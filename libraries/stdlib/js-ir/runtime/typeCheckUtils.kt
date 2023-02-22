@@ -90,6 +90,8 @@ internal external interface Metadata {
     val iid: Int?
 
     var `$kClass$`: dynamic
+
+    var errorInfo: Int? // Bits set for overridden properties: "message" => 0x1, "cause" => 0x2
 }
 
 internal external interface Ctor {
@@ -99,9 +101,32 @@ internal external interface Ctor {
     val prototype: dynamic
 }
 
-@Suppress("UNUSED_PARAMETER")
-private fun getPrototypeOf(obj: dynamic) =
-    js("Object.getPrototypeOf(obj)")
+private fun hasProp(proto: dynamic, propName: String): Boolean = proto.hasOwnProperty(propName)
+
+internal fun calculateErrorInfo(proto: dynamic): Int {
+    val metadata: Metadata? = proto.constructor?.`$metadata$`
+
+    metadata?.errorInfo?.let { return it } // cached
+
+    var result = 0
+    if (hasProp(proto, "message")) result = result or 0x1
+    if (hasProp(proto, "cause")) result = result or 0x2
+
+    if (result != 0x3) { //
+        val parentProto = getPrototypeOf(proto)
+        if (parentProto != js("Error").prototype) {
+            result = result or calculateErrorInfo(parentProto)
+        }
+    }
+
+    if (metadata != null) {
+        metadata.errorInfo = result
+    }
+
+    return result
+}
+
+private fun getPrototypeOf(obj: dynamic) = JsObject.getPrototypeOf(obj)
 
 private fun searchForMetadata(obj: dynamic): Metadata? {
     if (obj == null) {
