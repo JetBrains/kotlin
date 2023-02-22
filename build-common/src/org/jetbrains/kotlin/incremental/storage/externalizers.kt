@@ -32,13 +32,18 @@ import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import java.io.*
 
 /**
- * Externalizer that works correctly when [PersistentHashMap.appendData] is called
+ * Externalizer that works correctly when [com.intellij.util.io.PersistentHashMap.appendData] is called
  *
  * Besides the [append] method, it should support incremental [save] and [read]. E.g. if [save] was called multiple times, [read] should be able to collect them together
  */
 interface AppendableDataExternalizer<T> : DataExternalizer<T> {
     /**
-     * Combines two non-serialized values
+     * Creates an empty appendable object
+     */
+    fun createNil(): T
+
+    /**
+     * Combines two non-serialized appendable objects
      */
     fun append(currentValue: T, appendData: T): T
 }
@@ -304,7 +309,15 @@ open class CollectionExternalizer<T>(
         value.forEach { elementExternalizer.save(output, it) }
     }
 
-    override fun append(currentValue: Collection<T>, appendData: Collection<T>) = currentValue + appendData
+    override fun createNil() = newCollection()
+
+    override fun append(currentValue: Collection<T>, appendData: Collection<T>) = when (currentValue) {
+        is MutableCollection<*> -> {
+            (currentValue as MutableCollection<T>).addAll(appendData)
+            currentValue
+        }
+        else -> currentValue + appendData
+    }
 }
 
 object StringCollectionExternalizer : CollectionExternalizer<String>(EnumeratorStringDescriptor(), { HashSet() })

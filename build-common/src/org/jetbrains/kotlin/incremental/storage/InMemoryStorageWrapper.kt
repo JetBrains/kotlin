@@ -24,7 +24,7 @@ class DefaultInMemoryStorageWrapper<K, V>(
 ) :
     InMemoryStorageWrapper<K, V> {
     // These state properties keep the current diff that will be applied to the [origin] on flush if [resetInMemoryChanges] is not called
-    private val inMemoryStorage = LinkedHashMap<K, ValueWrapper<V>>()
+    private val inMemoryStorage = LinkedHashMap<K, ValueWrapper>()
     private val removedKeys = hashSetOf<K>()
     private var isCleanRequested = false
 
@@ -56,16 +56,17 @@ class DefaultInMemoryStorageWrapper<K, V>(
             }
         }
         for ((key, valueWrapper) in inMemoryStorage) {
-            if (valueWrapper.isAppend) {
-                origin.append(key, valueWrapper.value)
-                origin[key] // trigger chunks compaction
-            } else {
-                origin[key] = valueWrapper.value
+            when (valueWrapper) {
+                is ValueWrapper.Value<*> -> origin[key] = valueWrapper.value.cast()
+                // if we were appending the value and didn't access it,
+                // then we have it as an append chain, so merge it and append to the origin as a single value
+                is ValueWrapper.AppendChain<*> -> origin.append(key, getMergedValue(key, valueWrapper, false)).also {
+                    origin[key] // trigger chunks compaction
+                }
             }
         }
 
-        clean()
-        isCleanRequested = false
+        resetInMemoryChanges()
 
         origin.flush(memoryCachesOnly)
     }
@@ -77,22 +78,28 @@ class DefaultInMemoryStorageWrapper<K, V>(
 
     @Synchronized
     override fun append(key: K, value: V) {
+        /*
+         * Plain English explanation:
+         * 1. The key's value is present only in origin => appendToOrigin = true
+         * 2. The key's value was set in this wrapper => appendToOrigin = false
+         * 3. The key's value was appended but not set in this wrapper => appendToOrigin = true
+         */
         check(valueExternalizer is AppendableDataExternalizer<V>) {
             "`valueExternalizer` should implement the `AppendableDataExternalizer` interface to be able to call `append`"
         }
-        when {
-            key in inMemoryStorage -> {
-                val currentEntry = inMemoryStorage.getValue(key)
-                // should we avoid new allocations by performing appends in-place?
-                inMemoryStorage[key] = ValueWrapper(valueExternalizer.append(currentEntry.value, value), isAppend = currentEntry.isAppend)
-            }
-            key !in removedKeys && key in origin -> {
-                inMemoryStorage[key] = ValueWrapper(value, isAppend = true)
-            }
-            else -> {
-                set(key, value)
-            }
+        val currentWrapper = inMemoryStorage[key]
+        if (currentWrapper is ValueWrapper.AppendChain<*>) {
+            (currentWrapper.parts.cast<MutableList<V>>()).add(value)
+            return
         }
+
+        val newWrapper = when (currentWrapper) {
+            is ValueWrapper.Value<*> -> ValueWrapper.AppendChain(mutableListOf(currentWrapper.value.cast(), value), false)
+            // if `append` is called for the first time, assume it will be called more, so don't store it as `ValueWrapper.Value`
+            else -> ValueWrapper.AppendChain(mutableListOf(value), true)
+        }
+
+        inMemoryStorage[key] = newWrapper
     }
 
     @Synchronized
@@ -103,25 +110,18 @@ class DefaultInMemoryStorageWrapper<K, V>(
 
     @Synchronized
     override fun set(key: K, value: V) {
-        inMemoryStorage[key] = ValueWrapper(value)
+        inMemoryStorage[key] = ValueWrapper.Value(value)
     }
 
     @Synchronized
     override fun get(key: K): V? {
-        return when (key) {
-            in inMemoryStorage -> {
-                val entry = inMemoryStorage.getValue(key)
-                val originValue = origin[key]
-                if (entry.isAppend && originValue != null) {
-                    check(valueExternalizer is AppendableDataExternalizer<V>) {
-                        "`valueExternalizer` should implement the `AppendableDataExternalizer` interface to be able to handle `append`"
-                    }
-                    valueExternalizer.append(originValue, entry.value)
-                } else {
-                    entry.value
-                }
+        val wrapper = inMemoryStorage[key]
+        return when {
+            wrapper is ValueWrapper.Value<*> -> wrapper.value.cast<V>()
+            wrapper is ValueWrapper.AppendChain<*> -> getMergedValue(key, wrapper).also { mergedValue ->
+                inMemoryStorage[key] = ValueWrapper.Value(mergedValue)
             }
-            !in removedKeys -> origin[key]
+            key !in removedKeys -> origin[key]
             else -> null
         }
     }
@@ -129,8 +129,43 @@ class DefaultInMemoryStorageWrapper<K, V>(
     @Synchronized
     override fun contains(key: K) = key in inMemoryStorage || (key !in removedKeys && key in origin)
 
-    private fun <K, V> Map<K, V>.getValue(key: K) =
-        this[key] ?: error("$key was unexpectedly removed from in-memory storage. Seems to be a multithreading issue")
+    /**
+     * Merges a value for a [key] from [origin] if it isn't in [removedKeys] and [useOriginValue] != false with [ValueWrapper.AppendChain] and returns the merged value
+     */
+    private fun getMergedValue(key: K, wrapper: ValueWrapper, useOriginValue: Boolean = true): V {
+        check(wrapper !is ValueWrapper.Value<*>) {
+            "There's no need to merge values for $key"
+        }
+        check(valueExternalizer is AppendableDataExternalizer<V>) {
+            "`valueExternalizer` should implement the `AppendableDataExternalizer` interface to be able to handle `append`"
+        }
+        return when (wrapper) {
+            is ValueWrapper.AppendChain<*> -> {
+                fun merge(acc: V, append: V) = valueExternalizer.append(acc, append)
 
-    private class ValueWrapper<V>(val value: V, val isAppend: Boolean = false)
+                val initial = if (useOriginValue && wrapper.appendToOrigin) {
+                    listOfNotNull(getOriginValue(key)).fold(valueExternalizer.createNil(), ::merge)
+                } else {
+                    valueExternalizer.createNil()
+                }
+                (wrapper.parts.cast<MutableList<V>>()).fold(initial, ::merge)
+            }
+            else -> error("In-memory storage contains no value for $key")
+        }
+    }
+
+    private fun getOriginValue(key: K): V? = if (key !in removedKeys) {
+        origin[key]
+    } else {
+        null
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun <T> Any?.cast() = this as T
+
+    private sealed interface ValueWrapper {
+        class Value<V>(val value: V) : ValueWrapper
+
+        class AppendChain<V>(val parts: MutableList<V>, val appendToOrigin: Boolean) : ValueWrapper
+    }
 }
