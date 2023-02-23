@@ -46,11 +46,10 @@ open class AbstractSymbolLightClassesParentingTestBase(
             private val declarationStack = ArrayDeque<PsiElement>()
 
             private fun <T : PsiElement> checkParentAndVisitChildren(
-                declaration: T?,
+                declaration: T,
                 notCheckItself: Boolean = false,
                 action: T.(visitor: JavaElementVisitor) -> Unit = {},
             ) {
-                if (declaration == null) return
                 if (!notCheckItself) {
                     checkDeclarationParent(declaration)
                 }
@@ -76,35 +75,42 @@ open class AbstractSymbolLightClassesParentingTestBase(
                 }
             }
 
-            override fun visitModifierList(list: PsiModifierList?) {
+            override fun visitModifierList(list: PsiModifierList) {
                 checkParentAndVisitChildren(list, notCheckItself = ignoreDecompiledClasses) { visitor ->
                     annotations.forEach { it.accept(visitor) }
                 }
             }
 
-            override fun visitParameterList(list: PsiParameterList?) {
+            override fun visitParameterList(list: PsiParameterList) {
                 checkParentAndVisitChildren(list, notCheckItself = ignoreDecompiledClasses) { visitor ->
                     parameters.forEach { it.accept(visitor) }
                 }
             }
 
-            override fun visitTypeParameterList(list: PsiTypeParameterList?) {
+            override fun visitTypeParameterList(list: PsiTypeParameterList) {
                 checkParentAndVisitChildren(list, notCheckItself = ignoreDecompiledClasses) { visitor ->
                     typeParameters.forEach { it.accept(visitor) }
                 }
             }
 
-            override fun visitClass(aClass: PsiClass?) {
+            override fun visitReferenceList(list: PsiReferenceList) {
+                checkParentAndVisitChildren(list, notCheckItself = ignoreDecompiledClasses)
+            }
+
+            override fun visitClass(aClass: PsiClass) {
                 checkParentAndVisitChildren(aClass) { visitor ->
                     annotations.forEach { it.accept(visitor) }
 
                     fields.forEach { it.accept(visitor) }
                     methods.forEach { it.accept(visitor) }
                     innerClasses.forEach { it.accept(visitor) }
+
+                    implementsList?.accept(visitor)
+                    extendsList?.accept(visitor)
                 }
             }
 
-            override fun visitField(field: PsiField?) {
+            override fun visitField(field: PsiField) {
                 checkParentAndVisitChildren(field) { visitor ->
                     annotations.forEach { it.accept(visitor) }
 
@@ -112,7 +118,7 @@ open class AbstractSymbolLightClassesParentingTestBase(
                 }
             }
 
-            override fun visitMethod(method: PsiMethod?) {
+            override fun visitMethod(method: PsiMethod) {
                 if (method is SyntheticElement) return
 
                 checkParentAndVisitChildren(method) { visitor ->
@@ -122,13 +128,13 @@ open class AbstractSymbolLightClassesParentingTestBase(
                 }
             }
 
-            override fun visitParameter(parameter: PsiParameter?) {
+            override fun visitParameter(parameter: PsiParameter) {
                 checkParentAndVisitChildren(parameter) { visitor ->
                     annotations.forEach { it.accept(visitor) }
                 }
             }
 
-            override fun visitTypeParameter(classParameter: PsiTypeParameter?) {
+            override fun visitTypeParameter(classParameter: PsiTypeParameter) {
                 checkParentAndVisitChildren(classParameter) { visitor ->
                     annotations.forEach { it.accept(visitor) }
                 }
@@ -143,9 +149,7 @@ open class AbstractSymbolLightClassesParentingTestBase(
                 }
             }
 
-            override fun visitAnnotation(annotation: PsiAnnotation?) {
-                if (annotation == null) return
-
+            override fun visitAnnotation(annotation: PsiAnnotation) {
                 val owner = annotation.owner
                 assertions.assertNotNull(owner)
 

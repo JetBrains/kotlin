@@ -81,6 +81,7 @@ internal class SymbolLightClassForEnumEntry(
         } ?: return@lazyPub null
 
         KotlinSuperTypeListBuilder(
+            this,
             kotlinOrigin = enumClass.kotlinOrigin?.getSuperTypeList(),
             manager = manager,
             language = language,

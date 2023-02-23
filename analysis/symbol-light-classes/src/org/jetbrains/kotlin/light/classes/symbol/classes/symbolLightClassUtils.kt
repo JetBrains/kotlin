@@ -431,6 +431,7 @@ internal fun SymbolLightClassForClassLike<*>.createInheritanceList(
     val role = if (forExtendsList) PsiReferenceList.Role.EXTENDS_LIST else PsiReferenceList.Role.IMPLEMENTS_LIST
 
     val listBuilder = KotlinSuperTypeListBuilder(
+        this,
         kotlinOrigin = kotlinOrigin?.getSuperTypeList(),
         manager = manager,
         language = language,

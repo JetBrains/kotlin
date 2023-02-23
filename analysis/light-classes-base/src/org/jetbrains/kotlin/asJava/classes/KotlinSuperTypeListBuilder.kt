@@ -1,26 +1,29 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.asJava.classes
 
 import com.intellij.lang.Language
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiJavaCodeReferenceElement
-import com.intellij.psi.PsiManager
-import com.intellij.psi.PsiReferenceList
+import com.intellij.psi.*
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtSuperTypeList
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 
-class KotlinSuperTypeListBuilder(kotlinOrigin: KtSuperTypeList?, manager: PsiManager, language: Language, role: PsiReferenceList.Role) :
-    KotlinLightReferenceListBuilder(
-        manager,
-        language,
-        role
-    ) {
+class KotlinSuperTypeListBuilder(
+    private val parent: PsiClass,
+    kotlinOrigin: KtSuperTypeList?,
+    manager: PsiManager,
+    language: Language,
+    role: PsiReferenceList.Role,
+) : KotlinLightReferenceListBuilder(
+    manager,
+    language,
+    role,
+) {
+    override fun getParent(): PsiElement = parent
 
     private val myKotlinOrigin: KtSuperTypeList? = kotlinOrigin
 
