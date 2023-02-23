@@ -59,3 +59,15 @@ class C {
 fun withDefault(x: Int = <!JSCODE_WRONG_CONTEXT!>js<!>("1")) {
     println(x)
 }
+
+suspend fun suspendFun(): Int = <!JSCODE_UNSUPPORTED_FUNCTION_KIND!>js<!>("1")
+
+inline fun inlineFun(f: () -> Int): Int = <!JSCODE_UNSUPPORTED_FUNCTION_KIND!>js<!>("f()")
+
+fun Int.extensionFun(): Int = <!JSCODE_UNSUPPORTED_FUNCTION_KIND!>js<!>("1")
+
+var propertyWithAccessors: Int
+    get(): Int = <!JSCODE_WRONG_CONTEXT!>js<!>("1")
+    set(<!UNUSED_PARAMETER!>value<!>: Int) {
+        <!JSCODE_WRONG_CONTEXT!>js<!>("console.log(value);")
+    }

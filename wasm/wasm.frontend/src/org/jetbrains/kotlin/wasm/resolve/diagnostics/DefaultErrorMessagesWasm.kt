@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.wasm.resolve.diagnostics
 
+import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticFactoryToRendererMap
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers
@@ -29,6 +30,11 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
         put(
             ErrorsWasm.JSCODE_WRONG_CONTEXT,
             "Calls to js(code) should be a single expression inside a top-level function body or a property initializer in Kotlin/Wasm"
+        )
+        put(
+            ErrorsWasm.JSCODE_UNSUPPORTED_FUNCTION_KIND,
+            "Calls to js(code) are not supported in {0} in Kotlin/Wasm",
+            CommonRenderers.STRING
         )
     }
 }

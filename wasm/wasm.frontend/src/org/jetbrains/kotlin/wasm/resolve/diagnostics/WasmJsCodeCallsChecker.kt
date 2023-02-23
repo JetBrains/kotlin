@@ -50,6 +50,16 @@ class WasmJsCallChecker(
                 is FunctionDescriptor -> {
                     if (!containingDeclaration.hasValidJsCodeBody(context.trace.bindingContext)) {
                         context.trace.report(ErrorsWasm.JSCODE_WRONG_CONTEXT.on(reportOn))
+                    } else {
+                        if (containingDeclaration.isSuspend) {
+                            context.trace.report(ErrorsWasm.JSCODE_UNSUPPORTED_FUNCTION_KIND.on(reportOn, "suspend function"))
+                        }
+                        if (containingDeclaration.isInline) {
+                            context.trace.report(ErrorsWasm.JSCODE_UNSUPPORTED_FUNCTION_KIND.on(reportOn, "inline function"))
+                        }
+                        if (containingDeclaration.extensionReceiverParameter != null) {
+                            context.trace.report(ErrorsWasm.JSCODE_UNSUPPORTED_FUNCTION_KIND.on(reportOn, "function with extension receiver"))
+                        }
                     }
                 }
                 is PropertyDescriptor -> {
