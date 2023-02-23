@@ -5,7 +5,6 @@ package org.jetbrains.kotlin.analysis.decompiled.light.classes
 import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.origin.LightMemberOriginForCompiledField
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile
-import org.jetbrains.kotlin.asJava.classes.lazyPub
 
 internal class KtLightEnumEntryForDecompiledDeclaration(
     private val fldDelegate: PsiEnumConstant,
@@ -22,8 +21,7 @@ internal class KtLightEnumEntryForDecompiledDeclaration(
     override fun resolveMethod(): PsiMethod? = fldDelegate.resolveMethod()
     override fun resolveMethodGenerics(): JavaResolveResult = fldDelegate.resolveMethodGenerics()
 
-    override fun getInitializingClass(): PsiEnumConstantInitializer? = _initializingClass
-    private val _initializingClass: PsiEnumConstantInitializer? by lazyPub {
+    override fun getInitializingClass(): PsiEnumConstantInitializer? = cachedValueWithLibraryTracker {
         fldDelegate.initializingClass?.let {
             KtLightEnumClassForDecompiledDeclaration(
                 psiConstantInitializer = it,

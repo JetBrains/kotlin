@@ -55,7 +55,8 @@ open class KtLightFieldForDecompiledDeclaration(
 
     override fun computeConstantValue(): Any? = fldDelegate.computeConstantValue()
 
-    override fun computeConstantValue(visitedVars: MutableSet<PsiVariable>?): Any? = (fldDelegate as? PsiVariableEx)?.computeConstantValue(visitedVars)
+    override fun computeConstantValue(visitedVars: MutableSet<PsiVariable>?): Any? =
+        (fldDelegate as? PsiVariableEx)?.computeConstantValue(visitedVars)
 
     override fun equals(other: Any?): Boolean = other === this ||
             other is KtLightFieldForDecompiledDeclaration &&

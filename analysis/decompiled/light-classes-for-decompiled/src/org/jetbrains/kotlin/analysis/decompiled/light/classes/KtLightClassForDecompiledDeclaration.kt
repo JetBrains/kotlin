@@ -12,6 +12,8 @@ import com.intellij.psi.impl.PsiImplUtil
 import com.intellij.psi.impl.PsiSuperMethodImplUtil
 import com.intellij.psi.javadoc.PsiDocComment
 import com.intellij.psi.scope.PsiScopeProcessor
+import com.intellij.psi.util.CachedValueProvider
+import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiUtil
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.origin.LightMemberOriginForCompiledField
@@ -25,6 +27,12 @@ import org.jetbrains.kotlin.asJava.isGetEntriesMethod
 import org.jetbrains.kotlin.asJava.isSyntheticValuesOrValueOfMethod
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 import org.jetbrains.kotlin.psi.KtClassOrObject
+
+internal inline fun <R : PsiElement, T> R.cachedValueWithLibraryTracker(
+    crossinline computer: () -> T,
+): T = CachedValuesManager.getCachedValue(this) {
+    CachedValueProvider.Result.createSingleDependency(computer(), project.createAllLibrariesModificationTracker())
+}
 
 open class KtLightClassForDecompiledDeclaration(
     clsDelegate: PsiClass,
@@ -118,8 +126,7 @@ open class KtLightClassForDecompiledDeclaration(
     override fun getAllMethods(): Array<PsiMethod> = PsiClassImplUtil.getAllMethods(this)
     override fun getAllFields(): Array<PsiField> = PsiClassImplUtil.getAllFields(this)
 
-    override fun getOwnMethods(): List<PsiMethod> = _ownMethods
-    private val _ownMethods: List<PsiMethod> by lazyPub {
+    override fun getOwnMethods(): List<PsiMethod> = cachedValueWithLibraryTracker {
         val isEnum = isEnum
         this.clsDelegate.methods.mapNotNull { psiMethod ->
             if (isSyntheticValuesOrValueOfMethod(psiMethod)) return@mapNotNull null
@@ -135,8 +142,7 @@ open class KtLightClassForDecompiledDeclaration(
         }
     }
 
-    override fun getOwnFields(): List<PsiField> = _ownFields
-    private val _ownFields: List<PsiField> by lazyPub {
+    override fun getOwnFields(): List<PsiField> = cachedValueWithLibraryTracker {
         this.clsDelegate.fields.map { psiField ->
             if (psiField is PsiEnumConstant) {
                 KtLightEnumEntryForDecompiledDeclaration(
@@ -155,8 +161,7 @@ open class KtLightClassForDecompiledDeclaration(
         }
     }
 
-    override fun getOwnInnerClasses(): List<PsiClass> = _ownInnerClasses
-    private val _ownInnerClasses: List<PsiClass> by lazyPub {
+    override fun getOwnInnerClasses(): List<PsiClass> = cachedValueWithLibraryTracker {
         this.clsDelegate.innerClasses.map { psiClass ->
             val innerDeclaration = this.kotlinOrigin
                 ?.declarations
