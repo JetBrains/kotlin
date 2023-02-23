@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.*
+import org.jetbrains.kotlin.ir.util.map
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock as ProtoBlock
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBlockBody as ProtoBlockBody
@@ -78,7 +79,7 @@ class IrBodyDeserializer(
     private val declarationDeserializer: IrDeclarationDeserializer,
 ) {
 
-    private val fileLoops = mutableMapOf<Int, IrLoop>()
+    private val fileLoops = hashMapOf<Int, IrLoop>()
 
     private fun deserializeLoopHeader(loopIndex: Int, loopBuilder: () -> IrLoop): IrLoop =
         fileLoops.getOrPut(loopIndex, loopBuilder)
@@ -87,14 +88,7 @@ class IrBodyDeserializer(
         proto: ProtoBlockBody,
         start: Int, end: Int
     ): IrBlockBody {
-
-        val statements = mutableListOf<IrStatement>()
-
-        val statementProtos = proto.statementList
-        statementProtos.forEach {
-            statements.add(deserializeStatement(it) as IrStatement)
-        }
-
+        val statements = proto.statementList.map { deserializeStatement(it) as IrStatement }
         return irFactory.createBlockBody(start, end, statements)
     }
 
@@ -160,14 +154,14 @@ class IrBodyDeserializer(
 
     private fun deserializeMemberAccessCommon(access: IrMemberAccessExpression<*>, proto: ProtoMemberAccessCommon) {
 
-        proto.valueArgumentList.mapIndexed { i, arg ->
+        proto.valueArgumentList.forEachIndexed { i, arg ->
             if (arg.hasExpression()) {
                 val expr = deserializeExpression(arg.expression)
                 access.putValueArgument(i, expr)
             }
         }
 
-        proto.typeArgumentList.mapIndexed { i, arg ->
+        proto.typeArgumentList.forEachIndexed { i, arg ->
             access.putTypeArgument(i, declarationDeserializer.deserializeNullableIrType(arg))
         }
 
@@ -205,16 +199,16 @@ class IrBodyDeserializer(
 
             val klass = constructorCall.symbol.owner.parentAsClass
 
-            val typeParameters = extractTypeParameters(klass)
+            val typeParameters = extractTypeParameters(klass).ifEmpty {
+                return IrSimpleTypeBuilder().apply { classifier = klass.symbol }.buildSimpleType()
+            }
 
             val typeArguments = ArrayList<IrTypeArgument>(typeParameters.size)
             val typeParameterSymbols = ArrayList<IrTypeParameterSymbol>(typeParameters.size)
             val rawType = with(IrSimpleTypeBuilder()) {
-                arguments = typeParameters.run {
-                    mapTo(ArrayList(size)) {
-                        classifier = it.symbol
-                        buildTypeProjection()
-                    }
+                arguments = typeParameters.map {
+                    classifier = it.symbol
+                    buildTypeProjection()
                 }
                 classifier = klass.symbol
                 buildSimpleType()

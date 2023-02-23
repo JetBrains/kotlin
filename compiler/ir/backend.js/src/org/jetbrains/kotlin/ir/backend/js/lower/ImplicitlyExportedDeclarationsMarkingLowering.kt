@@ -14,9 +14,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.constructors
-import org.jetbrains.kotlin.ir.util.isPrimitiveArray
-import org.jetbrains.kotlin.ir.util.parentClassOrNull
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 
 class ImplicitlyExportedDeclarationsMarkingLowering(private val context: JsIrBackendContext) : DeclarationTransformer {
@@ -38,9 +36,11 @@ class ImplicitlyExportedDeclarationsMarkingLowering(private val context: JsIrBac
     }
 
     private fun IrClass.collectImplicitlyExportedDeclarations(): Set<IrDeclaration> {
-        return typeParameters
-            .flatMap { it.superTypes }.toSet()
-            .flatMap { it.collectImplicitlyExportedDeclarations() }.toSet()
+        return typeParameters.asSequence()
+            .flatMap { it.superTypes }
+            .distinct()
+            .flatMap { it.collectImplicitlyExportedDeclarations() }
+            .toSet()
     }
 
 

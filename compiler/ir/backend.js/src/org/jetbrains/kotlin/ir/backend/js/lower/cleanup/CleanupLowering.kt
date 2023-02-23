@@ -63,20 +63,16 @@ private class CodeCleaner : IrElementVisitorVoid {
     private fun IrStatementContainer.cleanUpStatements() {
         var unreachable = false
 
-        val newStatements = statements.filter {
+        statements.removeIf {
             when {
-                unreachable -> false
-                it is IrExpression && it.isPure(true) -> false
+                unreachable -> true
+                it is IrExpression && it.isPure(true) -> true
                 else -> {
                     unreachable = it.doesNotReturn()
-                    true
+                    false
                 }
             }
         }
-
-        statements.clear()
-
-        statements += newStatements
     }
 
     // Checks if it is safe to assume the statement doesn't return (e.g. throws an exception or loops infinitely)

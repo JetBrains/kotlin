@@ -24,10 +24,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.util.indexOrMinusOne
-import org.jetbrains.kotlin.ir.util.isCrossinline
-import org.jetbrains.kotlin.ir.util.isNoinline
-import org.jetbrains.kotlin.ir.util.varargElementType
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
 import org.jetbrains.kotlin.psi.KtScript

@@ -23,7 +23,10 @@ internal interface KotlinLibraryHeader {
     val jsOutputName: String?
 }
 
-internal class KotlinLoadedLibraryHeader(private val library: KotlinLibrary) : KotlinLibraryHeader {
+internal class KotlinLoadedLibraryHeader(
+    private val library: KotlinLibrary,
+    private val internationService: IrInternationService
+) : KotlinLibraryHeader {
     private fun parseFingerprintsFromManifest(): Map<KotlinSourceFile, FingerprintHash>? {
         val manifestFingerprints = library.serializedIrFileFingerprints?.takeIf { it.size == sourceFiles.size } ?: return null
         return sourceFiles.withIndex().associate { it.value to manifestFingerprints[it.index].fileFingerprint }
@@ -46,7 +49,7 @@ internal class KotlinLoadedLibraryHeader(private val library: KotlinLibrary) : K
                 override fun string(index: Int): ByteArray = library.string(index, it)
                 override fun body(index: Int): ByteArray = err()
                 override fun debugInfo(index: Int): ByteArray? = null
-            }), null)
+            }), null, internationService)
 
             put(sourceFiles[it], deserializer)
         }

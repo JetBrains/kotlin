@@ -37,9 +37,9 @@ class IrFunctionReferenceImpl(
     override val referencedName: Name
         get() = symbol.owner.name
 
-    override val typeArgumentsByIndex: Array<IrType?> = arrayOfNulls(typeArgumentsCount)
+    override val typeArgumentsByIndex: Array<IrType?> = initializeTypeArguments(typeArgumentsCount)
 
-    override val argumentsByParameterIndex: Array<IrExpression?> = arrayOfNulls(valueArgumentsCount)
+    override val argumentsByParameterIndex: Array<IrExpression?> = initializeParameterArguments(valueArgumentsCount)
 
     companion object {
         @ObsoleteDescriptorBasedAPI

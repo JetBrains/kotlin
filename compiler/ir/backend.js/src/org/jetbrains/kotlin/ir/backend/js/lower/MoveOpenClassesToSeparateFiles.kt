@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
 import org.jetbrains.kotlin.ir.util.transformDeclarationsFlat
 import org.jetbrains.kotlin.ir.util.transformFlat
+import org.jetbrains.kotlin.ir.util.plus
 
 fun moveOpenClassesToSeparateFiles(moduleFragment: IrModuleFragment) {
     fun createFile(file: IrFile, klass: IrClass): IrFile =
@@ -55,7 +56,7 @@ fun moveOpenClassesToSeparateFiles(moduleFragment: IrModuleFragment) {
         return@transformFlat if (openClasses.isEmpty())
             null
         else
-            listOf(file) + openClasses.map { createFile(file, it) }
+            openClasses.mapTo(mutableListOf(file)) { createFile(file, it) }
     }
 }
 

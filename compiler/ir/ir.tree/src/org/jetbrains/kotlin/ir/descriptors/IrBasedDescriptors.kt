@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.error.ErrorUtils
+import org.jetbrains.kotlin.util.collectionUtils.filterIsInstanceAnd
 
 /* Descriptors that serve purely as a view into IR structures.
    Created each time at the borderline between IR-based and descriptor-based code (such as inliner).
@@ -594,7 +595,7 @@ open class IrBasedClassDescriptor(owner: IrClass) : ClassDescriptor, IrBasedDecl
     override fun getSource() = owner.source
 
     override fun getConstructors() =
-        owner.declarations.filterIsInstance<IrConstructor>().filter { !it.origin.isSynthetic }.map { it.toIrBasedDescriptor() }.toList()
+        owner.declarations.filterIsInstanceAnd<IrConstructor> { !it.origin.isSynthetic }.map { it.toIrBasedDescriptor() }
 
     private val _defaultType: SimpleType by lazy {
         TypeUtils.makeUnsubstitutedType(this, unsubstitutedMemberScope, KotlinTypeFactory.EMPTY_REFINED_TYPE_FACTORY)

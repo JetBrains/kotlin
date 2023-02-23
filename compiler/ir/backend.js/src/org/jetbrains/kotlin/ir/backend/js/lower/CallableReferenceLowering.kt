@@ -270,9 +270,11 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
 
         private fun IrSimpleFunction.createLambdaInvokeMethod() {
             annotations = function.annotations
-            val valueParameterMap = function.explicitParameters.withIndex().associate { (index, param) ->
-                param to param.copyTo(this, index = index)
-            }
+            val valueParameterMap = function.explicitParameters
+                .withIndex()
+                .associate { (index, param) ->
+                    param to param.copyTo(this, index = index)
+                }
             valueParameters = valueParameterMap.values.toList()
             body = function.moveBodyTo(this, valueParameterMap)
         }

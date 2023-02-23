@@ -61,7 +61,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
     protected open fun IrBuilderWithScope.generateDelegatedCall(expectedType: IrType, delegatingCall: IrExpression): IrExpression =
         delegatingCall
 
-    private val builtCoroutines = mutableMapOf<IrFunction, BuiltCoroutine>()
+    private val builtCoroutines = hashMapOf<IrFunction, BuiltCoroutine>()
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         if (container is IrSimpleFunction && container.isSuspend) {
@@ -207,7 +207,8 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
         private val continuationType = continuationClassSymbol.typeWith(function.returnType)
 
         // Save all arguments to fields.
-        private val argumentToPropertiesMap = functionParameters.associateWith { coroutineClass.addField(it.name, it.type, false) }
+        private val argumentToPropertiesMap = functionParameters
+            .associateWith { coroutineClass.addField(it.name, it.type, false) }
 
         private val coroutineBaseClass = getCoroutineBaseClass(function)
         private val coroutineBaseClassConstructor = coroutineBaseClass.owner.constructors.single { it.valueParameters.size == 1 }
@@ -236,9 +237,12 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
 
         private fun buildConstructor(): IrConstructor {
             if (isSuspendLambda) {
-                return coroutineClass.declarations.filterIsInstance<IrConstructor>().single().let {
-                    context.mapping.capturedConstructors[it] ?: it
-                }
+                return coroutineClass.declarations
+                    .filterIsInstance<IrConstructor>()
+                    .single()
+                    .let {
+                        context.mapping.capturedConstructors[it] ?: it
+                    }
             }
 
             return context.irFactory.buildConstructor {

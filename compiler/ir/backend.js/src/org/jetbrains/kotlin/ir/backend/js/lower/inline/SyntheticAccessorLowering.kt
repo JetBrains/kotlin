@@ -18,12 +18,10 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
-import org.jetbrains.kotlin.ir.util.DeepCopyIrTreeWithSymbols
-import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
-import org.jetbrains.kotlin.ir.util.SimpleTypeRemapper
-import org.jetbrains.kotlin.ir.util.withinScope
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
+import kotlin.collections.map
 
 class SyntheticAccessorLowering(private val context: CommonBackendContext) : BodyLoweringPass {
 

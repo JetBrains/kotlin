@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetObjectValueImpl
 import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.ir.types.isString
 import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.filterIsInstance
 import org.jetbrains.kotlin.ir.util.irCall
 import org.jetbrains.kotlin.ir.util.properties
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid

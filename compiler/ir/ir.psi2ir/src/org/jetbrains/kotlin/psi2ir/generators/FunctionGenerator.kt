@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.util.declareSimpleFunctionWithOverrides
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.psi2ir.isConstructorDelegatingToSuper
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils

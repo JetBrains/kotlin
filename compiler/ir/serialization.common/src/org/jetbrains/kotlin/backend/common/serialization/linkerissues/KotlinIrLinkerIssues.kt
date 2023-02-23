@@ -154,7 +154,7 @@ class SymbolTypeMismatch(
         val idSignature = cause.actual.signature
         // There might be multiple declaring modules. Which is also an error, and should re reported separately.
         val declaringModuleIds: Set<ResolvedDependencyId> = if (idSignature != null) {
-            allModuleDeserializers.mapNotNullTo(mutableSetOf()) { deserializer ->
+            allModuleDeserializers.mapNotNullTo(hashSetOf()) { deserializer ->
                 if (idSignature in deserializer) userVisibleIrModulesSupport.getProblemModuleId(deserializer, allModules) else null
             }
         } else emptySet()
@@ -234,14 +234,14 @@ private fun StringBuilder.appendProjectDependencies(
         return
     }
 
-    val incomingDependencyIdToDependencies: MutableMap<ResolvedDependencyId, MutableCollection<ResolvedDependency>> = mutableMapOf()
+    val incomingDependencyIdToDependencies: MutableMap<ResolvedDependencyId, MutableCollection<ResolvedDependency>> = hashMapOf()
     allModules.values.forEach { module ->
         module.requestedVersionsByIncomingDependencies.keys.forEach { incomingDependencyId ->
             incomingDependencyIdToDependencies.getOrPut(incomingDependencyId) { mutableListOf() } += module
         }
     }
 
-    val renderedModules: MutableSet<ResolvedDependencyId> = mutableSetOf()
+    val renderedModules: MutableSet<ResolvedDependencyId> = hashSetOf()
     var everDependenciesOmitted = false
 
     fun renderModules(modules: Collection<ResolvedDependency>, parentData: Data?) {
@@ -352,7 +352,7 @@ private fun findPotentiallyConflictingOutgoingDependencies(
     )
 
     // Reverse dependency index.
-    val outgoingDependenciesIndex: MutableMap<ResolvedDependencyId, MutableList<OutgoingDependency>> = mutableMapOf()
+    val outgoingDependenciesIndex: MutableMap<ResolvedDependencyId, MutableList<OutgoingDependency>> = hashMapOf()
 
     allModules.values.forEach { module ->
         module.requestedVersionsByIncomingDependencies.forEach { (incomingDependencyId, requestedVersion) ->
@@ -364,7 +364,7 @@ private fun findPotentiallyConflictingOutgoingDependencies(
         }
     }
 
-    val dependencyStatesMap: MutableMap<ResolvedDependencyId, MutableSet<DependencyState>> = mutableMapOf()
+    val dependencyStatesMap: MutableMap<ResolvedDependencyId, MutableSet<DependencyState>> = hashMapOf()
 
     fun recurse(moduleId: ResolvedDependencyId, underConflictingDependency: Boolean) {
         val outgoingDependencies: List<OutgoingDependency> = outgoingDependenciesIndex[moduleId].orEmpty()
@@ -406,7 +406,7 @@ private fun findPotentiallyConflictingOutgoingDependencies(
                 else -> DependencyState.SUCCESS
             }
 
-            val dependencyStates: MutableSet<DependencyState> = dependencyStatesMap.getOrPut(outgoingDependency.id) { mutableSetOf() }
+            val dependencyStates: MutableSet<DependencyState> = dependencyStatesMap.getOrPut(outgoingDependency.id) { hashSetOf() }
             val notBeenHereYet = dependencyStates.add(dependencyState)
 
             if (notBeenHereYet) {
@@ -444,7 +444,7 @@ private fun findPotentiallyConflictingIncomingDependencies(
     sourceCodeModuleId: ResolvedDependencyId
 ): Map<ResolvedDependencyId, PotentialConflictDescription> {
 
-    val dependencyStatesMap: MutableMap<ResolvedDependencyId, MutableSet<DependencyState>> = mutableMapOf()
+    val dependencyStatesMap: MutableMap<ResolvedDependencyId, MutableSet<DependencyState>> = hashMapOf()
 
     fun recurse(moduleId: ResolvedDependencyId, aboveConflictingDependency: Boolean) {
         val module = allModules.findMatchingModule(moduleId)
@@ -488,7 +488,7 @@ private fun findPotentiallyConflictingIncomingDependencies(
                 else -> DependencyState.SUCCESS
             }
 
-            val dependencyStates: MutableSet<DependencyState> = dependencyStatesMap.getOrPut(incomingDependencyId) { mutableSetOf() }
+            val dependencyStates: MutableSet<DependencyState> = dependencyStatesMap.getOrPut(incomingDependencyId) { hashSetOf() }
             val notBeenHereYet = dependencyStates.add(dependencyState)
 
             if (notBeenHereYet) {

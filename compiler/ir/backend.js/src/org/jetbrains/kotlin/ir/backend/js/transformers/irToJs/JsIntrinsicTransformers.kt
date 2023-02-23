@@ -33,7 +33,7 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
     init {
         val intrinsics = backendContext.intrinsics
 
-        transformers = mutableMapOf()
+        transformers = hashMapOf()
 
         transformers.apply {
             binOp(intrinsics.jsEqeqeq, JsBinaryOperator.REF_EQ)

@@ -170,9 +170,9 @@ class ES6ConstructorLowering(val context: JsIrBackendContext) : DeclarationTrans
 
         transformChildrenVoid(object : ValueRemapper(emptyMap()) {
             override val map: MutableMap<IrValueSymbol, IrValueSymbol> = currentConstructor.valueParameters
-                .zip(constructorReplacement.valueParameters)
-                .associate { it.first.symbol to it.second.symbol }
-                .toMutableMap()
+                .asSequence()
+                .zip(constructorReplacement.valueParameters.asSequence())
+                .associateTo(HashMap(currentConstructor.valueParameters.size)) { it.first.symbol to it.second.symbol }
 
             override fun visitReturn(expression: IrReturn): IrExpression {
                 return if (expression.returnTargetSymbol == currentConstructor.symbol) {

@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.resolve.multiplatform.findActuals
 import org.jetbrains.kotlin.resolve.multiplatform.findExpects
 
 class ExpectActualTable(val expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>) {
-    val table = mutableMapOf<DeclarationDescriptor, IrSymbol>()
+    val table = hashMapOf<DeclarationDescriptor, IrSymbol>()
 
     private fun IrElement.recordActuals(rightHandSide: Map<DeclarationDescriptor, IrSymbol>, inModule: ModuleDescriptor) {
         this.acceptVoid(object : IrElementVisitorVoid {
@@ -62,7 +62,7 @@ class ExpectActualTable(val expectDescriptorToSymbol: MutableMap<DeclarationDesc
     }
 
     private fun IrDeclaration.recordRightHandSide(): Map<DeclarationDescriptor, IrSymbol> {
-        val rightHandSide = mutableMapOf<DeclarationDescriptor, IrSymbol>()
+        val rightHandSide = hashMapOf<DeclarationDescriptor, IrSymbol>()
 
         this.acceptVoid(object : IrElementVisitorVoid {
             override fun visitElement(element: IrElement) {

@@ -83,18 +83,18 @@ fun objectCreate(prototype: JsExpression, context: JsStaticContext) =
         prototype
     )
 
-fun defineProperty(obj: JsExpression, name: String, getter: JsExpression?, setter: JsExpression?, context: JsStaticContext) =
-    JsInvocation(
+fun defineProperty(obj: JsExpression, name: String, getter: JsExpression?, setter: JsExpression?, context: JsStaticContext): JsExpression {
+    val undefined = jsUndefined(context, context.backendContext)
+    return JsInvocation(
         context
             .getNameForStaticFunction(context.backendContext.intrinsics.jsDefinePropertySymbol.owner)
             .makeRef(),
         obj,
         JsStringLiteral(name),
-        *listOf(getter, setter)
-            .dropLastWhile { it == null }
-            .map { it ?: jsUndefined(context, context.backendContext) }
-            .toTypedArray()
+        getter ?: undefined,
+        setter ?: undefined
     )
+}
 
 fun translateFunction(declaration: IrFunction, name: JsName?, context: JsGenerationContext): JsFunction {
     context.staticContext.backendContext.getJsCodeForFunction(declaration.symbol)?.let { function ->
@@ -383,36 +383,38 @@ fun translateCallArguments(
     val varargParameterIndex = function.realOverrideTarget.varargParameterIndex()
 
     val validWithNullArgs = expression.validWithNullArgs()
-    val arguments = (0 until size)
-        .mapTo(ArrayList(size)) { index ->
-            expression.getValueArgument(index).checkOnNullability(
-                validWithNullArgs || function.valueParameters[index].isBoxParameter
-            )
-        }
-        .dropLastWhile {
-            allowDropTailVoids &&
-                    it is IrGetField &&
-                    it.symbol.owner.correspondingPropertySymbol == context.staticContext.backendContext.intrinsics.void
-        }
-        .map {
-            it?.accept(transformer, context)
-        }
-        .mapIndexed { index, result ->
-            val isEmptyExternalVararg = validWithNullArgs &&
-                    varargParameterIndex == index &&
-                    result is JsArrayLiteral &&
-                    result.expressions.isEmpty()
+    val jsUndefined = jsUndefined(context, context.staticContext.backendContext)
 
-            if (isEmptyExternalVararg && index == size - 1) {
-                null
-            } else result
+    val arguments = buildList {
+        for (i in 0 until size) {
+            val providedIrArgument = expression.getValueArgument(i)
+                .checkOnNullability(validWithNullArgs || function.valueParameters[i].isBoxParameter)
+
+            val jsArgument = when {
+                allowDropTailVoids && (providedIrArgument == null || providedIrArgument.isVoidGetter(context)) -> jsUndefined
+                else -> providedIrArgument?.accept(transformer, context) ?: jsUndefined
+            }
+
+            val isEmptyExternalVararg = validWithNullArgs &&
+                    varargParameterIndex == i &&
+                    jsArgument is JsArrayLiteral &&
+                    jsArgument.expressions.isEmpty()
+
+            if (isEmptyExternalVararg && i == size - 1) {
+                add(jsUndefined)
+            } else {
+                add(jsArgument)
+            }
         }
-        .dropLastWhile { it == null }
-        .map { it ?: jsUndefined(context, context.staticContext.backendContext) }
+    }.dropLastWhile { it === jsUndefined }
 
     check(!expression.symbol.isSuspend) { "Suspend functions should be lowered" }
     return arguments
 }
+
+private fun IrExpression.isVoidGetter(context: JsGenerationContext): Boolean = this is IrGetField &&
+        symbol.owner.correspondingPropertySymbol == context.staticContext.backendContext.intrinsics.void
+
 
 private fun IrExpression?.checkOnNullability(validWithNullArgs: Boolean) =
     also {

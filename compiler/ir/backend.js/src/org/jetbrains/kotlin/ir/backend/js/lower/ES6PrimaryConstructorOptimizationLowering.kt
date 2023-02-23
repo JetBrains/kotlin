@@ -67,8 +67,7 @@ class ES6PrimaryConstructorOptimizationLowering(private val context: JsIrBackend
 
             body.transformChildrenVoid(object : ValueRemapper(emptyMap()) {
                 override val map = original.valueParameters.zip(constructor.valueParameters)
-                    .associate { it.first.symbol to it.second.symbol }
-                    .toMutableMap<IrValueSymbol, IrValueSymbol>()
+                    .associateTo(HashMap<IrValueSymbol, IrValueSymbol>(original.valueParameters.size)) { it.first.symbol to it.second.symbol }
 
                 override fun visitReturn(expression: IrReturn): IrExpression {
                     return if (expression.returnTargetSymbol == original.symbol) {

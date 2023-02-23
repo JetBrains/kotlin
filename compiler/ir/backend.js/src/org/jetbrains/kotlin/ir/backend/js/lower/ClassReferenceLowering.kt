@@ -19,8 +19,10 @@ import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.filterIsInstance
 import org.jetbrains.kotlin.ir.util.isFunction
 import org.jetbrains.kotlin.ir.util.isThrowable
+import org.jetbrains.kotlin.ir.util.map
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.*

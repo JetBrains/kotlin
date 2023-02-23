@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.isClass
 import org.jetbrains.kotlin.descriptors.isInterface
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.export.isExported
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
@@ -19,8 +20,10 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrReturn
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.isAnnotationClass
 import org.jetbrains.kotlin.ir.util.parentAsClass
@@ -67,6 +70,12 @@ fun IrConstructor.hasStrictSignature(context: JsIrBackendContext): Boolean {
 private fun getKotlinOrJsQualifier(parent: IrPackageFragment, shouldIncludePackage: Boolean): FqName? {
     return (parent as? IrFile)?.getJsQualifier()?.let { FqName(it) } ?: parent.fqName.takeIf { shouldIncludePackage }
 }
+
+fun IrFunctionSymbol.isUnitInstanceFunction(context: JsIrBackendContext): Boolean {
+    return owner.origin === JsLoweredDeclarationOrigin.OBJECT_GET_INSTANCE_FUNCTION &&
+            owner.returnType.classifierOrNull === context.irBuiltIns.unitClass
+}
+
 
 val IrFunctionAccessExpression.typeArguments: List<IrType?>
     get() = List(typeArgumentsCount) { getTypeArgument(it) }

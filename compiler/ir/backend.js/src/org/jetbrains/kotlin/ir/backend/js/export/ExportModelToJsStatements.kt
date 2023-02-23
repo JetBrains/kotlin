@@ -27,7 +27,7 @@ class ExportModelToJsStatements(
     private val es6mode: Boolean,
     private val declareNewNamespace: (String) -> String,
 ) {
-    private val namespaceToRefMap = mutableMapOf<String, JsNameRef>()
+    private val namespaceToRefMap = hashMapOf<String, JsNameRef>()
 
     fun generateModuleExport(
         module: ExportedModule,

@@ -23,7 +23,7 @@ class MethodsOfAnyCallsTransformer(context: JsIrBackendContext) : CallsTransform
     private val nameToTransformer: Map<Name, (IrFunctionAccessExpression) -> IrExpression>
 
     init {
-        nameToTransformer = mutableMapOf()
+        nameToTransformer = hashMapOf()
         nameToTransformer.run {
             put(Name.identifier("toString")) { call ->
                 if (shouldReplaceToStringWithRuntimeCall(call)) {

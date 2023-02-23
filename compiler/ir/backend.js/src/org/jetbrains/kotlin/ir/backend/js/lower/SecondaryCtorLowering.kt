@@ -143,7 +143,9 @@ class SecondaryConstructorLowering(val context: JsIrBackendContext) : Declaratio
                     ThisUsageReplaceTransformer(
                         constructor.symbol,
                         delegate.symbol,
-                        oldValueParameters.zip(delegate.valueParameters).associate { (old, new) -> old.symbol to new.symbol }
+                        oldValueParameters
+                            .zip(delegate.valueParameters)
+                            .associate { (old, new) -> old.symbol to new.symbol }
                     )
                 )
             }

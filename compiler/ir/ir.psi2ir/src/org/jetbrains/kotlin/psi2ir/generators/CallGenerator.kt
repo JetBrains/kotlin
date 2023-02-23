@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.types.IrDynamicType
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.map
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.psiUtil.endOffset

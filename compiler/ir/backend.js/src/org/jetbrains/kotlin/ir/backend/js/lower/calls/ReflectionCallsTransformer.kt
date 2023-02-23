@@ -30,7 +30,7 @@ class ReflectionCallsTransformer(private val context: JsIrBackendContext) : Call
     }
 
     init {
-        nameToTransformer = mutableMapOf()
+        nameToTransformer = hashMapOf()
         nameToTransformer.run {
             addWithPredicate(
                 Name.special(Namer.KCALLABLE_GET_NAME),

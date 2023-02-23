@@ -6,22 +6,16 @@
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.ir.backend.js.utils.isTheLastReturnStatementIn
-import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
-import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.backend.js.utils.emptyScope
+import org.jetbrains.kotlin.ir.backend.js.utils.isUnitInstanceFunction
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
-import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.isAny
-import org.jetbrains.kotlin.ir.util.constructedClassType
-import org.jetbrains.kotlin.ir.util.file
-import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
-import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.js.backend.ast.*
 
 @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
@@ -164,7 +158,7 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
     }
 
     override fun visitCall(expression: IrCall, data: JsGenerationContext): JsStatement {
-        if (expression.symbol.isUnitInstanceFunction(data)) {
+        if (expression.symbol.isUnitInstanceFunction(data.staticContext.backendContext)) {
             return JsEmpty
         }
         if (data.checkIfJsCode(expression.symbol) || data.checkIfHasAssociatedJsCode(expression.symbol)) {
@@ -173,13 +167,7 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
         return translateCall(expression, data, IrElementToJsExpressionTransformer()).withSource(expression, data).makeStmt()
     }
 
-    private fun IrFunctionSymbol.isUnitInstanceFunction(context: JsGenerationContext): Boolean {
-        return owner.origin === JsLoweredDeclarationOrigin.OBJECT_GET_INSTANCE_FUNCTION &&
-                owner.returnType.classifierOrNull === context.staticContext.backendContext.irBuiltIns.unitClass
-    }
-
     override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall, context: JsGenerationContext): JsStatement {
-
         // TODO: implement
         return JsEmpty
     }

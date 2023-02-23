@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.filter
+import org.jetbrains.kotlin.ir.util.map
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.name.Name
@@ -37,12 +39,13 @@ class CreateScriptFunctionsPhase(val context: CommonBackendContext) : FileLoweri
         val (startOffset, endOffset) = getFunctionBodyOffsets(irScript)
 
         val initializeStatements = irScript.statements
+            .asSequence()
             .filterIsInstance<IrProperty>()
             .mapNotNull { it.backingField }
             .filter { it.initializer != null }
             .map { Pair(it, it.initializer!!.expression) }
-
-        initializeStatements.forEach { it.first.initializer = null }
+            .onEach { it.first.initializer = null }
+            .toList()
 
         val initializeScriptFunction = createFunction(irScript, "\$initializeScript\$", context.irBuiltIns.unitType).also {
             it.body = it.factory.createBlockBody(

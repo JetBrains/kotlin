@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.transformStatement
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.isElseBranch
+import org.jetbrains.kotlin.ir.util.map
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer

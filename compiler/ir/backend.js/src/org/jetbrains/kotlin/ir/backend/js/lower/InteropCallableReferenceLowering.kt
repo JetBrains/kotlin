@@ -112,16 +112,16 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
     override fun lower(irFile: IrFile) {
 
         // Regular contextless lambdas are always transformed to function references
-        val ctorToFreeFunctionMap = mutableMapOf<IrConstructorSymbol, IrSimpleFunctionSymbol>()
+        val ctorToFreeFunctionMap = hashMapOf<IrConstructorSymbol, IrSimpleFunctionSymbol>()
 
         // Regular lambdas with captured variables are transformed to function expressions whenever possible.
         // However, we don't do that if the lambda captures a variable declared in a loop, at least when variable
         // declarations are lowered into 'var' statements in JS. See the CapturedVariablesDeclaredInLoops class.
         // We also don't do that if there is more than one constructor call for a single lambda.
-        val ctorToFunctionExpressionMap = mutableMapOf<IrConstructorSymbol, FunctionExpressionFactory>()
+        val ctorToFunctionExpressionMap = hashMapOf<IrConstructorSymbol, FunctionExpressionFactory>()
 
         // Suspend lambdas are transformed to factory calls
-        val ctorToFactoryMap = mutableMapOf<IrConstructorSymbol, IrSimpleFunctionSymbol>()
+        val ctorToFactoryMap = hashMapOf<IrConstructorSymbol, IrSimpleFunctionSymbol>()
 
         val closureUsageAnalyser = ClosureUsageAnalyser()
 
@@ -502,7 +502,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
         val isSuspendLambda = invokeFun.overriddenSymbols.any { it.owner.isSuspend }
 
         fun createOldToNewInvokeParametersMapping(lambdaDeclaration: IrSimpleFunction) =
-            invokeFun.valueParameters.associateBy({ it.symbol }, { lambdaDeclaration.valueParameters[it.index].symbol })
+            invokeFun.valueParameters.associateBy({ it.symbol }) { lambdaDeclaration.valueParameters[it.index].symbol }
 
         fun lambdaInnerClasses() =
             lambdaClass.declarations.filter { it is IrClass || (it is IrSimpleFunction && it.dispatchReceiverParameter == null) }

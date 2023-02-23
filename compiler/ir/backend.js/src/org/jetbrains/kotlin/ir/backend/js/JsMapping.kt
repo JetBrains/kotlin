@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.ir.backend.js.utils.MutableReference
 import org.jetbrains.kotlin.ir.declarations.*
 
 class JsMapping : DefaultMapping() {
-    val esClassWhichNeedBoxParameters = mutableSetOf<IrClass>()
-    val esClassToPossibilityForOptimization = mutableMapOf<IrClass, MutableReference<Boolean>>()
+    val esClassWhichNeedBoxParameters = hashSetOf<IrClass>()
+    val esClassToPossibilityForOptimization = hashMapOf<IrClass, MutableReference<Boolean>>()
 
     val outerThisFieldSymbols = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrField>()
     val innerClassConstructors = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrConstructor, IrConstructor>()

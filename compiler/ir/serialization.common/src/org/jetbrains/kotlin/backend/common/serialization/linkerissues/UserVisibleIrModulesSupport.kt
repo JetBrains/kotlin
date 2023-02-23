@@ -88,10 +88,10 @@ open class UserVisibleIrModulesSupport(externalDependenciesLoader: ExternalDepen
                 selectedVersion = ResolvedDependencyVersion.EMPTY,
                 // Assumption: As we don't know for sure which modules the source code module depends on directly and which modules
                 // it depends on transitively, so let's assume it depends on all modules directly.
-                requestedVersionsByIncomingDependencies = mutableMapOf(
+                requestedVersionsByIncomingDependencies = hashMapOf(
                     ResolvedDependencyId.DEFAULT_SOURCE_CODE_MODULE_ID to ResolvedDependencyVersion.EMPTY
                 ),
-                artifactPaths = mutableSetOf()
+                artifactPaths = hashSetOf()
             )
 
             val outgoingDependencyIds = deserializer.moduleDependencies.map { getUserVisibleModuleId(it) }
@@ -108,7 +108,7 @@ open class UserVisibleIrModulesSupport(externalDependenciesLoader: ExternalDepen
      */
     protected fun mergedModules(deserializers: Collection<IrModuleDeserializer>): MutableMap<ResolvedDependencyId, ResolvedDependency> {
         val externalDependencyModulesByNames: Map</* unique name */ String, ResolvedDependency> =
-            mutableMapOf<String, ResolvedDependency>().apply {
+            hashMapOf<String, ResolvedDependency>().apply {
                 externalDependencyModules.forEach { externalDependency ->
                     externalDependency.id.uniqueNames.forEach { uniqueName ->
                         this[uniqueName] = externalDependency
@@ -122,7 +122,7 @@ open class UserVisibleIrModulesSupport(externalDependenciesLoader: ExternalDepen
         // The build system may express a group of modules where one module is a library KLIB and one or more modules
         // are just C-interop KLIBs as a single module with multiple artifacts. We need to expand them so that every particular
         // module/artifact will be represented as an individual [ResolvedDependency] instance.
-        val artifactPathsToOriginModules: MutableMap<ResolvedDependencyArtifactPath, ResolvedDependency> = mutableMapOf()
+        val artifactPathsToOriginModules: MutableMap<ResolvedDependencyArtifactPath, ResolvedDependency> = hashMapOf()
         externalDependencyModules.forEach { originModule ->
             originModule.artifactPaths.forEach { artifactPath -> artifactPathsToOriginModules[artifactPath] = originModule }
         }
@@ -180,7 +180,7 @@ open class UserVisibleIrModulesSupport(externalDependenciesLoader: ExternalDepen
             }
         }
 
-        return (externalDependencyModules + providedModules).associateByTo(mutableMapOf()) { it.id }
+        return (externalDependencyModules + providedModules).associateByTo(hashMapOf()) { it.id }
     }
 
     protected data class ModuleWithUninitializedDependencies(

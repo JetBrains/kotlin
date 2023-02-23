@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.library.IrLibrary
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.protobuf.CodedInputStream
@@ -27,14 +27,16 @@ abstract class BasicIrModuleDeserializer(
     override val klib: IrLibrary,
     override val strategyResolver: (String) -> DeserializationStrategy,
     libraryAbiVersion: KotlinAbiVersion,
-    private val containsErrorCode: Boolean = false
+    private val containsErrorCode: Boolean = false,
+    private val shouldSaveDeserializationState: Boolean = true,
 ) : IrModuleDeserializer(moduleDescriptor, libraryAbiVersion) {
 
-    private val fileToDeserializerMap = mutableMapOf<IrFile, IrFileDeserializer>()
+    private val fileToDeserializerMap = hashMapOf<IrFile, IrFileDeserializer>()
 
     private val moduleDeserializationState = ModuleDeserializationState()
 
-    protected val moduleReversedFileIndex = mutableMapOf<IdSignature, FileDeserializationState>()
+    protected lateinit var fileDeserializationStates: List<FileDeserializationState>
+    protected val moduleReversedFileIndex = hashMapOf<IdSignature, FileDeserializationState>()
 
     override val moduleDependencies by lazy {
         moduleDescriptor.allDependencyModules
@@ -45,8 +47,6 @@ abstract class BasicIrModuleDeserializer(
     override fun fileDeserializers(): Collection<IrFileDeserializer> {
         return fileToDeserializerMap.values.filterNot { strategyResolver(it.file.fileEntry.name).onDemand }
     }
-
-    protected lateinit var fileDeserializationStates: List<FileDeserializationState>
 
     override fun init(delegate: IrModuleDeserializer) {
         val fileCount = klib.fileCount()
@@ -64,7 +64,9 @@ abstract class BasicIrModuleDeserializer(
                 moduleFragment.files.add(file)
         }
 
-        this.fileDeserializationStates = fileDeserializationStates
+        if (shouldSaveDeserializationState) {
+            this.fileDeserializationStates = fileDeserializationStates
+        }
 
         fileToDeserializerMap.values.forEach { it.symbolDeserializer.deserializeExpectActualMapping() }
     }
@@ -128,7 +130,7 @@ abstract class BasicIrModuleDeserializer(
             fileStrategy.needBodies,
             allowErrorNodes,
             fileStrategy.inlineBodies,
-            moduleDeserializer
+            moduleDeserializer,
         )
 
         fileToDeserializerMap[file] = fileDeserializationState.fileDeserializer

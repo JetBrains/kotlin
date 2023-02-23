@@ -102,19 +102,19 @@ class JsIrBackendContext(
     val devMode = configuration[JSConfigurationKeys.DEVELOPER_MODE] ?: false
     val errorPolicy = configuration[JSConfigurationKeys.ERROR_TOLERANCE_POLICY] ?: ErrorTolerancePolicy.DEFAULT
 
-    val externalPackageFragment = mutableMapOf<IrFileSymbol, IrFile>()
+    val externalPackageFragment = hashMapOf<IrFileSymbol, IrFile>()
 
-    val additionalExportedDeclarations = mutableSetOf<IrDeclaration>()
+    val additionalExportedDeclarations = hashSetOf<IrDeclaration>()
 
     val bodilessBuiltInsPackageFragment: IrPackageFragment = IrExternalPackageFragmentImpl(
         DescriptorlessExternalPackageFragmentSymbol(),
         FqName("kotlin")
     )
 
-    val packageLevelJsModules = mutableSetOf<IrFile>()
+    val packageLevelJsModules = hashSetOf<IrFile>()
     val declarationLevelJsModules = mutableListOf<IrDeclarationWithName>()
 
-    val testFunsPerFile = mutableMapOf<IrFile, IrSimpleFunction>()
+    val testFunsPerFile = hashMapOf<IrFile, IrSimpleFunction>()
 
     override fun createTestContainerFun(irFile: IrFile): IrSimpleFunction {
         return testFunsPerFile.getOrPut(irFile) {

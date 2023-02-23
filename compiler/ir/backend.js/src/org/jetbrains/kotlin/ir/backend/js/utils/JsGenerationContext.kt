@@ -31,11 +31,11 @@ class JsGenerationContext(
     val currentFunction: IrFunction?,
     val staticContext: JsStaticContext,
     val localNames: LocalNameGenerator? = null,
-    private val nameCache: MutableMap<IrElement, JsName> = mutableMapOf(),
+    private val nameCache: MutableMap<IrElement, JsName> = hashMapOf(),
     private val useBareParameterNames: Boolean = false,
 ) : IrNamer by staticContext {
-    private val startLocationCache = mutableMapOf<Int, JsLocation>()
-    private val endLocationCache = mutableMapOf<Int, JsLocation>()
+    private val startLocationCache = hashMapOf<Int, JsLocation>()
+    private val endLocationCache = hashMapOf<Int, JsLocation>()
 
     fun newFile(file: IrFile, func: IrFunction? = null, localNames: LocalNameGenerator? = null): JsGenerationContext {
         return JsGenerationContext(

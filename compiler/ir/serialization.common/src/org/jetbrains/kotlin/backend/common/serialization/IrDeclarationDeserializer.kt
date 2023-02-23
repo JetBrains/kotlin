@@ -74,26 +74,26 @@ class IrDeclarationDeserializer(
     private val platformFakeOverrideClassFilter: FakeOverrideClassFilter,
     private val fakeOverrideBuilder: FakeOverrideBuilder,
     private val compatibilityMode: CompatibilityMode,
+    private val internationService: IrInternationService,
 ) {
 
     private val bodyDeserializer = IrBodyDeserializer(builtIns, allowErrorNodes, irFactory, libraryFile, this)
 
+    private fun deserializeString(index: Int): String {
+        return internationService.string(libraryFile.string(index))
+    }
+
     private fun deserializeName(index: Int): Name {
-        val name = libraryFile.string(index)
-        return Name.guessByFirstCharacter(name)
+        return internationService.name(deserializeString(index))
     }
 
-    private val irTypeCache = mutableMapOf<Int, IrType>()
-
-    private fun loadTypeProto(index: Int): ProtoType {
-        return libraryFile.type(index)
-    }
+    private val irTypeCache = hashMapOf<Int, IrType>()
 
     fun deserializeNullableIrType(index: Int): IrType? = if (index == -1) null else deserializeIrType(index)
 
     fun deserializeIrType(index: Int): IrType {
         return irTypeCache.getOrPut(index) {
-            val typeData = loadTypeProto(index)
+            val typeData = libraryFile.type(index)
             deserializeIrTypeData(typeData)
         }
     }
@@ -123,14 +123,17 @@ class IrDeclarationDeserializer(
 
         val arguments = proto.argumentList.map { deserializeIrTypeArgument(it) }
         val annotations = deserializeAnnotations(proto.annotationList)
+        val abbreviation = if (proto.hasAbbreviation()) deserializeTypeAbbreviation(proto.abbreviation) else null
 
-        return IrSimpleTypeImpl(
-            null,
-            symbol,
-            deserializeSimpleTypeNullability(proto.nullability),
-            arguments,
-            annotations,
-            if (proto.hasAbbreviation()) deserializeTypeAbbreviation(proto.abbreviation) else null
+        return internationService.simpleType(
+            IrSimpleTypeImpl(
+                null,
+                symbol,
+                deserializeSimpleTypeNullability(proto.nullability),
+                arguments,
+                annotations,
+                abbreviation
+            )
         )
     }
 
@@ -139,14 +142,17 @@ class IrDeclarationDeserializer(
 
         val arguments = proto.argumentList.map { deserializeIrTypeArgument(it) }
         val annotations = deserializeAnnotations(proto.annotationList)
+        val abbreviation = if (proto.hasAbbreviation()) deserializeTypeAbbreviation(proto.abbreviation) else null
 
-        return IrSimpleTypeImpl(
-            null,
-            symbol,
-            SimpleTypeNullability.fromHasQuestionMark(proto.hasQuestionMark),
-            arguments,
-            annotations,
-            if (proto.hasAbbreviation()) deserializeTypeAbbreviation(proto.abbreviation) else null
+        return internationService.simpleType(
+            IrSimpleTypeImpl(
+                null,
+                symbol,
+                SimpleTypeNullability.fromHasQuestionMark(proto.hasQuestionMark),
+                arguments,
+                annotations,
+                abbreviation
+            )
         )
     }
 
@@ -158,15 +164,27 @@ class IrDeclarationDeserializer(
             deserializeAnnotations(proto.annotationList)
         )
 
+    private val SIMPLE_DYNAMIC_TYPE = IrDynamicTypeImpl(null, EMPTY_LIST, Variance.INVARIANT)
+
     private fun deserializeDynamicType(proto: ProtoDynamicType): IrDynamicType {
-        val annotations = deserializeAnnotations(proto.annotationList)
-        return IrDynamicTypeImpl(null, annotations, Variance.INVARIANT)
+        return if (proto.annotationCount == 0) {
+            SIMPLE_DYNAMIC_TYPE
+        } else {
+            val annotations = deserializeAnnotations(proto.annotationList)
+            IrDynamicTypeImpl(null, annotations, Variance.INVARIANT)
+        }
     }
+
+    private val SIMPLE_ERROR_TYPE = IrErrorTypeImpl(null, EMPTY_LIST, Variance.INVARIANT)
 
     private fun deserializeErrorType(proto: ProtoErrorType): IrErrorType {
         checkErrorNodesAllowed<IrErrorType>(allowErrorNodes)
-        val annotations = deserializeAnnotations(proto.annotationList)
-        return IrErrorTypeImpl(null, annotations, Variance.INVARIANT)
+        return if (proto.annotationCount == 0) {
+            SIMPLE_ERROR_TYPE
+        } else {
+            val annotations = deserializeAnnotations(proto.annotationList)
+            IrErrorTypeImpl(null, annotations, Variance.INVARIANT)
+        }
     }
 
     private fun deserializeDefinitelyNotNullType(proto: ProtoDefinitelyNotNullType): IrSimpleType {
@@ -200,7 +218,7 @@ class IrDeclarationDeserializer(
         }
 
     // Delegating symbol maps to it's delegate only inside the declaration the symbol belongs to.
-    private val delegatedSymbolMap = mutableMapOf<IrSymbol, IrSymbol>()
+    private val delegatedSymbolMap = hashMapOf<IrSymbol, IrSymbol>()
 
     internal fun deserializeIrSymbol(code: Long): IrSymbol {
         return symbolDeserializer.deserializeIrSymbol(code)
@@ -444,6 +462,7 @@ class IrDeclarationDeserializer(
     }
 
     private fun deserializeTypeParameters(protos: List<ProtoTypeParameter>, isGlobal: Boolean): List<IrTypeParameter> {
+        if (protos.isEmpty()) return EMPTY_LIST
         // NOTE: fun <C : MutableCollection<in T>, T : Any> Array<out T?>.filterNotNullTo(destination: C): C
         val result = ArrayList<IrTypeParameter>(protos.size)
         for (index in protos.indices) {
@@ -459,6 +478,8 @@ class IrDeclarationDeserializer(
     }
 
     private fun deserializeValueParameters(protos: List<ProtoValueParameter>): List<IrValueParameter> {
+        if (protos.isEmpty()) return EMPTY_LIST
+
         val result = ArrayList<IrValueParameter>(protos.size)
 
         for (i in protos.indices) {

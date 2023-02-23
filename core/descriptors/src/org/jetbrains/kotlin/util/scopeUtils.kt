@@ -105,10 +105,12 @@ inline fun <Scope, T : ClassifierDescriptor> getFirstClassifierDiscriminateHeade
     return result
 }
 
-inline fun <reified R> Iterable<*>.filterIsInstanceAnd(predicate: (R) -> Boolean): Collection<R> =
-    filterIsInstanceAndTo(SmartList(), predicate)
+inline fun <reified R> Collection<*>.filterIsInstanceAnd(predicate: (R) -> Boolean): Collection<R> {
+    if (isEmpty()) return emptyList()
+    return filterIsInstanceAndTo(SmartList(), predicate)
+}
 
-inline fun <reified R, C : MutableCollection<in R>> Iterable<*>.filterIsInstanceAndTo(destination: C, predicate: (R) -> Boolean): C {
+inline fun <reified R, C : MutableCollection<in R>> Collection<*>.filterIsInstanceAndTo(destination: C, predicate: (R) -> Boolean): C {
     for (element in this) if (element is R && predicate(element)) destination.add(element)
     return destination
 }
@@ -120,8 +122,10 @@ inline fun <reified T, reified R, C : MutableCollection<in R>> Iterable<*>.filte
     return destination
 }
 
-inline fun <reified T, reified R> Iterable<*>.filterIsInstanceMapNotNull(transform: (T) -> R?): Collection<R> =
-    filterIsInstanceMapNotNullTo(SmartList(), transform)
+inline fun <reified T, reified R> Collection<*>.filterIsInstanceMapNotNull(transform: (T) -> R?): Collection<R> {
+    if (isEmpty()) return emptyList()
+    return filterIsInstanceMapNotNullTo(SmartList(), transform)
+}
 
 inline fun <reified T, reified R, C : MutableCollection<in R>> Iterable<*>.filterIsInstanceMapNotNullTo(destination: C, transform: (T) -> R?): C {
     for (element in this) if (element is T) {

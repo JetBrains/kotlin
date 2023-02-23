@@ -40,6 +40,7 @@ class TestGenerator(val context: JsCommonBackendContext, val groupByPackage: Boo
 
     override fun lower(irFile: IrFile) {
         // Additional copy to prevent ConcurrentModificationException
+        if (irFile.declarations.isEmpty()) return
         ArrayList(irFile.declarations).forEach {
             if (it is IrClass) {
                 generateTestCalls(it) { if (groupByPackage) suiteForPackage(irFile) else context.createTestContainerFun(irFile) }
@@ -49,7 +50,7 @@ class TestGenerator(val context: JsCommonBackendContext, val groupByPackage: Boo
         }
     }
 
-    private val packageSuites = mutableMapOf<FqName, IrSimpleFunction>()
+    private val packageSuites = hashMapOf<FqName, IrSimpleFunction>()
 
     private fun suiteForPackage(irFile: IrFile) = packageSuites.getOrPut(irFile.fqName) {
         context.suiteFun!!.createInvocation(irFile.fqName.asString(), context.createTestContainerFun(irFile))

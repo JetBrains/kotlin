@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.ir.util.getSimpleFunction
 class PrimitiveContainerMemberCallTransformer(private val context: JsIrBackendContext) : CallsTransformer {
     private val intrinsics = context.intrinsics
 
-    private val symbolToTransformer: SymbolToTransformer = mutableMapOf()
+    private val symbolToTransformer: SymbolToTransformer = hashMapOf()
 
     init {
         symbolToTransformer.run {
@@ -82,7 +82,7 @@ private val IrClassSymbol.iterator
     get() = getSimpleFunction("iterator")!!
 
 private val IrClassSymbol.sizeConstructor
-    get() = owner.declarations.filterIsInstance<IrConstructor>().first { it.valueParameters.size == 1 }.symbol
+    get() = owner.declarations.asSequence().filterIsInstance<IrConstructor>().first { it.valueParameters.size == 1 }.symbol
 
 private val IrClassSymbol.lengthProperty
     get() = getPropertyGetter("length")!!

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.ir.symbols.FqNameEqualityChecker
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.EMPTY_LIST
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
 
@@ -89,8 +90,8 @@ class IrSimpleTypeBuilder {
     var kotlinType: KotlinType? = null
     var classifier: IrClassifierSymbol? = null
     var nullability = SimpleTypeNullability.NOT_SPECIFIED
-    var arguments: List<IrTypeArgument> = emptyList()
-    var annotations: List<IrConstructorCall> = emptyList()
+    var arguments: List<IrTypeArgument> = EMPTY_LIST
+    var annotations: List<IrConstructorCall> = EMPTY_LIST
     var abbreviation: IrTypeAbbreviation? = null
     var variance = Variance.INVARIANT
 }
@@ -110,8 +111,8 @@ fun IrSimpleTypeBuilder.buildSimpleType() =
         kotlinType,
         classifier ?: throw AssertionError("Classifier not provided"),
         nullability,
-        arguments,
-        annotations,
+        arguments.ifEmpty { EMPTY_LIST },
+        annotations.ifEmpty { EMPTY_LIST },
         abbreviation
     )
 

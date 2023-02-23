@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.copyTo
 import org.jetbrains.kotlin.ir.util.copyTypeParametersFrom
 import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.plus
 import org.jetbrains.kotlin.name.Name
 
 class JsInnerClassesSupport(mapping: JsMapping, private val irFactory: IrFactory) : InnerClassesSupport {
