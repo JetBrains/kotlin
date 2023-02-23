@@ -33,6 +33,8 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.compact
 import java.util.*
 import kotlin.properties.Delegates
@@ -62,6 +64,7 @@ internal class PartiallyLinkedIrTreePatcher(
             if (!root.shouldBeSkipped && visitedModuleFragments.add(root)) {
                 root.transformVoid(DeclarationTransformer(startingFile = null))
                 root.transformVoid(ExpressionTransformer(startingFile = null))
+                root.transformVoid(NonLocalReturnsPatcher(startingFile = null))
             }
         }
     }
@@ -72,6 +75,7 @@ internal class PartiallyLinkedIrTreePatcher(
             if (!startingFile.module.shouldBeSkipped && visitedDeclarations.add(root)) {
                 root.transformVoid(DeclarationTransformer(startingFile))
                 root.transformVoid(ExpressionTransformer(startingFile))
+                root.transformVoid(NonLocalReturnsPatcher(startingFile))
             }
         }
     }
@@ -538,36 +542,10 @@ internal class PartiallyLinkedIrTreePatcher(
 
         override fun visitExpression(expression: IrExpression) = expression.maybeThrowLinkageError { null }
 
-        private inline fun <T : IrExpression> T.maybeThrowLinkageError(computePartialLinkageCase: T.() -> PartialLinkageCase?): IrExpression {
-            // The codegen uses postorder traversal: Children are evaluated/executed before the containing expression.
-            // So it's important to patch children and insert the necessary `throw IrLinkageError(...)` calls if necessary
-            // before patching the containing expression itself. This would guarantee that the order of linkage errors in a program
-            // would conform to the natural program execution flow.
-            transformChildrenVoid()
-
-            val partialLinkageCase = computePartialLinkageCase()
-                ?: checkExpressionType(type) // Check something that is always present in every expression.
-                ?: return apply { (this as? IrContainerExpression)?.statements?.eliminateDeadCodeStatements() }
-
-            // Collect direct children if `this` isn't an expression with branches.
-            val directChildren = if (!hasBranches())
-                DirectChildrenStatementsCollector().also(::acceptChildrenVoid).getResult() else DirectChildren.EMPTY
-
-            val linkageError = supportForLowerings.throwLinkageError(
-                partialLinkageCase,
-                element = this,
-                currentFile,
-                suppressWarningInCompilerOutput = false
-            )
-
-            return if (directChildren.statements.isNotEmpty())
-                IrCompositeImpl(startOffset, endOffset, builtIns.nothingType, PARTIAL_LINKAGE_RUNTIME_ERROR).apply {
-                    statements += directChildren.statements
-                    if (!directChildren.hasPartialLinkageRuntimeError) statements += linkageError
-                }
-            else
-                linkageError
-        }
+        private inline fun <T : IrExpression> T.maybeThrowLinkageError(computePartialLinkageCase: T.() -> PartialLinkageCase?): IrExpression =
+            maybeThrowLinkageError(transformer = this@ExpressionTransformer) {
+                computePartialLinkageCase() ?: checkExpressionType(type) // Check something that is always present in every expression.
+            }
 
         private fun IrExpression.checkExpressionType(type: IrType): PartialLinkageCase? {
             return ExpressionWithUnusableClassifier(this, type.explore() ?: return null)
@@ -751,24 +729,6 @@ internal class PartiallyLinkedIrTreePatcher(
                 }.compact()
             }
         }
-
-        /**
-         * Removes statements after the first IR p.l. error (everything after the IR p.l. error if effectively dead code and do not need
-         * to be kept in the IR tree).
-         */
-        private fun MutableList<IrStatement>.eliminateDeadCodeStatements() {
-            var hasPartialLinkageRuntimeError = false
-            removeIf { statement ->
-                val needToRemove = when (statement) {
-                    is IrInstanceInitializerCall,
-                    is IrDelegatingConstructorCall,
-                    is IrEnumConstructorCall -> false // Don't remove essential constructor statements.
-                    else -> hasPartialLinkageRuntimeError
-                }
-                hasPartialLinkageRuntimeError = hasPartialLinkageRuntimeError || statement.isPartialLinkageRuntimeError()
-                needToRemove
-            }
-        }
     }
 
     private fun IrClassifierSymbol.explore(): ExploredClassifier.Unusable? = classifierExplorer.exploreSymbol(this)
@@ -790,7 +750,7 @@ internal class PartiallyLinkedIrTreePatcher(
      * Collects direct children statements up to the first IR p.l. error (everything after the IR p.l. error
      * if effectively dead code and do not need to be kept in the IR tree).
      */
-    private inner class DirectChildrenStatementsCollector : IrElementVisitorVoid {
+    private class DirectChildrenStatementsCollector : IrElementVisitorVoid {
         private val children = mutableListOf<IrStatement>()
         private var hasPartialLinkageRuntimeError = false
 
@@ -804,11 +764,171 @@ internal class PartiallyLinkedIrTreePatcher(
         }
     }
 
+    private sealed interface ReturnTargetContext {
+        val validReturnTargets: Set<IrReturnTargetSymbol>
+
+        object Empty : ReturnTargetContext {
+            override val validReturnTargets: Set<IrReturnTargetSymbol> get() = emptySet()
+        }
+
+        class InFunction(
+            override val validReturnTargets: Set<IrReturnTargetSymbol>,
+            val function: IrFunction,
+            val isInlined: Boolean
+        ) : ReturnTargetContext
+
+        class InFunctionBody(
+            override val validReturnTargets: Set<IrReturnTargetSymbol>
+        ) : ReturnTargetContext
+
+        class InInlinedCall(
+            override val validReturnTargets: Set<IrReturnTargetSymbol>,
+            val inlinedLambdaArguments: Set<IrFunctionSymbol>
+        ) : ReturnTargetContext
+    }
+
+    private inner class NonLocalReturnsPatcher(startingFile: PLFile?) : FileAwareIrElementTransformerVoid(startingFile) {
+        private val stack = ArrayDeque<ReturnTargetContext>()
+        private inline val currentContext: ReturnTargetContext get() = stack.peek() ?: ReturnTargetContext.Empty
+
+        private inline fun <R> withContext(
+            getNewContext: (oldContext: ReturnTargetContext) -> ReturnTargetContext = { it },
+            block: (newContext: ReturnTargetContext) -> R
+        ): R {
+            val oldContext: ReturnTargetContext = currentContext
+            val newContext: ReturnTargetContext = getNewContext(oldContext)
+
+            if (newContext !== oldContext) stack.push(newContext)
+
+            return try {
+                block(newContext)
+            } finally {
+                if (newContext !== oldContext) assert(stack.pop() == newContext)
+            }
+        }
+
+        override fun visitFunction(declaration: IrFunction) = withContext(
+            { oldContext ->
+                ReturnTargetContext.InFunction(
+                    validReturnTargets = oldContext.validReturnTargets,
+                    function = declaration,
+                    isInlined = oldContext is ReturnTargetContext.InInlinedCall && declaration.symbol in oldContext.inlinedLambdaArguments
+                )
+            }
+        ) { super.visitFunction(declaration) }
+
+        override fun visitBlockBody(body: IrBlockBody) = withContext(
+            { oldContext ->
+                if (oldContext !is ReturnTargetContext.InFunction || body !== oldContext.function.body)
+                    return@withContext oldContext
+
+                ReturnTargetContext.InFunctionBody(
+                    validReturnTargets = if (oldContext.isInlined)
+                        oldContext.validReturnTargets + oldContext.function.symbol // Extend the set of valid return targets.
+                    else
+                        setOf(oldContext.function.symbol)
+                )
+            }
+        ) { super.visitBlockBody(body) }
+
+        override fun visitCall(expression: IrCall) = withContext(
+            { oldContext ->
+                val functionSymbol = expression.symbol
+                val function = if (functionSymbol.isBound) functionSymbol.owner else return@withContext oldContext
+                if (!function.isInline) return@withContext oldContext
+
+                fun IrValueParameter?.canBeInlined(): Boolean = this != null && !isCrossinline && !isNoinline
+
+                val inlinedLambdaArguments = ArrayList<IrFunctionSymbol>(function.valueParameters.size + 1)
+
+                fun IrExpression?.countInAsInlinedLambdaArgument() {
+                    inlinedLambdaArguments.addIfNotNull((this as? IrFunctionExpression)?.function?.symbol)
+                }
+
+                if (function.extensionReceiverParameter.canBeInlined())
+                    expression.extensionReceiver.countInAsInlinedLambdaArgument()
+
+                function.valueParameters.forEachIndexed { index, valueParameter ->
+                    if (valueParameter.canBeInlined())
+                        expression.getValueArgument(index).countInAsInlinedLambdaArgument()
+                }
+
+                if (inlinedLambdaArguments.isEmpty())
+                    return@withContext oldContext
+
+                ReturnTargetContext.InInlinedCall(
+                    validReturnTargets = oldContext.validReturnTargets,
+                    inlinedLambdaArguments = inlinedLambdaArguments.toSet()
+                )
+            }
+        ) { super.visitCall(expression) }
+
+        override fun visitReturn(expression: IrReturn) = withContext { context ->
+            expression.maybeThrowLinkageError(transformer = this@NonLocalReturnsPatcher) {
+                if (returnTargetSymbol !in context.validReturnTargets)
+                    IllegalNonLocalReturn(expression, context.validReturnTargets)
+                else
+                    null
+            }
+        }
+    }
+
+    private inline fun <T : IrExpression> T.maybeThrowLinkageError(
+        transformer: FileAwareIrElementTransformerVoid,
+        computePartialLinkageCase: T.() -> PartialLinkageCase?
+    ): IrExpression {
+        // The codegen uses postorder traversal: Children are evaluated/executed before the containing expression.
+        // So it's important to patch children and insert the necessary `throw IrLinkageError(...)` calls if necessary
+        // before patching the containing expression itself. This would guarantee that the order of linkage errors in a program
+        // would conform to the natural program execution flow.
+        transformChildrenVoid(transformer)
+
+        val partialLinkageCase = computePartialLinkageCase()
+            ?: return apply { (this as? IrContainerExpression)?.statements?.eliminateDeadCodeStatements() }
+
+        // Collect direct children if `this` isn't an expression with branches.
+        val directChildren = if (!hasBranches())
+            DirectChildrenStatementsCollector().also(::acceptChildrenVoid).getResult() else DirectChildren.EMPTY
+
+        val linkageError = supportForLowerings.throwLinkageError(
+            partialLinkageCase,
+            element = this,
+            transformer.currentFile,
+            suppressWarningInCompilerOutput = false
+        )
+
+        return if (directChildren.statements.isNotEmpty())
+            IrCompositeImpl(startOffset, endOffset, builtIns.nothingType, PARTIAL_LINKAGE_RUNTIME_ERROR).apply {
+                statements += directChildren.statements
+                if (!directChildren.hasPartialLinkageRuntimeError) statements += linkageError
+            }
+        else
+            linkageError
+    }
+
     companion object {
         private fun IrDeclaration.isDirectMemberOf(unusableClassifier: ExploredClassifier.Unusable?): Boolean {
             val unusableClassifierSymbol = unusableClassifier?.symbol ?: return false
             val containingClassSymbol = parentClassOrNull?.symbol ?: return false
             return unusableClassifierSymbol == containingClassSymbol
+        }
+
+        /**
+         * Removes statements after the first IR p.l. error (everything after the IR p.l. error if effectively dead code and do not need
+         * to be kept in the IR tree).
+         */
+        private fun MutableList<IrStatement>.eliminateDeadCodeStatements() {
+            var hasPartialLinkageRuntimeError = false
+            removeIf { statement ->
+                val needToRemove = when (statement) {
+                    is IrInstanceInitializerCall,
+                    is IrDelegatingConstructorCall,
+                    is IrEnumConstructorCall -> false // Don't remove essential constructor statements.
+                    else -> hasPartialLinkageRuntimeError
+                }
+                hasPartialLinkageRuntimeError = hasPartialLinkageRuntimeError || statement.isPartialLinkageRuntimeError()
+                needToRemove
+            }
         }
 
         private fun IrExpression.hasBranches(): Boolean = when (this) {

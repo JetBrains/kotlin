@@ -81,7 +81,7 @@ internal object PartialLinkageUtils {
 /** An optimization to avoid re-computing file for every visited declaration */
 internal abstract class FileAwareIrElementTransformerVoid(startingFile: PLFile?) : IrElementTransformerVoid() {
     private var _currentFile: PLFile? = startingFile
-    protected val currentFile: PLFile get() = _currentFile ?: error("No information about current file")
+    val currentFile: PLFile get() = _currentFile ?: error("No information about current file")
 
     final override fun visitFile(declaration: IrFile): IrFile {
         _currentFile = PLFile.IrBased(declaration)

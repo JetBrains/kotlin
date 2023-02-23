@@ -58,6 +58,8 @@ internal fun PartialLinkageCase.renderLinkageError(): String = buildString {
             suspendableCallWithoutCoroutine()
         }
 
+        is IllegalNonLocalReturn -> illegalNonLocalReturn(expression, validReturnTargets)
+
         is ExpressionHasInaccessibleDeclaration -> expression(expression) {
             inaccessibleDeclaration(referencedDeclarationSymbol, declaringModule, useSiteModule)
         }
@@ -94,6 +96,7 @@ private enum class DeclarationKind(val displayName: String) {
     FIELD_OF_PROPERTY("backing field of property"),
     PROPERTY("property"),
     PROPERTY_ACCESSOR("property accessor"),
+    LAMBDA("lambda"),
     FUNCTION("function"),
     CONSTRUCTOR("constructor"),
     TYPE_PARAMETER("type parameter"),
@@ -121,7 +124,11 @@ private val IrSymbol.declarationKind: DeclarationKind
         is IrValueParameterSymbol -> VALUE_PARAMETER
         is IrFieldSymbol -> if (owner.correspondingPropertySymbol != null) FIELD_OF_PROPERTY else FIELD
         is IrPropertySymbol -> PROPERTY
-        is IrSimpleFunctionSymbol -> if (owner.correspondingPropertySymbol != null || signature is AccessorSignature) PROPERTY_ACCESSOR else FUNCTION
+        is IrSimpleFunctionSymbol -> when {
+            owner.correspondingPropertySymbol != null || signature is AccessorSignature -> PROPERTY_ACCESSOR
+            owner.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA -> LAMBDA
+            else -> FUNCTION
+        }
         is IrConstructorSymbol -> CONSTRUCTOR
         is IrTypeParameterSymbol -> TYPE_PARAMETER
         else -> OTHER_DECLARATION
@@ -248,8 +255,14 @@ private fun Appendable.declarationKind(symbol: IrSymbol, capitalized: Boolean): 
 private fun Appendable.declarationKindName(symbol: IrSymbol, capitalized: Boolean): Appendable {
     val declarationKind = symbol.declarationKind
     appendCapitalized(declarationKind.displayName, capitalized)
-    if (declarationKind != ANONYMOUS_OBJECT) append(" ").declarationName(symbol)
-    return this
+    when (declarationKind) {
+        ANONYMOUS_OBJECT -> return this
+        LAMBDA -> ((symbol.owner as? IrDeclaration)?.parent as? IrDeclaration)?.symbol?.let { parentDeclarationSymbol ->
+            return append(" in ").declarationKindName(parentDeclarationSymbol, capitalized = false)
+        }
+        else -> Unit
+    }
+    return append(" ").declarationName(symbol)
 }
 
 private fun Appendable.declarationNameIsKind(symbol: IrSymbol): Appendable =
@@ -503,6 +516,16 @@ private fun Appendable.memberAccessExpressionArgumentsMismatch(
 
 private fun Appendable.suspendableCallWithoutCoroutine(): Appendable =
     append("Suspend function can be called only from a coroutine or another suspend function")
+
+private fun Appendable.illegalNonLocalReturn(expression: IrReturn, validReturnTargets: Set<IrReturnTargetSymbol>): Appendable {
+    append("Illegal non-local return: The return target is ").declarationKindName(expression.returnTargetSymbol, capitalized = false)
+    append(" while only the following return targets are allowed: ")
+    validReturnTargets.forEachIndexed { index, returnTarget ->
+        if (index > 0) append(", ")
+        declarationKindName(returnTarget, capitalized = false)
+    }
+    return this
+}
 
 private fun Appendable.inaccessibleDeclaration(
     referencedDeclarationSymbol: IrSymbol,

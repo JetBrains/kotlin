@@ -111,6 +111,13 @@ sealed interface PartialLinkageCase {
     class SuspendableFunctionCallWithoutCoroutineContext(val expression: IrCall) : PartialLinkageCase
 
     /**
+     * A non-local return in context where it is not expected.
+     *
+     * Applicable to: Expressions.
+     */
+    class IllegalNonLocalReturn(val expression: IrReturn, val validReturnTargets: Set<IrReturnTargetSymbol>) : PartialLinkageCase
+
+    /**
      * Expression refers an IR declaration that is not accessible at the use site.
      * Example: An [IrCall] that refers a private [IrSimpleFunction] from another module.
      *
