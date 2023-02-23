@@ -5,10 +5,132 @@ PsiJetFileStubImpl[package=test]
   OBJECT_DECLARATION[classId=test/Const, fqName=test.Const, isCompanion=false, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=Const, superNames=[]]
     MODIFIER_LIST[public]
     CLASS_BODY
-      PROPERTY[fqName=test.Const.inObject, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=inObject]
+      PROPERTY[fqName=test.Const.MAX_HIGH_SURROGATE, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=MAX_HIGH_SURROGATE]
+        MODIFIER_LIST[private final const]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Char]
+        CHARACTER_CONSTANT[kind=CHARACTER_CONSTANT, value='\uDBFF']
+      PROPERTY[fqName=test.Const.b, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=b]
+        MODIFIER_LIST[private final const]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Byte]
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=100]
+      PROPERTY[fqName=test.Const.b1, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=b1]
+        MODIFIER_LIST[private final const]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Byte]
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+      PROPERTY[fqName=test.Const.bb, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=bb]
+        MODIFIER_LIST[private final const]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Boolean]
+        BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=true]
+      PROPERTY[fqName=test.Const.c, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]
+        MODIFIER_LIST[private final const]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Char]
+        CHARACTER_CONSTANT[kind=CHARACTER_CONSTANT, value='\u03C0']
+      PROPERTY[fqName=test.Const.d, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=d]
+        MODIFIER_LIST[private final const]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Double]
+        FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=3.14]
+      PROPERTY[fqName=test.Const.f, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=f]
+        MODIFIER_LIST[private final const]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Float]
+        FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=3.14f]
+      PROPERTY[fqName=test.Const.i, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=i]
         MODIFIER_LIST[private final const]
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2000000]
+      PROPERTY[fqName=test.Const.i1, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=i1]
+        MODIFIER_LIST[private final const]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Short]
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+      PROPERTY[fqName=test.Const.inObject, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=inObject]
+        MODIFIER_LIST[private final const]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Int]
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+      PROPERTY[fqName=test.Const.l, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=l]
+        MODIFIER_LIST[private final const]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Long]
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2000000000000]
+      PROPERTY[fqName=test.Const.l1, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=l1]
+        MODIFIER_LIST[private final const]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Long]
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+      PROPERTY[fqName=test.Const.nl, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nl]
+        MODIFIER_LIST[private final const]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Char]
+        CHARACTER_CONSTANT[kind=CHARACTER_CONSTANT, value='\u000A']
+      PROPERTY[fqName=test.Const.s, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=s]
+        MODIFIER_LIST[private final const]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Short]
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=20000]
+      PROPERTY[fqName=test.Const.s1, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=s1]
+        MODIFIER_LIST[private final const]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Short]
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+      PROPERTY[fqName=test.Const.str, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=str]
+        MODIFIER_LIST[private final const]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=String]
+        STRING_TEMPLATE
+          LITERAL_STRING_TEMPLATE_ENTRY[text=:)]

@@ -16,10 +16,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isCompanionObject
-import org.jetbrains.kotlin.resolve.constants.AnnotationValue
-import org.jetbrains.kotlin.resolve.constants.ArrayValue
-import org.jetbrains.kotlin.resolve.constants.ConstantValue
-import org.jetbrains.kotlin.resolve.constants.KClassValue
+import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.declaresOrInheritsDefaultValue
 import org.jetbrains.kotlin.types.*
@@ -503,7 +500,10 @@ internal class DescriptorRendererImpl(
                     "$type::class"
                 }
             }
-            else -> value.toString()
+            is CharValue -> String.format("'\\u%04X'", value.value.code)
+            is StringValue, is EnumValue, is UnsignedValueConstant -> value.toString()
+            is FloatValue -> value.value.toString() + "f"
+            else -> value.value.toString()
         }
     }
 

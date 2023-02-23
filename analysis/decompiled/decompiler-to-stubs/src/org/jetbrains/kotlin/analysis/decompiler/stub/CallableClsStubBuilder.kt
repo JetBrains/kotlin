@@ -4,21 +4,31 @@ package org.jetbrains.kotlin.analysis.decompiler.stub
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
+import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.analysis.decompiler.stub.flags.*
+import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
+import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.load.kotlin.*
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf.MemberKind
 import org.jetbrains.kotlin.metadata.ProtoBuf.Modality
 import org.jetbrains.kotlin.metadata.deserialization.*
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtSimpleNameStringTemplateEntry
+import org.jetbrains.kotlin.psi.KtStringTemplateExpression
+import org.jetbrains.kotlin.psi.stubs.ConstantValueKind
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
-import org.jetbrains.kotlin.psi.stubs.impl.KotlinConstructorStubImpl
-import org.jetbrains.kotlin.psi.stubs.impl.KotlinFunctionStubImpl
-import org.jetbrains.kotlin.psi.stubs.impl.KotlinPropertyAccessorStubImpl
-import org.jetbrains.kotlin.psi.stubs.impl.KotlinPropertyStubImpl
+import org.jetbrains.kotlin.psi.stubs.impl.*
 import org.jetbrains.kotlin.resolve.DataClassResolver
+import org.jetbrains.kotlin.resolve.constants.ClassLiteralValue
 import org.jetbrains.kotlin.serialization.deserialization.AnnotatedCallableKind
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
+import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.serialization.deserialization.getName
 
 fun createPackageDeclarationsStubs(
@@ -198,6 +208,7 @@ private class PropertyClsStubBuilder(
     private val propertyProto: ProtoBuf.Property
 ) : CallableClsStubBuilder(parent, outerContext, protoContainer, propertyProto.typeParameterList) {
     private val isVar = Flags.IS_VAR.get(propertyProto.flags)
+    private val initializer = lazy { calcInitializer() }
 
     override val receiverType: ProtoBuf.Type?
         get() = propertyProto.receiverType(c.typeTable)
@@ -243,9 +254,9 @@ private class PropertyClsStubBuilder(
 
     override fun doCreateCallableStub(parent: StubElement<out PsiElement>): StubElement<out PsiElement> {
         val callableName = c.nameResolver.getName(propertyProto.name)
-
         // Note that arguments passed to stubs here and elsewhere are based on what stabs would be generated based on decompiled code
         // This info is anyway irrelevant for the purposes these stubs are used
+
         return KotlinPropertyStubImpl(
             parent,
             callableName.ref(),
@@ -253,7 +264,7 @@ private class PropertyClsStubBuilder(
             isTopLevel,
             hasDelegate = false,
             hasDelegateExpression = false,
-            hasInitializer = false,
+            hasInitializer = initializer.value != null,
             isExtension = propertyProto.hasReceiver(),
             hasReturnTypeRef = true,
             fqName = c.containerFqName.child(callableName)
@@ -261,6 +272,11 @@ private class PropertyClsStubBuilder(
     }
 
     override fun createInitializerStub() {
+        val constantInitializer = initializer.value
+        if (constantInitializer != null) {
+            buildConstantInitializer(constantInitializer, c.nameResolver, callableStub)
+        }
+
         val flags = propertyProto.flags
         if (Flags.HAS_GETTER[flags] && propertyProto.hasGetterFlags()) {
             val getterFlags = propertyProto.getterFlags
@@ -312,6 +328,121 @@ private class PropertyClsStubBuilder(
             }
         }
     }
+
+    private fun calcInitializer(): ConstantInitializer? {
+        val classFinder = c.components.classFinder
+        val containerClass =
+            if (classFinder != null) getSpecialCaseContainerClass(classFinder, c.components.jvmMetadataVersion!!) else null
+        val source = protoContainer.source
+        val binaryClass = containerClass ?: (source as? KotlinJvmBinarySourceElement)?.binaryClass
+        var constantInitializer: ConstantInitializer? = null
+        if (binaryClass != null) {
+            val callableName = c.nameResolver.getName(propertyProto.name)
+            binaryClass.visitMembers(object : KotlinJvmBinaryClass.MemberVisitor {
+                override fun visitMethod(name: Name, desc: String): KotlinJvmBinaryClass.MethodAnnotationVisitor? {
+                    if (name == callableName && protoContainer is ProtoContainer.Class && protoContainer.kind == ProtoBuf.Class.Kind.ANNOTATION_CLASS) {
+                        return object : KotlinJvmBinaryClass.MethodAnnotationVisitor {
+                            override fun visitParameterAnnotation(
+                                index: Int,
+                                classId: ClassId,
+                                source: SourceElement
+                            ): KotlinJvmBinaryClass.AnnotationArgumentVisitor? = null
+
+                            override fun visitAnnotationMemberDefaultValue(): KotlinJvmBinaryClass.AnnotationArgumentVisitor {
+                                return object : KotlinJvmBinaryClass.AnnotationArgumentVisitor {
+                                    //todo support all kind of possible annotation arguments
+                                    override fun visit(name: Name?, value: Any?) {
+                                        if (value != null) {
+                                            val returnType = desc.substring(2) // trim leading '()' - empty parameters
+                                            constantInitializer = ConstantInitializer(value, null, returnType)
+                                        }
+                                    }
+
+                                    override fun visitClassLiteral(name: Name?, value: ClassLiteralValue) {}
+                                    override fun visitEnum(name: Name?, enumClassId: ClassId, enumEntryName: Name) {}
+                                    override fun visitAnnotation(
+                                        name: Name?,
+                                        classId: ClassId
+                                    ): KotlinJvmBinaryClass.AnnotationArgumentVisitor? = null
+
+                                    override fun visitArray(name: Name?): KotlinJvmBinaryClass.AnnotationArrayArgumentVisitor? = null
+                                    override fun visitEnd() {}
+                                }
+                            }
+
+                            override fun visitAnnotation(
+                                classId: ClassId,
+                                source: SourceElement
+                            ): KotlinJvmBinaryClass.AnnotationArgumentVisitor? = null
+
+                            override fun visitEnd() {}
+                        }
+                    }
+                    return null
+                }
+
+                override fun visitField(name: Name, desc: String, initializer: Any?): KotlinJvmBinaryClass.AnnotationVisitor? {
+                    if (initializer != null && name == callableName) {
+                        constantInitializer = ConstantInitializer(initializer, null, desc)
+                    }
+                    return null
+                }
+            }, null)
+        } else {
+            val value = propertyProto.getExtensionOrNull(BuiltInSerializerProtocol.compileTimeValue)
+            if (value != null) {
+                constantInitializer = ConstantInitializer(null, value, value.type.name)
+            }
+        }
+        return constantInitializer
+    }
+
+    /**
+     * [org.jetbrains.kotlin.load.kotlin.AbstractBinaryClassAnnotationLoader.getSpecialCaseContainerClass]
+     */
+    //special cases when data might be stored in a neighbour class
+    private fun getSpecialCaseContainerClass(
+        classFinder: KotlinClassFinder,
+        jvmMetadataVersion: JvmMetadataVersion
+    ): KotlinJvmBinaryClass? {
+        val isConst = Flags.IS_CONST.get(propertyProto.flags) && Flags.VISIBILITY.get(propertyProto.flags) != ProtoBuf.Visibility.PRIVATE
+        if (protoContainer is ProtoContainer.Class && protoContainer.kind == ProtoBuf.Class.Kind.INTERFACE) {
+            return classFinder.findKotlinClass(
+                protoContainer.classId.createNestedClassId(Name.identifier(JvmAbi.DEFAULT_IMPLS_CLASS_NAME)),
+                jvmMetadataVersion
+            )
+        }
+        if (isConst && protoContainer is ProtoContainer.Package) {
+            // Const properties in multifile classes are generated into the facade class
+            val facadeClassName = (protoContainer.source as? JvmPackagePartSource)?.facadeClassName
+            if (facadeClassName != null) {
+                // Converting '/' to '.' is fine here because the facade class has a top level ClassId
+                return classFinder.findKotlinClass(
+                    ClassId.topLevel(FqName(facadeClassName.internalName.replace('/', '.'))),
+                    jvmMetadataVersion
+                )
+            }
+        }
+        if (protoContainer is ProtoContainer.Class && protoContainer.kind == ProtoBuf.Class.Kind.COMPANION_OBJECT) {
+            val outerClass = protoContainer.outerClass
+            if (outerClass != null &&
+                (outerClass.kind == ProtoBuf.Class.Kind.CLASS || outerClass.kind == ProtoBuf.Class.Kind.ENUM_CLASS ||
+                        (JvmProtoBufUtil.isMovedFromInterfaceCompanion(propertyProto) &&
+                                (outerClass.kind == ProtoBuf.Class.Kind.INTERFACE ||
+                                        outerClass.kind == ProtoBuf.Class.Kind.ANNOTATION_CLASS)))
+            ) {
+                // Backing fields of properties of a companion object in a class are generated in the outer class
+                return (outerClass.source as? KotlinJvmBinarySourceElement)?.binaryClass
+            }
+        }
+        if (protoContainer is ProtoContainer.Package && protoContainer.source is JvmPackagePartSource) {
+            val jvmPackagePartSource = protoContainer.source as JvmPackagePartSource
+
+            return jvmPackagePartSource.knownJvmBinaryClass
+                ?: classFinder.findKotlinClass(jvmPackagePartSource.classId, jvmMetadataVersion)
+        }
+        return null
+    }
 }
 
 private class ConstructorClsStubBuilder(
@@ -358,5 +489,60 @@ private class ConstructorClsStubBuilder(
             KotlinConstructorStubImpl(parent, KtStubElementTypes.SECONDARY_CONSTRUCTOR, name, hasBody = true, isDelegatedCallToThis = false)
         else
             KotlinConstructorStubImpl(parent, KtStubElementTypes.PRIMARY_CONSTRUCTOR, name, hasBody = false, isDelegatedCallToThis = false)
+    }
+}
+
+private data class ConstantInitializer(
+    val valueFromClassFile: Any?,
+    val builtInValue: ProtoBuf.Annotation.Argument.Value?,
+    val constKind: String
+)
+
+private fun buildConstantInitializer(
+    initializer: ConstantInitializer, nameResolver: NameResolver, parent: StubElement<out PsiElement>
+): KotlinStubBaseImpl<*>? {
+    return when (initializer.constKind) {
+        "BYTE", "B", "SHORT", "S", "LONG", "J", "INT", "I" -> KotlinConstantExpressionStubImpl(
+            parent,
+            KtStubElementTypes.INTEGER_CONSTANT,
+            ConstantValueKind.INTEGER_CONSTANT,
+            StringRef.fromString(((initializer.valueFromClassFile ?: initializer.builtInValue?.intValue) as Number).toString())
+        )
+        "CHAR", "C" -> KotlinConstantExpressionStubImpl(
+            parent,
+            KtStubElementTypes.CHARACTER_CONSTANT,
+            ConstantValueKind.CHARACTER_CONSTANT,
+            StringRef.fromString(String.format("'\\u%04X'", initializer.valueFromClassFile ?: initializer.builtInValue?.intValue))
+        )
+        "FLOAT", "F" -> KotlinConstantExpressionStubImpl(
+            parent,
+            KtStubElementTypes.FLOAT_CONSTANT,
+            ConstantValueKind.FLOAT_CONSTANT,
+            StringRef.fromString(((initializer.valueFromClassFile ?: initializer.builtInValue?.floatValue) as Float).toString() + "f")
+        )
+        "DOUBLE", "D" -> KotlinConstantExpressionStubImpl(
+            parent,
+            KtStubElementTypes.FLOAT_CONSTANT,
+            ConstantValueKind.FLOAT_CONSTANT,
+            StringRef.fromString(((initializer.valueFromClassFile ?: initializer.builtInValue?.doubleValue) as Double).toString())
+        )
+        "BOOLEAN", "Z" -> KotlinConstantExpressionStubImpl(
+            parent,
+            KtStubElementTypes.BOOLEAN_CONSTANT,
+            ConstantValueKind.BOOLEAN_CONSTANT,
+            StringRef.fromString(((initializer.valueFromClassFile ?: initializer.builtInValue?.intValue) != 0).toString())
+        )
+        "STRING", "Ljava/lang/String;" -> {
+            val text = (initializer.valueFromClassFile ?: nameResolver.getString(initializer.builtInValue!!.stringValue)) as String
+            val stringTemplate = KotlinPlaceHolderStubImpl<KtStringTemplateExpression>(
+                parent, KtStubElementTypes.STRING_TEMPLATE
+            )
+            return KotlinPlaceHolderWithTextStubImpl<KtSimpleNameStringTemplateEntry>(
+                stringTemplate,
+                KtStubElementTypes.LITERAL_STRING_TEMPLATE_ENTRY,
+                text
+            )
+        }
+        else -> null
     }
 }

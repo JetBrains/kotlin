@@ -153,6 +153,7 @@ PsiJetFileStubImpl[package=foo.TopLevelMembers]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
+        NULL[kind=NULL, value=null]
     TYPE_REFERENCE
       USER_TYPE
         USER_TYPE
