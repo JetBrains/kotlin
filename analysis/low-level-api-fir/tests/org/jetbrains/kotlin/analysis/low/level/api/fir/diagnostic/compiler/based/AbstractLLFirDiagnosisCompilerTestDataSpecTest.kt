@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.runners.baseFirDiagnosticTestConfiguration
 import org.jetbrains.kotlin.test.runners.baseFirSpecDiagnosticTestConfiguration
 
-abstract class AbstractDiagnosisCompilerTestDataSpecTest : AbstractCompilerBasedTestForFir() {
+abstract class AbstractLLFirDiagnosisCompilerTestDataSpecTest : AbstractCompilerBasedTestForFir() {
     override fun TestConfigurationBuilder.configureTest() {
         baseFirDiagnosticTestConfiguration(frontendFacade = ::LowLevelFirFrontendFacade.bind(LLFirAnalyzerFacadeFactoryWithoutPreresolve))
         baseFirSpecDiagnosticTestConfigurationForIde()
