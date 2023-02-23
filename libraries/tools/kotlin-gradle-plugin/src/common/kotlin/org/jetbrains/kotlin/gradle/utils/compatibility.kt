@@ -19,12 +19,15 @@ package org.jetbrains.kotlin.gradle.utils
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.artifacts.ArtifactCollection
+import org.gradle.api.artifacts.result.ResolvedArtifactResult
 import org.gradle.api.file.ArchiveOperations
 import org.gradle.api.file.CopySpec
 import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.file.FileTree
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.internal.tasks.testing.TestDescriptorInternal
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.WorkResult
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.api.tasks.testing.TestDescriptor
@@ -113,3 +116,13 @@ internal fun Task.doNotTrackStateCompat(because: String) {
         doNotTrackState(because)
     }
 }
+
+/**
+ * [ArtifactCollection.getResolvedArtifacts] is available after 7.4 (inclusive)
+ */
+internal fun ArtifactCollection.getResolvedArtifactsCompat(project: Project): Provider<Set<ResolvedArtifactResult>> =
+    if (GradleVersion.current() >= GradleVersion.version("7.4")) {
+        resolvedArtifacts
+    } else {
+        project.provider { artifacts }
+    }

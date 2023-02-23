@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.targets.native.internal.*
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.filesProvider
+import org.jetbrains.kotlin.gradle.utils.getResolvedArtifactsCompat
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 
@@ -327,13 +328,13 @@ class KotlinMetadataTargetConfigurator :
 
         val transformationTask = project.locateOrRegisterMetadataDependencyTransformationTask(sourceSet)
 
-        val artifacts = sourceSet.internal.resolvableMetadataConfiguration.incoming.artifacts
+        val artifacts = sourceSet.internal.resolvableMetadataConfiguration.incoming.artifacts.getResolvedArtifactsCompat(project)
 
         // Metadata from visible source sets within dependsOn closure
         compilation.compileDependencyFiles += sourceSet.dependsOnClassesDirs
 
         // Requested dependencies that are not Multiplatform Libraries. for example stdlib-common
-        compilation.compileDependencyFiles += project.filesProvider { artifacts.filterNot { it.isMpp }.map { it.file } }
+        compilation.compileDependencyFiles += project.files(artifacts.map { it.filterNot { it.isMpp }.map { it.file } })
 
         // Transformed Multiplatform Libraries based on source set visibility
         compilation.compileDependencyFiles += project.files(transformationTask.map { it.allTransformedLibraries })
