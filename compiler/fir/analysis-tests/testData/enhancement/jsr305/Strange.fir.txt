@@ -1,7 +1,7 @@
 public open class Strange : R|kotlin/Any| {
-    @R|javax/annotation/Nonnull|(when = R|javax/annotation/meta/When.UNKNOWN|()) public open field field: R|kotlin/String!|
+    @R|javax/annotation/Nonnull|(when = R|javax/annotation/meta/When.UNKNOWN|) public open field field: R|kotlin/String!|
 
-    @R|javax/annotation/Nonnull|(when = R|javax/annotation/meta/When.MAYBE|()) public open fun foo(@R|javax/annotation/Nonnull|(when = R|javax/annotation/meta/When.ALWAYS|()) x: R|@EnhancedNullability kotlin/String|, @R|javax/annotation/Nonnull|(when = R|javax/annotation/meta/When.NEVER|()) y: R|kotlin/CharSequence?|): R|kotlin/String?|
+    @R|javax/annotation/Nonnull|(when = R|javax/annotation/meta/When.MAYBE|) public open fun foo(@R|javax/annotation/Nonnull|(when = R|javax/annotation/meta/When.ALWAYS|) x: R|@EnhancedNullability kotlin/String|, @R|javax/annotation/Nonnull|(when = R|javax/annotation/meta/When.NEVER|) y: R|kotlin/CharSequence?|): R|kotlin/String?|
 
     @R|javax/annotation/Nonnull|() public open fun bar(): R|@EnhancedNullability kotlin/String|
 

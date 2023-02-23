@@ -271,7 +271,7 @@ abstract class AbstractAnnotationDeserializer(
                 )
                 typeRef = resolvedTypeRef
             }
-            ENUM -> buildFunctionCall {
+            ENUM -> buildPropertyAccessExpression {
                 val classId = nameResolver.getClassId(value.classId)
                 val entryName = nameResolver.getName(value.enumValueId)
 

@@ -10,11 +10,11 @@ public open class A : R|kotlin/Any| {
     public constructor(): R|test/A|
 
 }
-@R|kotlin/annotation/Target|(allowedTargets = vararg()) @R|kotlin/annotation/Retention|(value = R|kotlin/annotation/AnnotationRetention.RUNTIME|()) @R|kotlin/annotation/MustBeDocumented|() @R|javax/annotation/Nonnull|() @R|javax/annotation/meta/TypeQualifierDefault|(value = <implicitArrayOf>(R|java/lang/annotation/ElementType.METHOD|(), R|java/lang/annotation/ElementType.PARAMETER|())) public final annotation class NonNullApi : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = vararg()) @R|kotlin/annotation/Retention|(value = R|kotlin/annotation/AnnotationRetention.RUNTIME|) @R|kotlin/annotation/MustBeDocumented|() @R|javax/annotation/Nonnull|() @R|javax/annotation/meta/TypeQualifierDefault|(value = <implicitArrayOf>(R|java/lang/annotation/ElementType.METHOD|, R|java/lang/annotation/ElementType.PARAMETER|)) public final annotation class NonNullApi : R|kotlin/Annotation| {
     public constructor(): R|spr/NonNullApi|
 
 }
-@R|kotlin/annotation/Target|(allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|(), R|kotlin/annotation/AnnotationTarget.FUNCTION|(), R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|(), R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|())) @R|kotlin/annotation/Retention|(value = R|kotlin/annotation/AnnotationRetention.RUNTIME|()) @R|kotlin/annotation/MustBeDocumented|() @R|javax/annotation/Nonnull|(when = R|javax/annotation/meta/When.MAYBE|()) @R|javax/annotation/meta/TypeQualifierNickname|() public final annotation class Nullable : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, R|kotlin/annotation/AnnotationTarget.FUNCTION|, R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|)) @R|kotlin/annotation/Retention|(value = R|kotlin/annotation/AnnotationRetention.RUNTIME|) @R|kotlin/annotation/MustBeDocumented|() @R|javax/annotation/Nonnull|(when = R|javax/annotation/meta/When.MAYBE|) @R|javax/annotation/meta/TypeQualifierNickname|() public final annotation class Nullable : R|kotlin/Annotation| {
     public constructor(): R|spr/Nullable|
 
 }

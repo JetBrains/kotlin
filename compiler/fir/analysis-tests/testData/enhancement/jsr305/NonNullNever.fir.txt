@@ -1,11 +1,11 @@
-@R|kotlin/annotation/MustBeDocumented|() @R|javax/annotation/meta/TypeQualifierNickname|() @R|javax/annotation/Nonnull|(when = R|javax/annotation/meta/When.NEVER|()) @R|kotlin/annotation/Retention|(value = R|kotlin/annotation/AnnotationRetention.RUNTIME|()) public final annotation class MyNullable : R|kotlin/Annotation| {
+@R|kotlin/annotation/MustBeDocumented|() @R|javax/annotation/meta/TypeQualifierNickname|() @R|javax/annotation/Nonnull|(when = R|javax/annotation/meta/When.NEVER|) @R|kotlin/annotation/Retention|(value = R|kotlin/annotation/AnnotationRetention.RUNTIME|) public final annotation class MyNullable : R|kotlin/Annotation| {
     public constructor(): R|MyNullable|
 
 }
 public open class NonNullNever : R|kotlin/Any| {
-    @R|javax/annotation/Nonnull|(when = R|javax/annotation/meta/When.NEVER|()) public open field field: R|kotlin/String?|
+    @R|javax/annotation/Nonnull|(when = R|javax/annotation/meta/When.NEVER|) public open field field: R|kotlin/String?|
 
-    @R|MyNullable|() public open fun foo(@R|javax/annotation/Nonnull|(when = R|javax/annotation/meta/When.NEVER|()) x: R|kotlin/String?|, @R|MyNullable|() y: R|kotlin/CharSequence!|): R|kotlin/String!|
+    @R|MyNullable|() public open fun foo(@R|javax/annotation/Nonnull|(when = R|javax/annotation/meta/When.NEVER|) x: R|kotlin/String?|, @R|MyNullable|() y: R|kotlin/CharSequence!|): R|kotlin/String!|
 
     public constructor(): R|NonNullNever|
 

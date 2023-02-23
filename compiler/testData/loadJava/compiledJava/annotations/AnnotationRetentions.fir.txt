@@ -9,7 +9,7 @@ public open class AnnotationRetentions : R|kotlin/Any| {
         public/*package*/ test/AnnotationRetentions.constructor(): R|test/AnnotationRetentions.BaseClass|
 
     }
-    @R|kotlin/annotation/Retention|(value = R|kotlin/annotation/AnnotationRetention.BINARY|()) public final annotation class BinaryAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Retention|(value = R|kotlin/annotation/AnnotationRetention.BINARY|) public final annotation class BinaryAnnotation : R|kotlin/Annotation| {
         public constructor(): R|test/AnnotationRetentions.BinaryAnnotation|
 
     }
@@ -17,7 +17,7 @@ public open class AnnotationRetentions : R|kotlin/Any| {
         public/*package*/ test/AnnotationRetentions.constructor(): R|test/AnnotationRetentions.BinaryClass|
 
     }
-    @R|kotlin/annotation/Retention|(value = R|kotlin/annotation/AnnotationRetention.RUNTIME|()) public final annotation class RuntimeAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Retention|(value = R|kotlin/annotation/AnnotationRetention.RUNTIME|) public final annotation class RuntimeAnnotation : R|kotlin/Annotation| {
         public constructor(): R|test/AnnotationRetentions.RuntimeAnnotation|
 
     }
@@ -25,7 +25,7 @@ public open class AnnotationRetentions : R|kotlin/Any| {
         public/*package*/ test/AnnotationRetentions.constructor(): R|test/AnnotationRetentions.RuntimeClass|
 
     }
-    @R|kotlin/annotation/Retention|(value = R|kotlin/annotation/AnnotationRetention.SOURCE|()) public final annotation class SourceAnnotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Retention|(value = R|kotlin/annotation/AnnotationRetention.SOURCE|) public final annotation class SourceAnnotation : R|kotlin/Annotation| {
         public constructor(): R|test/AnnotationRetentions.SourceAnnotation|
 
     }

@@ -54,11 +54,11 @@
     public constructor(): R|C|
 
 }
-@R|kotlin/annotation/Target|(allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.CLASS|(), R|kotlin/annotation/AnnotationTarget.FILE|())) @R|kotlin/annotation/Retention|(value = R|kotlin/annotation/AnnotationRetention.RUNTIME|()) @R|kotlin/annotation/MustBeDocumented|() @R|javax/annotation/Nonnull|() @R|javax/annotation/meta/TypeQualifierDefault|(value = <implicitArrayOf>(R|java/lang/annotation/ElementType.METHOD|(), R|java/lang/annotation/ElementType.PARAMETER|(), R|java/lang/annotation/ElementType.FIELD|())) public final annotation class NonNullApi : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.CLASS|, R|kotlin/annotation/AnnotationTarget.FILE|)) @R|kotlin/annotation/Retention|(value = R|kotlin/annotation/AnnotationRetention.RUNTIME|) @R|kotlin/annotation/MustBeDocumented|() @R|javax/annotation/Nonnull|() @R|javax/annotation/meta/TypeQualifierDefault|(value = <implicitArrayOf>(R|java/lang/annotation/ElementType.METHOD|, R|java/lang/annotation/ElementType.PARAMETER|, R|java/lang/annotation/ElementType.FIELD|)) public final annotation class NonNullApi : R|kotlin/Annotation| {
     public constructor(): R|NonNullApi|
 
 }
-@R|kotlin/annotation/Target|(allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.CLASS|(), R|kotlin/annotation/AnnotationTarget.FILE|())) @R|kotlin/annotation/Retention|(value = R|kotlin/annotation/AnnotationRetention.RUNTIME|()) @R|kotlin/annotation/MustBeDocumented|() @R|javax/annotation/CheckForNull|() @R|javax/annotation/meta/TypeQualifierDefault|(value = <implicitArrayOf>(R|java/lang/annotation/ElementType.METHOD|(), R|java/lang/annotation/ElementType.PARAMETER|(), R|java/lang/annotation/ElementType.FIELD|())) public final annotation class NullableApi : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.CLASS|, R|kotlin/annotation/AnnotationTarget.FILE|)) @R|kotlin/annotation/Retention|(value = R|kotlin/annotation/AnnotationRetention.RUNTIME|) @R|kotlin/annotation/MustBeDocumented|() @R|javax/annotation/CheckForNull|() @R|javax/annotation/meta/TypeQualifierDefault|(value = <implicitArrayOf>(R|java/lang/annotation/ElementType.METHOD|, R|java/lang/annotation/ElementType.PARAMETER|, R|java/lang/annotation/ElementType.FIELD|)) public final annotation class NullableApi : R|kotlin/Annotation| {
     public constructor(): R|NullableApi|
 
 }

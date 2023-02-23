@@ -1,5 +1,5 @@
 public open class NestedEnumArgument : R|kotlin/Any| {
-    @R|test/NestedEnumArgument.Anno|(value = R|test/NestedEnumArgument.E.FIRST|()) public/*package*/ open fun foo(): R|kotlin/Unit|
+    @R|test/NestedEnumArgument.Anno|(value = R|test/NestedEnumArgument.E.FIRST|) public/*package*/ open fun foo(): R|kotlin/Unit|
 
     public constructor(): R|test/NestedEnumArgument|
 
