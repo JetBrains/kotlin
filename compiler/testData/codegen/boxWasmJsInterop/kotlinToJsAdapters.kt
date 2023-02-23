@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR, JS
 // WASM_FAILS_IN: SM
 
 fun notNullString(x: String) {

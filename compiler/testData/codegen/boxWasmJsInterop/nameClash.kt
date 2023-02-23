@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR, JS
 // FILE: file1.kt
 private fun clashName(): Int =
     js("42")
