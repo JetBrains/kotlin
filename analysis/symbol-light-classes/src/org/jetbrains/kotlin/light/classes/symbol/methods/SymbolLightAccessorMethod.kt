@@ -229,11 +229,7 @@ internal class SymbolLightAccessorMethod private constructor(
 
     override fun isDeprecated(): Boolean = _isDeprecated
 
-    private val _identifier: PsiIdentifier by lazyPub {
-        KtLightIdentifier(this, containingPropertyDeclaration)
-    }
-
-    override fun getNameIdentifier(): PsiIdentifier = _identifier
+    override fun getNameIdentifier(): PsiIdentifier = KtLightIdentifier(this, containingPropertyDeclaration)
 
     private val _returnedType: PsiType by lazyPub {
         if (!isGetter) return@lazyPub PsiType.VOID

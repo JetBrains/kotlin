@@ -75,11 +75,8 @@ abstract class SymbolLightClassForClassLike<SType : KtClassOrObjectSymbol> prote
 
     abstract override fun getOwnFields(): List<KtLightField>
     abstract override fun getOwnMethods(): List<PsiMethod>
-    private val _identifier: PsiIdentifier by lazyPub {
-        KtLightIdentifier(this, classOrObjectDeclaration)
-    }
 
-    override fun getNameIdentifier(): PsiIdentifier? = _identifier
+    override fun getNameIdentifier(): PsiIdentifier? = KtLightIdentifier(this, classOrObjectDeclaration)
 
     abstract override fun getExtendsList(): PsiReferenceList?
 

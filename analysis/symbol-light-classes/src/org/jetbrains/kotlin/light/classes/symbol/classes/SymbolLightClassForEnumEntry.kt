@@ -134,12 +134,8 @@ internal class SymbolLightClassForEnumEntry(
         return super.isInheritor(baseClass, checkDeep = true)
     }
 
-    private val _identifier: PsiIdentifier by lazyPub {
-        KtLightIdentifier(this, kotlinOrigin)
-    }
-
     // probably should be dropped after KT-54798
-    override fun getNameIdentifier(): PsiIdentifier = _identifier
+    override fun getNameIdentifier(): PsiIdentifier = KtLightIdentifier(this, kotlinOrigin)
     override fun getName(): String? = kotlinOrigin.name
 
     override fun isDeprecated(): Boolean = false

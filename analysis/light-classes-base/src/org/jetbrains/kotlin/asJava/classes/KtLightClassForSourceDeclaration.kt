@@ -37,8 +37,6 @@ abstract class KtLightClassForSourceDeclaration(
     StubBasedPsiElement<KotlinClassOrObjectStub<out KtClassOrObject>> {
     override fun cacheDependencies(): List<Any> = classOrObject.getExternalDependencies()
 
-    private val lightIdentifier = KtLightIdentifier(this, classOrObject)
-
     override fun getText() = kotlinOrigin.text ?: ""
 
     override fun getTextRange(): TextRange? = kotlinOrigin.textRange ?: TextRange.EMPTY_RANGE
@@ -133,7 +131,7 @@ abstract class KtLightClassForSourceDeclaration(
     override fun getElementType(): IStubElementType<out StubElement<*>, *>? = classOrObject.elementType
     override fun getStub(): KotlinClassOrObjectStub<out KtClassOrObject>? = classOrObject.stub
 
-    override fun getNameIdentifier(): KtLightIdentifier? = lightIdentifier
+    override fun getNameIdentifier(): KtLightIdentifier? = KtLightIdentifier(this, classOrObject)
 
     override fun getExtendsList(): PsiReferenceList? = _extendsList
     override fun getImplementsList(): PsiReferenceList? = _implementsList

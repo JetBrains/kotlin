@@ -48,10 +48,6 @@ internal abstract class SymbolLightParameterCommon(
 
     abstract override fun getModifierList(): PsiModifierList
 
-    private val _identifier: PsiIdentifier by lazyPub {
-        KtLightIdentifier(this, parameterDeclaration)
-    }
-
     protected fun nullabilityType(): NullabilityType {
         if (isVarArgs) return NullabilityType.NotNull
 
@@ -65,7 +61,7 @@ internal abstract class SymbolLightParameterCommon(
         }
     }
 
-    override fun getNameIdentifier(): PsiIdentifier = _identifier
+    override fun getNameIdentifier(): PsiIdentifier = KtLightIdentifier(this, parameterDeclaration)
 
     private val _type by lazyPub {
         parameterSymbolPointer.withSymbol(ktModule) { parameterSymbol ->
