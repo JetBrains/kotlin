@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.serialization.checkIsFunctionInterfac
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.export.*
-import org.jetbrains.kotlin.ir.backend.js.lower.ExportedDeclarationsCleanupLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.StaticMembersLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.isBuiltInClass
 import org.jetbrains.kotlin.ir.backend.js.utils.*
@@ -136,7 +135,6 @@ class IrModuleToJsTransformer(
         modules.forEach { module ->
             module.files.forEach {
                 StaticMembersLowering(backendContext).lower(it)
-//                ExportedDeclarationsCleanupLowering(backendContext).lower(it)
             }
         }
     }

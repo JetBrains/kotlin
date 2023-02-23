@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.ir.util
 
-val EMPTY_LIST = ArrayList<Nothing>(0)
+import org.jetbrains.kotlin.utils.SmartList
+
+val EMPTY_LIST = SmartList<Nothing>()
 
 inline fun <T, R> Collection<T>.map(transform: (T) -> R): List<R> {
     if (isEmpty()) return EMPTY_LIST

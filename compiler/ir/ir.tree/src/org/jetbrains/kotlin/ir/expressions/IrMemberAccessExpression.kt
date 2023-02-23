@@ -72,10 +72,6 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
         typeArgumentsByIndex[index] = type
     }
 
-    fun cleanTypeArguments() {
-        typeArgumentsByIndex.fill(null)
-    }
-
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         dispatchReceiver?.accept(visitor, data)
         extensionReceiver?.accept(visitor, data)
