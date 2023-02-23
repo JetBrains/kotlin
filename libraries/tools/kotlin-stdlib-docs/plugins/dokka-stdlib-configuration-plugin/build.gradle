@@ -1,17 +1,9 @@
 plugins {
-    id 'org.jetbrains.kotlin.jvm' version '1.8.0'
+    id 'org.jetbrains.kotlin.jvm'
 }
 description "Dokka Plugin to configure Dokka for stdlib"
 
-repositories {
-    mavenCentral()
-    maven {
-        url 'https://maven.pkg.jetbrains.space/kotlin/p/dokka/dev'
-    }
-    mavenLocal()
-}
-
-final String dokka_version = findProperty("dokka_version")
+final String dokka_version = property("dokka_version")
 
 dependencies {
     implementation "org.jetbrains.dokka:dokka-base:$dokka_version"
@@ -19,7 +11,7 @@ dependencies {
     compileOnly "org.jetbrains.dokka:dokka-analysis:$dokka_version"
 }
 
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile) {
-    kotlinOptions.jvmTarget = "1.8"
+kotlin {
+    jvmToolchain(8)
 }
 

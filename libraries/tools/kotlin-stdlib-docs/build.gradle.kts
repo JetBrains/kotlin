@@ -50,11 +50,6 @@ val prepare by tasks.registering {
     dependsOn(":kotlin_big:extractLibs")
 }
 
-repositories {
-    mavenCentral()
-    maven(url = "https://maven.pkg.jetbrains.space/kotlin/p/dokka/dev")
-}
-
 dependencies {
     dokkaPlugin(project(":plugins:dokka-samples-transformer-plugin"))
     dokkaPlugin(project(":plugins:dokka-stdlib-configuration-plugin"))
