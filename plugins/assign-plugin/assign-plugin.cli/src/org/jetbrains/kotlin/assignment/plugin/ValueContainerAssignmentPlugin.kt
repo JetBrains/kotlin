@@ -5,17 +5,15 @@
 
 package org.jetbrains.kotlin.assignment.plugin
 
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.compiler.plugin.*
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.CompilerConfigurationKey
-import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.assignment.plugin.AssignmentConfigurationKeys.ANNOTATION
 import org.jetbrains.kotlin.assignment.plugin.AssignmentPluginNames.ANNOTATION_OPTION_NAME
 import org.jetbrains.kotlin.assignment.plugin.AssignmentPluginNames.PLUGIN_ID
 import org.jetbrains.kotlin.assignment.plugin.diagnostics.AssignmentPluginDeclarationChecker
 import org.jetbrains.kotlin.assignment.plugin.k2.FirAssignmentPluginExtensionRegistrar
+import org.jetbrains.kotlin.compiler.plugin.*
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.CompilerConfigurationKey
+import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
@@ -48,12 +46,6 @@ class AssignmentCommandLineProcessor : CommandLineProcessor {
 class AssignmentComponentRegistrar : CompilerPluginRegistrar() {
     @OptIn(InternalNonStableExtensionPoints::class)
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
-        configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-            ?.report(
-                CompilerMessageSeverity.WARNING,
-                "Assign Kotlin compiler plugin is an experimental feature. See: https://kotlinlang.org/docs/components-stability.html"
-            )
-
         val annotations = configuration.getList(ANNOTATION)
         if (annotations.isNotEmpty()) {
             AssignResolutionAltererExtension.Companion.registerExtension(CliAssignPluginResolutionAltererExtension(annotations))
