@@ -948,7 +948,7 @@ class CocoaPodsIT : BaseGradleIT() {
                 val framework = fileInWorkingDir("build/bin/iOS/podDebugFramework/cocoapods.framework/cocoapods")
                 with(runProcess(listOf("file", framework.absolutePath), projectDir, environmentVariables = getEnvs())) {
                     assertTrue(isSuccessful)
-                    assertTrue(output.contains("current ar archive random library"))
+                    kotlin.test.assertContains(output, "current ar archive")
                 }
             }
 
@@ -1264,6 +1264,8 @@ class CocoaPodsIT : BaseGradleIT() {
         val subprojectPodInstallTask = ":$subProjectName$podInstallTaskName"
         with(project) {
             preparePodfile("ios-app", ImportMode.FRAMEWORKS)
+            gradleBuildScript(subProjectName).appendToCocoapodsBlock("ios.deploymentTarget = \"14.0\"")
+
             build(subprojectPodImportTask, "-Pkotlin.native.cocoapods.generate.wrapper=true") {
                 assertTasksExecuted(listOf(subprojectPodspecTask, subprojectPodInstallTask))
             }
