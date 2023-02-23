@@ -183,9 +183,18 @@ open class FirTypeResolveTransformer(
                     }
                     property.returnTypeRef !is FirResolvedTypeRef && property.initializer == null &&
                             property.getter?.returnTypeRef is FirResolvedTypeRef -> {
-                        property.replaceReturnTypeRef(
-                            property.getter!!.returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.PropertyTypeFromGetterReturnType)
+                        val returnTypeRef = property.getter!!.returnTypeRef
+
+                        property.replaceReturnTypeRef(returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.PropertyTypeFromGetterReturnType))
+                        property.backingField?.replaceReturnTypeRef(
+                            returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.PropertyTypeFromGetterReturnType)
                         )
+
+                        property.setter?.valueParameters?.map {
+                            it.replaceReturnTypeRef(
+                                returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.PropertyTypeFromGetterReturnType)
+                            )
+                        }
                     }
                 }
 
