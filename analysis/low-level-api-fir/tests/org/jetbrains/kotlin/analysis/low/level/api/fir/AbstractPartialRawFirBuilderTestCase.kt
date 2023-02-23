@@ -112,7 +112,11 @@ abstract class AbstractPartialRawFirBuilderTestCase : AbstractLowLevelApiSingleF
             ): FirContainingNamesAwareScope? =
                 error("Should not be called")
 
-            override fun getNestedClassifierScope(klass: FirClass, useSiteSession: FirSession, scopeSession: ScopeSession): FirContainingNamesAwareScope? =
+            override fun getNestedClassifierScope(
+                klass: FirClass,
+                useSiteSession: FirSession,
+                scopeSession: ScopeSession,
+            ): FirContainingNamesAwareScope? =
                 error("Should not be called")
         }
 

@@ -42,7 +42,12 @@ object KtDeclarationAndFirDeclarationEqualityChecker {
 
     private fun receiverTypeMatch(psi: KtCallableDeclaration, fir: FirCallableDeclaration): Boolean {
         if ((fir.receiverParameter != null) != (psi.receiverTypeReference != null)) return false
-        if (fir.receiverParameter != null && !isTheSameTypes(psi.receiverTypeReference!!, fir.receiverParameter!!.typeRef, isVararg = false)) {
+        if (fir.receiverParameter != null && !isTheSameTypes(
+                psi.receiverTypeReference!!,
+                fir.receiverParameter!!.typeRef,
+                isVararg = false,
+            )
+        ) {
             return false
         }
         return true
