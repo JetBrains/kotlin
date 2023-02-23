@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 
 @FirBuilderDsl
 class FirPropertyAccessorBuilder : FirFunctionBuilder, FirAnnotationContainerBuilder {
+    override var source: KtSourceElement? = null
     override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     override lateinit var moduleData: FirModuleData
     override lateinit var origin: FirDeclarationOrigin
@@ -62,7 +63,6 @@ class FirPropertyAccessorBuilder : FirFunctionBuilder, FirAnnotationContainerBui
     var contractDescription: FirContractDescription = FirEmptyContractDescription
     lateinit var symbol: FirPropertyAccessorSymbol
     lateinit var propertySymbol: FirPropertySymbol
-    override var source: KtSourceElement? = null
     var isGetter: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
@@ -70,6 +70,7 @@ class FirPropertyAccessorBuilder : FirFunctionBuilder, FirAnnotationContainerBui
     @OptIn(FirImplementationDetail::class)
     override fun build(): FirPropertyAccessor {
         return FirPropertyAccessorImpl(
+            source,
             resolvePhase,
             moduleData,
             origin,
@@ -85,7 +86,6 @@ class FirPropertyAccessorBuilder : FirFunctionBuilder, FirAnnotationContainerBui
             contractDescription,
             symbol,
             propertySymbol,
-            source,
             isGetter,
             annotations.toMutableOrEmpty(),
             typeParameters,
@@ -108,6 +108,7 @@ inline fun buildPropertyAccessorCopy(original: FirPropertyAccessor, init: FirPro
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
     }
     val copyBuilder = FirPropertyAccessorBuilder()
+    copyBuilder.source = original.source
     copyBuilder.resolvePhase = original.resolvePhase
     copyBuilder.moduleData = original.moduleData
     copyBuilder.origin = original.origin
@@ -123,7 +124,6 @@ inline fun buildPropertyAccessorCopy(original: FirPropertyAccessor, init: FirPro
     copyBuilder.contractDescription = original.contractDescription
     copyBuilder.symbol = original.symbol
     copyBuilder.propertySymbol = original.propertySymbol
-    copyBuilder.source = original.source
     copyBuilder.isGetter = original.isGetter
     copyBuilder.annotations.addAll(original.annotations)
     copyBuilder.typeParameters.addAll(original.typeParameters)

@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
  */
 
 open class FirPropertyAccessorImpl @FirImplementationDetail constructor(
+    override val source: KtSourceElement?,
     @Volatile
     override var resolvePhase: FirResolvePhase,
     override val moduleData: FirModuleData,
@@ -56,7 +57,6 @@ open class FirPropertyAccessorImpl @FirImplementationDetail constructor(
     override var contractDescription: FirContractDescription,
     override val symbol: FirPropertyAccessorSymbol,
     override val propertySymbol: FirPropertySymbol,
-    override var source: KtSourceElement?,
     override val isGetter: Boolean,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override val typeParameters: MutableList<FirTypeParameter>,
@@ -170,11 +170,6 @@ open class FirPropertyAccessorImpl @FirImplementationDetail constructor(
 
     override fun replaceContractDescription(newContractDescription: FirContractDescription) {
         contractDescription = newContractDescription
-    }
-
-    @FirImplementationDetail
-    override fun replaceSource(newSource: KtSourceElement?) {
-        source = newSource
     }
 
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {

@@ -359,7 +359,6 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +field("propertySymbol", firPropertySymbolType).apply {
                 withBindThis = false
             }
-            +field("source", sourceElementType, nullable = true, withReplace = true)
             +booleanField("isGetter")
             +booleanField("isSetter")
             +annotations
