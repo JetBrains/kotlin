@@ -7,7 +7,11 @@ package org.jetbrains.kotlin.light.classes.symbol.classes
 
 import com.intellij.psi.*
 import com.intellij.util.IncorrectOperationException
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithModality
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.InitializedModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -62,4 +66,9 @@ internal class SymbolLightClassForInterfaceDefaultImpls(private val containingCl
     override fun getContainingClass() = containingClass
 
     override fun getOwnInnerClasses() = emptyList<PsiClass>()
+
+    context(KtAnalysisSession)
+    override fun acceptCallableSymbol(symbol: KtCallableSymbol): Boolean {
+        return super.acceptCallableSymbol(symbol) && (symbol as? KtSymbolWithModality)?.modality != Modality.ABSTRACT
+    }
 }

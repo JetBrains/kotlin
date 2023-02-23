@@ -9,6 +9,7 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiReferenceList
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
@@ -55,9 +56,7 @@ internal open class SymbolLightClassForInterface : SymbolLightClassForInterfaceO
         withClassOrObjectSymbol { classOrObjectSymbol ->
             val result = mutableListOf<KtLightMethod>()
 
-            val visibleDeclarations = classOrObjectSymbol.getDeclaredMemberScope().getCallableSymbols()
-                .filterNot { it is KtFunctionSymbol && it.visibility.isPrivateOrPrivateToThis() }
-                .filterNot { it.hasTypeForValueClassInSignature() }
+            val visibleDeclarations = classOrObjectSymbol.getDeclaredMemberScope().getCallableSymbols().filter { acceptCallableSymbol(it) }
 
             createMethods(visibleDeclarations, result)
             addMethodsFromCompanionIfNeeded(result, classOrObjectSymbol)
@@ -65,6 +64,11 @@ internal open class SymbolLightClassForInterface : SymbolLightClassForInterfaceO
             result
         }
     }
+
+    context(KtAnalysisSession)
+    protected open fun acceptCallableSymbol(symbol: KtCallableSymbol): Boolean =
+        !(symbol is KtFunctionSymbol && symbol.visibility.isPrivateOrPrivateToThis() || symbol.hasTypeForValueClassInSignature())
+
 
     override fun getOwnMethods(): List<PsiMethod> = _ownMethods
 

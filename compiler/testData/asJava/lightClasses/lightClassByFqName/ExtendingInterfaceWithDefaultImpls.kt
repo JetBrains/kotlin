@@ -11,4 +11,6 @@ interface B: A {
 
 interface C : B {
     fun c() = "c"
+
+    fun more(): String
 }
