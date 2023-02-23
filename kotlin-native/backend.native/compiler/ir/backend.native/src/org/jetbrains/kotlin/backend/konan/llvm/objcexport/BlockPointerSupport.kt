@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 
 internal fun ObjCExportCodeGeneratorBase.generateBlockToKotlinFunctionConverter(
         bridge: BlockPointerBridge
-): LLVMValueRef {
+): LlvmCallable {
     val irInterface = symbols.functionN(bridge.numberOfParameters).owner
     val invokeMethod = irInterface.declarations.filterIsInstance<IrSimpleFunction>()
             .single { it.name == OperatorNameConventions.INVOKE }
@@ -33,8 +33,11 @@ internal fun ObjCExportCodeGeneratorBase.generateBlockToKotlinFunctionConverter(
     }
 
     val invokeImpl = functionGenerator(
-            LlvmFunctionSignature(invokeMethod, codegen),
-            "invokeFunction${bridge.nameSuffix}"
+            LlvmFunctionSignature(invokeMethod, codegen).toProto(
+                    "invokeFunction${bridge.nameSuffix}",
+                    null,
+                    LLVMLinkage.LLVMInternalLinkage
+            )
     ).generate {
         val thisRef = param(0)
         val associatedObjectHolder = if (useSeparateHolder) {
@@ -80,19 +83,17 @@ internal fun ObjCExportCodeGeneratorBase.generateBlockToKotlinFunctionConverter(
                     .also { objcReleaseFromRunnableThreadState(result) }
         }
         ret(kotlinResult)
-    }.also {
-        LLVMSetLinkage(it, LLVMLinkage.LLVMInternalLinkage)
     }
 
     val typeInfo = rttiGenerator.generateSyntheticInterfaceImpl(
             irInterface,
-            mapOf(invokeMethod to constPointer(invokeImpl)),
+            mapOf(invokeMethod to invokeImpl.toConstPointer()),
             bodyType,
             immutable = true
     )
+    val functionSig = LlvmFunctionSignature(LlvmRetType(codegen.kObjHeaderPtr), listOf(LlvmParamType(llvm.int8PtrType), LlvmParamType(codegen.kObjHeaderPtrPtr)))
     return functionGenerator(
-            LlvmFunctionSignature(LlvmRetType(codegen.kObjHeaderPtr), listOf(LlvmParamType(llvm.int8PtrType), LlvmParamType(codegen.kObjHeaderPtrPtr))),
-            "convertBlock${bridge.nameSuffix}"
+            functionSig.toProto("convertBlock${bridge.nameSuffix}", null, LLVMLinkage.LLVMInternalLinkage)
     ).generate {
         val blockPtr = param(0)
         ifThen(icmpEq(blockPtr, llvm.kNullInt8Ptr)) {
@@ -116,18 +117,17 @@ internal fun ObjCExportCodeGeneratorBase.generateBlockToKotlinFunctionConverter(
         }
 
         ret(result)
-    }.also {
-        LLVMSetLinkage(it, LLVMLinkage.LLVMInternalLinkage)
     }
 }
 
 private fun FunctionGenerationContext.loadBlockInvoke(
         blockPtr: LLVMValueRef,
         bridge: BlockPointerBridge
-): LLVMValueRef {
+): LlvmCallable {
     val invokePtr = structGep(bitcast(pointerType(codegen.runtime.blockLiteralType), blockPtr), 3)
+    val signature = bridge.blockType.toBlockInvokeLlvmType(llvm)
 
-    return bitcast(pointerType(bridge.blockType.toBlockInvokeLlvmType(llvm).llvmFunctionType), load(invokePtr))
+    return LlvmCallable(bitcast(pointerType(signature.llvmFunctionType), load(invokePtr)), signature)
 }
 
 private fun FunctionGenerationContext.allocInstanceWithAssociatedObject(
@@ -165,10 +165,18 @@ internal class BlockGenerator(private val codegen: CodeGenerator) {
             codegen.runtime.kRefSharedHolderType
     )
 
+    val disposeProto = LlvmFunctionSignature(
+            LlvmRetType(llvm.voidType),
+            listOf(LlvmParamType(llvm.int8PtrType))
+    ).toProto(
+            "blockDisposeHelper",
+            null,
+            LLVMLinkage.LLVMInternalLinkage
+    )
+
     val disposeHelper = generateFunction(
             codegen,
-            functionType(llvm.voidType, false, llvm.int8PtrType),
-            "blockDisposeHelper",
+            disposeProto,
             switchToRunnable = true
     ) {
         val blockPtr = bitcast(pointerType(blockLiteralType), param(0))
@@ -176,14 +184,20 @@ internal class BlockGenerator(private val codegen: CodeGenerator) {
         call(llvm.kRefSharedHolderDispose, listOf(refHolder))
 
         ret(null)
-    }.also {
-        LLVMSetLinkage(it, LLVMLinkage.LLVMInternalLinkage)
     }
+
+    val copyProto = LlvmFunctionSignature(
+            LlvmRetType(llvm.voidType),
+            listOf(LlvmParamType(llvm.int8PtrType), LlvmParamType(llvm.int8PtrType))
+    ).toProto(
+            "blockCopyHelper",
+            null,
+            LLVMLinkage.LLVMInternalLinkage
+    )
 
     val copyHelper = generateFunction(
             codegen,
-            functionType(llvm.voidType, false, llvm.int8PtrType, llvm.int8PtrType),
-            "blockCopyHelper"
+            copyProto,
     ) {
         val dstBlockPtr = bitcast(pointerType(blockLiteralType), param(0))
         val dstRefHolder = structGep(dstBlockPtr, 1)
@@ -204,8 +218,6 @@ internal class BlockGenerator(private val codegen: CodeGenerator) {
         call(llvm.kRefSharedHolderInit, listOf(dstRefHolder, ref))
 
         ret(null)
-    }.also {
-        LLVMSetLinkage(it, LLVMLinkage.LLVMInternalLinkage)
     }
 
     fun CodeGenerator.LongInt(value: Long) =
@@ -236,8 +248,8 @@ internal class BlockGenerator(private val codegen: CodeGenerator) {
         return Struct(codegen.runtime.blockDescriptorType,
                 codegen.LongInt(0L),
                 codegen.LongInt(LLVMStoreSizeOfType(codegen.runtime.targetData, blockLiteralType)),
-                constPointer(copyHelper),
-                constPointer(disposeHelper),
+                copyHelper.toConstPointer(),
+                disposeHelper.toConstPointer(),
                 codegen.staticData.cStringLiteral(signature),
                 NullPointer(llvm.int8Type)
         )
@@ -249,7 +261,7 @@ internal class BlockGenerator(private val codegen: CodeGenerator) {
             invokeName: String,
             genBody: ObjCExportFunctionGenerationContext.(LLVMValueRef, List<LLVMValueRef>) -> Unit
     ): ConstPointer {
-        val result = functionGenerator(blockType.toBlockInvokeLlvmType(llvm), invokeName) {
+        val result = functionGenerator(blockType.toBlockInvokeLlvmType(llvm).toProto(invokeName, null, LLVMLinkage.LLVMInternalLinkage)) {
             switchToRunnable = true
         }.generate {
             val blockPtr = bitcast(pointerType(blockLiteralType), param(0))
@@ -263,16 +275,14 @@ internal class BlockGenerator(private val codegen: CodeGenerator) {
             val arguments = (1 .. blockType.numberOfParameters).map { index -> param(index) }
 
             genBody(kotlinObject, arguments)
-        }.also {
-            LLVMSetLinkage(it, LLVMLinkage.LLVMInternalLinkage)
         }
 
-        return constPointer(result)
+        return result.toConstPointer()
     }
 
     fun ObjCExportCodeGeneratorBase.generateConvertFunctionToRetainedBlock(
             bridge: BlockPointerBridge
-    ): LLVMValueRef {
+    ): LlvmCallable {
         return generateWrapKotlinObjectToRetainedBlock(
                 bridge.blockType,
                 convertName = "convertFunction${bridge.nameSuffix}",
@@ -299,15 +309,16 @@ internal class BlockGenerator(private val codegen: CodeGenerator) {
             convertName: String,
             invokeName: String,
             genBlockBody: ObjCExportFunctionGenerationContext.(LLVMValueRef, List<LLVMValueRef>) -> Unit
-    ): LLVMValueRef {
+    ): LlvmCallable {
         val blockDescriptor = codegen.staticData.placeGlobal(
                 "",
                 generateDescriptorForBlock(blockType)
         )
 
         return functionGenerator(
-                LlvmFunctionSignature(LlvmRetType(llvm.int8PtrType), listOf(LlvmParamType(codegen.kObjHeaderPtr))),
-                convertName
+                LlvmFunctionSignature(LlvmRetType(llvm.int8PtrType), listOf(LlvmParamType(codegen.kObjHeaderPtr))).toProto(
+                    convertName, null, LLVMLinkage.LLVMInternalLinkage
+                )
         ).generate {
             val kotlinRef = param(0)
             ifThen(icmpEq(kotlinRef, kNullObjHeaderPtr)) {
@@ -338,8 +349,6 @@ internal class BlockGenerator(private val codegen: CodeGenerator) {
             val copiedBlock = callFromBridge(retainBlock, listOf(bitcast(llvm.int8PtrType, blockOnStack)))
 
             ret(copiedBlock)
-        }.also {
-            LLVMSetLinkage(it, LLVMLinkage.LLVMInternalLinkage)
         }
     }
 }

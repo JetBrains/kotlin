@@ -24,6 +24,9 @@ import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 
 
 internal class CodeGenerator(override val generationState: NativeGenerationState) : ContextUtils {
+    fun addFunction(proto: LlvmFunctionProto): LlvmCallable =
+            proto.createLlvmFunction(context, llvm.module)
+
     fun llvmFunction(function: IrFunction): LlvmCallable =
             llvmFunctionOrNull(function)
                     ?: error("no function ${function.name} in ${function.file.fqName}")
@@ -42,12 +45,7 @@ internal class CodeGenerator(override val generationState: NativeGenerationState
 
     fun typeInfoValue(irClass: IrClass): LLVMValueRef = irClass.llvmTypeInfoPtr
 
-    fun param(fn: IrFunction, i: Int): LLVMValueRef {
-        assert(i >= 0 && i < countParams(fn))
-        return LLVMGetParam(fn.llvmFunction.llvmValue, i)!!
-    }
-
-    private fun countParams(fn: IrFunction) = LLVMCountParams(fn.llvmFunction.llvmValue)
+    fun param(fn: IrFunction, i: Int) = fn.llvmFunction.param(i)
 
     fun functionEntryPointAddress(function: IrFunction) = function.entryPointAddress.llvm
 
@@ -108,7 +106,7 @@ internal inline fun generateFunction(
         endLocation: LocationInfo?,
         code: FunctionGenerationContext.() -> Unit
 ) {
-    val llvmFunction = codegen.llvmFunction(function).llvmValue
+    val llvmFunction = codegen.llvmFunction(function)
 
     val isCToKotlinBridge = function.origin == CBridgeOrigin.C_TO_KOTLIN_BRIDGE
 
@@ -131,13 +129,9 @@ internal inline fun generateFunction(
     } finally {
         functionGenerationContext.dispose()
     }
-
-    // To perform per-function validation.
-    if (false)
-        LLVMVerifyFunction(llvmFunction, LLVMVerifierFailureAction.LLVMAbortProcessAction)
 }
 
-internal inline fun <T : FunctionGenerationContext> FunctionGenerationContextBuilder<T>.generate(code: T.() -> Unit): LLVMValueRef {
+internal inline fun <T : FunctionGenerationContext> FunctionGenerationContextBuilder<T>.generate(code: T.() -> Unit): LlvmCallable {
     val functionGenerationContext = this.build()
     return try {
         generateFunctionBody(functionGenerationContext, code)
@@ -149,12 +143,13 @@ internal inline fun <T : FunctionGenerationContext> FunctionGenerationContextBui
 
 internal inline fun generateFunction(
         codegen: CodeGenerator,
-        function: LLVMValueRef,
+        functionProto: LlvmFunctionProto,
         startLocation: LocationInfo? = null,
         endLocation: LocationInfo? = null,
         switchToRunnable: Boolean = false,
         code: FunctionGenerationContext.() -> Unit
-) {
+) : LlvmCallable {
+    val function = codegen.addFunction(functionProto)
     val functionGenerationContext = DefaultFunctionGenerationContext(
             function,
             codegen,
@@ -167,31 +162,16 @@ internal inline fun generateFunction(
     } finally {
         functionGenerationContext.dispose()
     }
-}
-
-internal inline fun generateFunction(
-        codegen: CodeGenerator,
-        functionType: LLVMTypeRef,
-        name: String,
-        switchToRunnable: Boolean = false,
-        block: FunctionGenerationContext.() -> Unit
-): LLVMValueRef {
-    val function = addLlvmFunctionWithDefaultAttributes(
-            codegen.context,
-            codegen.llvm.module,
-            name,
-            functionType
-    )
-    generateFunction(codegen, function, startLocation = null, endLocation = null, switchToRunnable = switchToRunnable, code = block)
     return function
 }
 
 // TODO: Consider using different abstraction than `FunctionGenerationContext` for `generateFunctionNoRuntime`.
 internal inline fun generateFunctionNoRuntime(
         codegen: CodeGenerator,
-        function: LLVMValueRef,
+        functionProto: LlvmFunctionProto,
         code: FunctionGenerationContext.() -> Unit,
-) {
+) : LlvmCallable {
+    val function = codegen.addFunction(functionProto)
     val functionGenerationContext = DefaultFunctionGenerationContext(function, codegen, null, null, switchToRunnable = false)
     try {
         functionGenerationContext.forbidRuntime = true
@@ -203,21 +183,6 @@ internal inline fun generateFunctionNoRuntime(
     } finally {
         functionGenerationContext.dispose()
     }
-}
-
-internal inline fun generateFunctionNoRuntime(
-        codegen: CodeGenerator,
-        functionType: LLVMTypeRef,
-        name: String,
-        code: FunctionGenerationContext.() -> Unit,
-): LLVMValueRef {
-    val function = addLlvmFunctionWithDefaultAttributes(
-            codegen.context,
-            codegen.llvm.module,
-            name,
-            functionType
-    )
-    generateFunctionNoRuntime(codegen, function, code)
     return function
 }
 
@@ -413,17 +378,12 @@ internal class StackLocalsManagerImpl(
 }
 
 internal abstract class FunctionGenerationContextBuilder<T : FunctionGenerationContext>(
-        val function: LLVMValueRef,
+        val function: LlvmCallable,
         val codegen: CodeGenerator
 ) {
-    constructor(functionType: LLVMTypeRef, functionName: String, codegen: CodeGenerator) :
+    constructor(functionProto: LlvmFunctionProto, codegen: CodeGenerator) :
             this(
-                    addLlvmFunctionWithDefaultAttributes(
-                            codegen.context,
-                            codegen.llvm.module,
-                            functionName,
-                            functionType
-                    ),
+                    codegen.addFunction(functionProto),
                     codegen
             )
 
@@ -436,7 +396,7 @@ internal abstract class FunctionGenerationContextBuilder<T : FunctionGenerationC
 }
 
 internal abstract class FunctionGenerationContext(
-        val function: LLVMValueRef,
+        val function: LlvmCallable,
         val codegen: CodeGenerator,
         private val startLocation: LocationInfo?,
         protected val endLocation: LocationInfo?,
@@ -463,7 +423,7 @@ internal abstract class FunctionGenerationContext(
         basicBlockToLastLocation.put(block, LocationInfoRange(startLocationInfo, endLocation))
     }
 
-    var returnType: LLVMTypeRef? = LLVMGetReturnType(getFunctionType(function))
+    var returnType: LLVMTypeRef? = function.returnType
     val constructedClass: IrClass?
         get() = (irFunction as? IrConstructor)?.constructedClass
     var returnSlot: LLVMValueRef? = null
@@ -499,11 +459,9 @@ internal abstract class FunctionGenerationContext(
 
     data class FunctionInvokeInformation(
             val invokeInstruction: LLVMValueRef,
-            val llvmFunction: LLVMValueRef,
-            val rargs: CValues<CPointerVar<LLVMOpaqueValue>>,
-            val argsNumber: Int,
+            val llvmFunction: LlvmCallable,
+            val args: List<LLVMValueRef>,
             val success: LLVMBasicBlockRef,
-            val attributeProvider: LlvmFunctionAttributeProvider?
     )
 
     private val invokeInstructions = mutableListOf<FunctionInvokeInformation>()
@@ -519,21 +477,12 @@ internal abstract class FunctionGenerationContext(
     // TODO: Consider using a different abstraction than `FunctionGenerationContext`.
     var forbidRuntime = false
 
-    init {
-        irFunction?.let {
-            if (!irFunction.isExported()) {
-                if (!context.config.producePerFileCache || irFunction !in generationState.calledFromExportedInlineFunctions)
-                    LLVMSetLinkage(function, LLVMLinkage.LLVMInternalLinkage) // (Cannot do this before the function body is created)
-            }
-        }
-    }
-
     fun dispose() {
         currentPositionHolder.dispose()
     }
 
     protected fun basicBlockInFunction(name: String, locationInfo: LocationInfo?): LLVMBasicBlockRef {
-        val bb = LLVMAppendBasicBlockInContext(llvm.llvmContext, function, name)!!
+        val bb = function.addBasicBlock(llvm.llvmContext, name)
         update(bb, locationInfo)
         return bb
     }
@@ -585,7 +534,7 @@ internal abstract class FunctionGenerationContext(
 
     abstract fun ret(value: LLVMValueRef?): LLVMValueRef
 
-    fun param(index: Int): LLVMValueRef = LLVMGetParam(this.function, index)!!
+    fun param(index: Int): LLVMValueRef = function.param(index)
 
     fun load(address: LLVMValueRef, name: String = "",
              memoryOrder: LLVMAtomicOrdering? = null, alignment: Int? = null
@@ -699,17 +648,8 @@ internal abstract class FunctionGenerationContext(
              exceptionHandler: ExceptionHandler = ExceptionHandler.None,
              verbatim: Boolean = false,
              resultSlot: LLVMValueRef? = null,
-    ): LLVMValueRef =
-            call(llvmCallable.llvmValue, args, resultLifetime, exceptionHandler, verbatim, llvmCallable.attributeProvider, resultSlot)
-
-    fun call(llvmFunction: LLVMValueRef, args: List<LLVMValueRef>,
-             resultLifetime: Lifetime = Lifetime.IRRELEVANT,
-             exceptionHandler: ExceptionHandler = ExceptionHandler.None,
-             verbatim: Boolean = false,
-             attributeProvider: LlvmFunctionAttributeProvider? = null,
-             resultSlot: LLVMValueRef? = null
     ): LLVMValueRef {
-        val callArgs = if (verbatim || !isObjectReturn(llvmFunction.type)) {
+        val callArgs = if (verbatim || !isObjectType(llvmCallable.returnType)) {
             args
         } else {
             // If function returns an object - create slot for the returned value or give local arena.
@@ -719,7 +659,7 @@ internal abstract class FunctionGenerationContext(
                 SlotType.STACK -> {
                     localAllocs++
                     // Case of local call. Use memory allocated on stack.
-                    val type = LLVMGetReturnType(LLVMGetElementType(llvmFunction.type))!!
+                    val type = llvmCallable.returnType
                     val stackPointer = alloca(type)
                     //val objectHeader = structGep(stackPointer, 0)
                     //setTypeInfoForLocalObject(objectHeader)
@@ -735,18 +675,13 @@ internal abstract class FunctionGenerationContext(
             }
             args + realResultSlot
         }
-        return callRaw(llvmFunction, callArgs, exceptionHandler, attributeProvider)
+        return callRaw(llvmCallable, callArgs, exceptionHandler)
     }
 
-    private fun callRaw(llvmFunction: LLVMValueRef, args: List<LLVMValueRef>,
-                        exceptionHandler: ExceptionHandler,
-                        attributeProvider: LlvmFunctionAttributeProvider?): LLVMValueRef {
-        val rargs = args.toCValues()
-        if (LLVMIsAFunction(llvmFunction) != null /* the function declaration */ &&
-                isFunctionNoUnwind(llvmFunction)) {
-            return LLVMBuildCall(builder, llvmFunction, rargs, args.size, "")!!.also {
-                attributeProvider?.addCallSiteAttributes(it)
-            }
+    private fun callRaw(llvmCallable: LlvmCallable, args: List<LLVMValueRef>,
+                        exceptionHandler: ExceptionHandler): LLVMValueRef {
+        if (llvmCallable.isNoUnwind) {
+            return llvmCallable.buildCall(builder, args)
         } else {
             val unwind = when (exceptionHandler) {
                 ExceptionHandler.Caller -> cleanupLandingpad
@@ -756,7 +691,7 @@ internal abstract class FunctionGenerationContext(
                     // When calling a function that is not marked as nounwind (can throw an exception),
                     // it is required to specify an unwind label to handle exceptions properly.
                     // Runtime C++ function can be marked as non-throwing using `RUNTIME_NOTHROW`.
-                    val functionName = llvmFunction.name
+                    val functionName = llvmCallable.name
                     val message =
                             "no exception handler specified when calling function $functionName without nounwind attr"
                     throw IllegalArgumentException(message)
@@ -766,13 +701,12 @@ internal abstract class FunctionGenerationContext(
             val position = position()
             val endLocation = position?.end
             val success = basicBlock("call_success", endLocation)
-            val result = LLVMBuildInvoke(builder, llvmFunction, rargs, args.size, success, unwind, "")!!
-            attributeProvider?.addCallSiteAttributes(result)
+            val result = llvmCallable.buildInvoke(builder, args, success, unwind)
             // Store invoke instruction and its success block in reverse order.
             // Reverse order allows save arguments valid during all work with invokes
             // because other invokes processed before can be inside arguments list.
             if (exceptionHandler == ExceptionHandler.Caller)
-                invokeInstructions.add(0, FunctionInvokeInformation(result, llvmFunction, rargs, args.size, success, attributeProvider))
+                invokeInstructions.add(0, FunctionInvokeInformation(result, llvmCallable, args, success))
             positionAtEnd(success)
 
             return result
@@ -846,7 +780,7 @@ internal abstract class FunctionGenerationContext(
     }
 
     fun blockAddress(bbLabel: LLVMBasicBlockRef): LLVMValueRef {
-        return LLVMBlockAddress(function, bbLabel)!!
+        return function.blockAddress(bbLabel)
     }
 
     fun not(arg: LLVMValueRef, name: String = ""): LLVMValueRef = LLVMBuildNot(builder, arg, name)!!
@@ -927,12 +861,11 @@ internal abstract class FunctionGenerationContext(
             LLVMBuildExtractValue(builder, aggregate, index, name)!!
 
     fun gxxLandingpad(numClauses: Int, name: String = "", switchThreadState: Boolean = false): LLVMValueRef {
-        val personalityFunction = llvm.gxxPersonalityFunction.llvmValue
+        val personalityFunction = llvm.gxxPersonalityFunction
 
         // Type of `landingpad` instruction result (depends on personality function):
         val landingpadType = llvm.structType(llvm.int8PtrType, llvm.int32Type)
-
-        val landingpad = LLVMBuildLandingPad(builder, landingpadType, personalityFunction, numClauses, name)!!
+        val landingpad = personalityFunction.buildLandingpad(builder, landingpadType, numClauses, name)
 
         if (switchThreadState) {
             switchThreadState(Runnable)
@@ -1286,7 +1219,7 @@ internal abstract class FunctionGenerationContext(
         val enumClass = enumEntry.parentAsClass
         val getterId = context.enumsSupport.enumEntriesMap(enumClass)[enumEntry.name]!!.getterId
         return call(
-                context.enumsSupport.getValueGetter(enumClass).llvmFunction.llvmValue,
+                context.enumsSupport.getValueGetter(enumClass).llvmFunction,
                 listOf(llvm.int32(getterId)),
                 Lifetime.GLOBAL,
                 exceptionHandler
@@ -1356,7 +1289,7 @@ internal abstract class FunctionGenerationContext(
 
     internal fun prologue() {
         if (isObjectType(returnType!!)) {
-            returnSlot = LLVMGetParam(function, numParameters(function.type) - 1)
+            returnSlot = function.param( function.numParams - 1)
         }
 
         positionAtEnd(localsInitBb)
@@ -1449,9 +1382,7 @@ internal abstract class FunctionGenerationContext(
             // Replace invokes with calls and branches.
             invokeInstructions.forEach { functionInvokeInfo ->
                 positionBefore(functionInvokeInfo.invokeInstruction)
-                val newResult = LLVMBuildCall(builder, functionInvokeInfo.llvmFunction, functionInvokeInfo.rargs,
-                        functionInvokeInfo.argsNumber, "")!!
-                functionInvokeInfo.attributeProvider?.addCallSiteAttributes(newResult)
+                val newResult = functionInvokeInfo.llvmFunction.buildCall(builder, functionInvokeInfo.args)
                 // Have to generate `br` instruction because of current scheme of debug info.
                 br(functionInvokeInfo.success)
                 LLVMReplaceAllUsesWith(functionInvokeInfo.invokeInstruction, newResult)
@@ -1636,7 +1567,7 @@ internal abstract class FunctionGenerationContext(
 }
 
 internal class DefaultFunctionGenerationContext(
-        function: LLVMValueRef,
+        function: LlvmCallable,
         codegen: CodeGenerator,
         startLocation: LocationInfo?,
         endLocation: LocationInfo?,

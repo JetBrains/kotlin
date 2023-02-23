@@ -87,7 +87,7 @@ internal class KotlinObjCClassInfoGenerator(override val generationState: Native
                 .distinctBy { it.selector }
 
         allInitMethodsInfo.mapTo(this) {
-            ObjCMethodDesc(it.selector, it.encoding, llvm.missingInitImp.llvmValue)
+            ObjCMethodDesc(it.selector, it.encoding, llvm.missingInitImp.toConstPointer())
         }
     }
 
@@ -108,10 +108,10 @@ internal class KotlinObjCClassInfoGenerator(override val generationState: Native
     private val impType = pointerType(functionType(llvm.int8PtrType, true, llvm.int8PtrType, llvm.int8PtrType))
 
     private inner class ObjCMethodDesc(
-            val selector: String, val encoding: String, val impFunction: LLVMValueRef
+            val selector: String, val encoding: String, val impFunction: ConstPointer
     ) : Struct(
             runtime.objCMethodDescription,
-            constPointer(impFunction).bitcast(impType),
+            impFunction.bitcast(impType),
             staticData.cStringLiteral(selector),
             staticData.cStringLiteral(encoding)
     )
@@ -126,7 +126,7 @@ internal class KotlinObjCClassInfoGenerator(override val generationState: Native
                 ObjCMethodDesc(
                         annotation.getAnnotationStringValue("selector"),
                         annotation.getAnnotationStringValue("encoding"),
-                        it.llvmFunction.llvmValue
+                        it.llvmFunction.toConstPointer()
                 )
             }
 
@@ -136,16 +136,19 @@ internal class KotlinObjCClassInfoGenerator(override val generationState: Native
                 Zero(runtime.kotlinObjCClassData)
         ).pointer
 
-        val functionType = functionType(classDataPointer.llvmType, false, llvm.int8PtrType, llvm.int8PtrType)
-        val functionName = "kobjcclassdataimp:${irClass.fqNameForIrSerialization}#internal"
-
-        val function = generateFunctionNoRuntime(codegen, functionType, functionName) {
+        val functionProto = LlvmFunctionSignature(
+                returnType = LlvmRetType(classDataPointer.llvmType),
+                parameterTypes = listOf(LlvmParamType(llvm.int8PtrType), LlvmParamType(llvm.int8PtrType)),
+        ).toProto(
+                name = "kobjcclassdataimp:${irClass.fqNameForIrSerialization}#internal",
+                origin = null,
+                LLVMLinkage.LLVMPrivateLinkage
+        )
+        val functionCallable = generateFunctionNoRuntime(codegen, functionProto) {
             ret(classDataPointer.llvm)
-        }.also {
-            LLVMSetLinkage(it, LLVMLinkage.LLVMPrivateLinkage)
         }
 
-        return constPointer(function)
+        return functionCallable.toConstPointer()
     }
 
     private val codegen = CodeGenerator(generationState)

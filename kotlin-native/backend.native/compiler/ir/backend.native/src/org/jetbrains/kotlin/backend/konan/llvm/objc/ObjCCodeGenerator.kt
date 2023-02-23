@@ -27,14 +27,12 @@ internal open class ObjCCodeGenerator(val codegen: CodeGenerator) {
         return load(classRef.llvm)
     }
 
-    private val objcMsgSend = constPointer(
-            llvm.externalNativeRuntimeFunction(
+    private val objcMsgSend = llvm.externalNativeRuntimeFunction(
                     "objc_msgSend",
                     LlvmRetType(llvm.int8PtrType),
                     listOf(LlvmParamType(llvm.int8PtrType), LlvmParamType(llvm.int8PtrType)),
                     isVararg = true
-            ).llvmValue
-    )
+    ).toConstPointer()
 
     val objcRelease = llvm.externalNativeRuntimeFunction(
             "llvm.objc.release",

@@ -184,7 +184,7 @@ internal interface ContextUtils : RuntimeAware {
                                 ?: context.irLinker.getExternalDeclarationFileName(this)
                         this.computePrivateSymbolName(containerName)
                     }
-                    val proto = LlvmFunctionProto(this, symbolName, this@ContextUtils)
+                    val proto = LlvmFunctionProto(this, symbolName, this@ContextUtils, LLVMLinkage.LLVMExternalLinkage)
                     llvm.externalFunction(proto)
                 }
             } else {
@@ -197,8 +197,7 @@ internal interface ContextUtils : RuntimeAware {
      */
     val IrFunction.entryPointAddress: ConstPointer
         get() {
-            val result = LLVMConstBitCast(this.llvmFunction.llvmValue, llvm.int8PtrType)!!
-            return constPointer(result)
+            return llvmFunction.toConstPointer().bitcast(llvm.int8PtrType)
         }
 
     val IrClass.typeInfoPtr: ConstPointer
@@ -356,19 +355,19 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
     }
 
     internal fun externalFunction(llvmFunctionProto: LlvmFunctionProto): LlvmCallable {
-        this.dependenciesTracker.add(llvmFunctionProto.origin, onlyBitcode = llvmFunctionProto.independent)
+        if (llvmFunctionProto.origin != null) {
+            this.dependenciesTracker.add(llvmFunctionProto.origin, onlyBitcode = llvmFunctionProto.independent)
+        }
         val found = LLVMGetNamedFunction(module, llvmFunctionProto.name)
         if (found != null) {
-            assert(getFunctionType(found) == llvmFunctionProto.llvmFunctionType) {
-                "Expected: ${LLVMPrintTypeToString(llvmFunctionProto.llvmFunctionType)!!.toKString()} " +
+            require(getFunctionType(found) == llvmFunctionProto.signature.llvmFunctionType) {
+                "Expected: ${LLVMPrintTypeToString(llvmFunctionProto.signature.llvmFunctionType)!!.toKString()} " +
                         "found: ${LLVMPrintTypeToString(getFunctionType(found))!!.toKString()}"
             }
-            assert(LLVMGetLinkage(found) == LLVMLinkage.LLVMExternalLinkage)
-            return LlvmCallable(found, llvmFunctionProto)
+            require(LLVMGetLinkage(found) == llvmFunctionProto.linkage)
+            return LlvmCallable(found, llvmFunctionProto.signature)
         } else {
-            val function = addLlvmFunctionWithDefaultAttributes(context, module, llvmFunctionProto.name, llvmFunctionProto.llvmFunctionType)
-            llvmFunctionProto.addFunctionAttributes(function)
-            return LlvmCallable(function, llvmFunctionProto)
+            return llvmFunctionProto.createLlvmFunction(context, module)
         }
     }
 
@@ -379,9 +378,12 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
             functionAttributes: List<LlvmFunctionAttribute> = emptyList(),
             isVararg: Boolean = false
     ) = externalFunction(
-            LlvmFunctionProto(name, returnType, parameterTypes, functionAttributes,
+            LlvmFunctionSignature(returnType, parameterTypes, isVararg, functionAttributes).toProto(
+                    name,
                     origin = FunctionOrigin.FromNativeRuntime,
-                    isVararg, independent = false)
+                    linkage = LLVMLinkage.LLVMExternalLinkage,
+                    independent = false
+            )
     )
 
     internal fun externalNativeRuntimeFunction(name: String, signature: LlvmFunctionSignature) =
@@ -479,7 +481,6 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
     val CompareAndSwapVolatileHeapRef by lazyRtFunction
     val GetAndSetVolatileHeapRef by lazyRtFunction
 
-
     val tlsMode by lazy {
         when (target) {
             KonanTarget.WASM32,
@@ -488,12 +489,11 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
         }
     }
 
-    val usedFunctions = mutableListOf<LLVMValueRef>()
+    val usedFunctions = mutableListOf<LlvmCallable>()
     val usedGlobals = mutableListOf<LLVMValueRef>()
     val compilerUsedGlobals = mutableListOf<LLVMValueRef>()
     val irStaticInitializers = mutableListOf<IrStaticInitializer>()
-    val otherStaticInitializers = mutableListOf<LLVMValueRef>()
-    val globalSharedObjects = mutableSetOf<LLVMValueRef>()
+    val otherStaticInitializers = mutableListOf<LlvmCallable>()
     val initializersGenerationState = InitializersGenerationState()
     val boxCacheGlobals = mutableMapOf<BoxCache, StaticData.Global>()
 
@@ -605,25 +605,23 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
             functionAttributes = listOf(LlvmFunctionAttribute.NoUnwind)
     )
 
-    private fun getSizeOfReturnTypeInBits(functionPointer: LLVMValueRef): Long {
-        // LLVMGetElementType is called because we need to dereference a pointer to function.
-        val nsIntegerType = LLVMGetReturnType(LLVMGetElementType(functionPointer.type))
-        return LLVMSizeOfTypeInBits(runtime.targetData, nsIntegerType)
+    private fun getSizeOfTypeInBits(type: LLVMTypeRef): Long {
+        return LLVMSizeOfTypeInBits(runtime.targetData, type)
     }
 
     /**
      * Width of NSInteger in bits.
      */
     val nsIntegerTypeWidth: Long by lazy {
-        getSizeOfReturnTypeInBits(Kotlin_ObjCExport_NSIntegerTypeProvider.llvmValue)
+        getSizeOfTypeInBits(Kotlin_ObjCExport_NSIntegerTypeProvider.returnType)
     }
 
     /**
      * Width of C long type in bits.
      */
     val longTypeWidth: Long by lazy {
-        getSizeOfReturnTypeInBits(Kotlin_longTypeProvider.llvmValue)
+        getSizeOfTypeInBits(Kotlin_longTypeProvider.returnType)
     }
 }
 
-class IrStaticInitializer(val konanLibrary: KotlinLibrary?, val initializer: LLVMValueRef)
+class IrStaticInitializer(val konanLibrary: KotlinLibrary?, val initializer: LlvmCallable)

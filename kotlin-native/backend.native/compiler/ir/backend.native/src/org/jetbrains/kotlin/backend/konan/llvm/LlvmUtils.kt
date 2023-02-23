@@ -126,12 +126,6 @@ fun extractConstUnsignedInt(value: LLVMValueRef): Long {
     return LLVMConstIntGetZExtValue(value)
 }
 
-internal fun ContextUtils.isObjectReturn(functionType: LLVMTypeRef) : Boolean {
-    // Note that type is usually function pointer, so we have to dereference it.
-    val returnType = LLVMGetReturnType(LLVMGetElementType(functionType))!!
-    return isObjectType(returnType)
-}
-
 internal fun ContextUtils.isObjectRef(value: LLVMValueRef): Boolean {
     return isObjectType(value.type)
 }
@@ -194,11 +188,15 @@ private fun CodeGenerator.replaceExternalWeakOrCommonGlobal(name: String, value:
         // When some dynamic caches are used, we consider that stdlib is in the dynamic cache as well.
         // Runtime is linked into stdlib module only, so import runtime global from it.
         val global = importGlobal(name, value.llvmType)
-        val initializer = generateFunctionNoRuntime(this, functionType(llvm.voidType, false), "") {
+        val initializerProto = LlvmFunctionSignature(LlvmRetType(llvm.voidType)).toProto(
+                name = "",
+                origin = null,
+                LLVMLinkage.LLVMPrivateLinkage
+        )
+        val initializer = generateFunctionNoRuntime(this, initializerProto) {
             store(value.llvm, global)
             ret(null)
         }
-        LLVMSetLinkage(initializer, LLVMLinkage.LLVMPrivateLinkage)
 
         llvm.otherStaticInitializers += initializer
     } else {
