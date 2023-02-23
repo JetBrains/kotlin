@@ -39,7 +39,7 @@ internal fun FirCallableSymbol<*>.returnType(builder: KtSymbolByFirBuilder): KtT
     builder.typeBuilder.buildKtType(resolvedReturnType)
 
 internal fun FirCallableSymbol<*>.receiver(builder: KtSymbolByFirBuilder): KtReceiverParameterSymbol? =
-        builder.callableBuilder.buildExtensionReceiverSymbol(this)
+    builder.callableBuilder.buildExtensionReceiverSymbol(this)
 
 internal fun FirCallableSymbol<*>.receiverType(builder: KtSymbolByFirBuilder): KtType? =
     resolvedReceiverTypeRef?.let { receiver ->

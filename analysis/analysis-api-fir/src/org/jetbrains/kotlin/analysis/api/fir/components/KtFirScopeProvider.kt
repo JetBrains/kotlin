@@ -143,7 +143,7 @@ internal class KtFirScopeProvider(
     }
 
     override fun getFileScope(fileSymbol: KtFileSymbol): KtScope {
-            check(fileSymbol is KtFirFileSymbol) { "KtFirScopeProvider can only work with KtFirFileSymbol, but ${fileSymbol::class} was provided" }
+        check(fileSymbol is KtFirFileSymbol) { "KtFirScopeProvider can only work with KtFirFileSymbol, but ${fileSymbol::class} was provided" }
         return KtFirFileScope(fileSymbol, builder)
     }
 

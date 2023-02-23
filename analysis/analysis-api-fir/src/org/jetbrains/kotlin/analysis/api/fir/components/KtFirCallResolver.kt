@@ -189,7 +189,10 @@ internal class KtFirCallResolver(
             }
         }
 
-        fun <T> transformErrorReference(call: FirElement, calleeReference: T): KtCallInfo where T : FirNamedReference, T : FirDiagnosticHolder {
+        fun <T> transformErrorReference(
+            call: FirElement,
+            calleeReference: T,
+        ): KtCallInfo where T : FirNamedReference, T : FirDiagnosticHolder {
             val diagnostic = calleeReference.diagnostic
             val ktDiagnostic = calleeReference.createKtDiagnostic(psi)
 
