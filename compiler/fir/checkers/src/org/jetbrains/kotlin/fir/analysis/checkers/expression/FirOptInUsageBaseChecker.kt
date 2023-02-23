@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -262,7 +263,8 @@ object FirOptInUsageBaseChecker {
         experimentalities: Collection<Experimentality>,
         element: FirElement,
         context: CheckerContext,
-        reporter: DiagnosticReporter
+        reporter: DiagnosticReporter,
+        source: KtSourceElement? = element.source,
     ) {
         for ((annotationClassId, severity, message, _, fromSupertype) in experimentalities) {
             if (!isExperimentalityAcceptableInContext(annotationClassId, context, fromSupertype)) {
@@ -273,7 +275,7 @@ object FirOptInUsageBaseChecker {
                 val fqName = annotationClassId.asSingleFqName()
                 val reportedMessage = message?.takeIf { it.isNotBlank() }
                     ?: OptInNames.buildDefaultDiagnosticMessage(OptInNames.buildMessagePrefix(verb), fqName.asString())
-                reporter.reportOn(element.source, diagnostic, fqName, reportedMessage, context)
+                reporter.reportOn(source, diagnostic, fqName, reportedMessage, context)
             }
         }
     }

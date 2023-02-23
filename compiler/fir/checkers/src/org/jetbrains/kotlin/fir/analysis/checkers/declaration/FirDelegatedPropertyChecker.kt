@@ -32,11 +32,13 @@ object FirDelegatedPropertyChecker : FirPropertyChecker() {
         val delegate = declaration.delegate ?: return
         val delegateType = delegate.typeRef.coneType
 
+        val source = delegate.source;
+
         // TODO: Also suppress delegate issue if type inference failed. For example, in
         //  compiler/testData/diagnostics/tests/delegatedProperty/inference/differentDelegatedExpressions.fir.kt, no delegate issues are
         //  reported due to the inference issue.
         if (delegateType is ConeErrorType) {
-            val delegateSource = delegate.source
+            val delegateSource = source
             // Implicit recursion type is not reported since the type ref does not have a real source.
             if (delegateSource != null && (delegateType.diagnostic as? ConeSimpleDiagnostic)?.kind == DiagnosticKind.RecursionInImplicitTypes) {
                 // skip reporting other issues in this case
@@ -74,7 +76,7 @@ object FirDelegatedPropertyChecker : FirPropertyChecker() {
 
                 fun reportInapplicableDiagnostics(candidates: Collection<FirBasedSymbol<*>>) {
                     reporter.reportOn(
-                        reference.source,
+                        source,
                         FirErrors.DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE,
                         expectedFunctionSignature,
                         candidates,
@@ -85,7 +87,7 @@ object FirDelegatedPropertyChecker : FirPropertyChecker() {
                 var errorReported = true
                 when (diagnostic) {
                     is ConeUnresolvedNameError -> reporter.reportOn(
-                        reference.source,
+                        source,
                         FirErrors.DELEGATE_SPECIAL_FUNCTION_MISSING,
                         expectedFunctionSignature,
                         delegateType,
@@ -97,7 +99,7 @@ object FirDelegatedPropertyChecker : FirPropertyChecker() {
                         if (diagnostic.applicability.isSuccess) {
                             // Match is successful but there are too many matches! So we report DELEGATE_SPECIAL_FUNCTION_AMBIGUITY.
                             reporter.reportOn(
-                                reference.source,
+                                source,
                                 FirErrors.DELEGATE_SPECIAL_FUNCTION_AMBIGUITY,
                                 expectedFunctionSignature,
                                 diagnostic.candidates.map { it.symbol },
@@ -109,7 +111,7 @@ object FirDelegatedPropertyChecker : FirPropertyChecker() {
                     }
 
                     is ConeInapplicableWrongReceiver -> reporter.reportOn(
-                        reference.source,
+                        source,
                         FirErrors.DELEGATE_SPECIAL_FUNCTION_MISSING,
                         expectedFunctionSignature,
                         delegateType,
@@ -131,7 +133,7 @@ object FirDelegatedPropertyChecker : FirPropertyChecker() {
                 val propertyType = declaration.returnTypeRef.coneType
                 if (!AbstractTypeChecker.isSubtypeOf(context.session.typeContext, returnType, propertyType)) {
                     reporter.reportOn(
-                        delegate.source,
+                        source,
                         FirErrors.DELEGATE_SPECIAL_FUNCTION_RETURN_TYPE_MISMATCH,
                         "getValue",
                         propertyType,

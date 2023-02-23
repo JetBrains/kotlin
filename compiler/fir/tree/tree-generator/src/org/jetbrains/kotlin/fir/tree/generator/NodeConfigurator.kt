@@ -359,7 +359,6 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +field("propertySymbol", firPropertySymbolType).apply {
                 withBindThis = false
             }
-            +field("source", sourceElementType, nullable = true, withReplace = true)
             +booleanField("isGetter")
             +booleanField("isSetter")
             +annotations
@@ -629,8 +628,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         wrappedDelegateExpression.configure {
-            +field("delegateProvider", expression)
-            +field("source", sourceElementType, nullable = true, withReplace = true)
+            +field("delegateProvider", expression).withReplace()
         }
 
         namedReference.configure {

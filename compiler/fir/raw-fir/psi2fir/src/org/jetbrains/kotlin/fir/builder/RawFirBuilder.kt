@@ -1809,9 +1809,9 @@ open class RawFirBuilder(
                         }
 
                         if (hasDelegate()) {
-                            fun extractDelegateExpression() = buildOrLazyExpression(null) {
-                                this@toFirProperty.delegate?.expression?.let {
-                                    it.toFirExpression("Should have delegate")
+                            fun extractDelegateExpression() = buildOrLazyExpression(this@toFirProperty.toFirSourceElement(KtFakeSourceElementKind.WrappedDelegate)) {
+                                this@toFirProperty.delegate?.expression?.let { expression ->
+                                        expression.toFirExpression("Should have delegate")
                                 } ?: buildErrorExpression {
                                     diagnostic = ConeSimpleDiagnostic("Should have delegate", DiagnosticKind.ExpressionExpected)
                                 }
@@ -1820,7 +1820,7 @@ open class RawFirBuilder(
                             val delegateBuilder = FirWrappedDelegateExpressionBuilder().apply {
                                 val delegateExpression = extractDelegateExpression()
                                 source = delegateExpression.source?.fakeElement(KtFakeSourceElementKind.WrappedDelegate)
-                                expression = extractDelegateExpression()
+                                expression = delegateExpression
                             }
 
                             generateAccessorsByDelegate(

@@ -9,7 +9,6 @@ package org.jetbrains.kotlin.fir.expressions.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
@@ -28,17 +27,17 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 @FirBuilderDsl
 class FirWrappedDelegateExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
+    override var source: KtSourceElement? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     lateinit var expression: FirExpression
     lateinit var delegateProvider: FirExpression
-    override var source: KtSourceElement? = null
 
     override fun build(): FirWrappedDelegateExpression {
         return FirWrappedDelegateExpressionImpl(
+            source,
             annotations.toMutableOrEmpty(),
             expression,
             delegateProvider,
-            source,
         )
     }
 

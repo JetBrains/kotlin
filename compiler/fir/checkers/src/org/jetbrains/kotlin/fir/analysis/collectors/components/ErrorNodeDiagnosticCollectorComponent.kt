@@ -11,9 +11,11 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.analysis.diagnostics.toFirDiagnostics
 import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
 import org.jetbrains.kotlin.fir.declarations.FirErrorImport
+import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.diagnostics.ConeAmbiguousSuper
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
@@ -59,7 +61,7 @@ class ErrorNodeDiagnosticCollectorComponent(
     }
 
     private fun processErrorReference(reference: FirNamedReference, diagnostic: ConeDiagnostic, context: CheckerContext) {
-        val source = reference.source ?: return
+        var source = reference.source ?: return
         val qualifiedAccessOrAnnotationCall = context.qualifiedAccessOrAssignmentsOrAnnotationCalls.lastOrNull()?.takeIf {
             // Use the source of the enclosing FirQualifiedAccess if it is exactly the call to the erroneous callee.
             it.calleeReference == reference
@@ -77,6 +79,11 @@ class ErrorNodeDiagnosticCollectorComponent(
                 qualifiedAccessOrAnnotationCall.extensionReceiver.cannotBeResolved() ||
                 qualifiedAccessOrAnnotationCall.explicitReceiver.cannotBeResolved()
             ) return
+        }
+
+        if (source.kind == KtFakeSourceElementKind.DelegatedPropertyAccessor) {
+            val property = context.containingDeclarations.lastOrNull { it is FirProperty } as? FirProperty ?: return
+            source = property.delegate?.source?.fakeElement(KtFakeSourceElementKind.DelegatedPropertyAccessor) ?: return
         }
 
         reportFirDiagnostic(diagnostic, source, context, qualifiedAccessOrAnnotationCall?.source)

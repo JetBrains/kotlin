@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.isLhsOfAssignment
+import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.references.toResolvedBaseSymbol
@@ -37,7 +39,18 @@ object FirOptInUsageAccessChecker : FirBasicExpressionChecker() {
 
                 val experimentalities = resolvedSymbol.loadExperimentalities(context, fromSetter = false, dispatchReceiverType) +
                         loadExperimentalitiesFromTypeArguments(context, expression.typeArguments)
-                reportNotAcceptedExperimentalities(experimentalities, expression, context, reporter)
+                reportNotAcceptedExperimentalities(
+                    experimentalities,
+                    expression,
+                    context,
+                    reporter,
+                    source = if (expression.source?.kind == KtFakeSourceElementKind.DelegatedPropertyAccessor) {
+                        val property = context.containingDeclarations.lastOrNull { it is FirProperty } as? FirProperty ?: return
+                        property.delegate?.source?.fakeElement(KtFakeSourceElementKind.DelegatedPropertyAccessor) ?: return
+                    } else {
+                        expression.source
+                    },
+                )
             }
         }
     }

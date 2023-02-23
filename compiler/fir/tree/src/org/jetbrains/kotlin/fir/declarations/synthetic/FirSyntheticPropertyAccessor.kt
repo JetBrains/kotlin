@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.declarations.synthetic
 
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
@@ -153,11 +152,6 @@ class FirSyntheticPropertyAccessor(
     }
 
     override fun replaceContractDescription(newContractDescription: FirContractDescription) {
-        throw AssertionError("Mutation of synthetic property accessor isn't supported")
-    }
-
-    @FirImplementationDetail
-    override fun replaceSource(newSource: KtSourceElement?) {
         throw AssertionError("Mutation of synthetic property accessor isn't supported")
     }
 
