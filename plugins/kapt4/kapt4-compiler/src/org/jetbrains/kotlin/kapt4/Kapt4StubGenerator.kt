@@ -559,10 +559,7 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
 
         val type = field.type
 
-        // TODO
-//        if (!checkIfValidTypeName(containingClass, type)) {
-//            return null
-//        }
+        if (!checkIfValidTypeName(containingClass, type)) return null
 
 //        fun typeFromAsm() = signatureParser.parseFieldSignature(field.signature, treeMaker.RawType(type))
 

@@ -1,7 +1,7 @@
 @kotlin.Metadata()
 public final class A {
     @org.jetbrains.annotations.Nullable()
-    private final A x;
+    private final A x = null;
 
     public A() {
         super();
@@ -161,6 +161,11 @@ public final class Test {
         /*public static final*/ WHITE /* = new NestedEnum() */;
 
         NestedEnum() {
+        }
+
+        @org.jetbrains.annotations.NotNull()
+        public static kotlin.enums.EnumEntries<Test.NestedEnum> getEntries() {
+            return null;
         }
     }
 }
