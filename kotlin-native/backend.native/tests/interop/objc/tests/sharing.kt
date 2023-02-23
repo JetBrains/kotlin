@@ -22,7 +22,7 @@ private class NSObjectImpl : NSObject() {
         obj.freeze()
         assertTrue(obj.isFrozen)
         runInWorker {
-            val obj1 = array.objectAtIndex(0u) as NSObjectImpl // KT-55902
+            val obj1 = array.objectAtIndex(0u) as NSObjectImpl // FIXME change literal to "0" after fix of KT-55902
             assertFailsWith<InvalidMutabilityException> {
                 obj1.x = 333
             }

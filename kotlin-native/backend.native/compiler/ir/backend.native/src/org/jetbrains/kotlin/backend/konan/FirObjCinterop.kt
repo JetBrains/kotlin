@@ -13,6 +13,9 @@ import org.jetbrains.kotlin.fir.scopes.PlatformSpecificOverridabilityRules
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
+/**
+ * mimics behavior of class ObjCOverridabilityCondition
+ */
 class ObjCOverridabilityRules(val session: FirSession) : PlatformSpecificOverridabilityRules {
 
     override fun isOverriddenFunction(overrideCandidate: FirSimpleFunction, baseDeclaration: FirSimpleFunction): Boolean? {
@@ -48,7 +51,9 @@ private fun FirCallableDeclaration.isExternalObjCClassProperty() = this is FirPr
         true // FIXME must fully mimic CallableDescriptor.isExternalObjCClassProperty()
         // (this.containingDeclaration as? ClassDescriptor)?.isExternalObjCClass() == true
 
-// mimics ObjCInteropKt.parameterNamesMatch()
+/**
+ * mimics ObjCInteropKt.parameterNamesMatch()
+ */
 private fun parameterNamesMatch(first: FirSimpleFunction, second: FirSimpleFunction): Boolean {
     // The original Objective-C method selector is represented as
     // function name and parameter names (except first).
@@ -63,7 +68,9 @@ private fun parameterNamesMatch(first: FirSimpleFunction, second: FirSimpleFunct
     return true
 }
 
-
+/**
+ *  mimics FunctionDescriptor.getObjCMethodInfo()
+ */
 internal fun FirFunction.getObjCMethodInfo(onlyExternal: Boolean): ObjCMethodInfo? {
     val isReal = true  // TODO KT-56030: mimic "this.kind.isReal" as K1 did in `FunctionDescriptor.getObjCMethodInfo()`
     if (isReal) {
@@ -76,11 +83,17 @@ internal fun FirFunction.getObjCMethodInfo(onlyExternal: Boolean): ObjCMethodInf
     return null
 }
 
+/**
+ * mimics IrFunction.decodeObjCMethodAnnotation()
+ */
 private fun FirFunction.decodeObjCMethodAnnotation(): ObjCMethodInfo? {
     // TODO KT-56030: mimic `assert (this.kind.isReal)`
     return annotations.getAnnotationByClassId(ClassId.topLevel(objCMethodFqName), moduleData.session)?.toObjCMethodInfo()
 }
 
+/**
+ * mimics ObjCInteropKt.objCMethodInfo(annotation: AnnotationDescriptor)
+ */
 private fun FirAnnotation.toObjCMethodInfo() = ObjCMethodInfo(
         selector = constStringArgument("selector"),
         encoding = constStringArgument("encoding"),
