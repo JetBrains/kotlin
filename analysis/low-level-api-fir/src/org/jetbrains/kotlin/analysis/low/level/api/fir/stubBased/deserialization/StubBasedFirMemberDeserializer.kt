@@ -40,7 +40,7 @@ class StubBasedFirDeserializationContext(
     val relativeClassName: FqName?,
     val typeDeserializer: StubBasedFirTypeDeserializer,
     val annotationDeserializer: StubBasedAbstractAnnotationDeserializer,
-    val constDeserializer: FirConstDeserializer,
+    val constDeserializer: StubBasedFirConstDeserializer,
     val containerSource: DeserializedContainerSource?,
     val outerClassSymbol: FirRegularClassSymbol?,
     val outerTypeParameters: List<FirTypeParameterSymbol>
@@ -56,7 +56,7 @@ class StubBasedFirDeserializationContext(
         containerSource: DeserializedContainerSource? = this.containerSource,
         outerClassSymbol: FirRegularClassSymbol? = this.outerClassSymbol,
         annotationDeserializer: StubBasedAbstractAnnotationDeserializer = this.annotationDeserializer,
-        constDeserializer: FirConstDeserializer = this.constDeserializer,
+        constDeserializer: StubBasedFirConstDeserializer = this.constDeserializer,
         capturesTypeParameters: Boolean = true,
         containingDeclarationSymbol: FirBasedSymbol<*>? = this.outerClassSymbol
     ): StubBasedFirDeserializationContext = StubBasedFirDeserializationContext(
@@ -87,7 +87,7 @@ class StubBasedFirDeserializationContext(
             classOrObject: KtClassOrObject,
             moduleData: FirModuleData,
             annotationDeserializer: StubBasedAbstractAnnotationDeserializer,
-            constDeserializer: FirConstDeserializer,
+            constDeserializer: StubBasedFirConstDeserializer,
             containerSource: DeserializedContainerSource?,
             outerClassSymbol: FirRegularClassSymbol
         ): StubBasedFirDeserializationContext = createRootContext(
@@ -105,7 +105,7 @@ class StubBasedFirDeserializationContext(
         fun createRootContext(
             moduleData: FirModuleData,
             annotationDeserializer: StubBasedAbstractAnnotationDeserializer,
-            constDeserializer: FirConstDeserializer,
+            constDeserializer: StubBasedFirConstDeserializer,
             packageFqName: FqName,
             relativeClassName: FqName?,
             owner: KtTypeParameterListOwner,
@@ -139,7 +139,7 @@ class StubBasedFirDeserializationContext(
         ): StubBasedFirDeserializationContext = createRootContext(
             moduleData,
             JvmAnnotationsDeserializer(session),
-            FirConstDeserializer(session),
+            StubBasedFirConstDeserializer(session),
             callableId.packageName,
             callableId.className,
             parameterListOwner,

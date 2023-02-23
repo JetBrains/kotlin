@@ -4,21 +4,26 @@ package org.jetbrains.kotlin.analysis.decompiler.stub
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
+import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.analysis.decompiler.stub.flags.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
+import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
+import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf.MemberKind
 import org.jetbrains.kotlin.metadata.ProtoBuf.Modality
 import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtSimpleNameStringTemplateEntry
+import org.jetbrains.kotlin.psi.KtStringTemplateExpression
+import org.jetbrains.kotlin.psi.stubs.ConstantValueKind
+import org.jetbrains.kotlin.psi.stubs.elements.KtPlaceHolderStubElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
-import org.jetbrains.kotlin.psi.stubs.impl.KotlinConstructorStubImpl
-import org.jetbrains.kotlin.psi.stubs.impl.KotlinFunctionStubImpl
-import org.jetbrains.kotlin.psi.stubs.impl.KotlinPropertyAccessorStubImpl
-import org.jetbrains.kotlin.psi.stubs.impl.KotlinPropertyStubImpl
+import org.jetbrains.kotlin.psi.stubs.impl.*
 import org.jetbrains.kotlin.resolve.DataClassResolver
 import org.jetbrains.kotlin.serialization.deserialization.AnnotatedCallableKind
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
+import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.serialization.deserialization.getName
 
 fun createPackageDeclarationsStubs(
@@ -245,9 +250,10 @@ private class PropertyClsStubBuilder(
 
     override fun doCreateCallableStub(parent: StubElement<out PsiElement>): StubElement<out PsiElement> {
         val callableName = c.nameResolver.getName(propertyProto.name)
-
+        val flags = propertyProto.flags
         // Note that arguments passed to stubs here and elsewhere are based on what stabs would be generated based on decompiled code
         // This info is anyway irrelevant for the purposes these stubs are used
+        val hasInitializer = Flags.HAS_CONSTANT[flags]
         val propertyStub = KotlinPropertyStubImpl(
             parent,
             callableName.ref(),
@@ -255,13 +261,12 @@ private class PropertyClsStubBuilder(
             isTopLevel,
             hasDelegate = false,
             hasDelegateExpression = false,
-            hasInitializer = false,
+            hasInitializer = hasInitializer,
             isExtension = propertyProto.hasReceiver(),
             hasReturnTypeRef = true,
             fqName = c.containerFqName.child(callableName)
         )
 
-        val flags = propertyProto.flags
         val defaultAccessorFlags = Flags.getAccessorFlags(
             Flags.HAS_ANNOTATIONS[flags],
             Flags.VISIBILITY[flags],
@@ -293,6 +298,26 @@ private class PropertyClsStubBuilder(
                     listOf(propertyProto.setterValueParameter),
                     protoContainer
                 )
+            }
+        }
+        if (hasInitializer) {
+            val source = protoContainer.source
+            if (source is KotlinJvmBinarySourceElement){
+                source.binaryClass.visitMembers(object : KotlinJvmBinaryClass.MemberVisitor {
+                    override fun visitMethod(name: Name, desc: String): KotlinJvmBinaryClass.MethodAnnotationVisitor? = null
+
+                    override fun visitField(name: Name, desc: String, initializer: Any?): KotlinJvmBinaryClass.AnnotationVisitor? {
+                        if (initializer != null) {
+                            buildConstantInitializer(initializer, null, desc, propertyStub)
+                        }
+                        return null
+                    }
+                }, null)
+            } else {
+                val value = propertyProto.getExtensionOrNull(BuiltInSerializerProtocol.compileTimeValue)
+                if (value != null) {
+                    buildConstantInitializer(null, value, value.type.name, propertyStub)
+                }
             }
         }
         return propertyStub
@@ -343,5 +368,53 @@ private class ConstructorClsStubBuilder(
             KotlinConstructorStubImpl(parent, KtStubElementTypes.SECONDARY_CONSTRUCTOR, name, hasBody = true, isDelegatedCallToThis = false)
         else
             KotlinConstructorStubImpl(parent, KtStubElementTypes.PRIMARY_CONSTRUCTOR, name, hasBody = false, isDelegatedCallToThis = false)
+    }
+}
+fun buildConstantInitializer(
+    value1: Any?, builtInValue: ProtoBuf.Annotation.Argument.Value?, constKind: String, parent: KotlinStubBaseImpl<*>
+): KotlinStubBaseImpl<*>? {
+    return when (constKind) {
+        "BYTE", "B", "SHORT", "S", "LONG", "J", "INT", "I" -> KotlinConstantExpressionStubImpl(
+            parent,
+            KtStubElementTypes.INTEGER_CONSTANT,
+            ConstantValueKind.INTEGER_CONSTANT,
+            StringRef.fromString(((value1 ?: builtInValue?.intValue) as Number).toString())
+        )
+        "CHAR", "C" -> KotlinConstantExpressionStubImpl(
+            parent,
+            KtStubElementTypes.CHARACTER_CONSTANT,
+            ConstantValueKind.CHARACTER_CONSTANT,
+            StringRef.fromString(((value1 ?: builtInValue?.intValue) as Number).toInt().toChar().toString())
+        )
+        "FLOAT", "F" -> KotlinConstantExpressionStubImpl(
+            parent,
+            KtStubElementTypes.FLOAT_CONSTANT,
+            ConstantValueKind.FLOAT_CONSTANT,
+            StringRef.fromString(((value1 ?: builtInValue?.floatValue) as Float).toString())
+        )
+        "DOUBLE", "D" -> KotlinConstantExpressionStubImpl(
+            parent,
+            KtStubElementTypes.FLOAT_CONSTANT,
+            ConstantValueKind.FLOAT_CONSTANT,
+            StringRef.fromString(((value1 ?: builtInValue?.doubleValue) as Double).toString())
+        )
+        "BOOLEAN", "Z" -> KotlinConstantExpressionStubImpl(
+            parent,
+            KtStubElementTypes.BOOLEAN_CONSTANT,
+            ConstantValueKind.BOOLEAN_CONSTANT,
+            StringRef.fromString(((value1 ?: builtInValue?.intValue) != 0).toString())
+        )
+        "STRING", "Ljava/lang/String;" -> {
+            val text = (value1 ?: builtInValue?.stringValue) as String
+            val stringTemplate = KotlinPlaceHolderStubImpl<KtStringTemplateExpression>(
+                parent, KtStubElementTypes.STRING_TEMPLATE
+            )
+            return KotlinPlaceHolderWithTextStubImpl<KtSimpleNameStringTemplateEntry>(
+                stringTemplate,
+                KtStubElementTypes.SHORT_STRING_TEMPLATE_ENTRY,
+                text
+            )
+        }
+        else -> null
     }
 }

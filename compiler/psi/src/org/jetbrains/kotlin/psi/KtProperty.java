@@ -30,6 +30,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
+import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.kotlin.psi.stubs.KotlinPropertyStub;
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 import org.jetbrains.kotlin.psi.typeRefHelpers.TypeRefHelpersKt;
@@ -264,12 +265,29 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
         return getInitializer() != null;
     }
 
+    private static final TokenSet CONSTANT_EXPRESSIONS_TYPES = TokenSet.create(
+            KtStubElementTypes.NULL,
+            KtStubElementTypes.BOOLEAN_CONSTANT,
+            KtStubElementTypes.FLOAT_CONSTANT,
+            KtStubElementTypes.CHARACTER_CONSTANT,
+            KtStubElementTypes.INTEGER_CONSTANT,
+
+            KtStubElementTypes.STRING_TEMPLATE
+    );
+
     @Override
     @Nullable
     public KtExpression getInitializer() {
         KotlinPropertyStub stub = getStub();
-        if (stub != null && !stub.hasInitializer()) {
-            return null;
+        if (stub != null) {
+            if (!stub.hasInitializer()) {
+                return null;
+            }
+
+            KtExpression[] constantExpressions = stub.getChildrenByType(CONSTANT_EXPRESSIONS_TYPES, KtExpression.EMPTY_ARRAY);
+            if (constantExpressions.length > 0) {
+                return constantExpressions[0];
+            }
         }
 
         return AstLoadingFilter.forceAllowTreeLoading(this.getContainingFile(), () ->

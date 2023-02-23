@@ -99,7 +99,7 @@ class JvmStubBasedFirDeserializedSymbolProvider(
                 val rootContext = StubBasedFirDeserializationContext.createRootContext(
                     moduleData,
                     JvmAnnotationsDeserializer(session),
-                    FirConstDeserializer(session),
+                    StubBasedFirConstDeserializer(session),
                     classId.packageFqName,
                     classId.relativeClassName,
                     classLikeDeclaration,
