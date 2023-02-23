@@ -186,6 +186,43 @@
                                     <goal>run</goal>
                                 </goals>
                             </execution>
+                            <execution>
+                                <id>integration-test-k2</id>
+                                <configuration>
+                                    <projectsDirectory>src/it</projectsDirectory>
+                                    <cloneProjectsTo>${project.build.directory}/it-k2</cloneProjectsTo>
+                                    <pomExcludes>
+                                        <!-- exclude kapt -->
+                                        <pomExclude>test-dagger-maven-example/pom.xml</pomExclude>
+                                        <pomExclude>test-enable-extensions-kapt-allopen/pom.xml</pomExclude>
+                                        <pomExclude>test-kapt-generateKotlinCode/pom.xml</pomExclude>
+                                        <pomExclude>test-enable-extensions/pom.xml</pomExclude>
+                                        <pomExclude>test-kapt-allopen/pom.xml</pomExclude>
+                                        <pomExclude>test-lombok-with-kapt/pom.xml</pomExclude>
+                                        <!-- exclude js and mpp -->
+                                        <pomExclude>test-js-moduleKind/pom.xml</pomExclude>
+                                        <pomExclude>test-js-accessToInternal/pom.xml</pomExclude>
+                                        <pomExclude>test-js-suppressWarnings/pom.xml</pomExclude>
+                                        <pomExclude>test-js-sourceMap/pom.xml</pomExclude>
+                                        <pomExclude>test-js-extraArguments/pom.xml</pomExclude>
+                                        <pomExclude>test-js-sourceMapEmbedSources/pom.xml</pomExclude>
+                                        <pomExclude>test-multiplatform/pom.xml</pomExclude>
+                                        <!-- exclude kts -->
+                                        <pomExclude>test-helloworld-kts/pom.xml</pomExclude>
+                                        <!-- exclude test, that depends on lv as they will be automatically fixed, when current lv goes to 2.0 -->
+                                        <pomExclude>test-languageVersion/pom.xml</pomExclude>
+                                        <pomExclude>test-apiVersion/pom.xml</pomExclude>
+                                    </pomExcludes>
+                                    <properties>
+                                        <kotlin.compiler.languageVersion>2.0</kotlin.compiler.languageVersion>
+                                    </properties>
+                                </configuration>
+                                <!--<phase>package</phase>-->
+                                <goals>
+                                    <goal>install</goal>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
                         </executions>
                     </plugin>
                 </plugins>

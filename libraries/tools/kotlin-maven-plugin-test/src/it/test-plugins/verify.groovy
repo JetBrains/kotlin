@@ -26,20 +26,21 @@ State state = buildLogFile.readLines().collect { it.replaceAll("\\u001b[^m]*m", 
     def m = pattern.matcher(line)
     if (m.find()) {
         acc.currentPlugin = m.group(1)
-    } else if (line.startsWith("[INFO] Downloaded") ||
-               line.startsWith("[INFO] Downloading") ||
-               line.startsWith("Downloaded") ||
-               line.startsWith("Downloading") ||
-               line.startsWith("[INFO] PERF:")) {
+    } else if (line.startsWith("[INFO] Downloaded")
+            || line.startsWith("[INFO] Downloading")
+            || line.startsWith("Downloaded")
+            || line.startsWith("Downloading")
+            || line.startsWith("[WARNING] Language version 2.0 is experimental, there are no backwards compatibility guarantees for new language and library features")
+            || line.startsWith("[INFO] PERF:")) {
         // ignore line
     } else if (acc.currentPlugin == "kotlin-maven-plugin") {
-        def filtered = removePaths(line, basedir).
-                replace("\\", "/").
-                replaceAll(/[0-9]+\s*ms/, "LLL ms").
-                trim().
-                replaceAll(/^\[[A-Z]+\]$/, "").
-                replace(kotlinVersion, "@snapshot@").
-                replaceAll(/\(JRE .+\)/, "(JRE <jre-version>)")
+        def filtered = removePaths(line, basedir)
+                .replace("\\", "/")
+                .replaceAll(/[0-9]+\s*ms/, "LLL ms")
+                .trim()
+                .replaceAll(/^\[[A-Z]+\]$/, "")
+                .replace(kotlinVersion, "@snapshot@")
+                .replaceAll(/\(JRE .+\)/, "(JRE <jre-version>)")
 
         if (filtered != "") {
             acc.lines << filtered
