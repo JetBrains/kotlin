@@ -4088,6 +4088,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             public void testNoSmartcastToNullableNothing() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/problems/noSmartcastToNullableNothing.kt");
             }
+
+            @TestMetadata("smartcastToStarProjectedSubclass.kt")
+            public void testSmartcastToStarProjectedSubclass() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/problems/smartcastToStarProjectedSubclass.kt");
+            }
         }
 
         @TestMetadata("compiler/fir/analysis-tests/testData/resolve/smartcasts/receivers")

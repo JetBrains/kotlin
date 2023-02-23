@@ -152,7 +152,7 @@ class FirTypeIntersectionScopeContext(
             val groupWithPrivate =
                 overrideService.extractBothWaysOverridable(allMembersWithScope.maxByVisibility(), allMembersWithScope, overrideChecker)
             val group = groupWithPrivate.filter { !Visibilities.isPrivate(it.member.fir.visibility) }.ifEmpty { groupWithPrivate }
-            val directOverrides = group.onlyDirectlyInherited()
+            val directOverrides = if (forClassUseSiteScope) group.onlyDirectlyInherited() else group
             val mostSpecific = overrideService.selectMostSpecificMembers(directOverrides, ReturnTypeCalculatorForFullBodyResolve)
             val nonTrivial = if (forClassUseSiteScope) {
                 // Create a non-trivial intersection override when the base methods come from different scopes,

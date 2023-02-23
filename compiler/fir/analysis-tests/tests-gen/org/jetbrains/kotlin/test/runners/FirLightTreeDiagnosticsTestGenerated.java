@@ -4623,6 +4623,12 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
                 public void testNoSmartcastToNullableNothing() throws Exception {
                     runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/problems/noSmartcastToNullableNothing.kt");
                 }
+
+                @Test
+                @TestMetadata("smartcastToStarProjectedSubclass.kt")
+                public void testSmartcastToStarProjectedSubclass() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/problems/smartcastToStarProjectedSubclass.kt");
+                }
             }
 
             @Nested
