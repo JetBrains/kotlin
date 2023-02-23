@@ -242,7 +242,7 @@ object ConeTypeCompatibilityChecker {
     /**
      * Collects the upper bounds as [ConeClassLikeType].
      */
-    private fun ConeKotlinType?.collectUpperBounds(): Set<ConeClassLikeType> {
+    fun ConeKotlinType?.collectUpperBounds(): Set<ConeClassLikeType> {
         if (this == null) return emptySet()
         return when (this) {
             is ConeErrorType -> emptySet() // Ignore error types

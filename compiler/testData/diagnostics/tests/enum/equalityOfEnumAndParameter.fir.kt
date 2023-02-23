@@ -22,16 +22,16 @@ enum class CleverEnum : Buffered, AIPowered {
 }
 
 fun <P> processInfo1(info: String, printer: P) where P: Buffered, P: AIPowered {
-    printer == 20
-    printer == BufferedEnum.A
-    printer == UsualEnum.C
+    <!EQUALITY_NOT_APPLICABLE!>printer == 20<!>
+    <!INCOMPATIBLE_ENUM_COMPARISON!>printer == BufferedEnum.A<!>
+    <!INCOMPATIBLE_ENUM_COMPARISON!>printer == UsualEnum.C<!>
     printer == CleverEnum.E
 }
 
 fun <P> processInfo2(info: String, printer: P) where P: AIPowered, P: Buffered {
-    printer == 20
-    printer == BufferedEnum.A
-    printer == UsualEnum.C
+    <!EQUALITY_NOT_APPLICABLE!>printer == 20<!>
+    <!INCOMPATIBLE_ENUM_COMPARISON!>printer == BufferedEnum.A<!>
+    <!INCOMPATIBLE_ENUM_COMPARISON!>printer == UsualEnum.C<!>
     printer == CleverEnum.E
 }
 
@@ -41,7 +41,7 @@ abstract class Printer {
 
 fun <P> processInfo3(info: String, printer: P) where P: Buffered, P: Printer {
     <!EQUALITY_NOT_APPLICABLE!>printer == 20<!>
-    <!INCOMPATIBLE_ENUM_COMPARISON_ERROR!>printer == BufferedEnum.A<!>
-    <!INCOMPATIBLE_ENUM_COMPARISON_ERROR!>printer == UsualEnum.C<!>
-    <!INCOMPATIBLE_ENUM_COMPARISON_ERROR!>printer == CleverEnum.E<!>
+    <!INCOMPATIBLE_ENUM_COMPARISON!>printer == BufferedEnum.A<!>
+    <!INCOMPATIBLE_ENUM_COMPARISON!>printer == UsualEnum.C<!>
+    <!INCOMPATIBLE_ENUM_COMPARISON!>printer == CleverEnum.E<!>
 }

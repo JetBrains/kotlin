@@ -14,8 +14,10 @@ import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory2
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.checkers.ConeTypeCompatibilityChecker.collectUpperBounds
 import org.jetbrains.kotlin.fir.analysis.checkers.isValueClass
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
+import org.jetbrains.kotlin.fir.declarations.utils.isEnumEntry
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.declarations.utils.isInterface
 import org.jetbrains.kotlin.fir.expressions.FirEqualityOperatorCall
@@ -23,21 +25,20 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirOperation
 import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.resolve.isSubclassOf
+import org.jetbrains.kotlin.fir.scopes.platformClassMapper
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.text
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
 object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker() {
     override fun check(expression: FirEqualityOperatorCall, context: CheckerContext, reporter: DiagnosticReporter) {
         val arguments = expression.argumentList.arguments
         require(arguments.size == 2) { "Equality operator call with non-2 arguments" }
 
-        val l = arguments[0].toArgumentTypeInformation(context)
-        val r = arguments[1].toArgumentTypeInformation(context)
+        val l = arguments[0].toArgumentInfo(context)
+        val r = arguments[1].toArgumentInfo(context)
 
         checkSensibleness(l.smartCastType, r.smartCastType, context, expression, reporter)
 
@@ -47,10 +48,10 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker() {
             else -> error("Invalid operator of FirEqualityOperatorCall")
         }
 
-        checkApplicability(l.originalClassAndType, r.originalClassAndType, context).ifInapplicable {
+        checkApplicability(l.originalTypeInfo, r.originalTypeInfo, context).ifInapplicable {
             return reporter.reportInapplicabilityDiagnostic(
                 expression, it, expression.operation, isWarning = false,
-                l.originalClassAndType, r.originalClassAndType,
+                l.originalTypeInfo, r.originalTypeInfo,
                 l.userType, r.userType, context,
             )
         }
@@ -59,54 +60,16 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker() {
             return
         }
 
-        checkApplicability(l.smartCastClassAndType, r.smartCastClassAndType, context).ifInapplicable {
+        checkApplicability(l.smartCastTypeInfo, r.smartCastTypeInfo, context).ifInapplicable {
             return reporter.reportInapplicabilityDiagnostic(
                 expression, it, expression.operation, isWarning = true,
-                l.smartCastClassAndType, r.smartCastClassAndType,
+                l.smartCastTypeInfo, r.smartCastTypeInfo,
                 l.userType, r.userType, context,
             )
         }
     }
 
-    private class ClassAndType(
-        val klass: FirClassSymbol<*>,
-        val type: ConeKotlinType,
-    ) {
-        override fun toString() = "$type ($klass)"
-    }
-
-    private fun ConeKotlinType.toClassAndType(session: FirSession) =
-        ClassAndType(representativeClass(session), this)
-
-    private class ArgumentTypeInformation(
-        val argument: FirExpression,
-        val userType: ConeKotlinType,
-        val originalType: ConeKotlinType,
-        val session: FirSession,
-    ) {
-        val smartCastType: ConeKotlinType by lazy {
-            if (argument !is FirSmartCastExpression) originalType else userType.fullyExpandedType(session)
-        }
-
-        val originalClassAndType get() = originalType.toClassAndType(session)
-
-        val smartCastClassAndType get() = smartCastType.toClassAndType(session)
-
-        override fun toString() = "${argument.source?.text} :: $userType"
-    }
-
-    private fun FirExpression.toArgumentTypeInformation(context: CheckerContext) =
-        ArgumentTypeInformation(
-            this, typeRef.coneType, mostOriginalTypeIfSmartCast.fullyExpandedType(context.session), context.session,
-        )
-
-    private val FirExpression.mostOriginalTypeIfSmartCast: ConeKotlinType
-        get() = when (this) {
-            is FirSmartCastExpression -> originalExpression.mostOriginalTypeIfSmartCast
-            else -> typeRef.coneType
-        }
-
-    private fun checkEqualityApplicability(l: ClassAndType, r: ClassAndType, context: CheckerContext): Applicability {
+    private fun checkEqualityApplicability(l: TypeInfo, r: TypeInfo, context: CheckerContext): Applicability {
         val oneIsBuiltin = l.isBuiltin || r.isBuiltin
 
         // The compiler should only check comparisons
@@ -120,9 +83,7 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker() {
         }
     }
 
-    private val ClassAndType.isBuiltin get() = type.isPrimitiveOrNullablePrimitive || type.isStringOrNullableString || klass.isEnumClass
-
-    private fun checkIdentityApplicability(l: ClassAndType, r: ClassAndType, context: CheckerContext): Applicability {
+    private fun checkIdentityApplicability(l: TypeInfo, r: TypeInfo, context: CheckerContext): Applicability {
         // The compiler should only check comparisons
         // when identity-less types or builtins are involved.
 
@@ -136,96 +97,47 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker() {
         }
     }
 
-    private fun getInapplicabilityFor(l: ClassAndType, r: ClassAndType): Applicability {
-        val isIntersectionEmpty = l.klass.enforcesEmptyIntersection || r.klass.enforcesEmptyIntersection
-        val isOneEnum = l.klass.isEnumClass || r.klass.isEnumClass
+    private fun getInapplicabilityFor(l: TypeInfo, r: TypeInfo): Applicability {
+        val isIntersectionEmpty = l.enforcesEmptyIntersection || r.enforcesEmptyIntersection
+        val isOneEnum = l.isEnumClass || r.isEnumClass
 
         return when {
-            !isIntersectionEmpty && isOneEnum -> Applicability.INAPPLICABLE_AS_ENUMS
+            !isIntersectionEmpty && isOneEnum -> {
+                Applicability.INAPPLICABLE_AS_ENUMS
+            }
             else -> Applicability.GENERALLY_INAPPLICABLE
         }
     }
 
-    // Enum classes are final, but enum entries are their subclasses.
-    private val FirClassSymbol<*>.enforcesEmptyIntersection get() = isFinalClass && !isEnumClass
-
     private fun ConeKotlinType.isIdentityLess(context: CheckerContext) = isPrimitive || !isNullable && isValueClass(context.session)
 
-    private fun shouldReportAsPerRules1(l: ClassAndType, r: ClassAndType, context: CheckerContext): Boolean {
-        return areUnrelatedClasses(l.klass, r.klass, context)
-                || areInterfaceAndUnrelatedFinalClassAccordingly(l.klass, r.klass, context)
-                || areInterfaceAndUnrelatedFinalClassAccordingly(r.klass, l.klass, context)
+    private fun shouldReportAsPerRules1(l: TypeInfo, r: TypeInfo, context: CheckerContext): Boolean {
+        return areUnrelatedClasses(l, r, context)
+                || areInterfaceAndUnrelatedFinalClassAccordingly(l, r, context)
+                || areInterfaceAndUnrelatedFinalClassAccordingly(r, l, context)
     }
 
-    private fun areUnrelatedClasses(lClass: FirClassSymbol<*>, rClass: FirClassSymbol<*>, context: CheckerContext): Boolean {
-        fun FirClassSymbol<*>.isSubclassOf(other: FirClassSymbol<*>) = when {
-            other.enforcesEmptyIntersection -> lClass == rClass
-            else -> isSubclassOf(other.toLookupTag(), context.session, isStrict = false, lookupInterfaces = true)
+    private fun areUnrelatedClasses(l: TypeInfo, r: TypeInfo, context: CheckerContext): Boolean {
+        fun TypeInfo.isSubclassOf(other: TypeInfo) = when {
+            other.enforcesEmptyIntersection -> type.classId == other.type.classId
+            else -> notNullType.isSubtypeOf(other.notNullType, context.session)
         }
 
         return when {
-            !lClass.isClass || !rClass.isClass -> false
-            lClass.isNothing || rClass.isNothing -> false
-            else -> !lClass.isSubclassOf(rClass) && !rClass.isSubclassOf(lClass)
+            !l.isClass || !r.isClass -> false
+            l.type.isNothingOrNullableNothing || r.type.isNothingOrNullableNothing -> false
+            else -> !l.isSubclassOf(r) && !r.isSubclassOf(l)
         }
     }
 
     private fun areInterfaceAndUnrelatedFinalClassAccordingly(
-        lClass: FirClassSymbol<*>,
-        rClass: FirClassSymbol<*>,
+        l: TypeInfo,
+        r: TypeInfo,
         context: CheckerContext,
     ): Boolean {
-        return lClass.isInterface && rClass.isFinalClass && !rClass.isNothing && !rClass.isSubclassOf(
-            lClass.toLookupTag(), context.session, isStrict = false, lookupInterfaces = true,
-        )
+        return l.isInterface && r.isFinalClass && !r.type.isNothingOrNullableNothing
+                && !r.notNullType.isSubtypeOf(l.notNullType, context.session)
     }
-
-    private val FirClassSymbol<*>.isNothing get() = classId == StandardClassIds.Nothing
-
-    private val FirClassSymbol<*>.isFinalClass get() = isClass && isFinal
-
-    // NB: This is what RULES1 means then it says "class".
-    private val FirClassSymbol<*>.isClass get() = !isInterface
-
-    private fun ConeKotlinType.representativeClass(session: FirSession): FirClassSymbol<*> {
-        val symbol = toSymbol(session)
-
-        if (symbol is FirClassSymbol<*>) {
-            return symbol
-        }
-
-        return findRepresentativeClass(session, mutableMapOf())
-    }
-
-    private fun ConeKotlinType.findRepresentativeClass(
-        session: FirSession,
-        cache: MutableMap<ConeKotlinType, FirClassSymbol<*>>,
-    ): FirClassSymbol<*> = cache.getOrPut(this) {
-        when (val symbol = toSymbol(session)) {
-            is FirClassSymbol<*> -> when {
-                symbol.isClass -> symbol
-                else -> symbol.resolvedSuperTypes.firstNonAnyRepresentativeClass(session, cache)
-            }
-            is FirTypeParameterSymbol -> symbol.resolvedBounds.map { it.type }.firstNonAnyRepresentativeClass(session, cache)
-            is FirTypeAliasSymbol -> symbol.resolvedExpandedTypeRef.type.findRepresentativeClass(session, cache)
-            else -> session.anyClassSymbol
-        }
-    }
-
-    private fun List<ConeKotlinType>.firstNonAnyRepresentativeClass(
-        session: FirSession,
-        cache: MutableMap<ConeKotlinType, FirClassSymbol<*>>,
-    ): FirClassSymbol<*> {
-        return firstNotNullOfOrNull { type ->
-            type.findRepresentativeClass(session, cache).takeIf {
-                it != session.anyClassSymbol
-            }
-        } ?: session.anyClassSymbol
-    }
-
-    private val FirSession.anyClassSymbol
-        get() = builtinTypes.anyType.coneType.toSymbol(this) as? FirClassSymbol<*>
-            ?: error("Any type symbol is not a class symbol")
 
     private enum class Applicability {
         APPLICABLE,
@@ -279,8 +191,8 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker() {
     }
 
     private fun getEnumInapplicabilityDiagnostic(
-        l: ClassAndType,
-        r: ClassAndType,
+        l: TypeInfo,
+        r: TypeInfo,
         isWarning: Boolean,
         context: CheckerContext,
     ): KtDiagnosticFactory2<ConeKotlinType, ConeKotlinType> {
@@ -290,8 +202,15 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker() {
 
         // In this corner case K1 reports nothing
         val bothNullableEnums = l.isNullableEnum && r.isNullableEnum
+        // When comparing enums, for type parameters K1
+        // tries to pick the "representative" superclass
+        // instead of the proper intersection.
+        // We can't guarantee that in such cases
+        // K2 reports the same as K1
+        val areIntersectionsInvolved = l.type is ConeIntersectionType || r.type is ConeIntersectionType
+
         val shouldProperlyReportError = context.languageVersionSettings.supportsFeature(LanguageFeature.ReportErrorsForComparisonOperators)
-        val shouldRelaxDiagnostic = bothNullableEnums && !shouldProperlyReportError
+        val shouldRelaxDiagnostic = (bothNullableEnums || areIntersectionsInvolved) && !shouldProperlyReportError
 
         return when {
             isWarning || isOldTestData || shouldRelaxDiagnostic -> FirErrors.INCOMPATIBLE_ENUM_COMPARISON
@@ -299,15 +218,13 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker() {
         }
     }
 
-    private val ClassAndType.isNullableEnum get() = klass.isEnumClass && type.isNullable
-
     private fun DiagnosticReporter.reportInapplicabilityDiagnostic(
         expression: FirEqualityOperatorCall,
         applicability: Applicability,
         operation: FirOperation,
         isWarning: Boolean,
-        l: ClassAndType,
-        r: ClassAndType,
+        l: TypeInfo,
+        r: TypeInfo,
         lUserType: ConeKotlinType,
         rUserType: ConeKotlinType,
         context: CheckerContext,
@@ -364,3 +281,82 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker() {
         }
     }
 }
+
+private class TypeInfo(val type: ConeKotlinType, session: FirSession) {
+    val notNullType = type.withNullability(ConeNullability.NOT_NULL, session.typeContext)
+
+    val superTypesTraverser = ConeSupertypesTraverser(type.lowerBoundIfFlexible(), session)
+
+    val isClass by superTypesTraverser.anySuperClassSymbol { it.isClass }
+
+    val hasInterfaceSupertype by superTypesTraverser.anySuperClassSymbol { !it.isClass }
+
+    val isFinalClass by superTypesTraverser.anySuperClassSymbol { it.isFinalClass }
+
+    val isEnumEntry by superTypesTraverser.anySuperClassSymbol { it.isEnumEntry }
+
+    val hasEnumSupertype by superTypesTraverser.anySuperClassSymbol { it.isEnumClass }
+
+    override fun toString() = "$type"
+}
+
+private val TypeInfo.isInterface get() = hasInterfaceSupertype && !isClass
+
+private val TypeInfo.isBuiltin get() = type.isPrimitiveOrNullablePrimitive || type.isStringOrNullableString || isEnumClass
+
+private val TypeInfo.isEnumClass get() = hasEnumSupertype && !isEnumEntry
+
+// Enum classes are final, but enum entries are their subclasses.
+private val TypeInfo.enforcesEmptyIntersection get() = isFinalClass && !isEnumClass
+
+private val TypeInfo.isNullableEnum get() = isEnumClass && type.isNullable
+
+private val FirClassSymbol<*>.isFinalClass get() = isClass && isFinal
+
+// NB: This is what RULES1 means then it says "class".
+private val FirClassSymbol<*>.isClass get() = !isInterface
+
+private fun ConeKotlinType.toTypeInfo(session: FirSession): TypeInfo {
+    return TypeInfo(toUpperBound(session), session)
+}
+
+private fun ConeKotlinType.toUpperBound(session: FirSession) =
+    collectUpperBounds()
+        .map { type -> session.toKotlinType(type).replaceArgumentsWithStarProjections() }
+        .ifNotEmpty { ConeTypeIntersector.intersectTypes(session.typeContext, this) }
+        ?: session.builtinTypes.nullableAnyType.type
+
+private fun FirSession.toKotlinType(type: ConeClassLikeType): ConeClassLikeType {
+    return platformClassMapper.getCorrespondingKotlinClass(type.lookupTag.classId)
+        // Type arguments are ignored by design
+        ?.let { ConeClassLikeTypeImpl(it.toLookupTag(), type.typeArguments, type.isNullable) }
+        ?: type
+}
+
+private class ArgumentInfo(
+    val argument: FirExpression,
+    val userType: ConeKotlinType,
+    val originalType: ConeKotlinType,
+    val session: FirSession,
+) {
+    val smartCastType: ConeKotlinType by lazy {
+        if (argument !is FirSmartCastExpression) originalType else userType.fullyExpandedType(session)
+    }
+
+    val originalTypeInfo get() = originalType.toTypeInfo(session)
+
+    val smartCastTypeInfo get() = smartCastType.toTypeInfo(session)
+
+    override fun toString() = "${argument.source?.text} :: $userType"
+}
+
+private val FirExpression.mostOriginalTypeIfSmartCast: ConeKotlinType
+    get() = when (this) {
+        is FirSmartCastExpression -> originalExpression.mostOriginalTypeIfSmartCast
+        else -> typeRef.coneType
+    }
+
+private fun FirExpression.toArgumentInfo(context: CheckerContext) =
+    ArgumentInfo(
+        this, typeRef.coneType, mostOriginalTypeIfSmartCast.fullyExpandedType(context.session), context.session,
+    )
