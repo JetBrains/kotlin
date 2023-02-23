@@ -92,7 +92,7 @@ internal open class KotlinJvmCompilerArgumentsContributor(
 
         args.allowNoSourceFiles = true
         args.classpathAsList = try {
-            compileClasspath.toList().filter { it.exists() }
+            throw Exception("Test trap")
         } catch (e: Exception) {
             if (IgnoreClasspathResolutionErrors in flags) emptyList() else throw(e)
         }
