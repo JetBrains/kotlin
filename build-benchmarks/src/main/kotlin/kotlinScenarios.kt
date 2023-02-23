@@ -246,8 +246,14 @@ fun kotlinBenchmarks(prefix: String = "", additionalDefaultProperties: Array<Str
         }
 
         registerScenarios()
+        scenario("Stop daemons") {
+            stopDaemon()
+        }
         if (withLatestLtsJdk) {
             registerScenarios(withLatestLtsJdk = true)
+        }
+        scenario("Stop daemons") {
+            stopDaemon()
         }
     }
 
