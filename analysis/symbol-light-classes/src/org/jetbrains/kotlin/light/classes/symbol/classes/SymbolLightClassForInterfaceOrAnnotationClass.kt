@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.light.classes.symbol.annotations.AbstractClassAdditionalAnnotationsProvider
 import org.jetbrains.kotlin.light.classes.symbol.annotations.GranularAnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolAnnotationsProvider
+import org.jetbrains.kotlin.light.classes.symbol.cachedValue
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.GranularModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.with
@@ -84,7 +85,7 @@ internal abstract class SymbolLightClassForInterfaceOrAnnotationClass : SymbolLi
 
     final override fun getModifierList(): PsiModifierList? = _modifierList
 
-    private val _ownFields: List<KtLightField> by lazyPub {
+    override fun getOwnFields(): List<KtLightField> = cachedValue {
         withClassOrObjectSymbol { classOrObjectSymbol ->
             buildList {
                 addCompanionObjectFieldIfNeeded(this, classOrObjectSymbol)
@@ -92,8 +93,6 @@ internal abstract class SymbolLightClassForInterfaceOrAnnotationClass : SymbolLi
             }
         }
     }
-
-    override fun getOwnFields(): List<KtLightField> = _ownFields
 
     override fun getImplementsList(): PsiReferenceList? = null
 }

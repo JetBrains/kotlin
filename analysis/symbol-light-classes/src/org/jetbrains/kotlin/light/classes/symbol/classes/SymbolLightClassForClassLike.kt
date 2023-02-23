@@ -102,13 +102,11 @@ abstract class SymbolLightClassForClassLike<SType : KtClassOrObjectSymbol> prote
 
     override fun getTypeParameters(): Array<PsiTypeParameter> = _typeParameterList?.typeParameters ?: PsiTypeParameter.EMPTY_ARRAY
 
-    private val _ownInnerClasses: List<SymbolLightClassBase> by lazyPub {
+    override fun getOwnInnerClasses(): List<PsiClass> = cachedValue {
         withClassOrObjectSymbol {
             it.createInnerClasses(manager, this@SymbolLightClassForClassLike, classOrObjectDeclaration)
         }
     }
-
-    override fun getOwnInnerClasses(): List<PsiClass> = _ownInnerClasses
 
     override fun getTextOffset(): Int = classOrObjectDeclaration?.textOffset ?: -1
 

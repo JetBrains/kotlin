@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.light.classes.symbol.analyzeForLightClasses
 import org.jetbrains.kotlin.light.classes.symbol.annotations.GranularAnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolAnnotationsProvider
 import org.jetbrains.kotlin.light.classes.symbol.annotations.annotationUseSiteTargetFilterOf
+import org.jetbrains.kotlin.light.classes.symbol.cachedValue
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForClassOrObject
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForEnumEntry
 import org.jetbrains.kotlin.light.classes.symbol.isOriginEquivalentTo
@@ -67,7 +68,7 @@ internal class SymbolLightFieldForEnumEntry(
 
     private val hasBody: Boolean get() = enumEntry.body != null
 
-    private val _initializingClass: PsiEnumConstantInitializer? by lazyPub {
+    override fun getInitializingClass(): PsiEnumConstantInitializer? = cachedValue {
         hasBody.ifTrue {
             SymbolLightClassForEnumEntry(
                 enumConstant = this@SymbolLightFieldForEnumEntry,
@@ -77,8 +78,7 @@ internal class SymbolLightFieldForEnumEntry(
         }
     }
 
-    override fun getInitializingClass(): PsiEnumConstantInitializer? = _initializingClass
-    override fun getOrCreateInitializingClass(): PsiEnumConstantInitializer = _initializingClass ?: cannotModify()
+    override fun getOrCreateInitializingClass(): PsiEnumConstantInitializer = initializingClass ?: cannotModify()
 
     override fun getArgumentList(): PsiExpressionList? = null
     override fun resolveMethod(): PsiMethod? = null

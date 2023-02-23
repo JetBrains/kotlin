@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fileClasses.isJvmMultifileClassFile
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.light.classes.symbol.analyzeForLightClasses
 import org.jetbrains.kotlin.light.classes.symbol.annotations.*
+import org.jetbrains.kotlin.light.classes.symbol.cachedValue
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.InitializedModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
@@ -80,8 +81,7 @@ internal class SymbolLightClassForFacade(
 
     override fun getScope(): PsiElement = parent
 
-    override fun getOwnMethods(): List<PsiMethod> = _ownMethods
-    private val _ownMethods: List<PsiMethod> by lazyPub {
+    override fun getOwnMethods(): List<PsiMethod> = cachedValue {
         withFileSymbols { fileSymbols ->
             val result = mutableListOf<KtLightMethod>()
             val methodsAndProperties = sequence<KtCallableSymbol> {
@@ -136,8 +136,7 @@ internal class SymbolLightClassForFacade(
     private fun KtPropertyAccessorSymbol?.isNullOrPublic(): Boolean =
         this?.toPsiVisibilityForMember()?.let { it == PsiModifier.PUBLIC } != false
 
-    override fun getOwnFields(): List<PsiField> = _ownFields
-    private val _ownFields: List<PsiField> by lazyPub {
+    override fun getOwnFields(): List<PsiField> = cachedValue {
         val result = mutableListOf<KtLightField>()
         val nameGenerator = SymbolLightField.FieldNameGenerator()
         withFileSymbols { fileSymbols ->

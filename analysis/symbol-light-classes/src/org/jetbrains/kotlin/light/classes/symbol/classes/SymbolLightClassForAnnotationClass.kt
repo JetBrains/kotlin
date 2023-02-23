@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.isPrivateOrPrivateToThis
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
+import org.jetbrains.kotlin.light.classes.symbol.cachedValue
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
@@ -62,11 +62,10 @@ internal open class SymbolLightClassForAnnotationClass : SymbolLightClassForInte
         result
     }
 
-    private val _ownMethods: List<PsiMethod> by lazyPub {
+    final override fun getOwnMethods(): List<PsiMethod> = cachedValue {
         computeOwnMethods()
     }
 
-    final override fun getOwnMethods(): List<PsiMethod> = _ownMethods
     override fun getExtendsList(): PsiReferenceList? = null
 
     final override fun isInheritor(baseClass: PsiClass, checkDeep: Boolean): Boolean {
