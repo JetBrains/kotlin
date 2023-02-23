@@ -54,6 +54,10 @@ open class AbstractSymbolLightClassesParentingTestBase(
                     checkDeclarationParent(declaration)
                 }
 
+                if (declaration is PsiMember && declaration !is PsiTypeParameter) {
+                    visitPsiMemberDeclaration(declaration)
+                }
+
                 declarationStack.addLast(declaration)
                 try {
                     if (declaration is PsiModifierListOwner) {
@@ -72,6 +76,27 @@ open class AbstractSymbolLightClassesParentingTestBase(
                 } finally {
                     val removed = declarationStack.removeLast()
                     assertions.assertEquals(declaration, removed)
+                }
+            }
+
+            private fun visitPsiMemberDeclaration(member: PsiMember) {
+                val containingClass = member.containingClass
+                val expectedClass = declarationStack.lastOrNull()
+                if (expectedClass != null) {
+                    assertions.assertEquals(expectedClass, containingClass)
+                }
+
+                val classToCheck: PsiClass = expectedClass?.let { it as PsiClass } ?: containingClass ?: return
+                val memberToCheck = if (member is PsiEnumConstantInitializer) member.enumConstant else member
+                val collection = when (memberToCheck) {
+                    is PsiMethod -> classToCheck.methods
+                    is PsiField -> classToCheck.fields
+                    is PsiClass -> classToCheck.innerClasses
+                    else -> error("Unexpected member: ${memberToCheck::class}\nElement: $memberToCheck")
+                }
+
+                assertions.assertTrue(memberToCheck in collection) {
+                    "$memberToCheck is not found in:\n${collection.joinToString(separator = "\n")}\n"
                 }
             }
 
