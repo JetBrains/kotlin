@@ -28,9 +28,11 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.stubs.KotlinNameReferenceExpressionStub
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderWithTextStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.types.ConstantValueKind
@@ -209,24 +211,24 @@ abstract class StubBasedAbstractAnnotationDeserializer(
             val receiverExpression = value.receiverExpression
             if (receiverExpression is KtQualifiedExpression) {
                 val selectorExpression = value.selectorExpression
-                return traverseClassId(receiverExpression)
-                    .toEnumEntryReferenceExpression((selectorExpression as KtNameReferenceExpression).getReferencedNameAsName())
-            }
-            if (receiverExpression is KtClassLiteralExpression) {
-                val classId = receiverExpression.receiverExpression?.let { traverseClassId(it) } ?: error("Unresolved class reference")
-                return buildGetClassCall {
-                    val lookupTag = classId.toLookupTag()
-                    val referencedType = lookupTag.constructType(emptyArray(), isNullable = false)
-                    val resolvedTypeRef = buildResolvedTypeRef {
-                        type = StandardClassIds.KClass.constructClassLikeType(arrayOf(referencedType), false)
-                    }
-                    argumentList = buildUnaryArgumentList(
-                        buildClassReferenceExpression {
-                            classTypeRef = buildResolvedTypeRef { type = referencedType }
-                            typeRef = resolvedTypeRef
+                val classId = traverseClassId(receiverExpression)
+                val name = (selectorExpression as KtNameReferenceExpression).getReferencedNameAsName()
+                if (!Name.isValidIdentifier(name.asString())) {
+                    return buildGetClassCall {
+                        val lookupTag = classId.toLookupTag()
+                        val referencedType = lookupTag.constructType(emptyArray(), isNullable = false)
+                        val resolvedTypeRef = buildResolvedTypeRef {
+                            type = StandardClassIds.KClass.constructClassLikeType(arrayOf(referencedType), false)
                         }
-                    )
+                        argumentList = buildUnaryArgumentList(
+                            buildClassReferenceExpression {
+                                classTypeRef = buildResolvedTypeRef { type = referencedType }
+                                typeRef = resolvedTypeRef
+                            }
+                        )
+                    }
                 }
+                return classId.toEnumEntryReferenceExpression(name)
             }
         }
         if (value is KtStringTemplateExpression) {
@@ -318,17 +320,33 @@ abstract class StubBasedAbstractAnnotationDeserializer(
 
     private fun traverseClassId(receiverExpression: KtExpression): ClassId {
         var receiver = receiverExpression
-        val classIdSegments = mutableListOf<String>()
+        val packageSegments = mutableListOf<String>()
+        val classSegments = mutableListOf<String>()
         while (receiver is KtQualifiedExpression) {
             val rExpr = receiver.receiverExpression
             if (rExpr is KtNameReferenceExpression) {
-                classIdSegments.add(rExpr.getReferencedName())
+                val referencedName = rExpr.getReferencedName()
+                val stub = rExpr.stub
+                if (stub is KotlinNameReferenceExpressionStub && stub.isClassRef()) {
+                    classSegments.add(referencedName)
+                } else {
+                    packageSegments.add(referencedName)
+                }
                 break
             }
-            classIdSegments.add((receiver.selectorExpression as KtNameReferenceExpression).getReferencedName())
+            val selectorExpression = receiver.selectorExpression
+            val referencedName = (selectorExpression as KtNameReferenceExpression).getReferencedName()
+            val stub = selectorExpression.stub
+            if (stub is KotlinNameReferenceExpressionStub && stub.isClassRef()) {
+                classSegments.add(referencedName)
+            } else {
+                packageSegments.add(referencedName)
+            }
             receiver = receiver.receiverExpression
         }
-        return ClassId.fromString(classIdSegments.joinToString("/"))
+        val packageFQN = FqName.fromSegments(packageSegments)
+        val relativeName = FqName.fromSegments(classSegments)
+        return ClassId(packageFQN, relativeName, false)
     }
 
     private fun <T> const(kind: ConstantValueKind<T>, value: T, typeRef: FirResolvedTypeRef): FirConstExpression<T> {

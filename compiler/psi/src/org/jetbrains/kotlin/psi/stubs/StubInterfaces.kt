@@ -117,6 +117,8 @@ interface KotlinModifierListStub : StubElement<KtDeclarationModifierList> {
 }
 
 interface KotlinNameReferenceExpressionStub : StubElement<KtNameReferenceExpression> {
+    fun isClassRef(): Boolean
+
     fun getReferencedName(): String
 }
 

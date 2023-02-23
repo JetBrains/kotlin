@@ -234,32 +234,16 @@ private fun createAnnotationMappingByConstantValue(
 ) {
     when (constantValue) {
         is EnumValue -> {
-            val valueArg = KotlinValueArgumentStubImpl<KtValueArgument>(parent, KtStubElementTypes.VALUE_ARGUMENT, false)
-            val qStub =
-                KotlinPlaceHolderStubImpl<KtDotQualifiedExpression>(valueArg, KtStubElementTypes.DOT_QUALIFIED_EXPRESSION)
-            val segments = constantValue.enumClassId.asSingleFqName().pathSegments()
-            var last = KotlinPlaceHolderStubImpl<KtDotQualifiedExpression>(qStub, KtStubElementTypes.DOT_QUALIFIED_EXPRESSION)
-            segments.forEachIndexed { index, segment ->
-                if (index == segments.size - 1) {
-                    KotlinNameReferenceExpressionStubImpl(last, segment.ref())
-                    return@forEachIndexed
-                }
-                val current = KotlinPlaceHolderStubImpl<KtDotQualifiedExpression>(last, KtStubElementTypes.DOT_QUALIFIED_EXPRESSION)
-                KotlinNameReferenceExpressionStubImpl(last, segment.ref())
-                last = current
-            }
-            KotlinNameReferenceExpressionStubImpl(qStub, constantValue.enumEntryName.ref())
-            val argName = KotlinPlaceHolderStubImpl<KtValueArgumentName>(valueArg, KtStubElementTypes.VALUE_ARGUMENT_NAME)
-            KotlinNameReferenceExpressionStubImpl(argName, name.ref())
+            createQualifiedReference(parent, constantValue.enumClassId, constantValue.enumEntryName, name)
         }
-//        KtClassLiteralExpression is not stubbed thus we can't get the class name without ast loading
-//        is KClassValue -> {
-//            val valueArg = KotlinValueArgumentStubImpl<KtValueArgument>(parent, KtStubElementTypes.VALUE_ARGUMENT, false)
-//            when (val value = constantValue.value) {
-//                is KClassValue.Value.LocalClass -> error("Local classes are not reachable in annotation arguments, $value")
-//                is KClassValue.Value.NormalClass -> createStubForTypeName(value.value.classId, valueArg, false)
-//            }
-//        }
+        is KClassValue -> {
+            when (val value = constantValue.value) {
+                is KClassValue.Value.LocalClass -> error("Local classes are not reachable in annotation arguments, $value")
+                is KClassValue.Value.NormalClass -> {
+                    createQualifiedReference(parent, value.classId, Name.special("<class>"), name)
+                }
+            }
+        }
         is StringValue -> {
             val valueArg = KotlinValueArgumentStubImpl<KtValueArgument>(parent, KtStubElementTypes.VALUE_ARGUMENT, false)
             val argName = KotlinPlaceHolderStubImpl<KtValueArgumentName>(valueArg, KtStubElementTypes.VALUE_ARGUMENT_NAME)
@@ -283,6 +267,33 @@ private fun createAnnotationMappingByConstantValue(
             }
         }
     }
+}
+
+private fun createQualifiedReference(
+    parent: StubElement<out PsiElement>,
+    classId: ClassId,
+    constName: Name,
+    name: Name
+) {
+    val valueArg = KotlinValueArgumentStubImpl<KtValueArgument>(parent, KtStubElementTypes.VALUE_ARGUMENT, false)
+    val qStub =
+        KotlinPlaceHolderStubImpl<KtDotQualifiedExpression>(valueArg, KtStubElementTypes.DOT_QUALIFIED_EXPRESSION)
+    val segments = classId.asSingleFqName().pathSegments()
+    val classesLength = classId.relativeClassName.pathSegments().size
+    var last = KotlinPlaceHolderStubImpl<KtDotQualifiedExpression>(qStub, KtStubElementTypes.DOT_QUALIFIED_EXPRESSION)
+    segments.forEachIndexed { index, segment ->
+        val ref = segment.ref()
+        if (index == segments.size - 1) {
+            KotlinNameReferenceExpressionStubImpl(last, ref, true)
+            return@forEachIndexed
+        }
+        val current = KotlinPlaceHolderStubImpl<KtDotQualifiedExpression>(last, KtStubElementTypes.DOT_QUALIFIED_EXPRESSION)
+        KotlinNameReferenceExpressionStubImpl(last, ref, segments.size - index <= classesLength)
+        last = current
+    }
+    KotlinNameReferenceExpressionStubImpl(qStub, constName.ref())
+    val argName = KotlinPlaceHolderStubImpl<KtValueArgumentName>(valueArg, KtStubElementTypes.VALUE_ARGUMENT_NAME)
+    KotlinNameReferenceExpressionStubImpl(argName, name.ref())
 }
 
 val MessageLite.annotatedCallableKind: AnnotatedCallableKind
