@@ -219,14 +219,12 @@ fun <F> prepareCommonSessions(
         FirCommonSessionFactory.createModuleBasedSession(
             moduleData,
             sessionProvider,
-            librariesScope,
             projectEnvironment,
             incrementalCompilationContext = createProviderAndScopeForIncrementalCompilation(moduleFiles),
             extensionRegistrars,
             configuration.languageVersionSettings,
             lookupTracker = configuration.get(CommonConfigurationKeys.LOOKUP_TRACKER),
             enumWhenTracker = configuration.get(CommonConfigurationKeys.ENUM_WHEN_TRACKER),
-            needRegisterJavaElementFinder = true,
             registerExtraComponents = {},
             init = sessionConfigurator
         )

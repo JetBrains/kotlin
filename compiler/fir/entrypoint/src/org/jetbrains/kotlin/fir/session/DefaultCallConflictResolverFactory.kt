@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.jvm.ConeEquivalentCallConflictReso
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 
-object NativeCallConflictResolverFactory : ConeCallConflictResolverFactory() {
+object DefaultCallConflictResolverFactory : ConeCallConflictResolverFactory() {
     override fun create(
         typeSpecificityComparator: TypeSpecificityComparator,
         components: InferenceComponents,

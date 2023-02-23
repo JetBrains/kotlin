@@ -1629,6 +1629,16 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/metadata/moduleNameWithFir.args");
         }
 
+        @TestMetadata("optionalAnnotationsFromMetadata.args")
+        public void testOptionalAnnotationsFromMetadata() throws Exception {
+            runTest("compiler/testData/cli/metadata/optionalAnnotationsFromMetadata.args");
+        }
+
+        @TestMetadata("optionalAnnotationsFromMetadataWithFir.args")
+        public void testOptionalAnnotationsFromMetadataWithFir() throws Exception {
+            runTest("compiler/testData/cli/metadata/optionalAnnotationsFromMetadataWithFir.args");
+        }
+
         @TestMetadata("optionalExpectationUsage.args")
         public void testOptionalExpectationUsage() throws Exception {
             runTest("compiler/testData/cli/metadata/optionalExpectationUsage.args");

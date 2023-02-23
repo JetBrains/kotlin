@@ -47,7 +47,7 @@ object FirJvmDefaultChecker : FirBasicDeclarationChecker() {
                     reporter.reportOn(source, FirJvmErrors.JVM_DEFAULT_IN_JVM6_TARGET, "JvmDefault", context)
                     return
                 }
-                !jvmDefaultMode.isEnabled -> {
+                jvmDefaultMode?.isEnabled != true -> {
                     reporter.reportOn(source, FirJvmErrors.JVM_DEFAULT_IN_DECLARATION, "JvmDefault", context)
                     return
                 }
@@ -66,7 +66,7 @@ object FirJvmDefaultChecker : FirBasicDeclarationChecker() {
                         )
                         return
                     }
-                    !jvmDefaultMode.isEnabled -> {
+                    jvmDefaultMode?.isEnabled != true -> {
                         reporter.reportOn(
                             source,
                             FirJvmErrors.JVM_DEFAULT_IN_DECLARATION,
@@ -107,12 +107,12 @@ object FirJvmDefaultChecker : FirBasicDeclarationChecker() {
 
     private fun checkNonJvmDefaultOverridesJavaDefault(
         defaultAnnotation: FirAnnotation?,
-        jvmDefaultMode: JvmDefaultMode,
+        jvmDefaultMode: JvmDefaultMode?,
         declaration: FirDeclaration,
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
-        if (defaultAnnotation != null || jvmDefaultMode.forAllMethodsWithBody) return
+        if (defaultAnnotation != null || jvmDefaultMode?.forAllMethodsWithBody == true) return
         val member = declaration as? FirSimpleFunction ?: return
 
         val containingDeclaration = context.findClosest<FirClassLikeDeclaration>()
@@ -123,7 +123,7 @@ object FirJvmDefaultChecker : FirBasicDeclarationChecker() {
 
             if (overriddenFunctions.any { it.getAnnotationByClassId(JVM_DEFAULT_CLASS_ID, context.session) != null }) {
                 reporter.reportOn(declaration.source, FirJvmErrors.JVM_DEFAULT_REQUIRED_FOR_OVERRIDE, context)
-            } else if (jvmDefaultMode.isEnabled) {
+            } else if (jvmDefaultMode?.isEnabled != false) {
                 for (overriddenFunction in overriddenFunctions) {
                     val overriddenDeclarations = overriddenFunction.getOverriddenDeclarations()
                     for (overriddenDeclaration in overriddenDeclarations) {

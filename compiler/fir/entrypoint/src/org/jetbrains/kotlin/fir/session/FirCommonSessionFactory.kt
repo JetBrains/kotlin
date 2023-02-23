@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.checkers.registerJsCheckers
 import org.jetbrains.kotlin.fir.checkers.registerJvmCheckers
 import org.jetbrains.kotlin.fir.checkers.registerNativeCheckers
@@ -18,11 +17,10 @@ import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
-import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
-import org.jetbrains.kotlin.fir.java.deserialization.OptionalAnnotationClassesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCloneableSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
+import org.jetbrains.kotlin.fir.session.FirSessionFactoryHelper.registerDefaultExtraComponentsForModuleBased
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
@@ -48,7 +46,6 @@ object FirCommonSessionFactory : FirAbstractSessionFactory() {
             moduleDataProvider,
             languageVersionSettings,
             registerExtraComponents = {
-                it.registerCommonJavaComponents(projectEnvironment.getJavaModuleResolver())
                 registerExtraComponents(it)
             },
             createKotlinScopeProvider = { FirKotlinScopeProvider { _, declaredMemberScope, _, _ -> declaredMemberScope } },
@@ -63,24 +60,20 @@ object FirCommonSessionFactory : FirAbstractSessionFactory() {
                     ),
                     FirBuiltinSymbolProvider(session, builtinsModuleData, kotlinScopeProvider),
                     FirCloneableSymbolProvider(session, builtinsModuleData, kotlinScopeProvider),
-                    OptionalAnnotationClassesProvider(session, moduleDataProvider, kotlinScopeProvider, packageAndMetadataPartProvider)
                 )
             }
         )
     }
 
-    @OptIn(SessionConfiguration::class)
     fun createModuleBasedSession(
         moduleData: FirModuleData,
         sessionProvider: FirProjectSessionProvider,
-        javaSourcesScope: AbstractProjectFileSearchScope,
         projectEnvironment: AbstractProjectEnvironment,
         incrementalCompilationContext: IncrementalCompilationContext?,
         extensionRegistrars: List<FirExtensionRegistrar>,
         languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
         lookupTracker: LookupTracker? = null,
         enumWhenTracker: EnumWhenTracker? = null,
-        needRegisterJavaElementFinder: Boolean,
         registerExtraComponents: ((FirSession) -> Unit) = {},
         init: FirSessionConfigurator.() -> Unit = {}
     ): FirSession {
@@ -93,8 +86,7 @@ object FirCommonSessionFactory : FirAbstractSessionFactory() {
             enumWhenTracker,
             init,
             registerExtraComponents = {
-                it.registerCommonJavaComponents(projectEnvironment.getJavaModuleResolver())
-                it.registerJavaSpecificResolveComponents()
+                it.registerDefaultExtraComponentsForModuleBased()
                 registerExtraComponents(it)
             },
             registerExtraCheckers = {
@@ -105,7 +97,6 @@ object FirCommonSessionFactory : FirAbstractSessionFactory() {
             createKotlinScopeProvider = { FirKotlinScopeProvider { _, declaredMemberScope, _, _ -> declaredMemberScope } },
             createProviders = { session, kotlinScopeProvider, symbolProvider, syntheticFunctionalInterfaceProvider, generatedSymbolsProvider, dependencies ->
                 var symbolProviderForBinariesFromIncrementalCompilation: MetadataSymbolProvider? = null
-                var optionalAnnotationClassesProviderForBinariesFromIncrementalCompilation: OptionalAnnotationClassesProvider? = null
                 incrementalCompilationContext?.let {
                     val precompiledBinariesPackagePartProvider = it.precompiledBinariesPackagePartProvider
                     if (precompiledBinariesPackagePartProvider != null && it.precompiledBinariesFileScope != null) {
@@ -119,20 +110,8 @@ object FirCommonSessionFactory : FirAbstractSessionFactory() {
                                 projectEnvironment.getKotlinClassFinder(it.precompiledBinariesFileScope) as KotlinMetadataFinder,
                                 defaultDeserializationOrigin = FirDeclarationOrigin.Precompiled
                             )
-                        optionalAnnotationClassesProviderForBinariesFromIncrementalCompilation =
-                            OptionalAnnotationClassesProvider(
-                                session,
-                                moduleDataProvider,
-                                kotlinScopeProvider,
-                                precompiledBinariesPackagePartProvider,
-                                defaultDeserializationOrigin = FirDeclarationOrigin.Precompiled
-                            )
                     }
                 }
-
-                val javaSymbolProvider =
-                    JavaSymbolProvider(session, projectEnvironment.getFirJavaFacade(session, moduleData, javaSourcesScope))
-                session.register(JavaSymbolProvider::class, javaSymbolProvider)
 
                 listOfNotNull(
                     symbolProvider,
@@ -140,15 +119,9 @@ object FirCommonSessionFactory : FirAbstractSessionFactory() {
                     symbolProviderForBinariesFromIncrementalCompilation,
                     generatedSymbolsProvider,
                     syntheticFunctionalInterfaceProvider,
-                    javaSymbolProvider,
                     *dependencies.toTypedArray(),
-                    optionalAnnotationClassesProviderForBinariesFromIncrementalCompilation,
                 )
             }
-        ).also {
-            if (needRegisterJavaElementFinder) {
-                projectEnvironment.registerAsJavaElementFinder(it)
-            }
-        }
+        )
     }
 }

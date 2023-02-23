@@ -7,6 +7,9 @@ package org.jetbrains.kotlin.fir.session
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.ThreadSafeMutableState
+import org.jetbrains.kotlin.fir.caches.createCache
+import org.jetbrains.kotlin.fir.caches.firCachesFactory
+import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.deserialization.*
 import org.jetbrains.kotlin.fir.java.deserialization.KotlinBuiltins
@@ -20,6 +23,7 @@ import org.jetbrains.kotlin.serialization.deserialization.KotlinMetadataFinder
 import org.jetbrains.kotlin.serialization.deserialization.MetadataClassDataFinder
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.serialization.deserialization.readProto
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 @ThreadSafeMutableState
 class MetadataSymbolProvider(
@@ -37,6 +41,8 @@ class MetadataSymbolProvider(
     private val annotationDeserializer = MetadataBasedAnnotationDeserializer(session)
 
     private val constDeserializer = FirConstDeserializer(session, BuiltInSerializerProtocol)
+
+    private val metadataTopLevelClassesInPackageCache = session.firCachesFactory.createCache(::findMetadataTopLevelClassesInPackage)
 
     override fun computePackagePartsInfos(packageFqName: FqName): List<PackagePartsCacheData> {
         return packageAndMetadataPartProvider.findMetadataPackageParts(packageFqName.asString()).mapNotNull { partName ->
@@ -62,7 +68,7 @@ class MetadataSymbolProvider(
 
     override fun computePackageSetWithNonClassDeclarations() = packageAndMetadataPartProvider.computePackageSetWithNonClassDeclarations()
 
-    override fun knownTopLevelClassesInPackage(packageFqName: FqName) = kotlinClassFinder.findMetadataTopLevelClassesInPackage(packageFqName)
+    override fun knownTopLevelClassesInPackage(packageFqName: FqName) = metadataTopLevelClassesInPackageCache.getValue(packageFqName)
 
     override fun extractClassMetadata(classId: ClassId, parentContext: FirDeserializationContext?): ClassMetadataFindResult? {
         val classData = classDataFinder.findClassData(classId) ?: return null
@@ -78,5 +84,9 @@ class MetadataSymbolProvider(
 
     override fun isNewPlaceForBodyGeneration(classProto: ProtoBuf.Class) = false
 
-    override fun getPackage(fqName: FqName) = null
+    override fun getPackage(fqName: FqName) =
+        runIf(metadataTopLevelClassesInPackageCache.getValue(fqName)?.isNotEmpty() == true) { fqName }
+
+    private fun findMetadataTopLevelClassesInPackage(packageFqName: FqName) =
+        kotlinClassFinder.findMetadataTopLevelClassesInPackage(packageFqName)
 }
