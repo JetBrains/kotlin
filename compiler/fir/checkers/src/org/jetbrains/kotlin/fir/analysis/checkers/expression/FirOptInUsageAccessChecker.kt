@@ -39,18 +39,13 @@ object FirOptInUsageAccessChecker : FirBasicExpressionChecker() {
 
                 val experimentalities = resolvedSymbol.loadExperimentalities(context, fromSetter = false, dispatchReceiverType) +
                         loadExperimentalitiesFromTypeArguments(context, expression.typeArguments)
-                reportNotAcceptedExperimentalities(
-                    experimentalities,
-                    expression,
-                    context,
-                    reporter,
-                    source = if (expression.source?.kind == KtFakeSourceElementKind.DelegatedPropertyAccessor) {
-                        val property = context.containingDeclarations.lastOrNull { it is FirProperty } as? FirProperty ?: return
-                        property.delegate?.source?.fakeElement(KtFakeSourceElementKind.DelegatedPropertyAccessor) ?: return
-                    } else {
-                        expression.source
-                    },
-                )
+                val source = if (expression.source?.kind == KtFakeSourceElementKind.DelegatedPropertyAccessor) {
+                    val property = context.containingDeclarations.lastOrNull { it is FirProperty } as? FirProperty ?: return
+                    property.delegate?.source?.fakeElement(KtFakeSourceElementKind.DelegatedPropertyAccessor) ?: return
+                } else {
+                    expression.source
+                }
+                reportNotAcceptedExperimentalities(experimentalities, expression, context, reporter, source)
             }
         }
     }
