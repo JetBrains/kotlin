@@ -2,4 +2,15 @@ source(new File(basedir, "../../../verify-common.bsh").getAbsolutePath());
 
 assertBuildLogHasLine("[INFO] BUILD FAILURE");
 assertBuildLogHasNoLineThatContains("AutoCloseable");
-assertBuildLogHasLineThatContains("Unresolved reference: stream");
+
+int line1 = findBuildLogLineThatContains("Unresolved reference: stream");
+int line2 = findBuildLogLineThatContains("Unresolved reference: java.util.stream.Stream");
+
+if (line1 >= 0) {
+    print("Expected content \"Unresolved reference: stream\" was found at line " + (line1+1) + " of build log: \"" + buildLog[line1] + "\"");
+
+} else if (line2 >= 0) {
+    print("Expected content \"Unresolved reference: java.util.stream.Stream\" was found at line " + (line2+1) + " of build log: \"" + buildLog[line2] + "\"");
+} else {
+    throw new Exception("Expected build log to contain: \"Unresolved reference: stream\" or \"Unresolved reference: java.util.stream.Stream\"");
+}
