@@ -5028,7 +5028,7 @@ if (PlatformInfo.isAppleTarget(project)) {
     }
 
     interopTest("interop_kt49034_objcclass") {
-        disabled = (project.testTarget == 'wasm32') || isK2(project) // KT-56028
+        disabled = (project.testTarget == 'wasm32')
         interop = 'kt49034_objcclass'
         source = 'interop/objc/kt49034/objcclass/main.kt'
 
