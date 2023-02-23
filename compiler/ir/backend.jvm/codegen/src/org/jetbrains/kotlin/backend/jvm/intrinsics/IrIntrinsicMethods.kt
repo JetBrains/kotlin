@@ -133,6 +133,9 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
             // IntArray -> intArrayOf
             val arrayOfFunName = name.decapitalizeAsciiOnly() + "Of"
             Key(kotlinFqn, null, arrayOfFunName, listOf(primitiveClassSymbol.owner.fqNameWhenAvailable))
+        } + PrimitiveType.values().map { type ->
+            val arrayOfFunName = type.arrayTypeName.identifier.decapitalizeAsciiOnly() + "Of"
+            Key(kotlinFqn, null, arrayOfFunName, listOf(StandardNames.FqNames.vArray.toSafe()))
         } + listOf(
             Key(kotlinFqn, anyFqn, "toString", emptyList()),
             Key(kotlinFqn, null, "arrayOf", listOf(arrayFqn)),
