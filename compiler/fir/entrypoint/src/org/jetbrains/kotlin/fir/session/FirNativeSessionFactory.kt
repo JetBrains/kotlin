@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.ConeCallConflictResolverFactory
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCloneableSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirExtensionSyntheticFunctionInterfaceProvider
+import org.jetbrains.kotlin.fir.scopes.FirIntersectionScopeOverrideChecker
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.scopes.FirPlatformClassMapper
 import org.jetbrains.kotlin.fir.scopes.impl.FirEnumEntriesSupport
@@ -37,7 +38,12 @@ object FirNativeSessionFactory : FirAbstractSessionFactory() {
             moduleDataProvider,
             languageVersionSettings,
             registerExtraComponents,
-            createKotlinScopeProvider = { FirKotlinScopeProvider { _, declaredMemberScope, _, _ -> declaredMemberScope } },
+            createKotlinScopeProvider = {
+                FirKotlinScopeProvider(
+                    FirIntersectionScopeOverrideChecker(sessionProvider.getSession(moduleDataProvider.allModuleData.single())!!)
+                )
+                { _, declaredMemberScope, _, _ -> declaredMemberScope }
+            },
             createProviders = { session, builtinsModuleData, kotlinScopeProvider ->
                 val forwardDeclarationsModuleData = BinaryModuleData.createDependencyModuleData(
                     Name.special("<forward declarations>"),
@@ -77,7 +83,12 @@ object FirNativeSessionFactory : FirAbstractSessionFactory() {
                 registerExtraComponents(session)
             },
             registerExtraCheckers = { it.registerNativeCheckers() },
-            createKotlinScopeProvider = { FirKotlinScopeProvider { _, declaredMemberScope, _, _ -> declaredMemberScope } },
+            createKotlinScopeProvider = {
+                FirKotlinScopeProvider(
+                    FirIntersectionScopeOverrideChecker(sessionProvider.getSession(moduleData)!!)
+                )
+                { _, declaredMemberScope, _, _ -> declaredMemberScope }
+            },
             createProviders = { _, _, symbolProvider, generatedSymbolsProvider, syntheticFunctionInterfaceProvider, dependencies ->
                 listOfNotNull(
                     symbolProvider,

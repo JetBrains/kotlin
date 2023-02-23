@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
+import org.jetbrains.kotlin.fir.scopes.FirOverrideChecker
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
@@ -18,11 +19,12 @@ class FirClassUseSiteMemberScope(
     klass: FirClass,
     session: FirSession,
     superTypeScopes: List<FirTypeScope>,
-    declaredMemberScope: FirContainingNamesAwareScope
+    declaredMemberScope: FirContainingNamesAwareScope,
+    firOverrideChecker: FirOverrideChecker,
 ) : AbstractFirUseSiteMemberScope(
     klass.classId,
     session,
-    FirStandardOverrideChecker(session),
+    firOverrideChecker,
     superTypeScopes,
     klass.defaultType(),
     declaredMemberScope

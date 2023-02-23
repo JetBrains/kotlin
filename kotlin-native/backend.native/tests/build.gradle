@@ -4993,7 +4993,6 @@ if (PlatformInfo.isAppleTarget(project)) {
     }
 
     interopTestMultifile("interop_objc_tests") {
-        disabled = isK2(project) // KT-55909
         source = "interop/objc/tests/"
         interop = 'objcTests'
         flags = ['-tr', '-e', 'main']

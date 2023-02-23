@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.java.deserialization.OptionalAnnotationClassesPr
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCloneableSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
+import org.jetbrains.kotlin.fir.scopes.impl.FirStandardOverrideChecker
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
@@ -51,7 +52,12 @@ object FirCommonSessionFactory : FirAbstractSessionFactory() {
                 it.registerCommonJavaComponents(projectEnvironment.getJavaModuleResolver())
                 registerExtraComponents(it)
             },
-            createKotlinScopeProvider = { FirKotlinScopeProvider { _, declaredMemberScope, _, _ -> declaredMemberScope } },
+            createKotlinScopeProvider = {
+                FirKotlinScopeProvider(
+                    FirStandardOverrideChecker(sessionProvider.getSession(moduleDataProvider.allModuleData.single())!!)
+                )
+                { _, declaredMemberScope, _, _ -> declaredMemberScope }
+            },
             createProviders = { session, builtinsModuleData, kotlinScopeProvider ->
                 listOf(
                     MetadataSymbolProvider(
@@ -102,7 +108,12 @@ object FirCommonSessionFactory : FirAbstractSessionFactory() {
                 it.registerJsCheckers()
                 it.registerNativeCheckers()
             },
-            createKotlinScopeProvider = { FirKotlinScopeProvider { _, declaredMemberScope, _, _ -> declaredMemberScope } },
+            createKotlinScopeProvider = {
+                FirKotlinScopeProvider(
+                    FirStandardOverrideChecker(sessionProvider.getSession(moduleData)!!)
+                )
+                { _, declaredMemberScope, _, _ -> declaredMemberScope }
+            },
             createProviders = { session, kotlinScopeProvider, symbolProvider, syntheticFunctionalInterfaceProvider, generatedSymbolsProvider, dependencies ->
                 var symbolProviderForBinariesFromIncrementalCompilation: MetadataSymbolProvider? = null
                 var optionalAnnotationClassesProviderForBinariesFromIncrementalCompilation: OptionalAnnotationClassesProvider? = null

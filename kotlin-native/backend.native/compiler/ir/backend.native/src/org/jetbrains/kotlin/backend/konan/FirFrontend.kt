@@ -12,15 +12,18 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.fir.BinaryModuleData
 import org.jetbrains.kotlin.fir.DependencyListForCliModule
+import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.FirResult
 import org.jetbrains.kotlin.fir.pipeline.buildResolveAndCheckFir
 import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.scopes.PlatformSpecificOverridabilityRules
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.resolve.konan.platform.NativePlatformAnalyzerServices
 
+@OptIn(SessionConfiguration::class)
 internal fun PhaseContext.firFrontend(input: KotlinCoreEnvironment): FirOutput {
     val configuration = input.configuration
     val messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
@@ -43,7 +46,10 @@ internal fun PhaseContext.firFrontend(input: KotlinCoreEnvironment): FirOutput {
 
     val sessionsWithSources = prepareNativeSessions(
             ktFiles, configuration, mainModuleName.asString(), resolvedLibraries, dependencyList,
-            extensionRegistrars, isCommonSourceForPsi, fileBelongsToModuleForPsi
+            extensionRegistrars, isCommonSourceForPsi, fileBelongsToModuleForPsi,
+            registerExtraComponents = {
+                it.register(PlatformSpecificOverridabilityRules::class, ObjCOverridabilityRules(it))
+            },
     )
 
     val outputs = sessionsWithSources.map { (session, sources) ->

@@ -158,6 +158,7 @@ fun <F> prepareNativeSessions(
     extensionRegistrars: List<FirExtensionRegistrar>,
     isCommonSource: (F) -> Boolean,
     fileBelongsToModule: (F, String) -> Boolean,
+    registerExtraComponents: ((FirSession) -> Unit) = {},
 ): List<SessionWithSources<F>> {
     return prepareSessions(
         files, configuration, rootModuleName, NativePlatforms.unspecifiedNativePlatform, NativePlatformAnalyzerServices,
@@ -168,7 +169,7 @@ fun <F> prepareNativeSessions(
                 sessionProvider,
                 libraryList.moduleDataProvider,
                 configuration.languageVersionSettings,
-                registerExtraComponents = {},
+                registerExtraComponents,
             )
         }
     ) { _, moduleData, sessionProvider, sessionConfigurator ->

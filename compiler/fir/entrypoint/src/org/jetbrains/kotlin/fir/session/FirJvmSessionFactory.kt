@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.java.deserialization.OptionalAnnotationClassesPr
 import org.jetbrains.kotlin.fir.resolve.providers.impl.*
 import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
+import org.jetbrains.kotlin.fir.scopes.impl.FirStandardOverrideChecker
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
@@ -46,7 +47,12 @@ object FirJvmSessionFactory : FirAbstractSessionFactory() {
                 it.registerCommonJavaComponents(projectEnvironment.getJavaModuleResolver())
                 registerExtraComponents(it)
             },
-            createKotlinScopeProvider = { FirKotlinScopeProvider(::wrapScopeWithJvmMapped) },
+            createKotlinScopeProvider = {
+                FirKotlinScopeProvider(
+                    FirStandardOverrideChecker(sessionProvider.getSession(moduleDataProvider.getModuleData(null)!!)!!),
+                    ::wrapScopeWithJvmMapped
+                )
+            },
             createProviders = { session, builtinsModuleData, kotlinScopeProvider ->
                 listOf(
                     JvmClassFileBasedSymbolProvider(
@@ -100,7 +106,12 @@ object FirJvmSessionFactory : FirAbstractSessionFactory() {
                 registerExtraComponents(it)
             },
             registerExtraCheckers = { it.registerJvmCheckers() },
-            createKotlinScopeProvider = { FirKotlinScopeProvider(::wrapScopeWithJvmMapped) },
+            createKotlinScopeProvider = {
+                FirKotlinScopeProvider(
+                    FirStandardOverrideChecker(sessionProvider.getSession(moduleData)!!),
+                    ::wrapScopeWithJvmMapped
+                )
+            },
             createProviders = { session, kotlinScopeProvider, symbolProvider, generatedSymbolsProvider, syntheticFunctionInterfaceProvider, dependencies ->
                 var symbolProviderForBinariesFromIncrementalCompilation: JvmClassFileBasedSymbolProvider? = null
                 var optionalAnnotationClassesProviderForBinariesFromIncrementalCompilation: OptionalAnnotationClassesProvider? = null
