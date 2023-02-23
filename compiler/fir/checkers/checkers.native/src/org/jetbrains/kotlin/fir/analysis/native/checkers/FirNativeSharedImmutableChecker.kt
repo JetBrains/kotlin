@@ -46,8 +46,6 @@ object FirNativeSharedImmutableChecker : FirBasicDeclarationChecker() {
             return
         }
 
-        if (declaration.source?.kind is KtFakeSourceElementKind) return
-
         if (!context.isTopLevel) {
             reporter.reportIfHasAnnotation(
                 declaration,

@@ -234,6 +234,12 @@ public class FirLightTreeBlackBoxCodegenTestGenerated extends AbstractFirLightTr
         }
 
         @Test
+        @TestMetadata("javaTargetOnPrimaryCtorParameter.kt")
+        public void testJavaTargetOnPrimaryCtorParameter() throws Exception {
+            runTest("compiler/testData/codegen/box/annotations/javaTargetOnPrimaryCtorParameter.kt");
+        }
+
+        @Test
         @TestMetadata("jvmAnnotationFlags.kt")
         public void testJvmAnnotationFlags() throws Exception {
             runTest("compiler/testData/codegen/box/annotations/jvmAnnotationFlags.kt");
@@ -369,6 +375,18 @@ public class FirLightTreeBlackBoxCodegenTestGenerated extends AbstractFirLightTr
         @TestMetadata("syntheticMethodForProperty.kt")
         public void testSyntheticMethodForProperty() throws Exception {
             runTest("compiler/testData/codegen/box/annotations/syntheticMethodForProperty.kt");
+        }
+
+        @Test
+        @TestMetadata("targetOnPrimaryCtorParameter.kt")
+        public void testTargetOnPrimaryCtorParameter() throws Exception {
+            runTest("compiler/testData/codegen/box/annotations/targetOnPrimaryCtorParameter.kt");
+        }
+
+        @Test
+        @TestMetadata("targetOnPrimaryCtorParameterMultiModule.kt")
+        public void testTargetOnPrimaryCtorParameterMultiModule() throws Exception {
+            runTest("compiler/testData/codegen/box/annotations/targetOnPrimaryCtorParameterMultiModule.kt");
         }
 
         @Test

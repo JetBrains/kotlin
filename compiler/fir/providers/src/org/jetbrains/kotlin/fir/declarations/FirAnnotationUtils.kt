@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.declarations
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
@@ -64,6 +65,7 @@ fun List<FirAnnotation>.nonSourceAnnotations(session: FirSession): List<FirAnnot
                         ?.callableNameOfMetaAnnotationArgument == sourceName
         }
     }
+
 fun FirAnnotationContainer.nonSourceAnnotations(session: FirSession): List<FirAnnotation> =
     annotations.nonSourceAnnotations(session)
 
@@ -77,20 +79,30 @@ fun FirAnnotation.useSiteTargetsFromMetaAnnotation(session: FirSession): Set<Ann
     return toAnnotationClass(session)
         ?.annotations
         ?.find { it.toAnnotationClassId(session) == StandardClassIds.Annotations.Target }
-        ?.findArgumentByName(StandardClassIds.Annotations.ParameterNames.targetAllowedTargets)
-        ?.unwrapVarargValue()
-        ?.toAnnotationUseSiteTargets()
+        ?.findUseSiteTargets()
         ?: DEFAULT_USE_SITE_TARGETS
 }
 
-private fun List<FirExpression>.toAnnotationUseSiteTargets(): Set<AnnotationUseSiteTarget> =
-    flatMapTo(mutableSetOf()) { arg ->
-        when (val unwrappedArg = if (arg is FirNamedArgumentExpression) arg.expression else arg) {
-            is FirArrayOfCall -> unwrappedArg.argumentList.arguments.toAnnotationUseSiteTargets()
-            is FirVarargArgumentsExpression -> unwrappedArg.arguments.toAnnotationUseSiteTargets()
-            else -> USE_SITE_TARGET_NAME_MAP[unwrappedArg.callableNameOfMetaAnnotationArgument?.identifier] ?: setOf()
+private fun FirAnnotation.findUseSiteTargets(): Set<AnnotationUseSiteTarget> = buildSet {
+    fun addIfMatching(arg: FirExpression) {
+        if (arg !is FirQualifiedAccessExpression) return
+        val callableSymbol = arg.calleeReference.toResolvedCallableSymbol() ?: return
+        if (callableSymbol.containingClassLookupTag()?.classId == StandardClassIds.AnnotationTarget) {
+            USE_SITE_TARGET_NAME_MAP[callableSymbol.callableId.callableName.identifier]?.let { addAll(it) }
         }
     }
+
+    if (this@findUseSiteTargets is FirAnnotationCall) {
+        for (arg in argumentList.arguments) {
+            arg.unwrapAndFlattenArgument().forEach(::addIfMatching)
+        }
+    } else {
+        argumentMapping.mapping[StandardClassIds.Annotations.ParameterNames.targetAllowedTargets]
+            ?.unwrapAndFlattenArgument()
+            ?.forEach(::addIfMatching)
+    }
+}
+
 
 // See [org.jetbrains.kotlin.descriptors.annotations.KotlinTarget.USE_SITE_MAPPING] (it's in reverse)
 private val USE_SITE_TARGET_NAME_MAP = mapOf(

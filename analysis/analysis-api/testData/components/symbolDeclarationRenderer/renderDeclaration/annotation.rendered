@@ -5,7 +5,7 @@ annotation class base
 annotation class derived
 
 @base
-class correct(@base x: Int) {
+class correct(x: Int) {
   @base
   constructor()
 

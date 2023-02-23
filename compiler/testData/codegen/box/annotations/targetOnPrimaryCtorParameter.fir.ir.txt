@@ -1,0 +1,326 @@
+FILE fqName:<root> fileName:/targetOnPrimaryCtorParameter.kt
+  CLASS ANNOTATION_CLASS name:NoTarget modality:OPEN visibility:public superTypes:[kotlin.Annotation]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.NoTarget
+    CONSTRUCTOR visibility:public <> () returnType:<root>.NoTarget [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:NoTarget modality:OPEN visibility:public superTypes:[kotlin.Annotation]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in kotlin.Annotation
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int [fake_override] declared in kotlin.Annotation
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String [fake_override] declared in kotlin.Annotation
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS ANNOTATION_CLASS name:PropValueField modality:OPEN visibility:public superTypes:[kotlin.Annotation]
+    annotations:
+      Target(allowedTargets = [GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:PROPERTY' type=kotlin.annotation.AnnotationTarget, GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:VALUE_PARAMETER' type=kotlin.annotation.AnnotationTarget, GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:FIELD' type=kotlin.annotation.AnnotationTarget])
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.PropValueField
+    CONSTRUCTOR visibility:public <> () returnType:<root>.PropValueField [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:PropValueField modality:OPEN visibility:public superTypes:[kotlin.Annotation]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in kotlin.Annotation
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int [fake_override] declared in kotlin.Annotation
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String [fake_override] declared in kotlin.Annotation
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS ANNOTATION_CLASS name:PropertyOnly modality:OPEN visibility:public superTypes:[kotlin.Annotation]
+    annotations:
+      Target(allowedTargets = [GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:PROPERTY' type=kotlin.annotation.AnnotationTarget])
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.PropertyOnly
+    CONSTRUCTOR visibility:public <> () returnType:<root>.PropertyOnly [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:PropertyOnly modality:OPEN visibility:public superTypes:[kotlin.Annotation]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in kotlin.Annotation
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int [fake_override] declared in kotlin.Annotation
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String [fake_override] declared in kotlin.Annotation
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS ANNOTATION_CLASS name:ParameterOnly modality:OPEN visibility:public superTypes:[kotlin.Annotation]
+    annotations:
+      Target(allowedTargets = [GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:VALUE_PARAMETER' type=kotlin.annotation.AnnotationTarget])
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ParameterOnly
+    CONSTRUCTOR visibility:public <> () returnType:<root>.ParameterOnly [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:ParameterOnly modality:OPEN visibility:public superTypes:[kotlin.Annotation]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in kotlin.Annotation
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int [fake_override] declared in kotlin.Annotation
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String [fake_override] declared in kotlin.Annotation
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS ANNOTATION_CLASS name:FieldOnly modality:OPEN visibility:public superTypes:[kotlin.Annotation]
+    annotations:
+      Target(allowedTargets = [GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:FIELD' type=kotlin.annotation.AnnotationTarget])
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.FieldOnly
+    CONSTRUCTOR visibility:public <> () returnType:<root>.FieldOnly [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:FieldOnly modality:OPEN visibility:public superTypes:[kotlin.Annotation]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in kotlin.Annotation
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int [fake_override] declared in kotlin.Annotation
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String [fake_override] declared in kotlin.Annotation
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS ANNOTATION_CLASS name:PropertyOnly2 modality:OPEN visibility:public superTypes:[kotlin.Annotation]
+    annotations:
+      Target(allowedTargets = [GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:PROPERTY' type=kotlin.annotation.AnnotationTarget])
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.PropertyOnly2
+    CONSTRUCTOR visibility:public <> () returnType:<root>.PropertyOnly2 [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:PropertyOnly2 modality:OPEN visibility:public superTypes:[kotlin.Annotation]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in kotlin.Annotation
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int [fake_override] declared in kotlin.Annotation
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String [fake_override] declared in kotlin.Annotation
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS CLASS name:Foo modality:FINAL visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Foo
+    CONSTRUCTOR visibility:public <> (param:kotlin.Int) returnType:<root>.Foo [primary]
+      VALUE_PARAMETER name:param index:0 type:kotlin.Int
+        annotations:
+          NoTarget
+          PropValueField
+          ParameterOnly
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Foo modality:FINAL visibility:public superTypes:[kotlin.Any]'
+    PROPERTY name:param visibility:public modality:FINAL [var]
+      annotations:
+        PropertyOnly
+        PropertyOnly2
+      FIELD PROPERTY_BACKING_FIELD name:param type:kotlin.Int visibility:private
+        annotations:
+          FieldOnly
+        EXPRESSION_BODY
+          GET_VAR 'param: kotlin.Int declared in <root>.Foo.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-param> visibility:public modality:FINAL <> ($this:<root>.Foo) returnType:kotlin.Int
+        correspondingProperty: PROPERTY name:param visibility:public modality:FINAL [var]
+        $this: VALUE_PARAMETER name:<this> type:<root>.Foo
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-param> (): kotlin.Int declared in <root>.Foo'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:param type:kotlin.Int visibility:private' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.Foo declared in <root>.Foo.<get-param>' type=<root>.Foo origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-param> visibility:public modality:FINAL <> ($this:<root>.Foo, <set-?>:kotlin.Int) returnType:kotlin.Unit
+        correspondingProperty: PROPERTY name:param visibility:public modality:FINAL [var]
+        $this: VALUE_PARAMETER name:<this> type:<root>.Foo
+        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:param type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
+            receiver: GET_VAR '<this>: <root>.Foo declared in <root>.Foo.<set-param>' type=<root>.Foo origin=null
+            value: GET_VAR '<set-?>: kotlin.Int declared in <root>.Foo.<set-param>' type=kotlin.Int origin=null
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
+    BLOCK_BODY
+      VAR name:clazz type:kotlin.reflect.KClass<<root>.Foo> [val]
+        CLASS_REFERENCE 'CLASS CLASS name:Foo modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.reflect.KClass<<root>.Foo>
+      VAR name:parameterAnnotations type:kotlin.collections.Set<kotlin.String> [val]
+        CALL 'public final fun toSet <T> (): kotlin.collections.Set<T of kotlin.collections.CollectionsKt.toSet> declared in kotlin.collections.CollectionsKt' type=kotlin.collections.Set<kotlin.String> origin=null
+          <T>: kotlin.String
+          $receiver: CALL 'public final fun map <T, R> (transform: kotlin.Function1<T of kotlin.collections.CollectionsKt.map, R of kotlin.collections.CollectionsKt.map>): kotlin.collections.List<R of kotlin.collections.CollectionsKt.map> [inline] declared in kotlin.collections.CollectionsKt' type=kotlin.collections.List<kotlin.String> origin=null
+            <T>: kotlin.Annotation
+            <R>: kotlin.String
+            $receiver: CALL 'public abstract fun <get-annotations> (): kotlin.collections.List<kotlin.Annotation> [fake_override] declared in kotlin.reflect.KParameter' type=kotlin.collections.List<kotlin.Annotation> origin=GET_PROPERTY
+              $this: CALL 'public final fun single <T> (): T of kotlin.collections.CollectionsKt.single declared in kotlin.collections.CollectionsKt' type=kotlin.reflect.KParameter origin=null
+                <T>: kotlin.reflect.KParameter
+                $receiver: CALL 'public abstract fun <get-parameters> (): kotlin.collections.List<kotlin.reflect.KParameter> [fake_override] declared in kotlin.reflect.KFunction' type=kotlin.collections.List<kotlin.reflect.KParameter> origin=GET_PROPERTY
+                  $this: CALL 'public final fun single <T> (): T of kotlin.collections.CollectionsKt.single declared in kotlin.collections.CollectionsKt' type=kotlin.reflect.KFunction<<root>.Foo> origin=null
+                    <T>: kotlin.reflect.KFunction<<root>.Foo>
+                    $receiver: CALL 'public abstract fun <get-constructors> (): kotlin.collections.Collection<kotlin.reflect.KFunction<T of kotlin.reflect.KClass>> declared in kotlin.reflect.KClass' type=kotlin.collections.Collection<kotlin.reflect.KFunction<<root>.Foo>> origin=GET_PROPERTY
+                      $this: GET_VAR 'val clazz: kotlin.reflect.KClass<<root>.Foo> [val] declared in <root>.box' type=kotlin.reflect.KClass<<root>.Foo> origin=null
+            transform: FUN_EXPR type=kotlin.Function1<kotlin.Annotation, kotlin.String> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.Annotation) returnType:kotlin.String
+                VALUE_PARAMETER name:it index:0 type:kotlin.Annotation
+                BLOCK_BODY
+                  RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.Annotation): kotlin.String declared in <root>.box'
+                    BLOCK type=kotlin.String origin=ELVIS
+                      VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.String? [val]
+                        CALL 'public abstract fun <get-simpleName> (): kotlin.String? declared in kotlin.reflect.KClass' type=kotlin.String? origin=GET_PROPERTY
+                          $this: CALL 'public final fun <get-annotationClass> <T> (): kotlin.reflect.KClass<out T of kotlin.jvm.JvmClassMappingKt.<get-annotationClass>> declared in kotlin.jvm.JvmClassMappingKt' type=kotlin.reflect.KClass<out kotlin.Annotation> origin=GET_PROPERTY
+                            <T>: kotlin.Annotation
+                            $receiver: GET_VAR 'it: kotlin.Annotation declared in <root>.box.<anonymous>' type=kotlin.Annotation origin=null
+                      WHEN type=kotlin.String origin=ELVIS
+                        BRANCH
+                          if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                            arg0: GET_VAR 'val tmp_0: kotlin.String? [val] declared in <root>.box.<anonymous>' type=kotlin.String? origin=null
+                            arg1: CONST Null type=kotlin.Nothing? value=null
+                          then: CONST String type=kotlin.String value=""
+                        BRANCH
+                          if: CONST Boolean type=kotlin.Boolean value=true
+                          then: GET_VAR 'val tmp_0: kotlin.String? [val] declared in <root>.box.<anonymous>' type=kotlin.String? origin=null
+      VAR name:propertyAnnotations type:kotlin.collections.Set<kotlin.String> [val]
+        CALL 'public final fun toSet <T> (): kotlin.collections.Set<T of kotlin.collections.CollectionsKt.toSet> declared in kotlin.collections.CollectionsKt' type=kotlin.collections.Set<kotlin.String> origin=null
+          <T>: kotlin.String
+          $receiver: CALL 'public final fun map <T, R> (transform: kotlin.Function1<T of kotlin.collections.CollectionsKt.map, R of kotlin.collections.CollectionsKt.map>): kotlin.collections.List<R of kotlin.collections.CollectionsKt.map> [inline] declared in kotlin.collections.CollectionsKt' type=kotlin.collections.List<kotlin.String> origin=null
+            <T>: kotlin.Annotation
+            <R>: kotlin.String
+            $receiver: CALL 'public abstract fun <get-annotations> (): kotlin.collections.List<kotlin.Annotation> [fake_override] declared in kotlin.reflect.KProperty1' type=kotlin.collections.List<kotlin.Annotation> origin=GET_PROPERTY
+              $this: CALL 'public final fun single <T> (): T of kotlin.collections.CollectionsKt.single declared in kotlin.collections.CollectionsKt' type=kotlin.reflect.KProperty1<<root>.Foo, *> origin=null
+                <T>: kotlin.reflect.KProperty1<<root>.Foo, *>
+                $receiver: CALL 'public final fun <get-declaredMemberProperties> <T> (): kotlin.collections.Collection<kotlin.reflect.KProperty1<T of kotlin.reflect.full.KClasses.<get-declaredMemberProperties>, *>> declared in kotlin.reflect.full.KClasses' type=kotlin.collections.Collection<kotlin.reflect.KProperty1<<root>.Foo, *>> origin=GET_PROPERTY
+                  <T>: <root>.Foo
+                  $receiver: GET_VAR 'val clazz: kotlin.reflect.KClass<<root>.Foo> [val] declared in <root>.box' type=kotlin.reflect.KClass<<root>.Foo> origin=null
+            transform: FUN_EXPR type=kotlin.Function1<kotlin.Annotation, kotlin.String> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.Annotation) returnType:kotlin.String
+                VALUE_PARAMETER name:it index:0 type:kotlin.Annotation
+                BLOCK_BODY
+                  RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.Annotation): kotlin.String declared in <root>.box'
+                    BLOCK type=kotlin.String origin=ELVIS
+                      VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.String? [val]
+                        CALL 'public abstract fun <get-simpleName> (): kotlin.String? declared in kotlin.reflect.KClass' type=kotlin.String? origin=GET_PROPERTY
+                          $this: CALL 'public final fun <get-annotationClass> <T> (): kotlin.reflect.KClass<out T of kotlin.jvm.JvmClassMappingKt.<get-annotationClass>> declared in kotlin.jvm.JvmClassMappingKt' type=kotlin.reflect.KClass<out kotlin.Annotation> origin=GET_PROPERTY
+                            <T>: kotlin.Annotation
+                            $receiver: GET_VAR 'it: kotlin.Annotation declared in <root>.box.<anonymous>' type=kotlin.Annotation origin=null
+                      WHEN type=kotlin.String origin=ELVIS
+                        BRANCH
+                          if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                            arg0: GET_VAR 'val tmp_1: kotlin.String? [val] declared in <root>.box.<anonymous>' type=kotlin.String? origin=null
+                            arg1: CONST Null type=kotlin.Nothing? value=null
+                          then: CONST String type=kotlin.String value=""
+                        BRANCH
+                          if: CONST Boolean type=kotlin.Boolean value=true
+                          then: GET_VAR 'val tmp_1: kotlin.String? [val] declared in <root>.box.<anonymous>' type=kotlin.String? origin=null
+      VAR name:fieldAnnotations type:kotlin.collections.Set<kotlin.String> [val]
+        CALL 'public final fun toSet <T> (): kotlin.collections.Set<T of kotlin.collections.CollectionsKt.toSet> declared in kotlin.collections.CollectionsKt' type=kotlin.collections.Set<kotlin.String> origin=null
+          <T>: kotlin.String
+          $receiver: CALL 'public final fun map <T, R> (transform: kotlin.Function1<T of kotlin.collections.ArraysKt.map, R of kotlin.collections.ArraysKt.map>): kotlin.collections.List<R of kotlin.collections.ArraysKt.map> [inline] declared in kotlin.collections.ArraysKt' type=kotlin.collections.List<kotlin.String> origin=null
+            <T>: @[FlexibleNullability] kotlin.Annotation?
+            <R>: kotlin.String
+            $receiver: TYPE_OP type=kotlin.Array<out @[FlexibleNullability] kotlin.Annotation?> origin=IMPLICIT_NOTNULL typeOperand=kotlin.Array<out @[FlexibleNullability] kotlin.Annotation?>
+              CALL 'public open fun getAnnotations (): @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] kotlin.Annotation?>? [fake_override] declared in java.lang.reflect.Field' type=@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] kotlin.Annotation?>? origin=GET_PROPERTY
+                $this: CALL 'public open fun getDeclaredField (p0: @[FlexibleNullability] kotlin.String?): @[FlexibleNullability] java.lang.reflect.Field? declared in java.lang.Class' type=@[FlexibleNullability] java.lang.reflect.Field? origin=null
+                  $this: CALL 'public final fun <get-java> <T> (): java.lang.Class<T of kotlin.jvm.JvmClassMappingKt.<get-java>> declared in kotlin.jvm.JvmClassMappingKt' type=java.lang.Class<<root>.Foo> origin=GET_PROPERTY
+                    <T>: <root>.Foo
+                    $receiver: CLASS_REFERENCE 'CLASS CLASS name:Foo modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.reflect.KClass<<root>.Foo>
+                  p0: CONST String type=kotlin.String value="param"
+            transform: FUN_EXPR type=kotlin.Function1<@[FlexibleNullability] kotlin.Annotation?, kotlin.String> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:@[FlexibleNullability] kotlin.Annotation?) returnType:kotlin.String
+                VALUE_PARAMETER name:it index:0 type:@[FlexibleNullability] kotlin.Annotation?
+                BLOCK_BODY
+                  RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: @[FlexibleNullability] kotlin.Annotation?): kotlin.String declared in <root>.box'
+                    BLOCK type=kotlin.String origin=ELVIS
+                      VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:kotlin.String? [val]
+                        CALL 'public abstract fun <get-simpleName> (): kotlin.String? declared in kotlin.reflect.KClass' type=kotlin.String? origin=GET_PROPERTY
+                          $this: CALL 'public final fun <get-annotationClass> <T> (): kotlin.reflect.KClass<out T of kotlin.jvm.JvmClassMappingKt.<get-annotationClass>> declared in kotlin.jvm.JvmClassMappingKt' type=kotlin.reflect.KClass<out @[FlexibleNullability] kotlin.Annotation?> origin=GET_PROPERTY
+                            <T>: @[FlexibleNullability] kotlin.Annotation?
+                            $receiver: TYPE_OP type=kotlin.Annotation origin=IMPLICIT_NOTNULL typeOperand=kotlin.Annotation
+                              GET_VAR 'it: @[FlexibleNullability] kotlin.Annotation? declared in <root>.box.<anonymous>' type=@[FlexibleNullability] kotlin.Annotation? origin=null
+                      WHEN type=kotlin.String origin=ELVIS
+                        BRANCH
+                          if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                            arg0: GET_VAR 'val tmp_2: kotlin.String? [val] declared in <root>.box.<anonymous>' type=kotlin.String? origin=null
+                            arg1: CONST Null type=kotlin.Nothing? value=null
+                          then: CONST String type=kotlin.String value=""
+                        BRANCH
+                          if: CONST Boolean type=kotlin.Boolean value=true
+                          then: GET_VAR 'val tmp_2: kotlin.String? [val] declared in <root>.box.<anonymous>' type=kotlin.String? origin=null
+      WHEN type=kotlin.Unit origin=IF
+        BRANCH
+          if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+            $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+              arg0: GET_VAR 'val parameterAnnotations: kotlin.collections.Set<kotlin.String> [val] declared in <root>.box' type=kotlin.collections.Set<kotlin.String> origin=null
+              arg1: CALL 'public final fun setOf <T> (vararg elements: T of kotlin.collections.SetsKt.setOf): kotlin.collections.Set<T of kotlin.collections.SetsKt.setOf> declared in kotlin.collections.SetsKt' type=kotlin.collections.Set<kotlin.String> origin=null
+                <T>: kotlin.String
+                elements: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
+                  CONST String type=kotlin.String value="NoTarget"
+                  CONST String type=kotlin.String value="PropValueField"
+                  CONST String type=kotlin.String value="ParameterOnly"
+          then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+            CALL 'public final fun plus (other: kotlin.Any?): kotlin.String [operator] declared in kotlin.String' type=kotlin.String origin=PLUS
+              $this: CONST String type=kotlin.String value="Parameters:"
+              other: CALL 'public final fun joinToString <T> (separator: kotlin.CharSequence, prefix: kotlin.CharSequence, postfix: kotlin.CharSequence, limit: kotlin.Int, truncated: kotlin.CharSequence, transform: kotlin.Function1<T of kotlin.collections.CollectionsKt.joinToString, kotlin.CharSequence>?): kotlin.String declared in kotlin.collections.CollectionsKt' type=kotlin.String origin=null
+                <T>: kotlin.String
+                $receiver: GET_VAR 'val parameterAnnotations: kotlin.collections.Set<kotlin.String> [val] declared in <root>.box' type=kotlin.collections.Set<kotlin.String> origin=null
+      WHEN type=kotlin.Unit origin=IF
+        BRANCH
+          if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+            $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+              arg0: GET_VAR 'val propertyAnnotations: kotlin.collections.Set<kotlin.String> [val] declared in <root>.box' type=kotlin.collections.Set<kotlin.String> origin=null
+              arg1: CALL 'public final fun setOf <T> (vararg elements: T of kotlin.collections.SetsKt.setOf): kotlin.collections.Set<T of kotlin.collections.SetsKt.setOf> declared in kotlin.collections.SetsKt' type=kotlin.collections.Set<kotlin.String> origin=null
+                <T>: kotlin.String
+                elements: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
+                  CONST String type=kotlin.String value="PropertyOnly"
+                  CONST String type=kotlin.String value="PropertyOnly2"
+          then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+            CALL 'public final fun plus (other: kotlin.Any?): kotlin.String [operator] declared in kotlin.String' type=kotlin.String origin=PLUS
+              $this: CONST String type=kotlin.String value="Property:"
+              other: CALL 'public final fun joinToString <T> (separator: kotlin.CharSequence, prefix: kotlin.CharSequence, postfix: kotlin.CharSequence, limit: kotlin.Int, truncated: kotlin.CharSequence, transform: kotlin.Function1<T of kotlin.collections.CollectionsKt.joinToString, kotlin.CharSequence>?): kotlin.String declared in kotlin.collections.CollectionsKt' type=kotlin.String origin=null
+                <T>: kotlin.String
+                $receiver: GET_VAR 'val propertyAnnotations: kotlin.collections.Set<kotlin.String> [val] declared in <root>.box' type=kotlin.collections.Set<kotlin.String> origin=null
+      WHEN type=kotlin.Unit origin=IF
+        BRANCH
+          if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+            $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+              arg0: GET_VAR 'val fieldAnnotations: kotlin.collections.Set<kotlin.String> [val] declared in <root>.box' type=kotlin.collections.Set<kotlin.String> origin=null
+              arg1: CALL 'public final fun setOf <T> (element: T of kotlin.collections.SetsKt.setOf): kotlin.collections.Set<T of kotlin.collections.SetsKt.setOf> declared in kotlin.collections.SetsKt' type=kotlin.collections.Set<kotlin.String> origin=null
+                <T>: kotlin.String
+                element: CONST String type=kotlin.String value="FieldOnly"
+          then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+            CALL 'public final fun plus (other: kotlin.Any?): kotlin.String [operator] declared in kotlin.String' type=kotlin.String origin=PLUS
+              $this: CONST String type=kotlin.String value="Field:"
+              other: CALL 'public final fun joinToString <T> (separator: kotlin.CharSequence, prefix: kotlin.CharSequence, postfix: kotlin.CharSequence, limit: kotlin.Int, truncated: kotlin.CharSequence, transform: kotlin.Function1<T of kotlin.collections.CollectionsKt.joinToString, kotlin.CharSequence>?): kotlin.String declared in kotlin.collections.CollectionsKt' type=kotlin.String origin=null
+                <T>: kotlin.String
+                $receiver: GET_VAR 'val fieldAnnotations: kotlin.collections.Set<kotlin.String> [val] declared in <root>.box' type=kotlin.collections.Set<kotlin.String> origin=null
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        CONST String type=kotlin.String value="OK"

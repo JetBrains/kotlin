@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 class FirSpecificTypeResolverTransformer(
     override val session: FirSession,
     private val errorTypeAsResolved: Boolean = true,
+    private val resolveDeprecations: Boolean = true,
     private val supertypeSupplier: SupertypeSupplier = SupertypeSupplier.Default
 ) : FirAbstractTreeTransformer<ScopeClassDeclaration>(phase = FirResolvePhase.SUPER_TYPES) {
     private val typeResolver = session.typeResolver
@@ -85,6 +86,7 @@ class FirSpecificTypeResolverTransformer(
             data,
             areBareTypesAllowed,
             isOperandOfIsOperator,
+            resolveDeprecations,
             currentFile,
             supertypeSupplier
         )
@@ -104,6 +106,7 @@ class FirSpecificTypeResolverTransformer(
             data,
             areBareTypesAllowed,
             isOperandOfIsOperator,
+            resolveDeprecations,
             currentFile,
             supertypeSupplier
         )

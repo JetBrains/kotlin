@@ -162,7 +162,6 @@ object FirAnnotationChecker : FirBasicDeclarationChecker() {
                 context
             )
         } else {
-            if (declaration is FirProperty && declaration.source?.kind == KtFakeSourceElementKind.PropertyFromParameter) return
             reporter.reportOn(
                 annotation.source,
                 FirErrors.WRONG_ANNOTATION_TARGET,
@@ -212,8 +211,6 @@ object FirAnnotationChecker : FirBasicDeclarationChecker() {
                     } else {
                         reporter.reportOn(annotation.source, FirErrors.INAPPLICABLE_PARAM_TARGET, context)
                     }
-                }
-                annotated is FirProperty && annotated.source?.kind == KtFakeSourceElementKind.PropertyFromParameter -> {
                 }
                 else -> reporter.reportOn(annotation.source, FirErrors.INAPPLICABLE_PARAM_TARGET, context)
             }

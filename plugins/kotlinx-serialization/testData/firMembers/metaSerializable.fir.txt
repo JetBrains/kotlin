@@ -92,7 +92,7 @@ FILE: metaSerializable.kt
 
     }
     @R|kotlinx/serialization/Serializable|() public final class Wrapper : R|kotlin/Any| {
-        public constructor(@R|MySerializableWithInfo|(value = Int(234), kclass = <getClass>(Q|kotlin/Int|)) project: R|Project2|): R|Wrapper| {
+        public constructor(project: R|Project2|): R|Wrapper| {
             super<R|kotlin/Any|>()
         }
 

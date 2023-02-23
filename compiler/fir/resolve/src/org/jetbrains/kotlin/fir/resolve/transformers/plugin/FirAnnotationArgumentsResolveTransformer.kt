@@ -139,9 +139,8 @@ private class FirDeclarationsResolveTransformerForArgumentAnnotations(
     }
 }
 
-private class FirExpressionsResolveTransformerForSpecificAnnotations(
-    transformer: FirAbstractBodyResolveTransformerDispatcher
-) : FirExpressionsResolveTransformer(transformer) {
+abstract class AbstractFirExpressionsResolveTransformerForAnnotations(transformer: FirAbstractBodyResolveTransformerDispatcher) :
+    FirExpressionsResolveTransformer(transformer) {
 
     override fun transformAnnotation(annotation: FirAnnotation, data: ResolutionMode): FirStatement {
         dataFlowAnalyzer.enterAnnotation()
@@ -166,13 +165,11 @@ private class FirExpressionsResolveTransformerForSpecificAnnotations(
         return calleeReference !is FirErrorNamedReference
     }
 
-    override fun resolveQualifiedAccessAndSelectCandidate(
+    abstract override fun resolveQualifiedAccessAndSelectCandidate(
         qualifiedAccessExpression: FirQualifiedAccessExpression,
         isUsedAsReceiver: Boolean,
         callSite: FirElement,
-    ): FirStatement {
-        return callResolver.resolveOnlyEnumOrQualifierAccessAndSelectCandidate(qualifiedAccessExpression, isUsedAsReceiver)
-    }
+    ): FirStatement
 
     override fun transformFunctionCall(functionCall: FirFunctionCall, data: ResolutionMode): FirStatement {
         return functionCall
@@ -253,4 +250,17 @@ private class FirExpressionsResolveTransformerForSpecificAnnotations(
     override fun shouldComputeTypeOfGetClassCallWithNotQualifierInLhs(getClassCall: FirGetClassCall): Boolean {
         return false
     }
+}
+
+private class FirExpressionsResolveTransformerForSpecificAnnotations(transformer: FirAbstractBodyResolveTransformerDispatcher) :
+    AbstractFirExpressionsResolveTransformerForAnnotations(transformer) {
+
+    override fun resolveQualifiedAccessAndSelectCandidate(
+        qualifiedAccessExpression: FirQualifiedAccessExpression,
+        isUsedAsReceiver: Boolean,
+        callSite: FirElement,
+    ): FirStatement {
+        return callResolver.resolveOnlyEnumOrQualifierAccessAndSelectCandidate(qualifiedAccessExpression, isUsedAsReceiver)
+    }
+
 }

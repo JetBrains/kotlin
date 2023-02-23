@@ -82,7 +82,8 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         typeRef: FirUserTypeRef,
         scopeClassDeclaration: ScopeClassDeclaration,
         useSiteFile: FirFile?,
-        supertypeSupplier: SupertypeSupplier
+        supertypeSupplier: SupertypeSupplier,
+        resolveDeprecations: Boolean
     ): TypeResolutionResult {
         val qualifierResolver = session.qualifierResolver
         var applicability: CandidateApplicability? = null
@@ -101,10 +102,12 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                 diagnostic = ConeVisibilityError(symbol)
             }
 
-            val deprecation = symbol.getDeprecation(session, useSiteFile)
-            if (deprecation != null && deprecation.deprecationLevel == DeprecationLevelValue.HIDDEN) {
-                symbolApplicability = minOf(CandidateApplicability.HIDDEN, symbolApplicability)
-                diagnostic = null
+            if (resolveDeprecations) {
+                val deprecation = symbol.getDeprecation(session, useSiteFile)
+                if (deprecation != null && deprecation.deprecationLevel == DeprecationLevelValue.HIDDEN) {
+                    symbolApplicability = minOf(CandidateApplicability.HIDDEN, symbolApplicability)
+                    diagnostic = null
+                }
             }
 
             if (applicability == null || symbolApplicability > applicability!!) {
@@ -491,13 +494,14 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         scopeClassDeclaration: ScopeClassDeclaration,
         areBareTypesAllowed: Boolean,
         isOperandOfIsOperator: Boolean,
+        resolveDeprecations: Boolean,
         useSiteFile: FirFile?,
         supertypeSupplier: SupertypeSupplier
     ): Pair<ConeKotlinType, ConeDiagnostic?> {
         return when (typeRef) {
             is FirResolvedTypeRef -> error("Do not resolve, resolved type-refs")
             is FirUserTypeRef -> {
-                val result = resolveUserTypeToSymbol(typeRef, scopeClassDeclaration, useSiteFile, supertypeSupplier)
+                val result = resolveUserTypeToSymbol(typeRef, scopeClassDeclaration, useSiteFile, supertypeSupplier, resolveDeprecations)
                 resolveUserType(
                     typeRef,
                     result,

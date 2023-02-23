@@ -1657,7 +1657,7 @@ class Fir2IrDeclarationStorage(
             annotationGenerator.generate(this, firAnnotationContainer)
             if (this is IrFunction && firAnnotationContainer is FirSimpleFunction) {
                 valueParameters.zip(firAnnotationContainer.valueParameters).forEach { (irParameter, firParameter) ->
-                    annotationGenerator.generate(irParameter, firParameter, isInConstructor = false)
+                    annotationGenerator.generate(irParameter, firParameter)
                 }
             }
         }
