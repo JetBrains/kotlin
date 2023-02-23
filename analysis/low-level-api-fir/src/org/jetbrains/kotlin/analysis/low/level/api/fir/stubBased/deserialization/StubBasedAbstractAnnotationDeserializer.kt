@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderWithTextStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.types.ConstantValueKind
 
@@ -227,6 +228,10 @@ abstract class StubBasedAbstractAnnotationDeserializer(
                     )
                 }
             }
+        }
+        if (value is KtStringTemplateExpression) {
+            val textStub = value.entries[0].stub as KotlinPlaceHolderWithTextStub<*>
+            return const(ConstantValueKind.String, textStub.text(), session.builtinTypes.stringType)
         }
 //        val isUnsigned = Flags.IS_UNSIGNED.get(value.flags)
 //

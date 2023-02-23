@@ -23,10 +23,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.stubs.KotlinUserTypeStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.*
-import org.jetbrains.kotlin.resolve.constants.ArrayValue
-import org.jetbrains.kotlin.resolve.constants.ConstantValue
-import org.jetbrains.kotlin.resolve.constants.EnumValue
-import org.jetbrains.kotlin.resolve.constants.KClassValue
+import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.AnnotatedCallableKind
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
@@ -263,6 +260,18 @@ private fun createAnnotationMappingByConstantValue(
 //                is KClassValue.Value.NormalClass -> createStubForTypeName(value.value.classId, valueArg, false)
 //            }
 //        }
+        is StringValue -> {
+            val valueArg = KotlinValueArgumentStubImpl<KtValueArgument>(parent, KtStubElementTypes.VALUE_ARGUMENT, false)
+            val argName = KotlinPlaceHolderStubImpl<KtValueArgumentName>(valueArg, KtStubElementTypes.VALUE_ARGUMENT_NAME)
+            KotlinNameReferenceExpressionStubImpl(argName, name.ref())
+            val stringStub =
+                KotlinPlaceHolderStubImpl<KtStringTemplateExpression>(valueArg, KtStubElementTypes.STRING_TEMPLATE)
+            KotlinPlaceHolderWithTextStubImpl<KtStringTemplateExpression>(
+                stringStub,
+                KtStubElementTypes.SHORT_STRING_TEMPLATE_ENTRY,
+                constantValue.value
+            )
+        }
         is ArrayValue -> {
             val values = constantValue.value
             for (value in values) {
