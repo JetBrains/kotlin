@@ -139,6 +139,7 @@ internal abstract class AbstractFirSpecificAnnotationResolveTransformer(
                     relativeClassFqName = symbol.classId.relativeClassName
                     typeRef = FirImplicitUnitTypeRef(receiver.typeRef.source)
                     this.symbol = symbol
+                    isFullyQualified = segments.isNotEmpty()
                 }
 
                 // Resolve enum entry by name from the declarations of the receiver.

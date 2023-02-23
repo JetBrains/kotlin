@@ -1007,6 +1007,15 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.AMBIGUOUS_ANNOTATION_ARGUMENT) { firDiagnostic ->
+        AmbiguousAnnotationArgumentImpl(
+            firDiagnostic.a.map { firBasedSymbol ->
+                firSymbolBuilder.buildSymbol(firBasedSymbol)
+            },
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJsErrors.WRONG_JS_QUALIFIER) { firDiagnostic ->
         WrongJsQualifierImpl(
             firDiagnostic as KtPsiDiagnostic,

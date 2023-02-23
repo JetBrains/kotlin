@@ -39,6 +39,7 @@ class FirErrorResolvedQualifierBuilder : FirAbstractResolvedQualifierBuilder, Fi
     override var relativeClassFqName: FqName? = null
     override var symbol: FirClassLikeSymbol<*>? = null
     override var isNullableLHSForCallableReference: Boolean = false
+    override var isFullyQualified: Boolean = false
     override val nonFatalDiagnostics: MutableList<ConeDiagnostic> = mutableListOf()
     override val typeArguments: MutableList<FirTypeProjection> = mutableListOf()
     lateinit var diagnostic: ConeDiagnostic
@@ -51,6 +52,7 @@ class FirErrorResolvedQualifierBuilder : FirAbstractResolvedQualifierBuilder, Fi
             relativeClassFqName,
             symbol,
             isNullableLHSForCallableReference,
+            isFullyQualified,
             nonFatalDiagnostics.toMutableOrEmpty(),
             typeArguments.toMutableOrEmpty(),
             diagnostic,

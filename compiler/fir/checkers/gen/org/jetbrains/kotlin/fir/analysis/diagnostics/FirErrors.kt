@@ -264,6 +264,7 @@ object FirErrors {
     val WRONG_EXTENSION_FUNCTION_TYPE_WARNING by warning0<KtAnnotationEntry>()
     val ANNOTATION_IN_WHERE_CLAUSE_ERROR by error0<KtAnnotationEntry>()
     val PLUGIN_ANNOTATION_AMBIGUITY by error2<PsiElement, ConeKotlinType, ConeKotlinType>()
+    val AMBIGUOUS_ANNOTATION_ARGUMENT by error1<PsiElement, List<FirBasedSymbol<*>>>()
 
     // OptIn
     val OPT_IN_USAGE by warning2<PsiElement, FqName, String>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)

@@ -136,6 +136,7 @@ object StandardClassIds {
 
     val AnnotationRetention = "AnnotationRetention".annotationId()
     val AnnotationTarget = "AnnotationTarget".annotationId()
+    val DeprecationLevel = "DeprecationLevel".baseId()
 
     val EnumEntries = "EnumEntries".enumsId()
 

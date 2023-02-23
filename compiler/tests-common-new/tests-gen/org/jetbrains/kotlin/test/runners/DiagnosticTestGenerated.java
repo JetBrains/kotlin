@@ -35971,6 +35971,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("annotationTargetResolvedAmbiguously.kt")
+            public void testAnnotationTargetResolvedAmbiguously() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationTargetResolvedAmbiguously.kt");
+            }
+
+            @Test
             @TestMetadata("annotationsTargetingLateinitAccessors.kt")
             public void testAnnotationsTargetingLateinitAccessors() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationsTargetingLateinitAccessors.kt");

@@ -132,6 +132,8 @@ private fun ConeDiagnostic.toKtDiagnostic(
     is ConeAmbiguouslyResolvedAnnotationFromPlugin -> {
         FirErrors.PLUGIN_ANNOTATION_AMBIGUITY.createOn(source, typeFromCompilerPhase, typeFromTypesPhase)
     }
+    is ConeAmbiguouslyResolvedAnnotationArgument ->
+        FirErrors.AMBIGUOUS_ANNOTATION_ARGUMENT.createOn(source, listOfNotNull(symbolFromCompilerPhase, symbolFromAnnotationArgumentsPhase))
     is ConeAmbiguousFunctionTypeKinds -> FirErrors.AMBIGUOUS_FUNCTION_TYPE_KIND.createOn(source, kinds)
     else -> throw IllegalArgumentException("Unsupported diagnostic type: ${this.javaClass}")
 }

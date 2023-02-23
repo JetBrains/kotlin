@@ -728,6 +728,11 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val typeFromTypesPhase: KtType
     }
 
+    abstract class AmbiguousAnnotationArgument : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = AmbiguousAnnotationArgument::class
+        abstract val symbols: List<KtSymbol>
+    }
+
     abstract class WrongJsQualifier : KtFirDiagnostic<KtElement>() {
         override val diagnosticClass get() = WrongJsQualifier::class
     }

@@ -354,12 +354,12 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
 
         builder(resolvedQualifier) {
             parents += abstractResolvedQualifierBuilder
-            defaultFalse("isNullableLHSForCallableReference")
+            defaultFalse("isNullableLHSForCallableReference", "isFullyQualified")
         }
 
         builder(errorResolvedQualifier) {
             parents += abstractResolvedQualifierBuilder
-            defaultFalse("isNullableLHSForCallableReference")
+            defaultFalse("isNullableLHSForCallableReference", "isFullyQualified")
         }
 
 //        builder(safeCallExpression) {
