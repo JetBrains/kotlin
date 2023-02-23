@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.fir.expressions.FirSafeCallExpression
 import org.jetbrains.kotlin.fir.resolve.calls.FirErrorReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
-import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.receiverType
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
@@ -44,7 +43,7 @@ internal class KtFirCompletionCandidateChecker(
         possibleExplicitReceiver: KtExpression?,
     ): KtExtensionApplicabilityResult {
         require(firSymbolForCandidate is KtFirSymbol<*>)
-        firSymbolForCandidate.firSymbol.lazyResolveToPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
+        firSymbolForCandidate.firSymbol.lazyResolveToPhase(FirResolvePhase.STATUS)
         val declaration = firSymbolForCandidate.firSymbol.fir as FirCallableDeclaration
         return checkExtension(declaration, originalFile, nameExpression, possibleExplicitReceiver)
     }
@@ -73,7 +72,7 @@ internal class KtFirCompletionCandidateChecker(
                 val receiverCastRequired = call.calleeReference is FirErrorReferenceWithCandidate
 
                 return when {
-                    candidateSymbol is FirVariable && candidateSymbol.returnTypeRef.coneType.receiverType(rootModuleSession) != null -> {
+                    candidateSymbol is FirVariable && candidateSymbol.symbol.resolvedReturnType.receiverType(rootModuleSession) != null -> {
                         KtExtensionApplicabilityResult.ApplicableAsFunctionalVariableCall(substitutor, receiverCastRequired, token)
                     }
                     else -> {
