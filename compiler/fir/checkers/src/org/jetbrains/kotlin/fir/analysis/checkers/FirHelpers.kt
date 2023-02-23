@@ -721,7 +721,12 @@ fun ConeKotlinType.getInlineClassUnderlyingType(session: FirSession): ConeKotlin
 
 fun FirNamedFunctionSymbol.directOverriddenFunctions(session: FirSession, scopeSession: ScopeSession): List<FirNamedFunctionSymbol> {
     val classSymbol = getContainingClassSymbol(session) as? FirClassSymbol ?: return emptyList()
-    val scope = classSymbol.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false, requiredPhase = FirResolvePhase.STATUS)
+    val scope = classSymbol.unsubstitutedScope(
+        session,
+        scopeSession,
+        withForcedTypeCalculator = false,
+        requiredPhase = FirResolvePhase.STATUS,
+    )
 
     scope.processFunctionsByName(name) { }
     return scope.getDirectOverriddenFunctions(this, true)

@@ -91,7 +91,7 @@ class FirStatusResolver(
             return emptyList()
         }
 
-        val scope = containingClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false, requiredPhase = null,)
+        val scope = containingClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false, requiredPhase = null)
 
         return buildList {
             scope.processPropertiesByName(property.name) {}

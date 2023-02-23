@@ -215,6 +215,7 @@ class DelegatedWrapperData<D : FirCallableDeclaration>(
     val containingClass: ConeClassLikeLookupTag,
     val delegateField: FirField,
 )
+
 var <D : FirCallableDeclaration>
         D.delegatedWrapperData: DelegatedWrapperData<D>? by FirDeclarationDataRegistry.data(DelegatedWrapperDataKey)
 

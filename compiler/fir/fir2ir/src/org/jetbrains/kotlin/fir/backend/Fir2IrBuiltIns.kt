@@ -76,10 +76,12 @@ class Fir2IrBuiltIns(
         val constructorSymbol = if (firSymbol == null) {
             owner.declarations.firstIsInstance<IrConstructor>().symbol
         } else {
-            val firConstructorSymbol = firSymbol.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = true, requiredPhase = null)
-                .getDeclaredConstructors()
-                .singleOrNull()
-                ?: return null
+            val firConstructorSymbol = firSymbol.unsubstitutedScope(
+                session,
+                scopeSession,
+                withForcedTypeCalculator = true,
+                requiredPhase = null
+            ).getDeclaredConstructors().singleOrNull() ?: return null
 
             declarationStorage.getIrConstructorSymbol(firConstructorSymbol)
         }

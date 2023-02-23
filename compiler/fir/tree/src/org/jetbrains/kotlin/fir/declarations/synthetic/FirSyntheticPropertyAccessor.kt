@@ -51,7 +51,7 @@ class FirSyntheticPropertyAccessor(
 
     override val receiverParameter: FirReceiverParameter?
         get() = null
-    
+
     override val deprecationsProvider: DeprecationsProvider
         get() = delegate.deprecationsProvider
 

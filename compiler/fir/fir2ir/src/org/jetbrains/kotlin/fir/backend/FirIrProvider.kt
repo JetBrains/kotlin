@@ -59,7 +59,7 @@ class FirIrProvider(val fir2IrComponents: Fir2IrComponents) : IrProvider {
             val container = (getDeclarationForSignature(signature.container, SymbolKind.CLASS_SYMBOL)
                 ?: getDeclarationForSignature(signature.container, SymbolKind.FUNCTION_SYMBOL)
                 ?: getDeclarationForSignature(signature.container, SymbolKind.PROPERTY_SYMBOL)
-            ) as IrTypeParametersContainer
+                    ) as IrTypeParametersContainer
             val localSignature = signature.inner as IdSignature.LocalSignature
             return container.typeParameters[localSignature.index()]
         }
@@ -92,8 +92,13 @@ class FirIrProvider(val fir2IrComponents: Fir2IrComponents) : IrProvider {
             }
             isTopLevelPrivate = topLevelClass.visibility == Visibilities.Private
             val classId = firClass.classId
-            val scope =
-                firClass.unsubstitutedScope(fir2IrComponents.session, fir2IrComponents.scopeSession, withForcedTypeCalculator = true, requiredPhase = null)
+            val scope = firClass.unsubstitutedScope(
+                fir2IrComponents.session,
+                fir2IrComponents.scopeSession,
+                withForcedTypeCalculator = true,
+                requiredPhase = null,
+            )
+
             when (kind) {
                 SymbolKind.CLASS_SYMBOL -> {
                     firCandidates = listOf(firClass)

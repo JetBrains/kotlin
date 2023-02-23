@@ -313,12 +313,17 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                         // Report stub error so that it won't surface up. Instead, errors on the callee would be reported.
                         diagnostic = ConeStubDiagnostic(ConeSimpleDiagnostic("Unresolved super method", DiagnosticKind.Other))
                     }
-                    1 -> types.single().toFirResolvedTypeRef(superReferenceContainer.source?.fakeElement(KtFakeSourceElementKind.SuperCallImplicitType))
+
+                    1 -> types.single().toFirResolvedTypeRef(
+                        superReferenceContainer.source?.fakeElement(KtFakeSourceElementKind.SuperCallImplicitType)
+                    )
+
                     else -> buildErrorTypeRef {
                         source = superReferenceContainer.source
                         diagnostic = ConeAmbiguousSuper(types)
                     }
                 }
+
                 superReferenceContainer.resultType =
                     resultType.copyWithNewSourceKind(KtFakeSourceElementKind.SuperCallExplicitType)
                 superReference.replaceSuperTypeRef(resultType)

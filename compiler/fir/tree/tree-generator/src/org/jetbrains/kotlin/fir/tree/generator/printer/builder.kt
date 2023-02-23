@@ -135,7 +135,8 @@ private fun FieldWithDefault.needBackingField(fieldIsUseless: Boolean) = !nullab
     defaultValueInBuilder == null
 }
 
-private fun FieldWithDefault.needNotNullDelegate(fieldIsUseless: Boolean) = needBackingField(fieldIsUseless) && (type == "Boolean" || type == "Int")
+private fun FieldWithDefault.needNotNullDelegate(fieldIsUseless: Boolean) =
+    needBackingField(fieldIsUseless) && (type == "Boolean" || type == "Int")
 
 
 private fun SmartPrinter.printFieldInBuilder(field: FieldWithDefault, builder: Builder, fieldIsUseless: Boolean): Pair<Boolean, Boolean> {
@@ -243,7 +244,12 @@ private fun SmartPrinter.printModifiers(builder: Builder, field: Field, fieldIsU
     } else if (builder is LeafBuilder && builder.isOpen) {
         print("open ")
     }
-    if (builder is LeafBuilder && field is FieldWithDefault && field.needBackingField(fieldIsUseless) && !fieldIsUseless && !field.needNotNullDelegate(fieldIsUseless)) {
+    if (builder is LeafBuilder &&
+        field is FieldWithDefault &&
+        field.needBackingField(fieldIsUseless) &&
+        !fieldIsUseless &&
+        !field.needNotNullDelegate(fieldIsUseless)
+    ) {
         print("lateinit ")
     }
 }
@@ -256,7 +262,7 @@ private fun SmartPrinter.printDslBuildFunction(
     if (!isEmpty) {
         println("@OptIn(ExperimentalContracts::class)")
         print("inline ")
-    } else if(builder.implementation.isPublic) {
+    } else if (builder.implementation.isPublic) {
         println("@OptIn(FirImplementationDetail::class)")
     }
     print("fun ")

@@ -1579,7 +1579,9 @@ open class RawFirBuilder(
                         multiParameter
                     } else {
                         val typeRef = valueParameter.typeReference?.convertSafe() ?: buildImplicitTypeRef {
-                            source = valueParameter.toFirSourceElement().fakeElement(KtFakeSourceElementKind.ImplicitReturnTypeOfLambdaValueParameter)
+                            source = valueParameter.toFirSourceElement().fakeElement(
+                                KtFakeSourceElementKind.ImplicitReturnTypeOfLambdaValueParameter
+                            )
                         }
                         convertValueParameter(valueParameter, symbol, typeRef, ValueParameterDeclaration.LAMBDA)
                     }
@@ -2540,21 +2542,22 @@ open class RawFirBuilder(
             val source = expression.toFirSourceElement()
             val (calleeReference, explicitReceiver, isImplicitInvoke) = splitToCalleeAndReceiver(expression.calleeExpression, source)
 
-            val result: FirQualifiedAccessExpressionBuilder = if (expression.valueArgumentList == null && expression.lambdaArguments.isEmpty()) {
-                FirPropertyAccessExpressionBuilder().apply {
-                    this.source = source
-                    this.calleeReference = calleeReference
+            val result: FirQualifiedAccessExpressionBuilder =
+                if (expression.valueArgumentList == null && expression.lambdaArguments.isEmpty()) {
+                    FirPropertyAccessExpressionBuilder().apply {
+                        this.source = source
+                        this.calleeReference = calleeReference
+                    }
+                } else {
+                    val builder = if (isImplicitInvoke) FirImplicitInvokeCallBuilder() else FirFunctionCallBuilder()
+                    builder.apply {
+                        this.source = source
+                        this.calleeReference = calleeReference
+                        context.calleeNamesForLambda += calleeReference.name
+                        expression.extractArgumentsTo(this)
+                        context.calleeNamesForLambda.removeLast()
+                    }
                 }
-            } else {
-                val builder = if (isImplicitInvoke) FirImplicitInvokeCallBuilder() else FirFunctionCallBuilder()
-                builder.apply {
-                    this.source = source
-                    this.calleeReference = calleeReference
-                    context.calleeNamesForLambda += calleeReference.name
-                    expression.extractArgumentsTo(this)
-                    context.calleeNamesForLambda.removeLast()
-                }
-            }
 
             return result.apply {
                 this.explicitReceiver = explicitReceiver
@@ -2756,7 +2759,7 @@ open class RawFirBuilder(
             }
         }
 
-        private fun buildErrorTopLevelDeclarationForDanglingModifierList(modifierList : KtModifierList) = buildDanglingModifierList {
+        private fun buildErrorTopLevelDeclarationForDanglingModifierList(modifierList: KtModifierList) = buildDanglingModifierList {
             this.source = modifierList.toFirSourceElement(KtFakeSourceElementKind.DanglingModifierList)
             moduleData = baseModuleData
             origin = FirDeclarationOrigin.Source

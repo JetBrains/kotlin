@@ -634,11 +634,17 @@ class CallAndReferenceGenerator(
                         // Fallback for FirReferencePlaceholderForResolvedAnnotations from jar
                         val fir = coneType.lookupTag.toSymbol(session)?.fir as? FirClass
                         var constructorSymbol: FirConstructorSymbol? = null
-                        fir?.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = true, requiredPhase = null)?.processDeclaredConstructors {
+                        fir?.unsubstitutedScope(
+                            session,
+                            scopeSession,
+                            withForcedTypeCalculator = true,
+                            requiredPhase = null,
+                        )?.processDeclaredConstructors {
                             if (it.fir.isPrimary && constructorSymbol == null) {
                                 constructorSymbol = it
                             }
                         }
+
                         constructorSymbol?.let {
                             this.declarationStorage.getIrConstructorSymbol(it)
                         }
@@ -1033,7 +1039,10 @@ class CallAndReferenceGenerator(
     private fun FirQualifiedAccessExpression.findIrExtensionReceiver(explicitReceiverExpression: IrExpression?): IrExpression? =
         findIrReceiver(explicitReceiverExpression, isDispatch = false)
 
-    internal fun FirQualifiedAccessExpression.findIrReceiver(explicitReceiverExpression: IrExpression?, isDispatch: Boolean): IrExpression? {
+    internal fun FirQualifiedAccessExpression.findIrReceiver(
+        explicitReceiverExpression: IrExpression?,
+        isDispatch: Boolean
+    ): IrExpression? {
         val firReceiver = if (isDispatch) dispatchReceiver else extensionReceiver
         if (firReceiver == explicitReceiver) {
             return explicitReceiverExpression
@@ -1049,7 +1058,10 @@ class CallAndReferenceGenerator(
             }
     }
 
-    private fun IrExpression.applyReceivers(qualifiedAccess: FirQualifiedAccessExpression, explicitReceiverExpression: IrExpression?): IrExpression {
+    private fun IrExpression.applyReceivers(
+        qualifiedAccess: FirQualifiedAccessExpression,
+        explicitReceiverExpression: IrExpression?
+    ): IrExpression {
         when (this) {
             is IrMemberAccessExpression<*> -> {
                 val ownerFunction =

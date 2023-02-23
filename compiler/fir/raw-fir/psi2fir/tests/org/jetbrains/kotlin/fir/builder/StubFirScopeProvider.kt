@@ -31,7 +31,11 @@ object StubFirScopeProvider : FirScopeProvider() {
         return null
     }
 
-    override fun getNestedClassifierScope(klass: FirClass, useSiteSession: FirSession, scopeSession: ScopeSession): FirContainingNamesAwareScope? {
+    override fun getNestedClassifierScope(
+        klass: FirClass,
+        useSiteSession: FirSession,
+        scopeSession: ScopeSession,
+    ): FirContainingNamesAwareScope? {
         return null
     }
 }

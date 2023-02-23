@@ -189,7 +189,10 @@ object CheckDispatchReceiver : ResolutionStage() {
                 UnstableSmartCast(
                     smartcastedReceiver,
                     targetType,
-                    context.session.typeContext.isTypeMismatchDueToNullability(smartcastedReceiver.originalExpression.typeRef.coneType, targetType)
+                    context.session.typeContext.isTypeMismatchDueToNullability(
+                        smartcastedReceiver.originalExpression.typeRef.coneType,
+                        targetType,
+                    )
                 )
             )
         } else if (isReceiverNullable) {

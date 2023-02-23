@@ -541,7 +541,7 @@ open class FirDeclarationsResolveTransformer(
         }
     }
 
-       open fun withRegularClass(
+    open fun withRegularClass(
         regularClass: FirRegularClass,
         action: () -> FirRegularClass
     ): FirRegularClass {

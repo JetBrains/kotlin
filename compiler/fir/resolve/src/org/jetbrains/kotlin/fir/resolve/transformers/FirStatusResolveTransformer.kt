@@ -188,7 +188,8 @@ abstract class AbstractFirStatusResolveTransformer(
     private val designationMapForLocalClasses: Map<FirClassLikeDeclaration, FirClassLikeDeclaration?>,
     private val scopeForLocalClass: FirScope?
 ) : FirAbstractTreeTransformer<FirResolvedDeclarationStatus?>(phase = FirResolvePhase.STATUS) {
-    @PrivateForInline val classes = mutableListOf<FirClass>()
+    @PrivateForInline
+    val classes = mutableListOf<FirClass>()
     val statusResolver = FirStatusResolver(session, scopeSession)
 
     @OptIn(PrivateForInline::class)
@@ -306,7 +307,7 @@ abstract class AbstractFirStatusResolveTransformer(
         } as FirStatement
     }
 
-       fun transformValueClassRepresentation(firClass: FirClass) {
+    fun transformValueClassRepresentation(firClass: FirClass) {
         if (firClass is FirRegularClass && firClass.isInline) {
             firClass.valueClassRepresentation = computeValueClassRepresentation(firClass, session)
         }

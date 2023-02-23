@@ -34,9 +34,11 @@ open class FirAnnotationArgumentsResolveTransformer(
     outerBodyResolveContext = outerBodyResolveContext,
     returnTypeCalculator = returnTypeCalculator,
 ) {
-    final override val expressionsTransformer: FirExpressionsResolveTransformer = FirExpressionsResolveTransformerForSpecificAnnotations(this)
+    final override val expressionsTransformer: FirExpressionsResolveTransformer =
+        FirExpressionsResolveTransformerForSpecificAnnotations(this)
 
-    final override val declarationsTransformer: FirDeclarationsResolveTransformer = FirDeclarationsResolveTransformerForArgumentAnnotations(this)
+    final override val declarationsTransformer: FirDeclarationsResolveTransformer =
+        FirDeclarationsResolveTransformerForArgumentAnnotations(this)
 }
 
 private class FirDeclarationsResolveTransformerForArgumentAnnotations(

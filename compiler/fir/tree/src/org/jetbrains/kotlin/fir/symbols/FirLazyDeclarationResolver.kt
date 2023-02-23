@@ -26,7 +26,7 @@ abstract class FirLazyDeclarationResolver : FirSessionComponent {
 
     abstract fun finishResolvingPhase(phase: FirResolvePhase)
 
-    fun disableLazyResolveContractChecks(){
+    fun disableLazyResolveContractChecks() {
         lazyResolveContractChecksEnabled = false
     }
 

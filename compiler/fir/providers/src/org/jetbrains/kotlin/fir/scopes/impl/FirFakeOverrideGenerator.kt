@@ -356,7 +356,7 @@ object FirFakeOverrideGenerator {
         fakeOverrideSubstitution: FakeOverrideSubstitution? = null
     ): FirProperty {
         checkStatusIsResolved(baseProperty)
-        
+
         return buildProperty {
             source = baseProperty.source
             moduleData = session.moduleData
