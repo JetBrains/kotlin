@@ -39,10 +39,10 @@ private class KtUltraLightMethodModifierList(
     owner: KtUltraLightMethod,
     val delegate: PsiMethod,
 ) : KtUltraLightModifierList<KtUltraLightMethod>(owner, support) {
-    override fun hasModifierProperty(name: String) = when {
+    override fun hasModifierProperty(name: String): Boolean = when {
         name == PsiModifier.ABSTRACT && isImplementationInInterface() -> false
         // pretend this method behaves like a default method
-        name == PsiModifier.DEFAULT && isImplementationInInterface() -> true
+        name == PsiModifier.DEFAULT && isImplementationInInterface() && !hasModifierProperty(PsiModifier.STATIC) -> true
         name == PsiModifier.FINAL &&
                 (owner.containingClass.safeAs<KtLightClassForSourceDeclaration>()?.isPossiblyAffectedByAllOpen() == true)
         -> delegate.hasModifierProperty(name)
