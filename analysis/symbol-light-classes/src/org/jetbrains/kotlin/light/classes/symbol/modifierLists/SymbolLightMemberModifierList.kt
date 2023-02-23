@@ -23,7 +23,7 @@ internal class SymbolLightMemberModifierList<T : KtLightMember<*>>(
     override fun hasModifierProperty(name: String): Boolean = when {
         name == PsiModifier.ABSTRACT && isImplementationInInterface() -> false
         // Pretend this method behaves like a `default` method
-        name == PsiModifier.DEFAULT && isImplementationInInterface() -> true
+        name == PsiModifier.DEFAULT && isImplementationInInterface() && !hasModifierProperty(PsiModifier.STATIC) -> true
         // TODO: FINAL && isPossiblyAffectedByAllOpen
         else -> super.hasModifierProperty(name)
     }
