@@ -122,22 +122,11 @@ fun createStdLibVersionedDocTask(version: String, isLatest: Boolean) =
                 noJdkLink.set(true)
 
                 displayName.set("JS")
-                if (version != "1.0" && version != "1.1") {
-                    dependsOn("common")
-                }
+                dependsOn("common")
 
                 sourceRoots.from("$kotlin_stdlib_dir/js/src")
                 sourceRoots.from("$kotlin_stdlib_dir/js-v1/src")
 
-                // for Kotlin 1.1 hack: Common platform becomes JVM
-                if (version == "1.1") {
-                    sourceRoots.from("$kotlin_root/core/builtins/native")
-                    sourceRoots.from("$kotlin_root/core/builtins/src/")
-
-                    //sourceRoots.from("$kotlin_stdlib_dir/common/src") // is included  in /js-v1/src folder
-                    sourceRoots.from("$kotlin_stdlib_dir/src")
-                    sourceRoots.from("$kotlin_stdlib_dir/unsigned/src")
-                }
                 perPackageOption("org.w3c") {
                     reportUndocumented.set(false)
                 }
