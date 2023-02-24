@@ -56,4 +56,8 @@ internal class FirWrappedDelegateExpressionImpl(
     override fun replaceExpression(newExpression: FirExpression) {
         expression = newExpression
     }
+
+    override fun replaceDelegateProvider(newDelegateProvider: FirExpression) {
+        delegateProvider = newDelegateProvider
+    }
 }
