@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
+import org.jetbrains.kotlin.fir.isSubstitutionOrIntersectionOverride
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.providers.toSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -103,8 +104,7 @@ private fun parameterNamesMatch(first: FirSimpleFunction, second: FirSimpleFunct
  *  mimics FunctionDescriptor.getObjCMethodInfo()
  */
 internal fun FirFunction.getObjCMethodInfo(onlyExternal: Boolean): ObjCMethodInfo? {
-    val isReal = true  // TODO KT-56030: mimic "this.kind.isReal" as K1 did in `FunctionDescriptor.getObjCMethodInfo()`
-    if (isReal) {
+    if (!isSubstitutionOrIntersectionOverride) {
         this.decodeObjCMethodAnnotation()?.let { return it }
 
         if (onlyExternal) {
@@ -118,7 +118,7 @@ internal fun FirFunction.getObjCMethodInfo(onlyExternal: Boolean): ObjCMethodInf
  * mimics IrFunction.decodeObjCMethodAnnotation()
  */
 private fun FirFunction.decodeObjCMethodAnnotation(): ObjCMethodInfo? {
-    // TODO KT-56030: mimic `assert (this.kind.isReal)`
+    assert(!isSubstitutionOrIntersectionOverride)
     return annotations.getAnnotationByClassId(ClassId.topLevel(objCMethodFqName), moduleData.session)?.toObjCMethodInfo()
 }
 
