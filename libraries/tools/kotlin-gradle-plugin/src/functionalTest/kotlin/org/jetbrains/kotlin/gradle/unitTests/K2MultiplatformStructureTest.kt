@@ -160,7 +160,7 @@ private fun K2CompileTask.buildCompilerArguments(): CommonCompilerArguments {
 
     if (this is KotlinNativeCompile) {
         val arguments = K2NativeCompilerArguments()
-        val argsList = this.buildKotlinNativeKlibCompilerArgs()
+        val argsList = this.buildCompilerArgs()
         parseCommandLineArguments(argsList, arguments)
         return arguments
     }

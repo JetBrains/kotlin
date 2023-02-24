@@ -456,7 +456,7 @@ internal constructor(
         return SharedCompilationData(manifestFile, isAllowCommonizer, refinesModule)
     }
 
-    internal fun buildKotlinNativeKlibCompilerArgs(): List<String> = buildKotlinNativeKlibCompilerArgs(
+    internal fun buildCompilerArgs(): List<String> = buildKotlinNativeKlibCompilerArgs(
         outFile = outputFile.get(),
         optimized = optimized,
         debuggable = debuggable,
@@ -482,7 +482,7 @@ internal constructor(
         val output = outputFile.get()
         output.parentFile.mkdirs()
 
-        val buildArgs = buildKotlinNativeKlibCompilerArgs()
+        val buildArgs = buildCompilerArgs()
 
         KotlinNativeCompilerRunner(
             settings = runnerSettings,
