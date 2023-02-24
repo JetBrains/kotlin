@@ -251,6 +251,12 @@ class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfig
                 }
                 configuration.addJavaSourceRoot(testServices.sourceFileProvider.javaSourceDirectory)
             }
+
+            // We add that as a part of the classpath only when Java files are being analyzed as sources, so the relevant annotations
+            // are being resolved classes are being resolved properly.
+            configuration.addJvmClasspathRoots(
+                testServices.additionalClassPathForJavaCompilationOrAnalysis?.classPath?.map(::File).orEmpty()
+            )
         }
 
         if (javaBinaryFiles.isNotEmpty()) {
@@ -268,7 +274,9 @@ class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfig
                     compileJavaFilesLibraryToJar(
                         testServices.sourceFileProvider.javaBinaryDirectory.path,
                         JAVA_BINARIES_JAR_NAME,
-                        extraClasspath = configuration.jvmClasspathRoots.map { it.absolutePath },
+                        extraClasspath =
+                        configuration.jvmClasspathRoots.map { it.absolutePath } +
+                                testServices.additionalClassPathForJavaCompilationOrAnalysis?.classPath.orEmpty(),
                         assertions = JUnit5Assertions,
                         useJava11 = useJava11ToCompileIncludedJavaFiles
                     )
@@ -428,3 +436,12 @@ class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfig
 
 
 }
+
+// This should be used as a classpath entries when Java classes are being compiled/analyzed to become a binary/source dependencies of kt-files
+// But in case the Java files are compiled it should not belong to the classpath of the module where test kt-files belong.
+// Currently, it's used for jsr305.jar, for which it's necessary to make sure that once some library uses the annotation from that jar,
+// we still don't need the jar itself when using the library to read the annotations.
+// (as they have been written to the class-files as fully-qualified names)
+class AdditionalClassPathForJavaCompilationOrAnalysis(val classPath: List<String>) : TestService
+
+val TestServices.additionalClassPathForJavaCompilationOrAnalysis by TestServices.nullableTestServiceAccessor<AdditionalClassPathForJavaCompilationOrAnalysis>()
