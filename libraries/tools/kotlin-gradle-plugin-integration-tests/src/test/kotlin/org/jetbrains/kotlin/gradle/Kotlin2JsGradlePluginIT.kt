@@ -412,6 +412,36 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
             build("compileDevelopmentExecutableKotlinJs")
         }
     }
+
+    @DisplayName("klib fingerprints")
+    @GradleTest
+    fun testKlibFingerprints(gradleVersion: GradleVersion) {
+        project("kotlin2JsIrICProject", gradleVersion) {
+            val fingerprints = Array(2) {
+                build("compileDevelopmentExecutableKotlinJs")
+
+                val manifestLines = projectPath.resolve("build/classes/kotlin/main/default/manifest").readLines()
+                val serializedKlibFingerprint = manifestLines.singleOrNull { it.startsWith("serializedKlibFingerprint=") }
+                assertNotNull(serializedKlibFingerprint) { "can not find serializedKlibFingerprint" }
+                assertTrue("bad serializedKlibFingerprint format '$serializedKlibFingerprint'") {
+                    Regex("serializedKlibFingerprint=[a-z0-9]+\\.[a-z0-9]+").matches(serializedKlibFingerprint)
+                }
+
+                val serializedIrFileFingerprints = manifestLines.singleOrNull { it.startsWith("serializedIrFileFingerprints=") }
+                assertNotNull(serializedIrFileFingerprints) { "can not find serializedIrFileFingerprints" }
+                assertTrue("bad serializedIrFileFingerprints format '$serializedIrFileFingerprints'") {
+                    // kotlin2JsIrICProject has 2 files
+                    Regex("serializedIrFileFingerprints=[a-z0-9]+\\.[a-z0-9]+ [a-z0-9]+\\.[a-z0-9]+").matches(serializedIrFileFingerprints)
+                }
+
+                build("clean")
+
+                serializedKlibFingerprint to serializedIrFileFingerprints
+            }
+
+            assertEquals(fingerprints[0], fingerprints[1], "fingerprints must be stable")
+        }
+    }
 }
 
 @JsGradlePluginTests
