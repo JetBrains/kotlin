@@ -6,6 +6,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
 import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.analysis.decompiler.stub.flags.*
+import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf.MemberKind
 import org.jetbrains.kotlin.metadata.ProtoBuf.Modality
 import org.jetbrains.kotlin.metadata.deserialization.*
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtSimpleNameStringTemplateEntry
@@ -304,7 +306,7 @@ private class PropertyClsStubBuilder(
             }
         }
         if (hasInitializer) {
-            val binaryClass = when (val source = protoContainer.source) {
+            val binaryClass = when (val source = getSource()) {
                 is JvmPackagePartSource -> {
                     val knownJvmBinaryClass = source.knownJvmBinaryClass
                     val facadeName = knownJvmBinaryClass?.classHeader?.multifileClassName?.takeIf { it.isNotEmpty() }
@@ -338,6 +340,23 @@ private class PropertyClsStubBuilder(
             }
         }
         return propertyStub
+    }
+
+    /**
+     * [org.jetbrains.kotlin.load.kotlin.AbstractBinaryClassAnnotationLoader.getSpecialCaseContainerClass]
+     */
+    //special cases when data might be stored in a neighbour class
+    private fun getSource(): SourceElement? {
+        if (protoContainer is ProtoContainer.Class && protoContainer.kind == ProtoBuf.Class.Kind.COMPANION_OBJECT) {
+            val outerClass = protoContainer.outerClass
+            if (outerClass != null && (outerClass.kind == ProtoBuf.Class.Kind.CLASS || outerClass.kind == ProtoBuf.Class.Kind.ENUM_CLASS ||
+                        JvmProtoBufUtil.isMovedFromInterfaceCompanion(propertyProto) &&
+                        (outerClass.kind == ProtoBuf.Class.Kind.INTERFACE || outerClass.kind == ProtoBuf.Class.Kind.ANNOTATION_CLASS))
+            ) {
+                return outerClass.source
+            }
+        }
+        return protoContainer.source
     }
 }
 

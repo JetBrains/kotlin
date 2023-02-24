@@ -169,7 +169,7 @@ fun deserializeClassToSymbol(
 
                     addDeclaration(property)
                 }
-                is KtClass -> {
+                is KtClassOrObject -> {
                     val nestedClassId =
                         classId.createNestedClassId(Name.identifier(declaration.name ?: error("Class doesn't have name $declaration")))
                     deserializeNestedClass(nestedClassId, context)?.fir?.let { addDeclaration(it) }
