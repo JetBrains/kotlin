@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.FirResult
 import org.jetbrains.kotlin.fir.pipeline.buildResolveAndCheckFir
 import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.scopes.FirOverrideChecker
 import org.jetbrains.kotlin.fir.scopes.PlatformSpecificOverridabilityRules
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.name.Name
@@ -49,6 +50,7 @@ internal fun PhaseContext.firFrontend(input: KotlinCoreEnvironment): FirOutput {
             extensionRegistrars, isCommonSourceForPsi, fileBelongsToModuleForPsi,
             registerExtraComponents = {
                 it.register(PlatformSpecificOverridabilityRules::class, ObjCOverridabilityRules(it))
+                it.register(FirOverrideChecker::class, FirNativeOverrideChecker(it))
             },
     )
 

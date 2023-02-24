@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 
 class FirKotlinScopeProvider(
-    val firOverrideChecker: FirOverrideChecker,
     val declaredMemberScopeDecorator: (
         klass: FirClass,
         declaredMemberScope: FirContainingNamesAwareScope,
@@ -58,7 +57,6 @@ class FirKotlinScopeProvider(
                 useSiteSession,
                 scopes,
                 decoratedDeclaredMemberScope,
-                firOverrideChecker,
             )
         }
     }

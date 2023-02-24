@@ -179,6 +179,7 @@ fun <F> prepareNativeSessions(
             extensionRegistrars,
             configuration.languageVersionSettings,
             sessionConfigurator,
+            registerExtraComponents,
         )
     }
 }

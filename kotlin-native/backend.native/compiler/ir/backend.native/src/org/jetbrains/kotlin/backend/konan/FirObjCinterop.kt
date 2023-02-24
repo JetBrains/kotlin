@@ -6,10 +6,20 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.providers.toSymbol
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.PlatformSpecificOverridabilityRules
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.types.classId
+import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.unwrapFakeOverrides
+import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
@@ -45,11 +55,32 @@ class ObjCOverridabilityRules(val session: FirSession) : PlatformSpecificOverrid
         }
         return null
     }
-}
 
-private fun FirCallableDeclaration.isExternalObjCClassProperty() = this is FirProperty &&
-        true // FIXME must fully mimic CallableDescriptor.isExternalObjCClassProperty()
-        // (this.containingDeclaration as? ClassDescriptor)?.isExternalObjCClass() == true
+    /**
+     * mimics CallableDescriptor.isExternalObjCClassProperty()
+     */
+    @OptIn(SymbolInternals::class)
+    private fun FirCallableDeclaration.isExternalObjCClassProperty(): Boolean {
+        if (this !is FirProperty)
+            return false
+        val containingClassSymbol = unwrapFakeOverrides().containingClassLookupTag()?.toSymbol(session)?.fir?.symbol as? FirClassSymbol
+                ?: return false
+        return containingClassSymbol.isObjCClass() && containingClassSymbol.anyParentHasExternalObjCClassAnnotation()
+    }
+
+    private fun FirClassSymbol<*>.isObjCClass() = this.classId.relativeClassName != interopPackageName &&
+            selfOrAnySuperClass { objCObjectIdSignature == IdSignature.CommonSignature(it.classId.packageFqName.asString(), it.classId.shortClassName.asString(), null, 0) }
+
+    private fun FirClassSymbol<*>.selfOrAnySuperClass(pred: (FirClassSymbol<*>) -> Boolean): Boolean {
+        if (pred(this)) return true
+        return resolvedSuperTypes.any { (it.classId?.toSymbol(session) as? FirClassSymbol)?.selfOrAnySuperClass(pred) ?: false }
+    }
+
+    private fun FirClassSymbol<*>.anyParentHasExternalObjCClassAnnotation(): Boolean =
+            resolvedSuperTypes
+                    .mapNotNull { it.fullyExpandedType(session).toRegularClassSymbol(session) }
+                    .any { it.annotations.hasAnnotation(ClassId.topLevel(externalObjCClassFqName), session) }
+}
 
 /**
  * mimics ObjCInteropKt.parameterNamesMatch()

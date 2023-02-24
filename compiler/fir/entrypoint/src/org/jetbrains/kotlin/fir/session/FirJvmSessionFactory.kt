@@ -47,12 +47,7 @@ object FirJvmSessionFactory : FirAbstractSessionFactory() {
                 it.registerCommonJavaComponents(projectEnvironment.getJavaModuleResolver())
                 registerExtraComponents(it)
             },
-            createKotlinScopeProvider = {
-                FirKotlinScopeProvider(
-                    FirStandardOverrideChecker(sessionProvider.getSession(moduleDataProvider.getModuleData(null)!!)!!),
-                    ::wrapScopeWithJvmMapped
-                )
-            },
+            createKotlinScopeProvider = { FirKotlinScopeProvider(::wrapScopeWithJvmMapped) },
             createProviders = { session, builtinsModuleData, kotlinScopeProvider ->
                 listOf(
                     JvmClassFileBasedSymbolProvider(
@@ -106,12 +101,7 @@ object FirJvmSessionFactory : FirAbstractSessionFactory() {
                 registerExtraComponents(it)
             },
             registerExtraCheckers = { it.registerJvmCheckers() },
-            createKotlinScopeProvider = {
-                FirKotlinScopeProvider(
-                    FirStandardOverrideChecker(sessionProvider.getSession(moduleData)!!),
-                    ::wrapScopeWithJvmMapped
-                )
-            },
+            createKotlinScopeProvider = { FirKotlinScopeProvider(::wrapScopeWithJvmMapped) },
             createProviders = { session, kotlinScopeProvider, symbolProvider, generatedSymbolsProvider, syntheticFunctionInterfaceProvider, dependencies ->
                 var symbolProviderForBinariesFromIncrementalCompilation: JvmClassFileBasedSymbolProvider? = null
                 var optionalAnnotationClassesProviderForBinariesFromIncrementalCompilation: OptionalAnnotationClassesProvider? = null
