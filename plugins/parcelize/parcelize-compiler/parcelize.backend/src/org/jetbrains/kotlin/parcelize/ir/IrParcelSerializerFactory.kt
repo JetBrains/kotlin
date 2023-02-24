@@ -154,26 +154,42 @@ class IrParcelSerializerFactory(private val symbols: AndroidSymbols) {
 
             // This will only be hit if we have a custom serializer for booleans
             "android.util.SparseBooleanArray" ->
-                return IrSparseArrayParcelSerializer(
-                    classifier,
-                    irBuiltIns.booleanType,
-                    get(irBuiltIns.booleanType, scope, parcelizeType, strict())
+                return wrapNullableSerializerIfNeeded(
+                    irType,
+                    IrSparseArrayParcelSerializer(
+                        classifier,
+                        irBuiltIns.booleanType,
+                        get(irBuiltIns.booleanType, scope, parcelizeType, strict())
+                    )
                 )
             "android.util.SparseIntArray" ->
-                return IrSparseArrayParcelSerializer(
-                    classifier,
-                    irBuiltIns.intType,
-                    get(irBuiltIns.intType, scope, parcelizeType, strict())
+                return wrapNullableSerializerIfNeeded(
+                    irType,
+                    IrSparseArrayParcelSerializer(
+                        classifier,
+                        irBuiltIns.intType,
+                        get(irBuiltIns.intType, scope, parcelizeType, strict())
+                    )
                 )
             "android.util.SparseLongArray" ->
-                return IrSparseArrayParcelSerializer(
-                    classifier,
-                    irBuiltIns.longType,
-                    get(irBuiltIns.longType, scope, parcelizeType, strict())
+                return wrapNullableSerializerIfNeeded(
+                    irType,
+                    IrSparseArrayParcelSerializer(
+                        classifier,
+                        irBuiltIns.longType,
+                        get(irBuiltIns.longType, scope, parcelizeType, strict())
+                    )
                 )
             "android.util.SparseArray" -> {
                 val elementType = (irType as IrSimpleType).arguments.single().upperBound(irBuiltIns)
-                return IrSparseArrayParcelSerializer(classifier, elementType, get(elementType, scope, parcelizeType, strict()))
+                return wrapNullableSerializerIfNeeded(
+                    irType,
+                    IrSparseArrayParcelSerializer(
+                        classifier,
+                        elementType,
+                        get(elementType, scope, parcelizeType, strict())
+                    )
+                )
             }
 
             // TODO: More java collections?
