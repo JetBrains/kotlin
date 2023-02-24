@@ -365,7 +365,7 @@ fun createAllLibsVersionedDocTask(version: String, isLatest: Boolean, vararg lib
         libTasks.forEach { addChildTask(it.name) }
 
         fileLayout.set(DokkaMultiModuleFileLayout { parent, child ->
-            parent.outputDirectory.get().resolve(child.moduleName.get())
+            parent.outputDirectory.dir(child.moduleName)
         })
 
         val moduleDirName = "all-libs"
