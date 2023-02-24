@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.resolve
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fakeElement
@@ -493,25 +492,15 @@ fun FirCheckedSafeCallSubject.propagateTypeFromOriginalReceiver(
 }
 
 fun FirSafeCallExpression.propagateTypeFromQualifiedAccessAfterNullCheck(
-    nullableReceiverExpression: FirExpression,
     session: FirSession,
     file: FirFile,
 ) {
-    val receiverType = nullableReceiverExpression.typeRef.coneTypeSafe<ConeKotlinType>()
     val selector = selector
 
     val resultingType = when {
         selector is FirExpression && !selector.isCallToStatementLikeFunction -> {
             val type = selector.typeRef.coneTypeSafe<ConeKotlinType>() ?: return
-
-            val isReceiverActuallyNullable = session.languageVersionSettings.supportsFeature(LanguageFeature.SafeCallsAreAlwaysNullable)
-                    || receiverType != null && session.typeContext.run { receiverType.isNullableType() }
-
-            if (isReceiverActuallyNullable) {
-                type.withNullability(ConeNullability.NULLABLE, session.typeContext)
-            } else {
-                type
-            }
+            type.withNullability(ConeNullability.NULLABLE, session.typeContext)
         }
         // Branch for things that shouldn't be used as expressions.
         // They are forced to return not-null `Unit`, regardless of the receiver.

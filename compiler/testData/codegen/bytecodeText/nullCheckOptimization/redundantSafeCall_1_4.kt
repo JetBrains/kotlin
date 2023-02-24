@@ -1,4 +1,7 @@
 // !LANGUAGE: -SafeCallsAreAlwaysNullable
+// IGNORE_BACKEND_K2: JVM_IR
+// Status: Feature is always on in K2
+
 fun test(s: String) = s?.length
 
 // 0 IFNULL
