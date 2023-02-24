@@ -11,6 +11,8 @@ import org.jetbrains.dokka.model.DInterface
 import org.jetbrains.dokka.model.doc.P
 import org.jetbrains.dokka.model.doc.Text
 import org.jetbrains.dokka.plugability.DokkaPlugin
+import org.jetbrains.dokka.plugability.DokkaPluginApiPreview
+import org.jetbrains.dokka.plugability.PluginApiPreviewAcknowledgement
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import utils.AbstractModelTest
@@ -165,6 +167,10 @@ class InheritorsTest : AbstractModelTest("/src/main/kotlin/inheritors/Test.kt", 
                 )
             } override dokkaBase.defaultKotlinAnalysis
         }
+
+        @OptIn(DokkaPluginApiPreview::class)
+        override fun pluginApiPreviewAcknowledgement(): PluginApiPreviewAcknowledgement =
+            PluginApiPreviewAcknowledgement
     }
     @Test
     fun `should inherit docs for stdLib #2638`() {
