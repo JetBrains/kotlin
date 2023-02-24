@@ -11,10 +11,45 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrStatementContainer
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
-import org.jetbrains.kotlin.ir.util.addChild
-import org.jetbrains.kotlin.ir.util.setDeclarationsParent
+import org.jetbrains.kotlin.ir.types.extractTypeParameters
+import org.jetbrains.kotlin.ir.util.*
 
-//This lower takes part of old LocalDeclarationLowering job to pop up local classes from functions
+/**
+ * Lifts local classes from its containing function to the closest parent [IrClass] or [IrScript].
+ *
+ * Also, rewrites the extracted class's type parameters in the following way (pseudocode):
+ *
+ * ```kotlin
+ * class Outer<OuterTP>(val a: OuterTP) {
+ *     fun foo<FooTP>(b: FooTP) {
+ *         /*local*/ class Local<LocalTP>(
+ *             val p0: LocalTP,
+ *             val p1: FooTP,
+ *             val p2: OuterTP
+ *         )
+ *
+ *         println(Local<Int>(42, b, a))
+ *     }
+ * }
+ * ```
+ *
+ * Is transformed into:
+ *
+ * ```kotlin
+ * class Outer<OuterTP>(val a: OuterTP) {
+ *
+ *     /*local*/ class Local<LocalTP, SynthesizedFooTP>(
+ *         val p0: LocalTP,
+ *         val p1: SynthesizedFooTP,
+ *         val p2: OuterTP
+ *     )
+ *
+ *     fun foo<FooTP>(b: FooTP) {
+ *         println(Local<Int, FooTP>(42, b, a))
+ *     }
+ * }
+ * ```
+ */
 open class LocalClassPopupLowering(
     val context: BackendContext,
     val recordExtractedLocalClasses: BackendContext.(IrClass) -> Unit = {},
@@ -24,10 +59,22 @@ open class LocalClassPopupLowering(
     }
 
     private data class ExtractedLocalClass(
-        val local: IrClass, val newContainer: IrDeclarationParent, val extractedUnder: IrStatement?
+        val local: IrClass,
+        val newContainer: IrDeclarationParent,
+        val extractedUnder: IrStatement?,
+        val typeParameterRemapper: IrTypeParameterRemapper,
     )
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
+        val extractedLocalClasses = collectLocalClasses(irBody, container)
+
+        liftLocalClasses(extractedLocalClasses)
+    }
+
+    private fun collectLocalClasses(
+        irBody: IrBody,
+        container: IrDeclaration
+    ): List<ExtractedLocalClass> {
         val extractedLocalClasses = arrayListOf<ExtractedLocalClass>()
 
         irBody.transform(object : IrElementTransformerVoidWithContext() {
@@ -37,12 +84,22 @@ open class LocalClassPopupLowering(
                     if (allScopes.size > 1) allScopes[allScopes.lastIndex - 1] else createScope(container as IrSymbolOwner)
                 if (!shouldPopUp(declaration, currentScope)) return declaration
 
+                val currentTypeParameters = extractTypeParameters(declaration)
+
                 var extractedUnder: IrStatement? = declaration
                 var newContainer = declaration.parent
                 while (newContainer is IrDeclaration && newContainer !is IrClass && newContainer !is IrScript) {
                     extractedUnder = newContainer
                     newContainer = newContainer.parent
                 }
+
+                val newContainerTypeParameters = extractTypeParameters(newContainer)
+                val typeParametersToKeep = currentTypeParameters - newContainerTypeParameters.toSet()
+
+                declaration.typeParameters = emptyList()
+                val newTypeParameters = declaration.copyTypeParameters(typeParametersToKeep)
+                val typeParameterRemapper = IrTypeParameterRemapper(currentTypeParameters.zip(newTypeParameters).toMap())
+
                 when (newContainer) {
                     is IrStatementContainer -> {
                         // TODO: check if it is the correct behavior
@@ -51,17 +108,28 @@ open class LocalClassPopupLowering(
                                 .takeIf { it > 0 && it < newContainer.statements.size }
                                 ?.let { newContainer.statements[it] }
                         }
-                        extractedLocalClasses.add(ExtractedLocalClass(declaration, newContainer, extractedUnder))
+                        extractedLocalClasses.add(ExtractedLocalClass(declaration, newContainer, extractedUnder, typeParameterRemapper))
                     }
-                    is IrDeclarationContainer -> extractedLocalClasses.add(ExtractedLocalClass(declaration, newContainer, extractedUnder))
-                    else -> error("Inexpected container type $newContainer")
+                    is IrDeclarationContainer -> extractedLocalClasses.add(
+                        ExtractedLocalClass(
+                            declaration,
+                            newContainer,
+                            extractedUnder,
+                            typeParameterRemapper
+                        )
+                    )
+                    else -> compilationException("Unexpected container type ${newContainer.render()}", declaration)
                 }
 
                 return IrCompositeImpl(declaration.startOffset, declaration.endOffset, context.irBuiltIns.unitType)
             }
         }, null)
 
-        for ((local, newContainer, extractedUnder) in extractedLocalClasses) {
+        return extractedLocalClasses
+    }
+
+    private fun liftLocalClasses(extractedLocalClasses: List<ExtractedLocalClass>) {
+        for ((local, newContainer, extractedUnder, typeParameterRemapper) in extractedLocalClasses) {
             when (newContainer) {
                 is IrStatementContainer -> {
                     val insertIndex = extractedUnder?.let { newContainer.statements.indexOf(it) } ?: -1
@@ -75,8 +143,9 @@ open class LocalClassPopupLowering(
                 is IrDeclarationContainer -> {
                     newContainer.addChild(local)
                 }
-                else -> error("Inexpected container type $newContainer")
+                else -> compilationException("Unexpected container type $newContainer", local)
             }
+            local.remapTypes(typeParameterRemapper)
             context.recordExtractedLocalClasses(local)
         }
     }

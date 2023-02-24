@@ -289,30 +289,21 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
         */
 
         private fun IrConstructor.countContextTypeParameters(): Int {
-            fun countImpl(container: IrDeclarationParent): Int {
-                return when (container) {
-                    is IrClass -> container.typeParameters.size + container.run { if (isInner) countImpl(container.parent) else 0 }
-                    is IrFunction -> container.typeParameters.size + countImpl(container.parent)
-                    is IrProperty -> (container.run { getter ?: setter }?.typeParameters?.size ?: 0) + countImpl(container.parent)
-                    is IrDeclaration -> countImpl(container.parent)
-                    else -> 0
-                }
-            }
-
-            return countImpl(parent)
+            return extractTypeParameters(constructedClass).size
         }
 
-        private fun IrSimpleFunction.buildInvoke(): IrFunctionAccessExpression {
+        private fun IrSimpleFunction.buildInvoke(returnType: IrType): IrFunctionAccessExpression {
             val callee = function
+            val returnTypeArgs = (returnType as? IrSimpleType)?.arguments
             val irCall = reference.run {
                 when (callee) {
                     is IrConstructor ->
                         IrConstructorCallImpl(
                             UNDEFINED_OFFSET,
                             UNDEFINED_OFFSET,
-                            callee.parentAsClass.defaultType,
+                            returnType,
                             callee.symbol,
-                            callee.countContextTypeParameters(),
+                            returnTypeArgs?.size ?: callee.countContextTypeParameters(),
                             callee.typeParameters.size,
                             callee.valueParameters.size,
                             JsStatementOrigins.CALLABLE_REFERENCE_INVOKE
@@ -321,9 +312,9 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
                         IrCallImpl(
                             UNDEFINED_OFFSET,
                             UNDEFINED_OFFSET,
-                            callee.returnType,
+                            returnType,
                             callee.symbol,
-                            callee.typeParameters.size,
+                            returnTypeArgs?.size ?: callee.typeParameters.size,
                             callee.valueParameters.size,
                             JsStatementOrigins.CALLABLE_REFERENCE_INVOKE
                         )
@@ -343,9 +334,10 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
             var i = 0
             val valueParameters = valueParameters
 
-            for (ti in 0 until funRef.typeArgumentsCount) {
-                irCall.putTypeArgument(ti, funRef.getTypeArgument(ti))
-            }
+            (returnTypeArgs?.asSequence()?.map { it.typeOrNull }
+                ?: (0 until funRef.typeArgumentsCount).asSequence().map(funRef::getTypeArgument))
+                .withIndex()
+                .forEach { (ti, typeArgument) -> irCall.putTypeArgument(ti, typeArgument) }
 
             if (hasReceiver) {
                 if (!boundReceiver) {
@@ -388,6 +380,9 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
         private fun IrSimpleFunction.createFunctionReferenceInvokeMethod() {
             val parameterTypes = (reference.type as IrSimpleType).arguments.map { (it as IrTypeProjection).type }
             val argumentTypes = parameterTypes.dropLast(1)
+            val returnType = parameterTypes.last()
+
+            this.returnType = returnType
 
             valueParameters = argumentTypes.mapIndexed { i, t ->
                 buildValueParameter(this) {
@@ -404,7 +399,7 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
                         UNDEFINED_OFFSET,
                         nothingType,
                         symbol,
-                        buildInvoke()
+                        buildInvoke(returnType)
                     )
                 )
             )

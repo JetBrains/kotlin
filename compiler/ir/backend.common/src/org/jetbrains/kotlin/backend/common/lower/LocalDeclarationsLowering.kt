@@ -589,7 +589,7 @@ class LocalDeclarationsLowering(
                 oldCall.startOffset, oldCall.endOffset,
                 oldCall.type,
                 newCallee.symbol,
-                newCallee.parentAsClass.typeParameters.size,
+                oldCall.classTypeArgumentsCount,
                 oldCall.origin
             ).also {
                 it.copyTypeArgumentsFrom(oldCall)
