@@ -6,13 +6,13 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl
 
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinCompilationImplFactory
-import org.jetbrains.kotlin.gradle.tasks.K2Compile
+import org.jetbrains.kotlin.gradle.tasks.K2CompileTask
 import org.jetbrains.kotlin.gradle.tasks.K2MultiplatformStructure
 
 internal object KotlinCompilationK2MultiplatformConfigurator : KotlinCompilationImplFactory.PreConfigure {
     override fun configure(compilation: KotlinCompilationImpl) {
         compilation.project.tasks.matching { it.name == compilation.compileKotlinTaskName }.configureEach { compileTask ->
-            if (compileTask !is K2Compile) return@configureEach
+            if (compileTask !is K2CompileTask) return@configureEach
 
             compileTask.multiplatformStructure.dependsOnEdges.set(compilation.project.provider {
                 compilation.allKotlinSourceSets.flatMap { sourceSet ->

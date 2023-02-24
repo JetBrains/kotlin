@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.CompilerArgumentAware
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType.IR
-import org.jetbrains.kotlin.gradle.tasks.K2Compile
+import org.jetbrains.kotlin.gradle.tasks.K2CompileTask
 import org.jetbrains.kotlin.gradle.tasks.K2MultiplatformStructure
 import org.jetbrains.kotlin.gradle.tasks.K2MultiplatformStructure.DependsOnEdge
 import org.jetbrains.kotlin.gradle.tasks.K2MultiplatformStructure.Fragment
@@ -111,7 +111,7 @@ class K2MultiplatformStructureTest {
             compilation.compilerOptions.options.languageVersion.set(KotlinVersion.KOTLIN_2_0)
         }
 
-        val compileTask = compilation.compileTaskProvider.get() as K2Compile
+        val compileTask = compilation.compileTaskProvider.get() as K2CompileTask
 
         /* check dependsOnEdges */
         assertEquals(
@@ -155,7 +155,7 @@ class K2MultiplatformStructureTest {
     }
 }
 
-private fun K2Compile.buildCompilerArguments(): CommonCompilerArguments {
+private fun K2CompileTask.buildCompilerArguments(): CommonCompilerArguments {
     /* KotlinNative implements CompilerArgumentAware, but does not adhere to its contract */
 
     if (this is KotlinNativeCompile) {

@@ -6,9 +6,8 @@
 package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.Task
-import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 
 /**
@@ -16,9 +15,9 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
  * This does not extend [KotlinCompile], since [KotlinCompile] carries an unwanted/conflicting
  * type parameter `<out T : KotlinCommonOptions>`
  */
-internal interface K2Compile : Task {
-    @get:Internal
-    val kotlinOptions: KotlinCommonOptions
+internal interface K2CompileTask : Task {
+    @get:Nested
+    val compilerOptions: KotlinCommonCompilerOptions
 
     @get:Nested
     val multiplatformStructure: K2MultiplatformStructure

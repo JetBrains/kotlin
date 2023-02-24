@@ -526,7 +526,7 @@ abstract class KotlinCompile @Inject constructor(
     workerExecutor: WorkerExecutor,
     objectFactory: ObjectFactory
 ) : AbstractKotlinCompile<K2JVMCompilerArguments>(objectFactory, workerExecutor),
-    K2Compile,
+    K2CompileTask,
     @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") KotlinJvmCompileDsl,
     KotlinCompilationTask<KotlinJvmCompilerOptions>,
     UsesKotlinJavaToolchain {
@@ -923,7 +923,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
     KotlinCompilationTask<KotlinJsCompilerOptions>,
     UsesLibraryFilterCachingService,
     KotlinJsCompile,
-    K2Compile {
+    K2CompileTask {
 
     init {
         incremental = true
