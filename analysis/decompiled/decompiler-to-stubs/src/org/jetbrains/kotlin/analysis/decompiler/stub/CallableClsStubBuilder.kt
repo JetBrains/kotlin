@@ -7,20 +7,23 @@ import com.intellij.psi.stubs.StubElement
 import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.analysis.decompiler.stub.flags.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
+import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
+import org.jetbrains.kotlin.load.kotlin.findKotlinClass
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf.MemberKind
 import org.jetbrains.kotlin.metadata.ProtoBuf.Modality
 import org.jetbrains.kotlin.metadata.deserialization.*
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtSimpleNameStringTemplateEntry
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 import org.jetbrains.kotlin.psi.stubs.ConstantValueKind
-import org.jetbrains.kotlin.psi.stubs.elements.KtPlaceHolderStubElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.*
 import org.jetbrains.kotlin.resolve.DataClassResolver
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.AnnotatedCallableKind
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
@@ -301,9 +304,23 @@ private class PropertyClsStubBuilder(
             }
         }
         if (hasInitializer) {
-            val source = protoContainer.source
-            if (source is KotlinJvmBinarySourceElement){
-                source.binaryClass.visitMembers(object : KotlinJvmBinaryClass.MemberVisitor {
+            val binaryClass = when (val source = protoContainer.source) {
+                is JvmPackagePartSource -> {
+                    val knownJvmBinaryClass = source.knownJvmBinaryClass
+                    val facadeName = knownJvmBinaryClass?.classHeader?.multifileClassName?.takeIf { it.isNotEmpty() }
+                    val facadeFqName = facadeName?.let { JvmClassName.byInternalName(it).fqNameForTopLevelClassMaybeWithDollars }
+                    val facadeBinaryClass = facadeFqName?.let {
+                        c.components.classFinder?.findKotlinClass(ClassId.topLevel(it), c.components.jvmMetadataVersion!!)
+                    }
+                    facadeBinaryClass ?: knownJvmBinaryClass
+                }
+                is KotlinJvmBinarySourceElement -> {
+                    source.binaryClass
+                }
+                else -> null
+            }
+            if (binaryClass != null) {
+                binaryClass.visitMembers(object : KotlinJvmBinaryClass.MemberVisitor {
                     override fun visitMethod(name: Name, desc: String): KotlinJvmBinaryClass.MethodAnnotationVisitor? = null
 
                     override fun visitField(name: Name, desc: String, initializer: Any?): KotlinJvmBinaryClass.AnnotationVisitor? {
