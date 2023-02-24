@@ -356,6 +356,12 @@ public class ParcelizeBoxTestGenerated extends AbstractParcelizeBoxTest {
     }
 
     @Test
+    @TestMetadata("nullableSparseArrays.kt")
+    public void testNullableSparseArrays() throws Exception {
+        runTest("plugins/parcelize/parcelize-compiler/testData/box/nullableSparseArrays.kt");
+    }
+
+    @Test
     @TestMetadata("nullableTypes.kt")
     public void testNullableTypes() throws Exception {
         runTest("plugins/parcelize/parcelize-compiler/testData/box/nullableTypes.kt");
