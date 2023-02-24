@@ -7,6 +7,7 @@ package samples.collections
 
 import samples.*
 import kotlin.test.*
+import kotlin.time.DurationUnit
 
 
 @RunWith(Enclosed::class)
@@ -355,6 +356,17 @@ class Collections {
             set.remove(3)
             set += listOf(5, 4)
             assertPrints(set, "[1, 2, 5, 4]")
+        }
+
+        @Sample
+        fun enumSet() {
+            val set = enumSetOf(
+                DurationUnit.HOURS,
+                DurationUnit.MINUTES,
+                DurationUnit.SECONDS
+            )
+            // enum set is sorted by ordinal
+            assertPrints(set, "[SECONDS, MINUTES, HOURS]")
         }
     }
 
