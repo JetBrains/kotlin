@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.tree.generator.model
 import org.jetbrains.kotlin.fir.tree.generator.printer.typeWithArguments
 
 sealed class Field : Importable {
-    abstract var name: String
+    abstract val name: String
     open val arguments = mutableListOf<Importable>()
     abstract val nullable: Boolean
     abstract var isVolatile: Boolean
@@ -75,7 +75,7 @@ sealed class Field : Importable {
 // ----------- Field with default -----------
 
 class FieldWithDefault(val origin: Field) : Field() {
-    override var name: String = origin.name
+    override val name: String get() = origin.name
     override val type: String get() = origin.type
     override var isVolatile: Boolean = origin.isVolatile
     override val nullable: Boolean get() = origin.nullable
@@ -136,7 +136,7 @@ class FieldWithDefault(val origin: Field) : Field() {
 }
 
 class SimpleField(
-    override var name: String,
+    override val name: String,
     override val type: String,
     override val packageName: String?,
     val customType: Importable? = null,
@@ -185,7 +185,7 @@ class SimpleField(
 }
 
 class FirField(
-    override var name: String,
+    override val name: String,
     val element: AbstractElement,
     override val nullable: Boolean,
     override var withReplace: Boolean,
@@ -221,7 +221,7 @@ class FirField(
 // ----------- Field list -----------
 
 class FieldList(
-    override var name: String,
+    override val name: String,
     val baseType: Importable,
     override var withReplace: Boolean,
     useMutableOrEmpty: Boolean = false
