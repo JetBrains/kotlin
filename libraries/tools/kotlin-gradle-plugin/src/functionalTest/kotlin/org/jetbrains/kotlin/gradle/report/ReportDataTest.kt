@@ -38,7 +38,7 @@ class ReportDataTest {
             uuid = "uuid",
             label = "label",
             kotlinVersion = "version",
-            buildOperationRecords = listOf(buildOperationRecord),
+            buildOperationRecord = buildOperationRecord,
             additionalTags = listOf(StatTag.KOTLIN_DEBUG)
         )
 
@@ -93,7 +93,7 @@ class ReportDataTest {
             uuid = "uuid",
             label = "label",
             kotlinVersion = "version",
-            buildOperationRecords = listOf(buildOperationRecord),
+            buildOperationRecord = buildOperationRecord,
             additionalTags = listOf(StatTag.KOTLIN_DEBUG),
             metricsToShow = setOf(
                 BuildPerformanceMetric.BUNDLE_SIZE.name,// from TaskExecutionResult
@@ -147,7 +147,7 @@ class ReportDataTest {
             uuid = "uuid",
             label = "label",
             kotlinVersion = "version",
-            buildOperationRecords = listOf(buildOperationRecord),
+            buildOperationRecord = buildOperationRecord,
             additionalTags = listOf(StatTag.KOTLIN_DEBUG),
         )
         assertNotNull(statisticData)
