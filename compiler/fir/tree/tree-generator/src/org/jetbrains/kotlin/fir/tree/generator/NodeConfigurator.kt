@@ -628,7 +628,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         wrappedDelegateExpression.configure {
-            +field("delegateProvider", expression)
+            +field("delegateProvider", expression).withReplace()
         }
 
         namedReference.configure {
