@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,11 +15,14 @@ abstract class AbstractLazyBodyIsNotTouchedTilContractsPhaseTest : AbstractFirBa
     override val useLazyBodiesModeForRawFir: Boolean get() = true
 
     override fun runAnalysis(testDataFile: File, testFiles: List<TestFile>, firFilesPerSession: Map<FirSession, List<FirFile>>) {
-        val phases = FirResolvePhase.values().filter { phase -> phase != FirResolvePhase.RAW_FIR && phase < FirResolvePhase.CONTRACTS }
+        val phases = FirResolvePhase.values().filter { phase ->
+            phase != FirResolvePhase.RAW_FIR && phase < FirResolvePhase.ARGUMENTS_OF_ANNOTATIONS
+        }
+
         for ((session, firFiles) in firFilesPerSession) {
             val scopeSession = ScopeSession()
             /*
-             Test that we are not touching lazy bodies & lazy expressions during phases < CONTRACTS
+             Test that we are not touching lazy bodies & lazy expressions during phases < ARGUMENTS_OF_ANNOTATIONS
              If we try to access them, the exception will be thrown and test will fail
              */
             doFirResolveTestBench(
