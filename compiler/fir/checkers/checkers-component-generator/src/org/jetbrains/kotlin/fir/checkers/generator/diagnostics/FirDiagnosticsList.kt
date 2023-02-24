@@ -1488,6 +1488,8 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val INAPPLICABLE_TYPED_EQUALS_ANNOTATION by error<KtAnnotationEntry>() {
             parameter<String>("reason")
         }
+
+        val DEFAULT_VALUE_NOT_ALLOWED_IN_TYPED_EQUALS by error<KtParameter>(PositioningStrategy.PARAMETER_DEFAULT_VALUE)
     }
 
     val IMPORTS by object : DiagnosticGroup("Imports") {

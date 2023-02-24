@@ -13,8 +13,10 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.calls.components.hasDefaultValue
 import org.jetbrains.kotlin.resolve.isValueClass
 import org.jetbrains.kotlin.types.typeUtil.isBoolean
 import org.jetbrains.kotlin.types.typeUtil.isNothing
@@ -49,6 +51,12 @@ object TypedEqualsApplicabilityChecker : DeclarationChecker {
         }
         if (!functionDescriptor.hasSuitableSignatureForTypedEquals(parentClass)) {
             context.trace.report(Errors.INAPPLICABLE_TYPED_EQUALS_ANNOTATION.on(annotationEntry, "unexpected signature"))
+            return
+        }
+        if (functionDescriptor.valueParameters[0].hasDefaultValue()) {
+            val parameter = DescriptorToSourceUtils.descriptorToDeclaration(functionDescriptor.valueParameters[0]) as? KtParameter
+                ?: error("Declaration not found for parameter: ${functionDescriptor.valueParameters[0]}")
+            context.trace.report(Errors.DEFAULT_VALUE_NOT_ALLOWED_IN_TYPED_EQUALS.on(parameter))
         }
     }
 

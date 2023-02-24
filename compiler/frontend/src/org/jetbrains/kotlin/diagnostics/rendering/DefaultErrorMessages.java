@@ -851,6 +851,7 @@ public class DefaultErrorMessages {
         MAP.put(INEFFICIENT_EQUALS_OVERRIDING_IN_VALUE_CLASS, "Overriding ''equals'' from ''Any'' in value class without typed equals leads to boxing on every equality comparison");
         MAP.put(INAPPLICABLE_TYPED_EQUALS_ANNOTATION, "@TypedEquals annotation is inapplicable: {0}", STRING);
         MAP.put(ANNOTATION_ON_ILLEGAL_MULTI_FIELD_VALUE_CLASS_TYPED_TARGET, "Annotations on {0} of multi-field value class type are not supported", STRING);
+        MAP.put(DEFAULT_VALUE_NOT_ALLOWED_IN_TYPED_EQUALS, "Typed equals can not have a default parameter value");
 
         MAP.put(RESULT_CLASS_IN_RETURN_TYPE, "'kotlin.Result' cannot be used as a return type");
         MAP.put(RESULT_CLASS_WITH_NULLABLE_OPERATOR, "Expression of type ''kotlin.Result'' cannot be used as a left operand of ''{0}''", STRING);

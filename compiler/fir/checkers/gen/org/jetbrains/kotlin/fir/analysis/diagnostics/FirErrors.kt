@@ -758,6 +758,7 @@ object FirErrors {
     val REDUNDANT_INLINE_SUSPEND_FUNCTION_TYPE by warning0<KtElement>(SourceElementPositioningStrategies.SUSPEND_MODIFIER)
     val INEFFICIENT_EQUALS_OVERRIDING_IN_VALUE_CLASS by warning0<KtNamedFunction>(SourceElementPositioningStrategies.DECLARATION_NAME)
     val INAPPLICABLE_TYPED_EQUALS_ANNOTATION by error1<KtAnnotationEntry, String>()
+    val DEFAULT_VALUE_NOT_ALLOWED_IN_TYPED_EQUALS by error0<KtParameter>(SourceElementPositioningStrategies.PARAMETER_DEFAULT_VALUE)
 
     // Imports
     val CANNOT_ALL_UNDER_IMPORT_FROM_SINGLETON by error1<KtImportDirective, Name>(SourceElementPositioningStrategies.IMPORT_LAST_NAME)
