@@ -2939,6 +2939,10 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val reason: String
     }
 
+    abstract class DefaultValueNotAllowedInTypedEquals : KtFirDiagnostic<KtParameter>() {
+        override val diagnosticClass get() = DefaultValueNotAllowedInTypedEquals::class
+    }
+
     abstract class CannotAllUnderImportFromSingleton : KtFirDiagnostic<KtImportDirective>() {
         override val diagnosticClass get() = CannotAllUnderImportFromSingleton::class
         abstract val objectName: Name

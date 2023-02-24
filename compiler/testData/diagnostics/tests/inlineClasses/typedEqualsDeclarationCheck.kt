@@ -80,3 +80,9 @@ value class IC11(val x: Int) {
 
 <!INAPPLICABLE_TYPED_EQUALS_ANNOTATION!>@TypedEquals<!>
 fun equals(left : IC11, right: IC11) = true
+
+@JvmInline
+value class IC12(val x: Int) {
+    @TypedEquals
+    fun equals(other: IC12 = <!DEFAULT_VALUE_NOT_ALLOWED_IN_TYPED_EQUALS!>IC12(0)<!>) = true
+}

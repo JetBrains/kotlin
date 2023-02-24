@@ -436,6 +436,7 @@ public interface Errors {
     DiagnosticFactory1<KtAnnotationEntry, String> INAPPLICABLE_TYPED_EQUALS_ANNOTATION = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<KtAnnotationEntry, String> ANNOTATION_ON_ILLEGAL_MULTI_FIELD_VALUE_CLASS_TYPED_TARGET =
             DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory0<KtParameter> DEFAULT_VALUE_NOT_ALLOWED_IN_TYPED_EQUALS = DiagnosticFactory0.create(ERROR, PARAMETER_DEFAULT_VALUE);
 
     // Result class
 

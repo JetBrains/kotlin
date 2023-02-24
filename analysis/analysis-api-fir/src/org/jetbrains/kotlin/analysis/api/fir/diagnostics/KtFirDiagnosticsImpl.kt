@@ -3545,6 +3545,11 @@ internal class InapplicableTypedEqualsAnnotationImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.InapplicableTypedEqualsAnnotation(), KtAbstractFirDiagnostic<KtAnnotationEntry>
 
+internal class DefaultValueNotAllowedInTypedEqualsImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.DefaultValueNotAllowedInTypedEquals(), KtAbstractFirDiagnostic<KtParameter>
+
 internal class CannotAllUnderImportFromSingletonImpl(
     override val objectName: Name,
     override val firDiagnostic: KtPsiDiagnostic,

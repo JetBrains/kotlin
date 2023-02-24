@@ -58,6 +58,10 @@ object FirTypedEqualsApplicabilityChecker : FirFunctionChecker() {
         }
         if (!declaration.hasSuitableSignatureForTypedEquals(parentClass)) {
             reporter.reportOn(typedEqualsAnnotation.source, FirErrors.INAPPLICABLE_TYPED_EQUALS_ANNOTATION, "unexpected signature", context)
+            return
+        }
+        if (declaration.valueParameters[0].defaultValue != null) {
+            reporter.reportOn(declaration.valueParameters[0].source, FirErrors.DEFAULT_VALUE_NOT_ALLOWED_IN_TYPED_EQUALS, context)
         }
     }
 
