@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
+import org.jetbrains.kotlin.backend.jvm.extensions.ClassGeneratorExtension
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.CliModuleVisibilityManagerImpl
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
@@ -637,6 +638,7 @@ class KotlinCoreEnvironment private constructor(
             SyntheticResolveExtension.registerExtensionPoint(project)
             SyntheticJavaResolveExtension.registerExtensionPoint(project)
             ClassBuilderInterceptorExtension.registerExtensionPoint(project)
+            ClassGeneratorExtension.registerExtensionPoint(project)
             ClassFileFactoryFinalizerExtension.registerExtensionPoint(project)
             AnalysisHandlerExtension.registerExtensionPoint(project)
             PackageFragmentProviderExtension.registerExtensionPoint(project)

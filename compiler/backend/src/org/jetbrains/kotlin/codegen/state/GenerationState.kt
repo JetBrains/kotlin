@@ -397,12 +397,22 @@ class GenerationState private constructor(
                         ?.let { destination -> SignatureDumpingBuilderFactory(it, File(destination)) } ?: it
                 }
             )
-            .wrapWith(ClassBuilderInterceptorExtension.getInstances(project)) { classBuilderFactory, extension ->
+            .wrapWith(loadClassBuilderInterceptors()) { classBuilderFactory, extension ->
                 extension.interceptClassBuilderFactory(classBuilderFactory, originalFrontendBindingContext, diagnostics)
             }
 
         val finalizers = ClassFileFactoryFinalizerExtension.getInstances(project)
         this.factory = ClassFileFactory(this, interceptedBuilderFactory, finalizers)
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun loadClassBuilderInterceptors(): List<ClassBuilderInterceptorExtension> {
+        // Using Class.forName here because we're in the old JVM backend, and we need to load extensions declared in the JVM IR backend.
+        val adapted = Class.forName("org.jetbrains.kotlin.backend.jvm.extensions.ClassBuilderExtensionAdapter")
+            .getDeclaredMethod("getExtensions", Project::class.java)
+            .invoke(null, project) as List<ClassBuilderInterceptorExtension>
+
+        return ClassBuilderInterceptorExtension.getInstances(project) + adapted
     }
 
     fun beforeCompile() {
