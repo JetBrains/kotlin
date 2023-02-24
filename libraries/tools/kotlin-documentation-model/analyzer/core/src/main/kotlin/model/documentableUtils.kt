@@ -19,3 +19,5 @@ fun DTypeParameter.filter(filteredSet: Set<DokkaSourceSet>) =
             extra
         )
     }
+
+fun Documentable.isExtension() = this is Callable && receiver != null

@@ -168,7 +168,7 @@ class KotlinEnumsTest : BaseAbstractTest() {
         ) {
             renderingStage = { _, _ ->
                 val enumEntriesOnPage = writerPlugin.writer.renderedContent("root/testpackage/-test-enum/index.html")
-                    .select("div.table[data-togglable=Entries]")
+                    .select("div[data-togglable=ENTRY] .table")
                     .select("div.table-row")
                     .select("div.keyValue")
                     .select("div.title")
