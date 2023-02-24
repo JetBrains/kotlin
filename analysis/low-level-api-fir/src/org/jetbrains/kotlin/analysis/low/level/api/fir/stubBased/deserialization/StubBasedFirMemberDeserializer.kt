@@ -282,10 +282,9 @@ class StubBasedFirMemberDeserializer(private val c: StubBasedFirDeserializationC
         val returnTypeRef = property.typeReference?.toTypeRef(local) ?: error("Property doesn't have type reference, $property")
 
         val getter = property.getter
-        val receiverAnnotations = if (getter != null && property.receiverTypeReference != null) {
-            c.annotationDeserializer.loadAnnotations(
-                property, AnnotationUseSiteTarget.PROPERTY_GETTER
-            )
+        val receiverTypeReference = property.receiverTypeReference
+        val receiverAnnotations = if (getter != null && receiverTypeReference != null) {
+            c.annotationDeserializer.loadAnnotations(receiverTypeReference, AnnotationUseSiteTarget.PROPERTY_GETTER)
         } else {
             emptyList()
         }
@@ -297,7 +296,7 @@ class StubBasedFirMemberDeserializer(private val c: StubBasedFirDeserializationC
             moduleData = c.moduleData
             origin = FirDeclarationOrigin.Library
             this.returnTypeRef = returnTypeRef
-            receiverParameter = property.receiverTypeReference?.toTypeRef(local)?.let { receiverType ->
+            receiverParameter = receiverTypeReference?.toTypeRef(local)?.let { receiverType ->
                 buildReceiverParameter {
                     typeRef = receiverType
                     annotations += receiverAnnotations
