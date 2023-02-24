@@ -54,6 +54,7 @@ class DokkaBase : DokkaPlugin() {
     val outputWriter by extensionPoint<OutputWriter>()
     val htmlPreprocessors by extensionPoint<PageTransformer>()
     val kotlinAnalysis by extensionPoint<KotlinAnalysis>()
+    @Deprecated("It is not used anymore")
     val tabSortingStrategy by extensionPoint<TabSortingStrategy>()
     val immediateHtmlCommandConsumer by extensionPoint<ImmediateHtmlCommandConsumer>()
     val externalDocumentablesProvider by extensionPoint<ExternalDocumentablesProvider>()
@@ -180,10 +181,6 @@ class DokkaBase : DokkaPlugin() {
         pageMergerStrategy providing { ctx -> SameMethodNamePageMergerStrategy(ctx.logger) } order {
             before(fallbackMerger)
         }
-    }
-
-    val defaultTabSortingStrategy by extending {
-        tabSortingStrategy with DefaultTabSortingStrategy()
     }
 
     val htmlRenderer by extending {
