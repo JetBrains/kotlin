@@ -9,6 +9,8 @@ import org.jetbrains.dokka.base.DokkaBase
 import org.jetbrains.dokka.plugability.DokkaPlugin
 import org.jetbrains.dokka.analysis.DokkaAnalysisConfiguration
 import org.jetbrains.dokka.analysis.ProjectKotlinAnalysis
+import org.jetbrains.dokka.plugability.DokkaPluginApiPreview
+import org.jetbrains.dokka.plugability.PluginApiPreviewAcknowledgement
 import org.jetbrains.dokka.plugability.configuration
 
 class StdLibConfigurationPlugin : DokkaPlugin() {
@@ -25,4 +27,7 @@ class StdLibConfigurationPlugin : DokkaPlugin() {
             )
         } override dokkaBase.defaultKotlinAnalysis
     }
+
+    @DokkaPluginApiPreview
+    override fun pluginApiPreviewAcknowledgement(): PluginApiPreviewAcknowledgement = PluginApiPreviewAcknowledgement
 }
