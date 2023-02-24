@@ -19,7 +19,7 @@ class FirClassUseSiteMemberScope(
     klass: FirClass,
     session: FirSession,
     superTypeScopes: List<FirTypeScope>,
-    declaredMemberScope: FirContainingNamesAwareScope,
+    declaredMemberScope: FirContainingNamesAwareScope
 ) : AbstractFirUseSiteMemberScope(
     klass.classId,
     session,
