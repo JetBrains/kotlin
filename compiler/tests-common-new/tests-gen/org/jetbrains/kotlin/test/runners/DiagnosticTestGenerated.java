@@ -33012,6 +33012,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("flexibleSealedInSubject.kt")
+                public void testFlexibleSealedInSubject() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/testsWithJava17/sealedClasses/flexibleSealedInSubject.kt");
+                }
+
+                @Test
                 @TestMetadata("javaSealedClassExhaustiveness.kt")
                 public void testJavaSealedClassExhaustiveness() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/testsWithJava17/sealedClasses/javaSealedClassExhaustiveness.kt");
@@ -35320,6 +35326,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             @TestMetadata("extractingEntireCall.kt")
             public void testExtractingEntireCall() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/when/extractingEntireCall.kt");
+            }
+
+            @Test
+            @TestMetadata("flexibleEnumInSubject.kt")
+            public void testFlexibleEnumInSubject() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/when/flexibleEnumInSubject.kt");
             }
 
             @Test
