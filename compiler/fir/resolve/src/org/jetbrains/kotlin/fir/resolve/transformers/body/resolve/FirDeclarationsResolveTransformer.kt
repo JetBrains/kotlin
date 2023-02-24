@@ -501,16 +501,17 @@ open class FirDeclarationsResolveTransformer(
     override fun transformRegularClass(
         regularClass: FirRegularClass,
         data: ResolutionMode
-    ): FirStatement = whileAnalysing(session, regularClass) {
-        return context.withContainingClass(regularClass) {
-            if (regularClass.isLocal && regularClass !in context.targetedLocalClasses) {
-                return regularClass.runAllPhasesForLocalClass(transformer, components, data, transformer.firTowerDataContextCollector)
-            }
+    ): FirStatement =
+        whileAnalysing(session, regularClass) {
+            return context.withContainingClass(regularClass) {
+                if (regularClass.isLocal && regularClass !in context.targetedLocalClasses) {
+                    return regularClass.runAllPhasesForLocalClass(transformer, components, data, transformer.firTowerDataContextCollector)
+                }
 
-            doTransformTypeParameters(regularClass)
-            doTransformRegularClass(regularClass, data)
+                doTransformTypeParameters(regularClass)
+                doTransformRegularClass(regularClass, data)
+            }
         }
-    }
 
     override fun transformScript(script: FirScript, data: ResolutionMode): FirScript {
         if (implicitTypeOnly) return script
@@ -645,19 +646,19 @@ open class FirDeclarationsResolveTransformer(
         } as FirStatement
     }
 
-    override fun transformConstructor(
-        constructor: FirConstructor,
-        data: ResolutionMode
-    ): FirConstructor = whileAnalysing(session, constructor) {
-        if (implicitTypeOnly) return constructor
-        val container = context.containerIfAny as? FirRegularClass
-        if (constructor.isPrimary && container?.classKind == ClassKind.ANNOTATION_CLASS) {
-            return withFirArrayOfCallTransformer {
-                doTransformConstructor(constructor, data)
+    override fun transformConstructor(constructor: FirConstructor, data: ResolutionMode): FirConstructor =
+        whileAnalysing(session, constructor) {
+            if (implicitTypeOnly) return constructor
+            val container = context.containerIfAny as? FirRegularClass
+            if (constructor.isPrimary && container?.classKind == ClassKind.ANNOTATION_CLASS) {
+                return withFirArrayOfCallTransformer {
+
+                    doTransformConstructor(constructor, data)
+                }
             }
+
+            return doTransformConstructor(constructor, data)
         }
-        return doTransformConstructor(constructor, data)
-    }
 
     private fun doTransformConstructor(constructor: FirConstructor, data: ResolutionMode): FirConstructor {
         val owningClass = context.containerIfAny as? FirRegularClass
@@ -1007,21 +1008,22 @@ open class FirDeclarationsResolveTransformer(
         override fun transformValueParameter(
             valueParameter: FirValueParameter,
             data: Any?
-        ): FirStatement = whileAnalysing(valueParameter.moduleData.session, valueParameter) {
-            if (valueParameter.returnTypeRef is FirImplicitTypeRef) {
-                valueParameter.replaceReturnTypeRef(
-                    valueParameter.returnTypeRef.resolvedTypeFromPrototype(
-                        ConeErrorType(
-                            ConeSimpleDiagnostic(
-                                "No type for parameter",
-                                DiagnosticKind.ValueParameterWithNoTypeAnnotation
+        ): FirStatement =
+            whileAnalysing(valueParameter.moduleData.session, valueParameter) {
+                if (valueParameter.returnTypeRef is FirImplicitTypeRef) {
+                    valueParameter.replaceReturnTypeRef(
+                        valueParameter.returnTypeRef.resolvedTypeFromPrototype(
+                            ConeErrorType(
+                                ConeSimpleDiagnostic(
+                                    "No type for parameter",
+                                    DiagnosticKind.ValueParameterWithNoTypeAnnotation
+                                )
                             )
                         )
                     )
-                )
+                }
+                return valueParameter
             }
-            return valueParameter
-        }
     }
 
     private val FirVariable.initializerResolved: Boolean
