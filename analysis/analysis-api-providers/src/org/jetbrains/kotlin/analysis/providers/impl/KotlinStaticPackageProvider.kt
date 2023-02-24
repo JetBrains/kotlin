@@ -34,8 +34,8 @@ public class KotlinStaticPackageProvider(
         return packageFqName in packageToSubPackageNames
     }
 
-    override fun getKotlinSubPackageFqNames(packageFqName: FqName): Set<Name> {
-        return packageToSubPackageNames[packageFqName] ?: emptySet()
+    override fun getSubPackageFqNames(packageFqName: FqName, nameFilter: (Name) -> Boolean): Set<Name> {
+        return packageToSubPackageNames[packageFqName]?.filterTo(mutableSetOf()) { nameFilter(it) } ?: emptySet()
     }
 }
 
