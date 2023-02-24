@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.caches.createCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
-import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.java.FirJavaFacade
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
@@ -98,7 +97,7 @@ class JvmStubBasedFirDeserializedSymbolProvider(
             val postProcessor: DeserializedTypeAliasPostProcessor = {
                 val rootContext = StubBasedFirDeserializationContext.createRootContext(
                     moduleData,
-                    JvmAnnotationsDeserializer(session),
+                    StubBasedAnnotationDeserializer(session),
                     StubBasedFirConstDeserializer(session),
                     classId.packageFqName,
                     classId.relativeClassName,
@@ -126,7 +125,7 @@ class JvmStubBasedFirDeserializedSymbolProvider(
                 symbol,
                 session,
                 moduleData,
-                JvmAnnotationsDeserializer(session),
+                StubBasedAnnotationDeserializer(session),
                 kotlinScopeProvider,
                 parentContext,
                 JvmFromStubDecompilerSource(classId.packageFqName),
@@ -151,7 +150,7 @@ class JvmStubBasedFirDeserializedSymbolProvider(
             val moduleData = moduleDataProvider.getModuleData(function.containingLibrary()) ?: return@mapNotNull null
             val symbol = FirNamedFunctionSymbol(callableId)
             val createRootContext = StubBasedFirDeserializationContext.createRootContext(session, moduleData, callableId, function, symbol)
-            createRootContext.memberDeserializer.loadFunction(function, null, null, session, symbol).symbol
+            createRootContext.memberDeserializer.loadFunction(function, null, session, symbol).symbol
         }
     }
 
@@ -160,7 +159,7 @@ class JvmStubBasedFirDeserializedSymbolProvider(
             val moduleData = moduleDataProvider.getModuleData(property.containingLibrary()) ?: return@mapNotNull null
             val symbol = FirPropertySymbol(callableId)
             val createRootContext = StubBasedFirDeserializationContext.createRootContext(session, moduleData, callableId, property, symbol)
-            createRootContext.memberDeserializer.loadProperty(property, null, null, symbol).symbol
+            createRootContext.memberDeserializer.loadProperty(property, null, symbol).symbol
         }
     }
 
@@ -206,11 +205,5 @@ class JvmStubBasedFirDeserializedSymbolProvider(
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
         if (!classLikeNamesByPackage.getValue(classId.packageFqName).contains(classId.shortClassName)) return null
         return getClass(classId) ?: getTypeAlias(classId)
-    }
-}
-
-class JvmAnnotationsDeserializer(session: FirSession) : StubBasedAbstractAnnotationDeserializer(session) {
-    override fun loadTypeAnnotations(typeReference: KtTypeReference): List<FirAnnotation> {
-        return emptyList()
     }
 }
