@@ -51,7 +51,6 @@ abstract class AbstractDiagnosticsWasmTest : AbstractKotlinCompilerTest() {
         classicFrontendStep()
         classicFrontendHandlersStep {
             useHandlers(
-                ::DeclarationsDumpHandler,
                 ::ClassicDiagnosticsHandler,
             )
         }
