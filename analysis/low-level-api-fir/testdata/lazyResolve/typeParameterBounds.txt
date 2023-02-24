@@ -122,7 +122,7 @@ FILE: typeParameterBounds.kt
     }
     public abstract [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
     }
-    public abstract [ResolvedTo(STATUS)] interface Bar<[ResolvedTo(STATUS)] T : R|Foo|> : R|kotlin/Any| {
+    public? final? [ResolvedTo(TYPES)] interface Bar<[ResolvedTo(TYPES)] T : R|Foo|> : R|kotlin/Any| {
     }
     public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] F : R|Foo|, [ResolvedTo(CONTRACTS)] B : R|Bar<F>|> R|F|.util(): R|B| {
         ^util Null(null)!!

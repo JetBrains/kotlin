@@ -579,13 +579,13 @@ internal object CheckIncompatibleTypeVariableUpperBounds : ResolutionStage() {
             for (variableWithConstraints in candidate.system.notFixedTypeVariables.values) {
                 val upperTypes = variableWithConstraints.constraints.extractUpperTypesToCheckIntersectionEmptiness()
 
-                upperTypes.forEach { type ->
-                    (type as ConeKotlinType).toRegularClassSymbol(context.session)?.lazyResolveToPhase(FirResolvePhase.STATUS)
-                }
-
                 // TODO: consider reporting errors on bounded type variables by incompatible types but with other lower constraints
                 if (upperTypes.size <= 1 || variableWithConstraints.constraints.any { it.kind.isLower() })
                     continue
+
+                upperTypes.forEach { type ->
+                    (type as ConeKotlinType).toRegularClassSymbol(context.session)?.lazyResolveToPhase(FirResolvePhase.STATUS)
+                }
 
                 val emptyIntersectionTypeInfo = candidate.system.getEmptyIntersectionTypeKind(upperTypes) ?: continue
                 if (variableWithConstraints.constraints.any {
