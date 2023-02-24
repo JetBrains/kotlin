@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // !LANGUAGE: -SafeCallsAreAlwaysNullable
 // http://youtrack.jetbrains.net/issue/KT-418
 

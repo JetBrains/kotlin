@@ -357,7 +357,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 safeCallExpression.apply {
                     checkedSubjectRef.value.propagateTypeFromOriginalReceiver(receiver, components.session, components.file)
                     transformSelector(this@FirExpressionsResolveTransformer, data)
-                    propagateTypeFromQualifiedAccessAfterNullCheck(receiver, session, context.file)
+                    propagateTypeFromQualifiedAccessAfterNullCheck(session, context.file)
                 }
 
                 dataFlowAnalyzer.exitSafeCall(safeCallExpression)

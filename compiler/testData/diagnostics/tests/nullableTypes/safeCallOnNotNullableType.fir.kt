@@ -9,7 +9,7 @@ interface A {
 }
 
 fun test_1(a: A) {
-    val s = a.id().id().id().id().id().id().id().id()<!SAFE_CALL_WILL_CHANGE_NULLABILITY!>?.foo()<!>.length
+    val s = a.id().id().id().id().id().id().id().id()<!SAFE_CALL_WILL_CHANGE_NULLABILITY!>?.foo()<!><!UNSAFE_CALL!>.<!>length
 }
 
 fun test_2(a: A) {
@@ -18,17 +18,17 @@ fun test_2(a: A) {
         .id()
         .id()
         <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>?.id()<!>
-        .id()
+        <!UNSAFE_CALL!>.<!>id()
         .id()
         .id()
         <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>?.foo()<!>
-        <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>?.length<!>
+        ?.length
 }
 
 fun test_3(a: A) {
     val s = a.id()<!SAFE_CALL_WILL_CHANGE_NULLABILITY!>?.
-        id()<!>.
+        id()<!><!UNSAFE_CALL!>.<!>
         id()<!SAFE_CALL_WILL_CHANGE_NULLABILITY!>?.
-        foo()<!>.
+        foo()<!><!UNSAFE_CALL!>.<!>
         length
 }
