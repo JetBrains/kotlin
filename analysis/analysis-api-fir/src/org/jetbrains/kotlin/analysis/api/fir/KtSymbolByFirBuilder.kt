@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.fir
 
 import com.intellij.openapi.project.Project
-import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.analysis.api.KtStarTypeProjection
@@ -107,9 +106,7 @@ internal class KtSymbolByFirBuilder constructor(
     private val packageProvider = project.createPackageProvider(GlobalSearchScope.allScope(project))//todo scope
 
     fun createPackageSymbolIfOneExists(packageFqName: FqName): KtFirPackageSymbol? {
-        val exists =
-            packageProvider.doKotlinPackageExists(packageFqName)
-                    || JavaPsiFacade.getInstance(project).findPackage(packageFqName.asString()) != null
+        val exists = packageProvider.doesPackageExist(packageFqName, analysisSession.targetPlatform)
         if (!exists) {
             return null
         }

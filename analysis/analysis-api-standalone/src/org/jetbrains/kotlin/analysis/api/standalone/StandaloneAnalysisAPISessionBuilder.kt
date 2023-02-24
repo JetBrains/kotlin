@@ -130,7 +130,7 @@ public class StandaloneAnalysisAPISessionBuilder(
                     kotlinCoreProjectEnvironment.environment.jarFileSystem as CoreJarFileSystem
                 )
             )
-            registerService(KotlinPackageProviderFactory::class.java, KotlinStaticPackageProviderFactory(ktFiles))
+            registerService(KotlinPackageProviderFactory::class.java, KotlinStaticPackageProviderFactory(project, ktFiles))
 
             registerService(KtAnalysisSessionProvider::class.java, KtFirAnalysisSessionProvider(this))
             registerService(

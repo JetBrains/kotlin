@@ -65,5 +65,5 @@ class KtPackage(
 ) : PsiPackageImpl(manager, fqName.asString().replace('/', '.')) {
     override fun copy() = KtPackage(manager, fqName, scope)
 
-    override fun isValid(): Boolean = project.createPackageProvider(scope).doKotlinPackageExists(fqName)
+    override fun isValid(): Boolean = project.createPackageProvider(scope).doesKotlinOnlyPackageExist(fqName)
 }

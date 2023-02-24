@@ -92,7 +92,7 @@ internal class LLFirProviderHelper(
 
     fun getPackage(fqName: FqName): FqName? {
         if (!allowKotlinPackage && fqName.isKotlinPackage()) return null
-        return fqName.takeIf(packageProvider::doKotlinPackageExists)
+        return fqName.takeIf(packageProvider::doesKotlinOnlyPackageExist)
     }
 }
 
