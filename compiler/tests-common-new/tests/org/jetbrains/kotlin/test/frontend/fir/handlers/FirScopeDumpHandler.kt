@@ -84,7 +84,7 @@ class FirScopeDumpHandler(testServices: TestServices) : FirAnalysisHandler(testS
         println("$fqName: ")
 
         session.lazyDeclarationResolver.disableLazyResolveContractChecksInside {
-            val scope = firClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = true, requiredPhase = null)
+            val scope = firClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = true, memberRequiredPhase = null)
             val names = namesFromDirective.takeIf { it.isNotEmpty() }?.map { Name.identifier(it) } ?: scope.getCallableNames()
             withIndent {
                 for (name in names) {

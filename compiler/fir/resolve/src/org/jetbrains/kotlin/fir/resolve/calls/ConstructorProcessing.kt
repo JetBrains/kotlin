@@ -204,7 +204,7 @@ private fun processConstructors(
                         session,
                         bodyResolveComponents.scopeSession,
                         firClass.symbol.toLookupTag(),
-                        requiredPhase = FirResolvePhase.STATUS,
+                        memberRequiredPhase = FirResolvePhase.STATUS,
                     )
                 }
             }

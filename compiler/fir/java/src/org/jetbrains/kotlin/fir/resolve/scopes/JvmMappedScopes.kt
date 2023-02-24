@@ -43,7 +43,7 @@ fun wrapScopeWithJvmMapped(
             useSiteSession,
             scopeSession,
             withForcedTypeCalculator = false,
-            requiredPhase = null,
+            memberRequiredPhase = null,
         ).let { javaClassUseSiteScope ->
             val jvmMappedScope = JvmMappedScope(
                 useSiteSession,

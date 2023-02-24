@@ -638,7 +638,7 @@ class CallAndReferenceGenerator(
                             session,
                             scopeSession,
                             withForcedTypeCalculator = true,
-                            requiredPhase = null,
+                            memberRequiredPhase = null,
                         )?.processDeclaredConstructors {
                             if (it.fir.isPrimary && constructorSymbol == null) {
                                 constructorSymbol = it

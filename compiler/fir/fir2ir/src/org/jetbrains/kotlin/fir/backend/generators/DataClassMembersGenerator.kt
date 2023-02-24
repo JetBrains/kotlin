@@ -198,7 +198,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
                 components.session,
                 components.scopeSession,
                 withForcedTypeCalculator = true,
-                requiredPhase = null,
+                memberRequiredPhase = null,
             )
             val contributedFunctionsInSupertypes =
                 buildMap<Name, FirSimpleFunction> {

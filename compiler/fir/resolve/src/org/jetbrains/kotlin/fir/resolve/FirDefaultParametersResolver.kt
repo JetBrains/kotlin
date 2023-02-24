@@ -36,7 +36,7 @@ class FirDefaultParametersResolver : FirSessionComponent {
                     session,
                     scopeSession,
                     containingClass.symbol.toLookupTag(),
-                    requiredPhase = null,
+                    memberRequiredPhase = null,
                 )
             }
             else -> return false

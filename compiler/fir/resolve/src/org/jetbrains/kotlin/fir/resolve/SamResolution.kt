@@ -326,7 +326,12 @@ private fun FirRegularClass.findSingleAbstractMethodByNames(
     var resultMethod: FirSimpleFunction? = null
     var metIncorrectMember = false
 
-    val classUseSiteMemberScope = this.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false, requiredPhase = null)
+    val classUseSiteMemberScope = this.unsubstitutedScope(
+        session,
+        scopeSession,
+        withForcedTypeCalculator = false,
+        memberRequiredPhase = null,
+    )
 
     for (candidateName in samCandidateNames) {
         if (metIncorrectMember) break

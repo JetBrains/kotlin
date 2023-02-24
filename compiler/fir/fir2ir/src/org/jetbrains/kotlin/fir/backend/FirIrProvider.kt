@@ -96,7 +96,7 @@ class FirIrProvider(val fir2IrComponents: Fir2IrComponents) : IrProvider {
                 fir2IrComponents.session,
                 fir2IrComponents.scopeSession,
                 withForcedTypeCalculator = true,
-                requiredPhase = null,
+                memberRequiredPhase = null,
             )
 
             when (kind) {

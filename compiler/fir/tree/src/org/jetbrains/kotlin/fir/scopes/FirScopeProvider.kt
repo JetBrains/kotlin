@@ -15,7 +15,7 @@ abstract class FirScopeProvider {
         klass: FirClass,
         useSiteSession: FirSession,
         scopeSession: ScopeSession,
-        requiredPhase: FirResolvePhase?
+        memberRequiredPhase: FirResolvePhase?,
     ): FirTypeScope
 
     abstract fun getStaticMemberScopeForCallables(

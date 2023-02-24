@@ -550,7 +550,7 @@ class FirCallResolver(
             session,
             components.scopeSession,
             withForcedTypeCalculator = false,
-            requiredPhase = null,
+            memberRequiredPhase = null,
         ).processDeclaredConstructors {
             if (it.fir.isPrimary && constructorSymbol == null) {
                 constructorSymbol = it

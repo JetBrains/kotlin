@@ -53,7 +53,7 @@ fun FirClass.unsubstitutedScope(context: CheckerContext): FirTypeScope =
         context.sessionHolder.session,
         context.sessionHolder.scopeSession,
         withForcedTypeCalculator = false,
-        requiredPhase = null
+        memberRequiredPhase = null,
     )
 
 fun FirClassSymbol<*>.unsubstitutedScope(context: CheckerContext): FirTypeScope =

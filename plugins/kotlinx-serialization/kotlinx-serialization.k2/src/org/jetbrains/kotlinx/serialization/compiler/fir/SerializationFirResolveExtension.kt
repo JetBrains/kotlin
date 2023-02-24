@@ -147,7 +147,7 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
         val scopes = lookupSuperTypes(
             owner, lookupInterfaces = true, deep = false, useSiteSession = session
         ).mapNotNull { useSiteSuperType ->
-            useSiteSuperType.scopeForSupertype(session, scopeSession, owner.fir, requiredPhase = null)
+            useSiteSuperType.scopeForSupertype(session, scopeSession, owner.fir, memberRequiredPhase = null)
         }
         val targets = scopes.flatMap { extractor(it) }
         return targets.singleOrNull() ?: error("Multiple overrides found for ${callableId.callableName}")

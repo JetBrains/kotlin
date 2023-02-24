@@ -91,7 +91,7 @@ class FirStatusResolver(
             return emptyList()
         }
 
-        val scope = containingClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false, requiredPhase = null)
+        val scope = containingClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false, memberRequiredPhase = null)
 
         return buildList {
             scope.processPropertiesByName(property.name) {}
@@ -129,7 +129,13 @@ class FirStatusResolver(
         }
 
         return buildList<FirCallableDeclaration> {
-            val scope = containingClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false, requiredPhase = null)
+            val scope = containingClass.unsubstitutedScope(
+                session,
+                scopeSession,
+                withForcedTypeCalculator = false,
+                memberRequiredPhase = null,
+            )
+
             val symbol = function.symbol
             scope.processFunctionsByName(function.name) {}
             scope.processDirectOverriddenFunctionsWithBaseScope(symbol) { overriddenSymbol, _ ->

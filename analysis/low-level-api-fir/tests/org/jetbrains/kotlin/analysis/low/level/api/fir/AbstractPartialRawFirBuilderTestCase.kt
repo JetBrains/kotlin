@@ -101,7 +101,7 @@ abstract class AbstractPartialRawFirBuilderTestCase : AbstractLowLevelApiSingleF
                 klass: FirClass,
                 useSiteSession: FirSession,
                 scopeSession: ScopeSession,
-                requiredPhase: FirResolvePhase?
+                memberRequiredPhase: FirResolvePhase?,
             ): FirTypeScope =
                 error("Should not be called")
 

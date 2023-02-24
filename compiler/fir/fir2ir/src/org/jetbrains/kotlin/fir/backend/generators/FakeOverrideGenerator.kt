@@ -67,7 +67,13 @@ class FakeOverrideGenerator(
 
     private fun IrClass.getFakeOverrides(klass: FirClass, realDeclarations: Collection<FirDeclaration>): List<IrDeclaration> {
         val result = mutableListOf<IrDeclaration>()
-        val useSiteMemberScope = klass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = true, requiredPhase = null)
+        val useSiteMemberScope = klass.unsubstitutedScope(
+            session,
+            scopeSession,
+            withForcedTypeCalculator = true,
+            memberRequiredPhase = null,
+        )
+
         val superTypesCallableNames = useSiteMemberScope.getCallableNames()
         val realDeclarationSymbols = realDeclarations.mapTo(mutableSetOf(), FirDeclaration::symbol)
 
@@ -82,7 +88,13 @@ class FakeOverrideGenerator(
         name: Name,
         firClass: FirClass
     ): List<IrDeclaration> = buildList {
-        val useSiteMemberScope = firClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = true, requiredPhase = null)
+        val useSiteMemberScope = firClass.unsubstitutedScope(
+            session,
+            scopeSession,
+            withForcedTypeCalculator = true,
+            memberRequiredPhase = null,
+        )
+
         generateFakeOverridesForName(
             irClass, useSiteMemberScope, name, firClass, this,
             // This parameter is only needed for data-class methods that is irrelevant for lazy library classes
@@ -209,7 +221,7 @@ class FakeOverrideGenerator(
         fakeOverride: IrSimpleFunction,
         originalSymbol: FirNamedFunctionSymbol,
     ) {
-        val scope = klass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = true, requiredPhase = null)
+        val scope = klass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = true, memberRequiredPhase = null)
         val classLookupTag = klass.symbol.toLookupTag()
         val baseFirSymbolsForFakeOverride =
             if (originalSymbol.shouldHaveComputedBaseSymbolsForClass(classLookupTag)) {
