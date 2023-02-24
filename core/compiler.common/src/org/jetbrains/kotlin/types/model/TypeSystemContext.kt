@@ -23,7 +23,6 @@ interface DefinitelyNotNullTypeMarker : SimpleTypeMarker
 
 interface FlexibleTypeMarker : KotlinTypeMarker
 interface DynamicTypeMarker : FlexibleTypeMarker
-interface RawTypeMarker : FlexibleTypeMarker
 interface StubTypeMarker : SimpleTypeMarker
 
 interface TypeArgumentListMarker

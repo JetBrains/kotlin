@@ -184,7 +184,7 @@ data class ConeDefinitelyNotNullType(val original: ConeSimpleKotlinType) : ConeS
 class ConeRawType private constructor(
     lowerBound: ConeSimpleKotlinType,
     upperBound: ConeSimpleKotlinType
-) : ConeFlexibleType(lowerBound, upperBound), RawTypeMarker {
+) : ConeFlexibleType(lowerBound, upperBound) {
     companion object {
         fun create(
             lowerBound: ConeSimpleKotlinType,
