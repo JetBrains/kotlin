@@ -161,6 +161,12 @@ public class FirIdeNormalAnalysisSourceModuleReferenceShortenerTestGenerated ext
     }
 
     @Test
+    @TestMetadata("contextReceiver.kt")
+    public void testContextReceiver() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/contextReceiver.kt");
+    }
+
+    @Test
     @TestMetadata("enumClassCompanionAlreadyImported.kt")
     public void testEnumClassCompanionAlreadyImported() throws Exception {
         runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/enumClassCompanionAlreadyImported.kt");

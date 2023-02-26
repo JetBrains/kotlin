@@ -14,10 +14,13 @@ import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
 import org.jetbrains.kotlin.fir.scopes.impl.wrapNestedClassifierScopeWithSubstitutionForSuperType
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeStubType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -219,6 +222,7 @@ class FirTowerDataContext private constructor(
     }
 }
 
+// Each FirTowerDataElement has exactly one non-null value among values of properties: scope, implicitReceiver and contextReceiverGroup.
 class FirTowerDataElement(
     val scope: FirScope?,
     val implicitReceiver: ImplicitReceiverValue<*>?,
@@ -236,11 +240,24 @@ class FirTowerDataElement(
         )
 
     /**
-     * Returns [scope] if it is not null. Otherwise, returns [implicitReceiver.implicitScope].
+     * Returns [scope] if it is not null. Otherwise, returns scopes of implicit receivers (including context receivers).
      *
      * Note that a scope for a companion object is an implicit scope.
      */
-    fun getAvailableScope() = scope ?: implicitReceiver?.implicitScope
+    fun getAvailableScopes(): List<FirScope> = when {
+        scope != null -> listOf(scope)
+        implicitReceiver != null -> listOf(implicitReceiver.getImplicitScope())
+        contextReceiverGroup != null -> contextReceiverGroup.map { it.getImplicitScope() }
+        else -> error("Tower data element is expected to have either scope or implicit receivers.")
+    }
+
+    private fun ImplicitReceiverValue<*>.getImplicitScope(): FirScope {
+        return when (expandedType) {
+            is ConeErrorType,
+            is ConeStubType -> FirTypeScope.Empty
+            else -> implicitScope ?: error("Scope for type ${type::class.simpleName} is null.")
+        }
+    }
 }
 
 fun ImplicitReceiverValue<*>.asTowerDataElement(): FirTowerDataElement =
