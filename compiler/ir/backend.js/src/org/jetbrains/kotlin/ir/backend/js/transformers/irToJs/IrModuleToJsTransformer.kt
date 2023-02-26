@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.backend.js.lower.StaticMembersLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.isBuiltInClass
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.js.backend.JsToStringGenerationVisitor
@@ -221,6 +222,7 @@ class IrModuleToJsTransformer(
 
     private val generateFilePaths = backendContext.configuration.getBoolean(JSConfigurationKeys.GENERATE_COMMENTS_WITH_FILE_PATH)
     private val pathPrefixMap = backendContext.configuration.getMap(JSConfigurationKeys.FILE_PATHS_PREFIX_MAP)
+    private val signatureToTag = hashMapOf<IdSignature, String>()
 
     private fun generateProgramFragment(fileExports: IrFileExports, minimizedMemberNames: Boolean): JsIrProgramFragment {
         val nameGenerator = JsNameLinkingNamer(backendContext, minimizedMemberNames)
@@ -311,7 +313,8 @@ class IrModuleToJsTransformer(
         val definitionSet = fileExports.file.declarations.toSet()
 
         fun computeTag(declaration: IrDeclaration): String? {
-            val tag = (backendContext.irFactory as IdSignatureRetriever).declarationSignature(declaration)?.toString()
+            val signature = (backendContext.irFactory as IdSignatureRetriever).declarationSignature(declaration)
+            val tag = signature?.let { signatureToTag.getOrPut(it) { it.toString() } }
 
             if (tag == null && declaration !in definitionSet) {
                 error("signature for ${declaration.render()} not found")
