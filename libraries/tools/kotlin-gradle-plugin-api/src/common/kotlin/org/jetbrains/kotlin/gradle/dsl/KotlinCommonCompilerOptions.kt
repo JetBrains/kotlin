@@ -26,6 +26,13 @@ interface KotlinCommonCompilerOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCo
     val languageVersion: org.gradle.api.provider.Property<org.jetbrains.kotlin.gradle.dsl.KotlinVersion>
 
     /**
+     * Enable usages of API that requires opt-in with an opt-in requirement marker with the given fully qualified name
+     * Default value: emptyList<String>()
+     */
+    @get:org.gradle.api.tasks.Input
+    val optIn: org.gradle.api.provider.ListProperty<kotlin.String>
+
+    /**
      * Compile using experimental K2. K2 is a new compiler pipeline, no compatibility guarantees are yet provided
      * Default value: false
      */

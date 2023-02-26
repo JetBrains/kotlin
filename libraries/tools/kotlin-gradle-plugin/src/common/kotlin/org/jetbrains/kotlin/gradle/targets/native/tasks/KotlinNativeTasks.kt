@@ -379,8 +379,12 @@ internal constructor(
     val enabledLanguageFeatures: Set<String>
         @Input get() = languageSettings.enabledLanguageFeatures
 
+    @Deprecated(
+        message = "Replaced with compilerOptions.optIn",
+        replaceWith = ReplaceWith("compilerOptions.optIn")
+    )
     val optInAnnotationsInUse: Set<String>
-        @Input get() = languageSettings.optInAnnotationsInUse
+        @Internal get() = compilerOptions.optIn.get().toSet()
     // endregion.
 
     // region Kotlin options

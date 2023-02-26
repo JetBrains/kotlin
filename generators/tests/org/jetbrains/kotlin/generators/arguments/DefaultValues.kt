@@ -39,6 +39,13 @@ open class DefaultValues(
 
     object EmptyStringListDefault : DefaultValues("emptyList<String>()", typeOf<List<String>>(), typeOf<List<String>>())
 
+    object EmptyStringArrayDefault : DefaultValues(
+        "emptyList<String>()",
+        typeOf<List<String>>(),
+        typeOf<List<String>>(),
+        toArgumentConverter = ".toTypedArray()"
+    )
+
     object LanguageVersions : DefaultValues(
         "null",
         typeOf<KotlinVersionDsl?>(),

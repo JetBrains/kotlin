@@ -810,11 +810,24 @@ open class NewMultiplatformIT : BaseGradleIT() {
         )
 
         listOf(
-            "compileCommonMainKotlinMetadata", "compileKotlinJvm6", "compileKotlinNodeJs", "compileKotlinLinux64"
+            "compileCommonMainKotlinMetadata", "compileKotlinJvm6", "compileKotlinNodeJs"
         ).forEach {
             build(it) {
                 assertSuccessful()
                 assertTasksExecuted(":$it")
+                assertContains(
+                    "-XXLanguage:+InlineClasses",
+                    "-progressive",
+                    "-opt-in kotlin.ExperimentalUnsignedTypes,kotlin.contracts.ExperimentalContracts",
+                    "-Xno-inline"
+                )
+            }
+        }
+
+        listOf("compileNativeMainKotlinMetadata", "compileKotlinLinux64").forEach { task ->
+            build(task) {
+                assertSuccessful()
+                assertTasksExecuted(":$task")
                 assertContains(
                     "-XXLanguage:+InlineClasses",
                     "-progressive", "-opt-in=kotlin.ExperimentalUnsignedTypes",
@@ -1237,12 +1250,12 @@ open class NewMultiplatformIT : BaseGradleIT() {
             }
 
             assertEquals(
-                setOf("commonMain"),
+                setOf("commonMain", "nativeMain"),
                 sourceJarSourceRoots[null]
             )
             assertEquals(setOf("commonMain", "jvm6Main"), sourceJarSourceRoots["jvm6"])
             assertEquals(setOf("commonMain", "nodeJsMain"), sourceJarSourceRoots["nodejs"])
-            assertEquals(setOf("commonMain", "linux64Main"), sourceJarSourceRoots["linux64"])
+            assertEquals(setOf("commonMain", "nativeMain", "linux64Main"), sourceJarSourceRoots["linux64"])
         }
     }
 

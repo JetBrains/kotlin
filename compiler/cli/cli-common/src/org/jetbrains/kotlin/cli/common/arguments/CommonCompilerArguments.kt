@@ -107,6 +107,10 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
             field = value
         }
 
+    @GradleOption(
+        value = DefaultValue.EMPTY_STRING_ARRAY_DEFAULT,
+        gradleInputType = GradleInputTypes.INPUT
+    )
     @Argument(
         value = "-opt-in",
         deprecatedName = "-Xopt-in",

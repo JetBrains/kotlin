@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.gradle.plugin.sources.*
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.targets.native.internal.*
 import org.jetbrains.kotlin.gradle.tasks.*
+import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.gradle.utils.getResolvedArtifactsCompat
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -81,8 +82,7 @@ class KotlinMetadataTargetConfigurator :
                 compileKotlinTaskProvider.configure { it.onlyIf { isCompatibilityMetadataVariantEnabled } }
             }
 
-
-            val allMetadataJar = target.project.tasks.withType<Jar>().named(ALL_METADATA_JAR_NAME)
+            val allMetadataJar = target.project.tasks.named<Jar>(ALL_METADATA_JAR_NAME)
             createMetadataCompilationsForCommonSourceSets(target, allMetadataJar)
 
             configureProjectStructureMetadataGeneration(target.project, allMetadataJar)
@@ -317,6 +317,15 @@ class KotlinMetadataTargetConfigurator :
                     // Also clear the dependency files (classpath) of the compilation so that the host-specific dependencies are
                     // not resolved:
                     compileDependencyFiles = project.files()
+                }
+            }
+
+            target.project.runOnceAfterEvaluated("Sync common compilation language settings to compiler options") {
+                target.compilations.all { compilation ->
+                    applyLanguageSettingsToCompilerOptions(
+                        compilation.defaultSourceSet.languageSettings,
+                        compilation.compilerOptions.options
+                    )
                 }
             }
         }
