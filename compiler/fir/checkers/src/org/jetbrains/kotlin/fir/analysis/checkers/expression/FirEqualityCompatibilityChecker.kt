@@ -270,17 +270,13 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker() {
     }
 }
 
-private class TypeInfo(val type: ConeKotlinType, session: FirSession) {
-    val notNullType = type.withNullability(ConeNullability.NOT_NULL, session.typeContext)
-
-    val superTypesTraverser = ConeSupertypesTraverser(type.lowerBoundIfFlexible(), session)
-
-    val isFinalClass by superTypesTraverser.anySuperClassSymbol { it.isFinalClass }
-
-    val isEnumEntry by superTypesTraverser.anySuperClassSymbol { it.isEnumEntry }
-
-    val hasEnumSupertype by superTypesTraverser.anySuperClassSymbol { it.isEnumClass }
-
+private class TypeInfo(
+    val type: ConeKotlinType,
+    val notNullType: ConeKotlinType,
+    val isFinalClass: Boolean,
+    val isEnumEntry: Boolean,
+    val hasEnumSupertype: Boolean,
+) {
     override fun toString() = "$type"
 }
 
@@ -299,14 +295,18 @@ private val FirClassSymbol<*>.isFinalClass get() = isClass && isFinal
 private val FirClassSymbol<*>.isClass get() = !isInterface
 
 private fun ConeKotlinType.toTypeInfo(session: FirSession): TypeInfo {
-    return TypeInfo(toUpperBound(session), session)
-}
-
-private fun ConeKotlinType.toUpperBound(session: FirSession) =
-    collectUpperBounds()
-        .map { type -> session.toKotlinType(type).replaceArgumentsWithStarProjections() }
-        .ifNotEmpty { ConeTypeIntersector.intersectTypes(session.typeContext, this) }
+    val bounds = collectUpperBounds().map { type -> session.toKotlinType(type).replaceArgumentsWithStarProjections() }
+    val type = bounds.ifNotEmpty { ConeTypeIntersector.intersectTypes(session.typeContext, this) }
         ?: session.builtinTypes.nullableAnyType.type
+    val notNullType = type.withNullability(ConeNullability.NOT_NULL, session.typeContext)
+
+    return TypeInfo(
+        type, notNullType,
+        isFinalClass = bounds.any { it.toClassSymbol(session)?.isFinalClass == true },
+        isEnumEntry = bounds.any { it.toClassSymbol(session)?.isEnumEntry == true },
+        hasEnumSupertype = bounds.any { it.toClassSymbol(session)?.isEnumClass == true },
+    )
+}
 
 private fun FirSession.toKotlinType(type: ConeClassLikeType): ConeClassLikeType {
     return platformClassMapper.getCorrespondingKotlinClass(type.lookupTag.classId)

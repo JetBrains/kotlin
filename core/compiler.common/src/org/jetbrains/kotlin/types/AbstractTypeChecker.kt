@@ -98,8 +98,6 @@ open class TypeCheckerState(
 
     private var supertypesLocked = false
 
-    var startingSupertype: SimpleTypeMarker? = null
-        private set
     var supertypesDeque: ArrayDeque<SimpleTypeMarker>? = null
         private set
     var supertypesSet: MutableSet<SimpleTypeMarker>? = null
@@ -120,14 +118,7 @@ open class TypeCheckerState(
         }
     }
 
-    fun prepare(start: SimpleTypeMarker) {
-        initialize()
-        startingSupertype = start
-        supertypesDeque!!.push(start)
-    }
-
     fun clear() {
-        startingSupertype = null
         supertypesDeque!!.clear()
         supertypesSet!!.clear()
         supertypesLocked = false
@@ -138,62 +129,35 @@ open class TypeCheckerState(
         predicate: (SimpleTypeMarker) -> Boolean,
         supertypesPolicy: (SimpleTypeMarker) -> SupertypesPolicy
     ): Boolean {
-        prepare(start)
-        return traverseFurtherSupertypes(
-            action = {
-                if (predicate(it)) {
-                    SupertypesAction.STOP
-                } else {
-                    SupertypesAction.NEXT
-                }
-            },
-            supertypesPolicy = supertypesPolicy,
-        )
-    }
+        if (predicate(start)) return true
 
-    inline fun traverseFurtherSupertypes(
-        action: (SimpleTypeMarker) -> SupertypesAction,
-        supertypesPolicy: (SimpleTypeMarker) -> SupertypesPolicy,
-    ): Boolean {
+        initialize()
+
         val deque = supertypesDeque!!
         val visitedSupertypes = supertypesSet!!
-        var shouldProceed = true
 
-        while (deque.isNotEmpty() && shouldProceed) {
+        deque.push(start)
+        while (deque.isNotEmpty()) {
             if (visitedSupertypes.size > 1000) {
-                error("Too many supertypes for type: $startingSupertype. Supertypes = ${visitedSupertypes.joinToString()}")
+                error("Too many supertypes for type: $start. Supertypes = ${visitedSupertypes.joinToString()}")
             }
             val current = deque.pop()
-
-            when (action(current)) {
-                SupertypesAction.STOP -> {
-                    clear()
-                    return true
-                }
-                SupertypesAction.PAUSE -> shouldProceed = false
-                else -> {}
-            }
+            if (!visitedSupertypes.add(current)) continue
 
             val policy = supertypesPolicy(current).takeIf { it != SupertypesPolicy.None } ?: continue
             val supertypes = with(typeSystemContext) { current.typeConstructor().supertypes() }
             for (supertype in supertypes) {
                 val newType = policy.transformType(this, supertype)
-
-                if (visitedSupertypes.add(newType)) {
-                    deque.add(newType)
+                if (predicate(newType)) {
+                    clear()
+                    return true
                 }
+                deque.add(newType)
             }
         }
 
-        if (deque.isEmpty()) {
-            clear()
-        }
-
+        clear()
         return false
-    }
-
-    enum class SupertypesAction {
-        NEXT, PAUSE, STOP
     }
 
     sealed class SupertypesPolicy {
