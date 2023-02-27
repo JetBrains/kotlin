@@ -21,6 +21,16 @@ class C {
     }
 }
 
+class Writable {
+    foo(x = 10, y = "default") {
+        return x + y;
+    }
+    end(cb = () => "default") {
+        return cb()
+    }
+}
+
+
 // FILE: defaultValues.kt
 
 external fun foo(
@@ -47,6 +57,21 @@ external class C {
     fun bar(x5: C = definedExternally, x6: Any = definedExternally) : String
 }
 
+open external class Writable: WritableStream {
+    override fun foo(x: Int, y: String): String
+    override fun end(cb: () -> String): String
+}
+
+external interface WritableStream {
+    fun foo(
+        x: Int = definedExternally,
+        y: String = definedExternally
+    ): String
+
+    fun end(cb: () -> String = definedExternally): String
+}
+
+
 fun box(): String {
     if (foo() != "d1 d2 d3 d4 d5") return "Fail 1"
     if (foo(x1 = "x1", x3 = "x3", x5 = "x5") != "x1 d2 x3 d4 x5") return "Fail 2"
@@ -61,6 +86,11 @@ fun box(): String {
 
     if (C().bar(C(), C()) != "100 200 300 400 100 200 300 400") return "Fail 10"
     if (C().bar() != "10 20 300 400 1 2 300 400") return "Fail 11"
+
+    if (Writable().end({ "OK" }) != "OK") return "Fail 12"
+    if (Writable().end() != "default") return "Fail 13"
+    if (Writable().foo(x = 33) != "33default") return "Fail 14"
+    if (Writable().foo(y = "OK") != "10OK") return "Fail 15"
 
     return "OK"
 }

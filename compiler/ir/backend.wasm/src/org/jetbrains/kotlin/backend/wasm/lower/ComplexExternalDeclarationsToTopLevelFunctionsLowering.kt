@@ -476,6 +476,18 @@ class ComplexExternalDeclarationsUsageLowering(val context: WasmBackendContext) 
 }
 
 private fun numDefaultParametersForExternalFunction(function: IrFunction): Int {
+    if (function is IrSimpleFunction) {
+        // Default parameters can be in overridden external functions
+        val numDefaultParametersInOverrides =
+            function.overriddenSymbols.maxOfOrNull {
+                numDefaultParametersForExternalFunction(it.owner)
+            } ?: 0
+
+        if (numDefaultParametersInOverrides > 0) {
+            return numDefaultParametersInOverrides
+        }
+    }
+
     val firstDefaultParameterIndex: Int? =
         function.valueParameters.firstOrNull { it.defaultValue != null }?.index
 
