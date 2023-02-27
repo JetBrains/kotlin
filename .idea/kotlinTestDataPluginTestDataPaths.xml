@@ -6,7 +6,7 @@
         <entry key="$PROJECT_DIR$/compiler/testData/codegen/box">
           <value>
             <array>
-              <option value="$PROJECT_DIR$/js/js.tests/build/{out,out-min,out-per-module,out-per-module-min}/codegen/{box,irBox}/$TEST_DATA_FILE$_v5.js" />
+              <option value="$PROJECT_DIR$/js/js.tests/build/node/{out,out-min,out-per-module,out-per-module-min}/codegen/{box,irBox}/$TEST_DATA_FILE$_v5.js" />
               <option value="$PROJECT_DIR$/js/js.translator/testData/out/codegen/wasmBox/$TEST_DATA_FILE$.wat" />
             </array>
           </value>
@@ -14,42 +14,42 @@
         <entry key="$PROJECT_DIR$/compiler/testData/codegen/boxInline">
           <value>
             <array>
-              <option value="$PROJECT_DIR$/js/js.tests/build/{out,out-min,out-per-module,out-per-module-min}/codegen/{boxInline,irBoxInline}/$TEST_DATA_FILE$_v5.js" />
+              <option value="$PROJECT_DIR$/js/js.tests/build/node/{out,out-min,out-per-module,out-per-module-min}/codegen/{boxInline,irBoxInline}/$TEST_DATA_FILE$_v5.js" />
             </array>
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/compiler/testData/debug">
           <value>
             <array>
-              <option value="$PROJECT_DIR$/js/js.tests/build/{out,out-min,out-per-module,out-per-module-min}/debug/$TEST_DATA_FILE$_v5.js" />
+              <option value="$PROJECT_DIR$/js/js.tests/build/node/{out,out-min,out-per-module,out-per-module-min}/debug/$TEST_DATA_FILE$_v5.js" />
             </array>
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/js/js.translator/testData/box">
           <value>
             <array>
-              <option value="$PROJECT_DIR$/js/js.tests/build/{out,out-min,out-per-module,out-per-module-min}/{box,irBox}/$TEST_DATA_FILE$_v5.js" />
+              <option value="$PROJECT_DIR$/js/js.tests/build/node/{out,out-min,out-per-module,out-per-module-min}/{box,irBox}/$TEST_DATA_FILE$_v5.js" />
             </array>
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/js/js.translator/testData/lineNumbers">
           <value>
             <array>
-              <option value="$PROJECT_DIR$/js/js.tests/build/{out,out-min,out-per-module,out-per-module-min}/{lineNumbers,irLineNumbers}/$TEST_DATA_FILE${-lib,}_v5-lines.js" />
+              <option value="$PROJECT_DIR$/js/js.tests/build/node/{out,out-min,out-per-module,out-per-module-min}/{lineNumbers,irLineNumbers}/$TEST_DATA_FILE${-lib,}_v5-lines.js" />
             </array>
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/js/js.translator/testData/sourcemap">
           <value>
             <array>
-              <option value="$PROJECT_DIR$/js/js.tests/build/out/sourcemap/$TEST_DATA_FILE$_v5.js{.map,}" />
+              <option value="$PROJECT_DIR$/js/js.tests/build/node/out/sourcemap/$TEST_DATA_FILE$_v5.js{.map,}" />
             </array>
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/js/js.translator/testData/typescript-export">
           <value>
             <array>
-              <option value="$PROJECT_DIR$/js/js.tests/build/{out,out-min,out-per-module,out-per-module-min}/typescript-export/$TEST_DATA_FILE$-JS_TESTS{.d.ts,_v5.js}" />
+              <option value="$PROJECT_DIR$/js/js.tests/build/node/{out,out-min,out-per-module,out-per-module-min}/typescript-export/$TEST_DATA_FILE$-JS_TESTS{.d.ts,_v5.js}" />
               <option value="$PROJECT_DIR$/js/js.translator/testData/typescript-export/$TEST_DATA_FILE$__main.{js,ts}" />
             </array>
           </value>
@@ -57,7 +57,7 @@
         <entry key="$PROJECT_DIR$/js/js.translator/testData/webDemoExamples">
           <value>
             <array>
-              <option value="$PROJECT_DIR$/js/js.tests/build/out/webDemoExamples/$TEST_DATA_FILE$_v5.js{.map,}" />
+              <option value="$PROJECT_DIR$/js/js.tests/build/node/out/webDemoExamples/$TEST_DATA_FILE$_v5.js{.map,}" />
             </array>
           </value>
         </entry>
