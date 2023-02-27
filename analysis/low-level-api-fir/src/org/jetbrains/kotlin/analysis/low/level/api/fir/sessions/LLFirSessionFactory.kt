@@ -67,7 +67,6 @@ internal object LLFirSessionFactory {
         val contentScope = module.contentScope
         val session = LLFirSourcesSession(
             module,
-            project,
             components,
             builtinsSession.builtinTypes
         )
@@ -169,7 +168,7 @@ internal object LLFirSessionFactory {
         val components = LLFirModuleResolveComponents(module, globalComponents, scopeProvider, sessionInvalidator)
 
         val contentScope = module.contentScope
-        val session = LLFirLibraryOrLibrarySourceResolvableModuleSession(module, project, components, builtinSession.builtinTypes)
+        val session = LLFirLibraryOrLibrarySourceResolvableModuleSession(module, components, builtinSession.builtinTypes)
         sessionsCache[module] = session
         components.session = session
 
@@ -262,7 +261,7 @@ internal object LLFirSessionFactory {
         val components = LLFirModuleResolveComponents(module, globalResolveComponents, scopeProvider, sessionInvalidator)
         val contentScope = module.contentScope
 
-        val session = LLFirScriptSession(module, project, components, builtinsSession.builtinTypes)
+        val session = LLFirScriptSession(module, components, builtinsSession.builtinTypes)
         sessionsCache[module] = session
         components.session = session
 
@@ -343,7 +342,7 @@ internal object LLFirSessionFactory {
         val components = LLFirModuleResolveComponents(module, globalResolveComponents, scopeProvider, sessionInvalidator)
         val contentScope = module.contentScope
 
-        val session = LLFirNonUnderContentRootResolvableModuleSession(module, project, components, builtinsSession.builtinTypes)
+        val session = LLFirNonUnderContentRootResolvableModuleSession(module, components, builtinsSession.builtinTypes)
         sessionsCache[module] = session
         components.session = session
 

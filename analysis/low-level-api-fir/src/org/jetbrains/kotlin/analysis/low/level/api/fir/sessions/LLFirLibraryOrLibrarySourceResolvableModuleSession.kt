@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 
-import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.KtLibrarySourceModule
@@ -13,11 +12,10 @@ import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.fir.BuiltinTypes
 
 internal class LLFirLibraryOrLibrarySourceResolvableModuleSession(
-    override val ktModule: KtModule,
-    override val project: Project,
+    ktModule: KtModule,
     override val moduleComponents: LLFirModuleResolveComponents,
     builtinTypes: BuiltinTypes,
-) : LLFirResolvableModuleSession(builtinTypes) {
+) : LLFirResolvableModuleSession(ktModule, builtinTypes) {
     init {
         checkIsValidKtModule(ktModule)
     }

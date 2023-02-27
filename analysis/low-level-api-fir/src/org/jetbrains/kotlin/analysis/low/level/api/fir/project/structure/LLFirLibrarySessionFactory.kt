@@ -44,7 +44,7 @@ class LLFirLibrarySessionFactory(
         val platform = ktLibraryModule.platform
         val builtinsSession = LLFirBuiltinsSessionFactory.getInstance(project).getBuiltinsSession(platform)
         sessionsCache.putIfAbsent(builtinsSession.ktModule, builtinsSession)
-        return LLFirLibrarySession(ktLibraryModule, project, builtinsSession.builtinTypes).apply session@{
+        return LLFirLibrarySession(ktLibraryModule, builtinsSession.builtinTypes).apply session@{
             val moduleData = LLFirModuleData(ktLibraryModule).apply { bindSession(this@session) }
             registerModuleData(moduleData)
             registerIdeComponents(project)

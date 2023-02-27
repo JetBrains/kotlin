@@ -15,14 +15,22 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 
 @OptIn(PrivateSessionConstructor::class)
-abstract class LLFirSession(override val builtinTypes: BuiltinTypes, kind: Kind) : FirSession(sessionProvider = null, kind) {
-    abstract val project: Project
-    abstract val ktModule: KtModule
+abstract class LLFirSession(
+    val ktModule: KtModule,
+    override val builtinTypes: BuiltinTypes,
+    kind: Kind
+) : FirSession(sessionProvider = null, kind) {
+    val project: Project
+        get() = ktModule.project
 
     abstract fun getScopeSession(): ScopeSession
 }
 
-abstract class LLFirModuleSession(builtinTypes: BuiltinTypes, kind: Kind) : LLFirSession(builtinTypes, kind)
+abstract class LLFirModuleSession(
+    ktModule: KtModule,
+    builtinTypes: BuiltinTypes,
+    kind: Kind
+) : LLFirSession(ktModule, builtinTypes, kind)
 
 val FirElementWithResolvePhase.llFirSession: LLFirSession
     get() = moduleData.session as LLFirSession

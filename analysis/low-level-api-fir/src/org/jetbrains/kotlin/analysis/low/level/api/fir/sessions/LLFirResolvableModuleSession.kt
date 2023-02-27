@@ -6,14 +6,16 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
+import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.fir.BuiltinTypes
 import org.jetbrains.kotlin.fir.FirElementWithResolvePhase
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 
 abstract class LLFirResolvableModuleSession(
-    builtinTypes: BuiltinTypes,
-) : LLFirModuleSession(builtinTypes, Kind.Source) {
+    ktModule: KtModule,
+    builtinTypes: BuiltinTypes
+) : LLFirModuleSession(ktModule, builtinTypes, Kind.Source) {
     internal abstract val moduleComponents: LLFirModuleResolveComponents
 
     final override fun getScopeSession(): ScopeSession {
