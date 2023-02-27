@@ -45559,6 +45559,54 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         }
 
         @Nested
+        @TestMetadata("compiler/testData/codegen/boxInline/typeParameters")
+        @TestDataPath("$PROJECT_ROOT")
+        @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/box/multiplatform/migratedOldTests/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
+        public class TypeParameters {
+            @Test
+            public void testAllFilesPresentInTypeParameters() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/typeParameters"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+            }
+
+            @Test
+            @TestMetadata("anonymousObject.kt")
+            public void testAnonymousObject() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/typeParameters/anonymousObject.kt");
+            }
+
+            @Test
+            @TestMetadata("basic.kt")
+            public void testBasic() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/typeParameters/basic.kt");
+            }
+
+            @Test
+            @TestMetadata("projectionTypeArguments.kt")
+            public void testProjectionTypeArguments() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/typeParameters/projectionTypeArguments.kt");
+            }
+
+            @Test
+            @TestMetadata("severalUpperBounds.kt")
+            public void testSeveralUpperBounds() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/typeParameters/severalUpperBounds.kt");
+            }
+
+            @Test
+            @TestMetadata("typeArgFromGenericBaseClass.kt")
+            public void testTypeArgFromGenericBaseClass() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/typeParameters/typeArgFromGenericBaseClass.kt");
+            }
+
+            @Test
+            @TestMetadata("uncheckedCastToNothing.kt")
+            public void testUncheckedCastToNothing() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/typeParameters/uncheckedCastToNothing.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/varargs")
         @TestDataPath("$PROJECT_ROOT")
         @UseExtTestCaseGroupProvider()
