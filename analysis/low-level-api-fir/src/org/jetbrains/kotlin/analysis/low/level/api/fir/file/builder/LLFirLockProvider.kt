@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder
 
+import com.intellij.openapi.progress.ProcessCanceledException
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.lockWithPCECheck
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import java.util.concurrent.locks.ReentrantLock
@@ -18,11 +20,17 @@ internal class LLFirLockProvider {
     private val globalLock = ReentrantLock()
 
     inline fun <R> withLock(
-        @Suppress("UNUSED_PARAMETER") key: FirFile,
+        key: FirFile,
         lockingIntervalMs: Long = DEFAULT_LOCKING_INTERVAL,
         action: () -> R
     ): R {
-        return globalLock.lockWithPCECheck(lockingIntervalMs) { action() }
+        return globalLock.lockWithPCECheck(lockingIntervalMs) {
+            val session = key.llFirSession
+            if (!session.isValid) {
+                throw ProcessCanceledException()
+            }
+            action()
+        }
     }
 }
 
