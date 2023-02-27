@@ -96,6 +96,18 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
                 KotlinPlaceHolderStubImpl<KtDynamicType>(nullableTypeParent(parent, type), KtStubElementTypes.DYNAMIC_TYPE)
                 return
             }
+//
+//            val lowerBound = simpleType(proto, attributes)
+//            val upperBound = simpleType(proto.flexibleUpperBound(typeTable)!!, attributes)
+//
+//            val isDynamic = lowerBound == moduleData.session.builtinTypes.nothingType.coneType &&
+//                    upperBound == moduleData.session.builtinTypes.nullableAnyType.coneType
+//
+//            return if (isDynamic) {
+//                ConeDynamicType.create(moduleData.session)
+//            } else {
+//                ConeFlexibleType(lowerBound!!, upperBound!!)
+//            }
         }
 
         assert(type.hasClassName() || type.hasTypeAliasName()) {

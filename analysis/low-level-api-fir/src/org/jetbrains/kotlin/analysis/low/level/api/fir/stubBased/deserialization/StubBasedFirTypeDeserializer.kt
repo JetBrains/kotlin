@@ -101,15 +101,6 @@ class StubBasedFirTypeDeserializer(
         return type(typeReference, attributesFromAnnotations(typeReference))
     }
 
-    fun simpleType(typeReference: KtTypeReference): ConeSimpleKotlinType {
-        return simpleType(typeReference, attributesFromAnnotations(typeReference)) ?: ConeErrorType(
-            ConeSimpleDiagnostic(
-                "?!id:0",
-                DiagnosticKind.DeserializationError
-            )
-        )
-    }
-
     private fun type(typeReference: KtTypeReference, attributes: ConeAttributes): ConeKotlinType {
 //todo flexible types
         //        if (typeReference.hasFlexibleTypeCapabilitiesId()) {
@@ -139,13 +130,7 @@ class StubBasedFirTypeDeserializer(
         val constructor = typeSymbol(typeReference) ?: return null
         val isNullable = typeReference.typeElement is KtNullableType
         if (constructor is ConeTypeParameterLookupTag) {
-            return ConeTypeParameterTypeImpl(constructor, isNullable = isNullable).let {
-//                todo test intersection with Any
-                //                if (Flags.DEFINITELY_NOT_NULL_TYPE.get(typeReference.flags))
-//                    ConeDefinitelyNotNullType.create(it, moduleData.session.typeContext, avoidComprehensiveCheck = true) ?: it
-//                else
-                it
-            }
+            return ConeTypeParameterTypeImpl(constructor, isNullable = isNullable)
         }
         if (constructor !is ConeClassLikeLookupTag) return null
 

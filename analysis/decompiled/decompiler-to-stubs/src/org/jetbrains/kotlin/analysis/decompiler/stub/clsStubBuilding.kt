@@ -252,7 +252,7 @@ private fun createAnnotationMappingByConstantValue(
                 KotlinPlaceHolderStubImpl<KtStringTemplateExpression>(valueArg, KtStubElementTypes.STRING_TEMPLATE)
             KotlinPlaceHolderWithTextStubImpl<KtStringTemplateExpression>(
                 stringStub,
-                KtStubElementTypes.SHORT_STRING_TEMPLATE_ENTRY,
+                KtStubElementTypes.LITERAL_STRING_TEMPLATE_ENTRY,
                 constantValue.value
             )
         }

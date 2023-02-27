@@ -183,8 +183,14 @@ private class AnnotationLoaderForClassFileStubBuilder(
                 nameResolver.getClassId(value.classId),
                 nameResolver.getName(value.enumValueId)
             )
-            //todo
-            //ProtoBuf.Annotation.Argument.Value.Type.ANNOTATION -> AnnotationValue(deserializeAnnotation(value.annotation, nameResolver))
+            ProtoBuf.Annotation.Argument.Value.Type.ANNOTATION -> AnnotationValue(object : AnnotationDescriptor {
+                override val type: KotlinType
+                    get() = error("Should not be called")
+                override val allValueArguments: Map<Name, ConstantValue<*>>
+                    get() = value.annotation.argumentList.associate { nameResolver.getName(it.nameId) to toConstantValue(it.value, nameResolver) }
+                override val source: SourceElement
+                    get() = SourceElement.NO_SOURCE
+            })
             ProtoBuf.Annotation.Argument.Value.Type.ARRAY -> ConstantValueFactory.createArrayValue(
                 value.arrayElementList.map { toConstantValue(it, nameResolver) },
                 DefaultBuiltIns.Instance.anyType
