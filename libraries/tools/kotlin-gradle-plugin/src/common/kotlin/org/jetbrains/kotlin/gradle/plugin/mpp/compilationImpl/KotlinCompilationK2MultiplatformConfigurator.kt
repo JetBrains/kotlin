@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl
 
+import org.jetbrains.kotlin.gradle.dsl.usesK2
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinCompilationImplFactory
 import org.jetbrains.kotlin.gradle.tasks.K2MultiplatformCompilationTask
 import org.jetbrains.kotlin.gradle.tasks.K2MultiplatformStructure
@@ -16,6 +17,7 @@ internal object KotlinCompilationK2MultiplatformConfigurator : KotlinCompilation
             if (compileTask !is K2MultiplatformCompilationTask) return@configureEach
 
             compileTask.multiplatformStructure.refinesEdges.set(compilation.project.provider {
+                if (!compileTask.compilerOptions.usesK2.get()) return@provider emptyList()
                 compilation.allKotlinSourceSets.flatMap { sourceSet ->
                     sourceSet.dependsOn.map { dependsOn ->
                         K2MultiplatformStructure.RefinesEdge(sourceSet.name, dependsOn.name)
@@ -24,6 +26,7 @@ internal object KotlinCompilationK2MultiplatformConfigurator : KotlinCompilation
             })
 
             compileTask.multiplatformStructure.fragments.set(compilation.project.provider {
+                if (!compileTask.compilerOptions.usesK2.get()) return@provider emptyList()
                 compilation.allKotlinSourceSets.map { sourceSet ->
                     K2MultiplatformStructure.Fragment(sourceSet.name, sourceSet.kotlin.asFileTree)
                 }
