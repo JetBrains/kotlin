@@ -35,13 +35,12 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.stubs.KotlinNameReferenceExpressionStub
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderWithTextStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
+import org.jetbrains.kotlin.psi.stubs.impl.KotlinNameReferenceExpressionStubImpl
 import org.jetbrains.kotlin.types.ConstantValueKind
 
 class StubBasedAnnotationDeserializer(
     private val session: FirSession,
 ) {
-    //fun inheritAnnotationInfo(parent: StubBasedAnnotationDeserializer) {}
-
     fun loadAnnotations(
         ktAnnotated: KtAnnotated,
         useSiteTarget: AnnotationUseSiteTarget? = null
@@ -58,7 +57,7 @@ class StubBasedAnnotationDeserializer(
         val userType =
             ktAnnotation.getStubOrPsiChild(KtStubElementTypes.CONSTRUCTOR_CALLEE)?.getStubOrPsiChild(KtStubElementTypes.TYPE_REFERENCE)
                 ?.getStubOrPsiChild(KtStubElementTypes.USER_TYPE)!!
-        val classId = userType.stub!!.classId()!!//todo
+        val classId = userType.classId()
         return buildAnnotation {
             annotationTypeRef = buildResolvedTypeRef {
                 type = classId.toLookupTag().constructClassType(emptyArray(), isNullable = false)
@@ -243,7 +242,7 @@ class StubBasedAnnotationDeserializer(
             val selectorExpression = receiver.selectorExpression
             val referencedName = (selectorExpression as KtNameReferenceExpression).getReferencedName()
             val stub = selectorExpression.stub
-            if (stub is KotlinNameReferenceExpressionStub && stub.isClassRef()) {
+            if (stub is KotlinNameReferenceExpressionStubImpl && stub.isClassRef) {
                 classSegments.add(referencedName)
             } else {
                 packageSegments.add(referencedName)

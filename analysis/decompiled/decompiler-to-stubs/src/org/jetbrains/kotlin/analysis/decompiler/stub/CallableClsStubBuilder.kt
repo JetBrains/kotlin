@@ -306,7 +306,7 @@ private class PropertyClsStubBuilder(
                     override fun visitMethod(name: Name, desc: String): KotlinJvmBinaryClass.MethodAnnotationVisitor? = null
 
                     override fun visitField(name: Name, desc: String, initializer: Any?): KotlinJvmBinaryClass.AnnotationVisitor? {
-                        if (initializer != null) {
+                        if (initializer != null && name == callableName) {
                             buildConstantInitializer(initializer, null, desc, propertyStub)
                         }
                         return null

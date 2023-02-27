@@ -132,7 +132,6 @@ fun createStubForPackageName(packageDirectiveStub: KotlinPlaceHolderStubImpl<KtP
 fun createStubForTypeName(
     typeClassId: ClassId,
     parent: StubElement<out PsiElement>,
-    forTypeParameter: Boolean = false,
     bindTypeArguments: (KotlinUserTypeStub, Int) -> Unit = { _, _ -> }
 ): KotlinUserTypeStub {
     val substituteWithAny = typeClassId.isLocal
@@ -142,14 +141,15 @@ fun createStubForTypeName(
 
     val segments = fqName.pathSegments().asReversed()
     assert(segments.isNotEmpty())
+    val packageLength = typeClassId.packageFqName.pathSegments().size
 
     fun recCreateStubForType(current: StubElement<out PsiElement>, level: Int): KotlinUserTypeStub {
         val lastSegment = segments[level]
-        val userTypeStub = KotlinUserTypeStubImpl(current, forTypeParameter, classId = typeClassId)
+        val userTypeStub = KotlinUserTypeStubImpl(current)
         if (level + 1 < segments.size) {
             recCreateStubForType(userTypeStub, level + 1)
         }
-        KotlinNameReferenceExpressionStubImpl(userTypeStub, lastSegment.ref())
+        KotlinNameReferenceExpressionStubImpl(userTypeStub, lastSegment.ref(), level < segments.size - packageLength)
         if (!substituteWithAny) {
             bindTypeArguments(userTypeStub, level)
         }

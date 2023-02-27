@@ -13,7 +13,7 @@ PsiJetFileStubImpl[package=a]
         PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=A]
           MODIFIER_LIST[public]
           VALUE_PARAMETER_LIST
-            VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=c]
+            VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=c]
               TYPE_REFERENCE
                 USER_TYPE
                   USER_TYPE
@@ -43,7 +43,7 @@ PsiJetFileStubImpl[package=a]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
-          PROPERTY[fqName=a.InheritingClasses.A.op, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=op]
+          PROPERTY[fqName=a.InheritingClasses.A.op, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=op]
             MODIFIER_LIST[open public]
             TYPE_REFERENCE
               USER_TYPE
@@ -81,14 +81,14 @@ PsiJetFileStubImpl[package=a]
                   REFERENCE_EXPRESSION[referencedName=InheritingClasses]
                 REFERENCE_EXPRESSION[referencedName=A]
         CLASS_BODY
-          PROPERTY[fqName=a.InheritingClasses.B.ap, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=ap]
+          PROPERTY[fqName=a.InheritingClasses.B.ap, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=ap]
             MODIFIER_LIST[open public]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
-          PROPERTY[fqName=a.InheritingClasses.B.op, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=op]
+          PROPERTY[fqName=a.InheritingClasses.B.op, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=op]
             MODIFIER_LIST[open public]
             TYPE_REFERENCE
               USER_TYPE

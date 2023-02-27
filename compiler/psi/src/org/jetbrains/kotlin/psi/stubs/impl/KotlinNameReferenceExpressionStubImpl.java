@@ -53,7 +53,6 @@ public class KotlinNameReferenceExpressionStubImpl extends KotlinStubBaseImpl<Kt
         return referencedName.getString();
     }
 
-    @Override
     public boolean isClassRef() {
         return myClassRef;
     }

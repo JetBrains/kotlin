@@ -10,26 +10,48 @@ PsiJetFileStubImpl[package=test]
     CLASS_BODY
       CLASS[classId=test/AnnotationValues.WithArrays, fqName=test.AnnotationValues.WithArrays, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithArrays, superNames=[]]
         MODIFIER_LIST[public final]
-          ANNOTATION_ENTRY[hasValueArguments=false, shortName=Arrays]
+          ANNOTATION_ENTRY[hasValueArguments=true, shortName=Arrays]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=test]
                   REFERENCE_EXPRESSION[referencedName=Arrays]
+            VALUE_ARGUMENT_LIST
         PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=WithArrays]
           MODIFIER_LIST[public]
           VALUE_PARAMETER_LIST
         CLASS_BODY
       CLASS[classId=test/AnnotationValues.WithClassLiteral, fqName=test.AnnotationValues.WithClassLiteral, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithClassLiteral, superNames=[]]
         MODIFIER_LIST[public final]
-          ANNOTATION_ENTRY[hasValueArguments=false, shortName=ClassLiteral]
+          ANNOTATION_ENTRY[hasValueArguments=true, shortName=ClassLiteral]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=test]
                   REFERENCE_EXPRESSION[referencedName=ClassLiteral]
+            VALUE_ARGUMENT_LIST
+              VALUE_ARGUMENT[isSpread=false]
+                DOT_QUALIFIED_EXPRESSION
+                  DOT_QUALIFIED_EXPRESSION
+                    DOT_QUALIFIED_EXPRESSION
+                      DOT_QUALIFIED_EXPRESSION
+                        REFERENCE_EXPRESSION[referencedName=WithClassLiteral]
+                      REFERENCE_EXPRESSION[referencedName=AnnotationValues]
+                    REFERENCE_EXPRESSION[referencedName=test]
+                  REFERENCE_EXPRESSION[referencedName=<class>]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=c1]
+              VALUE_ARGUMENT[isSpread=false]
+                DOT_QUALIFIED_EXPRESSION
+                  DOT_QUALIFIED_EXPRESSION
+                    DOT_QUALIFIED_EXPRESSION
+                      REFERENCE_EXPRESSION[referencedName=String]
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=<class>]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=c2]
         TYPE_PARAMETER_LIST
           TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
         PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=WithClassLiteral]
@@ -38,65 +60,117 @@ PsiJetFileStubImpl[package=test]
         CLASS_BODY
       CLASS[classId=test/AnnotationValues.WithEnumLiteral, fqName=test.AnnotationValues.WithEnumLiteral, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithEnumLiteral, superNames=[]]
         MODIFIER_LIST[public final]
-          ANNOTATION_ENTRY[hasValueArguments=false, shortName=EnumLiteral]
+          ANNOTATION_ENTRY[hasValueArguments=true, shortName=EnumLiteral]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=test]
                   REFERENCE_EXPRESSION[referencedName=EnumLiteral]
+            VALUE_ARGUMENT_LIST
+              VALUE_ARGUMENT[isSpread=false]
+                DOT_QUALIFIED_EXPRESSION
+                  DOT_QUALIFIED_EXPRESSION
+                    DOT_QUALIFIED_EXPRESSION
+                      REFERENCE_EXPRESSION[referencedName=E]
+                    REFERENCE_EXPRESSION[referencedName=test]
+                  REFERENCE_EXPRESSION[referencedName=E1]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=e1]
+              VALUE_ARGUMENT[isSpread=false]
+                DOT_QUALIFIED_EXPRESSION
+                  DOT_QUALIFIED_EXPRESSION
+                    DOT_QUALIFIED_EXPRESSION
+                      REFERENCE_EXPRESSION[referencedName=E]
+                    REFERENCE_EXPRESSION[referencedName=test]
+                  REFERENCE_EXPRESSION[referencedName=E2]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=e2]
+              VALUE_ARGUMENT[isSpread=false]
+                DOT_QUALIFIED_EXPRESSION
+                  DOT_QUALIFIED_EXPRESSION
+                    DOT_QUALIFIED_EXPRESSION
+                      REFERENCE_EXPRESSION[referencedName=E]
+                    REFERENCE_EXPRESSION[referencedName=test]
+                  REFERENCE_EXPRESSION[referencedName=E2]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=e3]
         PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=WithEnumLiteral]
           MODIFIER_LIST[public]
           VALUE_PARAMETER_LIST
         CLASS_BODY
       CLASS[classId=test/AnnotationValues.WithNested, fqName=test.AnnotationValues.WithNested, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithNested, superNames=[]]
         MODIFIER_LIST[public final]
-          ANNOTATION_ENTRY[hasValueArguments=false, shortName=Outer]
+          ANNOTATION_ENTRY[hasValueArguments=true, shortName=Outer]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=test]
                   REFERENCE_EXPRESSION[referencedName=Outer]
+            VALUE_ARGUMENT_LIST
+              VALUE_ARGUMENT[isSpread=false]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=some]
+                STRING_TEMPLATE
+                  LITERAL_STRING_TEMPLATE_ENTRY[text=value]
         PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=WithNested]
           MODIFIER_LIST[public]
           VALUE_PARAMETER_LIST
         CLASS_BODY
       CLASS[classId=test/AnnotationValues.WithSimple, fqName=test.AnnotationValues.WithSimple, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithSimple, superNames=[]]
         MODIFIER_LIST[public final]
-          ANNOTATION_ENTRY[hasValueArguments=false, shortName=Simple]
+          ANNOTATION_ENTRY[hasValueArguments=true, shortName=Simple]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=test]
                   REFERENCE_EXPRESSION[referencedName=Simple]
+            VALUE_ARGUMENT_LIST
         PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=WithSimple]
           MODIFIER_LIST[public]
           VALUE_PARAMETER_LIST
         CLASS_BODY
       CLASS[classId=test/AnnotationValues.WithStringLiteral, fqName=test.AnnotationValues.WithStringLiteral, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithStringLiteral, superNames=[]]
         MODIFIER_LIST[public final]
-          ANNOTATION_ENTRY[hasValueArguments=false, shortName=StringLiteral]
+          ANNOTATION_ENTRY[hasValueArguments=true, shortName=StringLiteral]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=test]
                   REFERENCE_EXPRESSION[referencedName=StringLiteral]
+            VALUE_ARGUMENT_LIST
+              VALUE_ARGUMENT[isSpread=false]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=s1]
+                STRING_TEMPLATE
+                  LITERAL_STRING_TEMPLATE_ENTRY[text=some]
+              VALUE_ARGUMENT[isSpread=false]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=s2]
+                STRING_TEMPLATE
+                  LITERAL_STRING_TEMPLATE_ENTRY[text=]
+              VALUE_ARGUMENT[isSpread=false]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=s3]
+                STRING_TEMPLATE
+                  LITERAL_STRING_TEMPLATE_ENTRY[text=H12]
         PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=WithStringLiteral]
           MODIFIER_LIST[public]
           VALUE_PARAMETER_LIST
         CLASS_BODY
       CLASS[classId=test/AnnotationValues.WithVarArg, fqName=test.AnnotationValues.WithVarArg, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithVarArg, superNames=[]]
         MODIFIER_LIST[public final]
-          ANNOTATION_ENTRY[hasValueArguments=false, shortName=VarArg]
+          ANNOTATION_ENTRY[hasValueArguments=true, shortName=VarArg]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=test]
                   REFERENCE_EXPRESSION[referencedName=VarArg]
+            VALUE_ARGUMENT_LIST
         PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=WithVarArg]
           MODIFIER_LIST[public]
           VALUE_PARAMETER_LIST

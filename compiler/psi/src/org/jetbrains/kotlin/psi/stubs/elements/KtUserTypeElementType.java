@@ -36,30 +36,15 @@ public class KtUserTypeElementType extends KtStubElementType<KotlinUserTypeStub,
     @NotNull
     @Override
     public KotlinUserTypeStub createStub(@NotNull KtUserType psi, StubElement parentStub) {
-        return new KotlinUserTypeStubImpl((StubElement<?>) parentStub, false, null);
+        return new KotlinUserTypeStubImpl((StubElement<?>) parentStub);
     }
 
     @Override
-    public void serialize(@NotNull KotlinUserTypeStub stub, @NotNull StubOutputStream dataStream) throws IOException {
-        dataStream.writeBoolean(stub.onTypeParameter());
-        ClassId classId = stub.classId();
-        if (classId != null) {
-            dataStream.writeName(classId.getPackageFqName().asString());
-            dataStream.writeName(classId.getShortClassName().asString());
-        }
-        else {
-            dataStream.writeName(null);
-            dataStream.writeName(null);
-        }
-    }
+    public void serialize(@NotNull KotlinUserTypeStub stub, @NotNull StubOutputStream dataStream) throws IOException {}
 
     @NotNull
     @Override
     public KotlinUserTypeStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
-        boolean onTypeParameter = dataStream.readBoolean();
-        String packageName = dataStream.readNameString();
-        String className = dataStream.readNameString();
-        ClassId classId = packageName != null ? ClassId.fromString(packageName + "/" + className) : null;
-        return new KotlinUserTypeStubImpl((StubElement<?>) parentStub, onTypeParameter, classId);
+        return new KotlinUserTypeStubImpl((StubElement<?>) parentStub);
     }
 }

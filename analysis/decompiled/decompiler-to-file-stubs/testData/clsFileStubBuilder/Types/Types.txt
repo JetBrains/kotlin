@@ -390,12 +390,40 @@ PsiJetFileStubImpl[package=test]
                 VALUE_PARAMETER_LIST
                   VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
                     TYPE_REFERENCE
+                      MODIFIER_LIST[]
+                        ANNOTATION_ENTRY[hasValueArguments=true, shortName=ParameterName]
+                          CONSTRUCTOR_CALLEE
+                            TYPE_REFERENCE
+                              USER_TYPE
+                                USER_TYPE
+                                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                                REFERENCE_EXPRESSION[referencedName=ParameterName]
+                          VALUE_ARGUMENT_LIST
+                            VALUE_ARGUMENT[isSpread=false]
+                              VALUE_ARGUMENT_NAME
+                                REFERENCE_EXPRESSION[referencedName=name]
+                              STRING_TEMPLATE
+                                LITERAL_STRING_TEMPLATE_ENTRY[text=first]
                       USER_TYPE
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=kotlin]
                         REFERENCE_EXPRESSION[referencedName=String]
                   VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
                     TYPE_REFERENCE
+                      MODIFIER_LIST[]
+                        ANNOTATION_ENTRY[hasValueArguments=true, shortName=ParameterName]
+                          CONSTRUCTOR_CALLEE
+                            TYPE_REFERENCE
+                              USER_TYPE
+                                USER_TYPE
+                                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                                REFERENCE_EXPRESSION[referencedName=ParameterName]
+                          VALUE_ARGUMENT_LIST
+                            VALUE_ARGUMENT[isSpread=false]
+                              VALUE_ARGUMENT_NAME
+                                REFERENCE_EXPRESSION[referencedName=name]
+                              STRING_TEMPLATE
+                                LITERAL_STRING_TEMPLATE_ENTRY[text=second]
                       NULLABLE_TYPE
                         USER_TYPE
                           USER_TYPE

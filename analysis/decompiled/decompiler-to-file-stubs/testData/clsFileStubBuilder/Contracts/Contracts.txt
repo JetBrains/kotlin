@@ -3,6 +3,12 @@ PsiJetFileStubImpl[package=test]
     REFERENCE_EXPRESSION[referencedName=test]
   IMPORT_LIST
   FUN[fqName=test.myRequire, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=myRequire]
+    CONTRACT_EFFECT_LIST
+      CONTRACT_EFFECT[effectType=CONDITIONAL]
+        CONTRACT_EXPRESSION[data=, type=CONCLUSION]
+          CONTRACT_EXPRESSION[data=0, type=PARAM]
+        CONTRACT_EFFECT[effectType=RETURNS_CONSTANT]
+          CONTRACT_EXPRESSION[data=TRUE, type=CONST]
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]

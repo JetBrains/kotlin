@@ -47,7 +47,9 @@ PsiJetFileStubImpl[package=a.b.c.test.enum]
       OBJECT_DECLARATION[classId=a/b/c/test/enum/Enum.Companion, fqName=a.b.c.test.enum.Enum.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[public companion]
         CLASS_BODY
-          PROPERTY[fqName=a.b.c.test.enum.Enum.Companion.c, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]
+          PROPERTY[fqName=a.b.c.test.enum.Enum.Companion.c, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]
+            PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
+              MODIFIER_LIST[public final]
             MODIFIER_LIST[public final]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=Ann]
                 CONSTRUCTOR_CALLEE

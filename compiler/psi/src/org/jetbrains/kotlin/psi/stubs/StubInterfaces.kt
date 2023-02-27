@@ -117,8 +117,6 @@ interface KotlinModifierListStub : StubElement<KtDeclarationModifierList> {
 }
 
 interface KotlinNameReferenceExpressionStub : StubElement<KtNameReferenceExpression> {
-    fun isClassRef(): Boolean
-
     fun getReferencedName(): String
 }
 
@@ -180,10 +178,7 @@ interface KotlinTypeProjectionStub : StubElement<KtTypeProjection> {
     fun getProjectionKind(): KtProjectionKind
 }
 
-interface KotlinUserTypeStub : StubElement<KtUserType> {
-    fun onTypeParameter(): Boolean
-    fun classId(): ClassId?
-}
+interface KotlinUserTypeStub : StubElement<KtUserType>
 
 interface KotlinScriptStub : KotlinStubWithFqName<KtScript> {
     override fun getFqName(): FqName

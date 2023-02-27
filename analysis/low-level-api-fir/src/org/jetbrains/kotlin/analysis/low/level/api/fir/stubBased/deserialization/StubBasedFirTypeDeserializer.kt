@@ -27,10 +27,12 @@ import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasSuspendModifier
 import org.jetbrains.kotlin.psi.psiUtil.unwrapNullability
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
+import org.jetbrains.kotlin.psi.stubs.impl.KotlinNameReferenceExpressionStubImpl
 import org.jetbrains.kotlin.types.Variance
 
 class StubBasedFirTypeDeserializer(
@@ -167,11 +169,8 @@ class StubBasedFirTypeDeserializer(
             return computeClassifier(functionClassId)
         }
         val type = typeElement as KtUserType
-        val stub = type.stub!!
-        return when {
-            !stub.onTypeParameter() -> computeClassifier(stub.classId())//todo avoid full classId in the index, probably combine with type-parameter byte
-            else -> typeParameterSymbol(type.referencedName!!)
-        }
+        val referencedName = type.referencedName
+        return typeParameterSymbol(referencedName!!) ?: computeClassifier(type.classId())
     }
 
 
@@ -189,4 +188,32 @@ class StubBasedFirTypeDeserializer(
         val type = type(projection.typeReference!!)
         return type.toTypeProjection(variance)
     }
+}
+
+internal fun KtUserType.classId(): ClassId {
+    val packageFragments = mutableListOf<String>()
+    val classFragments = mutableListOf<String>()
+
+    fun collectFragments(type: KtUserType) {
+        val userType = type.getStubOrPsiChild(KtStubElementTypes.USER_TYPE)
+        if (userType != null) {
+            collectFragments(userType)
+        }
+        val referenceExpression = userType?.referenceExpression as? KtNameReferenceExpression
+        if (referenceExpression != null) {
+            val referencedName = referenceExpression.getReferencedName()
+            val stub = referenceExpression.stub
+            if (stub is KotlinNameReferenceExpressionStubImpl && stub.isClassRef) {
+                classFragments.add(referencedName)
+            } else {
+                packageFragments.add(referencedName)
+            }
+        }
+    }
+    collectFragments(this)
+    referencedName?.let { classFragments.add(it) }
+    return ClassId(FqName.fromSegments(packageFragments),
+        FqName.fromSegments(classFragments),
+        false
+    )
 }
