@@ -312,7 +312,7 @@ internal constructor(
     private val execOperations: ExecOperations
 ) : AbstractKotlinNativeCompile<KotlinCommonOptions, StubK2NativeCompilerArguments>(objectFactory),
     KotlinCompile<KotlinCommonOptions>,
-    K2CompileTask,
+    K2MultiplatformCompilationTask,
     KotlinCompilationTask<KotlinNativeCompilerOptions> {
 
     @get:Input

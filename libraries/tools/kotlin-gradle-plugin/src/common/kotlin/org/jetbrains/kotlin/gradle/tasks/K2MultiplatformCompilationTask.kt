@@ -11,11 +11,11 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 
 /**
- * Analogous to [KotlinCompile] for K2
- * This does not extend [KotlinCompile], since [KotlinCompile] carries an unwanted/conflicting
+ * Analogous to [KotlinCompilationTask] for K2
+ * This does not extend [KotlinCompilationTask], since [KotlinCompilationTask] carries an unwanted/conflicting
  * type parameter `<out T : KotlinCommonOptions>`
  */
-internal interface K2CompileTask : Task {
+internal interface K2MultiplatformCompilationTask : Task {
     @get:Nested
     val compilerOptions: KotlinCommonCompilerOptions
 
