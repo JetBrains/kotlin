@@ -88,7 +88,7 @@ internal fun buildKotlinNativeKlibCompilerArgs(
         if (sharedCompilationData == null) {
             add("-Xfragments=${k2MultiplatformCompilationData.fragmentsCompilerArgs.joinToString(",")}")
             add("-Xfragment-sources=${k2MultiplatformCompilationData.fragmentSourcesCompilerArgs.joinToString(",")}")
-            add("-Xdepends-on=${k2MultiplatformCompilationData.dependsOnCompilerArgs.joinToString(",")}")
+            add("-Xfragment-refines=${k2MultiplatformCompilationData.fragmentRefinesCompilerArgs.joinToString(",")}")
         }
     }
 

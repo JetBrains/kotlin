@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType.IR
 import org.jetbrains.kotlin.gradle.tasks.K2CompileTask
 import org.jetbrains.kotlin.gradle.tasks.K2MultiplatformStructure
-import org.jetbrains.kotlin.gradle.tasks.K2MultiplatformStructure.DependsOnEdge
+import org.jetbrains.kotlin.gradle.tasks.K2MultiplatformStructure.RefinesEdge
 import org.jetbrains.kotlin.gradle.tasks.K2MultiplatformStructure.Fragment
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.gradle.tasks.configureK2Multiplatform
@@ -43,7 +43,7 @@ class K2MultiplatformStructureTest {
     @Test
     fun `test - configureK2Multiplatform - then parse arguments`() {
         val structure = project.objects.newInstance<K2MultiplatformStructure>()
-        structure.dependsOnEdges.set(listOf(DependsOnEdge("a", "b"), DependsOnEdge("b", "c")))
+        structure.refinesEdges.set(listOf(RefinesEdge("a", "b"), RefinesEdge("b", "c")))
         structure.fragments.set(
             listOf(
                 Fragment("a", project.files("a.kt")),
@@ -65,13 +65,13 @@ class K2MultiplatformStructureTest {
         val fragmentSources = parsedArguments.fragmentSources ?: fail("Missing ${CommonCompilerArguments::fragmentSources.name}")
         assertEquals(
             listOf(
-                "a;${project.file("a.kt").absolutePath}",
-                "b;${project.file("b.kt").absolutePath}"
+                "a:${project.file("a.kt").absolutePath}",
+                "b:${project.file("b.kt").absolutePath}"
             ),
             fragmentSources.toList()
         )
 
-        val dependsOn = parsedArguments.dependsOnDependencies ?: fail("Missing ${CommonCompilerArguments::dependsOnDependencies.name}")
+        val dependsOn = parsedArguments.fragmentRefines ?: fail("Missing ${CommonCompilerArguments::fragmentRefines.name}")
         assertEquals(listOf("a:b", "b:c"), dependsOn.toList())
     }
 
@@ -116,11 +116,11 @@ class K2MultiplatformStructureTest {
         /* check dependsOnEdges */
         assertEquals(
             setOf(
-                DependsOnEdge(defaultSourceSet.name, "commonMain"),
-                DependsOnEdge(defaultSourceSet.name, "intermediateMain"),
-                DependsOnEdge("intermediateMain", "commonMain")
+                RefinesEdge(defaultSourceSet.name, "commonMain"),
+                RefinesEdge(defaultSourceSet.name, "intermediateMain"),
+                RefinesEdge("intermediateMain", "commonMain")
             ),
-            compileTask.multiplatformStructure.dependsOnEdges.get().toSet()
+            compileTask.multiplatformStructure.refinesEdges.get().toSet()
         )
 
         /* check source files */
@@ -149,8 +149,8 @@ class K2MultiplatformStructureTest {
             fail("Missing ${CommonCompilerArguments::fragmentSources.name} in K2 compilation")
         }
 
-        if (args.dependsOnDependencies == null) {
-            fail("Missing ${CommonCompilerArguments::dependsOnDependencies.name} in K2 compilation")
+        if (args.fragmentRefines == null) {
+            fail("Missing ${CommonCompilerArguments::fragmentRefines.name} in K2 compilation")
         }
     }
 }

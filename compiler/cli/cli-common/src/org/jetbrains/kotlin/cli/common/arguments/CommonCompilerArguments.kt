@@ -725,7 +725,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
 
     @Argument(
         value = "-Xfragment-sources",
-        valueDescription = "<fragment name>;<path>",
+        valueDescription = "<fragment name>:<path>",
         description = "Adds sources to a specific fragment of a multiplatform compilation",
     )
     var fragmentSources: Array<String>? = null
@@ -735,11 +735,11 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
         }
 
     @Argument(
-        value = "-Xdepends-on",
+        value = "-Xfragment-refines",
         valueDescription = "<fromModuleName>:<onModuleName>",
-        description = "Declares that <fromModuleName> depends on <onModuleName> with dependsOn relation",
+        description = "Declares that <fromModuleName> refines <onModuleName> with dependsOn/refines relation",
     )
-    var dependsOnDependencies: Array<String>? = null
+    var fragmentRefines: Array<String>? = null
         set(value) {
             checkFrozen()
             field = value

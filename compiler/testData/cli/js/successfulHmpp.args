@@ -9,8 +9,8 @@ fir-hmpp
 2.0
 -XXLanguage\:+MultiPlatformProjects
 -Xfragments=a,b,c
--Xfragment-sources=a;$TESTDATA_DIR$/../jvm/hmpp/src/a.kt
--Xfragment-sources=b;$TESTDATA_DIR$/../jvm/hmpp/src/b.kt
--Xfragment-sources=c;$TESTDATA_DIR$/../jvm/hmpp/src/c.kt
--Xdepends-on=b\:a
--Xdepends-on=c\:b
+-Xfragment-sources=a\:$TESTDATA_DIR$/../jvm/hmpp/src/a.kt
+-Xfragment-sources=b\:$TESTDATA_DIR$/../jvm/hmpp/src/b.kt
+-Xfragment-sources=c\:$TESTDATA_DIR$/../jvm/hmpp/src/c.kt
+-Xfragment-refines=b\:a
+-Xfragment-refines=c\:b

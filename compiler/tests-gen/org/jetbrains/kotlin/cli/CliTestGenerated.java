@@ -122,16 +122,6 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/hmpp/cycleInDependencies.args");
         }
 
-        @TestMetadata("dependsOnSingleModule.args")
-        public void testDependsOnSingleModule() throws Exception {
-            runTest("compiler/testData/cli/jvm/hmpp/dependsOnSingleModule.args");
-        }
-
-        @TestMetadata("dependsOnWithoutFragments.args")
-        public void testDependsOnWithoutFragments() throws Exception {
-            runTest("compiler/testData/cli/jvm/hmpp/dependsOnWithoutFragments.args");
-        }
-
         @TestMetadata("duplicatedFragments.args")
         public void testDuplicatedFragments() throws Exception {
             runTest("compiler/testData/cli/jvm/hmpp/duplicatedFragments.args");
@@ -155,6 +145,16 @@ public class CliTestGenerated extends AbstractCliTest {
         @TestMetadata("missingFragment.args")
         public void testMissingFragment() throws Exception {
             runTest("compiler/testData/cli/jvm/hmpp/missingFragment.args");
+        }
+
+        @TestMetadata("refinesSingleModule.args")
+        public void testRefinesSingleModule() throws Exception {
+            runTest("compiler/testData/cli/jvm/hmpp/refinesSingleModule.args");
+        }
+
+        @TestMetadata("refinesWithoutFragments.args")
+        public void testRefinesWithoutFragments() throws Exception {
+            runTest("compiler/testData/cli/jvm/hmpp/refinesWithoutFragments.args");
         }
 
         @TestMetadata("sameSourceInDifferentFragments.args")

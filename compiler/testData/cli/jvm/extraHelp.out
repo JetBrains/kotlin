@@ -169,8 +169,6 @@ where advanced options include:
   -Xcommon-sources=<path>    Sources of the common module that need to be compiled together with this module in the multi-platform mode.
                              Should be a subset of sources passed as free arguments
   -Xcontext-receivers        Enable experimental context receivers
-  -Xdepends-on=<fromModuleName>:<onModuleName>
-                             Declares that <fromModuleName> depends on <onModuleName> with dependsOn relation
   -Xdisable-default-scripting-plugin
                              Do not enable scripting plugin by default
   -Xdisable-phases           Disable backend phases
@@ -189,7 +187,9 @@ where advanced options include:
                              Use 'warning' level to issue warnings instead of errors.
   -Xextended-compiler-checks Enable additional compiler checks that might provide verbose diagnostic information for certain errors.
                              Warning: this mode is not backward-compatible and might cause compilation errors in previously compiled code.
-  -Xfragment-sources=<fragment name>;<path>
+  -Xfragment-refines=<fromModuleName>:<onModuleName>
+                             Declares that <fromModuleName> refines <onModuleName> with dependsOn/refines relation
+  -Xfragment-sources=<fragment name>:<path>
                              Adds sources to a specific fragment of a multiplatform compilation
   -Xfragments=<fragment name> Declares all known fragments of a multiplatform compilation
   -Xenable-incremental-compilation

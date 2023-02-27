@@ -15,10 +15,10 @@ internal object KotlinCompilationK2MultiplatformConfigurator : KotlinCompilation
             if (compileTask.name != compilation.compileKotlinTaskName) return@configureEach
             if (compileTask !is K2CompileTask) return@configureEach
 
-            compileTask.multiplatformStructure.dependsOnEdges.set(compilation.project.provider {
+            compileTask.multiplatformStructure.refinesEdges.set(compilation.project.provider {
                 compilation.allKotlinSourceSets.flatMap { sourceSet ->
                     sourceSet.dependsOn.map { dependsOn ->
-                        K2MultiplatformStructure.DependsOnEdge(sourceSet.name, dependsOn.name)
+                        K2MultiplatformStructure.RefinesEdge(sourceSet.name, dependsOn.name)
                     }
                 }
             })

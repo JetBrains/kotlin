@@ -132,7 +132,7 @@ private fun <A : CommonToolArguments> MessageCollector.reportUnsafeInternalArgum
 private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonCompilerArguments): HmppCliModuleStructure? {
     val rawFragments = arguments.fragments
     val rawFragmentSources = arguments.fragmentSources
-    val rawDependencies = arguments.dependsOnDependencies
+    val rawFragmentRefines = arguments.fragmentRefines
 
     val messageCollector = getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
@@ -145,8 +145,8 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
     }
 
     if (rawFragments == null) {
-        if (rawDependencies != null) {
-            reportError("-Xdepends-on flag can not be used without -Xfragments")
+        if (rawFragmentRefines != null) {
+            reportError("-Xfragment-refines flag can not be used without -Xfragments")
         }
         return null
     }
@@ -159,11 +159,11 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
 
     val sourcesByFragmentName: Map<String, Set<String>> = rawFragments.associateWith { mutableSetOf<String>() }.apply {
         rawFragmentSources.orEmpty().forEach { rawFragmentSourceArg ->
-            val split = rawFragmentSourceArg.split(";")
-            if (split.size != 2) {
+            val split = rawFragmentSourceArg.split(":", limit = 2)
+            if (split.size < 2) {
                 reportError(
                     "Incorrect syntax for -Xfragment-sources argument. " +
-                            "`<module name>;<source file>` expected but got `$rawFragmentSourceArg`"
+                            "`<module name>:<source file>` expected but got `$rawFragmentSourceArg`"
                 )
                 return@forEach
             }
@@ -171,7 +171,10 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
             val fragmentSource = split[1]
 
             getOrElse(fragmentName) {
-                reportError("fragment `$fragmentName` of source file $fragmentSource is not specified in -Xfragments")
+                reportError(
+                    "Passed $rawFragmentSourceArg, " +
+                            "but fragment `$fragmentName` of source file $fragmentSource is not specified in -Xfragments"
+                )
                 return@forEach
             }.add(fragmentSource)
         }
@@ -218,8 +221,8 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
     }
 
     if (modules.size == 1) {
-        if (rawDependencies?.isNotEmpty() == true) {
-            reportError("-Xdepends-on flag is specified but there is only one module declared")
+        if (rawFragmentRefines?.isNotEmpty() == true) {
+            reportError("-Xfragment-refines flag is specified but there is only one module declared")
         }
         return HmppCliModuleStructure(modules, emptyMap())
     }
@@ -233,10 +236,13 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
 
     val moduleByName = modules.associateBy { it.name }
 
-    val dependenciesMap = rawDependencies.orEmpty().mapNotNull {
-        val split = it.split(":")
+    val dependenciesMap = rawFragmentRefines.orEmpty().mapNotNull { rawFragmentRefinesEdge ->
+        val split = rawFragmentRefinesEdge.split(":")
         if (split.size != 2) {
-            reportError("Incorrect syntax for -Xdepends-on argument. Expected <fromModuleName>:<onModuleName> but got `$it`")
+            reportError(
+                "Incorrect syntax for -Xfragment-refines argument. " +
+                        "Expected <fromModuleName>:<onModuleName> but got `$rawFragmentRefines`"
+            )
             return@mapNotNull null
         }
         val moduleName1 = split[0]
@@ -245,7 +251,7 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
         fun findModule(name: String): HmppCliModule? {
             return moduleByName[name].also { module ->
                 if (module == null) {
-                    reportError("Module `$name` not found in -Xfragments arguments")
+                    reportError("`-Xfragment-refines=$rawFragmentRefinesEdge` Fragment `$name` not found in -Xfragments arguments")
                 }
             }
         }

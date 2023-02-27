@@ -4,4 +4,6 @@ $TEMP_DIR$
 -language-version
 2.0
 -XXLanguage\:+MultiPlatformProjects
--Xdepends-on=a\:b
+-Xfragments=a
+-Xfragment-sources=a\:$TESTDATA_DIR$/src/a.kt
+-Xfragment-refines=b\:a

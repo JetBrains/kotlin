@@ -6,5 +6,5 @@ $TEMP_DIR$
 2.0
 -XXLanguage\:+MultiPlatformProjects
 -Xfragments=a,b
--Xfragment-sources=a;$TESTDATA_DIR$/src/a.kt,b;$TESTDATA_DIR$/src/b.kt
--Xdepends-on=c\:a
+-Xfragment-sources=a\:$TESTDATA_DIR$/src/a.kt,b\:$TESTDATA_DIR$/src/b.kt
+-Xfragment-refines=c\:a

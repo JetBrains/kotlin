@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.gradle.dsl.usesK2
 abstract class K2MultiplatformStructure {
 
     @InternalKotlinGradlePluginApi
-    data class DependsOnEdge(
+    data class RefinesEdge(
         @Input
         val fromFragmentName: String,
         @Input
@@ -41,7 +41,7 @@ abstract class K2MultiplatformStructure {
     )
 
     @get:Nested
-    abstract val dependsOnEdges: SetProperty<DependsOnEdge>
+    abstract val refinesEdges: SetProperty<RefinesEdge>
 
     @get:Nested
     abstract val fragments: ListProperty<Fragment>
@@ -52,18 +52,18 @@ internal val K2MultiplatformStructure.fragmentsCompilerArgs: Array<String>
 
 internal val K2MultiplatformStructure.fragmentSourcesCompilerArgs: Array<String>
     get() = fragments.get().flatMap { sourceSet ->
-        sourceSet.sources.files.map { sourceFile -> "${sourceSet.fragmentName};${sourceFile.absolutePath}" }
+        sourceSet.sources.files.map { sourceFile -> "${sourceSet.fragmentName}:${sourceFile.absolutePath}" }
     }.toTypedArray()
 
-internal val K2MultiplatformStructure.dependsOnCompilerArgs: Array<String>
-    get() = dependsOnEdges.get().map { edge ->
+internal val K2MultiplatformStructure.fragmentRefinesCompilerArgs: Array<String>
+    get() = refinesEdges.get().map { edge ->
         "${edge.fromFragmentName}:${edge.toFragmentName}"
     }.toTypedArray()
 
 internal fun CommonCompilerArguments.configureK2Multiplatform(multiplatformStructure: K2MultiplatformStructure) {
     fragments = multiplatformStructure.fragmentsCompilerArgs
     fragmentSources = multiplatformStructure.fragmentSourcesCompilerArgs
-    dependsOnDependencies = multiplatformStructure.dependsOnCompilerArgs
+    fragmentRefines = multiplatformStructure.fragmentRefinesCompilerArgs
 }
 
 internal fun CommonCompilerArguments.configureMultiplatform(
