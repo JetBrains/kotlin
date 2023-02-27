@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.providers
 
 import com.intellij.psi.PsiClass
-import com.intellij.psi.PsiClassOwner
 import com.intellij.psi.PsiTypeParameter
 import com.intellij.psi.impl.compiled.ClsElementImpl
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
@@ -20,7 +19,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.analysis.utils.classIdIfNonLocal
 
 class LLFirFirClassByPsiClassProvider(private val session: LLFirSession) : FirSessionComponent {
     fun getFirClass(psiClass: PsiClass): FirRegularClassSymbol? {
@@ -82,13 +81,3 @@ class LLFirFirClassByPsiClassProvider(private val session: LLFirSession) : FirSe
 internal val FirSession.nullableJavaSymbolProvider: JavaSymbolProvider? by FirSession.nullableSessionComponentAccessor()
 
 val LLFirSession.firClassByPsiClassProvider: LLFirFirClassByPsiClassProvider by FirSession.sessionComponentAccessor()
-
-private val PsiClass.classIdIfNonLocal: ClassId?
-    get() {
-        val packageName = (containingFile as? PsiClassOwner)?.packageName ?: return null
-        val qualifiedName = qualifiedName ?: return null
-        val relatedClassName = qualifiedName.removePrefix("$packageName.")
-        if (relatedClassName.isEmpty()) return null
-
-        return ClassId(FqName(packageName), FqName(relatedClassName), false)
-    }
