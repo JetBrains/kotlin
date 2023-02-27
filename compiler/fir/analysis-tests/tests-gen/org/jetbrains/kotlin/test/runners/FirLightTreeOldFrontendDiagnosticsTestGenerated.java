@@ -38887,6 +38887,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
             }
 
             @Test
+            @TestMetadata("overrideInPrimaryConstructor.kt")
+            public void testOverrideInPrimaryConstructor() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/overrideInPrimaryConstructor.kt");
+            }
+
+            @Test
             @TestMetadata("subClassOptInModality.kt")
             public void testSubClassOptInModality() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/subClassOptInModality.kt");
