@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/fir/analysis-tests/testData/resolve")
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
-public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+public class LazyBodyIsNotTouchedTestGenerated extends AbstractLazyBodyIsNotTouchedTest {
     private void runTest(String testDataFilePath) throws Exception {
         KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
@@ -607,7 +607,7 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/annotations")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Annotations extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+    public static class Annotations extends AbstractLazyBodyIsNotTouchedTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -635,7 +635,7 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/arguments")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Arguments extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+    public static class Arguments extends AbstractLazyBodyIsNotTouchedTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -828,7 +828,7 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/arrays")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Arrays extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+    public static class Arrays extends AbstractLazyBodyIsNotTouchedTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -851,7 +851,7 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/builtins")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Builtins extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+    public static class Builtins extends AbstractLazyBodyIsNotTouchedTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -869,7 +869,7 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/callResolution")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class CallResolution extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+    public static class CallResolution extends AbstractLazyBodyIsNotTouchedTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -1002,7 +1002,7 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/cfa")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Cfa extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+    public static class Cfa extends AbstractLazyBodyIsNotTouchedTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -1035,7 +1035,7 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/cfg")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Cfg extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+    public static class Cfg extends AbstractLazyBodyIsNotTouchedTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -1213,7 +1213,7 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/checkers")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Checkers extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+    public static class Checkers extends AbstractLazyBodyIsNotTouchedTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -1286,7 +1286,7 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/constVal")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class ConstVal extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+    public static class ConstVal extends AbstractLazyBodyIsNotTouchedTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -1319,7 +1319,7 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/constructors")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Constructors extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+    public static class Constructors extends AbstractLazyBodyIsNotTouchedTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -1342,7 +1342,7 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/contracts")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Contracts extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+    public static class Contracts extends AbstractLazyBodyIsNotTouchedTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -1385,7 +1385,7 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/delegates")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Delegates extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+    public static class Delegates extends AbstractLazyBodyIsNotTouchedTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -1438,7 +1438,7 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/diagnostics")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Diagnostics extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+    public static class Diagnostics extends AbstractLazyBodyIsNotTouchedTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -1710,7 +1710,7 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         @TestMetadata("compiler/fir/analysis-tests/testData/resolve/diagnostics/functionAsExpression")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class FunctionAsExpression extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+        public static class FunctionAsExpression extends AbstractLazyBodyIsNotTouchedTest {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
@@ -1729,7 +1729,7 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/exhaustiveness")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Exhaustiveness extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+    public static class Exhaustiveness extends AbstractLazyBodyIsNotTouchedTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -1741,7 +1741,7 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         @TestMetadata("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/negative")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Negative extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+        public static class Negative extends AbstractLazyBodyIsNotTouchedTest {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
@@ -1779,7 +1779,7 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         @TestMetadata("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/positive")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Positive extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+        public static class Positive extends AbstractLazyBodyIsNotTouchedTest {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
@@ -1863,7 +1863,7 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/expresssions")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Expresssions extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+    public static class Expresssions extends AbstractLazyBodyIsNotTouchedTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -2190,7 +2190,7 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         @TestMetadata("compiler/fir/analysis-tests/testData/resolve/expresssions/inference")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Inference extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+        public static class Inference extends AbstractLazyBodyIsNotTouchedTest {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
@@ -2218,7 +2218,7 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         @TestMetadata("compiler/fir/analysis-tests/testData/resolve/expresssions/invoke")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Invoke extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+        public static class Invoke extends AbstractLazyBodyIsNotTouchedTest {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
@@ -2306,7 +2306,7 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         @TestMetadata("compiler/fir/analysis-tests/testData/resolve/expresssions/operators")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Operators extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+        public static class Operators extends AbstractLazyBodyIsNotTouchedTest {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
@@ -2335,7 +2335,7 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/extendedCheckers")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class ExtendedCheckers extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+    public static class ExtendedCheckers extends AbstractLazyBodyIsNotTouchedTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -2402,7 +2402,7 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         @TestMetadata("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/canBeReplacedWithOperatorAssignment")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class CanBeReplacedWithOperatorAssignment extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+        public static class CanBeReplacedWithOperatorAssignment extends AbstractLazyBodyIsNotTouchedTest {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
@@ -2510,7 +2510,7 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         @TestMetadata("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/emptyRangeChecker")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class EmptyRangeChecker extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+        public static class EmptyRangeChecker extends AbstractLazyBodyIsNotTouchedTest {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
@@ -2533,7 +2533,7 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         @TestMetadata("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantCallOfConversionMethod")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class RedundantCallOfConversionMethod extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+        public static class RedundantCallOfConversionMethod extends AbstractLazyBodyIsNotTouchedTest {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
@@ -2646,7 +2646,7 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         @TestMetadata("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/unused")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Unused extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+        public static class Unused extends AbstractLazyBodyIsNotTouchedTest {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
@@ -2699,7 +2699,7 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         @TestMetadata("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/UselessCallOnNotNullChecker")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class UselessCallOnNotNullChecker extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+        public static class UselessCallOnNotNullChecker extends AbstractLazyBodyIsNotTouchedTest {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
@@ -2768,7 +2768,7 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/fromBuilder")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class FromBuilder extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+    public static class FromBuilder extends AbstractLazyBodyIsNotTouchedTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -2806,7 +2806,7 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/inference")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Inference extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+    public static class Inference extends AbstractLazyBodyIsNotTouchedTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -2973,7 +2973,7 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         @TestMetadata("compiler/fir/analysis-tests/testData/resolve/inference/builderInference")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class BuilderInference extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+        public static class BuilderInference extends AbstractLazyBodyIsNotTouchedTest {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
@@ -2992,7 +2992,7 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/inlineClasses")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class InlineClasses extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+    public static class InlineClasses extends AbstractLazyBodyIsNotTouchedTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -3020,7 +3020,7 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/innerClasses")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class InnerClasses extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+    public static class InnerClasses extends AbstractLazyBodyIsNotTouchedTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -3053,7 +3053,7 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/localClasses")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class LocalClasses extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+    public static class LocalClasses extends AbstractLazyBodyIsNotTouchedTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -3096,7 +3096,7 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/multifile")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Multifile extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+    public static class Multifile extends AbstractLazyBodyIsNotTouchedTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -3164,7 +3164,7 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/overrides")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Overrides extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+    public static class Overrides extends AbstractLazyBodyIsNotTouchedTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -3222,7 +3222,7 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/problems")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Problems extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+    public static class Problems extends AbstractLazyBodyIsNotTouchedTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -3370,7 +3370,7 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/properties")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Properties extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+    public static class Properties extends AbstractLazyBodyIsNotTouchedTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -3428,7 +3428,7 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/propertyVsField")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class PropertyVsField extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+    public static class PropertyVsField extends AbstractLazyBodyIsNotTouchedTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -3461,7 +3461,7 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/references")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class References extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+    public static class References extends AbstractLazyBodyIsNotTouchedTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -3524,7 +3524,7 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/samConstructors")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class SamConstructors extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+    public static class SamConstructors extends AbstractLazyBodyIsNotTouchedTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -3572,7 +3572,7 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/samConversions")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class SamConversions extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+    public static class SamConversions extends AbstractLazyBodyIsNotTouchedTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -3635,7 +3635,7 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/scopes")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Scopes extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+    public static class Scopes extends AbstractLazyBodyIsNotTouchedTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -3718,7 +3718,7 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/smartcasts")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Smartcasts extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+    public static class Smartcasts extends AbstractLazyBodyIsNotTouchedTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -3870,7 +3870,7 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         @TestMetadata("compiler/fir/analysis-tests/testData/resolve/smartcasts/booleans")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Booleans extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+        public static class Booleans extends AbstractLazyBodyIsNotTouchedTest {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
@@ -3903,7 +3903,7 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         @TestMetadata("compiler/fir/analysis-tests/testData/resolve/smartcasts/boundSmartcasts")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class BoundSmartcasts extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+        public static class BoundSmartcasts extends AbstractLazyBodyIsNotTouchedTest {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
@@ -3946,7 +3946,7 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         @TestMetadata("compiler/fir/analysis-tests/testData/resolve/smartcasts/controlStructures")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class ControlStructures extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+        public static class ControlStructures extends AbstractLazyBodyIsNotTouchedTest {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
@@ -3999,7 +3999,7 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         @TestMetadata("compiler/fir/analysis-tests/testData/resolve/smartcasts/lambdas")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Lambdas extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+        public static class Lambdas extends AbstractLazyBodyIsNotTouchedTest {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
@@ -4027,7 +4027,7 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         @TestMetadata("compiler/fir/analysis-tests/testData/resolve/smartcasts/loops")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Loops extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+        public static class Loops extends AbstractLazyBodyIsNotTouchedTest {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
@@ -4055,7 +4055,7 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         @TestMetadata("compiler/fir/analysis-tests/testData/resolve/smartcasts/problems")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Problems extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+        public static class Problems extends AbstractLazyBodyIsNotTouchedTest {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
@@ -4078,7 +4078,7 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         @TestMetadata("compiler/fir/analysis-tests/testData/resolve/smartcasts/receivers")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Receivers extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+        public static class Receivers extends AbstractLazyBodyIsNotTouchedTest {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
@@ -4111,7 +4111,7 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         @TestMetadata("compiler/fir/analysis-tests/testData/resolve/smartcasts/safeCalls")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class SafeCalls extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+        public static class SafeCalls extends AbstractLazyBodyIsNotTouchedTest {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
@@ -4154,7 +4154,7 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         @TestMetadata("compiler/fir/analysis-tests/testData/resolve/smartcasts/stability")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Stability extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+        public static class Stability extends AbstractLazyBodyIsNotTouchedTest {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
@@ -4172,7 +4172,7 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         @TestMetadata("compiler/fir/analysis-tests/testData/resolve/smartcasts/variables")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Variables extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+        public static class Variables extends AbstractLazyBodyIsNotTouchedTest {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
@@ -4196,7 +4196,7 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/stdlib")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Stdlib extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+    public static class Stdlib extends AbstractLazyBodyIsNotTouchedTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -4208,7 +4208,7 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         @TestMetadata("compiler/fir/analysis-tests/testData/resolve/stdlib/j+k")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class J_k extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+        public static class J_k extends AbstractLazyBodyIsNotTouchedTest {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
@@ -4232,7 +4232,7 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/suppress")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Suppress extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+    public static class Suppress extends AbstractLazyBodyIsNotTouchedTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -4275,7 +4275,7 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/typeParameters")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class TypeParameters extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+    public static class TypeParameters extends AbstractLazyBodyIsNotTouchedTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -4298,7 +4298,7 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/types")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Types extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+    public static class Types extends AbstractLazyBodyIsNotTouchedTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -4341,7 +4341,7 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/unqualifiedEnum")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class UnqualifiedEnum extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+    public static class UnqualifiedEnum extends AbstractLazyBodyIsNotTouchedTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -4389,7 +4389,7 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/visibility")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Visibility extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+    public static class Visibility extends AbstractLazyBodyIsNotTouchedTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -4472,7 +4472,7 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/withAllowedKotlinPackage")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class WithAllowedKotlinPackage extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+    public static class WithAllowedKotlinPackage extends AbstractLazyBodyIsNotTouchedTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }

@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.createCompilerProcessorByPhase
 import java.io.File
 
-abstract class AbstractLazyBodyIsNotTouchedTilContractsPhaseTest : AbstractFirBaseDiagnosticsTest() {
+abstract class AbstractLazyBodyIsNotTouchedTest : AbstractFirBaseDiagnosticsTest() {
     override val useLazyBodiesModeForRawFir: Boolean get() = true
 
     override fun runAnalysis(testDataFile: File, testFiles: List<TestFile>, firFilesPerSession: Map<FirSession, List<FirFile>>) {
