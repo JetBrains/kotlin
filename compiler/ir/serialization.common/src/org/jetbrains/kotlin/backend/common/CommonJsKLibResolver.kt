@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.common
 
 import org.jetbrains.kotlin.konan.file.File
+import org.jetbrains.kotlin.konan.file.ZipFileSystemAccessor
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.KotlinLibraryProperResolverWithAttributes
 import org.jetbrains.kotlin.library.UnresolvedLibrary
@@ -16,15 +17,21 @@ import org.jetbrains.kotlin.library.metadata.resolver.impl.libraryResolver
 import org.jetbrains.kotlin.util.Logger
 
 object CommonJsKLibResolver {
-    fun resolve(libraries: Collection<String>, logger: Logger): KotlinLibraryResolveResult =
+    fun resolve(
+        libraries: Collection<String>,
+        logger: Logger,
+        zipAccessor: ZipFileSystemAccessor? = null
+    ): KotlinLibraryResolveResult =
         resolveWithoutDependencies(
             libraries,
-            logger
+            logger,
+            zipAccessor
         ).resolveWithDependencies()
 
     fun resolveWithoutDependencies(
         libraries: Collection<String>,
-        logger: Logger
+        logger: Logger,
+        zipAccessor: ZipFileSystemAccessor?
     ): KLibResolution {
         val unresolvedLibraries = libraries.map { UnresolvedLibrary(it, null) }
         val libraryAbsolutePaths = libraries.map { File(it).absolutePath }
@@ -35,7 +42,8 @@ object CommonJsKLibResolver {
             distributionKlib = null,
             localKotlinDir = null,
             skipCurrentDir = false,
-            logger = logger
+            logger = logger,
+            zipAccessor = zipAccessor
         ).libraryResolver()
 
         return KLibResolution(
@@ -67,7 +75,8 @@ private class KLibResolverHelper(
     distributionKlib: String?,
     localKotlinDir: String?,
     skipCurrentDir: Boolean,
-    logger: Logger
+    logger: Logger,
+    private val zipAccessor: ZipFileSystemAccessor?
 ) : KotlinLibraryProperResolverWithAttributes<KotlinLibrary>(
     repositories,
     directLibs,
@@ -78,5 +87,5 @@ private class KLibResolverHelper(
     emptyList()
 ) {
     // Stick with the default KotlinLibrary for now.
-    override fun libraryComponentBuilder(file: File, isDefault: Boolean) = createKotlinLibraryComponents(file, isDefault)
+    override fun libraryComponentBuilder(file: File, isDefault: Boolean) = createKotlinLibraryComponents(file, isDefault, zipAccessor)
 }

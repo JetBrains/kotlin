@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrProgramFragment
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.konan.properties.propertyList
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_DEPENDS
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -87,7 +88,8 @@ class CacheUpdater(
 
         // libraries in topological order: [stdlib, ..., main]
         val libraryDependencies = stopwatch.measure("Resolving and loading klib dependencies") {
-            val allResolvedDependencies = CommonJsKLibResolver.resolve(allModules, compilerConfiguration.resolverLogger)
+            val zipAccessor = compilerConfiguration.get(JSConfigurationKeys.ZIP_FILE_SYSTEM_ACCESSOR)
+            val allResolvedDependencies = CommonJsKLibResolver.resolve(allModules, compilerConfiguration.resolverLogger, zipAccessor)
 
             val libraries = allResolvedDependencies.getFullList(TopologicalLibraryOrder).let { resolvedLibraries ->
                 val mainLibraryIndex = resolvedLibraries.indexOfLast {

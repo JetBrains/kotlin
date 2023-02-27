@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.test.converters.ClassicJsBackendFacade
 import org.jetbrains.kotlin.js.test.utils.MODULE_EMULATION_FILE
 import org.jetbrains.kotlin.js.testOld.V8IrJsTestChecker
+import org.jetbrains.kotlin.konan.file.ZipFileSystemCacheableAccessor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.serialization.js.ModuleKind
@@ -61,8 +62,15 @@ abstract class AbstractInvalidationTest(
         private const val SOURCE_MAPPING_URL_PREFIX = "//# sourceMappingURL="
     }
 
+    private val zipAccessor = ZipFileSystemCacheableAccessor(2)
+
     override fun createEnvironment(): KotlinCoreEnvironment {
         return KotlinCoreEnvironment.createForTests(TestDisposable(), CompilerConfiguration(), EnvironmentConfigFiles.JS_CONFIG_FILES)
+    }
+
+    override fun tearDown() {
+        zipAccessor.reset()
+        super.tearDown()
     }
 
     private fun parseProjectInfo(testName: String, infoFile: File): ProjectInfo {
@@ -127,6 +135,9 @@ abstract class AbstractInvalidationTest(
             }
             build()
         }
+
+        zipAccessor.reset()
+        copy.put(JSConfigurationKeys.ZIP_FILE_SYSTEM_ACCESSOR, zipAccessor)
         return copy
     }
 

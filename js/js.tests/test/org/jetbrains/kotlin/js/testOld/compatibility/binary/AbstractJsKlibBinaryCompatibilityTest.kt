@@ -50,7 +50,9 @@ abstract class AbstractJsKlibBinaryCompatibilityTest : AbstractKlibBinaryCompati
         return uniqueDependencies
     }
 
-    private val TestModule.jsPath get() = File(workingDir, "${this.name}.js").absolutePath
+    private val jsOutDir get() = workingDir.resolve("out")
+
+    private val TestModule.jsPath get() = File(jsOutDir, "${this.name}.js").absolutePath
 
     private fun createFiles(files: List<TestFile>): List<String> =
         files.map {
@@ -83,7 +85,7 @@ abstract class AbstractJsKlibBinaryCompatibilityTest : AbstractKlibBinaryCompati
         val args = K2JSCompilerArguments().apply {
             freeArgs = createFiles(module.files) + runnerFunctionFile()
             libraries = module.dependenciesToLibrariesArg(version = 2)
-            outputDir = workingDir.normalize().absolutePath
+            outputDir = jsOutDir.normalize().absolutePath
             moduleName = module.name
             irProduceJs = true
             irOnly = true

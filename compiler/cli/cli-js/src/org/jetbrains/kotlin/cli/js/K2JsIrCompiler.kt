@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.cli.js
 
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.backend.common.CompilationException
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
@@ -55,6 +56,8 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
 import org.jetbrains.kotlin.js.config.*
+import org.jetbrains.kotlin.konan.file.ZipFileSystemAccessor
+import org.jetbrains.kotlin.konan.file.ZipFileSystemCacheableAccessor
 import org.jetbrains.kotlin.library.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.name.FqName
@@ -73,6 +76,16 @@ private val K2JSCompilerArguments.granularity: JsGenerationGranularity
         this.irPerFile -> JsGenerationGranularity.PER_FILE
         else -> JsGenerationGranularity.WHOLE_PROGRAM
     }
+
+private class DisposableZipFileSystemAccessor private constructor(
+    private val zipAccessor: ZipFileSystemCacheableAccessor
+) : Disposable, ZipFileSystemAccessor by zipAccessor {
+    constructor(cacheLimit: Int) : this(ZipFileSystemCacheableAccessor(cacheLimit))
+
+    override fun dispose() {
+        zipAccessor.reset()
+    }
+}
 
 class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
@@ -193,6 +206,10 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         configurationJs.put(JSConfigurationKeys.GENERATE_POLYFILLS, arguments.generatePolyfills)
         configurationJs.put(JSConfigurationKeys.GENERATE_DTS, arguments.generateDts)
         configurationJs.put(JSConfigurationKeys.GENERATE_INLINE_ANONYMOUS_FUNCTIONS, arguments.irGenerateInlineAnonymousFunctions)
+
+        val zipAccessor = DisposableZipFileSystemAccessor(64)
+        Disposer.register(rootDisposable, zipAccessor)
+        configurationJs.put(JSConfigurationKeys.ZIP_FILE_SYSTEM_ACCESSOR, zipAccessor)
 
         if (!checkKotlinPackageUsage(environmentForJS.configuration, sourcesFiles)) return COMPILATION_ERROR
 
