@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirResolveSessionDepend
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FileTowerProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirTowerContextProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirTowerDataContextAllElementsCollector
+import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FirElementsRecorder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.KtToFirMapping
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.RawFirNonLocalDeclarationBuilder
@@ -43,20 +44,10 @@ import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
-import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 
 object LowLevelFirApiFacadeForResolveOnAir {
-    private fun findNonLocalParentMaybeSelf(position: KtElement): KtNamedDeclaration? {
-        return position.parentsWithSelf
-            .filterIsInstance<KtNamedDeclaration>()
-            .filter { it is KtNamedFunction || it is KtProperty || (it is KtClassOrObject && it !is KtEnumEntry) || it is KtTypeAlias }
-            .filter { !KtPsiUtil.isLocal(it) && it.containingClassOrObject !is KtEnumEntry }
-            .firstOrNull()
-    }
-
-    private fun recordOriginalDeclaration(targetDeclaration: KtNamedDeclaration, originalDeclaration: KtNamedDeclaration) {
+    private fun recordOriginalDeclaration(targetDeclaration: KtDeclaration, originalDeclaration: KtDeclaration) {
         require(originalDeclaration.containingKtFile !== targetDeclaration.containingKtFile)
         val originalDeclarationParents = originalDeclaration.parentsOfType<KtDeclaration>().toList()
         val fakeDeclarationParents = targetDeclaration.parentsOfType<KtDeclaration>().toList()
@@ -145,13 +136,13 @@ object LowLevelFirApiFacadeForResolveOnAir {
         require(originalFirResolveSession is LLFirResolvableResolveSession)
         require(elementToAnalyze !is KtFile) { "KtFile for dependency element not supported" }
 
-        val dependencyNonLocalDeclaration = findNonLocalParentMaybeSelf(elementToAnalyze)
-            ?: return LLFirResolveSessionDepended(
-                originalFirResolveSession,
-                FileTowerProvider(elementToAnalyze.containingKtFile, onAirGetTowerContextForFile(originalFirResolveSession, originalKtFile)),
-                ktToFirMapping = null
-            )
+        val dependencyNonLocalDeclaration = elementToAnalyze.getNonLocalContainingOrThisDeclaration() as? KtNamedDeclaration
 
+        if (dependencyNonLocalDeclaration == null) {
+            val towerDataContext = onAirGetTowerContextForFile(originalFirResolveSession, originalKtFile)
+            val fileTowerProvider = FileTowerProvider(elementToAnalyze.containingKtFile, towerDataContext)
+            return LLFirResolveSessionDepended(originalFirResolveSession, fileTowerProvider, ktToFirMapping = null)
+        }
 
         val sameDeclarationInOriginalFile = PsiTreeUtil.findSameElementInCopy(dependencyNonLocalDeclaration, originalKtFile)
             ?: buildErrorWithAttachment("Cannot find original function matching") {
@@ -214,7 +205,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
         onAirCreatedDeclaration: Boolean,
         collector: FirTowerDataContextCollector? = null,
     ): FirElement {
-        val nonLocalDeclaration = findNonLocalParentMaybeSelf(replacement.from)
+        val nonLocalDeclaration = replacement.from.getNonLocalContainingOrThisDeclaration()
         val originalFirFile = firResolveSession.getOrBuildFirFile(replacement.from.containingKtFile)
 
         if (nonLocalDeclaration == null) {
@@ -255,6 +246,8 @@ object LowLevelFirApiFacadeForResolveOnAir {
                         originalDeclaration.withBodyFrom(newDeclarationWithReplacement as FirProperty)
                     is FirRegularClass ->
                         originalDeclaration.withBodyFrom(newDeclarationWithReplacement as FirRegularClass)
+                    is FirScript ->
+                        originalDeclaration.withBodyFrom(newDeclarationWithReplacement as FirScript)
                     is FirTypeAlias -> newDeclarationWithReplacement
                     else -> error("Not supported type ${originalDeclaration::class.simpleName}")
                 }
@@ -278,26 +271,23 @@ object LowLevelFirApiFacadeForResolveOnAir {
 
     }
 
-    private fun isInBodyReplacement(ktDeclaration: KtDeclaration, replacement: RawFirReplacement): Boolean = when (ktDeclaration) {
-        is KtNamedFunction ->
-            ktDeclaration.bodyBlockExpression?.let { it.isAncestor(replacement.from, true) } ?: false
-        is KtProperty -> {
-            val insideGetterBody = ktDeclaration.getter?.bodyBlockExpression?.let {
-                it.isAncestor(replacement.from, true)
-            } ?: false
-
-            val insideGetterOrSetterBody = insideGetterBody || ktDeclaration.setter?.bodyBlockExpression?.let {
-                it.isAncestor(replacement.from, true)
-            } ?: false
-
-            insideGetterOrSetterBody || ktDeclaration.initializer?.let {
-                it.isAncestor(replacement.from, true)
-            } ?: false
+    private fun isInBodyReplacement(ktDeclaration: KtDeclaration, replacement: RawFirReplacement): Boolean {
+        fun check(container: KtElement?): Boolean {
+            return container != null && container.isAncestor(replacement.from, true)
         }
-        is KtClassOrObject ->
-            ktDeclaration.body?.let { it.isAncestor(replacement.from, true) } ?: false
-        is KtTypeAlias -> false
-        else -> error("Not supported type ${ktDeclaration::class.simpleName}")
+
+        return when (ktDeclaration) {
+            is KtNamedFunction -> check(ktDeclaration.bodyBlockExpression)
+            is KtProperty -> {
+                check(ktDeclaration.getter?.bodyBlockExpression)
+                        || check(ktDeclaration.setter?.bodyBlockExpression)
+                        || check(ktDeclaration.initializer)
+            }
+            is KtClassOrObject -> check(ktDeclaration.body)
+            is KtScript -> check(ktDeclaration.blockExpression)
+            is KtTypeAlias -> false
+            else -> error("Not supported type ${ktDeclaration::class.simpleName}")
+        }
     }
 
     fun onAirResolveTypeInPlace(

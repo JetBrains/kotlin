@@ -30,6 +30,15 @@ internal object DeclarationCopyBuilder {
         resolvePhase = minOf(this.resolvePhase, FirResolvePhase.IMPORTS) //TODO move into initDeclaration?
     }
 
+    fun FirScript.withBodyFrom(
+        scriptWithBody: FirScript
+    ): FirScript = buildScriptCopy(this) {
+        statements.clear()
+        statements.addAll(scriptWithBody.statements)
+        symbol = scriptWithBody.symbol
+        initDeclaration(this@withBodyFrom, scriptWithBody)
+    }
+
     fun FirProperty.withBodyFrom(propertyWithBody: FirProperty): FirProperty {
         val newSetter = getAccessorToUse(this, propertyWithBody) { it.setter }
         val newGetter = getAccessorToUse(this, propertyWithBody) { it.getter }
@@ -80,6 +89,15 @@ internal object DeclarationCopyBuilder {
     }
 
     private fun FirDeclarationBuilder.initDeclaration(
+        originalDeclaration: FirDeclaration,
+        builtDeclaration: FirDeclaration,
+    ) {
+        resolvePhase = minOf(originalDeclaration.resolvePhase, FirResolvePhase.DECLARATIONS)
+        source = builtDeclaration.source
+        moduleData = originalDeclaration.moduleData
+    }
+
+    private fun FirScriptBuilder.initDeclaration(
         originalDeclaration: FirDeclaration,
         builtDeclaration: FirDeclaration,
     ) {

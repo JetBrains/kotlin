@@ -1049,7 +1049,11 @@ open class RawFirBuilder(
                     declarations += when (declaration) {
                         is KtScript -> {
                             require(file.declarations.size == 1) { "Expect the script to be the only declaration in the file $name" }
-                            convertScript(declaration, this)
+                            convertScript(declaration, this.name) {
+                                for (configurator in baseSession.extensionService.scriptConfigurators) {
+                                    with(configurator) { configure(this@buildFile) }
+                                }
+                            }
                         }
                         is KtDestructuringDeclaration -> buildErrorTopLevelDestructuringDeclaration(declaration.toFirSourceElement())
                         else -> declaration.convert()
@@ -1062,12 +1066,12 @@ open class RawFirBuilder(
             }
         }
 
-        private fun convertScript(script: KtScript, containingFile: FirFileBuilder): FirScript {
+        private fun convertScript(script: KtScript, fileName: String, setup: FirScriptBuilder.() -> Unit = {}): FirScript {
             return buildScript {
                 source = script.toFirSourceElement()
                 moduleData = baseModuleData
                 origin = FirDeclarationOrigin.Source
-                name = Name.special("<script-${containingFile.name}>")
+                name = Name.special("<script-$fileName>")
                 symbol = FirScriptSymbol(context.packageFqName.child(name))
                 for (declaration in script.declarations) {
                     when (declaration) {
@@ -1079,12 +1083,13 @@ open class RawFirBuilder(
                         }
                     }
                 }
-                baseSession.extensionService.scriptConfigurators.forEach { with(it) { configure(containingFile) } }
+                setup()
             }
         }
 
         override fun visitScript(script: KtScript, data: Unit?): FirElement {
-            error("should not be here")
+            val fileName = script.containingKtFile.name
+            return convertScript(script, fileName)
         }
 
         protected fun KtEnumEntry.toFirEnumEntry(

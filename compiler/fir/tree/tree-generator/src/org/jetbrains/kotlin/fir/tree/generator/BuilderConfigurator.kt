@@ -357,6 +357,10 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             fields from resolvedQualifier
         }
 
+        builder(script) {
+            withCopy()
+        }
+
         builder(resolvedQualifier) {
             parents += abstractResolvedQualifierBuilder
             defaultFalse("isNullableLHSForCallableReference", "isFullyQualified")
