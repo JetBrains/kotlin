@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
+import org.jetbrains.kotlin.backend.common.serialization.DefaultIrInternationService
+import org.jetbrains.kotlin.backend.common.serialization.IrInternationService
 import org.jetbrains.kotlin.backend.common.serialization.checkIsFunctionInterface
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.ir.backend.js.*
@@ -173,13 +175,14 @@ class IrModuleToJsTransformer(
     }
 
     fun makeIrFragmentsGenerators(files: Collection<IrFile>, allModules: Collection<IrModuleFragment>): List<() -> JsIrProgramFragment> {
+        val internationService = DefaultIrInternationService()
         val exportModelGenerator = ExportModelGenerator(backendContext, generateNamespacesForPackages = !isEsModules)
         val exportData = exportModelGenerator.generateExportWithExternals(files)
 
         doStaticMembersLowering(allModules)
 
         return exportData.map {
-            { generateProgramFragment(it, minimizedMemberNames = false) }
+            { generateProgramFragment(it, minimizedMemberNames = false, internationService) }
         }
     }
 
@@ -207,12 +210,12 @@ class IrModuleToJsTransformer(
 
         val program = JsIrProgram(
             exportData.map { data ->
+                val internationService = DefaultIrInternationService()
+
                 JsIrModule(
                     data.fragment.safeName,
                     data.fragment.externalModuleName(),
-                    data.files.map {
-                        generateProgramFragment(it, mode.minimizedMemberNames)
-                    }
+                    data.files.map { generateProgramFragment(it, mode.minimizedMemberNames, internationService) }
                 )
             }
         )
@@ -222,9 +225,12 @@ class IrModuleToJsTransformer(
 
     private val generateFilePaths = backendContext.configuration.getBoolean(JSConfigurationKeys.GENERATE_COMMENTS_WITH_FILE_PATH)
     private val pathPrefixMap = backendContext.configuration.getMap(JSConfigurationKeys.FILE_PATHS_PREFIX_MAP)
-    private val signatureToTag = hashMapOf<IdSignature, String>()
 
-    private fun generateProgramFragment(fileExports: IrFileExports, minimizedMemberNames: Boolean): JsIrProgramFragment {
+    private fun generateProgramFragment(
+        fileExports: IrFileExports,
+        minimizedMemberNames: Boolean,
+        internationService: IrInternationService
+    ): JsIrProgramFragment {
         val nameGenerator = JsNameLinkingNamer(backendContext, minimizedMemberNames)
 
         val globalNameScope = NameTable<IrDeclaration>()
@@ -314,7 +320,7 @@ class IrModuleToJsTransformer(
 
         fun computeTag(declaration: IrDeclaration): String? {
             val signature = (backendContext.irFactory as IdSignatureRetriever).declarationSignature(declaration)
-            val tag = signature?.let { signatureToTag.getOrPut(it) { it.toString() } }
+            val tag = signature?.let { internationService.signatureTag(it) }
 
             if (tag == null && declaration !in definitionSet) {
                 error("signature for ${declaration.render()} not found")

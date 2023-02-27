@@ -23,18 +23,27 @@ interface IrInternationService {
         return type
     }
 
+    fun signatureTag(signature: IdSignature): String {
+        return signature.toString()
+    }
+
     fun clear() {
 
     }
 }
 
 class DefaultIrInternationService : IrInternationService {
-    private val strings = hashMapOf<String, String>()
-    private val names = hashMapOf<String, Name>()
-    private val simpleTypes = hashMapOf<Pair<IdSignature, SimpleTypeNullability>, IrSimpleType>()
+    private val strings by lazy { hashMapOf<String, String>() }
+    private val names by lazy { hashMapOf<String, Name>() }
+    private val simpleTypes by lazy { hashMapOf<Pair<IdSignature, SimpleTypeNullability>, IrSimpleType>() }
+    private val signatureToTag by lazy { hashMapOf<IdSignature, String>() }
 
     override fun string(string: String): String {
         return strings.getOrPut(string) { string }
+    }
+
+    override fun signatureTag(signature: IdSignature): String {
+        return signatureToTag.getOrPut(signature) { signature.toString() }
     }
 
     override fun name(string: String): Name {

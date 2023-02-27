@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.ir.Symbols
+import org.jetbrains.kotlin.backend.common.serialization.DefaultIrInternationService
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -75,6 +76,7 @@ class JsIrBackendContext(
 
     val polyfills = JsPolyfills()
     val fieldToInitializer = WeakHashMap<IrField, IrExpression>()
+    val globalInternationService = DefaultIrInternationService()
 
     val localClassNames = WeakHashMap<IrClass, String>()
 
