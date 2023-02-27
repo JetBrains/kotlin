@@ -1,7 +1,8 @@
 // !LANGUAGE: +MultiPlatformProjects
 // IGNORE_BACKEND: NATIVE
-// IGNORE_BACKEND_K2: JVM_IR, JS_IR
-// FIR status: default argument mapping in MPP isn't designed yet
+// IGNORE_BACKEND_K2: ANY
+// FIR status: outdated code (expect and actual in the same module)
+
 // FILE: common.kt
 
 public expect fun <T> Array<out T>.copyInto(
