@@ -81,7 +81,9 @@ internal fun prepareData(
         kotlinVersion = kotlinVersion,
         buildUuid = uuid,
         finishTime = System.currentTimeMillis(),
-        compilerArguments = taskExecutionResult?.taskInfo?.compilerArguments?.asList() ?: emptyList()
+        compilerArguments = taskExecutionResult?.taskInfo?.compilerArguments?.asList() ?: emptyList(),
+        gcCountMetrics = buildMetrics?.gcMetrics?.asGcCountMap(),
+        gcTimeMetrics = buildMetrics?.gcMetrics?.asGcTimeMap()
     )
 }
 

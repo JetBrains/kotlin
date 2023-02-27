@@ -85,6 +85,9 @@ internal class PlainTextBuildReportWriter(
         if (newLineBetweenSections) p.println()
 
         printBuildAttributes(buildMetrics.buildAttributes)
+        if (newLineBetweenSections) p.println()
+
+        printGcMetrics(buildMetrics.gcMetrics)
     }
 
     private fun printBuildTimes(buildTimes: BuildTimes) {
@@ -158,6 +161,20 @@ internal class PlainTextBuildReportWriter(
             val attributesByKind = allAttributes.entries.groupBy { it.key.kind }.toSortedMap()
             for ((kind, attributesCounts) in attributesByKind) {
                 printMap(p, kind.name, attributesCounts.map { (k, v) -> k.readableString to v }.toMap())
+            }
+        }
+    }
+
+    private fun printGcMetrics(gcMetrics: GcMetrics) {
+        val allGcMetrics = gcMetrics.asMap()
+        if (allGcMetrics.isEmpty()) return
+        p.withIndent("GC metrics:") {
+            for (gcMetric in allGcMetrics) {
+                p.println("${gcMetric.key}:")
+                p.withIndent {
+                    p.println("GC count: ${gcMetric.value.count}")
+                    p.println("GC time: ${gcMetric.value.time}")
+                }
             }
         }
     }

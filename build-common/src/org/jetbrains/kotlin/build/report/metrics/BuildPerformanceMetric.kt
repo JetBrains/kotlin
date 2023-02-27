@@ -18,6 +18,9 @@ enum class BuildPerformanceMetric(val parent: BuildPerformanceMetric? = null, va
     DAEMON_INCREASED_MEMORY(readableString = "Increase memory usage", type = ValueType.BYTES),
     DAEMON_MEMORY_USAGE(readableString = "Total memory usage at the end of build", type = ValueType.BYTES),
 
+    DAEMON_GC_TIME(readableString = "Time spent in GC", type = ValueType.NANOSECONDS),
+    DAEMON_GC_COUNT(readableString = "Count of GC", type = ValueType.NUMBER),
+
     COMPILE_ITERATION(parent = null, "Total compiler iteration", type = ValueType.NUMBER),
         ANALYZED_LINES_NUMBER(parent = COMPILE_ITERATION, "Number of lines analyzed", type = ValueType.NUMBER),
         CODE_GENERATED_LINES_NUMBER(parent = COMPILE_ITERATION, "Number of lines for code generation", type = ValueType.NUMBER),

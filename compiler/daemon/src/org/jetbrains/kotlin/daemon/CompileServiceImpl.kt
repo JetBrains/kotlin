@@ -23,6 +23,8 @@ import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.report.RemoteBuildReporter
 import org.jetbrains.kotlin.build.report.info
+import org.jetbrains.kotlin.build.report.metrics.endMeasureGc
+import org.jetbrains.kotlin.build.report.metrics.startMeasureGc
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.ExitCode
@@ -532,6 +534,7 @@ abstract class CompileServiceImplBase(
         compilerMessageCollector: MessageCollector,
         reporter: RemoteBuildReporter
     ): ExitCode {
+        reporter.startMeasureGc()
         val allKotlinFiles = arrayListOf<File>()
         val freeArgsWithoutKotlinFiles = arrayListOf<String>()
         args.freeArgs.forEach {
@@ -565,6 +568,7 @@ abstract class CompileServiceImplBase(
         return try {
             compiler.compile(allKotlinFiles, args, compilerMessageCollector, changedFiles)
         } finally {
+            reporter.endMeasureGc()
             reporter.flush()
         }
     }
@@ -575,6 +579,7 @@ abstract class CompileServiceImplBase(
         compilerMessageCollector: MessageCollector,
         reporter: RemoteBuildReporter
     ): ExitCode {
+        reporter.startMeasureGc()
         val allKotlinExtensions = (DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS +
                 (incrementalCompilationOptions.kotlinScriptExtensions ?: emptyArray())).distinct()
         val dotExtensions = allKotlinExtensions.map { ".$it" }
@@ -630,6 +635,7 @@ abstract class CompileServiceImplBase(
         return try {
             compiler.compile(allKotlinFiles, k2jvmArgs, compilerMessageCollector, changedFiles, projectRoot)
         } finally {
+            reporter.endMeasureGc()
             reporter.flush()
         }
     }

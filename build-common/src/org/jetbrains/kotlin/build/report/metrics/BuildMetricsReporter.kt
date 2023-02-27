@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.build.report.metrics
 
+import java.lang.management.ManagementFactory
+
 interface BuildMetricsReporter {
     fun startMeasure(time: BuildTime)
     fun endMeasure(time: BuildTime)
@@ -13,6 +15,11 @@ interface BuildMetricsReporter {
 
     fun addMetric(metric: BuildPerformanceMetric, value: Long)
     fun addTimeMetric(metric: BuildPerformanceMetric)
+
+    //Change metric to enum if possible
+    fun addGcMetric(metric: String, value: GcMetric)
+    fun startGcMetric(name: String, value: GcMetric)
+    fun endGcMetric(name: String, value: GcMetric)
 
     fun addAttribute(attribute: BuildAttribute)
 
@@ -26,5 +33,18 @@ inline fun <T> BuildMetricsReporter.measure(time: BuildTime, fn: () -> T): T {
         return fn()
     } finally {
         endMeasure(time)
+    }
+}
+
+
+fun BuildMetricsReporter.startMeasureGc() {
+    ManagementFactory.getGarbageCollectorMXBeans().forEach {
+        startGcMetric(it.name, GcMetric(it.collectionTime, it.collectionCount))
+    }
+}
+
+fun BuildMetricsReporter.endMeasureGc() {
+    ManagementFactory.getGarbageCollectorMXBeans().forEach {
+        endGcMetric(it.name, GcMetric(it.collectionTime, it.collectionCount))
     }
 }
