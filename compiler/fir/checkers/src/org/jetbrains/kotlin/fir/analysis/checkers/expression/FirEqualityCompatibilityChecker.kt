@@ -112,31 +112,19 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker() {
     private fun ConeKotlinType.isIdentityLess(context: CheckerContext) = isPrimitive || !isNullable && isValueClass(context.session)
 
     private fun shouldReportAsPerRules1(l: TypeInfo, r: TypeInfo, context: CheckerContext): Boolean {
-        return areUnrelatedClasses(l, r, context)
-                || areInterfaceAndUnrelatedFinalClassAccordingly(l, r, context)
-                || areInterfaceAndUnrelatedFinalClassAccordingly(r, l, context)
-    }
+        // Builtins are always final classes, so
+        // we only need to check if one is related
+        // to the other
 
-    private fun areUnrelatedClasses(l: TypeInfo, r: TypeInfo, context: CheckerContext): Boolean {
         fun TypeInfo.isSubclassOf(other: TypeInfo) = when {
             other.enforcesEmptyIntersection -> type.classId == other.type.classId
             else -> notNullType.isSubtypeOf(other.notNullType, context.session)
         }
 
         return when {
-            !l.isClass || !r.isClass -> false
             l.type.isNothingOrNullableNothing || r.type.isNothingOrNullableNothing -> false
             else -> !l.isSubclassOf(r) && !r.isSubclassOf(l)
         }
-    }
-
-    private fun areInterfaceAndUnrelatedFinalClassAccordingly(
-        l: TypeInfo,
-        r: TypeInfo,
-        context: CheckerContext,
-    ): Boolean {
-        return l.isInterface && r.isFinalClass && !r.type.isNothingOrNullableNothing
-                && !r.notNullType.isSubtypeOf(l.notNullType, context.session)
     }
 
     private enum class Applicability {
@@ -287,10 +275,6 @@ private class TypeInfo(val type: ConeKotlinType, session: FirSession) {
 
     val superTypesTraverser = ConeSupertypesTraverser(type.lowerBoundIfFlexible(), session)
 
-    val isClass by superTypesTraverser.anySuperClassSymbol { it.isClass }
-
-    val hasInterfaceSupertype by superTypesTraverser.anySuperClassSymbol { !it.isClass }
-
     val isFinalClass by superTypesTraverser.anySuperClassSymbol { it.isFinalClass }
 
     val isEnumEntry by superTypesTraverser.anySuperClassSymbol { it.isEnumEntry }
@@ -299,8 +283,6 @@ private class TypeInfo(val type: ConeKotlinType, session: FirSession) {
 
     override fun toString() = "$type"
 }
-
-private val TypeInfo.isInterface get() = hasInterfaceSupertype && !isClass
 
 private val TypeInfo.isBuiltin get() = type.isPrimitiveOrNullablePrimitive || type.isStringOrNullableString || isEnumClass
 
