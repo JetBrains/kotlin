@@ -17,10 +17,7 @@ import com.intellij.psi.search.ProjectScope
 import com.intellij.util.io.URLUtil
 import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
-import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtLibraryModule
-import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSdkModule
-import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSourceModule
-import org.jetbrains.kotlin.analysis.project.structure.builder.buildProjectStructureProvider
+import org.jetbrains.kotlin.analysis.project.structure.builder.*
 import org.jetbrains.kotlin.analyzer.common.CommonPlatformAnalyzerServices
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.cli.jvm.config.javaSourceRoots
@@ -154,51 +151,66 @@ internal fun buildKtModuleProviderByCompilerConfiguration(
     project: Project,
     ktFiles: List<KtFile>,
 ): ProjectStructureProvider = buildProjectStructureProvider {
+    val (scriptFiles, ordinaryFiles) = ktFiles.partition { it.isScript() }
     val platform = JvmPlatforms.defaultJvmPlatform
-    addModule(
-        buildKtSourceModule {
-            val moduleName = compilerConfig.get(CommonConfigurationKeys.MODULE_NAME) ?: "<no module name provided>"
 
-            val libraryRoots = compilerConfig.jvmModularRoots + compilerConfig.jvmClasspathRoots
+    fun KtModuleBuilder.addModuleDependencies(moduleName: String) {
+        val libraryRoots = compilerConfig.jvmModularRoots + compilerConfig.jvmClasspathRoots
+        addRegularDependency(
+            buildKtLibraryModule {
+                contentScope = ProjectScope.getLibrariesScope(project)
+                this.platform = platform
+                this.project = project
+                binaryRoots = libraryRoots.map { it.toPath() }
+                libraryName = "Library for $moduleName"
+            }
+        )
+        compilerConfig.get(JVMConfigurationKeys.JDK_HOME)?.let { jdkHome ->
+            val vfm = VirtualFileManager.getInstance()
+            val jdkHomePath = jdkHome.toPath()
+            val jdkHomeVirtualFile = vfm.findFileByNioPath(jdkHomePath)
+            val binaryRoots = LibraryUtils.findClassesFromJdkHome(jdkHomePath).map {
+                Paths.get(URLUtil.extractPath(it))
+            }
             addRegularDependency(
-                buildKtLibraryModule {
-                    contentScope = ProjectScope.getLibrariesScope(project)
+                buildKtSdkModule {
+                    contentScope = GlobalSearchScope.fileScope(project, jdkHomeVirtualFile)
                     this.platform = platform
                     this.project = project
-                    binaryRoots = libraryRoots.map { it.toPath() }
-                    libraryName = "Library for $moduleName"
+                    this.binaryRoots = binaryRoots
+                    sdkName = "JDK for $moduleName"
                 }
-            )
-            compilerConfig.get(JVMConfigurationKeys.JDK_HOME)?.let { jdkHome ->
-                val vfm = VirtualFileManager.getInstance()
-                val jdkHomePath = jdkHome.toPath()
-                val jdkHomeVirtualFile = vfm.findFileByNioPath(jdkHomePath)
-                val binaryRoots = LibraryUtils.findClassesFromJdkHome(jdkHomePath).map {
-                    Paths.get(URLUtil.extractPath(it))
-                }
-                addRegularDependency(
-                    buildKtSdkModule {
-                        contentScope = GlobalSearchScope.fileScope(project, jdkHomeVirtualFile)
-                        this.platform = platform
-                        this.project = project
-                        this.binaryRoots = binaryRoots
-                        sdkName = "JDK for $moduleName"
-                    }
-                )
-            }
-
-            contentScope = TopDownAnalyzerFacadeForJVM.newModuleSearchScope(project, ktFiles)
-            this.platform = platform
-            this.project = project
-            this.moduleName = moduleName
-            addSourceRoots(
-                getPsiFilesFromPaths(
-                    project,
-                    getSourceFilePaths(compilerConfig, includeDirectoryRoot = true)
-                )
             )
         }
-    )
+    }
+
+    for (scriptFile in scriptFiles) {
+        buildKtScriptModule {
+            this.project = project
+            this.platform = platform
+            this.file = scriptFile
+
+            addModuleDependencies("Script " + scriptFile.name)
+        }.apply(::addModule)
+    }
+
+    buildKtSourceModule {
+        this.project = project
+        this.platform = platform
+        this.moduleName = compilerConfig.get(CommonConfigurationKeys.MODULE_NAME) ?: "<no module name provided>"
+
+        addModuleDependencies(moduleName)
+
+        contentScope = TopDownAnalyzerFacadeForJVM.newModuleSearchScope(project, ordinaryFiles)
+        addSourceRoots(
+            getPsiFilesFromPaths(
+                project,
+                getSourceFilePaths(compilerConfig, includeDirectoryRoot = true)
+            )
+        )
+    }.apply(::addModule)
+
+
     this.platform = platform
     this.project = project
 }

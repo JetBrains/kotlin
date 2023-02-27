@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveCompone
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirTowerContextProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableModuleSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirDeclarationForCompiledElementSearcher
@@ -49,6 +50,9 @@ internal abstract class LLFirResolvableResolveSession(
     override fun getSessionFor(module: KtModule): LLFirSession =
         sessionProvider.getSession(module)
 
+    protected open fun getResolvableSessionFor(module: KtModule): LLFirResolvableModuleSession =
+        sessionProvider.getResolvableSession(module)
+
     override fun getScopeSessionFor(firSession: FirSession): ScopeSession {
         requireIsInstance<LLFirSession>(firSession)
         return firSession.getScopeSession()
@@ -66,7 +70,7 @@ internal abstract class LLFirResolvableResolveSession(
 
     protected fun getModuleComponentsForElement(element: KtElement): LLFirModuleResolveComponents {
         val ktModule = element.getKtModule()
-        return sessionProvider.getResolvableSession(ktModule).moduleComponents
+        return getResolvableSessionFor(ktModule).moduleComponents
     }
 
     override fun resolveToFirSymbol(
@@ -86,7 +90,7 @@ internal abstract class LLFirResolvableResolveSession(
         }
 
         val ktModule = ktDeclaration.getKtModule(project)
-        val firSession = sessionProvider.getSession(ktModule)
+        val firSession = getSessionFor(ktModule)
         val searcher = FirDeclarationForCompiledElementSearcher(firSession.symbolProvider)
         val firDeclaration = searcher.findNonLocalDeclaration(ktDeclaration)
         return firDeclaration.symbol
@@ -107,7 +111,7 @@ internal abstract class LLFirResolvableResolveSession(
             }
 
         if (ktDeclaration == nonLocalNamedDeclaration) {
-            val session = sessionProvider.getResolvableSession(module)
+            val session = getResolvableSessionFor(module)
             return nonLocalNamedDeclaration.findSourceNonLocalFirDeclaration(
                 firFileBuilder = session.moduleComponents.firFileBuilder,
                 provider = session.firProvider,

@@ -40,6 +40,10 @@ class LLFirSessionProviderStorage(val project: Project) {
             createSessionProviderForLibraryOrLibrarySource(useSiteKtModule, configureSession)
         }
 
+        is KtScriptModule -> {
+            createSessionProviderForScriptSession(useSiteKtModule, configureSession)
+        }
+
         is KtNotUnderContentRootModule -> {
             createSessionProviderForNotUnderContentRootSession(useSiteKtModule, configureSession)
         }
@@ -82,6 +86,25 @@ class LLFirSessionProviderStorage(val project: Project) {
                 libraryAsUseSiteSessionCache.sessionInvalidator,
                 builtInsSessionFactory.getBuiltinsSession(useSiteKtModule.platform),
                 sessions,
+                configureSession = configureSession,
+            )
+            sessions to session
+        }
+        return LLFirSessionProvider(project, session, KtModuleToSessionMappingByWeakValueMapImpl(sessions))
+    }
+
+    private fun createSessionProviderForScriptSession(
+        useSiteKtModule: KtScriptModule,
+        configureSession: (LLFirSession.() -> Unit)?
+    ): LLFirSessionProvider {
+        val (sessions, session) = sourceAsUseSiteSessionCache.withMappings(project) { mappings ->
+            val sessions = mutableMapOf<KtModule, LLFirSession>().apply { putAll(mappings) }
+            val session = LLFirSessionFactory.createScriptSession(
+                project,
+                useSiteKtModule,
+                sourceAsUseSiteSessionCache.sessionInvalidator,
+                sessions,
+                librariesSessionFactory,
                 configureSession = configureSession,
             )
             sessions to session
@@ -189,6 +212,8 @@ private class FirSessionWithModificationTracker(
         val outOfBlockTracker = when (ktModule) {
             is KtSourceModule -> trackerFactory.createModuleWithoutDependenciesOutOfBlockModificationTracker(ktModule)
             is KtNotUnderContentRootModule -> ModificationTracker { ktModule.file?.modificationStamp ?: 0 }
+            is KtScriptModule -> ModificationTracker { ktModule.file.modificationStamp }
+            is KtScriptDependencyModule -> ModificationTracker { ktModule.file?.modificationStamp ?: 0 }
             else -> null
         }
         modificationTracker = CompositeModificationTracker.create(

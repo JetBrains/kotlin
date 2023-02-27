@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionProv
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirLibraryOrLibrarySourceResolvableResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirNotUnderContentRootResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirResolvableResolveSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirScriptResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirSourceResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.analysis.project.structure.*
@@ -66,6 +67,15 @@ internal class LLFirResolveSessionService(project: Project) {
                         sessionProviderStorage.project,
                         useSiteKtModule,
                         sessionProvider,
+                    )
+                }
+
+                is KtScriptModule -> {
+                    LLFirScriptResolveSession(
+                        useSiteSession.moduleComponents.globalResolveComponents,
+                        sessionProviderStorage.project,
+                        useSiteKtModule,
+                        sessionProvider
                     )
                 }
 

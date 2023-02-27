@@ -100,6 +100,10 @@ private fun collectDesignationPath(target: FirElementWithResolvePhase): List<Fir
             return if (target.diagnostic == ConeDestructuringDeclarationsOnTopLevel) emptyList() else null
         }
 
+        is FirScript -> {
+            return emptyList()
+        }
+
         else -> {
             return null
         }
@@ -239,14 +243,14 @@ fun FirElementWithResolvePhase.tryCollectDesignation(): FirDesignation? =
 
 fun FirElementWithResolvePhase.tryCollectDesignationWithFile(): FirDesignationWithFile? {
     return when (this) {
+        is FirScript, is FirFileAnnotationsContainer -> {
+            val firFile = getContainingFile() ?: return null
+            FirDesignationWithFile(path = emptyList(), this, firFile)
+        }
         is FirDeclaration -> {
             val path = collectDesignationPath(this) ?: return null
             val firFile = getContainingFile() ?: return null
             FirDesignationWithFile(path, this, firFile)
-        }
-        is FirFileAnnotationsContainer -> {
-            val firFile = getContainingFile() ?: return null
-            FirDesignationWithFile(path = emptyList(), this, firFile)
         }
         else -> unexpectedElementError<FirElementWithResolvePhase>(this)
     }
