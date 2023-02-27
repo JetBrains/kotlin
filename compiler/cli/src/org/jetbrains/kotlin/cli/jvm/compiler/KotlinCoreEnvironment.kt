@@ -515,6 +515,8 @@ class KotlinCoreEnvironment private constructor(
                     })
                 }
                 try {
+                    val disposeAppEnv =
+                        CompilerSystemProperties.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY.value.toBooleanLenient() != true
                     // Disposer uses identity of passed object to deduplicate registered disposables
                     // We should everytime pass new instance to avoid un-registering from previous one
                     @Suppress("ObjectLiteralToLambda")
@@ -528,7 +530,7 @@ class KotlinCoreEnvironment private constructor(
                                     // Do not use this property unless you sure need it, causes Application to MEMORY LEAK
                                     // Only valid use-case is when Application should be cached to avoid
                                     // initialization costs
-                                    if (CompilerSystemProperties.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY.value.toBooleanLenient() != true) {
+                                    if (disposeAppEnv) {
                                         disposeApplicationEnvironment()
                                     } else {
                                         ourApplicationEnvironment?.idleCleanup()
