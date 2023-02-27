@@ -182,8 +182,11 @@ object KtDeclarationAndFirDeclarationEqualityChecker {
         psiTypeReference: KtTypeReference,
         coneTypeReference: FirTypeRef,
         isVararg: Boolean
-    ): Boolean =
-        psiTypeReference.toKotlinTypReference().renderTypeAsKotlinType(isVararg) == coneTypeReference.renderTypeAsKotlinType()
+    ): Boolean {
+        val psiText = psiTypeReference.toKotlinTypReference().renderTypeAsKotlinType(isVararg)
+        val firText = coneTypeReference.renderTypeAsKotlinType(isVararg)
+        return psiText == firText
+    }
 
     @Suppress("DEPRECATION_ERROR")
     private fun KtTypeReference.toKotlinTypReference(): FirTypeRef {
