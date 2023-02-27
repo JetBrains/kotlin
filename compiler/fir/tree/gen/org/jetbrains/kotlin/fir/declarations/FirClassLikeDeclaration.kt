@@ -39,8 +39,6 @@ sealed class FirClassLikeDeclaration : FirMemberDeclaration(), FirStatement {
 
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
-    abstract override fun replaceAttributes(newAttributes: FirDeclarationAttributes)
-
     abstract override fun replaceStatus(newStatus: FirDeclarationStatus)
 
     abstract fun replaceDeprecationsProvider(newDeprecationsProvider: DeprecationsProvider)

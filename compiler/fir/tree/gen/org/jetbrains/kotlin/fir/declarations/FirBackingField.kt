@@ -57,15 +57,11 @@ abstract class FirBackingField : FirVariable(), FirTypeParametersOwner, FirState
 
     abstract override fun replaceResolveState(newResolveState: FirResolveState)
 
-    abstract override fun replaceAttributes(newAttributes: FirDeclarationAttributes)
-
     abstract override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef)
 
     abstract override fun replaceReceiverParameter(newReceiverParameter: FirReceiverParameter?)
 
     abstract override fun replaceDeprecationsProvider(newDeprecationsProvider: DeprecationsProvider)
-
-    abstract override fun replaceDispatchReceiverType(newDispatchReceiverType: ConeSimpleKotlinType?)
 
     abstract override fun replaceContextReceivers(newContextReceivers: List<FirContextReceiver>)
 

@@ -151,8 +151,6 @@ class FirFieldImpl @FirImplementationDetail constructor(
         resolveState = newResolveState
     }
 
-    override fun replaceAttributes(newAttributes: FirDeclarationAttributes) {}
-
     override fun replaceStatus(newStatus: FirDeclarationStatus) {
         status = newStatus
     }
@@ -166,8 +164,6 @@ class FirFieldImpl @FirImplementationDetail constructor(
     override fun replaceDeprecationsProvider(newDeprecationsProvider: DeprecationsProvider) {
         deprecationsProvider = newDeprecationsProvider
     }
-
-    override fun replaceDispatchReceiverType(newDispatchReceiverType: ConeSimpleKotlinType?) {}
 
     override fun replaceContextReceivers(newContextReceivers: List<FirContextReceiver>) {
         contextReceivers = newContextReceivers.toMutableOrEmpty()

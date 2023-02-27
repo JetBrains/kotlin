@@ -64,6 +64,4 @@ internal class FirDanglingModifierListImpl(
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
         annotations = newAnnotations.toMutableOrEmpty()
     }
-
-    override fun replaceAttributes(newAttributes: FirDeclarationAttributes) {}
 }

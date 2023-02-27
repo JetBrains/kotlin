@@ -69,8 +69,6 @@ internal class FirAnonymousInitializerImpl(
 
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {}
 
-    override fun replaceAttributes(newAttributes: FirDeclarationAttributes) {}
-
     override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {
         controlFlowGraphReference = newControlFlowGraphReference
     }

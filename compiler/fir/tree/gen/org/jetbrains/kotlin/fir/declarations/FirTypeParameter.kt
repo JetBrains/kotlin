@@ -42,8 +42,6 @@ abstract class FirTypeParameter : FirTypeParameterRef, FirDeclaration() {
 
     abstract override fun replaceResolveState(newResolveState: FirResolveState)
 
-    abstract override fun replaceAttributes(newAttributes: FirDeclarationAttributes)
-
     abstract fun replaceBounds(newBounds: List<FirTypeRef>)
 
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)

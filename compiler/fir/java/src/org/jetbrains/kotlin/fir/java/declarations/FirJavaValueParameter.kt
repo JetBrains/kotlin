@@ -193,16 +193,8 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
     override fun replaceSetter(newSetter: FirPropertyAccessor?) {
     }
 
-    override fun replaceAttributes(newAttributes: FirDeclarationAttributes) {
-        thrownFieldInJavaDeclarationCannotBeReplacedError(::attributes)
-    }
-
     override fun replaceStatus(newStatus: FirDeclarationStatus) {
         thrownFieldInJavaDeclarationCannotBeReplacedError(::status)
-    }
-
-    override fun replaceDispatchReceiverType(newDispatchReceiverType: ConeSimpleKotlinType?) {
-        thrownFieldInJavaDeclarationCannotBeReplacedError(::dispatchReceiverType)
     }
 
     override fun replaceContextReceivers(newContextReceivers: List<FirContextReceiver>) {

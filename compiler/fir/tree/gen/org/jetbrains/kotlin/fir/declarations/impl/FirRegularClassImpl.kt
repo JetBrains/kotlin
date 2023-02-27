@@ -114,8 +114,6 @@ internal class FirRegularClassImpl(
         resolveState = newResolveState
     }
 
-    override fun replaceAttributes(newAttributes: FirDeclarationAttributes) {}
-
     override fun replaceStatus(newStatus: FirDeclarationStatus) {
         status = newStatus
     }

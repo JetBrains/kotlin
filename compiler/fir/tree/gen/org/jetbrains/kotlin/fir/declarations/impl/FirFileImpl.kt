@@ -94,6 +94,4 @@ internal class FirFileImpl(
     }
 
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {}
-
-    override fun replaceAttributes(newAttributes: FirDeclarationAttributes) {}
 }

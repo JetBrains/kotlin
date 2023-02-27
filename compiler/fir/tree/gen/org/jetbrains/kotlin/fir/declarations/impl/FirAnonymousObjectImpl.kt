@@ -106,8 +106,6 @@ internal class FirAnonymousObjectImpl(
         resolveState = newResolveState
     }
 
-    override fun replaceAttributes(newAttributes: FirDeclarationAttributes) {}
-
     override fun replaceStatus(newStatus: FirDeclarationStatus) {
         status = newStatus
     }

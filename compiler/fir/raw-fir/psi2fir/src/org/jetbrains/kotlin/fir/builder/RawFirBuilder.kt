@@ -54,6 +54,10 @@ open class RawFirBuilder(
     bodyBuildingMode: BodyBuildingMode = BodyBuildingMode.NORMAL
 ) : BaseFirBuilder<PsiElement>(session) {
     protected open fun bindFunctionTarget(target: FirFunctionTarget, function: FirFunction) = target.bind(function)
+    protected open fun FirFunctionBuilder.additionalFunctionInit() {}
+    protected open fun FirPropertyBuilder.additionalPropertyInit() {}
+    protected open fun FirPropertyAccessorBuilder.additionalPropertyAccessorInit() {}
+    protected open fun FirBackingFieldBuilder.additionalBackingFieldInit() {}
 
     var mode: BodyBuildingMode = bodyBuildingMode
         private set
@@ -479,6 +483,8 @@ open class RawFirBuilder(
                             this.contractDescription = it
                         }
                         this.propertySymbol = propertySymbol
+
+                        additionalPropertyAccessorInit()
                     }.also {
                         it.initContainingClassAttr()
                         bindFunctionTarget(accessorTarget, it)
@@ -558,6 +564,8 @@ open class RawFirBuilder(
                     this.initializer = backingFieldInitializer
                     this.isVar = property.isVar
                     this.isVal = !property.isVar
+
+                    additionalBackingFieldInit()
                 }
             } else {
                 FirDefaultPropertyBackingField(
@@ -1494,6 +1502,7 @@ open class RawFirBuilder(
                     }
                 }
                 context.firFunctionTargets.removeLast()
+                additionalFunctionInit()
             }.build().also {
                 bindFunctionTarget(target, it)
                 if (it is FirSimpleFunction) {
@@ -1839,6 +1848,7 @@ open class RawFirBuilder(
                 }
 
                 contextReceivers.addAll(convertContextReceivers(this@toFirProperty.contextReceivers))
+                additionalPropertyInit()
             }.also {
                 if (!isLocal) {
                     fillDanglingConstraintsTo(it)

@@ -16,6 +16,10 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.SingleNonLoca
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.RawFirNonLocalDeclarationBuilder
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.builder.FirBackingFieldBuilder
+import org.jetbrains.kotlin.fir.declarations.builder.FirDeclarationBuilder
+import org.jetbrains.kotlin.fir.declarations.builder.FirFunctionBuilder
+import org.jetbrains.kotlin.fir.declarations.builder.FirPropertyBuilder
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -106,13 +110,15 @@ internal class ReanalyzableFunctionStructureElement(
         val originalFunction = firSymbol.fir as FirSimpleFunction
         val originalDesignation = originalFunction.collectDesignation()
 
-        val newFunction = RawFirNonLocalDeclarationBuilder.buildWithReplacement(
+        val newFunction = RawFirNonLocalDeclarationBuilder.buildNewSimpleFunction(
             session = originalFunction.moduleData.session,
             scopeProvider = originalFunction.moduleData.session.kotlinScopeProvider,
             designation = originalDesignation,
-            rootNonLocalDeclaration = newKtDeclaration,
-            replacement = null,
-        ) as FirSimpleFunction
+            newFunction = newKtDeclaration,
+            additionalFunctionInit = {
+                copyUnmodifiableFields(originalFunction)
+            },
+        )
 
         newFunction.apply {
             copyAllExceptBodyForFunction(originalFunction)
@@ -144,13 +150,27 @@ internal class ReanalyzablePropertyStructureElement(
         val originalProperty = firSymbol.fir
         val originalDesignation = originalProperty.collectDesignation()
 
-        val newProperty = RawFirNonLocalDeclarationBuilder.buildWithReplacement(
+        val newProperty = RawFirNonLocalDeclarationBuilder.buildNewProperty(
             session = originalProperty.moduleData.session,
             scopeProvider = originalProperty.moduleData.session.kotlinScopeProvider,
             designation = originalDesignation,
-            rootNonLocalDeclaration = newKtDeclaration,
-            replacement = null,
-        ) as FirProperty
+            newProperty = newKtDeclaration,
+            additionalPropertyInit = {
+                copyUnmodifiableFields(originalProperty)
+            },
+            additionalAccessorInit = {
+                copyUnmodifiableFields(
+                    if (isGetter) {
+                        originalProperty.getter!!
+                    } else {
+                        originalProperty.setter!!
+                    }
+                )
+            },
+            additionalBackingFieldInit = {
+                copyUnmodifiableFields(originalProperty.backingField!!)
+            },
+        )
 
         newProperty.apply {
             copyAllExceptBodyFromCallable(originalProperty)
@@ -298,6 +318,24 @@ private fun <C : FirCallableDeclaration> C.bodyResolveInAir(
     )
 }
 
+private fun FirPropertyBuilder.copyUnmodifiableFields(prototype: FirProperty) {
+    copyAttributes(prototype)
+    dispatchReceiverType = prototype.dispatchReceiverType
+}
+
+private fun FirFunctionBuilder.copyUnmodifiableFields(prototype: FirFunction) {
+    copyAttributes(prototype)
+    dispatchReceiverType = prototype.dispatchReceiverType
+}
+
+private fun FirBackingFieldBuilder.copyUnmodifiableFields(prototype: FirBackingField) {
+    attributes = prototype.attributes
+    dispatchReceiverType = prototype.dispatchReceiverType
+}
+
+private fun FirDeclarationBuilder.copyAttributes(prototype: FirCallableDeclaration) {
+    attributes = prototype.attributes
+}
 
 private fun <F : FirFunction> F.copyAllExceptBodyForFunction(prototype: F) {
     this.copyAllExceptBodyFromCallable(prototype)
@@ -315,8 +353,6 @@ private fun <C : FirCallableDeclaration> C.copyAllExceptBodyFromCallable(prototy
     this.replaceStatus(prototype.status)
     this.replaceDeprecationsProvider(prototype.deprecationsProvider)
     this.replaceContextReceivers(prototype.contextReceivers)
-    this.replaceDispatchReceiverType(prototype.dispatchReceiverType)
-    this.replaceAttributes(prototype.attributes)
 
     // TODO add replaceTypeParameter to FirCallableDeclaration instead of this unsafe case
     (this.typeParameters as MutableList<FirTypeParameterRef>).apply {

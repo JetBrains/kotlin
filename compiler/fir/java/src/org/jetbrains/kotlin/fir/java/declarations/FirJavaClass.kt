@@ -130,10 +130,6 @@ class FirJavaClass @FirImplementationDetail internal constructor(
         thrownFieldInJavaDeclarationCannotBeReplacedError(::annotations)
     }
 
-    override fun replaceAttributes(newAttributes: FirDeclarationAttributes) {
-        thrownFieldInJavaDeclarationCannotBeReplacedError(::attributes)
-    }
-
     override fun replaceStatus(newStatus: FirDeclarationStatus) {
         status = newStatus
     }
