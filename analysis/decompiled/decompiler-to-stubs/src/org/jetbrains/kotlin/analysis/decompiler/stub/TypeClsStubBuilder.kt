@@ -43,10 +43,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
 
         val typeReference = KotlinPlaceHolderStubImpl<KtTypeReference>(parent, KtStubElementTypes.TYPE_REFERENCE)
 
-        val annotations = c.components.annotationLoader.loadTypeAnnotations(type, c.nameResolver).filterNot {
-            val isTopLevelClass = !it.classId.isNestedClass
-            isTopLevelClass && it.classId.asSingleFqName() in ANNOTATIONS_NOT_LOADED_FOR_TYPES
-        }
+        val annotations = c.components.annotationLoader.loadTypeAnnotations(type, c.nameResolver)
 
         val allAnnotations = additionalAnnotations() + annotations.map { AnnotationWithTarget(it, null) }
 

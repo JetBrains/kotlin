@@ -13,6 +13,7 @@ import com.intellij.psi.stubs.PsiFileStub
 import com.intellij.util.indexing.FileContent
 import org.jetbrains.kotlin.SpecialJvmAnnotations
 import org.jetbrains.kotlin.analysis.decompiler.stub.*
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.stubs.KotlinStubVersions
 import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
+import org.jetbrains.kotlin.serialization.deserialization.getName
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -155,9 +157,41 @@ private class AnnotationLoaderForClassFileStubBuilder(
         return null
     }
 
-    override fun loadTypeAnnotation(proto: ProtoBuf.Annotation, nameResolver: NameResolver): AnnotationWithArgs =
-        AnnotationWithArgs(nameResolver.getClassId(proto.id), emptyMap())
+    override fun loadTypeAnnotation(proto: ProtoBuf.Annotation, nameResolver: NameResolver): AnnotationWithArgs {
+        val args = proto.argumentList.associate { nameResolver.getName(it.nameId) to toConstantValue(it.value, nameResolver) }
+        return AnnotationWithArgs(nameResolver.getClassId(proto.id), args)
+    }
 
+    fun toConstantValue(value: ProtoBuf.Annotation.Argument.Value, nameResolver: NameResolver): ConstantValue<*> {
+        val isUnsigned = Flags.IS_UNSIGNED.get(value.flags)
+
+        fun <T, R> T.letIf(predicate: Boolean, f: (T) -> R, g: (T) -> R): R =
+            if (predicate) f(this) else g(this)
+
+        return when (value.type) {
+            ProtoBuf.Annotation.Argument.Value.Type.BYTE -> value.intValue.toByte().letIf(isUnsigned, ::UByteValue, ::ByteValue)
+            ProtoBuf.Annotation.Argument.Value.Type.CHAR -> CharValue(value.intValue.toInt().toChar())
+            ProtoBuf.Annotation.Argument.Value.Type.SHORT -> value.intValue.toShort().letIf(isUnsigned, ::UShortValue, ::ShortValue)
+            ProtoBuf.Annotation.Argument.Value.Type.INT -> value.intValue.toInt().letIf(isUnsigned, ::UIntValue, ::IntValue)
+            ProtoBuf.Annotation.Argument.Value.Type.LONG -> value.intValue.letIf(isUnsigned, ::ULongValue, ::LongValue)
+            ProtoBuf.Annotation.Argument.Value.Type.FLOAT -> FloatValue(value.floatValue)
+            ProtoBuf.Annotation.Argument.Value.Type.DOUBLE -> DoubleValue(value.doubleValue)
+            ProtoBuf.Annotation.Argument.Value.Type.BOOLEAN -> BooleanValue(value.intValue != 0L)
+            ProtoBuf.Annotation.Argument.Value.Type.STRING -> StringValue(nameResolver.getString(value.stringValue))
+            ProtoBuf.Annotation.Argument.Value.Type.CLASS -> KClassValue(nameResolver.getClassId(value.classId), value.arrayDimensionCount)
+            ProtoBuf.Annotation.Argument.Value.Type.ENUM -> EnumValue(
+                nameResolver.getClassId(value.classId),
+                nameResolver.getName(value.enumValueId)
+            )
+            //todo
+            //ProtoBuf.Annotation.Argument.Value.Type.ANNOTATION -> AnnotationValue(deserializeAnnotation(value.annotation, nameResolver))
+            ProtoBuf.Annotation.Argument.Value.Type.ARRAY -> ConstantValueFactory.createArrayValue(
+                value.arrayElementList.map { toConstantValue(it, nameResolver) },
+                DefaultBuiltIns.Instance.anyType
+            )
+            else -> error("Unsupported annotation argument type: ${value.type}")
+        }
+    }
 
     override fun loadAnnotation(
         annotationClassId: ClassId, source: SourceElement, result: MutableList<AnnotationWithArgs>
