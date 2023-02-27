@@ -38,6 +38,7 @@ class KotlinWithJavaCompilationFactory<KotlinOptionsType : KotlinCommonOptions, 
         }
 
         val compilationImplFactory = KotlinCompilationImplFactory(
+            processResourcesTaskNameFactory = { _, _ -> javaSourceSet.processResourcesTaskName },
             compilerOptionsFactory = { _, _ ->
                 val compilerOptions = compilerOptionsFactory()
                 val kotlinOptions = kotlinOptionsFactory(compilerOptions.options)

@@ -11,13 +11,11 @@ import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.InternalKotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.targets
 import org.jetbrains.kotlin.gradle.util.buildProjectWithJvm
-import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class ResourcesTasksTest {
     @Test
-    @Ignore
     fun `test - default resources task names are consistent`() {
         val project = buildProjectWithJvm()
         val jvmTarget = project.kotlinExtension.targets.single()
