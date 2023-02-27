@@ -34,7 +34,7 @@ internal val JavaModifierListOwner.modality: Modality
         else -> Modality.OPEN
     }
 
-internal val JavaClass.modality: Modality
+val JavaClass.modality: Modality
     get() = when {
         isAnnotationType || isEnum -> Modality.FINAL
         isSealed -> Modality.SEALED
@@ -43,7 +43,7 @@ internal val JavaClass.modality: Modality
         else -> Modality.OPEN
     }
 
-internal val JavaClass.classKind: ClassKind
+val JavaClass.classKind: ClassKind
     get() = when {
         isAnnotationType -> ClassKind.ANNOTATION_CLASS
         isInterface -> ClassKind.INTERFACE

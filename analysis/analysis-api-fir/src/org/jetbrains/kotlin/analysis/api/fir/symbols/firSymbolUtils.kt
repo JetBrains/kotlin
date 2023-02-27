@@ -8,12 +8,20 @@
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.KtInitializerValue
 import org.jetbrains.kotlin.analysis.api.base.KtContextReceiver
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KtFirClassLikeSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.asKtInitializerValue
 import org.jetbrains.kotlin.analysis.api.impl.base.KtContextReceiverImpl
+import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.CanNotCreateSymbolPointerForLocalLibraryDeclarationException
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.UnsupportedSymbolKind
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.utils.printer.getElementTextInContext
@@ -57,6 +65,13 @@ internal fun <D> FirBasedSymbol<D>.createKtTypeParameters(
     }
 }
 
+internal fun <D> FirBasedSymbol<D>.createRegularKtTypeParameters(
+    builder: KtSymbolByFirBuilder,
+): List<KtFirTypeParameterSymbol> where D : FirTypeParameterRefsOwner, D : FirDeclaration {
+    return fir.typeParameters.filterIsInstance<FirTypeParameter>().map { typeParameter ->
+        builder.classifierBuilder.buildTypeParameterSymbol(typeParameter.symbol)
+    }
+}
 
 internal fun FirCallableSymbol<*>.createContextReceivers(
     builder: KtSymbolByFirBuilder
@@ -108,4 +123,19 @@ internal fun FirVariableSymbol<*>.getKtConstantInitializer(resolveSession: LLFir
         ?.toRegularClassSymbol(resolveSession.useSiteFirSession)
         ?.classKind == ClassKind.ANNOTATION_CLASS
     return firInitializer.asKtInitializerValue(moduleData.session, parentIsAnnotation)
+}
+
+context(KtAnalysisSession)
+internal fun KtNamedClassOrObjectSymbol.createNamedClassOrObjectSymbolPointer(): KtSymbolPointer<KtNamedClassOrObjectSymbol> {
+    KtPsiBasedSymbolPointer.createForSymbolFromSource<KtNamedClassOrObjectSymbol>(this)?.let { return it }
+
+    return when (val symbolKind = symbolKind) {
+        KtSymbolKind.LOCAL ->
+            throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException(classIdIfNonLocal?.asString() ?: name.asString())
+
+        KtSymbolKind.CLASS_MEMBER, KtSymbolKind.TOP_LEVEL ->
+            KtFirClassLikeSymbolPointer(classIdIfNonLocal!!, KtNamedClassOrObjectSymbol::class)
+
+        else -> throw UnsupportedSymbolKind(this::class, symbolKind)
+    }
 }
