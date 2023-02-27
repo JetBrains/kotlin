@@ -111,9 +111,7 @@ class ClassCodegen private constructor(
 
     private val jvmSignatureClashDetector = JvmSignatureClashDetector(this)
 
-    private val classOrigin = irClass.descriptorOrigin
-
-    private val visitor = state.factory.newVisitor(classOrigin, type, irClass.fileParent.loadSourceFilesInfo()).apply {
+    private val visitor = state.factory.newVisitor(irClass.descriptorOrigin, type, irClass.fileParent.loadSourceFilesInfo()).apply {
         val signature = typeMapper.mapClassSignature(irClass, type, context.state.classBuilderMode.generateBodies)
         // Ensure that the backend only produces class names that would be valid in the frontend for JVM.
         if (context.state.classBuilderMode.generateBodies && signature.hasInvalidName()) {
@@ -218,7 +216,7 @@ class ClassCodegen private constructor(
         generateInnerAndOuterClasses()
 
         visitor.done(state.generateSmapCopyToAnnotation)
-        jvmSignatureClashDetector.reportErrors(classOrigin)
+        jvmSignatureClashDetector.reportErrors()
     }
 
     private fun shouldSkipCodeGenerationAccordingToGenerationFilter(): Boolean {

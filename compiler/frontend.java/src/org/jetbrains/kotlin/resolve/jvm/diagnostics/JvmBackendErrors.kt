@@ -43,20 +43,14 @@ object KtDefaultJvmErrorMessages : BaseDiagnosticRendererFactory() {
 
     @JvmField
     val CONFLICTING_JVM_DECLARATIONS_DATA = Renderer<ConflictingJvmDeclarationsData> {
-        val renderedDescriptors: List<DeclarationDescriptor?> =
-            it.signatureOrigins.mapNotNull(
-                JvmDeclarationOrigin::descriptor
-            ).sortedWith(MemberComparator.INSTANCE)
-        val renderingContext: RenderingContext =
-            RenderingContext.Impl(renderedDescriptors)
+        val renderedDescriptors = it.signatureDescriptors.sortedWith(MemberComparator.INSTANCE)
+        val renderingContext = RenderingContext.Impl(renderedDescriptors)
         """
                 The following declarations have the same JVM signature (${it.signature.name}${it.signature.desc}):
                 
                 """.trimIndent() +
-                join(renderedDescriptors.map { descriptor: DeclarationDescriptor? ->
-                    "    " + Renderers.WITHOUT_MODIFIERS.render(
-                        descriptor!!, renderingContext
-                    )
+                join(renderedDescriptors.map { descriptor ->
+                    "    " + Renderers.WITHOUT_MODIFIERS.render(descriptor, renderingContext)
                 }, "\n")
     }
 

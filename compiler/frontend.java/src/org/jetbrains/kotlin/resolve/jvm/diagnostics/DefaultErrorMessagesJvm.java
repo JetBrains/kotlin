@@ -12,8 +12,9 @@ import org.jetbrains.kotlin.resolve.MemberComparator;
 import org.jetbrains.kotlin.utils.StringsKt;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
-import static kotlin.collections.CollectionsKt.*;
+import static kotlin.collections.CollectionsKt.map;
 import static org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers.STRING;
 import static org.jetbrains.kotlin.diagnostics.rendering.Renderers.*;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.*;
@@ -22,10 +23,8 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
 
     private static final DiagnosticParameterRenderer<ConflictingJvmDeclarationsData> CONFLICTING_JVM_DECLARATIONS_DATA =
             (data, context) -> {
-                List<DeclarationDescriptor> renderedDescriptors = sortedWith(
-                        mapNotNull(data.getSignatureOrigins(), JvmDeclarationOrigin::getDescriptor),
-                        MemberComparator.INSTANCE
-                );
+                List<DeclarationDescriptor> renderedDescriptors =
+                        data.getSignatureDescriptors().stream().sorted(MemberComparator.INSTANCE).collect(Collectors.toList());
                 RenderingContext renderingContext = new RenderingContext.Impl(renderedDescriptors);
                 return "The following declarations have the same JVM signature " +
                        "(" + data.getSignature().getName() + data.getSignature().getDesc() + "):\n" +
