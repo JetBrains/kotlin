@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.psi.PsiSourceManager
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.MultifileFacadeFileEntry
+import org.jetbrains.kotlin.backend.jvm.extensions.JvmIrDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.mapping.IrTypeMapper
 import org.jetbrains.kotlin.backend.jvm.mapping.MethodSignatureMapper
@@ -33,7 +34,6 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -59,7 +59,9 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPropertyDelegate
 import org.jetbrains.kotlin.resolve.jvm.checkers.JvmSimpleNameBacktickChecker
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.*
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.MemberKind
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.RawSignature
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmClassSignature
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.org.objectweb.asm.*
@@ -525,17 +527,17 @@ class ClassCodegen private constructor(
         }
     }
 
-    private val IrDeclaration.descriptorOrigin: JvmDeclarationOrigin
+    private val IrDeclaration.descriptorOrigin: JvmIrDeclarationOrigin
         get() {
             val psiElement = findPsiElementForDeclarationOrigin()
             return when {
                 origin == IrDeclarationOrigin.FILE_CLASS ->
-                    JvmDeclarationOrigin(JvmDeclarationOriginKind.PACKAGE_PART, psiElement, toIrBasedDescriptor())
+                    JvmIrDeclarationOrigin(JvmDeclarationOriginKind.PACKAGE_PART, psiElement, this)
                 (this is IrSimpleFunction && isSuspend && isEffectivelyInlineOnly()) ||
                         origin == JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE ||
                         origin == JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE ->
-                    JvmDeclarationOrigin(JvmDeclarationOriginKind.INLINE_VERSION_OF_SUSPEND_FUN, psiElement, toIrBasedDescriptor())
-                else -> OtherOrigin(psiElement, toIrBasedDescriptor())
+                    JvmIrDeclarationOrigin(JvmDeclarationOriginKind.INLINE_VERSION_OF_SUSPEND_FUN, psiElement, this)
+                else -> JvmIrDeclarationOrigin(JvmDeclarationOriginKind.OTHER, psiElement, this)
             }
         }
 
