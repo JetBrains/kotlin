@@ -37,6 +37,10 @@ internal class KtFe10SymbolProvider(
         return KtFe10FileSymbol(psi, analysisContext)
     }
 
+    override fun getScriptSymbol(psi: KtScript): KtScriptSymbol {
+        return KtFe10PsiScriptSymbol(psi, analysisContext)
+    }
+
     override fun getParameterSymbol(psi: KtParameter): KtVariableLikeSymbol {
         return when {
             psi.isFunctionTypeParameter -> error("Function type parameters are not supported in getParameterSymbol()")

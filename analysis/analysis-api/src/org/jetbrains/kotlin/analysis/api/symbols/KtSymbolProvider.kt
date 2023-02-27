@@ -31,11 +31,13 @@ public abstract class KtSymbolProvider : KtAnalysisSessionComponent() {
         is KtPropertyAccessor -> getPropertyAccessorSymbol(psi)
         is KtClassInitializer -> getClassInitializerSymbol(psi)
         is KtDestructuringDeclarationEntry -> getDestructuringDeclarationEntrySymbol(psi)
+        is KtScript -> getScriptSymbol(psi)
         else -> error("Cannot build symbol for ${psi::class}")
     }
 
     public abstract fun getParameterSymbol(psi: KtParameter): KtVariableLikeSymbol
     public abstract fun getFileSymbol(psi: KtFile): KtFileSymbol
+    public abstract fun getScriptSymbol(psi: KtScript): KtScriptSymbol
     public abstract fun getFunctionLikeSymbol(psi: KtNamedFunction): KtFunctionLikeSymbol
     public abstract fun getConstructorSymbol(psi: KtConstructor<*>): KtConstructorSymbol
     public abstract fun getTypeParameterSymbol(psi: KtTypeParameter): KtTypeParameterSymbol
