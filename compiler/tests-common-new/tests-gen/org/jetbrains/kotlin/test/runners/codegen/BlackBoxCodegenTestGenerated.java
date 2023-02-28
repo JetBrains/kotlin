@@ -33484,6 +33484,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("kt40857_parameterizedExtensionReceiver.kt")
+        public void testKt40857_parameterizedExtensionReceiver() throws Exception {
+            runTest("compiler/testData/codegen/box/parametersMetadata/kt40857_parameterizedExtensionReceiver.kt");
+        }
+
+        @Test
         @TestMetadata("superParams.kt")
         public void testSuperParams() throws Exception {
             runTest("compiler/testData/codegen/box/parametersMetadata/superParams.kt");

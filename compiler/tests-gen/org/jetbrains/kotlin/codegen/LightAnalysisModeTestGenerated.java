@@ -28509,9 +28509,24 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ParametersMetadata extends AbstractLightAnalysisModeTest {
+        @TestMetadata("extensionFunction.kt")
+        public void ignoreExtensionFunction() throws Exception {
+            runTest("compiler/testData/codegen/box/parametersMetadata/extensionFunction.kt");
+        }
+
+        @TestMetadata("inlineClassMethodParameterModifiers.kt")
+        public void ignoreInlineClassMethodParameterModifiers() throws Exception {
+            runTest("compiler/testData/codegen/box/parametersMetadata/inlineClassMethodParameterModifiers.kt");
+        }
+
         @TestMetadata("jvmOverloads.kt")
         public void ignoreJvmOverloads() throws Exception {
             runTest("compiler/testData/codegen/box/parametersMetadata/jvmOverloads.kt");
+        }
+
+        @TestMetadata("kt40857_parameterizedExtensionReceiver.kt")
+        public void ignoreKt40857_parameterizedExtensionReceiver() throws Exception {
+            runTest("compiler/testData/codegen/box/parametersMetadata/kt40857_parameterizedExtensionReceiver.kt");
         }
 
         private void runTest(String testDataFilePath) throws Exception {
@@ -28537,19 +28552,9 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/parametersMetadata/enum.kt");
         }
 
-        @TestMetadata("extensionFunction.kt")
-        public void testExtensionFunction() throws Exception {
-            runTest("compiler/testData/codegen/box/parametersMetadata/extensionFunction.kt");
-        }
-
         @TestMetadata("function.kt")
         public void testFunction() throws Exception {
             runTest("compiler/testData/codegen/box/parametersMetadata/function.kt");
-        }
-
-        @TestMetadata("inlineClassMethodParameterModifiers.kt")
-        public void testInlineClassMethodParameterModifiers() throws Exception {
-            runTest("compiler/testData/codegen/box/parametersMetadata/inlineClassMethodParameterModifiers.kt");
         }
 
         @TestMetadata("inlineClassMethodParameterNames.kt")

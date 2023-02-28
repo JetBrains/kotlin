@@ -337,7 +337,7 @@ private fun IrValueParameter.isSyntheticMarkerParameter(): Boolean =
 
 private fun generateParameterNames(irFunction: IrFunction, mv: MethodVisitor, state: GenerationState) {
     irFunction.extensionReceiverParameter?.let {
-        mv.visitParameter(irFunction.extensionReceiverName(state), Opcodes.ACC_MANDATED)
+        mv.visitParameter(irFunction.extensionReceiverName(state), 0)
     }
     for (irParameter in irFunction.valueParameters) {
         // A construct emitted by a Java compiler must be marked as synthetic if it does not correspond to a construct declared
