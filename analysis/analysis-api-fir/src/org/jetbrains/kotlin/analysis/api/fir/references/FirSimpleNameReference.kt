@@ -51,8 +51,12 @@ internal class KtFirSimpleNameReference(
         referenceTargetSymbols.flatMap { symbol ->
             when (symbol) {
                 is KtFirSyntheticJavaPropertySymbol ->
-                    if (isRead) listOfNotNull(symbol.javaGetterSymbol.psi)
-                    else listOfNotNull(symbol.javaSetterSymbol?.psi)
+                    if (isRead) {
+                        listOfNotNull(symbol.javaGetterSymbol.psi)
+                    } else {
+                        if (symbol.javaSetterSymbol == null) listOfNotNull(symbol.javaGetterSymbol.psi)
+                        else listOfNotNull(symbol.javaSetterSymbol?.psi)
+                    }
                 else -> listOfNotNull(symbol.psi)
             }
         }
