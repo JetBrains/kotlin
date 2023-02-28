@@ -166,7 +166,6 @@ bitcode {
 
             compilerArgs.add("-DCUSTOM_ALLOCATOR")
 
-            // Directly depends on cms which is only supported with threads.
             onlyIf { target.supportsThreads() }
         }
 
@@ -260,6 +259,8 @@ bitcode {
                 testFixtures {}
                 test {}
             }
+
+            onlyIf { target.supportsThreads() }
         }
 
         module("experimental_memory_manager_custom") {
@@ -270,8 +271,10 @@ bitcode {
                 testFixtures {}
                 test {}
             }
-            
+
             compilerArgs.add("-DCUSTOM_ALLOCATOR")
+
+            onlyIf { target.supportsThreads() }
         }
 
         module("common_gc") {
@@ -281,6 +284,8 @@ bitcode {
                 main {}
                 test {}
             }
+
+            onlyIf { target.supportsThreads() }
         }
 
         module("noop_gc") {
@@ -290,6 +295,8 @@ bitcode {
                 main {}
                 testFixtures {}
             }
+
+            onlyIf { target.supportsThreads() }
         }
 
         module("same_thread_ms_gc") {
@@ -300,6 +307,8 @@ bitcode {
                 testFixtures {}
                 test {}
             }
+
+            onlyIf { target.supportsThreads() }
         }
 
         module("concurrent_ms_gc") {
