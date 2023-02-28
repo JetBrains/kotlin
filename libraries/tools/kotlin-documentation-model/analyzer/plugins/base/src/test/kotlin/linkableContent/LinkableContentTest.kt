@@ -10,11 +10,14 @@ import org.jetbrains.dokka.model.doc.Text
 import org.jetbrains.dokka.pages.*
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import org.jsoup.Jsoup
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import utils.TestOutputWriterPlugin
 import utils.assertNotNull
 import java.net.URL
 import java.nio.file.Paths
+import kotlin.test.assertEquals
 
 class LinkableContentTest : BaseAbstractTest() {
 
@@ -359,5 +362,49 @@ class LinkableContentTest : BaseAbstractTest() {
             }
         }
 
+    }
+
+    @Test
+    fun `should have a correct link to declaration from another source set`() {
+        val writerPlugin = TestOutputWriterPlugin()
+        val configuration = dokkaConfiguration {
+            sourceSets {
+                val common = sourceSet {
+                    sourceRoots = listOf("src/commonMain")
+                    analysisPlatform = "common"
+                    name = "common"
+                    displayName = "common"
+                }
+                sourceSet {
+                    sourceRoots = listOf("src/jvmMain/")
+                    analysisPlatform = "jvm"
+                    name = "jvm"
+                    displayName = "jvm"
+                    dependentSourceSets = setOf(common.value.sourceSetID)
+                }
+            }
+        }
+
+        testInline(
+            """
+            /src/commonMain/main.kt
+            class A
+            /src/jvmMain/main.kt
+            /**
+            * link to [A]
+            */
+             class B
+            """.trimIndent()
+            ,
+            pluginOverrides = listOf(writerPlugin),
+            configuration = configuration
+        ) {
+            renderingStage = { _, _ ->
+                val page =
+                    Jsoup.parse(writerPlugin.writer.contents.getValue("root/[root]/-b/index.html"))
+                val link = page.select(".paragraph a").single()
+                assertEquals("../-a/index.html", link.attr("href"))
+            }
+        }
     }
 }
