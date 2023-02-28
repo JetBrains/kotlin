@@ -1,13 +1,14 @@
+// TARGET_BACKEND: WASM
 // MODULE: main
 // FILE: externals.kt
 
 class C(val x: Int)
 
 @JsExport
-fun makeC(x: Int): C = C(x)
+fun makeC(x: Int): JsHandle<C> = C(x).toJsHandle()
 
 @JsExport
-fun getX(c: C): Int = c.x
+fun getX(c: JsHandle<C>): Int = c.get().x
 
 @JsExport
 fun getString(s: String): String = "Test string $s";
@@ -18,10 +19,10 @@ fun isEven(x: Int): Boolean = x % 2 == 0
 external interface EI
 
 @JsExport
-fun eiAsAny(ei: EI): Any = ei
+fun eiAsAny(ei: EI): JsHandle<Any> = ei.toJsHandle()
 
 @JsExport
-fun anyAsEI(any: Any): EI = any as EI
+fun anyAsEI(any: JsHandle<Any>): EI = any.get() as EI
 
 fun box(): String = "OK"
 

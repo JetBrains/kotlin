@@ -56,12 +56,6 @@ public class FirJsCodegenWasmJsInteropTestGenerated extends AbstractFirJsCodegen
     }
 
     @Test
-    @TestMetadata("jsExport.kt")
-    public void testJsExport() throws Exception {
-        runTest("compiler/testData/codegen/boxWasmJsInterop/jsExport.kt");
-    }
-
-    @Test
     @TestMetadata("jsModule.kt")
     public void testJsModule() throws Exception {
         runTest("compiler/testData/codegen/boxWasmJsInterop/jsModule.kt");

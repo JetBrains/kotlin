@@ -68,6 +68,12 @@ public class DiagnosticsWasmTestGenerated extends AbstractDiagnosticsWasmTest {
         public void testJsFun() throws Exception {
             runTest("compiler/testData/diagnostics/wasmTests/jsInterop/jsFun.kt");
         }
+
+        @Test
+        @TestMetadata("types.kt")
+        public void testTypes() throws Exception {
+            runTest("compiler/testData/diagnostics/wasmTests/jsInterop/types.kt");
+        }
     }
 
     @Nested

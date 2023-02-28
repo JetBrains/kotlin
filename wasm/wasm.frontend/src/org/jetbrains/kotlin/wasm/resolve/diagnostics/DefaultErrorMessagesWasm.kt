@@ -18,6 +18,13 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
             Renderers.RENDER_TYPE
         )
 
+        put(
+            ErrorsWasm.WRONG_JS_INTEROP_TYPE, "Type {1} cannot be used in {0}. " +
+                    "Only external, primitive, string and function types are supported in Kotlin/Wasm JS interop.",
+            CommonRenderers.STRING,
+            Renderers.RENDER_TYPE
+        )
+
         put(ErrorsWasm.NESTED_WASM_IMPORT, "Only top-level functions can be imported with @WasmImport")
         put(ErrorsWasm.WASM_IMPORT_ON_NON_EXTERNAL_DECLARATION, "Functions annotated with @WasmImport must be external")
         put(ErrorsWasm.WASM_IMPORT_PARAMETER_DEFAULT_VALUE, "Default parameter values are not supported with @WasmImport")

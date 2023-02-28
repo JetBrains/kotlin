@@ -29,6 +29,7 @@ object WasmPlatformConfigurator : PlatformConfiguratorBase(
         WasmExternalDeclarationChecker,
         WasmImportAnnotationChecker,
         WasmJsFunAnnotationChecker,
+        WasmJsInteropTypesChecker,
     ),
     additionalCallCheckers = listOf(
         JsModuleCallChecker,

@@ -53,7 +53,7 @@ external class C {
     val x1: Int
     val x2: Int
     fun foo(x3: Int = definedExternally, x4: Int = definedExternally): String
-    fun bar(x5: C = definedExternally, x6: Any = definedExternally) : String
+    fun bar(x5: C = definedExternally, x6: C = definedExternally) : String
 }
 
 open external class Writable: WritableStream {

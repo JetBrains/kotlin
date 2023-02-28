@@ -43,7 +43,8 @@ fun testExterRef() {
     check(null2ExternRef() == null)
 }
 
-class DataRef
+class DataRefImpl
+typealias DataRef = JsHandle<DataRefImpl>
 
 fun notNullDataRef(x: DataRef): DataRef = js("x")
 
@@ -54,7 +55,7 @@ fun nullDataRef(x: DataRef): DataRef? = js("x")
 fun null2DataRef(x: DataRef): DataRef? = js("null")
 
 fun testDataRef() {
-    val dataRef = DataRef()
+    val dataRef = DataRefImpl().toJsHandle()
     check(notNullDataRef(dataRef) == dataRef)
     checkNPE { notNull2DataRef(dataRef) }
     check (nullDataRef(dataRef) == dataRef)
@@ -121,22 +122,6 @@ fun testFloat() {
     check(null2Float() == null)
 }
 
-
-fun notNullNumber(): Number = js("123.5")
-
-fun notNull2Number(): Number = js("null")
-
-fun nullNumber(): Number? = js("123.5")
-
-fun null2Number(): Number? = js("null")
-
-fun testNumber() {
-    check(notNullNumber() == 123.5)
-    check(notNull2Number() == 0.0)
-    check(nullNumber() == 123.5)
-    check(null2Number() == null)
-}
-
 fun box(): String {
     testString()
     testExterRef()
@@ -145,6 +130,5 @@ fun box(): String {
     testBoolean()
     testShort()
     testFloat()
-    testNumber()
     return "OK"
 }
