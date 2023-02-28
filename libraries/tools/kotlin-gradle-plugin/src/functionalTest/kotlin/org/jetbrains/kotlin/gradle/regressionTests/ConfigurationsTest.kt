@@ -573,7 +573,8 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
                     binaries.framework("main", listOf(NativeBuildType.DEBUG))
                 }
 
-                linuxX64()
+                linuxX64("linuxA") { attributes { attribute(distinguishingAttribute, "linuxA") } }
+                linuxX64("linuxB") { attributes { attribute(distinguishingAttribute, "linuxB") } }
 
                 targets.filterIsInstance<KotlinNativeTarget>().forEach {
                     it.binaries {

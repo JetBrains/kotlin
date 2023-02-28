@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.gradle.plugin.internal.artifactTypeAttribute
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.registerEmbedAndSignAppleFrameworkTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmVariant
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.copyAttributes
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.targets.native.*
@@ -213,10 +214,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
 
                 configuration.extendsFrom(*apiElements.extendsFrom.toTypedArray())
 
-                fun <T> copyAttribute(from: AttributeContainer, to: AttributeContainer, attribute: Attribute<T>) {
-                    to.attribute(attribute, from.getAttribute(attribute)!!)
-                }
-                with(apiElements.attributes) { keySet().forEach { copyAttribute(this, configuration.attributes, it) } }
+                copyAttributes(from = apiElements.attributes, to = configuration.attributes)
                 configuration.attributes.attribute(USAGE_ATTRIBUTE, objects.named(Usage::class.java, KotlinUsages.KOTLIN_METADATA))
             }
         }

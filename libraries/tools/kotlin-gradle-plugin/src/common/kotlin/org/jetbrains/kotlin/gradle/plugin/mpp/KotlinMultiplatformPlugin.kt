@@ -244,6 +244,14 @@ internal fun applyUserDefinedAttributes(target: AbstractKotlinTarget) {
                 .mapNotNull { configurationName -> target.project.configurations.findByName(configurationName) }
                 .forEach { configuration -> copyAttributes(compilationAttributes, configuration.attributes) }
         }
+
+        // Copy to host-specific metadata elements configurations
+        if (target is KotlinNativeTarget) {
+            val hostSpecificMetadataElements = project.configurations.findByName(target.hostSpecificMetadataElementsConfigurationName)
+            if (hostSpecificMetadataElements != null) {
+                copyAttributes(from = target.attributes, to = hostSpecificMetadataElements.attributes)
+            }
+        }
     }
 }
 
