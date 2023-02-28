@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.ConeTypeCompatibilityChecker.collectUpperBounds
 import org.jetbrains.kotlin.fir.analysis.checkers.isValueClass
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
-import org.jetbrains.kotlin.fir.declarations.utils.isEnumEntry
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.declarations.utils.isInterface
 import org.jetbrains.kotlin.fir.expressions.FirEqualityOperatorCall
@@ -274,15 +273,12 @@ private class TypeInfo(
     val type: ConeKotlinType,
     val notNullType: ConeKotlinType,
     val isFinalClass: Boolean,
-    val isEnumEntry: Boolean,
-    val hasEnumSupertype: Boolean,
+    val isEnumClass: Boolean,
 ) {
     override fun toString() = "$type"
 }
 
 private val TypeInfo.isBuiltin get() = type.isPrimitiveOrNullablePrimitive || type.isStringOrNullableString || isEnumClass
-
-private val TypeInfo.isEnumClass get() = hasEnumSupertype && !isEnumEntry
 
 // Enum classes are final, but enum entries are their subclasses.
 private val TypeInfo.enforcesEmptyIntersection get() = isFinalClass && !isEnumClass
@@ -303,8 +299,7 @@ private fun ConeKotlinType.toTypeInfo(session: FirSession): TypeInfo {
     return TypeInfo(
         type, notNullType,
         isFinalClass = bounds.any { it.toClassSymbol(session)?.isFinalClass == true },
-        isEnumEntry = bounds.any { it.toClassSymbol(session)?.isEnumEntry == true },
-        hasEnumSupertype = bounds.any { it.toClassSymbol(session)?.isEnumClass == true },
+        isEnumClass = bounds.any { it.toClassSymbol(session)?.isEnumClass == true },
     )
 }
 
