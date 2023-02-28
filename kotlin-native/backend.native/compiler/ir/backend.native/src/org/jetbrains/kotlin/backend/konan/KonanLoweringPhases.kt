@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.backend.konan.llvm.redundantCoercionsCleaningPhase
 import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.backend.konan.lower.InitializersLowering
 import org.jetbrains.kotlin.backend.konan.optimizations.KonanBCEForLoopBodyTransformer
+import org.jetbrains.kotlin.ir.util.isLocal
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -163,7 +164,7 @@ internal val extractLocalClassesFromInlineBodies = makeKonanFileOpPhase(
                 }
 
                 override fun visitFunction(declaration: IrFunction) {
-                    if (declaration.isInline)
+                    if (declaration.isInline && !declaration.isLocal)
                         context.inlineFunctionsSupport.saveNonLoweredInlineFunction(declaration)
                     declaration.acceptChildrenVoid(this)
                 }
