@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_HIERARCHICAL_STRUCTURE_BY_DEFAULT
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_HIERARCHICAL_STRUCTURE_SUPPORT
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_DEPRECATED_PROPERTIES_NO_WARN
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_IMPORT_ENABLE_KGP_DEPENDENCY_RESOLUTION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_IMPORT_ENABLE_SLOW_SOURCES_JAR_RESOLVER
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_DEPENDENCY_PROPAGATION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_USE_XCODE_MESSAGE_STYLE
@@ -410,6 +411,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val enableIntransitiveMetadataConfiguration: Boolean
         get() = booleanProperty(KOTLIN_MPP_ENABLE_INTRANSITIVE_METADATA_CONFIGURATION) ?: false
 
+    val enableKgpDependencyResolution: Boolean?
+        get() = booleanProperty(KOTLIN_MPP_IMPORT_ENABLE_KGP_DEPENDENCY_RESOLUTION)
+
     val enableSlowIdeSourcesJarResolver: Boolean
         get() = booleanProperty(KOTLIN_MPP_IMPORT_ENABLE_SLOW_SOURCES_JAR_RESOLVER) ?: true
 
@@ -591,6 +595,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         const val KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_VERSION = "kotlin.mpp.androidSourceSetLayoutVersion"
         const val KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_VERSION_1_NO_WARN = "${KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_VERSION}1.nowarn"
         const val KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_ANDROID_STYLE_NO_WARN = "kotlin.mpp.androidSourceSetLayoutV2AndroidStyleDirs.nowarn"
+        const val KOTLIN_MPP_IMPORT_ENABLE_KGP_DEPENDENCY_RESOLUTION = "kotlin.mpp.import.enableKgpDependencyResolution"
         const val KOTLIN_MPP_IMPORT_ENABLE_SLOW_SOURCES_JAR_RESOLVER = "kotlin.mpp.import.enableSlowSourcesJarResolver"
         const val KOTLIN_MPP_ENABLE_INTRANSITIVE_METADATA_CONFIGURATION = "kotlin.mpp.enableIntransitiveMetadataConfiguration"
         const val KOTLIN_NATIVE_DEPENDENCY_PROPAGATION = "kotlin.native.enableDependencyPropagation"
