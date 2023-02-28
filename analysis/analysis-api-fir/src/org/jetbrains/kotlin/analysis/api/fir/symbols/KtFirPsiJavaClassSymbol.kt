@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
+import com.intellij.codeInsight.PsiEquivalenceUtil
 import com.intellij.psi.PsiClass
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
@@ -47,6 +48,12 @@ internal class KtFirPsiJavaClassSymbol(
     override val psi: PsiClass,
     override val analysisSession: KtFirAnalysisSession,
 ) : KtNamedClassOrObjectSymbol(), KtFirPsiSymbol<PsiClass, FirRegularClassSymbol> {
+    init {
+        require(psi.qualifiedName != null) {
+            "${KtFirPsiJavaClassSymbol::class.simpleName} requires a PSI class with a qualified name."
+        }
+    }
+
     /**
      * [javaClass] is used to defer some properties to the compiler's view of a Java class.
      */
@@ -55,6 +62,9 @@ internal class KtFirPsiJavaClassSymbol(
     override val name: Name = withValidityAssertion { javaClass.name }
 
     override val classIdIfNonLocal: ClassId? by cached { psi.classIdIfNonLocal }
+
+    private val qualifiedName: String
+        get() = withValidityAssertion { psi.qualifiedName!! }
 
     override val origin: KtSymbolOrigin
         get() = withValidityAssertion { KtSymbolOrigin.JAVA }
@@ -90,6 +100,19 @@ internal class KtFirPsiJavaClassSymbol(
 
     override val contextReceivers: List<KtContextReceiver> get() = withValidityAssertion { emptyList() }
 
+    override fun equals(other: Any?): Boolean {
+        if (other === this) return true
+        if (other == null || other !is KtNamedClassOrObjectSymbol) return false
+
+        val otherPsiClass = other.psi as? PsiClass ?: return false
+        return PsiEquivalenceUtil.areElementsEquivalent(psi, otherPsiClass)
+    }
+
+    /**
+     * Since [PsiEquivalenceUtil] doesn't have a hash code function, we use the class's fully qualified name as a conservative hash code.
+     */
+    override fun hashCode(): Int = qualifiedName.hashCode()
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Slow Operations (requiring access to the underlying FIR class symbol)
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -121,8 +144,4 @@ internal class KtFirPsiJavaClassSymbol(
     override fun createPointer(): KtSymbolPointer<KtNamedClassOrObjectSymbol> = withValidityAssertion {
         createNamedClassOrObjectSymbolPointer()
     }
-
-    // TODO (marco): Can we implement equality and hash code without falling back to the symbol?
-    override fun equals(other: Any?): Boolean = symbolEquals(other)
-    override fun hashCode(): Int = symbolHashCode()
 }
