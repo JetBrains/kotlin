@@ -1727,7 +1727,6 @@ class CocoaPodsIT : BaseGradleIT() {
                         runCommand(
                             this, "xcodebuild",
                             "-sdk", "iphonesimulator",
-                            "-arch", "x86_64",
                             "-configuration", "Release",
                             "-workspace", "$name.xcworkspace",
                             "-scheme", name,
@@ -1889,20 +1888,6 @@ class CocoaPodsIT : BaseGradleIT() {
                 if (cocoapodsInstallationAllowed) {
                     println("Installing CocoaPods...")
                     gem("install", "--install-dir", cocoapodsInstallationRoot.absolutePath, "cocoapods")
-                    if (hostIsArmMac) {
-                        // Force running CocoaPods via `arch -x86_64` on ARM MacOS to workaround problems with libffi.
-                        // https://stackoverflow.com/questions/64901180/running-cocoapods-on-apple-silicon-m1
-                        cocoapodsBinPath.mkdirs()
-                        val wrapper = cocoapodsBinPath.resolve("pod")
-                        wrapper.writeText(
-                            """
-                                #!/bin/bash
-                                arch -x86_64 "${cocoapodsInstallationRoot.absolutePath}/bin/pod" ${'$'}@
-                            """.trimIndent()
-                        )
-                        wrapper.setExecutable(true)
-                    }
-
                 } else {
                     fail(
                         """
@@ -1957,11 +1942,7 @@ class CocoaPodsIT : BaseGradleIT() {
         private fun gem(vararg args: String): String {
             // On ARM MacOS, run gem using arch -x86_64 to workaround problems with libffi.
             // https://stackoverflow.com/questions/64901180/running-cocoapods-on-apple-silicon-m1
-            val command = if (hostIsArmMac) {
-                listOf("arch", "-x86_64", "gem", *args)
-            } else {
-                listOf("gem", *args)
-            }
+            val command = listOf("gem", *args)
             println("Run command: ${command.joinToString(separator = " ")}")
             val result = runProcess(command, File("."), options = BuildOptions(forceOutputToStdout = true))
             check(result.isSuccessful) {
