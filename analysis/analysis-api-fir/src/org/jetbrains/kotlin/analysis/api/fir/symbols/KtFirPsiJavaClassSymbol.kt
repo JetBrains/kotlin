@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.base.KtContextReceiver
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
+import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KtEmptyAnnotationsList
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.toKtClassKind
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -112,7 +113,8 @@ internal class KtFirPsiJavaClassSymbol(
     }
 
     override val annotationsList: KtAnnotationsList by cached {
-        KtFirAnnotationListForDeclaration.create(firSymbol, analysisSession.useSiteSession, token)
+        if (javaClass.annotations.isEmpty()) KtEmptyAnnotationsList(token)
+        else KtFirAnnotationListForDeclaration.create(firSymbol, analysisSession.useSiteSession, token)
     }
 
     context(KtAnalysisSession)
