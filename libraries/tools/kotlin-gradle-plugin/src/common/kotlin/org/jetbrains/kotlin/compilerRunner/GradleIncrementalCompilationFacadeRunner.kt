@@ -84,17 +84,8 @@ internal class GradleIncrementalCompilationFacadeRunner(
                     setOf(IncrementalCompilerFacade::class.java.name) // need to share API classes, so we could use them here without reflection
                 )
                 val classloader = URLClassLoader(classpath.toList().map { it.toURI().toURL() }.toTypedArray(), parentClassloader)
-                // TODO: don't do this right here
-                val implementationsPropertiesFile = "kotlin-ic-facade/implementations.properties"
-                val conn = classloader.getResource(implementationsPropertiesFile)?.openConnection()
-                    ?: error("No $implementationsPropertiesFile found")
-                conn.useCaches = false
-                val implementations = Properties()
-                conn.getInputStream().use {
-                    implementations.load(it)
-                }
-                val cls = classloader.loadClass(implementations[IncrementalCompilerFacade::class.java.name].toString())
-                val facade = cls.constructors[0].newInstance() as IncrementalCompilerFacade
+                val facade = ServiceLoader.load(IncrementalCompilerFacade::class.java, classloader).singleOrNull()
+                    ?: error("Compiler classpath should contain one and only one implementation of ${IncrementalCompilerFacade::class.java.name}")
                 facade.doSomething()
             } catch (e: FailedCompilationException) {
                 // Restore outputs only in cases where we expect that the user will make some changes to their project:
