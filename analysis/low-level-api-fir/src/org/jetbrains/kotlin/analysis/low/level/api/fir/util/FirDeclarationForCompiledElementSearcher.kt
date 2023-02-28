@@ -97,7 +97,7 @@ internal class FirDeclarationForCompiledElementSearcher(private val symbolProvid
         val candidates = symbolProvider.findFunctionCandidates(declaration)
         val functionCandidate =
             candidates
-                .singleOrNull { KtDeclarationAndFirDeclarationEqualityChecker.representsTheSameDeclaration(declaration, it.fir) }
+                .firstOrNull { KtDeclarationAndFirDeclarationEqualityChecker.representsTheSameDeclaration(declaration, it.fir) }
                 ?: errorWithFirSpecificEntries("We should be able to find a symbol for function", psi = declaration) {
                     withCandidates(candidates)
                 }
@@ -111,7 +111,7 @@ internal class FirDeclarationForCompiledElementSearcher(private val symbolProvid
 
         val candidates = symbolProvider.findPropertyCandidates(declaration)
         val propertyCandidate =
-            candidates.singleOrNull { KtDeclarationAndFirDeclarationEqualityChecker.representsTheSameDeclaration(declaration, it.fir) }
+            candidates.firstOrNull { KtDeclarationAndFirDeclarationEqualityChecker.representsTheSameDeclaration(declaration, it.fir) }
                 ?: errorWithFirSpecificEntries("We should be able to find a symbol for property", psi = declaration) {
                     withCandidates(candidates)
                 }
