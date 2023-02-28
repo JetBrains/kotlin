@@ -502,12 +502,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
      * Path to serialized dependencies to use for bitcode compilation.
      */
     internal val readSerializedDependencies: String? by lazy {
-        configuration.get(KonanConfigKeys.SERIALIZED_DEPENDENCIES).also {
-            if (compileFromBitcode.isNullOrEmpty()) {
-                configuration.report(CompilerMessageSeverity.STRONG_WARNING,
-                        "Providing serialized dependencies only works in conjunction with a bitcode file to compile.")
-            }
-        }
+        configuration.get(KonanConfigKeys.SERIALIZED_DEPENDENCIES)
     }
 
     /**

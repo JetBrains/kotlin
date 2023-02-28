@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.backend.konan.driver
 
+import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.usingJvmCInteropCallbacks
 import llvm.LLVMContextCreate
 import llvm.LLVMContextDispose
 import llvm.LLVMDisposeModule
+import llvm.LLVMOpaqueModule
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.BitcodePostProcessingContextImpl
 import org.jetbrains.kotlin.backend.konan.Context
@@ -133,8 +135,9 @@ internal class DynamicCompilerDriver : CompilerDriver() {
 
     private fun produceBinaryFromBitcode(engine: PhaseEngine<PhaseContext>, config: KonanConfig, bitcodeFilePath: String) {
         val llvmContext = LLVMContextCreate()!!
-        val llvmModule = parseBitcodeFile(llvmContext, bitcodeFilePath)
+        var llvmModule: CPointer<LLVMOpaqueModule>? = null
         try {
+            llvmModule = parseBitcodeFile(llvmContext, bitcodeFilePath)
             val context = BitcodePostProcessingContextImpl(config, llvmModule, llvmContext)
             val depsPath = config.readSerializedDependencies
             val dependencies = if (depsPath.isNullOrEmpty()) DependenciesTrackingResult(emptyList(), emptyList(), emptyList()).also {
@@ -142,7 +145,7 @@ internal class DynamicCompilerDriver : CompilerDriver() {
             } else DependenciesTrackingResult.deserialize(depsPath, File(depsPath).readStrings(), config)
             engine.runBitcodeBackend(context, dependencies)
         } finally {
-            LLVMDisposeModule(llvmModule)
+            llvmModule?.let { LLVMDisposeModule(it) }
             LLVMContextDispose(llvmContext)
         }
     }
