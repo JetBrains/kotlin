@@ -8,12 +8,12 @@
 #include "Cell.hpp"
 #include "CustomAllocConstants.hpp"
 #include "gtest/gtest.h"
-#include "SmallPage.hpp"
+#include "FixedBlockPage.hpp"
 #include "TypeInfo.h"
 
 namespace {
 
-using SmallPage = typename kotlin::alloc::SmallPage;
+using FixedBlockPage = typename kotlin::alloc::FixedBlockPage;
 
 TypeInfo fakeType = {.flags_ = 0}; // a type without a finalizer
 
@@ -21,7 +21,7 @@ void mark(void* obj) {
     reinterpret_cast<uint64_t*>(obj)[0] = 1;
 }
 
-uint8_t* alloc(SmallPage* page, size_t blockSize) {
+uint8_t* alloc(FixedBlockPage* page, size_t blockSize) {
     uint8_t* ptr = page->TryAllocate();
     if (ptr) {
         memset(ptr, 0, 8 * blockSize);
@@ -30,9 +30,9 @@ uint8_t* alloc(SmallPage* page, size_t blockSize) {
     return ptr;
 }
 
-TEST(CustomAllocTest, SmallPageConsequtiveAlloc) {
-    for (uint32_t size = 2; size <= SMALL_PAGE_MAX_BLOCK_SIZE; ++size) {
-        SmallPage* page = SmallPage::Create(size);
+TEST(CustomAllocTest, FixedBlockPageConsequtiveAlloc) {
+    for (uint32_t size = 2; size <= FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE; ++size) {
+        FixedBlockPage* page = FixedBlockPage::Create(size);
         uint8_t* prev = alloc(page, size);
         uint8_t* cur;
         while ((cur = alloc(page, size))) {
@@ -43,28 +43,28 @@ TEST(CustomAllocTest, SmallPageConsequtiveAlloc) {
     }
 }
 
-TEST(CustomAllocTest, SmallPageSweepEmptyPage) {
-    for (uint32_t size = 2; size <= SMALL_PAGE_MAX_BLOCK_SIZE; ++size) {
-        SmallPage* page = SmallPage::Create(size);
+TEST(CustomAllocTest, FixedBlockPageSweepEmptyPage) {
+    for (uint32_t size = 2; size <= FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE; ++size) {
+        FixedBlockPage* page = FixedBlockPage::Create(size);
         EXPECT_FALSE(page->Sweep());
         page->Destroy();
     }
 }
 
-TEST(CustomAllocTest, SmallPageSweepFullUnmarkedPage) {
-    for (uint32_t size = 2; size <= SMALL_PAGE_MAX_BLOCK_SIZE; ++size) {
-        SmallPage* page = SmallPage::Create(size);
+TEST(CustomAllocTest, FixedBlockPageSweepFullUnmarkedPage) {
+    for (uint32_t size = 2; size <= FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE; ++size) {
+        FixedBlockPage* page = FixedBlockPage::Create(size);
         uint32_t count = 0;
         while (alloc(page, size)) ++count;
-        EXPECT_EQ(count, SMALL_PAGE_CELL_COUNT / size);
+        EXPECT_EQ(count, FIXED_BLOCK_PAGE_CELL_COUNT / size);
         EXPECT_FALSE(page->Sweep());
         page->Destroy();
     }
 }
 
-TEST(CustomAllocTest, SmallPageSweepSingleMarked) {
-    for (uint32_t size = 2; size <= SMALL_PAGE_MAX_BLOCK_SIZE; ++size) {
-        SmallPage* page = SmallPage::Create(size);
+TEST(CustomAllocTest, FixedBlockPageSweepSingleMarked) {
+    for (uint32_t size = 2; size <= FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE; ++size) {
+        FixedBlockPage* page = FixedBlockPage::Create(size);
         uint8_t* ptr = alloc(page, size);
         mark(ptr);
         EXPECT_TRUE(page->Sweep());
@@ -72,9 +72,9 @@ TEST(CustomAllocTest, SmallPageSweepSingleMarked) {
     }
 }
 
-TEST(CustomAllocTest, SmallPageSweepSingleReuse) {
-    for (uint32_t size = 2; size <= SMALL_PAGE_MAX_BLOCK_SIZE; ++size) {
-        SmallPage* page = SmallPage::Create(size);
+TEST(CustomAllocTest, FixedBlockPageSweepSingleReuse) {
+    for (uint32_t size = 2; size <= FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE; ++size) {
+        FixedBlockPage* page = FixedBlockPage::Create(size);
         uint8_t* ptr = alloc(page, size);
         EXPECT_FALSE(page->Sweep());
         EXPECT_EQ(alloc(page, size), ptr);
@@ -82,9 +82,9 @@ TEST(CustomAllocTest, SmallPageSweepSingleReuse) {
     }
 }
 
-TEST(CustomAllocTest, SmallPageSweepReuse) {
-    for (uint32_t size = 2; size <= SMALL_PAGE_MAX_BLOCK_SIZE; ++size) {
-        SmallPage* page = SmallPage::Create(size);
+TEST(CustomAllocTest, FixedBlockPageSweepReuse) {
+    for (uint32_t size = 2; size <= FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE; ++size) {
+        FixedBlockPage* page = FixedBlockPage::Create(size);
         uint8_t* ptr;
         for (int count = 0; (ptr = alloc(page, size)); ++count) {
             if (count % 2 == 0) mark(ptr);
@@ -94,7 +94,7 @@ TEST(CustomAllocTest, SmallPageSweepReuse) {
         for (; (ptr = alloc(page, size)); ++count) {
             if (count % 2 == 0) mark(ptr);
         }
-        EXPECT_EQ(count, SMALL_PAGE_CELL_COUNT / size / 2);
+        EXPECT_EQ(count, FIXED_BLOCK_PAGE_CELL_COUNT / size / 2);
         page->Destroy();
     }
 }

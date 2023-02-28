@@ -3,8 +3,8 @@
  * that can be found in the LICENSE file.
  */
 
-#ifndef CUSTOM_ALLOC_CPP_MEDIUMPAGE_HPP_
-#define CUSTOM_ALLOC_CPP_MEDIUMPAGE_HPP_
+#ifndef CUSTOM_ALLOC_CPP_NEXTFITPAGE_HPP_
+#define CUSTOM_ALLOC_CPP_NEXTFITPAGE_HPP_
 
 #include <atomic>
 #include <cstdint>
@@ -14,9 +14,9 @@
 
 namespace kotlin::alloc {
 
-class alignas(8) MediumPage {
+class alignas(8) NextFitPage {
 public:
-    static MediumPage* Create(uint32_t cellCount) noexcept;
+    static NextFitPage* Create(uint32_t cellCount) noexcept;
 
     void Destroy() noexcept;
 
@@ -29,14 +29,14 @@ public:
     bool CheckInvariants() noexcept;
 
 private:
-    MediumPage(uint32_t cellCount) noexcept;
+    NextFitPage(uint32_t cellCount) noexcept;
 
     // Looks for a block big enough to hold cellsNeeded. If none big enough is
     // found, update to the largest one.
     void UpdateCurBlock(uint32_t cellsNeeded) noexcept;
 
-    friend class AtomicStack<MediumPage>;
-    MediumPage* next_;
+    friend class AtomicStack<NextFitPage>;
+    NextFitPage* next_;
 
     Cell* curBlock_;
     Cell cells_[]; // cells_[0] is reserved for an empty block

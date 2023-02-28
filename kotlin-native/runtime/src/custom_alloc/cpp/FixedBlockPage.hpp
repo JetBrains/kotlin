@@ -3,8 +3,8 @@
  * that can be found in the LICENSE file.
  */
 
-#ifndef CUSTOM_ALLOC_CPP_SMALLPAGE_HPP_
-#define CUSTOM_ALLOC_CPP_SMALLPAGE_HPP_
+#ifndef CUSTOM_ALLOC_CPP_FIXEDBLOCKPAGE_HPP_
+#define CUSTOM_ALLOC_CPP_FIXEDBLOCKPAGE_HPP_
 
 #include <atomic>
 #include <cstdint>
@@ -13,17 +13,17 @@
 
 namespace kotlin::alloc {
 
-struct alignas(8) SmallCell {
-    // The SmallCell either contains data or a pointer to the next free cell
+struct alignas(8) FixedBlockCell {
+    // The FixedBlockCell either contains data or a pointer to the next free cell
     union {
         uint8_t data[];
-        SmallCell* nextFree;
+        FixedBlockCell* nextFree;
     };
 };
 
-class alignas(8) SmallPage {
+class alignas(8) FixedBlockPage {
 public:
-    static SmallPage* Create(uint32_t blockSize) noexcept;
+    static FixedBlockPage* Create(uint32_t blockSize) noexcept;
 
     void Destroy() noexcept;
 
@@ -33,15 +33,15 @@ public:
     bool Sweep() noexcept;
 
 private:
-    friend class AtomicStack<SmallPage>;
+    friend class AtomicStack<FixedBlockPage>;
 
-    explicit SmallPage(uint32_t blockSize) noexcept;
+    explicit FixedBlockPage(uint32_t blockSize) noexcept;
 
     // Used for linking pages together in `pages` queue or in `unswept` queue.
-    SmallPage* next_;
+    FixedBlockPage* next_;
     uint32_t blockSize_;
-    SmallCell* nextFree_;
-    SmallCell cells_[];
+    FixedBlockCell* nextFree_;
+    FixedBlockCell cells_[];
 };
 
 } // namespace kotlin::alloc

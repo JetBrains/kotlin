@@ -13,10 +13,10 @@
 #include "CustomAllocConstants.hpp"
 #include "ExtraObjectPage.hpp"
 #include "GCStatistics.hpp"
-#include "LargePage.hpp"
-#include "MediumPage.hpp"
+#include "SingleObjectPage.hpp"
+#include "NextFitPage.hpp"
 #include "PageStore.hpp"
-#include "SmallPage.hpp"
+#include "FixedBlockPage.hpp"
 
 namespace kotlin::alloc {
 
@@ -34,15 +34,15 @@ public:
 
     AtomicStack<ExtraObjectCell> SweepExtraObjects(gc::GCHandle gcHandle) noexcept;
 
-    SmallPage* GetSmallPage(uint32_t cellCount) noexcept;
-    MediumPage* GetMediumPage(uint32_t cellCount) noexcept;
-    LargePage* GetLargePage(uint64_t cellCount) noexcept;
+    FixedBlockPage* GetFixedBlockPage(uint32_t cellCount) noexcept;
+    NextFitPage* GetNextFitPage(uint32_t cellCount) noexcept;
+    SingleObjectPage* GetSingleObjectPage(uint64_t cellCount) noexcept;
     ExtraObjectPage* GetExtraObjectPage() noexcept;
 
 private:
-    PageStore<SmallPage> smallPages_[SMALL_PAGE_MAX_BLOCK_SIZE + 1];
-    PageStore<MediumPage> mediumPages_;
-    PageStore<LargePage> largePages_;
+    PageStore<FixedBlockPage> fixedBlockPages_[FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE + 1];
+    PageStore<NextFitPage> nextFitPages_;
+    PageStore<SingleObjectPage> singleObjectPages_;
     AtomicStack<ExtraObjectPage> extraObjectPages_;
     AtomicStack<ExtraObjectPage> usedExtraObjectPages_;
 };

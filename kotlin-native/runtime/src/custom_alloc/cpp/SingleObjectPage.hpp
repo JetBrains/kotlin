@@ -3,20 +3,19 @@
  * that can be found in the LICENSE file.
  */
 
-#ifndef CUSTOM_ALLOC_CPP_LARGEPAGE_HPP_
-#define CUSTOM_ALLOC_CPP_LARGEPAGE_HPP_
+#ifndef CUSTOM_ALLOC_CPP_SINGLEOBJECTPAGE_HPP_
+#define CUSTOM_ALLOC_CPP_SINGLEOBJECTPAGE_HPP_
 
 #include <atomic>
 #include <cstdint>
 
 #include "AtomicStack.hpp"
-#include "MediumPage.hpp"
 
 namespace kotlin::alloc {
 
-class alignas(8) LargePage {
+class alignas(8) SingleObjectPage {
 public:
-    static LargePage* Create(uint64_t cellCount) noexcept;
+    static SingleObjectPage* Create(uint64_t cellCount) noexcept;
 
     void Destroy() noexcept;
 
@@ -27,8 +26,8 @@ public:
     bool Sweep() noexcept;
 
 private:
-    friend class AtomicStack<LargePage>;
-    LargePage* next_;
+    friend class AtomicStack<SingleObjectPage>;
+    SingleObjectPage* next_;
     bool isAllocated_ = false;
     struct alignas(8) {
         uint8_t data_[];

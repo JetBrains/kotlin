@@ -9,23 +9,23 @@
 #include "Cell.hpp"
 #include "CustomAllocConstants.hpp"
 #include "gtest/gtest.h"
-#include "MediumPage.hpp"
+#include "NextFitPage.hpp"
 #include "TypeInfo.h"
 
 namespace {
 
-using MediumPage = typename kotlin::alloc::MediumPage;
+using NextFitPage = typename kotlin::alloc::NextFitPage;
 using Cell = typename kotlin::alloc::Cell;
 
 TypeInfo fakeType = {.flags_ = 0}; // a type without a finalizer
 
-inline constexpr const size_t MIN_BLOCK_SIZE = SMALL_PAGE_MAX_BLOCK_SIZE + 1;
+inline constexpr const size_t MIN_BLOCK_SIZE = FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE + 1;
 
 void mark(void* obj) {
     reinterpret_cast<uint64_t*>(obj)[0] = 1;
 }
 
-uint8_t* alloc(MediumPage* page, uint32_t blockSize) {
+uint8_t* alloc(NextFitPage* page, uint32_t blockSize) {
     uint8_t* ptr = page->TryAllocate(blockSize);
     if (!page->CheckInvariants()) {
         ADD_FAILURE();
@@ -41,8 +41,8 @@ uint8_t* alloc(MediumPage* page, uint32_t blockSize) {
     return ptr;
 }
 
-TEST(CustomAllocTest, MediumPageAlloc) {
-    MediumPage* page = MediumPage::Create(MIN_BLOCK_SIZE);
+TEST(CustomAllocTest, NextFitPageAlloc) {
+    NextFitPage* page = NextFitPage::Create(MIN_BLOCK_SIZE);
     uint8_t* p1 = alloc(page, MIN_BLOCK_SIZE);
     uint8_t* p2 = alloc(page, MIN_BLOCK_SIZE);
     uint64_t dist = abs(p1 - p2);
@@ -50,33 +50,33 @@ TEST(CustomAllocTest, MediumPageAlloc) {
     page->Destroy();
 }
 
-TEST(CustomAllocTest, MediumPageSweepEmptyPage) {
-    MediumPage* page = MediumPage::Create(MIN_BLOCK_SIZE);
+TEST(CustomAllocTest, NextFitPageSweepEmptyPage) {
+    NextFitPage* page = NextFitPage::Create(MIN_BLOCK_SIZE);
     EXPECT_FALSE(page->Sweep());
     page->Destroy();
 }
 
-TEST(CustomAllocTest, MediumPageSweepFullUnmarkedPage) {
+TEST(CustomAllocTest, NextFitPageSweepFullUnmarkedPage) {
     for (uint32_t seed = 0xC0FFEE0; seed <= 0xC0FFEEF; ++seed) {
         std::minstd_rand r(seed);
-        MediumPage* page = MediumPage::Create(MIN_BLOCK_SIZE);
+        NextFitPage* page = NextFitPage::Create(MIN_BLOCK_SIZE);
         while (alloc(page, MIN_BLOCK_SIZE + r() % 100)) {}
         EXPECT_FALSE(page->Sweep());
         page->Destroy();
     }
 }
 
-TEST(CustomAllocTest, MediumPageSweepSingleMarked) {
-    MediumPage* page = MediumPage::Create(MIN_BLOCK_SIZE);
+TEST(CustomAllocTest, NextFitPageSweepSingleMarked) {
+    NextFitPage* page = NextFitPage::Create(MIN_BLOCK_SIZE);
     mark(alloc(page, MIN_BLOCK_SIZE));
     EXPECT_TRUE(page->Sweep());
     page->Destroy();
 }
 
-TEST(CustomAllocTest, MediumPageSweepSingleReuse) {
+TEST(CustomAllocTest, NextFitPageSweepSingleReuse) {
     for (uint32_t seed = 0xC0FFEE0; seed <= 0xC0FFEEF; ++seed) {
         std::minstd_rand r(seed);
-        MediumPage* page = MediumPage::Create(MIN_BLOCK_SIZE);
+        NextFitPage* page = NextFitPage::Create(MIN_BLOCK_SIZE);
         int count1 = 0;
         while (alloc(page, MIN_BLOCK_SIZE + r() % 100)) ++count1;
         EXPECT_FALSE(page->Sweep());
@@ -88,10 +88,10 @@ TEST(CustomAllocTest, MediumPageSweepSingleReuse) {
     }
 }
 
-TEST(CustomAllocTest, MediumPageSweepReuse) {
+TEST(CustomAllocTest, NextFitPageSweepReuse) {
     for (uint32_t seed = 0xC0FFEE0; seed <= 0xC0FFEEF; ++seed) {
         std::minstd_rand r(seed);
-        MediumPage* page = MediumPage::Create(MIN_BLOCK_SIZE);
+        NextFitPage* page = NextFitPage::Create(MIN_BLOCK_SIZE);
         int unmarked = 0;
         while (true) {
             uint8_t* ptr = alloc(page, MIN_BLOCK_SIZE);
@@ -110,11 +110,11 @@ TEST(CustomAllocTest, MediumPageSweepReuse) {
     }
 }
 
-TEST(CustomAllocTest, MediumPageSweepCoallesce) {
-    MediumPage* page = MediumPage::Create(MIN_BLOCK_SIZE);
-    EXPECT_TRUE(alloc(page, (MEDIUM_PAGE_CELL_COUNT-1) / 2 - 1));
+TEST(CustomAllocTest, NextFitPageSweepCoallesce) {
+    NextFitPage* page = NextFitPage::Create(MIN_BLOCK_SIZE);
+    EXPECT_TRUE(alloc(page, (NEXT_FIT_PAGE_CELL_COUNT-1) / 2 - 1));
     EXPECT_FALSE(page->Sweep());
-    EXPECT_TRUE(alloc(page, (MEDIUM_PAGE_CELL_COUNT-1) - 1));
+    EXPECT_TRUE(alloc(page, (NEXT_FIT_PAGE_CELL_COUNT-1) - 1));
     page->Destroy();
 }
 

@@ -11,7 +11,6 @@
 #include "ExtraObjectData.hpp"
 #include "ExtraObjectPage.hpp"
 #include "gtest/gtest.h"
-#include "TypeInfo.h"
 
 namespace {
 

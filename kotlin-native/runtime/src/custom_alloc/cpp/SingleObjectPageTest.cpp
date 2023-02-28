@@ -8,38 +8,38 @@
 
 #include "CustomAllocConstants.hpp"
 #include "gtest/gtest.h"
-#include "LargePage.hpp"
+#include "SingleObjectPage.hpp"
 #include "TypeInfo.h"
 
 namespace {
 
-using LargePage = typename kotlin::alloc::LargePage;
+using SingleObjectPage = typename kotlin::alloc::SingleObjectPage;
 
 TypeInfo fakeType = {.flags_ = 0}; // a type without a finalizer
 
-#define MIN_BLOCK_SIZE MEDIUM_PAGE_CELL_COUNT
+#define MIN_BLOCK_SIZE NEXT_FIT_PAGE_CELL_COUNT
 
 void mark(void* obj) {
     reinterpret_cast<uint64_t*>(obj)[0] = 1;
 }
 
-LargePage* alloc(uint64_t blockSize) {
-    LargePage* page = LargePage::Create(blockSize);
+SingleObjectPage* alloc(uint64_t blockSize) {
+    SingleObjectPage* page = SingleObjectPage::Create(blockSize);
     uint64_t* ptr = reinterpret_cast<uint64_t*>(page->TryAllocate());
     memset(ptr, 0, 8 * blockSize);
     ptr[1] = reinterpret_cast<uint64_t>(&fakeType);
     return page;
 }
 
-TEST(CustomAllocTest, LargePageSweepEmptyPage) {
-    LargePage* page = alloc(MIN_BLOCK_SIZE);
+TEST(CustomAllocTest, SingleObjectPageSweepEmptyPage) {
+    SingleObjectPage* page = alloc(MIN_BLOCK_SIZE);
     EXPECT_TRUE(page);
     EXPECT_FALSE(page->Sweep());
     page->Destroy();
 }
 
-TEST(CustomAllocTest, LargePageSweepFullPage) {
-    LargePage* page = alloc(MIN_BLOCK_SIZE);
+TEST(CustomAllocTest, SingleObjectPageSweepFullPage) {
+    SingleObjectPage* page = alloc(MIN_BLOCK_SIZE);
     EXPECT_TRUE(page);
     EXPECT_TRUE(page->Data());
     mark(page->Data());
