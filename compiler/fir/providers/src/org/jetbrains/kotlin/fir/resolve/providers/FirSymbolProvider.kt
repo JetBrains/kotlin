@@ -144,8 +144,12 @@ fun Set<String>.mayHaveTopLevelClassifier(
 private inline fun Set<String>.mayHaveTopLevelClassifier(shortClassName: Name): Boolean =
     shortClassName.asString() in this || shortClassName.isSpecial
 
-private fun isNameForFunctionClass(classId: ClassId, session: FirSession): Boolean =
-    session.functionTypeService.getKindByClassNamePrefix(classId.packageFqName, classId.shortClassName.asString()) != null
+private fun isNameForFunctionClass(classId: ClassId, session: FirSession): Boolean {
+    // Optimization: `classId` can only be a name for a generated function class if it ends with a digit. See `FunctionTypeKind`.
+    if (classId.relativeClassName.asString().lastOrNull()?.isDigit() != true) return false
+
+    return session.functionTypeService.getKindByClassNamePrefix(classId.packageFqName, classId.shortClassName.asString()) != null
+}
 
 fun ClassId.toSymbol(session: FirSession): FirClassifierSymbol<*>? {
     return session.symbolProvider.getClassLikeSymbolByClassId(this)
