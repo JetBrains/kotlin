@@ -107,6 +107,26 @@ fun buildDecompiledText(
                 }
                 endOffset = builder.length
             }
+            if (descriptor is PropertyDescriptor) {
+                for (accessor in descriptor.accessors) {
+                    if (accessor.isDefault) continue
+                    builder.append("$indent    ")
+                    builder.append(accessor.visibility.internalDisplayName).append(" ")
+                    if (accessor.modality == Modality.FINAL) {
+                        builder.append("final ")
+                    }
+                    if (accessor is PropertyGetterDescriptor) {
+                        builder.append("get")
+                    } else if (accessor is PropertySetterDescriptor) {
+                        builder.append("set(")
+                        val parameterDescriptor = accessor.valueParameters[0]
+                        builder.append(parameterDescriptor.name.asString()).append(": ")
+                            .append(descriptorRenderer.renderType(parameterDescriptor.type))
+                        builder.append(")")
+                    }
+                    endOffset = builder.length
+                }
+            }
         } else if (descriptor is ClassDescriptor && !isEnumEntry(descriptor)) {
             builder.append(" {\n")
 

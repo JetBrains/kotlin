@@ -12,6 +12,7 @@ PsiJetFileStubImpl[package=]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Int]
+          NULL[kind=NULL, value=null]
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
           TYPE_REFERENCE
             USER_TYPE

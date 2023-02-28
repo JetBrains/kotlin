@@ -8,8 +8,6 @@ PsiJetFileStubImpl[package=]
       VALUE_PARAMETER_LIST
     CLASS_BODY
       PROPERTY[fqName=ContextReceiversCallableMembers.property, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=false, isVar=false, name=property]
-        PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
-          MODIFIER_LIST[private final]
         CONTEXT_RECEIVER_LIST
           CONTEXT_RECEIVER[label=null]
             TYPE_REFERENCE
@@ -30,10 +28,32 @@ PsiJetFileStubImpl[package=]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
-      PROPERTY[fqName=ContextReceiversCallableMembers.propertyWithSetter, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=false, isVar=true, name=propertyWithSetter]
-        PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
+        PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=true]
           MODIFIER_LIST[private final]
-        PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=false]
+      PROPERTY[fqName=ContextReceiversCallableMembers.propertyWithSetter, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=false, isVar=true, name=propertyWithSetter]
+        CONTEXT_RECEIVER_LIST
+          CONTEXT_RECEIVER[label=null]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=A]
+          CONTEXT_RECEIVER[label=null]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=B]
+        MODIFIER_LIST[private final]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Int]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Int]
+        PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=true]
+          MODIFIER_LIST[private final]
+        PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=false]
           MODIFIER_LIST[private final]
           VALUE_PARAMETER_LIST
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=v]
@@ -42,26 +62,6 @@ PsiJetFileStubImpl[package=]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=Int]
-        CONTEXT_RECEIVER_LIST
-          CONTEXT_RECEIVER[label=null]
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=A]
-          CONTEXT_RECEIVER[label=null]
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=B]
-        MODIFIER_LIST[private final]
-        TYPE_REFERENCE
-          USER_TYPE
-            USER_TYPE
-              REFERENCE_EXPRESSION[referencedName=kotlin]
-            REFERENCE_EXPRESSION[referencedName=Int]
-        TYPE_REFERENCE
-          USER_TYPE
-            USER_TYPE
-              REFERENCE_EXPRESSION[referencedName=kotlin]
-            REFERENCE_EXPRESSION[referencedName=Int]
       FUN[fqName=ContextReceiversCallableMembers.function, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=function]
         CONTEXT_RECEIVER_LIST
           CONTEXT_RECEIVER[label=null]

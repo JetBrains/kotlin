@@ -258,7 +258,6 @@ private class PropertyClsStubBuilder(
 
     override fun doCreateCallableStub(parent: StubElement<out PsiElement>): StubElement<out PsiElement> {
         val callableName = c.nameResolver.getName(propertyProto.name)
-        val flags = propertyProto.flags
         // Note that arguments passed to stubs here and elsewhere are based on what stabs would be generated based on decompiled code
         // This info is anyway irrelevant for the purposes these stubs are used
         val propertyStub = KotlinPropertyStubImpl(
@@ -274,10 +273,18 @@ private class PropertyClsStubBuilder(
             fqName = c.containerFqName.child(callableName)
         )
 
+        return propertyStub
+    }
+
+    override fun createInitializer() {
+        if (initializer != null) {
+            buildConstantInitializer(initializer.value, initializer.argValue, initializer.kind, callableStub)
+        }
+        val flags = propertyProto.flags
         if (Flags.HAS_GETTER[flags] && propertyProto.hasGetterFlags()) {
             val getterFlags = propertyProto.getterFlags
             if (Flags.IS_NOT_DEFAULT.get(getterFlags)) {
-                val getterStub = KotlinPropertyAccessorStubImpl(propertyStub, true, true, false)
+                val getterStub = KotlinPropertyAccessorStubImpl(callableStub, true, false, true)
                 createModifierListStubForDeclaration(
                     getterStub,
                     getterFlags,
@@ -289,7 +296,7 @@ private class PropertyClsStubBuilder(
         if (Flags.HAS_SETTER[flags] && propertyProto.hasSetterFlags()) {
             val setterFlags = propertyProto.setterFlags
             if (Flags.IS_NOT_DEFAULT.get(setterFlags)) {
-                val setterStub = KotlinPropertyAccessorStubImpl(propertyStub, false, true, false)
+                val setterStub = KotlinPropertyAccessorStubImpl(callableStub, false, false, true)
                 createModifierListStubForDeclaration(
                     setterStub,
                     setterFlags,
@@ -304,13 +311,6 @@ private class PropertyClsStubBuilder(
                     )
                 }
             }
-        }
-        return propertyStub
-    }
-
-    override fun createInitializer() {
-        if (initializer != null) {
-            buildConstantInitializer(initializer.value, initializer.argValue, initializer.kind, callableStub)
         }
     }
 

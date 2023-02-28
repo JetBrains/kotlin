@@ -38,8 +38,6 @@ PsiJetFileStubImpl[package=test]
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Int]
   PROPERTY[fqName=test.p1ExtVal, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=false, name=p1ExtVal]
-    PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
-      MODIFIER_LIST[public final]
     MODIFIER_LIST[public]
     TYPE_REFERENCE
       USER_TYPE
@@ -51,6 +49,8 @@ PsiJetFileStubImpl[package=test]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Int]
+    PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=true]
+      MODIFIER_LIST[public final]
   FUN[fqName=test.p1ExprFun, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=p1ExprFun]
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
@@ -102,8 +102,6 @@ PsiJetFileStubImpl[package=test]
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Int]
   PROPERTY[fqName=test.p2ExtVal, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=false, name=p2ExtVal]
-    PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
-      MODIFIER_LIST[public final]
     MODIFIER_LIST[public]
     TYPE_REFERENCE
       USER_TYPE
@@ -115,6 +113,8 @@ PsiJetFileStubImpl[package=test]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Int]
+    PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=true]
+      MODIFIER_LIST[public final]
   FUN[fqName=test.p2Fun, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=p2Fun]
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST

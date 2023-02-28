@@ -19,6 +19,7 @@ PsiJetFileStubImpl[package=a]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=Int]
+              NULL[kind=NULL, value=null]
         SUPER_TYPE_LIST
           SUPER_TYPE_ENTRY
             TYPE_REFERENCE

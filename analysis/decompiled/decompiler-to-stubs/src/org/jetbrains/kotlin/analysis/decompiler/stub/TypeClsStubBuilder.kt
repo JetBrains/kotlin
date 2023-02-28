@@ -4,6 +4,7 @@ package org.jetbrains.kotlin.analysis.decompiler.stub
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
+import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionClass
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.stubs.ConstantValueKind
 import org.jetbrains.kotlin.psi.stubs.KotlinUserTypeStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.*
@@ -251,11 +253,12 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         val parameterListStub = KotlinPlaceHolderStubImpl<KtParameterList>(parent, KtStubElementTypes.VALUE_PARAMETER_LIST)
         for ((index, valueParameterProto) in parameters.withIndex()) {
             val name = c.nameResolver.getName(valueParameterProto.name)
+            val hasDefaultValue = Flags.DECLARES_DEFAULT_VALUE.get(valueParameterProto.flags)
             val parameterStub = KotlinParameterStubImpl(
                 parameterListStub,
                 name = name.ref(),
                 fqName = null,
-                hasDefaultValue = Flags.DECLARES_DEFAULT_VALUE.get(valueParameterProto.flags),
+                hasDefaultValue = hasDefaultValue,
                 hasValOrVar = false,
                 isMutable = false
             )
@@ -285,6 +288,14 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
             }
 
             createTypeReferenceStub(parameterStub, typeProto)
+            if (hasDefaultValue) {
+                KotlinConstantExpressionStubImpl(
+                    parameterStub,
+                    KtStubElementTypes.NULL,
+                    ConstantValueKind.NULL,
+                    StringRef.fromString("null")
+                )
+            }
         }
     }
 

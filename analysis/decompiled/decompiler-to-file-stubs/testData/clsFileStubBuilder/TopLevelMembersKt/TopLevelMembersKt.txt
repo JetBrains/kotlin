@@ -46,8 +46,6 @@ PsiJetFileStubImpl[package=foo.TopLevelMembers]
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Float]
   PROPERTY[fqName=foo.TopLevelMembers.Main, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=false, name=Main]
-    PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
-      MODIFIER_LIST[public final]
     MODIFIER_LIST[public]
     TYPE_REFERENCE
       USER_TYPE
@@ -64,9 +62,9 @@ PsiJetFileStubImpl[package=foo.TopLevelMembers]
               REFERENCE_EXPRESSION[referencedName=foo]
             REFERENCE_EXPRESSION[referencedName=TopLevelMembers]
           REFERENCE_EXPRESSION[referencedName=D]
-  PROPERTY[fqName=foo.TopLevelMembers.ext, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=false, name=ext]
-    PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
+    PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=true]
       MODIFIER_LIST[public final]
+  PROPERTY[fqName=foo.TopLevelMembers.ext, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=false, name=ext]
     MODIFIER_LIST[public]
     TYPE_REFERENCE
       USER_TYPE
@@ -78,6 +76,8 @@ PsiJetFileStubImpl[package=foo.TopLevelMembers]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=String]
+    PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=true]
+      MODIFIER_LIST[public final]
   FUN[fqName=foo.TopLevelMembers.funWithBlockBody, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=funWithBlockBody]
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
@@ -153,6 +153,7 @@ PsiJetFileStubImpl[package=foo.TopLevelMembers]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
+        NULL[kind=NULL, value=null]
     TYPE_REFERENCE
       USER_TYPE
         USER_TYPE
