@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.java.FirJavaFacade
+import org.jetbrains.kotlin.fir.java.deserialization.KotlinBuiltins
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import java.nio.file.Path
 import java.nio.file.Paths
 
@@ -127,7 +129,7 @@ class JvmStubBasedFirDeserializedSymbolProvider(
                 StubBasedAnnotationDeserializer(session),
                 kotlinScopeProvider,
                 parentContext,
-                JvmFromStubDecompilerSource(classId.packageFqName),
+                JvmFromStubDecompilerSource(JvmClassName.byClassId(classId)),
                 deserializeNestedClass = this::getClass,
             )
             return symbol to { loadAnnotationsFromFile() }
@@ -146,6 +148,10 @@ class JvmStubBasedFirDeserializedSymbolProvider(
 
     private fun loadFunctionsByCallableId(callableId: CallableId): List<FirNamedFunctionSymbol> {
         return declarationProvider.getTopLevelFunctions(callableId).mapNotNull { function ->
+            val file = function.containingKtFile
+            if (file.packageFqName.asString()
+                    .replace(".", "/") + "/" + file.virtualFile.nameWithoutExtension in KotlinBuiltins
+            ) return@mapNotNull null
             val moduleData = moduleDataProvider.getModuleData(function.containingLibrary()) ?: return@mapNotNull null
             val symbol = FirNamedFunctionSymbol(callableId)
             val createRootContext = StubBasedFirDeserializationContext.createRootContext(session, moduleData, callableId, function, symbol)
