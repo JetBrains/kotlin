@@ -709,9 +709,12 @@ class CallAndReferenceGenerator(
                 val firCallableSymbol = resolvedReference.resolvedSymbol as FirCallableSymbol<*>
                 // Make sure the reference indeed refers to a member of that companion
 
-                val dispatchReceiverClassLookupTag = firCallableSymbol.dispatchReceiverClassLookupTagOrNull() ?: return null
+                val receiverClassLookupTag = firCallableSymbol.dispatchReceiverClassLookupTagOrNull()
+                    ?: firCallableSymbol.receiverParameter?.typeRef?.coneTypeSafe<ConeClassLikeType>()?.lookupTag
+                    ?: return null
+
                 val callableIsDefinitelyNotMemberOfCompanion = with(session.typeContext) {
-                    !classSymbol.defaultType().anySuperTypeConstructor { it.typeConstructor() == dispatchReceiverClassLookupTag }
+                    !classSymbol.defaultType().anySuperTypeConstructor { it.typeConstructor() == receiverClassLookupTag }
                 }
                 if (callableIsDefinitelyNotMemberOfCompanion) {
                     return null
@@ -734,10 +737,21 @@ class CallAndReferenceGenerator(
                  */
                 val containingClass = classSymbol.getContainingClassLookupTag()?.toFirRegularClassSymbol(session) ?: return null
                 val callableIsDefinitelyMemberOfOuterClass = with(session.typeContext) {
-                    containingClass.defaultType().anySuperTypeConstructor { it.typeConstructor() == dispatchReceiverClassLookupTag }
+                    containingClass.defaultType().anySuperTypeConstructor { it.typeConstructor() == receiverClassLookupTag }
                 }
                 if (callableIsDefinitelyMemberOfOuterClass) {
-                    return null
+                    val expectedParameterCount = callableReferenceAccess.typeRef.coneType.typeArguments.size - 1
+
+                    val declaration = firCallableSymbol.fir
+                    val requiredParameterCount = ((declaration as? FirFunction)?.valueParameters?.size ?: 0) +
+                            (if (declaration.dispatchReceiverType != null) 1 else 0) +
+                            (if (declaration.receiverParameter != null) 1 else 0)
+
+                    // However, if the number of parameters only match, if the receiver is bound, allow using the companion as receiver.
+                    val boundCallableIsExpected = requiredParameterCount == expectedParameterCount + 1
+                    if (!boundCallableIsExpected) {
+                        return null
+                    }
                 }
             }
         }
