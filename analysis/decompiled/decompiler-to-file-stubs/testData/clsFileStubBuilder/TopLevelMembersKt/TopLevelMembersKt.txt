@@ -5,8 +5,6 @@ PsiJetFileStubImpl[package=foo.TopLevelMembers]
       REFERENCE_EXPRESSION[referencedName=TopLevelMembers]
   IMPORT_LIST
   PROPERTY[fqName=foo.TopLevelMembers.Main, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=Main]
-    PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
-      MODIFIER_LIST[internal final]
     MODIFIER_LIST[internal]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
         ANNOTATION_TARGET[useSiteTarget=FIELD]
@@ -33,7 +31,7 @@ PsiJetFileStubImpl[package=foo.TopLevelMembers]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Nothing]
-  PROPERTY[fqName=foo.TopLevelMembers.immutable, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=immutable]
+  PROPERTY[fqName=foo.TopLevelMembers.immutable, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=immutable]
     MODIFIER_LIST[public]
     TYPE_REFERENCE
       USER_TYPE

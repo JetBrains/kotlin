@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.psi.stubs.elements
 
-import com.intellij.lang.ASTNode
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
@@ -22,13 +21,6 @@ class KtConstantExpressionElementType(@NonNls debugName: String) :
         KtConstantExpression::class.java,
         KotlinConstantExpressionStub::class.java
     ) {
-
-    override fun shouldCreateStub(node: ASTNode): Boolean {
-        val parent = node.treeParent ?: return false
-        if (parent.elementType != KtStubElementTypes.VALUE_ARGUMENT) return false
-
-        return super.shouldCreateStub(node)
-    }
 
     override fun createStub(psi: KtConstantExpression, parentStub: StubElement<*>?): KotlinConstantExpressionStub {
         val elementType = psi.node.elementType as? KtConstantExpressionElementType

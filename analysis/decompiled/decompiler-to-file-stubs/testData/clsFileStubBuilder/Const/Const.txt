@@ -6,10 +6,10 @@ PsiJetFileStubImpl[package=test]
     MODIFIER_LIST[public]
     CLASS_BODY
       PROPERTY[fqName=test.Const.inObject, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=inObject]
-        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
         MODIFIER_LIST[private final const]
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]

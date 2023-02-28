@@ -3,9 +3,6 @@ PsiJetFileStubImpl[package=test]
     REFERENCE_EXPRESSION[referencedName=test]
   IMPORT_LIST
   PROPERTY[fqName=test.annotatedConstVal, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=annotatedConstVal]
-    PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
-      MODIFIER_LIST[public final]
-    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=42]
     MODIFIER_LIST[public const]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Deprecated]
         CONSTRUCTOR_CALLEE
@@ -25,7 +22,8 @@ PsiJetFileStubImpl[package=test]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Int]
-  PROPERTY[fqName=test.p1Val, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=p1Val]
+    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=42]
+  PROPERTY[fqName=test.p1Val, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=p1Val]
     MODIFIER_LIST[public]
     TYPE_REFERENCE
       USER_TYPE
@@ -96,7 +94,7 @@ PsiJetFileStubImpl[package=test]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Unit]
-  PROPERTY[fqName=test.p2Val, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=p2Val]
+  PROPERTY[fqName=test.p2Val, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=p2Val]
     MODIFIER_LIST[public]
     TYPE_REFERENCE
       USER_TYPE

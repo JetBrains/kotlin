@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.*
 import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Argument.Value
 import org.jetbrains.kotlin.metadata.ProtoBuf.MemberKind
 import org.jetbrains.kotlin.metadata.ProtoBuf.Modality
 import org.jetbrains.kotlin.metadata.deserialization.*
@@ -107,6 +108,7 @@ abstract class CallableClsStubBuilder(
         createValueParameterList()
         createReturnTypeStub()
         typeStubBuilder.createTypeConstraintListStub(callableStub, typeConstraintListData)
+        createInitializer()
     }
 
     abstract val receiverType: ProtoBuf.Type?
@@ -132,6 +134,8 @@ abstract class CallableClsStubBuilder(
     abstract fun createValueParameterList()
 
     abstract fun doCreateCallableStub(parent: StubElement<out PsiElement>): StubElement<out PsiElement>
+
+    open fun createInitializer() {}
 }
 
 private class FunctionClsStubBuilder(
@@ -208,6 +212,7 @@ private class PropertyClsStubBuilder(
     private val propertyProto: ProtoBuf.Property
 ) : CallableClsStubBuilder(parent, outerContext, protoContainer, propertyProto.typeParameterList) {
     private val isVar = Flags.IS_VAR.get(propertyProto.flags)
+    private val initializer = if (Flags.HAS_CONSTANT[propertyProto.flags]) getInitializer() else null
 
     override val receiverType: ProtoBuf.Type?
         get() = propertyProto.receiverType(c.typeTable)
@@ -256,7 +261,6 @@ private class PropertyClsStubBuilder(
         val flags = propertyProto.flags
         // Note that arguments passed to stubs here and elsewhere are based on what stabs would be generated based on decompiled code
         // This info is anyway irrelevant for the purposes these stubs are used
-        val hasInitializer = Flags.HAS_CONSTANT[flags]
         val propertyStub = KotlinPropertyStubImpl(
             parent,
             callableName.ref(),
@@ -264,62 +268,80 @@ private class PropertyClsStubBuilder(
             isTopLevel,
             hasDelegate = false,
             hasDelegateExpression = false,
-            hasInitializer = hasInitializer,
+            hasInitializer = initializer != null,
             isExtension = propertyProto.hasReceiver(),
             hasReturnTypeRef = true,
             fqName = c.containerFqName.child(callableName)
         )
 
         if (Flags.HAS_GETTER[flags] && propertyProto.hasGetterFlags()) {
-            val getterStub = KotlinPropertyAccessorStubImpl(propertyStub, true, true, false)
-            createModifierListStubForDeclaration(
-                getterStub,
-                propertyProto.getterFlags,
-                listOf(VISIBILITY, MODALITY, INLINE, EXTERNAL_FUN)
-            )
-        }
-
-        if (Flags.HAS_SETTER[flags] && propertyProto.hasSetterFlags()) {
-            val setterStub = KotlinPropertyAccessorStubImpl(propertyStub, false, true, false)
-            createModifierListStubForDeclaration(
-                setterStub,
-                propertyProto.setterFlags,
-                listOf(VISIBILITY, MODALITY, INLINE, EXTERNAL_FUN)
-            )
-            if (propertyProto.hasSetterValueParameter()) {
-                typeStubBuilder.createValueParameterListStub(
-                    setterStub,
-                    propertyProto,
-                    listOf(propertyProto.setterValueParameter),
-                    protoContainer
+            val getterFlags = propertyProto.getterFlags
+            if (Flags.IS_NOT_DEFAULT.get(getterFlags)) {
+                val getterStub = KotlinPropertyAccessorStubImpl(propertyStub, true, true, false)
+                createModifierListStubForDeclaration(
+                    getterStub,
+                    getterFlags,
+                    listOf(VISIBILITY, MODALITY, INLINE, EXTERNAL_FUN)
                 )
             }
         }
-        if (hasInitializer) {
-            val classFinder = c.components.classFinder
-            val containerClass =
-                if (classFinder != null) getSpecialCaseContainerClass(classFinder, c.components.jvmMetadataVersion!!) else null
-            val source = protoContainer.source
-            val binaryClass = containerClass ?: (source as? KotlinJvmBinarySourceElement)?.binaryClass
-            if (binaryClass != null) {
-                binaryClass.visitMembers(object : KotlinJvmBinaryClass.MemberVisitor {
-                    override fun visitMethod(name: Name, desc: String): KotlinJvmBinaryClass.MethodAnnotationVisitor? = null
 
-                    override fun visitField(name: Name, desc: String, initializer: Any?): KotlinJvmBinaryClass.AnnotationVisitor? {
-                        if (initializer != null && name == callableName) {
-                            buildConstantInitializer(initializer, null, desc, propertyStub)
-                        }
-                        return null
-                    }
-                }, null)
-            } else {
-                val value = propertyProto.getExtensionOrNull(BuiltInSerializerProtocol.compileTimeValue)
-                if (value != null) {
-                    buildConstantInitializer(null, value, value.type.name, propertyStub)
+        if (Flags.HAS_SETTER[flags] && propertyProto.hasSetterFlags()) {
+            val setterFlags = propertyProto.setterFlags
+            if (Flags.IS_NOT_DEFAULT.get(setterFlags)) {
+                val setterStub = KotlinPropertyAccessorStubImpl(propertyStub, false, true, false)
+                createModifierListStubForDeclaration(
+                    setterStub,
+                    setterFlags,
+                    listOf(VISIBILITY, MODALITY, INLINE, EXTERNAL_FUN)
+                )
+                if (propertyProto.hasSetterValueParameter()) {
+                    typeStubBuilder.createValueParameterListStub(
+                        setterStub,
+                        propertyProto,
+                        listOf(propertyProto.setterValueParameter),
+                        protoContainer
+                    )
                 }
             }
         }
         return propertyStub
+    }
+
+    override fun createInitializer() {
+        if (initializer != null) {
+            buildConstantInitializer(initializer.value, initializer.argValue, initializer.kind, callableStub)
+        }
+    }
+
+    data class InitializerDescriptor(val value: Any?, val argValue: Value?, val kind: String)
+
+    private fun getInitializer(): InitializerDescriptor? {
+        val callableName = c.nameResolver.getName(propertyProto.name)
+        val classFinder = c.components.classFinder
+        val containerClass =
+            if (classFinder != null) getSpecialCaseContainerClass(classFinder, c.components.jvmMetadataVersion!!) else null
+        val source = protoContainer.source
+        var foundInitializer: InitializerDescriptor? = null
+        val binaryClass = containerClass ?: (source as? KotlinJvmBinarySourceElement)?.binaryClass
+        if (binaryClass != null) {
+            binaryClass.visitMembers(object : KotlinJvmBinaryClass.MemberVisitor {
+                override fun visitMethod(name: Name, desc: String): KotlinJvmBinaryClass.MethodAnnotationVisitor? = null
+
+                override fun visitField(name: Name, desc: String, initializer: Any?): KotlinJvmBinaryClass.AnnotationVisitor? {
+                    if (initializer != null && name == callableName) {
+                        foundInitializer = InitializerDescriptor(initializer, null, desc)
+                    }
+                    return null
+                }
+            }, null)
+        } else {
+            val value = propertyProto.getExtensionOrNull(BuiltInSerializerProtocol.compileTimeValue)
+            if (value != null) {
+                foundInitializer = InitializerDescriptor(null, value, value.type.name)
+            }
+        }
+        return foundInitializer
     }
 
     /**
@@ -414,41 +436,41 @@ private class ConstructorClsStubBuilder(
     }
 }
 fun buildConstantInitializer(
-    value1: Any?, builtInValue: ProtoBuf.Annotation.Argument.Value?, constKind: String, parent: KotlinStubBaseImpl<*>
+    value: Any?, builtInValue: Value?, constKind: String, parent: StubElement<*>
 ): KotlinStubBaseImpl<*>? {
     return when (constKind) {
         "BYTE", "B", "SHORT", "S", "LONG", "J", "INT", "I" -> KotlinConstantExpressionStubImpl(
             parent,
             KtStubElementTypes.INTEGER_CONSTANT,
             ConstantValueKind.INTEGER_CONSTANT,
-            StringRef.fromString(((value1 ?: builtInValue?.intValue) as Number).toString())
+            StringRef.fromString(((value ?: builtInValue?.intValue) as Number).toString())
         )
         "CHAR", "C" -> KotlinConstantExpressionStubImpl(
             parent,
             KtStubElementTypes.CHARACTER_CONSTANT,
             ConstantValueKind.CHARACTER_CONSTANT,
-            StringRef.fromString(((value1 ?: builtInValue?.intValue) as Number).toInt().toChar().toString())
+            StringRef.fromString(((value ?: builtInValue?.intValue) as Number).toInt().toChar().toString())
         )
         "FLOAT", "F" -> KotlinConstantExpressionStubImpl(
             parent,
             KtStubElementTypes.FLOAT_CONSTANT,
             ConstantValueKind.FLOAT_CONSTANT,
-            StringRef.fromString(((value1 ?: builtInValue?.floatValue) as Float).toString())
+            StringRef.fromString(((value ?: builtInValue?.floatValue) as Float).toString())
         )
         "DOUBLE", "D" -> KotlinConstantExpressionStubImpl(
             parent,
             KtStubElementTypes.FLOAT_CONSTANT,
             ConstantValueKind.FLOAT_CONSTANT,
-            StringRef.fromString(((value1 ?: builtInValue?.doubleValue) as Double).toString())
+            StringRef.fromString(((value ?: builtInValue?.doubleValue) as Double).toString())
         )
         "BOOLEAN", "Z" -> KotlinConstantExpressionStubImpl(
             parent,
             KtStubElementTypes.BOOLEAN_CONSTANT,
             ConstantValueKind.BOOLEAN_CONSTANT,
-            StringRef.fromString(((value1 ?: builtInValue?.intValue) != 0).toString())
+            StringRef.fromString(((value ?: builtInValue?.intValue) != 0).toString())
         )
         "STRING", "Ljava/lang/String;" -> {
-            val text = (value1 ?: builtInValue?.stringValue) as String
+            val text = (value ?: builtInValue?.stringValue) as String
             val stringTemplate = KotlinPlaceHolderStubImpl<KtStringTemplateExpression>(
                 parent, KtStubElementTypes.STRING_TEMPLATE
             )
