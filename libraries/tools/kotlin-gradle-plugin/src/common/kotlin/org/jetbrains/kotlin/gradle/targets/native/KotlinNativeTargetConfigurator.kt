@@ -491,7 +491,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
             ) {
                 it.group = BasePlugin.BUILD_GROUP
                 it.description = "Compiles a klibrary from the '${compilationInfo.compilationName}' " +
-                        "compilation for target '${compilationInfo.platformType.name}'."
+                        "compilation in target '${compilationInfo.targetDisambiguationClassifier}'."
                 it.enabled = konanTarget.enabledOnCurrentHost
 
                 it.destinationDirectory.set(project.klibOutputDirectory(compilationInfo).resolve("klib"))
