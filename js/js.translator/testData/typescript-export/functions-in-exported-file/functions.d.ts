@@ -20,5 +20,7 @@ declare namespace JS_TESTS {
         function inlineFun(x: number, callback: (p0: number) => void): void;
         function formatList(value: any/* kotlin.collections.List<UnknownType *> */): string;
         function createList(): any/* kotlin.collections.List<UnknownType *> */;
+        function defaultParametersAtTheBegining(a: string | undefined, b: string): string;
+        function nonDefaultParameterInBetween(a: string | undefined, b: string, c?: string): string;
     }
 }

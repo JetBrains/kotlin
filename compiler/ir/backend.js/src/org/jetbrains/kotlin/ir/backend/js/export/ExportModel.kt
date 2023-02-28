@@ -116,6 +116,7 @@ sealed class ExportedType {
         object Throwable : Primitive("Error")
         object Any : Primitive("any")
         object Unknown : Primitive("unknown")
+        object Undefined : Primitive("undefined")
         object Unit : Primitive("void")
         object Nothing : Primitive("never")
         object UniqueSymbol : Primitive("unique symbol")

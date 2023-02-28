@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 private const val Nullable = "Nullable"
 private const val objects = "_objects_"
 private const val declare = "declare "
-private const val declareExorted = "export $declare"
+private const val declareExported = "export $declare"
 
 private const val NonExistent = "__NonExistent"
 private const val syntheticObjectNameSeparator = '$'
@@ -75,7 +75,7 @@ class ExportModelToTsDeclarations {
         return joinToString("\n") {
             it.toTypeScript(
                 indent = moduleKind.indent,
-                prefix = if (moduleKind == ModuleKind.PLAIN) "" else declareExorted,
+                prefix = if (moduleKind == ModuleKind.PLAIN) "" else declareExported,
                 esModules = moduleKind == ModuleKind.ES
             )
         } + generateObjectsNamespaceIfNeeded(
@@ -116,13 +116,11 @@ class ExportModelToTsDeclarations {
     }
 
     private fun ExportedConstructor.generateTypeScriptString(indent: String): String {
-        val renderedParameters = parameters.joinToString(", ") { it.toTypeScript(indent) }
-        return "${visibility.keyword}constructor($renderedParameters);"
+        return "${visibility.keyword}constructor(${parameters.generateTypeScriptString(indent)});"
     }
 
     private fun ExportedConstructSignature.generateTypeScriptString(indent: String): String {
-        val renderedParameters = parameters.joinToString(", ") { it.toTypeScript(indent) }
-        return "new($renderedParameters): ${returnType.toTypeScript(indent)};"
+        return "new(${parameters.generateTypeScriptString(indent)}): ${returnType.toTypeScript(indent)};"
     }
 
     private fun ExportedProperty.generateTypeScriptString(indent: String, prefix: String, esModules: Boolean = false): String {
@@ -181,8 +179,7 @@ class ExportModelToTsDeclarations {
             else -> "function "
         }
 
-        val renderedParameters = parameters.joinToString(", ") { it.toTypeScript(indent) }
-
+        val renderedParameters = parameters.generateTypeScriptString(indent)
         val renderedTypeParameters = if (typeParameters.isNotEmpty()) {
             "<" + typeParameters.joinToString(", ") { it.toTypeScript(indent) } + ">"
         } else {
@@ -394,11 +391,22 @@ class ExportModelToTsDeclarations {
         return ExportedProperty(name = name, type = type, mutable = false, isMember = true)
     }
 
-    private fun ExportedParameter.toTypeScript(indent: String): String {
+    private fun List<ExportedParameter>.generateTypeScriptString(indent: String): String {
+        var couldBeOptional = true
+        val parameters = foldRight(mutableListOf<String>()) { it, acc ->
+            if (!it.hasDefaultValue) couldBeOptional = false
+            acc.apply { add(0, it.toTypeScript(indent, couldBeOptional)) }
+        }
+        return parameters.joinToString(", ")
+    }
+
+    private fun ExportedParameter.toTypeScript(indent: String, couldBeOptional: Boolean): String {
         val name = sanitizeName(name, withHash = false)
-        val type = type.toTypeScript(indent)
-        val questionMark = if (hasDefaultValue) "?" else ""
-        return "$name$questionMark: $type"
+        val type = if (hasDefaultValue && !couldBeOptional) {
+            ExportedType.UnionType(type, ExportedType.Primitive.Undefined)
+        } else type
+        val questionMark = if (hasDefaultValue && couldBeOptional) "?" else ""
+        return "$name$questionMark: ${type.toTypeScript(indent)}"
     }
 
     private fun IrClass.asNestedClassAccess(): String {
