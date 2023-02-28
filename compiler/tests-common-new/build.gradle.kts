@@ -6,6 +6,11 @@ plugins {
 }
 
 dependencies {
+    api(project(":kotlin-scripting-common"))
+    api(project(":kotlin-scripting-jvm"))
+    api(projectTests(":compiler:test-infrastructure"))
+    api(projectTests(":compiler:test-infrastructure-utils"))
+
     testApi(project(":compiler:fir:entrypoint"))
     testApi(project(":compiler:fir:fir-serialization"))
     testApi(project(":compiler:cli"))
@@ -41,7 +46,9 @@ dependencies {
 optInToExperimentalCompilerApi()
 
 sourceSets {
-    "main" { none() }
+    "main" {
+        projectDefault() // TODO: Move script definitions to 'test' when IDEA learns to load script definitions from test roots (KTIJ-24800)
+    }
     "test" {
         projectDefault()
         generatedTestDir()
