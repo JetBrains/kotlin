@@ -41,7 +41,7 @@ abstract class KonanTest : DefaultTask(), KonanTestExecutable {
     /**
      * Test output directory. Used to store processed sources and binary artifacts.
      */
-    @get:OutputDirectory
+    @get:Internal
     abstract val outputDirectory: String
 
     /**
