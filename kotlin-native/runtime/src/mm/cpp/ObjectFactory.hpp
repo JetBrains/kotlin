@@ -675,6 +675,14 @@ public:
         typename Storage::Consumer consumer_;
     };
 
+    struct FinalizerQueueTraits {
+        static bool isEmpty(const FinalizerQueue& queue) noexcept { return queue.size() == 0; }
+
+        static void add(FinalizerQueue& into, FinalizerQueue from) noexcept { into.MergeWith(std::move(from)); }
+
+        static void process(FinalizerQueue queue) noexcept { queue.Finalize(); }
+    };
+
     class Iterable {
     public:
         Iterable(ObjectFactory& owner) noexcept : iter_(owner.storage_.LockForIter()) {}

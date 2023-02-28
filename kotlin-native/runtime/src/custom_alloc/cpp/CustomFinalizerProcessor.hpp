@@ -6,41 +6,27 @@
 #ifndef CUSTOM_ALLOC_CPP_CUSTOMFINALIZERPROCESSOR_HPP_
 #define CUSTOM_ALLOC_CPP_CUSTOMFINALIZERPROCESSOR_HPP_
 
-#include <cstdint>
-#include <condition_variable>
-
 #include "AtomicStack.hpp"
+#include "ExtraObjectData.hpp"
 #include "ExtraObjectPage.hpp"
-#include "ScopedThread.hpp"
+#include "FinalizerHooks.hpp"
 
 namespace kotlin::alloc {
 
-class CustomFinalizerProcessor : Pinned {
-public:
-    using Queue = typename kotlin::alloc::AtomicStack<kotlin::alloc::ExtraObjectCell>;
-    explicit CustomFinalizerProcessor(std::function<void(int64_t)> epochDoneCallback) : epochDoneCallback_(std::move(epochDoneCallback)) {}
-    void ScheduleTasks(Queue&& tasks, int64_t epoch) noexcept;
-    void StopFinalizerThread() noexcept;
-    bool IsRunning() noexcept;
-    void StartFinalizerThreadIfNone() noexcept;
-    void WaitFinalizerThreadInitialized() noexcept;
-    ~CustomFinalizerProcessor();
+using FinalizerQueue = kotlin::alloc::AtomicStack<kotlin::alloc::ExtraObjectCell>;
 
-private:
-    ScopedThread finalizerThread_;
-    Queue finalizerQueue_;
-    std::condition_variable finalizerQueueCondVar_;
-    std::mutex finalizerQueueMutex_;
-    std::function<void(int64_t)> epochDoneCallback_;
-    int64_t finalizerQueueEpoch_ = 0;
-    bool shutdownFlag_ = false;
-    bool newTasksAllowed_ = true;
+struct FinalizerQueueTraits {
+    static bool isEmpty(const FinalizerQueue& queue) noexcept { return queue.isEmpty(); }
 
-    std::mutex initializedMutex_;
-    std::condition_variable initializedCondVar_;
-    bool initialized_ = false;
+    static void add(FinalizerQueue& into, FinalizerQueue from) noexcept { into.TransferAllFrom(std::move(from)); }
 
-    std::mutex threadCreatingMutex_;
+    static void process(FinalizerQueue queue) noexcept {
+        while (auto* cell = queue.Pop()) {
+            auto* extraObject = cell->Data();
+            auto* baseObject = extraObject->GetBaseObject();
+            RunFinalizers(baseObject);
+        }
+    }
 };
 
 } // namespace kotlin::alloc

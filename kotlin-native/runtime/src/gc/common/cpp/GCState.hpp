@@ -10,6 +10,9 @@
 #include <atomic>
 #include <optional>
 
+#include "KAssert.h"
+#include "Utils.hpp"
+
 class GCStateHolder {
 public:
     int64_t schedule() {
@@ -29,17 +32,11 @@ public:
         finalizedEpoch.notify();
     }
 
-    void start(int64_t epoch) {
-        startedEpoch.set(epoch);
-    }
+    void start(int64_t epoch) { startedEpoch.set(epoch); }
 
-    void finish(int64_t epoch) {
-        finishedEpoch.set(epoch);
-    }
+    void finish(int64_t epoch) { finishedEpoch.set(epoch); }
 
-    void finalized(int64_t epoch) {
-        finalizedEpoch.set(epoch);
-    }
+    void finalized(int64_t epoch) { finalizedEpoch.set(epoch); }
 
     void waitEpochFinished(int64_t epoch) {
         finishedEpoch.wait([this, epoch] { return *finishedEpoch >= epoch || shutdownFlag_; });
@@ -58,7 +55,7 @@ public:
 private:
     template <typename T>
     struct ValueWithCondVar : kotlin::Pinned {
-        explicit ValueWithCondVar(T initializer, std::mutex& mutex) noexcept : value_(initializer), mutex_(mutex) {};
+        explicit ValueWithCondVar(T initializer, std::mutex& mutex) noexcept : value_(initializer), mutex_(mutex){};
 
         const T& operator*() const { return value_; }
 
@@ -73,9 +70,7 @@ private:
             cond_.notify_all();
         }
 
-        void notify() {
-            cond_.notify_all();
-        }
+        void notify() { cond_.notify_all(); }
 
         template <class Predicate>
         const T& wait(Predicate stop_waiting) {

@@ -67,7 +67,7 @@ public:
         } while (!stack_.compare_exchange_weak(thisHead, otherHead, std::memory_order_acq_rel));
     }
 
-    bool isEmpty() noexcept { return stack_.load(std::memory_order_relaxed) == nullptr; }
+    bool isEmpty() const noexcept { return stack_.load(std::memory_order_relaxed) == nullptr; }
 
     // Not thread-safe. Named like this to make AtomicStack compatible with FinalizerQueue
     size_t size() {

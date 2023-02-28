@@ -17,10 +17,7 @@ namespace {
 
 ALWAYS_INLINE void SafePointRegular(gc::GC::ThreadData& threadData, size_t weight) noexcept {
     threadData.impl().gcScheduler().OnSafePointRegular(weight);
-    auto flag = gc::internal::loadSafepointFlag();
-    if (flag != gc::SameThreadMarkAndSweep::SafepointFlag::kNone) {
-        threadData.impl().gc().SafePointSlowPath(flag);
-    }
+    mm::SuspendIfRequested();
 }
 
 } // namespace
@@ -89,16 +86,21 @@ gc::GCSchedulerConfig& gc::GC::gcSchedulerConfig() noexcept {
 }
 
 void gc::GC::ClearForTests() noexcept {
+    impl_->gc().StopFinalizerThreadIfRunning();
     impl_->objectFactory().ClearForTests();
     GCHandle::ClearForTests();
 }
 
-void gc::GC::StartFinalizerThreadIfNeeded() noexcept {}
+void gc::GC::StartFinalizerThreadIfNeeded() noexcept {
+    impl_->gc().StartFinalizerThreadIfNeeded();
+}
 
-void gc::GC::StopFinalizerThreadIfRunning() noexcept {}
+void gc::GC::StopFinalizerThreadIfRunning() noexcept {
+    impl_->gc().StopFinalizerThreadIfRunning();
+}
 
 bool gc::GC::FinalizersThreadIsRunning() noexcept {
-    return false;
+    return impl_->gc().FinalizersThreadIsRunning();
 }
 
 // static

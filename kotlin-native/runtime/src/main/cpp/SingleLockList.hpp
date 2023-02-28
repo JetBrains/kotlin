@@ -48,7 +48,7 @@ public:
 
     class Iterator {
     public:
-        using difference_type = void;
+        using difference_type = std::ptrdiff_t;
         using value_type = Value;
         using pointer = Value*;
         using reference = Value&;
