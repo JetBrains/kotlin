@@ -33,6 +33,7 @@ build/
 .idea/artifacts/KotlinPlugin.xml
 .idea/modules
 .idea/runConfigurations/JPS_*.xml
+.idea/runConfigurations/_JPS_*.xml
 .idea/runConfigurations/PILL_*.xml
 .idea/runConfigurations/_FP_*.xml
 .idea/runConfigurations/_MT_*.xml

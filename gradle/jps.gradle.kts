@@ -141,14 +141,14 @@ fun setupFirRunConfiguration() {
 
     val junit = JUnit("_stub").apply { configureForKotlin("2048m") }
     junit.moduleName = "kotlin.compiler.fir.fir2ir.test"
-    junit.pattern = """^.*\.Fir\w+Test\w*Generated$"""
+    junit.pattern = """^.*\.FirPsi\w+Test\w*Generated$"""
     junit.vmParameters = junit.vmParameters.replace(rootDir.absolutePath, "\$PROJECT_DIR\$")
     junit.workingDirectory = junit.workingDirectory.replace(rootDir.absolutePath, "\$PROJECT_DIR\$")
 
-    rootDir.resolve(".idea/runConfigurations/JPS__Fast_FIR_tests.xml").writeText(
+    rootDir.resolve(".idea/runConfigurations/JPS__Fast_FIR_PSI_tests.xml").writeText(
         """
             |<component name="ProjectRunConfigurationManager">
-            |  <configuration default="false" name="[JPS] Fast FIR tests" type="JUnit" factoryName="JUnit">
+            |  <configuration default="false" name="[JPS] Fast FIR PSI tests" type="JUnit" factoryName="JUnit">
             |    <module name="${junit.moduleName}" />
             |    <option name="MAIN_CLASS_NAME" value="" />
             |    <option name="METHOD_NAME" value="" />
