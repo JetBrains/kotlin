@@ -34152,6 +34152,12 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("kt51821.kt")
+        public void testKt51821() throws Exception {
+            runTest("compiler/testData/codegen/box/sam/kt51821.kt");
+        }
+
+        @Test
         @TestMetadata("kt56188.kt")
         public void testKt56188() throws Exception {
             runTest("compiler/testData/codegen/box/sam/kt56188.kt");

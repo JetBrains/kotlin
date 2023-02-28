@@ -30566,6 +30566,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/sam/kt17765.kt");
         }
 
+        @TestMetadata("kt51821.kt")
+        public void testKt51821() throws Exception {
+            runTest("compiler/testData/codegen/box/sam/kt51821.kt");
+        }
+
         @TestMetadata("kt56188.kt")
         public void testKt56188() throws Exception {
             runTest("compiler/testData/codegen/box/sam/kt56188.kt");
