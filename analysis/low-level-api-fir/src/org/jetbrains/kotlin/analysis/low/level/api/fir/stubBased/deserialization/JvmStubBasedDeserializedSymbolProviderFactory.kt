@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.JvmFirDeserializedSymbolProviderFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirModuleData
@@ -37,7 +39,12 @@ class JvmStubBasedDeserializedSymbolProviderFactory : JvmFirDeserializedSymbolPr
                     kotlinScopeProvider,
                     packagePartProvider,
                     firJavaFacade,
-                    project.createDeclarationProvider(scope)
+                    project.createDeclarationProvider(object : DelegatingGlobalSearchScope(project, scope) {
+                        override fun contains(file: VirtualFile): Boolean {
+                            if (file.extension == "kotlin_builtins") return false
+                            return super.contains(file)
+                        }
+                    })
                 )
             )
             add(createJavaSymbolProvider(session, moduleData, project, scope))
