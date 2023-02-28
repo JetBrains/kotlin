@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.backend.konan.lower.RedundantCoercionsCleaner
 import org.jetbrains.kotlin.backend.konan.lower.ReturnsInsertionLowering
 import org.jetbrains.kotlin.backend.konan.lower.UnboxInlineLowering
 import org.jetbrains.kotlin.backend.konan.optimizations.KonanBCEForLoopBodyTransformer
+import org.jetbrains.kotlin.ir.util.isLocal
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -112,7 +113,7 @@ private val extractLocalClassesFromInlineBodies = createFileLoweringPhase(
                 }
 
                 override fun visitFunction(declaration: IrFunction) {
-                    if (declaration.isInline)
+                    if (declaration.isInline && !declaration.isLocal)
                         context.inlineFunctionsSupport.saveNonLoweredInlineFunction(declaration)
                     declaration.acceptChildrenVoid(this)
                 }
