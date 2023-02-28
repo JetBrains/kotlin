@@ -1579,8 +1579,16 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val kotlinClass: FqName
     }
 
-    abstract class InferredTypeVariableIntoEmptyIntersection : KtFirDiagnostic<PsiElement>() {
-        override val diagnosticClass get() = InferredTypeVariableIntoEmptyIntersection::class
+    abstract class InferredTypeVariableIntoEmptyIntersectionError : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = InferredTypeVariableIntoEmptyIntersectionError::class
+        abstract val typeVariableDescription: String
+        abstract val incompatibleTypes: List<KtType>
+        abstract val description: String
+        abstract val causingTypes: String
+    }
+
+    abstract class InferredTypeVariableIntoEmptyIntersectionWarning : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = InferredTypeVariableIntoEmptyIntersectionWarning::class
         abstract val typeVariableDescription: String
         abstract val incompatibleTypes: List<KtType>
         abstract val description: String

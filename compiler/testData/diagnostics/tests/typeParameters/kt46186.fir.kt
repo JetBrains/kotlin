@@ -39,7 +39,7 @@ inline fun <reified T> findViewById10(): T where T: View3, T: View5 = null as T
 fun test10(): I = findViewById10()
 
 fun <T: View2> findViewById11(): T = null as T
-fun test11(): View4 = <!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION!>findViewById11<!>()
+fun test11(): View4 = <!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING!>findViewById11<!>()
 
 object Obj {
     fun <T: I> findViewById1(): T = null as T
@@ -73,7 +73,7 @@ object Obj {
     fun test10(): View1 = findViewById10()
 
     fun <T: View2> findViewById11(): T = null as T
-    fun test11(): View4 = <!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION!>findViewById11<!>()
+    fun test11(): View4 = <!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING!>findViewById11<!>()
 }
 
 interface A

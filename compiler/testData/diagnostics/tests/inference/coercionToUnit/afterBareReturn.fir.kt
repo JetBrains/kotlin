@@ -27,7 +27,7 @@ fun test3() = run {
     incompatibleI() // ? either uninferred T or error (Unit </: I)
 }
 
-fun test4() = <!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION!>run<!> {
+fun test4() = <!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING!>run<!> {
     if (p) return@run
     incompatibleC() // ? either uninferred T or error (Unit </: C)
 }

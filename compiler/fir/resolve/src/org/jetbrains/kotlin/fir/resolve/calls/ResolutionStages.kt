@@ -597,7 +597,10 @@ internal object CheckIncompatibleTypeVariableUpperBounds : ResolutionStage() {
                         upperTypes as List<ConeKotlinType>,
                         emptyIntersectionTypeInfo.casingTypes.toList() as List<ConeKotlinType>,
                         variableWithConstraints.typeVariable as ConeTypeVariable,
-                        emptyIntersectionTypeInfo.kind
+                        emptyIntersectionTypeInfo.kind,
+                        isError = context.session.languageVersionSettings.supportsFeature(
+                            LanguageFeature.ForbidInferringTypeVariablesIntoEmptyIntersection
+                        )
                     )
                 )
             }

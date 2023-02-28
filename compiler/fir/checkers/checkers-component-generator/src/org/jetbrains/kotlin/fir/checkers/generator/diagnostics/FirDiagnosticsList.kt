@@ -737,7 +737,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<FqName>("kotlinClass")
         }
 
-        val INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION by error<PsiElement> {
+        val INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION by deprecationError<PsiElement>(
+            LanguageFeature.ForbidInferringTypeVariablesIntoEmptyIntersection
+        ) {
             parameter<String>("typeVariableDescription")
             parameter<Collection<ConeKotlinType>>("incompatibleTypes")
             parameter<String>("description")

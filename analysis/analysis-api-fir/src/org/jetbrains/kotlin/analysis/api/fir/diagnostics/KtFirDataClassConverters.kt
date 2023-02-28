@@ -2224,8 +2224,20 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION) { firDiagnostic ->
-        InferredTypeVariableIntoEmptyIntersectionImpl(
+    add(FirErrors.INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION.errorFactory) { firDiagnostic ->
+        InferredTypeVariableIntoEmptyIntersectionErrorImpl(
+            firDiagnostic.a,
+            firDiagnostic.b.map { coneKotlinType ->
+                firSymbolBuilder.typeBuilder.buildKtType(coneKotlinType)
+            },
+            firDiagnostic.c,
+            firDiagnostic.d,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION.warningFactory) { firDiagnostic ->
+        InferredTypeVariableIntoEmptyIntersectionWarningImpl(
             firDiagnostic.a,
             firDiagnostic.b.map { coneKotlinType ->
                 firSymbolBuilder.typeBuilder.buildKtType(coneKotlinType)

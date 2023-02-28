@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // RENDER_DIAGNOSTICS_FULL_TEXT
 open class A<T1, T2> {}
 class B {
