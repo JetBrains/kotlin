@@ -32,7 +32,8 @@ class Fe10SyntheticPropertyAccessorReference(
                 if (getter) {
                     result.add(descriptor.getMethod)
                 } else {
-                    result.addIfNotNull(descriptor.setMethod)
+                    if (descriptor.setMethod == null) result.addIfNotNull(descriptor.getMethod)
+                    else result.addIfNotNull(descriptor.setMethod)
                 }
             }
         }
