@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.jvm.functionByName
 import org.jetbrains.kotlin.backend.jvm.ir.fileParent
 import org.jetbrains.kotlin.backend.jvm.ir.representativeUpperBound
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.deepCopyWithVariables
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.ir.expressions.IrClassReference
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.IrVararg
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -27,6 +29,7 @@ import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginContext
@@ -63,6 +66,25 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
     fun useFieldMissingOptimization(): Boolean {
         return throwMissedFieldExceptionFunc != null && throwMissedFieldExceptionArrayFunc != null
     }
+
+    fun IrDeclaration.excludeFromJsExport() {
+        if (!compilerContext.platform.isJs()) {
+            return
+        }
+        val jsExportIgnore = compilerContext.jsExportIgnoreClass ?: return
+        val jsExportIgnoreCtor = jsExportIgnore.primaryConstructor ?: return
+
+        annotations += IrConstructorCallImpl(
+            UNDEFINED_OFFSET,
+            UNDEFINED_OFFSET,
+            jsExportIgnore.defaultType,
+            jsExportIgnoreCtor.symbol,
+            jsExportIgnore.typeParameters.size,
+            jsExportIgnoreCtor.typeParameters.size,
+            jsExportIgnoreCtor.valueParameters.size,
+        )
+    }
+
 
     private fun getClassListFromFileAnnotation(annotationFqName: FqName): List<IrClassSymbol> {
         val annotation = currentClass.fileParent.annotations.findAnnotation(annotationFqName) ?: return emptyList()

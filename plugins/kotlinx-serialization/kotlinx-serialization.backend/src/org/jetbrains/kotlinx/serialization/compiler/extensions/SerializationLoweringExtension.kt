@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.findDeclaration
+import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.getPropertyGetter
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -33,6 +35,7 @@ import org.jetbrains.kotlinx.serialization.compiler.backend.ir.*
 import org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializationJvmIrIntrinsicSupport
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationDependencies
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationJsDependenciesClassIds
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationPackages
 import java.util.concurrent.ConcurrentHashMap
 
@@ -74,6 +77,16 @@ class SerializationPluginContext(baseContext: IrPluginContext, val metadataPlugi
         }
     internal val lazyClass = referenceClass(ClassId.topLevel(SerializationDependencies.LAZY_FQ))!!.owner
     internal val lazyValueGetter = lazyClass.getPropertyGetter("value")!!
+
+    internal val jsExportIgnoreClass: IrClass? by lazy {
+        val pkg = SerializationJsDependenciesClassIds.jsExportIgnore.packageFqName
+        val jsExportName = SerializationJsDependenciesClassIds.jsExportIgnore.parentClassId!!.shortClassName
+        val jsExportIgnoreFqName = SerializationJsDependenciesClassIds.jsExportIgnore.asSingleFqName()
+
+        getClassFromRuntimeOrNull(jsExportName.identifier, pkg)
+            ?.owner
+            ?.findDeclaration { it.fqNameWhenAvailable == jsExportIgnoreFqName }
+    }
 
     // serialization runtime declarations
     internal val enumSerializerFactoryFunc = baseContext.referenceFunctions(

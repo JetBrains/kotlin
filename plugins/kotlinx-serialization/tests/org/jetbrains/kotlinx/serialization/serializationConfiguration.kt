@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
+import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.bind
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.model.TestModule
@@ -39,15 +40,32 @@ class SerializationEnvironmentConfigurator(
     }
 }
 
-class SerializationRuntimeClasspathProvider(testServices: TestServices) : RuntimeClasspathProvider(testServices) {
+class SerializationRuntimeClasspathJvmProvider(testServices: TestServices) : RuntimeClasspathProvider(testServices) {
     override fun runtimeClassPaths(module: TestModule): List<File> {
         return librariesPaths
     }
 }
 
-fun TestConfigurationBuilder.configureForKotlinxSerialization(noLibraries: Boolean = false) {
+class SerializationRuntimeClasspathJsProvider(testServices: TestServices) : RuntimeClasspathProvider(testServices) {
+    override fun runtimeClassPaths(module: TestModule): List<File> {
+        return listOf(
+            File(System.getProperty("serialization.core.path")!!),
+            File(System.getProperty("serialization.json.path")!!),
+        )
+    }
+}
+
+fun TestConfigurationBuilder.configureForKotlinxSerialization(
+    noLibraries: Boolean = false,
+    target: TargetBackend = TargetBackend.JVM
+) {
     useConfigurators(::SerializationEnvironmentConfigurator.bind(noLibraries))
+
     if (!noLibraries) {
-        useCustomRuntimeClasspathProviders(::SerializationRuntimeClasspathProvider)
+        when (target) {
+            TargetBackend.JVM, TargetBackend.JVM_IR -> useCustomRuntimeClasspathProviders(::SerializationRuntimeClasspathJvmProvider)
+            TargetBackend.JS_IR, TargetBackend.JS_IR_ES6 -> useCustomRuntimeClasspathProviders(::SerializationRuntimeClasspathJsProvider)
+            else -> error("Unsupported backend")
+        }
     }
 }

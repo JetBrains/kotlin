@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
-import org.jetbrains.kotlin.synthetic.syntheticVisibility
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginContext
 
 

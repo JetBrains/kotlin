@@ -60,6 +60,7 @@ class IrPreGenerator(
         }
         method.apply {
             dispatchReceiverParameter = null // function is static
+            excludeFromJsExport()
         }
 
         val typeParams = irClass.typeParameters.map {
@@ -108,7 +109,7 @@ class IrPreGenerator(
         val ctor = irClass.addConstructor {
             origin = SERIALIZATION_PLUGIN_ORIGIN
             visibility = DescriptorVisibilities.PUBLIC
-        }
+        }.apply { excludeFromJsExport() }
         val markerClassSymbol =
             compilerContext.getClassFromInternalSerializationPackage(SerialEntityNames.SERIAL_CTOR_MARKER_NAME.asString())
         val serializableProperties = serializablePropertiesForIrBackend(irClass).serializableProperties
