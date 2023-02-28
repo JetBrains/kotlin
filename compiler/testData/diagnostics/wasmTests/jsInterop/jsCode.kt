@@ -23,6 +23,36 @@ val p5: Int = js(a + a)
 val p6: Int = js("1" + "1")
 val p7: Int = js(<!JSCODE_ARGUMENT_SHOULD_BE_CONSTANT!>nonConst()<!>)
 
+val propWithGetter: String
+    get() = "1"
+
+val propWithSimpleGetterAndInitializer: String = "1"
+    get() = field + "2"
+
+val propWithComplexGetterAndInitializer: String = "1"
+    get() = run { field + "2" }
+
+var varProp = "1"
+
+var varPropWithSetter = "1"
+    set(value) { field = field + value }
+
+const val constProp = "1"
+
+val delegatedVal: String by lazy { "1" }
+
+val p8: Int = js(<!JSCODE_ARGUMENT_SHOULD_BE_CONSTANT!>propWithGetter<!>)
+
+// TODO: This should be an error as property getters are no different to functions
+val p9: Int = js(propWithSimpleGetterAndInitializer)
+val p10: Int = js(propWithComplexGetterAndInitializer)
+
+val p11: Int = js(<!JSCODE_ARGUMENT_SHOULD_BE_CONSTANT!>varProp<!>)
+val p12: Int = js(<!JSCODE_ARGUMENT_SHOULD_BE_CONSTANT!>varPropWithSetter<!>)
+val p13: Int = js(constProp)
+val p14: Int = js(<!JSCODE_ARGUMENT_SHOULD_BE_CONSTANT!>delegatedVal<!>)
+
+
 fun foo0(b: Boolean): Int =
     if (b) <!JSCODE_WRONG_CONTEXT!>js<!>("1") else <!JSCODE_WRONG_CONTEXT!>js<!>("2")
 
