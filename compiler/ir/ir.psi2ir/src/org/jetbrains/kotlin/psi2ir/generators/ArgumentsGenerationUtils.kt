@@ -634,10 +634,6 @@ fun StatementGenerator.generateSamConversionForValueArgumentsIfRequired(call: Ca
         "Mismatching resolved call arguments:\n" +
                 "${resolvedCallArguments?.size} != ${underlyingValueParameters.size}"
     }
-    val isArrayAssignedToVararg: Boolean = resolvedCallArguments != null &&
-            (underlyingValueParameters zip resolvedCallArguments).any { (param, arg) ->
-                param.isVararg && arg is ResolvedCallArgument.SimpleArgument && arg.callArgument.isArrayOrArrayLiteral()
-            }
 
     val substitutionContext = call.original.typeArguments.entries.associate { (typeParameterDescriptor, typeArgument) ->
         underlyingDescriptor.typeParameters[typeParameterDescriptor.index].typeConstructor to TypeProjectionImpl(typeArgument)
@@ -648,7 +644,7 @@ fun StatementGenerator.generateSamConversionForValueArgumentsIfRequired(call: Ca
         val underlyingValueParameter: ValueParameterDescriptor = underlyingValueParameters[i]
 
         val expectedSamConversionTypesForVararg =
-            if (!isArrayAssignedToVararg && resolvedCall is NewResolvedCallImpl<*>) {
+            if (resolvedCall is NewResolvedCallImpl<*>) {
                 val arguments = resolvedCall.valueArguments[originalValueParameters[i]]?.arguments
                 arguments?.map { resolvedCall.getExpectedTypeForSamConvertedArgument(it) }
             } else null
