@@ -36,7 +36,8 @@ TEST(CustomAllocTest, HeapReuseSmallPages) {
         mark(obj); // to make the page survive a sweep
     }
     heap.PrepareForGC();
-    heap.Sweep();
+    auto gcHandle = kotlin::gc::GCHandle::createFakeForTests();
+    heap.Sweep(gcHandle);
     for (int blocks = MIN; blocks < MAX; ++blocks) {
         EXPECT_EQ(pages[blocks], heap.GetSmallPage(blocks));
     }
@@ -49,7 +50,8 @@ TEST(CustomAllocTest, HeapReuseMediumPages) {
     void* obj = page->TryAllocate(BLOCKSIZE);
     mark(obj); // to make the page survive a sweep
     heap.PrepareForGC();
-    heap.Sweep();
+    auto gcHandle = kotlin::gc::GCHandle::createFakeForTests();
+    heap.Sweep(gcHandle);
     EXPECT_EQ(page, heap.GetMediumPage(BLOCKSIZE));
 }
 
