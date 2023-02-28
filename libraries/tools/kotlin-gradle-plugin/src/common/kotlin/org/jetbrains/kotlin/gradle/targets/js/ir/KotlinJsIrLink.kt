@@ -84,8 +84,9 @@ abstract class KotlinJsIrLink @Inject constructor(
     @get:PathSensitive(PathSensitivity.RELATIVE)
     internal abstract val entryModule: DirectoryProperty
 
+    // Do not change the visibility - the property could be used outside
     @get:Internal
-    internal abstract val rootCacheDirectory: DirectoryProperty
+    abstract val rootCacheDirectory: DirectoryProperty
 
     override fun cleanOutputsAndLocalState(reason: String?) {
         if (!usingCacheDirectory()) {
