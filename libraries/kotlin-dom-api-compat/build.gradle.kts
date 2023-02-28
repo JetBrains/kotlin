@@ -1,4 +1,5 @@
 import plugins.configureDefaultPublishing
+import plugins.configureKotlinPomAttributes
 
 plugins {
     `maven-publish`
@@ -41,15 +42,16 @@ val emptyJavadocJar by tasks.creating(Jar::class) {
     archiveClassifier.set("javadoc")
 }
 
+configureDefaultPublishing()
+
 publishing {
     publications {
         create<MavenPublication>("maven") {
             from(components["kotlin"])
+            configureKotlinPomAttributes(project, "Kotlin DOM API compatibility library")
         }
         withType<MavenPublication> {
             artifact(emptyJavadocJar)
         }
     }
 }
-
-configureDefaultPublishing()
