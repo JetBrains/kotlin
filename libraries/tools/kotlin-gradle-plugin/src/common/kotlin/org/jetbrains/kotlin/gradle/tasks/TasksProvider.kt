@@ -19,12 +19,16 @@ package org.jetbrains.kotlin.gradle.tasks
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.UnknownTaskException
+import org.gradle.api.internal.provider.ProviderInternal
 import org.gradle.api.tasks.TaskCollection
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink
 import org.jetbrains.kotlin.gradle.tasks.configuration.*
+import org.jetbrains.kotlin.gradle.utils.IsolatedKotlinClasspathClassCastException
+import org.jetbrains.kotlin.gradle.utils.castIsolatedKotlinPluginClassLoaderAware
+import java.lang.ClassCastException
 
 /**
  * Registers the task with [name] and [type] and initialization script [body]
@@ -63,20 +67,35 @@ internal fun TaskProvider<*>.dependsOn(otherPath: String) = configure { it.depen
 internal inline fun <reified S : Task> TaskCollection<in S>.withType(): TaskCollection<S> = withType(S::class.java)
 
 /**
- * Locates a task by [name] and [type], without triggering its creation or configuration.
+ * Locates a task by [name] and type [T], without triggering its creation or configuration.
  */
-internal inline fun <reified T : Task> Project.locateTask(name: String): TaskProvider<T>? =
-    try {
-        tasks.withType(T::class.java).named(name)
-    } catch (e: UnknownTaskException) {
-        null
-    }
+internal inline fun <reified T : Task> Project.locateTask(name: String): TaskProvider<T>? {
+    return tasks.locateTask<T>(name)
+}
 
 /**
  * Locates a task by [name] and [type], without triggering its creation or configuration.
  */
-internal inline fun <reified T : Task> TaskContainer.locateTask(name: String): TaskProvider<T>? =
-    if (names.contains(name)) named(name, T::class.java) else null
+internal inline fun <reified T : Task> TaskContainer.locateTask(name: String): TaskProvider<T>? {
+    /* Fast path: no task with that name exists -> return null */
+    if (name !in names) return null
+
+    val typedTasks = withType<T>()
+    if (name !in typedTasks.names) {
+        /* For the sake of diagnostics: Safely try to access the type (using internal api) */
+        val typeOfTask = runCatching { (named(name) as ProviderInternal<*>).type }.getOrNull()
+        if (typeOfTask != null) {
+            if (typeOfTask.name == T::class.java.name) {
+                /* Isolated ClassLoaders =( */
+                throw IsolatedKotlinClasspathClassCastException()
+            }
+            throw UnknownTaskException(
+                "Expected type of task `$name`: ${T::class.java}, found: ${typeOfTask}"
+            )
+        }
+    }
+    return typedTasks.named(name)
+}
 
 /**
  * Locates a task by [name] and [type], without triggering its creation or configuration or registers new task
