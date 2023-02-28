@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmCompilationData
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmModule
 import org.jetbrains.kotlin.gradle.plugin.sources.dependsOnClosure
 import org.jetbrains.kotlin.gradle.utils.filesProvider
+import org.jetbrains.kotlin.gradle.utils.toSetOrEmpty
 import org.jetbrains.kotlin.project.model.LanguageSettings
 
 internal sealed class KotlinCompilationInfo {
@@ -38,6 +39,7 @@ internal sealed class KotlinCompilationInfo {
     abstract val classesDirs: ConfigurableFileCollection
     abstract val compileDependencyFiles: FileCollection
     abstract val sources: List<SourceDirectorySet>
+    abstract val displayName: String
 
     class TCS(val compilation: KotlinCompilation<*>) : KotlinCompilationInfo() {
 
@@ -92,6 +94,13 @@ internal sealed class KotlinCompilationInfo {
 
         override val sources: List<SourceDirectorySet>
             get() = origin.allKotlinSourceSets.map { it.kotlin }
+
+        override val displayName: String
+            get() = "compilation '${compilation.name}' in target '${compilation.target.name}'"
+
+        override fun toString(): String {
+            return displayName
+        }
     }
 
     class KPM(val compilationData: GradleKpmCompilationData<*>) : KotlinCompilationInfo() {
@@ -151,6 +160,12 @@ internal sealed class KotlinCompilationInfo {
         override val sources: List<SourceDirectorySet>
             get() = origin.kotlinSourceDirectoriesByFragmentName.values.toList()
 
+        override val displayName: String
+            get() = origin.toString()
+
+        override fun toString(): String {
+            return displayName
+        }
     }
 }
 
