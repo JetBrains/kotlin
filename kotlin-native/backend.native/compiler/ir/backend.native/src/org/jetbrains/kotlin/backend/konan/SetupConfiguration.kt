@@ -260,6 +260,8 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     put(PARTIAL_LINKAGE, arguments.partialLinkage)
     put(OMIT_FRAMEWORK_BINARY, arguments.omitFrameworkBinary)
     putIfNotNull(SAVE_LLVM_IR_DIRECTORY, arguments.saveLlvmIrDirectory)
+
+    putIfNotNull(OBJC_EXPORT_CONFIG, arguments.objcExportConfig)
 }
 
 private fun String.absoluteNormalizedFile() = java.io.File(this).absoluteFile.normalize()

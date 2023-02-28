@@ -14,10 +14,9 @@ import org.jetbrains.kotlin.backend.konan.driver.utilities.createCompilationFile
 import org.jetbrains.kotlin.backend.konan.driver.utilities.createObjCExportCompilationFiles
 import org.jetbrains.kotlin.backend.konan.driver.utilities.createTempFiles
 import org.jetbrains.kotlin.backend.konan.getIncludedLibraryDescriptors
+import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportGlobalConfig
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportHeaderInfo
-import org.jetbrains.kotlin.backend.konan.objcexport.abbreviate
-import org.jetbrains.kotlin.backend.konan.objcexport.objCExportTopLevelNamePrefix
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
@@ -25,6 +24,7 @@ import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.util.usingNativeMemoryAllocator
 import org.jetbrains.kotlin.library.impl.javaFile
 import java.io.Closeable
+import java.io.File
 
 
 /**
@@ -72,37 +72,48 @@ internal class DynamicCompilerDriver(
      */
     private fun produceObjCFramework(engine: PhaseEngine<PhaseContext>) {
         val frontendOutput = engine.runFrontend(config, environment) ?: return
+
+        val exportConfigFile = config.configuration[KonanConfigKeys.OBJC_EXPORT_CONFIG]
+
+        val headerInfos = if (exportConfigFile != null) {
+            ObjCExportConfigParser(config, frontendOutput.moduleDescriptor.allDependencyModules + frontendOutput.moduleDescriptor)
+                    .readObjCExportConfigFromXml(File(exportConfigFile))
+        } else {
+            listOf(ObjCExportHeaderInfo(
+                    topLevelPrefix = abbreviate(config.fullExportedNamePrefix),
+                    modules = listOf(frontendOutput.moduleDescriptor) + frontendOutput.moduleDescriptor.getExportedDependencies(config),
+                    frameworkName = "Kotlin",
+                    headerName = "Kotlin.h"
+            ))
+        }
+
         val objCExportGlobalConfig = ObjCExportGlobalConfig.create(config, frontendOutput.frontendServices,
                 stdlibPrefix = "Kotlin")
-        val headerInfo = ObjCExportHeaderInfo(
-                topLevelPrefix = abbreviate(config.fullExportedNamePrefix),
-                modules = listOf(frontendOutput.moduleDescriptor) + frontendOutput.moduleDescriptor.getExportedDependencies(config),
-                frameworkName = "",
-                headerName = ""
-        )
-        val objCExportedInterface = engine.runPhase(ProduceObjCExportInterfacePhase, ProduceObjCExportInterfaceInput(
+        val objCExportedInterfaces = engine.runPhase(ProduceObjCExportMultipleInterfacesPhase, ProduceObjCExportInterfaceInput(
                 globalConfig = objCExportGlobalConfig,
-                headerInfos = listOf(headerInfo),
+                headerInfos = headerInfos,
         ))
-        engine.runPhase(CreateObjCFrameworkPhase, CreateObjCFrameworkInput(
-                frontendOutput.moduleDescriptor,
-                objCExportedInterface,
-                files.getComponent<CompilationFiles.Component.FrameworkDirectory>().value
-        ))
-        if (config.omitFrameworkBinary) {
-            return
-        }
-        val (psiToIrOutput, objCCodeSpec) = engine.runPsiToIr(frontendOutput, isProducingLibrary = false) {
-            it.runPhase(CreateObjCExportCodeSpecPhase, objCExportedInterface)
-        }
-        require(psiToIrOutput is PsiToIrOutput.ForBackend)
-        val backendContext = createBackendContext(config, frontendOutput, psiToIrOutput) {
-            it.objCExportedInterface = objCExportedInterface
-            it.objCExportCodeSpec = objCCodeSpec
-        }
+        objCExportedInterfaces.forEach { (headerInfo, objCExportedInterface) ->
+            engine.runPhase(CreateObjCFrameworkPhase, CreateObjCFrameworkInput(
+                    frontendOutput.moduleDescriptor,
+                    objCExportedInterface,
+                    (files.getComponent<CompilationFiles.Component.FrameworkDirectory>().value).parentFile.resolve(headerInfo.frameworkName)
+            ))
+            if (config.omitFrameworkBinary) {
+                return
+            }
+            val (psiToIrOutput, objCCodeSpec) = engine.runPsiToIr(frontendOutput, isProducingLibrary = false) {
+                it.runPhase(CreateObjCExportCodeSpecPhase, objCExportedInterface)
+            }
+            require(psiToIrOutput is PsiToIrOutput.ForBackend)
+            val backendContext = createBackendContext(config, frontendOutput, psiToIrOutput) {
+                it.objCExportedInterface = objCExportedInterface
+                it.objCExportCodeSpec = objCCodeSpec
+            }
 //        engine.runBackend(backendContext, psiToIrOutput.irModule, files)
-        val objcExportCompilationFiles = createObjCExportCompilationFiles(tempFiles, outputFiles)
-        engine.runObjCExportCodegen(backendContext, objCExportedInterface, objCCodeSpec, objcExportCompilationFiles, "objcexport")
+            val objcExportCompilationFiles = createObjCExportCompilationFiles(tempFiles, outputFiles)
+            engine.runObjCExportCodegen(backendContext, objCExportedInterface, objCCodeSpec, objcExportCompilationFiles, "objcexport")
+        }
     }
 
     private fun produceCLibrary(engine: PhaseEngine<PhaseContext>) {
@@ -178,11 +189,5 @@ internal class DynamicCompilerDriver(
             psiToIrOutput.symbols
     ).also {
         additionalDataSetter(it)
-    }
-
-    private fun readObjCExportConfig(): List<ObjCExportHeaderInfo> {
-        val result = mutableListOf<ObjCExportHeaderInfo>()
-
-        return result
     }
 }

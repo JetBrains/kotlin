@@ -33,13 +33,13 @@ internal val ProduceObjCExportInterfacePhase = createSimpleNamedCompilerPhase<Ph
     produceObjCExportInterface(context, input.globalConfig, input.headerInfos.first(), stdlibNamer)
 }
 
-internal val ProduceObjCExportMultipleInterfacesPhase = createSimpleNamedCompilerPhase<PhaseContext, ProduceObjCExportInterfaceInput, List<ObjCExportedInterface>>(
+internal val ProduceObjCExportMultipleInterfacesPhase = createSimpleNamedCompilerPhase<PhaseContext, ProduceObjCExportInterfaceInput, Map<ObjCExportHeaderInfo,ObjCExportedInterface>>(
         "ObjCExportInterface",
         "Objective-C header generation",
         outputIfNotEnabled = { _, _, _, _ -> error("Cannot disable `ObjCExportInterface` phase when producing ObjC framework") }
 ) { context, input ->
     val stdlibNamer = ObjCExportStdlibNamer.create(input.globalConfig.stdlibPrefix)
-    val objcInterfaces = input.headerInfos.map { headerInfo ->
+    val objcInterfaces = input.headerInfos.associateWith { headerInfo ->
         produceObjCExportInterface(context, input.globalConfig, headerInfo, stdlibNamer)
     }
     objcInterfaces

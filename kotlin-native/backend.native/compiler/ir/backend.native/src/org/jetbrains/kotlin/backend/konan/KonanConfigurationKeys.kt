@@ -162,6 +162,8 @@ class KonanConfigKeys {
         val TEST_DUMP_OUTPUT_PATH: CompilerConfigurationKey<String?> = CompilerConfigurationKey.create("path to a file to dump the list of all available tests")
         val OMIT_FRAMEWORK_BINARY: CompilerConfigurationKey<Boolean> = CompilerConfigurationKey.create("do not generate binary in framework")
         val SAVE_LLVM_IR_DIRECTORY: CompilerConfigurationKey<String?> = CompilerConfigurationKey.create("directory to store LLVM IR from phases")
+
+        val OBJC_EXPORT_CONFIG: CompilerConfigurationKey<String?> = CompilerConfigurationKey.create("objcexport configuration file")
     }
 }
 
