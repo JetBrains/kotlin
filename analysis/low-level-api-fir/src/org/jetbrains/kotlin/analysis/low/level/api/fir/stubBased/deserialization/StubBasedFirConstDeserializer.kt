@@ -29,7 +29,7 @@ open class StubBasedFirConstDeserializer(
         val stub = initializer.stub ?: return null
         if (stub is KotlinConstantExpressionStub) {
             val text = stub.value()
-            return buildFirConstant(text, stub.kind())?.also { constantCache[callableId] = it }
+            return buildFirConstant(text, stub.kind()).also { constantCache[callableId] = it }
         }
         if (stub is KtStringTemplateExpression) {
             val textStub = stub.entries[0].stub as KotlinPlaceHolderWithTextStub<*>
@@ -41,7 +41,7 @@ open class StubBasedFirConstDeserializer(
 
 fun buildFirConstant(
     initializer: String, constKind: org.jetbrains.kotlin.psi.stubs.ConstantValueKind
-): FirExpression? {
+): FirExpression {
     return when (constKind) {
         org.jetbrains.kotlin.psi.stubs.ConstantValueKind.BOOLEAN_CONSTANT -> buildConstExpression(
             null,
@@ -63,6 +63,10 @@ fun buildFirConstant(
             ConstantValueKind.Long,
             java.lang.Long.parseLong(initializer)
         )
-        else -> null
+        org.jetbrains.kotlin.psi.stubs.ConstantValueKind.NULL -> buildConstExpression(
+            null,
+            ConstantValueKind.Null,
+            null
+        )
     }
 }
