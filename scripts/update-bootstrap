@@ -1,0 +1,23 @@
+#!/usr/bin/env python3
+
+import sys
+import subprocess
+
+def update_content(file_name, prefix, replacement):
+    with open(file_name, 'r', encoding='utf-8') as file:
+        data = file.readlines()
+    for i in range(len(data)):
+        line = data[i]
+        if prefix in line:
+            data[i] = replacement
+    with open(file_name, 'w', encoding='utf-8') as file:
+        file.writelines(data)
+
+if __name__ == '__main__':
+    version = sys.argv[1]
+    properties = 'gradle.properties'
+    kotlinc = '.idea/kotlinc.xml'
+    update_content(properties, 'bootstrap.kotlin.default.version', f'bootstrap.kotlin.default.version={version}')
+    update_content(kotlinc, '    <option name="version" value=', f'    <option name="version" value="{version}" />')
+    subprocess.run(['git', 'add', properties, kotlinc], check=True)
+    subprocess.run(['git', 'commit', '-m', f'Advance bootstrap to {version}'])
