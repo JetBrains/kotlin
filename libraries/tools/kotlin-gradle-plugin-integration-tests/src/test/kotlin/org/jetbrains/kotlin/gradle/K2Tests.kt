@@ -7,10 +7,11 @@ package org.jetbrains.kotlin.gradle
 
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions
 import org.jetbrains.kotlin.gradle.testbase.MppGradlePluginTests
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import kotlin.test.Ignore
 
-@Ignore
+@Disabled("Used for local testing only")
 @MppGradlePluginTests
 @DisplayName("K2: Hierarchical multiplatform")
 class K2HierarchicalMppIT : HierarchicalMppIT() {
