@@ -25,9 +25,11 @@ import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.load.kotlin.PackageAndMetadataPartProvider
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.KotlinMetadataFinder
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 object FirCommonSessionFactory : FirAbstractSessionFactory() {
     fun createLibrarySession(
@@ -36,6 +38,7 @@ object FirCommonSessionFactory : FirAbstractSessionFactory() {
         moduleDataProvider: ModuleDataProvider,
         projectEnvironment: AbstractProjectEnvironment,
         librariesScope: AbstractProjectFileSearchScope,
+        resolvedKLibs: List<KotlinResolvedLibrary>,
         packageAndMetadataPartProvider: PackageAndMetadataPartProvider,
         languageVersionSettings: LanguageVersionSettings,
         registerExtraComponents: ((FirSession) -> Unit),
@@ -50,7 +53,7 @@ object FirCommonSessionFactory : FirAbstractSessionFactory() {
             },
             createKotlinScopeProvider = { FirKotlinScopeProvider { _, declaredMemberScope, _, _ -> declaredMemberScope } },
             createProviders = { session, builtinsModuleData, kotlinScopeProvider ->
-                listOf(
+                listOfNotNull(
                     MetadataSymbolProvider(
                         session,
                         moduleDataProvider,
@@ -58,6 +61,14 @@ object FirCommonSessionFactory : FirAbstractSessionFactory() {
                         packageAndMetadataPartProvider,
                         projectEnvironment.getKotlinClassFinder(librariesScope)
                     ),
+                    runIf(resolvedKLibs.isNotEmpty()) {
+                        KlibBasedSymbolProvider(
+                            session,
+                            moduleDataProvider,
+                            kotlinScopeProvider,
+                            resolvedKLibs
+                        )
+                    },
                     FirBuiltinSymbolProvider(session, builtinsModuleData, kotlinScopeProvider),
                     FirCloneableSymbolProvider(session, builtinsModuleData, kotlinScopeProvider),
                 )

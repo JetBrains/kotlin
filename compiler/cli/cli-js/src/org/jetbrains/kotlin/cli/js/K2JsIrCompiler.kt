@@ -9,6 +9,7 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.backend.common.CompilationException
+import org.jetbrains.kotlin.backend.common.CommonJsKLibResolver
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.wasm.compileToLoweredIr
@@ -512,7 +513,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         }
 
         val logger = configuration.resolverLogger
-        val resolvedLibraries = jsResolveLibraries(libraries + friendLibraries, logger).getFullResolvedList()
+        val resolvedLibraries = CommonJsKLibResolver.resolve(libraries + friendLibraries, logger).getFullResolvedList()
 
         val sessionsWithSources = prepareJsSessions(
             ktFiles, configuration, escapedMainModuleName.asString(), resolvedLibraries, dependencyList,

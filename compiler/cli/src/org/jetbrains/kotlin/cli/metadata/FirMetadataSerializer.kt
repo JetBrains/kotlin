@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.cli.metadata
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
 import org.jetbrains.kotlin.analyzer.common.CommonPlatformAnalyzerServices
+import org.jetbrains.kotlin.backend.common.CommonJsKLibResolver
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.collectSources
 import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.createContextForIncrementalCompilation
 import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.createIncrementalCompilationScope
 import org.jetbrains.kotlin.cli.jvm.compiler.toAbstractProjectEnvironment
+import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.jvmModularRoots
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
@@ -36,12 +38,13 @@ import org.jetbrains.kotlin.fir.pipeline.resolveAndCheckFir
 import org.jetbrains.kotlin.fir.serialization.FirElementAwareSerializableStringTable
 import org.jetbrains.kotlin.fir.serialization.FirKLibSerializerExtension
 import org.jetbrains.kotlin.fir.serialization.serializeSingleFirFile
-import org.jetbrains.kotlin.library.SerializedMetadata
+import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.metadata.KlibMetadataHeaderFlags
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.CommonPlatforms
+import org.jetbrains.kotlin.util.DummyLogger
 import java.io.File
 
 internal class FirMetadataSerializer(
@@ -71,6 +74,12 @@ internal class FirMetadataSerializer(
 
         val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter()
 
+        val klibFiles = configuration.get(CLIConfigurationKeys.CONTENT_ROOTS).orEmpty()
+            .filterIsInstance<JvmClasspathRoot>()
+            .filter { it.file.isDirectory || it.file.extension == "klib" }
+            .map { it.file.absolutePath }
+        val resolvedLibraries = CommonJsKLibResolver.resolve(klibFiles, DummyLogger).getFullResolvedList()
+
         val outputs = if (isLightTree) {
             val projectEnvironment = environment.toAbstractProjectEnvironment() as VfsBasedProjectEnvironment
             var librariesScope = projectEnvironment.getSearchScopeForProjectLibraries()
@@ -83,8 +92,8 @@ internal class FirMetadataSerializer(
                 incrementalExcludesScope = null
             )?.also { librariesScope -= it }
             val sessionsWithSources = prepareCommonSessions(
-                ltFiles, configuration, projectEnvironment, rootModuleName, extensionRegistrars,
-                librariesScope, libraryList, groupedSources.isCommonSourceForLt, groupedSources.fileBelongsToModuleForLt,
+                ltFiles, configuration, projectEnvironment, rootModuleName, extensionRegistrars, librariesScope,
+                libraryList, resolvedLibraries, groupedSources.isCommonSourceForLt, groupedSources.fileBelongsToModuleForLt,
                 createProviderAndScopeForIncrementalCompilation = { files ->
                     createContextForIncrementalCompilation(
                         configuration,
@@ -121,7 +130,7 @@ internal class FirMetadataSerializer(
             }
             val sessionsWithSources = prepareCommonSessions(
                 psiFiles, configuration, projectEnvironment, rootModuleName, extensionRegistrars,
-                librariesScope, libraryList, isCommonSourceForPsi, fileBelongsToModuleForPsi,
+                librariesScope, libraryList, resolvedLibraries, isCommonSourceForPsi, fileBelongsToModuleForPsi,
                 createProviderAndScopeForIncrementalCompilation = { providerAndScopeForIncrementalCompilation }
             )
 
@@ -185,4 +194,3 @@ internal class FirMetadataSerializer(
         buildKotlinMetadataLibrary(configuration, serializedMetadata, destDir)
     }
 }
-

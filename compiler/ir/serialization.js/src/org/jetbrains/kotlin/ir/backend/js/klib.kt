@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.KtVirtualFileSourceFile
 import org.jetbrains.kotlin.analyzer.AbstractAnalyzerWithCompilerReport
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.analyzer.CompilationErrorException
+import org.jetbrains.kotlin.backend.common.CommonJsKLibResolver
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
@@ -469,7 +470,7 @@ class ModulesStructure(
     friendDependenciesPaths: Collection<String>,
 ) {
 
-    val allDependenciesResolution = jsResolveLibrariesWithoutDependencies(
+    val allDependenciesResolution = CommonJsKLibResolver.resolveWithoutDependencies(
         dependencies,
         compilerConfiguration.resolverLogger
     )

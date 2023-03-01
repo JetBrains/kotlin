@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.js.test.converters
 
+import org.jetbrains.kotlin.backend.common.CommonJsKLibResolver
 import org.jetbrains.kotlin.backend.common.actualizer.IrActualizer
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -12,7 +13,6 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.backend.js.JsFactories
-import org.jetbrains.kotlin.ir.backend.js.jsResolveLibraries
 import org.jetbrains.kotlin.ir.backend.js.resolverLogger
 import org.jetbrains.kotlin.ir.backend.js.serializeModuleIntoKlib
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
@@ -85,7 +85,7 @@ class FirJsKlibBackendFacade(
         }
 
         // TODO: consider avoiding repeated libraries resolution
-        val lib = jsResolveLibraries(
+        val lib = CommonJsKLibResolver.resolve(
             getAllJsDependenciesPaths(module, testServices) + listOf(outputFile),
             configuration.resolverLogger
         ).getFullResolvedList().last().library
