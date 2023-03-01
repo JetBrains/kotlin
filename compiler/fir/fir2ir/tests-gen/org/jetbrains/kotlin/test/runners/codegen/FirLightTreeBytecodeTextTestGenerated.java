@@ -350,6 +350,12 @@ public class FirLightTreeBytecodeTextTestGenerated extends AbstractFirLightTreeB
     }
 
     @Test
+    @TestMetadata("kt56923.kt")
+    public void testKt56923() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeText/kt56923.kt");
+    }
+
+    @Test
     @TestMetadata("kt7188.kt")
     public void testKt7188() throws Exception {
         runTest("compiler/testData/codegen/bytecodeText/kt7188.kt");
