@@ -343,11 +343,11 @@ extern "C" void Kotlin_native_internal_GC_start(ObjHeader*) {
 
 extern "C" void Kotlin_native_internal_GC_setThreshold(ObjHeader*, KInt value) {
     RuntimeAssert(value > 0, "Must be handled by the caller");
-    mm::GlobalData::Instance().gc().gcSchedulerConfig().threshold = value;
+    mm::GlobalData::Instance().gcScheduler().config().threshold = value;
 }
 
 extern "C" KInt Kotlin_native_internal_GC_getThreshold(ObjHeader*) {
-    return mm::GlobalData::Instance().gc().gcSchedulerConfig().threshold.load();
+    return mm::GlobalData::Instance().gcScheduler().config().threshold.load();
 }
 
 extern "C" void Kotlin_native_internal_GC_setCollectCyclesThreshold(ObjHeader*, int64_t value) {
@@ -363,64 +363,64 @@ extern "C" int64_t Kotlin_native_internal_GC_getCollectCyclesThreshold(ObjHeader
 
 extern "C" void Kotlin_native_internal_GC_setThresholdAllocations(ObjHeader*, int64_t value) {
     RuntimeAssert(value > 0, "Must be handled by the caller");
-    mm::GlobalData::Instance().gc().gcSchedulerConfig().allocationThresholdBytes = value;
+    mm::GlobalData::Instance().gcScheduler().config().allocationThresholdBytes = value;
 }
 
 extern "C" int64_t Kotlin_native_internal_GC_getThresholdAllocations(ObjHeader*) {
-    return mm::GlobalData::Instance().gc().gcSchedulerConfig().allocationThresholdBytes.load();
+    return mm::GlobalData::Instance().gcScheduler().config().allocationThresholdBytes.load();
 }
 
 extern "C" void Kotlin_native_internal_GC_setTuneThreshold(ObjHeader*, KBoolean value) {
-    mm::GlobalData::Instance().gc().gcSchedulerConfig().autoTune = value;
+    mm::GlobalData::Instance().gcScheduler().config().autoTune = value;
 }
 
 extern "C" KBoolean Kotlin_native_internal_GC_getTuneThreshold(ObjHeader*) {
-    return mm::GlobalData::Instance().gc().gcSchedulerConfig().autoTune.load();
+    return mm::GlobalData::Instance().gcScheduler().config().autoTune.load();
 }
 
 extern "C" KLong Kotlin_native_internal_GC_getRegularGCIntervalMicroseconds(ObjHeader*) {
-    return mm::GlobalData::Instance().gc().gcSchedulerConfig().regularGcIntervalMicroseconds.load();
+    return mm::GlobalData::Instance().gcScheduler().config().regularGcIntervalMicroseconds.load();
 }
 
 extern "C" void Kotlin_native_internal_GC_setRegularGCIntervalMicroseconds(ObjHeader*, KLong value) {
     RuntimeAssert(value >= 0, "Must be handled by the caller");
-    mm::GlobalData::Instance().gc().gcSchedulerConfig().regularGcIntervalMicroseconds = value;
+    mm::GlobalData::Instance().gcScheduler().config().regularGcIntervalMicroseconds = value;
 }
 
 extern "C" KLong Kotlin_native_internal_GC_getTargetHeapBytes(ObjHeader*) {
-    return mm::GlobalData::Instance().gc().gcSchedulerConfig().targetHeapBytes.load();
+    return mm::GlobalData::Instance().gcScheduler().config().targetHeapBytes.load();
 }
 
 extern "C" void Kotlin_native_internal_GC_setTargetHeapBytes(ObjHeader*, KLong value) {
     RuntimeAssert(value >= 0, "Must be handled by the caller");
-    mm::GlobalData::Instance().gc().gcSchedulerConfig().targetHeapBytes = value;
+    mm::GlobalData::Instance().gcScheduler().config().targetHeapBytes = value;
 }
 
 extern "C" KDouble Kotlin_native_internal_GC_getTargetHeapUtilization(ObjHeader*) {
-    return mm::GlobalData::Instance().gc().gcSchedulerConfig().targetHeapUtilization.load();
+    return mm::GlobalData::Instance().gcScheduler().config().targetHeapUtilization.load();
 }
 
 extern "C" void Kotlin_native_internal_GC_setTargetHeapUtilization(ObjHeader*, KDouble value) {
     RuntimeAssert(value > 0 && value <= 1, "Must be handled by the caller");
-    mm::GlobalData::Instance().gc().gcSchedulerConfig().targetHeapUtilization = value;
+    mm::GlobalData::Instance().gcScheduler().config().targetHeapUtilization = value;
 }
 
 extern "C" KLong Kotlin_native_internal_GC_getMaxHeapBytes(ObjHeader*) {
-    return mm::GlobalData::Instance().gc().gcSchedulerConfig().maxHeapBytes.load();
+    return mm::GlobalData::Instance().gcScheduler().config().maxHeapBytes.load();
 }
 
 extern "C" void Kotlin_native_internal_GC_setMaxHeapBytes(ObjHeader*, KLong value) {
     RuntimeAssert(value >= 0, "Must be handled by the caller");
-    mm::GlobalData::Instance().gc().gcSchedulerConfig().maxHeapBytes = value;
+    mm::GlobalData::Instance().gcScheduler().config().maxHeapBytes = value;
 }
 
 extern "C" KLong Kotlin_native_internal_GC_getMinHeapBytes(ObjHeader*) {
-    return mm::GlobalData::Instance().gc().gcSchedulerConfig().minHeapBytes.load();
+    return mm::GlobalData::Instance().gcScheduler().config().minHeapBytes.load();
 }
 
 extern "C" void Kotlin_native_internal_GC_setMinHeapBytes(ObjHeader*, KLong value) {
     RuntimeAssert(value >= 0, "Must be handled by the caller");
-    mm::GlobalData::Instance().gc().gcSchedulerConfig().minHeapBytes = value;
+    mm::GlobalData::Instance().gcScheduler().config().minHeapBytes = value;
 }
 
 extern "C" OBJ_GETTER(Kotlin_native_internal_GC_detectCycles, ObjHeader*) {
@@ -543,12 +543,14 @@ extern "C" void CheckGlobalsAccessible() {
 extern "C" RUNTIME_NOTHROW NO_INLINE void Kotlin_mm_safePointFunctionPrologue() {
     auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
     AssertThreadState(threadData, ThreadState::kRunnable);
+    threadData->gcScheduler().OnSafePointRegular(gcScheduler::GCSchedulerThreadData::kFunctionPrologueWeight);
     threadData->gc().SafePointFunctionPrologue();
 }
 
 extern "C" RUNTIME_NOTHROW CODEGEN_INLINE_POLICY void Kotlin_mm_safePointWhileLoopBody() {
     auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
     AssertThreadState(threadData, ThreadState::kRunnable);
+    threadData->gcScheduler().OnSafePointRegular(gcScheduler::GCSchedulerThreadData::kLoopBodyWeight);
     threadData->gc().SafePointLoopBody();
 }
 

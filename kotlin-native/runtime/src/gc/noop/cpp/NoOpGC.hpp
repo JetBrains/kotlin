@@ -9,10 +9,8 @@
 #include <cstddef>
 
 #include "Allocator.hpp"
-#include "GCScheduler.hpp"
-#include "ObjectFactory.hpp"
+#include "Logging.hpp"
 #include "Utils.hpp"
-#include "Types.h"
 
 namespace kotlin {
 
@@ -34,7 +32,7 @@ public:
     public:
         using ObjectData = NoOpGC::ObjectData;
 
-        ThreadData(NoOpGC& gc, mm::ThreadData& threadData, GCSchedulerThreadData&) noexcept {}
+        ThreadData() noexcept {}
         ~ThreadData() = default;
 
         void SafePointFunctionPrologue() noexcept {}
@@ -52,15 +50,10 @@ public:
     private:
     };
 
-    NoOpGC(mm::ObjectFactory<NoOpGC>&, GCScheduler&) noexcept {
-        RuntimeLogDebug({kTagGC}, "No-op GC initialized");
-    }
+    NoOpGC() noexcept { RuntimeLogInfo({kTagGC}, "No-op GC initialized"); }
     ~NoOpGC() = default;
 
-    GCScheduler& scheduler() noexcept { return scheduler_; }
-
 private:
-    GCScheduler scheduler_;
 };
 
 } // namespace gc

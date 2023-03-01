@@ -169,7 +169,7 @@ typename Traits::ObjectFactory::FinalizerQueue Sweep(GCHandle handle, typename T
 template <typename Traits>
 void collectRootSetForThread(GCHandle gcHandle, typename Traits::MarkQueue& markQueue, mm::ThreadData& thread) {
     auto handle = gcHandle.collectThreadRoots(thread);
-    thread.gc().OnStoppedForGC();
+    thread.gcScheduler().OnStoppedForGC();
     // TODO: Remove useless mm::ThreadRootSet abstraction.
     for (auto value : mm::ThreadRootSet(thread)) {
         if (internal::collectRoot<Traits>(markQueue, value.object)) {

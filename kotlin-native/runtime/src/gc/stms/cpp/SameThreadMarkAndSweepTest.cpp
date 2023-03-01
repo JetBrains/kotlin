@@ -725,7 +725,8 @@ TEST_F(SameThreadMarkAndSweepTest, MultipleMutatorsCollect) {
 
     std_support::vector<std::future<void>> gcFutures(kDefaultThreadCount);
 
-    gcFutures[0] = mutators[0].Execute([](mm::ThreadData& threadData, Mutator& mutator) { threadData.gc().ScheduleAndWaitFullGCWithFinalizers(); });
+    gcFutures[0] = mutators[0].Execute(
+            [](mm::ThreadData& threadData, Mutator& mutator) { threadData.gc().ScheduleAndWaitFullGCWithFinalizers(); });
 
     // Spin until thread suspension is requested.
     while (!mm::IsThreadSuspensionRequested()) {
@@ -857,7 +858,8 @@ TEST_F(SameThreadMarkAndSweepTest, MultipleMutatorsAddToRootSetAfterCollectionRe
     }
 
     std_support::vector<std::future<void>> gcFutures(kDefaultThreadCount);
-    gcFutures[0] = mutators[0].Execute([](mm::ThreadData& threadData, Mutator& mutator) { threadData.gc().ScheduleAndWaitFullGCWithFinalizers(); });
+    gcFutures[0] = mutators[0].Execute(
+            [](mm::ThreadData& threadData, Mutator& mutator) { threadData.gc().ScheduleAndWaitFullGCWithFinalizers(); });
 
     // Spin until thread suspension is requested.
     while (!mm::IsThreadSuspensionRequested()) {
@@ -922,7 +924,8 @@ TEST_F(SameThreadMarkAndSweepTest, CrossThreadReference) {
 
     std_support::vector<std::future<void>> gcFutures(kDefaultThreadCount);
 
-    gcFutures[0] = mutators[0].Execute([](mm::ThreadData& threadData, Mutator& mutator) { threadData.gc().ScheduleAndWaitFullGCWithFinalizers(); });
+    gcFutures[0] = mutators[0].Execute(
+            [](mm::ThreadData& threadData, Mutator& mutator) { threadData.gc().ScheduleAndWaitFullGCWithFinalizers(); });
 
     // Spin until thread suspension is requested.
     while (!mm::IsThreadSuspensionRequested()) {
@@ -1035,7 +1038,8 @@ TEST_F(SameThreadMarkAndSweepTest, NewThreadsWhileRequestingCollection) {
 
     std_support::vector<std::future<void>> gcFutures(kDefaultThreadCount);
 
-    gcFutures[0] = mutators[0].Execute([](mm::ThreadData& threadData, Mutator& mutator) { threadData.gc().ScheduleAndWaitFullGCWithFinalizers(); });
+    gcFutures[0] = mutators[0].Execute(
+            [](mm::ThreadData& threadData, Mutator& mutator) { threadData.gc().ScheduleAndWaitFullGCWithFinalizers(); });
 
     // Spin until thread suspension is requested.
     while (!mm::IsThreadSuspensionRequested()) {

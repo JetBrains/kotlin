@@ -272,6 +272,21 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     internal val runtimeNativeLibraries: List<String> = mutableListOf<String>().apply {
         if (debug) add("debug.bc")
         add("common_gc.bc")
+        add("common_gcScheduler.bc")
+        when (gcSchedulerType) {
+            GCSchedulerType.MANUAL -> {
+                add("manual_gcScheduler.bc")
+            }
+            GCSchedulerType.ADAPTIVE -> {
+                add("adaptive_gcScheduler.bc")
+            }
+            GCSchedulerType.AGGRESSIVE -> {
+                add("aggressive_gcScheduler.bc")
+            }
+            GCSchedulerType.DISABLED, GCSchedulerType.WITH_TIMER, GCSchedulerType.ON_SAFE_POINTS -> {
+                throw IllegalStateException("Deprecated options must have already been handled")
+            }
+        }
         if (allocationMode == AllocationMode.CUSTOM) {
             add("experimental_memory_manager_custom.bc")
             add("concurrent_ms_gc_custom.bc")

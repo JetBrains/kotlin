@@ -28,6 +28,7 @@ public:
     GlobalsRegistry& globalsRegistry() noexcept { return globalsRegistry_; }
     SpecialRefRegistry& specialRefRegistry() noexcept { return specialRefRegistry_; }
     ExtraObjectDataFactory& extraObjectDataFactory() noexcept { return extraObjectDataFactory_; }
+    gcScheduler::GCScheduler& gcScheduler() noexcept { return gcScheduler_; }
     gc::GC& gc() noexcept { return gc_; }
     AppStateTracking& appStateTracking() noexcept { return appStateTracking_; }
 
@@ -43,7 +44,8 @@ private:
     GlobalsRegistry globalsRegistry_;
     SpecialRefRegistry specialRefRegistry_;
     ExtraObjectDataFactory extraObjectDataFactory_;
-    gc::GC gc_;
+    gcScheduler::GCScheduler gcScheduler_;
+    gc::GC gc_{gcScheduler_};
 };
 
 } // namespace mm

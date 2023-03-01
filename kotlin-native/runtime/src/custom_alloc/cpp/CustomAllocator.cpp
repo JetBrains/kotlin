@@ -42,7 +42,7 @@ uint64_t ArrayAllocatedDataSize(const TypeInfo* typeInfo, uint32_t count) noexce
     return AlignUp<uint64_t>(sizeof(HeapArrayHeader) + membersSize, kObjectAlignment);
 }
 
-CustomAllocator::CustomAllocator(Heap& heap, gc::GCSchedulerThreadData& gcScheduler) noexcept :
+CustomAllocator::CustomAllocator(Heap& heap, gcScheduler::GCSchedulerThreadData& gcScheduler) noexcept :
     heap_(heap), gcScheduler_(gcScheduler), nextFitPage_(nullptr), extraObjectPage_(nullptr) {
     CustomAllocInfo("CustomAllocator::CustomAllocator(heap)");
     memset(fixedBlockPages_, 0, sizeof(fixedBlockPages_));

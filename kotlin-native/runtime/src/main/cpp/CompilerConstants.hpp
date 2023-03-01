@@ -37,7 +37,6 @@ extern "C" const int32_t Kotlin_needDebugInfo;
 extern "C" const int32_t Kotlin_runtimeAssertsMode;
 extern "C" const int32_t Kotlin_disableMmap;
 extern "C" const char* const Kotlin_runtimeLogs;
-extern "C" const int32_t Kotlin_gcSchedulerType;
 extern "C" const int32_t Kotlin_freezingEnabled;
 extern "C" const int32_t Kotlin_freezingChecksEnabled;
 
@@ -63,14 +62,6 @@ enum class RuntimeAssertsMode : int32_t {
 enum class WorkerExceptionHandling : int32_t {
     kLegacy = 0,
     kUseHook = 1,
-};
-
-// Must match GCSchedulerType in GCSchedulerType.kt
-enum class GCSchedulerType {
-    kDisabled = 0,
-    kWithTimer = 1,
-    kOnSafepoints = 2,
-    kAggressive = 3,
 };
 
 // Must match AppStateTracking in AppStateTracking.kt
@@ -106,11 +97,6 @@ ALWAYS_INLINE inline bool freezingEnabled() noexcept {
 ALWAYS_INLINE inline bool freezingChecksEnabled() noexcept {
     return Kotlin_freezingChecksEnabled != 0;
 }
-
-ALWAYS_INLINE inline GCSchedulerType getGCSchedulerType() noexcept {
-    return static_cast<compiler::GCSchedulerType>(Kotlin_gcSchedulerType);
-}
-
 
 WorkerExceptionHandling workerExceptionHandling() noexcept;
 DestroyRuntimeMode destroyRuntimeMode() noexcept;
