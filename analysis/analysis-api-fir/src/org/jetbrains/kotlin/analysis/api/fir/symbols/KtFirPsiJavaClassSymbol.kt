@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForD
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KtEmptyAnnotationsList
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.toKtClassKind
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
@@ -25,19 +24,18 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.firClassByPsiClassProvider
+import org.jetbrains.kotlin.analysis.project.structure.getKtModule
+import org.jetbrains.kotlin.analysis.utils.classIdIfNonLocal
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.analysis.project.structure.getKtModule
-import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.firClassByPsiClassProvider
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.analysis.utils.classIdIfNonLocal
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.java.classKind
 import org.jetbrains.kotlin.fir.java.modality
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.Name
 
 /**
  * Implements [KtNamedClassOrObjectSymbol] for a Java class. The underlying [firSymbol] is built lazily and only when needed. Many simple
@@ -105,7 +103,13 @@ internal class KtFirPsiJavaClassSymbol(
     }
 
     val hasTypeParameters: Boolean
-        get() = withValidityAssertion { javaClass.typeParameters.isNotEmpty() }
+        get() = withValidityAssertion { psi.typeParameters.isNotEmpty() }
+
+    val annotationSimpleNames: List<String?>
+        get() = withValidityAssertion { psi.annotations.map { it.nameReferenceElement?.referenceName } }
+
+    val hasAnnotations: Boolean
+        get() = withValidityAssertion { psi.annotations.isNotEmpty() }
 
     override val isData: Boolean get() = withValidityAssertion { false }
     override val isInline: Boolean get() = withValidityAssertion { false }
@@ -152,8 +156,8 @@ internal class KtFirPsiJavaClassSymbol(
     }
 
     override val annotationsList: KtAnnotationsList by cached {
-        if (javaClass.annotations.isEmpty()) KtEmptyAnnotationsList(token)
-        else KtFirAnnotationListForDeclaration.create(firSymbol, analysisSession.useSiteSession, token)
+        if (hasAnnotations) KtFirAnnotationListForDeclaration.create(firSymbol, analysisSession.useSiteSession, token)
+        else KtEmptyAnnotationsList(token)
     }
 
     context(KtAnalysisSession)
