@@ -629,9 +629,18 @@ class ComposerParamTransformer(
     private fun defaultParameterType(param: IrValueParameter): IrType {
         val type = param.type
         if (param.defaultValue == null) return type
+        val constructorAccessible = !type.isPrimitiveType() &&
+            type.classOrNull?.owner?.primaryConstructor != null
         return when {
             type.isPrimitiveType() -> type
-            type.isInlineClassType() -> type
+            type.isInlineClassType() -> if (context.platform.isJvm() || constructorAccessible) {
+                type
+            } else {
+                // k/js and k/native: private constructors of value classes can be not accessible.
+                // Therefore it won't be possible to create a "fake" default argument for calls.
+                // Making it nullable allows to pass null.
+                type.makeNullable()
+            }
             else -> type.makeNullable()
         }
     }
