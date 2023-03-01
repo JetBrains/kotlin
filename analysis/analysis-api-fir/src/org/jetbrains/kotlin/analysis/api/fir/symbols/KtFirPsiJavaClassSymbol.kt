@@ -97,6 +97,16 @@ internal class KtFirPsiJavaClassSymbol(
             psi.containingClass?.let { KtFirPsiJavaClassSymbol(it, analysisSession) }
         }
 
+    override val typeParameterNames: List<Name> by cached {
+        // The parent Java class might contribute `FirOuterClassTypeParameterRef`s to the FIR class's type parameters (see
+        // `FirJavaFacade.createFirJavaClass`), but since they are filtered out by `createRegularKtTypeParameters`, we do not need to
+        // include them in the list of type parameter names.
+        javaClass.typeParameters.map { it.name }
+    }
+
+    val hasTypeParameters: Boolean
+        get() = withValidityAssertion { javaClass.typeParameters.isNotEmpty() }
+
     override val isData: Boolean get() = withValidityAssertion { false }
     override val isInline: Boolean get() = withValidityAssertion { false }
     override val isFun: Boolean get() = withValidityAssertion { false }
@@ -137,7 +147,8 @@ internal class KtFirPsiJavaClassSymbol(
     }
 
     override val typeParameters: List<KtTypeParameterSymbol> by cached {
-        firSymbol.createRegularKtTypeParameters(builder)
+        if (hasTypeParameters) firSymbol.createRegularKtTypeParameters(builder)
+        else emptyList()
     }
 
     override val annotationsList: KtAnnotationsList by cached {
