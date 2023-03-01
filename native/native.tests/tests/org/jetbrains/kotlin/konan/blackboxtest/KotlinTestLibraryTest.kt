@@ -36,7 +36,7 @@ class KotlinTestLibraryTest : AbstractNativeBlackBoxTest() {
     fun worker() = dynamicTestCase(TestCaseId.Named("worker"))
 }
 
-@Tag("kotlin-test")
+@Tag("kotlin-testK2")
 @PredefinedTestCases(
     TC(
         name = "default",
