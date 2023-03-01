@@ -8,5 +8,5 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinCompilationImplFactory
 
 internal val DefaultKotlinCompilationPreConfigure = KotlinCompilationImplFactory.PreConfigure.composite(
-    KotlinCompilationLanguageVersionConfigurator, KotlinCompilationK2MultiplatformConfigurator
+    KotlinCompilationK2MultiplatformConfigurator
 )

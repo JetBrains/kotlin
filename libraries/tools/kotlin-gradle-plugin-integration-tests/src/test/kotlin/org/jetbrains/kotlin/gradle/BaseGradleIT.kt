@@ -274,8 +274,8 @@ abstract class BaseGradleIT {
         val configurationCache: Boolean = false,
         val configurationCacheProblems: ConfigurationCacheProblems = ConfigurationCacheProblems.FAIL,
         val warningMode: WarningMode = WarningMode.Fail,
-        val useFir: Boolean = false,
         val languageVersion: String? = null,
+        val languageApiVersion: String? = null,
         val customEnvironmentVariables: Map<String, String> = mapOf(),
         val dryRun: Boolean = false,
         val abiSnapshot: Boolean = false,
@@ -312,7 +312,7 @@ abstract class BaseGradleIT {
         open val resourcesRoot = File(resourcesRootFile, "testProject/$resourceDirName")
         val projectDir = File(workingDir.canonicalFile, projectName)
 
-        open fun setupWorkingDir(enableCacheRedirector: Boolean = true, applyAndroidTestFixes: Boolean = true) {
+        open fun setupWorkingDir(enableCacheRedirector: Boolean = true, applyAndroidTestFixes: Boolean = true, applyLanguageVersion: Boolean = true) {
             if (!projectDir.isDirectory || projectDir.listFiles().isEmpty()) {
                 copyRecursively(this.resourcesRoot, workingDir)
                 if (addHeapDumpOptions) {
@@ -323,6 +323,7 @@ abstract class BaseGradleIT {
                     addPluginManagementToSettings()
                     if (enableCacheRedirector) enableCacheRedirector()
                     if (applyAndroidTestFixes) applyAndroidTestFixes()
+                    if (applyLanguageVersion) applyKotlinCompilerArgsPlugin()
                 }
             }
         }
@@ -937,14 +938,6 @@ abstract class BaseGradleIT {
                 add("-Pkotlin.js.compiler=$it")
             }
 
-            if (options.useFir) {
-                add("-Pkotlin.useK2=true")
-            }
-
-            if(options.languageVersion != null) {
-                add("-Pkotlin.internal.languageVersion=${options.languageVersion}")
-            }
-
             if (options.dryRun) {
                 add("--dry-run")
             }
@@ -979,6 +972,9 @@ abstract class BaseGradleIT {
             if (supportFailingBuildOnWarning && options.warningMode == WarningMode.Fail) {
                 add("--warning-mode=${WarningMode.Fail.name.lowercase(Locale.getDefault())}")
             }
+            options.languageVersion?.also { add("-Pkotlin.test.languageVersion=$it") }
+            options.languageApiVersion?.also { add("-Pkotlin.test.apiVersion=$it") }
+
             addAll(options.freeCommandLineArgs)
         }
 

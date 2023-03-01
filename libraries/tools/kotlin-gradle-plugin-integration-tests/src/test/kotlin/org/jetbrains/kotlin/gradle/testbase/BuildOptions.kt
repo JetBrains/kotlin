@@ -34,9 +34,9 @@ data class BuildOptions(
     val androidVersion: String? = null,
     val jsOptions: JsOptions? = null,
     val buildReport: List<BuildReportType> = emptyList(),
-    val useFir: Boolean = false,
     val usePreciseJavaTracking: Boolean? = null,
     val languageVersion: String? = null,
+    val languageApiVersion: String? = null,
     val freeArgs: List<String> = emptyList(),
     val statisticsForceValidation: Boolean = true,
     val usePreciseOutputsBackup: Boolean? = null,
@@ -140,14 +140,6 @@ data class BuildOptions(
             arguments.add("-Pkotlin.build.report.output=${buildReport.joinToString()}")
         }
 
-        if (useFir) {
-            arguments.add("-Pkotlin.useK2=true")
-        }
-
-        if (languageVersion != null) {
-            arguments.add("-Pkotlin.internal.languageVersion=$languageVersion")
-        }
-
         if (usePreciseJavaTracking != null) {
             arguments.add("-Pkotlin.incremental.usePreciseJavaTracking=$usePreciseJavaTracking")
         }
@@ -158,6 +150,12 @@ data class BuildOptions(
 
         if (usePreciseOutputsBackup != null) {
             arguments.add("-Pkotlin.compiler.preciseCompilationResultsBackup=$usePreciseOutputsBackup")
+        }
+        if (languageApiVersion != null) {
+            arguments.add("-Pkotlin.test.apiVersion=$languageApiVersion")
+        }
+        if (languageVersion != null) {
+            arguments.add("-Pkotlin.test.languageVersion=$languageVersion")
         }
 
         if (keepIncrementalCompilationCachesInMemory != null) {

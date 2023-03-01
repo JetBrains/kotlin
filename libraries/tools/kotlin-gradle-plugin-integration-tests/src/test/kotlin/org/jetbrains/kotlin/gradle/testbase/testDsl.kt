@@ -74,6 +74,7 @@ fun KGPBaseTest.project(
     )
     localRepoDir?.let { testProject.configureLocalRepository(localRepoDir) }
     if (buildJdk != null) testProject.setupNonDefaultJdk(buildJdk)
+    testProject.addKotlinCompilerArgumentsPlugin()
 
     val result = runCatching {
         testProject.test()
@@ -313,6 +314,27 @@ class TestProject(
     val kotlinDaemonDebugPort: Int? = null
 ) : GradleProject(projectName, projectPath) {
     fun subProject(name: String) = GradleProject(name, projectPath.resolve(name))
+
+    fun addKotlinCompilerArgumentsPlugin() {
+        if (buildOptions.languageVersion != null || buildOptions.languageApiVersion != null ) {
+            projectPath.toFile().walkTopDown().forEach { file ->
+                when {
+                    file.name.equals("build.gradle") -> file.modify {
+                        it.replaceFirst(
+                            "plugins {",
+                            "plugins {\nid \"org.jetbrains.kotlin.test.kotlin-compiler-args-properties\""
+                        )
+                    }
+                    file.name.equals("build.gradle.kts") -> file.modify {
+                        it.replaceFirst(
+                            "plugins {",
+                            "plugins {\nid(\"org.jetbrains.kotlin.test.kotlin-compiler-args-properties\")"
+                        )
+                    }
+                }
+            }
+        }
+    }
 
     fun includeOtherProjectAsSubmodule(
         otherProjectName: String,

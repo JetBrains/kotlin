@@ -104,6 +104,8 @@ fun Project.excludeGradleCommonDependencies(sourceSet: SourceSet) {
     configurations[sourceSet.runtimeOnlyConfigurationName].excludeGradleCommonDependencies()
 }
 
+private val testPlugins = listOf("kotlin-gradle-plugin-api", "android-test-fixes", "gradle-warnings-detector", "kotlin-compiler-args-properties")
+
 /**
  * Common sources for all variants.
  * Should contain classes that are independent of Gradle API version or using minimal supported Gradle api.
@@ -123,10 +125,7 @@ fun Project.createGradleCommonSourceSet(): SourceSet {
         dependencies {
             compileOnlyConfigurationName(kotlinStdlib())
             "commonGradleApiCompileOnly"("dev.gradleplugins:gradle-api:7.6")
-            if (this@createGradleCommonSourceSet.name != "kotlin-gradle-plugin-api" &&
-                this@createGradleCommonSourceSet.name != "android-test-fixes" &&
-                this@createGradleCommonSourceSet.name != "gradle-warnings-detector"
-            ) {
+            if (this@createGradleCommonSourceSet.name !in testPlugins) {
                 compileOnlyConfigurationName(project(":kotlin-gradle-plugin-api")) {
                     capabilities {
                         requireCapability("org.jetbrains.kotlin:kotlin-gradle-plugin-api-common")
@@ -276,10 +275,7 @@ fun Project.reconfigureMainSourcesSetForGradlePlugin(
             // Decoupling gradle-api artifact from current project Gradle version. Later would be useful for
             // gradle plugin variants
             "compileOnly"("dev.gradleplugins:gradle-api:${GradlePluginVariant.GRADLE_MIN.gradleApiVersion}")
-            if (this@reconfigureMainSourcesSetForGradlePlugin.name != "kotlin-gradle-plugin-api" &&
-                this@reconfigureMainSourcesSetForGradlePlugin.name != "android-test-fixes" &&
-                this@reconfigureMainSourcesSetForGradlePlugin.name != "gradle-warnings-detector"
-            ) {
+            if (this@reconfigureMainSourcesSetForGradlePlugin.name !in testPlugins) {
                 "api"(project(":kotlin-gradle-plugin-api"))
             }
         }
@@ -463,10 +459,7 @@ fun Project.createGradlePluginVariant(
     dependencies {
         variantSourceSet.compileOnlyConfigurationName(kotlinStdlib())
         variantSourceSet.compileOnlyConfigurationName("dev.gradleplugins:gradle-api:${variant.gradleApiVersion}")
-        if (this@createGradlePluginVariant.name != "kotlin-gradle-plugin-api" &&
-            this@createGradlePluginVariant.name != "android-test-fixes" &&
-            this@createGradlePluginVariant.name != "gradle-warnings-detector"
-        ) {
+        if (this@createGradlePluginVariant.name !in testPlugins) {
             variantSourceSet.apiConfigurationName(project(":kotlin-gradle-plugin-api")) {
                 capabilities {
                     requireCapability("org.jetbrains.kotlin:kotlin-gradle-plugin-api-${variant.sourceSetName}")
@@ -567,6 +560,7 @@ fun Project.addBomCheckTask() {
         val exceptions = listOf(
             project(":gradle:android-test-fixes").path,
             project(":gradle:gradle-warnings-detector").path,
+            project(":gradle:kotlin-compiler-args-properties").path,
             project(":kotlin-gradle-build-metrics").path,
             project(":kotlin-gradle-statistics").path,
         )

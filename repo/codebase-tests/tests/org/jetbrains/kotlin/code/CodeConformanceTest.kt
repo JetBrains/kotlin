@@ -111,6 +111,7 @@ class CodeConformanceTest : TestCase() {
                 "libraries/tools/atomicfu/build",
                 "libraries/tools/gradle/android-test-fixes/build",
                 "libraries/tools/gradle/gradle-warnings-detector/build",
+                "libraries/tools/gradle/kotlin-compiler-args-properties/build",
                 "libraries/tools/kotlin-allopen/build",
                 "libraries/tools/kotlin-assignment/build",
                 "libraries/tools/kotlin-gradle-build-metrics/build",

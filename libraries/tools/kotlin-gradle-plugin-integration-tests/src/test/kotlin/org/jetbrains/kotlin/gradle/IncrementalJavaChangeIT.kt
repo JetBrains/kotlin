@@ -239,7 +239,7 @@ open class IncrementalJavaChangeDisablePreciseIT : IncrementalCompilationJavaCha
 
 @DisplayName("Default incremental compilation with disabled precise java tracking and enabled FIR")
 class IncrementalFirJavaChangeDisablePreciseIT : IncrementalJavaChangeDisablePreciseIT() {
-    override val defaultBuildOptions = super.defaultBuildOptions.copy(useFir = true)
+    override val defaultBuildOptions = super.defaultBuildOptions.copy(languageVersion = "2.0")
 }
 
 @JvmGradlePluginTests

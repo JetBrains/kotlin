@@ -232,7 +232,8 @@ abstract class AndroidAndJavaConsumeMppLibIT : BaseGradleIT() {
                     "\ninclude(\":${dependencyProject.projectName}:lib\")"
                 )
             }
-            setupWorkingDir()
+
+            setupWorkingDir(applyLanguageVersion = withKotlinVersion != oldKotlinVersion)
 
             gradleBuildScript("Lib").apply {
                 writeText(
