@@ -158,7 +158,7 @@ public interface KtNodeTypes {
     IElementType WHEN_CONDITION_IS_PATTERN = new KtNodeType("WHEN_CONDITION_IS_PATTERN", KtWhenConditionIsPattern.class);
     IElementType WHEN_CONDITION_EXPRESSION = new KtNodeType("WHEN_CONDITION_WITH_EXPRESSION", KtWhenConditionWithExpression.class);
 
-    IElementType COLLECTION_LITERAL_EXPRESSION = new KtNodeType("COLLECTION_LITERAL_EXPRESSION", KtCollectionLiteralExpression.class);
+    IElementType COLLECTION_LITERAL_EXPRESSION = KtStubElementTypes.COLLECTION_LITERAL_EXPRESSION;
 
     IElementType PACKAGE_DIRECTIVE = KtStubElementTypes.PACKAGE_DIRECTIVE;
 

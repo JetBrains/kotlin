@@ -160,6 +160,7 @@ public interface KtStubElementTypes {
     KtConstantExpressionElementType CHARACTER_CONSTANT  = new KtConstantExpressionElementType("CHARACTER_CONSTANT");
     KtConstantExpressionElementType INTEGER_CONSTANT    = new KtConstantExpressionElementType("INTEGER_CONSTANT");
     KtClassLiteralExpressionElementType CLASS_LITERAL_EXPRESSION = new KtClassLiteralExpressionElementType("CLASS_LITERAL_EXPRESSION");
+    KtCollectionLiteralExpressionElementType COLLECTION_LITERAL_EXPRESSION = new KtCollectionLiteralExpressionElementType("COLLECTION_LITERAL_EXPRESSION");
 
     KtPlaceHolderStubElementType<KtStringTemplateExpression> STRING_TEMPLATE =
             new KtStringTemplateExpressionElementType("STRING_TEMPLATE");

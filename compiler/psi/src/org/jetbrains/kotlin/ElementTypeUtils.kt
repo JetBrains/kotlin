@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.parsing.KotlinExpressionParsing
 import org.jetbrains.kotlin.psi.stubs.elements.KtClassLiteralExpressionElementType
+import org.jetbrains.kotlin.psi.stubs.elements.KtCollectionLiteralExpressionElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtConstantExpressionElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtStringTemplateExpressionElementType
 
@@ -62,6 +63,7 @@ object ElementTypeUtils {
             is KtConstantExpressionElementType,
             is KtStringTemplateExpressionElementType,
             is KtClassLiteralExpressionElementType,
+            is KtCollectionLiteralExpressionElementType,
             in expressionSet -> true
             else -> false
         }
