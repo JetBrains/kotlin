@@ -379,6 +379,42 @@ object FirFakeOverrideGenerator {
         }
     }
 
+    fun createCopyForFirField(
+        newSymbol: FirFieldSymbol,
+        baseField: FirField,
+        derivedClassLookupTag: ConeClassLikeLookupTag?,
+        session: FirSession,
+        origin: FirDeclarationOrigin,
+        isExpect: Boolean = baseField.isExpect,
+        newDispatchReceiverType: ConeSimpleKotlinType?,
+        newReceiverType: ConeKotlinType? = null,
+        newContextReceiverTypes: List<ConeKotlinType?>? = null,
+        newReturnType: ConeKotlinType? = null,
+        newModality: Modality? = null,
+        newVisibility: Visibility? = null,
+        fakeOverrideSubstitution: FakeOverrideSubstitution? = null
+    ): FirField {
+        return buildField {
+            source = baseField.source
+            moduleData = session.moduleData
+            this.origin = origin
+            name = baseField.name
+            isVar = baseField.isVar
+            this.symbol = newSymbol
+            status = baseField.status.copy(newVisibility, newModality, isExpect = isExpect)
+
+            resolvePhase = baseField.resolvePhase
+            dispatchReceiverType = newDispatchReceiverType
+            attributes = baseField.attributes.copy()
+            configureAnnotationsAndSignature(
+                baseField, newReceiverType, newContextReceiverTypes, newReturnType, fakeOverrideSubstitution, updateReceiver = false
+            )
+            deprecationsProvider = baseField.deprecationsProvider
+        }.apply {
+            containingClassForStaticMemberAttr = derivedClassLookupTag.takeIf { shouldOverrideSetContainingClass(baseField) }
+        }
+    }
+
     private fun FirPropertyBuilder.configureAnnotationsTypeParametersAndSignature(
         useSiteSession: FirSession,
         baseProperty: FirProperty,
@@ -452,35 +488,38 @@ object FirFakeOverrideGenerator {
         return Triple(copiedReceiverType, copiedContextReceiverTypes, Maybe.Value(copiedReturnType))
     }
 
-    private fun FirPropertyBuilder.configureAnnotationsAndSignature(
-        baseProperty: FirProperty,
+    private fun FirVariableBuilder.configureAnnotationsAndSignature(
+        baseVariable: FirVariable,
         newReceiverType: ConeKotlinType?,
         newContextReceiverTypes: List<ConeKotlinType?>?,
         newReturnType: ConeKotlinType?,
-        fakeOverrideSubstitution: FakeOverrideSubstitution?
+        fakeOverrideSubstitution: FakeOverrideSubstitution?,
+        updateReceiver: Boolean = true
     ) {
-        annotations += baseProperty.annotations
+        annotations += baseVariable.annotations
 
         @Suppress("NAME_SHADOWING")
-        val fakeOverrideSubstitution = fakeOverrideSubstitution ?: runIf(baseProperty.returnTypeRef is FirImplicitTypeRef) {
-            FakeOverrideSubstitution(ConeSubstitutor.Empty, baseProperty.symbol)
+        val fakeOverrideSubstitution = fakeOverrideSubstitution ?: runIf(baseVariable.returnTypeRef is FirImplicitTypeRef) {
+            FakeOverrideSubstitution(ConeSubstitutor.Empty, baseVariable.symbol)
         }
 
         if (fakeOverrideSubstitution != null) {
             returnTypeRef = buildImplicitTypeRef()
             attributes.fakeOverrideSubstitution = fakeOverrideSubstitution
         } else {
-            returnTypeRef = baseProperty.returnTypeRef.withReplacedReturnType(newReturnType)
+            returnTypeRef = baseVariable.returnTypeRef.withReplacedReturnType(newReturnType)
         }
 
-        receiverParameter = baseProperty.receiverParameter?.let { receiverParameter ->
-            buildReceiverParameterCopy(receiverParameter) {
-                typeRef = receiverParameter.typeRef.withReplacedConeType(newReceiverType)
+        if (updateReceiver) {
+            receiverParameter = baseVariable.receiverParameter?.let { receiverParameter ->
+                buildReceiverParameterCopy(receiverParameter) {
+                    typeRef = receiverParameter.typeRef.withReplacedConeType(newReceiverType)
+                }
             }
         }
 
-        contextReceivers += baseProperty.contextReceivers.zip(
-            newContextReceiverTypes ?: List(baseProperty.contextReceivers.size) { null }
+        contextReceivers += baseVariable.contextReceivers.zip(
+            newContextReceiverTypes ?: List(baseVariable.contextReceivers.size) { null }
         ) { contextReceiver, newType ->
             buildContextReceiverCopy(contextReceiver) {
                 typeRef = contextReceiver.typeRef.withReplacedConeType(newType)

@@ -101,12 +101,6 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             withCopy()
         }
 
-        builder(field) {
-            parents += declarationBuilder
-            default("resolvePhase", "FirResolvePhase.DECLARATIONS")
-            openBuilder()
-        }
-
         builder(anonymousObject) {
             parents += declarationBuilder
             parents += classBuilder
@@ -223,13 +217,24 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             parents += callBuilder
         }
 
-        builder(property) {
+        val variableBuilder by builder {
+            fields from variable without listOf("symbol", "typeParameters", "isVal")
             parents += declarationBuilder
+        }
+
+        builder(property) {
+            parents += variableBuilder
             parents += typeParametersOwnerBuilder
             defaultNull("getter", "setter", "containerSource", "delegateFieldSymbol")
             default("resolvePhase", "FirResolvePhase.RAW_FIR")
             default("bodyResolveState", "FirPropertyBodyResolveState.NOTHING_RESOLVED")
             withCopy()
+        }
+
+        builder(field) {
+            parents += variableBuilder
+            default("resolvePhase", "FirResolvePhase.DECLARATIONS")
+            openBuilder()
         }
 
         builder(typeOperatorCall) {

@@ -4386,6 +4386,12 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
             }
 
             @Test
+            @TestMetadata("smartcastedField.kt")
+            public void testSmartcastedField() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/smartcastedField.kt");
+            }
+
+            @Test
             @TestMetadata("smartcastsFromEquals_differentModule.kt")
             public void testSmartcastsFromEquals_differentModule() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/smartcastsFromEquals_differentModule.kt");
