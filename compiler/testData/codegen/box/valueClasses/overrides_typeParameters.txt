@@ -1121,7 +1121,7 @@ final class Overrides_typeParametersKt$box$40 {
     synthetic final field $xPoint-x: java.lang.Object
     synthetic final field $xPoint-y: java.lang.Object
     inner (anonymous) class Overrides_typeParametersKt$box$40
-    method <init>(p0: RealOverride, p1: java.lang.Object, p2: java.lang.Object): void
+    method <init>(p0: java.lang.Object, p1: java.lang.Object, p2: RealOverride): void
     public synthetic bridge method invoke(): java.lang.Object
     public final method invoke(): void
 }
@@ -1147,7 +1147,7 @@ final class Overrides_typeParametersKt$box$42 {
     synthetic final field $xPoint-x: java.lang.Object
     synthetic final field $xPoint-y: java.lang.Object
     inner (anonymous) class Overrides_typeParametersKt$box$42
-    method <init>(p0: RealOverride, p1: java.lang.Object, p2: java.lang.Object): void
+    method <init>(p0: java.lang.Object, p1: java.lang.Object, p2: RealOverride): void
     public synthetic bridge method invoke(): java.lang.Object
     public final method invoke(): void
 }
@@ -1173,7 +1173,7 @@ final class Overrides_typeParametersKt$box$44 {
     synthetic final field $xPoint-x: java.lang.Object
     synthetic final field $xPoint-y: java.lang.Object
     inner (anonymous) class Overrides_typeParametersKt$box$44
-    method <init>(p0: RealOverride, p1: java.lang.Object, p2: java.lang.Object): void
+    method <init>(p0: java.lang.Object, p1: java.lang.Object, p2: RealOverride): void
     public synthetic bridge method invoke(): java.lang.Object
     public final method invoke(): void
 }
@@ -1186,7 +1186,7 @@ final class Overrides_typeParametersKt$box$45 {
     synthetic final field $xPoint-x: java.lang.Object
     synthetic final field $xPoint-y: java.lang.Object
     inner (anonymous) class Overrides_typeParametersKt$box$45
-    method <init>(p0: RealOverride, p1: java.lang.Object, p2: java.lang.Object): void
+    method <init>(p0: java.lang.Object, p1: java.lang.Object, p2: RealOverride): void
     public synthetic bridge method invoke(): java.lang.Object
     public final method invoke(): void
 }
@@ -1199,7 +1199,7 @@ final class Overrides_typeParametersKt$box$46 {
     synthetic final field $xPoint-x: java.lang.Object
     synthetic final field $xPoint-y: java.lang.Object
     inner (anonymous) class Overrides_typeParametersKt$box$46
-    method <init>(p0: RealOverride, p1: java.lang.Object, p2: java.lang.Object): void
+    method <init>(p0: java.lang.Object, p1: java.lang.Object, p2: RealOverride): void
     public synthetic bridge method invoke(): java.lang.Object
     public final method invoke(): void
 }
@@ -1212,7 +1212,7 @@ final class Overrides_typeParametersKt$box$47 {
     synthetic final field $xPoint-x: java.lang.Object
     synthetic final field $xPoint-y: java.lang.Object
     inner (anonymous) class Overrides_typeParametersKt$box$47
-    method <init>(p0: RealOverride, p1: java.lang.Object, p2: java.lang.Object): void
+    method <init>(p0: java.lang.Object, p1: java.lang.Object, p2: RealOverride): void
     public synthetic bridge method invoke(): java.lang.Object
     public final method invoke(): void
 }
@@ -1433,7 +1433,7 @@ final class Overrides_typeParametersKt$box$64 {
     synthetic final field $xPoint-x: java.lang.Object
     synthetic final field $xPoint-y: java.lang.Object
     inner (anonymous) class Overrides_typeParametersKt$box$64
-    method <init>(p0: ReifiedFakeOverride, p1: java.lang.Object, p2: java.lang.Object): void
+    method <init>(p0: java.lang.Object, p1: java.lang.Object, p2: ReifiedFakeOverride): void
     public synthetic bridge method invoke(): java.lang.Object
     public final method invoke(): void
 }
@@ -1446,7 +1446,7 @@ final class Overrides_typeParametersKt$box$65 {
     synthetic final field $xPoint-x: java.lang.Object
     synthetic final field $xPoint-y: java.lang.Object
     inner (anonymous) class Overrides_typeParametersKt$box$65
-    method <init>(p0: ReifiedFakeOverride, p1: java.lang.Object, p2: java.lang.Object): void
+    method <init>(p0: java.lang.Object, p1: java.lang.Object, p2: ReifiedFakeOverride): void
     public synthetic bridge method invoke(): java.lang.Object
     public final method invoke(): void
 }
@@ -1459,7 +1459,7 @@ final class Overrides_typeParametersKt$box$66 {
     synthetic final field $xPoint-x: java.lang.Object
     synthetic final field $xPoint-y: java.lang.Object
     inner (anonymous) class Overrides_typeParametersKt$box$66
-    method <init>(p0: ReifiedFakeOverride, p1: java.lang.Object, p2: java.lang.Object): void
+    method <init>(p0: java.lang.Object, p1: java.lang.Object, p2: ReifiedFakeOverride): void
     public synthetic bridge method invoke(): java.lang.Object
     public final method invoke(): void
 }
@@ -1472,7 +1472,7 @@ final class Overrides_typeParametersKt$box$67 {
     synthetic final field $xPoint-x: java.lang.Object
     synthetic final field $xPoint-y: java.lang.Object
     inner (anonymous) class Overrides_typeParametersKt$box$67
-    method <init>(p0: ReifiedFakeOverride, p1: java.lang.Object, p2: java.lang.Object): void
+    method <init>(p0: java.lang.Object, p1: java.lang.Object, p2: ReifiedFakeOverride): void
     public synthetic bridge method invoke(): java.lang.Object
     public final method invoke(): void
 }
@@ -1485,7 +1485,7 @@ final class Overrides_typeParametersKt$box$68 {
     synthetic final field $xPoint-x: java.lang.Object
     synthetic final field $xPoint-y: java.lang.Object
     inner (anonymous) class Overrides_typeParametersKt$box$68
-    method <init>(p0: GenericFakeOverrideWithMFVCUpperBound, p1: java.lang.Object, p2: java.lang.Object): void
+    method <init>(p0: java.lang.Object, p1: java.lang.Object, p2: GenericFakeOverrideWithMFVCUpperBound): void
     public synthetic bridge method invoke(): java.lang.Object
     public final method invoke(): void
 }
@@ -1498,7 +1498,7 @@ final class Overrides_typeParametersKt$box$69 {
     synthetic final field $xPoint-x: java.lang.Object
     synthetic final field $xPoint-y: java.lang.Object
     inner (anonymous) class Overrides_typeParametersKt$box$69
-    method <init>(p0: GenericFakeOverrideWithMFVCUpperBound, p1: java.lang.Object, p2: java.lang.Object): void
+    method <init>(p0: java.lang.Object, p1: java.lang.Object, p2: GenericFakeOverrideWithMFVCUpperBound): void
     public synthetic bridge method invoke(): java.lang.Object
     public final method invoke(): void
 }
@@ -1523,7 +1523,7 @@ final class Overrides_typeParametersKt$box$70 {
     synthetic final field $xPoint-x: java.lang.Object
     synthetic final field $xPoint-y: java.lang.Object
     inner (anonymous) class Overrides_typeParametersKt$box$70
-    method <init>(p0: GenericFakeOverrideWithMFVCUpperBound, p1: java.lang.Object, p2: java.lang.Object): void
+    method <init>(p0: java.lang.Object, p1: java.lang.Object, p2: GenericFakeOverrideWithMFVCUpperBound): void
     public synthetic bridge method invoke(): java.lang.Object
     public final method invoke(): void
 }
@@ -1536,7 +1536,7 @@ final class Overrides_typeParametersKt$box$71 {
     synthetic final field $xPoint-x: java.lang.Object
     synthetic final field $xPoint-y: java.lang.Object
     inner (anonymous) class Overrides_typeParametersKt$box$71
-    method <init>(p0: GenericFakeOverrideWithMFVCUpperBound, p1: java.lang.Object, p2: java.lang.Object): void
+    method <init>(p0: java.lang.Object, p1: java.lang.Object, p2: GenericFakeOverrideWithMFVCUpperBound): void
     public synthetic bridge method invoke(): java.lang.Object
     public final method invoke(): void
 }
@@ -2379,7 +2379,8 @@ public final class RealOverride {
     // source: 'overrides_typeParameters.kt'
     private field p-x: java.lang.Object
     private field p-y: java.lang.Object
-    public method <init>(p0: java.lang.Object, p1: java.lang.Object): void
+    private method <init>(p0: java.lang.Object, p1: java.lang.Object): void
+    public synthetic method <init>(p0: java.lang.Object, p1: java.lang.Object, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
     public @org.jetbrains.annotations.NotNull method getP(): XPoint
     public synthetic bridge method getP(): java.lang.Object
     public synthetic method getP-x(): java.lang.Object

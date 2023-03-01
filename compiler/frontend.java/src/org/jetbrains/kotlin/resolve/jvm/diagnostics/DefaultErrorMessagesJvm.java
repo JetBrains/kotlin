@@ -53,8 +53,8 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(OVERLOADS_PRIVATE, "'@JvmOverloads' annotation has no effect on private declarations");
         MAP.put(OVERLOADS_LOCAL, "'@JvmOverloads' annotation cannot be used on local declarations");
         MAP.put(OVERLOADS_ANNOTATION_CLASS_CONSTRUCTOR, "'@JvmOverloads' annotation cannot be used on constructors of annotation classes");
-        MAP.put(OVERLOADS_ANNOTATION_HIDDEN_CONSTRUCTOR, "'@JvmOverloads' annotation cannot be used on constructors hidden by inline class rules");
-        MAP.put(OVERLOADS_ANNOTATION_MANGLED_FUNCTION, "'@JvmOverloads' annotation cannot be used on functions mangled by inline class rules");
+        MAP.put(OVERLOADS_ANNOTATION_HIDDEN_CONSTRUCTOR, "'@JvmOverloads' annotation cannot be used on constructors hidden by value class rules");
+        MAP.put(OVERLOADS_ANNOTATION_MANGLED_FUNCTION, "'@JvmOverloads' annotation cannot be used on functions mangled by value class rules");
         MAP.put(INAPPLICABLE_JVM_NAME, "'@JvmName' annotation is not applicable to this declaration");
         MAP.put(ILLEGAL_JVM_NAME, "Illegal JVM name");
 

@@ -32,8 +32,7 @@ import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 import org.jetbrains.kotlin.resolve.jvm.annotations.findJvmFieldAnnotation
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
-import org.jetbrains.kotlin.resolve.jvm.isInlineClassThatRequiresMangling
-import org.jetbrains.kotlin.resolve.needsMfvcFlattening
+import org.jetbrains.kotlin.resolve.jvm.isValueClassThatRequiresMangling
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
@@ -64,8 +63,7 @@ class JvmFieldApplicabilityChecker : DeclarationChecker {
                 }
             DescriptorUtils.isTopLevelDeclaration(descriptor) && declaration.isInsideJvmMultifileClassFile() ->
                 TOP_LEVEL_PROPERTY_OF_MULTIFILE_FACADE
-            descriptor.returnType?.isInlineClassThatRequiresMangling() == true -> RETURN_TYPE_IS_VALUE_CLASS
-            descriptor.returnType?.needsMfvcFlattening() == true -> RETURN_TYPE_IS_VALUE_CLASS
+            descriptor.returnType?.isValueClassThatRequiresMangling() == true -> RETURN_TYPE_IS_VALUE_CLASS
             else -> return
         }
 

@@ -2467,7 +2467,8 @@ public final class RealOverride {
     // source: 'overrides.kt'
     private field p-x: double
     private field p-y: double
-    public method <init>(p0: double, p1: double): void
+    private method <init>(p0: double, p1: double): void
+    public synthetic method <init>(p0: double, p1: double, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
     public @org.jetbrains.annotations.NotNull method getP(): DPoint
     public synthetic bridge method getP(): java.lang.Object
     public synthetic method getP-x(): double

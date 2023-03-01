@@ -373,7 +373,9 @@ private class SyntheticAccessorTransformer(
         get() {
             if (this in context.hiddenConstructorsWithMangledParams.keys) return true
             return isOrShouldBeHiddenDueToOrigin && !DescriptorVisibilities.isPrivate(visibility)
-                    && !constructedClass.isValue && hasMangledParameters() && !constructedClass.isAnonymousObject
+                    && !constructedClass.isValue &&
+                    (context.multiFieldValueClassReplacements.originalConstructorForConstructorReplacement[this] ?: this)
+                        .hasMangledParameters() && !constructedClass.isAnonymousObject
         }
 
     private val IrConstructor.isOrShouldBeHiddenAsSealedClassConstructor: Boolean

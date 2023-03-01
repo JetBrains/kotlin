@@ -25,7 +25,8 @@ public final class PointBox {
     // source: 'throwingMFVCReassignments.kt'
     private field value-x: double
     private field value-y: double
-    public method <init>(p0: double, p1: double): void
+    private method <init>(p0: double, p1: double): void
+    public synthetic method <init>(p0: double, p1: double, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
     public final @org.jetbrains.annotations.NotNull method getValue(): DPoint
     public synthetic final method getValue-x(): double
     public synthetic final method getValue-y(): double

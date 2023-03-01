@@ -93,8 +93,10 @@ fun trySetSegment(segment: DSegment) {
 // 0 private D notImplemented
 // 0 private DPoint; center
 // 0 private D center
-// 1 public <init>\(DDDD\)V
-// 0 public <init>\(DDDD\)V.*(\n {3}.*)*(\n {4}.*box)
+// 1 private <init>\(DDDD\)V
+// 0 private <init>\(DDDD\)V.*(\n {3}.*)*(\n {4}.*box)
+// 1 public synthetic <init>\(DDDDLkotlin/jvm/internal/DefaultConstructorMarker;\)V
+// 0 public synthetic <init>\(DDDDLkotlin/jvm/internal/DefaultConstructorMarker;\)V.*(\n {3}.*)*(\n {4}.*box)
 // 1 public final getP1\(\)LDPoint;
 // 1 public final setP1-sUp7gFk\(DD\)V
 // 1 public final getP2\(\)LDPoint;

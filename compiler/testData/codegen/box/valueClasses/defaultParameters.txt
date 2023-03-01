@@ -74,9 +74,9 @@ public final class Wrapper {
     private final field segment-p1-y: double
     private final field segment-p2-x: double
     private final field segment-p2-y: double
-    public method <init>(): void
-    public method <init>(p0: double, p1: double, p2: double, p3: double, p4: int, p5: int): void
+    private method <init>(p0: double, p1: double, p2: double, p3: double, p4: int, p5: int): void
     public synthetic method <init>(p0: double, p1: double, p2: double, p3: double, p4: int, p5: int, p6: int, p7: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public synthetic method <init>(p0: double, p1: double, p2: double, p3: double, p4: int, p5: int, p6: kotlin.jvm.internal.DefaultConstructorMarker): void
     public final @org.jetbrains.annotations.NotNull method component1(): DSegment
     public final method component2(): int
     public synthetic static method copy-GPBa7dw$default(p0: Wrapper, p1: double, p2: double, p3: double, p4: double, p5: int, p6: int, p7: int, p8: java.lang.Object): Wrapper

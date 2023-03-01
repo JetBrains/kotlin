@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
 import org.jetbrains.kotlin.ir.builders.irBlockBody
 import org.jetbrains.kotlin.ir.builders.irDelegatingConstructorCall
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.isSingleFieldValueClass
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.copyAnnotationsFrom
 import org.jetbrains.kotlin.ir.util.hasDefaultValue
@@ -38,7 +37,7 @@ internal val jvmDefaultConstructorPhase = makeIrFilePhase(
 private class JvmDefaultConstructorLowering(val context: JvmBackendContext) : ClassLoweringPass {
 
     override fun lower(irClass: IrClass) {
-        if (irClass.kind != ClassKind.CLASS || irClass.visibility == DescriptorVisibilities.LOCAL || irClass.isSingleFieldValueClass || irClass.isInner ||
+        if (irClass.kind != ClassKind.CLASS || irClass.visibility == DescriptorVisibilities.LOCAL || irClass.isValue || irClass.isInner ||
             irClass.modality == Modality.SEALED
         )
             return
@@ -47,7 +46,7 @@ private class JvmDefaultConstructorLowering(val context: JvmBackendContext) : Cl
         if (DescriptorVisibilities.isPrivate(primaryConstructor.visibility))
             return
 
-        if (primaryConstructor.hasMangledParameters())
+        if ((context.multiFieldValueClassReplacements.originalConstructorForConstructorReplacement[primaryConstructor] ?: primaryConstructor).hasMangledParameters())
             return
 
         if (primaryConstructor.valueParameters.isEmpty() || !primaryConstructor.valueParameters.all { it.hasDefaultValue() })

@@ -3,7 +3,8 @@ public final class A {
     // source: 'test.kt'
     private final field point-x: double
     private final field point-y: double
-    public method <init>(p0: double, p1: double): void
+    private method <init>(p0: double, p1: double): void
+    public synthetic method <init>(p0: double, p1: double, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
     public final method f-GPBa7dw(p0: double, p1: double, p2: double): double
     public final @org.jetbrains.annotations.NotNull method getPoint(): DPoint
     public synthetic final method getPoint-x(): double
@@ -18,7 +19,6 @@ synthetic final class AnotherKt$any1$1 {
     inner (anonymous) class AnotherKt$any1$1
     static method <clinit>(): void
     method <init>(): void
-    private final static method _init_$lambda$0(p0: double, p1: double): DPoint
     public final @org.jetbrains.annotations.NotNull method invoke(p0: double, p1: double): DPoint
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
 }
@@ -29,7 +29,6 @@ synthetic final class AnotherKt$any2$1 {
     enclosing method AnotherKt.any2-sUp7gFk(DD)Ljava/lang/Object;
     inner (anonymous) class AnotherKt$any2$1
     method <init>(p0: java.lang.Object): void
-    private final static method _init_$f(p0: DPoint, p1: double): double
     public final @org.jetbrains.annotations.NotNull method invoke(p0: double): java.lang.Double
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
 }
@@ -42,7 +41,6 @@ synthetic final class AnotherKt$any2$2 {
     inner (anonymous) class AnotherKt$any2$2
     static method <clinit>(): void
     method <init>(): void
-    private final static method _init_$f(p0: DPoint, p1: double): double
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
     public final @org.jetbrains.annotations.NotNull method invoke-GPBa7dw(p0: double, p1: double, p2: double): java.lang.Double
 }
@@ -53,8 +51,6 @@ synthetic final class AnotherKt$any3$1 {
     enclosing method AnotherKt.any3-sUp7gFk(DD)Ljava/lang/Object;
     inner (anonymous) class AnotherKt$any3$1
     method <init>(p0: java.lang.Object): void
-    private final static method _init_$suspended(p0: DPoint, p1: kotlin.coroutines.Continuation): java.lang.Object
-    public synthetic final static method access$_init_$suspended(p0: DPoint, p1: kotlin.coroutines.Continuation): java.lang.Object
     public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
 }
@@ -67,8 +63,6 @@ synthetic final class AnotherKt$any3$2 {
     inner (anonymous) class AnotherKt$any3$2
     static method <clinit>(): void
     method <init>(): void
-    private final static method _init_$suspended(p0: DPoint, p1: kotlin.coroutines.Continuation): java.lang.Object
-    public synthetic final static method access$_init_$suspended(p0: DPoint, p1: kotlin.coroutines.Continuation): java.lang.Object
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
     public final @org.jetbrains.annotations.Nullable method invoke-GPBa7dw(p0: double, p1: double, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): java.lang.Object
 }
@@ -79,7 +73,6 @@ synthetic final class AnotherKt$any4$1 {
     enclosing method AnotherKt.any4-sUp7gFk(DD)Ljava/lang/Object;
     inner (anonymous) class AnotherKt$any4$1
     method <init>(p0: java.lang.Object): void
-    private final static method _init_$suspendedInline(p0: DPoint, p1: kotlin.coroutines.Continuation): java.lang.Object
     public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
 }
@@ -92,7 +85,6 @@ synthetic final class AnotherKt$any4$2 {
     inner (anonymous) class AnotherKt$any4$2
     static method <clinit>(): void
     method <init>(): void
-    private final static method _init_$suspendedInline(p0: DPoint, p1: kotlin.coroutines.Continuation): java.lang.Object
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
     public final @org.jetbrains.annotations.Nullable method invoke-GPBa7dw(p0: double, p1: double, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): java.lang.Object
 }
@@ -103,7 +95,6 @@ synthetic final class AnotherKt$any5$1 {
     enclosing method AnotherKt.any5-sUp7gFk(DD)Ljava/lang/Object;
     inner (anonymous) class AnotherKt$any5$1
     method <init>(p0: java.lang.Object): void
-    private final static method _init_$functionWithInlineClass(p0: DPoint, p1: DPoint, p2: int): int
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
     public final method invoke-Qn1smSk(p0: double, p1: double, p2: int): int
 }
@@ -116,7 +107,6 @@ synthetic final class AnotherKt$any5$2 {
     inner (anonymous) class AnotherKt$any5$2
     static method <clinit>(): void
     method <init>(): void
-    private final static method _init_$functionWithInlineClass(p0: DPoint, p1: DPoint, p2: int): int
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): java.lang.Object
     public final method invoke-jXDDuk8(p0: double, p1: double, p2: double, p3: double, p4: int): int
 }
@@ -127,7 +117,6 @@ synthetic final class AnotherKt$any6$1 {
     enclosing method AnotherKt.any6-sUp7gFk(DD)Ljava/lang/Object;
     inner (anonymous) class AnotherKt$any6$1
     method <init>(p0: java.lang.Object): void
-    private final static method _init_$extensionFunction(p0: DPoint, p1: double): double
     public final @org.jetbrains.annotations.NotNull method invoke(p0: double): java.lang.Double
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
 }
@@ -140,7 +129,6 @@ synthetic final class AnotherKt$any6$2 {
     inner (anonymous) class AnotherKt$any6$2
     static method <clinit>(): void
     method <init>(): void
-    private final static method _init_$extensionFunction(p0: DPoint, p1: double): double
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
     public final @org.jetbrains.annotations.NotNull method invoke-GPBa7dw(p0: double, p1: double, p2: double): java.lang.Double
 }
@@ -151,8 +139,6 @@ synthetic final class AnotherKt$any7$1 {
     enclosing method AnotherKt.any7-sUp7gFk(DD)Ljava/lang/Object;
     inner (anonymous) class AnotherKt$any7$1
     method <init>(p0: java.lang.Object): void
-    private final static method _init_$suspendFunctionWithLambda(p0: DPoint, p1: DPoint, p2: kotlin.jvm.functions.Function2, p3: kotlin.coroutines.Continuation): java.lang.Object
-    public synthetic final static method access$_init_$suspendFunctionWithLambda(p0: DPoint, p1: DPoint, p2: kotlin.jvm.functions.Function2, p3: kotlin.coroutines.Continuation): java.lang.Object
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): java.lang.Object
     public final @org.jetbrains.annotations.Nullable method invoke-lIoT8es(p0: double, p1: double, @org.jetbrains.annotations.NotNull p2: kotlin.jvm.functions.Function2, @org.jetbrains.annotations.NotNull p3: kotlin.coroutines.Continuation): java.lang.Object
 }
@@ -165,8 +151,6 @@ synthetic final class AnotherKt$any7$2 {
     inner (anonymous) class AnotherKt$any7$2
     static method <clinit>(): void
     method <init>(): void
-    private final static method _init_$suspendFunctionWithLambda(p0: DPoint, p1: DPoint, p2: kotlin.jvm.functions.Function2, p3: kotlin.coroutines.Continuation): java.lang.Object
-    public synthetic final static method access$_init_$suspendFunctionWithLambda(p0: DPoint, p1: DPoint, p2: kotlin.jvm.functions.Function2, p3: kotlin.coroutines.Continuation): java.lang.Object
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
     public final @org.jetbrains.annotations.Nullable method invoke-552ch2I(p0: double, p1: double, p2: double, p3: double, @org.jetbrains.annotations.NotNull p4: kotlin.jvm.functions.Function2, @org.jetbrains.annotations.NotNull p5: kotlin.coroutines.Continuation): java.lang.Object
 }
@@ -177,8 +161,6 @@ synthetic final class AnotherKt$any8$1 {
     enclosing method AnotherKt.any8-sUp7gFk(DD)Ljava/lang/Object;
     inner (anonymous) class AnotherKt$any8$1
     method <init>(p0: java.lang.Object): void
-    private final static method _init_$suspendInlineFunctionWithLambda(p0: DPoint, p1: DPoint, p2: kotlin.jvm.functions.Function2, p3: kotlin.coroutines.Continuation): java.lang.Object
-    public synthetic final static method access$_init_$suspendInlineFunctionWithLambda(p0: DPoint, p1: DPoint, p2: kotlin.jvm.functions.Function2, p3: kotlin.coroutines.Continuation): java.lang.Object
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): java.lang.Object
     public final @org.jetbrains.annotations.Nullable method invoke-lIoT8es(p0: double, p1: double, @org.jetbrains.annotations.NotNull p2: kotlin.jvm.functions.Function2, @org.jetbrains.annotations.NotNull p3: kotlin.coroutines.Continuation): java.lang.Object
 }
@@ -191,8 +173,6 @@ synthetic final class AnotherKt$any8$2 {
     inner (anonymous) class AnotherKt$any8$2
     static method <clinit>(): void
     method <init>(): void
-    private final static method _init_$suspendInlineFunctionWithLambda(p0: DPoint, p1: DPoint, p2: kotlin.jvm.functions.Function2, p3: kotlin.coroutines.Continuation): java.lang.Object
-    public synthetic final static method access$_init_$suspendInlineFunctionWithLambda(p0: DPoint, p1: DPoint, p2: kotlin.jvm.functions.Function2, p3: kotlin.coroutines.Continuation): java.lang.Object
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
     public final @org.jetbrains.annotations.Nullable method invoke-552ch2I(p0: double, p1: double, p2: double, p3: double, @org.jetbrains.annotations.NotNull p4: kotlin.jvm.functions.Function2, @org.jetbrains.annotations.NotNull p5: kotlin.coroutines.Continuation): java.lang.Object
 }
@@ -341,7 +321,6 @@ synthetic final class TestKt$box$100 {
     inner (anonymous) class TestKt$box$100
     static method <clinit>(): void
     method <init>(): void
-    private final static method _init_$g(p0: DPoint, p1: double): double
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
     public final @org.jetbrains.annotations.NotNull method invoke-GPBa7dw(p0: double, p1: double, p2: double): java.lang.Double
 }
@@ -354,7 +333,6 @@ synthetic final class TestKt$box$101 {
     inner (anonymous) class TestKt$box$101
     static method <clinit>(): void
     method <init>(): void
-    private final static method _init_$g(p0: DPoint, p1: double): double
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
     public final @org.jetbrains.annotations.NotNull method invoke-GPBa7dw(p0: double, p1: double, p2: double): java.lang.Double
 }
@@ -365,7 +343,6 @@ synthetic final class TestKt$box$102 {
     enclosing method TestKt.box()Ljava/lang/String;
     inner (anonymous) class TestKt$box$102
     method <init>(p0: java.lang.Object): void
-    private final static method _init_$f(p0: A, p1: DPoint, p2: double): double
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
     public final @org.jetbrains.annotations.NotNull method invoke-GPBa7dw(p0: double, p1: double, p2: double): java.lang.Double
 }
@@ -376,7 +353,6 @@ synthetic final class TestKt$box$103 {
     enclosing method TestKt.box()Ljava/lang/String;
     inner (anonymous) class TestKt$box$103
     method <init>(p0: java.lang.Object): void
-    private final static method _init_$f(p0: A, p1: DPoint, p2: double): double
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
     public final @org.jetbrains.annotations.NotNull method invoke-GPBa7dw(p0: double, p1: double, p2: double): java.lang.Double
 }
@@ -389,7 +365,6 @@ synthetic final class TestKt$box$104 {
     inner (anonymous) class TestKt$box$104
     static method <clinit>(): void
     method <init>(): void
-    private final static method _init_$f(p0: A, p1: DPoint, p2: double): double
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): java.lang.Object
     public final @org.jetbrains.annotations.NotNull method invoke-lIoT8es(@org.jetbrains.annotations.NotNull p0: A, p1: double, p2: double, p3: double): java.lang.Double
 }
@@ -402,7 +377,6 @@ synthetic final class TestKt$box$105 {
     inner (anonymous) class TestKt$box$105
     static method <clinit>(): void
     method <init>(): void
-    private final static method _init_$f(p0: A, p1: DPoint, p2: double): double
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): java.lang.Object
     public final @org.jetbrains.annotations.NotNull method invoke-lIoT8es(@org.jetbrains.annotations.NotNull p0: A, p1: double, p2: double, p3: double): java.lang.Double
 }
@@ -415,7 +389,6 @@ synthetic final class TestKt$box$106 {
     inner (anonymous) class TestKt$box$106
     static method <clinit>(): void
     method <init>(): void
-    private final static method _init_$plus(p0: DPoint, p1: DPoint): DPoint
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
     public final @org.jetbrains.annotations.NotNull method invoke-GPBa7dw(p0: double, p1: double, p2: double, p3: double): DPoint
 }
@@ -428,7 +401,6 @@ synthetic final class TestKt$box$107 {
     inner (anonymous) class TestKt$box$107
     static method <clinit>(): void
     method <init>(): void
-    private final static method _init_$plus(p0: DPoint, p1: DPoint): DPoint
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
     public final @org.jetbrains.annotations.NotNull method invoke-GPBa7dw(p0: double, p1: double, p2: double, p3: double): DPoint
 }
@@ -516,8 +488,6 @@ synthetic final class TestKt$box$12$1 {
     inner (anonymous) class TestKt$box$12$1
     static method <clinit>(): void
     method <init>(): void
-    private final static method _init_$suspended(p0: DPoint, p1: kotlin.coroutines.Continuation): java.lang.Object
-    public synthetic final static method access$_init_$suspended(p0: DPoint, p1: kotlin.coroutines.Continuation): java.lang.Object
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
     public final @org.jetbrains.annotations.Nullable method invoke-GPBa7dw(p0: double, p1: double, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): java.lang.Object
 }
@@ -548,8 +518,6 @@ synthetic final class TestKt$box$13$2 {
     inner (anonymous) class TestKt$box$13$2
     static method <clinit>(): void
     method <init>(): void
-    private final static method _init_$suspended(p0: DPoint, p1: kotlin.coroutines.Continuation): java.lang.Object
-    public synthetic final static method access$_init_$suspended(p0: DPoint, p1: kotlin.coroutines.Continuation): java.lang.Object
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
     public final @org.jetbrains.annotations.Nullable method invoke-GPBa7dw(p0: double, p1: double, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): java.lang.Object
 }
@@ -580,8 +548,6 @@ synthetic final class TestKt$box$14$2 {
     inner (anonymous) class TestKt$box$14$2
     static method <clinit>(): void
     method <init>(): void
-    private final static method _init_$suspended(p0: DPoint, p1: kotlin.coroutines.Continuation): java.lang.Object
-    public synthetic final static method access$_init_$suspended(p0: DPoint, p1: kotlin.coroutines.Continuation): java.lang.Object
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
     public final @org.jetbrains.annotations.Nullable method invoke-GPBa7dw(p0: double, p1: double, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): java.lang.Object
 }
@@ -612,7 +578,6 @@ synthetic final class TestKt$box$15$1 {
     inner (anonymous) class TestKt$box$15$1
     static method <clinit>(): void
     method <init>(): void
-    private final static method _init_$suspendedInline(p0: DPoint, p1: kotlin.coroutines.Continuation): java.lang.Object
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
     public final @org.jetbrains.annotations.Nullable method invoke-GPBa7dw(p0: double, p1: double, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): java.lang.Object
 }
@@ -643,7 +608,6 @@ synthetic final class TestKt$box$16$2 {
     inner (anonymous) class TestKt$box$16$2
     static method <clinit>(): void
     method <init>(): void
-    private final static method _init_$suspendedInline(p0: DPoint, p1: kotlin.coroutines.Continuation): java.lang.Object
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
     public final @org.jetbrains.annotations.Nullable method invoke-GPBa7dw(p0: double, p1: double, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): java.lang.Object
 }
@@ -674,7 +638,6 @@ synthetic final class TestKt$box$17$2 {
     inner (anonymous) class TestKt$box$17$2
     static method <clinit>(): void
     method <init>(): void
-    private final static method _init_$suspendedInline(p0: DPoint, p1: kotlin.coroutines.Continuation): java.lang.Object
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
     public final @org.jetbrains.annotations.Nullable method invoke-GPBa7dw(p0: double, p1: double, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): java.lang.Object
 }
@@ -903,8 +866,6 @@ synthetic final class TestKt$box$24$1 {
     inner (anonymous) class TestKt$box$24$1
     static method <clinit>(): void
     method <init>(): void
-    private final static method _init_$suspended(p0: DPoint, p1: kotlin.coroutines.Continuation): java.lang.Object
-    public synthetic final static method access$_init_$suspended(p0: DPoint, p1: kotlin.coroutines.Continuation): java.lang.Object
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
     public final @org.jetbrains.annotations.Nullable method invoke-GPBa7dw(p0: double, p1: double, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): java.lang.Object
 }
@@ -935,8 +896,6 @@ synthetic final class TestKt$box$25$2 {
     inner (anonymous) class TestKt$box$25$2
     static method <clinit>(): void
     method <init>(): void
-    private final static method _init_$suspended(p0: DPoint, p1: kotlin.coroutines.Continuation): java.lang.Object
-    public synthetic final static method access$_init_$suspended(p0: DPoint, p1: kotlin.coroutines.Continuation): java.lang.Object
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
     public final @org.jetbrains.annotations.Nullable method invoke-GPBa7dw(p0: double, p1: double, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): java.lang.Object
 }
@@ -967,8 +926,6 @@ synthetic final class TestKt$box$26$2 {
     inner (anonymous) class TestKt$box$26$2
     static method <clinit>(): void
     method <init>(): void
-    private final static method _init_$suspended(p0: DPoint, p1: kotlin.coroutines.Continuation): java.lang.Object
-    public synthetic final static method access$_init_$suspended(p0: DPoint, p1: kotlin.coroutines.Continuation): java.lang.Object
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
     public final @org.jetbrains.annotations.Nullable method invoke-GPBa7dw(p0: double, p1: double, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): java.lang.Object
 }
@@ -999,7 +956,6 @@ synthetic final class TestKt$box$27$1 {
     inner (anonymous) class TestKt$box$27$1
     static method <clinit>(): void
     method <init>(): void
-    private final static method _init_$suspendedInline(p0: DPoint, p1: kotlin.coroutines.Continuation): java.lang.Object
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
     public final @org.jetbrains.annotations.Nullable method invoke-GPBa7dw(p0: double, p1: double, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): java.lang.Object
 }
@@ -1030,7 +986,6 @@ synthetic final class TestKt$box$28$2 {
     inner (anonymous) class TestKt$box$28$2
     static method <clinit>(): void
     method <init>(): void
-    private final static method _init_$suspendedInline(p0: DPoint, p1: kotlin.coroutines.Continuation): java.lang.Object
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
     public final @org.jetbrains.annotations.Nullable method invoke-GPBa7dw(p0: double, p1: double, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): java.lang.Object
 }
@@ -1061,7 +1016,6 @@ synthetic final class TestKt$box$29$2 {
     inner (anonymous) class TestKt$box$29$2
     static method <clinit>(): void
     method <init>(): void
-    private final static method _init_$suspendedInline(p0: DPoint, p1: kotlin.coroutines.Continuation): java.lang.Object
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
     public final @org.jetbrains.annotations.Nullable method invoke-GPBa7dw(p0: double, p1: double, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): java.lang.Object
 }
@@ -1289,7 +1243,6 @@ synthetic final class TestKt$box$47 {
     inner (anonymous) class TestKt$box$47
     static method <clinit>(): void
     method <init>(): void
-    private final static method _init_$plus(p0: DPoint, p1: DPoint): DPoint
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
     public final @org.jetbrains.annotations.NotNull method invoke-GPBa7dw(p0: double, p1: double, p2: double, p3: double): DPoint
 }
@@ -1326,7 +1279,6 @@ synthetic final class TestKt$box$53 {
     inner (anonymous) class TestKt$box$53
     static method <clinit>(): void
     method <init>(): void
-    private final static method _init_$lambda$0(p0: double, p1: double): DPoint
     public final @org.jetbrains.annotations.NotNull method invoke(p0: double, p1: double): DPoint
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
 }
@@ -1339,7 +1291,6 @@ synthetic final class TestKt$box$55 {
     inner (anonymous) class TestKt$box$55
     static method <clinit>(): void
     method <init>(): void
-    private final static method _init_$lambda$0(p0: double, p1: double): DPoint
     public final @org.jetbrains.annotations.NotNull method invoke(p0: double, p1: double): DPoint
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
 }
@@ -1352,7 +1303,6 @@ synthetic final class TestKt$box$56 {
     inner (anonymous) class TestKt$box$56
     static method <clinit>(): void
     method <init>(): void
-    private final static method _init_$lambda$0(p0: double, p1: double): DPoint
     public final @org.jetbrains.annotations.NotNull method invoke(p0: double, p1: double): DPoint
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
 }
@@ -1365,7 +1315,6 @@ synthetic final class TestKt$box$57 {
     inner (anonymous) class TestKt$box$57
     static method <clinit>(): void
     method <init>(): void
-    private final static method _init_$lambda$0(p0: double, p1: double): DPoint
     public final @org.jetbrains.annotations.NotNull method invoke(p0: double, p1: double): DPoint
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
 }
@@ -1376,7 +1325,6 @@ synthetic final class TestKt$box$58 {
     enclosing method TestKt.box()Ljava/lang/String;
     inner (anonymous) class TestKt$box$58
     method <init>(p0: java.lang.Object): void
-    private final static method _init_$f(p0: DPoint, p1: double): double
     public final @org.jetbrains.annotations.NotNull method invoke(p0: double): java.lang.Double
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
 }
@@ -1387,7 +1335,6 @@ synthetic final class TestKt$box$59 {
     enclosing method TestKt.box()Ljava/lang/String;
     inner (anonymous) class TestKt$box$59
     method <init>(p0: java.lang.Object): void
-    private final static method _init_$f(p0: DPoint, p1: double): double
     public final @org.jetbrains.annotations.NotNull method invoke(p0: double): java.lang.Double
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
 }
@@ -1416,7 +1363,6 @@ synthetic final class TestKt$box$60 {
     inner (anonymous) class TestKt$box$60
     static method <clinit>(): void
     method <init>(): void
-    private final static method _init_$f(p0: DPoint, p1: double): double
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
     public final @org.jetbrains.annotations.NotNull method invoke-GPBa7dw(p0: double, p1: double, p2: double): java.lang.Double
 }
@@ -1429,7 +1375,6 @@ synthetic final class TestKt$box$61 {
     inner (anonymous) class TestKt$box$61
     static method <clinit>(): void
     method <init>(): void
-    private final static method _init_$f(p0: DPoint, p1: double): double
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
     public final @org.jetbrains.annotations.NotNull method invoke-GPBa7dw(p0: double, p1: double, p2: double): java.lang.Double
 }
@@ -1440,7 +1385,6 @@ synthetic final class TestKt$box$62 {
     enclosing method TestKt.box()Ljava/lang/String;
     inner (anonymous) class TestKt$box$62
     method <init>(p0: java.lang.Object): void
-    private final static method _init_$f(p0: DPoint, p1: double): double
     public final @org.jetbrains.annotations.NotNull method invoke(p0: double): java.lang.Double
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
 }
@@ -1453,7 +1397,6 @@ synthetic final class TestKt$box$63 {
     inner (anonymous) class TestKt$box$63
     static method <clinit>(): void
     method <init>(): void
-    private final static method _init_$f(p0: DPoint, p1: double): double
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
     public final @org.jetbrains.annotations.NotNull method invoke-GPBa7dw(p0: double, p1: double, p2: double): java.lang.Double
 }
@@ -1464,8 +1407,6 @@ synthetic final class TestKt$box$64 {
     enclosing method TestKt.box()Ljava/lang/String;
     inner (anonymous) class TestKt$box$64
     method <init>(p0: java.lang.Object): void
-    private final static method _init_$suspended(p0: DPoint, p1: kotlin.coroutines.Continuation): java.lang.Object
-    public synthetic final static method access$_init_$suspended(p0: DPoint, p1: kotlin.coroutines.Continuation): java.lang.Object
     public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
 }
@@ -1476,8 +1417,6 @@ synthetic final class TestKt$box$65 {
     enclosing method TestKt.box()Ljava/lang/String;
     inner (anonymous) class TestKt$box$65
     method <init>(p0: java.lang.Object): void
-    private final static method _init_$suspended(p0: DPoint, p1: kotlin.coroutines.Continuation): java.lang.Object
-    public synthetic final static method access$_init_$suspended(p0: DPoint, p1: kotlin.coroutines.Continuation): java.lang.Object
     public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
 }
@@ -1490,8 +1429,6 @@ synthetic final class TestKt$box$66 {
     inner (anonymous) class TestKt$box$66
     static method <clinit>(): void
     method <init>(): void
-    private final static method _init_$suspended(p0: DPoint, p1: kotlin.coroutines.Continuation): java.lang.Object
-    public synthetic final static method access$_init_$suspended(p0: DPoint, p1: kotlin.coroutines.Continuation): java.lang.Object
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
     public final @org.jetbrains.annotations.Nullable method invoke-GPBa7dw(p0: double, p1: double, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): java.lang.Object
 }
@@ -1504,8 +1441,6 @@ synthetic final class TestKt$box$67 {
     inner (anonymous) class TestKt$box$67
     static method <clinit>(): void
     method <init>(): void
-    private final static method _init_$suspended(p0: DPoint, p1: kotlin.coroutines.Continuation): java.lang.Object
-    public synthetic final static method access$_init_$suspended(p0: DPoint, p1: kotlin.coroutines.Continuation): java.lang.Object
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
     public final @org.jetbrains.annotations.Nullable method invoke-GPBa7dw(p0: double, p1: double, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): java.lang.Object
 }
@@ -1516,8 +1451,6 @@ synthetic final class TestKt$box$68 {
     enclosing method TestKt.box()Ljava/lang/String;
     inner (anonymous) class TestKt$box$68
     method <init>(p0: java.lang.Object): void
-    private final static method _init_$suspended(p0: DPoint, p1: kotlin.coroutines.Continuation): java.lang.Object
-    public synthetic final static method access$_init_$suspended(p0: DPoint, p1: kotlin.coroutines.Continuation): java.lang.Object
     public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
 }
@@ -1530,8 +1463,6 @@ synthetic final class TestKt$box$69 {
     inner (anonymous) class TestKt$box$69
     static method <clinit>(): void
     method <init>(): void
-    private final static method _init_$suspended(p0: DPoint, p1: kotlin.coroutines.Continuation): java.lang.Object
-    public synthetic final static method access$_init_$suspended(p0: DPoint, p1: kotlin.coroutines.Continuation): java.lang.Object
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
     public final @org.jetbrains.annotations.Nullable method invoke-GPBa7dw(p0: double, p1: double, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): java.lang.Object
 }
@@ -1558,7 +1489,6 @@ synthetic final class TestKt$box$70 {
     enclosing method TestKt.box()Ljava/lang/String;
     inner (anonymous) class TestKt$box$70
     method <init>(p0: java.lang.Object): void
-    private final static method _init_$suspendedInline(p0: DPoint, p1: kotlin.coroutines.Continuation): java.lang.Object
     public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
 }
@@ -1569,7 +1499,6 @@ synthetic final class TestKt$box$71 {
     enclosing method TestKt.box()Ljava/lang/String;
     inner (anonymous) class TestKt$box$71
     method <init>(p0: java.lang.Object): void
-    private final static method _init_$suspendedInline(p0: DPoint, p1: kotlin.coroutines.Continuation): java.lang.Object
     public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
 }
@@ -1582,7 +1511,6 @@ synthetic final class TestKt$box$72 {
     inner (anonymous) class TestKt$box$72
     static method <clinit>(): void
     method <init>(): void
-    private final static method _init_$suspendedInline(p0: DPoint, p1: kotlin.coroutines.Continuation): java.lang.Object
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
     public final @org.jetbrains.annotations.Nullable method invoke-GPBa7dw(p0: double, p1: double, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): java.lang.Object
 }
@@ -1595,7 +1523,6 @@ synthetic final class TestKt$box$73 {
     inner (anonymous) class TestKt$box$73
     static method <clinit>(): void
     method <init>(): void
-    private final static method _init_$suspendedInline(p0: DPoint, p1: kotlin.coroutines.Continuation): java.lang.Object
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
     public final @org.jetbrains.annotations.Nullable method invoke-GPBa7dw(p0: double, p1: double, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): java.lang.Object
 }
@@ -1606,7 +1533,6 @@ synthetic final class TestKt$box$74 {
     enclosing method TestKt.box()Ljava/lang/String;
     inner (anonymous) class TestKt$box$74
     method <init>(p0: java.lang.Object): void
-    private final static method _init_$suspendedInline(p0: DPoint, p1: kotlin.coroutines.Continuation): java.lang.Object
     public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
 }
@@ -1619,7 +1545,6 @@ synthetic final class TestKt$box$75 {
     inner (anonymous) class TestKt$box$75
     static method <clinit>(): void
     method <init>(): void
-    private final static method _init_$suspendedInline(p0: DPoint, p1: kotlin.coroutines.Continuation): java.lang.Object
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
     public final @org.jetbrains.annotations.Nullable method invoke-GPBa7dw(p0: double, p1: double, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): java.lang.Object
 }
@@ -1630,7 +1555,6 @@ synthetic final class TestKt$box$76 {
     enclosing method TestKt.box()Ljava/lang/String;
     inner (anonymous) class TestKt$box$76
     method <init>(p0: java.lang.Object): void
-    private final static method _init_$functionWithInlineClass(p0: DPoint, p1: DPoint, p2: int): int
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
     public final method invoke-Qn1smSk(p0: double, p1: double, p2: int): int
 }
@@ -1641,7 +1565,6 @@ synthetic final class TestKt$box$77 {
     enclosing method TestKt.box()Ljava/lang/String;
     inner (anonymous) class TestKt$box$77
     method <init>(p0: java.lang.Object): void
-    private final static method _init_$functionWithInlineClass(p0: DPoint, p1: DPoint, p2: int): int
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
     public final method invoke-Qn1smSk(p0: double, p1: double, p2: int): int
 }
@@ -1654,7 +1577,6 @@ synthetic final class TestKt$box$78 {
     inner (anonymous) class TestKt$box$78
     static method <clinit>(): void
     method <init>(): void
-    private final static method _init_$functionWithInlineClass(p0: DPoint, p1: DPoint, p2: int): int
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): java.lang.Object
     public final method invoke-jXDDuk8(p0: double, p1: double, p2: double, p3: double, p4: int): int
 }
@@ -1667,7 +1589,6 @@ synthetic final class TestKt$box$79 {
     inner (anonymous) class TestKt$box$79
     static method <clinit>(): void
     method <init>(): void
-    private final static method _init_$functionWithInlineClass(p0: DPoint, p1: DPoint, p2: int): int
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): java.lang.Object
     public final method invoke-jXDDuk8(p0: double, p1: double, p2: double, p3: double, p4: int): int
 }
@@ -1694,7 +1615,6 @@ synthetic final class TestKt$box$80 {
     enclosing method TestKt.box()Ljava/lang/String;
     inner (anonymous) class TestKt$box$80
     method <init>(p0: java.lang.Object): void
-    private final static method _init_$functionWithInlineClass(p0: DPoint, p1: DPoint, p2: int): int
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
     public final method invoke-Qn1smSk(p0: double, p1: double, p2: int): int
 }
@@ -1707,7 +1627,6 @@ synthetic final class TestKt$box$81 {
     inner (anonymous) class TestKt$box$81
     static method <clinit>(): void
     method <init>(): void
-    private final static method _init_$functionWithInlineClass(p0: DPoint, p1: DPoint, p2: int): int
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): java.lang.Object
     public final method invoke-jXDDuk8(p0: double, p1: double, p2: double, p3: double, p4: int): int
 }
@@ -1718,7 +1637,6 @@ synthetic final class TestKt$box$82 {
     enclosing method TestKt.box()Ljava/lang/String;
     inner (anonymous) class TestKt$box$82
     method <init>(p0: java.lang.Object): void
-    private final static method _init_$extensionFunction(p0: DPoint, p1: double): double
     public final @org.jetbrains.annotations.NotNull method invoke(p0: double): java.lang.Double
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
 }
@@ -1729,7 +1647,6 @@ synthetic final class TestKt$box$83 {
     enclosing method TestKt.box()Ljava/lang/String;
     inner (anonymous) class TestKt$box$83
     method <init>(p0: java.lang.Object): void
-    private final static method _init_$extensionFunction(p0: DPoint, p1: double): double
     public final @org.jetbrains.annotations.NotNull method invoke(p0: double): java.lang.Double
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
 }
@@ -1742,7 +1659,6 @@ synthetic final class TestKt$box$84 {
     inner (anonymous) class TestKt$box$84
     static method <clinit>(): void
     method <init>(): void
-    private final static method _init_$extensionFunction(p0: DPoint, p1: double): double
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
     public final @org.jetbrains.annotations.NotNull method invoke-GPBa7dw(p0: double, p1: double, p2: double): java.lang.Double
 }
@@ -1755,7 +1671,6 @@ synthetic final class TestKt$box$85 {
     inner (anonymous) class TestKt$box$85
     static method <clinit>(): void
     method <init>(): void
-    private final static method _init_$extensionFunction(p0: DPoint, p1: double): double
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
     public final @org.jetbrains.annotations.NotNull method invoke-GPBa7dw(p0: double, p1: double, p2: double): java.lang.Double
 }
@@ -1766,7 +1681,6 @@ synthetic final class TestKt$box$86 {
     enclosing method TestKt.box()Ljava/lang/String;
     inner (anonymous) class TestKt$box$86
     method <init>(p0: java.lang.Object): void
-    private final static method _init_$extensionFunction(p0: DPoint, p1: double): double
     public final @org.jetbrains.annotations.NotNull method invoke(p0: double): java.lang.Double
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
 }
@@ -1779,7 +1693,6 @@ synthetic final class TestKt$box$87 {
     inner (anonymous) class TestKt$box$87
     static method <clinit>(): void
     method <init>(): void
-    private final static method _init_$extensionFunction(p0: DPoint, p1: double): double
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
     public final @org.jetbrains.annotations.NotNull method invoke-GPBa7dw(p0: double, p1: double, p2: double): java.lang.Double
 }
@@ -1790,8 +1703,6 @@ synthetic final class TestKt$box$88 {
     enclosing method TestKt.box()Ljava/lang/String;
     inner (anonymous) class TestKt$box$88
     method <init>(p0: java.lang.Object): void
-    private final static method _init_$suspendFunctionWithLambda(p0: DPoint, p1: DPoint, p2: kotlin.jvm.functions.Function2, p3: kotlin.coroutines.Continuation): java.lang.Object
-    public synthetic final static method access$_init_$suspendFunctionWithLambda(p0: DPoint, p1: DPoint, p2: kotlin.jvm.functions.Function2, p3: kotlin.coroutines.Continuation): java.lang.Object
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): java.lang.Object
     public final @org.jetbrains.annotations.Nullable method invoke-lIoT8es(p0: double, p1: double, @org.jetbrains.annotations.NotNull p2: kotlin.jvm.functions.Function2, @org.jetbrains.annotations.NotNull p3: kotlin.coroutines.Continuation): java.lang.Object
 }
@@ -1802,8 +1713,6 @@ synthetic final class TestKt$box$89 {
     enclosing method TestKt.box()Ljava/lang/String;
     inner (anonymous) class TestKt$box$89
     method <init>(p0: java.lang.Object): void
-    private final static method _init_$suspendFunctionWithLambda(p0: DPoint, p1: DPoint, p2: kotlin.jvm.functions.Function2, p3: kotlin.coroutines.Continuation): java.lang.Object
-    public synthetic final static method access$_init_$suspendFunctionWithLambda(p0: DPoint, p1: DPoint, p2: kotlin.jvm.functions.Function2, p3: kotlin.coroutines.Continuation): java.lang.Object
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): java.lang.Object
     public final @org.jetbrains.annotations.Nullable method invoke-lIoT8es(p0: double, p1: double, @org.jetbrains.annotations.NotNull p2: kotlin.jvm.functions.Function2, @org.jetbrains.annotations.NotNull p3: kotlin.coroutines.Continuation): java.lang.Object
 }
@@ -1832,8 +1741,6 @@ synthetic final class TestKt$box$90 {
     inner (anonymous) class TestKt$box$90
     static method <clinit>(): void
     method <init>(): void
-    private final static method _init_$suspendFunctionWithLambda(p0: DPoint, p1: DPoint, p2: kotlin.jvm.functions.Function2, p3: kotlin.coroutines.Continuation): java.lang.Object
-    public synthetic final static method access$_init_$suspendFunctionWithLambda(p0: DPoint, p1: DPoint, p2: kotlin.jvm.functions.Function2, p3: kotlin.coroutines.Continuation): java.lang.Object
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
     public final @org.jetbrains.annotations.Nullable method invoke-552ch2I(p0: double, p1: double, p2: double, p3: double, @org.jetbrains.annotations.NotNull p4: kotlin.jvm.functions.Function2, @org.jetbrains.annotations.NotNull p5: kotlin.coroutines.Continuation): java.lang.Object
 }
@@ -1846,8 +1753,6 @@ synthetic final class TestKt$box$91 {
     inner (anonymous) class TestKt$box$91
     static method <clinit>(): void
     method <init>(): void
-    private final static method _init_$suspendFunctionWithLambda(p0: DPoint, p1: DPoint, p2: kotlin.jvm.functions.Function2, p3: kotlin.coroutines.Continuation): java.lang.Object
-    public synthetic final static method access$_init_$suspendFunctionWithLambda(p0: DPoint, p1: DPoint, p2: kotlin.jvm.functions.Function2, p3: kotlin.coroutines.Continuation): java.lang.Object
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
     public final @org.jetbrains.annotations.Nullable method invoke-552ch2I(p0: double, p1: double, p2: double, p3: double, @org.jetbrains.annotations.NotNull p4: kotlin.jvm.functions.Function2, @org.jetbrains.annotations.NotNull p5: kotlin.coroutines.Continuation): java.lang.Object
 }
@@ -1858,8 +1763,6 @@ synthetic final class TestKt$box$92 {
     enclosing method TestKt.box()Ljava/lang/String;
     inner (anonymous) class TestKt$box$92
     method <init>(p0: java.lang.Object): void
-    private final static method _init_$suspendFunctionWithLambda(p0: DPoint, p1: DPoint, p2: kotlin.jvm.functions.Function2, p3: kotlin.coroutines.Continuation): java.lang.Object
-    public synthetic final static method access$_init_$suspendFunctionWithLambda(p0: DPoint, p1: DPoint, p2: kotlin.jvm.functions.Function2, p3: kotlin.coroutines.Continuation): java.lang.Object
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): java.lang.Object
     public final @org.jetbrains.annotations.Nullable method invoke-lIoT8es(p0: double, p1: double, @org.jetbrains.annotations.NotNull p2: kotlin.jvm.functions.Function2, @org.jetbrains.annotations.NotNull p3: kotlin.coroutines.Continuation): java.lang.Object
 }
@@ -1872,8 +1775,6 @@ synthetic final class TestKt$box$93 {
     inner (anonymous) class TestKt$box$93
     static method <clinit>(): void
     method <init>(): void
-    private final static method _init_$suspendFunctionWithLambda(p0: DPoint, p1: DPoint, p2: kotlin.jvm.functions.Function2, p3: kotlin.coroutines.Continuation): java.lang.Object
-    public synthetic final static method access$_init_$suspendFunctionWithLambda(p0: DPoint, p1: DPoint, p2: kotlin.jvm.functions.Function2, p3: kotlin.coroutines.Continuation): java.lang.Object
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
     public final @org.jetbrains.annotations.Nullable method invoke-552ch2I(p0: double, p1: double, p2: double, p3: double, @org.jetbrains.annotations.NotNull p4: kotlin.jvm.functions.Function2, @org.jetbrains.annotations.NotNull p5: kotlin.coroutines.Continuation): java.lang.Object
 }
@@ -1884,8 +1785,6 @@ synthetic final class TestKt$box$94 {
     enclosing method TestKt.box()Ljava/lang/String;
     inner (anonymous) class TestKt$box$94
     method <init>(p0: java.lang.Object): void
-    private final static method _init_$suspendInlineFunctionWithLambda(p0: DPoint, p1: DPoint, p2: kotlin.jvm.functions.Function2, p3: kotlin.coroutines.Continuation): java.lang.Object
-    public synthetic final static method access$_init_$suspendInlineFunctionWithLambda(p0: DPoint, p1: DPoint, p2: kotlin.jvm.functions.Function2, p3: kotlin.coroutines.Continuation): java.lang.Object
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): java.lang.Object
     public final @org.jetbrains.annotations.Nullable method invoke-lIoT8es(p0: double, p1: double, @org.jetbrains.annotations.NotNull p2: kotlin.jvm.functions.Function2, @org.jetbrains.annotations.NotNull p3: kotlin.coroutines.Continuation): java.lang.Object
 }
@@ -1896,8 +1795,6 @@ synthetic final class TestKt$box$95 {
     enclosing method TestKt.box()Ljava/lang/String;
     inner (anonymous) class TestKt$box$95
     method <init>(p0: java.lang.Object): void
-    private final static method _init_$suspendInlineFunctionWithLambda(p0: DPoint, p1: DPoint, p2: kotlin.jvm.functions.Function2, p3: kotlin.coroutines.Continuation): java.lang.Object
-    public synthetic final static method access$_init_$suspendInlineFunctionWithLambda(p0: DPoint, p1: DPoint, p2: kotlin.jvm.functions.Function2, p3: kotlin.coroutines.Continuation): java.lang.Object
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): java.lang.Object
     public final @org.jetbrains.annotations.Nullable method invoke-lIoT8es(p0: double, p1: double, @org.jetbrains.annotations.NotNull p2: kotlin.jvm.functions.Function2, @org.jetbrains.annotations.NotNull p3: kotlin.coroutines.Continuation): java.lang.Object
 }
@@ -1910,8 +1807,6 @@ synthetic final class TestKt$box$96 {
     inner (anonymous) class TestKt$box$96
     static method <clinit>(): void
     method <init>(): void
-    private final static method _init_$suspendInlineFunctionWithLambda(p0: DPoint, p1: DPoint, p2: kotlin.jvm.functions.Function2, p3: kotlin.coroutines.Continuation): java.lang.Object
-    public synthetic final static method access$_init_$suspendInlineFunctionWithLambda(p0: DPoint, p1: DPoint, p2: kotlin.jvm.functions.Function2, p3: kotlin.coroutines.Continuation): java.lang.Object
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
     public final @org.jetbrains.annotations.Nullable method invoke-552ch2I(p0: double, p1: double, p2: double, p3: double, @org.jetbrains.annotations.NotNull p4: kotlin.jvm.functions.Function2, @org.jetbrains.annotations.NotNull p5: kotlin.coroutines.Continuation): java.lang.Object
 }
@@ -1924,8 +1819,6 @@ synthetic final class TestKt$box$97 {
     inner (anonymous) class TestKt$box$97
     static method <clinit>(): void
     method <init>(): void
-    private final static method _init_$suspendInlineFunctionWithLambda(p0: DPoint, p1: DPoint, p2: kotlin.jvm.functions.Function2, p3: kotlin.coroutines.Continuation): java.lang.Object
-    public synthetic final static method access$_init_$suspendInlineFunctionWithLambda(p0: DPoint, p1: DPoint, p2: kotlin.jvm.functions.Function2, p3: kotlin.coroutines.Continuation): java.lang.Object
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
     public final @org.jetbrains.annotations.Nullable method invoke-552ch2I(p0: double, p1: double, p2: double, p3: double, @org.jetbrains.annotations.NotNull p4: kotlin.jvm.functions.Function2, @org.jetbrains.annotations.NotNull p5: kotlin.coroutines.Continuation): java.lang.Object
 }
@@ -1936,8 +1829,6 @@ synthetic final class TestKt$box$98 {
     enclosing method TestKt.box()Ljava/lang/String;
     inner (anonymous) class TestKt$box$98
     method <init>(p0: java.lang.Object): void
-    private final static method _init_$suspendInlineFunctionWithLambda(p0: DPoint, p1: DPoint, p2: kotlin.jvm.functions.Function2, p3: kotlin.coroutines.Continuation): java.lang.Object
-    public synthetic final static method access$_init_$suspendInlineFunctionWithLambda(p0: DPoint, p1: DPoint, p2: kotlin.jvm.functions.Function2, p3: kotlin.coroutines.Continuation): java.lang.Object
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): java.lang.Object
     public final @org.jetbrains.annotations.Nullable method invoke-lIoT8es(p0: double, p1: double, @org.jetbrains.annotations.NotNull p2: kotlin.jvm.functions.Function2, @org.jetbrains.annotations.NotNull p3: kotlin.coroutines.Continuation): java.lang.Object
 }
@@ -1950,8 +1841,6 @@ synthetic final class TestKt$box$99 {
     inner (anonymous) class TestKt$box$99
     static method <clinit>(): void
     method <init>(): void
-    private final static method _init_$suspendInlineFunctionWithLambda(p0: DPoint, p1: DPoint, p2: kotlin.jvm.functions.Function2, p3: kotlin.coroutines.Continuation): java.lang.Object
-    public synthetic final static method access$_init_$suspendInlineFunctionWithLambda(p0: DPoint, p1: DPoint, p2: kotlin.jvm.functions.Function2, p3: kotlin.coroutines.Continuation): java.lang.Object
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
     public final @org.jetbrains.annotations.Nullable method invoke-552ch2I(p0: double, p1: double, p2: double, p3: double, @org.jetbrains.annotations.NotNull p4: kotlin.jvm.functions.Function2, @org.jetbrains.annotations.NotNull p5: kotlin.coroutines.Continuation): java.lang.Object
 }

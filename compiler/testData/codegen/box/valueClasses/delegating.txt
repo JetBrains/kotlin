@@ -74,7 +74,8 @@ public final class C {
     // source: 'delegating.kt'
     private synthetic final field $$delegate_0-x: int
     private synthetic final field $$delegate_0-y: int
-    public method <init>(p0: int, p1: int): void
+    private method <init>(p0: int, p1: int): void
+    public synthetic method <init>(p0: int, p1: int, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
     public method getX(): int
 }
 

@@ -153,6 +153,7 @@ public final class PrivateInternal {
     public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public static method equals-impl(p0: int, p1: int, p2: java.lang.Object): boolean
     public final static method equals-impl0(p0: int, p1: int, p2: int, p3: int): boolean
+    private final method getValue(): Internal
     public method hashCode(): int
     public static method hashCode-impl(p0: int, p1: int): int
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
@@ -174,6 +175,7 @@ public final class PrivatePrivate {
     public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public static method equals-impl(p0: int, p1: int, p2: java.lang.Object): boolean
     public final static method equals-impl0(p0: int, p1: int, p2: int, p3: int): boolean
+    private final method getValue(): Private
     public method hashCode(): int
     public static method hashCode-impl(p0: int, p1: int): int
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
@@ -195,6 +197,7 @@ public final class PrivatePublic {
     public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public static method equals-impl(p0: int, p1: int, p2: java.lang.Object): boolean
     public final static method equals-impl0(p0: int, p1: int, p2: int, p3: int): boolean
+    private final method getValue(): Public
     public method hashCode(): int
     public static method hashCode-impl(p0: int, p1: int): int
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
@@ -328,6 +331,15 @@ public final class Regular$Companion {
     public synthetic final static method access$getJvmStaticX3(p0: Regular$Companion): Public
     public synthetic final static method access$getJvmStaticY3(p0: Regular$Companion): Internal
     public synthetic final static method access$getJvmStaticZ3(p0: Regular$Companion): Private
+    public synthetic final static method access$setJvmStaticX3-sUp7gFk(p0: Regular$Companion, p1: int, p2: int): void
+    public synthetic final static method access$setJvmStaticX4-sUp7gFk(p0: Regular$Companion, p1: int, p2: int): void
+    public synthetic final static method access$setJvmStaticX5-sUp7gFk(p0: Regular$Companion, p1: int, p2: int): void
+    public synthetic final static method access$setJvmStaticY3-sUp7gFk(p0: Regular$Companion, p1: int, p2: int): void
+    public synthetic final static method access$setJvmStaticY4-sUp7gFk(p0: Regular$Companion, p1: int, p2: int): void
+    public synthetic final static method access$setJvmStaticY5-sUp7gFk(p0: Regular$Companion, p1: int, p2: int): void
+    public synthetic final static method access$setJvmStaticZ3-sUp7gFk(p0: Regular$Companion, p1: int, p2: int): void
+    public synthetic final static method access$setJvmStaticZ4-sUp7gFk(p0: Regular$Companion, p1: int, p2: int): void
+    public synthetic final static method access$setJvmStaticZ5-sUp7gFk(p0: Regular$Companion, p1: int, p2: int): void
     public synthetic deprecated static @kotlin.jvm.JvmStatic method getJvmStaticX1$annotations(): void
     public final @org.jetbrains.annotations.NotNull method getJvmStaticX1(): Public
     public synthetic final method getJvmStaticX1-x(): int
@@ -456,21 +468,39 @@ public final class Regular$Companion {
     public synthetic final method getStaticZ6-y(): int
     public final method setJvmStaticX1-sUp7gFk(p0: int, p1: int): void
     public final method setJvmStaticX2-sUp7gFk$main(p0: int, p1: int): void
+    private final method setJvmStaticX3-sUp7gFk(p0: int, p1: int): void
+    private final method setJvmStaticX4-sUp7gFk(p0: int, p1: int): void
+    private final method setJvmStaticX5-sUp7gFk(p0: int, p1: int): void
     public final method setJvmStaticX6-sUp7gFk$main(p0: int, p1: int): void
     public final method setJvmStaticY1-sUp7gFk(p0: int, p1: int): void
     public final method setJvmStaticY2-sUp7gFk$main(p0: int, p1: int): void
+    private final method setJvmStaticY3-sUp7gFk(p0: int, p1: int): void
+    private final method setJvmStaticY4-sUp7gFk(p0: int, p1: int): void
+    private final method setJvmStaticY5-sUp7gFk(p0: int, p1: int): void
     public final method setJvmStaticY6-sUp7gFk$main(p0: int, p1: int): void
     public final method setJvmStaticZ1-sUp7gFk(p0: int, p1: int): void
     public final method setJvmStaticZ2-sUp7gFk$main(p0: int, p1: int): void
+    private final method setJvmStaticZ3-sUp7gFk(p0: int, p1: int): void
+    private final method setJvmStaticZ4-sUp7gFk(p0: int, p1: int): void
+    private final method setJvmStaticZ5-sUp7gFk(p0: int, p1: int): void
     public final method setJvmStaticZ6-sUp7gFk$main(p0: int, p1: int): void
     public final method setStaticX1-sUp7gFk(p0: int, p1: int): void
     public final method setStaticX2-sUp7gFk$main(p0: int, p1: int): void
+    private final method setStaticX3-sUp7gFk(p0: int, p1: int): void
+    private final method setStaticX4-sUp7gFk(p0: int, p1: int): void
+    private final method setStaticX5-sUp7gFk(p0: int, p1: int): void
     public final method setStaticX6-sUp7gFk$main(p0: int, p1: int): void
     public final method setStaticY1-sUp7gFk(p0: int, p1: int): void
     public final method setStaticY2-sUp7gFk$main(p0: int, p1: int): void
+    private final method setStaticY3-sUp7gFk(p0: int, p1: int): void
+    private final method setStaticY4-sUp7gFk(p0: int, p1: int): void
+    private final method setStaticY5-sUp7gFk(p0: int, p1: int): void
     public final method setStaticY6-sUp7gFk$main(p0: int, p1: int): void
     public final method setStaticZ1-sUp7gFk(p0: int, p1: int): void
     public final method setStaticZ2-sUp7gFk$main(p0: int, p1: int): void
+    private final method setStaticZ3-sUp7gFk(p0: int, p1: int): void
+    private final method setStaticZ4-sUp7gFk(p0: int, p1: int): void
+    private final method setStaticZ5-sUp7gFk(p0: int, p1: int): void
     public final method setStaticZ6-sUp7gFk$main(p0: int, p1: int): void
     public final inner class Regular$Companion
 }
@@ -665,36 +695,72 @@ public final class Regular {
     public synthetic final static method access$setJvmStaticX1-y$cp(p0: int): void
     public synthetic final static method access$setJvmStaticX2-x$cp(p0: int): void
     public synthetic final static method access$setJvmStaticX2-y$cp(p0: int): void
+    public synthetic final static method access$setJvmStaticX3-x$cp(p0: int): void
+    public synthetic final static method access$setJvmStaticX3-y$cp(p0: int): void
+    public synthetic final static method access$setJvmStaticX4-x$cp(p0: int): void
+    public synthetic final static method access$setJvmStaticX4-y$cp(p0: int): void
+    public synthetic final static method access$setJvmStaticX5-x$cp(p0: int): void
+    public synthetic final static method access$setJvmStaticX5-y$cp(p0: int): void
     public synthetic final static method access$setJvmStaticX6-x$cp(p0: int): void
     public synthetic final static method access$setJvmStaticX6-y$cp(p0: int): void
     public synthetic final static method access$setJvmStaticY1-x$cp(p0: int): void
     public synthetic final static method access$setJvmStaticY1-y$cp(p0: int): void
     public synthetic final static method access$setJvmStaticY2-x$cp(p0: int): void
     public synthetic final static method access$setJvmStaticY2-y$cp(p0: int): void
+    public synthetic final static method access$setJvmStaticY3-x$cp(p0: int): void
+    public synthetic final static method access$setJvmStaticY3-y$cp(p0: int): void
+    public synthetic final static method access$setJvmStaticY4-x$cp(p0: int): void
+    public synthetic final static method access$setJvmStaticY4-y$cp(p0: int): void
+    public synthetic final static method access$setJvmStaticY5-x$cp(p0: int): void
+    public synthetic final static method access$setJvmStaticY5-y$cp(p0: int): void
     public synthetic final static method access$setJvmStaticY6-x$cp(p0: int): void
     public synthetic final static method access$setJvmStaticY6-y$cp(p0: int): void
     public synthetic final static method access$setJvmStaticZ1-x$cp(p0: int): void
     public synthetic final static method access$setJvmStaticZ1-y$cp(p0: int): void
     public synthetic final static method access$setJvmStaticZ2-x$cp(p0: int): void
     public synthetic final static method access$setJvmStaticZ2-y$cp(p0: int): void
+    public synthetic final static method access$setJvmStaticZ3-x$cp(p0: int): void
+    public synthetic final static method access$setJvmStaticZ3-y$cp(p0: int): void
+    public synthetic final static method access$setJvmStaticZ4-x$cp(p0: int): void
+    public synthetic final static method access$setJvmStaticZ4-y$cp(p0: int): void
+    public synthetic final static method access$setJvmStaticZ5-x$cp(p0: int): void
+    public synthetic final static method access$setJvmStaticZ5-y$cp(p0: int): void
     public synthetic final static method access$setJvmStaticZ6-x$cp(p0: int): void
     public synthetic final static method access$setJvmStaticZ6-y$cp(p0: int): void
     public synthetic final static method access$setStaticX1-x$cp(p0: int): void
     public synthetic final static method access$setStaticX1-y$cp(p0: int): void
     public synthetic final static method access$setStaticX2-x$cp(p0: int): void
     public synthetic final static method access$setStaticX2-y$cp(p0: int): void
+    public synthetic final static method access$setStaticX3-x$cp(p0: int): void
+    public synthetic final static method access$setStaticX3-y$cp(p0: int): void
+    public synthetic final static method access$setStaticX4-x$cp(p0: int): void
+    public synthetic final static method access$setStaticX4-y$cp(p0: int): void
+    public synthetic final static method access$setStaticX5-x$cp(p0: int): void
+    public synthetic final static method access$setStaticX5-y$cp(p0: int): void
     public synthetic final static method access$setStaticX6-x$cp(p0: int): void
     public synthetic final static method access$setStaticX6-y$cp(p0: int): void
     public synthetic final static method access$setStaticY1-x$cp(p0: int): void
     public synthetic final static method access$setStaticY1-y$cp(p0: int): void
     public synthetic final static method access$setStaticY2-x$cp(p0: int): void
     public synthetic final static method access$setStaticY2-y$cp(p0: int): void
+    public synthetic final static method access$setStaticY3-x$cp(p0: int): void
+    public synthetic final static method access$setStaticY3-y$cp(p0: int): void
+    public synthetic final static method access$setStaticY4-x$cp(p0: int): void
+    public synthetic final static method access$setStaticY4-y$cp(p0: int): void
+    public synthetic final static method access$setStaticY5-x$cp(p0: int): void
+    public synthetic final static method access$setStaticY5-y$cp(p0: int): void
     public synthetic final static method access$setStaticY6-x$cp(p0: int): void
     public synthetic final static method access$setStaticY6-y$cp(p0: int): void
     public synthetic final static method access$setStaticZ1-x$cp(p0: int): void
     public synthetic final static method access$setStaticZ1-y$cp(p0: int): void
     public synthetic final static method access$setStaticZ2-x$cp(p0: int): void
     public synthetic final static method access$setStaticZ2-y$cp(p0: int): void
+    public synthetic final static method access$setStaticZ3-x$cp(p0: int): void
+    public synthetic final static method access$setStaticZ3-y$cp(p0: int): void
+    public synthetic final static method access$setStaticZ4-x$cp(p0: int): void
+    public synthetic final static method access$setStaticZ4-y$cp(p0: int): void
+    public synthetic final static method access$setStaticZ5-x$cp(p0: int): void
+    public synthetic final static method access$setStaticZ5-y$cp(p0: int): void
     public synthetic final static method access$setStaticZ6-x$cp(p0: int): void
     public synthetic final static method access$setStaticZ6-y$cp(p0: int): void
     public final method callAll(): void
@@ -770,14 +836,41 @@ public final class Regular {
     public final @org.jetbrains.annotations.NotNull method getZ6(): Private
     public synthetic final method getZ6-x(): int
     public synthetic final method getZ6-y(): int
+    public final static method setJvmStaticX1-sUp7gFk(p0: int, p1: int): void
+    public final static method setJvmStaticX2-sUp7gFk$main(p0: int, p1: int): void
+    private final static method setJvmStaticX3-sUp7gFk(p0: int, p1: int): void
+    private final static method setJvmStaticX4-sUp7gFk(p0: int, p1: int): void
+    private final static method setJvmStaticX5-sUp7gFk(p0: int, p1: int): void
+    public final static method setJvmStaticX6-sUp7gFk$main(p0: int, p1: int): void
+    public final static method setJvmStaticY1-sUp7gFk(p0: int, p1: int): void
+    public final static method setJvmStaticY2-sUp7gFk$main(p0: int, p1: int): void
+    private final static method setJvmStaticY3-sUp7gFk(p0: int, p1: int): void
+    private final static method setJvmStaticY4-sUp7gFk(p0: int, p1: int): void
+    private final static method setJvmStaticY5-sUp7gFk(p0: int, p1: int): void
+    public final static method setJvmStaticY6-sUp7gFk$main(p0: int, p1: int): void
+    public final static method setJvmStaticZ1-sUp7gFk(p0: int, p1: int): void
+    public final static method setJvmStaticZ2-sUp7gFk$main(p0: int, p1: int): void
+    private final static method setJvmStaticZ3-sUp7gFk(p0: int, p1: int): void
+    private final static method setJvmStaticZ4-sUp7gFk(p0: int, p1: int): void
+    private final static method setJvmStaticZ5-sUp7gFk(p0: int, p1: int): void
+    public final static method setJvmStaticZ6-sUp7gFk$main(p0: int, p1: int): void
     public final method setX1-sUp7gFk(p0: int, p1: int): void
     public final method setX2-sUp7gFk$main(p0: int, p1: int): void
+    private final method setX3-sUp7gFk(p0: int, p1: int): void
+    private final method setX4-sUp7gFk(p0: int, p1: int): void
+    private final method setX5-sUp7gFk(p0: int, p1: int): void
     public final method setX6-sUp7gFk$main(p0: int, p1: int): void
     public final method setY1-sUp7gFk(p0: int, p1: int): void
     public final method setY2-sUp7gFk$main(p0: int, p1: int): void
+    private final method setY3-sUp7gFk(p0: int, p1: int): void
+    private final method setY4-sUp7gFk(p0: int, p1: int): void
+    private final method setY5-sUp7gFk(p0: int, p1: int): void
     public final method setY6-sUp7gFk$main(p0: int, p1: int): void
     public final method setZ1-sUp7gFk(p0: int, p1: int): void
     public final method setZ2-sUp7gFk$main(p0: int, p1: int): void
+    private final method setZ3-sUp7gFk(p0: int, p1: int): void
+    private final method setZ4-sUp7gFk(p0: int, p1: int): void
+    private final method setZ5-sUp7gFk(p0: int, p1: int): void
     public final method setZ6-sUp7gFk$main(p0: int, p1: int): void
     public final inner class Regular$Companion
 }

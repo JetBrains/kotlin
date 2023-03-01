@@ -3,7 +3,8 @@ public final class A {
     // source: 'mfvcFieldInitializationOrder.kt'
     private field x-x: double
     private field x-y: double
-    public method <init>(p0: double, p1: double): void
+    private method <init>(p0: double, p1: double): void
+    public synthetic method <init>(p0: double, p1: double, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
     public final @org.jetbrains.annotations.NotNull method getX(): DPoint
     public synthetic final method getX-x(): double
     public synthetic final method getX-y(): double

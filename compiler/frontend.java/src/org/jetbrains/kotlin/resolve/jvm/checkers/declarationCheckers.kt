@@ -37,15 +37,14 @@ import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.isAnnotationConstructor
 import org.jetbrains.kotlin.resolve.descriptorUtil.propertyIfAccessor
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
-import org.jetbrains.kotlin.resolve.isMultiFieldValueClass
 import org.jetbrains.kotlin.resolve.jvm.annotations.findJvmOverloadsAnnotation
 import org.jetbrains.kotlin.resolve.jvm.annotations.findSynchronizedAnnotation
 import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmFieldAnnotation
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
-import org.jetbrains.kotlin.resolve.jvm.isInlineClassThatRequiresMangling
+import org.jetbrains.kotlin.resolve.jvm.isValueClassThatRequiresMangling
 import org.jetbrains.kotlin.resolve.jvm.requiresFunctionNameManglingForParameterTypes
 import org.jetbrains.kotlin.resolve.jvm.requiresFunctionNameManglingForReturnType
-import org.jetbrains.kotlin.resolve.jvm.shouldHideConstructorDueToInlineClassTypeValueParameters
+import org.jetbrains.kotlin.resolve.jvm.shouldHideConstructorDueToValueClassTypeValueParameters
 
 class LocalFunInlineChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
@@ -156,9 +155,7 @@ class JvmNameAnnotationChecker : DeclarationChecker {
         if (descriptor is CallableMemberDescriptor) {
             if (DescriptorUtils.isOverride(descriptor) || descriptor.isOverridable) {
                 diagnosticHolder.report(ErrorsJvm.INAPPLICABLE_JVM_NAME.on(annotationEntry))
-            } else if (descriptor.containingDeclaration.isInlineClassThatRequiresMangling()) {
-                diagnosticHolder.report(ErrorsJvm.INAPPLICABLE_JVM_NAME.on(annotationEntry))
-            } else if (descriptor.containingDeclaration.isMultiFieldValueClass()) {
+            } else if (descriptor.containingDeclaration.isValueClassThatRequiresMangling()) {
                 diagnosticHolder.report(ErrorsJvm.INAPPLICABLE_JVM_NAME.on(annotationEntry))
             }
         }
@@ -257,7 +254,7 @@ class OverloadsAnnotationChecker : DeclarationChecker {
                     (requiresFunctionNameManglingForParameterTypes(descriptor) || requiresFunctionNameManglingForReturnType(descriptor)) ->
                 diagnosticHolder.report(ErrorsJvm.OVERLOADS_ANNOTATION_MANGLED_FUNCTION.on(annotationEntry))
 
-            descriptor is ClassConstructorDescriptor && shouldHideConstructorDueToInlineClassTypeValueParameters(descriptor) ->
+            descriptor is ClassConstructorDescriptor && shouldHideConstructorDueToValueClassTypeValueParameters(descriptor) ->
                 diagnosticHolder.report(ErrorsJvm.OVERLOADS_ANNOTATION_HIDDEN_CONSTRUCTOR.on(annotationEntry))
         }
     }
