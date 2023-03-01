@@ -240,7 +240,7 @@ class IrOverridingUtil(
         val overridden = mutableSetOf<IrOverridableMember>()
 
         for (fromSupertype in descriptorsFromSuper) {
-            when (isOverridableBy(fromSupertype, fromCurrent).result) {
+            when (isOverridableBy(fromSupertype, fromCurrent, checkIsInlineFlag = true, checkReturnType = false).result) {
                 OverrideCompatibilityInfo.Result.OVERRIDABLE -> {
                     if (isVisibleForOverride(fromCurrent, fromSupertype.original))
                         overridden += fromSupertype
@@ -595,45 +595,35 @@ class IrOverridingUtil(
     ): Result {
         val result1 = isOverridableBy(
             candidateDescriptor,
-            overriderDescriptor
-            //null
+            overriderDescriptor,
+            checkIsInlineFlag = false,
+            checkReturnType = false
         ).result
+
         val result2 = isOverridableBy(
             overriderDescriptor,
-            candidateDescriptor
-            //null
+            candidateDescriptor,
+            checkIsInlineFlag = false,
+            checkReturnType = false
         ).result
-        return if (result1 == OverrideCompatibilityInfo.Result.OVERRIDABLE && result2 == OverrideCompatibilityInfo.Result.OVERRIDABLE)
-            OverrideCompatibilityInfo.Result.OVERRIDABLE
-        else if (result1 == OverrideCompatibilityInfo.Result.CONFLICT || result2 == OverrideCompatibilityInfo.Result.CONFLICT)
-            OverrideCompatibilityInfo.Result.CONFLICT
-        else
-            OverrideCompatibilityInfo.Result.INCOMPATIBLE
+
+        return if (result1 == result2) result1 else OverrideCompatibilityInfo.Result.INCOMPATIBLE
     }
 
     private fun isOverridableBy(
         superMember: IrOverridableMember,
         subMember: IrOverridableMember,
-        // subClass: IrClass?
-    ): OverrideCompatibilityInfo = isOverridableBy(superMember, subMember/*, subClass*/, false)
-
-    private fun isOverridableBy(
-        superMember: IrOverridableMember,
-        subMember: IrOverridableMember,
-        // subClass: IrClass?, Would only be needed for external overridability conditions.
+        checkIsInlineFlag: Boolean,
         checkReturnType: Boolean
     ): OverrideCompatibilityInfo {
-        val basicResult = isOverridableByWithoutExternalConditions(superMember, subMember, checkReturnType)
-        return if (basicResult.result == OverrideCompatibilityInfo.Result.OVERRIDABLE)
-            success()
-        else
-            basicResult
+        return isOverridableByWithoutExternalConditions(superMember, subMember, checkIsInlineFlag, checkReturnType)
         // The frontend goes into external overridability condition details here, but don't deal with them in IR (yet?).
     }
 
     private fun isOverridableByWithoutExternalConditions(
         superMember: IrOverridableMember,
         subMember: IrOverridableMember,
+        checkIsInlineFlag: Boolean,
         checkReturnType: Boolean
     ): OverrideCompatibilityInfo {
         val superTypeParameters: List<IrTypeParameter>
@@ -647,7 +637,7 @@ class IrOverridingUtil(
                 subMember !is IrSimpleFunction -> return incompatible("Member kind mismatch")
                 superMember.hasExtensionReceiver != subMember.hasExtensionReceiver -> return incompatible("Receiver presence mismatch")
                 superMember.isSuspend != subMember.isSuspend -> return incompatible("Incompatible suspendability")
-//                superMember.isInline -> return incompatible("Inline function can't be overridden")
+                checkIsInlineFlag && superMember.isInline -> return incompatible("Inline function can't be overridden")
 
                 else -> {
                     superTypeParameters = superMember.typeParameters
@@ -659,7 +649,7 @@ class IrOverridingUtil(
             is IrProperty -> when {
                 subMember !is IrProperty -> return incompatible("Member kind mismatch")
                 superMember.getter.hasExtensionReceiver != subMember.getter.hasExtensionReceiver -> return incompatible("Receiver presence mismatch")
-//                superMember.isInline -> return incompatible("Inline property can't be overridden")
+                checkIsInlineFlag && superMember.isInline -> return incompatible("Inline property can't be overridden")
 
                 else -> {
                     superTypeParameters = superMember.typeParameters
