@@ -19,11 +19,11 @@ package com.bnorm.power
 import com.tschuchort.compiletesting.KotlinCompilation
 import com.tschuchort.compiletesting.SourceFile
 import org.jetbrains.kotlin.name.FqName
-import java.io.ByteArrayOutputStream
-import java.io.PrintStream
 import java.lang.reflect.InvocationTargetException
+import java.lang.reflect.Method
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.fail
 
 class DebugFunctionTest {
   @Test
@@ -71,7 +71,7 @@ private fun executeMainDebug(mainBody: String): String {
 fun <T> dbg(value: T): T = value
 
 fun <T> dbg(value: T, msg: String): T {
-    println(msg)
+    throw RuntimeException("result:"+msg)
     return value
 }
 
@@ -87,15 +87,18 @@ fun main() {
 
   val kClazz = result.classLoader.loadClass("MainKt")
   val main = kClazz.declaredMethods.single { it.name == "main" && it.parameterCount == 0 }
-  val prevOut = System.out
+  return getMainResult(main)
+}
+
+fun getMainResult(main: Method): String {
   try {
-    val out = ByteArrayOutputStream()
-    System.setOut(PrintStream(out))
     main.invoke(null)
-    return out.toString("UTF-8")
+    fail("main did not throw expected exception")
   } catch (t: InvocationTargetException) {
+    with(t.cause) {
+      if (this is RuntimeException && message != null && message!!.startsWith("result:"))
+        return message!!.substringAfter("result:")
+    }
     throw t.cause!!
-  } finally {
-    System.setOut(prevOut)
   }
 }

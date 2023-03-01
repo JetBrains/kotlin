@@ -18,6 +18,7 @@ dependencies {
   testImplementation(kotlin("test-junit5"))
   testImplementation("org.jetbrains.kotlin:kotlin-compiler-embeddable")
   testImplementation("com.github.tschuchortdev:kotlin-compile-testing:1.4.9")
+  testImplementation(enforcedPlatform("org.junit:junit-bom:5.9.1"))
 }
 
 tasks.withType<KotlinCompile> {
