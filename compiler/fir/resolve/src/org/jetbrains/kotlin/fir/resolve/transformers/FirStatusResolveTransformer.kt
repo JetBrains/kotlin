@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.toSymbol
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.fir.whileAnalysing
+import org.jetbrains.kotlin.fir.withFileAnalysisExceptionWrapping
 
 class FirStatusResolveProcessor(
     session: FirSession,
@@ -199,7 +200,9 @@ abstract class AbstractFirStatusResolveTransformer(
     protected abstract fun FirDeclaration.needResolveNestedClassifiers(): Boolean
 
     override fun transformFile(file: FirFile, data: FirResolvedDeclarationStatus?): FirFile {
-        transformDeclarationContent(file, data)
+        withFileAnalysisExceptionWrapping(file) {
+            transformDeclarationContent(file, data)
+        }
         return file
     }
 

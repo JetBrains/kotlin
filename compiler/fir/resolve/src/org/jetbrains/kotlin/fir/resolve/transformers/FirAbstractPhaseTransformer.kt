@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
+import org.jetbrains.kotlin.fir.withFileAnalysisExceptionWrapping
 
 abstract class FirAbstractPhaseTransformer<D>(
     protected val baseTransformerPhase: FirResolvePhase
@@ -27,7 +28,9 @@ abstract class FirAbstractPhaseTransformer<D>(
 
     override fun transformFile(file: FirFile, data: D): FirFile {
         checkSessionConsistency(file)
-        return super.transformFile(file, data)
+        return withFileAnalysisExceptionWrapping(file) {
+            super.transformFile(file, data)
+        }
     }
 
     protected fun checkSessionConsistency(file: FirFile) {

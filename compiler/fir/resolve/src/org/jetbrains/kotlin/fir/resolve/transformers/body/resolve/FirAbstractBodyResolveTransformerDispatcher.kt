@@ -39,10 +39,12 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
     override fun transformFile(file: FirFile, data: ResolutionMode): FirFile {
         checkSessionConsistency(file)
         return context.withFile(file, components) {
-            firTowerDataContextCollector?.addFileContext(file, context.towerDataContext)
+            withFileAnalysisExceptionWrapping(file) {
+                firTowerDataContextCollector?.addFileContext(file, context.towerDataContext)
 
-            @Suppress("UNCHECKED_CAST")
-            transformDeclarationContent(file, data) as FirFile
+                @Suppress("UNCHECKED_CAST")
+                transformDeclarationContent(file, data) as FirFile
+            }
         }
     }
 

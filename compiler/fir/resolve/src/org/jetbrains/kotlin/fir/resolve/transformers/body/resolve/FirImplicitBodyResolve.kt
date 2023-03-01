@@ -60,7 +60,9 @@ class FirImplicitTypeBodyResolveTransformerAdapter(session: FirSession, scopeSes
     }
 
     override fun transformFile(file: FirFile, data: Any?): FirFile {
-        return file.transform(transformer, ResolutionMode.ContextIndependent)
+        return withFileAnalysisExceptionWrapping(file) {
+            file.transform(transformer, ResolutionMode.ContextIndependent)
+        }
     }
 }
 

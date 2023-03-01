@@ -21,6 +21,7 @@ class SourceCodeAnalysisException(val source: KtSourceElement, override val caus
 fun Throwable.wrapIntoSourceCodeAnalysisExceptionIfNeeded(element: KtSourceElement?) = when (this) {
     is SourceCodeAnalysisException -> this
     is IndexNotReadyException -> this
+    is FileAnalysisException -> this
     is ControlFlowException -> this
     is VirtualMachineError -> this
     else -> when (element?.kind) {
@@ -54,6 +55,7 @@ fun Throwable.wrapIntoFileAnalysisExceptionIfNeeded(
     }
 
     this is IndexNotReadyException -> this
+    this is FileAnalysisException -> this
     this is ControlFlowException -> this
     this is VirtualMachineError -> this
     else -> FileAnalysisException(filePath, this)

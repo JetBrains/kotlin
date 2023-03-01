@@ -65,9 +65,11 @@ open class FirSupertypeResolverTransformer(
 
     override fun transformFile(file: FirFile, data: Any?): FirFile {
         checkSessionConsistency(file)
-        file.accept(supertypeResolverVisitor, null)
-        supertypeComputationSession.breakLoops(session)
-        return file.transform(applySupertypesTransformer, null)
+        return withFileAnalysisExceptionWrapping(file) {
+            file.accept(supertypeResolverVisitor, null)
+            supertypeComputationSession.breakLoops(session)
+            file.transform(applySupertypesTransformer, null)
+        }
     }
 }
 
@@ -110,7 +112,9 @@ open class FirApplySupertypesTransformer(
     }
 
     override fun transformFile(file: FirFile, data: Any?): FirFile {
-        return transformDeclarationContent(file, null) as FirFile
+        return withFileAnalysisExceptionWrapping(file) {
+            transformDeclarationContent(file, null) as FirFile
+        }
     }
 
     override fun transformRegularClass(regularClass: FirRegularClass, data: Any?): FirStatement {

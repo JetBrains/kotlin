@@ -326,7 +326,9 @@ internal abstract class AbstractFirSpecificAnnotationResolveTransformer(
     inline fun <T> withFile(file: FirFile, f: () -> T): T {
         typeResolverTransformer.withFile(file) {
             argumentsTransformer.context.withFile(file, argumentsTransformer.components) {
-                return f()
+                return withFileAnalysisExceptionWrapping(file) {
+                    f()
+                }
             }
         }
     }
