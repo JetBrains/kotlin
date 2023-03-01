@@ -162,6 +162,8 @@ interface KotlinConstantExpressionStub : StubElement<KtConstantExpression> {
     fun value(): String
 }
 
+interface KotlinClassLiteralExpressionStub : StubElement<KtClassLiteralExpression>
+
 interface KotlinTypeProjectionStub : StubElement<KtTypeProjection> {
     fun getProjectionKind(): KtProjectionKind
 }

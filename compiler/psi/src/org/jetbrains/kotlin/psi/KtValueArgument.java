@@ -56,7 +56,9 @@ public class KtValueArgument extends KtElementImplStub<KotlinValueArgumentStub<?
             KtStubElementTypes.REFERENCE_EXPRESSION,
             KtStubElementTypes.DOT_QUALIFIED_EXPRESSION,
 
-            KtStubElementTypes.STRING_TEMPLATE
+            KtStubElementTypes.STRING_TEMPLATE,
+
+            KtStubElementTypes.CLASS_LITERAL_EXPRESSION
     );
 
     private static final TokenSet STRING_TEMPLATE_EXPRESSIONS_TYPES = TokenSet.create(
