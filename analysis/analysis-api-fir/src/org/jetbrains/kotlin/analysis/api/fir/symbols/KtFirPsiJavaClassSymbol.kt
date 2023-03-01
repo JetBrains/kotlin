@@ -92,6 +92,11 @@ internal class KtFirPsiJavaClassSymbol(
     override val isInner: Boolean
         get() = withValidityAssertion { classIdIfNonLocal?.outerClassId != null && !javaClass.isStatic }
 
+    val outerClass: KtFirPsiJavaClassSymbol?
+        get() = withValidityAssertion {
+            psi.containingClass?.let { KtFirPsiJavaClassSymbol(it, analysisSession) }
+        }
+
     override val isData: Boolean get() = withValidityAssertion { false }
     override val isInline: Boolean get() = withValidityAssertion { false }
     override val isFun: Boolean get() = withValidityAssertion { false }
