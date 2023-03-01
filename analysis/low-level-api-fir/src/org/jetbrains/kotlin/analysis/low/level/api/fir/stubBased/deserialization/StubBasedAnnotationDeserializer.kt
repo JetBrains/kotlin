@@ -98,8 +98,18 @@ class StubBasedAnnotationDeserializer(
             ktAnnotation.valueArguments.associateTo(mapping) {
                 val name = it.getArgumentName()?.asName ?: Name.identifier("value")
                 val expectedType = { parameterByName?.get(name)?.returnTypeRef?.coneType }
-                val value = resolveValue(it.getArgumentExpression(), expectedType)
-                name to value
+
+                val annotations: Array<out KtAnnotationEntry>? =
+                    (it as? KtValueArgument)?.stub?.getChildrenByType<KtAnnotationEntry>(
+                        KtStubElementTypes.ANNOTATION_ENTRY,
+                        arrayOfNulls<KtAnnotationEntry>(0)
+                    )
+                if (annotations != null && annotations.isNotEmpty()) {
+                    return@associateTo name to deserializeAnnotation(annotations[0])
+                }
+                val argumentExpression = it.getArgumentExpression()
+                val value = resolveValue(argumentExpression, expectedType)
+                return@associateTo name to value
             }
         }
     }
@@ -108,134 +118,53 @@ class StubBasedAnnotationDeserializer(
         value: KtExpression?, expectedType: () -> ConeKotlinType?
     ): FirExpression {
         if (value == null) error("Unexpected")
-        if (value is KtQualifiedExpression) {
-            val receiverExpression = value.receiverExpression
-            if (receiverExpression is KtQualifiedExpression) {
-                val selectorExpression = value.selectorExpression
-                val classId = traverseClassId(receiverExpression)
-                val name = (selectorExpression as KtNameReferenceExpression).getReferencedNameAsName()
-                return classId.toEnumEntryReferenceExpression(name)
-            }
-        }
-
-        if (value is KtCollectionLiteralExpression) {
-            return buildArrayOfCall {
-                argumentList = buildArgumentList {
-                    arguments.addAll(value.innerExpressions.map { resolveValue(it, expectedType) })
-                }
-                typeRef = buildResolvedTypeRef {
-                    type = (/*expectedType() ?: */session.builtinTypes.anyType.type).createArrayType()
+        when (value) {
+            is KtQualifiedExpression -> {
+                val receiverExpression = value.receiverExpression
+                if (receiverExpression is KtQualifiedExpression) {
+                    val selectorExpression = value.selectorExpression
+                    val classId = traverseClassId(receiverExpression)
+                    val name = (selectorExpression as KtNameReferenceExpression).getReferencedNameAsName()
+                    return classId.toEnumEntryReferenceExpression(name)
                 }
             }
-        }
-
-        if (value is KtStringTemplateExpression) {
-            val textStub = value.entries[0].stub as KotlinPlaceHolderWithTextStub<*>
-            return const(ConstantValueKind.String, textStub.text(), session.builtinTypes.stringType)
-        }
-
-        if (value is KtClassLiteralExpression) {
-            val receiverExpression = value.receiverExpression ?: error("Not defined class reference")
-            val classId = traverseClassId(receiverExpression)
-            return buildGetClassCall {
-                val lookupTag = classId.toLookupTag()
-                val referencedType = lookupTag.constructType(emptyArray(), isNullable = false)
-                val resolvedTypeRef = buildResolvedTypeRef {
-                    type = StandardClassIds.KClass.constructClassLikeType(arrayOf(referencedType), false)
-                }
-                argumentList = buildUnaryArgumentList(
-                    buildClassReferenceExpression {
-                        classTypeRef = buildResolvedTypeRef { type = referencedType }
-                        typeRef = resolvedTypeRef
+            is KtCollectionLiteralExpression -> {
+                return buildArrayOfCall {
+                    argumentList = buildArgumentList {
+                        arguments.addAll(value.innerExpressions.map { resolveValue(it, expectedType) })
                     }
-                )
+                    typeRef = buildResolvedTypeRef {
+                        type = (/*expectedType() ?: */session.builtinTypes.anyType.type).createArrayType()
+                    }
+                }
+            }
+            is KtStringTemplateExpression -> {
+                val textStub = value.entries[0].stub as KotlinPlaceHolderWithTextStub<*>
+                return const(ConstantValueKind.String, textStub.text(), session.builtinTypes.stringType)
+            }
+            is KtClassLiteralExpression -> {
+                val receiverExpression = value.receiverExpression ?: error("Not defined class reference")
+                val classId = traverseClassId(receiverExpression)
+                return buildGetClassCall {
+                    val lookupTag = classId.toLookupTag()
+                    val referencedType = lookupTag.constructType(emptyArray(), isNullable = false)
+                    val resolvedTypeRef = buildResolvedTypeRef {
+                        type = StandardClassIds.KClass.constructClassLikeType(arrayOf(referencedType), false)
+                    }
+                    argumentList = buildUnaryArgumentList(
+                        buildClassReferenceExpression {
+                            classTypeRef = buildResolvedTypeRef { type = referencedType }
+                            typeRef = resolvedTypeRef
+                        }
+                    )
+                }
+            }
+            is KtConstantExpression -> {
+                val expressionStub = value.stub as KotlinConstantExpressionStub
+                return buildFirConstant(expressionStub.value(), expressionStub.kind())
             }
         }
-        if (value is KtConstantExpression) {
-            val expressionStub = value.stub as KotlinConstantExpressionStub
-            return buildFirConstant(expressionStub.value(), expressionStub.kind())
-        }
-//        val isUnsigned = Flags.IS_UNSIGNED.get(value.flags)
-//
-//        return when (value.type) {
-//            BYTE -> {
-//                val kind = if (isUnsigned) ConstantValueKind.UnsignedByte else ConstantValueKind.Byte
-//                const(kind, value.intValue.toByte(), session.builtinTypes.byteType)
-//            }
-//
-//            SHORT -> {
-//                val kind = if (isUnsigned) ConstantValueKind.UnsignedShort else ConstantValueKind.Short
-//                const(kind, value.intValue.toShort(), session.builtinTypes.shortType)
-//            }
-//
-//            INT -> {
-//                val kind = if (isUnsigned) ConstantValueKind.UnsignedInt else ConstantValueKind.Int
-//                const(kind, value.intValue.toInt(), session.builtinTypes.intType)
-//            }
-//
-//            LONG -> {
-//                val kind = if (isUnsigned) ConstantValueKind.UnsignedLong else ConstantValueKind.Long
-//                const(kind, value.intValue, session.builtinTypes.longType)
-//            }
-//
-//            CHAR -> const(ConstantValueKind.Char, value.intValue.toInt().toChar(), session.builtinTypes.charType)
-//            FLOAT -> const(ConstantValueKind.Float, value.floatValue, session.builtinTypes.floatType)
-//            DOUBLE -> const(ConstantValueKind.Double, value.doubleValue, session.builtinTypes.doubleType)
-//            BOOLEAN -> const(ConstantValueKind.Boolean, (value.intValue != 0L), session.builtinTypes.booleanType)
-//            STRING -> const(ConstantValueKind.String, nameResolver.getString(value.stringValue), session.builtinTypes.stringType)
-//            ANNOTATION -> deserializeAnnotation(value.annotation, nameResolver)
-//            CLASS -> buildGetClassCall {
-//                val classId = nameResolver.getClassId(value.classId)
-//                val lookupTag = classId.toLookupTag()
-//                val referencedType = lookupTag.constructType(emptyArray(), isNullable = false)
-//                val resolvedTypeRef = buildResolvedTypeRef {
-//                    type = StandardClassIds.KClass.constructClassLikeType(arrayOf(referencedType), false)
-//                }
-//                argumentList = buildUnaryArgumentList(
-//                    buildClassReferenceExpression {
-//                        classTypeRef = buildResolvedTypeRef { type = referencedType }
-//                        typeRef = resolvedTypeRef
-//                    }
-//                )
-//                typeRef = resolvedTypeRef
-//            }
-//            ENUM -> buildFunctionCall {
-//                val classId = nameResolver.getClassId(value.classId)
-//                val entryName = nameResolver.getName(value.enumValueId)
-//
-//                val enumLookupTag = classId.toLookupTag()
-//                val enumSymbol = enumLookupTag.toSymbol(session)
-//                val firClass = enumSymbol?.fir as? FirRegularClass
-//                val enumEntries = firClass?.collectEnumEntries() ?: emptyList()
-//                val enumEntrySymbol = enumEntries.find { it.name == entryName }
-//                calleeReference = enumEntrySymbol?.let {
-//                    buildResolvedNamedReference {
-//                        name = entryName
-//                        resolvedSymbol = it.symbol
-//                    }
-//                } ?: buildErrorNamedReference {
-//                    diagnostic =
-//                        ConeSimpleDiagnostic("Strange deserialized enum value: $classId.$entryName", DiagnosticKind.DeserializationError)
-//                }
-//                if (enumEntrySymbol != null) {
-//                    typeRef = enumEntrySymbol.returnTypeRef
-//                }
-//            }
-//            ARRAY -> {
-//                val expectedArrayElementType = expectedType()?.arrayElementType() ?: session.builtinTypes.anyType.type
-//                buildArrayOfCall {
-//                    argumentList = buildArgumentList {
-//                        value.arrayElementList.mapTo(arguments) { resolveValue(it) { expectedArrayElementType } }
-//                    }
-//                    typeRef = buildResolvedTypeRef {
-//                        type = expectedArrayElementType.createArrayType()
-//                    }
-//                }
-//            }
-//
-//            else -> error("Unsupported annotation argument type: ${value.type} (expected $expectedType)")
-//        }
-        error("Not yet implemented $value $expectedType")
+        error("Unexpected $value")
     }
 
     private fun traverseClassId(receiverExpression: KtExpression): ClassId {

@@ -271,6 +271,8 @@ private class AnnotationLoaderForClassFileStubBuilder(
                         arguments[name] = AnnotationValue(object : AnnotationDescriptor {
                             override val type: KotlinType
                                 get() = error("Should not be called")
+                            override val fqName: FqName
+                                get() = classId.asSingleFqName()
                             override val allValueArguments: Map<Name, ConstantValue<*>>
                                 get() = list.single().args
                             override val source: SourceElement

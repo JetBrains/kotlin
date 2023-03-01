@@ -8,6 +8,7 @@ import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.analysis.decompiler.stub.flags.FlagsToModifiers
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.SourceElement
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
@@ -207,27 +208,34 @@ fun createTargetedAnnotationStubs(
 
     annotations.forEach { annotation ->
         val (annotationWithArgs, target) = annotation
-        val annotationEntryStubImpl = KotlinAnnotationEntryStubImpl(
-            parent,
-            shortName = annotationWithArgs.classId.shortClassName.ref(),
-            hasValueArguments = annotationWithArgs.args.isNotEmpty()
-        )
-        if (target != null) {
-            KotlinAnnotationUseSiteTargetStubImpl(annotationEntryStubImpl, StringRef.fromString(target.name)!!)
-        }
-        val constructorCallee =
-            KotlinPlaceHolderStubImpl<KtConstructorCalleeExpression>(annotationEntryStubImpl, KtStubElementTypes.CONSTRUCTOR_CALLEE)
-        val typeReference = KotlinPlaceHolderStubImpl<KtTypeReference>(constructorCallee, KtStubElementTypes.TYPE_REFERENCE)
-        createStubForTypeName(annotationWithArgs.classId, typeReference)
-        if (annotationWithArgs.args.isNotEmpty()) {
-            val valueArgumentListStub =
-                KotlinPlaceHolderStubImpl<KtValueArgumentList>(annotationEntryStubImpl, KtStubElementTypes.VALUE_ARGUMENT_LIST)
-            for (entry in annotation.annotationWithArgs.args) {
-                val constantValue = entry.value
-                if (constantValue is AnnotationValue) continue //TODO
-                val valueArg = createValueArgWithName(valueArgumentListStub, entry.key)
-                createAnnotationMappingByConstantValue(constantValue, valueArg)
-            }
+        createAnnotationStub(parent, annotationWithArgs, target)
+    }
+}
+
+private fun createAnnotationStub(
+    parent: StubElement<*>,
+    annotationWithArgs: AnnotationWithArgs,
+    target: AnnotationUseSiteTarget?
+) {
+    val annotationEntryStubImpl = KotlinAnnotationEntryStubImpl(
+        parent,
+        shortName = annotationWithArgs.classId.shortClassName.ref(),
+        hasValueArguments = annotationWithArgs.args.isNotEmpty()
+    )
+    if (target != null) {
+        KotlinAnnotationUseSiteTargetStubImpl(annotationEntryStubImpl, StringRef.fromString(target.name)!!)
+    }
+    val constructorCallee =
+        KotlinPlaceHolderStubImpl<KtConstructorCalleeExpression>(annotationEntryStubImpl, KtStubElementTypes.CONSTRUCTOR_CALLEE)
+    val typeReference = KotlinPlaceHolderStubImpl<KtTypeReference>(constructorCallee, KtStubElementTypes.TYPE_REFERENCE)
+    createStubForTypeName(annotationWithArgs.classId, typeReference)
+    if (annotationWithArgs.args.isNotEmpty()) {
+        val valueArgumentListStub =
+            KotlinPlaceHolderStubImpl<KtValueArgumentList>(annotationEntryStubImpl, KtStubElementTypes.VALUE_ARGUMENT_LIST)
+        for (entry in annotationWithArgs.args) {
+            val constantValue = entry.value
+            val valueArg = createValueArgWithName(valueArgumentListStub, entry.key)
+            createAnnotationMappingByConstantValue(constantValue, valueArg)
         }
     }
 }
@@ -304,6 +312,13 @@ private fun createAnnotationMappingByConstantValue(
                 KtStubElementTypes.LITERAL_STRING_TEMPLATE_ENTRY,
                 text
             )
+        }
+        is AnnotationValue -> {
+            val valueArguments = constantValue.value.allValueArguments
+            //todo won't work well with nested classes
+            val fqName = constantValue.value.fqName ?: error("Missed annotation FqName")
+            val classId = ClassId(fqName.parent(), fqName.shortName())
+            createAnnotationStub(parent, AnnotationWithArgs(classId, valueArguments), null)
         }
         is ArrayValue -> {
             val collectionLiteralStub = KotlinCollectionLiteralExpressionStubImpl(parent)
