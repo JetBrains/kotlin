@@ -3650,6 +3650,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 runTest("compiler/testData/codegen/box/callableReference/bound/syntheticExtensionOnLHS.kt");
             }
 
+            @Test
+            @TestMetadata("typeAliasObjectBoundReference.kt")
+            public void testTypeAliasObjectBoundReference() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/bound/typeAliasObjectBoundReference.kt");
+            }
+
             @Nested
             @TestMetadata("compiler/testData/codegen/box/callableReference/bound/equals")
             @TestDataPath("$PROJECT_ROOT")

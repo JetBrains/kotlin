@@ -698,10 +698,11 @@ class CallAndReferenceGenerator(
     ): IrExpression? {
         val classSymbol = (qualifier.typeRef.coneType as? ConeClassLikeType)?.lookupTag?.toSymbol(session)
         if (callableReferenceAccess != null && classSymbol is FirRegularClassSymbol) {
-            val classIdMatched = classSymbol.classId == qualifier.classId
+            val classId = qualifier.symbol?.fullyExpandedClass(session)?.classId
+            val classIdMatched = classSymbol.classId == classId
             if (!classIdMatched) {
                 // Check whether we need get companion object as dispatch receiver
-                if (!classSymbol.fir.isCompanion || classSymbol.classId.outerClassId != qualifier.classId) {
+                if (!classSymbol.fir.isCompanion || classSymbol.classId.outerClassId != classId) {
                     return null
                 }
                 val resolvedReference = callableReferenceAccess.calleeReference as FirResolvedNamedReference

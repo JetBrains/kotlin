@@ -2510,6 +2510,12 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
                 runTest("compiler/testData/codegen/box/callableReference/bound/smartCastForExtensionReceiver.kt");
             }
 
+            @Test
+            @TestMetadata("typeAliasObjectBoundReference.kt")
+            public void testTypeAliasObjectBoundReference() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/bound/typeAliasObjectBoundReference.kt");
+            }
+
             @Nested
             @TestMetadata("compiler/testData/codegen/box/callableReference/bound/equals")
             @TestDataPath("$PROJECT_ROOT")

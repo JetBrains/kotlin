@@ -3186,6 +3186,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/callableReference/bound/syntheticExtensionOnLHS.kt");
             }
 
+            @TestMetadata("typeAliasObjectBoundReference.kt")
+            public void testTypeAliasObjectBoundReference() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/bound/typeAliasObjectBoundReference.kt");
+            }
+
             @TestMetadata("compiler/testData/codegen/box/callableReference/bound/equals")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
