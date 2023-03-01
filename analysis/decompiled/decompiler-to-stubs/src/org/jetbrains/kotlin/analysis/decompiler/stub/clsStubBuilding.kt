@@ -223,22 +223,23 @@ fun createTargetedAnnotationStubs(
             val valueArgumentListStub =
                 KotlinPlaceHolderStubImpl<KtValueArgumentList>(annotationEntryStubImpl, KtStubElementTypes.VALUE_ARGUMENT_LIST)
             for (entry in annotation.annotationWithArgs.args) {
-                createAnnotationMappingByConstantValue(entry.key, entry.value, valueArgumentListStub)
+                val constantValue = entry.value
+                if (constantValue is AnnotationValue) continue //TODO
+                val valueArg = createValueArgWithName(valueArgumentListStub, entry.key)
+                createAnnotationMappingByConstantValue(constantValue, valueArg)
             }
         }
     }
 }
 
 private fun createAnnotationMappingByConstantValue(
-    name: Name,
     constantValue: ConstantValue<*>,
     parent: StubElement<out PsiElement>
 ) {
     when (constantValue) {
         is EnumValue -> {
-            val valueArg = createValueArgWithName(parent, name)
             createQualifiedReference(
-                valueArg,
+                parent,
                 ClassId(
                     constantValue.enumClassId.packageFqName,
                     constantValue.enumClassId.relativeClassName.child(constantValue.enumEntryName),
@@ -250,60 +251,53 @@ private fun createAnnotationMappingByConstantValue(
             when (val value = constantValue.value) {
                 is KClassValue.Value.LocalClass -> error("Local classes are not reachable in annotation arguments, $value")
                 is KClassValue.Value.NormalClass -> {
-                    val valueArg = createValueArgWithName(parent, name)
-                    val classLiteralStub = KotlinClassLiteralExpressionStubImpl(valueArg)
+                    val classLiteralStub = KotlinClassLiteralExpressionStubImpl(parent)
                     createQualifiedReference(classLiteralStub, value.classId)
                 }
             }
         }
         is BooleanValue -> {
-            val valueArg = createValueArgWithName(parent, name)
             KotlinConstantExpressionStubImpl(
-                valueArg,
+                parent,
                 KtStubElementTypes.BOOLEAN_CONSTANT,
                 ConstantValueKind.BOOLEAN_CONSTANT,
                 StringRef.fromString(constantValue.toString()))
         }
         is CharValue -> {
-            val valueArg = createValueArgWithName(parent, name)
             KotlinConstantExpressionStubImpl(
-                valueArg,
+                parent,
                 KtStubElementTypes.CHARACTER_CONSTANT,
                 ConstantValueKind.CHARACTER_CONSTANT,
                 StringRef.fromString(constantValue.value.toString())
             )
         }
         is IntegerValueConstant -> {
-            val valueArg = createValueArgWithName(parent, name)
             KotlinConstantExpressionStubImpl(
-                valueArg,
+                parent,
                 KtStubElementTypes.INTEGER_CONSTANT,
                 ConstantValueKind.INTEGER_CONSTANT,
                 StringRef.fromString(constantValue.value.toString())
             )
         }
         is DoubleValue, is FloatValue -> {
-            val valueArg = createValueArgWithName(parent, name)
             KotlinConstantExpressionStubImpl(
-                valueArg,
+                parent,
                 KtStubElementTypes.FLOAT_CONSTANT,
                 ConstantValueKind.FLOAT_CONSTANT,
                 StringRef.fromString(constantValue.value.toString())
             )
         }
         is NullValue -> {
-            val valueArg = createValueArgWithName(parent, name)
             KotlinConstantExpressionStubImpl(
-                valueArg,
+                parent,
                 KtStubElementTypes.NULL,
                 ConstantValueKind.NULL,
                 StringRef.fromString("null")
             )
         }
         is StringValue -> {
-            val valueArg = createValueArgWithName(parent, name)
             val stringStub =
-                KotlinPlaceHolderStubImpl<KtStringTemplateExpression>(valueArg, KtStubElementTypes.STRING_TEMPLATE)
+                KotlinPlaceHolderStubImpl<KtStringTemplateExpression>(parent, KtStubElementTypes.STRING_TEMPLATE)
             val text = constantValue.value
             KotlinPlaceHolderWithTextStubImpl<KtStringTemplateExpression>(
                 stringStub,
@@ -311,18 +305,10 @@ private fun createAnnotationMappingByConstantValue(
                 text
             )
         }
-        is AnnotationValue -> {
-            //createValueArgWithName(parent, name)
-            //TODO
-        }
         is ArrayValue -> {
-            val values = constantValue.value
-            for (value in values) {
-                createAnnotationMappingByConstantValue(name, value, parent)
-            }
-            if (values.size == 1) {
-                //repeat to get the array as a result!
-                createAnnotationMappingByConstantValue(name, values[0], parent)
+            val collectionLiteralStub = KotlinCollectionLiteralExpressionStubImpl(parent)
+            for (value in constantValue.value) {
+                createAnnotationMappingByConstantValue(value, collectionLiteralStub)
             }
         }
     }

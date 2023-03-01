@@ -18,6 +18,38 @@ PsiJetFileStubImpl[package=test]
                     REFERENCE_EXPRESSION[referencedName=test]
                   REFERENCE_EXPRESSION[referencedName=Arrays]
             VALUE_ARGUMENT_LIST
+              VALUE_ARGUMENT[isSpread=false]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=ia]
+                COLLECTION_LITERAL_EXPRESSION
+                  INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+                  INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
+                  INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=3]
+              VALUE_ARGUMENT[isSpread=false]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=la]
+                COLLECTION_LITERAL_EXPRESSION
+                  INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+              VALUE_ARGUMENT[isSpread=false]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=fa]
+                COLLECTION_LITERAL_EXPRESSION
+              VALUE_ARGUMENT[isSpread=false]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=da]
+                COLLECTION_LITERAL_EXPRESSION
+                  FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=2.2]
+              VALUE_ARGUMENT[isSpread=false]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=ca]
+                COLLECTION_LITERAL_EXPRESSION
+                  CHARACTER_CONSTANT[kind=CHARACTER_CONSTANT, value=a]
+              VALUE_ARGUMENT[isSpread=false]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=ba]
+                COLLECTION_LITERAL_EXPRESSION
+                  BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=true]
+                  BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=false]
         PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=WithArrays]
           MODIFIER_LIST[public]
           VALUE_PARAMETER_LIST
@@ -33,25 +65,21 @@ PsiJetFileStubImpl[package=test]
                   REFERENCE_EXPRESSION[referencedName=ClassLiteral]
             VALUE_ARGUMENT_LIST
               VALUE_ARGUMENT[isSpread=false]
-                DOT_QUALIFIED_EXPRESSION
-                  DOT_QUALIFIED_EXPRESSION
-                    DOT_QUALIFIED_EXPRESSION
-                      DOT_QUALIFIED_EXPRESSION
-                        REFERENCE_EXPRESSION[referencedName=WithClassLiteral]
-                      REFERENCE_EXPRESSION[referencedName=AnnotationValues]
-                    REFERENCE_EXPRESSION[referencedName=test]
-                  REFERENCE_EXPRESSION[referencedName=<class>]
                 VALUE_ARGUMENT_NAME
                   REFERENCE_EXPRESSION[referencedName=c1]
-              VALUE_ARGUMENT[isSpread=false]
-                DOT_QUALIFIED_EXPRESSION
+                CLASS_LITERAL_EXPRESSION
                   DOT_QUALIFIED_EXPRESSION
                     DOT_QUALIFIED_EXPRESSION
-                      REFERENCE_EXPRESSION[referencedName=String]
-                    REFERENCE_EXPRESSION[referencedName=kotlin]
-                  REFERENCE_EXPRESSION[referencedName=<class>]
+                      REFERENCE_EXPRESSION[referencedName=test]
+                      REFERENCE_EXPRESSION[referencedName=AnnotationValues]
+                    REFERENCE_EXPRESSION[referencedName=WithClassLiteral]
+              VALUE_ARGUMENT[isSpread=false]
                 VALUE_ARGUMENT_NAME
                   REFERENCE_EXPRESSION[referencedName=c2]
+                CLASS_LITERAL_EXPRESSION
+                  DOT_QUALIFIED_EXPRESSION
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                    REFERENCE_EXPRESSION[referencedName=String]
         TYPE_PARAMETER_LIST
           TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
         PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=WithClassLiteral]
@@ -69,32 +97,29 @@ PsiJetFileStubImpl[package=test]
                   REFERENCE_EXPRESSION[referencedName=EnumLiteral]
             VALUE_ARGUMENT_LIST
               VALUE_ARGUMENT[isSpread=false]
-                DOT_QUALIFIED_EXPRESSION
-                  DOT_QUALIFIED_EXPRESSION
-                    DOT_QUALIFIED_EXPRESSION
-                      REFERENCE_EXPRESSION[referencedName=E]
-                    REFERENCE_EXPRESSION[referencedName=test]
-                  REFERENCE_EXPRESSION[referencedName=E1]
                 VALUE_ARGUMENT_NAME
                   REFERENCE_EXPRESSION[referencedName=e1]
-              VALUE_ARGUMENT[isSpread=false]
                 DOT_QUALIFIED_EXPRESSION
                   DOT_QUALIFIED_EXPRESSION
-                    DOT_QUALIFIED_EXPRESSION
-                      REFERENCE_EXPRESSION[referencedName=E]
                     REFERENCE_EXPRESSION[referencedName=test]
-                  REFERENCE_EXPRESSION[referencedName=E2]
+                    REFERENCE_EXPRESSION[referencedName=E]
+                  REFERENCE_EXPRESSION[referencedName=E1]
+              VALUE_ARGUMENT[isSpread=false]
                 VALUE_ARGUMENT_NAME
                   REFERENCE_EXPRESSION[referencedName=e2]
-              VALUE_ARGUMENT[isSpread=false]
                 DOT_QUALIFIED_EXPRESSION
                   DOT_QUALIFIED_EXPRESSION
-                    DOT_QUALIFIED_EXPRESSION
-                      REFERENCE_EXPRESSION[referencedName=E]
                     REFERENCE_EXPRESSION[referencedName=test]
+                    REFERENCE_EXPRESSION[referencedName=E]
                   REFERENCE_EXPRESSION[referencedName=E2]
+              VALUE_ARGUMENT[isSpread=false]
                 VALUE_ARGUMENT_NAME
                   REFERENCE_EXPRESSION[referencedName=e3]
+                DOT_QUALIFIED_EXPRESSION
+                  DOT_QUALIFIED_EXPRESSION
+                    REFERENCE_EXPRESSION[referencedName=test]
+                    REFERENCE_EXPRESSION[referencedName=E]
+                  REFERENCE_EXPRESSION[referencedName=E2]
         PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=WithEnumLiteral]
           MODIFIER_LIST[public]
           VALUE_PARAMETER_LIST
@@ -114,6 +139,26 @@ PsiJetFileStubImpl[package=test]
                   REFERENCE_EXPRESSION[referencedName=some]
                 STRING_TEMPLATE
                   LITERAL_STRING_TEMPLATE_ENTRY[text=value]
+              VALUE_ARGUMENT[isSpread=false]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=nested]
+                ANNOTATION_ENTRY[hasValueArguments=true, shortName=Nested]
+                  CONSTRUCTOR_CALLEE
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION[referencedName=test]
+                        REFERENCE_EXPRESSION[referencedName=Nested]
+                  VALUE_ARGUMENT_LIST
+                    VALUE_ARGUMENT[isSpread=false]
+                      VALUE_ARGUMENT_NAME
+                        REFERENCE_EXPRESSION[referencedName=i]
+                      INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=12]
+                    VALUE_ARGUMENT[isSpread=false]
+                      VALUE_ARGUMENT_NAME
+                        REFERENCE_EXPRESSION[referencedName=s]
+                      STRING_TEMPLATE
+                        LITERAL_STRING_TEMPLATE_ENTRY[text=nested value]
         PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=WithNested]
           MODIFIER_LIST[public]
           VALUE_PARAMETER_LIST
@@ -128,6 +173,38 @@ PsiJetFileStubImpl[package=test]
                     REFERENCE_EXPRESSION[referencedName=test]
                   REFERENCE_EXPRESSION[referencedName=Simple]
             VALUE_ARGUMENT_LIST
+              VALUE_ARGUMENT[isSpread=false]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=i]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=12]
+              VALUE_ARGUMENT[isSpread=false]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=l]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=12]
+              VALUE_ARGUMENT[isSpread=false]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=b]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=12]
+              VALUE_ARGUMENT[isSpread=false]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=d]
+                FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=3.3]
+              VALUE_ARGUMENT[isSpread=false]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=f]
+                FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=3.3]
+              VALUE_ARGUMENT[isSpread=false]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=c]
+                CHARACTER_CONSTANT[kind=CHARACTER_CONSTANT, value=a]
+              VALUE_ARGUMENT[isSpread=false]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=b1]
+                BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=true]
+              VALUE_ARGUMENT[isSpread=false]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=b2]
+                BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=false]
         PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=WithSimple]
           MODIFIER_LIST[public]
           VALUE_PARAMETER_LIST
@@ -171,6 +248,13 @@ PsiJetFileStubImpl[package=test]
                     REFERENCE_EXPRESSION[referencedName=test]
                   REFERENCE_EXPRESSION[referencedName=VarArg]
             VALUE_ARGUMENT_LIST
+              VALUE_ARGUMENT[isSpread=false]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=v]
+                COLLECTION_LITERAL_EXPRESSION
+                  INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+                  INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
+                  INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=3]
         PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=WithVarArg]
           MODIFIER_LIST[public]
           VALUE_PARAMETER_LIST

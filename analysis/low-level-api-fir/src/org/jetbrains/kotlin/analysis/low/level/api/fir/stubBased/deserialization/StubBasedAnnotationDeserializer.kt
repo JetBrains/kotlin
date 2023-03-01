@@ -95,22 +95,12 @@ class StubBasedAnnotationDeserializer(
                 constructor.valueParameters.associateBy { it.name }
             }
 
-            ktAnnotation.valueArguments.groupBy { it.getArgumentName()?.asName ?: Name.identifier("value") }
-                .mapNotNull { (name, valueArguments) ->
-                    val expectedType = { parameterByName?.get(name)?.returnTypeRef?.coneType }
-                    val values = valueArguments.map {
-                        resolveValue(it.getArgumentExpression(), expectedType)
-                    }
-                    val value = if (values.size == 1) values[0] else buildArrayOfCall {
-                        argumentList = buildArgumentList {
-                            arguments.addAll(values)
-                        }
-                        typeRef = buildResolvedTypeRef {
-                            type = (/*expectedType() ?: */session.builtinTypes.anyType.type).createArrayType()
-                        }
-                    }
-                    name to value
-                }.toMap(mapping)
+            ktAnnotation.valueArguments.associateTo(mapping) {
+                val name = it.getArgumentName()?.asName ?: Name.identifier("value")
+                val expectedType = { parameterByName?.get(name)?.returnTypeRef?.coneType }
+                val value = resolveValue(it.getArgumentExpression(), expectedType)
+                name to value
+            }
         }
     }
 
@@ -127,6 +117,18 @@ class StubBasedAnnotationDeserializer(
                 return classId.toEnumEntryReferenceExpression(name)
             }
         }
+
+        if (value is KtCollectionLiteralExpression) {
+            return buildArrayOfCall {
+                argumentList = buildArgumentList {
+                    arguments.addAll(value.innerExpressions.map { resolveValue(it, expectedType) })
+                }
+                typeRef = buildResolvedTypeRef {
+                    type = (/*expectedType() ?: */session.builtinTypes.anyType.type).createArrayType()
+                }
+            }
+        }
+
         if (value is KtStringTemplateExpression) {
             val textStub = value.entries[0].stub as KotlinPlaceHolderWithTextStub<*>
             return const(ConstantValueKind.String, textStub.text(), session.builtinTypes.stringType)
