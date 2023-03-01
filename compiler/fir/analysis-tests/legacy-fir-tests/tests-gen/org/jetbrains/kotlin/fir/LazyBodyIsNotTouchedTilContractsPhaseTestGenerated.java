@@ -1045,6 +1045,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         public void testReassignOfNonMemberProperty_lateInitialization() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/cfa/reassignOfNonMemberProperty_lateInitialization.kt");
         }
+
+        @TestMetadata("smartcastOnThisDuringClassInitialization.kt")
+        public void testSmartcastOnThisDuringClassInitialization() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/cfa/smartcastOnThisDuringClassInitialization.kt");
+        }
     }
 
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/cfg")

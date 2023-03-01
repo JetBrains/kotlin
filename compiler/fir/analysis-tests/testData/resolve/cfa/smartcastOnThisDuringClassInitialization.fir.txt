@@ -1,0 +1,17 @@
+FILE: smartcastOnThisDuringClassInitialization.kt
+    public abstract interface I : R|kotlin/Any| {
+    }
+    public open class Some : R|kotlin/Any| {
+        public constructor(): R|Some| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+
+        init {
+            (this@R|/Some| as R|I|)
+            this@R|/Some|.R|/Some.x| = Int(1)
+        }
+
+    }

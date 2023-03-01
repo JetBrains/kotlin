@@ -18,10 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isLateInit
-import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
-import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
-import org.jetbrains.kotlin.fir.expressions.calleeReference
-import org.jetbrains.kotlin.fir.expressions.unwrapLValue
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.isCatchParameter
 import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
@@ -95,7 +92,7 @@ private fun PropertyInitializationInfoData.checkPropertyAccesses(
     scopes: MutableMap<FirPropertySymbol, FirDeclaration?>
 ) {
     fun FirQualifiedAccessExpression.hasCorrectReceiver() =
-        (dispatchReceiver as? FirThisReceiverExpression)?.calleeReference?.boundSymbol == receiver
+        (dispatchReceiver.unwrapSmartcastExpression() as? FirThisReceiverExpression)?.calleeReference?.boundSymbol == receiver
 
     for (node in graph.nodes) {
         when {

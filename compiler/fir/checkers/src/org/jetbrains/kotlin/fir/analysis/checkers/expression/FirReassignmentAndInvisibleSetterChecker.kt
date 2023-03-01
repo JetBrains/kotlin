@@ -139,7 +139,10 @@ object FirReassignmentAndInvisibleSetterChecker : FirVariableAssignmentChecker()
         // Assignments of uninitialized `val`s must be checked via CFG, since the first one is OK.
         // See `FirPropertyInitializationAnalyzer` for locals and `FirMemberPropertiesChecker` for backing fields in initializers.
         if (property.isLocal && property.requiresInitialization(isForClassInitialization = false)) return
-        if (isInOwnersInitializer(expression.dispatchReceiver, context) && property.requiresInitialization(isForClassInitialization = true)) return
+        if (
+            isInOwnersInitializer(expression.dispatchReceiver.unwrapSmartcastExpression(), context)
+            && property.requiresInitialization(isForClassInitialization = true)
+        ) return
 
         reporter.reportOn(expression.lValue.source, FirErrors.VAL_REASSIGNMENT, property, context)
     }
