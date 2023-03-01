@@ -415,16 +415,7 @@ open class CommonizerIT : BaseGradleIT() {
     @Test
     fun `test KT-49735 two kotlin targets with same konanTarget`() {
         with(Project("commonize-kt-49735-twoKotlinTargets-oneKonanTarget")) {
-            val currentGradleVersion = chooseWrapperVersionOrFinishTest()
-            build(
-                ":assemble",
-                options = defaultBuildOptions()
-                    .suppressDeprecationWarningsSinceGradleVersion(
-                        TestVersions.Gradle.G_7_4,
-                        currentGradleVersion,
-                        "Workaround for KT-55751"
-                    )
-            ) {
+            build(":assemble") {
                 assertTasksExecuted(":compileCommonMainKotlinMetadata")
                 assertSuccessful()
             }

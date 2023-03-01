@@ -328,12 +328,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
     fun testMultiModulesHmppKt48370(gradleVersion: GradleVersion) {
         project(
             "hierarchical-mpp-multi-modules",
-            gradleVersion,
-            buildOptions = defaultBuildOptions.suppressDeprecationWarningsSinceGradleVersion(
-                TestVersions.Gradle.G_7_4,
-                gradleVersion,
-                "Workaround for KT-55751"
-            )
+            gradleVersion
         ) {
             build("assemble")
         }

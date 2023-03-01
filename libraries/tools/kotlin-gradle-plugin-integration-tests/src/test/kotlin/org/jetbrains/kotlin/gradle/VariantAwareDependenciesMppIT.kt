@@ -357,16 +357,7 @@ class VariantAwareDependenciesMppIT : BaseGradleIT() {
                 }
             """
         )
-
-        val currentGradleVersion = chooseWrapperVersionOrFinishTest()
-        build(
-            resolveConfigurationTaskName,
-            options = defaultBuildOptions().suppressDeprecationWarningsSinceGradleVersion(
-                TestVersions.Gradle.G_7_4,
-                currentGradleVersion,
-                "Workaround for KT-55751"
-            )
-        ) {
+        build(resolveConfigurationTaskName) {
             assertSuccessful()
             val output = output.lines().single { marker in it }.substringAfter(marker).removeSurrounding("[", "]").split(",")
             assertTrue { output.any { "$nestedProjectName-1.0.jar" in it } }
