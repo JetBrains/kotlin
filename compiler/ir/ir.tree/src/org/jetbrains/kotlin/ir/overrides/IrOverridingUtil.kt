@@ -33,8 +33,8 @@ abstract class FakeOverrideBuilderStrategy(
         }
     }
 
-    protected abstract fun linkFunctionFakeOverride(function: IrFunctionWithLateBinding, compatibilityMode: Boolean)
-    protected abstract fun linkPropertyFakeOverride(property: IrPropertyWithLateBinding, compatibilityMode: Boolean)
+    protected abstract fun linkFunctionFakeOverride(function: IrFunctionWithLateBinding, manglerCompatibleMode: Boolean)
+    protected abstract fun linkPropertyFakeOverride(property: IrPropertyWithLateBinding, manglerCompatibleMode: Boolean)
 }
 
 @OptIn(ObsoleteDescriptorBasedAPI::class) // Because of the LazyIR, have to use descriptors here.
@@ -396,7 +396,7 @@ class IrOverridingUtil(
 
     private fun createAndBindFakeOverride(
         overridables: Collection<IrOverridableMember>,
-        current: IrClass,
+        currentClass: IrClass,
         addedFakeOverrides: MutableList<IrOverridableMember>,
         compatibilityMode: Boolean
     ) {
@@ -406,7 +406,7 @@ class IrOverridingUtil(
         // but we don't use invisible fakes in IR
         if (effectiveOverridden.isEmpty()) return
 
-        val modality = determineModalityForFakeOverride(effectiveOverridden, current)
+        val modality = determineModalityForFakeOverride(effectiveOverridden, currentClass)
         val visibility = findMemberWithMaxVisibility(effectiveOverridden).visibility
         val mostSpecific = selectMostSpecificMember(effectiveOverridden)
 
@@ -647,7 +647,7 @@ class IrOverridingUtil(
                 subMember !is IrSimpleFunction -> return incompatible("Member kind mismatch")
                 superMember.hasExtensionReceiver != subMember.hasExtensionReceiver -> return incompatible("Receiver presence mismatch")
                 superMember.isSuspend != subMember.isSuspend -> return incompatible("Incompatible suspendability")
-                superMember.isInline -> return incompatible("Inline function can't be overridden")
+//                superMember.isInline -> return incompatible("Inline function can't be overridden")
 
                 else -> {
                     superTypeParameters = superMember.typeParameters
@@ -659,7 +659,7 @@ class IrOverridingUtil(
             is IrProperty -> when {
                 subMember !is IrProperty -> return incompatible("Member kind mismatch")
                 superMember.getter.hasExtensionReceiver != subMember.getter.hasExtensionReceiver -> return incompatible("Receiver presence mismatch")
-                superMember.isInline -> return incompatible("Inline property can't be overridden")
+//                superMember.isInline -> return incompatible("Inline property can't be overridden")
 
                 else -> {
                     superTypeParameters = superMember.typeParameters

@@ -124,8 +124,8 @@ class FakeOverrideBuilder(
         return true
     }
 
-    override fun linkFunctionFakeOverride(function: IrFunctionWithLateBinding, compatibilityMode: Boolean) {
-        val (signature, symbol) = computeFunctionFakeOverrideSymbol(function, compatibilityMode)
+    override fun linkFunctionFakeOverride(function: IrFunctionWithLateBinding, manglerCompatibleMode: Boolean) {
+        val (signature, symbol) = computeFunctionFakeOverrideSymbol(function, manglerCompatibleMode)
 
         symbolTable.declareSimpleFunction(signature, { symbol }) {
             assert(it === symbol)
@@ -133,7 +133,7 @@ class FakeOverrideBuilder(
         }
     }
 
-    override fun linkPropertyFakeOverride(property: IrPropertyWithLateBinding, compatibilityMode: Boolean) {
+    override fun linkPropertyFakeOverride(property: IrPropertyWithLateBinding, manglerCompatibleMode: Boolean) {
         // To compute a signature for a property with type parameters,
         // we must have its accessor's correspondingProperty pointing to the property's symbol.
         // See IrMangleComputer.mangleTypeParameterReference() for details.
@@ -150,7 +150,7 @@ class FakeOverrideBuilder(
             setter.correspondingPropertySymbol = tempSymbol
         }
 
-        val (signature, symbol) = computePropertyFakeOverrideSymbol(property, compatibilityMode)
+        val (signature, symbol) = computePropertyFakeOverrideSymbol(property, manglerCompatibleMode)
         symbolTable.declareProperty(signature, { symbol }) {
             assert(it === symbol)
             property.acquireSymbol(it)
@@ -160,29 +160,29 @@ class FakeOverrideBuilder(
             getter.correspondingPropertySymbol = property.symbol
             linkFunctionFakeOverride(
                 getter as? IrFunctionWithLateBinding ?: error("Unexpected fake override getter: $getter"),
-                compatibilityMode
+                manglerCompatibleMode
             )
         }
         property.setter?.let { setter ->
             setter.correspondingPropertySymbol = property.symbol
             linkFunctionFakeOverride(
                 setter as? IrFunctionWithLateBinding ?: error("Unexpected fake override setter: $setter"),
-                compatibilityMode
+                manglerCompatibleMode
             )
         }
     }
 
-    private fun composeSignature(declaration: IrDeclaration, compatibleMode: Boolean) =
-        fakeOverrideDeclarationTable.signaturer.composeSignatureForDeclaration(declaration, compatibleMode)
+    private fun composeSignature(declaration: IrDeclaration, manglerCompatibleMode: Boolean) =
+        fakeOverrideDeclarationTable.signaturer.composeSignatureForDeclaration(declaration, manglerCompatibleMode)
 
     private fun computeFunctionFakeOverrideSymbol(
         function: IrFunctionWithLateBinding,
-        compatibilityMode: Boolean
+        manglerCompatibleMode: Boolean
     ): Pair<IdSignature, IrSimpleFunctionSymbol> {
         require(function is IrSimpleFunction) { "Unexpected fake override function: $function" }
         val parent = function.parentAsClass
 
-        val signature = composeSignature(function, compatibilityMode)
+        val signature = composeSignature(function, manglerCompatibleMode)
         val symbol = linker.tryReferencingSimpleFunctionByLocalSignature(parent, signature)
             ?: symbolTable.referenceSimpleFunction(signature)
 
@@ -201,7 +201,7 @@ class FakeOverrideBuilder(
         // This signature is not supposed to be ever serialized (as fake overrides are not serialized in KLIBs).
         // In new KLIB signatures `isSuspend` and `isInline` flags will be taken into account as a part of signature.
         val functionWithDisambiguatedSignature = buildFunctionWithDisambiguatedSignature(function)
-        val disambiguatedSignature = composeSignature(functionWithDisambiguatedSignature, compatibilityMode)
+        val disambiguatedSignature = composeSignature(functionWithDisambiguatedSignature, manglerCompatibleMode)
         assert(disambiguatedSignature != signature) { "Failed to compute disambiguated signature for fake override $function" }
 
         val symbolWithDisambiguatedSignature = linker.tryReferencingSimpleFunctionByLocalSignature(parent, disambiguatedSignature)
@@ -212,12 +212,12 @@ class FakeOverrideBuilder(
 
     private fun computePropertyFakeOverrideSymbol(
         property: IrPropertyWithLateBinding,
-        compatibilityMode: Boolean
+        manglerCompatibleMode: Boolean
     ): Pair<IdSignature, IrPropertySymbol> {
         require(property is IrProperty) { "Unexpected fake override property: $property" }
         val parent = property.parentAsClass
 
-        val signature = composeSignature(property, compatibilityMode)
+        val signature = composeSignature(property, manglerCompatibleMode)
         val symbol = linker.tryReferencingPropertyByLocalSignature(parent, signature)
             ?: symbolTable.referenceProperty(signature)
 
@@ -237,7 +237,7 @@ class FakeOverrideBuilder(
         // In new KLIB signatures `isInline` flag will be taken into account as a part of signature.
 
         val propertyWithDisambiguatedSignature = buildPropertyWithDisambiguatedSignature(property)
-        val disambiguatedSignature = composeSignature(propertyWithDisambiguatedSignature, compatibilityMode)
+        val disambiguatedSignature = composeSignature(propertyWithDisambiguatedSignature, manglerCompatibleMode)
         assert(disambiguatedSignature != signature) { "Failed to compute disambiguated signature for fake override $property" }
 
         val symbolWithDisambiguatedSignature = linker.tryReferencingPropertyByLocalSignature(parent, disambiguatedSignature)
@@ -275,8 +275,8 @@ class FakeOverrideBuilder(
             setter = property.setter?.let { buildFunctionWithDisambiguatedSignature(it) }
         }
 
-    fun provideFakeOverrides(klass: IrClass, compatibleMode: CompatibilityMode) {
-        buildFakeOverrideChainsForClass(klass, compatibleMode)
+    fun provideFakeOverrides(klass: IrClass, compatibilityMode: CompatibilityMode) {
+        buildFakeOverrideChainsForClass(klass, compatibilityMode)
         irOverridingUtil.clear()
         haveFakeOverrides.add(klass)
     }
