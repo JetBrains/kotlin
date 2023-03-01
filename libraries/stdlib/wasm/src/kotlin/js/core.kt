@@ -67,4 +67,5 @@ public external val definedExternally: Nothing
  * However, other Kotlin declarations are not visible inside the [code] block.
  */
 @ExcludedFromCodegen
+@SinceKotlin("1.9")
 public external fun js(code: String): Nothing
