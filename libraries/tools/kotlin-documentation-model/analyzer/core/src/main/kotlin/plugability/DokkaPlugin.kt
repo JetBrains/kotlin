@@ -36,7 +36,7 @@ abstract class DokkaPlugin {
     /**
      * @see PluginApiPreviewAcknowledgement
      */
-    @DokkaPluginApiPreview
+    @OptIn(DokkaPluginApiPreview::class)
     protected abstract fun pluginApiPreviewAcknowledgement(): PluginApiPreviewAcknowledgement
     protected inline fun <reified T : DokkaPlugin> plugin(): T = context?.plugin(T::class) ?: throwIllegalQuery()
 
