@@ -119,17 +119,21 @@ internal fun FirFunction.getObjCMethodInfo(onlyExternal: Boolean): ObjCMethodInf
  */
 private fun FirFunction.decodeObjCMethodAnnotation(): ObjCMethodInfo? {
     assert(!isSubstitutionOrIntersectionOverride)
-    return annotations.getAnnotationByClassId(ClassId.topLevel(objCMethodFqName), moduleData.session)?.toObjCMethodInfo()
+    return toObjCMethodInfo(
+            annotations.getAnnotationByClassId(ClassId.topLevel(objCMethodFqName), moduleData.session),
+            annotations.getAnnotationByClassId(ClassId.topLevel(objCDirectFqName), moduleData.session),
+    )
 }
 
-/**
- * mimics ObjCInteropKt.objCMethodInfo(annotation: AnnotationDescriptor)
- */
-private fun FirAnnotation.toObjCMethodInfo() = ObjCMethodInfo(
-        selector = constStringArgument("selector"),
-        encoding = constStringArgument("encoding"),
-        isStret = constBooleanArgumentOrNull("isStret") ?: false
-)
+private fun toObjCMethodInfo(objCMethodAnnotation: FirAnnotation?, objCDirectAnnotation: FirAnnotation?): ObjCMethodInfo? =
+        objCMethodAnnotation?.let {
+            ObjCMethodInfo(
+                    selector = it.constStringArgument("selector"),
+                    encoding = it.constStringArgument("encoding"),
+                    isStret = it.constBooleanArgumentOrNull("isStret") ?: false,
+                    directSymbol = objCDirectAnnotation?.constStringArgument("symbol"),
+            )
+        }
 
 private fun FirAnnotation.constStringArgument(argumentName: String): String =
         constArgument(argumentName) as? String ?: error("Expected string constant value of argument '$argumentName' at annotation $this")
