@@ -46,12 +46,6 @@ internal class KtFirPsiJavaClassSymbol(
     override val psi: PsiClass,
     override val analysisSession: KtFirAnalysisSession,
 ) : KtNamedClassOrObjectSymbol(), KtFirPsiSymbol<PsiClass, FirRegularClassSymbol> {
-    init {
-        require(psi.qualifiedName != null) {
-            "${KtFirPsiJavaClassSymbol::class.simpleName} requires a PSI class with a qualified name."
-        }
-    }
-
     /**
      * [javaClass] is used to defer some properties to the compiler's view of a Java class.
      */
@@ -59,20 +53,17 @@ internal class KtFirPsiJavaClassSymbol(
 
     override val name: Name = withValidityAssertion { javaClass.name }
 
-    override val classIdIfNonLocal: ClassId? by cached { psi.classIdIfNonLocal }
-
-    private val qualifiedName: String
-        get() = withValidityAssertion { psi.qualifiedName!! }
+    override val classIdIfNonLocal: ClassId = withValidityAssertion {
+        psi.classIdIfNonLocal ?: error("${KtFirPsiJavaClassSymbol::class.simpleName} requires a non-local PSI class.")
+    }
 
     override val origin: KtSymbolOrigin
         get() = withValidityAssertion { KtSymbolOrigin.JAVA }
 
     override val symbolKind: KtSymbolKind
         get() = withValidityAssertion {
-            val classId = classIdIfNonLocal
             when {
-                classId == null -> KtSymbolKind.LOCAL
-                classId.outerClassId != null -> KtSymbolKind.CLASS_MEMBER
+                classIdIfNonLocal.outerClassId != null -> KtSymbolKind.CLASS_MEMBER
                 else -> KtSymbolKind.TOP_LEVEL
             }
         }
@@ -88,7 +79,7 @@ internal class KtFirPsiJavaClassSymbol(
         get() = withValidityAssertion { javaClass.visibility }
 
     override val isInner: Boolean
-        get() = withValidityAssertion { classIdIfNonLocal?.outerClassId != null && !javaClass.isStatic }
+        get() = withValidityAssertion { classIdIfNonLocal.outerClassId != null && !javaClass.isStatic }
 
     val outerClass: KtFirPsiJavaClassSymbol?
         get() = withValidityAssertion {
@@ -128,9 +119,11 @@ internal class KtFirPsiJavaClassSymbol(
     }
 
     /**
-     * Since [PsiEquivalenceUtil] doesn't have a hash code function, we use the class's fully qualified name as a conservative hash code.
+     * Since [PsiEquivalenceUtil] doesn't have a hash code function, we use the class ID as a conservative hash code.
+     *
+     * Also see [KtFirNamedClassOrObjectSymbol.hashCode], which must generate the same hash code for non-local classes.
      */
-    override fun hashCode(): Int = qualifiedName.hashCode()
+    override fun hashCode(): Int = classIdIfNonLocal.hashCode()
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Slow Operations (requiring access to the underlying FIR class symbol)

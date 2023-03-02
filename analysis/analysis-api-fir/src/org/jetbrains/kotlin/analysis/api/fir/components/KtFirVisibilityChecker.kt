@@ -82,13 +82,6 @@ internal class KtFirVisibilityChecker(
      * Returns `null` if visibility cannot be decided by the heuristic.
      */
     private fun KtFirPsiJavaClassSymbol.isVisibleByPsi(useSiteFile: KtFirFileSymbol): Boolean? {
-        val classId = classIdIfNonLocal
-        if (classId == null) {
-            // Local classes are only visible in their containing method. Since we're checking the visibility for a Kotlin file, a local
-            // class from Java can never be accessible.
-            return false
-        }
-
         when (visibility) {
             Visibilities.Private ->
                 // Private classes from Java cannot be accessed from Kotlin.
@@ -101,7 +94,7 @@ internal class KtFirVisibilityChecker(
                 }
 
             JavaVisibilities.PackageVisibility -> {
-                val isSamePackage = classId.packageFqName == useSiteFile.firSymbol.fir.packageFqName
+                val isSamePackage = classIdIfNonLocal.packageFqName == useSiteFile.firSymbol.fir.packageFqName
                 if (!isSamePackage) return false
 
                 return when (val outerClass = this.outerClass) {

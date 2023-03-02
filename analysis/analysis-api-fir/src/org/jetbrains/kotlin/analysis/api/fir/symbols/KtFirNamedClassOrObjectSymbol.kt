@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.base.KtContextReceiver
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
@@ -105,6 +104,22 @@ internal class KtFirNamedClassOrObjectSymbol(
         createNamedClassOrObjectSymbolPointer()
     }
 
-    override fun equals(other: Any?): Boolean = symbolEquals(other)
-    override fun hashCode(): Int = symbolHashCode()
+    /**
+     * [KtFirNamedClassOrObjectSymbol] must be able to equal [KtFirPsiJavaClassSymbol].
+     */
+    override fun equals(other: Any?): Boolean {
+        if (other === this) return true
+
+        return when (other) {
+            is KtFirNamedClassOrObjectSymbol -> symbolEquals(other)
+            is KtFirPsiJavaClassSymbol -> other == this
+            else -> false
+        }
+    }
+
+    /**
+     * A non-local [KtFirNamedClassOrObjectSymbol] must have the same kind of hash code as [KtFirPsiJavaClassSymbol] so that they are
+     * interchangeable in collections.
+     */
+    override fun hashCode(): Int = classIdIfNonLocal?.hashCode() ?: symbolHashCode()
 }
