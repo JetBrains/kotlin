@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.tree.generator.model.SimpleField
 import org.jetbrains.kotlin.util.SmartPrinter
 
 
-fun SmartPrinter.printField(field: Field, isImplementation: Boolean, override: Boolean, end: String) {
+fun SmartPrinter.printField(field: Field, isImplementation: Boolean, override: Boolean, end: String, notNull: Boolean = false) {
     if (isImplementation && !field.isVal && field.isVolatile) {
         println("@Volatile")
     }
@@ -22,7 +22,7 @@ fun SmartPrinter.printField(field: Field, isImplementation: Boolean, override: B
     } else {
         print("var")
     }
-    val type = if (isImplementation) field.getMutableType() else field.typeWithArguments
+    val type = if (isImplementation) field.getMutableType(notNull = notNull) else field.getTypeWithArguments(notNull = notNull)
     println(" ${field.name}: $type$end")
 }
 

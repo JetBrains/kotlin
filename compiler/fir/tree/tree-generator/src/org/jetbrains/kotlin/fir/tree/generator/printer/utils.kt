@@ -122,14 +122,14 @@ fun Field.replaceFunctionDeclaration(overridenType: Importable? = null, forceNul
     return "fun replace$capName(new$capName: $typeWithNullable)"
 }
 
-fun Field.getMutableType(forBuilder: Boolean = false): String = when (this) {
+fun Field.getMutableType(forBuilder: Boolean = false, notNull: Boolean = false): String = when (this) {
     is FieldList -> when {
         isMutableOrEmpty && !forBuilder -> "MutableOrEmpty$typeWithArguments"
         isMutable -> "Mutable$typeWithArguments"
         else -> typeWithArguments
     }
-    is FieldWithDefault -> if (isMutable) origin.getMutableType() else typeWithArguments
-    else -> typeWithArguments
+    is FieldWithDefault -> if (isMutable) origin.getMutableType(notNull) else getTypeWithArguments(notNull)
+    else -> getTypeWithArguments(notNull)
 }
 
 fun Field.call(): String = if (nullable) "?." else "."
@@ -151,18 +151,19 @@ fun Kind?.braces(): String = when (this) {
 
 val Element.safeDecapitalizedName: String get() = if (name == "Class") "klass" else name.replaceFirstChar(Char::lowercaseChar)
 
-val Importable.typeWithArguments: String
-    get() = when (this) {
-        is AbstractElement -> type + generics
-        is Implementation -> type + element.generics
-        is FirField -> element.typeWithArguments + if (nullable) "?" else ""
-        is Field -> type + generics + if (nullable) "?" else ""
-        is Type -> type + generics
-        is ImplementationWithArg -> type + generics
-        is LeafBuilder -> type + implementation.element.generics
-        is IntermediateBuilder -> type
-        else -> throw IllegalArgumentException()
-    }
+val Importable.typeWithArguments: String get() = getTypeWithArguments()
+
+fun Importable.getTypeWithArguments(notNull: Boolean = false): String = when (this) {
+    is AbstractElement -> type + generics
+    is Implementation -> type + element.generics
+    is FirField -> element.getTypeWithArguments(notNull) + if (nullable && !notNull) "?" else ""
+    is Field -> type + generics + if (nullable && !notNull) "?" else ""
+    is Type -> type + generics
+    is ImplementationWithArg -> type + generics
+    is LeafBuilder -> type + implementation.element.generics
+    is IntermediateBuilder -> type
+    else -> throw IllegalArgumentException()
+}
 
 val ImplementationWithArg.generics: String
     get() = argument?.let { "<${it.type}>" } ?: ""

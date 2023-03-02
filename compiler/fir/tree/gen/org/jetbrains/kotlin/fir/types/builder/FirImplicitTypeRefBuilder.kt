@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 @FirBuilderDsl
 class FirImplicitTypeRefBuilder {
-    var source: KtSourceElement? = null
+    lateinit var source: KtSourceElement
 
     fun build(): FirImplicitTypeRef {
         return FirImplicitTypeRefImpl(
@@ -34,7 +34,7 @@ class FirImplicitTypeRefBuilder {
 }
 
 @OptIn(ExperimentalContracts::class)
-inline fun buildImplicitTypeRef(init: FirImplicitTypeRefBuilder.() -> Unit = {}): FirImplicitTypeRef {
+inline fun buildImplicitTypeRef(init: FirImplicitTypeRefBuilder.() -> Unit): FirImplicitTypeRef {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
     }
@@ -42,11 +42,11 @@ inline fun buildImplicitTypeRef(init: FirImplicitTypeRefBuilder.() -> Unit = {})
 }
 
 @OptIn(ExperimentalContracts::class)
-inline fun buildImplicitTypeRefCopy(original: FirImplicitTypeRef, init: FirImplicitTypeRefBuilder.() -> Unit = {}): FirImplicitTypeRef {
+inline fun buildImplicitTypeRefCopy(original: FirImplicitTypeRef, init: FirImplicitTypeRefBuilder.() -> Unit): FirImplicitTypeRef {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
     }
     val copyBuilder = FirImplicitTypeRefBuilder()
-    copyBuilder.source = original.source
+    original.source?.let { copyBuilder.source = it }
     return copyBuilder.apply(init).build()
 }

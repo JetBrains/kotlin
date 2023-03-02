@@ -77,7 +77,7 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
             withIndent {
 
                 fieldsWithoutDefault.forEachIndexed { _, field ->
-                    printField(field, isImplementation = true, override = true, end = ",")
+                    printField(field, isImplementation = true, override = true, end = ",", notNull = field.notNull)
                 }
             }
             print(")")
@@ -94,7 +94,7 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
                 allFields.forEach {
 
                     abstract()
-                    printField(it, isImplementation = true, override = true, end = "")
+                    printField(it, isImplementation = true, override = true, end = "", notNull = it.notNull)
                 }
             } else {
                 fieldsWithDefault.forEach {

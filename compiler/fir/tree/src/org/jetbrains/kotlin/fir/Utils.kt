@@ -52,9 +52,9 @@ fun <R : FirTypeRef> R.copyWithNewSource(newSource: KtSourceElement?): R {
             qualifier += typeRef.qualifier
             annotations += typeRef.annotations
         }
-        is FirImplicitTypeRef -> buildImplicitTypeRefCopy(typeRef) {
-            source = newSource
-        }
+        is FirImplicitTypeRef -> newSource?.let {
+            buildImplicitTypeRefCopy(typeRef) { source = it }
+        } ?: FirImplicitTypeRefImplWithoutSource
         is FirFunctionTypeRefImpl -> buildFunctionTypeRefCopy(typeRef) {
             source = newSource
         }

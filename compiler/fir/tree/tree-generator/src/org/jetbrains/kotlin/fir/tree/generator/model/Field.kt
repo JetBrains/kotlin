@@ -30,6 +30,7 @@ sealed class Field : Importable {
 
     open val overridenTypes: MutableSet<Importable> = mutableSetOf()
     open var useNullableForReplace: Boolean = false
+    open var notNull: Boolean = false
 
     var withBindThis = true
 
