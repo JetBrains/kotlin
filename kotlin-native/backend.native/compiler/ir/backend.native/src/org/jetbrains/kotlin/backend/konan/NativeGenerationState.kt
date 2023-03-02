@@ -69,7 +69,7 @@ internal class NativeGenerationState(
     val eagerInitializedFiles = mutableListOf<SerializedEagerInitializedFile>()
     val calledFromExportedInlineFunctions = mutableSetOf<IrFunction>()
     val constructedFromExportedInlineFunctions = mutableSetOf<IrClass>()
-    val loweredInlineFunctions = mutableMapOf<IrFunction, InlineFunctionOriginInfo>()
+    val inlineFunctionOrigins = mutableMapOf<IrFunction, InlineFunctionOriginInfo>()
 
     private val localClassNames = mutableMapOf<IrAttributeContainer, String>()
     fun getLocalClassName(container: IrAttributeContainer): String? = localClassNames[container.attributeOwnerId]
