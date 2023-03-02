@@ -444,6 +444,7 @@ private val jvmFilePhases = listOf(
     kotlinNothingValueExceptionPhase,
     makePropertyDelegateMethodsStaticPhase,
     addSuperQualifierToJavaFieldAccessPhase,
+    replaceNumberToCharCallSitesPhase,
 
     renameFieldsPhase,
     fakeInliningLocalVariablesLowering,
