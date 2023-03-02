@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.backend.konan.llvm.redundantCoercionsCleaningPhase
 import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.backend.konan.lower.InitializersLowering
 import org.jetbrains.kotlin.backend.konan.optimizations.KonanBCEForLoopBodyTransformer
-import org.jetbrains.kotlin.ir.util.isLocal
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -158,18 +157,6 @@ internal val inventNamesForLocalClasses = makeKonanFileLoweringPhase(
 
 internal val extractLocalClassesFromInlineBodies = makeKonanFileOpPhase(
         { context, irFile ->
-            irFile.acceptChildrenVoid(object : IrElementVisitorVoid {
-                override fun visitElement(element: IrElement) {
-                    element.acceptChildrenVoid(this)
-                }
-
-                override fun visitFunction(declaration: IrFunction) {
-                    if (declaration.isInline && !declaration.isLocal)
-                        context.inlineFunctionsSupport.saveNonLoweredInlineFunction(declaration)
-                    declaration.acceptChildrenVoid(this)
-                }
-            })
-
             LocalClassesInInlineLambdasLowering(context).lower(irFile)
             LocalClassesInInlineFunctionsLowering(context).lower(irFile)
             LocalClassesExtractionFromInlineFunctionsLowering(context).lower(irFile)
@@ -187,6 +174,18 @@ internal val wrapInlineDeclarationsWithReifiedTypeParametersLowering = makeKonan
 
 internal val inlinePhase = makeKonanFileOpPhase(
         { context, irFile ->
+            irFile.acceptChildrenVoid(object : IrElementVisitorVoid {
+                override fun visitElement(element: IrElement) {
+                    element.acceptChildrenVoid(this)
+                }
+
+                override fun visitFunction(declaration: IrFunction) {
+                    if (declaration.isInline)
+                        context.inlineFunctionsSupport.saveNonLoweredInlineFunction(declaration)
+                    declaration.acceptChildrenVoid(this)
+                }
+            })
+
             FunctionInlining(context, NativeInlineFunctionResolver(context, context.generationState)).lower(irFile)
         },
         name = "Inline",
