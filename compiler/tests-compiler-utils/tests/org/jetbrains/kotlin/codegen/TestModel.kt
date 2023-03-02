@@ -95,9 +95,8 @@ abstract class InfoParser<Info>(protected val infoFile: File) {
     }
 
 
-    protected fun diagnosticMessage(message: String, line: String): String {
-        return "$message in '$line' at ${infoFile.path}:${lineCounter - 1}"
-    }
+    protected fun diagnosticMessage(message: String, line: String): String = diagnosticMessage("$message in '$line'")
+    protected fun diagnosticMessage(message: String): String = "$message at ${infoFile.path}:${lineCounter - 1}"
 
     protected fun throwSyntaxError(line: String): Nothing {
         throw AssertionError(diagnosticMessage("Syntax error", line))
@@ -169,7 +168,19 @@ class ProjectInfoParser(infoFile: File) : InfoParser<ProjectInfo>(infoFile) {
 
                     val firstId = Integer.parseInt(m.group(1))
                     val lastId = m.group(2)?.let { Integer.parseInt(it) } ?: firstId
-                    steps += parseSteps(firstId, lastId)
+
+                    val newSteps = parseSteps(firstId, lastId)
+                    check(newSteps.isNotEmpty()) { diagnosticMessage("No steps have been found") }
+
+                    val lastStepId = steps.lastOrNull()?.id ?: -1
+                    newSteps.forEachIndexed { index, newStep ->
+                        val expectedStepId = lastStepId + 1 + index
+                        val stepId = newStep.id
+                        check(stepId == expectedStepId) {
+                            diagnosticMessage("Unexpected step number $stepId, expected: $expectedStepId")
+                        }
+                        steps += newStep
+                    }
                 }
                 else -> error(diagnosticMessage("Unknown op $op", line))
             }
@@ -198,7 +209,7 @@ class ModuleInfoParser(infoFile: File) : InfoParser<ModuleInfo>(infoFile) {
                         modifications.add(ModuleInfo.Modification.Update(from.trim(), to.trim()))
                     }
                     MODIFICATION_DELETE -> modifications.add(ModuleInfo.Modification.Delete(cmd.trim()))
-                    else -> error("Unknown modification $line")
+                    else -> error(diagnosticMessage("Unknown modification: $mop", line))
                 }
                 false
             } else {
@@ -277,7 +288,8 @@ class ModuleInfoParser(infoFile: File) : InfoParser<ModuleInfo>(infoFile) {
                 val firstId = Integer.parseInt(stepMatcher.group(1))
                 val lastId = stepMatcher.group(2)?.let { Integer.parseInt(it) } ?: firstId
                 parseSteps(firstId, lastId).forEach { step ->
-                    result.steps[step.id] = step
+                    val overwrittenStep = result.steps.put(step.id, step)
+                    check(overwrittenStep == null) { diagnosticMessage("Step ${step.id} redeclaration found") }
                 }
             }
             false
