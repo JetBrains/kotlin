@@ -314,6 +314,12 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     )
     var legacyDeprecatedNoWarn: Boolean by FreezableVar(false)
 
+    @Argument(
+        value = "-Xverbosity",
+        description = "Set verbosity level"
+    )
+    var verbosityLevel: String? by NullableStringFreezableVar(null)
+
     override fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> {
         return super.configureAnalysisFlags(collector, languageVersion).also {
             it[allowFullyQualifiedNameInKClass] = wasm && wasmKClassFqn //Only enabled WASM BE supports this flag

@@ -73,6 +73,18 @@ enum class ProduceKind {
     KLIB
 }
 
+private class JsIrMessageCollector(private val messageCollector: MessageCollector, private val verbosityLevel: Int) :
+    MessageCollector by messageCollector {
+
+    fun lifecycle(msg: String) {
+        if (verbosityLevel > 0) {
+            report(INFO, "[LIFECYCLE][JS IR] $msg")
+        } else {
+            report(INFO, msg)
+        }
+    }
+}
+
 class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
     override val defaultPerformanceManager: CommonCompilerPerformanceManager =
@@ -154,7 +166,10 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         rootDisposable: Disposable,
         paths: KotlinPaths?
     ): ExitCode {
-        val messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+        val messageCollector = JsIrMessageCollector(
+            messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY),
+            verbosityLevel = arguments.verbosityLevel?.toIntOrNull() ?: 0
+        )
         if (configuration.getBoolean(CommonConfigurationKeys.USE_FIR)) {
             messageCollector.report(ERROR, "K2 does not support JS target right now")
             return ExitCode.COMPILATION_ERROR
@@ -296,9 +311,9 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             )
 
             val artifacts = cacheUpdater.actualizeCaches()
-            messageCollector.report(INFO, "IC rebuilt overall time: ${System.currentTimeMillis() - start}ms")
+            messageCollector.lifecycle("IC rebuilt overall time: ${System.currentTimeMillis() - start}ms")
             for ((event, duration) in cacheUpdater.getStopwatchLaps()) {
-                messageCollector.report(INFO, "  $event: ${(duration / 1e6).toInt()}ms")
+                messageCollector.lifecycle("  $event: ${(duration / 1e6).toInt()}ms")
             }
 
             var libIndex = 0
@@ -308,13 +323,13 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                     srcFiles.values.all { it.contains(DirtyFileState.MODIFIED_CONFIG) } -> "fully rebuilt due to config modification" to false
                     else -> "partially rebuilt" to true
                 }
-                messageCollector.report(INFO, "${++libIndex}) module [${File(libFile.path).name}] was $msg")
+                messageCollector.lifecycle("${++libIndex}) module [${libFile.path}] was $msg")
                 if (showFiles) {
                     var fileIndex = 0
                     for ((srcFile, stat) in srcFiles) {
                         val statStr = stat.joinToString { it.str }
                         // Use index, because MessageCollector ignores already reported messages
-                        messageCollector.report(INFO, "  $libIndex.${++fileIndex}) file [${File(srcFile.path).name}]: ($statStr)")
+                        messageCollector.lifecycle("  $libIndex.${++fileIndex}) file [${srcFile.path}]: ($statStr)")
                     }
                 }
             }
@@ -379,13 +394,13 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                     outputFile.resolveSibling("$name.js").write(content)
                 }
 
-                messageCollector.report(INFO, "Executable production duration (IC): ${System.currentTimeMillis() - beforeIc2Js}ms")
+                messageCollector.lifecycle("Executable production duration (IC): ${System.currentTimeMillis() - beforeIc2Js}ms")
                 for ((event, duration) in jsExecutableProducer.getStopwatchLaps()) {
-                    messageCollector.report(INFO, "  $event: ${(duration / 1e6).toInt()}ms")
+                    messageCollector.lifecycle("  $event: ${(duration / 1e6).toInt()}ms")
                 }
 
                 for (module in rebuiltModules) {
-                    messageCollector.report(INFO, "IC module builder rebuilt JS for module [${File(module).name}]")
+                    messageCollector.lifecycle("IC module builder rebuilt JS for module [$module]")
                 }
 
                 return OK

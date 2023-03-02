@@ -148,6 +148,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
             )
         } ?: KotlinIrJsGeneratedTSValidationStrategy.IGNORE
 
+    val jsIrVerbosity: String?
+        get() = property("kotlin.js.ir.verbosity")
+
     val incrementalMultiplatform: Boolean?
         get() = booleanProperty("kotlin.incremental.multiplatform")
 

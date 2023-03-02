@@ -21,6 +21,8 @@ internal class GradlePrintingMessageCollector(
 
     private var hasErrors = false
 
+    private val lifecyclePrefix = "[LIFECYCLE]"
+
     private val messageRenderer = GradleStyleMessageRenderer()
 
     override fun hasErrors() = hasErrors
@@ -49,7 +51,11 @@ internal class GradlePrintingMessageCollector(
                 }
             }
             CompilerMessageSeverity.INFO -> {
-                logger.info(renderedMessage)
+                if (message.startsWith(lifecyclePrefix) && logger is GradleKotlinLogger) {
+                    logger.lifecycle(message.substring(lifecyclePrefix.length))
+                } else {
+                    logger.info(renderedMessage)
+                }
             }
             CompilerMessageSeverity.LOGGING,
             CompilerMessageSeverity.OUTPUT -> {
