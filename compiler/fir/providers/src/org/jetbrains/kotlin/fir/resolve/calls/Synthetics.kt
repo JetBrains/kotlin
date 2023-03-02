@@ -119,8 +119,7 @@ class FirSyntheticPropertiesScope private constructor(
                 val parameter = setter.valueParameters.singleOrNull() ?: return
                 if (setter.typeParameters.isNotEmpty() || setter.isStatic) return
                 val parameterType = (parameter.returnTypeRef as? FirResolvedTypeRef)?.type ?: return
-
-                if (!setterTypeIsConsistentWithGetterType(getterSymbol, parameterType, baseScope)) return
+                if (!setterTypeIsConsistentWithGetterType(propertyName, getterSymbol, setterSymbol, parameterType)) return
                 matchingSetter = setterSymbol.fir
             })
         }
@@ -161,21 +160,59 @@ class FirSyntheticPropertiesScope private constructor(
     }
 
     private fun setterTypeIsConsistentWithGetterType(
+        propertyName: Name,
         getterSymbol: FirNamedFunctionSymbol,
-        parameterType: ConeKotlinType,
-        scopeOfGetter: FirTypeScope
+        setterSymbol: FirNamedFunctionSymbol,
+        setterParameterType: ConeKotlinType
     ): Boolean {
         val getterReturnType = getterSymbol.resolvedReturnTypeRef.type
-        if (AbstractTypeChecker.equalTypes(session.typeContext, getterReturnType, parameterType)) return true
-        if (!AbstractTypeChecker.isSubtypeOf(session.typeContext, getterReturnType, parameterType)) return false
+        if (AbstractTypeChecker.equalTypes(session.typeContext, getterReturnType, setterParameterType)) return true
+        if (!AbstractTypeChecker.isSubtypeOf(session.typeContext, getterReturnType, setterParameterType)) return false
+
         /*
-         * Here we search for some getter in overrides hierarchy which type is consistent with type of setter
+         * If type of setter parameter is subtype of getter return type, we need to check corresponding "overridden" synthetic
+         *   properties from parent classes. If some of them has this setter or its overridden as base for setter, then current
+         *   setterSymbol can be used as setter for corresponding getterSymbol
+         *
+         * See corresponding code in FE 1.0 in `SyntheticJavaPropertyDescriptor.isGoodSetMethod`
+         * Note that FE 1.0 looks through overrides just ones (by setter hierarchy), but FIR does twice (for setter and getter)
+         *   This is needed because FIR does not create fake overrides for all inherited methods of class, so there may be a
+         *   situation, when in inheritor class only getter is overridden, and setter does not have overriddens at all
+         *
+         * class Base {
+         *     public Object getX() {...}
+         *     public Object setX(Object x) {...} // setterSymbol
+         * }
+         *
+         * class Derived extends Base {
+         *     public String getX() {...} // getterSymbol
+         * //  public fake-override Object setX(Object x) {...} // exist in FE 1.0 but not in FIR
+         * }
          */
-        for ((overriddenGetter, scope) in scopeOfGetter.getDirectOverriddenFunctionsWithBaseScope(getterSymbol)) {
-            val foundGoodOverride = setterTypeIsConsistentWithGetterType(overriddenGetter, parameterType, scope)
-            if (foundGoodOverride) return true
+
+        fun processOverrides(symbolToStart: FirNamedFunctionSymbol, setterSymbolToCompare: FirNamedFunctionSymbol?): Boolean {
+            var hasMatchingSetter = false
+            baseScope.processDirectOverriddenFunctionsWithBaseScope(symbolToStart) l@{ symbol, scope ->
+                if (hasMatchingSetter) return@l ProcessorAction.STOP
+                val baseDispatchReceiverType = symbol.dispatchReceiverType ?: return@l ProcessorAction.NEXT
+                val syntheticScope = FirSyntheticPropertiesScope(session, scope, baseDispatchReceiverType, syntheticNamesProvider)
+                val baseProperties = syntheticScope.getProperties(propertyName)
+                val propertyFound = baseProperties.any {
+                    val baseProperty = it.fir
+                    baseProperty is FirSyntheticProperty && baseProperty.setter?.delegate?.symbol == (setterSymbolToCompare ?: symbol)
+                }
+                if (propertyFound) {
+                    hasMatchingSetter = true
+                    ProcessorAction.STOP
+                } else {
+                    ProcessorAction.NEXT
+                }
+            }
+            return hasMatchingSetter
         }
-        return false
+
+        return processOverrides(setterSymbol, setterSymbolToCompare = null)
+                || processOverrides(getterSymbol, setterSymbolToCompare = setterSymbol)
     }
 
     private fun FirNamedFunctionSymbol.hasJavaOverridden(): Boolean {

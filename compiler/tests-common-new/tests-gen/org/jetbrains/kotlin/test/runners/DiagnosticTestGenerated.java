@@ -5691,6 +5691,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("assignmentOfSyntheticVarWithInconsistentNullability.kt")
+            public void testAssignmentOfSyntheticVarWithInconsistentNullability() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/assignmentOfSyntheticVarWithInconsistentNullability.kt");
+            }
+
+            @Test
             @TestMetadata("backingFieldInsideGetter_after.kt")
             public void testBackingFieldInsideGetter_after() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/backingFieldInsideGetter_after.kt");
