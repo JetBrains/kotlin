@@ -274,7 +274,7 @@ public class Byte private constructor() : Number(), Comparable<Byte> {
      */
     @SinceKotlin("1.7")
     @ExperimentalStdlibApi
-    public operator fun rangeUntil(other: Byte): IntRange
+    public operator fun rangeUntil(other: Byte): IntRange = this until other
 
     /**
      * Creates a range from this value up to but excluding the specified [other] value.
@@ -283,7 +283,7 @@ public class Byte private constructor() : Number(), Comparable<Byte> {
      */
     @SinceKotlin("1.7")
     @ExperimentalStdlibApi
-    public operator fun rangeUntil(other: Short): IntRange
+    public operator fun rangeUntil(other: Short): IntRange = this until other
 
     /**
      * Creates a range from this value up to but excluding the specified [other] value.
@@ -292,7 +292,7 @@ public class Byte private constructor() : Number(), Comparable<Byte> {
      */
     @SinceKotlin("1.7")
     @ExperimentalStdlibApi
-    public operator fun rangeUntil(other: Int): IntRange
+    public operator fun rangeUntil(other: Int): IntRange = this until other
 
     /**
      * Creates a range from this value up to but excluding the specified [other] value.
@@ -301,7 +301,7 @@ public class Byte private constructor() : Number(), Comparable<Byte> {
      */
     @SinceKotlin("1.7")
     @ExperimentalStdlibApi
-    public operator fun rangeUntil(other: Long): LongRange
+    public operator fun rangeUntil(other: Long): LongRange = this until other
 
     /** Returns this value. */
     @kotlin.internal.IntrinsicConstEvaluation
@@ -370,10 +370,10 @@ public class Byte private constructor() : Number(), Comparable<Byte> {
     public override fun toDouble(): Double
 
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun equals(other: Any?): Boolean
+    public override fun toString(): String
 
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun toString(): String
+    public override fun equals(other: Any?): Boolean
 
     public override fun hashCode(): Int
 }
@@ -643,7 +643,7 @@ public class Short private constructor() : Number(), Comparable<Short> {
      */
     @SinceKotlin("1.7")
     @ExperimentalStdlibApi
-    public operator fun rangeUntil(other: Byte): IntRange
+    public operator fun rangeUntil(other: Byte): IntRange = this until other
 
     /**
      * Creates a range from this value up to but excluding the specified [other] value.
@@ -652,7 +652,7 @@ public class Short private constructor() : Number(), Comparable<Short> {
      */
     @SinceKotlin("1.7")
     @ExperimentalStdlibApi
-    public operator fun rangeUntil(other: Short): IntRange
+    public operator fun rangeUntil(other: Short): IntRange = this until other
 
     /**
      * Creates a range from this value up to but excluding the specified [other] value.
@@ -661,7 +661,7 @@ public class Short private constructor() : Number(), Comparable<Short> {
      */
     @SinceKotlin("1.7")
     @ExperimentalStdlibApi
-    public operator fun rangeUntil(other: Int): IntRange
+    public operator fun rangeUntil(other: Int): IntRange = this until other
 
     /**
      * Creates a range from this value up to but excluding the specified [other] value.
@@ -670,7 +670,7 @@ public class Short private constructor() : Number(), Comparable<Short> {
      */
     @SinceKotlin("1.7")
     @ExperimentalStdlibApi
-    public operator fun rangeUntil(other: Long): LongRange
+    public operator fun rangeUntil(other: Long): LongRange = this until other
 
     /**
      * Converts this [Short] value to [Byte].
@@ -737,10 +737,10 @@ public class Short private constructor() : Number(), Comparable<Short> {
     public override fun toDouble(): Double
 
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun equals(other: Any?): Boolean
+    public override fun toString(): String
 
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun toString(): String
+    public override fun equals(other: Any?): Boolean
 
     public override fun hashCode(): Int
 }
@@ -1010,7 +1010,7 @@ public class Int private constructor() : Number(), Comparable<Int> {
      */
     @SinceKotlin("1.7")
     @ExperimentalStdlibApi
-    public operator fun rangeUntil(other: Byte): IntRange
+    public operator fun rangeUntil(other: Byte): IntRange = this until other
 
     /**
      * Creates a range from this value up to but excluding the specified [other] value.
@@ -1019,7 +1019,7 @@ public class Int private constructor() : Number(), Comparable<Int> {
      */
     @SinceKotlin("1.7")
     @ExperimentalStdlibApi
-    public operator fun rangeUntil(other: Short): IntRange
+    public operator fun rangeUntil(other: Short): IntRange = this until other
 
     /**
      * Creates a range from this value up to but excluding the specified [other] value.
@@ -1028,7 +1028,7 @@ public class Int private constructor() : Number(), Comparable<Int> {
      */
     @SinceKotlin("1.7")
     @ExperimentalStdlibApi
-    public operator fun rangeUntil(other: Int): IntRange
+    public operator fun rangeUntil(other: Int): IntRange = this until other
 
     /**
      * Creates a range from this value up to but excluding the specified [other] value.
@@ -1037,7 +1037,7 @@ public class Int private constructor() : Number(), Comparable<Int> {
      */
     @SinceKotlin("1.7")
     @ExperimentalStdlibApi
-    public operator fun rangeUntil(other: Long): LongRange
+    public operator fun rangeUntil(other: Long): LongRange = this until other
 
     /**
      * Shifts this value left by the [bitCount] number of bits.
@@ -1150,10 +1150,10 @@ public class Int private constructor() : Number(), Comparable<Int> {
     public override fun toDouble(): Double
 
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun equals(other: Any?): Boolean
+    public override fun toString(): String
 
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun toString(): String
+    public override fun equals(other: Any?): Boolean
 
     public override fun hashCode(): Int
 }
@@ -1485,10 +1485,10 @@ public class Float private constructor() : Number(), Comparable<Float> {
     public override fun toDouble(): Double
 
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun equals(other: Any?): Boolean
+    public override fun toString(): String
 
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun toString(): String
+    public override fun equals(other: Any?): Boolean
 
     public override fun hashCode(): Int
 }
@@ -1822,10 +1822,10 @@ public class Double private constructor() : Number(), Comparable<Double> {
     public override fun toDouble(): Double
 
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun equals(other: Any?): Boolean
+    public override fun toString(): String
 
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun toString(): String
+    public override fun equals(other: Any?): Boolean
 
     public override fun hashCode(): Int
 }

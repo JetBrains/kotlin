@@ -13,27 +13,28 @@ class JsPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(write
         return this != PrimitiveType.LONG
     }
 
-    override fun FileDescription.modifyGeneratedFile() {
-        addSuppress("NON_ABSTRACT_FUNCTION_WITH_NO_BODY")
-        addSuppress("UNUSED_PARAMETER")
+    override fun FileBuilder.modifyGeneratedFile() {
+        suppress("NON_ABSTRACT_FUNCTION_WITH_NO_BODY")
+        suppress("UNUSED_PARAMETER")
     }
 
-    override fun PropertyDescription.modifyGeneratedCompanionObjectProperty(thisKind: PrimitiveType) {
+    override fun PropertyBuilder.modifyGeneratedCompanionObjectProperty(thisKind: PrimitiveType) {
         if (this.name in setOf("POSITIVE_INFINITY", "NEGATIVE_INFINITY", "NaN")) {
-            this.addAnnotation("Suppress(\"DIVISION_BY_ZERO\")")
+            annotations += "Suppress(\"DIVISION_BY_ZERO\")"
         }
     }
 
-    override fun generateAdditionalMethods(thisKind: PrimitiveType): List<MethodDescription> {
-        val hashCode = MethodDescription(
-            doc = null,
-            signature = MethodSignature(
-                isOverride = true,
-                name = "hashCode",
-                arg = null,
+    override fun ClassBuilder.generateAdditionalMethods(thisKind: PrimitiveType) {
+        method {
+            signature {
+                isOverride = true
+                methodName = "hashCode"
                 returnType = PrimitiveType.INT.capitalized
-            )
-        )
-        return listOf(hashCode)
+            }
+        }
+    }
+
+    override fun MethodBuilder.modifyGeneratedRangeUntil(thisKind: PrimitiveType) {
+        "this until $parameterName".addAsSingleLineBody(bodyOnNewLine = false)
     }
 }

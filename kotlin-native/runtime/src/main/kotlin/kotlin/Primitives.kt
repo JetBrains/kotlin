@@ -54,7 +54,7 @@ public final class Byte private constructor() : Number(), Comparable<Byte> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun compareTo(other: Short): Int =
-    	this.toShort().compareTo(other)
+        this.toShort().compareTo(other)
 
     /**
      * Compares this value with the specified value for order.
@@ -63,7 +63,7 @@ public final class Byte private constructor() : Number(), Comparable<Byte> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun compareTo(other: Int): Int =
-    	this.toInt().compareTo(other)
+        this.toInt().compareTo(other)
 
     /**
      * Compares this value with the specified value for order.
@@ -72,7 +72,7 @@ public final class Byte private constructor() : Number(), Comparable<Byte> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun compareTo(other: Long): Int =
-    	this.toLong().compareTo(other)
+        this.toLong().compareTo(other)
 
     /**
      * Compares this value with the specified value for order.
@@ -81,7 +81,7 @@ public final class Byte private constructor() : Number(), Comparable<Byte> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun compareTo(other: Float): Int =
-    	this.toFloat().compareTo(other)
+        this.toFloat().compareTo(other)
 
     /**
      * Compares this value with the specified value for order.
@@ -90,127 +90,127 @@ public final class Byte private constructor() : Number(), Comparable<Byte> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun compareTo(other: Double): Int =
-    	this.toDouble().compareTo(other)
+        this.toDouble().compareTo(other)
 
     /** Adds the other value to this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun plus(other: Byte): Int =
-    	this.toInt() + other.toInt()
+        this.toInt() + other.toInt()
 
     /** Adds the other value to this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun plus(other: Short): Int =
-    	this.toInt() + other.toInt()
+        this.toInt() + other.toInt()
 
     /** Adds the other value to this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun plus(other: Int): Int =
-    	this.toInt() + other
+        this.toInt() + other
 
     /** Adds the other value to this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun plus(other: Long): Long =
-    	this.toLong() + other
+        this.toLong() + other
 
     /** Adds the other value to this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun plus(other: Float): Float =
-    	this.toFloat() + other
+        this.toFloat() + other
 
     /** Adds the other value to this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun plus(other: Double): Double =
-    	this.toDouble() + other
+        this.toDouble() + other
 
     /** Subtracts the other value from this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun minus(other: Byte): Int =
-    	this.toInt() - other.toInt()
+        this.toInt() - other.toInt()
 
     /** Subtracts the other value from this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun minus(other: Short): Int =
-    	this.toInt() - other.toInt()
+        this.toInt() - other.toInt()
 
     /** Subtracts the other value from this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun minus(other: Int): Int =
-    	this.toInt() - other
+        this.toInt() - other
 
     /** Subtracts the other value from this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun minus(other: Long): Long =
-    	this.toLong() - other
+        this.toLong() - other
 
     /** Subtracts the other value from this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun minus(other: Float): Float =
-    	this.toFloat() - other
+        this.toFloat() - other
 
     /** Subtracts the other value from this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun minus(other: Double): Double =
-    	this.toDouble() - other
+        this.toDouble() - other
 
     /** Multiplies this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun times(other: Byte): Int =
-    	this.toInt() * other.toInt()
+        this.toInt() * other.toInt()
 
     /** Multiplies this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun times(other: Short): Int =
-    	this.toInt() * other.toInt()
+        this.toInt() * other.toInt()
 
     /** Multiplies this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun times(other: Int): Int =
-    	this.toInt() * other
+        this.toInt() * other
 
     /** Multiplies this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun times(other: Long): Long =
-    	this.toLong() * other
+        this.toLong() * other
 
     /** Multiplies this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun times(other: Float): Float =
-    	this.toFloat() * other
+        this.toFloat() * other
 
     /** Multiplies this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun times(other: Double): Double =
-    	this.toDouble() * other
+        this.toDouble() * other
 
     /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun div(other: Byte): Int =
-    	this.toInt() / other.toInt()
+        this.toInt() / other.toInt()
 
     /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun div(other: Short): Int =
-    	this.toInt() / other.toInt()
+        this.toInt() / other.toInt()
 
     /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun div(other: Int): Int =
-    	this.toInt() / other
+        this.toInt() / other
 
     /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun div(other: Long): Long =
-    	this.toLong() / other
+        this.toLong() / other
 
     /** Divides this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun div(other: Float): Float =
-    	this.toFloat() / other
+        this.toFloat() / other
 
     /** Divides this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun div(other: Double): Double =
-    	this.toDouble() / other
+        this.toDouble() / other
 
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
@@ -220,7 +220,7 @@ public final class Byte private constructor() : Number(), Comparable<Byte> {
     @SinceKotlin("1.1")
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun rem(other: Byte): Int =
-    	this.toInt() % other.toInt()
+        this.toInt() % other.toInt()
 
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
@@ -230,7 +230,7 @@ public final class Byte private constructor() : Number(), Comparable<Byte> {
     @SinceKotlin("1.1")
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun rem(other: Short): Int =
-    	this.toInt() % other.toInt()
+        this.toInt() % other.toInt()
 
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
@@ -240,7 +240,7 @@ public final class Byte private constructor() : Number(), Comparable<Byte> {
     @SinceKotlin("1.1")
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun rem(other: Int): Int =
-    	this.toInt() % other
+        this.toInt() % other
 
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
@@ -250,7 +250,7 @@ public final class Byte private constructor() : Number(), Comparable<Byte> {
     @SinceKotlin("1.1")
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun rem(other: Long): Long =
-    	this.toLong() % other
+        this.toLong() % other
 
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
@@ -260,7 +260,7 @@ public final class Byte private constructor() : Number(), Comparable<Byte> {
     @SinceKotlin("1.1")
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun rem(other: Float): Float =
-    	this.toFloat() % other
+        this.toFloat() % other
 
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
@@ -270,7 +270,7 @@ public final class Byte private constructor() : Number(), Comparable<Byte> {
     @SinceKotlin("1.1")
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun rem(other: Double): Double =
-    	this.toDouble() % other
+        this.toDouble() % other
 
     /**
      * Returns this value incremented by one.
@@ -291,12 +291,12 @@ public final class Byte private constructor() : Number(), Comparable<Byte> {
     /** Returns this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun unaryPlus(): Int =
-    	this.toInt()
+        this.toInt()
 
     /** Returns the negative of this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun unaryMinus(): Int =
-    	-this.toInt()
+        -this.toInt()
 
     /** Creates a range from this value to the specified [other] value. */
     public operator fun rangeTo(other: Byte): IntRange {
@@ -357,7 +357,7 @@ public final class Byte private constructor() : Number(), Comparable<Byte> {
     /** Returns this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public override inline fun toByte(): Byte =
-    	this
+        this
 
     /**
      * Converts this [Byte] value to [Char].
@@ -428,19 +428,17 @@ public final class Byte private constructor() : Number(), Comparable<Byte> {
     external public override fun toDouble(): Double
 
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun equals(other: Any?): Boolean =
-    	    other is Byte && kotlin.native.internal.areEqualByValue(this, other)
-
-    @kotlin.internal.IntrinsicConstEvaluation
     @GCUnsafeCall("Kotlin_Byte_toString")
     external public override fun toString(): String
 
     @kotlin.internal.IntrinsicConstEvaluation
+    public override fun equals(other: Any?): Boolean =
+        other is Byte && kotlin.native.internal.areEqualByValue(this, other)
+
+    @kotlin.internal.IntrinsicConstEvaluation
     public fun equals(other: Byte): Boolean = kotlin.native.internal.areEqualByValue(this, other)
 
-    public override fun hashCode(): Int {
-        return this.toInt()
-    }
+    public override fun hashCode(): Int = this.toInt()
 }
 
 /** Represents a 16-bit signed integer. */
@@ -477,7 +475,7 @@ public final class Short private constructor() : Number(), Comparable<Short> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun compareTo(other: Byte): Int =
-    	this.compareTo(other.toShort())
+        this.compareTo(other.toShort())
 
     /**
      * Compares this value with the specified value for order.
@@ -495,7 +493,7 @@ public final class Short private constructor() : Number(), Comparable<Short> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun compareTo(other: Int): Int =
-    	this.toInt().compareTo(other)
+        this.toInt().compareTo(other)
 
     /**
      * Compares this value with the specified value for order.
@@ -504,7 +502,7 @@ public final class Short private constructor() : Number(), Comparable<Short> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun compareTo(other: Long): Int =
-    	this.toLong().compareTo(other)
+        this.toLong().compareTo(other)
 
     /**
      * Compares this value with the specified value for order.
@@ -513,7 +511,7 @@ public final class Short private constructor() : Number(), Comparable<Short> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun compareTo(other: Float): Int =
-    	this.toFloat().compareTo(other)
+        this.toFloat().compareTo(other)
 
     /**
      * Compares this value with the specified value for order.
@@ -522,127 +520,127 @@ public final class Short private constructor() : Number(), Comparable<Short> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun compareTo(other: Double): Int =
-    	this.toDouble().compareTo(other)
+        this.toDouble().compareTo(other)
 
     /** Adds the other value to this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun plus(other: Byte): Int =
-    	this.toInt() + other.toInt()
+        this.toInt() + other.toInt()
 
     /** Adds the other value to this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun plus(other: Short): Int =
-    	this.toInt() + other.toInt()
+        this.toInt() + other.toInt()
 
     /** Adds the other value to this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun plus(other: Int): Int =
-    	this.toInt() + other
+        this.toInt() + other
 
     /** Adds the other value to this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun plus(other: Long): Long =
-    	this.toLong() + other
+        this.toLong() + other
 
     /** Adds the other value to this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun plus(other: Float): Float =
-    	this.toFloat() + other
+        this.toFloat() + other
 
     /** Adds the other value to this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun plus(other: Double): Double =
-    	this.toDouble() + other
+        this.toDouble() + other
 
     /** Subtracts the other value from this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun minus(other: Byte): Int =
-    	this.toInt() - other.toInt()
+        this.toInt() - other.toInt()
 
     /** Subtracts the other value from this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun minus(other: Short): Int =
-    	this.toInt() - other.toInt()
+        this.toInt() - other.toInt()
 
     /** Subtracts the other value from this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun minus(other: Int): Int =
-    	this.toInt() - other
+        this.toInt() - other
 
     /** Subtracts the other value from this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun minus(other: Long): Long =
-    	this.toLong() - other
+        this.toLong() - other
 
     /** Subtracts the other value from this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun minus(other: Float): Float =
-    	this.toFloat() - other
+        this.toFloat() - other
 
     /** Subtracts the other value from this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun minus(other: Double): Double =
-    	this.toDouble() - other
+        this.toDouble() - other
 
     /** Multiplies this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun times(other: Byte): Int =
-    	this.toInt() * other.toInt()
+        this.toInt() * other.toInt()
 
     /** Multiplies this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun times(other: Short): Int =
-    	this.toInt() * other.toInt()
+        this.toInt() * other.toInt()
 
     /** Multiplies this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun times(other: Int): Int =
-    	this.toInt() * other
+        this.toInt() * other
 
     /** Multiplies this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun times(other: Long): Long =
-    	this.toLong() * other
+        this.toLong() * other
 
     /** Multiplies this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun times(other: Float): Float =
-    	this.toFloat() * other
+        this.toFloat() * other
 
     /** Multiplies this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun times(other: Double): Double =
-    	this.toDouble() * other
+        this.toDouble() * other
 
     /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun div(other: Byte): Int =
-    	this.toInt() / other.toInt()
+        this.toInt() / other.toInt()
 
     /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun div(other: Short): Int =
-    	this.toInt() / other.toInt()
+        this.toInt() / other.toInt()
 
     /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun div(other: Int): Int =
-    	this.toInt() / other
+        this.toInt() / other
 
     /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun div(other: Long): Long =
-    	this.toLong() / other
+        this.toLong() / other
 
     /** Divides this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun div(other: Float): Float =
-    	this.toFloat() / other
+        this.toFloat() / other
 
     /** Divides this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun div(other: Double): Double =
-    	this.toDouble() / other
+        this.toDouble() / other
 
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
@@ -652,7 +650,7 @@ public final class Short private constructor() : Number(), Comparable<Short> {
     @SinceKotlin("1.1")
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun rem(other: Byte): Int =
-    	this.toInt() % other.toInt()
+        this.toInt() % other.toInt()
 
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
@@ -662,7 +660,7 @@ public final class Short private constructor() : Number(), Comparable<Short> {
     @SinceKotlin("1.1")
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun rem(other: Short): Int =
-    	this.toInt() % other.toInt()
+        this.toInt() % other.toInt()
 
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
@@ -672,7 +670,7 @@ public final class Short private constructor() : Number(), Comparable<Short> {
     @SinceKotlin("1.1")
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun rem(other: Int): Int =
-    	this.toInt() % other
+        this.toInt() % other
 
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
@@ -682,7 +680,7 @@ public final class Short private constructor() : Number(), Comparable<Short> {
     @SinceKotlin("1.1")
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun rem(other: Long): Long =
-    	this.toLong() % other
+        this.toLong() % other
 
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
@@ -692,7 +690,7 @@ public final class Short private constructor() : Number(), Comparable<Short> {
     @SinceKotlin("1.1")
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun rem(other: Float): Float =
-    	this.toFloat() % other
+        this.toFloat() % other
 
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
@@ -702,7 +700,7 @@ public final class Short private constructor() : Number(), Comparable<Short> {
     @SinceKotlin("1.1")
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun rem(other: Double): Double =
-    	this.toDouble() % other
+        this.toDouble() % other
 
     /**
      * Returns this value incremented by one.
@@ -723,12 +721,12 @@ public final class Short private constructor() : Number(), Comparable<Short> {
     /** Returns this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun unaryPlus(): Int =
-    	this.toInt()
+        this.toInt()
 
     /** Returns the negative of this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun unaryMinus(): Int =
-    	-this.toInt()
+        -this.toInt()
 
     /** Creates a range from this value to the specified [other] value. */
     public operator fun rangeTo(other: Byte): IntRange {
@@ -813,7 +811,7 @@ public final class Short private constructor() : Number(), Comparable<Short> {
     /** Returns this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public override inline fun toShort(): Short =
-    	this
+        this
 
     /**
      * Converts this [Short] value to [Int].
@@ -858,19 +856,17 @@ public final class Short private constructor() : Number(), Comparable<Short> {
     external public override fun toDouble(): Double
 
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun equals(other: Any?): Boolean =
-    	    other is Short && kotlin.native.internal.areEqualByValue(this, other)
-
-    @kotlin.internal.IntrinsicConstEvaluation
     @GCUnsafeCall("Kotlin_Short_toString")
     external public override fun toString(): String
 
     @kotlin.internal.IntrinsicConstEvaluation
+    public override fun equals(other: Any?): Boolean =
+        other is Short && kotlin.native.internal.areEqualByValue(this, other)
+
+    @kotlin.internal.IntrinsicConstEvaluation
     public fun equals(other: Short): Boolean = kotlin.native.internal.areEqualByValue(this, other)
 
-    public override fun hashCode(): Int {
-        return this.toInt()
-    }
+    public override fun hashCode(): Int = this.toInt()
 }
 
 /** Represents a 32-bit signed integer. */
@@ -907,7 +903,7 @@ public final class Int private constructor() : Number(), Comparable<Int> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun compareTo(other: Byte): Int =
-    	this.compareTo(other.toInt())
+        this.compareTo(other.toInt())
 
     /**
      * Compares this value with the specified value for order.
@@ -916,7 +912,7 @@ public final class Int private constructor() : Number(), Comparable<Int> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun compareTo(other: Short): Int =
-    	this.compareTo(other.toInt())
+        this.compareTo(other.toInt())
 
     /**
      * Compares this value with the specified value for order.
@@ -934,7 +930,7 @@ public final class Int private constructor() : Number(), Comparable<Int> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun compareTo(other: Long): Int =
-    	this.toLong().compareTo(other)
+        this.toLong().compareTo(other)
 
     /**
      * Compares this value with the specified value for order.
@@ -943,7 +939,7 @@ public final class Int private constructor() : Number(), Comparable<Int> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun compareTo(other: Float): Int =
-    	this.toFloat().compareTo(other)
+        this.toFloat().compareTo(other)
 
     /**
      * Compares this value with the specified value for order.
@@ -952,17 +948,17 @@ public final class Int private constructor() : Number(), Comparable<Int> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun compareTo(other: Double): Int =
-    	this.toDouble().compareTo(other)
+        this.toDouble().compareTo(other)
 
     /** Adds the other value to this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun plus(other: Byte): Int =
-    	this + other.toInt()
+        this + other.toInt()
 
     /** Adds the other value to this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun plus(other: Short): Int =
-    	this + other.toInt()
+        this + other.toInt()
 
     /** Adds the other value to this value. */
     @kotlin.internal.IntrinsicConstEvaluation
@@ -972,27 +968,27 @@ public final class Int private constructor() : Number(), Comparable<Int> {
     /** Adds the other value to this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun plus(other: Long): Long =
-    	this.toLong() + other
+        this.toLong() + other
 
     /** Adds the other value to this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun plus(other: Float): Float =
-    	this.toFloat() + other
+        this.toFloat() + other
 
     /** Adds the other value to this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun plus(other: Double): Double =
-    	this.toDouble() + other
+        this.toDouble() + other
 
     /** Subtracts the other value from this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun minus(other: Byte): Int =
-    	this - other.toInt()
+        this - other.toInt()
 
     /** Subtracts the other value from this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun minus(other: Short): Int =
-    	this - other.toInt()
+        this - other.toInt()
 
     /** Subtracts the other value from this value. */
     @kotlin.internal.IntrinsicConstEvaluation
@@ -1002,27 +998,27 @@ public final class Int private constructor() : Number(), Comparable<Int> {
     /** Subtracts the other value from this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun minus(other: Long): Long =
-    	this.toLong() - other
+        this.toLong() - other
 
     /** Subtracts the other value from this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun minus(other: Float): Float =
-    	this.toFloat() - other
+        this.toFloat() - other
 
     /** Subtracts the other value from this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun minus(other: Double): Double =
-    	this.toDouble() - other
+        this.toDouble() - other
 
     /** Multiplies this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun times(other: Byte): Int =
-    	this * other.toInt()
+        this * other.toInt()
 
     /** Multiplies this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun times(other: Short): Int =
-    	this * other.toInt()
+        this * other.toInt()
 
     /** Multiplies this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
@@ -1032,27 +1028,27 @@ public final class Int private constructor() : Number(), Comparable<Int> {
     /** Multiplies this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun times(other: Long): Long =
-    	this.toLong() * other
+        this.toLong() * other
 
     /** Multiplies this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun times(other: Float): Float =
-    	this.toFloat() * other
+        this.toFloat() * other
 
     /** Multiplies this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun times(other: Double): Double =
-    	this.toDouble() * other
+        this.toDouble() * other
 
     /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun div(other: Byte): Int =
-    	this / other.toInt()
+        this / other.toInt()
 
     /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun div(other: Short): Int =
-    	this / other.toInt()
+        this / other.toInt()
 
     /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     @kotlin.internal.IntrinsicConstEvaluation
@@ -1062,17 +1058,17 @@ public final class Int private constructor() : Number(), Comparable<Int> {
     /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun div(other: Long): Long =
-    	this.toLong() / other
+        this.toLong() / other
 
     /** Divides this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun div(other: Float): Float =
-    	this.toFloat() / other
+        this.toFloat() / other
 
     /** Divides this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun div(other: Double): Double =
-    	this.toDouble() / other
+        this.toDouble() / other
 
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
@@ -1082,7 +1078,7 @@ public final class Int private constructor() : Number(), Comparable<Int> {
     @SinceKotlin("1.1")
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun rem(other: Byte): Int =
-    	this % other.toInt()
+        this % other.toInt()
 
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
@@ -1092,7 +1088,7 @@ public final class Int private constructor() : Number(), Comparable<Int> {
     @SinceKotlin("1.1")
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun rem(other: Short): Int =
-    	this % other.toInt()
+        this % other.toInt()
 
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
@@ -1112,7 +1108,7 @@ public final class Int private constructor() : Number(), Comparable<Int> {
     @SinceKotlin("1.1")
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun rem(other: Long): Long =
-    	this.toLong() % other
+        this.toLong() % other
 
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
@@ -1122,7 +1118,7 @@ public final class Int private constructor() : Number(), Comparable<Int> {
     @SinceKotlin("1.1")
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun rem(other: Float): Float =
-    	this.toFloat() % other
+        this.toFloat() % other
 
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
@@ -1132,7 +1128,7 @@ public final class Int private constructor() : Number(), Comparable<Int> {
     @SinceKotlin("1.1")
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun rem(other: Double): Double =
-    	this.toDouble() % other
+        this.toDouble() % other
 
     /**
      * Returns this value incremented by one.
@@ -1286,9 +1282,9 @@ public final class Int private constructor() : Number(), Comparable<Int> {
      *
      * The resulting `Char` code is represented by the least significant 16 bits of this `Int` value.
      */
+    @Suppress("OVERRIDE_DEPRECATION")
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.INT_TRUNCATE)
-    @Suppress("OVERRIDE_DEPRECATION")
     external public override fun toChar(): Char
 
     /**
@@ -1306,7 +1302,7 @@ public final class Int private constructor() : Number(), Comparable<Int> {
     /** Returns this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public override inline fun toInt(): Int =
-    	this
+        this
 
     /**
      * Converts this [Int] value to [Long].
@@ -1341,19 +1337,17 @@ public final class Int private constructor() : Number(), Comparable<Int> {
     external public override fun toDouble(): Double
 
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun equals(other: Any?): Boolean =
-    	    other is Int && kotlin.native.internal.areEqualByValue(this, other)
-
-    @kotlin.internal.IntrinsicConstEvaluation
     @GCUnsafeCall("Kotlin_Int_toString")
     external public override fun toString(): String
 
     @kotlin.internal.IntrinsicConstEvaluation
+    public override fun equals(other: Any?): Boolean =
+        other is Int && kotlin.native.internal.areEqualByValue(this, other)
+
+    @kotlin.internal.IntrinsicConstEvaluation
     public fun equals(other: Int): Boolean = kotlin.native.internal.areEqualByValue(this, other)
 
-    public override fun hashCode(): Int {
-        return this
-    }
+    public override fun hashCode(): Int = this
 }
 
 /** Represents a 64-bit signed integer. */
@@ -1390,7 +1384,7 @@ public final class Long private constructor() : Number(), Comparable<Long> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun compareTo(other: Byte): Int =
-    	this.compareTo(other.toLong())
+        this.compareTo(other.toLong())
 
     /**
      * Compares this value with the specified value for order.
@@ -1399,7 +1393,7 @@ public final class Long private constructor() : Number(), Comparable<Long> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun compareTo(other: Short): Int =
-    	this.compareTo(other.toLong())
+        this.compareTo(other.toLong())
 
     /**
      * Compares this value with the specified value for order.
@@ -1408,7 +1402,7 @@ public final class Long private constructor() : Number(), Comparable<Long> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun compareTo(other: Int): Int =
-    	this.compareTo(other.toLong())
+        this.compareTo(other.toLong())
 
     /**
      * Compares this value with the specified value for order.
@@ -1426,7 +1420,7 @@ public final class Long private constructor() : Number(), Comparable<Long> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun compareTo(other: Float): Int =
-    	this.toFloat().compareTo(other)
+        this.toFloat().compareTo(other)
 
     /**
      * Compares this value with the specified value for order.
@@ -1435,22 +1429,22 @@ public final class Long private constructor() : Number(), Comparable<Long> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun compareTo(other: Double): Int =
-    	this.toDouble().compareTo(other)
+        this.toDouble().compareTo(other)
 
     /** Adds the other value to this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun plus(other: Byte): Long =
-    	this + other.toLong()
+        this + other.toLong()
 
     /** Adds the other value to this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun plus(other: Short): Long =
-    	this + other.toLong()
+        this + other.toLong()
 
     /** Adds the other value to this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun plus(other: Int): Long =
-    	this + other.toLong()
+        this + other.toLong()
 
     /** Adds the other value to this value. */
     @kotlin.internal.IntrinsicConstEvaluation
@@ -1460,27 +1454,27 @@ public final class Long private constructor() : Number(), Comparable<Long> {
     /** Adds the other value to this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun plus(other: Float): Float =
-    	this.toFloat() + other
+        this.toFloat() + other
 
     /** Adds the other value to this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun plus(other: Double): Double =
-    	this.toDouble() + other
+        this.toDouble() + other
 
     /** Subtracts the other value from this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun minus(other: Byte): Long =
-    	this - other.toLong()
+        this - other.toLong()
 
     /** Subtracts the other value from this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun minus(other: Short): Long =
-    	this - other.toLong()
+        this - other.toLong()
 
     /** Subtracts the other value from this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun minus(other: Int): Long =
-    	this - other.toLong()
+        this - other.toLong()
 
     /** Subtracts the other value from this value. */
     @kotlin.internal.IntrinsicConstEvaluation
@@ -1490,27 +1484,27 @@ public final class Long private constructor() : Number(), Comparable<Long> {
     /** Subtracts the other value from this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun minus(other: Float): Float =
-    	this.toFloat() - other
+        this.toFloat() - other
 
     /** Subtracts the other value from this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun minus(other: Double): Double =
-    	this.toDouble() - other
+        this.toDouble() - other
 
     /** Multiplies this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun times(other: Byte): Long =
-    	this * other.toLong()
+        this * other.toLong()
 
     /** Multiplies this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun times(other: Short): Long =
-    	this * other.toLong()
+        this * other.toLong()
 
     /** Multiplies this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun times(other: Int): Long =
-    	this * other.toLong()
+        this * other.toLong()
 
     /** Multiplies this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
@@ -1520,27 +1514,27 @@ public final class Long private constructor() : Number(), Comparable<Long> {
     /** Multiplies this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun times(other: Float): Float =
-    	this.toFloat() * other
+        this.toFloat() * other
 
     /** Multiplies this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun times(other: Double): Double =
-    	this.toDouble() * other
+        this.toDouble() * other
 
     /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun div(other: Byte): Long =
-    	this / other.toLong()
+        this / other.toLong()
 
     /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun div(other: Short): Long =
-    	this / other.toLong()
+        this / other.toLong()
 
     /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun div(other: Int): Long =
-    	this / other.toLong()
+        this / other.toLong()
 
     /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     @kotlin.internal.IntrinsicConstEvaluation
@@ -1550,12 +1544,12 @@ public final class Long private constructor() : Number(), Comparable<Long> {
     /** Divides this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun div(other: Float): Float =
-    	this.toFloat() / other
+        this.toFloat() / other
 
     /** Divides this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun div(other: Double): Double =
-    	this.toDouble() / other
+        this.toDouble() / other
 
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
@@ -1565,7 +1559,7 @@ public final class Long private constructor() : Number(), Comparable<Long> {
     @SinceKotlin("1.1")
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun rem(other: Byte): Long =
-    	this % other.toLong()
+        this % other.toLong()
 
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
@@ -1575,7 +1569,7 @@ public final class Long private constructor() : Number(), Comparable<Long> {
     @SinceKotlin("1.1")
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun rem(other: Short): Long =
-    	this % other.toLong()
+        this % other.toLong()
 
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
@@ -1585,7 +1579,7 @@ public final class Long private constructor() : Number(), Comparable<Long> {
     @SinceKotlin("1.1")
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun rem(other: Int): Long =
-    	this % other.toLong()
+        this % other.toLong()
 
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
@@ -1605,7 +1599,7 @@ public final class Long private constructor() : Number(), Comparable<Long> {
     @SinceKotlin("1.1")
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun rem(other: Float): Float =
-    	this.toFloat() % other
+        this.toFloat() % other
 
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
@@ -1615,7 +1609,7 @@ public final class Long private constructor() : Number(), Comparable<Long> {
     @SinceKotlin("1.1")
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun rem(other: Double): Double =
-    	this.toDouble() % other
+        this.toDouble() % other
 
     /**
      * Returns this value incremented by one.
@@ -1636,7 +1630,7 @@ public final class Long private constructor() : Number(), Comparable<Long> {
     /** Returns this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun unaryPlus(): Long =
-    	this
+        this
 
     /** Returns the negative of this value. */
     @kotlin.internal.IntrinsicConstEvaluation
@@ -1802,7 +1796,7 @@ public final class Long private constructor() : Number(), Comparable<Long> {
     /** Returns this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public override inline fun toLong(): Long =
-    	this
+        this
 
     /**
      * Converts this [Long] value to [Float].
@@ -1827,19 +1821,17 @@ public final class Long private constructor() : Number(), Comparable<Long> {
     external public override fun toDouble(): Double
 
     @kotlin.internal.IntrinsicConstEvaluation
-    public override fun equals(other: Any?): Boolean =
-    	    other is Long && kotlin.native.internal.areEqualByValue(this, other)
-
-    @kotlin.internal.IntrinsicConstEvaluation
     @GCUnsafeCall("Kotlin_Long_toString")
     external public override fun toString(): String
 
     @kotlin.internal.IntrinsicConstEvaluation
+    public override fun equals(other: Any?): Boolean =
+        other is Long && kotlin.native.internal.areEqualByValue(this, other)
+
+    @kotlin.internal.IntrinsicConstEvaluation
     public fun equals(other: Long): Boolean = kotlin.native.internal.areEqualByValue(this, other)
 
-    public override fun hashCode(): Int {
-        return ((this ushr 32) xor this).toInt()
-    }
+    public override fun hashCode(): Int = ((this ushr 32) xor this).toInt()
 }
 
 /** Represents a single-precision 32-bit IEEE 754 floating point number. */
@@ -1893,7 +1885,7 @@ public final class Float private constructor() : Number(), Comparable<Float> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     public operator fun compareTo(other: Byte): Int =
-    	this.compareTo(other.toFloat())
+        this.compareTo(other.toFloat())
 
     /**
      * Compares this value with the specified value for order.
@@ -1902,7 +1894,7 @@ public final class Float private constructor() : Number(), Comparable<Float> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     public operator fun compareTo(other: Short): Int =
-    	this.compareTo(other.toFloat())
+        this.compareTo(other.toFloat())
 
     /**
      * Compares this value with the specified value for order.
@@ -1911,7 +1903,7 @@ public final class Float private constructor() : Number(), Comparable<Float> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     public operator fun compareTo(other: Int): Int =
-    	this.compareTo(other.toFloat())
+        this.compareTo(other.toFloat())
 
     /**
      * Compares this value with the specified value for order.
@@ -1920,7 +1912,7 @@ public final class Float private constructor() : Number(), Comparable<Float> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     public operator fun compareTo(other: Long): Int =
-    	this.compareTo(other.toFloat())
+        this.compareTo(other.toFloat())
 
     /**
      * Compares this value with the specified value for order.
@@ -1936,7 +1928,7 @@ public final class Float private constructor() : Number(), Comparable<Float> {
         val thisBits = this.toBits()
         val otherBits = other.toBits()
 
-        // Canonical NaN bits representation higher than any other bit represent value
+        // Canonical NaN bit representation is higher than any other value's bit representation
         return thisBits.compareTo(otherBits)
     }
 
@@ -1947,27 +1939,27 @@ public final class Float private constructor() : Number(), Comparable<Float> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     public operator fun compareTo(other: Double): Int =
-    	- other.compareTo(this)
+        -other.compareTo(this)
 
     /** Adds the other value to this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun plus(other: Byte): Float =
-    	this + other.toFloat()
+        this + other.toFloat()
 
     /** Adds the other value to this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun plus(other: Short): Float =
-    	this + other.toFloat()
+        this + other.toFloat()
 
     /** Adds the other value to this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun plus(other: Int): Float =
-    	this + other.toFloat()
+        this + other.toFloat()
 
     /** Adds the other value to this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun plus(other: Long): Float =
-    	this + other.toFloat()
+        this + other.toFloat()
 
     /** Adds the other value to this value. */
     @kotlin.internal.IntrinsicConstEvaluation
@@ -1977,27 +1969,27 @@ public final class Float private constructor() : Number(), Comparable<Float> {
     /** Adds the other value to this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun plus(other: Double): Double =
-    	this.toDouble() + other
+        this.toDouble() + other
 
     /** Subtracts the other value from this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun minus(other: Byte): Float =
-    	this - other.toFloat()
+        this - other.toFloat()
 
     /** Subtracts the other value from this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun minus(other: Short): Float =
-    	this - other.toFloat()
+        this - other.toFloat()
 
     /** Subtracts the other value from this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun minus(other: Int): Float =
-    	this - other.toFloat()
+        this - other.toFloat()
 
     /** Subtracts the other value from this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun minus(other: Long): Float =
-    	this - other.toFloat()
+        this - other.toFloat()
 
     /** Subtracts the other value from this value. */
     @kotlin.internal.IntrinsicConstEvaluation
@@ -2007,27 +1999,27 @@ public final class Float private constructor() : Number(), Comparable<Float> {
     /** Subtracts the other value from this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun minus(other: Double): Double =
-    	this.toDouble() - other
+        this.toDouble() - other
 
     /** Multiplies this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun times(other: Byte): Float =
-    	this * other.toFloat()
+        this * other.toFloat()
 
     /** Multiplies this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun times(other: Short): Float =
-    	this * other.toFloat()
+        this * other.toFloat()
 
     /** Multiplies this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun times(other: Int): Float =
-    	this * other.toFloat()
+        this * other.toFloat()
 
     /** Multiplies this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun times(other: Long): Float =
-    	this * other.toFloat()
+        this * other.toFloat()
 
     /** Multiplies this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
@@ -2037,27 +2029,27 @@ public final class Float private constructor() : Number(), Comparable<Float> {
     /** Multiplies this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun times(other: Double): Double =
-    	this.toDouble() * other
+        this.toDouble() * other
 
     /** Divides this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun div(other: Byte): Float =
-    	this / other.toFloat()
+        this / other.toFloat()
 
     /** Divides this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun div(other: Short): Float =
-    	this / other.toFloat()
+        this / other.toFloat()
 
     /** Divides this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun div(other: Int): Float =
-    	this / other.toFloat()
+        this / other.toFloat()
 
     /** Divides this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun div(other: Long): Float =
-    	this / other.toFloat()
+        this / other.toFloat()
 
     /** Divides this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
@@ -2067,7 +2059,7 @@ public final class Float private constructor() : Number(), Comparable<Float> {
     /** Divides this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun div(other: Double): Double =
-    	this.toDouble() / other
+        this.toDouble() / other
 
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
@@ -2077,7 +2069,7 @@ public final class Float private constructor() : Number(), Comparable<Float> {
     @SinceKotlin("1.1")
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun rem(other: Byte): Float =
-    	this % other.toFloat()
+        this % other.toFloat()
 
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
@@ -2087,7 +2079,7 @@ public final class Float private constructor() : Number(), Comparable<Float> {
     @SinceKotlin("1.1")
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun rem(other: Short): Float =
-    	this % other.toFloat()
+        this % other.toFloat()
 
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
@@ -2097,7 +2089,7 @@ public final class Float private constructor() : Number(), Comparable<Float> {
     @SinceKotlin("1.1")
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun rem(other: Int): Float =
-    	this % other.toFloat()
+        this % other.toFloat()
 
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
@@ -2107,7 +2099,7 @@ public final class Float private constructor() : Number(), Comparable<Float> {
     @SinceKotlin("1.1")
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun rem(other: Long): Float =
-    	this % other.toFloat()
+        this % other.toFloat()
 
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
@@ -2127,7 +2119,7 @@ public final class Float private constructor() : Number(), Comparable<Float> {
     @SinceKotlin("1.1")
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun rem(other: Double): Double =
-    	this.toDouble() % other
+        this.toDouble() % other
 
     /**
      * Returns this value incremented by one.
@@ -2210,7 +2202,7 @@ public final class Float private constructor() : Number(), Comparable<Float> {
     /** Returns this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public override inline fun toFloat(): Float =
-    	this
+        this
 
     /**
      * Converts this [Float] value to [Double].
@@ -2220,10 +2212,6 @@ public final class Float private constructor() : Number(), Comparable<Float> {
     @kotlin.internal.IntrinsicConstEvaluation
     @TypedIntrinsic(IntrinsicType.FLOAT_EXTEND)
     external public override fun toDouble(): Double
-
-    @kotlin.internal.IntrinsicConstEvaluation
-    public override fun equals(other: Any?): Boolean =
-    	    other is Float && this.equals(other)
 
     /**
      * Returns the string representation of this [Float] value.
@@ -2235,6 +2223,10 @@ public final class Float private constructor() : Number(), Comparable<Float> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     public override fun toString(): String = NumberConverter.convert(this)
+
+    @kotlin.internal.IntrinsicConstEvaluation
+    public override fun equals(other: Any?): Boolean =
+        other is Float && this.equals(other)
 
     @kotlin.internal.IntrinsicConstEvaluation
     public fun equals(other: Float): Boolean = toBits() == other.toBits()
@@ -2297,7 +2289,7 @@ public final class Double private constructor() : Number(), Comparable<Double> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     public operator fun compareTo(other: Byte): Int =
-    	this.compareTo(other.toDouble())
+        this.compareTo(other.toDouble())
 
     /**
      * Compares this value with the specified value for order.
@@ -2306,7 +2298,7 @@ public final class Double private constructor() : Number(), Comparable<Double> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     public operator fun compareTo(other: Short): Int =
-    	this.compareTo(other.toDouble())
+        this.compareTo(other.toDouble())
 
     /**
      * Compares this value with the specified value for order.
@@ -2315,7 +2307,7 @@ public final class Double private constructor() : Number(), Comparable<Double> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     public operator fun compareTo(other: Int): Int =
-    	this.compareTo(other.toDouble())
+        this.compareTo(other.toDouble())
 
     /**
      * Compares this value with the specified value for order.
@@ -2324,7 +2316,7 @@ public final class Double private constructor() : Number(), Comparable<Double> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     public operator fun compareTo(other: Long): Int =
-    	this.compareTo(other.toDouble())
+        this.compareTo(other.toDouble())
 
     /**
      * Compares this value with the specified value for order.
@@ -2333,7 +2325,7 @@ public final class Double private constructor() : Number(), Comparable<Double> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     public operator fun compareTo(other: Float): Int =
-    	this.compareTo(other.toDouble())
+        this.compareTo(other.toDouble())
 
     /**
      * Compares this value with the specified value for order.
@@ -2349,34 +2341,34 @@ public final class Double private constructor() : Number(), Comparable<Double> {
         val thisBits = this.toBits()
         val otherBits = other.toBits()
 
-        // Canonical NaN bits representation higher than any other bit represent value
+        // Canonical NaN bit representation is higher than any other value's bit representation
         return thisBits.compareTo(otherBits)
     }
 
     /** Adds the other value to this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun plus(other: Byte): Double =
-    	this + other.toDouble()
+        this + other.toDouble()
 
     /** Adds the other value to this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun plus(other: Short): Double =
-    	this + other.toDouble()
+        this + other.toDouble()
 
     /** Adds the other value to this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun plus(other: Int): Double =
-    	this + other.toDouble()
+        this + other.toDouble()
 
     /** Adds the other value to this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun plus(other: Long): Double =
-    	this + other.toDouble()
+        this + other.toDouble()
 
     /** Adds the other value to this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun plus(other: Float): Double =
-    	this + other.toDouble()
+        this + other.toDouble()
 
     /** Adds the other value to this value. */
     @kotlin.internal.IntrinsicConstEvaluation
@@ -2386,27 +2378,27 @@ public final class Double private constructor() : Number(), Comparable<Double> {
     /** Subtracts the other value from this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun minus(other: Byte): Double =
-    	this - other.toDouble()
+        this - other.toDouble()
 
     /** Subtracts the other value from this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun minus(other: Short): Double =
-    	this - other.toDouble()
+        this - other.toDouble()
 
     /** Subtracts the other value from this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun minus(other: Int): Double =
-    	this - other.toDouble()
+        this - other.toDouble()
 
     /** Subtracts the other value from this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun minus(other: Long): Double =
-    	this - other.toDouble()
+        this - other.toDouble()
 
     /** Subtracts the other value from this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun minus(other: Float): Double =
-    	this - other.toDouble()
+        this - other.toDouble()
 
     /** Subtracts the other value from this value. */
     @kotlin.internal.IntrinsicConstEvaluation
@@ -2416,27 +2408,27 @@ public final class Double private constructor() : Number(), Comparable<Double> {
     /** Multiplies this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun times(other: Byte): Double =
-    	this * other.toDouble()
+        this * other.toDouble()
 
     /** Multiplies this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun times(other: Short): Double =
-    	this * other.toDouble()
+        this * other.toDouble()
 
     /** Multiplies this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun times(other: Int): Double =
-    	this * other.toDouble()
+        this * other.toDouble()
 
     /** Multiplies this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun times(other: Long): Double =
-    	this * other.toDouble()
+        this * other.toDouble()
 
     /** Multiplies this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun times(other: Float): Double =
-    	this * other.toDouble()
+        this * other.toDouble()
 
     /** Multiplies this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
@@ -2446,27 +2438,27 @@ public final class Double private constructor() : Number(), Comparable<Double> {
     /** Divides this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun div(other: Byte): Double =
-    	this / other.toDouble()
+        this / other.toDouble()
 
     /** Divides this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun div(other: Short): Double =
-    	this / other.toDouble()
+        this / other.toDouble()
 
     /** Divides this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun div(other: Int): Double =
-    	this / other.toDouble()
+        this / other.toDouble()
 
     /** Divides this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun div(other: Long): Double =
-    	this / other.toDouble()
+        this / other.toDouble()
 
     /** Divides this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun div(other: Float): Double =
-    	this / other.toDouble()
+        this / other.toDouble()
 
     /** Divides this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
@@ -2481,7 +2473,7 @@ public final class Double private constructor() : Number(), Comparable<Double> {
     @SinceKotlin("1.1")
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun rem(other: Byte): Double =
-    	this % other.toDouble()
+        this % other.toDouble()
 
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
@@ -2491,7 +2483,7 @@ public final class Double private constructor() : Number(), Comparable<Double> {
     @SinceKotlin("1.1")
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun rem(other: Short): Double =
-    	this % other.toDouble()
+        this % other.toDouble()
 
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
@@ -2501,7 +2493,7 @@ public final class Double private constructor() : Number(), Comparable<Double> {
     @SinceKotlin("1.1")
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun rem(other: Int): Double =
-    	this % other.toDouble()
+        this % other.toDouble()
 
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
@@ -2511,7 +2503,7 @@ public final class Double private constructor() : Number(), Comparable<Double> {
     @SinceKotlin("1.1")
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun rem(other: Long): Double =
-    	this % other.toDouble()
+        this % other.toDouble()
 
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
@@ -2521,7 +2513,7 @@ public final class Double private constructor() : Number(), Comparable<Double> {
     @SinceKotlin("1.1")
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun rem(other: Float): Double =
-    	this % other.toDouble()
+        this % other.toDouble()
 
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
@@ -2625,11 +2617,7 @@ public final class Double private constructor() : Number(), Comparable<Double> {
     /** Returns this value. */
     @kotlin.internal.IntrinsicConstEvaluation
     public override inline fun toDouble(): Double =
-    	this
-
-    @kotlin.internal.IntrinsicConstEvaluation
-    public override fun equals(other: Any?): Boolean =
-    	    other is Double && this.equals(other)
+        this
 
     /**
      * Returns the string representation of this [Double] value.
@@ -2641,6 +2629,10 @@ public final class Double private constructor() : Number(), Comparable<Double> {
      */
     @kotlin.internal.IntrinsicConstEvaluation
     public override fun toString(): String = NumberConverter.convert(this)
+
+    @kotlin.internal.IntrinsicConstEvaluation
+    public override fun equals(other: Any?): Boolean =
+        other is Double && this.equals(other)
 
     @kotlin.internal.IntrinsicConstEvaluation
     public fun equals(other: Double): Boolean = toBits() == other.toBits()

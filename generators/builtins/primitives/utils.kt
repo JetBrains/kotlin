@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.generators.builtins.numbers.primitives
 
 import org.jetbrains.kotlin.generators.builtins.PrimitiveType
 
+internal const val END_LINE = "\n"
+
 internal fun PrimitiveType.castToIfNecessary(otherType: PrimitiveType): String {
     if (this !in PrimitiveType.onlyNumeric || otherType !in PrimitiveType.onlyNumeric) {
         throw IllegalArgumentException("Cannot cast to non-numeric type")
@@ -21,13 +23,17 @@ internal fun PrimitiveType.castToIfNecessary(otherType: PrimitiveType): String {
     return ""
 }
 
-internal fun String.asSign(): String {
-    return when (this) {
+internal fun operatorSign(methodName: String): String {
+    return when (methodName) {
         "plus" -> "+"
         "minus" -> "-"
         "times" -> "*"
         "div" -> "/"
         "rem" -> "%"
-        else -> throw IllegalArgumentException("Unsupported binary operation: ${this}")
+        else -> throw IllegalArgumentException("Unsupported binary operation: ${methodName}")
     }
+}
+
+internal fun String.toPrimitiveType(): PrimitiveType {
+    return PrimitiveType.valueOf(this.uppercase())
 }
