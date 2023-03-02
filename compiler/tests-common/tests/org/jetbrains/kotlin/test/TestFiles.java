@@ -23,6 +23,9 @@ public class TestFiles {
      * Syntax:
      *
      * // MODULE: name(dependency1, dependency2, ...)
+     * // MODULE: name(dependency1, dependency2, ...)(friend1, friend2, ...)
+     * // MODULE: name(dependency1, dependency2, ...)(friend1, friend2, ...)(abiversion1, abiversion2, ...)
+     * //   dependency list and/or friend list may be empty
      *
      * // FILE: name
      *
@@ -30,7 +33,8 @@ public class TestFiles {
      */
     private static final String MODULE_DELIMITER = ",\\s*";
 
-    private static final Pattern MODULE_PATTERN = Pattern.compile("//\\s*MODULE:\\s*([^()\\n]+)(?:\\(([^()]+(?:" + MODULE_DELIMITER + "[^()]+)*)\\))?\\s*(?:\\(([^()]+(?:" + MODULE_DELIMITER + "[^()]+)*)\\))?\\s*(?:\\((\\d+(?:" + MODULE_DELIMITER + "\\d+)*)\\))?\n");
+    private static final Pattern MODULE_PATTERN = Pattern.compile("//\\s*MODULE:\\s*([^()\\n]+)(?:\\(([^()]*(?:" + MODULE_DELIMITER + "[^()]+)*)\\))?\\s*(?:\\(([^()]*(?:" + MODULE_DELIMITER + "[^()]+)*)\\))?\\s*(?:\\((\\d+(?:" + MODULE_DELIMITER + "\\d+)*)\\))?\n");
+    private static final Pattern MODULE_PREFIX_PATTERN = Pattern.compile("//\\s*MODULE:(.*)\n");
     private static final Pattern FILE_PATTERN = Pattern.compile("//\\s*FILE:\\s*(.*)\n");
 
     private static final Pattern LINE_SEPARATOR_PATTERN = Pattern.compile("\\r\\n|\\r|\\n");
@@ -53,11 +57,14 @@ public class TestFiles {
         List<F> testFiles = Lists.newArrayList();
         Matcher fileMatcher = FILE_PATTERN.matcher(expectedText);
         Matcher moduleMatcher = MODULE_PATTERN.matcher(expectedText);
+        Matcher modulePrefixMatcher = MODULE_PREFIX_PATTERN.matcher(expectedText);
         boolean hasModules = false;
         String commonPrefixOrWholeFile;
 
         boolean fileFound = fileMatcher.find();
         boolean moduleFound = moduleMatcher.find();
+        boolean shortModuleFound = modulePrefixMatcher.find();
+        assert moduleFound == shortModuleFound : "First MODULE directive doesn't match to the expected pattern in:\n" + expectedText;
         if (!fileFound && !moduleFound) {
             assert testFileName != null : "testFileName should not be null if no FILE directive defined";
             // One file
@@ -96,6 +103,9 @@ public class TestFiles {
                 }
 
                 boolean nextModuleExists = moduleMatcher.find();
+                boolean nextModulePrefixExists = modulePrefixMatcher.find();
+                assert nextModuleExists == nextModulePrefixExists : "Continuation MODULE directive doesn't match to the expected pattern in:\n" + expectedText;
+
                 moduleFound = nextModuleExists;
                 while (true) {
                     String fileName = fileMatcher.group(1);
@@ -193,7 +203,7 @@ public class TestFiles {
     }
 
     private static List<String> parseModuleList(@Nullable String dependencies) {
-        if (dependencies == null) return Collections.emptyList();
+        if (dependencies == null || dependencies.trim().isEmpty()) return Collections.emptyList();
         return kotlin.text.StringsKt.split(dependencies, Pattern.compile(MODULE_DELIMITER), 0);
     }
 
