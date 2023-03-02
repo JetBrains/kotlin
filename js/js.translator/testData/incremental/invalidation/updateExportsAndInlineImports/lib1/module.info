@@ -31,7 +31,7 @@ STEP 6:
     modified ir: l1a.kt
 STEP 7:
     updated exports: l1a.kt, l1b.kt, l1c.kt
-STEP 6:
+STEP 8:
     modifications:
         U : l1a.8.kt -> l1a.kt
         U : l1b.8.kt -> l1b.kt
