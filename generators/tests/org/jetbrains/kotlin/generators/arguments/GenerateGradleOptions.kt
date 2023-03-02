@@ -753,7 +753,7 @@ private fun Printer.generateDoc(property: KProperty1<*, *>) {
     val defaultValue = property.gradleDefaultValue
 
     println("/**")
-    println(" * $description")
+    println(" * ${description.replace("\n", " ")}")
     if (possibleValues != null) {
         println(" * Possible values: ${possibleValues.joinToString()}")
     }

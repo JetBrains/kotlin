@@ -85,6 +85,10 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
             field = if (value.isNullOrEmpty()) null else value
         }
 
+    @GradleOption(
+        value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
+        gradleInputType = GradleInputTypes.INPUT
+    )
     @Argument(
         value = "-progressive",
         deprecatedName = "-Xprogressive",

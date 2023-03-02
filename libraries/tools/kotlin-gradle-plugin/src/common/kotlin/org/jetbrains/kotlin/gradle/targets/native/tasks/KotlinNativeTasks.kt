@@ -197,7 +197,9 @@ abstract class AbstractKotlinNativeCompile<
         compilation.languageSettings
     }
 
-    @get:Input
+    @Suppress("DeprecatedCallableAddReplaceWith")
+    @get:Deprecated("Replaced with 'compilerOptions.progressiveMode'")
+    @get:Internal
     val progressiveMode: Boolean
         get() = languageSettings.progressiveMode
     // endregion.

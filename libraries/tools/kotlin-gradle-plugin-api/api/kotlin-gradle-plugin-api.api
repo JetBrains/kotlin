@@ -166,6 +166,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinCommonComp
 	public abstract fun getApiVersion ()Lorg/gradle/api/provider/Property;
 	public abstract fun getLanguageVersion ()Lorg/gradle/api/provider/Property;
 	public abstract fun getOptIn ()Lorg/gradle/api/provider/ListProperty;
+	public abstract fun getProgressiveMode ()Lorg/gradle/api/provider/Property;
 	public abstract fun getUseK2 ()Lorg/gradle/api/provider/Property;
 }
 

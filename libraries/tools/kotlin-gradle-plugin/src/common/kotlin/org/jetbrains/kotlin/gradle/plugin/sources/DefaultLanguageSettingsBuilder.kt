@@ -106,13 +106,10 @@ internal fun applyLanguageSettingsToCompilerOptions(
 ) = with(compilerOptions) {
     languageVersion.convention(languageSettingsBuilder.languageVersion?.let { KotlinVersion.fromVersion(it) })
     apiVersion.convention(languageSettingsBuilder.apiVersion?.let { KotlinVersion.fromVersion(it) })
+    progressiveMode.convention(languageSettingsBuilder.progressiveMode)
     optIn.addAll(languageSettingsBuilder.optInAnnotationsInUse)
 
     val freeArgs = mutableListOf<String>().apply {
-        if (languageSettingsBuilder.progressiveMode) {
-            add("-progressive")
-        }
-
         languageSettingsBuilder.enabledLanguageFeatures.forEach { featureName ->
             add("-XXLanguage:+$featureName")
         }
