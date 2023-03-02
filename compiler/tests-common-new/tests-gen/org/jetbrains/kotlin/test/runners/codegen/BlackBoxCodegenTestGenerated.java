@@ -3136,6 +3136,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("referenceToGenericSyntheticProperty.kt")
+        public void testReferenceToGenericSyntheticProperty() throws Exception {
+            runTest("compiler/testData/codegen/box/callableReference/referenceToGenericSyntheticProperty.kt");
+        }
+
+        @Test
         @TestMetadata("staticMethod.kt")
         public void testStaticMethod() throws Exception {
             runTest("compiler/testData/codegen/box/callableReference/staticMethod.kt");

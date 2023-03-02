@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.scopes.*
@@ -124,20 +125,13 @@ class FirSyntheticPropertiesScope private constructor(
             })
         }
 
-        val classLookupTag = getterSymbol.originalOrSelf().dispatchReceiverClassLookupTagOrNull()
-        val packageName = classLookupTag?.classId?.packageFqName ?: getterSymbol.callableId.packageName
-        val className = classLookupTag?.classId?.relativeClassName
-
-        val property = buildSyntheticProperty {
-            moduleData = session.moduleData
-            name = propertyName
-            symbol = FirSimpleSyntheticPropertySymbol(
-                getterId = getterSymbol.callableId,
-                propertyId = CallableId(packageName, className, propertyName)
+        val property = buildSyntheticProperty(propertyName, getter, matchingSetter)
+        getter.originalForSubstitutionOverride?.let {
+            property.originalForSubstitutionOverrideAttr = buildSyntheticProperty(
+                propertyName,
+                it,
+                matchingSetter?.originalForSubstitutionOverride
             )
-            delegateGetter = getter
-            delegateSetter = matchingSetter
-            deprecationsProvider = getDeprecationsProviderFromAccessors(session, getter, matchingSetter)
         }
         val syntheticSymbol = property.symbol
         (baseScope as? FirUnstableSmartcastTypeScope)?.apply {
@@ -146,6 +140,24 @@ class FirSyntheticPropertiesScope private constructor(
             }
         }
         processor(syntheticSymbol)
+    }
+
+    private fun buildSyntheticProperty(propertyName: Name, getter: FirSimpleFunction, setter: FirSimpleFunction?): FirSyntheticProperty {
+        val classLookupTag = getter.symbol.originalOrSelf().dispatchReceiverClassLookupTagOrNull()
+        val packageName = classLookupTag?.classId?.packageFqName ?: getter.symbol.callableId.packageName
+        val className = classLookupTag?.classId?.relativeClassName
+
+        return buildSyntheticProperty {
+            moduleData = session.moduleData
+            name = propertyName
+            symbol = FirSimpleSyntheticPropertySymbol(
+                getterId = getter.symbol.callableId,
+                propertyId = CallableId(packageName, className, propertyName)
+            )
+            delegateGetter = getter
+            delegateSetter = setter
+            deprecationsProvider = getDeprecationsProviderFromAccessors(session, getter, setter)
+        }
     }
 
     private fun setterTypeIsConsistentWithGetterType(

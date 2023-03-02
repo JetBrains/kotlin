@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
+import org.jetbrains.kotlin.fir.declarations.utils.isSynthetic
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
@@ -63,7 +64,7 @@ val FirCallableSymbol<*>.isSubstitutionOverride: Boolean get() = origin == FirDe
 val FirCallableSymbol<*>.isSubstitutionOrIntersectionOverride: Boolean get() = isSubstitutionOverride || isIntersectionOverride
 
 inline val <reified D : FirCallableDeclaration> D.originalForSubstitutionOverride: D?
-    get() = if (isSubstitutionOverride) originalForSubstitutionOverrideAttr else null
+    get() = if (isSubstitutionOverride || isSynthetic) originalForSubstitutionOverrideAttr else null
 
 inline val <reified S : FirCallableSymbol<*>> S.originalForSubstitutionOverride: S?
     get() = fir.originalForSubstitutionOverride?.symbol as S?

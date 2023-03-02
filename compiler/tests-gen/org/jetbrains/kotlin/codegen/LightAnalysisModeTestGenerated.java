@@ -2743,6 +2743,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/callableReference/publicMutableField.kt");
         }
 
+        @TestMetadata("referenceToGenericSyntheticProperty.kt")
+        public void testReferenceToGenericSyntheticProperty() throws Exception {
+            runTest("compiler/testData/codegen/box/callableReference/referenceToGenericSyntheticProperty.kt");
+        }
+
         @TestMetadata("staticMethod.kt")
         public void testStaticMethod() throws Exception {
             runTest("compiler/testData/codegen/box/callableReference/staticMethod.kt");
