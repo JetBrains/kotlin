@@ -43521,6 +43521,100 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
                     }
                 }
             }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/reflection/call/valueClasses")
+            @TestDataPath("$PROJECT_ROOT")
+            public class ValueClasses {
+                @Test
+                public void testAllFilesPresentInValueClasses() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/call/valueClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+                }
+
+                @Test
+                @TestMetadata("constructorWithMfvcParameters.kt")
+                public void testConstructorWithMfvcParameters() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/call/valueClasses/constructorWithMfvcParameters.kt");
+                }
+
+                @Test
+                @TestMetadata("fieldAccessors.kt")
+                public void testFieldAccessors() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/call/valueClasses/fieldAccessors.kt");
+                }
+
+                @Test
+                @TestMetadata("functionsWithMfvcParameters.kt")
+                public void testFunctionsWithMfvcParameters() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/call/valueClasses/functionsWithMfvcParameters.kt");
+                }
+
+                @Test
+                @TestMetadata("internalPrimaryValOfMfvc.kt")
+                public void testInternalPrimaryValOfMfvc() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/call/valueClasses/internalPrimaryValOfMfvc.kt");
+                }
+
+                @Test
+                @TestMetadata("jvmStaticFieldInObject.kt")
+                public void testJvmStaticFieldInObject() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/call/valueClasses/jvmStaticFieldInObject.kt");
+                }
+
+                @Test
+                @TestMetadata("jvmStaticFunction.kt")
+                public void testJvmStaticFunction() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/call/valueClasses/jvmStaticFunction.kt");
+                }
+
+                @Test
+                @TestMetadata("mfvcConstructor.kt")
+                public void testMfvcConstructor() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/call/valueClasses/mfvcConstructor.kt");
+                }
+
+                @Test
+                @TestMetadata("nonOverridingFunOfMfvc.kt")
+                public void testNonOverridingFunOfMfvc() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/call/valueClasses/nonOverridingFunOfMfvc.kt");
+                }
+
+                @Test
+                @TestMetadata("nonOverridingVarOfMfvc.kt")
+                public void testNonOverridingVarOfMfvc() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/call/valueClasses/nonOverridingVarOfMfvc.kt");
+                }
+
+                @Test
+                @TestMetadata("overridingFunOfMfvc.kt")
+                public void testOverridingFunOfMfvc() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/call/valueClasses/overridingFunOfMfvc.kt");
+                }
+
+                @Test
+                @TestMetadata("overridingVarOfMfvc.kt")
+                public void testOverridingVarOfMfvc() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/call/valueClasses/overridingVarOfMfvc.kt");
+                }
+
+                @Test
+                @TestMetadata("primaryValOfMfvc.kt")
+                public void testPrimaryValOfMfvc() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/call/valueClasses/primaryValOfMfvc.kt");
+                }
+
+                @Test
+                @TestMetadata("properties.kt")
+                public void testProperties() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/call/valueClasses/properties.kt");
+                }
+
+                @Test
+                @TestMetadata("suspendFunction.kt")
+                public void testSuspendFunction() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/call/valueClasses/suspendFunction.kt");
+                }
+            }
         }
 
         @Nested
@@ -43638,6 +43732,24 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
             @TestMetadata("manyMaskArguments.kt")
             public void testManyMaskArguments() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/callBy/manyMaskArguments.kt");
+            }
+
+            @Test
+            @TestMetadata("mfvcDefaultArguments.kt")
+            public void testMfvcDefaultArguments() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/callBy/mfvcDefaultArguments.kt");
+            }
+
+            @Test
+            @TestMetadata("mfvcFunctionsAndConstructors.kt")
+            public void testMfvcFunctionsAndConstructors() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/callBy/mfvcFunctionsAndConstructors.kt");
+            }
+
+            @Test
+            @TestMetadata("mfvcMembers.kt")
+            public void testMfvcMembers() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/callBy/mfvcMembers.kt");
             }
 
             @Test
@@ -44485,6 +44597,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
             }
 
             @Test
+            @TestMetadata("reflectOnDefaultWithMfvcArgument.kt")
+            public void testReflectOnDefaultWithMfvcArgument() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/lambdaClasses/reflectOnDefaultWithMfvcArgument.kt");
+            }
+
+            @Test
             @TestMetadata("reflectOnLambdaInArrayConstructor.kt")
             public void testReflectOnLambdaInArrayConstructor() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/lambdaClasses/reflectOnLambdaInArrayConstructor.kt");
@@ -44552,6 +44670,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
             @TestMetadata("constructorWithInlineClassParameters.kt")
             public void testConstructorWithInlineClassParameters() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/mapping/constructorWithInlineClassParameters.kt");
+            }
+
+            @Test
+            @TestMetadata("constructorWithMfvcParameters.kt")
+            public void testConstructorWithMfvcParameters() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/mapping/constructorWithMfvcParameters.kt");
             }
 
             @Test
@@ -44816,6 +44940,18 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
                 }
 
                 @Test
+                @TestMetadata("mfvcInSignature.kt")
+                public void testMfvcInSignature() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/mapping/types/mfvcInSignature.kt");
+                }
+
+                @Test
+                @TestMetadata("mfvcPrimaryVal.kt")
+                public void testMfvcPrimaryVal() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/mapping/types/mfvcPrimaryVal.kt");
+                }
+
+                @Test
                 @TestMetadata("overrideAnyWithPrimitive.kt")
                 public void testOverrideAnyWithPrimitive() throws Exception {
                     runTest("compiler/testData/codegen/box/reflection/mapping/types/overrideAnyWithPrimitive.kt");
@@ -44879,6 +45015,28 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
                 @TestMetadata("withNullability.kt")
                 public void testWithNullability() throws Exception {
                     runTest("compiler/testData/codegen/box/reflection/mapping/types/withNullability.kt");
+                }
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/reflection/mapping/valueClasses")
+            @TestDataPath("$PROJECT_ROOT")
+            public class ValueClasses {
+                @Test
+                public void testAllFilesPresentInValueClasses() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/mapping/valueClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+                }
+
+                @Test
+                @TestMetadata("mfvcPrimaryVal.kt")
+                public void testMfvcPrimaryVal() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/mapping/valueClasses/mfvcPrimaryVal.kt");
+                }
+
+                @Test
+                @TestMetadata("suspendFunctionWithMfvcInSignature.kt")
+                public void testSuspendFunctionWithMfvcInSignature() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/mapping/valueClasses/suspendFunctionWithMfvcInSignature.kt");
                 }
             }
         }
@@ -45092,6 +45250,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
             @TestMetadata("javaVisibility.kt")
             public void testJavaVisibility() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/modifiers/javaVisibility.kt");
+            }
+
+            @Test
+            @TestMetadata("mfvc.kt")
+            public void testMfvc() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/modifiers/mfvc.kt");
             }
 
             @Test
@@ -45905,6 +46069,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
             }
 
             @Test
+            @TestMetadata("mfvc.kt")
+            public void testMfvc() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/typeOf/mfvc.kt");
+            }
+
+            @Test
             @TestMetadata("multipleLayers.kt")
             public void testMultipleLayers() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/typeOf/multipleLayers.kt");
@@ -46011,6 +46181,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
                 @TestMetadata("inlineClasses.kt")
                 public void testInlineClasses() throws Exception {
                     runTest("compiler/testData/codegen/box/reflection/typeOf/noReflect/inlineClasses.kt");
+                }
+
+                @Test
+                @TestMetadata("mfvc.kt")
+                public void testMfvc() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/typeOf/noReflect/mfvc.kt");
                 }
 
                 @Test

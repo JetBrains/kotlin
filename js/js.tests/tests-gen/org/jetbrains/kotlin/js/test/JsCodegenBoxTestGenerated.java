@@ -31931,6 +31931,16 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     }
                 }
             }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/reflection/call/valueClasses")
+            @TestDataPath("$PROJECT_ROOT")
+            public class ValueClasses {
+                @Test
+                public void testAllFilesPresentInValueClasses() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/call/valueClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
+                }
+            }
         }
 
         @Nested
@@ -32389,6 +32399,16 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 @Test
                 public void testAllFilesPresentInTypes() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/mapping/types"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
+                }
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/reflection/mapping/valueClasses")
+            @TestDataPath("$PROJECT_ROOT")
+            public class ValueClasses {
+                @Test
+                public void testAllFilesPresentInValueClasses() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/mapping/valueClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
                 }
             }
         }

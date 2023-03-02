@@ -105,15 +105,14 @@ internal class JvmMultiFieldValueClassLowering(
             return expressions.subList(0, expressions.size - repeatable.size) to repeatable
         }
 
-        private fun IrBuilderWithScope.castedToNotNull(expression: IrExpression) =
-            if (expression.type.isNullable()) irImplicitCast(expression, expression.type.makeNotNull()) else expression
-
         fun IrBlockBuilder.addReplacement(expression: IrSetValue, safe: Boolean): IrExpression? {
             oldValueSymbol2NewValueSymbol[expression.symbol]?.let {
                 return irSet(it.owner, expression.value).also { irSet -> +irSet }
             }
             val instance = oldSymbol2MfvcNodeInstance[expression.symbol] ?: return null
-            val values: List<IrExpression> = makeFlattenedExpressionsWithGivenSafety(instance.node, safe, castedToNotNull(expression.value))
+            val values: List<IrExpression> = makeFlattenedExpressionsWithGivenSafety(
+                instance.node, safe, castExpressionToNotNullTypeIfNeeded(expression.value, instance.type)
+            )
             val setterExpressions = instance.makeSetterExpressions(this, values)
             expression2MfvcNodeInstanceAccessor[setterExpressions] = MfvcNodeInstanceAccessor.Setter(instance, values)
             +setterExpressions
@@ -166,7 +165,9 @@ internal class JvmMultiFieldValueClassLowering(
                 accessType = AccessType.AlwaysPrivate,
                 saveVariable = ::variablesSaver
             )
-            val values: List<IrExpression> = makeFlattenedExpressionsWithGivenSafety(node, safe, castedToNotNull(expression.value))
+            val values: List<IrExpression> = makeFlattenedExpressionsWithGivenSafety(
+                node, safe, castExpressionToNotNullTypeIfNeeded(expression.value, node.type)
+            )
             val setterExpressions = instance.makeSetterExpressions(this, values)
             expression2MfvcNodeInstanceAccessor[setterExpressions] = MfvcNodeInstanceAccessor.Setter(instance, values)
             +setterExpressions
@@ -318,6 +319,12 @@ internal class JvmMultiFieldValueClassLowering(
                 if (replacingDeclaration in possibleExtraBoxUsageGenerated) removeAllExtraBoxes()
             } as IrBlockBody
 
+            is IrField -> replacingDeclaration.initializer = replacingDeclaration.initializer?.makeBodyWithAddedVariables(
+                context, variablesToAdd[replacingDeclaration] ?: emptySet(), replacingDeclaration.symbol
+            )?.apply {
+                if (replacingDeclaration in possibleExtraBoxUsageGenerated) removeAllExtraBoxes()
+            } as IrExpressionBody?
+
             else -> Unit
         }
     }
@@ -326,13 +333,15 @@ internal class JvmMultiFieldValueClassLowering(
         irClass.primaryConstructor?.let {
             replacements.getReplacementForRegularClassConstructor(it)?.let { replacement -> addBindingsFor(it, replacement) }
         }
-        val propertiesOrFields = collectPropertiesOrFieldsAfterLowering(irClass)
-        val oldBackingFields = propertiesOrFields.mapNotNull { propertyOrField ->
-            val property = (propertyOrField as? IrPropertyOrIrField.Property)?.property ?: return@mapNotNull null
-            property.backingField?.let { property to it }
-        }.toMap()
-        val propertiesOrFieldsReplacement =
-            collectRegularClassMfvcPropertiesOrFieldsReplacement(propertiesOrFields) // resets backing fields
+        val propertiesOrFields = collectPropertiesOrFieldsAfterLowering(irClass, context)
+        val oldBackingFields = buildMap {
+            for (propertyOrField in propertiesOrFields) {
+                val property = (propertyOrField as? IrPropertyOrIrField.Property)?.property ?: continue
+                val field = property.backingField ?: continue
+                put(property, field)
+            }
+        }
+        val propertiesOrFieldsReplacement = collectRegularClassMfvcPropertiesOrFieldsReplacement(propertiesOrFields)
 
         val fieldsToRemove = propertiesOrFieldsReplacement.keys.mapNotNull {
             when (it) {
@@ -390,12 +399,15 @@ internal class JvmMultiFieldValueClassLowering(
         context.irFactory.createAnonymousInitializer(
             startOffset = UNDEFINED_OFFSET,
             endOffset = UNDEFINED_OFFSET, origin = IrDeclarationOrigin.GENERATED_MULTI_FIELD_VALUE_CLASS_MEMBER,
-            symbol = IrAnonymousInitializerSymbolImpl()
+            symbol = IrAnonymousInitializerSymbolImpl(),
+            isStatic = element.isStatic,
         ).apply {
             parent = irClass
             body = context.createJvmIrBuilder(symbol).irBlockBody {
                 +irSetField(
-                    irClass.thisReceiver!!.takeUnless { element.isStatic }?.let { irGet(it) }, element, initializer.expression,
+                    receiver = irClass.thisReceiver!!.takeUnless { element.isStatic }?.let { irGet(it) },
+                    field = element,
+                    value = initializer.expression.patchDeclarationParents(irClass),
                     origin = UNSAFE_MFVC_SET_ORIGIN
                 )
             }
@@ -800,18 +812,18 @@ internal class JvmMultiFieldValueClassLowering(
     }
 
     override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
-        val originalFunction = expression.symbol.owner
-        if (originalFunction.getReplacement() == null) return super.visitFunctionReference(expression)
-        return makeNewLambda(originalFunction, expression, makeBody = { wrapper ->
-            with(context.createJvmIrBuilder(wrapper.symbol)) {
-                irExprBody(irCall(originalFunction).apply {
-                    passTypeArgumentsFrom(wrapper)
-                    for ((newParam, originalParam) in wrapper.explicitParameters zip originalFunction.explicitParameters) {
-                        putArgument(originalParam, irGet(newParam))
-                    }
-                }).transform(this@JvmMultiFieldValueClassLowering, null)
+        val function = expression.symbol.owner
+        val replacement = function.getReplacement() ?: return super.visitFunctionReference(expression)
+        return context.createJvmIrBuilder(expression.symbol, expression).irBlock {
+            // Bridge call is added in BridgeLowering
+            buildReplacement(function, expression, replacement) {
+                IrFunctionReferenceImpl(
+                    expression.startOffset, expression.endOffset,
+                    expression.type, replacement.symbol, function.typeParameters.size, replacement.valueParameters.size,
+                    expression.reflectionTarget, expression.origin
+                ).copyAttributes(expression)
             }
-        })
+        }.unwrapBlock()
     }
 
     private fun IrFunction.getReplacement(): IrFunction? =
@@ -995,7 +1007,7 @@ internal class JvmMultiFieldValueClassLowering(
         require(parameter2expression.size == structure.size)
         require(structure.sumOf { it.valueParameters.size } == replacement.explicitParametersCount)
         val newArguments: List<IrExpression?> =
-            makeNewArguments(parameter2expression.map { (_, argument) -> argument }, structure.map { it.valueParameters })
+            makeNewArguments(parameter2expression.map { (_, argument) -> argument }, structure)
         val resultExpression = makeMemberAccessExpression(replacement.symbol).apply {
             passTypeArgumentsWithOffsets(replacement, originalFunction) { original.getTypeArgument(it)!! }
             for ((parameter, argument) in replacement.explicitParameters zip newArguments) {
@@ -1023,21 +1035,15 @@ internal class JvmMultiFieldValueClassLowering(
         return super.visitStringConcatenation(expression)
     }
 
-    private fun IrBlockBuilder.makeNewArguments(
-        oldArguments: List<IrExpression?>,
-        structure: List<List<IrValueParameter>>
-    ): List<IrExpression?> {
-        val argumentSizes: List<Int> = structure.map { argTemplate -> argTemplate.size }
-        val newArguments = (oldArguments zip argumentSizes).flatMap { (oldArgument, parametersCount) ->
+    private fun IrBlockBuilder.makeNewArguments(oldArguments: List<IrExpression?>, structure: List<RemappedParameter>): List<IrExpression?> {
+        val argumentSizes: List<Int> = structure.map { argTemplate -> argTemplate.valueParameters.size }
+        val newArguments = (oldArguments zip argumentSizes).flatMapIndexed { index, (oldArgument, parametersCount) ->
             when {
                 oldArgument == null -> List(parametersCount) { null }
                 parametersCount == 1 -> listOf(oldArgument.transform(this@JvmMultiFieldValueClassLowering, null))
                 else -> {
-                    val castedIfNeeded = when {
-                        oldArgument.type.needsMfvcFlattening() -> oldArgument
-                        oldArgument.type.makeNotNull().needsMfvcFlattening() -> irImplicitCast(oldArgument, oldArgument.type.makeNotNull())
-                        else -> error("Unexpected type: ${oldArgument.type.render()}")
-                    }
+                    val expectedType = (structure[index] as MultiFieldValueClassMapping).boxedType
+                    val castedIfNeeded = castExpressionToNotNullTypeIfNeeded(oldArgument, expectedType)
                     flattenExpression(castedIfNeeded).also {
                         require(it.size == parametersCount) { "Expected $parametersCount arguments but got ${it.size}" }
                     }
@@ -1045,6 +1051,12 @@ internal class JvmMultiFieldValueClassLowering(
             }
         }
         return newArguments
+    }
+
+    private fun IrBuilderWithScope.castExpressionToNotNullTypeIfNeeded(expression: IrExpression, type: IrType) = when (type) {
+        expression.type -> expression
+        expression.type.makeNotNull() -> irImplicitCast(expression, type)
+        else -> irAs(expression, type)
     }
 
     /**
@@ -1212,7 +1224,7 @@ internal class JvmMultiFieldValueClassLowering(
         )
         val type = if (expression is IrConstructorCall) expression.symbol.owner.constructedClass.defaultType else expression.type
         val lowering = this@JvmMultiFieldValueClassLowering
-        if (rootNode == null || !type.needsMfvcFlattening()) {
+        if (rootNode == null || !type.needsMfvcFlattening() || instance.size == 1) {
             require(instance.size == 1) { "Required 1 variable/field to store regular value but got ${instance.size}" }
             instance.addSetterStatements(this, listOf(expression.transform(lowering, null)))
             return
@@ -1263,11 +1275,7 @@ internal class JvmMultiFieldValueClassLowering(
             }
         }
         val nullableTransformedExpression = expression.transform(this@JvmMultiFieldValueClassLowering, null)
-        val transformedExpression =
-            if (nullableTransformedExpression.type.isNullable())
-                irImplicitCast(nullableTransformedExpression, nullableTransformedExpression.type.makeNotNull())
-            else
-                nullableTransformedExpression
+        val transformedExpression = castExpressionToNotNullTypeIfNeeded(nullableTransformedExpression, instance.type)
         val addedSettersToFlattened = valueDeclarationsRemapper.handleFlattenedGetterExpressions(this, transformedExpression) {
             require(it.size == instance.size) { "Incompatible assignment sizes: ${it.size}, ${instance.size}" }
             instance.makeSetterExpressions(this, it)

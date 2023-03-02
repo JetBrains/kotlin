@@ -32117,6 +32117,16 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
                     }
                 }
             }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/reflection/call/valueClasses")
+            @TestDataPath("$PROJECT_ROOT")
+            public class ValueClasses {
+                @Test
+                public void testAllFilesPresentInValueClasses() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/call/valueClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+                }
+            }
         }
 
         @Nested
@@ -32575,6 +32585,16 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
                 @Test
                 public void testAllFilesPresentInTypes() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/mapping/types"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+                }
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/reflection/mapping/valueClasses")
+            @TestDataPath("$PROJECT_ROOT")
+            public class ValueClasses {
+                @Test
+                public void testAllFilesPresentInValueClasses() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/mapping/valueClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
                 }
             }
         }

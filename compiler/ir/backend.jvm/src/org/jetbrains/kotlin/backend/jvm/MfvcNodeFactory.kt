@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -61,7 +60,7 @@ fun createLeafMfvcNode(
             this.name = fullFieldName
             this.type = type
             this.visibility = DescriptorVisibilities.PRIVATE
-            this.metadata = null
+            oldBackingField.metadata = null
         }.apply {
             this.parent = oldBackingField.parent
             this.annotations = fieldAnnotations.map { it.deepCopyWithVariables() }
@@ -246,19 +245,27 @@ fun createIntermediateMfvcNode(
     )
 }
 
-fun collectPropertiesAfterLowering(irClass: IrClass): LinkedHashSet<IrProperty> =
-    LinkedHashSet(collectPropertiesOrFieldsAfterLowering(irClass).map { (it as Property).property })
+fun collectPropertiesAfterLowering(irClass: IrClass, context: JvmBackendContext): LinkedHashSet<IrProperty> =
+    LinkedHashSet(collectPropertiesOrFieldsAfterLowering(irClass, context).map { (it as Property).property })
 
 sealed class IrPropertyOrIrField {
     data class Property(val property: IrProperty) : IrPropertyOrIrField()
     data class Field(val field: IrField) : IrPropertyOrIrField()
 }
 
-fun collectPropertiesOrFieldsAfterLowering(irClass: IrClass): LinkedHashSet<IrPropertyOrIrField> =
+fun collectPropertiesOrFieldsAfterLowering(irClass: IrClass, context: JvmBackendContext): LinkedHashSet<IrPropertyOrIrField> =
     LinkedHashSet<IrPropertyOrIrField>().apply {
         for (element in irClass.declarations) {
             if (element is IrField) {
-                element.correspondingPropertySymbol?.owner?.takeUnless { it.isDelegated }?.let { add(Property(it)) } ?: add(Field(element))
+                val property = element.correspondingPropertySymbol?.owner
+                if (
+                    property != null && !property.isDelegated &&
+                    !context.multiFieldValueClassReplacements.getFieldsToRemove(element.parentAsClass).contains(element)
+                ) {
+                    add(Property(property))
+                } else {
+                    add(Field(element))
+                }
             } else if (element is IrSimpleFunction && element.extensionReceiverParameter == null && element.contextReceiverParametersCount == 0) {
                 element.correspondingPropertySymbol?.owner?.let { add(Property(it)) }
             }
@@ -275,7 +282,7 @@ fun getRootNode(context: JvmBackendContext, mfvc: IrClass): RootMfvcNode {
     val oldPrimaryConstructor = mfvc.primaryConstructor!!
     val oldFields = mfvc.fields.filter { !it.isStatic }.toList()
     val representation = mfvc.multiFieldValueClassRepresentation!!
-    val properties = collectPropertiesAfterLowering(mfvc).associateBy { it.isStatic(mfvc) to it.name }
+    val properties = collectPropertiesAfterLowering(mfvc, context).associateBy { it.isStatic(mfvc) to it.name }
 
     val subnodes = makeRootMfvcNodeSubnodes(representation, properties, context, mfvc)
 
@@ -394,6 +401,11 @@ private fun makePrimaryConstructorImpl(
         }
     }
     annotations = oldPrimaryConstructor.annotations
+    if (oldPrimaryConstructor.metadata != null) {
+        metadata = oldPrimaryConstructor.metadata
+        oldPrimaryConstructor.metadata = null
+    }
+    copyAttributes(oldPrimaryConstructor as? IrAttributeContainer)
     // body is added in the Lowering file as it needs to be lowered
 }
 
@@ -448,20 +460,18 @@ private fun makeRootMfvcNodeSubnodes(
         Modality.FINAL,
         oldBackingField,
     ).also {
-        updateAnnotationsAndPropertyFromOldProperty(oldProperty)
+        updateAnnotationsAndPropertyFromOldProperty(oldProperty, context, it)
         it.unboxMethod.overriddenSymbols = listOf() // the getter is saved so it overrides itself
     }
 }
 
 private fun updateAnnotationsAndPropertyFromOldProperty(
-    oldProperty: IrProperty
+    oldProperty: IrProperty,
+    context: JvmBackendContext,
+    node: MfvcNode,
 ) {
-    oldProperty.setter?.apply {
-        name = Name.identifier(JvmAbi.setterName(oldProperty.name.asString()))
-        correspondingPropertySymbol = null
-        origin = IrDeclarationOrigin.DEFINED
-    }
-    oldProperty.setter = null
+    if (node is LeafMfvcNode) return
+    oldProperty.backingField?.let { context.multiFieldValueClassReplacements.addFieldToRemove(it.parentAsClass, it) }
     oldProperty.backingField = null
 }
 
@@ -482,7 +492,7 @@ fun createIntermediateNodeForMfvcPropertyOfRegularClass(
         parent, context, type, makeTypeArgumentsFromType(type), MethodFullNameMode.Getter, listOf(oldProperty.name),
         fieldAnnotations, static, overriddenNode, null, oldGetter, modality, oldField
     ).also {
-        updateAnnotationsAndPropertyFromOldProperty(oldProperty)
+        updateAnnotationsAndPropertyFromOldProperty(oldProperty, context, it)
     }
 }
 

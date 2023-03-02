@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.isInlineClassType
+import org.jetbrains.kotlin.resolve.needsMfvcFlattening
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationContext
 import org.jetbrains.kotlin.serialization.deserialization.MemberDeserializer
 import java.lang.reflect.Field
@@ -268,6 +269,8 @@ internal fun <M : MessageLite, D : CallableDescriptor> deserializeToDescriptor(
 
 internal val KType.isInlineClassType: Boolean
     get() = (this as? KTypeImpl)?.type?.isInlineClassType() == true
+internal val KType.needsMultiFieldValueClassFlattening: Boolean
+    get() = (this as? KTypeImpl)?.type?.needsMfvcFlattening() == true
 
 internal fun defaultPrimitiveValue(type: Type): Any? =
     if (type is Class<*> && type.isPrimitive) {
