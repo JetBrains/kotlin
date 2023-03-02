@@ -33491,6 +33491,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             }
 
             @Test
+            @TestMetadata("kt46186withEmptyIntersections.kt")
+            public void testKt46186withEmptyIntersections() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/typeParameters/kt46186withEmptyIntersections.kt");
+            }
+
+            @Test
             @TestMetadata("misplacedConstraints.kt")
             public void testMisplacedConstraints() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/typeParameters/misplacedConstraints.kt");
