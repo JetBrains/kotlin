@@ -310,6 +310,11 @@ public class IrCodegenBoxInlineWasmTestGenerated extends AbstractIrCodegenBoxInl
             runTest("compiler/testData/codegen/boxInline/anonymousObject/kt52795_5.kt");
         }
 
+        @TestMetadata("kt57053.kt")
+        public void testKt57053() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/anonymousObject/kt57053.kt");
+        }
+
         @TestMetadata("kt6007.kt")
         public void testKt6007() throws Exception {
             runTest("compiler/testData/codegen/boxInline/anonymousObject/kt6007.kt");
