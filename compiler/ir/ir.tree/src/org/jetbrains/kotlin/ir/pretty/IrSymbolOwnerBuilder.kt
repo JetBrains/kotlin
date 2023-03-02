@@ -13,7 +13,7 @@ interface IrSymbolOwnerBuilder {
 
     var symbolReference: String?
 
-    val symbolContext: SymbolContext
+    val buildingContext: IrBuildingContext
 
     @PrettyIrDsl
     fun symbol(symbolReference: String) {
@@ -22,9 +22,9 @@ interface IrSymbolOwnerBuilder {
 }
 
 internal inline fun <reified Symbol : IrSymbol> IrSymbolOwnerBuilder.symbol(noinline symbolConstructor: () -> Symbol): Symbol =
-    symbolContext.symbol(symbolReference, symbolConstructor)
+    buildingContext.symbol(symbolReference, symbolConstructor)
 
 internal fun IrSymbolOwnerBuilder.recordSymbolFromOwner(owner: IrSymbolOwner) =
-    symbolContext.putSymbolForOwner(owner)
+    buildingContext.putSymbolForOwner(owner)
 
 

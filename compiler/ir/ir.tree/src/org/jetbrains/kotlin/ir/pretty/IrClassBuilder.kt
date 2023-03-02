@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.name.Name
 
 @PrettyIrDsl
 class IrClassBuilder internal constructor(
-    override val symbolContext: SymbolContext,
     private val name: String,
+    override val buildingContext: IrBuildingContext,
 ) : IrDeclarationBuilder<IrClass>(), IrDeclarationWithVisibilityBuilder, IrDeclarationWithModalityBuilder, IrDeclarationContainerBuilder,
     IrSymbolOwnerBuilder {
 
@@ -123,7 +123,7 @@ class IrClassBuilder internal constructor(
     }
 
     override fun build(): IrClass {
-        return IrClassImpl(
+        return buildingContext.irFactory.createClass(
             startOffset = startOffset,
             endOffset = endOffset,
             origin = declarationOrigin,

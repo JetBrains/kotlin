@@ -21,7 +21,7 @@ import kotlin.reflect.KFunction
 import kotlin.reflect.KFunction2
 
 class IrPrettyPrinterOptions(
-    internal val symbolContext: SymbolContext = SymbolContextImpl(),
+    internal val buildingContext: IrBuildingContext = IrBuildingContextImpl(),
     val printDebugInfo: Boolean = false,
     val omitPropertiesWithDefaultValues: Boolean = true,
 )

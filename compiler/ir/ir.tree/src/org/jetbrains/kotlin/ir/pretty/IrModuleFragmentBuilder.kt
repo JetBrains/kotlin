@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 
 @PrettyIrDsl
 class IrModuleFragmentBuilder internal constructor(
-    private val symbolContext: SymbolContext,
+    private val buildingContext: IrBuildingContext,
     private val moduleDescriptor: ModuleDescriptor,
     private val irBuiltins: IrBuiltIns
 ) : IrElementBuilder<IrModuleFragment>() {
@@ -22,7 +22,7 @@ class IrModuleFragmentBuilder internal constructor(
 
     @IrNodeBuilderDsl
     fun irFile(name: String, block: IrElementBuilderClosure<IrFileBuilder>) {
-        val builder = IrFileBuilder(symbolContext, name)
+        val builder = IrFileBuilder(buildingContext, name)
         builder.block()
         fileBuilders.add(builder)
     }

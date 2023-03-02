@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.SourceRangeInfo
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
@@ -17,7 +16,8 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
 import org.jetbrains.kotlin.name.FqName
 
 @PrettyIrDsl
-class IrFileBuilder internal constructor(override val symbolContext: SymbolContext, private val name: String) : IrElementBuilder<IrFile>(),
+class IrFileBuilder internal constructor(override val buildingContext: IrBuildingContext, private val name: String) :
+    IrElementBuilder<IrFile>(),
     IrAnnotationContainerBuilder,
     IrDeclarationContainerBuilder,
     IrSymbolOwnerBuilder {

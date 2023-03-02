@@ -5,20 +5,16 @@
 
 package org.jetbrains.kotlin.ir.pretty
 
+import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import kotlin.reflect.KClass
 
-abstract class SymbolContext internal constructor() {
-    internal abstract fun <Symbol : IrSymbol> symbol(name: String?, symbolClass: KClass<Symbol>, createSymbol: () -> Symbol): Symbol
-
-    internal abstract fun putSymbolForOwner(owner: IrSymbolOwner)
-}
-
-internal inline fun <reified Symbol : IrSymbol> SymbolContext.symbol(name: String?, noinline createSymbol: () -> Symbol): Symbol =
+internal inline fun <reified Symbol : IrSymbol> IrBuildingContext.symbol(name: String?, noinline createSymbol: () -> Symbol): Symbol =
     symbol(name, Symbol::class, createSymbol)
 
-internal class SymbolContextImpl internal constructor() : SymbolContext() {
+class IrBuildingContext(val irFactory: IrFactory = IrFactoryImpl) {
 
     private class SymbolMap<Symbol : IrSymbol> {
         private val string2SymbolMap = mutableMapOf<String, Symbol>()
@@ -63,7 +59,7 @@ internal class SymbolContextImpl internal constructor() : SymbolContext() {
         symbolClass2SymbolMap<IrTypeAliasSymbol>(),
     )
 
-    override fun <Symbol : IrSymbol> symbol(name: String?, symbolClass: KClass<Symbol>, createSymbol: () -> Symbol): Symbol {
+    fun <Symbol : IrSymbol> symbol(name: String?, symbolClass: KClass<Symbol>, createSymbol: () -> Symbol): Symbol {
         @Suppress("UNCHECKED_CAST")
         val map = symbolMaps[symbolClass] as SymbolMap<Symbol>? ?: error("Symbol map not found for ${symbolClass.simpleName}")
         return map.getOrCreateSymbol(name, createSymbol)
@@ -81,7 +77,7 @@ internal class SymbolContextImpl internal constructor() : SymbolContext() {
         map.putSymbol(stringRepresentation, symbol)
     }
 
-    override fun putSymbolForOwner(owner: IrSymbolOwner) {
+    fun putSymbolForOwner(owner: IrSymbolOwner) {
         val symbol = owner.symbol
         val map = symbolMaps[symbol::class] ?: error("Symbol map not found for ${symbol::class.simpleName}")
         if (map.containsSymbol(symbol)) return

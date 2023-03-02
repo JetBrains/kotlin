@@ -29,7 +29,8 @@ fun config2model(config: Config): Model {
                     fc.mutable,
                     fc.isChild,
                     fc.baseDefaultValue,
-                    fc.baseGetter
+                    fc.baseGetter,
+                    fc.isMandatoryInDSL,
                 )
                 is ListFieldConfig -> {
                     val listType = if (fc.mutability == ListFieldConfig.Mutability.List) type(

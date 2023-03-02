@@ -74,7 +74,7 @@ object IrTree : AbstractTreeBuilder() {
     val declarationWithName: ElementConfig by element(Declaration) {
         parent(declaration)
 
-        +field("name", type<Name>())
+        +field("name", type<Name>(), isMandatoryInDSL = true)
     }
     val possiblyExternalDeclaration: ElementConfig by element(Declaration) {
         parent(declarationWithName)

@@ -84,6 +84,7 @@ class ElementConfigRef(
 sealed class FieldConfig(
     val name: String,
     val isChild: Boolean,
+    val isMandatoryInDSL: Boolean,
 ) {
     var baseDefaultValue: CodeBlock? = null
     var baseGetter: CodeBlock? = null
@@ -101,7 +102,8 @@ class SimpleFieldConfig(
     val nullable: Boolean,
     val mutable: Boolean,
     isChildElement: Boolean,
-) : FieldConfig(name, isChildElement)
+    isMandatoryInDSL: Boolean,
+) : FieldConfig(name, isChildElement, isMandatoryInDSL)
 
 class ListFieldConfig(
     name: String,
@@ -109,7 +111,7 @@ class ListFieldConfig(
     val nullable: Boolean,
     val mutability: Mutability,
     isChildElement: Boolean,
-) : FieldConfig(name, isChildElement) {
+) : FieldConfig(name, isChildElement, false) {
     enum class Mutability {
         Immutable,
         Var,
