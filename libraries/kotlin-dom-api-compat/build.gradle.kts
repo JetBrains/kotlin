@@ -1,4 +1,5 @@
 import plugins.configureDefaultPublishing
+import plugins.configureKotlinPomAttributes
 
 plugins {
     `maven-publish`
@@ -45,6 +46,7 @@ publishing {
     publications {
         create<MavenPublication>("maven") {
             from(components["kotlin"])
+            configureKotlinPomAttributes(project, "Kotlin DOM API compatibility library", packaging = "klib")
         }
         withType<MavenPublication> {
             artifact(emptyJavadocJar)
