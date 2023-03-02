@@ -49,6 +49,13 @@ internal class FileBasedKotlinDeclarationProvider(private val kotlinFile: KtFile
                 val (chunks, element) = tasks.removeFirst()
                 assert(chunks.isNotEmpty())
 
+                if (element is KtScript) {
+                    for (child in element.declarations) {
+                        tasks.addLast(Task(chunks, child))
+                    }
+                    continue
+                }
+
                 if (element !is KtNamedDeclaration || element.nameAsName != chunks[0]) {
                     continue
                 }

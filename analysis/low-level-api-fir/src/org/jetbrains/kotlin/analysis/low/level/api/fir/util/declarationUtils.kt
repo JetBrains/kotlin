@@ -61,9 +61,13 @@ internal fun KtElement.findSourceByTraversingWholeTree(
     val firFile = containerFirFile ?: firFileBuilder.buildRawFirFileWithCaching(containingKtFile)
     val originalDeclaration = (this as? KtDeclaration)?.originalDeclaration
     val isDeclaration = this is KtDeclaration
-    return FirElementFinder.findElementIn(firFile, canGoInside = { it is FirRegularClass }) { firDeclaration ->
-        firDeclaration.psi == this || isDeclaration && firDeclaration.psi == originalDeclaration
-    }
+    return FirElementFinder.findElementIn(
+        firFile,
+        canGoInside = { it is FirRegularClass || it is FirScript },
+        predicate = { firDeclaration ->
+            firDeclaration.psi == this || isDeclaration && firDeclaration.psi == originalDeclaration
+        }
+    )
 }
 
 private fun KtDeclaration.findSourceNonLocalFirDeclarationByProvider(

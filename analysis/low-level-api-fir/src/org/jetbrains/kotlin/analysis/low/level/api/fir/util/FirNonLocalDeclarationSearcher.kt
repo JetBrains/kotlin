@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
 import org.jetbrains.kotlin.analysis.utils.errors.requireWithAttachmentBuilder
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.render
@@ -33,11 +30,17 @@ object FirElementFinder {
         val classIdPathSegment = classId.relativeClassName.pathSegments()
         var result: FirClassLikeDeclaration? = null
 
-        fun find(declarations: List<FirDeclaration>, classIdPathIndex: Int) {
+        fun find(declarations: Iterable<FirDeclaration>, classIdPathIndex: Int) {
             if (result != null) return
             val currentClassSegment = classIdPathSegment[classIdPathIndex]
 
             for (subDeclaration in declarations) {
+                if (subDeclaration is FirScript) {
+                    val scriptDeclarations = subDeclaration.statements.asSequence().filterIsInstance<FirDeclaration>()
+                    find(scriptDeclarations.asIterable(), classIdPathIndex)
+                    continue
+                }
+
                 if (subDeclaration is FirClassLikeDeclaration && currentClassSegment == subDeclaration.symbol.name) {
                     if (classIdPathIndex == classIdPathSegment.lastIndex) {
                         result = subDeclaration
