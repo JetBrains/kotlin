@@ -1,0 +1,7 @@
+ALL:
+  java/util/ArrayList.size: Int
+  java/util/AbstractCollection.size: Int
+  kotlin/collections/List.size: Int
+  kotlin/collections/Collection.size: Int
+DIRECT:
+  java/util/ArrayList.size: Int
