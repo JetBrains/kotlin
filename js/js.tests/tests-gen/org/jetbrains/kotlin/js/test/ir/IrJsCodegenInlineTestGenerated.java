@@ -1227,6 +1227,12 @@ public class IrJsCodegenInlineTestGenerated extends AbstractIrJsCodegenInlineTes
         }
 
         @Test
+        @TestMetadata("kt56965_2.kt")
+        public void testKt56965_2() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/capture/kt56965_2.kt");
+        }
+
+        @Test
         @TestMetadata("simpleCapturingInClass.kt")
         public void testSimpleCapturingInClass() throws Exception {
             runTest("compiler/testData/codegen/boxInline/capture/simpleCapturingInClass.kt");
