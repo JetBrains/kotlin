@@ -14,4 +14,4 @@ fun main() {
 
 
 fun <T : Appendable> wtf(): T = TODO()
-val bar: Int = wtf() // happily compiles
+val bar: Int = <!INFERRED_TYPE_VARIABLE_INTO_POSSIBLE_EMPTY_INTERSECTION!>wtf<!>() // happily compiles

@@ -802,8 +802,9 @@ class FirCallCompletionResultsWriterTransformer(
         return varargArgumentsExpression
     }
 
+    // TODO: report warning with a checker and return true here only in case of errors
     private fun FirNamedReferenceWithCandidate.hasAdditionalResolutionErrors(): Boolean =
-        candidate.system.errors.any { it is InferredEmptyIntersection && it.kind.isDefinitelyEmpty }
+        candidate.system.errors.any { it is InferredEmptyIntersection }
 
     private fun FirNamedReferenceWithCandidate.toResolvedReference(): FirNamedReference {
         val errorDiagnostic = when {
