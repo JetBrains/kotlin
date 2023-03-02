@@ -58,6 +58,9 @@ abstract class KotlinJsIrLink @Inject constructor(
     @get:Input
     internal val incrementalJsIr: Boolean = propertiesProvider.incrementalJsIr
 
+    @get:Internal
+    internal val jsIrVerbosity: String? = propertiesProvider.jsIrVerbosity
+
     @get:Input
     val outputGranularity: KotlinJsIrOutputGranularity = propertiesProvider.jsIrOutputGranularity
 
@@ -117,6 +120,7 @@ abstract class KotlinJsIrLink @Inject constructor(
         }
 
         args.includes = entryModule.get().asFile.canonicalPath
+        args.verbosityLevel = jsIrVerbosity
 
         if (usingCacheDirectory()) {
             args.cacheDirectory = rootCacheDirectory.get().asFile.also { it.mkdirs() }.absolutePath

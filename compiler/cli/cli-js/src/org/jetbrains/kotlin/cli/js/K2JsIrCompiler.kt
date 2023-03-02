@@ -109,6 +109,18 @@ private val K2JSCompilerArguments.granularity: JsGenerationGranularity
         else -> JsGenerationGranularity.WHOLE_PROGRAM
     }
 
+private class JsIrMessageCollector(private val messageCollector: MessageCollector, private val verbosityLevel: Int) :
+    MessageCollector by messageCollector {
+
+    fun lifecycle(msg: String) {
+        if (verbosityLevel > 0) {
+            report(INFO, "[LIFECYCLE][JS IR] $msg")
+        } else {
+            report(INFO, msg)
+        }
+    }
+}
+
 class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
     override val defaultPerformanceManager: CommonCompilerPerformanceManager =
@@ -168,7 +180,10 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         rootDisposable: Disposable,
         paths: KotlinPaths?
     ): ExitCode {
-        val messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+        val messageCollector = JsIrMessageCollector(
+            messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY),
+            verbosityLevel = arguments.verbosityLevel?.toIntOrNull() ?: 0
+        )
 
         val pluginLoadResult = loadPlugins(paths, arguments, configuration)
         if (pluginLoadResult != OK) return pluginLoadResult
@@ -330,13 +345,13 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
                 icCaches.cacheGuard.release()
 
-                messageCollector.report(INFO, "Executable production duration (IC): ${System.currentTimeMillis() - beforeIc2Js}ms")
+                messageCollector.lifecycle("Executable production duration (IC): ${System.currentTimeMillis() - beforeIc2Js}ms")
                 for ((event, duration) in jsExecutableProducer.getStopwatchLaps()) {
-                    messageCollector.report(INFO, "  $event: ${(duration / 1e6).toInt()}ms")
+                    messageCollector.lifecycle("  $event: ${(duration / 1e6).toInt()}ms")
                 }
 
                 for (module in rebuiltModules) {
-                    messageCollector.report(INFO, "IC module builder rebuilt JS for module [${File(module).name}]")
+                    messageCollector.lifecycle("IC module builder rebuilt JS for module [$module]")
                 }
 
                 return OK
@@ -658,7 +673,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
     private fun prepareIcCaches(
         arguments: K2JSCompilerArguments,
-        messageCollector: MessageCollector,
+        messageCollector: JsIrMessageCollector,
         outputDir: File,
         libraries: List<String>,
         friendLibraries: List<String>,
@@ -704,9 +719,9 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             val artifacts = cacheUpdater.actualizeCaches()
             cacheGuard.release()
 
-            messageCollector.report(INFO, "IC rebuilt overall time: ${System.currentTimeMillis() - start}ms")
+            messageCollector.lifecycle("IC rebuilt overall time: ${System.currentTimeMillis() - start}ms")
             for ((event, duration) in cacheUpdater.getStopwatchLastLaps()) {
-                messageCollector.report(INFO, "  $event: ${(duration / 1e6).toInt()}ms")
+                messageCollector.lifecycle("  $event: ${(duration / 1e6).toInt()}ms")
             }
 
             var libIndex = 0
@@ -722,13 +737,13 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                     srcFiles.values.any { it.singleOrNull() == DirtyFileState.NON_MODIFIED_IR } -> "partially rebuilt" to srcFiles
                     else -> "fully rebuilt" to srcFiles
                 }
-                messageCollector.report(INFO, "${++libIndex}) module [${File(libFile.path).name}] was $msg")
+                messageCollector.lifecycle("${++libIndex}) module [${File(libFile.path).name}] was $msg")
                 var fileIndex = 0
                 for ((srcFile, stat) in showFiles) {
                     val filteredStats = stat.filter { it != DirtyFileState.NON_MODIFIED_IR }
                     val statStr = filteredStats.takeIf { it.isNotEmpty() }?.joinToString { it.str } ?: continue
                     // Use index, because MessageCollector ignores already reported messages
-                    messageCollector.report(INFO, "  $libIndex.${++fileIndex}) file [${File(srcFile.path).name}]: ($statStr)")
+                    messageCollector.lifecycle("  $libIndex.${++fileIndex}) file [${File(srcFile.path).name}]: ($statStr)")
                 }
             }
 

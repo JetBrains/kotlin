@@ -46,6 +46,7 @@ where advanced options include:
   -Xuse-deprecated-legacy-compiler
                              Use deprecated legacy compiler without error
   -Xes-classes               Generated JavaScript will use ES2015 classes.
+  -Xverbosity                Set verbosity level
   -Xwasm                     Use experimental WebAssembly compiler backend
   -Xwasm-debug-info          Add debug info to WebAssembly compiled module
   -Xwasm-enable-array-range-checks

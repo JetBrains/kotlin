@@ -376,6 +376,12 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     )
     var legacyDeprecatedNoWarn: Boolean by FreezableVar(false)
 
+    @Argument(
+        value = "-Xverbosity",
+        description = "Set verbosity level"
+    )
+    var verbosityLevel: String? by NullableStringFreezableVar(null)
+
     private fun MessageCollector.deprecationWarn(value: Boolean, defaultValue: Boolean, name: String) {
         if (value != defaultValue) {
             report(CompilerMessageSeverity.WARNING, "'$name' is deprecated and ignored, it will be removed in a future release")
