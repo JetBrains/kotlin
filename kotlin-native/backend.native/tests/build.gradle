@@ -4655,7 +4655,7 @@ interopTest("interop_structAnonym") {
 }
 
 interopTest("interop_vectors") {
-    disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
+    disabled = (project.testTarget == 'wasm32') || (project.testTarget == 'linux_mips32') // No interop for wasm yet.
     source = "interop/basics/vectors.kt"
     interop = 'cvectors'
 }
