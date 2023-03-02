@@ -35294,24 +35294,6 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         }
 
         @Test
-        @TestMetadata("customNumberInheritor.kt")
-        public void testCustomNumberInheritor() throws Exception {
-            runTest("compiler/testData/codegen/box/primitiveTypes/customNumberInheritor.kt");
-        }
-
-        @Test
-        @TestMetadata("customNumberInheritor_callToSuper.kt")
-        public void testCustomNumberInheritor_callToSuper() throws Exception {
-            runTest("compiler/testData/codegen/box/primitiveTypes/customNumberInheritor_callToSuper.kt");
-        }
-
-        @Test
-        @TestMetadata("customNumberInheritor_interfaceInheritance.kt")
-        public void testCustomNumberInheritor_interfaceInheritance() throws Exception {
-            runTest("compiler/testData/codegen/box/primitiveTypes/customNumberInheritor_interfaceInheritance.kt");
-        }
-
-        @Test
         @TestMetadata("ea35963.kt")
         public void testEa35963() throws Exception {
             runTest("compiler/testData/codegen/box/primitiveTypes/ea35963.kt");
@@ -35856,6 +35838,58 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
                 public void testPrimitiveEqObjectShort() throws Exception {
                     runTest("compiler/testData/codegen/box/primitiveTypes/equalityWithObject/generated/primitiveEqObjectShort.kt");
                 }
+            }
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/primitiveTypes/numberToChar")
+        @TestDataPath("$PROJECT_ROOT")
+        public class NumberToChar {
+            @Test
+            @TestMetadata("abstractMethodInSuperinterface.kt")
+            public void testAbstractMethodInSuperinterface() throws Exception {
+                runTest("compiler/testData/codegen/box/primitiveTypes/numberToChar/abstractMethodInSuperinterface.kt");
+            }
+
+            @Test
+            public void testAllFilesPresentInNumberToChar() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/primitiveTypes/numberToChar"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            }
+
+            @Test
+            @TestMetadata("fakeOverride.kt")
+            public void testFakeOverride() throws Exception {
+                runTest("compiler/testData/codegen/box/primitiveTypes/numberToChar/fakeOverride.kt");
+            }
+
+            @Test
+            @TestMetadata("javaSubclass.kt")
+            public void testJavaSubclass() throws Exception {
+                runTest("compiler/testData/codegen/box/primitiveTypes/numberToChar/javaSubclass.kt");
+            }
+
+            @Test
+            @TestMetadata("simple.kt")
+            public void testSimple() throws Exception {
+                runTest("compiler/testData/codegen/box/primitiveTypes/numberToChar/simple.kt");
+            }
+
+            @Test
+            @TestMetadata("superCallToClass.kt")
+            public void testSuperCallToClass() throws Exception {
+                runTest("compiler/testData/codegen/box/primitiveTypes/numberToChar/superCallToClass.kt");
+            }
+
+            @Test
+            @TestMetadata("superCallToInterface.kt")
+            public void testSuperCallToInterface() throws Exception {
+                runTest("compiler/testData/codegen/box/primitiveTypes/numberToChar/superCallToInterface.kt");
+            }
+
+            @Test
+            @TestMetadata("superCallToNumber.kt")
+            public void testSuperCallToNumber() throws Exception {
+                runTest("compiler/testData/codegen/box/primitiveTypes/numberToChar/superCallToNumber.kt");
             }
         }
     }
