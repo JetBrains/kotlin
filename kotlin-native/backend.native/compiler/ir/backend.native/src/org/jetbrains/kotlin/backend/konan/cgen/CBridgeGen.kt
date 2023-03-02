@@ -307,12 +307,15 @@ internal fun KotlinStubs.generateObjCCall(
         method: IrSimpleFunction,
         isStret: Boolean,
         selector: String,
+        directSymbolName: String?,
         call: IrFunctionAccessExpression,
         superQualifier: IrClassSymbol?,
         receiver: ObjCCallReceiver,
         arguments: List<IrExpression?>
 ) = builder.irBlock {
     val resolved = method.resolveFakeOverride(allowAbstract = true)?: method
+    val isDirect = directSymbolName != null
+
     val exceptionMode = ForeignExceptionMode.byValue(
             resolved.konanLibrary?.manifestProperties
                     ?.getProperty(ForeignExceptionMode.manifestKey)
@@ -325,20 +328,23 @@ internal fun KotlinStubs.generateObjCCall(
             isMutable = true
     )
 
-    val messenger = irCall(if (isStret) {
-        symbols.interopGetMessengerStret
-    } else {
-        symbols.interopGetMessenger
-    }.owner).apply {
-        putValueArgument(0, irGet(superClass)) // TODO: check superClass statically.
-    }
+    val targetPtrParameter = if (!isDirect) {
+        val messenger = irCall(if (isStret) {
+            symbols.interopGetMessengerStret
+        } else {
+            symbols.interopGetMessenger
+        }.owner).apply {
+            putValueArgument(0, irGet(superClass)) // TODO: check superClass statically.
+        }
 
-    val targetPtrParameter = callBuilder.passThroughBridge(
-            messenger,
-            symbols.interopCPointer.starProjectedType,
-            CTypes.voidPtr
-    ).name
-    val targetFunctionName = "targetPtr"
+        callBuilder.passThroughBridge(
+                messenger,
+                symbols.interopCPointer.starProjectedType,
+                CTypes.voidPtr
+        ).name
+    } else {
+        null
+    }
 
     val preparedReceiver = if (method.objCConsumesReceiver()) {
         when (receiver) {
@@ -381,17 +387,31 @@ internal fun KotlinStubs.generateObjCCall(
             receiverOrSuper, symbols.nativePtrType, CTypes.voidPtr).name
     callBuilder.cFunctionBuilder.addParameter(CTypes.voidPtr)
 
-    callBuilder.cCallBuilder.arguments += "@selector($selector)"
-    callBuilder.cFunctionBuilder.addParameter(CTypes.voidPtr)
+    if (isDirect) {
+        callBuilder.cCallBuilder.arguments += "0"
+        callBuilder.cFunctionBuilder.addParameter(CTypes.voidPtr)
+    } else {
+        callBuilder.cCallBuilder.arguments += "@selector($selector)"
+        callBuilder.cFunctionBuilder.addParameter(CTypes.voidPtr)
+    }
 
     callBuilder.addArguments(arguments, method)
 
     val returnValuePassing = mapReturnType(method.returnType, call, signature = method)
 
+    val targetFunctionName = getUniqueCName("knbridge_targetPtr")
+
     val result = callBuilder.buildCall(targetFunctionName, returnValuePassing)
 
-    val targetFunctionVariable = CVariable(CTypes.pointer(callBuilder.cFunctionBuilder.getType()), targetFunctionName)
-    callBuilder.cBridgeBodyLines.add(0, "$targetFunctionVariable = $targetPtrParameter;")
+    if (isDirect) {
+        // This declares a function
+        val targetFunctionVariable = CVariable(callBuilder.cFunctionBuilder.getType(), targetFunctionName)
+        callBuilder.cBridgeBodyLines.add(0, "$targetFunctionVariable __asm(\"$directSymbolName\");")
+
+    } else {
+        val targetFunctionVariable = CVariable(CTypes.pointer(callBuilder.cFunctionBuilder.getType()), targetFunctionName)
+        callBuilder.cBridgeBodyLines.add(0, "$targetFunctionVariable = $targetPtrParameter;")
+    }
 
     callBuilder.emitCBridge()
 

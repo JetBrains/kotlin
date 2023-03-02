@@ -394,6 +394,9 @@ private class MappingExtensions(
                     ("encoding" to encoding).asAnnotationArgument(),
                     ("isStret" to KmAnnotationArgument.BooleanValue(isStret))
             )
+            is AnnotationStub.ObjC.Direct -> mapOfNotNull(
+                    ("symbol" to symbol).asAnnotationArgument(),
+            )
             is AnnotationStub.ObjC.Factory -> mapOfNotNull(
                     ("selector" to selector).asAnnotationArgument(),
                     ("encoding" to encoding).asAnnotationArgument(),

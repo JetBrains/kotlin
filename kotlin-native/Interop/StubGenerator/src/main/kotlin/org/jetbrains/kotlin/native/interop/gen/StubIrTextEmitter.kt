@@ -458,6 +458,7 @@ class StubIrTextEmitter(
             val encoding = annotationStub.encoding.quoteAsKotlinLiteral()
             "@ObjCMethod($selector, $encoding$stret)"
         }
+        is AnnotationStub.ObjC.Direct -> "@ObjCDirect(${annotationStub.symbol.quoteAsKotlinLiteral()})"
         is AnnotationStub.ObjC.Factory -> {
             val stret = if (annotationStub.isStret) ", true" else ""
             val selector = annotationStub.selector.quoteAsKotlinLiteral()

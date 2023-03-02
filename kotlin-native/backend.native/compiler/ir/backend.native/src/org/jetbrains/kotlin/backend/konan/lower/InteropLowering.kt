@@ -551,6 +551,7 @@ private class InteropLoweringPart1(val generationState: NativeGenerationState) :
                 method,
                 info.isStret,
                 info.selector,
+                info.directSymbol,
                 call,
                 superQualifier,
                 receiver,
@@ -626,6 +627,7 @@ private class InteropLoweringPart1(val generationState: NativeGenerationState) :
                 require(expression.superQualifierSymbol?.owner?.isInterface != true) { renderCompilerError(expression) }
 
                 builder.at(expression)
+
                 return builder.genLoweredObjCMethodCall(
                         methodInfo,
                         superQualifier = expression.superQualifierSymbol,
