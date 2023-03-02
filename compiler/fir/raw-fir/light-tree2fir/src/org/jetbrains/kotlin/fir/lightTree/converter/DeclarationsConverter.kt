@@ -52,16 +52,13 @@ import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.FirTypeProjection
-import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.FirUserTypeRef
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.*
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirQualifierPartImpl
 import org.jetbrains.kotlin.fir.types.impl.FirTypeArgumentListImpl
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
@@ -575,7 +572,7 @@ class DeclarationsConverter(
                         hasDefaultConstructor = if (primaryConstructor != null) !primaryConstructor!!.hasValueParameters()
                         else secondaryConstructors.isEmpty() || secondaryConstructors.any { !it.hasValueParameters() },
                         delegatedSelfTypeRef = selfType,
-                        delegatedSuperTypeRef = delegatedSuperTypeRef ?: buildImplicitTypeRef(),
+                        delegatedSuperTypeRef = delegatedSuperTypeRef ?: FirImplicitTypeRefImplWithoutSource,
                         superTypeCallEntry = superTypeCallEntry
                     )
                     //parse primary constructor
@@ -714,7 +711,7 @@ class DeclarationsConverter(
                         superTypeRefs += implicitAnyType
                         delegatedSuperTypeRef = implicitAnyType
                     }
-                    val delegatedSuperType = delegatedSuperTypeRef ?: buildImplicitTypeRef()
+                    val delegatedSuperType = delegatedSuperTypeRef ?: FirImplicitTypeRefImplWithoutSource
 
                     annotations += modifiers.annotations
                     this.superTypeRefs += superTypeRefs

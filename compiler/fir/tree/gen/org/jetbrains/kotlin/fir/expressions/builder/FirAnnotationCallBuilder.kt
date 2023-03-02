@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyAnnotationArgumentMappi
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 class FirAnnotationCallBuilder : FirCallBuilder, FirAnnotationContainerBuilder, FirExpressionBuilder {
     override var source: KtSourceElement? = null
     var useSiteTarget: AnnotationUseSiteTarget? = null
-    var annotationTypeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
+    var annotationTypeRef: FirTypeRef = FirImplicitTypeRefImplWithoutSource
     val typeArguments: MutableList<FirTypeProjection> = mutableListOf()
     override var argumentList: FirArgumentList = FirEmptyArgumentList
     lateinit var calleeReference: FirReference

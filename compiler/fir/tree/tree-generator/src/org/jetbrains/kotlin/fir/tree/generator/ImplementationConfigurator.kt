@@ -622,8 +622,8 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             implementationPredicate = { it.type !in implementationWithConfigurableTypeRef },
             fieldPredicate = { it.defaultValueInImplementation == null }
         ) {
-            default(it, "FirImplicitTypeRefImpl(null)")
-            useTypes(implicitTypeRefType)
+            default(it, "FirImplicitTypeRefImplWithoutSource")
+            useTypes(firImplicitTypeWithoutSourceType)
         }
 
         configureFieldInAllImplementations(
@@ -631,8 +631,8 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             implementationPredicate = { it.type in "FirVariableAssignmentImpl" },
             fieldPredicate = { it.defaultValueInImplementation == null }
         ) {
-            default(it, "FirImplicitTypeRefImpl(null)")
-            useTypes(implicitTypeRefType)
+            default(it, "FirImplicitTypeRefImplWithoutSource")
+            useTypes(firImplicitTypeWithoutSourceType)
         }
     }
 

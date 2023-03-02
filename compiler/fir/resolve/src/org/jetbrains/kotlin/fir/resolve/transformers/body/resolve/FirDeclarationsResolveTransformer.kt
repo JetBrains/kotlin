@@ -41,8 +41,8 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirMemberTypeParameterScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
-import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.Name
@@ -743,7 +743,7 @@ open class FirDeclarationsResolveTransformer(
             is ResolutionMode.WithExpectedType ->
                 transformAnonymousFunctionWithExpectedType(anonymousFunction, data.expectedTypeRef, data)
             is ResolutionMode.ContextIndependent, is ResolutionMode.AssignmentLValue, is ResolutionMode.ReceiverResolution ->
-                transformAnonymousFunctionWithExpectedType(anonymousFunction, buildImplicitTypeRef(), data)
+                transformAnonymousFunctionWithExpectedType(anonymousFunction, FirImplicitTypeRefImplWithoutSource, data)
             is ResolutionMode.WithStatus ->
                 throw AssertionError("Should not be here in WithStatus/WithExpectedTypeFromCast mode")
         }

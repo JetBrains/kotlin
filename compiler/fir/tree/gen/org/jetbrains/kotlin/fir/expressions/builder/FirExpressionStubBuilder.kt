@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 @FirBuilderDsl
 class FirExpressionStubBuilder : FirAnnotationContainerBuilder {
     override var source: KtSourceElement? = null
-    var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
+    var typeRef: FirTypeRef = FirImplicitTypeRefImplWithoutSource
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
 
     @OptIn(FirImplementationDetail::class)

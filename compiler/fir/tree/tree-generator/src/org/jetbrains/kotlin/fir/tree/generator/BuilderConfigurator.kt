@@ -122,9 +122,9 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
                 value = "FirEmptyArgumentList"
             }
             default("argumentMapping", "FirEmptyAnnotationArgumentMapping")
-            default("annotationTypeRef", "FirImplicitTypeRefImpl(null)")
+            default("annotationTypeRef", "FirImplicitTypeRefImplWithoutSource")
             default("annotationResolvePhase", "FirAnnotationResolvePhase.Unresolved")
-            useTypes(emptyArgumentListType, emptyAnnotationArgumentMappingType, implicitTypeRefType)
+            useTypes(emptyArgumentListType, emptyAnnotationArgumentMappingType, firImplicitTypeWithoutSourceType)
             withCopy()
         }
 
@@ -132,8 +132,8 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             parents += callBuilder
             default("argumentList", "FirEmptyArgumentList")
             default("argumentMapping", "FirEmptyAnnotationArgumentMapping")
-            default("annotationTypeRef", "FirImplicitTypeRefImpl(null)")
-            useTypes(emptyArgumentListType, emptyAnnotationArgumentMappingType, implicitTypeRefType)
+            default("annotationTypeRef", "FirImplicitTypeRefImplWithoutSource")
+            useTypes(emptyArgumentListType, emptyAnnotationArgumentMappingType, firImplicitTypeWithoutSourceType)
         }
 
         builder(arrayOfCall) {
@@ -409,8 +409,8 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
                 else -> throw IllegalArgumentException()
             }
             builder(element, name) {
-                default("typeRef", "FirImplicitTypeRefImpl(null)")
-                useTypes(implicitTypeRefType)
+                default("typeRef", "FirImplicitTypeRefImplWithoutSource")
+                useTypes(firImplicitTypeWithoutSourceType)
             }
         }
 

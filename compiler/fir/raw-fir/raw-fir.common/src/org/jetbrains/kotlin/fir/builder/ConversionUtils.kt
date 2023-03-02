@@ -33,13 +33,8 @@ import org.jetbrains.kotlin.fir.references.builder.buildDelegateFieldReference
 import org.jetbrains.kotlin.fir.references.builder.buildImplicitThisReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
-import org.jetbrains.kotlin.fir.types.constructStarProjectedType
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.ConeStarProjection
-import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
-import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -404,7 +399,7 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
             this.source = fakeSource
             this.moduleData = moduleData
             origin = FirDeclarationOrigin.Source
-            returnTypeRef = buildImplicitTypeRef()
+            returnTypeRef = FirImplicitTypeRefImplWithoutSource
             isGetter = true
             status = FirDeclarationStatusImpl(getterStatus?.visibility ?: Visibilities.Unknown, Modality.FINAL).apply {
                 isInline = getterStatus?.isInline ?: isInline
@@ -454,7 +449,7 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
                 containingFunctionSymbol = this@buildPropertyAccessor.symbol
                 this.moduleData = moduleData
                 origin = FirDeclarationOrigin.Source
-                returnTypeRef = buildImplicitTypeRef()
+                returnTypeRef = FirImplicitTypeRefImplWithoutSource
                 name = SpecialNames.IMPLICIT_SET_PARAMETER
                 symbol = FirValueParameterSymbol(this@generateAccessorsByDelegate.name)
                 isCrossinline = false
