@@ -10,9 +10,7 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
@@ -33,8 +31,14 @@ open class EnumWhenLowering(protected open val context: CommonBackendContext) : 
             assert(it >= 0) { "enum entry ${entry.dump()} not in parent class" }
         }
 
-    protected open fun mapRuntimeEnumEntry(builder: IrBuilderWithScope, subject: IrExpression): IrExpression =
-        builder.irCall(subject.type.getClass()!!.symbol.getPropertyGetter("ordinal")!!).apply { dispatchReceiver = subject }
+    protected open fun mapRuntimeEnumEntry(builder: IrBuilderWithScope, subject: IrExpression): IrExpression {
+        val ordinalGetter = subject.type.getClass()!!.symbol.owner.declarations
+            .filterIsInstance<IrProperty>()
+            .single { it.name.asString() == "ordinal" && it.origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB }
+            .getter!!
+        return builder.irCall(ordinalGetter).apply { dispatchReceiver = subject }
+    }
+
 
     override fun lower(irFile: IrFile) {
         visitFile(irFile)
