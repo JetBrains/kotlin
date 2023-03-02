@@ -13,7 +13,9 @@ import org.jetbrains.kotlin.backend.common.lower.irIfThen
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
+import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.backend.jvm.ir.irArray
+import org.jetbrains.kotlin.backend.jvm.needsMfvcFlattening
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.functions.BuiltInFunctionArity
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -93,7 +95,10 @@ private class FunctionNVarargBridgeLowering(val context: JvmBackendContext) :
                 val overridesInvoke = function.overriddenSymbols.any { symbol ->
                     symbol.owner.name.asString() == "invoke"
                 }
-                overridesInvoke && function.valueParameters.size == superType.arguments.size - if (function.isSuspend) 0 else 1
+                overridesInvoke && function.valueParameters.size == superType.arguments.sumOf {
+                    if (it.typeOrNull?.needsMfvcFlattening() != true) 1
+                    else context.multiFieldValueClassReplacements.getRootMfvcNode(it.typeOrNull!!.erasedUpperBound).leavesCount
+                } - if (function.isSuspend) 0 else 1
             }
             invokeFunction.overriddenSymbols = emptyList()
             declaration.addBridge(invokeFunction, functionNInvokeFun.owner)
