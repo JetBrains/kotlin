@@ -7,7 +7,7 @@ internal annotation class AnnInCommon
 // FILE: friendMain.kt
 internal annotation class AnnInFriend
 
-// MODULE: main()(friend)(common)
+// MODULE: main(common)(friend)
 // FILE: main.kt
 @AnnInCommon
 @AnnInFriend
