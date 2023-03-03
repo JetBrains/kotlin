@@ -26,11 +26,13 @@ import java.io.File
 import java.net.URI
 import java.net.URLClassLoader
 import java.nio.file.FileSystems
+import java.nio.file.Files
+import java.nio.file.Path
 
 // There's JrtFileSystem in idea-full which we can't use in the compiler because it depends on NewVirtualFileSystem, absent in intellij-core
 class CoreJrtFileSystem : DeprecatedVirtualFileSystem() {
-    private val roots =
-        ConcurrentFactoryMap.createMap<String, CoreJrtVirtualFile?> { jdkHomePath ->
+    private val handlers =
+        ConcurrentFactoryMap.createMap<String, CoreJrtHandler?> { jdkHomePath ->
             val jdkHome = File(jdkHomePath)
             val rootUri = URI.create(StandardFileSystems.JRT_PROTOCOL + ":/")
             val jrtFsJar = loadJrtFsJar(jdkHome) ?: return@createMap null
@@ -48,27 +50,30 @@ class CoreJrtFileSystem : DeprecatedVirtualFileSystem() {
                     }
                     FileSystems.newFileSystem(rootUri, emptyMap<String, Nothing>(), classLoader)
                 }
-            CoreJrtVirtualFile(this, jdkHomePath, fileSystem.getPath(""), parent = null)
+            CoreJrtHandler(this, jdkHomePath, fileSystem.getPath(""))
         }
+
+    internal class CoreJrtHandler(
+        val virtualFileSystem: CoreJrtFileSystem,
+        val jdkHomePath: String,
+        private val root: Path
+    ) {
+        fun findFile(fileName: String): VirtualFile? {
+            val path = root.resolve(fileName)
+            return if (Files.exists(path)) CoreJrtVirtualFile(this, path) else null
+        }
+    }
 
     override fun getProtocol(): String = StandardFileSystems.JRT_PROTOCOL
 
     override fun findFileByPath(path: String): VirtualFile? {
         val (jdkHomePath, pathInImage) = splitPath(path)
-        val root = roots[jdkHomePath] ?: return null
-
-        if (pathInImage.isEmpty()) return root
-
-        return root.findFileByRelativePath(pathInImage)
+        return handlers[jdkHomePath]?.findFile(pathInImage)
     }
 
     override fun refresh(asynchronous: Boolean) {}
 
     override fun refreshAndFindFileByPath(path: String): VirtualFile? = findFileByPath(path)
-
-    fun clearRoots() {
-        roots.clear()
-    }
 
     companion object {
         private fun loadJrtFsJar(jdkHome: File): File? =

@@ -21,6 +21,7 @@ import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileSystem
 import com.intellij.util.io.URLUtil
+import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem.CoreJrtHandler
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
@@ -28,22 +29,17 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.attribute.BasicFileAttributes
 
-internal class CoreJrtVirtualFile(
-    private val virtualFileSystem: CoreJrtFileSystem,
-    private val jdkHomePath: String,
-    private val path: Path,
-    private val parent: CoreJrtVirtualFile?,
-) : VirtualFile() {
+internal class CoreJrtVirtualFile(private val handler: CoreJrtHandler, private val path: Path) : VirtualFile() {
     // TODO: catch IOException?
     private val attributes: BasicFileAttributes get() = Files.readAttributes(path, BasicFileAttributes::class.java)
 
-    override fun getFileSystem(): VirtualFileSystem = virtualFileSystem
+    override fun getFileSystem(): VirtualFileSystem = handler.virtualFileSystem
 
     override fun getName(): String =
         path.fileName.toString()
 
     override fun getPath(): String =
-        FileUtil.toSystemIndependentName(jdkHomePath + URLUtil.JAR_SEPARATOR + path)
+        FileUtil.toSystemIndependentName(handler.jdkHomePath + URLUtil.JAR_SEPARATOR + path)
 
     override fun isWritable(): Boolean = false
 
@@ -51,21 +47,20 @@ internal class CoreJrtVirtualFile(
 
     override fun isValid(): Boolean = true
 
-    override fun getParent(): VirtualFile? = parent
+    override fun getParent(): VirtualFile? {
+        val parentPath = path.parent
+        return if (parentPath != null) CoreJrtVirtualFile(handler, parentPath) else null
+    }
 
-    private val myChildren by lazy { computeChildren() }
-
-    override fun getChildren(): Array<out VirtualFile> = myChildren
-
-    private fun computeChildren(): Array<out VirtualFile> {
+    override fun getChildren(): Array<out VirtualFile> {
         val paths = try {
             Files.newDirectoryStream(path).use(Iterable<Path>::toList)
         } catch (e: IOException) {
             emptyList<Path>()
         }
         return when {
-            paths.isEmpty() -> EMPTY_ARRAY
-            else -> paths.map { path -> CoreJrtVirtualFile(virtualFileSystem, jdkHomePath, path, parent = this) }.toTypedArray()
+            paths.isEmpty() -> VirtualFile.EMPTY_ARRAY
+            else -> paths.map { path -> CoreJrtVirtualFile(handler, path) }.toTypedArray()
         }
     }
 
