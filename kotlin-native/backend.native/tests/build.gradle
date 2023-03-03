@@ -3457,7 +3457,6 @@ standaloneTest("mpp_default_args") {
 }
 
 standaloneTest("mpp_optional_expectation") {
-    disabled = isK2(project)  // KT-56579
     source = "codegen/mpp/mpp_optional_expectation.kt"
     def outputRoot = project.ext.testOutputLocal.toString()
     def srcPath = "$outputRoot/$name/mpp_optional_expectation.kt".with {
