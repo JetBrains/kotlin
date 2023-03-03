@@ -10,6 +10,6 @@ expect class B
 actual class B
 expect class C
 
-// MODULE: main()()(intermediate)
+// MODULE: main(intermediate)
 actual class A
 actual class C

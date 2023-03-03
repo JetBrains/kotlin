@@ -42,7 +42,7 @@ expect val <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>intermediateProperty<!>: Stri
 actual val <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>intermediateProperty<!>: String
     get() = "hello"
 
-// MODULE: main()()(intermediate)
+// MODULE: main(intermediate)
 expect <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>class PlatformClass<!> {
     fun memberFun()
     val memberProp: Int

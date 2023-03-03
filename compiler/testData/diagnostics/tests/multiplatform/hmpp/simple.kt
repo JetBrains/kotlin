@@ -12,7 +12,7 @@ class B : A() {
 
 fun getB(): B = B()
 
-// MODULE: main()()(intermediate)
+// MODULE: main(intermediate)
 actual open class A actual constructor() {
     fun bar(): String = "K"
 }

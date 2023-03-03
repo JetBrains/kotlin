@@ -42,7 +42,7 @@ expect val intermediateProperty: String
 <!ACTUAL_WITHOUT_EXPECT!>actual val intermediateProperty: String
     get() = "hello"<!>
 
-// MODULE: main()()(intermediate)
+// MODULE: main(intermediate)
 expect class PlatformClass {
     fun memberFun()
     val memberProp: Int

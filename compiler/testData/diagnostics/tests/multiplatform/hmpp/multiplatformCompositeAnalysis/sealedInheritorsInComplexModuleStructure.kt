@@ -14,7 +14,7 @@ package foo
 actual sealed class SealedWithSharedActual
 class SimpleShared : SealedWithPlatformActuals<!NO_CONSTRUCTOR!>()<!>
 
-// MODULE: main()()(intermediate)
+// MODULE: main(intermediate)
 // TARGET_PLATFORM: JVM
 package foo
 

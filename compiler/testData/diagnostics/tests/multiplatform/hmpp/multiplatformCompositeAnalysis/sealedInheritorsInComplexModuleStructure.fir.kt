@@ -14,7 +14,7 @@ package foo
 actual sealed class SealedWithSharedActual
 class SimpleShared : <!SEALED_INHERITOR_IN_DIFFERENT_MODULE, UNRESOLVED_REFERENCE!>SealedWithPlatformActuals<!>()
 
-// MODULE: main()()(intermediate)
+// MODULE: main(intermediate)
 // TARGET_PLATFORM: JVM
 package foo
 
