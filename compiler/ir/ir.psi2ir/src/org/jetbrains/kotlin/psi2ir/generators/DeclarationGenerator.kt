@@ -207,5 +207,5 @@ abstract class DeclarationGeneratorExtension(val declarationGenerator: Declarati
     fun KotlinType.toIrType() = with(declarationGenerator) { toIrType() }
 }
 
-fun Generator.createBodyGenerator(scopeOwnerSymbol: IrSymbol, parentLoopResolver: LoopResolver? = null) =
+internal fun Generator.createBodyGenerator(scopeOwnerSymbol: IrSymbol, parentLoopResolver: LoopResolver? = null) =
     BodyGenerator(scopeOwnerSymbol, context, parentLoopResolver)

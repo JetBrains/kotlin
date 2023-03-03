@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.psi2ir.intermediate.VariableLValue
 import org.jetbrains.kotlin.psi2ir.intermediate.setExplicitReceiverValue
 import org.jetbrains.kotlin.resolve.BindingContext
 
-class LoopExpressionGenerator(statementGenerator: StatementGenerator) : StatementGeneratorExtension(statementGenerator) {
+internal class LoopExpressionGenerator(statementGenerator: StatementGenerator) : StatementGeneratorExtension(statementGenerator) {
     fun generateWhileLoop(ktWhile: KtWhileExpression): IrExpression {
         val irLoop = IrWhileLoopImpl(
             ktWhile.startOffsetSkippingComments, ktWhile.endOffset,

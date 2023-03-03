@@ -24,13 +24,13 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorWithScope
 
-class SafeExtensionInvokeCallReceiver(
+internal class SafeExtensionInvokeCallReceiver(
     val generator: GeneratorWithScope,
     val startOffset: Int,
     val endOffset: Int,
-    val callBuilder: CallBuilder,
-    val functionReceiver: IntermediateValue,
-    val extensionInvokeReceiver: IntermediateValue
+    private val callBuilder: CallBuilder,
+    private val functionReceiver: IntermediateValue,
+    private val extensionInvokeReceiver: IntermediateValue
 ) : CallReceiver {
     override fun call(builder: CallExpressionBuilder): IrExpression {
         // extensionInvokeReceiver is actually a first argument:
@@ -62,4 +62,3 @@ class SafeExtensionInvokeCallReceiver(
         }
     }
 }
-

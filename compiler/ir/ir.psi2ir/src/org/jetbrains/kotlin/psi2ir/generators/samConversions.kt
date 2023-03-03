@@ -15,15 +15,15 @@ import org.jetbrains.kotlin.resolve.sam.getFunctionTypeForAbstractMethod
 import org.jetbrains.kotlin.resolve.sam.getSingleAbstractMethodOrNull
 import org.jetbrains.kotlin.types.*
 
-fun GeneratorExtensions.SamConversion.isSamType(kotlinType: KotlinType): Boolean {
+internal fun GeneratorExtensions.SamConversion.isSamType(kotlinType: KotlinType): Boolean {
     val descriptor = kotlinType.constructor.declarationDescriptor
     return descriptor is ClassDescriptor && descriptor.isFun ||
             isPlatformSamType(kotlinType)
 }
 
-fun DeclarationDescriptor.isSamConstructor() = this is FunctionInterfaceConstructorDescriptor
+internal fun DeclarationDescriptor.isSamConstructor() = this is FunctionInterfaceConstructorDescriptor
 
-fun CallableDescriptor.getOriginalForFunctionInterfaceAdapter() =
+internal fun CallableDescriptor.getOriginalForFunctionInterfaceAdapter() =
     when (this) {
         is FunctionInterfaceAdapterDescriptor<*> ->
             baseDescriptorForSynthetic
@@ -33,7 +33,7 @@ fun CallableDescriptor.getOriginalForFunctionInterfaceAdapter() =
             null
     }
 
-fun KotlinType.getSubstitutedFunctionTypeForSamType(): KotlinType =
+internal fun KotlinType.getSubstitutedFunctionTypeForSamType(): KotlinType =
     when (val unwrapped = this.unwrap()) {
         is SimpleType -> unwrapped.getSubstitutedFunctionTypeForSamType()
         is FlexibleType -> KotlinTypeFactory.flexibleType(

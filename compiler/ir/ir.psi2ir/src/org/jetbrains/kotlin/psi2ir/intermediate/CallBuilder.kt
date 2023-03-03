@@ -16,14 +16,17 @@
 
 package org.jetbrains.kotlin.psi2ir.intermediate
 
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.psi2ir.generators.hasNoSideEffects
 import org.jetbrains.kotlin.psi2ir.isValueArgumentReorderingRequired
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.types.KotlinType
 
-class CallBuilder(
+internal class CallBuilder(
     val original: ResolvedCall<*>, // TODO get rid of "original", sometimes we want to generate a call without ResolvedCall
     val descriptor: CallableDescriptor,
     val typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
@@ -41,47 +44,31 @@ class CallBuilder(
         irValueArgumentsByIndex[valueParameterDescriptor.index + parametersOffset]
 }
 
-val CallBuilder.argumentsCount: Int
+internal val CallBuilder.argumentsCount: Int
     get() =
         irValueArgumentsByIndex.size
 
-var CallBuilder.lastArgument: IrExpression?
+internal var CallBuilder.lastArgument: IrExpression?
     get() = irValueArgumentsByIndex.last()
     set(value) {
         irValueArgumentsByIndex[argumentsCount - 1] = value
     }
 
-fun CallBuilder.getValueArgumentsInParameterOrder(): List<IrExpression?> =
+internal fun CallBuilder.getValueArgumentsInParameterOrder(): List<IrExpression?> =
     descriptor.valueParameters.map { irValueArgumentsByIndex[it.index] }
 
-fun CallBuilder.isValueArgumentReorderingRequired() =
+internal fun CallBuilder.isValueArgumentReorderingRequired() =
     original.isValueArgumentReorderingRequired() && irValueArgumentsByIndex.any { it != null && !it.hasNoSideEffects() }
 
-val CallBuilder.hasExtensionReceiver: Boolean
+internal val CallBuilder.hasExtensionReceiver: Boolean
     get() =
         descriptor.extensionReceiverParameter != null
 
-val CallBuilder.hasDispatchReceiver: Boolean
-    get() =
-        descriptor.dispatchReceiverParameter != null
-
-val CallBuilder.extensionReceiverType: KotlinType?
-    get() =
-        descriptor.extensionReceiverParameter?.type
-
-val CallBuilder.dispatchReceiverType: KotlinType?
+internal val CallBuilder.dispatchReceiverType: KotlinType?
     get() =
         descriptor.dispatchReceiverParameter?.type
 
-val CallBuilder.explicitReceiverParameter: ReceiverParameterDescriptor?
-    get() =
-        descriptor.extensionReceiverParameter ?: descriptor.dispatchReceiverParameter
-
-val CallBuilder.explicitReceiverType: KotlinType?
-    get() =
-        explicitReceiverParameter?.type
-
-fun CallBuilder.setExplicitReceiverValue(explicitReceiverValue: IntermediateValue) {
+internal fun CallBuilder.setExplicitReceiverValue(explicitReceiverValue: IntermediateValue) {
     val previousCallReceiver = callReceiver
     callReceiver = object : CallReceiver {
         override fun call(builder: CallExpressionBuilder): IrExpression {

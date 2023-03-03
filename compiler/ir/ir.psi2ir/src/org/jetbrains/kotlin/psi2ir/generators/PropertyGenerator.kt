@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.hasBackingField
 
-class PropertyGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGeneratorExtension(declarationGenerator) {
+internal class PropertyGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGeneratorExtension(declarationGenerator) {
     fun generatePropertyDeclaration(ktProperty: KtProperty): IrProperty {
         val propertyDescriptor = getPropertyDescriptor(ktProperty)
         val ktDelegate = ktProperty.delegate
@@ -277,5 +277,3 @@ internal fun IrProperty.linkCorrespondingPropertySymbol() {
     getter?.correspondingPropertySymbol = symbol
     setter?.correspondingPropertySymbol = symbol
 }
-
-

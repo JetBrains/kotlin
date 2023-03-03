@@ -54,10 +54,10 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 import kotlin.math.max
 import kotlin.math.min
 
-fun StatementGenerator.generateReceiverOrNull(ktDefaultElement: KtElement, receiver: ReceiverValue?): IntermediateValue? =
+internal fun StatementGenerator.generateReceiverOrNull(ktDefaultElement: KtElement, receiver: ReceiverValue?): IntermediateValue? =
     receiver?.let { generateReceiver(ktDefaultElement, receiver) }
 
-fun StatementGenerator.generateContextReceiverForDelegatingConstructorCall(
+private fun StatementGenerator.generateContextReceiverForDelegatingConstructorCall(
     ktDefaultElement: KtElement,
     receiver: ContextClassReceiver?
 ): IntermediateValue? =
@@ -69,7 +69,7 @@ fun StatementGenerator.generateContextReceiverForDelegatingConstructorCall(
         )
     }
 
-fun StatementGenerator.generateContextReceiverForDelegatingConstructorCall(
+private fun StatementGenerator.generateContextReceiverForDelegatingConstructorCall(
     defaultStartOffset: Int,
     defaultEndOffset: Int,
     receiver: ContextClassReceiver
@@ -85,10 +85,10 @@ fun StatementGenerator.generateContextReceiverForDelegatingConstructorCall(
     }
 }
 
-fun StatementGenerator.generateReceiver(ktDefaultElement: KtElement, receiver: ReceiverValue): IntermediateValue =
+private fun StatementGenerator.generateReceiver(ktDefaultElement: KtElement, receiver: ReceiverValue): IntermediateValue =
     generateReceiver(ktDefaultElement.startOffsetSkippingComments, ktDefaultElement.endOffset, receiver)
 
-fun StatementGenerator.generateReceiver(defaultStartOffset: Int, defaultEndOffset: Int, receiver: ReceiverValue): IntermediateValue {
+private fun StatementGenerator.generateReceiver(defaultStartOffset: Int, defaultEndOffset: Int, receiver: ReceiverValue): IntermediateValue {
     val irReceiverType =
         when (receiver) {
             is ExtensionReceiver ->
@@ -145,7 +145,7 @@ fun StatementGenerator.generateReceiver(defaultStartOffset: Int, defaultEndOffse
     }
 }
 
-fun StatementGenerator.loadContextReceiver(
+internal fun StatementGenerator.loadContextReceiver(
     receiver: ContextClassReceiver,
     defaultStartOffset: Int, defaultEndOffset: Int,
 ): IrGetFieldImpl {
@@ -165,7 +165,7 @@ fun StatementGenerator.loadContextReceiver(
 }
 
 
-fun StatementGenerator.generateSingletonReference(
+internal fun StatementGenerator.generateSingletonReference(
     descriptor: ClassDescriptor,
     startOffset: Int,
     endOffset: Int,
@@ -216,7 +216,7 @@ fun IrExpression.implicitCastTo(expectedType: IrType?): IrExpression {
     return IrTypeOperatorCallImpl(startOffset, endOffset, expectedType, IrTypeOperator.IMPLICIT_CAST, expectedType, this)
 }
 
-fun StatementGenerator.generateBackingFieldReceiver(
+internal fun StatementGenerator.generateBackingFieldReceiver(
     startOffset: Int,
     endOffset: Int,
     resolvedCall: ResolvedCall<*>?,
@@ -226,7 +226,7 @@ fun StatementGenerator.generateBackingFieldReceiver(
     return this.generateReceiver(startOffset, endOffset, receiver)
 }
 
-fun StatementGenerator.generateCallReceiver(
+internal fun StatementGenerator.generateCallReceiver(
     ktDefaultElement: KtElement,
     calleeDescriptor: CallableDescriptor,
     dispatchReceiver: ReceiverValue?,
@@ -355,11 +355,11 @@ private fun StatementGenerator.generateVarargExpressionUsing(
     return irVararg
 }
 
-fun StatementGenerator.generateValueArgument(
+private fun StatementGenerator.generateValueArgument(
     valueArgument: ResolvedValueArgument,
     valueParameter: ValueParameterDescriptor,
     resolvedCall: ResolvedCall<*>
-) = generateValueArgumentUsing(valueArgument, valueParameter, resolvedCall) { generateExpression(it) }
+): IrExpression? = generateValueArgumentUsing(valueArgument, valueParameter, resolvedCall) { generateExpression(it) }
 
 private fun StatementGenerator.generateValueArgumentUsing(
     valueArgument: ResolvedValueArgument,
@@ -500,21 +500,21 @@ private fun StatementGenerator.createFunctionForSuspendConversion(
     return irAdapterFun
 }
 
-fun StatementGenerator.castArgumentToFunctionalInterfaceForSamType(irExpression: IrExpression, samType: KotlinType): IrExpression {
+internal fun StatementGenerator.castArgumentToFunctionalInterfaceForSamType(irExpression: IrExpression, samType: KotlinType): IrExpression {
     val kotlinFunctionType = samType.getSubstitutedFunctionTypeForSamType()
     val irFunctionType = context.typeTranslator.translateType(kotlinFunctionType)
     return irExpression.implicitCastTo(irFunctionType)
 }
 
-fun Generator.getSuperQualifier(resolvedCall: ResolvedCall<*>): ClassDescriptor? {
+internal fun Generator.getSuperQualifier(resolvedCall: ResolvedCall<*>): ClassDescriptor? {
     val superCallExpression = getSuperCallExpression(resolvedCall.call) ?: return null
     return getOrFail(BindingContext.REFERENCE_TARGET, superCallExpression.instanceReference) as ClassDescriptor
 }
 
-fun StatementGenerator.pregenerateCall(resolvedCall: ResolvedCall<*>): CallBuilder =
+internal fun StatementGenerator.pregenerateCall(resolvedCall: ResolvedCall<*>): CallBuilder =
     pregenerateCallUsing(resolvedCall) { generateExpression(it) }
 
-fun StatementGenerator.pregenerateCallUsing(
+internal fun StatementGenerator.pregenerateCallUsing(
     resolvedCall: ResolvedCall<*>,
     generateArgumentExpression: (KtExpression) -> IrExpression?
 ): CallBuilder {
@@ -527,7 +527,7 @@ fun StatementGenerator.pregenerateCallUsing(
     return call
 }
 
-fun getTypeArguments(resolvedCall: ResolvedCall<*>?): Map<TypeParameterDescriptor, KotlinType>? {
+internal fun getTypeArguments(resolvedCall: ResolvedCall<*>?): Map<TypeParameterDescriptor, KotlinType>? {
     if (resolvedCall == null) return null
 
     val descriptor = resolvedCall.resultingDescriptor
@@ -537,7 +537,7 @@ fun getTypeArguments(resolvedCall: ResolvedCall<*>?): Map<TypeParameterDescripto
 }
 
 
-fun StatementGenerator.pregenerateExtensionInvokeCall(resolvedCall: ResolvedCall<*>): CallBuilder {
+private fun StatementGenerator.pregenerateExtensionInvokeCall(resolvedCall: ResolvedCall<*>): CallBuilder {
     val extensionInvoke = resolvedCall.resultingDescriptor
     val functionNClass = extensionInvoke.containingDeclaration as? ClassDescriptor
         ?: throw AssertionError("'invoke' should be a class member: $extensionInvoke")
@@ -606,7 +606,7 @@ private fun ResolvedCall<*>.isExtensionInvokeCall(): Boolean {
     return extensionReceiver != null
 }
 
-fun StatementGenerator.generateSamConversionForValueArgumentsIfRequired(call: CallBuilder, resolvedCall: ResolvedCall<*>) {
+internal fun StatementGenerator.generateSamConversionForValueArgumentsIfRequired(call: CallBuilder, resolvedCall: ResolvedCall<*>) {
     val samConversion = context.extensions.samConversion
 
     val originalDescriptor = resolvedCall.resultingDescriptor
@@ -751,7 +751,7 @@ private fun StatementGenerator.getSamTypeForValueParameter(valueParameter: Value
     )
 }
 
-fun StatementGenerator.pregenerateValueArgumentsUsing(
+internal fun StatementGenerator.pregenerateValueArgumentsUsing(
     call: CallBuilder,
     resolvedCall: ResolvedCall<*>,
     generateArgumentExpression: (KtExpression) -> IrExpression?
@@ -763,7 +763,7 @@ fun StatementGenerator.pregenerateValueArgumentsUsing(
     }
 }
 
-fun StatementGenerator.pregenerateCallReceivers(resolvedCall: ResolvedCall<*>): CallBuilder {
+internal fun StatementGenerator.pregenerateCallReceivers(resolvedCall: ResolvedCall<*>): CallBuilder {
     val call = unwrapCallableDescriptorAndTypeArguments(resolvedCall)
 
     call.callReceiver = generateCallReceiver(
@@ -790,7 +790,7 @@ private fun unwrapSpecialDescriptor(descriptor: CallableDescriptor): CallableDes
             descriptor.getOriginalForFunctionInterfaceAdapter()?.let { unwrapSpecialDescriptor(it) } ?: descriptor
     }
 
-fun unwrapCallableDescriptorAndTypeArguments(resolvedCall: ResolvedCall<*>): CallBuilder {
+internal fun unwrapCallableDescriptorAndTypeArguments(resolvedCall: ResolvedCall<*>): CallBuilder {
     val originalDescriptor = resolvedCall.resultingDescriptor
     val candidateDescriptor = resolvedCall.candidateDescriptor
 
