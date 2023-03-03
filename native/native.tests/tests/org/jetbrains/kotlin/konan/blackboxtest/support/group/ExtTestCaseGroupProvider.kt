@@ -633,7 +633,7 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
         fun addFileToMainModule(fileName: String, text: String): Unit = filesAndModules.addFileToMainModule(fileName, text)
 
         fun generateModules(testCaseDir: File, findOrGenerateSharedModule: SharedModuleCache): Set<TestModule.Exclusive> {
-            checkModulesConsistency()
+            checkModulesConsistency(testCaseDir)
 
             // Generate support module, if any.
             val supportModule = generateSharedSupportModule(findOrGenerateSharedModule)
@@ -701,16 +701,20 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
             return destination
         }
 
-        private fun checkModulesConsistency() {
+        private fun checkModulesConsistency(testCaseDir: File) {
             filesAndModules.modules.values.forEach { module ->
                 val unknownFriends = (module.friendsSymbols + module.friends.map { it.name }).toSet() - filesAndModules.modules.keys
-                assertTrue(unknownFriends.isEmpty()) { "Module $module has unknown friends: $unknownFriends" }
+                assertTrue(unknownFriends.isEmpty()) {
+                    "Module $module has unknown friends: $unknownFriends in ${testCaseDir.absolutePath}"
+                }
 
                 val unknownDependencies =
                     (module.dependenciesSymbols + module.dependencies.map { it.name }).toSet() - filesAndModules.modules.keys
-                assertTrue(unknownDependencies.isEmpty()) { "Module $module has unknown dependencies: $unknownDependencies" }
+                assertTrue(unknownDependencies.isEmpty()) {
+                    "Module $module has unknown dependencies: $unknownDependencies in ${testCaseDir.absolutePath}"
+                }
 
-                assertTrue(module.files.isNotEmpty()) { "Module $module has no files" }
+                assertTrue(module.files.isNotEmpty()) { "Module $module has no files in ${testCaseDir.absolutePath}" }
             }
         }
     }
