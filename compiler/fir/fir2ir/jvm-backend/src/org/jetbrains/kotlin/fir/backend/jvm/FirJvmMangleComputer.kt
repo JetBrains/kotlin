@@ -141,13 +141,19 @@ class FirJvmMangleComputer(
     }
 
     override fun getEffectiveParent(typeParameter: ConeTypeParameterLookupTag): FirMemberDeclaration = typeParameter.symbol.fir.run {
+
+        fun FirTypeParameter.sameAs(other: FirTypeParameter) =
+            this === other ||
+                    (name == other.name && bounds.size == other.bounds.size &&
+                            bounds.zip(other.bounds).all { it.first.coneType == it.second.coneType })
+
         for (parent in typeParameterContainers) {
-            if (this in parent.typeParameters) {
+            if (parent.typeParameters.any { this.sameAs(it.symbol.fir) }) {
                 return parent
             }
             if (parent is FirCallableDeclaration) {
                 val overriddenFir = parent.originalForSubstitutionOverride
-                if (overriddenFir is FirTypeParametersOwner && this in overriddenFir.typeParameters) {
+                if (overriddenFir is FirTypeParametersOwner && overriddenFir.typeParameters.any { this.sameAs(it) }) {
                     return parent
                 }
             }
