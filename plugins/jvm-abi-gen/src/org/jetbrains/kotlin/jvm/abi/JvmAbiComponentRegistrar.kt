@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.jvm.abi
 
+import org.jetbrains.kotlin.backend.jvm.extensions.ClassGeneratorExtension
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.codegen.extensions.ClassFileFactoryFinalizerExtension
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -21,7 +21,7 @@ class JvmAbiComponentRegistrar : CompilerPluginRegistrar() {
         configuration.put(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, true)
         val builderExtension = JvmAbiClassBuilderInterceptor()
         val outputExtension = JvmAbiOutputExtension(File(outputPath), builderExtension.abiClassInfo, messageCollector)
-        ClassBuilderInterceptorExtension.registerExtension(builderExtension)
+        ClassGeneratorExtension.registerExtension(builderExtension)
         ClassFileFactoryFinalizerExtension.registerExtension(outputExtension)
     }
 

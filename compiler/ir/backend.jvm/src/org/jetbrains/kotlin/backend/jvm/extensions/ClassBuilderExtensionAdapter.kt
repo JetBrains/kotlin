@@ -25,7 +25,8 @@ import org.jetbrains.org.objectweb.asm.FieldVisitor
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.RecordComponentVisitor
 
-// Loads an converts deprecated ClassBuilderInterceptorExtension implementations to the new ClassGeneratorExtension EP.
+// Loads ClassGeneratorExtension implementations and converts them to deprecated ClassBuilderInterceptorExtension implementations,
+// so that GenerationState (which is backend-agnostic) can apply them during class generation.
 @Suppress("unused") // Used reflectively in GenerationState.
 internal object ClassBuilderExtensionAdapter {
     @JvmStatic
