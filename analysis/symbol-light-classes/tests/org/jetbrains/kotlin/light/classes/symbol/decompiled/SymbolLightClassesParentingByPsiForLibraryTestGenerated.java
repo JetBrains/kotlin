@@ -307,6 +307,12 @@ public class SymbolLightClassesParentingByPsiForLibraryTestGenerated extends Abs
     }
 
     @Test
+    @TestMetadata("unresolvedGenericSupertypes.kt")
+    public void testUnresolvedGenericSupertypes() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/unresolvedGenericSupertypes.kt");
+    }
+
+    @Test
     @TestMetadata("unresolvedWithAliasedImport.kt")
     public void testUnresolvedWithAliasedImport() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/unresolvedWithAliasedImport.kt");
