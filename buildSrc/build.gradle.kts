@@ -106,7 +106,7 @@ dependencies {
 
     implementation("gradle.plugin.org.jetbrains.gradle.plugin.idea-ext:gradle-idea-ext:1.0.1")
 
-    compileOnly("com.gradle:gradle-enterprise-gradle-plugin:3.12.3")
+    compileOnly("com.gradle:gradle-enterprise-gradle-plugin:3.12.4")
 
     compileOnly(gradleApi())
 

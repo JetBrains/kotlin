@@ -52,7 +52,7 @@ dependencies {
     commonCompileOnly("org.codehaus.groovy:groovy-all:2.4.12")
     commonCompileOnly(intellijCore())
     commonCompileOnly(commonDependency("org.jetbrains.teamcity:serviceMessages"))
-    commonCompileOnly("com.gradle:gradle-enterprise-gradle-plugin:3.12.3")
+    commonCompileOnly("com.gradle:gradle-enterprise-gradle-plugin:3.12.4")
     commonCompileOnly(commonDependency("com.google.code.gson:gson"))
     commonCompileOnly(commonDependency("com.google.guava:guava"))
     commonCompileOnly("de.undercouch:gradle-download-task:4.1.1")
