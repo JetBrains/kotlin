@@ -46,7 +46,7 @@ fun test_2(): String {
     return "${func()} $prop ${a.foo()} ${b.bar()} ${c.baz()}"
 }
 
-// MODULE: jvm()()(intermediate)
+// MODULE: jvm(intermediate)
 // TARGET_PLATFORM: JVM
 // FILE: main.kt
 

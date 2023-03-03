@@ -43,7 +43,7 @@ expect annotation class Anno(
     // TODO: val aa: Array<A> = [A("2"), A("3")]
 )
 
-// MODULE: lib()()(common)
+// MODULE: lib(common)
 // FILE: Jnno.java
 
 import java.lang.annotation.Retention;

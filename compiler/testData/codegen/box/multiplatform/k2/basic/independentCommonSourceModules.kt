@@ -13,7 +13,7 @@ fun o() = "O"
 
 fun k() = "K"
 
-// MODULE: jvm()()(common1, common2)
+// MODULE: jvm(common1, common2)
 // TARGET_PLATFORM: JVM
 // FILE: main.kt
 

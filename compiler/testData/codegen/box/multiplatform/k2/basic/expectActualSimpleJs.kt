@@ -17,7 +17,7 @@ fun test(): String {
     return func() + prop
 }
 
-// MODULE: js()()(common)
+// MODULE: js(common)
 // TARGET_PLATFORM: JS
 // FILE: main.kt
 

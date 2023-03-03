@@ -8,7 +8,7 @@
 
 expect fun foo(a: String, b: String = "O"): String
 
-// MODULE: lib()()(common)
+// MODULE: lib(common)
 // FILE: lib.kt
 
 actual fun foo(a: String, b: String) = a + b
