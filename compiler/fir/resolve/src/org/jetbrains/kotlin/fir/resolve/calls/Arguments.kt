@@ -13,16 +13,12 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.lookupTracker
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.createFunctionType
-import org.jetbrains.kotlin.fir.expressions.unwrapSmartcastExpression
-import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.inference.LambdaWithTypeVariableAsExpectedTypeAtom
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeReceiverConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.preprocessCallableReference
 import org.jetbrains.kotlin.fir.resolve.inference.preprocessLambdaArgument
-import org.jetbrains.kotlin.fir.resolve.isMarkedWithImplicitIntegerCoercion
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolvedTypeDeclaration
@@ -520,23 +516,19 @@ private fun getExpectedTypeWithImplicintIntegerCoercion(
     parameter: FirValueParameter,
     candidateExpectedType: ConeKotlinType
 ): ConeKotlinType? {
-    val argumentRef = argument.calleeReference?.toResolvedCallableSymbol() ?: return null
-    if (argumentRef.rawStatus.isConst &&
-        parameter.isMarkedWithImplicitIntegerCoercion &&
-        argumentRef.isMarkedWithImplicitIntegerCoercion) {
+    if (!parameter.isMarkedWithImplicitIntegerCoercion) return null
 
-        val argumentType = argumentRef.resolvedReturnType
-        val parameterType = parameter.returnTypeRef.coneTypeOrNull?.let {
-            if (parameter.isVararg) it.varargElementType() else it
+    val argumentType =
+        if (argument.isIntegerLiteralOrOperatorCall()) argument.resultType.coneType
+        else {
+            argument.calleeReference?.toResolvedCallableSymbol()?.takeIf {
+                it.rawStatus.isConst && it.isMarkedWithImplicitIntegerCoercion
+            }?.resolvedReturnType
         }
 
-        fun ConeKotlinType.isConvertible() = isIntegerTypeOrNullableIntegerTypeOfAnySize || isUnsignedTypeOrNullableUnsignedType
+    // TODO: consider adding a check that argument could be converted to the parameter type (maybe difficult for platform types)
 
-        if (parameterType != null && argumentType.isConvertible() && parameterType.isConvertible()) {
-            return argumentType.withNullability(candidateExpectedType.nullability, session.typeContext)
-        }
-    }
-    return null
+    return argumentType?.withNullability(candidateExpectedType.nullability, session.typeContext)
 }
 
 fun FirExpression.isFunctional(

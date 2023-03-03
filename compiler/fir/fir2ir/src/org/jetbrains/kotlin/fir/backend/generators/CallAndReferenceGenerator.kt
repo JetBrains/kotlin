@@ -18,14 +18,10 @@ import org.jetbrains.kotlin.fir.getContainingClassLookupTag
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticFunctionSymbol
-import org.jetbrains.kotlin.fir.resolve.defaultType
-import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.resolve.isMarkedWithImplicitIntegerCoercion
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
-import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
-import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.approximateDeclarationType
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -1018,17 +1014,13 @@ class CallAndReferenceGenerator(
         argument: FirExpression,
         parameter: FirValueParameter?
     ): IrExpression {
-        if (parameter == null) return this
+        if (parameter == null || !parameter.isMarkedWithImplicitIntegerCoercion) return this
 
-        val parameterType = parameter.returnTypeRef.coneTypeOrNull?.let {
-            if (parameter.isVararg) it.varargElementType() else it
-        } ?: return this
-
-        fun ConeKotlinType.isConvertible() = isIntegerTypeOrNullableIntegerTypeOfAnySize || isUnsignedTypeOrNullableUnsignedType
-
-        fun IrExpression.applyToElement(argumentRef: FirCallableSymbol<*>?, conversionFunction: IrSimpleFunctionSymbol): IrExpression =
-            if (argumentRef != null && argumentRef.resolvedStatus.isConst && argumentRef.resolvedReturnType.isConvertible() &&
-                argumentRef.isMarkedWithImplicitIntegerCoercion
+        fun IrExpression.applyToElement(argument: FirExpression, conversionFunction: IrSimpleFunctionSymbol): IrExpression =
+            if (argument is FirConstExpression<*> ||
+                argument.calleeReference?.toResolvedCallableSymbol()?.let {
+                    it.resolvedStatus.isConst && it.isMarkedWithImplicitIntegerCoercion
+                } == true
             ) {
                 IrCallImpl(
                     startOffset, endOffset,
@@ -1041,7 +1033,7 @@ class CallAndReferenceGenerator(
                 }
             } else this@applyToElement
 
-        if (parameter.isMarkedWithImplicitIntegerCoercion && parameterType.isConvertible()) {
+        if (parameter.isMarkedWithImplicitIntegerCoercion) {
             if (this is IrVarargImpl && argument is FirVarargArgumentsExpression) {
 
                 val targetTypeFqName = varargElementType.classFqName ?: return this
@@ -1054,7 +1046,7 @@ class CallAndReferenceGenerator(
                         val targetFun = argument.arguments[i].typeRef.toIrType().classifierOrNull?.let { conversionFunctions[it] }
                         if (targetFun != null && irVarargElement is IrExpression) {
                             elements[i] =
-                                irVarargElement.applyToElement(argument.arguments[i].calleeReference?.toResolvedCallableSymbol(), targetFun)
+                                irVarargElement.applyToElement(argument.arguments[i], targetFun)
                         }
                     }
                 }
@@ -1070,7 +1062,7 @@ class CallAndReferenceGenerator(
 
                 val conversionFunction = conversionFunctions[sourceTypeClassifier] ?: return this
 
-                return this.applyToElement(argument.calleeReference?.toResolvedCallableSymbol(), conversionFunction)
+                return this.applyToElement(argument, conversionFunction)
             }
         }
         return this
