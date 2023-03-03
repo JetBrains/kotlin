@@ -277,10 +277,8 @@ private object FirLazyAnnotationTransformer : FirTransformer<FirLazyAnnotationTr
 private object FirLazyBodiesCalculatorTransformer : FirTransformer<PersistentList<FirRegularClass>>() {
 
     override fun transformFile(file: FirFile, data: PersistentList<FirRegularClass>): FirFile {
-        withFileAnalysisExceptionWrapping(file) {
-            file.declarations.forEach {
-                it.transformSingle(this, data)
-            }
+        file.declarations.forEach {
+            it.transformSingle(this, data)
         }
         return file
     }
