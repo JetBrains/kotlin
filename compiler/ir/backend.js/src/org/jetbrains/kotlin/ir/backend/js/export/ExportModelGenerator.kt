@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.export
 
 import org.jetbrains.kotlin.backend.common.ir.isExpect
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -61,7 +62,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
             is IrClass -> exportClass(candidate)
             is IrField -> null
             else -> error("Can't export declaration $candidate")
-        }
+        }?.withAttributesFor(candidate)
     }
 
     private fun exportClass(candidate: IrClass): ExportedDeclaration? {
@@ -315,16 +316,16 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
 
             when (candidate) {
                 is IrSimpleFunction ->
-                    members.addIfNotNull(exportFunction(candidate))
+                    members.addIfNotNull(exportFunction(candidate)?.withAttributesFor(candidate))
 
                 is IrConstructor ->
-                    members.addIfNotNull(exportConstructor(candidate))
+                    members.addIfNotNull(exportConstructor(candidate)?.withAttributesFor(candidate))
 
                 is IrProperty ->
-                    members.addIfNotNull(exportProperty(candidate))
+                    members.addIfNotNull(exportProperty(candidate)?.withAttributesFor(candidate))
 
                 is IrClass -> {
-                    val ec = exportClass(candidate)
+                    val ec = exportClass(candidate)?.withAttributesFor(candidate)
                     if (ec is ExportedClass) {
                         nestedClasses.add(ec)
                     } else {
@@ -547,6 +548,12 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
                 }
             }
         )
+    }
+
+    private fun ExportedDeclaration.withAttributesFor(declaration: IrDeclaration): ExportedDeclaration {
+        declaration.getDeprecated()?.let { attributes.add(ExportedAttribute.DeprecatedAttribute(it)) }
+
+        return this
     }
 
     private fun exportType(type: IrType, shouldCalculateExportedSupertypeForImplicit: Boolean = true): ExportedType {

@@ -96,7 +96,7 @@ class ExportModelToTsDeclarations {
         joinToString("") { it.toTypeScript(indent) + "\n" }
 
     private fun ExportedDeclaration.toTypeScript(indent: String, prefix: String = "", esModules: Boolean = false): String =
-        indent + when (this) {
+        attributes.toTypeScript(indent) + indent + when (this) {
             is ErrorDeclaration -> generateTypeScriptString()
             is ExportedConstructor -> generateTypeScriptString(indent)
             is ExportedConstructSignature -> generateTypeScriptString(indent)
@@ -106,6 +106,17 @@ class ExportModelToTsDeclarations {
             is ExportedProperty -> generateTypeScriptString(indent, prefix, esModules)
             is ExportedObject -> generateTypeScriptString(indent, prefix, esModules)
         }
+
+    private fun Iterable<ExportedAttribute>.toTypeScript(indent: String): String {
+        return joinToString("\n") { it.toTypeScript(indent) }
+            .run { if (isNotEmpty()) plus("\n") else this }
+    }
+
+    private fun ExportedAttribute.toTypeScript(indent: String): String {
+        return when (this) {
+            is ExportedAttribute.DeprecatedAttribute -> indent + tsDeprecated(message)
+        }
+    }
 
     private fun ErrorDeclaration.generateTypeScriptString(): String {
         return "/* ErrorDeclaration: $message */"
@@ -478,5 +489,9 @@ class ExportModelToTsDeclarations {
 
     private fun tsIgnore(reason: String): String {
         return "/* @ts-ignore: $reason */"
+    }
+
+    private fun tsDeprecated(message: String): String {
+        return "/** @deprecated $message */"
     }
 }
