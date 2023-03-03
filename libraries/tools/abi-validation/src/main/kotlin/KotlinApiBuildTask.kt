@@ -53,6 +53,24 @@ open class KotlinApiBuildTask @Inject constructor(
         get() = _ignoredClasses ?: extension?.ignoredClasses ?: emptySet()
         set(value) { _ignoredClasses = value }
 
+    private var _publicPackages: Set<String>? = null
+    @get:Input
+    var publicPackages: Set<String>
+        get() = _publicPackages ?: extension?.publicPackages ?: emptySet()
+        set(value) { _publicPackages = value }
+
+    private var _publicMarkers: Set<String>? = null
+    @get:Input
+    var publicMarkers: Set<String>
+        get() = _publicMarkers ?: extension?.publicMarkers ?: emptySet()
+        set(value) { _publicMarkers = value}
+
+    private var _publicClasses: Set<String>? = null
+    @get:Input
+    var publicClasses: Set<String>
+        get() = _publicClasses ?: extension?.publicClasses ?: emptySet()
+        set(value) { _publicClasses = value }
+
     @get:Internal
     internal val projectName = project.name
 
@@ -79,8 +97,9 @@ open class KotlinApiBuildTask @Inject constructor(
 
 
         val filteredSignatures = signatures
+            .retainExplicitlyIncludedIfDeclared(publicPackages, publicClasses, publicMarkers)
             .filterOutNonPublic(ignoredPackages, ignoredClasses)
-            .filterOutAnnotated(nonPublicMarkers.map { it.replace(".", "/") }.toSet())
+            .filterOutAnnotated(nonPublicMarkers.map(::replaceDots).toSet())
 
         outputApiDir.resolve("$projectName.api").bufferedWriter().use { writer ->
             filteredSignatures
