@@ -69,7 +69,7 @@ object CompilerRunnerUtil {
             )
             ourClassLoaderRef = SoftReference(classLoader)
         }
-        return classLoader!!
+        return JpsPluginClassLoader(classLoader!!)
     }
 
     fun getLibPath(paths: KotlinPaths, messageCollector: MessageCollector): File? {
