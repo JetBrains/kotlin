@@ -15,7 +15,7 @@ class Bar<T>(val t: T)
 @Serializable
 class Wrapper(val b: Bar<String>)
 
-// MODULE: jvm()()(common)
+// MODULE: jvm(common)
 // TARGET_PLATFORM: JVM
 // FILE: main.kt
 

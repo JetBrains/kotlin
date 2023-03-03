@@ -14,7 +14,7 @@ open class A : S1, S2
 
 class B : A()
 
-// MODULE: jvm()()(common)
+// MODULE: jvm(common)
 // TARGET_PLATFORM: JVM
 // FILE: main.kt
 

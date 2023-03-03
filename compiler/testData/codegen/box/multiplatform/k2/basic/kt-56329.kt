@@ -14,7 +14,7 @@ expect fun <T> foo(y: T, x: S): String
 
 fun ok() = foo(1) + foo(2, "K" as S)
 
-// MODULE: jvm()()(common)
+// MODULE: jvm(common)
 // TARGET_PLATFORM: JVM
 // FILE: main.kt
 

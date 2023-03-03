@@ -11,7 +11,7 @@ interface Foo {
 
 fun test(e: Foo) = e.ok()
 
-// MODULE: jvm()()(common)
+// MODULE: jvm(common)
 // TARGET_PLATFORM: JVM
 // FILE: main.kt
 

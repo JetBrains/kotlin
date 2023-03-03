@@ -14,7 +14,7 @@ expect class Foo {
     val value: String
 }
 
-// MODULE: jvm()()(common)
+// MODULE: jvm(common)
 // FILE: jvm.kt
 
 @file:JvmMultifileClass

@@ -8,7 +8,7 @@
 
 expect class Foo(a: String = "", b: Int = 42)
 
-// MODULE: jvm()()(common)
+// MODULE: jvm(common)
 // FILE: J.java
 
 public class J {

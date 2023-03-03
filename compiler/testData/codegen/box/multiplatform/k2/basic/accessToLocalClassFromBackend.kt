@@ -11,7 +11,7 @@ val LocalClass = object {
 
 fun ok() = LocalClass.toString()
 
-// MODULE: jvm()()(common)
+// MODULE: jvm(common)
 // TARGET_PLATFORM: JVM
 // FILE: main.kt
 

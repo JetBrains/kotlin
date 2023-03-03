@@ -14,7 +14,7 @@ fun test(): String {
     return func() + prop
 }
 
-// MODULE: jvm()()(common)
+// MODULE: jvm(common)
 // TARGET_PLATFORM: JVM
 // FILE: main.kt
 

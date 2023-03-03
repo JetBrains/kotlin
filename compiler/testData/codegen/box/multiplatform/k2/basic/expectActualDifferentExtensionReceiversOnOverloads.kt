@@ -11,7 +11,7 @@ expect fun BooleanArray.getChecked(index: Int): Boolean
 
 fun ok() = if (!BooleanArray(1).getChecked(0)) "OK" else "FAIL"
 
-// MODULE: jvm()()(common)
+// MODULE: jvm(common)
 // TARGET_PLATFORM: JVM
 // FILE: main.kt
 

@@ -11,7 +11,7 @@ expect enum class Base2 { K }
 
 fun k() = Base2.K.name
 
-// MODULE: jvm()()(common)
+// MODULE: jvm(common)
 // TARGET_PLATFORM: JVM
 // FILE: main.kt
 

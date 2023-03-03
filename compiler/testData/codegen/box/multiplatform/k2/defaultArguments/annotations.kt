@@ -14,7 +14,7 @@ expect annotation class A2(val x: Int = 42, val y: String = "OK")
 @A2
 fun test() {}
 
-// MODULE: jvm()()(common)
+// MODULE: jvm(common)
 // FILE: jvm.kt
 
 import kotlin.test.assertEquals
