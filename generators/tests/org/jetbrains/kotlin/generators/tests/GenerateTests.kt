@@ -179,24 +179,6 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup(
-            "plugins/jvm-abi-gen/test", "plugins/jvm-abi-gen/testData",
-            testRunnerMethodName = "runTestWithCustomIgnoreDirective",
-            additionalRunnerArguments = listOf("\"// IGNORE_BACKEND_LEGACY: \"")
-        ) {
-            testClass<AbstractLegacyCompareJvmAbiTest> {
-                model("compare", recursive = false, extension = null, targetBackend = TargetBackend.JVM_IR)
-            }
-
-            testClass<AbstractLegacyJvmAbiContentTest> {
-                model("content", recursive = false, extension = null, targetBackend = TargetBackend.JVM_IR)
-            }
-
-            testClass<AbstractLegacyCompileAgainstJvmAbiTest> {
-                model("compile", recursive = false, extension = null, targetBackend = TargetBackend.JVM_IR)
-            }
-        }
-
         testGroup("plugins/sam-with-receiver/tests-gen", "plugins/sam-with-receiver/testData") {
             testClass<AbstractSamWithReceiverScriptTest> {
                 model("script", extension = "kts")

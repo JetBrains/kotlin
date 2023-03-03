@@ -461,10 +461,7 @@ public class FunctionCodegen {
             boolean staticInCompanionObject
     ) {
         OwnerKind contextKind = methodContext.getContextKind();
-        if (!state.getClassBuilderMode().generateBodies
-            || isAbstractMethod(functionDescriptor, contextKind, state.getJvmDefaultMode())
-            || shouldSkipMethodBodyInAbiMode(state.getClassBuilderMode(), origin)
-        ) {
+        if (!state.getClassBuilderMode().generateBodies || isAbstractMethod(functionDescriptor, contextKind, state.getJvmDefaultMode())) {
             generateLocalVariableTable(
                     mv,
                     jvmSignature,
@@ -495,13 +492,6 @@ public class FunctionCodegen {
         }
 
         endVisit(mv, null, origin.getElement());
-    }
-
-    private static boolean shouldSkipMethodBodyInAbiMode(@NotNull ClassBuilderMode classBuilderMode, @NotNull JvmDeclarationOrigin origin) {
-        if (classBuilderMode != ClassBuilderMode.ABI) return false;
-
-        DeclarationDescriptor descriptor = origin.getDescriptor();
-        return descriptor != null && !InlineUtil.isInlineOrContainingInline(descriptor);
     }
 
     public static void generateParameterAnnotations(
