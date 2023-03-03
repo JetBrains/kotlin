@@ -14,7 +14,7 @@ expect class C(e: E = E.O) {
     }
 }
 
-// MODULE: platform()()(common)
+// MODULE: platform(common)
 // FILE: platform.kt
 
 actual class C actual constructor(e: E) {

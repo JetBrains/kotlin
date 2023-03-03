@@ -7,7 +7,7 @@
 
 expect inline fun <T> get(p: String = "OK"): String
 
-// MODULE: platform()()(common)
+// MODULE: platform(common)
 // FILE: platform.kt
 
 actual inline fun <T> get(p: String): String {

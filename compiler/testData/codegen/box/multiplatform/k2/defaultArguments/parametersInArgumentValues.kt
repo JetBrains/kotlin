@@ -9,7 +9,7 @@ class B(val value: Int)
 
 expect fun test(a: Int = 2, b: Int = B(a * 2).value, c: String = "${b}$a"): String
 
-// MODULE: platform()()(common)
+// MODULE: platform(common)
 // FILE: platform.kt
 
 actual fun test(a: Int, b: Int, c: String): String = c

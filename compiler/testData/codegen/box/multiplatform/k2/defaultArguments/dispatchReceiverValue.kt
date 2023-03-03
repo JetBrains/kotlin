@@ -13,7 +13,7 @@ expect class C {
     fun test(result: String = value): String
 }
 
-// MODULE: platform()()(common)
+// MODULE: platform(common)
 // FILE: platform.kt
 
 actual class C(actual val value: String) {

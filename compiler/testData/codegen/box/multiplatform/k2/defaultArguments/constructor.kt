@@ -8,7 +8,7 @@
 
 expect class Foo(a: String, b: Int = 0, c: Double? = null)
 
-// MODULE: platform()()(common)
+// MODULE: platform(common)
 // FILE: platform.kt
 
 import kotlin.test.assertEquals

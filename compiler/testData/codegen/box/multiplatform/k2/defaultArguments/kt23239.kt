@@ -14,7 +14,7 @@ expect open class C() {
     open fun fffx(p1: Int, p2: Int = 4, p3: Int = 5) : String
 }
 
-// MODULE: platform()()(common)
+// MODULE: platform(common)
 // FILE: platform.kt
 
 import kotlin.test.assertEquals

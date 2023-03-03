@@ -14,7 +14,7 @@ expect open class B : A {
     override open fun f(p: Int) : String
 }
 
-// MODULE: platform()()(common)
+// MODULE: platform(common)
 // FILE: platform.kt
 
 import kotlin.test.assertEquals

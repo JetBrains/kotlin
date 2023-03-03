@@ -8,7 +8,7 @@ expect interface I {
     fun f(p: String = "OK"): String
 }
 
-// MODULE: platform()()(common)
+// MODULE: platform(common)
 // FILE: platform.kt
 actual interface I {
     actual fun f(p: String): String

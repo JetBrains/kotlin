@@ -10,7 +10,7 @@ expect open class C() {
     open fun f(p: Int = 2) : String
 }
 
-// MODULE: platform()()(common)
+// MODULE: platform(common)
 // FILE: platform.kt
 
 import kotlin.test.assertEquals

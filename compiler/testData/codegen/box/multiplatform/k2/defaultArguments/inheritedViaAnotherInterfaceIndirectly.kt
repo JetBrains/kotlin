@@ -11,7 +11,7 @@ expect interface H {
     fun foo(x: String = "default"): String
 }
 
-// MODULE: platform()()(common)
+// MODULE: platform(common)
 // FILE: platform.kt
 package foo
 

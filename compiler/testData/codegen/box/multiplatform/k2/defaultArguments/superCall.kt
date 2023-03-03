@@ -12,7 +12,7 @@ expect open class A {
     open fun foo(x: Int = 20, y: Int = 3): Int
 }
 
-// MODULE: platform()()(common)
+// MODULE: platform(common)
 // FILE: main.kt
 package foo
 
