@@ -9,7 +9,7 @@ expect class Foo : I, C, J
 
 <!SUPERTYPE_INITIALIZED_WITHOUT_PRIMARY_CONSTRUCTOR, SUPERTYPE_INITIALIZED_WITHOUT_PRIMARY_CONSTRUCTOR!>expect class Bar : C()<!>
 
-// MODULE: m2-jvm()()(m1-common)
+// MODULE: m2-jvm(m1-common)
 // FILE: jvm.kt
 actual class Foo : I, C(), J
 

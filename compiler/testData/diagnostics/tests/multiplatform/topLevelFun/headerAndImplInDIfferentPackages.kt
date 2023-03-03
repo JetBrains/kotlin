@@ -4,7 +4,7 @@ package common
 
 expect fun <!NO_ACTUAL_FOR_EXPECT{JVM}, NO_ACTUAL_FOR_EXPECT{JS}!>foo<!>()
 
-// MODULE: m2-jvm()()(m1-common)
+// MODULE: m2-jvm(m1-common)
 // FILE: jvm.kt
 package jvm
 

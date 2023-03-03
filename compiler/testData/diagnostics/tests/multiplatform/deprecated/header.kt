@@ -13,7 +13,7 @@
     FIRST
 }
 
-// MODULE: m2-jvm()()(m1-common)
+// MODULE: m2-jvm(m1-common)
 // FILE: jvm.kt
 
 <!DEPRECATED_MODIFIER!>impl<!> class My

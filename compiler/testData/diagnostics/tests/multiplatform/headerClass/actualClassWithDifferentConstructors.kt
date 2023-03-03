@@ -13,7 +13,7 @@ expect class Bar5()
 expect class Bar6()
 expect class Bar7(s: String)
 
-// MODULE: m2-jvm()()(m1-common)
+// MODULE: m2-jvm(m1-common)
 
 // FILE: JavaFoo.java
 

@@ -4,7 +4,7 @@
 inline expect fun inlineFun()
 expect fun nonInlineFun()
 
-// MODULE: m2-jvm()()(m1-common)
+// MODULE: m2-jvm(m1-common)
 // FILE: jvm.kt
 
 <!ACTUAL_WITHOUT_EXPECT!>actual<!> fun inlineFun() { }

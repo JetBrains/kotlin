@@ -3,7 +3,7 @@
 
 expect fun <!AMBIGUOUS_ACTUALS{JVM}, AMBIGUOUS_ACTUALS{JS}!>foo<!>()
 
-// MODULE: m2-jvm()()(m1-common)
+// MODULE: m2-jvm(m1-common)
 // FILE: jvm.kt
 
 <!CONFLICTING_OVERLOADS!>actual fun foo()<!> {}

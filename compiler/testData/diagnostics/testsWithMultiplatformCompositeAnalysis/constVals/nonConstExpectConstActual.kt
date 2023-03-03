@@ -29,7 +29,7 @@ expect val NonConstConstTl: Int
 expect <!CONST_VAL_WITHOUT_INITIALIZER!>const<!> val ConstNonConstTl: Int
 expect <!CONST_VAL_WITHOUT_INITIALIZER!>const<!> val ConstConstTl: Int
 
-// MODULE: m2-jvm()()(m1-common)
+// MODULE: m2-jvm(m1-common)
 
 class NonConstImpl {
     companion object {

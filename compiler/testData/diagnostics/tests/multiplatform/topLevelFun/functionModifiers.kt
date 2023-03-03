@@ -9,7 +9,7 @@ expect fun inline()
 expect fun String.unaryMinus(): String
 expect fun String.and(other: String): String
 
-// MODULE: m2-jvm()()(m1-common)
+// MODULE: m2-jvm(m1-common)
 // FILE: jvm.kt
 
 actual external fun external()

@@ -6,7 +6,7 @@ expect fun foo(x: Int): Int
 
 fun callFromCommonCode(x: Int) = foo(x)
 
-// MODULE: m2-jvm()()(m1-common)
+// MODULE: m2-jvm(m1-common)
 // FILE: jvm.kt
 
 actual fun foo(x: Int): Int {

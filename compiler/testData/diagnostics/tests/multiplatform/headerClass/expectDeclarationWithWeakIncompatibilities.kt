@@ -11,7 +11,7 @@ expect val s: String
 
 expect open class <!AMBIGUOUS_ACTUALS{JVM}, PACKAGE_OR_CLASSIFIER_REDECLARATION{JVM}!>Foo3<!>
 
-// MODULE: m2-jvm()()(m1-common)
+// MODULE: m2-jvm(m1-common)
 
 // FILE: jvm.kt
 

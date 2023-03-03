@@ -35,7 +35,7 @@ fun A.test() {
     "".companionExtensionFunction(42, "ok")
 }
 
-// MODULE: m2-jvm()()(m1-common)
+// MODULE: m2-jvm(m1-common)
 // FILE: jvm.kt
 
 import A.Companion.companionExtensionFunction
