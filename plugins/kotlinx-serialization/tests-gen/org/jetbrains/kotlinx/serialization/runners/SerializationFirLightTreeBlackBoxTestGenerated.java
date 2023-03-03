@@ -70,6 +70,12 @@ public class SerializationFirLightTreeBlackBoxTestGenerated extends AbstractSeri
         }
 
         @Test
+        @TestMetadata("delegatedProperty.kt")
+        public void testDelegatedProperty() throws Exception {
+            runTest("plugins/kotlinx-serialization/testData/boxIr/delegatedProperty.kt");
+        }
+
+        @Test
         @TestMetadata("enumsAreCached.kt")
         public void testEnumsAreCached() throws Exception {
             runTest("plugins/kotlinx-serialization/testData/boxIr/enumsAreCached.kt");
