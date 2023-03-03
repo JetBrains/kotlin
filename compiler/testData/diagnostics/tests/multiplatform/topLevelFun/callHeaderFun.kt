@@ -15,7 +15,7 @@ actual fun foo(x: Int): Int {
 
 fun callFromJVM(x: Int) = foo(x)
 
-// MODULE: m3-js()()(m1-common)
+// MODULE: m3-js(m1-common)
 // FILE: js.kt
 
 actual fun foo(x: Int): Int {

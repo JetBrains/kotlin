@@ -7,6 +7,6 @@ expect var foo: String
 // FILE: jvm.kt
 actual var foo: String = "JVM"
 
-// MODULE: m3-js()()(m1-common)
+// MODULE: m3-js(m1-common)
 // FILE: js.kt
 actual var foo: String = "JS"

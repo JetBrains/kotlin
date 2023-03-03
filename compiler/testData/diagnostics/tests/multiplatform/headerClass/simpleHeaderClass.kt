@@ -7,6 +7,6 @@ expect class Foo
 // FILE: jvm.kt
 actual class Foo
 
-// MODULE: m3-js()()(m1-common)
+// MODULE: m3-js(m1-common)
 // FILE: js.kt
 actual class Foo

@@ -7,6 +7,6 @@ expect fun foo()
 // FILE: jvm.kt
 actual fun foo() {}
 
-// MODULE: m3-js()()(m1-common)
+// MODULE: m3-js(m1-common)
 // FILE: js.kt
 actual fun foo() {}

@@ -10,7 +10,7 @@ package jvm
 
 actual fun <!ACTUAL_WITHOUT_EXPECT!>foo<!>() {}
 
-// MODULE: m3-js()()(m1-common)
+// MODULE: m3-js(m1-common)
 // FILE: js.kt
 package js
 
