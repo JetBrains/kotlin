@@ -40,11 +40,6 @@ public class JsFirInvalidationTestGenerated extends AbstractJsFirInvalidationTes
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/incremental/invalidation"), Pattern.compile("^([^_](.+))$"), null, TargetBackend.JS_IR, false);
     }
 
-    @TestMetadata("breakKlibBinaryCompatibilityWithVariance")
-    public void testBreakKlibBinaryCompatibilityWithVariance() throws Exception {
-        runTest("js/js.translator/testData/incremental/invalidation/breakKlibBinaryCompatibilityWithVariance/");
-    }
-
     @TestMetadata("circleExportsUpdate")
     public void testCircleExportsUpdate() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/circleExportsUpdate/");
