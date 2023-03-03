@@ -5,12 +5,12 @@
 
 package org.w3c.dom
 
-public external interface ItemArrayLike<out T> {
+public external interface ItemArrayLike<out T : JsAny?> : JsAny {
     val length: Int
     fun item(index: Int): T?
 }
 
-public fun <T> ItemArrayLike<T>.asList(): List<T> = object : AbstractList<T>() {
+public fun <T : JsAny?> ItemArrayLike<T>.asList(): List<T> = object : AbstractList<T>() {
     override val size: Int get() = this@asList.length
 
     @Suppress("UNCHECKED_CAST")

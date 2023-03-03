@@ -8,7 +8,7 @@ package kotlin.js
 /**
  * Exposes the JavaScript [Promise object](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Promise) to Kotlin.
  */
-public external class Promise<out T>(executor: (resolve: (Dynamic?) -> Unit, reject: (Dynamic) -> Unit) -> Unit) {
+public external class Promise<out T : JsAny?>(executor: (resolve: (Dynamic?) -> Unit, reject: (Dynamic) -> Unit) -> Unit) : JsAny {
     public fun then(onFulfilled: (Dynamic?) -> Dynamic?): Promise<Dynamic?>
     public fun then(onFulfilled: (Dynamic?) -> Dynamic?, onRejected: (Dynamic) -> Dynamic?): Promise<Dynamic?>
     public fun catch(onRejected: (Dynamic) -> Dynamic?): Promise<Dynamic?>

@@ -152,7 +152,7 @@ internal fun <T> Dynamic.getAny(index: Int): T? = dynamicGetAny(this, index.toSt
 /**
  * Represents unversal type for JS interoperability.
  */
-external interface Dynamic
+external interface Dynamic : JsAny
 
 /**
  * Reinterprets this value as a value of the Dynamic type.

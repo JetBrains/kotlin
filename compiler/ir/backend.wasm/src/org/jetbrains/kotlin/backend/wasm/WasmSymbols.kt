@@ -290,8 +290,8 @@ class WasmSymbols(
 
     val wasmAnyRefClass = getIrClass(FqName("kotlin.wasm.internal.reftypes.anyref"))
 
-    private val externalInterfaceClass = getIrClass(FqName("kotlin.wasm.internal.ExternalInterfaceType"))
-    val externalInterfaceType by lazy { externalInterfaceClass.defaultType }
+    private val jsAnyClass = getIrClass(FqName("kotlin.js.JsAny"))
+    val jsAnyType by lazy { jsAnyClass.defaultType }
 
     inner class JsInteropAdapters {
         val kotlinToJsStringAdapter = getInternalFunction("kotlinToJsStringAdapter")

@@ -34,6 +34,7 @@ import kotlin.wasm.internal.ExcludedFromCodegen
  * ```
  */
 @ExcludedFromCodegen
+@Suppress("WRONG_JS_INTEROP_TYPE")
 public external val definedExternally: Nothing
 
 /**

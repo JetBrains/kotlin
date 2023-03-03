@@ -95,6 +95,11 @@ public class IrCodegenWasmJsInteropWasmTestGenerated extends AbstractIrCodegenWa
         runTest("compiler/testData/codegen/boxWasmJsInterop/jsToKotlinAdapters.kt");
     }
 
+    @TestMetadata("jsTypes.kt")
+    public void testJsTypes() throws Exception {
+        runTest("compiler/testData/codegen/boxWasmJsInterop/jsTypes.kt");
+    }
+
     @TestMetadata("kotlinToJsAdapters.kt")
     public void testKotlinToJsAdapters() throws Exception {
         runTest("compiler/testData/codegen/boxWasmJsInterop/kotlinToJsAdapters.kt");
