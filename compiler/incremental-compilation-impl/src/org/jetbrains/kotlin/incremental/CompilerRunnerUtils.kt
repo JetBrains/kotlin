@@ -21,17 +21,17 @@ import java.io.File
 var K2JVMCompilerArguments.destinationAsFile: File
     get() = File(destination)
     set(value) {
-        destination = value.path
+        destination = value.absolutePath
     }
 
 var K2JVMCompilerArguments.classpathAsList: List<File>
     get() = classpath.orEmpty().split(File.pathSeparator).map(::File)
     set(value) {
-        classpath = value.joinToString(separator = File.pathSeparator, transform = { it.path })
+        classpath = value.joinToString(separator = File.pathSeparator, transform = { it.absolutePath })
     }
 
 @Suppress("unused") // used in Maven compile runner
-fun makeIncrementally(
+fun makeJvmIncrementally(
     cachesDir: File,
     sourceRoots: Iterable<File>,
     args: K2JVMCompilerArguments,
