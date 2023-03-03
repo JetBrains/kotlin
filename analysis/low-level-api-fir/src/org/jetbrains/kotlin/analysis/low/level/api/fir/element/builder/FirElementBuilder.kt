@@ -7,17 +7,23 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.KtRealPsiSourceElement
 import org.jetbrains.kotlin.analysis.api.impl.barebone.annotations.ThreadSafe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FileStructureElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.declarationCanBeLazilyResolved
+import org.jetbrains.kotlin.analysis.project.structure.getKtModule
 import org.jetbrains.kotlin.analysis.utils.printer.getElementTextInContext
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getTopmostParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.psi.psiUtil.isObjectLiteral
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
@@ -78,19 +84,47 @@ internal class FirElementBuilder(
             return null
         }
 
-        val firFile = element.containingKtFile
-        val fileStructure = moduleComponents.fileStructureCache.getFileStructure(firFile)
+        val ktFile = element.containingKtFile
+        if (ktFile.isCompiled) {
+            val fir = findDeserializedFir(element, firResolveSession.getSessionFor(element.getKtModule()).symbolProvider) ?: return null
+            return moduleComponents.fileStructureCache.getClsKtToFirMapping(fir).getElement(element, firResolveSession)
+        }
+
+        val fileStructure = moduleComponents.fileStructureCache.getFileStructure(ktFile)
 
         val mappings = fileStructure.getStructureElementFor(element).mappings
         val psi = getPsiAsFirElementSource(element) ?: return null
         return mappings.getFirOfClosestParent(psi, firResolveSession)
-            ?: firResolveSession.getOrBuildFirFile(firFile)
+            ?: firResolveSession.getOrBuildFirFile(ktFile)
     }
 
     @TestOnly
     fun getStructureElementFor(element: KtElement): FileStructureElement {
         val fileStructure = moduleComponents.fileStructureCache.getFileStructure(element.containingKtFile)
         return fileStructure.getStructureElementFor(element)
+    }
+}
+
+fun findDeserializedFir(
+    element: KtElement,
+    firSymbolProvider: FirSymbolProvider
+): FirDeclaration? {
+    when (val ktDeclaration = element.getTopmostParentOfType<KtDeclaration>() ?: element as? KtDeclaration) {
+        is KtCallableDeclaration -> {
+            val packageName = ktDeclaration.containingKtFile.packageFqName
+            val callableName = ktDeclaration.nameAsSafeName
+            return firSymbolProvider.getTopLevelCallableSymbols(
+                packageName,
+                callableName
+            ).find { (it.fir.source as? KtRealPsiSourceElement)?.psi == ktDeclaration }?.fir
+        }
+        is KtClassLikeDeclaration -> {
+            val classId = ktDeclaration.getClassId() ?: return null
+            return firSymbolProvider.getClassLikeSymbolByClassId(
+                classId
+            )?.fir
+        }
+        else -> return null
     }
 }
 

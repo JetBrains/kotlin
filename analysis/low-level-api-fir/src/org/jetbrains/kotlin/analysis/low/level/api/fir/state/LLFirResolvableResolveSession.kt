@@ -76,7 +76,9 @@ internal abstract class LLFirResolvableResolveSession(
     }
 
     override fun getOrBuildFirFor(element: KtElement): FirElement? {
-        val moduleComponents = getModuleComponentsForElement(element)
+        val ktModule = element.getKtModule()
+        check(getModuleKind(ktModule) == ModuleKind.RESOLVABLE_MODULE)
+        val moduleComponents = getModuleComponentsForElement(element, ktModule)
         return moduleComponents.elementsBuilder.getOrBuildFirFor(element, this)
     }
 
@@ -85,8 +87,10 @@ internal abstract class LLFirResolvableResolveSession(
         return moduleComponents.firFileBuilder.buildRawFirFileWithCaching(ktFile)
     }
 
-    protected fun getModuleComponentsForElement(element: KtElement): LLFirModuleResolveComponents {
-        val ktModule = element.getKtModule()
+    protected fun getModuleComponentsForElement(
+        element: KtElement,
+        ktModule: KtModule = element.getKtModule()
+    ): LLFirModuleResolveComponents {
         return getResolvableSessionFor(ktModule).moduleComponents
     }
 

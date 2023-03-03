@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import java.util.concurrent.ConcurrentHashMap
 
@@ -14,8 +15,13 @@ import java.util.concurrent.ConcurrentHashMap
  */
 internal class FileStructureCache(private val moduleResolveComponents: LLFirModuleResolveComponents) {
     private val cache = ConcurrentHashMap<KtFile, FileStructure>()
+    private val clsFirMappingCache = ConcurrentHashMap<FirDeclaration, KtToFirMapping>()
 
     fun getFileStructure(ktFile: KtFile): FileStructure = cache.computeIfAbsent(ktFile) {
         FileStructure.build(ktFile, moduleResolveComponents)
+    }
+
+    fun getClsKtToFirMapping(firDeclaration: FirDeclaration) = clsFirMappingCache.computeIfAbsent(firDeclaration) {
+        KtToFirMapping(firDeclaration, FirElementsRecorder())
     }
 }

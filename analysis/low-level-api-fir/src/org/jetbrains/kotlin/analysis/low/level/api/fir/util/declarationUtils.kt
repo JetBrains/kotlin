@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
+import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.findDeserializedFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirFileBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirProvider
@@ -25,6 +26,10 @@ internal fun KtDeclaration.findSourceNonLocalFirDeclaration(
     containerFirFile: FirFile? = null
 ): FirDeclaration {
     //TODO test what way faster
+    val ktFile = containingKtFile
+    if (ktFile.isCompiled) {
+        findDeserializedFir(this, provider.symbolProvider)?.let { return it }
+    }
     findSourceNonLocalFirDeclarationByProvider(firFileBuilder, provider, containerFirFile)?.let { return it }
     findSourceByTraversingWholeTree(firFileBuilder, containerFirFile)?.let { return it }
     errorWithFirSpecificEntries("No fir element was found for", psi = this)

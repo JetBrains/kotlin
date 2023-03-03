@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.ModificationTracker
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.ProjectScope
 import com.intellij.psi.util.CachedValue
@@ -18,22 +20,22 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirLazyDeclarationResol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.*
+import org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization.JvmStubBasedFirDeserializedSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
 import org.jetbrains.kotlin.analysis.project.structure.*
 import org.jetbrains.kotlin.analysis.providers.createAnnotationResolver
 import org.jetbrains.kotlin.analysis.providers.createDeclarationProvider
+import org.jetbrains.kotlin.analysis.providers.createPackagePartProvider
 import org.jetbrains.kotlin.analysis.providers.createPackageProvider
 import org.jetbrains.kotlin.analysis.utils.trackers.CompositeModificationTracker
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
-import org.jetbrains.kotlin.fir.FirModuleDataImpl
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.PrivateSessionConstructor
-import org.jetbrains.kotlin.fir.SessionConfiguration
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkersComponent
 import org.jetbrains.kotlin.fir.analysis.extensions.additionalCheckers
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmTypeMapper
+import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.*
@@ -261,12 +263,31 @@ internal class LLFirSessionCache(private val project: Project) {
             })
 
             val javaSymbolProvider = createJavaSymbolProvider(this, moduleData, project, contentScope)
+            val symbolProvider = if (module is KtBinaryModule) {
+                val moduleDataProvider = SingleModuleDataProvider(moduleData)
+                val packagePartProvider = project.createPackagePartProvider(contentScope)
+                JvmStubBasedFirDeserializedSymbolProvider(
+                    session,
+                    moduleDataProvider,
+                    scopeProvider,
+                    packagePartProvider,
+                    javaSymbolProvider.javaFacade,
+                    project.createDeclarationProvider(object : DelegatingGlobalSearchScope(project, contentScope) {
+                        override fun contains(file: VirtualFile): Boolean {
+                            if (file.extension == "kotlin_builtins") return false
+                            return super.contains(file)
+                        }
+                    })
+                )
+            } else {
+                provider.symbolProvider
+            }
             register(
                 FirSymbolProvider::class,
                 LLFirModuleWithDependenciesSymbolProvider(
                     this,
                     providers = listOf(
-                        provider.symbolProvider,
+                        symbolProvider,
                         javaSymbolProvider,
                     ),
                     dependencyProvider,
