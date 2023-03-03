@@ -1,6 +1,5 @@
 // !LANGUAGE: +MultiPlatformProjects
-// IGNORE_BACKEND: NATIVE
-// IGNORE_BACKEND_K1: JVM, JVM_IR, JS, JS_IR, JS_IR_ES6
+// IGNORE_BACKEND_K1: JVM, JVM_IR, JS, JS_IR, JS_IR_ES6, NATIVE
 
 // MODULE: common
 // FILE: common.kt
@@ -13,7 +12,7 @@ expect val Char.extensionVal: String
 
 expect var String.extensionVar: Char
 
-// MODULE: platform()()(common)
+// MODULE: platform(common)
 // FILE: platform.kt
 
 package test

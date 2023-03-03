@@ -1,6 +1,5 @@
 // !LANGUAGE: +MultiPlatformProjects
-// IGNORE_BACKEND: NATIVE
-// IGNORE_BACKEND_K1: JVM, JVM_IR, JS, JS_IR, JS_IR_ES6
+// IGNORE_BACKEND_K1: JVM, JVM_IR, JS, JS_IR, JS_IR_ES6, NATIVE
 
 // MODULE: common
 // FILE: common.kt
@@ -9,7 +8,7 @@ public expect fun <T> Array<out T>.copyInto(
     destination: Array<T>, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size
 ): Array<T>
 
-// MODULE: platform()()(common)
+// MODULE: platform(common)
 // FILE: platform.kt
 
 // This test should be updated once KT-22818 is fixed; default values are not allowed in the actual function

@@ -1,6 +1,5 @@
 // !LANGUAGE: +MultiPlatformProjects
-// IGNORE_BACKEND: NATIVE
-// IGNORE_BACKEND_K1: JVM, JVM_IR, JS, JS_IR, JS_IR_ES6
+// IGNORE_BACKEND_K1: JVM, JVM_IR, JS, JS_IR, JS_IR_ES6, NATIVE
 
 // MODULE: common
 // FILE: common.kt
@@ -9,7 +8,7 @@ class Receiver(val value: String)
 
 expect fun Receiver.test(result: String = value): String
 
-// MODULE: platform()()(common)
+// MODULE: platform(common)
 // FILE: platform.kt
 
 actual fun Receiver.test(result: String): String {

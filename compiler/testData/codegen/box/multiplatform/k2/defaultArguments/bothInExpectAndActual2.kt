@@ -1,6 +1,5 @@
 // !LANGUAGE: +MultiPlatformProjects
-// IGNORE_BACKEND: NATIVE
-// IGNORE_BACKEND_K1: JVM, JVM_IR, JS, JS_IR, JS_IR_ES6
+// IGNORE_BACKEND_K1: JVM, JVM_IR, JS, JS_IR, JS_IR_ES6, NATIVE
 
 // MODULE: common
 // FILE: common.kt
@@ -11,7 +10,7 @@ expect interface I {
 
 expect interface J : I
 
-// MODULE: platform()()(common)
+// MODULE: platform(common)
 // FILE: platform.kt
 
 actual interface I {

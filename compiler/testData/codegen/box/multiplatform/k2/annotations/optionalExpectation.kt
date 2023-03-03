@@ -1,7 +1,7 @@
 // !LANGUAGE: +MultiPlatformProjects
 // !OPT_IN: kotlin.ExperimentalMultiplatform
-// IGNORE_BACKEND: NATIVE, WASM
-// IGNORE_BACKEND_K1: JVM, JVM_IR, JS, JS_IR, JS_IR_ES6
+// IGNORE_BACKEND: WASM
+// IGNORE_BACKEND_K1: JVM, JVM_IR, JS, JS_IR, JS_IR_ES6, NATIVE
 // IGNORE_BACKEND_K2: JS_IR
 // WITH_STDLIB
 
@@ -19,7 +19,7 @@ expect annotation class B(val s: String) {
     annotation class C(val a: Boolean)
 }
 
-// MODULE: library()()(common)
+// MODULE: library(common)
 // FILE: library.kt
 
 package a
