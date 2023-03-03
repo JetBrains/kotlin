@@ -8,6 +8,6 @@ package org.jetbrains.kotlin.gradle.utils
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_IMPORT_ENABLE_KGP_DEPENDENCY_RESOLUTION
 
-internal fun Project.disableKgpImport() {
-    extensions.extraProperties.set(KOTLIN_MPP_IMPORT_ENABLE_KGP_DEPENDENCY_RESOLUTION, "false") // IJ property parser expects a String
+internal fun Project.enableKgpDependencyResolution(isEnabled: Boolean) {
+    extensions.extraProperties.set(KOTLIN_MPP_IMPORT_ENABLE_KGP_DEPENDENCY_RESOLUTION, "$isEnabled") // IJ property parser expects a String
 }

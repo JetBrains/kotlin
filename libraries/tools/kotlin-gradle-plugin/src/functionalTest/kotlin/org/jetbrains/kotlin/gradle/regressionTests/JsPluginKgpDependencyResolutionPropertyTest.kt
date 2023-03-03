@@ -14,9 +14,9 @@ import org.jetbrains.kotlin.gradle.util.buildProject
 import org.junit.Test
 import kotlin.test.assertEquals
 
-class JsPluginKgpImportPropertyTest {
+class JsPluginKgpDependencyResolutionPropertyTest {
     @Test
-    fun `test project with js plugin has kgp import disabled`() {
+    fun `test project with js plugin has kgp dependency resolution disabled`() {
         val project = buildProject {
             plugins.apply("org.jetbrains.kotlin.js")
         }
@@ -30,7 +30,7 @@ class JsPluginKgpImportPropertyTest {
     }
 
     @Test
-    fun `test kgp import state in a nested js project with a top-level mpp project`() {
+    fun `test kgp dependency resolution state in a nested js project with a top-level mpp project`() {
         val project = buildProject {
             applyMultiplatformPlugin()
         }
@@ -46,7 +46,7 @@ class JsPluginKgpImportPropertyTest {
     }
 
     @Test
-    fun `test kgp import state in a nested js project with a top-level mpp project and enabled kgp import`() {
+    fun `test kgp import state in a nested js project with a top-level mpp project and enabled kgp dependency resolution`() {
         val project = buildProject {
             applyMultiplatformPlugin()
             extensions.extraProperties.set(KOTLIN_MPP_IMPORT_ENABLE_KGP_DEPENDENCY_RESOLUTION, "true")
@@ -63,7 +63,7 @@ class JsPluginKgpImportPropertyTest {
     }
 
     @Test
-    fun `test kgp import state in a nested mpp project with a top-level js project`() {
+    fun `test kgp dependency resolution state in a nested mpp project with a top-level js project`() {
         val project = buildProject {
             plugins.apply("org.jetbrains.kotlin.js")
         }
@@ -83,7 +83,7 @@ class JsPluginKgpImportPropertyTest {
     }
 
     @Test
-    fun `test kgp import state in a nested mpp project with a top-level js project and enabled kgp import`() {
+    fun `test kgp dependency resolution state in a nested mpp project with a top-level js project and enabled kgp import`() {
         val project = buildProject {
             plugins.apply("org.jetbrains.kotlin.js")
         }
@@ -102,7 +102,7 @@ class JsPluginKgpImportPropertyTest {
     }
 
     @Test
-    fun `test kgp import state in an mpp project alongside a js project`() {
+    fun `test kgp dependency resolution state in an mpp project alongside a js project`() {
         val project = buildProject {
         }
 
