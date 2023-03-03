@@ -5,6 +5,12 @@
 
 package org.jetbrains.kotlin.ir.pretty
 
-class IrWhenBuilder {
+import org.jetbrains.kotlin.ir.expressions.IrWhen
 
+class IrWhenBuilder @PublishedApi internal constructor(buildingContext: IrBuildingContext) : IrElementBuilder<IrWhen>(buildingContext) {
+
+    @PublishedApi
+    override fun build(): IrWhen {
+        TODO("Not yet implemented")
+    }
 }

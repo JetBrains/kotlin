@@ -5,6 +5,13 @@
 
 package org.jetbrains.kotlin.ir.pretty
 
-class IrSpreadElementBuilder {
+import org.jetbrains.kotlin.ir.expressions.IrSpreadElement
 
+class IrSpreadElementBuilder @PublishedApi internal constructor(buildingContext: IrBuildingContext) :
+    IrElementBuilder<IrSpreadElement>(buildingContext) {
+
+    @PublishedApi
+    override fun build(): IrSpreadElement {
+        TODO("Not yet implemented")
+    }
 }

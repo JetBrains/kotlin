@@ -5,6 +5,12 @@
 
 package org.jetbrains.kotlin.ir.pretty
 
-class IrFieldBuilder {
+import org.jetbrains.kotlin.ir.declarations.IrField
 
+class IrFieldBuilder @PublishedApi internal constructor(val name: String, buildingContext: IrBuildingContext) : IrDeclarationBuilder<IrField>(buildingContext) {
+
+    @PublishedApi
+    override fun build(): IrField {
+        TODO("Not yet implemented")
+    }
 }

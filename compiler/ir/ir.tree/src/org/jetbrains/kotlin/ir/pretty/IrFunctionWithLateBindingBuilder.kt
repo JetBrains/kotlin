@@ -5,6 +5,12 @@
 
 package org.jetbrains.kotlin.ir.pretty
 
-class IrFunctionWithLateBindingBuilder {
+import org.jetbrains.kotlin.ir.declarations.IrFunctionWithLateBinding
 
+class IrFunctionWithLateBindingBuilder @PublishedApi internal constructor(buildingContext: IrBuildingContext) : IrDeclarationBuilder<IrFunctionWithLateBinding>(buildingContext) {
+
+    @PublishedApi
+    override fun build(): IrFunctionWithLateBinding {
+        TODO("Not yet implemented")
+    }
 }

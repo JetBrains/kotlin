@@ -5,6 +5,12 @@
 
 package org.jetbrains.kotlin.ir.pretty
 
-class IrGetEnumValueBuilder {
+import org.jetbrains.kotlin.ir.expressions.IrGetEnumValue
 
+class IrGetEnumValueBuilder @PublishedApi  internal constructor(buildingContext: IrBuildingContext) : IrElementBuilder<IrGetEnumValue>(buildingContext) {
+
+    @PublishedApi
+    override fun build(): IrGetEnumValue {
+        TODO("Not yet implemented")
+    }
 }

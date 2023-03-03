@@ -5,6 +5,21 @@
 
 package org.jetbrains.kotlin.ir.pretty
 
-class IrExternalPackageFragmentBuilder {
+import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
+import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
+import org.jetbrains.kotlin.ir.symbols.IrExternalPackageFragmentSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrExternalPackageFragmentSymbolImpl
 
+class IrExternalPackageFragmentBuilder @PublishedApi internal constructor(buildingContext: IrBuildingContext) :
+    IrPackageFragmentBuilder<IrExternalPackageFragment>(buildingContext) {
+
+    @PublishedApi
+    override fun build(): IrExternalPackageFragment {
+        return IrExternalPackageFragmentImpl(
+            symbol = symbol<IrExternalPackageFragmentSymbol>(::IrExternalPackageFragmentSymbolImpl),
+            fqName = packageFqName
+        ).also {
+            recordSymbolFromOwner(it)
+        }
+    }
 }

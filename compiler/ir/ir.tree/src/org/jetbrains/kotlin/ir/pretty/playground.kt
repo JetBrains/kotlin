@@ -16,6 +16,7 @@ val a = buildIrModuleFragment {
         }
         irClass("Ab") {
             debugInfo(53, 81)
+            declarationBuilders
             modalityAbstract()
         }
         irClass("Ba") {

@@ -8,5 +8,6 @@ package org.jetbrains.kotlin.ir.pretty
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 
 @PrettyIrDsl
-abstract class IrFunctionBuilder<Function : IrFunction> internal constructor() : IrDeclarationBuilder<Function>() {
+abstract class IrFunctionBuilder<Function : IrFunction> internal constructor(buildingContext: IrBuildingContext) :
+    IrDeclarationBuilder<Function>(buildingContext) {
 }

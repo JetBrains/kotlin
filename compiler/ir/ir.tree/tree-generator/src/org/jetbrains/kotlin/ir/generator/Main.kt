@@ -30,7 +30,7 @@ fun main(args: Array<String>) {
         yield(printVisitorVoid(generationPath, model))
         yield(printTransformer(generationPath, model))
         // IrElementTransformerVoid is too random to autogenerate
-        yield(printDsl(generationPath, model))
+        yield(printTopLevelBuilderFunctions(generationPath, model))
         yield(printDslDeclarationContainerBuilder(generationPath, model))
     }.map {
         GeneratorsFileUtil.writeFileIfContentChanged(it.file, it.newText, logNotChanged = false)

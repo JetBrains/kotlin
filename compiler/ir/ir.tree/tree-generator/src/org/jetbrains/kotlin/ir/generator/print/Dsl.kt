@@ -22,48 +22,37 @@ private val prettyIrDslAnnotationTypeName = ClassName(DSL_PACKAGE, "PrettyIrDsl"
 private val irNodeBuilderDslAnnotationTypeName = ClassName(DSL_PACKAGE, "IrNodeBuilderDsl")
 
 fun printDslDeclarationContainerBuilder(generationPath: File, model: Model): GeneratedFile {
-    val declarationBuildersPropertyName = "declarationBuilders"
-    val buildingContextPropertyName = "buildingContext"
-    val type = TypeSpec.interfaceBuilder("IrDeclarationContainerBuilder")
-        .addAnnotation(prettyIrDslAnnotationTypeName)
-        .addProperty(
-            declarationBuildersPropertyName,
-            ClassName("kotlin.collections", "MutableList").parameterizedBy(
-                ClassName(
-                    DSL_PACKAGE,
-                    "IrDeclarationBuilder"
-                ).parameterizedBy(STAR)
+    val interfaceName = "IrDeclarationContainerBuilder"
+    return printFile(generationPath, DSL_PACKAGE, interfaceName) {
+        for (element in model.elements) {
+            if (!element.isLeaf || element.packageName != ElementConfig.Category.Declaration.packageName) continue
+            addFunction(
+                buildChildDeclarationBuilderFunction(element)
+                    .receiver(ClassName(DSL_PACKAGE, interfaceName))
+                    .addAnnotation(irNodeBuilderDslAnnotationTypeName)
+                    .run {
+                        addStatement(
+                            buildString {
+                                append("declarationBuilders")
+                                append(".add(")
+                                appendCallToBuilder(
+                                    element,
+                                    buildingContextPropertyName = "buildingContext",
+                                    mandatoryParameterNames = parameters.dropLast(1).map { it.name },
+                                    blockParameterName = parameters.last().name
+                                )
+                                append(")")
+                            }
+                        )
+                    }
+                    .build()
             )
-        )
-        .addProperty(buildingContextPropertyName, buildingContextTypeName)
-        .addFunctions(
-            model.elements.mapNotNull { element ->
-                if (element.isLeaf && element.packageName == ElementConfig.Category.Declaration.packageName) {
-                    buildChildDeclarationBuilderFunction(element)
-                        .addAnnotation(irNodeBuilderDslAnnotationTypeName).run {
-                            addStatement(
-                                buildString {
-                                    append(declarationBuildersPropertyName)
-                                    append(".add(")
-                                    appendCallToBuilder(
-                                        element,
-                                        buildingContextPropertyName,
-                                        parameters.dropLast(1).map { it.name },
-                                        parameters.last().name
-                                    )
-                                    append(")")
-                                }
-                            )
-                        }
-                        .build()
-                } else null
-            }
-        )
-        .build()
-    return printFile(generationPath, DSL_PACKAGE, type.name!!) {
-        addType(type)
+        }
     }
 }
+
+private val Element.isDeclaration: Boolean
+    get() = TODO()
 
 private fun StringBuilder.appendCallToBuilder(
     element: Element,
@@ -72,6 +61,9 @@ private fun StringBuilder.appendCallToBuilder(
     blockParameterName: String,
 ) {
     append(element.builderClassName.simpleName)
+    if (element.poetTypeVariables.isNotEmpty()) {
+        element.poetTypeVariables.joinTo(this, prefix = "<", postfix = ">") { it.name }
+    }
     append("(")
     for (mandatoryParameterName in mandatoryParameterNames) {
         append(mandatoryParameterName)
@@ -83,7 +75,7 @@ private fun StringBuilder.appendCallToBuilder(
     append(")")
 }
 
-fun printDsl(generationPath: File, model: Model) = printFile(generationPath, DSL_PACKAGE, "topLevelBuilders") {
+fun printTopLevelBuilderFunctions(generationPath: File, model: Model) = printFile(generationPath, DSL_PACKAGE, "topLevelBuilders") {
     for (element in model.elements) {
         if (!element.isLeaf) continue
         addFunction(buildTopLevelBuilderFunction(element).build())
@@ -120,6 +112,7 @@ private fun buildLambdaParameter(element: Element) =
 
 private fun buildBuilderFunction(element: Element, name: String, additionalParameters: Iterable<ParameterSpec>, returnType: TypeName) =
     FunSpec.builder(name)
+        .addModifiers(KModifier.INLINE)
         .addTypeVariables(element.poetTypeVariables)
         .addParameters(buildMandatoryElementSpecificParameters(element))
         .addParameters(additionalParameters)

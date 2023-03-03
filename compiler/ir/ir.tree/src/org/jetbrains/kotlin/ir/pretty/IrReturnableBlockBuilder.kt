@@ -5,6 +5,12 @@
 
 package org.jetbrains.kotlin.ir.pretty
 
-class IrReturnableBlockBuilder {
+import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
 
+class IrReturnableBlockBuilder @PublishedApi internal constructor(buildingContext: IrBuildingContext) : IrElementBuilder<IrReturnableBlock>(buildingContext) {
+
+    @PublishedApi
+    override fun build(): IrReturnableBlock {
+        TODO("Not yet implemented")
+    }
 }

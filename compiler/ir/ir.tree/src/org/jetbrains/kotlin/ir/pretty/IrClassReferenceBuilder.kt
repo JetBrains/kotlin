@@ -5,6 +5,13 @@
 
 package org.jetbrains.kotlin.ir.pretty
 
-class IrClassReferenceBuilder {
+import org.jetbrains.kotlin.ir.expressions.IrClassReference
 
+class IrClassReferenceBuilder @PublishedApi internal constructor(buildingContext: IrBuildingContext) :
+    IrElementBuilder<IrClassReference>(buildingContext) {
+
+    @PublishedApi
+    override fun build(): IrClassReference {
+        TODO("Not yet implemented")
+    }
 }

@@ -5,6 +5,12 @@
 
 package org.jetbrains.kotlin.ir.pretty
 
-class IrBreakBuilder {
+import org.jetbrains.kotlin.ir.expressions.IrBreak
 
+class IrBreakBuilder @PublishedApi internal constructor(buildingContext: IrBuildingContext) : IrElementBuilder<IrBreak>(buildingContext) {
+
+    @PublishedApi
+    override fun build(): IrBreak {
+        TODO("Not yet implemented")
+    }
 }

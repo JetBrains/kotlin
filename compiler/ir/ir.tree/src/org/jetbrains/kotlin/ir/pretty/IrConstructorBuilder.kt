@@ -7,7 +7,12 @@ package org.jetbrains.kotlin.ir.pretty
 
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 
-class IrConstructorBuilder internal constructor(val buildingContext: IrBuildingContext) : IrFunctionBuilder<IrConstructor>() {
+class IrConstructorBuilder @PublishedApi internal constructor(
+    name: String,
+    buildingContext: IrBuildingContext
+) : IrFunctionBuilder<IrConstructor>(buildingContext) {
+
+    @PublishedApi
     override fun build(): IrConstructor {
         TODO("Not yet implemented")
     }

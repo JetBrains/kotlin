@@ -7,6 +7,13 @@ package org.jetbrains.kotlin.ir.pretty
 
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationContainer
 
+@PrettyIrDsl
+interface IrDeclarationContainerBuilder {
+    val declarationBuilders: MutableList<IrDeclarationBuilder<*>>
+
+    val buildingContext: IrBuildingContext
+}
+
 internal fun IrDeclarationContainerBuilder.addDeclarationsTo(declarationContainer: IrDeclarationContainer) {
     for (declarationBuilder in declarationBuilders) {
         val declaration = declarationBuilder.build()

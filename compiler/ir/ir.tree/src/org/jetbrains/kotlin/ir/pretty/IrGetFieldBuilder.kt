@@ -5,6 +5,13 @@
 
 package org.jetbrains.kotlin.ir.pretty
 
-class IrGetFieldBuilder {
+import org.jetbrains.kotlin.ir.expressions.IrGetField
 
+class IrGetFieldBuilder @PublishedApi internal constructor(buildingContext: IrBuildingContext) :
+    IrElementBuilder<IrGetField>(buildingContext) {
+
+    @PublishedApi
+    override fun build(): IrGetField {
+        TODO("Not yet implemented")
+    }
 }

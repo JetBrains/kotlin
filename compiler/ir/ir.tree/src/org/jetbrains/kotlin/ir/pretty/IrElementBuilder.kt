@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 
 @PrettyIrDsl
-abstract class IrElementBuilder<out Element : IrElement> internal constructor() {
+abstract class IrElementBuilder<out Element : IrElement> internal constructor(val buildingContext: IrBuildingContext) {
 
     internal var startOffset: Int by SetAtMostOnce(UNDEFINED_OFFSET)
     internal var endOffset: Int by SetAtMostOnce(UNDEFINED_OFFSET)

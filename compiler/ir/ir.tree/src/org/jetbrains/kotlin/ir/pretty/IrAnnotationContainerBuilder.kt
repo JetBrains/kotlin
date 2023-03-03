@@ -11,11 +11,13 @@ import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 @PrettyIrDsl
 interface IrAnnotationContainerBuilder {
 
+    val buildingContext: IrBuildingContext
+
     var builtAnnotations: List<IrConstructorCall>
 
     @PrettyIrDsl
     fun annotations(block: IrElementBuilderClosure<IrAnnotationBuilder>) {
-        builtAnnotations = IrAnnotationBuilder().apply(block).annotations
+        builtAnnotations = IrAnnotationBuilder(buildingContext).apply(block).annotations
     }
 }
 

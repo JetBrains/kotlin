@@ -5,6 +5,12 @@
 
 package org.jetbrains.kotlin.ir.pretty
 
-class IrSyntheticBodyBuilder {
+import org.jetbrains.kotlin.ir.expressions.IrSyntheticBody
 
+class IrSyntheticBodyBuilder @PublishedApi internal constructor(buildingContext: IrBuildingContext) : IrElementBuilder<IrSyntheticBody>(buildingContext) {
+
+    @PublishedApi
+    override fun build(): IrSyntheticBody {
+        TODO("Not yet implemented")
+    }
 }

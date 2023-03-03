@@ -5,6 +5,12 @@
 
 package org.jetbrains.kotlin.ir.pretty
 
-class IrElseBranchBuilder {
+import org.jetbrains.kotlin.ir.expressions.IrElseBranch
 
+class IrElseBranchBuilder @PublishedApi internal constructor(buildingContext: IrBuildingContext) : IrElementBuilder<IrElseBranch>(buildingContext) {
+
+    @PublishedApi
+    override fun build(): IrElseBranch {
+        TODO("Not yet implemented")
+    }
 }

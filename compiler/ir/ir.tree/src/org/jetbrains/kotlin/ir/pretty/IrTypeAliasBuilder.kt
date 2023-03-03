@@ -5,6 +5,13 @@
 
 package org.jetbrains.kotlin.ir.pretty
 
-class IrTypeAliasBuilder {
+import org.jetbrains.kotlin.ir.declarations.IrTypeAlias
 
+class IrTypeAliasBuilder @PublishedApi internal constructor(private val name: String, buildingContext: IrBuildingContext) :
+    IrDeclarationBuilder<IrTypeAlias>(buildingContext) {
+
+    @PublishedApi
+    override fun build(): IrTypeAlias {
+        TODO("Not yet implemented")
+    }
 }

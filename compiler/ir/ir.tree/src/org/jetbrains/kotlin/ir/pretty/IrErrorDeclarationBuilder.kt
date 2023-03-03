@@ -5,6 +5,10 @@
 
 package org.jetbrains.kotlin.ir.pretty
 
-class IrErrorDeclarationBuilder {
+import org.jetbrains.kotlin.ir.declarations.IrErrorDeclaration
 
+class IrErrorDeclarationBuilder @PublishedApi internal constructor(buildingContext: IrBuildingContext) : IrDeclarationBuilder<IrErrorDeclaration>(buildingContext) {
+
+    @PublishedApi
+    override fun build(): IrErrorDeclaration = buildingContext.irFactory.createErrorDeclaration(startOffset, endOffset)
 }

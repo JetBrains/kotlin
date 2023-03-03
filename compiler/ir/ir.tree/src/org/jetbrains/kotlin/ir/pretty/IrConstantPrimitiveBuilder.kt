@@ -5,6 +5,13 @@
 
 package org.jetbrains.kotlin.ir.pretty
 
-class IrConstantPrimitiveBuilder {
+import org.jetbrains.kotlin.ir.expressions.IrConstantPrimitive
 
+class IrConstantPrimitiveBuilder @PublishedApi internal constructor(buildingContext: IrBuildingContext) :
+    IrElementBuilder<IrConstantPrimitive>(buildingContext) {
+
+    @PublishedApi
+    override fun build(): IrConstantPrimitive {
+        TODO("Not yet implemented")
+    }
 }

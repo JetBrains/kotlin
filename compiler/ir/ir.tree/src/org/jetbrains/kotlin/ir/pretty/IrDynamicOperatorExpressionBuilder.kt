@@ -5,6 +5,13 @@
 
 package org.jetbrains.kotlin.ir.pretty
 
-class IrDynamicOperatorExpressionBuilder {
+import org.jetbrains.kotlin.ir.expressions.IrDynamicOperatorExpression
 
+class IrDynamicOperatorExpressionBuilder @PublishedApi internal constructor(buildingContext: IrBuildingContext) :
+    IrElementBuilder<IrDynamicOperatorExpression>(buildingContext) {
+
+    @PublishedApi
+    override fun build(): IrDynamicOperatorExpression {
+        TODO("Not yet implemented")
+    }
 }

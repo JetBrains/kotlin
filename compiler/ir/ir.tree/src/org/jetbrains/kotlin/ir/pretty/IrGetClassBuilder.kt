@@ -5,6 +5,13 @@
 
 package org.jetbrains.kotlin.ir.pretty
 
-class IrGetClassBuilder {
+import org.jetbrains.kotlin.ir.expressions.IrGetClass
 
+class IrGetClassBuilder @PublishedApi internal constructor(buildingContext: IrBuildingContext) :
+    IrElementBuilder<IrGetClass>(buildingContext) {
+
+    @PublishedApi
+    override fun build(): IrGetClass {
+        TODO("Not yet implemented")
+    }
 }

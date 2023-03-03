@@ -5,6 +5,12 @@
 
 package org.jetbrains.kotlin.ir.pretty
 
-class IrCatchBuilder {
+import org.jetbrains.kotlin.ir.expressions.IrCatch
 
+class IrCatchBuilder @PublishedApi internal constructor(buildingContext: IrBuildingContext) : IrElementBuilder<IrCatch>(buildingContext) {
+
+    @PublishedApi
+    override fun build(): IrCatch {
+        TODO("Not yet implemented")
+    }
 }

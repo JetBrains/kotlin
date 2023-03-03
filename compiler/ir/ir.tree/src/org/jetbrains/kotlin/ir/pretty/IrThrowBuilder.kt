@@ -5,6 +5,12 @@
 
 package org.jetbrains.kotlin.ir.pretty
 
-class IrThrowBuilder {
+import org.jetbrains.kotlin.ir.expressions.IrThrow
 
+class IrThrowBuilder @PublishedApi internal constructor(buildingContext: IrBuildingContext) : IrElementBuilder<IrThrow>(buildingContext) {
+
+    @PublishedApi
+    override fun build(): IrThrow {
+        TODO("Not yet implemented")
+    }
 }

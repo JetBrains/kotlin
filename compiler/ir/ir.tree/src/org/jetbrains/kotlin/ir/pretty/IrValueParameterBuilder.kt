@@ -5,5 +5,13 @@
 
 package org.jetbrains.kotlin.ir.pretty
 
-class IrValueParameterBuilder {
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
+
+class IrValueParameterBuilder @PublishedApi internal constructor(private val name: String, buildingContext: IrBuildingContext) :
+    IrDeclarationBuilder<IrValueParameter>(buildingContext) {
+
+    @PublishedApi
+    override fun build(): IrValueParameter {
+        TODO("Not yet implemented")
+    }
 }

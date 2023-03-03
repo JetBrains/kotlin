@@ -5,6 +5,12 @@
 
 package org.jetbrains.kotlin.ir.pretty
 
-class IrConstantObjectBuilder {
+import org.jetbrains.kotlin.ir.expressions.IrConstantObject
 
+class IrConstantObjectBuilder @PublishedApi internal constructor(buildingContext: IrBuildingContext) : IrElementBuilder<IrConstantObject>(buildingContext) {
+
+    @PublishedApi
+    override fun build(): IrConstantObject {
+        TODO("Not yet implemented")
+    }
 }

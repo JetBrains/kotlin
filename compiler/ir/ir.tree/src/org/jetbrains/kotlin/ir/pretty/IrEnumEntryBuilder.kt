@@ -5,6 +5,13 @@
 
 package org.jetbrains.kotlin.ir.pretty
 
-class IrEnumEntryBuilder {
+import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
 
+class IrEnumEntryBuilder @PublishedApi internal constructor(private val name: String, buildingContext: IrBuildingContext) :
+    IrDeclarationBuilder<IrEnumEntry>(buildingContext) {
+
+    @PublishedApi
+    override fun build(): IrEnumEntry {
+        TODO("Not yet implemented")
+    }
 }

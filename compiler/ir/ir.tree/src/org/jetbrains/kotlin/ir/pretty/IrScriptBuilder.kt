@@ -5,6 +5,13 @@
 
 package org.jetbrains.kotlin.ir.pretty
 
-class IrScriptBuilder {
+import org.jetbrains.kotlin.ir.declarations.IrScript
 
+class IrScriptBuilder @PublishedApi internal constructor(private val name: String, buildingContext: IrBuildingContext) :
+    IrDeclarationBuilder<IrScript>(buildingContext) {
+
+    @PublishedApi
+    override fun build(): IrScript {
+        TODO("Not yet implemented")
+    }
 }

@@ -9,7 +9,8 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 
-abstract class IrDeclarationBuilder<Declaration : IrDeclaration> internal constructor() : IrElementBuilder<Declaration>(),
+abstract class IrDeclarationBuilder<Declaration : IrDeclaration> internal constructor(buildingContext: IrBuildingContext) :
+    IrElementBuilder<Declaration>(buildingContext),
     IrAnnotationContainerBuilder {
 
     protected var declarationOrigin: IrDeclarationOrigin by SetAtMostOnce(IrDeclarationOrigin.DEFINED)

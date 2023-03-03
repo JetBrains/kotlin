@@ -5,6 +5,13 @@
 
 package org.jetbrains.kotlin.ir.pretty
 
-class IrInstanceInitializerCallBuilder {
+import org.jetbrains.kotlin.ir.expressions.IrInstanceInitializerCall
 
+class IrInstanceInitializerCallBuilder @PublishedApi internal constructor(buildingContext: IrBuildingContext) :
+    IrElementBuilder<IrInstanceInitializerCall>(buildingContext) {
+
+    @PublishedApi
+    override fun build(): IrInstanceInitializerCall {
+        TODO("Not yet implemented")
+    }
 }

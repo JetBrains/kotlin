@@ -5,6 +5,13 @@
 
 package org.jetbrains.kotlin.ir.pretty
 
-class IrWhileLoopBuilder {
+import org.jetbrains.kotlin.ir.expressions.IrWhileLoop
 
+class IrWhileLoopBuilder @PublishedApi internal constructor(buildingContext: IrBuildingContext) :
+    IrElementBuilder<IrWhileLoop>(buildingContext) {
+
+    @PublishedApi
+    override fun build(): IrWhileLoop {
+        TODO("Not yet implemented")
+    }
 }

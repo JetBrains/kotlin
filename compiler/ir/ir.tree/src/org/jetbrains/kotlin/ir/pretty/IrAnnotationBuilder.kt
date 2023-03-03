@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.ir.pretty
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 
 @PrettyIrDsl
-class IrAnnotationBuilder internal constructor() {
+class IrAnnotationBuilder internal constructor(val buildingContext: IrBuildingContext) {
 
     internal val annotations = mutableListOf<IrConstructorCall>()
 

@@ -5,6 +5,12 @@
 
 package org.jetbrains.kotlin.ir.pretty
 
-class IrContinueBuilder {
+import org.jetbrains.kotlin.ir.expressions.IrContinue
 
+class IrContinueBuilder @PublishedApi internal constructor(buildingContext: IrBuildingContext) : IrElementBuilder<IrContinue>(buildingContext) {
+
+    @PublishedApi
+    override fun build(): IrContinue {
+        TODO("Not yet implemented")
+    }
 }

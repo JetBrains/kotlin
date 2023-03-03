@@ -5,6 +5,13 @@
 
 package org.jetbrains.kotlin.ir.pretty
 
-class IrExpressionBodyBuilder {
+import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 
+class IrExpressionBodyBuilder @PublishedApi internal constructor(buildingContext: IrBuildingContext) :
+    IrElementBuilder<IrExpressionBody>(buildingContext) {
+
+    @PublishedApi
+    override fun build(): IrExpressionBody {
+        TODO("Not yet implemented")
+    }
 }

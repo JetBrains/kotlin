@@ -16,19 +16,15 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
 import org.jetbrains.kotlin.name.FqName
 
 @PrettyIrDsl
-class IrFileBuilder internal constructor(override val buildingContext: IrBuildingContext, private val name: String) :
-    IrElementBuilder<IrFile>(),
+class IrFileBuilder @PublishedApi internal constructor(private val name: String, buildingContext: IrBuildingContext) :
+    IrPackageFragmentBuilder<IrFile>(buildingContext),
     IrAnnotationContainerBuilder,
     IrDeclarationContainerBuilder,
     IrSymbolOwnerBuilder {
 
-    private var packageFqName: String by SetAtMostOnce("")
-
     override var builtAnnotations: List<IrConstructorCall> by SetAtMostOnce(emptyList())
 
     override val declarationBuilders = mutableListOf<IrDeclarationBuilder<*>>()
-
-    override var symbolReference: String? by SetAtMostOnce(null)
 
     private class SyntheticFileEntry(override val name: String) : IrFileEntry {
         override val maxOffset: Int
@@ -50,25 +46,12 @@ class IrFileBuilder internal constructor(override val buildingContext: IrBuildin
         }
     }
 
-    @Deprecated(
-        "Custom debug info is not supported for IrFile",
-        replaceWith = ReplaceWith(""),
-        level = DeprecationLevel.ERROR,
-    )
-    override fun debugInfo(startOffset: Int, endOffset: Int) {
-        throw UnsupportedOperationException("Custom debug info is not supported for IrFile")
-    }
-
-    @PrettyIrDsl
-    fun packageName(name: String) {
-        packageFqName = name
-    }
-
+    @PublishedApi
     override fun build(): IrFile {
         return IrFileImpl(
             fileEntry = SyntheticFileEntry(name),
             symbol = symbol<IrFileSymbol>(::IrFileSymbolImpl),
-            fqName = FqName(packageFqName),
+            fqName = packageFqName,
         ).also {
             recordSymbolFromOwner(it)
             addDeclarationsTo(it)

@@ -5,6 +5,13 @@
 
 package org.jetbrains.kotlin.ir.pretty
 
-class IrLocalDelegatedPropertyReferenceBuilder {
+import org.jetbrains.kotlin.ir.expressions.IrLocalDelegatedPropertyReference
 
+class IrLocalDelegatedPropertyReferenceBuilder @PublishedApi internal constructor(buildingContext: IrBuildingContext) :
+    IrElementBuilder<IrLocalDelegatedPropertyReference>(buildingContext) {
+
+    @PublishedApi
+    override fun build(): IrLocalDelegatedPropertyReference {
+        TODO("Not yet implemented")
+    }
 }

@@ -5,6 +5,12 @@
 
 package org.jetbrains.kotlin.ir.pretty
 
-class IrBlockBodyBuilder {
+import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 
+class IrBlockBodyBuilder @PublishedApi internal constructor(buildingContext: IrBuildingContext) : IrElementBuilder<IrBlockBody>(buildingContext) {
+
+    @PublishedApi
+    override fun build(): IrBlockBody {
+        TODO("Not yet implemented")
+    }
 }

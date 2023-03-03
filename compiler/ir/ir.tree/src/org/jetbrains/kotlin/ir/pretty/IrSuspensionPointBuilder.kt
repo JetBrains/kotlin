@@ -5,6 +5,13 @@
 
 package org.jetbrains.kotlin.ir.pretty
 
-class IrSuspensionPointBuilder {
+import org.jetbrains.kotlin.ir.expressions.IrSuspensionPoint
 
+class IrSuspensionPointBuilder @PublishedApi internal constructor(buildingContext: IrBuildingContext) :
+    IrElementBuilder<IrSuspensionPoint>(buildingContext) {
+
+    @PublishedApi
+    override fun build(): IrSuspensionPoint {
+        TODO("Not yet implemented")
+    }
 }

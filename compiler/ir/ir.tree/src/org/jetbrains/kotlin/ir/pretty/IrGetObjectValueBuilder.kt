@@ -5,6 +5,12 @@
 
 package org.jetbrains.kotlin.ir.pretty
 
-class IrGetObjectValueBuilder {
+import org.jetbrains.kotlin.ir.expressions.IrGetObjectValue
 
+class IrGetObjectValueBuilder @PublishedApi internal constructor(buildingContext: IrBuildingContext) : IrElementBuilder<IrGetObjectValue>(buildingContext) {
+
+    @PublishedApi
+    override fun build(): IrGetObjectValue {
+        TODO("Not yet implemented")
+    }
 }

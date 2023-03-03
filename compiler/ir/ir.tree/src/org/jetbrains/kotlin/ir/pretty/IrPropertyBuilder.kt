@@ -5,6 +5,13 @@
 
 package org.jetbrains.kotlin.ir.pretty
 
-class IrPropertyBuilder {
+import org.jetbrains.kotlin.ir.declarations.IrProperty
 
+class IrPropertyBuilder @PublishedApi internal constructor(private val name: String, buildingContext: IrBuildingContext) :
+    IrDeclarationBuilder<IrProperty>(buildingContext) {
+
+    @PublishedApi
+    override fun build(): IrProperty {
+        TODO("Not yet implemented")
+    }
 }

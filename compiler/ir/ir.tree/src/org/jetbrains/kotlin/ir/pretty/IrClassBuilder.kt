@@ -10,16 +10,15 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.name.Name
 
 @PrettyIrDsl
-class IrClassBuilder internal constructor(
+class IrClassBuilder @PublishedApi internal constructor(
     private val name: String,
-    override val buildingContext: IrBuildingContext,
-) : IrDeclarationBuilder<IrClass>(), IrDeclarationWithVisibilityBuilder, IrDeclarationWithModalityBuilder, IrDeclarationContainerBuilder,
+    buildingContext: IrBuildingContext,
+) : IrDeclarationBuilder<IrClass>(buildingContext), IrDeclarationWithVisibilityBuilder, IrDeclarationWithModalityBuilder, IrDeclarationContainerBuilder,
     IrSymbolOwnerBuilder {
 
     override var symbolReference: String? by SetAtMostOnce(null)
@@ -122,6 +121,7 @@ class IrClassBuilder internal constructor(
         declarationBuilders.add(IrConstructorBuilder().apply(block))
     }
 
+    @PublishedApi
     override fun build(): IrClass {
         return buildingContext.irFactory.createClass(
             startOffset = startOffset,

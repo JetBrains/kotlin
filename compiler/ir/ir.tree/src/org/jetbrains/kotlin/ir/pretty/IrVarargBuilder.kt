@@ -5,6 +5,12 @@
 
 package org.jetbrains.kotlin.ir.pretty
 
-class IrVarargBuilder {
+import org.jetbrains.kotlin.ir.expressions.IrVararg
 
+class IrVarargBuilder @PublishedApi internal constructor(buildingContext: IrBuildingContext) : IrElementBuilder<IrVararg>(buildingContext) {
+
+    @PublishedApi
+    override fun build(): IrVararg {
+        TODO("Not yet implemented")
+    }
 }

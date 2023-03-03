@@ -5,6 +5,12 @@
 
 package org.jetbrains.kotlin.ir.pretty
 
-class IrErrorCallExpressionBuilder {
+import org.jetbrains.kotlin.ir.expressions.IrErrorCallExpression
 
+class IrErrorCallExpressionBuilder @PublishedApi internal constructor(buildingContext: IrBuildingContext) : IrElementBuilder<IrErrorCallExpression>(buildingContext) {
+
+    @PublishedApi
+    override fun build(): IrErrorCallExpression {
+        TODO("Not yet implemented")
+    }
 }

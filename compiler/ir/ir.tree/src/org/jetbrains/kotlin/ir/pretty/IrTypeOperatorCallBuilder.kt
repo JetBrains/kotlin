@@ -5,6 +5,13 @@
 
 package org.jetbrains.kotlin.ir.pretty
 
-class IrTypeOperatorCallBuilder {
+import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 
+class IrTypeOperatorCallBuilder @PublishedApi internal constructor(buildingContext: IrBuildingContext) :
+    IrElementBuilder<IrTypeOperatorCall>(buildingContext) {
+
+    @PublishedApi
+    override fun build(): IrTypeOperatorCall {
+        TODO("Not yet implemented")
+    }
 }

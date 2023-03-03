@@ -5,6 +5,12 @@
 
 package org.jetbrains.kotlin.ir.pretty
 
-class IrReturnBuilder {
+import org.jetbrains.kotlin.ir.expressions.IrReturn
 
+class IrReturnBuilder @PublishedApi internal constructor(buildingContext: IrBuildingContext) : IrElementBuilder<IrReturn>(buildingContext) {
+
+    @PublishedApi
+    override fun build(): IrReturn {
+        TODO("Not yet implemented")
+    }
 }

@@ -5,6 +5,13 @@
 
 package org.jetbrains.kotlin.ir.pretty
 
-class IrSuspendableExpressionBuilder {
+import org.jetbrains.kotlin.ir.expressions.IrSuspendableExpression
 
+class IrSuspendableExpressionBuilder @PublishedApi internal constructor(buildingContext: IrBuildingContext) :
+    IrElementBuilder<IrSuspendableExpression>(buildingContext) {
+
+    @PublishedApi
+    override fun build(): IrSuspendableExpression {
+        TODO("Not yet implemented")
+    }
 }

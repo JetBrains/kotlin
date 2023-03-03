@@ -12,17 +12,17 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 
 @PrettyIrDsl
-class IrModuleFragmentBuilder internal constructor(
-    private val buildingContext: IrBuildingContext,
+class IrModuleFragmentBuilder @PublishedApi internal constructor(
     private val moduleDescriptor: ModuleDescriptor,
-    private val irBuiltins: IrBuiltIns
-) : IrElementBuilder<IrModuleFragment>() {
+    private val irBuiltins: IrBuiltIns,
+    buildingContext: IrBuildingContext,
+) : IrElementBuilder<IrModuleFragment>(buildingContext) {
 
     private val fileBuilders = mutableListOf<IrFileBuilder>()
 
     @IrNodeBuilderDsl
     fun irFile(name: String, block: IrElementBuilderClosure<IrFileBuilder>) {
-        val builder = IrFileBuilder(buildingContext, name)
+        val builder = IrFileBuilder(name, buildingContext)
         builder.block()
         fileBuilders.add(builder)
     }
@@ -36,6 +36,7 @@ class IrModuleFragmentBuilder internal constructor(
         throw UnsupportedOperationException("Custom debug info is not supported for IrModuleFragment")
     }
 
+    @PublishedApi
     override fun build(): IrModuleFragment {
         val moduleFragment = IrModuleFragmentImpl(moduleDescriptor, irBuiltins)
         for (fileBuilder in fileBuilders) {

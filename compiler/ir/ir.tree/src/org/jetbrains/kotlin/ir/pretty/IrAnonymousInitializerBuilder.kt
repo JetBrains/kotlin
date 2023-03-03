@@ -5,6 +5,13 @@
 
 package org.jetbrains.kotlin.ir.pretty
 
-class IrAnonymousInitializerBuilder {
+import org.jetbrains.kotlin.ir.declarations.IrAnonymousInitializer
 
+class IrAnonymousInitializerBuilder @PublishedApi internal constructor(buildingContext: IrBuildingContext) :
+    IrDeclarationBuilder<IrAnonymousInitializer>(buildingContext) {
+
+    @PublishedApi
+    override fun build(): IrAnonymousInitializer {
+        TODO("Not yet implemented")
+    }
 }

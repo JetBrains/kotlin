@@ -5,6 +5,12 @@
 
 package org.jetbrains.kotlin.ir.pretty
 
-class IrCompositeBuilder {
+import org.jetbrains.kotlin.ir.expressions.IrComposite
 
+class IrCompositeBuilder @PublishedApi internal constructor(buildingContext: IrBuildingContext) : IrElementBuilder<IrComposite>(buildingContext) {
+
+    @PublishedApi
+    override fun build(): IrComposite {
+        TODO("Not yet implemented")
+    }
 }

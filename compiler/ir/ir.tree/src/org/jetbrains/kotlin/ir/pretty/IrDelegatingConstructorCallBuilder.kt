@@ -5,6 +5,13 @@
 
 package org.jetbrains.kotlin.ir.pretty
 
-class IrDelegatingConstructorCallBuilder {
+import org.jetbrains.kotlin.ir.expressions.IrDelegatingConstructorCall
 
+class IrDelegatingConstructorCallBuilder @PublishedApi internal constructor(buildingContext: IrBuildingContext) :
+    IrElementBuilder<IrDelegatingConstructorCall>(buildingContext) {
+
+    @PublishedApi
+    override fun build(): IrDelegatingConstructorCall {
+        TODO("Not yet implemented")
+    }
 }

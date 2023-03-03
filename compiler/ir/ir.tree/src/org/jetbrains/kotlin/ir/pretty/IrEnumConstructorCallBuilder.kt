@@ -5,6 +5,13 @@
 
 package org.jetbrains.kotlin.ir.pretty
 
-class IrEnumConstructorCallBuilder {
+import org.jetbrains.kotlin.ir.expressions.IrEnumConstructorCall
 
+class IrEnumConstructorCallBuilder @PublishedApi internal constructor(buildingContext: IrBuildingContext) :
+    IrElementBuilder<IrEnumConstructorCall>(buildingContext) {
+
+    @PublishedApi
+    override fun build(): IrEnumConstructorCall {
+        TODO("Not yet implemented")
+    }
 }
