@@ -4,7 +4,7 @@
 
 // MODULE: lib
 
-// MODULE: main()()(lib)
+// MODULE: main(lib)
 
 fun nullIfEmpty(list: List<String>): List<String>? {
     return if (list.isNotEmpty()) {

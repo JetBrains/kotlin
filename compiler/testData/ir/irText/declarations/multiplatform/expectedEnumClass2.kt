@@ -9,7 +9,7 @@ expect enum class MyEnum {
     BAR
 }
 
-// MODULE: main()()(lib)
+// MODULE: main(lib)
 // FILE: main.kt
 actual enum class MyEnum {
     FOO,
