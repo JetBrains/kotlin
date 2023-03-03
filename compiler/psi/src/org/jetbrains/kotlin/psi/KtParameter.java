@@ -82,10 +82,29 @@ public class KtParameter extends KtNamedDeclarationStub<KotlinParameterStub> imp
         return getDefaultValue() != null;
     }
 
+    private static final TokenSet CONSTANT_EXPRESSIONS_TYPES = TokenSet.create(
+            KtStubElementTypes.NULL,
+            KtStubElementTypes.BOOLEAN_CONSTANT,
+            KtStubElementTypes.FLOAT_CONSTANT,
+            KtStubElementTypes.CHARACTER_CONSTANT,
+            KtStubElementTypes.INTEGER_CONSTANT,
+
+            KtStubElementTypes.STRING_TEMPLATE
+    );
+
     @Nullable
     public KtExpression getDefaultValue() {
         KotlinParameterStub stub = getStub();
-        if (stub != null && !stub.hasDefaultValue()) return null;
+        if (stub != null) {
+            if (!stub.hasDefaultValue()) {
+                return null;
+            }
+
+            KtExpression[] constantExpressions = stub.getChildrenByType(CONSTANT_EXPRESSIONS_TYPES, KtExpression.EMPTY_ARRAY);
+            if (constantExpressions.length > 0) {
+                return constantExpressions[0];
+            }
+        }
 
         PsiElement equalsToken = getEqualsToken();
         return equalsToken != null ? PsiTreeUtil.getNextSiblingOfType(equalsToken, KtExpression.class) : null;
