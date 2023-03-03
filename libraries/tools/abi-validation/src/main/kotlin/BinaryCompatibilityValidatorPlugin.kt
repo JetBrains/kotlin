@@ -130,12 +130,7 @@ class BinaryCompatibilityValidatorPlugin : Plugin<Project> {
         project: Project,
         extension: ApiValidationExtension
     ) = configurePlugin("kotlin", project, extension) {
-        project.sourceSets.all { sourceSet ->
-            if (sourceSet.name != SourceSet.MAIN_SOURCE_SET_NAME) {
-                return@all
-            }
-            project.configureApiTasks(sourceSet, extension, TargetConfig(project))
-        }
+        project.configureApiTasks(extension, TargetConfig(project))
     }
 }
 
@@ -225,19 +220,24 @@ fun apiCheckEnabled(projectName: String, extension: ApiValidationExtension): Boo
     projectName !in extension.ignoredProjects && !extension.validationDisabled
 
 private fun Project.configureApiTasks(
-    sourceSet: SourceSet,
     extension: ApiValidationExtension,
     targetConfig: TargetConfig = TargetConfig(this),
 ) {
     val projectName = project.name
     val apiBuildDir = targetConfig.apiDir.map { buildDir.resolve(it) }
+    val sourceSetsOutputsProvider = project.provider {
+        sourceSets
+            .filter { it.name == SourceSet.MAIN_SOURCE_SET_NAME || it.name in extension.additionalSourceSets }
+            .map { it.output.classesDirs }
+    }
+
     val apiBuild = task<KotlinApiBuildTask>(targetConfig.apiTaskName("Build")) {
         isEnabled = apiCheckEnabled(projectName, extension)
         // 'group' is not specified deliberately, so it will be hidden from ./gradlew tasks
         description =
             "Builds Kotlin API for 'main' compilations of $projectName. Complementary task and shouldn't be called manually"
-        inputClassesDirs = files(provider<Any> { if (isEnabled) sourceSet.output.classesDirs else emptyList<Any>() })
-        inputDependencies = files(provider<Any> { if (isEnabled) sourceSet.output.classesDirs else emptyList<Any>() })
+        inputClassesDirs = files(provider<Any> { if (isEnabled) sourceSetsOutputsProvider.get() else emptyList<Any>() })
+        inputDependencies = files(provider<Any> { if (isEnabled) sourceSetsOutputsProvider.get() else emptyList<Any>() })
         outputApiDir = apiBuildDir.get()
     }
 

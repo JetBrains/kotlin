@@ -125,24 +125,38 @@ public fun List<ClassBinarySignature>.filterOutAnnotated(targetAnnotations: Set<
     if (targetAnnotations.isEmpty()) return this
     return filter {
         it.annotations.all { ann -> !targetAnnotations.any { ann.refersToName(it) } }
-    }.map {
-        ClassBinarySignature(
-            it.name,
-            it.superName,
-            it.outerName,
-            it.supertypes,
-            it.memberSignatures.filter {
-                it.annotations.all { ann ->
-                    !targetAnnotations.any {
-                        ann.refersToName(it)
-                    }
+    }.map { signature ->
+        val notAnnotatedMemberSignatures = signature.memberSignatures.filter { memberSignature ->
+            memberSignature.annotations.all { ann ->
+                !targetAnnotations.any {
+                    ann.refersToName(it)
                 }
-            },
-            it.access,
-            it.isEffectivelyPublic,
-            it.isNotUsedWhenEmpty,
-            it.annotations
-        )
+            }
+        }
+
+        signature.copy(memberSignatures = notAnnotatedMemberSignatures)
+    }
+}
+
+private fun List<ClassBinarySignature>.filterOutNotAnnotated(
+    targetAnnotations: Set<String>
+): List<ClassBinarySignature> {
+    if (targetAnnotations.isEmpty()) return this
+    return mapNotNull { classSignature ->
+
+        /* If class is annotated: Return class and all its members */
+        if (classSignature.annotations.any { annotation ->
+                targetAnnotations.any { annotation.refersToName(it) }
+            }) return@mapNotNull classSignature
+
+        val annotatedMembers = classSignature.memberSignatures.filter { memberSignature ->
+            memberSignature.annotations.any { annotation ->
+                targetAnnotations.any { annotation.refersToName(it) }
+            }
+        }
+
+        /* If some members are annotated, return class with only annotated members */
+        if (annotatedMembers.isNotEmpty()) classSignature.copy(memberSignatures = annotatedMembers) else null
     }
 }
 
@@ -151,18 +165,10 @@ public fun List<ClassBinarySignature>.filterOutNonPublic(
     nonPublicPackages: Collection<String> = emptyList(),
     nonPublicClasses: Collection<String> = emptyList()
 ): List<ClassBinarySignature> {
-    val pathMapper: (String) -> String = { it.replace('.', '/') + '/' }
-    val nonPublicPackagePaths = nonPublicPackages.map(pathMapper)
-    val excludedClasses = nonPublicClasses.map(pathMapper)
+    val nonPublicPackagePaths = nonPublicPackages.map(::toSlashSeparatedPath).toSet()
+    val excludedClasses = nonPublicClasses.map(::toSlashSeparatedPath).toSet()
 
     val classByName = associateBy { it.name }
-
-    fun ClassBinarySignature.isInNonPublicPackage() =
-        nonPublicPackagePaths.any { name.startsWith(it) }
-
-    // checks whether class (e.g. com/company/BuildConfig) is in excluded class (e.g. com/company/BuildConfig/)
-    fun ClassBinarySignature.isInExcludedClasses() =
-        excludedClasses.any { it.startsWith(name) }
 
     fun ClassBinarySignature.isPublicAndAccessible(): Boolean =
         isEffectivelyPublic &&
@@ -189,9 +195,32 @@ public fun List<ClassBinarySignature>.filterOutNonPublic(
         )
     }
 
-    return filter { !it.isInNonPublicPackage() && !it.isInExcludedClasses() && it.isPublicAndAccessible() }
+    return filter {
+        !it.isInPackages(nonPublicPackagePaths) && !it.isInClasses(excludedClasses) && it.isPublicAndAccessible()
+    }
         .map { it.flattenNonPublicBases() }
         .filterNot { it.isNotUsedWhenEmpty && it.memberSignatures.isEmpty() }
+}
+
+@ExternalApi
+public fun List<ClassBinarySignature>.retainExplicitlyIncludedIfDeclared(
+    publicPackages: Collection<String> = emptyList(),
+    publicClasses: Collection<String> = emptyList(),
+    publicMarkerAnnotations: Collection<String> = emptyList(),
+): List<ClassBinarySignature> {
+    if (publicPackages.isEmpty() && publicClasses.isEmpty() && publicMarkerAnnotations.isEmpty()) return this
+
+    val packagePaths = publicPackages.map(::toSlashSeparatedPath).toSet()
+    val classesPaths = publicClasses.map(::toSlashSeparatedPath).toSet()
+    val markerAnnotations = publicMarkerAnnotations.map(::replaceDots).toSet()
+
+    val (includedByPackageOrClass, potentiallyAnnotated) = this.partition { signature ->
+        signature.isInClasses(classesPaths) || signature.isInPackages(packagePaths)
+    }
+
+    val includedByMarkerAnnotations = potentiallyAnnotated.filterOutNotAnnotated(markerAnnotations)
+
+    return includedByPackageOrClass + includedByMarkerAnnotations
 }
 
 @ExternalApi
@@ -211,9 +240,21 @@ public fun <T : Appendable> List<ClassBinarySignature>.dump(to: T): T {
     return to
 }
 
+private fun ClassBinarySignature.isInPackages(packageNames: Collection<String>): Boolean =
+    packageNames.any { packageName -> name.startsWith(packageName) }
+
+private fun ClassBinarySignature.isInClasses(classNames: Collection<String>): Boolean =
+    classNames.any { className -> className.startsWith(name) }
+
 private fun JarFile.classEntries() = Sequence { entries().iterator() }.filter {
     !it.isDirectory && it.name.endsWith(".class") && !it.name.startsWith("META-INF/")
 }
+
+internal fun toSlashSeparatedPath(dotSeparated: String): String =
+    dotSeparated.replace('.', '/') + '/'
+
+internal fun replaceDots(dotSeparated: String): String =
+    dotSeparated.replace('.', '/')
 
 internal fun annotations(l1: List<AnnotationNode>?, l2: List<AnnotationNode>?): List<AnnotationNode> =
     ((l1 ?: emptyList()) + (l2 ?: emptyList()))
