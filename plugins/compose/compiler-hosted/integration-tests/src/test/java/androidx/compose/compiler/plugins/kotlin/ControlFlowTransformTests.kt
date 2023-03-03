@@ -450,12 +450,12 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                   traceEventStart(<>, %changed, -1, <>)
                 }
                 A(%composer, 0)
-                val tmp0_marker = %composer.currentMarker
                 M3({ %composer: Composer?, %changed: Int ->
                   sourceInformationMarkerStart(%composer, <>, "C<A()>,<A()>:Test.kt")
                   A(%composer, 0)
                   if (condition) {
-                    %composer.endToMarker(tmp0_marker)
+                    sourceInformationMarkerEnd(%composer)
+                    return
                   }
                   A(%composer, 0)
                   sourceInformationMarkerEnd(%composer)
@@ -504,6 +504,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                         if (isTraceInProgress()) {
                           traceEventEnd()
                         }
+                        return
                       }
                       sourceInformationMarkerEnd(%composer)
                     }, %composer, 0)
@@ -570,11 +571,11 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 M3({ %composer: Composer?, %changed: Int ->
                   sourceInformationMarkerStart(%composer, <>, "C<A()>,<M1>,<A()>:Test.kt")
                   A(%composer, 0)
-                  val tmp0_marker = %composer.currentMarker
                   M1({ %composer: Composer?, %changed: Int ->
                     sourceInformationMarkerStart(%composer, <>, "C:Test.kt")
                     if (condition) {
-                      %composer.endToMarker(tmp0_marker)
+                      sourceInformationMarkerEnd(%composer)
+                      return
                     }
                     sourceInformationMarkerEnd(%composer)
                   }, %composer, 0)
@@ -627,14 +628,15 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                   traceEventStart(<>, %changed, -1, <>)
                 }
                 A(%composer, 0)
-                val tmp0_marker = %composer.currentMarker
                 M3({ %composer: Composer?, %changed: Int ->
+                  val tmp0_marker = %composer.currentMarker
                   sourceInformationMarkerStart(%composer, <>, "C<A()>,<M1>,<A()>:Test.kt")
                   A(%composer, 0)
                   M1({ %composer: Composer?, %changed: Int ->
                     sourceInformationMarkerStart(%composer, <>, "C:Test.kt")
                     if (condition) {
                       %composer.endToMarker(tmp0_marker)
+                      return
                     }
                     sourceInformationMarkerEnd(%composer)
                   }, %composer, 0)
@@ -766,22 +768,22 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                   traceEventStart(<>, %changed, -1, <>)
                 }
                 A(%composer, 0)
-                val tmp0_marker = %composer.currentMarker
                 M3({ %composer: Composer?, %changed: Int ->
                   sourceInformationMarkerStart(%composer, <>, "C<A()>,<A()>:Test.kt")
                   A(%composer, 0)
                   if (condition) {
-                    %composer.endToMarker(tmp0_marker)
+                    sourceInformationMarkerEnd(%composer)
+                    return
                   }
                   A(%composer, 0)
                   sourceInformationMarkerEnd(%composer)
                 }, %composer, 0)
-                val tmp1_marker = %composer.currentMarker
                 M3({ %composer: Composer?, %changed: Int ->
                   sourceInformationMarkerStart(%composer, <>, "C<A()>,<A()>:Test.kt")
                   A(%composer, 0)
                   if (condition) {
-                    %composer.endToMarker(tmp1_marker)
+                    sourceInformationMarkerEnd(%composer)
+                    return
                   }
                   A(%composer, 0)
                   sourceInformationMarkerEnd(%composer)
@@ -902,11 +904,11 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
               if (isTraceInProgress()) {
                 traceEventStart(<>, %changed, -1, <>)
               }
-              val tmp0_marker = %composer.currentMarker
               FakeBox({ %composer: Composer?, %changed: Int ->
                 sourceInformationMarkerStart(%composer, <>, "C<A()>:Test.kt")
                 if (condition) {
-                  %composer.endToMarker(tmp0_marker)
+                  sourceInformationMarkerEnd(%composer)
+                  return
                 }
                 A(%composer, 0)
                 sourceInformationMarkerEnd(%composer)
@@ -1075,11 +1077,11 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %changed, -1, <>)
                 }
-                val tmp0_marker = %composer.currentMarker
                 IW({ %composer: Composer?, %changed: Int ->
                   sourceInformationMarkerStart(%composer, <>, "C<A()>:Test.kt")
                   if (condition) {
-                    %composer.endToMarker(tmp0_marker)
+                    sourceInformationMarkerEnd(%composer)
+                    return
                   }
                   A(%composer, 0)
                   sourceInformationMarkerEnd(%composer)
@@ -1235,12 +1237,12 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                   traceEventStart(<>, %changed, -1, <>)
                 }
                 Text("Some text", %composer, 0b0110)
-                val tmp0_marker = %composer.currentMarker
                 M1({ %composer: Composer?, %changed: Int ->
                   sourceInformationMarkerStart(%composer, <>, "C:Test.kt")
                   Identity {
                     if (condition) {
-                      %composer.endToMarker(tmp0_marker)
+                      sourceInformationMarkerEnd(%composer)
+                      return
                     }
                   }
                   sourceInformationMarkerEnd(%composer)
@@ -6140,6 +6142,68 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             import androidx.compose.runtime.*
 
             inline fun InlineNonComposable(block: () -> Unit) {}
+        """
+    )
+
+    @Test
+    fun testInlineLambda_nonLocalReturn() = verifyComposeIrTransform(
+        source = """
+            import androidx.compose.runtime.*
+
+            @Composable
+            private fun Test(param: String?) {
+                Inline1 {
+                    Inline2 {
+                        if (true) return@Inline1
+                    }
+                }
+            }
+        """,
+        expectedTransformed = """
+            @Composable
+            private fun Test(param: String?, %composer: Composer?, %changed: Int) {
+              %composer = %composer.startRestartGroup(<>)
+              sourceInformation(%composer, "C(Test)<Inline...>:Test.kt")
+              if (%changed and 0b0001 !== 0 || !%composer.skipping) {
+                if (isTraceInProgress()) {
+                  traceEventStart(<>, %changed, -1, <>)
+                }
+                Inline1({ %composer: Composer?, %changed: Int ->
+                  val tmp0_marker = %composer.currentMarker
+                  sourceInformationMarkerStart(%composer, <>, "C<Inline...>:Test.kt")
+                  Inline2({ %composer: Composer?, %changed: Int ->
+                    sourceInformationMarkerStart(%composer, <>, "C:Test.kt")
+                    if (true) {
+                      %composer.endToMarker(tmp0_marker)
+                      return
+                    }
+                    sourceInformationMarkerEnd(%composer)
+                  }, %composer, 0)
+                  sourceInformationMarkerEnd(%composer)
+                }, %composer, 0)
+                if (isTraceInProgress()) {
+                  traceEventEnd()
+                }
+              } else {
+                %composer.skipToGroupEnd()
+              }
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+                Test(param, %composer, updateChangedFlags(%changed or 0b0001))
+              }
+            }
+        """,
+        extra = """
+            import androidx.compose.runtime.*
+
+            @Composable
+            inline fun Inline1(block: @Composable () -> Unit) {
+                block()
+            }
+
+            @Composable
+            inline fun Inline2(block: @Composable () -> Unit) {
+                block()
+            }
         """
     )
 }
