@@ -368,7 +368,7 @@ private class ElementsToShortenCollector(
     }
 
     private fun processTypeRef(resolvedTypeRef: FirResolvedTypeRef) {
-        val wholeTypeReference = resolvedTypeRef.psi as? KtTypeReference ?: return
+        val wholeTypeReference = resolvedTypeRef.realPsi as? KtTypeReference ?: return
         if (!wholeTypeReference.textRange.intersects(selection)) return
 
         val wholeClassifierId = resolvedTypeRef.type.lowerBoundIfFlexible().candidateClassId ?: return
