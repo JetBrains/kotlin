@@ -3167,6 +3167,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
                 }
 
                 @Test
+                @TestMetadata("adaptationToOverridenWithoutDefault.kt")
+                public void testAdaptationToOverridenWithoutDefault() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/callableReference/adapted/adaptationToOverridenWithoutDefault.kt");
+                }
+
+                @Test
                 public void testAllFilesPresentInAdapted() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/callableReference/adapted"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
                 }

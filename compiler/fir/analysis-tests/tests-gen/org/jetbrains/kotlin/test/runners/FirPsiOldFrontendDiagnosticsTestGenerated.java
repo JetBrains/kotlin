@@ -3173,6 +3173,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
                 }
 
                 @Test
+                @TestMetadata("adaptationToOverridenWithoutDefault.kt")
+                public void testAdaptationToOverridenWithoutDefault() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/callableReference/adapted/adaptationToOverridenWithoutDefault.kt");
+                }
+
+                @Test
                 public void testAllFilesPresentInAdapted() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/callableReference/adapted"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
                 }
