@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization
 
 import com.intellij.psi.StubBasedPsiElement
+import org.jetbrains.kotlin.KtRealPsiSourceElement
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildConstExpression
@@ -29,42 +31,46 @@ open class StubBasedFirConstDeserializer(
         val stub = initializer.stub ?: return null
         if (stub is KotlinConstantExpressionStub) {
             val text = stub.value()
-            return buildFirConstant(text, stub.kind()).also { constantCache[callableId] = it }
+            return buildFirConstant(text, stub.kind(), KtRealPsiSourceElement(initializer)).also { constantCache[callableId] = it }
         }
         if (stub is KtStringTemplateExpression) {
             val textStub = stub.entries[0].stub as KotlinPlaceHolderWithTextStub<*>
-            return buildConstExpression(null, ConstantValueKind.String, textStub.text()).also { constantCache[callableId] = it }
+            return buildConstExpression(
+                KtRealPsiSourceElement(initializer),
+                ConstantValueKind.String,
+                textStub.text()
+            ).also { constantCache[callableId] = it }
         }
         return null
     }
 }
 
 fun buildFirConstant(
-    initializer: String, constKind: org.jetbrains.kotlin.psi.stubs.ConstantValueKind
+    initializer: String, constKind: org.jetbrains.kotlin.psi.stubs.ConstantValueKind, source: KtSourceElement?
 ): FirExpression {
     return when (constKind) {
         org.jetbrains.kotlin.psi.stubs.ConstantValueKind.BOOLEAN_CONSTANT -> buildConstExpression(
-            null,
+            source,
             ConstantValueKind.Boolean,
             java.lang.Boolean.parseBoolean(initializer)
         )
         org.jetbrains.kotlin.psi.stubs.ConstantValueKind.FLOAT_CONSTANT -> buildConstExpression(
-            null,
+            source,
             ConstantValueKind.Double,
             java.lang.Double.parseDouble(initializer)
         )
         org.jetbrains.kotlin.psi.stubs.ConstantValueKind.CHARACTER_CONSTANT -> buildConstExpression(
-            null,
+            source,
             ConstantValueKind.Char,
             initializer.toCharArray()[0]
         )
         org.jetbrains.kotlin.psi.stubs.ConstantValueKind.INTEGER_CONSTANT -> buildConstExpression(
-            null,
+            source,
             ConstantValueKind.Long,
             java.lang.Long.parseLong(initializer)
         )
         org.jetbrains.kotlin.psi.stubs.ConstantValueKind.NULL -> buildConstExpression(
-            null,
+            source,
             ConstantValueKind.Null,
             null
         )

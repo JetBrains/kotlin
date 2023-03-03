@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization
 
+import org.jetbrains.kotlin.KtRealPsiSourceElement
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.computeTypeAttributes
@@ -58,6 +59,7 @@ class StubBasedFirTypeDeserializer(
                     typeParameterNames[name.asString()] = it
                 }
                 builders += FirTypeParameterBuilder().apply {
+                    source = KtRealPsiSourceElement(typeParameter)
                     moduleData = this@StubBasedFirTypeDeserializer.moduleData
                     resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                     origin = FirDeclarationOrigin.Library
@@ -91,6 +93,7 @@ class StubBasedFirTypeDeserializer(
 
     fun typeRef(typeReference: KtTypeReference): FirTypeRef {
         return buildResolvedTypeRef {
+            source = KtRealPsiSourceElement(typeReference)
             annotations += annotationDeserializer.loadAnnotations(typeReference)
             type = type(typeReference, annotations.computeTypeAttributes(moduleData.session))
         }

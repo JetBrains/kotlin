@@ -59,7 +59,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: [
     kotlin/internal/InlineOnly()
-      psi: null
+      psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: kotlin/collections/listOf
   contextReceivers: []

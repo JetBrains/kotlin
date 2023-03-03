@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization
 
+import org.jetbrains.kotlin.KtRealPsiSourceElement
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
@@ -59,6 +60,7 @@ class StubBasedAnnotationDeserializer(
                 ?.getStubOrPsiChild(KtStubElementTypes.USER_TYPE)!!
         val classId = userType.classId()
         return buildAnnotation {
+            source = KtRealPsiSourceElement(ktAnnotation)
             annotationTypeRef = buildResolvedTypeRef {
                 type = classId.toLookupTag().constructClassType(emptyArray(), isNullable = false)
             }
@@ -125,7 +127,7 @@ class StubBasedAnnotationDeserializer(
                     val selectorExpression = value.selectorExpression
                     val classId = traverseClassId(receiverExpression)
                     val name = (selectorExpression as KtNameReferenceExpression).getReferencedNameAsName()
-                    return classId.toEnumEntryReferenceExpression(name)
+                    return classId.toEnumEntryReferenceExpression(name, value)
                 }
             }
             is KtCollectionLiteralExpression -> {
@@ -133,6 +135,7 @@ class StubBasedAnnotationDeserializer(
                     argumentList = buildArgumentList {
                         arguments.addAll(value.innerExpressions.map { resolveValue(it, expectedType) })
                     }
+                    source = KtRealPsiSourceElement(value)
                     typeRef = buildResolvedTypeRef {
                         type = (/*expectedType() ?: */session.builtinTypes.anyType.type).createArrayType()
                     }
@@ -140,7 +143,12 @@ class StubBasedAnnotationDeserializer(
             }
             is KtStringTemplateExpression -> {
                 val textStub = value.entries[0].stub as KotlinPlaceHolderWithTextStub<*>
-                return const(ConstantValueKind.String, textStub.text(), session.builtinTypes.stringType)
+                return buildConstExpression(
+                    KtRealPsiSourceElement(value),
+                    ConstantValueKind.String,
+                    textStub.text(),
+                    setType = true
+                ).apply { replaceTypeRef(session.builtinTypes.stringType) }
             }
             is KtClassLiteralExpression -> {
                 val receiverExpression = value.receiverExpression ?: error("Not defined class reference")
@@ -151,9 +159,13 @@ class StubBasedAnnotationDeserializer(
                     val resolvedTypeRef = buildResolvedTypeRef {
                         type = StandardClassIds.KClass.constructClassLikeType(arrayOf(referencedType), false)
                     }
+                    source = KtRealPsiSourceElement(value)
                     argumentList = buildUnaryArgumentList(
                         buildClassReferenceExpression {
-                            classTypeRef = buildResolvedTypeRef { type = referencedType }
+                            classTypeRef = buildResolvedTypeRef {
+                                type = referencedType
+                            }
+                            source = KtRealPsiSourceElement(receiverExpression)
                             typeRef = resolvedTypeRef
                         }
                     )
@@ -161,7 +173,7 @@ class StubBasedAnnotationDeserializer(
             }
             is KtConstantExpression -> {
                 val expressionStub = value.stub as KotlinConstantExpressionStub
-                return buildFirConstant(expressionStub.value(), expressionStub.kind())
+                return buildFirConstant(expressionStub.value(), expressionStub.kind(), KtRealPsiSourceElement(value))
             }
         }
         error("Unexpected $value")
@@ -196,22 +208,20 @@ class StubBasedAnnotationDeserializer(
         return ClassId(packageFQN, relativeName, false)
     }
 
-    private fun <T> const(kind: ConstantValueKind<T>, value: T, typeRef: FirResolvedTypeRef): FirConstExpression<T> {
-        return buildConstExpression(null, kind, value, setType = true).apply { this.replaceTypeRef(typeRef) }
-    }
-
-    private fun ClassId.toEnumEntryReferenceExpression(name: Name): FirExpression {
+    private fun ClassId.toEnumEntryReferenceExpression(name: Name, value: KtQualifiedExpression): FirExpression {
         return buildFunctionCall {
             val entryPropertySymbol =
                 session.symbolProvider.getClassDeclaredPropertySymbols(
                     this@toEnumEntryReferenceExpression, name,
                 ).firstOrNull()
 
+            source = KtRealPsiSourceElement(value)
             calleeReference = when {
                 entryPropertySymbol != null -> {
                     buildResolvedNamedReference {
                         this.name = name
                         resolvedSymbol = entryPropertySymbol
+                        source = KtRealPsiSourceElement(value.selectorExpression!!)
                     }
                 }
                 else -> {
