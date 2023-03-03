@@ -19,10 +19,13 @@ import org.jetbrains.kotlin.types.model.*
  * @param Session An additional context used for type computations.
  * @property builder A string builder to write the mangled name into.
  * @property mode The mangle mode.
+ * @property allowOutOfScopeTypeParameters Whether to throw an exception if the container of a referenced type parameter is not found
+ * in the current scope. This often happens in the lowered IR and should never happen in the IR emitted by the frontend.
  */
 abstract class BaseKotlinMangleComputer<Declaration, Type, TypeParameter, ValueParameter, TypeParameterContainer, FunctionDeclaration, Session>(
     protected val builder: StringBuilder,
-    protected val mode: MangleMode
+    protected val mode: MangleMode,
+    protected val allowOutOfScopeTypeParameters: Boolean = false,
 ) : KotlinMangleComputer<Declaration>
         where Declaration : Any,
               Type : KotlinTypeMarker,
@@ -120,7 +123,7 @@ abstract class BaseKotlinMangleComputer<Declaration, Type, TypeParameter, ValueP
     protected fun StringBuilder.mangleTypeParameterReference(typeParameter: TypeParameter) {
         val parent = getEffectiveParent(typeParameter)
         val containerIndex = typeParameterContainers.indexOf(parent)
-        require(containerIndex >= 0) {
+        require(allowOutOfScopeTypeParameters || containerIndex >= 0) {
             "No container found for type parameter '${getTypeParameterName(typeParameter)}' of '${renderDeclaration(parent)}'"
         }
         appendSignature(containerIndex)

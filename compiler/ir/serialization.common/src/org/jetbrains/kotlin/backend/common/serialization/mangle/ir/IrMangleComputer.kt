@@ -22,7 +22,8 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 open class IrMangleComputer(
     builder: StringBuilder,
     mode: MangleMode,
-    protected val compatibleMode: Boolean
+    protected val compatibleMode: Boolean,
+    allowOutOfScopeTypeParameters: Boolean = false,
 ) : BaseKotlinMangleComputer<
         /*Declaration=*/IrDeclaration,
         /*Type=*/IrType,
@@ -31,7 +32,7 @@ open class IrMangleComputer(
         /*TypeParameterContainer=*/IrDeclaration,
         /*FunctionDeclaration=*/IrFunction,
         /*Session=*/Nothing?,
-        >(builder, mode) {
+        >(builder, mode, allowOutOfScopeTypeParameters) {
 
     final override fun getTypeSystemContext(session: Nothing?) = object : IrTypeSystemContext {
         override val irBuiltIns: IrBuiltIns
