@@ -38965,6 +38965,30 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             public void testConcurrent() throws Exception {
                 runTest("compiler/testData/codegen/box/topLevelInitializtion/concurrent.kt");
             }
+
+            @Test
+            @TestMetadata("failInInitializer1.kt")
+            public void testFailInInitializer1() throws Exception {
+                runTest("compiler/testData/codegen/box/topLevelInitializtion/failInInitializer1.kt");
+            }
+
+            @Test
+            @TestMetadata("failInInitializer2.kt")
+            public void testFailInInitializer2() throws Exception {
+                runTest("compiler/testData/codegen/box/topLevelInitializtion/failInInitializer2.kt");
+            }
+
+            @Test
+            @TestMetadata("failInInitializer3.kt")
+            public void testFailInInitializer3() throws Exception {
+                runTest("compiler/testData/codegen/box/topLevelInitializtion/failInInitializer3.kt");
+            }
+
+            @Test
+            @TestMetadata("failInInitializer4.kt")
+            public void testFailInInitializer4() throws Exception {
+                runTest("compiler/testData/codegen/box/topLevelInitializtion/failInInitializer4.kt");
+            }
         }
 
         @Nested

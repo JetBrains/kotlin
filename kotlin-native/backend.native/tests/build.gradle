@@ -1557,34 +1557,6 @@ standaloneTest("initializers_workers2") {
     useGoldenData = true
 }
 
-standaloneTest("initializers_failInInitializer1") {
-    expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
-    source = "codegen/initializers/failInInitializer1.kt"
-    useGoldenData = true
-    flags = ['-Xir-property-lazy-initialization=enable']
-}
-
-standaloneTest("initializers_failInInitializer2") {
-    expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
-    source = "codegen/initializers/failInInitializer2.kt"
-    useGoldenData = true
-    flags = ['-Xir-property-lazy-initialization=enable']
-}
-
-standaloneTest("initializers_failInInitializer3") {
-    expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
-    source = "codegen/initializers/failInInitializer3.kt"
-    useGoldenData = true
-    flags = ['-Xir-property-lazy-initialization=enable']
-}
-
-standaloneTest("initializers_failInInitializer4") {
-    expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
-    source = "codegen/initializers/failInInitializer4.kt"
-    useGoldenData = true
-    flags = ['-Xir-property-lazy-initialization=enable']
-}
-
 standaloneTest("initializers_when1") {
     source = "codegen/initializers/when1.kt"
     useGoldenData = true
@@ -2839,7 +2811,7 @@ standaloneTest("exception_in_global_init") {
     enabled = (project.testTarget != 'wasm32') // Uses exceptions.
     source = "runtime/exceptions/exception_in_global_init.kt"
     expectedExitStatusChecker = { it != 0 }
-    outputChecker = { s -> s.contains("Uncaught Kotlin exception:") && s.coinains("FAIL") && !s.contains("in kotlin main") }
+    outputChecker = { s -> s.contains("Uncaught Kotlin exception:") && s.contains("FAIL") && !s.contains("in kotlin main") }
 }
 
 task rethrow_exception(type: KonanLocalTest) {
