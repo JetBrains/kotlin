@@ -39,11 +39,37 @@ public class DefaultErrorMessages {
     }
 
     private static final DiagnosticFactoryToRendererMap MAP = new DiagnosticFactoryToRendererMap("Default");
-    private static final List<DiagnosticFactoryToRendererMap> RENDERER_MAPS =
-            CollectionsKt.plus(
-                    Collections.singletonList(MAP),
-                    CollectionsKt.map(ServiceLoader.load(Extension.class, DefaultErrorMessages.class.getClassLoader()), Extension::getMap)
-            );
+
+    private static final List<String> RENDERER_PLATFORM_EXTENSIONS = CollectionsKt.listOf(
+            "org.jetbrains.kotlin.resolve.jvm.diagnostics.DefaultErrorMessagesJvm",
+            "org.jetbrains.kotlin.js.resolve.diagnostics.DefaultErrorMessagesJs",
+            "org.jetbrains.kotlin.resolve.konan.diagnostics.DefaultErrorMessagesNative",
+            "org.jetbrains.kotlin.wasm.resolve.diagnostics.DefaultErrorMessagesWasm"
+    );
+
+    private static final List<DiagnosticFactoryToRendererMap> RENDERER_MAPS;
+
+    static {
+        List<DiagnosticFactoryToRendererMap> rendererMaps = new ArrayList<>(RENDERER_PLATFORM_EXTENSIONS.size() + 1);
+        rendererMaps.add(MAP);
+
+        for (String extensionFqName : RENDERER_PLATFORM_EXTENSIONS) {
+            try {
+                Class<?> extensionClass = Class.forName(extensionFqName);
+                if (!Extension.class.isAssignableFrom(extensionClass)) {
+                    throw new IllegalStateException(extensionClass.getName() + " is not a " + Extension.class.getName());
+                }
+
+                Extension extension = (Extension) extensionClass.newInstance();
+                rendererMaps.add(extension.getMap());
+            }
+            catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        RENDERER_MAPS = Collections.unmodifiableList(rendererMaps);
+    }
 
     @NotNull
     @SuppressWarnings("unchecked")
