@@ -24,7 +24,7 @@ fun test_1(): String {
     return "${func()} $prop ${a.foo()} ${b.bar()}"
 }
 
-// MODULE: intermediate()()(common)
+// MODULE: intermediate(common)
 // TARGET_PLATFORM: Common
 // FILE: intermediate.kt
 

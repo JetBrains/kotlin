@@ -13,7 +13,7 @@
 // FILE: common.kt
 expect open class A()
 
-// MODULE: intermediate()()(common)
+// MODULE: intermediate(common)
 // TARGET_PLATFORM: JVM, JS
 
 // FILE: intermediate.kt

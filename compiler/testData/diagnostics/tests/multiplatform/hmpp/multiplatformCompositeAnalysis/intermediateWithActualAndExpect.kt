@@ -5,7 +5,7 @@
 expect class A
 expect class B
 
-// MODULE: intermediate()()(common)
+// MODULE: intermediate(common)
 // TARGET_PLATFORM: Common
 actual class B
 expect class C

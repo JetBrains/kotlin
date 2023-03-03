@@ -20,7 +20,7 @@ expect val commonProperty: String
 <!ACTUAL_WITHOUT_EXPECT!>actual val commonProperty: String
     get() = "hello"<!>
 
-// MODULE: intermediate()()(common)
+// MODULE: intermediate(common)
 // TARGET_PLATFORM: Common
 expect class IntermediateClass {
     fun memberFun()

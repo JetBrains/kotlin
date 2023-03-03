@@ -7,7 +7,7 @@ package foo
 expect sealed class SealedWithSharedActual()
 expect sealed class SealedWithPlatformActuals : SealedWithSharedActual
 
-// MODULE: intermediate()()(common)
+// MODULE: intermediate(common)
 // TARGET_PLATFORM: Common
 package foo
 
