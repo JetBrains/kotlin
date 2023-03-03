@@ -86,7 +86,7 @@ annotation class A(val value: String)
 @Anno
 fun test() {}
 
-// MODULE: main(lib1)()(lib2)
+// MODULE: main(lib1,lib2)
 // FILE: main.kt
 
 actual typealias Anno = Jnno

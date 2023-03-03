@@ -11,7 +11,7 @@ class A(val result: String = "OK")
 // FILE: B.kt
 expect class B(result: String = "FAIL")
 
-// MODULE: main(lib1)()(lib2)
+// MODULE: main(lib1,lib2)
 // FILE: multiplatform.kt
 actual typealias B = A
 
