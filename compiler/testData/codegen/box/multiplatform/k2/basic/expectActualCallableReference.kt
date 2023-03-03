@@ -11,7 +11,7 @@ expect fun ret(): R
 
 fun foo() = ::ret
 
-// MODULE: main()()(common)
+// MODULE: main(common)
 // TARGET_PLATFORM: JVM
 // FILE: main.kt
 

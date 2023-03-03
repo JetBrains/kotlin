@@ -8,7 +8,7 @@
 
 expect fun foo(j: Int, i: Int = -1)
 
-// MODULE: main()()(common)
+// MODULE: main(common)
 // FILE: J.java
 
 public class J {

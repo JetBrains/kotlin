@@ -23,7 +23,7 @@ expect class A<T> {
     }
 }
 
-// MODULE: main()()(common)
+// MODULE: main(common)
 // FILE: main.kt
 
 import kotlin.test.assertEquals

@@ -25,7 +25,7 @@ expect class A() {
     fun g(): Int
 }
 
-// MODULE: main()()(common)
+// MODULE: main(common)
 // TARGET_PLATFORM: JVM
 
 // FILE: p11.kt

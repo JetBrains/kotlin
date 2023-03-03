@@ -25,7 +25,7 @@ expect fun atomic(initial: Boolean): AtomicBoolean
 private val _topLevelBoolean = atomic(false)
 var topLevelDelegatedPropertyBoolean: Boolean by _topLevelBoolean
 
-// MODULE: main()()(common)
+// MODULE: main(common)
 // TARGET_PLATFORM: JVM
 // FILE: jvm/AtomicBoolean.kt
 

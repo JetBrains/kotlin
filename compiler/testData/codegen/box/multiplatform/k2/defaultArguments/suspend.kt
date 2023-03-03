@@ -11,7 +11,7 @@ expect interface I {
     suspend fun f(p: Int = 1): String
 }
 
-// MODULE: main()()(common)
+// MODULE: main(common)
 // FILE: main.kt
 import kotlin.coroutines.*
 import helpers.*

@@ -15,7 +15,7 @@ fun test(s: String): String {
     return a.foo(s) + a.bar
 }
 
-// MODULE: main()()(common)
+// MODULE: main(common)
 // TARGET_PLATFORM: JVM
 // FILE: main.kt
 

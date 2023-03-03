@@ -12,7 +12,7 @@ expect fun foo(i: Int): Int
 
 fun test(s: S) = foo(s)
 
-// MODULE: main()()(common)
+// MODULE: main(common)
 // TARGET_PLATFORM: JVM
 // FILE: main.kt
 

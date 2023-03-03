@@ -25,7 +25,7 @@ expect fun <T> atomic(initial: T): AtomicRef<T>
 private val _topLevelRef = atomic("A")
 var topLevelDelegatedPropertyRef: String by _topLevelRef
 
-// MODULE: main()()(common)
+// MODULE: main(common)
 // TARGET_PLATFORM: JVM
 // FILE: jvm/AtomicBoolean.kt
 

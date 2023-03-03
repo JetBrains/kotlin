@@ -8,5 +8,5 @@ expect class Counter {
     operator fun dec(): Counter
 }
 
-// MODULE: main()()(common)
+// MODULE: main(common)
 actual typealias Counter = Int

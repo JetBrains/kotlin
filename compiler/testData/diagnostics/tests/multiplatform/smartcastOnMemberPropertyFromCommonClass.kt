@@ -7,7 +7,7 @@ enum class SomeEnum {
     A, B
 }
 
-// MODULE: main()()(common)
+// MODULE: main(common)
 fun Some.test() {
     if (e == null) return
     val x = when (<!DEBUG_INFO_SMARTCAST!>e<!>) {

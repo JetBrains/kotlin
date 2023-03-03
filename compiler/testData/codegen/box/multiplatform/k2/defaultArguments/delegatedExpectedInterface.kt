@@ -9,7 +9,7 @@ expect interface I {
     fun foo(x: Int = 1): Unit
 }
 
-// MODULE: main()()(common)
+// MODULE: main(common)
 // FILE: main.kt
 
 var log = ""
