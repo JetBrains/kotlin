@@ -8,7 +8,7 @@ interface Base {
 
 expect object Implementation : Base
 
-// MODULE: m1-jvm()()(m1-common)
+// MODULE: m1-jvm(m1-common)
 // FILE: jvm.kt
 
 abstract class RealImplementation : Base {
