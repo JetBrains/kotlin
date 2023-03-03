@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.incremental.multiproject
 
-import org.jetbrains.kotlin.incremental.IncrementalModuleEntry
-import org.jetbrains.kotlin.incremental.IncrementalModuleInfo
+import org.jetbrains.kotlin.api.IncrementalModuleEntry
+import org.jetbrains.kotlin.api.IncrementalModuleInfo
 import org.jetbrains.kotlin.incremental.util.Either
 import org.junit.Before
 import org.junit.Rule

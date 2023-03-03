@@ -6,6 +6,7 @@ plugins {
 dependencies {
     api(project(":incremental-compilation-facade-api"))
     implementation(kotlinStdlib())
+    implementation(project(":kotlin-compiler-embeddable"))
 }
 
-publish()
+publish()4

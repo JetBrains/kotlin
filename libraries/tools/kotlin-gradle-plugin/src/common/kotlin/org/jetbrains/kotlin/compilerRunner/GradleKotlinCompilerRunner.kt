@@ -37,8 +37,8 @@ import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.plugin.variantImplementationFactory
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.*
-import org.jetbrains.kotlin.incremental.IncrementalModuleEntry
-import org.jetbrains.kotlin.incremental.IncrementalModuleInfo
+import org.jetbrains.kotlin.api.IncrementalModuleEntry
+import org.jetbrains.kotlin.api.IncrementalModuleInfo
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 import java.io.File

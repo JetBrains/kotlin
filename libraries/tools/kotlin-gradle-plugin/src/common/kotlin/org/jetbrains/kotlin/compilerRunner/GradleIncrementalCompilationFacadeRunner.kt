@@ -10,20 +10,23 @@ import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.logging.Logging
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
+import org.gradle.process.ExecOperations
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
 import org.gradle.workers.WorkQueue
 import org.gradle.workers.WorkerExecutor
+import org.jetbrains.kotlin.api.*
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.BuildTime
 import org.jetbrains.kotlin.build.report.metrics.measure
+import org.jetbrains.kotlin.daemon.common.CompilerMode
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.CompilationErrorException
 import org.jetbrains.kotlin.gradle.tasks.FailedCompilationException
 import org.jetbrains.kotlin.gradle.tasks.OOMErrorException
 import org.jetbrains.kotlin.gradle.tasks.TaskOutputsBackup
-import org.jetbrains.kotlin.incremental.IncrementalCompilerFacade
+import org.jetbrains.kotlin.incremental.*
 import java.io.File
 import java.net.URLClassLoader
 import java.util.*
@@ -57,8 +60,53 @@ internal class GradleIncrementalCompilationFacadeRunner(
 
     internal abstract class IncrementalFacadeRunnerAction @Inject constructor(
         private val fileSystemOperations: FileSystemOperations,
+        private val execOperations: ExecOperations,
     ) : WorkAction<IncrementalFacadeRunnerParameters> {
         private val logger = Logging.getLogger("kotlin-compile-worker")
+
+        private val workArguments
+            get() = parameters.compilerWorkArguments.get()
+
+        fun prepareKotlinCompilerOptions(): KotlinCompilationOptions {
+            val icEnv = workArguments.incrementalCompilationEnvironment
+            val kotlinScriptExtensions = workArguments.kotlinScriptExtensions
+            return if (icEnv != null) {
+                val knownChangedFiles = icEnv.changedFiles as? ChangedFiles.Known
+                val incrementalModuleInfo = workArguments.incrementalModuleInfo
+                val outputFiles = workArguments.outputFiles
+                IncrementalKotlinCompilationOptions(
+                    areFileChangesKnown = knownChangedFiles != null,
+                    modifiedFiles = knownChangedFiles?.modified,
+                    deletedFiles = knownChangedFiles?.removed,
+                    classpathChanges = icEnv.classpathChanges,
+                    workingDir = icEnv.workingDir,
+                    reportCategories = emptyArray(),
+                    reportSeverity = 0,
+                    requestedCompilationResults = emptyArray(),
+                    compilerMode = org.jetbrains.kotlin.api.CompilerMode.INCREMENTAL_COMPILER,
+                    targetPlatform = TargetPlatform.JVM,
+                    usePreciseJavaTracking = icEnv.usePreciseJavaTracking,
+                    outputFiles = outputFiles,
+                    multiModuleICSettings = MultiModuleICSettings(
+                        icEnv.multiModuleICSettings.buildHistoryFile,
+                        icEnv.multiModuleICSettings.useModuleDetection,
+                    ),
+                    modulesInfo = incrementalModuleInfo!!,
+                    kotlinScriptExtensions = kotlinScriptExtensions,
+                    withAbiSnapshot = icEnv.withAbiSnapshot,
+                    preciseCompilationResultsBackup = icEnv.preciseCompilationResultsBackup,
+                )
+            } else {
+                KotlinCompilationOptions(
+                    compilerMode = org.jetbrains.kotlin.api.CompilerMode.NON_INCREMENTAL_COMPILER,
+                    targetPlatform = TargetPlatform.JVM,
+                    reportCategories = emptyArray(),
+                    reportSeverity = 0,
+                    requestedCompilationResults = emptyArray(),
+                    kotlinScriptExtensions = kotlinScriptExtensions
+                )
+            }
+        }
 
         override fun execute() {
             val taskOutputsBackup = if (parameters.snapshotsDir.isPresent) {
@@ -74,19 +122,24 @@ internal class GradleIncrementalCompilationFacadeRunner(
             }
 
             try {
-                val classpath = parameters.compilerWorkArguments.get().compilerFacadeClasspath
+                val classpath = workArguments.compilerFacadeClasspath
                 logger.warn("IC facade classpath: $classpath")
                 logger.warn("Trying to invoke IncrementalCompilerFacade.doSomething()...")
                 // TODO: cache classloader
                 val parentClassloader = LimitedScopeClassLoaderDelegator(
                     IncrementalCompilerFacade::class.java.classLoader,
                     ClassLoader.getSystemClassLoader(),
-                    setOf(IncrementalCompilerFacade::class.java.name) // need to share API classes, so we could use them here without reflection
+                    listOf("org.jetbrains.kotlin.api") // need to share API classes, so we could use them here without reflection
                 )
                 val classloader = URLClassLoader(classpath.toList().map { it.toURI().toURL() }.toTypedArray(), parentClassloader)
                 val facade = ServiceLoader.load(IncrementalCompilerFacade::class.java, classloader).singleOrNull()
                     ?: error("Compiler classpath should contain one and only one implementation of ${IncrementalCompilerFacade::class.java.name}")
                 facade.doSomething()
+                val launcher = GradleKotlinCompilerLauncher(execOperations)
+                facade.compileInProcess(
+                    workArguments.compilerArgs.toList(),
+                    prepareKotlinCompilerOptions(),
+                )
             } catch (e: FailedCompilationException) {
                 // Restore outputs only in cases where we expect that the user will make some changes to their project:
                 //   - For a compilation error, the user will need to fix their source code
@@ -120,10 +173,10 @@ internal class GradleIncrementalCompilationFacadeRunner(
 private class LimitedScopeClassLoaderDelegator(
     private val parent: ClassLoader,
     fallback: ClassLoader,
-    private val allowedClasses: Set<String>,
+    private val allowedPackage: List<String>,
 ) : ClassLoader(fallback) {
     override fun loadClass(name: String, resolve: Boolean): Class<*> {
-        return if (name in allowedClasses) {
+        return if (allowedPackage.any { name.startsWith(it) }) {
             parent.loadClass(name)
         } else {
             super.loadClass(name, resolve)

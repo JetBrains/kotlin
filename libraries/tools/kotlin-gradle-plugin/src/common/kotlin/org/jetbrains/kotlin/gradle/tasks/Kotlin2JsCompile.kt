@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.gradle.tasks.internal.KotlinJsOptionsCompat
 import org.jetbrains.kotlin.gradle.utils.isParentOf
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import org.jetbrains.kotlin.gradle.utils.property
-import org.jetbrains.kotlin.incremental.ClasspathChanges
+import org.jetbrains.kotlin.api.ClasspathChanges
 import org.jetbrains.kotlin.library.impl.isKotlinLibrary
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.utils.JsLibraryUtils

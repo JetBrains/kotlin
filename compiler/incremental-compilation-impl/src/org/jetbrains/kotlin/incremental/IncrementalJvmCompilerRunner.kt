@@ -23,6 +23,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.PsiJavaFile
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.api.ClasspathChanges
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.build.GeneratedJvmClass
@@ -43,12 +44,12 @@ import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotDisabled
-import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun.NoChanges
-import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun.ToBeComputedByIncrementalCompiler
-import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnabled.NotAvailableDueToMissingClasspathSnapshot
-import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnabled.NotAvailableForNonIncrementalRun
-import org.jetbrains.kotlin.incremental.ClasspathChanges.NotAvailableForJSCompiler
+import org.jetbrains.kotlin.api.ClasspathChanges.ClasspathSnapshotDisabled
+import org.jetbrains.kotlin.api.ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun.NoChanges
+import org.jetbrains.kotlin.api.ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun.ToBeComputedByIncrementalCompiler
+import org.jetbrains.kotlin.api.ClasspathChanges.ClasspathSnapshotEnabled.NotAvailableDueToMissingClasspathSnapshot
+import org.jetbrains.kotlin.api.ClasspathChanges.ClasspathSnapshotEnabled.NotAvailableForNonIncrementalRun
+import org.jetbrains.kotlin.api.ClasspathChanges.NotAvailableForJSCompiler
 import org.jetbrains.kotlin.incremental.classpathDiff.AccessibleClassSnapshot
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathChangesComputer.computeClasspathChanges
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotBuildReporter

@@ -14,7 +14,7 @@ import org.gradle.api.services.BuildServiceParameters
 import org.gradle.api.tasks.Internal
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
-import org.jetbrains.kotlin.incremental.IncrementalModuleInfo
+import org.jetbrains.kotlin.api.IncrementalModuleInfo
 
 /**
  * Provider of [IncrementalModuleInfo] that allows concrete implementation to e.g use Gradle build services

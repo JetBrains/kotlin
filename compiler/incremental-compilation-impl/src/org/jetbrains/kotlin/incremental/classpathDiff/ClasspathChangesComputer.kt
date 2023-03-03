@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.incremental.classpathDiff
 
 import com.intellij.openapi.util.io.FileUtil
+import org.jetbrains.kotlin.api.ClasspathSnapshotFiles
 import org.jetbrains.kotlin.build.report.DoNothingICReporter
 import org.jetbrains.kotlin.build.report.debug
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
