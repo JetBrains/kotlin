@@ -13,7 +13,7 @@ import org.khronos.webgl.*
 import org.w3c.dom.*
 import org.w3c.dom.events.*
 
-public external interface PointerEventInit : MouseEventInit {
+public external interface PointerEventInit : MouseEventInit, JsAny {
     var pointerId: Int? /* = 0 */
         get() = definedExternally
         set(value) = definedExternally
@@ -46,55 +46,13 @@ public external interface PointerEventInit : MouseEventInit {
         set(value) = definedExternally
 }
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline fun PointerEventInit(pointerId: Int? = 0, width: Double? = 1.0, height: Double? = 1.0, pressure: Float? = 0f, tangentialPressure: Float? = 0f, tiltX: Int? = 0, tiltY: Int? = 0, twist: Int? = 0, pointerType: String? = "", isPrimary: Boolean? = false, screenX: Int? = 0, screenY: Int? = 0, clientX: Int? = 0, clientY: Int? = 0, button: Short? = 0, buttons: Short? = 0, relatedTarget: EventTarget? = null, region: String? = null, ctrlKey: Boolean? = false, shiftKey: Boolean? = false, altKey: Boolean? = false, metaKey: Boolean? = false, modifierAltGraph: Boolean? = false, modifierCapsLock: Boolean? = false, modifierFn: Boolean? = false, modifierFnLock: Boolean? = false, modifierHyper: Boolean? = false, modifierNumLock: Boolean? = false, modifierScrollLock: Boolean? = false, modifierSuper: Boolean? = false, modifierSymbol: Boolean? = false, modifierSymbolLock: Boolean? = false, view: Window? = null, detail: Int? = 0, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): PointerEventInit {
-    val o = newJsObject()
-    o["pointerId"] = pointerId
-    o["width"] = width
-    o["height"] = height
-    o["pressure"] = pressure
-    o["tangentialPressure"] = tangentialPressure
-    o["tiltX"] = tiltX
-    o["tiltY"] = tiltY
-    o["twist"] = twist
-    o["pointerType"] = pointerType
-    o["isPrimary"] = isPrimary
-    o["screenX"] = screenX
-    o["screenY"] = screenY
-    o["clientX"] = clientX
-    o["clientY"] = clientY
-    o["button"] = button
-    o["buttons"] = buttons
-    o["relatedTarget"] = relatedTarget
-    o["region"] = region
-    o["ctrlKey"] = ctrlKey
-    o["shiftKey"] = shiftKey
-    o["altKey"] = altKey
-    o["metaKey"] = metaKey
-    o["modifierAltGraph"] = modifierAltGraph
-    o["modifierCapsLock"] = modifierCapsLock
-    o["modifierFn"] = modifierFn
-    o["modifierFnLock"] = modifierFnLock
-    o["modifierHyper"] = modifierHyper
-    o["modifierNumLock"] = modifierNumLock
-    o["modifierScrollLock"] = modifierScrollLock
-    o["modifierSuper"] = modifierSuper
-    o["modifierSymbol"] = modifierSymbol
-    o["modifierSymbolLock"] = modifierSymbolLock
-    o["view"] = view
-    o["detail"] = detail
-    o["bubbles"] = bubbles
-    o["cancelable"] = cancelable
-    o["composed"] = composed
-    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-    return o as PointerEventInit
-}
+@Suppress("UNUSED_PARAMETER")
+public fun PointerEventInit(pointerId: Int? = 0, width: Double? = 1.0, height: Double? = 1.0, pressure: Float? = 0f, tangentialPressure: Float? = 0f, tiltX: Int? = 0, tiltY: Int? = 0, twist: Int? = 0, pointerType: String? = "", isPrimary: Boolean? = false, screenX: Int? = 0, screenY: Int? = 0, clientX: Int? = 0, clientY: Int? = 0, button: Short? = 0, buttons: Short? = 0, relatedTarget: EventTarget? = null, region: String? = null, ctrlKey: Boolean? = false, shiftKey: Boolean? = false, altKey: Boolean? = false, metaKey: Boolean? = false, modifierAltGraph: Boolean? = false, modifierCapsLock: Boolean? = false, modifierFn: Boolean? = false, modifierFnLock: Boolean? = false, modifierHyper: Boolean? = false, modifierNumLock: Boolean? = false, modifierScrollLock: Boolean? = false, modifierSuper: Boolean? = false, modifierSymbol: Boolean? = false, modifierSymbolLock: Boolean? = false, view: Window? = null, detail: Int? = 0, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): PointerEventInit { js("return { pointerId, width, height, pressure, tangentialPressure, tiltX, tiltY, twist, pointerType, isPrimary, screenX, screenY, clientX, clientY, button, buttons, relatedTarget, region, ctrlKey, shiftKey, altKey, metaKey, modifierAltGraph, modifierCapsLock, modifierFn, modifierFnLock, modifierHyper, modifierNumLock, modifierScrollLock, modifierSuper, modifierSymbol, modifierSymbolLock, view, detail, bubbles, cancelable, composed };") }
 
 /**
  * Exposes the JavaScript [PointerEvent](https://developer.mozilla.org/en/docs/Web/API/PointerEvent) to Kotlin
  */
-public external open class PointerEvent(type: String, eventInitDict: PointerEventInit = definedExternally) : MouseEvent {
+public external open class PointerEvent(type: String, eventInitDict: PointerEventInit = definedExternally) : MouseEvent, JsAny {
     open val pointerId: Int
     open val width: Double
     open val height: Double

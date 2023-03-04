@@ -16,17 +16,17 @@ import org.w3c.dom.events.*
 /**
  * Exposes the JavaScript [MediaKeySystemConfiguration](https://developer.mozilla.org/en/docs/Web/API/MediaKeySystemConfiguration) to Kotlin
  */
-public external interface MediaKeySystemConfiguration {
+public external interface MediaKeySystemConfiguration : JsAny {
     var label: String? /* = "" */
         get() = definedExternally
         set(value) = definedExternally
-    var initDataTypes: Array<String>? /* = arrayOf() */
+    var initDataTypes: JsArray<JsString>? /* = arrayOf() */
         get() = definedExternally
         set(value) = definedExternally
-    var audioCapabilities: Array<MediaKeySystemMediaCapability>? /* = arrayOf() */
+    var audioCapabilities: JsArray<MediaKeySystemMediaCapability>? /* = arrayOf() */
         get() = definedExternally
         set(value) = definedExternally
-    var videoCapabilities: Array<MediaKeySystemMediaCapability>? /* = arrayOf() */
+    var videoCapabilities: JsArray<MediaKeySystemMediaCapability>? /* = arrayOf() */
         get() = definedExternally
         set(value) = definedExternally
     var distinctiveIdentifier: MediaKeysRequirement? /* = MediaKeysRequirement.OPTIONAL */
@@ -35,27 +35,15 @@ public external interface MediaKeySystemConfiguration {
     var persistentState: MediaKeysRequirement? /* = MediaKeysRequirement.OPTIONAL */
         get() = definedExternally
         set(value) = definedExternally
-    var sessionTypes: Array<String>?
+    var sessionTypes: JsArray<JsString>?
         get() = definedExternally
         set(value) = definedExternally
 }
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline fun MediaKeySystemConfiguration(label: String? = "", initDataTypes: Array<String>? = arrayOf(), audioCapabilities: Array<MediaKeySystemMediaCapability>? = arrayOf(), videoCapabilities: Array<MediaKeySystemMediaCapability>? = arrayOf(), distinctiveIdentifier: MediaKeysRequirement? = MediaKeysRequirement.OPTIONAL, persistentState: MediaKeysRequirement? = MediaKeysRequirement.OPTIONAL, sessionTypes: Array<String>? = undefined): MediaKeySystemConfiguration {
-    val o = newJsObject()
-    o["label"] = label
-    o["initDataTypes"] = initDataTypes
-    o["audioCapabilities"] = audioCapabilities
-    o["videoCapabilities"] = videoCapabilities
-    o["distinctiveIdentifier"] = distinctiveIdentifier
-    o["persistentState"] = persistentState
-    o["sessionTypes"] = sessionTypes
-    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-    return o as MediaKeySystemConfiguration
-}
+@Suppress("UNUSED_PARAMETER")
+public fun MediaKeySystemConfiguration(label: String? = "", initDataTypes: JsArray<JsString>? = JsArray(), audioCapabilities: JsArray<MediaKeySystemMediaCapability>? = JsArray(), videoCapabilities: JsArray<MediaKeySystemMediaCapability>? = JsArray(), distinctiveIdentifier: MediaKeysRequirement? = MediaKeysRequirement.OPTIONAL, persistentState: MediaKeysRequirement? = MediaKeysRequirement.OPTIONAL, sessionTypes: JsArray<JsString>? = undefined): MediaKeySystemConfiguration { js("return { label, initDataTypes, audioCapabilities, videoCapabilities, distinctiveIdentifier, persistentState, sessionTypes };") }
 
-public external interface MediaKeySystemMediaCapability {
+public external interface MediaKeySystemMediaCapability : JsAny {
     var contentType: String? /* = "" */
         get() = definedExternally
         set(value) = definedExternally
@@ -64,20 +52,13 @@ public external interface MediaKeySystemMediaCapability {
         set(value) = definedExternally
 }
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline fun MediaKeySystemMediaCapability(contentType: String? = "", robustness: String? = ""): MediaKeySystemMediaCapability {
-    val o = newJsObject()
-    o["contentType"] = contentType
-    o["robustness"] = robustness
-    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-    return o as MediaKeySystemMediaCapability
-}
+@Suppress("UNUSED_PARAMETER")
+public fun MediaKeySystemMediaCapability(contentType: String? = "", robustness: String? = ""): MediaKeySystemMediaCapability { js("return { contentType, robustness };") }
 
 /**
  * Exposes the JavaScript [MediaKeySystemAccess](https://developer.mozilla.org/en/docs/Web/API/MediaKeySystemAccess) to Kotlin
  */
-public external abstract class MediaKeySystemAccess {
+public external abstract class MediaKeySystemAccess : JsAny {
     open val keySystem: String
     fun getConfiguration(): MediaKeySystemConfiguration
     fun createMediaKeys(): Promise<MediaKeys>
@@ -86,41 +67,41 @@ public external abstract class MediaKeySystemAccess {
 /**
  * Exposes the JavaScript [MediaKeys](https://developer.mozilla.org/en/docs/Web/API/MediaKeys) to Kotlin
  */
-public external abstract class MediaKeys {
+public external abstract class MediaKeys : JsAny {
     fun createSession(sessionType: MediaKeySessionType = definedExternally): MediaKeySession
-    fun setServerCertificate(serverCertificate: Dynamic?): Promise<Boolean>
+    fun setServerCertificate(serverCertificate: JsAny?): Promise<JsBoolean>
 }
 
 /**
  * Exposes the JavaScript [MediaKeySession](https://developer.mozilla.org/en/docs/Web/API/MediaKeySession) to Kotlin
  */
-public external abstract class MediaKeySession : EventTarget {
+public external abstract class MediaKeySession : EventTarget, JsAny {
     open val sessionId: String
     open val expiration: Double
-    open val closed: Promise<Unit>
+    open val closed: Promise<Nothing?>
     open val keyStatuses: MediaKeyStatusMap
     open var onkeystatuseschange: ((Event) -> Dynamic?)?
     open var onmessage: ((MessageEvent) -> Dynamic?)?
-    fun generateRequest(initDataType: String, initData: Dynamic?): Promise<Unit>
-    fun load(sessionId: String): Promise<Boolean>
-    fun update(response: Dynamic?): Promise<Unit>
-    fun close(): Promise<Unit>
-    fun remove(): Promise<Unit>
+    fun generateRequest(initDataType: String, initData: JsAny?): Promise<Nothing?>
+    fun load(sessionId: String): Promise<JsBoolean>
+    fun update(response: JsAny?): Promise<Nothing?>
+    fun close(): Promise<Nothing?>
+    fun remove(): Promise<Nothing?>
 }
 
 /**
  * Exposes the JavaScript [MediaKeyStatusMap](https://developer.mozilla.org/en/docs/Web/API/MediaKeyStatusMap) to Kotlin
  */
-public external abstract class MediaKeyStatusMap {
+public external abstract class MediaKeyStatusMap : JsAny {
     open val size: Int
-    fun has(keyId: Dynamic?): Boolean
-    fun get(keyId: Dynamic?): Any?
+    fun has(keyId: JsAny?): Boolean
+    fun get(keyId: JsAny?): JsAny?
 }
 
 /**
  * Exposes the JavaScript [MediaKeyMessageEvent](https://developer.mozilla.org/en/docs/Web/API/MediaKeyMessageEvent) to Kotlin
  */
-public external open class MediaKeyMessageEvent(type: String, eventInitDict: MediaKeyMessageEventInit) : Event {
+public external open class MediaKeyMessageEvent(type: String, eventInitDict: MediaKeyMessageEventInit) : Event, JsAny {
     open val messageType: MediaKeyMessageType
     open val message: ArrayBuffer
 
@@ -132,25 +113,15 @@ public external open class MediaKeyMessageEvent(type: String, eventInitDict: Med
     }
 }
 
-public external interface MediaKeyMessageEventInit : EventInit {
+public external interface MediaKeyMessageEventInit : EventInit, JsAny {
     var messageType: MediaKeyMessageType?
     var message: ArrayBuffer?
 }
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline fun MediaKeyMessageEventInit(messageType: MediaKeyMessageType?, message: ArrayBuffer?, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): MediaKeyMessageEventInit {
-    val o = newJsObject()
-    o["messageType"] = messageType
-    o["message"] = message
-    o["bubbles"] = bubbles
-    o["cancelable"] = cancelable
-    o["composed"] = composed
-    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-    return o as MediaKeyMessageEventInit
-}
+@Suppress("UNUSED_PARAMETER")
+public fun MediaKeyMessageEventInit(messageType: MediaKeyMessageType?, message: ArrayBuffer?, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): MediaKeyMessageEventInit { js("return { messageType, message, bubbles, cancelable, composed };") }
 
-public external open class MediaEncryptedEvent(type: String, eventInitDict: MediaEncryptedEventInit = definedExternally) : Event {
+public external open class MediaEncryptedEvent(type: String, eventInitDict: MediaEncryptedEventInit = definedExternally) : Event, JsAny {
     open val initDataType: String
     open val initData: ArrayBuffer?
 
@@ -162,7 +133,7 @@ public external open class MediaEncryptedEvent(type: String, eventInitDict: Medi
     }
 }
 
-public external interface MediaEncryptedEventInit : EventInit {
+public external interface MediaEncryptedEventInit : EventInit, JsAny {
     var initDataType: String? /* = "" */
         get() = definedExternally
         set(value) = definedExternally
@@ -171,23 +142,13 @@ public external interface MediaEncryptedEventInit : EventInit {
         set(value) = definedExternally
 }
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline fun MediaEncryptedEventInit(initDataType: String? = "", initData: ArrayBuffer? = null, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): MediaEncryptedEventInit {
-    val o = newJsObject()
-    o["initDataType"] = initDataType
-    o["initData"] = initData
-    o["bubbles"] = bubbles
-    o["cancelable"] = cancelable
-    o["composed"] = composed
-    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-    return o as MediaEncryptedEventInit
-}
+@Suppress("UNUSED_PARAMETER")
+public fun MediaEncryptedEventInit(initDataType: String? = "", initData: ArrayBuffer? = null, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): MediaEncryptedEventInit { js("return { initDataType, initData, bubbles, cancelable, composed };") }
 
 /* please, don't implement this interface! */
 @JsName("null")
 @Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
-public external interface MediaKeysRequirement {
+public external interface MediaKeysRequirement : JsAny {
     companion object
 }
 
@@ -200,7 +161,7 @@ public inline val MediaKeysRequirement.Companion.NOT_ALLOWED: MediaKeysRequireme
 /* please, don't implement this interface! */
 @JsName("null")
 @Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
-public external interface MediaKeySessionType {
+public external interface MediaKeySessionType : JsAny {
     companion object
 }
 
@@ -211,7 +172,7 @@ public inline val MediaKeySessionType.Companion.PERSISTENT_LICENSE: MediaKeySess
 /* please, don't implement this interface! */
 @JsName("null")
 @Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
-public external interface MediaKeyStatus {
+public external interface MediaKeyStatus : JsAny {
     companion object
 }
 
@@ -232,7 +193,7 @@ public inline val MediaKeyStatus.Companion.INTERNAL_ERROR: MediaKeyStatus get() 
 /* please, don't implement this interface! */
 @JsName("null")
 @Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
-public external interface MediaKeyMessageType {
+public external interface MediaKeyMessageType : JsAny {
     companion object
 }
 

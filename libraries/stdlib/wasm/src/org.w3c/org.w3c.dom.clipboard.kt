@@ -13,28 +13,19 @@ import org.khronos.webgl.*
 import org.w3c.dom.*
 import org.w3c.dom.events.*
 
-public external interface ClipboardEventInit : EventInit {
+public external interface ClipboardEventInit : EventInit, JsAny {
     var clipboardData: DataTransfer? /* = null */
         get() = definedExternally
         set(value) = definedExternally
 }
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline fun ClipboardEventInit(clipboardData: DataTransfer? = null, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): ClipboardEventInit {
-    val o = newJsObject()
-    o["clipboardData"] = clipboardData
-    o["bubbles"] = bubbles
-    o["cancelable"] = cancelable
-    o["composed"] = composed
-    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-    return o as ClipboardEventInit
-}
+@Suppress("UNUSED_PARAMETER")
+public fun ClipboardEventInit(clipboardData: DataTransfer? = null, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): ClipboardEventInit { js("return { clipboardData, bubbles, cancelable, composed };") }
 
 /**
  * Exposes the JavaScript [ClipboardEvent](https://developer.mozilla.org/en/docs/Web/API/ClipboardEvent) to Kotlin
  */
-public external open class ClipboardEvent(type: String, eventInitDict: ClipboardEventInit = definedExternally) : Event {
+public external open class ClipboardEvent(type: String, eventInitDict: ClipboardEventInit = definedExternally) : Event, JsAny {
     open val clipboardData: DataTransfer?
 
     companion object {
@@ -48,24 +39,18 @@ public external open class ClipboardEvent(type: String, eventInitDict: Clipboard
 /**
  * Exposes the JavaScript [Clipboard](https://developer.mozilla.org/en/docs/Web/API/Clipboard) to Kotlin
  */
-public external abstract class Clipboard : EventTarget {
+public external abstract class Clipboard : EventTarget, JsAny {
     fun read(): Promise<DataTransfer>
-    fun readText(): Promise<String>
-    fun write(data: DataTransfer): Promise<Unit>
-    fun writeText(data: String): Promise<Unit>
+    fun readText(): Promise<JsString>
+    fun write(data: DataTransfer): Promise<Nothing?>
+    fun writeText(data: String): Promise<Nothing?>
 }
 
-public external interface ClipboardPermissionDescriptor {
+public external interface ClipboardPermissionDescriptor : JsAny {
     var allowWithoutGesture: Boolean? /* = false */
         get() = definedExternally
         set(value) = definedExternally
 }
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline fun ClipboardPermissionDescriptor(allowWithoutGesture: Boolean? = false): ClipboardPermissionDescriptor {
-    val o = newJsObject()
-    o["allowWithoutGesture"] = allowWithoutGesture
-    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-    return o as ClipboardPermissionDescriptor
-}
+@Suppress("UNUSED_PARAMETER")
+public fun ClipboardPermissionDescriptor(allowWithoutGesture: Boolean? = false): ClipboardPermissionDescriptor { js("return { allowWithoutGesture };") }

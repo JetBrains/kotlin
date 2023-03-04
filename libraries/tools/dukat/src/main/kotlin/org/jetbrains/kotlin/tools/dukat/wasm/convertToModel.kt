@@ -54,6 +54,18 @@ import org.jetbrains.dukat.stdlib.isTsStdlibPrefixed
 import org.jetbrains.dukat.translator.ROOT_PACKAGENAME
 import java.io.File
 
+private val jsAnyHeritageModel: HeritageModel = HeritageModel(
+    TypeValueModel(
+        IdentifierEntity("JsAny"),
+        emptyList(),
+        null,
+        null,
+        false
+    ),
+    listOf(),
+    null
+)
+
 private fun IDLDeclaration.resolveName(): String? {
     return when (this) {
         is IDLDictionaryDeclaration -> name
@@ -94,31 +106,42 @@ private class IdlFileConverter(
         val toStdMap = mapOf(
             "ByteString" to "String",
             "CSSOMString" to "String",
-            "DOMError" to "dynamic",
+            "DOMError" to "JsAny",
             "DOMString" to "String",
-            "FrozenArray" to "Array",
+            "FrozenArray" to "JsArray",
             "Promise" to "Promise",
             "USVString" to "String",
-            "\$Array" to "Array",
-            "\$dynamic" to "dynamic",
-            "any" to "Any",
+            "\$Array" to "JsArray",
+            "\$dynamic" to "JsAny",
+            "any" to "JsAny",
             "boolean" to "Boolean",
             "byte" to "Byte",
             "double" to "Double",
             "float" to "Float",
             "long" to "Int",
             "longlong" to "Int",
-            "object" to "dynamic",
+            "object" to "JsAny",
             "octet" to "Byte",
-            "record" to "dynamic",
-            "sequence" to "Array",
+            "record" to "JsAny",
+            "sequence" to "JsArray",
             "short" to "Short",
             "unrestricteddouble" to "Double",
             "unrestrictedfloat" to "Float",
             "unsignedlong" to "Int",
-            "unsignedlonglong" to "Number",
+            "unsignedlonglong" to "JsNumber",
             "unsignedshort" to "Short",
             "void" to "Unit"
+        )
+
+        val kotlinToExternalType = mapOf(
+            "String" to "JsString",
+            "Byte" to "JsNumber",
+            "Short" to "JsNumber",
+            "Int" to "JsNumber",
+            "Float" to "JsNumber",
+            "Double" to "JsNumber",
+            "Boolean" to "JsBoolean",
+            "Unit" to "Nothing?"
         )
     }
 
@@ -166,12 +189,14 @@ private class IdlFileConverter(
         return stdFqName() ?: fileDeclaration.packageName?.appendLeft(IdentifierEntity(this))
     }
 
-    private fun IDLSingleTypeDeclaration.convertToModel(): TypeValueModel {
-        val resolvedName = toStdMap[name] ?: name
+    private fun IDLSingleTypeDeclaration.convertToModel(isTypeParameter: Boolean = false): TypeValueModel {
+        var resolvedName = toStdMap[name] ?: name
+        if (isTypeParameter)
+            resolvedName = kotlinToExternalType[resolvedName] ?: resolvedName
 
         val typeModel = TypeValueModel(
             value = IdentifierEntity(resolvedName),
-            params = listOfNotNull(typeParameter?.convertToModel())
+            params = listOfNotNull(typeParameter?.convertToModel(isTypeParameter = true))
                 .map { TypeParameterModel(it, listOf()) }
                 .map {
                     if (name == "FrozenArray") {
@@ -185,9 +210,9 @@ private class IdlFileConverter(
         )
 
         return typeModel.copy(
-            nullable = when (typeModel.value) {
-                IdentifierEntity("dynamic") -> false
-                IdentifierEntity("Any") -> true
+            nullable = when (name) {
+                "\$dynamic" -> true
+                "any" -> true
                 else -> nullable
             }
         )
@@ -209,9 +234,9 @@ private class IdlFileConverter(
         )
     }
 
-    private fun IDLTypeDeclaration.convertToModel(): TypeModel {
+    private fun IDLTypeDeclaration.convertToModel(isTypeParameter: Boolean = false): TypeModel {
         return when (this) {
-            is IDLSingleTypeDeclaration -> convertToModel()
+            is IDLSingleTypeDeclaration -> convertToModel(isTypeParameter)
             is IDLFunctionTypeDeclaration -> convertToModel()
             //there shouldn't be any UnionTypeDeclarations at this stage
             else -> raiseConcern("unprocessed type declaration: ${this}") {
@@ -269,13 +294,6 @@ private class IdlFileConverter(
             ),
             typeParameters = listOf(),
             annotations = mutableListOf(
-                AnnotationModel(
-                    name = IdentifierEntity("Suppress"),
-                    params = listOf(
-                        IdentifierEntity("INVISIBLE_REFERENCE"),
-                        IdentifierEntity("INVISIBLE_MEMBER")
-                    )
-                ),
                 INLINE_ONLY_ANNOTATION
             ),
             export = false,
@@ -312,13 +330,6 @@ private class IdlFileConverter(
             type = valueType.toNullableIfNotPrimitive().convertToModel(),
             typeParameters = listOf(),
             annotations = mutableListOf(
-                AnnotationModel(
-                    name = IdentifierEntity("Suppress"),
-                    params = listOf(
-                        IdentifierEntity("INVISIBLE_REFERENCE"),
-                        IdentifierEntity("INVISIBLE_MEMBER")
-                    )
-                ),
                 INLINE_ONLY_ANNOTATION
             ),
             export = false,
@@ -409,7 +420,7 @@ private class IdlFileConverter(
                 members = dynamicMemberModels,
                 companionObject = companionObjectModel,
                 typeParameters = listOf(),
-                parentEntities = parentModels,
+                parentEntities = parentModels + jsAnyHeritageModel,
                 comment = null,
                 annotations = annotationModels,
                 external = true,
@@ -421,7 +432,7 @@ private class IdlFileConverter(
                 members = dynamicMemberModels,
                 companionObject = companionObjectModel,
                 typeParameters = listOf(),
-                parentEntities = parentModels,
+                parentEntities = parentModels + jsAnyHeritageModel,
                 primaryConstructor = if (primaryConstructor != null) {
                     primaryConstructor!!.convertToModel() as ConstructorModel
                 } else {
@@ -449,10 +460,23 @@ private class IdlFileConverter(
             name = name,
             type = type,
             initializer = if (defaultValue != null && !required) {
+                val typeString = (type as? TypeValueModel)?.value.toString()
+                val newDefaultValue = when {
+                    typeString.startsWith("Js") && defaultValue == "arrayOf()" ->
+                        "JsArray()"
+
+                    typeString.startsWith("Js") && (defaultValue == "true" || defaultValue == "false") ->
+                        "$defaultValue.toJsBoolean()"
+
+                    typeString.startsWith("Js") && defaultValue == "0" ->
+                        "$defaultValue.toJsNumber()"
+
+                    else -> defaultValue
+                }
                 val defaultValueModel = IdentifierExpressionModel(
-                    IdentifierEntity(defaultValue!!)
+                    IdentifierEntity(newDefaultValue!!)
                 )
-                if (defaultValue != "undefined" && type is TypeValueModel && type.value.isDynamic) {
+                if (newDefaultValue != "undefined" && type is TypeValueModel && type.value.isDynamic) {
                     ExpressionStatementModel(
                         PropertyAccessExpressionModel(
                             defaultValueModel,
@@ -490,57 +514,18 @@ private class IdlFileConverter(
         )
     }
 
-    fun IDLDictionaryDeclaration.generateFunctionBody(): List<StatementModel> {
-        val functionBody: MutableList<StatementModel> = mutableListOf(
-            VariableModel(
-                name = IdentifierEntity("o"),
-                immutable = true,
-                inline = false,
-                external = false,
-                get = null,
-                set = null,
-                extend = null,
-                comment = null,
-                explicitlyDeclaredType = false,
-                typeParameters = listOf(),
-                annotations = mutableListOf(),
-                visibilityModifier = VisibilityModifierModel.DEFAULT,
-                type = TypeValueModel(
-                    value = IdentifierEntity("dynamic"),
-                    params = listOf(),
-                    fqName = null,
-                    metaDescription = null,
-                ),
-                initializer = CallExpressionModel(
-                    IdentifierExpressionModel(
-                        IdentifierEntity("js")
-                    ),
-                    listOf(
-                        StringLiteralExpressionModel(
-                            "({})"
-                        )
-                    )
-                )
+    fun callJsFunction(code: String): CallExpressionModel =
+        CallExpressionModel(
+            expression = IdentifierExpressionModel(IdentifierEntity("js")),
+            arguments = listOf(StringLiteralExpressionModel(code))
+        )
+
+    fun IDLDictionaryDeclaration.generateFunctionBody(): List<StatementModel> =
+        listOf<StatementModel>(
+            ExpressionStatementModel(
+                callJsFunction("return { ${members.joinToString { it.name }} };")
             )
         )
-        functionBody.addAll(members.map { it.convertToAssignmentStatementModel() })
-        functionBody.add(
-            ReturnStatementModel(
-                AsExpressionModel(
-                    expression = IdentifierExpressionModel(
-                        IdentifierEntity("o")
-                    ),
-                    type = TypeValueModel(
-                        value = IdentifierEntity(name),
-                        params = listOf(),
-                        metaDescription = null,
-                        fqName = toFqName()
-                    )
-                )
-            )
-        )
-        return functionBody
-    }
 
     private fun IDLDictionaryDeclaration.convertToModel(): List<TopLevelModel> {
         val declaration = InterfaceModel(
@@ -554,7 +539,7 @@ private class IdlFileConverter(
                     listOf(),
                     null
                 )
-            },
+            } + jsAnyHeritageModel,
             comment = null,
             annotations = mutableListOf(),
             external = true,
@@ -572,22 +557,18 @@ private class IdlFileConverter(
             typeParameters = listOf(),
             annotations = mutableListOf(
                 AnnotationModel(
-                    name = IdentifierEntity("Suppress"),
-                    params = listOf(
-                        IdentifierEntity("INVISIBLE_REFERENCE"),
-                        IdentifierEntity("INVISIBLE_MEMBER")
-                    )
-                ),
-                INLINE_ONLY_ANNOTATION
+                    IdentifierEntity("Suppress"),
+                    listOf(IdentifierEntity("UNUSED_PARAMETER"))
+                )
             ),
             export = false,
-            inline = true,
+            inline = false,
             operator = false,
             extend = null,
             body = BlockStatementModel(generateFunctionBody()),
             visibilityModifier = VisibilityModifierModel.DEFAULT,
             comment = null,
-            external = true
+            external = false
         )
         return listOf(declaration, generatedFunction)
     }
@@ -611,7 +592,7 @@ private class IdlFileConverter(
                     listOf(),
                     null
                 )
-            },
+            } + jsAnyHeritageModel,
             comment = SimpleCommentEntity(
                 "please, don't implement this interface!"
             ),

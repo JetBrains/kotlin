@@ -18,45 +18,45 @@ import org.w3c.notifications.*
 /**
  * Exposes the JavaScript [ServiceWorker](https://developer.mozilla.org/en/docs/Web/API/ServiceWorker) to Kotlin
  */
-public external abstract class ServiceWorker : EventTarget, AbstractWorker, UnionMessagePortOrServiceWorker, UnionClientOrMessagePortOrServiceWorker {
+public external abstract class ServiceWorker : EventTarget, AbstractWorker, UnionMessagePortOrServiceWorker, UnionClientOrMessagePortOrServiceWorker, JsAny {
     open val scriptURL: String
     open val state: ServiceWorkerState
     open var onstatechange: ((Event) -> Dynamic?)?
-    fun postMessage(message: Any?, transfer: Array<Dynamic?> = definedExternally)
+    fun postMessage(message: JsAny?, transfer: JsArray<JsAny> = definedExternally)
 }
 
 /**
  * Exposes the JavaScript [ServiceWorkerRegistration](https://developer.mozilla.org/en/docs/Web/API/ServiceWorkerRegistration) to Kotlin
  */
-public external abstract class ServiceWorkerRegistration : EventTarget {
+public external abstract class ServiceWorkerRegistration : EventTarget, JsAny {
     open val installing: ServiceWorker?
     open val waiting: ServiceWorker?
     open val active: ServiceWorker?
     open val scope: String
     open var onupdatefound: ((Event) -> Dynamic?)?
-    open val APISpace: Dynamic?
-    fun update(): Promise<Unit>
-    fun unregister(): Promise<Boolean>
-    fun showNotification(title: String, options: NotificationOptions = definedExternally): Promise<Unit>
-    fun getNotifications(filter: GetNotificationOptions = definedExternally): Promise<Array<Notification>>
-    fun methodName(): Promise<Dynamic?>
+    open val APISpace: JsAny?
+    fun update(): Promise<Nothing?>
+    fun unregister(): Promise<JsBoolean>
+    fun showNotification(title: String, options: NotificationOptions = definedExternally): Promise<Nothing?>
+    fun getNotifications(filter: GetNotificationOptions = definedExternally): Promise<JsArray<Notification>>
+    fun methodName(): Promise<JsAny?>
 }
 
 /**
  * Exposes the JavaScript [ServiceWorkerContainer](https://developer.mozilla.org/en/docs/Web/API/ServiceWorkerContainer) to Kotlin
  */
-public external abstract class ServiceWorkerContainer : EventTarget {
+public external abstract class ServiceWorkerContainer : EventTarget, JsAny {
     open val controller: ServiceWorker?
     open val ready: Promise<ServiceWorkerRegistration>
     open var oncontrollerchange: ((Event) -> Dynamic?)?
     open var onmessage: ((MessageEvent) -> Dynamic?)?
     fun register(scriptURL: String, options: RegistrationOptions = definedExternally): Promise<ServiceWorkerRegistration>
-    fun getRegistration(clientURL: String = definedExternally): Promise<Any?>
-    fun getRegistrations(): Promise<Array<ServiceWorkerRegistration>>
+    fun getRegistration(clientURL: String = definedExternally): Promise<JsAny?>
+    fun getRegistrations(): Promise<JsArray<ServiceWorkerRegistration>>
     fun startMessages()
 }
 
-public external interface RegistrationOptions {
+public external interface RegistrationOptions : JsAny {
     var scope: String?
         get() = definedExternally
         set(value) = definedExternally
@@ -65,25 +65,18 @@ public external interface RegistrationOptions {
         set(value) = definedExternally
 }
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline fun RegistrationOptions(scope: String? = undefined, type: WorkerType? = WorkerType.CLASSIC): RegistrationOptions {
-    val o = newJsObject()
-    o["scope"] = scope
-    o["type"] = type
-    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-    return o as RegistrationOptions
-}
+@Suppress("UNUSED_PARAMETER")
+public fun RegistrationOptions(scope: String? = undefined, type: WorkerType? = WorkerType.CLASSIC): RegistrationOptions { js("return { scope, type };") }
 
 /**
  * Exposes the JavaScript [ServiceWorkerMessageEvent](https://developer.mozilla.org/en/docs/Web/API/ServiceWorkerMessageEvent) to Kotlin
  */
-public external open class ServiceWorkerMessageEvent(type: String, eventInitDict: ServiceWorkerMessageEventInit = definedExternally) : Event {
-    open val data: Any?
+public external open class ServiceWorkerMessageEvent(type: String, eventInitDict: ServiceWorkerMessageEventInit = definedExternally) : Event, JsAny {
+    open val data: JsAny?
     open val origin: String
     open val lastEventId: String
     open val source: UnionMessagePortOrServiceWorker?
-    open val ports: Array<out MessagePort>?
+    open val ports: JsArray<out MessagePort>?
 
     companion object {
         val NONE: Short
@@ -93,8 +86,8 @@ public external open class ServiceWorkerMessageEvent(type: String, eventInitDict
     }
 }
 
-public external interface ServiceWorkerMessageEventInit : EventInit {
-    var data: Any?
+public external interface ServiceWorkerMessageEventInit : EventInit, JsAny {
+    var data: JsAny?
         get() = definedExternally
         set(value) = definedExternally
     var origin: String?
@@ -106,31 +99,18 @@ public external interface ServiceWorkerMessageEventInit : EventInit {
     var source: UnionMessagePortOrServiceWorker?
         get() = definedExternally
         set(value) = definedExternally
-    var ports: Array<MessagePort>?
+    var ports: JsArray<MessagePort>?
         get() = definedExternally
         set(value) = definedExternally
 }
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline fun ServiceWorkerMessageEventInit(data: Any? = undefined, origin: String? = undefined, lastEventId: String? = undefined, source: UnionMessagePortOrServiceWorker? = undefined, ports: Array<MessagePort>? = undefined, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): ServiceWorkerMessageEventInit {
-    val o = newJsObject()
-    o["data"] = data
-    o["origin"] = origin
-    o["lastEventId"] = lastEventId
-    o["source"] = source
-    o["ports"] = ports
-    o["bubbles"] = bubbles
-    o["cancelable"] = cancelable
-    o["composed"] = composed
-    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-    return o as ServiceWorkerMessageEventInit
-}
+@Suppress("UNUSED_PARAMETER")
+public fun ServiceWorkerMessageEventInit(data: JsAny? = undefined, origin: String? = undefined, lastEventId: String? = undefined, source: UnionMessagePortOrServiceWorker? = undefined, ports: JsArray<MessagePort>? = undefined, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): ServiceWorkerMessageEventInit { js("return { data, origin, lastEventId, source, ports, bubbles, cancelable, composed };") }
 
 /**
  * Exposes the JavaScript [ServiceWorkerGlobalScope](https://developer.mozilla.org/en/docs/Web/API/ServiceWorkerGlobalScope) to Kotlin
  */
-public external abstract class ServiceWorkerGlobalScope : WorkerGlobalScope {
+public external abstract class ServiceWorkerGlobalScope : WorkerGlobalScope, JsAny {
     open val clients: Clients
     open val registration: ServiceWorkerRegistration
     open var oninstall: ((Event) -> Dynamic?)?
@@ -141,24 +121,24 @@ public external abstract class ServiceWorkerGlobalScope : WorkerGlobalScope {
     open var onnotificationclick: ((NotificationEvent) -> Dynamic?)?
     open var onnotificationclose: ((NotificationEvent) -> Dynamic?)?
     open var onfunctionalevent: ((Event) -> Dynamic?)?
-    fun skipWaiting(): Promise<Unit>
+    fun skipWaiting(): Promise<Nothing?>
 }
 
 /**
  * Exposes the JavaScript [Client](https://developer.mozilla.org/en/docs/Web/API/Client) to Kotlin
  */
-public external abstract class Client : UnionClientOrMessagePortOrServiceWorker {
+public external abstract class Client : UnionClientOrMessagePortOrServiceWorker, JsAny {
     open val url: String
     open val frameType: FrameType
     open val id: String
-    fun postMessage(message: Any?, transfer: Array<Dynamic?> = definedExternally)
+    fun postMessage(message: JsAny?, transfer: JsArray<JsAny> = definedExternally)
 }
 
 /**
  * Exposes the JavaScript [WindowClient](https://developer.mozilla.org/en/docs/Web/API/WindowClient) to Kotlin
  */
-public external abstract class WindowClient : Client {
-    open val visibilityState: Dynamic?
+public external abstract class WindowClient : Client, JsAny {
+    open val visibilityState: JsAny?
     open val focused: Boolean
     fun focus(): Promise<WindowClient>
     fun navigate(url: String): Promise<WindowClient>
@@ -167,14 +147,14 @@ public external abstract class WindowClient : Client {
 /**
  * Exposes the JavaScript [Clients](https://developer.mozilla.org/en/docs/Web/API/Clients) to Kotlin
  */
-public external abstract class Clients {
-    fun get(id: String): Promise<Any?>
-    fun matchAll(options: ClientQueryOptions = definedExternally): Promise<Array<Client>>
+public external abstract class Clients : JsAny {
+    fun get(id: String): Promise<JsAny?>
+    fun matchAll(options: ClientQueryOptions = definedExternally): Promise<JsArray<Client>>
     fun openWindow(url: String): Promise<WindowClient?>
-    fun claim(): Promise<Unit>
+    fun claim(): Promise<Nothing?>
 }
 
-public external interface ClientQueryOptions {
+public external interface ClientQueryOptions : JsAny {
     var includeUncontrolled: Boolean? /* = false */
         get() = definedExternally
         set(value) = definedExternally
@@ -183,21 +163,14 @@ public external interface ClientQueryOptions {
         set(value) = definedExternally
 }
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline fun ClientQueryOptions(includeUncontrolled: Boolean? = false, type: ClientType? = ClientType.WINDOW): ClientQueryOptions {
-    val o = newJsObject()
-    o["includeUncontrolled"] = includeUncontrolled
-    o["type"] = type
-    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-    return o as ClientQueryOptions
-}
+@Suppress("UNUSED_PARAMETER")
+public fun ClientQueryOptions(includeUncontrolled: Boolean? = false, type: ClientType? = ClientType.WINDOW): ClientQueryOptions { js("return { includeUncontrolled, type };") }
 
 /**
  * Exposes the JavaScript [ExtendableEvent](https://developer.mozilla.org/en/docs/Web/API/ExtendableEvent) to Kotlin
  */
-public external open class ExtendableEvent(type: String, eventInitDict: ExtendableEventInit = definedExternally) : Event {
-    fun waitUntil(f: Promise<Any?>)
+public external open class ExtendableEvent(type: String, eventInitDict: ExtendableEventInit = definedExternally) : Event, JsAny {
+    fun waitUntil(f: Promise<JsAny?>)
 
     companion object {
         val NONE: Short
@@ -207,23 +180,15 @@ public external open class ExtendableEvent(type: String, eventInitDict: Extendab
     }
 }
 
-public external interface ExtendableEventInit : EventInit
+public external interface ExtendableEventInit : EventInit, JsAny
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline fun ExtendableEventInit(bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): ExtendableEventInit {
-    val o = newJsObject()
-    o["bubbles"] = bubbles
-    o["cancelable"] = cancelable
-    o["composed"] = composed
-    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-    return o as ExtendableEventInit
-}
+@Suppress("UNUSED_PARAMETER")
+public fun ExtendableEventInit(bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): ExtendableEventInit { js("return { bubbles, cancelable, composed };") }
 
 /**
  * Exposes the JavaScript [InstallEvent](https://developer.mozilla.org/en/docs/Web/API/InstallEvent) to Kotlin
  */
-public external open class InstallEvent(type: String, eventInitDict: ExtendableEventInit = definedExternally) : ExtendableEvent {
+public external open class InstallEvent(type: String, eventInitDict: ExtendableEventInit = definedExternally) : ExtendableEvent, JsAny {
     fun registerForeignFetch(options: ForeignFetchOptions)
 
     companion object {
@@ -234,25 +199,18 @@ public external open class InstallEvent(type: String, eventInitDict: ExtendableE
     }
 }
 
-public external interface ForeignFetchOptions {
-    var scopes: Array<String>?
-    var origins: Array<String>?
+public external interface ForeignFetchOptions : JsAny {
+    var scopes: JsArray<JsString>?
+    var origins: JsArray<JsString>?
 }
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline fun ForeignFetchOptions(scopes: Array<String>?, origins: Array<String>?): ForeignFetchOptions {
-    val o = newJsObject()
-    o["scopes"] = scopes
-    o["origins"] = origins
-    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-    return o as ForeignFetchOptions
-}
+@Suppress("UNUSED_PARAMETER")
+public fun ForeignFetchOptions(scopes: JsArray<JsString>?, origins: JsArray<JsString>?): ForeignFetchOptions { js("return { scopes, origins };") }
 
 /**
  * Exposes the JavaScript [FetchEvent](https://developer.mozilla.org/en/docs/Web/API/FetchEvent) to Kotlin
  */
-public external open class FetchEvent(type: String, eventInitDict: FetchEventInit) : ExtendableEvent {
+public external open class FetchEvent(type: String, eventInitDict: FetchEventInit) : ExtendableEvent, JsAny {
     open val request: Request
     open val clientId: String?
     open val isReload: Boolean
@@ -266,7 +224,7 @@ public external open class FetchEvent(type: String, eventInitDict: FetchEventIni
     }
 }
 
-public external interface FetchEventInit : ExtendableEventInit {
+public external interface FetchEventInit : ExtendableEventInit, JsAny {
     var request: Request?
     var clientId: String? /* = null */
         get() = definedExternally
@@ -276,21 +234,10 @@ public external interface FetchEventInit : ExtendableEventInit {
         set(value) = definedExternally
 }
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline fun FetchEventInit(request: Request?, clientId: String? = null, isReload: Boolean? = false, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): FetchEventInit {
-    val o = newJsObject()
-    o["request"] = request
-    o["clientId"] = clientId
-    o["isReload"] = isReload
-    o["bubbles"] = bubbles
-    o["cancelable"] = cancelable
-    o["composed"] = composed
-    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-    return o as FetchEventInit
-}
+@Suppress("UNUSED_PARAMETER")
+public fun FetchEventInit(request: Request?, clientId: String? = null, isReload: Boolean? = false, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): FetchEventInit { js("return { request, clientId, isReload, bubbles, cancelable, composed };") }
 
-public external open class ForeignFetchEvent(type: String, eventInitDict: ForeignFetchEventInit) : ExtendableEvent {
+public external open class ForeignFetchEvent(type: String, eventInitDict: ForeignFetchEventInit) : ExtendableEvent, JsAny {
     open val request: Request
     open val origin: String
     fun respondWith(r: Promise<ForeignFetchResponse>)
@@ -303,56 +250,38 @@ public external open class ForeignFetchEvent(type: String, eventInitDict: Foreig
     }
 }
 
-public external interface ForeignFetchEventInit : ExtendableEventInit {
+public external interface ForeignFetchEventInit : ExtendableEventInit, JsAny {
     var request: Request?
     var origin: String? /* = "null" */
         get() = definedExternally
         set(value) = definedExternally
 }
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline fun ForeignFetchEventInit(request: Request?, origin: String? = "null", bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): ForeignFetchEventInit {
-    val o = newJsObject()
-    o["request"] = request
-    o["origin"] = origin
-    o["bubbles"] = bubbles
-    o["cancelable"] = cancelable
-    o["composed"] = composed
-    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-    return o as ForeignFetchEventInit
-}
+@Suppress("UNUSED_PARAMETER")
+public fun ForeignFetchEventInit(request: Request?, origin: String? = "null", bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): ForeignFetchEventInit { js("return { request, origin, bubbles, cancelable, composed };") }
 
-public external interface ForeignFetchResponse {
+public external interface ForeignFetchResponse : JsAny {
     var response: Response?
     var origin: String?
         get() = definedExternally
         set(value) = definedExternally
-    var headers: Array<String>?
+    var headers: JsArray<JsString>?
         get() = definedExternally
         set(value) = definedExternally
 }
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline fun ForeignFetchResponse(response: Response?, origin: String? = undefined, headers: Array<String>? = undefined): ForeignFetchResponse {
-    val o = newJsObject()
-    o["response"] = response
-    o["origin"] = origin
-    o["headers"] = headers
-    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-    return o as ForeignFetchResponse
-}
+@Suppress("UNUSED_PARAMETER")
+public fun ForeignFetchResponse(response: Response?, origin: String? = undefined, headers: JsArray<JsString>? = undefined): ForeignFetchResponse { js("return { response, origin, headers };") }
 
 /**
  * Exposes the JavaScript [ExtendableMessageEvent](https://developer.mozilla.org/en/docs/Web/API/ExtendableMessageEvent) to Kotlin
  */
-public external open class ExtendableMessageEvent(type: String, eventInitDict: ExtendableMessageEventInit = definedExternally) : ExtendableEvent {
-    open val data: Any?
+public external open class ExtendableMessageEvent(type: String, eventInitDict: ExtendableMessageEventInit = definedExternally) : ExtendableEvent, JsAny {
+    open val data: JsAny?
     open val origin: String
     open val lastEventId: String
     open val source: UnionClientOrMessagePortOrServiceWorker?
-    open val ports: Array<out MessagePort>?
+    open val ports: JsArray<out MessagePort>?
 
     companion object {
         val NONE: Short
@@ -362,8 +291,8 @@ public external open class ExtendableMessageEvent(type: String, eventInitDict: E
     }
 }
 
-public external interface ExtendableMessageEventInit : ExtendableEventInit {
-    var data: Any?
+public external interface ExtendableMessageEventInit : ExtendableEventInit, JsAny {
+    var data: JsAny?
         get() = definedExternally
         set(value) = definedExternally
     var origin: String?
@@ -375,41 +304,28 @@ public external interface ExtendableMessageEventInit : ExtendableEventInit {
     var source: UnionClientOrMessagePortOrServiceWorker?
         get() = definedExternally
         set(value) = definedExternally
-    var ports: Array<MessagePort>?
+    var ports: JsArray<MessagePort>?
         get() = definedExternally
         set(value) = definedExternally
 }
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline fun ExtendableMessageEventInit(data: Any? = undefined, origin: String? = undefined, lastEventId: String? = undefined, source: UnionClientOrMessagePortOrServiceWorker? = undefined, ports: Array<MessagePort>? = undefined, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): ExtendableMessageEventInit {
-    val o = newJsObject()
-    o["data"] = data
-    o["origin"] = origin
-    o["lastEventId"] = lastEventId
-    o["source"] = source
-    o["ports"] = ports
-    o["bubbles"] = bubbles
-    o["cancelable"] = cancelable
-    o["composed"] = composed
-    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-    return o as ExtendableMessageEventInit
-}
+@Suppress("UNUSED_PARAMETER")
+public fun ExtendableMessageEventInit(data: JsAny? = undefined, origin: String? = undefined, lastEventId: String? = undefined, source: UnionClientOrMessagePortOrServiceWorker? = undefined, ports: JsArray<MessagePort>? = undefined, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): ExtendableMessageEventInit { js("return { data, origin, lastEventId, source, ports, bubbles, cancelable, composed };") }
 
 /**
  * Exposes the JavaScript [Cache](https://developer.mozilla.org/en/docs/Web/API/Cache) to Kotlin
  */
-public external abstract class Cache {
-    fun match(request: Dynamic?, options: CacheQueryOptions = definedExternally): Promise<Any?>
-    fun matchAll(request: Dynamic? = definedExternally, options: CacheQueryOptions = definedExternally): Promise<Array<Response>>
-    fun add(request: Dynamic?): Promise<Unit>
-    fun addAll(requests: Array<Dynamic?>): Promise<Unit>
-    fun put(request: Dynamic?, response: Response): Promise<Unit>
-    fun delete(request: Dynamic?, options: CacheQueryOptions = definedExternally): Promise<Boolean>
-    fun keys(request: Dynamic? = definedExternally, options: CacheQueryOptions = definedExternally): Promise<Array<Request>>
+public external abstract class Cache : JsAny {
+    fun match(request: JsAny?, options: CacheQueryOptions = definedExternally): Promise<JsAny?>
+    fun matchAll(request: JsAny? = definedExternally, options: CacheQueryOptions = definedExternally): Promise<JsArray<Response>>
+    fun add(request: JsAny?): Promise<Nothing?>
+    fun addAll(requests: JsArray<JsAny?>): Promise<Nothing?>
+    fun put(request: JsAny?, response: Response): Promise<Nothing?>
+    fun delete(request: JsAny?, options: CacheQueryOptions = definedExternally): Promise<JsBoolean>
+    fun keys(request: JsAny? = definedExternally, options: CacheQueryOptions = definedExternally): Promise<JsArray<Request>>
 }
 
-public external interface CacheQueryOptions {
+public external interface CacheQueryOptions : JsAny {
     var ignoreSearch: Boolean? /* = false */
         get() = definedExternally
         set(value) = definedExternally
@@ -424,19 +340,10 @@ public external interface CacheQueryOptions {
         set(value) = definedExternally
 }
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline fun CacheQueryOptions(ignoreSearch: Boolean? = false, ignoreMethod: Boolean? = false, ignoreVary: Boolean? = false, cacheName: String? = undefined): CacheQueryOptions {
-    val o = newJsObject()
-    o["ignoreSearch"] = ignoreSearch
-    o["ignoreMethod"] = ignoreMethod
-    o["ignoreVary"] = ignoreVary
-    o["cacheName"] = cacheName
-    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-    return o as CacheQueryOptions
-}
+@Suppress("UNUSED_PARAMETER")
+public fun CacheQueryOptions(ignoreSearch: Boolean? = false, ignoreMethod: Boolean? = false, ignoreVary: Boolean? = false, cacheName: String? = undefined): CacheQueryOptions { js("return { ignoreSearch, ignoreMethod, ignoreVary, cacheName };") }
 
-public external interface CacheBatchOperation {
+public external interface CacheBatchOperation : JsAny {
     var type: String?
         get() = definedExternally
         set(value) = definedExternally
@@ -451,30 +358,21 @@ public external interface CacheBatchOperation {
         set(value) = definedExternally
 }
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline fun CacheBatchOperation(type: String? = undefined, request: Request? = undefined, response: Response? = undefined, options: CacheQueryOptions? = undefined): CacheBatchOperation {
-    val o = newJsObject()
-    o["type"] = type
-    o["request"] = request
-    o["response"] = response
-    o["options"] = options
-    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-    return o as CacheBatchOperation
-}
+@Suppress("UNUSED_PARAMETER")
+public fun CacheBatchOperation(type: String? = undefined, request: Request? = undefined, response: Response? = undefined, options: CacheQueryOptions? = undefined): CacheBatchOperation { js("return { type, request, response, options };") }
 
 /**
  * Exposes the JavaScript [CacheStorage](https://developer.mozilla.org/en/docs/Web/API/CacheStorage) to Kotlin
  */
-public external abstract class CacheStorage {
-    fun match(request: Dynamic?, options: CacheQueryOptions = definedExternally): Promise<Any?>
-    fun has(cacheName: String): Promise<Boolean>
+public external abstract class CacheStorage : JsAny {
+    fun match(request: JsAny?, options: CacheQueryOptions = definedExternally): Promise<JsAny?>
+    fun has(cacheName: String): Promise<JsBoolean>
     fun open(cacheName: String): Promise<Cache>
-    fun delete(cacheName: String): Promise<Boolean>
-    fun keys(): Promise<Array<String>>
+    fun delete(cacheName: String): Promise<JsBoolean>
+    fun keys(): Promise<JsArray<JsString>>
 }
 
-public external open class FunctionalEvent : ExtendableEvent {
+public external open class FunctionalEvent : ExtendableEvent, JsAny {
     companion object {
         val NONE: Short
         val CAPTURING_PHASE: Short
@@ -490,7 +388,7 @@ public external interface UnionClientOrMessagePortOrServiceWorker
 /* please, don't implement this interface! */
 @JsName("null")
 @Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
-public external interface ServiceWorkerState {
+public external interface ServiceWorkerState : JsAny {
     companion object
 }
 
@@ -507,7 +405,7 @@ public inline val ServiceWorkerState.Companion.REDUNDANT: ServiceWorkerState get
 /* please, don't implement this interface! */
 @JsName("null")
 @Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
-public external interface FrameType {
+public external interface FrameType : JsAny {
     companion object
 }
 
@@ -522,7 +420,7 @@ public inline val FrameType.Companion.NONE: FrameType get() = "none".asDynamic()
 /* please, don't implement this interface! */
 @JsName("null")
 @Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
-public external interface ClientType {
+public external interface ClientType : JsAny {
     companion object
 }
 

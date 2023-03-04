@@ -12,7 +12,7 @@ import kotlin.js.*
 import org.w3c.dom.*
 import org.w3c.dom.events.*
 
-public external interface WebGLContextAttributes {
+public external interface WebGLContextAttributes : JsAny {
     var alpha: Boolean? /* = true */
         get() = definedExternally
         set(value) = definedExternally
@@ -39,63 +39,50 @@ public external interface WebGLContextAttributes {
         set(value) = definedExternally
 }
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline fun WebGLContextAttributes(alpha: Boolean? = true, depth: Boolean? = true, stencil: Boolean? = false, antialias: Boolean? = true, premultipliedAlpha: Boolean? = true, preserveDrawingBuffer: Boolean? = false, preferLowPowerToHighPerformance: Boolean? = false, failIfMajorPerformanceCaveat: Boolean? = false): WebGLContextAttributes {
-    val o = newJsObject()
-    o["alpha"] = alpha
-    o["depth"] = depth
-    o["stencil"] = stencil
-    o["antialias"] = antialias
-    o["premultipliedAlpha"] = premultipliedAlpha
-    o["preserveDrawingBuffer"] = preserveDrawingBuffer
-    o["preferLowPowerToHighPerformance"] = preferLowPowerToHighPerformance
-    o["failIfMajorPerformanceCaveat"] = failIfMajorPerformanceCaveat
-    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-    return o as WebGLContextAttributes
-}
+@Suppress("UNUSED_PARAMETER")
+public fun WebGLContextAttributes(alpha: Boolean? = true, depth: Boolean? = true, stencil: Boolean? = false, antialias: Boolean? = true, premultipliedAlpha: Boolean? = true, preserveDrawingBuffer: Boolean? = false, preferLowPowerToHighPerformance: Boolean? = false, failIfMajorPerformanceCaveat: Boolean? = false): WebGLContextAttributes { js("return { alpha, depth, stencil, antialias, premultipliedAlpha, preserveDrawingBuffer, preferLowPowerToHighPerformance, failIfMajorPerformanceCaveat };") }
 
-public external abstract class WebGLObject
+public external abstract class WebGLObject : JsAny
 
 /**
  * Exposes the JavaScript [WebGLBuffer](https://developer.mozilla.org/en/docs/Web/API/WebGLBuffer) to Kotlin
  */
-public external abstract class WebGLBuffer : WebGLObject
+public external abstract class WebGLBuffer : WebGLObject, JsAny
 
 /**
  * Exposes the JavaScript [WebGLFramebuffer](https://developer.mozilla.org/en/docs/Web/API/WebGLFramebuffer) to Kotlin
  */
-public external abstract class WebGLFramebuffer : WebGLObject
+public external abstract class WebGLFramebuffer : WebGLObject, JsAny
 
 /**
  * Exposes the JavaScript [WebGLProgram](https://developer.mozilla.org/en/docs/Web/API/WebGLProgram) to Kotlin
  */
-public external abstract class WebGLProgram : WebGLObject
+public external abstract class WebGLProgram : WebGLObject, JsAny
 
 /**
  * Exposes the JavaScript [WebGLRenderbuffer](https://developer.mozilla.org/en/docs/Web/API/WebGLRenderbuffer) to Kotlin
  */
-public external abstract class WebGLRenderbuffer : WebGLObject
+public external abstract class WebGLRenderbuffer : WebGLObject, JsAny
 
 /**
  * Exposes the JavaScript [WebGLShader](https://developer.mozilla.org/en/docs/Web/API/WebGLShader) to Kotlin
  */
-public external abstract class WebGLShader : WebGLObject
+public external abstract class WebGLShader : WebGLObject, JsAny
 
 /**
  * Exposes the JavaScript [WebGLTexture](https://developer.mozilla.org/en/docs/Web/API/WebGLTexture) to Kotlin
  */
-public external abstract class WebGLTexture : WebGLObject
+public external abstract class WebGLTexture : WebGLObject, JsAny
 
 /**
  * Exposes the JavaScript [WebGLUniformLocation](https://developer.mozilla.org/en/docs/Web/API/WebGLUniformLocation) to Kotlin
  */
-public external abstract class WebGLUniformLocation
+public external abstract class WebGLUniformLocation : JsAny
 
 /**
  * Exposes the JavaScript [WebGLActiveInfo](https://developer.mozilla.org/en/docs/Web/API/WebGLActiveInfo) to Kotlin
  */
-public external abstract class WebGLActiveInfo {
+public external abstract class WebGLActiveInfo : JsAny {
     open val size: Int
     open val type: Int
     open val name: String
@@ -104,21 +91,21 @@ public external abstract class WebGLActiveInfo {
 /**
  * Exposes the JavaScript [WebGLShaderPrecisionFormat](https://developer.mozilla.org/en/docs/Web/API/WebGLShaderPrecisionFormat) to Kotlin
  */
-public external abstract class WebGLShaderPrecisionFormat {
+public external abstract class WebGLShaderPrecisionFormat : JsAny {
     open val rangeMin: Int
     open val rangeMax: Int
     open val precision: Int
 }
 
 @Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
-public external interface WebGLRenderingContextBase {
+public external interface WebGLRenderingContextBase : JsAny {
     val canvas: HTMLCanvasElement
     val drawingBufferWidth: Int
     val drawingBufferHeight: Int
     fun getContextAttributes(): WebGLContextAttributes?
     fun isContextLost(): Boolean
-    fun getSupportedExtensions(): Array<String>?
-    fun getExtension(name: String): Dynamic?
+    fun getSupportedExtensions(): JsArray<JsString>?
+    fun getExtension(name: String): JsAny?
     fun activeTexture(texture: Int)
     fun attachShader(program: WebGLProgram?, shader: WebGLShader?)
     fun bindAttribLocation(program: WebGLProgram?, index: Int, name: String)
@@ -176,23 +163,23 @@ public external interface WebGLRenderingContextBase {
     fun generateMipmap(target: Int)
     fun getActiveAttrib(program: WebGLProgram?, index: Int): WebGLActiveInfo?
     fun getActiveUniform(program: WebGLProgram?, index: Int): WebGLActiveInfo?
-    fun getAttachedShaders(program: WebGLProgram?): Array<WebGLShader>?
+    fun getAttachedShaders(program: WebGLProgram?): JsArray<WebGLShader>?
     fun getAttribLocation(program: WebGLProgram?, name: String): Int
-    fun getBufferParameter(target: Int, pname: Int): Any?
-    fun getParameter(pname: Int): Any?
+    fun getBufferParameter(target: Int, pname: Int): JsAny?
+    fun getParameter(pname: Int): JsAny?
     fun getError(): Int
-    fun getFramebufferAttachmentParameter(target: Int, attachment: Int, pname: Int): Any?
-    fun getProgramParameter(program: WebGLProgram?, pname: Int): Any?
+    fun getFramebufferAttachmentParameter(target: Int, attachment: Int, pname: Int): JsAny?
+    fun getProgramParameter(program: WebGLProgram?, pname: Int): JsAny?
     fun getProgramInfoLog(program: WebGLProgram?): String?
-    fun getRenderbufferParameter(target: Int, pname: Int): Any?
-    fun getShaderParameter(shader: WebGLShader?, pname: Int): Any?
+    fun getRenderbufferParameter(target: Int, pname: Int): JsAny?
+    fun getShaderParameter(shader: WebGLShader?, pname: Int): JsAny?
     fun getShaderPrecisionFormat(shadertype: Int, precisiontype: Int): WebGLShaderPrecisionFormat?
     fun getShaderInfoLog(shader: WebGLShader?): String?
     fun getShaderSource(shader: WebGLShader?): String?
-    fun getTexParameter(target: Int, pname: Int): Any?
-    fun getUniform(program: WebGLProgram?, location: WebGLUniformLocation?): Any?
+    fun getTexParameter(target: Int, pname: Int): JsAny?
+    fun getUniform(program: WebGLProgram?, location: WebGLUniformLocation?): JsAny?
     fun getUniformLocation(program: WebGLProgram?, name: String): WebGLUniformLocation?
-    fun getVertexAttrib(index: Int, pname: Int): Any?
+    fun getVertexAttrib(index: Int, pname: Int): JsAny?
     fun getVertexAttribOffset(index: Int, pname: Int): Int
     fun hint(target: Int, mode: Int)
     fun isBuffer(buffer: WebGLBuffer?): Boolean
@@ -225,44 +212,44 @@ public external interface WebGLRenderingContextBase {
     fun texSubImage2D(target: Int, level: Int, xoffset: Int, yoffset: Int, format: Int, type: Int, source: TexImageSource?)
     fun uniform1f(location: WebGLUniformLocation?, x: Float)
     fun uniform1fv(location: WebGLUniformLocation?, v: Float32Array)
-    fun uniform1fv(location: WebGLUniformLocation?, v: Array<Float>)
+    fun uniform1fv(location: WebGLUniformLocation?, v: JsArray<JsNumber>)
     fun uniform1i(location: WebGLUniformLocation?, x: Int)
     fun uniform1iv(location: WebGLUniformLocation?, v: Int32Array)
-    fun uniform1iv(location: WebGLUniformLocation?, v: Array<Int>)
+    fun uniform1iv(location: WebGLUniformLocation?, v: JsArray<JsNumber>)
     fun uniform2f(location: WebGLUniformLocation?, x: Float, y: Float)
     fun uniform2fv(location: WebGLUniformLocation?, v: Float32Array)
-    fun uniform2fv(location: WebGLUniformLocation?, v: Array<Float>)
+    fun uniform2fv(location: WebGLUniformLocation?, v: JsArray<JsNumber>)
     fun uniform2i(location: WebGLUniformLocation?, x: Int, y: Int)
     fun uniform2iv(location: WebGLUniformLocation?, v: Int32Array)
-    fun uniform2iv(location: WebGLUniformLocation?, v: Array<Int>)
+    fun uniform2iv(location: WebGLUniformLocation?, v: JsArray<JsNumber>)
     fun uniform3f(location: WebGLUniformLocation?, x: Float, y: Float, z: Float)
     fun uniform3fv(location: WebGLUniformLocation?, v: Float32Array)
-    fun uniform3fv(location: WebGLUniformLocation?, v: Array<Float>)
+    fun uniform3fv(location: WebGLUniformLocation?, v: JsArray<JsNumber>)
     fun uniform3i(location: WebGLUniformLocation?, x: Int, y: Int, z: Int)
     fun uniform3iv(location: WebGLUniformLocation?, v: Int32Array)
-    fun uniform3iv(location: WebGLUniformLocation?, v: Array<Int>)
+    fun uniform3iv(location: WebGLUniformLocation?, v: JsArray<JsNumber>)
     fun uniform4f(location: WebGLUniformLocation?, x: Float, y: Float, z: Float, w: Float)
     fun uniform4fv(location: WebGLUniformLocation?, v: Float32Array)
-    fun uniform4fv(location: WebGLUniformLocation?, v: Array<Float>)
+    fun uniform4fv(location: WebGLUniformLocation?, v: JsArray<JsNumber>)
     fun uniform4i(location: WebGLUniformLocation?, x: Int, y: Int, z: Int, w: Int)
     fun uniform4iv(location: WebGLUniformLocation?, v: Int32Array)
-    fun uniform4iv(location: WebGLUniformLocation?, v: Array<Int>)
+    fun uniform4iv(location: WebGLUniformLocation?, v: JsArray<JsNumber>)
     fun uniformMatrix2fv(location: WebGLUniformLocation?, transpose: Boolean, value: Float32Array)
-    fun uniformMatrix2fv(location: WebGLUniformLocation?, transpose: Boolean, value: Array<Float>)
+    fun uniformMatrix2fv(location: WebGLUniformLocation?, transpose: Boolean, value: JsArray<JsNumber>)
     fun uniformMatrix3fv(location: WebGLUniformLocation?, transpose: Boolean, value: Float32Array)
-    fun uniformMatrix3fv(location: WebGLUniformLocation?, transpose: Boolean, value: Array<Float>)
+    fun uniformMatrix3fv(location: WebGLUniformLocation?, transpose: Boolean, value: JsArray<JsNumber>)
     fun uniformMatrix4fv(location: WebGLUniformLocation?, transpose: Boolean, value: Float32Array)
-    fun uniformMatrix4fv(location: WebGLUniformLocation?, transpose: Boolean, value: Array<Float>)
+    fun uniformMatrix4fv(location: WebGLUniformLocation?, transpose: Boolean, value: JsArray<JsNumber>)
     fun useProgram(program: WebGLProgram?)
     fun validateProgram(program: WebGLProgram?)
     fun vertexAttrib1f(index: Int, x: Float)
-    fun vertexAttrib1fv(index: Int, values: Dynamic?)
+    fun vertexAttrib1fv(index: Int, values: JsAny?)
     fun vertexAttrib2f(index: Int, x: Float, y: Float)
-    fun vertexAttrib2fv(index: Int, values: Dynamic?)
+    fun vertexAttrib2fv(index: Int, values: JsAny?)
     fun vertexAttrib3f(index: Int, x: Float, y: Float, z: Float)
-    fun vertexAttrib3fv(index: Int, values: Dynamic?)
+    fun vertexAttrib3fv(index: Int, values: JsAny?)
     fun vertexAttrib4f(index: Int, x: Float, y: Float, z: Float, w: Float)
-    fun vertexAttrib4fv(index: Int, values: Dynamic?)
+    fun vertexAttrib4fv(index: Int, values: JsAny?)
     fun vertexAttribPointer(index: Int, size: Int, type: Int, normalized: Boolean, stride: Int, offset: Int)
     fun viewport(x: Int, y: Int, width: Int, height: Int)
 
@@ -570,7 +557,7 @@ public external interface WebGLRenderingContextBase {
 /**
  * Exposes the JavaScript [WebGLRenderingContext](https://developer.mozilla.org/en/docs/Web/API/WebGLRenderingContext) to Kotlin
  */
-public external abstract class WebGLRenderingContext : WebGLRenderingContextBase, RenderingContext {
+public external abstract class WebGLRenderingContext : WebGLRenderingContextBase, RenderingContext, JsAny {
     companion object {
         val DEPTH_BUFFER_BIT: Int
         val STENCIL_BUFFER_BIT: Int
@@ -875,7 +862,7 @@ public external abstract class WebGLRenderingContext : WebGLRenderingContextBase
 /**
  * Exposes the JavaScript [WebGLContextEvent](https://developer.mozilla.org/en/docs/Web/API/WebGLContextEvent) to Kotlin
  */
-public external open class WebGLContextEvent(type: String, eventInit: WebGLContextEventInit = definedExternally) : Event {
+public external open class WebGLContextEvent(type: String, eventInit: WebGLContextEventInit = definedExternally) : Event, JsAny {
     open val statusMessage: String
 
     companion object {
@@ -886,40 +873,31 @@ public external open class WebGLContextEvent(type: String, eventInit: WebGLConte
     }
 }
 
-public external interface WebGLContextEventInit : EventInit {
+public external interface WebGLContextEventInit : EventInit, JsAny {
     var statusMessage: String? /* = "" */
         get() = definedExternally
         set(value) = definedExternally
 }
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline fun WebGLContextEventInit(statusMessage: String? = "", bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): WebGLContextEventInit {
-    val o = newJsObject()
-    o["statusMessage"] = statusMessage
-    o["bubbles"] = bubbles
-    o["cancelable"] = cancelable
-    o["composed"] = composed
-    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-    return o as WebGLContextEventInit
-}
+@Suppress("UNUSED_PARAMETER")
+public fun WebGLContextEventInit(statusMessage: String? = "", bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): WebGLContextEventInit { js("return { statusMessage, bubbles, cancelable, composed };") }
 
 /**
  * Exposes the JavaScript [ArrayBuffer](https://developer.mozilla.org/en/docs/Web/API/ArrayBuffer) to Kotlin
  */
-public external open class ArrayBuffer(length: Int) : BufferDataSource {
+public external open class ArrayBuffer(length: Int) : BufferDataSource, JsAny {
     open val byteLength: Int
     fun slice(begin: Int, end: Int = definedExternally): ArrayBuffer
 
     companion object {
-        fun isView(value: Any?): Boolean
+        fun isView(value: JsAny?): Boolean
     }
 }
 
 /**
  * Exposes the JavaScript [ArrayBufferView](https://developer.mozilla.org/en/docs/Web/API/ArrayBufferView) to Kotlin
  */
-public external interface ArrayBufferView : BufferDataSource {
+public external interface ArrayBufferView : BufferDataSource, JsAny {
     val buffer: ArrayBuffer
     val byteOffset: Int
     val byteLength: Int
@@ -928,17 +906,17 @@ public external interface ArrayBufferView : BufferDataSource {
 /**
  * Exposes the JavaScript [Int8Array](https://developer.mozilla.org/en/docs/Web/API/Int8Array) to Kotlin
  */
-public external open class Int8Array : ArrayBufferView {
+public external open class Int8Array : ArrayBufferView, JsAny {
     constructor(length: Int)
     constructor(array: Int8Array)
-    constructor(array: Array<Byte>)
+    constructor(array: JsArray<JsNumber>)
     constructor(buffer: ArrayBuffer, byteOffset: Int = definedExternally, length: Int = definedExternally)
     open val length: Int
     override val buffer: ArrayBuffer
     override val byteOffset: Int
     override val byteLength: Int
     fun set(array: Int8Array, offset: Int = definedExternally)
-    fun set(array: Array<Byte>, offset: Int = definedExternally)
+    fun set(array: JsArray<JsNumber>, offset: Int = definedExternally)
     fun subarray(start: Int, end: Int): Int8Array
 
     companion object {
@@ -946,28 +924,26 @@ public external open class Int8Array : ArrayBufferView {
     }
 }
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline operator fun Int8Array.get(index: Int): Byte = asDynamic().getByte(index)
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline operator fun Int8Array.set(index: Int, value: Byte) { asDynamic()[index] = value }
 
 /**
  * Exposes the JavaScript [Uint8Array](https://developer.mozilla.org/en/docs/Web/API/Uint8Array) to Kotlin
  */
-public external open class Uint8Array : ArrayBufferView {
+public external open class Uint8Array : ArrayBufferView, JsAny {
     constructor(length: Int)
     constructor(array: Uint8Array)
-    constructor(array: Array<Byte>)
+    constructor(array: JsArray<JsNumber>)
     constructor(buffer: ArrayBuffer, byteOffset: Int = definedExternally, length: Int = definedExternally)
     open val length: Int
     override val buffer: ArrayBuffer
     override val byteOffset: Int
     override val byteLength: Int
     fun set(array: Uint8Array, offset: Int = definedExternally)
-    fun set(array: Array<Byte>, offset: Int = definedExternally)
+    fun set(array: JsArray<JsNumber>, offset: Int = definedExternally)
     fun subarray(start: Int, end: Int): Uint8Array
 
     companion object {
@@ -975,28 +951,26 @@ public external open class Uint8Array : ArrayBufferView {
     }
 }
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline operator fun Uint8Array.get(index: Int): Byte = asDynamic().getByte(index)
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline operator fun Uint8Array.set(index: Int, value: Byte) { asDynamic()[index] = value }
 
 /**
  * Exposes the JavaScript [Uint8ClampedArray](https://developer.mozilla.org/en/docs/Web/API/Uint8ClampedArray) to Kotlin
  */
-public external open class Uint8ClampedArray : ArrayBufferView {
+public external open class Uint8ClampedArray : ArrayBufferView, JsAny {
     constructor(length: Int)
     constructor(array: Uint8ClampedArray)
-    constructor(array: Array<Byte>)
+    constructor(array: JsArray<JsNumber>)
     constructor(buffer: ArrayBuffer, byteOffset: Int = definedExternally, length: Int = definedExternally)
     open val length: Int
     override val buffer: ArrayBuffer
     override val byteOffset: Int
     override val byteLength: Int
     fun set(array: Uint8ClampedArray, offset: Int = definedExternally)
-    fun set(array: Array<Byte>, offset: Int = definedExternally)
+    fun set(array: JsArray<JsNumber>, offset: Int = definedExternally)
     fun subarray(start: Int, end: Int): Uint8ClampedArray
 
     companion object {
@@ -1004,28 +978,26 @@ public external open class Uint8ClampedArray : ArrayBufferView {
     }
 }
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline operator fun Uint8ClampedArray.get(index: Int): Byte = asDynamic().getByte(index)
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline operator fun Uint8ClampedArray.set(index: Int, value: Byte) { asDynamic()[index] = value }
 
 /**
  * Exposes the JavaScript [Int16Array](https://developer.mozilla.org/en/docs/Web/API/Int16Array) to Kotlin
  */
-public external open class Int16Array : ArrayBufferView {
+public external open class Int16Array : ArrayBufferView, JsAny {
     constructor(length: Int)
     constructor(array: Int16Array)
-    constructor(array: Array<Short>)
+    constructor(array: JsArray<JsNumber>)
     constructor(buffer: ArrayBuffer, byteOffset: Int = definedExternally, length: Int = definedExternally)
     open val length: Int
     override val buffer: ArrayBuffer
     override val byteOffset: Int
     override val byteLength: Int
     fun set(array: Int16Array, offset: Int = definedExternally)
-    fun set(array: Array<Short>, offset: Int = definedExternally)
+    fun set(array: JsArray<JsNumber>, offset: Int = definedExternally)
     fun subarray(start: Int, end: Int): Int16Array
 
     companion object {
@@ -1033,28 +1005,26 @@ public external open class Int16Array : ArrayBufferView {
     }
 }
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline operator fun Int16Array.get(index: Int): Short = asDynamic().getShort(index)
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline operator fun Int16Array.set(index: Int, value: Short) { asDynamic()[index] = value }
 
 /**
  * Exposes the JavaScript [Uint16Array](https://developer.mozilla.org/en/docs/Web/API/Uint16Array) to Kotlin
  */
-public external open class Uint16Array : ArrayBufferView {
+public external open class Uint16Array : ArrayBufferView, JsAny {
     constructor(length: Int)
     constructor(array: Uint16Array)
-    constructor(array: Array<Short>)
+    constructor(array: JsArray<JsNumber>)
     constructor(buffer: ArrayBuffer, byteOffset: Int = definedExternally, length: Int = definedExternally)
     open val length: Int
     override val buffer: ArrayBuffer
     override val byteOffset: Int
     override val byteLength: Int
     fun set(array: Uint16Array, offset: Int = definedExternally)
-    fun set(array: Array<Short>, offset: Int = definedExternally)
+    fun set(array: JsArray<JsNumber>, offset: Int = definedExternally)
     fun subarray(start: Int, end: Int): Uint16Array
 
     companion object {
@@ -1062,28 +1032,26 @@ public external open class Uint16Array : ArrayBufferView {
     }
 }
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline operator fun Uint16Array.get(index: Int): Short = asDynamic().getShort(index)
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline operator fun Uint16Array.set(index: Int, value: Short) { asDynamic()[index] = value }
 
 /**
  * Exposes the JavaScript [Int32Array](https://developer.mozilla.org/en/docs/Web/API/Int32Array) to Kotlin
  */
-public external open class Int32Array : ArrayBufferView {
+public external open class Int32Array : ArrayBufferView, JsAny {
     constructor(length: Int)
     constructor(array: Int32Array)
-    constructor(array: Array<Int>)
+    constructor(array: JsArray<JsNumber>)
     constructor(buffer: ArrayBuffer, byteOffset: Int = definedExternally, length: Int = definedExternally)
     open val length: Int
     override val buffer: ArrayBuffer
     override val byteOffset: Int
     override val byteLength: Int
     fun set(array: Int32Array, offset: Int = definedExternally)
-    fun set(array: Array<Int>, offset: Int = definedExternally)
+    fun set(array: JsArray<JsNumber>, offset: Int = definedExternally)
     fun subarray(start: Int, end: Int): Int32Array
 
     companion object {
@@ -1091,28 +1059,26 @@ public external open class Int32Array : ArrayBufferView {
     }
 }
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline operator fun Int32Array.get(index: Int): Int = asDynamic().getInt(index)
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline operator fun Int32Array.set(index: Int, value: Int) { asDynamic()[index] = value }
 
 /**
  * Exposes the JavaScript [Uint32Array](https://developer.mozilla.org/en/docs/Web/API/Uint32Array) to Kotlin
  */
-public external open class Uint32Array : ArrayBufferView {
+public external open class Uint32Array : ArrayBufferView, JsAny {
     constructor(length: Int)
     constructor(array: Uint32Array)
-    constructor(array: Array<Int>)
+    constructor(array: JsArray<JsNumber>)
     constructor(buffer: ArrayBuffer, byteOffset: Int = definedExternally, length: Int = definedExternally)
     open val length: Int
     override val buffer: ArrayBuffer
     override val byteOffset: Int
     override val byteLength: Int
     fun set(array: Uint32Array, offset: Int = definedExternally)
-    fun set(array: Array<Int>, offset: Int = definedExternally)
+    fun set(array: JsArray<JsNumber>, offset: Int = definedExternally)
     fun subarray(start: Int, end: Int): Uint32Array
 
     companion object {
@@ -1120,28 +1086,26 @@ public external open class Uint32Array : ArrayBufferView {
     }
 }
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline operator fun Uint32Array.get(index: Int): Int = asDynamic().getInt(index)
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline operator fun Uint32Array.set(index: Int, value: Int) { asDynamic()[index] = value }
 
 /**
  * Exposes the JavaScript [Float32Array](https://developer.mozilla.org/en/docs/Web/API/Float32Array) to Kotlin
  */
-public external open class Float32Array : ArrayBufferView {
+public external open class Float32Array : ArrayBufferView, JsAny {
     constructor(length: Int)
     constructor(array: Float32Array)
-    constructor(array: Array<Float>)
+    constructor(array: JsArray<JsNumber>)
     constructor(buffer: ArrayBuffer, byteOffset: Int = definedExternally, length: Int = definedExternally)
     open val length: Int
     override val buffer: ArrayBuffer
     override val byteOffset: Int
     override val byteLength: Int
     fun set(array: Float32Array, offset: Int = definedExternally)
-    fun set(array: Array<Float>, offset: Int = definedExternally)
+    fun set(array: JsArray<JsNumber>, offset: Int = definedExternally)
     fun subarray(start: Int, end: Int): Float32Array
 
     companion object {
@@ -1149,28 +1113,26 @@ public external open class Float32Array : ArrayBufferView {
     }
 }
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline operator fun Float32Array.get(index: Int): Float = asDynamic().getFloat(index)
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline operator fun Float32Array.set(index: Int, value: Float) { asDynamic()[index] = value }
 
 /**
  * Exposes the JavaScript [Float64Array](https://developer.mozilla.org/en/docs/Web/API/Float64Array) to Kotlin
  */
-public external open class Float64Array : ArrayBufferView {
+public external open class Float64Array : ArrayBufferView, JsAny {
     constructor(length: Int)
     constructor(array: Float64Array)
-    constructor(array: Array<Double>)
+    constructor(array: JsArray<JsNumber>)
     constructor(buffer: ArrayBuffer, byteOffset: Int = definedExternally, length: Int = definedExternally)
     open val length: Int
     override val buffer: ArrayBuffer
     override val byteOffset: Int
     override val byteLength: Int
     fun set(array: Float64Array, offset: Int = definedExternally)
-    fun set(array: Array<Double>, offset: Int = definedExternally)
+    fun set(array: JsArray<JsNumber>, offset: Int = definedExternally)
     fun subarray(start: Int, end: Int): Float64Array
 
     companion object {
@@ -1178,18 +1140,16 @@ public external open class Float64Array : ArrayBufferView {
     }
 }
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline operator fun Float64Array.get(index: Int): Double = asDynamic().getDouble(index)
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline operator fun Float64Array.set(index: Int, value: Double) { asDynamic()[index] = value }
 
 /**
  * Exposes the JavaScript [DataView](https://developer.mozilla.org/en/docs/Web/API/DataView) to Kotlin
  */
-public external open class DataView(buffer: ArrayBuffer, byteOffset: Int = definedExternally, byteLength: Int = definedExternally) : ArrayBufferView {
+public external open class DataView(buffer: ArrayBuffer, byteOffset: Int = definedExternally, byteLength: Int = definedExternally) : ArrayBufferView, JsAny {
     override val buffer: ArrayBuffer
     override val byteOffset: Int
     override val byteLength: Int

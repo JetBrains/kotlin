@@ -16,7 +16,7 @@ import org.w3c.workers.*
 /**
  * Exposes the JavaScript [Notification](https://developer.mozilla.org/en/docs/Web/API/Notification) to Kotlin
  */
-public external open class Notification(title: String, options: NotificationOptions = definedExternally) : EventTarget {
+public external open class Notification(title: String, options: NotificationOptions = definedExternally) : EventTarget, JsAny {
     var onclick: ((MouseEvent) -> Dynamic?)?
     var onerror: ((Event) -> Dynamic?)?
     open val title: String
@@ -28,15 +28,15 @@ public external open class Notification(title: String, options: NotificationOpti
     open val icon: String
     open val badge: String
     open val sound: String
-    open val vibrate: Array<out Int>
-    open val timestamp: Number
+    open val vibrate: JsArray<out JsNumber>
+    open val timestamp: JsNumber
     open val renotify: Boolean
     open val silent: Boolean
     open val noscreen: Boolean
     open val requireInteraction: Boolean
     open val sticky: Boolean
-    open val data: Any?
-    open val actions: Array<out NotificationAction>
+    open val data: JsAny?
+    open val actions: JsArray<out NotificationAction>
     fun close()
 
     companion object {
@@ -46,7 +46,7 @@ public external open class Notification(title: String, options: NotificationOpti
     }
 }
 
-public external interface NotificationOptions {
+public external interface NotificationOptions : JsAny {
     var dir: NotificationDirection? /* = NotificationDirection.AUTO */
         get() = definedExternally
         set(value) = definedExternally
@@ -71,10 +71,10 @@ public external interface NotificationOptions {
     var sound: String?
         get() = definedExternally
         set(value) = definedExternally
-    var vibrate: Dynamic?
+    var vibrate: JsAny?
         get() = definedExternally
         set(value) = definedExternally
-    var timestamp: Number?
+    var timestamp: JsNumber?
         get() = definedExternally
         set(value) = definedExternally
     var renotify: Boolean? /* = false */
@@ -92,40 +92,18 @@ public external interface NotificationOptions {
     var sticky: Boolean? /* = false */
         get() = definedExternally
         set(value) = definedExternally
-    var data: Any? /* = null */
+    var data: JsAny? /* = null */
         get() = definedExternally
         set(value) = definedExternally
-    var actions: Array<NotificationAction>? /* = arrayOf() */
+    var actions: JsArray<NotificationAction>? /* = arrayOf() */
         get() = definedExternally
         set(value) = definedExternally
 }
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline fun NotificationOptions(dir: NotificationDirection? = NotificationDirection.AUTO, lang: String? = "", body: String? = "", tag: String? = "", image: String? = undefined, icon: String? = undefined, badge: String? = undefined, sound: String? = undefined, vibrate: Dynamic? = undefined, timestamp: Number? = undefined, renotify: Boolean? = false, silent: Boolean? = false, noscreen: Boolean? = false, requireInteraction: Boolean? = false, sticky: Boolean? = false, data: Any? = null, actions: Array<NotificationAction>? = arrayOf()): NotificationOptions {
-    val o = newJsObject()
-    o["dir"] = dir
-    o["lang"] = lang
-    o["body"] = body
-    o["tag"] = tag
-    o["image"] = image
-    o["icon"] = icon
-    o["badge"] = badge
-    o["sound"] = sound
-    o["vibrate"] = vibrate
-    o["timestamp"] = timestamp
-    o["renotify"] = renotify
-    o["silent"] = silent
-    o["noscreen"] = noscreen
-    o["requireInteraction"] = requireInteraction
-    o["sticky"] = sticky
-    o["data"] = data
-    o["actions"] = actions
-    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-    return o as NotificationOptions
-}
+@Suppress("UNUSED_PARAMETER")
+public fun NotificationOptions(dir: NotificationDirection? = NotificationDirection.AUTO, lang: String? = "", body: String? = "", tag: String? = "", image: String? = undefined, icon: String? = undefined, badge: String? = undefined, sound: String? = undefined, vibrate: JsAny? = undefined, timestamp: JsNumber? = undefined, renotify: Boolean? = false, silent: Boolean? = false, noscreen: Boolean? = false, requireInteraction: Boolean? = false, sticky: Boolean? = false, data: JsAny? = null, actions: JsArray<NotificationAction>? = JsArray()): NotificationOptions { js("return { dir, lang, body, tag, image, icon, badge, sound, vibrate, timestamp, renotify, silent, noscreen, requireInteraction, sticky, data, actions };") }
 
-public external interface NotificationAction {
+public external interface NotificationAction : JsAny {
     var action: String?
     var title: String?
     var icon: String?
@@ -133,36 +111,22 @@ public external interface NotificationAction {
         set(value) = definedExternally
 }
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline fun NotificationAction(action: String?, title: String?, icon: String? = undefined): NotificationAction {
-    val o = newJsObject()
-    o["action"] = action
-    o["title"] = title
-    o["icon"] = icon
-    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-    return o as NotificationAction
-}
+@Suppress("UNUSED_PARAMETER")
+public fun NotificationAction(action: String?, title: String?, icon: String? = undefined): NotificationAction { js("return { action, title, icon };") }
 
-public external interface GetNotificationOptions {
+public external interface GetNotificationOptions : JsAny {
     var tag: String? /* = "" */
         get() = definedExternally
         set(value) = definedExternally
 }
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline fun GetNotificationOptions(tag: String? = ""): GetNotificationOptions {
-    val o = newJsObject()
-    o["tag"] = tag
-    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-    return o as GetNotificationOptions
-}
+@Suppress("UNUSED_PARAMETER")
+public fun GetNotificationOptions(tag: String? = ""): GetNotificationOptions { js("return { tag };") }
 
 /**
  * Exposes the JavaScript [NotificationEvent](https://developer.mozilla.org/en/docs/Web/API/NotificationEvent) to Kotlin
  */
-public external open class NotificationEvent(type: String, eventInitDict: NotificationEventInit) : ExtendableEvent {
+public external open class NotificationEvent(type: String, eventInitDict: NotificationEventInit) : ExtendableEvent, JsAny {
     open val notification: Notification
     open val action: String
 
@@ -174,30 +138,20 @@ public external open class NotificationEvent(type: String, eventInitDict: Notifi
     }
 }
 
-public external interface NotificationEventInit : ExtendableEventInit {
+public external interface NotificationEventInit : ExtendableEventInit, JsAny {
     var notification: Notification?
     var action: String? /* = "" */
         get() = definedExternally
         set(value) = definedExternally
 }
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline fun NotificationEventInit(notification: Notification?, action: String? = "", bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): NotificationEventInit {
-    val o = newJsObject()
-    o["notification"] = notification
-    o["action"] = action
-    o["bubbles"] = bubbles
-    o["cancelable"] = cancelable
-    o["composed"] = composed
-    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-    return o as NotificationEventInit
-}
+@Suppress("UNUSED_PARAMETER")
+public fun NotificationEventInit(notification: Notification?, action: String? = "", bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): NotificationEventInit { js("return { notification, action, bubbles, cancelable, composed };") }
 
 /* please, don't implement this interface! */
 @JsName("null")
 @Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
-public external interface NotificationPermission {
+public external interface NotificationPermission : JsAny {
     companion object
 }
 
@@ -210,7 +164,7 @@ public inline val NotificationPermission.Companion.GRANTED: NotificationPermissi
 /* please, don't implement this interface! */
 @JsName("null")
 @Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
-public external interface NotificationDirection {
+public external interface NotificationDirection : JsAny {
     companion object
 }
 

@@ -16,7 +16,7 @@ import org.w3c.xhr.*
 /**
  * Exposes the JavaScript [Headers](https://developer.mozilla.org/en/docs/Web/API/Headers) to Kotlin
  */
-public external open class Headers(init: Dynamic? = definedExternally) {
+public external open class Headers(init: JsAny? = definedExternally) : JsAny {
     fun append(name: String, value: String)
     fun delete(name: String)
     fun get(name: String): String?
@@ -27,26 +27,26 @@ public external open class Headers(init: Dynamic? = definedExternally) {
 /**
  * Exposes the JavaScript [Body](https://developer.mozilla.org/en/docs/Web/API/Body) to Kotlin
  */
-public external interface Body {
+public external interface Body : JsAny {
     val bodyUsed: Boolean
     fun arrayBuffer(): Promise<ArrayBuffer>
     fun blob(): Promise<Blob>
     fun formData(): Promise<FormData>
-    fun json(): Promise<Any?>
-    fun text(): Promise<String>
+    fun json(): Promise<JsAny?>
+    fun text(): Promise<JsString>
 }
 
 /**
  * Exposes the JavaScript [Request](https://developer.mozilla.org/en/docs/Web/API/Request) to Kotlin
  */
-public external open class Request(input: Dynamic?, init: RequestInit = definedExternally) : Body {
+public external open class Request(input: JsAny?, init: RequestInit = definedExternally) : Body, JsAny {
     open val method: String
     open val url: String
     open val headers: Headers
     open val type: RequestType
     open val destination: RequestDestination
     open val referrer: String
-    open val referrerPolicy: Dynamic?
+    open val referrerPolicy: JsAny?
     open val mode: RequestMode
     open val credentials: RequestCredentials
     open val cache: RequestCache
@@ -58,24 +58,24 @@ public external open class Request(input: Dynamic?, init: RequestInit = definedE
     override fun arrayBuffer(): Promise<ArrayBuffer>
     override fun blob(): Promise<Blob>
     override fun formData(): Promise<FormData>
-    override fun json(): Promise<Any?>
-    override fun text(): Promise<String>
+    override fun json(): Promise<JsAny?>
+    override fun text(): Promise<JsString>
 }
 
-public external interface RequestInit {
+public external interface RequestInit : JsAny {
     var method: String?
         get() = definedExternally
         set(value) = definedExternally
-    var headers: Dynamic?
+    var headers: JsAny?
         get() = definedExternally
         set(value) = definedExternally
-    var body: Dynamic?
+    var body: JsAny?
         get() = definedExternally
         set(value) = definedExternally
     var referrer: String?
         get() = definedExternally
         set(value) = definedExternally
-    var referrerPolicy: Dynamic?
+    var referrerPolicy: JsAny?
         get() = definedExternally
         set(value) = definedExternally
     var mode: RequestMode?
@@ -96,35 +96,18 @@ public external interface RequestInit {
     var keepalive: Boolean?
         get() = definedExternally
         set(value) = definedExternally
-    var window: Any?
+    var window: JsAny?
         get() = definedExternally
         set(value) = definedExternally
 }
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline fun RequestInit(method: String? = undefined, headers: Dynamic? = undefined, body: Dynamic? = undefined, referrer: String? = undefined, referrerPolicy: Dynamic? = undefined, mode: RequestMode? = undefined, credentials: RequestCredentials? = undefined, cache: RequestCache? = undefined, redirect: RequestRedirect? = undefined, integrity: String? = undefined, keepalive: Boolean? = undefined, window: Any? = undefined): RequestInit {
-    val o = newJsObject()
-    o["method"] = method
-    o["headers"] = headers
-    o["body"] = body
-    o["referrer"] = referrer
-    o["referrerPolicy"] = referrerPolicy
-    o["mode"] = mode
-    o["credentials"] = credentials
-    o["cache"] = cache
-    o["redirect"] = redirect
-    o["integrity"] = integrity
-    o["keepalive"] = keepalive
-    o["window"] = window
-    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-    return o as RequestInit
-}
+@Suppress("UNUSED_PARAMETER")
+public fun RequestInit(method: String? = undefined, headers: JsAny? = undefined, body: JsAny? = undefined, referrer: String? = undefined, referrerPolicy: JsAny? = undefined, mode: RequestMode? = undefined, credentials: RequestCredentials? = undefined, cache: RequestCache? = undefined, redirect: RequestRedirect? = undefined, integrity: String? = undefined, keepalive: Boolean? = undefined, window: JsAny? = undefined): RequestInit { js("return { method, headers, body, referrer, referrerPolicy, mode, credentials, cache, redirect, integrity, keepalive, window };") }
 
 /**
  * Exposes the JavaScript [Response](https://developer.mozilla.org/en/docs/Web/API/Response) to Kotlin
  */
-public external open class Response(body: Dynamic? = definedExternally, init: ResponseInit = definedExternally) : Body {
+public external open class Response(body: JsAny? = definedExternally, init: ResponseInit = definedExternally) : Body, JsAny {
     open val type: ResponseType
     open val url: String
     open val redirected: Boolean
@@ -132,15 +115,15 @@ public external open class Response(body: Dynamic? = definedExternally, init: Re
     open val ok: Boolean
     open val statusText: String
     open val headers: Headers
-    open val body: Dynamic?
+    open val body: JsAny?
     open val trailer: Promise<Headers>
     override val bodyUsed: Boolean
     fun clone(): Response
     override fun arrayBuffer(): Promise<ArrayBuffer>
     override fun blob(): Promise<Blob>
     override fun formData(): Promise<FormData>
-    override fun json(): Promise<Any?>
-    override fun text(): Promise<String>
+    override fun json(): Promise<JsAny?>
+    override fun text(): Promise<JsString>
 
     companion object {
         fun error(): Response
@@ -148,33 +131,25 @@ public external open class Response(body: Dynamic? = definedExternally, init: Re
     }
 }
 
-public external interface ResponseInit {
+public external interface ResponseInit : JsAny {
     var status: Short? /* = 200 */
         get() = definedExternally
         set(value) = definedExternally
     var statusText: String? /* = "OK" */
         get() = definedExternally
         set(value) = definedExternally
-    var headers: Dynamic?
+    var headers: JsAny?
         get() = definedExternally
         set(value) = definedExternally
 }
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline fun ResponseInit(status: Short? = 200, statusText: String? = "OK", headers: Dynamic? = undefined): ResponseInit {
-    val o = newJsObject()
-    o["status"] = status
-    o["statusText"] = statusText
-    o["headers"] = headers
-    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-    return o as ResponseInit
-}
+@Suppress("UNUSED_PARAMETER")
+public fun ResponseInit(status: Short? = 200, statusText: String? = "OK", headers: JsAny? = undefined): ResponseInit { js("return { status, statusText, headers };") }
 
 /* please, don't implement this interface! */
 @JsName("null")
 @Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
-public external interface RequestType {
+public external interface RequestType : JsAny {
     companion object
 }
 
@@ -197,7 +172,7 @@ public inline val RequestType.Companion.VIDEO: RequestType get() = "video".asDyn
 /* please, don't implement this interface! */
 @JsName("null")
 @Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
-public external interface RequestDestination {
+public external interface RequestDestination : JsAny {
     companion object
 }
 
@@ -234,7 +209,7 @@ public inline val RequestDestination.Companion.XSLT: RequestDestination get() = 
 /* please, don't implement this interface! */
 @JsName("null")
 @Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
-public external interface RequestMode {
+public external interface RequestMode : JsAny {
     companion object
 }
 
@@ -249,7 +224,7 @@ public inline val RequestMode.Companion.CORS: RequestMode get() = "cors".asDynam
 /* please, don't implement this interface! */
 @JsName("null")
 @Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
-public external interface RequestCredentials {
+public external interface RequestCredentials : JsAny {
     companion object
 }
 
@@ -262,7 +237,7 @@ public inline val RequestCredentials.Companion.INCLUDE: RequestCredentials get()
 /* please, don't implement this interface! */
 @JsName("null")
 @Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
-public external interface RequestCache {
+public external interface RequestCache : JsAny {
     companion object
 }
 
@@ -281,7 +256,7 @@ public inline val RequestCache.Companion.ONLY_IF_CACHED: RequestCache get() = "o
 /* please, don't implement this interface! */
 @JsName("null")
 @Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
-public external interface RequestRedirect {
+public external interface RequestRedirect : JsAny {
     companion object
 }
 
@@ -294,7 +269,7 @@ public inline val RequestRedirect.Companion.MANUAL: RequestRedirect get() = "man
 /* please, don't implement this interface! */
 @JsName("null")
 @Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
-public external interface ResponseType {
+public external interface ResponseType : JsAny {
     companion object
 }
 

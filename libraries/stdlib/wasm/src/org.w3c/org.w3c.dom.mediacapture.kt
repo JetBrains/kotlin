@@ -16,16 +16,16 @@ import org.w3c.dom.events.*
 /**
  * Exposes the JavaScript [MediaStream](https://developer.mozilla.org/en/docs/Web/API/MediaStream) to Kotlin
  */
-public external open class MediaStream() : EventTarget, MediaProvider {
+public external open class MediaStream() : EventTarget, MediaProvider, JsAny {
     constructor(stream: MediaStream)
-    constructor(tracks: Array<MediaStreamTrack>)
+    constructor(tracks: JsArray<MediaStreamTrack>)
     open val id: String
     open val active: Boolean
     var onaddtrack: ((MediaStreamTrackEvent) -> Dynamic?)?
     var onremovetrack: ((MediaStreamTrackEvent) -> Dynamic?)?
-    fun getAudioTracks(): Array<MediaStreamTrack>
-    fun getVideoTracks(): Array<MediaStreamTrack>
-    fun getTracks(): Array<MediaStreamTrack>
+    fun getAudioTracks(): JsArray<MediaStreamTrack>
+    fun getVideoTracks(): JsArray<MediaStreamTrack>
+    fun getTracks(): JsArray<MediaStreamTrack>
     fun getTrackById(trackId: String): MediaStreamTrack?
     fun addTrack(track: MediaStreamTrack)
     fun removeTrack(track: MediaStreamTrack)
@@ -35,7 +35,7 @@ public external open class MediaStream() : EventTarget, MediaProvider {
 /**
  * Exposes the JavaScript [MediaStreamTrack](https://developer.mozilla.org/en/docs/Web/API/MediaStreamTrack) to Kotlin
  */
-public external abstract class MediaStreamTrack : EventTarget {
+public external abstract class MediaStreamTrack : EventTarget, JsAny {
     open val kind: String
     open val id: String
     open val label: String
@@ -51,13 +51,13 @@ public external abstract class MediaStreamTrack : EventTarget {
     fun getCapabilities(): MediaTrackCapabilities
     fun getConstraints(): MediaTrackConstraints
     fun getSettings(): MediaTrackSettings
-    fun applyConstraints(constraints: MediaTrackConstraints = definedExternally): Promise<Unit>
+    fun applyConstraints(constraints: MediaTrackConstraints = definedExternally): Promise<Nothing?>
 }
 
 /**
  * Exposes the JavaScript [MediaTrackSupportedConstraints](https://developer.mozilla.org/en/docs/Web/API/MediaTrackSupportedConstraints) to Kotlin
  */
-public external interface MediaTrackSupportedConstraints {
+public external interface MediaTrackSupportedConstraints : JsAny {
     var width: Boolean? /* = true */
         get() = definedExternally
         set(value) = definedExternally
@@ -108,31 +108,10 @@ public external interface MediaTrackSupportedConstraints {
         set(value) = definedExternally
 }
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline fun MediaTrackSupportedConstraints(width: Boolean? = true, height: Boolean? = true, aspectRatio: Boolean? = true, frameRate: Boolean? = true, facingMode: Boolean? = true, resizeMode: Boolean? = true, volume: Boolean? = true, sampleRate: Boolean? = true, sampleSize: Boolean? = true, echoCancellation: Boolean? = true, autoGainControl: Boolean? = true, noiseSuppression: Boolean? = true, latency: Boolean? = true, channelCount: Boolean? = true, deviceId: Boolean? = true, groupId: Boolean? = true): MediaTrackSupportedConstraints {
-    val o = newJsObject()
-    o["width"] = width
-    o["height"] = height
-    o["aspectRatio"] = aspectRatio
-    o["frameRate"] = frameRate
-    o["facingMode"] = facingMode
-    o["resizeMode"] = resizeMode
-    o["volume"] = volume
-    o["sampleRate"] = sampleRate
-    o["sampleSize"] = sampleSize
-    o["echoCancellation"] = echoCancellation
-    o["autoGainControl"] = autoGainControl
-    o["noiseSuppression"] = noiseSuppression
-    o["latency"] = latency
-    o["channelCount"] = channelCount
-    o["deviceId"] = deviceId
-    o["groupId"] = groupId
-    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-    return o as MediaTrackSupportedConstraints
-}
+@Suppress("UNUSED_PARAMETER")
+public fun MediaTrackSupportedConstraints(width: Boolean? = true, height: Boolean? = true, aspectRatio: Boolean? = true, frameRate: Boolean? = true, facingMode: Boolean? = true, resizeMode: Boolean? = true, volume: Boolean? = true, sampleRate: Boolean? = true, sampleSize: Boolean? = true, echoCancellation: Boolean? = true, autoGainControl: Boolean? = true, noiseSuppression: Boolean? = true, latency: Boolean? = true, channelCount: Boolean? = true, deviceId: Boolean? = true, groupId: Boolean? = true): MediaTrackSupportedConstraints { js("return { width, height, aspectRatio, frameRate, facingMode, resizeMode, volume, sampleRate, sampleSize, echoCancellation, autoGainControl, noiseSuppression, latency, channelCount, deviceId, groupId };") }
 
-public external interface MediaTrackCapabilities {
+public external interface MediaTrackCapabilities : JsAny {
     var width: ULongRange?
         get() = definedExternally
         set(value) = definedExternally
@@ -145,10 +124,10 @@ public external interface MediaTrackCapabilities {
     var frameRate: DoubleRange?
         get() = definedExternally
         set(value) = definedExternally
-    var facingMode: Array<String>?
+    var facingMode: JsArray<JsString>?
         get() = definedExternally
         set(value) = definedExternally
-    var resizeMode: Array<String>?
+    var resizeMode: JsArray<JsString>?
         get() = definedExternally
         set(value) = definedExternally
     var volume: DoubleRange?
@@ -160,13 +139,13 @@ public external interface MediaTrackCapabilities {
     var sampleSize: ULongRange?
         get() = definedExternally
         set(value) = definedExternally
-    var echoCancellation: Array<Boolean>?
+    var echoCancellation: JsArray<JsBoolean>?
         get() = definedExternally
         set(value) = definedExternally
-    var autoGainControl: Array<Boolean>?
+    var autoGainControl: JsArray<JsBoolean>?
         get() = definedExternally
         set(value) = definedExternally
-    var noiseSuppression: Array<Boolean>?
+    var noiseSuppression: JsArray<JsBoolean>?
         get() = definedExternally
         set(value) = definedExternally
     var latency: DoubleRange?
@@ -183,143 +162,79 @@ public external interface MediaTrackCapabilities {
         set(value) = definedExternally
 }
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline fun MediaTrackCapabilities(width: ULongRange? = undefined, height: ULongRange? = undefined, aspectRatio: DoubleRange? = undefined, frameRate: DoubleRange? = undefined, facingMode: Array<String>? = undefined, resizeMode: Array<String>? = undefined, volume: DoubleRange? = undefined, sampleRate: ULongRange? = undefined, sampleSize: ULongRange? = undefined, echoCancellation: Array<Boolean>? = undefined, autoGainControl: Array<Boolean>? = undefined, noiseSuppression: Array<Boolean>? = undefined, latency: DoubleRange? = undefined, channelCount: ULongRange? = undefined, deviceId: String? = undefined, groupId: String? = undefined): MediaTrackCapabilities {
-    val o = newJsObject()
-    o["width"] = width
-    o["height"] = height
-    o["aspectRatio"] = aspectRatio
-    o["frameRate"] = frameRate
-    o["facingMode"] = facingMode
-    o["resizeMode"] = resizeMode
-    o["volume"] = volume
-    o["sampleRate"] = sampleRate
-    o["sampleSize"] = sampleSize
-    o["echoCancellation"] = echoCancellation
-    o["autoGainControl"] = autoGainControl
-    o["noiseSuppression"] = noiseSuppression
-    o["latency"] = latency
-    o["channelCount"] = channelCount
-    o["deviceId"] = deviceId
-    o["groupId"] = groupId
-    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-    return o as MediaTrackCapabilities
-}
+@Suppress("UNUSED_PARAMETER")
+public fun MediaTrackCapabilities(width: ULongRange? = undefined, height: ULongRange? = undefined, aspectRatio: DoubleRange? = undefined, frameRate: DoubleRange? = undefined, facingMode: JsArray<JsString>? = undefined, resizeMode: JsArray<JsString>? = undefined, volume: DoubleRange? = undefined, sampleRate: ULongRange? = undefined, sampleSize: ULongRange? = undefined, echoCancellation: JsArray<JsBoolean>? = undefined, autoGainControl: JsArray<JsBoolean>? = undefined, noiseSuppression: JsArray<JsBoolean>? = undefined, latency: DoubleRange? = undefined, channelCount: ULongRange? = undefined, deviceId: String? = undefined, groupId: String? = undefined): MediaTrackCapabilities { js("return { width, height, aspectRatio, frameRate, facingMode, resizeMode, volume, sampleRate, sampleSize, echoCancellation, autoGainControl, noiseSuppression, latency, channelCount, deviceId, groupId };") }
 
 /**
  * Exposes the JavaScript [MediaTrackConstraints](https://developer.mozilla.org/en/docs/Web/API/MediaTrackConstraints) to Kotlin
  */
-public external interface MediaTrackConstraints : MediaTrackConstraintSet {
-    var advanced: Array<MediaTrackConstraintSet>?
+public external interface MediaTrackConstraints : MediaTrackConstraintSet, JsAny {
+    var advanced: JsArray<MediaTrackConstraintSet>?
         get() = definedExternally
         set(value) = definedExternally
 }
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline fun MediaTrackConstraints(advanced: Array<MediaTrackConstraintSet>? = undefined, width: Dynamic? = undefined, height: Dynamic? = undefined, aspectRatio: Dynamic? = undefined, frameRate: Dynamic? = undefined, facingMode: Dynamic? = undefined, resizeMode: Dynamic? = undefined, volume: Dynamic? = undefined, sampleRate: Dynamic? = undefined, sampleSize: Dynamic? = undefined, echoCancellation: Dynamic? = undefined, autoGainControl: Dynamic? = undefined, noiseSuppression: Dynamic? = undefined, latency: Dynamic? = undefined, channelCount: Dynamic? = undefined, deviceId: Dynamic? = undefined, groupId: Dynamic? = undefined): MediaTrackConstraints {
-    val o = newJsObject()
-    o["advanced"] = advanced
-    o["width"] = width
-    o["height"] = height
-    o["aspectRatio"] = aspectRatio
-    o["frameRate"] = frameRate
-    o["facingMode"] = facingMode
-    o["resizeMode"] = resizeMode
-    o["volume"] = volume
-    o["sampleRate"] = sampleRate
-    o["sampleSize"] = sampleSize
-    o["echoCancellation"] = echoCancellation
-    o["autoGainControl"] = autoGainControl
-    o["noiseSuppression"] = noiseSuppression
-    o["latency"] = latency
-    o["channelCount"] = channelCount
-    o["deviceId"] = deviceId
-    o["groupId"] = groupId
-    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-    return o as MediaTrackConstraints
-}
+@Suppress("UNUSED_PARAMETER")
+public fun MediaTrackConstraints(advanced: JsArray<MediaTrackConstraintSet>? = undefined, width: JsAny? = undefined, height: JsAny? = undefined, aspectRatio: JsAny? = undefined, frameRate: JsAny? = undefined, facingMode: JsAny? = undefined, resizeMode: JsAny? = undefined, volume: JsAny? = undefined, sampleRate: JsAny? = undefined, sampleSize: JsAny? = undefined, echoCancellation: JsAny? = undefined, autoGainControl: JsAny? = undefined, noiseSuppression: JsAny? = undefined, latency: JsAny? = undefined, channelCount: JsAny? = undefined, deviceId: JsAny? = undefined, groupId: JsAny? = undefined): MediaTrackConstraints { js("return { advanced, width, height, aspectRatio, frameRate, facingMode, resizeMode, volume, sampleRate, sampleSize, echoCancellation, autoGainControl, noiseSuppression, latency, channelCount, deviceId, groupId };") }
 
-public external interface MediaTrackConstraintSet {
-    var width: Dynamic?
+public external interface MediaTrackConstraintSet : JsAny {
+    var width: JsAny?
         get() = definedExternally
         set(value) = definedExternally
-    var height: Dynamic?
+    var height: JsAny?
         get() = definedExternally
         set(value) = definedExternally
-    var aspectRatio: Dynamic?
+    var aspectRatio: JsAny?
         get() = definedExternally
         set(value) = definedExternally
-    var frameRate: Dynamic?
+    var frameRate: JsAny?
         get() = definedExternally
         set(value) = definedExternally
-    var facingMode: Dynamic?
+    var facingMode: JsAny?
         get() = definedExternally
         set(value) = definedExternally
-    var resizeMode: Dynamic?
+    var resizeMode: JsAny?
         get() = definedExternally
         set(value) = definedExternally
-    var volume: Dynamic?
+    var volume: JsAny?
         get() = definedExternally
         set(value) = definedExternally
-    var sampleRate: Dynamic?
+    var sampleRate: JsAny?
         get() = definedExternally
         set(value) = definedExternally
-    var sampleSize: Dynamic?
+    var sampleSize: JsAny?
         get() = definedExternally
         set(value) = definedExternally
-    var echoCancellation: Dynamic?
+    var echoCancellation: JsAny?
         get() = definedExternally
         set(value) = definedExternally
-    var autoGainControl: Dynamic?
+    var autoGainControl: JsAny?
         get() = definedExternally
         set(value) = definedExternally
-    var noiseSuppression: Dynamic?
+    var noiseSuppression: JsAny?
         get() = definedExternally
         set(value) = definedExternally
-    var latency: Dynamic?
+    var latency: JsAny?
         get() = definedExternally
         set(value) = definedExternally
-    var channelCount: Dynamic?
+    var channelCount: JsAny?
         get() = definedExternally
         set(value) = definedExternally
-    var deviceId: Dynamic?
+    var deviceId: JsAny?
         get() = definedExternally
         set(value) = definedExternally
-    var groupId: Dynamic?
+    var groupId: JsAny?
         get() = definedExternally
         set(value) = definedExternally
 }
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline fun MediaTrackConstraintSet(width: Dynamic? = undefined, height: Dynamic? = undefined, aspectRatio: Dynamic? = undefined, frameRate: Dynamic? = undefined, facingMode: Dynamic? = undefined, resizeMode: Dynamic? = undefined, volume: Dynamic? = undefined, sampleRate: Dynamic? = undefined, sampleSize: Dynamic? = undefined, echoCancellation: Dynamic? = undefined, autoGainControl: Dynamic? = undefined, noiseSuppression: Dynamic? = undefined, latency: Dynamic? = undefined, channelCount: Dynamic? = undefined, deviceId: Dynamic? = undefined, groupId: Dynamic? = undefined): MediaTrackConstraintSet {
-    val o = newJsObject()
-    o["width"] = width
-    o["height"] = height
-    o["aspectRatio"] = aspectRatio
-    o["frameRate"] = frameRate
-    o["facingMode"] = facingMode
-    o["resizeMode"] = resizeMode
-    o["volume"] = volume
-    o["sampleRate"] = sampleRate
-    o["sampleSize"] = sampleSize
-    o["echoCancellation"] = echoCancellation
-    o["autoGainControl"] = autoGainControl
-    o["noiseSuppression"] = noiseSuppression
-    o["latency"] = latency
-    o["channelCount"] = channelCount
-    o["deviceId"] = deviceId
-    o["groupId"] = groupId
-    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-    return o as MediaTrackConstraintSet
-}
+@Suppress("UNUSED_PARAMETER")
+public fun MediaTrackConstraintSet(width: JsAny? = undefined, height: JsAny? = undefined, aspectRatio: JsAny? = undefined, frameRate: JsAny? = undefined, facingMode: JsAny? = undefined, resizeMode: JsAny? = undefined, volume: JsAny? = undefined, sampleRate: JsAny? = undefined, sampleSize: JsAny? = undefined, echoCancellation: JsAny? = undefined, autoGainControl: JsAny? = undefined, noiseSuppression: JsAny? = undefined, latency: JsAny? = undefined, channelCount: JsAny? = undefined, deviceId: JsAny? = undefined, groupId: JsAny? = undefined): MediaTrackConstraintSet { js("return { width, height, aspectRatio, frameRate, facingMode, resizeMode, volume, sampleRate, sampleSize, echoCancellation, autoGainControl, noiseSuppression, latency, channelCount, deviceId, groupId };") }
 
 /**
  * Exposes the JavaScript [MediaTrackSettings](https://developer.mozilla.org/en/docs/Web/API/MediaTrackSettings) to Kotlin
  */
-public external interface MediaTrackSettings {
+public external interface MediaTrackSettings : JsAny {
     var width: Int?
         get() = definedExternally
         set(value) = definedExternally
@@ -370,34 +285,13 @@ public external interface MediaTrackSettings {
         set(value) = definedExternally
 }
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline fun MediaTrackSettings(width: Int? = undefined, height: Int? = undefined, aspectRatio: Double? = undefined, frameRate: Double? = undefined, facingMode: String? = undefined, resizeMode: String? = undefined, volume: Double? = undefined, sampleRate: Int? = undefined, sampleSize: Int? = undefined, echoCancellation: Boolean? = undefined, autoGainControl: Boolean? = undefined, noiseSuppression: Boolean? = undefined, latency: Double? = undefined, channelCount: Int? = undefined, deviceId: String? = undefined, groupId: String? = undefined): MediaTrackSettings {
-    val o = newJsObject()
-    o["width"] = width
-    o["height"] = height
-    o["aspectRatio"] = aspectRatio
-    o["frameRate"] = frameRate
-    o["facingMode"] = facingMode
-    o["resizeMode"] = resizeMode
-    o["volume"] = volume
-    o["sampleRate"] = sampleRate
-    o["sampleSize"] = sampleSize
-    o["echoCancellation"] = echoCancellation
-    o["autoGainControl"] = autoGainControl
-    o["noiseSuppression"] = noiseSuppression
-    o["latency"] = latency
-    o["channelCount"] = channelCount
-    o["deviceId"] = deviceId
-    o["groupId"] = groupId
-    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-    return o as MediaTrackSettings
-}
+@Suppress("UNUSED_PARAMETER")
+public fun MediaTrackSettings(width: Int? = undefined, height: Int? = undefined, aspectRatio: Double? = undefined, frameRate: Double? = undefined, facingMode: String? = undefined, resizeMode: String? = undefined, volume: Double? = undefined, sampleRate: Int? = undefined, sampleSize: Int? = undefined, echoCancellation: Boolean? = undefined, autoGainControl: Boolean? = undefined, noiseSuppression: Boolean? = undefined, latency: Double? = undefined, channelCount: Int? = undefined, deviceId: String? = undefined, groupId: String? = undefined): MediaTrackSettings { js("return { width, height, aspectRatio, frameRate, facingMode, resizeMode, volume, sampleRate, sampleSize, echoCancellation, autoGainControl, noiseSuppression, latency, channelCount, deviceId, groupId };") }
 
 /**
  * Exposes the JavaScript [MediaStreamTrackEvent](https://developer.mozilla.org/en/docs/Web/API/MediaStreamTrackEvent) to Kotlin
  */
-public external open class MediaStreamTrackEvent(type: String, eventInitDict: MediaStreamTrackEventInit) : Event {
+public external open class MediaStreamTrackEvent(type: String, eventInitDict: MediaStreamTrackEventInit) : Event, JsAny {
     open val track: MediaStreamTrack
 
     companion object {
@@ -408,24 +302,15 @@ public external open class MediaStreamTrackEvent(type: String, eventInitDict: Me
     }
 }
 
-public external interface MediaStreamTrackEventInit : EventInit {
+public external interface MediaStreamTrackEventInit : EventInit, JsAny {
     var track: MediaStreamTrack?
 }
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline fun MediaStreamTrackEventInit(track: MediaStreamTrack?, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): MediaStreamTrackEventInit {
-    val o = newJsObject()
-    o["track"] = track
-    o["bubbles"] = bubbles
-    o["cancelable"] = cancelable
-    o["composed"] = composed
-    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-    return o as MediaStreamTrackEventInit
-}
+@Suppress("UNUSED_PARAMETER")
+public fun MediaStreamTrackEventInit(track: MediaStreamTrack?, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): MediaStreamTrackEventInit { js("return { track, bubbles, cancelable, composed };") }
 
-public external open class OverconstrainedErrorEvent(type: String, eventInitDict: OverconstrainedErrorEventInit) : Event {
-    open val error: Dynamic?
+public external open class OverconstrainedErrorEvent(type: String, eventInitDict: OverconstrainedErrorEventInit) : Event, JsAny {
+    open val error: JsAny?
 
     companion object {
         val NONE: Short
@@ -435,30 +320,21 @@ public external open class OverconstrainedErrorEvent(type: String, eventInitDict
     }
 }
 
-public external interface OverconstrainedErrorEventInit : EventInit {
-    var error: Dynamic? /* = null */
+public external interface OverconstrainedErrorEventInit : EventInit, JsAny {
+    var error: JsAny? /* = null */
         get() = definedExternally
         set(value) = definedExternally
 }
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline fun OverconstrainedErrorEventInit(error: Dynamic? = null.unsafeCast<Dynamic?>(), bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): OverconstrainedErrorEventInit {
-    val o = newJsObject()
-    o["error"] = error
-    o["bubbles"] = bubbles
-    o["cancelable"] = cancelable
-    o["composed"] = composed
-    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-    return o as OverconstrainedErrorEventInit
-}
+@Suppress("UNUSED_PARAMETER")
+public fun OverconstrainedErrorEventInit(error: JsAny? = null, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): OverconstrainedErrorEventInit { js("return { error, bubbles, cancelable, composed };") }
 
 /**
  * Exposes the JavaScript [MediaDevices](https://developer.mozilla.org/en/docs/Web/API/MediaDevices) to Kotlin
  */
-public external abstract class MediaDevices : EventTarget {
+public external abstract class MediaDevices : EventTarget, JsAny {
     open var ondevicechange: ((Event) -> Dynamic?)?
-    fun enumerateDevices(): Promise<Array<MediaDeviceInfo>>
+    fun enumerateDevices(): Promise<JsArray<MediaDeviceInfo>>
     fun getSupportedConstraints(): MediaTrackSupportedConstraints
     fun getUserMedia(constraints: MediaStreamConstraints = definedExternally): Promise<MediaStream>
 }
@@ -466,54 +342,47 @@ public external abstract class MediaDevices : EventTarget {
 /**
  * Exposes the JavaScript [MediaDeviceInfo](https://developer.mozilla.org/en/docs/Web/API/MediaDeviceInfo) to Kotlin
  */
-public external abstract class MediaDeviceInfo {
+public external abstract class MediaDeviceInfo : JsAny {
     open val deviceId: String
     open val kind: MediaDeviceKind
     open val label: String
     open val groupId: String
-    fun toJSON(): Dynamic?
+    fun toJSON(): JsAny
 }
 
-public external abstract class InputDeviceInfo : MediaDeviceInfo {
+public external abstract class InputDeviceInfo : MediaDeviceInfo, JsAny {
     fun getCapabilities(): MediaTrackCapabilities
 }
 
 /**
  * Exposes the JavaScript [MediaStreamConstraints](https://developer.mozilla.org/en/docs/Web/API/MediaStreamConstraints) to Kotlin
  */
-public external interface MediaStreamConstraints {
-    var video: Dynamic? /* = false */
+public external interface MediaStreamConstraints : JsAny {
+    var video: JsAny? /* = false */
         get() = definedExternally
         set(value) = definedExternally
-    var audio: Dynamic? /* = false */
+    var audio: JsAny? /* = false */
         get() = definedExternally
         set(value) = definedExternally
 }
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline fun MediaStreamConstraints(video: Dynamic? = false.unsafeCast<Dynamic?>(), audio: Dynamic? = false.unsafeCast<Dynamic?>()): MediaStreamConstraints {
-    val o = newJsObject()
-    o["video"] = video
-    o["audio"] = audio
-    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-    return o as MediaStreamConstraints
-}
+@Suppress("UNUSED_PARAMETER")
+public fun MediaStreamConstraints(video: JsAny? = false.toJsBoolean(), audio: JsAny? = false.toJsBoolean()): MediaStreamConstraints { js("return { video, audio };") }
 
-public external interface ConstrainablePattern {
+public external interface ConstrainablePattern : JsAny {
     var onoverconstrained: ((Event) -> Dynamic?)?
         get() = definedExternally
         set(value) = definedExternally
     fun getCapabilities(): Capabilities
     fun getConstraints(): Constraints
     fun getSettings(): Settings
-    fun applyConstraints(constraints: Constraints = definedExternally): Promise<Unit>
+    fun applyConstraints(constraints: Constraints = definedExternally): Promise<Nothing?>
 }
 
 /**
  * Exposes the JavaScript [DoubleRange](https://developer.mozilla.org/en/docs/Web/API/DoubleRange) to Kotlin
  */
-public external interface DoubleRange {
+public external interface DoubleRange : JsAny {
     var max: Double?
         get() = definedExternally
         set(value) = definedExternally
@@ -522,17 +391,10 @@ public external interface DoubleRange {
         set(value) = definedExternally
 }
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline fun DoubleRange(max: Double? = undefined, min: Double? = undefined): DoubleRange {
-    val o = newJsObject()
-    o["max"] = max
-    o["min"] = min
-    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-    return o as DoubleRange
-}
+@Suppress("UNUSED_PARAMETER")
+public fun DoubleRange(max: Double? = undefined, min: Double? = undefined): DoubleRange { js("return { max, min };") }
 
-public external interface ConstrainDoubleRange : DoubleRange {
+public external interface ConstrainDoubleRange : DoubleRange, JsAny {
     var exact: Double?
         get() = definedExternally
         set(value) = definedExternally
@@ -541,19 +403,10 @@ public external interface ConstrainDoubleRange : DoubleRange {
         set(value) = definedExternally
 }
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline fun ConstrainDoubleRange(exact: Double? = undefined, ideal: Double? = undefined, max: Double? = undefined, min: Double? = undefined): ConstrainDoubleRange {
-    val o = newJsObject()
-    o["exact"] = exact
-    o["ideal"] = ideal
-    o["max"] = max
-    o["min"] = min
-    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-    return o as ConstrainDoubleRange
-}
+@Suppress("UNUSED_PARAMETER")
+public fun ConstrainDoubleRange(exact: Double? = undefined, ideal: Double? = undefined, max: Double? = undefined, min: Double? = undefined): ConstrainDoubleRange { js("return { exact, ideal, max, min };") }
 
-public external interface ULongRange {
+public external interface ULongRange : JsAny {
     var max: Int?
         get() = definedExternally
         set(value) = definedExternally
@@ -562,17 +415,10 @@ public external interface ULongRange {
         set(value) = definedExternally
 }
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline fun ULongRange(max: Int? = undefined, min: Int? = undefined): ULongRange {
-    val o = newJsObject()
-    o["max"] = max
-    o["min"] = min
-    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-    return o as ULongRange
-}
+@Suppress("UNUSED_PARAMETER")
+public fun ULongRange(max: Int? = undefined, min: Int? = undefined): ULongRange { js("return { max, min };") }
 
-public external interface ConstrainULongRange : ULongRange {
+public external interface ConstrainULongRange : ULongRange, JsAny {
     var exact: Int?
         get() = definedExternally
         set(value) = definedExternally
@@ -581,22 +427,13 @@ public external interface ConstrainULongRange : ULongRange {
         set(value) = definedExternally
 }
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline fun ConstrainULongRange(exact: Int? = undefined, ideal: Int? = undefined, max: Int? = undefined, min: Int? = undefined): ConstrainULongRange {
-    val o = newJsObject()
-    o["exact"] = exact
-    o["ideal"] = ideal
-    o["max"] = max
-    o["min"] = min
-    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-    return o as ConstrainULongRange
-}
+@Suppress("UNUSED_PARAMETER")
+public fun ConstrainULongRange(exact: Int? = undefined, ideal: Int? = undefined, max: Int? = undefined, min: Int? = undefined): ConstrainULongRange { js("return { exact, ideal, max, min };") }
 
 /**
  * Exposes the JavaScript [ConstrainBooleanParameters](https://developer.mozilla.org/en/docs/Web/API/ConstrainBooleanParameters) to Kotlin
  */
-public external interface ConstrainBooleanParameters {
+public external interface ConstrainBooleanParameters : JsAny {
     var exact: Boolean?
         get() = definedExternally
         set(value) = definedExternally
@@ -605,87 +442,52 @@ public external interface ConstrainBooleanParameters {
         set(value) = definedExternally
 }
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline fun ConstrainBooleanParameters(exact: Boolean? = undefined, ideal: Boolean? = undefined): ConstrainBooleanParameters {
-    val o = newJsObject()
-    o["exact"] = exact
-    o["ideal"] = ideal
-    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-    return o as ConstrainBooleanParameters
-}
+@Suppress("UNUSED_PARAMETER")
+public fun ConstrainBooleanParameters(exact: Boolean? = undefined, ideal: Boolean? = undefined): ConstrainBooleanParameters { js("return { exact, ideal };") }
 
 /**
  * Exposes the JavaScript [ConstrainDOMStringParameters](https://developer.mozilla.org/en/docs/Web/API/ConstrainDOMStringParameters) to Kotlin
  */
-public external interface ConstrainDOMStringParameters {
-    var exact: Dynamic?
+public external interface ConstrainDOMStringParameters : JsAny {
+    var exact: JsAny?
         get() = definedExternally
         set(value) = definedExternally
-    var ideal: Dynamic?
-        get() = definedExternally
-        set(value) = definedExternally
-}
-
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline fun ConstrainDOMStringParameters(exact: Dynamic? = undefined, ideal: Dynamic? = undefined): ConstrainDOMStringParameters {
-    val o = newJsObject()
-    o["exact"] = exact
-    o["ideal"] = ideal
-    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-    return o as ConstrainDOMStringParameters
-}
-
-public external interface Capabilities
-
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline fun Capabilities(): Capabilities {
-    val o = newJsObject()
-    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-    return o as Capabilities
-}
-
-public external interface Settings
-
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline fun Settings(): Settings {
-    val o = newJsObject()
-    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-    return o as Settings
-}
-
-public external interface ConstraintSet
-
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline fun ConstraintSet(): ConstraintSet {
-    val o = newJsObject()
-    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-    return o as ConstraintSet
-}
-
-public external interface Constraints : ConstraintSet {
-    var advanced: Array<ConstraintSet>?
+    var ideal: JsAny?
         get() = definedExternally
         set(value) = definedExternally
 }
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline fun Constraints(advanced: Array<ConstraintSet>? = undefined): Constraints {
-    val o = newJsObject()
-    o["advanced"] = advanced
-    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-    return o as Constraints
+@Suppress("UNUSED_PARAMETER")
+public fun ConstrainDOMStringParameters(exact: JsAny? = undefined, ideal: JsAny? = undefined): ConstrainDOMStringParameters { js("return { exact, ideal };") }
+
+public external interface Capabilities : JsAny
+
+@Suppress("UNUSED_PARAMETER")
+public fun Capabilities(): Capabilities { js("return {  };") }
+
+public external interface Settings : JsAny
+
+@Suppress("UNUSED_PARAMETER")
+public fun Settings(): Settings { js("return {  };") }
+
+public external interface ConstraintSet : JsAny
+
+@Suppress("UNUSED_PARAMETER")
+public fun ConstraintSet(): ConstraintSet { js("return {  };") }
+
+public external interface Constraints : ConstraintSet, JsAny {
+    var advanced: JsArray<ConstraintSet>?
+        get() = definedExternally
+        set(value) = definedExternally
 }
+
+@Suppress("UNUSED_PARAMETER")
+public fun Constraints(advanced: JsArray<ConstraintSet>? = undefined): Constraints { js("return { advanced };") }
 
 /* please, don't implement this interface! */
 @JsName("null")
 @Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
-public external interface MediaStreamTrackState {
+public external interface MediaStreamTrackState : JsAny {
     companion object
 }
 
@@ -696,7 +498,7 @@ public inline val MediaStreamTrackState.Companion.ENDED: MediaStreamTrackState g
 /* please, don't implement this interface! */
 @JsName("null")
 @Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
-public external interface VideoFacingModeEnum {
+public external interface VideoFacingModeEnum : JsAny {
     companion object
 }
 
@@ -711,7 +513,7 @@ public inline val VideoFacingModeEnum.Companion.RIGHT: VideoFacingModeEnum get()
 /* please, don't implement this interface! */
 @JsName("null")
 @Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
-public external interface VideoResizeModeEnum {
+public external interface VideoResizeModeEnum : JsAny {
     companion object
 }
 
@@ -722,7 +524,7 @@ public inline val VideoResizeModeEnum.Companion.CROP_AND_SCALE: VideoResizeModeE
 /* please, don't implement this interface! */
 @JsName("null")
 @Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
-public external interface MediaDeviceKind {
+public external interface MediaDeviceKind : JsAny {
     companion object
 }
 
