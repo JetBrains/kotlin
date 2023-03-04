@@ -5,21 +5,64 @@
 
 package org.jetbrains.kotlin.tools.dukat
 
+import org.jetbrains.dukat.astModel.SourceSetModel
+import org.jetbrains.dukat.astModel.modifiers.VisibilityModifierModel
+import org.jetbrains.dukat.commonLowerings.AddExplicitGettersAndSetters
+import org.jetbrains.dukat.idlLowerings.*
+import org.jetbrains.dukat.idlParser.parseIDL
+import org.jetbrains.dukat.idlReferenceResolver.DirectoryReferencesResolver
+import org.jetbrains.dukat.model.commonLowerings.*
+import org.jetbrains.dukat.translatorString.compileUnits
+import org.jetbrains.dukat.translatorString.translateSourceSet
+import org.jetbrains.kotlin.tools.dukat.wasm.convertToWasmModel
 import java.io.File
-import kotlin.text.Regex
 
 fun main() {
     val outputDirectory = "../../stdlib/wasm/src/org.w3c/"
-    launch(
-        outputDirectory = outputDirectory,
-        dynamicAsType = true,
-        useStaticGetters = true
-    )
+    val input = "../../stdlib/js/idl/org.w3c.dom.idl"
+
+    val sourceSet = translateIdlToSourceSet(input)
+    compileUnits(translateSourceSet(sourceSet), outputDirectory)
+
     File(outputDirectory).walk().forEach {
         if (it.isFile && it.name.endsWith(".kt")) {
-            it.writeText(postProcessIdlBindings(it.readText()))
+            it.writeText(getHeader() + postProcessIdlBindings(it.readText()))
         }
     }
+}
+
+fun translateIdlToSourceSet(fileName: String): SourceSetModel {
+    val translationContext = TranslationContext()
+    return parseIDL(fileName, DirectoryReferencesResolver())
+        .resolvePartials()
+        .addConstructors()
+        .resolveTypedefs()
+        .specifyEventHandlerTypes()
+        .specifyDefaultValues()
+        .resolveImplementsStatements()
+        .resolveMixins()
+        .addItemArrayLike()
+        .resolveTypes()
+        .markAbstractOrOpen()
+        .addMissingMembers()
+        .addOverloadsForCallbacks()
+        .convertToWasmModel()
+        .lower(
+            ModelContextAwareLowering(translationContext),
+            LowerOverrides(translationContext),
+            EscapeIdentificators(),
+            AddExplicitGettersAndSetters(),
+        )
+        .lower(ReplaceDynamics())  // Wasm-specific
+        .addKDocs()
+        .relocateDeclarations()
+        .resolveTopLevelVisibility(alwaysPublic())
+        .addImportsForUsedPackages()
+        .omitStdLib()
+}
+
+private fun alwaysPublic(): VisibilityModifierResolver = object : VisibilityModifierResolver {
+    override fun resolve(): VisibilityModifierModel = VisibilityModifierModel.PUBLIC
 }
 
 // TODO: Backport to dukat
