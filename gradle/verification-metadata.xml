@@ -63,6 +63,7 @@
          <trust group="org.jetbrains.kotlin" name="kotlin-util-klib" version="1.9.[0-9](-.+)?" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlinx-serialization-compiler-plugin" version="1.9.[0-9](-.+)?" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlinx-serialization-compiler-plugin-embeddable" version="1.9.[0-9](-.+)?" regex="true"/>
+         <trust group="org.jetbrains.dukat" name="dukat" version="0.5.8.*" regex="true"/>
       </trusted-artifacts>
    </configuration>
    <components>
