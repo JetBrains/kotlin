@@ -32,10 +32,17 @@ fun config2model(config: Config): Model {
                     fc.baseGetter
                 )
                 is ListFieldConfig -> {
-                    val listType = if (fc.mutability == ListFieldConfig.Mutability.List) type(
-                        "kotlin.collections",
-                        "MutableList"
-                    ) else type("kotlin.collections", "List")
+                    val listType = when (fc.mutability) {
+                        ListFieldConfig.Mutability.List -> type(
+                            "kotlin.collections",
+                            "MutableList"
+                        )
+                        ListFieldConfig.Mutability.Array -> type(
+                            "kotlin.",
+                            "Array"
+                        )
+                        else -> type("kotlin.collections", "List")
+                    }
                     ListField(
                         fc,
                         fc.name,

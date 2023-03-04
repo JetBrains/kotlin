@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.generator.elementTransformerType
 import org.jetbrains.kotlin.ir.generator.elementVisitorType
 import org.jetbrains.kotlin.ir.generator.model.*
 import org.jetbrains.kotlin.ir.generator.util.TypeKind
+import org.jetbrains.kotlin.ir.generator.util.TypeRefWithNullability
 import org.jetbrains.kotlin.ir.generator.util.tryParameterizedBy
 import java.io.File
 
@@ -161,7 +162,11 @@ fun printElements(generationPath: File, model: Model) = sequence {
                             if (child.nullable) append("?")
                             when (child) {
                                 is SingleField -> append(".%N(%N, %N)")
-                                is ListField -> append(".forEach { it.%N(%N, %N) }")
+                                is ListField -> {
+                                    append(".forEach { it")
+                                    if ((child.elementType as? TypeRefWithNullability)?.nullable == true) append("?")
+                                    append(".%N(%N, %N) }")
+                                }
                             }
                         }, child.name, acceptMethodName, visitorParam, dataParam)
                     }

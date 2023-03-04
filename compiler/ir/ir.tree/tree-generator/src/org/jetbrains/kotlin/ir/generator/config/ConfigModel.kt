@@ -116,6 +116,7 @@ class ListFieldConfig(
     enum class Mutability {
         Immutable,
         Var,
-        List
+        List,
+        Array
     }
 }
