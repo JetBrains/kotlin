@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrStringConcatenationImpl
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.constructors
+import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
@@ -173,7 +174,7 @@ private class JvmStringConcatenationLowering(val context: JvmBackendContext) : F
         return appendAnyNFunction
     }
 
-    override fun visitStringConcatenation(expression: IrStringConcatenation): IrExpression {
+    private fun handleStringConcatenation(expression: IrStringConcatenation, stringBuilder: IrExpression): IrExpression {
         expression.transformChildrenVoid(this)
         return context.createJvmIrBuilder(currentScope!!, expression).run {
             // When `String.plus(Any?)` is invoked with receiver of platform type String or String with enhanced nullability, this could
@@ -191,7 +192,7 @@ private class JvmStringConcatenationLowering(val context: JvmBackendContext) : F
 
                 arguments.size < MAX_STRING_CONCAT_DEPTH -> {
                     irCall(toStringFunction).apply {
-                        dispatchReceiver = appendWindow(arguments, irCall(constructor))
+                        dispatchReceiver = appendWindow(arguments, stringBuilder)
                     }
                 }
 
@@ -205,7 +206,7 @@ private class JvmStringConcatenationLowering(val context: JvmBackendContext) : F
                     //      tmp.toString()
                     //  }
                     irBlock {
-                        val tmpStringBuilder = irTemporary(irCall(constructor))
+                        val tmpStringBuilder = irTemporary(stringBuilder)
                         val argsWindowed =
                             arguments.windowed(
                                 size = MAX_STRING_CONCAT_DEPTH,
@@ -220,6 +221,27 @@ private class JvmStringConcatenationLowering(val context: JvmBackendContext) : F
                 }
             }
         }
+    }
+
+    override fun visitCall(expression: IrCall): IrExpression {
+        // Optimization: don't create a new StringBuilder when appending concatenation to existing StringBuilder. See KT-24949
+        if (isAppendOfStringConcatenation(expression)) {
+            return handleStringConcatenation(expression.getValueArgument(0) as IrStringConcatenation, expression.dispatchReceiver!!)
+        }
+        return super.visitCall(expression)
+    }
+
+    private fun isAppendOfStringConcatenation(expression: IrCall): Boolean {
+        return isAppendStringFunction(expression.symbol.owner) && expression.getValueArgument(0) is IrStringConcatenation
+    }
+
+    private fun isAppendStringFunction(function: IrSimpleFunction): Boolean {
+        return stringBuilder.fqNameWhenAvailable == function.dispatchReceiverParameter?.type?.classFqName
+                && function.isAppendFunction() && function.valueParameters[0].type.classOrNull == context.irBuiltIns.stringClass
+    }
+
+    override fun visitStringConcatenation(expression: IrStringConcatenation): IrExpression {
+        return handleStringConcatenation(expression, context.createJvmIrBuilder(currentScope!!, expression).irCall(constructor))
     }
 
     private fun JvmIrBuilder.appendWindow(arguments: List<IrExpression>, stringBuilder0: IrExpression): IrExpression {
