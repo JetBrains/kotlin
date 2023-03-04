@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.name.Name
 
 @PrettyIrDsl
 class IrClassBuilder @PublishedApi internal constructor(
-    private val name: String,
+    private val name: Name,
     buildingContext: IrBuildingContext,
 ) : IrDeclarationBuilder<IrClass>(buildingContext), IrDeclarationWithVisibilityBuilder, IrDeclarationWithModalityBuilder, IrDeclarationContainerBuilder,
     IrSymbolOwnerBuilder {
@@ -115,12 +115,6 @@ class IrClassBuilder @PublishedApi internal constructor(
         this.isFun = isFun
     }
 
-
-    @IrNodeBuilderDsl
-    fun irConstructor(block: IrElementBuilderClosure<IrConstructorBuilder>) {
-        declarationBuilders.add(IrConstructorBuilder().apply(block))
-    }
-
     @PublishedApi
     override fun build(): IrClass {
         return buildingContext.irFactory.createClass(
@@ -128,7 +122,7 @@ class IrClassBuilder @PublishedApi internal constructor(
             endOffset = endOffset,
             origin = declarationOrigin,
             symbol = symbol<IrClassSymbol>(::IrClassSymbolImpl),
-            name = Name.guessByFirstCharacter(name),
+            name = name,
             kind = classKind,
             visibility = declarationVisibility,
             modality = declarationModality,

@@ -6,9 +6,10 @@
 package org.jetbrains.kotlin.ir.pretty
 
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
+import org.jetbrains.kotlin.name.Name
 
 class IrConstructorBuilder @PublishedApi internal constructor(
-    name: String,
+    name: Name,
     buildingContext: IrBuildingContext
 ) : IrFunctionBuilder<IrConstructor>(buildingContext) {
 

@@ -15,10 +15,8 @@ import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
 import org.jetbrains.kotlin.ir.declarations.IrErrorDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
 import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunctionWithLateBinding
 import org.jetbrains.kotlin.ir.declarations.IrLocalDelegatedProperty
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrPropertyWithLateBinding
 import org.jetbrains.kotlin.ir.declarations.IrScript
@@ -73,298 +71,441 @@ import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.expressions.IrVararg
 import org.jetbrains.kotlin.ir.expressions.IrWhen
 import org.jetbrains.kotlin.ir.expressions.IrWhileLoop
+import org.jetbrains.kotlin.name.Name
 
+@IrNodeBuilderDsl
 inline fun buildIrValueParameter(
-    name: String,
+    name: Name,
     buildingContext: IrBuildingContext = IrBuildingContext(),
     block: IrElementBuilderClosure<IrValueParameterBuilder>,
 ): IrValueParameter = IrValueParameterBuilder(name, buildingContext).apply(block).build()
 
-inline fun buildIrClass(
+@IrNodeBuilderDsl
+inline fun buildIrValueParameter(
     name: String,
+    buildingContext: IrBuildingContext = IrBuildingContext(),
+    block: IrElementBuilderClosure<IrValueParameterBuilder>,
+): IrValueParameter = buildIrValueParameter(Name.guessByFirstCharacter(name), buildingContext,
+        block)
+
+@IrNodeBuilderDsl
+inline fun buildIrClass(
+    name: Name,
     buildingContext: IrBuildingContext = IrBuildingContext(),
     block: IrElementBuilderClosure<IrClassBuilder>,
 ): IrClass = IrClassBuilder(name, buildingContext).apply(block).build()
 
+@IrNodeBuilderDsl
+inline fun buildIrClass(
+    name: String,
+    buildingContext: IrBuildingContext = IrBuildingContext(),
+    block: IrElementBuilderClosure<IrClassBuilder>,
+): IrClass = buildIrClass(Name.guessByFirstCharacter(name), buildingContext, block)
+
+@IrNodeBuilderDsl
 inline fun buildIrAnonymousInitializer(buildingContext: IrBuildingContext =
         IrBuildingContext(), block: IrElementBuilderClosure<IrAnonymousInitializerBuilder>):
         IrAnonymousInitializer = IrAnonymousInitializerBuilder(buildingContext).apply(block).build()
 
+@IrNodeBuilderDsl
 inline fun buildIrTypeParameter(
-    name: String,
+    name: Name,
     buildingContext: IrBuildingContext = IrBuildingContext(),
     block: IrElementBuilderClosure<IrTypeParameterBuilder>,
 ): IrTypeParameter = IrTypeParameterBuilder(name, buildingContext).apply(block).build()
 
-inline fun buildIrConstructor(
+@IrNodeBuilderDsl
+inline fun buildIrTypeParameter(
     name: String,
+    buildingContext: IrBuildingContext = IrBuildingContext(),
+    block: IrElementBuilderClosure<IrTypeParameterBuilder>,
+): IrTypeParameter = buildIrTypeParameter(Name.guessByFirstCharacter(name), buildingContext, block)
+
+@IrNodeBuilderDsl
+inline fun buildIrConstructor(
+    name: Name,
     buildingContext: IrBuildingContext = IrBuildingContext(),
     block: IrElementBuilderClosure<IrConstructorBuilder>,
 ): IrConstructor = IrConstructorBuilder(name, buildingContext).apply(block).build()
 
-inline fun buildIrEnumEntry(
+@IrNodeBuilderDsl
+inline fun buildIrConstructor(
     name: String,
+    buildingContext: IrBuildingContext = IrBuildingContext(),
+    block: IrElementBuilderClosure<IrConstructorBuilder>,
+): IrConstructor = buildIrConstructor(Name.guessByFirstCharacter(name), buildingContext, block)
+
+@IrNodeBuilderDsl
+inline fun buildIrEnumEntry(
+    name: Name,
     buildingContext: IrBuildingContext = IrBuildingContext(),
     block: IrElementBuilderClosure<IrEnumEntryBuilder>,
 ): IrEnumEntry = IrEnumEntryBuilder(name, buildingContext).apply(block).build()
 
+@IrNodeBuilderDsl
+inline fun buildIrEnumEntry(
+    name: String,
+    buildingContext: IrBuildingContext = IrBuildingContext(),
+    block: IrElementBuilderClosure<IrEnumEntryBuilder>,
+): IrEnumEntry = buildIrEnumEntry(Name.guessByFirstCharacter(name), buildingContext, block)
+
+@IrNodeBuilderDsl
 inline fun buildIrErrorDeclaration(buildingContext: IrBuildingContext = IrBuildingContext(),
         block: IrElementBuilderClosure<IrErrorDeclarationBuilder>): IrErrorDeclaration =
         IrErrorDeclarationBuilder(buildingContext).apply(block).build()
 
+@IrNodeBuilderDsl
 inline fun buildIrFunctionWithLateBinding(buildingContext: IrBuildingContext =
         IrBuildingContext(), block: IrElementBuilderClosure<IrFunctionWithLateBindingBuilder>):
         IrFunctionWithLateBinding =
         IrFunctionWithLateBindingBuilder(buildingContext).apply(block).build()
 
+@IrNodeBuilderDsl
 inline fun buildIrPropertyWithLateBinding(buildingContext: IrBuildingContext =
         IrBuildingContext(), block: IrElementBuilderClosure<IrPropertyWithLateBindingBuilder>):
         IrPropertyWithLateBinding =
         IrPropertyWithLateBindingBuilder(buildingContext).apply(block).build()
 
+@IrNodeBuilderDsl
 inline fun buildIrField(
-    name: String,
+    name: Name,
     buildingContext: IrBuildingContext = IrBuildingContext(),
     block: IrElementBuilderClosure<IrFieldBuilder>,
 ): IrField = IrFieldBuilder(name, buildingContext).apply(block).build()
 
-inline fun buildIrLocalDelegatedProperty(
+@IrNodeBuilderDsl
+inline fun buildIrField(
     name: String,
+    buildingContext: IrBuildingContext = IrBuildingContext(),
+    block: IrElementBuilderClosure<IrFieldBuilder>,
+): IrField = buildIrField(Name.guessByFirstCharacter(name), buildingContext, block)
+
+@IrNodeBuilderDsl
+inline fun buildIrLocalDelegatedProperty(
+    name: Name,
     buildingContext: IrBuildingContext = IrBuildingContext(),
     block: IrElementBuilderClosure<IrLocalDelegatedPropertyBuilder>,
 ): IrLocalDelegatedProperty = IrLocalDelegatedPropertyBuilder(name,
         buildingContext).apply(block).build()
 
-inline fun buildIrModuleFragment(buildingContext: IrBuildingContext = IrBuildingContext(),
-        block: IrElementBuilderClosure<IrModuleFragmentBuilder>): IrModuleFragment =
-        IrModuleFragmentBuilder(buildingContext).apply(block).build()
-
-inline fun buildIrProperty(
+@IrNodeBuilderDsl
+inline fun buildIrLocalDelegatedProperty(
     name: String,
+    buildingContext: IrBuildingContext = IrBuildingContext(),
+    block: IrElementBuilderClosure<IrLocalDelegatedPropertyBuilder>,
+): IrLocalDelegatedProperty = buildIrLocalDelegatedProperty(Name.guessByFirstCharacter(name),
+        buildingContext, block)
+
+@IrNodeBuilderDsl
+inline fun buildIrProperty(
+    name: Name,
     buildingContext: IrBuildingContext = IrBuildingContext(),
     block: IrElementBuilderClosure<IrPropertyBuilder>,
 ): IrProperty = IrPropertyBuilder(name, buildingContext).apply(block).build()
 
-inline fun buildIrScript(
+@IrNodeBuilderDsl
+inline fun buildIrProperty(
     name: String,
+    buildingContext: IrBuildingContext = IrBuildingContext(),
+    block: IrElementBuilderClosure<IrPropertyBuilder>,
+): IrProperty = buildIrProperty(Name.guessByFirstCharacter(name), buildingContext, block)
+
+@IrNodeBuilderDsl
+inline fun buildIrScript(
+    name: Name,
     buildingContext: IrBuildingContext = IrBuildingContext(),
     block: IrElementBuilderClosure<IrScriptBuilder>,
 ): IrScript = IrScriptBuilder(name, buildingContext).apply(block).build()
 
-inline fun buildIrSimpleFunction(
+@IrNodeBuilderDsl
+inline fun buildIrScript(
     name: String,
+    buildingContext: IrBuildingContext = IrBuildingContext(),
+    block: IrElementBuilderClosure<IrScriptBuilder>,
+): IrScript = buildIrScript(Name.guessByFirstCharacter(name), buildingContext, block)
+
+@IrNodeBuilderDsl
+inline fun buildIrSimpleFunction(
+    name: Name,
     buildingContext: IrBuildingContext = IrBuildingContext(),
     block: IrElementBuilderClosure<IrSimpleFunctionBuilder>,
 ): IrSimpleFunction = IrSimpleFunctionBuilder(name, buildingContext).apply(block).build()
 
-inline fun buildIrTypeAlias(
+@IrNodeBuilderDsl
+inline fun buildIrSimpleFunction(
     name: String,
+    buildingContext: IrBuildingContext = IrBuildingContext(),
+    block: IrElementBuilderClosure<IrSimpleFunctionBuilder>,
+): IrSimpleFunction = buildIrSimpleFunction(Name.guessByFirstCharacter(name), buildingContext,
+        block)
+
+@IrNodeBuilderDsl
+inline fun buildIrTypeAlias(
+    name: Name,
     buildingContext: IrBuildingContext = IrBuildingContext(),
     block: IrElementBuilderClosure<IrTypeAliasBuilder>,
 ): IrTypeAlias = IrTypeAliasBuilder(name, buildingContext).apply(block).build()
 
-inline fun buildIrVariable(
+@IrNodeBuilderDsl
+inline fun buildIrTypeAlias(
     name: String,
+    buildingContext: IrBuildingContext = IrBuildingContext(),
+    block: IrElementBuilderClosure<IrTypeAliasBuilder>,
+): IrTypeAlias = buildIrTypeAlias(Name.guessByFirstCharacter(name), buildingContext, block)
+
+@IrNodeBuilderDsl
+inline fun buildIrVariable(
+    name: Name,
     buildingContext: IrBuildingContext = IrBuildingContext(),
     block: IrElementBuilderClosure<IrVariableBuilder>,
 ): IrVariable = IrVariableBuilder(name, buildingContext).apply(block).build()
 
+@IrNodeBuilderDsl
+inline fun buildIrVariable(
+    name: String,
+    buildingContext: IrBuildingContext = IrBuildingContext(),
+    block: IrElementBuilderClosure<IrVariableBuilder>,
+): IrVariable = buildIrVariable(Name.guessByFirstCharacter(name), buildingContext, block)
+
+@IrNodeBuilderDsl
 inline fun buildIrExternalPackageFragment(buildingContext: IrBuildingContext =
         IrBuildingContext(), block: IrElementBuilderClosure<IrExternalPackageFragmentBuilder>):
         IrExternalPackageFragment =
         IrExternalPackageFragmentBuilder(buildingContext).apply(block).build()
 
-inline fun buildIrFile(buildingContext: IrBuildingContext = IrBuildingContext(),
-        block: IrElementBuilderClosure<IrFileBuilder>): IrFile =
-        IrFileBuilder(buildingContext).apply(block).build()
-
+@IrNodeBuilderDsl
 inline fun buildIrExpressionBody(buildingContext: IrBuildingContext = IrBuildingContext(),
         block: IrElementBuilderClosure<IrExpressionBodyBuilder>): IrExpressionBody =
         IrExpressionBodyBuilder(buildingContext).apply(block).build()
 
+@IrNodeBuilderDsl
 inline fun buildIrBlockBody(buildingContext: IrBuildingContext = IrBuildingContext(),
         block: IrElementBuilderClosure<IrBlockBodyBuilder>): IrBlockBody =
         IrBlockBodyBuilder(buildingContext).apply(block).build()
 
+@IrNodeBuilderDsl
 inline fun buildIrConstructorCall(buildingContext: IrBuildingContext = IrBuildingContext(),
         block: IrElementBuilderClosure<IrConstructorCallBuilder>): IrConstructorCall =
         IrConstructorCallBuilder(buildingContext).apply(block).build()
 
+@IrNodeBuilderDsl
 inline fun buildIrGetObjectValue(buildingContext: IrBuildingContext = IrBuildingContext(),
         block: IrElementBuilderClosure<IrGetObjectValueBuilder>): IrGetObjectValue =
         IrGetObjectValueBuilder(buildingContext).apply(block).build()
 
+@IrNodeBuilderDsl
 inline fun buildIrGetEnumValue(buildingContext: IrBuildingContext = IrBuildingContext(),
         block: IrElementBuilderClosure<IrGetEnumValueBuilder>): IrGetEnumValue =
         IrGetEnumValueBuilder(buildingContext).apply(block).build()
 
+@IrNodeBuilderDsl
 inline fun buildIrRawFunctionReference(buildingContext: IrBuildingContext =
         IrBuildingContext(), block: IrElementBuilderClosure<IrRawFunctionReferenceBuilder>):
         IrRawFunctionReference = IrRawFunctionReferenceBuilder(buildingContext).apply(block).build()
 
+@IrNodeBuilderDsl
 inline fun buildIrComposite(buildingContext: IrBuildingContext = IrBuildingContext(),
         block: IrElementBuilderClosure<IrCompositeBuilder>): IrComposite =
         IrCompositeBuilder(buildingContext).apply(block).build()
 
+@IrNodeBuilderDsl
 inline fun buildIrReturnableBlock(buildingContext: IrBuildingContext = IrBuildingContext(),
         block: IrElementBuilderClosure<IrReturnableBlockBuilder>): IrReturnableBlock =
         IrReturnableBlockBuilder(buildingContext).apply(block).build()
 
+@IrNodeBuilderDsl
 inline fun buildIrSyntheticBody(buildingContext: IrBuildingContext = IrBuildingContext(),
         block: IrElementBuilderClosure<IrSyntheticBodyBuilder>): IrSyntheticBody =
         IrSyntheticBodyBuilder(buildingContext).apply(block).build()
 
+@IrNodeBuilderDsl
 inline fun buildIrBreak(buildingContext: IrBuildingContext = IrBuildingContext(),
         block: IrElementBuilderClosure<IrBreakBuilder>): IrBreak =
         IrBreakBuilder(buildingContext).apply(block).build()
 
+@IrNodeBuilderDsl
 inline fun buildIrContinue(buildingContext: IrBuildingContext = IrBuildingContext(),
         block: IrElementBuilderClosure<IrContinueBuilder>): IrContinue =
         IrContinueBuilder(buildingContext).apply(block).build()
 
+@IrNodeBuilderDsl
 inline fun buildIrCall(buildingContext: IrBuildingContext = IrBuildingContext(),
         block: IrElementBuilderClosure<IrCallBuilder>): IrCall =
         IrCallBuilder(buildingContext).apply(block).build()
 
+@IrNodeBuilderDsl
 inline fun buildIrFunctionReference(buildingContext: IrBuildingContext = IrBuildingContext(),
         block: IrElementBuilderClosure<IrFunctionReferenceBuilder>): IrFunctionReference =
         IrFunctionReferenceBuilder(buildingContext).apply(block).build()
 
+@IrNodeBuilderDsl
 inline fun buildIrPropertyReference(buildingContext: IrBuildingContext = IrBuildingContext(),
         block: IrElementBuilderClosure<IrPropertyReferenceBuilder>): IrPropertyReference =
         IrPropertyReferenceBuilder(buildingContext).apply(block).build()
 
+@IrNodeBuilderDsl
 inline fun buildIrLocalDelegatedPropertyReference(buildingContext: IrBuildingContext =
         IrBuildingContext(),
         block: IrElementBuilderClosure<IrLocalDelegatedPropertyReferenceBuilder>):
         IrLocalDelegatedPropertyReference =
         IrLocalDelegatedPropertyReferenceBuilder(buildingContext).apply(block).build()
 
+@IrNodeBuilderDsl
 inline fun buildIrClassReference(buildingContext: IrBuildingContext = IrBuildingContext(),
         block: IrElementBuilderClosure<IrClassReferenceBuilder>): IrClassReference =
         IrClassReferenceBuilder(buildingContext).apply(block).build()
 
+@IrNodeBuilderDsl
 inline fun <T> buildIrConst(buildingContext: IrBuildingContext = IrBuildingContext(),
         block: IrElementBuilderClosure<IrConstBuilder<T>>): IrConst<T> =
         IrConstBuilder<T>(buildingContext).apply(block).build()
 
+@IrNodeBuilderDsl
 inline fun buildIrConstantPrimitive(buildingContext: IrBuildingContext = IrBuildingContext(),
         block: IrElementBuilderClosure<IrConstantPrimitiveBuilder>): IrConstantPrimitive =
         IrConstantPrimitiveBuilder(buildingContext).apply(block).build()
 
+@IrNodeBuilderDsl
 inline fun buildIrConstantObject(buildingContext: IrBuildingContext = IrBuildingContext(),
         block: IrElementBuilderClosure<IrConstantObjectBuilder>): IrConstantObject =
         IrConstantObjectBuilder(buildingContext).apply(block).build()
 
+@IrNodeBuilderDsl
 inline fun buildIrConstantArray(buildingContext: IrBuildingContext = IrBuildingContext(),
         block: IrElementBuilderClosure<IrConstantArrayBuilder>): IrConstantArray =
         IrConstantArrayBuilder(buildingContext).apply(block).build()
 
+@IrNodeBuilderDsl
 inline fun buildIrDelegatingConstructorCall(buildingContext: IrBuildingContext =
         IrBuildingContext(), block: IrElementBuilderClosure<IrDelegatingConstructorCallBuilder>):
         IrDelegatingConstructorCall =
         IrDelegatingConstructorCallBuilder(buildingContext).apply(block).build()
 
+@IrNodeBuilderDsl
 inline fun buildIrDynamicOperatorExpression(buildingContext: IrBuildingContext =
         IrBuildingContext(), block: IrElementBuilderClosure<IrDynamicOperatorExpressionBuilder>):
         IrDynamicOperatorExpression =
         IrDynamicOperatorExpressionBuilder(buildingContext).apply(block).build()
 
+@IrNodeBuilderDsl
 inline fun buildIrDynamicMemberExpression(buildingContext: IrBuildingContext =
         IrBuildingContext(), block: IrElementBuilderClosure<IrDynamicMemberExpressionBuilder>):
         IrDynamicMemberExpression =
         IrDynamicMemberExpressionBuilder(buildingContext).apply(block).build()
 
+@IrNodeBuilderDsl
 inline fun buildIrEnumConstructorCall(buildingContext: IrBuildingContext =
         IrBuildingContext(), block: IrElementBuilderClosure<IrEnumConstructorCallBuilder>):
         IrEnumConstructorCall = IrEnumConstructorCallBuilder(buildingContext).apply(block).build()
 
+@IrNodeBuilderDsl
 inline fun buildIrErrorCallExpression(buildingContext: IrBuildingContext =
         IrBuildingContext(), block: IrElementBuilderClosure<IrErrorCallExpressionBuilder>):
         IrErrorCallExpression = IrErrorCallExpressionBuilder(buildingContext).apply(block).build()
 
+@IrNodeBuilderDsl
 inline fun buildIrGetField(buildingContext: IrBuildingContext = IrBuildingContext(),
         block: IrElementBuilderClosure<IrGetFieldBuilder>): IrGetField =
         IrGetFieldBuilder(buildingContext).apply(block).build()
 
+@IrNodeBuilderDsl
 inline fun buildIrSetField(buildingContext: IrBuildingContext = IrBuildingContext(),
         block: IrElementBuilderClosure<IrSetFieldBuilder>): IrSetField =
         IrSetFieldBuilder(buildingContext).apply(block).build()
 
+@IrNodeBuilderDsl
 inline fun buildIrFunctionExpression(buildingContext: IrBuildingContext =
         IrBuildingContext(), block: IrElementBuilderClosure<IrFunctionExpressionBuilder>):
         IrFunctionExpression = IrFunctionExpressionBuilder(buildingContext).apply(block).build()
 
+@IrNodeBuilderDsl
 inline fun buildIrGetClass(buildingContext: IrBuildingContext = IrBuildingContext(),
         block: IrElementBuilderClosure<IrGetClassBuilder>): IrGetClass =
         IrGetClassBuilder(buildingContext).apply(block).build()
 
+@IrNodeBuilderDsl
 inline fun buildIrInstanceInitializerCall(buildingContext: IrBuildingContext =
         IrBuildingContext(), block: IrElementBuilderClosure<IrInstanceInitializerCallBuilder>):
         IrInstanceInitializerCall =
         IrInstanceInitializerCallBuilder(buildingContext).apply(block).build()
 
+@IrNodeBuilderDsl
 inline fun buildIrWhileLoop(buildingContext: IrBuildingContext = IrBuildingContext(),
         block: IrElementBuilderClosure<IrWhileLoopBuilder>): IrWhileLoop =
         IrWhileLoopBuilder(buildingContext).apply(block).build()
 
+@IrNodeBuilderDsl
 inline fun buildIrDoWhileLoop(buildingContext: IrBuildingContext = IrBuildingContext(),
         block: IrElementBuilderClosure<IrDoWhileLoopBuilder>): IrDoWhileLoop =
         IrDoWhileLoopBuilder(buildingContext).apply(block).build()
 
+@IrNodeBuilderDsl
 inline fun buildIrReturn(buildingContext: IrBuildingContext = IrBuildingContext(),
         block: IrElementBuilderClosure<IrReturnBuilder>): IrReturn =
         IrReturnBuilder(buildingContext).apply(block).build()
 
+@IrNodeBuilderDsl
 inline fun buildIrStringConcatenation(buildingContext: IrBuildingContext =
         IrBuildingContext(), block: IrElementBuilderClosure<IrStringConcatenationBuilder>):
         IrStringConcatenation = IrStringConcatenationBuilder(buildingContext).apply(block).build()
 
+@IrNodeBuilderDsl
 inline fun buildIrSuspensionPoint(buildingContext: IrBuildingContext = IrBuildingContext(),
         block: IrElementBuilderClosure<IrSuspensionPointBuilder>): IrSuspensionPoint =
         IrSuspensionPointBuilder(buildingContext).apply(block).build()
 
+@IrNodeBuilderDsl
 inline fun buildIrSuspendableExpression(buildingContext: IrBuildingContext =
         IrBuildingContext(), block: IrElementBuilderClosure<IrSuspendableExpressionBuilder>):
         IrSuspendableExpression =
         IrSuspendableExpressionBuilder(buildingContext).apply(block).build()
 
+@IrNodeBuilderDsl
 inline fun buildIrThrow(buildingContext: IrBuildingContext = IrBuildingContext(),
         block: IrElementBuilderClosure<IrThrowBuilder>): IrThrow =
         IrThrowBuilder(buildingContext).apply(block).build()
 
+@IrNodeBuilderDsl
 inline fun buildIrTry(buildingContext: IrBuildingContext = IrBuildingContext(),
         block: IrElementBuilderClosure<IrTryBuilder>): IrTry =
         IrTryBuilder(buildingContext).apply(block).build()
 
+@IrNodeBuilderDsl
 inline fun buildIrCatch(buildingContext: IrBuildingContext = IrBuildingContext(),
         block: IrElementBuilderClosure<IrCatchBuilder>): IrCatch =
         IrCatchBuilder(buildingContext).apply(block).build()
 
+@IrNodeBuilderDsl
 inline fun buildIrTypeOperatorCall(buildingContext: IrBuildingContext = IrBuildingContext(),
         block: IrElementBuilderClosure<IrTypeOperatorCallBuilder>): IrTypeOperatorCall =
         IrTypeOperatorCallBuilder(buildingContext).apply(block).build()
 
+@IrNodeBuilderDsl
 inline fun buildIrGetValue(buildingContext: IrBuildingContext = IrBuildingContext(),
         block: IrElementBuilderClosure<IrGetValueBuilder>): IrGetValue =
         IrGetValueBuilder(buildingContext).apply(block).build()
 
+@IrNodeBuilderDsl
 inline fun buildIrSetValue(buildingContext: IrBuildingContext = IrBuildingContext(),
         block: IrElementBuilderClosure<IrSetValueBuilder>): IrSetValue =
         IrSetValueBuilder(buildingContext).apply(block).build()
 
+@IrNodeBuilderDsl
 inline fun buildIrVararg(buildingContext: IrBuildingContext = IrBuildingContext(),
         block: IrElementBuilderClosure<IrVarargBuilder>): IrVararg =
         IrVarargBuilder(buildingContext).apply(block).build()
 
+@IrNodeBuilderDsl
 inline fun buildIrSpreadElement(buildingContext: IrBuildingContext = IrBuildingContext(),
         block: IrElementBuilderClosure<IrSpreadElementBuilder>): IrSpreadElement =
         IrSpreadElementBuilder(buildingContext).apply(block).build()
 
+@IrNodeBuilderDsl
 inline fun buildIrWhen(buildingContext: IrBuildingContext = IrBuildingContext(),
         block: IrElementBuilderClosure<IrWhenBuilder>): IrWhen =
         IrWhenBuilder(buildingContext).apply(block).build()
 
+@IrNodeBuilderDsl
 inline fun buildIrElseBranch(buildingContext: IrBuildingContext = IrBuildingContext(),
         block: IrElementBuilderClosure<IrElseBranchBuilder>): IrElseBranch =
         IrElseBranchBuilder(buildingContext).apply(block).build()

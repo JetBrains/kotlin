@@ -6,8 +6,9 @@
 package org.jetbrains.kotlin.ir.pretty
 
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
+import org.jetbrains.kotlin.name.Name
 
-class IrTypeParameterBuilder @PublishedApi internal constructor(private val name: String, buildingContext: IrBuildingContext) :
+class IrTypeParameterBuilder @PublishedApi internal constructor(private val name: Name, buildingContext: IrBuildingContext) :
     IrDeclarationBuilder<IrTypeParameter>(buildingContext) {
 
     @PublishedApi

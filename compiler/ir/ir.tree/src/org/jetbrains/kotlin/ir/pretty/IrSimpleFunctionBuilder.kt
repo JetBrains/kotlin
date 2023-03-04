@@ -6,9 +6,10 @@
 package org.jetbrains.kotlin.ir.pretty
 
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.name.Name
 
 class IrSimpleFunctionBuilder @PublishedApi internal constructor(
-    private val name: String,
+    private val name: Name,
     buildingContext: IrBuildingContext
 ) : IrFunctionBuilder<IrSimpleFunction>(buildingContext) {
 

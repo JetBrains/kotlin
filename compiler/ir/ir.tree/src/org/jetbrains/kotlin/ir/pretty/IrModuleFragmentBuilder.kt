@@ -5,11 +5,17 @@
 
 package org.jetbrains.kotlin.ir.pretty
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
+import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
 @PrettyIrDsl
 class IrModuleFragmentBuilder @PublishedApi internal constructor(

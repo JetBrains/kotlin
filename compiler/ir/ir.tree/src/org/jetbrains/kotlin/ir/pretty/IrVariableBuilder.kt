@@ -6,8 +6,9 @@
 package org.jetbrains.kotlin.ir.pretty
 
 import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.name.Name
 
-class IrVariableBuilder @PublishedApi internal constructor(private val name: String, buildingContext: IrBuildingContext) :
+class IrVariableBuilder @PublishedApi internal constructor(private val name: Name, buildingContext: IrBuildingContext) :
     IrDeclarationBuilder<IrVariable>(buildingContext) {
 
     @PublishedApi

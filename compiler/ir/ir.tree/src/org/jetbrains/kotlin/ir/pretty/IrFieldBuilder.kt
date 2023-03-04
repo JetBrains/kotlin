@@ -6,8 +6,9 @@
 package org.jetbrains.kotlin.ir.pretty
 
 import org.jetbrains.kotlin.ir.declarations.IrField
+import org.jetbrains.kotlin.name.Name
 
-class IrFieldBuilder @PublishedApi internal constructor(val name: String, buildingContext: IrBuildingContext) : IrDeclarationBuilder<IrField>(buildingContext) {
+class IrFieldBuilder @PublishedApi internal constructor(val name: Name, buildingContext: IrBuildingContext) : IrDeclarationBuilder<IrField>(buildingContext) {
 
     @PublishedApi
     override fun build(): IrField {

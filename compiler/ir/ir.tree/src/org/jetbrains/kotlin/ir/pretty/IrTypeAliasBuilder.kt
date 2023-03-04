@@ -6,8 +6,9 @@
 package org.jetbrains.kotlin.ir.pretty
 
 import org.jetbrains.kotlin.ir.declarations.IrTypeAlias
+import org.jetbrains.kotlin.name.Name
 
-class IrTypeAliasBuilder @PublishedApi internal constructor(private val name: String, buildingContext: IrBuildingContext) :
+class IrTypeAliasBuilder @PublishedApi internal constructor(private val name: Name, buildingContext: IrBuildingContext) :
     IrDeclarationBuilder<IrTypeAlias>(buildingContext) {
 
     @PublishedApi

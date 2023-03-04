@@ -8,8 +8,9 @@ package org.jetbrains.kotlin.ir.generator.print
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import org.jetbrains.kotlin.ir.generator.DSL_PACKAGE
-import org.jetbrains.kotlin.ir.generator.config.ElementConfig
+import org.jetbrains.kotlin.ir.generator.IrTree
 import org.jetbrains.kotlin.ir.generator.model.Element
+import org.jetbrains.kotlin.ir.generator.model.ElementRef
 import org.jetbrains.kotlin.ir.generator.model.Field
 import org.jetbrains.kotlin.ir.generator.model.Model
 import org.jetbrains.kotlin.ir.generator.util.GeneratedFile
@@ -18,41 +19,49 @@ import org.jetbrains.kotlin.name.Name
 import java.io.File
 
 private val buildingContextTypeName = ClassName(DSL_PACKAGE, "IrBuildingContext")
-private val prettyIrDslAnnotationTypeName = ClassName(DSL_PACKAGE, "PrettyIrDsl")
 private val irNodeBuilderDslAnnotationTypeName = ClassName(DSL_PACKAGE, "IrNodeBuilderDsl")
 
 fun printDslDeclarationContainerBuilder(generationPath: File, model: Model): GeneratedFile {
     val interfaceName = "IrDeclarationContainerBuilder"
     return printFile(generationPath, DSL_PACKAGE, interfaceName) {
         for (element in model.elements) {
-            if (!element.isLeaf || element.packageName != ElementConfig.Category.Declaration.packageName) continue
-            addFunction(
-                buildChildDeclarationBuilderFunction(element)
-                    .receiver(ClassName(DSL_PACKAGE, interfaceName))
-                    .addAnnotation(irNodeBuilderDslAnnotationTypeName)
-                    .run {
-                        addStatement(
-                            buildString {
-                                append("declarationBuilders")
-                                append(".add(")
-                                appendCallToBuilder(
-                                    element,
-                                    buildingContextPropertyName = "buildingContext",
-                                    mandatoryParameterNames = parameters.dropLast(1).map { it.name },
-                                    blockParameterName = parameters.last().name
-                                )
-                                append(")")
-                            }
-                        )
-                    }
-                    .build()
-            )
+            if (!element.isLeaf || !element.isDeclarationElement) continue
+            buildIrNodeBuilderFunctions(
+                element,
+                name = element.typeName.replaceFirstChar(Char::lowercaseChar),
+                additionalParameters = emptyList(),
+                returnType = UNIT,
+                customize = {
+                    receiver(ClassName(DSL_PACKAGE, interfaceName))
+                },
+                bodyBuilder = {
+                    addStatement(
+                        buildString {
+                            append("declarationBuilders")
+                            append(".add(")
+                            appendCallToBuilder(
+                                element,
+                                buildingContextPropertyName = "buildingContext",
+                                mandatoryParameterNames = parameters.dropLast(1).map { it.name },
+                                blockParameterName = parameters.last().name
+                            )
+                            append(")")
+                        }
+                    )
+                }
+            ).forEach(::addFunction)
         }
     }
 }
 
-private val Element.isDeclaration: Boolean
-    get() = TODO()
+private val Element.isDeclarationElement: Boolean
+    get() {
+        fun isDeclaration(parents: List<ElementRef>): Boolean {
+            if (parents.any { it.element.name == IrTree.declaration.name }) return true
+            return parents.any { isDeclaration(it.element.elementParents) }
+        }
+        return isDeclaration(elementParents)
+    }
 
 private fun StringBuilder.appendCallToBuilder(
     element: Element,
@@ -78,20 +87,12 @@ private fun StringBuilder.appendCallToBuilder(
 fun printTopLevelBuilderFunctions(generationPath: File, model: Model) = printFile(generationPath, DSL_PACKAGE, "topLevelBuilders") {
     for (element in model.elements) {
         if (!element.isLeaf) continue
-        addFunction(buildTopLevelBuilderFunction(element).build())
-    }
-}
 
-private fun buildMandatoryElementSpecificParameters(element: Element) = element.allFields.mapNotNull { field ->
-    if (field.isMandatoryInDSL) {
-        val poetFieldType = field.type.toPoet()
-        val type = if (poetFieldType == Name::class.asTypeName()) {
-            STRING
-        } else {
-            poetFieldType
-        }
-        ParameterSpec.builder(field.name, type).build()
-    } else null
+        // IrFile and IrModuleFragment builders are special, we'll implement them by hand
+        if (element.name == IrTree.file.name || element.name == IrTree.moduleFragment.name) continue
+
+        buildTopLevelBuilderFunctions(element).forEach(::addFunction)
+    }
 }
 
 private fun buildBuildingContextParameter() =
@@ -110,39 +111,91 @@ private fun buildLambdaParameter(element: Element) =
         )
     ).build()
 
-private fun buildBuilderFunction(element: Element, name: String, additionalParameters: Iterable<ParameterSpec>, returnType: TypeName) =
-    FunSpec.builder(name)
-        .addModifiers(KModifier.INLINE)
-        .addTypeVariables(element.poetTypeVariables)
-        .addParameters(buildMandatoryElementSpecificParameters(element))
-        .addParameters(additionalParameters)
-        .addParameter(buildLambdaParameter(element))
-        .returns(returnType)
+private fun buildIrNodeBuilderFunctions(
+    element: Element,
+    name: String,
+    additionalParameters: Iterable<ParameterSpec>,
+    returnType: TypeName,
+    customize: FunSpec.Builder.() -> Unit = {},
+    bodyBuilder: FunSpec.Builder.() -> Unit
+): List<FunSpec> {
+    var hasNameParameter = false
 
-private fun buildChildDeclarationBuilderFunction(element: Element) =
-    buildBuilderFunction(
-        element,
-        name = element.typeName.replaceFirstChar(Char::lowercaseChar),
-        additionalParameters = emptyList(),
-        returnType = UNIT
+    val nameClass = Name::class.asTypeName()
+
+    val mandatoryFields = element.allFields.mapNotNull { field ->
+        if (field.isMandatoryInDSL) {
+            val poetFieldType = field.type.toPoet()
+            if (poetFieldType == nameClass) {
+                hasNameParameter = true
+            }
+            field.name to poetFieldType
+        } else null
+    }
+
+    val parameterSpecs = mandatoryFields.map { (name, type) -> ParameterSpec.builder(name, type).build() }
+
+    val parameterSpecsWithStringsInsteadOfNames = if (hasNameParameter)
+        mandatoryFields.map { (name, type) -> ParameterSpec.builder(name, if (type == nameClass) STRING else type).build() }
+    else
+        null
+
+    fun build(parameters: List<ParameterSpec>) =
+        FunSpec.builder(name)
+            .addModifiers(KModifier.INLINE)
+            .addAnnotation(irNodeBuilderDslAnnotationTypeName)
+            .addTypeVariables(element.poetTypeVariables)
+            .addParameters(parameters)
+            .addParameters(additionalParameters)
+            .addParameter(buildLambdaParameter(element))
+            .returns(returnType)
+            .apply(customize)
+
+    return listOfNotNull(
+        build(parameterSpecs).apply(bodyBuilder).build(),
+        parameterSpecsWithStringsInsteadOfNames
+            ?.let(::build)
+            ?.run {
+                addStatement(
+                    buildString {
+                        append("return ")
+                        append(name)
+                        parameters.withIndex().joinTo(this, prefix = "(", postfix = ")") { (i, parameter) ->
+                            if (i in parameterSpecs.indices && parameterSpecs[i].type == nameClass) {
+                                "${nameClass.simpleName}.${Name::guessByFirstCharacter.name}(${parameter.name})"
+                            } else {
+                                parameter.name
+                            }
+                        }
+                    }
+                )
+            }
+            ?.build()
     )
+}
 
-private fun buildTopLevelBuilderFunction(element: Element): FunSpec.Builder {
+private fun buildTopLevelBuilderFunctions(element: Element): List<FunSpec> {
     val buildingContextParameter = buildBuildingContextParameter()
-    return buildBuilderFunction(
+    return buildIrNodeBuilderFunctions(
         element,
         name = "build${element.typeName}",
         additionalParameters = listOf(buildingContextParameter),
-        element.toPoetSelfParameterized()
-    ).run {
-        addStatement(
-            buildString {
-                append("return ")
-                appendCallToBuilder(element, buildingContextParameter.name, parameters.dropLast(2).map { it.name }, parameters.last().name)
-                append(".build()")
-            }
-        )
-    }
+        element.toPoetSelfParameterized(),
+        bodyBuilder = {
+            addStatement(
+                buildString {
+                    append("return ")
+                    appendCallToBuilder(
+                        element,
+                        buildingContextParameter.name,
+                        parameters.dropLast(2).map { it.name },
+                        parameters.last().name
+                    )
+                    append(".build()")
+                }
+            )
+        }
+    )
 }
 
 private val Element.allFields: List<Field>

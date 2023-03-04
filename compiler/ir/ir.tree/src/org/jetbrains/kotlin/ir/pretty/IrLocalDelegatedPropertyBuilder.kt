@@ -6,8 +6,9 @@
 package org.jetbrains.kotlin.ir.pretty
 
 import org.jetbrains.kotlin.ir.declarations.IrLocalDelegatedProperty
+import org.jetbrains.kotlin.name.Name
 
-class IrLocalDelegatedPropertyBuilder @PublishedApi internal constructor(private val name: String, buildingContext: IrBuildingContext) :
+class IrLocalDelegatedPropertyBuilder @PublishedApi internal constructor(private val name: Name, buildingContext: IrBuildingContext) :
     IrDeclarationBuilder<IrLocalDelegatedProperty>(buildingContext) {
 
     @PublishedApi
