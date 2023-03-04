@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -54,9 +55,10 @@ private fun <T> MutableList<T>.trimSize(newSize: Int) {
     for (i in newSize until size) removeAt(size - 1)
 }
 
-private val IrFieldSymbol.name: String get() = if (isBound) owner.name.asString() else "unbound"
-
 internal object ControlFlowSensibleEscapeAnalysis {
+    private val IrFieldSymbol.name: String
+        get() = if (isBound) owner.name.asString() else "unbound"
+
     private class InterproceduralAnalysis(val context: Context, val callGraph: CallGraph) {
         fun analyze() {
             // TODO: To common function.
@@ -142,15 +144,19 @@ internal object ControlFlowSensibleEscapeAnalysis {
         }
 //        private val returnsValueField = IrFieldSymbolImpl()
 
-        private class EscapeAnalysisResult(val graph: PointsToGraph, val returnValue: Node) {
+        private class EscapeAnalysisResult(val graph: PointsToGraph, val returnValue: Node, val objectsReferencedFromThrown: BitSet) {
             companion object {
                 fun optimistic(returnType: IrType, parameters: List<IrValueParameter>): EscapeAnalysisResult {
                     val pointsToGraph = PointsToGraph(PointsToGraphForest())
                     parameters.forEachIndexed { index, parameter -> pointsToGraph.addParameter(parameter, index) }
                     val returnValue = with(pointsToGraph) {
-                        if (returnType.isUnit()) Node.Unit else newTempVariable()
+                        when {
+                            returnType.isNothing() -> Node.Nothing
+                            returnType.isUnit() -> Node.Unit
+                            else -> newTempVariable()
+                        }
                     }
-                    return EscapeAnalysisResult(pointsToGraph, returnValue)
+                    return EscapeAnalysisResult(pointsToGraph, returnValue, BitSet())
                 }
             }
         }
@@ -216,14 +222,27 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 override fun toString() = irVariable?.let { "<V:${it.name}>$id" } ?: "T$id"
             }
 
-            object Unit : Object(UNIT_ID, null, "<U>") {
+            object Nothing : Object(NOTHING_ID, null, "⊥") {
                 override fun shallowCopy() = this
             }
 
+            object Unit : Object(UNIT_ID, null, "( )") {
+                override fun shallowCopy() = this
+            }
+
+            inline fun forEachPointee(block: (Node) -> kotlin.Unit) {
+                when (this) {
+                    is Object -> this.fields.values.forEach { block(it) }
+                    is Variable -> this.assignedWith?.let { block(it) }
+                    is Phi -> this.pointsTo.forEach { block(it) }
+                }
+            }
+
             companion object {
-                const val UNIT_ID = 0
-                const val GLOBAL_ID = 1
-                const val LOWEST_NODE_ID = 2
+                const val NOTHING_ID = 0
+                const val UNIT_ID = 1
+                const val GLOBAL_ID = 2
+                const val LOWEST_NODE_ID = 3
             }
         }
 
@@ -235,12 +254,6 @@ internal object ControlFlowSensibleEscapeAnalysis {
             // TODO: Optimize.
             private val ids = mutableMapOf<Pair<Int, Any>, Int>()
             fun getAssociatedId(nodeId: Int, obj: Any) = ids.getOrPut(Pair(nodeId, obj)) { nextNodeId() }
-
-//            private val fieldIds = mutableMapOf<Pair<Int, IrFieldSymbol>, Int>()
-//            fun getFieldId(objectId: Int, field: IrFieldSymbol) = fieldIds.getOrPut(Pair(objectId, field)) { nextNodeId() }
-
-//            private val irElementIds = mutableMapOf<IrElement, Int>()
-//            fun getIrElementId(element: IrElement) = irElementIds.getOrPut(element) { nextNodeId() }
 
             fun cloneGraph(graph: PointsToGraph, otherNodesToMap: MutableList<Node>): PointsToGraph {
                 val parameterNodes = mutableMapOf<IrValueParameter, Node.Parameter>()
@@ -457,7 +470,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 val variableNodes: MutableMap<IrVariable, Node.VariableValue>
         ) : NodeFactory {
             constructor(forest: PointsToGraphForest)
-                    : this(forest, mutableListOf(Node.Unit, Node.Object(Node.GLOBAL_ID, null, "<G>")), mutableMapOf(), mutableMapOf())
+                    : this(forest, mutableListOf(Node.Nothing, Node.Unit, Node.Object(Node.GLOBAL_ID, null, "G")), mutableMapOf(), mutableMapOf())
 
             private inline fun <reified T : Node> getOrPutNodeAt(id: Int, nodeBuilder: (Int) -> T): T {
                 nodes.ensureSize(id + 1)
@@ -493,6 +506,15 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 other.variableNodes.forEach { (variable, variableNode) -> variableNodes[variable] = variableNode }
             }
 
+            fun clear() {
+                variableNodes.clear()
+                for (id in Node.LOWEST_NODE_ID until nodes.size) {
+                    val node = nodes[id] ?: continue
+                    if (node !is Node.Parameter)
+                        nodes[id] = null
+                }
+            }
+
             fun addParameter(parameter: IrValueParameter, index: Int) = putNewNodeAt(forest.nextNodeId()) { id ->
                 Node.Parameter(id, index, parameter).also { parameterNodes[parameter] = it }
             }
@@ -505,7 +527,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
             override fun newPhiNode() = getOrPutNodeAt(forest.nextNodeId()) { Node.Phi(it) }
             override fun newObject(label: String?) = getOrPutNodeAt(forest.nextNodeId()) { Node.Object(it, null, label) }
 
-            fun at(loop: IrLoop?, element: IrElement?, anchorNodeId: Int = Node.UNIT_ID): NodeFactory =
+            fun at(loop: IrLoop?, element: IrElement?, anchorNodeId: Int = 0): NodeFactory =
                     loop?.let { NodeContext(forest.getAssociatedId(anchorNodeId, element!!), it) } ?: this
 
             fun Node.Object.getField(field: IrFieldSymbol) = fields.getOrPut(field) {
@@ -535,7 +557,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
             //            *-*-*-*-*-*-*-*-*-*-*
             //
             // Nodes naming: u -> v -> w
-            fun bypass(v: Node.Variable, loop: IrLoop?, element: IrElement?, anchorNodeId: Int = Node.UNIT_ID) {
+            fun bypass(v: Node.Variable, loop: IrLoop?, element: IrElement?, anchorNodeId: Int = 0) {
                 require(v.assignedTo.isNotEmpty())
                 val w = v.assignedWith ?: at(loop, element, anchorNodeId).newObject()
                 (w as? Node.Variable)?.assignedTo?.run {
@@ -557,7 +579,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
             }
 
             fun getObjectNodes(node: Node, createFictitiousObjects: Boolean, loop: IrLoop?, element: IrElement?,
-                               anchorNodeId: Int = Node.UNIT_ID): List<Node.Object> = when (node) {
+                               anchorNodeId: Int = 0): List<Node.Object> = when (node) {
                 is Node.Object -> listOf(node)
                 is Node.Reference -> {
                     val visited = BitSet()
@@ -566,17 +588,9 @@ internal object ControlFlowSensibleEscapeAnalysis {
                     fun findReachable(node: Node.Reference) {
                         visited.set(node.id)
                         reachable.add(node)
-                        when (node) {
-                            is Node.Variable -> {
-                                (node.assignedWith as? Node.Reference)?.let {
-                                    if (!visited.get(it.id)) findReachable(it)
-                                }
-                            }
-                            is Node.Phi ->
-                                for (pointee in node.pointsTo)
-                                    (pointee as? Node.Reference)?.let {
-                                        if (!visited.get(it.id)) findReachable(it)
-                                    }
+                        node.forEachPointee { pointee ->
+                            if (pointee is Node.Reference && !visited.get(pointee.id))
+                                findReachable(pointee)
                         }
                     }
 
@@ -645,18 +659,33 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 }
             }
 
-            fun logDigraph(context: Context, vararg markedNodes: Node) = logDigraph(context, markedNodes.asList())
+            class LoggingOptions(val highlightLifetimes: Boolean, val markedNodes: BitSet, val thrownNodes: BitSet)
 
-            fun logDigraph(context: Context, markedNodes: List<Node>) = context.logMultiple {
+            class LoggingOptionsBuilder {
+                var highlightLifetimes = false
+                val markedNodes = BitSet()
+                var thrownNodes = BitSet()
+
+                operator fun Node.unaryPlus() = markedNodes.set(this.id)
+
+                fun build() = LoggingOptions(highlightLifetimes, markedNodes, thrownNodes)
+            }
+
+            fun logDigraph(context: Context, block: LoggingOptionsBuilder.() -> Unit) = context.logMultiple {
 //                log(context)
+
+                val builder = LoggingOptionsBuilder()
+                builder.block()
+                val options = builder.build()
 
                 +"digraph {"
                 +"rankdir=\"LR\";"
 
                 fun Node.format(): String {
                     val name = when (this) {
+                        Node.Nothing -> "nothing"
                         Node.Unit -> "unit"
-                        globalNode -> "glob"
+                        globalNode -> "global"
                         is Node.Parameter -> "param$id"
                         is Node.Object -> "obj$id"
                         is Node.FieldValue -> "field$id"
@@ -669,8 +698,13 @@ internal object ControlFlowSensibleEscapeAnalysis {
                     val colors = buildString {
                         if ((this@format as? Node.Object)?.loop != null)
                             append(" penwidth=3.0 color=deepskyblue")
-                        if (this@format in markedNodes)
-                            append(" fillcolor=yellow style=filled")
+                        val referencedFromThrown = options.thrownNodes.get(this@format.id)
+                        val marked = options.markedNodes.get(this@format.id)
+                        when {
+                            referencedFromThrown && marked -> append(" fillcolor=orangered style=filled")
+                            referencedFromThrown -> append(" fillcolor=crimson style=filled")
+                            marked -> append(" fillcolor=yellow style=filled")
+                        }
                     }
                     +"$name[$label$shape$colors]"
                     return name
@@ -697,50 +731,83 @@ internal object ControlFlowSensibleEscapeAnalysis {
 
         private class ExpressionResult(val value: Node, val graph: PointsToGraph)
 
-        private data class BuilderState(val graph: PointsToGraph, val loop: IrLoop?)
+        private data class BuilderState(val graph: PointsToGraph, val loop: IrLoop?, val insideATry: Boolean)
 
         private inner class PointsToGraphBuilder(
                 val function: IrFunction,
                 val forest: PointsToGraphForest,
                 val escapeAnalysisResults: Map<IrFunctionSymbol, EscapeAnalysisResult>
         ) : IrElementVisitor<Node, BuilderState> {
-            fun build(): ExpressionResult {
+            fun build(): EscapeAnalysisResult {
                 val pointsToGraph = PointsToGraph(forest)
                 function.allParameters.forEachIndexed { index, parameter -> pointsToGraph.addParameter(parameter, index) }
                 val returnResults = mutableListOf<ExpressionResult>()
                 returnTargetsResults[function.symbol] = returnResults
-                (function.body as IrBlockBody).statements.forEach { it.accept(this, BuilderState(pointsToGraph, null)) }
+                (function.body as IrBlockBody).statements.forEach { it.accept(this, BuilderState(pointsToGraph, null, false)) }
                 val functionResult = controlFlowMergePoint(pointsToGraph, null, null, function.returnType, returnResults)
-                return ExpressionResult(functionResult, pointsToGraph)
+                return EscapeAnalysisResult(pointsToGraph, functionResult, objectsReferencedFromThrown)
             }
 
-            fun controlFlowMergePoint(graph: PointsToGraph, loop: IrLoop?, element: IrElement?, type: IrType, results: List<ExpressionResult>): Node {
-                return if (results.size == 1) {
+            fun PointsToGraph.logDigraph(vararg markedNodes: Node) =
+                    logDigraph(context) {
+                        thrownNodes = objectsReferencedFromThrown
+                        for (node in markedNodes) +node
+                    }
+
+            fun PointsToGraph.logDigraph(context: Context, markedNodes: List<Node>) =
+                    logDigraph(context) {
+                        thrownNodes = objectsReferencedFromThrown
+                        for (node in markedNodes) +node
+                    }
+
+            fun controlFlowMergePoint(graph: PointsToGraph, loop: IrLoop?, element: IrElement?, type: IrType, results: List<ExpressionResult>) =
+                    controlFlowMergePointImpl(graph, loop, element, type, results.filterNot { it.value == Node.Nothing })
+
+            fun controlFlowMergePointImpl(graph: PointsToGraph, loop: IrLoop?, element: IrElement?,
+                                          type: IrType, results: List<ExpressionResult>
+            ): Node = when (results.size) {
+                0 -> {
+                    graph.clear()
+                    Node.Nothing
+                }
+                1 -> {
                     graph.copyFrom(results[0].graph)
-                    if (type.isUnit()) Node.Unit else results[0].value
-                } else {
+                    when {
+                        type.isNothing() -> Node.Nothing
+                        type.isUnit() -> Node.Unit
+                        else -> results[0].value
+                    }
+                }
+                else -> {
                     context.log { "before CFG merge" }
                     results.forEachIndexed { index, result ->
                         context.log { "#$index:" }
-                        result.graph.logDigraph(context, result.value)
+                        result.graph.logDigraph(result.value)
                     }
-
                     val resultNodes = results.map { it.value }.toMutableList()
                     val mergedGraph = forest.mergeGraphs(results.map { it.graph }, element, resultNodes)
                     graph.copyFrom(mergedGraph)
-                    if (type.isUnit())
-                        Node.Unit
-                    else graph.at(loop, element).newPhiNode().also { phiNode ->
-                        resultNodes.forEach { phiNode.addEdge(it) }
+                    when {
+                        type.isNothing() -> Node.Nothing
+                        type.isUnit() -> Node.Unit
+                        else -> graph.at(loop, element).newPhiNode().also { phiNode ->
+                            resultNodes.forEach { phiNode.addEdge(it) }
+                        }
+                    }.also {
+                        context.log { "after CFG merge" }
+                        graph.logDigraph(it)
                     }
-                }.also {
-
-                    context.log { "after CFG merge" }
-                    graph.logDigraph(context, it)
                 }
             }
 
+            // TODO: We need to clear these lists from time to time during loops handling.
+            val irBuilder = context.createIrBuilder(function.symbol)
             val returnTargetsResults = mutableMapOf<IrReturnTargetSymbol, MutableList<ExpressionResult>>()
+            val objectsReferencedFromThrown = BitSet()
+            val fictitiousLoopsStarts = mutableMapOf<IrLoop, IrElement>()
+            val fictitiousLoopsEnds = mutableMapOf<IrLoop, IrElement>()
+            val loopsContinueResults = mutableMapOf<IrLoop, MutableList<ExpressionResult>>()
+            val loopsBreakResults = mutableMapOf<IrLoop, MutableList<ExpressionResult>>()
 
             override fun visitElement(element: IrElement, data: BuilderState): Node = TODO(element.render())
             override fun visitExpression(expression: IrExpression, data: BuilderState): Node = TODO(expression.render())
@@ -770,35 +837,53 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 else -> error("Unknown value declaration: ${owner.render()}")
             }
 
-            fun PointsToGraph.setValue(variableNode: Node.Variable, valueNode: Node,
-                                       loop: IrLoop?, element: IrElement) {
+            fun PointsToGraph.eraseValue(variableNode: Node.Variable, loop: IrLoop?, element: IrElement, anchorNodeId: Int = 0) {
                 if (variableNode.assignedTo.isNotEmpty())
-                    bypass(variableNode, loop, element)
+                    bypass(variableNode, loop, element, anchorNodeId)
                 else
                     variableNode.assignedWith = null
-                variableNode.addEdge(valueNode)
+            }
+
+            fun PointsToGraph.addValue(variableNode: Node.Variable, valueNode: Node,
+                                       loop: IrLoop?, element: IrElement, anchorNodeId: Int = variableNode.id) {
+                val assignedWith = variableNode.assignedWith
+                if (assignedWith == null)
+                    variableNode.addEdge(valueNode)
+                else {
+                    val phiNode = at(loop, element, anchorNodeId).newPhiNode()
+                    if (assignedWith.id != phiNode.id) {
+                        (assignedWith as? Node.Variable)?.assignedTo?.let { pointeeAssignedTo ->
+                            pointeeAssignedTo[pointeeAssignedTo.indexOf(variableNode)] = phiNode
+                        }
+                        variableNode.assignedWith = phiNode
+                        phiNode.pointsTo.add(assignedWith)
+                    }
+                    (variableNode.assignedWith as Node.Phi).addEdge(valueNode)
+                }
             }
 
             override fun visitSetValue(expression: IrSetValue, data: BuilderState): Node = with(data.graph) {
                 context.log { "before ${expression.dump()}" }
-                logDigraph(context)
+                logDigraph()
 
                 val valueNode = expression.value.accept(this@PointsToGraphBuilder, data)
                 context.log { "after evaluating value" }
-                logDigraph(context, valueNode)
+                logDigraph(valueNode)
 
                 val variable = expression.symbol.owner as IrVariable
                 val variableNode = variableNodes[variable] ?: error("Unknown variable: ${variable.render()}")
-                setValue(variableNode, valueNode, data.loop, expression)
+                if (!data.insideATry)
+                    eraseValue(variableNode, data.loop, expression)
+                addValue(variableNode, valueNode, data.loop, expression)
                 context.log { "after ${expression.dump()}" }
-                logDigraph(context, variableNode)
+                logDigraph(variableNode)
 
                 Node.Unit
             }
 
             override fun visitVariable(declaration: IrVariable, data: BuilderState): Node = with(data.graph) {
                 context.log { "before ${declaration.dump()}" }
-                logDigraph(context)
+                logDigraph()
 
                 require(data.loop != null || variableNodes[declaration] == null) {
                     "Duplicate variable declaration: ${declaration.render()}"
@@ -807,24 +892,28 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 val valueNode = declaration.initializer?.accept(this@PointsToGraphBuilder, data)
                 valueNode?.let {
                     context.log { "after evaluating initializer" }
-                    logDigraph(context, it)
+                    logDigraph(it)
                 }
 
                 val variableNode = getOrAddVariable(declaration)
-                valueNode?.let { setValue(variableNode, it, data.loop, declaration) }
+                valueNode?.let {
+                    if (!data.insideATry)
+                        eraseValue(variableNode, data.loop, declaration)
+                    addValue(variableNode, it, data.loop, declaration)
+                }
                 context.log { "after ${declaration.dump()}" }
-                logDigraph(context, variableNode)
+                logDigraph(variableNode)
 
                 Node.Unit
             }
 
             override fun visitGetField(expression: IrGetField, data: BuilderState): Node = with(data.graph) {
                 context.log { "before ${expression.dump()}" }
-                logDigraph(context)
+                logDigraph()
 
                 val receiverNode = expression.receiver?.accept(this@PointsToGraphBuilder, data) ?: globalNode
                 context.log { "after evaluating receiver" }
-                logDigraph(context, receiverNode)
+                logDigraph(receiverNode)
 
                 val receiverObjects = getObjectNodes(receiverNode, true, data.loop, expression.receiver)
                 context.log { "after getting receiver's objects" }
@@ -837,17 +926,17 @@ internal object ControlFlowSensibleEscapeAnalysis {
                         phiNode.addEdge(receiver.getField(expression.symbol))
                 }).also {
                     context.log { "after ${expression.dump()}" }
-                    logDigraph(context, it)
+                    logDigraph(it)
                 }
             }
 
             override fun visitSetField(expression: IrSetField, data: BuilderState): Node = with(data.graph) {
                 context.log { "before ${expression.dump()}" }
-                logDigraph(context)
+                logDigraph()
 
                 val receiverNode = expression.receiver?.accept(this@PointsToGraphBuilder, data) ?: globalNode
                 context.log { "after evaluating receiver" }
-                logDigraph(context, receiverNode)
+                logDigraph(receiverNode)
 
                 val receiverObjects = getObjectNodes(receiverNode, true, data.loop, expression.receiver)
                 context.log { "after getting receiver's objects" }
@@ -855,32 +944,17 @@ internal object ControlFlowSensibleEscapeAnalysis {
 
                 val valueNode = expression.value.accept(this@PointsToGraphBuilder, data)
                 context.log { "after evaluating value" }
-                logDigraph(context, valueNode)
+                logDigraph(valueNode)
 
-                if (receiverObjects.size == 1 && data.loop == receiverObjects[0].loop) {
-                    // TODO: Probably can do for any outer loop as well (not only for the current).
-                    val fieldNode = receiverObjects[0].getField(expression.symbol)
-                    setValue(fieldNode, valueNode, data.loop, expression)
-                } else receiverObjects.forEach { receiverObject ->
+                receiverObjects.forEach { receiverObject ->
                     val fieldNode = receiverObject.getField(expression.symbol)
-                    val assignedWith = fieldNode.assignedWith
-                    if (assignedWith == null)
-                        fieldNode.addEdge(valueNode)
-                    else {
-                        val phiNode = at(data.loop, expression, fieldNode.id).newPhiNode()
-                        if (assignedWith.id != phiNode.id) {
-                            (assignedWith as? Node.Variable)?.assignedTo?.let { pointeeAssignedTo ->
-                                pointeeAssignedTo[pointeeAssignedTo.indexOf(fieldNode)] = phiNode
-                            }
-                            fieldNode.assignedWith = phiNode
-                            phiNode.pointsTo.add(assignedWith)
-                        }
-                        (fieldNode.assignedWith as Node.Phi).addEdge(valueNode)
-                    }
-                    //setValue(fieldNode, valueNode, data.loop, expression, fieldNode.id)
+                    // TODO: Probably can do for any outer loop as well (not only for the current).
+                    if (receiverObjects.size == 1 && data.loop == receiverObjects[0].loop && !data.insideATry)
+                        eraseValue(fieldNode, data.loop, expression)
+                    addValue(fieldNode, valueNode, data.loop, expression)
                 }
                 context.log { "after ${expression.dump()}" }
-                logDigraph(context)
+                logDigraph()
 
                 return Node.Unit
             }
@@ -892,8 +966,34 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 val clone = data.graph.clone(list)
                 (returnTargetsResults[expression.returnTargetSymbol] ?: error("Unknown return target: ${expression.render()}"))
                         .add(ExpressionResult(list[0], clone))
-                // TODO: Return null (=Nothing) and clear the graph.
-                return Node.Unit
+                data.graph.clear()
+                return Node.Nothing
+            }
+
+            override fun visitThrow(expression: IrThrow, data: BuilderState) = with(data.graph) {
+                context.log { "before ${expression.dump()}" }
+                data.graph.logDigraph()
+                val value = expression.value.accept(this@PointsToGraphBuilder, data)
+                val visited = BitSet()
+                val newObjectsReferencedFromThrown = mutableListOf<Node.Object>()
+
+                fun markReachableObjects(node: Node) {
+                    visited.set(node.id)
+                    if (node is Node.Object && !objectsReferencedFromThrown.get(node.id)) {
+                        objectsReferencedFromThrown.set(node.id)
+                        newObjectsReferencedFromThrown.add(node)
+                    }
+                    node.forEachPointee {
+                        if (!visited.get(it.id)) markReachableObjects(it)
+                    }
+                }
+
+                markReachableObjects(value)
+                context.log { "after ${expression.dump()}" }
+                data.graph.logDigraph(context, newObjectsReferencedFromThrown)
+
+                data.graph.clear()
+                Node.Nothing
             }
 
             override fun visitContainerExpression(expression: IrContainerExpression, data: BuilderState): Node {
@@ -910,45 +1010,80 @@ internal object ControlFlowSensibleEscapeAnalysis {
             }
 
             override fun visitWhen(expression: IrWhen, data: BuilderState): Node {
+                context.log { "before ${expression.dump()}" }
+                data.graph.logDigraph()
                 val branchResults = mutableListOf<ExpressionResult>()
                 expression.branches.forEach { branch ->
                     branch.condition.accept(this, data)
                     val branchGraph = data.graph.clone()
-                    val branchState = BuilderState(branchGraph, data.loop)
+                    val branchState = BuilderState(branchGraph, data.loop, data.insideATry)
                     branchResults.add(ExpressionResult(branch.result.accept(this, branchState), branchGraph))
                 }
                 val isExhaustive = expression.branches.last().isUnconditional()
                 require(isExhaustive || expression.type.isUnit())
                 if (!isExhaustive) {
                     // Reflecting the case when none of the clauses have been executed.
-                    branchResults.add(ExpressionResult(Node.Unit, data.graph))
+                    branchResults.add(ExpressionResult(Node.Unit, data.graph.clone()))
                 }
-                return controlFlowMergePoint(data.graph, data.loop, expression, expression.type, branchResults)
+                return controlFlowMergePoint(data.graph, data.loop, expression, expression.type, branchResults).also {
+                    context.log { "after ${expression.dump()}" }
+                    data.graph.logDigraph()
+                }
             }
 
-            val irBuilder = context.createIrBuilder(function.symbol)
-            val fictitiousLoopsStarts = mutableMapOf<IrLoop, IrElement>()
-            val fictitiousLoopsEnds = mutableMapOf<IrLoop, IrElement>()
-            val loopsContinueResults = mutableMapOf<IrLoop, MutableList<ExpressionResult>>()
-            val loopsBreakResults = mutableMapOf<IrLoop, MutableList<ExpressionResult>>()
+            override fun visitCatch(aCatch: IrCatch, data: BuilderState): Node {
+                require(aCatch.catchParameter.initializer == null) {
+                    "Non-null initializer of a catch parameter: ${aCatch.catchParameter.render()}"
+                }
+                data.graph.getOrAddVariable(aCatch.catchParameter)
+                return aCatch.result.accept(this, data)
+            }
+
+            override fun visitTry(aTry: IrTry, data: BuilderState): Node {
+                require(aTry.finallyExpression == null) { "All finally clauses should've been lowered out" }
+                context.log { "before ${aTry.dump()}" }
+                data.graph.logDigraph()
+
+                val tryGraph = data.graph.clone()
+                val tryResult = aTry.tryResult.accept(this, BuilderState(tryGraph, data.loop, true))
+                val catchesResults = aTry.catches.map {
+                    val catchGraph = tryGraph.clone()
+                    val catchResult = it.accept(this, BuilderState(catchGraph, data.loop, data.insideATry))
+                    ExpressionResult(catchResult, catchGraph)
+                }
+
+                return if (catchesResults.all { it.value == Node.Nothing }) {
+                    // We can get here only if no exception has been thrown at the try block
+                    // (otherwise, it either would've been caught by one of the catch blocks or
+                    // would've been thrown to upper scope and, since they all return nothing,
+                    // the control flow wouldn't have gotten to this point).
+                    aTry.tryResult.accept(this, BuilderState(data.graph, data.loop, false))
+                } else {
+                    controlFlowMergePoint(data.graph, data.loop, aTry, aTry.type,
+                            listOf(ExpressionResult(tryResult, tryGraph)) + catchesResults)
+                }.also {
+                    context.log { "after ${aTry.dump()}" }
+                    data.graph.logDigraph()
+                }
+            }
 
             override fun visitContinue(jump: IrContinue, data: BuilderState): Node {
                 (loopsContinueResults[jump.loop] ?: error("A continue from an unknown loop: ${jump.loop}"))
                         .add(ExpressionResult(Node.Unit, data.graph.clone()))
-                // TODO: Return null (=Nothing) and clear the graph.
-                return Node.Unit
+                data.graph.clear()
+                return Node.Nothing
             }
 
             override fun visitBreak(jump: IrBreak, data: BuilderState): Node {
                 (loopsBreakResults[jump.loop] ?: error("A break from an unknown loop: ${jump.loop}"))
                         .add(ExpressionResult(Node.Unit, data.graph.clone()))
-                // TODO: Return null (=Nothing) and clear the graph.
-                return Node.Unit
+                data.graph.clear()
+                return Node.Nothing
             }
 
             override fun visitLoop(loop: IrLoop, data: BuilderState): Node {
                 context.log { "before ${loop.dump()}" }
-                data.graph.logDigraph(context)
+                data.graph.logDigraph()
                 val fictitiousLoopStart = fictitiousLoopsStarts.getOrPut(loop) {
                     when (loop) {
                         is IrWhileLoop -> irBuilder.irWhile()
@@ -969,23 +1104,23 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 val iterationResults = mutableListOf<ExpressionResult>()
                 var prevGraph = data.graph
                 if (loop is IrWhileLoop) {
-                    loop.condition.accept(this, BuilderState(prevGraph, loop))
+                    loop.condition.accept(this, BuilderState(prevGraph, loop, data.insideATry))
                     // A while loop might not execute even a single iteration.
                     iterationResults.add(ExpressionResult(Node.Unit, prevGraph.clone()))
                 }
                 var iterations = 0
                 do {
                     context.log { "iter#$iterations:" }
-                    prevGraph.logDigraph(context)
+                    prevGraph.logDigraph()
                     ++iterations
                     continueResults.clear()
                     breakResults.clear()
                     val curGraph = prevGraph.clone()
-                    loop.body?.accept(this, BuilderState(curGraph, loop))
+                    loop.body?.accept(this, BuilderState(curGraph, loop, data.insideATry))
                     continueResults.add(ExpressionResult(Node.Unit, curGraph))
                     val nextGraph = PointsToGraph(prevGraph.forest)
                     controlFlowMergePoint(nextGraph, loop, fictitiousLoopStart, context.irBuiltIns.unitType, continueResults)
-                    loop.condition.accept(this, BuilderState(nextGraph, loop))
+                    loop.condition.accept(this, BuilderState(nextGraph, loop, data.insideATry))
                     val graphHasChanged = !forest.graphsAreEqual(prevGraph, nextGraph)
                     prevGraph = nextGraph
                     if (graphHasChanged) {
@@ -1000,44 +1135,23 @@ internal object ControlFlowSensibleEscapeAnalysis {
                     error("BUGBUGBUG: ${loop.dump()}")
                 controlFlowMergePoint(data.graph, data.loop, loop, context.irBuiltIns.unitType, iterationResults)
                 context.log { "after ${loop.dump()}" }
-                data.graph.logDigraph(context)
+                data.graph.logDigraph()
                 return Node.Unit
             }
 
             fun processCall(
                     // TODO: Must be different for each actual callee for a devirtualized call.
                     // Or may be create merged graph for all possible callees?
-                    loop: IrLoop?,
+                    state: BuilderState,
                     callSite: IrFunctionAccessExpression,
                     actualCallee: IrFunction,
                     arguments: List<Node>,
                     calleeEscapeAnalysisResult: EscapeAnalysisResult,
-                    graph: PointsToGraph
             ): Node {
-//                context.logMultiple {
-//                    +"Processing callSite"
-//                    +nodeToStringWhole(call)
-//                    +"Actual callee: ${callSite.actualCallee}"
-//                    +"Callee escape analysis result:"
-//                    +calleeEscapeAnalysisResult.toString()
-//                }
-
-/*
-        return if (call is DataFlowIR.Node.NewObject) {
-            (0..call.arguments.size).map {
-                if (it == 0) node else call.arguments[it - 1].node
-            }
-        } else {
-            (0..call.arguments.size).map {
-                if (it < call.arguments.size) call.arguments[it].node else node
-            }
-        }
-
- */
                 context.log { "before calling ${actualCallee.render()}" }
-                graph.logDigraph(context)
+                state.graph.logDigraph()
                 context.log { "callee EA result" }
-                calleeEscapeAnalysisResult.graph.logDigraph(context, calleeEscapeAnalysisResult.returnValue)
+                calleeEscapeAnalysisResult.graph.logDigraph(calleeEscapeAnalysisResult.returnValue)
 
                 val calleeGraph = calleeEscapeAnalysisResult.graph
                 require(arguments.size == calleeGraph.parameterNodes.size)
@@ -1045,12 +1159,8 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 val referencesCount = IntArray(calleeGraph.nodes.size)
                 for (node in calleeGraph.nodes) {
                     if (node !is Node.Reference) continue
-                    when (node) {
-                        is Node.Variable ->
-                            (node.assignedWith as? Node.Object)?.let { ++referencesCount[it.id] }
-                        is Node.Phi -> node.pointsTo.forEach { pointee ->
-                            (pointee as? Node.Object)?.let { ++referencesCount[it.id] }
-                        }
+                    node.forEachPointee { pointee ->
+                        if (pointee is Node.Object) ++referencesCount[pointee.id]
                     }
                 }
 
@@ -1068,7 +1178,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 }
 
                 fun reflectFieldsOf(fictitiousObject: Node.Object, actualObjects: List<Node.Object>) {
-                    class PossiblySplitMirroredNode() {
+                    class PossiblySplitMirroredNode {
                         var inNode: Node.Phi? = null
                         var outNode: Node.VariableValue? = null
 
@@ -1077,6 +1187,9 @@ internal object ControlFlowSensibleEscapeAnalysis {
                             reflectNode(node, inNode ?: outNode!!, outNode ?: inNode!!)
                         }
                     }
+
+                    if (calleeEscapeAnalysisResult.objectsReferencedFromThrown.get(fictitiousObject.id))
+                        actualObjects.forEach { objectsReferencedFromThrown.set(it.id) }
 
                     fictitiousObject.fields.forEach { (field, fieldValue) ->
                         val fieldPointee = fieldValue.assignedWith
@@ -1088,17 +1201,15 @@ internal object ControlFlowSensibleEscapeAnalysis {
                         val hasIncomingEdges = fieldValue.assignedTo.isNotEmpty()
                         val canOmitFictitiousObject = fieldPointee is Node.Object
                                 && fieldPointee.isFictitious
-                                //&& referencesCount[fieldPointee.id] == 1
-                                //&& fieldPointee != fictitiousObject // Skip loops.
                                 && inMirroredNodes[fieldPointee.id] == null // Skip cycles.
 
-                        val mirroredNode = if (actualObjects.size == 1 && actualObjects[0].loop == loop)
+                        val mirroredNode = if (actualObjects.size == 1 && actualObjects[0].loop == state.loop && !state.insideATry)
                             null
                         else PossiblySplitMirroredNode().also {
                             if (hasIncomingEdges || fieldPointee == null)
-                                it.inNode = graph.at(loop, callSite, fieldValue.id).newPhiNode()
+                                it.inNode = state.graph.at(state.loop, callSite, fieldValue.id).newPhiNode()
                             if (fieldPointee != null && !canOmitFictitiousObject)
-                                it.outNode = graph.at(loop, callSite, fieldValue.id + calleeGraph.nodes.size).newTempVariable()
+                                it.outNode = state.graph.at(state.loop, callSite, fieldValue.id + calleeGraph.nodes.size).newTempVariable()
                         }.takeIf { it.inNode != null || it.outNode != null }
                         mirroredNode?.reflect(fieldValue)
 
@@ -1106,7 +1217,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
                             fieldPointee as Node.Object
                             val nextActualObjects = mutableListOf<Node.Object>()
                             for (obj in actualObjects) {
-                                val objFieldValue = with(graph) { obj.getField(field) }
+                                val objFieldValue = with(state.graph) { obj.getField(field) }
                                 if (hasIncomingEdges) {
                                     if (mirroredNode == null)
                                         reflectNode(fieldValue, objFieldValue)
@@ -1116,8 +1227,8 @@ internal object ControlFlowSensibleEscapeAnalysis {
                                     }
                                 }
                                 nextActualObjects.addAll(
-                                        graph.getObjectNodes(objFieldValue, true,
-                                                fieldPointee.loop ?: loop, callSite, fieldValue.id + calleeGraph.nodes.size)
+                                        state.graph.getObjectNodes(objFieldValue, true,
+                                                fieldPointee.loop ?: state.loop, callSite, fieldValue.id + calleeGraph.nodes.size)
                                 )
                             }
                             handledNodes.set(fieldValue.id)
@@ -1130,7 +1241,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
                                 if (nextActualObjects.size == 1)
                                     reflectNode(fieldPointee, nextActualObjects[0])
                                 else {
-                                    val mirroredFieldPointee = graph.at(loop, callSite, fieldPointee.id).newPhiNode()
+                                    val mirroredFieldPointee = state.graph.at(state.loop, callSite, fieldPointee.id).newPhiNode()
                                     mirroredFieldPointee.pointsTo.addAll(nextActualObjects)
                                     reflectNode(fieldPointee, mirroredFieldPointee)
                                 }
@@ -1138,15 +1249,11 @@ internal object ControlFlowSensibleEscapeAnalysis {
                             reflectFieldsOf(fieldPointee, nextActualObjects)
                         } else {
                             for (obj in actualObjects) {
-                                val objFieldValue = with(graph) { obj.getField(field) }
-                                if (fieldPointee != null) {
-                                    // An actual field rewrite.
-                                    if (actualObjects.size == 1 && loop == obj.loop) {
-                                        // TODO: Probably can do for any outer loop as well (not only for the current).
-                                        if (objFieldValue.assignedTo.isNotEmpty())
-                                            graph.bypass(objFieldValue, loop, callSite, fieldValue.id + 2 * calleeGraph.nodes.size)
-                                        else
-                                            objFieldValue.assignedWith = null
+                                val objFieldValue = with(state.graph) { obj.getField(field) }
+                                if (fieldPointee != null) { // An actual field rewrite.
+                                    // TODO: Probably can do for any outer loop as well (not only for the current).
+                                    if (actualObjects.size == 1 && state.loop == obj.loop && !state.insideATry) {
+                                        state.graph.eraseValue(objFieldValue, state.loop, callSite, fieldValue.id + 2 * calleeGraph.nodes.size)
                                     } else {
                                         require(mirroredNode?.outNode != null)
                                     }
@@ -1157,20 +1264,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
                                 else {
                                     mirroredNode.inNode?.addEdge(objFieldValue)
                                     mirroredNode.outNode?.let {
-                                        val assignedWith = objFieldValue.assignedWith
-                                        if (assignedWith == null)
-                                            objFieldValue.addEdge(it)
-                                        else {
-                                            val phiNode = graph.at(loop, callSite, fieldValue.id + 3 * calleeGraph.nodes.size).newPhiNode()
-                                            if (assignedWith.id != phiNode.id) {
-                                                (assignedWith as? Node.Variable)?.assignedTo?.let { pointeeAssignedTo ->
-                                                    pointeeAssignedTo[pointeeAssignedTo.indexOf(objFieldValue)] = phiNode
-                                                }
-                                                objFieldValue.assignedWith = phiNode
-                                                phiNode.pointsTo.add(assignedWith)
-                                            }
-                                            (objFieldValue.assignedWith as Node.Phi).addEdge(it)
-                                        }
+                                        state.graph.addValue(objFieldValue, it, state.loop, callSite, fieldValue.id + 3 * calleeGraph.nodes.size)
                                     }
                                 }
                             }
@@ -1179,12 +1273,13 @@ internal object ControlFlowSensibleEscapeAnalysis {
                     handledNodes.set(fictitiousObject.id)
                 }
 
+                reflectNode(Node.Nothing, Node.Nothing)
                 reflectNode(Node.Unit, Node.Unit)
-                reflectNode(calleeEscapeAnalysisResult.graph.globalNode, graph.globalNode)
+                reflectNode(calleeEscapeAnalysisResult.graph.globalNode, state.graph.globalNode)
                 for (parameter in calleeEscapeAnalysisResult.graph.parameterNodes.values)
                     reflectNode(parameter, arguments[parameter.index])
                 for (parameter in calleeEscapeAnalysisResult.graph.parameterNodes.values)
-                    reflectFieldsOf(parameter, graph.getObjectNodes(arguments[parameter.index], true, loop, callSite, parameter.id))
+                    reflectFieldsOf(parameter, state.graph.getObjectNodes(arguments[parameter.index], true, state.loop, callSite, parameter.id))
 
                 for (node in calleeGraph.nodes) {
                     if (handledNodes.get(node!!.id) || inMirroredNodes[node.id] != null) continue
@@ -1192,15 +1287,17 @@ internal object ControlFlowSensibleEscapeAnalysis {
                         is Node.Parameter -> error("Parameter $node should've been handled earlier")
                         is Node.VariableValue -> {
                             require(node == calleeEscapeAnalysisResult.returnValue) { "All the variables should've been bypassed: $node" }
-                            reflectNode(node, graph.at(loop, callSite, node.id).newTempVariable())
+                            reflectNode(node, state.graph.at(state.loop, callSite, node.id).newTempVariable())
                         }
                         is Node.FieldValue -> Unit // Will be mirrored along with its owner object.
-                        is Node.Phi -> reflectNode(node, graph.at(loop, callSite, node.id).newPhiNode())
+                        is Node.Phi -> reflectNode(node, state.graph.at(state.loop, callSite, node.id).newPhiNode())
                         is Node.Object -> {
-                            val mirroredObject = graph.at(node.loop ?: loop, callSite, node.id).newObject(node.label)
+                            val mirroredObject = state.graph.at(node.loop ?: state.loop, callSite, node.id).newObject(node.label)
                             reflectNode(node, mirroredObject)
+                            if (calleeEscapeAnalysisResult.objectsReferencedFromThrown.get(node.id))
+                                objectsReferencedFromThrown.set(mirroredObject.id)
                             node.fields.forEach { (field, fieldValue) ->
-                                reflectNode(fieldValue, with(graph) { mirroredObject.getField(field) })
+                                reflectNode(fieldValue, with(state.graph) { mirroredObject.getField(field) })
                             }
                         }
                     }
@@ -1209,22 +1306,15 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 for (node in calleeGraph.nodes) {
                     if (handledNodes.get(node!!.id) || inMirroredNodes[node.id] != null) continue
                     require(node is Node.FieldValue) { "The node $node should've been reflected at this point" }
-                    reflectNode(node, graph.at(loop, callSite, node.id).newTempVariable())
+                    reflectNode(node, state.graph.at(state.loop, callSite, node.id).newTempVariable())
                 }
 
                 for (node in calleeGraph.nodes) {
                     if (handledNodes.get(node!!.id) || node !is Node.Reference) continue
 
                     val outMirroredNode = outMirroredNodes[node.id] as Node.Reference
-                    when (node) {
-                        is Node.Variable ->
-                            node.assignedWith?.let {
-                                outMirroredNode.addEdge(inMirroredNodes[it.id] ?: error("Node $it hasn't been reflected"))
-                            }
-                        is Node.Phi ->
-                            node.pointsTo.forEach {
-                                outMirroredNode.addEdge(inMirroredNodes[it.id] ?: error("Node $it hasn't been reflected"))
-                            }
+                    node.forEachPointee { pointee ->
+                        outMirroredNode.addEdge(inMirroredNodes[pointee.id] ?: error("Node $pointee hasn't been reflected"))
                     }
                 }
 
@@ -1265,7 +1355,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
                         ?: error("Node ${calleeEscapeAnalysisResult.returnValue} hasn't been reflected")
 
                 context.log { "after calling ${actualCallee.render()}" }
-                graph.logDigraph(context, returnValue)
+                state.graph.logDigraph(returnValue)
 
                 return returnValue
             }
@@ -1281,7 +1371,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 val calleeEscapeAnalysisResult = escapeAnalysisResults[callee.symbol]
                         ?: EscapeAnalysisResult.optimistic(context.irBuiltIns.unitType,
                                 listOf(callee.constructedClass.thisReceiver!!) + arguments.map { it.first })
-                processCall(state.loop, callSite, callee, argumentNodes, calleeEscapeAnalysisResult, state.graph)
+                processCall(state, callSite, callee, argumentNodes, calleeEscapeAnalysisResult)
             }
 
             fun BuilderState.allocObjectNode(expression: IrExpression, irClass: IrClass) =
@@ -1324,7 +1414,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
                             val argumentNodes = arguments.map { it.second.accept(this, data) }
                             val calleeEscapeAnalysisResult = escapeAnalysisResults[actualCallee.symbol]
                                     ?: EscapeAnalysisResult.optimistic(actualCallee.returnType, arguments.map { it.first })
-                            processCall(data.loop, expression, actualCallee, argumentNodes, calleeEscapeAnalysisResult, data.graph)
+                            processCall(data, expression, actualCallee, argumentNodes, calleeEscapeAnalysisResult)
                         }
                     }
                 }
@@ -1354,8 +1444,6 @@ internal object ControlFlowSensibleEscapeAnalysis {
             val forest = PointsToGraphForest()
             val functionResult = PointsToGraphBuilder(function, forest, escapeAnalysisResults).build()
 
-            // TODO: compute lifetimes.
-
             /*
              * Now, do the following:
              * 1. Add an object node to each leaf variable node.
@@ -1369,82 +1457,88 @@ internal object ControlFlowSensibleEscapeAnalysis {
              */
 
             context.log { "after analyzing body:" }
-            functionResult.graph.logDigraph(context, functionResult.value)
+            functionResult.graph.logDigraph(context) {
+                thrownNodes = functionResult.objectsReferencedFromThrown
+                +functionResult.returnValue
+            }
+
+            // TODO: compute lifetimes.
+            context.log { "lifetimes computation results:" }
+            functionResult.graph.logDigraph(context) {
+                highlightLifetimes = true
+                +functionResult.returnValue
+            }
 
             functionResult.graph.variableNodes.clear() // No need in this map anymore.
             functionResult.removeUnreachable()
             context.log { "after removing unreachable:" }
-            functionResult.graph.logDigraph(context, functionResult.value)
+            functionResult.graph.logDigraph(context) {
+                thrownNodes = functionResult.objectsReferencedFromThrown
+                +functionResult.returnValue
+            }
 
             // TODO: Remove phi nodes with either one incoming or one outgoing edge.
             functionResult.bypassAndRemoveVariables()
             context.log { "after bypassing variables:" }
-            functionResult.graph.logDigraph(context, functionResult.value)
+            functionResult.graph.logDigraph(context) {
+                thrownNodes = functionResult.objectsReferencedFromThrown
+                +functionResult.returnValue
+            }
 
             // Remove multi-edges.
-            functionResult.graph.reenumerateNodes()
-            val list = mutableListOf(functionResult.value)
+            functionResult.reenumerateNodes()
+            val list = mutableListOf(functionResult.returnValue)
             val graph = PointsToGraphForest(functionResult.graph.nodes.size).mergeGraphs(listOf(functionResult.graph), null, list)
             val returnValue = list[0]
             context.log { "after removing multi-edges:" }
-            graph.logDigraph(context, returnValue)
+            graph.logDigraph(context) {
+                thrownNodes = functionResult.objectsReferencedFromThrown
+                +returnValue
+            }
 
-            val optimizedFunctionResult = ExpressionResult(returnValue, graph)
+            val optimizedFunctionResult = EscapeAnalysisResult(graph, returnValue, functionResult.objectsReferencedFromThrown)
             optimizedFunctionResult.removeRedundantNodes()
-//            if (returnValue is Node.Reference) {
-//                val isALeaf = when (returnValue) {
-//                    is Node.Variable -> returnValue.assignedWith == null
-//                    is Node.Phi -> returnValue.pointsTo.isEmpty()
-//                }
-//                if (isALeaf)
-//                    returnValue.addEdge(optimizedFunctionResult.graph.constObjectNode(function.returnType))
-//            }
-            optimizedFunctionResult.graph.reenumerateNodes()
+            optimizedFunctionResult.reenumerateNodes()
             context.log { "EA result for ${function.render()}" }
-            optimizedFunctionResult.graph.logDigraph(context, optimizedFunctionResult.value)
+            optimizedFunctionResult.graph.logDigraph(context) {
+                thrownNodes = optimizedFunctionResult.objectsReferencedFromThrown
+                +optimizedFunctionResult.returnValue
+            }
 
-            escapeAnalysisResults[function.symbol] = EscapeAnalysisResult(optimizedFunctionResult.graph, optimizedFunctionResult.value)
+            escapeAnalysisResults[function.symbol] = optimizedFunctionResult
         }
 
-        private fun PointsToGraph.reenumerateNodes() {
+        private fun EscapeAnalysisResult.reenumerateNodes() {
             var id = 0
-            for (index in nodes.indices) {
-                val node = nodes[index]
+            val objectsReferencedFromThrown = mutableListOf<Node.Object>()
+            for (index in graph.nodes.indices) {
+                val node = graph.nodes[index]
                 if (node != null) {
-                    nodes[id] = node
+                    if (this.objectsReferencedFromThrown.get(node.id))
+                        objectsReferencedFromThrown.add(node as Node.Object)
+                    graph.nodes[id] = node
                     node.id = id++
                 }
             }
-            nodes.trimSize(id)
+            graph.nodes.trimSize(id)
+            this.objectsReferencedFromThrown.clear()
+            objectsReferencedFromThrown.forEach { this.objectsReferencedFromThrown.set(it.id) }
         }
 
-        private fun ExpressionResult.removeUnreachable() {
+        private fun EscapeAnalysisResult.removeUnreachable() {
             val nodeSet = BitSet(graph.forest.totalNodes)
+            nodeSet.set(Node.NOTHING_ID)
             nodeSet.set(Node.UNIT_ID)
 
             fun findReachable(node: Node) {
                 nodeSet.set(node.id)
-                when (node) {
-                    is Node.Object -> {
-                        node.fields.values.forEach {
-                            if (!nodeSet.get(it.id)) findReachable(it)
-                        }
-                    }
-                    is Node.Variable -> {
-                        node.assignedWith?.let {
-                            if (!nodeSet.get(it.id)) findReachable(it)
-                        }
-                    }
-                    is Node.Phi -> {
-                        node.pointsTo.forEach {
-                            if (!nodeSet.get(it.id)) findReachable(it)
-                        }
-                    }
+                node.forEachPointee { pointee ->
+                    if (!nodeSet.get(pointee.id)) findReachable(pointee)
                 }
             }
 
-            if (value != Node.Unit)
-                findReachable(value)
+            if (returnValue != Node.Unit && returnValue != Node.Nothing)
+                findReachable(returnValue)
             findReachable(graph.globalNode)
             graph.parameterNodes.values.forEach {
                 if (!nodeSet.get(it.id)) findReachable(it)
@@ -1454,25 +1548,9 @@ internal object ControlFlowSensibleEscapeAnalysis {
                     graph.nodes[id] = null
         }
 
-        private fun ExpressionResult.bypassAndRemoveVariables() {
-//            val nodesCopy = graph.nodes.toMutableList()
-//            graph.nodes.clear()
-//
-//            val nodeSet = BitSet(graph.forest.totalNodes)
-//            nodeSet.set(value.id)
-//            for (node in nodesCopy)
-//                (node as? Node.Object)?.fields?.values?.forEach { nodeSet.set(it.id) }
-//
-//            nodesCopy.filterTo(graph.nodes) { node ->
-//                (node as? Node.Variable)
-//                        ?.takeIf { !nodeSet.get(node.id) }
-//                        ?.also { variable ->
-//                            require(variable.assignedTo.isNotEmpty())
-//                            graph.bypass(variable, null)
-//                        } == null
-//            }
+        private fun EscapeAnalysisResult.bypassAndRemoveVariables() {
             val nodeSet = BitSet(graph.nodes.size)
-            nodeSet.set(value.id)
+            nodeSet.set(returnValue.id)
             for (node in graph.nodes)
                 (node as? Node.Object)?.fields?.values?.forEach { nodeSet.set(it.id) }
 
@@ -1485,7 +1563,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
             }
         }
 
-        private fun ExpressionResult.removeRedundantNodes() {
+        private fun EscapeAnalysisResult.removeRedundantNodes() {
             val singleNodesPointingAt = arrayOfNulls<Node>(graph.nodes.size)
             val incomingEdgesCounts = IntArray(graph.nodes.size)
 
@@ -1520,9 +1598,10 @@ internal object ControlFlowSensibleEscapeAnalysis {
 
             val forbiddenToRemove = BitSet(graph.nodes.size)
             val removed = BitSet(graph.nodes.size)
+            forbiddenToRemove.set(Node.NOTHING_ID)
             forbiddenToRemove.set(Node.UNIT_ID)
             forbiddenToRemove.set(Node.GLOBAL_ID)
-            forbiddenToRemove.set(value.id)
+            forbiddenToRemove.set(returnValue.id)
             graph.parameterNodes.values.forEach { forbiddenToRemove.set(it.id) }
             while (leaves.isNotEmpty()) {
                 val leafNode = leaves.pop()
@@ -1548,11 +1627,6 @@ internal object ControlFlowSensibleEscapeAnalysis {
                     leaves.push(singleNodePointingAtLeaf)
             }
 
-//            @Suppress("UnnecessaryVariable") val nodesCopy = singleNodesPointingAt
-//            for (node in graph.nodes)
-//                nodesCopy[node!!.id] = node.takeIf { !removed.get(node.id) }
-//            graph.nodes.clear()
-//            nodesCopy.filterNotNullTo(graph.nodes)
             for (id in 0 until graph.nodes.size)
                 if (removed.get(id))
                     graph.nodes[id] = null
