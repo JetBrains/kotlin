@@ -21,8 +21,6 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.psi.psiUtil.isObjectLiteral
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
-import org.jetbrains.kotlin.psi2ir.deparenthesize
-
 
 @ThreadSafe
 internal class FirElementBuilder(
@@ -30,9 +28,8 @@ internal class FirElementBuilder(
 ) {
     companion object {
         fun getPsiAsFirElementSource(element: KtElement): KtElement? {
-            val deparenthesized = if (element is KtPropertyDelegate) element.deparenthesize() else element
+            val deparenthesized = if (element is KtExpression) KtPsiUtil.safeDeparenthesize(element) else element
             return when {
-                deparenthesized is KtParenthesizedExpression -> deparenthesized.deparenthesize()
                 deparenthesized is KtPropertyDelegate -> deparenthesized.expression ?: element
                 deparenthesized is KtQualifiedExpression && deparenthesized.selectorExpression is KtCallExpression -> {
                     /*
@@ -51,7 +48,6 @@ internal class FirElementBuilder(
             }
         }
     }
-
 
     fun doKtElementHasCorrespondingFirElement(ktElement: KtElement): Boolean = when (ktElement) {
         is KtImportList -> false
