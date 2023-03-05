@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.psi2ir.generators
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
-import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.types.IrDynamicType
@@ -453,16 +452,6 @@ internal class CallGenerator(statementGenerator: StatementGenerator) : Statement
         return irBlock
     }
 }
-
-fun IrExpression.isUnchanging(): Boolean =
-    this is IrFunctionExpression ||
-            (this is IrCallableReference<*> && dispatchReceiver == null && extensionReceiver == null) ||
-            this is IrClassReference ||
-            this is IrConst<*> ||
-            (this is IrGetValue && !symbol.owner.let { it is IrVariable && it.isVar })
-
-fun IrExpression.hasNoSideEffects(): Boolean =
-    isUnchanging() || this is IrGetValue
 
 internal fun CallGenerator.generateCall(
     ktElement: KtElement,

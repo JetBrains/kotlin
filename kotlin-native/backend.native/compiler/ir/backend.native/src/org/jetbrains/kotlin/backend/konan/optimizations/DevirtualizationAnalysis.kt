@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi2ir.generators.implicitCastTo
 import java.util.*
 import kotlin.collections.ArrayList
 

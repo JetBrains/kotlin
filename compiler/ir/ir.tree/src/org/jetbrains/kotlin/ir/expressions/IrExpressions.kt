@@ -6,7 +6,10 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
+import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.fileOrNull
 
 @Suppress("unused") // Used in kotlin-native
@@ -51,3 +54,19 @@ fun IrStringConcatenation.addArgument(argument: IrExpression) {
 
 val IrContainerExpression.isTransparentScope: Boolean
     get() = this is IrComposite
+
+fun IrExpression.implicitCastTo(expectedType: IrType?): IrExpression {
+    if (expectedType == null) return this
+
+    return IrTypeOperatorCallImpl(startOffset, endOffset, expectedType, IrTypeOperator.IMPLICIT_CAST, expectedType, this)
+}
+
+fun IrExpression.isUnchanging(): Boolean =
+    this is IrFunctionExpression ||
+            (this is IrCallableReference<*> && dispatchReceiver == null && extensionReceiver == null) ||
+            this is IrClassReference ||
+            this is IrConst<*> ||
+            (this is IrGetValue && !symbol.owner.let { it is IrVariable && it.isVar })
+
+fun IrExpression.hasNoSideEffects(): Boolean =
+    isUnchanging() || this is IrGetValue

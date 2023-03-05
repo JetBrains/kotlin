@@ -41,7 +41,6 @@ import org.jetbrains.kotlin.psi2ir.intermediate.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.ImportedFromObjectCallableDescriptor
-import org.jetbrains.kotlin.resolve.calls.components.isArrayOrArrayLiteral
 import org.jetbrains.kotlin.resolve.calls.components.isVararg
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.NewResolvedCallImpl
@@ -208,12 +207,6 @@ private fun StatementGenerator.generateThisOrSuperReceiver(receiver: ReceiverVal
     val ktReceiver = expressionReceiver.expression
     val type = if (receiver is SuperCallReceiverValue) receiver.thisType else expressionReceiver.type
     return generateThisReceiver(ktReceiver.startOffsetSkippingComments, ktReceiver.endOffset, type, classDescriptor)
-}
-
-fun IrExpression.implicitCastTo(expectedType: IrType?): IrExpression {
-    if (expectedType == null) return this
-
-    return IrTypeOperatorCallImpl(startOffset, endOffset, expectedType, IrTypeOperator.IMPLICIT_CAST, expectedType, this)
 }
 
 internal fun StatementGenerator.generateBackingFieldReceiver(

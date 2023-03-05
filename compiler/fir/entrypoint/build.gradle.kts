@@ -16,9 +16,6 @@ dependencies {
     api(project(":compiler:fir:checkers:checkers.native"))
     api(project(":js:js.frontend"))
 
-    // TODO: do not use GeneratorExtensions in `FirAnalyzerFacade.convertToIr`, and make this an 'implementation' dependency.
-    api(project(":compiler:ir.psi2ir"))
-
     implementation(project(":compiler:fir:resolve"))
     implementation(project(":compiler:fir:fir2ir:jvm-backend"))
     implementation(project(":compiler:backend.jvm"))
