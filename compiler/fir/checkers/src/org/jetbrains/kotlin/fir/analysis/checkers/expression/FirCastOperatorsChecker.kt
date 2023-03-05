@@ -9,17 +9,15 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.CastingType
+import org.jetbrains.kotlin.fir.analysis.checkers.checkCasting
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.isCastErased
-import org.jetbrains.kotlin.fir.analysis.checkers.checkCasting
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirOperation
 import org.jetbrains.kotlin.fir.expressions.FirTypeOperatorCall
 import org.jetbrains.kotlin.fir.resolve.dfa.unwrapSmartcastExpression
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.toSymbol
-import org.jetbrains.kotlin.name.SpecialNames
 
 object FirCastOperatorsChecker : FirTypeOperatorCallChecker() {
     override fun check(expression: FirTypeOperatorCall, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -41,12 +39,7 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker() {
                     reporter.reportOn(expression.source, FirErrors.USELESS_CAST, context)
                 }
             } else if (isCastErased(actualType, targetType, context)) {
-
-                val isTargetTypeSelf = targetType.toSymbol(session)?.toLookupTag()?.name.let { it == SpecialNames.SELF_TYPE }
-                val isTargetTypeTypeArg = actualType.typeArguments.contains(targetType)
-
-                if (!(isTargetTypeTypeArg && isTargetTypeSelf))
-                    reporter.reportOn(expression.source, FirErrors.UNCHECKED_CAST, actualType, targetType, context)
+                reporter.reportOn(expression.source, FirErrors.UNCHECKED_CAST, actualType, targetType, context)
             }
         } else if (expression.operation == FirOperation.IS) {
             if (!context.isContractBody && isCastErased(actualType, targetType, context)) {
