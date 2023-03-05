@@ -8,7 +8,7 @@ import kotlin.Self
 open class Foo<T> {
     public val bar = 1
 
-    fun test(): Self = this as Self
+    fun test(): Self = this
 
     fun box(): String {
         val testSelf = test()

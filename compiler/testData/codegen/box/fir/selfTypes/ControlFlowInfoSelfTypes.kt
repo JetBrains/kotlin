@@ -27,7 +27,7 @@ internal constructor(
      */
     fun put(key: K, value: D, oldValue: D?): Self {
         // Avoid a copy instance creation if new value is the same
-        if (value == oldValue) return this as Self
+        if (value == oldValue) return this
         val newMap = map + (key to value)
         return copy(newMap)
     }

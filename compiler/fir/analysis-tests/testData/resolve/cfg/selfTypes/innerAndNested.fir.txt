@@ -10,7 +10,7 @@ FILE: innerAndNested.kt
             }
 
             public final fun returnType(): R|<Self>| {
-                ^returnType (this@R|/InnerClass.Inner| as R|<Self>|)
+                ^returnType this@R|/InnerClass.Inner|
             }
 
         }
@@ -27,7 +27,7 @@ FILE: innerAndNested.kt
             }
 
             public final fun returnType(): R|<Self>| {
-                ^returnType (this@R|/NestedClass.Nested| as R|<Self>|)
+                ^returnType this@R|/NestedClass.Nested|
             }
 
         }
@@ -50,7 +50,7 @@ FILE: innerAndNested.kt
         }
 
         public final fun returnType(): R|<Self>| {
-            ^returnType (this@R|/InnerSelfClass| as R|<Self>|)
+            ^returnType this@R|/InnerSelfClass|
         }
 
         public final fun returnSelfClassType(): R|InnerSelfClass.Self| {
@@ -69,7 +69,7 @@ FILE: innerAndNested.kt
             }
 
             public final fun returnType(): R|<Self>| {
-                ^returnType (this@R|/InnerClassWithSelfAnnotation.SelfAnnotated| as R|<Self>|)
+                ^returnType this@R|/InnerClassWithSelfAnnotation.SelfAnnotated|
             }
 
         }
@@ -90,7 +90,7 @@ FILE: innerAndNested.kt
             }
 
             public final fun foo(): R|<Self>| {
-                ^foo (this@R|/QualifiedThisClass| as R|<Self>|)
+                ^foo this@R|/QualifiedThisClass|
             }
 
         }

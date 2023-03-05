@@ -15,7 +15,7 @@ abstract class AbstractObservable {
 
     protected fun notification() {
         observers.forEach { observer ->
-            observer(this as Self)
+            observer(this)
         }
     }
 }

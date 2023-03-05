@@ -7,7 +7,7 @@ FILE: typealias.kt
         @R|kotlin/Suppress|(names = vararg(String(TOPLEVEL_TYPEALIASES_ONLY))) public final typealias Self = R|kotlin/String|
 
         public final fun returnType(): R|<Self>| {
-            ^returnType (this@R|/TypealiasSelf| as R|<Self>|)
+            ^returnType this@R|/TypealiasSelf|
         }
 
         public final fun returnTypealias(): R|TypealiasSelf.Self| {

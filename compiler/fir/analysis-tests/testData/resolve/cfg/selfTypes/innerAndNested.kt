@@ -5,7 +5,7 @@ class InnerClass {
     @Self
     inner class Inner {
         fun returnType(): Self {
-            return this as Self
+            return this
         }
     }
 }
@@ -14,7 +14,7 @@ class NestedClass {
     @Self
     class Nested {
         fun returnType(): Self {
-            return this as Self
+            return this
         }
     }
 }
@@ -28,7 +28,7 @@ class InnerSelfClass {
     }
 
     fun returnType(): Self {
-        return this as Self
+        return this
     }
 
     fun returnSelfClassType(): InnerSelfClass.Self {
@@ -42,7 +42,7 @@ class InnerClassWithSelfAnnotation<S: InnerClassWithSelfAnnotation<S>> {
     @Self
     inner class SelfAnnotated {
         fun returnType(): Self {
-            return this as Self
+            return this
         }
     }
 
@@ -57,7 +57,7 @@ class InnerClassWithSelfAnnotation<S: InnerClassWithSelfAnnotation<S>> {
 class QualifiedThisClass {
     inner class Inner {
         fun foo(): Self {
-            return this@QualifiedThisClass as Self
+            return this@QualifiedThisClass
         }
     }
 }

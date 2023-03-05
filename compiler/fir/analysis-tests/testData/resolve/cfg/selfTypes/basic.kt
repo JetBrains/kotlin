@@ -9,7 +9,7 @@ class JustSelfAnnotation {
 @Self
 class ReturnType {
     fun returnTypeWithVal(): Self {
-        val res: Self  = this as Self
+        val res: Self  = this
         return res
     }
 }
@@ -17,7 +17,7 @@ class ReturnType {
 @Self
 class SelfWithSelfVariable {
     fun returnType(): Self {
-        val Self: Self = this as Self
+        val Self: Self = this
         return Self
     }
 }
@@ -25,7 +25,7 @@ class SelfWithSelfVariable {
 @Self
 class SelfTypeWithSelfFunction {
     fun Self(): Self {
-        return this as Self
+        return this
     }
 }
 

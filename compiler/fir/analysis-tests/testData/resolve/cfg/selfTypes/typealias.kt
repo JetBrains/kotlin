@@ -7,7 +7,7 @@ class TypealiasSelf {
     typealias Self = String
 
     fun returnType(): Self {
-        return this as Self
+        return this
     }
 
     fun returnTypealias(): TypealiasSelf.Self {

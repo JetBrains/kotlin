@@ -8,14 +8,14 @@ interface SelfTypeParameterInterface
 class SelfTypeAsTypeParameterInExtends : SelfTypeParameterInterface<Self> {
 
     fun returnType(): Self {
-        return this as Self
+        return this
     }
 }
 
 @Self
 class SelfTypeWithSelfFunction {
     fun Self(): Self {
-        return this as Self
+        return this
     }
 }
 
@@ -26,7 +26,7 @@ interface WithTypeParameter<out T> {
 @Self
 class ExtendingInterfaceWithTypeParameter : WithTypeParameter<Self> {
     override fun foo(): Self {
-        return this as Self
+        return this
     }
 }
 

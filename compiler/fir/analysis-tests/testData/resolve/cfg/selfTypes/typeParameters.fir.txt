@@ -5,17 +5,17 @@ FILE: typeParameters.kt
         }
 
         public final fun returnType(): R|<Self>| {
-            ^returnType (this@R|/ReturnTypeWithTypeParameter| as R|<Self>|)
+            ^returnType this@R|/ReturnTypeWithTypeParameter|
         }
 
         public final fun functionWithImplicitConstructor(): R|<Self>| {
             lval s: R|ReturnTypeWithTypeParameter<kotlin/Int, ReturnTypeWithTypeParameter<kotlin/Int, *>>| = R|/ReturnTypeWithTypeParameter.ReturnTypeWithTypeParameter|<R|kotlin/Int|, R|ReturnTypeWithTypeParameter<kotlin/Int, *>|>()
-            ^functionWithImplicitConstructor (this@R|/ReturnTypeWithTypeParameter| as R|<Self>|)
+            ^functionWithImplicitConstructor this@R|/ReturnTypeWithTypeParameter|
         }
 
         public final fun functionWithManualConstructor(): R|<Self>| {
             lval s: R|ReturnTypeWithTypeParameter<kotlin/Int, ReturnTypeWithTypeParameter<kotlin/Int, *>>| = R|/ReturnTypeWithTypeParameter.ReturnTypeWithTypeParameter|<R|kotlin/Int|, R|ReturnTypeWithTypeParameter<kotlin/Int, *>|>()
-            ^functionWithManualConstructor (this@R|/ReturnTypeWithTypeParameter| as R|<Self>|)
+            ^functionWithManualConstructor this@R|/ReturnTypeWithTypeParameter|
         }
 
     }
@@ -25,7 +25,7 @@ FILE: typeParameters.kt
         }
 
         public final fun returnType(): R|<Self>| {
-            ^returnType (this@R|/ReturnTypeWithMultipleTypeParameters| as R|<Self>|)
+            ^returnType this@R|/ReturnTypeWithMultipleTypeParameters|
         }
 
     }

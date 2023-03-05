@@ -29,15 +29,13 @@ import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.withScopeCleanup
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.createImportingScopes
-import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
-import org.jetbrains.kotlin.fir.scopes.impl.FirMemberTypeParameterScope
-import org.jetbrains.kotlin.fir.scopes.impl.FirSelfTypeScope
-import org.jetbrains.kotlin.fir.scopes.impl.FirWhenSubjectImportingScope
+import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
 import org.jetbrains.kotlin.name.StandardClassIds
 
@@ -428,7 +426,9 @@ class BodyResolveContext(
             ?: if (owner.classKind == ClassKind.ENUM_ENTRY) {
                 owner.primaryConstructorIfAny(holder.session)?.callableId?.className?.shortName()
             } else null
-        val type = owner.defaultType()
+
+        val selfType = owner.typeParameters.findLast { it.symbol.name == SpecialNames.SELF_TYPE }
+        val type = selfType?.toConeType() ?: owner.defaultType()
         val towerElementsForClass = holder.collectTowerDataElementsForClass(owner, type)
 
         val base = towerDataContext.addNonLocalTowerDataElements(towerElementsForClass.superClassesStaticsAndCompanionReceivers)

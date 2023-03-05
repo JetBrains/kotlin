@@ -5,7 +5,7 @@ FILE: customSelfTypeForClassWithSelfAnnotation.kt
         }
 
         public final fun returnType(): R|Self| {
-            ^returnType (this@R|/ClassWithCustomSelfTypeParameter| as R|<Self>|)
+            ^returnType this@R|/ClassWithCustomSelfTypeParameter|
         }
 
     }

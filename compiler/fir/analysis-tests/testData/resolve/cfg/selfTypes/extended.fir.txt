@@ -7,7 +7,7 @@ FILE: extended.kt
         }
 
         public final fun returnType(): R|<Self>| {
-            ^returnType (this@R|/SelfTypeAsTypeParameterInExtends| as R|<Self>|)
+            ^returnType this@R|/SelfTypeAsTypeParameterInExtends|
         }
 
     }
@@ -17,7 +17,7 @@ FILE: extended.kt
         }
 
         public final fun Self(): R|<Self>| {
-            ^Self (this@R|/SelfTypeWithSelfFunction| as R|<Self>|)
+            ^Self this@R|/SelfTypeWithSelfFunction|
         }
 
     }
@@ -31,7 +31,7 @@ FILE: extended.kt
         }
 
         public open override fun foo(): R|<Self>| {
-            ^foo (this@R|/ExtendingInterfaceWithTypeParameter| as R|<Self>|)
+            ^foo this@R|/ExtendingInterfaceWithTypeParameter|
         }
 
     }

@@ -26,7 +26,7 @@ open class PersonBuilder {
 
     fun setName(name: String): Self {
         this.name = name
-        return this as Self
+        return this
     }
 
     open fun build(): Person = Person(this)
