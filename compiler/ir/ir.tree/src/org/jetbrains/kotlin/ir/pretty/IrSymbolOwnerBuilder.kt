@@ -14,17 +14,18 @@ interface IrSymbolOwnerBuilder {
     var symbolReference: String?
 
     val buildingContext: IrBuildingContext
-
-    @PrettyIrDsl
-    fun symbol(symbolReference: String) {
-        this.symbolReference = symbolReference
-    }
 }
 
-internal inline fun <reified Symbol : IrSymbol> IrSymbolOwnerBuilder.symbol(noinline symbolConstructor: () -> Symbol): Symbol =
-    buildingContext.symbol(symbolReference, symbolConstructor)
+@PrettyIrDsl
+fun IrSymbolOwnerBuilder.symbol(symbolReference: String) {
+    this.symbolReference = symbolReference
+}
+
+// TODO: We need a way to work with public/private symbols. Right now there are only private symbols.
+internal inline fun <reified Symbol : IrSymbol> IrSymbolOwnerBuilder.symbol(symbolConstructor: () -> Symbol): Symbol =
+    buildingContext.getOrCreateSymbol(symbolReference, symbolConstructor)
 
 internal fun IrSymbolOwnerBuilder.recordSymbolFromOwner(owner: IrSymbolOwner) =
-    buildingContext.putSymbolForOwner(owner)
+    buildingContext.putSymbolForSymbolOwner(owner)
 
 

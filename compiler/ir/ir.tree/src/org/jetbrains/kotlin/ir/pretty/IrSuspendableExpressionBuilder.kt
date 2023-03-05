@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.ir.pretty
 import org.jetbrains.kotlin.ir.expressions.IrSuspendableExpression
 
 class IrSuspendableExpressionBuilder @PublishedApi internal constructor(buildingContext: IrBuildingContext) :
-    IrElementBuilder<IrSuspendableExpression>(buildingContext) {
+    IrExpressionBuilder<IrSuspendableExpression>(buildingContext) {
 
     @PublishedApi
     override fun build(): IrSuspendableExpression {

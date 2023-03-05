@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.ir.pretty
 
 import org.jetbrains.kotlin.ir.expressions.IrTry
 
-class IrTryBuilder @PublishedApi internal constructor(buildingContext: IrBuildingContext) : IrElementBuilder<IrTry>(buildingContext) {
+class IrTryBuilder @PublishedApi internal constructor(buildingContext: IrBuildingContext) : IrExpressionBuilder<IrTry>(buildingContext) {
 
     @PublishedApi
     override fun build(): IrTry {

@@ -7,7 +7,8 @@ package org.jetbrains.kotlin.ir.pretty
 
 import org.jetbrains.kotlin.ir.expressions.IrVararg
 
-class IrVarargBuilder @PublishedApi internal constructor(buildingContext: IrBuildingContext) : IrElementBuilder<IrVararg>(buildingContext) {
+class IrVarargBuilder @PublishedApi internal constructor(buildingContext: IrBuildingContext) :
+    IrExpressionBuilder<IrVararg>(buildingContext) {
 
     @PublishedApi
     override fun build(): IrVararg {

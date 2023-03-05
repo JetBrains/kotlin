@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.ir.pretty
 import org.jetbrains.kotlin.ir.expressions.IrInstanceInitializerCall
 
 class IrInstanceInitializerCallBuilder @PublishedApi internal constructor(buildingContext: IrBuildingContext) :
-    IrElementBuilder<IrInstanceInitializerCall>(buildingContext) {
+    IrExpressionBuilder<IrInstanceInitializerCall>(buildingContext) {
 
     @PublishedApi
     override fun build(): IrInstanceInitializerCall {

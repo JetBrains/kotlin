@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.ir.pretty
 import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
 
 class IrPropertyReferenceBuilder @PublishedApi internal constructor(buildingContext: IrBuildingContext) :
-    IrElementBuilder<IrPropertyReference>(buildingContext) {
+    IrExpressionBuilder<IrPropertyReference>(buildingContext) {
 
     @PublishedApi
     override fun build(): IrPropertyReference {

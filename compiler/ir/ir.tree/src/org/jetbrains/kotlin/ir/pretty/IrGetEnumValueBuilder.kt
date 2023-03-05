@@ -7,7 +7,8 @@ package org.jetbrains.kotlin.ir.pretty
 
 import org.jetbrains.kotlin.ir.expressions.IrGetEnumValue
 
-class IrGetEnumValueBuilder @PublishedApi  internal constructor(buildingContext: IrBuildingContext) : IrElementBuilder<IrGetEnumValue>(buildingContext) {
+class IrGetEnumValueBuilder @PublishedApi internal constructor(buildingContext: IrBuildingContext) :
+    IrExpressionBuilder<IrGetEnumValue>(buildingContext) {
 
     @PublishedApi
     override fun build(): IrGetEnumValue {

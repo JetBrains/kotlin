@@ -65,6 +65,7 @@ import org.jetbrains.kotlin.ir.expressions.IrStringConcatenation
 import org.jetbrains.kotlin.ir.expressions.IrSuspendableExpression
 import org.jetbrains.kotlin.ir.expressions.IrSuspensionPoint
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBody
+import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind
 import org.jetbrains.kotlin.ir.expressions.IrThrow
 import org.jetbrains.kotlin.ir.expressions.IrTry
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
@@ -314,9 +315,11 @@ inline fun buildIrReturnableBlock(buildingContext: IrBuildingContext = IrBuildin
         IrReturnableBlockBuilder(buildingContext).apply(block).build()
 
 @IrNodeBuilderDsl
-inline fun buildIrSyntheticBody(buildingContext: IrBuildingContext = IrBuildingContext(),
-        block: IrElementBuilderClosure<IrSyntheticBodyBuilder>): IrSyntheticBody =
-        IrSyntheticBodyBuilder(buildingContext).apply(block).build()
+inline fun buildIrSyntheticBody(
+    kind: IrSyntheticBodyKind,
+    buildingContext: IrBuildingContext = IrBuildingContext(),
+    block: IrElementBuilderClosure<IrSyntheticBodyBuilder>,
+): IrSyntheticBody = IrSyntheticBodyBuilder(kind, buildingContext).apply(block).build()
 
 @IrNodeBuilderDsl
 inline fun buildIrBreak(buildingContext: IrBuildingContext = IrBuildingContext(),

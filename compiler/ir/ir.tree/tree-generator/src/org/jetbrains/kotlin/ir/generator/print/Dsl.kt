@@ -9,10 +9,13 @@ import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import org.jetbrains.kotlin.ir.generator.DSL_PACKAGE
 import org.jetbrains.kotlin.ir.generator.IrTree
+import org.jetbrains.kotlin.ir.generator.Packages
+import org.jetbrains.kotlin.ir.generator.config.ElementConfig
 import org.jetbrains.kotlin.ir.generator.model.Element
 import org.jetbrains.kotlin.ir.generator.model.ElementRef
 import org.jetbrains.kotlin.ir.generator.model.Field
 import org.jetbrains.kotlin.ir.generator.model.Model
+import org.jetbrains.kotlin.ir.generator.util.ClassRef
 import org.jetbrains.kotlin.ir.generator.util.GeneratedFile
 import org.jetbrains.kotlin.ir.generator.util.parameterizedByIfAny
 import org.jetbrains.kotlin.name.Name
@@ -21,47 +24,76 @@ import java.io.File
 private val buildingContextTypeName = ClassName(DSL_PACKAGE, "IrBuildingContext")
 private val irNodeBuilderDslAnnotationTypeName = ClassName(DSL_PACKAGE, "IrNodeBuilderDsl")
 
-fun printDslDeclarationContainerBuilder(generationPath: File, model: Model): GeneratedFile {
-    val interfaceName = "IrDeclarationContainerBuilder"
-    return printFile(generationPath, DSL_PACKAGE, interfaceName) {
-        for (element in model.elements) {
-            if (!element.isLeaf || !element.isDeclarationElement) continue
-            buildIrNodeBuilderFunctions(
-                element,
-                name = element.typeName.replaceFirstChar(Char::lowercaseChar),
-                additionalParameters = emptyList(),
-                returnType = UNIT,
-                customize = {
-                    receiver(ClassName(DSL_PACKAGE, interfaceName))
-                },
-                bodyBuilder = {
-                    addStatement(
-                        buildString {
-                            append("declarationBuilders")
-                            append(".add(")
-                            appendCallToBuilder(
-                                element,
-                                buildingContextPropertyName = "buildingContext",
-                                mandatoryParameterNames = parameters.dropLast(1).map { it.name },
-                                blockParameterName = parameters.last().name
-                            )
-                            append(")")
-                        }
-                    )
-                }
-            ).forEach(::addFunction)
-        }
+fun printDslDeclarationContainerBuilders(generationPath: File, model: Model): GeneratedFile =
+    printDslContainerBuilders(
+        "IrDeclarationContainerBuilder",
+        "__internal_addDeclarationBuilder",
+        { it.isChildOf(IrTree.declaration) },
+        generationPath,
+        model
+    )
+
+fun printDslStatementContainerBuilders(generationPath: File, model: Model): GeneratedFile =
+    printDslContainerBuilders(
+        "IrStatementContainerBuilder",
+        "__internal_addStatementBuilder",
+        { it.isChildOf(IrTree.statement) && !it.isChildOf(IrTree.declaration) },
+        generationPath,
+        model
+    )
+
+fun printDslExpressionContainerBuilders(generationPath: File, model: Model): GeneratedFile =
+    printDslContainerBuilders(
+        "IrExpressionContainerBuilder",
+        "__internal_addExpressionBuilder",
+        { it.isChildOf(IrTree.expression) },
+        generationPath,
+        model
+    )
+
+private fun printDslContainerBuilders(
+    interfaceName: String,
+    addMethodName: String,
+    elementPredicate: (Element) -> Boolean,
+    generationPath: File,
+    model: Model
+): GeneratedFile = printFile(generationPath, DSL_PACKAGE, interfaceName) {
+    for (element in model.elements) {
+        if (!element.isLeaf || !elementPredicate(element)) continue
+        buildIrNodeBuilderFunctions(
+            element,
+            name = element.typeName.replaceFirstChar(Char::lowercaseChar),
+            additionalParameters = emptyList(),
+            returnType = UNIT,
+            customize = {
+                receiver(ClassName(DSL_PACKAGE, interfaceName))
+            },
+            bodyBuilder = {
+                addStatement(
+                    buildString {
+                        append(addMethodName)
+                        append("(")
+                        appendCallToBuilder(
+                            element,
+                            buildingContextPropertyName = "buildingContext",
+                            mandatoryParameterNames = parameters.dropLast(1).map { it.name },
+                            blockParameterName = parameters.last().name
+                        )
+                        append(")")
+                    }
+                )
+            }
+        ).forEach(::addFunction)
     }
 }
 
-private val Element.isDeclarationElement: Boolean
-    get() {
-        fun isDeclaration(parents: List<ElementRef>): Boolean {
-            if (parents.any { it.element.name == IrTree.declaration.name }) return true
-            return parents.any { isDeclaration(it.element.elementParents) }
-        }
-        return isDeclaration(elementParents)
+private fun Element.isChildOf(elementConfig: ElementConfig): Boolean {
+    fun recurse(parents: List<ElementRef>): Boolean {
+        if (parents.any { it.element.name == elementConfig.name }) return true
+        return parents.any { recurse(it.element.elementParents) }
     }
+    return recurse(elementParents)
+}
 
 private fun StringBuilder.appendCallToBuilder(
     element: Element,

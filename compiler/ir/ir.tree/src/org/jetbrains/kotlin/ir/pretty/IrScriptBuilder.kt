@@ -9,7 +9,9 @@ import org.jetbrains.kotlin.ir.declarations.IrScript
 import org.jetbrains.kotlin.name.Name
 
 class IrScriptBuilder @PublishedApi internal constructor(private val name: Name, buildingContext: IrBuildingContext) :
-    IrDeclarationBuilder<IrScript>(buildingContext) {
+    IrDeclarationBuilder<IrScript>(buildingContext), IrStatementContainerBuilder {
+
+    override val __internal_statementBuilders = mutableListOf<IrStatementBuilder<*>>()
 
     @PublishedApi
     override fun build(): IrScript {

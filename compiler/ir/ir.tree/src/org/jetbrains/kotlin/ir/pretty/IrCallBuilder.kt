@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.ir.pretty
 
 import org.jetbrains.kotlin.ir.expressions.IrCall
 
-class IrCallBuilder @PublishedApi internal constructor(buildingContext: IrBuildingContext) : IrElementBuilder<IrCall>(buildingContext) {
+class IrCallBuilder @PublishedApi internal constructor(buildingContext: IrBuildingContext) : IrExpressionBuilder<IrCall>(buildingContext) {
 
     @PublishedApi
     override fun build(): IrCall {

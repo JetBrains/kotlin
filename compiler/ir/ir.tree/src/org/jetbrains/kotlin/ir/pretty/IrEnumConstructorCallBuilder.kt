@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.ir.pretty
 import org.jetbrains.kotlin.ir.expressions.IrEnumConstructorCall
 
 class IrEnumConstructorCallBuilder @PublishedApi internal constructor(buildingContext: IrBuildingContext) :
-    IrElementBuilder<IrEnumConstructorCall>(buildingContext) {
+    IrExpressionBuilder<IrEnumConstructorCall>(buildingContext) {
 
     @PublishedApi
     override fun build(): IrEnumConstructorCall {

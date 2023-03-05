@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.ir.pretty
 import org.jetbrains.kotlin.ir.expressions.IrConstantArray
 
 class IrConstantArrayBuilder @PublishedApi internal constructor(buildingContext: IrBuildingContext) :
-    IrElementBuilder<IrConstantArray>(buildingContext) {
+    IrExpressionBuilder<IrConstantArray>(buildingContext) {
 
     @PublishedApi
     override fun build(): IrConstantArray {

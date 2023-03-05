@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.name.Name
 @IrNodeBuilderDsl
 inline fun IrDeclarationContainerBuilder.irValueParameter(name: Name,
         block: IrElementBuilderClosure<IrValueParameterBuilder>) {
-    declarationBuilders.add(IrValueParameterBuilder(name, buildingContext).apply(block))
+    __internal_addDeclarationBuilder(IrValueParameterBuilder(name, buildingContext).apply(block))
 }
 
 @IrNodeBuilderDsl
@@ -24,7 +24,7 @@ inline fun IrDeclarationContainerBuilder.irValueParameter(name: String,
 @IrNodeBuilderDsl
 inline fun IrDeclarationContainerBuilder.irClass(name: Name,
         block: IrElementBuilderClosure<IrClassBuilder>) {
-    declarationBuilders.add(IrClassBuilder(name, buildingContext).apply(block))
+    __internal_addDeclarationBuilder(IrClassBuilder(name, buildingContext).apply(block))
 }
 
 @IrNodeBuilderDsl
@@ -35,13 +35,13 @@ inline fun IrDeclarationContainerBuilder.irClass(name: String,
 @IrNodeBuilderDsl
 inline
         fun IrDeclarationContainerBuilder.irAnonymousInitializer(block: IrElementBuilderClosure<IrAnonymousInitializerBuilder>) {
-    declarationBuilders.add(IrAnonymousInitializerBuilder(buildingContext).apply(block))
+    __internal_addDeclarationBuilder(IrAnonymousInitializerBuilder(buildingContext).apply(block))
 }
 
 @IrNodeBuilderDsl
 inline fun IrDeclarationContainerBuilder.irTypeParameter(name: Name,
         block: IrElementBuilderClosure<IrTypeParameterBuilder>) {
-    declarationBuilders.add(IrTypeParameterBuilder(name, buildingContext).apply(block))
+    __internal_addDeclarationBuilder(IrTypeParameterBuilder(name, buildingContext).apply(block))
 }
 
 @IrNodeBuilderDsl
@@ -52,7 +52,7 @@ inline fun IrDeclarationContainerBuilder.irTypeParameter(name: String,
 @IrNodeBuilderDsl
 inline fun IrDeclarationContainerBuilder.irConstructor(name: Name,
         block: IrElementBuilderClosure<IrConstructorBuilder>) {
-    declarationBuilders.add(IrConstructorBuilder(name, buildingContext).apply(block))
+    __internal_addDeclarationBuilder(IrConstructorBuilder(name, buildingContext).apply(block))
 }
 
 @IrNodeBuilderDsl
@@ -63,7 +63,7 @@ inline fun IrDeclarationContainerBuilder.irConstructor(name: String,
 @IrNodeBuilderDsl
 inline fun IrDeclarationContainerBuilder.irEnumEntry(name: Name,
         block: IrElementBuilderClosure<IrEnumEntryBuilder>) {
-    declarationBuilders.add(IrEnumEntryBuilder(name, buildingContext).apply(block))
+    __internal_addDeclarationBuilder(IrEnumEntryBuilder(name, buildingContext).apply(block))
 }
 
 @IrNodeBuilderDsl
@@ -74,25 +74,25 @@ inline fun IrDeclarationContainerBuilder.irEnumEntry(name: String,
 @IrNodeBuilderDsl
 inline
         fun IrDeclarationContainerBuilder.irErrorDeclaration(block: IrElementBuilderClosure<IrErrorDeclarationBuilder>) {
-    declarationBuilders.add(IrErrorDeclarationBuilder(buildingContext).apply(block))
+    __internal_addDeclarationBuilder(IrErrorDeclarationBuilder(buildingContext).apply(block))
 }
 
 @IrNodeBuilderDsl
 inline
         fun IrDeclarationContainerBuilder.irFunctionWithLateBinding(block: IrElementBuilderClosure<IrFunctionWithLateBindingBuilder>) {
-    declarationBuilders.add(IrFunctionWithLateBindingBuilder(buildingContext).apply(block))
+    __internal_addDeclarationBuilder(IrFunctionWithLateBindingBuilder(buildingContext).apply(block))
 }
 
 @IrNodeBuilderDsl
 inline
         fun IrDeclarationContainerBuilder.irPropertyWithLateBinding(block: IrElementBuilderClosure<IrPropertyWithLateBindingBuilder>) {
-    declarationBuilders.add(IrPropertyWithLateBindingBuilder(buildingContext).apply(block))
+    __internal_addDeclarationBuilder(IrPropertyWithLateBindingBuilder(buildingContext).apply(block))
 }
 
 @IrNodeBuilderDsl
 inline fun IrDeclarationContainerBuilder.irField(name: Name,
         block: IrElementBuilderClosure<IrFieldBuilder>) {
-    declarationBuilders.add(IrFieldBuilder(name, buildingContext).apply(block))
+    __internal_addDeclarationBuilder(IrFieldBuilder(name, buildingContext).apply(block))
 }
 
 @IrNodeBuilderDsl
@@ -103,7 +103,8 @@ inline fun IrDeclarationContainerBuilder.irField(name: String,
 @IrNodeBuilderDsl
 inline fun IrDeclarationContainerBuilder.irLocalDelegatedProperty(name: Name,
         block: IrElementBuilderClosure<IrLocalDelegatedPropertyBuilder>) {
-    declarationBuilders.add(IrLocalDelegatedPropertyBuilder(name, buildingContext).apply(block))
+    __internal_addDeclarationBuilder(IrLocalDelegatedPropertyBuilder(name,
+            buildingContext).apply(block))
 }
 
 @IrNodeBuilderDsl
@@ -114,7 +115,7 @@ inline fun IrDeclarationContainerBuilder.irLocalDelegatedProperty(name: String,
 @IrNodeBuilderDsl
 inline fun IrDeclarationContainerBuilder.irProperty(name: Name,
         block: IrElementBuilderClosure<IrPropertyBuilder>) {
-    declarationBuilders.add(IrPropertyBuilder(name, buildingContext).apply(block))
+    __internal_addDeclarationBuilder(IrPropertyBuilder(name, buildingContext).apply(block))
 }
 
 @IrNodeBuilderDsl
@@ -125,7 +126,7 @@ inline fun IrDeclarationContainerBuilder.irProperty(name: String,
 @IrNodeBuilderDsl
 inline fun IrDeclarationContainerBuilder.irScript(name: Name,
         block: IrElementBuilderClosure<IrScriptBuilder>) {
-    declarationBuilders.add(IrScriptBuilder(name, buildingContext).apply(block))
+    __internal_addDeclarationBuilder(IrScriptBuilder(name, buildingContext).apply(block))
 }
 
 @IrNodeBuilderDsl
@@ -136,7 +137,7 @@ inline fun IrDeclarationContainerBuilder.irScript(name: String,
 @IrNodeBuilderDsl
 inline fun IrDeclarationContainerBuilder.irSimpleFunction(name: Name,
         block: IrElementBuilderClosure<IrSimpleFunctionBuilder>) {
-    declarationBuilders.add(IrSimpleFunctionBuilder(name, buildingContext).apply(block))
+    __internal_addDeclarationBuilder(IrSimpleFunctionBuilder(name, buildingContext).apply(block))
 }
 
 @IrNodeBuilderDsl
@@ -147,7 +148,7 @@ inline fun IrDeclarationContainerBuilder.irSimpleFunction(name: String,
 @IrNodeBuilderDsl
 inline fun IrDeclarationContainerBuilder.irTypeAlias(name: Name,
         block: IrElementBuilderClosure<IrTypeAliasBuilder>) {
-    declarationBuilders.add(IrTypeAliasBuilder(name, buildingContext).apply(block))
+    __internal_addDeclarationBuilder(IrTypeAliasBuilder(name, buildingContext).apply(block))
 }
 
 @IrNodeBuilderDsl
@@ -158,7 +159,7 @@ inline fun IrDeclarationContainerBuilder.irTypeAlias(name: String,
 @IrNodeBuilderDsl
 inline fun IrDeclarationContainerBuilder.irVariable(name: Name,
         block: IrElementBuilderClosure<IrVariableBuilder>) {
-    declarationBuilders.add(IrVariableBuilder(name, buildingContext).apply(block))
+    __internal_addDeclarationBuilder(IrVariableBuilder(name, buildingContext).apply(block))
 }
 
 @IrNodeBuilderDsl

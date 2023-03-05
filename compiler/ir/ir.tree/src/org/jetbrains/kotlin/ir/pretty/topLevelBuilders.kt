@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.expressions.IrBlock
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 
@@ -33,3 +34,9 @@ inline fun buildIrConstructor(
     buildingContext: IrBuildingContext = IrBuildingContext(),
     block: IrElementBuilderClosure<IrConstructorBuilder>,
 ): IrConstructor = buildIrConstructor(SpecialNames.INIT, buildingContext, block)
+
+@IrNodeBuilderDsl
+inline fun buildIrBlock(
+    buildingContext: IrBuildingContext,
+    block: IrElementBuilderClosure<IrBlockBuilder>,
+): IrBlock = IrBlockBuilder(buildingContext).apply(block).build()

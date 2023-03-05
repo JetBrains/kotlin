@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.ir.pretty
 import org.jetbrains.kotlin.ir.expressions.IrRawFunctionReference
 
 class IrRawFunctionReferenceBuilder @PublishedApi internal constructor(buildingContext: IrBuildingContext) :
-    IrElementBuilder<IrRawFunctionReference>(buildingContext) {
+    IrExpressionBuilder<IrRawFunctionReference>(buildingContext) {
 
     @PublishedApi
     override fun build(): IrRawFunctionReference {

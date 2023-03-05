@@ -649,7 +649,7 @@ object IrTree : AbstractTreeBuilder() {
 
         parent(body)
 
-        +field("kind", type(Packages.exprs, "IrSyntheticBodyKind"))
+        +field("kind", type(Packages.exprs, "IrSyntheticBodyKind"), isMandatoryInDSL = true)
     }
     val breakContinue: ElementConfig by element(Expression) {
         visitorParent = expression

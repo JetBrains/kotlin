@@ -24,7 +24,7 @@ class IrFileBuilder @PublishedApi internal constructor(private val name: String,
 
     override var builtAnnotations: List<IrConstructorCall> by SetAtMostOnce(emptyList())
 
-    override val declarationBuilders = mutableListOf<IrDeclarationBuilder<*>>()
+    override val __internal_declarationBuilders = mutableListOf<IrDeclarationBuilder<*>>()
 
     private class SyntheticFileEntry(override val name: String) : IrFileEntry {
         override val maxOffset: Int

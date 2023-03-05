@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.ir.pretty
 import org.jetbrains.kotlin.ir.expressions.IrDynamicMemberExpression
 
 class IrDynamicMemberExpressionBuilder @PublishedApi internal constructor(buildingContext: IrBuildingContext) :
-    IrElementBuilder<IrDynamicMemberExpression>(buildingContext) {
+    IrExpressionBuilder<IrDynamicMemberExpression>(buildingContext) {
 
     @PublishedApi
     override fun build(): IrDynamicMemberExpression {

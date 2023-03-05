@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.ir.pretty
 
+import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind
+
 val a = buildIrFile("a.kt") {
     packageName("com.example")
     irClass("Aa") {
@@ -12,29 +14,43 @@ val a = buildIrFile("a.kt") {
         symbol("com.example.Aa")
         modalityAbstract()
         visibilityInternal()
+        irConstructor {
+            primary()
+            irBlockBody {
+                irComposite {
+                    irSimpleFunction("local") {
+
+                    }
+                    irFunctionReference {
+
+                    }
+                }
+                irBlock {
+
+                }
+                irReturnableBlock {
+
+                }
+                irSetValue {
+
+                }
+            }
+        }
     }
-    irClass("Ab") {
-        debugInfo(53, 81)
-        modalityAbstract()
+    irSimpleFunction("foo") {
+        symbol("com.example.foo")
+        irBlockBody {
+            irReturn {
+                from("com.example.foo")
+                irConstructorCall {
+
+                }
+            }
+        }
     }
-    irClass("Ba") {
-        debugInfo(84, 96)
-        modalityAbstract()
-    }
-    irClass("Bb") {
-        debugInfo(98, 133)
-        modalityAbstract()
-    }
-    irClass("Ca") {
-        debugInfo(136, 166)
-        modalityAbstract()
-    }
-    irClass("Cb") {
-        debugInfo(168, 201)
-        modalityAbstract()
-    }
-    irClass("C") {
-        debugInfo(203, 223)
-        modalityAbstract()
+    irScript("MyScript") {
+        irSimpleFunction("") {
+
+        }
     }
 }

@@ -18,14 +18,20 @@ import org.jetbrains.kotlin.name.Name
 class IrClassBuilder @PublishedApi internal constructor(
     private val name: Name,
     buildingContext: IrBuildingContext,
-) : IrDeclarationBuilder<IrClass>(buildingContext), IrDeclarationWithVisibilityBuilder, IrDeclarationWithModalityBuilder, IrDeclarationContainerBuilder,
-    IrSymbolOwnerBuilder {
+) : IrDeclarationBuilder<IrClass>(buildingContext),
+    IrDeclarationWithVisibilityBuilder,
+    IrDeclarationWithModalityBuilder,
+    IrDeclarationContainerBuilder,
+    IrSymbolOwnerBuilder,
+    IrPossiblyExternalDeclarationBuilder {
 
     override var symbolReference: String? by SetAtMostOnce(null)
 
     override var declarationVisibility: DescriptorVisibility by SetAtMostOnce(DescriptorVisibilities.DEFAULT_VISIBILITY)
 
-    override val declarationBuilders = mutableListOf<IrDeclarationBuilder<*>>()
+    override var isExternal: Boolean by SetAtMostOnce(false)
+
+    override val __internal_declarationBuilders = mutableListOf<IrDeclarationBuilder<*>>()
 
     private var classKind: ClassKind by SetAtMostOnce(ClassKind.CLASS)
 
@@ -87,13 +93,6 @@ class IrClassBuilder @PublishedApi internal constructor(
         this.isData = isData
     }
 
-    private var isExternal: Boolean by SetAtMostOnce(false)
-
-    @IrNodePropertyDsl
-    fun external(isExternal: Boolean = true) {
-        this.isExternal = isExternal
-    }
-
     private var isValue: Boolean by SetAtMostOnce(false)
 
     @IrNodePropertyDsl
@@ -121,7 +120,7 @@ class IrClassBuilder @PublishedApi internal constructor(
             startOffset = startOffset,
             endOffset = endOffset,
             origin = declarationOrigin,
-            symbol = symbol<IrClassSymbol>(::IrClassSymbolImpl),
+            symbol = symbol(::IrClassSymbolImpl), // FIXME: Support public symbols
             name = name,
             kind = classKind,
             visibility = declarationVisibility,

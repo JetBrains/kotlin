@@ -7,7 +7,8 @@ package org.jetbrains.kotlin.ir.pretty
 
 import org.jetbrains.kotlin.ir.expressions.IrErrorCallExpression
 
-class IrErrorCallExpressionBuilder @PublishedApi internal constructor(buildingContext: IrBuildingContext) : IrElementBuilder<IrErrorCallExpression>(buildingContext) {
+class IrErrorCallExpressionBuilder @PublishedApi internal constructor(buildingContext: IrBuildingContext) :
+    IrExpressionBuilder<IrErrorCallExpression>(buildingContext) {
 
     @PublishedApi
     override fun build(): IrErrorCallExpression {

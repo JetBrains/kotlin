@@ -7,7 +7,8 @@ package org.jetbrains.kotlin.ir.pretty
 
 import org.jetbrains.kotlin.ir.expressions.IrStringConcatenation
 
-class IrStringConcatenationBuilder @PublishedApi internal constructor(buildingContext: IrBuildingContext) : IrElementBuilder<IrStringConcatenation>(buildingContext) {
+class IrStringConcatenationBuilder @PublishedApi internal constructor(buildingContext: IrBuildingContext) :
+    IrExpressionBuilder<IrStringConcatenation>(buildingContext) {
 
     @PublishedApi
     override fun build(): IrStringConcatenation {

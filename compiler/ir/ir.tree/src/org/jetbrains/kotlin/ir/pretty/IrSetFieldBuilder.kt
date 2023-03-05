@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.ir.pretty
 import org.jetbrains.kotlin.ir.expressions.IrSetField
 
 class IrSetFieldBuilder @PublishedApi internal constructor(buildingContext: IrBuildingContext) :
-    IrElementBuilder<IrSetField>(buildingContext) {
+    IrExpressionBuilder<IrSetField>(buildingContext) {
 
     @PublishedApi
     override fun build(): IrSetField {

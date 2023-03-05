@@ -6,18 +6,31 @@
 package org.jetbrains.kotlin.ir.pretty
 
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationContainer
+import org.jetbrains.kotlin.name.SpecialNames
 
 @PrettyIrDsl
 interface IrDeclarationContainerBuilder {
-    val declarationBuilders: MutableList<IrDeclarationBuilder<*>>
+
+    @Suppress("PropertyName") // TODO: Make @RequiresOptIn?
+    val __internal_declarationBuilders: MutableList<IrDeclarationBuilder<*>>
 
     val buildingContext: IrBuildingContext
+
+    @Suppress("FunctionName") // TODO: Make @RequiresOptIn?
+    fun __internal_addDeclarationBuilder(declarationBuilder: IrDeclarationBuilder<*>) {
+        __internal_declarationBuilders.add(declarationBuilder)
+    }
 }
 
 internal fun IrDeclarationContainerBuilder.addDeclarationsTo(declarationContainer: IrDeclarationContainer) {
-    for (declarationBuilder in declarationBuilders) {
+    for (declarationBuilder in __internal_declarationBuilders) {
         val declaration = declarationBuilder.build()
         declaration.parent = declarationContainer
         declarationContainer.declarations.add(declaration)
     }
+}
+
+@IrNodeBuilderDsl
+inline fun IrDeclarationContainerBuilder.irConstructor(block: IrElementBuilderClosure<IrConstructorBuilder>) {
+    irConstructor(SpecialNames.INIT, block)
 }

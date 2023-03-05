@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.ir.pretty
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 
 class IrTypeOperatorCallBuilder @PublishedApi internal constructor(buildingContext: IrBuildingContext) :
-    IrElementBuilder<IrTypeOperatorCall>(buildingContext) {
+    IrExpressionBuilder<IrTypeOperatorCall>(buildingContext) {
 
     @PublishedApi
     override fun build(): IrTypeOperatorCall {

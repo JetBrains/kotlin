@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.ir.pretty
 import org.jetbrains.kotlin.ir.expressions.IrGetClass
 
 class IrGetClassBuilder @PublishedApi internal constructor(buildingContext: IrBuildingContext) :
-    IrElementBuilder<IrGetClass>(buildingContext) {
+    IrExpressionBuilder<IrGetClass>(buildingContext) {
 
     @PublishedApi
     override fun build(): IrGetClass {

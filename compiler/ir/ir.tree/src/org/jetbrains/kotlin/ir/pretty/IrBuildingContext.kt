@@ -9,78 +9,77 @@ import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.symbols.*
-import kotlin.reflect.KClass
-
-internal inline fun <reified Symbol : IrSymbol> IrBuildingContext.symbol(name: String?, noinline createSymbol: () -> Symbol): Symbol =
-    symbol(name, Symbol::class, createSymbol)
 
 class IrBuildingContext(val irFactory: IrFactory = IrFactoryImpl) {
 
-    private class SymbolMap<Symbol : IrSymbol> {
-        private val string2SymbolMap = mutableMapOf<String, Symbol>()
-        private val symbol2StringMap = mutableMapOf<Symbol, String>()
+    internal class SymbolTable {
+        private val string2SymbolMap = mutableMapOf<String, IrSymbol>()
+        private val symbol2StringMap = mutableMapOf<IrSymbol, String>()
 
-        fun getOrCreateSymbol(
+        inline fun getOrCreateSymbol(
             name: String?,
-            symbolConstructor: () -> Symbol,
-        ): Symbol {
+            symbolConstructor: () -> IrSymbol,
+        ): IrSymbol {
             if (name == null) return symbolConstructor()
             string2SymbolMap[name]?.let { return it }
             return symbolConstructor().also { putSymbol(name, it) }
         }
 
         fun putSymbol(name: String, symbol: IrSymbol) {
-            @Suppress("UNCHECKED_CAST")
-            string2SymbolMap[name] = symbol as Symbol
+            string2SymbolMap[name] = symbol
             symbol2StringMap[symbol] = name
         }
+
+        fun getSymbol(name: String) = string2SymbolMap[name]
 
         fun containsSymbol(symbol: IrSymbol) = symbol2StringMap.containsKey(symbol)
     }
 
-    private inline fun <reified Symbol : IrSymbol> symbolClass2SymbolMap() = Symbol::class to SymbolMap<Symbol>()
+    internal val symbolTable = SymbolTable()
 
-    private val symbolMaps: Map<KClass<out IrSymbol>, SymbolMap<out IrSymbol>> = mapOf(
-        symbolClass2SymbolMap<IrFileSymbol>(),
-        symbolClass2SymbolMap<IrExternalPackageFragmentSymbol>(),
-        symbolClass2SymbolMap<IrAnonymousInitializerSymbol>(),
-        symbolClass2SymbolMap<IrEnumEntrySymbol>(),
-        symbolClass2SymbolMap<IrFieldSymbol>(),
-        symbolClass2SymbolMap<IrClassSymbol>(),
-        symbolClass2SymbolMap<IrScriptSymbol>(),
-        symbolClass2SymbolMap<IrTypeParameterSymbol>(),
-        symbolClass2SymbolMap<IrValueParameterSymbol>(),
-        symbolClass2SymbolMap<IrVariableSymbol>(),
-        symbolClass2SymbolMap<IrConstructorSymbol>(),
-        symbolClass2SymbolMap<IrSimpleFunctionSymbol>(),
-        symbolClass2SymbolMap<IrReturnableBlockSymbol>(),
-        symbolClass2SymbolMap<IrPropertySymbol>(),
-        symbolClass2SymbolMap<IrLocalDelegatedPropertySymbol>(),
-        symbolClass2SymbolMap<IrTypeAliasSymbol>(),
-    )
+    /**
+     * If a symbol with a non-null [name] and with type [Symbol] is found in this building context, returns that symbol.
+     *
+     * If [name] is not `null` and no symbol with this name is found in this building context, creates a new symbol with [createSymbol],
+     * saves that symbol in the context under the provided name and returns that symbol.
+     *
+     * If [name] is `null`, just executes [createSymbol] and returns it result without saving the created symbol in the building context.
+     *
+     * If a symbol with [name] is found in this context, but that symbol has a type different from [Symbol],
+     * throws [IllegalArgumentException].
+     *
+     * @param name The name to associate with the symbol. Different symbols within a building context must have different names.
+     * @param createSymbol A symbol constructor to execute if no symbol with [name] is found in this building context.
+     * @return A symbol associated with [name]
+     */
+    internal inline fun <reified Symbol : IrSymbol> getOrCreateSymbol(name: String?, createSymbol: () -> Symbol): Symbol =
+        when (val irSymbol = symbolTable.getOrCreateSymbol(name, createSymbol)) {
+            is Symbol -> irSymbol
+            else -> throw IllegalArgumentException(
+                "Symbol associated with name '$name' is expected to have the type ${Symbol::class.simpleName}, " +
+                        "but the actual type is ${irSymbol::class.simpleName}"
+            )
+        }
 
-    fun <Symbol : IrSymbol> symbol(name: String?, symbolClass: KClass<Symbol>, createSymbol: () -> Symbol): Symbol {
-        @Suppress("UNCHECKED_CAST")
-        val map = symbolMaps[symbolClass] as SymbolMap<Symbol>? ?: error("Symbol map not found for ${symbolClass.simpleName}")
-        return map.getOrCreateSymbol(name, createSymbol)
+    internal inline fun <reified Symbol : IrSymbol> getSymbol(name: String): Symbol {
+        return when (val irSymbol = symbolTable.getSymbol(name)) {
+            null -> error("Symbol associated with name '$name' is not found")
+            is Symbol -> irSymbol
+            else -> throw IllegalArgumentException(
+                "Symbol associated with name '$name' is expected to have the type ${Symbol::class.simpleName}, " +
+                        "but the actual type is ${irSymbol::class.simpleName}"
+            )
+        }
     }
 
     private fun uniqueNameForSymbolOwner(owner: IrSymbolOwner): String {
         TODO("Not implemented yet")
     }
 
-    private fun <Owner : IrSymbolOwner, Symbol : IrBindableSymbol<*, Owner>> putSymbolForSymbolOwner(owner: Owner, map: SymbolMap<Symbol>) {
-        @Suppress("UNCHECKED_CAST")
-        val symbol = owner.symbol as Symbol
-        if (map.containsSymbol(symbol)) return
-        val stringRepresentation = uniqueNameForSymbolOwner(owner)
-        map.putSymbol(stringRepresentation, symbol)
-    }
-
-    fun putSymbolForOwner(owner: IrSymbolOwner) {
+    fun putSymbolForSymbolOwner(owner: IrSymbolOwner) {
         val symbol = owner.symbol
-        val map = symbolMaps[symbol::class] ?: error("Symbol map not found for ${symbol::class.simpleName}")
-        if (map.containsSymbol(symbol)) return
-        map.putSymbol(uniqueNameForSymbolOwner(owner), symbol)
+        if (symbolTable.containsSymbol(symbol)) return
+        val stringRepresentation = uniqueNameForSymbolOwner(owner)
+        symbolTable.putSymbol(stringRepresentation, symbol)
     }
 }

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.ir.pretty
 import org.jetbrains.kotlin.ir.expressions.IrDoWhileLoop
 
 class IrDoWhileLoopBuilder @PublishedApi internal constructor(buildingContext: IrBuildingContext) :
-    IrElementBuilder<IrDoWhileLoop>(buildingContext) {
+    IrExpressionBuilder<IrDoWhileLoop>(buildingContext) {
 
     @PublishedApi
     override fun build(): IrDoWhileLoop {

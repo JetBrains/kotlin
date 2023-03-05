@@ -10,11 +10,12 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 
 abstract class IrDeclarationBuilder<Declaration : IrDeclaration> internal constructor(buildingContext: IrBuildingContext) :
-    IrElementBuilder<Declaration>(buildingContext),
+    IrStatementBuilder<Declaration>(buildingContext),
     IrAnnotationContainerBuilder {
 
     protected var declarationOrigin: IrDeclarationOrigin by SetAtMostOnce(IrDeclarationOrigin.DEFINED)
 
+    @PrettyIrDsl
     fun origin(origin: IrDeclarationOrigin) {
         this.declarationOrigin = origin
     }

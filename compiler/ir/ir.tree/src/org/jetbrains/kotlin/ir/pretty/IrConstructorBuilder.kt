@@ -6,15 +6,38 @@
 package org.jetbrains.kotlin.ir.pretty
 
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
+import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
+import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
 import org.jetbrains.kotlin.name.Name
 
 class IrConstructorBuilder @PublishedApi internal constructor(
-    name: Name,
+    private val name: Name,
     buildingContext: IrBuildingContext
 ) : IrFunctionBuilder<IrConstructor>(buildingContext) {
 
+    private var isPrimary: Boolean by SetAtMostOnce(false)
+
+    @IrNodePropertyDsl
+    fun primary(isPrimary: Boolean = true) {
+        this.isPrimary = isPrimary
+    }
+
     @PublishedApi
     override fun build(): IrConstructor {
-        TODO("Not yet implemented")
+        return buildingContext.irFactory.createConstructor(
+            startOffset = startOffset,
+            endOffset = endOffset,
+            origin = declarationOrigin,
+            symbol = symbol(::IrConstructorSymbolImpl), // FIXME: Support public symbols
+            name = name,
+            visibility = declarationVisibility,
+            returnType = IrUninitializedType, // FIXME!!!
+            isInline = isInline,
+            isExternal = isExternal,
+            isPrimary = isPrimary,
+            isExpect = isExpect,
+        ).also {
+            addFunctionPropertiesTo(it)
+        }
     }
 }

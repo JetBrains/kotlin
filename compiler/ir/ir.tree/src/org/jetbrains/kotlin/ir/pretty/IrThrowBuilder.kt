@@ -7,7 +7,8 @@ package org.jetbrains.kotlin.ir.pretty
 
 import org.jetbrains.kotlin.ir.expressions.IrThrow
 
-class IrThrowBuilder @PublishedApi internal constructor(buildingContext: IrBuildingContext) : IrElementBuilder<IrThrow>(buildingContext) {
+class IrThrowBuilder @PublishedApi internal constructor(buildingContext: IrBuildingContext) :
+    IrExpressionBuilder<IrThrow>(buildingContext) {
 
     @PublishedApi
     override fun build(): IrThrow {

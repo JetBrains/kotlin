@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.ir.pretty
 
 import org.jetbrains.kotlin.ir.expressions.IrWhen
 
-class IrWhenBuilder @PublishedApi internal constructor(buildingContext: IrBuildingContext) : IrElementBuilder<IrWhen>(buildingContext) {
+class IrWhenBuilder @PublishedApi internal constructor(buildingContext: IrBuildingContext) : IrExpressionBuilder<IrWhen>(buildingContext) {
 
     @PublishedApi
     override fun build(): IrWhen {

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.ir.pretty
 import org.jetbrains.kotlin.ir.expressions.IrConstantPrimitive
 
 class IrConstantPrimitiveBuilder @PublishedApi internal constructor(buildingContext: IrBuildingContext) :
-    IrElementBuilder<IrConstantPrimitive>(buildingContext) {
+    IrExpressionBuilder<IrConstantPrimitive>(buildingContext) {
 
     @PublishedApi
     override fun build(): IrConstantPrimitive {

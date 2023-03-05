@@ -7,7 +7,8 @@ package org.jetbrains.kotlin.ir.pretty
 
 import org.jetbrains.kotlin.ir.expressions.IrContinue
 
-class IrContinueBuilder @PublishedApi internal constructor(buildingContext: IrBuildingContext) : IrElementBuilder<IrContinue>(buildingContext) {
+class IrContinueBuilder @PublishedApi internal constructor(buildingContext: IrBuildingContext) :
+    IrExpressionBuilder<IrContinue>(buildingContext) {
 
     @PublishedApi
     override fun build(): IrContinue {

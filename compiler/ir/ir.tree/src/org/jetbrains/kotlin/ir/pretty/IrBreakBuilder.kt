@@ -7,7 +7,8 @@ package org.jetbrains.kotlin.ir.pretty
 
 import org.jetbrains.kotlin.ir.expressions.IrBreak
 
-class IrBreakBuilder @PublishedApi internal constructor(buildingContext: IrBuildingContext) : IrElementBuilder<IrBreak>(buildingContext) {
+class IrBreakBuilder @PublishedApi internal constructor(buildingContext: IrBuildingContext) :
+    IrExpressionBuilder<IrBreak>(buildingContext) {
 
     @PublishedApi
     override fun build(): IrBreak {

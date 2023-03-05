@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.ir.pretty
 import org.jetbrains.kotlin.ir.expressions.IrSuspensionPoint
 
 class IrSuspensionPointBuilder @PublishedApi internal constructor(buildingContext: IrBuildingContext) :
-    IrElementBuilder<IrSuspensionPoint>(buildingContext) {
+    IrExpressionBuilder<IrSuspensionPoint>(buildingContext) {
 
     @PublishedApi
     override fun build(): IrSuspensionPoint {
