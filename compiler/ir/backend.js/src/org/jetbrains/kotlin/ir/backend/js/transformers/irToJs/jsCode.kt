@@ -63,7 +63,7 @@ private fun translateJsCodeIntoStatementList(
     return parseExpressionOrStatement(jsCode, ThrowExceptionOnErrorReporter, currentScope, CodePosition(startLine, offset), fileName)
 }
 
-fun foldString(expression: IrExpression, context: JsIrBackendContext?): String? {
+private fun foldString(expression: IrExpression, context: JsIrBackendContext?): String? {
     val builder = StringBuilder()
     var foldingFailed = false
     expression.acceptVoid(object : IrElementVisitorVoid {
@@ -92,6 +92,7 @@ fun foldString(expression: IrExpression, context: JsIrBackendContext?): String? 
 
         override fun visitCall(expression: IrCall) {
             val owner = expression.symbol.owner
+            val propertySymbol = owner.correspondingPropertySymbol
             return when {
                 expression.origin == IrStatementOrigin.PLUS ->
                     expression.acceptChildrenVoid(this)
@@ -99,8 +100,17 @@ fun foldString(expression: IrExpression, context: JsIrBackendContext?): String? 
                     owner.body?.acceptChildrenVoid(InitFunVisitor(context))
                     expression.acceptChildrenVoid(this)
                 }
-                owner == owner.correspondingPropertySymbol?.owner?.getter -> {
-                    owner.body?.acceptChildrenVoid(this)
+                propertySymbol != null && owner == propertySymbol.owner.getter -> {
+                    if (propertySymbol.owner.isConst) {
+                        val initializer = propertySymbol.owner.backingField?.initializer
+                        if (initializer != null) {
+                            initializer.acceptChildrenVoid(this)
+                        } else {
+                            foldingFailed = true
+                        }
+                    } else {
+                        owner.body?.acceptChildrenVoid(this)
+                    }
                     expression.acceptChildrenVoid(this)
                 }
                 else -> super.visitCall(expression)

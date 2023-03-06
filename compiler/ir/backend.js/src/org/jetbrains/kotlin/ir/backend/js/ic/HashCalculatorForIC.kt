@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.DumpIrTreeVisitor
@@ -141,6 +142,11 @@ internal fun IrSymbol.irSymbolHashForIC() = HashCalculatorForIC().also {
         }
     }
     (owner as? IrAnnotationContainer)?.let(it::updateAnnotationContainer)
+    (owner as? IrProperty)?.let { irProperty ->
+        if (irProperty.isConst) {
+            irProperty.backingField?.initializer?.let(it::update)
+        }
+    }
 }.finalize()
 
 internal fun String.stringHashForIC() = HashCalculatorForIC().also { it.update(this) }.finalize()
