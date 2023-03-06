@@ -68,8 +68,7 @@ abstract class BasicWasmBoxTest(
             val languageVersionSettings = inputFiles.firstNotNullOfOrNull { it.languageVersionSettings }
 
             val kotlinFiles = mutableListOf<String>()
-            val jsFilesBefore = mutableListOf<String>()
-            val jsFilesAfter = mutableListOf<String>()
+            val jsFiles = mutableListOf<String>()
             val mjsFiles = mutableListOf<String>()
 
             var entryMjs: String? = "test.mjs"
@@ -80,11 +79,8 @@ abstract class BasicWasmBoxTest(
                     name.endsWith(".kt") ->
                         kotlinFiles += name
 
-                    name.endsWith("__after.js") ->
-                        jsFilesAfter += name
-
                     name.endsWith(".js") ->
-                        jsFilesBefore += name
+                        jsFiles += name
 
                     name.endsWith(".mjs") -> {
                         mjsFiles += name
@@ -98,7 +94,7 @@ abstract class BasicWasmBoxTest(
 
             val additionalJsFile = filePath.removeSuffix(".kt") + ".js"
             if (File(additionalJsFile).exists()) {
-                jsFilesBefore += additionalJsFile
+                jsFiles += additionalJsFile
             }
             val additionalMjsFile = filePath.removeSuffix(".kt") + ".mjs"
             if (File(additionalMjsFile).exists()) {
@@ -260,8 +256,7 @@ abstract class BasicWasmBoxTest(
                         }
                         vm.run(
                             "./${entryMjs}",
-                            jsFilesBefore.map { File(it).absolutePath },
-                            jsFilesAfter.map { File(it).absolutePath },
+                            jsFiles.map { File(it).absolutePath },
                             workingDirectory = dir
                         )
                         if (vm.shortName in failsIn) {

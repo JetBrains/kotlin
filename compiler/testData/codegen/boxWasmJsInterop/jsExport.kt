@@ -1,4 +1,3 @@
-// WASM_FAILS_IN: SM
 // MODULE: main
 // FILE: externals.kt
 
@@ -26,17 +25,9 @@ fun anyAsEI(any: Any): EI = any as EI
 
 fun box(): String = "OK"
 
-// TODO: Rewrite test to use module system
+// FILE: entry.mjs
 
-fun hackNonModuleExport() {
-    js("globalThis.main = wasmExports;")
-}
-
-fun main() {
-    hackNonModuleExport()
-}
-
-// FILE: jsExport__after.js
+import main from "./index.mjs"
 
 const c = main.makeC(300);
 if (main.getX(c) !== 300) {

@@ -1,6 +1,5 @@
 // Char issues
 // IGNORE_BACKEND: JS_IR
-// WASM_FAILS_IN: SM 
 
 // MODULE: main
 // FILE: externals.js
@@ -241,16 +240,15 @@ fun box(): String {
     return "OK"
 }
 
-// TODO: Rewrite test to use module system
-fun hackNonModuleExport() {
-    js("globalThis.main = wasmExports;")
-}
+// FILE: entry.mjs
 
-fun main() {
-    hackNonModuleExport()
-}
+import main from "./index.mjs"
 
-// FILE: functionTypes__after.js
+const boxResult = main.box();
+
+if (boxResult != "OK") {
+    throw `Wrong box result '${boxResult}'; Expected "OK"`;
+}
 
 const exportedFres = main.exportedF()(1, 20, 300)("<", ">");
 if (exportedFres !== "<321>")
