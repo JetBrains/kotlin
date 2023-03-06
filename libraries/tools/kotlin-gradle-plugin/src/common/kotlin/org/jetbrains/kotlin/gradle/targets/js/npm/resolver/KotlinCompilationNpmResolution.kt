@@ -61,7 +61,7 @@ class KotlinCompilationNpmResolution(
     }
 
     @Synchronized
-    fun getResolutionOrResolve(
+    fun getResolutionOrPrepare(
         npmResolutionManager: KotlinNpmResolutionManager,
         logger: Logger,
     ): PreparedKotlinCompilationNpmResolution {
@@ -80,7 +80,7 @@ class KotlinCompilationNpmResolution(
     ): PreparedKotlinCompilationNpmResolution {
         check(!closed) { "$this already closed" }
         closed = true
-        return getResolutionOrResolve(npmResolutionManager, logger)
+        return getResolutionOrPrepare(npmResolutionManager, logger)
     }
 
     fun createPreparedResolution(
@@ -92,7 +92,7 @@ class KotlinCompilationNpmResolution(
 
         internalDependencies.map {
             val compilationNpmResolution: KotlinCompilationNpmResolution = rootResolver[it.projectPath][it.compilationName]
-            compilationNpmResolution.getResolutionOrResolve(
+            compilationNpmResolution.getResolutionOrPrepare(
                 npmResolutionManager,
                 logger
             )

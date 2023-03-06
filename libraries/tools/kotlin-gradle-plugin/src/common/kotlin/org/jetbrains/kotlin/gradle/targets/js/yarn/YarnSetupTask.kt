@@ -29,14 +29,13 @@ abstract class YarnSetupTask : DefaultTask() {
     private val shouldDownload = settings.download
 
     @get:Inject
-    abstract internal val archiveOperations: ArchiveOperations
+    internal abstract val archiveOperations: ArchiveOperations
 
     @get:Inject
-    abstract internal val fileHasher: FileHasher
+    internal abstract val fileHasher: FileHasher
 
     @get:Inject
-    internal open val fs: FileSystemOperations
-        get() = error("Should be injected")
+    internal abstract val fs: FileSystemOperations
 
     @Suppress("MemberVisibilityCanBePrivate")
     val downloadUrl

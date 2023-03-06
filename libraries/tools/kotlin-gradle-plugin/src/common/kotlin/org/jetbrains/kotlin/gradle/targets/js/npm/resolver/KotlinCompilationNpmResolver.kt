@@ -109,7 +109,7 @@ class KotlinCompilationNpmResolver(
         return _compilationNpmResolution
     }
 
-    fun createAggregatedConfiguration(): Configuration {
+    private fun createAggregatedConfiguration(): Configuration {
         val all = project.configurations.create(compilation.disambiguateName("npm"))
 
         all.usesPlatformOf(target)

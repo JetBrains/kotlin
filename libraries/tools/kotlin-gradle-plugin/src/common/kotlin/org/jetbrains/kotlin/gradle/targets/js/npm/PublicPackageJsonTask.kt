@@ -50,7 +50,7 @@ abstract class PublicPackageJsonTask :
 
     private val compilationResolution
         get() = npmResolutionManager.get().resolution.get()[projectPath][compilationDisambiguatedName.get()]
-            .getResolutionOrResolve(
+            .getResolutionOrPrepare(
                 npmResolutionManager.get(),
                 logger
             )

@@ -47,7 +47,7 @@ open class NodeJsRootExtension(
     }
 
     val rootProjectDir
-        get() = project.projectDir
+        get() = project.rootDir
 
     private val gradleHome = project.gradle.gradleUserHomeDir.also {
         project.logger.kotlinInfo("Storing cached files in $it")
