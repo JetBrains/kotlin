@@ -156,10 +156,6 @@ class DescriptorSerializer private constructor(
             if (descriptor is TypeAliasDescriptor) {
                 typeAliasProto(descriptor)?.let { builder.addTypeAlias(it) }
             } else {
-                if (descriptor is ClassDescriptor && !extension.shouldSerializeNestedClass(descriptor)) {
-                    continue
-                }
-
                 val name = getSimpleNameIndex(descriptor.name)
                 if (isEnumEntry(descriptor)) {
                     builder.addEnumEntry(enumEntryProto(descriptor as ClassDescriptor))
@@ -254,8 +250,6 @@ class DescriptorSerializer private constructor(
     }
 
     fun propertyProto(descriptor: PropertyDescriptor): ProtoBuf.Property.Builder? {
-        if (!extension.shouldSerializeProperty(descriptor)) return null
-
         val builder = ProtoBuf.Property.newBuilder()
 
         val local = createChildSerializer(descriptor)
@@ -384,8 +378,6 @@ class DescriptorSerializer private constructor(
     }
 
     fun functionProto(descriptor: FunctionDescriptor): ProtoBuf.Function.Builder? {
-        if (!extension.shouldSerializeFunction(descriptor)) return null
-
         val builder = ProtoBuf.Function.newBuilder()
 
         val local = createChildSerializer(descriptor)
@@ -530,8 +522,6 @@ class DescriptorSerializer private constructor(
     }
 
     private fun typeAliasProto(descriptor: TypeAliasDescriptor): ProtoBuf.TypeAlias.Builder? = withNewMetDefinitelyNotNullType {
-        if (!extension.shouldSerializeTypeAlias(descriptor)) return null
-
         val builder = ProtoBuf.TypeAlias.newBuilder()
         val local = createChildSerializer(descriptor)
 

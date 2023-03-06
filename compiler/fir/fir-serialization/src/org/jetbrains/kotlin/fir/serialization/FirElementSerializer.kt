@@ -32,7 +32,10 @@ import org.jetbrains.kotlin.fir.serialization.constant.EnumValue
 import org.jetbrains.kotlin.fir.serialization.constant.IntValue
 import org.jetbrains.kotlin.fir.serialization.constant.StringValue
 import org.jetbrains.kotlin.fir.serialization.constant.toConstantValue
-import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
@@ -195,10 +198,6 @@ class FirElementSerializer private constructor(
             if (nestedClassifier is FirTypeAliasSymbol) {
                 typeAliasProto(nestedClassifier.fir)?.let { builder.addTypeAlias(it) }
             } else if (nestedClassifier is FirRegularClassSymbol) {
-                if (!extension.shouldSerializeNestedClass(nestedClassifier.fir)) {
-                    continue
-                }
-
                 builder.addNestedClassName(getSimpleNameIndex(nestedClassifier.name))
             }
         }
@@ -311,8 +310,6 @@ class FirElementSerializer private constructor(
         (this as FirAnnotationContainer).nonSourceAnnotations(session)
 
     fun propertyProto(property: FirProperty): ProtoBuf.Property.Builder? = whileAnalysing(session, property) {
-        if (!extension.shouldSerializeProperty(property)) return null
-
         val builder = ProtoBuf.Property.newBuilder()
 
         val local = createChildSerializer(property)
@@ -419,8 +416,6 @@ class FirElementSerializer private constructor(
     }
 
     fun functionProto(function: FirFunction): ProtoBuf.Function.Builder? = whileAnalysing(session, function) {
-        if (!extension.shouldSerializeFunction(function)) return null
-
         val builder = ProtoBuf.Function.newBuilder()
         val simpleFunction = function as? FirSimpleFunction
 
@@ -523,8 +518,6 @@ class FirElementSerializer private constructor(
     }
 
     private fun typeAliasProto(typeAlias: FirTypeAlias): ProtoBuf.TypeAlias.Builder? = whileAnalysing(session, typeAlias) {
-        if (!extension.shouldSerializeTypeAlias(typeAlias)) return null
-
         val builder = ProtoBuf.TypeAlias.newBuilder()
         val local = createChildSerializer(typeAlias)
 

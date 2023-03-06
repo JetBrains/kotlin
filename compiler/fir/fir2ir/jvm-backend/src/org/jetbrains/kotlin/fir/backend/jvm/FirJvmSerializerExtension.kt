@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.JvmDefaultMode
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
@@ -79,23 +78,6 @@ class FirJvmSerializerExtension(
     )
 
     override fun shouldUseTypeTable(): Boolean = useTypeTable
-    override fun shouldSerializeFunction(function: FirFunction): Boolean {
-        return classBuilderMode != ClassBuilderMode.ABI ||
-                function !is FirSimpleFunction || function.visibility != Visibilities.Private
-    }
-
-    override fun shouldSerializeProperty(property: FirProperty): Boolean {
-        return classBuilderMode != ClassBuilderMode.ABI || property.visibility != Visibilities.Private
-    }
-
-    override fun shouldSerializeTypeAlias(typeAlias: FirTypeAlias): Boolean {
-        // TODO: do not serialize private type aliases in ABI class builder mode once KT-17229 is fixed.
-        return true
-    }
-
-    override fun shouldSerializeNestedClass(nestedClass: FirRegularClass): Boolean {
-        return classBuilderMode != ClassBuilderMode.ABI || nestedClass.visibility != Visibilities.Private
-    }
 
     override fun serializeClass(
         klass: FirClass,
