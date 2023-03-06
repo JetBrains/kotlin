@@ -6,7 +6,7 @@ package kotlin.jvm
 
 annotation class JvmInline
 
-@JvmInline
+<!JVM_INLINE_WITHOUT_VALUE_CLASS!>@JvmInline<!>
 inline class IC(val a: Any)
 
 @JvmInline

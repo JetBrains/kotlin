@@ -34377,6 +34377,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
             }
 
             @Test
+            @TestMetadata("inlineKeywordForMfvc.kt")
+            public void testInlineKeywordForMfvc() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/valueClasses/inlineKeywordForMfvc.kt");
+            }
+
+            @Test
             @TestMetadata("jvmInlineApplicability.kt")
             public void testJvmInlineApplicability() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/valueClasses/jvmInlineApplicability.kt");
