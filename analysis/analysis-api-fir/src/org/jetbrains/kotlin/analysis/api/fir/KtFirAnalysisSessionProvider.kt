@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeTokenFactory
 import org.jetbrains.kotlin.analysis.api.session.KtAnalysisSessionProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getFirResolveSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.FirSessionValidityStamp
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.getKtModule
 import org.jetbrains.kotlin.analysis.providers.createProjectWideOutOfBlockModificationTracker
@@ -47,12 +46,9 @@ class KtFirAnalysisSessionProvider(project: Project) : KtAnalysisSessionProvider
                 val firResolveSession = useSiteKtModule.getFirResolveSession(project)
                 val validityToken = factory.create(project)
 
-                val validityStamp = FirSessionValidityStamp(firResolveSession.useSiteFirSession)
-                require(validityStamp.isValid) { "Got an invalid session for module $useSiteKtModule" }
-
                 CachedValueProvider.Result(
                     KtFirAnalysisSession.createAnalysisSessionByFirResolveSession(firResolveSession, validityToken),
-                    validityStamp,
+                    firResolveSession.useSiteFirSession.modificationTracker,
                     ProjectRootModificationTracker.getInstance(project),
                     project.createProjectWideOutOfBlockModificationTracker()
                 )
