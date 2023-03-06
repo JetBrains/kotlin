@@ -4,6 +4,7 @@
  */
 
 @file:Suppress("FunctionName", "DuplicatedCode")
+@file:OptIn(ExperimentalWasmDsl::class)
 
 package org.jetbrains.kotlin.gradle.unitTests
 
@@ -331,7 +332,6 @@ class KotlinTargetHierarchyDslTest {
             }
         }
 
-        @OptIn(ExperimentalWasmDsl::class)
         kotlin.wasm()
         kotlin.js()
 
@@ -361,7 +361,6 @@ class KotlinTargetHierarchyDslTest {
             }
         }
 
-        @OptIn(ExperimentalWasmDsl::class)
         kotlin.wasm()
         kotlin.js()
         kotlin.jvm()
