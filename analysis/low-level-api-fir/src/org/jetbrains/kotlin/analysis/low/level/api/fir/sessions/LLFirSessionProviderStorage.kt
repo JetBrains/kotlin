@@ -6,16 +6,12 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.ModificationTracker
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirGlobalResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirBuiltinsSessionFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirLibrarySessionFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.addValueFor
 import org.jetbrains.kotlin.analysis.project.structure.*
-import org.jetbrains.kotlin.analysis.providers.KotlinModificationTrackerFactory
-import org.jetbrains.kotlin.analysis.providers.KtModuleStateTracker
-import org.jetbrains.kotlin.analysis.utils.trackers.CompositeModificationTracker
 import java.lang.ref.SoftReference
 
 class LLFirSessionProviderStorage(val project: Project) {
@@ -51,12 +47,11 @@ class LLFirSessionProviderStorage(val project: Project) {
         else -> error("Unexpected ${useSiteKtModule::class.simpleName}")
     }
 
-
     private fun createSessionProviderForSourceSession(
         useSiteKtModule: KtSourceModule,
         configureSession: (LLFirSession.() -> Unit)?
     ): LLFirSessionProvider {
-        val (sessions, session) = sourceAsUseSiteSessionCache.withMappings(project) { mappings ->
+        val (sessions, session) = sourceAsUseSiteSessionCache.withMappings { mappings ->
             val sessions = mutableMapOf<KtModule, LLFirSession>().apply { putAll(mappings) }
             val session = LLFirSessionFactory.createSourcesSession(
                 project,
@@ -77,7 +72,7 @@ class LLFirSessionProviderStorage(val project: Project) {
         useSiteKtModule: KtModule,
         configureSession: (LLFirSession.() -> Unit)?
     ): LLFirSessionProvider {
-        val (sessions, session) = libraryAsUseSiteSessionCache.withMappings(project) { mappings ->
+        val (sessions, session) = libraryAsUseSiteSessionCache.withMappings { mappings ->
             val sessions = mutableMapOf<KtModule, LLFirSession>().apply { putAll(mappings) }
             val session = LLFirSessionFactory.createLibraryOrLibrarySourceResolvableSession(
                 project,
@@ -97,7 +92,7 @@ class LLFirSessionProviderStorage(val project: Project) {
         useSiteKtModule: KtScriptModule,
         configureSession: (LLFirSession.() -> Unit)?
     ): LLFirSessionProvider {
-        val (sessions, session) = sourceAsUseSiteSessionCache.withMappings(project) { mappings ->
+        val (sessions, session) = sourceAsUseSiteSessionCache.withMappings { mappings ->
             val sessions = mutableMapOf<KtModule, LLFirSession>().apply { putAll(mappings) }
             val session = LLFirSessionFactory.createScriptSession(
                 project,
@@ -116,7 +111,7 @@ class LLFirSessionProviderStorage(val project: Project) {
         useSiteKtModule: KtNotUnderContentRootModule,
         configureSession: (LLFirSession.() -> Unit)?
     ): LLFirSessionProvider {
-        val (sessions, session) = notUnderContentRootSessionCache.withMappings(project) { mappings ->
+        val (sessions, session) = notUnderContentRootSessionCache.withMappings { mappings ->
             val sessions = mutableMapOf<KtModule, LLFirSession>().apply { putAll(mappings) }
             val session = LLFirSessionFactory.createNotUnderContentRootResolvableSession(
                 project,
@@ -133,111 +128,60 @@ class LLFirSessionProviderStorage(val project: Project) {
 
 private class LLFirSessionsCache {
     @Volatile
-    private var mappings: Map<KtModule, FirSessionWithModificationTracker> = emptyMap()
+    private var mappings: Map<KtModule, SoftReference<LLFirSession>> = emptyMap()
 
     val sessionInvalidator: LLFirSessionInvalidator = LLFirSessionInvalidator { session ->
-        mappings[session.llFirModuleData.ktModule]?.invalidate()
+        mappings[session.llFirModuleData.ktModule]?.get()?.invalidate()
     }
 
-
     inline fun <R> withMappings(
-        project: Project,
         action: (Map<KtModule, LLFirSession>) -> Pair<Map<KtModule, LLFirSession>, R>
     ): Pair<Map<KtModule, LLFirSession>, R> {
         val (newMappings, result) = action(getSessions().mapValues { it.value })
-        mappings = newMappings.mapValues { FirSessionWithModificationTracker(project, it.value) }
+        mappings = newMappings.mapValues { SoftReference(it.value) }
         return newMappings to result
     }
 
     private fun getSessions(): Map<KtModule, LLFirSession> = buildMap {
-        val sessions = mappings.values
-        val wasSessionInvalidated = sessions.associateWithTo(hashMapOf()) { false }
-
-        val reversedDependencies = sessions.reversedDependencies { session ->
-            if (session.validityTracker.isValid) {
-                session.ktModule.directRegularDependencies.mapNotNull { mappings[it] }
-            } else emptyList()
-        }
-
-        fun markAsInvalidWithDfs(session: FirSessionWithModificationTracker) {
-            if (wasSessionInvalidated.getValue(session)) {
-                // we already was in that branch
-                return
-            }
-            wasSessionInvalidated[session] = true
-            reversedDependencies[session]?.forEach { dependsOn ->
-                markAsInvalidWithDfs(dependsOn)
+        // Initially, all sessions are considered to be valid ('true').
+        val sessions = LinkedHashMap<LLFirSession, Boolean>().apply {
+            for (sessionRef in mappings.values) {
+                val session = sessionRef.get() ?: continue
+                put(session, true)
             }
         }
 
-        for (session in sessions) {
-            if (!session.isValid) {
-                markAsInvalidWithDfs(session)
-            }
-        }
-        return wasSessionInvalidated.entries
-            .mapNotNull { (sessionWithTracker, wasInvalidated) ->
-                if (wasInvalidated) return@mapNotNull null
-                val firSession = sessionWithTracker.firSessionSoftReference.get() ?: return@mapNotNull null
-                sessionWithTracker.ktModule to firSession
-            }.toMap()
-    }
-
-    private fun <T> Collection<T>.reversedDependencies(getDependencies: (T) -> List<T>): Map<T, List<T>> {
-        val result = hashMapOf<T, MutableList<T>>()
-        forEach { from ->
-            getDependencies(from).forEach { to ->
-                result.addValueFor(to, from)
-            }
-        }
-        return result
-    }
-}
-
-private class FirSessionWithModificationTracker(
-    project: Project,
-    firSession: LLFirSession,
-) {
-    val firSessionSoftReference: SoftReference<LLFirSession> = SoftReference(firSession)
-    val ktModule = firSession.llFirModuleData.ktModule
-
-    val validityTracker: KtModuleStateTracker
-    private val modificationTracker: ModificationTracker
-
-    init {
-        val trackerFactory = KotlinModificationTrackerFactory.getService(project)
-
-        validityTracker = trackerFactory.createModuleStateTracker(ktModule)
-
-        val outOfBlockTracker = when (ktModule) {
-            is KtSourceModule -> trackerFactory.createModuleWithoutDependenciesOutOfBlockModificationTracker(ktModule)
-            is KtNotUnderContentRootModule -> ModificationTracker { ktModule.file?.modificationStamp ?: 0 }
-            is KtScriptModule -> ModificationTracker { ktModule.file.modificationStamp }
-            is KtScriptDependencyModule -> ModificationTracker { ktModule.file?.modificationStamp ?: 0 }
-            else -> null
-        }
-        modificationTracker = CompositeModificationTracker.create(
-            listOfNotNull(
-                outOfBlockTracker,
-                object : ModificationTracker {
-                    override fun getModificationCount() = validityTracker.rootModificationCount
+        val reversedDependencies = buildMap {
+            for (session in sessions.keys) {
+                if (session.isValid) {
+                    val module = session.ktModule
+                    for (dependency in module.directRegularDependencies) {
+                        addValueFor(dependency, module)
+                    }
                 }
-            )
-        )
+            }
+        }
+
+        fun invalidateRecursively(session: LLFirSession) {
+            // Invalidate all dependent sessions only if we didn't that before
+            if (sessions.put(session, false) == true) {
+                for (dependentModule in reversedDependencies[session.ktModule].orEmpty()) {
+                    val dependentSession = mappings[dependentModule]?.get() ?: continue
+                    invalidateRecursively(dependentSession)
+                }
+            }
+        }
+
+        for (session in sessions.keys) {
+            if (session.isValid) continue
+            invalidateRecursively(session)
+        }
+
+        return buildMap {
+            for ((session, isValid) in sessions) {
+                if (!isValid) continue
+                put(session.ktModule, session)
+            }
+        }
     }
-
-
-    private val timeStamp = modificationTracker.modificationCount
-
-    @Volatile
-    private var isInvalidated = false
-
-    fun invalidate() {
-        isInvalidated = true
-    }
-
-    val isValid: Boolean
-        get() = validityTracker.isValid
-                && !isInvalidated
-                && modificationTracker.modificationCount == timeStamp
 }

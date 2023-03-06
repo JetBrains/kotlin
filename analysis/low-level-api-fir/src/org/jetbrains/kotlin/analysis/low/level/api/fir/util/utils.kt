@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
 import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.util.ModificationTracker
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
@@ -65,3 +66,7 @@ internal fun KtDeclaration.isNonAnonymousClassOrObject() =
     this is KtClassOrObject
             && !this.isObjectLiteral()
 
+
+internal fun BooleanModificationTracker(provider: () -> Boolean): ModificationTracker {
+    return ModificationTracker { if (provider()) 0 else 1 }
+}
