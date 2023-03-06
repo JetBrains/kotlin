@@ -425,7 +425,7 @@ class FirElementSerializer private constructor(
             function.nonSourceAnnotations(session).isNotEmpty(),
             ProtoEnumFlags.visibility(simpleFunction?.let { normalizeVisibility(it) } ?: Visibilities.Local),
             ProtoEnumFlags.modality(simpleFunction?.modality ?: Modality.FINAL),
-            ProtoBuf.MemberKind.DECLARATION,
+            if (function.origin == FirDeclarationOrigin.Delegated) ProtoBuf.MemberKind.DELEGATION else ProtoBuf.MemberKind.DECLARATION,
             simpleFunction?.isOperator == true,
             simpleFunction?.isInfix == true,
             simpleFunction?.isInline == true,
