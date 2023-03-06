@@ -79,12 +79,12 @@ private fun transformSuspendFunction(context: CommonBackendContext, function: Ir
         newBody.statements.lastOrNull() !is IrReturn
     ) {
         // Adding explicit return of Unit.
-        // Set both offsets of the IrReturn to body.endOffset - 1 so that a breakpoint set at the closing brace of a lambda expression
-        // could be hit.
+        // Set both offsets of the IrReturn to body.endOffset.previousOffset (check the description of the `previousOffset` method)
+        // so that a breakpoint set at the closing brace of a lambda expression could be hit.
         newBody.statements += context.createIrBuilder(
             newFunctionWithContinuation.symbol,
-            startOffset = newBody.endOffset - 1,
-            endOffset = newBody.endOffset - 1
+            startOffset = newBody.endOffset.previousOffset,
+            endOffset = newBody.endOffset.previousOffset
         ).irReturnUnit()
     }
 
