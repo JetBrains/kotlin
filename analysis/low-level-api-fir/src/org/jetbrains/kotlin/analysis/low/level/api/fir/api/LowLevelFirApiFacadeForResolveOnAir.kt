@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.api
 
+import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analysis.low.level.api.fir.DeclarationCopyBuilder.withBodyFrom
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirResolveSessionDepended
@@ -47,6 +48,27 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 
 object LowLevelFirApiFacadeForResolveOnAir {
+    private fun PsiElement.onAirGetNonLocalContainingOrThisDeclarationFor(): KtDeclaration? {
+        return getNonLocalContainingOrThisDeclaration { declaration ->
+            when (declaration) {
+                is KtNamedFunction,
+                is KtProperty,
+                is KtTypeAlias,
+                is KtScript -> {
+                    true
+                }
+
+                is KtClassOrObject -> {
+                    declaration !is KtEnumEntry
+                }
+
+                else -> {
+                    false
+                }
+            }
+        }
+    }
+
     private fun recordOriginalDeclaration(targetDeclaration: KtDeclaration, originalDeclaration: KtDeclaration) {
         require(originalDeclaration.containingKtFile !== targetDeclaration.containingKtFile)
         val originalDeclarationParents = originalDeclaration.parentsOfType<KtDeclaration>().toList()
@@ -136,7 +158,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
         require(originalFirResolveSession is LLFirResolvableResolveSession)
         require(elementToAnalyze !is KtFile) { "KtFile for dependency element not supported" }
 
-        val dependencyNonLocalDeclaration = elementToAnalyze.getNonLocalContainingOrThisDeclaration() as? KtNamedDeclaration
+        val dependencyNonLocalDeclaration = elementToAnalyze.onAirGetNonLocalContainingOrThisDeclarationFor() as? KtNamedDeclaration
 
         if (dependencyNonLocalDeclaration == null) {
             val towerDataContext = onAirGetTowerContextForFile(originalFirResolveSession, originalKtFile)
@@ -205,7 +227,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
         onAirCreatedDeclaration: Boolean,
         collector: FirTowerDataContextCollector? = null,
     ): FirElement {
-        val nonLocalDeclaration = replacement.from.getNonLocalContainingOrThisDeclaration()
+        val nonLocalDeclaration = replacement.from.onAirGetNonLocalContainingOrThisDeclarationFor()
         val originalFirFile = firResolveSession.getOrBuildFirFile(replacement.from.containingKtFile)
 
         if (nonLocalDeclaration == null) {
