@@ -90,20 +90,6 @@ abstract class AbstractParcelizeBoxTestBase<R : ResultingArtifact.FrontendOutput
     }
 }
 
-open class AbstractParcelizeBoxTest : AbstractParcelizeBoxTestBase<ClassicFrontendOutputArtifact, ClassicBackendInput>(
-    FrontendKinds.ClassicFrontend,
-    TargetBackend.JVM
-) {
-    override val frontendFacade: Constructor<FrontendFacade<ClassicFrontendOutputArtifact>>
-        get() = ::ClassicFrontendFacade
-
-    override val frontendToBackendConverter: Constructor<Frontend2BackendConverter<ClassicFrontendOutputArtifact, ClassicBackendInput>>
-        get() = ::ClassicFrontend2ClassicBackendConverter
-
-    override val backendFacade: Constructor<BackendFacade<ClassicBackendInput, BinaryArtifacts.Jvm>>
-        get() = ::ClassicJvmBackendFacade
-}
-
 open class AbstractParcelizeIrBoxTest : AbstractParcelizeBoxTestBase<ClassicFrontendOutputArtifact, IrBackendInput>(
     FrontendKinds.ClassicFrontend,
     TargetBackend.JVM_IR

@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.CREATE_FROM_PARCEL_NAME
-import org.jetbrains.kotlin.parcelize.ParcelizeNames.CREATOR_ID
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.DESCRIBE_CONTENTS_NAME
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.NEW_ARRAY_NAME
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCELER_FQN
@@ -42,20 +41,15 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.*
 import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
-import org.jetbrains.kotlin.types.error.ErrorTypeKind
-import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.SimpleType
+import org.jetbrains.kotlin.types.error.ErrorTypeKind
+import org.jetbrains.kotlin.types.error.ErrorUtils
 
 open class ParcelizeResolveExtension : SyntheticResolveExtension {
     companion object {
         fun resolveParcelClassType(module: ModuleDescriptor): SimpleType? {
             return module.findClassAcrossModuleDependencies(PARCEL_ID)?.defaultType
-        }
-
-        fun resolveParcelableCreatorClassType(module: ModuleDescriptor): SimpleType? {
-            val creatorClassId = CREATOR_ID
-            return module.findClassAcrossModuleDependencies(creatorClassId)?.defaultType
         }
 
         fun createMethod(

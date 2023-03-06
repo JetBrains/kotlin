@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.parcelize
 
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
-import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
-import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -24,14 +22,12 @@ import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension
 class ParcelizeComponentRegistrar : CompilerPluginRegistrar() {
     companion object {
         fun registerParcelizeComponents(extensionStorage: ExtensionStorage, useFir: Boolean) = with(extensionStorage) {
-            ExpressionCodegenExtension.registerExtension(ParcelizeCodegenExtension())
             if (useFir) {
                 IrGenerationExtension.registerExtension(ParcelizeFirIrGeneratorExtension())
             } else {
                 IrGenerationExtension.registerExtension(ParcelizeIrGeneratorExtension())
             }
             SyntheticResolveExtension.registerExtension(ParcelizeResolveExtension())
-            ClassBuilderInterceptorExtension.registerExtension(ParcelizeClinitClassBuilderInterceptorExtension())
             StorageComponentContainerContributor.registerExtension(ParcelizeDeclarationCheckerComponentContainerContributor())
             FirExtensionRegistrarAdapter.registerExtension(FirParcelizeExtensionRegistrar())
         }

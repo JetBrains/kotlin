@@ -14,19 +14,21 @@ import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidBoxTest
 import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidBytecodeShapeTest
 import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidIrBoxTest
 import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidSyntheticPropertyDescriptorTest
-import org.jetbrains.kotlin.assignment.plugin.AbstractIrBlackBoxCodegenTestAssignmentPlugin
 import org.jetbrains.kotlin.assignment.plugin.AbstractAssignmentPluginDiagnosticTest
 import org.jetbrains.kotlin.assignment.plugin.AbstractFirLightTreeBlackBoxCodegenTestForAssignmentPlugin
 import org.jetbrains.kotlin.assignment.plugin.AbstractFirPsiAssignmentPluginDiagnosticTest
+import org.jetbrains.kotlin.assignment.plugin.AbstractIrBlackBoxCodegenTestAssignmentPlugin
 import org.jetbrains.kotlin.fir.plugin.runners.AbstractFirLightTreePluginBlackBoxCodegenTest
 import org.jetbrains.kotlin.fir.plugin.runners.AbstractFirPsiPluginDiagnosticTest
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.impl.generateTestGroupSuite
 import org.jetbrains.kotlin.generators.model.annotation
-import org.jetbrains.kotlin.generators.tests.IncrementalTestsGeneratorUtil.Companion.IcTestTypes.*
+import org.jetbrains.kotlin.generators.tests.IncrementalTestsGeneratorUtil.Companion.IcTestTypes.PURE_KOTLIN
 import org.jetbrains.kotlin.generators.tests.IncrementalTestsGeneratorUtil.Companion.incrementalJvmTestData
 import org.jetbrains.kotlin.incremental.*
-import org.jetbrains.kotlin.jvm.abi.*
+import org.jetbrains.kotlin.jvm.abi.AbstractCompareJvmAbiTest
+import org.jetbrains.kotlin.jvm.abi.AbstractCompileAgainstJvmAbiTest
+import org.jetbrains.kotlin.jvm.abi.AbstractJvmAbiContentTest
 import org.jetbrains.kotlin.kapt.cli.test.AbstractArgumentParsingTest
 import org.jetbrains.kotlin.kapt.cli.test.AbstractKaptToolIntegrationTest
 import org.jetbrains.kotlin.kapt3.test.runners.AbstractClassFileToSourceStubConverterTest
@@ -200,20 +202,12 @@ fun main(args: Array<String>) {
         val excludedFirTestdataPattern = "^(.+)\\.fir\\.kts?\$"
 
         testGroup("plugins/parcelize/parcelize-compiler/tests-gen", "plugins/parcelize/parcelize-compiler/testData") {
-            testClass<AbstractParcelizeBoxTest> {
-                model("box")
-            }
-
             testClass<AbstractParcelizeIrBoxTest> {
                 model("box")
             }
 
             testClass<AbstractParcelizeFirLightTreeBoxTest> {
                 model("box")
-            }
-
-            testClass<AbstractParcelizeBytecodeListingTest> {
-                model("codegen")
             }
 
             testClass<AbstractParcelizeIrBytecodeListingTest> {

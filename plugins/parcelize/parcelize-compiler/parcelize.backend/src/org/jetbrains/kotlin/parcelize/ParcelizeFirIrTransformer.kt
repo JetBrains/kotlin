@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.parcelize.ir
+package org.jetbrains.kotlin.parcelize
 
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.descriptors.Modality
@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.ir.util.companionObject
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCELER_FQN
-import org.jetbrains.kotlin.parcelize.ParcelizeSyntheticComponent
 import org.jetbrains.kotlin.parcelize.fir.ParcelizePluginKey
 
 class ParcelizeFirIrTransformer(

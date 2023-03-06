@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.parcelize.ir
+package org.jetbrains.kotlin.parcelize
 
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.descriptors.Modality
@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.parcelize.ParcelizeNames.FLAGS_NAME
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCELABLE_FQN
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCELER_FQN
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.WRITE_TO_PARCEL_NAME
-import org.jetbrains.kotlin.parcelize.ParcelizeSyntheticComponent
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class ParcelizeIrTransformer(
