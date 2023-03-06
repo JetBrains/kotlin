@@ -6,7 +6,7 @@ fun Int.train(args: Array<<!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@recei
 
 fun Int.plane(<!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@receiver:Anno<!> args: Array<String>) {}
 
-fun vein(args: Array<<!WRONG_ANNOTATION_TARGET!>@file:Anno<!> String>) {}
+fun vein(args: Array<<!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@file:Anno<!> String>) {}
 
 fun rain(args: Array<<!WRONG_ANNOTATION_TARGET!>@Anno<!> String>) {}
 
@@ -14,6 +14,6 @@ fun <!WRONG_ANNOTATION_TARGET!>@Anno<!> Int.strain() {}
 
 fun @receiver:Anno Int.drain() {}
 
-fun <!WRONG_ANNOTATION_TARGET!>@file:Anno<!> Int.brain() {}
+fun <!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@file:Anno<!> Int.brain() {}
 
 fun (<!WRONG_ANNOTATION_TARGET!>@Anno<!> Int).crane() {}
