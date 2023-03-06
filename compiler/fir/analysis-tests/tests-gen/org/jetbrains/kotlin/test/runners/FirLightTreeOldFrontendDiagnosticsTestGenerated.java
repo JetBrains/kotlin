@@ -22063,6 +22063,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
                     }
 
                     @Test
+                    @TestMetadata("expectAndActualInTheSameModuleIncompatibilities.kt")
+                    public void testExpectAndActualInTheSameModuleIncompatibilities() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/multiplatformCompositeAnalysis/expectAndActualInTheSameModuleIncompatibilities.kt");
+                    }
+
+                    @Test
                     @TestMetadata("intermediateWithActualAndExpect.kt")
                     public void testIntermediateWithActualAndExpect() throws Exception {
                         runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/multiplatformCompositeAnalysis/intermediateWithActualAndExpect.kt");
