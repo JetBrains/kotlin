@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +RestrictionOfWrongAnnotationsWithUseSiteTargetsOnTypes
 
 @Target(AnnotationTarget.VALUE_PARAMETER)
