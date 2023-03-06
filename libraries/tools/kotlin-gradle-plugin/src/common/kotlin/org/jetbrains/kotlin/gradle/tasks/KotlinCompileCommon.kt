@@ -64,9 +64,9 @@ abstract class KotlinCompileCommon @Inject constructor(
     override fun createCompilerArgs(): K2MetadataCompilerArguments =
         K2MetadataCompilerArguments()
 
-    override fun setupCompilerArgs(args: K2MetadataCompilerArguments, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
+    override fun setupCompilerArgs(args: K2MetadataCompilerArguments, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean, includeClasspath: Boolean) {
         (compilerOptions as KotlinMultiplatformCommonCompilerOptionsDefault).fillDefaultValues(args)
-        super.setupCompilerArgs(args, defaultsOnly = defaultsOnly, ignoreClasspathResolutionErrors = ignoreClasspathResolutionErrors)
+        super.setupCompilerArgs(args, defaultsOnly = defaultsOnly, ignoreClasspathResolutionErrors = ignoreClasspathResolutionErrors, includeClasspath = includeClasspath)
 
         args.moduleName = this@KotlinCompileCommon.moduleName.get()
 

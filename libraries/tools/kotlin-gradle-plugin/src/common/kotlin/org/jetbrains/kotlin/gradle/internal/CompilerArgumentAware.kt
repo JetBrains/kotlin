@@ -36,8 +36,19 @@ interface CompilerArgumentAware<T : CommonToolArguments> {
             .let(ArgumentUtils::convertArgumentsToStringList)
 
     fun createCompilerArgs(): T
-    fun setupCompilerArgs(args: T, defaultsOnly: Boolean = false, ignoreClasspathResolutionErrors: Boolean = false)
+
+    // This function is called via reflection from IntelliJ Kotlin plugin, so keeping the old signature around too.
+    // Since this is an interface, we can't use @JvmOverloads here.
+    fun setupCompilerArgs(args: T, defaultsOnly: Boolean = false, ignoreClasspathResolutionErrors: Boolean = false) =
+        setupCompilerArgs(
+            args = args,
+            defaultsOnly = defaultsOnly,
+            ignoreClasspathResolutionErrors = ignoreClasspathResolutionErrors,
+            includeClasspath = true
+        )
+
+    fun setupCompilerArgs(args: T, defaultsOnly: Boolean = false, ignoreClasspathResolutionErrors: Boolean = false, includeClasspath: Boolean = true)
 }
 
-internal fun <T : CommonToolArguments> CompilerArgumentAware<T>.prepareCompilerArguments(ignoreClasspathResolutionErrors: Boolean = false) =
-    createCompilerArgs().also { setupCompilerArgs(it, ignoreClasspathResolutionErrors = ignoreClasspathResolutionErrors) }
+internal fun <T : CommonToolArguments> CompilerArgumentAware<T>.prepareCompilerArguments(ignoreClasspathResolutionErrors: Boolean = false, includeClasspath : Boolean = true) =
+    createCompilerArgs().also { setupCompilerArgs(it, ignoreClasspathResolutionErrors = ignoreClasspathResolutionErrors, includeClasspath = includeClasspath) }

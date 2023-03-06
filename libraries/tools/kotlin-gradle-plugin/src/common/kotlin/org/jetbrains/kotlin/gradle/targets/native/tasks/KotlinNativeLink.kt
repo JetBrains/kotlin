@@ -198,7 +198,8 @@ constructor(
     override fun setupCompilerArgs(
         args: StubK2NativeCompilerArguments,
         defaultsOnly: Boolean,
-        ignoreClasspathResolutionErrors: Boolean
+        ignoreClasspathResolutionErrors: Boolean,
+        includeClasspath: Boolean
     ) = Unit
 
     private fun validatedExportedLibraries() {
