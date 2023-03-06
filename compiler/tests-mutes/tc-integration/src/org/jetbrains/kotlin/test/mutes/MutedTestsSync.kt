@@ -19,17 +19,8 @@ fun main() {
 fun syncMutedTestsOnTeamCityWithDatabase() {
     val remotelyMutedTests = RemotelyMutedTests()
     val locallyMutedTests = LocallyMutedTests()
-    val bunches = Bunches.parseRulesToBunches(locallyMutedTests.tests.keys)
 
     syncMutedTests(remotelyMutedTests.projectTests, locallyMutedTests.projectTests)
-
-    for ((originalBunchId, foundBunchId) in bunches) {
-        getBuildTypeIds(originalBunchId)?.let { buildTypeIds ->
-            for (buildTypeId in buildTypeIds.split(",")) {
-                syncMutedTests(remotelyMutedTests.getTestsJson(buildTypeId), locallyMutedTests.getTestsJson(foundBunchId, buildTypeId))
-            }
-        }
-    }
 }
 
 private fun syncMutedTests(
@@ -45,34 +36,8 @@ private fun syncMutedTests(
 internal fun getMandatoryProperty(propertyName: String) = (System.getProperty(propertyName)
     ?: throw Exception("Property $propertyName must be set"))
 
-object Bunches {
-    private val bunchRules: List<String> = readAllRulesFromFile()
-    internal val baseBunchId = bunchRules.first()
-
-    internal fun parseRulesToBunches(platforms: Set<String>): Map<String, String> {
-        return bunchRules
-            .map { it.split('_') }
-            .map { rule ->
-                rule.first() to (rule.find { platforms.contains(it) } ?: baseBunchId)
-            }.toMap()
-    }
-
-    private fun readAllRulesFromFile(): List<String> {
-        val file = File("../../..", ".bunch")
-        if (!file.exists()) {
-            throw BunchException("Can't build list of rules. File '${file.canonicalPath}' doesn't exist")
-        }
-        return file.readLines()
-            .map { it.trim() }
-            .filter { it.isNotEmpty() }
-    }
-
-    private class BunchException(msg: String? = null) : Exception(msg)
-}
-
 private const val mutesPackageName = "org.jetbrains.kotlin.test.mutes"
 internal val projectId = getMandatoryProperty("$mutesPackageName.tests.project.id")
-internal fun getBuildTypeIds(bunchId: String) = System.getProperty("$mutesPackageName.$bunchId")
 
 class RemotelyMutedTests {
     val tests = getMutedTestsOnTeamcityForRootProject(projectId)

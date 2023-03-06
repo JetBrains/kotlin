@@ -154,49 +154,6 @@ class CodeConformanceTest : TestCase() {
         }
     }
 
-    private fun isCorrectExtension(filename: String, extensions: Set<String>): Boolean {
-        val additionalExtensions = listOf(
-            "after", "new", "before", "expected",
-            "todo", "delete", "touch", "prefix", "postfix", "map",
-            "fragment", "after2", "result", "log", "messages", "conflicts", "match", "imports", "txt", "xml"
-        )
-        val possibleAdditionalExtensions = extensions.plus(additionalExtensions)
-        val fileExtensions = filename.split("\\.").drop(1)
-        if (fileExtensions.size < 2) {
-            return true
-        }
-        val extension = fileExtensions.last()
-
-        return !((extension !in possibleAdditionalExtensions && (extension.toIntOrNull() ?: MAX_STEPS_COUNT) >= MAX_STEPS_COUNT))
-    }
-
-    fun testForgottenBunchDirectivesAndFiles() {
-        val sourceBunchFilePattern = Pattern.compile("(.+\\.java|.+\\.kt|.+\\.js)(\\.\\w+)?")
-        val root = nonSourcesMatcher.root
-        val extensions = File(root, ".bunch").readLines().map { it.split("_") }.flatten().toSet()
-        val failBuilder = mutableListOf<String>()
-        nonSourcesMatcher.excludeWalkTopDown(sourceBunchFilePattern).forEach { sourceFile ->
-            val matches = Regex("BUNCH (\\w+)")
-                .findAll(sourceFile.readText())
-                .map { it.groupValues[1] }
-                .toSet()
-                .filterNot { it in extensions }
-            for (bunch in matches) {
-                val filename = FileUtil.toSystemIndependentName(sourceFile.toRelativeString(root))
-                failBuilder.add("$filename has unregistered $bunch bunch directive")
-            }
-
-            if (!isCorrectExtension(sourceFile.name, extensions)) {
-                val filename = FileUtil.toSystemIndependentName(sourceFile.toRelativeString(root))
-                failBuilder.add("$filename has unknown bunch extension")
-            }
-        }
-
-        if (failBuilder.isNotEmpty()) {
-            fail("\n" + failBuilder.joinToString("\n"))
-        }
-    }
-
     fun testNoBadSubstringsInProjectCode() {
         class TestData(val message: String, val filter: (File, String) -> Boolean) {
             val result: MutableList<File> = ArrayList()

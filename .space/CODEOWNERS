@@ -379,7 +379,6 @@
 *Generated.java "Kotlin" "Kotlin IDE"
 
 # Singular files
-/.bunch "Kotlin Build Infrastructure"
 /.gitattributes "Kotlin Build Infrastructure"
 /.space.kts "Kotlin Build Infrastructure"
 /ChangeLog.md "Kotlin Release"
