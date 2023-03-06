@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.analysis.project.structure.getKtModule
 import org.jetbrains.kotlin.analysis.utils.classIdIfNonLocal
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.java.classKind
 import org.jetbrains.kotlin.fir.java.modality
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -82,15 +83,20 @@ internal class KtFirPsiJavaClassSymbol(
             psi.containingClass?.let { KtFirPsiJavaClassSymbol(it, analysisSession) }
         }
 
-    override val typeParameterNames: List<Name> by cached {
-        // The parent Java class might contribute `FirOuterClassTypeParameterRef`s to the FIR class's type parameters (see
-        // `FirJavaFacade.createFirJavaClass`), but since they are filtered out by `createRegularKtTypeParameters`, we do not need to
-        // include them in the list of type parameter names.
-        javaClass.typeParameters.map { it.name }
+    override val typeParameters: List<KtTypeParameterSymbol> by cached {
+        // The parent Java class might contribute type parameters to the Java type parameter stack, but for this KtSymbol, parent type 
+        // parameters aren't relevant.
+        psi.typeParameters.mapIndexed { index, psiTypeParameter ->
+            KtFirPsiJavaTypeParameterSymbol(psiTypeParameter, analysisSession) {
+                // `psi.typeParameters` should align with the list of regular `FirTypeParameter`s, making the use of `index` valid.
+                val firTypeParameter = firSymbol.fir.typeParameters.filterIsInstance<FirTypeParameter>().getOrNull(index)
+                require(firTypeParameter != null) {
+                    "The FIR symbol's ${FirTypeParameter::class.simpleName}s should have an entry at $index."
+                }
+                firTypeParameter.symbol
+            }
+        }
     }
-
-    val hasTypeParameters: Boolean
-        get() = withValidityAssertion { psi.typeParameters.isNotEmpty() }
 
     val annotationSimpleNames: List<String?>
         get() = withValidityAssertion { psi.annotations.map { it.nameReferenceElement?.referenceName } }
@@ -120,11 +126,6 @@ internal class KtFirPsiJavaClassSymbol(
             "A FIR class symbol should be available for ${KtFirPsiJavaClassSymbol::class.simpleName} `$classIdIfNonLocal`."
         }
         firClassSymbol
-    }
-
-    override val typeParameters: List<KtTypeParameterSymbol> by cached {
-        if (hasTypeParameters) firSymbol.createRegularKtTypeParameters(builder)
-        else emptyList()
     }
 
     override val annotationsList: KtAnnotationsList by cached {
