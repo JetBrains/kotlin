@@ -5584,6 +5584,7 @@ standaloneTest("fake_override_0") {
 }
 
 standaloneTest("split_compilation_pipeline") {
+    enabled = !twoStageEnabled
     def dir = buildDir.absolutePath
     source = "link/private_fake_overrides/override_main.kt"
     doBeforeBuild {
