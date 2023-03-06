@@ -22,23 +22,40 @@ import org.jetbrains.kotlin.resolve.multiplatform.OptionalAnnotationUtil
 
 fun generateIrElementFullName(
     declaration: IrElement,
-    expectActualTypesMap: Map<IrSymbol, IrSymbol>,
+    expectActualTypesMap: Map<IrSymbol, IrSymbol>? = null,
     typeAliasMap: Map<FqName, FqName>? = null
 ): String {
-    return StringBuilder().apply { appendElementFullName(declaration, expectActualTypesMap, this, typeAliasMap) }.toString()
+    return StringBuilder().apply { appendElementFullName(declaration, this, expectActualTypesMap, typeAliasMap) }.toString()
 }
 
 private fun appendElementFullName(
     declaration: IrElement,
-    expectActualTypesMap: Map<IrSymbol, IrSymbol>,
     result: StringBuilder,
-    typeAliasMap: Map<FqName, FqName>? = null
+    expectActualTypesMap: Map<IrSymbol, IrSymbol>? = null,
+    expectActualTypeAliasMap: Map<FqName, FqName>? = null
 ) {
     if (declaration !is IrDeclarationBase) return
 
-    val parentName = declaration.parent.kotlinFqName
-    if (parentName.asString().isNotEmpty()) {
-        result.append(typeAliasMap?.get(parentName) ?: parentName.asString())
+    val parents = mutableListOf<String>()
+    var parent: IrDeclarationParent? = declaration.parent
+    while (parent != null) {
+        if (parent is IrDeclarationWithName) {
+            val parentParent = parent.parent
+            if (parentParent is IrClass) {
+                parents.add(parent.name.asString())
+                parent = parentParent
+                continue
+            }
+        }
+        val parentString = parent.kotlinFqName.let { (expectActualTypeAliasMap?.get(it) ?: it).asString() }
+        if (parentString.isNotEmpty()) {
+            parents.add(parentString)
+        }
+        parent = null
+    }
+
+    if (parents.isNotEmpty()) {
+        result.append(parents.asReversed().joinToString(separator = "."))
         result.append('.')
     }
 
@@ -49,8 +66,8 @@ private fun appendElementFullName(
     if (declaration is IrFunction) {
         fun appendType(type: IrType) {
             val typeClassifier = type.classifierOrFail
-            val actualizedTypeSymbol = expectActualTypesMap[typeClassifier] ?: typeClassifier
-            appendElementFullName(actualizedTypeSymbol.owner, expectActualTypesMap, result)
+            val actualizedTypeSymbol = expectActualTypesMap?.get(typeClassifier) ?: typeClassifier
+            appendElementFullName(actualizedTypeSymbol.owner, result, expectActualTypesMap)
         }
 
         val extensionReceiverType = declaration.extensionReceiverParameter?.type

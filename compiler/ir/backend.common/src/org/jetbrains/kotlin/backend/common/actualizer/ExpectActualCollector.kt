@@ -33,7 +33,7 @@ internal class ExpectActualCollector(
     }
 
     private fun MutableMap<IrSymbol, IrSymbol>.appendExpectActualClassifiersMap(): Pair<Set<IrDeclaration>, Map<FqName, FqName>> {
-        val actualClassifiers = mutableMapOf<FqName, IrSymbol>()
+        val actualClassifiers = mutableMapOf<String, IrSymbol>()
         // There is no list for builtins declarations; that's why they are being collected from typealiases
         val allActualDeclarations = mutableSetOf<IrDeclaration>()
         val typeAliasMap = mutableMapOf<FqName, FqName>() // It's used to link members from expect class that have typealias actual
@@ -43,7 +43,7 @@ internal class ExpectActualCollector(
             ActualClassifiersCollector(actualClassifiers, allActualDeclarations, typeAliasMap).visitModuleFragment(fragment, false)
         }
 
-        val linkCollector = ClassifiersLinkCollector(this, actualClassifiers, diagnosticsReporter)
+        val linkCollector = ClassifiersLinkCollector(this, actualClassifiers, typeAliasMap, diagnosticsReporter)
         dependentFragments.forEach { linkCollector.visitModuleFragment(it) }
 
         return allActualDeclarations to typeAliasMap
@@ -55,21 +55,21 @@ internal class ExpectActualCollector(
     ) {
         val actualMembers = mutableMapOf<String, IrDeclarationBase>()
 
-        collectActualCallables(this, actualMembers, allActualDeclarations)
+        collectActualCallables(this, actualMembers, typeAliasMap, allActualDeclarations)
         val collector = CallablesLinkCollector(this, actualMembers, typeAliasMap, diagnosticsReporter)
         dependentFragments.forEach { collector.visitModuleFragment(it) }
     }
 }
 
 private class ActualClassifiersCollector(
-    private val actualClassifiers: MutableMap<FqName, IrSymbol>,
+    private val actualClassifiers: MutableMap<String, IrSymbol>,
     private val allActualClassifiers: MutableSet<IrDeclaration>,
     private val typeAliasMap: MutableMap<FqName, FqName>
 ) : IrElementVisitor<Unit, Boolean> {
     override fun visitTypeAlias(declaration: IrTypeAlias, data: Boolean) {
         if (declaration.isActual) {
             val expandedTypeSymbol = declaration.expandedType.classifierOrFail
-            actualClassifiers[declaration.kotlinFqName] = expandedTypeSymbol
+            actualClassifiers[generateIrElementFullName(declaration)] = expandedTypeSymbol
             if (expandedTypeSymbol is IrClassSymbol) {
                 allActualClassifiers.add(expandedTypeSymbol.owner)
                 typeAliasMap[declaration.kotlinFqName] = expandedTypeSymbol.owner.kotlinFqName
@@ -80,19 +80,14 @@ private class ActualClassifiersCollector(
 
     override fun visitClass(declaration: IrClass, data: Boolean) {
         if (!data && !declaration.isExpect) {
-            actualClassifiers[declaration.kotlinFqName] = declaration.symbol
+            actualClassifiers[generateIrElementFullName(declaration)] = declaration.symbol
         }
         visitDeclaration(declaration, data)
     }
 
     override fun visitEnumEntry(declaration: IrEnumEntry, data: Boolean) {
         if (!data && !declaration.isExpect) {
-            actualClassifiers[FqName.fromSegments(
-                listOf(
-                    declaration.parent.kotlinFqName.asString(),
-                    declaration.name.asString()
-                )
-            )] = declaration.symbol
+            actualClassifiers[generateIrElementFullName(declaration)] = declaration.symbol
         }
         visitDeclaration(declaration, data)
     }
@@ -111,11 +106,12 @@ private class ActualClassifiersCollector(
 
 private class ClassifiersLinkCollector(
     private val expectActualMap: MutableMap<IrSymbol, IrSymbol>,
-    private val actualClassifiers: Map<FqName, IrSymbol>,
+    private val actualClassifiers: Map<String, IrSymbol>,
+    private val typeAliasMap: Map<FqName, FqName>,
     private val diagnosticsReporter: KtDiagnosticReporterWithImplicitIrBasedContext
 ) : IrElementVisitorVoid {
-    private fun addLinkOrReportMissing(expectElement: IrDeclaration, actualTypeId: FqName) {
-        val actualClassifier = actualClassifiers[actualTypeId]
+    private fun addLinkOrReportMissing(expectElement: IrDeclaration) {
+        val actualClassifier = actualClassifiers[generateIrElementFullName(expectElement, expectActualMap, typeAliasMap)]
         if (actualClassifier != null) {
             expectActualMap[expectElement.symbol] = actualClassifier
         } else if (!expectElement.containsOptionalExpectation()) {
@@ -125,16 +121,14 @@ private class ClassifiersLinkCollector(
 
     override fun visitClass(declaration: IrClass) {
         if (declaration.isExpect) {
-            addLinkOrReportMissing(declaration, declaration.kotlinFqName)
+            addLinkOrReportMissing(declaration)
         }
         visitElement(declaration)
     }
 
     override fun visitEnumEntry(declaration: IrEnumEntry) {
         if (declaration.isProperExpect) {
-            addLinkOrReportMissing(
-                declaration, FqName.fromSegments(listOf(declaration.parent.kotlinFqName.asString(), declaration.name.asString()))
-            )
+            addLinkOrReportMissing(declaration)
         }
         visitElement(declaration)
     }
@@ -147,13 +141,14 @@ private class ClassifiersLinkCollector(
 private fun collectActualCallables(
     expectActualMap: MutableMap<IrSymbol, IrSymbol>,
     actualMembers: MutableMap<String, IrDeclarationBase>,
+    typeAliasMap: Map<FqName, FqName>,
     allActualDeclarations: Set<IrDeclaration>,
 ) {
     fun collectActualsCallables(declaration: IrDeclaration) {
         when (declaration) {
             is IrFunction,
             is IrProperty -> {
-                actualMembers[generateIrElementFullName(declaration, expectActualMap)] = declaration as IrDeclarationBase
+                actualMembers[generateIrElementFullName(declaration, expectActualMap, typeAliasMap)] = declaration as IrDeclarationBase
             }
             is IrClass -> {
                 for (member in declaration.declarations) {
