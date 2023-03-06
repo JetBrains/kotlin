@@ -406,9 +406,6 @@ internal abstract class KonanSymbols(
     val kTypeImplForTypeParametersWithRecursiveBounds = internalClass("KTypeImplForTypeParametersWithRecursiveBounds")
     val kTypeProjectionList = internalClass("KTypeProjectionList")
 
-
-    val arrayAsList = internalClass("ArrayAsList")
-
     val threadLocal = topLevelClass(KonanFqNames.threadLocal)
 
     val sharedImmutable = topLevelClass(KonanFqNames.sharedImmutable)

@@ -108,7 +108,7 @@ internal class KTypeGenerator(
         val result = irConstantObject(symbols.kTypeParameterImpl.owner, mapOf(
                 "name" to irConstantString(typeParameter.name.asString()),
                 "containerFqName" to irConstantString(typeParameter.parentUniqueName),
-                "upperBounds" to irKTypeList(typeParameter.superTypes, leaveReifiedForLater, seenTypeParameters),
+                "upperBoundsArray" to irKTypeArray(typeParameter.superTypes, leaveReifiedForLater, seenTypeParameters),
                 "varianceId" to irConstantInt(mapVariance(typeParameter.variance)),
                 "isReified" to irConstantBoolean(typeParameter.isReified),
         ))
@@ -122,18 +122,15 @@ internal class KTypeGenerator(
             else -> parent.fqNameForIrSerialization.asString()
         }
 
-    private fun IrBuilderWithScope.irKTypeList(
+    private fun IrBuilderWithScope.irKTypeArray(
             types: List<IrType>,
             leaveReifiedForLater: Boolean,
             seenTypeParameters: MutableSet<IrTypeParameter>
     ): IrConstantValue {
         val itemType = symbols.kType.defaultType
-        val elements = irConstantArray(symbols.array.typeWith(itemType),
+        return irConstantArray(symbols.array.typeWith(itemType),
                 types.map { irKType(it, leaveReifiedForLater, seenTypeParameters) }
         )
-        return irConstantObject(symbols.arrayAsList.owner, mapOf(
-                "array" to elements
-        ))
     }
 
     // this constants are copypasted from KVarianceMapper.Companion in KTypeImpl.kt
