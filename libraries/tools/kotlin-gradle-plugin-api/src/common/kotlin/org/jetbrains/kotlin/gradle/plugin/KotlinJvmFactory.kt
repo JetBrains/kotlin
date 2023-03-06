@@ -41,6 +41,9 @@ interface KotlinJvmFactory {
     /** Creates a Kotlin compile task. */
     fun registerKotlinJvmCompileTask(taskName: String): TaskProvider<out KotlinJvmCompile>
 
+    /** Creates a Kotlin compile task that accept java-only inputs. */
+    fun registerKotlinJvmCompileWithJavaTask(taskName: String): TaskProvider<out KotlinJvmCompile>
+
     /** Creates a stub generation task which creates Java sources stubs from Kotlin sources. */
     fun registerKaptGenerateStubsTask(taskName: String): TaskProvider<out KaptGenerateStubs>
 
