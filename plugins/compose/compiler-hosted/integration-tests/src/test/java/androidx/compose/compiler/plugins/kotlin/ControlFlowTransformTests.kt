@@ -6206,4 +6206,85 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             }
         """
     )
+
+    fun testNothingBody() = verifyComposeIrTransform(
+        source = """
+        import androidx.compose.runtime.*
+
+        val test1: @Composable () -> Unit = TODO()
+
+        @Composable
+        fun Test2(): Unit = TODO()
+
+        @Composable
+        fun Test3() {
+            Wrapper {
+                TODO()
+            }
+        }
+        """,
+        extra = """
+        import androidx.compose.runtime.*
+
+        @Composable
+        fun Wrapper(content: @Composable () -> Unit) = content()
+        """,
+        expectedTransformed = """
+        val test1: Function2<Composer, Int, Unit> = TODO()
+        @Composable
+        fun Test2(%composer: Composer?, %changed: Int) {
+          %composer = %composer.startRestartGroup(<>)
+          sourceInformation(%composer, "C(Test2):Test.kt")
+          if (%changed !== 0 || !%composer.skipping) {
+            if (isTraceInProgress()) {
+              traceEventStart(<>, %changed, -1, <>)
+            }
+            TODO()
+            if (isTraceInProgress()) {
+              traceEventEnd()
+            }
+          } else {
+            %composer.skipToGroupEnd()
+          }
+          %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+            Test2(%composer, updateChangedFlags(%changed or 0b0001))
+          }
+        }
+        @Composable
+        fun Test3(%composer: Composer?, %changed: Int) {
+          %composer = %composer.startRestartGroup(<>)
+          sourceInformation(%composer, "C(Test3)<Wrappe...>:Test.kt")
+          if (%changed !== 0 || !%composer.skipping) {
+            if (isTraceInProgress()) {
+              traceEventStart(<>, %changed, -1, <>)
+            }
+            Wrapper(ComposableSingletons%TestKt.lambda-1, %composer, 0b0110)
+            if (isTraceInProgress()) {
+              traceEventEnd()
+            }
+          } else {
+            %composer.skipToGroupEnd()
+          }
+          %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+            Test3(%composer, updateChangedFlags(%changed or 0b0001))
+          }
+        }
+        internal object ComposableSingletons%TestKt {
+          val lambda-1: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
+            sourceInformation(%composer, "C:Test.kt")
+            if (%changed and 0b1011 !== 0b0010 || !%composer.skipping) {
+              if (isTraceInProgress()) {
+                traceEventStart(<>, %changed, -1, <>)
+              }
+              TODO()
+              if (isTraceInProgress()) {
+                traceEventEnd()
+              }
+            } else {
+              %composer.skipToGroupEnd()
+            }
+          }
+        }
+        """
+    )
 }
