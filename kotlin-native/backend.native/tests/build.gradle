@@ -5359,6 +5359,7 @@ standaloneTest("interop_objc_illegal_sharing") {
             it.startsWith("Before") && !it.contains("After")
         }
     }
+    flags = ["-XXLanguage:+ImplicitSignedToUnsignedIntegerConversion"]
 }
 
 dynamicTest("produce_dynamic") {
