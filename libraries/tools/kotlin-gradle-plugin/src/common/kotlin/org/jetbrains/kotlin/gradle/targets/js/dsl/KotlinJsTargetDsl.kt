@@ -78,7 +78,18 @@ interface KotlinJsSubTargetDsl {
     @ExperimentalDistributionDsl
     fun distribution(body: Action<Distribution>)
 
+    @Deprecated("Use distribution(Action<KotlinJsTest>)", ReplaceWith("distribution(Action { body(it) }"))
+    @ExperimentalDistributionDsl
+    fun distribution(body: Distribution.() -> Unit) {
+        distribution(Action { body(it) })
+    }
+
     fun testTask(body: Action<KotlinJsTest>)
+
+    @Deprecated("Use testTask(Action<KotlinJsTest>)", ReplaceWith("testTask(Action { body(it) }"))
+    fun testTask(body: KotlinJsTest.() -> Unit) {
+        testTask(Action { body(it) })
+    }
 
     val testRuns: NamedDomainObjectContainer<KotlinJsPlatformTestRun>
 }
@@ -86,14 +97,40 @@ interface KotlinJsSubTargetDsl {
 interface KotlinJsBrowserDsl : KotlinJsSubTargetDsl {
     fun commonWebpackConfig(body: Action<KotlinWebpackConfig>)
 
+    @Deprecated("Use commonWebpackConfig(Action<KotlinJsTest>)", ReplaceWith("commonWebpackConfig(Action { body(it) }"))
+    fun commonWebpackConfig(body: KotlinWebpackConfig.() -> Unit) {
+        commonWebpackConfig(Action { body(it) })
+    }
+
     fun runTask(body: Action<KotlinWebpack>)
+
+    @Deprecated("Use runTask(Action<KotlinJsTest>)", ReplaceWith("runTask(Action { body(it) }"))
+    fun runTask(body: KotlinWebpack.() -> Unit) {
+        runTask(Action { body(it) })
+    }
 
     fun webpackTask(body: Action<KotlinWebpack>)
 
+    @Deprecated("Use webpackTask(Action<KotlinJsTest>)", ReplaceWith("webpackTask(Action { body(it) }"))
+    fun webpackTask(body: KotlinWebpack.() -> Unit) {
+        webpackTask(Action { body(it) })
+    }
+
     @ExperimentalDceDsl
     fun dceTask(body: Action<KotlinJsDce>)
+
+    @Deprecated("Use dceTask(Action<KotlinJsTest>)", ReplaceWith("dceTask(Action { body(it) }"))
+    @ExperimentalDceDsl
+    fun dceTask(body: KotlinJsDce.() -> Unit) {
+        dceTask(Action { body(it) })
+    }
 }
 
 interface KotlinJsNodeDsl : KotlinJsSubTargetDsl {
     fun runTask(body: Action<NodeJsExec>)
+
+    @Deprecated("Use runTask(Action<KotlinJsTest>)", ReplaceWith("runTask(Action { body(it) }"))
+    fun runTask(body: NodeJsExec.() -> Unit) {
+        runTask(Action { body(it) })
+    }
 }
