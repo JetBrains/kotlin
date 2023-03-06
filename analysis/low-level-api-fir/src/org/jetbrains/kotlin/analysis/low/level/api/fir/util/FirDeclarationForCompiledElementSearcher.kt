@@ -53,10 +53,7 @@ internal class FirDeclarationForCompiledElementSearcher(private val symbolProvid
         val classId = declaration.getClassId()
             ?: errorWithFirSpecificEntries("Non-local class should have classId", psi = declaration)
 
-        val classCandidate = when (symbolProvider) {
-            is LLFirModuleWithDependenciesSymbolProvider -> symbolProvider.getClassLikeSymbolByFqNameWithoutDependencies(classId)
-            else -> symbolProvider.getClassLikeSymbolByClassId(classId)
-        }
+        val classCandidate = symbolProvider.getClassLikeSymbolByClassId(classId)
 
         if (classCandidate == null) {
             errorWithFirSpecificEntries("We should be able to find a symbol for $classId", psi = declaration) {
@@ -131,7 +128,10 @@ private fun FirSymbolProvider.findCallableCandidates(
 
         @OptIn(FirSymbolProviderInternals::class)
         return when (this) {
-            is LLFirModuleWithDependenciesSymbolProvider -> getTopLevelCallableSymbolsWithoutDependencies(packageFqName, shortName)
+            is LLFirModuleWithDependenciesSymbolProvider -> {
+                getTopLevelCallableSymbolsWithoutDependencies(packageFqName, shortName).takeUnless { it.isEmpty() }
+                    ?: getTopLevelCallableSymbols(packageFqName, shortName)
+            }
             else -> getTopLevelCallableSymbols(packageFqName, shortName)
         }
     }
