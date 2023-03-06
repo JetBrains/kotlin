@@ -32,7 +32,7 @@ class IrLocalDelegatedPropertyReferenceImpl(
     override var delegate: IrVariableSymbol,
     override var getter: IrSimpleFunctionSymbol,
     override var setter: IrSimpleFunctionSymbol?,
-    override val origin: IrStatementOrigin? = null,
+    override var origin: IrStatementOrigin? = null,
 ) : IrLocalDelegatedPropertyReference() {
     override val typeArguments: Array<IrType?>
         get() = EMPTY_TYPE_ARGUMENTS
