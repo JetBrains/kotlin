@@ -26,7 +26,7 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
 
     abstract override val symbol: S
 
-    abstract val origin: IrStatementOrigin?
+    abstract var origin: IrStatementOrigin?
 
     protected abstract val valueArguments: Array<IrExpression?>
 

@@ -608,7 +608,7 @@ object IrTree : AbstractTreeBuilder() {
             baseDefaultValue = code("null")
         }
         +symbol(s)
-        +field("origin", statementOriginType, nullable = true, mutable = false)
+        +field("origin", statementOriginType, nullable = true)
         +listField("valueArguments", expression.copy(nullable = true), mutability = Array, isChild = true) {
             generationCallback = {
                 addModifiers(KModifier.PROTECTED)

@@ -33,7 +33,7 @@ class IrPropertyReferenceImpl(
     override var field: IrFieldSymbol?,
     override var getter: IrSimpleFunctionSymbol?,
     override var setter: IrSimpleFunctionSymbol?,
-    override val origin: IrStatementOrigin? = null,
+    override var origin: IrStatementOrigin? = null,
 ) : IrPropertyReference() {
     override val typeArguments: Array<IrType?> = arrayOfNulls(typeArgumentsCount)
 
