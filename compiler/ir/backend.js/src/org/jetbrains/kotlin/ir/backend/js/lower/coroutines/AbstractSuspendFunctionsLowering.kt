@@ -487,9 +487,13 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
             else delegatingCall
         val body = irFunction.body as IrBlockBody
 
-        // Set both offsets to body.endOffset - 1 so that a breakpoint set at the closing brace of a lambda expression
-        // could be hit.
-        context.createIrBuilder(irFunction.symbol, startOffset = body.endOffset - 1, endOffset = body.endOffset - 1).run {
+        // Set both offsets to body.endOffset.previousOffset (check the description of the `previousOffset` method)
+        // so that a breakpoint set at the closing brace of a lambda expression could be hit.
+        context.createIrBuilder(
+            irFunction.symbol,
+            startOffset = body.endOffset.previousOffset,
+            endOffset = body.endOffset.previousOffset
+        ).run {
             val statements = body.statements
             val lastStatement = statements.last()
             assert(lastStatement == delegatingCall || lastStatement is IrReturn) { "Unexpected statement $lastStatement" }

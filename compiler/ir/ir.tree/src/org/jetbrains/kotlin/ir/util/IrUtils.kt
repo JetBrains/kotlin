@@ -1369,3 +1369,15 @@ val IrFunction.isValueClassTypedEquals: Boolean
                 && contextReceiverParametersCount == 0 && extensionReceiverParameter == null
                 && (parentClass.isValue)
     }
+
+/**
+ * The method is used to calculate the previous offset from the current one to prevent situations when it can calculate
+ * [UNDEFINED_OFFSET] from 0 offset and -2 offset from the [UNDEFINED OFFSET]
+ */
+val Int.previousOffset
+    get(): Int =
+        when (compareTo(0)) {
+            0 -> 0
+            -1 -> UNDEFINED_OFFSET
+            else -> minus(1)
+        }
