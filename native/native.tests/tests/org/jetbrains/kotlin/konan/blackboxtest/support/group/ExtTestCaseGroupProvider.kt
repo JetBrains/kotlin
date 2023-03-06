@@ -74,7 +74,8 @@ internal class ExtTestCaseGroupProvider : TestCaseGroupProvider, TestDisposable(
                     generatedSources = settings.get(),
                     customKlibs = settings.get(),
                     pipelineType = settings.get(),
-                    timeouts = settings.get()
+                    timeouts = settings.get(),
+                    memoryModel = settings.get(),
                 )
 
                 if (extTestDataFile.isRelevant)
@@ -99,7 +100,8 @@ private class ExtTestDataFile(
     private val generatedSources: GeneratedSources,
     private val customKlibs: CustomKlibs,
     private val pipelineType: PipelineType,
-    private val timeouts: Timeouts
+    private val timeouts: Timeouts,
+    private val memoryModel: MemoryModel
 ) {
     private val structure by lazy {
         val allSourceTransformers: ExternalSourceTransformers = if (customSourceTransformers.isNullOrEmpty())
@@ -138,17 +140,18 @@ private class ExtTestDataFile(
 
     val isRelevant: Boolean =
         isCompatibleTarget(TargetBackend.NATIVE, testDataFile) // Checks TARGET_BACKEND/DONT_TARGET_EXACT_BACKEND directives.
-                && !isIgnoredNativeTarget(pipelineType, testDataFile) // Checks IGNORE_BACKEND directives.
+                && !isIgnoredTarget(pipelineType, testDataFile, TargetBackend.NATIVE) // Checks IGNORE_BACKEND directives.
+                && (memoryModel != MemoryModel.LEGACY || !isIgnoredTarget(pipelineType, testDataFile, TargetBackend.NATIVE_WITH_LEGACY_MM)) // Checks IGNORE_BACKEND directives.
                 && testDataFileSettings.languageSettings.none { it in INCOMPATIBLE_LANGUAGE_SETTINGS }
                 && INCOMPATIBLE_DIRECTIVES.none { it in structure.directives }
                 && structure.directives[API_VERSION_DIRECTIVE] !in INCOMPATIBLE_API_VERSIONS
                 && structure.directives[LANGUAGE_VERSION_DIRECTIVE] !in INCOMPATIBLE_LANGUAGE_VERSIONS
 
-    private fun isIgnoredNativeTarget(pipelineType: PipelineType, testDataFile: File): Boolean {
+    private fun isIgnoredTarget(pipelineType: PipelineType, testDataFile: File, backend: TargetBackend): Boolean {
         return when (pipelineType) {
             PipelineType.K1 ->
                 isIgnoredTarget(
-                    TargetBackend.NATIVE,
+                    backend,
                     testDataFile,
                     /*includeAny = */true,
                     IGNORE_BACKEND_DIRECTIVE_PREFIX,
@@ -156,7 +159,7 @@ private class ExtTestDataFile(
                 )
             PipelineType.K2 ->
                 isIgnoredTarget(
-                    TargetBackend.NATIVE,
+                    backend,
                     testDataFile,
                     /*includeAny = */true,
                     IGNORE_BACKEND_DIRECTIVE_PREFIX,

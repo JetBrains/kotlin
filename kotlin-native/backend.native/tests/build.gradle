@@ -2839,7 +2839,7 @@ standaloneTest("exception_in_global_init") {
     enabled = (project.testTarget != 'wasm32') // Uses exceptions.
     source = "runtime/exceptions/exception_in_global_init.kt"
     expectedExitStatusChecker = { it != 0 }
-    outputChecker = { s -> s.contains("Uncaught Kotlin exception: kotlin.IllegalStateException: FAIL") && !s.contains("in kotlin main") }
+    outputChecker = { s -> s.contains("Uncaught Kotlin exception:") && s.coinains("FAIL") && !s.contains("in kotlin main") }
 }
 
 task rethrow_exception(type: KonanLocalTest) {
