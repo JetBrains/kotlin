@@ -17,3 +17,8 @@ fun @receiver:Anno Int.drain() {}
 fun <!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@file:Anno<!> Int.brain() {}
 
 fun (<!WRONG_ANNOTATION_TARGET!>@Anno<!> Int).crane() {}
+
+@Target(AnnotationTarget.FILE)
+annotation class Anno2
+
+fun @receiver:Anno2 Int.pain() {}
