@@ -111,6 +111,8 @@ inline fun <reified D : FirCallableDeclaration> D.unwrapSubstitutionOverrides():
 
 inline fun <reified S : FirCallableSymbol<*>> S.unwrapFakeOverrides(): S = fir.unwrapFakeOverrides().symbol as S
 
+inline fun <reified S : FirCallableSymbol<*>> S.unwrapSubstitutionOverrides(): S = fir.unwrapSubstitutionOverrides().symbol as S
+
 private object SubstitutedOverrideOriginalKey : FirDeclarationDataKey()
 
 var <D : FirCallableDeclaration>

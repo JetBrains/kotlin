@@ -152,24 +152,25 @@ class FirTypeIntersectionScopeContext(
             val groupWithPrivate =
                 overrideService.extractBothWaysOverridable(allMembersWithScope.maxByVisibility(), allMembersWithScope, overrideChecker)
             val group = groupWithPrivate.filter { !Visibilities.isPrivate(it.member.fir.visibility) }.ifEmpty { groupWithPrivate }
-            val directOverrides = if (forClassUseSiteScope) group.onlyDirectlyInherited() else group
-            val mostSpecific = overrideService.selectMostSpecificMembers(directOverrides, ReturnTypeCalculatorForFullBodyResolve)
+            val nonSubsumed = if (forClassUseSiteScope) group.nonSubsumed() else group
+            val mostSpecific = overrideService.selectMostSpecificMembers(nonSubsumed, ReturnTypeCalculatorForFullBodyResolve)
             val nonTrivial = if (forClassUseSiteScope) {
                 // Create a non-trivial intersection override when the base methods come from different scopes,
-                // even if one of them is more specific than the others. This is necessary for proper reporting of
-                // MANY_{IMPL,INTERFACES}_MEMBER_NOT_IMPLEMENTED diagnostics.
+                // even if one of them is more specific than the others, i.e. when there is more than one method that is not subsumed.
+                // This is necessary for proper reporting of MANY_{IMPL,INTERFACES}_MEMBER_NOT_IMPLEMENTED diagnostics.
                 //
                 // It is also possible to have the opposite case (> 1 most specific member, but all members are from
                 // the same base scope), but this means there are different instantiations of the same base class,
                 // which should generally result in INCONSISTENT_TYPE_PARAMETER_VALUES errors.
-                directOverrides.size > 1 &&
-                        directOverrides.mapTo(mutableSetOf()) { it.member.fir.unwrapSubstitutionOverrides().symbol }.size > 1
+                nonSubsumed.size > 1 &&
+                        nonSubsumed.mapTo(mutableSetOf()) { it.member.fir.unwrapSubstitutionOverrides().symbol }.size > 1
             } else {
                 // Create a non-trivial intersection override when return types should be intersected.
                 mostSpecific.size > 1
             }
             if (nonTrivial) {
-                result += ResultOfIntersection.NonTrivial(this, mostSpecific, group, containingScope = null)
+                // Only add non-subsumed members to list of overridden in intersection override.
+                result += ResultOfIntersection.NonTrivial(this, mostSpecific, overriddenMembers = nonSubsumed, containingScope = null)
             } else {
                 val (member, containingScope) = mostSpecific.first()
                 result += ResultOfIntersection.SingleMember(member, group, containingScope)
@@ -209,12 +210,16 @@ class FirTypeIntersectionScopeContext(
         }.withScope(key.baseScope)
     }
 
-    private fun <S : FirCallableSymbol<*>> List<MemberWithBaseScope<S>>.onlyDirectlyInherited(): List<MemberWithBaseScope<S>> {
+    /**
+     * A callable declaration D [subsumes](https://kotlinlang.org/spec/inheritance.html#matching-and-subsumption-of-declarations)
+     * a callable declaration B if D overrides B.
+     */
+    private fun <S : FirCallableSymbol<*>> List<MemberWithBaseScope<S>>.nonSubsumed(): List<MemberWithBaseScope<S>> {
         val baseMembers = mutableSetOf<FirCallableSymbol<*>>()
         for ((member, scope) in this) {
-            val unwrapped = member.fir.unwrapSubstitutionOverrides().symbol
+            val unwrapped = member.unwrapSubstitutionOverrides<FirCallableSymbol<*>>()
             val addIfDifferent = { it: FirCallableSymbol<*> ->
-                val symbol = it.fir.unwrapSubstitutionOverrides().symbol
+                val symbol = it.unwrapSubstitutionOverrides()
                 if (symbol != unwrapped) {
                     baseMembers += symbol
                 }
@@ -226,7 +231,7 @@ class FirTypeIntersectionScopeContext(
                 scope.processOverriddenProperties(member, addIfDifferent)
             }
         }
-        return filter { it.member.fir.unwrapSubstitutionOverrides().symbol !in baseMembers }
+        return filter { it.member.unwrapSubstitutionOverrides<FirCallableSymbol<*>>() !in baseMembers }
     }
 
     private fun <S : FirCallableSymbol<*>> Collection<MemberWithBaseScope<S>>.maxByVisibility(): MemberWithBaseScope<S> {
@@ -299,15 +304,6 @@ class FirTypeIntersectionScopeContext(
         collectRealOverridden(symbol, scope, result, mutableSetOf(), processDirectOverridden)
 
         return result
-    }
-
-    private inline fun <reified D : FirCallableDeclaration> D.unwrapSubstitutionOverrides(): D {
-        var current = this
-
-        do {
-            val next = current.originalForSubstitutionOverride ?: return current
-            current = next
-        } while (true)
     }
 
     private fun <D : FirCallableSymbol<*>> collectRealOverridden(

@@ -23653,6 +23653,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
             }
 
             @Test
+            @TestMetadata("diamondWithDiagonal.kt")
+            public void testDiamondWithDiagonal() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/override/diamondWithDiagonal.kt");
+            }
+
+            @Test
             @TestMetadata("DuplicateMethod.kt")
             public void testDuplicateMethod() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/override/DuplicateMethod.kt");
