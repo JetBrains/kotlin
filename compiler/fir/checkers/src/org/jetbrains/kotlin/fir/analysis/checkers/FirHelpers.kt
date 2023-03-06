@@ -574,7 +574,7 @@ fun FirFunctionSymbol<*>.isFunctionForExpectTypeFromCastFeature(): Boolean {
     return true
 }
 
-fun getActualTargetList(annotated: FirDeclaration): AnnotationTargetList {
+fun getActualTargetList(annotated: FirAnnotationContainer): AnnotationTargetList {
     fun CallableId.isMember(): Boolean {
         return classId != null || isLocal // TODO: Replace with .containingClass (after fixing)
     }
@@ -628,6 +628,7 @@ fun getActualTargetList(annotated: FirDeclaration): AnnotationTargetList {
         is FirBackingField -> TargetLists.T_BACKING_FIELD
         is FirFile -> TargetLists.T_FILE
         is FirTypeParameter -> TargetLists.T_TYPE_PARAMETER
+        is FirReceiverParameter -> TargetLists.T_TYPE_REFERENCE
         is FirAnonymousInitializer -> TargetLists.T_INITIALIZER
         is FirAnonymousObject ->
             if (annotated.source?.kind == KtFakeSourceElementKind.EnumInitializer) {

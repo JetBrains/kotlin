@@ -39,6 +39,20 @@ object FirAnnotationChecker : FirBasicDeclarationChecker() {
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
+        checkAnnotationContainer(declaration, context, reporter)
+
+        if (declaration is FirCallableDeclaration) {
+            declaration.receiverParameter?.let {
+                checkAnnotationContainer(it, context, reporter)
+            }
+        }
+    }
+
+    private fun checkAnnotationContainer(
+        declaration: FirAnnotationContainer,
+        context: CheckerContext,
+        reporter: DiagnosticReporter
+    ) {
         var deprecated: FirAnnotation? = null
         var deprecatedSinceKotlin: FirAnnotation? = null
 
@@ -88,7 +102,7 @@ object FirAnnotationChecker : FirBasicDeclarationChecker() {
     }
 
     private fun checkMultiFieldValueClassAnnotationRestrictions(
-        declaration: FirDeclaration,
+        declaration: FirAnnotationContainer,
         annotation: FirAnnotation,
         context: CheckerContext,
         reporter: DiagnosticReporter
@@ -123,7 +137,7 @@ object FirAnnotationChecker : FirBasicDeclarationChecker() {
     }
 
     private fun checkAnnotationTarget(
-        declaration: FirDeclaration,
+        declaration: FirAnnotationContainer,
         annotation: FirAnnotation,
         context: CheckerContext,
         reporter: DiagnosticReporter
@@ -172,7 +186,7 @@ object FirAnnotationChecker : FirBasicDeclarationChecker() {
     }
 
     private fun checkAnnotationUseSiteTarget(
-        annotated: FirDeclaration,
+        annotated: FirAnnotationContainer,
         annotation: FirAnnotation,
         target: AnnotationUseSiteTarget,
         context: CheckerContext,
