@@ -774,9 +774,18 @@ class IrSourcePrinterVisitor(
         // only print the return statement directly if it is not a lambda
         val returnTarget = expression.returnTargetSymbol.owner
         if (returnTarget !is IrFunction ||
-            returnTarget.name.asString() != "<anonymous>" &&
             returnTarget.origin != IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE) {
-            print("return ")
+
+            val isLastStatementInLambda =
+                returnTarget is IrFunction &&
+                    returnTarget.name.asString() == "<anonymous>" &&
+                    returnTarget.body?.statements?.last().let {
+                        it == expression || (it is IrBlock && it.statements.last() == expression)
+                    }
+
+            if (!isLastStatementInLambda) {
+                print("return ")
+            }
         }
         if (expression.type.isUnit() || value.type.isUnit()) {
             if (value is IrGetObjectValue) {
