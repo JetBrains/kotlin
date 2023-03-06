@@ -1387,7 +1387,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(AMBIGUOUS_ANONYMOUS_TYPE_INFERRED, "Right-hand side has anonymous type. Please specify type explicitly", NOT_RENDERED)
         map.put(
             MANY_IMPL_MEMBER_NOT_IMPLEMENTED,
-            "{0} must override {1} because it inherits many implementations of it",
+            "{0} must override {1} because it inherits multiple implementations of it",
             RENDER_CLASS_OR_OBJECT,
             DECLARATION_NAME
         )
