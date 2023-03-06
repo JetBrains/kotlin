@@ -2850,6 +2850,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/manyDefaultsAndVararg.kt");
             }
 
+            @TestMetadata("nestedClassConstructorWithDefault.kt")
+            public void testNestedClassConstructorWithDefault() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/nestedClassConstructorWithDefault.kt");
+            }
+
             @TestMetadata("noAdaptedReferencesIfNoOptimizedReferencesEnabled.kt")
             public void testNoAdaptedReferencesIfNoOptimizedReferencesEnabled() throws Exception {
                 runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/noAdaptedReferencesIfNoOptimizedReferencesEnabled.kt");

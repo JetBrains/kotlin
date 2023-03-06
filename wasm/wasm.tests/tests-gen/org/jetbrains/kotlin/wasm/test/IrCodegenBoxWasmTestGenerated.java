@@ -1940,6 +1940,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
                 runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/manyDefaultsAndVararg.kt");
             }
 
+            @TestMetadata("nestedClassConstructorWithDefault.kt")
+            public void testNestedClassConstructorWithDefault() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/nestedClassConstructorWithDefault.kt");
+            }
+
             @TestMetadata("noNameClashForReferencesToSameFunction.kt")
             public void testNoNameClashForReferencesToSameFunction() throws Exception {
                 runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/noNameClashForReferencesToSameFunction.kt");

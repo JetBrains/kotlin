@@ -3259,6 +3259,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
 
             @Test
+            @TestMetadata("nestedClassConstructorWithDefault.kt")
+            public void testNestedClassConstructorWithDefault() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/nestedClassConstructorWithDefault.kt");
+            }
+
+            @Test
             @TestMetadata("noAdaptedReferencesIfNoOptimizedReferencesEnabled.kt")
             public void testNoAdaptedReferencesIfNoOptimizedReferencesEnabled() throws Exception {
                 runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/noAdaptedReferencesIfNoOptimizedReferencesEnabled.kt");

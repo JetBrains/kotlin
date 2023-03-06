@@ -2233,6 +2233,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 }
 
                 @Test
+                @TestMetadata("nestedClassConstructorWithDefault.kt")
+                public void testNestedClassConstructorWithDefault() throws Exception {
+                    runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/nestedClassConstructorWithDefault.kt");
+                }
+
+                @Test
                 @TestMetadata("noNameClashForReferencesToSameFunction.kt")
                 public void testNoNameClashForReferencesToSameFunction() throws Exception {
                     runTest("compiler/testData/codegen/box/callableReference/adaptedReferences/noNameClashForReferencesToSameFunction.kt");
