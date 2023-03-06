@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 @TestMetadata("libraries/tools/kotlinp/testData")
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
-public class KotlinpTestGenerated extends AbstractKotlinpTest {
+public class K1KotlinpTestGenerated extends AbstractK1KotlinpTest {
     private void runTest(String testDataFilePath) throws Exception {
         KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
@@ -42,6 +42,11 @@ public class KotlinpTestGenerated extends AbstractKotlinpTest {
     @TestMetadata("Contracts.kt")
     public void testContracts() throws Exception {
         runTest("libraries/tools/kotlinp/testData/Contracts.kt");
+    }
+
+    @TestMetadata("Delegation.kt")
+    public void testDelegation() throws Exception {
+        runTest("libraries/tools/kotlinp/testData/Delegation.kt");
     }
 
     @TestMetadata("EnumEntries.kt")
@@ -132,7 +137,7 @@ public class KotlinpTestGenerated extends AbstractKotlinpTest {
     @TestMetadata("libraries/tools/kotlinp/testData/jvmDefault")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class JvmDefault extends AbstractKotlinpTest {
+    public static class JvmDefault extends AbstractK1KotlinpTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -165,7 +170,7 @@ public class KotlinpTestGenerated extends AbstractKotlinpTest {
     @TestMetadata("libraries/tools/kotlinp/testData/localClasses")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class LocalClasses extends AbstractKotlinpTest {
+    public static class LocalClasses extends AbstractK1KotlinpTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
