@@ -46,50 +46,20 @@ data class NpmDependency(
     internal var integrity: String? = null
 
     override fun resolve(transitive: Boolean): Set<File> =
-        resolveProject()
-            ?.let {
-                it
-                    .npmProject
-                    .nodeJs
-                    .packageManager
-                    .resolveDependency(
-                        it,
-                        this,
-                        transitive
-                    )
-            }
-            ?: mutableSetOf()
+        mutableSetOf()
 
     override fun resolve(): MutableSet<File> {
-        val npmPackage = parent?.resolveProject()
-            ?: resolveProject()
-            ?: return mutableSetOf()
-        return mutableSetOf(npmPackage.npmProject.resolve(key)!!)
+        return mutableSetOf()
     }
 
     override fun resolve(context: DependencyResolveContext) {
-        val npmPackage = resolveProject()
-        if (npmPackage != null) {
-            npmPackage.project.files(npmPackage.npmProject.resolve(key))
-            dependencies.forEach {
-                context.add(it)
-            }
-        }
-    }
-
-    // may return null only during npm resolution
-    // (it can be called since NpmDependency added to configuration that
-    // requires resolve to build package.json, in this case we should just skip this call)
-    private fun resolveProject(): KotlinCompilationNpmResolution? {
-        val nodeJs = NodeJsRootPlugin.apply(project!!.rootProject)
-        return nodeJs.npmResolutionManager.getNpmDependencyResolvedCompilation(this)
     }
 
     val key: String = name
 
     override fun toString() = "$key: $version"
 
-    override fun getFiles(): FileCollection = project!!.files(resolve(true))
+    override fun getFiles(): FileCollection = project!!.files()
 
     override fun getName() = name
 
