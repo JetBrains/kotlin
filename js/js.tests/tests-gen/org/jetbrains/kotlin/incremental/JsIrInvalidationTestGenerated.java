@@ -250,6 +250,11 @@ public class JsIrInvalidationTestGenerated extends AbstractJsIrInvalidationTest 
         runTest("js/js.translator/testData/incremental/invalidation/jsCode/");
     }
 
+    @TestMetadata("jsCodeWithConstString")
+    public void testJsCodeWithConstString() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/jsCodeWithConstString/");
+    }
+
     @TestMetadata("jsExport")
     public void testJsExport() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/jsExport/");
