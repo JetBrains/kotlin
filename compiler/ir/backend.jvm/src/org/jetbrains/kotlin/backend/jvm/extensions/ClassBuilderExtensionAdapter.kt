@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.ClassBuilderFactory
 import org.jetbrains.kotlin.codegen.DelegatingClassBuilder
 import org.jetbrains.kotlin.codegen.DelegatingClassBuilderFactory
-import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -30,11 +29,14 @@ import org.jetbrains.org.objectweb.asm.RecordComponentVisitor
 @Suppress("unused") // Used reflectively in GenerationState.
 internal object ClassBuilderExtensionAdapter {
     @JvmStatic
-    fun getExtensions(project: Project): List<ClassBuilderInterceptorExtension> =
+    @Suppress("DEPRECATION_ERROR")
+    fun getExtensions(project: Project): List<org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension> =
         ClassGeneratorExtension.getInstances(project).map(::ExtensionAdapter)
 }
 
-private class ExtensionAdapter(private val extension: ClassGeneratorExtension) : ClassBuilderInterceptorExtension {
+@Suppress("DEPRECATION_ERROR")
+private class ExtensionAdapter(private val extension: ClassGeneratorExtension) :
+    org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension {
     override fun interceptClassBuilderFactory(
         interceptedFactory: ClassBuilderFactory,
         bindingContext: BindingContext,
