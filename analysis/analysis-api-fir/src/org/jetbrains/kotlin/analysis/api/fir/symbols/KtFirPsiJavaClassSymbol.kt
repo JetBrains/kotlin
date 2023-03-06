@@ -79,9 +79,7 @@ internal class KtFirPsiJavaClassSymbol(
         get() = withValidityAssertion { classIdIfNonLocal.outerClassId != null && !javaClass.isStatic }
 
     val outerClass: KtFirPsiJavaClassSymbol?
-        get() = withValidityAssertion {
-            psi.containingClass?.let { KtFirPsiJavaClassSymbol(it, analysisSession) }
-        }
+        get() = psi.containingClass?.let { KtFirPsiJavaClassSymbol(it, analysisSession) }
 
     override val typeParameters: List<KtTypeParameterSymbol> by cached {
         // The parent Java class might contribute type parameters to the Java type parameter stack, but for this KtSymbol, parent type 
@@ -99,10 +97,10 @@ internal class KtFirPsiJavaClassSymbol(
     }
 
     val annotationSimpleNames: List<String?>
-        get() = withValidityAssertion { psi.annotations.map { it.nameReferenceElement?.referenceName } }
+        get() = psi.annotations.map { it.nameReferenceElement?.referenceName }
 
     val hasAnnotations: Boolean
-        get() = withValidityAssertion { psi.annotations.isNotEmpty() }
+        get() = psi.annotations.isNotEmpty()
 
     override val isData: Boolean get() = withValidityAssertion { false }
     override val isInline: Boolean get() = withValidityAssertion { false }
