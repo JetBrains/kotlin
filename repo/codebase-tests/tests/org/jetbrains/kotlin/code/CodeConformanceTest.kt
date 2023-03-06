@@ -138,6 +138,7 @@ class CodeConformanceTest : TestCase() {
                 "repo/gradle-settings-conventions/build-cache/build/generated-sources",
                 "repo/gradle-settings-conventions/jvm-toolchain-provisioning/build/generated-sources",
                 "repo/gradle-settings-conventions/gradle-enterprise/build/generated-sources",
+                "repo/gradle-settings-conventions/kotlin-daemon-config/build/generated-sources"
             )
         )
     }
