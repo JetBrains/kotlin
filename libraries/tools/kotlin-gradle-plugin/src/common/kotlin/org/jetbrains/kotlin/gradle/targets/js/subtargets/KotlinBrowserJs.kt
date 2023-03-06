@@ -69,7 +69,7 @@ abstract class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
             it.webpackConfigApplier(body)
         }
         testTask {
-            it.onTestFrameworkSet {
+            onTestFrameworkSet {
                 if (it is KotlinKarma) {
                     body.execute(it.webpackConfig)
                 }
