@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CrossModuleReferen
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.DumpIrTreeVisitor
@@ -131,6 +132,11 @@ internal class ICHasher {
             }
         }
         (symbol.owner as? IrAnnotationContainer)?.let(hashCalculator::updateAnnotationContainer)
+        (symbol.owner as? IrProperty)?.let { irProperty ->
+            if (irProperty.isConst) {
+                irProperty.backingField?.initializer?.let(hashCalculator::update)
+            }
+        }
         return hashCalculator.finalize()
     }
 }
