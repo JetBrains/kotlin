@@ -28045,6 +28045,18 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
             }
 
             @Test
+            @TestMetadata("AllowInternalInterfaceMembers.kt")
+            public void testAllowInternalInterfaceMembers() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/scopes/AllowInternalInterfaceMembers.kt");
+            }
+
+            @Test
+            @TestMetadata("AllowInternalInterfaceMembersDisabled.kt")
+            public void testAllowInternalInterfaceMembersDisabled() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/scopes/AllowInternalInterfaceMembersDisabled.kt");
+            }
+
+            @Test
             @TestMetadata("AmbiguityBetweenRootAndPackage.kt")
             public void testAmbiguityBetweenRootAndPackage() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/scopes/AmbiguityBetweenRootAndPackage.kt");

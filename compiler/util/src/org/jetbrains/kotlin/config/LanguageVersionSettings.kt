@@ -348,7 +348,8 @@ enum class LanguageFeature(
     ForbidInferringTypeVariablesIntoEmptyIntersection(sinceVersion = null, kind = BUG_FIX), // KT-51221
     IntrinsicConstEvaluation(sinceVersion = null, kind = UNSTABLE_FEATURE), // KT-49303
     DisableCheckingChangedProgressionsResolve(sinceVersion = null, kind = OTHER), // KT-49276
-    ContextSensitiveEnumResolutionInWhen(sinceVersion = null, kind = UNSTABLE_FEATURE), // KT-52774
+    ContextSensitiveEnumResolutionInWhen(sinceVersion = null, kind = UNSTABLE_FEATURE), // KT-52774#
+    AllowInternalInterfaceMembers(sinceVersion = null, kind = OTHER), // KT-22408
     ;
 
     init {

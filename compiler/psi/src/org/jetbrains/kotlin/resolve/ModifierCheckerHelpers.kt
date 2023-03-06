@@ -338,14 +338,17 @@ val possibleParentTargetPredicateMap = mapOf(
         KotlinTarget.ENUM_ENTRY
     ),
     PROTECTED_KEYWORD to always(KotlinTarget.CLASS_ONLY, KotlinTarget.LOCAL_CLASS, KotlinTarget.ENUM_CLASS, KotlinTarget.COMPANION_OBJECT),
-    INTERNAL_KEYWORD to always(
-        KotlinTarget.CLASS_ONLY,
-        KotlinTarget.LOCAL_CLASS,
-        KotlinTarget.OBJECT,
-        KotlinTarget.OBJECT_LITERAL,
-        KotlinTarget.ENUM_CLASS,
-        KotlinTarget.ENUM_ENTRY,
-        KotlinTarget.FILE
+    INTERNAL_KEYWORD to or(
+        always(
+            KotlinTarget.CLASS_ONLY,
+            KotlinTarget.LOCAL_CLASS,
+            KotlinTarget.OBJECT,
+            KotlinTarget.OBJECT_LITERAL,
+            KotlinTarget.ENUM_CLASS,
+            KotlinTarget.ENUM_ENTRY,
+            KotlinTarget.FILE
+        ),
+        ifSupported(LanguageFeature.AllowInternalInterfaceMembers, KotlinTarget.INTERFACE)
     ),
     PRIVATE_KEYWORD to always(
         KotlinTarget.CLASS_ONLY,
