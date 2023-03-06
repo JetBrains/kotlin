@@ -1040,10 +1040,17 @@ class ComposableFunctionBodyTransformer(
             }
         }
 
+        if (collectSourceInformation && isInlineLambda) {
+            scope.realizeEndCalls {
+                irSourceInformationMarkerEnd(body)
+            }
+        }
+
         if (canSkipExecution) {
             // We CANNOT skip if any of the following conditions are met
             // 1. if any of the stable parameters have *differences* from last execution.
             // 2. if the composer.skipping call returns false
+            // 3. function is inline
             val shouldExecute = irOrOr(
                 dirtyForSkipping.irHasDifferences(scope.usedParams),
                 irNot(irIsSkipping())
@@ -1066,15 +1073,11 @@ class ComposableFunctionBodyTransformer(
                 body.startOffset,
                 body.endOffset,
                 listOfNotNull(
-                    if (scope.isInlinedLambda)
-                        irStartReplaceableGroup(body, scope, irFunctionSourceKey())
-                    else null,
                     *sourceInformationPreamble.statements.toTypedArray(),
                     *scope.markerPreamble.statements.toTypedArray(),
                     *skipPreamble.statements.toTypedArray(),
                     *bodyPreamble.statements.toTypedArray(),
                     transformedBody,
-                    if (scope.isInlinedLambda) irEndReplaceableGroup() else null,
                     returnVar?.let { irReturn(declaration.symbol, irGet(it)) }
                 )
             )
@@ -1084,8 +1087,8 @@ class ComposableFunctionBodyTransformer(
                 body.startOffset,
                 body.endOffset,
                 listOfNotNull(
-                    *sourceInformationPreamble.statements.toTypedArray(),
                     *scope.markerPreamble.statements.toTypedArray(),
+                    *sourceInformationPreamble.statements.toTypedArray(),
                     *skipPreamble.statements.toTypedArray(),
                     *bodyPreamble.statements.toTypedArray(),
                     transformed,
@@ -2516,13 +2519,7 @@ class ComposableFunctionBodyTransformer(
             when (scope) {
                 is Scope.FunctionScope -> {
                     if (scope.function == symbol.owner) {
-                        if (
-                            !(
-                                leavingInlinedLambda ||
-                                (scope.isInlinedLambda && scope.inComposableCall)
-                            ) ||
-                            !rollbackGroupMarkerEnabled
-                        ) {
+                        if (!leavingInlinedLambda || !rollbackGroupMarkerEnabled) {
                             blockScopeMarks.forEach {
                                 it.markReturn(extraEndLocation)
                             }
@@ -3688,13 +3685,19 @@ class ComposableFunctionBodyTransformer(
 
             fun allocateMarker(): IrVariable = marker ?: run {
                 val parent = parent
-                return (if (isInlinedLambda && parent is Scope.CallScope) {
-                    parent.allocateMarker()
-                } else transformer.irTemporary(
-                    transformer.irCurrentMarker(myComposer),
-                    getNameForTemporary("marker")
-                ).also { markerPreamble.statements.add(it) }).also {
-                    marker = it
+                return when {
+                    isInlinedLambda && !isComposable && parent is CallScope -> {
+                        parent.allocateMarker()
+                    }
+                    else -> {
+                        val newMarker = transformer.irTemporary(
+                            transformer.irCurrentMarker(myComposer),
+                            getNameForTemporary("marker")
+                        )
+                        markerPreamble.statements.add(newMarker)
+                        marker = newMarker
+                        newMarker
+                    }
                 }
             }
 
