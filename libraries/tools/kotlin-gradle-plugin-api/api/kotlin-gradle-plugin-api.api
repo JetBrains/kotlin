@@ -1084,6 +1084,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTargetH
 	public abstract fun withTvosArm64 ()V
 	public abstract fun withTvosSimulatorArm64 ()V
 	public abstract fun withTvosX64 ()V
+	public abstract fun withWasm ()V
 	public abstract fun withWasm32 ()V
 	public abstract fun withWatchos ()V
 	public abstract fun withWatchosArm32 ()V
