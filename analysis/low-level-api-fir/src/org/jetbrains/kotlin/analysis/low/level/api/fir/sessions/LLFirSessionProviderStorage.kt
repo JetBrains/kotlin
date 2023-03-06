@@ -24,33 +24,27 @@ class LLFirSessionProviderStorage(val project: Project) {
 
     private val globalComponents = LLFirGlobalResolveComponents(project)
 
-    fun getSessionProvider(
-        useSiteKtModule: KtModule,
-        configureSession: (LLFirSession.() -> Unit)? = null
-    ): LLFirSessionProvider = when (useSiteKtModule) {
+    fun getSessionProvider(useSiteKtModule: KtModule): LLFirSessionProvider = when (useSiteKtModule) {
         is KtSourceModule -> {
-            createSessionProviderForSourceSession(useSiteKtModule, configureSession)
+            createSessionProviderForSourceSession(useSiteKtModule)
         }
 
         is KtLibraryModule, is KtLibrarySourceModule -> {
-            createSessionProviderForLibraryOrLibrarySource(useSiteKtModule, configureSession)
+            createSessionProviderForLibraryOrLibrarySource(useSiteKtModule)
         }
 
         is KtScriptModule -> {
-            createSessionProviderForScriptSession(useSiteKtModule, configureSession)
+            createSessionProviderForScriptSession(useSiteKtModule)
         }
 
         is KtNotUnderContentRootModule -> {
-            createSessionProviderForNotUnderContentRootSession(useSiteKtModule, configureSession)
+            createSessionProviderForNotUnderContentRootSession(useSiteKtModule)
         }
 
         else -> error("Unexpected ${useSiteKtModule::class.simpleName}")
     }
 
-    private fun createSessionProviderForSourceSession(
-        useSiteKtModule: KtSourceModule,
-        configureSession: (LLFirSession.() -> Unit)?
-    ): LLFirSessionProvider {
+    private fun createSessionProviderForSourceSession(useSiteKtModule: KtSourceModule): LLFirSessionProvider {
         val (sessions, session) = sourceAsUseSiteSessionCache.withMappings { mappings ->
             val sessions = mutableMapOf<KtModule, LLFirSession>().apply { putAll(mappings) }
             val session = LLFirSessionFactory.createSourcesSession(
@@ -59,8 +53,7 @@ class LLFirSessionProviderStorage(val project: Project) {
                 globalComponents,
                 sourceAsUseSiteSessionCache.sessionInvalidator,
                 sessions,
-                librariesSessionFactory,
-                configureSession = configureSession,
+                librariesSessionFactory
             )
             sessions to session
         }
@@ -68,10 +61,7 @@ class LLFirSessionProviderStorage(val project: Project) {
     }
 
 
-    private fun createSessionProviderForLibraryOrLibrarySource(
-        useSiteKtModule: KtModule,
-        configureSession: (LLFirSession.() -> Unit)?
-    ): LLFirSessionProvider {
+    private fun createSessionProviderForLibraryOrLibrarySource(useSiteKtModule: KtModule): LLFirSessionProvider {
         val (sessions, session) = libraryAsUseSiteSessionCache.withMappings { mappings ->
             val sessions = mutableMapOf<KtModule, LLFirSession>().apply { putAll(mappings) }
             val session = LLFirSessionFactory.createLibraryOrLibrarySourceResolvableSession(
@@ -80,18 +70,14 @@ class LLFirSessionProviderStorage(val project: Project) {
                 globalComponents,
                 libraryAsUseSiteSessionCache.sessionInvalidator,
                 builtInsSessionFactory.getBuiltinsSession(useSiteKtModule.platform),
-                sessions,
-                configureSession = configureSession,
+                sessions
             )
             sessions to session
         }
         return LLFirSessionProvider(project, session, KtModuleToSessionMappingByWeakValueMapImpl(sessions))
     }
 
-    private fun createSessionProviderForScriptSession(
-        useSiteKtModule: KtScriptModule,
-        configureSession: (LLFirSession.() -> Unit)?
-    ): LLFirSessionProvider {
+    private fun createSessionProviderForScriptSession(useSiteKtModule: KtScriptModule): LLFirSessionProvider {
         val (sessions, session) = sourceAsUseSiteSessionCache.withMappings { mappings ->
             val sessions = mutableMapOf<KtModule, LLFirSession>().apply { putAll(mappings) }
             val session = LLFirSessionFactory.createScriptSession(
@@ -99,26 +85,21 @@ class LLFirSessionProviderStorage(val project: Project) {
                 useSiteKtModule,
                 sourceAsUseSiteSessionCache.sessionInvalidator,
                 sessions,
-                librariesSessionFactory,
-                configureSession = configureSession,
+                librariesSessionFactory
             )
             sessions to session
         }
         return LLFirSessionProvider(project, session, KtModuleToSessionMappingByWeakValueMapImpl(sessions))
     }
 
-    private fun createSessionProviderForNotUnderContentRootSession(
-        useSiteKtModule: KtNotUnderContentRootModule,
-        configureSession: (LLFirSession.() -> Unit)?
-    ): LLFirSessionProvider {
+    private fun createSessionProviderForNotUnderContentRootSession(useSiteKtModule: KtNotUnderContentRootModule): LLFirSessionProvider {
         val (sessions, session) = notUnderContentRootSessionCache.withMappings { mappings ->
             val sessions = mutableMapOf<KtModule, LLFirSession>().apply { putAll(mappings) }
             val session = LLFirSessionFactory.createNotUnderContentRootResolvableSession(
                 project,
                 useSiteKtModule,
                 notUnderContentRootSessionCache.sessionInvalidator,
-                sessions,
-                configureSession = configureSession,
+                sessions
             )
             sessions to session
         }

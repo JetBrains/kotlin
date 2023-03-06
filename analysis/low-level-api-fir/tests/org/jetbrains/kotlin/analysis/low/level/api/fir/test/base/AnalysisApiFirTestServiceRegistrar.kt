@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirLi
 import org.jetbrains.kotlin.analysis.low.level.api.fir.services.KtCompilerPluginsProviderForTests
 import org.jetbrains.kotlin.analysis.low.level.api.fir.services.LLFirSealedClassInheritorsProcessorFactoryForTests
 import org.jetbrains.kotlin.analysis.low.level.api.fir.services.PackagePartProviderTestImpl
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionConfigurator
 import org.jetbrains.kotlin.analysis.project.structure.KtCompilerPluginsProvider
 import org.jetbrains.kotlin.analysis.providers.PackagePartProviderFactory
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
@@ -39,6 +40,7 @@ object AnalysisApiFirTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
     override fun registerProjectExtensionPoints(project: MockProject, testServices: TestServices) {
         IrGenerationExtension.registerExtensionPoint(project)
         FirExtensionRegistrarAdapter.registerExtensionPoint(project)
+        LLFirSessionConfigurator.registerExtensionPoint(project)
     }
 
     @OptIn(KtAnalysisApiInternals::class)

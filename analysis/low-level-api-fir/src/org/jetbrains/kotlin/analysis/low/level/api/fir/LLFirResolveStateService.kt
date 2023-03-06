@@ -10,7 +10,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootModificationTracker
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionProviderStorage
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirLibraryOrLibrarySourceResolvableResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirNotUnderContentRootResolveSession
@@ -46,10 +45,9 @@ internal class LLFirResolveSessionService(project: Project) {
 
         internal fun createFirResolveSessionFor(
             useSiteKtModule: KtModule,
-            sessionProviderStorage: LLFirSessionProviderStorage,
-            configureSession: (LLFirSession.() -> Unit)? = null,
+            sessionProviderStorage: LLFirSessionProviderStorage
         ): LLFirResolvableResolveSession {
-            val sessionProvider = sessionProviderStorage.getSessionProvider(useSiteKtModule, configureSession)
+            val sessionProvider = sessionProviderStorage.getSessionProvider(useSiteKtModule)
             val useSiteSession = sessionProvider.rootModuleSession
             return when (useSiteKtModule) {
                 is KtSourceModule -> {
@@ -100,15 +98,11 @@ internal class LLFirResolveSessionService(project: Project) {
 }
 
 @TestOnly
-fun createFirResolveSessionForNoCaching(
-    useSiteKtModule: KtModule,
-    project: Project,
-    configureSession: (LLFirSession.() -> Unit)? = null,
-): LLFirResolveSession =
-    LLFirResolveSessionService.createFirResolveSessionFor(
+fun createFirResolveSessionForNoCaching(useSiteKtModule: KtModule, project: Project): LLFirResolveSession {
+    return LLFirResolveSessionService.createFirResolveSessionFor(
         useSiteKtModule = useSiteKtModule,
-        sessionProviderStorage = LLFirSessionProviderStorage(project),
-        configureSession = configureSession
+        sessionProviderStorage = LLFirSessionProviderStorage(project)
     )
+}
 
 

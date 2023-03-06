@@ -50,8 +50,7 @@ internal object LLFirSessionFactory {
         globalResolveComponents: LLFirGlobalResolveComponents,
         sessionInvalidator: LLFirSessionInvalidator,
         sessionsCache: MutableMap<KtModule, LLFirSession>,
-        librariesSessionFactory: LLFirLibrarySessionFactory,
-        configureSession: (LLFirSession.() -> Unit)? = null
+        librariesSessionFactory: LLFirLibrarySessionFactory
     ): LLFirSourcesSession {
         sessionsCache[module]?.let { return it as LLFirSourcesSession }
         checkCanceled()
@@ -110,8 +109,7 @@ internal object LLFirSessionFactory {
                     sessionsCache,
                     globalResolveComponents,
                     sessionInvalidator,
-                    librariesSessionFactory,
-                    configureSession
+                    librariesSessionFactory
                 )
 
                 add(builtinsSession)
@@ -138,7 +136,8 @@ internal object LLFirSessionFactory {
             register(FirJvmTypeMapper::class, FirJvmTypeMapper(this))
             register(LLFirFirClassByPsiClassProvider::class, LLFirFirClassByPsiClassProvider(this))
 
-            configureSession?.invoke(this)
+            LLFirSessionConfigurator.configure(this)
+
             extensionService.additionalCheckers.forEach(session.checkersComponent::register)
         }
     }
@@ -151,8 +150,7 @@ internal object LLFirSessionFactory {
         sessionInvalidator: LLFirSessionInvalidator,
         builtinSession: LLFirBuiltinsAndCloneableSession,
         sessionsCache: MutableMap<KtModule, LLFirSession>,
-        languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
-        configureSession: (LLFirSession.() -> Unit)? = null
+        languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT
     ): LLFirLibraryOrLibrarySourceResolvableModuleSession {
         LLFirLibraryOrLibrarySourceResolvableModuleSession.checkIsValidKtModule(module)
         sessionsCache[module]?.let { return it as LLFirLibraryOrLibrarySourceResolvableModuleSession }
@@ -237,7 +235,7 @@ internal object LLFirSessionFactory {
             register(FirJvmTypeMapper::class, FirJvmTypeMapper(this))
             register(LLFirFirClassByPsiClassProvider::class, LLFirFirClassByPsiClassProvider(this))
 
-            configureSession?.invoke(this)
+            LLFirSessionConfigurator.configure(this)
         }
     }
 
@@ -246,8 +244,7 @@ internal object LLFirSessionFactory {
         module: KtScriptModule,
         sessionInvalidator: LLFirSessionInvalidator,
         sessionsCache: MutableMap<KtModule, LLFirSession>,
-        librariesSessionFactory: LLFirLibrarySessionFactory,
-        configureSession: (LLFirSession.() -> Unit)? = null
+        librariesSessionFactory: LLFirLibrarySessionFactory
     ): LLFirScriptSession {
         sessionsCache[module]?.let { return it as LLFirScriptSession }
         checkCanceled()
@@ -294,8 +291,7 @@ internal object LLFirSessionFactory {
                     sessionsCache,
                     globalResolveComponents,
                     sessionInvalidator,
-                    librariesSessionFactory,
-                    configureSession
+                    librariesSessionFactory
                 )
 
                 add(builtinsSession)
@@ -321,7 +317,7 @@ internal object LLFirSessionFactory {
             register(FirJvmTypeMapper::class, FirJvmTypeMapper(this))
             register(FirRegisteredPluginAnnotations::class, FirRegisteredPluginAnnotations.Empty)
 
-            configureSession?.invoke(this)
+            LLFirSessionConfigurator.configure(this)
         }
     }
 
@@ -329,8 +325,7 @@ internal object LLFirSessionFactory {
         project: Project,
         module: KtNotUnderContentRootModule,
         sessionInvalidator: LLFirSessionInvalidator,
-        sessionsCache: MutableMap<KtModule, LLFirSession>,
-        configureSession: (LLFirSession.() -> Unit)? = null
+        sessionsCache: MutableMap<KtModule, LLFirSession>
     ): LLFirNonUnderContentRootResolvableModuleSession {
         sessionsCache[module]?.let { return it as LLFirNonUnderContentRootResolvableModuleSession }
         checkCanceled()
@@ -391,7 +386,7 @@ internal object LLFirSessionFactory {
             register(FirJvmTypeMapper::class, FirJvmTypeMapper(this))
             register(FirRegisteredPluginAnnotations::class, FirRegisteredPluginAnnotations.Empty)
 
-            configureSession?.invoke(this)
+            LLFirSessionConfigurator.configure(this)
         }
     }
 
@@ -418,8 +413,7 @@ internal object LLFirSessionFactory {
         sessionsCache: MutableMap<KtModule, LLFirSession>,
         globalResolveComponents: LLFirGlobalResolveComponents,
         sessionInvalidator: LLFirSessionInvalidator,
-        librariesSessionFactory: LLFirLibrarySessionFactory,
-        configureSession: (LLFirSession.() -> Unit)?
+        librariesSessionFactory: LLFirLibrarySessionFactory
     ) {
         val project = module.project
 
@@ -440,8 +434,7 @@ internal object LLFirSessionFactory {
                     globalResolveComponents,
                     sessionInvalidator,
                     sessionsCache,
-                    librariesSessionFactory = librariesSessionFactory,
-                    configureSession = configureSession,
+                    librariesSessionFactory = librariesSessionFactory
                 )
             }
 
@@ -463,6 +456,13 @@ internal object LLFirSessionFactory {
                 getOrCreateSessionForDependency(dependency)?.let(this::add)
             }
         }
+    }
+}
+
+internal fun LLFirSessionConfigurator.Companion.configure(session: LLFirSession) {
+    val project = session.project
+    for (extension in extensionPointName.getExtensionList(project)) {
+        extension.configure(session)
     }
 }
 
