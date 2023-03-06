@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.base.KtContextReceiver
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForDeclaration
@@ -17,10 +16,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.symbols.toKtClassKind
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
-import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
-import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
@@ -32,7 +28,7 @@ import org.jetbrains.kotlin.name.Name
 internal class KtFirNamedClassOrObjectSymbol(
     override val firSymbol: FirRegularClassSymbol,
     override val analysisSession: KtFirAnalysisSession,
-) : KtNamedClassOrObjectSymbol(), KtFirSymbol<FirRegularClassSymbol> {
+) : KtFirNamedClassOrObjectSymbolBase() {
     override val token: KtLifetimeToken get() = builder.token
     override val psi: PsiElement? by cached { firSymbol.findPsi() }
 
@@ -50,7 +46,6 @@ internal class KtFirNamedClassOrObjectSymbol(
                     else -> Modality.FINAL
                 }
         }
-
 
     /* FirRegularClass visibility is not modified by STATUS only for Unknown, so it can be taken from RAW */
     override val visibility: Visibility
@@ -83,10 +78,6 @@ internal class KtFirNamedClassOrObjectSymbol(
         }
     }
 
-    override val superTypes: List<KtType> by cached {
-        firSymbol.superTypesAndAnnotationsListForRegularClass(builder)
-    }
-
     override val typeParameters = withValidityAssertion {
         firSymbol.createRegularKtTypeParameters(builder)
     }
@@ -98,28 +89,4 @@ internal class KtFirNamedClassOrObjectSymbol(
         }
 
     override val symbolKind: KtSymbolKind get() = withValidityAssertion { getSymbolKind() }
-
-    context(KtAnalysisSession)
-    override fun createPointer(): KtSymbolPointer<KtNamedClassOrObjectSymbol> = withValidityAssertion {
-        createNamedClassOrObjectSymbolPointer()
-    }
-
-    /**
-     * [KtFirNamedClassOrObjectSymbol] must be able to equal [KtFirPsiJavaClassSymbol].
-     */
-    override fun equals(other: Any?): Boolean {
-        if (other === this) return true
-
-        return when (other) {
-            is KtFirNamedClassOrObjectSymbol -> symbolEquals(other)
-            is KtFirPsiJavaClassSymbol -> other == this
-            else -> false
-        }
-    }
-
-    /**
-     * A non-local [KtFirNamedClassOrObjectSymbol] must have the same kind of hash code as [KtFirPsiJavaClassSymbol] so that they are
-     * interchangeable in collections.
-     */
-    override fun hashCode(): Int = classIdIfNonLocal?.hashCode() ?: symbolHashCode()
 }

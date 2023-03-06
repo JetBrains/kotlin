@@ -5,10 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
-import com.intellij.codeInsight.PsiEquivalenceUtil
 import com.intellij.psi.PsiClass
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
 import org.jetbrains.kotlin.analysis.api.base.KtContextReceiver
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
@@ -22,8 +20,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
 import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
-import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.firClassByPsiClassProvider
 import org.jetbrains.kotlin.analysis.project.structure.getKtModule
 import org.jetbrains.kotlin.analysis.utils.classIdIfNonLocal
@@ -45,7 +41,7 @@ import org.jetbrains.kotlin.name.Name
 internal class KtFirPsiJavaClassSymbol(
     override val psi: PsiClass,
     override val analysisSession: KtFirAnalysisSession,
-) : KtNamedClassOrObjectSymbol(), KtFirPsiSymbol<PsiClass, FirRegularClassSymbol> {
+) : KtFirNamedClassOrObjectSymbolBase(), KtFirPsiSymbol<PsiClass, FirRegularClassSymbol> {
     /**
      * [javaClass] is used to defer some properties to the compiler's view of a Java class.
      */
@@ -110,24 +106,11 @@ internal class KtFirPsiJavaClassSymbol(
 
     override val contextReceivers: List<KtContextReceiver> get() = withValidityAssertion { emptyList() }
 
-    override fun equals(other: Any?): Boolean {
-        if (other === this) return true
-        if (other == null || other !is KtNamedClassOrObjectSymbol) return false
-
-        val otherPsiClass = other.psi as? PsiClass ?: return false
-        return PsiEquivalenceUtil.areElementsEquivalent(psi, otherPsiClass)
-    }
-
-    /**
-     * Since [PsiEquivalenceUtil] doesn't have a hash code function, we use the class ID as a conservative hash code.
-     *
-     * Also see [KtFirNamedClassOrObjectSymbol.hashCode], which must generate the same hash code for non-local classes.
-     */
-    override fun hashCode(): Int = classIdIfNonLocal.hashCode()
-
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Slow Operations (requiring access to the underlying FIR class symbol)
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    override val hasLazyFirSymbol: Boolean get() = true
+
     override val firSymbol: FirRegularClassSymbol by cached {
         val module = psi.getKtModule(analysisSession.project)
         val provider = analysisSession.firResolveSession.getSessionFor(module).firClassByPsiClassProvider
@@ -139,10 +122,6 @@ internal class KtFirPsiJavaClassSymbol(
         firClassSymbol
     }
 
-    override val superTypes: List<KtType> by cached {
-        firSymbol.superTypesAndAnnotationsListForRegularClass(builder)
-    }
-
     override val typeParameters: List<KtTypeParameterSymbol> by cached {
         if (hasTypeParameters) firSymbol.createRegularKtTypeParameters(builder)
         else emptyList()
@@ -151,10 +130,5 @@ internal class KtFirPsiJavaClassSymbol(
     override val annotationsList: KtAnnotationsList by cached {
         if (hasAnnotations) KtFirAnnotationListForDeclaration.create(firSymbol, analysisSession.useSiteSession, token)
         else KtEmptyAnnotationsList(token)
-    }
-
-    context(KtAnalysisSession)
-    override fun createPointer(): KtSymbolPointer<KtNamedClassOrObjectSymbol> = withValidityAssertion {
-        createNamedClassOrObjectSymbolPointer()
     }
 }
