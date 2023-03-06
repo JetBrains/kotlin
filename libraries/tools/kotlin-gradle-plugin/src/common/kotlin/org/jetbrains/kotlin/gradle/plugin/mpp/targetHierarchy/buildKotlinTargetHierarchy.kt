@@ -119,7 +119,7 @@ private class KotlinTargetHierarchyBuilderImpl(
 
     override fun withAndroidNative() = addTargets { it is KotlinNativeTarget && it.konanTarget.family == Family.ANDROID }
 
-    /** Don't check for instance of [KotlinJsTargetDsl] or [KotlinWasmTargetDsl] because they are implemented by single target [KotlinJsIrTarget] */
+    // Don't check for instance of [KotlinJsTargetDsl] or [KotlinWasmTargetDsl] because they are implemented by single target [KotlinJsIrTarget]
     override fun withJs() = addTargets { it.platformType == KotlinPlatformType.js }
     override fun withWasm() = addTargets { it.platformType == KotlinPlatformType.wasm }
 
