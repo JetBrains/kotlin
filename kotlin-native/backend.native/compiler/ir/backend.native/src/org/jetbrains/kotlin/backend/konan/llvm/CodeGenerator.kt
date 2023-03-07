@@ -47,7 +47,7 @@ internal class CodeGenerator(override val generationState: NativeGenerationState
 
     fun param(fn: IrFunction, i: Int) = fn.llvmFunction.param(i)
 
-    fun functionEntryPointAddress(function: IrFunction) = function.entryPointAddress.llvm
+    fun functionAsCCallback(function: IrFunction) = function.llvmFunction.toNativeCallback().bitcast(llvm.int8PtrType).llvm
 
     fun typeInfoForAllocation(constructedClass: IrClass): LLVMValueRef {
         assert(!constructedClass.isObjCClass())

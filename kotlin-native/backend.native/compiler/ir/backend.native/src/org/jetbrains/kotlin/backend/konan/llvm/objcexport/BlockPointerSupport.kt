@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.konan.llvm.objcexport
 
 import llvm.LLVMLinkage
-import llvm.LLVMSetLinkage
 import llvm.LLVMStoreSizeOfType
 import llvm.LLVMValueRef
 import org.jetbrains.kotlin.backend.konan.llvm.*
@@ -87,7 +86,7 @@ internal fun ObjCExportCodeGeneratorBase.generateBlockToKotlinFunctionConverter(
 
     val typeInfo = rttiGenerator.generateSyntheticInterfaceImpl(
             irInterface,
-            mapOf(invokeMethod to invokeImpl.toConstPointer()),
+            mapOf(invokeMethod to invokeImpl),
             bodyType,
             immutable = true
     )
@@ -248,8 +247,8 @@ internal class BlockGenerator(private val codegen: CodeGenerator) {
         return Struct(codegen.runtime.blockDescriptorType,
                 codegen.LongInt(0L),
                 codegen.LongInt(LLVMStoreSizeOfType(codegen.runtime.targetData, blockLiteralType)),
-                copyHelper.toConstPointer(),
-                disposeHelper.toConstPointer(),
+                copyHelper.toNativeCallback(),
+                disposeHelper.toNativeCallback(),
                 codegen.staticData.cStringLiteral(signature),
                 NullPointer(llvm.int8Type)
         )
@@ -277,7 +276,7 @@ internal class BlockGenerator(private val codegen: CodeGenerator) {
             genBody(kotlinObject, arguments)
         }
 
-        return result.toConstPointer()
+        return result.toNativeCallback()
     }
 
     fun ObjCExportCodeGeneratorBase.generateConvertFunctionToRetainedBlock(

@@ -559,8 +559,8 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
         val superClass = args.single()
         val messenger = LLVMBuildSelect(builder,
                 If = icmpEq(superClass, llvm.kNullInt8Ptr),
-                Then = normalMessenger.toConstPointer().llvm,
-                Else = superMessenger.toConstPointer().llvm,
+                Then = normalMessenger.toNativeCallbackValue(),
+                Else = superMessenger.toNativeCallbackValue(),
                 Name = ""
         )!!
 

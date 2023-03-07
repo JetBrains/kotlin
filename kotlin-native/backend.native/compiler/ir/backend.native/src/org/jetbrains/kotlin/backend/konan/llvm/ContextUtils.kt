@@ -192,14 +192,6 @@ internal interface ContextUtils : RuntimeAware {
             }
         }
 
-    /**
-     * Address of entry point of [llvmFunction].
-     */
-    val IrFunction.entryPointAddress: ConstPointer
-        get() {
-            return llvmFunction.toConstPointer().bitcast(llvm.int8PtrType)
-        }
-
     val IrClass.typeInfoPtr: ConstPointer
         get() {
             return if (isExternal(this)) {
@@ -490,8 +482,8 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
     }
 
     val usedFunctions = mutableListOf<LlvmCallable>()
-    val usedGlobals = mutableListOf<LLVMValueRef>()
-    val compilerUsedGlobals = mutableListOf<LLVMValueRef>()
+    val usedGlobals = mutableListOf<ConstPointer>()
+    val compilerUsedGlobals = mutableListOf<ConstPointer>()
     val irStaticInitializers = mutableListOf<IrStaticInitializer>()
     val otherStaticInitializers = mutableListOf<LlvmCallable>()
     val initializersGenerationState = InitializersGenerationState()

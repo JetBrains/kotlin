@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.llvm
 
+import llvm.LLVMCallConv
 import llvm.LLVMTypeRef
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -44,4 +45,9 @@ internal fun ContextUtils.getLlvmFunctionReturnType(function: IrFunction): LlvmR
         )
     }
     return returnType
+}
+
+@Suppress("UNUSED_PARAMETER")
+internal fun ContextUtils.getLlvmCallingConvention(function: IrFunction): LLVMCallConv {
+    return LLVMCallConv.LLVMCCallConv
 }

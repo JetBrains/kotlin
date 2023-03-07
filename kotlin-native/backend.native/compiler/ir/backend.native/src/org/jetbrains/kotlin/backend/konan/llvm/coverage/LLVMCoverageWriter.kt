@@ -8,6 +8,7 @@ import kotlinx.cinterop.*
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
+import org.jetbrains.kotlin.backend.konan.llvm.constPointer
 import org.jetbrains.kotlin.backend.konan.llvm.name
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.path
@@ -70,6 +71,6 @@ internal class LLVMCoverageWriter(
 
             retval
         }
-        generationState.llvm.usedGlobals.add(coverageGlobal)
+        generationState.llvm.usedGlobals.add(constPointer(coverageGlobal))
     }
 }

@@ -32,7 +32,7 @@ internal open class ObjCCodeGenerator(val codegen: CodeGenerator) {
                     LlvmRetType(llvm.int8PtrType),
                     listOf(LlvmParamType(llvm.int8PtrType), LlvmParamType(llvm.int8PtrType)),
                     isVararg = true
-    ).toConstPointer()
+    )
 
     val objcRelease = llvm.externalNativeRuntimeFunction(
             "llvm.objc.release",
@@ -79,10 +79,7 @@ internal open class ObjCCodeGenerator(val codegen: CodeGenerator) {
 
     // TODO: this doesn't support stret.
     fun msgSender(functionType: LlvmFunctionSignature): LlvmCallable =
-            LlvmCallable(
-                    objcMsgSend.bitcast(pointerType(functionType.llvmFunctionType)).llvm,
-                    functionType
-            )
+            objcMsgSend.constCastTo(functionType)
 }
 
 internal fun FunctionGenerationContext.genObjCSelector(selector: String): LLVMValueRef {

@@ -39,30 +39,30 @@ internal class KotlinObjCClassInfoGenerator(override val generationState: Native
 
         val classNameLiteral = className?.let { staticData.cStringLiteral(it) } ?: NullPointer(llvm.int8Type)
         val info = Struct(runtime.kotlinObjCClassInfo,
-                          classNameLiteral,
-                          llvm.constInt32(if (exportedClassName != null) 1 else 0),
+                classNameLiteral,
+                llvm.constInt32(if (exportedClassName != null) 1 else 0),
 
-                          staticData.cStringLiteral(superclassName),
-                          staticData.placeGlobalConstArray("", llvm.int8PtrType,
+                staticData.cStringLiteral(superclassName),
+                staticData.placeGlobalConstArray("", llvm.int8PtrType,
                         protocolNames.map { staticData.cStringLiteral(it) } + NullPointer(llvm.int8Type)),
 
-                          staticData.placeGlobalConstArray("", runtime.objCMethodDescription, instanceMethods),
-                          llvm.constInt32(instanceMethods.size),
+                staticData.placeGlobalConstArray("", runtime.objCMethodDescription, instanceMethods),
+                llvm.constInt32(instanceMethods.size),
 
-                          staticData.placeGlobalConstArray("", runtime.objCMethodDescription, classMethods),
-                          llvm.constInt32(classMethods.size),
+                staticData.placeGlobalConstArray("", runtime.objCMethodDescription, classMethods),
+                llvm.constInt32(classMethods.size),
 
-                          objCLLvmDeclarations.bodyOffsetGlobal.pointer,
+                objCLLvmDeclarations.bodyOffsetGlobal.pointer,
 
-                          irClass.typeInfoPtr,
-                          companionObject?.typeInfoPtr ?: NullPointer(runtime.typeInfoType),
+                irClass.typeInfoPtr,
+                companionObject?.typeInfoPtr ?: NullPointer(runtime.typeInfoType),
 
-                          staticData.placeGlobal(
+                staticData.placeGlobal(
                         "kobjcclassptr:${irClass.fqNameForIrSerialization}#internal",
                         NullPointer(llvm.int8Type)
                 ).pointer,
 
-                          generateClassDataImp(irClass)
+                generateClassDataImp(irClass).toNativeCallback()
         )
 
         objCLLvmDeclarations.classInfoGlobal.setInitializer(info)
@@ -85,7 +85,7 @@ internal class KotlinObjCClassInfoGenerator(override val generationState: Native
                 .distinctBy { it.selector }
 
         allInitMethodsInfo.mapTo(this) {
-            ObjCMethodDesc(it.selector, it.encoding, llvm.missingInitImp.toConstPointer())
+            ObjCMethodDesc(it.selector, it.encoding, llvm.missingInitImp.toNativeCallback())
         }
     }
 
@@ -124,11 +124,11 @@ internal class KotlinObjCClassInfoGenerator(override val generationState: Native
                 ObjCMethodDesc(
                         annotation.getAnnotationStringValue("selector"),
                         annotation.getAnnotationStringValue("encoding"),
-                        it.llvmFunction.toConstPointer()
+                        it.llvmFunction.toNativeCallback()
                 )
             }
 
-    private fun generateClassDataImp(irClass: IrClass): ConstPointer {
+    private fun generateClassDataImp(irClass: IrClass): LlvmCallable {
         val classDataPointer = staticData.placeGlobal(
                 "kobjcclassdata:${irClass.fqNameForIrSerialization}#internal",
                 Zero(runtime.kotlinObjCClassData)
@@ -142,11 +142,9 @@ internal class KotlinObjCClassInfoGenerator(override val generationState: Native
                 origin = null,
                 LLVMLinkage.LLVMPrivateLinkage
         )
-        val functionCallable = generateFunctionNoRuntime(codegen, functionProto) {
+        return generateFunctionNoRuntime(codegen, functionProto) {
             ret(classDataPointer.llvm)
         }
-
-        return functionCallable.toConstPointer()
     }
 
     private val codegen = CodeGenerator(generationState)

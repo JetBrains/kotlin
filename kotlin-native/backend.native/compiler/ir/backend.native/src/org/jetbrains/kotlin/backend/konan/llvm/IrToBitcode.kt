@@ -448,7 +448,7 @@ internal class CodeGeneratorVisitor(
 
             generationState.coverage.writeRegionInfo()
             overrideRuntimeGlobals()
-            appendLlvmUsed("llvm.used", llvm.usedFunctions.map { it.toConstPointer().llvm } + llvm.usedGlobals)
+            appendLlvmUsed("llvm.used", llvm.usedFunctions.map { it.toNonCallablePointer() } + llvm.usedGlobals)
             appendLlvmUsed("llvm.compiler.used", llvm.compilerUsedGlobals)
             if (context.config.produce.isNativeLibrary) {
                 context.cAdapterExportedElements?.let { appendCAdapters(it) }
@@ -544,21 +544,21 @@ internal class CodeGeneratorVisitor(
     //-------------------------------------------------------------------------//
     // Creates static struct InitNode $nodeName = {$initName, NULL};
 
-    private fun createInitNode(initFunction: LlvmCallable): LLVMValueRef {
-        val nextInitNode = LLVMConstNull(pointerType(kNodeInitType))
-        val argList = cValuesOf(initFunction.toConstPointer().llvm, nextInitNode)
+    private fun createInitNode(initFunction: LlvmCallable): ConstPointer {
+        val nextInitNode = NullPointer(kNodeInitType)
+        val argList = listOf(initFunction.toNativeCallback(), nextInitNode)
         // Create static object of class InitNode.
-        val initNode = LLVMConstNamedStruct(kNodeInitType, argList, 2)!!
+        val initNode = Struct(kNodeInitType, argList)
         // Create global variable with init record data.
-        return codegen.staticData.placeGlobal("init_node", constPointer(initNode), isExported = false).llvmGlobal
+        return codegen.staticData.placeGlobal("init_node", initNode, isExported = false).pointer
     }
 
     //-------------------------------------------------------------------------//
 
-    private fun createInitCtor(initNodePtr: LLVMValueRef): LlvmCallable {
+    private fun createInitCtor(initNodePtr: ConstPointer): LlvmCallable {
         val ctorProto = ctorFunctionSignature.toProto("", null, LLVMLinkage.LLVMPrivateLinkage)
         val ctor = generateFunctionNoRuntime(codegen, ctorProto) {
-            call(llvm.appendToInitalizersTail, listOf(initNodePtr))
+            call(llvm.appendToInitalizersTail, listOf(initNodePtr.llvm))
             ret(null)
         }
         return ctor
@@ -2313,7 +2313,7 @@ internal class CodeGeneratorVisitor(
         val function = expression.symbol.owner
         assert (function.dispatchReceiverParameter == null)
 
-        return codegen.functionEntryPointAddress(function)
+        return codegen.functionAsCCallback(function)
     }
 
     //-------------------------------------------------------------------------//
@@ -2413,7 +2413,7 @@ internal class CodeGeneratorVisitor(
 
     private fun evaluateFileGlobalInitializerCall(fileInitializer: IrFunction) = with(functionGenerationContext) {
         val statePtr = getGlobalInitStateFor(fileInitializer.parent as IrDeclarationContainer)
-        val initializerPtr = with(codegen) { fileInitializer.llvmFunction.asCallback() }
+        val initializerPtr = with(codegen) { fileInitializer.llvmFunction.toNativeCallbackValue() }
 
         val bbInit = basicBlock("label_init", null)
         val bbExit = basicBlock("label_continue", null)
@@ -2433,7 +2433,7 @@ internal class CodeGeneratorVisitor(
         val globalStatePtr = getGlobalInitStateFor(fileInitializer.parent as IrDeclarationContainer)
         val localState = getThreadLocalInitStateFor(fileInitializer.parent as IrDeclarationContainer)
         val localStatePtr = localState.getAddress(functionGenerationContext)
-        val initializerPtr = with(codegen) { fileInitializer.llvmFunction.asCallback() }
+        val initializerPtr = with(codegen) { fileInitializer.llvmFunction.toNativeCallbackValue() }
 
         val bbInit = basicBlock("label_init", null)
         val bbCheckLocalState = basicBlock("label_check_local", null)
@@ -2459,7 +2459,7 @@ internal class CodeGeneratorVisitor(
     private fun evaluateFileStandaloneThreadLocalInitializerCall(fileInitializer: IrFunction) = with(functionGenerationContext) {
         val state = getThreadLocalInitStateFor(fileInitializer.parent as IrDeclarationContainer)
         val statePtr = state.getAddress(functionGenerationContext)
-        val initializerPtr = with(codegen) { fileInitializer.llvmFunction.asCallback() }
+        val initializerPtr = with(codegen) { fileInitializer.llvmFunction.toNativeCallbackValue() }
 
         val bbInit = basicBlock("label_init", null)
         val bbExit = basicBlock("label_continue", null)
@@ -2701,10 +2701,10 @@ internal class CodeGeneratorVisitor(
 
     //-------------------------------------------------------------------------//
 
-    private fun appendLlvmUsed(name: String, args: List<LLVMValueRef>) {
+    private fun appendLlvmUsed(name: String, args: List<ConstPointer>) {
         if (args.isEmpty()) return
 
-        val argsCasted = args.map { constPointer(it).bitcast(llvm.int8PtrType) }
+        val argsCasted = args.map { it.bitcast(llvm.int8PtrType) }
         val llvmUsedGlobal = codegen.staticData.placeGlobalArray(name, llvm.int8PtrType, argsCasted)
 
         LLVMSetLinkage(llvmUsedGlobal.llvmGlobal, LLVMLinkage.LLVMAppendingLinkage)
@@ -2752,23 +2752,21 @@ internal class CodeGeneratorVisitor(
     //-------------------------------------------------------------------------//
     // Create object { i32, void ()*, i8* } { i32 1, void ()* @ctorFunction, i8* null }
 
-    fun createGlobalCtor(ctorFunction: LlvmCallable): ConstPointer {
+    fun createGlobalCtor(ctorFunction: LlvmCallable): ConstValue {
         val priority = if (context.config.target.family == Family.MINGW) {
             // Workaround MinGW bug. Using this value makes the compiler generate
             // '.ctors' section instead of '.ctors.XXXXX', which can't be recognized by ld
             // when string table is too long.
             // More details: https://youtrack.jetbrains.com/issue/KT-39548
-            llvm.int32(65535)
+            llvm.constInt32(65535)
             // Note: this difference in priorities doesn't actually make initializers
             // platform-dependent, because handling priorities for initializers
             // from different object files is platform-dependent anyway.
         } else {
-            llvm.kImmInt32One
+            llvm.constInt32(1)
         }
-        val data = llvm.kNullInt8Ptr
-        val argList = cValuesOf(priority, ctorFunction.toConstPointer().llvm, data)
-        val ctorItem = LLVMConstNamedStruct(kCtorType, argList, 3)!!
-        return constPointer(ctorItem)
+        val data = NullPointer(llvm.int8Type)
+        return Struct(kCtorType, priority, ctorFunction.toNativeCallback(), data)
     }
 
     //-------------------------------------------------------------------------//
@@ -2893,7 +2891,7 @@ internal class CodeGeneratorVisitor(
             if (context.config.produce == CompilerOutputKind.PROGRAM) {
                 // Provide an optional handle for calling .ctors, if standard constructors mechanism
                 // is not available on the platform (i.e. WASM, embedded).
-                appendLlvmUsed("llvm.used", listOf(globalCtorCallable.toConstPointer().llvm))
+                appendLlvmUsed("llvm.used", listOf(globalCtorCallable.toNonCallablePointer()))
             }
         }
     }

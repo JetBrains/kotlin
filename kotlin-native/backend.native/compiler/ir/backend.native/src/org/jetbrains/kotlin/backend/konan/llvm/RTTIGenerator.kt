@@ -262,7 +262,7 @@ internal class RTTIGenerator(
                 llvmDeclarations.writableTypeInfoGlobal?.pointer,
                 associatedObjects = genAssociatedObjects(irClass),
                 processObjectInMark = when {
-                    irClass.symbol == context.ir.symbols.array -> llvm.Kotlin_processArrayInMark.toConstPointer()
+                    irClass.symbol == context.ir.symbols.array -> llvm.Kotlin_processArrayInMark.toNativeCallback()
                     else -> genProcessObjectInMark(bodyType)
                 },
                 requiredAlignment = llvmDeclarations.alignment
@@ -300,7 +300,7 @@ internal class RTTIGenerator(
             if (implementation == null || implementation.isExternalObjCClassMethod() || referencedFunctions?.contains(implementation) == false) {
                 NullPointer(llvm.int8Type)
             } else {
-                implementation.entryPointAddress
+                implementation.llvmFunction.toKotlinCallback().bitcast(llvm.int8PtrType)
             }
         }
         return ConstArray(llvm.int8PtrType, vtableEntries)
@@ -380,7 +380,7 @@ internal class RTTIGenerator(
                             val impl = layoutBuilder.overridingOf(ifaceFunction)
                             if (impl == null || referencedFunctions?.contains(impl) == false)
                                 NullPointer(llvm.int8Type)
-                            else impl.entryPointAddress
+                            else impl.llvmFunction.toKotlinCallback().bitcast(llvm.int8PtrType)
                         }
 
                         staticData.placeGlobalConstArray("kifacevtable:${className}_$interfaceId",
@@ -471,7 +471,7 @@ internal class RTTIGenerator(
             val function = context.getObjectClassInstanceFunction(value)
             val llvmFunction = generationState.llvmDeclarations.forFunction(function)
 
-            Struct(runtime.associatedObjectTableRecordType, key.typeInfoPtr, llvmFunction.toConstPointer())
+            Struct(runtime.associatedObjectTableRecordType, key.typeInfoPtr, llvmFunction.toNativeCallback())
         }
 
         return staticData.placeGlobalConstArray(
@@ -486,11 +486,11 @@ internal class RTTIGenerator(
         return when {
             indicesOfObjectFields.isEmpty() -> {
                 // TODO: Try to generate it here instead of importing from the runtime.
-                llvm.Kotlin_processEmptyObjectInMark.toConstPointer()
+                llvm.Kotlin_processEmptyObjectInMark.toNativeCallback()
             }
             else -> {
                 // TODO: specialize for "small" objects
-                llvm.Kotlin_processObjectInMark.toConstPointer()
+                llvm.Kotlin_processObjectInMark.toNativeCallback()
             }
         }
     }
@@ -498,7 +498,7 @@ internal class RTTIGenerator(
     // TODO: extract more code common with generate().
     fun generateSyntheticInterfaceImpl(
             irClass: IrClass,
-            methodImpls: Map<IrFunction, ConstPointer>,
+            methodImpls: Map<IrFunction, LlvmCallable>,
             bodyType: LLVMTypeRef,
             immutable: Boolean = false
     ): ConstPointer {
@@ -543,12 +543,12 @@ internal class RTTIGenerator(
             if (layoutBuilder == null) {
                 InterfaceTableRecord(llvm.constInt32(0), llvm.constInt32(0), null)
             } else {
-                val vtableEntries = layoutBuilder.interfaceVTableEntries.map { methodImpls[it]!!.bitcast(llvm.int8PtrType) }
-                val interfaceVTable = staticData.placeGlobalArray("", llvm.int8PtrType, vtableEntries)
+                val vtableEntries = layoutBuilder.interfaceVTableEntries.map { methodImpls[it]!!.toKotlinCallback().bitcast(llvm.int8PtrType) }
+                val interfaceVTable = staticData.placeGlobalConstArray("", llvm.int8PtrType, vtableEntries)
                 InterfaceTableRecord(
                         llvm.constInt32(layoutBuilder.classId),
                         llvm.constInt32(layoutBuilder.interfaceVTableEntries.size),
-                        interfaceVTable.pointer.getElementPtr(llvm, 0)
+                        interfaceVTable
                 )
             }
         }

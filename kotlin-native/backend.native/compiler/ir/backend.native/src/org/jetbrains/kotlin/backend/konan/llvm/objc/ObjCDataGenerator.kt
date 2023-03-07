@@ -39,7 +39,7 @@ internal class ObjCDataGenerator(val codegen: CodeGenerator) {
         global.setAlignment(codegen.runtime.pointerAlignment)
         global.setSection("__DATA,__objc_selrefs,literal_pointers,no_dead_strip")
 
-        llvm.compilerUsedGlobals += global.llvmGlobal
+        llvm.compilerUsedGlobals += global.pointer
 
         global.pointer
     }
@@ -52,7 +52,7 @@ internal class ObjCDataGenerator(val codegen: CodeGenerator) {
             it.setAlignment(codegen.runtime.pointerAlignment)
         }
 
-        llvm.compilerUsedGlobals += global.pointer.llvm
+        llvm.compilerUsedGlobals += global.pointer
 
         global.pointer.bitcast(pointerType(llvm.int8PtrType))
     }
@@ -60,8 +60,8 @@ internal class ObjCDataGenerator(val codegen: CodeGenerator) {
     private val classObjectType = codegen.runtime.objCClassObjectType
 
     fun exportClass(name: String) {
-        llvm.usedGlobals += getClassGlobal(name, isMetaclass = false).llvm
-        llvm.usedGlobals += getClassGlobal(name, isMetaclass = true).llvm
+        llvm.usedGlobals += getClassGlobal(name, isMetaclass = false)
+        llvm.usedGlobals += getClassGlobal(name, isMetaclass = true)
     }
 
     private fun getClassGlobal(name: String, isMetaclass: Boolean): ConstPointer {
@@ -122,7 +122,7 @@ internal class ObjCDataGenerator(val codegen: CodeGenerator) {
                 it.setSection("__DATA, __objc_const")
             }
 
-            llvm.compilerUsedGlobals += global.llvmGlobal
+            llvm.compilerUsedGlobals += global.pointer
 
             return global.pointer.bitcast(pointerType(methodListType))
         }
@@ -196,7 +196,7 @@ internal class ObjCDataGenerator(val codegen: CodeGenerator) {
             LLVMSetSection(classGlobal.llvm, "__DATA, __objc_data")
             LLVMSetAlignment(classGlobal.llvm, LLVMABIAlignmentOfType(runtime.targetData, classObjectType))
 
-            llvm.usedGlobals.add(classGlobal.llvm)
+            llvm.usedGlobals.add(classGlobal)
 
             return classGlobal
         }
@@ -238,7 +238,7 @@ internal class ObjCDataGenerator(val codegen: CodeGenerator) {
 
         global.setSection(section)
 
-        llvm.compilerUsedGlobals += global.llvmGlobal
+        llvm.compilerUsedGlobals += global.pointer
     }
 
     private val classNames = CStringLiteralsTable(classNameGenerator)
@@ -253,7 +253,7 @@ internal class ObjCDataGenerator(val codegen: CodeGenerator) {
 
         fun get(value: String) = literals.getOrPut(value) {
             val globalPointer = generator.generate(llvm.module, llvm, value)
-            llvm.compilerUsedGlobals += globalPointer.llvm
+            llvm.compilerUsedGlobals += globalPointer
             globalPointer.getElementPtr(llvm, 0)
         }
     }

@@ -23,23 +23,17 @@ import org.jetbrains.kotlin.ir.util.isThrowable
  * Add attributes to LLVM function declaration and its invocation.
  */
 interface LlvmFunctionAttributeProvider {
+    // Not using LLVMCallConv as this value allowed to be not in enum valid values list.
+    val callingConvention : Int
+
     fun addCallSiteAttributes(callSite: LLVMValueRef)
 
     fun addFunctionAttributes(function: LLVMValueRef)
 
     companion object {
-        fun makeEmpty(): LlvmFunctionAttributeProvider =
-                DummyLlvmFunctionAttributeProvider
-
         fun copyFromExternal(externalFunction: LLVMValueRef): LlvmFunctionAttributeProvider =
                 LlvmFunctionAttributesCopier(externalFunction)
     }
-}
-
-private object DummyLlvmFunctionAttributeProvider : LlvmFunctionAttributeProvider {
-    override fun addCallSiteAttributes(callSite: LLVMValueRef) {}
-
-    override fun addFunctionAttributes(function: LLVMValueRef) {}
 }
 
 /**
@@ -48,6 +42,7 @@ private object DummyLlvmFunctionAttributeProvider : LlvmFunctionAttributeProvide
  * and we want to create an external declaration for it.
  */
 private class LlvmFunctionAttributesCopier(private val externalFunction: LLVMValueRef) : LlvmFunctionAttributeProvider {
+    override val callingConvention: Int by lazy { LLVMGetFunctionCallConv(externalFunction) }
 
     private val paramsCount: Int by lazy { LLVMCountParams(externalFunction) }
 
@@ -76,6 +71,7 @@ private class LlvmFunctionAttributesCopier(private val externalFunction: LLVMVal
     }
 
     override fun addCallSiteAttributes(callSite: LLVMValueRef) {
+        LLVMSetInstructionCallConv(callSite, callingConvention)
         attributesForCallSite.withIndex().forEach { (listIndex, attributeList) ->
             attributeList.forEach { attributeRef ->
                 LLVMAddCallSiteAttribute(callSite, LLVMAttributeFunctionIndex + listIndex, attributeRef)
@@ -84,6 +80,7 @@ private class LlvmFunctionAttributesCopier(private val externalFunction: LLVMVal
     }
 
     override fun addFunctionAttributes(function: LLVMValueRef) {
+        LLVMSetFunctionCallConv(function, callingConvention)
         attributesForFunctionDeclaration.withIndex().forEach { (listIndex, attributeList) ->
             attributeList.forEach { attributeRef ->
                 LLVMAddAttributeAtIndex(function, LLVMAttributeFunctionIndex + listIndex, attributeRef)
@@ -114,6 +111,7 @@ internal open class LlvmFunctionSignature(
         val parameterTypes: List<LlvmParamType> = emptyList(),
         val isVararg: Boolean = false,
         val functionAttributes: List<LlvmFunctionAttribute> = emptyList(),
+        override val callingConvention: Int = LLVMCallConv.LLVMCCallConv.value
 ) : LlvmFunctionAttributeProvider {
 
     constructor(irFunction: IrFunction, contextUtils: ContextUtils) : this(
@@ -121,6 +119,7 @@ internal open class LlvmFunctionSignature(
             parameterTypes = contextUtils.getLlvmFunctionParameterTypes(irFunction),
             functionAttributes = inferFunctionAttributes(contextUtils, irFunction),
             isVararg = false,
+            callingConvention = contextUtils.getLlvmCallingConvention(irFunction).value
     )
 
     val llvmFunctionType by lazy {
@@ -130,6 +129,7 @@ internal open class LlvmFunctionSignature(
     override fun addCallSiteAttributes(callSite: LLVMValueRef) {
         val caller = LLVMGetBasicBlockParent(LLVMGetInstructionParent(callSite))
         val llvmContext = LLVMGetModuleContext(LLVMGetGlobalParent(caller))!!
+        LLVMSetInstructionCallConv(callSite, callingConvention)
         addCallSiteAttributesAtIndex(llvmContext, callSite, LLVMAttributeFunctionIndex, functionAttributes)
         addCallSiteAttributesAtIndex(llvmContext, callSite, LLVMAttributeReturnIndex, returnType.attributes)
         repeat(parameterTypes.count()) {
@@ -139,6 +139,7 @@ internal open class LlvmFunctionSignature(
 
     override fun addFunctionAttributes(function: LLVMValueRef) {
         val llvmContext = LLVMGetModuleContext(LLVMGetGlobalParent(function))!!
+        LLVMSetFunctionCallConv(function, callingConvention)
         addDeclarationAttributesAtIndex(llvmContext, function, LLVMAttributeFunctionIndex, functionAttributes)
         addDeclarationAttributesAtIndex(llvmContext, function, LLVMAttributeReturnIndex, returnType.attributes)
         repeat(parameterTypes.count()) {

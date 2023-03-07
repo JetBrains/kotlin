@@ -61,6 +61,14 @@ class LlvmCallable(private val llvmValue: LLVMValueRef, private val attributePro
         DIFunctionAddSubprogram(llvmValue, subprogram)
     }
 
+    internal fun constCastTo(functionType: LlvmFunctionSignature) : LlvmCallable {
+        require(isConstant)
+        return LlvmCallable(
+                LLVMConstBitCast(llvmValue, functionType.llvmFunctionType)!!,
+                functionType
+        )
+    }
+
     fun createBridgeFunctionDebugInfo(builder: DIBuilderRef, scope: DIScopeOpaqueRef, file: DIFileRef, lineNo: Int, type: DISubroutineTypeRef, isLocal: Int, isDefinition: Int, scopeLine: Int) =
         DICreateBridgeFunction(
                 builder = builder,
@@ -84,6 +92,12 @@ class LlvmCallable(private val llvmValue: LLVMValueRef, private val attributePro
     }
 
     // these functions are potentially unsafe, as they need to use same attribute provider when converted to callable
-    internal fun toConstPointer() = constPointer(llvmValue)
-    internal fun asCallback() = llvmValue
+    internal fun toKotlinCallback() = constPointer(llvmValue).also {
+        require(attributeProvider.callingConvention == LLVMCallConv.LLVMCCallConv.value)
+    }
+    internal fun toNativeCallback() = constPointer(toNativeCallbackValue())
+    internal fun toNonCallablePointer() = constPointer(llvmValue)
+    internal fun toNativeCallbackValue() = llvmValue.also {
+        require(attributeProvider.callingConvention == LLVMCallConv.LLVMCCallConv.value)
+    }
 }

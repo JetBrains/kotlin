@@ -205,7 +205,7 @@ private fun CodeGenerator.replaceExternalWeakOrCommonGlobal(name: String, value:
         if (generationState.llvmModuleSpecification.importsKotlinDeclarationsFromOtherObjectFiles()) {
             // Note: actually this is required only if global's weak/common definition is in another object file,
             // but it is simpler to do this for all globals, considering that all usages can't be removed by DCE anyway.
-            llvm.usedGlobals += global.llvmGlobal
+            llvm.usedGlobals += global.pointer
             LLVMSetVisibility(global.llvmGlobal, LLVMVisibility.LLVMHiddenVisibility)
 
             // See also [emitKt42254Hint].
