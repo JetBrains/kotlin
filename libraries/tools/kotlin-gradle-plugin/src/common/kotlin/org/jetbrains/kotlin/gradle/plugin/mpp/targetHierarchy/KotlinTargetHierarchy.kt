@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy
 
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
+import org.jetbrains.kotlin.gradle.plugin.sources.android.AndroidVariantType
 import org.jetbrains.kotlin.gradle.plugin.sources.android.type
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.tooling.core.withClosure
@@ -27,18 +28,38 @@ internal data class KotlinTargetHierarchy(
 
         data class Group(val name: String) : Node() {
             override fun sharedSourceSetName(compilation: KotlinCompilation<*>): String? {
-                val suffix = when (compilation) {
-                    is KotlinJvmAndroidCompilation -> compilation.androidVariant.type.androidBaseSourceSetName?.name
-                    else -> compilation.name
-                } ?: return null
-
-                return lowerCamelCaseName(name, suffix)
+                val moduleName = Module.orNull(compilation)?.name ?: return null
+                return lowerCamelCaseName(name, moduleName)
             }
         }
 
         final override fun toString(): String = when (this) {
             is Group -> name
             is Root -> "<root>"
+        }
+    }
+
+    data class Module(val name: String) {
+        override fun toString(): String = name
+
+        companion object {
+            val main = Module("main")
+            val test = Module("test")
+            private val instrumentedTest = Module("instrumentedTest")
+
+            fun orNull(compilation: KotlinCompilation<*>): Module? = when (compilation) {
+                is KotlinJvmAndroidCompilation -> when (compilation.androidVariant.type) {
+                    AndroidVariantType.Main -> main
+                    AndroidVariantType.UnitTest -> test
+                    AndroidVariantType.InstrumentedTest -> instrumentedTest
+                    AndroidVariantType.Unknown -> null
+                }
+                else -> when (compilation.name) {
+                    "main" -> main
+                    "test" -> test
+                    else -> Module(compilation.name)
+                }
+            }
         }
     }
 
