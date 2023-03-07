@@ -1,76 +1,21 @@
-import org.jetbrains.*
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.ValidatePublications
+import org.jetbrains.publicationChannels
 
 plugins {
-    kotlin("jvm") apply false
-    id("java")
-    id("org.jetbrains.dokka") version "1.8.10"
+    org.jetbrains.conventions.base
+    id("org.jetbrains.dokka")
     id("io.github.gradle-nexus.publish-plugin")
+
+    id("org.jetbrains.kotlinx.binary-compatibility-validator")
 }
 
 val dokka_version: String by project
 
-allprojects {
-    configureDokkaVersion()
-
-    group = "org.jetbrains.dokka"
-    version = dokka_version
+group = "org.jetbrains.dokka"
+version = dokka_version
 
 
-    val language_version: String by project
-    tasks.withType(KotlinCompile::class).all {
-        kotlinOptions {
-            freeCompilerArgs = freeCompilerArgs + listOf(
-                "-opt-in=kotlin.RequiresOptIn",
-                "-Xjsr305=strict",
-                "-Xskip-metadata-version-check",
-                // need 1.4 support, otherwise there might be problems with Gradle 6.x (it's bundling Kotlin 1.4)
-                "-Xsuppress-version-warnings"
-            )
-            allWarningsAsErrors = true
-            languageVersion = language_version
-            apiVersion = language_version
-            jvmTarget = "1.8"
-        }
-    }
-
-    repositories {
-        mavenCentral()
-    }
-}
-
-subprojects {
-    apply {
-        plugin("org.jetbrains.kotlin.jvm")
-        plugin("java")
-        plugin("signing")
-        plugin("org.jetbrains.dokka")
-    }
-
-    // Gradle metadata
-    java {
-        @Suppress("UnstableApiUsage")
-        withSourcesJar()
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-
-    tasks {
-        val dokkaOutputDir = "$buildDir/dokka"
-
-        dokkaHtml {
-            onlyIf { !isLocalPublication }
-            outputDirectory.set(file(dokkaOutputDir))
-        }
-
-        register<Jar>("javadocJar") {
-            archiveClassifier.set("javadoc")
-            dependsOn(dokkaHtml)
-            from(dokkaOutputDir)
-        }
-    }
-}
-
-println("Publication version: $dokka_version")
+logger.lifecycle("Publication version: $dokka_version")
 tasks.register<ValidatePublications>("validatePublications")
 
 nexusPublishing {
@@ -82,8 +27,28 @@ nexusPublishing {
     }
 }
 
-tasks.maybeCreate("dokkaPublish").run {
+val dokkaPublish by tasks.registering {
     if (publicationChannels.any { it.isMavenRepository() }) {
         finalizedBy(tasks.named("closeAndReleaseSonatypeStagingRepository"))
     }
+}
+
+apiValidation {
+    // note that subprojects are ignored by their name, not their path https://github.com/Kotlin/binary-compatibility-validator/issues/16
+    ignoredProjects += setOf(
+        // NAME                    PATH
+        "search-component",    // :plugins:search-component
+        "frontend",            // :plugins:base:frontend
+
+        "kotlin-analysis",     // :kotlin-analysis
+        "compiler-dependency", // :kotlin-analysis:compiler-dependency
+        "intellij-dependency", // :kotlin-analysis:intellij-dependency
+
+        "integration-tests",   // :integration-tests
+        "gradle",              // :integration-tests:gradle
+        "cli",                 // :integration-tests:cli
+        "maven",               // integration-tests:maven
+
+        "test-utils",          // :test-utils
+    )
 }
