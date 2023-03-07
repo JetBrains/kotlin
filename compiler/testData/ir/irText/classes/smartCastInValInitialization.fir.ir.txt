@@ -46,7 +46,10 @@ FILE fqName:<root> fileName:/smartCastInValInitialization.kt
         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
           TYPE_OP type=<root>.RootBus origin=CAST typeOperand=<root>.RootBus
             GET_VAR '<this>: <root>.MessageBusImpl declared in <root>.MessageBusImpl' type=<root>.MessageBusImpl origin=null
-        ERROR_CALL 'Unresolved reference: R|/MessageBusImpl.parentBus|' type=IrErrorType(null)
+        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:parentBus type:kotlin.Any? visibility:private [final]' type=kotlin.Unit origin=null
+          receiver: TYPE_OP type=<root>.RootBus origin=IMPLICIT_CAST typeOperand=<root>.RootBus
+            GET_VAR '<this>: <root>.MessageBusImpl declared in <root>.MessageBusImpl' type=<root>.MessageBusImpl origin=null
+          value: CONST Null type=kotlin.Nothing? value=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any

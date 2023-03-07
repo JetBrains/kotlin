@@ -19,7 +19,7 @@ open class MessageBusImpl {
 
   init {
     <this> as RootBus /*~> Unit */
-    error("") /* ErrorCallExpression */
+    <this> /*as RootBus */.#parentBus = null
   }
 
 }

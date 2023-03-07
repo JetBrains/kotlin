@@ -48996,6 +48996,12 @@ public class FirLightTreeBlackBoxCodegenTestGenerated extends AbstractFirLightTr
         }
 
         @Test
+        @TestMetadata("propertyInitializationAfterSmartCast.kt")
+        public void testPropertyInitializationAfterSmartCast() throws Exception {
+            runTest("compiler/testData/codegen/box/smartCasts/propertyInitializationAfterSmartCast.kt");
+        }
+
+        @Test
         @TestMetadata("resolveToMemberOfSuperclass_overrideWithDifferentType.kt")
         public void testResolveToMemberOfSuperclass_overrideWithDifferentType() throws Exception {
             runTest("compiler/testData/codegen/box/smartCasts/resolveToMemberOfSuperclass_overrideWithDifferentType.kt");
