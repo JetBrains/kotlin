@@ -175,7 +175,7 @@ class KotlinMetadataTargetConfigurator :
     private fun createMetadataCompilationsForCommonSourceSets(
         target: KotlinMetadataTarget,
         allMetadataJar: TaskProvider<out Jar>
-    ) = target.project.whenEvaluated {
+    ) = target.project.enqueue(KotlinMultiplatformPluginLifecycle.Stage.FinaliseCompilations) {
         // Do this after all targets are configured by the user build script
 
         val publishedCommonSourceSets: Set<KotlinSourceSet> = getCommonSourceSetsForMetadataCompilation(project)
