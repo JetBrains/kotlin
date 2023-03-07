@@ -11,8 +11,13 @@ dependencies {
     implementation 'com.loopj.android:android-async-http:1.4.9'
 }
 
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(8))
+}
+
 android {
     compileSdkVersion 22
+    namespace "org.jetbrains.kotlin.gradle.test.android.libalfa"
 
     defaultConfig {
         minSdkVersion 7

@@ -3,8 +3,13 @@ plugins {
     kotlin("multiplatform")
 }
 
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(8))
+}
+
 android {
     compileSdkVersion(28)
+    namespace = "io.sellmair.mpp"
     defaultConfig {
         minSdkVersion(21)
         targetSdkVersion(28)

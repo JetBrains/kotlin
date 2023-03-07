@@ -10,6 +10,10 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 
 @MppGradlePluginTests
+@GradleTestVersions(
+    maxVersion = TestVersions.Gradle.NEXT_RELEASE,
+    additionalVersions = [TestVersions.Gradle.MAX_SUPPORTED]
+)
 @DisplayName("Broken task configuration avoidance doesn't lead to build failures at least with simple setups")
 class BrokenLazyConfigurationIT : KGPBaseTest() {
     @GradleTest
