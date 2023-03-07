@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.lightTree
 import com.intellij.lang.LighterASTNode
 import com.intellij.openapi.util.Ref
 import com.intellij.util.diff.FlyweightCapableTreeStructure
+import org.jetbrains.kotlin.cli.common.fir.SequentialPositionFinder
 import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
 import org.jetbrains.kotlin.readSourceFileWithMapping
 import org.junit.Assert
@@ -18,33 +19,68 @@ class LightTreeParsingTest {
 
     @Test
     fun testLightTreeReadLineEndings() {
-        fun String.makeCodeMappingAndLines() = run {
-            val (code, mapping) = ByteArrayInputStream(toByteArray()).reader().readSourceFileWithMapping()
-            val lines =
-                LightTree2Fir.buildLightTree(code).getChildrenAsArray().mapNotNull { it?.startOffset }.map { mapping.getLineByOffset(it) }
-            Triple(code, mapping, lines)
+
+        data class LinePos(
+            val mappingLine: Int,
+            val line: Int,
+            val col: Int,
+            val content: String?
+        ) {
+            override fun toString(): String = "$mappingLine: \"$content\" ($line:$col)"
         }
 
-        val (codeFromTextWithLf, mappingFromTextWithLf, linesFromTextWithLf) = MULTILINE_SOURCE.makeCodeMappingAndLines()
+        fun String.makeCodeMappingAndPositions() = run {
+            val (code, mapping) = ByteArrayInputStream(toByteArray()).reader().readSourceFileWithMapping()
+            val positionFinder = SequentialPositionFinder(ByteArrayInputStream(toByteArray()).reader())
+            val linePositions =
+                LightTree2Fir.buildLightTree(code).getChildrenAsArray()
+                    .mapNotNull { it?.startOffset }
+                    .map {
+                        val nextPos = positionFinder.findNextPosition(it)
+                        LinePos( mapping.getLineByOffset(it), nextPos.line, nextPos.column, nextPos.lineContent)
+                    }
+            Triple(code.toString(), mapping, linePositions)
+        }
 
-        val (codeFromTextWithCrLf, mappingFromTextWithCrLf, linesFromTextWithCrLf) =
-            MULTILINE_SOURCE.replace("\n", "\r\n").makeCodeMappingAndLines()
+        val (codeLf, mappingLf, positionsLf) = MULTILINE_SOURCE.makeCodeMappingAndPositions()
 
-        // classic Mac OS line endings are probably not to be found in the wild, but checking the support nevertheless
-        val (codeFromTextWithCr, mappingFromTextWithCr, linesFromTextWithCr) =
-            MULTILINE_SOURCE.replace("\n", "\r").makeCodeMappingAndLines()
+        val (codeCrLf, mappingCrLf, positionsCrLf) =
+            MULTILINE_SOURCE.replace("\n", "\r\n").makeCodeMappingAndPositions()
 
-        Assert.assertEquals(codeFromTextWithLf.toString(), codeFromTextWithCrLf.toString())
-        Assert.assertEquals(codeFromTextWithLf.toString(), codeFromTextWithCr.toString())
+        val (codeCrLfMixed, mappingCrLfMixed, positionsCrLfMixed) =
+            MULTILINE_SOURCE.let {
+                var toReplace = false
+                buildString {
+                    it.forEach { c ->
+                        if (c == '\n') {
+                            if (toReplace) append("\r\n") else append(c)
+                            toReplace = !toReplace
+                        } else append(c)
+                    }
+                }
+            }.also { s ->
+                Assert.assertEquals(s.count { it == '\r' }, s.count { it == '\n' } / 2)
+            }.makeCodeMappingAndPositions()
 
-        Assert.assertEquals(mappingFromTextWithLf.linesCount, mappingFromTextWithCrLf.linesCount)
-        Assert.assertEquals(mappingFromTextWithLf.linesCount, mappingFromTextWithCr.linesCount)
+        // classic MacOS line endings are probably not to be found in the wild, but checking the support nevertheless
+        val (codeCr, mappingCr, positionsCr) =
+            MULTILINE_SOURCE.replace("\n", "\r").makeCodeMappingAndPositions()
 
-        Assert.assertEquals(linesFromTextWithLf, linesFromTextWithCrLf)
-        Assert.assertEquals(linesFromTextWithLf, linesFromTextWithCr)
+        Assert.assertEquals(codeLf, codeCrLf)
+        Assert.assertEquals(codeLf, codeCrLfMixed)
+        Assert.assertEquals(codeLf, codeCr)
 
-        Assert.assertEquals(mappingFromTextWithLf.lastOffset, mappingFromTextWithCrLf.lastOffset)
-        Assert.assertEquals(mappingFromTextWithLf.lastOffset, mappingFromTextWithCr.lastOffset)
+        Assert.assertEquals(mappingLf.linesCount, mappingCrLf.linesCount)
+        Assert.assertEquals(mappingLf.linesCount, mappingCrLfMixed.linesCount)
+        Assert.assertEquals(mappingLf.linesCount, mappingCr.linesCount)
+
+        Assert.assertEquals(positionsLf, positionsCrLf)
+        Assert.assertEquals(positionsLf, positionsCrLfMixed)
+        Assert.assertEquals(positionsLf, positionsCr)
+
+        Assert.assertEquals(mappingLf.lastOffset, mappingCrLf.lastOffset)
+        Assert.assertEquals(mappingLf.lastOffset, mappingCrLfMixed.lastOffset)
+        Assert.assertEquals(mappingLf.lastOffset, mappingCr.lastOffset)
     }
 }
 
@@ -59,4 +95,5 @@ val a = 1
  val b = 2 
   val c = 3
    val d = 4
+    val e = 5
 """
