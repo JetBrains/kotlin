@@ -9,7 +9,7 @@ open class Result {
 
     fun isSuccess1(): Boolean {
         contract {
-            <!ERROR_IN_CONTRACT_DESCRIPTION!>returns(true) implies (this@Result is Success)<!>
+            returns(true) implies (this@Result is Success)
         }
         return this@Result is Success
     }
