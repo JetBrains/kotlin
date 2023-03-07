@@ -726,23 +726,42 @@ class FunctionInlining(
         }
 
         // In short this is needed for `kt44429` test. We need to get original generic type to trick type system on JVM backend.
+        // Probably this it is relevant only for numeric types in JVM.
         private fun IrValueParameter.getOriginalType(): IrType {
             if (this.parent !is IrFunction) return type
-            val callee = this.parent as IrFunction
-            val original = callee.originalFunction
+            val copy = this.parent as IrFunction // contains substituted type parameters with corresponding type arguments
+            val original = copy.originalFunction // contains original unsubstituted type parameters
+
+            // Note 1: the following method will replace super types fow the owner type parameter. So in every other IrSimpleType that
+            // refers this type parameter we will see substituted values. This should not be a problem because earlier we replace all type
+            // parameters with corresponding type arguments.
+            // Note 2: this substitution can be dropped if we will learn how to copy IR function and leave its type parameters as they are.
+            // But this sounds a little complicated.
+            fun IrType.substituteSuperTypes(): IrType {
+                val typeClassifier = this.classifierOrNull?.owner as? IrTypeParameter ?: return this
+                typeClassifier.superTypes = original.typeParameters[typeClassifier.index].superTypes.map {
+                    val superTypeClassifier = it.classifierOrNull?.owner as? IrTypeParameter ?: return@map it
+                    copy.typeParameters[superTypeClassifier.index].defaultType.substituteSuperTypes()
+                }
+                return this
+            }
 
             fun IrValueParameter?.getTypeIfFromTypeParameter(): IrType? {
                 val typeClassifier = this?.type?.classifierOrNull?.owner as? IrTypeParameter ?: return null
                 if (typeClassifier.parent != this.parent) return null
-                return callee.typeParameters[typeClassifier.index].defaultType
+
+                // We take type parameter from copied callee and not from original because we need an actual copy. Without this copy,
+                // in case of recursive call, we can get a situation there the same type parameter will be mapped on different type arguments.
+                // (see compiler/testData/codegen/boxInline/complex/use.kt test file)
+                return copy.typeParameters[typeClassifier.index].defaultType.substituteSuperTypes()
             }
 
             return when (this) {
-                callee.dispatchReceiverParameter -> original.dispatchReceiverParameter?.getTypeIfFromTypeParameter()
-                    ?: callee.dispatchReceiverParameter!!.type
-                callee.extensionReceiverParameter -> original.extensionReceiverParameter?.getTypeIfFromTypeParameter()
-                    ?: callee.extensionReceiverParameter!!.type
-                else -> callee.valueParameters.first { it == this }.let { valueParameter ->
+                copy.dispatchReceiverParameter -> original.dispatchReceiverParameter?.getTypeIfFromTypeParameter()
+                    ?: copy.dispatchReceiverParameter!!.type
+                copy.extensionReceiverParameter -> original.extensionReceiverParameter?.getTypeIfFromTypeParameter()
+                    ?: copy.extensionReceiverParameter!!.type
+                else -> copy.valueParameters.first { it == this }.let { valueParameter ->
                     original.valueParameters[valueParameter.index].getTypeIfFromTypeParameter()
                         ?: valueParameter.type
                 }

@@ -1501,6 +1501,12 @@ public class FirLightTreeBlackBoxInlineCodegenWithIrInlinerTestGenerated extends
         }
 
         @Test
+        @TestMetadata("kt44429MustFail.kt")
+        public void testKt44429MustFail() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/complex/kt44429MustFail.kt");
+        }
+
+        @Test
         @TestMetadata("lambdaInLambda.kt")
         public void testLambdaInLambda() throws Exception {
             runTest("compiler/testData/codegen/boxInline/complex/lambdaInLambda.kt");
