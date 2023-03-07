@@ -92,7 +92,7 @@ private class KotlinTargetHierarchyBuilderImpl(
         return childrenClosure.any { child -> compilation in child }
     }
 
-    private inline fun addTargets(crossinline predicate: (KotlinTarget) -> Boolean) = withCompilations { predicate(it.target) }
+    private inline fun withTargets(crossinline predicate: (KotlinTarget) -> Boolean) = withCompilations { predicate(it.target) }
 
     override fun group(name: String, build: KotlinTargetHierarchyBuilder.() -> Unit) {
         val node = KotlinTargetHierarchy.Node.Group(name)
@@ -101,29 +101,30 @@ private class KotlinTargetHierarchyBuilderImpl(
         checkCyclicHierarchy()
     }
 
-    override fun withNative() = addTargets { it is KotlinNativeTarget }
+    override fun withNative() = withTargets { it is KotlinNativeTarget }
 
-    override fun withApple() = addTargets { it is KotlinNativeTarget && it.konanTarget.family.isAppleFamily }
+    override fun withApple() = withTargets { it is KotlinNativeTarget && it.konanTarget.family.isAppleFamily }
 
-    override fun withIos() = addTargets { it is KotlinNativeTarget && it.konanTarget.family == Family.IOS }
+    override fun withIos() = withTargets { it is KotlinNativeTarget && it.konanTarget.family == Family.IOS }
 
-    override fun withWatchos() = addTargets { it is KotlinNativeTarget && it.konanTarget.family == Family.WATCHOS }
+    override fun withWatchos() = withTargets { it is KotlinNativeTarget && it.konanTarget.family == Family.WATCHOS }
 
-    override fun withMacos() = addTargets { it is KotlinNativeTarget && it.konanTarget.family == Family.OSX }
+    override fun withMacos() = withTargets { it is KotlinNativeTarget && it.konanTarget.family == Family.OSX }
 
-    override fun withTvos() = addTargets { it is KotlinNativeTarget && it.konanTarget.family == Family.TVOS }
+    override fun withTvos() = withTargets { it is KotlinNativeTarget && it.konanTarget.family == Family.TVOS }
 
-    override fun withMingw() = addTargets { it is KotlinNativeTarget && it.konanTarget.family == Family.MINGW }
+    override fun withMingw() = withTargets { it is KotlinNativeTarget && it.konanTarget.family == Family.MINGW }
 
-    override fun withLinux() = addTargets { it is KotlinNativeTarget && it.konanTarget.family == Family.LINUX }
+    override fun withLinux() = withTargets { it is KotlinNativeTarget && it.konanTarget.family == Family.LINUX }
 
-    override fun withAndroidNative() = addTargets { it is KotlinNativeTarget && it.konanTarget.family == Family.ANDROID }
+    override fun withAndroidNative() = withTargets { it is KotlinNativeTarget && it.konanTarget.family == Family.ANDROID }
 
     // Don't check for instance of [KotlinJsTargetDsl] or [KotlinWasmTargetDsl] because they are implemented by single target [KotlinJsIrTarget]
-    override fun withJs() = addTargets { it.platformType == KotlinPlatformType.js }
-    override fun withWasm() = addTargets { it.platformType == KotlinPlatformType.wasm }
+    override fun withJs() = withTargets { it.platformType == KotlinPlatformType.js }
 
-    override fun withJvm() = addTargets {
+    override fun withWasm() = withTargets { it.platformType == KotlinPlatformType.wasm }
+
+    override fun withJvm() = withTargets {
         it is KotlinJvmTarget ||
                 /*
                 Handle older KotlinWithJavaTarget correctly:
@@ -133,119 +134,119 @@ private class KotlinTargetHierarchyBuilderImpl(
                 (it is KotlinWithJavaTarget<*, *> && it.platformType == KotlinPlatformType.jvm)
     }
 
-    override fun withAndroid() = addTargets { it is KotlinAndroidTarget }
+    override fun withAndroid() = withTargets { it is KotlinAndroidTarget }
 
-    override fun withAndroidNativeX64() = addTargets {
+    override fun withAndroidNativeX64() = withTargets {
         it is KotlinNativeTarget && it.konanTarget == KonanTarget.ANDROID_X64
     }
 
-    override fun withAndroidNativeX86() = addTargets {
+    override fun withAndroidNativeX86() = withTargets {
         it is KotlinNativeTarget && it.konanTarget == KonanTarget.ANDROID_X86
     }
 
-    override fun withAndroidNativeArm32() = addTargets {
+    override fun withAndroidNativeArm32() = withTargets {
         it is KotlinNativeTarget && it.konanTarget == KonanTarget.ANDROID_X86
     }
 
-    override fun withAndroidNativeArm64() = addTargets {
+    override fun withAndroidNativeArm64() = withTargets {
         it is KotlinNativeTarget && it.konanTarget == KonanTarget.ANDROID_ARM64
     }
 
-    override fun withIosArm32() = addTargets {
+    override fun withIosArm32() = withTargets {
         it is KotlinNativeTarget && it.konanTarget == KonanTarget.IOS_ARM32
     }
 
-    override fun withIosArm64() = addTargets {
+    override fun withIosArm64() = withTargets {
         it is KotlinNativeTarget && it.konanTarget == KonanTarget.IOS_ARM64
     }
 
-    override fun withIosX64() = addTargets {
+    override fun withIosX64() = withTargets {
         it is KotlinNativeTarget && it.konanTarget == KonanTarget.IOS_X64
     }
 
-    override fun withIosSimulatorArm64() = addTargets {
+    override fun withIosSimulatorArm64() = withTargets {
         it is KotlinNativeTarget && it.konanTarget == KonanTarget.IOS_SIMULATOR_ARM64
     }
 
-    override fun withWatchosArm32() = addTargets {
+    override fun withWatchosArm32() = withTargets {
         it is KotlinNativeTarget && it.konanTarget == KonanTarget.WATCHOS_ARM32
     }
 
-    override fun withWatchosArm64() = addTargets {
+    override fun withWatchosArm64() = withTargets {
         it is KotlinNativeTarget && it.konanTarget == KonanTarget.WATCHOS_ARM64
     }
 
-    override fun withWatchosX64() = addTargets {
+    override fun withWatchosX64() = withTargets {
         it is KotlinNativeTarget && it.konanTarget == KonanTarget.WATCHOS_X64
     }
 
-    override fun withWatchosSimulatorArm64() = addTargets {
+    override fun withWatchosSimulatorArm64() = withTargets {
         it is KotlinNativeTarget && it.konanTarget == KonanTarget.WATCHOS_SIMULATOR_ARM64
     }
 
-    override fun withWatchosDeviceArm64() = addTargets {
+    override fun withWatchosDeviceArm64() = withTargets {
         it is KotlinNativeTarget && it.konanTarget == KonanTarget.WATCHOS_DEVICE_ARM64
     }
 
-    override fun withTvosArm64() = addTargets {
+    override fun withTvosArm64() = withTargets {
         it is KotlinNativeTarget && it.konanTarget == KonanTarget.TVOS_ARM64
     }
 
-    override fun withTvosX64() = addTargets {
+    override fun withTvosX64() = withTargets {
         it is KotlinNativeTarget && it.konanTarget == KonanTarget.TVOS_X64
     }
 
-    override fun withTvosSimulatorArm64() = addTargets {
+    override fun withTvosSimulatorArm64() = withTargets {
         it is KotlinNativeTarget && it.konanTarget == KonanTarget.TVOS_SIMULATOR_ARM64
     }
 
-    override fun withLinuxX64() = addTargets {
+    override fun withLinuxX64() = withTargets {
         it is KotlinNativeTarget && it.konanTarget == KonanTarget.LINUX_X64
     }
 
-    override fun withMingwX64() = addTargets {
+    override fun withMingwX64() = withTargets {
         it is KotlinNativeTarget && it.konanTarget == KonanTarget.MINGW_X64
     }
 
-    override fun withMacosX64() = addTargets {
+    override fun withMacosX64() = withTargets {
         it is KotlinNativeTarget && it.konanTarget == KonanTarget.MACOS_X64
     }
 
-    override fun withMacosArm64() = addTargets {
+    override fun withMacosArm64() = withTargets {
         it is KotlinNativeTarget && it.konanTarget == KonanTarget.MACOS_ARM64
     }
 
-    override fun withLinuxArm64() = addTargets {
+    override fun withLinuxArm64() = withTargets {
         it is KotlinNativeTarget && it.konanTarget == KonanTarget.LINUX_ARM64
     }
 
     @Deprecated(DEPRECATED_TARGET_MESSAGE)
-    override fun withWatchosX86() = addTargets {
+    override fun withWatchosX86() = withTargets {
         it is KotlinNativeTarget && it.konanTarget == KonanTarget.WATCHOS_X86
     }
 
     @Deprecated(DEPRECATED_TARGET_MESSAGE)
-    override fun withMingwX86() = addTargets {
+    override fun withMingwX86() = withTargets {
         it is KotlinNativeTarget && it.konanTarget == KonanTarget.MINGW_X86
     }
 
     @Deprecated(DEPRECATED_TARGET_MESSAGE)
-    override fun withLinuxArm32Hfp() = addTargets {
+    override fun withLinuxArm32Hfp() = withTargets {
         it is KotlinNativeTarget && it.konanTarget == KonanTarget.LINUX_ARM32_HFP
     }
 
     @Deprecated(DEPRECATED_TARGET_MESSAGE)
-    override fun withLinuxMips32() = addTargets {
+    override fun withLinuxMips32() = withTargets {
         it is KotlinNativeTarget && it.konanTarget == KonanTarget.LINUX_MIPS32
     }
 
     @Deprecated(DEPRECATED_TARGET_MESSAGE)
-    override fun withLinuxMipsel32() = addTargets {
+    override fun withLinuxMipsel32() = withTargets {
         it is KotlinNativeTarget && it.konanTarget == KonanTarget.LINUX_MIPSEL32
     }
 
     @Deprecated(DEPRECATED_TARGET_MESSAGE)
-    override fun withWasm32() = addTargets {
+    override fun withWasm32() = withTargets {
         it is KotlinNativeTarget && it.konanTarget == KonanTarget.WASM32
     }
 
