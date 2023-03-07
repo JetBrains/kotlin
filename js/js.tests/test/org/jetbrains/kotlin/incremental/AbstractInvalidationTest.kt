@@ -12,8 +12,6 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.SingleRootFileViewProvider
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.toPhaseMap
-import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
-import org.jetbrains.kotlin.cli.js.klib.generateIrForKlibSerialization
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.*
@@ -21,16 +19,13 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.ic.*
 import org.jetbrains.kotlin.ir.backend.js.SourceMapsInfo
 import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CompilationOutputs
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.safeModuleName
-import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.test.converters.ClassicJsBackendFacade
 import org.jetbrains.kotlin.js.test.utils.MODULE_EMULATION_FILE
@@ -47,9 +42,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.junit.ComparisonFailure
 import java.io.File
 import java.util.EnumSet
-
-abstract class AbstractJsIrInvalidationTest : AbstractInvalidationTest(TargetBackend.JS_IR, "incrementalOut/invalidation")
-abstract class AbstractJsIrES6InvalidationTest : AbstractInvalidationTest(TargetBackend.JS_IR_ES6, "incrementalOut/invalidationES6")
 
 abstract class AbstractInvalidationTest(
     private val targetBackend: TargetBackend,
@@ -90,7 +82,9 @@ abstract class AbstractInvalidationTest(
         val projectInfoFile = File(testDirectory, PROJECT_INFO_FILE)
         val projectInfo = parseProjectInfo(testName, projectInfoFile)
 
-        if (projectInfo.muted) return
+        if (isIgnoredTest(projectInfo)){
+            return
+        }
 
         val modulesInfos = mutableMapOf<String, ModuleInfo>()
         for (module in projectInfo.modules) {
@@ -182,7 +176,8 @@ abstract class AbstractInvalidationTest(
                     }
                 }
                 val configuration = createConfiguration(module, projStep.language)
-                buildArtifact(configuration, module, moduleSourceDir, dependencies, friends, outputKlibFile)
+                outputKlibFile.delete()
+                buildKlib(configuration, module, moduleSourceDir, dependencies, friends, outputKlibFile)
             }
 
             val dtsFile = moduleStep.expectedDTS.ifNotEmpty {
@@ -369,75 +364,9 @@ abstract class AbstractInvalidationTest(
 
     private fun String.isAllowedJsFile() = endsWith(".js") && !TEST_FILE_IGNORE_PATTERN.matches(this)
 
-    private fun File.filteredKtFiles(): Collection<File> {
+    protected fun File.filteredKtFiles(): Collection<File> {
         assert(isDirectory && exists())
         return listFiles { _, name -> name.isAllowedKtFile() }!!.toList()
-    }
-
-    private fun KotlinCoreEnvironment.createPsiFile(file: File): KtFile {
-        val psiManager = PsiManager.getInstance(project)
-        val fileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL) as CoreLocalFileSystem
-
-        val vFile = fileSystem.findFileByIoFile(file) ?: error("File not found: $file")
-
-        return SingleRootFileViewProvider(psiManager, vFile).allFiles.find {
-            it is KtFile && it.virtualFile.canonicalPath == vFile.canonicalPath
-        } as KtFile
-    }
-
-    private fun buildArtifact(
-        configuration: CompilerConfiguration,
-        moduleName: String,
-        sourceDir: File,
-        dependencies: Collection<File>,
-        friends: Collection<File>,
-        outputKlibFile: File
-    ) {
-        if (outputKlibFile.exists()) outputKlibFile.delete()
-
-        val projectJs = environment.project
-
-        val sourceFiles = sourceDir.filteredKtFiles().map { environment.createPsiFile(it) }
-
-        val sourceModule = prepareAnalyzedSourceModule(
-            project = projectJs,
-            files = sourceFiles,
-            configuration = configuration,
-            dependencies = dependencies.map { it.canonicalPath },
-            friendDependencies = friends.map { it.canonicalPath },
-            analyzer = AnalyzerWithCompilerReport(configuration)
-        )
-
-        val moduleSourceFiles = (sourceModule.mainModule as MainModule.SourceFiles).files
-        val icData = sourceModule.compilerConfiguration.incrementalDataProvider?.getSerializedData(moduleSourceFiles) ?: emptyList()
-        val expectDescriptorToSymbol = mutableMapOf<DeclarationDescriptor, IrSymbol>()
-        val (moduleFragment, _) = generateIrForKlibSerialization(
-            environment.project,
-            moduleSourceFiles,
-            configuration,
-            sourceModule.jsFrontEndResult.jsAnalysisResult,
-            sortDependencies(sourceModule.moduleDependencies),
-            icData,
-            expectDescriptorToSymbol,
-            IrFactoryImpl,
-            verifySignatures = true
-        ) {
-            sourceModule.getModuleDescriptor(it)
-        }
-        val metadataSerializer =
-            KlibMetadataIncrementalSerializer(configuration, sourceModule.project, sourceModule.jsFrontEndResult.hasErrors)
-
-        generateKLib(
-            sourceModule,
-            outputKlibFile.canonicalPath,
-            nopack = false,
-            jsOutputName = moduleName,
-            icData = icData,
-            expectDescriptorToSymbol = expectDescriptorToSymbol,
-            moduleFragment = moduleFragment
-        ) { file ->
-            metadataSerializer.serializeScope(file, sourceModule.jsFrontEndResult.bindingContext, moduleFragment.descriptor)
-        }
     }
 
     private fun initializeWorkingDir(projectInfo: ProjectInfo, testDir: File, sourceDir: File, buildDir: File) {
@@ -466,4 +395,26 @@ abstract class AbstractInvalidationTest(
 
         return dir
     }
+
+    protected fun KotlinCoreEnvironment.createPsiFile(file: File): KtFile {
+        val psiManager = PsiManager.getInstance(project)
+        val fileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL) as CoreLocalFileSystem
+
+        val vFile = fileSystem.findFileByIoFile(file) ?: error("File not found: $file")
+
+        return SingleRootFileViewProvider(psiManager, vFile).allFiles.find {
+            it is KtFile && it.virtualFile.canonicalPath == vFile.canonicalPath
+        } as KtFile
+    }
+
+    protected open fun isIgnoredTest(projectInfo: ProjectInfo) = projectInfo.muted
+
+    protected abstract fun buildKlib(
+        configuration: CompilerConfiguration,
+        moduleName: String,
+        sourceDir: File,
+        dependencies: Collection<File>,
+        friends: Collection<File>,
+        outputKlibFile: File
+    )
 }

@@ -475,6 +475,10 @@ class ModulesStructure(
         compilerConfiguration.resolverLogger
     )
 
+    val fullResolvedLibraries by lazy {
+        allDependenciesResolution.resolveWithDependencies().getFullResolvedList()
+    }
+
     val allDependencies: List<KotlinLibrary>
         get() = allDependenciesResolution.libraries
 

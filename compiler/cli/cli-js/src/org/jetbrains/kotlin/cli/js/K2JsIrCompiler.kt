@@ -7,18 +7,13 @@ package org.jetbrains.kotlin.cli.js
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.text.StringUtil
-import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.backend.common.CompilationException
-import org.jetbrains.kotlin.backend.common.CommonJsKLibResolver
-import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.wasm.compileToLoweredIr
 import org.jetbrains.kotlin.backend.wasm.compileWasm
 import org.jetbrains.kotlin.backend.wasm.dce.eliminateDeadDeclarations
 import org.jetbrains.kotlin.backend.wasm.wasmPhases
 import org.jetbrains.kotlin.backend.wasm.writeCompilationResult
-import org.jetbrains.kotlin.builtins.DefaultBuiltIns
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.ExitCode.*
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
@@ -26,7 +21,6 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.RUNTIME_DIAGNOSTIC_EXCEPTION
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.RUNTIME_DIAGNOSTIC_LOG
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
-import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
@@ -34,29 +28,16 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageUtil
 import org.jetbrains.kotlin.cli.js.klib.TopDownAnalyzerFacadeForJSIR
 import org.jetbrains.kotlin.cli.js.klib.TopDownAnalyzerFacadeForWasm
+import org.jetbrains.kotlin.cli.js.klib.compileModuleToAnalyzedFir
 import org.jetbrains.kotlin.cli.js.klib.generateIrForKlibSerialization
+import org.jetbrains.kotlin.cli.js.klib.serializeFirKlib
+import org.jetbrains.kotlin.cli.js.klib.transformFirToIr
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
-import org.jetbrains.kotlin.fir.BinaryModuleData
-import org.jetbrains.kotlin.fir.DependencyListForCliModule
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.backend.Fir2IrExtensions
-import org.jetbrains.kotlin.fir.backend.Fir2IrVisibilityConverter
-import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
-import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
-import org.jetbrains.kotlin.fir.pipeline.FirResult
-import org.jetbrains.kotlin.fir.pipeline.buildResolveAndCheckFir
-import org.jetbrains.kotlin.fir.pipeline.convertToIrAndActualize
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.serialization.FirElementAwareSerializableStringTable
-import org.jetbrains.kotlin.fir.serialization.FirKLibSerializerExtension
-import org.jetbrains.kotlin.fir.serialization.serializeSingleFirFile
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
@@ -65,7 +46,6 @@ import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.backend.js.ic.*
-import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CompilationOutputsBuilt
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsCodeGenerator
@@ -73,27 +53,19 @@ import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
 import org.jetbrains.kotlin.js.config.*
-import org.jetbrains.kotlin.js.resolve.JsPlatformAnalyzerServices
-import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.metadata.KlibMetadataVersion
-import org.jetbrains.kotlin.library.unresolvedDependencies
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.serialization.js.ModuleKind
-import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.join
-import org.jetbrains.kotlin.utils.metadataVersion
 import java.io.File
 import java.io.IOException
-import java.nio.file.Paths
+import java.nio.charset.Charset
 
 private val K2JSCompilerArguments.granularity: JsGenerationGranularity
     get() = when {
@@ -490,134 +462,36 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         val configuration = environmentForJS.configuration
         val messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
         val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter()
-        val renderDiagnosticNames = configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
-
-        // FIR
-        val extensionRegistrars = FirExtensionRegistrar.getInstances(environmentForJS.project)
-
-        val mainModuleName = configuration.get(CommonConfigurationKeys.MODULE_NAME)!!
-        val escapedMainModuleName = Name.special("<$mainModuleName>")
-
-        val ktFiles = environmentForJS.getSourceFiles()
-        val syntaxErrors = ktFiles.fold(false) { errorsFound, ktFile ->
-            AnalyzerWithCompilerReport.reportSyntaxErrors(ktFile, messageCollector).isHasErrors or errorsFound
-        }
 
         val mainModule = MainModule.SourceFiles(environmentForJS.getSourceFiles())
+        val moduleStructure = ModulesStructure(environmentForJS.project, mainModule, configuration, libraries, friendLibraries)
 
-        val binaryModuleData = BinaryModuleData.initialize(escapedMainModuleName, JsPlatforms.defaultJsPlatform, JsPlatformAnalyzerServices)
-        val dependencyList = DependencyListForCliModule.build(binaryModuleData) {
-            dependencies(libraries.map { Paths.get(it).toAbsolutePath() })
-            friendDependencies(friendLibraries.map { Paths.get(it).toAbsolutePath() })
-            // TODO: !!! dependencies module data?
-        }
-
-        val logger = configuration.resolverLogger
-        val resolvedLibraries = CommonJsKLibResolver.resolve(libraries + friendLibraries, logger).getFullResolvedList()
-
-        val sessionsWithSources = prepareJsSessions(
-            ktFiles, configuration, escapedMainModuleName.asString(), resolvedLibraries, dependencyList,
-            extensionRegistrars, isCommonSourceForPsi, fileBelongsToModuleForPsi
-        )
-
-        val outputs = sessionsWithSources.map {
-            buildResolveAndCheckFir(it.session, it.files, diagnosticsReporter)
-        }
-
-        if (syntaxErrors || diagnosticsReporter.hasErrors) {
-            FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, messageCollector, renderDiagnosticNames)
-            return null
-        }
+        val outputs = compileModuleToAnalyzedFir(
+            moduleStructure = moduleStructure,
+            ktFiles = environmentForJS.getSourceFiles(),
+            libraries = libraries,
+            friendLibraries = friendLibraries,
+            messageCollector = messageCollector,
+            diagnosticsReporter = diagnosticsReporter
+        ) ?: return null
 
         // FIR2IR
-
-        val fir2IrExtensions = Fir2IrExtensions.Default
-
-        var builtInsModule: KotlinBuiltIns? = null
-        val dependencies = mutableListOf<ModuleDescriptorImpl>()
-
-        val librariesDescriptors = resolvedLibraries.map { resolvedLibrary ->
-            val storageManager = LockBasedStorageManager("ModulesStructure")
-
-            val moduleDescriptor = JsFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
-                resolvedLibrary.library,
-                configuration.languageVersionSettings,
-                storageManager,
-                builtInsModule,
-                packageAccessHandler = null,
-                lookupTracker = LookupTracker.DO_NOTHING
-            )
-            dependencies += moduleDescriptor
-            moduleDescriptor.setDependencies(ArrayList(dependencies))
-
-            val isBuiltIns = resolvedLibrary.library.unresolvedDependencies.isEmpty()
-            if (isBuiltIns) builtInsModule = moduleDescriptor.builtIns
-
-            moduleDescriptor
-        }
-
-        val firResult = FirResult(outputs)
-        val irResult = firResult.convertToIrAndActualize(
-            fir2IrExtensions,
-            IrGenerationExtension.getInstances(environmentForJS.project),
-            linkViaSignatures = false,
-            signatureComposerCreator = null,
-            irMangler = JsManglerIr,
-            visibilityConverter = Fir2IrVisibilityConverter.Default,
-            kotlinBuiltIns = builtInsModule ?: DefaultBuiltIns.Instance,
-            fir2IrResultPostCompute = {
-                (this.irModuleFragment.descriptor as? FirModuleDescriptor)?.let { it.allDependencyModules = librariesDescriptors }
-            }
-        )
+        val irResult = transformFirToIr(moduleStructure, outputs)
 
         // Serialize klib
-
         if (arguments.irProduceKlibDir || arguments.irProduceKlibFile) {
-            val sourceFiles = mutableListOf<KtSourceFile>()
-            val firFilesAndSessionsBySourceFile = mutableMapOf<KtSourceFile, Triple<FirFile, FirSession, ScopeSession>>()
-
-            for (output in outputs) {
-                output.fir.forEach {
-                    sourceFiles.add(it.sourceFile!!)
-                    firFilesAndSessionsBySourceFile[it.sourceFile!!] = Triple(it, output.session, output.scopeSession)
-                }
-            }
-
-            val icData = environmentForJS.configuration.incrementalDataProvider?.getSerializedData(sourceFiles) ?: emptyList()
-
-            val metadataVersion = configuration.metadataVersion()
-
-            serializeModuleIntoKlib(
-                configuration[CommonConfigurationKeys.MODULE_NAME]!!,
-                configuration,
-                configuration.get(IrMessageLogger.IR_MESSAGE_LOGGER) ?: IrMessageLogger.None,
-                sourceFiles,
-                klibPath = outputKlibPath,
-                resolvedLibraries.map { it.library },
-                irResult.irModuleFragment,
-                expectDescriptorToSymbol = mutableMapOf(),
-                cleanFiles = icData,
-                nopack = true,
-                perFile = false,
-                containsErrorCode = messageCollector.hasErrors() || diagnosticsReporter.hasErrors,
-                abiVersion = KotlinAbiVersion.CURRENT, // TODO get from test file data
-                jsOutputName = null
-            ) { file ->
-                val (firFile, session, scopeSession) = firFilesAndSessionsBySourceFile[file]
-                    ?: error("cannot find FIR file by source file ${file.name} (${file.path})")
-                serializeSingleFirFile(
-                    firFile,
-                    session,
-                    scopeSession,
-                    FirKLibSerializerExtension(session, metadataVersion, FirElementAwareSerializableStringTable()),
-                    configuration.languageVersionSettings,
-                )
-            }
+            serializeFirKlib(
+                moduleStructure = moduleStructure,
+                firOutputs = outputs,
+                irResult = irResult,
+                outputKlibPath = outputKlibPath,
+                messageCollector = messageCollector,
+                diagnosticsReporter = diagnosticsReporter,
+                jsOutputName = arguments.irPerModuleOutputName
+            )
         }
 
-        return ModulesStructure(
-            environmentForJS.project, mainModule, configuration, libraries, friendLibraries
-        )
+        return moduleStructure
     }
 
     class IcCachesArtifacts(val artifacts: List<ModuleArtifact>, val cacheGuard: IncrementalCacheGuard)
