@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirGlobalResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirBuiltinsSessionFactory
-import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirLibrarySessionFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.addValueFor
 import org.jetbrains.kotlin.analysis.project.structure.*
@@ -19,7 +18,6 @@ class LLFirSessionProviderStorage(val project: Project) {
     private val libraryAsUseSiteSessionCache = LLFirSessionsCache()
     private val notUnderContentRootSessionCache = LLFirSessionsCache()
 
-    private val librariesSessionFactory = LLFirLibrarySessionFactory.getInstance(project)
     private val builtInsSessionFactory = LLFirBuiltinsSessionFactory.getInstance(project)
 
     private val globalComponents = LLFirGlobalResolveComponents(project)
@@ -52,8 +50,7 @@ class LLFirSessionProviderStorage(val project: Project) {
                 useSiteKtModule,
                 globalComponents,
                 sourceAsUseSiteSessionCache.sessionInvalidator,
-                sessions,
-                librariesSessionFactory
+                sessions
             )
             sessions to session
         }
@@ -84,8 +81,7 @@ class LLFirSessionProviderStorage(val project: Project) {
                 project,
                 useSiteKtModule,
                 sourceAsUseSiteSessionCache.sessionInvalidator,
-                sessions,
-                librariesSessionFactory
+                sessions
             )
             sessions to session
         }

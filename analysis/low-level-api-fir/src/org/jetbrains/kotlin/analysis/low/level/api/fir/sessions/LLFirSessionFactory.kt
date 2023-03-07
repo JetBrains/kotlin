@@ -49,8 +49,7 @@ internal object LLFirSessionFactory {
         module: KtSourceModule,
         globalResolveComponents: LLFirGlobalResolveComponents,
         sessionInvalidator: LLFirSessionInvalidator,
-        sessionsCache: MutableMap<KtModule, LLFirSession>,
-        librariesSessionFactory: LLFirLibrarySessionFactory
+        sessionsCache: MutableMap<KtModule, LLFirSession>
     ): LLFirSourcesSession {
         sessionsCache[module]?.let { return it as LLFirSourcesSession }
         checkCanceled()
@@ -108,8 +107,7 @@ internal object LLFirSessionFactory {
                     module,
                     sessionsCache,
                     globalResolveComponents,
-                    sessionInvalidator,
-                    librariesSessionFactory
+                    sessionInvalidator
                 )
 
                 add(builtinsSession)
@@ -243,8 +241,7 @@ internal object LLFirSessionFactory {
         project: Project,
         module: KtScriptModule,
         sessionInvalidator: LLFirSessionInvalidator,
-        sessionsCache: MutableMap<KtModule, LLFirSession>,
-        librariesSessionFactory: LLFirLibrarySessionFactory
+        sessionsCache: MutableMap<KtModule, LLFirSession>
     ): LLFirScriptSession {
         sessionsCache[module]?.let { return it as LLFirScriptSession }
         checkCanceled()
@@ -290,8 +287,7 @@ internal object LLFirSessionFactory {
                     module,
                     sessionsCache,
                     globalResolveComponents,
-                    sessionInvalidator,
-                    librariesSessionFactory
+                    sessionInvalidator
                 )
 
                 add(builtinsSession)
@@ -412,8 +408,7 @@ internal object LLFirSessionFactory {
         module: KtModule,
         sessionsCache: MutableMap<KtModule, LLFirSession>,
         globalResolveComponents: LLFirGlobalResolveComponents,
-        sessionInvalidator: LLFirSessionInvalidator,
-        librariesSessionFactory: LLFirLibrarySessionFactory
+        sessionInvalidator: LLFirSessionInvalidator
     ) {
         val project = module.project
 
@@ -433,8 +428,7 @@ internal object LLFirSessionFactory {
                     dependency,
                     globalResolveComponents,
                     sessionInvalidator,
-                    sessionsCache,
-                    librariesSessionFactory = librariesSessionFactory
+                    sessionsCache
                 )
             }
 
