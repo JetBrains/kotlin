@@ -130,7 +130,7 @@ class FirSyntheticPropertiesScope private constructor(
             property.originalForSubstitutionOverrideAttr = buildSyntheticProperty(
                 propertyName,
                 it,
-                matchingSetter?.originalForSubstitutionOverride
+                matchingSetter?.originalForSubstitutionOverride ?: matchingSetter
             )
         }
         val syntheticSymbol = property.symbol
