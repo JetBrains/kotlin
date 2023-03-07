@@ -45,7 +45,6 @@ import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 @OptIn(PrivateSessionConstructor::class, SessionConfiguration::class)
 internal object LLFirSessionFactory {
     fun createSourcesSession(
-        project: Project,
         module: KtSourceModule,
         globalResolveComponents: LLFirGlobalResolveComponents,
         sessionsCache: MutableMap<KtModule, LLFirSession>
@@ -53,6 +52,7 @@ internal object LLFirSessionFactory {
         sessionsCache[module]?.let { return it as LLFirSourcesSession }
         checkCanceled()
 
+        val project = module.project
         val platform = module.platform
         val builtinsSession = LLFirBuiltinsSessionFactory.getInstance(project).getBuiltinsSession(platform)
         val languageVersionSettings = wrapLanguageVersionSettings(module.languageVersionSettings)
@@ -136,7 +136,6 @@ internal object LLFirSessionFactory {
 
 
     fun createLibraryOrLibrarySourceResolvableSession(
-        project: Project,
         module: KtModule,
         globalComponents: LLFirGlobalResolveComponents,
         builtinSession: LLFirBuiltinsAndCloneableSession,
@@ -146,6 +145,8 @@ internal object LLFirSessionFactory {
         LLFirLibraryOrLibrarySourceResolvableModuleSession.checkIsValidKtModule(module)
         sessionsCache[module]?.let { return it as LLFirLibraryOrLibrarySourceResolvableModuleSession }
         checkCanceled()
+
+        val project = module.project
 
         val libraryModule = when (module) {
             is KtLibraryModule -> module
@@ -231,13 +232,13 @@ internal object LLFirSessionFactory {
     }
 
     fun createScriptSession(
-        project: Project,
         module: KtScriptModule,
         sessionsCache: MutableMap<KtModule, LLFirSession>
     ): LLFirScriptSession {
         sessionsCache[module]?.let { return it as LLFirScriptSession }
         checkCanceled()
 
+        val project = module.project
         val platform = module.platform
         val builtinsSession = LLFirBuiltinsSessionFactory.getInstance(project).getBuiltinsSession(platform)
         val languageVersionSettings = wrapLanguageVersionSettings(module.languageVersionSettings)
@@ -309,13 +310,13 @@ internal object LLFirSessionFactory {
     }
 
     fun createNotUnderContentRootResolvableSession(
-        project: Project,
         module: KtNotUnderContentRootModule,
         sessionsCache: MutableMap<KtModule, LLFirSession>
     ): LLFirNonUnderContentRootResolvableModuleSession {
         sessionsCache[module]?.let { return it as LLFirNonUnderContentRootResolvableModuleSession }
         checkCanceled()
 
+        val project = module.project
         val builtinsSession = LLFirBuiltinsSessionFactory.getInstance(project).getBuiltinsSession(JvmPlatforms.unspecifiedJvmPlatform)
         val languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT
         val scopeProvider = FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
@@ -412,12 +413,7 @@ internal object LLFirSessionFactory {
             }
 
             is KtSourceModule -> {
-                createSourcesSession(
-                    project,
-                    dependency,
-                    globalResolveComponents,
-                    sessionsCache
-                )
+                createSourcesSession(dependency, globalResolveComponents, sessionsCache)
             }
 
             is KtScriptModule,
