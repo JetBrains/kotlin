@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.KtDeclarationAndFirDeclarationEqualityChecker
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirModuleWithDependenciesSymbolProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirBuiltinsAndCloneableSession
 import org.jetbrains.kotlin.analysis.project.structure.getKtModule
 import org.jetbrains.kotlin.analysis.utils.errors.ExceptionAttachmentBuilder
 import org.jetbrains.kotlin.analysis.utils.errors.withClassEntry
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 
@@ -53,7 +55,15 @@ internal class FirDeclarationForCompiledElementSearcher(private val symbolProvid
         val classId = declaration.getClassId()
             ?: errorWithFirSpecificEntries("Non-local class should have classId", psi = declaration)
 
-        val classCandidate = symbolProvider.getClassLikeSymbolByClassId(classId)
+        val classCandidate = when (symbolProvider) {
+            is LLFirModuleWithDependenciesSymbolProvider -> {
+                symbolProvider.getClassLikeSymbolByFqNameWithoutDependencies(classId)
+                    ?: symbolProvider.friendBuiltinsProvider?.getClassLikeSymbolByClassId(classId)
+            }
+            else -> {
+                symbolProvider.getClassLikeSymbolByClassId(classId)
+            }
+        }
 
         if (classCandidate == null) {
             errorWithFirSpecificEntries("We should be able to find a symbol for $classId", psi = declaration) {
@@ -111,6 +121,16 @@ internal class FirDeclarationForCompiledElementSearcher(private val symbolProvid
 
 }
 
+// Returns a built-in provider for a Kotlin standard library, as built-in declarations are its logical part.
+private val LLFirModuleWithDependenciesSymbolProvider.friendBuiltinsProvider: FirSymbolProvider?
+    get() {
+        if (getPackageWithoutDependencies(StandardClassIds.BASE_KOTLIN_PACKAGE) != null) {
+            return dependencyProvider.dependentProviders.find { it.session is LLFirBuiltinsAndCloneableSession }
+        }
+
+        return null
+    }
+
 private fun FirSymbolProvider.findFunctionCandidates(function: KtNamedFunction): List<FirFunctionSymbol<*>> =
     findCallableCandidates(function, function.isTopLevel).filterIsInstance<FirFunctionSymbol<*>>()
 
@@ -128,9 +148,9 @@ private fun FirSymbolProvider.findCallableCandidates(
 
         @OptIn(FirSymbolProviderInternals::class)
         return when (this) {
-            is LLFirModuleWithDependenciesSymbolProvider -> {
-                getTopLevelCallableSymbolsWithoutDependencies(packageFqName, shortName).takeUnless { it.isEmpty() }
-                    ?: getTopLevelCallableSymbols(packageFqName, shortName)
+            is LLFirModuleWithDependenciesSymbolProvider -> buildList {
+                getTopLevelCallableSymbolsToWithoutDependencies(this, packageFqName, shortName)
+                friendBuiltinsProvider?.getTopLevelCallableSymbolsTo(this, packageFqName, shortName)
             }
             else -> getTopLevelCallableSymbols(packageFqName, shortName)
         }
