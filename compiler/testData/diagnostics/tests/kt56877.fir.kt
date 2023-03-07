@@ -9,7 +9,7 @@ open class Result {
 
     fun isSuccess1(): Boolean {
         contract {
-            <!ERROR_IN_CONTRACT_DESCRIPTION!>returns(true) implies (this<!UNRESOLVED_LABEL!>@Result<!> is Success)<!>
+            <!ERROR_IN_CONTRACT_DESCRIPTION!>returns(true) implies (this@Result is Success)<!>
         }
         return this@Result is Success
     }
@@ -18,7 +18,7 @@ open class Result {
         contract {
             // implicit type ref
             // ERROR CLASS: Cannot calculate return type during full-body resolution (local class/object?)
-            <!ERROR_IN_CONTRACT_DESCRIPTION!>returns(true) implies (this<!UNRESOLVED_LABEL!>@Result<!>.someProperty == 10)<!>
+            <!ERROR_IN_CONTRACT_DESCRIPTION!>returns(true) implies (this@Result.someProperty == 10)<!>
         }
         return this@Result.someProperty == 10
     }
