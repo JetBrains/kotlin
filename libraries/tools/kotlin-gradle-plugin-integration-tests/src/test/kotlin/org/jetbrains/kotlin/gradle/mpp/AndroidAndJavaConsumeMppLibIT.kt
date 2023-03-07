@@ -7,7 +7,6 @@
 package org.jetbrains.kotlin.gradle.mpp
 
 import org.gradle.api.logging.LogLevel
-import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.*
 import org.jetbrains.kotlin.gradle.embedProject
@@ -34,9 +33,16 @@ class AndroidAndJavaConsumeMppLibBuiltByGradle69IT : AndroidAndJavaConsumeMppLib
 }
 
 class AndroidAndJavaConsumeMppLibBuiltByGradle7IT : AndroidAndJavaConsumeMppLibIT() {
-    override val producerAgpVersion: AGPVersion = AGPVersion.v7_0_0
+    override val producerAgpVersion: AGPVersion = AGPVersion.v7_4_0
     override val producerGradleVersion: GradleVersionRequired = GradleVersionRequired.AtLeast(
-        TestVersions.Gradle.G_7_0
+        TestVersions.Gradle.G_7_5
+    )
+}
+
+class AndroidAndJavaConsumeMppLibBuiltByGradle8IT : AndroidAndJavaConsumeMppLibIT() {
+    override val producerAgpVersion: AGPVersion = AGPVersion.v8_0_0
+    override val producerGradleVersion: GradleVersionRequired = GradleVersionRequired.AtLeast(
+        TestVersions.Gradle.G_8_0
     )
 }
 
@@ -73,8 +79,9 @@ abstract class AndroidAndJavaConsumeMppLibIT : BaseGradleIT() {
         fun testCases(): List<Array<Any>> {
             val consumers = listOf(
                 AGPVersion.v4_2_0 to GradleVersionRequired.Exact(TestVersions.Gradle.G_6_9),
-                AGPVersion.v4_2_0 to GradleVersionRequired.AtLeast(TestVersions.Gradle.G_7_0),
-                AGPVersion.v7_0_0 to GradleVersionRequired.AtLeast(TestVersions.Gradle.G_7_0),
+                AGPVersion.v4_2_0 to GradleVersionRequired.AtLeast(TestVersions.Gradle.G_7_6),
+                AGPVersion.v7_4_0 to GradleVersionRequired.AtLeast(TestVersions.Gradle.G_7_6),
+                AGPVersion.v8_0_0 to GradleVersionRequired.AtLeast(TestVersions.Gradle.G_8_0)
             )
             val buildParams = listOf(
                 /* useFlavors, isAndroidPublishDebugOnly, isPublishedLibrary */
