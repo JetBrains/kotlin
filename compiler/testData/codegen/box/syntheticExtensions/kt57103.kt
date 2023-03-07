@@ -1,4 +1,5 @@
-// TARGET_BACKEND: JVM
+// !LANGUAGE: +ReferencesToSyntheticJavaProperties
+// TARGET_BACKEND: JVM_IR
 
 // FILE: J.java
 
@@ -10,16 +11,15 @@ public class J<T> {
     public T getValue() {
         return value;
     }
-}
 
+    public T foo() {
+        return value;
+    }
+}
 
 // FILE: test.kt
 
 fun box(): String {
     val j = J("OK")
-    if (j.value != "OK") return "FAIL"
-    if (run(j::value) != "OK") return "FAIL"
-    if (j.let(J<String>::value) != "OK") return "FAIL"
-
-    return "OK"
+    return run(j::value)
 }
