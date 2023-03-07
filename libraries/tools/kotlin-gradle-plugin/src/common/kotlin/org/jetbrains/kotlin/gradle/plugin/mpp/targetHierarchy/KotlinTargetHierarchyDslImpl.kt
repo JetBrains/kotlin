@@ -25,7 +25,7 @@ internal class KotlinTargetHierarchyDslImpl(
     }
 
     override fun default(describeExtension: (KotlinTargetHierarchyBuilder.() -> Unit)?) {
-        apply(naturalKotlinTargetHierarchy, describeExtension)
+        apply(defaultKotlinTargetHierarchy, describeExtension)
     }
 
     override fun custom(describe: KotlinTargetHierarchyBuilder.() -> Unit) {

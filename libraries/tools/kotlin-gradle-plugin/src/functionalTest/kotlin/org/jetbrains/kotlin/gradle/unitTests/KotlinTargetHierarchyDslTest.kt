@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetHierarchyDescriptor
 import org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy.buildKotlinTargetHierarchy
-import org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy.naturalKotlinTargetHierarchy
+import org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy.defaultKotlinTargetHierarchy
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.util.*
 import kotlin.test.*
@@ -184,9 +184,9 @@ class KotlinTargetHierarchyDslTest {
 
     @Test
     fun `test - hierarchy default - is only applied to main and test compilations`() {
-        assertNotNull(naturalKotlinTargetHierarchy.buildKotlinTargetHierarchy(kotlin.linuxX64().compilations.main))
-        assertNotNull(naturalKotlinTargetHierarchy.buildKotlinTargetHierarchy(kotlin.linuxX64().compilations.test))
-        assertNull(naturalKotlinTargetHierarchy.buildKotlinTargetHierarchy(kotlin.linuxX64().compilations.maybeCreate("custom")))
+        assertNotNull(defaultKotlinTargetHierarchy.buildKotlinTargetHierarchy(kotlin.linuxX64().compilations.main))
+        assertNotNull(defaultKotlinTargetHierarchy.buildKotlinTargetHierarchy(kotlin.linuxX64().compilations.test))
+        assertNull(defaultKotlinTargetHierarchy.buildKotlinTargetHierarchy(kotlin.linuxX64().compilations.maybeCreate("custom")))
 
         kotlin.targetHierarchy.default()
         kotlin.linuxX64().compilations.maybeCreate("custom").defaultSourceSet.let { customSourceSet ->

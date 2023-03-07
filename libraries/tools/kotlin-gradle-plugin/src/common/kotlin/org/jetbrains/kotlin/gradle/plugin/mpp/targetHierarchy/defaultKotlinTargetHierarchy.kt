@@ -7,11 +7,14 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy
 
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetHierarchyDescriptor
 
-private val naturalKotlinTargetHierarchyModules = hashSetOf(KotlinTargetHierarchy.Module.main, KotlinTargetHierarchy.Module.test)
+private val defaultKotlinTargetHierarchyModules = hashSetOf(
+    KotlinTargetHierarchy.Module.main,
+    KotlinTargetHierarchy.Module.test
+)
 
-internal val naturalKotlinTargetHierarchy = KotlinTargetHierarchyDescriptor {
+internal val defaultKotlinTargetHierarchy = KotlinTargetHierarchyDescriptor {
     /* natural hierarchy is only applied to default 'main'/'test' compilations (by default) */
-    withoutCompilations { KotlinTargetHierarchy.Module.orNull(it) !in naturalKotlinTargetHierarchyModules }
+    withoutCompilations { KotlinTargetHierarchy.Module.orNull(it) !in defaultKotlinTargetHierarchyModules }
 
     common {
         /* All compilations shall receive be added to the common group by default */
