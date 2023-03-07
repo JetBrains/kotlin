@@ -55,48 +55,12 @@ class KotlinTargetHierarchyDslTest {
         }
 
         assertEquals(
-            stringSetOf(
-                "androidNativeArm32Main",
-                "androidNativeArm64Main",
-                "iosArm32Main",
-                "iosArm64Main",
-                "iosSimulatorArm64Main",
-                "iosX64Main",
-                "linuxArm32HfpMain",
-                "linuxX64Main",
-                "macosArm64Main",
-                "macosX64Main",
-                "mingwX64Main",
-                "mingwX86Main",
-                "nativeMain",
-                "tvosArm64Main",
-                "tvosX64Main",
-                "watchosArm32Main",
-                "watchosArm64Main"
-            ),
+            stringSetOf("nativeMain"),
             kotlin.dependingSourceSetNames("commonMain")
         )
 
         assertEquals(
-            stringSetOf(
-                "androidNativeArm32Test",
-                "androidNativeArm64Test",
-                "iosArm32Test",
-                "iosArm64Test",
-                "iosSimulatorArm64Test",
-                "iosX64Test",
-                "linuxArm32HfpTest",
-                "linuxX64Test",
-                "macosArm64Test",
-                "macosX64Test",
-                "mingwX64Test",
-                "mingwX86Test",
-                "nativeTest",
-                "tvosArm64Test",
-                "tvosX64Test",
-                "watchosArm32Test",
-                "watchosArm64Test"
-            ), kotlin.dependingSourceSetNames("commonTest")
+            stringSetOf("nativeTest"), kotlin.dependingSourceSetNames("commonTest")
         )
 
         assertEquals(
@@ -222,7 +186,7 @@ class KotlinTargetHierarchyDslTest {
         project.evaluate()
 
         assertEquals(
-            stringSetOf("androidDebug", "androidMain", "androidRelease", "jvmAndAndroidMain", "jvmMain"),
+            stringSetOf("jvmAndAndroidMain"),
             kotlin.dependingSourceSetNames("commonMain")
         )
 
@@ -232,7 +196,7 @@ class KotlinTargetHierarchyDslTest {
         )
 
         assertEquals(
-            stringSetOf("jvmAndAndroidTest", "jvmTest", "androidUnitTest", "androidUnitTestDebug", "androidUnitTestRelease"),
+            stringSetOf("jvmAndAndroidTest"),
             kotlin.dependingSourceSetNames("commonTest")
         )
 
@@ -270,7 +234,7 @@ class KotlinTargetHierarchyDslTest {
         }
 
         assertEquals(
-            stringSetOf("baseMain", "linuxX64Main"), kotlin.dependingSourceSetNames("commonMain")
+            stringSetOf("baseMain"), kotlin.dependingSourceSetNames("commonMain")
         )
 
         assertEquals(
@@ -306,7 +270,7 @@ class KotlinTargetHierarchyDslTest {
         kotlin.mingwX64()
 
         assertEquals(
-            stringSetOf("nativeMain", "nixMain", "linuxX64Main", "macosX64Main", "mingwX64Main"),
+            stringSetOf("nativeMain", "nixMain"),
             kotlin.dependingSourceSetNames("commonMain")
         )
 
@@ -336,7 +300,7 @@ class KotlinTargetHierarchyDslTest {
         kotlin.js()
 
         assertEquals(
-            stringSetOf("webMain", "jsMain", "wasmMain"),
+            stringSetOf("webMain"),
             kotlin.dependingSourceSetNames("commonMain")
         )
 
@@ -367,7 +331,7 @@ class KotlinTargetHierarchyDslTest {
         kotlin.linuxX64()
 
         assertEquals(
-            stringSetOf("jsAndJvmMain", "wasmAndLinuxMain", "jvmMain", "linuxX64Main", "jsMain", "wasmMain"),
+            stringSetOf("jsAndJvmMain", "wasmAndLinuxMain"),
             kotlin.dependingSourceSetNames("commonMain")
         )
 
@@ -408,7 +372,7 @@ class KotlinTargetHierarchyDslTest {
         )
 
         assertEquals(
-            stringSetOf("baseMain", "linuxX64Main"), kotlin.dependingSourceSetNames("commonMain")
+            stringSetOf("baseMain"), kotlin.dependingSourceSetNames("commonMain")
         )
 
         assertEquals(

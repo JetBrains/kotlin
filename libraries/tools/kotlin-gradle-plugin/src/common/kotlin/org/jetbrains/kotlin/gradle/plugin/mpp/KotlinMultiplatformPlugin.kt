@@ -171,14 +171,18 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
     private fun configureSourceSets(project: Project) = with(project.multiplatformExtension) {
         val production = sourceSets.create(KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME)
         val test = sourceSets.create(KotlinSourceSet.COMMON_TEST_SOURCE_SET_NAME)
-
         targets.all { target ->
-            target.compilations.findByName(KotlinCompilation.MAIN_COMPILATION_NAME)?.let { mainCompilation ->
-                mainCompilation.defaultSourceSet.takeIf { it != production }?.dependsOn(production)
-            }
+            project.launch(KotlinMultiplatformPluginLifecycle.Stage.FinaliseRefinesEdges) {
+                /* Only setup default refines edges when no KotlinTargetHierarchy was applied */
+                if (project.multiplatformExtension.internalKotlinTargetHierarchy.appliedDescriptors.isNotEmpty()) return@launch
 
-            target.compilations.findByName(KotlinCompilation.TEST_COMPILATION_NAME)?.let { testCompilation ->
-                testCompilation.defaultSourceSet.takeIf { it != test }?.dependsOn(test)
+                target.compilations.findByName(KotlinCompilation.MAIN_COMPILATION_NAME)?.let { mainCompilation ->
+                    mainCompilation.defaultSourceSet.takeIf { it != production }?.dependsOn(production)
+                }
+
+                target.compilations.findByName(KotlinCompilation.TEST_COMPILATION_NAME)?.let { testCompilation ->
+                    testCompilation.defaultSourceSet.takeIf { it != test }?.dependsOn(test)
+                }
             }
 
             val targetName = if (target is KotlinNativeTarget)

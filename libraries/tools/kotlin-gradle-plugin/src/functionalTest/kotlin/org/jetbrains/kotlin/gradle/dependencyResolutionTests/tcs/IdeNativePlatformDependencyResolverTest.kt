@@ -25,6 +25,7 @@ class IdeNativePlatformDependencyResolverTest {
     fun `test - posix on linux`() {
         val project = buildProjectWithMPP()
         val kotlin = project.multiplatformExtension
+        kotlin.targetHierarchy.default()
         kotlin.linuxX64()
 
         val commonMain = kotlin.sourceSets.getByName("commonMain")
@@ -48,6 +49,7 @@ class IdeNativePlatformDependencyResolverTest {
         Assume.assumeTrue("Macos host required for this test", HostManager.hostIsMac)
         val project = buildProjectWithMPP()
         val kotlin = project.multiplatformExtension
+        kotlin.targetHierarchy.default()
         kotlin.macosArm64()
 
         val commonMain = kotlin.sourceSets.getByName("commonMain")

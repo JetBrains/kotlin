@@ -116,7 +116,6 @@ class K2MultiplatformStructureTest {
         /* check dependsOnEdges */
         assertEquals(
             setOf(
-                RefinesEdge(defaultSourceSet.name, "commonMain"),
                 RefinesEdge(defaultSourceSet.name, "intermediateMain"),
                 RefinesEdge("intermediateMain", "commonMain")
             ),

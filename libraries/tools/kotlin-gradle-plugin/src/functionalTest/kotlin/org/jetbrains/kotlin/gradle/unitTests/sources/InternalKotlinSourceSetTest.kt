@@ -9,7 +9,9 @@ package org.jetbrains.kotlin.gradle.unitTests.sources
 
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.enqueue
 import org.jetbrains.kotlin.gradle.plugin.mpp.getHostSpecificMainSharedSourceSets
 import org.jetbrains.kotlin.gradle.plugin.sources.InternalKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
@@ -47,7 +49,7 @@ class InternalKotlinSourceSetTest {
         nativeMain.dependsOn(commonMain)
 
         assertEquals<Set<KotlinCompilation<*>>>(
-            setOf(metadataCompilation, jvmCompilation, linuxCompilation, macosCompilation),
+            setOf(metadataCompilation),
             commonMain.internal.compilations
         )
 
@@ -67,6 +69,20 @@ class InternalKotlinSourceSetTest {
             setOf(linuxCompilation, macosCompilation),
             nativeMain.internal.compilations
         )
+
+        project.enqueue(KotlinMultiplatformPluginLifecycle.Stage.Finalised) {
+            assertEquals<Set<KotlinCompilation<*>>>(
+                setOf(
+                    metadataCompilation,
+                    kotlin.metadata().compilations.getByName("commonMain"),
+                    kotlin.metadata().compilations.getByName("nativeMain"),
+                    jvmCompilation, linuxCompilation, macosCompilation
+                ),
+                commonMain.internal.compilations
+            )
+        }
+
+        project.evaluate()
     }
 
     @Test
@@ -80,6 +96,7 @@ class InternalKotlinSourceSetTest {
         val nativeMain = kotlin.sourceSets.create("nativeMain")
         val linuxMain = kotlin.sourceSets.create("linuxMain")
         val linuxX64Main = kotlin.sourceSets.getByName("linuxX64Main")
+        linuxX64Main.dependsOn(commonMain)
 
         assertEquals(
             setOf(commonMain, linuxX64Main),

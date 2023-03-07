@@ -52,8 +52,10 @@ abstract class KotlinMultiplatformExtension(project: Project) :
         configure(presetExtension)
     }
 
+    internal val internalKotlinTargetHierarchy by lazy { KotlinTargetHierarchyDslImpl(targets, sourceSets) }
+
     @ExperimentalKotlinGradlePluginApi
-    val targetHierarchy: KotlinTargetHierarchyDsl get() = KotlinTargetHierarchyDslImpl(targets, sourceSets)
+    val targetHierarchy: KotlinTargetHierarchyDsl get() = internalKotlinTargetHierarchy
 
     @Suppress("unused") // DSL
     val testableTargets: NamedDomainObjectCollection<KotlinTargetWithTests<*, *>>

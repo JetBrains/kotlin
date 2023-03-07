@@ -8,9 +8,12 @@ package org.jetbrains.kotlin.gradle.plugin.sources.android.configurator
 import com.android.build.gradle.api.AndroidSourceSet
 import com.android.build.gradle.api.BaseVariant
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
+import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet.Companion.COMMON_MAIN_SOURCE_SET_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet.Companion.COMMON_TEST_SOURCE_SET_NAME
+import org.jetbrains.kotlin.gradle.plugin.kotlinMultiplatformPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.sources.android.AndroidBaseSourceSetName
 import org.jetbrains.kotlin.gradle.plugin.sources.android.AndroidVariantType
@@ -28,14 +31,22 @@ internal object MultiplatformLayoutV2DependsOnConfigurator : KotlinAndroidSource
     }
 
     private fun setDefaultDependsOn(target: KotlinAndroidTarget, kotlinSourceSet: KotlinSourceSet, variantType: AndroidVariantType) {
-        /* Add default dependency on 'commonMain' or 'commonTest' */
-        val commonMain = target.project.kotlinExtension.sourceSets.getByName(COMMON_MAIN_SOURCE_SET_NAME)
-        val commonTest = target.project.kotlinExtension.sourceSets.getByName(COMMON_TEST_SOURCE_SET_NAME)
+        target.project.kotlinMultiplatformPluginLifecycle.launch {
+            await(KotlinMultiplatformPluginLifecycle.Stage.FinaliseRefinesEdges)
+            /* Only setup default if not KotlinTargetHierarchy was applied */
+            if (target.project.multiplatformExtensionOrNull?.internalKotlinTargetHierarchy?.appliedDescriptors.orEmpty().isNotEmpty()) {
+                return@launch
+            }
 
-        when (variantType) {
-            AndroidVariantType.Main -> kotlinSourceSet.dependsOn(commonMain)
-            AndroidVariantType.UnitTest -> kotlinSourceSet.dependsOn(commonTest)
-            AndroidVariantType.InstrumentedTest, AndroidVariantType.Unknown -> Unit
+            /* Add default dependency on 'commonMain' or 'commonTest' */
+            val commonMain = target.project.kotlinExtension.sourceSets.getByName(COMMON_MAIN_SOURCE_SET_NAME)
+            val commonTest = target.project.kotlinExtension.sourceSets.getByName(COMMON_TEST_SOURCE_SET_NAME)
+
+            when (variantType) {
+                AndroidVariantType.Main -> kotlinSourceSet.dependsOn(commonMain)
+                AndroidVariantType.UnitTest -> kotlinSourceSet.dependsOn(commonTest)
+                AndroidVariantType.InstrumentedTest, AndroidVariantType.Unknown -> Unit
+            }
         }
     }
 }

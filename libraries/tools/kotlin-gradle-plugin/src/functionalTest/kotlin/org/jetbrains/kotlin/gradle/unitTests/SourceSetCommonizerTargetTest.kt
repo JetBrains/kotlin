@@ -9,6 +9,7 @@
 package org.jetbrains.kotlin.gradle.unitTests
 
 import org.gradle.api.Project
+import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.commonizer.CommonizerTarget
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.targets.native.internal.getCommonizerTarget
 import org.jetbrains.kotlin.gradle.util.addBuildEventsListenerRegistryMock
+import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -25,12 +27,12 @@ import kotlin.test.assertNull
 
 class SourceSetCommonizerTargetTest {
 
-    private lateinit var project: Project
+    private lateinit var project: ProjectInternal
     private lateinit var kotlin: KotlinMultiplatformExtension
 
     @BeforeTest
     fun setup() {
-        project = ProjectBuilder.builder().build()
+        project = buildProject()
         addBuildEventsListenerRegistryMock(project)
         project.extensions.getByType(ExtraPropertiesExtension::class.java).set("kotlin.mpp.enableCompatibilityMetadataVariant", "false")
         project.plugins.apply("kotlin-multiplatform")
@@ -54,6 +56,8 @@ class SourceSetCommonizerTargetTest {
         assertEquals(CommonizerTarget(LINUX_X64), getCommonizerTarget(linuxTest))
         assertEquals(CommonizerTarget(MACOS_X64), getCommonizerTarget(macosMain))
         assertEquals(CommonizerTarget(MACOS_X64), getCommonizerTarget(macosTest))
+
+        project.evaluate()
         assertEquals(CommonizerTarget(LINUX_X64, MACOS_X64), getCommonizerTarget(commonMain))
         assertEquals(CommonizerTarget(LINUX_X64, MACOS_X64), getCommonizerTarget(commonTest))
     }
@@ -75,12 +79,15 @@ class SourceSetCommonizerTargetTest {
         linuxMain.dependsOn(nativeMain)
         macosMain.dependsOn(nativeMain)
 
+
         assertEquals(CommonizerTarget(LINUX_X64), getCommonizerTarget(linuxMain))
         assertEquals(CommonizerTarget(LINUX_X64), getCommonizerTarget(linuxTest))
         assertEquals(CommonizerTarget(MACOS_X64), getCommonizerTarget(macosMain))
         assertEquals(CommonizerTarget(MACOS_X64), getCommonizerTarget(macosTest))
 
         assertEquals(CommonizerTarget(LINUX_X64, MACOS_X64), getCommonizerTarget(nativeMain))
+
+        project.evaluate()
         assertEquals(CommonizerTarget(LINUX_X64, MACOS_X64), getCommonizerTarget(commonMain))
         assertEquals(CommonizerTarget(LINUX_X64, MACOS_X64), getCommonizerTarget(commonTest))
     }
@@ -108,6 +115,8 @@ class SourceSetCommonizerTargetTest {
         assertEquals(LeafCommonizerTarget(LINUX_X64), getCommonizerTarget(linuxBTest))
 
         assertEquals(LeafCommonizerTarget(LINUX_X64), getCommonizerTarget(nativeMain))
+
+        project.evaluate()
         assertEquals(LeafCommonizerTarget(LINUX_X64), getCommonizerTarget(commonMain))
         assertEquals(LeafCommonizerTarget(LINUX_X64), getCommonizerTarget(commonTest))
     }
@@ -153,6 +162,9 @@ class SourceSetCommonizerTargetTest {
             CommonizerTarget(IOS_X64, IOS_ARM64, MACOS_X64, LINUX_X64),
             getCommonizerTarget(nativeMain)
         )
+
+        project.evaluate()
+
         assertEquals(
             CommonizerTarget(IOS_X64, IOS_ARM64, MACOS_X64, LINUX_X64),
             getCommonizerTarget(commonMain)
@@ -193,6 +205,7 @@ class SourceSetCommonizerTargetTest {
 
         assertEquals(CommonizerTarget(LINUX_X64, MACOS_X64), getCommonizerTarget(nativeMain))
 
+        project.evaluate()
         assertNull(getCommonizerTarget(commonMain), "Expected commonMain to have no commonizer target")
         assertNull(getCommonizerTarget(commonTest), "Expected commonTest to have no commonizer target")
     }

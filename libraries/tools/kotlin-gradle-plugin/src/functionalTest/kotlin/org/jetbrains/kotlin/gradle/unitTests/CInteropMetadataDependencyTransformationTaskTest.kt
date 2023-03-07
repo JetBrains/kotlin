@@ -82,6 +82,7 @@ class CInteropMetadataDependencyTransformationTaskTest : MultiplatformExtensionT
     @Test
     fun `test task disabled for non shared-native source sets`() {
         project.enableCInteropCommonization(true)
+        kotlin.targetHierarchy.default()
         kotlin.linuxArm64()
         kotlin.linuxX64()
         kotlin.jvm()
@@ -89,12 +90,11 @@ class CInteropMetadataDependencyTransformationTaskTest : MultiplatformExtensionT
         val commonMain = kotlin.sourceSets.getByName("commonMain")
         val linuxArm64Main = kotlin.sourceSets.getByName("linuxArm64Main")
         val linuxX64Main = kotlin.sourceSets.getByName("linuxX64Main")
-        val linuxMain = kotlin.sourceSets.create("linuxMain") as DefaultKotlinSourceSet
+        val linuxMain = kotlin.sourceSets.getByName("linuxMain") as DefaultKotlinSourceSet
 
         linuxMain.dependsOn(commonMain)
         linuxArm64Main.dependsOn(linuxMain)
         linuxX64Main.dependsOn(linuxMain)
-
 
         listOf(
             "commonMain", "jvmMain", "linuxArm64Main", "linuxX64Main"
