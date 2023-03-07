@@ -48,7 +48,6 @@ internal object LLFirSessionFactory {
         project: Project,
         module: KtSourceModule,
         globalResolveComponents: LLFirGlobalResolveComponents,
-        sessionInvalidator: LLFirSessionInvalidator,
         sessionsCache: MutableMap<KtModule, LLFirSession>
     ): LLFirSourcesSession {
         sessionsCache[module]?.let { return it as LLFirSourcesSession }
@@ -60,7 +59,7 @@ internal object LLFirSessionFactory {
 
         val scopeProvider = FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
 
-        val components = LLFirModuleResolveComponents(module, globalResolveComponents, scopeProvider, sessionInvalidator)
+        val components = LLFirModuleResolveComponents(module, globalResolveComponents, scopeProvider)
 
         val contentScope = module.contentScope
         val session = LLFirSourcesSession(
@@ -103,12 +102,7 @@ internal object LLFirSessionFactory {
             }
 
             val dependencyProvider = LLFirDependentModuleProvidersBySessions(this) {
-                processSourceDependencies(
-                    module,
-                    sessionsCache,
-                    globalResolveComponents,
-                    sessionInvalidator
-                )
+                processSourceDependencies(module, sessionsCache, globalResolveComponents)
 
                 add(builtinsSession)
             }
@@ -145,7 +139,6 @@ internal object LLFirSessionFactory {
         project: Project,
         module: KtModule,
         globalComponents: LLFirGlobalResolveComponents,
-        sessionInvalidator: LLFirSessionInvalidator,
         builtinSession: LLFirBuiltinsAndCloneableSession,
         sessionsCache: MutableMap<KtModule, LLFirSession>,
         languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT
@@ -161,7 +154,7 @@ internal object LLFirSessionFactory {
         }
 
         val scopeProvider = FirKotlinScopeProvider()
-        val components = LLFirModuleResolveComponents(module, globalComponents, scopeProvider, sessionInvalidator)
+        val components = LLFirModuleResolveComponents(module, globalComponents, scopeProvider)
 
         val contentScope = module.contentScope
         val session = LLFirLibraryOrLibrarySourceResolvableModuleSession(module, components, builtinSession.builtinTypes)
@@ -240,7 +233,6 @@ internal object LLFirSessionFactory {
     fun createScriptSession(
         project: Project,
         module: KtScriptModule,
-        sessionInvalidator: LLFirSessionInvalidator,
         sessionsCache: MutableMap<KtModule, LLFirSession>
     ): LLFirScriptSession {
         sessionsCache[module]?.let { return it as LLFirScriptSession }
@@ -252,7 +244,7 @@ internal object LLFirSessionFactory {
         val scopeProvider = FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
         val globalResolveComponents = LLFirGlobalResolveComponents(project)
 
-        val components = LLFirModuleResolveComponents(module, globalResolveComponents, scopeProvider, sessionInvalidator)
+        val components = LLFirModuleResolveComponents(module, globalResolveComponents, scopeProvider)
         val contentScope = module.contentScope
 
         val session = LLFirScriptSession(module, components, builtinsSession.builtinTypes)
@@ -286,8 +278,7 @@ internal object LLFirSessionFactory {
                 processSourceDependencies(
                     module,
                     sessionsCache,
-                    globalResolveComponents,
-                    sessionInvalidator
+                    globalResolveComponents
                 )
 
                 add(builtinsSession)
@@ -320,7 +311,6 @@ internal object LLFirSessionFactory {
     fun createNotUnderContentRootResolvableSession(
         project: Project,
         module: KtNotUnderContentRootModule,
-        sessionInvalidator: LLFirSessionInvalidator,
         sessionsCache: MutableMap<KtModule, LLFirSession>
     ): LLFirNonUnderContentRootResolvableModuleSession {
         sessionsCache[module]?.let { return it as LLFirNonUnderContentRootResolvableModuleSession }
@@ -330,7 +320,7 @@ internal object LLFirSessionFactory {
         val languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT
         val scopeProvider = FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
         val globalResolveComponents = LLFirGlobalResolveComponents(project)
-        val components = LLFirModuleResolveComponents(module, globalResolveComponents, scopeProvider, sessionInvalidator)
+        val components = LLFirModuleResolveComponents(module, globalResolveComponents, scopeProvider)
         val contentScope = module.contentScope
 
         val session = LLFirNonUnderContentRootResolvableModuleSession(module, components, builtinsSession.builtinTypes)
@@ -407,8 +397,7 @@ internal object LLFirSessionFactory {
     private fun MutableList<LLFirSession>.processSourceDependencies(
         module: KtModule,
         sessionsCache: MutableMap<KtModule, LLFirSession>,
-        globalResolveComponents: LLFirGlobalResolveComponents,
-        sessionInvalidator: LLFirSessionInvalidator
+        globalResolveComponents: LLFirGlobalResolveComponents
     ) {
         val project = module.project
 
@@ -427,7 +416,6 @@ internal object LLFirSessionFactory {
                     project,
                     dependency,
                     globalResolveComponents,
-                    sessionInvalidator,
                     sessionsCache
                 )
             }

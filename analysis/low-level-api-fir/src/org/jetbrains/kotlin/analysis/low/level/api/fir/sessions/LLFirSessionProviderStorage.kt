@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirGlobalResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirBuiltinsSessionFactory
-import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.addValueFor
 import org.jetbrains.kotlin.analysis.project.structure.*
 import java.lang.ref.SoftReference
@@ -49,7 +48,6 @@ class LLFirSessionProviderStorage(val project: Project) {
                 project,
                 useSiteKtModule,
                 globalComponents,
-                sourceAsUseSiteSessionCache.sessionInvalidator,
                 sessions
             )
             sessions to session
@@ -65,7 +63,6 @@ class LLFirSessionProviderStorage(val project: Project) {
                 project,
                 useSiteKtModule,
                 globalComponents,
-                libraryAsUseSiteSessionCache.sessionInvalidator,
                 builtInsSessionFactory.getBuiltinsSession(useSiteKtModule.platform),
                 sessions
             )
@@ -80,7 +77,6 @@ class LLFirSessionProviderStorage(val project: Project) {
             val session = LLFirSessionFactory.createScriptSession(
                 project,
                 useSiteKtModule,
-                sourceAsUseSiteSessionCache.sessionInvalidator,
                 sessions
             )
             sessions to session
@@ -94,7 +90,6 @@ class LLFirSessionProviderStorage(val project: Project) {
             val session = LLFirSessionFactory.createNotUnderContentRootResolvableSession(
                 project,
                 useSiteKtModule,
-                notUnderContentRootSessionCache.sessionInvalidator,
                 sessions
             )
             sessions to session
@@ -106,10 +101,6 @@ class LLFirSessionProviderStorage(val project: Project) {
 private class LLFirSessionsCache {
     @Volatile
     private var mappings: Map<KtModule, SoftReference<LLFirSession>> = emptyMap()
-
-    val sessionInvalidator: LLFirSessionInvalidator = LLFirSessionInvalidator { session ->
-        mappings[session.llFirModuleData.ktModule]?.get()?.invalidate()
-    }
 
     inline fun <R> withMappings(
         action: (Map<KtModule, LLFirSession>) -> Pair<Map<KtModule, LLFirSession>, R>
