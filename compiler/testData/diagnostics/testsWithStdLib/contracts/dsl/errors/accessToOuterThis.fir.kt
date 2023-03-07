@@ -10,7 +10,7 @@ class Foo {
     inner class Bar {
         fun good() {
             contract {
-                <!ERROR_IN_CONTRACT_DESCRIPTION!>returns() implies (this@Bar != null)<!>
+                returns() implies (this@Bar != null)
             }
         }
 
