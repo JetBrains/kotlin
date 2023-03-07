@@ -1331,7 +1331,7 @@ class DeclarationsConverter(
     /**
      * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.visitDestructuringDeclaration
      */
-    private fun convertDestructingDeclaration(destructingDeclaration: LighterASTNode): DestructuringDeclaration {
+    internal fun convertDestructingDeclaration(destructingDeclaration: LighterASTNode): DestructuringDeclaration {
         var modifiers = Modifier()
         var isVar = false
         val entries = mutableListOf<FirVariable?>()

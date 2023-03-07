@@ -126,6 +126,7 @@ class ExpressionsConverter(
 
             OBJECT_LITERAL -> declarationsConverter.convertObjectLiteral(expression)
             FUN -> declarationsConverter.convertFunctionDeclaration(expression)
+            DESTRUCTURING_DECLARATION -> declarationsConverter.convertDestructingDeclaration(expression).toFirDestructingDeclaration(baseModuleData)
             else -> buildErrorExpression(null, ConeSimpleDiagnostic(errorReason, DiagnosticKind.ExpressionExpected))
         }
     }
