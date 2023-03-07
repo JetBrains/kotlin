@@ -4,8 +4,13 @@ apply plugin: 'kotlin-multiplatform'
 group 'com.example'
 version '1.0'
 
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(8))
+}
+
 android {
     compileSdkVersion 27
+    namespace 'app.example.com.app_sample'
     defaultConfig {
         applicationId "app.example.com.app_sample"
         minSdkVersion 21

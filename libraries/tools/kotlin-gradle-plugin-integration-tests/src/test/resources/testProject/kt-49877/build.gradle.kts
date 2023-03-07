@@ -9,8 +9,13 @@ repositories {
     google()
 }
 
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(8))
+}
+
 android {
     compileSdk = 30
+    namespace = "foo.bar"
 }
 
 kotlin {
