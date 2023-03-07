@@ -27,6 +27,14 @@ import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurati
 import org.jetbrains.kotlin.gradle.targets.js.npm.SemVer
 import org.jetbrains.kotlin.gradle.utils.withType
 
+internal const val KOTLIN_STDLIB_COMMON_MODULE_NAME = "kotlin-stdlib-common"
+internal const val KOTLIN_STDLIB_MODULE_NAME = "kotlin-stdlib"
+internal const val KOTLIN_STDLIB_JDK7_MODULE_NAME = "kotlin-stdlib-jdk7"
+internal const val KOTLIN_STDLIB_JDK8_MODULE_NAME = "kotlin-stdlib-jdk8"
+internal const val KOTLIN_STDLIB_JS_MODULE_NAME = "kotlin-stdlib-js"
+internal const val KOTLIN_STDLIB_WASM_MODULE_NAME = "kotlin-stdlib-wasm"
+internal const val KOTLIN_ANDROID_JVM_STDLIB_MODULE_NAME = KOTLIN_STDLIB_JDK8_MODULE_NAME
+
 internal fun Project.configureStdlibDefaultDependency(
     topLevelExtension: KotlinTopLevelExtension,
     coreLibrariesVersion: Provider<String>
@@ -60,7 +68,7 @@ internal fun ConfigurationContainer.configureStdlibVersionAlignment() = all { co
             .withType<ExternalDependency>()
             .configureEach { dependency ->
                 if (dependency.group == KOTLIN_MODULE_GROUP &&
-                    (dependency.name == "kotlin-stdlib" || dependency.name == "kotlin-stdlib-jdk7") &&
+                    (dependency.name == KOTLIN_STDLIB_MODULE_NAME || dependency.name == KOTLIN_STDLIB_JDK7_MODULE_NAME) &&
                     dependency.version != null &&
                     SemVer.fromGradleRichVersion(dependency.version!!) >= kotlin180Version
                 ) {
@@ -82,7 +90,7 @@ private fun Configuration.alignStdlibJvmVariantVersions(
     kotlinStdlibDependency: ExternalDependency
 ) {
     resolutionStrategy.dependencySubstitution {
-        if (kotlinStdlibDependency.name != "kotlin-stdlib-jdk7") {
+        if (kotlinStdlibDependency.name != KOTLIN_STDLIB_JDK7_MODULE_NAME) {
             it.substitute(it.module("org.jetbrains.kotlin:kotlin-stdlib-jdk7"))
                 .using(it.module("org.jetbrains.kotlin:kotlin-stdlib-jdk7:${kotlinStdlibDependency.version}"))
                 .because("kotlin-stdlib-jdk7 is now part of kotlin-stdlib")
@@ -101,16 +109,16 @@ private fun addStdlibToKpmProject(
     project.pm20Extension.modules.named(GradleKpmModule.MAIN_MODULE_NAME) { main ->
         main.fragments.named(GradleKpmFragment.COMMON_FRAGMENT_NAME) { common ->
             common.dependencies {
-                api(project.dependencies.kotlinDependency("kotlin-stdlib-common", coreLibrariesVersion.get()))
+                api(project.dependencies.kotlinDependency(KOTLIN_STDLIB_COMMON_MODULE_NAME, coreLibrariesVersion.get()))
             }
         }
         main.variants.configureEach { variant ->
             val dependencyHandler = project.dependencies
             val stdlibModule = when (variant.platformType) {
                 KotlinPlatformType.common -> error("variants are not expected to be common")
-                KotlinPlatformType.jvm -> "kotlin-stdlib-jdk8"
-                KotlinPlatformType.js -> "kotlin-stdlib-js"
-                KotlinPlatformType.wasm -> "kotlin-stdlib-wasm"
+                KotlinPlatformType.jvm -> KOTLIN_STDLIB_JDK8_MODULE_NAME
+                KotlinPlatformType.js -> KOTLIN_STDLIB_JS_MODULE_NAME
+                KotlinPlatformType.wasm -> KOTLIN_STDLIB_WASM_MODULE_NAME
                 KotlinPlatformType.androidJvm -> null // TODO: expect support on the AGP side?
                 KotlinPlatformType.native -> null
             }
@@ -189,26 +197,26 @@ internal fun isStdlibAddedByUser(
         }
 }
 
-private fun KotlinPlatformType.stdlibPlatformType(
+internal fun KotlinPlatformType.stdlibPlatformType(
     kotlinTarget: KotlinTarget,
     kotlinSourceSet: KotlinSourceSet
 ): String? = when (this) {
-    KotlinPlatformType.jvm -> "kotlin-stdlib-jdk8"
+    KotlinPlatformType.jvm -> KOTLIN_STDLIB_JDK8_MODULE_NAME
     KotlinPlatformType.androidJvm -> {
         if (kotlinTarget is KotlinAndroidTarget &&
             kotlinSourceSet.androidSourceSetInfoOrNull?.androidSourceSetName == AndroidBaseSourceSetName.Main.name
         ) {
-            "kotlin-stdlib-jdk8"
+            KOTLIN_ANDROID_JVM_STDLIB_MODULE_NAME
         } else {
             null
         }
     }
 
-    KotlinPlatformType.js -> "kotlin-stdlib-js"
-    KotlinPlatformType.wasm -> "kotlin-stdlib-wasm"
+    KotlinPlatformType.js -> KOTLIN_STDLIB_JS_MODULE_NAME
+    KotlinPlatformType.wasm -> KOTLIN_STDLIB_WASM_MODULE_NAME
     KotlinPlatformType.native -> null
     KotlinPlatformType.common -> // there's no platform compilation that the source set is default for
-        "kotlin-stdlib-common"
+        KOTLIN_STDLIB_COMMON_MODULE_NAME
 }
 
 private val androidTestVariants = setOf(AndroidVariantType.UnitTest, AndroidVariantType.InstrumentedTest)
@@ -221,9 +229,9 @@ private fun KotlinSourceSet.isRelatedToAndroidTestSourceSet(): Boolean {
 }
 
 internal val stdlibModules = setOf(
-    "kotlin-stdlib-common",
-    "kotlin-stdlib",
-    "kotlin-stdlib-jdk7",
-    "kotlin-stdlib-jdk8",
-    "kotlin-stdlib-js"
+    KOTLIN_STDLIB_COMMON_MODULE_NAME,
+    KOTLIN_STDLIB_MODULE_NAME,
+    KOTLIN_STDLIB_JDK7_MODULE_NAME,
+    KOTLIN_STDLIB_JDK8_MODULE_NAME,
+    KOTLIN_STDLIB_JS_MODULE_NAME,
 )
