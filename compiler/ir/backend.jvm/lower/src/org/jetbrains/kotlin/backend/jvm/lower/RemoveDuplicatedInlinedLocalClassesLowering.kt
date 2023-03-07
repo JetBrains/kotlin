@@ -30,6 +30,12 @@ internal val removeDuplicatedInlinedLocalClasses = makeIrFilePhase(
     prerequisite = setOf(functionInliningPhase, localDeclarationsPhase)
 )
 
+data class Data(
+    var classDeclaredOnCallSiteOrIsDefaultLambda: Boolean = false,
+    var insideInlineBlock: Boolean = false,
+    var modifyTree: Boolean = true,
+)
+
 // There are three types of inlined local classes:
 // 1. MUST BE regenerated according to set of rules in AnonymousObjectTransformationInfo.
 // They all have `originalBeforeInline != null`.
@@ -37,49 +43,45 @@ internal val removeDuplicatedInlinedLocalClasses = makeIrFilePhase(
 // This lambda will not exist after inline, so we copy declaration into new temporary inline call `singleArgumentInlineFunction`.
 // 3. MUST NOT BE created at all because will be created at callee site.
 // This lowering drops declarations that correspond to second and third type.
-class RemoveDuplicatedInlinedLocalClassesLowering(val context: JvmBackendContext) : IrElementTransformer<Boolean>, FileLoweringPass {
-    private var insideInlineBlock = false
+class RemoveDuplicatedInlinedLocalClassesLowering(val context: JvmBackendContext) : IrElementTransformer<Data>, FileLoweringPass {
     private val visited = mutableSetOf<IrElement>()
-
-    private var modifyTree: Boolean = true
-
     private val capturedConstructors = context.mapping.capturedConstructors
 
-    private fun removeUselessDeclarationsFromCapturedConstructors(irClass: IrClass) {
-        modifyTree = false
+    private fun removeUselessDeclarationsFromCapturedConstructors(irClass: IrClass, data: Data) {
         irClass.parents.first { it !is IrFunction || it.origin != JvmLoweredDeclarationOrigin.INLINE_LAMBDA }
-            .accept(this, false)
+            .accept(this, data.copy(classDeclaredOnCallSiteOrIsDefaultLambda = false, modifyTree = false))
     }
 
     override fun lower(irFile: IrFile) {
-        irFile.transformChildren(this, false)
+        irFile.transformChildren(this, Data())
     }
 
-    override fun visitCall(expression: IrCall, data: Boolean): IrElement {
+    override fun visitCall(expression: IrCall, data: Data): IrElement {
         if (expression.symbol == context.ir.symbols.singleArgumentInlineFunction) return expression
         return super.visitCall(expression, data)
     }
 
-    override fun visitBlock(expression: IrBlock, data: Boolean): IrExpression {
+    override fun visitBlock(expression: IrBlock, data: Data): IrExpression {
         if (expression is IrInlinedFunctionBlock) {
-            val oldInsideInlineBlock = insideInlineBlock
-            insideInlineBlock = true
-            expression.getNonDefaultAdditionalStatementsFromInlinedBlock().forEach { it.transform(this, false) }
-            expression.getDefaultAdditionalStatementsFromInlinedBlock().forEach { it.transform(this, true) }
-            expression.getOriginalStatementsFromInlinedBlock().forEach { it.transform(this, true) }
-            insideInlineBlock = oldInsideInlineBlock
+            val newData = data.copy(insideInlineBlock = true)
+            expression.getNonDefaultAdditionalStatementsFromInlinedBlock()
+                .forEach { it.transform(this, newData.copy(classDeclaredOnCallSiteOrIsDefaultLambda = false)) }
+            expression.getDefaultAdditionalStatementsFromInlinedBlock()
+                .forEach { it.transform(this, newData.copy(classDeclaredOnCallSiteOrIsDefaultLambda = true)) }
+            expression.getOriginalStatementsFromInlinedBlock()
+                .forEach { it.transform(this, newData.copy(classDeclaredOnCallSiteOrIsDefaultLambda = true)) }
             return expression
         }
 
         val anonymousClass = expression.statements.firstOrNull()
         val result = super.visitBlock(expression, data)
         if (anonymousClass is IrClass && result is IrBlock && result.statements.firstOrNull() is IrComposite) {
-            reuseConstructorFromOriginalClass(result, anonymousClass)
+            reuseConstructorFromOriginalClass(result, anonymousClass, data)
         }
         return result
     }
 
-    private fun reuseConstructorFromOriginalClass(block: IrBlock, anonymousClass: IrClass) {
+    private fun reuseConstructorFromOriginalClass(block: IrBlock, anonymousClass: IrClass, data: Data) {
         val lastStatement = block.statements.last()
         val constructorCall = (lastStatement as? IrConstructorCall)
             ?: (lastStatement as IrBlock).statements.last() as IrConstructorCall
@@ -98,7 +100,7 @@ class RemoveDuplicatedInlinedLocalClassesLowering(val context: JvmBackendContext
 
         // We must remove all constructors from `capturedConstructors` that belong to the classes that will be removed
         capturedConstructors.keys.forEach {
-            RemoveDuplicatedInlinedLocalClassesLowering(context).removeUselessDeclarationsFromCapturedConstructors(it.parentAsClass)
+            RemoveDuplicatedInlinedLocalClassesLowering(context).removeUselessDeclarationsFromCapturedConstructors(it.parentAsClass, data)
         }
 
         val originalConstructor = capturedConstructors.keys.single {
@@ -122,8 +124,8 @@ class RemoveDuplicatedInlinedLocalClassesLowering(val context: JvmBackendContext
     // Basically we want to remove all anonymous classes after inline. Exceptions are:
     // 1. classes that must be regenerated (declaration.originalBeforeInline != null)
     // 2. classes that are originally declared on call site or are default lambdas (data == true)
-    override fun visitClass(declaration: IrClass, data: Boolean): IrStatement {
-        if (!insideInlineBlock || declaration.originalBeforeInline != null || !data) {
+    override fun visitClass(declaration: IrClass, data: Data): IrStatement {
+        if (!data.insideInlineBlock || declaration.originalBeforeInline != null || !data.classDeclaredOnCallSiteOrIsDefaultLambda) {
             return super.visitClass(declaration, data)
         }
 
@@ -137,14 +139,14 @@ class RemoveDuplicatedInlinedLocalClassesLowering(val context: JvmBackendContext
             }
         }
 
-        return if (modifyTree) {
+        return if (data.modifyTree) {
             IrCompositeImpl(declaration.startOffset, declaration.endOffset, context.irBuiltIns.unitType)
         } else {
             super.visitClass(declaration, data)
         }
     }
 
-    override fun visitFunctionReference(expression: IrFunctionReference, data: Boolean): IrElement {
+    override fun visitFunctionReference(expression: IrFunctionReference, data: Data): IrElement {
         if (!visited.add(expression.symbol.owner)) return expression
         expression.symbol.owner.accept(this, data)
         return super.visitFunctionReference(expression, data)
