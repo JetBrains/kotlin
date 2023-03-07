@@ -15,8 +15,8 @@ interface KotlinTargetHierarchyBuilder {
     /* low-level APIs */
     fun withCompilations(predicate: (KotlinCompilation<*>) -> Boolean)
     fun withoutCompilations(predicate: (KotlinCompilation<*>) -> Boolean)
-    fun filterCompilations(predicate: (KotlinCompilation<*>) -> Boolean) =
-        withoutCompilations { !predicate(it) }
+    @Deprecated("Use plain 'withoutCompilations(!predicate) instead'", ReplaceWith("withoutCompilations { !predicate(it) }"))
+    fun filterCompilations(predicate: (KotlinCompilation<*>) -> Boolean) = withoutCompilations { !predicate(it) }
 
     /* Convenient groups */
     fun withNative()
