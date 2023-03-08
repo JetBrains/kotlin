@@ -78,6 +78,7 @@ dependencies {
     testImplementation(projectTests(":compiler:tests-common-new"))
     testImplementation(projectTests(":js:js.tests"))
     testImplementation(project(":kotlin-gradle-compiler-types"))
+    testImplementation(project(":jps:jps-common"))
     testApiJUnit5()
 
     if (Ide.IJ()) {
@@ -90,6 +91,8 @@ dependencies {
 projectTest(parallel = true) {
     workingDir = rootDir
 }
+
+val generateCompilerArgumentsCopy by generator("org.jetbrains.kotlin.generators.arguments.GenerateCompilerArgumentsCopyKt")
 
 val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateTestsKt") {
     dependsOn(":generators:analysis-api-generator:generateFrontendApiTests")

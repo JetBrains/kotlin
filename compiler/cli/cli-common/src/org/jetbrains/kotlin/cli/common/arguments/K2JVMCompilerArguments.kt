@@ -923,4 +923,6 @@ Also sets `-jvm-target` value equal to the selected JDK version"""
             )
         }
     }
+
+    override fun copyOf(): Freezable = copyK2JVMCompilerArguments(this, K2JVMCompilerArguments())
 }

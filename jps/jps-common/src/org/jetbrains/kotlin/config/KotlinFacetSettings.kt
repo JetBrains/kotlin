@@ -177,7 +177,7 @@ class KotlinFacetSettings {
         val compilerSettings = compilerSettings
 
         mergedCompilerArguments = if (compilerArguments != null) {
-            copyBean(compilerArguments).apply {
+            compilerArguments.copyOf().apply {
                 if (compilerSettings != null) {
                     parseCommandLineArguments(compilerSettings.additionalArgumentsAsList, this)
                 }

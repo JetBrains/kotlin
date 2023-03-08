@@ -1069,5 +1069,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
             }
 
     // Used only for serialize and deserialize settings. Don't use in other places!
-    class DummyImpl : CommonCompilerArguments()
+    class DummyImpl : CommonCompilerArguments() {
+        override fun copyOf(): Freezable = copyCommonCompilerArguments(this, DummyImpl())
+    }
 }

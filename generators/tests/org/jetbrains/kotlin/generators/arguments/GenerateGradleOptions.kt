@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.File
-import java.io.PrintStream
 import kotlin.reflect.KAnnotatedElement
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
@@ -145,18 +144,7 @@ fun generateKotlinGradleOptions(withPrinterToFile: (targetFile: File, Printer.()
 }
 
 fun main() {
-    fun getPrinter(file: File, fn: Printer.() -> Unit) {
-        if (!file.exists()) {
-            file.parentFile.mkdirs()
-            file.createNewFile()
-        }
-        PrintStream(file.outputStream()).use {
-            val printer = Printer(it)
-            printer.fn()
-        }
-    }
-
-    generateKotlinGradleOptions(::getPrinter)
+    generateKotlinGradleOptions(::getPrinterToFile)
 }
 
 private fun generateKotlinCommonToolOptions(

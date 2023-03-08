@@ -9,6 +9,8 @@
 package org.jetbrains.kotlin.platform.impl
 
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.Freezable
+import org.jetbrains.kotlin.cli.common.arguments.copyCommonCompilerArguments
 import org.jetbrains.kotlin.platform.IdePlatform
 import org.jetbrains.kotlin.platform.IdePlatformKind
 import org.jetbrains.kotlin.platform.TargetPlatform
@@ -57,7 +59,9 @@ object NativeIdePlatformKind : IdePlatformKind() {
 }
 
 // These are fake compiler arguments for Kotlin/Native - only for usage within IDEA plugin:
-class FakeK2NativeCompilerArguments : CommonCompilerArguments()
+class FakeK2NativeCompilerArguments : CommonCompilerArguments() {
+    override fun copyOf(): Freezable = copyCommonCompilerArguments(this, FakeK2NativeCompilerArguments())
+}
 
 val IdePlatformKind?.isKotlinNative
     get() = this is NativeIdePlatformKind

@@ -364,14 +364,14 @@ private fun KotlinFacetSettings.writeConfig(element: Element) {
             element.addContent(Element("testOutputPath").apply { addContent(FileUtilRt.toSystemIndependentName(it)) })
         }
     }
-    compilerSettings?.let { copyBean(it) }?.let {
+    compilerSettings?.copyOf()?.let {
         it.convertPathsToSystemIndependent()
         buildChildElement(element, "compilerSettings", it, filter)
     }
 }
 
 private fun KotlinFacetSettings.writeV2toV4Config(element: Element) = writeConfig(element).apply {
-    compilerArguments?.let { copyBean(it) }?.let {
+    compilerArguments?.copyOf()?.let {
         it.convertPathsToSystemIndependent()
         val compilerArgumentsXml = buildChildElement(element, "compilerArguments", it, SkipDefaultsSerializationFilter())
         compilerArgumentsXml.dropVersionsIfNecessary(it)
@@ -379,7 +379,7 @@ private fun KotlinFacetSettings.writeV2toV4Config(element: Element) = writeConfi
 }
 
 private fun KotlinFacetSettings.writeLatestConfig(element: Element) = writeConfig(element).apply {
-    compilerArguments?.let { copyBean(it) }?.let {
+    compilerArguments?.copyOf()?.let {
         it.convertPathsToSystemIndependent()
         val compilerArgumentsXml = CompilerArgumentsSerializerV5(it).serializeTo(element)
         compilerArgumentsXml.dropVersionsIfNecessary(it)

@@ -26,8 +26,7 @@ import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.javaField
 
-@Suppress("UNCHECKED_CAST")
-fun <T : Any> copyBean(bean: T) = copyBeanTo(bean, bean::class.java.newInstance()!!)
+fun <T : Any> copyBean(bean: T): T = copyBeanTo(bean, bean::class.java.newInstance())
 
 @Suppress("UNCHECKED_CAST")
 fun <T : Any> copyBeanTo(from: T, to: T, filter: ((KProperty1<T, Any?>, Any?) -> Boolean)? = null) =
