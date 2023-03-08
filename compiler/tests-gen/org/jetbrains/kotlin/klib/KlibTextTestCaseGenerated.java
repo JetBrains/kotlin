@@ -227,6 +227,11 @@ public class KlibTextTestCaseGenerated extends AbstractKlibTextTestCase {
             runTest("compiler/testData/ir/irText/classes/secondaryConstructors.kt");
         }
 
+        @TestMetadata("smartCastInValInitialization.kt")
+        public void testSmartCastInValInitialization() throws Exception {
+            runTest("compiler/testData/ir/irText/classes/smartCastInValInitialization.kt");
+        }
+
         @TestMetadata("superCalls.kt")
         public void testSuperCalls() throws Exception {
             runTest("compiler/testData/ir/irText/classes/superCalls.kt");

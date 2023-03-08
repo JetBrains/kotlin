@@ -305,6 +305,12 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
         }
 
         @Test
+        @TestMetadata("smartCastInValInitialization.kt")
+        public void testSmartCastInValInitialization() throws Exception {
+            runTest("compiler/testData/ir/irText/classes/smartCastInValInitialization.kt");
+        }
+
+        @Test
         @TestMetadata("superCalls.kt")
         public void testSuperCalls() throws Exception {
             runTest("compiler/testData/ir/irText/classes/superCalls.kt");
