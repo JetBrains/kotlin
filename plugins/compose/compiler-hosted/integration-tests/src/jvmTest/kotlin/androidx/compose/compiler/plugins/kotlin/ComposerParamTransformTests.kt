@@ -851,7 +851,7 @@ class ComposerParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(use
                         if (isTraceInProgress()) {
                           traceEventStart(<>, %changed, -1, <>)
                         }
-                        val tmp0 = foo%delegate.getValue(null, ::foo%delegate, %composer, 0b00110000)
+                        val tmp0 = foo%delegate.getValue(null, ::foo%delegate, %composer, 0b001000110000)
                         if (isTraceInProgress()) {
                           traceEventEnd()
                         }
@@ -867,7 +867,7 @@ class ComposerParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(use
                         if (isTraceInProgress()) {
                           traceEventStart(<>, %changed, -1, <>)
                         }
-                        val tmp0 = fooDelegate%delegate.getValue(null, ::fooDelegate%delegate, %composer, 0b0110)
+                        val tmp0 = fooDelegate%delegate.getValue(null, ::fooDelegate%delegate, %composer, 0b01000110)
                         if (isTraceInProgress()) {
                           traceEventEnd()
                         }
@@ -941,7 +941,7 @@ class ComposerParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(use
                     if (isTraceInProgress()) {
                       traceEventStart(<>, %changed, -1, <>)
                     }
-                    val tmp0 = foo%delegate.getValue(null, ::foo%delegate, %composer, 0b00111000)
+                    val tmp0 = foo%delegate.getValue(null, ::foo%delegate, %composer, 0b001000111000)
                     if (isTraceInProgress()) {
                       traceEventEnd()
                     }
@@ -1012,7 +1012,7 @@ class ComposerParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(use
                     if (isTraceInProgress()) {
                       traceEventStart(<>, %changed, -1, <>)
                     }
-                    val tmp0 = delegated%delegate.getValue(null, ::delegated%delegate, %composer, 0b00110000 or 0b1110 and %dirty)
+                    val tmp0 = delegated%delegate.getValue(null, ::delegated%delegate, %composer, 0b001000110000 or 0b1110 and %dirty)
                     if (isTraceInProgress()) {
                       traceEventEnd()
                     }

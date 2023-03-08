@@ -69,6 +69,10 @@ object ComposeConfiguration {
         CompilerConfigurationKey<Boolean>("Generate decoy methods in IR transform")
     val STRONG_SKIPPING_ENABLED_KEY =
         CompilerConfigurationKey<Boolean>("Enable strong skipping mode")
+    val STABLE_TYPES_KEY =
+        CompilerConfigurationKey<List<String>>(
+            "Fully qualified name of external types known to be stable"
+        )
 }
 
 @OptIn(ExperimentalCompilerApi::class)
@@ -146,6 +150,13 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
             required = false,
             allowMultipleOccurrences = false
         )
+        val STABLE_TYPES_OPTION = CliOption(
+            "stableType",
+            "<fqName>",
+            "Fully qualified name of external types known to be stable",
+            required = false,
+            allowMultipleOccurrences = true
+        )
     }
 
     override val pluginId = PLUGIN_ID
@@ -206,6 +217,10 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
         STRONG_SKIPPING_OPTION -> configuration.put(
             ComposeConfiguration.STRONG_SKIPPING_ENABLED_KEY,
             value == "true"
+        )
+        STABLE_TYPES_OPTION -> configuration.appendList(
+            ComposeConfiguration.STABLE_TYPES_KEY,
+            value
         )
         else -> throw CliOptionProcessingException("Unknown option: ${option.optionName}")
     }
@@ -369,10 +384,15 @@ class ComposePluginRegistrar : org.jetbrains.kotlin.compiler.plugin.ComponentReg
             val validateIr = configuration.getBoolean(
                 JVMConfigurationKeys.VALIDATE_IR
             )
+
             val useK2 = configuration.languageVersionSettings.languageVersion.usesK2
             val strongSkippingEnabled = configuration.get(
                 ComposeConfiguration.STRONG_SKIPPING_ENABLED_KEY,
                 false
+            )
+
+            val knownStableTypes = configuration.getList(
+                ComposeConfiguration.STABLE_TYPES_KEY,
             )
 
             return ComposeIrGenerationExtension(
@@ -386,7 +406,8 @@ class ComposePluginRegistrar : org.jetbrains.kotlin.compiler.plugin.ComponentReg
                 reportsDestination = reportsDestination,
                 validateIr = validateIr,
                 useK2 = useK2,
-                strongSkippingEnabled = strongSkippingEnabled
+                strongSkippingEnabled = strongSkippingEnabled,
+                knownStableTypes = knownStableTypes.toSet()
             )
         }
     }
