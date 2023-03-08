@@ -27168,6 +27168,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                     runTest("compiler/testData/codegen/box/multiplatform/k2/basic/accessToLocalClassFromBackend.kt");
                 }
 
+                @TestMetadata("actualFunctionWithArgumentOfExpectType.kt")
+                public void testActualFunctionWithArgumentOfExpectType() throws Exception {
+                    runTest("compiler/testData/codegen/box/multiplatform/k2/basic/actualFunctionWithArgumentOfExpectType.kt");
+                }
+
                 public void testAllFilesPresentInBasic() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/basic"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
                 }

@@ -35,10 +35,24 @@ fun Map<String, List<IrDeclaration>>.getMatch(
 }
 
 private fun IrFunction.match(actualFunction: IrFunction, expectActualTypesMap: Map<IrSymbol, IrSymbol>): Boolean {
+    fun getActualizedValueParameterSymbol(
+        expectParameter: IrValueParameter,
+        localTypeParametersMap: Map<IrTypeParameterSymbol, IrTypeParameterSymbol>? = null
+    ): IrSymbol {
+        return expectParameter.type.classifierOrFail.let {
+            val localMappedSymbol = if (localTypeParametersMap != null && it is IrTypeParameterSymbol) {
+                localTypeParametersMap[it]
+            } else {
+                null
+            }
+            localMappedSymbol ?: expectActualTypesMap[it] ?: it
+        }
+    }
+
     fun checkParameter(
         expectParameter: IrValueParameter?,
         actualParameter: IrValueParameter?,
-        typeParametersMap: Map<IrTypeParameterSymbol, IrTypeParameterSymbol>
+        localTypeParametersMap: Map<IrTypeParameterSymbol, IrTypeParameterSymbol>
     ): Boolean {
         if (expectParameter == null) {
             return actualParameter == null
@@ -47,17 +61,9 @@ private fun IrFunction.match(actualFunction: IrFunction, expectActualTypesMap: M
             return false
         }
 
-        val actualizedParameterTypeSymbol = expectParameter.type.classifierOrFail.let {
-            var mappedSymbol: IrSymbol? = null
-            if (it is IrTypeParameterSymbol) {
-                mappedSymbol = typeParametersMap[it]
-            }
-            if (mappedSymbol == null) {
-                mappedSymbol = expectActualTypesMap[it] ?: it
-            }
-            mappedSymbol
-        }
-        if (actualizedParameterTypeSymbol != actualParameter.type.classifierOrFail) {
+        if (getActualizedValueParameterSymbol(expectParameter, localTypeParametersMap) !=
+            getActualizedValueParameterSymbol(actualParameter)
+        ) {
             return false
         }
         return true
@@ -67,20 +73,20 @@ private fun IrFunction.match(actualFunction: IrFunction, expectActualTypesMap: M
         return false
     }
 
-    val typeParametersMap = mutableMapOf<IrTypeParameterSymbol, IrTypeParameterSymbol>()
+    val localTypeParametersMap = mutableMapOf<IrTypeParameterSymbol, IrTypeParameterSymbol>()
     for ((expectTypeParameter, actualTypeParameter) in typeParameters.zip(actualFunction.typeParameters)) {
         if (expectTypeParameter.name != actualTypeParameter.name) {
             return false
         }
-        typeParametersMap[expectTypeParameter.symbol] = actualTypeParameter.symbol
+        localTypeParametersMap[expectTypeParameter.symbol] = actualTypeParameter.symbol
     }
 
-    if (!checkParameter(extensionReceiverParameter, actualFunction.extensionReceiverParameter, typeParametersMap)) {
+    if (!checkParameter(extensionReceiverParameter, actualFunction.extensionReceiverParameter, localTypeParametersMap)) {
         return false
     }
 
     for ((expectParameter, actualParameter) in valueParameters.zip(actualFunction.valueParameters)) {
-        if (!checkParameter(expectParameter, actualParameter, typeParametersMap)) {
+        if (!checkParameter(expectParameter, actualParameter, localTypeParametersMap)) {
             return false
         }
     }

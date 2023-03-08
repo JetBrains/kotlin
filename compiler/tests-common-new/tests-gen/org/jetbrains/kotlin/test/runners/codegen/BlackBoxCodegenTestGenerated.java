@@ -31889,6 +31889,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 }
 
                 @Test
+                @TestMetadata("actualFunctionWithArgumentOfExpectType.kt")
+                public void testActualFunctionWithArgumentOfExpectType() throws Exception {
+                    runTest("compiler/testData/codegen/box/multiplatform/k2/basic/actualFunctionWithArgumentOfExpectType.kt");
+                }
+
+                @Test
                 public void testAllFilesPresentInBasic() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/basic"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
                 }
