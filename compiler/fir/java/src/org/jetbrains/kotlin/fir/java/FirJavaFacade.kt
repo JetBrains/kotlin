@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.load.java.structure.impl.JavaElementImpl
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.types.Variance.INVARIANT
-import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class FirJavaFacadeForSource(
     session: FirSession,
@@ -66,7 +65,7 @@ abstract class FirJavaFacade(
     }
 
     private val packageCache = session.firCachesFactory.createCache { fqName: FqName ->
-        val knownClassNames: Set<String>? = knownClassNamesInPackage.getValue(fqName)
+        val knownClassNames: Set<String>? = knownClassNamesInPackage(fqName)
         classFinder.findPackage(
             fqName,
             mayHaveAnnotations = if (knownClassNames != null) PACKAGE_INFO_CLASS_NAME in knownClassNames else true
@@ -86,11 +85,15 @@ abstract class FirJavaFacade(
         packageCache.getValue(fqName)?.fqName
 
     fun hasTopLevelClassOf(classId: ClassId): Boolean {
-        val knownNames = knownClassNamesInPackage.getValue(classId.packageFqName) ?: return true
+        val knownNames = knownClassNamesInPackage(classId.packageFqName) ?: return true
         return classId.relativeClassName.topLevelName() in knownNames
     }
 
-    fun knownClassNamesInPackage(packageFqName: FqName): Set<String>? = knownClassNamesInPackage.getValue(packageFqName)
+    fun knownClassNamesInPackage(packageFqName: FqName): Set<String>? {
+        // Avoid filling the cache with `null`s and accessing the cache if `knownClassNamesInPackage` cannot be calculated anyway.
+        if (!classFinder.canComputeKnownClassNamesInPackage()) return null
+        return knownClassNamesInPackage.getValue(packageFqName)
+    }
 
     abstract fun getModuleDataForClass(javaClass: JavaClass): FirModuleData
 

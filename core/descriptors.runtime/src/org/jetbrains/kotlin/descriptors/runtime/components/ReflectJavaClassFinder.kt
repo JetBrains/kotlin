@@ -42,6 +42,7 @@ class ReflectJavaClassFinder(private val classLoader: ClassLoader) : JavaClassFi
     }
 
     override fun knownClassNamesInPackage(packageFqName: FqName): Set<String>? = null
+    override fun canComputeKnownClassNamesInPackage(): Boolean = false
 }
 
 fun ClassLoader.tryLoadClass(fqName: String) =

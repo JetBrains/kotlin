@@ -52,4 +52,7 @@ class JavaClassFinderImpl : AbstractJavaClassFinder() {
         return javaFacade.knownClassNamesInPackage(packageFqName, javaSearchScope)
     }
 
+    override fun canComputeKnownClassNamesInPackage(): Boolean {
+        return javaFacade.canComputeKnownClassNamesInPackage()
+    }
 }

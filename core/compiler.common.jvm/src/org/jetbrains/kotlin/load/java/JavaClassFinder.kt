@@ -24,4 +24,10 @@ interface JavaClassFinder {
     fun findPackage(fqName: FqName, mayHaveAnnotations: Boolean = true): JavaPackage?
 
     fun knownClassNamesInPackage(packageFqName: FqName): Set<String>?
+
+    /**
+     * Whether [knownClassNamesInPackage] can be computed. When [canComputeKnownClassNamesInPackage] is `false`, [knownClassNamesInPackage]
+     * will always return `null`.
+     */
+    fun canComputeKnownClassNamesInPackage(): Boolean
 }

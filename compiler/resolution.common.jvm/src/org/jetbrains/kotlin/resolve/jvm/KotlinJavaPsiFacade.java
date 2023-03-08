@@ -220,11 +220,16 @@ public class KotlinJavaPsiFacade implements Disposable {
 
         KotlinPsiElementFinderWrapper[] finders = finders();
 
-        if (finders.length == 1 && finders[0] instanceof CliFinder) {
+        if (canComputeKnownClassNamesInPackage()) {
             return ((CliFinder) finders[0]).knownClassNamesInPackage(packageFqName);
         }
 
         return null;
+    }
+
+    public Boolean canComputeKnownClassNamesInPackage() {
+        KotlinPsiElementFinderWrapper[] finders = finders();
+        return finders.length == 1 && finders[0] instanceof CliFinder;
     }
 
     @NotNull

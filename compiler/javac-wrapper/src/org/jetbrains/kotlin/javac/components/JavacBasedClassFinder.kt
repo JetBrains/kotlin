@@ -45,4 +45,5 @@ class JavacBasedClassFinder : AbstractJavaClassFinder() {
     override fun findPackage(fqName: FqName, mayHaveAnnotations: Boolean) = javac.findPackage(fqName, javaSearchScope)
 
     override fun knownClassNamesInPackage(packageFqName: FqName) = javac.knownClassNamesInPackage(packageFqName)
+    override fun canComputeKnownClassNamesInPackage(): Boolean = true
 }
