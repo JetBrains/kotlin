@@ -95,3 +95,12 @@ public inline fun <reified T : Enum<T>> enumValues(): Array<T>
 public inline fun <reified T : Enum<T>> enumValueOf(name: String): T
 
 inline operator fun <reified T> VArray<T>.iterator(): VArrayIterator<T>
+
+inline operator fun VArray<Byte>.iterator(): ByteIterator
+inline operator fun VArray<Short>.iterator(): ShortIterator
+inline operator fun VArray<Int>.iterator(): IntIterator
+inline operator fun VArray<Long>.iterator(): LongIterator
+inline operator fun VArray<Float>.iterator(): FloatIterator
+inline operator fun VArray<Double>.iterator(): DoubleIterator
+inline operator fun VArray<Char>.iterator(): CharIterator
+inline operator fun VArray<Boolean>.iterator(): BooleanIterator

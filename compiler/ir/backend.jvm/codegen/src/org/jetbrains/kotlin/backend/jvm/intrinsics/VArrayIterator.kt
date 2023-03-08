@@ -38,7 +38,7 @@ object VArrayIterator : IntrinsicMethod() {
             if (AsmUtil.isPrimitive(receiverTypeMapped.elementType)) {
                 it.invokestatic(
                     "kotlin/jvm/internal/ArrayIteratorsKt",
-                    "iterator",
+                    "vArrayIterator",
                     "(${receiverTypeMapped.descriptor})${getPrimitiveIteratorType(getKotlinPrimitiveClassName(receiverTypeMapped.elementType))}",
                     false
                 )
