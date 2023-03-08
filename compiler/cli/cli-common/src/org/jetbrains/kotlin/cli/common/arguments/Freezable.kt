@@ -23,7 +23,10 @@ abstract class Freezable {
 
     private var frozen: Boolean = false
 
-    internal fun getInstanceWithFreezeStatus(value: Boolean) = if (value == frozen) this else copyBean(this).apply { frozen = value }
+    protected abstract fun clone(): Freezable
+
+    internal fun cloneInternal(): Freezable = clone()
+    internal fun getInstanceWithFreezeStatus(value: Boolean) = if (value == frozen) this else clone().apply { frozen = value }
 
     @Deprecated(level = DeprecationLevel.HIDDEN, message = "Please use type safe extension functions")
     fun frozen() = getInstanceWithFreezeStatus(true)
@@ -31,6 +34,9 @@ abstract class Freezable {
     @Deprecated(level = DeprecationLevel.HIDDEN, message = "Please use type safe extension functions")
     fun unfrozen() = getInstanceWithFreezeStatus(false)
 }
+
+@Suppress("UNCHECKED_CAST")
+fun <T : Freezable> T.clone(): T = cloneInternal() as T
 
 @Suppress(
     "UNCHECKED_CAST",

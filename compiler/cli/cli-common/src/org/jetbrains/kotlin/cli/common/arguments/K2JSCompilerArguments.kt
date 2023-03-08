@@ -662,6 +662,8 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
             }
         }
     }
+
+    override fun clone(): Freezable = copyK2JSCompilerArguments(this, K2JSCompilerArguments())
 }
 
 fun K2JSCompilerArguments.isPreIrBackendDisabled(): Boolean =

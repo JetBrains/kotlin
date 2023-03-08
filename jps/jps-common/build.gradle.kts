@@ -33,7 +33,10 @@ dependencies {
 }
 
 sourceSets {
-    "main" { projectDefault() }
+    "main" {
+        projectDefault()
+        generatedDir()
+    }
     "test" { projectDefault() }
 }
 

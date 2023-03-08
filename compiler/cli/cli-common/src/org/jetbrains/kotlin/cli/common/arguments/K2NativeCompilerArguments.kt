@@ -456,6 +456,8 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
         }
     }
 
+    override fun clone(): Freezable = copyK2NativeCompilerArguments(this, K2NativeCompilerArguments())
+
     companion object {
         const val EMBED_BITCODE_FLAG = "-Xembed-bitcode"
         const val EMBED_BITCODE_MARKER_FLAG = "-Xembed-bitcode-marker"

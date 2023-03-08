@@ -17,16 +17,16 @@
 package org.jetbrains.kotlin.cli.common.arguments
 
 import com.intellij.util.text.VersionComparatorUtil
-import java.util.*
+import java.lang.reflect.Modifier
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KProperty1
 import kotlin.reflect.KVisibility
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.memberProperties
+import kotlin.reflect.jvm.javaField
 
-@Suppress("UNCHECKED_CAST")
-fun <T : Any> copyBean(bean: T) = copyBeanTo(bean, bean::class.java.newInstance()!!)
+fun <T : Any> copyBean(bean: T): T = copyBeanTo(bean, bean::class.java.newInstance())
 
 @Suppress("UNCHECKED_CAST")
 fun <T : Any> copyBeanTo(from: T, to: T, filter: ((KProperty1<T, Any?>, Any?) -> Boolean)? = null) =
@@ -103,7 +103,7 @@ fun <T : Any> collectProperties(kClass: KClass<T>, inheritedOnly: Boolean): List
         properties.removeAll(kClass.declaredMemberProperties)
     }
     return properties.filter { property ->
-        property.visibility == KVisibility.PUBLIC && (property.annotations.firstOrNull { it is Transient } as Transient?) == null
+        property.visibility == KVisibility.PUBLIC && (property.javaField?.modifiers?.let { Modifier.isTransient(it) } != true)
     }
 }
 
