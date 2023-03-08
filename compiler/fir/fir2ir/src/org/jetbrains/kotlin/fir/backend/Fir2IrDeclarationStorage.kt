@@ -940,6 +940,8 @@ class Fir2IrDeclarationStorage(
                             origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB -> origin
                             origin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER -> origin
                             delegate != null -> IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR
+                            origin == IrDeclarationOrigin.FAKE_OVERRIDE -> origin
+                            origin == IrDeclarationOrigin.DELEGATED_MEMBER -> origin
                             getter is FirDefaultPropertyGetter -> IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
                             else -> origin
                         },
@@ -953,6 +955,8 @@ class Fir2IrDeclarationStorage(
                             setter, property, this, type, irParent, thisReceiverOwner, true,
                             when {
                                 delegate != null -> IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR
+                                origin == IrDeclarationOrigin.FAKE_OVERRIDE -> origin
+                                origin == IrDeclarationOrigin.DELEGATED_MEMBER -> origin
                                 setter is FirDefaultPropertySetter -> IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
                                 else -> origin
                             },
