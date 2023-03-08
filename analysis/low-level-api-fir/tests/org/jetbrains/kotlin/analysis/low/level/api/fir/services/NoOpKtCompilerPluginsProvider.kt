@@ -12,4 +12,6 @@ import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 internal object NoOpKtCompilerPluginsProvider : KtCompilerPluginsProvider() {
     override fun <T : Any> getRegisteredExtensions(module: KtSourceModule, extensionType: ProjectExtensionDescriptor<T>): List<T> =
         emptyList()
+
+    override fun isPluginOfTypeRegistered(module: KtSourceModule, pluginType: CompilerPluginType): Boolean = false
 }

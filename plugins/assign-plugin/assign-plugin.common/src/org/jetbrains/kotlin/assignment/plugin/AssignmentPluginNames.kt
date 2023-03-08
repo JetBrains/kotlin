@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.assignment.plugin
 
-import org.jetbrains.kotlin.name.Name
-
 object AssignmentPluginNames {
     const val PLUGIN_ID = "org.jetbrains.kotlin.assignment"
     const val ANNOTATION_OPTION_NAME = "annotation"
-    val ASSIGN_METHOD = Name.identifier("assign")
 }
