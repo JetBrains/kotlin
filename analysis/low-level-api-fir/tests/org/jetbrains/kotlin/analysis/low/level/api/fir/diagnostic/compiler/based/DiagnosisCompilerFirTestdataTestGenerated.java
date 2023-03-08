@@ -6292,6 +6292,12 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
             }
 
             @Test
+            @TestMetadata("lambdaForKfunction.kt")
+            public void testLambdaForKfunction() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/intellij/lambdaForKfunction.kt");
+            }
+
+            @Test
             @TestMetadata("ParentOfType.kt")
             public void testParentOfType() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/intellij/ParentOfType.kt");
