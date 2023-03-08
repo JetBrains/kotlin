@@ -19,13 +19,15 @@ internal fun applyKotlinTargetHierarchy(
         .matching { target -> target.platformType != KotlinPlatformType.common }
         .all { target ->
             target.compilations.all forCompilation@{ compilation ->
-                val hierarchy = hierarchyDescriptor.buildKotlinTargetHierarchy(compilation) ?: return@forCompilation
-                applyKotlinTargetHierarchy(hierarchy, compilation, sourceSets)
+                target.project.kotlinMultiplatformPluginLifecycle.launch {
+                    val hierarchy = hierarchyDescriptor.buildKotlinTargetHierarchy(compilation) ?: return@launch
+                    applyKotlinTargetHierarchy(hierarchy, compilation, sourceSets)
+                }
             }
         }
 }
 
-private fun applyKotlinTargetHierarchy(
+private suspend fun applyKotlinTargetHierarchy(
     hierarchy: KotlinTargetHierarchy,
     compilation: KotlinCompilation<*>,
     sourceSets: NamedDomainObjectContainer<KotlinSourceSet>
@@ -48,7 +50,7 @@ private fun applyKotlinTargetHierarchy(
     return sharedSourceSet
 }
 
-private fun createSharedSourceSetOrNull(
+private suspend fun createSharedSourceSetOrNull(
     sourceSets: NamedDomainObjectContainer<KotlinSourceSet>,
     node: KotlinTargetHierarchy.Node,
     compilation: KotlinCompilation<*>,

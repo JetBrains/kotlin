@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy
 
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.awaitFinalValue
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
 import org.jetbrains.kotlin.gradle.plugin.sources.android.AndroidVariantType
 import org.jetbrains.kotlin.gradle.plugin.sources.android.type
@@ -20,14 +22,14 @@ internal data class KotlinTargetHierarchy(
         children.withClosure<KotlinTargetHierarchy> { it.children }
 
     sealed class Node {
-        abstract fun sharedSourceSetName(compilation: KotlinCompilation<*>): String?
+        abstract suspend fun sharedSourceSetName(compilation: KotlinCompilation<*>): String?
 
         object Root : Node() {
-            override fun sharedSourceSetName(compilation: KotlinCompilation<*>): String? = null
+            override suspend fun sharedSourceSetName(compilation: KotlinCompilation<*>): String? = null
         }
 
         data class Group(val name: String) : Node() {
-            override fun sharedSourceSetName(compilation: KotlinCompilation<*>): String? {
+            override suspend fun sharedSourceSetName(compilation: KotlinCompilation<*>): String? {
                 val moduleName = Module.orNull(compilation)?.name ?: return null
                 return lowerCamelCaseName(name, moduleName)
             }
@@ -47,17 +49,27 @@ internal data class KotlinTargetHierarchy(
             val test = Module("test")
             private val instrumentedTest = Module("instrumentedTest")
 
-            fun orNull(compilation: KotlinCompilation<*>): Module? = when (compilation) {
-                is KotlinJvmAndroidCompilation -> when (compilation.androidVariant.type) {
-                    AndroidVariantType.Main -> main
-                    AndroidVariantType.UnitTest -> test
-                    AndroidVariantType.InstrumentedTest -> instrumentedTest
-                    AndroidVariantType.Unknown -> null
-                }
+            suspend fun orNull(compilation: KotlinCompilation<*>): Module? = when (compilation) {
+                is KotlinJvmAndroidCompilation -> orNull(compilation.target, compilation.androidVariant.type)
                 else -> when (compilation.name) {
                     "main" -> main
                     "test" -> test
                     else -> Module(compilation.name)
+                }
+            }
+
+            suspend fun orNull(target: KotlinAndroidTarget, variantType: AndroidVariantType): Module? {
+                return when (variantType) {
+                    AndroidVariantType.Main ->
+                        Module(target.main.kotlinModuleName.awaitFinalValue() ?: return main)
+
+                    AndroidVariantType.UnitTest ->
+                        Module(target.unitTest.kotlinModuleName.awaitFinalValue() ?: return test)
+
+                    AndroidVariantType.InstrumentedTest ->
+                        Module(target.instrumentedTest.kotlinModuleName.awaitFinalValue() ?: return instrumentedTest)
+
+                    AndroidVariantType.Unknown -> null
                 }
             }
         }

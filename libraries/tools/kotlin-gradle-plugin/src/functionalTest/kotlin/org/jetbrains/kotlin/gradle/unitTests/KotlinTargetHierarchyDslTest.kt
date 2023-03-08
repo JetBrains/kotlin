@@ -201,7 +201,7 @@ class KotlinTargetHierarchyDslTest {
         )
 
         assertEquals(
-            stringSetOf("jvmTest", "androidUnitTest", "androidUnitTest", "androidUnitTestDebug", "androidUnitTestRelease"),
+            stringSetOf("androidUnitTest", "androidUnitTestDebug", "androidUnitTestRelease", "jvmTest"),
             kotlin.dependingSourceSetNames("jvmAndAndroidTest")
         )
 

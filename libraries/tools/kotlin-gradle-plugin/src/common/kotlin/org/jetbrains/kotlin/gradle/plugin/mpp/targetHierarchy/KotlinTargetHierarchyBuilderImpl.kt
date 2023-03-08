@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.tooling.core.closure
 
-internal fun KotlinTargetHierarchyDescriptor.buildKotlinTargetHierarchy(compilation: KotlinCompilation<*>): KotlinTargetHierarchy? {
+internal suspend fun KotlinTargetHierarchyDescriptor.buildKotlinTargetHierarchy(compilation: KotlinCompilation<*>): KotlinTargetHierarchy? {
     val context = KotlinTargetHierarchyBuilderImplContext(compilation)
     describe(context.getOrCreateBuilder(KotlinTargetHierarchy.Node.Root))
     return context.build(KotlinTargetHierarchy.Node.Root)
@@ -33,10 +33,10 @@ private class KotlinTargetHierarchyBuilderImplContext(private val compilation: K
         KotlinTargetHierarchyBuilderImpl(this, node)
     }
 
-    fun build(node: KotlinTargetHierarchy.Node): KotlinTargetHierarchy? {
+    suspend fun build(node: KotlinTargetHierarchy.Node): KotlinTargetHierarchy? {
         return builtValues.getOrPut(node) {
             val builder = getOrCreateBuilder(node)
-            if (compilation !in builder) return@getOrPut null
+            if (!builder.contains(compilation)) return@getOrPut null
 
             /*
             Keep the hierarchy 'deduplicated'.
@@ -64,24 +64,24 @@ private class KotlinTargetHierarchyBuilderImpl(
     val children = mutableSetOf<KotlinTargetHierarchyBuilderImpl>()
     val childrenClosure get() = closure { it.children }
 
-    private var includePredicate: ((KotlinCompilation<*>) -> Boolean) = { false }
-    private var excludePredicate: ((KotlinCompilation<*>) -> Boolean) = { false }
+    private var includePredicate: (suspend (KotlinCompilation<*>) -> Boolean) = { false }
+    private var excludePredicate: (suspend (KotlinCompilation<*>) -> Boolean) = { false }
 
-    override fun withCompilations(predicate: (KotlinCompilation<*>) -> Boolean) {
+    override fun withCompilations(predicate: suspend (KotlinCompilation<*>) -> Boolean) {
         val previousIncludePredicate = this.includePredicate
         val previousExcludePredicate = this.excludePredicate
         this.includePredicate = { previousIncludePredicate(it) || predicate(it) }
         this.excludePredicate = { previousExcludePredicate(it) && !predicate(it) }
     }
 
-    override fun withoutCompilations(predicate: (KotlinCompilation<*>) -> Boolean) {
+    override fun withoutCompilations(predicate: suspend (KotlinCompilation<*>) -> Boolean) {
         val previousIncludePredicate = this.includePredicate
         val previousExcludePredicate = this.excludePredicate
         this.includePredicate = { previousIncludePredicate(it) && !predicate(it) }
         this.excludePredicate = { previousExcludePredicate(it) || predicate(it) }
     }
 
-    operator fun contains(compilation: KotlinCompilation<*>): Boolean {
+    suspend fun contains(compilation: KotlinCompilation<*>): Boolean {
         /* Return eagerly, when compilation is explicitly excluded */
         if (excludePredicate(compilation)) return false
 
@@ -89,7 +89,7 @@ private class KotlinTargetHierarchyBuilderImpl(
         if (includePredicate(compilation)) return true
 
         /* Find any child that includes this compilation */
-        return childrenClosure.any { child -> compilation in child }
+        return childrenClosure.any { child -> child.contains(compilation) }
     }
 
     private inline fun withTargets(crossinline predicate: (KotlinTarget) -> Boolean) = withCompilations { predicate(it.target) }

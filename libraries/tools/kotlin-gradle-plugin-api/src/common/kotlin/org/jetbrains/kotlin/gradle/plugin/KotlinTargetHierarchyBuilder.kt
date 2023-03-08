@@ -13,8 +13,9 @@ interface KotlinTargetHierarchyBuilder {
     fun group(name: String, build: KotlinTargetHierarchyBuilder.() -> Unit = {})
 
     /* low-level APIs */
-    fun withCompilations(predicate: (KotlinCompilation<*>) -> Boolean)
-    fun withoutCompilations(predicate: (KotlinCompilation<*>) -> Boolean)
+    fun withCompilations(predicate: suspend (KotlinCompilation<*>) -> Boolean)
+    fun withoutCompilations(predicate: suspend (KotlinCompilation<*>) -> Boolean)
+
     @Deprecated("Use plain 'withoutCompilations(!predicate) instead'", ReplaceWith("withoutCompilations { !predicate(it) }"))
     fun filterCompilations(predicate: (KotlinCompilation<*>) -> Boolean) = withoutCompilations { !predicate(it) }
 
