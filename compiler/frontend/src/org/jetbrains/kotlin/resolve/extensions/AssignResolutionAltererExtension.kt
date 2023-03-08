@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.resolve.extensions
 import org.jetbrains.kotlin.extensions.AnnotationBasedExtension
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.extensions.internal.InternalNonStableExtensionPoints
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -36,4 +37,6 @@ interface AssignResolutionAltererExtension : AnnotationBasedExtension {
         components: ExpressionTypingComponents,
         scope: LexicalWritableScope
     ): KotlinTypeInfo?
+
+    fun getOperationName(expression: KtBinaryExpression, leftType: KotlinType?, bindingContext: BindingContext): Name?
 }
