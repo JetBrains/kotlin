@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.getSymbolByLookupTag
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirSyntheticFunctionInterfaceProviderBase.Companion.mayBeSyntheticFunctionClassName
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
 import org.jetbrains.kotlin.fir.scopes.getFunctions
@@ -16,14 +17,10 @@ import org.jetbrains.kotlin.fir.scopes.getProperties
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.ConeLookupTagBasedType
-import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
-import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.coneTypeSafe
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.fir.types.functionTypeService
 
 @RequiresOptIn
 annotation class FirSymbolProviderInternals
@@ -144,10 +141,9 @@ fun Set<String>.mayHaveTopLevelClassifier(
 private inline fun Set<String>.mayHaveTopLevelClassifier(shortClassName: Name): Boolean =
     shortClassName.asString() in this || shortClassName.isSpecial
 
+@OptIn(FirSymbolProviderInternals::class)
 private fun isNameForFunctionClass(classId: ClassId, session: FirSession): Boolean {
-    // Optimization: `classId` can only be a name for a generated function class if it ends with a digit. See `FunctionTypeKind`.
-    if (classId.relativeClassName.asString().lastOrNull()?.isDigit() != true) return false
-
+    if (!classId.mayBeSyntheticFunctionClassName()) return false
     return session.functionTypeService.getKindByClassNamePrefix(classId.packageFqName, classId.shortClassName.asString()) != null
 }
 

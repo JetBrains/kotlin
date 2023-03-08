@@ -70,6 +70,7 @@ abstract class FirSyntheticFunctionInterfaceProviderBase(
     val kotlinScopeProvider: FirKotlinScopeProvider
 ) : FirSymbolProvider(session) {
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirRegularClassSymbol? {
+        if (!classId.mayBeSyntheticFunctionClassName()) return null
         return cache.getValue(classId)
     }
 
@@ -233,4 +234,14 @@ abstract class FirSyntheticFunctionInterfaceProviderBase(
     }
 
     private fun FunctionTypeKind.classId(arity: Int) = ClassId(packageFqName, numberedClassName(arity))
+
+    companion object {
+        /**
+         * A [ClassId] can only be a name for a generated function class if it ends with a digit. See [FunctionTypeKind].
+         *
+         * Checking this first is usually faster than checking `functionTypeService.getKindByClassNamePrefix` or a class cache.
+         */
+        @FirSymbolProviderInternals
+        fun ClassId.mayBeSyntheticFunctionClassName(): Boolean = relativeClassName.asString().lastOrNull()?.isDigit() == true
+    }
 }
