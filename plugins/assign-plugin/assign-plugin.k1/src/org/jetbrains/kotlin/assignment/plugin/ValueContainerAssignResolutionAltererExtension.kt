@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.extensions.internal.InternalNonStableExtensionPoints
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContextUtils
@@ -88,6 +89,10 @@ abstract class AbstractAssignPluginResolutionAltererExtension : AssignResolution
         }
         context.trace.report(NO_APPLICABLE_ASSIGN_METHOD.on(operationSign))
         return null
+    }
+
+    override fun getOperationName(expression: KtBinaryExpression, leftType: KotlinType?, bindingContext: BindingContext): Name? {
+        return if (needOverloadAssign(expression, leftType, bindingContext)) ASSIGN_METHOD else null
     }
 
     private fun CallResolver.resolveMethodCall(

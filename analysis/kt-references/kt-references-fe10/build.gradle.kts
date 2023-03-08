@@ -9,6 +9,7 @@ dependencies {
     implementation(project(":compiler:psi"))
     implementation(project(":analysis:light-classes-base"))
     implementation(project(":compiler:frontend.java"))
+    implementation(project(":analysis:analysis-api"))
     implementation(intellijCore())
 
     compileOnly(commonDependency("com.google.guava:guava"))

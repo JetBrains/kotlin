@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.assignment.plugin.k2
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtRealPsiSourceElement
 import org.jetbrains.kotlin.assignment.plugin.AssignmentPluginNames.ASSIGN_METHOD
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
@@ -13,13 +14,17 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
 import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpression
 import org.jetbrains.kotlin.fir.extensions.FirAssignExpressionAltererExtension
+import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.references.toResolvedVariableSymbol
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class FirAssignmentPluginAssignAltererExtension(
@@ -30,6 +35,11 @@ class FirAssignmentPluginAssignAltererExtension(
         return runIf(variableAssignment.supportsTransformVariableAssignment()) {
             buildFunctionCall(variableAssignment)
         }
+    }
+
+    override fun getOperationName(reference: FirErrorNamedReference): Name? {
+        return if (reference.dealsWith(ASSIGN_METHOD) && reference.originallyIs(KtBinaryExpression::class.java)) ASSIGN_METHOD
+        else null
     }
 
     private fun FirVariableAssignment.supportsTransformVariableAssignment(): Boolean {
@@ -70,4 +80,13 @@ class FirAssignmentPluginAssignAltererExtension(
             origin = FirFunctionCallOrigin.Regular
         }
     }
+}
+
+private fun FirErrorNamedReference.dealsWith(name: Name): Boolean {
+    return (diagnostic as? ConeUnresolvedNameError)?.name == name
+}
+
+@Suppress("UNUSED_PARAMETER")
+private inline fun <reified T> FirErrorNamedReference.originallyIs(expressionClass: Class<T>): Boolean {
+    return (source as? KtRealPsiSourceElement)?.psi is T
 }
