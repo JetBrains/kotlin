@@ -31,6 +31,7 @@ fun ClassifierDescriptorWithTypeParameters.computeConstructorTypeParameters(): L
     val parametersFromContainingFunctions =
         parents.takeWhile { it is CallableDescriptor }
             .filter { it !is ConstructorDescriptor }
+            .map { (it as? PropertyAccessorDescriptor)?.correspondingProperty ?: it }
             .flatMap { (it as CallableDescriptor).typeParameters.asSequence() }
             .toList()
 
