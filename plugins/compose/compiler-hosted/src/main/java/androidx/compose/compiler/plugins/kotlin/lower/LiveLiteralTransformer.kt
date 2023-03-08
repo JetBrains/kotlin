@@ -19,6 +19,7 @@ package androidx.compose.compiler.plugins.kotlin.lower
 import androidx.compose.compiler.plugins.kotlin.ComposeCallableIds
 import androidx.compose.compiler.plugins.kotlin.ComposeClassIds
 import androidx.compose.compiler.plugins.kotlin.ModuleMetrics
+import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -162,8 +163,9 @@ open class LiveLiteralTransformer(
     context: IrPluginContext,
     symbolRemapper: DeepCopySymbolRemapper,
     metrics: ModuleMetrics,
+    stabilityInferencer: StabilityInferencer
 ) :
-    AbstractComposeLowering(context, symbolRemapper, metrics),
+    AbstractComposeLowering(context, symbolRemapper, metrics, stabilityInferencer),
     ModuleLoweringPass {
 
     override fun lower(module: IrModuleFragment) {

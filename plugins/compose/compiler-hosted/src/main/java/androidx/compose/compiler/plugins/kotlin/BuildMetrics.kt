@@ -19,7 +19,6 @@ package androidx.compose.compiler.plugins.kotlin
 import androidx.compose.compiler.plugins.kotlin.analysis.Stability
 import androidx.compose.compiler.plugins.kotlin.analysis.knownStable
 import androidx.compose.compiler.plugins.kotlin.analysis.knownUnstable
-import androidx.compose.compiler.plugins.kotlin.analysis.stabilityOf
 import androidx.compose.compiler.plugins.kotlin.lower.ComposableFunctionBodyTransformer
 import androidx.compose.compiler.plugins.kotlin.lower.IrSourcePrinterVisitor
 import androidx.compose.compiler.plugins.kotlin.lower.isUnitOrNullableUnit
@@ -191,6 +190,7 @@ object EmptyFunctionMetrics : FunctionMetrics {
 
 class ModuleMetricsImpl(
     var name: String,
+    val stabilityOf: (IrType) -> Stability
 ) : ModuleMetrics {
     private var skippableComposables = 0
     private var restartableComposables = 0

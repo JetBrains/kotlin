@@ -19,6 +19,7 @@ package androidx.compose.compiler.plugins.kotlin.lower
 import androidx.compose.compiler.plugins.kotlin.ComposeCallableIds
 import androidx.compose.compiler.plugins.kotlin.ComposeClassIds
 import androidx.compose.compiler.plugins.kotlin.ModuleMetrics
+import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
 import androidx.compose.compiler.plugins.kotlin.lower.decoys.AbstractDecoysLowering
 import androidx.compose.compiler.plugins.kotlin.lower.decoys.CreateDecoysTransformer
 import androidx.compose.compiler.plugins.kotlin.lower.decoys.isDecoy
@@ -85,12 +86,18 @@ class WrapJsComposableLambdaLowering(
     symbolRemapper: DeepCopySymbolRemapper,
     metrics: ModuleMetrics,
     signatureBuilder: IdSignatureSerializer,
+    stabilityInferencer: StabilityInferencer,
     private val decoysEnabled: Boolean
-) : AbstractDecoysLowering(context, symbolRemapper, metrics, signatureBuilder) {
-
+) : AbstractDecoysLowering(
+    context,
+    symbolRemapper,
+    metrics,
+    stabilityInferencer,
+    signatureBuilder
+) {
     private val rememberFunSymbol by lazy {
         val composerParamTransformer = ComposerParamTransformer(
-            context, symbolRemapper, decoysEnabled, metrics
+            context, symbolRemapper, stabilityInferencer, decoysEnabled, metrics
         )
         symbolRemapper.getReferencedSimpleFunction(
             getTopLevelFunctions(ComposeCallableIds.remember).map { it.owner }.first {
@@ -103,7 +110,7 @@ class WrapJsComposableLambdaLowering(
                 // If a module didn't have any explicit remember calls,
                 // so `fun remember` wasn't transformed yet, then we have to transform it now.
                 val createDecoysTransformer = CreateDecoysTransformer(
-                    context, symbolRemapper, signatureBuilder, metrics
+                    context, symbolRemapper, signatureBuilder, stabilityInferencer, metrics
                 )
                 createDecoysTransformer.visitSimpleFunction(it) as IrSimpleFunction
                 createDecoysTransformer.updateParents()

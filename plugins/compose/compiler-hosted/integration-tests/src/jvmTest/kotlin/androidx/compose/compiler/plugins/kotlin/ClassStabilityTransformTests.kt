@@ -16,7 +16,7 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
-import androidx.compose.compiler.plugins.kotlin.analysis.stabilityOf
+import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
 import androidx.compose.compiler.plugins.kotlin.facade.SourceFile
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -565,6 +565,30 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
             class Foo(val a: A)
         """,
         "Stable"
+    )
+
+    @Test
+    fun testExternalStableTypesFieldsAreStable() = assertStability(
+        externalSrc = """
+            class A 
+        """,
+        classDefSrc = """
+            class Foo(val a: A)
+        """,
+        stability = "Stable",
+        externalTypes = setOf("dependency.A")
+    )
+
+    @Test
+    fun testClassesExtendingExternalStableInterfacesAreStable() = assertStability(
+        externalSrc = """
+            interface A 
+        """,
+        classDefSrc = """
+            class Foo : A
+        """,
+        stability = "Stable",
+        externalTypes = setOf("dependency.A")
     )
 
     @Test
@@ -1480,7 +1504,8 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
     private fun assertStability(
         @Language("kotlin")
         classDefSrc: String,
-        stability: String
+        stability: String,
+        externalTypes: Set<String> = emptySet()
     ) {
         val source = """
             import androidx.compose.runtime.mutableStateOf
@@ -1499,7 +1524,8 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
         val files = listOf(SourceFile("Test.kt", source))
         val irModule = compileToIr(files)
         val irClass = irModule.files.last().declarations.first() as IrClass
-        val classStability = stabilityOf(irClass.defaultType as IrType)
+        val stabilityInferencer = StabilityInferencer(externalTypes)
+        val classStability = stabilityInferencer.stabilityOf(irClass.defaultType as IrType)
 
         assertEquals(
             stability,
@@ -1513,11 +1539,13 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
         @Language("kotlin")
         classDefSrc: String,
         stability: String,
-        dumpClasses: Boolean = false
+        dumpClasses: Boolean = false,
+        externalTypes: Set<String> = emptySet()
     ) {
         val irModule = buildModule(externalSrc, classDefSrc, dumpClasses)
         val irClass = irModule.files.last().declarations.first() as IrClass
-        val classStability = stabilityOf(irClass.defaultType as IrType)
+        val classStability =
+            StabilityInferencer(externalTypes).stabilityOf(irClass.defaultType as IrType)
 
         assertEquals(
             stability,
@@ -1587,7 +1615,8 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
         localSrc: String,
         expression: String,
         stability: String,
-        dumpClasses: Boolean = false
+        dumpClasses: Boolean = false,
+        externalTypes: Set<String> = emptySet()
     ) {
         val irModule = buildModule(
             externalSrc,
@@ -1611,7 +1640,7 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
             is IrExpression -> lastStatement
             else -> error("unexpected statement: $lastStatement")
         }
-        val exprStability = stabilityOf(irExpr)
+        val exprStability = StabilityInferencer(externalTypes).stabilityOf(irExpr)
 
         assertEquals(
             stability,

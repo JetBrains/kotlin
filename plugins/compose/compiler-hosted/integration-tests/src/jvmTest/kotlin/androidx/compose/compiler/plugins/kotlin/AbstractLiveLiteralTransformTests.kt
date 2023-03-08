@@ -16,6 +16,7 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
+import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
 import androidx.compose.compiler.plugins.kotlin.facade.SourceFile
 import androidx.compose.compiler.plugins.kotlin.lower.DurableKeyVisitor
 import androidx.compose.compiler.plugins.kotlin.lower.LiveLiteralTransformer
@@ -40,6 +41,7 @@ abstract class AbstractLiveLiteralTransformTests(
                 val liveLiteralsV2Enabled = configuration.getBoolean(
                     ComposeConfiguration.LIVE_LITERALS_V2_ENABLED_KEY
                 )
+
                 ComposePluginRegistrar.registerCommonExtensions(this)
                 IrGenerationExtension.registerExtension(
                     this,
@@ -50,13 +52,15 @@ abstract class AbstractLiveLiteralTransformTests(
                         ) {
                             val symbolRemapper = DeepCopySymbolRemapper()
                             val keyVisitor = DurableKeyVisitor(builtKeys)
+                            val stabilityInferencer = StabilityInferencer(emptySet())
                             val transformer = object : LiveLiteralTransformer(
                                 liveLiteralsEnabled || liveLiteralsV2Enabled,
                                 liveLiteralsV2Enabled,
                                 keyVisitor,
                                 pluginContext,
                                 symbolRemapper,
-                                ModuleMetricsImpl("temp")
+                                ModuleMetricsImpl("temp") { stabilityInferencer.stabilityOf(it) },
+                                stabilityInferencer
                             ) {
                                 override fun makeKeySet(): MutableSet<String> {
                                     return super.makeKeySet().also { builtKeys = it }
