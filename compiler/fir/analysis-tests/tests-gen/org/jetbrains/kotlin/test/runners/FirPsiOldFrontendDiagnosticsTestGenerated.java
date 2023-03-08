@@ -23481,6 +23481,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             }
 
             @Test
+            @TestMetadata("doubleWinsOverFloat.kt")
+            public void testDoubleWinsOverFloat() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/overload/doubleWinsOverFloat.kt");
+            }
+
+            @Test
             @TestMetadata("EmptyArgumentListInLambda.kt")
             public void testEmptyArgumentListInLambda() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/overload/EmptyArgumentListInLambda.kt");

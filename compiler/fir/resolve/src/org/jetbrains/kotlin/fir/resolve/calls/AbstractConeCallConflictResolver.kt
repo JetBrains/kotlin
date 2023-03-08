@@ -67,9 +67,6 @@ abstract class AbstractConeCallConflictResolver(
             requireOrDescribe(specific is ConeKotlinType, specific)
             requireOrDescribe(general is ConeKotlinType, general)
 
-            // TODO: support unsigned types
-            // see OverloadingConflictResolver.kt:294
-
             val int = StandardClassIds.Int
             val long = StandardClassIds.Long
             val byte = StandardClassIds.Byte
@@ -87,7 +84,6 @@ abstract class AbstractConeCallConflictResolver(
             // int >= long, int >= short, short >= byte
 
             when {
-                //TypeUtils.equalTypes(specific, _double) && TypeUtils.equalTypes(general, _float) -> return true
                 specificClassId == int -> {
                     when (generalClassId) {
                         long -> return true
@@ -104,6 +100,7 @@ abstract class AbstractConeCallConflictResolver(
                     }
                 }
                 specificClassId == uShort && generalClassId == uByte -> return true
+                specificClassId == StandardClassIds.Double && generalClassId == StandardClassIds.Float -> return true
             }
             return false
         }
