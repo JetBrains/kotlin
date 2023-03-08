@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.extensions.internal.InternalNonStableExtensionPoints
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.references.fe10.base.KtFe10KotlinReferenceProviderContributor
 import org.jetbrains.kotlin.resolve.extensions.AssignResolutionAltererExtension
 
 object AssignmentConfigurationKeys {
@@ -51,6 +52,7 @@ class AssignmentComponentRegistrar : CompilerPluginRegistrar() {
             AssignResolutionAltererExtension.Companion.registerExtension(CliAssignPluginResolutionAltererExtension(annotations))
             StorageComponentContainerContributor.registerExtension(AssignmentComponentContainerContributor(annotations))
             FirExtensionRegistrarAdapter.registerExtension(FirAssignmentPluginExtensionRegistrar(annotations))
+            KtFe10KotlinReferenceProviderContributor.Extension.registerExtension(ReferenceProviderContributorExtension())
         }
     }
 

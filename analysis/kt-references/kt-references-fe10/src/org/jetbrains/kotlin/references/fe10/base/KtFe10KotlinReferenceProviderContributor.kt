@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.references.fe10.base
 
 import com.intellij.psi.PsiReference
+import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.references.fe10.*
 import org.jetbrains.kotlin.idea.references.KotlinPsiReferenceRegistrar
 import org.jetbrains.kotlin.idea.references.KotlinReferenceProviderContributor
@@ -15,7 +16,6 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
 import org.jetbrains.kotlin.psi.psiUtil.parents
-import org.jetbrains.kotlin.references.fe10.*
 import org.jetbrains.kotlin.resolve.references.ReferenceAccess
 
 class KtFe10KotlinReferenceProviderContributor : KotlinReferenceProviderContributor {
@@ -60,5 +60,14 @@ class KtFe10KotlinReferenceProviderContributor : KotlinReferenceProviderContribu
                 KtDefaultAnnotationArgumentReference(element)
             }
         }
+    }
+
+    interface Extension {
+        fun getCustomReference(expression: KtSimpleNameExpression): PsiReference?
+
+        companion object : ProjectExtensionDescriptor<Extension>(
+            "org.jetbrains.kotlin.referenceProviderContributorExtension",
+            Extension::class.java
+        )
     }
 }

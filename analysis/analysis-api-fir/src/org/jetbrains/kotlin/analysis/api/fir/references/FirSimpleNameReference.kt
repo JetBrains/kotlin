@@ -7,11 +7,13 @@ package org.jetbrains.kotlin.idea.references
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirSyntheticJavaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 
 internal class KtFirSimpleNameReference(
@@ -74,5 +76,12 @@ internal class KtFirSimpleNameReference(
     override fun getImportAlias(): KtImportAlias? {
         // TODO: Implement.
         return null
+    }
+
+    override fun getOperationNameFromExtensions(): Name? {
+        return analyze(expression) {
+            val binaryExpression = expression.parent as? KtBinaryExpression ?: return null
+            binaryExpression.getNames().firstOrNull()
+        }
     }
 }

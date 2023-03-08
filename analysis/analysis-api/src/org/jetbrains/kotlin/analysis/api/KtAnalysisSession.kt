@@ -60,13 +60,17 @@ public abstract class KtAnalysisSession(final override val token: KtLifetimeToke
     KtAnalysisScopeProviderMixIn,
     KtSignatureSubstitutorMixIn,
     KtScopeSubstitutionMixIn,
-    KtSymbolProviderByJavaPsiMixIn {
+    KtSymbolProviderByJavaPsiMixIn,
+    KtAssignmentNamesProviderMixIn {
 
     public abstract val useSiteModule: KtModule
 
     override val analysisSession: KtAnalysisSession get() = this
 
     public abstract fun createContextDependentCopy(originalKtFile: KtFile, elementToReanalyze: KtElement): KtAnalysisSession
+
+    internal val assignmentNamesProvider: KtAssignmentNamesProvider get() = assignmentNamesProviderImpl
+    protected abstract val assignmentNamesProviderImpl: KtAssignmentNamesProvider
 
     internal val smartCastProvider: KtSmartCastProvider get() = smartCastProviderImpl
     protected abstract val smartCastProviderImpl: KtSmartCastProvider

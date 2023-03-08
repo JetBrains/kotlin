@@ -13,6 +13,7 @@ dependencies {
     compileOnly(project(":compiler:util"))
     compileOnly(project(":compiler:plugin-api"))
     compileOnly(project(":compiler:fir:entrypoint"))
+    compileOnly(project(":analysis:kt-references:kt-references-fe10"))
     compileOnly(intellijCore())
 }
 

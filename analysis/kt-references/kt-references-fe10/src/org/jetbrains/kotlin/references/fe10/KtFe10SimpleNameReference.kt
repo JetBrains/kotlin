@@ -7,20 +7,22 @@ package org.jetbrains.kotlin.references.fe10
 
 import com.intellij.psi.PsiElement
 import com.intellij.util.SmartList
-import org.jetbrains.kotlin.references.fe10.base.KtFe10Reference
-import org.jetbrains.kotlin.references.fe10.base.KtFe10ReferenceResolutionHelper
+import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.readWriteAccess
 import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.plugin.references.SimpleNameReferenceExtension
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.references.fe10.base.KtFe10Reference
+import org.jetbrains.kotlin.references.fe10.base.KtFe10ReferenceResolutionHelper
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.ImportedFromObjectCallableDescriptor
 import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
 
 
-class KtFe10SimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleNameReference(expression), KtFe10Reference {
+open class KtFe10SimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleNameReference(expression), KtFe10Reference {
 
     override fun canBeReferenceTo(candidateTarget: PsiElement): Boolean {
         return element.containingFile == candidateTarget.containingFile ||
@@ -97,5 +99,12 @@ class KtFe10SimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleNa
             return importDirective.alias
         }
         return null
+    }
+
+    override fun getOperationNameFromExtensions(): Name? {
+        return analyze(expression) {
+            val binaryExpression = expression.parent as? KtBinaryExpression ?: return null
+            binaryExpression.getNames().firstOrNull()
+        }
     }
 }
