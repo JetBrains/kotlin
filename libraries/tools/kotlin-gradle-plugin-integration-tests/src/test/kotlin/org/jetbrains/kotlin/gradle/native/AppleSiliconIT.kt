@@ -98,7 +98,6 @@ class AppleSiliconIT : BaseGradleIT() {
 
                 val x64Tests = listOf(
                     ":iosX64Test",
-                    ":jvmTest",
                     ":macosX64Test",
                     ":tvosX64Test",
                     ":watchosX64Test",
