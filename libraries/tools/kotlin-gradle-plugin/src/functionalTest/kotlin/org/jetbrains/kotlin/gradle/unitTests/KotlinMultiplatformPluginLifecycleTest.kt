@@ -7,10 +7,13 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
+import org.gradle.api.ProjectConfigurationException
 import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginLifecycle.Stage.*
 import org.jetbrains.kotlin.gradle.plugin.kotlinMultiplatformPluginLifecycle
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
+import org.jetbrains.kotlin.tooling.core.linearClosure
+import org.jetbrains.kotlin.tooling.core.withLinearClosure
 import org.junit.Test
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
@@ -209,5 +212,96 @@ class KotlinMultiplatformPluginLifecycleTest {
         assertEquals(1, action1Invocations.get())
         assertEquals(1, action2Invocations.get())
         assertEquals(1, action3Invocations.get())
+    }
+
+    @Test
+    fun `test - launch in configure`() {
+        val action1Invocations = AtomicInteger(0)
+        val action2Invocations = AtomicInteger(0)
+        val action3Invocations = AtomicInteger(0)
+
+        lifecycle.launch action1@{
+            lifecycle.launch action2@{
+                assertEquals(1, action1Invocations.get())
+                assertEquals(0, action3Invocations.get())
+                assertEquals(1, action2Invocations.incrementAndGet())
+            }
+            assertEquals(0, action2Invocations.get())
+            assertEquals(0, action3Invocations.get())
+            assertEquals(1, action1Invocations.incrementAndGet())
+
+            lifecycle.launch action3@{
+                assertEquals(1, action1Invocations.get())
+                assertEquals(1, action2Invocations.get())
+                assertEquals(1, action3Invocations.incrementAndGet())
+            }
+        }
+
+        assertEquals(1, action1Invocations.get())
+        assertEquals(1, action2Invocations.get())
+        assertEquals(1, action3Invocations.get())
+    }
+
+    @Test
+    fun `test - launch in configure - await Stage`() {
+        val executionPointA = AtomicBoolean(false)
+        val executionPointB = AtomicBoolean(false)
+        lifecycle.launch action1@{
+            assertFalse(executionPointA.getAndSet(true))
+            assertEquals(Configure, stage)
+            await(AfterEvaluate)
+            assertEquals(AfterEvaluate, stage)
+            assertFalse(executionPointB.getAndSet(true))
+        }
+
+        assertTrue(executionPointA.get())
+        assertFalse(executionPointB.get())
+        project.evaluate()
+        assertTrue(executionPointA.get())
+        assertTrue(executionPointB.get())
+    }
+
+    @Test
+    fun `test - launch - await - launch`() {
+        val executedInnerAction = AtomicBoolean(false)
+        lifecycle.launch {
+            await(AfterEvaluate)
+            launch {
+                assertEquals(AfterEvaluate, stage)
+                await(FinaliseRefinesEdges)
+                assertEquals(FinaliseRefinesEdges, stage)
+                assertFalse(executedInnerAction.getAndSet(true))
+            }
+        }
+
+        assertFalse(executedInnerAction.get())
+        project.evaluate()
+        assertTrue(executedInnerAction.get())
+    }
+
+    @Test
+    fun `test - launch - exception`() {
+        assertFailsWith<IllegalStateException> {
+            lifecycle.launch {
+                throw IllegalStateException("42")
+            }
+        }
+    }
+
+    @Test
+    fun `test - launch - await - exception`() {
+        val testException = object : Throwable() {}
+        lifecycle.launch {
+            await(AfterEvaluate)
+            launch {
+                throw testException
+            }
+        }
+
+        val causes = assertFailsWith<ProjectConfigurationException> {
+            project.evaluate()
+        }.withLinearClosure<Throwable> { it.cause }
+
+        assertTrue(testException in causes)
     }
 }
