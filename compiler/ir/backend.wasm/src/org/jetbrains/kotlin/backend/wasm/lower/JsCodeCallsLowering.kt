@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.*
 
 /**
  * Lower calls to `js(code)` into `@JsFun(code) external` functions.
@@ -55,6 +55,31 @@ class JsCodeCallsLowering(val context: WasmBackendContext) : FileLoweringPass {
             append(jsCode)
             if (!isSingleExpressionJsCode) append(" }")
         }
+        if (function.valueParameters.any { it.defaultValue != null }) {
+            // Create a separate external function without default arguments
+            // and delegate calls to it.
+            val externalFun = createExternalJsFunction(
+                context,
+                function.name,
+                "_js_code",
+                function.returnType,
+                jsCode = jsFunCode,
+            )
+            externalFun.copyTypeParametersFrom(function)
+            externalFun.valueParameters = function.valueParameters.map { it.copyTo(externalFun, defaultValue = null) }
+            function.body = context.createIrBuilder(function.symbol).irBlockBody {
+                val call = irCall(externalFun.symbol)
+                function.valueParameters.forEachIndexed { index, parameter ->
+                    call.putValueArgument(index, irGet(parameter))
+                }
+                function.typeParameters.forEachIndexed { index, typeParameter ->
+                    call.putTypeArgument(index, typeParameter.defaultType)
+                }
+                +irReturn(call)
+            }
+            return listOf(function, externalFun)
+        }
+
         val builder = context.createIrBuilder(function.symbol)
         function.annotations += builder.irCallConstructor(context.wasmSymbols.jsFunConstructor, typeArguments = emptyList()).also {
             it.putValueArgument(0, builder.irString(jsFunCode))
