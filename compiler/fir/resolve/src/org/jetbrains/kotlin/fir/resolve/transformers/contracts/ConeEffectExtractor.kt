@@ -149,18 +149,15 @@ class ConeEffectExtractor(
         return declaration is FirProperty && (declaration.getter == this || declaration.setter == this)
     }
 
-    private fun FirContractDescriptionOwner.isMemberOf(declaration: FirDeclaration): Boolean {
-        return (this as? FirCallableDeclaration)?.getContainingClass(session) == declaration
-    }
-
     override fun visitThisReceiverExpression(
         thisReceiverExpression: FirThisReceiverExpression,
         data: Nothing?
     ): ConeContractDescriptionElement? {
         val declaration = thisReceiverExpression.calleeReference.boundSymbol?.fir ?: return null
-        val ownerHasReceiver = owner is FirCallableDeclaration && owner.receiverParameter != null
-        val isAllowedReferenceToContainingClass = owner.isMemberOf(declaration) && !ownerHasReceiver
-        return if (declaration == owner || owner.isAccessorOf(declaration) || isAllowedReferenceToContainingClass) {
+        val callableOwner = owner as? FirCallableDeclaration
+        val ownerHasReceiver = callableOwner?.receiverParameter != null
+        val ownerIsMemberOfDeclaration = callableOwner?.getContainingClass(session) == declaration
+        return if (declaration == owner || owner.isAccessorOf(declaration) || ownerIsMemberOfDeclaration && !ownerHasReceiver) {
             val type = thisReceiverExpression.typeRef.coneType
             toValueParameterReference(type, -1, "this")
         } else {
