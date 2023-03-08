@@ -214,12 +214,12 @@ internal fun applyUserDefinedAttributes(target: AbstractKotlinTarget) {
         // To copy the attributes to the output configurations, find those output configurations and their producing compilations
         // based on the target's components:
         val outputConfigurationsWithCompilations = target.kotlinComponents.filterIsInstance<KotlinVariant>().flatMap { kotlinVariant ->
-                kotlinVariant.usages.mapNotNull { usageContext ->
-                    project.configurations.findByName(usageContext.dependencyConfigurationName)?.let { configuration ->
-                        configuration to usageContext.compilation
-                    }
+            kotlinVariant.usages.mapNotNull { usageContext ->
+                project.configurations.findByName(usageContext.dependencyConfigurationName)?.let { configuration ->
+                    configuration to usageContext.compilation
                 }
-            }.toMutableList()
+            }
+        }.toMutableList()
 
         val mainCompilation = target.compilations.findByName(KotlinCompilation.MAIN_COMPILATION_NAME)
         val defaultTargetConfiguration = project.configurations.findByName(target.defaultConfigurationName)

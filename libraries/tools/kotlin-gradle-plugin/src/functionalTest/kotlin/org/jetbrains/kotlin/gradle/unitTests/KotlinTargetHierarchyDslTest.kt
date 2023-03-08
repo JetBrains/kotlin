@@ -183,7 +183,7 @@ class KotlinTargetHierarchyDslTest {
     }
 
     @Test
-    fun `test - hierarchy default - is only applied to main and test compilations`() {
+    fun `test - hierarchy default - is only applied to main and test compilations`() = project.runLifecycleAwareTest {
         assertNotNull(defaultKotlinTargetHierarchy.buildKotlinTargetHierarchy(kotlin.linuxX64().compilations.main))
         assertNotNull(defaultKotlinTargetHierarchy.buildKotlinTargetHierarchy(kotlin.linuxX64().compilations.test))
         assertNull(defaultKotlinTargetHierarchy.buildKotlinTargetHierarchy(kotlin.linuxX64().compilations.maybeCreate("custom")))

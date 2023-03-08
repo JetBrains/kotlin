@@ -77,6 +77,8 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
 
         checkGradleCompatibility()
 
+        project.startKotlinMultiplatformPluginLifecycle()
+
         project.gradle.projectsEvaluated {
             whenBuildEvaluated(project)
         }
@@ -323,7 +325,6 @@ abstract class AbstractKotlinMultiplatformPluginWrapper : KotlinBasePluginWrappe
 
     override fun apply(project: Project) {
         super.apply(project)
-        project.startKotlinMultiplatformPluginLifecycle()
         project.runMultiplatformAndroidGradlePluginCompatibilityHealthCheckWhenAndroidIsApplied()
     }
 
