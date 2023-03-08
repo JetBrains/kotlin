@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.load.java.JavaClassFinder
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.load.java.structure.impl.JavaElementImpl
 import org.jetbrains.kotlin.name.*
@@ -133,9 +132,6 @@ abstract class FirJavaFacade(
     ): List<FirTypeParameter> {
         return map { it.toFirTypeParameter(stack, containingDeclarationSymbol, moduleData) }
     }
-
-    private fun JavaClass.hasMetadataAnnotation(): Boolean =
-        annotations.any { it.classId?.asSingleFqName() == JvmAnnotationNames.METADATA_FQ_NAME }
 
     private class ValueParametersForAnnotationConstructor {
         val valueParameters: MutableMap<JavaMethod, FirJavaValueParameter> = linkedMapOf()

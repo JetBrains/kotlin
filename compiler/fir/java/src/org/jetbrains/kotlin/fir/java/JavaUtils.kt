@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildErrorExpression
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.expectedConeType
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.createArrayType
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.RXJAVA3_ANNOTATIONS
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaClass
@@ -50,6 +51,9 @@ val JavaClass.classKind: ClassKind
         isEnum -> ClassKind.ENUM_CLASS
         else -> ClassKind.CLASS
     }
+
+internal fun JavaClass.hasMetadataAnnotation(): Boolean =
+    annotations.any { it.classId?.asSingleFqName() == JvmAnnotationNames.METADATA_FQ_NAME }
 
 internal fun Any?.createConstantOrError(session: FirSession): FirExpression {
     return createConstantIfAny(session) ?: buildErrorExpression {
