@@ -19577,6 +19577,24 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             }
 
             @Test
+            @TestMetadata("syntheticAssignmentInLambdaExpressionBody.kt")
+            public void testSyntheticAssignmentInLambdaExpressionBody() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/j+k/syntheticAssignmentInLambdaExpressionBody.kt");
+            }
+
+            @Test
+            @TestMetadata("syntheticPropertyOverridden.kt")
+            public void testSyntheticPropertyOverridden() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/j+k/syntheticPropertyOverridden.kt");
+            }
+
+            @Test
+            @TestMetadata("syntheticPropertyOverridden2.kt")
+            public void testSyntheticPropertyOverridden2() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/j+k/syntheticPropertyOverridden2.kt");
+            }
+
+            @Test
             @TestMetadata("traitDefaultCall.kt")
             public void testTraitDefaultCall() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/j+k/traitDefaultCall.kt");

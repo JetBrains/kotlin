@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
+import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.SyntheticSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -40,20 +41,23 @@ class FirSyntheticPropertiesScope private constructor(
     val session: FirSession,
     private val baseScope: FirTypeScope,
     private val dispatchReceiverType: ConeKotlinType,
-    private val syntheticNamesProvider: FirSyntheticNamesProvider
+    private val syntheticNamesProvider: FirSyntheticNamesProvider,
+    private val returnTypeCalculator: ReturnTypeCalculator?,
 ) : FirContainingNamesAwareScope() {
     companion object {
         fun createIfSyntheticNamesProviderIsDefined(
             session: FirSession,
             dispatchReceiverType: ConeKotlinType,
-            baseScope: FirTypeScope
+            baseScope: FirTypeScope,
+            returnTypeCalculator: ReturnTypeCalculator? = null,
         ): FirSyntheticPropertiesScope? {
             val syntheticNamesProvider = session.syntheticNamesProvider ?: return null
             return FirSyntheticPropertiesScope(
                 session,
                 baseScope,
                 dispatchReceiverType,
-                syntheticNamesProvider
+                syntheticNamesProvider,
+                returnTypeCalculator,
             )
         }
     }
@@ -104,7 +108,14 @@ class FirSyntheticPropertiesScope private constructor(
         if (getter.typeParameters.isNotEmpty()) return
         if (getter.valueParameters.isNotEmpty()) return
         if (getter.isStatic) return
-        val getterReturnType = (getter.returnTypeRef as? FirResolvedTypeRef)?.type
+
+        var getterReturnType = (getter.returnTypeRef as? FirResolvedTypeRef)?.type
+        if (getterReturnType == null && needCheckForSetter) {
+            // During implicit body resolve phase, we can encounter a reference to a not yet resolved Kotlin class that inherits a
+            // synthetic property from a Java class. In that case, resolve the return type here, ignoring error types (e.g. cycles).
+            getterReturnType = returnTypeCalculator?.tryCalculateReturnTypeOrNull(getter)?.type?.takeUnless { it is ConeErrorType }
+        }
+
         if ((getterReturnType as? ConeClassLikeType)?.lookupTag?.classId == StandardClassIds.Unit) return
 
         if (!getterSymbol.hasJavaOverridden()) return
@@ -195,7 +206,7 @@ class FirSyntheticPropertiesScope private constructor(
             baseScope.processDirectOverriddenFunctionsWithBaseScope(symbolToStart) l@{ symbol, scope ->
                 if (hasMatchingSetter) return@l ProcessorAction.STOP
                 val baseDispatchReceiverType = symbol.dispatchReceiverType ?: return@l ProcessorAction.NEXT
-                val syntheticScope = FirSyntheticPropertiesScope(session, scope, baseDispatchReceiverType, syntheticNamesProvider)
+                val syntheticScope = FirSyntheticPropertiesScope(session, scope, baseDispatchReceiverType, syntheticNamesProvider, returnTypeCalculator)
                 val baseProperties = syntheticScope.getProperties(propertyName)
                 val propertyFound = baseProperties.any {
                     val baseProperty = it.fir

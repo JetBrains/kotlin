@@ -121,9 +121,11 @@ internal abstract class FirBaseTowerResolveTask(
     protected fun ReceiverValue.toMemberScopeTowerLevel(
         extensionReceiver: ReceiverValue? = null,
         contextReceiverGroup: ContextReceiverGroup? = null,
+        skipSynthetics: Boolean = false,
     ) = MemberScopeTowerLevel(
         components, this,
         givenExtensionReceiverOptions = contextReceiverGroup ?: listOfNotNull(extensionReceiver),
+        skipSynthetics = skipSynthetics,
     )
 
     protected fun ContextReceiverGroup.toMemberScopeTowerLevel(
@@ -315,7 +317,8 @@ internal open class FirTowerResolveTask(
     }
 
     suspend fun runResolverForNoReceiver(
-        info: CallInfo
+        info: CallInfo,
+        skipSynthetics: Boolean = false,
     ) {
         val emptyScopes = mutableSetOf<FirScope>()
         val implicitReceiverValuesWithEmptyScopes = mutableSetOf<ImplicitReceiverValue<*>>()
@@ -342,7 +345,8 @@ internal open class FirTowerResolveTask(
                     info,
                     group,
                     implicitReceiverValuesWithEmptyScopes,
-                    emptyScopes
+                    emptyScopes,
+                    skipSynthetics,
                 )
             },
             onContextReceiverGroup = { contextReceiverGroup, towerGroup ->
@@ -401,7 +405,8 @@ internal open class FirTowerResolveTask(
         info: CallInfo,
         parentGroup: TowerGroup,
         implicitReceiverValuesWithEmptyScopes: MutableSet<ImplicitReceiverValue<*>>,
-        emptyScopes: MutableSet<FirScope>
+        emptyScopes: MutableSet<FirScope>,
+        skipSynthetics: Boolean,
     ) {
         processExtensionsThatHideMembers(
             info, receiver, TowerGroup.EmptyRoot,
@@ -409,7 +414,7 @@ internal open class FirTowerResolveTask(
         )
 
         processLevel(
-            receiver.toMemberScopeTowerLevel(), info, parentGroup.Member,
+            receiver.toMemberScopeTowerLevel(skipSynthetics = skipSynthetics), info, parentGroup.Member,
             onEmptyLevel = {
                 implicitReceiverValuesWithEmptyScopes += receiver
             }

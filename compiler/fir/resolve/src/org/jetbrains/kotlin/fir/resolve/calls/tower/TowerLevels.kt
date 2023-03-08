@@ -74,6 +74,7 @@ class MemberScopeTowerLevel(
     private val bodyResolveComponents: BodyResolveComponents,
     val dispatchReceiverValue: ReceiverValue,
     private val givenExtensionReceiverOptions: List<ReceiverValue>,
+    private val skipSynthetics: Boolean,
 ) : TowerScopeLevel() {
     private val scopeSession: ScopeSession get() = bodyResolveComponents.scopeSession
     private val session: FirSession get() = bodyResolveComponents.session
@@ -117,7 +118,7 @@ class MemberScopeTowerLevel(
             )
         }
 
-        if (givenExtensionReceiverOptions.isEmpty()) {
+        if (givenExtensionReceiverOptions.isEmpty() && !skipSynthetics) {
             val dispatchReceiverType = dispatchReceiverValue.type
 
             val useSiteForSyntheticScope: FirTypeScope
@@ -148,7 +149,9 @@ class MemberScopeTowerLevel(
                 session,
                 typeForSyntheticScope,
                 useSiteForSyntheticScope,
+                bodyResolveComponents.returnTypeCalculator,
             )
+
             withSynthetic?.processScopeMembers { symbol ->
                 empty = false
                 output.consumeCandidate(
@@ -291,7 +294,7 @@ class ContextReceiverGroupMemberScopeTowerLevel(
     givenExtensionReceiverOptions: List<ReceiverValue> = emptyList(),
 ) : TowerScopeLevel() {
     private val memberScopeLevels = contextReceiverGroup.map {
-        MemberScopeTowerLevel(bodyResolveComponents, it, givenExtensionReceiverOptions)
+        MemberScopeTowerLevel(bodyResolveComponents, it, givenExtensionReceiverOptions, false)
     }
 
     override fun processFunctionsByName(info: CallInfo, processor: TowerScopeLevelProcessor<FirFunctionSymbol<*>>): ProcessResult {
