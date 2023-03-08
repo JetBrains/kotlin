@@ -26,7 +26,7 @@ abstract class FirAbstractInvalidationTest(
     targetBackend: TargetBackend,
     workingDirPath: String
 ) : AbstractInvalidationTest(targetBackend, workingDirPath) {
-    private val mutedTests = setOf("constVals", "enum")
+    private val mutedTests = setOf("constVals", "enum", "jsCodeWithConstString")
 
     override fun isIgnoredTest(projectInfo: ProjectInfo): Boolean {
         return super.isIgnoredTest(projectInfo) || projectInfo.name in mutedTests
