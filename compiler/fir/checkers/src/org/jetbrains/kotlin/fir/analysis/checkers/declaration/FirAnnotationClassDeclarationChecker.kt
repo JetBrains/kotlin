@@ -72,6 +72,7 @@ object FirAnnotationClassDeclarationChecker : FirRegularClassChecker() {
 
                     val typeRef = parameter.returnTypeRef
                     val coneType = typeRef.coneTypeSafe<ConeLookupTagBasedType>()
+                        ?.fullyExpandedType(context.session) as? ConeLookupTagBasedType
                     val classId = coneType?.classId
 
                     if (coneType != null) when {
