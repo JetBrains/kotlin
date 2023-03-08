@@ -108,7 +108,7 @@ class ComposeIrGenerationExtension(
             metrics
         ).lower(moduleFragment)
 
-        CopyDefaultValuesFromExpectLowering().lower(moduleFragment)
+        CopyDefaultValuesFromExpectLowering(pluginContext).lower(moduleFragment)
 
         val mangler = when {
             pluginContext.platform.isJs() -> JsManglerIr
