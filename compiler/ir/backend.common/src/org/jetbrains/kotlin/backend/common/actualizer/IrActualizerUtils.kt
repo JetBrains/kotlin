@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.types.IrDynamicType
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.kotlinFqName
@@ -61,11 +62,16 @@ private fun IrFunction.match(actualFunction: IrFunction, expectActualTypesMap: M
             return false
         }
 
+        if (expectParameter.type is IrDynamicType || actualParameter.type is IrDynamicType) {
+            return true
+        }
+
         if (getActualizedValueParameterSymbol(expectParameter, localTypeParametersMap) !=
             getActualizedValueParameterSymbol(actualParameter)
         ) {
             return false
         }
+
         return true
     }
 

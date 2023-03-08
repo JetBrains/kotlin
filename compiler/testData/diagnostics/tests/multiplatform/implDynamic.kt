@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNSUPPORTED
 // MODULE: m1-common
 // FILE: common.kt
