@@ -44,7 +44,13 @@ internal fun String.parseHtmlEncodedWithNormalisedSpaces(
  */
 internal fun String.parseWithNormalisedSpaces(
     renderWhiteCharactersAsSpaces: Boolean
-): List<DocTag> =
-    //parsing it using jsoup is required to get codePoints, otherwise they are interpreted separately, as chars
-    //But we dont need to do it for java as it is already parsed with jsoup
-    Jsoup.parseBodyFragment(this).body().wholeText().parseHtmlEncodedWithNormalisedSpaces(renderWhiteCharactersAsSpaces)
+): List<DocTag> {
+    if (!requiresHtmlEncoding()) {
+        return parseHtmlEncodedWithNormalisedSpaces(renderWhiteCharactersAsSpaces)
+    }
+    // parsing it using jsoup is required to get codePoints, otherwise they are interpreted separately, as chars
+    // But we dont need to do it for java as it is already parsed with jsoup
+    return Jsoup.parseBodyFragment(this).body().wholeText().parseHtmlEncodedWithNormalisedSpaces(renderWhiteCharactersAsSpaces)
+}
+
+private fun String.requiresHtmlEncoding(): Boolean = indexOf('&') != -1
