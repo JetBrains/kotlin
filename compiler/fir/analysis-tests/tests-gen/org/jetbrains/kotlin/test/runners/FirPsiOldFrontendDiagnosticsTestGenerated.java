@@ -526,6 +526,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         }
 
         @Test
+        @TestMetadata("kt56876.kt")
+        public void testKt56876() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/kt56876.kt");
+        }
+
+        @Test
         @TestMetadata("kt56877.kt")
         public void testKt56877() throws Exception {
             runTest("compiler/testData/diagnostics/tests/kt56877.kt");
