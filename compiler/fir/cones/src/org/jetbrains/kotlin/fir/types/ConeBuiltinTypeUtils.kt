@@ -19,6 +19,7 @@ val ConeKotlinType.isAny: Boolean get() = isBuiltinType(StandardClassIds.Any, fa
 val ConeKotlinType.isNullableAny: Boolean get() = isBuiltinType(StandardClassIds.Any, true)
 val ConeKotlinType.isNothing: Boolean get() = isBuiltinType(StandardClassIds.Nothing, false)
 val ConeKotlinType.isNullableNothing: Boolean get() = isBuiltinType(StandardClassIds.Nothing, true)
+val ConeKotlinType.isNothingOrNullableNothing: Boolean get() = isAnyOfBuiltinType(setOf(StandardClassIds.Nothing))
 
 val ConeKotlinType.isUnit: Boolean get() = isBuiltinType(StandardClassIds.Unit, false)
 val ConeKotlinType.isBoolean: Boolean get() = isBuiltinType(StandardClassIds.Boolean, false)

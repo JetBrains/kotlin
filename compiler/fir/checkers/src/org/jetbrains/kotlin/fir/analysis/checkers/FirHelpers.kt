@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.analysis.checkers.ConeTypeCompatibilityChecker.collectUpperBounds
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.primaryConstructorSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -731,4 +732,9 @@ fun FirElement.isLhsOfAssignment(context: CheckerContext): Boolean {
     if (this !is FirQualifiedAccessExpression) return false
     val lastQualified = context.qualifiedAccessOrAssignmentsOrAnnotationCalls.lastOrNull { it != this } ?: return false
     return lastQualified is FirVariableAssignment && lastQualified.lValue == this
+}
+
+fun ConeKotlinType.leastUpperBound(session: FirSession): ConeKotlinType {
+    val upperBounds = collectUpperBounds().takeIf { it.isNotEmpty() } ?: setOf(session.builtinTypes.nullableAnyType.type)
+    return ConeTypeIntersector.intersectTypes(session.typeContext, upperBounds)
 }
