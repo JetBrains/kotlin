@@ -193,6 +193,7 @@ class KotlinTargetHierarchyDescriptorTest {
         )
     }
 
+    @Suppress("DEPRECATION")
     @Test
     fun `test - filterCompilations`() = project.runLifecycleAwareTest {
         val descriptor = KotlinTargetHierarchyDescriptor {
@@ -223,6 +224,7 @@ class KotlinTargetHierarchyDescriptorTest {
         )
     }
 
+    @Suppress("DEPRECATION")
     @Test
     fun `test - filterCompilations - include them again`() = project.runLifecycleAwareTest {
         val descriptor = KotlinTargetHierarchyDescriptor {
