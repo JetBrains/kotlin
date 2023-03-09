@@ -5544,7 +5544,8 @@ interopTest("interop_exceptions_cCallback") {
 }
 
 tasks.register("library_ir_provider_mismatch", KonanDriverTest) {
-    disabled = isAggressiveGC // No need to test with different GC schedulers
+    disabled = isAggressiveGC || // No need to test with different GC schedulers
+            isK2(project) // KT-56855
 
     def dir = buildDir.absolutePath
     def lib = "$projectDir/link/ir_providers/library/empty.kt"
