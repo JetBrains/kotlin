@@ -1052,8 +1052,32 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTargetE
 	public abstract fun getTarget ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;
 }
 
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchy {
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchy$ModuleName {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchy$ModuleName$Companion;
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchy$ModuleName;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchy$ModuleName;Ljava/lang/String;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchy$ModuleName;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchy$ModuleName$Companion {
+	public final fun getInstrumentedTest ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchy$ModuleName;
+	public final fun getIntegrationTest ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchy$ModuleName;
+	public final fun getMain ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchy$ModuleName;
+	public final fun getTest ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchy$ModuleName;
+	public final fun getUnitTest ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchy$ModuleName;
+}
+
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchyBuilder {
 	public abstract fun common (Lkotlin/jvm/functions/Function1;)V
+	public abstract fun excludeCompilations (Lkotlin/jvm/functions/Function2;)V
 	public abstract fun filterCompilations (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun group (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)V
 	public abstract fun withAndroid ()V
@@ -1063,7 +1087,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTargetH
 	public abstract fun withAndroidNativeX64 ()V
 	public abstract fun withAndroidNativeX86 ()V
 	public abstract fun withApple ()V
-	public abstract fun withCompilations (Lkotlin/jvm/functions/Function1;)V
+	public abstract fun withCompilations (Lkotlin/jvm/functions/Function2;)V
 	public abstract fun withIos ()V
 	public abstract fun withIosArm32 ()V
 	public abstract fun withIosArm64 ()V
@@ -1097,17 +1121,30 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTargetH
 	public abstract fun withWatchosSimulatorArm64 ()V
 	public abstract fun withWatchosX64 ()V
 	public abstract fun withWatchosX86 ()V
-	public abstract fun withoutCompilations (Lkotlin/jvm/functions/Function1;)V
+	public abstract fun withoutCompilations (Lkotlin/jvm/functions/Function2;)V
 }
 
 public final class org/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchyBuilder$DefaultImpls {
 	public static fun common (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchyBuilder;Lkotlin/jvm/functions/Function1;)V
 	public static fun filterCompilations (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchyBuilder;Lkotlin/jvm/functions/Function1;)V
 	public static synthetic fun group$default (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchyBuilder;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
+	public static fun withoutCompilations (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchyBuilder;Lkotlin/jvm/functions/Function2;)V
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchyBuilder$Root : org/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchyBuilder {
+	public abstract fun excludeModule ([Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchy$ModuleName;)V
+	public abstract fun modules ([Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchy$ModuleName;)V
+	public abstract fun withModule ([Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchy$ModuleName;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchyBuilder$Root$DefaultImpls {
+	public static fun common (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchyBuilder$Root;Lkotlin/jvm/functions/Function1;)V
+	public static fun filterCompilations (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchyBuilder$Root;Lkotlin/jvm/functions/Function1;)V
+	public static fun withoutCompilations (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchyBuilder$Root;Lkotlin/jvm/functions/Function2;)V
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchyDescriptor {
-	public abstract fun describe (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchyBuilder;)V
+	public abstract fun describe (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchyBuilder$Root;)V
 	public abstract fun extend (Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchyDescriptor;
 }
 
