@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
 import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.daemon.report.CompileServicesFacadeMessageCollector
@@ -608,13 +609,17 @@ abstract class CompileServiceImplBase(
         }
 
         val projectRoot = incrementalCompilationOptions.modulesInfo.projectRoot
+        val useK2 = k2jvmArgs.useK2 || LanguageVersion.fromVersionString(k2jvmArgs.languageVersion)?.usesK2 == true
+        // TODO: This should be reverted after implementing of fir-based java tracker (KT-57147).
+        //  See org.jetbrains.kotlin.incremental.IncrementalJvmCompilerRunnerKt.makeIncrementally
+        val usePreciseJavaTracking = if (useK2) false else incrementalCompilationOptions.usePreciseJavaTracking
 
         val compiler = IncrementalJvmCompilerRunner(
             workingDir,
             reporter,
             buildHistoryFile = incrementalCompilationOptions.multiModuleICSettings.buildHistoryFile,
             outputDirs = incrementalCompilationOptions.outputFiles,
-            usePreciseJavaTracking = incrementalCompilationOptions.usePreciseJavaTracking,
+            usePreciseJavaTracking = usePreciseJavaTracking,
             modulesApiHistory = modulesApiHistory,
             kotlinSourceFilesExtensions = allKotlinExtensions,
             classpathChanges = incrementalCompilationOptions.classpathChanges,
