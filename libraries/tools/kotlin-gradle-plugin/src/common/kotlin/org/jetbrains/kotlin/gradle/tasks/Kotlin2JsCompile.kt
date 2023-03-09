@@ -23,10 +23,8 @@ import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.IncrementalCompilationEnvironment
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
-import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile
-import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptions
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptionsDefault
-import org.jetbrains.kotlin.gradle.dsl.KotlinJsOptions
 import org.jetbrains.kotlin.gradle.internal.tasks.allOutputFiles
 import org.jetbrains.kotlin.gradle.logging.GradleErrorMessageCollector
 import org.jetbrains.kotlin.gradle.logging.GradlePrintingMessageCollector
@@ -131,12 +129,12 @@ abstract class Kotlin2JsCompile @Inject constructor(
         K2JSCompilerArguments()
 
     override fun setupCompilerArgs(args: K2JSCompilerArguments, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
-        (compilerOptions as KotlinJsCompilerOptionsDefault).fillDefaultValues(args)
+        KotlinJsCompilerOptionsHelper.fillDefaultValues(args)
         super.setupCompilerArgs(args, defaultsOnly = defaultsOnly, ignoreClasspathResolutionErrors = ignoreClasspathResolutionErrors)
 
         if (defaultsOnly) return
 
-        (compilerOptions as KotlinJsCompilerOptionsDefault).fillCompilerArguments(args)
+        KotlinJsCompilerOptionsHelper.fillCompilerArguments(compilerOptions, args)
         if (!args.sourceMapPrefix.isNullOrEmpty()) {
             args.sourceMapBaseDirs = sourceMapBaseDir.get().asFile.absolutePath
         }

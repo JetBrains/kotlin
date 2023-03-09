@@ -26,6 +26,7 @@ import org.gradle.work.NormalizeLineEndings
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptionsDefault
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptionsHelper
 import org.jetbrains.kotlin.gradle.report.BuildReportMode
 import org.jetbrains.kotlin.gradle.tasks.KaptGenerateStubs
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -114,7 +115,7 @@ abstract class KaptGenerateStubsTask @Inject constructor(
         args.freeArgs = emptyList()
         // Also use KotlinOptions configuration that was directly set to this task
         // as 'compileKotlinArgumentsContributor' has KotlinOptions from linked KotlinCompile task
-        (compilerOptions as KotlinJvmCompilerOptionsDefault).fillCompilerArguments(args)
+        KotlinJvmCompilerOptionsHelper.fillCompilerArguments(compilerOptions, args)
 
         // Copied from KotlinCompile
         if (reportingSettings().buildReportMode == BuildReportMode.VERBOSE) {
