@@ -53,6 +53,7 @@ class KtFe10AnalysisSession(
     override val visibilityCheckerImpl: KtVisibilityChecker = KtFe10VisibilityChecker(this)
     override val overrideInfoProviderImpl: KtOverrideInfoProvider = KtFe10OverrideInfoProvider(this)
     override val multiplatformInfoProviderImpl: KtMultiplatformInfoProvider = KtFe10MultiplatformInfoProvider(this)
+    override val originalPsiProviderImpl: KtOriginalPsiProvider = KtFe10OriginalPsiProvider(this)
     override val inheritorsProviderImpl: KtInheritorsProvider = KtFe10InheritorsProvider(this)
     override val typesCreatorImpl: KtTypeCreator = KtFe10TypeCreator(this)
     override val samResolverImpl: KtSamResolver = KtFe10SamResolver(this)
