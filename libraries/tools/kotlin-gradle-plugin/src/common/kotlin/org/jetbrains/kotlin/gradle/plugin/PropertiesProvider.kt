@@ -153,6 +153,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val incrementalJsIr: Boolean
         get() = booleanProperty("kotlin.incremental.js.ir") ?: true
 
+    val incrementalNative: Boolean?
+        get() = booleanProperty(PropertyNames.KOTLIN_NATIVE_INCREMENTAL_COMPILATION)
+
     val jsIrOutputGranularity: KotlinJsIrOutputGranularity
         get() = this.property("kotlin.js.ir.output.granularity")?.let { KotlinJsIrOutputGranularity.byArgument(it) }
             ?: KotlinJsIrOutputGranularity.PER_MODULE
@@ -439,6 +442,12 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = this.property(PropertyNames.KOTLIN_NATIVE_CACHE_ORCHESTRATION)?.let { NativeCacheOrchestration.byCompilerArgument(it) }
 
     /**
+     * Native backend threads.
+     */
+    val nativeParallelThreads: Int?
+        get() = this.property(PropertyNames.KOTLIN_NATIVE_PARALLEL_THREADS)?.toInt()
+
+    /**
      * Ignore overflow in [org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessageOutputStreamHandler]
      */
     val ignoreTcsmOverflow: Boolean
@@ -610,6 +619,8 @@ internal class PropertiesProvider private constructor(private val project: Proje
         const val KOTLIN_MPP_ENABLE_INTRANSITIVE_METADATA_CONFIGURATION = "kotlin.mpp.enableIntransitiveMetadataConfiguration"
         const val KOTLIN_NATIVE_DEPENDENCY_PROPAGATION = "kotlin.native.enableDependencyPropagation"
         const val KOTLIN_NATIVE_CACHE_ORCHESTRATION = "kotlin.native.cacheOrchestration"
+        const val KOTLIN_NATIVE_PARALLEL_THREADS = "kotlin.native.parallelThreads"
+        const val KOTLIN_NATIVE_INCREMENTAL_COMPILATION = "kotlin.incremental.native"
         const val KOTLIN_MPP_ENABLE_OPTIMISTIC_NUMBER_COMMONIZATION = "kotlin.mpp.enableOptimisticNumberCommonization"
         const val KOTLIN_MPP_ENABLE_PLATFORM_INTEGER_COMMONIZATION = "kotlin.mpp.enablePlatformIntegerCommonization"
         const val KOTLIN_ABI_SNAPSHOT = "kotlin.incremental.classpath.snapshot.enabled"
