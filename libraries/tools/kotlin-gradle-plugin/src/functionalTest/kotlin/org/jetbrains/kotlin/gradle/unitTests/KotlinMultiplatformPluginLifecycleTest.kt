@@ -8,11 +8,12 @@
 package org.jetbrains.kotlin.gradle.unitTests
 
 import org.gradle.api.ProjectConfigurationException
-import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginLifecycle
+import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginLifecycle.IllegalLifecycleException
+import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginLifecycle.Stage
 import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginLifecycle.Stage.*
-import org.jetbrains.kotlin.gradle.plugin.kotlinMultiplatformPluginLifecycle
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
-import org.jetbrains.kotlin.tooling.core.linearClosure
+import org.jetbrains.kotlin.gradle.util.runLifecycleAwareTest
 import org.jetbrains.kotlin.tooling.core.withLinearClosure
 import org.junit.Test
 import java.util.concurrent.atomic.AtomicBoolean
@@ -67,10 +68,10 @@ class KotlinMultiplatformPluginLifecycleTest {
 
     @Test
     fun `test - all stages are executed in order`() {
-        val invocations = KotlinMultiplatformPluginLifecycle.Stage.values().associateWith { AtomicInteger(0) }
-        KotlinMultiplatformPluginLifecycle.Stage.values().toList().forEach { stage ->
+        val invocations = Stage.values().associateWith { AtomicInteger(0) }
+        Stage.values().toList().forEach { stage ->
             lifecycle.enqueue(stage) {
-                KotlinMultiplatformPluginLifecycle.Stage.values().forEach { otherStage ->
+                Stage.values().forEach { otherStage ->
                     when {
                         otherStage.ordinal < stage.ordinal -> assertEquals(1, invocations.getValue(otherStage).get())
                         otherStage.ordinal == stage.ordinal -> assertEquals(1, invocations.getValue(stage).incrementAndGet())
@@ -165,7 +166,7 @@ class KotlinMultiplatformPluginLifecycleTest {
     fun `test - enqueue of already executed stage - throws exception`() {
         val executed = AtomicBoolean(false)
         lifecycle.enqueue(Finalised) {
-            assertFailsWith<KotlinMultiplatformPluginLifecycle.IllegalLifecycleException> {
+            assertFailsWith<IllegalLifecycleException> {
                 lifecycle.enqueue(AfterEvaluate) { fail("This code shall not be executed!") }
             }
             assertFalse(executed.getAndSet(true))
@@ -177,7 +178,7 @@ class KotlinMultiplatformPluginLifecycleTest {
 
     @Test
     fun `test - stage property is correct`() {
-        KotlinMultiplatformPluginLifecycle.Stage.values().forEach { stage ->
+        Stage.values().forEach { stage ->
             lifecycle.enqueue(stage) {
                 assertEquals(lifecycle.stage, stage)
             }
@@ -303,5 +304,49 @@ class KotlinMultiplatformPluginLifecycleTest {
         }.withLinearClosure<Throwable> { it.cause }
 
         assertTrue(testException in causes)
+    }
+
+    @Test
+    fun `test - require current stage`() = project.runLifecycleAwareTest {
+        launchInStage(AfterEvaluate) {
+            requireCurrentStage { } // OK
+
+            requireCurrentStage {
+                /* Fails because of stage transition  using 'await' */
+                assertFailsWith<IllegalLifecycleException> { await(Finalised) }
+            }
+        }
+    }
+
+    @Test
+    fun `test - launch in required stage`() = project.runLifecycleAwareTest {
+        launchInRequiredStage(AfterEvaluate) {
+            assertEquals(AfterEvaluate, stage)
+            await(AfterEvaluate)
+            assertEquals(AfterEvaluate, stage)
+            assertFailsWith<IllegalLifecycleException> { await(Finalised) }
+        }
+    }
+
+    @Test
+    fun `test - withRestrictedStages`() = project.runLifecycleAwareTest {
+        launch {
+            withRestrictedStages(Stage.upTo(FinaliseRefinesEdges)) {
+                assertEquals(Configure, stage)
+
+                await(AfterEvaluate)
+                assertEquals(AfterEvaluate, stage)
+
+                await(BeforeFinaliseRefinesEdges)
+                assertEquals(BeforeFinaliseRefinesEdges, stage)
+
+                await(FinaliseRefinesEdges)
+                assertEquals(FinaliseRefinesEdges, stage)
+
+                assertFailsWith<IllegalLifecycleException> {
+                    await(AfterFinaliseRefinesEdges)
+                }
+            }
+        }
     }
 }

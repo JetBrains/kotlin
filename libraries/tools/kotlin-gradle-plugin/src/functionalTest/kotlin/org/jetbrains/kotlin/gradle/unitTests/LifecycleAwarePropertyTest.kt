@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginLifecycle.Stage.*
 import org.jetbrains.kotlin.gradle.plugin.awaitFinalValue
 import org.jetbrains.kotlin.gradle.plugin.currentMultiplatformPluginLifecycle
-import org.jetbrains.kotlin.gradle.plugin.launch
+import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.plugin.newLifecycleAwareProperty
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.runLifecycleAwareTest
@@ -30,11 +30,11 @@ class LifecycleAwarePropertyTest {
         val property by project.newLifecycleAwareProperty<Int>(AfterFinaliseRefinesEdges)
         assertTrue(property.isLifecycleAware())
 
-        launch(BeforeFinaliseRefinesEdges) {
+        launchInStage(BeforeFinaliseRefinesEdges) {
             property.set(1)
         }
 
-        launch(FinaliseRefinesEdges) {
+        launchInStage(FinaliseRefinesEdges) {
             assertEquals(1, property.get())
             property.set(2)
         }
@@ -56,7 +56,7 @@ class LifecycleAwarePropertyTest {
         val property by project.newLifecycleAwareProperty<Int>(AfterEvaluate)
         property.set(1)
 
-        launch(AfterEvaluate) {
+        launchInStage(AfterEvaluate) {
             assertFailsWith<IllegalStateException> { property.set(2) }
         }
     }

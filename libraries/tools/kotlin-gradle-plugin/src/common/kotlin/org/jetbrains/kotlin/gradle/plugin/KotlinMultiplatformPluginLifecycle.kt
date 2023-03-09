@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin
 
 import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.withContext
 import org.gradle.api.Project
 import org.gradle.api.provider.Property
 import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginLifecycle.*
@@ -14,11 +15,7 @@ import java.lang.ref.WeakReference
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.collections.ArrayDeque
-import kotlin.collections.Map
-import kotlin.collections.associateWith
-import kotlin.collections.getValue
 import kotlin.collections.set
-import kotlin.collections.toList
 import kotlin.coroutines.*
 import kotlin.reflect.KProperty
 
@@ -30,10 +27,18 @@ internal fun Project.launch(block: suspend KotlinMultiplatformPluginLifecycle.()
     kotlinMultiplatformPluginLifecycle.launch(block)
 }
 
-internal fun Project.launch(stage: Stage, block: suspend KotlinMultiplatformPluginLifecycle.() -> Unit) {
+internal fun Project.launchInStage(stage: Stage, block: suspend KotlinMultiplatformPluginLifecycle.() -> Unit) {
     launch {
         await(stage)
         block()
+    }
+}
+
+internal fun Project.launchInRequiredStage(stage: Stage, block: suspend KotlinMultiplatformPluginLifecycle.() -> Unit) {
+    launchInStage(stage) {
+        requiredStage(stage) {
+            block()
+        }
     }
 }
 
@@ -56,7 +61,7 @@ internal suspend fun await(stage: Stage) {
 }
 
 internal inline fun <reified T : Any> Project.newLifecycleAwareProperty(
-    finaliseIn: Stage, initialValue: T? = null
+    finaliseIn: Stage = Stage.FinaliseDsl, initialValue: T? = null
 ): LifecycleAwareProperty<T> {
     return kotlinMultiplatformPluginLifecycle.newLifecycleAwareProperty(T::class.java, finaliseIn, initialValue)
 }
@@ -74,6 +79,20 @@ internal suspend fun Property<*>.isLifecycleAware(): Boolean {
     return findLifecycleAwareProperty() != null
 }
 
+internal suspend fun <T> requiredStage(stage: Stage, block: suspend () -> T): T {
+    return withRestrictedStages(hashSetOf(stage), block)
+}
+
+internal suspend fun <T> requireCurrentStage(block: suspend () -> T): T {
+    return requiredStage(currentMultiplatformPluginLifecycle().stage, block)
+}
+
+internal suspend fun <T> withRestrictedStages(allowed: Set<Stage>, block: suspend () -> T): T {
+    return withContext(RestrictedLifecycleStages(currentMultiplatformPluginLifecycle(), allowed)) {
+        block()
+    }
+}
+
 /*
 Definition of the Lifecycle and its stages
  */
@@ -83,6 +102,10 @@ internal interface KotlinMultiplatformPluginLifecycle {
         Configure,
         AfterEvaluate,
 
+        BeforeFinaliseDsl,
+        FinaliseDsl,
+        AfterFinaliseDsl,
+
         BeforeFinaliseRefinesEdges,
         FinaliseRefinesEdges,
         AfterFinaliseRefinesEdges,
@@ -91,14 +114,16 @@ internal interface KotlinMultiplatformPluginLifecycle {
         FinaliseCompilations,
         AfterFinaliseCompilations,
 
-        Finalised
-    }
+        Finalised;
 
-    interface LifecycleAwareProperty<T : Any> {
-        val finaliseIn: Stage
-        val property: Property<T>
-        suspend fun awaitFinalValue(): T?
-        operator fun getValue(thisRef: Any?, property: KProperty<*>): Property<T> = this.property
+        operator fun rangeTo(other: Stage): Set<Stage> {
+            return values.subList(this.ordinal, other.ordinal + 1).toSet()
+        }
+
+        companion object {
+            val values = values().toList()
+            fun upTo(stage: Stage): Set<Stage> = values.first()..stage
+        }
     }
 
     val project: Project
@@ -116,6 +141,13 @@ internal interface KotlinMultiplatformPluginLifecycle {
     ): LifecycleAwareProperty<T>
 
     class IllegalLifecycleException(message: String) : IllegalStateException(message)
+
+    interface LifecycleAwareProperty<T : Any> {
+        val finaliseIn: Stage
+        val property: Property<T>
+        suspend fun awaitFinalValue(): T?
+        operator fun getValue(thisRef: Any?, property: KProperty<*>): Property<T> = this.property
+    }
 }
 
 
@@ -124,7 +156,7 @@ Implementation
  */
 
 private class KotlinMultiplatformPluginLifecycleImpl(override val project: Project) : KotlinMultiplatformPluginLifecycle {
-    private val enqueuedStages: ArrayDeque<Stage> = ArrayDeque(Stage.values().toList())
+    private val enqueuedStages: ArrayDeque<Stage> = ArrayDeque(Stage.values)
     private val enqueuedActions: Map<Stage, ArrayDeque<KotlinMultiplatformPluginLifecycle.() -> Unit>> =
         Stage.values().associateWith { ArrayDeque() }
 
@@ -197,8 +229,8 @@ private class KotlinMultiplatformPluginLifecycleImpl(override val project: Proje
         val lifecycle = this
         check(isStarted.get()) { "Cannot launch when ${KotlinMultiplatformPluginLifecycle::class.simpleName} is not started" }
         check(!isFinished.get()) { "Cannot launch when ${KotlinMultiplatformPluginLifecycle::class.simpleName} is already finished" }
-        val coroutine = block.createCoroutine(this, object : Continuation<Unit> {
 
+        val coroutine = block.createCoroutine(this, object : Continuation<Unit> {
             override val context: CoroutineContext = EmptyCoroutineContext +
                     KotlinMultiplatformPluginLifecycleCoroutineContextElement(lifecycle)
 
@@ -250,4 +282,37 @@ private class KotlinMultiplatformPluginLifecycleCoroutineContextElement(
     companion object Key : CoroutineContext.Key<KotlinMultiplatformPluginLifecycleCoroutineContextElement>
 
     override val key: CoroutineContext.Key<KotlinMultiplatformPluginLifecycleCoroutineContextElement> = Key
+}
+
+private class RestrictedLifecycleStages(
+    private val lifecycle: KotlinMultiplatformPluginLifecycle,
+    private val allowedStages: Set<Stage>,
+) : CoroutineContext.Element, ContinuationInterceptor {
+    @OptIn(ExperimentalStdlibApi::class)
+    companion object Key : AbstractCoroutineContextKey<ContinuationInterceptor, RestrictedLifecycleStages>(
+        ContinuationInterceptor, { it as? RestrictedLifecycleStages }
+    )
+
+    override val key: CoroutineContext.Key<*> = Key
+
+    override fun <T> interceptContinuation(continuation: Continuation<T>): Continuation<T> = object : Continuation<T> {
+        override val context: CoroutineContext
+            get() = continuation.context
+
+        override fun resumeWith(result: Result<T>) = when {
+            result.isFailure -> continuation.resumeWith(result)
+            lifecycle.stage !in allowedStages -> continuation.resumeWithException(
+                IllegalLifecycleException(
+                    "Required stage in '$allowedStages', but lifecycle switched to '${lifecycle.stage}'"
+                )
+            )
+            else -> continuation.resumeWith(result)
+        }
+    }
+
+    init {
+        if (lifecycle.stage !in allowedStages) {
+            throw IllegalLifecycleException("Required stage in '${allowedStages}' but lifecycle is currently in '${lifecycle.stage}'")
+        }
+    }
 }

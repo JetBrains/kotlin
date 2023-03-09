@@ -172,9 +172,9 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
         val production = sourceSets.create(KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME)
         val test = sourceSets.create(KotlinSourceSet.COMMON_TEST_SOURCE_SET_NAME)
         targets.all { target ->
-            project.launch(KotlinMultiplatformPluginLifecycle.Stage.FinaliseRefinesEdges) {
+            project.launchInStage(KotlinMultiplatformPluginLifecycle.Stage.FinaliseRefinesEdges) {
                 /* Only setup default refines edges when no KotlinTargetHierarchy was applied */
-                if (project.multiplatformExtension.internalKotlinTargetHierarchy.appliedDescriptors.isNotEmpty()) return@launch
+                if (project.multiplatformExtension.internalKotlinTargetHierarchy.appliedDescriptors.isNotEmpty()) return@launchInStage
 
                 target.compilations.findByName(KotlinCompilation.MAIN_COMPILATION_NAME)?.let { mainCompilation ->
                     mainCompilation.defaultSourceSet.takeIf { it != production }?.dependsOn(production)
