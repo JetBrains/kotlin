@@ -12,27 +12,95 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.kotlinFqName
 import org.jetbrains.kotlin.ir.util.module
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.multiplatform.OptionalAnnotationUtil
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
-fun generateIrElementFullName(
+fun Map<String, List<IrDeclaration>>.getMatch(
+    expectDeclaration: IrDeclaration,
+    expectActualTypesMap: Map<IrSymbol, IrSymbol>,
+    expectActualTypeAliasMap: Map<FqName, FqName>
+): IrDeclaration? {
+    val members = this[generateIrElementFullNameFromExpect(expectDeclaration, expectActualTypeAliasMap)] ?: return null
+    return if (expectDeclaration is IrFunction) {
+        members.firstNotNullOfOrNull { runIf(expectDeclaration.match(it as IrFunction, expectActualTypesMap)) { it } }
+    } else {
+        members.singleOrNull()
+    }
+}
+
+private fun IrFunction.match(actualFunction: IrFunction, expectActualTypesMap: Map<IrSymbol, IrSymbol>): Boolean {
+    fun checkParameter(
+        expectParameter: IrValueParameter?,
+        actualParameter: IrValueParameter?,
+        typeParametersMap: Map<IrTypeParameterSymbol, IrTypeParameterSymbol>
+    ): Boolean {
+        if (expectParameter == null) {
+            return actualParameter == null
+        }
+        if (actualParameter == null) {
+            return false
+        }
+
+        val actualizedParameterTypeSymbol = expectParameter.type.classifierOrFail.let {
+            var mappedSymbol: IrSymbol? = null
+            if (it is IrTypeParameterSymbol) {
+                mappedSymbol = typeParametersMap[it]
+            }
+            if (mappedSymbol == null) {
+                mappedSymbol = expectActualTypesMap[it] ?: it
+            }
+            mappedSymbol
+        }
+        if (actualizedParameterTypeSymbol != actualParameter.type.classifierOrFail) {
+            return false
+        }
+        return true
+    }
+
+    if (valueParameters.size != actualFunction.valueParameters.size || typeParameters.size != actualFunction.typeParameters.size) {
+        return false
+    }
+
+    val typeParametersMap = mutableMapOf<IrTypeParameterSymbol, IrTypeParameterSymbol>()
+    for ((expectTypeParameter, actualTypeParameter) in typeParameters.zip(actualFunction.typeParameters)) {
+        if (expectTypeParameter.name != actualTypeParameter.name) {
+            return false
+        }
+        typeParametersMap[expectTypeParameter.symbol] = actualTypeParameter.symbol
+    }
+
+    if (!checkParameter(extensionReceiverParameter, actualFunction.extensionReceiverParameter, typeParametersMap)) {
+        return false
+    }
+
+    for ((expectParameter, actualParameter) in valueParameters.zip(actualFunction.valueParameters)) {
+        if (!checkParameter(expectParameter, actualParameter, typeParametersMap)) {
+            return false
+        }
+    }
+
+    return true
+}
+
+fun generateActualIrClassOrTypeAliasFullName(declaration: IrElement) = generateIrElementFullNameFromExpect(declaration, emptyMap())
+
+fun generateIrElementFullNameFromExpect(
     declaration: IrElement,
-    expectActualTypesMap: Map<IrSymbol, IrSymbol>? = null,
-    typeAliasMap: Map<FqName, FqName>? = null
+    expectActualTypeAliasMap: Map<FqName, FqName>
 ): String {
-    return StringBuilder().apply { appendElementFullName(declaration, this, expectActualTypesMap, typeAliasMap) }.toString()
+    return StringBuilder().apply { appendElementFullName(declaration, this, expectActualTypeAliasMap) }.toString()
 }
 
 private fun appendElementFullName(
     declaration: IrElement,
     result: StringBuilder,
-    expectActualTypesMap: Map<IrSymbol, IrSymbol>? = null,
-    expectActualTypeAliasMap: Map<FqName, FqName>? = null
+    expectActualTypeAliasMap: Map<FqName, FqName>
 ) {
     if (declaration !is IrDeclarationBase) return
 
@@ -47,7 +115,7 @@ private fun appendElementFullName(
                 continue
             }
         }
-        val parentString = parent.kotlinFqName.let { (expectActualTypeAliasMap?.get(it) ?: it).asString() }
+        val parentString = parent.kotlinFqName.let { (expectActualTypeAliasMap[it] ?: it).asString() }
         if (parentString.isNotEmpty()) {
             parents.add(parentString)
         }
@@ -64,27 +132,7 @@ private fun appendElementFullName(
     }
 
     if (declaration is IrFunction) {
-        fun appendType(type: IrType) {
-            val typeClassifier = type.classifierOrFail
-            val actualizedTypeSymbol = expectActualTypesMap?.get(typeClassifier) ?: typeClassifier
-            appendElementFullName(actualizedTypeSymbol.owner, result, expectActualTypesMap)
-        }
-
-        val extensionReceiverType = declaration.extensionReceiverParameter?.type
-        if (extensionReceiverType != null) {
-            result.append('[')
-            appendType(extensionReceiverType)
-            result.append(']')
-        }
-
-        result.append('(')
-        for ((index, parameter) in declaration.valueParameters.withIndex()) {
-            appendType(parameter.type)
-            if (index < declaration.valueParameters.size - 1) {
-                result.append(',')
-            }
-        }
-        result.append(')')
+        result.append("()")
     }
 }
 

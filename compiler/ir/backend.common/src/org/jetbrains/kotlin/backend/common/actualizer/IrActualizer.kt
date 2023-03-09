@@ -20,10 +20,10 @@ object IrActualizer {
         languageVersionSettings: LanguageVersionSettings
     ) {
         val ktDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(diagnosticReporter, languageVersionSettings)
-        val (expectActualMap, typeAliasMap) = ExpectActualCollector(mainFragment, dependentFragments, ktDiagnosticReporter).collect()
+        val (expectActualMap, expectActualTypeAliasMap) = ExpectActualCollector(mainFragment, dependentFragments, ktDiagnosticReporter).collect()
         FunctionDefaultParametersActualizer(expectActualMap).actualize()
         removeExpectDeclarations(dependentFragments, expectActualMap)
-        addMissingFakeOverrides(expectActualMap, dependentFragments, typeAliasMap, ktDiagnosticReporter)
+        addMissingFakeOverrides(expectActualMap, dependentFragments, expectActualTypeAliasMap, ktDiagnosticReporter)
         linkExpectToActual(expectActualMap, dependentFragments)
         mergeIrFragments(mainFragment, dependentFragments)
     }
@@ -48,10 +48,14 @@ object IrActualizer {
     private fun addMissingFakeOverrides(
         expectActualMap: Map<IrSymbol, IrSymbol>,
         dependentFragments: List<IrModuleFragment>,
-        typeAliasMap: Map<FqName, FqName>,
+        expectActualTypeAliasMap: Map<FqName, FqName>,
         diagnosticsReporter: KtDiagnosticReporterWithImplicitIrBasedContext
     ) {
-        MissingFakeOverridesAdder(expectActualMap, typeAliasMap, diagnosticsReporter).apply { dependentFragments.forEach { visitModuleFragment(it) } }
+        MissingFakeOverridesAdder(
+            expectActualMap,
+            expectActualTypeAliasMap,
+            diagnosticsReporter
+        ).apply { dependentFragments.forEach { visitModuleFragment(it) } }
     }
 
     private fun linkExpectToActual(expectActualMap: Map<IrSymbol, IrSymbol>, dependentFragments: List<IrModuleFragment>) {

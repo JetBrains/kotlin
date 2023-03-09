@@ -2,7 +2,7 @@
 // FILE: common.kt
 
 <!NO_ACTUAL_FOR_EXPECT{JVM}!>expect enum class Foo {
-    <!NO_ACTUAL_FOR_EXPECT{JVM}!>ENTRY<!>
+    ENTRY
 }<!>
 
 expect enum class _TimeUnit

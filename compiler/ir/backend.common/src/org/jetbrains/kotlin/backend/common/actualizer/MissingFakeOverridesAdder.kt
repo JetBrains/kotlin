@@ -39,9 +39,12 @@ class MissingFakeOverridesAdder(
 
     private fun processSupertypes(declaration: IrClass) {
         val members by lazy(LazyThreadSafetyMode.NONE) {
-            declaration.declarations.filter { !it.isBuiltinMember() }.associateBy {
-                generateIrElementFullName(it, expectActualMap, typeAliasMap)
+            val notBuiltinMembers = declaration.declarations.filter { !it.isBuiltinMember() }
+            val result = mutableMapOf<String, MutableList<IrDeclaration>>()
+            for (member in notBuiltinMembers) {
+                result.getOrPut(generateIrElementFullNameFromExpect(member, typeAliasMap)) { mutableListOf() }.add(member)
             }
+            result
         }
 
         for (superType in declaration.superTypes) {
@@ -68,15 +71,11 @@ class MissingFakeOverridesAdder(
         }
     }
 
-    private fun addFakeOverride(
-        actualMember: IrDeclaration,
-        members: Map<String, IrDeclaration>,
-        declaration: IrClass
-    ) {
+    private fun addFakeOverride(actualMember: IrDeclaration, members: Map<String, List<IrDeclaration>>, declaration: IrClass) {
         when (actualMember) {
             is IrFunctionImpl,
             is IrPropertyImpl -> {
-                if (members[generateIrElementFullName(actualMember, expectActualMap, typeAliasMap)] != null) {
+                if (members.getMatch(actualMember, expectActualMap, typeAliasMap) != null) {
                     diagnosticsReporter.reportManyInterfacesMembersNotImplemented(declaration, actualMember as IrDeclarationWithName)
                     return
                 }
