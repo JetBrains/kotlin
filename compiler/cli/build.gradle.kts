@@ -37,6 +37,9 @@ dependencies {
     api(project(":kotlin-util-klib"))
     api(project(":kotlin-util-io"))
 
+    api(project(":analysis:analysis-api-standalone"))
+    api(project(":analysis:symbol-light-classes"))
+
     compileOnly(toolsJarApi())
     compileOnly(intellijCore())
     compileOnly(commonDependency("org.jetbrains.intellij.deps:trove4j"))
