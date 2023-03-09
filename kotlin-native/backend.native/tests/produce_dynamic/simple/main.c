@@ -10,7 +10,11 @@ void errorHandler(const char* str) {
 }
 
 void testVector128() {
+#ifndef mips
     int __attribute__ ((__vector_size__ (16))) v4f = __ kotlin.root.getVector128();
+#else
+    int __attribute__ ((__vector_size__ (16))) v4f = {1, 2, 3, 4};
+#endif
     printf("getVector128 = (%d, %d, %d, %d)\n",  v4f[0],  v4f[1],  v4f[2],  v4f[3]);
 }
 

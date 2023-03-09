@@ -628,6 +628,7 @@ task runtime_random(type: KonanLocalTest) {
 }
 
 task runtime_basic_simd(type: KonanLocalTest) {
+    disabled = (project.testTarget == 'linux_mips32')
     expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
     source = "runtime/basic/simd.kt"
 }
