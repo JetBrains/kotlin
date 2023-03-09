@@ -1,3 +1,4 @@
+// TARGET_FRONTEND: FIR
 // FIR_IDENTICAL
 
 class A {
