@@ -2104,6 +2104,52 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
         }
     }
 
+    @TestMetadata("compiler/testData/ir/irText/properties")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Properties extends AbstractKlibTextTestCase {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JS_IR, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInProperties() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/properties"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        }
+
+        @TestMetadata("compiler/testData/ir/irText/properties/backingField")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class BackingField extends AbstractKlibTextTestCase {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.JS_IR, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInBackingField() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/properties/backingField"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+            }
+
+            @TestMetadata("backingFieldVisibility.kt")
+            public void testBackingFieldVisibility() throws Exception {
+                runTest("compiler/testData/ir/irText/properties/backingField/backingFieldVisibility.kt");
+            }
+
+            @TestMetadata("explicitBackingFieldType.kt")
+            public void testExplicitBackingFieldType() throws Exception {
+                runTest("compiler/testData/ir/irText/properties/backingField/explicitBackingFieldType.kt");
+            }
+
+            @TestMetadata("independentBackingFieldType.kt")
+            public void testIndependentBackingFieldType() throws Exception {
+                runTest("compiler/testData/ir/irText/properties/backingField/independentBackingFieldType.kt");
+            }
+
+            @TestMetadata("propertyTypeNarrowing.kt")
+            public void testPropertyTypeNarrowing() throws Exception {
+                runTest("compiler/testData/ir/irText/properties/backingField/propertyTypeNarrowing.kt");
+            }
+        }
+    }
+
     @TestMetadata("compiler/testData/ir/irText/regressions")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

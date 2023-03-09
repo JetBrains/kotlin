@@ -354,18 +354,6 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
                 model("codegen/boxWithStdLib")
             }
 
-            testClass<AbstractFirLightTreeJvmIrTextTest>(
-                suiteTestClassName = "FirLightTreeJvmIrSpecificTextTestGenerated"
-            ) {
-                model("ir/irText")
-            }
-
-            testClass<AbstractFirPsiJvmIrTextTest>(
-                suiteTestClassName = "FirPsiJvmIrSpecificTextTestGenerated"
-            ) {
-                model("ir/irText")
-            }
-
             testClass<AbstractFirLightTreeBytecodeListingTest>(
                 suiteTestClassName = "FirLightTreeSpecificBytecodeListingTestGenerated"
             ) {

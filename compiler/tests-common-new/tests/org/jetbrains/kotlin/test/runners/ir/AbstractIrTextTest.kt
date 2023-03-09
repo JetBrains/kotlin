@@ -137,7 +137,7 @@ open class AbstractFirIrTextTestBase(
                 ::BlackBoxCodegenSuppressor
             )
 
-            forTestsMatching("compiler/fir/fir2ir/testData/ir/irText/properties/backingField/*") {
+            forTestsMatching("compiler/testData/ir/irText/properties/backingField/*") {
                 defaultDirectives {
                     LanguageSettingsDirectives.LANGUAGE with "+ExplicitBackingFields"
                 }
