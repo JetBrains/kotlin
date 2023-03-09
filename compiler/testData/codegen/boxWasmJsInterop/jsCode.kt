@@ -14,6 +14,9 @@ val eib1000: EIB = js("'1000'")
 fun <T : EIA> fooDefaultT(x: T? = null): T? =
     js("x")
 
+fun fooVararg(i: Int, vararg x: Int): Int =
+    js("x[i]")
+
 fun box(): String {
     val res = foo(10, 20, z = "30")
     if (res != 60) return "Wrong foo: $res"
@@ -26,6 +29,10 @@ fun box(): String {
     if (fooDefaultT<EIA>() != null) return "Wrong fooDefaultT 1"
     if (fooDefaultT<EIA>(eia10).toString() != "10") return "Wrong fooDefaultT 2"
     if (fooDefaultT<EIB>(eib1000).toString() != "1000") return "Wrong fooDefaultT 3"
+
+    if (fooVararg(0, 1) != 1) return "Wrong fooVararg 1"
+    if (fooVararg(2, 1, 2, 3) != 3) return "Wrong fooVararg 2"
+    if (fooVararg(2, 1, *intArrayOf(2, 3)) != 3) return "Wrong fooVararg 3"
 
     return "OK"
 }
