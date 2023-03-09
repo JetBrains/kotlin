@@ -1,5 +1,3 @@
-// IGNORE_BACKEND_K2: NATIVE, JS_IR
-
 // MODULE: lib
 // FILE: lib.kt
 const val four = 2 + 2

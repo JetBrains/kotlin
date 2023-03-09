@@ -24,9 +24,7 @@ import org.jetbrains.kotlin.diagnostics.impl.PendingDiagnosticsCollectorWithSupp
 import org.jetbrains.kotlin.fir.BinaryModuleData
 import org.jetbrains.kotlin.fir.DependencyListForCliModule
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.backend.Fir2IrExtensions
-import org.jetbrains.kotlin.fir.backend.Fir2IrVisibilityConverter
-import org.jetbrains.kotlin.fir.backend.extractFirDeclarations
+import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmKotlinMangler
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
@@ -192,7 +190,10 @@ fun serializeFirKlib(
             session,
             scopeSession,
             actualizedExpectDeclarations,
-            FirKLibSerializerExtension(session, metadataVersion, FirElementAwareSerializableStringTable()),
+            FirKLibSerializerExtension(
+                session, metadataVersion, FirElementAwareSerializableStringTable(),
+                ConstValueProviderImpl(fir2IrActualizedResult.components),
+            ),
             moduleStructure.compilerConfiguration.languageVersionSettings,
         )
     }

@@ -26,11 +26,13 @@ import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
 import org.jetbrains.kotlin.fir.serialization.FirElementAwareStringTable
 import org.jetbrains.kotlin.fir.serialization.FirElementSerializer
 import org.jetbrains.kotlin.fir.serialization.TypeApproximatorForMetadataSerializer
+import org.jetbrains.kotlin.fir.serialization.constant.*
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.MetadataSource
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.metadata.jvm.serialization.JvmStringTable
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.ClassId
@@ -65,7 +67,7 @@ fun makeFirMetadataSerializerForIrClass(
         approximator,
         makeElementSerializer(
             irClass.metadata, components.session, components.scopeSession, firSerializerExtension, approximator, parent,
-            context.state.configuration.languageVersionSettings
+            context.state.configuration.languageVersionSettings,
         ),
         irActualizationResult
     )
@@ -102,7 +104,8 @@ fun makeLocalFirMetadataSerializerForMetadataSource(
                 !configuration.getBoolean(JVMConfigurationKeys.NO_UNIFIED_NULL_CHECKS),
         configuration.metadataVersion(session.languageVersionSettings.languageVersion),
         session.languageVersionSettings.getFlag(JvmAnalysisFlags.jvmDefaultMode),
-        stringTable
+        stringTable,
+        constValueProvider = null,
     )
     return FirMetadataSerializer(
         globalSerializationBindings,

@@ -8,8 +8,10 @@ package org.jetbrains.kotlin.fir.serialization
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.serialization.constant.ConstValueProvider
 import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeFlexibleType
+import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.serialization.MutableVersionRequirementTable
@@ -23,6 +25,8 @@ abstract class FirSerializerExtension {
     abstract val metadataVersion: BinaryVersion
 
     val annotationSerializer by lazy { FirAnnotationSerializer(session, stringTable) }
+
+    abstract val constValueProvider: ConstValueProvider?
 
     open fun shouldUseTypeTable(): Boolean = false
     open fun shouldUseNormalizedVisibility(): Boolean = false
@@ -81,6 +85,11 @@ abstract class FirSerializerExtension {
 
     open fun serializeErrorType(type: ConeErrorType, builder: ProtoBuf.Type.Builder) {
         throw IllegalStateException("Cannot serialize error type: $type")
+    }
+
+    protected fun serializeConstant(property: FirProperty, proto: ProtoBuf.Property.Builder) {
+        val constProtoBuf = constValueProvider?.buildValueProtoBufIfPropertyIsConst(property, annotationSerializer) ?: return
+        proto.setExtension(KlibMetadataProtoBuf.compileTimeValue, constProtoBuf)
     }
 
     open val customClassMembersProducer: ClassMembersProducer?

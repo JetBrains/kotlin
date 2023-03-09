@@ -1,5 +1,3 @@
-// IGNORE_BACKEND_K2: JS_IR, NATIVE
-
 // MODULE: lib1
 // FILE: lib1.kt
 object L1 {

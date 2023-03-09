@@ -14,14 +14,13 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.backend.ConstValueProviderImpl
 import org.jetbrains.kotlin.fir.backend.extractFirDeclarations
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.serialization.FirElementAwareSerializableStringTable
-import org.jetbrains.kotlin.fir.serialization.FirElementSerializer
-import org.jetbrains.kotlin.fir.serialization.FirKLibSerializerExtension
-import org.jetbrains.kotlin.fir.serialization.serializeSingleFirFile
+import org.jetbrains.kotlin.fir.serialization.*
+import org.jetbrains.kotlin.fir.serialization.constant.ConstValueProvider
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
@@ -70,7 +69,9 @@ internal fun PhaseContext.firSerializer(
                 session,
                 scopeSession,
                 actualizedFirDeclarations,
-                FirNativeKLibSerializerExtension(session, metadataVersion, FirElementAwareSerializableStringTable()),
+                FirNativeKLibSerializerExtension(
+                        session, metadataVersion, FirElementAwareSerializableStringTable(), ConstValueProviderImpl(input.components),
+                ),
                 configuration.languageVersionSettings,
         )
     }
@@ -137,8 +138,9 @@ internal fun PhaseContext.serializeNativeModule(
 class FirNativeKLibSerializerExtension(
         override val session: FirSession,
         override val metadataVersion: BinaryVersion,
-        override val stringTable: FirElementAwareSerializableStringTable
-) : FirKLibSerializerExtension(session, metadataVersion, stringTable) {
+        override val stringTable: FirElementAwareSerializableStringTable,
+        override val constValueProvider: ConstValueProvider?
+) : FirKLibSerializerExtension(session, metadataVersion, stringTable, constValueProvider) {
     private fun declarationFileId(declaration: FirMemberDeclaration): Int? {
         val fileName = declaration.source.psi?.containingFile?.name ?: return null
         return stringTable.getStringIndex(fileName)
@@ -194,6 +196,9 @@ class FirNativeKLibSerializerExtension(
         property.setter?.nonSourceAnnotations(session)?.forEach {
             proto.addExtension(KlibMetadataProtoBuf.propertySetterAnnotation, annotationSerializer.serializeAnnotation(it))
         }
+
+        serializeConstant(property, proto)
+
         // TODO KT-56090 Serialize KDocString
         super.serializeProperty(property, proto, versionRequirementTable, childSerializer)
     }
@@ -242,5 +247,4 @@ class FirNativeKLibSerializerExtension(
         }
         super.serializeTypeParameter(typeParameter, proto)
     }
-
 }

@@ -123,7 +123,9 @@ class Fir2IrJsResultsConverter(
                 components.session,
                 components.scopeSession,
                 actualizedExpectDeclarations,
-                FirKLibSerializerExtension(components.session, metadataVersion, FirElementAwareSerializableStringTable()),
+                FirKLibSerializerExtension(
+                    components.session, metadataVersion, FirElementAwareSerializableStringTable(), ConstValueProviderImpl(components),
+                ),
                 configuration.languageVersionSettings,
             )
         }

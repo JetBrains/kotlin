@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.fir.pipeline.resolveAndCheckFir
 import org.jetbrains.kotlin.fir.serialization.FirElementAwareSerializableStringTable
 import org.jetbrains.kotlin.fir.serialization.FirKLibSerializerExtension
 import org.jetbrains.kotlin.fir.serialization.serializeSingleFirFile
-import org.jetbrains.kotlin.library.*
+import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.library.metadata.KlibMetadataHeaderFlags
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.modules.TargetId
@@ -167,8 +167,10 @@ internal class FirMetadataSerializer(
                     session,
                     scopeSession,
                     actualizedExpectDeclarations = null,
-                    FirKLibSerializerExtension(session, metadataVersion, FirElementAwareSerializableStringTable()),
-                    languageVersionSettings
+                    FirKLibSerializerExtension(
+                        session, metadataVersion, FirElementAwareSerializableStringTable(), constValueProvider = null
+                    ),
+                    languageVersionSettings,
                 )
                 fragments.getOrPut(firFile.packageFqName.asString()) { mutableListOf() }.add(packageFragment.toByteArray())
             }

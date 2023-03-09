@@ -16,6 +16,7 @@ dependencies {
     compileOnly(project(":compiler:ir.tree"))
     compileOnly(project(":compiler:ir.backend.common"))
     compileOnly(project(":compiler:ir.serialization.common"))
+    compileOnly(project(":compiler:fir:fir-serialization"))
 
     compileOnly(intellijCore())
 
@@ -26,7 +27,6 @@ dependencies {
     testApi(projectTests(":compiler:tests-compiler-utils"))
     testApi(projectTests(":compiler:tests-common-new"))
     testApi(projectTests(":compiler:fir:analysis-tests"))
-    testApi(project(":compiler:fir:fir-serialization"))
 
     testApiJUnit5()
 

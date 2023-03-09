@@ -49,11 +49,11 @@ internal object FirToConstantValueTransformer : FirDefaultVisitor<ConstantValue<
             ConstantValueKind.UnsignedShort -> UShortValue((value as Number).toShort())
             ConstantValueKind.Int -> IntValue((value as Number).toInt())
             ConstantValueKind.UnsignedInt -> UIntValue((value as Number).toInt())
-            ConstantValueKind.Long -> LongValue(value as Long)
-            ConstantValueKind.UnsignedLong -> ULongValue(value as Long)
+            ConstantValueKind.Long -> LongValue((value as Number).toLong())
+            ConstantValueKind.UnsignedLong -> ULongValue((value as Number).toLong())
             ConstantValueKind.String -> StringValue(value as String)
-            ConstantValueKind.Float -> FloatValue(value as Float)
-            ConstantValueKind.Double -> DoubleValue(value as Double)
+            ConstantValueKind.Float -> FloatValue((value as Number).toFloat())
+            ConstantValueKind.Double -> DoubleValue((value as Number).toDouble())
             ConstantValueKind.Null -> NullValue
             else -> null
         }
@@ -99,24 +99,22 @@ internal object FirToConstantValueTransformer : FirDefaultVisitor<ConstantValue<
             symbol is FirConstructorSymbol -> {
                 val constructorCall = qualifiedAccessExpression as FirFunctionCall
                 val constructedClassSymbol = symbol.containingClassLookupTag()?.toFirRegularClassSymbol(data) ?: return null
-                return if (constructedClassSymbol.classKind == ClassKind.ANNOTATION_CLASS) {
-                    AnnotationValue(
-                        buildAnnotationCall {
-                            argumentMapping = buildAnnotationArgumentMapping {
-                                constructorCall.resolvedArgumentMapping?.forEach { (firExpression, firValueParameter) ->
-                                    mapping[firValueParameter.name] = firExpression
-                                }
-                            }
-                            annotationTypeRef = qualifiedAccessExpression.typeRef
-                            calleeReference = buildSimpleNamedReference {
-                                source = qualifiedAccessExpression.source
-                                name = qualifiedAccessExpression.calleeReference.name
+                if (constructedClassSymbol.classKind != ClassKind.ANNOTATION_CLASS) return null
+
+                return AnnotationValue(
+                    buildAnnotationCall {
+                        argumentMapping = buildAnnotationArgumentMapping {
+                            constructorCall.resolvedArgumentMapping?.forEach { (firExpression, firValueParameter) ->
+                                mapping[firValueParameter.name] = firExpression
                             }
                         }
-                    )
-                } else {
-                    null
-                }
+                        annotationTypeRef = qualifiedAccessExpression.typeRef
+                        calleeReference = buildSimpleNamedReference {
+                            source = qualifiedAccessExpression.source
+                            name = qualifiedAccessExpression.calleeReference.name
+                        }
+                    }
+                )
             }
 
             symbol.callableId.packageName.asString() == "kotlin" -> {
