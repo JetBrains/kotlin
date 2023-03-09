@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.*
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirExtensionSyntheticFunctionInterfaceProvider
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
 import org.jetbrains.kotlin.fir.resolve.transformers.FirDummyCompilerLazyDeclarationResolver
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
@@ -157,10 +158,10 @@ internal class LLFirSessionCache(private val project: Project) {
                 register(FirSwitchableExtensionDeclarationsSymbolProvider::class, it)
             }
 
-            val dependencyProvider = LLFirDependentModuleProvidersBySessions(this) {
-                addAll(dependencies)
-                add(builtinsSession)
-            }
+            val dependencyProvider = LLFirDependenciesSymbolProvider(this, buildList {
+                addDependencySymbolProvidersTo(session, dependencies, this)
+                add(builtinsSession.symbolProvider)
+            })
 
             val javaSymbolProvider = createJavaSymbolProvider(this, moduleData, project, contentScope)
             val syntheticFunctionalInterfaceProvider = FirExtensionSyntheticFunctionInterfaceProvider(this, moduleData, scopeProvider)
@@ -168,13 +169,13 @@ internal class LLFirSessionCache(private val project: Project) {
                 FirSymbolProvider::class,
                 LLFirModuleWithDependenciesSymbolProvider(
                     this,
-                    dependencyProvider,
                     providers = listOfNotNull(
                         provider.symbolProvider,
                         switchableExtensionDeclarationsSymbolProvider,
                         javaSymbolProvider,
                         syntheticFunctionalInterfaceProvider,
                     ),
+                    dependencyProvider,
                 )
             )
             register(JavaSymbolProvider::class, javaSymbolProvider)
@@ -239,7 +240,7 @@ internal class LLFirSessionCache(private val project: Project) {
             register(FirRegisteredPluginAnnotations::class, LLFirIdeRegisteredPluginAnnotations(this, annotationsResolver))
             register(FirPredicateBasedProvider::class, FirEmptyPredicateBasedProvider)
 
-            val dependencyProvider = LLFirDependentModuleProvidersByProviders(this) {
+            val dependencyProvider = LLFirDependenciesSymbolProvider(this, buildList {
                 add(builtinsSession.symbolProvider)
 
                 // Script dependencies are self-contained and should not depend on other libraries
@@ -255,18 +256,18 @@ internal class LLFirSessionCache(private val project: Project) {
 
                     addAll(restLibrariesProvider)
                 }
-            }
+            })
 
             val javaSymbolProvider = createJavaSymbolProvider(this, moduleData, project, contentScope)
             register(
                 FirSymbolProvider::class,
                 LLFirModuleWithDependenciesSymbolProvider(
                     this,
-                    dependencyProvider,
                     providers = listOf(
                         provider.symbolProvider,
                         javaSymbolProvider,
                     ),
+                    dependencyProvider,
                 )
             )
             register(JavaSymbolProvider::class, javaSymbolProvider)
@@ -358,10 +359,10 @@ internal class LLFirSessionCache(private val project: Project) {
             register(FirProvider::class, provider)
             register(FirLazyDeclarationResolver::class, LLFirLazyDeclarationResolver())
 
-            val dependencyProvider = LLFirDependentModuleProvidersBySessions(this) {
-                addAll(dependencies)
-                add(builtinsSession)
-            }
+            val dependencyProvider = LLFirDependenciesSymbolProvider(this, buildList {
+                addDependencySymbolProvidersTo(session, dependencies, this)
+                add(builtinsSession.symbolProvider)
+            })
 
             val javaSymbolProvider = createJavaSymbolProvider(this, moduleData, project, contentScope)
             register(JavaSymbolProvider::class, javaSymbolProvider)
@@ -370,11 +371,11 @@ internal class LLFirSessionCache(private val project: Project) {
                 FirSymbolProvider::class,
                 LLFirModuleWithDependenciesSymbolProvider(
                     this,
-                    dependencyProvider,
                     providers = listOfNotNull(
                         javaSymbolProvider,
                         provider.symbolProvider,
-                    )
+                    ),
+                    dependencyProvider,
                 )
             )
 
@@ -423,18 +424,16 @@ internal class LLFirSessionCache(private val project: Project) {
             register(FirProvider::class, provider)
             register(FirLazyDeclarationResolver::class, LLFirLazyDeclarationResolver())
 
-            val dependencyProvider = LLFirDependentModuleProvidersBySessions(this) {
-                add(builtinsSession)
-            }
+            val dependencyProvider = LLFirDependenciesSymbolProvider(this, listOf(builtinsSession.symbolProvider))
 
             register(
                 FirSymbolProvider::class,
                 LLFirModuleWithDependenciesSymbolProvider(
                     this,
-                    dependencyProvider,
-                    providers = listOfNotNull(
+                    providers = listOf(
                         provider.symbolProvider,
-                    )
+                    ),
+                    dependencyProvider,
                 )
             )
 
@@ -466,8 +465,6 @@ internal class LLFirSessionCache(private val project: Project) {
     }
 
     private fun collectSourceModuleDependencies(module: KtModule): List<LLFirSession> {
-        val dependencies = mutableListOf<LLFirSession>()
-
         fun getOrCreateSessionForDependency(dependency: KtModule): LLFirSession? = when (dependency) {
             is KtBuiltinsModule -> null // Built-ins are already added
             is KtBinaryModule -> getSession(dependency, preferBinary = true)
@@ -479,18 +476,15 @@ internal class LLFirSessionCache(private val project: Project) {
             is KtLibrarySourceModule -> error("Module $module cannot depend on ${dependency::class}: $dependency")
         }
 
-        module.directRegularDependencies.mapNotNullTo(dependencies, ::getOrCreateSessionForDependency)
+        val dependencyModules = buildSet {
+            addAll(module.directRegularDependencies)
 
-        // The dependency provider needs to have access to all direct and indirect `dependsOn` dependencies, as `dependsOn`
-        // dependencies are transitive.
-        val directRegularDependenciesSet = module.directRegularDependencies.toSet()
-        module.transitiveDependsOnDependencies.forEach { dependency ->
-            if (dependency !in directRegularDependenciesSet) {
-                getOrCreateSessionForDependency(dependency)?.let(dependencies::add)
-            }
+            // The dependency provider needs to have access to all direct and indirect `dependsOn` dependencies, as `dependsOn`
+            // dependencies are transitive.
+            addAll(module.transitiveDependsOnDependencies)
         }
 
-        return dependencies
+        return dependencyModules.mapNotNull(::getOrCreateSessionForDependency)
     }
 
     private fun createSourceModuleDependencyTracker(module: KtModule, exposedDependencies: List<LLFirSession>): ModificationTracker {
@@ -505,6 +499,43 @@ internal class LLFirSessionCache(private val project: Project) {
 
     private fun createModuleData(session: LLFirSession): LLFirModuleData {
         return LLFirModuleData(session.ktModule).apply { bindSession(session) }
+    }
+
+    /**
+     * Adds dependency symbol providers from [dependencies] to [destination]. The function might combine, reorder, or exclude specific
+     * symbol providers for optimization.
+     */
+    private fun addDependencySymbolProvidersTo(
+        session: LLFirSession,
+        dependencies: List<LLFirSession>,
+        destination: MutableList<FirSymbolProvider>,
+    ) {
+        val dependencyProviders = buildList {
+            dependencies.forEach { session ->
+                when (val dependencyProvider = session.symbolProvider) {
+                    is LLFirModuleWithDependenciesSymbolProvider -> addAll(dependencyProvider.providers)
+                    else -> add(dependencyProvider)
+                }
+            }
+        }
+
+        dependencyProviders.mergeDependencySymbolProvidersInto(session, destination)
+    }
+
+    /**
+     * Merges dependency symbol providers of the same kind if possible. The merged symbol provider usually delegates to its subordinate
+     * symbol providers to preserve session semantics, but it will have some form of advantage over individual symbol providers (such as
+     * querying an index once instead of N times).
+     *
+     * [session] should be the session of the dependent module. Because all symbol providers are tied to a session, we need a session to
+     * create a combined symbol provider.
+     */
+    @Suppress("UNUSED_PARAMETER")
+    private fun List<FirSymbolProvider>.mergeDependencySymbolProvidersInto(
+        session: FirSession,
+        destination: MutableList<FirSymbolProvider>,
+    ) {
+        destination.addAll(this)
     }
 }
 

@@ -7,11 +7,10 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirDependentModuleProvidersByProviders
+import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirDependenciesSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirModuleWithDependenciesSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirJavaFacadeForBinaries
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
-import org.jetbrains.kotlin.analysis.project.structure.KtBinaryModule
 import org.jetbrains.kotlin.analysis.providers.createPackagePartProvider
 import org.jetbrains.kotlin.fir.BuiltinTypes
 import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
@@ -36,7 +35,6 @@ internal object LLFirLibraryProviderFactory {
         val packagePartProvider = project.createPackagePartProvider(scope)
         return LLFirModuleWithDependenciesSymbolProvider(
             session,
-            LLFirDependentModuleProvidersByProviders(session, listOf(builtinSymbolProvider)),
             providers = listOf(
                 JvmClassFileBasedSymbolProvider(
                     session,
@@ -48,6 +46,7 @@ internal object LLFirLibraryProviderFactory {
                 ),
                 OptionalAnnotationClassesProvider(session, moduleDataProvider, kotlinScopeProvider, packagePartProvider),
             ),
+            LLFirDependenciesSymbolProvider(session, listOf(builtinSymbolProvider)),
         )
     }
 
@@ -75,5 +74,4 @@ internal object LLFirLibraryProviderFactory {
             add(OptionalAnnotationClassesProvider(session, moduleDataProvider, kotlinScopeProvider, packagePartProvider))
         }
     }
-
 }
