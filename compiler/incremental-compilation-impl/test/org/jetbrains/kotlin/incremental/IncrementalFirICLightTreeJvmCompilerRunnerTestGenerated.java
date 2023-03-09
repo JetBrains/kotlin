@@ -1680,7 +1680,7 @@ public class IncrementalFirICLightTreeJvmCompilerRunnerTestGenerated extends Abs
                 }
 
                 public void testAllFilesPresentInRemoveAnnotation() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/removeAnnotation"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/removeAnnotation"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("(^classToPackageFacade)"), TargetBackend.JVM_IR, true);
                 }
             }
 
