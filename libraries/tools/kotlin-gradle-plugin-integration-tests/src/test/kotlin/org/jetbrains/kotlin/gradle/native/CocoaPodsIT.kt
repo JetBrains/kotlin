@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.gradle.util.createTempDir
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.gradle.util.runProcess
 import org.jetbrains.kotlin.konan.target.HostManager
-import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.BeforeClass
@@ -1887,7 +1886,7 @@ class CocoaPodsIT : BaseGradleIT() {
             if (cocoapodsInstallationRequired) {
                 if (cocoapodsInstallationAllowed) {
                     println("Installing CocoaPods...")
-                    gem("install", "--install-dir", cocoapodsInstallationRoot.absolutePath, "cocoapods")
+                    gem("install", "--install-dir", cocoapodsInstallationRoot.absolutePath, "cocoapods", "-v", cocoapodsVersion)
                 } else {
                     fail(
                         """
@@ -1901,6 +1900,8 @@ class CocoaPodsIT : BaseGradleIT() {
             }
         }
 
+        private const val cocoapodsVersion = "1.11.0"
+
         private val cocoapodsInstallationRequired: Boolean by lazy {
             !isCocoapodsInstalled()
         }
@@ -1908,7 +1909,7 @@ class CocoaPodsIT : BaseGradleIT() {
 
         private val cocoapodsInstallationRoot: File by lazy { createTempDir("cocoapods") }
         private val cocoapodsBinPath: File by lazy {
-            if (hostIsArmMac) cocoapodsInstallationRoot.resolve("bin/wrapper") else cocoapodsInstallationRoot.resolve("bin")
+            cocoapodsInstallationRoot.resolve("bin")
         }
 
         private fun getEnvs(): Map<String, String> {
@@ -1950,8 +1951,5 @@ class CocoaPodsIT : BaseGradleIT() {
             }
             return result.output
         }
-
-        private val hostIsArmMac: Boolean
-            get() = HostManager.host == KonanTarget.MACOS_ARM64
     }
 }
