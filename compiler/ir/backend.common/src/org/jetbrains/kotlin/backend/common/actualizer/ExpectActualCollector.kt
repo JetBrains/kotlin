@@ -171,7 +171,7 @@ private class MemberLinksCollector(
                 declaration.getter?.symbol?.let { expectActualMap[it] = actualProperty.getter!!.symbol }
                 declaration.setter?.symbol?.let { expectActualMap[it] = actualProperty.setter!!.symbol }
             }
-        } else if (!declaration.parent.containsOptionalExpectation()) {
+        } else if (!declaration.parent.containsOptionalExpectation() && !(declaration is IrConstructor && declaration.isPrimary)) {
             diagnosticsReporter.reportMissingActual(declaration)
         }
     }

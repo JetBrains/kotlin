@@ -5,9 +5,9 @@ expect class Foo1
 expect class Foo2
 expect class Foo3
 
-expect class Bar1<!NO_ACTUAL_FOR_EXPECT{JVM}!>()<!>
-expect class Bar2<!NO_ACTUAL_FOR_EXPECT{JVM}!>()<!>
-expect class Bar3<!NO_ACTUAL_FOR_EXPECT{JVM}!>()<!>
+expect class Bar1()
+expect class Bar2()
+expect class Bar3()
 expect class Bar4()
 expect class Bar5()
 expect class Bar6()

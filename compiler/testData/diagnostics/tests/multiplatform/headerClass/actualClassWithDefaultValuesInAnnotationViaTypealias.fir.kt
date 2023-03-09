@@ -6,8 +6,8 @@ expect annotation class Foo2
 expect annotation class Foo3
 expect annotation class Foo4
 expect annotation class Foo5()
-expect annotation class Foo6<!NO_ACTUAL_FOR_EXPECT{JVM}!>()<!>
-expect annotation class Foo7<!NO_ACTUAL_FOR_EXPECT{JVM}!>()<!>
+expect annotation class Foo6()
+expect annotation class Foo7()
 
 @<!UNRESOLVED_REFERENCE!>Foo1<!>
 fun foo() {}
