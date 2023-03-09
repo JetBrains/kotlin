@@ -349,4 +349,30 @@ class KotlinPluginLifecycleTest {
             }
         }
     }
+
+    @Test
+    fun `test - Stage - previous next utils`() {
+        assertNull(Stage.values.first().previousOrNull)
+        assertEquals(Stage.values.first(), Stage.values.first().previousOrFirst)
+
+        assertNull(Stage.values.last().nextOrNull)
+        assertEquals(Stage.values.last(), Stage.values.last().nextOrLast)
+
+        assertFailsWith<IllegalArgumentException> { Stage.values.last().nextOrThrow }
+    }
+
+    @Test
+    fun `test - Stage - range utils`() {
+        assertEquals(setOf(BeforeFinaliseDsl, FinaliseDsl, AfterFinaliseDsl), BeforeFinaliseDsl..AfterFinaliseDsl)
+        assertEquals(emptySet(), AfterFinaliseDsl..BeforeFinaliseDsl)
+        assertEquals(setOf(BeforeFinaliseDsl), BeforeFinaliseDsl..BeforeFinaliseDsl)
+
+        assertTrue(FinaliseDsl in Stage.upTo(FinaliseDsl))
+        assertTrue(Stage.values.first() in Stage.upTo(FinaliseDsl))
+        assertTrue(BeforeFinaliseDsl in Stage.upTo(FinaliseDsl))
+        assertTrue(FinaliseDsl.nextOrThrow !in Stage.upTo(FinaliseDsl))
+
+        assertTrue(FinaliseDsl !in Stage.until(FinaliseDsl))
+        assertTrue(FinaliseDsl.previousOrFirst in Stage.until(FinaliseDsl))
+    }
 }

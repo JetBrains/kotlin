@@ -305,9 +305,11 @@ internal interface KotlinPluginLifecycle {
         val previousOrNull: Stage? get() = values.getOrNull(ordinal - 1)
         val nextOrNull: Stage? get() = values.getOrNull(ordinal + 1)
         val nextOrLast: Stage get() = nextOrNull ?: values.last()
-        val nextOrThrow: Stage get() = values[ordinal + 1]
+        val nextOrThrow: Stage
+            get() = nextOrNull ?: throw IllegalArgumentException("'$this' does not have a next ${Stage::class.simpleName}")
 
         operator fun rangeTo(other: Stage): Set<Stage> {
+            if (this.ordinal > other.ordinal) return emptySet()
             return values.subList(this.ordinal, other.ordinal + 1).toSet()
         }
 
