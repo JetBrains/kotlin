@@ -9,9 +9,9 @@ import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.provider.Property
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginLifecycle.Stage.FinaliseDsl
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.FinaliseDsl
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetHierarchy
-import org.jetbrains.kotlin.gradle.plugin.newLifecycleAwareProperty
+import org.jetbrains.kotlin.gradle.plugin.newKotlinPluginLifecycleAwareProperty
 
 @ExperimentalKotlinGradlePluginApi
 interface KotlinAndroidTargetVariantTypeDsl {
@@ -27,7 +27,7 @@ interface KotlinAndroidTargetVariantTypeDsl {
 
 internal class KotlinAndroidTargetVariantTypeDslImpl(private val project: Project) : KotlinAndroidTargetVariantTypeDsl {
     internal inner class TargetHierarchyDslImpl : KotlinAndroidTargetVariantTypeDsl.TargetHierarchyDsl {
-        override val module: Property<KotlinTargetHierarchy.ModuleName> by project.newLifecycleAwareProperty(FinaliseDsl)
+        override val module: Property<KotlinTargetHierarchy.ModuleName> by project.newKotlinPluginLifecycleAwareProperty(FinaliseDsl)
     }
 
     override val targetHierarchy: KotlinAndroidTargetVariantTypeDsl.TargetHierarchyDsl = TargetHierarchyDslImpl()

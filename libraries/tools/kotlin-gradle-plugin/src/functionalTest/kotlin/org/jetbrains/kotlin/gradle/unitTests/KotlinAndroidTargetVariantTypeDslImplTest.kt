@@ -9,10 +9,10 @@ package org.jetbrains.kotlin.gradle.unitTests
 
 import junit.framework.TestCase.assertNull
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginLifecycle
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.awaitFinalValue
-import org.jetbrains.kotlin.gradle.plugin.currentMultiplatformPluginLifecycle
-import org.jetbrains.kotlin.gradle.plugin.kotlinMultiplatformPluginLifecycle
+import org.jetbrains.kotlin.gradle.plugin.currentKotlinPluginLifecycle
+import org.jetbrains.kotlin.gradle.plugin.kotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.targets.android.KotlinAndroidTargetVariantTypeDslImpl
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.runLifecycleAwareTest
@@ -27,7 +27,7 @@ class KotlinAndroidTargetVariantTypeDslImplTest {
 
     @Test
     fun `test -  module - not set`() = project.runLifecycleAwareTest {
-        project.kotlinMultiplatformPluginLifecycle.launch {
+        project.kotlinPluginLifecycle.launch {
             assertNull(dsl.targetHierarchy.module.orNull)
             assertNull(dsl.targetHierarchy.module.awaitFinalValue())
         }
@@ -38,16 +38,16 @@ class KotlinAndroidTargetVariantTypeDslImplTest {
         afterEvaluate { dsl.targetHierarchy.module.set(KotlinTargetHierarchy.ModuleName("x")) }
         dsl.targetHierarchy.module.set(KotlinTargetHierarchy.ModuleName("-set-before-after-evaluate-"))
         assertEquals("x", dsl.targetHierarchy.module.awaitFinalValue()?.name)
-        assertEquals(KotlinMultiplatformPluginLifecycle.Stage.FinaliseDsl, currentMultiplatformPluginLifecycle().stage)
+        assertEquals(KotlinPluginLifecycle.Stage.FinaliseDsl, currentKotlinPluginLifecycle().stage)
     }
 
     @Test
     fun `test - module - cannot be set after FinaliseDsl`() = project.runLifecycleAwareTest {
-        launchInStage(KotlinMultiplatformPluginLifecycle.Stage.BeforeFinaliseDsl) {
+        launchInStage(KotlinPluginLifecycle.Stage.BeforeFinaliseDsl) {
             dsl.targetHierarchy.module.set(KotlinTargetHierarchy.ModuleName("x"))
         }
 
-        launchInStage(KotlinMultiplatformPluginLifecycle.Stage.FinaliseDsl) {
+        launchInStage(KotlinPluginLifecycle.Stage.FinaliseDsl) {
             assertFails { dsl.targetHierarchy.module.set(KotlinTargetHierarchy.ModuleName("y")) }
         }
     }

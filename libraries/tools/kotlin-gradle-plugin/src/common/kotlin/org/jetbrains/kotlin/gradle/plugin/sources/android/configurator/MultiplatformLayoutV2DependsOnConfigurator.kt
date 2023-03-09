@@ -9,7 +9,7 @@ import com.android.build.gradle.api.AndroidSourceSet
 import com.android.build.gradle.api.BaseVariant
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
-import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginLifecycle
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetHierarchy
 import org.jetbrains.kotlin.gradle.plugin.launchInStage
@@ -32,7 +32,7 @@ internal object MultiplatformLayoutV2DependsOnConfigurator : KotlinAndroidSource
     }
 
     private fun setDefaultDependsOn(target: KotlinAndroidTarget, kotlinSourceSet: KotlinSourceSet, variantType: AndroidVariantType) {
-        target.project.launchInStage(KotlinMultiplatformPluginLifecycle.Stage.FinaliseRefinesEdges) {
+        target.project.launchInStage(KotlinPluginLifecycle.Stage.FinaliseRefinesEdges) {
             /* Only setup default if not KotlinTargetHierarchy was applied */
             if (target.project.multiplatformExtensionOrNull?.internalKotlinTargetHierarchy?.appliedDescriptors.orEmpty().isNotEmpty()) {
                 return@launchInStage

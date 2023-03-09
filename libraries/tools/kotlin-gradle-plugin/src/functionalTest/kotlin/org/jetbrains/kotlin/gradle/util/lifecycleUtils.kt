@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.gradle.util
 
 import org.gradle.api.Project
 import org.gradle.api.internal.project.ProjectInternal
-import org.jetbrains.kotlin.gradle.plugin.kotlinMultiplatformPluginLifecycle
+import org.jetbrains.kotlin.gradle.plugin.kotlinPluginLifecycle
 
 fun Project.runLifecycleAwareTest(block: suspend Project.() -> Unit) {
-    kotlinMultiplatformPluginLifecycle.launch { block() }
+    kotlinPluginLifecycle.launch { block() }
     (this as ProjectInternal).evaluate()
 }

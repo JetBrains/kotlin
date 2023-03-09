@@ -9,7 +9,7 @@ package org.jetbrains.kotlin.gradle.unitTests.sources
 
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginLifecycle
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.plugin.mpp.getHostSpecificMainSharedSourceSets
@@ -70,7 +70,7 @@ class InternalKotlinSourceSetTest {
             nativeMain.internal.compilations
         )
 
-        project.launchInStage(KotlinMultiplatformPluginLifecycle.Stage.Finalised) {
+        project.launchInStage(KotlinPluginLifecycle.Stage.Finalised) {
             assertEquals<Set<KotlinCompilation<*>>>(
                 setOf(
                     metadataCompilation,

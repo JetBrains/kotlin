@@ -8,9 +8,9 @@
 package org.jetbrains.kotlin.gradle.plugin.sources
 
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginLifecycle
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.kotlinMultiplatformPluginLifecycle
+import org.jetbrains.kotlin.gradle.plugin.kotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.utils.MutableObservableSet
 import org.jetbrains.kotlin.gradle.utils.MutableObservableSetImpl
 import org.jetbrains.kotlin.gradle.utils.ObservableSet
@@ -34,8 +34,8 @@ abstract class AbstractKotlinSourceSet : InternalKotlinSourceSet {
     final override fun dependsOn(other: KotlinSourceSet) {
         if (other == this) return
 
-        assert(project.kotlinMultiplatformPluginLifecycle.stage <= KotlinMultiplatformPluginLifecycle.Stage.FinaliseRefinesEdges) {
-            "Illegal 'dependsOn' call in stage '${project.kotlinMultiplatformPluginLifecycle.stage}'"
+        assert(project.kotlinPluginLifecycle.stage <= KotlinPluginLifecycle.Stage.FinaliseRefinesEdges) {
+            "Illegal 'dependsOn' call in stage '${project.kotlinPluginLifecycle.stage}'"
         }
 
         /*

@@ -8,11 +8,11 @@
 package org.jetbrains.kotlin.gradle.unitTests
 
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginLifecycle.Stage.*
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.*
 import org.jetbrains.kotlin.gradle.plugin.awaitFinalValue
-import org.jetbrains.kotlin.gradle.plugin.currentMultiplatformPluginLifecycle
+import org.jetbrains.kotlin.gradle.plugin.currentKotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.launchInStage
-import org.jetbrains.kotlin.gradle.plugin.newLifecycleAwareProperty
+import org.jetbrains.kotlin.gradle.plugin.newKotlinPluginLifecycleAwareProperty
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.runLifecycleAwareTest
 import org.jetbrains.kotlin.gradle.utils.newProperty
@@ -27,8 +27,8 @@ class LifecycleAwarePropertyTest {
 
     @Test
     fun `test - awaitFinalValue`() = project.runLifecycleAwareTest {
-        val property by project.newLifecycleAwareProperty<Int>(AfterFinaliseRefinesEdges)
-        assertTrue(property.isLifecycleAware())
+        val property by project.newKotlinPluginLifecycleAwareProperty<Int>(AfterFinaliseRefinesEdges)
+        assertTrue(property.isKotlinPluginLifecycleAware())
 
         launchInStage(BeforeFinaliseRefinesEdges) {
             property.set(1)
@@ -39,21 +39,21 @@ class LifecycleAwarePropertyTest {
             property.set(2)
         }
 
-        assertEquals(Configure, currentMultiplatformPluginLifecycle().stage)
+        assertEquals(Configure, currentKotlinPluginLifecycle().stage)
         assertEquals(2, property.awaitFinalValue())
-        assertEquals(AfterFinaliseRefinesEdges, currentMultiplatformPluginLifecycle().stage)
+        assertEquals(AfterFinaliseRefinesEdges, currentKotlinPluginLifecycle().stage)
     }
 
     @Test
     fun `test - awaitFinalValue - on non lifecycle aware property`() = project.runLifecycleAwareTest {
         val property = project.newProperty<String>()
-        assertFalse(property.isLifecycleAware())
+        assertFalse(property.isKotlinPluginLifecycleAware())
         assertFailsWith<IllegalArgumentException> { property.awaitFinalValue() }
     }
 
     @Test
     fun `test - changing value after finalized`() = project.runLifecycleAwareTest {
-        val property by project.newLifecycleAwareProperty<Int>(AfterEvaluate)
+        val property by project.newKotlinPluginLifecycleAwareProperty<Int>(AfterEvaluate)
         property.set(1)
 
         launchInStage(AfterEvaluate) {

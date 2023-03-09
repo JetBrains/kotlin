@@ -77,7 +77,7 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
 
         checkGradleCompatibility()
 
-        project.startKotlinMultiplatformPluginLifecycle()
+        project.startKotlinPluginLifecycle()
 
         project.gradle.projectsEvaluated {
             whenBuildEvaluated(project)

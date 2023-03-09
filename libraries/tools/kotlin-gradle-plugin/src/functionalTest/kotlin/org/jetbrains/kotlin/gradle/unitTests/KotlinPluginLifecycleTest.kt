@@ -9,9 +9,9 @@ package org.jetbrains.kotlin.gradle.unitTests
 
 import org.gradle.api.ProjectConfigurationException
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginLifecycle.IllegalLifecycleException
-import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginLifecycle.Stage
-import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginLifecycle.Stage.*
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.IllegalLifecycleException
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.*
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.runLifecycleAwareTest
 import org.jetbrains.kotlin.tooling.core.withLinearClosure
@@ -20,10 +20,10 @@ import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.test.*
 
-class KotlinMultiplatformPluginLifecycleTest {
+class KotlinPluginLifecycleTest {
 
     private val project = buildProjectWithMPP()
-    private val lifecycle = project.kotlinMultiplatformPluginLifecycle
+    private val lifecycle = project.kotlinPluginLifecycle
 
     @Test
     fun `test - configure phase is executed right away`() {

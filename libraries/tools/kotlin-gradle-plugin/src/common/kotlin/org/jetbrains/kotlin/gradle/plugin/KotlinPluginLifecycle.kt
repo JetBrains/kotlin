@@ -9,7 +9,7 @@ import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.withContext
 import org.gradle.api.Project
 import org.gradle.api.provider.Property
-import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginLifecycle.*
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.*
 import org.jetbrains.kotlin.gradle.utils.getOrPut
 import java.lang.ref.WeakReference
 import java.util.*
@@ -23,18 +23,18 @@ import kotlin.reflect.KProperty
 Util functions
  */
 
-internal fun Project.launch(block: suspend KotlinMultiplatformPluginLifecycle.() -> Unit) {
-    kotlinMultiplatformPluginLifecycle.launch(block)
+internal fun Project.launch(block: suspend KotlinPluginLifecycle.() -> Unit) {
+    kotlinPluginLifecycle.launch(block)
 }
 
-internal fun Project.launchInStage(stage: Stage, block: suspend KotlinMultiplatformPluginLifecycle.() -> Unit) {
+internal fun Project.launchInStage(stage: Stage, block: suspend KotlinPluginLifecycle.() -> Unit) {
     launch {
         await(stage)
         block()
     }
 }
 
-internal fun Project.launchInRequiredStage(stage: Stage, block: suspend KotlinMultiplatformPluginLifecycle.() -> Unit) {
+internal fun Project.launchInRequiredStage(stage: Stage, block: suspend KotlinPluginLifecycle.() -> Unit) {
     launchInStage(stage) {
         requiredStage(stage) {
             block()
@@ -42,41 +42,42 @@ internal fun Project.launchInRequiredStage(stage: Stage, block: suspend KotlinMu
     }
 }
 
-internal val Project.kotlinMultiplatformPluginLifecycle: KotlinMultiplatformPluginLifecycle
-    get() = extraProperties.getOrPut(KotlinMultiplatformPluginLifecycle::class.java.name) {
-        KotlinMultiplatformPluginLifecycleImpl(project)
+internal val Project.kotlinPluginLifecycle: KotlinPluginLifecycle
+    get() = extraProperties.getOrPut(KotlinPluginLifecycle::class.java.name) {
+        KotlinPluginLifecycleImpl(project)
     }
 
-internal fun Project.startKotlinMultiplatformPluginLifecycle() {
-    (kotlinMultiplatformPluginLifecycle as KotlinMultiplatformPluginLifecycleImpl).start()
+internal fun Project.startKotlinPluginLifecycle() {
+    (kotlinPluginLifecycle as KotlinPluginLifecycleImpl).start()
 }
 
-internal suspend fun currentMultiplatformPluginLifecycle(): KotlinMultiplatformPluginLifecycle {
+internal suspend fun currentKotlinPluginLifecycle(): KotlinPluginLifecycle {
     return currentCoroutineContext()[KotlinMultiplatformPluginLifecycleCoroutineContextElement]?.lifecycle
         ?: error("Missing $KotlinMultiplatformPluginLifecycleCoroutineContextElement in currentCoroutineContext")
 }
 
 internal suspend fun await(stage: Stage) {
-    currentMultiplatformPluginLifecycle().await(stage)
+    currentKotlinPluginLifecycle().await(stage)
 }
 
-internal inline fun <reified T : Any> Project.newLifecycleAwareProperty(
+internal inline fun <reified T : Any> Project.newKotlinPluginLifecycleAwareProperty(
     finaliseIn: Stage = Stage.FinaliseDsl, initialValue: T? = null
 ): LifecycleAwareProperty<T> {
-    return kotlinMultiplatformPluginLifecycle.newLifecycleAwareProperty(T::class.java, finaliseIn, initialValue)
+    return kotlinPluginLifecycle.newLifecycleAwareProperty(T::class.java, finaliseIn, initialValue)
 }
 
-internal suspend fun <T : Any> Property<T>.findLifecycleAwareProperty(): LifecycleAwareProperty<T>? {
-    return (currentMultiplatformPluginLifecycle() as KotlinMultiplatformPluginLifecycleImpl).findLifecycleAwareProperty(this)
+internal suspend fun <T : Any> Property<T>.findKotlinPluginLifecycleAwareProperty(): LifecycleAwareProperty<T>? {
+    return (currentKotlinPluginLifecycle() as KotlinPluginLifecycleImpl).findLifecycleAwareProperty(this)
 }
 
 internal suspend fun <T : Any> Property<T>.awaitFinalValue(): T? {
-    val lifecycleAwareProperty = findLifecycleAwareProperty() ?: throw IllegalArgumentException("Property is not lifecycle aware")
+    val lifecycleAwareProperty = findKotlinPluginLifecycleAwareProperty()
+        ?: throw IllegalArgumentException("Property is not lifecycle aware")
     return lifecycleAwareProperty.awaitFinalValue()
 }
 
-internal suspend fun Property<*>.isLifecycleAware(): Boolean {
-    return findLifecycleAwareProperty() != null
+internal suspend fun Property<*>.isKotlinPluginLifecycleAware(): Boolean {
+    return findKotlinPluginLifecycleAwareProperty() != null
 }
 
 internal suspend fun <T> requiredStage(stage: Stage, block: suspend () -> T): T {
@@ -84,11 +85,11 @@ internal suspend fun <T> requiredStage(stage: Stage, block: suspend () -> T): T 
 }
 
 internal suspend fun <T> requireCurrentStage(block: suspend () -> T): T {
-    return requiredStage(currentMultiplatformPluginLifecycle().stage, block)
+    return requiredStage(currentKotlinPluginLifecycle().stage, block)
 }
 
 internal suspend fun <T> withRestrictedStages(allowed: Set<Stage>, block: suspend () -> T): T {
-    return withContext(RestrictedLifecycleStages(currentMultiplatformPluginLifecycle(), allowed)) {
+    return withContext(RestrictedLifecycleStages(currentKotlinPluginLifecycle(), allowed)) {
         block()
     }
 }
@@ -97,7 +98,7 @@ internal suspend fun <T> withRestrictedStages(allowed: Set<Stage>, block: suspen
 Definition of the Lifecycle and its stages
  */
 
-internal interface KotlinMultiplatformPluginLifecycle {
+internal interface KotlinPluginLifecycle {
     enum class Stage {
         Configure,
         AfterEvaluate,
@@ -130,9 +131,9 @@ internal interface KotlinMultiplatformPluginLifecycle {
 
     val stage: Stage
 
-    fun enqueue(stage: Stage, action: KotlinMultiplatformPluginLifecycle.() -> Unit)
+    fun enqueue(stage: Stage, action: KotlinPluginLifecycle.() -> Unit)
 
-    fun launch(block: suspend KotlinMultiplatformPluginLifecycle.() -> Unit)
+    fun launch(block: suspend KotlinPluginLifecycle.() -> Unit)
 
     suspend fun await(stage: Stage)
 
@@ -155,9 +156,9 @@ internal interface KotlinMultiplatformPluginLifecycle {
 Implementation
  */
 
-private class KotlinMultiplatformPluginLifecycleImpl(override val project: Project) : KotlinMultiplatformPluginLifecycle {
+private class KotlinPluginLifecycleImpl(override val project: Project) : KotlinPluginLifecycle {
     private val enqueuedStages: ArrayDeque<Stage> = ArrayDeque(Stage.values)
-    private val enqueuedActions: Map<Stage, ArrayDeque<KotlinMultiplatformPluginLifecycle.() -> Unit>> =
+    private val enqueuedActions: Map<Stage, ArrayDeque<KotlinPluginLifecycle.() -> Unit>> =
         Stage.values().associateWith { ArrayDeque() }
 
     private var configureLoopRunning = AtomicBoolean(false)
@@ -168,11 +169,11 @@ private class KotlinMultiplatformPluginLifecycleImpl(override val project: Proje
 
     fun start() {
         check(!isStarted.getAndSet(true)) {
-            "${KotlinMultiplatformPluginLifecycle::class.java.name} already started"
+            "${KotlinPluginLifecycle::class.java.name} already started"
         }
 
         check(!project.state.executed) {
-            "${KotlinMultiplatformPluginLifecycle::class.java.name} cannot be started in ProjectState '${project.state}'"
+            "${KotlinPluginLifecycle::class.java.name} cannot be started in ProjectState '${project.state}'"
         }
 
         project.whenEvaluated {
@@ -213,7 +214,7 @@ private class KotlinMultiplatformPluginLifecycleImpl(override val project: Proje
 
     override var stage: Stage = enqueuedStages.removeFirst()
 
-    override fun enqueue(stage: Stage, action: KotlinMultiplatformPluginLifecycle.() -> Unit) {
+    override fun enqueue(stage: Stage, action: KotlinPluginLifecycle.() -> Unit) {
         if (stage < this.stage) {
             throw IllegalLifecycleException("Cannot enqueue Action for stage '${this.stage}' in current stage '${this.stage}'")
         }
@@ -225,10 +226,10 @@ private class KotlinMultiplatformPluginLifecycleImpl(override val project: Proje
         }
     }
 
-    override fun launch(block: suspend KotlinMultiplatformPluginLifecycle.() -> Unit) {
+    override fun launch(block: suspend KotlinPluginLifecycle.() -> Unit) {
         val lifecycle = this
-        check(isStarted.get()) { "Cannot launch when ${KotlinMultiplatformPluginLifecycle::class.simpleName} is not started" }
-        check(!isFinished.get()) { "Cannot launch when ${KotlinMultiplatformPluginLifecycle::class.simpleName} is already finished" }
+        check(isStarted.get()) { "Cannot launch when ${KotlinPluginLifecycle::class.simpleName} is not started" }
+        check(!isFinished.get()) { "Cannot launch when ${KotlinPluginLifecycle::class.simpleName} is already finished" }
 
         val coroutine = block.createCoroutine(this, object : Continuation<Unit> {
             override val context: CoroutineContext = EmptyCoroutineContext +
@@ -277,7 +278,7 @@ private class KotlinMultiplatformPluginLifecycleImpl(override val project: Proje
 }
 
 private class KotlinMultiplatformPluginLifecycleCoroutineContextElement(
-    val lifecycle: KotlinMultiplatformPluginLifecycle
+    val lifecycle: KotlinPluginLifecycle
 ) : CoroutineContext.Element {
     companion object Key : CoroutineContext.Key<KotlinMultiplatformPluginLifecycleCoroutineContextElement>
 
@@ -285,7 +286,7 @@ private class KotlinMultiplatformPluginLifecycleCoroutineContextElement(
 }
 
 private class RestrictedLifecycleStages(
-    private val lifecycle: KotlinMultiplatformPluginLifecycle,
+    private val lifecycle: KotlinPluginLifecycle,
     private val allowedStages: Set<Stage>,
 ) : CoroutineContext.Element, ContinuationInterceptor {
     @OptIn(ExperimentalStdlibApi::class)
