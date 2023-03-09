@@ -1,3 +1,7 @@
+// CHECK:
+//   Mangled name: #test(){}kotlin.String
+//   Public signature: /test|-7008832412320199001[0]
 fun test(): String {
   return getProperty(p0 = "test") /*!! String */
 }
+

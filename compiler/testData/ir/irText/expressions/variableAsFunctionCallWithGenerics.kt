@@ -1,3 +1,6 @@
+// IGNORE_BACKEND_K2: ANY
+// ^ KT-57440
+
 val <T : CharSequence> T.gk: () -> T
     get() = { -> this }
 

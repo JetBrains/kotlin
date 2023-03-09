@@ -1,4 +1,8 @@
 // FIR_IDENTICAL
+
+// NO_SIGNATURE_DUMP
+// ^KT-57429
+
 fun testFunction(a: Any, b: Any) {
     a as MutableList<String>
     b as String

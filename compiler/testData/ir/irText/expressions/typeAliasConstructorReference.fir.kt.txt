@@ -1,6 +1,18 @@
+// CHECK:
+//   Mangled name: CA
+//   Public signature: /CA|null[0]
 typealias CA = C
+// CHECK:
+//   Mangled name: NA
+//   Public signature: /NA|null[0]
 typealias NA = Nested
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
 class C {
+  // CHECK:
+  //   Mangled name: C#<init>(kotlin.Int){}
+  //   Public signature: /C.<init>|-5182794243525578284[0]
   constructor(x: Int) /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -9,14 +21,26 @@ class C {
 
 }
 
+// CHECK:
+//   Mangled name: Host
+//   Public signature: /Host|null[0]
 object Host {
+  // CHECK:
+  //   Mangled name: Host#<init>(){}
+  //   Public signature: /Host.<init>|-5645683436151566731[0]
   private constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: Host.Nested
+  //   Public signature: /Host.Nested|null[0]
   class Nested {
+    // CHECK:
+    //   Mangled name: Host.Nested#<init>(kotlin.Int){}
+    //   Public signature: /Host.Nested.<init>|-5182794243525578284[0]
     constructor(x: Int) /* primary */ {
       super/*Any*/()
       /* <init>() */
@@ -27,10 +51,33 @@ object Host {
 
 }
 
+// CHECK:
+//   Mangled name: {}test1
+//   Public signature: /test1|6005685442305498193[0]
 val test1: Function1<Int, C>
   field = C::<init>
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-test1>(){}kotlin.Function1<kotlin.Int,C>
+  //   Public signature: /test1.<get-test1>|3885954913991504024[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         #<get-test1>(){}
+  //   Mangled name computed from Descriptor: #<get-test1>(){}
+  //   Mangled name computed from Fir:        #<get-test1>(){}kotlin.Function1<kotlin.Int,C>
+  //   Public signature: /test1.<get-test1>|3885954913991504024[0]
   get
 
+// CHECK:
+//   Mangled name: {}test2
+//   Public signature: /test2|2517758057000911509[0]
 val test2: Function1<Int, Nested>
   field = Nested::<init>
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-test2>(){}kotlin.Function1<kotlin.Int,Host.Nested>
+  //   Public signature: /test2.<get-test2>|7753417540311277623[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         #<get-test2>(){}
+  //   Mangled name computed from Descriptor: #<get-test2>(){}
+  //   Mangled name computed from Fir:        #<get-test2>(){}kotlin.Function1<kotlin.Int,Host.Nested>
+  //   Public signature: /test2.<get-test2>|7753417540311277623[0]
   get
+

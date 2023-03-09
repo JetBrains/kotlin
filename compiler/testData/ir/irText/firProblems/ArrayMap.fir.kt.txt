@@ -1,64 +1,131 @@
+// CHECK:
+//   Mangled name: ArrayMap
+//   Public signature: /ArrayMap|null[0]
 sealed class ArrayMap<T : Any> : Iterable<T> {
+  // CHECK:
+  //   Mangled name: ArrayMap#<init>(){}
+  //   Public signature: /ArrayMap.<init>|-5645683436151566731[0]
   protected constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: ArrayMap{}size
+  //   Public signature: /ArrayMap.size|-6253659984320132064[0]
   abstract val size: Int
+    // CHECK:
+    //   Mangled name: ArrayMap#<get-size>(){}kotlin.Int
+    //   Public signature: /ArrayMap.size.<get-size>|-3941649985161900780[0]
     abstract get
 
+  // CHECK:
+  //   Mangled name: ArrayMap#set(kotlin.Int;1:0){}
+  //   Public signature: /ArrayMap.set|366827667513302185[0]
   abstract operator fun set(index: Int, value: T)
+  // CHECK:
+  //   Mangled name: ArrayMap#get(kotlin.Int){}1:0?
+  //   Public signature: /ArrayMap.get|7872141219897475972[0]
   abstract operator fun get(index: Int): T?
+  // CHECK:
+  //   Mangled name: ArrayMap#copy(){}ArrayMap<1:0>
+  //   Public signature: /ArrayMap.copy|547614334273986924[0]
   abstract fun copy(): ArrayMap<T>
 
 }
 
+// CHECK:
+//   Mangled name: #isEmpty@ArrayMap<*>(){}kotlin.Boolean
+//   Public signature: /isEmpty|-1737302757312965016[0]
 fun ArrayMap<*>.isEmpty(): Boolean {
   return EQEQ(arg0 = <this>.<get-size>(), arg1 = 0)
 }
 
+// CHECK:
+//   Mangled name: #isNotEmpty@ArrayMap<*>(){}kotlin.Boolean
+//   Public signature: /isNotEmpty|-1968768410773210268[0]
 fun ArrayMap<*>.isNotEmpty(): Boolean {
   return EQEQ(arg0 = <this>.<get-size>(), arg1 = 0).not()
 }
 
+// CHECK:
+//   Mangled name: EmptyArrayMap
+//   Public signature: /EmptyArrayMap|null[0]
 internal object EmptyArrayMap : ArrayMap<Nothing> {
+  // CHECK:
+  //   Mangled name: EmptyArrayMap#<init>(){}
+  //   Public signature: /EmptyArrayMap.<init>|-5645683436151566731[0]
   private constructor() /* primary */ {
     super/*ArrayMap*/<Nothing>()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: EmptyArrayMap{}size
+  //   Public signature: /EmptyArrayMap.size|-6253659984320132064[0]
   override val size: Int
+    // CHECK:
+    //   Mangled name: EmptyArrayMap#<get-size>(){}kotlin.Int
+    //   Public signature: /EmptyArrayMap.size.<get-size>|-3941649985161900780[0]
     override get(): Int {
       return 0
     }
 
+  // CHECK:
+  //   Mangled name: EmptyArrayMap#set(kotlin.Int;kotlin.Nothing){}
+  //   Public signature: /EmptyArrayMap.set|-6638106378891901866[0]
   override operator fun set(index: Int, value: Nothing) {
     throw IllegalStateException()
   }
 
+  // CHECK:
+  //   Mangled name: EmptyArrayMap#get(kotlin.Int){}kotlin.Nothing?
+  //   Public signature: /EmptyArrayMap.get|-5899437872230381284[0]
   override operator fun get(index: Int): Nothing? {
     return null
   }
 
+  // CHECK:
+  //   Mangled name: EmptyArrayMap#copy(){}ArrayMap<kotlin.Nothing>
+  //   Public signature: /EmptyArrayMap.copy|-4610758081204118207[0]
   override fun copy(): ArrayMap<Nothing> {
     return <this>
   }
 
+  // CHECK:
+  //   Mangled name: EmptyArrayMap#iterator(){}kotlin.collections.Iterator<kotlin.Nothing>
+  //   Public signature: /EmptyArrayMap.iterator|5538760664730176758[0]
   override operator fun iterator(): Iterator<Nothing> {
     return { // BLOCK
+      // CHECK:
+      //   Mangled name computed from Ir:         EmptyArrayMap#iterator(){}kotlin.collections.Iterator<kotlin.Nothing>.<no name provided>
+      //   Mangled name computed from Descriptor: EmptyArrayMap#iterator(){}kotlin.collections.Iterator<kotlin.Nothing>.<no name provided>
+      //   Mangled name computed from Fir:        <anonymous>
       local class <no name provided> : Iterator<Nothing> {
+        // CHECK:
+        //   Mangled name computed from Ir:         EmptyArrayMap#iterator(){}kotlin.collections.Iterator<kotlin.Nothing>.<no name provided>#<init>(){}
+        //   Mangled name computed from Descriptor: EmptyArrayMap#iterator(){}kotlin.collections.Iterator<kotlin.Nothing>.<no name provided>#<init>(){}
+        //   Mangled name computed from Fir:        #<init>(){}
         constructor() /* primary */ {
           super/*Any*/()
           /* <init>() */
 
         }
 
+        // CHECK:
+        //   Mangled name computed from Ir:         EmptyArrayMap#iterator(){}kotlin.collections.Iterator<kotlin.Nothing>.<no name provided>#hasNext(){}kotlin.Boolean
+        //   Mangled name computed from Descriptor: EmptyArrayMap#iterator(){}kotlin.collections.Iterator<kotlin.Nothing>.<no name provided>#hasNext(){}kotlin.Boolean
+        //   Mangled name computed from Fir:        #hasNext(){}kotlin.Boolean
         override operator fun hasNext(): Boolean {
           return false
         }
 
+        // CHECK:
+        //   Mangled name computed from Ir:         EmptyArrayMap#iterator(){}kotlin.collections.Iterator<kotlin.Nothing>.<no name provided>#next(){}kotlin.Nothing
+        //   Mangled name computed from Descriptor: EmptyArrayMap#iterator(){}kotlin.collections.Iterator<kotlin.Nothing>.<no name provided>#next(){}kotlin.Nothing
+        //   Mangled name computed from Fir:        #next(){}kotlin.Nothing
         override operator fun next(): Nothing {
           return throw NoSuchElementException()
         }
@@ -71,30 +138,62 @@ internal object EmptyArrayMap : ArrayMap<Nothing> {
 
 }
 
+// CHECK:
+//   Mangled name: OneElementArrayMap
+//   Public signature: /OneElementArrayMap|null[0]
 internal class OneElementArrayMap<T : Any> : ArrayMap<T> {
+  // CHECK:
+  //   Mangled name computed from Ir:         OneElementArrayMap#<init>(1:0;kotlin.Int){}
+  //   Mangled name computed from Descriptor: OneElementArrayMap#<init>(1:0;kotlin.Int){}
+  //   Mangled name computed from Fir:        OneElementArrayMap#<init>(0:-1;kotlin.Int){}
+  //   Public signature: /OneElementArrayMap.<init>|2882950191869079001[0]
   constructor(value: T, index: Int) /* primary */ {
     super/*ArrayMap*/<T>()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: OneElementArrayMap{}value
+  //   Public signature: /OneElementArrayMap.value|1987073854177347439[0]
   val value: T
     field = value
+    // CHECK:
+    //   Mangled name: OneElementArrayMap#<get-value>(){}1:0
+    //   Public signature: /OneElementArrayMap.value.<get-value>|3167862337988859752[0]
     get
 
+  // CHECK:
+  //   Mangled name: OneElementArrayMap{}index
+  //   Public signature: /OneElementArrayMap.index|-7442989064208524072[0]
   val index: Int
     field = index
+    // CHECK:
+    //   Mangled name: OneElementArrayMap#<get-index>(){}kotlin.Int
+    //   Public signature: /OneElementArrayMap.index.<get-index>|-8397313606796909404[0]
     get
 
+  // CHECK:
+  //   Mangled name: OneElementArrayMap{}size
+  //   Public signature: /OneElementArrayMap.size|-6253659984320132064[0]
   override val size: Int
+    // CHECK:
+    //   Mangled name: OneElementArrayMap#<get-size>(){}kotlin.Int
+    //   Public signature: /OneElementArrayMap.size.<get-size>|-3941649985161900780[0]
     override get(): Int {
       return 1
     }
 
+  // CHECK:
+  //   Mangled name: OneElementArrayMap#set(kotlin.Int;1:0){}
+  //   Public signature: /OneElementArrayMap.set|366827667513302185[0]
   override operator fun set(index: Int, value: T) {
     throw IllegalStateException()
   }
 
+  // CHECK:
+  //   Mangled name: OneElementArrayMap#get(kotlin.Int){}1:0?
+  //   Public signature: /OneElementArrayMap.get|7872141219897475972[0]
   override operator fun get(index: Int): T? {
     return when {
       EQEQ(arg0 = index, arg1 = <this>.<get-index>()) -> <this>.<get-value>()
@@ -102,28 +201,62 @@ internal class OneElementArrayMap<T : Any> : ArrayMap<T> {
     }
   }
 
+  // CHECK:
+  //   Mangled name: OneElementArrayMap#copy(){}ArrayMap<1:0>
+  //   Public signature: /OneElementArrayMap.copy|547614334273986924[0]
   override fun copy(): ArrayMap<T> {
     return OneElementArrayMap<T>(value = <this>.<get-value>(), index = <this>.<get-index>())
   }
 
+  // CHECK:
+  //   Mangled name: OneElementArrayMap#iterator(){}kotlin.collections.Iterator<1:0>
+  //   Public signature: /OneElementArrayMap.iterator|6283263045548554825[0]
   override operator fun iterator(): Iterator<T> {
     return { // BLOCK
+      // CHECK:
+      //   Mangled name computed from Ir:         OneElementArrayMap#iterator(){}kotlin.collections.Iterator<2:0>.<no name provided>
+      //   Mangled name computed from Descriptor: OneElementArrayMap#iterator(){}kotlin.collections.Iterator<2:0>.<no name provided>
+      //   Mangled name computed from Fir:        <anonymous>
       local class <no name provided> : Iterator<T> {
+        // CHECK:
+        //   Mangled name computed from Ir:         OneElementArrayMap#iterator(){}kotlin.collections.Iterator<3:0>.<no name provided>#<init>(){}
+        //   Mangled name computed from Descriptor: OneElementArrayMap#iterator(){}kotlin.collections.Iterator<3:0>.<no name provided>#<init>(){}
+        //   Mangled name computed from Fir:        #<init>(){}
         constructor() /* primary */ {
           super/*Any*/()
           /* <init>() */
 
         }
 
+        // CHECK:
+        //   Mangled name computed from Ir:         OneElementArrayMap#iterator(){}kotlin.collections.Iterator<3:0>.<no name provided>{}notVisited
+        //   Mangled name computed from Descriptor: OneElementArrayMap#iterator(){}kotlin.collections.Iterator<3:0>.<no name provided>{}notVisited
+        //   Mangled name computed from Fir:        {}notVisited
         private var notVisited: Boolean
           field = true
+          // CHECK:
+          //   Mangled name computed from Ir:         OneElementArrayMap#iterator(){}kotlin.collections.Iterator<3:0>.<no name provided>#<get-notVisited>(){}kotlin.Boolean
+          //   Mangled name computed from Descriptor: OneElementArrayMap#iterator(){}kotlin.collections.Iterator<3:0>.<no name provided>#<get-notVisited>(){}kotlin.Boolean
+          //   Mangled name computed from Fir:        #<get-notVisited>(){}kotlin.Boolean
           private get
+          // CHECK:
+          //   Mangled name computed from Ir:         OneElementArrayMap#iterator(){}kotlin.collections.Iterator<3:0>.<no name provided>#<set-notVisited>(kotlin.Boolean){}
+          //   Mangled name computed from Descriptor: OneElementArrayMap#iterator(){}kotlin.collections.Iterator<3:0>.<no name provided>#<set-notVisited>(kotlin.Boolean){}
+          //   Mangled name computed from Fir:        #<set-notVisited>(kotlin.Boolean){}
           private set
 
+        // CHECK:
+        //   Mangled name computed from Ir:         OneElementArrayMap#iterator(){}kotlin.collections.Iterator<3:0>.<no name provided>#hasNext(){}kotlin.Boolean
+        //   Mangled name computed from Descriptor: OneElementArrayMap#iterator(){}kotlin.collections.Iterator<3:0>.<no name provided>#hasNext(){}kotlin.Boolean
+        //   Mangled name computed from Fir:        #hasNext(){}kotlin.Boolean
         override operator fun hasNext(): Boolean {
           return <this>.<get-notVisited>()
         }
 
+        // CHECK:
+        //   Mangled name computed from Ir:         OneElementArrayMap#iterator(){}kotlin.collections.Iterator<3:0>.<no name provided>#next(){}3:0
+        //   Mangled name computed from Descriptor: OneElementArrayMap#iterator(){}kotlin.collections.Iterator<3:0>.<no name provided>#next(){}3:0
+        //   Mangled name computed from Fir:        could not compute mangled name: java.lang.IllegalStateException: Should not be here!
         override operator fun next(): T {
           when {
             <this>.<get-notVisited>() -> { // BLOCK
@@ -142,44 +275,92 @@ internal class OneElementArrayMap<T : Any> : ArrayMap<T> {
 
 }
 
+// CHECK:
+//   Mangled name: ArrayMapImpl
+//   Public signature: /ArrayMapImpl|null[0]
 internal class ArrayMapImpl<T : Any> : ArrayMap<T> {
+  // CHECK:
+  //   Mangled name: ArrayMapImpl#<init>(kotlin.Array<kotlin.Any?>){}
+  //   Public signature: /ArrayMapImpl.<init>|-940489726603364367[0]
   private constructor(data: Array<Any?>) /* primary */ {
     super/*ArrayMap*/<T>()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: ArrayMapImpl{}data
+  //   Public signature: /ArrayMapImpl.data|4273011692695536650[0]
   private var data: Array<Any?>
     field = data
+    // CHECK:
+    //   Mangled name: ArrayMapImpl#<get-data>(){}kotlin.Array<kotlin.Any?>
+    //   Public signature: /ArrayMapImpl.data.<get-data>|5490366642916416835[0]
     private get
+    // CHECK:
+    //   Mangled name: ArrayMapImpl#<set-data>(kotlin.Array<kotlin.Any?>){}
+    //   Public signature: /ArrayMapImpl.data.<set-data>|1302271608139098175[0]
     private set
 
+  // CHECK:
+  //   Mangled name: ArrayMapImpl.Companion
+  //   Public signature: /ArrayMapImpl.Companion|null[0]
   companion object Companion {
+    // CHECK:
+    //   Mangled name: ArrayMapImpl.Companion#<init>(){}
+    //   Public signature: /ArrayMapImpl.Companion.<init>|-5645683436151566731[0]
     private constructor() /* primary */ {
       super/*Any*/()
       /* <init>() */
 
     }
 
+    // CHECK:
+    //   Mangled name: ArrayMapImpl.Companion{}DEFAULT_SIZE
+    //   Public signature: /ArrayMapImpl.Companion.DEFAULT_SIZE|-2519126992484260687[0]
     private const val DEFAULT_SIZE: Int
       field = 20
+      // CHECK:
+      //   Mangled name: ArrayMapImpl.Companion#<get-DEFAULT_SIZE>(){}kotlin.Int
+      //   Public signature: /ArrayMapImpl.Companion.DEFAULT_SIZE.<get-DEFAULT_SIZE>|-825092515895884543[0]
       private get
 
+    // CHECK:
+    //   Mangled name: ArrayMapImpl.Companion{}INCREASE_K
+    //   Public signature: /ArrayMapImpl.Companion.INCREASE_K|7964000577208016171[0]
     private const val INCREASE_K: Int
       field = 2
+      // CHECK:
+      //   Mangled name: ArrayMapImpl.Companion#<get-INCREASE_K>(){}kotlin.Int
+      //   Public signature: /ArrayMapImpl.Companion.INCREASE_K.<get-INCREASE_K>|-381728285012206517[0]
       private get
 
   }
 
+  // CHECK:
+  //   Mangled name: ArrayMapImpl#<init>(){}
+  //   Public signature: /ArrayMapImpl.<init>|-5645683436151566731[0]
   constructor() {
     this/*ArrayMapImpl*/<T>(data = arrayOfNulls<Any>(size = 20))
   }
 
+  // CHECK:
+  //   Mangled name: ArrayMapImpl{}size
+  //   Public signature: /ArrayMapImpl.size|-6253659984320132064[0]
   override var size: Int
     field = 0
+    // CHECK:
+    //   Mangled name: ArrayMapImpl#<get-size>(){}kotlin.Int
+    //   Public signature: /ArrayMapImpl.size.<get-size>|-3941649985161900780[0]
     override get
+    // CHECK:
+    //   Mangled name: ArrayMapImpl#<set-size>(kotlin.Int){}
+    //   Public signature: /ArrayMapImpl.size.<set-size>|3088904159210893297[0]
     private open set
 
+  // CHECK:
+  //   Mangled name: ArrayMapImpl#ensureCapacity(kotlin.Int){}
+  //   Public signature: /ArrayMapImpl.ensureCapacity|-7913402150632352615[0]
   private fun ensureCapacity(index: Int) {
     when {
       lessOrEqual(arg0 = <this>.<get-data>().<get-size>(), arg1 = index) -> { // BLOCK
@@ -188,6 +369,9 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T> {
     }
   }
 
+  // CHECK:
+  //   Mangled name: ArrayMapImpl#set(kotlin.Int;1:0){}
+  //   Public signature: /ArrayMapImpl.set|366827667513302185[0]
   override operator fun set(index: Int, value: T) {
     <this>.ensureCapacity(index = index)
     when {
@@ -200,28 +384,61 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T> {
     <this>.<get-data>().set(index = index, value = value)
   }
 
+  // CHECK:
+  //   Mangled name: ArrayMapImpl#get(kotlin.Int){}1:0?
+  //   Public signature: /ArrayMapImpl.get|7872141219897475972[0]
   override operator fun get(index: Int): T? {
     return <this>.<get-data>().getOrNull<Any?>(index = index) as T?
   }
 
+  // CHECK:
+  //   Mangled name: ArrayMapImpl#copy(){}ArrayMap<1:0>
+  //   Public signature: /ArrayMapImpl.copy|547614334273986924[0]
   override fun copy(): ArrayMap<T> {
     return ArrayMapImpl<T>(data = <this>.<get-data>().copyOf<Any?>())
   }
 
+  // CHECK:
+  //   Mangled name: ArrayMapImpl#iterator(){}kotlin.collections.Iterator<1:0>
+  //   Public signature: /ArrayMapImpl.iterator|6283263045548554825[0]
   override operator fun iterator(): Iterator<T> {
     return { // BLOCK
+      // CHECK:
+      //   Mangled name computed from Ir:         ArrayMapImpl#iterator(){}kotlin.collections.Iterator<2:0>.<no name provided>
+      //   Mangled name computed from Descriptor: ArrayMapImpl#iterator(){}kotlin.collections.Iterator<2:0>.<no name provided>
+      //   Mangled name computed from Fir:        <anonymous>
       local class <no name provided> : AbstractIterator<T> {
+        // CHECK:
+        //   Mangled name computed from Ir:         ArrayMapImpl#iterator(){}kotlin.collections.Iterator<3:0>.<no name provided>#<init>(){}
+        //   Mangled name computed from Descriptor: ArrayMapImpl#iterator(){}kotlin.collections.Iterator<3:0>.<no name provided>#<init>(){}
+        //   Mangled name computed from Fir:        #<init>(){}
         constructor() /* primary */ {
           super/*AbstractIterator*/<T>()
           /* <init>() */
 
         }
 
+        // CHECK:
+        //   Mangled name computed from Ir:         ArrayMapImpl#iterator(){}kotlin.collections.Iterator<3:0>.<no name provided>{}index
+        //   Mangled name computed from Descriptor: ArrayMapImpl#iterator(){}kotlin.collections.Iterator<3:0>.<no name provided>{}index
+        //   Mangled name computed from Fir:        {}index
         private var index: Int
           field = -1
+          // CHECK:
+          //   Mangled name computed from Ir:         ArrayMapImpl#iterator(){}kotlin.collections.Iterator<3:0>.<no name provided>#<get-index>(){}kotlin.Int
+          //   Mangled name computed from Descriptor: ArrayMapImpl#iterator(){}kotlin.collections.Iterator<3:0>.<no name provided>#<get-index>(){}kotlin.Int
+          //   Mangled name computed from Fir:        #<get-index>(){}kotlin.Int
           private get
+          // CHECK:
+          //   Mangled name computed from Ir:         ArrayMapImpl#iterator(){}kotlin.collections.Iterator<3:0>.<no name provided>#<set-index>(kotlin.Int){}
+          //   Mangled name computed from Descriptor: ArrayMapImpl#iterator(){}kotlin.collections.Iterator<3:0>.<no name provided>#<set-index>(kotlin.Int){}
+          //   Mangled name computed from Fir:        #<set-index>(kotlin.Int){}
           private set
 
+        // CHECK:
+        //   Mangled name computed from Ir:         ArrayMapImpl#iterator(){}kotlin.collections.Iterator<3:0>.<no name provided>#computeNext(){}
+        //   Mangled name computed from Descriptor: ArrayMapImpl#iterator(){}kotlin.collections.Iterator<3:0>.<no name provided>#computeNext(){}
+        //   Mangled name computed from Fir:        #computeNext(){}
         protected override fun computeNext() {
           { // BLOCK
             do{ // BLOCK
@@ -245,6 +462,9 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T> {
     }
   }
 
+  // CHECK:
+  //   Mangled name: ArrayMapImpl#remove(kotlin.Int){}
+  //   Public signature: /ArrayMapImpl.remove|-6905763659499399195[0]
   fun remove(index: Int) {
     when {
       EQEQ(arg0 = <this>.<get-data>().get(index = index), arg1 = null).not() -> { // BLOCK
@@ -256,43 +476,83 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T> {
     <this>.<get-data>().set(index = index, value = null)
   }
 
+  // CHECK:
+  //   Mangled name: ArrayMapImpl#entries(){}kotlin.collections.List<ArrayMapImpl.Entry<1:0>>
+  //   Public signature: /ArrayMapImpl.entries|-1049561237604241333[0]
   fun entries(): List<Entry<T>> {
-    return <this>.<get-data>().mapIndexedNotNull<Any?, Entry<T>>(transform = local fun <anonymous>(index: @ParameterName(name = "index") Int, value: Any?): Entry<T>? {
-      return when {
-        EQEQ(arg0 = value, arg1 = null).not() -> Entry<T>(key = index, value = value as T)
-        else -> null
+    return <this>.<get-data>().mapIndexedNotNull<Any?, Entry<T>>(transform = 
+      // CHECK:
+      //   Mangled name computed from Ir:         ArrayMapImpl#entries(){}kotlin.collections.List<ArrayMapImpl.Entry<2:0>>#<anonymous>#static(kotlin.Int;kotlin.Any?){}ArrayMapImpl.Entry<2:0>?
+      //   Mangled name computed from Descriptor: ArrayMapImpl#entries(){}kotlin.collections.List<ArrayMapImpl.Entry<2:0>>#<anonymous>#static(kotlin.Int;kotlin.Any?){}ArrayMapImpl.Entry<2:0>?
+      //   Mangled name computed from Fir:        could not compute mangled name: java.lang.IllegalStateException: unexpected element mapIndexedNotNull@fun <anonymous>(index: R|@R|kotlin/ParameterName|(name = String(index))  kotlin/Int|, value: R|kotlin/Any?|): R|ArrayMapImpl.Entry<T>?| <inline=Inline, kind=UNKNOWN>  {... (truncated)
+      local fun <anonymous>(index: @ParameterName(name = "index") Int, value: Any?): Entry<T>? {
+        return when {
+          EQEQ(arg0 = value, arg1 = null).not() -> Entry<T>(key = index, value = value as T)
+          else -> null
+        }
       }
-    }
 )
   }
 
+  // CHECK:
+  //   Mangled name: ArrayMapImpl.Entry
+  //   Public signature: /ArrayMapImpl.Entry|null[0]
   data class Entry<T : Any?> : Entry<Int, T> {
+    // CHECK:
+    //   Mangled name computed from Ir:         ArrayMapImpl.Entry#<init>(kotlin.Int;1:0){}
+    //   Mangled name computed from Descriptor: ArrayMapImpl.Entry#<init>(kotlin.Int;1:0){}
+    //   Mangled name computed from Fir:        ArrayMapImpl.Entry#<init>(kotlin.Int;0:-1){}
+    //   Public signature: /ArrayMapImpl.Entry.<init>|1784473218753601515[0]
     constructor(key: Int, value: T) /* primary */ {
       super/*Any*/()
       /* <init>() */
 
     }
 
+    // CHECK:
+    //   Mangled name: ArrayMapImpl.Entry{}key
+    //   Public signature: /ArrayMapImpl.Entry.key|1144547298251177939[0]
     override val key: Int
       field = key
+      // CHECK:
+      //   Mangled name: ArrayMapImpl.Entry#<get-key>(){}kotlin.Int
+      //   Public signature: /ArrayMapImpl.Entry.key.<get-key>|-7928552352363699078[0]
       override get
 
+    // CHECK:
+    //   Mangled name: ArrayMapImpl.Entry{}value
+    //   Public signature: /ArrayMapImpl.Entry.value|1987073854177347439[0]
     override val value: T
       field = value
+      // CHECK:
+      //   Mangled name: ArrayMapImpl.Entry#<get-value>(){}1:0
+      //   Public signature: /ArrayMapImpl.Entry.value.<get-value>|3167862337988859752[0]
       override get
 
+    // CHECK:
+    //   Mangled name: ArrayMapImpl.Entry#component1(){}kotlin.Int
+    //   Public signature: /ArrayMapImpl.Entry.component1|-8217597213800111288[0]
     operator fun component1(): Int {
       return <this>.#key
     }
 
+    // CHECK:
+    //   Mangled name: ArrayMapImpl.Entry#component2(){}1:0
+    //   Public signature: /ArrayMapImpl.Entry.component2|15991383605318669[0]
     operator fun component2(): T {
       return <this>.#value
     }
 
+    // CHECK:
+    //   Mangled name: ArrayMapImpl.Entry#copy(kotlin.Int;1:0){}ArrayMapImpl.Entry<1:0>
+    //   Public signature: /ArrayMapImpl.Entry.copy|-2005463288207303075[0]
     fun copy(key: Int = <this>.#key, value: T = <this>.#value): Entry<T> {
       return Entry<Any>(key = key, value = value)
     }
 
+    // CHECK:
+    //   Mangled name: ArrayMapImpl.Entry#equals(kotlin.Any?){}kotlin.Boolean
+    //   Public signature: /ArrayMapImpl.Entry.equals|722809408929142791[0]
     override fun equals(other: Any?): Boolean {
       when {
         EQEQEQ(arg0 = <this>, arg1 = other) -> return true
@@ -310,6 +570,9 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T> {
       return true
     }
 
+    // CHECK:
+    //   Mangled name: ArrayMapImpl.Entry#hashCode(){}kotlin.Int
+    //   Public signature: /ArrayMapImpl.Entry.hashCode|-8048879360829830756[0]
     override fun hashCode(): Int {
       var result: Int = <this>.#key.hashCode()
       result = result.times(other = 31).plus(other = when {
@@ -319,6 +582,9 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T> {
       return result
     }
 
+    // CHECK:
+    //   Mangled name: ArrayMapImpl.Entry#toString(){}kotlin.String
+    //   Public signature: /ArrayMapImpl.Entry.toString|6958853723545266802[0]
     override fun toString(): String {
       return "Entry(key=" + <this>.#key + ", value=" + <this>.#value + ")"
     }
@@ -326,3 +592,4 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T> {
   }
 
 }
+

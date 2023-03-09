@@ -1,27 +1,71 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
 class A<T : Any?> {
+  // CHECK:
+  //   Mangled name computed from Ir:         A#<init>(1:0){}
+  //   Mangled name computed from Descriptor: A#<init>(1:0){}
+  //   Mangled name computed from Fir:        A#<init>(0:-1){}
+  //   Public signature: /A.<init>|8751876555175556900[0]
   constructor(value: T) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: A{}value
+  //   Public signature: /A.value|1987073854177347439[0]
   private val value: T
     field = value
+    // CHECK JVM_IR:
+    //   Mangled name: A#<get-value>(){}1:0
+    //   Public signature: /A.value.<get-value>|3167862337988859752[0]
+    // CHECK JS_IR:
+    //   Mangled name computed from Ir:         A#<get-value>(){}
+    //   Mangled name computed from Descriptor: A#<get-value>(){}
+    //   Mangled name computed from Fir:        A#<get-value>(){}1:0
+    //   Public signature: /A.value.<get-value>|3167862337988859752[0]
     private get
 
+  // CHECK JVM_IR:
+  //   Mangled name: A#get(kotlin.Int){}1:0
+  //   Public signature: /A.get|4109019764351174315[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         A#get(kotlin.Int){}
+  //   Mangled name computed from Descriptor: A#get(kotlin.Int){}
+  //   Mangled name computed from Fir:        A#get(kotlin.Int){}1:0
+  //   Public signature: /A.get|4109019764351174315[0]
   operator fun get(i: Int): T {
     return <this>.<get-value>()
   }
 
+  // CHECK:
+  //   Mangled name: A#set(kotlin.Int;1:0){}
+  //   Public signature: /A.set|366827667513302185[0]
   operator fun set(i: Int, v: T) {
   }
 
 }
 
+// CHECK:
+//   Mangled name: {}aFloat
+//   Public signature: /aFloat|4391422460504083106[0]
 val aFloat: A<Float>
   field = A<Float>(value = 0.0F)
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-aFloat>(){}A<kotlin.Float>
+  //   Public signature: /aFloat.<get-aFloat>|-8376703976384589815[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         #<get-aFloat>(){}
+  //   Mangled name computed from Descriptor: #<get-aFloat>(){}
+  //   Mangled name computed from Fir:        #<get-aFloat>(){}A<kotlin.Float>
+  //   Public signature: /aFloat.<get-aFloat>|-8376703976384589815[0]
   get
 
+// CHECK:
+//   Mangled name: {}aInt
+//   Public signature: /aInt|-6794586520969567401[0]
 val aInt: Float
   field = { // BLOCK
     val <array>: A<Float> = <get-aFloat>()
@@ -30,4 +74,13 @@ val aInt: Float
     <array>.set(i = <index_0>, v = <unary>.dec())
     <unary>
   }
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-aInt>(){}kotlin.Float
+  //   Public signature: /aInt.<get-aInt>|-2970752737551036436[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         #<get-aInt>(){}
+  //   Mangled name computed from Descriptor: #<get-aInt>(){}
+  //   Mangled name computed from Fir:        #<get-aInt>(){}kotlin.Float
+  //   Public signature: /aInt.<get-aInt>|-2970752737551036436[0]
   get
+

@@ -1,11 +1,20 @@
+// CHECK:
+//   Mangled name: #component1@J?(){}kotlin.Int
+//   Public signature: /component1|-3884047873137386118[0]
 operator fun J?.component1(): Int {
   return 1
 }
 
+// CHECK:
+//   Mangled name: #component2@J(){}kotlin.Int
+//   Public signature: [ File 'implicitNotNullInDestructuringAssignment.kt' <- /component2|-623550756830644944[0] ]
 private operator fun J.component2(): Int {
   return 2
 }
 
+// CHECK:
+//   Mangled name: #test(){}
+//   Public signature: /test|6620506149988718649[0]
 fun test() {
   // COMPOSITE {
   val tmp0_container: @FlexibleNullability J? = j()
@@ -13,3 +22,4 @@ fun test() {
   val b: Int = tmp0_container /*!! J */.component2()
   // }
 }
+

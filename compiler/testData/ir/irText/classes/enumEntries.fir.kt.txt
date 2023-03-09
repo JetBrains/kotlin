@@ -1,24 +1,54 @@
+// CHECK:
+//   Mangled name: MyEnum
+//   Public signature: /MyEnum|null[0]
 enum class MyEnum : Enum<MyEnum> {
+  // CHECK:
+  //   Mangled name: MyEnum#<init>(){}
+  //   Public signature: /MyEnum.<init>|-5645683436151566731[0]
   private constructor() /* primary */ {
     super/*Enum*/<MyEnum>()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: MyEnum.Ok
+  //   Public signature: /MyEnum.Ok|null[0]
   Ok = MyEnum()
 
+  // CHECK:
+  //   Mangled name: MyEnum.Nope
+  //   Public signature: /MyEnum.Nope|null[0]
   Nope = MyEnum()
 
+  // CHECK:
+  //   Mangled name: MyEnum#values#static(){}kotlin.Array<MyEnum>
+  //   Public signature: /MyEnum.values|3097625172661156808[0]
   fun values(): Array<MyEnum> /* Synthetic body for ENUM_VALUES */
 
+  // CHECK:
+  //   Mangled name: MyEnum#valueOf#static(kotlin.String){}MyEnum
+  //   Public signature: /MyEnum.valueOf|4316550590519800984[0]
   fun valueOf(value: String): MyEnum /* Synthetic body for ENUM_VALUEOF */
 
+  // CHECK:
+  //   Mangled name: MyEnum#static{}entries
+  //   Public signature: /MyEnum.entries|-5134227801081826149[0]
   val entries: EnumEntries<MyEnum>
+    // CHECK:
+    //   Mangled name computed from Ir:         MyEnum#<get-entries>#static(){}kotlin.enums.EnumEntries<MyEnum>
+    //   Mangled name computed from Descriptor: MyEnum#<get-entries>#static(){}kotlin.enums.EnumEntries<MyEnum>
+    //   Mangled name computed from Fir:        #<get-entries>#static(){}kotlin.enums.EnumEntries<MyEnum>
+    //   Public signature: /MyEnum.entries.<get-entries>|-3922959509726908718[0]
     get(): EnumEntries<MyEnum> /* Synthetic body for ENUM_ENTRIES */
 
 }
 
+// CHECK:
+//   Mangled name: #box(){}kotlin.enums.EnumEntries<MyEnum>
+//   Public signature: /box|700999420470824741[0]
 @OptIn(markerClass = [ExperimentalStdlibApi::class])
 fun box(): EnumEntries<MyEnum> {
   return <get-entries>()
 }
+

@@ -1,4 +1,8 @@
+// CHECK:
+//   Mangled name: #foo(){}
+//   Public signature: /foo|-1041209573719867811[0]
 fun foo() {
   val ref1: KProperty0<String> = SomeJavaClass::someJavaField/*</* null */>()*/
   val ref2: KProperty0<String> = SomeJavaClass::someJavaField/*</* null */>()*/
 }
+

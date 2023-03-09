@@ -1,7 +1,13 @@
+// CHECK:
+//   Mangled name: #magic(){0§<kotlin.Any?>}0:0
+//   Public signature: /magic|-2053324167820994651[0]
 fun <T : Any?> magic(): T {
   return throw Exception()
 }
 
+// CHECK:
+//   Mangled name: #test(0:0;0:0){0§<kotlin.Any?>}
+//   Public signature: /test|112304132393930964[0]
 fun <T : Any?> test(value: T, value2: T) {
   val x1: Any = { // BLOCK
     val <elvis>: T = value
@@ -83,3 +89,4 @@ fun <T : Any?> test(value: T, value2: T) {
     }
   }
 }
+

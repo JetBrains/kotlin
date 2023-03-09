@@ -1,4 +1,8 @@
 // FIR_IDENTICAL
+
+// NO_SIGNATURE_DUMP
+// ^KT-57436
+
 class Test1<T : U, U>
 
 fun <T : U, U> test2() {}

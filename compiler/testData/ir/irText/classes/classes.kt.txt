@@ -1,4 +1,10 @@
+// CHECK:
+//   Mangled name: TestClass
+//   Public signature: /TestClass|null[0]
 class TestClass {
+  // CHECK:
+  //   Mangled name: TestClass#<init>(){}
+  //   Public signature: /TestClass.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -7,11 +13,20 @@ class TestClass {
 
 }
 
+// CHECK:
+//   Mangled name: TestInterface
+//   Public signature: /TestInterface|null[0]
 interface TestInterface {
 
 }
 
+// CHECK:
+//   Mangled name: TestObject
+//   Public signature: /TestObject|null[0]
 object TestObject {
+  // CHECK:
+  //   Mangled name: TestObject#<init>(){}
+  //   Public signature: /TestObject.<init>|-5645683436151566731[0]
   private constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -20,7 +35,13 @@ object TestObject {
 
 }
 
+// CHECK:
+//   Mangled name: TestAnnotationClass
+//   Public signature: /TestAnnotationClass|null[0]
 open annotation class TestAnnotationClass : Annotation {
+  // CHECK:
+  //   Mangled name: TestAnnotationClass#<init>(){}
+  //   Public signature: /TestAnnotationClass.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -29,18 +50,37 @@ open annotation class TestAnnotationClass : Annotation {
 
 }
 
+// CHECK:
+//   Mangled name: TestEnumClass
+//   Public signature: /TestEnumClass|null[0]
 enum class TestEnumClass : Enum<TestEnumClass> {
+  // CHECK:
+  //   Mangled name: TestEnumClass#<init>(){}
+  //   Public signature: /TestEnumClass.<init>|-5645683436151566731[0]
   private constructor() /* primary */ {
     super/*Enum*/<TestEnumClass>()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: TestEnumClass#values#static(){}kotlin.Array<TestEnumClass>
+  //   Public signature: /TestEnumClass.values|2819729310351736077[0]
   fun values(): Array<TestEnumClass> /* Synthetic body for ENUM_VALUES */
 
+  // CHECK:
+  //   Mangled name: TestEnumClass#valueOf#static(kotlin.String){}TestEnumClass
+  //   Public signature: /TestEnumClass.valueOf|3258702714702284561[0]
   fun valueOf(value: String): TestEnumClass /* Synthetic body for ENUM_VALUEOF */
 
+  // CHECK:
+  //   Mangled name: TestEnumClass#static{}entries
+  //   Public signature: /TestEnumClass.entries|-5134227801081826149[0]
   val entries: EnumEntries<TestEnumClass>
+    // CHECK:
+    //   Mangled name: TestEnumClass#<get-entries>#static(){}kotlin.enums.EnumEntries<TestEnumClass>
+    //   Public signature: /TestEnumClass.entries.<get-entries>|-5859730592340272958[0]
     get(): EnumEntries<TestEnumClass> /* Synthetic body for ENUM_ENTRIES */
 
 }
+

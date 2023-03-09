@@ -1,30 +1,60 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
 data class A {
+  // CHECK:
+  //   Mangled name: A#<init>(kotlin.Int;kotlin.Int){}
+  //   Public signature: /A.<init>|-7691762014320324121[0]
   constructor(x: Int, y: Int) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: A{}x
+  //   Public signature: /A.x|-8060530855978347579[0]
   val x: Int
     field = x
+    // CHECK:
+    //   Mangled name: A#<get-x>(){}kotlin.Int
+    //   Public signature: /A.x.<get-x>|4966956098150895696[0]
     get
 
+  // CHECK:
+  //   Mangled name: A{}y
+  //   Public signature: /A.y|3625903257357557171[0]
   val y: Int
     field = y
+    // CHECK:
+    //   Mangled name: A#<get-y>(){}kotlin.Int
+    //   Public signature: /A.y.<get-y>|-6745575372101973707[0]
     get
 
+  // CHECK:
+  //   Mangled name: A#component1(){}kotlin.Int
+  //   Public signature: /A.component1|-8217597213800111288[0]
   operator fun component1(): Int {
     return <this>.#x
   }
 
+  // CHECK:
+  //   Mangled name: A#component2(){}kotlin.Int
+  //   Public signature: /A.component2|-7444333055342785242[0]
   operator fun component2(): Int {
     return <this>.#y
   }
 
+  // CHECK:
+  //   Mangled name: A#copy(kotlin.Int;kotlin.Int){}A
+  //   Public signature: /A.copy|1926272323689019234[0]
   fun copy(x: Int = <this>.#x, y: Int = <this>.#y): A {
     return A(x = x, y = y)
   }
 
+  // CHECK:
+  //   Mangled name: A#equals(kotlin.Any?){}kotlin.Boolean
+  //   Public signature: /A.equals|722809408929142791[0]
   override fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
@@ -42,23 +72,47 @@ data class A {
     return true
   }
 
+  // CHECK:
+  //   Mangled name: A#hashCode(){}kotlin.Int
+  //   Public signature: /A.hashCode|-8048879360829830756[0]
   override fun hashCode(): Int {
     var result: Int = <this>.#x.hashCode()
     result = result.times(other = 31).plus(other = <this>.#y.hashCode())
     return result
   }
 
+  // CHECK:
+  //   Mangled name: A#toString(){}kotlin.String
+  //   Public signature: /A.toString|6958853723545266802[0]
   override fun toString(): String {
     return "A(x=" + <this>.#x + ", y=" + <this>.#y + ")"
   }
 
 }
 
+// CHECK:
+//   Mangled name: {}fn
+//   Public signature: /fn|-1096960354582375131[0]
 var fn: Function1<A, Int>
-  field = local fun <anonymous>(<destruct>: A): Int {
-    val y: Int = <destruct>.component2()
-    return 42.plus(other = y)
-  }
+  field = 
+    // CHECK:
+    //   Mangled name computed from Ir (compatible mode: false):         {}fn#<anonymous>#static(A){}kotlin.Int
+    //   Mangled name computed from Ir (compatible mode: true):          fn#<anonymous>#static(A){}kotlin.Int
+    //   Mangled name computed from Descriptor (compatible mode: false): {}fn#jf#<anonymous>#static(A){}kotlin.Int
+    //   Mangled name computed from Descriptor (compatible mode: true):  {}fn#jf#<anonymous>#static(A){}kotlin.Int
+    //   Mangled name computed from Fir (compatible mode: false):        could not compute mangled name: java.lang.IllegalStateException: unexpected element fun <anonymous>(<destruct>: R|A|): R|kotlin/Int| <inline=Unknown>  {... (truncated)
+    //   Mangled name computed from Fir (compatible mode: true):         could not compute mangled name: java.lang.IllegalStateException: unexpected element fun <anonymous>(<destruct>: R|A|): R|kotlin/Int| <inline=Unknown>  {... (truncated)
+    local fun <anonymous>(<destruct>: A): Int {
+      val y: Int = <destruct>.component2()
+      return 42.plus(other = y)
+    }
 
+  // CHECK:
+  //   Mangled name: #<get-fn>(){}kotlin.Function1<A,kotlin.Int>
+  //   Public signature: /fn.<get-fn>|-1538543637358155392[0]
   get
+  // CHECK:
+  //   Mangled name: #<set-fn>(kotlin.Function1<A,kotlin.Int>){}
+  //   Public signature: /fn.<set-fn>|5076231225819362553[0]
   set
+

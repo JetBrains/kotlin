@@ -1,18 +1,44 @@
+// CHECK:
+//   Mangled name: IFoo
+//   Public signature: /IFoo|null[0]
 fun interface IFoo {
+  // CHECK:
+  //   Mangled name: IFoo#foo(kotlin.Int){}
+  //   Public signature: /IFoo.foo|-104159190164110731[0]
   abstract fun foo(i: Int)
 
 }
 
+// CHECK:
+//   Mangled name: #useFoo(IFoo){}
+//   Public signature: /useFoo|-5008863146598304258[0]
 fun useFoo(foo: IFoo) {
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #withVararg(kotlin.IntArray...){}kotlin.Int
+//   Public signature: /withVararg|2262699225692856772[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #withVararg(kotlin.IntArray...){}
+//   Mangled name computed from Descriptor: #withVararg(kotlin.IntArray...){}
+//   Mangled name computed from Fir:        #withVararg(kotlin.IntArray...){}kotlin.Int
+//   Public signature: /withVararg|2262699225692856772[0]
 fun withVararg(vararg xs: Int): Int {
   return 42
 }
 
+// CHECK:
+//   Mangled name: #test(){}
+//   Public signature: /test|6620506149988718649[0]
 fun test() {
-  useFoo(foo = local fun withVararg(p0: Int) {
-    withVararg(xs = [p0])
-  }
+  useFoo(foo = 
+    // CHECK:
+    //   Mangled name computed from Ir:         #test(){}#withVararg#static(kotlin.Int){}
+    //   Mangled name computed from Descriptor: #test(){}#withVararg#static(kotlin.Int){}
+    //   Mangled name computed from Fir:        #withVararg(kotlin.IntArray...){}kotlin.Int
+    local fun withVararg(p0: Int) {
+      withVararg(xs = [p0])
+    }
  /*-> IFoo */)
 }
+

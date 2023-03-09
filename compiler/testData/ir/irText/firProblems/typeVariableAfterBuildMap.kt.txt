@@ -1,175 +1,318 @@
+// CHECK:
+//   Mangled name: Visibility
+//   Public signature: /Visibility|null[0]
 abstract class Visibility {
+  // CHECK:
+  //   Mangled name: Visibility#<init>(kotlin.String;kotlin.Boolean){}
+  //   Public signature: /Visibility.<init>|7478968091293048907[0]
   constructor(name: String, isPublicAPI: Boolean) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: Visibility{}name
+  //   Public signature: /Visibility.name|4231860309499509769[0]
   val name: String
     field = name
+    // CHECK:
+    //   Mangled name: Visibility#<get-name>(){}kotlin.String
+    //   Public signature: /Visibility.name.<get-name>|-8006111524522882650[0]
     get
 
+  // CHECK:
+  //   Mangled name: Visibility{}isPublicAPI
+  //   Public signature: /Visibility.isPublicAPI|-3614707293274580028[0]
   val isPublicAPI: Boolean
     field = isPublicAPI
+    // CHECK:
+    //   Mangled name: Visibility#<get-isPublicAPI>(){}kotlin.Boolean
+    //   Public signature: /Visibility.isPublicAPI.<get-isPublicAPI>|3495554365118712322[0]
     get
 
+  // CHECK:
+  //   Mangled name: Visibility{}internalDisplayName
+  //   Public signature: /Visibility.internalDisplayName|363288575296777097[0]
   open val internalDisplayName: String
+    // CHECK:
+    //   Mangled name: Visibility#<get-internalDisplayName>(){}kotlin.String
+    //   Public signature: /Visibility.internalDisplayName.<get-internalDisplayName>|2525145903245032039[0]
     open get(): String {
       return <this>.<get-name>()
     }
 
+  // CHECK:
+  //   Mangled name: Visibility{}externalDisplayName
+  //   Public signature: /Visibility.externalDisplayName|391049038221671391[0]
   open val externalDisplayName: String
+    // CHECK:
+    //   Mangled name: Visibility#<get-externalDisplayName>(){}kotlin.String
+    //   Public signature: /Visibility.externalDisplayName.<get-externalDisplayName>|-6122052316113926396[0]
     open get(): String {
       return <this>.<get-internalDisplayName>()
     }
 
+  // CHECK:
+  //   Mangled name: Visibility#mustCheckInImports(){}kotlin.Boolean
+  //   Public signature: /Visibility.mustCheckInImports|671123431860416266[0]
   abstract fun mustCheckInImports(): Boolean
 
 }
 
+// CHECK:
+//   Mangled name: Visibilities
+//   Public signature: /Visibilities|null[0]
 object Visibilities {
+  // CHECK:
+  //   Mangled name: Visibilities#<init>(){}
+  //   Public signature: /Visibilities.<init>|-5645683436151566731[0]
   private constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: Visibilities.Private
+  //   Public signature: /Visibilities.Private|null[0]
   object Private : Visibility {
+    // CHECK:
+    //   Mangled name: Visibilities.Private#<init>(){}
+    //   Public signature: /Visibilities.Private.<init>|-5645683436151566731[0]
     private constructor() /* primary */ {
       super/*Visibility*/(name = "private", isPublicAPI = false)
       /* <init>() */
 
     }
 
+    // CHECK:
+    //   Mangled name: Visibilities.Private#mustCheckInImports(){}kotlin.Boolean
+    //   Public signature: /Visibilities.Private.mustCheckInImports|671123431860416266[0]
     override fun mustCheckInImports(): Boolean {
       return true
     }
 
   }
 
+  // CHECK:
+  //   Mangled name: Visibilities.PrivateToThis
+  //   Public signature: /Visibilities.PrivateToThis|null[0]
   object PrivateToThis : Visibility {
+    // CHECK:
+    //   Mangled name: Visibilities.PrivateToThis#<init>(){}
+    //   Public signature: /Visibilities.PrivateToThis.<init>|-5645683436151566731[0]
     private constructor() /* primary */ {
       super/*Visibility*/(name = "private_to_this", isPublicAPI = false)
       /* <init>() */
 
     }
 
+    // CHECK:
+    //   Mangled name: Visibilities.PrivateToThis{}internalDisplayName
+    //   Public signature: /Visibilities.PrivateToThis.internalDisplayName|363288575296777097[0]
     override val internalDisplayName: String
+      // CHECK:
+      //   Mangled name: Visibilities.PrivateToThis#<get-internalDisplayName>(){}kotlin.String
+      //   Public signature: /Visibilities.PrivateToThis.internalDisplayName.<get-internalDisplayName>|2525145903245032039[0]
       override get(): String {
         return "private/*private to this*/"
       }
 
+    // CHECK:
+    //   Mangled name: Visibilities.PrivateToThis#mustCheckInImports(){}kotlin.Boolean
+    //   Public signature: /Visibilities.PrivateToThis.mustCheckInImports|671123431860416266[0]
     override fun mustCheckInImports(): Boolean {
       return true
     }
 
   }
 
+  // CHECK:
+  //   Mangled name: Visibilities.Protected
+  //   Public signature: /Visibilities.Protected|null[0]
   object Protected : Visibility {
+    // CHECK:
+    //   Mangled name: Visibilities.Protected#<init>(){}
+    //   Public signature: /Visibilities.Protected.<init>|-5645683436151566731[0]
     private constructor() /* primary */ {
       super/*Visibility*/(name = "protected", isPublicAPI = true)
       /* <init>() */
 
     }
 
+    // CHECK:
+    //   Mangled name: Visibilities.Protected#mustCheckInImports(){}kotlin.Boolean
+    //   Public signature: /Visibilities.Protected.mustCheckInImports|671123431860416266[0]
     override fun mustCheckInImports(): Boolean {
       return false
     }
 
   }
 
+  // CHECK:
+  //   Mangled name: Visibilities.Internal
+  //   Public signature: /Visibilities.Internal|null[0]
   object Internal : Visibility {
+    // CHECK:
+    //   Mangled name: Visibilities.Internal#<init>(){}
+    //   Public signature: /Visibilities.Internal.<init>|-5645683436151566731[0]
     private constructor() /* primary */ {
       super/*Visibility*/(name = "internal", isPublicAPI = false)
       /* <init>() */
 
     }
 
+    // CHECK:
+    //   Mangled name: Visibilities.Internal#mustCheckInImports(){}kotlin.Boolean
+    //   Public signature: /Visibilities.Internal.mustCheckInImports|671123431860416266[0]
     override fun mustCheckInImports(): Boolean {
       return true
     }
 
   }
 
+  // CHECK:
+  //   Mangled name: Visibilities.Public
+  //   Public signature: /Visibilities.Public|null[0]
   object Public : Visibility {
+    // CHECK:
+    //   Mangled name: Visibilities.Public#<init>(){}
+    //   Public signature: /Visibilities.Public.<init>|-5645683436151566731[0]
     private constructor() /* primary */ {
       super/*Visibility*/(name = "public", isPublicAPI = true)
       /* <init>() */
 
     }
 
+    // CHECK:
+    //   Mangled name: Visibilities.Public#mustCheckInImports(){}kotlin.Boolean
+    //   Public signature: /Visibilities.Public.mustCheckInImports|671123431860416266[0]
     override fun mustCheckInImports(): Boolean {
       return false
     }
 
   }
 
+  // CHECK:
+  //   Mangled name: Visibilities.Local
+  //   Public signature: /Visibilities.Local|null[0]
   object Local : Visibility {
+    // CHECK:
+    //   Mangled name: Visibilities.Local#<init>(){}
+    //   Public signature: /Visibilities.Local.<init>|-5645683436151566731[0]
     private constructor() /* primary */ {
       super/*Visibility*/(name = "local", isPublicAPI = false)
       /* <init>() */
 
     }
 
+    // CHECK:
+    //   Mangled name: Visibilities.Local#mustCheckInImports(){}kotlin.Boolean
+    //   Public signature: /Visibilities.Local.mustCheckInImports|671123431860416266[0]
     override fun mustCheckInImports(): Boolean {
       return true
     }
 
   }
 
+  // CHECK:
+  //   Mangled name: Visibilities.Inherited
+  //   Public signature: /Visibilities.Inherited|null[0]
   object Inherited : Visibility {
+    // CHECK:
+    //   Mangled name: Visibilities.Inherited#<init>(){}
+    //   Public signature: /Visibilities.Inherited.<init>|-5645683436151566731[0]
     private constructor() /* primary */ {
       super/*Visibility*/(name = "inherited", isPublicAPI = false)
       /* <init>() */
 
     }
 
+    // CHECK:
+    //   Mangled name: Visibilities.Inherited#mustCheckInImports(){}kotlin.Boolean
+    //   Public signature: /Visibilities.Inherited.mustCheckInImports|671123431860416266[0]
     override fun mustCheckInImports(): Boolean {
       throw IllegalStateException(p0 = "This method shouldn't be invoked for INHERITED visibility")
     }
 
   }
 
+  // CHECK:
+  //   Mangled name: Visibilities.InvisibleFake
+  //   Public signature: /Visibilities.InvisibleFake|null[0]
   object InvisibleFake : Visibility {
+    // CHECK:
+    //   Mangled name: Visibilities.InvisibleFake#<init>(){}
+    //   Public signature: /Visibilities.InvisibleFake.<init>|-5645683436151566731[0]
     private constructor() /* primary */ {
       super/*Visibility*/(name = "invisible_fake", isPublicAPI = false)
       /* <init>() */
 
     }
 
+    // CHECK:
+    //   Mangled name: Visibilities.InvisibleFake#mustCheckInImports(){}kotlin.Boolean
+    //   Public signature: /Visibilities.InvisibleFake.mustCheckInImports|671123431860416266[0]
     override fun mustCheckInImports(): Boolean {
       return true
     }
 
+    // CHECK:
+    //   Mangled name: Visibilities.InvisibleFake{}externalDisplayName
+    //   Public signature: /Visibilities.InvisibleFake.externalDisplayName|391049038221671391[0]
     override val externalDisplayName: String
+      // CHECK:
+      //   Mangled name: Visibilities.InvisibleFake#<get-externalDisplayName>(){}kotlin.String
+      //   Public signature: /Visibilities.InvisibleFake.externalDisplayName.<get-externalDisplayName>|-6122052316113926396[0]
       override get(): String {
         return "invisible (private in a supertype)"
       }
 
   }
 
+  // CHECK:
+  //   Mangled name: Visibilities.Unknown
+  //   Public signature: /Visibilities.Unknown|null[0]
   object Unknown : Visibility {
+    // CHECK:
+    //   Mangled name: Visibilities.Unknown#<init>(){}
+    //   Public signature: /Visibilities.Unknown.<init>|-5645683436151566731[0]
     private constructor() /* primary */ {
       super/*Visibility*/(name = "unknown", isPublicAPI = false)
       /* <init>() */
 
     }
 
+    // CHECK:
+    //   Mangled name: Visibilities.Unknown#mustCheckInImports(){}kotlin.Boolean
+    //   Public signature: /Visibilities.Unknown.mustCheckInImports|671123431860416266[0]
     override fun mustCheckInImports(): Boolean {
       throw IllegalStateException(p0 = "This method shouldn't be invoked for UNKNOWN visibility")
     }
 
   }
 
+  // CHECK:
+  //   Mangled name: Visibilities{}ORDERED_VISIBILITIES
+  //   Public signature: /Visibilities.ORDERED_VISIBILITIES|6079781139816677865[0]
   private val ORDERED_VISIBILITIES: Map<Visibility, Int>
-    field = buildMap<Visibility, Int>(builderAction = local fun MutableMap<Visibility, Int>.<anonymous>() {
-      $this$buildMap.put(key = PrivateToThis, value = 0) /*~> Unit */
-      $this$buildMap.put(key = Private, value = 0) /*~> Unit */
-      $this$buildMap.put(key = Internal, value = 1) /*~> Unit */
-      $this$buildMap.put(key = Protected, value = 1) /*~> Unit */
-      $this$buildMap.put(key = Public, value = 2) /*~> Unit */
-    }
+    field = buildMap<Visibility, Int>(builderAction = 
+      // CHECK:
+      //   Mangled name (compatible mode: false): Visibilities{}ORDERED_VISIBILITIES#<anonymous>#static@kotlin.collections.MutableMap<Visibility,kotlin.Int>(){}
+      //   Mangled name (compatible mode: true):  Visibilities.ORDERED_VISIBILITIES#<anonymous>#static@kotlin.collections.MutableMap<Visibility,kotlin.Int>(){}
+      local fun MutableMap<Visibility, Int>.<anonymous>() {
+        $this$buildMap.put(key = PrivateToThis, value = 0) /*~> Unit */
+        $this$buildMap.put(key = Private, value = 0) /*~> Unit */
+        $this$buildMap.put(key = Internal, value = 1) /*~> Unit */
+        $this$buildMap.put(key = Protected, value = 1) /*~> Unit */
+        $this$buildMap.put(key = Public, value = 2) /*~> Unit */
+      }
 )
+    // CHECK:
+    //   Mangled name: Visibilities#<get-ORDERED_VISIBILITIES>(){}kotlin.collections.Map<Visibility,kotlin.Int>
+    //   Public signature: /Visibilities.ORDERED_VISIBILITIES.<get-ORDERED_VISIBILITIES>|-1863707493423525823[0]
     private get
 
 }
+

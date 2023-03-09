@@ -1,4 +1,8 @@
 // FIR_IDENTICAL
+
+// IGNORE_BACKEND_K2: JS_IR
+// IGNORE_BACKEND_K2: JS_IR_ES6
+
 annotation class A1(vararg val xs: Int)
 annotation class A2(vararg val xs: String)
 annotation class AA(vararg val xs: A1)

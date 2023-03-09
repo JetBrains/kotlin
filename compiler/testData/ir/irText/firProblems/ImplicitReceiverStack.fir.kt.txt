@@ -1,77 +1,153 @@
+// CHECK:
+//   Mangled name: SymbolOwner
+//   Public signature: /SymbolOwner|null[0]
 interface SymbolOwner<E : SymbolOwner<E>> {
 
 }
 
+// CHECK:
+//   Mangled name: Symbol
+//   Public signature: /Symbol|null[0]
 interface Symbol<E : SymbolOwner<E>> {
 
 }
 
+// CHECK:
+//   Mangled name: ReceiverValue
+//   Public signature: /ReceiverValue|null[0]
 interface ReceiverValue {
+  // CHECK:
+  //   Mangled name: ReceiverValue{}type
+  //   Public signature: /ReceiverValue.type|-6051055617123801408[0]
   abstract val type: String
+    // CHECK:
+    //   Mangled name: ReceiverValue#<get-type>(){}kotlin.String
+    //   Public signature: /ReceiverValue.type.<get-type>|9160771839252493702[0]
     abstract get
 
 }
 
+// CHECK:
+//   Mangled name: ImplicitReceiverValue
+//   Public signature: /ImplicitReceiverValue|null[0]
 class ImplicitReceiverValue<S : Symbol<*>> : ReceiverValue {
+  // CHECK:
+  //   Mangled name computed from Ir:         ImplicitReceiverValue#<init>(1:0?;kotlin.String){}
+  //   Mangled name computed from Descriptor: ImplicitReceiverValue#<init>(1:0?;kotlin.String){}
+  //   Mangled name computed from Fir:        ImplicitReceiverValue#<init>(0:-1?;kotlin.String){}
+  //   Public signature: /ImplicitReceiverValue.<init>|8347747711414848342[0]
   constructor(boundSymbol: S?, type: String) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: ImplicitReceiverValue{}boundSymbol
+  //   Public signature: /ImplicitReceiverValue.boundSymbol|7940914052046792092[0]
   val boundSymbol: S?
     field = boundSymbol
+    // CHECK:
+    //   Mangled name: ImplicitReceiverValue#<get-boundSymbol>(){}1:0?
+    //   Public signature: /ImplicitReceiverValue.boundSymbol.<get-boundSymbol>|4571442115658707994[0]
     get
 
+  // CHECK:
+  //   Mangled name: ImplicitReceiverValue{}type
+  //   Public signature: /ImplicitReceiverValue.type|-6051055617123801408[0]
   override val type: String
     field = type
+    // CHECK:
+    //   Mangled name: ImplicitReceiverValue#<get-type>(){}kotlin.String
+    //   Public signature: /ImplicitReceiverValue.type.<get-type>|9160771839252493702[0]
     override get
 
 }
 
+// CHECK:
+//   Mangled name: ImplicitReceiverStack
+//   Public signature: /ImplicitReceiverStack|null[0]
 abstract class ImplicitReceiverStack : Iterable<ImplicitReceiverValue<*>> {
+  // CHECK:
+  //   Mangled name: ImplicitReceiverStack#<init>(){}
+  //   Public signature: /ImplicitReceiverStack.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: ImplicitReceiverStack#get(kotlin.String?){}ImplicitReceiverValue<*>?
+  //   Public signature: /ImplicitReceiverStack.get|-8207298175036627063[0]
   abstract operator fun get(name: String?): ImplicitReceiverValue<*>?
 
 }
 
+// CHECK:
+//   Mangled name: PersistentImplicitReceiverStack
+//   Public signature: /PersistentImplicitReceiverStack|null[0]
 class PersistentImplicitReceiverStack : ImplicitReceiverStack, Iterable<ImplicitReceiverValue<*>> {
+  // CHECK:
+  //   Mangled name: PersistentImplicitReceiverStack#<init>(kotlin.collections.List<ImplicitReceiverValue<*>>){}
+  //   Public signature: /PersistentImplicitReceiverStack.<init>|-7593555479041026486[0]
   constructor(stack: List<ImplicitReceiverValue<*>>) /* primary */ {
     super/*ImplicitReceiverStack*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: PersistentImplicitReceiverStack{}stack
+  //   Public signature: /PersistentImplicitReceiverStack.stack|-6859012302810162613[0]
   private val stack: List<ImplicitReceiverValue<*>>
     field = stack
+    // CHECK:
+    //   Mangled name: PersistentImplicitReceiverStack#<get-stack>(){}kotlin.collections.List<ImplicitReceiverValue<*>>
+    //   Public signature: /PersistentImplicitReceiverStack.stack.<get-stack>|2790934809164034447[0]
     private get
 
+  // CHECK:
+  //   Mangled name: PersistentImplicitReceiverStack#iterator(){}kotlin.collections.Iterator<ImplicitReceiverValue<*>>
+  //   Public signature: /PersistentImplicitReceiverStack.iterator|-837055222250609728[0]
   override operator fun iterator(): Iterator<ImplicitReceiverValue<*>> {
     return <this>.<get-stack>().iterator()
   }
 
+  // CHECK:
+  //   Mangled name: PersistentImplicitReceiverStack#get(kotlin.String?){}ImplicitReceiverValue<*>?
+  //   Public signature: /PersistentImplicitReceiverStack.get|-8207298175036627063[0]
   override operator fun get(name: String?): ImplicitReceiverValue<*>? {
     return <this>.<get-stack>().lastOrNull<ImplicitReceiverValue<*>>()
   }
 
 }
 
+// CHECK:
+//   Mangled name: #bar(kotlin.String){}
+//   Public signature: /bar|5132770888056479978[0]
 fun bar(s: String) {
 }
 
+// CHECK:
+//   Mangled name: #foo(PersistentImplicitReceiverStack){}
+//   Public signature: /foo|4910085870541175645[0]
 fun foo(stack: PersistentImplicitReceiverStack) {
-  stack.forEach<ImplicitReceiverValue<*>>(action = local fun <anonymous>(it: ImplicitReceiverValue<*>) {
-    it.<get-boundSymbol>() /*~> Unit */
-    bar(s = it.<get-type>())
-  }
+  stack.forEach<ImplicitReceiverValue<*>>(action = 
+    // CHECK:
+    //   Mangled name computed from Ir:         #foo(PersistentImplicitReceiverStack){}#<anonymous>#static(ImplicitReceiverValue<*>){}
+    //   Mangled name computed from Descriptor: #foo(PersistentImplicitReceiverStack){}#<anonymous>#static(ImplicitReceiverValue<*>){}
+    //   Mangled name computed from Fir:        could not compute mangled name: java.lang.IllegalStateException: unexpected element forEach@fun <anonymous>(it: R|ImplicitReceiverValue<*>|): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {... (truncated)
+    local fun <anonymous>(it: ImplicitReceiverValue<*>) {
+      it.<get-boundSymbol>() /*~> Unit */
+      bar(s = it.<get-type>())
+    }
 )
 }
 
+// CHECK:
+//   Mangled name: #box(){}kotlin.String
+//   Public signature: /box|-9347091776561469[0]
 fun box(): String {
   val stack: PersistentImplicitReceiverStack = PersistentImplicitReceiverStack(stack = listOf<ImplicitReceiverValue<Nothing>>(elements = [ImplicitReceiverValue<Nothing>(boundSymbol = null, type = "O"), ImplicitReceiverValue<Nothing>(boundSymbol = null, type = "K")]))
   foo(stack = stack)
@@ -83,3 +159,4 @@ fun box(): String {
     }
   })
 }
+

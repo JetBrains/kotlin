@@ -1,23 +1,67 @@
+// CHECK:
+//   Mangled name: KR
+//   Public signature: /KR|null[0]
 typealias KR = KRunnable
+// CHECK:
+//   Mangled name: KSS
+//   Public signature: /KSS|null[0]
 typealias KSS = KSupplier<String>
+// CHECK:
+//   Mangled name: KCS
+//   Public signature: /KCS|null[0]
 typealias KCS = KConsumer<String>
+// CHECK:
+//   Mangled name: KRunnable
+//   Public signature: /KRunnable|null[0]
 fun interface KRunnable {
+  // CHECK:
+  //   Mangled name: KRunnable#run(){}
+  //   Public signature: /KRunnable.run|-991178076551934874[0]
   abstract fun run()
 
 }
 
+// CHECK:
+//   Mangled name: KSupplier
+//   Public signature: /KSupplier|null[0]
 fun interface KSupplier<T : Any?> {
+  // CHECK JVM_IR:
+  //   Mangled name: KSupplier#get(){}1:0
+  //   Public signature: /KSupplier.get|-8285253024618084508[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         KSupplier#get(){}
+  //   Mangled name computed from Descriptor: KSupplier#get(){}
+  //   Mangled name computed from Fir:        KSupplier#get(){}1:0
+  //   Public signature: /KSupplier.get|-8285253024618084508[0]
   abstract fun get(): T
 
 }
 
+// CHECK:
+//   Mangled name: KConsumer
+//   Public signature: /KConsumer|null[0]
 fun interface KConsumer<T : Any?> {
+  // CHECK:
+  //   Mangled name: KConsumer#accept(1:0){}
+  //   Public signature: /KConsumer.accept|6106307687017385176[0]
   abstract fun accept(x: T)
 
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #test1(){}kotlin.reflect.KFunction1<kotlin.Function0<kotlin.Unit>,KRunnable>
+//   Public signature: /test1|506540275033726465[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #test1(){}
+//   Mangled name computed from Descriptor: #test1(){}
+//   Mangled name computed from Fir:        #test1(){}kotlin.reflect.KFunction1<kotlin.Function0<kotlin.Unit>,KRunnable>
+//   Public signature: /test1|506540275033726465[0]
 fun test1(): KFunction1<Function0<Unit>, KRunnable> {
   return { // BLOCK
+    // CHECK JVM_IR:
+    //   Mangled name: #test1(){}kotlin.reflect.KFunction1<kotlin.Function0<kotlin.Unit>,KRunnable>#KRunnable#static(kotlin.Function0<kotlin.Unit>){}KRunnable
+    // CHECK JS_IR:
+    //   Mangled name: #test1(){}#KRunnable#static(kotlin.Function0<kotlin.Unit>){}
     local fun KRunnable(function: Function0<Unit>): KRunnable {
       return CHECK_NOT_NULL<Function0<Unit>>(arg0 = function) /*-> KRunnable */
     }
@@ -26,8 +70,20 @@ fun test1(): KFunction1<Function0<Unit>, KRunnable> {
   }
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #test1a(){}kotlin.reflect.KFunction1<kotlin.Function0<kotlin.Unit>,KRunnable>
+//   Public signature: /test1a|-8182615495924259711[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #test1a(){}
+//   Mangled name computed from Descriptor: #test1a(){}
+//   Mangled name computed from Fir:        #test1a(){}kotlin.reflect.KFunction1<kotlin.Function0<kotlin.Unit>,KRunnable>
+//   Public signature: /test1a|-8182615495924259711[0]
 fun test1a(): KFunction1<Function0<Unit>, KRunnable> {
   return { // BLOCK
+    // CHECK JVM_IR:
+    //   Mangled name: #test1a(){}kotlin.reflect.KFunction1<kotlin.Function0<kotlin.Unit>,KRunnable>#KRunnable#static(kotlin.Function0<kotlin.Unit>){}KRunnable
+    // CHECK JS_IR:
+    //   Mangled name: #test1a(){}#KRunnable#static(kotlin.Function0<kotlin.Unit>){}
     local fun KRunnable(function: Function0<Unit>): KRunnable {
       return CHECK_NOT_NULL<Function0<Unit>>(arg0 = function) /*-> KRunnable */
     }
@@ -36,8 +92,20 @@ fun test1a(): KFunction1<Function0<Unit>, KRunnable> {
   }
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #test1b(){}kotlin.reflect.KFunction<KRunnable>
+//   Public signature: /test1b|2835121128193807915[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #test1b(){}
+//   Mangled name computed from Descriptor: #test1b(){}
+//   Mangled name computed from Fir:        #test1b(){}kotlin.reflect.KFunction<KRunnable>
+//   Public signature: /test1b|2835121128193807915[0]
 fun test1b(): KFunction<KRunnable> {
   return { // BLOCK
+    // CHECK JVM_IR:
+    //   Mangled name: #test1b(){}kotlin.reflect.KFunction<KRunnable>#KRunnable#static(kotlin.Function0<kotlin.Unit>){}KRunnable
+    // CHECK JS_IR:
+    //   Mangled name: #test1b(){}#KRunnable#static(kotlin.Function0<kotlin.Unit>){}
     local fun KRunnable(function: Function0<Unit>): KRunnable {
       return CHECK_NOT_NULL<Function0<Unit>>(arg0 = function) /*-> KRunnable */
     }
@@ -46,8 +114,20 @@ fun test1b(): KFunction<KRunnable> {
   }
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #test2(){}kotlin.Function1<kotlin.Function0<kotlin.String>,KSupplier<kotlin.String>>
+//   Public signature: /test2|8549593161906467660[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #test2(){}
+//   Mangled name computed from Descriptor: #test2(){}
+//   Mangled name computed from Fir:        #test2(){}kotlin.Function1<kotlin.Function0<kotlin.String>,KSupplier<kotlin.String>>
+//   Public signature: /test2|8549593161906467660[0]
 fun test2(): Function1<Function0<String>, KSupplier<String>> {
   return { // BLOCK
+    // CHECK JVM_IR:
+    //   Mangled name: #test2(){}kotlin.Function1<kotlin.Function0<kotlin.String>,KSupplier<kotlin.String>>#KSupplier#static(kotlin.Function0<kotlin.String>){}KSupplier<kotlin.String>
+    // CHECK JS_IR:
+    //   Mangled name: #test2(){}#KSupplier#static(kotlin.Function0<kotlin.String>){}
     local fun KSupplier(function: Function0<String>): KSupplier<String> {
       return CHECK_NOT_NULL<Function0<String>>(arg0 = function) /*-> KSupplier<String> */
     }
@@ -56,8 +136,20 @@ fun test2(): Function1<Function0<String>, KSupplier<String>> {
   }
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #test2a(){}kotlin.Function1<kotlin.Function0<kotlin.String>,KSupplier<kotlin.String>>
+//   Public signature: /test2a|2821642702752260802[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #test2a(){}
+//   Mangled name computed from Descriptor: #test2a(){}
+//   Mangled name computed from Fir:        #test2a(){}kotlin.Function1<kotlin.Function0<kotlin.String>,KSupplier<kotlin.String>>
+//   Public signature: /test2a|2821642702752260802[0]
 fun test2a(): Function1<Function0<String>, KSupplier<String>> {
   return { // BLOCK
+    // CHECK JVM_IR:
+    //   Mangled name: #test2a(){}kotlin.Function1<kotlin.Function0<kotlin.String>,KSupplier<kotlin.String>>#KSS#static(kotlin.Function0<kotlin.String>){}KSupplier<kotlin.String>
+    // CHECK JS_IR:
+    //   Mangled name: #test2a(){}#KSS#static(kotlin.Function0<kotlin.String>){}
     local fun KSS(function: Function0<String>): KSupplier<String> {
       return CHECK_NOT_NULL<Function0<String>>(arg0 = function) /*-> KSupplier<String> */
     }
@@ -66,8 +158,20 @@ fun test2a(): Function1<Function0<String>, KSupplier<String>> {
   }
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #test3(){}kotlin.Function1<kotlin.Function1<kotlin.String,kotlin.Unit>,KConsumer<kotlin.String>>
+//   Public signature: /test3|2652628399422738400[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #test3(){}
+//   Mangled name computed from Descriptor: #test3(){}
+//   Mangled name computed from Fir:        #test3(){}kotlin.Function1<kotlin.Function1<kotlin.String,kotlin.Unit>,KConsumer<kotlin.String>>
+//   Public signature: /test3|2652628399422738400[0]
 fun test3(): Function1<Function1<String, Unit>, KConsumer<String>> {
   return { // BLOCK
+    // CHECK JVM_IR:
+    //   Mangled name: #test3(){}kotlin.Function1<kotlin.Function1<kotlin.String,kotlin.Unit>,KConsumer<kotlin.String>>#KConsumer#static(kotlin.Function1<kotlin.String,kotlin.Unit>){}KConsumer<kotlin.String>
+    // CHECK JS_IR:
+    //   Mangled name: #test3(){}#KConsumer#static(kotlin.Function1<kotlin.String,kotlin.Unit>){}
     local fun KConsumer(function: Function1<String, Unit>): KConsumer<String> {
       return CHECK_NOT_NULL<Function1<String, Unit>>(arg0 = function) /*-> KConsumer<String> */
     }
@@ -76,8 +180,20 @@ fun test3(): Function1<Function1<String, Unit>, KConsumer<String>> {
   }
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #test3a(){}kotlin.Function1<kotlin.Function1<kotlin.String,kotlin.Unit>,KConsumer<kotlin.String>>
+//   Public signature: /test3a|-985514784897508218[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #test3a(){}
+//   Mangled name computed from Descriptor: #test3a(){}
+//   Mangled name computed from Fir:        #test3a(){}kotlin.Function1<kotlin.Function1<kotlin.String,kotlin.Unit>,KConsumer<kotlin.String>>
+//   Public signature: /test3a|-985514784897508218[0]
 fun test3a(): Function1<Function1<String, Unit>, KConsumer<String>> {
   return { // BLOCK
+    // CHECK JVM_IR:
+    //   Mangled name: #test3a(){}kotlin.Function1<kotlin.Function1<kotlin.String,kotlin.Unit>,KConsumer<kotlin.String>>#KCS#static(kotlin.Function1<kotlin.String,kotlin.Unit>){}KConsumer<kotlin.String>
+    // CHECK JS_IR:
+    //   Mangled name: #test3a(){}#KCS#static(kotlin.Function1<kotlin.String,kotlin.Unit>){}
     local fun KCS(function: Function1<String, Unit>): KConsumer<String> {
       return CHECK_NOT_NULL<Function1<String, Unit>>(arg0 = function) /*-> KConsumer<String> */
     }
@@ -86,8 +202,20 @@ fun test3a(): Function1<Function1<String, Unit>, KConsumer<String>> {
   }
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #test3b(){}kotlin.reflect.KFunction<KConsumer<kotlin.String>>
+//   Public signature: /test3b|-1724736633267333752[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #test3b(){}
+//   Mangled name computed from Descriptor: #test3b(){}
+//   Mangled name computed from Fir:        #test3b(){}kotlin.reflect.KFunction<KConsumer<kotlin.String>>
+//   Public signature: /test3b|-1724736633267333752[0]
 fun test3b(): KFunction<KConsumer<String>> {
   return { // BLOCK
+    // CHECK JVM_IR:
+    //   Mangled name: #test3b(){}kotlin.reflect.KFunction<KConsumer<kotlin.String>>#KConsumer#static(kotlin.Function1<kotlin.String,kotlin.Unit>){}KConsumer<kotlin.String>
+    // CHECK JS_IR:
+    //   Mangled name: #test3b(){}#KConsumer#static(kotlin.Function1<kotlin.String,kotlin.Unit>){}
     local fun KConsumer(function: Function1<String, Unit>): KConsumer<String> {
       return CHECK_NOT_NULL<Function1<String, Unit>>(arg0 = function) /*-> KConsumer<String> */
     }
@@ -95,3 +223,4 @@ fun test3b(): KFunction<KConsumer<String>> {
     ::KConsumer
   }
 }
+

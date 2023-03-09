@@ -1,9 +1,18 @@
+// CHECK:
+//   Mangled name: #f(kotlin.Any){}kotlin.String
+//   Public signature: /f|7796856655889654815[0]
 fun f(x: Any): String {
   when {
-    x is A<*> -> return x /*as A<*> */.call(block = local fun <anonymous>(y: Any?): @FlexibleNullability String? {
-      return "OK"
-    }
+    x is A<*> -> return x /*as A<*> */.call(block = 
+      // CHECK:
+      //   Mangled name computed from Ir:         #f(kotlin.Any){}kotlin.String#<anonymous>#static(kotlin.Any?){}kotlin.String?
+      //   Mangled name computed from Descriptor: #f(kotlin.Any){}kotlin.String#<anonymous>#static(kotlin.Any?){}kotlin.String?
+      //   Mangled name computed from Fir:        could not compute mangled name: java.lang.IllegalStateException: unexpected element call@fun <anonymous>(y: R|kotlin/Any?|): R|kotlin/String!| <inline=NoInline>  {... (truncated)
+      local fun <anonymous>(y: Any?): @FlexibleNullability String? {
+        return "OK"
+      }
  /*-> @FlexibleNullability I<out @FlexibleNullability Any?>? */) /*!! String */
   }
   return "Fail"
 }
+

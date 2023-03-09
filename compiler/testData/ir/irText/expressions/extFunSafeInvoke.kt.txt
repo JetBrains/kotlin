@@ -1,3 +1,9 @@
+// CHECK JVM_IR:
+//   Mangled name: #test(kotlin.Any?;kotlin.Function3<kotlin.Any,kotlin.Int,kotlin.String,kotlin.Unit>){}kotlin.Unit?
+//   Public signature: /test|-6483776340446886488[0]
+// CHECK JS_IR:
+//   Mangled name: #test(kotlin.Any?;kotlin.Function3<kotlin.Any,kotlin.Int,kotlin.String,kotlin.Unit>){}
+//   Public signature: /test|7562359801694057104[0]
 fun test(receiver: Any?, fn: @ExtensionFunctionType Function3<Any, Int, String, Unit>): Unit? {
   return { // BLOCK
     val tmp0_safe_receiver: Any? = receiver
@@ -7,3 +13,4 @@ fun test(receiver: Any?, fn: @ExtensionFunctionType Function3<Any, Int, String, 
     }
   }
 }
+

@@ -1,23 +1,44 @@
+// CHECK:
+//   Mangled name: #testFun(){}
+//   Public signature: /testFun|6322333980269160703[0]
 fun testFun() {
   super<System>.#out /*!! PrintStream */.println(p0 = "testFun")
 }
 
+// CHECK:
+//   Mangled name: {}testProp
+//   Public signature: /testProp|4463768917101701410[0]
 var testProp: Any
+  // CHECK:
+  //   Mangled name: #<get-testProp>(){}kotlin.Any
+  //   Public signature: /testProp.<get-testProp>|3424752583741777147[0]
   get(): Any {
     super<System>.#out /*!! PrintStream */.println(p0 = "testProp/get")
     return 42
   }
+  // CHECK:
+  //   Mangled name: #<set-testProp>(kotlin.Any){}
+  //   Public signature: /testProp.<set-testProp>|602902979763786235[0]
   set(value: Any) {
     super<System>.#out /*!! PrintStream */.println(p0 = "testProp/set")
   }
 
+// CHECK:
+//   Mangled name: TestClass
+//   Public signature: /TestClass|null[0]
 class TestClass {
+  // CHECK:
+  //   Mangled name: TestClass#<init>(){}
+  //   Public signature: /TestClass.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: TestClass{}test
+  //   Public signature: /TestClass.test|-5712650070209114719[0]
   val test: Int
     field = when {
       else -> { // BLOCK
@@ -25,8 +46,14 @@ class TestClass {
         42
       }
     }
+    // CHECK:
+    //   Mangled name: TestClass#<get-test>(){}kotlin.Int
+    //   Public signature: /TestClass.test.<get-test>|3701432460336260723[0]
     get
 
+  // CHECK:
+  //   Mangled name computed from Ir:         TestClass.<ANI>
+  //   Mangled name computed from Descriptor: TestClass
   init {
     super<System>.#out /*!! PrintStream */.println(p0 = "TestClass/init")
   }

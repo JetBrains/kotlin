@@ -1,11 +1,21 @@
+// CHECK:
+//   Mangled name: Foo
+//   Public signature: /Foo|null[0]
 fun interface Foo : Function0<Int> {
 
 }
 
+// CHECK:
+//   Mangled name: #id(Foo){}kotlin.Any
+//   Public signature: /id|-7816997914602483733[0]
 fun id(foo: Foo): Any {
   return foo
 }
 
+// CHECK:
+//   Mangled name: #test(Foo){}
+//   Public signature: /test|1185534388124909890[0]
 fun test(foo: Foo) {
   id(foo = foo) /*~> Unit */
 }
+

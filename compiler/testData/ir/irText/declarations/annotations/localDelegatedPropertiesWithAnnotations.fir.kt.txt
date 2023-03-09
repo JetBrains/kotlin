@@ -1,24 +1,49 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
 open annotation class A : Annotation {
+  // CHECK:
+  //   Mangled name: A#<init>(kotlin.String){}
+  //   Public signature: /A.<init>|1280618353163213788[0]
   constructor(x: String) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: A{}x
+  //   Public signature: /A.x|-8060530855978347579[0]
   val x: String
     field = x
+    // CHECK:
+    //   Mangled name: A#<get-x>(){}kotlin.String
+    //   Public signature: /A.x.<get-x>|316111172223894646[0]
     get
 
 }
 
+// CHECK:
+//   Mangled name: #foo(kotlin.collections.Map<kotlin.String,kotlin.Int>){}
+//   Public signature: /foo|2882082711847831728[0]
 fun foo(m: Map<String, Int>) {
   val test: Int
-    val test$delegate: Lazy<Int> = lazy<Int>(initializer = local fun <anonymous>(): Int {
-      return 42
-    }
+    val test$delegate: Lazy<Int> = lazy<Int>(initializer = 
+      // CHECK:
+      //   Mangled name computed from Ir:         #foo(kotlin.collections.Map<kotlin.String,kotlin.Int>){}#<anonymous>#static(){}kotlin.Int
+      //   Mangled name computed from Descriptor: #foo(kotlin.collections.Map<kotlin.String,kotlin.Int>){}#<anonymous>#static(){}kotlin.Int
+      //   Mangled name computed from Fir:        could not compute mangled name: java.lang.IllegalStateException: unexpected element lazy@fun <anonymous>(): R|kotlin/Int| <inline=NoInline>  {... (truncated)
+      local fun <anonymous>(): Int {
+        return 42
+      }
 )
+    // CHECK:
+    //   Mangled name computed from Ir:         #foo(kotlin.collections.Map<kotlin.String,kotlin.Int>){}#<get-test>#static(){}kotlin.Int
+    //   Mangled name computed from Descriptor: #foo(kotlin.collections.Map<kotlin.String,kotlin.Int>){}#<get-test>#static(){}kotlin.Int
+    //   Mangled name computed from Fir:        #<get-test>(){}kotlin.Int
     local get(): Int {
       return test$delegate.getValue<Int>(thisRef = null, property = ::test)
     }
 
 }
+

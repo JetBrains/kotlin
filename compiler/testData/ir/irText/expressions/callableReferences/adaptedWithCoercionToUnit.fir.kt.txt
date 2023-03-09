@@ -1,45 +1,108 @@
+// CHECK:
+//   Mangled name: #useUnit0(kotlin.Function0<kotlin.Unit>){}
+//   Public signature: /useUnit0|5614361260644496254[0]
 fun useUnit0(fn: Function0<Unit>) {
 }
 
+// CHECK:
+//   Mangled name: #useUnit1(kotlin.Function1<kotlin.Int,kotlin.Unit>){}
+//   Public signature: /useUnit1|-3238349347224683286[0]
 fun useUnit1(fn: Function1<Int, Unit>) {
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #fn0(){}kotlin.Int
+//   Public signature: /fn0|-3364598877649792431[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #fn0(){}
+//   Mangled name computed from Descriptor: #fn0(){}
+//   Mangled name computed from Fir:        #fn0(){}kotlin.Int
+//   Public signature: /fn0|-3364598877649792431[0]
 fun fn0(): Int {
   return 1
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #fn1(kotlin.Int){}kotlin.Int
+//   Public signature: /fn1|-2634385227090463147[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #fn1(kotlin.Int){}
+//   Mangled name computed from Descriptor: #fn1(kotlin.Int){}
+//   Mangled name computed from Fir:        #fn1(kotlin.Int){}kotlin.Int
+//   Public signature: /fn1|-2634385227090463147[0]
 fun fn1(x: Int): Int {
   return 1
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #fnv(kotlin.IntArray...){}kotlin.Int
+//   Public signature: /fnv|7629192376934713891[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #fnv(kotlin.IntArray...){}
+//   Mangled name computed from Descriptor: #fnv(kotlin.IntArray...){}
+//   Mangled name computed from Fir:        #fnv(kotlin.IntArray...){}kotlin.Int
+//   Public signature: /fnv|7629192376934713891[0]
 fun fnv(vararg xs: Int): Int {
   return 1
 }
 
+// CHECK:
+//   Mangled name: #test0(){}
+//   Public signature: /test0|-2819007353171228053[0]
 fun test0() {
-  return useUnit0(fn = local fun fn0() {
-    fn0()
-  }
+  return useUnit0(fn = 
+    // CHECK:
+    //   Mangled name computed from Ir:         #test0(){}#fn0#static(){}
+    //   Mangled name computed from Descriptor: #test0(){}#fn0#static(){}
+    //   Mangled name computed from Fir:        #fn0(){}kotlin.Int
+    local fun fn0() {
+      fn0()
+    }
 )
 }
 
+// CHECK:
+//   Mangled name: #test1(){}
+//   Public signature: /test1|4297044443957252634[0]
 fun test1() {
-  return useUnit1(fn = local fun fn1(p0: Int) {
-    fn1(x = p0)
-  }
+  return useUnit1(fn = 
+    // CHECK:
+    //   Mangled name computed from Ir:         #test1(){}#fn1#static(kotlin.Int){}
+    //   Mangled name computed from Descriptor: #test1(){}#fn1#static(kotlin.Int){}
+    //   Mangled name computed from Fir:        #fn1(kotlin.Int){}kotlin.Int
+    local fun fn1(p0: Int) {
+      fn1(x = p0)
+    }
 )
 }
 
+// CHECK:
+//   Mangled name: #testV0(){}
+//   Public signature: /testV0|-8921284502747635947[0]
 fun testV0() {
-  return useUnit0(fn = local fun fnv() {
-    fnv()
-  }
+  return useUnit0(fn = 
+    // CHECK:
+    //   Mangled name computed from Ir:         #testV0(){}#fnv#static(){}
+    //   Mangled name computed from Descriptor: #testV0(){}#fnv#static(){}
+    //   Mangled name computed from Fir:        #fnv(kotlin.IntArray...){}kotlin.Int
+    local fun fnv() {
+      fnv()
+    }
 )
 }
 
+// CHECK:
+//   Mangled name: #testV1(){}
+//   Public signature: /testV1|3830223062623947245[0]
 fun testV1() {
-  return useUnit1(fn = local fun fnv(p0: Int) {
-    fnv(xs = [p0])
-  }
+  return useUnit1(fn = 
+    // CHECK:
+    //   Mangled name computed from Ir:         #testV1(){}#fnv#static(kotlin.Int){}
+    //   Mangled name computed from Descriptor: #testV1(){}#fnv#static(kotlin.Int){}
+    //   Mangled name computed from Fir:        #fnv(kotlin.IntArray...){}kotlin.Int
+    local fun fnv(p0: Int) {
+      fnv(xs = [p0])
+    }
 )
 }
+

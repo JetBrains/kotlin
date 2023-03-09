@@ -1,4 +1,8 @@
 // FIR_IDENTICAL
+
+// NO_SIGNATURE_DUMP
+// ^KT-57436
+
 inline fun <reified T : Any> classRefFun() = T::class
 
 inline fun <reified T : Any> Any.classRefExtFun() = T::class

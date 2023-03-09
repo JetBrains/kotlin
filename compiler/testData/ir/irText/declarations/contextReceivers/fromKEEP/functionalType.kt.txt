@@ -1,4 +1,10 @@
+// CHECK:
+//   Mangled name: Param
+//   Public signature: /Param|null[0]
 class Param {
+  // CHECK:
+  //   Mangled name: Param#<init>(){}
+  //   Public signature: /Param.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -7,42 +13,81 @@ class Param {
 
 }
 
+// CHECK:
+//   Mangled name: O
+//   Public signature: /O|null[0]
 class O {
+  // CHECK:
+  //   Mangled name: O#<init>(){}
+  //   Public signature: /O.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: O{}o
+  //   Public signature: /O.o|-5332571409865440260[0]
   val o: String
     field = "O"
+    // CHECK:
+    //   Mangled name: O#<get-o>(){}kotlin.String
+    //   Public signature: /O.o.<get-o>|2606027183154875572[0]
     get
 
 }
 
+// CHECK:
+//   Mangled name: K
+//   Public signature: /K|null[0]
 class K {
+  // CHECK:
+  //   Mangled name: K#<init>(){}
+  //   Public signature: /K.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: K{}k
+  //   Public signature: /K.k|2162811783424158931[0]
   val k: String
     field = "K"
+    // CHECK:
+    //   Mangled name: K#<get-k>(){}kotlin.String
+    //   Public signature: /K.k.<get-k>|-8248201737917988340[0]
     get
 
 }
 
+// CHECK:
+//   Mangled name computed from Ir:         #f@K(O;kotlin.Function3<O,K,Param,0:0>){0§<kotlin.Any?>}0:0
+//   Mangled name computed from Descriptor: #f!O@K(kotlin.Function3<O,K,Param,0:0>){0§<kotlin.Any?>}0:0
+//   Public signature: /f|-7653040485655702379[0]
 fun <T : Any?> K.f($context_receiver_0: O, g: @ExtensionFunctionType @ContextFunctionTypeParams(count = 1) Function3<O, K, Param, T>): T {
   return g.invoke(p1 = $context_receiver_0, p2 = <this>, p3 = Param())
 }
 
+// CHECK:
+//   Mangled name: #box(){}kotlin.String
+//   Public signature: /box|-9347091776561469[0]
 fun box(): String {
-  return with<O, String>(receiver = O(), block = local fun O.<anonymous>(): String {
-    return K().f<String>($context_receiver_0 = $this$with, g = local fun K.<anonymous>($context_receiver_0: O, it: Param): String {
-      return $this$with.<get-o>().plus(other = $this$f.<get-k>())
+  return with<O, String>(receiver = O(), block = 
+    // CHECK:
+    //   Mangled name: #box(){}kotlin.String#<anonymous>#static@O(){}kotlin.String
+    local fun O.<anonymous>(): String {
+      return K().f<String>($context_receiver_0 = $this$with, g = 
+        // CHECK:
+        //   Mangled name computed from Ir:         #box(){}kotlin.String#<anonymous>#static@O(){}kotlin.String#<anonymous>#static@K(O;Param){}kotlin.String
+        //   Mangled name computed from Descriptor: #box(){}kotlin.String#<anonymous>#static@O(){}kotlin.String#<anonymous>#static!O@K(Param){}kotlin.String
+        local fun K.<anonymous>($context_receiver_0: O, it: Param): String {
+          return $this$with.<get-o>().plus(other = $this$f.<get-k>())
+        }
+)
     }
 )
-  }
-)
 }
+

@@ -1,11 +1,25 @@
+// CHECK:
+//   Mangled name: #box(){}kotlin.String
+//   Public signature: /box|-9347091776561469[0]
 fun box(): String {
   val map: MutableMap<Fun, String> = mutableMapOf<Fun, String>()
-  val fn: Fun = local fun <anonymous>(it: @FlexibleNullability String?): @FlexibleNullability String? {
-    TODO()
-  }
+  val fn: Fun = 
+    // CHECK:
+    //   Mangled name computed from Ir:         #box(){}kotlin.String#<anonymous>#static(kotlin.String?){}kotlin.String?
+    //   Mangled name computed from Descriptor: #box(){}kotlin.String#<anonymous>#static(kotlin.String?){}kotlin.String?
+    //   Mangled name computed from Fir:        could not compute mangled name: java.lang.IllegalStateException: unexpected element Fun@fun <anonymous>(it: R|kotlin/String!|): R|kotlin/String!| <inline=NoInline>  {... (truncated)
+    local fun <anonymous>(it: @FlexibleNullability String?): @FlexibleNullability String? {
+      TODO()
+    }
  /*-> Fun */
-  return map.computeIfAbsent(p0 = fn, p1 = local fun <anonymous>(it: @EnhancedNullability Fun): @EnhancedNullability String {
-    return "OK"
-  }
+  return map.computeIfAbsent(p0 = fn, p1 = 
+    // CHECK:
+    //   Mangled name computed from Ir:         #box(){}kotlin.String#<anonymous>#static(Fun{EnhancedNullability}){}kotlin.String{EnhancedNullability}
+    //   Mangled name computed from Descriptor: #box(){}kotlin.String#<anonymous>#static(Fun){}kotlin.String
+    //   Mangled name computed from Fir:        could not compute mangled name: java.lang.IllegalStateException: unexpected element computeIfAbsent@fun <anonymous>(it: R|@EnhancedNullability Fun|): R|@EnhancedNullability kotlin/String| <inline=NoInline>  {... (truncated)
+    local fun <anonymous>(it: @EnhancedNullability Fun): @EnhancedNullability String {
+      return "OK"
+    }
  /*as Function1<@EnhancedNullability Any?, @EnhancedNullability String> */ /*-> @EnhancedNullability Function<Any?, @EnhancedNullability String> */) /*!! String */
 }
+

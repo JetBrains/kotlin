@@ -1,4 +1,8 @@
 // TARGET_BACKEND: JS_IR
 // IGNORE_BACKEND_K1: JS_IR
 // IGNORE_BACKEND_K1: JS_IR_ES6
+
+// NO_SIGNATURE_DUMP
+// ^ KT-57566
+
 fun test(d: dynamic) = d!!

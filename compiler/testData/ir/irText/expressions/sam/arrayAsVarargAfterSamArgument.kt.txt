@@ -1,11 +1,20 @@
+// CHECK:
+//   Mangled name: #test(kotlin.Function0<kotlin.Unit>;java.lang.Runnable;kotlin.Array<kotlin.String>){}
+//   Public signature: /test|-6479681129946022977[0]
 fun test(fn: Function0<Unit>, r: Runnable, arr: Array<String>) {
-  foo1(r = local fun <anonymous>() {
-    return Unit
-  }
+  foo1(r = 
+    // CHECK:
+    //   Mangled name: #test(kotlin.Function0<kotlin.Unit>;java.lang.Runnable;kotlin.Array<kotlin.String>){}#<anonymous>#static(){}
+    local fun <anonymous>() {
+      return Unit
+    }
  /*-> @FlexibleNullability Runnable? */, strs = arr) /*~> Unit */
-  foo1(r = local fun <anonymous>() {
-    return Unit
-  }
+  foo1(r = 
+    // CHECK:
+    //   Mangled name: #test(kotlin.Function0<kotlin.Unit>;java.lang.Runnable;kotlin.Array<kotlin.String>){}#<anonymous>#static(){}
+    local fun <anonymous>() {
+      return Unit
+    }
  /*-> @FlexibleNullability Runnable? */, strs = [*arr]) /*~> Unit */
   foo1(r = fn /*-> @FlexibleNullability Runnable? */, strs = arr) /*~> Unit */
   foo1(r = fn /*-> @FlexibleNullability Runnable? */, strs = [*arr]) /*~> Unit */
@@ -13,56 +22,99 @@ fun test(fn: Function0<Unit>, r: Runnable, arr: Array<String>) {
   foo1(r = fn /*-> @FlexibleNullability Runnable? */, strs = arr) /*~> Unit */
   foo1(r = fn /*-> @FlexibleNullability Runnable? */, strs = [*arr]) /*~> Unit */
   foo1(r = r, strs = [*arr]) /*~> Unit */
-  val i1: Test = Test(r = local fun <anonymous>() {
-    return Unit
-  }
+  val i1: Test = Test(r = 
+    // CHECK:
+    //   Mangled name: #test(kotlin.Function0<kotlin.Unit>;java.lang.Runnable;kotlin.Array<kotlin.String>){}#<anonymous>#static(){}
+    local fun <anonymous>() {
+      return Unit
+    }
  /*-> @FlexibleNullability Runnable? */, strs = arr)
-  val i2: Test = Test(r = local fun <anonymous>() {
-    return Unit
-  }
+  val i2: Test = Test(r = 
+    // CHECK:
+    //   Mangled name: #test(kotlin.Function0<kotlin.Unit>;java.lang.Runnable;kotlin.Array<kotlin.String>){}#<anonymous>#static(){}
+    local fun <anonymous>() {
+      return Unit
+    }
  /*-> @FlexibleNullability Runnable? */, strs = [*arr])
-  val i3: Test = Test(r1 = local fun <anonymous>() {
-    return Unit
-  }
- /*-> @FlexibleNullability Runnable? */, r2 = local fun <anonymous>() {
-    return Unit
-  }
+  val i3: Test = Test(r1 = 
+    // CHECK:
+    //   Mangled name: #test(kotlin.Function0<kotlin.Unit>;java.lang.Runnable;kotlin.Array<kotlin.String>){}#<anonymous>#static(){}
+    local fun <anonymous>() {
+      return Unit
+    }
+ /*-> @FlexibleNullability Runnable? */, r2 = 
+    // CHECK:
+    //   Mangled name: #test(kotlin.Function0<kotlin.Unit>;java.lang.Runnable;kotlin.Array<kotlin.String>){}#<anonymous>#static(){}
+    local fun <anonymous>() {
+      return Unit
+    }
  /*-> @FlexibleNullability Runnable? */, strs = arr)
-  val i4: Test = Test(r1 = r, r2 = local fun <anonymous>() {
-    return Unit
-  }
+  val i4: Test = Test(r1 = r, r2 = 
+    // CHECK:
+    //   Mangled name: #test(kotlin.Function0<kotlin.Unit>;java.lang.Runnable;kotlin.Array<kotlin.String>){}#<anonymous>#static(){}
+    local fun <anonymous>() {
+      return Unit
+    }
  /*-> @FlexibleNullability Runnable? */, strs = [""])
-  val i5: Test = Test(r1 = local fun <anonymous>() {
-    return Unit
-  }
- /*-> @FlexibleNullability Runnable? */, r2 = local fun <anonymous>() {
-    return Unit
-  }
+  val i5: Test = Test(r1 = 
+    // CHECK:
+    //   Mangled name: #test(kotlin.Function0<kotlin.Unit>;java.lang.Runnable;kotlin.Array<kotlin.String>){}#<anonymous>#static(){}
+    local fun <anonymous>() {
+      return Unit
+    }
+ /*-> @FlexibleNullability Runnable? */, r2 = 
+    // CHECK:
+    //   Mangled name: #test(kotlin.Function0<kotlin.Unit>;java.lang.Runnable;kotlin.Array<kotlin.String>){}#<anonymous>#static(){}
+    local fun <anonymous>() {
+      return Unit
+    }
  /*-> @FlexibleNullability Runnable? */, strs = [*arr])
-  val i6: Test = Test(r1 = r, r2 = local fun <anonymous>() {
-    return Unit
-  }
+  val i6: Test = Test(r1 = r, r2 = 
+    // CHECK:
+    //   Mangled name: #test(kotlin.Function0<kotlin.Unit>;java.lang.Runnable;kotlin.Array<kotlin.String>){}#<anonymous>#static(){}
+    local fun <anonymous>() {
+      return Unit
+    }
  /*-> @FlexibleNullability Runnable? */, strs = [*arr])
-  i1.foo2(r1 = local fun <anonymous>() {
-    return Unit
-  }
- /*-> @FlexibleNullability Runnable? */, r2 = local fun <anonymous>() {
-    return Unit
-  }
+  i1.foo2(r1 = 
+    // CHECK:
+    //   Mangled name: #test(kotlin.Function0<kotlin.Unit>;java.lang.Runnable;kotlin.Array<kotlin.String>){}#<anonymous>#static(){}
+    local fun <anonymous>() {
+      return Unit
+    }
+ /*-> @FlexibleNullability Runnable? */, r2 = 
+    // CHECK:
+    //   Mangled name: #test(kotlin.Function0<kotlin.Unit>;java.lang.Runnable;kotlin.Array<kotlin.String>){}#<anonymous>#static(){}
+    local fun <anonymous>() {
+      return Unit
+    }
  /*-> @FlexibleNullability Runnable? */, strs = arr) /*~> Unit */
-  i1.foo2(r1 = r, r2 = local fun <anonymous>() {
-    return Unit
-  }
+  i1.foo2(r1 = r, r2 = 
+    // CHECK:
+    //   Mangled name: #test(kotlin.Function0<kotlin.Unit>;java.lang.Runnable;kotlin.Array<kotlin.String>){}#<anonymous>#static(){}
+    local fun <anonymous>() {
+      return Unit
+    }
  /*-> @FlexibleNullability Runnable? */, strs = [""]) /*~> Unit */
-  i1.foo2(r1 = local fun <anonymous>() {
-    return Unit
-  }
- /*-> @FlexibleNullability Runnable? */, r2 = local fun <anonymous>() {
-    return Unit
-  }
+  i1.foo2(r1 = 
+    // CHECK:
+    //   Mangled name: #test(kotlin.Function0<kotlin.Unit>;java.lang.Runnable;kotlin.Array<kotlin.String>){}#<anonymous>#static(){}
+    local fun <anonymous>() {
+      return Unit
+    }
+ /*-> @FlexibleNullability Runnable? */, r2 = 
+    // CHECK:
+    //   Mangled name: #test(kotlin.Function0<kotlin.Unit>;java.lang.Runnable;kotlin.Array<kotlin.String>){}#<anonymous>#static(){}
+    local fun <anonymous>() {
+      return Unit
+    }
  /*-> @FlexibleNullability Runnable? */, strs = [*arr]) /*~> Unit */
-  i1.foo2(r1 = r, r2 = local fun <anonymous>() {
-    return Unit
-  }
+  i1.foo2(r1 = r, r2 = 
+    // CHECK:
+    //   Mangled name: #test(kotlin.Function0<kotlin.Unit>;java.lang.Runnable;kotlin.Array<kotlin.String>){}#<anonymous>#static(){}
+    local fun <anonymous>() {
+      return Unit
+    }
  /*-> @FlexibleNullability Runnable? */, strs = [*arr]) /*~> Unit */
 }
+

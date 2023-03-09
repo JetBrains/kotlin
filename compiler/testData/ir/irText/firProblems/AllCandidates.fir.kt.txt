@@ -1,4 +1,10 @@
+// CHECK:
+//   Mangled name: ResolvedCall
+//   Public signature: /ResolvedCall|null[0]
 class ResolvedCall<C : Any?> {
+  // CHECK:
+  //   Mangled name: ResolvedCall#<init>(){}
+  //   Public signature: /ResolvedCall.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -7,26 +13,51 @@ class ResolvedCall<C : Any?> {
 
 }
 
+// CHECK:
+//   Mangled name: MyCandidate
+//   Public signature: /MyCandidate|null[0]
 class MyCandidate {
+  // CHECK:
+  //   Mangled name: MyCandidate#<init>(ResolvedCall<*>){}
+  //   Public signature: /MyCandidate.<init>|-1587603405695784398[0]
   constructor(resolvedCall: ResolvedCall<*>) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: MyCandidate{}resolvedCall
+  //   Public signature: /MyCandidate.resolvedCall|-2429780263902948392[0]
   val resolvedCall: ResolvedCall<*>
     field = resolvedCall
+    // CHECK:
+    //   Mangled name: MyCandidate#<get-resolvedCall>(){}ResolvedCall<*>
+    //   Public signature: /MyCandidate.resolvedCall.<get-resolvedCall>|2961495013206965605[0]
     get
 
 }
 
+// CHECK:
+//   Mangled name: #allCandidatesResult(kotlin.collections.Collection<MyCandidate>){0§<kotlin.Any?>}OverloadResolutionResultsImpl<0:0?>?
+//   Public signature: [ File '<unknown>' <- /allCandidatesResult|-4417746287859138452[0] ]
 private fun <A : Any?> allCandidatesResult(allCandidates: Collection<MyCandidate>): @FlexibleNullability OverloadResolutionResultsImpl<@FlexibleNullability A?>? {
-  return nameNotFound<A>().apply<@FlexibleNullability OverloadResolutionResultsImpl<@FlexibleNullability A?>?>(block = local fun @FlexibleNullability OverloadResolutionResultsImpl<@FlexibleNullability A?>?.<anonymous>() {
-    $this$apply.setAllCandidates(allCandidates = allCandidates.map<MyCandidate, ResolvedCall<A>>(transform = local fun <anonymous>(it: MyCandidate): ResolvedCall<A> {
-      return it.<get-resolvedCall>() as ResolvedCall<A>
-    }
+  return nameNotFound<A>().apply<@FlexibleNullability OverloadResolutionResultsImpl<@FlexibleNullability A?>?>(block = 
+    // CHECK:
+    //   Mangled name computed from Ir:         #allCandidatesResult(kotlin.collections.Collection<MyCandidate>){0§<kotlin.Any?>}OverloadResolutionResultsImpl<1:0?>?#<anonymous>#static@OverloadResolutionResultsImpl<1:0?>?(){}
+    //   Mangled name computed from Descriptor: #allCandidatesResult(kotlin.collections.Collection<MyCandidate>){0§<kotlin.Any?>}OverloadResolutionResultsImpl<1:0?>?#<anonymous>#static@OverloadResolutionResultsImpl<1:0?>?(){}
+    //   Mangled name computed from Fir:        could not compute mangled name: java.lang.IllegalStateException: unexpected element apply@fun R|ft<OverloadResolutionResultsImpl<ft<A & Any, A?>>, OverloadResolutionResultsImpl<ft<A & Any, A?>>?>|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {... (truncated)
+    local fun @FlexibleNullability OverloadResolutionResultsImpl<@FlexibleNullability A?>?.<anonymous>() {
+      $this$apply.setAllCandidates(allCandidates = allCandidates.map<MyCandidate, ResolvedCall<A>>(transform = 
+        // CHECK:
+        //   Mangled name computed from Ir:         #allCandidatesResult(kotlin.collections.Collection<MyCandidate>){0§<kotlin.Any?>}OverloadResolutionResultsImpl<2:0?>?#<anonymous>#static@OverloadResolutionResultsImpl<2:0?>?(){}#<anonymous>#static(MyCandidate){}ResolvedCall<2:0>
+        //   Mangled name computed from Descriptor: #allCandidatesResult(kotlin.collections.Collection<MyCandidate>){0§<kotlin.Any?>}OverloadResolutionResultsImpl<2:0?>?#<anonymous>#static@OverloadResolutionResultsImpl<2:0?>?(){}#<anonymous>#static(MyCandidate){}ResolvedCall<2:0>
+        //   Mangled name computed from Fir:        could not compute mangled name: java.lang.IllegalStateException: unexpected element map@fun <anonymous>(it: R|MyCandidate|): R|ResolvedCall<A>| <inline=Inline, kind=UNKNOWN>  {... (truncated)
+        local fun <anonymous>(it: MyCandidate): ResolvedCall<A> {
+          return it.<get-resolvedCall>() as ResolvedCall<A>
+        }
 ))
-  }
+    }
 )
 }
 

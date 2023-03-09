@@ -1,4 +1,10 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
 class A {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -7,17 +13,39 @@ class A {
 
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #get@A(kotlin.IntArray...){}kotlin.Int
+//   Public signature: /get|1721673901625314100[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #get@A(kotlin.IntArray...){}
+//   Mangled name computed from Descriptor: #get@A(kotlin.IntArray...){}
+//   Mangled name computed from Fir:        #get@A(kotlin.IntArray...){}kotlin.Int
+//   Public signature: /get|1721673901625314100[0]
 operator fun A.get(vararg xs: Int): Int {
   return 0
 }
 
+// CHECK:
+//   Mangled name: #set@A(kotlin.Int;kotlin.Int;kotlin.Int){}
+//   Public signature: /set|-1889324313224580378[0]
 operator fun A.set(i: Int, j: Int, v: Int) {
 }
 
+// CHECK:
+//   Mangled name: #testSimpleAssignment(A){}
+//   Public signature: /testSimpleAssignment|1100548656282165605[0]
 fun testSimpleAssignment(a: A) {
   a.set(i = 1, j = 2, v = 0)
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #testPostfixIncrement(A){}kotlin.Int
+//   Public signature: /testPostfixIncrement|-2576964328021229709[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #testPostfixIncrement(A){}
+//   Mangled name computed from Descriptor: #testPostfixIncrement(A){}
+//   Mangled name computed from Fir:        #testPostfixIncrement(A){}kotlin.Int
+//   Public signature: /testPostfixIncrement|-2576964328021229709[0]
 fun testPostfixIncrement(a: A): Int {
   return { // BLOCK
     val <array>: A = a
@@ -29,6 +57,9 @@ fun testPostfixIncrement(a: A): Int {
   }
 }
 
+// CHECK:
+//   Mangled name: #testCompoundAssignment(A){}
+//   Public signature: /testCompoundAssignment|446952120601658700[0]
 fun testCompoundAssignment(a: A) {
   { // BLOCK
     val <array>: A = a
@@ -37,3 +68,4 @@ fun testCompoundAssignment(a: A) {
     <array>.set(i = <index_0>, j = <index_1>, v = <array>.get(xs = [<index_0>, <index_1>]).plus(other = 10))
   }
 }
+

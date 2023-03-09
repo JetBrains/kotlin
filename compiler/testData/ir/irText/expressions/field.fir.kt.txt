@@ -1,13 +1,42 @@
+// CHECK:
+//   Mangled name: {}testSimple
+//   Public signature: /testSimple|4953321271268423714[0]
 var testSimple: Int
   field = 0
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-testSimple>(){}kotlin.Int
+  //   Public signature: /testSimple.<get-testSimple>|-8005436010067357235[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         #<get-testSimple>(){}
+  //   Mangled name computed from Descriptor: #<get-testSimple>(){}
+  //   Mangled name computed from Fir:        #<get-testSimple>(){}kotlin.Int
+  //   Public signature: /testSimple.<get-testSimple>|-8005436010067357235[0]
   get
+  // CHECK:
+  //   Mangled name: #<set-testSimple>(kotlin.Int){}
+  //   Public signature: /testSimple.<set-testSimple>|524645050851415713[0]
   set(value: Int) {
     #testSimple = value
   }
 
+// CHECK:
+//   Mangled name: {}testAugmented
+//   Public signature: /testAugmented|-6564959773952065103[0]
 var testAugmented: Int
   field = 0
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-testAugmented>(){}kotlin.Int
+  //   Public signature: /testAugmented.<get-testAugmented>|2800173571752957459[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         #<get-testAugmented>(){}
+  //   Mangled name computed from Descriptor: #<get-testAugmented>(){}
+  //   Mangled name computed from Fir:        #<get-testAugmented>(){}kotlin.Int
+  //   Public signature: /testAugmented.<get-testAugmented>|2800173571752957459[0]
   get
+  // CHECK:
+  //   Mangled name: #<set-testAugmented>(kotlin.Int){}
+  //   Public signature: /testAugmented.<set-testAugmented>|-5845041817875850586[0]
   set(value: Int) {
     #testAugmented = #testAugmented.plus(other = value)
   }
+

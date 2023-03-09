@@ -1,8 +1,14 @@
+// CHECK:
+//   Mangled name: #test1(){}
+//   Public signature: /test1|4297044443957252634[0]
 fun test1() {
   error("") /* ErrorExpression */
   error("") /* ErrorExpression */
 }
 
+// CHECK:
+//   Mangled name: #test2(){}
+//   Public signature: /test2|4279114864133353152[0]
 fun test2() {
   L1@ while (true) { // BLOCK
     error("") /* ErrorExpression */
@@ -10,19 +16,29 @@ fun test2() {
   }
 }
 
+// CHECK:
+//   Mangled name: #test3(){}
+//   Public signature: /test3|-3759735065270951803[0]
 fun test3() {
   L1@ while (true) { // BLOCK
-    val lambda: Function0<Nothing> = local fun <anonymous>(): Nothing {
-      error("") /* ErrorExpression */
-      return error("") /* ErrorExpression */
-    }
+    val lambda: Function0<Nothing> = 
+      // CHECK:
+      //   Mangled name: #test3(){}#<anonymous>#static(){}kotlin.Nothing
+      local fun <anonymous>(): Nothing {
+        error("") /* ErrorExpression */
+        return error("") /* ErrorExpression */
+      }
 
   }
 }
 
+// CHECK:
+//   Mangled name: #test4(){}
+//   Public signature: /test4|5588455914500386239[0]
 fun test4() {
   while (error("") /* ErrorExpression */) { // BLOCK
   }
   while (error("") /* ErrorExpression */) { // BLOCK
   }
 }
+

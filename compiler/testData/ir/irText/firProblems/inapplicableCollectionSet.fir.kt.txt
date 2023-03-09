@@ -1,18 +1,39 @@
+// CHECK:
+//   Mangled name: Flaf
+//   Public signature: /Flaf|null[0]
 class Flaf {
+  // CHECK:
+  //   Mangled name: Flaf#<init>(kotlin.String){}
+  //   Public signature: /Flaf.<init>|1280618353163213788[0]
   constructor(javaName: String) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: Flaf{}javaName
+  //   Public signature: /Flaf.javaName|-8684515170534215532[0]
   val javaName: String
     field = javaName
+    // CHECK:
+    //   Mangled name: Flaf#<get-javaName>(){}kotlin.String
+    //   Public signature: /Flaf.javaName.<get-javaName>|-917464454700477406[0]
     get
 
+  // CHECK:
+  //   Mangled name: Flaf{}INSTANCES
+  //   Public signature: /Flaf.INSTANCES|1897835723956041094[0]
   private val INSTANCES: MutableMap<String, Flaf>
     field = mutableMapOf<String, Flaf>()
+    // CHECK:
+    //   Mangled name: Flaf#<get-INSTANCES>(){}kotlin.collections.MutableMap<kotlin.String,Flaf>
+    //   Public signature: /Flaf.INSTANCES.<get-INSTANCES>|-852664816279800923[0]
     private get
 
+  // CHECK:
+  //   Mangled name: Flaf#forJavaName(kotlin.String){}Flaf
+  //   Public signature: /Flaf.forJavaName|5746555906334011497[0]
   fun forJavaName(javaName: String): Flaf {
     var result: Flaf? = <this>.<get-INSTANCES>().get(key = javaName)
     when {
@@ -30,3 +51,4 @@ class Flaf {
   }
 
 }
+

@@ -3,6 +3,9 @@
 // IGNORE_BACKEND_K1: JS_IR
 // IGNORE_BACKEND_K1: JS_IR_ES6
 
+// NO_SIGNATURE_DUMP
+// ^KT-57429, KT-57435
+
 class A<T>(val a: T)
 class B(val b: Any)
 class C(val c: Any)

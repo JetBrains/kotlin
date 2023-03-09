@@ -1,7 +1,13 @@
+// CHECK:
+//   Mangled name: #foo(kotlin.collections.MutableList<Couple<FilePath>>){}
+//   Public signature: /foo|-235147134910002974[0]
 fun foo(movedPaths: MutableList<Couple<FilePath>>) {
-  movedPaths.forEach<Couple<FilePath>>(action = local fun <anonymous>(it: Couple<FilePath>) {
-    it(super<Couple>).#second /*!! FilePath */.getName() /*~> Unit */
-  }
+  movedPaths.forEach<Couple<FilePath>>(action = 
+    // CHECK:
+    //   Mangled name: #foo(kotlin.collections.MutableList<Couple<FilePath>>){}#<anonymous>#static(Couple<FilePath>){}
+    local fun <anonymous>(it: Couple<FilePath>) {
+      it(super<Couple>).#second /*!! FilePath */.getName() /*~> Unit */
+    }
 )
 }
 

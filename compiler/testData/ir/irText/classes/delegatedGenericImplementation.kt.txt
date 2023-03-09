@@ -1,69 +1,175 @@
+// CHECK:
+//   Mangled name: IBase
+//   Public signature: /IBase|null[0]
 interface IBase<A : Any?> {
+  // CHECK:
+  //   Mangled name: IBase#foo(1:0;0:0){0§<kotlin.Any?>}
+  //   Public signature: /IBase.foo|406069289574534187[0]
   abstract fun <B : Any?> foo(a: A, b: B)
+  // CHECK:
+  //   Mangled name: IBase@0:0{0§<kotlin.Any?>}id
+  //   Public signature: /IBase.id|6409895071901545951[0]
   abstract val <C : Any?> C.id: Map<A, C>?
+    // CHECK JVM_IR:
+    //   Mangled name: IBase#<get-id>@0:0(){0§<kotlin.Any?>}kotlin.collections.Map<1:0,0:0>?
+    //   Public signature: /IBase.id.<get-id>|-1161899104741266586[0]
+    // CHECK JS_IR:
+    //   Mangled name: IBase#<get-id>@0:0(){0§<kotlin.Any?>}
+    //   Public signature: /IBase.id.<get-id>|-1537502770664138716[0]
     abstract get
 
+  // CHECK:
+  //   Mangled name: IBase@kotlin.collections.List<0:0>{0§<kotlin.Any?>}x
+  //   Public signature: /IBase.x|-197950632589282220[0]
   abstract var <D : Any?> List<D>.x: D?
+    // CHECK JVM_IR:
+    //   Mangled name: IBase#<get-x>@kotlin.collections.List<0:0>(){0§<kotlin.Any?>}0:0?
+    //   Public signature: /IBase.x.<get-x>|1915131689713400313[0]
+    // CHECK JS_IR:
+    //   Mangled name: IBase#<get-x>@kotlin.collections.List<0:0>(){0§<kotlin.Any?>}
+    //   Public signature: /IBase.x.<get-x>|-7897041295469127828[0]
     abstract get
+    // CHECK:
+    //   Mangled name: IBase#<set-x>@kotlin.collections.List<0:0>(0:0?){0§<kotlin.Any?>}
+    //   Public signature: /IBase.x.<set-x>|7048513426934671771[0]
     abstract set
 
 }
 
+// CHECK:
+//   Mangled name: Test1
+//   Public signature: /Test1|null[0]
 class Test1<E : Any?> : IBase<E> {
+  // CHECK:
+  //   Mangled name: Test1#<init>(IBase<1:0>){}
+  //   Public signature: /Test1.<init>|-3017997426280513504[0]
   constructor(i: IBase<E>) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: Test1.$$delegate_0
+  //   Public signature: /Test1.$$delegate_0|-7286425919675154353[0]
   private /* final field */ val $$delegate_0: IBase<E> = i
+  // CHECK:
+  //   Mangled name: Test1@0:0{0§<kotlin.Any?>}id
+  //   Public signature: /Test1.id|6409895071901545951[0]
   override val <C : Any?> C.id: Map<E, C>?
+    // CHECK JVM_IR:
+    //   Mangled name: Test1#<get-id>@0:0(){0§<kotlin.Any?>}kotlin.collections.Map<1:0,0:0>?
+    //   Public signature: /Test1.id.<get-id>|-1161899104741266586[0]
+    // CHECK JS_IR:
+    //   Mangled name: Test1#<get-id>@0:0(){0§<kotlin.Any?>}
+    //   Public signature: /Test1.id.<get-id>|-1537502770664138716[0]
     override get(): Map<E, C>? {
       return (<this>.#$$delegate_0, <this>).<get-id><C>()
     }
 
+  // CHECK:
+  //   Mangled name: Test1@kotlin.collections.List<0:0>{0§<kotlin.Any?>}x
+  //   Public signature: /Test1.x|-197950632589282220[0]
   override var <D : Any?> List<D>.x: D?
+    // CHECK JVM_IR:
+    //   Mangled name: Test1#<get-x>@kotlin.collections.List<0:0>(){0§<kotlin.Any?>}0:0?
+    //   Public signature: /Test1.x.<get-x>|1915131689713400313[0]
+    // CHECK JS_IR:
+    //   Mangled name: Test1#<get-x>@kotlin.collections.List<0:0>(){0§<kotlin.Any?>}
+    //   Public signature: /Test1.x.<get-x>|-7897041295469127828[0]
     override get(): D? {
       return (<this>.#$$delegate_0, <this>).<get-x><D>()
     }
+    // CHECK:
+    //   Mangled name: Test1#<set-x>@kotlin.collections.List<0:0>(0:0?){0§<kotlin.Any?>}
+    //   Public signature: /Test1.x.<set-x>|7048513426934671771[0]
     override set(<set-?>: D?) {
       (<this>.#$$delegate_0, <this>).<set-x><D>(<set-?> = <set-?>)
     }
 
+  // CHECK:
+  //   Mangled name: Test1#foo(1:0;0:0){0§<kotlin.Any?>}
+  //   Public signature: /Test1.foo|406069289574534187[0]
   override fun <B : Any?> foo(a: E, b: B) {
     <this>.#$$delegate_0.foo<B>(a = a, b = b)
   }
 
 }
 
+// CHECK:
+//   Mangled name: Test2
+//   Public signature: /Test2|null[0]
 class Test2 : IBase<String> {
+  // CHECK:
+  //   Mangled name: Test2#<init>(IBase<kotlin.String>){}
+  //   Public signature: /Test2.<init>|4395202944622832808[0]
   constructor(j: IBase<String>) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: Test2{}j
+  //   Public signature: /Test2.j|-6836075379230315579[0]
   var j: IBase<String>
     field = j
+    // CHECK JVM_IR:
+    //   Mangled name: Test2#<get-j>(){}IBase<kotlin.String>
+    //   Public signature: /Test2.j.<get-j>|-6883763672420899739[0]
+    // CHECK JS_IR:
+    //   Mangled name: Test2#<get-j>(){}
+    //   Public signature: /Test2.j.<get-j>|5087577794943671660[0]
     get
+    // CHECK:
+    //   Mangled name: Test2#<set-j>(IBase<kotlin.String>){}
+    //   Public signature: /Test2.j.<set-j>|4329154110216130240[0]
     set
 
+  // CHECK:
+  //   Mangled name: Test2.$$delegate_0
+  //   Public signature: /Test2.$$delegate_0|-7286425919675154353[0]
   private /* final field */ val $$delegate_0: IBase<String> = j
+  // CHECK:
+  //   Mangled name: Test2@0:0{0§<kotlin.Any?>}id
+  //   Public signature: /Test2.id|6409895071901545951[0]
   override val <C : Any?> C.id: Map<String, C>?
+    // CHECK JVM_IR:
+    //   Mangled name: Test2#<get-id>@0:0(){0§<kotlin.Any?>}kotlin.collections.Map<kotlin.String,0:0>?
+    //   Public signature: /Test2.id.<get-id>|5038832815964071118[0]
+    // CHECK JS_IR:
+    //   Mangled name: Test2#<get-id>@0:0(){0§<kotlin.Any?>}
+    //   Public signature: /Test2.id.<get-id>|-1537502770664138716[0]
     override get(): Map<String, C>? {
       return (<this>.#$$delegate_0, <this>).<get-id><C>()
     }
 
+  // CHECK:
+  //   Mangled name: Test2@kotlin.collections.List<0:0>{0§<kotlin.Any?>}x
+  //   Public signature: /Test2.x|-197950632589282220[0]
   override var <D : Any?> List<D>.x: D?
+    // CHECK JVM_IR:
+    //   Mangled name: Test2#<get-x>@kotlin.collections.List<0:0>(){0§<kotlin.Any?>}0:0?
+    //   Public signature: /Test2.x.<get-x>|1915131689713400313[0]
+    // CHECK JS_IR:
+    //   Mangled name: Test2#<get-x>@kotlin.collections.List<0:0>(){0§<kotlin.Any?>}
+    //   Public signature: /Test2.x.<get-x>|-7897041295469127828[0]
     override get(): D? {
       return (<this>.#$$delegate_0, <this>).<get-x><D>()
     }
+    // CHECK:
+    //   Mangled name: Test2#<set-x>@kotlin.collections.List<0:0>(0:0?){0§<kotlin.Any?>}
+    //   Public signature: /Test2.x.<set-x>|7048513426934671771[0]
     override set(<set-?>: D?) {
       (<this>.#$$delegate_0, <this>).<set-x><D>(<set-?> = <set-?>)
     }
 
+  // CHECK:
+  //   Mangled name: Test2#foo(kotlin.String;0:0){0§<kotlin.Any?>}
+  //   Public signature: /Test2.foo|3497909443104319155[0]
   override fun <B : Any?> foo(a: String, b: B) {
     <this>.#$$delegate_0.foo<B>(a = a, b = b)
   }
 
 }
+

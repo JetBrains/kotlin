@@ -1,18 +1,44 @@
+// CHECK:
+//   Mangled name: Z
+//   Public signature: /Z|null[0]
 object Z {
+  // CHECK:
+  //   Mangled name: Z#<init>(){}
+  //   Public signature: /Z.<init>|-5645683436151566731[0]
   private constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: Z{}counter
+  //   Public signature: /Z.counter|3849500605769271673[0]
   var counter: Int
     field = 0
+    // CHECK JVM_IR:
+    //   Mangled name: Z#<get-counter>(){}kotlin.Int
+    //   Public signature: /Z.counter.<get-counter>|6416265643848993228[0]
+    // CHECK JS_IR:
+    //   Mangled name computed from Ir:         Z#<get-counter>(){}
+    //   Mangled name computed from Descriptor: Z#<get-counter>(){}
+    //   Mangled name computed from Fir:        Z#<get-counter>(){}kotlin.Int
+    //   Public signature: /Z.counter.<get-counter>|6416265643848993228[0]
     get
+    // CHECK:
+    //   Mangled name: Z#<set-counter>(kotlin.Int){}
+    //   Public signature: /Z.counter.<set-counter>|-8124462411591632783[0]
     set
 
+  // CHECK:
+  //   Mangled name: Z#foo(){}
+  //   Public signature: /Z.foo|-1041209573719867811[0]
   fun foo() {
   }
 
+  // CHECK:
+  //   Mangled name: Z#bar(){}
+  //   Public signature: /Z.bar|496682602797471549[0]
   fun bar() {
     <this>.<set-counter>(<set-?> = 1)
     <this>.foo()
@@ -20,13 +46,22 @@ object Z {
     Z.foo()
   }
 
+  // CHECK:
+  //   Mangled name: Z.Nested
+  //   Public signature: /Z.Nested|null[0]
   class Nested {
+    // CHECK:
+    //   Mangled name: Z.Nested#<init>(){}
+    //   Public signature: /Z.Nested.<init>|-5645683436151566731[0]
     constructor() /* primary */ {
       super/*Any*/()
       /* <init>() */
 
     }
 
+    // CHECK:
+    //   Mangled name computed from Ir:         Z.Nested.<ANI>
+    //   Mangled name computed from Descriptor: Z.Nested
     init {
       Z.<set-counter>(<set-?> = 1)
       Z.foo()
@@ -34,6 +69,9 @@ object Z {
       Z.foo()
     }
 
+    // CHECK:
+    //   Mangled name: Z.Nested#test(){}
+    //   Public signature: /Z.Nested.test|6620506149988718649[0]
     fun test() {
       Z.<set-counter>(<set-?> = 1)
       Z.foo()
@@ -43,25 +81,92 @@ object Z {
 
   }
 
+  // CHECK:
+  //   Mangled name: Z{}aLambda
+  //   Public signature: /Z.aLambda|3337321219156655813[0]
   val aLambda: Function0<Unit>
-    field = local fun <anonymous>() {
-      <this>.<set-counter>(<set-?> = 1)
-      <this>.foo()
-      Z.<set-counter>(<set-?> = 1)
-      Z.foo()
-    }
+    field = 
+      // CHECK JVM_IR:
+      //   Mangled name computed from Ir (compatible mode: false):         Z{}aLambda#<anonymous>#static(){}
+      //   Mangled name computed from Ir (compatible mode: true):          Z.aLambda#<anonymous>#static(){}
+      //   Mangled name computed from Descriptor (compatible mode: false): Z{}aLambda#jf#<anonymous>#static(){}
+      //   Mangled name computed from Descriptor (compatible mode: true):  Z{}aLambda#jf#<anonymous>#static(){}
+      //   Mangled name computed from Fir (compatible mode: false):        could not compute mangled name: java.lang.IllegalStateException: unexpected element fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {... (truncated)
+      //   Mangled name computed from Fir (compatible mode: true):         could not compute mangled name: java.lang.IllegalStateException: unexpected element fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {... (truncated)
+      // CHECK JS_IR:
+      //   Mangled name computed from Ir (compatible mode: false):         Z{}aLambda#<anonymous>#static(){}
+      //   Mangled name computed from Ir (compatible mode: true):          Z.aLambda#<anonymous>#static(){}
+      //   Mangled name computed from Descriptor (compatible mode: false): Z{}aLambda#<anonymous>#static(){}
+      //   Mangled name computed from Descriptor (compatible mode: true):  Z{}aLambda#<anonymous>#static(){}
+      //   Mangled name computed from Fir (compatible mode: false):        could not compute mangled name: java.lang.IllegalStateException: unexpected element fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {... (truncated)
+      //   Mangled name computed from Fir (compatible mode: true):         could not compute mangled name: java.lang.IllegalStateException: unexpected element fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {... (truncated)
+      local fun <anonymous>() {
+        <this>.<set-counter>(<set-?> = 1)
+        <this>.foo()
+        Z.<set-counter>(<set-?> = 1)
+        Z.foo()
+      }
 
+    // CHECK JVM_IR:
+    //   Mangled name: Z#<get-aLambda>(){}kotlin.Function0<kotlin.Unit>
+    //   Public signature: /Z.aLambda.<get-aLambda>|9058518221524596568[0]
+    // CHECK JS_IR:
+    //   Mangled name computed from Ir:         Z#<get-aLambda>(){}
+    //   Mangled name computed from Descriptor: Z#<get-aLambda>(){}
+    //   Mangled name computed from Fir:        Z#<get-aLambda>(){}kotlin.Function0<kotlin.Unit>
+    //   Public signature: /Z.aLambda.<get-aLambda>|9058518221524596568[0]
     get
 
+  // CHECK:
+  //   Mangled name: Z{}anObject
+  //   Public signature: /Z.anObject|409091113626572731[0]
   val anObject: Any
     field = { // BLOCK
+      // CHECK JVM_IR:
+      //   Mangled name computed from Ir (compatible mode: false):         Z{}anObject.<no name provided>
+      //   Mangled name computed from Ir (compatible mode: true):          Z.anObject.<no name provided>
+      //   Mangled name computed from Descriptor (compatible mode: false): Z{}anObject#jf.<no name provided>
+      //   Mangled name computed from Descriptor (compatible mode: true):  Z{}anObject#jf.<no name provided>
+      //   Mangled name computed from Fir (compatible mode: false):        <anonymous>
+      //   Mangled name computed from Fir (compatible mode: true):         <anonymous>
+      // CHECK JS_IR:
+      //   Mangled name computed from Ir (compatible mode: false):         Z{}anObject.<no name provided>
+      //   Mangled name computed from Ir (compatible mode: true):          Z.anObject.<no name provided>
+      //   Mangled name computed from Descriptor (compatible mode: false): Z{}anObject.<no name provided>
+      //   Mangled name computed from Descriptor (compatible mode: true):  Z{}anObject.<no name provided>
+      //   Mangled name computed from Fir (compatible mode: false):        <anonymous>
+      //   Mangled name computed from Fir (compatible mode: true):         <anonymous>
       local class <no name provided> {
+        // CHECK JVM_IR:
+        //   Mangled name computed from Ir (compatible mode: false):         Z{}anObject.<no name provided>#<init>(){}
+        //   Mangled name computed from Ir (compatible mode: true):          Z.anObject.<no name provided>#<init>(){}
+        //   Mangled name computed from Descriptor (compatible mode: false): Z{}anObject#jf.<no name provided>#<init>(){}
+        //   Mangled name computed from Descriptor (compatible mode: true):  Z{}anObject#jf.<no name provided>#<init>(){}
+        //   Mangled name computed from Fir (compatible mode: false):        #<init>(){}
+        //   Mangled name computed from Fir (compatible mode: true):         #<init>(){}
+        // CHECK JS_IR:
+        //   Mangled name computed from Ir (compatible mode: false):         Z{}anObject.<no name provided>#<init>(){}
+        //   Mangled name computed from Ir (compatible mode: true):          Z.anObject.<no name provided>#<init>(){}
+        //   Mangled name computed from Descriptor (compatible mode: false): Z{}anObject.<no name provided>#<init>(){}
+        //   Mangled name computed from Descriptor (compatible mode: true):  Z{}anObject.<no name provided>#<init>(){}
+        //   Mangled name computed from Fir (compatible mode: false):        #<init>(){}
+        //   Mangled name computed from Fir (compatible mode: true):         #<init>(){}
         constructor() /* primary */ {
           super/*Any*/()
           /* <init>() */
 
         }
 
+        // CHECK JVM_IR:
+        //   Mangled name computed from Ir (compatible mode: false):         Z{}anObject.<no name provided>.<ANI>
+        //   Mangled name computed from Ir (compatible mode: true):          Z.anObject.<no name provided>.<ANI>
+        //   Mangled name computed from Descriptor (compatible mode: false): Z{}anObject#jf.<no name provided>
+        //   Mangled name computed from Descriptor (compatible mode: true):  Z{}anObject#jf.<no name provided>
+        // CHECK JS_IR:
+        //   Mangled name computed from Ir (compatible mode: false):         Z{}anObject.<no name provided>.<ANI>
+        //   Mangled name computed from Ir (compatible mode: true):          Z.anObject.<no name provided>.<ANI>
+        //   Mangled name computed from Descriptor (compatible mode: false): Z{}anObject.<no name provided>
+        //   Mangled name computed from Descriptor (compatible mode: true):  Z{}anObject.<no name provided>
         init {
           Z.<set-counter>(<set-?> = 1)
           Z.foo()
@@ -69,6 +174,20 @@ object Z {
           Z.foo()
         }
 
+        // CHECK JVM_IR:
+        //   Mangled name computed from Ir (compatible mode: false):         Z{}anObject.<no name provided>#test(){}
+        //   Mangled name computed from Ir (compatible mode: true):          Z.anObject.<no name provided>#test(){}
+        //   Mangled name computed from Descriptor (compatible mode: false): Z{}anObject#jf.<no name provided>#test(){}
+        //   Mangled name computed from Descriptor (compatible mode: true):  Z{}anObject#jf.<no name provided>#test(){}
+        //   Mangled name computed from Fir (compatible mode: false):        #test(){}
+        //   Mangled name computed from Fir (compatible mode: true):         #test(){}
+        // CHECK JS_IR:
+        //   Mangled name computed from Ir (compatible mode: false):         Z{}anObject.<no name provided>#test(){}
+        //   Mangled name computed from Ir (compatible mode: true):          Z.anObject.<no name provided>#test(){}
+        //   Mangled name computed from Descriptor (compatible mode: false): Z{}anObject.<no name provided>#test(){}
+        //   Mangled name computed from Descriptor (compatible mode: true):  Z{}anObject.<no name provided>#test(){}
+        //   Mangled name computed from Fir (compatible mode: false):        #test(){}
+        //   Mangled name computed from Fir (compatible mode: true):         #test(){}
         fun test() {
           Z.<set-counter>(<set-?> = 1)
           Z.foo()
@@ -80,13 +199,25 @@ object Z {
 
       <no name provided>()
     }
+    // CHECK JVM_IR:
+    //   Mangled name: Z#<get-anObject>(){}kotlin.Any
+    //   Public signature: /Z.anObject.<get-anObject>|-6807306499596507825[0]
+    // CHECK JS_IR:
+    //   Mangled name computed from Ir:         Z#<get-anObject>(){}
+    //   Mangled name computed from Descriptor: Z#<get-anObject>(){}
+    //   Mangled name computed from Fir:        Z#<get-anObject>(){}kotlin.Any
+    //   Public signature: /Z.anObject.<get-anObject>|-6807306499596507825[0]
     get
 
 }
 
+// CHECK:
+//   Mangled name: #test@Z(){}
+//   Public signature: /test|2491484829934192138[0]
 fun Z.test() {
   <this>.<set-counter>(<set-?> = 1)
   <this>.foo()
   Z.<set-counter>(<set-?> = 1)
   Z.foo()
 }
+

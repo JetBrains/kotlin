@@ -3,6 +3,9 @@
 // WITH_STDLIB
 // !OPT_IN: kotlin.experimental.ExperimentalTypeInference
 
+// NO_SIGNATURE_DUMP
+// ^KT-57428
+
 import kotlin.experimental.ExperimentalTypeInference
 
 fun <E> produce(block: Derived<E>.() -> Unit): E = null as E

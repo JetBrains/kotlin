@@ -1,10 +1,19 @@
+// CHECK:
+//   Mangled name: Serializer
+//   Public signature: /Serializer|null[0]
 class Serializer {
+  // CHECK:
+  //   Mangled name: Serializer#<init>(){}
+  //   Public signature: /Serializer.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: Serializer#serialize(){}
+  //   Public signature: /Serializer.serialize|2218225496927039174[0]
   fun serialize() {
     val messageCollector: <no name provided> = <this>.createMessageCollector()
     try { // BLOCK
@@ -15,9 +24,22 @@ class Serializer {
 
   }
 
+  // CHECK:
+  //   Mangled name computed from Ir:         Serializer#createMessageCollector(){}Serializer#createMessageCollector.<no name provided>
+  //   Mangled name computed from Descriptor: Serializer#createMessageCollector(){}Serializer#createMessageCollector.<no name provided>
+  //   Mangled name computed from Fir:        Serializer#createMessageCollector(){}<anonymous>
+  //   Public signature: /Serializer.createMessageCollector|6888377667936403612[0]
   private fun createMessageCollector(): <no name provided> {
     return { // BLOCK
+      // CHECK:
+      //   Mangled name computed from Ir:         Serializer#createMessageCollector(){}Serializer#createMessageCollector.<no name provided>.<no name provided>
+      //   Mangled name computed from Descriptor: Serializer#createMessageCollector(){}Serializer#createMessageCollector.<no name provided>.<no name provided>
+      //   Mangled name computed from Fir:        <anonymous>
       local class <no name provided> : Collector {
+        // CHECK:
+        //   Mangled name computed from Ir:         Serializer#createMessageCollector(){}Serializer#createMessageCollector.<no name provided>.<no name provided>#<init>(){}
+        //   Mangled name computed from Descriptor: Serializer#createMessageCollector(){}Serializer#createMessageCollector.<no name provided>.<no name provided>#<init>(){}
+        //   Mangled name computed from Fir:        #<init>(){}
         constructor() /* primary */ {
           super/*Collector*/()
           /* <init>() */
@@ -31,3 +53,4 @@ class Serializer {
   }
 
 }
+

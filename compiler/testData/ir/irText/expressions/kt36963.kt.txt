@@ -1,6 +1,16 @@
+// CHECK:
+//   Mangled name: #foo(){}
+//   Public signature: /foo|-1041209573719867811[0]
 fun foo() {
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #test(){}kotlin.reflect.KFunction0<kotlin.Unit>
+//   Public signature: /test|-7541901321398002849[0]
+// CHECK JS_IR:
+//   Mangled name: #test(){}
+//   Public signature: /test|6620506149988718649[0]
 fun test(): KFunction0<Unit> {
   return CHECK_NOT_NULL<KFunction0<Unit>>(arg0 = ::foo)
 }
+

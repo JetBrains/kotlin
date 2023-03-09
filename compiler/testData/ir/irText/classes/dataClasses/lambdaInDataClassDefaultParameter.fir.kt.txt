@@ -1,25 +1,71 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
 data class A {
-  constructor(runA: @ExtensionFunctionType Function2<A, String, Unit> = local fun A.<anonymous>(it: String) {
-    return Unit
-  }
+  // CHECK:
+  //   Mangled name: A#<init>(kotlin.Function2<A,kotlin.String,kotlin.Unit>){}
+  //   Public signature: /A.<init>|-2423641970729475329[0]
+  constructor(runA: @ExtensionFunctionType Function2<A, String, Unit> = 
+    // CHECK:
+    //   Mangled name computed from Ir:         A#<init>(kotlin.Function2<A,kotlin.String,kotlin.Unit>){}#<anonymous>#static@A(kotlin.String){}
+    //   Mangled name computed from Descriptor: A#<init>(kotlin.Function2<A,kotlin.String,kotlin.Unit>){}#<anonymous>#static@A(kotlin.String){}
+    //   Mangled name computed from Fir:        could not compute mangled name: java.lang.IllegalStateException: unexpected element fun R|A|.<anonymous>(it: R|kotlin/String|): R|kotlin/Unit| <inline=Unknown>  {... (truncated)
+    local fun A.<anonymous>(it: String) {
+      return Unit
+    }
 ) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: A{}runA
+  //   Public signature: /A.runA|-603860279021396892[0]
   val runA: @ExtensionFunctionType Function2<A, String, Unit>
     field = runA
+    // CHECK JVM_IR:
+    //   Mangled name: A#<get-runA>(){}kotlin.Function2<A,kotlin.String,kotlin.Unit>
+    //   Public signature: /A.runA.<get-runA>|-7395660359918443631[0]
+    // CHECK JS_IR:
+    //   Mangled name computed from Ir:         A#<get-runA>(){}
+    //   Mangled name computed from Descriptor: A#<get-runA>(){}
+    //   Mangled name computed from Fir:        A#<get-runA>(){}kotlin.Function2<A,kotlin.String,kotlin.Unit>
+    //   Public signature: /A.runA.<get-runA>|-7395660359918443631[0]
     get
 
+  // CHECK JVM_IR:
+  //   Mangled name: A#component1(){}kotlin.Function2<A,kotlin.String,kotlin.Unit>
+  //   Public signature: /A.component1|793860828130635274[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         A#component1(){}
+  //   Mangled name computed from Descriptor: A#component1(){}
+  //   Mangled name computed from Fir:        A#component1(){}kotlin.Function2<A,kotlin.String,kotlin.Unit>
+  //   Public signature: /A.component1|793860828130635274[0]
   operator fun component1(): @ExtensionFunctionType Function2<A, String, Unit> {
     return <this>.#runA
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: A#copy(kotlin.Function2<A,kotlin.String,kotlin.Unit>){}A
+  //   Public signature: /A.copy|7236950802229760509[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         A#copy(kotlin.Function2<A,kotlin.String,kotlin.Unit>){}
+  //   Mangled name computed from Descriptor: A#copy(kotlin.Function2<A,kotlin.String,kotlin.Unit>){}
+  //   Mangled name computed from Fir:        A#copy(kotlin.Function2<A,kotlin.String,kotlin.Unit>){}A
+  //   Public signature: /A.copy|7236950802229760509[0]
   fun copy(runA: @ExtensionFunctionType Function2<A, String, Unit> = <this>.#runA): A {
     return A(runA = runA)
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: A#equals(kotlin.Any?){}kotlin.Boolean
+  //   Public signature: /A.equals|722809408929142791[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         A#equals(kotlin.Any?){}
+  //   Mangled name computed from Descriptor: A#equals(kotlin.Any?){}
+  //   Mangled name computed from Fir:        A#equals(kotlin.Any?){}kotlin.Boolean
+  //   Public signature: /A.equals|722809408929142791[0]
   override fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
@@ -34,19 +80,49 @@ data class A {
     return true
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: A#hashCode(){}kotlin.Int
+  //   Public signature: /A.hashCode|-8048879360829830756[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         A#hashCode(){}
+  //   Mangled name computed from Descriptor: A#hashCode(){}
+  //   Mangled name computed from Fir:        A#hashCode(){}kotlin.Int
+  //   Public signature: /A.hashCode|-8048879360829830756[0]
   override fun hashCode(): Int {
     return <this>.#runA.hashCode()
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: A#toString(){}kotlin.String
+  //   Public signature: /A.toString|6958853723545266802[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         A#toString(){}
+  //   Mangled name computed from Descriptor: A#toString(){}
+  //   Mangled name computed from Fir:        A#toString(){}kotlin.String
+  //   Public signature: /A.toString|6958853723545266802[0]
   override fun toString(): String {
     return "A(runA=" + <this>.#runA + ")"
   }
 
 }
 
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[0]
 data class B {
+  // CHECK:
+  //   Mangled name: B#<init>(kotlin.Any){}
+  //   Public signature: /B.<init>|4518179880532599055[0]
   constructor(x: Any = { // BLOCK
+    // CHECK:
+    //   Mangled name computed from Ir:         B#<init>(kotlin.Any){}.<no name provided>
+    //   Mangled name computed from Descriptor: B#<init>(kotlin.Any){}.<no name provided>
+    //   Mangled name computed from Fir:        <anonymous>
     local class <no name provided> {
+      // CHECK:
+      //   Mangled name computed from Ir:         B#<init>(kotlin.Any){}.<no name provided>#<init>(){}
+      //   Mangled name computed from Descriptor: B#<init>(kotlin.Any){}.<no name provided>#<init>(){}
+      //   Mangled name computed from Fir:        #<init>(){}
       constructor() /* primary */ {
         super/*Any*/()
         /* <init>() */
@@ -62,18 +138,53 @@ data class B {
 
   }
 
+  // CHECK:
+  //   Mangled name: B{}x
+  //   Public signature: /B.x|-8060530855978347579[0]
   val x: Any
     field = x
+    // CHECK JVM_IR:
+    //   Mangled name: B#<get-x>(){}kotlin.Any
+    //   Public signature: /B.x.<get-x>|98409022523676208[0]
+    // CHECK JS_IR:
+    //   Mangled name computed from Ir:         B#<get-x>(){}
+    //   Mangled name computed from Descriptor: B#<get-x>(){}
+    //   Mangled name computed from Fir:        B#<get-x>(){}kotlin.Any
+    //   Public signature: /B.x.<get-x>|98409022523676208[0]
     get
 
+  // CHECK JVM_IR:
+  //   Mangled name: B#component1(){}kotlin.Any
+  //   Public signature: /B.component1|2325042746135573536[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         B#component1(){}
+  //   Mangled name computed from Descriptor: B#component1(){}
+  //   Mangled name computed from Fir:        B#component1(){}kotlin.Any
+  //   Public signature: /B.component1|2325042746135573536[0]
   operator fun component1(): Any {
     return <this>.#x
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: B#copy(kotlin.Any){}B
+  //   Public signature: /B.copy|-4210150655908205808[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         B#copy(kotlin.Any){}
+  //   Mangled name computed from Descriptor: B#copy(kotlin.Any){}
+  //   Mangled name computed from Fir:        B#copy(kotlin.Any){}B
+  //   Public signature: /B.copy|-4210150655908205808[0]
   fun copy(x: Any = <this>.#x): B {
     return B(x = x)
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: B#equals(kotlin.Any?){}kotlin.Boolean
+  //   Public signature: /B.equals|722809408929142791[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         B#equals(kotlin.Any?){}
+  //   Mangled name computed from Descriptor: B#equals(kotlin.Any?){}
+  //   Mangled name computed from Fir:        B#equals(kotlin.Any?){}kotlin.Boolean
+  //   Public signature: /B.equals|722809408929142791[0]
   override fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
@@ -88,12 +199,29 @@ data class B {
     return true
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: B#hashCode(){}kotlin.Int
+  //   Public signature: /B.hashCode|-8048879360829830756[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         B#hashCode(){}
+  //   Mangled name computed from Descriptor: B#hashCode(){}
+  //   Mangled name computed from Fir:        B#hashCode(){}kotlin.Int
+  //   Public signature: /B.hashCode|-8048879360829830756[0]
   override fun hashCode(): Int {
     return <this>.#x.hashCode()
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: B#toString(){}kotlin.String
+  //   Public signature: /B.toString|6958853723545266802[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         B#toString(){}
+  //   Mangled name computed from Descriptor: B#toString(){}
+  //   Mangled name computed from Fir:        B#toString(){}kotlin.String
+  //   Public signature: /B.toString|6958853723545266802[0]
   override fun toString(): String {
     return "B(x=" + <this>.#x + ")"
   }
 
 }
+

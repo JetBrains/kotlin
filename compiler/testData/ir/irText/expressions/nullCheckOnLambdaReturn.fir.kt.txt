@@ -1,53 +1,129 @@
+// CHECK:
+//   Mangled name: #checkAny(kotlin.Function0<kotlin.Any>){}kotlin.Any
+//   Public signature: /checkAny|3822573499379692767[0]
 fun checkAny(fn: Function0<Any>): Any {
   return fn.invoke()
 }
 
+// CHECK:
+//   Mangled name: #checkAnyN(kotlin.Function0<kotlin.Any?>){}kotlin.Any?
+//   Public signature: /checkAnyN|2531653624856991874[0]
 fun checkAnyN(fn: Function0<Any?>): Any? {
   return fn.invoke()
 }
 
+// CHECK:
+//   Mangled name: #id(0:0){0§<kotlin.Any?>}0:0
+//   Public signature: /id|-6791396263062521506[0]
 fun <T : Any?> id(x: T): T {
   return x
 }
 
+// CHECK:
+//   Mangled name: #test1(){}kotlin.Any
+//   Public signature: /test1|-7147480710941941177[0]
 fun test1(): Any {
-  return checkAny(fn = local fun <anonymous>(): Any {
-    return foo() /*!! String */
-  }
+  return checkAny(fn = 
+    // CHECK:
+    //   Mangled name computed from Ir:         #test1(){}kotlin.Any#<anonymous>#static(){}kotlin.Any
+    //   Mangled name computed from Descriptor: #test1(){}kotlin.Any#<anonymous>#static(){}kotlin.Any
+    //   Mangled name computed from Fir:        could not compute mangled name: java.lang.IllegalStateException: unexpected element checkAny@fun <anonymous>(): R|kotlin/Any| <inline=NoInline>  {... (truncated)
+    local fun <anonymous>(): Any {
+      return foo() /*!! String */
+    }
 )
 }
 
+// CHECK:
+//   Mangled name: {}test2
+//   Public signature: /test2|2517758057000911509[0]
 val test2: Function0<Any>
-  field = local fun <anonymous>(): @FlexibleNullability String? {
-    return foo()
-  }
+  field = 
+    // CHECK:
+    //   Mangled name computed from Ir (compatible mode: false):         {}test2#<anonymous>#static(){}kotlin.String?
+    //   Mangled name computed from Ir (compatible mode: true):          test2#<anonymous>#static(){}kotlin.String?
+    //   Mangled name computed from Descriptor (compatible mode: false): {}test2#jf#<anonymous>#static(){}kotlin.String?
+    //   Mangled name computed from Descriptor (compatible mode: true):  {}test2#jf#<anonymous>#static(){}kotlin.String?
+    //   Mangled name computed from Fir (compatible mode: false):        could not compute mangled name: java.lang.IllegalStateException: unexpected element fun <anonymous>(): R|kotlin/String!| <inline=Unknown>  {... (truncated)
+    //   Mangled name computed from Fir (compatible mode: true):         could not compute mangled name: java.lang.IllegalStateException: unexpected element fun <anonymous>(): R|kotlin/String!| <inline=Unknown>  {... (truncated)
+    local fun <anonymous>(): @FlexibleNullability String? {
+      return foo()
+    }
 
+  // CHECK:
+  //   Mangled name: #<get-test2>(){}kotlin.Function0<kotlin.Any>
+  //   Public signature: /test2.<get-test2>|-3521014862279202095[0]
   get
 
+// CHECK:
+//   Mangled name: {}test3
+//   Public signature: /test3|7677556066983021166[0]
 val test3: Function0<Any>
-  field = local fun <anonymous>(): @FlexibleNullability String? {
-    return foo()
-  }
+  field = 
+    // CHECK:
+    //   Mangled name computed from Ir (compatible mode: false):         {}test3#<anonymous>#static(){}kotlin.String?
+    //   Mangled name computed from Ir (compatible mode: true):          test3#<anonymous>#static(){}kotlin.String?
+    //   Mangled name computed from Descriptor (compatible mode: false): {}test3#jf#<anonymous>#static(){}kotlin.String?
+    //   Mangled name computed from Descriptor (compatible mode: true):  {}test3#jf#<anonymous>#static(){}kotlin.String?
+    //   Mangled name computed from Fir (compatible mode: false):        could not compute mangled name: java.lang.IllegalStateException: unexpected element fun <anonymous>(): R|kotlin/String!| <inline=Unknown>  {... (truncated)
+    //   Mangled name computed from Fir (compatible mode: true):         could not compute mangled name: java.lang.IllegalStateException: unexpected element fun <anonymous>(): R|kotlin/String!| <inline=Unknown>  {... (truncated)
+    local fun <anonymous>(): @FlexibleNullability String? {
+      return foo()
+    }
  as Function0<Any>
+  // CHECK:
+  //   Mangled name: #<get-test3>(){}kotlin.Function0<kotlin.Any>
+  //   Public signature: /test3.<get-test3>|-2771730067305258179[0]
   get
 
+// CHECK:
+//   Mangled name: {}test4
+//   Public signature: /test4|-9115637610245762085[0]
 val test4: Function0<Any>
-  field = id<Function0<@FlexibleNullability String?>>(x = local fun <anonymous>(): @FlexibleNullability String? {
-    return foo()
-  }
+  field = id<Function0<@FlexibleNullability String?>>(x = 
+    // CHECK:
+    //   Mangled name computed from Ir (compatible mode: false):         {}test4#<anonymous>#static(){}kotlin.String?
+    //   Mangled name computed from Ir (compatible mode: true):          test4#<anonymous>#static(){}kotlin.String?
+    //   Mangled name computed from Descriptor (compatible mode: false): {}test4#jf#<anonymous>#static(){}kotlin.String?
+    //   Mangled name computed from Descriptor (compatible mode: true):  {}test4#jf#<anonymous>#static(){}kotlin.String?
+    //   Mangled name computed from Fir (compatible mode: false):        could not compute mangled name: java.lang.IllegalStateException: unexpected element id@fun <anonymous>(): R|kotlin/String!| <inline=NoInline>  {... (truncated)
+    //   Mangled name computed from Fir (compatible mode: true):         could not compute mangled name: java.lang.IllegalStateException: unexpected element id@fun <anonymous>(): R|kotlin/String!| <inline=NoInline>  {... (truncated)
+    local fun <anonymous>(): @FlexibleNullability String? {
+      return foo()
+    }
 )
+  // CHECK:
+  //   Mangled name: #<get-test4>(){}kotlin.Function0<kotlin.Any>
+  //   Public signature: /test4.<get-test4>|-8396604175230297932[0]
   get
 
+// CHECK:
+//   Mangled name: #test5(){}kotlin.Any?
+//   Public signature: /test5|-4912917521390671072[0]
 fun test5(): Any? {
-  return checkAnyN(fn = local fun <anonymous>(): Any? {
-    return foo()
-  }
+  return checkAnyN(fn = 
+    // CHECK:
+    //   Mangled name computed from Ir:         #test5(){}kotlin.Any?#<anonymous>#static(){}kotlin.Any?
+    //   Mangled name computed from Descriptor: #test5(){}kotlin.Any?#<anonymous>#static(){}kotlin.Any?
+    //   Mangled name computed from Fir:        could not compute mangled name: java.lang.IllegalStateException: unexpected element checkAnyN@fun <anonymous>(): R|kotlin/Any?| <inline=NoInline>  {... (truncated)
+    local fun <anonymous>(): Any? {
+      return foo()
+    }
 )
 }
 
+// CHECK:
+//   Mangled name: #test6(){}kotlin.Any?
+//   Public signature: /test6|-7389759467691093908[0]
 fun test6(): Any? {
-  return checkAnyN(fn = local fun <anonymous>(): Any? {
-    return nnFoo()
-  }
+  return checkAnyN(fn = 
+    // CHECK:
+    //   Mangled name computed from Ir:         #test6(){}kotlin.Any?#<anonymous>#static(){}kotlin.Any?
+    //   Mangled name computed from Descriptor: #test6(){}kotlin.Any?#<anonymous>#static(){}kotlin.Any?
+    //   Mangled name computed from Fir:        could not compute mangled name: java.lang.IllegalStateException: unexpected element checkAnyN@fun <anonymous>(): R|kotlin/Any?| <inline=NoInline>  {... (truncated)
+    local fun <anonymous>(): Any? {
+      return nnFoo()
+    }
 )
 }
+

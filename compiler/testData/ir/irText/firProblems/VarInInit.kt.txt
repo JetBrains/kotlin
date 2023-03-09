@@ -1,15 +1,36 @@
+// CHECK:
+//   Mangled name: Some
+//   Public signature: /Some|null[0]
 class Some {
+  // CHECK:
+  //   Mangled name: Some#<init>(kotlin.Int){}
+  //   Public signature: /Some.<init>|-5182794243525578284[0]
   constructor(foo: Int) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: Some{}foo
+  //   Public signature: /Some.foo|1688079488202778848[0]
   var foo: Int
     field = foo
+    // CHECK JVM_IR:
+    //   Mangled name: Some#<get-foo>(){}kotlin.Int
+    //   Public signature: /Some.foo.<get-foo>|-5521901919061670077[0]
+    // CHECK JS_IR:
+    //   Mangled name: Some#<get-foo>(){}
+    //   Public signature: /Some.foo.<get-foo>|-2462361841367688099[0]
     get
+    // CHECK:
+    //   Mangled name: Some#<set-foo>(kotlin.Int){}
+    //   Public signature: /Some.foo.<set-foo>|3461873232640801433[0]
     set
 
+  // CHECK:
+  //   Mangled name computed from Ir:         Some.<ANI>
+  //   Mangled name computed from Descriptor: Some
   init {
     when {
       less(arg0 = <this>.<get-foo>(), arg1 = 0) -> { // BLOCK
@@ -19,3 +40,4 @@ class Some {
   }
 
 }
+

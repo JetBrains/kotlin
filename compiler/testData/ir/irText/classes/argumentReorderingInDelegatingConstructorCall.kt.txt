@@ -1,21 +1,51 @@
+// CHECK:
+//   Mangled name: Base
+//   Public signature: /Base|null[0]
 open class Base {
+  // CHECK:
+  //   Mangled name: Base#<init>(kotlin.Int;kotlin.Int){}
+  //   Public signature: /Base.<init>|-7691762014320324121[0]
   constructor(x: Int, y: Int) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: Base{}x
+  //   Public signature: /Base.x|-8060530855978347579[0]
   val x: Int
     field = x
+    // CHECK JVM_IR:
+    //   Mangled name: Base#<get-x>(){}kotlin.Int
+    //   Public signature: /Base.x.<get-x>|4966956098150895696[0]
+    // CHECK JS_IR:
+    //   Mangled name: Base#<get-x>(){}
+    //   Public signature: /Base.x.<get-x>|1482705010654679335[0]
     get
 
+  // CHECK:
+  //   Mangled name: Base{}y
+  //   Public signature: /Base.y|3625903257357557171[0]
   val y: Int
     field = y
+    // CHECK JVM_IR:
+    //   Mangled name: Base#<get-y>(){}kotlin.Int
+    //   Public signature: /Base.y.<get-y>|-6745575372101973707[0]
+    // CHECK JS_IR:
+    //   Mangled name: Base#<get-y>(){}
+    //   Public signature: /Base.y.<get-y>|-7902422373892128922[0]
     get
 
 }
 
+// CHECK:
+//   Mangled name: Test1
+//   Public signature: /Test1|null[0]
 class Test1 : Base {
+  // CHECK:
+  //   Mangled name: Test1#<init>(kotlin.Int;kotlin.Int){}
+  //   Public signature: /Test1.<init>|-7691762014320324121[0]
   constructor(xx: Int, yy: Int) /* primary */ {
     super/*Base*/(x = xx, y = yy)
     /* <init>() */
@@ -24,15 +54,25 @@ class Test1 : Base {
 
 }
 
+// CHECK:
+//   Mangled name: Test2
+//   Public signature: /Test2|null[0]
 class Test2 : Base {
+  // CHECK:
+  //   Mangled name: Test2#<init>(kotlin.Int;kotlin.Int){}
+  //   Public signature: /Test2.<init>|-7691762014320324121[0]
   constructor(xx: Int, yy: Int) {
     super/*Base*/(x = xx, y = yy)
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: Test2#<init>(kotlin.Int;kotlin.Int;kotlin.Any){}
+  //   Public signature: /Test2.<init>|-2775945437722696135[0]
   constructor(xxx: Int, yyy: Int, a: Any) {
     this/*Test2*/(xx = xxx, yy = yyy)
   }
 
 }
+

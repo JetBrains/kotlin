@@ -1,38 +1,90 @@
+// CHECK:
+//   Mangled name: IFoo
+//   Public signature: /IFoo|null[0]
 fun interface IFoo {
+  // CHECK:
+  //   Mangled name: IFoo#foo(kotlin.Int){}
+  //   Public signature: /IFoo.foo|-104159190164110731[0]
   abstract fun foo(i: Int)
 
 }
 
+// CHECK:
+//   Mangled name: #useVararg(kotlin.Array<out|IFoo>...){}
+//   Public signature: /useVararg|-167843892719966590[0]
 fun useVararg(vararg foos: IFoo) {
 }
 
+// CHECK:
+//   Mangled name: #testLambda(){}
+//   Public signature: /testLambda|-124997257399938843[0]
 fun testLambda() {
-  useVararg(foos = [local fun <anonymous>(it: Int) {
-    return Unit
-  }
+  useVararg(foos = [
+    // CHECK:
+    //   Mangled name computed from Ir:         #testLambda(){}#<anonymous>#static(kotlin.Int){}
+    //   Mangled name computed from Descriptor: #testLambda(){}#<anonymous>#static(kotlin.Int){}
+    //   Mangled name computed from Fir:        could not compute mangled name: java.lang.IllegalStateException: unexpected element useVararg@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Unit| <inline=Unknown>  {... (truncated)
+    local fun <anonymous>(it: Int) {
+      return Unit
+    }
  /*-> IFoo */])
 }
 
+// CHECK:
+//   Mangled name: #testSeveralLambdas(){}
+//   Public signature: /testSeveralLambdas|884186753581284332[0]
 fun testSeveralLambdas() {
-  useVararg(foos = [local fun <anonymous>(it: Int) {
-    return Unit
-  }
- /*-> IFoo */, local fun <anonymous>(it: Int) {
-    return Unit
-  }
- /*-> IFoo */, local fun <anonymous>(it: Int) {
-    return Unit
-  }
+  useVararg(foos = [
+    // CHECK:
+    //   Mangled name computed from Ir:         #testSeveralLambdas(){}#<anonymous>#static(kotlin.Int){}
+    //   Mangled name computed from Descriptor: #testSeveralLambdas(){}#<anonymous>#static(kotlin.Int){}
+    //   Mangled name computed from Fir:        could not compute mangled name: java.lang.IllegalStateException: unexpected element useVararg@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Unit| <inline=Unknown>  {... (truncated)
+    local fun <anonymous>(it: Int) {
+      return Unit
+    }
+ /*-> IFoo */, 
+    // CHECK:
+    //   Mangled name computed from Ir:         #testSeveralLambdas(){}#<anonymous>#static(kotlin.Int){}
+    //   Mangled name computed from Descriptor: #testSeveralLambdas(){}#<anonymous>#static(kotlin.Int){}
+    //   Mangled name computed from Fir:        could not compute mangled name: java.lang.IllegalStateException: unexpected element useVararg@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Unit| <inline=Unknown>  {... (truncated)
+    local fun <anonymous>(it: Int) {
+      return Unit
+    }
+ /*-> IFoo */, 
+    // CHECK:
+    //   Mangled name computed from Ir:         #testSeveralLambdas(){}#<anonymous>#static(kotlin.Int){}
+    //   Mangled name computed from Descriptor: #testSeveralLambdas(){}#<anonymous>#static(kotlin.Int){}
+    //   Mangled name computed from Fir:        could not compute mangled name: java.lang.IllegalStateException: unexpected element useVararg@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Unit| <inline=Unknown>  {... (truncated)
+    local fun <anonymous>(it: Int) {
+      return Unit
+    }
  /*-> IFoo */])
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #withVarargOfInt(kotlin.IntArray...){}kotlin.String
+//   Public signature: /withVarargOfInt|-4664776409518571139[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #withVarargOfInt(kotlin.IntArray...){}
+//   Mangled name computed from Descriptor: #withVarargOfInt(kotlin.IntArray...){}
+//   Mangled name computed from Fir:        #withVarargOfInt(kotlin.IntArray...){}kotlin.String
+//   Public signature: /withVarargOfInt|-4664776409518571139[0]
 fun withVarargOfInt(vararg xs: Int): String {
   return ""
 }
 
+// CHECK:
+//   Mangled name: #testAdaptedCR(){}
+//   Public signature: /testAdaptedCR|-2000726175248606[0]
 fun testAdaptedCR() {
-  useVararg(foos = [local fun withVarargOfInt(p0: Int) {
-    withVarargOfInt(xs = [p0])
-  }
+  useVararg(foos = [
+    // CHECK:
+    //   Mangled name computed from Ir:         #testAdaptedCR(){}#withVarargOfInt#static(kotlin.Int){}
+    //   Mangled name computed from Descriptor: #testAdaptedCR(){}#withVarargOfInt#static(kotlin.Int){}
+    //   Mangled name computed from Fir:        #withVarargOfInt(kotlin.IntArray...){}kotlin.String
+    local fun withVarargOfInt(p0: Int) {
+      withVarargOfInt(xs = [p0])
+    }
  /*-> IFoo */])
 }
+

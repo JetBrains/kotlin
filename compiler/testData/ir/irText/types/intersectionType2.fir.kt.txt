@@ -1,12 +1,24 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
 interface A<out T : Any?> {
 
 }
 
+// CHECK:
+//   Mangled name: Foo
+//   Public signature: /Foo|null[0]
 interface Foo {
 
 }
 
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[0]
 open class B : Foo, A<B> {
+  // CHECK:
+  //   Mangled name: B#<init>(){}
+  //   Public signature: /B.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -15,7 +27,13 @@ open class B : Foo, A<B> {
 
 }
 
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
 open class C : Foo, A<C> {
+  // CHECK:
+  //   Mangled name: C#<init>(){}
+  //   Public signature: /C.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -24,19 +42,45 @@ open class C : Foo, A<C> {
 
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #run(kotlin.Function0<0:0>){0§<kotlin.Any?>}0:0
+//   Public signature: /run|3503148828372491191[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #run(kotlin.Function0<0:0>){0§<kotlin.Any?>}
+//   Mangled name computed from Descriptor: #run(kotlin.Function0<0:0>){0§<kotlin.Any?>}
+//   Mangled name computed from Fir:        #run(kotlin.Function0<0:0>){0§<kotlin.Any?>}0:0
+//   Public signature: /run|3503148828372491191[0]
 fun <T : Any?> run(fn: Function0<T>): T {
   return fn.invoke()
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #foo(){}kotlin.Any
+//   Public signature: /foo|-9059697968601777418[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #foo(){}
+//   Mangled name computed from Descriptor: #foo(){}
+//   Mangled name computed from Fir:        #foo(){}kotlin.Any
+//   Public signature: /foo|-9059697968601777418[0]
 fun foo(): Any {
-  return run<Foo>(fn = local fun <anonymous>(): Foo {
-    val mm: B = B()
-    val nn: C = C()
-    val c: Foo = when {
-      true -> mm
-      else -> nn
+  return run<Foo>(fn = 
+    // CHECK JVM_IR:
+    //   Mangled name computed from Ir:         #foo(){}kotlin.Any#<anonymous>#static(){}Foo
+    //   Mangled name computed from Descriptor: #foo(){}kotlin.Any#<anonymous>#static(){}Foo
+    //   Mangled name computed from Fir:        could not compute mangled name: java.lang.IllegalStateException: unexpected element run@fun <anonymous>(): R|it(Foo & A<*>)| <inline=NoInline>  {... (truncated)
+    // CHECK JS_IR:
+    //   Mangled name computed from Ir:         #foo(){}#<anonymous>#static(){}
+    //   Mangled name computed from Descriptor: #foo(){}#<anonymous>#static(){}
+    //   Mangled name computed from Fir:        could not compute mangled name: java.lang.IllegalStateException: unexpected element run@fun <anonymous>(): R|it(Foo & A<*>)| <inline=NoInline>  {... (truncated)
+    local fun <anonymous>(): Foo {
+      val mm: B = B()
+      val nn: C = C()
+      val c: Foo = when {
+        true -> mm
+        else -> nn
+      }
+      return c
     }
-    return c
-  }
 )
 }
+

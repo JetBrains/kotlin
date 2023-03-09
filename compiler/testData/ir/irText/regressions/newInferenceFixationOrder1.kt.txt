@@ -1,20 +1,36 @@
+// CHECK:
+//   Mangled name: #foo(){0§<kotlin.Any?>;1§<kotlin.Any?>}kotlin.Function1<0:0,0:1>
+//   Public signature: /foo|-9122187844133412005[0]
 fun <X : Any?, Y : Any?> foo(): Function1<X, Y> {
   return TODO()
 }
 
+// CHECK:
+//   Mangled name: Inv2
+//   Public signature: /Inv2|null[0]
 interface Inv2<A : Any?, B : Any?> {
 
 }
 
+// CHECK:
+//   Mangled name: #check(0:0;0:1;kotlin.Function1<0:0,0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}Inv2<0:0,0:1>
+//   Public signature: /check|5984400751488580697[0]
 fun <T : Any?, R : Any?> check(x: T, y: R, f: Function1<T, R>): Inv2<T, R> {
   return TODO()
 }
 
+// CHECK:
+//   Mangled name: #test(){}Inv2<kotlin.String,kotlin.Int>
+//   Public signature: /test|1156894151612153537[0]
 fun test(): Inv2<String, Int> {
   return check<String, Int>(x = "", y = 1, f = foo<String, Int>())
 }
 
+// CHECK:
+//   Mangled name: #box(){}kotlin.String
+//   Public signature: /box|-9347091776561469[0]
 fun box(): String {
   val x: Inv2<String, Int> = test()
   return "OK"
 }
+

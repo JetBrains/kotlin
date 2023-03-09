@@ -1,5 +1,9 @@
 // FIR_IDENTICAL
 // TARGET_BACKEND: JVM
+
+// NO_SIGNATURE_DUMP
+// ^KT-57429
+
 // FILE: samConversionInGenericConstructorCall.kt
 fun test3(
     f1: (String) -> String,

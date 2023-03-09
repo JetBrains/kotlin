@@ -1,34 +1,70 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
 abstract class A {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: A{}x
+  //   Public signature: /A.x|-8060530855978347579[0]
   val x: B
     field = B()
+    // CHECK:
+    //   Mangled name: A#<get-x>(){}B
+    //   Public signature: /A.x.<get-x>|-4306177069200763996[0]
     get
 
+  // CHECK:
+  //   Mangled name: A{}y
+  //   Public signature: /A.y|3625903257357557171[0]
   var y: Int
     field = 0
+    // CHECK:
+    //   Mangled name: A#<get-y>(){}kotlin.Int
+    //   Public signature: /A.y.<get-y>|-6745575372101973707[0]
     get
+    // CHECK:
+    //   Mangled name: A#<set-y>(kotlin.Int){}
+    //   Public signature: /A.y.<set-y>|2154335559382602722[0]
     set
 
 }
 
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[0]
 class B {
+  // CHECK:
+  //   Mangled name: B#<init>(){}
+  //   Public signature: /B.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: B#plusAssign(kotlin.Int){}
+  //   Public signature: /B.plusAssign|3258359553712471205[0]
   operator fun plusAssign(x: Int) {
   }
 
 }
 
+// CHECK:
+//   Mangled name: Test1
+//   Public signature: /Test1|null[0]
 class Test1 : A {
+  // CHECK:
+  //   Mangled name: Test1#<init>(){}
+  //   Public signature: /Test1.<init>|-5645683436151566731[0]
   constructor() {
     super/*A*/()
     /* <init>() */
@@ -45,13 +81,22 @@ class Test1 : A {
 
 }
 
+// CHECK:
+//   Mangled name: Test2
+//   Public signature: /Test2|null[0]
 class Test2 : J {
+  // CHECK:
+  //   Mangled name: Test2#<init>(){}
+  //   Public signature: /Test2.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*J*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name computed from Ir:         Test2.<ANI>
+  //   Mangled name computed from Descriptor: Test2
   init {
     <this>(super<Test2>).#field = 42
   }

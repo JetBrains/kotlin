@@ -1,11 +1,26 @@
+// CHECK:
+//   Mangled name: X
+//   Public signature: /X|null[0]
 interface X {
+  // CHECK:
+  //   Mangled name: X{}xs
+  //   Public signature: /X.xs|1063330853857063704[0]
   abstract val xs: MutableList<Any>
+    // CHECK:
+    //   Mangled name: X#<get-xs>(){}kotlin.collections.MutableList<kotlin.Any>
+    //   Public signature: /X.xs.<get-xs>|4835834621360897253[0]
     abstract get
 
+  // CHECK:
+  //   Mangled name: X#f(){}kotlin.collections.MutableList<kotlin.Any>
+  //   Public signature: /X.f|7644118277748321581[0]
   abstract fun f(): MutableList<Any>
 
 }
 
+// CHECK:
+//   Mangled name: #test(X;X?){}
+//   Public signature: /test|5134068917668758678[0]
 fun test(x: X, nx: X?) {
   { // BLOCK
     val tmp0_this: X = x
@@ -30,28 +45,49 @@ fun test(x: X, nx: X?) {
   }).plusAssign<Int>(element = 6)
 }
 
+// CHECK:
+//   Mangled name: #testExtensionReceiver@kotlin.collections.MutableList<kotlin.Any>(){}
+//   Public signature: /testExtensionReceiver|-1953518633341294637[0]
 fun MutableList<Any>.testExtensionReceiver() {
   <this>.plusAssign<Int>(element = 100)
 }
 
+// CHECK:
+//   Mangled name: AML
+//   Public signature: /AML|null[0]
 abstract class AML : MutableList<Int> {
+  // CHECK:
+  //   Mangled name: AML#<init>(){}
+  //   Public signature: /AML.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: AML#testExplicitThis(){}
+  //   Public signature: /AML.testExplicitThis|3726917819644420797[0]
   fun testExplicitThis() {
     <this>.plusAssign<Int>(element = 200)
   }
 
+  // CHECK:
+  //   Mangled name: AML.Inner
+  //   Public signature: /AML.Inner|null[0]
   inner class Inner {
+    // CHECK:
+    //   Mangled name: AML.Inner#<init>(){}
+    //   Public signature: /AML.Inner.<init>|-5645683436151566731[0]
     constructor() /* primary */ {
       super/*Any*/()
       /* <init>() */
 
     }
 
+    // CHECK:
+    //   Mangled name: AML.Inner#testOuterThis(){}
+    //   Public signature: /AML.Inner.testOuterThis|-5189187038429412487[0]
     fun testOuterThis() {
       <this>.plusAssign<Int>(element = 300)
     }
@@ -59,3 +95,4 @@ abstract class AML : MutableList<Int> {
   }
 
 }
+

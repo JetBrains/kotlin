@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_IR
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_KT_IR
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LINK_VIA_SIGNATURES
 import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
@@ -48,6 +49,7 @@ abstract class AbstractIrTextTest<FrontendOutput : ResultingArtifact.FrontendOut
         defaultDirectives {
             +DUMP_IR
             +DUMP_KT_IR
+            +LINK_VIA_SIGNATURES
         }
 
         useAfterAnalysisCheckers(

@@ -1,104 +1,273 @@
+// CHECK:
+//   Mangled name: Value
+//   Public signature: /Value|null[0]
 class Value<T : Any?, IT : IR<T>> {
+  // CHECK:
+  //   Mangled name: Value#<init>(1:0;1:1){}
+  //   Public signature: /Value.<init>|3086114026882374588[0]
   constructor(value1: T, value2: IT) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: Value{}value1
+  //   Public signature: /Value.value1|-1609410989855067486[0]
   var value1: T
     field = value1
+    // CHECK JVM_IR:
+    //   Mangled name: Value#<get-value1>(){}1:0
+    //   Public signature: /Value.value1.<get-value1>|6019421524321236052[0]
+    // CHECK JS_IR:
+    //   Mangled name: Value#<get-value1>(){}
+    //   Public signature: /Value.value1.<get-value1>|6997002919469559625[0]
     get
+    // CHECK:
+    //   Mangled name: Value#<set-value1>(1:0){}
+    //   Public signature: /Value.value1.<set-value1>|6839885877777773163[0]
     set
 
+  // CHECK:
+  //   Mangled name: Value{}value2
+  //   Public signature: /Value.value2|-1664181645671419060[0]
   val value2: IT
     field = value2
+    // CHECK JVM_IR:
+    //   Mangled name: Value#<get-value2>(){}1:1
+    //   Public signature: /Value.value2.<get-value2>|3746012481463661565[0]
+    // CHECK JS_IR:
+    //   Mangled name: Value#<get-value2>(){}
+    //   Public signature: /Value.value2.<get-value2>|1776957621204807843[0]
     get
 
 }
 
+// CHECK:
+//   Mangled name: IDelegate1
+//   Public signature: /IDelegate1|null[0]
 interface IDelegate1<T1 : Any?, R1 : Any?> {
+  // CHECK JVM_IR:
+  //   Mangled name: IDelegate1#getValue(1:0;kotlin.reflect.KProperty<*>){}1:1
+  //   Public signature: /IDelegate1.getValue|-902248562118213940[0]
+  // CHECK JS_IR:
+  //   Mangled name: IDelegate1#getValue(1:0;kotlin.reflect.KProperty<*>){}
+  //   Public signature: /IDelegate1.getValue|-5099931934018608327[0]
   abstract operator fun getValue(t: T1, p: KProperty<*>): R1
 
 }
 
+// CHECK:
+//   Mangled name: IDelegate2
+//   Public signature: /IDelegate2|null[0]
 interface IDelegate2<T2 : Any?, R2 : Any?> {
+  // CHECK JVM_IR:
+  //   Mangled name: IDelegate2#getValue(1:0;kotlin.reflect.KProperty<*>){}1:1
+  //   Public signature: /IDelegate2.getValue|-902248562118213940[0]
+  // CHECK JS_IR:
+  //   Mangled name: IDelegate2#getValue(1:0;kotlin.reflect.KProperty<*>){}
+  //   Public signature: /IDelegate2.getValue|-5099931934018608327[0]
   abstract operator fun getValue(t: T2, p: KProperty<*>): R2
 
 }
 
+// CHECK:
+//   Mangled name: IR
+//   Public signature: /IR|null[0]
 interface IR<R : Any?> {
+  // CHECK JVM_IR:
+  //   Mangled name: IR#foo(){}1:0
+  //   Public signature: /IR.foo|-5478580208809996038[0]
+  // CHECK JS_IR:
+  //   Mangled name: IR#foo(){}
+  //   Public signature: /IR.foo|-1041209573719867811[0]
   abstract fun foo(): R
 
 }
 
+// CHECK:
+//   Mangled name: CR
+//   Public signature: /CR|null[0]
 class CR<R : Any?> : IR<R> {
+  // CHECK:
+  //   Mangled name: CR#<init>(1:0){}
+  //   Public signature: /CR.<init>|-8731461708390519279[0]
   constructor(r: R) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: CR{}r
+  //   Public signature: /CR.r|-8117627916896159533[0]
   val r: R
     field = r
+    // CHECK JVM_IR:
+    //   Mangled name: CR#<get-r>(){}1:0
+    //   Public signature: /CR.r.<get-r>|8828977917809363505[0]
+    // CHECK JS_IR:
+    //   Mangled name: CR#<get-r>(){}
+    //   Public signature: /CR.r.<get-r>|-7424184448774736572[0]
     get
 
+  // CHECK JVM_IR:
+  //   Mangled name: CR#foo(){}1:0
+  //   Public signature: /CR.foo|-5478580208809996038[0]
+  // CHECK JS_IR:
+  //   Mangled name: CR#foo(){}
+  //   Public signature: /CR.foo|-1041209573719867811[0]
   override fun foo(): R {
     return <this>.<get-r>()
   }
 
 }
 
+// CHECK:
+//   Mangled name: P
+//   Public signature: /P|null[0]
 class P<P1 : Any?, P2 : Any?> {
+  // CHECK:
+  //   Mangled name: P#<init>(1:0;1:1){}
+  //   Public signature: /P.<init>|3086114026882374588[0]
   constructor(p1: P1, p2: P2) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: P{}p1
+  //   Public signature: /P.p1|7711764890799440087[0]
   val p1: P1
     field = p1
+    // CHECK JVM_IR:
+    //   Mangled name: P#<get-p1>(){}1:0
+    //   Public signature: /P.p1.<get-p1>|-4219781876451304030[0]
+    // CHECK JS_IR:
+    //   Mangled name: P#<get-p1>(){}
+    //   Public signature: /P.p1.<get-p1>|419663188770843259[0]
     get
 
+  // CHECK:
+  //   Mangled name: P{}p2
+  //   Public signature: /P.p2|1837305664617486052[0]
   val p2: P2
     field = p2
+    // CHECK JVM_IR:
+    //   Mangled name: P#<get-p2>(){}1:1
+    //   Public signature: /P.p2.<get-p2>|6195993200459932152[0]
+    // CHECK JS_IR:
+    //   Mangled name: P#<get-p2>(){}
+    //   Public signature: /P.p2.<get-p2>|3135798795606784082[0]
     get
 
 }
 
-val <T : Any?> Value<T, CR<T>>.additionalText: P<T, T> /* by */
+// CHECK:
+//   Mangled name: @Value<0:0,CR<0:0>>{0§<kotlin.Any?>}additionalText
+//   Public signature: /additionalText|-3624592186686248643[0]
+val <T : Any?> Value<T, CR<T>>.additionalText: P<T, T> /* by */ 
   field = { // BLOCK
+    // CHECK:
+    //   Mangled name (compatible mode: false): @Value<1:0,CR<1:0>>{0§<kotlin.Any?>}additionalText.<no name provided>
+    //   Mangled name (compatible mode: true):  additionalText$delegate.<no name provided>
     local class <no name provided> : IDelegate1<Value<Any?, CR<Any?>>, P<Any?, Any?>> {
+      // CHECK:
+      //   Mangled name (compatible mode: false): @Value<2:0,CR<2:0>>{0§<kotlin.Any?>}additionalText.<no name provided>#<init>(){}
+      //   Mangled name (compatible mode: true):  additionalText$delegate.<no name provided>#<init>(){}
       constructor() /* primary */ {
         super/*Any*/()
         /* <init>() */
 
       }
 
+      // CHECK JVM_IR:
+      //   Mangled name (compatible mode: false): @Value<2:0,CR<2:0>>{0§<kotlin.Any?>}additionalText.<no name provided>#qux11(0:0){0§<kotlin.Any?>}0:0
+      //   Mangled name (compatible mode: true):  additionalText$delegate.<no name provided>#qux11(0:0){0§<kotlin.Any?>}0:0
+      // CHECK JS_IR:
+      //   Mangled name (compatible mode: false): @Value<2:0,CR<2:0>>{0§<kotlin.Any?>}additionalText.<no name provided>#qux11(0:0){0§<kotlin.Any?>}
+      //   Mangled name (compatible mode: true):  additionalText$delegate.<no name provided>#qux11(0:0){0§<kotlin.Any?>}
       fun <F11T : Any?> qux11(t: F11T): F11T {
         return t
       }
 
+      // CHECK JVM_IR:
+      //   Mangled name computed from Ir (compatible mode: false):         @Value<2:0,CR<2:0>>{0§<kotlin.Any?>}additionalText.<no name provided>#qux12(0:0){0§<IR<kotlin.Any?>>}kotlin.Any?
+      //   Mangled name computed from Ir (compatible mode: true):          additionalText$delegate.<no name provided>#qux12(0:0){0§<IR<kotlin.Any?>>}kotlin.Any?
+      //   Mangled name computed from Descriptor (compatible mode: false): @Value<2:0,CR<2:0>>{0§<kotlin.Any?>}additionalText.<no name provided>#qux12(0:0){0§<IR<2:0>>}2:0
+      //   Mangled name computed from Descriptor (compatible mode: true):  @Value<2:0,CR<2:0>>{0§<kotlin.Any?>}additionalText.<no name provided>#qux12(0:0){0§<IR<2:0>>}2:0
+      // CHECK JS_IR:
+      //   Mangled name computed from Ir (compatible mode: false):         @Value<2:0,CR<2:0>>{0§<kotlin.Any?>}additionalText.<no name provided>#qux12(0:0){0§<IR<kotlin.Any?>>}
+      //   Mangled name computed from Ir (compatible mode: true):          additionalText$delegate.<no name provided>#qux12(0:0){0§<IR<kotlin.Any?>>}
+      //   Mangled name computed from Descriptor (compatible mode: false): @Value<2:0,CR<2:0>>{0§<kotlin.Any?>}additionalText.<no name provided>#qux12(0:0){0§<IR<2:0>>}
+      //   Mangled name computed from Descriptor (compatible mode: true):  @Value<2:0,CR<2:0>>{0§<kotlin.Any?>}additionalText.<no name provided>#qux12(0:0){0§<IR<2:0>>}
       fun <F12T : IR<Any?>> qux12(t: F12T): Any? {
         return t.foo() /*as Any? */
       }
 
-      private val Value<Any?, CR<Any?>>.deepO: Any? /* by */
+      // CHECK:
+      //   Mangled name computed from Ir (compatible mode: false):         @Value<2:0,CR<2:0>>{0§<kotlin.Any?>}additionalText.<no name provided>@Value<kotlin.Any?,CR<kotlin.Any?>>{}deepO
+      //   Mangled name computed from Ir (compatible mode: true):          additionalText$delegate.<no name provided>@Value<kotlin.Any?,CR<kotlin.Any?>>{}deepO
+      //   Mangled name computed from Descriptor (compatible mode: false): @Value<2:0,CR<2:0>>{0§<kotlin.Any?>}additionalText.<no name provided>@Value<2:0,CR<2:0>>{}deepO
+      //   Mangled name computed from Descriptor (compatible mode: true):  @Value<2:0,CR<2:0>>{0§<kotlin.Any?>}additionalText.<no name provided>@Value<2:0,CR<2:0>>{}deepO
+      private val Value<Any?, CR<Any?>>.deepO: Any? /* by */ 
         field = { // BLOCK
+          // CHECK:
+          //   Mangled name computed from Ir (compatible mode: false):         @Value<3:0,CR<3:0>>{0§<kotlin.Any?>}additionalText.<no name provided>@Value<kotlin.Any?,CR<kotlin.Any?>>{}deepO.<no name provided>
+          //   Mangled name computed from Ir (compatible mode: true):          additionalText$delegate.<no name provided>.deepO$delegate.<no name provided>
+          //   Mangled name computed from Descriptor (compatible mode: false): @Value<3:0,CR<3:0>>{0§<kotlin.Any?>}additionalText.<no name provided>@Value<3:0,CR<3:0>>{}deepO.<no name provided>
+          //   Mangled name computed from Descriptor (compatible mode: true):  @Value<3:0,CR<3:0>>{0§<kotlin.Any?>}additionalText.<no name provided>@Value<3:0,CR<3:0>>{}deepO.<no name provided>
           local class <no name provided> : IDelegate1<Value<Any?, CR<Any?>>, Any?> {
+            // CHECK:
+            //   Mangled name computed from Ir (compatible mode: false):         @Value<4:0,CR<4:0>>{0§<kotlin.Any?>}additionalText.<no name provided>@Value<kotlin.Any?,CR<kotlin.Any?>>{}deepO.<no name provided>#<init>(){}
+            //   Mangled name computed from Ir (compatible mode: true):          additionalText$delegate.<no name provided>.deepO$delegate.<no name provided>#<init>(){}
+            //   Mangled name computed from Descriptor (compatible mode: false): @Value<4:0,CR<4:0>>{0§<kotlin.Any?>}additionalText.<no name provided>@Value<4:0,CR<4:0>>{}deepO.<no name provided>#<init>(){}
+            //   Mangled name computed from Descriptor (compatible mode: true):  @Value<4:0,CR<4:0>>{0§<kotlin.Any?>}additionalText.<no name provided>@Value<4:0,CR<4:0>>{}deepO.<no name provided>#<init>(){}
             constructor() /* primary */ {
               super/*Any*/()
               /* <init>() */
 
             }
 
+            // CHECK JVM_IR:
+            //   Mangled name computed from Ir (compatible mode: false):         @Value<4:0,CR<4:0>>{0§<kotlin.Any?>}additionalText.<no name provided>@Value<kotlin.Any?,CR<kotlin.Any?>>{}deepO.<no name provided>#getValue(Value<kotlin.Any?,CR<kotlin.Any?>>;kotlin.reflect.KProperty<*>){}kotlin.Any?
+            //   Mangled name computed from Ir (compatible mode: true):          additionalText$delegate.<no name provided>.deepO$delegate.<no name provided>#getValue(Value<kotlin.Any?,CR<kotlin.Any?>>;kotlin.reflect.KProperty<*>){}kotlin.Any?
+            //   Mangled name computed from Descriptor (compatible mode: false): @Value<4:0,CR<4:0>>{0§<kotlin.Any?>}additionalText.<no name provided>@Value<4:0,CR<4:0>>{}deepO.<no name provided>#getValue(Value<4:0,CR<4:0>>;kotlin.reflect.KProperty<*>){}4:0
+            //   Mangled name computed from Descriptor (compatible mode: true):  @Value<4:0,CR<4:0>>{0§<kotlin.Any?>}additionalText.<no name provided>@Value<4:0,CR<4:0>>{}deepO.<no name provided>#getValue(Value<4:0,CR<4:0>>;kotlin.reflect.KProperty<*>){}4:0
+            // CHECK JS_IR:
+            //   Mangled name computed from Ir (compatible mode: false):         @Value<4:0,CR<4:0>>{0§<kotlin.Any?>}additionalText.<no name provided>@Value<kotlin.Any?,CR<kotlin.Any?>>{}deepO.<no name provided>#getValue(Value<kotlin.Any?,CR<kotlin.Any?>>;kotlin.reflect.KProperty<*>){}
+            //   Mangled name computed from Ir (compatible mode: true):          additionalText$delegate.<no name provided>.deepO$delegate.<no name provided>#getValue(Value<kotlin.Any?,CR<kotlin.Any?>>;kotlin.reflect.KProperty<*>){}
+            //   Mangled name computed from Descriptor (compatible mode: false): @Value<4:0,CR<4:0>>{0§<kotlin.Any?>}additionalText.<no name provided>@Value<4:0,CR<4:0>>{}deepO.<no name provided>#getValue(Value<4:0,CR<4:0>>;kotlin.reflect.KProperty<*>){}
+            //   Mangled name computed from Descriptor (compatible mode: true):  @Value<4:0,CR<4:0>>{0§<kotlin.Any?>}additionalText.<no name provided>@Value<4:0,CR<4:0>>{}deepO.<no name provided>#getValue(Value<4:0,CR<4:0>>;kotlin.reflect.KProperty<*>){}
             override operator fun getValue(t: Value<Any?, CR<Any?>>, p: KProperty<*>): Any? {
               return t.<get-value1>() /*as Any? */
             }
 
+            // CHECK JVM_IR:
+            //   Mangled name computed from Ir (compatible mode: false):         @Value<4:0,CR<4:0>>{0§<kotlin.Any?>}additionalText.<no name provided>@Value<kotlin.Any?,CR<kotlin.Any?>>{}deepO.<no name provided>#qux21(0:0){0§<kotlin.Any?>}0:0
+            //   Mangled name computed from Ir (compatible mode: true):          additionalText$delegate.<no name provided>.deepO$delegate.<no name provided>#qux21(0:0){0§<kotlin.Any?>}0:0
+            //   Mangled name computed from Descriptor (compatible mode: false): @Value<4:0,CR<4:0>>{0§<kotlin.Any?>}additionalText.<no name provided>@Value<4:0,CR<4:0>>{}deepO.<no name provided>#qux21(0:0){0§<kotlin.Any?>}0:0
+            //   Mangled name computed from Descriptor (compatible mode: true):  @Value<4:0,CR<4:0>>{0§<kotlin.Any?>}additionalText.<no name provided>@Value<4:0,CR<4:0>>{}deepO.<no name provided>#qux21(0:0){0§<kotlin.Any?>}0:0
+            // CHECK JS_IR:
+            //   Mangled name computed from Ir (compatible mode: false):         @Value<4:0,CR<4:0>>{0§<kotlin.Any?>}additionalText.<no name provided>@Value<kotlin.Any?,CR<kotlin.Any?>>{}deepO.<no name provided>#qux21(0:0){0§<kotlin.Any?>}
+            //   Mangled name computed from Ir (compatible mode: true):          additionalText$delegate.<no name provided>.deepO$delegate.<no name provided>#qux21(0:0){0§<kotlin.Any?>}
+            //   Mangled name computed from Descriptor (compatible mode: false): @Value<4:0,CR<4:0>>{0§<kotlin.Any?>}additionalText.<no name provided>@Value<4:0,CR<4:0>>{}deepO.<no name provided>#qux21(0:0){0§<kotlin.Any?>}
+            //   Mangled name computed from Descriptor (compatible mode: true):  @Value<4:0,CR<4:0>>{0§<kotlin.Any?>}additionalText.<no name provided>@Value<4:0,CR<4:0>>{}deepO.<no name provided>#qux21(0:0){0§<kotlin.Any?>}
             fun <F21T : Any?> qux21(t: F21T): F21T {
               return t
             }
 
+            // CHECK JVM_IR:
+            //   Mangled name computed from Ir (compatible mode: false):         @Value<4:0,CR<4:0>>{0§<kotlin.Any?>}additionalText.<no name provided>@Value<kotlin.Any?,CR<kotlin.Any?>>{}deepO.<no name provided>#qux22(0:0){0§<IR<kotlin.Any?>>}kotlin.Any?
+            //   Mangled name computed from Ir (compatible mode: true):          additionalText$delegate.<no name provided>.deepO$delegate.<no name provided>#qux22(0:0){0§<IR<kotlin.Any?>>}kotlin.Any?
+            //   Mangled name computed from Descriptor (compatible mode: false): @Value<4:0,CR<4:0>>{0§<kotlin.Any?>}additionalText.<no name provided>@Value<4:0,CR<4:0>>{}deepO.<no name provided>#qux22(0:0){0§<IR<4:0>>}4:0
+            //   Mangled name computed from Descriptor (compatible mode: true):  @Value<4:0,CR<4:0>>{0§<kotlin.Any?>}additionalText.<no name provided>@Value<4:0,CR<4:0>>{}deepO.<no name provided>#qux22(0:0){0§<IR<4:0>>}4:0
+            // CHECK JS_IR:
+            //   Mangled name computed from Ir (compatible mode: false):         @Value<4:0,CR<4:0>>{0§<kotlin.Any?>}additionalText.<no name provided>@Value<kotlin.Any?,CR<kotlin.Any?>>{}deepO.<no name provided>#qux22(0:0){0§<IR<kotlin.Any?>>}
+            //   Mangled name computed from Ir (compatible mode: true):          additionalText$delegate.<no name provided>.deepO$delegate.<no name provided>#qux22(0:0){0§<IR<kotlin.Any?>>}
+            //   Mangled name computed from Descriptor (compatible mode: false): @Value<4:0,CR<4:0>>{0§<kotlin.Any?>}additionalText.<no name provided>@Value<4:0,CR<4:0>>{}deepO.<no name provided>#qux22(0:0){0§<IR<4:0>>}
+            //   Mangled name computed from Descriptor (compatible mode: true):  @Value<4:0,CR<4:0>>{0§<kotlin.Any?>}additionalText.<no name provided>@Value<4:0,CR<4:0>>{}deepO.<no name provided>#qux22(0:0){0§<IR<4:0>>}
             fun <F22T : IR<Any?>> qux22(t: F22T): Any? {
               return t.foo() /*as Any? */
             }
@@ -107,19 +276,54 @@ val <T : Any?> Value<T, CR<T>>.additionalText: P<T, T> /* by */
 
           <no name provided>()
         }
+        // CHECK JVM_IR:
+        //   Mangled name computed from Ir (compatible mode: false):         @Value<2:0,CR<2:0>>{0§<kotlin.Any?>}additionalText.<no name provided>#<get-deepO>@Value<kotlin.Any?,CR<kotlin.Any?>>(){}kotlin.Any?
+        //   Mangled name computed from Ir (compatible mode: true):          additionalText$delegate.<no name provided>#<get-deepO>@Value<kotlin.Any?,CR<kotlin.Any?>>(){}kotlin.Any?
+        //   Mangled name computed from Descriptor (compatible mode: false): @Value<2:0,CR<2:0>>{0§<kotlin.Any?>}additionalText.<no name provided>#<get-deepO>@Value<2:0,CR<2:0>>(){}2:0
+        //   Mangled name computed from Descriptor (compatible mode: true):  @Value<2:0,CR<2:0>>{0§<kotlin.Any?>}additionalText.<no name provided>#<get-deepO>@Value<2:0,CR<2:0>>(){}2:0
+        // CHECK JS_IR:
+        //   Mangled name computed from Ir (compatible mode: false):         @Value<2:0,CR<2:0>>{0§<kotlin.Any?>}additionalText.<no name provided>#<get-deepO>@Value<kotlin.Any?,CR<kotlin.Any?>>(){}
+        //   Mangled name computed from Ir (compatible mode: true):          additionalText$delegate.<no name provided>#<get-deepO>@Value<kotlin.Any?,CR<kotlin.Any?>>(){}
+        //   Mangled name computed from Descriptor (compatible mode: false): @Value<2:0,CR<2:0>>{0§<kotlin.Any?>}additionalText.<no name provided>#<get-deepO>@Value<2:0,CR<2:0>>(){}
+        //   Mangled name computed from Descriptor (compatible mode: true):  @Value<2:0,CR<2:0>>{0§<kotlin.Any?>}additionalText.<no name provided>#<get-deepO>@Value<2:0,CR<2:0>>(){}
         private get(): Any? {
           return <this>.#deepO$delegate.getValue(t = <this>, p = <no name provided>::deepO) /*as Any? */
         }
 
-      private val Value<Any?, CR<Any?>>.deepK: Any? /* by */
+      // CHECK:
+      //   Mangled name computed from Ir (compatible mode: false):         @Value<2:0,CR<2:0>>{0§<kotlin.Any?>}additionalText.<no name provided>@Value<kotlin.Any?,CR<kotlin.Any?>>{}deepK
+      //   Mangled name computed from Ir (compatible mode: true):          additionalText$delegate.<no name provided>@Value<kotlin.Any?,CR<kotlin.Any?>>{}deepK
+      //   Mangled name computed from Descriptor (compatible mode: false): @Value<2:0,CR<2:0>>{0§<kotlin.Any?>}additionalText.<no name provided>@Value<2:0,CR<2:0>>{}deepK
+      //   Mangled name computed from Descriptor (compatible mode: true):  @Value<2:0,CR<2:0>>{0§<kotlin.Any?>}additionalText.<no name provided>@Value<2:0,CR<2:0>>{}deepK
+      private val Value<Any?, CR<Any?>>.deepK: Any? /* by */ 
         field = { // BLOCK
+          // CHECK:
+          //   Mangled name computed from Ir (compatible mode: false):         @Value<3:0,CR<3:0>>{0§<kotlin.Any?>}additionalText.<no name provided>@Value<kotlin.Any?,CR<kotlin.Any?>>{}deepK.<no name provided>
+          //   Mangled name computed from Ir (compatible mode: true):          additionalText$delegate.<no name provided>.deepK$delegate.<no name provided>
+          //   Mangled name computed from Descriptor (compatible mode: false): @Value<3:0,CR<3:0>>{0§<kotlin.Any?>}additionalText.<no name provided>@Value<3:0,CR<3:0>>{}deepK.<no name provided>
+          //   Mangled name computed from Descriptor (compatible mode: true):  @Value<3:0,CR<3:0>>{0§<kotlin.Any?>}additionalText.<no name provided>@Value<3:0,CR<3:0>>{}deepK.<no name provided>
           local class <no name provided> : IDelegate1<Value<Any?, CR<Any?>>, Any?> {
+            // CHECK:
+            //   Mangled name computed from Ir (compatible mode: false):         @Value<4:0,CR<4:0>>{0§<kotlin.Any?>}additionalText.<no name provided>@Value<kotlin.Any?,CR<kotlin.Any?>>{}deepK.<no name provided>#<init>(){}
+            //   Mangled name computed from Ir (compatible mode: true):          additionalText$delegate.<no name provided>.deepK$delegate.<no name provided>#<init>(){}
+            //   Mangled name computed from Descriptor (compatible mode: false): @Value<4:0,CR<4:0>>{0§<kotlin.Any?>}additionalText.<no name provided>@Value<4:0,CR<4:0>>{}deepK.<no name provided>#<init>(){}
+            //   Mangled name computed from Descriptor (compatible mode: true):  @Value<4:0,CR<4:0>>{0§<kotlin.Any?>}additionalText.<no name provided>@Value<4:0,CR<4:0>>{}deepK.<no name provided>#<init>(){}
             constructor() /* primary */ {
               super/*Any*/()
               /* <init>() */
 
             }
 
+            // CHECK JVM_IR:
+            //   Mangled name computed from Ir (compatible mode: false):         @Value<4:0,CR<4:0>>{0§<kotlin.Any?>}additionalText.<no name provided>@Value<kotlin.Any?,CR<kotlin.Any?>>{}deepK.<no name provided>#getValue(Value<kotlin.Any?,CR<kotlin.Any?>>;kotlin.reflect.KProperty<*>){}kotlin.Any?
+            //   Mangled name computed from Ir (compatible mode: true):          additionalText$delegate.<no name provided>.deepK$delegate.<no name provided>#getValue(Value<kotlin.Any?,CR<kotlin.Any?>>;kotlin.reflect.KProperty<*>){}kotlin.Any?
+            //   Mangled name computed from Descriptor (compatible mode: false): @Value<4:0,CR<4:0>>{0§<kotlin.Any?>}additionalText.<no name provided>@Value<4:0,CR<4:0>>{}deepK.<no name provided>#getValue(Value<4:0,CR<4:0>>;kotlin.reflect.KProperty<*>){}4:0
+            //   Mangled name computed from Descriptor (compatible mode: true):  @Value<4:0,CR<4:0>>{0§<kotlin.Any?>}additionalText.<no name provided>@Value<4:0,CR<4:0>>{}deepK.<no name provided>#getValue(Value<4:0,CR<4:0>>;kotlin.reflect.KProperty<*>){}4:0
+            // CHECK JS_IR:
+            //   Mangled name computed from Ir (compatible mode: false):         @Value<4:0,CR<4:0>>{0§<kotlin.Any?>}additionalText.<no name provided>@Value<kotlin.Any?,CR<kotlin.Any?>>{}deepK.<no name provided>#getValue(Value<kotlin.Any?,CR<kotlin.Any?>>;kotlin.reflect.KProperty<*>){}
+            //   Mangled name computed from Ir (compatible mode: true):          additionalText$delegate.<no name provided>.deepK$delegate.<no name provided>#getValue(Value<kotlin.Any?,CR<kotlin.Any?>>;kotlin.reflect.KProperty<*>){}
+            //   Mangled name computed from Descriptor (compatible mode: false): @Value<4:0,CR<4:0>>{0§<kotlin.Any?>}additionalText.<no name provided>@Value<4:0,CR<4:0>>{}deepK.<no name provided>#getValue(Value<4:0,CR<4:0>>;kotlin.reflect.KProperty<*>){}
+            //   Mangled name computed from Descriptor (compatible mode: true):  @Value<4:0,CR<4:0>>{0§<kotlin.Any?>}additionalText.<no name provided>@Value<4:0,CR<4:0>>{}deepK.<no name provided>#getValue(Value<4:0,CR<4:0>>;kotlin.reflect.KProperty<*>){}
             override operator fun getValue(t: Value<Any?, CR<Any?>>, p: KProperty<*>): Any? {
               return t.<get-value2>().foo() /*as Any? */
             }
@@ -128,10 +332,30 @@ val <T : Any?> Value<T, CR<T>>.additionalText: P<T, T> /* by */
 
           <no name provided>()
         }
+        // CHECK JVM_IR:
+        //   Mangled name computed from Ir (compatible mode: false):         @Value<2:0,CR<2:0>>{0§<kotlin.Any?>}additionalText.<no name provided>#<get-deepK>@Value<kotlin.Any?,CR<kotlin.Any?>>(){}kotlin.Any?
+        //   Mangled name computed from Ir (compatible mode: true):          additionalText$delegate.<no name provided>#<get-deepK>@Value<kotlin.Any?,CR<kotlin.Any?>>(){}kotlin.Any?
+        //   Mangled name computed from Descriptor (compatible mode: false): @Value<2:0,CR<2:0>>{0§<kotlin.Any?>}additionalText.<no name provided>#<get-deepK>@Value<2:0,CR<2:0>>(){}2:0
+        //   Mangled name computed from Descriptor (compatible mode: true):  @Value<2:0,CR<2:0>>{0§<kotlin.Any?>}additionalText.<no name provided>#<get-deepK>@Value<2:0,CR<2:0>>(){}2:0
+        // CHECK JS_IR:
+        //   Mangled name computed from Ir (compatible mode: false):         @Value<2:0,CR<2:0>>{0§<kotlin.Any?>}additionalText.<no name provided>#<get-deepK>@Value<kotlin.Any?,CR<kotlin.Any?>>(){}
+        //   Mangled name computed from Ir (compatible mode: true):          additionalText$delegate.<no name provided>#<get-deepK>@Value<kotlin.Any?,CR<kotlin.Any?>>(){}
+        //   Mangled name computed from Descriptor (compatible mode: false): @Value<2:0,CR<2:0>>{0§<kotlin.Any?>}additionalText.<no name provided>#<get-deepK>@Value<2:0,CR<2:0>>(){}
+        //   Mangled name computed from Descriptor (compatible mode: true):  @Value<2:0,CR<2:0>>{0§<kotlin.Any?>}additionalText.<no name provided>#<get-deepK>@Value<2:0,CR<2:0>>(){}
         private get(): Any? {
           return <this>.#deepK$delegate.getValue(t = <this>, p = <no name provided>::deepK) /*as Any? */
         }
 
+      // CHECK JVM_IR:
+      //   Mangled name computed from Ir (compatible mode: false):         @Value<2:0,CR<2:0>>{0§<kotlin.Any?>}additionalText.<no name provided>#getValue(Value<kotlin.Any?,CR<kotlin.Any?>>;kotlin.reflect.KProperty<*>){}P<kotlin.Any?,kotlin.Any?>
+      //   Mangled name computed from Ir (compatible mode: true):          additionalText$delegate.<no name provided>#getValue(Value<kotlin.Any?,CR<kotlin.Any?>>;kotlin.reflect.KProperty<*>){}P<kotlin.Any?,kotlin.Any?>
+      //   Mangled name computed from Descriptor (compatible mode: false): @Value<2:0,CR<2:0>>{0§<kotlin.Any?>}additionalText.<no name provided>#getValue(Value<2:0,CR<2:0>>;kotlin.reflect.KProperty<*>){}P<2:0,2:0>
+      //   Mangled name computed from Descriptor (compatible mode: true):  @Value<2:0,CR<2:0>>{0§<kotlin.Any?>}additionalText.<no name provided>#getValue(Value<2:0,CR<2:0>>;kotlin.reflect.KProperty<*>){}P<2:0,2:0>
+      // CHECK JS_IR:
+      //   Mangled name computed from Ir (compatible mode: false):         @Value<2:0,CR<2:0>>{0§<kotlin.Any?>}additionalText.<no name provided>#getValue(Value<kotlin.Any?,CR<kotlin.Any?>>;kotlin.reflect.KProperty<*>){}
+      //   Mangled name computed from Ir (compatible mode: true):          additionalText$delegate.<no name provided>#getValue(Value<kotlin.Any?,CR<kotlin.Any?>>;kotlin.reflect.KProperty<*>){}
+      //   Mangled name computed from Descriptor (compatible mode: false): @Value<2:0,CR<2:0>>{0§<kotlin.Any?>}additionalText.<no name provided>#getValue(Value<2:0,CR<2:0>>;kotlin.reflect.KProperty<*>){}
+      //   Mangled name computed from Descriptor (compatible mode: true):  @Value<2:0,CR<2:0>>{0§<kotlin.Any?>}additionalText.<no name provided>#getValue(Value<2:0,CR<2:0>>;kotlin.reflect.KProperty<*>){}
       override operator fun getValue(t: Value<Any?, CR<Any?>>, p: KProperty<*>): P<Any?, Any?> {
         return P<Any?, Any?>(p1 = (<this>, t).<get-deepO>() /*as Any? */, p2 = (<this>, t).<get-deepK>() /*as Any? */)
       }
@@ -140,6 +364,13 @@ val <T : Any?> Value<T, CR<T>>.additionalText: P<T, T> /* by */
 
     <no name provided>()
   }
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-additionalText>@Value<0:0,CR<0:0>>(){0§<kotlin.Any?>}P<0:0,0:0>
+  //   Public signature: /additionalText.<get-additionalText>|-2964788147301147474[0]
+  // CHECK JS_IR:
+  //   Mangled name: #<get-additionalText>@Value<0:0,CR<0:0>>(){0§<kotlin.Any?>}
+  //   Public signature: /additionalText.<get-additionalText>|7110754747328025719[0]
   get(): P<T, T> {
     return #additionalText$delegate.getValue(t = <this>, p = ::additionalText/*<T>()*/)
   }
+

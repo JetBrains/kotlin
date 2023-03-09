@@ -1,3 +1,6 @@
+// CHECK:
+//   Mangled name: #test1(){}
+//   Public signature: /test1|4297044443957252634[0]
 fun test1() {
   try { // BLOCK
     println()
@@ -10,6 +13,9 @@ fun test1() {
   }
 }
 
+// CHECK:
+//   Mangled name: #test2(){}kotlin.Int
+//   Public signature: /test2|5542371834528279174[0]
 fun test2(): Int {
   return try { // BLOCK
     println()

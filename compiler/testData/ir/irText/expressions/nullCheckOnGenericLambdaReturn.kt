@@ -1,5 +1,9 @@
 // TARGET_BACKEND: JVM
 // FIR_IDENTICAL
+
+// NO_SIGNATURE_DUMP
+// ^KT-57428
+
 // FILE: nullCheckOnGenericLambdaReturn.kt
 fun checkAny(fn: () -> Any) = fn()
 

@@ -1,42 +1,146 @@
+// CHECK JVM_IR:
+//   Mangled name: #box(){}kotlin.String
+//   Public signature: /box|-9347091776561469[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #box(){}
+//   Mangled name computed from Descriptor: #box(){}
+//   Mangled name computed from Fir:        #box(){}kotlin.String
+//   Public signature: /box|-9347091776561469[0]
 fun box(): String {
   val obj: <no name provided> = { // BLOCK
+    // CHECK JVM_IR:
+    //   Mangled name computed from Ir:         #box(){}kotlin.String.<no name provided>
+    //   Mangled name computed from Descriptor: #box(){}kotlin.String.<no name provided>
+    //   Mangled name computed from Fir:        <anonymous>
+    // CHECK JS_IR:
+    //   Mangled name computed from Ir:         #box(){}.<no name provided>
+    //   Mangled name computed from Descriptor: #box(){}.<no name provided>
+    //   Mangled name computed from Fir:        <anonymous>
     local class <no name provided> {
+      // CHECK JVM_IR:
+      //   Mangled name computed from Ir:         #box(){}kotlin.String.<no name provided>#<init>(){}
+      //   Mangled name computed from Descriptor: #box(){}kotlin.String.<no name provided>#<init>(){}
+      //   Mangled name computed from Fir:        #<init>(){}
+      // CHECK JS_IR:
+      //   Mangled name computed from Ir:         #box(){}.<no name provided>#<init>(){}
+      //   Mangled name computed from Descriptor: #box(){}.<no name provided>#<init>(){}
+      //   Mangled name computed from Fir:        #<init>(){}
       constructor() /* primary */ {
         super/*Any*/()
         /* <init>() */
 
       }
 
+      // CHECK JVM_IR:
+      //   Mangled name computed from Ir:         #box(){}kotlin.String.<no name provided>{}end
+      //   Mangled name computed from Descriptor: #box(){}kotlin.String.<no name provided>{}end
+      //   Mangled name computed from Fir:        {}end
+      // CHECK JS_IR:
+      //   Mangled name computed from Ir:         #box(){}.<no name provided>{}end
+      //   Mangled name computed from Descriptor: #box(){}.<no name provided>{}end
+      //   Mangled name computed from Fir:        {}end
       val end: String
         field = "K"
+        // CHECK JVM_IR:
+        //   Mangled name computed from Ir:         #box(){}kotlin.String.<no name provided>#<get-end>(){}kotlin.String
+        //   Mangled name computed from Descriptor: #box(){}kotlin.String.<no name provided>#<get-end>(){}kotlin.String
+        //   Mangled name computed from Fir:        #<get-end>(){}kotlin.String
+        // CHECK JS_IR:
+        //   Mangled name computed from Ir:         #box(){}.<no name provided>#<get-end>(){}
+        //   Mangled name computed from Descriptor: #box(){}.<no name provided>#<get-end>(){}
+        //   Mangled name computed from Fir:        #<get-end>(){}kotlin.String
         get
 
+      // CHECK JVM_IR:
+      //   Mangled name computed from Ir:         #box(){}kotlin.String.<no name provided>#foo(){}kotlin.String
+      //   Mangled name computed from Descriptor: #box(){}kotlin.String.<no name provided>#foo(){}kotlin.String
+      //   Mangled name computed from Fir:        #foo(){}kotlin.String
+      // CHECK JS_IR:
+      //   Mangled name computed from Ir:         #box(){}.<no name provided>#foo(){}
+      //   Mangled name computed from Descriptor: #box(){}.<no name provided>#foo(){}
+      //   Mangled name computed from Fir:        #foo(){}kotlin.String
       fun foo(): String {
         return <this>.Some(s = "O").bar()
       }
 
+      // CHECK JVM_IR:
+      //   Mangled name computed from Ir:         #box(){}kotlin.String.<no name provided>.Some
+      //   Mangled name computed from Descriptor: #box(){}kotlin.String.<no name provided>.Some
+      //   Mangled name computed from Fir:        Some
+      // CHECK JS_IR:
+      //   Mangled name computed from Ir:         #box(){}.<no name provided>.Some
+      //   Mangled name computed from Descriptor: #box(){}.<no name provided>.Some
+      //   Mangled name computed from Fir:        Some
       local inner class Some : Base {
+        // CHECK JVM_IR:
+        //   Mangled name computed from Ir:         #box(){}kotlin.String.<no name provided>.Some#<init>(kotlin.String){}
+        //   Mangled name computed from Descriptor: #box(){}kotlin.String.<no name provided>.Some#<init>(kotlin.String){}
+        //   Mangled name computed from Fir:        #<init>(kotlin.String){}
+        // CHECK JS_IR:
+        //   Mangled name computed from Ir:         #box(){}.<no name provided>.Some#<init>(kotlin.String){}
+        //   Mangled name computed from Descriptor: #box(){}.<no name provided>.Some#<init>(kotlin.String){}
+        //   Mangled name computed from Fir:        #<init>(kotlin.String){}
         constructor(s: String) /* primary */ {
           <this>.super/*Base*/(s = s)
           /* <init>() */
 
         }
 
+        // CHECK JVM_IR:
+        //   Mangled name computed from Ir:         #box(){}kotlin.String.<no name provided>.Some#bar(){}kotlin.String
+        //   Mangled name computed from Descriptor: #box(){}kotlin.String.<no name provided>.Some#bar(){}kotlin.String
+        //   Mangled name computed from Fir:        #bar(){}kotlin.String
+        // CHECK JS_IR:
+        //   Mangled name computed from Ir:         #box(){}.<no name provided>.Some#bar(){}
+        //   Mangled name computed from Descriptor: #box(){}.<no name provided>.Some#bar(){}
+        //   Mangled name computed from Fir:        #bar(){}kotlin.String
         fun bar(): String {
           return <this>.<get-s>().plus(other = <this>.<get-end>())
         }
 
       }
 
+      // CHECK JVM_IR:
+      //   Mangled name computed from Ir:         #box(){}kotlin.String.<no name provided>.Base
+      //   Mangled name computed from Descriptor: #box(){}kotlin.String.<no name provided>.Base
+      //   Mangled name computed from Fir:        Base
+      // CHECK JS_IR:
+      //   Mangled name computed from Ir:         #box(){}.<no name provided>.Base
+      //   Mangled name computed from Descriptor: #box(){}.<no name provided>.Base
+      //   Mangled name computed from Fir:        Base
       local open inner class Base {
+        // CHECK JVM_IR:
+        //   Mangled name computed from Ir:         #box(){}kotlin.String.<no name provided>.Base#<init>(kotlin.String){}
+        //   Mangled name computed from Descriptor: #box(){}kotlin.String.<no name provided>.Base#<init>(kotlin.String){}
+        //   Mangled name computed from Fir:        #<init>(kotlin.String){}
+        // CHECK JS_IR:
+        //   Mangled name computed from Ir:         #box(){}.<no name provided>.Base#<init>(kotlin.String){}
+        //   Mangled name computed from Descriptor: #box(){}.<no name provided>.Base#<init>(kotlin.String){}
+        //   Mangled name computed from Fir:        #<init>(kotlin.String){}
         constructor(s: String) /* primary */ {
           super/*Any*/()
           /* <init>() */
 
         }
 
+        // CHECK JVM_IR:
+        //   Mangled name computed from Ir:         #box(){}kotlin.String.<no name provided>.Base{}s
+        //   Mangled name computed from Descriptor: #box(){}kotlin.String.<no name provided>.Base{}s
+        //   Mangled name computed from Fir:        {}s
+        // CHECK JS_IR:
+        //   Mangled name computed from Ir:         #box(){}.<no name provided>.Base{}s
+        //   Mangled name computed from Descriptor: #box(){}.<no name provided>.Base{}s
+        //   Mangled name computed from Fir:        {}s
         val s: String
           field = s
+          // CHECK JVM_IR:
+          //   Mangled name computed from Ir:         #box(){}kotlin.String.<no name provided>.Base#<get-s>(){}kotlin.String
+          //   Mangled name computed from Descriptor: #box(){}kotlin.String.<no name provided>.Base#<get-s>(){}kotlin.String
+          //   Mangled name computed from Fir:        #<get-s>(){}kotlin.String
+          // CHECK JS_IR:
+          //   Mangled name computed from Ir:         #box(){}.<no name provided>.Base#<get-s>(){}
+          //   Mangled name computed from Descriptor: #box(){}.<no name provided>.Base#<get-s>(){}
+          //   Mangled name computed from Fir:        #<get-s>(){}kotlin.String
           get
 
       }
@@ -47,3 +151,4 @@ fun box(): String {
   }
   return obj.foo()
 }
+

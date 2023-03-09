@@ -28,3 +28,4 @@ fun <R : Any?> foo(r: Receiver<R>): R {
 fun box(): String {
   return "OK"
 }
+

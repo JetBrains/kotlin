@@ -1,19 +1,48 @@
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[0]
 typealias B<X : Any?> = A<X>
+// CHECK:
+//   Mangled name: B2
+//   Public signature: /B2|null[0]
 typealias B2<T : Any?> = A<A<T>>
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
 class A<Q : Any?> {
+  // CHECK:
+  //   Mangled name computed from Ir:         A#<init>(1:0){}
+  //   Mangled name computed from Descriptor: A#<init>(1:0){}
+  //   Mangled name computed from Fir:        A#<init>(0:-1){}
+  //   Public signature: /A.<init>|8751876555175556900[0]
   constructor(q: Q) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: A{}q
+  //   Public signature: /A.q|3274930974999175741[0]
   val q: Q
     field = q
+    // CHECK JVM_IR:
+    //   Mangled name: A#<get-q>(){}1:0
+    //   Public signature: /A.q.<get-q>|-447041854451904985[0]
+    // CHECK JS_IR:
+    //   Mangled name computed from Ir:         A#<get-q>(){}
+    //   Mangled name computed from Descriptor: A#<get-q>(){}
+    //   Mangled name computed from Fir:        A#<get-q>(){}1:0
+    //   Public signature: /A.q.<get-q>|-447041854451904985[0]
     get
 
 }
 
+// CHECK:
+//   Mangled name: #bar(){}
+//   Public signature: /bar|496682602797471549[0]
 fun bar() {
   val b: A<Int> = A<Int>(q = 2)
   val b2: A<A<Int>> = A<Int>(q = b)
 }
+

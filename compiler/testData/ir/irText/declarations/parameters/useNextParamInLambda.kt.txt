@@ -1,13 +1,25 @@
-fun f(f1: Function0<String> = local fun <anonymous>(): String {
-  return f2.invoke()
-}
-, f2: Function0<String> = local fun <anonymous>(): String {
-  return "FAIL"
-}
+// CHECK:
+//   Mangled name: #f(kotlin.Function0<kotlin.String>;kotlin.Function0<kotlin.String>){}kotlin.String
+//   Public signature: /f|3250103379442841891[0]
+fun f(f1: Function0<String> = 
+  // CHECK:
+  //   Mangled name: #f(kotlin.Function0<kotlin.String>;kotlin.Function0<kotlin.String>){}kotlin.String#<anonymous>#static(){}kotlin.String
+  local fun <anonymous>(): String {
+    return f2.invoke()
+  }
+, f2: Function0<String> = 
+  // CHECK:
+  //   Mangled name: #f(kotlin.Function0<kotlin.String>;kotlin.Function0<kotlin.String>){}kotlin.String#<anonymous>#static(){}kotlin.String
+  local fun <anonymous>(): String {
+    return "FAIL"
+  }
 ): String {
   return f1.invoke()
 }
 
+// CHECK:
+//   Mangled name: #box(){}kotlin.String
+//   Public signature: /box|-9347091776561469[0]
 fun box(): String {
   var result: String = "fail"
   try { // BLOCK
@@ -17,11 +29,18 @@ fun box(): String {
     result = "OK"
   }
 
-  return f(, f2 = local fun <anonymous>(): String {
-    return "O"
-  }
-).plus(other = f(f1 = local fun <anonymous>(): String {
-    return "K"
-  }
+  return f(, f2 = 
+    // CHECK:
+    //   Mangled name: #box(){}kotlin.String#<anonymous>#static(){}kotlin.String
+    local fun <anonymous>(): String {
+      return "O"
+    }
+).plus(other = f(f1 = 
+    // CHECK:
+    //   Mangled name: #box(){}kotlin.String#<anonymous>#static(){}kotlin.String
+    local fun <anonymous>(): String {
+      return "K"
+    }
 ))
 }
+

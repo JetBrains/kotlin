@@ -1,79 +1,152 @@
+// CHECK:
+//   Mangled name: IrType
+//   Public signature: /IrType|null[0]
 interface IrType {
 
 }
 
+// CHECK:
+//   Mangled name: TypeRemapper
+//   Public signature: /TypeRemapper|null[0]
 interface TypeRemapper {
+  // CHECK:
+  //   Mangled name: TypeRemapper#enterScope(IrTypeParametersContainer){}
+  //   Public signature: /TypeRemapper.enterScope|1651098445614641728[0]
   abstract fun enterScope(irTypeParametersContainer: IrTypeParametersContainer)
+  // CHECK:
+  //   Mangled name: TypeRemapper#remapType(IrType){}IrType
+  //   Public signature: /TypeRemapper.remapType|-9004737899985615010[0]
   abstract fun remapType(type: IrType): IrType
+  // CHECK:
+  //   Mangled name: TypeRemapper#leaveScope(){}
+  //   Public signature: /TypeRemapper.leaveScope|-4405470612310357271[0]
   abstract fun leaveScope()
 
 }
 
+// CHECK:
+//   Mangled name: IrTypeParametersContainer
+//   Public signature: /IrTypeParametersContainer|null[0]
 interface IrTypeParametersContainer : IrDeclaration, IrDeclarationParent {
+  // CHECK:
+  //   Mangled name: IrTypeParametersContainer{}typeParameters
+  //   Public signature: /IrTypeParametersContainer.typeParameters|551746886075737521[0]
   abstract var typeParameters: List<IrTypeParameter>
+    // CHECK:
+    //   Mangled name: IrTypeParametersContainer#<get-typeParameters>(){}kotlin.collections.List<IrTypeParameter>
+    //   Public signature: /IrTypeParametersContainer.typeParameters.<get-typeParameters>|6508048225555086161[0]
     abstract get
+    // CHECK:
+    //   Mangled name: IrTypeParametersContainer#<set-typeParameters>(kotlin.collections.List<IrTypeParameter>){}
+    //   Public signature: /IrTypeParametersContainer.typeParameters.<set-typeParameters>|-1608351996457643427[0]
     abstract set
 
 }
 
+// CHECK:
+//   Mangled name: IrDeclaration
+//   Public signature: /IrDeclaration|null[0]
 interface IrDeclaration {
 
 }
 
+// CHECK:
+//   Mangled name: IrTypeParameter
+//   Public signature: /IrTypeParameter|null[0]
 interface IrTypeParameter : IrDeclaration {
+  // CHECK:
+  //   Mangled name: IrTypeParameter{}superTypes
+  //   Public signature: /IrTypeParameter.superTypes|4746750561425700979[0]
   abstract val superTypes: MutableList<IrType>
+    // CHECK:
+    //   Mangled name: IrTypeParameter#<get-superTypes>(){}kotlin.collections.MutableList<IrType>
+    //   Public signature: /IrTypeParameter.superTypes.<get-superTypes>|-6696770425648193325[0]
     abstract get
 
 }
 
+// CHECK:
+//   Mangled name: IrDeclarationParent
+//   Public signature: /IrDeclarationParent|null[0]
 interface IrDeclarationParent {
 
 }
 
+// CHECK:
+//   Mangled name: DeepCopyIrTreeWithSymbols
+//   Public signature: /DeepCopyIrTreeWithSymbols|null[0]
 class DeepCopyIrTreeWithSymbols {
+  // CHECK:
+  //   Mangled name: DeepCopyIrTreeWithSymbols#<init>(TypeRemapper){}
+  //   Public signature: /DeepCopyIrTreeWithSymbols.<init>|1455758733659253884[0]
   constructor(typeRemapper: TypeRemapper) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: DeepCopyIrTreeWithSymbols{}typeRemapper
+  //   Public signature: /DeepCopyIrTreeWithSymbols.typeRemapper|4793044681928918608[0]
   private val typeRemapper: TypeRemapper
     field = typeRemapper
+    // CHECK:
+    //   Mangled name: DeepCopyIrTreeWithSymbols#<get-typeRemapper>(){}TypeRemapper
+    //   Public signature: /DeepCopyIrTreeWithSymbols.typeRemapper.<get-typeRemapper>|5098073462906324888[0]
     private get
 
+  // CHECK:
+  //   Mangled name: DeepCopyIrTreeWithSymbols#copyTypeParameter(IrTypeParameter){}IrTypeParameter
+  //   Public signature: /DeepCopyIrTreeWithSymbols.copyTypeParameter|3854275171797584519[0]
   private fun copyTypeParameter(declaration: IrTypeParameter): IrTypeParameter {
     return declaration
   }
 
+  // CHECK:
+  //   Mangled name: DeepCopyIrTreeWithSymbols#copyTypeParametersFrom@IrTypeParametersContainer(IrTypeParametersContainer){}
+  //   Public signature: /DeepCopyIrTreeWithSymbols.copyTypeParametersFrom|2148396968414493997[0]
   fun IrTypeParametersContainer.copyTypeParametersFrom(other: IrTypeParametersContainer) {
-    <this>.<set-typeParameters>(<set-?> = other.<get-typeParameters>().map<IrTypeParameter, IrTypeParameter>(transform = local fun <anonymous>(it: IrTypeParameter): IrTypeParameter {
-      return <this>.copyTypeParameter(declaration = it)
-    }
+    <this>.<set-typeParameters>(<set-?> = other.<get-typeParameters>().map<IrTypeParameter, IrTypeParameter>(transform = 
+      // CHECK:
+      //   Mangled name: DeepCopyIrTreeWithSymbols#copyTypeParametersFrom@IrTypeParametersContainer(IrTypeParametersContainer){}#<anonymous>#static(IrTypeParameter){}IrTypeParameter
+      local fun <anonymous>(it: IrTypeParameter): IrTypeParameter {
+        return <this>.copyTypeParameter(declaration = it)
+      }
 ))
-    <this>.<get-typeRemapper>().withinScope<Unit>(irTypeParametersContainer = <this>, fn = local fun <anonymous>() {
-      { // BLOCK
-        val tmp0_iterator: Iterator<Pair<IrTypeParameter, IrTypeParameter>> = <this>.<get-typeParameters>().zip<IrTypeParameter, IrTypeParameter>(other = other.<get-typeParameters>()).iterator()
-        while (tmp0_iterator.hasNext()) { // BLOCK
-          val tmp1_loop_parameter: Pair<IrTypeParameter, IrTypeParameter> = tmp0_iterator.next()
-          val thisTypeParameter: IrTypeParameter = tmp1_loop_parameter.component1()
-          val otherTypeParameter: IrTypeParameter = tmp1_loop_parameter.component2()
-          { // BLOCK
-            otherTypeParameter.<get-superTypes>().mapTo<IrType, IrType, MutableList<IrType>>(destination = thisTypeParameter.<get-superTypes>(), transform = local fun <anonymous>(it: IrType): IrType {
-              return <this>.<get-typeRemapper>().remapType(type = it)
-            }
+    <this>.<get-typeRemapper>().withinScope<Unit>(irTypeParametersContainer = <this>, fn = 
+      // CHECK:
+      //   Mangled name: DeepCopyIrTreeWithSymbols#copyTypeParametersFrom@IrTypeParametersContainer(IrTypeParametersContainer){}#<anonymous>#static(){}
+      local fun <anonymous>() {
+        { // BLOCK
+          val tmp0_iterator: Iterator<Pair<IrTypeParameter, IrTypeParameter>> = <this>.<get-typeParameters>().zip<IrTypeParameter, IrTypeParameter>(other = other.<get-typeParameters>()).iterator()
+          while (tmp0_iterator.hasNext()) { // BLOCK
+            val tmp1_loop_parameter: Pair<IrTypeParameter, IrTypeParameter> = tmp0_iterator.next()
+            val thisTypeParameter: IrTypeParameter = tmp1_loop_parameter.component1()
+            val otherTypeParameter: IrTypeParameter = tmp1_loop_parameter.component2()
+            { // BLOCK
+              otherTypeParameter.<get-superTypes>().mapTo<IrType, IrType, MutableList<IrType>>(destination = thisTypeParameter.<get-superTypes>(), transform = 
+                // CHECK:
+                //   Mangled name: DeepCopyIrTreeWithSymbols#copyTypeParametersFrom@IrTypeParametersContainer(IrTypeParametersContainer){}#<anonymous>#static(){}#<anonymous>#static(IrType){}IrType
+                local fun <anonymous>(it: IrType): IrType {
+                  return <this>.<get-typeRemapper>().remapType(type = it)
+                }
 ) /*~> Unit */
+            }
           }
         }
       }
-    }
 )
   }
 
 }
 
+// CHECK:
+//   Mangled name: #withinScope@TypeRemapper(IrTypeParametersContainer;kotlin.Function0<0:0>){0§<kotlin.Any?>}0:0
+//   Public signature: /withinScope|-8757375077287758446[0]
 inline fun <T : Any?> TypeRemapper.withinScope(irTypeParametersContainer: IrTypeParametersContainer, fn: Function0<T>): T {
   <this>.enterScope(irTypeParametersContainer = irTypeParametersContainer)
   val result: T = fn.invoke()
   <this>.leaveScope()
   return result
 }
+

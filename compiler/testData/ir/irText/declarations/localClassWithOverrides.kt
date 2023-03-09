@@ -1,4 +1,8 @@
 // FIR_IDENTICAL
+
+// NO_SIGNATURE_DUMP
+// ^KT-57430
+
 fun outer() {
     abstract class ALocal {
         abstract fun afun()

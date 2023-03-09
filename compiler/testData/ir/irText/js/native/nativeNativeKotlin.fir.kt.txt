@@ -1,28 +1,56 @@
 package foo
 
+// CHECK:
+//   Mangled name: foo.A
+//   Public signature: foo/A|null[0]
 open external class A {
+  // CHECK:
+  //   Mangled name: foo.A#<init>(){}
+  //   Public signature: foo/A.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name computed from Ir:         foo.A#foo(){}
+  //   Mangled name computed from Descriptor: foo.A#foo(){}
+  //   Mangled name computed from Fir:        foo.A#foo(){}kotlin.String
+  //   Public signature: foo/A.foo|485335955883620819[0]
   fun foo(): String
 
 }
 
+// CHECK:
+//   Mangled name: foo.B
+//   Public signature: foo/B|null[0]
 open external class B : A {
+  // CHECK:
+  //   Mangled name: foo.B#<init>(){}
+  //   Public signature: foo/B.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*A*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name computed from Ir:         foo.B#bar(){}
+  //   Mangled name computed from Descriptor: foo.B#bar(){}
+  //   Mangled name computed from Fir:        foo.B#bar(){}kotlin.String
+  //   Public signature: foo/B.bar|1214702899383694193[0]
   fun bar(): String
 
 }
 
+// CHECK:
+//   Mangled name: foo.C
+//   Public signature: foo/C|null[0]
 class C : B {
+  // CHECK:
+  //   Mangled name: foo.C#<init>(){}
+  //   Public signature: foo/C.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*B*/()
     /* <init>() */
@@ -31,7 +59,13 @@ class C : B {
 
 }
 
+// CHECK:
+//   Mangled name computed from Ir:         foo#box(){}
+//   Mangled name computed from Descriptor: foo#box(){}
+//   Mangled name computed from Fir:        #box(){}kotlin.String
+//   Public signature: foo/box|-9347091776561469[0]
 fun box(): String {
   val c: C = C()
   return "OK"
 }
+

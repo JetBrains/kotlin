@@ -1,9 +1,19 @@
+// CHECK:
+//   Mangled name: KRunnable
+//   Public signature: /KRunnable|null[0]
 fun interface KRunnable {
+  // CHECK:
+  //   Mangled name: KRunnable#invoke(){}
+  //   Public signature: /KRunnable.invoke|-4663091332620260873[0]
   abstract fun invoke()
 
 }
 
+// CHECK:
+//   Mangled name: #test(kotlin.Any?){}
+//   Public signature: /test|4942271194395271693[0]
 fun test(a: Any?) {
   a as Function0<Unit> /*~> Unit */
   a /*as Function0<Unit> */ /*-> KRunnable */.invoke()
 }
+

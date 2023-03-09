@@ -1,20 +1,44 @@
+// CHECK:
+//   Mangled name: #use(kotlin.Function1<kotlin.Int,kotlin.Unit>){}
+//   Public signature: /use|4736665629979262606[0]
 fun use(fn: Function1<Int, Unit>) {
   fn.invoke(p1 = 1)
 }
 
+// CHECK:
+//   Mangled name: Host
+//   Public signature: /Host|null[0]
 class Host {
+  // CHECK:
+  //   Mangled name: Host#<init>(){}
+  //   Public signature: /Host.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: Host#withVararg(kotlin.IntArray...){}kotlin.String
+  //   Public signature: /Host.withVararg|3343284378880347768[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         Host#withVararg(kotlin.IntArray...){}
+  //   Mangled name computed from Descriptor: Host#withVararg(kotlin.IntArray...){}
+  //   Mangled name computed from Fir:        Host#withVararg(kotlin.IntArray...){}kotlin.String
+  //   Public signature: /Host.withVararg|3343284378880347768[0]
   fun withVararg(vararg xs: Int): String {
     return ""
   }
 
+  // CHECK:
+  //   Mangled name: Host#testImplicitThis(){}
+  //   Public signature: /Host.testImplicitThis|-6601040006825871356[0]
   fun testImplicitThis() {
     use(fn = { // BLOCK
+      // CHECK:
+      //   Mangled name computed from Ir:         Host#testImplicitThis(){}#withVararg#static@Host(kotlin.Int){}
+      //   Mangled name computed from Descriptor: Host#testImplicitThis(){}#withVararg#static@Host(kotlin.Int){}
+      //   Mangled name computed from Fir:        Host#withVararg(kotlin.IntArray...){}kotlin.String
       local fun Host.withVararg(p0: Int) {
         receiver.withVararg(xs = [p0])
       }
@@ -23,9 +47,16 @@ class Host {
     })
   }
 
+  // CHECK:
+  //   Mangled name: Host#testBoundReceiverLocalVal(){}
+  //   Public signature: /Host.testBoundReceiverLocalVal|5089842263939902901[0]
   fun testBoundReceiverLocalVal() {
     val h: Host = Host()
     use(fn = { // BLOCK
+      // CHECK:
+      //   Mangled name computed from Ir:         Host#testBoundReceiverLocalVal(){}#withVararg#static@Host(kotlin.Int){}
+      //   Mangled name computed from Descriptor: Host#testBoundReceiverLocalVal(){}#withVararg#static@Host(kotlin.Int){}
+      //   Mangled name computed from Fir:        Host#withVararg(kotlin.IntArray...){}kotlin.String
       local fun Host.withVararg(p0: Int) {
         receiver.withVararg(xs = [p0])
       }
@@ -34,9 +65,16 @@ class Host {
     })
   }
 
+  // CHECK:
+  //   Mangled name: Host#testBoundReceiverLocalVar(){}
+  //   Public signature: /Host.testBoundReceiverLocalVar|7082315393387759929[0]
   fun testBoundReceiverLocalVar() {
     var h: Host = Host()
     use(fn = { // BLOCK
+      // CHECK:
+      //   Mangled name computed from Ir:         Host#testBoundReceiverLocalVar(){}#withVararg#static@Host(kotlin.Int){}
+      //   Mangled name computed from Descriptor: Host#testBoundReceiverLocalVar(){}#withVararg#static@Host(kotlin.Int){}
+      //   Mangled name computed from Fir:        Host#withVararg(kotlin.IntArray...){}kotlin.String
       local fun Host.withVararg(p0: Int) {
         receiver.withVararg(xs = [p0])
       }
@@ -45,8 +83,15 @@ class Host {
     })
   }
 
+  // CHECK:
+  //   Mangled name: Host#testBoundReceiverParameter(Host){}
+  //   Public signature: /Host.testBoundReceiverParameter|2962165494345239444[0]
   fun testBoundReceiverParameter(h: Host) {
     use(fn = { // BLOCK
+      // CHECK:
+      //   Mangled name computed from Ir:         Host#testBoundReceiverParameter(Host){}#withVararg#static@Host(kotlin.Int){}
+      //   Mangled name computed from Descriptor: Host#testBoundReceiverParameter(Host){}#withVararg#static@Host(kotlin.Int){}
+      //   Mangled name computed from Fir:        Host#withVararg(kotlin.IntArray...){}kotlin.String
       local fun Host.withVararg(p0: Int) {
         receiver.withVararg(xs = [p0])
       }
@@ -55,8 +100,15 @@ class Host {
     })
   }
 
+  // CHECK:
+  //   Mangled name: Host#testBoundReceiverExpression(){}
+  //   Public signature: /Host.testBoundReceiverExpression|4527152464563403382[0]
   fun testBoundReceiverExpression() {
     use(fn = { // BLOCK
+      // CHECK:
+      //   Mangled name computed from Ir:         Host#testBoundReceiverExpression(){}#withVararg#static@Host(kotlin.Int){}
+      //   Mangled name computed from Descriptor: Host#testBoundReceiverExpression(){}#withVararg#static@Host(kotlin.Int){}
+      //   Mangled name computed from Fir:        Host#withVararg(kotlin.IntArray...){}kotlin.String
       local fun Host.withVararg(p0: Int) {
         receiver.withVararg(xs = [p0])
       }
@@ -66,3 +118,4 @@ class Host {
   }
 
 }
+

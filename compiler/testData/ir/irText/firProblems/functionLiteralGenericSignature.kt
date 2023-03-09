@@ -1,6 +1,10 @@
 // SKIP_KLIB_TEST
 // FIR_IDENTICAL
 // TARGET_BACKEND: JVM_IR
+
+// NO_SIGNATURE_DUMP
+// ^KT-57428
+
 import java.util.Date
 
 val unitFun = { }

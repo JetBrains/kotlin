@@ -1,22 +1,45 @@
+// CHECK:
+//   Mangled name: Some
+//   Public signature: /Some|null[0]
 data class Some<T : Any?> {
+  // CHECK:
+  //   Mangled name computed from Ir:         Some#<init>(1:0){}
+  //   Mangled name computed from Descriptor: Some#<init>(1:0){}
+  //   Mangled name computed from Fir:        Some#<init>(0:-1){}
+  //   Public signature: /Some.<init>|8751876555175556900[0]
   constructor(value: T) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: Some{}value
+  //   Public signature: /Some.value|1987073854177347439[0]
   val value: T
     field = value
+    // CHECK:
+    //   Mangled name: Some#<get-value>(){}1:0
+    //   Public signature: /Some.value.<get-value>|3167862337988859752[0]
     get
 
+  // CHECK:
+  //   Mangled name: Some#component1(){}1:0
+  //   Public signature: /Some.component1|2393470133763651536[0]
   operator fun component1(): T {
     return <this>.#value
   }
 
+  // CHECK:
+  //   Mangled name: Some#copy(1:0){}Some<1:0>
+  //   Public signature: /Some.copy|-5113145417327178592[0]
   fun copy(value: T = <this>.#value): Some<T> {
     return Some<Any>(value = value)
   }
 
+  // CHECK:
+  //   Mangled name: Some#equals(kotlin.Any?){}kotlin.Boolean
+  //   Public signature: /Some.equals|722809408929142791[0]
   override fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
@@ -31,6 +54,9 @@ data class Some<T : Any?> {
     return true
   }
 
+  // CHECK:
+  //   Mangled name: Some#hashCode(){}kotlin.Int
+  //   Public signature: /Some.hashCode|-8048879360829830756[0]
   override fun hashCode(): Int {
     return when {
       EQEQ(arg0 = <this>.#value, arg1 = null) -> 0
@@ -38,17 +64,29 @@ data class Some<T : Any?> {
     }
   }
 
+  // CHECK:
+  //   Mangled name: Some#toString(){}kotlin.String
+  //   Public signature: /Some.toString|6958853723545266802[0]
   override fun toString(): String {
     return "Some(value=" + <this>.#value + ")"
   }
 
 }
 
+// CHECK:
+//   Mangled name: MyList
+//   Public signature: /MyList|null[0]
 interface MyList<T : Any?> : List<Some<T>> {
 
 }
 
+// CHECK:
+//   Mangled name: SomeList
+//   Public signature: /SomeList|null[0]
 open class SomeList<T : Any?> : MyList<T>, ArrayList<Some<T>> {
+  // CHECK:
+  //   Mangled name: SomeList#<init>(){}
+  //   Public signature: /SomeList.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*ArrayList*/<Some<T>>()
     /* <init>() */
@@ -57,7 +95,13 @@ open class SomeList<T : Any?> : MyList<T>, ArrayList<Some<T>> {
 
 }
 
+// CHECK:
+//   Mangled name: FinalList
+//   Public signature: /FinalList|null[0]
 class FinalList : SomeList<String> {
+  // CHECK:
+  //   Mangled name: FinalList#<init>(){}
+  //   Public signature: /FinalList.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*SomeList*/<String>()
     /* <init>() */
@@ -65,3 +109,4 @@ class FinalList : SomeList<String> {
   }
 
 }
+

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test.frontend.fir
 
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -30,9 +31,11 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.backend.js.JsFactories
 import org.jetbrains.kotlin.ir.backend.js.getSerializedData
 import org.jetbrains.kotlin.ir.backend.js.incrementalDataProvider
+import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
+import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.library.unresolvedDependencies
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
@@ -41,9 +44,7 @@ import org.jetbrains.kotlin.test.model.BackendKinds
 import org.jetbrains.kotlin.test.model.Frontend2BackendConverter
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
-import org.jetbrains.kotlin.test.services.jsLibraryProvider
+import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.utils.metadataVersion
 
 class Fir2IrJsResultsConverter(
@@ -53,6 +54,9 @@ class Fir2IrJsResultsConverter(
     FrontendKinds.FIR,
     BackendKinds.IrBackend
 ) {
+    override val additionalServices: List<ServiceRegistrationData>
+        get() = listOf(service(::ManglerProvider))
+
     override fun transform(
         module: TestModule,
         inputArtifact: FirOutputArtifact
@@ -66,11 +70,17 @@ class Fir2IrJsResultsConverter(
         lateinit var mainPluginContext: IrPluginContext
         var irBuiltIns: IrBuiltInsOverFir? = null
 
+        val descriptorMangler = JsManglerDesc
+
+        val generateSignatures = true
+
         val commonMemberStorage = Fir2IrCommonMemberStorage(
-            generateSignatures = false,
-            signatureComposerCreator = null,
+            generateSignatures = generateSignatures,
+            signatureComposerCreator = { IdSignatureDescriptor(descriptorMangler) },
             manglerCreator = { FirJvmKotlinMangler() } // TODO: replace with potentially simpler JS version
         )
+
+        val irMangler = JsManglerIr
 
         for ((index, part) in inputArtifact.partsForDependsOnModules.withIndex()) {
             val (irModuleFragment, components, pluginContext) =
@@ -81,7 +91,9 @@ class Fir2IrJsResultsConverter(
                     configuration,
                     testServices,
                     commonMemberStorage,
-                    irBuiltIns
+                    irBuiltIns,
+                    irMangler,
+                    generateSignatures
                 )
             irBuiltIns = components.irBuiltIns
             mainPluginContext = pluginContext
@@ -100,6 +112,12 @@ class Fir2IrJsResultsConverter(
         }
 
         val metadataVersion = configuration.metadataVersion(module.languageVersionSettings.languageVersion)
+
+        // Save the manglers, so we could test them later in irText tests.
+        testServices.manglerProvider.setManglersForModule(
+            module,
+            ManglerProvider.Manglers(descriptorMangler, irMangler, commonMemberStorage.signatureComposer.mangler)
+        )
 
         var actualizedExpectDeclarations: Set<FirDeclaration>? = null
 
@@ -137,7 +155,9 @@ fun AbstractFirAnalyzerFacade.convertToJsIr(
     configuration: CompilerConfiguration,
     testServices: TestServices,
     commonMemberStorage: Fir2IrCommonMemberStorage,
-    irBuiltIns: IrBuiltInsOverFir?
+    irBuiltIns: IrBuiltInsOverFir?,
+    irMangler: KotlinMangler.IrMangler,
+    generateSignatures: Boolean
 ): Fir2IrResult {
     this as FirAnalyzerFacade
     // TODO: consider avoiding repeated libraries resolution
@@ -148,11 +168,11 @@ fun AbstractFirAnalyzerFacade.convertToJsIr(
         session, scopeSession, firFiles.toList(),
         languageVersionSettings,
         fir2IrExtensions,
-        JsManglerIr, IrFactoryImpl,
+        irMangler, IrFactoryImpl,
         Fir2IrVisibilityConverter.Default,
         Fir2IrJvmSpecialAnnotationSymbolProvider(), // TODO: replace with appropriate (probably empty) implementation
         irGeneratorExtensions,
-        generateSignatures = false,
+        generateSignatures = generateSignatures,
         kotlinBuiltIns = builtIns ?: DefaultBuiltIns.Instance, // TODO: consider passing externally,
         commonMemberStorage = commonMemberStorage,
         initializedIrBuiltIns = irBuiltIns

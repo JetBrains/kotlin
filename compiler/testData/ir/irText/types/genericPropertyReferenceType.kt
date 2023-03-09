@@ -1,4 +1,8 @@
 // FIR_IDENTICAL
+
+// NO_SIGNATURE_DUMP
+// ^KT-57429
+
 import kotlin.reflect.KMutableProperty
 
 class C<T>(var x: T)

@@ -1,17 +1,30 @@
+// CHECK:
+//   Mangled name: #f(){}
+//   Public signature: /f|5316533450599009716[0]
 fun f() {
 }
 
+// CHECK:
+//   Mangled name: #test1@J(){}
+//   Public signature: /test1|6869262091258899204[0]
 fun J.test1() {
   <this>.get(k = ::f /*-> @FlexibleNullability Runnable? */)
   <this>.get(k = ::f /*-> @FlexibleNullability Runnable? */, m = ::f /*-> @FlexibleNullability Runnable? */)
 }
 
+// CHECK:
+//   Mangled name: #test2@J(){}
+//   Public signature: /test2|-509977306549568233[0]
 fun J.test2() {
   <this>.set(k = ::f /*-> @FlexibleNullability Runnable? */, v = ::f /*-> @FlexibleNullability Runnable? */)
   <this>.set(k = ::f /*-> @FlexibleNullability Runnable? */, m = ::f /*-> @FlexibleNullability Runnable? */, v = ::f /*-> @FlexibleNullability Runnable? */)
 }
 
+// CHECK:
+//   Mangled name: #test3@J(){}
+//   Public signature: /test3|-2284942743287682332[0]
 fun J.test3() {
   <this>.plusAssign(i = ::f /*-> @FlexibleNullability Runnable? */)
   <this>.minusAssign(i = ::f /*-> @FlexibleNullability Runnable? */)
 }
+

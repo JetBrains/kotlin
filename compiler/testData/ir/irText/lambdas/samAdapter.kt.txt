@@ -5,3 +5,4 @@ fun test1() {
  /*-> Runnable */
   hello.run()
 }
+

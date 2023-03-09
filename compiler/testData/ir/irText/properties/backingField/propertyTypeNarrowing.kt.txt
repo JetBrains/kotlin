@@ -1,26 +1,65 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
 class A {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: A{}it
+  //   Public signature: /A.it|3309866017710461759[0]
   val it: Int
     field = 4
+    // CHECK JVM_IR:
+    //   Mangled name: A#<get-it>(){}kotlin.Number
+    //   Public signature: /A.it.<get-it>|-5000280677775858846[0]
+    // CHECK JS_IR:
+    //   Mangled name computed from Ir:         A#<get-it>(){}
+    //   Mangled name computed from Descriptor: A#<get-it>(){}
+    //   Mangled name computed from Fir:        A#<get-it>(){}kotlin.Number
+    //   Public signature: /A.it.<get-it>|-5000280677775858846[0]
     get
 
+  // CHECK JVM_IR:
+  //   Mangled name: A#test(){}kotlin.Int
+  //   Public signature: /A.test|4216975235718029399[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         A#test(){}
+  //   Mangled name computed from Descriptor: A#test(){}
+  //   Mangled name computed from Fir:        A#test(){}kotlin.Int
+  //   Public signature: /A.test|4216975235718029399[0]
   fun test(): Int {
     return <this>.<get-it>().plus(other = 3)
   }
 
+  // CHECK:
+  //   Mangled name: A{}p
+  //   Public signature: /A.p|6715504260787941082[0]
   val p: Int
     field = 5
+    // CHECK JVM_IR:
+    //   Mangled name: A#<get-p>(){}kotlin.Int
+    //   Public signature: /A.p.<get-p>|5329635969197638839[0]
+    // CHECK JS_IR:
+    //   Mangled name computed from Ir:         A#<get-p>(){}
+    //   Mangled name computed from Descriptor: A#<get-p>(){}
+    //   Mangled name computed from Fir:        A#<get-p>(){}kotlin.Int
+    //   Public signature: /A.p.<get-p>|5329635969197638839[0]
     get(): Int {
       return <this>.#p
     }
 
 }
 
+// CHECK:
+//   Mangled name: #test(){}
+//   Public signature: /test|6620506149988718649[0]
 fun test() {
   val d: Unit = test()
   val b: Int = A().<get-p>().plus(other = 2)

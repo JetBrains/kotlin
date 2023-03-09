@@ -2,10 +2,16 @@
 // MODULE: main
 // FILE: nullCheckInElvisRhs.kt
 
+// CHECK:
+//   Mangled name: #baz(){}kotlin.String?
+//   Public signature: /baz|3245777681320490676[0]
 fun baz(): String? {
   return null
 }
 
+// CHECK:
+//   Mangled name: #test(){}kotlin.String
+//   Public signature: /test|-7008832412320199001[0]
 fun test(): String {
   return { // BLOCK
     val tmp0_elvis_lhs: String? = baz()
@@ -15,3 +21,4 @@ fun test(): String {
     }
   }
 }
+

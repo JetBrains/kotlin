@@ -1,6 +1,13 @@
+// CHECK JVM_IR:
+//   Mangled name: #test(kotlin.Any){}kotlin.Boolean
+//   Public signature: /test|1012595665164220820[0]
+// CHECK JS_IR:
+//   Mangled name: #test(kotlin.Any){}
+//   Public signature: /test|-7985792749252989017[0]
 fun test(x: Any): Boolean {
   return EQEQ(arg0 = x, arg1 = when {
     x !is Double -> CHECK_NOT_NULL<Nothing>(arg0 = null)
     else -> x /*as Double */
   })
 }
+

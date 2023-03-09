@@ -1,44 +1,93 @@
+// CHECK:
+//   Mangled name: #use1(kotlin.Function2<A,kotlin.Int,kotlin.Unit>){}
+//   Public signature: /use1|-4462422680581088517[0]
 fun use1(fn: Function2<A, Int, Unit>) {
 }
 
+// CHECK:
+//   Mangled name: #use2(kotlin.Function1<kotlin.Int,kotlin.Unit>){}
+//   Public signature: /use2|-4849598794733123366[0]
 fun use2(fn: Function1<Int, Unit>) {
 }
 
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
 open class A {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: A#foo(kotlin.IntArray...){}kotlin.Int
+  //   Public signature: /A.foo|-3529930544137592433[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         A#foo(kotlin.IntArray...){}
+  //   Mangled name computed from Descriptor: A#foo(kotlin.IntArray...){}
+  //   Mangled name computed from Fir:        A#foo(kotlin.IntArray...){}kotlin.Int
+  //   Public signature: /A.foo|-3529930544137592433[0]
   open fun foo(vararg xs: Int): Int {
     return 1
   }
 
 }
 
+// CHECK:
+//   Mangled name: Obj
+//   Public signature: /Obj|null[0]
 object Obj : A {
+  // CHECK:
+  //   Mangled name: Obj#<init>(){}
+  //   Public signature: /Obj.<init>|-5645683436151566731[0]
   private constructor() /* primary */ {
     super/*A*/()
     /* <init>() */
 
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: Obj#foo(kotlin.IntArray...){}kotlin.Int
+  //   Public signature: /Obj.foo|-3529930544137592433[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         Obj#foo(kotlin.IntArray...){}
+  //   Mangled name computed from Descriptor: Obj#foo(kotlin.IntArray...){}
+  //   Mangled name computed from Fir:        Obj#foo(kotlin.IntArray...){}kotlin.Int
+  //   Public signature: /Obj.foo|-3529930544137592433[0]
   override fun foo(vararg xs: Int): Int {
     return 1
   }
 
 }
 
+// CHECK:
+//   Mangled name: #testUnbound(){}
+//   Public signature: /testUnbound|-7514176206479207862[0]
 fun testUnbound() {
-  use1(fn = local fun foo(p0: A, p1: Int) {
-    p0.foo(xs = [p1])
-  }
+  use1(fn = 
+    // CHECK:
+    //   Mangled name computed from Ir:         #testUnbound(){}#foo#static(A;kotlin.Int){}
+    //   Mangled name computed from Descriptor: #testUnbound(){}#foo#static(A;kotlin.Int){}
+    //   Mangled name computed from Fir:        A#foo(kotlin.IntArray...){}kotlin.Int
+    local fun foo(p0: A, p1: Int) {
+      p0.foo(xs = [p1])
+    }
 )
 }
 
+// CHECK:
+//   Mangled name: #testBound(A){}
+//   Public signature: /testBound|1636169933869733015[0]
 fun testBound(a: A) {
   use2(fn = { // BLOCK
+    // CHECK:
+    //   Mangled name computed from Ir:         #testBound(A){}#foo#static@A(kotlin.Int){}
+    //   Mangled name computed from Descriptor: #testBound(A){}#foo#static@A(kotlin.Int){}
+    //   Mangled name computed from Fir:        A#foo(kotlin.IntArray...){}kotlin.Int
     local fun A.foo(p0: Int) {
       receiver.foo(xs = [p0])
     }
@@ -47,8 +96,15 @@ fun testBound(a: A) {
   })
 }
 
+// CHECK:
+//   Mangled name: #testObject(){}
+//   Public signature: /testObject|-3988286999538388748[0]
 fun testObject() {
   use2(fn = { // BLOCK
+    // CHECK:
+    //   Mangled name computed from Ir:         #testObject(){}#foo#static@Obj(kotlin.Int){}
+    //   Mangled name computed from Descriptor: #testObject(){}#foo#static@Obj(kotlin.Int){}
+    //   Mangled name computed from Fir:        Obj#foo(kotlin.IntArray...){}kotlin.Int
     local fun Obj.foo(p0: Int) {
       receiver.foo(xs = [p0])
     }
@@ -56,3 +112,4 @@ fun testObject() {
     Obj::foo
   })
 }
+

@@ -1,32 +1,50 @@
+// CHECK:
+//   Mangled name: #test_1(kotlin.Any?){}kotlin.String?
+//   Public signature: /test_1|8306101080862525041[0]
 fun test_1(value: Any?): String? {
   return { // BLOCK
     val tmp0_safe_receiver: Any? = value
     when {
       EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
-      else -> tmp0_safe_receiver.let<Any, Nothing>(block = local fun <anonymous>(it: Any): Nothing {
-        return "O"
-      }
-)
-    }
-  }
-}
-
-fun test_2(value: Any?): String? {
-  return run<Nothing?>(block = local fun <anonymous>(): Nothing? {
-    return { // BLOCK
-      val tmp0_safe_receiver: Any? = value
-      when {
-        EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
-        else -> tmp0_safe_receiver.let<Any, Nothing>(block = local fun <anonymous>(it: Any): Nothing {
-          return "K"
+      else -> tmp0_safe_receiver.let<Any, Nothing>(block = 
+        // CHECK:
+        //   Mangled name: #test_1(kotlin.Any?){}kotlin.String?#<anonymous>#static(kotlin.Any){}kotlin.Nothing
+        local fun <anonymous>(it: Any): Nothing {
+          return "O"
         }
 )
-      }
     }
   }
+}
+
+// CHECK:
+//   Mangled name: #test_2(kotlin.Any?){}kotlin.String?
+//   Public signature: /test_2|4804906371697221872[0]
+fun test_2(value: Any?): String? {
+  return run<Nothing?>(block = 
+    // CHECK:
+    //   Mangled name: #test_2(kotlin.Any?){}kotlin.String?#<anonymous>#static(){}kotlin.Nothing?
+    local fun <anonymous>(): Nothing? {
+      return { // BLOCK
+        val tmp0_safe_receiver: Any? = value
+        when {
+          EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
+          else -> tmp0_safe_receiver.let<Any, Nothing>(block = 
+            // CHECK:
+            //   Mangled name: #test_2(kotlin.Any?){}kotlin.String?#<anonymous>#static(){}kotlin.Nothing?#<anonymous>#static(kotlin.Any){}kotlin.Nothing
+            local fun <anonymous>(it: Any): Nothing {
+              return "K"
+            }
+)
+        }
+      }
+    }
 )
 }
 
+// CHECK:
+//   Mangled name: #box(){}kotlin.String
+//   Public signature: /box|-9347091776561469[0]
 fun box(): String {
   var result: String = ""
   result = result.plus(other = { // BLOCK
@@ -45,3 +63,4 @@ fun box(): String {
   })
   return result
 }
+

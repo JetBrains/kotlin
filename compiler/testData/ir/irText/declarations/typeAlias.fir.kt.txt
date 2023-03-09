@@ -1,10 +1,22 @@
+// CHECK:
+//   Mangled name: Test1
+//   Public signature: /Test1|null[0]
 typealias Test1 = String
+// CHECK:
+//   Mangled name: #foo(){}
+//   Public signature: /foo|-1041209573719867811[0]
 fun foo() {
   { // BLOCK
   }
 }
 
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
 class C {
+  // CHECK:
+  //   Mangled name: C#<init>(){}
+  //   Public signature: /C.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -12,3 +24,4 @@ class C {
   }
 
 }
+

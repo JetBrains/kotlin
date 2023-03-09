@@ -1,73 +1,205 @@
+// CHECK:
+//   Mangled name: IBase
+//   Public signature: /IBase|null[0]
 interface IBase {
+  // CHECK:
+  //   Mangled name: IBase#foo(kotlin.Int;kotlin.String){}
+  //   Public signature: /IBase.foo|2507695683462765192[0]
   abstract fun foo(x: Int, s: String)
+  // CHECK JVM_IR:
+  //   Mangled name: IBase#bar(){}kotlin.Int
+  //   Public signature: /IBase.bar|-6436649210114349217[0]
+  // CHECK JS_IR:
+  //   Mangled name: IBase#bar(){}
+  //   Public signature: /IBase.bar|496682602797471549[0]
   abstract fun bar(): Int
+  // CHECK:
+  //   Mangled name: IBase#qux@kotlin.String(){}
+  //   Public signature: /IBase.qux|7892261924686331851[0]
   abstract fun String.qux()
 
 }
 
+// CHECK:
+//   Mangled name: BaseImpl
+//   Public signature: /BaseImpl|null[0]
 object BaseImpl : IBase {
+  // CHECK:
+  //   Mangled name: BaseImpl#<init>(){}
+  //   Public signature: /BaseImpl.<init>|-5645683436151566731[0]
   private constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: BaseImpl#foo(kotlin.Int;kotlin.String){}
+  //   Public signature: /BaseImpl.foo|2507695683462765192[0]
   override fun foo(x: Int, s: String) {
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: BaseImpl#bar(){}kotlin.Int
+  //   Public signature: /BaseImpl.bar|-6436649210114349217[0]
+  // CHECK JS_IR:
+  //   Mangled name: BaseImpl#bar(){}
+  //   Public signature: /BaseImpl.bar|496682602797471549[0]
   override fun bar(): Int {
     return 42
   }
 
+  // CHECK:
+  //   Mangled name: BaseImpl#qux@kotlin.String(){}
+  //   Public signature: /BaseImpl.qux|7892261924686331851[0]
   override fun String.qux() {
   }
 
 }
 
+// CHECK:
+//   Mangled name: IOther
+//   Public signature: /IOther|null[0]
 interface IOther {
+  // CHECK:
+  //   Mangled name: IOther{}x
+  //   Public signature: /IOther.x|-8060530855978347579[0]
   abstract val x: String
+    // CHECK JVM_IR:
+    //   Mangled name: IOther#<get-x>(){}kotlin.String
+    //   Public signature: /IOther.x.<get-x>|316111172223894646[0]
+    // CHECK JS_IR:
+    //   Mangled name: IOther#<get-x>(){}
+    //   Public signature: /IOther.x.<get-x>|1482705010654679335[0]
     abstract get
 
+  // CHECK:
+  //   Mangled name: IOther{}y
+  //   Public signature: /IOther.y|3625903257357557171[0]
   abstract var y: Int
+    // CHECK JVM_IR:
+    //   Mangled name: IOther#<get-y>(){}kotlin.Int
+    //   Public signature: /IOther.y.<get-y>|-6745575372101973707[0]
+    // CHECK JS_IR:
+    //   Mangled name: IOther#<get-y>(){}
+    //   Public signature: /IOther.y.<get-y>|-7902422373892128922[0]
     abstract get
+    // CHECK:
+    //   Mangled name: IOther#<set-y>(kotlin.Int){}
+    //   Public signature: /IOther.y.<set-y>|2154335559382602722[0]
     abstract set
 
+  // CHECK:
+  //   Mangled name: IOther@kotlin.Byte{}z1
+  //   Public signature: /IOther.z1|-5032678972511317603[0]
   abstract val Byte.z1: Int
+    // CHECK JVM_IR:
+    //   Mangled name: IOther#<get-z1>@kotlin.Byte(){}kotlin.Int
+    //   Public signature: /IOther.z1.<get-z1>|202969018831811261[0]
+    // CHECK JS_IR:
+    //   Mangled name: IOther#<get-z1>@kotlin.Byte(){}
+    //   Public signature: /IOther.z1.<get-z1>|1974735559523490070[0]
     abstract get
 
+  // CHECK:
+  //   Mangled name: IOther@kotlin.Byte{}z2
+  //   Public signature: /IOther.z2|2525323031525546079[0]
   abstract var Byte.z2: Int
+    // CHECK JVM_IR:
+    //   Mangled name: IOther#<get-z2>@kotlin.Byte(){}kotlin.Int
+    //   Public signature: /IOther.z2.<get-z2>|7197655500603983642[0]
+    // CHECK JS_IR:
+    //   Mangled name: IOther#<get-z2>@kotlin.Byte(){}
+    //   Public signature: /IOther.z2.<get-z2>|-8674032209594777706[0]
     abstract get
+    // CHECK:
+    //   Mangled name: IOther#<set-z2>@kotlin.Byte(kotlin.Int){}
+    //   Public signature: /IOther.z2.<set-z2>|7245124960540359440[0]
     abstract set
 
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #otherImpl(kotlin.String;kotlin.Int){}IOther
+//   Public signature: /otherImpl|6303285997838013800[0]
+// CHECK JS_IR:
+//   Mangled name: #otherImpl(kotlin.String;kotlin.Int){}
+//   Public signature: /otherImpl|4856050071539374055[0]
 fun otherImpl(x0: String, y0: Int): IOther {
   return { // BLOCK
+    // CHECK JVM_IR:
+    //   Mangled name: #otherImpl(kotlin.String;kotlin.Int){}IOther.<no name provided>
+    // CHECK JS_IR:
+    //   Mangled name: #otherImpl(kotlin.String;kotlin.Int){}.<no name provided>
     local class <no name provided> : IOther {
+      // CHECK JVM_IR:
+      //   Mangled name: #otherImpl(kotlin.String;kotlin.Int){}IOther.<no name provided>#<init>(){}
+      // CHECK JS_IR:
+      //   Mangled name: #otherImpl(kotlin.String;kotlin.Int){}.<no name provided>#<init>(){}
       constructor() /* primary */ {
         super/*Any*/()
         /* <init>() */
 
       }
 
+      // CHECK JVM_IR:
+      //   Mangled name: #otherImpl(kotlin.String;kotlin.Int){}IOther.<no name provided>{}x
+      // CHECK JS_IR:
+      //   Mangled name: #otherImpl(kotlin.String;kotlin.Int){}.<no name provided>{}x
       override val x: String
         field = x0
+        // CHECK JVM_IR:
+        //   Mangled name: #otherImpl(kotlin.String;kotlin.Int){}IOther.<no name provided>#<get-x>(){}kotlin.String
+        // CHECK JS_IR:
+        //   Mangled name: #otherImpl(kotlin.String;kotlin.Int){}.<no name provided>#<get-x>(){}
         override get
 
+      // CHECK JVM_IR:
+      //   Mangled name: #otherImpl(kotlin.String;kotlin.Int){}IOther.<no name provided>{}y
+      // CHECK JS_IR:
+      //   Mangled name: #otherImpl(kotlin.String;kotlin.Int){}.<no name provided>{}y
       override var y: Int
         field = y0
+        // CHECK JVM_IR:
+        //   Mangled name: #otherImpl(kotlin.String;kotlin.Int){}IOther.<no name provided>#<get-y>(){}kotlin.Int
+        // CHECK JS_IR:
+        //   Mangled name: #otherImpl(kotlin.String;kotlin.Int){}.<no name provided>#<get-y>(){}
         override get
+        // CHECK JVM_IR:
+        //   Mangled name: #otherImpl(kotlin.String;kotlin.Int){}IOther.<no name provided>#<set-y>(kotlin.Int){}
+        // CHECK JS_IR:
+        //   Mangled name: #otherImpl(kotlin.String;kotlin.Int){}.<no name provided>#<set-y>(kotlin.Int){}
         override set
 
+      // CHECK JVM_IR:
+      //   Mangled name: #otherImpl(kotlin.String;kotlin.Int){}IOther.<no name provided>@kotlin.Byte{}z1
+      // CHECK JS_IR:
+      //   Mangled name: #otherImpl(kotlin.String;kotlin.Int){}.<no name provided>@kotlin.Byte{}z1
       override val Byte.z1: Int
+        // CHECK JVM_IR:
+        //   Mangled name: #otherImpl(kotlin.String;kotlin.Int){}IOther.<no name provided>#<get-z1>@kotlin.Byte(){}kotlin.Int
+        // CHECK JS_IR:
+        //   Mangled name: #otherImpl(kotlin.String;kotlin.Int){}.<no name provided>#<get-z1>@kotlin.Byte(){}
         override get(): Int {
           return 1
         }
 
+      // CHECK JVM_IR:
+      //   Mangled name: #otherImpl(kotlin.String;kotlin.Int){}IOther.<no name provided>@kotlin.Byte{}z2
+      // CHECK JS_IR:
+      //   Mangled name: #otherImpl(kotlin.String;kotlin.Int){}.<no name provided>@kotlin.Byte{}z2
       override var Byte.z2: Int
+        // CHECK JVM_IR:
+        //   Mangled name: #otherImpl(kotlin.String;kotlin.Int){}IOther.<no name provided>#<get-z2>@kotlin.Byte(){}kotlin.Int
+        // CHECK JS_IR:
+        //   Mangled name: #otherImpl(kotlin.String;kotlin.Int){}.<no name provided>#<get-z2>@kotlin.Byte(){}
         override get(): Int {
           return 2
         }
+        // CHECK JVM_IR:
+        //   Mangled name: #otherImpl(kotlin.String;kotlin.Int){}IOther.<no name provided>#<set-z2>@kotlin.Byte(kotlin.Int){}
+        // CHECK JS_IR:
+        //   Mangled name: #otherImpl(kotlin.String;kotlin.Int){}.<no name provided>#<set-z2>@kotlin.Byte(kotlin.Int){}
         override set(value: Int) {
         }
 
@@ -77,73 +209,161 @@ fun otherImpl(x0: String, y0: Int): IOther {
   }
 }
 
+// CHECK:
+//   Mangled name: Test1
+//   Public signature: /Test1|null[0]
 class Test1 : IBase {
+  // CHECK:
+  //   Mangled name: Test1#<init>(){}
+  //   Public signature: /Test1.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: Test1.$$delegate_0
+  //   Public signature: /Test1.$$delegate_0|-7286425919675154353[0]
   private /* final field */ val $$delegate_0: BaseImpl = BaseImpl
+  // CHECK JVM_IR:
+  //   Mangled name: Test1#bar(){}kotlin.Int
+  //   Public signature: /Test1.bar|-6436649210114349217[0]
+  // CHECK JS_IR:
+  //   Mangled name: Test1#bar(){}
+  //   Public signature: /Test1.bar|496682602797471549[0]
   override fun bar(): Int {
     return <this>.#$$delegate_0.bar()
   }
 
+  // CHECK:
+  //   Mangled name: Test1#foo(kotlin.Int;kotlin.String){}
+  //   Public signature: /Test1.foo|2507695683462765192[0]
   override fun foo(x: Int, s: String) {
     <this>.#$$delegate_0.foo(x = x, s = s)
   }
 
+  // CHECK:
+  //   Mangled name: Test1#qux@kotlin.String(){}
+  //   Public signature: /Test1.qux|7892261924686331851[0]
   override fun String.qux() {
     (<this>.#$$delegate_0, <this>).qux()
   }
 
 }
 
+// CHECK:
+//   Mangled name: Test2
+//   Public signature: /Test2|null[0]
 class Test2 : IBase, IOther {
+  // CHECK:
+  //   Mangled name: Test2#<init>(){}
+  //   Public signature: /Test2.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: Test2.$$delegate_0
+  //   Public signature: /Test2.$$delegate_0|-7286425919675154353[0]
   private /* final field */ val $$delegate_0: BaseImpl = BaseImpl
+  // CHECK JVM_IR:
+  //   Mangled name: Test2#bar(){}kotlin.Int
+  //   Public signature: /Test2.bar|-6436649210114349217[0]
+  // CHECK JS_IR:
+  //   Mangled name: Test2#bar(){}
+  //   Public signature: /Test2.bar|496682602797471549[0]
   override fun bar(): Int {
     return <this>.#$$delegate_0.bar()
   }
 
+  // CHECK:
+  //   Mangled name: Test2#foo(kotlin.Int;kotlin.String){}
+  //   Public signature: /Test2.foo|2507695683462765192[0]
   override fun foo(x: Int, s: String) {
     <this>.#$$delegate_0.foo(x = x, s = s)
   }
 
+  // CHECK:
+  //   Mangled name: Test2#qux@kotlin.String(){}
+  //   Public signature: /Test2.qux|7892261924686331851[0]
   override fun String.qux() {
     (<this>.#$$delegate_0, <this>).qux()
   }
 
+  // CHECK:
+  //   Mangled name: Test2.$$delegate_1
+  //   Public signature: /Test2.$$delegate_1|-7286425919675154353[0]
   private /* final field */ val $$delegate_1: IOther = otherImpl(x0 = "", y0 = 42)
+  // CHECK:
+  //   Mangled name: Test2{}x
+  //   Public signature: /Test2.x|-8060530855978347579[0]
   override val x: String
+    // CHECK JVM_IR:
+    //   Mangled name: Test2#<get-x>(){}kotlin.String
+    //   Public signature: /Test2.x.<get-x>|316111172223894646[0]
+    // CHECK JS_IR:
+    //   Mangled name: Test2#<get-x>(){}
+    //   Public signature: /Test2.x.<get-x>|1482705010654679335[0]
     override get(): String {
       return <this>.#$$delegate_1.<get-x>()
     }
 
+  // CHECK:
+  //   Mangled name: Test2{}y
+  //   Public signature: /Test2.y|3625903257357557171[0]
   override var y: Int
+    // CHECK JVM_IR:
+    //   Mangled name: Test2#<get-y>(){}kotlin.Int
+    //   Public signature: /Test2.y.<get-y>|-6745575372101973707[0]
+    // CHECK JS_IR:
+    //   Mangled name: Test2#<get-y>(){}
+    //   Public signature: /Test2.y.<get-y>|-7902422373892128922[0]
     override get(): Int {
       return <this>.#$$delegate_1.<get-y>()
     }
+    // CHECK:
+    //   Mangled name: Test2#<set-y>(kotlin.Int){}
+    //   Public signature: /Test2.y.<set-y>|2154335559382602722[0]
     override set(<set-?>: Int) {
       <this>.#$$delegate_1.<set-y>(<set-?> = <set-?>)
     }
 
+  // CHECK:
+  //   Mangled name: Test2@kotlin.Byte{}z1
+  //   Public signature: /Test2.z1|-5032678972511317603[0]
   override val Byte.z1: Int
+    // CHECK JVM_IR:
+    //   Mangled name: Test2#<get-z1>@kotlin.Byte(){}kotlin.Int
+    //   Public signature: /Test2.z1.<get-z1>|202969018831811261[0]
+    // CHECK JS_IR:
+    //   Mangled name: Test2#<get-z1>@kotlin.Byte(){}
+    //   Public signature: /Test2.z1.<get-z1>|1974735559523490070[0]
     override get(): Int {
       return (<this>.#$$delegate_1, <this>).<get-z1>()
     }
 
+  // CHECK:
+  //   Mangled name: Test2@kotlin.Byte{}z2
+  //   Public signature: /Test2.z2|2525323031525546079[0]
   override var Byte.z2: Int
+    // CHECK JVM_IR:
+    //   Mangled name: Test2#<get-z2>@kotlin.Byte(){}kotlin.Int
+    //   Public signature: /Test2.z2.<get-z2>|7197655500603983642[0]
+    // CHECK JS_IR:
+    //   Mangled name: Test2#<get-z2>@kotlin.Byte(){}
+    //   Public signature: /Test2.z2.<get-z2>|-8674032209594777706[0]
     override get(): Int {
       return (<this>.#$$delegate_1, <this>).<get-z2>()
     }
+    // CHECK:
+    //   Mangled name: Test2#<set-z2>@kotlin.Byte(kotlin.Int){}
+    //   Public signature: /Test2.z2.<set-z2>|7245124960540359440[0]
     override set(<set-?>: Int) {
       (<this>.#$$delegate_1, <this>).<set-z2>(<set-?> = <set-?>)
     }
 
 }
+

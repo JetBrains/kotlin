@@ -1,11 +1,35 @@
+// CHECK JVM_IR:
+//   Mangled name: #one(){}kotlin.Int
+//   Public signature: /one|-1338778839794458943[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #one(){}
+//   Mangled name computed from Descriptor: #one(){}
+//   Mangled name computed from Fir:        #one(){}kotlin.Int
+//   Public signature: /one|-1338778839794458943[0]
 fun one(): Int {
   return 1
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #two(){}kotlin.Int
+//   Public signature: /two|-3668245894055563667[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #two(){}
+//   Mangled name computed from Descriptor: #two(){}
+//   Mangled name computed from Fir:        #two(){}kotlin.Int
+//   Public signature: /two|-3668245894055563667[0]
 fun two(): Int {
   return 2
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #test1(){}kotlin.Int
+//   Public signature: /test1|3246027394688469880[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #test1(){}
+//   Mangled name computed from Descriptor: #test1(){}
+//   Mangled name computed from Fir:        #test1(){}kotlin.Int
+//   Public signature: /test1|3246027394688469880[0]
 fun test1(): Int {
   while (true) { // BLOCK
     val tmp0_subject: Int = one()
@@ -21,6 +45,14 @@ fun test1(): Int {
   }
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #test2(){}kotlin.Int
+//   Public signature: /test2|5542371834528279174[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #test2(){}
+//   Mangled name computed from Descriptor: #test2(){}
+//   Mangled name computed from Fir:        #test2(){}kotlin.Int
+//   Public signature: /test2|5542371834528279174[0]
 fun test2(): Int {
   while (true) { // BLOCK
     val tmp2_subject: Int = one()
@@ -35,3 +67,4 @@ fun test2(): Int {
     }
   }
 }
+

@@ -256,6 +256,7 @@ open class FirFrontendFacade(
         val sessionProvider = moduleInfoProvider.firSessionProvider
 
         val project = compilerConfigurationProvider.getProject(module)
+        val compilerConfiguration = compilerConfigurationProvider.getCompilerConfiguration(module)
 
         PsiElementFinder.EP.getPoint(project).unregisterExtension(JavaElementFinder::class.java)
 
@@ -294,7 +295,7 @@ open class FirFrontendFacade(
             IrGenerationExtension.getInstances(project),
             parser,
             enablePluginPhases,
-            generateSignatures = module.targetBackend == TargetBackend.JVM_IR_SERIALIZE
+            generateSignatures = compilerConfiguration.getBoolean(JVMConfigurationKeys.LINK_VIA_SIGNATURES)
         )
         val firFiles = firAnalyzerFacade.runResolution()
         val filesMap = firFiles.mapNotNull { firFile ->

@@ -1,34 +1,80 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
 open enum class A : Enum<A> {
+  // CHECK:
+  //   Mangled name: A.X
+  //   Public signature: /A.X|null[0]
   X = A(arg = "asd")
 
+  // CHECK:
+  //   Mangled name: A.Y
+  //   Public signature: /A.Y|null[0]
+
   Y = Y()
+  // CHECK:
+  //   Mangled name: A.Y
+  //   Public signature: /A.Y.<EEC>|null[0]
   private enum entry class Y : A {
+    // CHECK:
+    //   Mangled name: A.Y#<init>(){}
+    //   Public signature: /A.Y.<EEC>.<init>|-5645683436151566731[0]
     private constructor() /* primary */ {
       super/*A*/() /*~> Unit */
       /* <init>() */
 
     }
 
+    // CHECK:
+    //   Mangled name: A.Y#f(){}kotlin.String
+    //   Public signature: /A.Y.<EEC>.f|9098388873611041001[0]
     override fun f(): String {
       return super<A>.f().plus(other = "#Y")
     }
 
   }
 
+  // CHECK:
+  //   Mangled name: A.Z
+  //   Public signature: /A.Z|null[0]
   Z = A(x = 5)
 
+  // CHECK:
+  //   Mangled name: A{}prop1
+  //   Public signature: /A.prop1|-8329482664683066904[0]
   val prop1: String
+    // CHECK:
+    //   Mangled name: A#<get-prop1>(){}kotlin.String
+    //   Public signature: /A.prop1.<get-prop1>|-4492148362286235808[0]
     get
 
+  // CHECK:
+  //   Mangled name: A{}prop2
+  //   Public signature: /A.prop2|4028676822563871521[0]
   val prop2: String
     field = "const2"
+    // CHECK:
+    //   Mangled name: A#<get-prop2>(){}kotlin.String
+    //   Public signature: /A.prop2.<get-prop2>|-8475233937604972170[0]
     get
 
+  // CHECK:
+  //   Mangled name: A{}prop3
+  //   Public signature: /A.prop3|-8425624005164692994[0]
   var prop3: String
     field = ""
+    // CHECK:
+    //   Mangled name: A#<get-prop3>(){}kotlin.String
+    //   Public signature: /A.prop3.<get-prop3>|-7199457926449641523[0]
     get
+    // CHECK:
+    //   Mangled name: A#<set-prop3>(kotlin.String){}
+    //   Public signature: /A.prop3.<set-prop3>|-8957114365133646196[0]
     set
 
+  // CHECK:
+  //   Mangled name: A#<init>(kotlin.String){}
+  //   Public signature: /A.<init>|1280618353163213788[0]
   private constructor(arg: String) {
     super/*Enum*/<A>()
     /* <init>() */
@@ -36,6 +82,9 @@ open enum class A : Enum<A> {
     <this>.#prop1 = arg
   }
 
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
   private constructor() {
     super/*Enum*/<A>()
     /* <init>() */
@@ -44,20 +93,39 @@ open enum class A : Enum<A> {
     <this>.<set-prop3>(<set-?> = "empty")
   }
 
+  // CHECK:
+  //   Mangled name: A#<init>(kotlin.Int){}
+  //   Public signature: /A.<init>|-5182794243525578284[0]
   private constructor(x: Int) {
     this/*A*/(arg = x.toString())
     <this>.<set-prop3>(<set-?> = "int")
   }
 
+  // CHECK:
+  //   Mangled name: A#f(){}kotlin.String
+  //   Public signature: /A.f|9098388873611041001[0]
   open fun f(): String {
     return <this>.<get-prop1>() + "#" + <this>.<get-prop2>() + "#" + <this>.<get-prop3>()
   }
 
+  // CHECK:
+  //   Mangled name: A#values#static(){}kotlin.Array<A>
+  //   Public signature: /A.values|5753238680897834936[0]
   fun values(): Array<A> /* Synthetic body for ENUM_VALUES */
 
+  // CHECK:
+  //   Mangled name: A#valueOf#static(kotlin.String){}A
+  //   Public signature: /A.valueOf|8636923007498802918[0]
   fun valueOf(value: String): A /* Synthetic body for ENUM_VALUEOF */
 
+  // CHECK:
+  //   Mangled name: A#static{}entries
+  //   Public signature: /A.entries|-5134227801081826149[0]
   val entries: EnumEntries<A>
+    // CHECK:
+    //   Mangled name: A#<get-entries>#static(){}kotlin.enums.EnumEntries<A>
+    //   Public signature: /A.entries.<get-entries>|3279885591622842062[0]
     get(): EnumEntries<A> /* Synthetic body for ENUM_ENTRIES */
 
 }
+

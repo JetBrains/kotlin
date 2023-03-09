@@ -1,36 +1,93 @@
+// CHECK:
+//   Mangled name: KRunnable
+//   Public signature: /KRunnable|null[0]
 fun interface KRunnable {
+  // CHECK:
+  //   Mangled name: KRunnable#run(){}
+  //   Public signature: /KRunnable.run|-991178076551934874[0]
   abstract fun run()
 
 }
 
+// CHECK:
+//   Mangled name: #foo0(){}
+//   Public signature: /foo0|854950155582184407[0]
 fun foo0() {
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #foo1(kotlin.IntArray...){}kotlin.Int
+//   Public signature: /foo1|7470134185704818303[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #foo1(kotlin.IntArray...){}
+//   Mangled name computed from Descriptor: #foo1(kotlin.IntArray...){}
+//   Mangled name computed from Fir:        #foo1(kotlin.IntArray...){}kotlin.Int
+//   Public signature: /foo1|7470134185704818303[0]
 fun foo1(vararg xs: Int): Int {
   return 1
 }
 
+// CHECK:
+//   Mangled name: #use(KRunnable){}
+//   Public signature: /use|3076420774911186780[0]
 fun use(r: KRunnable) {
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #testSamConstructor(){}KRunnable
+//   Public signature: /testSamConstructor|-5482155559435579976[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #testSamConstructor(){}
+//   Mangled name computed from Descriptor: #testSamConstructor(){}
+//   Mangled name computed from Fir:        #testSamConstructor(){}KRunnable
+//   Public signature: /testSamConstructor|-5482155559435579976[0]
 fun testSamConstructor(): KRunnable {
   return ::foo0 /*-> KRunnable */
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #testSamCosntructorOnAdapted(){}KRunnable
+//   Public signature: /testSamCosntructorOnAdapted|655519272240812814[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #testSamCosntructorOnAdapted(){}
+//   Mangled name computed from Descriptor: #testSamCosntructorOnAdapted(){}
+//   Mangled name computed from Fir:        #testSamCosntructorOnAdapted(){}KRunnable
+//   Public signature: /testSamCosntructorOnAdapted|655519272240812814[0]
 fun testSamCosntructorOnAdapted(): KRunnable {
-  return local fun foo1() {
-    foo1()
-  }
+  return 
+    // CHECK JVM_IR:
+    //   Mangled name computed from Ir:         #testSamCosntructorOnAdapted(){}KRunnable#foo1#static(){}
+    //   Mangled name computed from Descriptor: #testSamCosntructorOnAdapted(){}KRunnable#foo1#static(){}
+    //   Mangled name computed from Fir:        #foo1(kotlin.IntArray...){}kotlin.Int
+    // CHECK JS_IR:
+    //   Mangled name computed from Ir:         #testSamCosntructorOnAdapted(){}#foo1#static(){}
+    //   Mangled name computed from Descriptor: #testSamCosntructorOnAdapted(){}#foo1#static(){}
+    //   Mangled name computed from Fir:        #foo1(kotlin.IntArray...){}kotlin.Int
+    local fun foo1() {
+      foo1()
+    }
  /*-> KRunnable */
 }
 
+// CHECK:
+//   Mangled name: #testSamConversion(){}
+//   Public signature: /testSamConversion|8522656930427711360[0]
 fun testSamConversion() {
   use(r = ::foo0 /*-> KRunnable */)
 }
 
+// CHECK:
+//   Mangled name: #testSamConversionOnAdapted(){}
+//   Public signature: /testSamConversionOnAdapted|2809940309834714371[0]
 fun testSamConversionOnAdapted() {
-  use(r = local fun foo1() {
-    foo1()
-  }
+  use(r = 
+    // CHECK:
+    //   Mangled name computed from Ir:         #testSamConversionOnAdapted(){}#foo1#static(){}
+    //   Mangled name computed from Descriptor: #testSamConversionOnAdapted(){}#foo1#static(){}
+    //   Mangled name computed from Fir:        #foo1(kotlin.IntArray...){}kotlin.Int
+    local fun foo1() {
+      foo1()
+    }
  /*-> KRunnable */)
 }
+

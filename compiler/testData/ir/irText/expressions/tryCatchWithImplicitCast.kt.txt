@@ -1,3 +1,6 @@
+// CHECK:
+//   Mangled name: #testImplicitCast(kotlin.Any){}
+//   Public signature: /testImplicitCast|3599450462487506190[0]
 fun testImplicitCast(a: Any) {
   when {
     a !is String -> return Unit
@@ -10,3 +13,4 @@ fun testImplicitCast(a: Any) {
   }
 
 }
+

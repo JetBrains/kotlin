@@ -1,4 +1,10 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
 object A {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
   private constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -7,7 +13,13 @@ object A {
 
 }
 
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[0]
 object B {
+  // CHECK:
+  //   Mangled name: B#<init>(){}
+  //   Public signature: /B.<init>|-5645683436151566731[0]
   private constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -16,30 +28,58 @@ object B {
 
 }
 
+// CHECK:
+//   Mangled name: IFoo
+//   Public signature: /IFoo|null[0]
 interface IFoo {
+  // CHECK:
+  //   Mangled name: IFoo@A{}foo
+  //   Public signature: /IFoo.foo|1214000299789500455[0]
   val A.foo: B
+    // CHECK:
+    //   Mangled name: IFoo#<get-foo>@A(){}B
+    //   Public signature: /IFoo.foo.<get-foo>|8070848468738985847[0]
     get(): B {
       return B
     }
 
 }
 
+// CHECK:
+//   Mangled name: IInvoke
+//   Public signature: /IInvoke|null[0]
 interface IInvoke {
+  // CHECK:
+  //   Mangled name: IInvoke#invoke@B(){}kotlin.Int
+  //   Public signature: /IInvoke.invoke|7560171197904259096[0]
   operator fun B.invoke(): Int {
     return 42
   }
 
 }
 
+// CHECK:
+//   Mangled name: #test(IFoo;IInvoke){}
+//   Public signature: /test|8554265419982095815[0]
 fun test(fooImpl: IFoo, invokeImpl: IInvoke) {
-  with<A, Int>(receiver = A, block = local fun A.<anonymous>(): Int {
-    return with<IFoo, Int>(receiver = fooImpl, block = local fun IFoo.<anonymous>(): Int {
-      return with<IInvoke, Int>(receiver = invokeImpl, block = local fun IInvoke.<anonymous>(): Int {
-        return ($this$with, ($this$with, $this$with).<get-foo>()).invoke()
-      }
+  with<A, Int>(receiver = A, block = 
+    // CHECK:
+    //   Mangled name: #test(IFoo;IInvoke){}#<anonymous>#static@A(){}kotlin.Int
+    local fun A.<anonymous>(): Int {
+      return with<IFoo, Int>(receiver = fooImpl, block = 
+        // CHECK:
+        //   Mangled name: #test(IFoo;IInvoke){}#<anonymous>#static@A(){}kotlin.Int#<anonymous>#static@IFoo(){}kotlin.Int
+        local fun IFoo.<anonymous>(): Int {
+          return with<IInvoke, Int>(receiver = invokeImpl, block = 
+            // CHECK:
+            //   Mangled name: #test(IFoo;IInvoke){}#<anonymous>#static@A(){}kotlin.Int#<anonymous>#static@IFoo(){}kotlin.Int#<anonymous>#static@IInvoke(){}kotlin.Int
+            local fun IInvoke.<anonymous>(): Int {
+              return ($this$with, ($this$with, $this$with).<get-foo>()).invoke()
+            }
+)
+        }
 )
     }
-)
-  }
 ) /*~> Unit */
 }
+

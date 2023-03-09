@@ -1,101 +1,211 @@
+// CHECK:
+//   Mangled name: #useSuspend(kotlin.coroutines.SuspendFunction0<kotlin.Unit>){}
+//   Public signature: /useSuspend|60604456614172212[0]
 fun useSuspend(fn: SuspendFunction0<Unit>) {
 }
 
+// CHECK:
+//   Mangled name: #useSuspendNullable(kotlin.coroutines.SuspendFunction0<kotlin.Unit>?){}
+//   Public signature: /useSuspendNullable|967374217920293410[0]
 fun useSuspendNullable(fn: SuspendFunction0<Unit>?) {
 }
 
+// CHECK:
+//   Mangled name: #useSuspendNestedNullable(kotlin.coroutines.SuspendFunction0<kotlin.Unit>?){}
+//   Public signature: /useSuspendNestedNullable|4549127976714545272[0]
 fun useSuspendNestedNullable(fn: SuspendFunction0<Unit>?) {
 }
 
+// CHECK:
+//   Mangled name: #useSuspendInt(kotlin.coroutines.SuspendFunction1<kotlin.Int,kotlin.Unit>){}
+//   Public signature: /useSuspendInt|6677445730045728976[0]
 fun useSuspendInt(fn: SuspendFunction1<Int, Unit>) {
 }
 
+// CHECK:
+//   Mangled name: #foo0(){}
+//   Public signature: /foo0|854950155582184407[0]
 suspend fun foo0() {
 }
 
+// CHECK:
+//   Mangled name: #foo1(){}
+//   Public signature: /foo1|-8639587189244574023[0]
 fun foo1() {
 }
 
+// CHECK:
+//   Mangled name: #fooInt(kotlin.Int){}
+//   Public signature: /fooInt|-6183432728780744676[0]
 fun fooInt(x: Int) {
 }
 
+// CHECK:
+//   Mangled name: #foo2(kotlin.IntArray...){}
+//   Public signature: /foo2|5922411859677377366[0]
 fun foo2(vararg xs: Int) {
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #foo3(){}kotlin.Int
+//   Public signature: /foo3|8491530264469693037[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #foo3(){}
+//   Mangled name computed from Descriptor: #foo3(){}
+//   Mangled name computed from Fir:        #foo3(){}kotlin.Int
+//   Public signature: /foo3|8491530264469693037[0]
 fun foo3(): Int {
   return 42
 }
 
+// CHECK:
+//   Mangled name: #foo4(kotlin.Int){}
+//   Public signature: /foo4|2900723419202106229[0]
 fun foo4(i: Int = 42) {
 }
 
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
 class C {
+  // CHECK:
+  //   Mangled name: C#<init>(){}
+  //   Public signature: /C.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: C#bar(){}
+  //   Public signature: /C.bar|496682602797471549[0]
   fun bar() {
   }
 
 }
 
+// CHECK:
+//   Mangled name: #testLambda(){}
+//   Public signature: /testLambda|-124997257399938843[0]
 fun testLambda() {
-  useSuspend(fn = local suspend fun <anonymous>() {
-    foo1()
-  }
+  useSuspend(fn = 
+    // CHECK:
+    //   Mangled name computed from Ir:         #testLambda(){}#<anonymous>#static(){}
+    //   Mangled name computed from Descriptor: #testLambda(){}#<anonymous>#static(){}
+    //   Mangled name computed from Fir:        could not compute mangled name: java.lang.IllegalStateException: unexpected element useSuspend@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {... (truncated)
+    local suspend fun <anonymous>() {
+      foo1()
+    }
 )
 }
 
+// CHECK:
+//   Mangled name: #testNoCoversion(){}
+//   Public signature: /testNoCoversion|-8699135843773409510[0]
 fun testNoCoversion() {
   useSuspend(fn = ::foo0)
 }
 
+// CHECK:
+//   Mangled name: #testSuspendPlain(){}
+//   Public signature: /testSuspendPlain|8964987636066532028[0]
 fun testSuspendPlain() {
-  useSuspend(fn = local suspend fun foo1() {
-    foo1()
-  }
+  useSuspend(fn = 
+    // CHECK:
+    //   Mangled name computed from Ir:         #testSuspendPlain(){}#foo1#static(){}
+    //   Mangled name computed from Descriptor: #testSuspendPlain(){}#foo1#static(){}
+    //   Mangled name computed from Fir:        #foo1(){}
+    local suspend fun foo1() {
+      foo1()
+    }
 )
 }
 
+// CHECK:
+//   Mangled name: #testSuspendWithArgs(){}
+//   Public signature: /testSuspendWithArgs|5693690156127811203[0]
 fun testSuspendWithArgs() {
-  useSuspendInt(fn = local suspend fun fooInt(p0: Int) {
-    fooInt(x = p0)
-  }
+  useSuspendInt(fn = 
+    // CHECK:
+    //   Mangled name computed from Ir:         #testSuspendWithArgs(){}#fooInt#static(kotlin.Int){}
+    //   Mangled name computed from Descriptor: #testSuspendWithArgs(){}#fooInt#static(kotlin.Int){}
+    //   Mangled name computed from Fir:        #fooInt(kotlin.Int){}
+    local suspend fun fooInt(p0: Int) {
+      fooInt(x = p0)
+    }
 )
 }
 
+// CHECK:
+//   Mangled name: #testWithVararg(){}
+//   Public signature: /testWithVararg|-4416299807822127184[0]
 fun testWithVararg() {
-  useSuspend(fn = local suspend fun foo2() {
-    foo2()
-  }
+  useSuspend(fn = 
+    // CHECK:
+    //   Mangled name computed from Ir:         #testWithVararg(){}#foo2#static(){}
+    //   Mangled name computed from Descriptor: #testWithVararg(){}#foo2#static(){}
+    //   Mangled name computed from Fir:        #foo2(kotlin.IntArray...){}
+    local suspend fun foo2() {
+      foo2()
+    }
 )
 }
 
+// CHECK:
+//   Mangled name: #testWithVarargMapped(){}
+//   Public signature: /testWithVarargMapped|-7339035095379549066[0]
 fun testWithVarargMapped() {
-  useSuspendInt(fn = local suspend fun foo2(p0: Int) {
-    foo2(xs = [p0])
-  }
+  useSuspendInt(fn = 
+    // CHECK:
+    //   Mangled name computed from Ir:         #testWithVarargMapped(){}#foo2#static(kotlin.Int){}
+    //   Mangled name computed from Descriptor: #testWithVarargMapped(){}#foo2#static(kotlin.Int){}
+    //   Mangled name computed from Fir:        #foo2(kotlin.IntArray...){}
+    local suspend fun foo2(p0: Int) {
+      foo2(xs = [p0])
+    }
 )
 }
 
+// CHECK:
+//   Mangled name: #testWithCoercionToUnit(){}
+//   Public signature: /testWithCoercionToUnit|7796968706461873316[0]
 fun testWithCoercionToUnit() {
-  useSuspend(fn = local suspend fun foo3() {
-    foo3()
-  }
+  useSuspend(fn = 
+    // CHECK:
+    //   Mangled name computed from Ir:         #testWithCoercionToUnit(){}#foo3#static(){}
+    //   Mangled name computed from Descriptor: #testWithCoercionToUnit(){}#foo3#static(){}
+    //   Mangled name computed from Fir:        #foo3(){}kotlin.Int
+    local suspend fun foo3() {
+      foo3()
+    }
 )
 }
 
+// CHECK:
+//   Mangled name: #testWithDefaults(){}
+//   Public signature: /testWithDefaults|-448085806147000561[0]
 fun testWithDefaults() {
-  useSuspend(fn = local suspend fun foo4() {
-    foo4()
-  }
+  useSuspend(fn = 
+    // CHECK:
+    //   Mangled name computed from Ir:         #testWithDefaults(){}#foo4#static(){}
+    //   Mangled name computed from Descriptor: #testWithDefaults(){}#foo4#static(){}
+    //   Mangled name computed from Fir:        #foo4(kotlin.Int){}
+    local suspend fun foo4() {
+      foo4()
+    }
 )
 }
 
+// CHECK:
+//   Mangled name: #testWithBoundReceiver(){}
+//   Public signature: /testWithBoundReceiver|7823514110875059394[0]
 fun testWithBoundReceiver() {
   useSuspend(fn = { // BLOCK
+    // CHECK:
+    //   Mangled name computed from Ir:         #testWithBoundReceiver(){}#bar#static@C(){}
+    //   Mangled name computed from Descriptor: #testWithBoundReceiver(){}#bar#static@C(){}
+    //   Mangled name computed from Fir:        C#bar(){}
     local suspend fun C.bar() {
       receiver.bar()
     }
@@ -104,16 +214,33 @@ fun testWithBoundReceiver() {
   })
 }
 
+// CHECK:
+//   Mangled name: #testNullableParam(){}
+//   Public signature: /testNullableParam|-2995936548663185551[0]
 fun testNullableParam() {
-  useSuspendNullable(fn = local suspend fun foo1() {
-    foo1()
-  }
+  useSuspendNullable(fn = 
+    // CHECK:
+    //   Mangled name computed from Ir:         #testNullableParam(){}#foo1#static(){}
+    //   Mangled name computed from Descriptor: #testNullableParam(){}#foo1#static(){}
+    //   Mangled name computed from Fir:        #foo1(){}
+    local suspend fun foo1() {
+      foo1()
+    }
 )
 }
 
+// CHECK:
+//   Mangled name: #testNestedNullableParam(){}
+//   Public signature: /testNestedNullableParam|-2012116353768946084[0]
 fun testNestedNullableParam() {
-  useSuspendNestedNullable(fn = local suspend fun foo1() {
-    foo1()
-  }
+  useSuspendNestedNullable(fn = 
+    // CHECK:
+    //   Mangled name computed from Ir:         #testNestedNullableParam(){}#foo1#static(){}
+    //   Mangled name computed from Descriptor: #testNestedNullableParam(){}#foo1#static(){}
+    //   Mangled name computed from Fir:        #foo1(){}
+    local suspend fun foo1() {
+      foo1()
+    }
 )
 }
+

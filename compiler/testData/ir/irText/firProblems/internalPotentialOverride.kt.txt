@@ -1,19 +1,34 @@
 // MODULE: m1
 // FILE: A.kt
 
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
 open class A {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: A#foo(){}kotlin.Int
+  //   Public signature: /A.foo|-1256155405684507276[0]
   internal open fun foo(): Int {
     return 1
   }
 
+  // CHECK:
+  //   Mangled name: A{}bar
+  //   Public signature: /A.bar|-7864284097863469857[0]
   internal open val bar: Int
     field = 1
+    // CHECK:
+    //   Mangled name: A#<get-bar>(){}kotlin.Int
+    //   Public signature: /A.bar.<get-bar>|-7403724005139201014[0]
     internal open get
 
 }
@@ -21,19 +36,35 @@ open class A {
 // MODULE: m2
 // FILE: B.kt
 
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[0]
 class B : A {
+  // CHECK:
+  //   Mangled name: B#<init>(){}
+  //   Public signature: /B.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*A*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: B#foo(){}kotlin.String
+  //   Public signature: /B.foo|485335955883620819[0]
   fun foo(): String {
     return "OK"
   }
 
+  // CHECK:
+  //   Mangled name: B{}bar
+  //   Public signature: /B.bar|-7864284097863469857[0]
   val bar: Int
     field = 2
+    // CHECK:
+    //   Mangled name: B#<get-bar>(){}kotlin.Int
+    //   Public signature: /B.bar.<get-bar>|-7403724005139201014[0]
     get
 
 }
+

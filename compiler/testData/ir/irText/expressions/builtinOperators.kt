@@ -1,4 +1,7 @@
 // FIR_IDENTICAL
+// NO_SIGNATURE_DUMP
+// ^KT-57433
+
 // FILE: test.kt
 
 package test

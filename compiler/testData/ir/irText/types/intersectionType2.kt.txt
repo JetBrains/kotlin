@@ -1,12 +1,24 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
 interface A<out T : Any?> {
 
 }
 
+// CHECK:
+//   Mangled name: Foo
+//   Public signature: /Foo|null[0]
 interface Foo {
 
 }
 
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[0]
 open class B : Foo, A<B> {
+  // CHECK:
+  //   Mangled name: B#<init>(){}
+  //   Public signature: /B.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -15,7 +27,13 @@ open class B : Foo, A<B> {
 
 }
 
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
 open class C : Foo, A<C> {
+  // CHECK:
+  //   Mangled name: C#<init>(){}
+  //   Public signature: /C.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -24,19 +42,38 @@ open class C : Foo, A<C> {
 
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #run(kotlin.Function0<0:0>){0§<kotlin.Any?>}0:0
+//   Public signature: /run|3503148828372491191[0]
+// CHECK JS_IR:
+//   Mangled name: #run(kotlin.Function0<0:0>){0§<kotlin.Any?>}
+//   Public signature: /run|8432521068183421057[0]
 fun <T : Any?> run(fn: Function0<T>): T {
   return fn.invoke()
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #foo(){}kotlin.Any
+//   Public signature: /foo|-9059697968601777418[0]
+// CHECK JS_IR:
+//   Mangled name: #foo(){}
+//   Public signature: /foo|-1041209573719867811[0]
 fun foo(): Any {
-  return run<Any>(fn = local fun <anonymous>(): Any {
-    val mm: B = B()
-    val nn: C = C()
-    val c: Any = when {
-      true -> mm
-      else -> nn
+  return run<Any>(fn = 
+    // CHECK JVM_IR:
+    //   Mangled name computed from Ir:         #foo(){}kotlin.Any#<anonymous>#static(){}kotlin.Any
+    //   Mangled name computed from Descriptor: could not compute mangled name: java.lang.IllegalStateException: Unexpected classifier: null
+    // CHECK JS_IR:
+    //   Mangled name: #foo(){}#<anonymous>#static(){}
+    local fun <anonymous>(): Any {
+      val mm: B = B()
+      val nn: C = C()
+      val c: Any = when {
+        true -> mm
+        else -> nn
+      }
+      return c
     }
-    return c
-  }
 )
 }
+

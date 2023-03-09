@@ -1,36 +1,67 @@
+// CHECK:
+//   Mangled name: #use(kotlin.String){}
+//   Public signature: /use|282927213234974825[0]
 fun use(s: String) {
 }
 
+// CHECK:
+//   Mangled name: #testUse(){}
+//   Public signature: /testUse|-7403625566932697674[0]
 fun testUse() {
   use(s = notNullString() /*!! String */)
 }
 
+// CHECK:
+//   Mangled name: #testLocalVal(){}
+//   Public signature: /testLocalVal|-7792259248330039914[0]
 fun testLocalVal() {
   val local: String = notNullString() /*!! String */
 }
 
+// CHECK:
+//   Mangled name: #testReturnValue(){}kotlin.String
+//   Public signature: /testReturnValue|5442151564926968913[0]
 fun testReturnValue(): String {
   return notNullString() /*!! String */
 }
 
+// CHECK:
+//   Mangled name: {}testGlobalVal
+//   Public signature: /testGlobalVal|-7890151294500331033[0]
 val testGlobalVal: String
   field = notNullString() /*!! String */
+  // CHECK:
+  //   Mangled name: #<get-testGlobalVal>(){}kotlin.String
+  //   Public signature: /testGlobalVal.<get-testGlobalVal>|-3066052240315060283[0]
   get
 
+// CHECK:
+//   Mangled name: {}testGlobalValGetter
+//   Public signature: /testGlobalValGetter|4373373755408489194[0]
 val testGlobalValGetter: String
+  // CHECK:
+  //   Mangled name: #<get-testGlobalValGetter>(){}kotlin.String
+  //   Public signature: /testGlobalValGetter.<get-testGlobalValGetter>|4232922191754925744[0]
   get(): String {
     return notNullString() /*!! String */
   }
 
+// CHECK:
+//   Mangled name: #testJUse(){}
+//   Public signature: /testJUse|-778395660464810777[0]
 fun testJUse() {
   use(s = nullString())
   use(s = notNullString())
   use(x = 42)
 }
 
+// CHECK:
+//   Mangled name: #testLocalVarUse(){}
+//   Public signature: /testLocalVarUse|-2742930964593648658[0]
 fun testLocalVarUse() {
   val ns: @FlexibleNullability String? = nullString()
   use(s = ns)
   val nns: String = notNullString() /*!! String */
   use(s = nns)
 }
+

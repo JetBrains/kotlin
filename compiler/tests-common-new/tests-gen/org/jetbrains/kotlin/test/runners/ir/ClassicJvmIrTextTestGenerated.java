@@ -3011,6 +3011,12 @@ public class ClassicJvmIrTextTestGenerated extends AbstractClassicJvmIrTextTest 
         }
 
         @Test
+        @TestMetadata("anonFakeOverride.kt")
+        public void testAnonFakeOverride() throws Exception {
+            runTest("compiler/testData/ir/irText/regressions/anonFakeOverride.kt");
+        }
+
+        @Test
         @TestMetadata("coercionInLoop.kt")
         public void testCoercionInLoop() throws Exception {
             runTest("compiler/testData/ir/irText/regressions/coercionInLoop.kt");

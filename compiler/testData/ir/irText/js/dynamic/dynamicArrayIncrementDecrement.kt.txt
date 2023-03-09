@@ -1,3 +1,6 @@
+// CHECK:
+//   Mangled name: #testArrayIncrementDecrement(<dynamic>){}
+//   Public signature: /testArrayIncrementDecrement|641183399401632019[0]
 fun testArrayIncrementDecrement(d: dynamic) {
   val t1: dynamic = ++d["prefixIncr"]
   val t2: dynamic = --d["prefixDecr"]

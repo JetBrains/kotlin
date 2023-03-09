@@ -1,32 +1,61 @@
+// CHECK:
+//   Mangled name: View
+//   Public signature: /View|null[0]
 class View {
+  // CHECK:
+  //   Mangled name: View#<init>(){}
+  //   Public signature: /View.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: View{}coefficient
+  //   Public signature: /View.coefficient|4563127391682800227[0]
   val coefficient: Int
     field = 42
+    // CHECK:
+    //   Mangled name: View#<get-coefficient>(){}kotlin.Int
+    //   Public signature: /View.coefficient.<get-coefficient>|2286291581442465794[0]
     get
 
 }
 
+// CHECK:
+//   Mangled name: @kotlin.Int{}dp
+//   Public signature: /dp|-4245635280375224248[0]
 val Int.dp: Int
+  // CHECK:
+  //   Mangled name computed from Ir:         #<get-dp>@kotlin.Int(View){}kotlin.Int
+  //   Mangled name computed from Descriptor: #<get-dp>!View@kotlin.Int(){}kotlin.Int
+  //   Public signature: /dp.<get-dp>|933397372434095199[0]
   get($context_receiver_0: View): Int {
     return $context_receiver_0.<get-coefficient>().times(other = <this>)
   }
 
+// CHECK:
+//   Mangled name: #box(){}kotlin.String
+//   Public signature: /box|-9347091776561469[0]
 fun box(): String {
-  with<View, Nothing>(receiver = View(), block = local fun View.<anonymous>(): Nothing {
-    when {
-      EQEQ(arg0 = listOf<Int>(elements = [1, 2, 10]).map<Int, Int>(transform = local fun <anonymous>(it: Int): Int {
-        return it.<get-dp>($context_receiver_0 = $this$with)
-      }
+  with<View, Nothing>(receiver = View(), block = 
+    // CHECK:
+    //   Mangled name: #box(){}kotlin.String#<anonymous>#static@View(){}kotlin.Nothing
+    local fun View.<anonymous>(): Nothing {
+      when {
+        EQEQ(arg0 = listOf<Int>(elements = [1, 2, 10]).map<Int, Int>(transform = 
+          // CHECK:
+          //   Mangled name: #box(){}kotlin.String#<anonymous>#static@View(){}kotlin.Nothing#<anonymous>#static(kotlin.Int){}kotlin.Int
+          local fun <anonymous>(it: Int): Int {
+            return it.<get-dp>($context_receiver_0 = $this$with)
+          }
 ), arg1 = listOf<Int>(elements = [42, 84, 420])) -> { // BLOCK
-        return "OK"
+          return "OK"
+        }
       }
+      return "fail"
     }
-    return "fail"
-  }
 )
 }
+

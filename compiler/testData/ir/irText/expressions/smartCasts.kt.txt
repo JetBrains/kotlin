@@ -1,17 +1,32 @@
+// CHECK:
+//   Mangled name: #expectsString(kotlin.String){}
+//   Public signature: /expectsString|229423483676830816[0]
 fun expectsString(s: String) {
 }
 
+// CHECK:
+//   Mangled name: #expectsInt(kotlin.Int){}
+//   Public signature: /expectsInt|7060157470192889404[0]
 fun expectsInt(i: Int) {
 }
 
+// CHECK:
+//   Mangled name: #overloaded(kotlin.String){}kotlin.String
+//   Public signature: /overloaded|-6751807575913949015[0]
 fun overloaded(s: String): String {
   return s
 }
 
+// CHECK:
+//   Mangled name: #overloaded(kotlin.Any){}kotlin.Any
+//   Public signature: /overloaded|-9074611933282297931[0]
 fun overloaded(x: Any): Any {
   return x
 }
 
+// CHECK:
+//   Mangled name: #test1(kotlin.Any){}
+//   Public signature: /test1|-4133164698161335314[0]
 fun test1(x: Any) {
   when {
     x !is String -> return Unit
@@ -22,6 +37,9 @@ fun test1(x: Any) {
   expectsString(s = overloaded(s = x /*as String */))
 }
 
+// CHECK:
+//   Mangled name: #test2(kotlin.Any){}kotlin.String
+//   Public signature: /test2|1843573308398339018[0]
 fun test2(x: Any): String {
   when {
     x !is String -> return ""
@@ -29,9 +47,13 @@ fun test2(x: Any): String {
   return overloaded(s = x /*as String */)
 }
 
+// CHECK:
+//   Mangled name: #test3(kotlin.Any){}kotlin.String
+//   Public signature: /test3|-5895248493644150217[0]
 fun test3(x: Any): String {
   when {
     x !is String -> return ""
   }
   return x /*as String */
 }
+

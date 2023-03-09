@@ -1,13 +1,50 @@
+// CHECK:
+//   Mangled name: Wrapper
+//   Public signature: /Wrapper|null[0]
 class Wrapper {
+  // CHECK:
+  //   Mangled name: Wrapper#<init>(){}
+  //   Public signature: /Wrapper.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: Wrapper{}dummy
+  //   Public signature: /Wrapper.dummy|-4015397354973262001[0]
   private val dummy: <no name provided>
     field = { // BLOCK
+      // CHECK JVM_IR:
+      //   Mangled name computed from Ir (compatible mode: false):         Wrapper{}dummy.<no name provided>
+      //   Mangled name computed from Ir (compatible mode: true):          Wrapper.dummy.<no name provided>
+      //   Mangled name computed from Descriptor (compatible mode: false): Wrapper{}dummy#jf.<no name provided>
+      //   Mangled name computed from Descriptor (compatible mode: true):  Wrapper{}dummy#jf.<no name provided>
+      //   Mangled name computed from Fir (compatible mode: false):        <anonymous>
+      //   Mangled name computed from Fir (compatible mode: true):         <anonymous>
+      // CHECK JS_IR:
+      //   Mangled name computed from Ir (compatible mode: false):         Wrapper{}dummy.<no name provided>
+      //   Mangled name computed from Ir (compatible mode: true):          Wrapper.dummy.<no name provided>
+      //   Mangled name computed from Descriptor (compatible mode: false): Wrapper{}dummy.<no name provided>
+      //   Mangled name computed from Descriptor (compatible mode: true):  Wrapper{}dummy.<no name provided>
+      //   Mangled name computed from Fir (compatible mode: false):        <anonymous>
+      //   Mangled name computed from Fir (compatible mode: true):         <anonymous>
       local class <no name provided> : Bar {
+        // CHECK JVM_IR:
+        //   Mangled name computed from Ir (compatible mode: false):         Wrapper{}dummy.<no name provided>#<init>(){}
+        //   Mangled name computed from Ir (compatible mode: true):          Wrapper.dummy.<no name provided>#<init>(){}
+        //   Mangled name computed from Descriptor (compatible mode: false): Wrapper{}dummy#jf.<no name provided>#<init>(){}
+        //   Mangled name computed from Descriptor (compatible mode: true):  Wrapper{}dummy#jf.<no name provided>#<init>(){}
+        //   Mangled name computed from Fir (compatible mode: false):        #<init>(){}
+        //   Mangled name computed from Fir (compatible mode: true):         #<init>(){}
+        // CHECK JS_IR:
+        //   Mangled name computed from Ir (compatible mode: false):         Wrapper{}dummy.<no name provided>#<init>(){}
+        //   Mangled name computed from Ir (compatible mode: true):          Wrapper.dummy.<no name provided>#<init>(){}
+        //   Mangled name computed from Descriptor (compatible mode: false): Wrapper{}dummy.<no name provided>#<init>(){}
+        //   Mangled name computed from Descriptor (compatible mode: true):  Wrapper{}dummy.<no name provided>#<init>(){}
+        //   Mangled name computed from Fir (compatible mode: false):        #<init>(){}
+        //   Mangled name computed from Fir (compatible mode: true):         #<init>(){}
         constructor() /* primary */ {
           super/*Any*/()
           /* <init>() */
@@ -18,36 +55,140 @@ class Wrapper {
 
       <no name provided>()
     }
+    // CHECK JVM_IR:
+    //   Mangled name computed from Ir (compatible mode: false):         Wrapper#<get-dummy>(){}Wrapper{}dummy.<no name provided>
+    //   Mangled name computed from Ir (compatible mode: true):          Wrapper#<get-dummy>(){}Wrapper.dummy.<no name provided>
+    //   Mangled name computed from Descriptor (compatible mode: false): Wrapper#<get-dummy>(){}Wrapper{}dummy.<no name provided>
+    //   Mangled name computed from Descriptor (compatible mode: true):  Wrapper#<get-dummy>(){}Wrapper{}dummy.<no name provided>
+    //   Mangled name computed from Fir (compatible mode: false):        Wrapper#<get-dummy>(){}<anonymous>
+    //   Mangled name computed from Fir (compatible mode: true):         Wrapper#<get-dummy>(){}<anonymous>
+    //   Public signature: /Wrapper.dummy.<get-dummy>|-496593505334163578[0]
+    // CHECK JS_IR:
+    //   Mangled name computed from Ir:         Wrapper#<get-dummy>(){}
+    //   Mangled name computed from Descriptor: Wrapper#<get-dummy>(){}
+    //   Mangled name computed from Fir:        Wrapper#<get-dummy>(){}<anonymous>
+    //   Public signature: /Wrapper.dummy.<get-dummy>|-496593505334163578[0]
     private get
 
+  // CHECK:
+  //   Mangled name: Wrapper{}bar
+  //   Public signature: /Wrapper.bar|-7864284097863469857[0]
   private val bar: <no name provided>
     field = { // BLOCK
+      // CHECK JVM_IR:
+      //   Mangled name computed from Ir (compatible mode: false):         Wrapper{}bar.<no name provided>
+      //   Mangled name computed from Ir (compatible mode: true):          Wrapper.bar.<no name provided>
+      //   Mangled name computed from Descriptor (compatible mode: false): Wrapper{}bar#jf.<no name provided>
+      //   Mangled name computed from Descriptor (compatible mode: true):  Wrapper{}bar#jf.<no name provided>
+      //   Mangled name computed from Fir (compatible mode: false):        <anonymous>
+      //   Mangled name computed from Fir (compatible mode: true):         <anonymous>
+      // CHECK JS_IR:
+      //   Mangled name computed from Ir (compatible mode: false):         Wrapper{}bar.<no name provided>
+      //   Mangled name computed from Ir (compatible mode: true):          Wrapper.bar.<no name provided>
+      //   Mangled name computed from Descriptor (compatible mode: false): Wrapper{}bar.<no name provided>
+      //   Mangled name computed from Descriptor (compatible mode: true):  Wrapper{}bar.<no name provided>
+      //   Mangled name computed from Fir (compatible mode: false):        <anonymous>
+      //   Mangled name computed from Fir (compatible mode: true):         <anonymous>
       local class <no name provided> : Bar {
+        // CHECK JVM_IR:
+        //   Mangled name computed from Ir (compatible mode: false):         Wrapper{}bar.<no name provided>#<init>(){}
+        //   Mangled name computed from Ir (compatible mode: true):          Wrapper.bar.<no name provided>#<init>(){}
+        //   Mangled name computed from Descriptor (compatible mode: false): Wrapper{}bar#jf.<no name provided>#<init>(){}
+        //   Mangled name computed from Descriptor (compatible mode: true):  Wrapper{}bar#jf.<no name provided>#<init>(){}
+        //   Mangled name computed from Fir (compatible mode: false):        #<init>(){}
+        //   Mangled name computed from Fir (compatible mode: true):         #<init>(){}
+        // CHECK JS_IR:
+        //   Mangled name computed from Ir (compatible mode: false):         Wrapper{}bar.<no name provided>#<init>(){}
+        //   Mangled name computed from Ir (compatible mode: true):          Wrapper.bar.<no name provided>#<init>(){}
+        //   Mangled name computed from Descriptor (compatible mode: false): Wrapper{}bar.<no name provided>#<init>(){}
+        //   Mangled name computed from Descriptor (compatible mode: true):  Wrapper{}bar.<no name provided>#<init>(){}
+        //   Mangled name computed from Fir (compatible mode: false):        #<init>(){}
+        //   Mangled name computed from Fir (compatible mode: true):         #<init>(){}
         constructor() /* primary */ {
           super/*Any*/()
           /* <init>() */
 
         }
 
+        // CHECK JVM_IR:
+        //   Mangled name computed from Ir (compatible mode: false):         Wrapper{}bar.<no name provided>{}foo
+        //   Mangled name computed from Ir (compatible mode: true):          Wrapper.bar.<no name provided>{}foo
+        //   Mangled name computed from Descriptor (compatible mode: false): Wrapper{}bar#jf.<no name provided>{}foo
+        //   Mangled name computed from Descriptor (compatible mode: true):  Wrapper{}bar#jf.<no name provided>{}foo
+        //   Mangled name computed from Fir (compatible mode: false):        {}foo
+        //   Mangled name computed from Fir (compatible mode: true):         {}foo
+        // CHECK JS_IR:
+        //   Mangled name computed from Ir (compatible mode: false):         Wrapper{}bar.<no name provided>{}foo
+        //   Mangled name computed from Ir (compatible mode: true):          Wrapper.bar.<no name provided>{}foo
+        //   Mangled name computed from Descriptor (compatible mode: false): Wrapper{}bar.<no name provided>{}foo
+        //   Mangled name computed from Descriptor (compatible mode: true):  Wrapper{}bar.<no name provided>{}foo
+        //   Mangled name computed from Fir (compatible mode: false):        {}foo
+        //   Mangled name computed from Fir (compatible mode: true):         {}foo
         override val foo: String
+          // CHECK JVM_IR:
+          //   Mangled name computed from Ir (compatible mode: false):         Wrapper{}bar.<no name provided>#<get-foo>(){}kotlin.String
+          //   Mangled name computed from Ir (compatible mode: true):          Wrapper.bar.<no name provided>#<get-foo>(){}kotlin.String
+          //   Mangled name computed from Descriptor (compatible mode: false): Wrapper{}bar#jf.<no name provided>#<get-foo>(){}kotlin.String
+          //   Mangled name computed from Descriptor (compatible mode: true):  Wrapper{}bar#jf.<no name provided>#<get-foo>(){}kotlin.String
+          // CHECK JS_IR:
+          //   Mangled name (compatible mode: false): Wrapper{}bar.<no name provided>#<get-foo>(){}
+          //   Mangled name (compatible mode: true):  Wrapper.bar.<no name provided>#<get-foo>(){}
           override get(): String {
             return <this>.#$$delegate_0.<get-foo>()
           }
 
+        // CHECK JVM_IR:
+        //   Mangled name computed from Ir (compatible mode: false):         Wrapper{}bar.<no name provided>.$$delegate_0
+        //   Mangled name computed from Ir (compatible mode: true):          Wrapper.bar.<no name provided>.$$delegate_0
+        //   Mangled name computed from Descriptor (compatible mode: false): Wrapper{}bar#jf.<no name provided>{}$$delegate_0#jf
+        //   Mangled name computed from Descriptor (compatible mode: true):  Wrapper{}bar#jf.<no name provided>{}$$delegate_0#jf
+        // CHECK JS_IR:
+        //   Mangled name computed from Ir (compatible mode: false):         Wrapper{}bar.<no name provided>.$$delegate_0
+        //   Mangled name computed from Ir (compatible mode: true):          Wrapper.bar.<no name provided>.$$delegate_0
+        //   Mangled name computed from Descriptor (compatible mode: false): Wrapper{}bar.<no name provided>{}$$delegate_0
+        //   Mangled name computed from Descriptor (compatible mode: true):  Wrapper{}bar.<no name provided>{}$$delegate_0
         private /* final field */ val $$delegate_0: <no name provided> = <this>.<get-dummy>()
 
       }
 
       <no name provided>()
     }
+    // CHECK JVM_IR:
+    //   Mangled name computed from Ir (compatible mode: false):         Wrapper#<get-bar>(){}Wrapper{}bar.<no name provided>
+    //   Mangled name computed from Ir (compatible mode: true):          Wrapper#<get-bar>(){}Wrapper.bar.<no name provided>
+    //   Mangled name computed from Descriptor (compatible mode: false): Wrapper#<get-bar>(){}Wrapper{}bar.<no name provided>
+    //   Mangled name computed from Descriptor (compatible mode: true):  Wrapper#<get-bar>(){}Wrapper{}bar.<no name provided>
+    //   Mangled name computed from Fir (compatible mode: false):        Wrapper#<get-bar>(){}<anonymous>
+    //   Mangled name computed from Fir (compatible mode: true):         Wrapper#<get-bar>(){}<anonymous>
+    //   Public signature: /Wrapper.bar.<get-bar>|3900495136408569124[0]
+    // CHECK JS_IR:
+    //   Mangled name computed from Ir:         Wrapper#<get-bar>(){}
+    //   Mangled name computed from Descriptor: Wrapper#<get-bar>(){}
+    //   Mangled name computed from Fir:        Wrapper#<get-bar>(){}<anonymous>
+    //   Public signature: /Wrapper.bar.<get-bar>|3900495136408569124[0]
     private get
 
 }
 
+// CHECK:
+//   Mangled name: Bar
+//   Public signature: /Bar|null[0]
 interface Bar {
+  // CHECK:
+  //   Mangled name: Bar{}foo
+  //   Public signature: /Bar.foo|1688079488202778848[0]
   val foo: String
+    // CHECK JVM_IR:
+    //   Mangled name: Bar#<get-foo>(){}kotlin.String
+    //   Public signature: /Bar.foo.<get-foo>|9191418659696353323[0]
+    // CHECK JS_IR:
+    //   Mangled name computed from Ir:         Bar#<get-foo>(){}
+    //   Mangled name computed from Descriptor: Bar#<get-foo>(){}
+    //   Mangled name computed from Fir:        Bar#<get-foo>(){}kotlin.String
+    //   Public signature: /Bar.foo.<get-foo>|9191418659696353323[0]
     get(): String {
       return ""
     }
 
 }
+

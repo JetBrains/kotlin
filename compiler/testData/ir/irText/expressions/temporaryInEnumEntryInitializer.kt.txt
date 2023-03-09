@@ -1,18 +1,39 @@
+// CHECK:
+//   Mangled name: {}n
+//   Public signature: /n|-1061662854873377138[0]
 val n: Any?
   field = null
+  // CHECK:
+  //   Mangled name: #<get-n>(){}kotlin.Any?
+  //   Public signature: /n.<get-n>|7208370094191018600[0]
   get
 
+// CHECK:
+//   Mangled name: En
+//   Public signature: /En|null[0]
 enum class En : Enum<En> {
+  // CHECK:
+  //   Mangled name: En#<init>(kotlin.String?){}
+  //   Public signature: /En.<init>|392868513202821770[0]
   private constructor(x: String?) /* primary */ {
     super/*Enum*/<En>()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: En{}x
+  //   Public signature: /En.x|-8060530855978347579[0]
   val x: String?
     field = x
+    // CHECK:
+    //   Mangled name: En#<get-x>(){}kotlin.String?
+    //   Public signature: /En.x.<get-x>|1655337285200701437[0]
     get
 
+  // CHECK:
+  //   Mangled name: En.ENTRY
+  //   Public signature: /En.ENTRY|null[0]
   ENTRY = En(x = { // BLOCK
     val tmp0_safe_receiver: Any? = <get-n>()
     when {
@@ -21,11 +42,24 @@ enum class En : Enum<En> {
     }
   })
 
+  // CHECK:
+  //   Mangled name: En#values#static(){}kotlin.Array<En>
+  //   Public signature: /En.values|-6442868649398371099[0]
   fun values(): Array<En> /* Synthetic body for ENUM_VALUES */
 
+  // CHECK:
+  //   Mangled name: En#valueOf#static(kotlin.String){}En
+  //   Public signature: /En.valueOf|-1047188124757226812[0]
   fun valueOf(value: String): En /* Synthetic body for ENUM_VALUEOF */
 
+  // CHECK:
+  //   Mangled name: En#static{}entries
+  //   Public signature: /En.entries|-5134227801081826149[0]
   val entries: EnumEntries<En>
+    // CHECK:
+    //   Mangled name: En#<get-entries>#static(){}kotlin.enums.EnumEntries<En>
+    //   Public signature: /En.entries.<get-entries>|7832995474718587298[0]
     get(): EnumEntries<En> /* Synthetic body for ENUM_ENTRIES */
 
 }
+

@@ -1,34 +1,67 @@
+// CHECK:
+//   Mangled name: Test
+//   Public signature: /Test|null[0]
 data class Test<T : Any?> {
+  // CHECK:
+  //   Mangled name: Test#<init>(1:0;kotlin.String){}
+  //   Public signature: /Test.<init>|-7411275398527089511[0]
   constructor(x: T, y: String = "") /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: Test{}x
+  //   Public signature: /Test.x|-8060530855978347579[0]
   val x: T
     field = x
+    // CHECK:
+    //   Mangled name: Test#<get-x>(){}1:0
+    //   Public signature: /Test.x.<get-x>|-8893883356128097563[0]
     get
 
+  // CHECK:
+  //   Mangled name: Test{}y
+  //   Public signature: /Test.y|3625903257357557171[0]
   val y: String
     field = y
+    // CHECK:
+    //   Mangled name: Test#<get-y>(){}kotlin.String
+    //   Public signature: /Test.y.<get-y>|1760775372995524147[0]
     get
 
+  // CHECK:
+  //   Mangled name: Test#component1(){}1:0
+  //   Public signature: /Test.component1|2393470133763651536[0]
   operator fun component1(): T {
     return <this>.#x
   }
 
+  // CHECK:
+  //   Mangled name: Test#component2(){}kotlin.String
+  //   Public signature: /Test.component2|1228864375093914597[0]
   operator fun component2(): String {
     return <this>.#y
   }
 
+  // CHECK:
+  //   Mangled name: Test#copy(1:0;kotlin.String){}Test<1:0>
+  //   Public signature: /Test.copy|8763634592557776800[0]
   fun copy(x: T = <this>.#x, y: String = <this>.#y): Test<T> {
     return Test<T>(x = x, y = y)
   }
 
+  // CHECK:
+  //   Mangled name: Test#toString(){}kotlin.String
+  //   Public signature: /Test.toString|6958853723545266802[0]
   override fun toString(): String {
     return "Test(" + "x=" + <this>.#x + ", " + "y=" + <this>.#y + ")"
   }
 
+  // CHECK:
+  //   Mangled name: Test#hashCode(){}kotlin.Int
+  //   Public signature: /Test.hashCode|-8048879360829830756[0]
   override fun hashCode(): Int {
     var result: Int = when {
       EQEQ(arg0 = <this>.#x, arg1 = null) -> 0
@@ -38,6 +71,9 @@ data class Test<T : Any?> {
     return result
   }
 
+  // CHECK:
+  //   Mangled name: Test#equals(kotlin.Any?){}kotlin.Boolean
+  //   Public signature: /Test.equals|722809408929142791[0]
   override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
@@ -56,3 +92,4 @@ data class Test<T : Any?> {
   }
 
 }
+

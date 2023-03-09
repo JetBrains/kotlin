@@ -1,18 +1,36 @@
+// CHECK:
+//   Mangled name: TestAnn
+//   Public signature: /TestAnn|null[0]
 open annotation class TestAnn : Annotation {
+  // CHECK:
+  //   Mangled name: TestAnn#<init>(kotlin.String){}
+  //   Public signature: /TestAnn.<init>|1280618353163213788[0]
   constructor(x: String) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: TestAnn{}x
+  //   Public signature: /TestAnn.x|-8060530855978347579[0]
   val x: String
     field = x
+    // CHECK:
+    //   Mangled name: TestAnn#<get-x>(){}kotlin.String
+    //   Public signature: /TestAnn.x.<get-x>|316111172223894646[0]
     get
 
 }
 
+// CHECK:
+//   Mangled name: TestClass
+//   Public signature: /TestClass|null[0]
 @TestAnn(x = "class")
 class TestClass {
+  // CHECK:
+  //   Mangled name: TestClass#<init>(){}
+  //   Public signature: /TestClass.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -21,13 +39,22 @@ class TestClass {
 
 }
 
+// CHECK:
+//   Mangled name: TestInterface
+//   Public signature: /TestInterface|null[0]
 @TestAnn(x = "interface")
 interface TestInterface {
 
 }
 
+// CHECK:
+//   Mangled name: TestObject
+//   Public signature: /TestObject|null[0]
 @TestAnn(x = "object")
 object TestObject {
+  // CHECK:
+  //   Mangled name: TestObject#<init>(){}
+  //   Public signature: /TestObject.<init>|-5645683436151566731[0]
   private constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -36,15 +63,27 @@ object TestObject {
 
 }
 
+// CHECK:
+//   Mangled name: Host
+//   Public signature: /Host|null[0]
 class Host {
+  // CHECK:
+  //   Mangled name: Host#<init>(){}
+  //   Public signature: /Host.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: Host.TestCompanion
+  //   Public signature: /Host.TestCompanion|null[0]
   @TestAnn(x = "companion")
   companion object TestCompanion {
+    // CHECK:
+    //   Mangled name: Host.TestCompanion#<init>(){}
+    //   Public signature: /Host.TestCompanion.<init>|-5645683436151566731[0]
     private constructor() /* primary */ {
       super/*Any*/()
       /* <init>() */
@@ -55,25 +94,49 @@ class Host {
 
 }
 
+// CHECK:
+//   Mangled name: TestEnum
+//   Public signature: /TestEnum|null[0]
 @TestAnn(x = "enum")
 enum class TestEnum : Enum<TestEnum> {
+  // CHECK:
+  //   Mangled name: TestEnum#<init>(){}
+  //   Public signature: /TestEnum.<init>|-5645683436151566731[0]
   private constructor() /* primary */ {
     super/*Enum*/<TestEnum>()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: TestEnum#values#static(){}kotlin.Array<TestEnum>
+  //   Public signature: /TestEnum.values|-4299804782350326897[0]
   fun values(): Array<TestEnum> /* Synthetic body for ENUM_VALUES */
 
+  // CHECK:
+  //   Mangled name: TestEnum#valueOf#static(kotlin.String){}TestEnum
+  //   Public signature: /TestEnum.valueOf|1811575739170804829[0]
   fun valueOf(value: String): TestEnum /* Synthetic body for ENUM_VALUEOF */
 
+  // CHECK:
+  //   Mangled name: TestEnum#static{}entries
+  //   Public signature: /TestEnum.entries|-5134227801081826149[0]
   val entries: EnumEntries<TestEnum>
+    // CHECK:
+    //   Mangled name: TestEnum#<get-entries>#static(){}kotlin.enums.EnumEntries<TestEnum>
+    //   Public signature: /TestEnum.entries.<get-entries>|6962221716588245012[0]
     get(): EnumEntries<TestEnum> /* Synthetic body for ENUM_ENTRIES */
 
 }
 
+// CHECK:
+//   Mangled name: TestAnnotation
+//   Public signature: /TestAnnotation|null[0]
 @TestAnn(x = "annotation")
 open annotation class TestAnnotation : Annotation {
+  // CHECK:
+  //   Mangled name: TestAnnotation#<init>(){}
+  //   Public signature: /TestAnnotation.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -81,3 +144,4 @@ open annotation class TestAnnotation : Annotation {
   }
 
 }
+

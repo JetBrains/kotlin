@@ -1,3 +1,6 @@
+// CHECK:
+//   Mangled name: #test(J<0:0>){0§<kotlin.Any?>}
+//   Public signature: /test|-9034900230155254055[0]
 fun <F : Any?> test(j: J<F>) {
   j.getFoo<F>() /*~> Unit */
   j.setFoo<F>(x = 1)
@@ -14,3 +17,4 @@ fun <F : Any?> test(j: J<F>) {
     tmp2_receiver.setFoo<F>(x = tmp2_receiver.getFoo<F>().plus(other = 1))
   }
 }
+

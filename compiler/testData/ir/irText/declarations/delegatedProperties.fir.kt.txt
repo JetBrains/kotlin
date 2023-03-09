@@ -1,48 +1,106 @@
-val test1: Int /* by */
-  field = lazy<Int>(initializer = local fun <anonymous>(): Int {
-    return 42
-  }
+// CHECK:
+//   Mangled name: {}test1
+//   Public signature: /test1|6005685442305498193[0]
+val test1: Int /* by */ 
+  field = lazy<Int>(initializer = 
+    // CHECK:
+    //   Mangled name computed from Ir (compatible mode: false):         {}test1#<anonymous>#static(){}kotlin.Int
+    //   Mangled name computed from Ir (compatible mode: true):          test1$delegate#<anonymous>#static(){}kotlin.Int
+    //   Mangled name computed from Descriptor (compatible mode: false): {}test1$delegate#jf#<anonymous>#static(){}kotlin.Int
+    //   Mangled name computed from Descriptor (compatible mode: true):  {}test1$delegate#jf#<anonymous>#static(){}kotlin.Int
+    //   Mangled name computed from Fir (compatible mode: false):        could not compute mangled name: java.lang.IllegalStateException: unexpected element lazy@fun <anonymous>(): R|kotlin/Int| <inline=NoInline>  {... (truncated)
+    //   Mangled name computed from Fir (compatible mode: true):         could not compute mangled name: java.lang.IllegalStateException: unexpected element lazy@fun <anonymous>(): R|kotlin/Int| <inline=NoInline>  {... (truncated)
+    local fun <anonymous>(): Int {
+      return 42
+    }
 )
+  // CHECK:
+  //   Mangled name: #<get-test1>(){}kotlin.Int
+  //   Public signature: /test1.<get-test1>|3978508226793108919[0]
   get(): Int {
     return #test1$delegate.getValue<Int>(thisRef = null, property = ::test1)
   }
 
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
 class C {
+  // CHECK:
+  //   Mangled name: C#<init>(kotlin.collections.MutableMap<kotlin.String,kotlin.Any>){}
+  //   Public signature: /C.<init>|1811770173759787848[0]
   constructor(map: MutableMap<String, Any>) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: C{}map
+  //   Public signature: /C.map|7076745113644856434[0]
   val map: MutableMap<String, Any>
     field = map
+    // CHECK:
+    //   Mangled name: C#<get-map>(){}kotlin.collections.MutableMap<kotlin.String,kotlin.Any>
+    //   Public signature: /C.map.<get-map>|-8717997113067483919[0]
     get
 
-  val test2: Int /* by */
-    field = lazy<Int>(initializer = local fun <anonymous>(): Int {
-      return 42
-    }
+  // CHECK:
+  //   Mangled name: C{}test2
+  //   Public signature: /C.test2|2517758057000911509[0]
+  val test2: Int /* by */ 
+    field = lazy<Int>(initializer = 
+      // CHECK:
+      //   Mangled name computed from Ir (compatible mode: false):         C{}test2#<anonymous>#static(){}kotlin.Int
+      //   Mangled name computed from Ir (compatible mode: true):          C.test2$delegate#<anonymous>#static(){}kotlin.Int
+      //   Mangled name computed from Descriptor (compatible mode: false): C{}test2$delegate#jf#<anonymous>#static(){}kotlin.Int
+      //   Mangled name computed from Descriptor (compatible mode: true):  C{}test2$delegate#jf#<anonymous>#static(){}kotlin.Int
+      //   Mangled name computed from Fir (compatible mode: false):        could not compute mangled name: java.lang.IllegalStateException: unexpected element lazy@fun <anonymous>(): R|kotlin/Int| <inline=NoInline>  {... (truncated)
+      //   Mangled name computed from Fir (compatible mode: true):         could not compute mangled name: java.lang.IllegalStateException: unexpected element lazy@fun <anonymous>(): R|kotlin/Int| <inline=NoInline>  {... (truncated)
+      local fun <anonymous>(): Int {
+        return 42
+      }
 )
+    // CHECK:
+    //   Mangled name: C#<get-test2>(){}kotlin.Int
+    //   Public signature: /C.test2.<get-test2>|-8779933517717592707[0]
     get(): Int {
       return <this>.#test2$delegate.getValue<Int>(thisRef = <this>, property = C::test2)
     }
 
-  var test3: Any /* by */
+  // CHECK:
+  //   Mangled name: C{}test3
+  //   Public signature: /C.test3|7677556066983021166[0]
+  var test3: Any /* by */ 
     field = <this>.<get-map>()
+    // CHECK:
+    //   Mangled name: C#<get-test3>(){}kotlin.Any
+    //   Public signature: /C.test3.<get-test3>|-7091348225606608458[0]
     get(): Any {
       return <this>.#test3$delegate.getValue<Any, Any>(thisRef = <this>, property = C::test3)
     }
+    // CHECK:
+    //   Mangled name: C#<set-test3>(kotlin.Any){}
+    //   Public signature: /C.test3.<set-test3>|1934506036485889165[0]
     set(<set-?>: Any) {
       <this>.#test3$delegate.setValue<Any>(thisRef = <this>, property = C::test3, value = <set-?>)
     }
 
 }
 
-var test4: Any /* by */
+// CHECK:
+//   Mangled name: {}test4
+//   Public signature: /test4|-9115637610245762085[0]
+var test4: Any /* by */ 
   field = hashMapOf<String, Any>()
+  // CHECK:
+  //   Mangled name: #<get-test4>(){}kotlin.Any
+  //   Public signature: /test4.<get-test4>|-6534367907772852251[0]
   get(): Any {
     return #test4$delegate.getValue<Any, Any>(thisRef = null, property = ::test4)
   }
+  // CHECK:
+  //   Mangled name: #<set-test4>(kotlin.Any){}
+  //   Public signature: /test4.<set-test4>|128813287573470091[0]
   set(<set-?>: Any) {
     #test4$delegate.setValue<Any>(thisRef = null, property = ::test4, value = <set-?>)
   }

@@ -1,4 +1,8 @@
 // FIR_IDENTICAL
+
+// NO_SIGNATURE_DUMP
+// ^KT-57436
+
 fun <T> castFun(x: Any) = x as T
 
 fun <T> Any.castExtFun() = this as T

@@ -1,4 +1,10 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
 object A {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
   private constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -7,36 +13,78 @@ object A {
 
 }
 
+// CHECK:
+//   Mangled name: En
+//   Public signature: /En|null[0]
 enum class En : Enum<En> {
+  // CHECK:
+  //   Mangled name: En#<init>(){}
+  //   Public signature: /En.<init>|-5645683436151566731[0]
   private constructor() /* primary */ {
     super/*Enum*/<En>()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: En.X
+  //   Public signature: /En.X|null[0]
   X = En()
 
+  // CHECK:
+  //   Mangled name: En#values#static(){}kotlin.Array<En>
+  //   Public signature: /En.values|-6442868649398371099[0]
   fun values(): Array<En> /* Synthetic body for ENUM_VALUES */
 
+  // CHECK:
+  //   Mangled name: En#valueOf#static(kotlin.String){}En
+  //   Public signature: /En.valueOf|-1047188124757226812[0]
   fun valueOf(value: String): En /* Synthetic body for ENUM_VALUEOF */
 
+  // CHECK:
+  //   Mangled name: En#static{}entries
+  //   Public signature: /En.entries|-5134227801081826149[0]
   val entries: EnumEntries<En>
+    // CHECK:
+    //   Mangled name computed from Ir:         En#<get-entries>#static(){}kotlin.enums.EnumEntries<En>
+    //   Mangled name computed from Descriptor: En#<get-entries>#static(){}kotlin.enums.EnumEntries<En>
+    //   Mangled name computed from Fir:        #<get-entries>#static(){}kotlin.enums.EnumEntries<En>
+    //   Public signature: /En.entries.<get-entries>|7832995474718587298[0]
     get(): EnumEntries<En> /* Synthetic body for ENUM_ENTRIES */
 
 }
 
+// CHECK:
+//   Mangled name: #invoke@A(kotlin.Int){}kotlin.Int
+//   Public signature: /invoke|503088749404942002[0]
 operator fun A.invoke(i: Int): Int {
   return i
 }
 
+// CHECK:
+//   Mangled name: #invoke@En(kotlin.Int){}kotlin.Int
+//   Public signature: /invoke|-7019391879885662247[0]
 operator fun En.invoke(i: Int): Int {
   return i
 }
 
+// CHECK:
+//   Mangled name: {}test1
+//   Public signature: /test1|6005685442305498193[0]
 val test1: Int
   field = A.invoke(i = 42)
+  // CHECK:
+  //   Mangled name: #<get-test1>(){}kotlin.Int
+  //   Public signature: /test1.<get-test1>|3978508226793108919[0]
   get
 
+// CHECK:
+//   Mangled name: {}test2
+//   Public signature: /test2|2517758057000911509[0]
 val test2: Int
   field = En.X.invoke(i = 42)
+  // CHECK:
+  //   Mangled name: #<get-test2>(){}kotlin.Int
+  //   Public signature: /test2.<get-test2>|-8779933517717592707[0]
   get
+

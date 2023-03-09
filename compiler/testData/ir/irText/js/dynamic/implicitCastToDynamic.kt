@@ -1,4 +1,8 @@
 // TARGET_BACKEND: JS_IR
+
+// NO_SIGNATURE_DUMP
+// ^ KT-57566
+
 val d1: dynamic = 1
 
 val p: Int = 1

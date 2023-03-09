@@ -1,4 +1,8 @@
 // FIR_IDENTICAL
+
+// NO_SIGNATURE_DUMP
+// ^KT-57430
+
 class Outer {
     open inner class Inner(val x: Int)
 }

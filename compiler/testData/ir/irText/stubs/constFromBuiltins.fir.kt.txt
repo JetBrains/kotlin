@@ -1,3 +1,10 @@
+// CHECK:
+//   Mangled name: {}test
+//   Public signature: /test|-5712650070209114719[0]
 val test: Int
   field = Companion.#MIN_VALUE
+  // CHECK:
+  //   Mangled name: #<get-test>(){}kotlin.Int
+  //   Public signature: /test.<get-test>|3701432460336260723[0]
   get
+

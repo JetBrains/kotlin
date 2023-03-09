@@ -1,4 +1,10 @@
+// CHECK:
+//   Mangled name: Ann
+//   Public signature: /Ann|null[0]
 open annotation class Ann : Annotation {
+  // CHECK:
+  //   Mangled name: Ann#<init>(){}
+  //   Public signature: /Ann.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -7,51 +13,119 @@ open annotation class Ann : Annotation {
 
 }
 
+// CHECK:
+//   Mangled name: IFoo
+//   Public signature: /IFoo|null[0]
 interface IFoo {
+  // CHECK:
+  //   Mangled name: IFoo{}testVal
+  //   Public signature: /IFoo.testVal|2839078120601828782[0]
   @Ann
   abstract val testVal: String
+    // CHECK JVM_IR:
+    //   Mangled name: IFoo#<get-testVal>(){}kotlin.String
+    //   Public signature: /IFoo.testVal.<get-testVal>|-8940261368877498423[0]
+    // CHECK JS_IR:
+    //   Mangled name computed from Ir:         IFoo#<get-testVal>(){}
+    //   Mangled name computed from Descriptor: IFoo#<get-testVal>(){}
+    //   Mangled name computed from Fir:        IFoo#<get-testVal>(){}kotlin.String
+    //   Public signature: /IFoo.testVal.<get-testVal>|-8940261368877498423[0]
     abstract get
 
+  // CHECK:
+  //   Mangled name: IFoo#testFun(){}
+  //   Public signature: /IFoo.testFun|6322333980269160703[0]
   @Ann
   abstract fun testFun()
+  // CHECK:
+  //   Mangled name: IFoo@kotlin.String{}testExtVal
+  //   Public signature: /IFoo.testExtVal|-6269693357376137188[0]
   @Ann
   abstract val String.testExtVal: String
+    // CHECK JVM_IR:
+    //   Mangled name: IFoo#<get-testExtVal>@kotlin.String(){}kotlin.String
+    //   Public signature: /IFoo.testExtVal.<get-testExtVal>|4035393032845602237[0]
+    // CHECK JS_IR:
+    //   Mangled name computed from Ir:         IFoo#<get-testExtVal>@kotlin.String(){}
+    //   Mangled name computed from Descriptor: IFoo#<get-testExtVal>@kotlin.String(){}
+    //   Mangled name computed from Fir:        IFoo#<get-testExtVal>@kotlin.String(){}kotlin.String
+    //   Public signature: /IFoo.testExtVal.<get-testExtVal>|4035393032845602237[0]
     abstract get
 
+  // CHECK:
+  //   Mangled name: IFoo#testExtFun@kotlin.String(){}
+  //   Public signature: /IFoo.testExtFun|-4671785829303171989[0]
   @Ann
   abstract fun String.testExtFun()
 
 }
 
+// CHECK:
+//   Mangled name: DFoo
+//   Public signature: /DFoo|null[0]
 class DFoo : IFoo {
+  // CHECK:
+  //   Mangled name: DFoo#<init>(IFoo){}
+  //   Public signature: /DFoo.<init>|-657369904845510135[0]
   constructor(d: IFoo) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: DFoo#testFun(){}
+  //   Public signature: /DFoo.testFun|6322333980269160703[0]
   @Ann
   override fun testFun() {
     <this>.#$$delegate_0.testFun()
   }
 
+  // CHECK:
+  //   Mangled name: DFoo#testExtFun@kotlin.String(){}
+  //   Public signature: /DFoo.testExtFun|-4671785829303171989[0]
   @Ann
   override fun String.testExtFun() {
     (<this>.#$$delegate_0, <this>).testExtFun()
   }
 
+  // CHECK:
+  //   Mangled name: DFoo{}testVal
+  //   Public signature: /DFoo.testVal|2839078120601828782[0]
   @Ann
   override val testVal: String
+    // CHECK JVM_IR:
+    //   Mangled name: DFoo#<get-testVal>(){}kotlin.String
+    //   Public signature: /DFoo.testVal.<get-testVal>|-8940261368877498423[0]
+    // CHECK JS_IR:
+    //   Mangled name: DFoo#<get-testVal>(){}
+    //   Public signature: /DFoo.testVal.<get-testVal>|-8940261368877498423[0]
     override get(): String {
       return <this>.#$$delegate_0.<get-testVal>()
     }
 
+  // CHECK:
+  //   Mangled name: DFoo@kotlin.String{}testExtVal
+  //   Public signature: /DFoo.testExtVal|-6269693357376137188[0]
   @Ann
   override val String.testExtVal: String
+    // CHECK JVM_IR:
+    //   Mangled name: DFoo#<get-testExtVal>@kotlin.String(){}kotlin.String
+    //   Public signature: /DFoo.testExtVal.<get-testExtVal>|4035393032845602237[0]
+    // CHECK JS_IR:
+    //   Mangled name: DFoo#<get-testExtVal>@kotlin.String(){}
+    //   Public signature: /DFoo.testExtVal.<get-testExtVal>|4035393032845602237[0]
     override get(): String {
       return (<this>.#$$delegate_0, <this>).<get-testExtVal>()
     }
 
+  // CHECK JVM_IR:
+  //   Mangled name computed from Ir:         DFoo.$$delegate_0
+  //   Mangled name computed from Descriptor: DFoo{}$$delegate_0#jf
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         DFoo.$$delegate_0
+  //   Mangled name computed from Descriptor: DFoo{}$$delegate_0
   private /* final field */ val $$delegate_0: IFoo = d
 
 }
+

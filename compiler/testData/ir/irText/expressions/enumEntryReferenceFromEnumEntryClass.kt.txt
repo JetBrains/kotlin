@@ -1,53 +1,111 @@
+// CHECK:
+//   Mangled name: MyEnum
+//   Public signature: /MyEnum|null[0]
 open enum class MyEnum : Enum<MyEnum> {
+  // CHECK:
+  //   Mangled name: MyEnum#<init>(){}
+  //   Public signature: /MyEnum.<init>|-5645683436151566731[0]
   private constructor() /* primary */ {
     super/*Enum*/<MyEnum>()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: MyEnum.Z
+  //   Public signature: /MyEnum.Z|null[0]
+
   Z = Z()
+  // CHECK:
+  //   Mangled name: MyEnum.Z
+  //   Public signature: /MyEnum.Z.<EEC>|null[0]
   private enum entry class Z : MyEnum {
+    // CHECK:
+    //   Mangled name: MyEnum.Z#<init>(){}
+    //   Public signature: /MyEnum.Z.<EEC>.<init>|-5645683436151566731[0]
     private constructor() /* primary */ {
       super/*MyEnum*/() /*~> Unit */
       /* <init>() */
 
     }
 
+    // CHECK:
+    //   Mangled name: MyEnum.Z{}counter
+    //   Public signature: /MyEnum.Z.<EEC>.counter|3849500605769271673[0]
     var counter: Int
       field = 0
+      // CHECK:
+      //   Mangled name: MyEnum.Z#<get-counter>(){}kotlin.Int
+      //   Public signature: /MyEnum.Z.<EEC>.counter.<get-counter>|6416265643848993228[0]
       get
+      // CHECK:
+      //   Mangled name: MyEnum.Z#<set-counter>(kotlin.Int){}
+      //   Public signature: /MyEnum.Z.<EEC>.counter.<set-counter>|-8124462411591632783[0]
       set
 
+    // CHECK:
+    //   Mangled name: MyEnum.Z#foo(){}
+    //   Public signature: /MyEnum.Z.<EEC>.foo|-1041209573719867811[0]
     fun foo() {
     }
 
+    // CHECK:
+    //   Mangled name: MyEnum.Z#bar(){}
+    //   Public signature: /MyEnum.Z.<EEC>.bar|496682602797471549[0]
     fun bar() {
       <this>.<set-counter>(<set-?> = 1)
       <this>.foo()
     }
 
+    // CHECK:
+    //   Mangled name: MyEnum.Z{}aLambda
+    //   Public signature: /MyEnum.Z.<EEC>.aLambda|3337321219156655813[0]
     val aLambda: Function0<Unit>
-      field = local fun <anonymous>() {
-        MyEnum.Z.<set-counter>(<set-?> = 1)
-        MyEnum.Z.foo()
-      }
+      field = 
+        // CHECK:
+        //   Mangled name (compatible mode: false): MyEnum.Z{}aLambda#<anonymous>#static(){}
+        //   Mangled name (compatible mode: true):  MyEnum.Z.aLambda#<anonymous>#static(){}
+        local fun <anonymous>() {
+          MyEnum.Z.<set-counter>(<set-?> = 1)
+          MyEnum.Z.foo()
+        }
 
+      // CHECK:
+      //   Mangled name: MyEnum.Z#<get-aLambda>(){}kotlin.Function0<kotlin.Unit>
+      //   Public signature: /MyEnum.Z.<EEC>.aLambda.<get-aLambda>|9058518221524596568[0]
       get
 
+    // CHECK:
+    //   Mangled name: MyEnum.Z{}anObject
+    //   Public signature: /MyEnum.Z.<EEC>.anObject|409091113626572731[0]
     val anObject: Any
       field = { // BLOCK
+        // CHECK:
+        //   Mangled name (compatible mode: false): MyEnum.Z{}anObject.<no name provided>
+        //   Mangled name (compatible mode: true):  MyEnum.Z.anObject.<no name provided>
         local class <no name provided> {
+          // CHECK:
+          //   Mangled name (compatible mode: false): MyEnum.Z{}anObject.<no name provided>#<init>(){}
+          //   Mangled name (compatible mode: true):  MyEnum.Z.anObject.<no name provided>#<init>(){}
           constructor() /* primary */ {
             super/*Any*/()
             /* <init>() */
 
           }
 
+          // CHECK:
+          //   Mangled name computed from Ir (compatible mode: false):         MyEnum.Z{}anObject.<no name provided>.<ANI>
+          //   Mangled name computed from Ir (compatible mode: true):          MyEnum.Z.anObject.<no name provided>.<ANI>
+          //   Mangled name computed from Descriptor (compatible mode: false): MyEnum.Z{}anObject.<no name provided>
+          //   Mangled name computed from Descriptor (compatible mode: true):  MyEnum.Z{}anObject.<no name provided>
           init {
             MyEnum.Z.<set-counter>(<set-?> = 1)
             MyEnum.Z.foo()
           }
 
+          // CHECK:
+          //   Mangled name (compatible mode: false): MyEnum.Z{}anObject.<no name provided>#test(){}
+          //   Mangled name (compatible mode: true):  MyEnum.Z.anObject.<no name provided>#test(){}
           fun test() {
             MyEnum.Z.<set-counter>(<set-?> = 1)
             MyEnum.Z.foo()
@@ -57,15 +115,31 @@ open enum class MyEnum : Enum<MyEnum> {
 
         <no name provided>()
       }
+      // CHECK:
+      //   Mangled name: MyEnum.Z#<get-anObject>(){}kotlin.Any
+      //   Public signature: /MyEnum.Z.<EEC>.anObject.<get-anObject>|-6807306499596507825[0]
       get
 
   }
 
+  // CHECK:
+  //   Mangled name: MyEnum#values#static(){}kotlin.Array<MyEnum>
+  //   Public signature: /MyEnum.values|3097625172661156808[0]
   fun values(): Array<MyEnum> /* Synthetic body for ENUM_VALUES */
 
+  // CHECK:
+  //   Mangled name: MyEnum#valueOf#static(kotlin.String){}MyEnum
+  //   Public signature: /MyEnum.valueOf|4316550590519800984[0]
   fun valueOf(value: String): MyEnum /* Synthetic body for ENUM_VALUEOF */
 
+  // CHECK:
+  //   Mangled name: MyEnum#static{}entries
+  //   Public signature: /MyEnum.entries|-5134227801081826149[0]
   val entries: EnumEntries<MyEnum>
+    // CHECK:
+    //   Mangled name: MyEnum#<get-entries>#static(){}kotlin.enums.EnumEntries<MyEnum>
+    //   Public signature: /MyEnum.entries.<get-entries>|-3922959509726908718[0]
     get(): EnumEntries<MyEnum> /* Synthetic body for ENUM_ENTRIES */
 
 }
+

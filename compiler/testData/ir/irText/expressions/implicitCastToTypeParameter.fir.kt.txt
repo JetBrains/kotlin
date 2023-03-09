@@ -1,3 +1,11 @@
+// CHECK JVM_IR:
+//   Mangled name: #test1@kotlin.Any(){0§<kotlin.Any>}0:0?
+//   Public signature: /test1|2900041689817297802[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #test1@kotlin.Any(){0§<kotlin.Any>}
+//   Mangled name computed from Descriptor: #test1@kotlin.Any(){0§<kotlin.Any>}
+//   Mangled name computed from Fir:        #test1@kotlin.Any(){0§<kotlin.Any>}0:0?
+//   Public signature: /test1|2900041689817297802[0]
 inline fun <reified T : Any> Any.test1(): T? {
   return when {
     <this> is T -> <this> /*as T */
@@ -5,11 +13,29 @@ inline fun <reified T : Any> Any.test1(): T? {
   }
 }
 
+// CHECK:
+//   Mangled name: Foo
+//   Public signature: /Foo|null[0]
 interface Foo<T : Any?> {
 
 }
 
+// CHECK:
+//   Mangled name computed from Ir:         @Foo<0:0>{0§<kotlin.Any>}asT
+//   Mangled name computed from Descriptor: could not compute mangled name: java.lang.IllegalArgumentException: No container found for type parameter 'T' of 'public inline fun <reified T : Any> Foo<T>.`<get-asT>`(): T? defined in root package'
+//   Mangled name computed from Fir:        @Foo<0:0>{0§<kotlin.Any>}asT
+//   Public signature: /asT|-840544213460054683[0]
 val <reified T : Any> Foo<T>.asT: T?
+  // CHECK JVM_IR:
+  //   Mangled name computed from Ir:         #<get-asT>@Foo<0:0>(){0§<kotlin.Any>}0:0?
+  //   Mangled name computed from Descriptor: could not compute mangled name: java.lang.IllegalArgumentException: No container found for type parameter 'T' of 'public inline fun <reified T : Any> Foo<T>.`<get-asT>`(): T? defined in root package'
+  //   Mangled name computed from Fir:        #<get-asT>@Foo<0:0>(){0§<kotlin.Any>}0:0?
+  //   Public signature: /asT.<get-asT>|-4847921419158920204[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         #<get-asT>@Foo<0:0>(){0§<kotlin.Any>}
+  //   Mangled name computed from Descriptor: could not compute mangled name: java.lang.IllegalArgumentException: No container found for type parameter 'T' of 'public inline fun <reified T : Any> Foo<T>.`<get-asT>`(): T? defined in root package'
+  //   Mangled name computed from Fir:        #<get-asT>@Foo<0:0>(){0§<kotlin.Any>}0:0?
+  //   Public signature: /asT.<get-asT>|-4847921419158920204[0]
   inline get(): T? {
     return when {
       <this> is T -> <this> /*as T */
@@ -17,19 +43,32 @@ val <reified T : Any> Foo<T>.asT: T?
     }
   }
 
+// CHECK:
+//   Mangled name: Bar
+//   Public signature: /Bar|null[0]
 class Bar<T : Any?> {
+  // CHECK:
+  //   Mangled name: Bar#<init>(){}
+  //   Public signature: /Bar.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: Bar#test(kotlin.Any){}
+  //   Public signature: /Bar.test|-7985792749252989017[0]
   fun test(arg: Any) {
     arg as T /*~> Unit */
     <this>.useT(t = arg /*as (T & Any) */)
   }
 
+  // CHECK:
+  //   Mangled name: Bar#useT(1:0){}
+  //   Public signature: /Bar.useT|2218364832177755788[0]
   fun useT(t: T) {
   }
 
 }
+

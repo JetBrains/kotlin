@@ -1,5 +1,9 @@
 // FIR_IDENTICAL
 
+// IGNORE_BACKEND_K2: JS_IR
+// IGNORE_BACKEND_K2: JS_IR_ES6
+
+
 const val I0 = 0
 const val I1 = 1
 const val I2 = I0 + I1 + I1

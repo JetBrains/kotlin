@@ -1,12 +1,27 @@
+// CHECK:
+//   Mangled name: OI
+//   Public signature: /OI|null[0]
 typealias OI = Inner
+// CHECK:
+//   Mangled name: Outer
+//   Public signature: /Outer|null[0]
 class Outer {
+  // CHECK:
+  //   Mangled name: Outer#<init>(){}
+  //   Public signature: /Outer.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: Outer.Inner
+  //   Public signature: /Outer.Inner|null[0]
   open inner class Inner {
+    // CHECK:
+    //   Mangled name: Outer.Inner#<init>(){}
+    //   Public signature: /Outer.Inner.<init>|-5645683436151566731[0]
     constructor() /* primary */ {
       super/*Any*/()
       /* <init>() */
@@ -15,7 +30,13 @@ class Outer {
 
   }
 
+  // CHECK:
+  //   Mangled name: Outer.InnerDerived0
+  //   Public signature: /Outer.InnerDerived0|null[0]
   inner class InnerDerived0 : Inner {
+    // CHECK:
+    //   Mangled name: Outer.InnerDerived0#<init>(){}
+    //   Public signature: /Outer.InnerDerived0.<init>|-5645683436151566731[0]
     constructor() /* primary */ {
       <this>.super/*Inner*/()
       /* <init>() */
@@ -24,7 +45,13 @@ class Outer {
 
   }
 
+  // CHECK:
+  //   Mangled name: Outer.InnerDerived1
+  //   Public signature: /Outer.InnerDerived1|null[0]
   inner class InnerDerived1 : Inner {
+    // CHECK:
+    //   Mangled name: Outer.InnerDerived1#<init>(){}
+    //   Public signature: /Outer.InnerDerived1.<init>|-5645683436151566731[0]
     constructor() /* primary */ {
       <this>.super/*Inner*/()
       /* <init>() */
@@ -35,6 +62,15 @@ class Outer {
 
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #test(){}Outer.Inner
+//   Public signature: /test|8585667894850483787[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #test(){}
+//   Mangled name computed from Descriptor: #test(){}
+//   Mangled name computed from Fir:        #test(){}Outer.Inner
+//   Public signature: /test|8585667894850483787[0]
 fun test(): Inner {
   return Outer().Inner()
 }
+

@@ -1,4 +1,8 @@
 // FIR_IDENTICAL
+
+// NO_SIGNATURE_DUMP
+// ^KT-57434
+
 fun <TT> outer() {
     fun <T> test1(i: Int, j: T) {}
 

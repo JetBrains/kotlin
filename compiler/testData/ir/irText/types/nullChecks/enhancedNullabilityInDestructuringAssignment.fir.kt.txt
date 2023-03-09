@@ -1,56 +1,112 @@
+// CHECK:
+//   Mangled name: #use(kotlin.Any;kotlin.Any){}
+//   Public signature: /use|-6359788865457040335[0]
 fun use(x: Any, y: Any) {
 }
 
+// CHECK:
+//   Mangled name: P
+//   Public signature: /P|null[0]
 class P {
+  // CHECK:
+  //   Mangled name: P#<init>(kotlin.Int;kotlin.Int){}
+  //   Public signature: /P.<init>|-7691762014320324121[0]
   constructor(x: Int, y: Int) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: P{}x
+  //   Public signature: /P.x|-8060530855978347579[0]
   val x: Int
     field = x
+    // CHECK:
+    //   Mangled name: P#<get-x>(){}kotlin.Int
+    //   Public signature: /P.x.<get-x>|4966956098150895696[0]
     get
 
+  // CHECK:
+  //   Mangled name: P{}y
+  //   Public signature: /P.y|3625903257357557171[0]
   val y: Int
     field = y
+    // CHECK:
+    //   Mangled name: P#<get-y>(){}kotlin.Int
+    //   Public signature: /P.y.<get-y>|-6745575372101973707[0]
     get
 
+  // CHECK:
+  //   Mangled name: P#component1(){}kotlin.Int
+  //   Public signature: /P.component1|-8217597213800111288[0]
   operator fun component1(): Int {
     return <this>.<get-x>()
   }
 
+  // CHECK:
+  //   Mangled name: P#component2(){}kotlin.Int
+  //   Public signature: /P.component2|-7444333055342785242[0]
   operator fun component2(): Int {
     return <this>.<get-y>()
   }
 
 }
 
+// CHECK:
+//   Mangled name: Q
+//   Public signature: /Q|null[0]
 class Q<T1 : Any?, T2 : Any?> {
+  // CHECK:
+  //   Mangled name computed from Ir:         Q#<init>(1:0;1:1){}
+  //   Mangled name computed from Descriptor: Q#<init>(1:0;1:1){}
+  //   Mangled name computed from Fir:        Q#<init>(0:-1;0:-1){}
+  //   Public signature: /Q.<init>|3925877681016924387[0]
   constructor(x: T1, y: T2) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: Q{}x
+  //   Public signature: /Q.x|-8060530855978347579[0]
   val x: T1
     field = x
+    // CHECK:
+    //   Mangled name: Q#<get-x>(){}1:0
+    //   Public signature: /Q.x.<get-x>|-8893883356128097563[0]
     get
 
+  // CHECK:
+  //   Mangled name: Q{}y
+  //   Public signature: /Q.y|3625903257357557171[0]
   val y: T2
     field = y
+    // CHECK:
+    //   Mangled name: Q#<get-y>(){}1:1
+    //   Public signature: /Q.y.<get-y>|6657541212363005233[0]
     get
 
+  // CHECK:
+  //   Mangled name: Q#component1(){}1:0
+  //   Public signature: /Q.component1|2393470133763651536[0]
   operator fun component1(): T1 {
     return <this>.<get-x>()
   }
 
+  // CHECK:
+  //   Mangled name: Q#component2(){}1:1
+  //   Public signature: /Q.component2|319033347667924570[0]
   operator fun component2(): T2 {
     return <this>.<get-y>()
   }
 
 }
 
+// CHECK:
+//   Mangled name: #test1(){}
+//   Public signature: /test1|4297044443957252634[0]
 fun test1() {
   val <destruct>: P = notNullP() /*!! P */
   val x: Int = <destruct>.component1()
@@ -58,6 +114,9 @@ fun test1() {
   use(x = x, y = y)
 }
 
+// CHECK:
+//   Mangled name: #test2(){}
+//   Public signature: /test2|4279114864133353152[0]
 fun test2() {
   val <destruct>: @FlexibleNullability Q<@EnhancedNullability String, @EnhancedNullability String>? = notNullComponents()
   val x: @EnhancedNullability String = <destruct>.component1() /*!! String */
@@ -65,6 +124,9 @@ fun test2() {
   use(x = x, y = y)
 }
 
+// CHECK:
+//   Mangled name: #test2Desugared(){}
+//   Public signature: /test2Desugared|-3180716473372303323[0]
 fun test2Desugared() {
   val tmp: @FlexibleNullability Q<@EnhancedNullability String, @EnhancedNullability String>? = notNullComponents()
   val x: String = tmp.component1() /*!! String */
@@ -72,6 +134,9 @@ fun test2Desugared() {
   use(x = x, y = y)
 }
 
+// CHECK:
+//   Mangled name: #test3(){}
+//   Public signature: /test3|-3759735065270951803[0]
 fun test3() {
   val <destruct>: Q<@EnhancedNullability String, @EnhancedNullability String> = notNullQAndComponents() /*!! Q<@EnhancedNullability String, @EnhancedNullability String> */
   val x: @EnhancedNullability String = <destruct>.component1() /*!! String */
@@ -79,6 +144,9 @@ fun test3() {
   use(x = x, y = y)
 }
 
+// CHECK:
+//   Mangled name: #test4(){}
+//   Public signature: /test4|5588455914500386239[0]
 fun test4() {
   val <destruct>: IndexedValue<@EnhancedNullability P> = listOfNotNull() /*!! MutableList<@EnhancedNullability P> */.withIndex<@EnhancedNullability P>().first<IndexedValue<@EnhancedNullability P>>()
   val x: Int = <destruct>.component1()

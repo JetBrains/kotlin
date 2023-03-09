@@ -1,5 +1,9 @@
 // FIR_IDENTICAL
 // TARGET_BACKEND: JVM
+
+// NO_SIGNATURE_DUMP
+// ^KT-57428
+
 // FILE: samByProjectedType.kt
 fun test1() {
     H.bar { x: Any -> x }

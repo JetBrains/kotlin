@@ -1,27 +1,48 @@
 package test
 
+// CHECK:
+//   Mangled name: test#eval(kotlin.Function0<0:0>){0§<kotlin.Any?>}0:0
+//   Public signature: test/eval|-3571752498880916343[0]
 fun <T : Any?> eval(f: Function0<T>): T {
   return f.invoke()
 }
 
+// CHECK:
+//   Mangled name: test.C
+//   Public signature: test/C|null[0]
 class C : B {
+  // CHECK:
+  //   Mangled name: test.C#<init>(){}
+  //   Public signature: test/C.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*B*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: test.C#f(){}kotlin.String?
+  //   Public signature: test/C.f|6718023650115810455[0]
   fun f(): @FlexibleNullability String? {
-    return eval<@FlexibleNullability String?>(f = local fun <anonymous>(): @FlexibleNullability String? {
-      return <this>(super<C>).#x
-    }
+    return eval<@FlexibleNullability String?>(f = 
+      // CHECK:
+      //   Mangled name: test.C#f(){}kotlin.String?#<anonymous>#static(){}kotlin.String?
+      local fun <anonymous>(): @FlexibleNullability String? {
+        return <this>(super<C>).#x
+      }
 )
   }
 
+  // CHECK:
+  //   Mangled name: test.C#g(){}kotlin.String?
+  //   Public signature: test/C.g|-377144927952738440[0]
   fun g(): @FlexibleNullability String? {
-    return eval<@FlexibleNullability String?>(f = local fun <anonymous>(): @FlexibleNullability String? {
-      return <this>(super<C>).#y
-    }
+    return eval<@FlexibleNullability String?>(f = 
+      // CHECK:
+      //   Mangled name: test.C#g(){}kotlin.String?#<anonymous>#static(){}kotlin.String?
+      local fun <anonymous>(): @FlexibleNullability String? {
+        return <this>(super<C>).#y
+      }
 )
   }
 

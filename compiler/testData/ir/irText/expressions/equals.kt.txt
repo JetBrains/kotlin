@@ -1,15 +1,27 @@
+// CHECK:
+//   Mangled name: #testEqeq(kotlin.Int;kotlin.Int){}kotlin.Boolean
+//   Public signature: /testEqeq|-8467980441682237872[0]
 fun testEqeq(a: Int, b: Int): Boolean {
   return EQEQ(arg0 = a, arg1 = b)
 }
 
+// CHECK:
+//   Mangled name: #testEquals(kotlin.Int;kotlin.Int){}kotlin.Boolean
+//   Public signature: /testEquals|-6776844626244337538[0]
 fun testEquals(a: Int, b: Int): Boolean {
   return a.equals(other = b)
 }
 
+// CHECK:
+//   Mangled name: #testJEqeqNull(){}kotlin.Boolean
+//   Public signature: /testJEqeqNull|-16498498668551755[0]
 fun testJEqeqNull(): Boolean {
   return EQEQ(arg0 = super<J>.#INT_NULL, arg1 = null)
 }
 
+// CHECK:
+//   Mangled name: #testJEqualsNull(){}kotlin.Boolean
+//   Public signature: /testJEqualsNull|1794297066470075977[0]
 fun testJEqualsNull(): Boolean {
   return super<J>.#INT_NULL /*!! Int */.equals(other = null)
 }

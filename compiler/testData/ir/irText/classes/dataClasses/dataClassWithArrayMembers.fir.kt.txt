@@ -1,86 +1,279 @@
+// CHECK:
+//   Mangled name: Test1
+//   Public signature: /Test1|null[0]
 data class Test1 {
+  // CHECK:
+  //   Mangled name: Test1#<init>(kotlin.Array<kotlin.String>;kotlin.CharArray;kotlin.BooleanArray;kotlin.ByteArray;kotlin.ShortArray;kotlin.IntArray;kotlin.LongArray;kotlin.FloatArray;kotlin.DoubleArray){}
+  //   Public signature: /Test1.<init>|-2901047261480922149[0]
   constructor(stringArray: Array<String>, charArray: CharArray, booleanArray: BooleanArray, byteArray: ByteArray, shortArray: ShortArray, intArray: IntArray, longArray: LongArray, floatArray: FloatArray, doubleArray: DoubleArray) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: Test1{}stringArray
+  //   Public signature: /Test1.stringArray|3224078221487065108[0]
   val stringArray: Array<String>
     field = stringArray
+    // CHECK JVM_IR:
+    //   Mangled name: Test1#<get-stringArray>(){}kotlin.Array<kotlin.String>
+    //   Public signature: /Test1.stringArray.<get-stringArray>|3372814522015375360[0]
+    // CHECK JS_IR:
+    //   Mangled name computed from Ir:         Test1#<get-stringArray>(){}
+    //   Mangled name computed from Descriptor: Test1#<get-stringArray>(){}
+    //   Mangled name computed from Fir:        Test1#<get-stringArray>(){}kotlin.Array<kotlin.String>
+    //   Public signature: /Test1.stringArray.<get-stringArray>|3372814522015375360[0]
     get
 
+  // CHECK:
+  //   Mangled name: Test1{}charArray
+  //   Public signature: /Test1.charArray|-5349931751208968301[0]
   val charArray: CharArray
     field = charArray
+    // CHECK JVM_IR:
+    //   Mangled name: Test1#<get-charArray>(){}kotlin.CharArray
+    //   Public signature: /Test1.charArray.<get-charArray>|-3365262090570994726[0]
+    // CHECK JS_IR:
+    //   Mangled name computed from Ir:         Test1#<get-charArray>(){}
+    //   Mangled name computed from Descriptor: Test1#<get-charArray>(){}
+    //   Mangled name computed from Fir:        Test1#<get-charArray>(){}kotlin.CharArray
+    //   Public signature: /Test1.charArray.<get-charArray>|-3365262090570994726[0]
     get
 
+  // CHECK:
+  //   Mangled name: Test1{}booleanArray
+  //   Public signature: /Test1.booleanArray|7605527965651232515[0]
   val booleanArray: BooleanArray
     field = booleanArray
+    // CHECK JVM_IR:
+    //   Mangled name: Test1#<get-booleanArray>(){}kotlin.BooleanArray
+    //   Public signature: /Test1.booleanArray.<get-booleanArray>|-2975190751408552199[0]
+    // CHECK JS_IR:
+    //   Mangled name computed from Ir:         Test1#<get-booleanArray>(){}
+    //   Mangled name computed from Descriptor: Test1#<get-booleanArray>(){}
+    //   Mangled name computed from Fir:        Test1#<get-booleanArray>(){}kotlin.BooleanArray
+    //   Public signature: /Test1.booleanArray.<get-booleanArray>|-2975190751408552199[0]
     get
 
+  // CHECK:
+  //   Mangled name: Test1{}byteArray
+  //   Public signature: /Test1.byteArray|-2314777124899298189[0]
   val byteArray: ByteArray
     field = byteArray
+    // CHECK JVM_IR:
+    //   Mangled name: Test1#<get-byteArray>(){}kotlin.ByteArray
+    //   Public signature: /Test1.byteArray.<get-byteArray>|-4531821776506226927[0]
+    // CHECK JS_IR:
+    //   Mangled name computed from Ir:         Test1#<get-byteArray>(){}
+    //   Mangled name computed from Descriptor: Test1#<get-byteArray>(){}
+    //   Mangled name computed from Fir:        Test1#<get-byteArray>(){}kotlin.ByteArray
+    //   Public signature: /Test1.byteArray.<get-byteArray>|-4531821776506226927[0]
     get
 
+  // CHECK:
+  //   Mangled name: Test1{}shortArray
+  //   Public signature: /Test1.shortArray|3516401755230006906[0]
   val shortArray: ShortArray
     field = shortArray
+    // CHECK JVM_IR:
+    //   Mangled name: Test1#<get-shortArray>(){}kotlin.ShortArray
+    //   Public signature: /Test1.shortArray.<get-shortArray>|3616346085964569365[0]
+    // CHECK JS_IR:
+    //   Mangled name computed from Ir:         Test1#<get-shortArray>(){}
+    //   Mangled name computed from Descriptor: Test1#<get-shortArray>(){}
+    //   Mangled name computed from Fir:        Test1#<get-shortArray>(){}kotlin.ShortArray
+    //   Public signature: /Test1.shortArray.<get-shortArray>|3616346085964569365[0]
     get
 
+  // CHECK:
+  //   Mangled name: Test1{}intArray
+  //   Public signature: /Test1.intArray|-5845507301569286943[0]
   val intArray: IntArray
     field = intArray
+    // CHECK JVM_IR:
+    //   Mangled name: Test1#<get-intArray>(){}kotlin.IntArray
+    //   Public signature: /Test1.intArray.<get-intArray>|540017735713660266[0]
+    // CHECK JS_IR:
+    //   Mangled name computed from Ir:         Test1#<get-intArray>(){}
+    //   Mangled name computed from Descriptor: Test1#<get-intArray>(){}
+    //   Mangled name computed from Fir:        Test1#<get-intArray>(){}kotlin.IntArray
+    //   Public signature: /Test1.intArray.<get-intArray>|540017735713660266[0]
     get
 
+  // CHECK:
+  //   Mangled name: Test1{}longArray
+  //   Public signature: /Test1.longArray|-261136028309834719[0]
   val longArray: LongArray
     field = longArray
+    // CHECK JVM_IR:
+    //   Mangled name: Test1#<get-longArray>(){}kotlin.LongArray
+    //   Public signature: /Test1.longArray.<get-longArray>|-1197859177727725361[0]
+    // CHECK JS_IR:
+    //   Mangled name computed from Ir:         Test1#<get-longArray>(){}
+    //   Mangled name computed from Descriptor: Test1#<get-longArray>(){}
+    //   Mangled name computed from Fir:        Test1#<get-longArray>(){}kotlin.LongArray
+    //   Public signature: /Test1.longArray.<get-longArray>|-1197859177727725361[0]
     get
 
+  // CHECK:
+  //   Mangled name: Test1{}floatArray
+  //   Public signature: /Test1.floatArray|-863616440006860352[0]
   val floatArray: FloatArray
     field = floatArray
+    // CHECK JVM_IR:
+    //   Mangled name: Test1#<get-floatArray>(){}kotlin.FloatArray
+    //   Public signature: /Test1.floatArray.<get-floatArray>|379636537041432797[0]
+    // CHECK JS_IR:
+    //   Mangled name computed from Ir:         Test1#<get-floatArray>(){}
+    //   Mangled name computed from Descriptor: Test1#<get-floatArray>(){}
+    //   Mangled name computed from Fir:        Test1#<get-floatArray>(){}kotlin.FloatArray
+    //   Public signature: /Test1.floatArray.<get-floatArray>|379636537041432797[0]
     get
 
+  // CHECK:
+  //   Mangled name: Test1{}doubleArray
+  //   Public signature: /Test1.doubleArray|-3027997348205759511[0]
   val doubleArray: DoubleArray
     field = doubleArray
+    // CHECK JVM_IR:
+    //   Mangled name: Test1#<get-doubleArray>(){}kotlin.DoubleArray
+    //   Public signature: /Test1.doubleArray.<get-doubleArray>|5171225634314785003[0]
+    // CHECK JS_IR:
+    //   Mangled name computed from Ir:         Test1#<get-doubleArray>(){}
+    //   Mangled name computed from Descriptor: Test1#<get-doubleArray>(){}
+    //   Mangled name computed from Fir:        Test1#<get-doubleArray>(){}kotlin.DoubleArray
+    //   Public signature: /Test1.doubleArray.<get-doubleArray>|5171225634314785003[0]
     get
 
+  // CHECK JVM_IR:
+  //   Mangled name: Test1#component1(){}kotlin.Array<kotlin.String>
+  //   Public signature: /Test1.component1|2673462985803256369[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         Test1#component1(){}
+  //   Mangled name computed from Descriptor: Test1#component1(){}
+  //   Mangled name computed from Fir:        Test1#component1(){}kotlin.Array<kotlin.String>
+  //   Public signature: /Test1.component1|2673462985803256369[0]
   operator fun component1(): Array<String> {
     return <this>.#stringArray
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: Test1#component2(){}kotlin.CharArray
+  //   Public signature: /Test1.component2|-8172205221988991671[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         Test1#component2(){}
+  //   Mangled name computed from Descriptor: Test1#component2(){}
+  //   Mangled name computed from Fir:        Test1#component2(){}kotlin.CharArray
+  //   Public signature: /Test1.component2|-8172205221988991671[0]
   operator fun component2(): CharArray {
     return <this>.#charArray
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: Test1#component3(){}kotlin.BooleanArray
+  //   Public signature: /Test1.component3|8179741844146192752[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         Test1#component3(){}
+  //   Mangled name computed from Descriptor: Test1#component3(){}
+  //   Mangled name computed from Fir:        Test1#component3(){}kotlin.BooleanArray
+  //   Public signature: /Test1.component3|8179741844146192752[0]
   operator fun component3(): BooleanArray {
     return <this>.#booleanArray
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: Test1#component4(){}kotlin.ByteArray
+  //   Public signature: /Test1.component4|-1739414106658456946[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         Test1#component4(){}
+  //   Mangled name computed from Descriptor: Test1#component4(){}
+  //   Mangled name computed from Fir:        Test1#component4(){}kotlin.ByteArray
+  //   Public signature: /Test1.component4|-1739414106658456946[0]
   operator fun component4(): ByteArray {
     return <this>.#byteArray
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: Test1#component5(){}kotlin.ShortArray
+  //   Public signature: /Test1.component5|-3423229537519330548[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         Test1#component5(){}
+  //   Mangled name computed from Descriptor: Test1#component5(){}
+  //   Mangled name computed from Fir:        Test1#component5(){}kotlin.ShortArray
+  //   Public signature: /Test1.component5|-3423229537519330548[0]
   operator fun component5(): ShortArray {
     return <this>.#shortArray
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: Test1#component6(){}kotlin.IntArray
+  //   Public signature: /Test1.component6|-2300576074023927975[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         Test1#component6(){}
+  //   Mangled name computed from Descriptor: Test1#component6(){}
+  //   Mangled name computed from Fir:        Test1#component6(){}kotlin.IntArray
+  //   Public signature: /Test1.component6|-2300576074023927975[0]
   operator fun component6(): IntArray {
     return <this>.#intArray
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: Test1#component7(){}kotlin.LongArray
+  //   Public signature: /Test1.component7|-867169008637195949[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         Test1#component7(){}
+  //   Mangled name computed from Descriptor: Test1#component7(){}
+  //   Mangled name computed from Fir:        Test1#component7(){}kotlin.LongArray
+  //   Public signature: /Test1.component7|-867169008637195949[0]
   operator fun component7(): LongArray {
     return <this>.#longArray
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: Test1#component8(){}kotlin.FloatArray
+  //   Public signature: /Test1.component8|4154428752572134259[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         Test1#component8(){}
+  //   Mangled name computed from Descriptor: Test1#component8(){}
+  //   Mangled name computed from Fir:        Test1#component8(){}kotlin.FloatArray
+  //   Public signature: /Test1.component8|4154428752572134259[0]
   operator fun component8(): FloatArray {
     return <this>.#floatArray
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: Test1#component9(){}kotlin.DoubleArray
+  //   Public signature: /Test1.component9|-6146261915259686298[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         Test1#component9(){}
+  //   Mangled name computed from Descriptor: Test1#component9(){}
+  //   Mangled name computed from Fir:        Test1#component9(){}kotlin.DoubleArray
+  //   Public signature: /Test1.component9|-6146261915259686298[0]
   operator fun component9(): DoubleArray {
     return <this>.#doubleArray
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: Test1#copy(kotlin.Array<kotlin.String>;kotlin.CharArray;kotlin.BooleanArray;kotlin.ByteArray;kotlin.ShortArray;kotlin.IntArray;kotlin.LongArray;kotlin.FloatArray;kotlin.DoubleArray){}Test1
+  //   Public signature: /Test1.copy|3580547657034916048[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         Test1#copy(kotlin.Array<kotlin.String>;kotlin.CharArray;kotlin.BooleanArray;kotlin.ByteArray;kotlin.ShortArray;kotlin.IntArray;kotlin.LongArray;kotlin.FloatArray;kotlin.DoubleArray){}
+  //   Mangled name computed from Descriptor: Test1#copy(kotlin.Array<kotlin.String>;kotlin.CharArray;kotlin.BooleanArray;kotlin.ByteArray;kotlin.ShortArray;kotlin.IntArray;kotlin.LongArray;kotlin.FloatArray;kotlin.DoubleArray){}
+  //   Mangled name computed from Fir:        Test1#copy(kotlin.Array<kotlin.String>;kotlin.CharArray;kotlin.BooleanArray;kotlin.ByteArray;kotlin.ShortArray;kotlin.IntArray;kotlin.LongArray;kotlin.FloatArray;kotlin.DoubleArray){}Test1
+  //   Public signature: /Test1.copy|3580547657034916048[0]
   fun copy(stringArray: Array<String> = <this>.#stringArray, charArray: CharArray = <this>.#charArray, booleanArray: BooleanArray = <this>.#booleanArray, byteArray: ByteArray = <this>.#byteArray, shortArray: ShortArray = <this>.#shortArray, intArray: IntArray = <this>.#intArray, longArray: LongArray = <this>.#longArray, floatArray: FloatArray = <this>.#floatArray, doubleArray: DoubleArray = <this>.#doubleArray): Test1 {
     return Test1(stringArray = stringArray, charArray = charArray, booleanArray = booleanArray, byteArray = byteArray, shortArray = shortArray, intArray = intArray, longArray = longArray, floatArray = floatArray, doubleArray = doubleArray)
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: Test1#equals(kotlin.Any?){}kotlin.Boolean
+  //   Public signature: /Test1.equals|722809408929142791[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         Test1#equals(kotlin.Any?){}
+  //   Mangled name computed from Descriptor: Test1#equals(kotlin.Any?){}
+  //   Mangled name computed from Fir:        Test1#equals(kotlin.Any?){}kotlin.Boolean
+  //   Public signature: /Test1.equals|722809408929142791[0]
   override fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
@@ -119,6 +312,14 @@ data class Test1 {
     return true
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: Test1#hashCode(){}kotlin.Int
+  //   Public signature: /Test1.hashCode|-8048879360829830756[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         Test1#hashCode(){}
+  //   Mangled name computed from Descriptor: Test1#hashCode(){}
+  //   Mangled name computed from Fir:        Test1#hashCode(){}kotlin.Int
+  //   Public signature: /Test1.hashCode|-8048879360829830756[0]
   override fun hashCode(): Int {
     var result: Int = dataClassArrayMemberHashCode(arg0 = <this>.#stringArray)
     result = result.times(other = 31).plus(other = dataClassArrayMemberHashCode(arg0 = <this>.#charArray))
@@ -132,31 +333,82 @@ data class Test1 {
     return result
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: Test1#toString(){}kotlin.String
+  //   Public signature: /Test1.toString|6958853723545266802[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         Test1#toString(){}
+  //   Mangled name computed from Descriptor: Test1#toString(){}
+  //   Mangled name computed from Fir:        Test1#toString(){}kotlin.String
+  //   Public signature: /Test1.toString|6958853723545266802[0]
   override fun toString(): String {
     return "Test1(stringArray=" + dataClassArrayMemberToString(arg0 = <this>.#stringArray) + ", charArray=" + dataClassArrayMemberToString(arg0 = <this>.#charArray) + ", booleanArray=" + dataClassArrayMemberToString(arg0 = <this>.#booleanArray) + ", byteArray=" + dataClassArrayMemberToString(arg0 = <this>.#byteArray) + ", shortArray=" + dataClassArrayMemberToString(arg0 = <this>.#shortArray) + ", intArray=" + dataClassArrayMemberToString(arg0 = <this>.#intArray) + ", longArray=" + dataClassArrayMemberToString(arg0 = <this>.#longArray) + ", floatArray=" + dataClassArrayMemberToString(arg0 = <this>.#floatArray) + ", doubleArray=" + dataClassArrayMemberToString(arg0 = <this>.#doubleArray) + ")"
   }
 
 }
 
+// CHECK:
+//   Mangled name: Test2
+//   Public signature: /Test2|null[0]
 data class Test2<T : Any?> {
+  // CHECK:
+  //   Mangled name computed from Ir:         Test2#<init>(kotlin.Array<1:0>){}
+  //   Mangled name computed from Descriptor: Test2#<init>(kotlin.Array<1:0>){}
+  //   Mangled name computed from Fir:        Test2#<init>(kotlin.Array<0:-1>){}
+  //   Public signature: /Test2.<init>|2155641021334975929[0]
   constructor(genericArray: Array<T>) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: Test2{}genericArray
+  //   Public signature: /Test2.genericArray|-3006201342680303597[0]
   val genericArray: Array<T>
     field = genericArray
+    // CHECK JVM_IR:
+    //   Mangled name: Test2#<get-genericArray>(){}kotlin.Array<1:0>
+    //   Public signature: /Test2.genericArray.<get-genericArray>|-887796497194881267[0]
+    // CHECK JS_IR:
+    //   Mangled name computed from Ir:         Test2#<get-genericArray>(){}
+    //   Mangled name computed from Descriptor: Test2#<get-genericArray>(){}
+    //   Mangled name computed from Fir:        Test2#<get-genericArray>(){}kotlin.Array<1:0>
+    //   Public signature: /Test2.genericArray.<get-genericArray>|-887796497194881267[0]
     get
 
+  // CHECK JVM_IR:
+  //   Mangled name: Test2#component1(){}kotlin.Array<1:0>
+  //   Public signature: /Test2.component1|-8550302254215159930[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         Test2#component1(){}
+  //   Mangled name computed from Descriptor: Test2#component1(){}
+  //   Mangled name computed from Fir:        Test2#component1(){}kotlin.Array<1:0>
+  //   Public signature: /Test2.component1|-8550302254215159930[0]
   operator fun component1(): Array<T> {
     return <this>.#genericArray
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: Test2#copy(kotlin.Array<1:0>){}Test2<1:0>
+  //   Public signature: /Test2.copy|-4093092771055361563[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         Test2#copy(kotlin.Array<1:0>){}
+  //   Mangled name computed from Descriptor: Test2#copy(kotlin.Array<1:0>){}
+  //   Mangled name computed from Fir:        Test2#copy(kotlin.Array<1:0>){}Test2<1:0>
+  //   Public signature: /Test2.copy|-4093092771055361563[0]
   fun copy(genericArray: Array<T> = <this>.#genericArray): Test2<T> {
     return Test2<Any>(genericArray = genericArray)
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: Test2#equals(kotlin.Any?){}kotlin.Boolean
+  //   Public signature: /Test2.equals|722809408929142791[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         Test2#equals(kotlin.Any?){}
+  //   Mangled name computed from Descriptor: Test2#equals(kotlin.Any?){}
+  //   Mangled name computed from Fir:        Test2#equals(kotlin.Any?){}kotlin.Boolean
+  //   Public signature: /Test2.equals|722809408929142791[0]
   override fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
@@ -171,35 +423,92 @@ data class Test2<T : Any?> {
     return true
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: Test2#hashCode(){}kotlin.Int
+  //   Public signature: /Test2.hashCode|-8048879360829830756[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         Test2#hashCode(){}
+  //   Mangled name computed from Descriptor: Test2#hashCode(){}
+  //   Mangled name computed from Fir:        Test2#hashCode(){}kotlin.Int
+  //   Public signature: /Test2.hashCode|-8048879360829830756[0]
   override fun hashCode(): Int {
     return dataClassArrayMemberHashCode(arg0 = <this>.#genericArray)
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: Test2#toString(){}kotlin.String
+  //   Public signature: /Test2.toString|6958853723545266802[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         Test2#toString(){}
+  //   Mangled name computed from Descriptor: Test2#toString(){}
+  //   Mangled name computed from Fir:        Test2#toString(){}kotlin.String
+  //   Public signature: /Test2.toString|6958853723545266802[0]
   override fun toString(): String {
     return "Test2(genericArray=" + dataClassArrayMemberToString(arg0 = <this>.#genericArray) + ")"
   }
 
 }
 
+// CHECK:
+//   Mangled name: Test3
+//   Public signature: /Test3|null[0]
 data class Test3 {
+  // CHECK:
+  //   Mangled name: Test3#<init>(kotlin.Array<kotlin.Any>?){}
+  //   Public signature: /Test3.<init>|2034455610636948474[0]
   constructor(anyArrayN: Array<Any>?) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: Test3{}anyArrayN
+  //   Public signature: /Test3.anyArrayN|-3755548963031234944[0]
   val anyArrayN: Array<Any>?
     field = anyArrayN
+    // CHECK JVM_IR:
+    //   Mangled name: Test3#<get-anyArrayN>(){}kotlin.Array<kotlin.Any>?
+    //   Public signature: /Test3.anyArrayN.<get-anyArrayN>|1018695805048889237[0]
+    // CHECK JS_IR:
+    //   Mangled name computed from Ir:         Test3#<get-anyArrayN>(){}
+    //   Mangled name computed from Descriptor: Test3#<get-anyArrayN>(){}
+    //   Mangled name computed from Fir:        Test3#<get-anyArrayN>(){}kotlin.Array<kotlin.Any>?
+    //   Public signature: /Test3.anyArrayN.<get-anyArrayN>|1018695805048889237[0]
     get
 
+  // CHECK JVM_IR:
+  //   Mangled name: Test3#component1(){}kotlin.Array<kotlin.Any>?
+  //   Public signature: /Test3.component1|3443609172722853741[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         Test3#component1(){}
+  //   Mangled name computed from Descriptor: Test3#component1(){}
+  //   Mangled name computed from Fir:        Test3#component1(){}kotlin.Array<kotlin.Any>?
+  //   Public signature: /Test3.component1|3443609172722853741[0]
   operator fun component1(): Array<Any>? {
     return <this>.#anyArrayN
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: Test3#copy(kotlin.Array<kotlin.Any>?){}Test3
+  //   Public signature: /Test3.copy|-3165504510354767753[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         Test3#copy(kotlin.Array<kotlin.Any>?){}
+  //   Mangled name computed from Descriptor: Test3#copy(kotlin.Array<kotlin.Any>?){}
+  //   Mangled name computed from Fir:        Test3#copy(kotlin.Array<kotlin.Any>?){}Test3
+  //   Public signature: /Test3.copy|-3165504510354767753[0]
   fun copy(anyArrayN: Array<Any>? = <this>.#anyArrayN): Test3 {
     return Test3(anyArrayN = anyArrayN)
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: Test3#equals(kotlin.Any?){}kotlin.Boolean
+  //   Public signature: /Test3.equals|722809408929142791[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         Test3#equals(kotlin.Any?){}
+  //   Mangled name computed from Descriptor: Test3#equals(kotlin.Any?){}
+  //   Mangled name computed from Fir:        Test3#equals(kotlin.Any?){}kotlin.Boolean
+  //   Public signature: /Test3.equals|722809408929142791[0]
   override fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
@@ -214,6 +523,14 @@ data class Test3 {
     return true
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: Test3#hashCode(){}kotlin.Int
+  //   Public signature: /Test3.hashCode|-8048879360829830756[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         Test3#hashCode(){}
+  //   Mangled name computed from Descriptor: Test3#hashCode(){}
+  //   Mangled name computed from Fir:        Test3#hashCode(){}kotlin.Int
+  //   Public signature: /Test3.hashCode|-8048879360829830756[0]
   override fun hashCode(): Int {
     return when {
       EQEQ(arg0 = <this>.#anyArrayN, arg1 = null) -> 0
@@ -221,8 +538,17 @@ data class Test3 {
     }
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: Test3#toString(){}kotlin.String
+  //   Public signature: /Test3.toString|6958853723545266802[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         Test3#toString(){}
+  //   Mangled name computed from Descriptor: Test3#toString(){}
+  //   Mangled name computed from Fir:        Test3#toString(){}kotlin.String
+  //   Public signature: /Test3.toString|6958853723545266802[0]
   override fun toString(): String {
     return "Test3(anyArrayN=" + dataClassArrayMemberToString(arg0 = <this>.#anyArrayN) + ")"
   }
 
 }
+

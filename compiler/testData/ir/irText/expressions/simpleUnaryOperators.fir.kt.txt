@@ -1,23 +1,72 @@
+// CHECK JVM_IR:
+//   Mangled name: #test1(kotlin.Int){}kotlin.Int
+//   Public signature: /test1|135491646798962448[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #test1(kotlin.Int){}
+//   Mangled name computed from Descriptor: #test1(kotlin.Int){}
+//   Mangled name computed from Fir:        #test1(kotlin.Int){}kotlin.Int
+//   Public signature: /test1|135491646798962448[0]
 fun test1(x: Int): Int {
   return x.unaryMinus()
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #test2(){}kotlin.Int
+//   Public signature: /test2|5542371834528279174[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #test2(){}
+//   Mangled name computed from Descriptor: #test2(){}
+//   Mangled name computed from Fir:        #test2(){}kotlin.Int
+//   Public signature: /test2|5542371834528279174[0]
 fun test2(): Int {
   return -42
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #test3(kotlin.Int){}kotlin.Int
+//   Public signature: /test3|4444212326709071419[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #test3(kotlin.Int){}
+//   Mangled name computed from Descriptor: #test3(kotlin.Int){}
+//   Mangled name computed from Fir:        #test3(kotlin.Int){}kotlin.Int
+//   Public signature: /test3|4444212326709071419[0]
 fun test3(x: Int): Int {
   return x.unaryPlus()
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #test4(){}kotlin.Int
+//   Public signature: /test4|3513867399525975921[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #test4(){}
+//   Mangled name computed from Descriptor: #test4(){}
+//   Mangled name computed from Fir:        #test4(){}kotlin.Int
+//   Public signature: /test4|3513867399525975921[0]
 fun test4(): Int {
   return 42
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #test5(kotlin.Boolean){}kotlin.Boolean
+//   Public signature: /test5|5789064363105651650[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #test5(kotlin.Boolean){}
+//   Mangled name computed from Descriptor: #test5(kotlin.Boolean){}
+//   Mangled name computed from Fir:        #test5(kotlin.Boolean){}kotlin.Boolean
+//   Public signature: /test5|5789064363105651650[0]
 fun test5(x: Boolean): Boolean {
   return x.not()
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #test6(){}kotlin.Boolean
+//   Public signature: /test6|8631689306238556839[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #test6(){}
+//   Mangled name computed from Descriptor: #test6(){}
+//   Mangled name computed from Fir:        #test6(){}kotlin.Boolean
+//   Public signature: /test6|8631689306238556839[0]
 fun test6(): Boolean {
   return false
 }
+

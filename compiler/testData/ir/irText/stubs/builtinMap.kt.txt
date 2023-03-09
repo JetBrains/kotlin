@@ -1,9 +1,16 @@
+// CHECK:
+//   Mangled name: #plus@kotlin.collections.Map<out|0:0,0:1>(kotlin.Pair<0:0,0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}kotlin.collections.Map<0:0,0:1>
+//   Public signature: /plus|-6703819129199897123[0]
 fun <K1 : Any?, V1 : Any?> Map<out K1, V1>.plus(pair: Pair<K1, V1>): Map<K1, V1> {
   return when {
     <this>.isEmpty() -> mapOf<K1, V1>(pair = pair)
-    else -> LinkedHashMap<@FlexibleNullability K1?, @FlexibleNullability V1?>(p0 = <this>).apply<LinkedHashMap<@FlexibleNullability K1?, @FlexibleNullability V1?>>(block = local fun LinkedHashMap<@FlexibleNullability K1?, @FlexibleNullability V1?>.<anonymous>() {
-      $this$apply.put(key = pair.<get-first>(), value = pair.<get-second>()) /*~> Unit */
-    }
+    else -> LinkedHashMap<@FlexibleNullability K1?, @FlexibleNullability V1?>(p0 = <this>).apply<LinkedHashMap<@FlexibleNullability K1?, @FlexibleNullability V1?>>(block = 
+      // CHECK:
+      //   Mangled name: #plus@kotlin.collections.Map<out|1:0,1:1>(kotlin.Pair<1:0,1:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}kotlin.collections.Map<1:0,1:1>#<anonymous>#static@java.util.LinkedHashMap<1:0?,1:1?>(){}
+      local fun LinkedHashMap<@FlexibleNullability K1?, @FlexibleNullability V1?>.<anonymous>() {
+        $this$apply.put(key = pair.<get-first>(), value = pair.<get-second>()) /*~> Unit */
+      }
 )
   }
 }
+

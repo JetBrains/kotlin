@@ -1,35 +1,77 @@
+// CHECK:
+//   Mangled name: Base
+//   Public signature: /Base|null[0]
 open class Base {
+  // CHECK:
+  //   Mangled name: Base#<init>(){}
+  //   Public signature: /Base.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: Base#foo(){}
+  //   Public signature: /Base.foo|-1041209573719867811[0]
   open fun foo() {
   }
 
+  // CHECK:
+  //   Mangled name: Base{}bar
+  //   Public signature: /Base.bar|-7864284097863469857[0]
   open val bar: String
     field = ""
+    // CHECK JVM_IR:
+    //   Mangled name: Base#<get-bar>(){}kotlin.String
+    //   Public signature: /Base.bar.<get-bar>|3423724227669014303[0]
+    // CHECK JS_IR:
+    //   Mangled name: Base#<get-bar>(){}
+    //   Public signature: /Base.bar.<get-bar>|6880642144337645699[0]
     open get
 
+  // CHECK JVM_IR:
+  //   Mangled name: Base#hashCode(){}kotlin.Int
+  //   Public signature: /Base.hashCode|-8048879360829830756[0]
+  // CHECK JS_IR:
+  //   Mangled name: Base#hashCode(){}
+  //   Public signature: /Base.hashCode|3409210261493131192[0]
   override fun hashCode(): Int {
     return super<Any>.hashCode()
   }
 
 }
 
+// CHECK:
+//   Mangled name: Derived
+//   Public signature: /Derived|null[0]
 class Derived : Base {
+  // CHECK:
+  //   Mangled name: Derived#<init>(){}
+  //   Public signature: /Derived.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Base*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: Derived#foo(){}
+  //   Public signature: /Derived.foo|-1041209573719867811[0]
   override fun foo() {
     super<Base>.foo()
   }
 
+  // CHECK:
+  //   Mangled name: Derived{}bar
+  //   Public signature: /Derived.bar|-7864284097863469857[0]
   override val bar: String
+    // CHECK JVM_IR:
+    //   Mangled name: Derived#<get-bar>(){}kotlin.String
+    //   Public signature: /Derived.bar.<get-bar>|3423724227669014303[0]
+    // CHECK JS_IR:
+    //   Mangled name: Derived#<get-bar>(){}
+    //   Public signature: /Derived.bar.<get-bar>|6880642144337645699[0]
     override get(): String {
       return super<Base>.<get-bar>()
     }

@@ -1,30 +1,100 @@
+// CHECK:
+//   Mangled name: Fn
+//   Public signature: /Fn|null[0]
 fun interface Fn<T : Any?, R : Any?> {
+  // CHECK JVM_IR:
+  //   Mangled name: Fn#run(kotlin.String;kotlin.Int;1:0){}1:1
+  //   Public signature: /Fn.run|6229634511602909233[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         Fn#run(kotlin.String;kotlin.Int;1:0){}
+  //   Mangled name computed from Descriptor: Fn#run(kotlin.String;kotlin.Int;1:0){}
+  //   Mangled name computed from Fir:        Fn#run(kotlin.String;kotlin.Int;1:0){}1:1
+  //   Public signature: /Fn.run|6229634511602909233[0]
   abstract fun run(s: String, i: Int, t: T): R
 
 }
 
+// CHECK:
+//   Mangled name: J
+//   Public signature: /J|null[0]
 class J {
+  // CHECK:
+  //   Mangled name: J#<init>(){}
+  //   Public signature: /J.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: J#runConversion(Fn<kotlin.String,kotlin.Int>;Fn<kotlin.Int,kotlin.String>){}kotlin.Int
+  //   Public signature: /J.runConversion|4347513371052535712[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         J#runConversion(Fn<kotlin.String,kotlin.Int>;Fn<kotlin.Int,kotlin.String>){}
+  //   Mangled name computed from Descriptor: J#runConversion(Fn<kotlin.String,kotlin.Int>;Fn<kotlin.Int,kotlin.String>){}
+  //   Mangled name computed from Fir:        J#runConversion(Fn<kotlin.String,kotlin.Int>;Fn<kotlin.Int,kotlin.String>){}kotlin.Int
+  //   Public signature: /J.runConversion|4347513371052535712[0]
   fun runConversion(f1: Fn<String, Int>, f2: Fn<Int, String>): Int {
     return f1.run(s = "Bar", i = 1, t = f2.run(s = "Foo", i = 42, t = 239))
   }
 
 }
 
+// CHECK:
+//   Mangled name: {}fsi
+//   Public signature: /fsi|5902301571547257746[0]
 val fsi: Fn<String, Int>
   field = { // BLOCK
+    // CHECK JVM_IR:
+    //   Mangled name computed from Ir (compatible mode: false):         {}fsi.<no name provided>
+    //   Mangled name computed from Ir (compatible mode: true):          fsi.<no name provided>
+    //   Mangled name computed from Descriptor (compatible mode: false): {}fsi#jf.<no name provided>
+    //   Mangled name computed from Descriptor (compatible mode: true):  {}fsi#jf.<no name provided>
+    //   Mangled name computed from Fir (compatible mode: false):        <anonymous>
+    //   Mangled name computed from Fir (compatible mode: true):         <anonymous>
+    // CHECK JS_IR:
+    //   Mangled name computed from Ir (compatible mode: false):         {}fsi.<no name provided>
+    //   Mangled name computed from Ir (compatible mode: true):          fsi.<no name provided>
+    //   Mangled name computed from Descriptor (compatible mode: false): {}fsi.<no name provided>
+    //   Mangled name computed from Descriptor (compatible mode: true):  {}fsi.<no name provided>
+    //   Mangled name computed from Fir (compatible mode: false):        <anonymous>
+    //   Mangled name computed from Fir (compatible mode: true):         <anonymous>
     local class <no name provided> : Fn<String, Int> {
+      // CHECK JVM_IR:
+      //   Mangled name computed from Ir (compatible mode: false):         {}fsi.<no name provided>#<init>(){}
+      //   Mangled name computed from Ir (compatible mode: true):          fsi.<no name provided>#<init>(){}
+      //   Mangled name computed from Descriptor (compatible mode: false): {}fsi#jf.<no name provided>#<init>(){}
+      //   Mangled name computed from Descriptor (compatible mode: true):  {}fsi#jf.<no name provided>#<init>(){}
+      //   Mangled name computed from Fir (compatible mode: false):        #<init>(){}
+      //   Mangled name computed from Fir (compatible mode: true):         #<init>(){}
+      // CHECK JS_IR:
+      //   Mangled name computed from Ir (compatible mode: false):         {}fsi.<no name provided>#<init>(){}
+      //   Mangled name computed from Ir (compatible mode: true):          fsi.<no name provided>#<init>(){}
+      //   Mangled name computed from Descriptor (compatible mode: false): {}fsi.<no name provided>#<init>(){}
+      //   Mangled name computed from Descriptor (compatible mode: true):  {}fsi.<no name provided>#<init>(){}
+      //   Mangled name computed from Fir (compatible mode: false):        #<init>(){}
+      //   Mangled name computed from Fir (compatible mode: true):         #<init>(){}
       constructor() /* primary */ {
         super/*Any*/()
         /* <init>() */
 
       }
 
+      // CHECK JVM_IR:
+      //   Mangled name computed from Ir (compatible mode: false):         {}fsi.<no name provided>#run(kotlin.String;kotlin.Int;kotlin.String){}kotlin.Int
+      //   Mangled name computed from Ir (compatible mode: true):          fsi.<no name provided>#run(kotlin.String;kotlin.Int;kotlin.String){}kotlin.Int
+      //   Mangled name computed from Descriptor (compatible mode: false): {}fsi#jf.<no name provided>#run(kotlin.String;kotlin.Int;kotlin.String){}kotlin.Int
+      //   Mangled name computed from Descriptor (compatible mode: true):  {}fsi#jf.<no name provided>#run(kotlin.String;kotlin.Int;kotlin.String){}kotlin.Int
+      //   Mangled name computed from Fir (compatible mode: false):        #run(kotlin.String;kotlin.Int;kotlin.String){}kotlin.Int
+      //   Mangled name computed from Fir (compatible mode: true):         #run(kotlin.String;kotlin.Int;kotlin.String){}kotlin.Int
+      // CHECK JS_IR:
+      //   Mangled name computed from Ir (compatible mode: false):         {}fsi.<no name provided>#run(kotlin.String;kotlin.Int;kotlin.String){}
+      //   Mangled name computed from Ir (compatible mode: true):          fsi.<no name provided>#run(kotlin.String;kotlin.Int;kotlin.String){}
+      //   Mangled name computed from Descriptor (compatible mode: false): {}fsi.<no name provided>#run(kotlin.String;kotlin.Int;kotlin.String){}
+      //   Mangled name computed from Descriptor (compatible mode: true):  {}fsi.<no name provided>#run(kotlin.String;kotlin.Int;kotlin.String){}
+      //   Mangled name computed from Fir (compatible mode: false):        #run(kotlin.String;kotlin.Int;kotlin.String){}kotlin.Int
+      //   Mangled name computed from Fir (compatible mode: true):         #run(kotlin.String;kotlin.Int;kotlin.String){}kotlin.Int
       override fun run(s: String, i: Int, t: String): Int {
         return 1
       }
@@ -33,17 +103,70 @@ val fsi: Fn<String, Int>
 
     <no name provided>()
   }
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-fsi>(){}Fn<kotlin.String,kotlin.Int>
+  //   Public signature: /fsi.<get-fsi>|-2546794996796226350[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         #<get-fsi>(){}
+  //   Mangled name computed from Descriptor: #<get-fsi>(){}
+  //   Mangled name computed from Fir:        #<get-fsi>(){}Fn<kotlin.String,kotlin.Int>
+  //   Public signature: /fsi.<get-fsi>|-2546794996796226350[0]
   get
 
+// CHECK:
+//   Mangled name: {}fis
+//   Public signature: /fis|4743015834142814854[0]
 val fis: Fn<Int, String>
   field = { // BLOCK
+    // CHECK JVM_IR:
+    //   Mangled name computed from Ir (compatible mode: false):         {}fis.<no name provided>
+    //   Mangled name computed from Ir (compatible mode: true):          fis.<no name provided>
+    //   Mangled name computed from Descriptor (compatible mode: false): {}fis#jf.<no name provided>
+    //   Mangled name computed from Descriptor (compatible mode: true):  {}fis#jf.<no name provided>
+    //   Mangled name computed from Fir (compatible mode: false):        <anonymous>
+    //   Mangled name computed from Fir (compatible mode: true):         <anonymous>
+    // CHECK JS_IR:
+    //   Mangled name computed from Ir (compatible mode: false):         {}fis.<no name provided>
+    //   Mangled name computed from Ir (compatible mode: true):          fis.<no name provided>
+    //   Mangled name computed from Descriptor (compatible mode: false): {}fis.<no name provided>
+    //   Mangled name computed from Descriptor (compatible mode: true):  {}fis.<no name provided>
+    //   Mangled name computed from Fir (compatible mode: false):        <anonymous>
+    //   Mangled name computed from Fir (compatible mode: true):         <anonymous>
     local class <no name provided> : Fn<Int, String> {
+      // CHECK JVM_IR:
+      //   Mangled name computed from Ir (compatible mode: false):         {}fis.<no name provided>#<init>(){}
+      //   Mangled name computed from Ir (compatible mode: true):          fis.<no name provided>#<init>(){}
+      //   Mangled name computed from Descriptor (compatible mode: false): {}fis#jf.<no name provided>#<init>(){}
+      //   Mangled name computed from Descriptor (compatible mode: true):  {}fis#jf.<no name provided>#<init>(){}
+      //   Mangled name computed from Fir (compatible mode: false):        #<init>(){}
+      //   Mangled name computed from Fir (compatible mode: true):         #<init>(){}
+      // CHECK JS_IR:
+      //   Mangled name computed from Ir (compatible mode: false):         {}fis.<no name provided>#<init>(){}
+      //   Mangled name computed from Ir (compatible mode: true):          fis.<no name provided>#<init>(){}
+      //   Mangled name computed from Descriptor (compatible mode: false): {}fis.<no name provided>#<init>(){}
+      //   Mangled name computed from Descriptor (compatible mode: true):  {}fis.<no name provided>#<init>(){}
+      //   Mangled name computed from Fir (compatible mode: false):        #<init>(){}
+      //   Mangled name computed from Fir (compatible mode: true):         #<init>(){}
       constructor() /* primary */ {
         super/*Any*/()
         /* <init>() */
 
       }
 
+      // CHECK JVM_IR:
+      //   Mangled name computed from Ir (compatible mode: false):         {}fis.<no name provided>#run(kotlin.String;kotlin.Int;kotlin.Int){}kotlin.String
+      //   Mangled name computed from Ir (compatible mode: true):          fis.<no name provided>#run(kotlin.String;kotlin.Int;kotlin.Int){}kotlin.String
+      //   Mangled name computed from Descriptor (compatible mode: false): {}fis#jf.<no name provided>#run(kotlin.String;kotlin.Int;kotlin.Int){}kotlin.String
+      //   Mangled name computed from Descriptor (compatible mode: true):  {}fis#jf.<no name provided>#run(kotlin.String;kotlin.Int;kotlin.Int){}kotlin.String
+      //   Mangled name computed from Fir (compatible mode: false):        #run(kotlin.String;kotlin.Int;kotlin.Int){}kotlin.String
+      //   Mangled name computed from Fir (compatible mode: true):         #run(kotlin.String;kotlin.Int;kotlin.Int){}kotlin.String
+      // CHECK JS_IR:
+      //   Mangled name computed from Ir (compatible mode: false):         {}fis.<no name provided>#run(kotlin.String;kotlin.Int;kotlin.Int){}
+      //   Mangled name computed from Ir (compatible mode: true):          fis.<no name provided>#run(kotlin.String;kotlin.Int;kotlin.Int){}
+      //   Mangled name computed from Descriptor (compatible mode: false): {}fis.<no name provided>#run(kotlin.String;kotlin.Int;kotlin.Int){}
+      //   Mangled name computed from Descriptor (compatible mode: true):  {}fis.<no name provided>#run(kotlin.String;kotlin.Int;kotlin.Int){}
+      //   Mangled name computed from Fir (compatible mode: false):        #run(kotlin.String;kotlin.Int;kotlin.Int){}kotlin.String
+      //   Mangled name computed from Fir (compatible mode: true):         #run(kotlin.String;kotlin.Int;kotlin.Int){}kotlin.String
       override fun run(s: String, i: Int, t: Int): String {
         return ""
       }
@@ -52,15 +175,45 @@ val fis: Fn<Int, String>
 
     <no name provided>()
   }
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-fis>(){}Fn<kotlin.Int,kotlin.String>
+  //   Public signature: /fis.<get-fis>|5252092316637653538[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         #<get-fis>(){}
+  //   Mangled name computed from Descriptor: #<get-fis>(){}
+  //   Mangled name computed from Fir:        #<get-fis>(){}Fn<kotlin.Int,kotlin.String>
+  //   Public signature: /fis.<get-fis>|5252092316637653538[0]
   get
 
+// CHECK:
+//   Mangled name: #test(J){}
+//   Public signature: /test|-8477572416399964095[0]
 fun test(j: J) {
-  j.runConversion(f1 = <get-fsi>(), f2 = local fun <anonymous>(s: String, i: Int, ti: Int): String {
-    return ""
-  }
+  j.runConversion(f1 = <get-fsi>(), f2 = 
+    // CHECK JVM_IR:
+    //   Mangled name computed from Ir:         #test(J){}#<anonymous>#static(kotlin.String;kotlin.Int;kotlin.Int){}kotlin.String
+    //   Mangled name computed from Descriptor: #test(J){}#<anonymous>#static(kotlin.String;kotlin.Int;kotlin.Int){}kotlin.String
+    //   Mangled name computed from Fir:        could not compute mangled name: java.lang.IllegalStateException: unexpected element runConversion@fun <anonymous>(s: R|kotlin/String|, i: R|kotlin/Int|, ti: R|kotlin/Int|): R|kotlin/String| <inline=NoInline>  {... (truncated)
+    // CHECK JS_IR:
+    //   Mangled name computed from Ir:         #test(J){}#<anonymous>#static(kotlin.String;kotlin.Int;kotlin.Int){}
+    //   Mangled name computed from Descriptor: #test(J){}#<anonymous>#static(kotlin.String;kotlin.Int;kotlin.Int){}
+    //   Mangled name computed from Fir:        could not compute mangled name: java.lang.IllegalStateException: unexpected element runConversion@fun <anonymous>(s: R|kotlin/String|, i: R|kotlin/Int|, ti: R|kotlin/Int|): R|kotlin/String| <inline=NoInline>  {... (truncated)
+    local fun <anonymous>(s: String, i: Int, ti: Int): String {
+      return ""
+    }
  /*-> Fn<Int, String> */) /*~> Unit */
-  j.runConversion(f1 = local fun <anonymous>(s: String, i: Int, ts: String): Int {
-    return 1
-  }
+  j.runConversion(f1 = 
+    // CHECK JVM_IR:
+    //   Mangled name computed from Ir:         #test(J){}#<anonymous>#static(kotlin.String;kotlin.Int;kotlin.String){}kotlin.Int
+    //   Mangled name computed from Descriptor: #test(J){}#<anonymous>#static(kotlin.String;kotlin.Int;kotlin.String){}kotlin.Int
+    //   Mangled name computed from Fir:        could not compute mangled name: java.lang.IllegalStateException: unexpected element runConversion@fun <anonymous>(s: R|kotlin/String|, i: R|kotlin/Int|, ts: R|kotlin/String|): R|kotlin/Int| <inline=NoInline>  {... (truncated)
+    // CHECK JS_IR:
+    //   Mangled name computed from Ir:         #test(J){}#<anonymous>#static(kotlin.String;kotlin.Int;kotlin.String){}
+    //   Mangled name computed from Descriptor: #test(J){}#<anonymous>#static(kotlin.String;kotlin.Int;kotlin.String){}
+    //   Mangled name computed from Fir:        could not compute mangled name: java.lang.IllegalStateException: unexpected element runConversion@fun <anonymous>(s: R|kotlin/String|, i: R|kotlin/Int|, ts: R|kotlin/String|): R|kotlin/Int| <inline=NoInline>  {... (truncated)
+    local fun <anonymous>(s: String, i: Int, ts: String): Int {
+      return 1
+    }
  /*-> Fn<String, Int> */, f2 = <get-fis>()) /*~> Unit */
 }
+

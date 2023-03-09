@@ -1,5 +1,8 @@
 // FIR_IDENTICAL
 
+// NO_SIGNATURE_DUMP
+// ^KT-57436
+
 val test1 get() = 42
 
 var test2 get() = 42; set(value) {}

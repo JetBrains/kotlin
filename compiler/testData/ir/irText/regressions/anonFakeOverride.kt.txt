@@ -1,0 +1,254 @@
+// MODULE: libxxxxx
+// FILE: l1.kt
+package com.soywiz.korag.shader
+
+// CHECK:
+//   Mangled name: com.soywiz.korag.shader.Operand
+//   Public signature: com.soywiz.korag.shader/Operand|null[0]
+open class Operand {
+  // CHECK:
+  //   Mangled name: com.soywiz.korag.shader.Operand#<init>(){}
+  //   Public signature: com.soywiz.korag.shader/Operand.<init>|-5645683436151566731[0]
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+// CHECK:
+//   Mangled name: com.soywiz.korag.shader.Variable
+//   Public signature: com.soywiz.korag.shader/Variable|null[0]
+open class Variable : Operand {
+  // CHECK:
+  //   Mangled name: com.soywiz.korag.shader.Variable#<init>(){}
+  //   Public signature: com.soywiz.korag.shader/Variable.<init>|-5645683436151566731[0]
+  constructor() /* primary */ {
+    super/*Operand*/()
+    /* <init>() */
+
+  }
+
+}
+
+// CHECK:
+//   Mangled name: com.soywiz.korag.shader.Program
+//   Public signature: com.soywiz.korag.shader/Program|null[0]
+class Program {
+  // CHECK:
+  //   Mangled name: com.soywiz.korag.shader.Program#<init>(){}
+  //   Public signature: com.soywiz.korag.shader/Program.<init>|-5645683436151566731[0]
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  // CHECK:
+  //   Mangled name: com.soywiz.korag.shader.Program.Stm
+  //   Public signature: com.soywiz.korag.shader/Program.Stm|null[0]
+  class Stm {
+    // CHECK:
+    //   Mangled name: com.soywiz.korag.shader.Program.Stm#<init>(com.soywiz.korag.shader.Operand){}
+    //   Public signature: com.soywiz.korag.shader/Program.Stm.<init>|9004691256340202638[0]
+    constructor(o: Operand) /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    // CHECK:
+    //   Mangled name: com.soywiz.korag.shader.Program.Stm{}o
+    //   Public signature: com.soywiz.korag.shader/Program.Stm.o|-5332571409865440260[0]
+    val o: Operand
+      field = o
+      // CHECK:
+      //   Mangled name: com.soywiz.korag.shader.Program.Stm#<get-o>(){}com.soywiz.korag.shader.Operand
+      //   Public signature: com.soywiz.korag.shader/Program.Stm.o.<get-o>|6916946551137658651[0]
+      get
+
+  }
+
+  // CHECK:
+  //   Mangled name: com.soywiz.korag.shader.Program.Visitor
+  //   Public signature: com.soywiz.korag.shader/Program.Visitor|null[0]
+  open class Visitor<E : Any?> {
+    // CHECK:
+    //   Mangled name: com.soywiz.korag.shader.Program.Visitor#<init>(1:0){}
+    //   Public signature: com.soywiz.korag.shader/Program.Visitor.<init>|-8731461708390519279[0]
+    constructor(default: E) /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    // CHECK:
+    //   Mangled name: com.soywiz.korag.shader.Program.Visitor{}default
+    //   Public signature: com.soywiz.korag.shader/Program.Visitor.default|-936762540050553464[0]
+    val default: E
+      field = default
+      // CHECK:
+      //   Mangled name: com.soywiz.korag.shader.Program.Visitor#<get-default>(){}1:0
+      //   Public signature: com.soywiz.korag.shader/Program.Visitor.default.<get-default>|854086044895302061[0]
+      get
+
+    // CHECK:
+    //   Mangled name: com.soywiz.korag.shader.Program.Visitor#visit(com.soywiz.korag.shader.Program.Stm?){}
+    //   Public signature: com.soywiz.korag.shader/Program.Visitor.visit|-1054644168328851686[0]
+    open fun visit(stm: Stm?) {
+      when {
+        { // BLOCK
+          val tmp0_safe_receiver: Stm? = stm
+          when {
+            EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
+            else -> tmp0_safe_receiver.<get-o>()
+          }
+        } is Operand -> <this>.visit(o = stm.<get-o>()) /*~> Unit */
+      }
+    }
+
+    // CHECK:
+    //   Mangled name: com.soywiz.korag.shader.Program.Visitor#visit(com.soywiz.korag.shader.Operand){}1:0
+    //   Public signature: com.soywiz.korag.shader/Program.Visitor.visit|-6430847214315026710[0]
+    open fun visit(o: Operand): E {
+      when {
+        o is Uniform -> <this>.visit(operand = o /*as Uniform */) /*~> Unit */
+      }
+      return <this>.<get-default>()
+    }
+
+    // CHECK:
+    //   Mangled name: com.soywiz.korag.shader.Program.Visitor#visit(com.soywiz.korag.shader.Uniform){}1:0
+    //   Public signature: com.soywiz.korag.shader/Program.Visitor.visit|9112147213196101826[0]
+    open fun visit(operand: Uniform): E {
+      return <this>.<get-default>()
+    }
+
+  }
+
+}
+
+// CHECK:
+//   Mangled name: com.soywiz.korag.shader.Uniform
+//   Public signature: com.soywiz.korag.shader/Uniform|null[0]
+open class Uniform : Variable {
+  // CHECK:
+  //   Mangled name: com.soywiz.korag.shader.Uniform#<init>(kotlin.String){}
+  //   Public signature: com.soywiz.korag.shader/Uniform.<init>|1280618353163213788[0]
+  constructor(result: String) /* primary */ {
+    super/*Variable*/()
+    /* <init>() */
+
+  }
+
+  // CHECK:
+  //   Mangled name: com.soywiz.korag.shader.Uniform{}result
+  //   Public signature: com.soywiz.korag.shader/Uniform.result|456251868630197251[0]
+  val result: String
+    field = result
+    // CHECK:
+    //   Mangled name: com.soywiz.korag.shader.Uniform#<get-result>(){}kotlin.String
+    //   Public signature: com.soywiz.korag.shader/Uniform.result.<get-result>|8441547134620975366[0]
+    get
+
+}
+
+// CHECK:
+//   Mangled name: com.soywiz.korag.shader.Shader
+//   Public signature: com.soywiz.korag.shader/Shader|null[0]
+open class Shader {
+  // CHECK:
+  //   Mangled name: com.soywiz.korag.shader.Shader#<init>(com.soywiz.korag.shader.Program.Stm?){}
+  //   Public signature: com.soywiz.korag.shader/Shader.<init>|2569647550072261496[0]
+  constructor(stm: Stm?) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  // CHECK:
+  //   Mangled name: com.soywiz.korag.shader.Shader{}stm
+  //   Public signature: com.soywiz.korag.shader/Shader.stm|-6858075582173729330[0]
+  val stm: Stm?
+    field = stm
+    // CHECK:
+    //   Mangled name: com.soywiz.korag.shader.Shader#<get-stm>(){}com.soywiz.korag.shader.Program.Stm?
+    //   Public signature: com.soywiz.korag.shader/Shader.stm.<get-stm>|6728519906692791573[0]
+    get
+
+  // CHECK:
+  //   Mangled name: com.soywiz.korag.shader.Shader{}uniforms
+  //   Public signature: com.soywiz.korag.shader/Shader.uniforms|-1005314498293161335[0]
+  val uniforms: Set<Uniform>
+    field = LinkedHashSet<Uniform>().also<LinkedHashSet<Uniform>>(block = 
+      // CHECK:
+      //   Mangled name (compatible mode: false): com.soywiz.korag.shader.Shader{}uniforms#<anonymous>#static(java.util.LinkedHashSet<com.soywiz.korag.shader.Uniform>){}
+      //   Mangled name (compatible mode: true):  com.soywiz.korag.shader.Shader.uniforms#<anonymous>#static(java.util.LinkedHashSet<com.soywiz.korag.shader.Uniform>){}
+      local fun <anonymous>(out: LinkedHashSet<Uniform>) {
+        { // BLOCK
+          // CHECK:
+          //   Mangled name (compatible mode: false): com.soywiz.korag.shader.Shader{}uniforms#<anonymous>#static(java.util.LinkedHashSet<com.soywiz.korag.shader.Uniform>){}.<no name provided>
+          //   Mangled name (compatible mode: true):  com.soywiz.korag.shader.Shader.uniforms#<anonymous>#static(java.util.LinkedHashSet<com.soywiz.korag.shader.Uniform>){}.<no name provided>
+          local class <no name provided> : Visitor<Unit> {
+            // CHECK:
+            //   Mangled name (compatible mode: false): com.soywiz.korag.shader.Shader{}uniforms#<anonymous>#static(java.util.LinkedHashSet<com.soywiz.korag.shader.Uniform>){}.<no name provided>#<init>(){}
+            //   Mangled name (compatible mode: true):  com.soywiz.korag.shader.Shader.uniforms#<anonymous>#static(java.util.LinkedHashSet<com.soywiz.korag.shader.Uniform>){}.<no name provided>#<init>(){}
+            constructor() /* primary */ {
+              super/*Visitor*/<Unit>(default = Unit)
+              /* <init>() */
+
+            }
+
+            // CHECK:
+            //   Mangled name (compatible mode: false): com.soywiz.korag.shader.Shader{}uniforms#<anonymous>#static(java.util.LinkedHashSet<com.soywiz.korag.shader.Uniform>){}.<no name provided>#visit(com.soywiz.korag.shader.Uniform){}
+            //   Mangled name (compatible mode: true):  com.soywiz.korag.shader.Shader.uniforms#<anonymous>#static(java.util.LinkedHashSet<com.soywiz.korag.shader.Uniform>){}.<no name provided>#visit(com.soywiz.korag.shader.Uniform){}
+            override fun visit(uniform: Uniform) {
+              out.add(element = uniform) /*~> Unit */
+            }
+
+          }
+
+          <no name provided>()
+        }.visit(stm = <this>.<get-stm>())
+      }
+).toSet<Uniform>()
+    // CHECK:
+    //   Mangled name: com.soywiz.korag.shader.Shader#<get-uniforms>(){}kotlin.collections.Set<com.soywiz.korag.shader.Uniform>
+    //   Public signature: com.soywiz.korag.shader/Shader.uniforms.<get-uniforms>|-3180607165974082826[0]
+    get
+
+}
+
+// MODULE: main
+// FILE: l2.kt
+
+// CHECK:
+//   Mangled name: D
+//   Public signature: /D|null[0]
+class D : Shader {
+  // CHECK:
+  //   Mangled name: D#<init>(){}
+  //   Public signature: /D.<init>|-5645683436151566731[0]
+  constructor() /* primary */ {
+    super/*Shader*/(stm = Stm(o = Uniform(result = "OK")))
+    /* <init>() */
+
+  }
+
+}
+
+// CHECK:
+//   Mangled name: #foo(){}com.soywiz.korag.shader.Shader
+//   Public signature: /foo|-8759301537433620077[0]
+fun foo(): Shader {
+  return D()
+}
+
+// CHECK:
+//   Mangled name: #box(){}kotlin.String
+//   Public signature: /box|-9347091776561469[0]
+fun box(): String {
+  return foo().<get-uniforms>().first<Uniform>().<get-result>()
+}
+

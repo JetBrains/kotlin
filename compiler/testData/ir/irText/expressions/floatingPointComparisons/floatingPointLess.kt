@@ -1,4 +1,8 @@
 // FIR_IDENTICAL
+
+// IGNORE_BACKEND_K2: JS_IR
+// IGNORE_BACKEND_K2: JS_IR_ES6
+
 fun test1d(x: Double, y: Double) = x < y
 fun test2d(x: Double, y: Any) = y is Double && x < y
 fun test3d(x: Any, y: Any) = x is Double && y is Double && x < y

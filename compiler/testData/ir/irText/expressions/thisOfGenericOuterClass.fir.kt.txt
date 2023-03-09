@@ -1,40 +1,116 @@
+// CHECK:
+//   Mangled name: Outer
+//   Public signature: /Outer|null[0]
 class Outer<T : Any?> {
+  // CHECK:
+  //   Mangled name computed from Ir:         Outer#<init>(1:0){}
+  //   Mangled name computed from Descriptor: Outer#<init>(1:0){}
+  //   Mangled name computed from Fir:        Outer#<init>(0:-1){}
+  //   Public signature: /Outer.<init>|8751876555175556900[0]
   constructor(x: T) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: Outer{}x
+  //   Public signature: /Outer.x|-8060530855978347579[0]
   val x: T
     field = x
+    // CHECK JVM_IR:
+    //   Mangled name: Outer#<get-x>(){}1:0
+    //   Public signature: /Outer.x.<get-x>|-8893883356128097563[0]
+    // CHECK JS_IR:
+    //   Mangled name computed from Ir:         Outer#<get-x>(){}
+    //   Mangled name computed from Descriptor: Outer#<get-x>(){}
+    //   Mangled name computed from Fir:        Outer#<get-x>(){}1:0
+    //   Public signature: /Outer.x.<get-x>|-8893883356128097563[0]
     get
 
+  // CHECK:
+  //   Mangled name: Outer.Inner
+  //   Public signature: /Outer.Inner|null[0]
   open inner class Inner {
+    // CHECK:
+    //   Mangled name: Outer.Inner#<init>(kotlin.Int){}
+    //   Public signature: /Outer.Inner.<init>|-5182794243525578284[0]
     constructor(y: Int) /* primary */ {
       super/*Any*/()
       /* <init>() */
 
     }
 
+    // CHECK:
+    //   Mangled name: Outer.Inner{}y
+    //   Public signature: /Outer.Inner.y|3625903257357557171[0]
     val y: Int
       field = y
+      // CHECK JVM_IR:
+      //   Mangled name: Outer.Inner#<get-y>(){}kotlin.Int
+      //   Public signature: /Outer.Inner.y.<get-y>|-6745575372101973707[0]
+      // CHECK JS_IR:
+      //   Mangled name computed from Ir:         Outer.Inner#<get-y>(){}
+      //   Mangled name computed from Descriptor: Outer.Inner#<get-y>(){}
+      //   Mangled name computed from Fir:        Outer.Inner#<get-y>(){}kotlin.Int
+      //   Public signature: /Outer.Inner.y.<get-y>|-6745575372101973707[0]
       get
 
   }
 
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #test@Outer<kotlin.Int>(){}Outer.Inner<kotlin.Int>
+//   Public signature: /test|7679810293855475963[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #test@Outer<kotlin.Int>(){}
+//   Mangled name computed from Descriptor: #test@Outer<kotlin.Int>(){}
+//   Mangled name computed from Fir:        #test@Outer<kotlin.Int>(){}Outer.Inner<kotlin.Int>
+//   Public signature: /test|7679810293855475963[0]
 fun Outer<Int>.test(): Inner<Int> {
   return { // BLOCK
+    // CHECK JVM_IR:
+    //   Mangled name computed from Ir:         #test@Outer<kotlin.Int>(){}Outer.Inner<kotlin.Int>.<no name provided>
+    //   Mangled name computed from Descriptor: #test@Outer<kotlin.Int>(){}Outer.Inner<kotlin.Int>.<no name provided>
+    //   Mangled name computed from Fir:        <anonymous>
+    // CHECK JS_IR:
+    //   Mangled name computed from Ir:         #test@Outer<kotlin.Int>(){}.<no name provided>
+    //   Mangled name computed from Descriptor: #test@Outer<kotlin.Int>(){}.<no name provided>
+    //   Mangled name computed from Fir:        <anonymous>
     local class <no name provided> : Inner<Int> {
+      // CHECK JVM_IR:
+      //   Mangled name computed from Ir:         #test@Outer<kotlin.Int>(){}Outer.Inner<kotlin.Int>.<no name provided>#<init>(){}
+      //   Mangled name computed from Descriptor: #test@Outer<kotlin.Int>(){}Outer.Inner<kotlin.Int>.<no name provided>#<init>(){}
+      //   Mangled name computed from Fir:        #<init>(){}
+      // CHECK JS_IR:
+      //   Mangled name computed from Ir:         #test@Outer<kotlin.Int>(){}.<no name provided>#<init>(){}
+      //   Mangled name computed from Descriptor: #test@Outer<kotlin.Int>(){}.<no name provided>#<init>(){}
+      //   Mangled name computed from Fir:        #<init>(){}
       constructor() /* primary */ {
         <this>.super/*Inner*/(y = 42)
         /* <init>() */
 
       }
 
+      // CHECK JVM_IR:
+      //   Mangled name computed from Ir:         #test@Outer<kotlin.Int>(){}Outer.Inner<kotlin.Int>.<no name provided>{}xx
+      //   Mangled name computed from Descriptor: #test@Outer<kotlin.Int>(){}Outer.Inner<kotlin.Int>.<no name provided>{}xx
+      //   Mangled name computed from Fir:        {}xx
+      // CHECK JS_IR:
+      //   Mangled name computed from Ir:         #test@Outer<kotlin.Int>(){}.<no name provided>{}xx
+      //   Mangled name computed from Descriptor: #test@Outer<kotlin.Int>(){}.<no name provided>{}xx
+      //   Mangled name computed from Fir:        {}xx
       val xx: Int
         field = <this>.<get-x>().plus(other = <this>.<get-y>())
+        // CHECK JVM_IR:
+        //   Mangled name computed from Ir:         #test@Outer<kotlin.Int>(){}Outer.Inner<kotlin.Int>.<no name provided>#<get-xx>(){}kotlin.Int
+        //   Mangled name computed from Descriptor: #test@Outer<kotlin.Int>(){}Outer.Inner<kotlin.Int>.<no name provided>#<get-xx>(){}kotlin.Int
+        //   Mangled name computed from Fir:        #<get-xx>(){}kotlin.Int
+        // CHECK JS_IR:
+        //   Mangled name computed from Ir:         #test@Outer<kotlin.Int>(){}.<no name provided>#<get-xx>(){}
+        //   Mangled name computed from Descriptor: #test@Outer<kotlin.Int>(){}.<no name provided>#<get-xx>(){}
+        //   Mangled name computed from Fir:        #<get-xx>(){}kotlin.Int
         get
 
     }
@@ -42,3 +118,4 @@ fun Outer<Int>.test(): Inner<Int> {
     <no name provided>()
   }
 }
+

@@ -1,60 +1,169 @@
+// CHECK:
+//   Mangled name: SettingType
+//   Public signature: /SettingType|null[0]
 class SettingType<out V : Any> {
+  // CHECK:
+  //   Mangled name computed from Ir:         SettingType#<init>(kotlin.reflect.KClass<out|1:0>){}
+  //   Mangled name computed from Descriptor: SettingType#<init>(kotlin.reflect.KClass<out|1:0>){}
+  //   Mangled name computed from Fir:        SettingType#<init>(kotlin.reflect.KClass<out|0:-1>){}
+  //   Public signature: /SettingType.<init>|162529958895940958[0]
   constructor(type: KClass<out V>) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: SettingType{}type
+  //   Public signature: /SettingType.type|-6051055617123801408[0]
   val type: KClass<out V>
     field = type
+    // CHECK JVM_IR:
+    //   Mangled name: SettingType#<get-type>(){}kotlin.reflect.KClass<out|1:0>
+    //   Public signature: /SettingType.type.<get-type>|-782685829818054763[0]
+    // CHECK JS_IR:
+    //   Mangled name computed from Ir:         SettingType#<get-type>(){}
+    //   Mangled name computed from Descriptor: SettingType#<get-type>(){}
+    //   Mangled name computed from Fir:        SettingType#<get-type>(){}kotlin.reflect.KClass<out|1:0>
+    //   Public signature: /SettingType.type.<get-type>|-782685829818054763[0]
     get
 
 }
 
+// CHECK:
+//   Mangled name: SettingReference
+//   Public signature: /SettingReference|null[0]
 class SettingReference<V : Any, T : SettingType<V>> {
+  // CHECK:
+  //   Mangled name computed from Ir:         SettingReference#<init>(1:1;1:0){}
+  //   Mangled name computed from Descriptor: SettingReference#<init>(1:1;1:0){}
+  //   Mangled name computed from Fir:        SettingReference#<init>(0:-1;0:-1){}
+  //   Public signature: /SettingReference.<init>|3925877681016924387[0]
   constructor(t: T, v: V) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: SettingReference{}t
+  //   Public signature: /SettingReference.t|-8767999791664836944[0]
   var t: T
     field = t
+    // CHECK JVM_IR:
+    //   Mangled name: SettingReference#<get-t>(){}1:1
+    //   Public signature: /SettingReference.t.<get-t>|3876475218778608787[0]
+    // CHECK JS_IR:
+    //   Mangled name computed from Ir:         SettingReference#<get-t>(){}
+    //   Mangled name computed from Descriptor: SettingReference#<get-t>(){}
+    //   Mangled name computed from Fir:        SettingReference#<get-t>(){}1:1
+    //   Public signature: /SettingReference.t.<get-t>|3876475218778608787[0]
     get
+    // CHECK:
+    //   Mangled name: SettingReference#<set-t>(1:1){}
+    //   Public signature: /SettingReference.t.<set-t>|-1029452311345649469[0]
     set
 
+  // CHECK:
+  //   Mangled name: SettingReference{}v
+  //   Public signature: /SettingReference.v|138869847852828796[0]
   var v: V
     field = v
+    // CHECK JVM_IR:
+    //   Mangled name: SettingReference#<get-v>(){}1:0
+    //   Public signature: /SettingReference.v.<get-v>|-6358452650346304910[0]
+    // CHECK JS_IR:
+    //   Mangled name computed from Ir:         SettingReference#<get-v>(){}
+    //   Mangled name computed from Descriptor: SettingReference#<get-v>(){}
+    //   Mangled name computed from Fir:        SettingReference#<get-v>(){}1:0
+    //   Public signature: /SettingReference.v.<get-v>|-6358452650346304910[0]
     get
+    // CHECK:
+    //   Mangled name: SettingReference#<set-v>(1:0){}
+    //   Public signature: /SettingReference.v.<set-v>|-106720973864593013[0]
     set
 
 }
 
+// CHECK:
+//   Mangled name: IdeWizard
+//   Public signature: /IdeWizard|null[0]
 class IdeWizard {
+  // CHECK:
+  //   Mangled name: IdeWizard#<init>(){}
+  //   Public signature: /IdeWizard.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  var projectTemplate: Int? /* by */
+  // CHECK:
+  //   Mangled name: IdeWizard{}projectTemplate
+  //   Public signature: /IdeWizard.projectTemplate|1011078309052725595[0]
+  var projectTemplate: Int? /* by */ 
     field = <this>.setting<Int, SettingType<Int>>(reference = SettingReference<Int, SettingType<Int>>(t = SettingType<Int>(type = 42::class), v = 42))
+    // CHECK JVM_IR:
+    //   Mangled name: IdeWizard#<get-projectTemplate>(){}kotlin.Int?
+    //   Public signature: /IdeWizard.projectTemplate.<get-projectTemplate>|-8817473698570649998[0]
+    // CHECK JS_IR:
+    //   Mangled name computed from Ir:         IdeWizard#<get-projectTemplate>(){}
+    //   Mangled name computed from Descriptor: IdeWizard#<get-projectTemplate>(){}
+    //   Mangled name computed from Fir:        IdeWizard#<get-projectTemplate>(){}kotlin.Int?
+    //   Public signature: /IdeWizard.projectTemplate.<get-projectTemplate>|-8817473698570649998[0]
     get(): Int? {
       return <this>.#projectTemplate$delegate.getValue(thisRef = <this>, property = IdeWizard::projectTemplate)
     }
+    // CHECK:
+    //   Mangled name: IdeWizard#<set-projectTemplate>(kotlin.Int?){}
+    //   Public signature: /IdeWizard.projectTemplate.<set-projectTemplate>|7033237300104161042[0]
     set(<set-?>: Int?) {
       <this>.#projectTemplate$delegate.setValue(thisRef = <this>, property = IdeWizard::projectTemplate, value = <set-?>)
     }
 
+  // CHECK JVM_IR:
+  //   Mangled name computed from Ir:         IdeWizard#setting(SettingReference<0:0,0:1>){0§<kotlin.Any>;1§<SettingType<0:0>>}IdeWizard#setting.<no name provided><0:0,0:1>
+  //   Mangled name computed from Descriptor: IdeWizard#setting(SettingReference<0:0,0:1>){0§<kotlin.Any>;1§<SettingType<0:0>>}IdeWizard#setting.<no name provided>
+  //   Mangled name computed from Fir:        IdeWizard#setting(SettingReference<0:0,0:1>){0§<kotlin.Any>;1§<SettingType<0:0>>}<anonymous><0:0,0:1>
+  //   Public signature: /IdeWizard.setting|-4665055165924518145[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         IdeWizard#setting(SettingReference<0:0,0:1>){0§<kotlin.Any>;1§<SettingType<0:0>>}
+  //   Mangled name computed from Descriptor: IdeWizard#setting(SettingReference<0:0,0:1>){0§<kotlin.Any>;1§<SettingType<0:0>>}
+  //   Mangled name computed from Fir:        IdeWizard#setting(SettingReference<0:0,0:1>){0§<kotlin.Any>;1§<SettingType<0:0>>}<anonymous><0:0,0:1>
+  //   Public signature: /IdeWizard.setting|-4665055165924518145[0]
   private fun <V : Any, T : SettingType<V>> setting(reference: SettingReference<V, T>): <no name provided><V, T> {
     return { // BLOCK
+      // CHECK JVM_IR:
+      //   Mangled name computed from Ir:         IdeWizard#setting(SettingReference<1:0,1:1>){0§<kotlin.Any>;1§<SettingType<1:0>>}IdeWizard#setting.<no name provided><1:0,1:1>.<no name provided>
+      //   Mangled name computed from Descriptor: IdeWizard#setting(SettingReference<1:0,1:1>){0§<kotlin.Any>;1§<SettingType<1:0>>}IdeWizard#setting.<no name provided>.<no name provided>
+      //   Mangled name computed from Fir:        <anonymous>
+      // CHECK JS_IR:
+      //   Mangled name computed from Ir:         IdeWizard#setting(SettingReference<1:0,1:1>){0§<kotlin.Any>;1§<SettingType<1:0>>}.<no name provided>
+      //   Mangled name computed from Descriptor: IdeWizard#setting(SettingReference<1:0,1:1>){0§<kotlin.Any>;1§<SettingType<1:0>>}.<no name provided>
+      //   Mangled name computed from Fir:        <anonymous>
       local class <no name provided> : ReadWriteProperty<Any?, V?> {
+        // CHECK JVM_IR:
+        //   Mangled name computed from Ir:         IdeWizard#setting(SettingReference<2:0,2:1>){0§<kotlin.Any>;1§<SettingType<2:0>>}IdeWizard#setting.<no name provided><2:0,2:1>.<no name provided>#<init>(){}
+        //   Mangled name computed from Descriptor: IdeWizard#setting(SettingReference<2:0,2:1>){0§<kotlin.Any>;1§<SettingType<2:0>>}IdeWizard#setting.<no name provided>.<no name provided>#<init>(){}
+        //   Mangled name computed from Fir:        #<init>(){}
+        // CHECK JS_IR:
+        //   Mangled name computed from Ir:         IdeWizard#setting(SettingReference<2:0,2:1>){0§<kotlin.Any>;1§<SettingType<2:0>>}.<no name provided>#<init>(){}
+        //   Mangled name computed from Descriptor: IdeWizard#setting(SettingReference<2:0,2:1>){0§<kotlin.Any>;1§<SettingType<2:0>>}.<no name provided>#<init>(){}
+        //   Mangled name computed from Fir:        #<init>(){}
         constructor() /* primary */ {
           super/*Any*/()
           /* <init>() */
 
         }
 
+        // CHECK JVM_IR:
+        //   Mangled name computed from Ir:         IdeWizard#setting(SettingReference<2:0,2:1>){0§<kotlin.Any>;1§<SettingType<2:0>>}IdeWizard#setting.<no name provided><2:0,2:1>.<no name provided>#setValue(kotlin.Any?;kotlin.reflect.KProperty<*>;2:0?){}
+        //   Mangled name computed from Descriptor: IdeWizard#setting(SettingReference<2:0,2:1>){0§<kotlin.Any>;1§<SettingType<2:0>>}IdeWizard#setting.<no name provided>.<no name provided>#setValue(kotlin.Any?;kotlin.reflect.KProperty<*>;2:0?){}
+        //   Mangled name computed from Fir:        could not compute mangled name: java.lang.IllegalStateException: Should not be here!
+        // CHECK JS_IR:
+        //   Mangled name computed from Ir:         IdeWizard#setting(SettingReference<2:0,2:1>){0§<kotlin.Any>;1§<SettingType<2:0>>}.<no name provided>#setValue(kotlin.Any?;kotlin.reflect.KProperty<*>;2:0?){}
+        //   Mangled name computed from Descriptor: IdeWizard#setting(SettingReference<2:0,2:1>){0§<kotlin.Any>;1§<SettingType<2:0>>}.<no name provided>#setValue(kotlin.Any?;kotlin.reflect.KProperty<*>;2:0?){}
+        //   Mangled name computed from Fir:        could not compute mangled name: java.lang.IllegalStateException: Should not be here!
         override operator fun setValue(thisRef: Any?, property: KProperty<*>, value: V?) {
           when {
             EQEQ(arg0 = value, arg1 = null) -> return Unit
@@ -63,6 +172,14 @@ class IdeWizard {
           reference.<set-v>(<set-?> = value)
         }
 
+        // CHECK JVM_IR:
+        //   Mangled name computed from Ir:         IdeWizard#setting(SettingReference<2:0,2:1>){0§<kotlin.Any>;1§<SettingType<2:0>>}IdeWizard#setting.<no name provided><2:0,2:1>.<no name provided>#getValue(kotlin.Any?;kotlin.reflect.KProperty<*>){}2:0?
+        //   Mangled name computed from Descriptor: IdeWizard#setting(SettingReference<2:0,2:1>){0§<kotlin.Any>;1§<SettingType<2:0>>}IdeWizard#setting.<no name provided>.<no name provided>#getValue(kotlin.Any?;kotlin.reflect.KProperty<*>){}2:0?
+        //   Mangled name computed from Fir:        could not compute mangled name: java.lang.IllegalStateException: Should not be here!
+        // CHECK JS_IR:
+        //   Mangled name computed from Ir:         IdeWizard#setting(SettingReference<2:0,2:1>){0§<kotlin.Any>;1§<SettingType<2:0>>}.<no name provided>#getValue(kotlin.Any?;kotlin.reflect.KProperty<*>){}
+        //   Mangled name computed from Descriptor: IdeWizard#setting(SettingReference<2:0,2:1>){0§<kotlin.Any>;1§<SettingType<2:0>>}.<no name provided>#getValue(kotlin.Any?;kotlin.reflect.KProperty<*>){}
+        //   Mangled name computed from Fir:        could not compute mangled name: java.lang.IllegalStateException: Should not be here!
         override operator fun getValue(thisRef: Any?, property: KProperty<*>): V? {
           return reference.<get-v>()
         }
@@ -74,3 +191,4 @@ class IdeWizard {
   }
 
 }
+

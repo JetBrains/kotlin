@@ -1,62 +1,131 @@
+// CHECK:
+//   Mangled name: Semigroup
+//   Public signature: /Semigroup|null[0]
 interface Semigroup<T : Any?> {
+  // CHECK:
+  //   Mangled name: Semigroup#combine@1:0(1:0){}1:0
+  //   Public signature: /Semigroup.combine|-3517256775590682507[0]
   abstract infix fun T.combine(other: T): T
 
 }
 
+// CHECK:
+//   Mangled name: Monoid
+//   Public signature: /Monoid|null[0]
 interface Monoid<T : Any?> : Semigroup<T> {
+  // CHECK:
+  //   Mangled name: Monoid{}unit
+  //   Public signature: /Monoid.unit|-5200734743185576787[0]
   abstract val unit: T
+    // CHECK:
+    //   Mangled name: Monoid#<get-unit>(){}1:0
+    //   Public signature: /Monoid.unit.<get-unit>|-2842189358620964971[0]
     abstract get
 
 }
 
+// CHECK:
+//   Mangled name: IntMonoid
+//   Public signature: /IntMonoid|null[0]
 object IntMonoid : Monoid<Int> {
+  // CHECK:
+  //   Mangled name: IntMonoid#<init>(){}
+  //   Public signature: /IntMonoid.<init>|-5645683436151566731[0]
   private constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: IntMonoid#combine@kotlin.Int(kotlin.Int){}kotlin.Int
+  //   Public signature: /IntMonoid.combine|4765448259581317405[0]
   override infix fun Int.combine(other: Int): Int {
     return <this>.plus(other = other)
   }
 
+  // CHECK:
+  //   Mangled name: IntMonoid{}unit
+  //   Public signature: /IntMonoid.unit|-5200734743185576787[0]
   override val unit: Int
     field = 0
+    // CHECK:
+    //   Mangled name: IntMonoid#<get-unit>(){}kotlin.Int
+    //   Public signature: /IntMonoid.unit.<get-unit>|3772729924213749256[0]
     override get
 
 }
 
+// CHECK:
+//   Mangled name: StringMonoid
+//   Public signature: /StringMonoid|null[0]
 object StringMonoid : Monoid<String> {
+  // CHECK:
+  //   Mangled name: StringMonoid#<init>(){}
+  //   Public signature: /StringMonoid.<init>|-5645683436151566731[0]
   private constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: StringMonoid#combine@kotlin.String(kotlin.String){}kotlin.String
+  //   Public signature: /StringMonoid.combine|-5815259829474546918[0]
   override infix fun String.combine(other: String): String {
     return <this>.plus(other = other)
   }
 
+  // CHECK:
+  //   Mangled name: StringMonoid{}unit
+  //   Public signature: /StringMonoid.unit|-5200734743185576787[0]
   override val unit: String
     field = ""
+    // CHECK:
+    //   Mangled name: StringMonoid#<get-unit>(){}kotlin.String
+    //   Public signature: /StringMonoid.unit.<get-unit>|4504480110251605077[0]
     override get
 
 }
 
+// CHECK:
+//   Mangled name computed from Ir:         #sum@kotlin.collections.List<0:0>(Monoid<0:0>){0§<kotlin.Any?>}0:0
+//   Mangled name computed from Descriptor: #sum@kotlin.collections.List<0:0>(Monoid<0:0>){0§<kotlin.Any?>}0:0
+//   Mangled name computed from Fir:        #sum!Monoid<0:0>@kotlin.collections.List<0:0>(){0§<kotlin.Any?>}0:0
+//   Public signature: /sum|7635142307973834922[0]
 fun <T : Any?> List<T>.sum($context_receiver_0: Monoid<T>): T {
-  return <this>.fold<T, T>(initial = $context_receiver_0.<get-unit>(), operation = local fun <anonymous>(acc: T, e: T): T {
-    return ($context_receiver_0, acc).combine(other = e)
-  }
+  return <this>.fold<T, T>(initial = $context_receiver_0.<get-unit>(), operation = 
+    // CHECK:
+    //   Mangled name computed from Ir:         #sum@kotlin.collections.List<1:0>(Monoid<1:0>){0§<kotlin.Any?>}1:0#<anonymous>#static(1:0;1:0){}1:0
+    //   Mangled name computed from Descriptor: #sum@kotlin.collections.List<1:0>(Monoid<1:0>){0§<kotlin.Any?>}1:0#<anonymous>#static(1:0;1:0){}1:0
+    //   Mangled name computed from Fir:        could not compute mangled name: java.lang.IllegalStateException: unexpected element fold@fun <anonymous>(acc: R|T|, e: R|T|): R|T| <inline=Inline, kind=UNKNOWN>  {... (truncated)
+    local fun <anonymous>(acc: T, e: T): T {
+      return ($context_receiver_0, acc).combine(other = e)
+    }
 )
 }
 
+// CHECK:
+//   Mangled name: #box(){}kotlin.String
+//   Public signature: /box|-9347091776561469[0]
 fun box(): String {
-  with<IntMonoid, Int>(receiver = IntMonoid, block = local fun IntMonoid.<anonymous>(): Int {
-    return listOf<Int>(elements = [1, 2, 3]).sum<Int>($context_receiver_0 = $this$with)
-  }
+  with<IntMonoid, Int>(receiver = IntMonoid, block = 
+    // CHECK:
+    //   Mangled name computed from Ir:         #box(){}kotlin.String#<anonymous>#static@IntMonoid(){}kotlin.Int
+    //   Mangled name computed from Descriptor: #box(){}kotlin.String#<anonymous>#static@IntMonoid(){}kotlin.Int
+    //   Mangled name computed from Fir:        could not compute mangled name: java.lang.IllegalStateException: unexpected element with@fun R|IntMonoid|.<anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {... (truncated)
+    local fun IntMonoid.<anonymous>(): Int {
+      return listOf<Int>(elements = [1, 2, 3]).sum<Int>($context_receiver_0 = $this$with)
+    }
 ) /*~> Unit */
-  return with<StringMonoid, String>(receiver = StringMonoid, block = local fun StringMonoid.<anonymous>(): String {
-    return listOf<String>(elements = ["O", "K"]).sum<String>($context_receiver_0 = $this$with)
-  }
+  return with<StringMonoid, String>(receiver = StringMonoid, block = 
+    // CHECK:
+    //   Mangled name computed from Ir:         #box(){}kotlin.String#<anonymous>#static@StringMonoid(){}kotlin.String
+    //   Mangled name computed from Descriptor: #box(){}kotlin.String#<anonymous>#static@StringMonoid(){}kotlin.String
+    //   Mangled name computed from Fir:        could not compute mangled name: java.lang.IllegalStateException: unexpected element with@fun R|StringMonoid|.<anonymous>(): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {... (truncated)
+    local fun StringMonoid.<anonymous>(): String {
+      return listOf<String>(elements = ["O", "K"]).sum<String>($context_receiver_0 = $this$with)
+    }
 )
 }
+

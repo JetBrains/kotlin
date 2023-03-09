@@ -158,6 +158,10 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
         description = "Skips check pretty kt IR dump (disables ${IrPrettyKotlinDumpHandler::class})"
     )
 
+    val NO_SIGNATURE_DUMP by directive(
+        description = "Disables dumping signatures and mangled names of declarations in Kotlin-like dump"
+    )
+
     val DUMP_IR_FOR_GIVEN_PHASES by valueDirective<AnyNamedPhase>(
         description = "Dumps backend IR after given lowerings (enables ${PhasedIrDumpHandler::class})",
         parser = { error("Cannot parse value $it for \"DUMP_IR_FOR_GIVEN_PHASES\" directive. All arguments must be specified via code in test system") }

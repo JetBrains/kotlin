@@ -1,52 +1,126 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
 open annotation class A : Annotation {
+  // CHECK:
+  //   Mangled name: A#<init>(kotlin.String){}
+  //   Public signature: /A.<init>|1280618353163213788[0]
   constructor(x: String) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: A{}x
+  //   Public signature: /A.x|-8060530855978347579[0]
   val x: String
     field = x
+    // CHECK JVM_IR:
+    //   Mangled name: A#<get-x>(){}kotlin.String
+    //   Public signature: /A.x.<get-x>|316111172223894646[0]
+    // CHECK JS_IR:
+    //   Mangled name computed from Ir:         A#<get-x>(){}
+    //   Mangled name computed from Descriptor: A#<get-x>(){}
+    //   Mangled name computed from Fir:        A#<get-x>(){}kotlin.String
+    //   Public signature: /A.x.<get-x>|316111172223894646[0]
     get
 
 }
 
+// CHECK:
+//   Mangled name: Cell
+//   Public signature: /Cell|null[0]
 class Cell {
+  // CHECK:
+  //   Mangled name: Cell#<init>(kotlin.Int){}
+  //   Public signature: /Cell.<init>|-5182794243525578284[0]
   constructor(value: Int) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: Cell{}value
+  //   Public signature: /Cell.value|1987073854177347439[0]
   var value: Int
     field = value
+    // CHECK JVM_IR:
+    //   Mangled name: Cell#<get-value>(){}kotlin.Int
+    //   Public signature: /Cell.value.<get-value>|-5900028706170996[0]
+    // CHECK JS_IR:
+    //   Mangled name computed from Ir:         Cell#<get-value>(){}
+    //   Mangled name computed from Descriptor: Cell#<get-value>(){}
+    //   Mangled name computed from Fir:        Cell#<get-value>(){}kotlin.Int
+    //   Public signature: /Cell.value.<get-value>|-5900028706170996[0]
     get
+    // CHECK:
+    //   Mangled name: Cell#<set-value>(kotlin.Int){}
+    //   Public signature: /Cell.value.<set-value>|-195057410739577239[0]
     set
 
+  // CHECK JVM_IR:
+  //   Mangled name: Cell#getValue(kotlin.Any?;kotlin.Any?){}kotlin.Int
+  //   Public signature: /Cell.getValue|-3377375928534350672[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         Cell#getValue(kotlin.Any?;kotlin.Any?){}
+  //   Mangled name computed from Descriptor: Cell#getValue(kotlin.Any?;kotlin.Any?){}
+  //   Mangled name computed from Fir:        Cell#getValue(kotlin.Any?;kotlin.Any?){}kotlin.Int
+  //   Public signature: /Cell.getValue|-3377375928534350672[0]
   operator fun getValue(thisRef: Any?, kProp: Any?): Int {
     return <this>.<get-value>()
   }
 
+  // CHECK:
+  //   Mangled name: Cell#setValue(kotlin.Any?;kotlin.Any?;kotlin.Int){}
+  //   Public signature: /Cell.setValue|6795912344196649599[0]
   operator fun setValue(thisRef: Any?, kProp: Any?, newValue: Int) {
     <this>.<set-value>(<set-?> = newValue)
   }
 
 }
 
-val test1: Int /* by */
+// CHECK:
+//   Mangled name: {}test1
+//   Public signature: /test1|6005685442305498193[0]
+val test1: Int /* by */ 
   field = Cell(value = 1)
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-test1>(){}kotlin.Int
+  //   Public signature: /test1.<get-test1>|3978508226793108919[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         #<get-test1>(){}
+  //   Mangled name computed from Descriptor: #<get-test1>(){}
+  //   Mangled name computed from Fir:        #<get-test1>(){}kotlin.Int
+  //   Public signature: /test1.<get-test1>|3978508226793108919[0]
   @A(x = "test1.get")
   get(): Int {
     return #test1$delegate.getValue(thisRef = null, kProp = ::test1)
   }
 
-var test2: Int /* by */
+// CHECK:
+//   Mangled name: {}test2
+//   Public signature: /test2|2517758057000911509[0]
+var test2: Int /* by */ 
   field = Cell(value = 2)
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-test2>(){}kotlin.Int
+  //   Public signature: /test2.<get-test2>|-8779933517717592707[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         #<get-test2>(){}
+  //   Mangled name computed from Descriptor: #<get-test2>(){}
+  //   Mangled name computed from Fir:        #<get-test2>(){}kotlin.Int
+  //   Public signature: /test2.<get-test2>|-8779933517717592707[0]
   @A(x = "test2.get")
   get(): Int {
     return #test2$delegate.getValue(thisRef = null, kProp = ::test2)
   }
+  // CHECK:
+  //   Mangled name: #<set-test2>(kotlin.Int){}
+  //   Public signature: /test2.<set-test2>|1925150309265265312[0]
   @A(x = "test2.set")
   set(@A(x = "test2.set.param") <set-?>: Int) {
     #test2$delegate.setValue(thisRef = null, kProp = ::test2, newValue = <set-?>)
   }
+

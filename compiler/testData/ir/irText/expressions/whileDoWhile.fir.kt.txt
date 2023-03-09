@@ -1,3 +1,6 @@
+// CHECK:
+//   Mangled name: #test(){}
+//   Public signature: /test|6620506149988718649[0]
 fun test() {
   var x: Int = 0
   while (less(arg0 = x, arg1 = 0)) { // BLOCK
@@ -32,6 +35,9 @@ fun test() {
   }
 }
 
+// CHECK:
+//   Mangled name: #testSmartcastInCondition(){}
+//   Public signature: /testSmartcastInCondition|-5923754457814780223[0]
 fun testSmartcastInCondition() {
   val a: Any? = null
   when {
@@ -45,3 +51,4 @@ fun testSmartcastInCondition() {
     }
   }
 }
+

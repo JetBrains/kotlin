@@ -1,13 +1,28 @@
+// CHECK:
+//   Mangled name: CInt32Var
+//   Public signature: /CInt32Var|null[0]
 typealias CInt32Var = CInt32VarX<Int>
+// CHECK:
+//   Mangled name: CPointed
+//   Public signature: /CPointed|null[0]
 interface CPointed {
 
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #reinterpret@CPointed(){0§<CPointed>}0:0
+//   Public signature: /reinterpret|6686627751758834868[0]
 inline fun <reified T : CPointed> CPointed.reinterpret(): T {
   return TODO()
 }
 
+// CHECK:
+//   Mangled name: CInt32VarX
+//   Public signature: /CInt32VarX|null[0]
 class CInt32VarX<T : Any?> : CPointed {
+  // CHECK:
+  //   Mangled name: CInt32VarX#<init>(){}
+  //   Public signature: /CInt32VarX.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -16,26 +31,57 @@ class CInt32VarX<T : Any?> : CPointed {
 
 }
 
+// CHECK:
+//   Mangled name computed from Ir:         @CInt32VarX<0:0>{0§<kotlin.Int>}value
+//   Mangled name computed from Descriptor: could not compute mangled name: java.lang.IllegalArgumentException: No container found for type parameter 'T_INT' of 'public fun <T_INT : Int> CInt32VarX<T_INT>.`<get-value>`(): T_INT defined in root package'
+//   Mangled name computed from Fir:        @CInt32VarX<0:0>{0§<kotlin.Int>}value
+//   Public signature: /value|-135689265793066449[0]
 var <T_INT : Int> CInt32VarX<T_INT>.value: T_INT
+  // CHECK:
+  //   Mangled name computed from Ir:         #<get-value>@CInt32VarX<0:0>(){0§<kotlin.Int>}0:0
+  //   Mangled name computed from Descriptor: could not compute mangled name: java.lang.IllegalArgumentException: No container found for type parameter 'T_INT' of 'public fun <T_INT : Int> CInt32VarX<T_INT>.`<get-value>`(): T_INT defined in root package'
+  //   Mangled name computed from Fir:        #<get-value>@CInt32VarX<0:0>(){0§<kotlin.Int>}0:0
+  //   Public signature: /value.<get-value>|2596477086313818765[0]
   get(): T_INT {
     return TODO()
   }
+  // CHECK:
+  //   Mangled name computed from Ir:         #<set-value>@CInt32VarX<0:0>(0:0){0§<kotlin.Int>}
+  //   Mangled name computed from Descriptor: could not compute mangled name: java.lang.IllegalArgumentException: No container found for type parameter 'T_INT' of 'public fun <T_INT : Int> CInt32VarX<T_INT>.`<set-value>`(value: T_INT): Unit defined in root package'
+  //   Mangled name computed from Fir:        #<set-value>@CInt32VarX<0:0>(0:0){0§<kotlin.Int>}
+  //   Public signature: /value.<set-value>|4371752181027190206[0]
   set(value: T_INT) {
   }
 
+// CHECK:
+//   Mangled name: IdType
+//   Public signature: /IdType|null[0]
 class IdType : CPointed {
+  // CHECK:
+  //   Mangled name: IdType#<init>(kotlin.Int){}
+  //   Public signature: /IdType.<init>|-5182794243525578284[0]
   constructor(value: Int) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: IdType{}value
+  //   Public signature: /IdType.value|1987073854177347439[0]
   val value: Int
     field = value
+    // CHECK:
+    //   Mangled name: IdType#<get-value>(){}kotlin.Int
+    //   Public signature: /IdType.value.<get-value>|-5900028706170996[0]
     get
 
 }
 
+// CHECK:
+//   Mangled name: #foo(IdType;CInt32VarX<kotlin.Int>){}
+//   Public signature: /foo|-5455779368502417749[0]
 fun foo(value: IdType, cv: CInt32VarX<Int>) {
   cv.<set-value><Int>(value = value.<get-value>())
 }
+

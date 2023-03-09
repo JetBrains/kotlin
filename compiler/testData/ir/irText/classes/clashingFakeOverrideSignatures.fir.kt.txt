@@ -1,29 +1,59 @@
+// CHECK:
+//   Mangled name: Base
+//   Public signature: /Base|null[0]
 open class Base<T : Any?> {
+  // CHECK:
+  //   Mangled name: Base#<init>(){}
+  //   Public signature: /Base.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: Base#foo(1:0){}
+  //   Public signature: /Base.foo|-701456291278879981[0]
   fun foo(x: T) {
   }
 
+  // CHECK:
+  //   Mangled name: Base#foo(kotlin.String){}
+  //   Public signature: /Base.foo|1351044947738582195[0]
   fun foo(y: String) {
   }
 
+  // CHECK:
+  //   Mangled name: Base@1:0{}bar
+  //   Public signature: /Base.bar|2723903059187474703[0]
   val T.bar: Int
+    // CHECK:
+    //   Mangled name: Base#<get-bar>@1:0(){}kotlin.Int
+    //   Public signature: /Base.bar.<get-bar>|-3456944057375693285[0]
     get(): Int {
       return 1
     }
 
+  // CHECK:
+  //   Mangled name: Base@kotlin.String{}bar
+  //   Public signature: /Base.bar|-1423076340722422780[0]
   val String.bar: Int
+    // CHECK:
+    //   Mangled name: Base#<get-bar>@kotlin.String(){}kotlin.Int
+    //   Public signature: /Base.bar.<get-bar>|-1735437823545695148[0]
     get(): Int {
       return 2
     }
 
 }
 
+// CHECK:
+//   Mangled name: Derived
+//   Public signature: /Derived|null[0]
 open class Derived : Base<String> {
+  // CHECK:
+  //   Mangled name: Derived#<init>(){}
+  //   Public signature: /Derived.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Base*/<String>()
     /* <init>() */
@@ -32,7 +62,13 @@ open class Derived : Base<String> {
 
 }
 
+// CHECK:
+//   Mangled name: Derived2
+//   Public signature: /Derived2|null[0]
 class Derived2 : Derived {
+  // CHECK:
+  //   Mangled name: Derived2#<init>(){}
+  //   Public signature: /Derived2.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Derived*/()
     /* <init>() */
@@ -41,6 +77,9 @@ class Derived2 : Derived {
 
 }
 
+// CHECK:
+//   Mangled name: #test(Base<kotlin.String>;Derived;Derived2){}
+//   Public signature: /test|4797523954931916574[0]
 fun test(b: Base<String>, d: Derived, d2: Derived2) {
   b.foo(x = "")
   b.foo(y = "")
@@ -50,22 +89,40 @@ fun test(b: Base<String>, d: Derived, d2: Derived2) {
   d2.foo(x = "")
 }
 
+// CHECK:
+//   Mangled name: BaseXY
+//   Public signature: /BaseXY|null[0]
 open class BaseXY<X : Any?, Y : Any?> {
+  // CHECK:
+  //   Mangled name: BaseXY#<init>(){}
+  //   Public signature: /BaseXY.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: BaseXY#foo(1:0;kotlin.String){}
+  //   Public signature: /BaseXY.foo|-6449444608569619796[0]
   fun foo(x: X, y: String) {
   }
 
+  // CHECK:
+  //   Mangled name: BaseXY#foo(kotlin.String;1:1){}
+  //   Public signature: /BaseXY.foo|1702475903058974856[0]
   fun foo(x: String, y: Y) {
   }
 
 }
 
+// CHECK:
+//   Mangled name: DerivedXY
+//   Public signature: /DerivedXY|null[0]
 class DerivedXY : BaseXY<String, String> {
+  // CHECK:
+  //   Mangled name: DerivedXY#<init>(){}
+  //   Public signature: /DerivedXY.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*BaseXY*/<String, String>()
     /* <init>() */
@@ -74,33 +131,76 @@ class DerivedXY : BaseXY<String, String> {
 
 }
 
+// CHECK:
+//   Mangled name: #outerFun(){}
+//   Public signature: /outerFun|-7637205853782391556[0]
 fun outerFun() {
+  // CHECK:
+  //   Mangled name computed from Ir:         #outerFun(){}.LocalBase
+  //   Mangled name computed from Descriptor: #outerFun(){}.LocalBase
+  //   Mangled name computed from Fir:        LocalBase
   local open class LocalBase<T : Any?> {
+    // CHECK:
+    //   Mangled name computed from Ir:         #outerFun(){}.LocalBase#<init>(){}
+    //   Mangled name computed from Descriptor: #outerFun(){}.LocalBase#<init>(){}
+    //   Mangled name computed from Fir:        #<init>(){}
     constructor() /* primary */ {
       super/*Any*/()
       /* <init>() */
 
     }
 
+    // CHECK:
+    //   Mangled name computed from Ir:         #outerFun(){}.LocalBase#foo(1:0){}
+    //   Mangled name computed from Descriptor: #outerFun(){}.LocalBase#foo(1:0){}
+    //   Mangled name computed from Fir:        could not compute mangled name: java.lang.IllegalStateException: Should not be here!
     fun foo(x: T) {
     }
 
+    // CHECK:
+    //   Mangled name computed from Ir:         #outerFun(){}.LocalBase#foo(kotlin.String){}
+    //   Mangled name computed from Descriptor: #outerFun(){}.LocalBase#foo(kotlin.String){}
+    //   Mangled name computed from Fir:        #foo(kotlin.String){}
     fun foo(y: String) {
     }
 
+    // CHECK:
+    //   Mangled name computed from Ir:         #outerFun(){}.LocalBase@1:0{}bar
+    //   Mangled name computed from Descriptor: #outerFun(){}.LocalBase@1:0{}bar
+    //   Mangled name computed from Fir:        could not compute mangled name: java.lang.IllegalStateException: Should not be here!
     val T.bar: Int
+      // CHECK:
+      //   Mangled name computed from Ir:         #outerFun(){}.LocalBase#<get-bar>@1:0(){}kotlin.Int
+      //   Mangled name computed from Descriptor: #outerFun(){}.LocalBase#<get-bar>@1:0(){}kotlin.Int
+      //   Mangled name computed from Fir:        could not compute mangled name: java.lang.IllegalStateException: Should not be here!
       get(): Int {
         return 1
       }
 
+    // CHECK:
+    //   Mangled name computed from Ir:         #outerFun(){}.LocalBase@kotlin.String{}bar
+    //   Mangled name computed from Descriptor: #outerFun(){}.LocalBase@kotlin.String{}bar
+    //   Mangled name computed from Fir:        @kotlin.String{}bar
     val String.bar: Int
+      // CHECK:
+      //   Mangled name computed from Ir:         #outerFun(){}.LocalBase#<get-bar>@kotlin.String(){}kotlin.Int
+      //   Mangled name computed from Descriptor: #outerFun(){}.LocalBase#<get-bar>@kotlin.String(){}kotlin.Int
+      //   Mangled name computed from Fir:        #<get-bar>@kotlin.String(){}kotlin.Int
       get(): Int {
         return 2
       }
 
   }
 
+  // CHECK:
+  //   Mangled name computed from Ir:         #outerFun(){}.LocalDerived
+  //   Mangled name computed from Descriptor: #outerFun(){}.LocalDerived
+  //   Mangled name computed from Fir:        LocalDerived
   local open class LocalDerived : LocalBase<String> {
+    // CHECK:
+    //   Mangled name computed from Ir:         #outerFun(){}.LocalDerived#<init>(){}
+    //   Mangled name computed from Descriptor: #outerFun(){}.LocalDerived#<init>(){}
+    //   Mangled name computed from Fir:        #<init>(){}
     constructor() /* primary */ {
       super/*LocalBase*/<String>()
       /* <init>() */
@@ -109,7 +209,15 @@ fun outerFun() {
 
   }
 
+  // CHECK:
+  //   Mangled name computed from Ir:         #outerFun(){}.LocalDerived2
+  //   Mangled name computed from Descriptor: #outerFun(){}.LocalDerived2
+  //   Mangled name computed from Fir:        LocalDerived2
   local class LocalDerived2 : LocalDerived {
+    // CHECK:
+    //   Mangled name computed from Ir:         #outerFun(){}.LocalDerived2#<init>(){}
+    //   Mangled name computed from Descriptor: #outerFun(){}.LocalDerived2#<init>(){}
+    //   Mangled name computed from Fir:        #<init>(){}
     constructor() /* primary */ {
       super/*LocalDerived*/()
       /* <init>() */
@@ -118,6 +226,10 @@ fun outerFun() {
 
   }
 
+  // CHECK:
+  //   Mangled name computed from Ir:         #outerFun(){}#test#static(#outerFun.LocalBase<kotlin.String>;#outerFun.LocalDerived;#outerFun.LocalDerived2){}
+  //   Mangled name computed from Descriptor: #outerFun(){}#test#static(#outerFun.LocalBase<kotlin.String>;#outerFun.LocalDerived;#outerFun.LocalDerived2){}
+  //   Mangled name computed from Fir:        #test(LocalBase<kotlin.String>;LocalDerived;LocalDerived2){}
   local fun test(b: LocalBase<String>, d: LocalDerived, d2: LocalDerived2) {
     b.foo(x = "")
     b.foo(y = "")
@@ -129,23 +241,43 @@ fun outerFun() {
 
 }
 
+// CHECK:
+//   Mangled name: Outer
+//   Public signature: /Outer|null[0]
 open class Outer<T : Any?> {
+  // CHECK:
+  //   Mangled name: Outer#<init>(){}
+  //   Public signature: /Outer.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: Outer.Inner
+  //   Public signature: /Outer.Inner|null[0]
   open inner class Inner {
+    // CHECK:
+    //   Mangled name: Outer.Inner#<init>(){}
+    //   Public signature: /Outer.Inner.<init>|-5645683436151566731[0]
     constructor() /* primary */ {
       super/*Any*/()
       /* <init>() */
 
     }
 
+    // CHECK:
+    //   Mangled name computed from Ir:         Outer.Inner#foo(2:0){}
+    //   Mangled name computed from Descriptor: Outer.Inner#foo(2:0){}
+    //   Mangled name computed from Fir:        Outer.Inner#foo(1:-1){}
+    //   Public signature: /Outer.Inner.foo|-8605771571187591093[0]
     fun foo(x: T) {
     }
 
+    // CHECK:
+    //   Mangled name: Outer.Inner#foo(kotlin.String){}
+    //   Public signature: /Outer.Inner.foo|1351044947738582195[0]
     fun foo(y: String) {
     }
 
@@ -153,14 +285,26 @@ open class Outer<T : Any?> {
 
 }
 
+// CHECK:
+//   Mangled name: OuterDerived
+//   Public signature: /OuterDerived|null[0]
 class OuterDerived : Outer<String> {
+  // CHECK:
+  //   Mangled name: OuterDerived#<init>(){}
+  //   Public signature: /OuterDerived.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Outer*/<String>()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: OuterDerived.InnerDerived
+  //   Public signature: /OuterDerived.InnerDerived|null[0]
   inner class InnerDerived : Inner<String> {
+    // CHECK:
+    //   Mangled name: OuterDerived.InnerDerived#<init>(){}
+    //   Public signature: /OuterDerived.InnerDerived.<init>|-5645683436151566731[0]
     constructor() /* primary */ {
       <this>.super/*Inner*/()
       /* <init>() */
@@ -170,3 +314,4 @@ class OuterDerived : Outer<String> {
   }
 
 }
+

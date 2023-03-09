@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_BACKEND
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_BACKEND_MULTI_MODULE
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.SERIALIZE_IR
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LINK_VIA_SIGNATURES
 import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.directives.model.ValueDirective
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2ClassicBackendConverter
@@ -90,6 +91,7 @@ open class AbstractIrCompileKotlinAgainstInlineKotlinTest :
 private fun TestConfigurationBuilder.configureForSerialization() {
     defaultDirectives {
         SERIALIZE_IR.with(JvmSerializeIrMode.INLINE)
+        +LINK_VIA_SIGNATURES
     }
 
     configureIrHandlersStep {

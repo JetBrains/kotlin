@@ -1,5 +1,9 @@
 // FIR_IDENTICAL
 // WITH_REFLECT
+
+// IGNORE_BACKEND_K2: JS_IR
+// IGNORE_BACKEND_K2: JS_IR_ES6
+
 import kotlin.reflect.KCallable
 
 fun defaultsOnly(x: String = "") = 1

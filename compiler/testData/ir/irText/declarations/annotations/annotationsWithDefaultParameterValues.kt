@@ -1,4 +1,8 @@
 // FIR_IDENTICAL
+
+// IGNORE_BACKEND_K2: JS_IR
+// IGNORE_BACKEND_K2: JS_IR_ES6
+
 annotation class A(val x: String = "", val y: Int = 42)
 
 @A("abc", 123) fun test1() {}

@@ -1,19 +1,37 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
 class A {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: A{}b
+  //   Public signature: /A.b|772347207915745207[0]
   private val b: <no name provided>
     field = { // BLOCK
+      // CHECK:
+      //   Mangled name (compatible mode: false): A{}b.<no name provided>
+      //   Mangled name (compatible mode: true):  A.b.<no name provided>
       local class <no name provided> : DoubleExpression {
+        // CHECK:
+        //   Mangled name (compatible mode: false): A{}b.<no name provided>#<init>(){}
+        //   Mangled name (compatible mode: true):  A.b.<no name provided>#<init>(){}
         constructor() /* primary */ {
           super/*DoubleExpression*/()
           /* <init>() */
 
         }
 
+        // CHECK:
+        //   Mangled name (compatible mode: false): A{}b.<no name provided>#get(){}kotlin.Double
+        //   Mangled name (compatible mode: true):  A.b.<no name provided>#get(){}kotlin.Double
         override fun get(): Double {
           return 0.0
         }
@@ -22,19 +40,33 @@ class A {
 
       <no name provided>()
     }
+    // CHECK:
+    //   Mangled name (compatible mode: false): A#<get-b>(){}A{}b.<no name provided>
+    //   Mangled name (compatible mode: true):  A#<get-b>(){}A.b.<no name provided>
+    //   Public signature: /A.b.<get-b>|-6508357397455690228[0]
     private get
 
 }
 
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
 class C : DoubleExpression {
+  // CHECK:
+  //   Mangled name: C#<init>(){}
+  //   Public signature: /C.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*DoubleExpression*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: C#get(){}kotlin.Double
+  //   Public signature: /C.get|-8276149070669614990[0]
   override fun get(): Double {
     return 0.0
   }
 
 }
+

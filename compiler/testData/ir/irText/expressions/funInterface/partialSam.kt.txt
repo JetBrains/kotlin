@@ -1,30 +1,66 @@
+// CHECK:
+//   Mangled name: Fn
+//   Public signature: /Fn|null[0]
 fun interface Fn<T : Any?, R : Any?> {
+  // CHECK JVM_IR:
+  //   Mangled name: Fn#run(kotlin.String;kotlin.Int;1:0){}1:1
+  //   Public signature: /Fn.run|6229634511602909233[0]
+  // CHECK JS_IR:
+  //   Mangled name: Fn#run(kotlin.String;kotlin.Int;1:0){}
+  //   Public signature: /Fn.run|-3043809751901738692[0]
   abstract fun run(s: String, i: Int, t: T): R
 
 }
 
+// CHECK:
+//   Mangled name: J
+//   Public signature: /J|null[0]
 class J {
+  // CHECK:
+  //   Mangled name: J#<init>(){}
+  //   Public signature: /J.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: J#runConversion(Fn<kotlin.String,kotlin.Int>;Fn<kotlin.Int,kotlin.String>){}kotlin.Int
+  //   Public signature: /J.runConversion|4347513371052535712[0]
+  // CHECK JS_IR:
+  //   Mangled name: J#runConversion(Fn<kotlin.String,kotlin.Int>;Fn<kotlin.Int,kotlin.String>){}
+  //   Public signature: /J.runConversion|-3250437629905581865[0]
   fun runConversion(f1: Fn<String, Int>, f2: Fn<Int, String>): Int {
     return f1.run(s = "Bar", i = 1, t = f2.run(s = "Foo", i = 42, t = 239))
   }
 
 }
 
+// CHECK:
+//   Mangled name: {}fsi
+//   Public signature: /fsi|5902301571547257746[0]
 val fsi: Fn<String, Int>
   field = { // BLOCK
+    // CHECK:
+    //   Mangled name (compatible mode: false): {}fsi.<no name provided>
+    //   Mangled name (compatible mode: true):  fsi.<no name provided>
     local class <no name provided> : Fn<String, Int> {
+      // CHECK:
+      //   Mangled name (compatible mode: false): {}fsi.<no name provided>#<init>(){}
+      //   Mangled name (compatible mode: true):  fsi.<no name provided>#<init>(){}
       constructor() /* primary */ {
         super/*Any*/()
         /* <init>() */
 
       }
 
+      // CHECK JVM_IR:
+      //   Mangled name (compatible mode: false): {}fsi.<no name provided>#run(kotlin.String;kotlin.Int;kotlin.String){}kotlin.Int
+      //   Mangled name (compatible mode: true):  fsi.<no name provided>#run(kotlin.String;kotlin.Int;kotlin.String){}kotlin.Int
+      // CHECK JS_IR:
+      //   Mangled name (compatible mode: false): {}fsi.<no name provided>#run(kotlin.String;kotlin.Int;kotlin.String){}
+      //   Mangled name (compatible mode: true):  fsi.<no name provided>#run(kotlin.String;kotlin.Int;kotlin.String){}
       override fun run(s: String, i: Int, t: String): Int {
         return 1
       }
@@ -33,17 +69,38 @@ val fsi: Fn<String, Int>
 
     <no name provided>()
   }
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-fsi>(){}Fn<kotlin.String,kotlin.Int>
+  //   Public signature: /fsi.<get-fsi>|-2546794996796226350[0]
+  // CHECK JS_IR:
+  //   Mangled name: #<get-fsi>(){}
+  //   Public signature: /fsi.<get-fsi>|211056100616532240[0]
   get
 
+// CHECK:
+//   Mangled name: {}fis
+//   Public signature: /fis|4743015834142814854[0]
 val fis: Fn<Int, String>
   field = { // BLOCK
+    // CHECK:
+    //   Mangled name (compatible mode: false): {}fis.<no name provided>
+    //   Mangled name (compatible mode: true):  fis.<no name provided>
     local class <no name provided> : Fn<Int, String> {
+      // CHECK:
+      //   Mangled name (compatible mode: false): {}fis.<no name provided>#<init>(){}
+      //   Mangled name (compatible mode: true):  fis.<no name provided>#<init>(){}
       constructor() /* primary */ {
         super/*Any*/()
         /* <init>() */
 
       }
 
+      // CHECK JVM_IR:
+      //   Mangled name (compatible mode: false): {}fis.<no name provided>#run(kotlin.String;kotlin.Int;kotlin.Int){}kotlin.String
+      //   Mangled name (compatible mode: true):  fis.<no name provided>#run(kotlin.String;kotlin.Int;kotlin.Int){}kotlin.String
+      // CHECK JS_IR:
+      //   Mangled name (compatible mode: false): {}fis.<no name provided>#run(kotlin.String;kotlin.Int;kotlin.Int){}
+      //   Mangled name (compatible mode: true):  fis.<no name provided>#run(kotlin.String;kotlin.Int;kotlin.Int){}
       override fun run(s: String, i: Int, t: Int): String {
         return ""
       }
@@ -52,15 +109,38 @@ val fis: Fn<Int, String>
 
     <no name provided>()
   }
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-fis>(){}Fn<kotlin.Int,kotlin.String>
+  //   Public signature: /fis.<get-fis>|5252092316637653538[0]
+  // CHECK JS_IR:
+  //   Mangled name: #<get-fis>(){}
+  //   Public signature: /fis.<get-fis>|-3144498278709673820[0]
   get
 
+// CHECK JVM_IR:
+//   Mangled name: #test(J){}
+//   Public signature: /test|-8477572416399964095[0]
+// CHECK JS_IR:
+//   Mangled name: #test(J){}
+//   Public signature: /test|-8477572416399964095[0]
 fun test(j: J) {
-  j.runConversion(f1 = <get-fsi>(), f2 = local fun <anonymous>(s: String, i: Int, ti: Int): String {
-    return ""
-  }
+  j.runConversion(f1 = <get-fsi>(), f2 = 
+    // CHECK JVM_IR:
+    //   Mangled name: #test(J){}#<anonymous>#static(kotlin.String;kotlin.Int;kotlin.Int){}kotlin.String
+    // CHECK JS_IR:
+    //   Mangled name: #test(J){}#<anonymous>#static(kotlin.String;kotlin.Int;kotlin.Int){}
+    local fun <anonymous>(s: String, i: Int, ti: Int): String {
+      return ""
+    }
  /*-> Fn<Int, String> */) /*~> Unit */
-  j.runConversion(f1 = local fun <anonymous>(s: String, i: Int, ts: String): Int {
-    return 1
-  }
+  j.runConversion(f1 = 
+    // CHECK JVM_IR:
+    //   Mangled name: #test(J){}#<anonymous>#static(kotlin.String;kotlin.Int;kotlin.String){}kotlin.Int
+    // CHECK JS_IR:
+    //   Mangled name: #test(J){}#<anonymous>#static(kotlin.String;kotlin.Int;kotlin.String){}
+    local fun <anonymous>(s: String, i: Int, ts: String): Int {
+      return 1
+    }
  /*-> Fn<String, Int> */, f2 = <get-fis>()) /*~> Unit */
 }
+

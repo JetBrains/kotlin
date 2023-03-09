@@ -1,19 +1,49 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
 class A {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: A{}b
+  //   Public signature: /A.b|772347207915745207[0]
   private val b: <no name provided>
     field = { // BLOCK
+      // CHECK:
+      //   Mangled name computed from Ir (compatible mode: false):         A{}b.<no name provided>
+      //   Mangled name computed from Ir (compatible mode: true):          A.b.<no name provided>
+      //   Mangled name computed from Descriptor (compatible mode: false): A{}b#jf.<no name provided>
+      //   Mangled name computed from Descriptor (compatible mode: true):  A{}b#jf.<no name provided>
+      //   Mangled name computed from Fir (compatible mode: false):        <anonymous>
+      //   Mangled name computed from Fir (compatible mode: true):         <anonymous>
       local class <no name provided> : DoubleExpression {
+        // CHECK:
+        //   Mangled name computed from Ir (compatible mode: false):         A{}b.<no name provided>#<init>(){}
+        //   Mangled name computed from Ir (compatible mode: true):          A.b.<no name provided>#<init>(){}
+        //   Mangled name computed from Descriptor (compatible mode: false): A{}b#jf.<no name provided>#<init>(){}
+        //   Mangled name computed from Descriptor (compatible mode: true):  A{}b#jf.<no name provided>#<init>(){}
+        //   Mangled name computed from Fir (compatible mode: false):        #<init>(){}
+        //   Mangled name computed from Fir (compatible mode: true):         #<init>(){}
         constructor() /* primary */ {
           super/*DoubleExpression*/()
           /* <init>() */
 
         }
 
+        // CHECK:
+        //   Mangled name computed from Ir (compatible mode: false):         A{}b.<no name provided>#get(){}kotlin.Double
+        //   Mangled name computed from Ir (compatible mode: true):          A.b.<no name provided>#get(){}kotlin.Double
+        //   Mangled name computed from Descriptor (compatible mode: false): A{}b#jf.<no name provided>#get(){}kotlin.Double
+        //   Mangled name computed from Descriptor (compatible mode: true):  A{}b#jf.<no name provided>#get(){}kotlin.Double
+        //   Mangled name computed from Fir (compatible mode: false):        #get(){}kotlin.Double
+        //   Mangled name computed from Fir (compatible mode: true):         #get(){}kotlin.Double
         override fun get(): Double {
           return 0.0
         }
@@ -22,19 +52,37 @@ class A {
 
       <no name provided>()
     }
+    // CHECK:
+    //   Mangled name computed from Ir (compatible mode: false):         A#<get-b>(){}A{}b.<no name provided>
+    //   Mangled name computed from Ir (compatible mode: true):          A#<get-b>(){}A.b.<no name provided>
+    //   Mangled name computed from Descriptor (compatible mode: false): A#<get-b>(){}A{}b.<no name provided>
+    //   Mangled name computed from Descriptor (compatible mode: true):  A#<get-b>(){}A{}b.<no name provided>
+    //   Mangled name computed from Fir (compatible mode: false):        A#<get-b>(){}<anonymous>
+    //   Mangled name computed from Fir (compatible mode: true):         A#<get-b>(){}<anonymous>
+    //   Public signature: /A.b.<get-b>|-4640876603559618607[0]
     private get
 
 }
 
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
 class C : DoubleExpression {
+  // CHECK:
+  //   Mangled name: C#<init>(){}
+  //   Public signature: /C.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*DoubleExpression*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: C#get(){}kotlin.Double
+  //   Public signature: /C.get|-8276149070669614990[0]
   override fun get(): Double {
     return 0.0
   }
 
 }
+

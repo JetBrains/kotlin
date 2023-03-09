@@ -1,3 +1,6 @@
+// CHECK:
+//   Mangled name: #testForBreak1(kotlin.collections.List<kotlin.String>){}
+//   Public signature: /testForBreak1|859715268937219552[0]
 fun testForBreak1(ss: List<String>) {
   { // BLOCK
     val tmp0_iterator: Iterator<String> = ss.iterator()
@@ -10,6 +13,9 @@ fun testForBreak1(ss: List<String>) {
   }
 }
 
+// CHECK:
+//   Mangled name: #testForBreak2(kotlin.collections.List<kotlin.String>){}
+//   Public signature: /testForBreak2|-8316570653848899578[0]
 fun testForBreak2(ss: List<String>) {
   { // BLOCK
     val tmp0_iterator: Iterator<String> = ss.iterator()
@@ -33,6 +39,9 @@ fun testForBreak2(ss: List<String>) {
   }
 }
 
+// CHECK:
+//   Mangled name: #testForContinue1(kotlin.collections.List<kotlin.String>){}
+//   Public signature: /testForContinue1|1338147304246344442[0]
 fun testForContinue1(ss: List<String>) {
   { // BLOCK
     val tmp0_iterator: Iterator<String> = ss.iterator()
@@ -45,6 +54,9 @@ fun testForContinue1(ss: List<String>) {
   }
 }
 
+// CHECK:
+//   Mangled name: #testForContinue2(kotlin.collections.List<kotlin.String>){}
+//   Public signature: /testForContinue2|-2490600607304201756[0]
 fun testForContinue2(ss: List<String>) {
   { // BLOCK
     val tmp0_iterator: Iterator<String> = ss.iterator()
@@ -67,3 +79,4 @@ fun testForContinue2(ss: List<String>) {
     }
   }
 }
+

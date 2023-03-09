@@ -126,7 +126,7 @@ object GenerationUtils {
             emptyList(),
             IrGenerationExtension.getInstances(project),
             FirParser.Psi,
-            generateSignatures = false
+            generateSignatures = configuration.getBoolean(JVMConfigurationKeys.LINK_VIA_SIGNATURES)
         )
         val fir2IrExtensions = JvmFir2IrExtensions(configuration, JvmIrDeserializerImpl(), JvmIrMangler)
 

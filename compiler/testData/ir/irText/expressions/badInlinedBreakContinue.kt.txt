@@ -1,16 +1,28 @@
+// CHECK:
+//   Mangled name: #foo(kotlin.Function0<kotlin.Unit>){}
+//   Public signature: /foo|251397761749529488[0]
 inline fun foo(block: Function0<Unit>) {
   block.invoke()
 }
 
+// CHECK:
+//   Mangled name: #bar(kotlin.Function0<kotlin.Unit>;kotlin.Function0<kotlin.Unit>){}
+//   Public signature: /bar|1436837239648519468[0]
 inline fun bar(block1: Function0<Unit>, noinline block2: Function0<Unit>) {
   block1.invoke()
   block2.invoke()
 }
 
+// CHECK:
+//   Mangled name: #baz(kotlin.Function0<kotlin.Unit>){}
+//   Public signature: /baz|-1086471891001796248[0]
 inline fun baz(crossinline block: Function0<Unit>) {
   block.invoke()
 }
 
+// CHECK:
+//   Mangled name: #myForEach@kotlin.collections.Iterable<0:0>(kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}
+//   Public signature: /myForEach|-478947801945904451[0]
 inline fun <T : Any?> Iterable<T>.myForEach(action: Function1<T, Unit>) {
   { // BLOCK
     val tmp0_iterator: Iterator<T> = <this>.iterator()
@@ -21,214 +33,361 @@ inline fun <T : Any?> Iterable<T>.myForEach(action: Function1<T, Unit>) {
   }
 }
 
+// CHECK:
+//   Mangled name: #test1(){}
+//   Public signature: /test1|4297044443957252634[0]
 fun test1() {
   error("") /* ErrorExpression */
-  local fun <no name provided>() {
-    error("") /* ErrorExpression */
-  }
+  
+    // CHECK:
+    //   Mangled name: #test1(){}#<no name provided>#static(){}
+    local fun <no name provided>() {
+      error("") /* ErrorExpression */
+    }
 .invoke()
-  local fun <no name provided>() {
-    error("") /* ErrorExpression */
-  }
+  
+    // CHECK:
+    //   Mangled name: #test1(){}#<no name provided>#static(){}
+    local fun <no name provided>() {
+      error("") /* ErrorExpression */
+    }
 .invoke()
-  foo(block = local fun <anonymous>() {
-    error("") /* ErrorExpression */
-  }
+  foo(block = 
+    // CHECK:
+    //   Mangled name: #test1(){}#<anonymous>#static(){}
+    local fun <anonymous>() {
+      error("") /* ErrorExpression */
+    }
 )
-  foo(block = local fun <anonymous>() {
-    error("") /* ErrorExpression */
-  }
+  foo(block = 
+    // CHECK:
+    //   Mangled name: #test1(){}#<anonymous>#static(){}
+    local fun <anonymous>() {
+      error("") /* ErrorExpression */
+    }
 )
-  foo(block = local fun <no name provided>() {
-    error("") /* ErrorExpression */
-  }
+  foo(block = 
+    // CHECK:
+    //   Mangled name: #test1(){}#<no name provided>#static(){}
+    local fun <no name provided>() {
+      error("") /* ErrorExpression */
+    }
 )
-  foo(block = local fun <no name provided>() {
-    error("") /* ErrorExpression */
-  }
+  foo(block = 
+    // CHECK:
+    //   Mangled name: #test1(){}#<no name provided>#static(){}
+    local fun <no name provided>() {
+      error("") /* ErrorExpression */
+    }
 )
 }
 
+// CHECK:
+//   Mangled name: #test2(){}
+//   Public signature: /test2|4279114864133353152[0]
 fun test2() {
   L1@ while (true) { // BLOCK
     error("") /* ErrorExpression */
-    local fun <no name provided>() {
-      error("") /* ErrorExpression */
-    }
+    
+      // CHECK:
+      //   Mangled name: #test2(){}#<no name provided>#static(){}
+      local fun <no name provided>() {
+        error("") /* ErrorExpression */
+      }
 .invoke()
-    local fun <no name provided>() {
-      error("") /* ErrorExpression */
-    }
+    
+      // CHECK:
+      //   Mangled name: #test2(){}#<no name provided>#static(){}
+      local fun <no name provided>() {
+        error("") /* ErrorExpression */
+      }
 .invoke()
-    foo(block = local fun <anonymous>() {
-      error("") /* ErrorExpression */
-    }
+    foo(block = 
+      // CHECK:
+      //   Mangled name: #test2(){}#<anonymous>#static(){}
+      local fun <anonymous>() {
+        error("") /* ErrorExpression */
+      }
 )
-    foo(block = local fun <anonymous>() {
-      error("") /* ErrorExpression */
-    }
+    foo(block = 
+      // CHECK:
+      //   Mangled name: #test2(){}#<anonymous>#static(){}
+      local fun <anonymous>() {
+        error("") /* ErrorExpression */
+      }
 )
-    foo(block = local fun <no name provided>() {
-      error("") /* ErrorExpression */
-    }
+    foo(block = 
+      // CHECK:
+      //   Mangled name: #test2(){}#<no name provided>#static(){}
+      local fun <no name provided>() {
+        error("") /* ErrorExpression */
+      }
 )
-    foo(block = local fun <no name provided>() {
-      error("") /* ErrorExpression */
-    }
+    foo(block = 
+      // CHECK:
+      //   Mangled name: #test2(){}#<no name provided>#static(){}
+      local fun <no name provided>() {
+        error("") /* ErrorExpression */
+      }
 )
   }
 }
 
+// CHECK:
+//   Mangled name: #test3(){}
+//   Public signature: /test3|-3759735065270951803[0]
 fun test3() {
   L1@ while (true) { // BLOCK
-    val lambda: Function0<Unit> = local fun <anonymous>() {
-      error("") /* ErrorExpression */
-      local fun <no name provided>() {
+    val lambda: Function0<Unit> = 
+      // CHECK:
+      //   Mangled name: #test3(){}#<anonymous>#static(){}
+      local fun <anonymous>() {
         error("") /* ErrorExpression */
-      }
+        
+          // CHECK:
+          //   Mangled name: #test3(){}#<anonymous>#static(){}#<no name provided>#static(){}
+          local fun <no name provided>() {
+            error("") /* ErrorExpression */
+          }
 .invoke()
-      local fun <no name provided>() {
-        error("") /* ErrorExpression */
-      }
+        
+          // CHECK:
+          //   Mangled name: #test3(){}#<anonymous>#static(){}#<no name provided>#static(){}
+          local fun <no name provided>() {
+            error("") /* ErrorExpression */
+          }
 .invoke()
-      foo(block = local fun <anonymous>() {
-        error("") /* ErrorExpression */
-      }
+        foo(block = 
+          // CHECK:
+          //   Mangled name: #test3(){}#<anonymous>#static(){}#<anonymous>#static(){}
+          local fun <anonymous>() {
+            error("") /* ErrorExpression */
+          }
 )
-      foo(block = local fun <anonymous>() {
-        error("") /* ErrorExpression */
-      }
+        foo(block = 
+          // CHECK:
+          //   Mangled name: #test3(){}#<anonymous>#static(){}#<anonymous>#static(){}
+          local fun <anonymous>() {
+            error("") /* ErrorExpression */
+          }
 )
-      foo(block = local fun <no name provided>() {
-        error("") /* ErrorExpression */
-      }
+        foo(block = 
+          // CHECK:
+          //   Mangled name: #test3(){}#<anonymous>#static(){}#<no name provided>#static(){}
+          local fun <no name provided>() {
+            error("") /* ErrorExpression */
+          }
 )
-      foo(block = local fun <no name provided>() {
-        error("") /* ErrorExpression */
-      }
+        foo(block = 
+          // CHECK:
+          //   Mangled name: #test3(){}#<anonymous>#static(){}#<no name provided>#static(){}
+          local fun <no name provided>() {
+            error("") /* ErrorExpression */
+          }
 )
-    }
+      }
 
   }
 }
 
+// CHECK:
+//   Mangled name: #test4(){}
+//   Public signature: /test4|5588455914500386239[0]
 fun test4() {
-  while (local fun <anonymous>(): Nothing {
-    return error("") /* ErrorExpression */
-  }
+  while (
+    // CHECK:
+    //   Mangled name: #test4(){}#<anonymous>#static(){}kotlin.Nothing
+    local fun <anonymous>(): Nothing {
+      return error("") /* ErrorExpression */
+    }
 .invoke()) { // BLOCK
   }
-  while (local fun <anonymous>(): Nothing {
-    return error("") /* ErrorExpression */
-  }
+  while (
+    // CHECK:
+    //   Mangled name: #test4(){}#<anonymous>#static(){}kotlin.Nothing
+    local fun <anonymous>(): Nothing {
+      return error("") /* ErrorExpression */
+    }
 .invoke()) { // BLOCK
   }
-  while (local fun <no name provided>() {
-    error("") /* ErrorExpression */
-  }
+  while (
+    // CHECK:
+    //   Mangled name: #test4(){}#<no name provided>#static(){}
+    local fun <no name provided>() {
+      error("") /* ErrorExpression */
+    }
 .invoke() /*as Boolean */) { // BLOCK
   }
-  while (local fun <no name provided>() {
-    error("") /* ErrorExpression */
-  }
+  while (
+    // CHECK:
+    //   Mangled name: #test4(){}#<no name provided>#static(){}
+    local fun <no name provided>() {
+      error("") /* ErrorExpression */
+    }
 .invoke() /*as Boolean */) { // BLOCK
   }
-  while (foo(block = local fun <anonymous>() {
-    error("") /* ErrorExpression */
-  }
+  while (foo(block = 
+    // CHECK:
+    //   Mangled name: #test4(){}#<anonymous>#static(){}
+    local fun <anonymous>() {
+      error("") /* ErrorExpression */
+    }
 ) /*as Boolean */) { // BLOCK
   }
-  while (foo(block = local fun <anonymous>() {
-    error("") /* ErrorExpression */
-  }
+  while (foo(block = 
+    // CHECK:
+    //   Mangled name: #test4(){}#<anonymous>#static(){}
+    local fun <anonymous>() {
+      error("") /* ErrorExpression */
+    }
 ) /*as Boolean */) { // BLOCK
   }
-  while (foo(block = local fun <no name provided>() {
-    error("") /* ErrorExpression */
-  }
+  while (foo(block = 
+    // CHECK:
+    //   Mangled name: #test4(){}#<no name provided>#static(){}
+    local fun <no name provided>() {
+      error("") /* ErrorExpression */
+    }
 ) /*as Boolean */) { // BLOCK
   }
-  while (foo(block = local fun <no name provided>() {
-    error("") /* ErrorExpression */
-  }
+  while (foo(block = 
+    // CHECK:
+    //   Mangled name: #test4(){}#<no name provided>#static(){}
+    local fun <no name provided>() {
+      error("") /* ErrorExpression */
+    }
 ) /*as Boolean */) { // BLOCK
   }
 }
 
+// CHECK:
+//   Mangled name: #test5(){}
+//   Public signature: /test5|-2461239215881954159[0]
 fun test5() {
-  listOf<Int>(elements = [1, 2, 3]).forEach<Int>(action = local fun <anonymous>(i: Int) {
-    when {
-      EQEQ(arg0 = i, arg1 = 2) -> error("") /* ErrorExpression */
+  listOf<Int>(elements = [1, 2, 3]).forEach<Int>(action = 
+    // CHECK:
+    //   Mangled name: #test5(){}#<anonymous>#static(kotlin.Int){}
+    local fun <anonymous>(i: Int) {
+      when {
+        EQEQ(arg0 = i, arg1 = 2) -> error("") /* ErrorExpression */
+      }
     }
-  }
 )
-  listOf<Int>(elements = [1, 2, 3]).forEach<Int>(action = local fun <anonymous>(i: Int) {
-    when {
-      EQEQ(arg0 = i, arg1 = 2) -> error("") /* ErrorExpression */
+  listOf<Int>(elements = [1, 2, 3]).forEach<Int>(action = 
+    // CHECK:
+    //   Mangled name: #test5(){}#<anonymous>#static(kotlin.Int){}
+    local fun <anonymous>(i: Int) {
+      when {
+        EQEQ(arg0 = i, arg1 = 2) -> error("") /* ErrorExpression */
+      }
     }
-  }
 )
-  listOf<Int>(elements = [1, 2, 3]).forEach<Int>(action = local fun <no name provided>(i: Int) {
-    when {
-      EQEQ(arg0 = i, arg1 = 2) -> error("") /* ErrorExpression */
+  listOf<Int>(elements = [1, 2, 3]).forEach<Int>(action = 
+    // CHECK:
+    //   Mangled name: #test5(){}#<no name provided>#static(kotlin.Int){}
+    local fun <no name provided>(i: Int) {
+      when {
+        EQEQ(arg0 = i, arg1 = 2) -> error("") /* ErrorExpression */
+      }
     }
-  }
 )
-  listOf<Int>(elements = [1, 2, 3]).forEach<Int>(action = local fun <no name provided>(i: Int) {
-    when {
-      EQEQ(arg0 = i, arg1 = 2) -> error("") /* ErrorExpression */
+  listOf<Int>(elements = [1, 2, 3]).forEach<Int>(action = 
+    // CHECK:
+    //   Mangled name: #test5(){}#<no name provided>#static(kotlin.Int){}
+    local fun <no name provided>(i: Int) {
+      when {
+        EQEQ(arg0 = i, arg1 = 2) -> error("") /* ErrorExpression */
+      }
     }
-  }
 )
 }
 
+// CHECK:
+//   Mangled name: #test6(){}
+//   Public signature: /test6|-6357717956567725919[0]
 fun test6() {
   while (true) { // BLOCK
-    bar(block1 = local fun <anonymous>() {
-      return Unit
-    }
-, block2 = local fun <anonymous>() {
-      error("") /* ErrorExpression */
-    }
-)
-    bar(block1 = local fun <anonymous>() {
-      return Unit
-    }
-, block2 = local fun <anonymous>() {
-      error("") /* ErrorExpression */
-    }
-)
-    bar(block1 = local fun <no name provided>() {
-    }
-, block2 = local fun <no name provided>() {
-      error("") /* ErrorExpression */
-    }
-)
-    bar(block1 = local fun <no name provided>() {
-    }
-, block2 = local fun <no name provided>() {
-      error("") /* ErrorExpression */
-    }
-)
-  }
-}
-
-fun test7() {
-  1.rangeTo(other = 3).myForEach<Int>(action = local fun <anonymous>(i: Int) {
-    when {
-      EQEQ(arg0 = i, arg1 = 2) -> { // BLOCK
+    bar(block1 = 
+      // CHECK:
+      //   Mangled name: #test6(){}#<anonymous>#static(){}
+      local fun <anonymous>() {
+        return Unit
+      }
+, block2 = 
+      // CHECK:
+      //   Mangled name: #test6(){}#<anonymous>#static(){}
+      local fun <anonymous>() {
         error("") /* ErrorExpression */
       }
-    }
+)
+    bar(block1 = 
+      // CHECK:
+      //   Mangled name: #test6(){}#<anonymous>#static(){}
+      local fun <anonymous>() {
+        return Unit
+      }
+, block2 = 
+      // CHECK:
+      //   Mangled name: #test6(){}#<anonymous>#static(){}
+      local fun <anonymous>() {
+        error("") /* ErrorExpression */
+      }
+)
+    bar(block1 = 
+      // CHECK:
+      //   Mangled name: #test6(){}#<no name provided>#static(){}
+      local fun <no name provided>() {
+      }
+, block2 = 
+      // CHECK:
+      //   Mangled name: #test6(){}#<no name provided>#static(){}
+      local fun <no name provided>() {
+        error("") /* ErrorExpression */
+      }
+)
+    bar(block1 = 
+      // CHECK:
+      //   Mangled name: #test6(){}#<no name provided>#static(){}
+      local fun <no name provided>() {
+      }
+, block2 = 
+      // CHECK:
+      //   Mangled name: #test6(){}#<no name provided>#static(){}
+      local fun <no name provided>() {
+        error("") /* ErrorExpression */
+      }
+)
   }
+}
+
+// CHECK:
+//   Mangled name: #test7(){}
+//   Public signature: /test7|-8173197202779127520[0]
+fun test7() {
+  1.rangeTo(other = 3).myForEach<Int>(action = 
+    // CHECK:
+    //   Mangled name: #test7(){}#<anonymous>#static(kotlin.Int){}
+    local fun <anonymous>(i: Int) {
+      when {
+        EQEQ(arg0 = i, arg1 = 2) -> { // BLOCK
+          error("") /* ErrorExpression */
+        }
+      }
+    }
 )
 }
 
+// CHECK:
+//   Mangled name: #test8(){}
+//   Public signature: /test8|70876202459738419[0]
 fun test8() {
   while (true) { // BLOCK
-    baz(block = local fun <anonymous>() {
-      error("") /* ErrorExpression */
-    }
+    baz(block = 
+      // CHECK:
+      //   Mangled name: #test8(){}#<anonymous>#static(){}
+      local fun <anonymous>() {
+        error("") /* ErrorExpression */
+      }
 )
   }
 }

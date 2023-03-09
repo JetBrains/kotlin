@@ -1,35 +1,84 @@
+// CHECK:
+//   Mangled name: MyEnum
+//   Public signature: /MyEnum|null[1]
 expect enum class MyEnum : Enum<MyEnum> {
+  // CHECK:
+  //   Mangled name: MyEnum.FOO
+  //   Public signature: /MyEnum.FOO|null[1]
   FOO
 
+  // CHECK:
+  //   Mangled name: MyEnum.BAR
+  //   Public signature: /MyEnum.BAR|null[1]
   BAR
 
+  // CHECK:
+  //   Mangled name: MyEnum#values#static(){}kotlin.Array<MyEnum>
+  //   Public signature: /MyEnum.values|3097625172661156808[1]
   fun values(): Array<MyEnum> /* Synthetic body for ENUM_VALUES */
 
+  // CHECK:
+  //   Mangled name: MyEnum#valueOf#static(kotlin.String){}MyEnum
+  //   Public signature: /MyEnum.valueOf|4316550590519800984[1]
   fun valueOf(value: String): MyEnum /* Synthetic body for ENUM_VALUEOF */
 
+  // CHECK:
+  //   Mangled name: MyEnum#static{}entries
+  //   Public signature: /MyEnum.entries|-5134227801081826149[1]
   val entries: EnumEntries<MyEnum>
+    // CHECK:
+    //   Mangled name: MyEnum#<get-entries>#static(){}kotlin.enums.EnumEntries<MyEnum>
+    //   Public signature: /MyEnum.entries.<get-entries>|-3922959509726908718[1]
     get(): EnumEntries<MyEnum> /* Synthetic body for ENUM_ENTRIES */
 
 }
 
+// CHECK:
+//   Mangled name: MyEnum
+//   Public signature: /MyEnum|null[0]
 enum class MyEnum : Enum<MyEnum> {
+  // CHECK:
+  //   Mangled name: MyEnum#<init>(){}
+  //   Public signature: /MyEnum.<init>|-5645683436151566731[0]
   private constructor() /* primary */ {
     super/*Enum*/<MyEnum>()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: MyEnum.FOO
+  //   Public signature: /MyEnum.FOO|null[0]
   FOO = MyEnum()
 
+  // CHECK:
+  //   Mangled name: MyEnum.BAR
+  //   Public signature: /MyEnum.BAR|null[0]
   BAR = MyEnum()
 
+  // CHECK:
+  //   Mangled name: MyEnum.BAZ
+  //   Public signature: /MyEnum.BAZ|null[0]
   BAZ = MyEnum()
 
+  // CHECK:
+  //   Mangled name: MyEnum#values#static(){}kotlin.Array<MyEnum>
+  //   Public signature: /MyEnum.values|3097625172661156808[0]
   fun values(): Array<MyEnum> /* Synthetic body for ENUM_VALUES */
 
+  // CHECK:
+  //   Mangled name: MyEnum#valueOf#static(kotlin.String){}MyEnum
+  //   Public signature: /MyEnum.valueOf|4316550590519800984[0]
   fun valueOf(value: String): MyEnum /* Synthetic body for ENUM_VALUEOF */
 
+  // CHECK:
+  //   Mangled name: MyEnum#static{}entries
+  //   Public signature: /MyEnum.entries|-5134227801081826149[0]
   val entries: EnumEntries<MyEnum>
+    // CHECK:
+    //   Mangled name: MyEnum#<get-entries>#static(){}kotlin.enums.EnumEntries<MyEnum>
+    //   Public signature: /MyEnum.entries.<get-entries>|-3922959509726908718[0]
     get(): EnumEntries<MyEnum> /* Synthetic body for ENUM_ENTRIES */
 
 }
+

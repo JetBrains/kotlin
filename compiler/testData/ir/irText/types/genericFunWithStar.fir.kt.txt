@@ -1,29 +1,64 @@
+// CHECK:
+//   Mangled name: IBase
+//   Public signature: /IBase|null[0]
 interface IBase {
 
 }
 
+// CHECK:
+//   Mangled name: IFoo
+//   Public signature: /IFoo|null[0]
 interface IFoo : IBase {
 
 }
 
+// CHECK:
+//   Mangled name: IBar
+//   Public signature: /IBar|null[0]
 interface IBar : IBase {
 
 }
 
+// CHECK:
+//   Mangled name: I
+//   Public signature: /I|null[0]
 interface I<G> where G : IFoo, G : IBar {
 
 }
 
+// CHECK:
+//   Mangled name: Box
+//   Public signature: /Box|null[0]
 abstract class Box<T> : IFoo, IBar where T : IFoo, T : IBar {
+  // CHECK:
+  //   Mangled name: Box#<init>(){}
+  //   Public signature: /Box.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: Box#foo(I<0:0>){0§<IFoo&IBar>}I<Box<0:0>>
+  //   Public signature: /Box.foo|-2974216352759527693[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         Box#foo(I<0:0>){0§<IFoo&IBar>}
+  //   Mangled name computed from Descriptor: Box#foo(I<0:0>){0§<IFoo&IBar>}
+  //   Mangled name computed from Fir:        Box#foo(I<0:0>){0§<IFoo&IBar>}I<Box<0:0>>
+  //   Public signature: /Box.foo|-2974216352759527693[0]
   abstract fun <F> foo(tSerializer: I<F>): I<Box<F>> where F : IFoo, F : IBar
+  // CHECK JVM_IR:
+  //   Mangled name: Box#bar(kotlin.Array<out|I<*>>...){}I<*>
+  //   Public signature: /Box.bar|-1391226342944074333[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         Box#bar(kotlin.Array<out|I<*>>...){}
+  //   Mangled name computed from Descriptor: Box#bar(kotlin.Array<out|I<*>>...){}
+  //   Mangled name computed from Fir:        Box#bar(kotlin.Array<out|I<*>>...){}I<*>
+  //   Public signature: /Box.bar|-1391226342944074333[0]
   fun bar(vararg serializers: I<*>): I<*> {
     return <this>.foo<IFoo>(tSerializer = serializers.get(index = 0))
   }
 
 }
+

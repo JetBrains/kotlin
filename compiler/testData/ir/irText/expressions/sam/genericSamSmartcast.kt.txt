@@ -1,11 +1,18 @@
+// CHECK:
+//   Mangled name: #f(kotlin.Any){}kotlin.String
+//   Public signature: /f|7796856655889654815[0]
 fun f(x: Any): String {
   when {
     x is A<*> -> { // BLOCK
-      return x /*as A<*> */.call(block = local fun <anonymous>(y: Any?): @FlexibleNullability String? {
-        return "OK"
-      }
+      return x /*as A<*> */.call(block = 
+        // CHECK:
+        //   Mangled name: #f(kotlin.Any){}kotlin.String#<anonymous>#static(kotlin.Any?){}kotlin.String?
+        local fun <anonymous>(y: Any?): @FlexibleNullability String? {
+          return "OK"
+        }
  /*-> @FlexibleNullability I<Nothing>? */) /*!! String */
     }
   }
   return "Fail"
 }
+

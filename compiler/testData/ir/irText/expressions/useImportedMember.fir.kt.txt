@@ -1,68 +1,194 @@
+// CHECK:
+//   Mangled name: I
+//   Public signature: /I|null[0]
 interface I<G : Any?> {
+  // CHECK JVM_IR:
+  //   Mangled name: I#fromInterface@0:0(){0§<kotlin.Any?>}0:0
+  //   Public signature: /I.fromInterface|-4942486396992795009[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         I#fromInterface@0:0(){0§<kotlin.Any?>}
+  //   Mangled name computed from Descriptor: I#fromInterface@0:0(){0§<kotlin.Any?>}
+  //   Mangled name computed from Fir:        I#fromInterface@0:0(){0§<kotlin.Any?>}0:0
+  //   Public signature: /I.fromInterface|-4942486396992795009[0]
   fun <T : Any?> T.fromInterface(): T {
     return <this>
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: I#genericFromSuper(1:0){}1:0
+  //   Public signature: /I.genericFromSuper|8776773144406187108[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         I#genericFromSuper(1:0){}
+  //   Mangled name computed from Descriptor: I#genericFromSuper(1:0){}
+  //   Mangled name computed from Fir:        I#genericFromSuper(1:0){}1:0
+  //   Public signature: /I.genericFromSuper|8776773144406187108[0]
   fun genericFromSuper(g: G): G {
     return g
   }
 
 }
 
+// CHECK:
+//   Mangled name: BaseClass
+//   Public signature: /BaseClass|null[0]
 open class BaseClass {
+  // CHECK:
+  //   Mangled name: BaseClass#<init>(){}
+  //   Public signature: /BaseClass.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name computed from Ir:         BaseClass@0:0{0§<kotlin.Any?>}fromClass
+  //   Mangled name computed from Descriptor: could not compute mangled name: java.lang.IllegalArgumentException: No container found for type parameter 'T' of 'public final fun <T> T.`<get-fromClass>`(): T defined in BaseClass'
+  //   Mangled name computed from Fir:        BaseClass@0:0{0§<kotlin.Any?>}fromClass
+  //   Public signature: /BaseClass.fromClass|-434634369200779905[0]
   val <T : Any?> T.fromClass: T
+    // CHECK JVM_IR:
+    //   Mangled name computed from Ir:         BaseClass#<get-fromClass>@0:0(){0§<kotlin.Any?>}0:0
+    //   Mangled name computed from Descriptor: could not compute mangled name: java.lang.IllegalArgumentException: No container found for type parameter 'T' of 'public final fun <T> T.`<get-fromClass>`(): T defined in BaseClass'
+    //   Mangled name computed from Fir:        BaseClass#<get-fromClass>@0:0(){0§<kotlin.Any?>}0:0
+    //   Public signature: /BaseClass.fromClass.<get-fromClass>|1075975932794232667[0]
+    // CHECK JS_IR:
+    //   Mangled name computed from Ir:         BaseClass#<get-fromClass>@0:0(){0§<kotlin.Any?>}
+    //   Mangled name computed from Descriptor: could not compute mangled name: java.lang.IllegalArgumentException: No container found for type parameter 'T' of 'public final fun <T> T.`<get-fromClass>`(): T defined in BaseClass'
+    //   Mangled name computed from Fir:        BaseClass#<get-fromClass>@0:0(){0§<kotlin.Any?>}0:0
+    //   Public signature: /BaseClass.fromClass.<get-fromClass>|1075975932794232667[0]
     get(): T {
       return <this>
     }
 
 }
 
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
 object C : BaseClass, I<String> {
+  // CHECK:
+  //   Mangled name: C#<init>(){}
+  //   Public signature: /C.<init>|-5645683436151566731[0]
   private constructor() /* primary */ {
     super/*BaseClass*/()
     /* <init>() */
 
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: C#f(kotlin.Int){}kotlin.Int
+  //   Public signature: /C.f|-3963816453364174180[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         C#f(kotlin.Int){}
+  //   Mangled name computed from Descriptor: C#f(kotlin.Int){}
+  //   Mangled name computed from Fir:        C#f(kotlin.Int){}kotlin.Int
+  //   Public signature: /C.f|-3963816453364174180[0]
   fun f(s: Int): Int {
     return 1
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: C#f(kotlin.String){}kotlin.Int
+  //   Public signature: /C.f|-4014058920923284658[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         C#f(kotlin.String){}
+  //   Mangled name computed from Descriptor: C#f(kotlin.String){}
+  //   Mangled name computed from Fir:        C#f(kotlin.String){}kotlin.Int
+  //   Public signature: /C.f|-4014058920923284658[0]
   fun f(s: String): Int {
     return 2
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: C#f@kotlin.Boolean(){}kotlin.Int
+  //   Public signature: /C.f|-2085546679212506947[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         C#f@kotlin.Boolean(){}
+  //   Mangled name computed from Descriptor: C#f@kotlin.Boolean(){}
+  //   Mangled name computed from Fir:        C#f@kotlin.Boolean(){}kotlin.Int
+  //   Public signature: /C.f|-2085546679212506947[0]
   fun Boolean.f(): Int {
     return 3
   }
 
+  // CHECK:
+  //   Mangled name: C{}p
+  //   Public signature: /C.p|6715504260787941082[0]
   var p: Int
     field = 4
+    // CHECK JVM_IR:
+    //   Mangled name: C#<get-p>(){}kotlin.Int
+    //   Public signature: /C.p.<get-p>|5329635969197638839[0]
+    // CHECK JS_IR:
+    //   Mangled name computed from Ir:         C#<get-p>(){}
+    //   Mangled name computed from Descriptor: C#<get-p>(){}
+    //   Mangled name computed from Fir:        C#<get-p>(){}kotlin.Int
+    //   Public signature: /C.p.<get-p>|5329635969197638839[0]
     get
+    // CHECK:
+    //   Mangled name: C#<set-p>(kotlin.Int){}
+    //   Public signature: /C.p.<set-p>|-6346582004572228570[0]
     set
 
+  // CHECK:
+  //   Mangled name: C@kotlin.Int{}ext
+  //   Public signature: /C.ext|-8111988424022289676[0]
   val Int.ext: Int
+    // CHECK JVM_IR:
+    //   Mangled name: C#<get-ext>@kotlin.Int(){}kotlin.Int
+    //   Public signature: /C.ext.<get-ext>|6877487399042398312[0]
+    // CHECK JS_IR:
+    //   Mangled name computed from Ir:         C#<get-ext>@kotlin.Int(){}
+    //   Mangled name computed from Descriptor: C#<get-ext>@kotlin.Int(){}
+    //   Mangled name computed from Fir:        C#<get-ext>@kotlin.Int(){}kotlin.Int
+    //   Public signature: /C.ext.<get-ext>|6877487399042398312[0]
     get(): Int {
       return 6
     }
 
+  // CHECK JVM_IR:
+  //   Mangled name: C#g1(0:0){0§<kotlin.Any?>}0:0
+  //   Public signature: /C.g1|600972423589629792[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         C#g1(0:0){0§<kotlin.Any?>}
+  //   Mangled name computed from Descriptor: C#g1(0:0){0§<kotlin.Any?>}
+  //   Mangled name computed from Fir:        C#g1(0:0){0§<kotlin.Any?>}0:0
+  //   Public signature: /C.g1|600972423589629792[0]
   fun <T : Any?> g1(t: T): T {
     return t
   }
 
+  // CHECK:
+  //   Mangled name computed from Ir:         C@0:0{0§<kotlin.Any?>}g2
+  //   Mangled name computed from Descriptor: could not compute mangled name: java.lang.IllegalArgumentException: No container found for type parameter 'T' of 'public final fun <T> T.`<get-g2>`(): T defined in C'
+  //   Mangled name computed from Fir:        C@0:0{0§<kotlin.Any?>}g2
+  //   Public signature: /C.g2|8414340838395849892[0]
   val <T : Any?> T.g2: T
+    // CHECK JVM_IR:
+    //   Mangled name computed from Ir:         C#<get-g2>@0:0(){0§<kotlin.Any?>}0:0
+    //   Mangled name computed from Descriptor: could not compute mangled name: java.lang.IllegalArgumentException: No container found for type parameter 'T' of 'public final fun <T> T.`<get-g2>`(): T defined in C'
+    //   Mangled name computed from Fir:        C#<get-g2>@0:0(){0§<kotlin.Any?>}0:0
+    //   Public signature: /C.g2.<get-g2>|6685580240509732107[0]
+    // CHECK JS_IR:
+    //   Mangled name computed from Ir:         C#<get-g2>@0:0(){0§<kotlin.Any?>}
+    //   Mangled name computed from Descriptor: could not compute mangled name: java.lang.IllegalArgumentException: No container found for type parameter 'T' of 'public final fun <T> T.`<get-g2>`(): T defined in C'
+    //   Mangled name computed from Fir:        C#<get-g2>@0:0(){0§<kotlin.Any?>}0:0
+    //   Public signature: /C.g2.<get-g2>|6685580240509732107[0]
     get(): T {
       return <this>
     }
 
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #box(){}kotlin.String
+//   Public signature: /box|-9347091776561469[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #box(){}
+//   Mangled name computed from Descriptor: #box(){}
+//   Mangled name computed from Fir:        #box(){}kotlin.String
+//   Public signature: /box|-9347091776561469[0]
 fun box(): String {
   when {
     EQEQ(arg0 = C.f(s = 1), arg1 = 1).not() -> return "1"
@@ -100,3 +226,4 @@ fun box(): String {
   }
   return "OK"
 }
+

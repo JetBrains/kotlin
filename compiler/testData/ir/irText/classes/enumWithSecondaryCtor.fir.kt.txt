@@ -1,106 +1,237 @@
+// CHECK:
+//   Mangled name: Test0
+//   Public signature: /Test0|null[0]
 open enum class Test0 : Enum<Test0> {
+  // CHECK:
+  //   Mangled name: Test0#<init>(kotlin.Int){}
+  //   Public signature: /Test0.<init>|-5182794243525578284[0]
   private constructor(x: Int) /* primary */ {
     super/*Enum*/<Test0>()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: Test0{}x
+  //   Public signature: /Test0.x|-8060530855978347579[0]
   val x: Int
     field = x
+    // CHECK:
+    //   Mangled name: Test0#<get-x>(){}kotlin.Int
+    //   Public signature: /Test0.x.<get-x>|4966956098150895696[0]
     get
 
+  // CHECK:
+  //   Mangled name: Test0.ZERO
+  //   Public signature: /Test0.ZERO|null[0]
   ZERO = Test0()
 
+  // CHECK:
+  //   Mangled name: Test0#<init>(){}
+  //   Public signature: /Test0.<init>|-5645683436151566731[0]
   private constructor() {
     this/*Test0*/(x = 0)
   }
 
+  // CHECK:
+  //   Mangled name: Test0#values#static(){}kotlin.Array<Test0>
+  //   Public signature: /Test0.values|5003914817845036921[0]
   fun values(): Array<Test0> /* Synthetic body for ENUM_VALUES */
 
+  // CHECK:
+  //   Mangled name: Test0#valueOf#static(kotlin.String){}Test0
+  //   Public signature: /Test0.valueOf|2435631791442896277[0]
   fun valueOf(value: String): Test0 /* Synthetic body for ENUM_VALUEOF */
 
+  // CHECK:
+  //   Mangled name: Test0#static{}entries
+  //   Public signature: /Test0.entries|-5134227801081826149[0]
   val entries: EnumEntries<Test0>
+    // CHECK:
+    //   Mangled name computed from Ir:         Test0#<get-entries>#static(){}kotlin.enums.EnumEntries<Test0>
+    //   Mangled name computed from Descriptor: Test0#<get-entries>#static(){}kotlin.enums.EnumEntries<Test0>
+    //   Mangled name computed from Fir:        #<get-entries>#static(){}kotlin.enums.EnumEntries<Test0>
+    //   Public signature: /Test0.entries.<get-entries>|-2219920410598886791[0]
     get(): EnumEntries<Test0> /* Synthetic body for ENUM_ENTRIES */
 
 }
 
+// CHECK:
+//   Mangled name: Test1
+//   Public signature: /Test1|null[0]
 open enum class Test1 : Enum<Test1> {
+  // CHECK:
+  //   Mangled name: Test1#<init>(kotlin.Int){}
+  //   Public signature: /Test1.<init>|-5182794243525578284[0]
   private constructor(x: Int) /* primary */ {
     super/*Enum*/<Test1>()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: Test1{}x
+  //   Public signature: /Test1.x|-8060530855978347579[0]
   val x: Int
     field = x
+    // CHECK:
+    //   Mangled name: Test1#<get-x>(){}kotlin.Int
+    //   Public signature: /Test1.x.<get-x>|4966956098150895696[0]
     get
 
+  // CHECK:
+  //   Mangled name: Test1.ZERO
+  //   Public signature: /Test1.ZERO|null[0]
   ZERO = Test1()
 
+  // CHECK:
+  //   Mangled name: Test1.ONE
+  //   Public signature: /Test1.ONE|null[0]
   ONE = Test1(x = 1)
 
+  // CHECK:
+  //   Mangled name: Test1#<init>(){}
+  //   Public signature: /Test1.<init>|-5645683436151566731[0]
   private constructor() {
     this/*Test1*/(x = 0)
   }
 
+  // CHECK:
+  //   Mangled name: Test1#values#static(){}kotlin.Array<Test1>
+  //   Public signature: /Test1.values|1411653061731083303[0]
   fun values(): Array<Test1> /* Synthetic body for ENUM_VALUES */
 
+  // CHECK:
+  //   Mangled name: Test1#valueOf#static(kotlin.String){}Test1
+  //   Public signature: /Test1.valueOf|7465772014771661384[0]
   fun valueOf(value: String): Test1 /* Synthetic body for ENUM_VALUEOF */
 
+  // CHECK:
+  //   Mangled name: Test1#static{}entries
+  //   Public signature: /Test1.entries|-5134227801081826149[0]
   val entries: EnumEntries<Test1>
+    // CHECK:
+    //   Mangled name computed from Ir:         Test1#<get-entries>#static(){}kotlin.enums.EnumEntries<Test1>
+    //   Mangled name computed from Descriptor: Test1#<get-entries>#static(){}kotlin.enums.EnumEntries<Test1>
+    //   Mangled name computed from Fir:        #<get-entries>#static(){}kotlin.enums.EnumEntries<Test1>
+    //   Public signature: /Test1.entries.<get-entries>|-7972344572232634128[0]
     get(): EnumEntries<Test1> /* Synthetic body for ENUM_ENTRIES */
 
 }
 
+// CHECK:
+//   Mangled name: Test2
+//   Public signature: /Test2|null[0]
 abstract enum class Test2 : Enum<Test2> {
+  // CHECK:
+  //   Mangled name: Test2#<init>(kotlin.Int){}
+  //   Public signature: /Test2.<init>|-5182794243525578284[0]
   private constructor(x: Int) /* primary */ {
     super/*Enum*/<Test2>()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: Test2{}x
+  //   Public signature: /Test2.x|-8060530855978347579[0]
   val x: Int
     field = x
+    // CHECK:
+    //   Mangled name: Test2#<get-x>(){}kotlin.Int
+    //   Public signature: /Test2.x.<get-x>|4966956098150895696[0]
     get
 
+  // CHECK:
+  //   Mangled name: Test2.ZERO
+  //   Public signature: /Test2.ZERO|null[0]
+
   ZERO = ZERO()
+  // CHECK:
+  //   Mangled name computed from Ir:         Test2.ZERO
+  //   Mangled name computed from Descriptor: Test2.ZERO
+  //   Mangled name computed from Fir:        <anonymous>
   private enum entry class ZERO : Test2 {
+    // CHECK:
+    //   Mangled name computed from Ir:         Test2.ZERO#<init>(){}
+    //   Mangled name computed from Descriptor: Test2.ZERO#<init>(){}
+    //   Mangled name computed from Fir:        #<init>(){}
     private constructor() /* primary */ {
       super/*Test2*/()
       /* <init>() */
 
     }
 
+    // CHECK:
+    //   Mangled name computed from Ir:         Test2.ZERO#foo(){}
+    //   Mangled name computed from Descriptor: Test2.ZERO#foo(){}
+    //   Mangled name computed from Fir:        #foo(){}
     override fun foo() {
       println(message = "ZERO")
     }
 
   }
 
+  // CHECK:
+  //   Mangled name: Test2.ONE
+  //   Public signature: /Test2.ONE|null[0]
+
   ONE = ONE()
+  // CHECK:
+  //   Mangled name computed from Ir:         Test2.ONE
+  //   Mangled name computed from Descriptor: Test2.ONE
+  //   Mangled name computed from Fir:        <anonymous>
   private enum entry class ONE : Test2 {
+    // CHECK:
+    //   Mangled name computed from Ir:         Test2.ONE#<init>(){}
+    //   Mangled name computed from Descriptor: Test2.ONE#<init>(){}
+    //   Mangled name computed from Fir:        #<init>(){}
     private constructor() /* primary */ {
       super/*Test2*/(x = 1)
       /* <init>() */
 
     }
 
+    // CHECK:
+    //   Mangled name computed from Ir:         Test2.ONE#foo(){}
+    //   Mangled name computed from Descriptor: Test2.ONE#foo(){}
+    //   Mangled name computed from Fir:        #foo(){}
     override fun foo() {
       println(message = "ONE")
     }
 
   }
 
+  // CHECK:
+  //   Mangled name: Test2#<init>(){}
+  //   Public signature: /Test2.<init>|-5645683436151566731[0]
   private constructor() {
     this/*Test2*/(x = 0)
   }
 
+  // CHECK:
+  //   Mangled name: Test2#foo(){}
+  //   Public signature: /Test2.foo|-1041209573719867811[0]
   abstract fun foo()
+  // CHECK:
+  //   Mangled name: Test2#values#static(){}kotlin.Array<Test2>
+  //   Public signature: /Test2.values|-1286825984033907824[0]
   fun values(): Array<Test2> /* Synthetic body for ENUM_VALUES */
 
+  // CHECK:
+  //   Mangled name: Test2#valueOf#static(kotlin.String){}Test2
+  //   Public signature: /Test2.valueOf|-8667399781449349710[0]
   fun valueOf(value: String): Test2 /* Synthetic body for ENUM_VALUEOF */
 
+  // CHECK:
+  //   Mangled name: Test2#static{}entries
+  //   Public signature: /Test2.entries|-5134227801081826149[0]
   val entries: EnumEntries<Test2>
+    // CHECK:
+    //   Mangled name computed from Ir:         Test2#<get-entries>#static(){}kotlin.enums.EnumEntries<Test2>
+    //   Mangled name computed from Descriptor: Test2#<get-entries>#static(){}kotlin.enums.EnumEntries<Test2>
+    //   Mangled name computed from Fir:        #<get-entries>#static(){}kotlin.enums.EnumEntries<Test2>
+    //   Public signature: /Test2.entries.<get-entries>|2374563375183991273[0]
     get(): EnumEntries<Test2> /* Synthetic body for ENUM_ENTRIES */
 
 }

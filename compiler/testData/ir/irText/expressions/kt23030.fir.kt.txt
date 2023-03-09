@@ -1,11 +1,35 @@
+// CHECK JVM_IR:
+//   Mangled name: #compareTo@kotlin.Int(kotlin.Char){}kotlin.Int
+//   Public signature: /compareTo|-3046390620514569100[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #compareTo@kotlin.Int(kotlin.Char){}
+//   Mangled name computed from Descriptor: #compareTo@kotlin.Int(kotlin.Char){}
+//   Mangled name computed from Fir:        #compareTo@kotlin.Int(kotlin.Char){}kotlin.Int
+//   Public signature: /compareTo|-3046390620514569100[0]
 operator fun Int.compareTo(c: Char): Int {
   return 0
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #testOverloadedCompareToCall(kotlin.Int;kotlin.Char){}kotlin.Boolean
+//   Public signature: /testOverloadedCompareToCall|-3653539079240215410[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #testOverloadedCompareToCall(kotlin.Int;kotlin.Char){}
+//   Mangled name computed from Descriptor: #testOverloadedCompareToCall(kotlin.Int;kotlin.Char){}
+//   Mangled name computed from Fir:        #testOverloadedCompareToCall(kotlin.Int;kotlin.Char){}kotlin.Boolean
+//   Public signature: /testOverloadedCompareToCall|-3653539079240215410[0]
 fun testOverloadedCompareToCall(x: Int, y: Char): Boolean {
   return less(arg0 = x.compareTo(c = y), arg1 = 0)
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #testOverloadedCompareToCallWithSmartCast(kotlin.Any;kotlin.Any){}kotlin.Boolean
+//   Public signature: /testOverloadedCompareToCallWithSmartCast|-1185994757727801494[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #testOverloadedCompareToCallWithSmartCast(kotlin.Any;kotlin.Any){}
+//   Mangled name computed from Descriptor: #testOverloadedCompareToCallWithSmartCast(kotlin.Any;kotlin.Any){}
+//   Mangled name computed from Fir:        #testOverloadedCompareToCallWithSmartCast(kotlin.Any;kotlin.Any){}kotlin.Boolean
+//   Public signature: /testOverloadedCompareToCallWithSmartCast|-1185994757727801494[0]
 fun testOverloadedCompareToCallWithSmartCast(x: Any, y: Any): Boolean {
   return when {
     when {
@@ -16,6 +40,14 @@ fun testOverloadedCompareToCallWithSmartCast(x: Any, y: Any): Boolean {
   }
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #testEqualsWithSmartCast(kotlin.Any;kotlin.Any){}kotlin.Boolean
+//   Public signature: /testEqualsWithSmartCast|216587402273338311[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #testEqualsWithSmartCast(kotlin.Any;kotlin.Any){}
+//   Mangled name computed from Descriptor: #testEqualsWithSmartCast(kotlin.Any;kotlin.Any){}
+//   Mangled name computed from Fir:        #testEqualsWithSmartCast(kotlin.Any;kotlin.Any){}kotlin.Boolean
+//   Public signature: /testEqualsWithSmartCast|216587402273338311[0]
 fun testEqualsWithSmartCast(x: Any, y: Any): Boolean {
   return when {
     when {
@@ -26,21 +58,51 @@ fun testEqualsWithSmartCast(x: Any, y: Any): Boolean {
   }
 }
 
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
 class C {
+  // CHECK:
+  //   Mangled name: C#<init>(){}
+  //   Public signature: /C.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: C#compareTo@kotlin.Int(kotlin.Char){}kotlin.Int
+  //   Public signature: /C.compareTo|-3046390620514569100[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         C#compareTo@kotlin.Int(kotlin.Char){}
+  //   Mangled name computed from Descriptor: C#compareTo@kotlin.Int(kotlin.Char){}
+  //   Mangled name computed from Fir:        C#compareTo@kotlin.Int(kotlin.Char){}kotlin.Int
+  //   Public signature: /C.compareTo|-3046390620514569100[0]
   operator fun Int.compareTo(c: Char): Int {
     return 0
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: C#testMemberExtensionCompareToCall(kotlin.Int;kotlin.Char){}kotlin.Boolean
+  //   Public signature: /C.testMemberExtensionCompareToCall|-4075882409492053136[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         C#testMemberExtensionCompareToCall(kotlin.Int;kotlin.Char){}
+  //   Mangled name computed from Descriptor: C#testMemberExtensionCompareToCall(kotlin.Int;kotlin.Char){}
+  //   Mangled name computed from Fir:        C#testMemberExtensionCompareToCall(kotlin.Int;kotlin.Char){}kotlin.Boolean
+  //   Public signature: /C.testMemberExtensionCompareToCall|-4075882409492053136[0]
   fun testMemberExtensionCompareToCall(x: Int, y: Char): Boolean {
     return less(arg0 = (<this>, x).compareTo(c = y), arg1 = 0)
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: C#testMemberExtensionCompareToCallWithSmartCast(kotlin.Any;kotlin.Any){}kotlin.Boolean
+  //   Public signature: /C.testMemberExtensionCompareToCallWithSmartCast|8745947718269383382[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         C#testMemberExtensionCompareToCallWithSmartCast(kotlin.Any;kotlin.Any){}
+  //   Mangled name computed from Descriptor: C#testMemberExtensionCompareToCallWithSmartCast(kotlin.Any;kotlin.Any){}
+  //   Mangled name computed from Fir:        C#testMemberExtensionCompareToCallWithSmartCast(kotlin.Any;kotlin.Any){}kotlin.Boolean
+  //   Public signature: /C.testMemberExtensionCompareToCallWithSmartCast|8745947718269383382[0]
   fun testMemberExtensionCompareToCallWithSmartCast(x: Any, y: Any): Boolean {
     return when {
       when {

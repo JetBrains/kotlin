@@ -1,17 +1,48 @@
+// CHECK:
+//   Mangled name: IntAlias
+//   Public signature: /IntAlias|null[0]
 typealias IntAlias = Cell<Int>
+// CHECK:
+//   Mangled name: Cell
+//   Public signature: /Cell|null[0]
 class Cell<T : Any?> {
+  // CHECK:
+  //   Mangled name computed from Ir:         Cell#<init>(1:0){}
+  //   Mangled name computed from Descriptor: Cell#<init>(1:0){}
+  //   Mangled name computed from Fir:        Cell#<init>(0:-1){}
+  //   Public signature: /Cell.<init>|8751876555175556900[0]
   constructor(value: T) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: Cell{}value
+  //   Public signature: /Cell.value|1987073854177347439[0]
   val value: T
     field = value
+    // CHECK JVM_IR:
+    //   Mangled name: Cell#<get-value>(){}1:0
+    //   Public signature: /Cell.value.<get-value>|3167862337988859752[0]
+    // CHECK JS_IR:
+    //   Mangled name computed from Ir:         Cell#<get-value>(){}
+    //   Mangled name computed from Descriptor: Cell#<get-value>(){}
+    //   Mangled name computed from Fir:        Cell#<get-value>(){}1:0
+    //   Public signature: /Cell.value.<get-value>|3167862337988859752[0]
     get
 
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #test(){}Cell<kotlin.Int>
+//   Public signature: /test|-4810339714221695945[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #test(){}
+//   Mangled name computed from Descriptor: #test(){}
+//   Mangled name computed from Fir:        #test(){}Cell<kotlin.Int>
+//   Public signature: /test|-4810339714221695945[0]
 fun test(): Cell<Int> {
   return Cell</* null */>(value = 42)
 }
+

@@ -1,4 +1,10 @@
+// CHECK:
+//   Mangled name: IrElement
+//   Public signature: /IrElement|null[0]
 open class IrElement {
+  // CHECK:
+  //   Mangled name: IrElement#<init>(){}
+  //   Public signature: /IrElement.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -7,17 +13,39 @@ open class IrElement {
 
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #dumpKotlinLike@IrElement(kotlin.String){}kotlin.String
+//   Public signature: /dumpKotlinLike|4178458168806795646[0]
+// CHECK JS_IR:
+//   Mangled name: #dumpKotlinLike@IrElement(kotlin.String){}
+//   Public signature: /dumpKotlinLike|-2371556323569177260[0]
 fun IrElement.dumpKotlinLike(options: String = ""): String {
   return "O"
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #dump@IrElement(kotlin.Boolean;kotlin.Boolean){}kotlin.String
+//   Public signature: /dump|-3225440066498389487[0]
+// CHECK JS_IR:
+//   Mangled name: #dump@IrElement(kotlin.Boolean;kotlin.Boolean){}
+//   Public signature: /dump|773530586679184317[0]
 fun IrElement.dump(normalizeNames: Boolean = false, stableOrder: Boolean = false): String {
   return "K"
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #dump(IrElement;kotlin.String){}kotlin.String
+//   Public signature: /dump|2660497428954829765[0]
+// CHECK JS_IR:
+//   Mangled name: #dump(IrElement;kotlin.String){}
+//   Public signature: /dump|4886700334642684742[0]
 fun dump(data: IrElement, dumpStrategy: String): String {
   val dump: @ExtensionFunctionType Function1<IrElement, String> = when {
     EQEQ(arg0 = dumpStrategy, arg1 = "KotlinLike") -> { // BLOCK
+      // CHECK JVM_IR:
+      //   Mangled name: #dump(IrElement;kotlin.String){}kotlin.String#dumpKotlinLike#static(IrElement){}kotlin.String
+      // CHECK JS_IR:
+      //   Mangled name: #dump(IrElement;kotlin.String){}#dumpKotlinLike#static(IrElement){}
       local fun dumpKotlinLike(p0: IrElement): String {
         return p0.dumpKotlinLike()
       }
@@ -25,6 +53,10 @@ fun dump(data: IrElement, dumpStrategy: String): String {
       ::dumpKotlinLike
     }
     else -> { // BLOCK
+      // CHECK JVM_IR:
+      //   Mangled name: #dump(IrElement;kotlin.String){}kotlin.String#dump#static(IrElement){}kotlin.String
+      // CHECK JS_IR:
+      //   Mangled name: #dump(IrElement;kotlin.String){}#dump#static(IrElement){}
       local fun dump(p0: IrElement): String {
         return p0.dump()
       }
@@ -34,3 +66,4 @@ fun dump(data: IrElement, dumpStrategy: String): String {
   }
   return dump.invoke(p1 = data)
 }
+

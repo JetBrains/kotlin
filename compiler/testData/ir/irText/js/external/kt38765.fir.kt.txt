@@ -1,13 +1,25 @@
 package events
 
+// CHECK:
+//   Mangled name: events.internal
+//   Public signature: events/internal|null[0]
 open external class internal {
+  // CHECK:
+  //   Mangled name: events.internal#<init>(){}
+  //   Public signature: events/internal.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: events.internal.EventEmitterP
+  //   Public signature: events/internal.EventEmitterP|null[0]
   open class EventEmitterP : internal {
+    // CHECK:
+    //   Mangled name: events.internal.EventEmitterP#<init>(){}
+    //   Public signature: events/internal.EventEmitterP.<init>|-5645683436151566731[0]
     constructor() /* primary */ {
       super/*internal*/()
       /* <init>() */
@@ -16,7 +28,13 @@ open external class internal {
 
   }
 
+  // CHECK:
+  //   Mangled name: events.internal.EventEmitterS
+  //   Public signature: events/internal.EventEmitterS|null[0]
   open class EventEmitterS : internal {
+    // CHECK:
+    //   Mangled name: events.internal.EventEmitterS#<init>(kotlin.Any){}
+    //   Public signature: events/internal.EventEmitterS.<init>|4518179880532599055[0]
     constructor(a: Any) {
       super/*internal*/()
       /* <init>() */
@@ -25,7 +43,13 @@ open external class internal {
 
   }
 
+  // CHECK:
+  //   Mangled name: events.internal.NestedExternalObject
+  //   Public signature: events/internal.NestedExternalObject|null[0]
   object NestedExternalObject : internal {
+    // CHECK:
+    //   Mangled name: events.internal.NestedExternalObject#<init>(){}
+    //   Public signature: events/internal.NestedExternalObject.<init>|-5645683436151566731[0]
     private constructor() /* primary */ {
       super/*internal*/()
       /* <init>() */
@@ -34,28 +58,62 @@ open external class internal {
 
   }
 
+  // CHECK:
+  //   Mangled name: events.internal.NestedExternalEnum
+  //   Public signature: events/internal.NestedExternalEnum|null[0]
   enum class NestedExternalEnum : Enum<NestedExternalEnum> {
+    // CHECK:
+    //   Mangled name: events.internal.NestedExternalEnum#<init>(){}
+    //   Public signature: events/internal.NestedExternalEnum.<init>|-5645683436151566731[0]
     private constructor() /* primary */ {
       super/*Enum*/<NestedExternalEnum>()
       /* <init>() */
 
     }
 
+    // CHECK:
+    //   Mangled name: events.internal.NestedExternalEnum.A
+    //   Public signature: events/internal.NestedExternalEnum.A|null[0]
     A = NestedExternalEnum()
 
+    // CHECK:
+    //   Mangled name: events.internal.NestedExternalEnum.B
+    //   Public signature: events/internal.NestedExternalEnum.B|null[0]
     B = NestedExternalEnum()
 
+    // CHECK:
+    //   Mangled name computed from Ir:         events.internal.NestedExternalEnum#values#static(){}
+    //   Mangled name computed from Descriptor: events.internal.NestedExternalEnum#values#static(){}
+    //   Mangled name computed from Fir:        events.internal.NestedExternalEnum#values#static(){}kotlin.Array<events.internal.NestedExternalEnum>
+    //   Public signature: events/internal.NestedExternalEnum.values|-8687891420267122599[0]
     fun values(): Array<NestedExternalEnum> /* Synthetic body for ENUM_VALUES */
 
+    // CHECK:
+    //   Mangled name computed from Ir:         events.internal.NestedExternalEnum#valueOf#static(kotlin.String){}
+    //   Mangled name computed from Descriptor: events.internal.NestedExternalEnum#valueOf#static(kotlin.String){}
+    //   Mangled name computed from Fir:        events.internal.NestedExternalEnum#valueOf#static(kotlin.String){}events.internal.NestedExternalEnum
+    //   Public signature: events/internal.NestedExternalEnum.valueOf|-2890383149952592362[0]
     fun valueOf(value: String): NestedExternalEnum /* Synthetic body for ENUM_VALUEOF */
 
+    // CHECK:
+    //   Mangled name: events.internal.NestedExternalEnum#static{}entries
+    //   Public signature: events/internal.NestedExternalEnum.entries|-5134227801081826149[0]
     val entries: EnumEntries<NestedExternalEnum>
+      // CHECK:
+      //   Mangled name computed from Ir:         events.internal.NestedExternalEnum#<get-entries>#static(){}
+      //   Mangled name computed from Descriptor: events.internal.NestedExternalEnum#<get-entries>#static(){}
+      //   Mangled name computed from Fir:        #<get-entries>#static(){}kotlin.enums.EnumEntries<events.internal.NestedExternalEnum>
+      //   Public signature: events/internal.NestedExternalEnum.entries.<get-entries>|-4750845092359099588[0]
       get(): EnumEntries<NestedExternalEnum> /* Synthetic body for ENUM_ENTRIES */
 
   }
 
+  // CHECK:
+  //   Mangled name: events.internal.NestedExternalInterface
+  //   Public signature: events/internal.NestedExternalInterface|null[0]
   interface NestedExternalInterface {
 
   }
 
 }
+

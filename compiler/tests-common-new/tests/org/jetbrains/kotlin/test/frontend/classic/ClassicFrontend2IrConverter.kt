@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.test.frontend.classic
 
 import org.jetbrains.kotlin.KtPsiSourceFile
+import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.js.klib.TopDownAnalyzerFacadeForJSIR
@@ -16,8 +17,13 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.ir.backend.js.*
+import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
+import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
+import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmDescriptorMangler
+import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.js.config.ErrorTolerancePolicy
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.test.TargetBackend
@@ -39,7 +45,7 @@ class ClassicFrontend2IrConverter(
     BackendKinds.IrBackend
 ) {
     override val additionalServices: List<ServiceRegistrationData>
-        get() = listOf(service(::JsLibraryProvider))
+        get() = listOf(service(::JsLibraryProvider), service(::ManglerProvider))
 
     override fun transform(module: TestModule, inputArtifact: ClassicFrontendOutputArtifact): IrBackendInput {
         return when (module.targetBackend) {
@@ -66,6 +72,16 @@ class ClassicFrontend2IrConverter(
 
         val conversionResult =
             codegenFactory.convertToIr(CodegenFactory.IrConversionInput.fromGenerationStateAndFiles(state, psiFiles.values))
+
+        testServices.manglerProvider.setManglersForModule(
+            module,
+            ManglerProvider.Manglers(
+                (conversionResult.symbolTable.signaturer as? IdSignatureDescriptor)?.mangler ?: JvmDescriptorMangler(null),
+                JvmIrMangler,
+                null
+            )
+        )
+
         return IrBackendInput.JvmIrBackendInput(
             state,
             codegenFactory,
@@ -98,6 +114,13 @@ class ClassicFrontend2IrConverter(
         ) {
             testServices.jsLibraryProvider.getDescriptorByCompiledLibrary(it)
         }
+
+        val descriptorMangler = ((pluginContext.symbolTable as? SymbolTable)?.signaturer as? IdSignatureDescriptor)?.mangler
+
+        testServices.manglerProvider.setManglersForModule(
+            module,
+            ManglerProvider.Manglers(descriptorMangler ?: JsManglerDesc, JsManglerIr, null)
+        )
 
         val errorPolicy = configuration.get(JSConfigurationKeys.ERROR_TOLERANCE_POLICY) ?: ErrorTolerancePolicy.DEFAULT
         val hasErrors = TopDownAnalyzerFacadeForJSIR.checkForErrors(sourceFiles, analysisResult.bindingContext, errorPolicy)

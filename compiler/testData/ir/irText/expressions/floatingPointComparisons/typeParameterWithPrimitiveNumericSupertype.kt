@@ -1,4 +1,8 @@
 // FIR_IDENTICAL
+
+// IGNORE_BACKEND_K2: JS_IR
+// IGNORE_BACKEND_K2: JS_IR_ES6
+
 fun <T> test0(x: Any, y: T) = x is Int && x == y
 fun <T : Float> test1(x: Any, y: T) = x is Float && x == y
 fun <T : Double> test2(x: Any, y: T) = x is Float && x == y

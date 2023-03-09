@@ -27,3 +27,4 @@ fun J.test4(a: Function0<Unit>, b: Function0<Unit>, flag: Boolean) {
     else -> b
   } /*-> @FlexibleNullability Runnable? */)
 }
+

@@ -1,5 +1,9 @@
 // FIR_IDENTICAL
 // TARGET_BACKEND: JVM
+
+// NO_SIGNATURE_DUMP
+// ^KT-57428
+
 // FILE: stringVsTConstrained.kt
 fun <T> useTConstrained(xs: Array<T>, fn: () -> T) = fn()
 

@@ -1,43 +1,97 @@
+// CHECK:
+//   Mangled name: X
+//   Public signature: /X|null[0]
 abstract enum class X : Enum<X> {
+  // CHECK:
+  //   Mangled name: X#<init>(){}
+  //   Public signature: /X.<init>|-5645683436151566731[0]
   private constructor() /* primary */ {
     super/*Enum*/<X>()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: X.B
+  //   Public signature: /X.B|null[0]
+
   B = B()
+  // CHECK:
+  //   Mangled name: X.B
+  //   Public signature: /X.B.<EEC>|null[0]
   private enum entry class B : X {
+    // CHECK:
+    //   Mangled name: X.B#<init>(){}
+    //   Public signature: /X.B.<EEC>.<init>|-5645683436151566731[0]
     private constructor() /* primary */ {
       super/*X*/() /*~> Unit */
       /* <init>() */
 
     }
 
+    // CHECK:
+    //   Mangled name: X.B{}value2
+    //   Public signature: /X.B.<EEC>.value2|-1664181645671419060[0]
     val value2: String
       field = "OK"
+      // CHECK:
+      //   Mangled name: X.B#<get-value2>(){}kotlin.String
+      //   Public signature: /X.B.<EEC>.value2.<get-value2>|2390168402748813003[0]
       get
 
+    // CHECK:
+    //   Mangled name: X.B{}value
+    //   Public signature: /X.B.<EEC>.value|1987073854177347439[0]
     override val value: Function0<String>
-      field = local fun <anonymous>(): String {
-        return X.B.<get-value2>()
-      }
+      field = 
+        // CHECK:
+        //   Mangled name (compatible mode: false): X.B{}value#<anonymous>#static(){}kotlin.String
+        //   Mangled name (compatible mode: true):  X.B.value#<anonymous>#static(){}kotlin.String
+        local fun <anonymous>(): String {
+          return X.B.<get-value2>()
+        }
 
+      // CHECK:
+      //   Mangled name: X.B#<get-value>(){}kotlin.Function0<kotlin.String>
+      //   Public signature: /X.B.<EEC>.value.<get-value>|-2160558915408168462[0]
       override get
 
   }
 
+  // CHECK:
+  //   Mangled name: X{}value
+  //   Public signature: /X.value|1987073854177347439[0]
   abstract val value: Function0<String>
+    // CHECK:
+    //   Mangled name: X#<get-value>(){}kotlin.Function0<kotlin.String>
+    //   Public signature: /X.value.<get-value>|-2160558915408168462[0]
     abstract get
 
+  // CHECK:
+  //   Mangled name: X#values#static(){}kotlin.Array<X>
+  //   Public signature: /X.values|-7109739533511471403[0]
   fun values(): Array<X> /* Synthetic body for ENUM_VALUES */
 
+  // CHECK:
+  //   Mangled name: X#valueOf#static(kotlin.String){}X
+  //   Public signature: /X.valueOf|5795127078210310399[0]
   fun valueOf(value: String): X /* Synthetic body for ENUM_VALUEOF */
 
+  // CHECK:
+  //   Mangled name: X#static{}entries
+  //   Public signature: /X.entries|-5134227801081826149[0]
   val entries: EnumEntries<X>
+    // CHECK:
+    //   Mangled name: X#<get-entries>#static(){}kotlin.enums.EnumEntries<X>
+    //   Public signature: /X.entries.<get-entries>|6681560497291336349[0]
     get(): EnumEntries<X> /* Synthetic body for ENUM_ENTRIES */
 
 }
 
+// CHECK:
+//   Mangled name: #box(){}kotlin.String
+//   Public signature: /box|-9347091776561469[0]
 fun box(): String {
   return X.B.<get-value>().invoke()
 }
+

@@ -1,3 +1,6 @@
+// CHECK:
+//   Mangled name: #test(J){}
+//   Public signature: /test|-8477572416399964095[0]
 fun test(j: J) {
   j.getFoo() /*~> Unit */
   j.setFoo(x = 1)
@@ -9,3 +12,4 @@ fun test(j: J) {
   } /*~> Unit */
   j.setFoo(x = j.getFoo().plus(other = 1))
 }
+

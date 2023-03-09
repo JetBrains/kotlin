@@ -1,5 +1,8 @@
 // TARGET_BACKEND: JS_IR
 
+// NO_SIGNATURE_DUMP
+// ^ KT-57566
+
 // FIR_IDENTICAL
 fun testBinaryPlus(d: dynamic) = d + 1
 fun testBinaryMinus(d: dynamic) = d - 1

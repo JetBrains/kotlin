@@ -1,18 +1,45 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
 open class A {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: A#f(){}kotlin.Int
+  //   Public signature: /A.f|-2854658745315648608[0]
+  // CHECK JS_IR:
+  //   Mangled name: A#f(){}
+  //   Public signature: /A.f|5316533450599009716[0]
   fun f(): Int {
     return 1
   }
 
+  // CHECK:
+  //   Mangled name: A{}aVal
+  //   Public signature: /A.aVal|-4026160909590410018[0]
   val aVal: Int
     field = 42
+    // CHECK JVM_IR:
+    //   Mangled name: A#<get-aVal>(){}kotlin.Int
+    //   Public signature: /A.aVal.<get-aVal>|-1703021672602726383[0]
+    // CHECK JS_IR:
+    //   Mangled name: A#<get-aVal>(){}
+    //   Public signature: /A.aVal.<get-aVal>|1133261762939420636[0]
     get
 
+  // CHECK JVM_IR:
+  //   Mangled name: A#testA1(kotlin.Any){}kotlin.Int?
+  //   Public signature: /A.testA1|2875421029417429294[0]
+  // CHECK JS_IR:
+  //   Mangled name: A#testA1(kotlin.Any){}
+  //   Public signature: /A.testA1|8315841731790135220[0]
   fun testA1(x: Any): Int? {
     return when {
       x is B -> x /*as B */.f()
@@ -20,6 +47,12 @@ open class A {
     }
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: A#testA2(kotlin.Any){}kotlin.Int?
+  //   Public signature: /A.testA2|-4968448057047160096[0]
+  // CHECK JS_IR:
+  //   Mangled name: A#testA2(kotlin.Any){}
+  //   Public signature: /A.testA2|7321153466955297562[0]
   fun testA2(x: Any): Int? {
     return when {
       x is B -> x /*as B */.<get-aVal>()
@@ -29,13 +62,25 @@ open class A {
 
 }
 
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[0]
 class B : A {
+  // CHECK:
+  //   Mangled name: B#<init>(){}
+  //   Public signature: /B.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*A*/()
     /* <init>() */
 
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: B#testB1(kotlin.Any){}kotlin.Int?
+  //   Public signature: /B.testB1|3289472249587789251[0]
+  // CHECK JS_IR:
+  //   Mangled name: B#testB1(kotlin.Any){}
+  //   Public signature: /B.testB1|-8016237152028222856[0]
   fun testB1(x: Any): Int? {
     return when {
       x is B -> x /*as B */.f()
@@ -43,6 +88,12 @@ class B : A {
     }
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: B#testB2(kotlin.Any){}kotlin.Int?
+  //   Public signature: /B.testB2|-6423506669184631110[0]
+  // CHECK JS_IR:
+  //   Mangled name: B#testB2(kotlin.Any){}
+  //   Public signature: /B.testB2|-6848848121088735860[0]
   fun testB2(x: Any): Int? {
     return when {
       x is B -> x /*as B */.<get-aVal>()
@@ -52,30 +103,60 @@ class B : A {
 
 }
 
+// CHECK:
+//   Mangled name: GA
+//   Public signature: /GA|null[0]
 open class GA<T : Any?> {
+  // CHECK:
+  //   Mangled name: GA#<init>(){}
+  //   Public signature: /GA.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: GA#f(){}kotlin.Int
+  //   Public signature: /GA.f|-2854658745315648608[0]
+  // CHECK JS_IR:
+  //   Mangled name: GA#f(){}
+  //   Public signature: /GA.f|5316533450599009716[0]
   fun f(): Int {
     return 1
   }
 
+  // CHECK:
+  //   Mangled name: GA{}aVal
+  //   Public signature: /GA.aVal|-4026160909590410018[0]
   val aVal: Int
     field = 42
+    // CHECK JVM_IR:
+    //   Mangled name: GA#<get-aVal>(){}kotlin.Int
+    //   Public signature: /GA.aVal.<get-aVal>|-1703021672602726383[0]
+    // CHECK JS_IR:
+    //   Mangled name: GA#<get-aVal>(){}
+    //   Public signature: /GA.aVal.<get-aVal>|1133261762939420636[0]
     get
 
 }
 
+// CHECK:
+//   Mangled name: GB
+//   Public signature: /GB|null[0]
 class GB<T : Any?, S : Any?> : GA<T> {
+  // CHECK:
+  //   Mangled name: GB#<init>(){}
+  //   Public signature: /GB.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*GA*/<T>()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: GB#testGB1(kotlin.Any){}
+  //   Public signature: /GB.testGB1|-7751162722819007112[0]
   fun testGB1(a: Any) {
     a as GB<Int, String> /*~> Unit */
     a /*as GB<Int, String> */.f() /*~> Unit */
@@ -83,3 +164,4 @@ class GB<T : Any?, S : Any?> : GA<T> {
   }
 
 }
+

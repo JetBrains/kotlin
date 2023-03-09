@@ -1,6 +1,17 @@
+// CHECK:
+//   Mangled name: #box(){}kotlin.String
+//   Public signature: /box|-9347091776561469[0]
 fun box(): String {
   val impl: <no name provided> = { // BLOCK
+    // CHECK:
+    //   Mangled name computed from Ir:         #box(){}kotlin.String.<no name provided>
+    //   Mangled name computed from Descriptor: #box(){}kotlin.String.<no name provided>
+    //   Mangled name computed from Fir:        <anonymous>
     local class <no name provided> : I {
+      // CHECK:
+      //   Mangled name computed from Ir:         #box(){}kotlin.String.<no name provided>#<init>(){}
+      //   Mangled name computed from Descriptor: #box(){}kotlin.String.<no name provided>#<init>(){}
+      //   Mangled name computed from Fir:        #<init>(){}
       constructor() /* primary */ {
         super/*Any*/()
         /* <init>() */
@@ -20,7 +31,13 @@ fun box(): String {
   return "ERR: " + size
 }
 
+// CHECK:
+//   Mangled name: Ann
+//   Public signature: /Ann|null[0]
 open annotation class Ann : Annotation {
+  // CHECK:
+  //   Mangled name: Ann#<init>(){}
+  //   Public signature: /Ann.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -29,8 +46,15 @@ open annotation class Ann : Annotation {
 
 }
 
+// CHECK:
+//   Mangled name: I
+//   Public signature: /I|null[0]
 interface I {
+  // CHECK:
+  //   Mangled name: I#m(kotlin.String){}
+  //   Public signature: /I.m|934693771674457301[0]
   fun m(@Ann s: String) {
   }
 
 }
+

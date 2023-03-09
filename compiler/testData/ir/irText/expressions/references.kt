@@ -1,4 +1,8 @@
 // FIR_IDENTICAL
+
+// IGNORE_BACKEND_K2: JS_IR
+// IGNORE_BACKEND_K2: JS_IR_ES6
+
 val ok = "OK"
 val ok2 = ok
 val ok3: String get() = "OK"

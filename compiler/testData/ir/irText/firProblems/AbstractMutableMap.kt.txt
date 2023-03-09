@@ -1,17 +1,33 @@
+// CHECK:
+//   Mangled name: MyMap
+//   Public signature: /MyMap|null[0]
 class MyMap<K : Any, V : Any> : AbstractMutableMap<K, V> {
+  // CHECK:
+  //   Mangled name: MyMap#<init>(){}
+  //   Public signature: /MyMap.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*AbstractMutableMap*/<K, V>()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: MyMap#put(1:0;1:1){}1:1?
+  //   Public signature: /MyMap.put|8231545920718079981[0]
   override fun put(key: K, value: V): V? {
     return null
   }
 
+  // CHECK:
+  //   Mangled name: MyMap{}entries
+  //   Public signature: /MyMap.entries|-586096469347622282[0]
   override val entries: MutableSet<MutableEntry<K, V>>
+    // CHECK:
+    //   Mangled name: MyMap#<get-entries>(){}kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<1:0,1:1>>
+    //   Public signature: /MyMap.entries.<get-entries>|-6853624087387317257[0]
     override get(): MutableSet<MutableEntry<K, V>> {
       return mutableSetOf<MutableEntry<K, V>>()
     }
 
 }
+

@@ -1,38 +1,71 @@
+// CHECK:
+//   Mangled name: Test1
+//   Public signature: /Test1|null[0]
 class Test1 {
+  // CHECK:
+  //   Mangled name: Test1#<init>(){}
+  //   Public signature: /Test1.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name computed from Ir:         Test1.<ANI>
+  //   Mangled name computed from Descriptor: Test1
   init {
     println()
   }
 
 }
 
+// CHECK:
+//   Mangled name: Test2
+//   Public signature: /Test2|null[0]
 class Test2 {
+  // CHECK:
+  //   Mangled name: Test2#<init>(kotlin.Int){}
+  //   Public signature: /Test2.<init>|-5182794243525578284[0]
   constructor(x: Int) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: Test2{}x
+  //   Public signature: /Test2.x|-8060530855978347579[0]
   val x: Int
     field = x
+    // CHECK:
+    //   Mangled name: Test2#<get-x>(){}kotlin.Int
+    //   Public signature: /Test2.x.<get-x>|4966956098150895696[0]
     get
 
+  // CHECK:
+  //   Mangled name computed from Ir:         Test2.<ANI>
+  //   Mangled name computed from Descriptor: Test2
   init {
     println()
   }
 
 }
 
+// CHECK:
+//   Mangled name: Test3
+//   Public signature: /Test3|null[0]
 class Test3 {
+  // CHECK:
+  //   Mangled name computed from Ir:         Test3.<ANI>
+  //   Mangled name computed from Descriptor: Test3
   init {
     println()
   }
 
+  // CHECK:
+  //   Mangled name: Test3#<init>(){}
+  //   Public signature: /Test3.<init>|-5645683436151566731[0]
   constructor() {
     super/*Any*/()
     /* <init>() */
@@ -41,41 +74,71 @@ class Test3 {
 
 }
 
+// CHECK:
+//   Mangled name: Test4
+//   Public signature: /Test4|null[0]
 class Test4 {
+  // CHECK:
+  //   Mangled name computed from Ir:         Test4.<ANI>$0
+  //   Mangled name computed from Descriptor: Test4
   init {
     println(message = "1")
   }
 
+  // CHECK:
+  //   Mangled name: Test4#<init>(){}
+  //   Public signature: /Test4.<init>|-5645683436151566731[0]
   constructor() {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name computed from Ir:         Test4.<ANI>$1
+  //   Mangled name computed from Descriptor: Test4
   init {
     println(message = "2")
   }
 
 }
 
+// CHECK:
+//   Mangled name: Test5
+//   Public signature: /Test5|null[0]
 class Test5 {
+  // CHECK:
+  //   Mangled name: Test5#<init>(){}
+  //   Public signature: /Test5.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name computed from Ir:         Test5.<ANI>
+  //   Mangled name computed from Descriptor: Test5
   init {
     println(message = "1")
   }
 
+  // CHECK:
+  //   Mangled name: Test5.TestInner
+  //   Public signature: /Test5.TestInner|null[0]
   inner class TestInner {
+    // CHECK:
+    //   Mangled name: Test5.TestInner#<init>(){}
+    //   Public signature: /Test5.TestInner.<init>|-5645683436151566731[0]
     constructor() /* primary */ {
       super/*Any*/()
       /* <init>() */
 
     }
 
+    // CHECK:
+    //   Mangled name computed from Ir:         Test5.TestInner.<ANI>
+    //   Mangled name computed from Descriptor: Test5.TestInner
     init {
       println(message = "2")
     }
@@ -83,3 +146,4 @@ class Test5 {
   }
 
 }
+

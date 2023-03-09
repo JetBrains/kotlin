@@ -1,34 +1,67 @@
+// CHECK:
+//   Mangled name: Pair
+//   Public signature: /Pair|null[0]
 data class Pair<A : Any?, B : Any?> {
+  // CHECK:
+  //   Mangled name: Pair#<init>(1:0;1:1){}
+  //   Public signature: /Pair.<init>|3086114026882374588[0]
   constructor(first: A, second: B) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: Pair{}first
+  //   Public signature: /Pair.first|1497393077339299626[0]
   val first: A
     field = first
+    // CHECK:
+    //   Mangled name: Pair#<get-first>(){}1:0
+    //   Public signature: /Pair.first.<get-first>|-2355525345180386541[0]
     get
 
+  // CHECK:
+  //   Mangled name: Pair{}second
+  //   Public signature: /Pair.second|8934636033843101515[0]
   val second: B
     field = second
+    // CHECK:
+    //   Mangled name: Pair#<get-second>(){}1:1
+    //   Public signature: /Pair.second.<get-second>|-7108495346814383827[0]
     get
 
+  // CHECK:
+  //   Mangled name: Pair#component1(){}1:0
+  //   Public signature: /Pair.component1|2393470133763651536[0]
   operator fun component1(): A {
     return <this>.#first
   }
 
+  // CHECK:
+  //   Mangled name: Pair#component2(){}1:1
+  //   Public signature: /Pair.component2|319033347667924570[0]
   operator fun component2(): B {
     return <this>.#second
   }
 
+  // CHECK:
+  //   Mangled name: Pair#copy(1:0;1:1){}Pair<1:0,1:1>
+  //   Public signature: /Pair.copy|7298985996422673194[0]
   fun copy(first: A = <this>.#first, second: B = <this>.#second): Pair<A, B> {
     return Pair<A, B>(first = first, second = second)
   }
 
+  // CHECK:
+  //   Mangled name: Pair#toString(){}kotlin.String
+  //   Public signature: /Pair.toString|6958853723545266802[0]
   override fun toString(): String {
     return "Pair(" + "first=" + <this>.#first + ", " + "second=" + <this>.#second + ")"
   }
 
+  // CHECK:
+  //   Mangled name: Pair#hashCode(){}kotlin.Int
+  //   Public signature: /Pair.hashCode|-8048879360829830756[0]
   override fun hashCode(): Int {
     var result: Int = when {
       EQEQ(arg0 = <this>.#first, arg1 = null) -> 0
@@ -41,6 +74,9 @@ data class Pair<A : Any?, B : Any?> {
     return result
   }
 
+  // CHECK:
+  //   Mangled name: Pair#equals(kotlin.Any?){}kotlin.Boolean
+  //   Public signature: /Pair.equals|722809408929142791[0]
   override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
@@ -60,11 +96,22 @@ data class Pair<A : Any?, B : Any?> {
 
 }
 
+// CHECK:
+//   Mangled name computed from Ir:         #compareTo@0:0(java.util.Comparator<0:0>;0:0){0§<kotlin.Any?>}kotlin.Int
+//   Mangled name computed from Descriptor: #compareTo!java.util.Comparator<0:0>@0:0(0:0){0§<kotlin.Any?>}kotlin.Int
+//   Public signature: /compareTo|-4091974102091923679[0]
 infix operator fun <T : Any?> T.compareTo($context_receiver_0: Comparator<T>, other: T): Int {
   return $context_receiver_0.compare(p0 = <this>, p1 = other)
 }
 
+// CHECK:
+//   Mangled name: @Pair<0:0,0:0>{0§<kotlin.Any?>}min
+//   Public signature: /min|6885845668930107919[0]
 val <T : Any?> Pair<T, T>.min: T
+  // CHECK:
+  //   Mangled name computed from Ir:         #<get-min>@Pair<0:0,0:0>(java.util.Comparator<0:0>){0§<kotlin.Any?>}0:0
+  //   Mangled name computed from Descriptor: #<get-min>!java.util.Comparator<0:0>@Pair<0:0,0:0>(){0§<kotlin.Any?>}0:0
+  //   Public signature: /min.<get-min>|6404877126791863503[0]
   get($context_receiver_0: Comparator<T>): T {
     return when {
       less(arg0 = <this>.<get-first>().compareTo<T>($context_receiver_0 = $context_receiver_0, other = <this>.<get-second>()), arg1 = 0) -> <this>.<get-first>()
@@ -72,19 +119,29 @@ val <T : Any?> Pair<T, T>.min: T
     }
   }
 
+// CHECK:
+//   Mangled name: #box(){}kotlin.String
+//   Public signature: /box|-9347091776561469[0]
 fun box(): String {
-  val comparator: Comparator<String> = local fun <anonymous>(a: @FlexibleNullability String?, b: @FlexibleNullability String?): Int {
-    return when {
-      when {
-        EQEQ(arg0 = a, arg1 = null) -> true
-        else -> EQEQ(arg0 = b, arg1 = null)
-      } -> 0
-      else -> a /*!! String */.<get-length>().compareTo(other = b /*!! String */.<get-length>())
+  val comparator: Comparator<String> = 
+    // CHECK:
+    //   Mangled name: #box(){}kotlin.String#<anonymous>#static(kotlin.String?;kotlin.String?){}kotlin.Int
+    local fun <anonymous>(a: @FlexibleNullability String?, b: @FlexibleNullability String?): Int {
+      return when {
+        when {
+          EQEQ(arg0 = a, arg1 = null) -> true
+          else -> EQEQ(arg0 = b, arg1 = null)
+        } -> 0
+        else -> a /*!! String */.<get-length>().compareTo(other = b /*!! String */.<get-length>())
+      }
     }
-  }
  /*-> Comparator<String> */
-  return with<Comparator<String>, String>(receiver = comparator, block = local fun Comparator<String>.<anonymous>(): String {
-    return Pair<String, String>(first = "OK", second = "fail").<get-min><String>($context_receiver_0 = $this$with)
-  }
+  return with<Comparator<String>, String>(receiver = comparator, block = 
+    // CHECK:
+    //   Mangled name: #box(){}kotlin.String#<anonymous>#static@java.util.Comparator<kotlin.String>(){}kotlin.String
+    local fun Comparator<String>.<anonymous>(): String {
+      return Pair<String, String>(first = "OK", second = "fail").<get-min><String>($context_receiver_0 = $this$with)
+    }
 )
 }
+

@@ -1,9 +1,17 @@
+// CHECK:
+//   Mangled name: #test1(){}
+//   Public signature: /test1|4297044443957252634[0]
 fun test1() {
   val x: Int
-    val x$delegate: Lazy<Int> = lazy<Int>(initializer = local fun <anonymous>(): Int {
-      return 42
-    }
+    val x$delegate: Lazy<Int> = lazy<Int>(initializer = 
+      // CHECK:
+      //   Mangled name: #test1(){}#<anonymous>#static(){}kotlin.Int
+      local fun <anonymous>(): Int {
+        return 42
+      }
 )
+    // CHECK:
+    //   Mangled name: #test1(){}#<get-x>#static(){}kotlin.Int
     local get(): Int {
       return x$delegate.getValue<Int>(thisRef = null, property = ::x)
     }
@@ -11,12 +19,19 @@ fun test1() {
   println(message = <get-x>())
 }
 
+// CHECK:
+//   Mangled name: #test2(){}
+//   Public signature: /test2|4279114864133353152[0]
 fun test2() {
   var x: Int
     val x$delegate: HashMap<String, Int> = hashMapOf<String, Int>()
+    // CHECK:
+    //   Mangled name: #test2(){}#<get-x>#static(){}kotlin.Int
     local get(): Int {
       return x$delegate.getValue<Int, Int>(thisRef = null, property = ::x)
     }
+    // CHECK:
+    //   Mangled name: #test2(){}#<set-x>#static(kotlin.Int){}
     local set(value: Int) {
       return x$delegate.setValue<Int>(thisRef = null, property = ::x, value = value)
     }
@@ -29,3 +44,4 @@ fun test2() {
   } /*~> Unit */
   <set-x>(value = <get-x>().plus(other = 1))
 }
+

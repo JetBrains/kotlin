@@ -1,4 +1,15 @@
+// CHECK:
+//   Mangled name: MyLong
+//   Public signature: /MyLong|null[0]
 typealias MyLong = Long
+// CHECK JVM_IR:
+//   Mangled name: #foo(kotlin.Long){}kotlin.String
+//   Public signature: /foo|2242291574308227467[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #foo(kotlin.Long){}
+//   Mangled name computed from Descriptor: #foo(kotlin.Long){}
+//   Mangled name computed from Fir:        #foo(kotlin.Long){}kotlin.String
+//   Public signature: /foo|2242291574308227467[0]
 fun foo(l: Long): String {
   return when {
     EQEQ(arg0 = l, arg1 = 0L) -> "OK"
@@ -6,6 +17,15 @@ fun foo(l: Long): String {
   }
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #box(){}kotlin.String
+//   Public signature: /box|-9347091776561469[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #box(){}
+//   Mangled name computed from Descriptor: #box(){}
+//   Mangled name computed from Fir:        #box(){}kotlin.String
+//   Public signature: /box|-9347091776561469[0]
 fun box(): String {
   return foo(l = 0L)
 }
+

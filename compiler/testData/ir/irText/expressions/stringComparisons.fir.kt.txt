@@ -1,15 +1,48 @@
+// CHECK JVM_IR:
+//   Mangled name: #test1(kotlin.String;kotlin.String){}kotlin.Boolean
+//   Public signature: /test1|6790785447655035499[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #test1(kotlin.String;kotlin.String){}
+//   Mangled name computed from Descriptor: #test1(kotlin.String;kotlin.String){}
+//   Mangled name computed from Fir:        #test1(kotlin.String;kotlin.String){}kotlin.Boolean
+//   Public signature: /test1|6790785447655035499[0]
 fun test1(a: String, b: String): Boolean {
   return greater(arg0 = a.compareTo(other = b), arg1 = 0)
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #test2(kotlin.String;kotlin.String){}kotlin.Boolean
+//   Public signature: /test2|7858239913425663674[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #test2(kotlin.String;kotlin.String){}
+//   Mangled name computed from Descriptor: #test2(kotlin.String;kotlin.String){}
+//   Mangled name computed from Fir:        #test2(kotlin.String;kotlin.String){}kotlin.Boolean
+//   Public signature: /test2|7858239913425663674[0]
 fun test2(a: String, b: String): Boolean {
   return less(arg0 = a.compareTo(other = b), arg1 = 0)
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #test3(kotlin.String;kotlin.String){}kotlin.Boolean
+//   Public signature: /test3|-7031649260333243795[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #test3(kotlin.String;kotlin.String){}
+//   Mangled name computed from Descriptor: #test3(kotlin.String;kotlin.String){}
+//   Mangled name computed from Fir:        #test3(kotlin.String;kotlin.String){}kotlin.Boolean
+//   Public signature: /test3|-7031649260333243795[0]
 fun test3(a: String, b: String): Boolean {
   return greaterOrEqual(arg0 = a.compareTo(other = b), arg1 = 0)
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #test4(kotlin.String;kotlin.String){}kotlin.Boolean
+//   Public signature: /test4|6371007876260764309[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #test4(kotlin.String;kotlin.String){}
+//   Mangled name computed from Descriptor: #test4(kotlin.String;kotlin.String){}
+//   Mangled name computed from Fir:        #test4(kotlin.String;kotlin.String){}kotlin.Boolean
+//   Public signature: /test4|6371007876260764309[0]
 fun test4(a: String, b: String): Boolean {
   return lessOrEqual(arg0 = a.compareTo(other = b), arg1 = 0)
 }
+

@@ -1,5 +1,5 @@
-// IGNORE_BACKEND_K1: JS_IR
-// IGNORE_BACKEND_K1: JS_IR_ES6
+// IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JS_IR_ES6
 
 // MODULE: m1
 // FILE: genericClassInDifferentModule_m1.kt

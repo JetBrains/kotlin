@@ -1,0 +1,358 @@
+Module: libxxxxx
+FILE fqName:com.soywiz.korag.shader fileName:/l1.kt
+  CLASS CLASS name:Operand modality:OPEN visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:com.soywiz.korag.shader.Operand
+    CONSTRUCTOR visibility:public <> () returnType:com.soywiz.korag.shader.Operand [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Operand modality:OPEN visibility:public superTypes:[kotlin.Any]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS CLASS name:Variable modality:OPEN visibility:public superTypes:[com.soywiz.korag.shader.Operand]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:com.soywiz.korag.shader.Variable
+    CONSTRUCTOR visibility:public <> () returnType:com.soywiz.korag.shader.Variable [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in com.soywiz.korag.shader.Operand'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Variable modality:OPEN visibility:public superTypes:[com.soywiz.korag.shader.Operand]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in com.soywiz.korag.shader.Operand
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int [fake_override] declared in com.soywiz.korag.shader.Operand
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String [fake_override] declared in com.soywiz.korag.shader.Operand
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS CLASS name:Program modality:FINAL visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:com.soywiz.korag.shader.Program
+    CONSTRUCTOR visibility:public <> () returnType:com.soywiz.korag.shader.Program [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Program modality:FINAL visibility:public superTypes:[kotlin.Any]'
+    CLASS CLASS name:Stm modality:FINAL visibility:public superTypes:[kotlin.Any]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:com.soywiz.korag.shader.Program.Stm
+      CONSTRUCTOR visibility:public <> (o:com.soywiz.korag.shader.Operand) returnType:com.soywiz.korag.shader.Program.Stm [primary]
+        VALUE_PARAMETER name:o index:0 type:com.soywiz.korag.shader.Operand
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Stm modality:FINAL visibility:public superTypes:[kotlin.Any]'
+      PROPERTY name:o visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:o type:com.soywiz.korag.shader.Operand visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'o: com.soywiz.korag.shader.Operand declared in com.soywiz.korag.shader.Program.Stm.<init>' type=com.soywiz.korag.shader.Operand origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-o> visibility:public modality:FINAL <> ($this:com.soywiz.korag.shader.Program.Stm) returnType:com.soywiz.korag.shader.Operand
+          correspondingProperty: PROPERTY name:o visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:com.soywiz.korag.shader.Program.Stm
+          BLOCK_BODY
+            RETURN type=kotlin.Nothing from='public final fun <get-o> (): com.soywiz.korag.shader.Operand declared in com.soywiz.korag.shader.Program.Stm'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:o type:com.soywiz.korag.shader.Operand visibility:private [final]' type=com.soywiz.korag.shader.Operand origin=null
+                receiver: GET_VAR '<this>: com.soywiz.korag.shader.Program.Stm declared in com.soywiz.korag.shader.Program.Stm.<get-o>' type=com.soywiz.korag.shader.Program.Stm origin=null
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+        overridden:
+          public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+        VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+        overridden:
+          public open fun hashCode (): kotlin.Int declared in kotlin.Any
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+        overridden:
+          public open fun toString (): kotlin.String declared in kotlin.Any
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    CLASS CLASS name:Visitor modality:OPEN visibility:public superTypes:[kotlin.Any]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:com.soywiz.korag.shader.Program.Visitor<E of com.soywiz.korag.shader.Program.Visitor>
+      TYPE_PARAMETER name:E index:0 variance: superTypes:[kotlin.Any?] reified:false
+      CONSTRUCTOR visibility:public <> (default:E of com.soywiz.korag.shader.Program.Visitor) returnType:com.soywiz.korag.shader.Program.Visitor<E of com.soywiz.korag.shader.Program.Visitor> [primary]
+        VALUE_PARAMETER name:default index:0 type:E of com.soywiz.korag.shader.Program.Visitor
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Visitor modality:OPEN visibility:public superTypes:[kotlin.Any]'
+      PROPERTY name:default visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:default type:E of com.soywiz.korag.shader.Program.Visitor visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'default: E of com.soywiz.korag.shader.Program.Visitor declared in com.soywiz.korag.shader.Program.Visitor.<init>' type=E of com.soywiz.korag.shader.Program.Visitor origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-default> visibility:public modality:FINAL <> ($this:com.soywiz.korag.shader.Program.Visitor<E of com.soywiz.korag.shader.Program.Visitor>) returnType:E of com.soywiz.korag.shader.Program.Visitor
+          correspondingProperty: PROPERTY name:default visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:com.soywiz.korag.shader.Program.Visitor<E of com.soywiz.korag.shader.Program.Visitor>
+          BLOCK_BODY
+            RETURN type=kotlin.Nothing from='public final fun <get-default> (): E of com.soywiz.korag.shader.Program.Visitor declared in com.soywiz.korag.shader.Program.Visitor'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:default type:E of com.soywiz.korag.shader.Program.Visitor visibility:private [final]' type=E of com.soywiz.korag.shader.Program.Visitor origin=null
+                receiver: GET_VAR '<this>: com.soywiz.korag.shader.Program.Visitor<E of com.soywiz.korag.shader.Program.Visitor> declared in com.soywiz.korag.shader.Program.Visitor.<get-default>' type=com.soywiz.korag.shader.Program.Visitor<E of com.soywiz.korag.shader.Program.Visitor> origin=null
+      FUN name:visit visibility:public modality:OPEN <> ($this:com.soywiz.korag.shader.Program.Visitor<E of com.soywiz.korag.shader.Program.Visitor>, stm:com.soywiz.korag.shader.Program.Stm?) returnType:kotlin.Unit
+        $this: VALUE_PARAMETER name:<this> type:com.soywiz.korag.shader.Program.Visitor<E of com.soywiz.korag.shader.Program.Visitor>
+        VALUE_PARAMETER name:stm index:0 type:com.soywiz.korag.shader.Program.Stm?
+        BLOCK_BODY
+          WHEN type=kotlin.Unit origin=IF
+            BRANCH
+              if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=com.soywiz.korag.shader.Operand
+                BLOCK type=com.soywiz.korag.shader.Operand? origin=SAFE_CALL
+                  VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:com.soywiz.korag.shader.Program.Stm? [val]
+                    GET_VAR 'stm: com.soywiz.korag.shader.Program.Stm? declared in com.soywiz.korag.shader.Program.Visitor.visit' type=com.soywiz.korag.shader.Program.Stm? origin=null
+                  WHEN type=com.soywiz.korag.shader.Operand? origin=null
+                    BRANCH
+                      if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                        arg0: GET_VAR 'val tmp_0: com.soywiz.korag.shader.Program.Stm? [val] declared in com.soywiz.korag.shader.Program.Visitor.visit' type=com.soywiz.korag.shader.Program.Stm? origin=null
+                        arg1: CONST Null type=kotlin.Nothing? value=null
+                      then: CONST Null type=kotlin.Nothing? value=null
+                    BRANCH
+                      if: CONST Boolean type=kotlin.Boolean value=true
+                      then: CALL 'public final fun <get-o> (): com.soywiz.korag.shader.Operand declared in com.soywiz.korag.shader.Program.Stm' type=com.soywiz.korag.shader.Operand origin=GET_PROPERTY
+                        $this: GET_VAR 'val tmp_0: com.soywiz.korag.shader.Program.Stm? [val] declared in com.soywiz.korag.shader.Program.Visitor.visit' type=com.soywiz.korag.shader.Program.Stm? origin=null
+              then: TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                CALL 'public open fun visit (o: com.soywiz.korag.shader.Operand): E of com.soywiz.korag.shader.Program.Visitor declared in com.soywiz.korag.shader.Program.Visitor' type=E of com.soywiz.korag.shader.Program.Visitor origin=null
+                  $this: GET_VAR '<this>: com.soywiz.korag.shader.Program.Visitor<E of com.soywiz.korag.shader.Program.Visitor> declared in com.soywiz.korag.shader.Program.Visitor.visit' type=com.soywiz.korag.shader.Program.Visitor<E of com.soywiz.korag.shader.Program.Visitor> origin=null
+                  o: CALL 'public final fun <get-o> (): com.soywiz.korag.shader.Operand declared in com.soywiz.korag.shader.Program.Stm' type=com.soywiz.korag.shader.Operand origin=GET_PROPERTY
+                    $this: GET_VAR 'stm: com.soywiz.korag.shader.Program.Stm? declared in com.soywiz.korag.shader.Program.Visitor.visit' type=com.soywiz.korag.shader.Program.Stm? origin=null
+      FUN name:visit visibility:public modality:OPEN <> ($this:com.soywiz.korag.shader.Program.Visitor<E of com.soywiz.korag.shader.Program.Visitor>, o:com.soywiz.korag.shader.Operand) returnType:E of com.soywiz.korag.shader.Program.Visitor
+        $this: VALUE_PARAMETER name:<this> type:com.soywiz.korag.shader.Program.Visitor<E of com.soywiz.korag.shader.Program.Visitor>
+        VALUE_PARAMETER name:o index:0 type:com.soywiz.korag.shader.Operand
+        BLOCK_BODY
+          WHEN type=kotlin.Unit origin=IF
+            BRANCH
+              if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=com.soywiz.korag.shader.Uniform
+                GET_VAR 'o: com.soywiz.korag.shader.Operand declared in com.soywiz.korag.shader.Program.Visitor.visit' type=com.soywiz.korag.shader.Operand origin=null
+              then: TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                CALL 'public open fun visit (operand: com.soywiz.korag.shader.Uniform): E of com.soywiz.korag.shader.Program.Visitor declared in com.soywiz.korag.shader.Program.Visitor' type=E of com.soywiz.korag.shader.Program.Visitor origin=null
+                  $this: GET_VAR '<this>: com.soywiz.korag.shader.Program.Visitor<E of com.soywiz.korag.shader.Program.Visitor> declared in com.soywiz.korag.shader.Program.Visitor.visit' type=com.soywiz.korag.shader.Program.Visitor<E of com.soywiz.korag.shader.Program.Visitor> origin=null
+                  operand: TYPE_OP type=com.soywiz.korag.shader.Uniform origin=IMPLICIT_CAST typeOperand=com.soywiz.korag.shader.Uniform
+                    GET_VAR 'o: com.soywiz.korag.shader.Operand declared in com.soywiz.korag.shader.Program.Visitor.visit' type=com.soywiz.korag.shader.Operand origin=null
+          RETURN type=kotlin.Nothing from='public open fun visit (o: com.soywiz.korag.shader.Operand): E of com.soywiz.korag.shader.Program.Visitor declared in com.soywiz.korag.shader.Program.Visitor'
+            CALL 'public final fun <get-default> (): E of com.soywiz.korag.shader.Program.Visitor declared in com.soywiz.korag.shader.Program.Visitor' type=E of com.soywiz.korag.shader.Program.Visitor origin=GET_PROPERTY
+              $this: GET_VAR '<this>: com.soywiz.korag.shader.Program.Visitor<E of com.soywiz.korag.shader.Program.Visitor> declared in com.soywiz.korag.shader.Program.Visitor.visit' type=com.soywiz.korag.shader.Program.Visitor<E of com.soywiz.korag.shader.Program.Visitor> origin=null
+      FUN name:visit visibility:public modality:OPEN <> ($this:com.soywiz.korag.shader.Program.Visitor<E of com.soywiz.korag.shader.Program.Visitor>, operand:com.soywiz.korag.shader.Uniform) returnType:E of com.soywiz.korag.shader.Program.Visitor
+        $this: VALUE_PARAMETER name:<this> type:com.soywiz.korag.shader.Program.Visitor<E of com.soywiz.korag.shader.Program.Visitor>
+        VALUE_PARAMETER name:operand index:0 type:com.soywiz.korag.shader.Uniform
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public open fun visit (operand: com.soywiz.korag.shader.Uniform): E of com.soywiz.korag.shader.Program.Visitor declared in com.soywiz.korag.shader.Program.Visitor'
+            CALL 'public final fun <get-default> (): E of com.soywiz.korag.shader.Program.Visitor declared in com.soywiz.korag.shader.Program.Visitor' type=E of com.soywiz.korag.shader.Program.Visitor origin=GET_PROPERTY
+              $this: GET_VAR '<this>: com.soywiz.korag.shader.Program.Visitor<E of com.soywiz.korag.shader.Program.Visitor> declared in com.soywiz.korag.shader.Program.Visitor.visit' type=com.soywiz.korag.shader.Program.Visitor<E of com.soywiz.korag.shader.Program.Visitor> origin=null
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+        overridden:
+          public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+        VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+        overridden:
+          public open fun hashCode (): kotlin.Int declared in kotlin.Any
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+        overridden:
+          public open fun toString (): kotlin.String declared in kotlin.Any
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS CLASS name:Uniform modality:OPEN visibility:public superTypes:[com.soywiz.korag.shader.Variable]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:com.soywiz.korag.shader.Uniform
+    CONSTRUCTOR visibility:public <> (result:kotlin.String) returnType:com.soywiz.korag.shader.Uniform [primary]
+      VALUE_PARAMETER name:result index:0 type:kotlin.String
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in com.soywiz.korag.shader.Variable'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Uniform modality:OPEN visibility:public superTypes:[com.soywiz.korag.shader.Variable]'
+    PROPERTY name:result visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:result type:kotlin.String visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'result: kotlin.String declared in com.soywiz.korag.shader.Uniform.<init>' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-result> visibility:public modality:FINAL <> ($this:com.soywiz.korag.shader.Uniform) returnType:kotlin.String
+        correspondingProperty: PROPERTY name:result visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:com.soywiz.korag.shader.Uniform
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-result> (): kotlin.String declared in com.soywiz.korag.shader.Uniform'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:result type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
+              receiver: GET_VAR '<this>: com.soywiz.korag.shader.Uniform declared in com.soywiz.korag.shader.Uniform.<get-result>' type=com.soywiz.korag.shader.Uniform origin=null
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in com.soywiz.korag.shader.Variable
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int [fake_override] declared in com.soywiz.korag.shader.Variable
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String [fake_override] declared in com.soywiz.korag.shader.Variable
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS CLASS name:Shader modality:OPEN visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:com.soywiz.korag.shader.Shader
+    CONSTRUCTOR visibility:public <> (stm:com.soywiz.korag.shader.Program.Stm?) returnType:com.soywiz.korag.shader.Shader [primary]
+      VALUE_PARAMETER name:stm index:0 type:com.soywiz.korag.shader.Program.Stm?
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Shader modality:OPEN visibility:public superTypes:[kotlin.Any]'
+    PROPERTY name:stm visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:stm type:com.soywiz.korag.shader.Program.Stm? visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'stm: com.soywiz.korag.shader.Program.Stm? declared in com.soywiz.korag.shader.Shader.<init>' type=com.soywiz.korag.shader.Program.Stm? origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-stm> visibility:public modality:FINAL <> ($this:com.soywiz.korag.shader.Shader) returnType:com.soywiz.korag.shader.Program.Stm?
+        correspondingProperty: PROPERTY name:stm visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:com.soywiz.korag.shader.Shader
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-stm> (): com.soywiz.korag.shader.Program.Stm? declared in com.soywiz.korag.shader.Shader'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:stm type:com.soywiz.korag.shader.Program.Stm? visibility:private [final]' type=com.soywiz.korag.shader.Program.Stm? origin=null
+              receiver: GET_VAR '<this>: com.soywiz.korag.shader.Shader declared in com.soywiz.korag.shader.Shader.<get-stm>' type=com.soywiz.korag.shader.Shader origin=null
+    PROPERTY name:uniforms visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:uniforms type:kotlin.collections.Set<com.soywiz.korag.shader.Uniform> visibility:private [final]
+        EXPRESSION_BODY
+          CALL 'public final fun toSet <T> (): kotlin.collections.Set<T of kotlin.collections.CollectionsKt.toSet> declared in kotlin.collections.CollectionsKt' type=kotlin.collections.Set<com.soywiz.korag.shader.Uniform> origin=null
+            <T>: com.soywiz.korag.shader.Uniform
+            $receiver: CALL 'public final fun also <T> (block: kotlin.Function1<T of kotlin.StandardKt.also, kotlin.Unit>): T of kotlin.StandardKt.also [inline] declared in kotlin.StandardKt' type=java.util.LinkedHashSet<com.soywiz.korag.shader.Uniform>{ kotlin.collections.TypeAliasesKt.LinkedHashSet<com.soywiz.korag.shader.Uniform> } origin=null
+              <T>: java.util.LinkedHashSet<com.soywiz.korag.shader.Uniform>{ kotlin.collections.TypeAliasesKt.LinkedHashSet<com.soywiz.korag.shader.Uniform> }
+              $receiver: CONSTRUCTOR_CALL 'public constructor <init> () declared in java.util.LinkedHashSet' type=java.util.LinkedHashSet<com.soywiz.korag.shader.Uniform> origin=null
+                <class: E>: com.soywiz.korag.shader.Uniform
+              block: FUN_EXPR type=kotlin.Function1<java.util.LinkedHashSet<com.soywiz.korag.shader.Uniform>{ kotlin.collections.TypeAliasesKt.LinkedHashSet<com.soywiz.korag.shader.Uniform> }, kotlin.Unit> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (out:java.util.LinkedHashSet<com.soywiz.korag.shader.Uniform>{ kotlin.collections.TypeAliasesKt.LinkedHashSet<com.soywiz.korag.shader.Uniform> }) returnType:kotlin.Unit
+                  VALUE_PARAMETER name:out index:0 type:java.util.LinkedHashSet<com.soywiz.korag.shader.Uniform>{ kotlin.collections.TypeAliasesKt.LinkedHashSet<com.soywiz.korag.shader.Uniform> }
+                  BLOCK_BODY
+                    CALL 'public open fun visit (stm: com.soywiz.korag.shader.Program.Stm?): kotlin.Unit [fake_override] declared in com.soywiz.korag.shader.Shader.uniforms.<anonymous>.<no name provided>' type=kotlin.Unit origin=null
+                      $this: BLOCK type=com.soywiz.korag.shader.Shader.uniforms.<anonymous>.<no name provided> origin=OBJECT_LITERAL
+                        CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[com.soywiz.korag.shader.Program.Visitor<kotlin.Unit>]
+                          $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:com.soywiz.korag.shader.Shader.uniforms.<anonymous>.<no name provided>
+                          CONSTRUCTOR visibility:public <> () returnType:com.soywiz.korag.shader.Shader.uniforms.<anonymous>.<no name provided> [primary]
+                            BLOCK_BODY
+                              DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (default: E of com.soywiz.korag.shader.Program.Visitor) [primary] declared in com.soywiz.korag.shader.Program.Visitor'
+                                <E>: kotlin.Unit
+                                default: GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+                              INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[com.soywiz.korag.shader.Program.Visitor<kotlin.Unit>]'
+                          FUN name:visit visibility:public modality:OPEN <> ($this:com.soywiz.korag.shader.Shader.uniforms.<anonymous>.<no name provided>, uniform:com.soywiz.korag.shader.Uniform) returnType:kotlin.Unit
+                            overridden:
+                              public open fun visit (operand: com.soywiz.korag.shader.Uniform): E of com.soywiz.korag.shader.Program.Visitor declared in com.soywiz.korag.shader.Program.Visitor
+                            $this: VALUE_PARAMETER name:<this> type:com.soywiz.korag.shader.Shader.uniforms.<anonymous>.<no name provided>
+                            VALUE_PARAMETER name:uniform index:0 type:com.soywiz.korag.shader.Uniform
+                            BLOCK_BODY
+                              TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                                CALL 'public open fun add (element: @[EnhancedNullability] E of java.util.LinkedHashSet): kotlin.Boolean [fake_override] declared in java.util.LinkedHashSet' type=kotlin.Boolean origin=null
+                                  $this: GET_VAR 'out: java.util.LinkedHashSet<com.soywiz.korag.shader.Uniform>{ kotlin.collections.TypeAliasesKt.LinkedHashSet<com.soywiz.korag.shader.Uniform> } declared in com.soywiz.korag.shader.Shader.uniforms.<anonymous>' type=java.util.LinkedHashSet<com.soywiz.korag.shader.Uniform>{ kotlin.collections.TypeAliasesKt.LinkedHashSet<com.soywiz.korag.shader.Uniform> } origin=null
+                                  element: GET_VAR 'uniform: com.soywiz.korag.shader.Uniform declared in com.soywiz.korag.shader.Shader.uniforms.<anonymous>.<no name provided>.visit' type=com.soywiz.korag.shader.Uniform origin=null
+                          FUN FAKE_OVERRIDE name:visit visibility:public modality:OPEN <> ($this:com.soywiz.korag.shader.Program.Visitor<kotlin.Unit>, stm:com.soywiz.korag.shader.Program.Stm?) returnType:kotlin.Unit [fake_override]
+                            overridden:
+                              public open fun visit (stm: com.soywiz.korag.shader.Program.Stm?): kotlin.Unit declared in com.soywiz.korag.shader.Program.Visitor
+                            $this: VALUE_PARAMETER name:<this> type:com.soywiz.korag.shader.Program.Visitor<kotlin.Unit>
+                            VALUE_PARAMETER name:stm index:0 type:com.soywiz.korag.shader.Program.Stm?
+                          FUN FAKE_OVERRIDE name:visit visibility:public modality:OPEN <> ($this:com.soywiz.korag.shader.Program.Visitor<kotlin.Unit>, o:com.soywiz.korag.shader.Operand) returnType:kotlin.Unit [fake_override]
+                            overridden:
+                              public open fun visit (o: com.soywiz.korag.shader.Operand): E of com.soywiz.korag.shader.Program.Visitor declared in com.soywiz.korag.shader.Program.Visitor
+                            $this: VALUE_PARAMETER name:<this> type:com.soywiz.korag.shader.Program.Visitor<kotlin.Unit>
+                            VALUE_PARAMETER name:o index:0 type:com.soywiz.korag.shader.Operand
+                          PROPERTY FAKE_OVERRIDE name:default visibility:public modality:FINAL [fake_override,val]
+                            overridden:
+                              public final default: E of com.soywiz.korag.shader.Program.Visitor [val]
+                            FUN FAKE_OVERRIDE name:<get-default> visibility:public modality:FINAL <> ($this:com.soywiz.korag.shader.Program.Visitor<kotlin.Unit>) returnType:kotlin.Unit [fake_override]
+                              correspondingProperty: PROPERTY FAKE_OVERRIDE name:default visibility:public modality:FINAL [fake_override,val]
+                              overridden:
+                                public final fun <get-default> (): E of com.soywiz.korag.shader.Program.Visitor declared in com.soywiz.korag.shader.Program.Visitor
+                              $this: VALUE_PARAMETER name:<this> type:com.soywiz.korag.shader.Program.Visitor<kotlin.Unit>
+                          FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+                            overridden:
+                              public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in com.soywiz.korag.shader.Program.Visitor
+                            $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+                            VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+                          FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+                            overridden:
+                              public open fun hashCode (): kotlin.Int [fake_override] declared in com.soywiz.korag.shader.Program.Visitor
+                            $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+                          FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+                            overridden:
+                              public open fun toString (): kotlin.String [fake_override] declared in com.soywiz.korag.shader.Program.Visitor
+                            $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+                        CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in com.soywiz.korag.shader.Shader.uniforms.<anonymous>.<no name provided>' type=com.soywiz.korag.shader.Shader.uniforms.<anonymous>.<no name provided> origin=OBJECT_LITERAL
+                      stm: CALL 'public final fun <get-stm> (): com.soywiz.korag.shader.Program.Stm? declared in com.soywiz.korag.shader.Shader' type=com.soywiz.korag.shader.Program.Stm? origin=GET_PROPERTY
+                        $this: GET_VAR '<this>: com.soywiz.korag.shader.Shader declared in com.soywiz.korag.shader.Shader' type=com.soywiz.korag.shader.Shader origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-uniforms> visibility:public modality:FINAL <> ($this:com.soywiz.korag.shader.Shader) returnType:kotlin.collections.Set<com.soywiz.korag.shader.Uniform>
+        correspondingProperty: PROPERTY name:uniforms visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:com.soywiz.korag.shader.Shader
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-uniforms> (): kotlin.collections.Set<com.soywiz.korag.shader.Uniform> declared in com.soywiz.korag.shader.Shader'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:uniforms type:kotlin.collections.Set<com.soywiz.korag.shader.Uniform> visibility:private [final]' type=kotlin.collections.Set<com.soywiz.korag.shader.Uniform> origin=null
+              receiver: GET_VAR '<this>: com.soywiz.korag.shader.Shader declared in com.soywiz.korag.shader.Shader.<get-uniforms>' type=com.soywiz.korag.shader.Shader origin=null
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+Module: main
+FILE fqName:<root> fileName:/l2.kt
+  CLASS CLASS name:D modality:FINAL visibility:public superTypes:[com.soywiz.korag.shader.Shader]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.D
+    CONSTRUCTOR visibility:public <> () returnType:<root>.D [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (stm: com.soywiz.korag.shader.Program.Stm?) [primary] declared in com.soywiz.korag.shader.Shader'
+          stm: CONSTRUCTOR_CALL 'public constructor <init> (o: com.soywiz.korag.shader.Operand) [primary] declared in com.soywiz.korag.shader.Program.Stm' type=com.soywiz.korag.shader.Program.Stm origin=null
+            o: CONSTRUCTOR_CALL 'public constructor <init> (result: kotlin.String) [primary] declared in com.soywiz.korag.shader.Uniform' type=com.soywiz.korag.shader.Uniform origin=null
+              result: CONST String type=kotlin.String value="OK"
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:D modality:FINAL visibility:public superTypes:[com.soywiz.korag.shader.Shader]'
+    PROPERTY FAKE_OVERRIDE name:uniforms visibility:public modality:FINAL [fake_override,val]
+      overridden:
+        public final uniforms: kotlin.collections.Set<com.soywiz.korag.shader.Uniform> [val]
+      FUN FAKE_OVERRIDE name:<get-uniforms> visibility:public modality:FINAL <> ($this:com.soywiz.korag.shader.Shader) returnType:kotlin.collections.Set<com.soywiz.korag.shader.Uniform> [fake_override]
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:uniforms visibility:public modality:FINAL [fake_override,val]
+        overridden:
+          public final fun <get-uniforms> (): kotlin.collections.Set<com.soywiz.korag.shader.Uniform> declared in com.soywiz.korag.shader.Shader
+        $this: VALUE_PARAMETER name:<this> type:com.soywiz.korag.shader.Shader
+    PROPERTY FAKE_OVERRIDE name:stm visibility:public modality:FINAL [fake_override,val]
+      overridden:
+        public final stm: com.soywiz.korag.shader.Program.Stm? [val]
+      FUN FAKE_OVERRIDE name:<get-stm> visibility:public modality:FINAL <> ($this:com.soywiz.korag.shader.Shader) returnType:com.soywiz.korag.shader.Program.Stm? [fake_override]
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:stm visibility:public modality:FINAL [fake_override,val]
+        overridden:
+          public final fun <get-stm> (): com.soywiz.korag.shader.Program.Stm? declared in com.soywiz.korag.shader.Shader
+        $this: VALUE_PARAMETER name:<this> type:com.soywiz.korag.shader.Shader
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in com.soywiz.korag.shader.Shader
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int [fake_override] declared in com.soywiz.korag.shader.Shader
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String [fake_override] declared in com.soywiz.korag.shader.Shader
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  FUN name:foo visibility:public modality:FINAL <> () returnType:com.soywiz.korag.shader.Shader
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun foo (): com.soywiz.korag.shader.Shader declared in <root>'
+        CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.D' type=<root>.D origin=null
+  FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        CALL 'public final fun <get-result> (): kotlin.String declared in com.soywiz.korag.shader.Uniform' type=kotlin.String origin=GET_PROPERTY
+          $this: CALL 'public final fun first <T> (): T of kotlin.collections.CollectionsKt.first declared in kotlin.collections.CollectionsKt' type=com.soywiz.korag.shader.Uniform origin=null
+            <T>: com.soywiz.korag.shader.Uniform
+            $receiver: CALL 'public final fun <get-uniforms> (): kotlin.collections.Set<com.soywiz.korag.shader.Uniform> declared in com.soywiz.korag.shader.Shader' type=kotlin.collections.Set<com.soywiz.korag.shader.Uniform> origin=GET_PROPERTY
+              $this: CALL 'public final fun foo (): com.soywiz.korag.shader.Shader declared in <root>' type=com.soywiz.korag.shader.Shader origin=null

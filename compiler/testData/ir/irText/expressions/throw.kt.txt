@@ -1,7 +1,13 @@
+// CHECK:
+//   Mangled name: #test1(){}
+//   Public signature: /test1|4297044443957252634[0]
 fun test1() {
   throw Throwable()
 }
 
+// CHECK:
+//   Mangled name: #testImplicitCast(kotlin.Any){}
+//   Public signature: /testImplicitCast|3599450462487506190[0]
 fun testImplicitCast(a: Any) {
   when {
     a is Throwable -> { // BLOCK
@@ -9,3 +15,4 @@ fun testImplicitCast(a: Any) {
     }
   }
 }
+

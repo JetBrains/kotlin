@@ -7,7 +7,7 @@ open annotation class Ann : Annotation {
 
 }
 
-val test1: Int /* by */
+val test1: Int /* by */ 
   field = lazy<Int>(initializer = local fun <anonymous>(): Int {
     return 42
   }
@@ -15,3 +15,4 @@ val test1: Int /* by */
   get(): Int {
     return #test1$delegate.getValue<Int>(thisRef = null, property = ::test1)
   }
+

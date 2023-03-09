@@ -1,20 +1,48 @@
+// CHECK:
+//   Mangled name: {}operationScore
+//   Public signature: /operationScore|-9073278321118823634[0]
 var operationScore: Int
   field = 0
+  // CHECK:
+  //   Mangled name: #<get-operationScore>(){}kotlin.Int
+  //   Public signature: /operationScore.<get-operationScore>|7107010356269447258[0]
   get
+  // CHECK:
+  //   Mangled name: #<set-operationScore>(kotlin.Int){}
+  //   Public signature: /operationScore.<set-operationScore>|1936076120216071025[0]
   set
 
+// CHECK:
+//   Mangled name: Delegate
+//   Public signature: /Delegate|null[0]
 class Delegate {
+  // CHECK:
+  //   Mangled name: Delegate#<init>(){}
+  //   Public signature: /Delegate.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: Delegate{}delegateValue
+  //   Public signature: /Delegate.delegateValue|-8268138023786011357[0]
   var delegateValue: String
     field = "fail"
+    // CHECK:
+    //   Mangled name: Delegate#<get-delegateValue>(){}kotlin.String
+    //   Public signature: /Delegate.delegateValue.<get-delegateValue>|-8802990183041924458[0]
     get
+    // CHECK:
+    //   Mangled name: Delegate#<set-delegateValue>(kotlin.String){}
+    //   Public signature: /Delegate.delegateValue.<set-delegateValue>|-6867110197203157583[0]
     set
 
+  // CHECK:
+  //   Mangled name computed from Ir:         Delegate#getValue(kotlin.Int;kotlin.Any?;kotlin.reflect.KProperty<*>){}kotlin.String
+  //   Mangled name computed from Descriptor: Delegate#getValue!kotlin.Int(kotlin.Any?;kotlin.reflect.KProperty<*>){}kotlin.String
+  //   Public signature: /Delegate.getValue|-7764345795816801347[0]
   operator fun getValue($context_receiver_0: Int, thisRef: Any?, property: KProperty<*>): String {
     { // BLOCK
       <set-operationScore>(<set-?> = <get-operationScore>().plus(other = $context_receiver_0))
@@ -22,6 +50,10 @@ class Delegate {
     return <this>.<get-delegateValue>()
   }
 
+  // CHECK:
+  //   Mangled name computed from Ir:         Delegate#setValue(kotlin.Int;kotlin.Any?;kotlin.reflect.KProperty<*>;kotlin.String){}
+  //   Mangled name computed from Descriptor: Delegate#setValue!kotlin.Int(kotlin.Any?;kotlin.reflect.KProperty<*>;kotlin.String){}
+  //   Public signature: /Delegate.setValue|9105212648373628088[0]
   operator fun setValue($context_receiver_0: Int, thisRef: Any?, property: KProperty<*>, value: String) {
     { // BLOCK
       <set-operationScore>(<set-?> = <get-operationScore>().plus(other = $context_receiver_0))
@@ -31,8 +63,18 @@ class Delegate {
 
 }
 
+// CHECK:
+//   Mangled name: Result
+//   Public signature: /Result|null[0]
 class Result {
+  // CHECK:
+  //   Mangled name computed from Ir:         Result.contextReceiverField0
+  //   Mangled name computed from Descriptor: Result{}contextReceiverField0#jf
   private /* final field */ val contextReceiverField0: Int
+  // CHECK:
+  //   Mangled name computed from Ir:         Result#<init>(kotlin.Int){}
+  //   Mangled name computed from Descriptor: Result#<init>!kotlin.Int(){}
+  //   Public signature: /Result.<init>|-1392650824251324893[0]
   constructor($context_receiver_0: Int) /* primary */ {
     super/*Any*/()
     <this>.#contextReceiverField0 = $context_receiver_0
@@ -40,21 +82,36 @@ class Result {
 
   }
 
-  var s: String /* by */
+  // CHECK:
+  //   Mangled name: Result{}s
+  //   Public signature: /Result.s|7217541905509134881[0]
+  var s: String /* by */ 
     field = Delegate()
+    // CHECK:
+    //   Mangled name: Result#<get-s>(){}kotlin.String
+    //   Public signature: /Result.s.<get-s>|4142379646177092803[0]
     get(): String {
       return <this>.#s$delegate.getValue($context_receiver_0 = <this>.#contextReceiverField0, thisRef = <this>, property = Result::s)
     }
+    // CHECK:
+    //   Mangled name: Result#<set-s>(kotlin.String){}
+    //   Public signature: /Result.s.<set-s>|8225901422521337963[0]
     set(<set-?>: String) {
       return <this>.#s$delegate.setValue($context_receiver_0 = <this>.#contextReceiverField0, thisRef = <this>, property = Result::s, value = <set-?>)
     }
 
 }
 
+// CHECK:
+//   Mangled name: #box(){}kotlin.String
+//   Public signature: /box|-9347091776561469[0]
 fun box(): String {
-  val result: Result = with<Int, Result>(receiver = 1, block = local fun Int.<anonymous>(): Result {
-    return Result($context_receiver_0 = $this$with)
-  }
+  val result: Result = with<Int, Result>(receiver = 1, block = 
+    // CHECK:
+    //   Mangled name: #box(){}kotlin.String#<anonymous>#static@kotlin.Int(){}Result
+    local fun Int.<anonymous>(): Result {
+      return Result($context_receiver_0 = $this$with)
+    }
 )
   result.<set-s>(<set-?> = "OK")
   val returnValue: String = result.<get-s>()
@@ -63,3 +120,4 @@ fun box(): String {
     else -> "fail"
   }
 }
+

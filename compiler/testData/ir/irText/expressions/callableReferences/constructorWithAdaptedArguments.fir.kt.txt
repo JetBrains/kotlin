@@ -1,8 +1,22 @@
+// CHECK JVM_IR:
+//   Mangled name: #use(kotlin.Function1<kotlin.Int,kotlin.Any>){}kotlin.Any
+//   Public signature: /use|1574437315632336940[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #use(kotlin.Function1<kotlin.Int,kotlin.Any>){}
+//   Mangled name computed from Descriptor: #use(kotlin.Function1<kotlin.Int,kotlin.Any>){}
+//   Mangled name computed from Fir:        #use(kotlin.Function1<kotlin.Int,kotlin.Any>){}kotlin.Any
+//   Public signature: /use|1574437315632336940[0]
 fun use(fn: Function1<Int, Any>): Any {
   return fn.invoke(p1 = 42)
 }
 
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
 class C {
+  // CHECK:
+  //   Mangled name: C#<init>(kotlin.IntArray...){}
+  //   Public signature: /C.<init>|3304157197881351514[0]
   constructor(vararg xs: Int) /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -11,14 +25,26 @@ class C {
 
 }
 
+// CHECK:
+//   Mangled name: Outer
+//   Public signature: /Outer|null[0]
 class Outer {
+  // CHECK:
+  //   Mangled name: Outer#<init>(){}
+  //   Public signature: /Outer.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: Outer.Inner
+  //   Public signature: /Outer.Inner|null[0]
   inner class Inner {
+    // CHECK:
+    //   Mangled name: Outer.Inner#<init>(kotlin.IntArray...){}
+    //   Public signature: /Outer.Inner.<init>|3304157197881351514[0]
     constructor(vararg xs: Int) /* primary */ {
       super/*Any*/()
       /* <init>() */
@@ -29,15 +55,48 @@ class Outer {
 
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #testConstructor(){}kotlin.Any
+//   Public signature: /testConstructor|-8265230471442733237[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #testConstructor(){}
+//   Mangled name computed from Descriptor: #testConstructor(){}
+//   Mangled name computed from Fir:        #testConstructor(){}kotlin.Any
+//   Public signature: /testConstructor|-8265230471442733237[0]
 fun testConstructor(): Any {
-  return use(fn = local fun <init>(p0: Int): C {
-    return C(xs = [p0])
-  }
+  return use(fn = 
+    // CHECK JVM_IR:
+    //   Mangled name computed from Ir:         #testConstructor(){}kotlin.Any#<init>#static(kotlin.Int){}C
+    //   Mangled name computed from Descriptor: #testConstructor(){}kotlin.Any#<init>#static(kotlin.Int){}C
+    //   Mangled name computed from Fir:        C#<init>(kotlin.IntArray...){}
+    // CHECK JS_IR:
+    //   Mangled name computed from Ir:         #testConstructor(){}#<init>#static(kotlin.Int){}
+    //   Mangled name computed from Descriptor: #testConstructor(){}#<init>#static(kotlin.Int){}
+    //   Mangled name computed from Fir:        C#<init>(kotlin.IntArray...){}
+    local fun <init>(p0: Int): C {
+      return C(xs = [p0])
+    }
 )
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #testInnerClassConstructor(Outer){}kotlin.Any
+//   Public signature: /testInnerClassConstructor|7325530570703424818[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #testInnerClassConstructor(Outer){}
+//   Mangled name computed from Descriptor: #testInnerClassConstructor(Outer){}
+//   Mangled name computed from Fir:        #testInnerClassConstructor(Outer){}kotlin.Any
+//   Public signature: /testInnerClassConstructor|7325530570703424818[0]
 fun testInnerClassConstructor(outer: Outer): Any {
   return use(fn = { // BLOCK
+    // CHECK JVM_IR:
+    //   Mangled name computed from Ir:         #testInnerClassConstructor(Outer){}kotlin.Any#<init>#static@Outer(kotlin.Int){}Outer.Inner
+    //   Mangled name computed from Descriptor: #testInnerClassConstructor(Outer){}kotlin.Any#<init>#static@Outer(kotlin.Int){}Outer.Inner
+    //   Mangled name computed from Fir:        Outer.Inner#<init>(kotlin.IntArray...){}
+    // CHECK JS_IR:
+    //   Mangled name computed from Ir:         #testInnerClassConstructor(Outer){}#<init>#static@Outer(kotlin.Int){}
+    //   Mangled name computed from Descriptor: #testInnerClassConstructor(Outer){}#<init>#static@Outer(kotlin.Int){}
+    //   Mangled name computed from Fir:        Outer.Inner#<init>(kotlin.IntArray...){}
     local fun Outer.<init>(p0: Int): Inner {
       return receiver.Inner(xs = [p0])
     }
@@ -46,8 +105,24 @@ fun testInnerClassConstructor(outer: Outer): Any {
   })
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #testInnerClassConstructorCapturingOuter(){}kotlin.Any
+//   Public signature: /testInnerClassConstructorCapturingOuter|-5884857333600375021[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #testInnerClassConstructorCapturingOuter(){}
+//   Mangled name computed from Descriptor: #testInnerClassConstructorCapturingOuter(){}
+//   Mangled name computed from Fir:        #testInnerClassConstructorCapturingOuter(){}kotlin.Any
+//   Public signature: /testInnerClassConstructorCapturingOuter|-5884857333600375021[0]
 fun testInnerClassConstructorCapturingOuter(): Any {
   return use(fn = { // BLOCK
+    // CHECK JVM_IR:
+    //   Mangled name computed from Ir:         #testInnerClassConstructorCapturingOuter(){}kotlin.Any#<init>#static@Outer(kotlin.Int){}Outer.Inner
+    //   Mangled name computed from Descriptor: #testInnerClassConstructorCapturingOuter(){}kotlin.Any#<init>#static@Outer(kotlin.Int){}Outer.Inner
+    //   Mangled name computed from Fir:        Outer.Inner#<init>(kotlin.IntArray...){}
+    // CHECK JS_IR:
+    //   Mangled name computed from Ir:         #testInnerClassConstructorCapturingOuter(){}#<init>#static@Outer(kotlin.Int){}
+    //   Mangled name computed from Descriptor: #testInnerClassConstructorCapturingOuter(){}#<init>#static@Outer(kotlin.Int){}
+    //   Mangled name computed from Fir:        Outer.Inner#<init>(kotlin.IntArray...){}
     local fun Outer.<init>(p0: Int): Inner {
       return receiver.Inner(xs = [p0])
     }
@@ -55,3 +130,4 @@ fun testInnerClassConstructorCapturingOuter(): Any {
     Outer()::<init>
   })
 }
+

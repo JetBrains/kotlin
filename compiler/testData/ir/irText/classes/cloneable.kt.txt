@@ -1,4 +1,10 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
 class A : Cloneable {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -7,11 +13,20 @@ class A : Cloneable {
 
 }
 
+// CHECK:
+//   Mangled name: I
+//   Public signature: /I|null[0]
 interface I : Cloneable {
 
 }
 
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
 class C : I {
+  // CHECK:
+  //   Mangled name: C#<init>(){}
+  //   Public signature: /C.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -20,15 +35,30 @@ class C : I {
 
 }
 
+// CHECK:
+//   Mangled name: OC
+//   Public signature: /OC|null[0]
 class OC : I {
+  // CHECK:
+  //   Mangled name: OC#<init>(){}
+  //   Public signature: /OC.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: OC#clone(){}OC
+  //   Public signature: /OC.clone|8389954697594281582[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         OC#clone(){}
+  //   Mangled name computed from Descriptor: OC#clone(){}
+  //   Mangled name computed from Fir:        OC#clone(){}OC
+  //   Public signature: /OC.clone|8389954697594281582[0]
   protected override fun clone(): OC {
     return OC()
   }
 
 }
+

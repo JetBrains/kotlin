@@ -1,3 +1,6 @@
+// CHECK:
+//   Mangled name: #testEmpty(kotlin.collections.List<kotlin.String>){}
+//   Public signature: /testEmpty|4311987365375111339[0]
 fun testEmpty(ss: List<String>) {
   { // BLOCK
     val tmp0_iterator: Iterator<String> = ss.iterator()
@@ -7,6 +10,9 @@ fun testEmpty(ss: List<String>) {
   }
 }
 
+// CHECK:
+//   Mangled name: #testIterable(kotlin.collections.List<kotlin.String>){}
+//   Public signature: /testIterable|3066285127841729695[0]
 fun testIterable(ss: List<String>) {
   { // BLOCK
     val tmp0_iterator: Iterator<String> = ss.iterator()
@@ -19,6 +25,9 @@ fun testIterable(ss: List<String>) {
   }
 }
 
+// CHECK:
+//   Mangled name: #testDestructuring(kotlin.collections.List<kotlin.Pair<kotlin.Int,kotlin.String>>){}
+//   Public signature: /testDestructuring|-7027332132873483477[0]
 fun testDestructuring(pp: List<Pair<Int, String>>) {
   { // BLOCK
     val tmp0_iterator: Iterator<Pair<Int, String>> = pp.iterator()
@@ -34,6 +43,9 @@ fun testDestructuring(pp: List<Pair<Int, String>>) {
   }
 }
 
+// CHECK:
+//   Mangled name: #testRange(){}
+//   Public signature: /testRange|5870058580411114415[0]
 fun testRange() {
   { // BLOCK
     val tmp0_iterator: IntIterator = 1.rangeTo(other = 10).iterator()
@@ -42,3 +54,4 @@ fun testRange() {
     }
   }
 }
+

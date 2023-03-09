@@ -1,35 +1,78 @@
+// CHECK:
+//   Mangled name: Wrapper
+//   Public signature: /Wrapper|null[0]
 class Wrapper {
+  // CHECK:
+  //   Mangled name: Wrapper#<init>(kotlin.String){}
+  //   Public signature: /Wrapper.<init>|1280618353163213788[0]
   constructor(baseUrl: String) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: Wrapper{}baseUrl
+  //   Public signature: /Wrapper.baseUrl|8725729733335673706[0]
   var baseUrl: String
     field = baseUrl
+    // CHECK:
+    //   Mangled name: Wrapper#<get-baseUrl>(){}kotlin.String
+    //   Public signature: /Wrapper.baseUrl.<get-baseUrl>|-3814925406424189958[0]
     get
+    // CHECK:
+    //   Mangled name: Wrapper#<set-baseUrl>(kotlin.String){}
+    //   Public signature: /Wrapper.baseUrl.<set-baseUrl>|-3147657826477490604[0]
     set
 
 }
 
+// CHECK:
+//   Mangled name: ConfigurationParameter
+//   Public signature: /ConfigurationParameter|null[0]
 open enum class ConfigurationParameter : Enum<ConfigurationParameter> {
-  BASE_URL = ConfigurationParameter(apply = local fun <anonymous>(value: String, nc: Wrapper) {
-    println(message = "Base url updated from config parameters ".plus(other = nc.<get-baseUrl>()).plus(other = " -> ").plus(other = value))
-    nc.<set-baseUrl>(<set-?> = value)
-  }
+  // CHECK:
+  //   Mangled name: ConfigurationParameter.BASE_URL
+  //   Public signature: /ConfigurationParameter.BASE_URL|null[0]
+  BASE_URL = ConfigurationParameter(apply = 
+    // CHECK:
+    //   Mangled name computed from Ir:         ConfigurationParameter#<anonymous>#static(kotlin.String;Wrapper){}
+    //   Mangled name computed from Descriptor: ConfigurationParameter#<anonymous>#static(kotlin.String;Wrapper){}
+    //   Mangled name computed from Fir:        could not compute mangled name: java.lang.IllegalStateException: unexpected element fun <anonymous>(value: R|kotlin/String|, nc: R|Wrapper|): R|kotlin/Unit| <inline=Unknown>  {... (truncated)
+    local fun <anonymous>(value: String, nc: Wrapper) {
+      println(message = "Base url updated from config parameters ".plus(other = nc.<get-baseUrl>()).plus(other = " -> ").plus(other = value))
+      nc.<set-baseUrl>(<set-?> = value)
+    }
 )
 
+  // CHECK:
+  //   Mangled name: ConfigurationParameter#<init>(kotlin.Function2<kotlin.String,Wrapper,kotlin.Unit>){}
+  //   Public signature: /ConfigurationParameter.<init>|-5590500836156829531[0]
   private constructor(apply: Function2<String, Wrapper, Unit>) {
     super/*Enum*/<ConfigurationParameter>()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: ConfigurationParameter#values#static(){}kotlin.Array<ConfigurationParameter>
+  //   Public signature: /ConfigurationParameter.values|-8145439714348067759[0]
   fun values(): Array<ConfigurationParameter> /* Synthetic body for ENUM_VALUES */
 
+  // CHECK:
+  //   Mangled name: ConfigurationParameter#valueOf#static(kotlin.String){}ConfigurationParameter
+  //   Public signature: /ConfigurationParameter.valueOf|4681288256259957260[0]
   fun valueOf(value: String): ConfigurationParameter /* Synthetic body for ENUM_VALUEOF */
 
+  // CHECK:
+  //   Mangled name: ConfigurationParameter#static{}entries
+  //   Public signature: /ConfigurationParameter.entries|-5134227801081826149[0]
   val entries: EnumEntries<ConfigurationParameter>
+    // CHECK:
+    //   Mangled name computed from Ir:         ConfigurationParameter#<get-entries>#static(){}kotlin.enums.EnumEntries<ConfigurationParameter>
+    //   Mangled name computed from Descriptor: ConfigurationParameter#<get-entries>#static(){}kotlin.enums.EnumEntries<ConfigurationParameter>
+    //   Mangled name computed from Fir:        #<get-entries>#static(){}kotlin.enums.EnumEntries<ConfigurationParameter>
+    //   Public signature: /ConfigurationParameter.entries.<get-entries>|-1947990751381640787[0]
     get(): EnumEntries<ConfigurationParameter> /* Synthetic body for ENUM_ENTRIES */
 
 }

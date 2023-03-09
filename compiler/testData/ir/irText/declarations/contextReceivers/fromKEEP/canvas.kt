@@ -2,6 +2,9 @@
 // !LANGUAGE: +ContextReceivers
 // TARGET_BACKEND: JVM_IR
 
+// NO_SIGNATURE_DUMP
+// ^KT-57435
+
 interface Canvas {
     val suffix: String
 }

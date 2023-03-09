@@ -1,23 +1,47 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
 class A {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: A{}it
+  //   Public signature: /A.it|3309866017710461759[0]
   var it: Double
     field = 3.14
+    // CHECK JVM_IR:
+    //   Mangled name: A#<get-it>(){}kotlin.Int
+    //   Public signature: /A.it.<get-it>|6190054477763999448[0]
+    // CHECK JS_IR:
+    //   Mangled name computed from Ir:         A#<get-it>(){}
+    //   Mangled name computed from Descriptor: A#<get-it>(){}
+    //   Mangled name computed from Fir:        A#<get-it>(){}kotlin.Int
+    //   Public signature: /A.it.<get-it>|6190054477763999448[0]
     get(): Int {
       return <this>.#it.plus(other = 10).toInt()
     }
+    // CHECK:
+    //   Mangled name: A#<set-it>(kotlin.Int){}
+    //   Public signature: /A.it.<set-it>|-4393420298619979651[0]
     set(value: Int) {
       <this>.#it = value.minus(other = 10).toDouble()
     }
 
 }
 
+// CHECK:
+//   Mangled name: #test(){}
+//   Public signature: /test|6620506149988718649[0]
 fun test() {
   val a: A = A()
   val it: Int = A().<get-it>().and(other = 10)
   a.<set-it>(value = it)
 }
+

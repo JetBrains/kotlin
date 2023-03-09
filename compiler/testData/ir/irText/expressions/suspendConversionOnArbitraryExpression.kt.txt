@@ -1,27 +1,58 @@
+// CHECK:
+//   Mangled name: #useSuspend(kotlin.coroutines.SuspendFunction0<kotlin.Unit>){}
+//   Public signature: /useSuspend|60604456614172212[0]
 fun useSuspend(sfn: SuspendFunction0<Unit>) {
 }
 
+// CHECK:
+//   Mangled name: #useSuspendExt(kotlin.coroutines.SuspendFunction1<kotlin.Int,kotlin.Unit>){}
+//   Public signature: /useSuspendExt|-8690505892244175114[0]
 fun useSuspendExt(sfn: @ExtensionFunctionType SuspendFunction1<Int, Unit>) {
 }
 
+// CHECK:
+//   Mangled name: #useSuspendArg(kotlin.coroutines.SuspendFunction1<kotlin.Int,kotlin.Unit>){}
+//   Public signature: /useSuspendArg|3426050309145504362[0]
 fun useSuspendArg(sfn: SuspendFunction1<Int, Unit>) {
 }
 
+// CHECK:
+//   Mangled name: #useSuspendArgT(kotlin.coroutines.SuspendFunction1<0:0,kotlin.Unit>){0§<kotlin.Any?>}
+//   Public signature: /useSuspendArgT|6442526549851733448[0]
 fun <T : Any?> useSuspendArgT(sfn: SuspendFunction1<T, Unit>) {
 }
 
+// CHECK:
+//   Mangled name: #useSuspendExtT(kotlin.coroutines.SuspendFunction1<0:0,kotlin.Unit>){0§<kotlin.Any?>}
+//   Public signature: /useSuspendExtT|-926225216925468449[0]
 fun <T : Any?> useSuspendExtT(sfn: @ExtensionFunctionType SuspendFunction1<T, Unit>) {
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #produceFun(){}kotlin.Function0<kotlin.Unit>
+//   Public signature: /produceFun|4804189546570931998[0]
+// CHECK JS_IR:
+//   Mangled name: #produceFun(){}
+//   Public signature: /produceFun|6933842891382874270[0]
 fun produceFun(): Function0<Unit> {
-  return local fun <anonymous>() {
-    return Unit
-  }
+  return 
+    // CHECK JVM_IR:
+    //   Mangled name: #produceFun(){}kotlin.Function0<kotlin.Unit>#<anonymous>#static(){}
+    // CHECK JS_IR:
+    //   Mangled name: #produceFun(){}#<anonymous>#static(){}
+    local fun <anonymous>() {
+      return Unit
+    }
 
 }
 
+// CHECK:
+//   Mangled name: #testSimple(kotlin.Function0<kotlin.Unit>){}
+//   Public signature: /testSimple|-2671092887420400255[0]
 fun testSimple(fn: Function0<Unit>) {
   useSuspend(sfn = { // BLOCK
+    // CHECK:
+    //   Mangled name: #testSimple(kotlin.Function0<kotlin.Unit>){}#suspendConversion0#static@kotlin.Function0<kotlin.Unit>(){}
     local suspend fun Function0<Unit>.suspendConversion0() {
       callee.invoke()
     }
@@ -30,8 +61,13 @@ fun testSimple(fn: Function0<Unit>) {
   })
 }
 
+// CHECK:
+//   Mangled name: #testSimpleNonVal(){}
+//   Public signature: /testSimpleNonVal|8897109715568911238[0]
 fun testSimpleNonVal() {
   useSuspend(sfn = { // BLOCK
+    // CHECK:
+    //   Mangled name: #testSimpleNonVal(){}#suspendConversion0#static@kotlin.Function0<kotlin.Unit>(){}
     local suspend fun Function0<Unit>.suspendConversion0() {
       callee.invoke()
     }
@@ -40,8 +76,13 @@ fun testSimpleNonVal() {
   })
 }
 
+// CHECK:
+//   Mangled name: #testExtAsExt(kotlin.Function1<kotlin.Int,kotlin.Unit>){}
+//   Public signature: /testExtAsExt|-7977860665221117368[0]
 fun testExtAsExt(fn: @ExtensionFunctionType Function1<Int, Unit>) {
   useSuspendExt(sfn = { // BLOCK
+    // CHECK:
+    //   Mangled name: #testExtAsExt(kotlin.Function1<kotlin.Int,kotlin.Unit>){}#suspendConversion0#static@kotlin.Function1<kotlin.Int,kotlin.Unit>(kotlin.Int){}
     local suspend fun @ExtensionFunctionType Function1<Int, Unit>.suspendConversion0(p0: Int) {
       callee.invoke(p1 = p0)
     }
@@ -50,8 +91,13 @@ fun testExtAsExt(fn: @ExtensionFunctionType Function1<Int, Unit>) {
   })
 }
 
+// CHECK:
+//   Mangled name: #testExtAsSimple(kotlin.Function1<kotlin.Int,kotlin.Unit>){}
+//   Public signature: /testExtAsSimple|-1067298536485961384[0]
 fun testExtAsSimple(fn: @ExtensionFunctionType Function1<Int, Unit>) {
   useSuspendArg(sfn = { // BLOCK
+    // CHECK:
+    //   Mangled name: #testExtAsSimple(kotlin.Function1<kotlin.Int,kotlin.Unit>){}#suspendConversion0#static@kotlin.Function1<kotlin.Int,kotlin.Unit>(kotlin.Int){}
     local suspend fun Function1<Int, Unit>.suspendConversion0(p0: Int) {
       callee.invoke(p1 = p0)
     }
@@ -60,8 +106,13 @@ fun testExtAsSimple(fn: @ExtensionFunctionType Function1<Int, Unit>) {
   })
 }
 
+// CHECK:
+//   Mangled name: #testSimpleAsExt(kotlin.Function1<kotlin.Int,kotlin.Unit>){}
+//   Public signature: /testSimpleAsExt|9047906843313761541[0]
 fun testSimpleAsExt(fn: Function1<Int, Unit>) {
   useSuspendExt(sfn = { // BLOCK
+    // CHECK:
+    //   Mangled name: #testSimpleAsExt(kotlin.Function1<kotlin.Int,kotlin.Unit>){}#suspendConversion0#static@kotlin.Function1<kotlin.Int,kotlin.Unit>(kotlin.Int){}
     local suspend fun @ExtensionFunctionType Function1<Int, Unit>.suspendConversion0(p0: Int) {
       callee.invoke(p1 = p0)
     }
@@ -70,8 +121,13 @@ fun testSimpleAsExt(fn: Function1<Int, Unit>) {
   })
 }
 
+// CHECK:
+//   Mangled name: #testSimpleAsSimpleT(kotlin.Function1<kotlin.Int,kotlin.Unit>){}
+//   Public signature: /testSimpleAsSimpleT|4911702590190727707[0]
 fun testSimpleAsSimpleT(fn: Function1<Int, Unit>) {
   useSuspendArgT<Int>(sfn = { // BLOCK
+    // CHECK:
+    //   Mangled name: #testSimpleAsSimpleT(kotlin.Function1<kotlin.Int,kotlin.Unit>){}#suspendConversion0#static@kotlin.Function1<kotlin.Int,kotlin.Unit>(kotlin.Int){}
     local suspend fun Function1<Int, Unit>.suspendConversion0(p0: Int) {
       callee.invoke(p1 = p0)
     }
@@ -80,8 +136,13 @@ fun testSimpleAsSimpleT(fn: Function1<Int, Unit>) {
   })
 }
 
+// CHECK:
+//   Mangled name: #testSimpleAsExtT(kotlin.Function1<kotlin.Int,kotlin.Unit>){}
+//   Public signature: /testSimpleAsExtT|6234667294456337247[0]
 fun testSimpleAsExtT(fn: Function1<Int, Unit>) {
   useSuspendExtT<Int>(sfn = { // BLOCK
+    // CHECK:
+    //   Mangled name: #testSimpleAsExtT(kotlin.Function1<kotlin.Int,kotlin.Unit>){}#suspendConversion0#static@kotlin.Function1<kotlin.Int,kotlin.Unit>(kotlin.Int){}
     local suspend fun @ExtensionFunctionType Function1<Int, Unit>.suspendConversion0(p0: Int) {
       callee.invoke(p1 = p0)
     }
@@ -90,8 +151,13 @@ fun testSimpleAsExtT(fn: Function1<Int, Unit>) {
   })
 }
 
+// CHECK:
+//   Mangled name: #testExtAsSimpleT(kotlin.Function1<kotlin.Int,kotlin.Unit>){}
+//   Public signature: /testExtAsSimpleT|2898108913573127027[0]
 fun testExtAsSimpleT(fn: @ExtensionFunctionType Function1<Int, Unit>) {
   useSuspendArgT<Int>(sfn = { // BLOCK
+    // CHECK:
+    //   Mangled name: #testExtAsSimpleT(kotlin.Function1<kotlin.Int,kotlin.Unit>){}#suspendConversion0#static@kotlin.Function1<kotlin.Int,kotlin.Unit>(kotlin.Int){}
     local suspend fun Function1<Int, Unit>.suspendConversion0(p0: Int) {
       callee.invoke(p1 = p0)
     }
@@ -100,8 +166,13 @@ fun testExtAsSimpleT(fn: @ExtensionFunctionType Function1<Int, Unit>) {
   })
 }
 
+// CHECK:
+//   Mangled name: #testExtAsExtT(kotlin.Function1<kotlin.Int,kotlin.Unit>){}
+//   Public signature: /testExtAsExtT|7097873516490245685[0]
 fun testExtAsExtT(fn: @ExtensionFunctionType Function1<Int, Unit>) {
   useSuspendExtT<Int>(sfn = { // BLOCK
+    // CHECK:
+    //   Mangled name: #testExtAsExtT(kotlin.Function1<kotlin.Int,kotlin.Unit>){}#suspendConversion0#static@kotlin.Function1<kotlin.Int,kotlin.Unit>(kotlin.Int){}
     local suspend fun @ExtensionFunctionType Function1<Int, Unit>.suspendConversion0(p0: Int) {
       callee.invoke(p1 = p0)
     }
@@ -110,8 +181,13 @@ fun testExtAsExtT(fn: @ExtensionFunctionType Function1<Int, Unit>) {
   })
 }
 
+// CHECK:
+//   Mangled name: #testSimpleSAsSimpleT(kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}
+//   Public signature: /testSimpleSAsSimpleT|8425022052538754664[0]
 fun <S : Any?> testSimpleSAsSimpleT(fn: Function1<S, Unit>) {
   useSuspendArgT<S>(sfn = { // BLOCK
+    // CHECK:
+    //   Mangled name: #testSimpleSAsSimpleT(kotlin.Function1<1:0,kotlin.Unit>){0§<kotlin.Any?>}#suspendConversion0#static@kotlin.Function1<1:0,kotlin.Unit>(1:0){}
     local suspend fun Function1<S, Unit>.suspendConversion0(p0: S) {
       callee.invoke(p1 = p0)
     }
@@ -120,8 +196,13 @@ fun <S : Any?> testSimpleSAsSimpleT(fn: Function1<S, Unit>) {
   })
 }
 
+// CHECK:
+//   Mangled name: #testSimpleSAsExtT(kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}
+//   Public signature: /testSimpleSAsExtT|6597420463751673979[0]
 fun <S : Any?> testSimpleSAsExtT(fn: Function1<S, Unit>) {
   useSuspendExtT<S>(sfn = { // BLOCK
+    // CHECK:
+    //   Mangled name: #testSimpleSAsExtT(kotlin.Function1<1:0,kotlin.Unit>){0§<kotlin.Any?>}#suspendConversion0#static@kotlin.Function1<1:0,kotlin.Unit>(1:0){}
     local suspend fun @ExtensionFunctionType Function1<S, Unit>.suspendConversion0(p0: S) {
       callee.invoke(p1 = p0)
     }
@@ -130,8 +211,13 @@ fun <S : Any?> testSimpleSAsExtT(fn: Function1<S, Unit>) {
   })
 }
 
+// CHECK:
+//   Mangled name: #testExtSAsSimpleT(kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}
+//   Public signature: /testExtSAsSimpleT|-2358609713172847328[0]
 fun <S : Any?> testExtSAsSimpleT(fn: @ExtensionFunctionType Function1<S, Unit>) {
   useSuspendArgT<S>(sfn = { // BLOCK
+    // CHECK:
+    //   Mangled name: #testExtSAsSimpleT(kotlin.Function1<1:0,kotlin.Unit>){0§<kotlin.Any?>}#suspendConversion0#static@kotlin.Function1<1:0,kotlin.Unit>(1:0){}
     local suspend fun Function1<S, Unit>.suspendConversion0(p0: S) {
       callee.invoke(p1 = p0)
     }
@@ -140,8 +226,13 @@ fun <S : Any?> testExtSAsSimpleT(fn: @ExtensionFunctionType Function1<S, Unit>) 
   })
 }
 
+// CHECK:
+//   Mangled name: #testExtSAsExtT(kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}
+//   Public signature: /testExtSAsExtT|1144176814022208305[0]
 fun <S : Any?> testExtSAsExtT(fn: @ExtensionFunctionType Function1<S, Unit>) {
   useSuspendExtT<S>(sfn = { // BLOCK
+    // CHECK:
+    //   Mangled name: #testExtSAsExtT(kotlin.Function1<1:0,kotlin.Unit>){0§<kotlin.Any?>}#suspendConversion0#static@kotlin.Function1<1:0,kotlin.Unit>(1:0){}
     local suspend fun @ExtensionFunctionType Function1<S, Unit>.suspendConversion0(p0: S) {
       callee.invoke(p1 = p0)
     }
@@ -150,9 +241,14 @@ fun <S : Any?> testExtSAsExtT(fn: @ExtensionFunctionType Function1<S, Unit>) {
   })
 }
 
+// CHECK:
+//   Mangled name: #testSmartCastWithSuspendConversion(kotlin.Any){}
+//   Public signature: /testSmartCastWithSuspendConversion|7215678361079943817[0]
 fun testSmartCastWithSuspendConversion(a: Any) {
   a as Function0<Unit> /*~> Unit */
   useSuspend(sfn = { // BLOCK
+    // CHECK:
+    //   Mangled name: #testSmartCastWithSuspendConversion(kotlin.Any){}#suspendConversion0#static@kotlin.Function0<kotlin.Unit>(){}
     local suspend fun Function0<Unit>.suspendConversion0() {
       callee.invoke()
     }
@@ -161,10 +257,15 @@ fun testSmartCastWithSuspendConversion(a: Any) {
   })
 }
 
+// CHECK:
+//   Mangled name: #testSmartCastOnVarWithSuspendConversion(kotlin.Any){}
+//   Public signature: /testSmartCastOnVarWithSuspendConversion|9105739241469619247[0]
 fun testSmartCastOnVarWithSuspendConversion(a: Any) {
   var b: Any = a
   b as Function0<Unit> /*~> Unit */
   useSuspend(sfn = { // BLOCK
+    // CHECK:
+    //   Mangled name: #testSmartCastOnVarWithSuspendConversion(kotlin.Any){}#suspendConversion0#static@kotlin.Function0<kotlin.Unit>(){}
     local suspend fun Function0<Unit>.suspendConversion0() {
       callee.invoke()
     }
@@ -173,17 +274,27 @@ fun testSmartCastOnVarWithSuspendConversion(a: Any) {
   })
 }
 
+// CHECK:
+//   Mangled name: #testSmartCastVsSuspendConversion(kotlin.Function0<kotlin.Unit>){}
+//   Public signature: /testSmartCastVsSuspendConversion|-8980078119905187795[0]
 fun testSmartCastVsSuspendConversion(a: Function0<Unit>) {
   a as SuspendFunction0<Unit> /*~> Unit */
   useSuspend(sfn = a /*as SuspendFunction0<Unit> */)
 }
 
+// CHECK:
+//   Mangled name: #testSmartCastOnVarVsSuspendConversion(kotlin.Function0<kotlin.Unit>){}
+//   Public signature: /testSmartCastOnVarVsSuspendConversion|2087060806377142132[0]
 fun testSmartCastOnVarVsSuspendConversion(a: Function0<Unit>) {
   var b: Function0<Unit> = a
   b as SuspendFunction0<Unit> /*~> Unit */
   useSuspend(sfn = b /*as SuspendFunction0<Unit> */)
 }
 
+// CHECK:
+//   Mangled name: #testIntersectionVsSuspendConversion(0:0){0§<kotlin.Function0<kotlin.Unit>&kotlin.coroutines.SuspendFunction0<kotlin.Unit>>}
+//   Public signature: /testIntersectionVsSuspendConversion|3036580114518012351[0]
 fun <T> testIntersectionVsSuspendConversion(x: T) where T : Function0<Unit>, T : SuspendFunction0<Unit> {
   useSuspend(sfn = x)
 }
+

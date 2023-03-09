@@ -1,22 +1,49 @@
+// CHECK:
+//   Mangled name: Enum
+//   Public signature: /Enum|null[0]
 enum class Enum : Enum<Enum> {
+  // CHECK:
+  //   Mangled name: Enum#<init>(){}
+  //   Public signature: /Enum.<init>|-5645683436151566731[0]
   private constructor() /* primary */ {
     super/*Enum*/<Enum>()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: Enum.A
+  //   Public signature: /Enum.A|null[0]
   A = Enum()
 
+  // CHECK:
+  //   Mangled name: Enum#values#static(){}kotlin.Array<Enum>
+  //   Public signature: /Enum.values|7836551505611991213[0]
   fun values(): Array<Enum> /* Synthetic body for ENUM_VALUES */
 
+  // CHECK:
+  //   Mangled name: Enum#valueOf#static(kotlin.String){}Enum
+  //   Public signature: /Enum.valueOf|3536549559141182245[0]
   fun valueOf(value: String): Enum /* Synthetic body for ENUM_VALUEOF */
 
+  // CHECK:
+  //   Mangled name: Enum#static{}entries
+  //   Public signature: /Enum.entries|-5134227801081826149[0]
   val entries: EnumEntries<Enum>
+    // CHECK:
+    //   Mangled name: Enum#<get-entries>#static(){}kotlin.enums.EnumEntries<Enum>
+    //   Public signature: /Enum.entries.<get-entries>|-2213733217881289366[0]
     get(): EnumEntries<Enum> /* Synthetic body for ENUM_ENTRIES */
 
 }
 
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
 object A {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
   private constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -25,18 +52,36 @@ object A {
 
 }
 
+// CHECK:
+//   Mangled name: {}a
+//   Public signature: /a|-1200697420457237799[0]
 val a: Int
   field = 0
+  // CHECK:
+  //   Mangled name: #<get-a>(){}kotlin.Int
+  //   Public signature: /a.<get-a>|4232747788241509192[0]
   get
 
+// CHECK:
+//   Mangled name: Z
+//   Public signature: /Z|null[0]
 class Z {
+  // CHECK:
+  //   Mangled name: Z#<init>(){}
+  //   Public signature: /Z.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: Z.Companion
+  //   Public signature: /Z.Companion|null[0]
   companion object Companion {
+    // CHECK:
+    //   Mangled name: Z.Companion#<init>(){}
+    //   Public signature: /Z.Companion.<init>|-5645683436151566731[0]
     private constructor() /* primary */ {
       super/*Any*/()
       /* <init>() */
@@ -47,18 +92,31 @@ class Z {
 
 }
 
+// CHECK:
+//   Mangled name: #test1(){}Enum
+//   Public signature: /test1|2327660247328941000[0]
 fun test1(): Enum {
   return Enum.A
 }
 
+// CHECK:
+//   Mangled name: #test2(){}A
+//   Public signature: /test2|-3343341839692584744[0]
 fun test2(): A {
   return A
 }
 
+// CHECK:
+//   Mangled name: #test3(){}kotlin.Int
+//   Public signature: /test3|-1546181855196587449[0]
 fun test3(): Int {
   return <get-a>()
 }
 
+// CHECK:
+//   Mangled name: #test4(){}Z.Companion
+//   Public signature: /test4|5728287137046346436[0]
 fun test4(): Companion {
   return Companion
 }
+

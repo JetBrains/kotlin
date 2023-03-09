@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test.frontend.fir
 
+import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.backend.jvm.JvmIrDeserializerImpl
 import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
@@ -34,8 +35,7 @@ import org.jetbrains.kotlin.test.model.BackendKinds
 import org.jetbrains.kotlin.test.model.Frontend2BackendConverter
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
+import org.jetbrains.kotlin.test.services.*
 
 class Fir2IrResultsConverter(
     testServices: TestServices
@@ -44,6 +44,9 @@ class Fir2IrResultsConverter(
     FrontendKinds.FIR,
     BackendKinds.IrBackend
 ) {
+    override val additionalServices: List<ServiceRegistrationData>
+        get() = listOf(service(::ManglerProvider))
+
     override fun transform(
         module: TestModule,
         inputArtifact: FirOutputArtifact
@@ -66,7 +69,8 @@ class Fir2IrResultsConverter(
         val compilerConfigurationProvider = testServices.compilerConfigurationProvider
         val configuration = compilerConfigurationProvider.getCompilerConfiguration(module)
 
-        val fir2IrExtensions = JvmFir2IrExtensions(configuration, JvmIrDeserializerImpl(), JvmIrMangler)
+        val irMangler = JvmIrMangler
+        val fir2IrExtensions = JvmFir2IrExtensions(configuration, JvmIrDeserializerImpl(), irMangler)
 
         // Create and initialize the module and its dependencies
         val project = compilerConfigurationProvider.getProject(module)
@@ -89,11 +93,24 @@ class Fir2IrResultsConverter(
         val generateSignatures =
             (inputArtifact.partsForDependsOnModules.last().firAnalyzerFacade as? FirAnalyzerFacade)?.generateSignatures == true
 
+        fun makeDescriptorMangler() = JvmDescriptorMangler(null)
+
         val commonMemberStorage = Fir2IrCommonMemberStorage(
             generateSignatures = generateSignatures,
-            signatureComposerCreator = { JvmIdSignatureDescriptor(JvmDescriptorMangler(null)) },
+            signatureComposerCreator = { JvmIdSignatureDescriptor(makeDescriptorMangler()) },
             manglerCreator = { FirJvmKotlinMangler() }
         )
+
+        // Save the manglers, so we could test them later in irText tests.
+        testServices.manglerProvider.setManglersForModule(
+            module,
+            ManglerProvider.Manglers(
+                makeDescriptorMangler(),
+                irMangler,
+                commonMemberStorage.signatureComposer.mangler
+            )
+        )
+
         var irBuiltIns: IrBuiltInsOverFir? = null
 
         for ((index, firOutputPart) in inputArtifact.partsForDependsOnModules.withIndex()) {

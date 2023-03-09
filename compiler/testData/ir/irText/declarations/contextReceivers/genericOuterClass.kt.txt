@@ -27,3 +27,4 @@ fun Int.foo() {
 fun Collection<Int>.bar() {
   B<Int>($context_receiver_0 = <this>) /*~> Unit */
 }
+

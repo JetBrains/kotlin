@@ -1,143 +1,275 @@
+// CHECK:
+//   Mangled name: #scopedFlow(kotlin.coroutines.SuspendFunction2<CoroutineScope,FlowCollector<0:0>,kotlin.Unit>){0§<kotlin.Any?>}Flow<0:0>
+//   Public signature: /scopedFlow|2249590853579674662[0]
 @OptIn(markerClass = [ExperimentalTypeInference::class])
 fun <R : Any?> scopedFlow(block: @ExtensionFunctionType SuspendFunction2<CoroutineScope, FlowCollector<R>, Unit>): Flow<R> {
-  return flow<R>(block = local suspend fun FlowCollector<R>.<anonymous>() {
-    val collector: FlowCollector<R> = $this$flow
-    flowScope<Unit>(block = local suspend fun CoroutineScope.<anonymous>() {
-      block.invoke(p1 = $this$flowScope, p2 = collector)
+  return flow<R>(block = 
+    // CHECK:
+    //   Mangled name computed from Ir:         #scopedFlow(kotlin.coroutines.SuspendFunction2<CoroutineScope,FlowCollector<1:0>,kotlin.Unit>){0§<kotlin.Any?>}Flow<1:0>#<anonymous>#static@FlowCollector<1:0>(){}
+    //   Mangled name computed from Descriptor: #scopedFlow(kotlin.coroutines.SuspendFunction2<CoroutineScope,FlowCollector<1:0>,kotlin.Unit>){0§<kotlin.Any?>}Flow<1:0>#<anonymous>#static@FlowCollector<1:0>(){}
+    //   Mangled name computed from Fir:        could not compute mangled name: java.lang.IllegalStateException: unexpected element flow@fun R|FlowCollector<R>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {... (truncated)
+    local suspend fun FlowCollector<R>.<anonymous>() {
+      val collector: FlowCollector<R> = $this$flow
+      flowScope<Unit>(block = 
+        // CHECK:
+        //   Mangled name computed from Ir:         #scopedFlow(kotlin.coroutines.SuspendFunction2<CoroutineScope,FlowCollector<2:0>,kotlin.Unit>){0§<kotlin.Any?>}Flow<2:0>#<anonymous>#static@FlowCollector<2:0>(){}#<anonymous>#static@CoroutineScope(){}
+        //   Mangled name computed from Descriptor: #scopedFlow(kotlin.coroutines.SuspendFunction2<CoroutineScope,FlowCollector<2:0>,kotlin.Unit>){0§<kotlin.Any?>}Flow<2:0>#<anonymous>#static@FlowCollector<2:0>(){}#<anonymous>#static@CoroutineScope(){}
+        //   Mangled name computed from Fir:        could not compute mangled name: java.lang.IllegalStateException: unexpected element flowScope@fun R|CoroutineScope|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {... (truncated)
+        local suspend fun CoroutineScope.<anonymous>() {
+          block.invoke(p1 = $this$flowScope, p2 = collector)
+        }
+)
     }
 )
-  }
-)
 }
 
+// CHECK:
+//   Mangled name: #onCompletion@Flow<0:0>(kotlin.coroutines.SuspendFunction2<FlowCollector<0:0>,kotlin.Throwable?,kotlin.Unit>){0§<kotlin.Any?>}Flow<0:0>
+//   Public signature: /onCompletion|-3071899649967554187[0]
 fun <T : Any?> Flow<T>.onCompletion(action: @ExtensionFunctionType SuspendFunction2<FlowCollector<T>, @ParameterName(name = "cause") Throwable?, Unit>): Flow<T> {
-  return unsafeFlow<T>(block = local suspend fun FlowCollector<T>.<anonymous>() {
-    val safeCollector: SafeCollector<T> = SafeCollector<T>(collector = $this$unsafeFlow)
-    safeCollector.invokeSafely<T>(action = action)
-  }
+  return unsafeFlow<T>(block = 
+    // CHECK:
+    //   Mangled name computed from Ir:         #onCompletion@Flow<1:0>(kotlin.coroutines.SuspendFunction2<FlowCollector<1:0>,kotlin.Throwable?,kotlin.Unit>){0§<kotlin.Any?>}Flow<1:0>#<anonymous>#static@FlowCollector<1:0>(){}
+    //   Mangled name computed from Descriptor: #onCompletion@Flow<1:0>(kotlin.coroutines.SuspendFunction2<FlowCollector<1:0>,kotlin.Throwable?,kotlin.Unit>){0§<kotlin.Any?>}Flow<1:0>#<anonymous>#static@FlowCollector<1:0>(){}
+    //   Mangled name computed from Fir:        could not compute mangled name: java.lang.IllegalStateException: unexpected element unsafeFlow@fun R|FlowCollector<T>|.<anonymous>(): R|kotlin/Unit| <inline=CrossInline>  {... (truncated)
+    local suspend fun FlowCollector<T>.<anonymous>() {
+      val safeCollector: SafeCollector<T> = SafeCollector<T>(collector = $this$unsafeFlow)
+      safeCollector.invokeSafely<T>(action = action)
+    }
 )
 }
 
+// CHECK:
+//   Mangled name: #invokeSafely@FlowCollector<0:0>(kotlin.coroutines.SuspendFunction2<FlowCollector<0:0>,kotlin.Throwable?,kotlin.Unit>){0§<kotlin.Any?>}
+//   Public signature: /invokeSafely|-132311587249073600[0]
 suspend fun <T : Any?> FlowCollector<T>.invokeSafely(action: @ExtensionFunctionType SuspendFunction2<FlowCollector<T>, @ParameterName(name = "cause") Throwable?, Unit>) {
 }
 
+// CHECK:
+//   Mangled name: #unsafeFlow(kotlin.coroutines.SuspendFunction1<FlowCollector<0:0>,kotlin.Unit>){0§<kotlin.Any?>}Flow<0:0>
+//   Public signature: /unsafeFlow|-135607760831793589[0]
 @OptIn(markerClass = [ExperimentalTypeInference::class])
 inline fun <T : Any?> unsafeFlow(crossinline block: @ExtensionFunctionType SuspendFunction1<FlowCollector<T>, Unit>): Flow<T> {
   return TODO()
 }
 
+// CHECK:
+//   Mangled name: #onCompletion@Flow<0:0>(kotlin.coroutines.SuspendFunction1<kotlin.Throwable?,kotlin.Unit>){0§<kotlin.Any?>}Flow<0:0>
+//   Public signature: /onCompletion|647694112352607196[0]
 @Deprecated(message = "binary compatibility with a version w/o FlowCollector receiver", level = DeprecationLevel.HIDDEN)
 fun <T : Any?> Flow<T>.onCompletion(action: SuspendFunction1<@ParameterName(name = "cause") Throwable?, Unit>): Flow<T> {
-  return <this>.onCompletion<T>(action = local suspend fun FlowCollector<T>.<anonymous>(it: @ParameterName(name = "cause") Throwable?) {
-    action.invoke(p1 = it)
-  }
+  return <this>.onCompletion<T>(action = 
+    // CHECK:
+    //   Mangled name computed from Ir:         #onCompletion@Flow<1:0>(kotlin.coroutines.SuspendFunction1<kotlin.Throwable?,kotlin.Unit>){0§<kotlin.Any?>}Flow<1:0>#<anonymous>#static@FlowCollector<1:0>(kotlin.Throwable?){}
+    //   Mangled name computed from Descriptor: #onCompletion@Flow<1:0>(kotlin.coroutines.SuspendFunction1<kotlin.Throwable?,kotlin.Unit>){0§<kotlin.Any?>}Flow<1:0>#<anonymous>#static@FlowCollector<1:0>(kotlin.Throwable?){}
+    //   Mangled name computed from Fir:        could not compute mangled name: java.lang.IllegalStateException: unexpected element onCompletion@fun R|FlowCollector<T>|.<anonymous>(it: R|@R|kotlin/ParameterName|(name = String(cause))  kotlin/Throwable?|): R|kotlin/Unit| <inline=NoInline>  {... (truncated)
+    local suspend fun FlowCollector<T>.<anonymous>(it: @ParameterName(name = "cause") Throwable?) {
+      action.invoke(p1 = it)
+    }
 )
 }
 
+// CHECK:
+//   Mangled name: #asFairChannel@CoroutineScope(Flow<*>){}ReceiveChannel<kotlin.Any>
+//   Public signature: [ File '<unknown>' <- /asFairChannel|-8739457176543595950[0] ]
 private fun CoroutineScope.asFairChannel(flow: Flow<*>): ReceiveChannel<Any> {
-  return <this>.produce<Any>(block = local suspend fun ProducerScope<Any>.<anonymous>() {
-    val channel: ChannelCoroutine<Any> = $this$produce.<get-channel>() as ChannelCoroutine<Any>
-    flow.collect<Any?>(action = local suspend fun <anonymous>(value: @ParameterName(name = "value") Any?) {
-      return channel.sendFair(element = { // BLOCK
-        val <elvis>: @ParameterName(name = "value") Any? = value
-        when {
-          EQEQ(arg0 = <elvis>, arg1 = null) -> Any()
-          else -> <elvis>
+  return <this>.produce<Any>(block = 
+    // CHECK:
+    //   Mangled name computed from Ir:         #asFairChannel@CoroutineScope(Flow<*>){}ReceiveChannel<kotlin.Any>#<anonymous>#static@ProducerScope<kotlin.Any>(){}
+    //   Mangled name computed from Descriptor: #asFairChannel@CoroutineScope(Flow<*>){}ReceiveChannel<kotlin.Any>#<anonymous>#static@ProducerScope<kotlin.Any>(){}
+    //   Mangled name computed from Fir:        could not compute mangled name: java.lang.IllegalStateException: unexpected element produce@fun R|ProducerScope<kotlin/Any>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {... (truncated)
+    local suspend fun ProducerScope<Any>.<anonymous>() {
+      val channel: ChannelCoroutine<Any> = $this$produce.<get-channel>() as ChannelCoroutine<Any>
+      flow.collect<Any?>(action = 
+        // CHECK:
+        //   Mangled name computed from Ir:         #asFairChannel@CoroutineScope(Flow<*>){}ReceiveChannel<kotlin.Any>#<anonymous>#static@ProducerScope<kotlin.Any>(){}#<anonymous>#static(kotlin.Any?){}
+        //   Mangled name computed from Descriptor: #asFairChannel@CoroutineScope(Flow<*>){}ReceiveChannel<kotlin.Any>#<anonymous>#static@ProducerScope<kotlin.Any>(){}#<anonymous>#static(kotlin.Any?){}
+        //   Mangled name computed from Fir:        could not compute mangled name: java.lang.IllegalStateException: unexpected element collect@fun <anonymous>(value: R|@R|kotlin/ParameterName|(name = String(value))  kotlin/Any?|): R|kotlin/Unit| <inline=CrossInline>  {... (truncated)
+        local suspend fun <anonymous>(value: @ParameterName(name = "value") Any?) {
+          return channel.sendFair(element = { // BLOCK
+            val <elvis>: @ParameterName(name = "value") Any? = value
+            when {
+              EQEQ(arg0 = <elvis>, arg1 = null) -> Any()
+              else -> <elvis>
+            }
+          })
         }
-      })
-    }
 )
-  }
+    }
 )
 }
 
+// CHECK:
+//   Mangled name: #asChannel@CoroutineScope(Flow<*>){}ReceiveChannel<kotlin.Any>
+//   Public signature: [ File '<unknown>' <- /asChannel|-3549601571428075944[0] ]
 private fun CoroutineScope.asChannel(flow: Flow<*>): ReceiveChannel<Any> {
-  return <this>.produce<Any>(block = local suspend fun ProducerScope<Any>.<anonymous>() {
-    flow.collect<Any?>(action = local suspend fun <anonymous>(value: @ParameterName(name = "value") Any?) {
-      return $this$produce.<get-channel>().send(e = { // BLOCK
-        val <elvis>: @ParameterName(name = "value") Any? = value
-        when {
-          EQEQ(arg0 = <elvis>, arg1 = null) -> Any()
-          else -> <elvis>
+  return <this>.produce<Any>(block = 
+    // CHECK:
+    //   Mangled name computed from Ir:         #asChannel@CoroutineScope(Flow<*>){}ReceiveChannel<kotlin.Any>#<anonymous>#static@ProducerScope<kotlin.Any>(){}
+    //   Mangled name computed from Descriptor: #asChannel@CoroutineScope(Flow<*>){}ReceiveChannel<kotlin.Any>#<anonymous>#static@ProducerScope<kotlin.Any>(){}
+    //   Mangled name computed from Fir:        could not compute mangled name: java.lang.IllegalStateException: unexpected element produce@fun R|ProducerScope<kotlin/Any>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {... (truncated)
+    local suspend fun ProducerScope<Any>.<anonymous>() {
+      flow.collect<Any?>(action = 
+        // CHECK:
+        //   Mangled name computed from Ir:         #asChannel@CoroutineScope(Flow<*>){}ReceiveChannel<kotlin.Any>#<anonymous>#static@ProducerScope<kotlin.Any>(){}#<anonymous>#static(kotlin.Any?){}
+        //   Mangled name computed from Descriptor: #asChannel@CoroutineScope(Flow<*>){}ReceiveChannel<kotlin.Any>#<anonymous>#static@ProducerScope<kotlin.Any>(){}#<anonymous>#static(kotlin.Any?){}
+        //   Mangled name computed from Fir:        could not compute mangled name: java.lang.IllegalStateException: unexpected element collect@fun <anonymous>(value: R|@R|kotlin/ParameterName|(name = String(value))  kotlin/Any?|): R|kotlin/Unit| <inline=CrossInline>  {... (truncated)
+        local suspend fun <anonymous>(value: @ParameterName(name = "value") Any?) {
+          return $this$produce.<get-channel>().send(e = { // BLOCK
+            val <elvis>: @ParameterName(name = "value") Any? = value
+            when {
+              EQEQ(arg0 = <elvis>, arg1 = null) -> Any()
+              else -> <elvis>
+            }
+          })
         }
-      })
-    }
 )
-  }
+    }
 )
 }
 
+// CHECK:
+//   Mangled name: SafeCollector
+//   Public signature: /SafeCollector|null[0]
 class SafeCollector<T : Any?> : FlowCollector<T> {
+  // CHECK:
+  //   Mangled name computed from Ir:         SafeCollector#<init>(FlowCollector<1:0>){}
+  //   Mangled name computed from Descriptor: SafeCollector#<init>(FlowCollector<1:0>){}
+  //   Mangled name computed from Fir:        SafeCollector#<init>(FlowCollector<0:-1>){}
+  //   Public signature: /SafeCollector.<init>|-6254075178024411567[0]
   constructor(collector: FlowCollector<T>) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: SafeCollector{}collector
+  //   Public signature: /SafeCollector.collector|4340129746635199588[0]
   internal val collector: FlowCollector<T>
     field = collector
+    // CHECK:
+    //   Mangled name: SafeCollector#<get-collector>(){}FlowCollector<1:0>
+    //   Public signature: /SafeCollector.collector.<get-collector>|7868666490655551038[0]
     internal get
 
+  // CHECK:
+  //   Mangled name: SafeCollector#emit(1:0){}
+  //   Public signature: /SafeCollector.emit|-8401228374452471444[0]
   override suspend fun emit(value: T) {
   }
 
 }
 
+// CHECK:
+//   Mangled name: #flow(kotlin.coroutines.SuspendFunction1<FlowCollector<0:0>,kotlin.Unit>){0§<kotlin.Any?>}Flow<0:0>
+//   Public signature: /flow|-8236097055230938451[0]
 @OptIn(markerClass = [ExperimentalTypeInference::class])
 fun <T : Any?> flow(block: @ExtensionFunctionType SuspendFunction1<FlowCollector<T>, Unit>): Flow<T> {
   return TODO()
 }
 
+// CHECK:
+//   Mangled name: #flowScope(kotlin.coroutines.SuspendFunction1<CoroutineScope,0:0>){0§<kotlin.Any?>}0:0
+//   Public signature: /flowScope|-4863413966525211507[0]
 @OptIn(markerClass = [ExperimentalTypeInference::class])
 suspend fun <R : Any?> flowScope(block: @ExtensionFunctionType SuspendFunction1<CoroutineScope, R>): R {
   return TODO()
 }
 
+// CHECK:
+//   Mangled name: #collect@Flow<0:0>(kotlin.coroutines.SuspendFunction1<0:0,kotlin.Unit>){0§<kotlin.Any?>}
+//   Public signature: /collect|-7963666311311772650[0]
 suspend inline fun <T : Any?> Flow<T>.collect(crossinline action: SuspendFunction1<@ParameterName(name = "value") T, Unit>) {
 }
 
+// CHECK:
+//   Mangled name: ChannelCoroutine
+//   Public signature: /ChannelCoroutine|null[0]
 open class ChannelCoroutine<E : Any?> {
+  // CHECK:
+  //   Mangled name: ChannelCoroutine#<init>(){}
+  //   Public signature: /ChannelCoroutine.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: ChannelCoroutine#sendFair(1:0){}
+  //   Public signature: /ChannelCoroutine.sendFair|9002973699384044266[0]
   suspend fun sendFair(element: E) {
   }
 
 }
 
+// CHECK:
+//   Mangled name: CoroutineScope
+//   Public signature: /CoroutineScope|null[0]
 interface CoroutineScope {
 
 }
 
+// CHECK:
+//   Mangled name: Flow
+//   Public signature: /Flow|null[0]
 interface Flow<out T : Any?> {
+  // CHECK:
+  //   Mangled name: Flow#collect(FlowCollector<1:0>){}
+  //   Public signature: /Flow.collect|5114876798301803727[0]
   abstract suspend fun collect(collector: FlowCollector<T>)
 
 }
 
+// CHECK:
+//   Mangled name: FlowCollector
+//   Public signature: /FlowCollector|null[0]
 interface FlowCollector<in T : Any?> {
+  // CHECK:
+  //   Mangled name: FlowCollector#emit(1:0){}
+  //   Public signature: /FlowCollector.emit|-8401228374452471444[0]
   abstract suspend fun emit(value: T)
 
 }
 
+// CHECK:
+//   Mangled name: ReceiveChannel
+//   Public signature: /ReceiveChannel|null[0]
 interface ReceiveChannel<out E : Any?> {
 
 }
 
+// CHECK:
+//   Mangled name: #produce@CoroutineScope(kotlin.coroutines.SuspendFunction1<ProducerScope<0:0>,kotlin.Unit>){0§<kotlin.Any?>}ReceiveChannel<0:0>
+//   Public signature: /produce|5215241159089619820[0]
 @OptIn(markerClass = [ExperimentalTypeInference::class])
 fun <E : Any?> CoroutineScope.produce(block: @ExtensionFunctionType SuspendFunction1<ProducerScope<E>, Unit>): ReceiveChannel<E> {
   return TODO()
 }
 
+// CHECK:
+//   Mangled name: ProducerScope
+//   Public signature: /ProducerScope|null[0]
 interface ProducerScope<in E : Any?> : CoroutineScope, SendChannel<E> {
+  // CHECK:
+  //   Mangled name: ProducerScope{}channel
+  //   Public signature: /ProducerScope.channel|1234507572828696339[0]
   abstract val channel: SendChannel<E>
+    // CHECK:
+    //   Mangled name: ProducerScope#<get-channel>(){}SendChannel<1:0>
+    //   Public signature: /ProducerScope.channel.<get-channel>|6405133005890607699[0]
     abstract get
 
 }
 
+// CHECK:
+//   Mangled name: SendChannel
+//   Public signature: /SendChannel|null[0]
 interface SendChannel<in E : Any?> {
+  // CHECK:
+  //   Mangled name: SendChannel#send(1:0){}
+  //   Public signature: /SendChannel.send|-5896904506239336668[0]
   abstract suspend fun send(e: E)
 
 }

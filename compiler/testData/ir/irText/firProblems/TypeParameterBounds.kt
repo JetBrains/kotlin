@@ -1,6 +1,10 @@
 // FIR_IDENTICAL
 // !LANGUAGE: +ClassTypeParameterAnnotations
 
+// IGNORE_BACKEND_K2: JS_IR
+// IGNORE_BACKEND_K2: JS_IR_ES6
+
+
 @Target(AnnotationTarget.TYPE)
 annotation class TypeAnn(val name: String)
 

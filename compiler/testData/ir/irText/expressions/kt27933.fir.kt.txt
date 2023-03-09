@@ -1,3 +1,11 @@
+// CHECK JVM_IR:
+//   Mangled name: #box(){}kotlin.String
+//   Public signature: /box|-9347091776561469[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #box(){}
+//   Mangled name computed from Descriptor: #box(){}
+//   Mangled name computed from Fir:        #box(){}kotlin.String
+//   Public signature: /box|-9347091776561469[0]
 fun box(): String {
   var r: String = ""
   when {
@@ -14,3 +22,4 @@ fun box(): String {
   }
   return r
 }
+

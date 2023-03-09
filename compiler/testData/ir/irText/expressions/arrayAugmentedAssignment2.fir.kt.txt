@@ -1,13 +1,33 @@
+// CHECK:
+//   Mangled name: IA
+//   Public signature: /IA|null[0]
 interface IA {
+  // CHECK JVM_IR:
+  //   Mangled name: IA#get(kotlin.String){}kotlin.Int
+  //   Public signature: /IA.get|8115151130332405730[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         IA#get(kotlin.String){}
+  //   Mangled name computed from Descriptor: IA#get(kotlin.String){}
+  //   Mangled name computed from Fir:        IA#get(kotlin.String){}kotlin.Int
+  //   Public signature: /IA.get|8115151130332405730[0]
   abstract operator fun get(index: String): Int
 
 }
 
+// CHECK:
+//   Mangled name: IB
+//   Public signature: /IB|null[0]
 interface IB {
+  // CHECK:
+  //   Mangled name: IB#set@IA(kotlin.String;kotlin.Int){}
+  //   Public signature: /IB.set|-3878244067281394744[0]
   abstract operator fun IA.set(index: String, value: Int)
 
 }
 
+// CHECK:
+//   Mangled name: #test@IB(IA){}
+//   Public signature: /test|-3494937446551267445[0]
 fun IB.test(a: IA) {
   { // BLOCK
     val <array>: IA = a
@@ -15,3 +35,4 @@ fun IB.test(a: IA) {
     (<this>, <array>).set(index = <index_0>, value = <array>.get(index = <index_0>).plus(other = 42))
   }
 }
+

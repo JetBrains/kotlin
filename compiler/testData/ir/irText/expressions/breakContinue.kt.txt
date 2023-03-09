@@ -1,3 +1,6 @@
+// CHECK:
+//   Mangled name: #test1(){}
+//   Public signature: /test1|4297044443957252634[0]
 fun test1() {
   while (true) { // BLOCK
     break
@@ -17,6 +20,9 @@ fun test1() {
   }
 }
 
+// CHECK:
+//   Mangled name: #test2(){}
+//   Public signature: /test2|4279114864133353152[0]
 fun test2() {
   OUTER@ while (true) { // BLOCK
     INNER@ while (true) { // BLOCK
@@ -34,6 +40,9 @@ fun test2() {
   }
 }
 
+// CHECK:
+//   Mangled name: #test3(){}
+//   Public signature: /test3|-3759735065270951803[0]
 fun test3() {
   L@ while (true) { // BLOCK
     L@ while (true) { // BLOCK
@@ -48,3 +57,4 @@ fun test3() {
     continue@L
   }
 }
+

@@ -1,7 +1,15 @@
+// CHECK:
+//   Mangled name: #foo(kotlin.collections.MutableList<Couple<FilePath>>){}
+//   Public signature: /foo|-235147134910002974[0]
 fun foo(movedPaths: MutableList<Couple<FilePath>>) {
-  movedPaths.forEach<Couple<FilePath>>(action = local fun <anonymous>(it: Couple<FilePath>) {
-    it.#second.getName() /*~> Unit */
-  }
+  movedPaths.forEach<Couple<FilePath>>(action = 
+    // CHECK:
+    //   Mangled name computed from Ir:         #foo(kotlin.collections.MutableList<Couple<FilePath>>){}#<anonymous>#static(Couple<FilePath>){}
+    //   Mangled name computed from Descriptor: #foo(kotlin.collections.MutableList<Couple<FilePath>>){}#<anonymous>#static(Couple<FilePath>){}
+    //   Mangled name computed from Fir:        could not compute mangled name: java.lang.IllegalStateException: unexpected element forEach@fun <anonymous>(it: R|Couple<FilePath>|): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {... (truncated)
+    local fun <anonymous>(it: Couple<FilePath>) {
+      it.#second.getName() /*~> Unit */
+    }
 )
 }
 

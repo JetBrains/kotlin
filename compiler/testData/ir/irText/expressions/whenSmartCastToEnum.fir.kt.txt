@@ -1,25 +1,57 @@
+// CHECK:
+//   Mangled name: En
+//   Public signature: /En|null[0]
 enum class En : Enum<En> {
+  // CHECK:
+  //   Mangled name: En#<init>(){}
+  //   Public signature: /En.<init>|-5645683436151566731[0]
   private constructor() /* primary */ {
     super/*Enum*/<En>()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: En.A
+  //   Public signature: /En.A|null[0]
   A = En()
 
+  // CHECK:
+  //   Mangled name: En.B
+  //   Public signature: /En.B|null[0]
   B = En()
 
+  // CHECK:
+  //   Mangled name: En.C
+  //   Public signature: /En.C|null[0]
   C = En()
 
+  // CHECK:
+  //   Mangled name: En#values#static(){}kotlin.Array<En>
+  //   Public signature: /En.values|-6442868649398371099[0]
   fun values(): Array<En> /* Synthetic body for ENUM_VALUES */
 
+  // CHECK:
+  //   Mangled name: En#valueOf#static(kotlin.String){}En
+  //   Public signature: /En.valueOf|-1047188124757226812[0]
   fun valueOf(value: String): En /* Synthetic body for ENUM_VALUEOF */
 
+  // CHECK:
+  //   Mangled name: En#static{}entries
+  //   Public signature: /En.entries|-5134227801081826149[0]
   val entries: EnumEntries<En>
+    // CHECK:
+    //   Mangled name computed from Ir:         En#<get-entries>#static(){}kotlin.enums.EnumEntries<En>
+    //   Mangled name computed from Descriptor: En#<get-entries>#static(){}kotlin.enums.EnumEntries<En>
+    //   Mangled name computed from Fir:        #<get-entries>#static(){}kotlin.enums.EnumEntries<En>
+    //   Public signature: /En.entries.<get-entries>|7832995474718587298[0]
     get(): EnumEntries<En> /* Synthetic body for ENUM_ENTRIES */
 
 }
 
+// CHECK:
+//   Mangled name: #test(){}
+//   Public signature: /test|6620506149988718649[0]
 fun test() {
   var r: String = ""
   val x: Any? = En.A
@@ -55,3 +87,4 @@ fun test() {
     }
   }
 }
+

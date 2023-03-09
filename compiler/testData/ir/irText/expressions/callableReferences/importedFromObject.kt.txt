@@ -32,3 +32,4 @@ val test2: KFunction0<String>
 val test2a: KFunction0<String>
   field = Foo::foo
   get
+

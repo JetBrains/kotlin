@@ -1,5 +1,11 @@
+// CHECK:
+//   Mangled name computed from Ir:         #main(){}
+//   Mangled name computed from Descriptor: #main(){}
+//   Mangled name computed from Fir:        #main%kt55458.kt(){}
+//   Public signature: /main|1668221365206031117[0]
 fun main() {
   val <destruct>: Pair<Int, Int> = 1.to<Int, Int>(that = 2)
   val a: Int = <destruct>.component1()
   println(message = a)
 }
+

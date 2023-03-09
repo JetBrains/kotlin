@@ -1,22 +1,43 @@
+// CHECK:
+//   Mangled name: Test
+//   Public signature: /Test|null[0]
 value class Test {
+  // CHECK:
+  //   Mangled name: Test#<init>(kotlin.Int){}
+  //   Public signature: /Test.<init>|-5182794243525578284[0]
   constructor(x: Int) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: Test{}x
+  //   Public signature: /Test.x|-8060530855978347579[0]
   val x: Int
     field = x
+    // CHECK:
+    //   Mangled name: Test#<get-x>(){}kotlin.Int
+    //   Public signature: /Test.x.<get-x>|4966956098150895696[0]
     get
 
+  // CHECK:
+  //   Mangled name: Test#toString(){}kotlin.String
+  //   Public signature: /Test.toString|6958853723545266802[0]
   override fun toString(): String {
     return "Test(" + "x=" + <this>.#x + ")"
   }
 
+  // CHECK:
+  //   Mangled name: Test#hashCode(){}kotlin.Int
+  //   Public signature: /Test.hashCode|-8048879360829830756[0]
   override fun hashCode(): Int {
     return <this>.#x.hashCode()
   }
 
+  // CHECK:
+  //   Mangled name: Test#equals(kotlin.Any?){}kotlin.Boolean
+  //   Public signature: /Test.equals|722809408929142791[0]
   override operator fun equals(other: Any?): Boolean {
     when {
       other !is Test -> return false
@@ -29,3 +50,4 @@ value class Test {
   }
 
 }
+

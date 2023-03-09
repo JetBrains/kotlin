@@ -1,42 +1,96 @@
+// CHECK JVM_IR:
+//   Mangled name: #box(){}kotlin.String
+//   Public signature: /box|-9347091776561469[0]
+// CHECK JS_IR:
+//   Mangled name: #box(){}
+//   Public signature: /box|2173511048851971368[0]
 fun box(): String {
   val obj: <no name provided> = { // BLOCK
+    // CHECK JVM_IR:
+    //   Mangled name: #box(){}kotlin.String.<no name provided>
+    // CHECK JS_IR:
+    //   Mangled name: #box(){}.<no name provided>
     local class <no name provided> {
+      // CHECK JVM_IR:
+      //   Mangled name: #box(){}kotlin.String.<no name provided>#<init>(){}
+      // CHECK JS_IR:
+      //   Mangled name: #box(){}.<no name provided>#<init>(){}
       constructor() /* primary */ {
         super/*Any*/()
         /* <init>() */
 
       }
 
+      // CHECK JVM_IR:
+      //   Mangled name: #box(){}kotlin.String.<no name provided>{}end
+      // CHECK JS_IR:
+      //   Mangled name: #box(){}.<no name provided>{}end
       val end: String
         field = "K"
+        // CHECK JVM_IR:
+        //   Mangled name: #box(){}kotlin.String.<no name provided>#<get-end>(){}kotlin.String
+        // CHECK JS_IR:
+        //   Mangled name: #box(){}.<no name provided>#<get-end>(){}
         get
 
+      // CHECK JVM_IR:
+      //   Mangled name: #box(){}kotlin.String.<no name provided>#foo(){}kotlin.String
+      // CHECK JS_IR:
+      //   Mangled name: #box(){}.<no name provided>#foo(){}
       fun foo(): String {
         return <this>.Some(s = "O").bar()
       }
 
+      // CHECK JVM_IR:
+      //   Mangled name: #box(){}kotlin.String.<no name provided>.Some
+      // CHECK JS_IR:
+      //   Mangled name: #box(){}.<no name provided>.Some
       local inner class Some : Base {
+        // CHECK JVM_IR:
+        //   Mangled name: #box(){}kotlin.String.<no name provided>.Some#<init>(kotlin.String){}
+        // CHECK JS_IR:
+        //   Mangled name: #box(){}.<no name provided>.Some#<init>(kotlin.String){}
         constructor(s: String) /* primary */ {
           <this>.super/*Base*/(s = s)
           /* <init>() */
 
         }
 
+        // CHECK JVM_IR:
+        //   Mangled name: #box(){}kotlin.String.<no name provided>.Some#bar(){}kotlin.String
+        // CHECK JS_IR:
+        //   Mangled name: #box(){}.<no name provided>.Some#bar(){}
         fun bar(): String {
           return <this>.<get-s>().plus(other = <this>.<get-end>())
         }
 
       }
 
+      // CHECK JVM_IR:
+      //   Mangled name: #box(){}kotlin.String.<no name provided>.Base
+      // CHECK JS_IR:
+      //   Mangled name: #box(){}.<no name provided>.Base
       local open inner class Base {
+        // CHECK JVM_IR:
+        //   Mangled name: #box(){}kotlin.String.<no name provided>.Base#<init>(kotlin.String){}
+        // CHECK JS_IR:
+        //   Mangled name: #box(){}.<no name provided>.Base#<init>(kotlin.String){}
         constructor(s: String) /* primary */ {
           super/*Any*/()
           /* <init>() */
 
         }
 
+        // CHECK JVM_IR:
+        //   Mangled name: #box(){}kotlin.String.<no name provided>.Base{}s
+        // CHECK JS_IR:
+        //   Mangled name: #box(){}.<no name provided>.Base{}s
         val s: String
           field = s
+          // CHECK JVM_IR:
+          //   Mangled name: #box(){}kotlin.String.<no name provided>.Base#<get-s>(){}kotlin.String
+          // CHECK JS_IR:
+          //   Mangled name: #box(){}.<no name provided>.Base#<get-s>(){}
           get
 
       }
@@ -47,3 +101,4 @@ fun box(): String {
   }
   return obj.foo()
 }
+

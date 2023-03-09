@@ -1,22 +1,65 @@
+// CHECK:
+//   Mangled name: Test1
+//   Public signature: /Test1|null[0]
 data class Test1<T : Any?> {
+  // CHECK:
+  //   Mangled name computed from Ir:         Test1#<init>(1:0){}
+  //   Mangled name computed from Descriptor: Test1#<init>(1:0){}
+  //   Mangled name computed from Fir:        Test1#<init>(0:-1){}
+  //   Public signature: /Test1.<init>|8751876555175556900[0]
   constructor(x: T) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: Test1{}x
+  //   Public signature: /Test1.x|-8060530855978347579[0]
   val x: T
     field = x
+    // CHECK JVM_IR:
+    //   Mangled name: Test1#<get-x>(){}1:0
+    //   Public signature: /Test1.x.<get-x>|-8893883356128097563[0]
+    // CHECK JS_IR:
+    //   Mangled name computed from Ir:         Test1#<get-x>(){}
+    //   Mangled name computed from Descriptor: Test1#<get-x>(){}
+    //   Mangled name computed from Fir:        Test1#<get-x>(){}1:0
+    //   Public signature: /Test1.x.<get-x>|-8893883356128097563[0]
     get
 
+  // CHECK JVM_IR:
+  //   Mangled name: Test1#component1(){}1:0
+  //   Public signature: /Test1.component1|2393470133763651536[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         Test1#component1(){}
+  //   Mangled name computed from Descriptor: Test1#component1(){}
+  //   Mangled name computed from Fir:        Test1#component1(){}1:0
+  //   Public signature: /Test1.component1|2393470133763651536[0]
   operator fun component1(): T {
     return <this>.#x
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: Test1#copy(1:0){}Test1<1:0>
+  //   Public signature: /Test1.copy|-3829390724189512274[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         Test1#copy(1:0){}
+  //   Mangled name computed from Descriptor: Test1#copy(1:0){}
+  //   Mangled name computed from Fir:        Test1#copy(1:0){}Test1<1:0>
+  //   Public signature: /Test1.copy|-3829390724189512274[0]
   fun copy(x: T = <this>.#x): Test1<T> {
     return Test1<Any>(x = x)
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: Test1#equals(kotlin.Any?){}kotlin.Boolean
+  //   Public signature: /Test1.equals|722809408929142791[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         Test1#equals(kotlin.Any?){}
+  //   Mangled name computed from Descriptor: Test1#equals(kotlin.Any?){}
+  //   Mangled name computed from Fir:        Test1#equals(kotlin.Any?){}kotlin.Boolean
+  //   Public signature: /Test1.equals|722809408929142791[0]
   override fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
@@ -31,6 +74,14 @@ data class Test1<T : Any?> {
     return true
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: Test1#hashCode(){}kotlin.Int
+  //   Public signature: /Test1.hashCode|-8048879360829830756[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         Test1#hashCode(){}
+  //   Mangled name computed from Descriptor: Test1#hashCode(){}
+  //   Mangled name computed from Fir:        Test1#hashCode(){}kotlin.Int
+  //   Public signature: /Test1.hashCode|-8048879360829830756[0]
   override fun hashCode(): Int {
     return when {
       EQEQ(arg0 = <this>.#x, arg1 = null) -> 0
@@ -38,31 +89,82 @@ data class Test1<T : Any?> {
     }
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: Test1#toString(){}kotlin.String
+  //   Public signature: /Test1.toString|6958853723545266802[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         Test1#toString(){}
+  //   Mangled name computed from Descriptor: Test1#toString(){}
+  //   Mangled name computed from Fir:        Test1#toString(){}kotlin.String
+  //   Public signature: /Test1.toString|6958853723545266802[0]
   override fun toString(): String {
     return "Test1(x=" + <this>.#x + ")"
   }
 
 }
 
+// CHECK:
+//   Mangled name: Test2
+//   Public signature: /Test2|null[0]
 data class Test2<T : Number> {
+  // CHECK:
+  //   Mangled name computed from Ir:         Test2#<init>(1:0){}
+  //   Mangled name computed from Descriptor: Test2#<init>(1:0){}
+  //   Mangled name computed from Fir:        Test2#<init>(0:-1){}
+  //   Public signature: /Test2.<init>|8751876555175556900[0]
   constructor(x: T) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: Test2{}x
+  //   Public signature: /Test2.x|-8060530855978347579[0]
   val x: T
     field = x
+    // CHECK JVM_IR:
+    //   Mangled name: Test2#<get-x>(){}1:0
+    //   Public signature: /Test2.x.<get-x>|-8893883356128097563[0]
+    // CHECK JS_IR:
+    //   Mangled name computed from Ir:         Test2#<get-x>(){}
+    //   Mangled name computed from Descriptor: Test2#<get-x>(){}
+    //   Mangled name computed from Fir:        Test2#<get-x>(){}1:0
+    //   Public signature: /Test2.x.<get-x>|-8893883356128097563[0]
     get
 
+  // CHECK JVM_IR:
+  //   Mangled name: Test2#component1(){}1:0
+  //   Public signature: /Test2.component1|2393470133763651536[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         Test2#component1(){}
+  //   Mangled name computed from Descriptor: Test2#component1(){}
+  //   Mangled name computed from Fir:        Test2#component1(){}1:0
+  //   Public signature: /Test2.component1|2393470133763651536[0]
   operator fun component1(): T {
     return <this>.#x
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: Test2#copy(1:0){}Test2<1:0>
+  //   Public signature: /Test2.copy|6320544838333919124[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         Test2#copy(1:0){}
+  //   Mangled name computed from Descriptor: Test2#copy(1:0){}
+  //   Mangled name computed from Fir:        Test2#copy(1:0){}Test2<1:0>
+  //   Public signature: /Test2.copy|6320544838333919124[0]
   fun copy(x: T = <this>.#x): Test2<T> {
     return Test2<Any>(x = x)
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: Test2#equals(kotlin.Any?){}kotlin.Boolean
+  //   Public signature: /Test2.equals|722809408929142791[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         Test2#equals(kotlin.Any?){}
+  //   Mangled name computed from Descriptor: Test2#equals(kotlin.Any?){}
+  //   Mangled name computed from Fir:        Test2#equals(kotlin.Any?){}kotlin.Boolean
+  //   Public signature: /Test2.equals|722809408929142791[0]
   override fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
@@ -77,35 +179,94 @@ data class Test2<T : Number> {
     return true
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: Test2#hashCode(){}kotlin.Int
+  //   Public signature: /Test2.hashCode|-8048879360829830756[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         Test2#hashCode(){}
+  //   Mangled name computed from Descriptor: Test2#hashCode(){}
+  //   Mangled name computed from Fir:        Test2#hashCode(){}kotlin.Int
+  //   Public signature: /Test2.hashCode|-8048879360829830756[0]
   override fun hashCode(): Int {
     return <this>.#x.hashCode()
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: Test2#toString(){}kotlin.String
+  //   Public signature: /Test2.toString|6958853723545266802[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         Test2#toString(){}
+  //   Mangled name computed from Descriptor: Test2#toString(){}
+  //   Mangled name computed from Fir:        Test2#toString(){}kotlin.String
+  //   Public signature: /Test2.toString|6958853723545266802[0]
   override fun toString(): String {
     return "Test2(x=" + <this>.#x + ")"
   }
 
 }
 
+// CHECK:
+//   Mangled name: Test3
+//   Public signature: /Test3|null[0]
 data class Test3<T : Any?> {
+  // CHECK:
+  //   Mangled name computed from Ir:         Test3#<init>(kotlin.collections.List<1:0>){}
+  //   Mangled name computed from Descriptor: Test3#<init>(kotlin.collections.List<1:0>){}
+  //   Mangled name computed from Fir:        Test3#<init>(kotlin.collections.List<0:-1>){}
+  //   Public signature: /Test3.<init>|3935275774314091218[0]
   constructor(x: List<T>) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: Test3{}x
+  //   Public signature: /Test3.x|-8060530855978347579[0]
   val x: List<T>
     field = x
+    // CHECK JVM_IR:
+    //   Mangled name: Test3#<get-x>(){}kotlin.collections.List<1:0>
+    //   Public signature: /Test3.x.<get-x>|-8777382765774009671[0]
+    // CHECK JS_IR:
+    //   Mangled name computed from Ir:         Test3#<get-x>(){}
+    //   Mangled name computed from Descriptor: Test3#<get-x>(){}
+    //   Mangled name computed from Fir:        Test3#<get-x>(){}kotlin.collections.List<1:0>
+    //   Public signature: /Test3.x.<get-x>|-8777382765774009671[0]
     get
 
+  // CHECK JVM_IR:
+  //   Mangled name: Test3#component1(){}kotlin.collections.List<1:0>
+  //   Public signature: /Test3.component1|-4141154284195946749[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         Test3#component1(){}
+  //   Mangled name computed from Descriptor: Test3#component1(){}
+  //   Mangled name computed from Fir:        Test3#component1(){}kotlin.collections.List<1:0>
+  //   Public signature: /Test3.component1|-4141154284195946749[0]
   operator fun component1(): List<T> {
     return <this>.#x
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: Test3#copy(kotlin.collections.List<1:0>){}Test3<1:0>
+  //   Public signature: /Test3.copy|-1250137760207177088[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         Test3#copy(kotlin.collections.List<1:0>){}
+  //   Mangled name computed from Descriptor: Test3#copy(kotlin.collections.List<1:0>){}
+  //   Mangled name computed from Fir:        Test3#copy(kotlin.collections.List<1:0>){}Test3<1:0>
+  //   Public signature: /Test3.copy|-1250137760207177088[0]
   fun copy(x: List<T> = <this>.#x): Test3<T> {
     return Test3<Any>(x = x)
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: Test3#equals(kotlin.Any?){}kotlin.Boolean
+  //   Public signature: /Test3.equals|722809408929142791[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         Test3#equals(kotlin.Any?){}
+  //   Mangled name computed from Descriptor: Test3#equals(kotlin.Any?){}
+  //   Mangled name computed from Fir:        Test3#equals(kotlin.Any?){}kotlin.Boolean
+  //   Public signature: /Test3.equals|722809408929142791[0]
   override fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
@@ -120,35 +281,92 @@ data class Test3<T : Any?> {
     return true
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: Test3#hashCode(){}kotlin.Int
+  //   Public signature: /Test3.hashCode|-8048879360829830756[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         Test3#hashCode(){}
+  //   Mangled name computed from Descriptor: Test3#hashCode(){}
+  //   Mangled name computed from Fir:        Test3#hashCode(){}kotlin.Int
+  //   Public signature: /Test3.hashCode|-8048879360829830756[0]
   override fun hashCode(): Int {
     return <this>.#x.hashCode()
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: Test3#toString(){}kotlin.String
+  //   Public signature: /Test3.toString|6958853723545266802[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         Test3#toString(){}
+  //   Mangled name computed from Descriptor: Test3#toString(){}
+  //   Mangled name computed from Fir:        Test3#toString(){}kotlin.String
+  //   Public signature: /Test3.toString|6958853723545266802[0]
   override fun toString(): String {
     return "Test3(x=" + <this>.#x + ")"
   }
 
 }
 
+// CHECK:
+//   Mangled name: Test4
+//   Public signature: /Test4|null[0]
 data class Test4 {
+  // CHECK:
+  //   Mangled name: Test4#<init>(kotlin.collections.List<kotlin.String>){}
+  //   Public signature: /Test4.<init>|-9211757031347255021[0]
   constructor(x: List<String>) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: Test4{}x
+  //   Public signature: /Test4.x|-8060530855978347579[0]
   val x: List<String>
     field = x
+    // CHECK JVM_IR:
+    //   Mangled name: Test4#<get-x>(){}kotlin.collections.List<kotlin.String>
+    //   Public signature: /Test4.x.<get-x>|-612381453611729517[0]
+    // CHECK JS_IR:
+    //   Mangled name computed from Ir:         Test4#<get-x>(){}
+    //   Mangled name computed from Descriptor: Test4#<get-x>(){}
+    //   Mangled name computed from Fir:        Test4#<get-x>(){}kotlin.collections.List<kotlin.String>
+    //   Public signature: /Test4.x.<get-x>|-612381453611729517[0]
     get
 
+  // CHECK JVM_IR:
+  //   Mangled name: Test4#component1(){}kotlin.collections.List<kotlin.String>
+  //   Public signature: /Test4.component1|-4918334505452908017[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         Test4#component1(){}
+  //   Mangled name computed from Descriptor: Test4#component1(){}
+  //   Mangled name computed from Fir:        Test4#component1(){}kotlin.collections.List<kotlin.String>
+  //   Public signature: /Test4.component1|-4918334505452908017[0]
   operator fun component1(): List<String> {
     return <this>.#x
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: Test4#copy(kotlin.collections.List<kotlin.String>){}Test4
+  //   Public signature: /Test4.copy|8976360980800871723[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         Test4#copy(kotlin.collections.List<kotlin.String>){}
+  //   Mangled name computed from Descriptor: Test4#copy(kotlin.collections.List<kotlin.String>){}
+  //   Mangled name computed from Fir:        Test4#copy(kotlin.collections.List<kotlin.String>){}Test4
+  //   Public signature: /Test4.copy|8976360980800871723[0]
   fun copy(x: List<String> = <this>.#x): Test4 {
     return Test4(x = x)
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: Test4#equals(kotlin.Any?){}kotlin.Boolean
+  //   Public signature: /Test4.equals|722809408929142791[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         Test4#equals(kotlin.Any?){}
+  //   Mangled name computed from Descriptor: Test4#equals(kotlin.Any?){}
+  //   Mangled name computed from Fir:        Test4#equals(kotlin.Any?){}kotlin.Boolean
+  //   Public signature: /Test4.equals|722809408929142791[0]
   override fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
@@ -163,12 +381,29 @@ data class Test4 {
     return true
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: Test4#hashCode(){}kotlin.Int
+  //   Public signature: /Test4.hashCode|-8048879360829830756[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         Test4#hashCode(){}
+  //   Mangled name computed from Descriptor: Test4#hashCode(){}
+  //   Mangled name computed from Fir:        Test4#hashCode(){}kotlin.Int
+  //   Public signature: /Test4.hashCode|-8048879360829830756[0]
   override fun hashCode(): Int {
     return <this>.#x.hashCode()
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: Test4#toString(){}kotlin.String
+  //   Public signature: /Test4.toString|6958853723545266802[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         Test4#toString(){}
+  //   Mangled name computed from Descriptor: Test4#toString(){}
+  //   Mangled name computed from Fir:        Test4#toString(){}kotlin.String
+  //   Public signature: /Test4.toString|6958853723545266802[0]
   override fun toString(): String {
     return "Test4(x=" + <this>.#x + ")"
   }
 
 }
+

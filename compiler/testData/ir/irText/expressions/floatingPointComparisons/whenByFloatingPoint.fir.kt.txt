@@ -1,3 +1,11 @@
+// CHECK JVM_IR:
+//   Mangled name: #testSimple(kotlin.Double){}kotlin.Int
+//   Public signature: /testSimple|7182738722897187971[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #testSimple(kotlin.Double){}
+//   Mangled name computed from Descriptor: #testSimple(kotlin.Double){}
+//   Mangled name computed from Fir:        #testSimple(kotlin.Double){}kotlin.Int
+//   Public signature: /testSimple|7182738722897187971[0]
 fun testSimple(x: Double): Int {
   return { // BLOCK
     val tmp0_subject: Double = x
@@ -8,6 +16,14 @@ fun testSimple(x: Double): Int {
   }
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #testSmartCastInWhenSubject(kotlin.Any){}kotlin.Int
+//   Public signature: /testSmartCastInWhenSubject|5050233636010761247[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #testSmartCastInWhenSubject(kotlin.Any){}
+//   Mangled name computed from Descriptor: #testSmartCastInWhenSubject(kotlin.Any){}
+//   Mangled name computed from Fir:        #testSmartCastInWhenSubject(kotlin.Any){}kotlin.Int
+//   Public signature: /testSmartCastInWhenSubject|5050233636010761247[0]
 fun testSmartCastInWhenSubject(x: Any): Int {
   when {
     x !is Double -> return -1
@@ -21,6 +37,14 @@ fun testSmartCastInWhenSubject(x: Any): Int {
   }
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #testSmartCastInWhenCondition(kotlin.Double;kotlin.Any){}kotlin.Int
+//   Public signature: /testSmartCastInWhenCondition|7854851848186858587[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #testSmartCastInWhenCondition(kotlin.Double;kotlin.Any){}
+//   Mangled name computed from Descriptor: #testSmartCastInWhenCondition(kotlin.Double;kotlin.Any){}
+//   Mangled name computed from Fir:        #testSmartCastInWhenCondition(kotlin.Double;kotlin.Any){}kotlin.Int
+//   Public signature: /testSmartCastInWhenCondition|7854851848186858587[0]
 fun testSmartCastInWhenCondition(x: Double, y: Any): Int {
   when {
     y !is Double -> return -1
@@ -34,6 +58,14 @@ fun testSmartCastInWhenCondition(x: Double, y: Any): Int {
   }
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #testSmartCastInWhenConditionInBranch(kotlin.Any){}kotlin.Int
+//   Public signature: /testSmartCastInWhenConditionInBranch|5671837591576771954[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #testSmartCastInWhenConditionInBranch(kotlin.Any){}
+//   Mangled name computed from Descriptor: #testSmartCastInWhenConditionInBranch(kotlin.Any){}
+//   Mangled name computed from Fir:        #testSmartCastInWhenConditionInBranch(kotlin.Any){}kotlin.Int
+//   Public signature: /testSmartCastInWhenConditionInBranch|5671837591576771954[0]
 fun testSmartCastInWhenConditionInBranch(x: Any): Int {
   return { // BLOCK
     val tmp3_subject: Any = x
@@ -45,6 +77,14 @@ fun testSmartCastInWhenConditionInBranch(x: Any): Int {
   }
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #testSmartCastToDifferentTypes(kotlin.Any;kotlin.Any){}kotlin.Int
+//   Public signature: /testSmartCastToDifferentTypes|285815180648163500[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #testSmartCastToDifferentTypes(kotlin.Any;kotlin.Any){}
+//   Mangled name computed from Descriptor: #testSmartCastToDifferentTypes(kotlin.Any;kotlin.Any){}
+//   Mangled name computed from Fir:        #testSmartCastToDifferentTypes(kotlin.Any;kotlin.Any){}kotlin.Int
+//   Public signature: /testSmartCastToDifferentTypes|285815180648163500[0]
 fun testSmartCastToDifferentTypes(x: Any, y: Any): Int {
   when {
     x !is Double -> return -1
@@ -61,10 +101,26 @@ fun testSmartCastToDifferentTypes(x: Any, y: Any): Int {
   }
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #foo(kotlin.Double){}kotlin.Double
+//   Public signature: /foo|1917451337252472224[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #foo(kotlin.Double){}
+//   Mangled name computed from Descriptor: #foo(kotlin.Double){}
+//   Mangled name computed from Fir:        #foo(kotlin.Double){}kotlin.Double
+//   Public signature: /foo|1917451337252472224[0]
 fun foo(x: Double): Double {
   return x
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #testWithPrematureExitInConditionSubexpression(kotlin.Any){}kotlin.Int
+//   Public signature: /testWithPrematureExitInConditionSubexpression|-7044982830298293879[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #testWithPrematureExitInConditionSubexpression(kotlin.Any){}
+//   Mangled name computed from Descriptor: #testWithPrematureExitInConditionSubexpression(kotlin.Any){}
+//   Mangled name computed from Fir:        #testWithPrematureExitInConditionSubexpression(kotlin.Any){}kotlin.Int
+//   Public signature: /testWithPrematureExitInConditionSubexpression|-7044982830298293879[0]
 fun testWithPrematureExitInConditionSubexpression(x: Any): Int {
   return { // BLOCK
     val tmp5_subject: Any = x

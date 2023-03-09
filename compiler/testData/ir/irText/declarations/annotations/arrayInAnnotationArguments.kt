@@ -1,4 +1,8 @@
 // FIR_IDENTICAL
+
+// IGNORE_BACKEND_K2: JS_IR
+// IGNORE_BACKEND_K2: JS_IR_ES6
+
 annotation class TestAnnWithIntArray(val x: IntArray)
 annotation class TestAnnWithStringArray(val x: Array<String>)
 

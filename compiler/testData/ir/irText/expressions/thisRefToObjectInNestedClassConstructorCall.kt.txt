@@ -1,24 +1,51 @@
+// CHECK:
+//   Mangled name: Base
+//   Public signature: /Base|null[0]
 open class Base {
+  // CHECK:
+  //   Mangled name: Base#<init>(kotlin.Any){}
+  //   Public signature: /Base.<init>|4518179880532599055[0]
   constructor(x: Any) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: Base{}x
+  //   Public signature: /Base.x|-8060530855978347579[0]
   val x: Any
     field = x
+    // CHECK JVM_IR:
+    //   Mangled name: Base#<get-x>(){}kotlin.Any
+    //   Public signature: /Base.x.<get-x>|98409022523676208[0]
+    // CHECK JS_IR:
+    //   Mangled name: Base#<get-x>(){}
+    //   Public signature: /Base.x.<get-x>|1482705010654679335[0]
     get
 
 }
 
+// CHECK:
+//   Mangled name: Host
+//   Public signature: /Host|null[0]
 object Host {
+  // CHECK:
+  //   Mangled name: Host#<init>(){}
+  //   Public signature: /Host.<init>|-5645683436151566731[0]
   private constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: Host.Derived1
+  //   Public signature: /Host.Derived1|null[0]
   class Derived1 : Base {
+    // CHECK:
+    //   Mangled name: Host.Derived1#<init>(){}
+    //   Public signature: /Host.Derived1.<init>|-5645683436151566731[0]
     constructor() /* primary */ {
       super/*Base*/(x = Host)
       /* <init>() */
@@ -27,7 +54,13 @@ object Host {
 
   }
 
+  // CHECK:
+  //   Mangled name: Host.Derived2
+  //   Public signature: /Host.Derived2|null[0]
   class Derived2 : Base {
+    // CHECK:
+    //   Mangled name: Host.Derived2#<init>(){}
+    //   Public signature: /Host.Derived2.<init>|-5645683436151566731[0]
     constructor() /* primary */ {
       super/*Base*/(x = Host)
       /* <init>() */
@@ -37,3 +70,4 @@ object Host {
   }
 
 }
+

@@ -1,4 +1,10 @@
+// CHECK:
+//   Mangled name: A1
+//   Public signature: /A1|null[0]
 class A1 : ArrayList<String> {
+  // CHECK:
+  //   Mangled name: A1#<init>(){}
+  //   Public signature: /A1.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*ArrayList*/<@FlexibleNullability String?>()
     /* <init>() */
@@ -7,15 +13,25 @@ class A1 : ArrayList<String> {
 
 }
 
+// CHECK:
+//   Mangled name: A2
+//   Public signature: /A2|null[0]
 class A2 : ArrayList<String> {
+  // CHECK:
+  //   Mangled name: A2#<init>(){}
+  //   Public signature: /A2.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*ArrayList*/<@FlexibleNullability String?>()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: A2#remove(kotlin.String){}kotlin.Boolean
+  //   Public signature: /A2.remove|-4681585628882047709[0]
   override fun remove(x: String): Boolean {
     return true
   }
 
 }
+

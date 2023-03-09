@@ -1,14 +1,38 @@
 package test
 
+// CHECK:
+//   Mangled name computed from Ir:         test#foo(kotlin.Function0<kotlin.Unit>){}
+//   Mangled name computed from Descriptor: test#foo(kotlin.Function0<kotlin.Unit>){}
+//   Mangled name computed from Fir:        #foo(kotlin.Function0<kotlin.Unit>){}
+//   Public signature: test/foo|251397761749529488[0]
 inline fun foo(x: Function0<Unit>) {
 }
 
+// CHECK JVM_IR:
+//   Mangled name computed from Ir:         test#id@kotlin.String(kotlin.String;kotlin.IntArray...){}kotlin.String
+//   Mangled name computed from Descriptor: test#id@kotlin.String(kotlin.String;kotlin.IntArray...){}kotlin.String
+//   Mangled name computed from Fir:        #id@kotlin.String(kotlin.String;kotlin.IntArray...){}kotlin.String
+//   Public signature: test/id|-8103162913932729860[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         test#id@kotlin.String(kotlin.String;kotlin.IntArray...){}
+//   Mangled name computed from Descriptor: test#id@kotlin.String(kotlin.String;kotlin.IntArray...){}
+//   Mangled name computed from Fir:        #id@kotlin.String(kotlin.String;kotlin.IntArray...){}kotlin.String
+//   Public signature: test/id|-8103162913932729860[0]
 fun String.id(s: String = <this>, vararg xs: Int): String {
   return s
 }
 
+// CHECK:
+//   Mangled name computed from Ir:         test#test(){}
+//   Mangled name computed from Descriptor: test#test(){}
+//   Mangled name computed from Fir:        #test(){}
+//   Public signature: test/test|6620506149988718649[0]
 fun test() {
   foo(x = { // BLOCK
+    // CHECK:
+    //   Mangled name computed from Ir:         test#test(){}#id#static@kotlin.String(){}
+    //   Mangled name computed from Descriptor: test#test(){}#id#static@kotlin.String(){}
+    //   Mangled name computed from Fir:        #id@kotlin.String(kotlin.String;kotlin.IntArray...){}kotlin.String
     local fun String.id() {
       receiver.id()
     }
@@ -16,3 +40,4 @@ fun test() {
     "Fail"::id
   })
 }
+

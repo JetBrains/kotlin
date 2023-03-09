@@ -3,6 +3,9 @@
 // IGNORE_BACKEND: JS_IR
 // IGNORE_BACKEND: JS_IR_ES6
 
+// NO_SIGNATURE_DUMP
+// ^KT-57428, KT-57429
+
 class Foo<T>(var x: T)
 
 fun <K> foo(x: MutableList<K>): Foo<K> = TODO()

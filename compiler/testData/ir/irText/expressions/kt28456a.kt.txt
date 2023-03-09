@@ -1,4 +1,10 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
 class A {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -7,9 +13,16 @@ class A {
 
 }
 
+// CHECK:
+//   Mangled name: #set@A(kotlin.IntArray...;kotlin.Int){}
+//   Public signature: /set|-7344305741500909935[0]
 operator fun A.set(vararg i: Int, v: Int) {
 }
 
+// CHECK:
+//   Mangled name: #testSimpleAssignment(A){}
+//   Public signature: /testSimpleAssignment|1100548656282165605[0]
 fun testSimpleAssignment(a: A) {
   a.set(i = [1, 2, 3], v = 0)
 }
+

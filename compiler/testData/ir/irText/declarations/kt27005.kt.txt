@@ -1,11 +1,21 @@
+// CHECK:
+//   Mangled name: #foo(){}
+//   Public signature: /foo|-1041209573719867811[0]
 suspend fun foo() {
   return baz<Unit>()
 }
 
+// CHECK:
+//   Mangled name: #bar(){}kotlin.Any
+//   Public signature: /bar|-7451665824130722710[0]
 suspend fun bar(): Any {
   return baz<Any>()
 }
 
+// CHECK:
+//   Mangled name: #baz(){0§<kotlin.Any?>}0:0
+//   Public signature: /baz|-6572927612231176329[0]
 suspend fun <T : Any?> baz(): T {
   TODO()
 }
+

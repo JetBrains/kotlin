@@ -1,3 +1,9 @@
+// CHECK JVM_IR:
+//   Mangled name: #toString(kotlin.String){}kotlin.String
+//   Public signature: /toString|4425972968165869572[0]
+// CHECK JS_IR:
+//   Mangled name: #toString(kotlin.String){}
+//   Public signature: /toString|-3383991056988645668[0]
 fun toString(grade: String): String {
   { // BLOCK
     val tmp0_subject: String = grade
@@ -11,3 +17,4 @@ fun toString(grade: String): String {
   }
   return "???"
 }
+

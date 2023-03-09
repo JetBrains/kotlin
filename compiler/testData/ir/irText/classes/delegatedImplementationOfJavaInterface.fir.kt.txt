@@ -1,38 +1,73 @@
+// CHECK:
+//   Mangled name: Test
+//   Public signature: /Test|null[0]
 class Test : J {
+  // CHECK:
+  //   Mangled name: Test#<init>(J){}
+  //   Public signature: /Test.<init>|1083383516528472352[0]
   constructor(j: J) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name computed from Ir:         Test#takeNotNull(kotlin.String{EnhancedNullability}){}
+  //   Mangled name computed from Descriptor: Test#takeNotNull(kotlin.String){}
+  //   Mangled name computed from Fir:        Test#takeNotNull(kotlin.String{EnhancedNullability}){}
+  //   Public signature: /Test.takeNotNull|2138033560695328162[0]
   override fun takeNotNull(x: @EnhancedNullability String) {
     <this>.#j.takeNotNull(x = x)
   }
 
+  // CHECK:
+  //   Mangled name: Test#takeNullable(kotlin.String?){}
+  //   Public signature: /Test.takeNullable|5724815424219841897[0]
   override fun takeNullable(x: String?) {
     <this>.#j.takeNullable(x = x)
   }
 
+  // CHECK:
+  //   Mangled name: Test#takeFlexible(kotlin.String?){}
+  //   Public signature: /Test.takeFlexible|8434697244780181625[0]
   override fun takeFlexible(x: @FlexibleNullability String?) {
     <this>.#j.takeFlexible(x = x)
   }
 
+  // CHECK:
+  //   Mangled name computed from Ir:         Test#returnNotNull(){}kotlin.String{EnhancedNullability}
+  //   Mangled name computed from Descriptor: Test#returnNotNull(){}kotlin.String
+  //   Mangled name computed from Fir:        Test#returnNotNull(){}kotlin.String{EnhancedNullability}
+  //   Public signature: /Test.returnNotNull|-3682895453084642874[0]
   @NotNull
   override fun returnNotNull(): @EnhancedNullability String {
     return <this>.#j.returnNotNull() /*!! String */
   }
 
+  // CHECK:
+  //   Mangled name: Test#returnNullable(){}kotlin.String?
+  //   Public signature: /Test.returnNullable|-8543835017469041188[0]
   @Nullable
   override fun returnNullable(): String? {
     return <this>.#j.returnNullable()
   }
 
+  // CHECK:
+  //   Mangled name: Test#returnsFlexible(){}kotlin.String?
+  //   Public signature: /Test.returnsFlexible|-5946143652599840920[0]
   override fun returnsFlexible(): @FlexibleNullability String? {
     return <this>.#j.returnsFlexible()
   }
 
+  // CHECK:
+  //   Mangled name: Test{}j
+  //   Public signature: /Test.j|-6836075379230315579[0]
   private val j: J
     field = j
+    // CHECK:
+    //   Mangled name: Test#<get-j>(){}J
+    //   Public signature: /Test.j.<get-j>|-6114050685652754863[0]
     private get
 
 }
+

@@ -1,14 +1,27 @@
+// CHECK:
+//   Mangled name: #withContext(kotlin.Function1<kotlin.String,kotlin.String>){}kotlin.String
+//   Public signature: /withContext|-1533357735492795771[0]
 fun withContext(f: @ContextFunctionTypeParams(count = 1) Function1<String, String>): String {
   return f.invoke(p1 = "OK")
 }
 
+// CHECK:
+//   Mangled name: #callWithContext(kotlin.Function1<kotlin.String,kotlin.String>){}kotlin.String
+//   Public signature: /callWithContext|2869415620415030876[0]
 fun callWithContext(f: Function1<String, String>): String {
   return withContext(f = f)
 }
 
+// CHECK:
+//   Mangled name: #box(){}kotlin.String
+//   Public signature: /box|-9347091776561469[0]
 fun box(): String {
-  return callWithContext(f = local fun <anonymous>(s: String): String {
-    return s
-  }
+  return callWithContext(f = 
+    // CHECK:
+    //   Mangled name: #box(){}kotlin.String#<anonymous>#static(kotlin.String){}kotlin.String
+    local fun <anonymous>(s: String): String {
+      return s
+    }
 )
 }
+

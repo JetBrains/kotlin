@@ -1,16 +1,34 @@
+// CHECK:
+//   Mangled name: MyRunnable
+//   Public signature: /MyRunnable|null[0]
 fun interface MyRunnable {
+  // CHECK:
+  //   Mangled name: MyRunnable#run(){}
+  //   Public signature: /MyRunnable.run|-991178076551934874[0]
   abstract fun run()
 
 }
 
+// CHECK:
+//   Mangled name: #test(kotlin.Any;MyRunnable){}
+//   Public signature: /test|-2252565057874021036[0]
 fun test(a: Any, r: MyRunnable) {
   when {
-    a is MyRunnable -> foo(rs = [local fun <anonymous>() {
-      return Unit
-    }
+    a is MyRunnable -> foo(rs = [
+      // CHECK:
+      //   Mangled name computed from Ir:         #test(kotlin.Any;MyRunnable){}#<anonymous>#static(){}
+      //   Mangled name computed from Descriptor: #test(kotlin.Any;MyRunnable){}#<anonymous>#static(){}
+      //   Mangled name computed from Fir:        could not compute mangled name: java.lang.IllegalStateException: unexpected element foo@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {... (truncated)
+      local fun <anonymous>() {
+        return Unit
+      }
  /*-> MyRunnable */, r, a /*as MyRunnable */])
   }
 }
 
+// CHECK:
+//   Mangled name: #foo(kotlin.Array<out|MyRunnable>...){}
+//   Public signature: /foo|6689815842309055774[0]
 fun foo(vararg rs: MyRunnable) {
 }
+

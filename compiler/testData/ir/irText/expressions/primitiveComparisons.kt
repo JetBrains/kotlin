@@ -1,4 +1,8 @@
 // FIR_IDENTICAL
+
+// IGNORE_BACKEND_K2: JS_IR
+// IGNORE_BACKEND_K2: JS_IR_ES6
+
 fun btest1(a: Byte, b: Byte) = a > b
 fun btest2(a: Byte, b: Byte) = a < b
 fun btest3(a: Byte, b: Byte) = a >= b

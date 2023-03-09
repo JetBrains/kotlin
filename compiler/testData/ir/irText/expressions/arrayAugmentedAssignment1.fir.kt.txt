@@ -1,24 +1,45 @@
+// CHECK:
+//   Mangled name: #foo(){}kotlin.IntArray
+//   Public signature: /foo|-7128217666146299316[0]
 fun foo(): IntArray {
   return intArrayOf(elements = [1, 2, 3])
 }
 
+// CHECK:
+//   Mangled name: #bar(){}kotlin.Int
+//   Public signature: /bar|-6436649210114349217[0]
 fun bar(): Int {
   return 42
 }
 
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
 class C {
+  // CHECK:
+  //   Mangled name: C#<init>(kotlin.IntArray){}
+  //   Public signature: /C.<init>|6811679238332965682[0]
   constructor(x: IntArray) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: C{}x
+  //   Public signature: /C.x|-8060530855978347579[0]
   val x: IntArray
     field = x
+    // CHECK:
+    //   Mangled name: C#<get-x>(){}kotlin.IntArray
+    //   Public signature: /C.x.<get-x>|-5699461780158713262[0]
     get
 
 }
 
+// CHECK:
+//   Mangled name: #testVariable(){}
+//   Public signature: /testVariable|660968387512033895[0]
 fun testVariable() {
   var x: IntArray = foo()
   { // BLOCK
@@ -28,6 +49,9 @@ fun testVariable() {
   }
 }
 
+// CHECK:
+//   Mangled name: #testCall(){}
+//   Public signature: /testCall|-7871976205737309252[0]
 fun testCall() {
   { // BLOCK
     val <array>: IntArray = foo()
@@ -36,6 +60,9 @@ fun testCall() {
   }
 }
 
+// CHECK:
+//   Mangled name: #testMember(C){}
+//   Public signature: /testMember|-6666493840981303553[0]
 fun testMember(c: C) {
   val <array>: IntArray = c.<get-x>()
   val <index_0>: Int = 0
@@ -43,3 +70,4 @@ fun testMember(c: C) {
   <array>.set(index = <index_0>, value = <unary>.inc())
   <unary> /*~> Unit */
 }
+

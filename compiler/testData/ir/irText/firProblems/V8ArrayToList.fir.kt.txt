@@ -1,4 +1,10 @@
+// CHECK:
+//   Mangled name: V8Array
+//   Public signature: /V8Array|null[0]
 class V8Array {
+  // CHECK:
+  //   Mangled name: V8Array#<init>(){}
+  //   Public signature: /V8Array.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -7,8 +13,12 @@ class V8Array {
 
 }
 
+// CHECK:
+//   Mangled name: #box(){}kotlin.String
+//   Public signature: /box|-9347091776561469[0]
 fun box(): String {
   val array: V8Array = V8Array()
   val list: List<String> = toList(array = array) as List<String>
   return list.get(index = 0)
 }
+

@@ -1,5 +1,12 @@
+// CHECK:
+//   Mangled name: #outer(){}
+//   Public signature: /outer|1607449560170809066[0]
 fun outer() {
   var x: Int = 0
+  // CHECK:
+  //   Mangled name computed from Ir:         #outer(){}#local#static(){}
+  //   Mangled name computed from Descriptor: #outer(){}#local#static(){}
+  //   Mangled name computed from Fir:        #local(){}
   local fun local() {
     { // BLOCK
       val <unary>: Int = x

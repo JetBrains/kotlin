@@ -1,5 +1,10 @@
+// CHECK:
+//   Mangled name: #outer(){}
+//   Public signature: /outer|1607449560170809066[0]
 fun outer() {
   var x: Int = 0
+  // CHECK:
+  //   Mangled name: #outer(){}#local#static(){}
   local fun local() {
     { // BLOCK
       val tmp0: Int = x
@@ -10,3 +15,4 @@ fun outer() {
 
   local()
 }
+

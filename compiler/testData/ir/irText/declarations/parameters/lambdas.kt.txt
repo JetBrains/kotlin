@@ -1,26 +1,85 @@
+// CHECK:
+//   Mangled name: {}test1
+//   Public signature: /test1|6005685442305498193[0]
 val test1: Function1<String, String>
-  field = local fun <anonymous>(it: String): String {
-    return it
-  }
+  field = 
+    // CHECK JVM_IR:
+    //   Mangled name (compatible mode: false): {}test1#<anonymous>#static(kotlin.String){}kotlin.String
+    //   Mangled name (compatible mode: true):  test1#<anonymous>#static(kotlin.String){}kotlin.String
+    // CHECK JS_IR:
+    //   Mangled name (compatible mode: false): {}test1#<anonymous>#static(kotlin.String){}
+    //   Mangled name (compatible mode: true):  test1#<anonymous>#static(kotlin.String){}
+    local fun <anonymous>(it: String): String {
+      return it
+    }
 
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-test1>(){}kotlin.Function1<kotlin.String,kotlin.String>
+  //   Public signature: /test1.<get-test1>|2788097897117242625[0]
+  // CHECK JS_IR:
+  //   Mangled name: #<get-test1>(){}
+  //   Public signature: /test1.<get-test1>|-5735092642142423279[0]
   get
 
+// CHECK:
+//   Mangled name: {}test2
+//   Public signature: /test2|2517758057000911509[0]
 val test2: @ExtensionFunctionType Function2<Any, Any, Any>
-  field = local fun Any.<anonymous>(it: Any): Int {
-    return it.hashCode()
-  }
+  field = 
+    // CHECK JVM_IR:
+    //   Mangled name (compatible mode: false): {}test2#<anonymous>#static@kotlin.Any(kotlin.Any){}kotlin.Int
+    //   Mangled name (compatible mode: true):  test2#<anonymous>#static@kotlin.Any(kotlin.Any){}kotlin.Int
+    // CHECK JS_IR:
+    //   Mangled name (compatible mode: false): {}test2#<anonymous>#static@kotlin.Any(kotlin.Any){}
+    //   Mangled name (compatible mode: true):  test2#<anonymous>#static@kotlin.Any(kotlin.Any){}
+    local fun Any.<anonymous>(it: Any): Int {
+      return it.hashCode()
+    }
 
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-test2>(){}kotlin.Function2<kotlin.Any,kotlin.Any,kotlin.Any>
+  //   Public signature: /test2.<get-test2>|-8953585576935292690[0]
+  // CHECK JS_IR:
+  //   Mangled name: #<get-test2>(){}
+  //   Public signature: /test2.<get-test2>|-5218942532816206869[0]
   get
 
+// CHECK:
+//   Mangled name: {}test3
+//   Public signature: /test3|7677556066983021166[0]
 val test3: Function2<Int, Int, Unit>
-  field = local fun <anonymous>(i: Int, j: Int) {
-    return Unit
-  }
+  field = 
+    // CHECK:
+    //   Mangled name (compatible mode: false): {}test3#<anonymous>#static(kotlin.Int;kotlin.Int){}
+    //   Mangled name (compatible mode: true):  test3#<anonymous>#static(kotlin.Int;kotlin.Int){}
+    local fun <anonymous>(i: Int, j: Int) {
+      return Unit
+    }
 
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-test3>(){}kotlin.Function2<kotlin.Int,kotlin.Int,kotlin.Unit>
+  //   Public signature: /test3.<get-test3>|7794341945053892780[0]
+  // CHECK JS_IR:
+  //   Mangled name: #<get-test3>(){}
+  //   Public signature: /test3.<get-test3>|-7333791615083236686[0]
   get
 
+// CHECK:
+//   Mangled name: {}test4
+//   Public signature: /test4|-9115637610245762085[0]
 val test4: Function2<Int, Int, Unit>
-  field = local fun <no name provided>(i: Int, j: Int) {
-  }
+  field = 
+    // CHECK:
+    //   Mangled name (compatible mode: false): {}test4#<no name provided>#static(kotlin.Int;kotlin.Int){}
+    //   Mangled name (compatible mode: true):  test4#<no name provided>#static(kotlin.Int;kotlin.Int){}
+    local fun <no name provided>(i: Int, j: Int) {
+    }
 
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-test4>(){}kotlin.Function2<kotlin.Int,kotlin.Int,kotlin.Unit>
+  //   Public signature: /test4.<get-test4>|6534158501518091161[0]
+  // CHECK JS_IR:
+  //   Mangled name: #<get-test4>(){}
+  //   Public signature: /test4.<get-test4>|4166854324968284003[0]
   get
+

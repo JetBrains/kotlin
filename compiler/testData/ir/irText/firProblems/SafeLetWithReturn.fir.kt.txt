@@ -1,51 +1,84 @@
+// CHECK:
+//   Mangled name: #foo(kotlin.String?){}kotlin.String
+//   Public signature: /foo|-459206804338718434[0]
 fun foo(s: String?): String {
   { // BLOCK
     val tmp0_safe_receiver: String? = s
     when {
       EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
-      else -> tmp0_safe_receiver.let<String, Nothing>(block = local fun <anonymous>(it: String): Nothing {
-        return it
-      }
+      else -> tmp0_safe_receiver.let<String, Nothing>(block = 
+        // CHECK:
+        //   Mangled name computed from Ir:         #foo(kotlin.String?){}kotlin.String#<anonymous>#static(kotlin.String){}kotlin.Nothing
+        //   Mangled name computed from Descriptor: #foo(kotlin.String?){}kotlin.String#<anonymous>#static(kotlin.String){}kotlin.Nothing
+        //   Mangled name computed from Fir:        could not compute mangled name: java.lang.IllegalStateException: unexpected element let@fun <anonymous>(it: R|kotlin/String|): R|kotlin/Nothing| <inline=Inline, kind=EXACTLY_ONCE>  {... (truncated)
+        local fun <anonymous>(it: String): Nothing {
+          return it
+        }
 )
     }
   } /*~> Unit */
   return ""
 }
 
+// CHECK:
+//   Mangled name: #bar(kotlin.String?;kotlin.String?){}kotlin.String
+//   Public signature: /bar|8959405200213373616[0]
 fun bar(s: String?, t: String?): String {
   { // BLOCK
     val tmp1_safe_receiver: String? = s
     when {
       EQEQ(arg0 = tmp1_safe_receiver, arg1 = null) -> null
-      else -> tmp1_safe_receiver.let<String, Nothing?>(block = local fun <anonymous>(it: String): Nothing? {
-        return { // BLOCK
-          val tmp2_safe_receiver: String? = t
-          when {
-            EQEQ(arg0 = tmp2_safe_receiver, arg1 = null) -> null
-            else -> tmp2_safe_receiver.let<String, Nothing>(block = local fun <anonymous>(it: String): Nothing {
-              return it
-            }
+      else -> tmp1_safe_receiver.let<String, Nothing?>(block = 
+        // CHECK:
+        //   Mangled name computed from Ir:         #bar(kotlin.String?;kotlin.String?){}kotlin.String#<anonymous>#static(kotlin.String){}kotlin.Nothing?
+        //   Mangled name computed from Descriptor: #bar(kotlin.String?;kotlin.String?){}kotlin.String#<anonymous>#static(kotlin.String){}kotlin.Nothing?
+        //   Mangled name computed from Fir:        could not compute mangled name: java.lang.IllegalStateException: unexpected element let@fun <anonymous>(it: R|kotlin/String|): R|kotlin/Nothing?| <inline=Inline, kind=EXACTLY_ONCE>  {... (truncated)
+        local fun <anonymous>(it: String): Nothing? {
+          return { // BLOCK
+            val tmp2_safe_receiver: String? = t
+            when {
+              EQEQ(arg0 = tmp2_safe_receiver, arg1 = null) -> null
+              else -> tmp2_safe_receiver.let<String, Nothing>(block = 
+                // CHECK:
+                //   Mangled name computed from Ir:         #bar(kotlin.String?;kotlin.String?){}kotlin.String#<anonymous>#static(kotlin.String){}kotlin.Nothing?#<anonymous>#static(kotlin.String){}kotlin.Nothing
+                //   Mangled name computed from Descriptor: #bar(kotlin.String?;kotlin.String?){}kotlin.String#<anonymous>#static(kotlin.String){}kotlin.Nothing?#<anonymous>#static(kotlin.String){}kotlin.Nothing
+                //   Mangled name computed from Fir:        could not compute mangled name: java.lang.IllegalStateException: unexpected element let@fun <anonymous>(it: R|kotlin/String|): R|kotlin/Nothing| <inline=Inline, kind=EXACTLY_ONCE>  {... (truncated)
+                local fun <anonymous>(it: String): Nothing {
+                  return it
+                }
 )
+            }
           }
         }
-      }
 )
     }
   } /*~> Unit */
   return ""
 }
 
+// CHECK:
+//   Mangled name: @kotlin.String?{}baz
+//   Public signature: /baz|7411160368245609818[0]
 val String?.baz: String
+  // CHECK:
+  //   Mangled name: #<get-baz>@kotlin.String?(){}kotlin.String
+  //   Public signature: /baz.<get-baz>|4455067775993214927[0]
   get(): String {
     { // BLOCK
       val tmp3_safe_receiver: String? = <this>
       when {
         EQEQ(arg0 = tmp3_safe_receiver, arg1 = null) -> null
-        else -> tmp3_safe_receiver.let<String, Nothing>(block = local fun <anonymous>(it: String): Nothing {
-          return it
-        }
+        else -> tmp3_safe_receiver.let<String, Nothing>(block = 
+          // CHECK:
+          //   Mangled name computed from Ir:         #<get-baz>@kotlin.String?(){}kotlin.String#<anonymous>#static(kotlin.String){}kotlin.Nothing
+          //   Mangled name computed from Descriptor: #<get-baz>@kotlin.String?(){}kotlin.String#<anonymous>#static(kotlin.String){}kotlin.Nothing
+          //   Mangled name computed from Fir:        could not compute mangled name: java.lang.IllegalStateException: unexpected element let@fun <anonymous>(it: R|kotlin/String|): R|kotlin/Nothing| <inline=Inline, kind=EXACTLY_ONCE>  {... (truncated)
+          local fun <anonymous>(it: String): Nothing {
+            return it
+          }
 )
       }
     } /*~> Unit */
     return ""
   }
+

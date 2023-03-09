@@ -1,3 +1,10 @@
+// CHECK:
+//   Mangled name: {}test
+//   Public signature: /test|-5712650070209114719[0]
 val test: JEnum
   field = JEnum.ONE
+  // CHECK:
+  //   Mangled name: #<get-test>(){}JEnum
+  //   Public signature: /test.<get-test>|-6218625217141810690[0]
   get
+

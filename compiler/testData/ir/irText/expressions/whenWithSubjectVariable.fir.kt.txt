@@ -1,7 +1,23 @@
+// CHECK JVM_IR:
+//   Mangled name: #foo(){}kotlin.Any
+//   Public signature: /foo|-9059697968601777418[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #foo(){}
+//   Mangled name computed from Descriptor: #foo(){}
+//   Mangled name computed from Fir:        #foo(){}kotlin.Any
+//   Public signature: /foo|-9059697968601777418[0]
 fun foo(): Any {
   return 1
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #test(){}kotlin.Int
+//   Public signature: /test|4216975235718029399[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #test(){}
+//   Mangled name computed from Descriptor: #test(){}
+//   Mangled name computed from Fir:        #test(){}kotlin.Int
+//   Public signature: /test|4216975235718029399[0]
 fun test(): Int {
   return { // BLOCK
     val y: Any = foo()
@@ -15,3 +31,4 @@ fun test(): Int {
     }
   }
 }
+

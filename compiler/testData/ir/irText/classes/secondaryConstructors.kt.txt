@@ -1,8 +1,17 @@
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
 class C {
+  // CHECK:
+  //   Mangled name: C#<init>(){}
+  //   Public signature: /C.<init>|-5645683436151566731[0]
   constructor() {
     this/*C*/(x = 0)
   }
 
+  // CHECK:
+  //   Mangled name: C#<init>(kotlin.Int){}
+  //   Public signature: /C.<init>|-5182794243525578284[0]
   constructor(x: Int) {
     super/*Any*/()
     /* <init>() */
@@ -10,3 +19,4 @@ class C {
   }
 
 }
+

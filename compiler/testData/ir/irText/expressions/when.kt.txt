@@ -1,4 +1,10 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
 object A {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
   private constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -7,6 +13,9 @@ object A {
 
 }
 
+// CHECK:
+//   Mangled name: #testWithSubject(kotlin.Any?){}kotlin.String
+//   Public signature: /testWithSubject|-4105857294025109172[0]
 fun testWithSubject(x: Any?): String {
   return { // BLOCK
     val tmp0_subject: Any? = x
@@ -21,6 +30,9 @@ fun testWithSubject(x: Any?): String {
   }
 }
 
+// CHECK:
+//   Mangled name: #test(kotlin.Any?){}kotlin.String
+//   Public signature: /test|3065596719711130696[0]
 fun test(x: Any?): String {
   return when {
     EQEQ(arg0 = x, arg1 = null) -> "null"
@@ -32,6 +44,9 @@ fun test(x: Any?): String {
   }
 }
 
+// CHECK:
+//   Mangled name: #testComma(kotlin.Int){}kotlin.String
+//   Public signature: /testComma|5053559742575177933[0]
 fun testComma(x: Int): String {
   return { // BLOCK
     val tmp0_subject: Int = x
@@ -61,3 +76,4 @@ fun testComma(x: Int): String {
     }
   }
 }
+

@@ -1,16 +1,37 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
 open annotation class A : Annotation {
+  // CHECK:
+  //   Mangled name: A#<init>(kotlin.Array<out|kotlin.String>...){}
+  //   Public signature: /A.<init>|-6780234697714860085[0]
   constructor(vararg xs: String) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: A{}xs
+  //   Public signature: /A.xs|1063330853857063704[0]
   val xs: Array<out String>
     field = xs
+    // CHECK JVM_IR:
+    //   Mangled name: A#<get-xs>(){}kotlin.Array<out|kotlin.String>
+    //   Public signature: /A.xs.<get-xs>|9188548163055185324[0]
+    // CHECK JS_IR:
+    //   Mangled name computed from Ir:         A#<get-xs>(){}
+    //   Mangled name computed from Descriptor: A#<get-xs>(){}
+    //   Mangled name computed from Fir:        A#<get-xs>(){}kotlin.Array<out|kotlin.String>
+    //   Public signature: /A.xs.<get-xs>|9188548163055185324[0]
     get
 
 }
 
+// CHECK:
+//   Mangled name: #test(){}
+//   Public signature: /test|6620506149988718649[0]
 @A(xs = ["a", "b"])
 fun test() {
 }
+

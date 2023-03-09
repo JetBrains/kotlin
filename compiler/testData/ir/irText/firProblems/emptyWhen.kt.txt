@@ -1,3 +1,6 @@
+// CHECK:
+//   Mangled name: #foo(){}
+//   Public signature: /foo|-1041209573719867811[0]
 fun foo() {
   { // BLOCK
   }

@@ -1,15 +1,48 @@
+// CHECK JVM_IR:
+//   Mangled name: #test1(kotlin.Any;kotlin.collections.Collection<kotlin.Any>){}kotlin.Boolean
+//   Public signature: /test1|2421564591168232411[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #test1(kotlin.Any;kotlin.collections.Collection<kotlin.Any>){}
+//   Mangled name computed from Descriptor: #test1(kotlin.Any;kotlin.collections.Collection<kotlin.Any>){}
+//   Mangled name computed from Fir:        #test1(kotlin.Any;kotlin.collections.Collection<kotlin.Any>){}kotlin.Boolean
+//   Public signature: /test1|2421564591168232411[0]
 fun test1(a: Any, x: Collection<Any>): Boolean {
   return x.contains(element = a)
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #test2(kotlin.Any;kotlin.collections.Collection<kotlin.Any>){}kotlin.Boolean
+//   Public signature: /test2|-2480848712272829730[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #test2(kotlin.Any;kotlin.collections.Collection<kotlin.Any>){}
+//   Mangled name computed from Descriptor: #test2(kotlin.Any;kotlin.collections.Collection<kotlin.Any>){}
+//   Mangled name computed from Fir:        #test2(kotlin.Any;kotlin.collections.Collection<kotlin.Any>){}kotlin.Boolean
+//   Public signature: /test2|-2480848712272829730[0]
 fun test2(a: Any, x: Collection<Any>): Boolean {
   return x.contains(element = a).not()
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #test3(0:0;kotlin.collections.Collection<0:0>){0§<kotlin.Any?>}kotlin.Boolean
+//   Public signature: /test3|-3611627028832372019[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #test3(0:0;kotlin.collections.Collection<0:0>){0§<kotlin.Any?>}
+//   Mangled name computed from Descriptor: #test3(0:0;kotlin.collections.Collection<0:0>){0§<kotlin.Any?>}
+//   Mangled name computed from Fir:        #test3(0:0;kotlin.collections.Collection<0:0>){0§<kotlin.Any?>}kotlin.Boolean
+//   Public signature: /test3|-3611627028832372019[0]
 fun <T : Any?> test3(a: T, x: Collection<T>): Boolean {
   return x.contains(element = a)
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #test4(0:0;kotlin.collections.Collection<0:0>){0§<kotlin.Any?>}kotlin.Boolean
+//   Public signature: /test4|-7047720598994490770[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #test4(0:0;kotlin.collections.Collection<0:0>){0§<kotlin.Any?>}
+//   Mangled name computed from Descriptor: #test4(0:0;kotlin.collections.Collection<0:0>){0§<kotlin.Any?>}
+//   Mangled name computed from Fir:        #test4(0:0;kotlin.collections.Collection<0:0>){0§<kotlin.Any?>}kotlin.Boolean
+//   Public signature: /test4|-7047720598994490770[0]
 fun <T : Any?> test4(a: T, x: Collection<T>): Boolean {
   return x.contains(element = a).not()
 }
+

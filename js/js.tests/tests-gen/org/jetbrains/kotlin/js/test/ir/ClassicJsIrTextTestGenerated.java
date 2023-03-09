@@ -2277,12 +2277,6 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
         }
 
         @Test
-        @TestMetadata("SignatureComputationComplexJavaGeneric.kt")
-        public void testSignatureComputationComplexJavaGeneric() throws Exception {
-            runTest("compiler/testData/ir/irText/firProblems/SignatureComputationComplexJavaGeneric.kt");
-        }
-
-        @Test
         @TestMetadata("SimpleTypeMarker.kt")
         public void testSimpleTypeMarker() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/SimpleTypeMarker.kt");
@@ -2606,6 +2600,12 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
         @Test
         public void testAllFilesPresentInRegressions() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/regressions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        }
+
+        @Test
+        @TestMetadata("anonFakeOverride.kt")
+        public void testAnonFakeOverride() throws Exception {
+            runTest("compiler/testData/ir/irText/regressions/anonFakeOverride.kt");
         }
 
         @Test

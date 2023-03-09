@@ -1,40 +1,125 @@
+// CHECK:
+//   Mangled name: L
+//   Public signature: /L|null[0]
 open class L<LL : Any?> {
+  // CHECK:
+  //   Mangled name computed from Ir:         L#<init>(1:0){}
+  //   Mangled name computed from Descriptor: L#<init>(1:0){}
+  //   Mangled name computed from Fir:        L#<init>(0:-1){}
+  //   Public signature: /L.<init>|8751876555175556900[0]
   constructor(ll: LL) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: L{}ll
+  //   Public signature: /L.ll|-6205844342928411776[0]
   val ll: LL
     field = ll
+    // CHECK JVM_IR:
+    //   Mangled name: L#<get-ll>(){}1:0
+    //   Public signature: /L.ll.<get-ll>|3292228176841932804[0]
+    // CHECK JS_IR:
+    //   Mangled name computed from Ir:         L#<get-ll>(){}
+    //   Mangled name computed from Descriptor: L#<get-ll>(){}
+    //   Mangled name computed from Fir:        L#<get-ll>(){}1:0
+    //   Public signature: /L.ll.<get-ll>|3292228176841932804[0]
     get
 
 }
 
+// CHECK:
+//   Mangled name: Rec
+//   Public signature: /Rec|null[0]
 class Rec<T : Any?> {
+  // CHECK:
+  //   Mangled name computed from Ir:         Rec#<init>(1:0){}
+  //   Mangled name computed from Descriptor: Rec#<init>(1:0){}
+  //   Mangled name computed from Fir:        Rec#<init>(0:-1){}
+  //   Public signature: /Rec.<init>|8751876555175556900[0]
   constructor(rt: T) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: Rec{}rt
+  //   Public signature: /Rec.rt|-2445570895924930609[0]
   val rt: T
     field = rt
+    // CHECK JVM_IR:
+    //   Mangled name: Rec#<get-rt>(){}1:0
+    //   Public signature: /Rec.rt.<get-rt>|4833941673195700440[0]
+    // CHECK JS_IR:
+    //   Mangled name computed from Ir:         Rec#<get-rt>(){}
+    //   Mangled name computed from Descriptor: Rec#<get-rt>(){}
+    //   Mangled name computed from Fir:        Rec#<get-rt>(){}1:0
+    //   Public signature: /Rec.rt.<get-rt>|4833941673195700440[0]
     get
 
 }
 
+// CHECK:
+//   Mangled name computed from Ir:         @Rec<0:0>{0§<kotlin.Any?>}p
+//   Mangled name computed from Descriptor: could not compute mangled name: java.lang.IllegalArgumentException: No container found for type parameter 'PT' of 'public fun <PT> Rec<PT>.`<get-p>`(): L<PT> defined in root package'
+//   Mangled name computed from Fir:        @Rec<0:0>{0§<kotlin.Any?>}p
+//   Public signature: /p|1337333823224750046[0]
 val <PT : Any?> Rec<PT>.p: L<PT>
+  // CHECK JVM_IR:
+  //   Mangled name computed from Ir:         #<get-p>@Rec<0:0>(){0§<kotlin.Any?>}L<0:0>
+  //   Mangled name computed from Descriptor: could not compute mangled name: java.lang.IllegalArgumentException: No container found for type parameter 'PT' of 'public fun <PT> Rec<PT>.`<get-p>`(): L<PT> defined in root package'
+  //   Mangled name computed from Fir:        #<get-p>@Rec<0:0>(){0§<kotlin.Any?>}L<0:0>
+  //   Public signature: /p.<get-p>|-439714386562020387[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         #<get-p>@Rec<0:0>(){0§<kotlin.Any?>}
+  //   Mangled name computed from Descriptor: could not compute mangled name: java.lang.IllegalArgumentException: No container found for type parameter 'PT' of 'public fun <PT> Rec<PT>.`<get-p>`(): L<PT> defined in root package'
+  //   Mangled name computed from Fir:        #<get-p>@Rec<0:0>(){0§<kotlin.Any?>}L<0:0>
+  //   Public signature: /p.<get-p>|-439714386562020387[0]
   get(): L<PT> {
+    // CHECK JVM_IR:
+    //   Mangled name computed from Ir:         #<get-p>@Rec<1:0>(){0§<kotlin.Any?>}L<1:0>.PLocal
+    //   Mangled name computed from Descriptor: could not compute mangled name: java.lang.IllegalArgumentException: No container found for type parameter 'PT' of 'public fun <PT> Rec<PT>.`<get-p>`(): L<PT> defined in root package'
+    //   Mangled name computed from Fir:        PLocal
+    // CHECK JS_IR:
+    //   Mangled name computed from Ir:         #<get-p>@Rec<1:0>(){0§<kotlin.Any?>}.PLocal
+    //   Mangled name computed from Descriptor: could not compute mangled name: java.lang.IllegalArgumentException: No container found for type parameter 'PT' of 'public fun <PT> Rec<PT>.`<get-p>`(): L<PT> defined in root package'
+    //   Mangled name computed from Fir:        PLocal
     local class PLocal<LT : Any?> : L<LT> {
+      // CHECK JVM_IR:
+      //   Mangled name computed from Ir:         #<get-p>@Rec<2:0>(){0§<kotlin.Any?>}L<2:0>.PLocal#<init>(1:0;2:0){}
+      //   Mangled name computed from Descriptor: could not compute mangled name: java.lang.IllegalArgumentException: No container found for type parameter 'PT' of 'public fun <PT> Rec<PT>.`<get-p>`(): L<PT> defined in root package'
+      //   Mangled name computed from Fir:        could not compute mangled name: java.lang.IllegalStateException: Should not be here!
+      // CHECK JS_IR:
+      //   Mangled name computed from Ir:         #<get-p>@Rec<2:0>(){0§<kotlin.Any?>}.PLocal#<init>(1:0;2:0){}
+      //   Mangled name computed from Descriptor: could not compute mangled name: java.lang.IllegalArgumentException: No container found for type parameter 'PT' of 'public fun <PT> Rec<PT>.`<get-p>`(): L<PT> defined in root package'
+      //   Mangled name computed from Fir:        could not compute mangled name: java.lang.IllegalStateException: Should not be here!
       constructor(lt: LT, pt: PT) /* primary */ {
         super/*L*/<LT>(ll = lt)
         /* <init>() */
 
       }
 
+      // CHECK JVM_IR:
+      //   Mangled name computed from Ir:         #<get-p>@Rec<2:0>(){0§<kotlin.Any?>}L<2:0>.PLocal{}pt
+      //   Mangled name computed from Descriptor: could not compute mangled name: java.lang.IllegalArgumentException: No container found for type parameter 'PT' of 'public fun <PT> Rec<PT>.`<get-p>`(): L<PT> defined in root package'
+      //   Mangled name computed from Fir:        {}pt
+      // CHECK JS_IR:
+      //   Mangled name computed from Ir:         #<get-p>@Rec<2:0>(){0§<kotlin.Any?>}.PLocal{}pt
+      //   Mangled name computed from Descriptor: could not compute mangled name: java.lang.IllegalArgumentException: No container found for type parameter 'PT' of 'public fun <PT> Rec<PT>.`<get-p>`(): L<PT> defined in root package'
+      //   Mangled name computed from Fir:        {}pt
       val pt: PT
         field = pt
+        // CHECK JVM_IR:
+        //   Mangled name computed from Ir:         #<get-p>@Rec<2:0>(){0§<kotlin.Any?>}L<2:0>.PLocal#<get-pt>(){}2:0
+        //   Mangled name computed from Descriptor: could not compute mangled name: java.lang.IllegalArgumentException: No container found for type parameter 'PT' of 'public fun <PT> Rec<PT>.`<get-p>`(): L<PT> defined in root package'
+        //   Mangled name computed from Fir:        could not compute mangled name: java.lang.IllegalStateException: Should not be here!
+        // CHECK JS_IR:
+        //   Mangled name computed from Ir:         #<get-p>@Rec<2:0>(){0§<kotlin.Any?>}.PLocal#<get-pt>(){}
+        //   Mangled name computed from Descriptor: could not compute mangled name: java.lang.IllegalArgumentException: No container found for type parameter 'PT' of 'public fun <PT> Rec<PT>.`<get-p>`(): L<PT> defined in root package'
+        //   Mangled name computed from Fir:        could not compute mangled name: java.lang.IllegalStateException: Should not be here!
         get
 
     }
@@ -42,16 +127,56 @@ val <PT : Any?> Rec<PT>.p: L<PT>
     return foo2<PT, PT, PLocal<PT, PT>>(t1 = <this>.<get-rt>(), t2 = <this>.<get-rt>(), bb = PLocal::<init>/*<PT>()*/)
   }
 
+// CHECK JVM_IR:
+//   Mangled name: #fn@Rec<0:0>(){0§<kotlin.Any?>}L<0:0>
+//   Public signature: /fn|458419256100465624[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #fn@Rec<0:0>(){0§<kotlin.Any?>}
+//   Mangled name computed from Descriptor: #fn@Rec<0:0>(){0§<kotlin.Any?>}
+//   Mangled name computed from Fir:        #fn@Rec<0:0>(){0§<kotlin.Any?>}L<0:0>
+//   Public signature: /fn|458419256100465624[0]
 fun <FT : Any?> Rec<FT>.fn(): L<FT> {
+  // CHECK JVM_IR:
+  //   Mangled name computed from Ir:         #fn@Rec<1:0>(){0§<kotlin.Any?>}L<1:0>.FLocal
+  //   Mangled name computed from Descriptor: #fn@Rec<1:0>(){0§<kotlin.Any?>}L<1:0>.FLocal
+  //   Mangled name computed from Fir:        FLocal
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         #fn@Rec<1:0>(){0§<kotlin.Any?>}.FLocal
+  //   Mangled name computed from Descriptor: #fn@Rec<1:0>(){0§<kotlin.Any?>}.FLocal
+  //   Mangled name computed from Fir:        FLocal
   local class FLocal<LT : Any?> : L<LT> {
+    // CHECK JVM_IR:
+    //   Mangled name computed from Ir:         #fn@Rec<2:0>(){0§<kotlin.Any?>}L<2:0>.FLocal#<init>(1:0;2:0){}
+    //   Mangled name computed from Descriptor: #fn@Rec<2:0>(){0§<kotlin.Any?>}L<2:0>.FLocal#<init>(1:0;2:0){}
+    //   Mangled name computed from Fir:        could not compute mangled name: java.lang.IllegalStateException: Should not be here!
+    // CHECK JS_IR:
+    //   Mangled name computed from Ir:         #fn@Rec<2:0>(){0§<kotlin.Any?>}.FLocal#<init>(1:0;2:0){}
+    //   Mangled name computed from Descriptor: #fn@Rec<2:0>(){0§<kotlin.Any?>}.FLocal#<init>(1:0;2:0){}
+    //   Mangled name computed from Fir:        could not compute mangled name: java.lang.IllegalStateException: Should not be here!
     constructor(lt: LT, pt: FT) /* primary */ {
       super/*L*/<LT>(ll = lt)
       /* <init>() */
 
     }
 
+    // CHECK JVM_IR:
+    //   Mangled name computed from Ir:         #fn@Rec<2:0>(){0§<kotlin.Any?>}L<2:0>.FLocal{}pt
+    //   Mangled name computed from Descriptor: #fn@Rec<2:0>(){0§<kotlin.Any?>}L<2:0>.FLocal{}pt
+    //   Mangled name computed from Fir:        {}pt
+    // CHECK JS_IR:
+    //   Mangled name computed from Ir:         #fn@Rec<2:0>(){0§<kotlin.Any?>}.FLocal{}pt
+    //   Mangled name computed from Descriptor: #fn@Rec<2:0>(){0§<kotlin.Any?>}.FLocal{}pt
+    //   Mangled name computed from Fir:        {}pt
     val pt: FT
       field = pt
+      // CHECK JVM_IR:
+      //   Mangled name computed from Ir:         #fn@Rec<2:0>(){0§<kotlin.Any?>}L<2:0>.FLocal#<get-pt>(){}2:0
+      //   Mangled name computed from Descriptor: #fn@Rec<2:0>(){0§<kotlin.Any?>}L<2:0>.FLocal#<get-pt>(){}2:0
+      //   Mangled name computed from Fir:        could not compute mangled name: java.lang.IllegalStateException: Should not be here!
+      // CHECK JS_IR:
+      //   Mangled name computed from Ir:         #fn@Rec<2:0>(){0§<kotlin.Any?>}.FLocal#<get-pt>(){}
+      //   Mangled name computed from Descriptor: #fn@Rec<2:0>(){0§<kotlin.Any?>}.FLocal#<get-pt>(){}
+      //   Mangled name computed from Fir:        could not compute mangled name: java.lang.IllegalStateException: Should not be here!
       get
 
   }
@@ -59,6 +184,14 @@ fun <FT : Any?> Rec<FT>.fn(): L<FT> {
   return foo2<FT, FT, FLocal<FT, FT>>(t1 = <this>.<get-rt>(), t2 = <this>.<get-rt>(), bb = FLocal::<init>/*<FT>()*/)
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #foo2(0:0;0:1;kotlin.Function2<0:0,0:1,0:2>){0§<kotlin.Any?>;1§<kotlin.Any?>;2§<kotlin.Any?>}0:2
+//   Public signature: /foo2|-6186734139379933811[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #foo2(0:0;0:1;kotlin.Function2<0:0,0:1,0:2>){0§<kotlin.Any?>;1§<kotlin.Any?>;2§<kotlin.Any?>}
+//   Mangled name computed from Descriptor: #foo2(0:0;0:1;kotlin.Function2<0:0,0:1,0:2>){0§<kotlin.Any?>;1§<kotlin.Any?>;2§<kotlin.Any?>}
+//   Mangled name computed from Fir:        #foo2(0:0;0:1;kotlin.Function2<0:0,0:1,0:2>){0§<kotlin.Any?>;1§<kotlin.Any?>;2§<kotlin.Any?>}0:2
+//   Public signature: /foo2|-6186734139379933811[0]
 fun <T1 : Any?, T2 : Any?, R : Any?> foo2(t1: T1, t2: T2, bb: Function2<T1, T2, R>): R {
   return bb.invoke(p1 = t1, p2 = t2)
 }

@@ -1,19 +1,46 @@
+// CHECK:
+//   Mangled name: Cell
+//   Public signature: /Cell|null[0]
 open class Cell<T : Any?> {
+  // CHECK:
+  //   Mangled name: Cell#<init>(1:0){}
+  //   Public signature: /Cell.<init>|-8731461708390519279[0]
   constructor(value: T) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: Cell{}value
+  //   Public signature: /Cell.value|1987073854177347439[0]
   val value: T
     field = value
+    // CHECK JVM_IR:
+    //   Mangled name: Cell#<get-value>(){}1:0
+    //   Public signature: /Cell.value.<get-value>|3167862337988859752[0]
+    // CHECK JS_IR:
+    //   Mangled name: Cell#<get-value>(){}
+    //   Public signature: /Cell.value.<get-value>|3260093555963109437[0]
     get
 
 }
 
+// CHECK:
+//   Mangled name: CT
+//   Public signature: /CT|null[0]
 typealias CT<T : Any?> = Cell<T>
+// CHECK:
+//   Mangled name: CStr
+//   Public signature: /CStr|null[0]
 typealias CStr = Cell<String>
+// CHECK:
+//   Mangled name: C1
+//   Public signature: /C1|null[0]
 class C1 : Cell<String> {
+  // CHECK:
+  //   Mangled name: C1#<init>(){}
+  //   Public signature: /C1.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Cell*/<String>(value = "O")
     /* <init>() */
@@ -22,7 +49,13 @@ class C1 : Cell<String> {
 
 }
 
+// CHECK:
+//   Mangled name: C2
+//   Public signature: /C2|null[0]
 class C2 : Cell<String> {
+  // CHECK:
+  //   Mangled name: C2#<init>(){}
+  //   Public signature: /C2.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Cell*/<String>(value = "K")
     /* <init>() */
@@ -30,3 +63,4 @@ class C2 : Cell<String> {
   }
 
 }
+

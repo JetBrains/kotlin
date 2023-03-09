@@ -1,4 +1,11 @@
+// CHECK:
+//   Mangled name: @java.lang.Class<*>{}test
+//   Public signature: /test|-5107008281653532078[0]
 val Class<*>.test: @FlexibleNullability Array<out @FlexibleNullability Field?>?
+  // CHECK:
+  //   Mangled name: #<get-test>@java.lang.Class<*>(){}kotlin.Array<out|java.lang.reflect.Field?>?
+  //   Public signature: /test.<get-test>|5143661076951635746[0]
   get(): @FlexibleNullability Array<out @FlexibleNullability Field?>? {
     return <this>.getDeclaredFields<@FlexibleNullability Any?>()
   }
+

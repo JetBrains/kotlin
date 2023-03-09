@@ -1,3 +1,6 @@
+// CHECK:
+//   Mangled name: #testMemberIncrementDecrement(<dynamic>){}
+//   Public signature: /testMemberIncrementDecrement|1604694277771575268[0]
 fun testMemberIncrementDecrement(d: dynamic) {
   val t1: dynamic = ++d.prefixIncr
   val t2: dynamic = --d.prefixDecr
@@ -5,6 +8,9 @@ fun testMemberIncrementDecrement(d: dynamic) {
   val t4: dynamic = d.postfixDecr--
 }
 
+// CHECK:
+//   Mangled name: #testSafeMemberIncrementDecrement(<dynamic>){}
+//   Public signature: /testSafeMemberIncrementDecrement|-4306216465980095979[0]
 fun testSafeMemberIncrementDecrement(d: dynamic) {
   val t1: dynamic = { // BLOCK
     val tmp0_safe_receiver: dynamic = d

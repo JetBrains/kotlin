@@ -1,6 +1,9 @@
 // FIR_IDENTICAL
 // WITH_STDLIB
 
+// NO_SIGNATURE_DUMP
+// ^KT-57434
+
 class MyClass(val value: String)
 
 operator fun MyClass.provideDelegate(host: Any?, p: Any): String =

@@ -1,22 +1,51 @@
+// CHECK JVM_IR:
+//   Mangled name: #k@kotlin.String(){}kotlin.Function0<kotlin.String>
+//   Public signature: /k|-4623891636485044145[0]
+// CHECK JS_IR:
+//   Mangled name: #k@kotlin.String(){}
+//   Public signature: /k|603037284564559001[0]
 fun String.k(): Function0<String> {
-  return local fun <anonymous>(): String {
-    return <this>
-  }
+  return 
+    // CHECK JVM_IR:
+    //   Mangled name: #k@kotlin.String(){}kotlin.Function0<kotlin.String>#<anonymous>#static(){}kotlin.String
+    // CHECK JS_IR:
+    //   Mangled name: #k@kotlin.String(){}#<anonymous>#static(){}
+    local fun <anonymous>(): String {
+      return <this>
+    }
 
 }
 
+// CHECK:
+//   Mangled name: #test1(kotlin.Function0<kotlin.Unit>){}
+//   Public signature: /test1|-2870537507416699845[0]
 fun test1(f: Function0<Unit>) {
   return f.invoke()
 }
 
+// CHECK:
+//   Mangled name: #test2(kotlin.Function1<kotlin.String,kotlin.Unit>){}
+//   Public signature: /test2|4596316013814715028[0]
 fun test2(f: @ExtensionFunctionType Function1<String, Unit>) {
   return f.invoke(p1 = "hello")
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #test3(){}kotlin.String
+//   Public signature: /test3|3344305992477585251[0]
+// CHECK JS_IR:
+//   Mangled name: #test3(){}
+//   Public signature: /test3|-3759735065270951803[0]
 fun test3(): String {
   return "hello".k().invoke()
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #test4(kotlin.String?){}kotlin.String?
+//   Public signature: /test4|-1434334118883225411[0]
+// CHECK JS_IR:
+//   Mangled name: #test4(kotlin.String?){}
+//   Public signature: /test4|-2246924836724040051[0]
 fun test4(ns: String?): String? {
   return { // BLOCK
     val tmp1_safe_receiver: Function0<String>? = { // BLOCK
@@ -32,3 +61,4 @@ fun test4(ns: String?): String? {
     }
   }
 }
+

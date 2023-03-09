@@ -1,12 +1,22 @@
+// CHECK:
+//   Mangled name: #test(){}
+//   Public signature: /test|6620506149988718649[0]
 fun test() {
   val x: IntArray = intArrayOf(elements = [1, 2, 3])
   x.set(index = 1, value = 0)
 }
 
+// CHECK:
+//   Mangled name: #foo(){}kotlin.Int
+//   Public signature: /foo|-1256155405684507276[0]
 fun foo(): Int {
   return 1
 }
 
+// CHECK:
+//   Mangled name: #test2(){}
+//   Public signature: /test2|4279114864133353152[0]
 fun test2() {
   intArrayOf(elements = [1, 2, 3]).set(index = foo(), value = 1)
 }
+

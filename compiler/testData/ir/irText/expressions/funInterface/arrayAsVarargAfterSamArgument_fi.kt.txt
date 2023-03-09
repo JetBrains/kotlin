@@ -53,3 +53,4 @@ fun test(fn: Function0<Unit>, r: IRunnable, s: String, arr: Array<String>) {
   }
  /*-> IRunnable */, s = [*arr])
 }
+

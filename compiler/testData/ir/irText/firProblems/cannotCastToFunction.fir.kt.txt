@@ -1,4 +1,10 @@
+// CHECK:
+//   Mangled name: IrElement
+//   Public signature: /IrElement|null[0]
 open class IrElement {
+  // CHECK:
+  //   Mangled name: IrElement#<init>(){}
+  //   Public signature: /IrElement.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -7,24 +13,67 @@ open class IrElement {
 
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #dumpKotlinLike@IrElement(kotlin.String){}kotlin.String
+//   Public signature: /dumpKotlinLike|4178458168806795646[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #dumpKotlinLike@IrElement(kotlin.String){}
+//   Mangled name computed from Descriptor: #dumpKotlinLike@IrElement(kotlin.String){}
+//   Mangled name computed from Fir:        #dumpKotlinLike@IrElement(kotlin.String){}kotlin.String
+//   Public signature: /dumpKotlinLike|4178458168806795646[0]
 fun IrElement.dumpKotlinLike(options: String = ""): String {
   return "O"
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #dump@IrElement(kotlin.Boolean;kotlin.Boolean){}kotlin.String
+//   Public signature: /dump|-3225440066498389487[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #dump@IrElement(kotlin.Boolean;kotlin.Boolean){}
+//   Mangled name computed from Descriptor: #dump@IrElement(kotlin.Boolean;kotlin.Boolean){}
+//   Mangled name computed from Fir:        #dump@IrElement(kotlin.Boolean;kotlin.Boolean){}kotlin.String
+//   Public signature: /dump|-3225440066498389487[0]
 fun IrElement.dump(normalizeNames: Boolean = false, stableOrder: Boolean = false): String {
   return "K"
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #dump(IrElement;kotlin.String){}kotlin.String
+//   Public signature: /dump|2660497428954829765[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #dump(IrElement;kotlin.String){}
+//   Mangled name computed from Descriptor: #dump(IrElement;kotlin.String){}
+//   Mangled name computed from Fir:        #dump(IrElement;kotlin.String){}kotlin.String
+//   Public signature: /dump|2660497428954829765[0]
 fun dump(data: IrElement, dumpStrategy: String): String {
   val dump: @ExtensionFunctionType Function1<IrElement, String> = when {
-    EQEQ(arg0 = dumpStrategy, arg1 = "KotlinLike") -> local fun dumpKotlinLike(p0: IrElement): String {
-      return p0.dumpKotlinLike()
-    }
+    EQEQ(arg0 = dumpStrategy, arg1 = "KotlinLike") -> 
+      // CHECK JVM_IR:
+      //   Mangled name computed from Ir:         #dump(IrElement;kotlin.String){}kotlin.String#dumpKotlinLike#static(IrElement){}kotlin.String
+      //   Mangled name computed from Descriptor: #dump(IrElement;kotlin.String){}kotlin.String#dumpKotlinLike#static(IrElement){}kotlin.String
+      //   Mangled name computed from Fir:        #dumpKotlinLike@IrElement(kotlin.String){}kotlin.String
+      // CHECK JS_IR:
+      //   Mangled name computed from Ir:         #dump(IrElement;kotlin.String){}#dumpKotlinLike#static(IrElement){}
+      //   Mangled name computed from Descriptor: #dump(IrElement;kotlin.String){}#dumpKotlinLike#static(IrElement){}
+      //   Mangled name computed from Fir:        #dumpKotlinLike@IrElement(kotlin.String){}kotlin.String
+      local fun dumpKotlinLike(p0: IrElement): String {
+        return p0.dumpKotlinLike()
+      }
 
-    else -> local fun dump(p0: IrElement): String {
-      return p0.dump()
-    }
+    else -> 
+      // CHECK JVM_IR:
+      //   Mangled name computed from Ir:         #dump(IrElement;kotlin.String){}kotlin.String#dump#static(IrElement){}kotlin.String
+      //   Mangled name computed from Descriptor: #dump(IrElement;kotlin.String){}kotlin.String#dump#static(IrElement){}kotlin.String
+      //   Mangled name computed from Fir:        #dump@IrElement(kotlin.Boolean;kotlin.Boolean){}kotlin.String
+      // CHECK JS_IR:
+      //   Mangled name computed from Ir:         #dump(IrElement;kotlin.String){}#dump#static(IrElement){}
+      //   Mangled name computed from Descriptor: #dump(IrElement;kotlin.String){}#dump#static(IrElement){}
+      //   Mangled name computed from Fir:        #dump@IrElement(kotlin.Boolean;kotlin.Boolean){}kotlin.String
+      local fun dump(p0: IrElement): String {
+        return p0.dump()
+      }
 
   }
   return dump.invoke(p1 = data)
 }
+

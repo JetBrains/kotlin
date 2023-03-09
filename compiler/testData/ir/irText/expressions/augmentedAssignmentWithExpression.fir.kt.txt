@@ -1,31 +1,61 @@
+// CHECK:
+//   Mangled name: Host
+//   Public signature: /Host|null[0]
 class Host {
+  // CHECK:
+  //   Mangled name: Host#<init>(){}
+  //   Public signature: /Host.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: Host#plusAssign(kotlin.Int){}
+  //   Public signature: /Host.plusAssign|3258359553712471205[0]
   operator fun plusAssign(x: Int) {
   }
 
+  // CHECK:
+  //   Mangled name: Host#test1(){}
+  //   Public signature: /Host.test1|4297044443957252634[0]
   fun test1() {
     <this>.plusAssign(x = 1)
   }
 
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #foo(){}Host
+//   Public signature: /foo|-9155687047523720482[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #foo(){}
+//   Mangled name computed from Descriptor: #foo(){}
+//   Mangled name computed from Fir:        #foo(){}Host
+//   Public signature: /foo|-9155687047523720482[0]
 fun foo(): Host {
   return Host()
 }
 
+// CHECK:
+//   Mangled name: #test2@Host(){}
+//   Public signature: /test2|-8326697418267123126[0]
 fun Host.test2() {
   <this>.plusAssign(x = 1)
 }
 
+// CHECK:
+//   Mangled name: #test3(){}
+//   Public signature: /test3|-3759735065270951803[0]
 fun test3() {
   foo().plusAssign(x = 1)
 }
 
+// CHECK:
+//   Mangled name: #test4(kotlin.Function0<Host>){}
+//   Public signature: /test4|1361778723589440005[0]
 fun test4(a: Function0<Host>) {
   a.invoke().plusAssign(x = 1)
 }
+

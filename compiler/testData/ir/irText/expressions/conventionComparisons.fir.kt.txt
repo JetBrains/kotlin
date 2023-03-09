@@ -1,24 +1,71 @@
+// CHECK:
+//   Mangled name: IA
+//   Public signature: /IA|null[0]
 interface IA {
 
 }
 
+// CHECK:
+//   Mangled name: IB
+//   Public signature: /IB|null[0]
 interface IB {
+  // CHECK JVM_IR:
+  //   Mangled name: IB#compareTo@IA(IA){}kotlin.Int
+  //   Public signature: /IB.compareTo|-7259969497814497426[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         IB#compareTo@IA(IA){}
+  //   Mangled name computed from Descriptor: IB#compareTo@IA(IA){}
+  //   Mangled name computed from Fir:        IB#compareTo@IA(IA){}kotlin.Int
+  //   Public signature: /IB.compareTo|-7259969497814497426[0]
   abstract operator fun IA.compareTo(other: IA): Int
 
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #test1@IB(IA;IA){}kotlin.Boolean
+//   Public signature: /test1|-4373836657117486273[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #test1@IB(IA;IA){}
+//   Mangled name computed from Descriptor: #test1@IB(IA;IA){}
+//   Mangled name computed from Fir:        #test1@IB(IA;IA){}kotlin.Boolean
+//   Public signature: /test1|-4373836657117486273[0]
 fun IB.test1(a1: IA, a2: IA): Boolean {
   return greater(arg0 = (<this>, a1).compareTo(other = a2), arg1 = 0)
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #test2@IB(IA;IA){}kotlin.Boolean
+//   Public signature: /test2|5436750902587155920[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #test2@IB(IA;IA){}
+//   Mangled name computed from Descriptor: #test2@IB(IA;IA){}
+//   Mangled name computed from Fir:        #test2@IB(IA;IA){}kotlin.Boolean
+//   Public signature: /test2|5436750902587155920[0]
 fun IB.test2(a1: IA, a2: IA): Boolean {
   return greaterOrEqual(arg0 = (<this>, a1).compareTo(other = a2), arg1 = 0)
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #test3@IB(IA;IA){}kotlin.Boolean
+//   Public signature: /test3|-6567103906122911326[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #test3@IB(IA;IA){}
+//   Mangled name computed from Descriptor: #test3@IB(IA;IA){}
+//   Mangled name computed from Fir:        #test3@IB(IA;IA){}kotlin.Boolean
+//   Public signature: /test3|-6567103906122911326[0]
 fun IB.test3(a1: IA, a2: IA): Boolean {
   return less(arg0 = (<this>, a1).compareTo(other = a2), arg1 = 0)
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #test4@IB(IA;IA){}kotlin.Boolean
+//   Public signature: /test4|-2122684825224786608[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #test4@IB(IA;IA){}
+//   Mangled name computed from Descriptor: #test4@IB(IA;IA){}
+//   Mangled name computed from Fir:        #test4@IB(IA;IA){}kotlin.Boolean
+//   Public signature: /test4|-2122684825224786608[0]
 fun IB.test4(a1: IA, a2: IA): Boolean {
   return lessOrEqual(arg0 = (<this>, a1).compareTo(other = a2), arg1 = 0)
 }
+

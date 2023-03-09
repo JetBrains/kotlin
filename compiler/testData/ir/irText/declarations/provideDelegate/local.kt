@@ -1,4 +1,8 @@
 // FIR_IDENTICAL
+
+// NO_SIGNATURE_DUMP
+// ^KT-57434
+
 class Delegate(val value: String) {
     operator fun getValue(thisRef: Any?, property: Any?) = value
 }

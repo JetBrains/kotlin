@@ -1,11 +1,21 @@
+// CHECK:
+//   Mangled name: #box(){}kotlin.String
+//   Public signature: /box|-9347091776561469[0]
 fun box(): String {
   val map: MutableMap<Fun, String> = mutableMapOf<Fun, String>()
-  val fn: Fun = local fun <anonymous>(it: @FlexibleNullability String?): @FlexibleNullability String? {
-    return TODO()
-  }
+  val fn: Fun = 
+    // CHECK:
+    //   Mangled name: #box(){}kotlin.String#<anonymous>#static(kotlin.String?){}kotlin.String?
+    local fun <anonymous>(it: @FlexibleNullability String?): @FlexibleNullability String? {
+      return TODO()
+    }
  /*-> Fun */
-  return map.computeIfAbsent(p0 = fn, p1 = local fun <anonymous>(it: @EnhancedNullability Fun): @EnhancedNullability String {
-    return "OK"
-  }
+  return map.computeIfAbsent(p0 = fn, p1 = 
+    // CHECK:
+    //   Mangled name: #box(){}kotlin.String#<anonymous>#static(Fun{EnhancedNullability}){}kotlin.String{EnhancedNullability}
+    local fun <anonymous>(it: @EnhancedNullability Fun): @EnhancedNullability String {
+      return "OK"
+    }
  /*as Function1<@EnhancedNullability Any?, @EnhancedNullability String> */ /*-> @EnhancedNullability Function<Any?, @EnhancedNullability String> */) /*!! String */
 }
+

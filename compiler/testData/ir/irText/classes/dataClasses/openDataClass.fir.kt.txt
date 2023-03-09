@@ -1,31 +1,61 @@
+// CHECK:
+//   Mangled name: ValidatedProperties
+//   Public signature: /ValidatedProperties|null[0]
 @Suppress(names = ["INCOMPATIBLE_MODIFIERS"])
 open data class ValidatedProperties {
+  // CHECK:
+  //   Mangled name: ValidatedProperties#<init>(kotlin.String;kotlin.String){}
+  //   Public signature: /ValidatedProperties.<init>|9140439783797628932[0]
   constructor(test1: String, test2: String) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: ValidatedProperties{}test1
+  //   Public signature: /ValidatedProperties.test1|6005685442305498193[0]
   open val test1: String
     field = test1
+    // CHECK:
+    //   Mangled name: ValidatedProperties#<get-test1>(){}kotlin.String
+    //   Public signature: /ValidatedProperties.test1.<get-test1>|-7403750508378492770[0]
     open get
 
+  // CHECK:
+  //   Mangled name: ValidatedProperties{}test2
+  //   Public signature: /ValidatedProperties.test2|2517758057000911509[0]
   open val test2: String
     field = test2
+    // CHECK:
+    //   Mangled name: ValidatedProperties#<get-test2>(){}kotlin.String
+    //   Public signature: /ValidatedProperties.test2.<get-test2>|-8062412501290172814[0]
     open get
 
+  // CHECK:
+  //   Mangled name: ValidatedProperties#component1(){}kotlin.String
+  //   Public signature: /ValidatedProperties.component1|-7481405593404337796[0]
   operator fun component1(): String {
     return <this>.<get-test1>()
   }
 
+  // CHECK:
+  //   Mangled name: ValidatedProperties#component2(){}kotlin.String
+  //   Public signature: /ValidatedProperties.component2|1228864375093914597[0]
   operator fun component2(): String {
     return <this>.<get-test2>()
   }
 
+  // CHECK:
+  //   Mangled name: ValidatedProperties#copy(kotlin.String;kotlin.String){}ValidatedProperties
+  //   Public signature: /ValidatedProperties.copy|3682871900302910646[0]
   fun copy(test1: String = <this>.<get-test1>(), test2: String = <this>.<get-test2>()): ValidatedProperties {
     return ValidatedProperties(test1 = test1, test2 = test2)
   }
 
+  // CHECK:
+  //   Mangled name: ValidatedProperties#equals(kotlin.Any?){}kotlin.Boolean
+  //   Public signature: /ValidatedProperties.equals|722809408929142791[0]
   override fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
@@ -43,14 +73,21 @@ open data class ValidatedProperties {
     return true
   }
 
+  // CHECK:
+  //   Mangled name: ValidatedProperties#hashCode(){}kotlin.Int
+  //   Public signature: /ValidatedProperties.hashCode|-8048879360829830756[0]
   override fun hashCode(): Int {
     var result: Int = <this>.<get-test1>().hashCode()
     result = result.times(other = 31).plus(other = <this>.<get-test2>().hashCode())
     return result
   }
 
+  // CHECK:
+  //   Mangled name: ValidatedProperties#toString(){}kotlin.String
+  //   Public signature: /ValidatedProperties.toString|6958853723545266802[0]
   override fun toString(): String {
     return "ValidatedProperties(test1=" + <this>.<get-test1>() + ", test2=" + <this>.<get-test2>() + ")"
   }
 
 }
+

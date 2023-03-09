@@ -1,37 +1,74 @@
+// CHECK:
+//   Mangled name: IFooBar
+//   Public signature: /IFooBar|null[0]
 interface IFooBar {
+  // CHECK:
+  //   Mangled name: IFooBar#foo(){}
+  //   Public signature: /IFooBar.foo|-1041209573719867811[0]
   abstract fun foo()
+  // CHECK:
+  //   Mangled name: IFooBar#bar(){}
+  //   Public signature: /IFooBar.bar|496682602797471549[0]
   abstract fun bar()
 
 }
 
+// CHECK:
+//   Mangled name: FooBarImpl
+//   Public signature: /FooBarImpl|null[0]
 object FooBarImpl : IFooBar {
+  // CHECK:
+  //   Mangled name: FooBarImpl#<init>(){}
+  //   Public signature: /FooBarImpl.<init>|-5645683436151566731[0]
   private constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: FooBarImpl#foo(){}
+  //   Public signature: /FooBarImpl.foo|-1041209573719867811[0]
   override fun foo() {
   }
 
+  // CHECK:
+  //   Mangled name: FooBarImpl#bar(){}
+  //   Public signature: /FooBarImpl.bar|496682602797471549[0]
   override fun bar() {
   }
 
 }
 
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
 class C : IFooBar {
+  // CHECK:
+  //   Mangled name: C#<init>(){}
+  //   Public signature: /C.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: C.$$delegate_0
+  //   Public signature: /C.$$delegate_0|-7286425919675154353[0]
   private /* final field */ val $$delegate_0: FooBarImpl = FooBarImpl
+  // CHECK:
+  //   Mangled name: C#foo(){}
+  //   Public signature: /C.foo|-1041209573719867811[0]
   override fun foo() {
     <this>.#$$delegate_0.foo()
   }
 
+  // CHECK:
+  //   Mangled name: C#bar(){}
+  //   Public signature: /C.bar|496682602797471549[0]
   override fun bar() {
   }
 
 }
+

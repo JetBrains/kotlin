@@ -1,3 +1,7 @@
+// CHECK:
+//   Mangled name: #test(Outer.Inner){}
+//   Public signature: /test|-7065473236966425170[0]
 fun test(inner: Inner) {
   return inner.foo()
 }
+

@@ -1,50 +1,95 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
 sealed class A : CharSequence {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
   protected constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: A.B
+  //   Public signature: /A.B|null[0]
   data class B : A, CharSequence {
+    // CHECK:
+    //   Mangled name: A.B#<init>(kotlin.CharSequence){}
+    //   Public signature: /A.B.<init>|2804354480087813081[0]
     constructor(c: CharSequence) /* primary */ {
       super/*A*/()
       /* <init>() */
 
     }
 
+    // CHECK:
+    //   Mangled name: A.B{}c
+    //   Public signature: /A.B.c|-4416962153448040627[0]
     val c: CharSequence
       field = c
+      // CHECK:
+      //   Mangled name: A.B#<get-c>(){}kotlin.CharSequence
+      //   Public signature: /A.B.c.<get-c>|7304122790316032774[0]
       get
 
+    // CHECK:
+    //   Mangled name: A.B{}length
+    //   Public signature: /A.B.length|8693345930578737573[0]
     override val length: Int
+      // CHECK:
+      //   Mangled name: A.B#<get-length>(){}kotlin.Int
+      //   Public signature: /A.B.length.<get-length>|2176130084070422186[0]
       override get(): Int {
         return <this>.#c.<get-length>()
       }
 
+    // CHECK:
+    //   Mangled name: A.B#get(kotlin.Int){}kotlin.Char
+    //   Public signature: /A.B.get|6519934306502810002[0]
     override operator fun get(index: Int): Char {
       return <this>.#c.get(index = index)
     }
 
+    // CHECK:
+    //   Mangled name: A.B#subSequence(kotlin.Int;kotlin.Int){}kotlin.CharSequence
+    //   Public signature: /A.B.subSequence|7954975239934934955[0]
     override fun subSequence(startIndex: Int, endIndex: Int): CharSequence {
       return <this>.#c.subSequence(startIndex = startIndex, endIndex = endIndex)
     }
 
+    // CHECK:
+    //   Mangled name: A.B#component1(){}kotlin.CharSequence
+    //   Public signature: /A.B.component1|3907327938938556754[0]
     operator fun component1(): CharSequence {
       return <this>.#c
     }
 
+    // CHECK:
+    //   Mangled name: A.B#copy(kotlin.CharSequence){}A.B
+    //   Public signature: /A.B.copy|-126682590898406005[0]
     fun copy(c: CharSequence = <this>.#c): B {
       return B(c = c)
     }
 
+    // CHECK:
+    //   Mangled name: A.B#toString(){}kotlin.String
+    //   Public signature: /A.B.toString|6958853723545266802[0]
     override fun toString(): String {
       return "B(" + "c=" + <this>.#c + ")"
     }
 
+    // CHECK:
+    //   Mangled name: A.B#hashCode(){}kotlin.Int
+    //   Public signature: /A.B.hashCode|-8048879360829830756[0]
     override fun hashCode(): Int {
       return <this>.#c.hashCode()
     }
 
+    // CHECK:
+    //   Mangled name: A.B#equals(kotlin.Any?){}kotlin.Boolean
+    //   Public signature: /A.B.equals|722809408929142791[0]
     override operator fun equals(other: Any?): Boolean {
       when {
         EQEQEQ(arg0 = <this>, arg1 = other) -> return true
@@ -62,3 +107,4 @@ sealed class A : CharSequence {
   }
 
 }
+

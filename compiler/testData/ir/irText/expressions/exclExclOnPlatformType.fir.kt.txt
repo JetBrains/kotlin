@@ -1,6 +1,12 @@
+// CHECK:
+//   Mangled name: #use(kotlin.Any){}
+//   Public signature: /use|-404813706895505622[0]
 fun use(a: Any) {
 }
 
+// CHECK:
+//   Mangled name: #test(){}
+//   Public signature: /test|6620506149988718649[0]
 fun test() {
   use(a = CHECK_NOT_NULL<String>(arg0 = WeakReference<@FlexibleNullability String?>(p0 = "").get()))
   use(a = CHECK_NOT_NULL<@FlexibleNullability String>(arg0 = getProperty(p0 = "abc")))

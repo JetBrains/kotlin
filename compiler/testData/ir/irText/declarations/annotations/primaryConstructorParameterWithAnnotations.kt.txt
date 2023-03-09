@@ -1,4 +1,10 @@
+// CHECK:
+//   Mangled name: Ann
+//   Public signature: /Ann|null[0]
 open annotation class Ann : Annotation {
+  // CHECK:
+  //   Mangled name: Ann#<init>(){}
+  //   Public signature: /Ann.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -7,15 +13,31 @@ open annotation class Ann : Annotation {
 
 }
 
+// CHECK:
+//   Mangled name: Test
+//   Public signature: /Test|null[0]
 class Test {
+  // CHECK:
+  //   Mangled name: Test#<init>(kotlin.Int){}
+  //   Public signature: /Test.<init>|-5182794243525578284[0]
   constructor(@Ann x: Int) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: Test{}x
+  //   Public signature: /Test.x|-8060530855978347579[0]
   val x: Int
     field = x
+    // CHECK JVM_IR:
+    //   Mangled name: Test#<get-x>(){}kotlin.Int
+    //   Public signature: /Test.x.<get-x>|4966956098150895696[0]
+    // CHECK JS_IR:
+    //   Mangled name: Test#<get-x>(){}
+    //   Public signature: /Test.x.<get-x>|1482705010654679335[0]
     get
 
 }
+

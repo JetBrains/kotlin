@@ -1,12 +1,26 @@
+// CHECK:
+//   Mangled name: {}BACKSLASH
+//   Public signature: [ File '<unknown>' <- /BACKSLASH|9213821134505379379[0] ]
 private const val BACKSLASH: Char
   field = '\\'
+  // CHECK:
+  //   Mangled name: #<get-BACKSLASH>(){}kotlin.Char
+  //   Public signature: [ File '<unknown>' <- /BACKSLASH.<get-BACKSLASH>|7174062972088453102[0] ]
   private get
 
+// CHECK:
+//   Mangled name: #nextChar@java.io.Reader(){}kotlin.Char?
+//   Public signature: [ File '<unknown>' <- /nextChar|8697099457416866690[0] ]
 private fun Reader.nextChar(): Char? {
   return { // BLOCK
-    val tmp0_safe_receiver: Int? = <this>.read().takeUnless<Int>(predicate = local fun <anonymous>(it: Int): Boolean {
-      return EQEQ(arg0 = it, arg1 = -1)
-    }
+    val tmp0_safe_receiver: Int? = <this>.read().takeUnless<Int>(predicate = 
+      // CHECK:
+      //   Mangled name computed from Ir:         #nextChar@java.io.Reader(){}kotlin.Char?#<anonymous>#static(kotlin.Int){}kotlin.Boolean
+      //   Mangled name computed from Descriptor: #nextChar@java.io.Reader(){}kotlin.Char?#<anonymous>#static(kotlin.Int){}kotlin.Boolean
+      //   Mangled name computed from Fir:        could not compute mangled name: java.lang.IllegalStateException: unexpected element takeUnless@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Boolean| <inline=Inline, kind=EXACTLY_ONCE>  {... (truncated)
+      local fun <anonymous>(it: Int): Boolean {
+        return EQEQ(arg0 = it, arg1 = -1)
+      }
 )
     when {
       EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
@@ -15,6 +29,9 @@ private fun Reader.nextChar(): Char? {
   }
 }
 
+// CHECK:
+//   Mangled name: #consumeRestOfQuotedSequence@java.io.Reader(java.lang.StringBuilder;kotlin.Char){}
+//   Public signature: /consumeRestOfQuotedSequence|-9181202314719024538[0]
 fun Reader.consumeRestOfQuotedSequence(sb: StringBuilder, quote: Char) {
   var ch: Char? = <this>.nextChar()
   while (when {
@@ -26,9 +43,14 @@ fun Reader.consumeRestOfQuotedSequence(sb: StringBuilder, quote: Char) {
         val tmp1_safe_receiver: Char? = <this>.nextChar()
         when {
           EQEQ(arg0 = tmp1_safe_receiver, arg1 = null) -> null
-          else -> tmp1_safe_receiver.let<Char, @FlexibleNullability StringBuilder?>(block = local fun <anonymous>(it: Char): @FlexibleNullability StringBuilder? {
-            return sb.append(p0 = it)
-          }
+          else -> tmp1_safe_receiver.let<Char, @FlexibleNullability StringBuilder?>(block = 
+            // CHECK:
+            //   Mangled name computed from Ir:         #consumeRestOfQuotedSequence@java.io.Reader(java.lang.StringBuilder;kotlin.Char){}#<anonymous>#static(kotlin.Char){}java.lang.StringBuilder?
+            //   Mangled name computed from Descriptor: #consumeRestOfQuotedSequence@java.io.Reader(java.lang.StringBuilder;kotlin.Char){}#<anonymous>#static(kotlin.Char){}java.lang.StringBuilder?
+            //   Mangled name computed from Fir:        could not compute mangled name: java.lang.IllegalStateException: unexpected element let@fun <anonymous>(it: R|kotlin/Char|): R|java/lang/StringBuilder!| <inline=Inline, kind=EXACTLY_ONCE>  {... (truncated)
+            local fun <anonymous>(it: Char): @FlexibleNullability StringBuilder? {
+              return sb.append(p0 = it)
+            }
 )
         }
       }
@@ -37,3 +59,4 @@ fun Reader.consumeRestOfQuotedSequence(sb: StringBuilder, quote: Char) {
     ch = <this>.nextChar()
   }
 }
+

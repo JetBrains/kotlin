@@ -1,28 +1,62 @@
+// CHECK:
+//   Mangled name: Z
+//   Public signature: /Z|null[0]
 open enum class Z : Enum<Z> {
+  // CHECK:
+  //   Mangled name: Z#<init>(){}
+  //   Public signature: /Z.<init>|-5645683436151566731[0]
   private constructor() /* primary */ {
     super/*Enum*/<Z>()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: Z.ENTRY
+  //   Public signature: /Z.ENTRY|null[0]
+
   ENTRY = ENTRY()
+  // CHECK:
+  //   Mangled name computed from Ir:         Z.ENTRY
+  //   Mangled name computed from Descriptor: Z.ENTRY
+  //   Mangled name computed from Fir:        <anonymous>
   private enum entry class ENTRY : Z {
+    // CHECK:
+    //   Mangled name computed from Ir:         Z.ENTRY#<init>(){}
+    //   Mangled name computed from Descriptor: Z.ENTRY#<init>(){}
+    //   Mangled name computed from Fir:        #<init>(){}
     private constructor() /* primary */ {
       super/*Z*/()
       /* <init>() */
 
     }
 
+    // CHECK:
+    //   Mangled name computed from Ir:         Z.ENTRY#test(){}
+    //   Mangled name computed from Descriptor: Z.ENTRY#test(){}
+    //   Mangled name computed from Fir:        #test(){}
     fun test() {
     }
 
+    // CHECK:
+    //   Mangled name computed from Ir:         Z.ENTRY.A
+    //   Mangled name computed from Descriptor: Z.ENTRY.A
+    //   Mangled name computed from Fir:        A
     local inner class A {
+      // CHECK:
+      //   Mangled name computed from Ir:         Z.ENTRY.A#<init>(){}
+      //   Mangled name computed from Descriptor: Z.ENTRY.A#<init>(){}
+      //   Mangled name computed from Fir:        #<init>(){}
       constructor() /* primary */ {
         super/*Any*/()
         /* <init>() */
 
       }
 
+      // CHECK:
+      //   Mangled name computed from Ir:         Z.ENTRY.A#test2(){}
+      //   Mangled name computed from Descriptor: Z.ENTRY.A#test2(){}
+      //   Mangled name computed from Fir:        #test2(){}
       fun test2() {
         <this>.test()
       }
@@ -31,11 +65,26 @@ open enum class Z : Enum<Z> {
 
   }
 
+  // CHECK:
+  //   Mangled name: Z#values#static(){}kotlin.Array<Z>
+  //   Public signature: /Z.values|-4467060086112669746[0]
   fun values(): Array<Z> /* Synthetic body for ENUM_VALUES */
 
+  // CHECK:
+  //   Mangled name: Z#valueOf#static(kotlin.String){}Z
+  //   Public signature: /Z.valueOf|6700955022581377295[0]
   fun valueOf(value: String): Z /* Synthetic body for ENUM_VALUEOF */
 
+  // CHECK:
+  //   Mangled name: Z#static{}entries
+  //   Public signature: /Z.entries|-5134227801081826149[0]
   val entries: EnumEntries<Z>
+    // CHECK:
+    //   Mangled name computed from Ir:         Z#<get-entries>#static(){}kotlin.enums.EnumEntries<Z>
+    //   Mangled name computed from Descriptor: Z#<get-entries>#static(){}kotlin.enums.EnumEntries<Z>
+    //   Mangled name computed from Fir:        #<get-entries>#static(){}kotlin.enums.EnumEntries<Z>
+    //   Public signature: /Z.entries.<get-entries>|3224480899107517660[0]
     get(): EnumEntries<Z> /* Synthetic body for ENUM_ENTRIES */
 
 }
+

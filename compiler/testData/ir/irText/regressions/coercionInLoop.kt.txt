@@ -1,3 +1,9 @@
+// CHECK JVM_IR:
+//   Mangled name: #box(){}kotlin.String
+//   Public signature: /box|-9347091776561469[0]
+// CHECK JS_IR:
+//   Mangled name: #box(){}
+//   Public signature: /box|2173511048851971368[0]
 fun box(): String {
   val a: DoubleArray = DoubleArray(size = 5)
   val x: DoubleIterator = a.iterator()
@@ -14,3 +20,4 @@ fun box(): String {
   }
   return "OK"
 }
+

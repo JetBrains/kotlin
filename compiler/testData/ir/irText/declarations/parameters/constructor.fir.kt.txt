@@ -1,42 +1,113 @@
+// CHECK:
+//   Mangled name: Test1
+//   Public signature: /Test1|null[0]
 class Test1<T1 : Any?, T2 : Any?> {
+  // CHECK:
+  //   Mangled name computed from Ir:         Test1#<init>(1:0;1:1){}
+  //   Mangled name computed from Descriptor: Test1#<init>(1:0;1:1){}
+  //   Mangled name computed from Fir:        Test1#<init>(0:-1;0:-1){}
+  //   Public signature: /Test1.<init>|3925877681016924387[0]
   constructor(x: T1, y: T2) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: Test1{}x
+  //   Public signature: /Test1.x|-8060530855978347579[0]
   val x: T1
     field = x
+    // CHECK JVM_IR:
+    //   Mangled name: Test1#<get-x>(){}1:0
+    //   Public signature: /Test1.x.<get-x>|-8893883356128097563[0]
+    // CHECK JS_IR:
+    //   Mangled name computed from Ir:         Test1#<get-x>(){}
+    //   Mangled name computed from Descriptor: Test1#<get-x>(){}
+    //   Mangled name computed from Fir:        Test1#<get-x>(){}1:0
+    //   Public signature: /Test1.x.<get-x>|-8893883356128097563[0]
     get
 
+  // CHECK:
+  //   Mangled name: Test1{}y
+  //   Public signature: /Test1.y|3625903257357557171[0]
   val y: T2
     field = y
+    // CHECK JVM_IR:
+    //   Mangled name: Test1#<get-y>(){}1:1
+    //   Public signature: /Test1.y.<get-y>|6657541212363005233[0]
+    // CHECK JS_IR:
+    //   Mangled name computed from Ir:         Test1#<get-y>(){}
+    //   Mangled name computed from Descriptor: Test1#<get-y>(){}
+    //   Mangled name computed from Fir:        Test1#<get-y>(){}1:1
+    //   Public signature: /Test1.y.<get-y>|6657541212363005233[0]
     get
 
 }
 
+// CHECK:
+//   Mangled name: Test2
+//   Public signature: /Test2|null[0]
 class Test2 {
+  // CHECK:
+  //   Mangled name: Test2#<init>(kotlin.Int;kotlin.String){}
+  //   Public signature: /Test2.<init>|-6994814679185246063[0]
   constructor(x: Int, y: String) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: Test2{}y
+  //   Public signature: /Test2.y|3625903257357557171[0]
   val y: String
     field = y
+    // CHECK JVM_IR:
+    //   Mangled name: Test2#<get-y>(){}kotlin.String
+    //   Public signature: /Test2.y.<get-y>|1760775372995524147[0]
+    // CHECK JS_IR:
+    //   Mangled name computed from Ir:         Test2#<get-y>(){}
+    //   Mangled name computed from Descriptor: Test2#<get-y>(){}
+    //   Mangled name computed from Fir:        Test2#<get-y>(){}kotlin.String
+    //   Public signature: /Test2.y.<get-y>|1760775372995524147[0]
     get
 
+  // CHECK:
+  //   Mangled name: Test2.TestInner
+  //   Public signature: /Test2.TestInner|null[0]
   inner class TestInner<Z : Any?> {
+    // CHECK:
+    //   Mangled name computed from Ir:         Test2.TestInner#<init>(1:0){}
+    //   Mangled name computed from Descriptor: Test2.TestInner#<init>(1:0){}
+    //   Mangled name computed from Fir:        Test2.TestInner#<init>(0:-1){}
+    //   Public signature: /Test2.TestInner.<init>|8751876555175556900[0]
     constructor(z: Z) /* primary */ {
       super/*Any*/()
       /* <init>() */
 
     }
 
+    // CHECK:
+    //   Mangled name: Test2.TestInner{}z
+    //   Public signature: /Test2.TestInner.z|7549650372729116193[0]
     val z: Z
       field = z
+      // CHECK JVM_IR:
+      //   Mangled name: Test2.TestInner#<get-z>(){}1:0
+      //   Public signature: /Test2.TestInner.z.<get-z>|6635558627205321915[0]
+      // CHECK JS_IR:
+      //   Mangled name computed from Ir:         Test2.TestInner#<get-z>(){}
+      //   Mangled name computed from Descriptor: Test2.TestInner#<get-z>(){}
+      //   Mangled name computed from Fir:        Test2.TestInner#<get-z>(){}1:0
+      //   Public signature: /Test2.TestInner.z.<get-z>|6635558627205321915[0]
       get
 
+    // CHECK:
+    //   Mangled name computed from Ir:         Test2.TestInner#<init>(1:0;kotlin.Int){}
+    //   Mangled name computed from Descriptor: Test2.TestInner#<init>(1:0;kotlin.Int){}
+    //   Mangled name computed from Fir:        Test2.TestInner#<init>(0:-1;kotlin.Int){}
+    //   Public signature: /Test2.TestInner.<init>|2882950191869079001[0]
     constructor(z: Z, i: Int) {
       <this>.this/*TestInner*/<Z>(z = z)
     }
@@ -45,36 +116,85 @@ class Test2 {
 
 }
 
+// CHECK:
+//   Mangled name: Test3
+//   Public signature: /Test3|null[0]
 class Test3 {
+  // CHECK:
+  //   Mangled name: Test3#<init>(kotlin.Int;kotlin.String){}
+  //   Public signature: /Test3.<init>|-6994814679185246063[0]
   constructor(x: Int, y: String = "") /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: Test3{}x
+  //   Public signature: /Test3.x|-8060530855978347579[0]
   val x: Int
     field = x
+    // CHECK JVM_IR:
+    //   Mangled name: Test3#<get-x>(){}kotlin.Int
+    //   Public signature: /Test3.x.<get-x>|4966956098150895696[0]
+    // CHECK JS_IR:
+    //   Mangled name computed from Ir:         Test3#<get-x>(){}
+    //   Mangled name computed from Descriptor: Test3#<get-x>(){}
+    //   Mangled name computed from Fir:        Test3#<get-x>(){}kotlin.Int
+    //   Public signature: /Test3.x.<get-x>|4966956098150895696[0]
     get
 
+  // CHECK:
+  //   Mangled name: Test3{}y
+  //   Public signature: /Test3.y|3625903257357557171[0]
   val y: String
     field = y
+    // CHECK JVM_IR:
+    //   Mangled name: Test3#<get-y>(){}kotlin.String
+    //   Public signature: /Test3.y.<get-y>|1760775372995524147[0]
+    // CHECK JS_IR:
+    //   Mangled name computed from Ir:         Test3#<get-y>(){}
+    //   Mangled name computed from Descriptor: Test3#<get-y>(){}
+    //   Mangled name computed from Fir:        Test3#<get-y>(){}kotlin.String
+    //   Public signature: /Test3.y.<get-y>|1760775372995524147[0]
     get
 
 }
 
+// CHECK:
+//   Mangled name: Test4
+//   Public signature: /Test4|null[0]
 class Test4<T : Any?> {
+  // CHECK:
+  //   Mangled name: Test4#<init>(kotlin.Int){}
+  //   Public signature: /Test4.<init>|-5182794243525578284[0]
   constructor(x: Int) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: Test4{}x
+  //   Public signature: /Test4.x|-8060530855978347579[0]
   val x: Int
     field = x
+    // CHECK JVM_IR:
+    //   Mangled name: Test4#<get-x>(){}kotlin.Int
+    //   Public signature: /Test4.x.<get-x>|4966956098150895696[0]
+    // CHECK JS_IR:
+    //   Mangled name computed from Ir:         Test4#<get-x>(){}
+    //   Mangled name computed from Descriptor: Test4#<get-x>(){}
+    //   Mangled name computed from Fir:        Test4#<get-x>(){}kotlin.Int
+    //   Public signature: /Test4.x.<get-x>|4966956098150895696[0]
     get
 
+  // CHECK:
+  //   Mangled name: Test4#<init>(kotlin.Int;kotlin.Int){}
+  //   Public signature: /Test4.<init>|-7691762014320324121[0]
   constructor(x: Int, y: Int = 42) {
     this/*Test4*/<T>(x = x.plus(other = y))
   }
 
 }
+

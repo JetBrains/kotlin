@@ -1,9 +1,15 @@
+// CHECK:
+//   Mangled name: #testSetField(kotlin.Any;kotlin.Any){}
+//   Public signature: /testSetField|-8372089981302935899[0]
 fun testSetField(a: Any, b: Any) {
   a as JCell<String> /*~> Unit */
   b as String /*~> Unit */
   a /*as JCell<String> */.#value = b /*as String */
 }
 
+// CHECK:
+//   Mangled name: #testGetField(kotlin.Any){}kotlin.String
+//   Public signature: /testGetField|1503752848353622726[0]
 fun testGetField(a: Any): String {
   a as JCell<String> /*~> Unit */
   return a /*as JCell<String> */.#value /*!! String */

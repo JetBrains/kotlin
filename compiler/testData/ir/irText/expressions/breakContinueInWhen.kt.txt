@@ -1,7 +1,13 @@
+// CHECK:
+//   Mangled name: #testBreakFor(){}
+//   Public signature: /testBreakFor|-7772840210562213149[0]
 fun testBreakFor() {
-  val xs: IntArray = IntArray(size = 10, init = local fun <anonymous>(i: Int): Int {
-    return i
-  }
+  val xs: IntArray = IntArray(size = 10, init = 
+    // CHECK:
+    //   Mangled name: #testBreakFor(){}#<anonymous>#static(kotlin.Int){}kotlin.Int
+    local fun <anonymous>(i: Int): Int {
+      return i
+    }
 )
   var k: Int = 0
   { // BLOCK
@@ -17,6 +23,9 @@ fun testBreakFor() {
   }
 }
 
+// CHECK:
+//   Mangled name: #testBreakWhile(){}
+//   Public signature: /testBreakWhile|3882710933639253522[0]
 fun testBreakWhile() {
   var k: Int = 0
   while (less(arg0 = k, arg1 = 10)) { // BLOCK
@@ -26,6 +35,9 @@ fun testBreakWhile() {
   }
 }
 
+// CHECK:
+//   Mangled name: #testBreakDoWhile(){}
+//   Public signature: /testBreakDoWhile|-1704674514591918334[0]
 fun testBreakDoWhile() {
   var k: Int = 0
   { // BLOCK
@@ -37,10 +49,16 @@ fun testBreakDoWhile() {
   }
 }
 
+// CHECK:
+//   Mangled name: #testContinueFor(){}
+//   Public signature: /testContinueFor|-6520729324717708312[0]
 fun testContinueFor() {
-  val xs: IntArray = IntArray(size = 10, init = local fun <anonymous>(i: Int): Int {
-    return i
-  }
+  val xs: IntArray = IntArray(size = 10, init = 
+    // CHECK:
+    //   Mangled name: #testContinueFor(){}#<anonymous>#static(kotlin.Int){}kotlin.Int
+    local fun <anonymous>(i: Int): Int {
+      return i
+    }
 )
   var k: Int = 0
   { // BLOCK
@@ -56,6 +74,9 @@ fun testContinueFor() {
   }
 }
 
+// CHECK:
+//   Mangled name: #testContinueWhile(){}
+//   Public signature: /testContinueWhile|2151596509430082894[0]
 fun testContinueWhile() {
   var k: Int = 0
   while (less(arg0 = k, arg1 = 10)) { // BLOCK
@@ -65,6 +86,9 @@ fun testContinueWhile() {
   }
 }
 
+// CHECK:
+//   Mangled name: #testContinueDoWhile(){}
+//   Public signature: /testContinueDoWhile|-1939470436794612956[0]
 fun testContinueDoWhile() {
   var k: Int = 0
   var s: String = ""
@@ -84,3 +108,4 @@ fun testContinueDoWhile() {
     EQEQ(arg0 = s, arg1 = "1;2;").not() -> throw AssertionError(p0 = s)
   }
 }
+

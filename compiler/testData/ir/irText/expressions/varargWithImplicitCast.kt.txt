@@ -1,3 +1,6 @@
+// CHECK:
+//   Mangled name: #testScalar(kotlin.Any){}kotlin.IntArray
+//   Public signature: /testScalar|-7300349592361569657[0]
 fun testScalar(a: Any): IntArray {
   when {
     a !is Int -> return intArrayOf()
@@ -5,9 +8,13 @@ fun testScalar(a: Any): IntArray {
   return intArrayOf(elements = [a /*as Int */])
 }
 
+// CHECK:
+//   Mangled name: #testSpread(kotlin.Any){}kotlin.IntArray
+//   Public signature: /testSpread|-65767048159588156[0]
 fun testSpread(a: Any): IntArray {
   when {
     a !is IntArray -> return intArrayOf()
   }
   return intArrayOf(elements = [*a /*as IntArray */])
 }
+

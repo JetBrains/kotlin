@@ -4,6 +4,9 @@
 // IGNORE_ERRORS
 // WITH_STDLIB
 
+// NO_SIGNATURE_DUMP
+// ^KT-57428
+
 inline fun foo(block: () -> Unit) { block() }
 
 inline fun bar(block1: () -> Unit, noinline block2: () -> Unit) {

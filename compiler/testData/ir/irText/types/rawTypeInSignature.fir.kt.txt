@@ -1,4 +1,10 @@
+// CHECK:
+//   Mangled name: GenericInv
+//   Public signature: /GenericInv|null[0]
 class GenericInv<T : Number> {
+  // CHECK:
+  //   Mangled name: GenericInv#<init>(){}
+  //   Public signature: /GenericInv.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -7,7 +13,13 @@ class GenericInv<T : Number> {
 
 }
 
+// CHECK:
+//   Mangled name: GenericIn
+//   Public signature: /GenericIn|null[0]
 class GenericIn<in T : Number> {
+  // CHECK:
+  //   Mangled name: GenericIn#<init>(){}
+  //   Public signature: /GenericIn.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -16,7 +28,13 @@ class GenericIn<in T : Number> {
 
 }
 
+// CHECK:
+//   Mangled name: GenericOut
+//   Public signature: /GenericOut|null[0]
 class GenericOut<out T : Number> {
+  // CHECK:
+  //   Mangled name: GenericOut#<init>(){}
+  //   Public signature: /GenericOut.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -25,57 +43,100 @@ class GenericOut<out T : Number> {
 
 }
 
+// CHECK:
+//   Mangled name: #testReturnsRawGenericInv(JRaw){}GenericInv<kotlin.Number>
+//   Public signature: /testReturnsRawGenericInv|5130359618608443436[0]
 fun testReturnsRawGenericInv(j: JRaw): @FlexibleNullability @RawType GenericInv<Number> {
   return j.returnsRawGenericInv()
 }
 
+// CHECK:
+//   Mangled name: #testReturnsRawGenericIn(JRaw){}GenericIn<kotlin.Number>
+//   Public signature: /testReturnsRawGenericIn|8366804840057905100[0]
 fun testReturnsRawGenericIn(j: JRaw): @FlexibleNullability @RawType GenericIn<Number> {
   return j.returnsRawGenericIn()
 }
 
+// CHECK:
+//   Mangled name: #testReturnsRawGenericOut(JRaw){}GenericOut<kotlin.Number>
+//   Public signature: /testReturnsRawGenericOut|-62256167970682834[0]
 fun testReturnsRawGenericOut(j: JRaw): @FlexibleNullability @RawType GenericOut<Number> {
   return j.returnsRawGenericOut()
 }
 
+// CHECK:
+//   Mangled name: KRaw
+//   Public signature: /KRaw|null[0]
 class KRaw : JRaw {
+  // CHECK:
+  //   Mangled name: KRaw#<init>(JRaw){}
+  //   Public signature: /KRaw.<init>|-9018601651041838198[0]
   constructor(j: JRaw) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: KRaw#takesRawList(kotlin.collections.MutableList<kotlin.Any?>){}
+  //   Public signature: /KRaw.takesRawList|1781281561350478530[0]
   override fun takesRawList(list: @FlexibleNullability @RawType MutableList<Any?>) {
     <this>.#$$delegate_0.takesRawList(list = list)
   }
 
+  // CHECK:
+  //   Mangled name: KRaw#returnsRawList(){}kotlin.collections.MutableList<kotlin.Any?>
+  //   Public signature: /KRaw.returnsRawList|1437515324872981008[0]
   override fun returnsRawList(): @FlexibleNullability @RawType MutableList<Any?> {
     return <this>.#$$delegate_0.returnsRawList() /*!! @RawType MutableList<Any?> */
   }
 
+  // CHECK:
+  //   Mangled name: KRaw#takesRawGenericInv(GenericInv<kotlin.Number>){}
+  //   Public signature: /KRaw.takesRawGenericInv|2853148690189632857[0]
   override fun takesRawGenericInv(g: @FlexibleNullability @RawType GenericInv<Number>) {
     <this>.#$$delegate_0.takesRawGenericInv(g = g)
   }
 
+  // CHECK:
+  //   Mangled name: KRaw#returnsRawGenericInv(){}GenericInv<kotlin.Number>
+  //   Public signature: /KRaw.returnsRawGenericInv|8692532014882222304[0]
   override fun returnsRawGenericInv(): @FlexibleNullability @RawType GenericInv<Number> {
     return <this>.#$$delegate_0.returnsRawGenericInv() /*!! @RawType GenericInv<Number> */
   }
 
+  // CHECK:
+  //   Mangled name: KRaw#takesRawGenericIn(GenericIn<kotlin.Number>){}
+  //   Public signature: /KRaw.takesRawGenericIn|-2236627248339978838[0]
   override fun takesRawGenericIn(g: @FlexibleNullability @RawType GenericIn<Number>) {
     <this>.#$$delegate_0.takesRawGenericIn(g = g)
   }
 
+  // CHECK:
+  //   Mangled name: KRaw#returnsRawGenericIn(){}GenericIn<kotlin.Number>
+  //   Public signature: /KRaw.returnsRawGenericIn|-5257730602735068314[0]
   override fun returnsRawGenericIn(): @FlexibleNullability @RawType GenericIn<Number> {
     return <this>.#$$delegate_0.returnsRawGenericIn() /*!! @RawType GenericIn<Number> */
   }
 
+  // CHECK:
+  //   Mangled name: KRaw#takesRawGenericOut(GenericOut<kotlin.Number>){}
+  //   Public signature: /KRaw.takesRawGenericOut|-5773421374790089688[0]
   override fun takesRawGenericOut(g: @FlexibleNullability @RawType GenericOut<Number>) {
     <this>.#$$delegate_0.takesRawGenericOut(g = g)
   }
 
+  // CHECK:
+  //   Mangled name: KRaw#returnsRawGenericOut(){}GenericOut<kotlin.Number>
+  //   Public signature: /KRaw.returnsRawGenericOut|6207427576909418451[0]
   override fun returnsRawGenericOut(): @FlexibleNullability @RawType GenericOut<Number> {
     return <this>.#$$delegate_0.returnsRawGenericOut() /*!! @RawType GenericOut<Number> */
   }
 
+  // CHECK:
+  //   Mangled name computed from Ir:         KRaw.$$delegate_0
+  //   Mangled name computed from Descriptor: KRaw{}$$delegate_0#jf
   private /* final field */ val $$delegate_0: JRaw = j
 
 }
+

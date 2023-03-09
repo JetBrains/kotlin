@@ -1,43 +1,135 @@
+// CHECK:
+//   Mangled name: Visitor
+//   Public signature: /Visitor|null[0]
 interface Visitor {
+  // CHECK:
+  //   Mangled name: Visitor#visit(){}
+  //   Public signature: /Visitor.visit|-7531698844362190050[0]
   abstract fun visit()
+  // CHECK JVM_IR:
+  //   Mangled name: Visitor#visitArray(){}Visitor?
+  //   Public signature: /Visitor.visitArray|-7483008353702058436[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         Visitor#visitArray(){}
+  //   Mangled name computed from Descriptor: Visitor#visitArray(){}
+  //   Mangled name computed from Fir:        Visitor#visitArray(){}Visitor?
+  //   Public signature: /Visitor.visitArray|-7483008353702058436[0]
   fun visitArray(): Visitor? {
     return null
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: Visitor#visitAnnotation(){}Visitor?
+  //   Public signature: /Visitor.visitAnnotation|-8142708510940079695[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         Visitor#visitAnnotation(){}
+  //   Mangled name computed from Descriptor: Visitor#visitAnnotation(){}
+  //   Mangled name computed from Fir:        Visitor#visitAnnotation(){}Visitor?
+  //   Public signature: /Visitor.visitAnnotation|-8142708510940079695[0]
   fun visitAnnotation(): Visitor? {
     return null
   }
 
 }
 
+// CHECK:
+//   Mangled name: AnnotationLoader
+//   Public signature: /AnnotationLoader|null[0]
 class AnnotationLoader {
+  // CHECK:
+  //   Mangled name: AnnotationLoader#<init>(){}
+  //   Public signature: /AnnotationLoader.<init>|-5645683436151566731[0]
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: AnnotationLoader#loadAnnotation(){}Visitor?
+  //   Public signature: /AnnotationLoader.loadAnnotation|-7081476927485882760[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         AnnotationLoader#loadAnnotation(){}
+  //   Mangled name computed from Descriptor: AnnotationLoader#loadAnnotation(){}
+  //   Mangled name computed from Fir:        AnnotationLoader#loadAnnotation(){}Visitor?
+  //   Public signature: /AnnotationLoader.loadAnnotation|-7081476927485882760[0]
   fun loadAnnotation(): Visitor? {
     return { // BLOCK
+      // CHECK JVM_IR:
+      //   Mangled name computed from Ir:         AnnotationLoader#loadAnnotation(){}Visitor?.<no name provided>
+      //   Mangled name computed from Descriptor: AnnotationLoader#loadAnnotation(){}Visitor?.<no name provided>
+      //   Mangled name computed from Fir:        <anonymous>
+      // CHECK JS_IR:
+      //   Mangled name computed from Ir:         AnnotationLoader#loadAnnotation(){}.<no name provided>
+      //   Mangled name computed from Descriptor: AnnotationLoader#loadAnnotation(){}.<no name provided>
+      //   Mangled name computed from Fir:        <anonymous>
       local class <no name provided> : Visitor {
+        // CHECK JVM_IR:
+        //   Mangled name computed from Ir:         AnnotationLoader#loadAnnotation(){}Visitor?.<no name provided>#<init>(){}
+        //   Mangled name computed from Descriptor: AnnotationLoader#loadAnnotation(){}Visitor?.<no name provided>#<init>(){}
+        //   Mangled name computed from Fir:        #<init>(){}
+        // CHECK JS_IR:
+        //   Mangled name computed from Ir:         AnnotationLoader#loadAnnotation(){}.<no name provided>#<init>(){}
+        //   Mangled name computed from Descriptor: AnnotationLoader#loadAnnotation(){}.<no name provided>#<init>(){}
+        //   Mangled name computed from Fir:        #<init>(){}
         constructor() /* primary */ {
           super/*Any*/()
           /* <init>() */
 
         }
 
+        // CHECK JVM_IR:
+        //   Mangled name computed from Ir:         AnnotationLoader#loadAnnotation(){}Visitor?.<no name provided>#visit(){}
+        //   Mangled name computed from Descriptor: AnnotationLoader#loadAnnotation(){}Visitor?.<no name provided>#visit(){}
+        //   Mangled name computed from Fir:        #visit(){}
+        // CHECK JS_IR:
+        //   Mangled name computed from Ir:         AnnotationLoader#loadAnnotation(){}.<no name provided>#visit(){}
+        //   Mangled name computed from Descriptor: AnnotationLoader#loadAnnotation(){}.<no name provided>#visit(){}
+        //   Mangled name computed from Fir:        #visit(){}
         override fun visit() {
         }
 
+        // CHECK JVM_IR:
+        //   Mangled name computed from Ir:         AnnotationLoader#loadAnnotation(){}Visitor?.<no name provided>#visitArray(){}Visitor?
+        //   Mangled name computed from Descriptor: AnnotationLoader#loadAnnotation(){}Visitor?.<no name provided>#visitArray(){}Visitor?
+        //   Mangled name computed from Fir:        #visitArray(){}Visitor?
+        // CHECK JS_IR:
+        //   Mangled name computed from Ir:         AnnotationLoader#loadAnnotation(){}.<no name provided>#visitArray(){}
+        //   Mangled name computed from Descriptor: AnnotationLoader#loadAnnotation(){}.<no name provided>#visitArray(){}
+        //   Mangled name computed from Fir:        #visitArray(){}Visitor?
         override fun visitArray(): Visitor? {
           return { // BLOCK
+            // CHECK JVM_IR:
+            //   Mangled name computed from Ir:         AnnotationLoader#loadAnnotation(){}Visitor?.<no name provided>#visitArray(){}Visitor?.<no name provided>
+            //   Mangled name computed from Descriptor: AnnotationLoader#loadAnnotation(){}Visitor?.<no name provided>#visitArray(){}Visitor?.<no name provided>
+            //   Mangled name computed from Fir:        <anonymous>
+            // CHECK JS_IR:
+            //   Mangled name computed from Ir:         AnnotationLoader#loadAnnotation(){}.<no name provided>#visitArray(){}.<no name provided>
+            //   Mangled name computed from Descriptor: AnnotationLoader#loadAnnotation(){}.<no name provided>#visitArray(){}.<no name provided>
+            //   Mangled name computed from Fir:        <anonymous>
             local class <no name provided> : Visitor {
+              // CHECK JVM_IR:
+              //   Mangled name computed from Ir:         AnnotationLoader#loadAnnotation(){}Visitor?.<no name provided>#visitArray(){}Visitor?.<no name provided>#<init>(){}
+              //   Mangled name computed from Descriptor: AnnotationLoader#loadAnnotation(){}Visitor?.<no name provided>#visitArray(){}Visitor?.<no name provided>#<init>(){}
+              //   Mangled name computed from Fir:        #<init>(){}
+              // CHECK JS_IR:
+              //   Mangled name computed from Ir:         AnnotationLoader#loadAnnotation(){}.<no name provided>#visitArray(){}.<no name provided>#<init>(){}
+              //   Mangled name computed from Descriptor: AnnotationLoader#loadAnnotation(){}.<no name provided>#visitArray(){}.<no name provided>#<init>(){}
+              //   Mangled name computed from Fir:        #<init>(){}
               constructor() /* primary */ {
                 super/*Any*/()
                 /* <init>() */
 
               }
 
+              // CHECK JVM_IR:
+              //   Mangled name computed from Ir:         AnnotationLoader#loadAnnotation(){}Visitor?.<no name provided>#visitArray(){}Visitor?.<no name provided>#visit(){}
+              //   Mangled name computed from Descriptor: AnnotationLoader#loadAnnotation(){}Visitor?.<no name provided>#visitArray(){}Visitor?.<no name provided>#visit(){}
+              //   Mangled name computed from Fir:        #visit(){}
+              // CHECK JS_IR:
+              //   Mangled name computed from Ir:         AnnotationLoader#loadAnnotation(){}.<no name provided>#visitArray(){}.<no name provided>#visit(){}
+              //   Mangled name computed from Descriptor: AnnotationLoader#loadAnnotation(){}.<no name provided>#visitArray(){}.<no name provided>#visit(){}
+              //   Mangled name computed from Fir:        #visit(){}
               override fun visit() {
                 <this>.foo()
               }
@@ -48,25 +140,79 @@ class AnnotationLoader {
           }
         }
 
+        // CHECK JVM_IR:
+        //   Mangled name computed from Ir:         AnnotationLoader#loadAnnotation(){}Visitor?.<no name provided>#visitAnnotation(){}Visitor?
+        //   Mangled name computed from Descriptor: AnnotationLoader#loadAnnotation(){}Visitor?.<no name provided>#visitAnnotation(){}Visitor?
+        //   Mangled name computed from Fir:        #visitAnnotation(){}Visitor?
+        // CHECK JS_IR:
+        //   Mangled name computed from Ir:         AnnotationLoader#loadAnnotation(){}.<no name provided>#visitAnnotation(){}
+        //   Mangled name computed from Descriptor: AnnotationLoader#loadAnnotation(){}.<no name provided>#visitAnnotation(){}
+        //   Mangled name computed from Fir:        #visitAnnotation(){}Visitor?
         override fun visitAnnotation(): Visitor? {
           val visitor: Visitor = CHECK_NOT_NULL<Visitor>(arg0 = <this>.loadAnnotation())
           return { // BLOCK
+            // CHECK JVM_IR:
+            //   Mangled name computed from Ir:         AnnotationLoader#loadAnnotation(){}Visitor?.<no name provided>#visitAnnotation(){}Visitor?.<no name provided>
+            //   Mangled name computed from Descriptor: AnnotationLoader#loadAnnotation(){}Visitor?.<no name provided>#visitAnnotation(){}Visitor?.<no name provided>
+            //   Mangled name computed from Fir:        <anonymous>
+            // CHECK JS_IR:
+            //   Mangled name computed from Ir:         AnnotationLoader#loadAnnotation(){}.<no name provided>#visitAnnotation(){}.<no name provided>
+            //   Mangled name computed from Descriptor: AnnotationLoader#loadAnnotation(){}.<no name provided>#visitAnnotation(){}.<no name provided>
+            //   Mangled name computed from Fir:        <anonymous>
             local class <no name provided> : Visitor {
+              // CHECK JVM_IR:
+              //   Mangled name computed from Ir:         AnnotationLoader#loadAnnotation(){}Visitor?.<no name provided>#visitAnnotation(){}Visitor?.<no name provided>#<init>(){}
+              //   Mangled name computed from Descriptor: AnnotationLoader#loadAnnotation(){}Visitor?.<no name provided>#visitAnnotation(){}Visitor?.<no name provided>#<init>(){}
+              //   Mangled name computed from Fir:        #<init>(){}
+              // CHECK JS_IR:
+              //   Mangled name computed from Ir:         AnnotationLoader#loadAnnotation(){}.<no name provided>#visitAnnotation(){}.<no name provided>#<init>(){}
+              //   Mangled name computed from Descriptor: AnnotationLoader#loadAnnotation(){}.<no name provided>#visitAnnotation(){}.<no name provided>#<init>(){}
+              //   Mangled name computed from Fir:        #<init>(){}
               constructor() /* primary */ {
                 super/*Any*/()
                 /* <init>() */
 
               }
 
+              // CHECK JVM_IR:
+              //   Mangled name computed from Ir:         AnnotationLoader#loadAnnotation(){}Visitor?.<no name provided>#visitAnnotation(){}Visitor?.<no name provided>#visitArray(){}Visitor?
+              //   Mangled name computed from Descriptor: AnnotationLoader#loadAnnotation(){}Visitor?.<no name provided>#visitAnnotation(){}Visitor?.<no name provided>#visitArray(){}Visitor?
+              //   Mangled name computed from Fir:        #visitArray(){}Visitor?
+              // CHECK JS_IR:
+              //   Mangled name computed from Ir:         AnnotationLoader#loadAnnotation(){}.<no name provided>#visitAnnotation(){}.<no name provided>#visitArray(){}
+              //   Mangled name computed from Descriptor: AnnotationLoader#loadAnnotation(){}.<no name provided>#visitAnnotation(){}.<no name provided>#visitArray(){}
+              //   Mangled name computed from Fir:        #visitArray(){}Visitor?
               override fun visitArray(): Visitor? {
                 return <this>.#$$delegate_0.visitArray()
               }
 
+              // CHECK JVM_IR:
+              //   Mangled name computed from Ir:         AnnotationLoader#loadAnnotation(){}Visitor?.<no name provided>#visitAnnotation(){}Visitor?.<no name provided>#visitAnnotation(){}Visitor?
+              //   Mangled name computed from Descriptor: AnnotationLoader#loadAnnotation(){}Visitor?.<no name provided>#visitAnnotation(){}Visitor?.<no name provided>#visitAnnotation(){}Visitor?
+              //   Mangled name computed from Fir:        #visitAnnotation(){}Visitor?
+              // CHECK JS_IR:
+              //   Mangled name computed from Ir:         AnnotationLoader#loadAnnotation(){}.<no name provided>#visitAnnotation(){}.<no name provided>#visitAnnotation(){}
+              //   Mangled name computed from Descriptor: AnnotationLoader#loadAnnotation(){}.<no name provided>#visitAnnotation(){}.<no name provided>#visitAnnotation(){}
+              //   Mangled name computed from Fir:        #visitAnnotation(){}Visitor?
               override fun visitAnnotation(): Visitor? {
                 return <this>.#$$delegate_0.visitAnnotation()
               }
 
+              // CHECK JVM_IR:
+              //   Mangled name computed from Ir:         AnnotationLoader#loadAnnotation(){}Visitor?.<no name provided>#visitAnnotation(){}Visitor?.<no name provided>.$$delegate_0
+              //   Mangled name computed from Descriptor: AnnotationLoader#loadAnnotation(){}Visitor?.<no name provided>#visitAnnotation(){}Visitor?.<no name provided>{}$$delegate_0#jf
+              // CHECK JS_IR:
+              //   Mangled name computed from Ir:         AnnotationLoader#loadAnnotation(){}.<no name provided>#visitAnnotation(){}.<no name provided>.$$delegate_0
+              //   Mangled name computed from Descriptor: AnnotationLoader#loadAnnotation(){}.<no name provided>#visitAnnotation(){}.<no name provided>{}$$delegate_0
               private /* final field */ val $$delegate_0: Visitor = visitor
+              // CHECK JVM_IR:
+              //   Mangled name computed from Ir:         AnnotationLoader#loadAnnotation(){}Visitor?.<no name provided>#visitAnnotation(){}Visitor?.<no name provided>#visit(){}
+              //   Mangled name computed from Descriptor: AnnotationLoader#loadAnnotation(){}Visitor?.<no name provided>#visitAnnotation(){}Visitor?.<no name provided>#visit(){}
+              //   Mangled name computed from Fir:        #visit(){}
+              // CHECK JS_IR:
+              //   Mangled name computed from Ir:         AnnotationLoader#loadAnnotation(){}.<no name provided>#visitAnnotation(){}.<no name provided>#visit(){}
+              //   Mangled name computed from Descriptor: AnnotationLoader#loadAnnotation(){}.<no name provided>#visitAnnotation(){}.<no name provided>#visit(){}
+              //   Mangled name computed from Fir:        #visit(){}
               override fun visit() {
               }
 
@@ -76,6 +222,14 @@ class AnnotationLoader {
           }
         }
 
+        // CHECK JVM_IR:
+        //   Mangled name computed from Ir:         AnnotationLoader#loadAnnotation(){}Visitor?.<no name provided>#foo(){}
+        //   Mangled name computed from Descriptor: AnnotationLoader#loadAnnotation(){}Visitor?.<no name provided>#foo(){}
+        //   Mangled name computed from Fir:        #foo(){}
+        // CHECK JS_IR:
+        //   Mangled name computed from Ir:         AnnotationLoader#loadAnnotation(){}.<no name provided>#foo(){}
+        //   Mangled name computed from Descriptor: AnnotationLoader#loadAnnotation(){}.<no name provided>#foo(){}
+        //   Mangled name computed from Fir:        #foo(){}
         private fun foo() {
         }
 
@@ -86,3 +240,4 @@ class AnnotationLoader {
   }
 
 }
+

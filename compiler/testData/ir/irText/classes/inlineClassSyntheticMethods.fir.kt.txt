@@ -1,35 +1,97 @@
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
 class C<T : Any?> {
+  // CHECK:
+  //   Mangled name computed from Ir:         C#<init>(1:0){}
+  //   Mangled name computed from Descriptor: C#<init>(1:0){}
+  //   Mangled name computed from Fir:        C#<init>(0:-1){}
+  //   Public signature: /C.<init>|8751876555175556900[0]
   constructor(t: T) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: C{}t
+  //   Public signature: /C.t|-8767999791664836944[0]
   val t: T
     field = t
+    // CHECK JVM_IR:
+    //   Mangled name: C#<get-t>(){}1:0
+    //   Public signature: /C.t.<get-t>|5296523675281381766[0]
+    // CHECK JS_IR:
+    //   Mangled name computed from Ir:         C#<get-t>(){}
+    //   Mangled name computed from Descriptor: C#<get-t>(){}
+    //   Mangled name computed from Fir:        C#<get-t>(){}1:0
+    //   Public signature: /C.t.<get-t>|5296523675281381766[0]
     get
 
+  // CHECK JVM_IR:
+  //   Mangled name: C#hashCode(){}kotlin.Int
+  //   Public signature: /C.hashCode|-8048879360829830756[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         C#hashCode(){}
+  //   Mangled name computed from Descriptor: C#hashCode(){}
+  //   Mangled name computed from Fir:        C#hashCode(){}kotlin.Int
+  //   Public signature: /C.hashCode|-8048879360829830756[0]
   override fun hashCode(): Int {
     return <this>.<get-t>() as Int
   }
 
 }
 
+// CHECK:
+//   Mangled name: IC
+//   Public signature: /IC|null[0]
 value class IC<TT : Any?> {
+  // CHECK:
+  //   Mangled name computed from Ir:         IC#<init>(C<1:0>){}
+  //   Mangled name computed from Descriptor: IC#<init>(C<1:0>){}
+  //   Mangled name computed from Fir:        IC#<init>(C<0:-1>){}
+  //   Public signature: /IC.<init>|-8708769510687562337[0]
   constructor(c: C<TT>) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+  // CHECK:
+  //   Mangled name: IC{}c
+  //   Public signature: /IC.c|-4416962153448040627[0]
   val c: C<TT>
     field = c
+    // CHECK JVM_IR:
+    //   Mangled name: IC#<get-c>(){}C<1:0>
+    //   Public signature: /IC.c.<get-c>|-6707667902688835915[0]
+    // CHECK JS_IR:
+    //   Mangled name computed from Ir:         IC#<get-c>(){}
+    //   Mangled name computed from Descriptor: IC#<get-c>(){}
+    //   Mangled name computed from Fir:        IC#<get-c>(){}C<1:0>
+    //   Public signature: /IC.c.<get-c>|-6707667902688835915[0]
     get
 
+  // CHECK JVM_IR:
+  //   Mangled name: IC#foo(){}kotlin.Int
+  //   Public signature: /IC.foo|-1256155405684507276[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         IC#foo(){}
+  //   Mangled name computed from Descriptor: IC#foo(){}
+  //   Mangled name computed from Fir:        IC#foo(){}kotlin.Int
+  //   Public signature: /IC.foo|-1256155405684507276[0]
   fun foo(): Int {
     return <this>.<get-c>().hashCode()
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: IC#equals(kotlin.Any?){}kotlin.Boolean
+  //   Public signature: /IC.equals|722809408929142791[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         IC#equals(kotlin.Any?){}
+  //   Mangled name computed from Descriptor: IC#equals(kotlin.Any?){}
+  //   Mangled name computed from Fir:        IC#equals(kotlin.Any?){}kotlin.Boolean
+  //   Public signature: /IC.equals|722809408929142791[0]
   override fun equals(other: Any?): Boolean {
     when {
       other !is IC<TT> -> return false
@@ -41,16 +103,40 @@ value class IC<TT : Any?> {
     return true
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: IC#hashCode(){}kotlin.Int
+  //   Public signature: /IC.hashCode|-8048879360829830756[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         IC#hashCode(){}
+  //   Mangled name computed from Descriptor: IC#hashCode(){}
+  //   Mangled name computed from Fir:        IC#hashCode(){}kotlin.Int
+  //   Public signature: /IC.hashCode|-8048879360829830756[0]
   override fun hashCode(): Int {
     return <this>.#c.hashCode()
   }
 
+  // CHECK JVM_IR:
+  //   Mangled name: IC#toString(){}kotlin.String
+  //   Public signature: /IC.toString|6958853723545266802[0]
+  // CHECK JS_IR:
+  //   Mangled name computed from Ir:         IC#toString(){}
+  //   Mangled name computed from Descriptor: IC#toString(){}
+  //   Mangled name computed from Fir:        IC#toString(){}kotlin.String
+  //   Public signature: /IC.toString|6958853723545266802[0]
   override fun toString(): String {
     return "IC(c=" + <this>.#c + ")"
   }
 
 }
 
+// CHECK JVM_IR:
+//   Mangled name: #box(){}kotlin.String
+//   Public signature: /box|-9347091776561469[0]
+// CHECK JS_IR:
+//   Mangled name computed from Ir:         #box(){}
+//   Mangled name computed from Descriptor: #box(){}
+//   Mangled name computed from Fir:        #box(){}kotlin.String
+//   Public signature: /box|-9347091776561469[0]
 fun box(): String {
   val ic: IC<Int> = IC<Int>(c = C<Int>(t = 42))
   when {

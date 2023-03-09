@@ -1,3 +1,9 @@
+// CHECK JVM_IR:
+//   Mangled name: #test(kotlin.Int){}kotlin.Int
+//   Public signature: /test|-291422697420002546[0]
+// CHECK JS_IR:
+//   Mangled name: #test(kotlin.Int){}
+//   Public signature: /test|7577436859890467564[0]
 fun test(i: Int): Int {
   return when {
     greater(arg0 = i, arg1 = 0) -> 1
@@ -6,6 +12,9 @@ fun test(i: Int): Int {
   }
 }
 
+// CHECK:
+//   Mangled name: #testEmptyBranches1(kotlin.Boolean){}
+//   Public signature: /testEmptyBranches1|6749407893686345218[0]
 fun testEmptyBranches1(flag: Boolean) {
   when {
     flag -> { // BLOCK
@@ -17,6 +26,9 @@ fun testEmptyBranches1(flag: Boolean) {
   }
 }
 
+// CHECK:
+//   Mangled name: #testEmptyBranches2(kotlin.Boolean){}
+//   Public signature: /testEmptyBranches2|3860029463289034948[0]
 fun testEmptyBranches2(flag: Boolean) {
   when {
     flag -> { // BLOCK
@@ -30,6 +42,9 @@ fun testEmptyBranches2(flag: Boolean) {
   }
 }
 
+// CHECK:
+//   Mangled name: #testEmptyBranches3(kotlin.Boolean){}
+//   Public signature: /testEmptyBranches3|-3957627705861131354[0]
 fun testEmptyBranches3(flag: Boolean) {
   when {
     flag -> { // BLOCK
@@ -37,3 +52,4 @@ fun testEmptyBranches3(flag: Boolean) {
     else -> true /*~> Unit */
   }
 }
+
