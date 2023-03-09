@@ -3,12 +3,13 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.ir;
+package org.jetbrains.kotlin.klib;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -20,25 +21,25 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/ir/irJsText")
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
-public class IrJsTextTestCaseGenerated extends AbstractIrJsTextTestCase {
+public class KlibJsIrTextTestCaseGenerated extends AbstractKlibJsIrTextTestCase {
     private void runTest(String testDataFilePath) throws Exception {
-        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.JS_IR, testDataFilePath);
     }
 
     public void testAllFilesPresentInIrJsText() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irJsText"), Pattern.compile("^(.+)\\.kt(s)?$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irJsText"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
     @TestMetadata("compiler/testData/ir/irJsText/dynamic")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Dynamic extends AbstractIrJsTextTestCase {
+    public static class Dynamic extends AbstractKlibJsIrTextTestCase {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JS_IR, testDataFilePath);
         }
 
         public void testAllFilesPresentInDynamic() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irJsText/dynamic"), Pattern.compile("^(.+)\\.kt(s)?$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irJsText/dynamic"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
         }
 
         @TestMetadata("dynamicAndMembersOfAny.kt")
@@ -155,13 +156,13 @@ public class IrJsTextTestCaseGenerated extends AbstractIrJsTextTestCase {
     @TestMetadata("compiler/testData/ir/irJsText/external")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class External extends AbstractIrJsTextTestCase {
+    public static class External extends AbstractKlibJsIrTextTestCase {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JS_IR, testDataFilePath);
         }
 
         public void testAllFilesPresentInExternal() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irJsText/external"), Pattern.compile("^(.+)\\.kt(s)?$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irJsText/external"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
         }
 
         @TestMetadata("kt38765.kt")
@@ -173,13 +174,13 @@ public class IrJsTextTestCaseGenerated extends AbstractIrJsTextTestCase {
     @TestMetadata("compiler/testData/ir/irJsText/native")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Native extends AbstractIrJsTextTestCase {
+    public static class Native extends AbstractKlibJsIrTextTestCase {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JS_IR, testDataFilePath);
         }
 
         public void testAllFilesPresentInNative() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irJsText/native"), Pattern.compile("^(.+)\\.kt(s)?$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irJsText/native"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
         }
 
         @TestMetadata("nativeNativeKotlin.kt")

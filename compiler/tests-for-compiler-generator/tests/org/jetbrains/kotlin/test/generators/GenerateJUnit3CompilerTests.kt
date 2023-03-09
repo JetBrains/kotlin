@@ -29,15 +29,15 @@ import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.KT_OR_KTS_WITHOUT_
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME
 import org.jetbrains.kotlin.integration.AbstractAntTaskTest
 import org.jetbrains.kotlin.ir.AbstractIrCfgTestCase
-import org.jetbrains.kotlin.ir.AbstractIrJsTextTestCase
+import org.jetbrains.kotlin.ir.AbstractClassicJsIrTextTestCase
 import org.jetbrains.kotlin.ir.AbstractIrSourceRangesTestCase
 import org.jetbrains.kotlin.jvm.compiler.*
 import org.jetbrains.kotlin.jvm.compiler.ir.AbstractIrCompileJavaAgainstKotlinTest
 import org.jetbrains.kotlin.jvm.compiler.ir.AbstractIrCompileKotlinAgainstJavaTest
 import org.jetbrains.kotlin.jvm.compiler.ir.AbstractIrLoadJavaTest
 import org.jetbrains.kotlin.jvm.compiler.javac.AbstractLoadJavaUsingJavacTest
-import org.jetbrains.kotlin.klib.AbstractKlibJsTextTestCase
-import org.jetbrains.kotlin.klib.AbstractKlibTextTestCase
+import org.jetbrains.kotlin.klib.AbstractKlibJsIrTextTestCase
+import org.jetbrains.kotlin.klib.AbstractKlibIrTextTestCase
 import org.jetbrains.kotlin.lexer.kdoc.AbstractKDocLexerTest
 import org.jetbrains.kotlin.lexer.kotlin.AbstractKotlinLexerTest
 import org.jetbrains.kotlin.modules.xml.AbstractModuleXmlParserTest
@@ -116,15 +116,15 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
                 model("codegen/customScript", pattern = "^(.*)$")
             }
 
-            testClass<AbstractIrJsTextTestCase> {
+            testClass<AbstractClassicJsIrTextTestCase> {
                 model("ir/irJsText", pattern = "^(.+)\\.kt(s)?\$")
             }
 
-            testClass<AbstractKlibJsTextTestCase> {
+            testClass<AbstractKlibJsIrTextTestCase> {
                 model("ir/irJsText", pattern = "^(.+)\\.kt\$", targetBackend = TargetBackend.JS_IR)
             }
 
-            testClass<AbstractKlibTextTestCase> {
+            testClass<AbstractKlibIrTextTestCase> {
                 model("ir/irText", pattern = "^(.+)\\.kt\$", targetBackend = TargetBackend.JS_IR)
             }
 

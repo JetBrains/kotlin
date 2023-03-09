@@ -38,8 +38,8 @@ import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsS
 import org.jetbrains.kotlin.test.services.sourceProviders.CodegenHelpersSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 
-abstract class AbstractIrTextTestBase<R : ResultingArtifact.FrontendOutput<R>> :
-    AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JVM_IR)
+abstract class AbstractIrTextTestBase<R : ResultingArtifact.FrontendOutput<R>>(targetBackend: TargetBackend) :
+    AbstractKotlinCompilerWithTargetBackendTest(targetBackend)
 {
     abstract val frontend: FrontendKind<*>
     abstract val frontendFacade: Constructor<FrontendFacade<R>>
@@ -57,7 +57,7 @@ abstract class AbstractIrTextTestBase<R : ResultingArtifact.FrontendOutput<R>> :
             frontend = this@AbstractIrTextTestBase.frontend
             targetPlatform = JvmPlatforms.defaultJvmPlatform
             artifactKind = BinaryKind.NoArtifact
-            targetBackend = TargetBackend.JVM_IR
+            targetBackend = this@AbstractIrTextTestBase.targetBackend
             dependencyKind = DependencyKind.Source
         }
 
@@ -99,7 +99,7 @@ abstract class AbstractIrTextTestBase<R : ResultingArtifact.FrontendOutput<R>> :
     }
 }
 
-open class AbstractIrTextTest : AbstractIrTextTestBase<ClassicFrontendOutputArtifact>() {
+open class AbstractClassicJvmIrTextTest : AbstractIrTextTestBase<ClassicFrontendOutputArtifact>(TargetBackend.JVM_IR) {
     override val frontend: FrontendKind<*>
         get() = FrontendKinds.ClassicFrontend
     override val frontendFacade: Constructor<FrontendFacade<ClassicFrontendOutputArtifact>>
@@ -117,7 +117,10 @@ open class AbstractIrTextTest : AbstractIrTextTestBase<ClassicFrontendOutputArti
     }
 }
 
-open class AbstractFirIrTextTestBase(val parser: FirParser) : AbstractIrTextTestBase<FirOutputArtifact>() {
+open class AbstractFirIrTextTestBase(
+    val parser: FirParser,
+    targetBackend: TargetBackend
+) : AbstractIrTextTestBase<FirOutputArtifact>(targetBackend) {
     override val frontend: FrontendKind<*>
         get() = FrontendKinds.FIR
     override val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>
@@ -143,12 +146,12 @@ open class AbstractFirIrTextTestBase(val parser: FirParser) : AbstractIrTextTest
     }
 }
 
-open class AbstractFirLightTreeIrTextTest : AbstractFirIrTextTestBase(FirParser.LightTree)
+open class AbstractFirLightTreeJvmIrTextTest : AbstractFirIrTextTestBase(FirParser.LightTree, TargetBackend.JVM_IR)
 
 @FirPsiCodegenTest
-open class AbstractFirPsiIrTextTest : AbstractFirIrTextTestBase(FirParser.Psi)
+open class AbstractFirPsiJvmIrTextTest : AbstractFirIrTextTestBase(FirParser.Psi, TargetBackend.JVM_IR)
 
-open class AbstractFirIrJsTextTestBase(parser: FirParser) : AbstractFirIrTextTestBase(parser) {
+open class AbstractFirJsIrTextTestBase(parser: FirParser) : AbstractFirIrTextTestBase(parser, TargetBackend.JS_IR) {
     override fun TestConfigurationBuilder.applyConfigurators() {
         useConfigurators(
             ::CommonEnvironmentConfigurator,
@@ -164,11 +167,10 @@ open class AbstractFirIrJsTextTestBase(parser: FirParser) : AbstractFirIrTextTes
             globalDefaults {
                 targetPlatform = JsPlatforms.defaultJsPlatform
                 artifactKind = BinaryKind.NoArtifact
-                targetBackend = TargetBackend.JS_IR
                 dependencyKind = DependencyKind.Source
             }
         }
     }
 }
 
-open class AbstractFirLightTreeIrJsTextTest : AbstractFirIrJsTextTestBase(FirParser.LightTree)
+open class AbstractFirLightTreeJsIrTextTest : AbstractFirJsIrTextTestBase(FirParser.LightTree)

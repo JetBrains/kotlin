@@ -62,7 +62,7 @@ import java.util.*
 /**
  * Compares compiled and deserialized IR
  */
-abstract class AbstractKlibTextTestCase : CodegenTestCase() {
+abstract class AbstractKlibIrTextTestCase : CodegenTestCase() {
 
     companion object {
         val SKIP_KLIB_TEST = Regex("""// SKIP_KLIB_TEST""")
@@ -297,4 +297,4 @@ abstract class AbstractKlibTextTestCase : CodegenTestCase() {
     }
 }
 
-abstract class AbstractKlibJsTextTestCase : AbstractKlibTextTestCase()
+abstract class AbstractKlibJsIrTextTestCase : AbstractKlibIrTextTestCase()

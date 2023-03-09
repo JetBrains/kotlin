@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.ir
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
 
-abstract class AbstractIrJsTextTestCase : AbstractIrTextTestCase() {
+abstract class AbstractClassicJsIrTextTestCase : AbstractIrTextTestCase() {
     override fun doGenerateIrModule(psi2IrTranslator: Psi2IrTranslator): IrModuleFragment =
         generateIrModuleWithJsResolve(myFiles.psiFiles, myEnvironment, psi2IrTranslator)
 }

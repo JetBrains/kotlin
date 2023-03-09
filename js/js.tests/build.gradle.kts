@@ -258,7 +258,6 @@ fun Test.setUpJsBoxTests(jsEnabled: Boolean, jsIrEnabled: Boolean, firEnabled: B
         when {
             firEnabled -> {
                 include("org/jetbrains/kotlin/js/test/fir/*")
-                include("org/jetbrains/kotlin/test/runners/ir/Fir2IrJsTextTestGenerated.class")
             }
             es6Enabled -> {
                 include("org/jetbrains/kotlin/js/test/ir/IrBoxJsES6TestGenerated.class")

@@ -128,7 +128,7 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
                 model("codegen/box/compileKotlinAgainstKotlin")
             }
 
-            testClass<AbstractIrTextTest> {
+            testClass<AbstractClassicJvmIrTextTest> {
                 model("ir/irText")
             }
 
@@ -354,14 +354,14 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
                 model("codegen/boxWithStdLib")
             }
 
-            testClass<AbstractFirLightTreeIrTextTest>(
-                suiteTestClassName = "FirLightTreeIrSpecificTextTestGenerated"
+            testClass<AbstractFirLightTreeJvmIrTextTest>(
+                suiteTestClassName = "FirLightTreeJvmIrSpecificTextTestGenerated"
             ) {
                 model("ir/irText")
             }
 
-            testClass<AbstractFirPsiIrTextTest>(
-                suiteTestClassName = "FirPsiIrSpecificTextTestGenerated"
+            testClass<AbstractFirPsiJvmIrTextTest>(
+                suiteTestClassName = "FirPsiJvmIrSpecificTextTestGenerated"
             ) {
                 model("ir/irText")
             }
@@ -392,11 +392,11 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
         }
 
         testGroup(testsRoot = "compiler/fir/fir2ir/tests-gen", testDataRoot = "compiler/testData") {
-            testClass<AbstractFirLightTreeIrTextTest> {
+            testClass<AbstractFirLightTreeJvmIrTextTest> {
                 model("ir/irText")
             }
 
-            testClass<AbstractFirPsiIrTextTest> {
+            testClass<AbstractFirPsiJvmIrTextTest> {
                 model("ir/irText")
             }
 

@@ -19,10 +19,10 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/ir/irJsText")
 @TestDataPath("$PROJECT_ROOT")
-public class FirLightTreeJsIrTextTestGenerated extends AbstractFirLightTreeIrJsTextTest {
+public class FirLightTreeJsIrTextTestGenerated extends AbstractFirLightTreeJsIrTextTest {
     @Test
     public void testAllFilesPresentInIrJsText() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irJsText"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irJsText"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
     }
 
     @Nested
@@ -31,7 +31,7 @@ public class FirLightTreeJsIrTextTestGenerated extends AbstractFirLightTreeIrJsT
     public class Dynamic {
         @Test
         public void testAllFilesPresentInDynamic() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irJsText/dynamic"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irJsText/dynamic"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
         }
 
         @Test
@@ -173,7 +173,7 @@ public class FirLightTreeJsIrTextTestGenerated extends AbstractFirLightTreeIrJsT
     public class External {
         @Test
         public void testAllFilesPresentInExternal() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irJsText/external"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irJsText/external"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
         }
 
         @Test
@@ -189,7 +189,7 @@ public class FirLightTreeJsIrTextTestGenerated extends AbstractFirLightTreeIrJsT
     public class Native {
         @Test
         public void testAllFilesPresentInNative() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irJsText/native"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irJsText/native"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
         }
 
         @Test

@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.js.test.ir.*
 import org.jetbrains.kotlin.js.testOld.AbstractDceTest
 import org.jetbrains.kotlin.js.testOld.compatibility.binary.AbstractJsKlibBinaryCompatibilityTest
 import org.jetbrains.kotlin.test.TargetBackend
-import org.jetbrains.kotlin.test.runners.ir.AbstractFirLightTreeIrJsTextTest
+import org.jetbrains.kotlin.test.runners.ir.AbstractFirLightTreeJsIrTextTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -179,7 +179,7 @@ fun main(args: Array<String>) {
                 model("diagnostics/testsWithJsStdLib", pattern = "^([^_](.+))\\.kt$", excludedPattern = excludedFirTestdataPattern)
             }
 
-            testClass<AbstractFirLightTreeIrJsTextTest>(
+            testClass<AbstractFirLightTreeJsIrTextTest>(
                 suiteTestClassName = "FirLightTreeJsIrTextTestGenerated"
             ) {
                 model("ir/irJsText")
