@@ -139,7 +139,6 @@
 /compiler/testData/ir/closureAnnotator/ "Kotlin JVM"
 /compiler/testData/ir/interpreter/ "Kotlin JVM"
 /compiler/testData/ir/irCfg/ "Kotlin JVM"
-/compiler/testData/ir/irJsText/ "Kotlin Compiler Core"
 /compiler/testData/ir/irText/ "Kotlin Compiler Core"
 /compiler/testData/ir/klibLayout/ "Kotlin Native"
 /compiler/testData/ir/sourceRanges/ "Kotlin Compiler Core"

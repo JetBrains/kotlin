@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_IR
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_KT_IR
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
+import org.jetbrains.kotlin.test.directives.ModuleStructureDirectives
 import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
@@ -95,6 +96,12 @@ abstract class AbstractIrTextTestBase<R : ResultingArtifact.FrontendOutput<R>>(t
                 ::IrTreeVerifierHandler,
                 ::IrPrettyKotlinDumpHandler
             )
+        }
+
+        forTestsMatching("compiler/testData/ir/irText/js/*") {
+            defaultDirectives {
+                ModuleStructureDirectives.TARGET_BACKEND_KIND with TargetBackend.JS_IR
+            }
         }
     }
 }

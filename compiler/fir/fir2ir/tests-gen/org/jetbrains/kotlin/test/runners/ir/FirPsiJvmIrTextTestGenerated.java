@@ -2842,6 +2842,190 @@ public class FirPsiJvmIrTextTestGenerated extends AbstractFirPsiJvmIrTextTest {
     }
 
     @Nested
+    @TestMetadata("compiler/testData/ir/irText/js")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Js {
+        @Test
+        public void testAllFilesPresentInJs() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/js"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/ir/irText/js/dynamic")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Dynamic {
+            @Test
+            public void testAllFilesPresentInDynamic() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/js/dynamic"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            }
+
+            @Test
+            @TestMetadata("dynamicAndMembersOfAny.kt")
+            public void testDynamicAndMembersOfAny() throws Exception {
+                runTest("compiler/testData/ir/irText/js/dynamic/dynamicAndMembersOfAny.kt");
+            }
+
+            @Test
+            @TestMetadata("dynamicArrayAccess.kt")
+            public void testDynamicArrayAccess() throws Exception {
+                runTest("compiler/testData/ir/irText/js/dynamic/dynamicArrayAccess.kt");
+            }
+
+            @Test
+            @TestMetadata("dynamicArrayAssignment.kt")
+            public void testDynamicArrayAssignment() throws Exception {
+                runTest("compiler/testData/ir/irText/js/dynamic/dynamicArrayAssignment.kt");
+            }
+
+            @Test
+            @TestMetadata("dynamicArrayAugmentedAssignment.kt")
+            public void testDynamicArrayAugmentedAssignment() throws Exception {
+                runTest("compiler/testData/ir/irText/js/dynamic/dynamicArrayAugmentedAssignment.kt");
+            }
+
+            @Test
+            @TestMetadata("dynamicArrayIncrementDecrement.kt")
+            public void testDynamicArrayIncrementDecrement() throws Exception {
+                runTest("compiler/testData/ir/irText/js/dynamic/dynamicArrayIncrementDecrement.kt");
+            }
+
+            @Test
+            @TestMetadata("dynamicBinaryEqualityOperator.kt")
+            public void testDynamicBinaryEqualityOperator() throws Exception {
+                runTest("compiler/testData/ir/irText/js/dynamic/dynamicBinaryEqualityOperator.kt");
+            }
+
+            @Test
+            @TestMetadata("dynamicBinaryLogicalOperator.kt")
+            public void testDynamicBinaryLogicalOperator() throws Exception {
+                runTest("compiler/testData/ir/irText/js/dynamic/dynamicBinaryLogicalOperator.kt");
+            }
+
+            @Test
+            @TestMetadata("dynamicBinaryOperator.kt")
+            public void testDynamicBinaryOperator() throws Exception {
+                runTest("compiler/testData/ir/irText/js/dynamic/dynamicBinaryOperator.kt");
+            }
+
+            @Test
+            @TestMetadata("dynamicBinaryRelationalOperator.kt")
+            public void testDynamicBinaryRelationalOperator() throws Exception {
+                runTest("compiler/testData/ir/irText/js/dynamic/dynamicBinaryRelationalOperator.kt");
+            }
+
+            @Test
+            @TestMetadata("dynamicCall.kt")
+            public void testDynamicCall() throws Exception {
+                runTest("compiler/testData/ir/irText/js/dynamic/dynamicCall.kt");
+            }
+
+            @Test
+            @TestMetadata("dynamicElvisOperator.kt")
+            public void testDynamicElvisOperator() throws Exception {
+                runTest("compiler/testData/ir/irText/js/dynamic/dynamicElvisOperator.kt");
+            }
+
+            @Test
+            @TestMetadata("dynamicExclExclOperator.kt")
+            public void testDynamicExclExclOperator() throws Exception {
+                runTest("compiler/testData/ir/irText/js/dynamic/dynamicExclExclOperator.kt");
+            }
+
+            @Test
+            @TestMetadata("dynamicInfixCall.kt")
+            public void testDynamicInfixCall() throws Exception {
+                runTest("compiler/testData/ir/irText/js/dynamic/dynamicInfixCall.kt");
+            }
+
+            @Test
+            @TestMetadata("dynamicMemberAccess.kt")
+            public void testDynamicMemberAccess() throws Exception {
+                runTest("compiler/testData/ir/irText/js/dynamic/dynamicMemberAccess.kt");
+            }
+
+            @Test
+            @TestMetadata("dynamicMemberAssignment.kt")
+            public void testDynamicMemberAssignment() throws Exception {
+                runTest("compiler/testData/ir/irText/js/dynamic/dynamicMemberAssignment.kt");
+            }
+
+            @Test
+            @TestMetadata("dynamicMemberAugmentedAssignment.kt")
+            public void testDynamicMemberAugmentedAssignment() throws Exception {
+                runTest("compiler/testData/ir/irText/js/dynamic/dynamicMemberAugmentedAssignment.kt");
+            }
+
+            @Test
+            @TestMetadata("dynamicMemberIncrementDecrement.kt")
+            public void testDynamicMemberIncrementDecrement() throws Exception {
+                runTest("compiler/testData/ir/irText/js/dynamic/dynamicMemberIncrementDecrement.kt");
+            }
+
+            @Test
+            @TestMetadata("dynamicUnaryOperator.kt")
+            public void testDynamicUnaryOperator() throws Exception {
+                runTest("compiler/testData/ir/irText/js/dynamic/dynamicUnaryOperator.kt");
+            }
+
+            @Test
+            @TestMetadata("dynamicWithSmartCast.kt")
+            public void testDynamicWithSmartCast() throws Exception {
+                runTest("compiler/testData/ir/irText/js/dynamic/dynamicWithSmartCast.kt");
+            }
+
+            @Test
+            @TestMetadata("implicitCastFromDynamic.kt")
+            public void testImplicitCastFromDynamic() throws Exception {
+                runTest("compiler/testData/ir/irText/js/dynamic/implicitCastFromDynamic.kt");
+            }
+
+            @Test
+            @TestMetadata("implicitCastToDynamic.kt")
+            public void testImplicitCastToDynamic() throws Exception {
+                runTest("compiler/testData/ir/irText/js/dynamic/implicitCastToDynamic.kt");
+            }
+
+            @Test
+            @TestMetadata("invokeOperator.kt")
+            public void testInvokeOperator() throws Exception {
+                runTest("compiler/testData/ir/irText/js/dynamic/invokeOperator.kt");
+            }
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/ir/irText/js/external")
+        @TestDataPath("$PROJECT_ROOT")
+        public class External {
+            @Test
+            public void testAllFilesPresentInExternal() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/js/external"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            }
+
+            @Test
+            @TestMetadata("kt38765.kt")
+            public void testKt38765() throws Exception {
+                runTest("compiler/testData/ir/irText/js/external/kt38765.kt");
+            }
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/ir/irText/js/native")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Native {
+            @Test
+            public void testAllFilesPresentInNative() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/js/native"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            }
+
+            @Test
+            @TestMetadata("nativeNativeKotlin.kt")
+            public void testNativeNativeKotlin() throws Exception {
+                runTest("compiler/testData/ir/irText/js/native/nativeNativeKotlin.kt");
+            }
+        }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/ir/irText/lambdas")
     @TestDataPath("$PROJECT_ROOT")
     public class Lambdas {

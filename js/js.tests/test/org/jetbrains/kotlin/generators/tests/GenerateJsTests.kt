@@ -182,7 +182,7 @@ fun main(args: Array<String>) {
             testClass<AbstractFirLightTreeJsIrTextTest>(
                 suiteTestClassName = "FirLightTreeJsIrTextTestGenerated"
             ) {
-                model("ir/irJsText")
+                model("ir/irText")
             }
 
             testClass<AbstractFirJsCodegenBoxTest> {

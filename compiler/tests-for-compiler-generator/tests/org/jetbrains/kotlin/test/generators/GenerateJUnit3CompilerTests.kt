@@ -117,11 +117,11 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
             }
 
             testClass<AbstractClassicJsIrTextTestCase> {
-                model("ir/irJsText", pattern = "^(.+)\\.kt(s)?\$")
+                model("ir/irText/js", pattern = "^(.+)\\.kt(s)?\$")
             }
 
             testClass<AbstractKlibJsIrTextTestCase> {
-                model("ir/irJsText", pattern = "^(.+)\\.kt\$", targetBackend = TargetBackend.JS_IR)
+                model("ir/irText/js", pattern = "^(.+)\\.kt\$", targetBackend = TargetBackend.JS_IR)
             }
 
             testClass<AbstractKlibIrTextTestCase> {
