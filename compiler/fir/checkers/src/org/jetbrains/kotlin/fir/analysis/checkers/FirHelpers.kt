@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.multipleDelegatesWithTheSameSignature
+import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -731,4 +732,38 @@ fun FirElement.isLhsOfAssignment(context: CheckerContext): Boolean {
     if (this !is FirQualifiedAccessExpression) return false
     val lastQualified = context.qualifiedAccessOrAssignmentsOrAnnotationCalls.lastOrNull { it != this } ?: return false
     return lastQualified is FirVariableAssignment && lastQualified.lValue == this
+}
+
+/**
+ * Collects the upper bounds as [ConeClassLikeType].
+ */
+fun ConeKotlinType?.collectUpperBounds(): Set<ConeClassLikeType> {
+    if (this == null) return emptySet()
+    return when (this) {
+        is ConeErrorType -> emptySet() // Ignore error types
+        is ConeLookupTagBasedType -> when (this) {
+            is ConeClassLikeType -> setOf(this)
+            is ConeTypeVariableType -> {
+                (lookupTag.originalTypeParameter as? ConeTypeParameterLookupTag)?.typeParameterSymbol.collectUpperBounds()
+            }
+            is ConeTypeParameterType -> lookupTag.typeParameterSymbol.collectUpperBounds()
+            else -> throw IllegalStateException("missing branch for ${javaClass.name}")
+        }
+        is ConeDefinitelyNotNullType -> original.collectUpperBounds()
+        is ConeIntersectionType -> intersectedTypes.flatMap { it.collectUpperBounds() }.toSet()
+        is ConeFlexibleType -> upperBound.collectUpperBounds()
+        is ConeCapturedType -> constructor.supertypes?.flatMap { it.collectUpperBounds() }?.toSet().orEmpty()
+        is ConeIntegerConstantOperatorType -> setOf(getApproximatedType())
+        is ConeStubType, is ConeIntegerLiteralConstantType -> throw IllegalStateException("$this should not reach here")
+    }
+}
+
+private fun FirTypeParameterSymbol?.collectUpperBounds(): Set<ConeClassLikeType> {
+    if (this == null) return emptySet()
+    return resolvedBounds.flatMap { it.coneType.collectUpperBounds() }.toSet()
+}
+
+fun ConeKotlinType.leastUpperBound(session: FirSession): ConeKotlinType {
+    val upperBounds = collectUpperBounds().takeIf { it.isNotEmpty() } ?: return session.builtinTypes.nullableAnyType.type
+    return ConeTypeIntersector.intersectTypes(session.typeContext, upperBounds)
 }

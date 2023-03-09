@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.isValueClass
+import org.jetbrains.kotlin.fir.analysis.checkers.leastUpperBound
 import org.jetbrains.kotlin.fir.analysis.checkers.valOrVarKeyword
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
@@ -25,7 +26,6 @@ import org.jetbrains.kotlin.fir.references.toResolvedValueParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
-import org.jetbrains.kotlin.types.AbstractTypeChecker
 
 object FirFunctionParameterChecker : FirFunctionChecker() {
     override fun check(declaration: FirFunction, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -61,10 +61,13 @@ object FirFunctionParameterChecker : FirFunctionChecker() {
             }
         }
 
-        val nullableNothingType = context.session.builtinTypes.nullableNothingType.coneType
         for (varargParameter in varargParameters) {
             val varargParameterType = varargParameter.returnTypeRef.coneType.arrayElementType() ?: continue
-            if (AbstractTypeChecker.isSubtypeOf(context.session.typeContext, varargParameterType, nullableNothingType) ||
+            // LUB is checked to ensure varargParameterType may
+            // never be anything except `Nothing` or `Nothing?`
+            // in case it is a complex type that quantifies
+            // over many other types.
+            if (varargParameterType.leastUpperBound(context.session).isNothingOrNullableNothing ||
                 (varargParameterType.isValueClass(context.session) && !varargParameterType.isUnsignedTypeOrNullableUnsignedType)
             // Note: comparing with FE1.0, we skip checking if the type is not primitive because primitive types are not inline. That
             // is any primitive values are already allowed by the inline check.
