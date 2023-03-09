@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.name.FqName
 @RequiresOptIn
 annotation class AllowedToUsedOnlyInK1
 
-class FunctionTypeKindExtractor(kinds: List<FunctionTypeKind>) {
+class FunctionTypeKindExtractor(private val kinds: List<FunctionTypeKind>) {
     companion object {
         /**
          * This instance should be used only in:
@@ -48,6 +48,10 @@ class FunctionTypeKindExtractor(kinds: List<FunctionTypeKind>) {
     fun hasKindWithSpecificPackage(packageFqName: FqName): Boolean {
         return packageFqName in knownKindsByPackageFqName
     }
+
+    fun getFunctionKindPackageNames(): Set<FqName> = knownKindsByPackageFqName.keys
+
+    fun hasExtensionKinds(): Boolean = kinds.any { !it.isBuiltin }
 
     data class KindWithArity(val kind: FunctionTypeKind, val arity: Int)
 

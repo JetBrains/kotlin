@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.*
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirExtensionSyntheticFunctionInterfaceProvider
-import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
 import org.jetbrains.kotlin.fir.resolve.transformers.FirDummyCompilerLazyDeclarationResolver
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
@@ -49,6 +48,7 @@ import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
+import org.jetbrains.kotlin.utils.addToStdlib.partitionIsInstance
 import java.util.concurrent.ConcurrentMap
 
 @OptIn(PrivateSessionConstructor::class, SessionConfiguration::class)
@@ -164,7 +164,13 @@ internal class LLFirSessionCache(private val project: Project) {
             })
 
             val javaSymbolProvider = createJavaSymbolProvider(this, moduleData, project, contentScope)
-            val syntheticFunctionalInterfaceProvider = FirExtensionSyntheticFunctionInterfaceProvider(this, moduleData, scopeProvider)
+
+            // We only need to add an extension synthetic function provider if the session's function type service even has extension kinds.
+            // Otherwise, the provider will be completely useless.
+            val syntheticFunctionalInterfaceProvider = if (this.functionTypeService.hasExtensionKinds()) {
+                FirExtensionSyntheticFunctionInterfaceProvider(this, moduleData, scopeProvider)
+            } else null
+
             register(
                 FirSymbolProvider::class,
                 LLFirModuleWithDependenciesSymbolProvider(
@@ -530,12 +536,19 @@ internal class LLFirSessionCache(private val project: Project) {
      * [session] should be the session of the dependent module. Because all symbol providers are tied to a session, we need a session to
      * create a combined symbol provider.
      */
-    @Suppress("UNUSED_PARAMETER")
     private fun List<FirSymbolProvider>.mergeDependencySymbolProvidersInto(
         session: FirSession,
         destination: MutableList<FirSymbolProvider>,
     ) {
-        destination.addAll(this)
+        val (syntheticFunctionSymbolProviders, remainingSymbolProviders1) =
+            partitionIsInstance<_, FirExtensionSyntheticFunctionInterfaceProvider>()
+
+        destination.addAll(remainingSymbolProviders1)
+
+        // Unfortunately, the functions that an extension synthetic function symbol provider might provide differ between sessions because
+        // they depend on compiler plugins. However, only extension providers that are affected by compiler plugins are added in
+        // `createSourcesSession`. We can still combine these, because the `ClassId` heuristics only need to be checked once.
+        destination.add(LLFirCombinedSyntheticFunctionSymbolProvider.merge(session, syntheticFunctionSymbolProviders))
     }
 }
 

@@ -23,6 +23,16 @@ abstract class FirFunctionTypeKindService : FirSessionComponent {
         return extractor.hasKindWithSpecificPackage(packageFqName)
     }
 
+    /**
+     * Returns all package names for which [getKindByClassNamePrefix] may return a [FunctionTypeKind].
+     */
+    fun getFunctionKindPackageNames(): Set<FqName> = extractor.getFunctionKindPackageNames()
+
+    /**
+     * Whether [getKindByClassNamePrefix] may return a [FunctionTypeKind] added by a compiler plugin.
+     */
+    fun hasExtensionKinds(): Boolean = extractor.hasExtensionKinds()
+
     abstract fun extractSingleSpecialKindForFunction(functionSymbol: FirFunctionSymbol<*>): FunctionTypeKind?
     abstract fun extractAllSpecialKindsForFunction(functionSymbol: FirFunctionSymbol<*>): List<FunctionTypeKind>
     abstract fun extractAllSpecialKindsForFunctionTypeRef(typeRef: FirFunctionTypeRef): List<FunctionTypeKind>
