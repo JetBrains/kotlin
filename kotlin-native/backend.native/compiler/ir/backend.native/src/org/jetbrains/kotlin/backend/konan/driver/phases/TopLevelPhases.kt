@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.backend.konan.driver.utilities.CExportFiles
 import org.jetbrains.kotlin.backend.konan.driver.utilities.createTempFiles
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -119,8 +118,8 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
         }
 
         val fragments = backendEngine.splitIntoFragments(irModule)
-        val nThreads = context.config.configuration.get(CommonConfigurationKeys.PARALLEL_BACKEND_THREADS) ?: 1
-        if (nThreads == 1) {
+        val threadsCount = context.config.threadsCount
+        if (threadsCount == 1) {
             fragments.forEach { fragment ->
                 runAfterLowerings(fragment, createGenerationStateAndRunLowerings(fragment))
             }
@@ -133,9 +132,9 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
                 // We'd love to run entire pipeline in parallel, but it's difficult (mainly because of the lowerings,
                 // which need cross-file access all the time and it's not easy to overcome this). So, for now,
                 // we split the pipeline into two parts - everything before lowerings (including them)
-                // which is run sequentially, and everything else which in run in parallel.
+                // which is run sequentially, and everything else which is run in parallel.
                 val generationStates = fragmentsList.map { fragment -> createGenerationStateAndRunLowerings(fragment) }
-                val executor = Executors.newFixedThreadPool(nThreads)
+                val executor = Executors.newFixedThreadPool(threadsCount)
                 val thrownFromThread = AtomicReference<Throwable?>(null)
                 val tasks = fragmentsList.zip(generationStates).map { (fragment, generationState) ->
                     Callable {

@@ -177,6 +177,11 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     put(CACHE_DIRECTORIES, arguments.cacheDirectories.toNonNullList())
     put(AUTO_CACHEABLE_FROM, arguments.autoCacheableFrom.toNonNullList())
     arguments.autoCacheDir?.let { put(AUTO_CACHE_DIR, it) }
+    val incrementalCacheDir = arguments.incrementalCacheDir
+    if ((incrementalCacheDir != null) xor (arguments.incrementalCompilation == true))
+        report(ERROR, "For incremental compilation both flags should be supplied: " +
+                "-Xenable-incremental-compilation and ${K2NativeCompilerArguments.INCREMENTAL_CACHE_DIR}")
+    incrementalCacheDir?.let { put(INCREMENTAL_CACHE_DIR, it) }
     arguments.filesToCache?.let { put(FILES_TO_CACHE, it.toList()) }
     put(MAKE_PER_FILE_CACHE, arguments.makePerFileCache)
     val nThreadsRaw = parseBackendThreads(arguments.backendThreads)
@@ -302,6 +307,7 @@ internal fun CompilerConfiguration.setupCommonOptionsForCaches(konanConfig: Kona
     put(BinaryOptions.freezing, konanConfig.freezing)
     put(BinaryOptions.runtimeAssertionsMode, konanConfig.runtimeAssertsMode)
     put(LAZY_IR_FOR_CACHES, konanConfig.lazyIrForCaches)
+    put(CommonConfigurationKeys.PARALLEL_BACKEND_THREADS, konanConfig.threadsCount)
 }
 
 private fun Array<String>?.toNonNullList() = this?.asList().orEmpty()

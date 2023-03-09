@@ -167,6 +167,14 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     )
     var autoCacheDir: String? = null
 
+    @Argument(
+        value = INCREMENTAL_CACHE_DIR,
+        valueDescription = "<path>",
+        description = "Path to the directory where to put incremental build caches",
+        delimiter = ""
+    )
+    var incrementalCacheDir: String? = null
+
     @Argument(value="-Xcheck-dependencies", deprecatedName = "--check_dependencies", description = "Check dependencies and download the missing ones")
     var checkDependencies: Boolean = false
 
@@ -485,6 +493,7 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
         const val INCLUDE_ARG = "-Xinclude"
         const val CACHED_LIBRARY = "-Xcached-library"
         const val ADD_CACHE = "-Xadd-cache"
+        const val INCREMENTAL_CACHE_DIR = "-Xic-cache-dir"
         const val SHORT_MODULE_NAME_ARG = "-Xshort-module-name"
     }
 }
