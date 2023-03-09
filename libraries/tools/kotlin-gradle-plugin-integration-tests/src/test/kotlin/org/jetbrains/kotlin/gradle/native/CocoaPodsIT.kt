@@ -1887,7 +1887,7 @@ class CocoaPodsIT : BaseGradleIT() {
             if (cocoapodsInstallationRequired) {
                 if (cocoapodsInstallationAllowed) {
                     println("Installing CocoaPods...")
-                    gem("install", "--install-dir", cocoapodsInstallationRoot.absolutePath, "cocoapods")
+                    gem("install", "--install-dir", cocoapodsInstallationRoot.absolutePath, "cocoapods", "-v", cocoapodsVersion)
                 } else {
                     fail(
                         """
@@ -1900,6 +1900,8 @@ class CocoaPodsIT : BaseGradleIT() {
                 }
             }
         }
+
+        private const val cocoapodsVersion = "1.11.0"
 
         private val cocoapodsInstallationRequired: Boolean by lazy {
             !isCocoapodsInstalled()
