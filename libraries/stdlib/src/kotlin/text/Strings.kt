@@ -641,28 +641,6 @@ public fun CharSequence.removeSuffix(suffix: CharSequence): CharSequence {
 }
 
 /**
- * If this char sequence starts with the given [prefix], returns a new string with the prefix
- * replaced with [replacement]. Otherwise, returns this string.
- */
-public fun CharSequence.replacePrefix(prefix: CharSequence, replacement: CharSequence):CharSequence{
-    if (startsWith(prefix)) {
-        return this.replaceRange(0..prefix.length-1, replacement)
-    }
-    return this
-}
-
-/**
- * If this char sequence starts with the given [suffix], returns a new string with the suffix
- * replaced with [replacement]. Otherwise, returns this string.
- */
-public fun CharSequence.replaceSufix(sufix: CharSequence, replacement: CharSequence):CharSequence{
-    if (endsWith(sufix)) {
-        return this.replaceRange(sufix.length..this.length-1, replacement)
-    }
-    return this
-}
-
-/**
  * If this string ends with the given [suffix], returns a copy of this string
  * with the suffix removed. Otherwise, returns this string.
  */
