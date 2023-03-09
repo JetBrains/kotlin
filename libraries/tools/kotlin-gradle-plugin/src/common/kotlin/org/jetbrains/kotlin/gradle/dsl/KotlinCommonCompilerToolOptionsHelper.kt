@@ -24,4 +24,14 @@ internal object KotlinCommonCompilerToolOptionsHelper {
         args.suppressWarnings = false
         args.verbose = false
     }
+
+    internal fun syncOptionsAsConvention(
+        from: org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerToolOptions,
+        into: org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerToolOptions,
+    ) {
+        into.allWarningsAsErrors.convention(from.allWarningsAsErrors)
+        into.suppressWarnings.convention(from.suppressWarnings)
+        into.verbose.convention(from.verbose)
+        into.freeCompilerArgs.convention(from.freeCompilerArgs)
+    }
 }

@@ -29,4 +29,16 @@ internal object KotlinCommonCompilerOptionsHelper {
         args.progressiveMode = false
         args.useK2 = false
     }
+
+    internal fun syncOptionsAsConvention(
+        from: org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions,
+        into: org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions,
+    ) {
+        org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerToolOptionsHelper.syncOptionsAsConvention(from, into)
+        into.apiVersion.convention(from.apiVersion)
+        into.languageVersion.convention(from.languageVersion)
+        into.optIn.convention(from.optIn)
+        into.progressiveMode.convention(from.progressiveMode)
+        into.useK2.convention(from.useK2)
+    }
 }

@@ -21,4 +21,12 @@ internal object KotlinNativeCompilerOptionsHelper {
         org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptionsHelper.fillDefaultValues(args)
         args.moduleName = null
     }
+
+    internal fun syncOptionsAsConvention(
+        from: org.jetbrains.kotlin.gradle.dsl.KotlinNativeCompilerOptions,
+        into: org.jetbrains.kotlin.gradle.dsl.KotlinNativeCompilerOptions,
+    ) {
+        org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptionsHelper.syncOptionsAsConvention(from, into)
+        into.moduleName.convention(from.moduleName)
+    }
 }

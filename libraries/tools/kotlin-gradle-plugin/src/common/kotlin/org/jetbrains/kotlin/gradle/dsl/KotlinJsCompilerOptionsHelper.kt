@@ -47,4 +47,25 @@ internal object KotlinJsCompilerOptionsHelper {
         args.typedArrays = true
         args.useEsClasses = false
     }
+
+    internal fun syncOptionsAsConvention(
+        from: org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptions,
+        into: org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptions,
+    ) {
+        org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptionsHelper.syncOptionsAsConvention(from, into)
+        into.friendModulesDisabled.convention(from.friendModulesDisabled)
+        into.main.convention(from.main)
+        into.metaInfo.convention(from.metaInfo)
+        into.moduleKind.convention(from.moduleKind)
+        into.moduleName.convention(from.moduleName)
+        into.noStdlib.convention(from.noStdlib)
+        into.outputFile.convention(from.outputFile)
+        into.sourceMap.convention(from.sourceMap)
+        into.sourceMapEmbedSources.convention(from.sourceMapEmbedSources)
+        into.sourceMapNamesPolicy.convention(from.sourceMapNamesPolicy)
+        into.sourceMapPrefix.convention(from.sourceMapPrefix)
+        into.target.convention(from.target)
+        into.typedArrays.convention(from.typedArrays)
+        into.useEsClasses.convention(from.useEsClasses)
+    }
 }

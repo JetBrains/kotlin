@@ -35,4 +35,15 @@ internal object KotlinJvmCompilerOptionsHelper {
         args.noStdlib = true
         args.noReflect = true
     }
+
+    internal fun syncOptionsAsConvention(
+        from: org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions,
+        into: org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions,
+    ) {
+        org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptionsHelper.syncOptionsAsConvention(from, into)
+        into.javaParameters.convention(from.javaParameters)
+        into.jvmTarget.convention(from.jvmTarget)
+        into.moduleName.convention(from.moduleName)
+        into.noJdk.convention(from.noJdk)
+    }
 }

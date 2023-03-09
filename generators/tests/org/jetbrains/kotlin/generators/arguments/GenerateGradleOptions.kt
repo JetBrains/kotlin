@@ -746,6 +746,21 @@ private fun Printer.generateCompilerOptionsHelper(
             addAdditionalJvmArgs(helperName)
         }
         println("}")
+
+        println()
+        println("internal fun syncOptionsAsConvention(")
+        withIndent {
+            println("from: $type,")
+            println("into: $type,")
+        }
+        println(") {")
+        withIndent {
+            if (parentHelperName != null) println("$parentHelperName.syncOptionsAsConvention(from, into)")
+            for (property in properties) {
+                println("into.${property.name}.convention(from.${property.name})")
+            }
+        }
+        println("}")
     }
 }
 
