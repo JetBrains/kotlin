@@ -117,6 +117,12 @@ internal interface KotlinPluginLifecycle {
 
         Finalised;
 
+        val previousOrFirst: Stage get() = previousOrNull ?: values.first()
+        val previousOrNull: Stage? get() = values.getOrNull(ordinal - 1)
+        val nextOrNull: Stage? get() = values.getOrNull(ordinal + 1)
+        val nextOrLast: Stage get() = nextOrNull ?: values.last()
+        val nextOrThrow: Stage get() = values[ordinal + 1]
+
         operator fun rangeTo(other: Stage): Set<Stage> {
             return values.subList(this.ordinal, other.ordinal + 1).toSet()
         }
@@ -124,6 +130,9 @@ internal interface KotlinPluginLifecycle {
         companion object {
             val values = values().toList()
             fun upTo(stage: Stage): Set<Stage> = values.first()..stage
+            fun until(stage: Stage): Set<Stage> {
+                return upTo(stage.previousOrNull ?: return emptySet())
+            }
         }
     }
 
@@ -157,11 +166,10 @@ Implementation
  */
 
 private class KotlinPluginLifecycleImpl(override val project: Project) : KotlinPluginLifecycle {
-    private val enqueuedStages: ArrayDeque<Stage> = ArrayDeque(Stage.values)
     private val enqueuedActions: Map<Stage, ArrayDeque<KotlinPluginLifecycle.() -> Unit>> =
         Stage.values().associateWith { ArrayDeque() }
 
-    private var configureLoopRunning = AtomicBoolean(false)
+    private var loopRunning = AtomicBoolean(false)
     private var isStarted = AtomicBoolean(false)
     private var isFinished = AtomicBoolean(false)
 
@@ -177,18 +185,17 @@ private class KotlinPluginLifecycleImpl(override val project: Project) : KotlinP
         }
 
         project.whenEvaluated {
-            executeStage(project, enqueuedStages.removeFirst())
+            assert(enqueuedActions.getValue(stage).isEmpty()) { "Expected empty queue from '$stage'" }
+            executeStage(project, stage.nextOrThrow)
         }
     }
 
     private fun executeStage(project: Project, stage: Stage) {
         this.stage = stage
-        val queue = enqueuedActions.getValue(stage)
-        do {
-            val action = queue.removeFirstOrNull()
-            action?.invoke(this)
-        } while (action != null)
-        val nextStage = enqueuedStages.removeFirstOrNull() ?: run {
+
+        loopIfNecessary()
+
+        val nextStage = stage.nextOrNull ?: run {
             isFinished.set(true)
             return
         }
@@ -198,21 +205,20 @@ private class KotlinPluginLifecycleImpl(override val project: Project) : KotlinP
         }
     }
 
-    private fun startConfigureLoopIfNecessary() {
-        check(stage == Stage.Configure) { "Cannot start 'configure loop' on stage '$stage'" }
-        if (configureLoopRunning.getAndSet(true)) return
+    private fun loopIfNecessary() {
+        if (loopRunning.getAndSet(true)) return
         try {
-            val queue = enqueuedActions.getValue(Stage.Configure)
+            val queue = enqueuedActions.getValue(stage)
             do {
                 val action = queue.removeFirstOrNull()
                 action?.invoke(this)
             } while (action != null)
         } finally {
-            configureLoopRunning.set(false)
+            loopRunning.set(false)
         }
     }
 
-    override var stage: Stage = enqueuedStages.removeFirst()
+    override var stage: Stage = Stage.values.first()
 
     override fun enqueue(stage: Stage, action: KotlinPluginLifecycle.() -> Unit) {
         if (stage < this.stage) {
@@ -222,7 +228,7 @@ private class KotlinPluginLifecycleImpl(override val project: Project) : KotlinP
         enqueuedActions.getValue(stage).addLast(action)
 
         if (stage == Stage.Configure) {
-            startConfigureLoopIfNecessary()
+            loopIfNecessary()
         }
     }
 
