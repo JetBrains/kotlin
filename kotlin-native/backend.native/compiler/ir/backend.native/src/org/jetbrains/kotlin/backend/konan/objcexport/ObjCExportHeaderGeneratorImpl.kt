@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.resolve.source.getPsi
 
 internal class ObjCExportHeaderGeneratorImpl(
         val context: PhaseContext,
-        moduleDescriptors: List<ModuleDescriptor>,
+        moduleDescriptors: List<ObjCExportModuleInfo>,
         mapper: ObjCExportMapper,
         namer: ObjCExportNamer,
         stdlibNamer: ObjCExportStdlibNamer,

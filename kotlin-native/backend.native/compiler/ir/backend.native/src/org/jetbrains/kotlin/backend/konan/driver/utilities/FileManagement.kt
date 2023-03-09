@@ -139,7 +139,7 @@ internal fun createCompilationFiles(
         }
     }
     if (config.produce == CompilerOutputKind.FRAMEWORK) {
-        val frameworkDirectory = File(config.outputPath)
+        val frameworkDirectory = File(config.outputPath).absoluteFile
         val dylibName = frameworkDirectory.name.removeSuffix(".framework")
         val dylibRelativePath = when (config.target.family) {
             Family.IOS,

@@ -14,6 +14,8 @@ internal interface ObjCExportKlibMapper {
 
     fun getHeaderInfoFor(library: KotlinLibrary): ObjCExportHeaderInfo
 
+    fun getGeneratorFor(library: KotlinLibrary): ObjCExportClassGenerator
+
     companion object {
         fun create(
                 globalConfig: ObjCExportGlobalConfig,
@@ -24,12 +26,17 @@ internal interface ObjCExportKlibMapper {
     }
 }
 
+class ObjCExportModuleInfo(
+        val module: ModuleDescriptor,
+        val exported: Boolean,
+)
+
 /**
  * TODO: Should be easily parseable from CLI arg (JSON file)?
  */
-internal class ObjCExportHeaderInfo(
+class ObjCExportHeaderInfo(
         val topLevelPrefix: String,
-        val modules: List<ModuleDescriptor>,
+        val modules: List<ObjCExportModuleInfo>,
         val frameworkName: String,
         val headerName: String,
 ) {
@@ -52,16 +59,16 @@ internal class ObjCExportKlibMappingBuilder(
 
     private val stdlibNamer = ObjCExportStdlibNamer.create(globalConfig.stdlibPrefix)
 
-    private val klibMapping = mutableMapOf<KotlinLibrary, ObjCExportNamer>()
+    private val namerMapping = mutableMapOf<KotlinLibrary, ObjCExportNamer>()
     private val headerInfoMapping = mutableMapOf<KotlinLibrary, ObjCExportHeaderInfo>()
 
     fun getHeaderInfo(library: KotlinLibrary): ObjCExportHeaderInfo = headerInfoMapping.getOrPut(library) {
-        headerInfos.find { it.modules.any { it.kotlinLibrary == library } }
+        headerInfos.find { it.modules.any { it.module.kotlinLibrary == library } }
                 ?: error("library ${library.libraryName} does not belong to any header")
     }
 
-    fun getOrCreateNamer(library: KotlinLibrary): ObjCExportNamer = klibMapping.getOrPut(library) {
-        val headerInfo = headerInfos.find { it.modules.any { it.kotlinLibrary == library } }
+    fun getOrCreateNamer(library: KotlinLibrary): ObjCExportNamer = namerMapping.getOrPut(library) {
+        val headerInfo = headerInfos.find { it.modules.any { it.module.kotlinLibrary == library } }
                 ?: error("library ${library.libraryName} does not belong to any header")
         createObjCExportNamer(headerInfo)
     }
@@ -77,7 +84,7 @@ internal class ObjCExportKlibMappingBuilder(
         val ignoreInterfaceMethodCollisions = globalConfig.ignoreInterfaceMethodCollisions
         return ObjCExportNamerImpl(
                 headerInfo.modules.toSet(),
-                headerInfo.modules.first().builtIns,
+                headerInfo.modules.first().module.builtIns,
                 stdlibNamer,
                 mapper,
                 headerInfo.topLevelPrefix,

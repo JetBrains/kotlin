@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns.isAny
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.constants.ArrayValue
 import org.jetbrains.kotlin.resolve.constants.KClassValue
@@ -1075,7 +1076,7 @@ internal class ObjCExportTranslatorImpl(
 }
 
 abstract class ObjCExportHeaderGenerator internal constructor(
-        val moduleDescriptors: List<ModuleDescriptor>,
+        val moduleDescriptors: List<ObjCExportModuleInfo>,
         internal val mapper: ObjCExportMapper,
         val namer: ObjCExportNamer,
         val stdlibNamer: ObjCExportStdlibNamer,
@@ -1098,6 +1099,7 @@ abstract class ObjCExportHeaderGenerator internal constructor(
 
     fun build(): List<String> = mutableListOf<String>().apply {
         addImports(foundationImports)
+        addImports(getKotlinDependenciesImports())
         addImports(getAdditionalImports())
         add("")
 
@@ -1162,10 +1164,14 @@ abstract class ObjCExportHeaderGenerator internal constructor(
 
     protected open fun getAdditionalImports(): List<String> = emptyList()
 
+    private fun getKotlinDependenciesImports(): List<String> = emptyList()
+
     fun translateModule() {
         // TODO: make the translation order stable
         // to stabilize name mangling.
-        translateBaseDeclarations()
+        if (moduleDescriptors.any { it.module.isNativeStdlib() }) {
+            translateBaseDeclarations()
+        }
         translateModuleDeclarations()
     }
 
@@ -1179,7 +1185,10 @@ abstract class ObjCExportHeaderGenerator internal constructor(
     }
 
     private fun translatePackageFragments() {
-        val packageFragments = moduleDescriptors.flatMap { it.getPackageFragments() }
+        val packageFragments = moduleDescriptors
+                .filter { it.exported }
+                .map { it.module }
+                .flatMap { it.getPackageFragments() }
 
         packageFragments.forEach { packageFragment ->
             packageFragment.getMemberScope().getContributedDescriptors()
@@ -1288,6 +1297,7 @@ abstract class ObjCExportHeaderGenerator internal constructor(
 
     internal fun requireClassOrInterface(descriptor: ClassDescriptor) {
         if (shouldTranslateExtraClass(descriptor) && descriptor !in generatedClasses) {
+            // TODO: Delegate to the proper generator
             extraClassesToTranslate += descriptor
         }
     }

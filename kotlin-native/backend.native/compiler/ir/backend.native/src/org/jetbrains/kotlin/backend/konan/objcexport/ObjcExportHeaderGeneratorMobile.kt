@@ -7,7 +7,7 @@ import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
 class ObjcExportHeaderGeneratorMobile internal constructor(
-        moduleDescriptors: List<ModuleDescriptor>,
+        moduleDescriptors: List<ObjCExportModuleInfo>,
         mapper: ObjCExportMapper,
         namer: ObjCExportNamer,
         stdlibNamer: ObjCExportStdlibNamer,
@@ -21,7 +21,7 @@ class ObjcExportHeaderGeneratorMobile internal constructor(
                 configuration: ObjCExportLazy.Configuration,
                 problemCollector: ObjCExportProblemCollector,
                 builtIns: KotlinBuiltIns,
-                moduleDescriptors: List<ModuleDescriptor>,
+                moduleDescriptors: List<ObjCExportModuleInfo>,
                 deprecationResolver: DeprecationResolver? = null,
                 local: Boolean = false,
                 restrictToLocalModules: Boolean = false): ObjCExportHeaderGenerator {
@@ -43,5 +43,5 @@ class ObjcExportHeaderGeneratorMobile internal constructor(
     }
 
     override fun shouldTranslateExtraClass(descriptor: ClassDescriptor): Boolean =
-        !restrictToLocalModules || descriptor.module in moduleDescriptors
+        !restrictToLocalModules || descriptor.module in moduleDescriptors.map { it.module }
 }

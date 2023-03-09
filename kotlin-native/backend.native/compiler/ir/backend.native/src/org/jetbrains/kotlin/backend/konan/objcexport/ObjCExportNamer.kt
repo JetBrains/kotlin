@@ -89,19 +89,19 @@ interface LocalObjCExportNamer : ObjCExportNamer {
     val topLevelNamePrefix: String
 }
 
-fun createNamer(moduleDescriptor: ModuleDescriptor,
+fun createNamer(moduleDescriptor: ObjCExportModuleInfo,
                 topLevelNamePrefix: String,
                 stdlibNamer: ObjCExportStdlibNamer): ObjCExportNamer =
         createNamer(moduleDescriptor, emptyList(), topLevelNamePrefix, stdlibNamer)
 
 fun createNamer(
-        moduleDescriptor: ModuleDescriptor,
-        exportedDependencies: List<ModuleDescriptor>,
+        moduleDescriptor: ObjCExportModuleInfo,
+        exportedDependencies: List<ObjCExportModuleInfo>,
         topLevelNamePrefix: String,
         stdlibNamer: ObjCExportStdlibNamer,
 ): ObjCExportNamer = ObjCExportNamerImpl(
         (exportedDependencies + moduleDescriptor).toSet(),
-        moduleDescriptor.builtIns,
+        moduleDescriptor.module.builtIns,
         stdlibNamer,
         ObjCExportMapper(local = true, unitSuspendFunctionExport = UnitSuspendFunctionObjCExport.DEFAULT),
         topLevelNamePrefix,
@@ -279,7 +279,7 @@ internal class ObjCExportNamerImpl(
 ) : LocalObjCExportNamer {
 
     constructor(
-            moduleDescriptors: Set<ModuleDescriptor>,
+            moduleDescriptors: Set<ObjCExportModuleInfo>,
             builtIns: KotlinBuiltIns,
             stdlibNamer: ObjCExportStdlibNamer,
             mapper: ObjCExportMapper,
@@ -294,7 +294,7 @@ internal class ObjCExportNamerImpl(
                     get() = topLevelNamePrefix
 
                 override fun getAdditionalPrefix(module: ModuleDescriptor): String? =
-                        if (module in moduleDescriptors) null else module.objCExportAdditionalNamePrefix
+                        if (module in moduleDescriptors.map { it.module }) null else module.objCExportAdditionalNamePrefix
 
                 override val objcGenerics: Boolean
                     get() = objcGenerics

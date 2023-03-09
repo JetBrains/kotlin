@@ -30,11 +30,19 @@ internal class ObjCExportedInterface(
 )
 
 internal fun produceObjCExportInterface(
+        headerGenerator: ObjCExportHeaderGenerator
+): ObjCExportedInterface {
+
+    headerGenerator.translateModule()
+    return headerGenerator.buildInterface()
+}
+
+internal fun createObjCExportHeaderGenerator(
         context: PhaseContext,
         exportConfig: ObjCExportGlobalConfig,
         headerInfo: ObjCExportHeaderInfo,
         stdlibNamer: ObjCExportStdlibNamer,
-): ObjCExportedInterface {
+): ObjCExportHeaderGenerator {
     require(headerInfo.modules.isNotEmpty())
 
     // TODO: emit RTTI to the same modules as classes belong to.
@@ -48,7 +56,7 @@ internal fun produceObjCExportInterface(
     val ignoreInterfaceMethodCollisions = exportConfig.ignoreInterfaceMethodCollisions
     val namer = ObjCExportNamerImpl(
             headerInfo.modules.toSet(),
-            headerInfo.modules.first().builtIns,
+            headerInfo.modules.first().module.builtIns,
             stdlibNamer,
             mapper,
             headerInfo.topLevelPrefix,
@@ -57,9 +65,7 @@ internal fun produceObjCExportInterface(
             disableSwiftMemberNameMangling = disableSwiftMemberNameMangling,
             ignoreInterfaceMethodCollisions = ignoreInterfaceMethodCollisions,
     )
-    val headerGenerator = ObjCExportHeaderGeneratorImpl(context, headerInfo.modules, mapper, namer, stdlibNamer, objcGenerics)
-    headerGenerator.translateModule()
-    return headerGenerator.buildInterface()
+    return ObjCExportHeaderGeneratorImpl(context, headerInfo.modules, mapper, namer, stdlibNamer, objcGenerics)
 }
 
 /**
@@ -102,7 +108,7 @@ internal class ObjCExport(
     val mapper: ObjCExportMapper = exportedInterface?.mapper ?: ObjCExportMapper(unitSuspendFunctionExport = config.unitSuspendFunctionObjCExport)
 
     val namer: ObjCExportNamer = exportedInterface?.namer ?: ObjCExportNamerImpl(
-            setOf(moduleDescriptor),
+            setOf(ObjCExportModuleInfo(moduleDescriptor, true)),
             moduleDescriptor.builtIns,
             ObjCExportStdlibNamer.create(topLevelNamePrefix),
             mapper,

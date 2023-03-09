@@ -79,9 +79,11 @@ internal class DynamicCompilerDriver(
             ObjCExportConfigParser(config, frontendOutput.moduleDescriptor.allDependencyModules + frontendOutput.moduleDescriptor)
                     .readObjCExportConfigFromXml(File(exportConfigFile))
         } else {
+            val exportedModules = (listOf(frontendOutput.moduleDescriptor) + frontendOutput.moduleDescriptor.getExportedDependencies(config))
+                    .map { ObjCExportModuleInfo(it, exported = true) }
             listOf(ObjCExportHeaderInfo(
                     topLevelPrefix = abbreviate(config.fullExportedNamePrefix),
-                    modules = listOf(frontendOutput.moduleDescriptor) + frontendOutput.moduleDescriptor.getExportedDependencies(config),
+                    modules = exportedModules,
                     frameworkName = "Kotlin",
                     headerName = "Kotlin.h"
             ))
@@ -97,10 +99,10 @@ internal class DynamicCompilerDriver(
             engine.runPhase(CreateObjCFrameworkPhase, CreateObjCFrameworkInput(
                     frontendOutput.moduleDescriptor,
                     objCExportedInterface,
-                    (files.getComponent<CompilationFiles.Component.FrameworkDirectory>().value).parentFile.resolve(headerInfo.frameworkName)
+                    (files.getComponent<CompilationFiles.Component.FrameworkDirectory>().value).parentFile.resolve("${headerInfo.frameworkName}.framework")
             ))
             if (config.omitFrameworkBinary) {
-                return
+                return@forEach
             }
             val (psiToIrOutput, objCCodeSpec) = engine.runPsiToIr(frontendOutput, isProducingLibrary = false) {
                 it.runPhase(CreateObjCExportCodeSpecPhase, objCExportedInterface)

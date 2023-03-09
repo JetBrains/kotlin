@@ -39,19 +39,25 @@ internal class ObjCExportConfigParser(
         result += root.children.map { frameworkNode ->
             val frameworkName = frameworkNode.getChild("name").value
             val topLevelPrefix = frameworkNode.getChild("topLevelPrefix").value
-            val libraryNames = frameworkNode.getChild("libraries").children.map { libraryNode ->
-                libraryNode.getChild("name").value
+            val libraries = frameworkNode.getChild("libraries").children.map { libraryNode ->
+                parseLibrary(libraryNode)
             }
-            val resolvedLibraries = config.resolvedLibraries.getFullList(TopologicalLibraryOrder).filter { it.uniqueName in libraryNames }
-            val modules = allModules.filter { it.klibModuleOrigin is DeserializedKlibModuleOrigin && it.kotlinLibrary in resolvedLibraries }
             ObjCExportHeaderInfo(
                     topLevelPrefix = topLevelPrefix,
                     frameworkName = frameworkName,
                     headerName = "$frameworkName.h",
-                    modules = modules,
+                    modules = libraries.map { it.resolve() },
             )
         }
         return result
+    }
+
+    private fun ObjCExportConfig.Library.resolve(): ObjCExportModuleInfo {
+        val resolvedLibrary = config.resolvedLibraries.getFullList(TopologicalLibraryOrder)
+                .find { it.uniqueName == name }
+                ?: error("Library $name not found. Is it passed to the compiler?")
+        val module = allModules.first { it.klibModuleOrigin is DeserializedKlibModuleOrigin && it.kotlinLibrary == resolvedLibrary }
+        return ObjCExportModuleInfo(module = module, exported = exported)
     }
 
     private fun File.readXml(): Element {
