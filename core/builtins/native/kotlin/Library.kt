@@ -94,13 +94,13 @@ public inline fun <reified T : Enum<T>> enumValues(): Array<T>
 @SinceKotlin("1.1")
 public inline fun <reified T : Enum<T>> enumValueOf(name: String): T
 
-fun <reified T> VArray<T>.iterator(): VArrayIterator<T>
+operator fun <reified T> VArray<T>.iterator(): VArrayIterator<T>
 
-fun VArray<Byte>.iterator(): ByteIterator
-fun VArray<Short>.iterator(): ShortIterator
-fun VArray<Int>.iterator(): IntIterator
-fun VArray<Long>.iterator(): LongIterator
-fun VArray<Float>.iterator(): FloatIterator
-fun VArray<Double>.iterator(): DoubleIterator
-fun VArray<Char>.iterator(): CharIterator
-fun VArray<Boolean>.iterator(): BooleanIterator
+operator fun VArray<Byte>.iterator(): ByteIterator
+operator fun VArray<Short>.iterator(): ShortIterator
+operator fun VArray<Int>.iterator(): IntIterator
+operator fun VArray<Long>.iterator(): LongIterator
+operator fun VArray<Float>.iterator(): FloatIterator
+operator fun VArray<Double>.iterator(): DoubleIterator
+operator fun VArray<Char>.iterator(): CharIterator
+operator fun VArray<Boolean>.iterator(): BooleanIterator
