@@ -250,7 +250,7 @@ private class KotlinPluginLifecycleImpl(override val project: Project) : KotlinP
     }
 
     override suspend fun await(stage: Stage) {
-        if (this.stage >= stage) return
+        if (this.stage > stage) return
         suspendCoroutine<Unit> { continuation ->
             enqueue(stage) {
                 continuation.resume(Unit)
