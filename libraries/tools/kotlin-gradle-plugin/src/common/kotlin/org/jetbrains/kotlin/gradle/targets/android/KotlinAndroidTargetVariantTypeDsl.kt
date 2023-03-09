@@ -5,25 +5,30 @@
 
 package org.jetbrains.kotlin.gradle.targets.android
 
+import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.provider.Property
-import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginLifecycle.Stage
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginLifecycle.Stage.FinaliseDsl
+import org.jetbrains.kotlin.gradle.plugin.KotlinTargetHierarchy
 import org.jetbrains.kotlin.gradle.plugin.newLifecycleAwareProperty
 
-sealed class KotlinAndroidTargetVariantTypeDsl {
-    abstract val kotlinModuleName: Property<String>
-}
-
-internal val KotlinAndroidTargetVariantTypeDsl.internal: InternalKotlinAndroidTargetVariantTypeDsl
-    get() = when (this) {
-        is InternalKotlinAndroidTargetVariantTypeDsl -> this
+@ExperimentalKotlinGradlePluginApi
+interface KotlinAndroidTargetVariantTypeDsl {
+    interface TargetHierarchyDsl {
+        val module: Property<KotlinTargetHierarchy.ModuleName>
     }
 
-internal class InternalKotlinAndroidTargetVariantTypeDsl(
-    val project: Project,
-) : KotlinAndroidTargetVariantTypeDsl() {
+    val targetHierarchy: TargetHierarchyDsl
+    fun targetHierarchy(configure: TargetHierarchyDsl.() -> Unit): Unit = targetHierarchy.configure()
+    fun targetHierarchy(configure: Action<@UnsafeVariance TargetHierarchyDsl>): Unit = configure.execute(targetHierarchy)
+}
 
-    override val kotlinModuleName: Property<String> by project.newLifecycleAwareProperty<String>(
-        finaliseIn = Stage.BeforeFinaliseRefinesEdges
-    )
+
+internal class KotlinAndroidTargetVariantTypeDslImpl(private val project: Project) : KotlinAndroidTargetVariantTypeDsl {
+    internal inner class TargetHierarchyDslImpl : KotlinAndroidTargetVariantTypeDsl.TargetHierarchyDsl {
+        override val module: Property<KotlinTargetHierarchy.ModuleName> by project.newLifecycleAwareProperty(FinaliseDsl)
+    }
+
+    override val targetHierarchy: KotlinAndroidTargetVariantTypeDsl.TargetHierarchyDsl = TargetHierarchyDslImpl()
 }

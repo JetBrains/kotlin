@@ -17,8 +17,8 @@ import org.gradle.api.attributes.AttributeContainer
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.copyAttributes
-import org.jetbrains.kotlin.gradle.targets.android.InternalKotlinAndroidTargetVariantTypeDsl
 import org.jetbrains.kotlin.gradle.targets.android.KotlinAndroidTargetVariantTypeDsl
+import org.jetbrains.kotlin.gradle.targets.android.KotlinAndroidTargetVariantTypeDslImpl
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
 import org.jetbrains.kotlin.gradle.utils.forAllAndroidVariants
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -41,13 +41,13 @@ abstract class KotlinAndroidTarget @Inject constructor(
         project.container(KotlinJvmAndroidCompilation::class.java)
 
     @ExperimentalKotlinGradlePluginApi
-    val main: KotlinAndroidTargetVariantTypeDsl = InternalKotlinAndroidTargetVariantTypeDsl(project)
+    val main: KotlinAndroidTargetVariantTypeDsl = KotlinAndroidTargetVariantTypeDslImpl(project)
 
     @ExperimentalKotlinGradlePluginApi
-    val unitTest: KotlinAndroidTargetVariantTypeDsl = InternalKotlinAndroidTargetVariantTypeDsl(project)
+    val unitTest: KotlinAndroidTargetVariantTypeDsl = KotlinAndroidTargetVariantTypeDslImpl(project)
 
     @ExperimentalKotlinGradlePluginApi
-    val instrumentedTest: KotlinAndroidTargetVariantTypeDsl = InternalKotlinAndroidTargetVariantTypeDsl(project)
+    val instrumentedTest: KotlinAndroidTargetVariantTypeDsl = KotlinAndroidTargetVariantTypeDslImpl(project)
 
     /** Names of the Android library variants that should be published from the target's project within the default publications which are
      * set up if the `maven-publish` Gradle plugin is applied.

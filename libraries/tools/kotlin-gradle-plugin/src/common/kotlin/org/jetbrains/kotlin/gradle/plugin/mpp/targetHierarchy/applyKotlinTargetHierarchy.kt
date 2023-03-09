@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy
 import org.gradle.api.DomainObjectCollection
 import org.gradle.api.NamedDomainObjectContainer
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginLifecycle.Stage
+import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginLifecycle.Stage.Companion.upTo
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 
 internal fun applyKotlinTargetHierarchy(
@@ -20,8 +22,10 @@ internal fun applyKotlinTargetHierarchy(
         .all { target ->
             target.compilations.all forCompilation@{ compilation ->
                 target.project.kotlinMultiplatformPluginLifecycle.launch {
-                    val hierarchy = hierarchyDescriptor.buildKotlinTargetHierarchy(compilation) ?: return@launch
-                    applyKotlinTargetHierarchy(hierarchy, compilation, sourceSets)
+                    withRestrictedStages(upTo(Stage.FinaliseRefinesEdges)) {
+                        val hierarchy = hierarchyDescriptor.buildKotlinTargetHierarchy(compilation) ?: return@withRestrictedStages
+                        applyKotlinTargetHierarchy(hierarchy, compilation, sourceSets)
+                    }
                 }
             }
         }
