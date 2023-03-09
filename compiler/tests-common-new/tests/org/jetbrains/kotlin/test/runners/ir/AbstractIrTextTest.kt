@@ -97,12 +97,6 @@ abstract class AbstractIrTextTestBase<R : ResultingArtifact.FrontendOutput<R>>(t
                 ::IrPrettyKotlinDumpHandler
             )
         }
-
-        forTestsMatching("compiler/testData/ir/irText/js/*") {
-            defaultDirectives {
-                ModuleStructureDirectives.TARGET_BACKEND_KIND with TargetBackend.JS_IR
-            }
-        }
     }
 }
 

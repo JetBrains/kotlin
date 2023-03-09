@@ -1,3 +1,4 @@
+// TARGET_BACKEND: JS_IR
 package events
 
 external open class internal {

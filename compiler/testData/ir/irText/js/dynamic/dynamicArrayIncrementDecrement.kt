@@ -1,3 +1,4 @@
+// TARGET_BACKEND: JS_IR
 // FIR_IDENTICAL
 
 fun testArrayIncrementDecrement(d: dynamic) {

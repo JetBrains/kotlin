@@ -1,3 +1,5 @@
+// TARGET_BACKEND: JS_IR
+
 // FIR_IDENTICAL
 fun test1(d: dynamic) = d foo 123
 
