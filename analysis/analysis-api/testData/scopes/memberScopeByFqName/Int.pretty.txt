@@ -198,6 +198,4 @@ open fun hashCode(): kotlin.Int
 
 companion object
 
-constructor(value: kotlin.Int)
-
 private constructor()

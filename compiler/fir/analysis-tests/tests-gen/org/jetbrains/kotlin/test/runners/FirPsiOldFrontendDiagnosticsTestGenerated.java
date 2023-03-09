@@ -24331,6 +24331,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             }
 
             @Test
+            @TestMetadata("javaMappedCtors.kt")
+            public void testJavaMappedCtors() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/platformTypes/javaMappedCtors.kt");
+            }
+
+            @Test
             @TestMetadata("kt50877.kt")
             public void testKt50877() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/platformTypes/kt50877.kt");
@@ -33904,6 +33910,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             @TestMetadata("kt19601.kt")
             public void testKt19601() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/typealias/kt19601.kt");
+            }
+
+            @Test
+            @TestMetadata("kt57065.kt")
+            public void testKt57065() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/typealias/kt57065.kt");
             }
 
             @Test

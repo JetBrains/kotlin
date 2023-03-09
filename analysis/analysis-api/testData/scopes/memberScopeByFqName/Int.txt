@@ -3607,50 +3607,6 @@ KtConstructorSymbol:
   callableIdIfNonLocal: null
   containingClassIdIfNonLocal: kotlin/Int
   contextReceivers: []
-  hasStableParameterNames: false
-  isExtension: false
-  isPrimary: false
-  origin: JAVA
-  receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
-    type: java/lang/Integer
-  symbolKind: CLASS_MEMBER
-  typeParameters: []
-  valueParameters: [
-    KtValueParameterSymbol:
-      annotationsList: []
-      callableIdIfNonLocal: null
-      contextReceivers: []
-      generatedPrimaryConstructorProperty: null
-      hasDefaultValue: false
-      isCrossinline: false
-      isExtension: false
-      isImplicitLambdaParameter: false
-      isNoinline: false
-      isVararg: false
-      name: value
-      origin: SUBSTITUTION_OVERRIDE
-      receiverParameter: null
-      returnType: KtUsualClassType:
-        annotationsList: []
-        ownTypeArguments: []
-        type: kotlin/Int
-      symbolKind: LOCAL
-      typeParameters: []
-      getContainingModule: KtSdkModule "SDK jdk"
-      deprecationStatus: null
-  ]
-  visibility: Public
-  getContainingModule: KtSourceModule "Sources of main"
-  deprecationStatus: null
-
-KtConstructorSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: null
-  containingClassIdIfNonLocal: kotlin/Int
-  contextReceivers: []
   hasStableParameterNames: true
   isExtension: false
   isPrimary: true
