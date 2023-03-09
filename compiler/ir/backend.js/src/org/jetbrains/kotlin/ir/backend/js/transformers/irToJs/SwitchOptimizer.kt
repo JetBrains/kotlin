@@ -11,10 +11,14 @@ import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.js.backend.ast.*
 
-class SwitchOptimizer(private val context: JsGenerationContext, private val isExpression: Boolean, private val lastStatementTransformer: (JsStatement) -> JsStatement) {
+class SwitchOptimizer(
+    private val context: JsGenerationContext,
+    private val isExpression: Boolean,
+    private val lastStatementTransformer: (() -> JsStatement) -> JsStatement
+) {
 
     // TODO: reimplement optimization on top of IR
-    constructor(context: JsGenerationContext) : this(context, isExpression = false, { it })
+    constructor(context: JsGenerationContext) : this(context, isExpression = false, { it() })
 
     private val jsEqeqeq = context.staticContext.backendContext.intrinsics.jsEqeqeq
     private val jsEqeq = context.staticContext.backendContext.intrinsics.jsEqeq
@@ -145,8 +149,7 @@ class SwitchOptimizer(private val context: JsGenerationContext, private val isEx
             }
 
             val lastStatement = if (isExpression) {
-                val expression = case.body.accept(exprTransformer, context).makeStmt()
-                val lastStatement = lastStatementTransformer(expression)
+                val lastStatement = lastStatementTransformer { case.body.accept(exprTransformer, context).makeStmt() }
                 jsCase.statements += lastStatement
                 lastStatement
             } else {
@@ -154,7 +157,7 @@ class SwitchOptimizer(private val context: JsGenerationContext, private val isEx
                 var lastStatement = jsBody.statements.lastOrNull()
 
                 if (lastStatement != null) {
-                    lastStatement = lastStatementTransformer(lastStatement)
+                    lastStatement = lastStatementTransformer { lastStatement!! }
                     jsBody.statements[jsBody.statements.lastIndex] = lastStatement
                 }
 
