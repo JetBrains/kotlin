@@ -42,7 +42,7 @@ internal fun PhaseContext.firFrontend(input: KotlinCoreEnvironment): FirOutput {
     val resolvedLibraries: List<KotlinResolvedLibrary> = config.resolvedLibraries.getFullResolvedList()
 
     val sessionsWithSources = prepareNativeSessions(
-            ktFiles, configuration, mainModuleName.asString(), resolvedLibraries, dependencyList,
+            ktFiles, configuration, mainModuleName, resolvedLibraries, dependencyList,
             extensionRegistrars, isCommonSourceForPsi, fileBelongsToModuleForPsi
     )
 

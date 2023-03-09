@@ -39,7 +39,7 @@ abstract class AbstractNativeKlibContentsTest : AbstractNativeSimpleTest() {
 
     private fun generateTestCaseWithSingleSource(source: File, extraArgs: List<String>): TestCase {
         val moduleName: String = source.name
-        val module = TestModule.Exclusive(moduleName, emptySet(), emptySet())
+        val module = TestModule.Exclusive(moduleName, emptySet(), emptySet(), emptySet())
         module.files += TestFile.createCommitted(source, module)
 
         return TestCase(

@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.konan.blackboxtest.support
 
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCase.WithTestRunnerExtras
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestModule.Companion.allDependencies
+import org.jetbrains.kotlin.konan.blackboxtest.support.TestModule.Companion.allDependsOn
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.*
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
@@ -85,16 +86,19 @@ internal sealed class TestModule {
     data class Exclusive(
         override val name: String,
         val directDependencySymbols: Set<String>,
-        val directFriendSymbols: Set<String>
+        val directFriendSymbols: Set<String>,
+        val directDependsOnSymbols: Set<String>, // mimics the name from ModuleStructureExtractorImpl, thought later converted to `-Xfragment-refines` parameter
     ) : TestModule() {
         override val files: FailOnDuplicatesSet<TestFile<Exclusive>> = FailOnDuplicatesSet()
 
         lateinit var directDependencies: Set<TestModule>
         lateinit var directFriends: Set<TestModule>
+        lateinit var directDependsOn: Set<TestModule>
 
         // N.B. The following two properties throw an exception on attempt to resolve cyclic dependencies.
         val allDependencies: Set<TestModule> by SM.lazyNeighbors({ directDependencies }, { it.allDependencies })
         val allFriends: Set<TestModule> by SM.lazyNeighbors({ directFriends }, { it.allFriends })
+        val allDependsOn: Set<TestModule> by SM.lazyNeighbors({ directDependsOn }, { it.allDependsOn })
 
         lateinit var testCase: TestCase
 
@@ -103,7 +107,9 @@ internal sealed class TestModule {
         }
 
         fun haveSameSymbols(other: Exclusive) =
-            other.directDependencySymbols == directDependencySymbols && other.directFriendSymbols == directFriendSymbols
+            other.directDependencySymbols == directDependencySymbols &&
+                    other.directFriendSymbols == directFriendSymbols &&
+                    other.directDependsOnSymbols == directDependsOnSymbols
     }
 
     data class Shared(override val name: String) : TestModule() {
@@ -122,7 +128,7 @@ internal sealed class TestModule {
     final override fun toString() = "${javaClass.canonicalName}[name=$name]"
 
     companion object {
-        fun newDefaultModule() = Exclusive(DEFAULT_MODULE_NAME, emptySet(), emptySet())
+        fun newDefaultModule() = Exclusive(DEFAULT_MODULE_NAME, emptySet(), emptySet(), emptySet())
 
         val TestModule.allDependencies: Set<TestModule>
             get() = when (this) {
@@ -133,6 +139,12 @@ internal sealed class TestModule {
         val TestModule.allFriends: Set<TestModule>
             get() = when (this) {
                 is Exclusive -> allFriends
+                is Shared, is Given -> emptySet()
+            }
+
+        val TestModule.allDependsOn: Set<TestModule>
+            get() = when (this) {
+                is Exclusive -> allDependsOn
                 is Shared, is Given -> emptySet()
             }
 
@@ -198,11 +210,13 @@ internal class TestCase(
         modules.forEach { module ->
             allModules += module
             allModules += module.allDependencies
+            allModules += module.allDependsOn
         }
 
         val rootModules = allModules.toHashSet()
         allModules.forEach { module ->
             rootModules -= module.allDependencies
+            rootModules -= module.allDependsOn
         }
 
         assertTrue(rootModules.isNotEmpty()) { "$id: No root modules in test case." }
@@ -257,6 +271,7 @@ internal class TestCase(
             }
 
             module.directFriends = module.directFriendSymbols.mapToSet(::findModule)
+            module.directDependsOn = module.directDependsOnSymbols.mapToSet(::findModule)
         }
     }
 }

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.jvm.runtime
 
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.io.FileUtil
+import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.checkers.KotlinMultiFileTestWithJava
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.codegen.GenerationUtils
@@ -111,6 +112,7 @@ abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdir() {
                 containingDeclaration is JavaClassDescriptor &&
                 containingDeclaration.kind == ClassKind.ANNOTATION_CLASS
 
+    @OptIn(ObsoleteTestInfrastructure::class)
     private fun compileFile(file: File, text: String, jdkKind: TestJdkKind) {
         val fileName = file.name
         when {
