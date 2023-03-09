@@ -23,10 +23,57 @@ import kotlin.reflect.KProperty
 Util functions
  */
 
+/**
+ * Launches the given [block] as coroutine inside the Kotlin Gradle Plugin which allows to suspend execution of the code.
+ * Intended use cases for suspensions are:
+ *
+ * #### Waiting for a given [KotlinPluginLifecycle.Stage]
+ *
+ * ```kotlin
+ * project.launch {
+ *     // code
+ *     await(Stage.AfterEvaluate) // <- suspends
+ *     assertEquals(Stage.AfterEvaluate, stage)
+ *
+ *     await(Stage.FinaliseDsl) // suspends
+ *     assertEquals(Stage.FinaliseDsl, stage)
+ *     // code
+ * }
+ * ```
+ *
+ * #### Waiting for some Gradle property to return a final value
+ *
+ * ```kotlin
+ * project.launch {
+ *     val value = myProperty.awaitFinalValue() // <- suspends until final value is available!
+ * }
+ * ```
+ *
+ * #### Waiting for other suspending code in the Kotlin Gradle Plugin
+ *
+ * ```kotlin
+ * project.launch {
+ *    // code
+ *    callMyOtherSuspendingFunction() // <- suspends
+ * }
+ * ```
+ *
+ * When launching a coroutine, the execution start of the [block] is not guaranteed.
+ * It can be executed right away, effectively executing the [block] before this launch function returns
+ * However, when called inside an already existing coroutine (or once Gradle has started executing afterEvaluate listeners),
+ * then this block executed after this launch function returns and put at the end of the execution queue
+ */
 internal fun Project.launch(block: suspend KotlinPluginLifecycle.() -> Unit) {
     kotlinPluginLifecycle.launch(block)
 }
 
+/**
+ * See [launch] and [launchInRequiredStage]
+ *
+ * This is a shortcut to [launch] and immediately awaiting the specified [stage]:
+ * @param block Is guaranteed to be executed *not before* [stage]. However, when this function is called in a higher stage then specified
+ * the [block] will still be launched.
+ */
 internal fun Project.launchInStage(stage: Stage, block: suspend KotlinPluginLifecycle.() -> Unit) {
     launch {
         await(stage)
@@ -34,6 +81,21 @@ internal fun Project.launchInStage(stage: Stage, block: suspend KotlinPluginLife
     }
 }
 
+/**
+ * See also [launch]
+ *
+ * Launches the given block in the specified lifecycle stage [stage].
+ * It is guaranteed that [block] is only executed in the specified [stage]. Leaving the stage is forbidden.
+ *
+ * @throws IllegalLifecycleException if the [stage] was already executed or [block] tries to exit the required [stage]
+ *
+ * ```kotlin
+ * project.launchInRequiredStage(Stage.BeforeFinaliseDsl) {
+ *     assertEquals(Stage.BeforeFinaliseDsl, stage) // guaranteed!
+ *     assertFails { await(Stage.FinaliseDsl) } // <- forbidden, as it tried to leave the required stage!
+ * }
+ * ```
+ */
 internal fun Project.launchInRequiredStage(stage: Stage, block: suspend KotlinPluginLifecycle.() -> Unit) {
     launchInStage(stage) {
         requiredStage(stage) {
@@ -42,52 +104,125 @@ internal fun Project.launchInRequiredStage(stage: Stage, block: suspend KotlinPl
     }
 }
 
+/**
+ * Universal way of retrieving the current lifecycle
+ * Also: See [currentKotlinPluginLifecycle]
+ */
 internal val Project.kotlinPluginLifecycle: KotlinPluginLifecycle
     get() = extraProperties.getOrPut(KotlinPluginLifecycle::class.java.name) {
         KotlinPluginLifecycleImpl(project)
     }
 
+/**
+ * Will start the lifecycle, this shall be called before the [kotlinPluginLifecycle] is effectively used
+ */
 internal fun Project.startKotlinPluginLifecycle() {
     (kotlinPluginLifecycle as KotlinPluginLifecycleImpl).start()
 }
 
+/**
+ * Similar to [currentCoroutineContext]: Returns the current [KotlinPluginLifecycle] instance used to launch
+ * the currently running coroutine. Throws if this coroutine was not started using a [KotlinPluginLifecycle]
+ */
 internal suspend fun currentKotlinPluginLifecycle(): KotlinPluginLifecycle {
     return currentCoroutineContext()[KotlinMultiplatformPluginLifecycleCoroutineContextElement]?.lifecycle
         ?: error("Missing $KotlinMultiplatformPluginLifecycleCoroutineContextElement in currentCoroutineContext")
 }
 
+/**
+ * Suspends execution until we *at least* reached the specified [stage]
+ * This will return right away if the specified [stage] was already executed or we are currently executing the [stage]
+ */
 internal suspend fun await(stage: Stage) {
     currentKotlinPluginLifecycle().await(stage)
 }
 
+/**
+ * See [LifecycleAwareProperty]
+ * Will create a new [LifecycleAwareProperty] which is going to finalise its value in stage [finaliseIn]
+ * and the initialValue [initialValue]
+ *
+ * ## Sample
+ * ```kotlin
+ * val myProperty by project.newKotlinPluginLifecycleAwareProperty<String>()
+ * myProperty.set("hello")
+ * //...
+ * project.launch {
+ *     val myFinalValue = myProperty.awaitFinalValue() // <- suspends until final value is known!
+ * }
+ * ```
+ */
 internal inline fun <reified T : Any> Project.newKotlinPluginLifecycleAwareProperty(
     finaliseIn: Stage = Stage.FinaliseDsl, initialValue: T? = null
 ): LifecycleAwareProperty<T> {
     return kotlinPluginLifecycle.newLifecycleAwareProperty(T::class.java, finaliseIn, initialValue)
 }
 
+/**
+ * Will return the [LifecycleAwareProperty] instance if the given receiver was created by [newKotlinPluginLifecycleAwareProperty]
+ */
 internal suspend fun <T : Any> Property<T>.findKotlinPluginLifecycleAwareProperty(): LifecycleAwareProperty<T>? {
     return (currentKotlinPluginLifecycle() as KotlinPluginLifecycleImpl).findLifecycleAwareProperty(this)
 }
 
+/**
+ * Will suspend until the property finalises its value and therefore a final value can returned.
+ * Note: This only works on properties that are [isKotlinPluginLifecycleAware]
+ * (e.g. by being created using [newKotlinPluginLifecycleAwareProperty]).
+ */
 internal suspend fun <T : Any> Property<T>.awaitFinalValue(): T? {
     val lifecycleAwareProperty = findKotlinPluginLifecycleAwareProperty()
         ?: throw IllegalArgumentException("Property is not lifecycle aware")
     return lifecycleAwareProperty.awaitFinalValue()
 }
 
+/**
+ * @return true if this property has an associated [LifecycleAwareProperty]
+ */
 internal suspend fun Property<*>.isKotlinPluginLifecycleAware(): Boolean {
     return findKotlinPluginLifecycleAwareProperty() != null
 }
 
+/**
+ * See also [withRestrictedStages]
+ *
+ * Will ensure that the given [block] can only execute in the given [stage]
+ */
 internal suspend fun <T> requiredStage(stage: Stage, block: suspend () -> T): T {
     return withRestrictedStages(hashSetOf(stage), block)
 }
 
+/**
+ * See also [withRestrictedStages]
+ *
+ * Will ensure that the given [block] cannot leave the current stage
+ * e.g.
+ *
+ * ```kotlin
+ * project.launch {
+ *    requireCurrentStage {
+ *        await(stage.nextOrThrow) // <- fails! We are not allowed to switch stages!
+ *    }
+ * }
+ * ```
+ */
 internal suspend fun <T> requireCurrentStage(block: suspend () -> T): T {
     return requiredStage(currentKotlinPluginLifecycle().stage, block)
 }
 
+/**
+ * Will ensure that the given [block] cannot leave the specified allowed stages [allowed]
+ * e.g.
+ *
+ * ```kotlin
+ * project.launchInStage(Stage.BeforeFinaliseDsl) {
+ *     withRestrictedStages(Stage.upTo(Stage.FinaliseDsl)) {
+ *        await(Stage.FinaliseDsl) // <- OK, since still in allowed stages
+ *        await(Stage.AfterFinaliseDsl) // <- fails, since not in allowed stages!
+ *     }
+ * }
+ * ```
+ */
 internal suspend fun <T> withRestrictedStages(allowed: Set<Stage>, block: suspend () -> T): T {
     return withContext(RestrictedLifecycleStages(currentKotlinPluginLifecycle(), allowed)) {
         block()
@@ -100,22 +235,71 @@ Definition of the Lifecycle and its stages
 
 internal interface KotlinPluginLifecycle {
     enum class Stage {
+        /**
+         * Configure Phase of Gradle: No .afterEvaluate {} listeners have been called yet,
+         * the buildscript is still evaluated!
+         */
         Configure,
+
+        /**
+         * The buildscript has been evaluated, first .afterEvaluate {} listeners get executed.
+         * This can include .afterEvaluates from other plugins as well as other users!
+         */
         AfterEvaluate,
 
+        /**
+         * Before [FinaliseDsl]
+         */
         BeforeFinaliseDsl,
+
+        /**
+         * Last changes are allowed to be done to the DSL.
+         * E.g. Gradle properties shall call their [Property.finalizeValue] functions to
+         * disallow further changes
+         */
         FinaliseDsl,
+
+        /**
+         * After [FinaliseDsl]
+         */
         AfterFinaliseDsl,
 
+        /**
+         * Before [FinaliseRefinesEdges]
+         */
         BeforeFinaliseRefinesEdges,
+
+        /**
+         * All refines edges ([KotlinSourceSet.dependsOn]) have to be finalised here.
+         * Adding edges after this stage is forbidden and will throw an exception!
+         */
         FinaliseRefinesEdges,
+
+        /**
+         * After [FinaliseRefinesEdges]
+         */
         AfterFinaliseRefinesEdges,
 
+        /**
+         * Before [FinaliseCompilations]
+         */
         BeforeFinaliseCompilations,
+
+        /**
+         * [KotlinCompilation] instances have to finalised: Creating compilations after this stage is forbidden.
+         * Values and configuration of compilations also shall be finalised already
+         */
         FinaliseCompilations,
+
+        /**
+         * After [FinaliseCompilations]
+         */
         AfterFinaliseCompilations,
 
-        Finalised;
+        /**
+         * Done; Configuration Phase passed. All tasks are configured and execution can be scheduled
+         */
+        ReadyForExecution;
 
         val previousOrFirst: Stage get() = previousOrNull ?: values.first()
         val previousOrNull: Stage? get() = values.getOrNull(ordinal - 1)
@@ -152,9 +336,22 @@ internal interface KotlinPluginLifecycle {
 
     class IllegalLifecycleException(message: String) : IllegalStateException(message)
 
+    /**
+     * Wrapper around Gradle's [Property] that is aware of the [KotlinPluginLifecycle] and ensures that
+     * the given [property] is finalised in [stage] (also calling [Property.finalizeValue]).
+     *
+     * A property finalised in a given [stage] will allow to safely get the final value using the
+     * [awaitFinalValue] function, suspending the execution until the value is indeed finalised.
+     *
+     * See [Project.newKotlinPluginLifecycleAwareProperty] to create a new instance
+     */
     interface LifecycleAwareProperty<T : Any> {
         val finaliseIn: Stage
         val property: Property<T>
+
+        /**
+         * See [LifecycleAwareProperty]
+         */
         suspend fun awaitFinalValue(): T?
         operator fun getValue(thisRef: Any?, property: KProperty<*>): Property<T> = this.property
     }

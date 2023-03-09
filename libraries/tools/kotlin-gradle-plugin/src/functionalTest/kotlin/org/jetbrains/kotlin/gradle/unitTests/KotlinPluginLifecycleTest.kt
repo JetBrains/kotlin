@@ -94,7 +94,7 @@ class KotlinPluginLifecycleTest {
         val action2Invocations = AtomicInteger(0)
         val action3Invocations = AtomicInteger(0)
 
-        lifecycle.enqueue(Finalised) action3@{
+        lifecycle.enqueue(ReadyForExecution) action3@{
             assertEquals(1, action1Invocations.get(), "Expected action1 to be executed before action3")
             assertEquals(1, action2Invocations.get(), "Expected action2 to be executed before action3")
             assertEquals(1, action3Invocations.incrementAndGet())
@@ -165,7 +165,7 @@ class KotlinPluginLifecycleTest {
     @Test
     fun `test - enqueue of already executed stage - throws exception`() {
         val executed = AtomicBoolean(false)
-        lifecycle.enqueue(Finalised) {
+        lifecycle.enqueue(ReadyForExecution) {
             assertFailsWith<IllegalLifecycleException> {
                 lifecycle.enqueue(AfterEvaluate) { fail("This code shall not be executed!") }
             }
@@ -313,7 +313,7 @@ class KotlinPluginLifecycleTest {
 
             requireCurrentStage {
                 /* Fails because of stage transition  using 'await' */
-                assertFailsWith<IllegalLifecycleException> { await(Finalised) }
+                assertFailsWith<IllegalLifecycleException> { await(ReadyForExecution) }
             }
         }
     }
@@ -324,7 +324,7 @@ class KotlinPluginLifecycleTest {
             assertEquals(AfterEvaluate, stage)
             await(AfterEvaluate)
             assertEquals(AfterEvaluate, stage)
-            assertFailsWith<IllegalLifecycleException> { await(Finalised) }
+            assertFailsWith<IllegalLifecycleException> { await(ReadyForExecution) }
         }
     }
 

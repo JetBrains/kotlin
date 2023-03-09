@@ -70,7 +70,7 @@ class InternalKotlinSourceSetTest {
             nativeMain.internal.compilations
         )
 
-        project.launchInStage(KotlinPluginLifecycle.Stage.Finalised) {
+        project.launchInStage(KotlinPluginLifecycle.Stage.ReadyForExecution) {
             assertEquals<Set<KotlinCompilation<*>>>(
                 setOf(
                     metadataCompilation,
