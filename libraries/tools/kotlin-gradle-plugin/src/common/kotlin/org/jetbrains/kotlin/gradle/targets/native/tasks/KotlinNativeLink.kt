@@ -17,8 +17,8 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
+import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.compilerRunner.KotlinNativeCompilerRunner
-import org.jetbrains.kotlin.compilerRunner.KotlinToolRunner
 import org.jetbrains.kotlin.compilerRunner.getKonanCacheKind
 import org.jetbrains.kotlin.compilerRunner.getKonanCacheOrchestration
 import org.jetbrains.kotlin.gradle.dsl.*
@@ -187,10 +187,14 @@ constructor(
         CacheBuilder.Settings.createWithProject(project, binary, konanTarget, toolOptions, externalDependenciesArgs)
     }
 
-    private class CacheSettings(val orchestration: NativeCacheOrchestration, val kind: NativeCacheKind, val gradleUserHomeDir: File)
+    private class CacheSettings(val orchestration: NativeCacheOrchestration, val kind: NativeCacheKind,
+                                val icEnabled: Boolean, val threads: Int,
+                                val gradleUserHomeDir: File, val gradleBuildDir: File)
 
     private val cacheSettings by lazy {
-        CacheSettings(project.getKonanCacheOrchestration(), project.getKonanCacheKind(konanTarget), project.gradle.gradleUserHomeDir)
+        CacheSettings(project.getKonanCacheOrchestration(), project.getKonanCacheKind(konanTarget),
+                      project.isKonanIncrementalCompilationEnabled(), project.getKonanParallelThreads(),
+                      project.gradle.gradleUserHomeDir, project.buildDir)
     }
 
     override fun createCompilerArgs(): StubK2NativeCompilerArguments = StubK2NativeCompilerArguments()
@@ -308,6 +312,13 @@ constructor(
                         && konanPropertiesService.get().cacheWorksFor(konanTarget)
                     ) {
                         add("-Xauto-cache-from=${cacheSettings.gradleUserHomeDir}")
+                        add("-Xbackend-threads=${cacheSettings.threads}")
+                        if (cacheSettings.icEnabled) {
+                            val icCacheDir = cacheSettings.gradleBuildDir.resolve("kotlin-native-ic-cache")
+                            icCacheDir.mkdirs()
+                            add("-Xenable-incremental-compilation")
+                            add("-Xic-cache-dir=$icCacheDir")
+                        }
                     }
                 }
                 NativeCacheOrchestration.Gradle -> {

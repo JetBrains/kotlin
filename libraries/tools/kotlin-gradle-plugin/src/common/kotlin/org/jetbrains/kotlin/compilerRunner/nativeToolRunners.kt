@@ -51,6 +51,14 @@ internal fun Project.getKonanCacheOrchestration(): NativeCacheOrchestration {
     return PropertiesProvider(this).nativeCacheOrchestration ?: NativeCacheOrchestration.Compiler
 }
 
+internal fun Project.isKonanIncrementalCompilationEnabled(): Boolean {
+    return PropertiesProvider(this).incrementalNative ?: false
+}
+
+internal fun Project.getKonanParallelThreads(): Int {
+    return PropertiesProvider(this).nativeParallelThreads ?: 4
+}
+
 private val Project.kotlinNativeCompilerJar: String
     get() = if (nativeUseEmbeddableCompilerJar)
         "$konanHome/konan/lib/kotlin-native-compiler-embeddable.jar"
