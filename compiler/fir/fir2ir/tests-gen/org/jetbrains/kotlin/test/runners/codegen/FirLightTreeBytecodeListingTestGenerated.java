@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/codegen/bytecodeListing")
 @TestDataPath("$PROJECT_ROOT")
-public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTest {
+public class FirLightTreeBytecodeListingTestGenerated extends AbstractFirLightTreeBytecodeListingTest {
     @Test
     @TestMetadata("accessorForProtectedPropertyWithPrivateSetter.kt")
     public void testAccessorForProtectedPropertyWithPrivateSetter() throws Exception {

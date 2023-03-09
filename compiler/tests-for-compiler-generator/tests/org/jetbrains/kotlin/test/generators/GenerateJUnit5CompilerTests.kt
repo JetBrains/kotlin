@@ -313,6 +313,14 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
             testClass<AbstractFirPsiSerializeCompileKotlinAgainstInlineKotlinTest> {
                 model("codegen/boxInline")
             }
+
+            testClass<AbstractFirPsiBytecodeListingTest> {
+                model("codegen/bytecodeListing")
+            }
+
+            testClass<AbstractFirLightTreeBytecodeListingTest> {
+                model("codegen/bytecodeListing")
+            }
         }
 
         testGroup(testsRoot = "compiler/fir/fir2ir/tests-gen", testDataRoot = "compiler/fir/fir2ir/testData") {

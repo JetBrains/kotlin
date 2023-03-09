@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_K2: JVM_IR
 // FULL_JDK
 
 import java.util.concurrent.*
