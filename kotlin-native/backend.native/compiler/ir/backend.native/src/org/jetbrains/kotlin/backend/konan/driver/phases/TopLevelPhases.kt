@@ -119,7 +119,7 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
         }
 
         val fragments = backendEngine.splitIntoFragments(irModule)
-        val nThreads = context.config.configuration.get(CommonConfigurationKeys.PARALLEL_BACKEND_THREADS) ?: 1
+        val nThreads = context.config.nThreads
         if (nThreads == 1) {
             fragments.forEach { fragment ->
                 runAfterLowerings(fragment, createGenerationStateAndRunLowerings(fragment))

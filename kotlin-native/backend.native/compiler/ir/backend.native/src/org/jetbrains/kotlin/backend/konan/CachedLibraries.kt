@@ -85,11 +85,13 @@ class CachedLibraries(
             }
         }
 
-        class PerFile(target: KonanTarget, kind: Kind, path: String, private val fileDirs: List<File>)
+        class PerFile(target: KonanTarget, kind: Kind, path: String, fileDirs: List<File>, val complete: Boolean)
             : Cache(target, kind, path, File(path).absolutePath)
         {
+            private val existingFileDirs = if (complete) fileDirs else fileDirs.filter { it.exists }
+
             private val perFileBitcodeDependencies by lazy {
-                fileDirs.associate {
+                existingFileDirs.associate {
                     val data = it.child(PER_FILE_CACHE_BINARY_LEVEL_DIR_NAME).child(BITCODE_DEPENDENCIES_FILE_NAME).readStrings()
                     it.name to DependenciesSerializer.deserialize(it.absolutePath, data)
                 }
@@ -106,26 +108,26 @@ class CachedLibraries(
 
             override fun computeBitcodeDependencies() = perFileBitcodeDependencies.values.flatten()
 
-            override fun computeBinariesPaths() = fileDirs.map {
+            override fun computeBinariesPaths() = existingFileDirs.map {
                 it.child(PER_FILE_CACHE_BINARY_LEVEL_DIR_NAME).child(getArtifactName(target, it.name, kind.toCompilerOutputKind())).absolutePath
             }
 
             override fun computeSerializedInlineFunctionBodies() = mutableListOf<SerializedInlineFunctionReference>().also {
-                fileDirs.forEach { fileDir ->
+                existingFileDirs.forEach { fileDir ->
                     val data = fileDir.child(PER_FILE_CACHE_IR_LEVEL_DIR_NAME).child(INLINE_FUNCTION_BODIES_FILE_NAME).readBytes()
                     InlineFunctionBodyReferenceSerializer.deserializeTo(data, it)
                 }
             }
 
             override fun computeSerializedClassFields() = mutableListOf<SerializedClassFields>().also {
-                fileDirs.forEach { fileDir ->
+                existingFileDirs.forEach { fileDir ->
                     val data = fileDir.child(PER_FILE_CACHE_IR_LEVEL_DIR_NAME).child(CLASS_FIELDS_FILE_NAME).readBytes()
                     ClassFieldsSerializer.deserializeTo(data, it)
                 }
             }
 
             override fun computeSerializedEagerInitializedFiles() = mutableListOf<SerializedEagerInitializedFile>().also {
-                fileDirs.forEach { fileDir ->
+                existingFileDirs.forEach { fileDir ->
                     val data = fileDir.child(PER_FILE_CACHE_IR_LEVEL_DIR_NAME).child(EAGER_INITIALIZED_PROPERTIES_FILE_NAME).readBytes()
                     EagerInitializedPropertySerializer.deserializeTo(data, it)
                 }
@@ -160,8 +162,8 @@ class CachedLibraries(
                 val libraryFileDirs = librariesFileDirs.getOrPut(library) {
                     library.getFilesWithFqNames().map { cacheDir.child(CacheSupport.cacheFileId(it.fqName, it.filePath)) }
                 }
-                Cache.PerFile(target, Kind.STATIC, cacheDir.absolutePath, libraryFileDirs)
-                        .takeIf { cacheDirContents.containsAll(libraryFileDirs.map { it.absolutePath }) }
+                Cache.PerFile(target, Kind.STATIC, cacheDir.absolutePath, libraryFileDirs,
+                        complete = cacheDirContents.containsAll(libraryFileDirs.map { it.absolutePath }))
             }
         }
     }
@@ -194,8 +196,8 @@ class CachedLibraries(
     fun isLibraryCached(library: KotlinLibrary): Boolean =
             getLibraryCache(library) != null
 
-    fun getLibraryCache(library: KotlinLibrary): Cache? =
-            allCaches[library]
+    fun getLibraryCache(library: KotlinLibrary, allowIncomplete: Boolean = false): Cache? =
+            allCaches[library]?.takeIf { allowIncomplete || (it as? Cache.PerFile)?.complete != false }
 
     val hasStaticCaches = allCaches.values.any {
         when (it.kind) {

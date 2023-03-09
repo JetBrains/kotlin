@@ -40,14 +40,17 @@ class KonanDriver(
 ) {
     fun run() {
         val fileNames = configuration.get(KonanConfigKeys.LIBRARY_TO_ADD_TO_CACHE)?.let { libPath ->
-            if (configuration.get(KonanConfigKeys.MAKE_PER_FILE_CACHE) != true)
-                configuration.get(KonanConfigKeys.FILES_TO_CACHE)
-            else {
-                val lib = createKonanLibrary(File(libPath), "default", null, true)
-                (0 until lib.fileCount()).map { fileIndex ->
-                    val proto = IrFile.parseFrom(lib.file(fileIndex).codedInputStream, ExtensionRegistryLite.newInstance())
-                    proto.fileEntry.name
+            val filesToCache = configuration.get(KonanConfigKeys.FILES_TO_CACHE)
+            when {
+                !filesToCache.isNullOrEmpty() -> filesToCache
+                configuration.get(KonanConfigKeys.MAKE_PER_FILE_CACHE) == true -> {
+                    val lib = createKonanLibrary(File(libPath), "default", null, true)
+                    (0 until lib.fileCount()).map { fileIndex ->
+                        val proto = IrFile.parseFrom(lib.file(fileIndex).codedInputStream, ExtensionRegistryLite.newInstance())
+                        proto.fileEntry.name
+                    }
                 }
+                else -> null
             }
         }
         if (fileNames != null) {
@@ -74,6 +77,8 @@ class KonanDriver(
             cacheBuilder.build()
             konanConfig = KonanConfig(project, configuration) // TODO: Just set freshly built caches.
         }
+
+        konanConfig.cacheSupport.checkConsistency()
 
         DynamicCompilerDriver().run(konanConfig, environment)
     }
