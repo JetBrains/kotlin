@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.gradle.util.createTempDir
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.gradle.util.runProcess
 import org.jetbrains.kotlin.konan.target.HostManager
-import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.BeforeClass
@@ -1883,46 +1882,50 @@ class CocoaPodsIT : BaseGradleIT() {
 
         @BeforeClass
         @JvmStatic
-        fun installCocoaPods() {
-            if (cocoapodsInstallationRequired) {
-                if (cocoapodsInstallationAllowed) {
-                    println("Installing CocoaPods...")
-                    gem("install", "--install-dir", cocoapodsInstallationRoot.absolutePath, "cocoapods", "-v", cocoapodsVersion)
-                } else {
-                    fail(
-                        """
-                            Running CocoaPods integration tests requires cocoapods to be installed.
-                            Please install them manually:
-                                gem install cocoapods
-                            Or re-run the tests with the 'installCocoapods=true' Gradle property.
+        fun ensureCocoapodsInstalled() {
+            if (useLocalCocoapods) {
+                println("Installing RVM, Ruby, CocoaPods...")
+                installLocalEnvironment()
+            } else if (isCocoapodsInstalled()) {
+                println("Using system CocoaPods")
+            } else {
+                fail(
+                    """
+                        Running CocoaPods integration tests requires cocoapods to be installed.
+                        Please install them manually:
+                            gem install cocoapods
+                        Or re-run the tests with the 'installCocoapods=true' Gradle property.
                         """.trimIndent()
-                    )
-                }
+                )
             }
         }
 
-        private const val cocoapodsVersion = "1.11.0"
+        private const val rubyVersion = "3.2.1"
+        private const val cocoapodsVersion = "1.12.0"
 
-        private val cocoapodsInstallationRequired: Boolean by lazy {
-            !isCocoapodsInstalled()
+        private val useLocalCocoapods: Boolean = System.getProperty("installCocoapods").toBoolean()
+        private val rvmInstallationRoot by lazy { createTempDir("rvm") }
+
+        private fun installLocalEnvironment() {
+            cmd("sh", "-c", "curl -sSL https://get.rvm.io | bash -s -- --path ${rvmInstallationRoot.absolutePath}")
+            rvm("install", rubyVersion)
+            rvm(rubyVersion, "do", "gem", "install", "cocoapods", "-v", cocoapodsVersion)
         }
-        private val cocoapodsInstallationAllowed: Boolean = System.getProperty("installCocoapods").toBoolean()
 
-        private val cocoapodsInstallationRoot: File by lazy { createTempDir("cocoapods") }
-        private val cocoapodsBinPath: File by lazy {
-            if (hostIsArmMac) cocoapodsInstallationRoot.resolve("bin/wrapper") else cocoapodsInstallationRoot.resolve("bin")
+        private val pathEnv by lazy {
+            val customPath = if (useLocalCocoapods) {
+                rvm(rubyVersion, "gemdir").lineSequence().last() + "/bin" + File.pathSeparator
+            } else {
+                ""
+            }
+            customPath + System.getenv("PATH")
         }
 
         private fun getEnvs(): Map<String, String> {
-            val path = cocoapodsBinPath.absolutePath + File.pathSeparator + System.getenv("PATH")
-            val gemPath = System.getenv("GEM_PATH")?.let {
-                cocoapodsInstallationRoot.absolutePath + File.pathSeparator + it
-            } ?: cocoapodsInstallationRoot.absolutePath
             return mapOf(
-                "PATH" to path,
-                "GEM_PATH" to gemPath,
+                "PATH" to pathEnv,
                 // CocoaPods 1.11 requires UTF-8 locale being set, more details: https://github.com/CocoaPods/CocoaPods/issues/10939
-                "LC_ALL" to "en_US.UTF-8"
+                "LC_ALL" to "en_US.UTF-8",
             )
         }
 
@@ -1941,19 +1944,18 @@ class CocoaPodsIT : BaseGradleIT() {
             }
         }
 
-        private fun gem(vararg args: String): String {
-            // On ARM MacOS, run gem using arch -x86_64 to workaround problems with libffi.
-            // https://stackoverflow.com/questions/64901180/running-cocoapods-on-apple-silicon-m1
-            val command = listOf("gem", *args)
+        private fun rvm(vararg args: String): String {
+            return cmd(rvmInstallationRoot.resolve("bin/rvm").absolutePath, *args)
+        }
+
+        private fun cmd(vararg args: String): String {
+            val command = listOf(*args)
             println("Run command: ${command.joinToString(separator = " ")}")
             val result = runProcess(command, File("."), options = BuildOptions(forceOutputToStdout = true))
             check(result.isSuccessful) {
-                "Process 'gem ${args.joinToString(separator = " ")}' exited with error code ${result.exitCode}. See log for details."
+                "Process '${args.joinToString(separator = " ")}' exited with error code ${result.exitCode}. See log for details."
             }
             return result.output
         }
-
-        private val hostIsArmMac: Boolean
-            get() = HostManager.host == KonanTarget.MACOS_ARM64
     }
 }
