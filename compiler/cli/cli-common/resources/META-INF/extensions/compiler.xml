@@ -55,6 +55,8 @@
                         area="IDEA_PROJECT" dynamic="true"/>
         <extensionPoint qualifiedName="org.jetbrains.kotlin.fir.extensions.firExtensionRegistrar"
                         interface="org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter"/>
+        <extensionPoint qualifiedName="org.jetbrains.kotlin.cli.jvm.compiler.FirAnalysisHandlerExtension"
+                        interface="org.jetbrains.kotlin.cli.jvm.compiler.FirAnalysisHandlerExtension"/>
         <extensionPoint qualifiedName="org.jetbrains.kotlin.DescriptorSerializerPlugin"
                         interface="org.jetbrains.kotlin.serialization.DescriptorSerializerPlugin"/>
         <extensionPoint qualifiedName="org.jetbrains.kotlin.defaultErrorMessages"
