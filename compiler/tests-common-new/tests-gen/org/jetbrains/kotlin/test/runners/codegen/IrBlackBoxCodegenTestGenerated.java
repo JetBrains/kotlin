@@ -51726,6 +51726,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("delegatingConstructors.kt")
+        public void testDelegatingConstructors() throws Exception {
+            runTest("compiler/testData/codegen/box/valueClasses/delegatingConstructors.kt");
+        }
+
+        @Test
         @TestMetadata("equality.kt")
         public void testEquality() throws Exception {
             runTest("compiler/testData/codegen/box/valueClasses/equality.kt");

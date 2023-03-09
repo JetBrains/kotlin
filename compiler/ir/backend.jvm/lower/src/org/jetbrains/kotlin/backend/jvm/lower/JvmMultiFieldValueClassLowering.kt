@@ -462,14 +462,14 @@ internal class JvmMultiFieldValueClassLowering(
                     override fun visitClass(declaration: IrClass): IrStatement = declaration
 
                     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
-                        if (expression.symbol.owner.constructedClass != constructor.constructedClass) { // Delegating constructor to Object
-                            require(expression.symbol.owner.constructedClass == context.irBuiltIns.anyClass.owner) {
-                                "Expected delegating constructor to the MFVC primary constructor or Any constructor but got: ${expression.symbol.owner.render()}"
+                        val delegatedConstructor = expression.symbol.owner
+                        if (delegatedConstructor.constructedClass != constructor.constructedClass) { // Delegating constructor to Object
+                            require(delegatedConstructor.constructedClass == context.irBuiltIns.anyClass.owner) {
+                                "Expected delegating constructor to the MFVC primary constructor or Any constructor but got: ${delegatedConstructor.render()}"
                             }
                             return irBlock { }
                         }
-                        val oldPrimaryConstructor = replacements.getRootMfvcNode(constructor.constructedClass).oldPrimaryConstructor
-                        thisVar.initializer = irCall(oldPrimaryConstructor).apply {
+                        thisVar.initializer = irCall(delegatedConstructor).apply {
                             copyTypeAndValueArgumentsFrom(expression)
                         }
                         return irBlock {}
@@ -1334,7 +1334,8 @@ internal class JvmMultiFieldValueClassLowering(
                 constructor.origin != JvmLoweredDeclarationOrigin.STATIC_MULTI_FIELD_VALUE_CLASS_CONSTRUCTOR
             ) {
                 val oldArguments = List(expression.valueArgumentsCount) {
-                    expression.getValueArgument(it) ?: error("Default arguments for MFVC primary constructors are not yet supported")
+                    expression.getValueArgument(it)
+                        ?: error("Default arguments for MFVC primary constructors are not yet supported:\n${expression.dump()}")
                 }
                 require(rootNode.subnodes.size == oldArguments.size) {
                     "Old ${constructor.render()} must have ${rootNode.subnodes.size} arguments but got ${oldArguments.size}"
