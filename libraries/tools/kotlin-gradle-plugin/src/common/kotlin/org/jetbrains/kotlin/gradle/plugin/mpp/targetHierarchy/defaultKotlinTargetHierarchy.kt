@@ -5,16 +5,12 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy
 
+import org.jetbrains.kotlin.gradle.plugin.KotlinTargetHierarchy.ModuleName
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetHierarchyDescriptor
-
-private val defaultKotlinTargetHierarchyModules = hashSetOf(
-    KotlinTargetHierarchy.Module.main,
-    KotlinTargetHierarchy.Module.test
-)
 
 internal val defaultKotlinTargetHierarchy = KotlinTargetHierarchyDescriptor {
     /* natural hierarchy is only applied to default 'main'/'test' compilations (by default) */
-    withoutCompilations { KotlinTargetHierarchy.Module.orNull(it) !in defaultKotlinTargetHierarchyModules }
+    withModule(ModuleName.main, ModuleName.test)
 
     common {
         /* All compilations shall receive be added to the common group by default */

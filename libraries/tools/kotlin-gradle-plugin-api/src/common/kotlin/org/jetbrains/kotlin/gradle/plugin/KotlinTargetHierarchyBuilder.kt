@@ -8,16 +8,27 @@ import org.jetbrains.kotlin.konan.target.DEPRECATED_TARGET_MESSAGE
 @KotlinTargetsDsl
 @ExperimentalKotlinGradlePluginApi
 interface KotlinTargetHierarchyBuilder {
+
+    interface Root : KotlinTargetHierarchyBuilder {
+        fun modules(vararg module: KotlinTargetHierarchy.ModuleName)
+        fun withModule(vararg module: KotlinTargetHierarchy.ModuleName)
+        fun excludeModule(vararg module: KotlinTargetHierarchy.ModuleName)
+    }
+
     /* Declaring groups */
     fun common(build: KotlinTargetHierarchyBuilder.() -> Unit) = group("common", build)
     fun group(name: String, build: KotlinTargetHierarchyBuilder.() -> Unit = {})
 
     /* low-level APIs */
     fun withCompilations(predicate: suspend (KotlinCompilation<*>) -> Boolean)
-    fun withoutCompilations(predicate: suspend (KotlinCompilation<*>) -> Boolean)
+
+    fun excludeCompilations(predicate: suspend (KotlinCompilation<*>) -> Boolean)
+
+    @Deprecated("Use 'excludeCompilations' instead", ReplaceWith("excludeCompilations(predicate)"))
+    fun withoutCompilations(predicate: suspend (KotlinCompilation<*>) -> Boolean) = excludeCompilations(predicate)
 
     @Deprecated("Use plain 'withoutCompilations(!predicate) instead'", ReplaceWith("withoutCompilations { !predicate(it) }"))
-    fun filterCompilations(predicate: (KotlinCompilation<*>) -> Boolean) = withoutCompilations { !predicate(it) }
+    fun filterCompilations(predicate: (KotlinCompilation<*>) -> Boolean) = excludeCompilations { !predicate(it) }
 
     /* Convenient groups */
     fun withNative()

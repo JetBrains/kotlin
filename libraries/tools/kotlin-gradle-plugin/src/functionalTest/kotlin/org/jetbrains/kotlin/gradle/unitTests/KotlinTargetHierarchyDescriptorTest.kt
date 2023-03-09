@@ -10,8 +10,8 @@ package org.jetbrains.kotlin.gradle.unitTests
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetHierarchyDescriptor
 import org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy.CyclicKotlinTargetHierarchyException
-import org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy.KotlinTargetHierarchy
-import org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy.KotlinTargetHierarchy.Node
+import org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy.KotlinTargetHierarchyTree
+import org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy.KotlinTargetHierarchyTree.Node
 import org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy.buildKotlinTargetHierarchy
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.runLifecycleAwareTest
@@ -149,7 +149,7 @@ class KotlinTargetHierarchyDescriptorTest {
             }, hierarchy
         )
 
-        fun KotlinTargetHierarchy.collectChildren(): List<KotlinTargetHierarchy> {
+        fun KotlinTargetHierarchyTree.collectChildren(): List<KotlinTargetHierarchyTree> {
             return children.toList() + children.flatMap { it.collectChildren() }
         }
 
@@ -249,9 +249,9 @@ private class TestHierarchyBuilder(private val node: Node) {
         children.add(TestHierarchyBuilder(Node.Group(name)).also(builder))
     }
 
-    fun build(): KotlinTargetHierarchy = KotlinTargetHierarchy(node, children.map { it.build() }.toSet())
+    fun build(): KotlinTargetHierarchyTree = KotlinTargetHierarchyTree(node, children.map { it.build() }.toSet())
 }
 
-private fun hierarchy(build: TestHierarchyBuilder.() -> Unit): KotlinTargetHierarchy {
+private fun hierarchy(build: TestHierarchyBuilder.() -> Unit): KotlinTargetHierarchyTree {
     return TestHierarchyBuilder(Node.Root).also(build).build()
 }

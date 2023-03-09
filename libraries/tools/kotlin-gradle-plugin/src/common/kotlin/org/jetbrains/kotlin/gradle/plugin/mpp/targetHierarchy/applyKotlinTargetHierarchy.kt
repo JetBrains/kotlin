@@ -28,7 +28,7 @@ internal fun applyKotlinTargetHierarchy(
 }
 
 private suspend fun applyKotlinTargetHierarchy(
-    hierarchy: KotlinTargetHierarchy,
+    hierarchy: KotlinTargetHierarchyTree,
     compilation: KotlinCompilation<*>,
     sourceSets: NamedDomainObjectContainer<KotlinSourceSet>
 ): KotlinSourceSet? {
@@ -52,7 +52,7 @@ private suspend fun applyKotlinTargetHierarchy(
 
 private suspend fun createSharedSourceSetOrNull(
     sourceSets: NamedDomainObjectContainer<KotlinSourceSet>,
-    node: KotlinTargetHierarchy.Node,
+    node: KotlinTargetHierarchyTree.Node,
     compilation: KotlinCompilation<*>,
 ): KotlinSourceSet? {
     val sharedSourceSetName = node.sharedSourceSetName(compilation) ?: return null
