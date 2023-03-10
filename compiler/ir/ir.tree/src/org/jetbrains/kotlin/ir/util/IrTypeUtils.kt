@@ -57,6 +57,8 @@ fun IrType.isTypeParameter() = classifierOrNull is IrTypeParameterSymbol
 
 fun IrType.isInterface() = classOrNull?.owner?.kind == ClassKind.INTERFACE
 
+fun IrType.isExternalObject() = classOrNull?.owner.let { it?.kind == ClassKind.OBJECT && it.isExternal }
+
 fun IrType.isAnnotation() = classOrNull?.owner?.kind == ClassKind.ANNOTATION_CLASS
 
 fun IrType.isFunctionOrKFunction() = isFunction() || isKFunction()

@@ -4546,6 +4546,12 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
             public void testSimpleIsInterface() throws Exception {
                 runTest("js/js.translator/testData/box/expression/typeCheck/simpleIsInterface.kt");
             }
+
+            @Test
+            @TestMetadata("simpleIsObject.kt")
+            public void testSimpleIsObject() throws Exception {
+                runTest("js/js.translator/testData/box/expression/typeCheck/simpleIsObject.kt");
+            }
         }
 
         @Nested

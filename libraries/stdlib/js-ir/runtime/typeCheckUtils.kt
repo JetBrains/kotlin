@@ -239,3 +239,8 @@ internal fun isComparable(value: dynamic): Boolean {
 @OptIn(JsIntrinsic::class)
 internal fun isCharSequence(value: dynamic): Boolean =
     jsTypeOf(value) == "string" || isInterface(value, jsClassIntrinsic<CharSequence>())
+
+
+@OptIn(JsIntrinsic::class)
+internal fun isExternalObject(value: dynamic, ktExternalObject: dynamic) =
+    jsEqeqeq(value, ktExternalObject) || (jsTypeOf(ktExternalObject) == "function" && jsInstanceOf(value, ktExternalObject))
