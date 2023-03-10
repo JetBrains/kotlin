@@ -35,6 +35,16 @@ class KotlinPluginLifecycleTest {
     }
 
     @Test
+    fun `test - launchInState - Configure`() {
+        val invocations = AtomicInteger(0)
+        project.launchInStage(Configure) {
+            assertEquals(Configure, stage)
+            assertEquals(1, invocations.incrementAndGet())
+        }
+        assertEquals(1, invocations.get())
+    }
+
+    @Test
     fun `test - configure phase - nested enqueue - is executed as queue`() {
         val outerInvocations = AtomicInteger(0)
         val nestedAInvocations = AtomicInteger(0)
