@@ -194,8 +194,10 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
 
         UnusedSourceSetsChecker.checkSourceSets(project)
 
-        project.runProjectConfigurationHealthCheckWhenEvaluated {
-            checkSourceSetVisibilityRequirements(project)
+        project.launchInStage(KotlinPluginLifecycle.Stage.ReadyForExecution) {
+            project.runProjectConfigurationHealthCheck {
+                checkSourceSetVisibilityRequirements(project)
+            }
         }
     }
 
