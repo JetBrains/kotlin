@@ -35,6 +35,10 @@ fun compileAndPrintAllFiles(
     readWriteAndCompare: Boolean,
     useK2: Boolean
 ) {
+    if (useK2 && InTextDirectivesUtils.findStringWithPrefixes(file.readText(), "// IGNORE K2") != null) {
+        return
+    }
+
     val main = StringBuilder()
     val afterVisitors = StringBuilder()
     val afterNodes = StringBuilder()

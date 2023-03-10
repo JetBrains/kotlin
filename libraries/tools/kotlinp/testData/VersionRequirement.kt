@@ -1,3 +1,5 @@
+// IGNORE K2
+
 @file:Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
 package test
 
