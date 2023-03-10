@@ -14,6 +14,7 @@ object Main {
     private fun run(args: Array<String>) {
         val paths = arrayListOf<String>()
         var verbose = false
+        var sort = false
 
         var i = 0
         while (true) {
@@ -21,6 +22,8 @@ object Main {
 
             if (arg == "-help" || arg == "-h") {
                 printUsageAndExit()
+            } else if (arg == "-sort") {
+                sort = true
             } else if (arg == "-verbose") {
                 verbose = true
             } else if (arg == "-version") {
@@ -32,7 +35,7 @@ object Main {
             }
         }
 
-        val kotlinp = Kotlinp(KotlinpSettings(verbose))
+        val kotlinp = Kotlinp(KotlinpSettings(isVerbose = verbose, sortDeclarations = sort))
 
         for (path in paths) {
             val file = File(path)
@@ -72,6 +75,7 @@ object Main {
 
 Usage: kotlinp <options> <classes>
 where possible options include:
+  -sort                      Sort declarations in the output by signature and/or name
   -verbose                   Display information in more detail, minimizing ambiguities but worsening readability
   -version                   Display Kotlin version
   -help (-h)                 Print a synopsis of options

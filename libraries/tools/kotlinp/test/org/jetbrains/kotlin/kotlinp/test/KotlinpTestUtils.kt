@@ -39,7 +39,7 @@ fun compileAndPrintAllFiles(
     val afterVisitors = StringBuilder()
     val afterNodes = StringBuilder()
 
-    val kotlinp = Kotlinp(KotlinpSettings(isVerbose = true))
+    val kotlinp = Kotlinp(KotlinpSettings(isVerbose = true, sortDeclarations = true))
 
     @OptIn(UnstableMetadataApi::class)
     compile(file, disposable, tmpdir, useK2) { outputFile ->
