@@ -283,11 +283,11 @@ internal class JvmInlineClassLowering(
             if (left.type.isUnsigned() && right.type.isUnsigned() && rightIsUnboxed)
                 return irEquals(left.coerceToUnboxed(), right.coerceToUnboxed())
 
-            val klass = left.type.classOrNull!!.owner
-            val equalsMethod = if (rightIsUnboxed) {
-                this@JvmInlineClassLowering.context.inlineClassReplacements.getSpecializedEqualsMethod(klass, context.irBuiltIns)
+            val leftOperandClass = left.type.classOrNull!!.owner
+            val equalsMethod = if (rightIsUnboxed && leftOperandClass == right.type.classOrNull!!.owner) {
+                this@JvmInlineClassLowering.context.inlineClassReplacements.getSpecializedEqualsMethod(leftOperandClass, context.irBuiltIns)
             } else {
-                val equals = klass.functions.single { it.name.asString() == "equals" && it.overriddenSymbols.isNotEmpty() }
+                val equals = leftOperandClass.functions.single { it.name.asString() == "equals" && it.overriddenSymbols.isNotEmpty() }
                 this@JvmInlineClassLowering.context.inlineClassReplacements.getReplacementFunction(equals)!!
             }
 
