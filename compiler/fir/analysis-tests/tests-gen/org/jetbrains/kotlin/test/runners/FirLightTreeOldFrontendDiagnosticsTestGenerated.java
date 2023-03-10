@@ -556,6 +556,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
         }
 
         @Test
+        @TestMetadata("kt57214.kt")
+        public void testKt57214() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/kt57214.kt");
+        }
+
+        @Test
         @TestMetadata("LValueAssignment.kt")
         public void testLValueAssignment() throws Exception {
             runTest("compiler/testData/diagnostics/tests/LValueAssignment.kt");
