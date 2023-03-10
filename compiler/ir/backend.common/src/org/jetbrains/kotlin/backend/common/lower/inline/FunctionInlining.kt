@@ -519,9 +519,10 @@ class FunctionInlining(
         private fun isLambdaCall(irCall: IrCall): Boolean {
             val callee = irCall.symbol.owner
             val dispatchReceiver = callee.dispatchReceiverParameter ?: return false
-            assert(!dispatchReceiver.type.isKFunction())
+            // Uncomment or delete depending on KT-57249 status
+//            assert(!dispatchReceiver.type.isKFunction())
 
-            return (dispatchReceiver.type.isFunction() || dispatchReceiver.type.isSuspendFunction())
+            return (dispatchReceiver.type.isFunctionOrKFunction() || dispatchReceiver.type.isSuspendFunctionOrKFunction())
                     && callee.name == OperatorNameConventions.INVOKE
                     && irCall.dispatchReceiver?.unwrapAdditionalImplicitCastsIfNeeded() is IrGetValue
         }
