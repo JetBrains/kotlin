@@ -1,3 +1,5 @@
+// IGNORE K2
+
 interface A
 interface B
 class Inv<T>(e: T)

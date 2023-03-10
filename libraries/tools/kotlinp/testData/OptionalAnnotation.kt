@@ -1,3 +1,4 @@
+// IGNORE K2
 // !LANGUAGE: +MultiPlatformProjects
 // !OPT_IN: kotlin.ExperimentalMultiplatform
 // NO_READ_WRITE_COMPARE
