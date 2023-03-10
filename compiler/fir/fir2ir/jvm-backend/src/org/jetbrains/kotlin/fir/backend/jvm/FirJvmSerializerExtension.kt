@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.ClassMapperLite
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmFlags
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.metadata.serialization.MutableVersionRequirementTable
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.protobuf.GeneratedMessageLite
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
@@ -97,7 +98,10 @@ class FirJvmSerializerExtension(
                 JvmProtoBuf.jvmClassFlags,
                 JvmFlags.getClassFlags(
                     jvmDefaultMode.forAllMethodsWithBody,
-                    JvmDefaultMode.ALL_COMPATIBILITY == jvmDefaultMode
+                    (JvmDefaultMode.ALL_COMPATIBILITY == jvmDefaultMode &&
+                            !klass.hasAnnotation(JVM_DEFAULT_NO_COMPATIBILITY_CLASS_ID, session)) ||
+                            (JvmDefaultMode.ALL_INCOMPATIBLE == jvmDefaultMode &&
+                                    klass.hasAnnotation(JVM_DEFAULT_WITH_COMPATIBILITY_CLASS_ID, session))
                 )
             )
         }
@@ -389,6 +393,9 @@ class FirJvmSerializerExtension(
         val FIELD_FOR_PROPERTY = JvmSerializationBindings.SerializationMappingSlice.create<FirProperty, Pair<Type, String>>()
         val SYNTHETIC_METHOD_FOR_FIR_VARIABLE = JvmSerializationBindings.SerializationMappingSlice.create<FirVariable, Method>()
         val DELEGATE_METHOD_FOR_FIR_VARIABLE = JvmSerializationBindings.SerializationMappingSlice.create<FirVariable, Method>()
+        private val JVM_DEFAULT_NO_COMPATIBILITY_FQ_NAME = FqName("kotlin.jvm.JvmDefaultWithoutCompatibility")
+        private val JVM_DEFAULT_WITH_COMPATIBILITY_FQ_NAME = FqName("kotlin.jvm.JvmDefaultWithCompatibility")
+        private val JVM_DEFAULT_NO_COMPATIBILITY_CLASS_ID = ClassId.topLevel(JVM_DEFAULT_NO_COMPATIBILITY_FQ_NAME)
+        private val JVM_DEFAULT_WITH_COMPATIBILITY_CLASS_ID = ClassId.topLevel(JVM_DEFAULT_WITH_COMPATIBILITY_FQ_NAME)
     }
-
 }
