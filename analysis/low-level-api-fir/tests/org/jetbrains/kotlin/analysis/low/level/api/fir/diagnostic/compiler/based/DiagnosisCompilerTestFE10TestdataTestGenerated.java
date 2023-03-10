@@ -32566,6 +32566,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
                 }
 
                 @Test
+                @TestMetadata("OverrideOnlyGetterFromGenericJavaClass.kt")
+                public void testOverrideOnlyGetterFromGenericJavaClass() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/syntheticExtensions/javaProperties/OverrideOnlyGetterFromGenericJavaClass.kt");
+                }
+
+                @Test
                 @TestMetadata("SetterHasHigherAccess.kt")
                 public void testSetterHasHigherAccess() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/syntheticExtensions/javaProperties/SetterHasHigherAccess.kt");

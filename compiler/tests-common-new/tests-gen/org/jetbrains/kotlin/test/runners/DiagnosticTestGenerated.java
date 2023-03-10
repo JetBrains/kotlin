@@ -32662,6 +32662,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("OverrideOnlyGetterFromGenericJavaClass.kt")
+                public void testOverrideOnlyGetterFromGenericJavaClass() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/syntheticExtensions/javaProperties/OverrideOnlyGetterFromGenericJavaClass.kt");
+                }
+
+                @Test
                 @TestMetadata("SetterHasHigherAccess.kt")
                 public void testSetterHasHigherAccess() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/syntheticExtensions/javaProperties/SetterHasHigherAccess.kt");
