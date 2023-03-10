@@ -3409,6 +3409,10 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = InlineExternalDeclaration::class
     }
 
+    abstract class EnumClassInExternalDeclarationWarning : KtFirDiagnostic<KtDeclaration>() {
+        override val diagnosticClass get() = EnumClassInExternalDeclarationWarning::class
+    }
+
     abstract class InlineClassInExternalDeclarationWarning : KtFirDiagnostic<KtElement>() {
         override val diagnosticClass get() = InlineClassInExternalDeclarationWarning::class
     }

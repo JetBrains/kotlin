@@ -4126,6 +4126,11 @@ internal class InlineExternalDeclarationImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.InlineExternalDeclaration(), KtAbstractFirDiagnostic<KtDeclaration>
 
+internal class EnumClassInExternalDeclarationWarningImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.EnumClassInExternalDeclarationWarning(), KtAbstractFirDiagnostic<KtDeclaration>
+
 internal class InlineClassInExternalDeclarationWarningImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: KtLifetimeToken,
