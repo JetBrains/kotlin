@@ -50,6 +50,4 @@ private class JvmInlineConstTransformer(val irFile: IrFile, val inlineConstTrack
 
         inlineConstTracker.report(path, owner, name, constType)
     }
-
-    override fun IrExpression.shouldDropConstReceiver() = this is IrConst<*> || this is IrGetValue || this is IrGetObjectValue
 }

@@ -57,8 +57,12 @@ object ClassWithConstructor {
 @Test fun checkConstructor() {
     assertEquals(0, ClassWithConstructorInitialized)
     assertEquals(1, ClassWithConstructor.A)
+    assertEquals(0, ClassWithConstructorInitialized)
+    val unused1 = ClassWithConstructor
+    assertEquals(1, unused1.A)
     assertEquals(1, ClassWithConstructorInitialized)
-    assertEquals(1, ClassWithConstructor.A)
+    val unused2 = ClassWithConstructor
+    assertEquals(1, unused2.A)
     assertEquals(1, ClassWithConstructorInitialized)
     assertFalse(ClassWithConstructor.isPermanent())
 }

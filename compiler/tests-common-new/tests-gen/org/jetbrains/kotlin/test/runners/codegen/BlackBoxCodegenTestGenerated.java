@@ -8152,6 +8152,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("doNotTriggerInit.kt")
+        public void testDoNotTriggerInit() throws Exception {
+            runTest("compiler/testData/codegen/box/constants/doNotTriggerInit.kt");
+        }
+
+        @Test
         @TestMetadata("float.kt")
         public void testFloat() throws Exception {
             runTest("compiler/testData/codegen/box/constants/float.kt");

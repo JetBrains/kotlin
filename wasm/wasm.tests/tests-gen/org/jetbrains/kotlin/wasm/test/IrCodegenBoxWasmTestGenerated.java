@@ -4784,6 +4784,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/constants/divisionByZero.kt");
         }
 
+        @TestMetadata("doNotTriggerInit.kt")
+        public void testDoNotTriggerInit() throws Exception {
+            runTest("compiler/testData/codegen/box/constants/doNotTriggerInit.kt");
+        }
+
         @TestMetadata("float.kt")
         public void testFloat() throws Exception {
             runTest("compiler/testData/codegen/box/constants/float.kt");

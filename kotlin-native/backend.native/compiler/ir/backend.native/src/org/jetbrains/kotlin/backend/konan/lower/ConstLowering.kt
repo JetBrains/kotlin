@@ -32,7 +32,4 @@ private class NativeInlineConstTransformer : InlineConstTransformer() {
                 ?.takeUnless { it.kind == IrConstKind.Float && IrConstKind.Float.valueOf(it).isNaN() }
 
     override fun reportInlineConst(field: IrField, value: IrConst<*>) {}
-    // on jvm IrGetObjectValue is also dropped. This would be breaking change for native.
-    // Some design work is required to decide what is correct, let just keep current behaviour for now
-    override fun IrExpression.shouldDropConstReceiver() = this is IrConst<*> || this is IrGetValue
 }

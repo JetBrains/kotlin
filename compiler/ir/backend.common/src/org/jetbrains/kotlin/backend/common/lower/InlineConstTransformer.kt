@@ -33,7 +33,9 @@ abstract class InlineConstTransformer : IrElementTransformerVoid() {
 
     abstract fun reportInlineConst(field: IrField, value: IrConst<*>)
 
-    abstract fun IrExpression.shouldDropConstReceiver(): Boolean
+    fun IrExpression.shouldDropConstReceiver(): Boolean {
+        return this is IrConst<*> || this is IrGetValue || this is IrGetObjectValue
+    }
 
     override fun visitCall(expression: IrCall): IrExpression {
         val function = (expression.symbol.owner as? IrSimpleFunction) ?: return super.visitCall(expression)
