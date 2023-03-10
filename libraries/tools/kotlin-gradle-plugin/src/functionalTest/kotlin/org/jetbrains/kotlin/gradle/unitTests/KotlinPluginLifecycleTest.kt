@@ -351,6 +351,22 @@ class KotlinPluginLifecycleTest {
     }
 
     @Test
+    fun `test - launching in AfterEvaluate`() = project.runLifecycleAwareTest {
+        val actionInvocations = AtomicInteger(0)
+
+        afterEvaluate {
+            launch {
+                assertEquals(AfterEvaluate.nextOrThrow, currentKotlinPluginLifecycle().stage)
+                assertEquals(1, actionInvocations.incrementAndGet())
+            }
+        }
+
+        await(AfterEvaluate.nextOrThrow.nextOrThrow)
+        assertEquals(1, actionInvocations.get())
+        await(Stage.values.last())
+    }
+
+    @Test
     fun `test - Stage - previous next utils`() {
         assertNull(Stage.values.first().previousOrNull)
         assertEquals(Stage.values.first(), Stage.values.first().previousOrFirst)

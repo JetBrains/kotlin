@@ -385,22 +385,27 @@ private class KotlinPluginLifecycleImpl(override val project: Project) : KotlinP
 
         project.whenEvaluated {
             assert(enqueuedActions.getValue(stage).isEmpty()) { "Expected empty queue from '$stage'" }
-            executeStage(project, stage.nextOrThrow)
+            stage = stage.nextOrThrow
+            executeCurrentStageAndScheduleNext()
         }
     }
 
-    private fun executeStage(project: Project, stage: Stage) {
-        this.stage = stage
+    private fun executeCurrentStageAndScheduleNext() {
+        stage.previousOrNull?.let { previousStage ->
+            assert(enqueuedActions.getValue(previousStage).isEmpty()) {
+                "Actions from previous stage '$previousStage' have not been executed (stage: '$stage')"
+            }
+        }
 
         loopIfNecessary()
 
-        val nextStage = stage.nextOrNull ?: run {
+        stage = stage.nextOrNull ?: run {
             isFinished.set(true)
             return
         }
 
         project.afterEvaluate {
-            executeStage(project, nextStage)
+            executeCurrentStageAndScheduleNext()
         }
     }
 
