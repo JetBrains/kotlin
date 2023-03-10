@@ -64,12 +64,12 @@ abstract class LLFirSession(
 
     private class ModuleStateModificationTracker(val module: KtModule, val tracker: KtModuleStateTracker) : ModificationTracker {
         override fun getModificationCount(): Long = tracker.rootModificationCount
-        override fun toString(): String = "Module state tracker for module " + module.moduleDescription + "'"
+        override fun toString(): String = "Module state tracker for module '${module.moduleDescription}'"
     }
 
     private class ExplicitInvalidationTracker(val module: KtModule, val isExplicitlyInvalidated: AtomicBoolean) : ModificationTracker {
         override fun getModificationCount(): Long = if (isExplicitlyInvalidated.get()) 1 else 0
-        override fun toString(): String = "Explicit invalidation tracker for module '" + module.moduleDescription + "'"
+        override fun toString(): String = "Explicit invalidation tracker for module '${module.moduleDescription}'"
     }
 
     private class FileModificationTracker(file: PsiFile) : ModificationTracker {
@@ -82,8 +82,8 @@ abstract class LLFirSession(
 
         override fun toString(): String {
             val file = pointer.element ?: return "File tracker for a collected file"
-            val virtualFile = file.virtualFile ?: return "File tracker for a non-physical file '" + file.name + "'"
-            return "File tracker for path '" + virtualFile.path + "'"
+            val virtualFile = file.virtualFile ?: return "File tracker for a non-physical file '${file.name}'"
+            return "File tracker for path '${virtualFile.path}'"
         }
     }
 
