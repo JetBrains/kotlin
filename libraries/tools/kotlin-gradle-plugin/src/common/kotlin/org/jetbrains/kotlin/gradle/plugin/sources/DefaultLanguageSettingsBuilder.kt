@@ -14,14 +14,11 @@ import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
-import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompileTool
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinNativeCompile
 import org.jetbrains.kotlin.gradle.tasks.toSingleCompilerPluginOptions
 import org.jetbrains.kotlin.project.model.LanguageSettings
-import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
-import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 import kotlin.properties.Delegates
 
 internal class DefaultLanguageSettingsBuilder : LanguageSettingsBuilder {
@@ -135,13 +132,6 @@ internal fun applyLanguageSettingsToCompilerOptions(
         } else {
             freeCompilerArgs.addAll(freeArgs)
         }
-    }
-
-    // TODO: Fix it - get actual values on execution
-    KotlinBuildStatsService.getInstance()?.apply {
-        report(BooleanMetrics.KOTLIN_PROGRESSIVE_MODE, languageSettingsBuilder.progressiveMode)
-        apiVersion.orNull?.also { v -> report(StringMetrics.KOTLIN_API_VERSION, v.version) }
-        languageVersion.orNull?.also { v -> report(StringMetrics.KOTLIN_LANGUAGE_VERSION, v.version) }
     }
 }
 

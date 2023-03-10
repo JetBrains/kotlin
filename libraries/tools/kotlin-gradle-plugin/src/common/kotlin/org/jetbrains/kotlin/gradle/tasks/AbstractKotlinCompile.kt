@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers
 import org.jetbrains.kotlin.compilerRunner.UsesCompilerSystemPropertiesService
 import org.jetbrains.kotlin.daemon.common.MultiModuleICSettings
+import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
 import org.jetbrains.kotlin.gradle.incremental.UsesIncrementalModuleInfoBuildService
 import org.jetbrains.kotlin.gradle.internal.AbstractKotlinCompileArgumentsContributor
 import org.jetbrains.kotlin.gradle.internal.compilerArgumentsConfigurationFlags
@@ -52,6 +53,7 @@ import org.jetbrains.kotlin.gradle.utils.propertyWithNewInstance
 import org.jetbrains.kotlin.incremental.ChangedFiles
 import org.jetbrains.kotlin.incremental.IncrementalCompilerRunner
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
+import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 import java.io.File
 import javax.inject.Inject
 import org.jetbrains.kotlin.gradle.tasks.cleanOutputsAndLocalState as cleanOutputsAndLocalStateUtil
@@ -85,6 +87,9 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
     // avoid creating directory in getter: this can lead to failure in parallel build
     @get:LocalState
     internal abstract val taskBuildLocalStateDirectory: DirectoryProperty
+
+    @get:Nested
+    abstract val compilerOptions: KotlinCommonCompilerOptions
 
     @get:Internal
     internal val buildHistoryFile
@@ -239,6 +244,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
                     it.report(BooleanMetrics.COMPILATION_STARTED, true)
             }
             validateCompilerClasspath()
+            collectCommonCompilerStats()
             systemPropertiesService.get().startIntercept()
             CompilerSystemProperties.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY.value = "true"
 
@@ -270,6 +276,18 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
         }
 
         buildMetricsService.orNull?.also { it.addTask(path, this.javaClass, buildMetrics) }
+    }
+
+    private fun collectCommonCompilerStats() {
+        KotlinBuildStatsService.getInstance()?.apply {
+            report(BooleanMetrics.KOTLIN_PROGRESSIVE_MODE, compilerOptions.progressiveMode.get())
+            compilerOptions.apiVersion.orNull?.also { v ->
+                report(StringMetrics.KOTLIN_API_VERSION, v.version)
+            }
+            compilerOptions.languageVersion.orNull?.also { v ->
+                report(StringMetrics.KOTLIN_LANGUAGE_VERSION, v.version)
+            }
+        }
     }
 
     protected open fun cleanOutputsAndLocalState(reason: String?) {

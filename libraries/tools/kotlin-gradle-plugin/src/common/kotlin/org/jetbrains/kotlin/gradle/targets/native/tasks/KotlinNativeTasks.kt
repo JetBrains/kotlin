@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmMetadataCompilationData
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmNativeCompilationData
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
+import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.targets.native.KonanPropertiesBuildService
 import org.jetbrains.kotlin.gradle.targets.native.internal.isAllowCommonizer
 import org.jetbrains.kotlin.gradle.targets.native.tasks.*
@@ -49,6 +50,8 @@ import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.project.model.LanguageSettings
+import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
+import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 import java.io.File
 import java.nio.file.Files
 import javax.inject.Inject
@@ -488,12 +491,25 @@ internal constructor(
         val output = outputFile.get()
         output.parentFile.mkdirs()
 
+        collectCommonCompilerStats()
         val buildArgs = buildCompilerArgs()
 
         KotlinNativeCompilerRunner(
             settings = runnerSettings,
             executionContext = KotlinToolRunner.GradleExecutionContext.fromTaskContext(objectFactory, execOperations, logger)
         ).run(buildArgs)
+    }
+
+    private fun collectCommonCompilerStats() {
+        KotlinBuildStatsService.getInstance()?.apply {
+            report(BooleanMetrics.KOTLIN_PROGRESSIVE_MODE, compilerOptions.progressiveMode.get())
+            compilerOptions.apiVersion.orNull?.also { v ->
+                report(StringMetrics.KOTLIN_API_VERSION, v.version)
+            }
+            compilerOptions.languageVersion.orNull?.also { v ->
+                report(StringMetrics.KOTLIN_LANGUAGE_VERSION, v.version)
+            }
+        }
     }
 }
 
