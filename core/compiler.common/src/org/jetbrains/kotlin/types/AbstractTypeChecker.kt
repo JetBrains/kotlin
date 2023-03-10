@@ -185,7 +185,6 @@ open class TypeCheckerState(
         return allowedTypeVariable && with(typeSystemContext) { type.isTypeVariableType() }
     }
 
-
     internal class SubtypeCache {
 
         private data class CacheEntry(val subType: KotlinTypeMarker, val superType: KotlinTypeMarker, val result: Boolean)
@@ -204,7 +203,6 @@ open class TypeCheckerState(
         fun getOrNull(subType: KotlinTypeMarker, superType: KotlinTypeMarker): Boolean? {
             return cache.find { entry -> entry.superType === superType && entry.subType === subType }?.result
         }
-
     }
 
     internal var subtypeCache: SubtypeCache? = null
@@ -267,7 +265,6 @@ object AbstractTypeChecker {
         superType: KotlinTypeMarker,
         isFromNullabilityConstraint: Boolean = false
     ): Boolean {
-
         state.subtypeCache?.getOrNull(subType, superType)?.let {
             return it
         }
@@ -463,7 +460,7 @@ object AbstractTypeChecker {
         return typeVariableConstructor.typeParameter?.hasRecursiveBounds(selfConstructor) == true
     }
 
-    fun TypeCheckerState.isSubtypeForSameConstructor(
+    private fun TypeCheckerState.isSubtypeForSameConstructor(
         capturedSubArguments: TypeArgumentListMarker,
         superType: SimpleTypeMarker
     ): Boolean = with(this.typeSystemContext) {
@@ -746,7 +743,7 @@ object AbstractNullabilityChecker {
         runIsPossibleSubtype(state, subType, superType)
 
     fun isSubtypeOfAny(context: TypeCheckerProviderContext, type: KotlinTypeMarker): Boolean =
-        AbstractNullabilityChecker.isSubtypeOfAny(
+        isSubtypeOfAny(
             context.newTypeCheckerState(
                 errorTypesEqualToAnything = false,
                 stubTypesEqualToAnything = true
