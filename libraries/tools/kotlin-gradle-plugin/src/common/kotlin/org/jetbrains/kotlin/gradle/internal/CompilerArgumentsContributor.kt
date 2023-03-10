@@ -68,7 +68,6 @@ internal open class KotlinJvmCompilerArgumentsContributor(
 ) : AbstractKotlinCompileArgumentsContributor<K2JVMCompilerArguments>(taskProvider) {
 
     private val taskName = taskProvider.taskName
-    private val moduleName = taskProvider.moduleName
     private val friendPaths = taskProvider.friendPaths
     private val compileClasspath = taskProvider.compileClasspath
     private val destinationDir = taskProvider.destinationDir
@@ -82,7 +81,7 @@ internal open class KotlinJvmCompilerArgumentsContributor(
 
         super.contributeArguments(args, flags)
 
-        args.moduleName = moduleName
+        args.moduleName = compilerOptions.moduleName.orNull
         logger.kotlinDebug { "$taskName | args.moduleName = ${args.moduleName}" }
 
         args.friendPaths = friendPaths.files.map { it.absolutePath }.toTypedArray()

@@ -63,7 +63,21 @@ internal open class KotlinJvmPlugin(
                 disambiguationClassifier = null // don't add anything to the task names
             }
 
-        (project.kotlinExtension as KotlinJvmProjectExtension).target = target
+        val kotlinExtension = project.kotlinExtension as KotlinJvmProjectExtension
+        kotlinExtension.target = target
+        kotlinExtension.compilerOptions.verbose.convention(project.logger.isDebugEnabled)
+        target.compilations.configureEach {
+            KotlinJvmCompilerOptionsHelper.syncOptionsAsConvention(
+                from = kotlinExtension.compilerOptions,
+                into = it.compilerOptions.options
+            )
+            it.compilerOptions.options.moduleName.convention(
+                kotlinExtension.compilerOptions.moduleName.orElse(
+                    @Suppress("DEPRECATION")
+                    project.providers.provider { it.moduleName }
+                )
+            )
+        }
 
         super.apply(project)
 

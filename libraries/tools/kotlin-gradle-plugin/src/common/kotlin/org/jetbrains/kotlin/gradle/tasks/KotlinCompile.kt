@@ -69,10 +69,8 @@ abstract class KotlinCompile @Inject constructor(
     KotlinCompilationTask<KotlinJvmCompilerOptions>,
     UsesKotlinJavaToolchain {
 
-    init {
-        compilerOptions.moduleName.convention(moduleName)
-        compilerOptions.verbose.convention(logger.isDebugEnabled)
-    }
+    @get:Internal // covered by compiler options
+    abstract override val moduleName: Property<String>
 
     final override val kotlinOptions: KotlinJvmOptions = KotlinJvmOptionsCompat(
         { this },

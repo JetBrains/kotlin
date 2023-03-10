@@ -23,7 +23,6 @@ open class KotlinCompileArgumentsProvider<T : AbstractKotlinCompile<out CommonCo
 class KotlinJvmCompilerArgumentsProvider
     (taskProvider: KotlinCompile) : KotlinCompileArgumentsProvider<KotlinCompile>(taskProvider) {
     val taskName: String = taskProvider.name
-    val moduleName: String = taskProvider.moduleName.get()
     val friendPaths: FileCollection = taskProvider.friendPaths
     val compileClasspath: Iterable<File> = taskProvider.libraries
     val destinationDir: File = taskProvider.destinationDirectory.get().asFile

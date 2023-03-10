@@ -472,7 +472,8 @@ open class IncrementalJvmCompilerRunner(
         isIncremental: Boolean
     ): Services.Builder =
         super.makeServices(args, lookupTracker, expectActualTracker, caches, dirtySources, isIncremental).apply {
-            val targetId = TargetId(args.moduleName!!, "java-production")
+            val moduleName = requireNotNull(args.moduleName) { "'moduleName' is null!" }
+            val targetId = TargetId(moduleName, "java-production")
             val targetToCache = mapOf(targetId to caches.platformCache)
             val incrementalComponents = IncrementalCompilationComponentsImpl(targetToCache)
             register(IncrementalCompilationComponents::class.java, incrementalComponents)

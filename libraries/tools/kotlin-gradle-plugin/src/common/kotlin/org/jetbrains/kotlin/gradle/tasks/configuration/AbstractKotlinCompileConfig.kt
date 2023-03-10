@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.gradle.report.BuildMetricsService
 import org.jetbrains.kotlin.gradle.report.BuildReportsService
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KOTLIN_BUILD_DIR_NAME
+import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.utils.providerWithLazyConvention
 import org.jetbrains.kotlin.project.model.LanguageSettings
 
@@ -50,7 +51,11 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
                     if (it is KaptGenerateStubsTask) return@configure
 
                     applyLanguageSettingsToCompilerOptions(
-                        languageSettings.get(), (it as org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask<*>).compilerOptions
+                        languageSettings.get(),
+                        (it as org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask<*>).compilerOptions,
+                        // KotlinJsIrTarget and KotlinJsIrTargetConfigurator add additional freeCompilerArgs essentially
+                        // always overwriting convention value
+                        addFreeCompilerArgsAsConvention = it !is Kotlin2JsCompile
                     )
                 }
             }

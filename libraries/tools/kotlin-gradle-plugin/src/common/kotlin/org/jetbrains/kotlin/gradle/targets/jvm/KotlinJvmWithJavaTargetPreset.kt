@@ -56,6 +56,13 @@ class KotlinJvmWithJavaTargetPreset(
             Kotlin2JvmSourceSetProcessor(KotlinTasksProvider(), KotlinCompilationInfo(compilation))
         }
 
+        target.compilations.configureEach {
+            it.compilerOptions.options.moduleName.convention(
+                @Suppress("DEPRECATION")
+                project.providers.provider { it.moduleName }
+            )
+        }
+
         target.compilations.getByName("test").run {
             val main = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
 

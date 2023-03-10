@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.gradle.tasks.toSingleCompilerPluginOptions
 import org.jetbrains.kotlin.project.model.LanguageSettings
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
+import kotlin.properties.Delegates
 
 internal class DefaultLanguageSettingsBuilder : LanguageSettingsBuilder {
     private var languageVersionImpl: LanguageVersion? = null
@@ -48,7 +49,12 @@ internal class DefaultLanguageSettingsBuilder : LanguageSettingsBuilder {
             }
         }
 
-    override var progressiveMode: Boolean = false
+    // By using 'observable' delegate we are tracking value set by user and not default value,
+    // so we could propagate it to the compiler options only if it was configured explicitly
+    internal var setByUserProgressiveMode: Boolean? = null
+    override var progressiveMode: Boolean by Delegates.observable(false) { _, _, newValue ->
+        setByUserProgressiveMode = newValue
+    }
 
     private val enabledLanguageFeaturesImpl = mutableSetOf<LanguageFeature>()
 
@@ -102,25 +108,36 @@ internal class DefaultLanguageSettingsBuilder : LanguageSettingsBuilder {
 
 internal fun applyLanguageSettingsToCompilerOptions(
     languageSettingsBuilder: LanguageSettings,
-    compilerOptions: KotlinCommonCompilerOptions
+    compilerOptions: KotlinCommonCompilerOptions,
+    addFreeCompilerArgsAsConvention: Boolean = true,
 ) = with(compilerOptions) {
-    languageVersion.convention(languageSettingsBuilder.languageVersion?.let { KotlinVersion.fromVersion(it) })
-    apiVersion.convention(languageSettingsBuilder.apiVersion?.let { KotlinVersion.fromVersion(it) })
-    progressiveMode.convention(languageSettingsBuilder.progressiveMode)
-    optIn.addAll(languageSettingsBuilder.optInAnnotationsInUse)
+    val languageSettingsBuilderDefault = languageSettingsBuilder as DefaultLanguageSettingsBuilder
+    languageSettingsBuilderDefault.languageVersion?.let {
+        languageVersion.convention(KotlinVersion.fromVersion(it))
+    }
+    languageSettingsBuilderDefault.apiVersion?.let {
+        apiVersion.convention(KotlinVersion.fromVersion(it))
+    }
+    languageSettingsBuilderDefault.setByUserProgressiveMode?.let {
+        progressiveMode.convention(it)
+    }
+    if (languageSettingsBuilder.optInAnnotationsInUse.isNotEmpty()) optIn.addAll(languageSettingsBuilder.optInAnnotationsInUse)
 
-    val freeArgs = mutableListOf<String>().apply {
-        languageSettingsBuilder.enabledLanguageFeatures.forEach { featureName ->
-            add("-XXLanguage:+$featureName")
-        }
+    val freeArgs = mutableListOf<String>()
+    languageSettingsBuilder.enabledLanguageFeatures.forEach { featureName ->
+        freeArgs.add("-XXLanguage:+$featureName")
+    }
+    freeArgs.addAll(languageSettingsBuilderDefault.freeCompilerArgs)
 
-        if (languageSettingsBuilder is DefaultLanguageSettingsBuilder) {
-            addAll(languageSettingsBuilder.freeCompilerArgs)
+    if (freeArgs.isNotEmpty()) {
+        if (addFreeCompilerArgsAsConvention) {
+            freeCompilerArgs.convention(freeArgs)
+        } else {
+            freeCompilerArgs.addAll(freeArgs)
         }
     }
 
-    freeCompilerArgs.addAll(freeArgs)
-
+    // TODO: Fix it - get actual values on execution
     KotlinBuildStatsService.getInstance()?.apply {
         report(BooleanMetrics.KOTLIN_PROGRESSIVE_MODE, languageSettingsBuilder.progressiveMode)
         apiVersion.orNull?.also { v -> report(StringMetrics.KOTLIN_API_VERSION, v.version) }
