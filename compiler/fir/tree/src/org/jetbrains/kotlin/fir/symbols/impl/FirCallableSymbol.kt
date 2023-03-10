@@ -88,8 +88,6 @@ abstract class FirCallableSymbol<D : FirCallableDeclaration> : FirBasedSymbol<D>
     override fun toString(): String = "${this::class.simpleName} $callableId"
 }
 
-val FirCallableSymbol<*>.isStatic: Boolean get() = (fir as? FirMemberDeclaration)?.status?.isStatic == true
-
 val FirCallableSymbol<*>.isExtension: Boolean
     get() = when (fir) {
         is FirFunction -> fir.receiverParameter != null
