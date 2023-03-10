@@ -116,7 +116,7 @@ private fun Project.collectAllSharedCommonizerTargetsFromBuild(): Set<SharedComm
 
 private fun Project.collectAllSharedCommonizerTargetsFromProject(): Set<SharedCommonizerTarget> {
     return (project.multiplatformExtensionOrNull ?: return emptySet()).sourceSets
-        .mapNotNull { sourceSet -> getCommonizerTarget(sourceSet) }
+        .mapNotNull { sourceSet -> sourceSet.commonizerTarget.getOrThrow() }
         .filterIsInstance<SharedCommonizerTarget>()
         .toSet()
 }

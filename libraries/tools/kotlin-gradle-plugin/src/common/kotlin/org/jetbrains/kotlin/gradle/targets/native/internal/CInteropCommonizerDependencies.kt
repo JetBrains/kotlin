@@ -9,9 +9,10 @@ import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
+import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
+import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 import java.io.File
 
@@ -59,11 +60,10 @@ internal fun Project.cinteropCommonizerDependencies(sourceSet: DefaultKotlinSour
     }
 }
 
-private fun Project.setupCInteropTransformCompositeMetadataDependenciesForIde(sourceSet: DefaultKotlinSourceSet) {
-    whenEvaluated {
-        if (getCommonizerTarget(sourceSet) !is SharedCommonizerTarget) return@whenEvaluated
-        addIntransitiveMetadataDependencyIfPossible(
-            sourceSet, createCInteropMetadataDependencyClasspathForIde(sourceSet)
-        )
-    }
+private fun Project.setupCInteropTransformCompositeMetadataDependenciesForIde(sourceSet: DefaultKotlinSourceSet) = launch {
+    if (sourceSet.internal.commonizerTarget.await() !is SharedCommonizerTarget) return@launch
+    addIntransitiveMetadataDependencyIfPossible(
+        sourceSet, createCInteropMetadataDependencyClasspathForIde(sourceSet)
+    )
 }
+

@@ -105,7 +105,7 @@ private fun CInteropMetadataDependencyTransformationTask.configureTaskOrder() {
 }
 
 private fun CInteropMetadataDependencyTransformationTask.onlyIfSourceSetIsSharedNative() {
-    val isSharedCommonizerTarget = getCommonizerTarget(sourceSet) is SharedCommonizerTarget
+    val isSharedCommonizerTarget = sourceSet.internal.commonizerTarget.getOrThrow() is SharedCommonizerTarget
     onlyIf { isSharedCommonizerTarget }
 }
 

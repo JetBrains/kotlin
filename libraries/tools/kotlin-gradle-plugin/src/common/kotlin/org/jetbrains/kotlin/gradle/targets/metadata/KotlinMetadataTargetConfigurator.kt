@@ -272,7 +272,7 @@ class KotlinMetadataTargetConfigurator :
         }
     }
 
-    private fun createMetadataCompilation(
+    private suspend fun createMetadataCompilation(
         target: KotlinMetadataTarget,
         sourceSet: KotlinSourceSet,
         allMetadataJar: TaskProvider<out Jar>,
@@ -331,7 +331,7 @@ class KotlinMetadataTargetConfigurator :
         }
     }
 
-    private fun configureMetadataDependenciesForCompilation(compilation: KotlinCompilation<*>) {
+    private suspend fun configureMetadataDependenciesForCompilation(compilation: KotlinCompilation<*>) {
         val project = compilation.target.project
         val sourceSet = compilation.defaultSourceSet
 
@@ -348,7 +348,7 @@ class KotlinMetadataTargetConfigurator :
         // Transformed Multiplatform Libraries based on source set visibility
         compilation.compileDependencyFiles += project.files(transformationTask.map { it.allTransformedLibraries })
 
-        if (sourceSet is DefaultKotlinSourceSet && getCommonizerTarget(sourceSet) is SharedCommonizerTarget) {
+        if (sourceSet is DefaultKotlinSourceSet && sourceSet.sharedCommonizerTarget.await() is SharedCommonizerTarget) {
             compilation.compileDependencyFiles += project.createCInteropMetadataDependencyClasspath(sourceSet)
         }
     }

@@ -27,6 +27,7 @@ class IdeNativePlatformDependencyResolverTest {
         val kotlin = project.multiplatformExtension
         kotlin.targetHierarchy.default()
         kotlin.linuxX64()
+        project.evaluate()
 
         val commonMain = kotlin.sourceSets.getByName("commonMain")
         val commonTest = kotlin.sourceSets.getByName("commonTest")
@@ -51,6 +52,7 @@ class IdeNativePlatformDependencyResolverTest {
         val kotlin = project.multiplatformExtension
         kotlin.targetHierarchy.default()
         kotlin.macosArm64()
+        project.evaluate()
 
         val commonMain = kotlin.sourceSets.getByName("commonMain")
         val commonTest = kotlin.sourceSets.getByName("commonTest")
@@ -74,6 +76,7 @@ class IdeNativePlatformDependencyResolverTest {
         val kotlin = project.multiplatformExtension
         kotlin.jvm()
         kotlin.linuxX64()
+        project.evaluate()
 
         val commonMain = kotlin.sourceSets.getByName("commonMain")
         val commonTest = kotlin.sourceSets.getByName("commonTest")

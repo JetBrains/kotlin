@@ -13,14 +13,13 @@ import org.jetbrains.kotlin.compilerRunner.konanHome
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver
-import org.jetbrains.kotlin.gradle.plugin.sources.project
-import org.jetbrains.kotlin.gradle.targets.native.internal.getCommonizerTarget
+import org.jetbrains.kotlin.gradle.targets.native.internal.commonizerTarget
 import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
 
 internal object IdeNativePlatformDependencyResolver : IdeDependencyResolver {
     override fun resolve(sourceSet: KotlinSourceSet): Set<IdeaKotlinDependency> {
         val project = sourceSet.project
-        val commonizerTarget = getCommonizerTarget(sourceSet) as? LeafCommonizerTarget ?: return emptySet()
+        val commonizerTarget = sourceSet.commonizerTarget.getOrThrow() as? LeafCommonizerTarget ?: return emptySet()
         val konanTarget = commonizerTarget.konanTargetOrNull ?: return emptySet()
 
         return sourceSet.project.konanDistribution.platformLibsDir.resolve(konanTarget.name)

@@ -74,14 +74,14 @@ internal fun CInteropCommonizerDependent.Factory.from(
 
 internal fun CInteropCommonizerDependent.Factory.from(compilation: KotlinSharedNativeCompilation): CInteropCommonizerDependent? {
     return from(
-        getCommonizerTarget(compilation) as? SharedCommonizerTarget ?: return null,
+        compilation.commonizerTarget.getOrThrow() as? SharedCommonizerTarget ?: return null,
         compilation.getImplicitlyDependingNativeCompilations()
     )
 }
 
 internal fun CInteropCommonizerDependent.Factory.from(sourceSet: KotlinSourceSet): CInteropCommonizerDependent? {
     return from(
-        target = getCommonizerTarget(sourceSet) as? SharedCommonizerTarget ?: return null,
+        target = sourceSet.commonizerTarget.getOrThrow() as? SharedCommonizerTarget ?: return null,
         compilations = sourceSet.internal.compilations
             .filterIsInstance<KotlinNativeCompilation>().toSet()
     )
@@ -89,7 +89,7 @@ internal fun CInteropCommonizerDependent.Factory.from(sourceSet: KotlinSourceSet
 
 internal fun CInteropCommonizerDependent.Factory.fromAssociateCompilations(sourceSet: KotlinSourceSet): CInteropCommonizerDependent? {
     return from(
-        target = getCommonizerTarget(sourceSet) as? SharedCommonizerTarget ?: return null,
+        target = sourceSet.commonizerTarget.getOrThrow() as? SharedCommonizerTarget ?: return null,
         compilations = sourceSet.internal.compilations
             .filterIsInstance<KotlinNativeCompilation>()
             .flatMap { compilation -> compilation.associateWithClosure }

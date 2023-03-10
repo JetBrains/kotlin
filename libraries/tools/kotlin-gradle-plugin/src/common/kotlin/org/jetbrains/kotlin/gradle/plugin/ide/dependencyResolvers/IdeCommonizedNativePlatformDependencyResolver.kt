@@ -12,9 +12,8 @@ import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.isCommonized
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver
-import org.jetbrains.kotlin.gradle.plugin.sources.project
 import org.jetbrains.kotlin.gradle.targets.native.internal.commonizeNativeDistributionTask
-import org.jetbrains.kotlin.gradle.targets.native.internal.getCommonizerTarget
+import org.jetbrains.kotlin.gradle.targets.native.internal.commonizerTarget
 import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
 
 internal object IdeCommonizedNativePlatformDependencyResolver :
@@ -22,7 +21,7 @@ internal object IdeCommonizedNativePlatformDependencyResolver :
 
     override fun resolve(sourceSet: KotlinSourceSet): Set<IdeaKotlinDependency> {
         val project = sourceSet.project
-        val commonizerTarget = getCommonizerTarget(sourceSet) as? SharedCommonizerTarget ?: return emptySet()
+        val commonizerTarget = sourceSet.commonizerTarget.getOrThrow() as? SharedCommonizerTarget ?: return emptySet()
         val commonizerTask = project.commonizeNativeDistributionTask?.get() ?: return emptySet()
         val outputDirectory = resolveCommonizedDirectory(commonizerTask.rootOutputDirectory, commonizerTarget)
 
