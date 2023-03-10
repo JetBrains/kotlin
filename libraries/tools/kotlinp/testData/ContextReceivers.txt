@@ -12,14 +12,12 @@ public abstract interface B : kotlin/Any {
 }
 // C.class
 // ------------------------------------------
-// requires compiler version 1.6.20 (level=ERROR)
 context(A)
 public final class C : kotlin/Any {
 
   // signature: <init>(LA;)V
   public constructor()
 
-  // requires compiler version 1.6.20 (level=ERROR)
   // signature: f(LB;)V
   context(B)
   public final fun f(): kotlin/Unit
@@ -30,12 +28,10 @@ public final class C : kotlin/Any {
 // ------------------------------------------
 package {
 
-  // requires compiler version 1.6.20 (level=ERROR)
   // signature: g(LA;)V
   context(A)
   public final fun g(): kotlin/Unit
 
-  // requires compiler version 1.6.20 (level=ERROR)
   // getter: getH(LB;)I
   context(B)
   public final val h: kotlin/Int

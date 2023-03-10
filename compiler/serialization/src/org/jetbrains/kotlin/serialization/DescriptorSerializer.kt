@@ -215,12 +215,6 @@ class DescriptorSerializer private constructor(
             )
         }
 
-        if (classDescriptor.contextReceivers.isNotEmpty()) {
-            builder.addVersionRequirement(
-                writeCompilerVersionRequirement(1, 6, 20, versionRequirementTable)
-            )
-        }
-
         typeTable.serialize()?.let { builder.typeTable = it }
         versionRequirementTable.serialize()?.let { builder.versionRequirementTable = it }
 
@@ -346,10 +340,6 @@ class DescriptorSerializer private constructor(
                 builder.addVersionRequirement(writeVersionRequirement(LanguageFeature.InlineClasses))
             }
 
-            if (descriptor.contextReceiverParameters.isNotEmpty()) {
-                builder.addVersionRequirement(writeCompilerVersionRequirement(1, 6, 20))
-            }
-
             if (local.metDefinitelyNotNullType) {
                 builder.addVersionRequirement(writeVersionRequirement(LanguageFeature.DefinitelyNonNullableTypes))
             }
@@ -445,10 +435,6 @@ class DescriptorSerializer private constructor(
 
             if (descriptor.hasInlineClassTypesInSignature()) {
                 builder.addVersionRequirement(writeVersionRequirement(LanguageFeature.InlineClasses))
-            }
-
-            if (descriptor.contextReceiverParameters.isNotEmpty()) {
-                builder.addVersionRequirement(writeCompilerVersionRequirement(1, 6, 20))
             }
 
             if (local.metDefinitelyNotNullType) {
