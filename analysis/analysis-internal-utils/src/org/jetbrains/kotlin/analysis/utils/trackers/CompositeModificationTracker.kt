@@ -22,7 +22,7 @@ public class CompositeModificationTracker private constructor(private val tracke
         }
 
         public fun createFlattened(trackers: List<ModificationTracker>): ModificationTracker {
-            val map = IdentityHashMap<ModificationTracker, Boolean>()
+            val set = Collections.newSetFromMap(IdentityHashMap<ModificationTracker, Boolean>())
             val flattened = ArrayList<ModificationTracker>()
 
             fun flatten(tracker: ModificationTracker) {
@@ -30,7 +30,7 @@ public class CompositeModificationTracker private constructor(private val tracke
                     is CompositeModificationTracker -> tracker.trackers.forEach(::flatten)
                     ModificationTracker.NEVER_CHANGED -> {}
                     else -> {
-                        if (map.put(tracker, true) == null) {
+                        if (set.add(tracker)) {
                             flattened += tracker
                         }
                     }
