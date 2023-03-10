@@ -426,7 +426,7 @@ private class KotlinPluginLifecycleImpl(override val project: Project) : KotlinP
 
         enqueuedActions.getValue(stage).addLast(action)
 
-        if (stage == Stage.Configure) {
+        if (stage == Stage.Configure || isFinished.get()) {
             loopIfNecessary()
         }
     }
@@ -434,7 +434,6 @@ private class KotlinPluginLifecycleImpl(override val project: Project) : KotlinP
     override fun launch(block: suspend KotlinPluginLifecycle.() -> Unit) {
         val lifecycle = this
         check(isStarted.get()) { "Cannot launch when ${KotlinPluginLifecycle::class.simpleName} is not started" }
-        check(!isFinished.get()) { "Cannot launch when ${KotlinPluginLifecycle::class.simpleName} is already finished" }
 
         val coroutine = block.createCoroutine(this, object : Continuation<Unit> {
             override val context: CoroutineContext = EmptyCoroutineContext +
@@ -475,6 +474,7 @@ private class KotlinPluginLifecycleImpl(override val project: Project) : KotlinP
         override val finaliseIn: Stage,
         override val property: Property<T>
     ) : LifecycleAwareProperty<T> {
+
         override suspend fun awaitFinalValue(): T? {
             await(finaliseIn)
             return property.orNull
