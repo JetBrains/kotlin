@@ -43,6 +43,7 @@ internal class KaptGenerateStubsConfig : BaseKotlinCompileConfig<KaptGenerateStu
             task.libraries.from({ kotlinCompileTask.libraries - project.files(kaptClassesDir) })
             task.compileKotlinArgumentsContributor.set(providers.provider { kotlinCompileTask.compilerArgumentsContributor })
             task.pluginOptions.addAll(kotlinCompileTask.pluginOptions)
+            task.compilerOptions.moduleName.convention(kotlinCompileTask.compilerOptions.moduleName)
             task.compilerOptions.freeCompilerArgs.convention(kotlinCompileTask.compilerOptions.freeCompilerArgs)
             // KotlinCompile will also have as input output from KaptGenerateStubTask and KaptTask
             // We are filtering them to avoid failed UP-TO-DATE checks

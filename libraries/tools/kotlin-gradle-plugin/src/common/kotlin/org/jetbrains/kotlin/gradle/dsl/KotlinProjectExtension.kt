@@ -406,6 +406,17 @@ abstract class KotlinAndroidProjectExtension(project: Project) : KotlinSingleTar
         internal set
 
     open fun target(body: KotlinAndroidTarget.() -> Unit) = target.run(body)
+
+    val compilerOptions: KotlinJvmCompilerOptions =
+        project.objects.newInstance(KotlinJvmCompilerOptionsDefault::class.java)
+
+    fun compilerOptions(configure: Action<KotlinJvmCompilerOptions>) {
+        configure.execute(compilerOptions)
+    }
+
+    fun compilerOptions(configure: KotlinJvmCompilerOptions.() -> Unit) {
+        configure(compilerOptions)
+    }
 }
 
 enum class NativeCacheKind(val produce: String?, val outputKind: CompilerOutputKind?) {

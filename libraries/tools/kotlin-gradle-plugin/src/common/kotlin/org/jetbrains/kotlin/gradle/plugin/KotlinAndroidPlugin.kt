@@ -5,14 +5,18 @@
 
 package org.jetbrains.kotlin.gradle.plugin
 
+import com.android.build.gradle.BaseExtension
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.internal.customizeKotlinDependencies
 import org.jetbrains.kotlin.gradle.model.builder.KotlinModelBuilder
+import org.jetbrains.kotlin.gradle.plugin.KotlinJvmPlugin.Companion.configureCompilerOptionsForTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.applyUserDefinedAttributes
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
@@ -32,8 +36,21 @@ internal open class KotlinAndroidPlugin(
                     KotlinAndroidTarget::class.java,
                     "",
                     project
-                ).also {
-                    (project.kotlinExtension as KotlinAndroidProjectExtension).target = it
+                ).also { target ->
+                    val kotlinAndroidExtension = project.kotlinExtension as KotlinAndroidProjectExtension
+                    kotlinAndroidExtension.target = target
+                    project.configureCompilerOptionsForTarget(
+                        kotlinAndroidExtension.compilerOptions,
+                        target.compilations
+                    )
+                    kotlinAndroidExtension.compilerOptions.noJdk.value(true).disallowChanges()
+
+                    @Suppress("DEPRECATION") val kotlinOptions = object : KotlinJvmOptions {
+                        override val options: KotlinJvmCompilerOptions
+                            get() = kotlinAndroidExtension.compilerOptions
+                    }
+                    val ext = project.extensions.getByName("android") as BaseExtension
+                    ext.addExtension(KOTLIN_OPTIONS_DSL_NAME, kotlinOptions)
                 }
             }
         ) { androidTarget ->

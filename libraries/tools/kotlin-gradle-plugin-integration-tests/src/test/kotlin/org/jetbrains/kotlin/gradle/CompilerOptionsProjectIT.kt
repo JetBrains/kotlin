@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
 
+@DisplayName("Project level compiler options DSL")
 class CompilerOptionsProjectIT : KGPBaseTest() {
 
     @DisplayName("Jvm project compiler options are passed to compilation")
@@ -209,6 +210,45 @@ class CompilerOptionsProjectIT : KGPBaseTest() {
                 assert(compilationArgs.contains("-module-name customModule")) {
                     printBuildOutput()
                     "Compiler arguments does not contain '-module-name customModule': $compilationArgs"
+                }
+            }
+        }
+    }
+
+    @DisplayName("Project level DSL is available in android project")
+    @AndroidGradlePluginTests
+    @GradleAndroidTest
+    fun androidProject(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        jdk: JdkVersions.ProvidedJdk
+    ) {
+        project(
+            "AndroidSimpleApp",
+            gradleVersion,
+            buildJdk = jdk.location,
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion, logLevel = LogLevel.DEBUG)
+        ) {
+            buildGradle.appendText(
+                //language=Groovy
+                """
+                |
+                |kotlin {
+                |   compilerOptions {
+                |       javaParameters = true
+                |   }
+                |}
+                """.trimMargin()
+            )
+
+            build("compileDebugKotlin") {
+                assertTasksExecuted(":compileDebugKotlin")
+
+                val compilationArgs = output.lineSequence().first { it.contains("Kotlin compiler args:") }
+
+                assert(compilationArgs.contains("-java-parameters")) {
+                    printBuildOutput()
+                    "Compiler arguments does not contain '-java-parameters': $compilationArgs"
                 }
             }
         }
