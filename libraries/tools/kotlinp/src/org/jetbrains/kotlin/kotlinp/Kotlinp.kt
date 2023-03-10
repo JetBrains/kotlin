@@ -45,5 +45,6 @@ class Kotlinp(private val settings: KotlinpSettings) {
 }
 
 data class KotlinpSettings(
-    val isVerbose: Boolean
+    val isVerbose: Boolean,
+    val sortDeclarations: Boolean
 )

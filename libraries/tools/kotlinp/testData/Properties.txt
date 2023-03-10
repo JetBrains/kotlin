@@ -19,6 +19,11 @@ public final class C : kotlin/Any {
   public final val constructorParam: kotlin/String
     public final get
 
+  // getter: getDelegated(Ljava/lang/Number;)Ljava/util/List;
+  // synthetic method for delegate: getDelegated$delegate(LC;Ljava/lang/Number;)Ljava/lang/Object;
+  public final /* delegated */ val <T#0 /* T */ : kotlin/Number> T#0.delegated: kotlin/collections/List<kotlin/Nothing>
+    public final /* non-default */ get
+
   // getter: getGetterOnlyVal()D
   public final val getterOnlyVal: kotlin/Double
     public final /* non-default */ get
@@ -33,11 +38,6 @@ public final class C : kotlin/Any {
   // getter: getWithOptimizedDelegate()D
   // synthetic method for delegate: getWithOptimizedDelegate$delegate(LC;)Ljava/lang/Object;
   public final /* delegated */ val withOptimizedDelegate: kotlin/Double
-    public final /* non-default */ get
-
-  // getter: getDelegated(Ljava/lang/Number;)Ljava/util/List;
-  // synthetic method for delegate: getDelegated$delegate(LC;Ljava/lang/Number;)Ljava/lang/Object;
-  public final /* delegated */ val <T#0 /* T */ : kotlin/Number> T#0.delegated: kotlin/collections/List<kotlin/Nothing>
     public final /* non-default */ get
 
   // module name: test-module
