@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.konan.blackboxtest.support.compilation
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.konan.blackboxtest.support.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCase.*
+import org.jetbrains.kotlin.konan.blackboxtest.support.TestModule.Companion.allDependsOn
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.ExecutableCompilation.Companion.applyTestRunnerSpecificArgs
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.ExecutableCompilation.Companion.assertTestDumpFileNotEmptyIfExists
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationArtifact.*
@@ -154,6 +155,7 @@ internal abstract class SourceBasedCompilation<A : TestCompilationArtifact>(
         gcType.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
         gcScheduler.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
         pipelineType.compilerFlags.forEach { compilerFlag -> add(compilerFlag) }
+        applyK2MPPArgs(this)
     }
 
     override fun applyDependencies(argsBuilder: ArgsBuilder): Unit = with(argsBuilder) {
@@ -162,6 +164,17 @@ internal abstract class SourceBasedCompilation<A : TestCompilationArtifact>(
             add("-friend-modules", friends.joinToString(File.pathSeparator) { friend -> friend.path })
         }
         add(dependencies.includedLibraries) { include -> "-Xinclude=${include.path}" }
+    }
+
+    private fun applyK2MPPArgs(argsBuilder: ArgsBuilder): Unit = with(argsBuilder) {
+        if (pipelineType == PipelineType.K2 && freeCompilerArgs.compilerArgs.any { it == "-XXLanguage:+MultiPlatformProjects" }) {
+            sourceModules.mapToSet { "-Xfragments=${it.name}" }
+                .sorted().forEach { add(it) }
+            sourceModules.flatMapToSet { module -> module.allDependsOn.map { "-Xfragment-refines=${module.name}:${it.name}" } }
+                .sorted().forEach { add(it) }
+            sourceModules.flatMapToSet { module -> module.files.map { "-Xfragment-sources=${module.name}:${it.location.path}" } }
+                .sorted().forEach { add(it) }
+        }
     }
 }
 
@@ -338,6 +351,7 @@ internal class StaticCacheCompilation(
     settings: Settings,
     freeCompilerArgs: TestCompilerArgs,
     private val options: Options,
+    private val pipelineType: PipelineType,
     dependencies: Iterable<TestCompilationDependency<*>>,
     expectedArtifact: KLIBStaticCache
 ) : BasicCompilation<KLIBStaticCache>(
@@ -367,6 +381,7 @@ internal class StaticCacheCompilation(
 
     override fun applySpecificArgs(argsBuilder: ArgsBuilder): Unit = with(argsBuilder) {
         add("-produce", "static_cache")
+        pipelineType.compilerFlags.forEach { compilerFlag -> add(compilerFlag) }
 
         when (options) {
             is Options.Regular -> Unit /* Nothing to do. */

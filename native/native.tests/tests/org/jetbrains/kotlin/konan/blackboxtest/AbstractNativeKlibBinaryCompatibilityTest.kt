@@ -127,6 +127,7 @@ abstract class AbstractNativeKlibBinaryCompatibilityTest : AbstractNativeSimpleT
             settings = testRunSettings,
             freeCompilerArgs = COMPILER_ARGS_FOR_STATIC_CACHE_AND_EXECUTABLE,
             options = StaticCacheCompilation.Options.Regular,
+            pipelineType = testRunSettings.get(),
             dependencies = moduleDependencies.map {
                 it.klibFile.toStaticCacheArtifact().toDependency()
             } + klib.toKlib().toDependency(),
@@ -142,7 +143,8 @@ abstract class AbstractNativeKlibBinaryCompatibilityTest : AbstractNativeSimpleT
         val module: TestModule.Exclusive = TestModule.Exclusive(
             name = name,
             directDependencySymbols = emptySet(),
-            directFriendSymbols = emptySet()
+            directFriendSymbols = emptySet(),
+            directDependsOnSymbols = emptySet(),
         )
 
         val localBuildDir: File =

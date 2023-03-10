@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.compatibility.binary
 
+import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.test.*
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.DFS
@@ -71,6 +72,7 @@ abstract class AbstractKlibBinaryCompatibilityTest : KotlinTestWithEnvironment()
         const val TEST_FUNCTION = "box"
         const val DEFAULT_MODULE = "main"
 
+        @OptIn(ObsoleteTestInfrastructure::class)
         fun doTest(
             filePath: String,
             expectedResult: String,
@@ -89,7 +91,7 @@ abstract class AbstractKlibBinaryCompatibilityTest : KotlinTestWithEnvironment()
                             TestFile(module, fileName, text, directives)
                         } ?: error("Expected a module for $fileName in $filePath")
 
-                    override fun createModule(name: String, dependencies: List<String>, friends: List<String>, abiVersions: List<Int>) =
+                    override fun createModule(name: String, dependencies: List<String>, friends: List<String>, dependsOn: List<String>) =
                         TestModule(name, dependencies, friends)
 
                 },

@@ -32,7 +32,7 @@ abstract class AbstractNativeCInteropBaseTest : AbstractNativeSimpleTest() {
 
     internal fun generateCInteropTestCaseWithSingleDef(defFile: File, extraArgs: List<String>): TestCase {
         val moduleName: String = defFile.name
-        val module = TestModule.Exclusive(moduleName, emptySet(), emptySet())
+        val module = TestModule.Exclusive(moduleName, emptySet(), emptySet(), emptySet())
         module.files += TestFile.createCommitted(defFile, module)
 
         return TestCase(

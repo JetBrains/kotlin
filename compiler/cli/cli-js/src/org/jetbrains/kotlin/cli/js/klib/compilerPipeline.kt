@@ -81,7 +81,7 @@ fun compileModuleToAnalyzedFir(
     val resolvedLibraries = moduleStructure.fullResolvedLibraries
 
     val sessionsWithSources = prepareJsSessions(
-        ktFiles, moduleStructure.compilerConfiguration, escapedMainModuleName.asString(),
+        ktFiles, moduleStructure.compilerConfiguration, escapedMainModuleName,
         resolvedLibraries, dependencyList, extensionRegistrars, isCommonSourceForPsi, fileBelongsToModuleForPsi
     )
 

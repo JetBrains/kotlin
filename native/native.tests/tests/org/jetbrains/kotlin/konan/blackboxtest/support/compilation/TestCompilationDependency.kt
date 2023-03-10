@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilati
  * [Library] - the [TestCompilation]s (modules) that should yield KLIBs to be consumed as dependency libraries in the current compilation.
  * [FriendLibrary] - similarly but friend modules (-friend-modules).
  * [IncludedLibrary] - similarly but included modules (-Xinclude).
+ * Note: there cannot be DependsOnLibrary type, since `dependsOn` dependency works only within a KLIB, not between KLIBs.
  */
 internal sealed class TestCompilationDependencyType<A : TestCompilationArtifact>(private val artifactClass: Class<A>) {
     object Library : TestCompilationDependencyType<KLIB>(KLIB::class.java)

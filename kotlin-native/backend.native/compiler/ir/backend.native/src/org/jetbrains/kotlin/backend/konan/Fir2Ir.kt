@@ -71,6 +71,9 @@ internal fun PhaseContext.fir2Ir(
     ).also {
         (it.irModuleFragment.descriptor as? FirModuleDescriptor)?.let { it.allDependencyModules = librariesDescriptors }
     }
+    assert(fir2irResult.irModuleFragment.name.isSpecial) {
+        "`${fir2irResult.irModuleFragment.name}` must be Name.special, since it's required by KlibMetadataModuleDescriptorFactoryImpl.createDescriptorOptionalBuiltIns()"
+    }
 
     val symbols = createKonanSymbols(fir2irResult)
     // TODO KT-55580 Invoke CopyDefaultValuesToActualPhase, same as PsiToir phase does.
