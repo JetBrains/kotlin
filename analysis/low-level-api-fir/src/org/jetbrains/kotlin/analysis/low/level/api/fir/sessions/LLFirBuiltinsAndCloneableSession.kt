@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 
+import com.intellij.openapi.util.ModificationTracker
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.fir.BuiltinTypes
 import org.jetbrains.kotlin.fir.PrivateSessionConstructor
 
 class LLFirBuiltinsAndCloneableSession @PrivateSessionConstructor constructor(
     ktModule: KtModule,
+    dependencyTracker: ModificationTracker,
     builtinTypes: BuiltinTypes,
-) : LLFirLibraryLikeSession(ktModule, builtinTypes)
+) : LLFirLibraryLikeSession(ktModule, dependencyTracker, builtinTypes)

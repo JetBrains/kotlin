@@ -6,8 +6,13 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.ModificationTracker
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.ProjectScope
+import com.intellij.psi.util.CachedValue
+import com.intellij.psi.util.CachedValueProvider
+import com.intellij.psi.util.CachedValuesManager
+import com.intellij.util.containers.CollectionFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirGlobalResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirLazyDeclarationResolver
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
@@ -18,6 +23,7 @@ import org.jetbrains.kotlin.analysis.project.structure.*
 import org.jetbrains.kotlin.analysis.providers.createAnnotationResolver
 import org.jetbrains.kotlin.analysis.providers.createDeclarationProvider
 import org.jetbrains.kotlin.analysis.providers.createPackageProvider
+import org.jetbrains.kotlin.analysis.utils.trackers.CompositeModificationTracker
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
@@ -33,6 +39,7 @@ import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.*
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirExtensionSyntheticFunctionInterfaceProvider
 import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
+import org.jetbrains.kotlin.fir.resolve.transformers.FirDummyCompilerLazyDeclarationResolver
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.*
 import org.jetbrains.kotlin.fir.symbols.FirLazyDeclarationResolver
@@ -41,37 +48,84 @@ import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
+import java.util.concurrent.ConcurrentMap
 
 @OptIn(PrivateSessionConstructor::class, SessionConfiguration::class)
-internal object LLFirSessionFactory {
-    fun createSourcesSession(
-        module: KtSourceModule,
-        globalResolveComponents: LLFirGlobalResolveComponents,
-        sessionsCache: MutableMap<KtModule, LLFirSession>
-    ): LLFirSourcesSession {
-        sessionsCache[module]?.let { return it as LLFirSourcesSession }
+internal class LLFirSessionCache(private val project: Project) {
+    companion object {
+        fun getInstance(project: Project): LLFirSessionCache {
+            return project.getService(LLFirSessionCache::class.java)
+        }
+    }
+
+    private val globalResolveComponents: LLFirGlobalResolveComponents
+        get() = LLFirGlobalResolveComponents.getInstance(project)
+
+    private val sourceCache: ConcurrentMap<KtModule, CachedValue<LLFirSession>> = CollectionFactory.createConcurrentSoftValueMap()
+    private val binaryCache: ConcurrentMap<KtModule, CachedValue<LLFirSession>> = CollectionFactory.createConcurrentSoftValueMap()
+
+    /**
+     * Returns the existing session if found, or creates a new session and caches it.
+     * Analyzable session will be returned for a library module.
+     */
+    fun getSession(module: KtModule, preferBinary: Boolean = false): LLFirSession {
+        if (module is KtBinaryModule && (preferBinary || module is KtSdkModule)) {
+            return getCachedSession(module, binaryCache, ::createBinaryLibrarySession)
+        }
+
+        return getCachedSession(module, sourceCache, ::createSession)
+    }
+
+    /**
+     * Returns a session without caching it.
+     * Note that session dependencies are still cached.
+     */
+    internal fun getSessionNoCaching(module: KtModule): LLFirSession {
+        return createSession(module)
+    }
+
+    private fun <T : KtModule> getCachedSession(
+        module: T,
+        storage: ConcurrentMap<KtModule, CachedValue<LLFirSession>>,
+        factory: (T) -> LLFirSession
+    ): LLFirSession {
         checkCanceled()
 
-        val project = module.project
+        return storage.computeIfAbsent(module) {
+            CachedValuesManager.getManager(project).createCachedValue {
+                val session = factory(module)
+                CachedValueProvider.Result(session, session.modificationTracker)
+            }
+        }.value
+    }
+
+    private fun createSession(module: KtModule): LLFirSession {
+        return when (module) {
+            is KtSourceModule -> createSourcesSession(module)
+            is KtLibraryModule, is KtLibrarySourceModule -> createLibrarySession(module)
+            is KtSdkModule -> createBinaryLibrarySession(module)
+            is KtScriptModule -> createScriptSession(module)
+            is KtNotUnderContentRootModule -> createNotUnderContentRootResolvableSession(module)
+            else -> error("Unexpected module kind: ${module::class.simpleName}")
+        }
+    }
+
+    private fun createSourcesSession(module: KtSourceModule): LLFirSourcesSession {
         val platform = module.platform
         val builtinsSession = LLFirBuiltinsSessionFactory.getInstance(project).getBuiltinsSession(platform)
         val languageVersionSettings = wrapLanguageVersionSettings(module.languageVersionSettings)
 
         val scopeProvider = FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
-
         val components = LLFirModuleResolveComponents(module, globalResolveComponents, scopeProvider)
 
-        val contentScope = module.contentScope
-        val session = LLFirSourcesSession(
-            module,
-            components,
-            builtinsSession.builtinTypes
-        )
-        sessionsCache[module] = session
+        val dependencies = collectSourceModuleDependencies(module)
+        val dependencyTracker = createSourceModuleDependencyTracker(module, dependencies)
+        val session = LLFirSourcesSession(module, dependencyTracker, components, builtinsSession.builtinTypes)
         components.session = session
 
-        return session.apply session@{
-            val moduleData = LLFirModuleData(module).apply { bindSession(this@session) }
+        val moduleData = createModuleData(session)
+
+        return session.apply {
             registerModuleData(moduleData)
             register(FirKotlinScopeProvider::class, scopeProvider)
 
@@ -80,6 +134,8 @@ internal object LLFirSessionFactory {
             registerCommonJavaComponents(JavaModuleResolver.getInstance(project))
             registerResolveComponents()
             registerJavaSpecificResolveComponents()
+
+            val contentScope = module.contentScope
 
             val provider = LLFirProvider(
                 this,
@@ -102,8 +158,7 @@ internal object LLFirSessionFactory {
             }
 
             val dependencyProvider = LLFirDependentModuleProvidersBySessions(this) {
-                processSourceDependencies(module, sessionsCache, globalResolveComponents)
-
+                addAll(dependencies)
                 add(builtinsSession)
             }
 
@@ -134,36 +189,27 @@ internal object LLFirSessionFactory {
         }
     }
 
-
-    fun createLibraryOrLibrarySourceResolvableSession(
-        module: KtModule,
-        globalComponents: LLFirGlobalResolveComponents,
-        builtinSession: LLFirBuiltinsAndCloneableSession,
-        sessionsCache: MutableMap<KtModule, LLFirSession>,
-        languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT
-    ): LLFirLibraryOrLibrarySourceResolvableModuleSession {
-        LLFirLibraryOrLibrarySourceResolvableModuleSession.checkIsValidKtModule(module)
-        sessionsCache[module]?.let { return it as LLFirLibraryOrLibrarySourceResolvableModuleSession }
-        checkCanceled()
-
-        val project = module.project
-
+    private fun createLibrarySession(module: KtModule): LLFirLibraryOrLibrarySourceResolvableModuleSession {
         val libraryModule = when (module) {
             is KtLibraryModule -> module
             is KtLibrarySourceModule -> module.binaryLibrary
             else -> error("Unexpected module ${module::class.simpleName}")
         }
 
-        val scopeProvider = FirKotlinScopeProvider()
-        val components = LLFirModuleResolveComponents(module, globalComponents, scopeProvider)
+        val platform = module.platform
+        val builtinsSession = LLFirBuiltinsSessionFactory.getInstance(project).getBuiltinsSession(platform)
+        val languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT
 
-        val contentScope = module.contentScope
-        val session = LLFirLibraryOrLibrarySourceResolvableModuleSession(module, components, builtinSession.builtinTypes)
-        sessionsCache[module] = session
+        val scopeProvider = FirKotlinScopeProvider()
+        val components = LLFirModuleResolveComponents(module, globalResolveComponents, scopeProvider)
+
+        val dependencyTracker = builtinsSession.modificationTracker
+        val session = LLFirLibraryOrLibrarySourceResolvableModuleSession(module, dependencyTracker, components, builtinsSession.builtinTypes)
         components.session = session
 
-        return session.apply session@{
-            val moduleData = LLFirModuleData(module).apply { bindSession(this@session) }
+        val moduleData = createModuleData(session)
+
+        return session.apply {
             registerModuleData(moduleData)
             register(FirKotlinScopeProvider::class, scopeProvider)
 
@@ -173,6 +219,8 @@ internal object LLFirSessionFactory {
             registerCommonJavaComponents(JavaModuleResolver.getInstance(project))
             registerResolveComponents()
             registerJavaSpecificResolveComponents()
+
+            val contentScope = module.contentScope
 
             val provider = LLFirProvider(
                 this,
@@ -188,11 +236,11 @@ internal object LLFirSessionFactory {
 
             // We need FirRegisteredPluginAnnotations during extensions' registration process
             val annotationsResolver = project.createAnnotationResolver(contentScope)
-            register(FirRegisteredPluginAnnotations::class, LLFirIdeRegisteredPluginAnnotations(this@session, annotationsResolver))
+            register(FirRegisteredPluginAnnotations::class, LLFirIdeRegisteredPluginAnnotations(this, annotationsResolver))
             register(FirPredicateBasedProvider::class, FirEmptyPredicateBasedProvider)
 
             val dependencyProvider = LLFirDependentModuleProvidersByProviders(this) {
-                add(builtinSession.symbolProvider)
+                add(builtinsSession.symbolProvider)
 
                 // Script dependencies are self-contained and should not depend on other libraries
                 if (module !is KtScriptDependencyModule) {
@@ -231,29 +279,64 @@ internal object LLFirSessionFactory {
         }
     }
 
-    fun createScriptSession(
-        module: KtScriptModule,
-        sessionsCache: MutableMap<KtModule, LLFirSession>
-    ): LLFirScriptSession {
-        sessionsCache[module]?.let { return it as LLFirScriptSession }
-        checkCanceled()
+    private fun createBinaryLibrarySession(module: KtBinaryModule): LLFirLibrarySession {
+        val platform = module.platform
+        val builtinsSession = LLFirBuiltinsSessionFactory.getInstance(project).getBuiltinsSession(platform)
 
-        val project = module.project
+        val dependencyTracker = ModificationTracker.NEVER_CHANGED
+        val session = LLFirLibrarySession(module, dependencyTracker, builtinsSession.builtinTypes)
+
+        val moduleData = createModuleData(session)
+
+        return session.apply {
+            registerModuleData(moduleData)
+            registerIdeComponents(project)
+            register(FirLazyDeclarationResolver::class, FirDummyCompilerLazyDeclarationResolver)
+            registerCommonComponents(LanguageVersionSettingsImpl.DEFAULT/*TODO*/)
+            registerCommonComponentsAfterExtensionsAreConfigured()
+            registerCommonJavaComponents(JavaModuleResolver.getInstance(project))
+            registerJavaSpecificResolveComponents()
+
+            val kotlinScopeProvider = FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
+            register(FirKotlinScopeProvider::class, kotlinScopeProvider)
+
+            val symbolProvider = LLFirLibraryProviderFactory.createLibraryProvidersForScope(
+                this,
+                moduleData,
+                kotlinScopeProvider,
+                project,
+                builtinTypes,
+                module.contentScope,
+                builtinsSession.symbolProvider
+            )
+
+            register(LLFirFirClassByPsiClassProvider::class, LLFirFirClassByPsiClassProvider(this))
+            register(FirProvider::class, LLFirLibrarySessionProvider(symbolProvider))
+            register(FirSymbolProvider::class, symbolProvider)
+            register(FirJvmTypeMapper::class, FirJvmTypeMapper(this))
+
+            LLFirSessionConfigurator.configure(this)
+        }
+    }
+
+    private fun createScriptSession(module: KtScriptModule): LLFirScriptSession {
         val platform = module.platform
         val builtinsSession = LLFirBuiltinsSessionFactory.getInstance(project).getBuiltinsSession(platform)
         val languageVersionSettings = wrapLanguageVersionSettings(module.languageVersionSettings)
         val scopeProvider = FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
-        val globalResolveComponents = LLFirGlobalResolveComponents(project)
 
         val components = LLFirModuleResolveComponents(module, globalResolveComponents, scopeProvider)
         val contentScope = module.contentScope
 
-        val session = LLFirScriptSession(module, components, builtinsSession.builtinTypes)
-        sessionsCache[module] = session
+        val dependencies = collectSourceModuleDependencies(module)
+        val dependencyTracker = createSourceModuleDependencyTracker(module, dependencies)
+
+        val session = LLFirScriptSession(module, dependencyTracker, components, builtinsSession.builtinTypes)
         components.session = session
 
-        return session.apply session@{
-            val moduleData = LLFirModuleData(module).apply { bindSession(this@session) }
+        val moduleData = createModuleData(session)
+
+        return session.apply {
             registerModuleData(moduleData)
             register(FirKotlinScopeProvider::class, scopeProvider)
 
@@ -276,12 +359,7 @@ internal object LLFirSessionFactory {
             register(FirLazyDeclarationResolver::class, LLFirLazyDeclarationResolver())
 
             val dependencyProvider = LLFirDependentModuleProvidersBySessions(this) {
-                processSourceDependencies(
-                    module,
-                    sessionsCache,
-                    globalResolveComponents
-                )
-
+                addAll(dependencies)
                 add(builtinsSession)
             }
 
@@ -309,27 +387,19 @@ internal object LLFirSessionFactory {
         }
     }
 
-    fun createNotUnderContentRootResolvableSession(
-        module: KtNotUnderContentRootModule,
-        sessionsCache: MutableMap<KtModule, LLFirSession>
-    ): LLFirNonUnderContentRootResolvableModuleSession {
-        sessionsCache[module]?.let { return it as LLFirNonUnderContentRootResolvableModuleSession }
-        checkCanceled()
-
-        val project = module.project
+    private fun createNotUnderContentRootResolvableSession(module: KtNotUnderContentRootModule): LLFirNonUnderContentRootResolvableModuleSession {
         val builtinsSession = LLFirBuiltinsSessionFactory.getInstance(project).getBuiltinsSession(JvmPlatforms.unspecifiedJvmPlatform)
         val languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT
         val scopeProvider = FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
-        val globalResolveComponents = LLFirGlobalResolveComponents(project)
         val components = LLFirModuleResolveComponents(module, globalResolveComponents, scopeProvider)
-        val contentScope = module.contentScope
 
-        val session = LLFirNonUnderContentRootResolvableModuleSession(module, components, builtinsSession.builtinTypes)
-        sessionsCache[module] = session
+        val dependencyTracker = builtinsSession.modificationTracker
+        val session = LLFirNonUnderContentRootResolvableModuleSession(module, dependencyTracker, components, builtinsSession.builtinTypes)
         components.session = session
 
-        return session.apply session@{
-            val moduleData = LLFirModuleData(module).apply { bindSession(this@session) }
+        val moduleData = createModuleData(session)
+
+        return session.apply {
             registerModuleData(moduleData)
             register(FirKotlinScopeProvider::class, scopeProvider)
 
@@ -346,7 +416,7 @@ internal object LLFirSessionFactory {
                 this,
                 components,
                 if (ktFile != null) FileBasedKotlinDeclarationProvider(ktFile) else EmptyKotlinDeclarationProvider,
-                project.createPackageProvider(contentScope),
+                project.createPackageProvider(module.contentScope),
                 canContainKotlinPackage = true,
             )
 
@@ -395,45 +465,46 @@ internal object LLFirSessionFactory {
         }
     }
 
-    private fun MutableList<LLFirSession>.processSourceDependencies(
-        module: KtModule,
-        sessionsCache: MutableMap<KtModule, LLFirSession>,
-        globalResolveComponents: LLFirGlobalResolveComponents
-    ) {
-        val project = module.project
+    private fun collectSourceModuleDependencies(module: KtModule): List<LLFirSession> {
+        val dependencies = mutableListOf<LLFirSession>()
 
         fun getOrCreateSessionForDependency(dependency: KtModule): LLFirSession? = when (dependency) {
-            is KtBuiltinsModule -> {
-                // Built-ins are already added
-                null
-            }
-
-            is KtBinaryModule -> {
-                LLFirLibrarySessionFactory.getInstance(project).getLibrarySession(dependency, sessionsCache)
-            }
-
-            is KtSourceModule -> {
-                createSourcesSession(dependency, globalResolveComponents, sessionsCache)
-            }
+            is KtBuiltinsModule -> null // Built-ins are already added
+            is KtBinaryModule -> getSession(dependency, preferBinary = true)
+            is KtSourceModule -> getSession(dependency)
 
             is KtScriptModule,
             is KtScriptDependencyModule,
             is KtNotUnderContentRootModule,
-            is KtLibrarySourceModule -> {
-                error("Module $module cannot depend on ${dependency::class}: $dependency")
-            }
+            is KtLibrarySourceModule -> error("Module $module cannot depend on ${dependency::class}: $dependency")
         }
 
-        module.directRegularDependencies.mapNotNullTo(this@processSourceDependencies, ::getOrCreateSessionForDependency)
+        module.directRegularDependencies.mapNotNullTo(dependencies, ::getOrCreateSessionForDependency)
 
         // The dependency provider needs to have access to all direct and indirect `dependsOn` dependencies, as `dependsOn`
         // dependencies are transitive.
         val directRegularDependenciesSet = module.directRegularDependencies.toSet()
         module.transitiveDependsOnDependencies.forEach { dependency ->
             if (dependency !in directRegularDependenciesSet) {
-                getOrCreateSessionForDependency(dependency)?.let(this::add)
+                getOrCreateSessionForDependency(dependency)?.let(dependencies::add)
             }
         }
+
+        return dependencies
+    }
+
+    private fun createSourceModuleDependencyTracker(module: KtModule, exposedDependencies: List<LLFirSession>): ModificationTracker {
+        val friendDependencies = module.directFriendDependencies
+        val trackers = ArrayList<ModificationTracker>(exposedDependencies.size + friendDependencies.size)
+
+        exposedDependencies.forEach { trackers += it.modificationTracker }
+        friendDependencies.forEach { trackers += getSession(it).modificationTracker }
+
+        return CompositeModificationTracker.createFlattened(trackers)
+    }
+
+    private fun createModuleData(session: LLFirSession): LLFirModuleData {
+        return LLFirModuleData(session.ktModule).apply { bindSession(session) }
     }
 }
 

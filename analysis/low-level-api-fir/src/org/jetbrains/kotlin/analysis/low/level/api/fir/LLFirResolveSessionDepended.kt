@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
-import java.util.concurrent.ConcurrentHashMap
 
 internal class LLFirResolveSessionDepended(
     val originalFirResolveSession: LLFirResolvableResolveSession,

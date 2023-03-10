@@ -5,14 +5,15 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.state
 
-import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirGlobalResolveComponents
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirTowerContextProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableModuleSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirDeclarationForCompiledElementSearcher
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.findSourceNonLocalFirDeclaration
@@ -40,18 +41,32 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
 
+@Suppress("PrivatePropertyName")
+private val LOG = Logger.getInstance(LLFirResolvableResolveSession::class.java)
+
 internal abstract class LLFirResolvableResolveSession(
-    private val sessionProvider: LLFirSessionProvider,
+    final override val useSiteFirSession: LLFirSession
 ) : LLFirResolveSession() {
-    abstract val globalComponents: LLFirGlobalResolveComponents
+    final override val useSiteKtModule: KtModule
+        get() = useSiteFirSession.ktModule
 
-    final override val useSiteFirSession = sessionProvider.rootModuleSession
+    final override val project: Project
+        get() = useSiteKtModule.project
 
-    override fun getSessionFor(module: KtModule): LLFirSession =
-        sessionProvider.getSession(module)
+    override fun getSessionFor(module: KtModule): LLFirSession {
+        LOG.assertTrue(useSiteFirSession.isValid, "Use-site session is invalid")
 
-    protected open fun getResolvableSessionFor(module: KtModule): LLFirResolvableModuleSession =
-        sessionProvider.getResolvableSession(module)
+        if (module == useSiteFirSession.ktModule) {
+            return useSiteFirSession
+        }
+
+        val cache = LLFirSessionCache.getInstance(module.project)
+        return cache.getSession(module, preferBinary = true)
+    }
+
+    protected open fun getResolvableSessionFor(module: KtModule): LLFirResolvableModuleSession {
+        return getSessionFor(module) as LLFirResolvableModuleSession
+    }
 
     override fun getScopeSessionFor(firSession: FirSession): ScopeSession {
         requireIsInstance<LLFirSession>(firSession)

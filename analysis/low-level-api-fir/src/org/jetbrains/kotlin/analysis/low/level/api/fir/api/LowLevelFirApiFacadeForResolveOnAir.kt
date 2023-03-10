@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.api
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analysis.low.level.api.fir.DeclarationCopyBuilder.withBodyFrom
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirGlobalResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirResolveSessionDepended
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FileTowerProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirTowerContextProvider
@@ -259,7 +260,9 @@ object LowLevelFirApiFacadeForResolveOnAir {
 
         val isInBodyReplacement = isInBodyReplacement(nonLocalDeclaration, replacement)
 
-        return firResolveSession.globalComponents.lockProvider.withLock(originalFirFile) {
+        val globalResolveComponents = LLFirGlobalResolveComponents.getInstance(firResolveSession.project)
+
+        return globalResolveComponents.lockProvider.withLock(originalFirFile) {
             val copiedFirDeclaration = if (isInBodyReplacement) {
                 when (originalDeclaration) {
                     is FirSimpleFunction ->

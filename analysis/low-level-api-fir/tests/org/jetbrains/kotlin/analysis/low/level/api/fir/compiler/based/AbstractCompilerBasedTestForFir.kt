@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based
 
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirResolveSessionService
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
-import org.jetbrains.kotlin.analysis.low.level.api.fir.createFirResolveSessionForNoCaching
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.FirLowLevelCompilerBasedTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyTransformer
 import org.jetbrains.kotlin.analysis.test.framework.AbstractCompilerBasedTest
@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.FirParser
-import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.firHandlersStep
 import org.jetbrains.kotlin.test.builders.testConfiguration
@@ -86,8 +85,8 @@ abstract class AbstractCompilerBasedTestForFir : AbstractCompilerBasedTest() {
             val moduleInfoProvider = testServices.ktModuleProvider
             val ktModule = moduleInfoProvider.getModule(module.name) as KtSourceModuleByCompilerConfiguration
 
-            val project = testServices.compilerConfigurationProvider.getProject(module)
-            val firResolveSession = createFirResolveSessionForNoCaching(ktModule, project)
+            val project = ktModule.project
+            val firResolveSession = LLFirResolveSessionService.getInstance(project).getFirResolveSessionNoCaching(ktModule)
 
             val allFirFiles =
                 module.files.filter { it.isKtFile }.zip(
