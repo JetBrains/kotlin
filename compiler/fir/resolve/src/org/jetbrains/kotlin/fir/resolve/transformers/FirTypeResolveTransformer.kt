@@ -190,7 +190,7 @@ open class FirTypeResolveTransformer(
                             returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.PropertyTypeFromGetterReturnType)
                         )
 
-                        property.setter?.valueParameters?.map {
+                        property.setter?.valueParameters?.forEach {
                             it.replaceReturnTypeRef(
                                 returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.PropertyTypeFromGetterReturnType)
                             )
