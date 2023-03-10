@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.gradle.plugin.ide.ideaImportDependsOn
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.getVisibleSourceSetsFromAssociateCompilations
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
-import org.jetbrains.kotlin.gradle.targets.metadata.getMetadataCompilationForSourceSet
+import org.jetbrains.kotlin.gradle.targets.metadata.findMetadataCompilation
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.targets.native.internal.MissingNativeStdlibWarning.showMissingNativeStdlibWarning
 import org.jetbrains.kotlin.gradle.utils.filesProvider
@@ -89,11 +89,11 @@ private fun NativeDistributionCommonizerTask.getCommonizedPlatformLibrariesFor(t
     return project.filesProvider { targetOutputDirectory.listLibraryFiles() }.builtBy(this)
 }
 
-private fun Project.addDependencies(
+private suspend fun Project.addDependencies(
     sourceSet: KotlinSourceSet, libraries: FileCollection, isCompilationDependency: Boolean = true, isIdeDependency: Boolean = true
 ) {
     if (isCompilationDependency) {
-        getMetadataCompilationForSourceSet(sourceSet)?.let { compilation ->
+        findMetadataCompilation(sourceSet)?.let { compilation ->
             compilation.compileDependencyFiles += libraries
         }
     }

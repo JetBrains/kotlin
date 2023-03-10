@@ -315,6 +315,8 @@ internal interface KotlinPluginLifecycle {
 
         companion object {
             val values = values().toList()
+            val first = values.first()
+            val last = values.last()
             fun upTo(stage: Stage): Set<Stage> = values.first()..stage
             fun until(stage: Stage): Set<Stage> {
                 return upTo(stage.previousOrNull ?: return emptySet())
@@ -368,9 +370,9 @@ private class KotlinPluginLifecycleImpl(override val project: Project) : KotlinP
     private val enqueuedActions: Map<Stage, ArrayDeque<KotlinPluginLifecycle.() -> Unit>> =
         Stage.values().associateWith { ArrayDeque() }
 
-    private var loopRunning = AtomicBoolean(false)
-    private var isStarted = AtomicBoolean(false)
-    private var isFinished = AtomicBoolean(false)
+    private val loopRunning = AtomicBoolean(false)
+    private val isStarted = AtomicBoolean(false)
+    private val isFinished = AtomicBoolean(false)
 
     private val properties = WeakHashMap<Property<*>, WeakReference<LifecycleAwareProperty<*>>>()
 

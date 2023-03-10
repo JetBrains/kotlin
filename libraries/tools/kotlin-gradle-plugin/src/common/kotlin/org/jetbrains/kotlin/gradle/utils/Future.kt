@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.gradle.plugin.HasProject
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.IllegalLifecycleException
 import org.jetbrains.kotlin.gradle.plugin.kotlinPluginLifecycle
-import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.tooling.core.ExtrasLazyProperty
 import org.jetbrains.kotlin.tooling.core.HasMutableExtras
 import org.jetbrains.kotlin.tooling.core.extrasLazyProperty
@@ -47,6 +46,12 @@ internal interface Future<T> {
     fun getOrThrow(): T
 }
 
+internal interface CompletableFuture<T> : Future<T> {
+    fun complete(value: T)
+}
+
+internal fun CompletableFuture<Unit>.complete() = complete(Unit)
+
 internal inline fun <Receiver, reified T> lazyFuture(
     name: String? = null, noinline block: suspend Receiver.() -> T
 ): ExtrasLazyProperty<Receiver, Future<T>> where Receiver : HasMutableExtras, Receiver : HasProject {
@@ -55,8 +60,10 @@ internal inline fun <Receiver, reified T> lazyFuture(
     }
 }
 
+internal fun <T> Project.future(block: suspend Project.() -> T): Future<T> = kotlinPluginLifecycle.future { block() }
+
 @OptIn(ExperimentalCoroutinesApi::class)
-internal fun <T> Project.future(block: suspend Project.() -> T): Future<T> {
+internal fun <T> KotlinPluginLifecycle.future(block: suspend () -> T): Future<T> {
     val deferred = CompletableDeferred<T>()
 
     launch {
@@ -70,7 +77,29 @@ internal fun <T> Project.future(block: suspend Project.() -> T): Future<T> {
 
         override fun getOrThrow(): T {
             return if (deferred.isCompleted) deferred.getCompleted() else throw IllegalLifecycleException(
-                "Future was not completed yet. Stage: '${kotlinPluginLifecycle.stage}'"
+                "Future was not completed yet. Stage: '${stage}'"
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalCoroutinesApi::class)
+internal fun <T> CompletableFuture(): CompletableFuture<T> {
+    val deferred = CompletableDeferred<T>()
+
+
+    return object : CompletableFuture<T> {
+        override fun complete(value: T) {
+            deferred.complete(value)
+        }
+
+        override suspend fun await(): T {
+            return deferred.await()
+        }
+
+        override fun getOrThrow(): T {
+            return if (deferred.isCompleted) deferred.getCompleted() else throw IllegalLifecycleException(
+                "Future was not completed yet"
             )
         }
     }

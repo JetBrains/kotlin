@@ -56,7 +56,7 @@ abstract class KotlinNativeTarget @Inject constructor(
         // NB: another usage context for the host-specific metadata may be added to this set below
         val mutableUsageContexts = createUsageContexts(mainCompilation).toMutableSet()
 
-        project.whenEvaluated {
+        project.launchInStage(KotlinPluginLifecycle.Stage.AfterFinaliseDsl) {
             val hostSpecificSourceSets = getHostSpecificSourceSets(project)
                 .intersect(mainCompilation.allKotlinSourceSets)
 
@@ -70,18 +70,20 @@ abstract class KotlinNativeTarget @Inject constructor(
                     val publishable = this@KotlinNativeTarget.publishable
                     metadataJar.onlyIf { publishable }
 
-                    val metadataCompilations = hostSpecificSourceSets.mapNotNull {
-                        project.getMetadataCompilationForSourceSet(it)
-                    }
-
-                    metadataCompilations.forEach { compilation ->
-                        metadataJar.from(project.filesWithUnpackedArchives(compilation.output.allOutputs, setOf("klib"))) { spec ->
-                            spec.into(compilation.name)
+                    launch {
+                        val metadataCompilations = hostSpecificSourceSets.mapNotNull {
+                            project.findMetadataCompilation(it)
                         }
-                        metadataJar.dependsOn(compilation.output.classesDirs)
 
-                        if (compilation is KotlinSharedNativeCompilation) {
-                            project.includeCommonizedCInteropMetadata(metadataJar, compilation)
+                        metadataCompilations.forEach { compilation ->
+                            metadataJar.from(project.filesWithUnpackedArchives(compilation.output.allOutputs, setOf("klib"))) { spec ->
+                                spec.into(compilation.name)
+                            }
+                            metadataJar.dependsOn(compilation.output.classesDirs)
+
+                            if (compilation is KotlinSharedNativeCompilation) {
+                                project.includeCommonizedCInteropMetadata(metadataJar, compilation)
+                            }
                         }
                     }
                 }
