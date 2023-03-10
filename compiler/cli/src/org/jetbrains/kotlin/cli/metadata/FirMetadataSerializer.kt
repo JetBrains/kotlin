@@ -57,11 +57,12 @@ internal class FirMetadataSerializer(
 
         val configuration = environment.configuration
         val messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-        val rootModuleName = Name.special("<${configuration.getNotNull(CommonConfigurationKeys.MODULE_NAME)}>")
+        val moduleName = Name.special("<${configuration.getNotNull(CommonConfigurationKeys.MODULE_NAME)}>")
         val isLightTree = configuration.getBoolean(CommonConfigurationKeys.USE_LIGHT_TREE)
 
+        val rootModuleName = moduleName.asString()
         val binaryModuleData = BinaryModuleData.initialize(
-            rootModuleName,
+            Name.identifier(rootModuleName),
             CommonPlatforms.defaultCommonPlatform,
             CommonPlatformAnalyzerServices
         )

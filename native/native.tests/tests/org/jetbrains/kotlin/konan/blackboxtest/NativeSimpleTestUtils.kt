@@ -80,7 +80,6 @@ internal fun AbstractNativeSimpleTest.compileToStaticCache(
         settings = testRunSettings,
         freeCompilerArgs = TestCompilerArgs.EMPTY,
         StaticCacheCompilation.Options.Regular,
-        pipelineType = testRunSettings.get(),
         dependencies = listOf(klib.asLibraryDependency()),
         expectedArtifact = TestCompilationArtifact.KLIBStaticCache(cacheDir, klib)
     )
@@ -92,7 +91,7 @@ internal fun AbstractNativeSimpleTest.generateTestCaseWithSingleModule(
     freeCompilerArgs: TestCompilerArgs = TestCompilerArgs.EMPTY
 ): TestCase {
     val moduleName: String = moduleDir?.name ?: LAUNCHER_MODULE_NAME
-    val module = TestModule.Exclusive(moduleName, emptySet(), emptySet(), emptySet())
+    val module = TestModule.Exclusive(moduleName, emptySet(), emptySet())
 
     moduleDir?.walkTopDown()
         ?.filter { it.isFile && it.extension == "kt" }

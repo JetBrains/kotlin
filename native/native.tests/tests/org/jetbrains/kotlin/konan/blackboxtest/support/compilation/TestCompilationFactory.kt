@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.TestCase.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCompilerArgs
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestModule
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestModule.Companion.allDependencies
-import org.jetbrains.kotlin.konan.blackboxtest.support.TestModule.Companion.allDependsOn
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestModule.Companion.allFriends
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationArtifact.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationDependencyType.*
@@ -159,7 +158,7 @@ internal class TestCompilationFactory {
                 LibraryCompilation(
                     settings = settings,
                     freeCompilerArgs = freeCompilerArgs,
-                    sourceModules = sourceModules.flatMapToSet { sortDependsOnTopologically(it) },
+                    sourceModules = sourceModules,
                     dependencies = dependencies.forKlib(),
                     expectedArtifact = klibArtifact
                 )
@@ -170,7 +169,6 @@ internal class TestCompilationFactory {
                         settings = settings,
                         freeCompilerArgs = freeCompilerArgs,
                         options = staticCacheOptions,
-                        pipelineType = settings.get(),
                         dependencies = dependencies.forStaticCache(klibCompilation.asKlibDependency(type = /* does not matter in fact*/ Library)),
                         expectedArtifact = staticCacheArtifact
                     )
@@ -203,23 +201,6 @@ internal class TestCompilationFactory {
         sourceModules.allFriends().collectDependencies(FriendLibrary)
 
         return CompilationDependencies(klibDependencies, staticCacheDependencies)
-    }
-
-    // mimics FirFrontendFacade.sortDependsOnTopologically(org.jetbrains.kotlin.test.model.TestModule)
-    private fun sortDependsOnTopologically(module: TestModule): List<TestModule> {
-        val sortedModules = mutableListOf<TestModule>()
-        val visitedModules = mutableSetOf<TestModule>()
-        val modulesQueue = ArrayDeque<TestModule>()
-        modulesQueue.add(module)
-
-        while (modulesQueue.isNotEmpty()) {
-            val currentModule = modulesQueue.removeFirst()
-            if (!visitedModules.add(currentModule)) continue
-            sortedModules.add(currentModule)
-            modulesQueue += currentModule.allDependsOn
-        }
-
-        return sortedModules.reversed()
     }
 
     companion object {

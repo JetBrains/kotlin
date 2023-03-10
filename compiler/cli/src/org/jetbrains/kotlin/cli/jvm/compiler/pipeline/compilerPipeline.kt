@@ -65,7 +65,6 @@ import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackagePartProvid
 import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
@@ -327,7 +326,7 @@ fun compileModuleToAnalyzedFir(
     // TODO: handle friends paths
     val libraryList = createLibraryListForJvm(rootModuleName, moduleConfiguration, friendPaths = emptyList())
     val sessionWithSources = prepareJvmSessions(
-        allSources, moduleConfiguration, projectEnvironment, Name.identifier(rootModuleName),
+        allSources, moduleConfiguration, projectEnvironment, rootModuleName,
         extensionRegistrars, librariesScope, libraryList,
         isCommonSource = input.groupedSources.isCommonSourceForLt,
         fileBelongsToModule = input.groupedSources.fileBelongsToModuleForLt,

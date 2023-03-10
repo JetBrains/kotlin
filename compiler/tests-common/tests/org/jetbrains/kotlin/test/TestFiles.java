@@ -6,10 +6,8 @@
 package org.jetbrains.kotlin.test;
 
 import com.google.common.collect.Lists;
-import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.ObsoleteTestInfrastructure;
 import org.jetbrains.kotlin.TestHelperGeneratorKt;
 
 import java.util.*;
@@ -20,12 +18,11 @@ import java.util.stream.Collectors;
 import static org.jetbrains.kotlin.test.InTextDirectivesUtils.isDirectiveDefined;
 import static org.jetbrains.kotlin.test.KotlinTestUtils.parseDirectives;
 
-@ObsoleteTestInfrastructure // THIS TEST PARSER IS OUTDATED/DEPRECATED. PLEASE USE ModuleStructureExtractor INSTEAD
 public class TestFiles {
     /**
      * Syntax:
      *
-     * // MODULE: name(dependency1, dependency2, ...)(friend1, friend2, ...)(dependsOn1, dependsOn2, ...)
+     * // MODULE: name(dependency1, dependency2, ...)
      *
      * // FILE: name
      *
@@ -33,11 +30,7 @@ public class TestFiles {
      */
     private static final String MODULE_DELIMITER = ",\\s*";
 
-    private static final Pattern MODULE_PREFIX_PATTERN = Pattern.compile("//\\s*MODULE:.*\n");
-    private static final Pattern MODULE_PATTERN = Pattern.compile("//\\s*MODULE:\\s*([^()\\n]+)" +                         // name
-                                                                  "(?:\\(([^()]*(?:" + MODULE_DELIMITER + "[^()]+)*)\\))?\\s*" + // dependencies
-                                                                  "(?:\\(([^()]*(?:" + MODULE_DELIMITER + "[^()]+)*)\\))?\\s*" + // friends
-                                                                  "(?:\\(([^()]*(?:" + MODULE_DELIMITER + "[^()]+)*)\\))?\n");   // dependsOn
+    private static final Pattern MODULE_PATTERN = Pattern.compile("//\\s*MODULE:\\s*([^()\\n]+)(?:\\(([^()]+(?:" + MODULE_DELIMITER + "[^()]+)*)\\))?\\s*(?:\\(([^()]+(?:" + MODULE_DELIMITER + "[^()]+)*)\\))?\\s*(?:\\((\\d+(?:" + MODULE_DELIMITER + "\\d+)*)\\))?\n");
     private static final Pattern FILE_PATTERN = Pattern.compile("//\\s*FILE:\\s*(.*)\n");
 
     private static final Pattern LINE_SEPARATOR_PATTERN = Pattern.compile("\\r\\n|\\r|\\n");
@@ -60,15 +53,11 @@ public class TestFiles {
         List<F> testFiles = Lists.newArrayList();
         Matcher fileMatcher = FILE_PATTERN.matcher(expectedText);
         Matcher moduleMatcher = MODULE_PATTERN.matcher(expectedText);
-        Matcher modulePrefixMatcher = MODULE_PREFIX_PATTERN.matcher(expectedText);
         boolean hasModules = false;
         String commonPrefixOrWholeFile;
 
         boolean fileFound = fileMatcher.find();
         boolean moduleFound = moduleMatcher.find();
-        boolean modulePrefixFound = modulePrefixMatcher.find();
-        assert moduleFound == modulePrefixFound : "First MODULE directive doesn't match to the expected pattern in:\n" + expectedText;
-
         if (!fileFound && !moduleFound) {
             assert testFileName != null : "testFileName should not be null if no FILE directive defined";
             // One file
@@ -96,20 +85,17 @@ public class TestFiles {
                     String moduleName = moduleMatcher.group(1);
                     String moduleDependencies = moduleMatcher.group(2);
                     String moduleFriends = moduleMatcher.group(3);
-                    String moduleDependsOn = moduleMatcher.group(4);
+                    String abiVersions = moduleMatcher.group(4);
                     if (moduleName != null) {
                         moduleName = moduleName.trim();
                         hasModules = true;
-                        module = factory.createModule(moduleName, parseModuleList(moduleDependencies), parseModuleList(moduleFriends), parseModuleList(moduleDependsOn));
+                        module = factory.createModule(moduleName, parseModuleList(moduleDependencies), parseModuleList(moduleFriends), parseAbiVersionsList(abiVersions));
                         M oldValue = modules.put(moduleName, module);
                         assert oldValue == null : "Module with name " + moduleName + " already present in file";
                     }
                 }
 
                 boolean nextModuleExists = moduleMatcher.find();
-                boolean nextModulePrefixExists = modulePrefixMatcher.find();
-                assert nextModuleExists == nextModulePrefixExists : "Continuation MODULE directive doesn't match to the expected pattern in:\n" + expectedText;
-
                 moduleFound = nextModuleExists;
                 while (true) {
                     String fileName = fileMatcher.group(1);
@@ -170,25 +156,18 @@ public class TestFiles {
 
         for (M module : modules.values()) {
             if (module != null) {
-                module.getDependencies().addAll(module.dependenciesSymbols.stream().map(name -> {
-                    M dep = modules.get(name);
-                    assert dep != null : "Dependency not found: " + name + " for module " + module.name + " in:\n" + expectedText;
-                    return dep;
-                }).collect(Collectors.toList()));
+                module.getDependencies().addAll(module.dependenciesSymbols.stream()
+                                                        .map(modules::get)
+                                                        .filter(Objects::nonNull)
+                                                        .collect(Collectors.toList()));
 
-                module.getFriends().addAll(module.friendsSymbols.stream().map(name -> {
-                    M dep = modules.get(name);
-                    assert dep != null : "Dependency not found: " + name + " for module " + module.name + " in:\n" + expectedText;
-                    return dep;
-                }).collect(Collectors.toList()));
-
-                module.getDependsOn().addAll(module.dependsOnSymbols.stream().map(name -> {
-                    M dep = modules.get(name);
-                    assert dep != null : "Dependency not found: " + name + " for module " + module.name + " in:\n" + expectedText;
-                    return dep;
-                }).collect(Collectors.toList()));
+                module.getFriends().addAll(module.friendsSymbols.stream()
+                                                   .map(modules::get)
+                                                   .filter(Objects::nonNull)
+                                                   .collect(Collectors.toList()));
             }
         }
+
 
         return testFiles;
     }
@@ -214,13 +193,23 @@ public class TestFiles {
     }
 
     private static List<String> parseModuleList(@Nullable String dependencies) {
-        if (dependencies == null || StringsKt.isBlank(dependencies)) return Collections.emptyList();
-        return StringsKt.split(dependencies, Pattern.compile(MODULE_DELIMITER), 0);
+        if (dependencies == null) return Collections.emptyList();
+        return kotlin.text.StringsKt.split(dependencies, Pattern.compile(MODULE_DELIMITER), 0);
+    }
+
+    private static List<Integer> parseAbiVersionsList(@Nullable String versions) {
+        if (versions == null) return Collections.emptyList();
+        List<String> splitted = kotlin.text.StringsKt.split(versions, Pattern.compile(MODULE_DELIMITER), 0);
+        List<Integer> result = new ArrayList<>(splitted.size());
+        for (String s : splitted) {
+            result.add(Integer.parseInt(s));
+        }
+        return result;
     }
 
     public interface TestFileFactory<M, F> {
         F createFile(@Nullable M module, @NotNull String fileName, @NotNull String text, @NotNull Directives directives);
-        M createModule(@NotNull String name, @NotNull List<String> dependencies, @NotNull List<String> friends, @NotNull List<String> dependsOn);
+        M createModule(@NotNull String name, @NotNull List<String> dependencies, @NotNull List<String> friends, @NotNull List<Integer> abiVersions);
     }
 
     public static abstract class TestFileFactoryNoModules<F> implements TestFileFactory<KotlinBaseTest.TestModule, F> {
@@ -238,7 +227,7 @@ public class TestFiles {
         public abstract F create(@NotNull String fileName, @NotNull String text, @NotNull Directives directives);
 
         @Override
-        public KotlinBaseTest.TestModule createModule(@NotNull String name, @NotNull List<String> dependencies, @NotNull List<String> friends, @NotNull List<String> dependsOn) {
+        public KotlinBaseTest.TestModule createModule(@NotNull String name, @NotNull List<String> dependencies, @NotNull List<String> friends, @NotNull List<Integer> abiVersions) {
             return null;
         }
     }

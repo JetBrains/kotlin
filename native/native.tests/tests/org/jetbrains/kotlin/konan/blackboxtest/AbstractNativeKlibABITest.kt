@@ -107,7 +107,6 @@ abstract class AbstractNativeKlibABITest : AbstractNativeSimpleTest() {
             settings = testRunSettings,
             freeCompilerArgs = COMPILER_ARGS_FOR_STATIC_CACHE_AND_EXECUTABLE,
             options = StaticCacheCompilation.Options.Regular,
-            pipelineType = testRunSettings.get(),
             dependencies = createLibraryCacheDependencies(moduleDependencies) + klibArtifact.toDependency(),
             expectedArtifact = klibArtifact.toStaticCacheArtifact()
         )
@@ -119,8 +118,7 @@ abstract class AbstractNativeKlibABITest : AbstractNativeSimpleTest() {
         name = moduleName,
         directDependencySymbols = emptySet(), /* Don't need to pass any dependency symbols here.
                                                  Dependencies are already handled by the AbstractKlibABITestCase class. */
-        directFriendSymbols = emptySet(),
-        directDependsOnSymbols = emptySet(),
+        directFriendSymbols = emptySet()
     )
 
     private fun createTestCase(module: TestModule.Exclusive, compilerArgs: TestCompilerArgs) = TestCase(

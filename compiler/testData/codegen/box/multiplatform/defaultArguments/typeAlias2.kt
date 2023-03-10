@@ -1,6 +1,7 @@
 // !LANGUAGE: +MultiPlatformProjects
 // WITH_STDLIB
 // IGNORE_BACKEND_K1: ANY
+// IGNORE_BACKEND_K2: NATIVE
 
 // MODULE: common
 // FILE: common.kt
