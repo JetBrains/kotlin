@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBod
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDeclarationsResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirExpressionsResolveTransformer
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.visitors.transformSingle
 
 open class FirAnnotationArgumentsResolveTransformer(
     session: FirSession,
@@ -147,7 +148,7 @@ private class FirDeclarationsResolveTransformerForArgumentAnnotations(
 
     override fun transformTypeAlias(typeAlias: FirTypeAlias, data: ResolutionMode): FirTypeAlias {
         typeAlias.transformAnnotations(transformer, data)
-        typeAlias.expandedTypeRef.transform<FirTypeRef, _>(transformer, data)
+        typeAlias.expandedTypeRef.transformSingle(transformer, data)
         return typeAlias
     }
 
