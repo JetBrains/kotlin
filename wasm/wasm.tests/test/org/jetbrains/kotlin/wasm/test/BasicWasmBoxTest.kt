@@ -9,6 +9,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiManager
+import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.toPhaseMap
 import org.jetbrains.kotlin.backend.wasm.*
@@ -55,6 +56,8 @@ abstract class BasicWasmBoxTest(
     )
 
     fun doTest(filePath: String) = doTestWithTransformer(filePath) { it }
+
+    @OptIn(ObsoleteTestInfrastructure::class)
     fun doTestWithTransformer(filePath: String, transformer: java.util.function.Function<String, String>) {
         val file = File(filePath)
 
@@ -308,6 +311,7 @@ abstract class BasicWasmBoxTest(
         return JsConfig(project, configuration, CompilerEnvironment, null, null)
     }
 
+    @OptIn(ObsoleteTestInfrastructure::class)
     private inner class TestFileFactoryImpl : TestFiles.TestFileFactoryNoModules<TestFile>(), Closeable {
         override fun create(fileName: String, text: String, directives: Directives): TestFile {
             val ktFile = KtPsiFactory(project).createFile(text)
