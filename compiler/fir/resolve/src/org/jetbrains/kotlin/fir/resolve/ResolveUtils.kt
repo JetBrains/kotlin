@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
-import org.jetbrains.kotlin.fir.scopes.impl.delegatedWrapperData
 import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectOrStaticData
 import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -556,14 +555,12 @@ fun FirFunction.getAsForbiddenNamedArgumentsTarget(
     if (hasStableParameterNames) return null
 
     return when (origin) {
-        FirDeclarationOrigin.Delegated -> delegatedWrapperData?.wrapped?.getAsForbiddenNamedArgumentsTarget(session)
-
         FirDeclarationOrigin.ImportedFromObjectOrStatic ->
             importedFromObjectOrStaticData?.original?.getAsForbiddenNamedArgumentsTarget(session)
 
-        FirDeclarationOrigin.IntersectionOverride, FirDeclarationOrigin.SubstitutionOverride -> {
+        FirDeclarationOrigin.IntersectionOverride, FirDeclarationOrigin.SubstitutionOverride, FirDeclarationOrigin.Delegated -> {
             var result: ForbiddenNamedArgumentsTarget? =
-                originalIfFakeOverride()?.getAsForbiddenNamedArgumentsTarget(session) ?: return null
+                unwrapFakeOverridesOrDelegated().getAsForbiddenNamedArgumentsTarget(session) ?: return null
             originScope?.processOverriddenFunctions(symbol as FirNamedFunctionSymbol) {
                 if (it.fir.getAsForbiddenNamedArgumentsTarget(session) == null) {
                     result = null
