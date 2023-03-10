@@ -9,10 +9,11 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.JsModuleAndQualifierReference
+import org.jetbrains.kotlin.backend.wasm.utils.getJsFunAnnotation
+import org.jetbrains.kotlin.backend.wasm.utils.getJsPrimitiveType
+import org.jetbrains.kotlin.backend.wasm.utils.getWasmImportDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.backend.wasm.utils.getJsFunAnnotation
-import org.jetbrains.kotlin.backend.wasm.utils.getWasmImportDescriptor
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsModule
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
@@ -30,7 +31,6 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
-import java.lang.StringBuilder
 
 /**
  * Lower complex external declarations to top-level functions:
@@ -340,8 +340,13 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
             "_\$external_class_instanceof",
             resultType = context.irBuiltIns.booleanType,
             jsCode = buildString {
-                append("(x) => x instanceof ")
-                appendExternalClassReference(klass)
+                val jsPrimitiveType = klass.getJsPrimitiveType()
+                if (jsPrimitiveType != null) {
+                    append("(x) => typeof x === '$jsPrimitiveType'")
+                } else {
+                    append("(x) => x instanceof ")
+                    appendExternalClassReference(klass)
+                }
             }
         ).also {
             it.addValueParameter("x", context.irBuiltIns.anyType)
