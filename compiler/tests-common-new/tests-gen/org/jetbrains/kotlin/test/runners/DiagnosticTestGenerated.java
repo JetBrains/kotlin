@@ -3866,6 +3866,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("mutablePropertyViaDelegation.kt")
+                public void testMutablePropertyViaDelegation() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/callableReference/property/mutablePropertyViaDelegation.kt");
+                }
+
+                @Test
                 @TestMetadata("propertyFromAbstractSuperClass.kt")
                 public void testPropertyFromAbstractSuperClass() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/callableReference/property/propertyFromAbstractSuperClass.kt");
