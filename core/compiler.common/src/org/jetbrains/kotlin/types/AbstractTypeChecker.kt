@@ -463,7 +463,7 @@ object AbstractTypeChecker {
         return typeVariableConstructor.typeParameter?.hasRecursiveBounds(selfConstructor) == true
     }
 
-    fun TypeCheckerState.isSubtypeForSameConstructor(
+    private fun TypeCheckerState.isSubtypeForSameConstructor(
         capturedSubArguments: TypeArgumentListMarker,
         superType: SimpleTypeMarker
     ): Boolean = with(this.typeSystemContext) {
@@ -746,7 +746,7 @@ object AbstractNullabilityChecker {
         runIsPossibleSubtype(state, subType, superType)
 
     fun isSubtypeOfAny(context: TypeCheckerProviderContext, type: KotlinTypeMarker): Boolean =
-        AbstractNullabilityChecker.isSubtypeOfAny(
+        isSubtypeOfAny(
             context.newTypeCheckerState(
                 errorTypesEqualToAnything = false,
                 stubTypesEqualToAnything = true
