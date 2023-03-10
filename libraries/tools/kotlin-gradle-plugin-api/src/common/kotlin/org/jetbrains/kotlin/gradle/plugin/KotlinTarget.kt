@@ -16,8 +16,9 @@ import org.gradle.api.attributes.HasAttributes
 import org.gradle.api.component.SoftwareComponent
 import org.gradle.api.publish.maven.MavenPublication
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptionsDeprecated
+import org.jetbrains.kotlin.tooling.core.HasMutableExtras
 
-interface KotlinTarget : Named, HasAttributes {
+interface KotlinTarget : Named, HasAttributes, HasProject, HasMutableExtras {
     val targetName: String
     val disambiguationClassifier: String? get() = targetName
     val useDisambiguationClassifierAsSourceSetNamePrefix: Boolean
@@ -26,8 +27,6 @@ interface KotlinTarget : Named, HasAttributes {
     val platformType: KotlinPlatformType
 
     val compilations: NamedDomainObjectContainer<out KotlinCompilation<KotlinCommonOptionsDeprecated>>
-
-    val project: Project
 
     val artifactsTaskName: String
 

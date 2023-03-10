@@ -672,6 +672,10 @@ public final class org/jetbrains/kotlin/gradle/plugin/HasKotlinDependenciesKt {
 	public static final fun warnNpmGenerateExternals (Lorg/gradle/api/logging/Logger;)V
 }
 
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/HasProject {
+	public abstract fun getProject ()Lorg/gradle/api/Project;
+}
+
 public class org/jetbrains/kotlin/gradle/plugin/InternalSubpluginOption : org/jetbrains/kotlin/gradle/plugin/SubpluginOption {
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
 }
@@ -689,7 +693,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinBasePlu
 	public abstract fun getPluginVersion ()Ljava/lang/String;
 }
 
-public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinCompilation : org/gradle/api/Named, org/gradle/api/attributes/HasAttributes, org/jetbrains/kotlin/gradle/plugin/HasKotlinDependencies {
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinCompilation : org/gradle/api/Named, org/gradle/api/attributes/HasAttributes, org/jetbrains/kotlin/gradle/plugin/HasKotlinDependencies, org/jetbrains/kotlin/gradle/plugin/HasProject, org/jetbrains/kotlin/tooling/core/HasMutableExtras {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilation$Companion;
 	public static final field MAIN_COMPILATION_NAME Ljava/lang/String;
 	public static final field TEST_COMPILATION_NAME Ljava/lang/String;
@@ -718,7 +722,6 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinCompila
 	public abstract fun getName ()Ljava/lang/String;
 	public abstract fun getOutput ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilationOutput;
 	public abstract fun getPlatformType ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinPlatformType;
-	public abstract fun getProject ()Lorg/gradle/api/Project;
 	public abstract fun getRelatedConfigurationNames ()Ljava/util/List;
 	public abstract fun getRuntimeDependencyConfigurationName ()Ljava/lang/String;
 	public abstract fun getRuntimeDependencyFiles ()Lorg/gradle/api/file/FileCollection;
@@ -970,7 +973,7 @@ public final class org/jetbrains/kotlin/gradle/plugin/KotlinPlatformType$Disambi
 	public fun execute (Lorg/gradle/api/attributes/MultipleCandidatesDetails;)V
 }
 
-public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinSourceSet : org/gradle/api/Named, org/jetbrains/kotlin/gradle/plugin/HasKotlinDependencies {
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinSourceSet : org/gradle/api/Named, org/jetbrains/kotlin/gradle/plugin/HasKotlinDependencies, org/jetbrains/kotlin/gradle/plugin/HasProject, org/jetbrains/kotlin/tooling/core/HasMutableExtras {
 	public static final field COMMON_MAIN_SOURCE_SET_NAME Ljava/lang/String;
 	public static final field COMMON_TEST_SOURCE_SET_NAME Ljava/lang/String;
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSet$Companion;
@@ -1007,7 +1010,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinSourceS
 	public abstract fun getSourceSets ()Lorg/gradle/api/NamedDomainObjectContainer;
 }
 
-public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTarget : org/gradle/api/Named, org/gradle/api/attributes/HasAttributes {
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTarget : org/gradle/api/Named, org/gradle/api/attributes/HasAttributes, org/jetbrains/kotlin/gradle/plugin/HasProject, org/jetbrains/kotlin/tooling/core/HasMutableExtras {
 	public abstract fun attributes (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun attributes (Lorg/gradle/api/Action;)V
 	public abstract fun getApiElementsConfigurationName ()Ljava/lang/String;
@@ -1020,7 +1023,6 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTarget 
 	public abstract fun getOverrideDisambiguationClassifierOnIdeImport ()Ljava/lang/String;
 	public abstract fun getPlatformType ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinPlatformType;
 	public abstract fun getPreset ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetPreset;
-	public abstract fun getProject ()Lorg/gradle/api/Project;
 	public abstract fun getPublishable ()Z
 	public abstract fun getRuntimeElementsConfigurationName ()Ljava/lang/String;
 	public abstract fun getSourcesElementsConfigurationName ()Ljava/lang/String;

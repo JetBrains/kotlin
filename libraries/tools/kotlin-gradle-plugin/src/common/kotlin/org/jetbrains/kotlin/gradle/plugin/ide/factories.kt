@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceCoordinates
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.KlibExtra
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.currentBuildId
-import org.jetbrains.kotlin.gradle.plugin.sources.project
 import org.jetbrains.kotlin.library.*
 
 
