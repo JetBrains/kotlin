@@ -702,64 +702,11 @@ class CallAndReferenceGenerator(
         callableReferenceAccess: FirCallableReferenceAccess?
     ): IrExpression? {
         val classSymbol = (qualifier.typeRef.coneType as? ConeClassLikeType)?.lookupTag?.toSymbol(session)
-        if (callableReferenceAccess != null && classSymbol is FirRegularClassSymbol) {
-            val classId = qualifier.symbol?.fullyExpandedClass(session)?.classId
-            val classIdMatched = classSymbol.classId == classId
-            if (!classIdMatched) {
-                // Check whether we need get companion object as dispatch receiver
-                if (!classSymbol.fir.isCompanion || classSymbol.classId.outerClassId != classId) {
-                    return null
-                }
-                val resolvedReference = callableReferenceAccess.calleeReference as FirResolvedNamedReference
-                val firCallableSymbol = resolvedReference.resolvedSymbol as FirCallableSymbol<*>
-                // Make sure the reference indeed refers to a member of that companion
 
-                val receiverClassLookupTag = firCallableSymbol.dispatchReceiverClassLookupTagOrNull()
-                    ?: firCallableSymbol.receiverParameter?.typeRef?.coneTypeSafe<ConeClassLikeType>()?.lookupTag
-                    ?: return null
-
-                val callableIsDefinitelyNotMemberOfCompanion = with(session.typeContext) {
-                    !classSymbol.defaultType().anySuperTypeConstructor { it.typeConstructor() == receiverClassLookupTag }
-                }
-                if (callableIsDefinitelyNotMemberOfCompanion) {
-                    return null
-                }
-                /*
-                 * This check is supposed to distinguish cases when both companion and containing class have this function
-                 *
-                 *   open class Base {
-                 *       fun foo() {}
-                 *   }
-                 *
-                 *   class Some : Base() {
-                 *       companion object : Base() {
-                 *           fun bar()
-                 *       }
-                 *   }
-                 *
-                 *   Some::foo // reference to Some.foo
-                 *   Some::bar // reference to Some.Companion.bar
-                 */
-                val containingClass = classSymbol.getContainingClassLookupTag()?.toFirRegularClassSymbol(session) ?: return null
-                val callableIsDefinitelyMemberOfOuterClass = with(session.typeContext) {
-                    containingClass.defaultType().anySuperTypeConstructor { it.typeConstructor() == receiverClassLookupTag }
-                }
-                if (callableIsDefinitelyMemberOfOuterClass) {
-                    val expectedParameterCount = callableReferenceAccess.typeRef.coneType.typeArguments.size - 1
-
-                    val declaration = firCallableSymbol.fir
-                    val requiredParameterCount = ((declaration as? FirFunction)?.valueParameters?.size ?: 0) +
-                            (if (declaration.dispatchReceiverType != null) 1 else 0) +
-                            (if (declaration.receiverParameter != null) 1 else 0)
-
-                    // However, if the number of parameters only match, if the receiver is bound, allow using the companion as receiver.
-                    val boundCallableIsExpected = requiredParameterCount == expectedParameterCount + 1
-                    if (!boundCallableIsExpected) {
-                        return null
-                    }
-                }
-            }
+        if (callableReferenceAccess?.isBound == false) {
+            return null
         }
+
         val irType = qualifier.typeRef.toIrType()
         return qualifier.convertWithOffsets { startOffset, endOffset ->
             if (classSymbol != null) {
