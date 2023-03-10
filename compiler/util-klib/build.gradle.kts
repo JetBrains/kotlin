@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     kotlin("jvm")
     id("jps-compatible")
@@ -14,6 +16,14 @@ dependencies {
 sourceSets {
     "main" { projectDefault() }
     "test" { projectDefault() }
+}
+
+tasks.withType<KotlinCompile>().configureEach {
+    kotlinOptions {
+        languageVersion = "1.4"
+        apiVersion = "1.4"
+        freeCompilerArgs += listOf("-Xsuppress-version-warnings")
+    }
 }
 
 publish()

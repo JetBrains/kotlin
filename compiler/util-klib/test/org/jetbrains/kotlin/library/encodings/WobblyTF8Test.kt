@@ -152,9 +152,9 @@ class WobblyTF8Test {
         fun ByteArray.decodeWithWobbly(): String = WobblyTF8.decode(this)
         fun ByteArray.decodeWithUTF8(): String = toString(Charsets.UTF_8)
 
-        val CODE_POINTS_BEFORE_SURROGATES = MIN_CODE_POINT until MIN_SURROGATE.code
-        val CODE_POINTS_SURROGATES = MIN_SURROGATE.code..MAX_SURROGATE.code
-        val CODE_POINTS_AFTER_SURROGATES = (MAX_SURROGATE.code + 1) until MIN_SUPPLEMENTARY_CODE_POINT
+        val CODE_POINTS_BEFORE_SURROGATES = MIN_CODE_POINT until MIN_SURROGATE.toInt()
+        val CODE_POINTS_SURROGATES = MIN_SURROGATE.toInt()..MAX_SURROGATE.toInt()
+        val CODE_POINTS_AFTER_SURROGATES = (MAX_SURROGATE.toInt() + 1) until MIN_SUPPLEMENTARY_CODE_POINT
         val CODE_POINTS_SUPPLEMENTARY = MIN_SUPPLEMENTARY_CODE_POINT..MAX_CODE_POINT
 
         fun generateWellFormedString(
