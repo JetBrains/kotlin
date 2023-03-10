@@ -58,6 +58,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
         }
 
         @Test
+        @TestMetadata("annotationArgumentWithAliasedArrayType.kt")
+        public void testAnnotationArgumentWithAliasedArrayType() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/annotationArgumentWithAliasedArrayType.kt");
+        }
+
+        @Test
         @TestMetadata("AnonymousInitializerVarAndConstructor.kt")
         public void testAnonymousInitializerVarAndConstructor() throws Exception {
             runTest("compiler/testData/diagnostics/tests/AnonymousInitializerVarAndConstructor.kt");
