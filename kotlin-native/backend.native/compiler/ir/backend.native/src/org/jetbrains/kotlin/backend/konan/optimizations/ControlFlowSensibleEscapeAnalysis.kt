@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.backend.konan.llvm.Lifetime
 import org.jetbrains.kotlin.backend.konan.logMultiple
 import org.jetbrains.kotlin.backend.konan.lower.erasedUpperBound
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irDoWhile
 import org.jetbrains.kotlin.ir.builders.irWhile
 import org.jetbrains.kotlin.ir.declarations.*
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.isNothing
@@ -56,8 +58,14 @@ private fun <T> MutableList<T>.trimSize(newSize: Int) {
 }
 
 internal object ControlFlowSensibleEscapeAnalysis {
+    private val escapesField = IrFieldSymbolImpl()
+
     private val IrFieldSymbol.name: String
-        get() = if (isBound) owner.name.asString() else "unbound"
+        get() = when {
+            this == escapesField -> "<escapes>"
+            isBound -> owner.name.asString()
+            else -> "<unbound>"
+        }
 
     private class InterproceduralAnalysis(val context: Context, val callGraph: CallGraph) {
         fun analyze() {
@@ -157,6 +165,16 @@ internal object ControlFlowSensibleEscapeAnalysis {
                         }
                     }
                     return EscapeAnalysisResult(pointsToGraph, returnValue, BitSet())
+                }
+
+                fun pessimistic(returnType: IrType, parameters: List<IrValueParameter>): EscapeAnalysisResult {
+                    val result = optimistic(returnType, parameters)
+                    with(result.graph) {
+                        val globalEscapes = globalNode.getField(escapesField)
+                        parameterNodes.values.forEach { globalEscapes.addEdge(it) }
+                        (result.returnValue as? Node.Variable)?.let { globalEscapes.addEdge(it) }
+                    }
+                    return result
                 }
             }
         }
@@ -736,8 +754,19 @@ internal object ControlFlowSensibleEscapeAnalysis {
         private inner class PointsToGraphBuilder(
                 val function: IrFunction,
                 val forest: PointsToGraphForest,
-                val escapeAnalysisResults: Map<IrFunctionSymbol, EscapeAnalysisResult>
+                val escapeAnalysisResults: Map<IrFunctionSymbol, EscapeAnalysisResult>,
+                val devirtualizedCallSites: Map<IrCall, List<IrFunctionSymbol>>,
         ) : IrElementVisitor<Node, BuilderState> {
+            // TODO: We need to clear these lists from time to time during loops handling.
+            val irBuilder = context.createIrBuilder(function.symbol)
+            val returnTargetsResults = mutableMapOf<IrReturnTargetSymbol, MutableList<ExpressionResult>>()
+            val objectsReferencedFromThrown = BitSet()
+            val fictitiousLoopsStarts = mutableMapOf<IrLoop, IrElement>()
+            val fictitiousLoopsEnds = mutableMapOf<IrLoop, IrElement>()
+            val loopsContinueResults = mutableMapOf<IrLoop, MutableList<ExpressionResult>>()
+            val loopsBreakResults = mutableMapOf<IrLoop, MutableList<ExpressionResult>>()
+            val devirtualizedFictitiousCallSites = mutableMapOf<IrCall, List<IrFunctionAccessExpression>>()
+
             fun build(): EscapeAnalysisResult {
                 val pointsToGraph = PointsToGraph(forest)
                 function.allParameters.forEachIndexed { index, parameter -> pointsToGraph.addParameter(parameter, index) }
@@ -799,15 +828,6 @@ internal object ControlFlowSensibleEscapeAnalysis {
                     }
                 }
             }
-
-            // TODO: We need to clear these lists from time to time during loops handling.
-            val irBuilder = context.createIrBuilder(function.symbol)
-            val returnTargetsResults = mutableMapOf<IrReturnTargetSymbol, MutableList<ExpressionResult>>()
-            val objectsReferencedFromThrown = BitSet()
-            val fictitiousLoopsStarts = mutableMapOf<IrLoop, IrElement>()
-            val fictitiousLoopsEnds = mutableMapOf<IrLoop, IrElement>()
-            val loopsContinueResults = mutableMapOf<IrLoop, MutableList<ExpressionResult>>()
-            val loopsBreakResults = mutableMapOf<IrLoop, MutableList<ExpressionResult>>()
 
             override fun visitElement(element: IrElement, data: BuilderState): Node = TODO(element.render())
             override fun visitExpression(expression: IrExpression, data: BuilderState): Node = TODO(expression.render())
@@ -1140,15 +1160,13 @@ internal object ControlFlowSensibleEscapeAnalysis {
             }
 
             fun processCall(
-                    // TODO: Must be different for each actual callee for a devirtualized call.
-                    // Or may be create merged graph for all possible callees?
                     state: BuilderState,
                     callSite: IrFunctionAccessExpression,
-                    actualCallee: IrFunction,
+                    callee: IrFunction,
                     arguments: List<Node>,
                     calleeEscapeAnalysisResult: EscapeAnalysisResult,
             ): Node {
-                context.log { "before calling ${actualCallee.render()}" }
+                context.log { "before calling ${callee.render()}" }
                 state.graph.logDigraph()
                 context.log { "callee EA result" }
                 calleeEscapeAnalysisResult.graph.logDigraph(calleeEscapeAnalysisResult.returnValue)
@@ -1318,43 +1336,10 @@ internal object ControlFlowSensibleEscapeAnalysis {
                     }
                 }
 
-//                // TODO: Support escapes.
-////                calleeEscapeAnalysisResult.escapes.forEach { escapingNode ->
-////                    val (arg, node) = mapNode(escapingNode)
-////                    if (node == null) {
-////                        //context.log { "WARNING: There is no node ${nodeToString(arg!!)}" }
-////                        return@forEach
-////                    }
-////                    escapeOrigins += node
-//////                    context.log { "Node ${escapingNode.debugString(arg?.let { nodeToString(it) })} escapes" }
-////                }
-//
-//                calleeEscapeAnalysisResult.pointsTo.edges.forEach { edge ->
-//                    val fromNodes = mapNode(edge.from).map { it as Node.Reference }
-//                    val toNodes = mapNode(edge.to)
-//                    if (fromNodes.size == 1) {
-//                        val fromNode = fromNodes[0]
-//                        toNodes.forEach { graph.addEdge(fromNode, it) }
-//                    } else if (toNodes.size == 1) {
-//                        val toNode = toNodes[0]
-//                        fromNodes.forEach { graph.addEdge(it, toNode) }
-//                    } else {
-//                        val temp = graph.newTemporary()
-//                        fromNodes.forEach { graph.addEdge(it, temp) }
-//                        toNodes.forEach { graph.addEdge(temp, it) }
-//                    }
-//
-////                    context.logMultiple {
-////                        +"Adding edge"
-////                        +"    FROM ${edge.from.debugString(fromArg?.let { nodeToString(it) })}"
-////                        +"    TO ${edge.to.debugString(toArg?.let { nodeToString(it) })}"
-////                    }
-//                }
-
                 val returnValue = outMirroredNodes[calleeEscapeAnalysisResult.returnValue.id]
                         ?: error("Node ${calleeEscapeAnalysisResult.returnValue} hasn't been reflected")
 
-                context.log { "after calling ${actualCallee.render()}" }
+                context.log { "after calling ${callee.render()}" }
                 state.graph.logDigraph(returnValue)
 
                 return returnValue
@@ -1369,6 +1354,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 val arguments = callSite.getArgumentsWithIr()
                 val argumentNodes = listOf(thisNode) + arguments.map { it.second.accept(this, state) }
                 val calleeEscapeAnalysisResult = escapeAnalysisResults[callee.symbol]
+                        // TODO
                         ?: EscapeAnalysisResult.optimistic(context.irBuiltIns.unitType,
                                 listOf(callee.constructedClass.thisReceiver!!) + arguments.map { it.first })
                 processCall(state, callSite, callee, argumentNodes, calleeEscapeAnalysisResult)
@@ -1394,31 +1380,60 @@ internal object ControlFlowSensibleEscapeAnalysis {
             val createUninitializedInstanceSymbol = context.ir.symbols.createUninitializedInstance
             val initInstanceSymbol = context.ir.symbols.initInstance
 
-            override fun visitCall(expression: IrCall, data: BuilderState): Node {
-                if (!expression.isVirtualCall) {
-                    // TODO: What about staticInitializer, executeImpl, getContinuation?
-                    return when (expression.symbol) {
-                        createUninitializedInstanceSymbol -> {
-                            data.allocObjectNode(expression, expression.getTypeArgument(0)!!.classOrNull!!.owner)
-                        }
-                        initInstanceSymbol -> {
-                            val irThis = expression.getValueArgument(0)!!
-                            val thisNode = irThis.accept(this, data)
-                            val irInitializer = expression.getValueArgument(1) as IrConstructorCall
-                            processConstructorCall(irInitializer.symbol.owner, thisNode, irInitializer, data)
-                            Node.Unit
-                        }
-                        else -> {
-                            val actualCallee = expression.actualCallee
-                            val arguments = expression.getArgumentsWithIr()
-                            val argumentNodes = arguments.map { it.second.accept(this, data) }
-                            val calleeEscapeAnalysisResult = escapeAnalysisResults[actualCallee.symbol]
-                                    ?: EscapeAnalysisResult.optimistic(actualCallee.returnType, arguments.map { it.first })
-                            processCall(data, expression, actualCallee, argumentNodes, calleeEscapeAnalysisResult)
+            // TODO: What about staticInitializer, executeImpl, getContinuation?
+            override fun visitCall(expression: IrCall, data: BuilderState) = when (expression.symbol) {
+                createUninitializedInstanceSymbol -> {
+                    data.allocObjectNode(expression, expression.getTypeArgument(0)!!.classOrNull!!.owner)
+                }
+                initInstanceSymbol -> {
+                    val irThis = expression.getValueArgument(0)!!
+                    val thisNode = irThis.accept(this, data)
+                    val irInitializer = expression.getValueArgument(1) as IrConstructorCall
+                    processConstructorCall(irInitializer.symbol.owner, thisNode, irInitializer, data)
+                    Node.Unit
+                }
+                else -> {
+                    val arguments = expression.getArgumentsWithIr()
+                    val argumentNodes = arguments.map { it.second.accept(this, data) }
+                    val actualCallee = expression.actualCallee
+                    if (!expression.isVirtualCall) {
+                        val calleeEscapeAnalysisResult = escapeAnalysisResults[actualCallee.symbol]
+                                // TODO
+                                ?: EscapeAnalysisResult.optimistic(actualCallee.returnType, arguments.map { it.first })
+                        processCall(data, expression, actualCallee, argumentNodes, calleeEscapeAnalysisResult)
+                    } else {
+                        val devirtualizedCallSite = devirtualizedCallSites[expression]
+                        if (devirtualizedCallSite == null) {
+                            // Non-devirtualized call.
+                            processCall(data, expression, expression.actualCallee, argumentNodes,
+                                    EscapeAnalysisResult.pessimistic(actualCallee.returnType, arguments.map { it.first }))
+                        } else when (devirtualizedCallSite.size) {
+                            0 -> { // TODO: This looks like unreachable code, isn't it? Should we return here Nothing then?
+                                processCall(data, expression, actualCallee, argumentNodes,
+                                        EscapeAnalysisResult.optimistic(actualCallee.returnType, arguments.map { it.first }))
+                            }
+                            1 -> {
+                                processCall(data, expression, actualCallee, argumentNodes,
+                                        escapeAnalysisResults[devirtualizedCallSite[0]]!!)
+                            }
+                            else -> {
+                                // Multiple possible callees - model this as a when clause.
+                                val fictitiousCallSites = devirtualizedFictitiousCallSites.getOrPut(expression) {
+                                    // Don't bother with the arguments - it is only used as a key.
+                                    devirtualizedCallSite.map { irBuilder.irCall(it) }
+                                }
+                                val callResults = devirtualizedCallSite.zip(fictitiousCallSites).map { (calleeSymbol, callSite) ->
+                                    val clonedArgumentNodes = argumentNodes.toMutableList()
+                                    val clonedGraph = data.graph.clone(clonedArgumentNodes)
+                                    val resultNode = processCall(BuilderState(clonedGraph, data.loop, data.insideATry), callSite, calleeSymbol.owner, clonedArgumentNodes,
+                                            escapeAnalysisResults[calleeSymbol]!!)
+                                    ExpressionResult(resultNode, clonedGraph)
+                                }
+                                controlFlowMergePoint(data.graph, data.loop, expression, expression.type, callResults)
+                            }
                         }
                     }
                 }
-                TODO("Not implemented")
             }
         }
 
@@ -1429,7 +1444,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
 
             val producerInvocations = mutableMapOf<IrExpression, IrCall>()
             val jobInvocations = mutableMapOf<IrCall, IrCall>()
-            val virtualCallSites = mutableMapOf<IrCall, MutableList<CallGraphNode.CallSite>>()
+            val devirtualizedCallSites = mutableMapOf<IrCall, MutableList<IrFunctionSymbol>>()
             for (callSite in callGraphNode.callSites) {
                 val call = callSite.call
                 val irCall = call.irCallSite as? IrCall ?: continue
@@ -1438,11 +1453,13 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 else if (irCall.origin == STATEMENT_ORIGIN_JOB_INVOCATION)
                     jobInvocations[irCall.getValueArgument(0) as IrCall] = irCall
                 if (call !is DataFlowIR.Node.VirtualCall) continue
-                virtualCallSites.getOrPut(irCall) { mutableListOf() }.add(callSite)
+                devirtualizedCallSites.getOrPut(irCall) { mutableListOf() }.add(
+                        callSite.actualCallee.irFunction?.symbol ?: error("No IR for ${callSite.actualCallee}")
+                )
             }
 
             val forest = PointsToGraphForest()
-            val functionResult = PointsToGraphBuilder(function, forest, escapeAnalysisResults).build()
+            val functionResult = PointsToGraphBuilder(function, forest, escapeAnalysisResults, devirtualizedCallSites).build()
 
             /*
              * Now, do the following:
