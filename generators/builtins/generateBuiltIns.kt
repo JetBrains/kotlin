@@ -35,8 +35,6 @@ abstract class BuiltInsSourceGenerator(val out: PrintWriter) {
 
     protected open fun getMultifileClassName(): String? = null
 
-    protected open fun getFileAnnotations(): List<String> = emptyList()
-
     fun generate() {
         out.println(File("license/COPYRIGHT_HEADER.txt").readText())
         out.println()
@@ -47,9 +45,6 @@ abstract class BuiltInsSourceGenerator(val out: PrintWriter) {
         getMultifileClassName()?.let { name ->
             out.println("@file:kotlin.jvm.JvmName(\"$name\")")
             out.println("@file:kotlin.jvm.JvmMultifileClass")
-        }
-        getFileAnnotations().forEach { annotation ->
-            out.println("@file:$annotation")
         }
         out.print("package ${getPackage()}")
         out.println()

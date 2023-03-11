@@ -27,10 +27,6 @@ import java.io.PrintWriter
 class GenerateProgressions(out: PrintWriter) : BuiltInsSourceGenerator(out) {
 
     override fun getPackage() = "kotlin.ranges"
-    override fun getFileAnnotations(): List<String> =
-        // TODO: make source retention annotations ignored by LoadBuiltinsTest and move closer to usage
-        listOf("""Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE") // preserve parameter name of 'contains' override""")
-
     private fun generateDiscreteBody(kind: ProgressionKind) {
         val t = kind.capitalized
         val progression = "${t}Progression"
@@ -133,7 +129,7 @@ public open class $progression
         get() = $sizeBody
 
     @SinceKotlin("1.9")
-    override fun contains(value: $t): Boolean = when {
+    override fun contains(@Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE") /* for the backward compatibility with old names */ value: $t): Boolean = when {
         @Suppress("USELESS_CAST") (value as Any? !is $t) -> false // TODO: Eliminate this check after KT-30016 gets fixed.
         step > $zero && value >= first && value <= last ||
         step < $zero && value <= first && value >= last -> value$elementToIncrement.mod(step) == first$elementToIncrement.mod(step)
