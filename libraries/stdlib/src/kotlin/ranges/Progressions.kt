@@ -59,11 +59,11 @@ public open class CharProgression
 
     override fun toString(): String = if (step > 0) "$first..$last step $step" else "$first downTo $last step ${-step}"
 
-    @SinceKotlin("1.6")
+    @SinceKotlin("1.9")
     override val size: Int
         get() = if (isEmpty()) 0 else (last - first) / step + 1
 
-    @SinceKotlin("1.6")
+    @SinceKotlin("1.9")
     override fun contains(@Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE") /* for the backward compatibility with old names */ value: Char): Boolean = when {
         @Suppress("USELESS_CAST") (value as Any? !is Char) -> false // TODO: Eliminate this check after KT-30016 gets fixed.
         step > 0 && value >= first && value <= last ||
@@ -71,7 +71,7 @@ public open class CharProgression
         else -> false
     }
 
-    @SinceKotlin("1.6")
+    @SinceKotlin("1.9")
     override fun containsAll(elements: Collection<Char>): Boolean =
         if (this.isEmpty()) elements.isEmpty() else (elements as Collection<*>).all { it in (this as Collection<Any?>) }
 
@@ -137,7 +137,7 @@ public open class IntProgression
 
     override fun toString(): String = if (step > 0) "$first..$last step $step" else "$first downTo $last step ${-step}"
 
-    @SinceKotlin("1.6")
+    @SinceKotlin("1.9")
     override val size: Int
         get() = when {
             isEmpty() -> 0
@@ -148,7 +148,7 @@ public open class IntProgression
             else -> error("Progression invariant is broken: step == 0")
         }
 
-    @SinceKotlin("1.6")
+    @SinceKotlin("1.9")
     override fun contains(@Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE") /* for the backward compatibility with old names */ value: Int): Boolean = when {
         @Suppress("USELESS_CAST") (value as Any? !is Int) -> false // TODO: Eliminate this check after KT-30016 gets fixed.
         step > 0 && value >= first && value <= last ||
@@ -156,7 +156,7 @@ public open class IntProgression
         else -> false
     }
 
-    @SinceKotlin("1.6")
+    @SinceKotlin("1.9")
     override fun containsAll(elements: Collection<Int>): Boolean =
         if (this.isEmpty()) elements.isEmpty() else (elements as Collection<*>).all { it in (this as Collection<Any?>) }
 
@@ -222,7 +222,7 @@ public open class LongProgression
 
     override fun toString(): String = if (step > 0) "$first..$last step $step" else "$first downTo $last step ${-step}"
 
-    @SinceKotlin("1.6")
+    @SinceKotlin("1.9")
     override val size: Int
         get() = when {
             isEmpty() -> 0
@@ -233,7 +233,7 @@ public open class LongProgression
             else -> error("Progression invariant is broken: step == 0")
         }
 
-    @SinceKotlin("1.6")
+    @SinceKotlin("1.9")
     override fun contains(@Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE") /* for the backward compatibility with old names */ value: Long): Boolean = when {
         @Suppress("USELESS_CAST") (value as Any? !is Long) -> false // TODO: Eliminate this check after KT-30016 gets fixed.
         step > 0L && value >= first && value <= last ||
@@ -241,7 +241,7 @@ public open class LongProgression
         else -> false
     }
 
-    @SinceKotlin("1.6")
+    @SinceKotlin("1.9")
     override fun containsAll(elements: Collection<Long>): Boolean =
         if (this.isEmpty()) elements.isEmpty() else (elements as Collection<*>).all { it in (this as Collection<Any?>) }
 

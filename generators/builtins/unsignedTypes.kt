@@ -672,11 +672,11 @@ internal constructor(
 
     override fun toString(): String = if (step > 0) "${'$'}first..${'$'}last step ${'$'}step" else "${'$'}first downTo ${'$'}last step ${'$'}{-step}"
 
-    @SinceKotlin("1.6")
+    @SinceKotlin("1.9")
     override val size: Int
         get() = $sizeBody
 
-    @SinceKotlin("1.6")
+    @SinceKotlin("1.9")
     override fun contains(@Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE") /* for the backward compatibility with old names */ value: $elementType): Boolean =
         when {
             @Suppress("USELESS_CAST") (value as Any? !is $elementType) -> false // TODO: Eliminate this check after KT-30016 gets fixed.
@@ -685,7 +685,7 @@ internal constructor(
             else -> false
         }
 
-    @SinceKotlin("1.6")
+    @SinceKotlin("1.9")
     override fun containsAll(elements: Collection<$elementType>): Boolean =
         if (this.isEmpty()) elements.isEmpty() else (elements as Collection<*>).all { it in (this as Collection<Any?>) }
 
