@@ -662,15 +662,15 @@ public open class CharProgression : kotlin.collections.Collection<kotlin.Char> {
 
     public final val last: kotlin.Char { get; }
 
-    @kotlin.SinceKotlin(version = "1.6")
+    @kotlin.SinceKotlin(version = "1.9")
     public open override val size: kotlin.Int { get; }
 
     public final val step: kotlin.Int { get; }
 
-    @kotlin.SinceKotlin(version = "1.6")
+    @kotlin.SinceKotlin(version = "1.9")
     public open override operator fun contains(value: kotlin.Char): kotlin.Boolean
 
-    @kotlin.SinceKotlin(version = "1.6")
+    @kotlin.SinceKotlin(version = "1.9")
     public open override fun containsAll(elements: kotlin.collections.Collection<kotlin.Char>): kotlin.Boolean
 
     public open override operator fun equals(other: kotlin.Any?): kotlin.Boolean
@@ -693,15 +693,15 @@ public open class CharProgression : kotlin.collections.Collection<kotlin.Char> {
 /*∆*/ 
 /*∆*/     public final val last: kotlin.Char { get; }
 /*∆*/ 
-/*∆*/     @kotlin.SinceKotlin(version = "1.6")
+/*∆*/     @kotlin.SinceKotlin(version = "1.9")
 /*∆*/     public open override val size: kotlin.Int { get; }
 /*∆*/ 
 /*∆*/     public final val step: kotlin.Int { get; }
 /*∆*/ 
-/*∆*/     @kotlin.SinceKotlin(version = "1.6")
+/*∆*/     @kotlin.SinceKotlin(version = "1.9")
 /*∆*/     public open override operator fun contains(value: kotlin.Char): kotlin.Boolean
 /*∆*/ 
-/*∆*/     @kotlin.SinceKotlin(version = "1.6")
+/*∆*/     @kotlin.SinceKotlin(version = "1.9")
 /*∆*/     public open override fun containsAll(elements: kotlin.collections.Collection<kotlin.Char>): kotlin.Boolean
 /*∆*/ 
 /*∆*/     public open override operator fun equals(other: kotlin.Any?): kotlin.Boolean
@@ -807,15 +807,15 @@ public open class IntProgression : kotlin.collections.Collection<kotlin.Int> {
 
     public final val last: kotlin.Int { get; }
 
-    @kotlin.SinceKotlin(version = "1.6")
+    @kotlin.SinceKotlin(version = "1.9")
     public open override val size: kotlin.Int { get; }
 
     public final val step: kotlin.Int { get; }
 
-    @kotlin.SinceKotlin(version = "1.6")
+    @kotlin.SinceKotlin(version = "1.9")
     public open override operator fun contains(value: kotlin.Int): kotlin.Boolean
 
-    @kotlin.SinceKotlin(version = "1.6")
+    @kotlin.SinceKotlin(version = "1.9")
     public open override fun containsAll(elements: kotlin.collections.Collection<kotlin.Int>): kotlin.Boolean
 
     public open override operator fun equals(other: kotlin.Any?): kotlin.Boolean
@@ -838,15 +838,15 @@ public open class IntProgression : kotlin.collections.Collection<kotlin.Int> {
 /*∆*/ 
 /*∆*/     public final val last: kotlin.Int { get; }
 /*∆*/ 
-/*∆*/     @kotlin.SinceKotlin(version = "1.6")
+/*∆*/     @kotlin.SinceKotlin(version = "1.9")
 /*∆*/     public open override val size: kotlin.Int { get; }
 /*∆*/ 
 /*∆*/     public final val step: kotlin.Int { get; }
 /*∆*/ 
-/*∆*/     @kotlin.SinceKotlin(version = "1.6")
+/*∆*/     @kotlin.SinceKotlin(version = "1.9")
 /*∆*/     public open override operator fun contains(value: kotlin.Int): kotlin.Boolean
 /*∆*/ 
-/*∆*/     @kotlin.SinceKotlin(version = "1.6")
+/*∆*/     @kotlin.SinceKotlin(version = "1.9")
 /*∆*/     public open override fun containsAll(elements: kotlin.collections.Collection<kotlin.Int>): kotlin.Boolean
 /*∆*/ 
 /*∆*/     public open override operator fun equals(other: kotlin.Any?): kotlin.Boolean
@@ -923,15 +923,15 @@ public open class LongProgression : kotlin.collections.Collection<kotlin.Long> {
 
     public final val last: kotlin.Long { get; }
 
-    @kotlin.SinceKotlin(version = "1.6")
+    @kotlin.SinceKotlin(version = "1.9")
     public open override val size: kotlin.Int { get; }
 
     public final val step: kotlin.Long { get; }
 
-    @kotlin.SinceKotlin(version = "1.6")
+    @kotlin.SinceKotlin(version = "1.9")
     public open override operator fun contains(value: kotlin.Long): kotlin.Boolean
 
-    @kotlin.SinceKotlin(version = "1.6")
+    @kotlin.SinceKotlin(version = "1.9")
     public open override fun containsAll(elements: kotlin.collections.Collection<kotlin.Long>): kotlin.Boolean
 
     public open override operator fun equals(other: kotlin.Any?): kotlin.Boolean
@@ -954,15 +954,15 @@ public open class LongProgression : kotlin.collections.Collection<kotlin.Long> {
 /*∆*/ 
 /*∆*/     public final val last: kotlin.Long { get; }
 /*∆*/ 
-/*∆*/     @kotlin.SinceKotlin(version = "1.6")
+/*∆*/     @kotlin.SinceKotlin(version = "1.9")
 /*∆*/     public open override val size: kotlin.Int { get; }
 /*∆*/ 
 /*∆*/     public final val step: kotlin.Long { get; }
 /*∆*/ 
-/*∆*/     @kotlin.SinceKotlin(version = "1.6")
+/*∆*/     @kotlin.SinceKotlin(version = "1.9")
 /*∆*/     public open override operator fun contains(value: kotlin.Long): kotlin.Boolean
 /*∆*/ 
-/*∆*/     @kotlin.SinceKotlin(version = "1.6")
+/*∆*/     @kotlin.SinceKotlin(version = "1.9")
 /*∆*/     public open override fun containsAll(elements: kotlin.collections.Collection<kotlin.Long>): kotlin.Boolean
 /*∆*/ 
 /*∆*/     public open override operator fun equals(other: kotlin.Any?): kotlin.Boolean
@@ -1065,15 +1065,15 @@ public open class UIntProgression : kotlin.collections.Collection<kotlin.UInt> {
 
     public final val last: kotlin.UInt { get; }
 
-    @kotlin.SinceKotlin(version = "1.6")
+    @kotlin.SinceKotlin(version = "1.9")
     public open override val size: kotlin.Int { get; }
 
     public final val step: kotlin.Int { get; }
 
-    @kotlin.SinceKotlin(version = "1.6")
+    @kotlin.SinceKotlin(version = "1.9")
     public open override operator fun contains(value: kotlin.UInt): kotlin.Boolean
 
-    @kotlin.SinceKotlin(version = "1.6")
+    @kotlin.SinceKotlin(version = "1.9")
     public open override fun containsAll(elements: kotlin.collections.Collection<kotlin.UInt>): kotlin.Boolean
 
     public open override operator fun equals(other: kotlin.Any?): kotlin.Boolean
@@ -1127,15 +1127,15 @@ public open class ULongProgression : kotlin.collections.Collection<kotlin.ULong>
 
     public final val last: kotlin.ULong { get; }
 
-    @kotlin.SinceKotlin(version = "1.6")
+    @kotlin.SinceKotlin(version = "1.9")
     public open override val size: kotlin.Int { get; }
 
     public final val step: kotlin.Long { get; }
 
-    @kotlin.SinceKotlin(version = "1.6")
+    @kotlin.SinceKotlin(version = "1.9")
     public open override operator fun contains(value: kotlin.ULong): kotlin.Boolean
 
-    @kotlin.SinceKotlin(version = "1.6")
+    @kotlin.SinceKotlin(version = "1.9")
     public open override fun containsAll(elements: kotlin.collections.Collection<kotlin.ULong>): kotlin.Boolean
 
     public open override operator fun equals(other: kotlin.Any?): kotlin.Boolean
