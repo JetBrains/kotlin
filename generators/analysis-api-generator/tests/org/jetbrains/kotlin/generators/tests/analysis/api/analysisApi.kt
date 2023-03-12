@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.importO
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.multiplatformInfoProvider.AbstractExpectForActualTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.psiTypeProvider.AbstractAnalysisApiExpressionPsiTypeProviderTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.psiTypeProvider.AbstractAnalysisApiPsiTypeProviderTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.scopeProvider.*
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.signatureSubstitution.AbstractAnalysisApiSignatureContractsTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.signatureSubstitution.AbstractAnalysisApiSignatureSubstitutionTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.signatureSubstitution.AbstractAnalysisApiSymbolAsSignatureTest
@@ -46,7 +47,6 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typePro
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeProvider.AbstractTypeReferenceTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.AbstractReferenceResolveTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.AbstractReferenceShortenerTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.scopes.*
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.AbstractSingleSymbolByPsi
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.AbstractSymbolByFqNameTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.AbstractSymbolByPsiTest
@@ -90,42 +90,6 @@ internal fun AnalysisApiTestGroup.generateAnalysisApiTests() {
 }
 
 private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
-    group("scopes", filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
-        test(
-            AbstractSubstitutionOverridesUnwrappingTest::class,
-            filter = frontendIs(FrontendKind.Fir),
-        ) {
-            model("substitutionOverridesUnwrapping")
-        }
-
-        test(
-            AbstractMemberScopeByFqNameTest::class,
-            filter = frontendIs(FrontendKind.Fir),
-        ) {
-            when (it.analysisApiMode) {
-                AnalysisApiMode.Ide ->
-                    model("memberScopeByFqName")
-                AnalysisApiMode.Standalone ->
-                    model("memberScopeByFqName", excludeDirsRecursively = listOf("withTestCompilerPluginEnabled"))
-            }
-        }
-
-        test(AbstractFileScopeTest::class) {
-            model("fileScopeTest", extension = "kt")
-        }
-
-        test(AbstractDelegateMemberScopeTest::class) {
-            model("delegatedMemberScope")
-        }
-
-        test(
-            AbstractDeclaredMemberScopeTest::class,
-            filter = frontendIs(FrontendKind.Fir),
-        ) {
-            model("declaredMemberScope")
-        }
-    }
-
     group("symbols", filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
         test(AbstractSymbolByPsiTest::class) {
             model("symbolByPsi")
@@ -415,11 +379,45 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
             test(AbstractTypeScopeTest::class) {
                 model("typeScope")
             }
-        }
 
-        group(filter = frontendIs(FrontendKind.Fir)) {
             test(AbstractScopeContextForPositionTest::class) {
                 model("scopeContextForPosition")
+            }
+        }
+
+        group(filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
+            test(
+                AbstractSubstitutionOverridesUnwrappingTest::class,
+                filter = frontendIs(FrontendKind.Fir),
+            ) {
+                model("substitutionOverridesUnwrapping")
+            }
+
+            test(
+                AbstractMemberScopeByFqNameTest::class,
+                filter = frontendIs(FrontendKind.Fir),
+            ) {
+                when (it.analysisApiMode) {
+                    AnalysisApiMode.Ide ->
+                        model("memberScopeByFqName")
+                    AnalysisApiMode.Standalone ->
+                        model("memberScopeByFqName", excludeDirsRecursively = listOf("withTestCompilerPluginEnabled"))
+                }
+            }
+
+            test(AbstractFileScopeTest::class) {
+                model("fileScopeTest", extension = "kt")
+            }
+
+            test(AbstractDelegateMemberScopeTest::class) {
+                model("delegatedMemberScope")
+            }
+
+            test(
+                AbstractDeclaredMemberScopeTest::class,
+                filter = frontendIs(FrontendKind.Fir),
+            ) {
+                model("declaredMemberScope")
             }
         }
     }
