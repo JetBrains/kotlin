@@ -209,7 +209,7 @@ class StubBasedAnnotationDeserializer(
     }
 
     private fun ClassId.toEnumEntryReferenceExpression(name: Name, value: KtQualifiedExpression): FirExpression {
-        return buildFunctionCall {
+        return buildPropertyAccessExpression {
             val entryPropertySymbol =
                 session.symbolProvider.getClassDeclaredPropertySymbols(
                     this@toEnumEntryReferenceExpression, name,
