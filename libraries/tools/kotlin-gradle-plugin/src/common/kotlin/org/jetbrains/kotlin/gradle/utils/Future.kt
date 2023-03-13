@@ -80,7 +80,7 @@ internal fun <T> Project.future(block: suspend Project.() -> T): Future<T> = kot
 internal fun <T> Project.lazyFuture(block: suspend Project.() -> T): Lazy<Future<T>> = lazy { future(block) }
 
 internal fun <T> KotlinPluginLifecycle.future(block: suspend () -> T): Future<T> {
-    return FutureImpl<T>(CompletableDeferred()).also { future ->
+    return FutureImpl<T>(lifecycle = this).also { future ->
         launch { future.completeWith(runCatching { block() }) }
     }
 }
@@ -90,7 +90,10 @@ internal fun <T> CompletableFuture(): CompletableFuture<T> {
 }
 
 @OptIn(ExperimentalCoroutinesApi::class)
-private class FutureImpl<T>(private val deferred: CompletableDeferred<T> = CompletableDeferred()) : CompletableFuture<T>, Serializable {
+private class FutureImpl<T>(
+    private val deferred: CompletableDeferred<T> = CompletableDeferred(),
+    private val lifecycle: KotlinPluginLifecycle? = null
+) : CompletableFuture<T>, Serializable {
     fun completeWith(result: Result<T>) = deferred.completeWith(result)
 
     override fun complete(value: T) {
@@ -103,7 +106,7 @@ private class FutureImpl<T>(private val deferred: CompletableDeferred<T> = Compl
 
     override fun getOrThrow(): T {
         return if (deferred.isCompleted) deferred.getCompleted() else throw IllegalLifecycleException(
-            "Future was not completed yet"
+            "Future was not completed yet" + if (lifecycle != null) " (stage '${lifecycle.stage}')" else ""
         )
     }
 }

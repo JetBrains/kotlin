@@ -9,8 +9,11 @@ import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.await
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ProjectMetadataProvider
+import org.jetbrains.kotlin.gradle.targets.metadata.findMetadataCompilation
 import org.jetbrains.kotlin.gradle.targets.native.internal.*
 
 private typealias SourceSetName = String
@@ -33,7 +36,7 @@ internal class SourceSetMetadataOutputs(
 
 private class ProjectMetadataProviderImpl(
     private val sourceSetMetadataOutputs: Map<SourceSetName, SourceSetMetadataOutputs>
-): ProjectMetadataProvider() {
+) : ProjectMetadataProvider() {
 
     override fun getSourceSetCompiledMetadata(sourceSetName: String): FileCollection =
         sourceSetMetadataOutputs[sourceSetName]?.metadata ?: error("Unexpected source set '$sourceSetName'")
@@ -63,16 +66,11 @@ internal suspend fun Project.collectSourceSetMetadataOutputs(): Map<SourceSetNam
     }.mapKeys { it.key.name }
 }
 
-private fun KotlinMultiplatformExtension.sourceSetsMetadataOutputs(): Map<KotlinSourceSet, FileCollection> {
-    val commonTarget = metadata()
-
-    val compilations = commonTarget.compilations
+private suspend fun KotlinMultiplatformExtension.sourceSetsMetadataOutputs(): Map<KotlinSourceSet, FileCollection> {
+    await(KotlinPluginLifecycle.Stage.AfterFinaliseDsl)
 
     return sourceSets.mapNotNull { sourceSet ->
-        val compilation = compilations.findByName(sourceSet.name)
-            ?: return@mapNotNull null // given source set is not shared
-
-        val destination = when (compilation) {
+        val destination = when (val compilation = project.findMetadataCompilation(sourceSet) ?: return@mapNotNull null) {
             is KotlinCommonCompilation -> compilation.output.classesDirs
             is KotlinSharedNativeCompilation -> compilation.output.classesDirs
             else -> error("Unexpected compilation type: $compilation")

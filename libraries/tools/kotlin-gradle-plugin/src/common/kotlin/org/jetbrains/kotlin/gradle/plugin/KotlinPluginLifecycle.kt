@@ -387,6 +387,8 @@ private class KotlinPluginLifecycleImpl(override val project: Project) : KotlinP
             "${KotlinPluginLifecycle::class.java.name} cannot be started in ProjectState '${project.state}'"
         }
 
+        loopIfNecessary()
+
         project.whenEvaluated {
             assert(enqueuedActions.getValue(stage).isEmpty()) { "Expected empty queue from '$stage'" }
             stage = stage.nextOrThrow
@@ -445,14 +447,13 @@ private class KotlinPluginLifecycleImpl(override val project: Project) : KotlinP
 
         enqueuedActions.getValue(stage).addLast(action)
 
-        if (stage == Stage.Configure) {
+        if (stage == Stage.Configure && isStarted.get()) {
             loopIfNecessary()
         }
     }
 
     override fun launch(block: suspend KotlinPluginLifecycle.() -> Unit) {
         val lifecycle = this
-        check(isStarted.get()) { "Cannot launch when ${KotlinPluginLifecycle::class.simpleName} is not started" }
 
         val coroutine = block.createCoroutine(this, object : Continuation<Unit> {
             override val context: CoroutineContext = EmptyCoroutineContext +

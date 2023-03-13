@@ -77,8 +77,6 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
 
         checkGradleCompatibility()
 
-        project.startKotlinPluginLifecycle()
-
         project.gradle.projectsEvaluated {
             whenBuildEvaluated(project)
         }
@@ -233,6 +231,8 @@ abstract class KotlinBasePluginWrapper : DefaultKotlinBasePlugin() {
         project.addNpmDependencyExtension()
 
         project.registerBuildKotlinToolingMetadataTask()
+
+        project.startKotlinPluginLifecycle()
     }
 
     internal open fun createTestRegistry(project: Project) = KotlinTestsRegistry(project)
