@@ -1,5 +1,6 @@
 // WITH_STDLIB
 // SKIP_KT_DUMP
+// TARGET_BACKEND: JVM_IR
 
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract

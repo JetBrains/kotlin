@@ -1003,12 +1003,6 @@ public class FirLightTreeJsIrTextTestGenerated extends AbstractFirLightTreeJsIrT
         }
 
         @Test
-        @TestMetadata("ambiguousFieldAccess.kt")
-        public void testAmbiguousFieldAccess() throws Exception {
-            runTest("compiler/testData/ir/irText/expressions/ambiguousFieldAccess.kt");
-        }
-
-        @Test
         @TestMetadata("argumentMappedWithError.kt")
         public void testArgumentMappedWithError() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/argumentMappedWithError.kt");
@@ -1441,12 +1435,6 @@ public class FirLightTreeJsIrTextTestGenerated extends AbstractFirLightTreeJsIrT
         }
 
         @Test
-        @TestMetadata("kt42321.kt")
-        public void testKt42321() throws Exception {
-            runTest("compiler/testData/ir/irText/expressions/kt42321.kt");
-        }
-
-        @Test
         @TestMetadata("kt45022.kt")
         public void testKt45022() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/kt45022.kt");
@@ -1456,12 +1444,6 @@ public class FirLightTreeJsIrTextTestGenerated extends AbstractFirLightTreeJsIrT
         @TestMetadata("kt47245.kt")
         public void testKt47245() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/kt47245.kt");
-        }
-
-        @Test
-        @TestMetadata("kt47328.kt")
-        public void testKt47328() throws Exception {
-            runTest("compiler/testData/ir/irText/expressions/kt47328.kt");
         }
 
         @Test
@@ -2140,12 +2122,6 @@ public class FirLightTreeJsIrTextTestGenerated extends AbstractFirLightTreeJsIrT
     @TestDataPath("$PROJECT_ROOT")
     public class FirProblems {
         @Test
-        @TestMetadata("AbstractMutableMap.kt")
-        public void testAbstractMutableMap() throws Exception {
-            runTest("compiler/testData/ir/irText/firProblems/AbstractMutableMap.kt");
-        }
-
-        @Test
         public void testAllFilesPresentInFirProblems() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/firProblems"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
         }
@@ -2157,9 +2133,9 @@ public class FirLightTreeJsIrTextTestGenerated extends AbstractFirLightTreeJsIrT
         }
 
         @Test
-        @TestMetadata("ArrayListOverrides.kt")
-        public void testArrayListOverrides() throws Exception {
-            runTest("compiler/testData/ir/irText/firProblems/ArrayListOverrides.kt");
+        @TestMetadata("AnonymousAsReturnOfGenericFunction.kt")
+        public void testAnonymousAsReturnOfGenericFunction() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/AnonymousAsReturnOfGenericFunction.kt");
         }
 
         @Test
@@ -2220,12 +2196,6 @@ public class FirLightTreeJsIrTextTestGenerated extends AbstractFirLightTreeJsIrT
         @TestMetadata("FlushFromAnonymous.kt")
         public void testFlushFromAnonymous() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/FlushFromAnonymous.kt");
-        }
-
-        @Test
-        @TestMetadata("functionLiteralGenericSignature.kt")
-        public void testFunctionLiteralGenericSignature() throws Exception {
-            runTest("compiler/testData/ir/irText/firProblems/functionLiteralGenericSignature.kt");
         }
 
         @Test
@@ -2663,12 +2633,6 @@ public class FirLightTreeJsIrTextTestGenerated extends AbstractFirLightTreeJsIrT
         }
 
         @Test
-        @TestMetadata("kt45236.kt")
-        public void testKt45236() throws Exception {
-            runTest("compiler/testData/ir/irText/regressions/kt45236.kt");
-        }
-
-        @Test
         @TestMetadata("newInferenceFixationOrder1.kt")
         public void testNewInferenceFixationOrder1() throws Exception {
             runTest("compiler/testData/ir/irText/regressions/newInferenceFixationOrder1.kt");
@@ -2716,12 +2680,6 @@ public class FirLightTreeJsIrTextTestGenerated extends AbstractFirLightTreeJsIrT
         @Test
         public void testAllFilesPresentInStubs() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/stubs"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
-        }
-
-        @Test
-        @TestMetadata("builtinMap.kt")
-        public void testBuiltinMap() throws Exception {
-            runTest("compiler/testData/ir/irText/stubs/builtinMap.kt");
         }
 
         @Test

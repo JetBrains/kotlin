@@ -1,4 +1,6 @@
 // SKIP_KLIB_TEST
+// IGNORE_BACKEND_K2: JS_IR
+// IGNORE_BACKEND_K2: JS_IR_ES6
 // FILE: Collector.java
 
 public class Collector {

@@ -1,3 +1,6 @@
+// IGNORE_BACKEND_K2: JS_IR
+// IGNORE_BACKEND_K2: JS_IR_ES6
+
 var p: Int = 0
 val arr = intArrayOf(1, 2, 3)
 
@@ -44,6 +47,7 @@ fun testArrayPostfix() {
     val a1 = arr[0]++
     val a2 = arr[0]--
 }
+
 
 fun testClassPropPrefix() {
     val p1 = ++C().p

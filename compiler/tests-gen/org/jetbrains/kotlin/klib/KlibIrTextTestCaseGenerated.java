@@ -900,11 +900,6 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/expressions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
         }
 
-        @TestMetadata("ambiguousFieldAccess.kt")
-        public void testAmbiguousFieldAccess() throws Exception {
-            runTest("compiler/testData/ir/irText/expressions/ambiguousFieldAccess.kt");
-        }
-
         @TestMetadata("argumentMappedWithError.kt")
         public void testArgumentMappedWithError() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/argumentMappedWithError.kt");
@@ -1265,11 +1260,6 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
             runTest("compiler/testData/ir/irText/expressions/kt37779.kt");
         }
 
-        @TestMetadata("kt42321.kt")
-        public void testKt42321() throws Exception {
-            runTest("compiler/testData/ir/irText/expressions/kt42321.kt");
-        }
-
         @TestMetadata("kt45022.kt")
         public void testKt45022() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/kt45022.kt");
@@ -1278,11 +1268,6 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
         @TestMetadata("kt47245.kt")
         public void testKt47245() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/kt47245.kt");
-        }
-
-        @TestMetadata("kt47328.kt")
-        public void testKt47328() throws Exception {
-            runTest("compiler/testData/ir/irText/expressions/kt47328.kt");
         }
 
         @TestMetadata("kt47450.kt")
@@ -1871,11 +1856,6 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.JS_IR, testDataFilePath);
         }
 
-        @TestMetadata("AbstractMutableMap.kt")
-        public void testAbstractMutableMap() throws Exception {
-            runTest("compiler/testData/ir/irText/firProblems/AbstractMutableMap.kt");
-        }
-
         public void testAllFilesPresentInFirProblems() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/firProblems"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
         }
@@ -1888,11 +1868,6 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
         @TestMetadata("AnonymousAsReturnOfGenericFunction.kt")
         public void testAnonymousAsReturnOfGenericFunction() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/AnonymousAsReturnOfGenericFunction.kt");
-        }
-
-        @TestMetadata("ArrayListOverrides.kt")
-        public void testArrayListOverrides() throws Exception {
-            runTest("compiler/testData/ir/irText/firProblems/ArrayListOverrides.kt");
         }
 
         @TestMetadata("ArrayMap.kt")
@@ -1943,11 +1918,6 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
         @TestMetadata("FlushFromAnonymous.kt")
         public void testFlushFromAnonymous() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/FlushFromAnonymous.kt");
-        }
-
-        @TestMetadata("functionLiteralGenericSignature.kt")
-        public void testFunctionLiteralGenericSignature() throws Exception {
-            runTest("compiler/testData/ir/irText/firProblems/functionLiteralGenericSignature.kt");
         }
 
         @TestMetadata("ImplicitReceiverStack.kt")
@@ -2349,11 +2319,6 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
             runTest("compiler/testData/ir/irText/regressions/kt24114.kt");
         }
 
-        @TestMetadata("kt45236.kt")
-        public void testKt45236() throws Exception {
-            runTest("compiler/testData/ir/irText/regressions/kt45236.kt");
-        }
-
         @TestMetadata("newInferenceFixationOrder1.kt")
         public void testNewInferenceFixationOrder1() throws Exception {
             runTest("compiler/testData/ir/irText/regressions/newInferenceFixationOrder1.kt");
@@ -2403,11 +2368,6 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
 
         public void testAllFilesPresentInStubs() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/stubs"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
-        }
-
-        @TestMetadata("builtinMap.kt")
-        public void testBuiltinMap() throws Exception {
-            runTest("compiler/testData/ir/irText/stubs/builtinMap.kt");
         }
 
         @TestMetadata("constFromBuiltins.kt")

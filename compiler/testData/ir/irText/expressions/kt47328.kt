@@ -3,6 +3,7 @@
 // !LANGUAGE: -ProhibitJvmFieldOnOverrideFromInterfaceInPrimaryConstructor
 // SKIP_KT_DUMP
 // SKIP_KLIB_TEST
+// TARGET_BACKEND: JVM_IR
 // WITH_STDLIB
 
 interface A { val x: Int }
