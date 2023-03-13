@@ -18,20 +18,20 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.utils.Future
-import org.jetbrains.kotlin.gradle.utils.lazyFuture
+import org.jetbrains.kotlin.gradle.utils.future
+import org.jetbrains.kotlin.gradle.utils.futureExtension
 import org.jetbrains.kotlin.tooling.core.UnsafeApi
 
-internal val KotlinSourceSet.commonizerTarget: Future<CommonizerTarget?> by lazyFuture {
+internal val KotlinSourceSet.commonizerTarget: Future<CommonizerTarget?> by futureExtension {
     await(KotlinPluginLifecycle.Stage.AfterFinaliseRefinesEdges)
     @OptIn(UnsafeApi::class)
     inferCommonizerTarget(this)
 }
 
-internal val KotlinSourceSet.sharedCommonizerTarget: Future<SharedCommonizerTarget?> by lazyFuture {
-    commonizerTarget.await() as? SharedCommonizerTarget
-}
+internal val KotlinSourceSet.sharedCommonizerTarget: Future<SharedCommonizerTarget?>
+    get() = project.future { commonizerTarget.await() as? SharedCommonizerTarget }
 
-internal val KotlinCompilation<*>.commonizerTarget: Future<CommonizerTarget?> by lazyFuture {
+internal val KotlinCompilation<*>.commonizerTarget: Future<CommonizerTarget?> by futureExtension {
     await(KotlinPluginLifecycle.Stage.AfterFinaliseRefinesEdges)
     @OptIn(UnsafeApi::class)
     inferCommonizerTarget(this)

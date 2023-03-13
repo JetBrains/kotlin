@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.tooling.core.ExtrasLazyProperty
 import org.jetbrains.kotlin.tooling.core.HasMutableExtras
 import org.jetbrains.kotlin.tooling.core.extrasLazyProperty
 import java.io.Serializable
-import kotlin.reflect.KProperty
 
 /**
  * See [KotlinPluginLifecycle]:
@@ -54,7 +53,13 @@ internal interface CompletableFuture<T> : Future<T> {
 
 internal fun CompletableFuture<Unit>.complete() = complete(Unit)
 
-internal inline fun <Receiver, reified T> lazyFuture(
+/**
+ * Extend a given [Receiver] with data produced by [block]:
+ * This uses the [HasMutableExtras] infrastructure to store/share the produced future entity to the given [Receiver]
+ * Note: The [block] will be lazily launched on first access to this extension!
+ * @param name: The name of the extras key being used to store the future (see [extrasLazyProperty])
+ */
+internal inline fun <Receiver, reified T> futureExtension(
     name: String? = null, noinline block: suspend Receiver.() -> T
 ): ExtrasLazyProperty<Receiver, Future<T>> where Receiver : HasMutableExtras, Receiver : HasProject {
     return extrasLazyProperty<Receiver, Future<T>>(name) {
@@ -63,6 +68,16 @@ internal inline fun <Receiver, reified T> lazyFuture(
 }
 
 internal fun <T> Project.future(block: suspend Project.() -> T): Future<T> = kotlinPluginLifecycle.future { block() }
+
+/**
+ * Shortcut for
+ * ```kotlin
+ * lazy { future { block() } }
+ * ```
+ *
+ * basically creating a future, which is launched lazily
+ */
+internal fun <T> Project.lazyFuture(block: suspend Project.() -> T): Lazy<Future<T>> = lazy { future(block) }
 
 internal fun <T> KotlinPluginLifecycle.future(block: suspend () -> T): Future<T> {
     return FutureImpl<T>(CompletableDeferred()).also { future ->

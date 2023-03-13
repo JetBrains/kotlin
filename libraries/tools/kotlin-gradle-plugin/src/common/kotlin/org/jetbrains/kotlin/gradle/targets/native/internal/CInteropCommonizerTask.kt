@@ -25,12 +25,16 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.withDependsOnClosure
+import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerTask.CInteropCommonizerDependencies
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerTask.CInteropGist
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 import javax.inject.Inject
+
+private typealias GroupedCommonizerDependencies = Map<CInteropCommonizerGroup, List<CInteropCommonizerDependencies>>
+
 
 @CacheableTask
 internal open class CInteropCommonizerTask
@@ -121,8 +125,8 @@ internal open class CInteropCommonizerTask
      * For Gradle Configuration Cache support the Group-to-Dependencies relation should be pre-cached.
      * It is used during execution phase.
      */
-    private val groupedCommonizerDependencies: Future<Map<CInteropCommonizerGroup, List<CInteropCommonizerDependencies>>> = project.future {
-        val multiplatformExtension = project.multiplatformExtensionOrNull ?: return@future emptyMap()
+    private val groupedCommonizerDependencies: Future<GroupedCommonizerDependencies> by project.lazyFuture {
+        val multiplatformExtension = project.multiplatformExtensionOrNull ?: return@lazyFuture emptyMap()
 
         val sourceSetsByTarget = multiplatformExtension.sourceSets.groupBy { sourceSet -> sourceSet.commonizerTarget.getOrThrow() }
         val sourceSetsByGroup = multiplatformExtension.sourceSets.groupBy { sourceSet ->
@@ -228,7 +232,7 @@ internal open class CInteropCommonizerTask
     }
 
     @get:Internal
-    internal val allInteropGroups: Future<Set<CInteropCommonizerGroup>> = project.future {
+    internal val allInteropGroups: Future<Set<CInteropCommonizerGroup>> by project.lazyFuture {
         val dependents = allDependents.await()
         val allScopeSets = dependents.map { it.scopes }.toSet()
         val rootScopeSets = allScopeSets.filter { scopeSet ->
@@ -263,8 +267,8 @@ internal open class CInteropCommonizerTask
         return suitableGroups.firstOrNull()
     }
 
-    private val allDependents: Future<Set<CInteropCommonizerDependent>> = project.future {
-        val multiplatformExtension = project.multiplatformExtensionOrNull ?: return@future emptySet()
+    private val allDependents: Future<Set<CInteropCommonizerDependent>> by project.lazyFuture {
+        val multiplatformExtension = project.multiplatformExtensionOrNull ?: return@lazyFuture emptySet()
 
         val fromSharedNativeCompilations = multiplatformExtension
             .targets.flatMap { target -> target.compilations }
