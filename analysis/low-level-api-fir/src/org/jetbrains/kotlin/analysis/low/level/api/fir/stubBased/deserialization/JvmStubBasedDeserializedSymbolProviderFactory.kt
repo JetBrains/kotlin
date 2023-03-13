@@ -37,7 +37,6 @@ class JvmStubBasedDeserializedSymbolProviderFactory : JvmFirDeserializedSymbolPr
                     session,
                     moduleDataProvider,
                     kotlinScopeProvider,
-                    packagePartProvider,
                     firJavaFacade,
                     project.createDeclarationProvider(object : DelegatingGlobalSearchScope(project, scope) {
                         override fun contains(file: VirtualFile): Boolean {
