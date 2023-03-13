@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.fir.FirAnalyzerFacade
 import org.jetbrains.kotlin.fir.FirTestSessionFactoryHelper
 import org.jetbrains.kotlin.fir.backend.Fir2IrCommonMemberStorage
+import org.jetbrains.kotlin.fir.backend.Fir2IrConfiguration
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmKotlinMangler
@@ -122,16 +123,16 @@ object GenerationUtils {
         val firAnalyzerFacade = FirAnalyzerFacade(
             session,
             configuration.languageVersionSettings,
+            Fir2IrConfiguration(linkViaSignatures = false),
             files,
             emptyList(),
             IrGenerationExtension.getInstances(project),
             FirParser.Psi,
-            generateSignatures = false
         )
         val fir2IrExtensions = JvmFir2IrExtensions(configuration, JvmIrDeserializerImpl(), JvmIrMangler)
 
         val commonMemberStorage = Fir2IrCommonMemberStorage(
-            generateSignatures = firAnalyzerFacade.generateSignatures,
+            generateSignatures = firAnalyzerFacade.fir2IrConfiguration.linkViaSignatures,
             signatureComposerCreator = { JvmIdSignatureDescriptor(JvmDescriptorMangler(null)) },
             manglerCreator = { FirJvmKotlinMangler() }
         )

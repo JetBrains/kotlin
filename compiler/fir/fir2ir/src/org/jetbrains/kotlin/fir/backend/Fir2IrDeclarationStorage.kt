@@ -526,7 +526,7 @@ class Fir2IrDeclarationStorage(
         val signature =
             runUnless(
                 isLocal ||
-                        !generateSignatures && irParent !is Fir2IrLazyClass &&
+                        !configuration.linkViaSignatures && irParent !is Fir2IrLazyClass &&
                         function.dispatchReceiverType?.isPrimitive != true && function.containerSource == null &&
                         updatedOrigin != IrDeclarationOrigin.FAKE_OVERRIDE && !function.isOverride
             ) {
@@ -632,7 +632,7 @@ class Fir2IrDeclarationStorage(
         val origin = constructor.computeIrOrigin(predefinedOrigin)
         val isPrimary = constructor.isPrimary
         val signature =
-            runUnless(isLocal || !generateSignatures) {
+            runUnless(isLocal || !configuration.linkViaSignatures) {
                 signatureComposer.composeSignature(constructor, forceTopLevelPrivate = forceTopLevelPrivate)
             }
         val visibility = if (irParent.isAnonymousObject) Visibilities.Public else constructor.visibility
@@ -868,7 +868,7 @@ class Fir2IrDeclarationStorage(
         val signature =
             runUnless(
                 isLocal ||
-                        !generateSignatures && irParent !is Fir2IrLazyClass &&
+                        !configuration.linkViaSignatures && irParent !is Fir2IrLazyClass &&
                         property.dispatchReceiverType?.isPrimitive != true && property.containerSource == null &&
                         origin != IrDeclarationOrigin.FAKE_OVERRIDE && !property.isOverride
             ) {

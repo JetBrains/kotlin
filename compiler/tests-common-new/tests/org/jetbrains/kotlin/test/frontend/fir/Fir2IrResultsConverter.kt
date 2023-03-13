@@ -86,8 +86,8 @@ class Fir2IrResultsConverter(
         lateinit var mainIrPart: JvmIrCodegenFactory.JvmIrBackendInput
         lateinit var mainModuleComponents: Fir2IrComponents
 
-        val generateSignatures =
-            (inputArtifact.partsForDependsOnModules.last().firAnalyzerFacade as? FirAnalyzerFacade)?.generateSignatures == true
+        val firAnalyzerFacade = inputArtifact.partsForDependsOnModules.last().firAnalyzerFacade as? FirAnalyzerFacade
+        val generateSignatures = firAnalyzerFacade?.fir2IrConfiguration?.linkViaSignatures == true
 
         val commonMemberStorage = Fir2IrCommonMemberStorage(
             generateSignatures = generateSignatures,

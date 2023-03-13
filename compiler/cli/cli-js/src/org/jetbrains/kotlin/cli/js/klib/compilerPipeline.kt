@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.BinaryModuleData
 import org.jetbrains.kotlin.fir.DependencyListForCliModule
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.ConstValueProviderImpl
+import org.jetbrains.kotlin.fir.backend.Fir2IrConfiguration
 import org.jetbrains.kotlin.fir.backend.Fir2IrExtensions
 import org.jetbrains.kotlin.fir.backend.Fir2IrVisibilityConverter
 import org.jetbrains.kotlin.fir.backend.extractFirDeclarations
@@ -129,8 +130,8 @@ fun transformFirToIr(
     val firResult = FirResult(firOutputs)
     return firResult.convertToIrAndActualize(
         fir2IrExtensions,
+        Fir2IrConfiguration(linkViaSignatures = false),
         IrGenerationExtension.getInstances(moduleStructure.project),
-        linkViaSignatures = false,
         signatureComposerCreator = null,
         irMangler = JsManglerIr,
         firManglerCreator = ::FirJsKotlinMangler,

@@ -46,14 +46,14 @@ data class Fir2IrActualizedResult(
 
 fun FirResult.convertToIrAndActualizeForJvm(
     fir2IrExtensions: Fir2IrExtensions,
+    fir2IrConfiguration: Fir2IrConfiguration,
     irGeneratorExtensions: Collection<IrGenerationExtension>,
-    linkViaSignatures: Boolean,
     diagnosticReporter: DiagnosticReporter,
     languageVersionSettings: LanguageVersionSettings,
 ): Fir2IrActualizedResult = this.convertToIrAndActualize(
     fir2IrExtensions,
+    fir2IrConfiguration,
     irGeneratorExtensions,
-    linkViaSignatures = linkViaSignatures,
     signatureComposerCreator = { JvmIdSignatureDescriptor(JvmDescriptorMangler(null)) },
     irMangler = JvmIrMangler,
     firManglerCreator = { FirJvmKotlinMangler() },
@@ -65,8 +65,8 @@ fun FirResult.convertToIrAndActualizeForJvm(
 
 fun FirResult.convertToIrAndActualize(
     fir2IrExtensions: Fir2IrExtensions,
+    fir2IrConfiguration: Fir2IrConfiguration,
     irGeneratorExtensions: Collection<IrGenerationExtension>,
-    linkViaSignatures: Boolean,
     signatureComposerCreator: (() -> IdSignatureComposer)?,
     irMangler: KotlinMangler.IrMangler,
     firManglerCreator: () -> FirMangler,
@@ -80,7 +80,7 @@ fun FirResult.convertToIrAndActualize(
     val actualizationResult: IrActualizedResult?
 
     val commonMemberStorage = Fir2IrCommonMemberStorage(
-        generateSignatures = linkViaSignatures,
+        generateSignatures = fir2IrConfiguration.linkViaSignatures,
         signatureComposerCreator = signatureComposerCreator,
         manglerCreator = firManglerCreator
     )
@@ -90,8 +90,8 @@ fun FirResult.convertToIrAndActualize(
         1 -> {
             fir2IrResult = outputs.single().convertToIr(
                 fir2IrExtensions,
+                fir2IrConfiguration,
                 irGeneratorExtensions,
-                linkViaSignatures = linkViaSignatures,
                 commonMemberStorage = commonMemberStorage,
                 irBuiltIns = null,
                 irMangler,
@@ -109,8 +109,8 @@ fun FirResult.convertToIrAndActualize(
             val commonIrOutputs = commonOutputs.map {
                 it.convertToIr(
                     fir2IrExtensions,
+                    fir2IrConfiguration,
                     irGeneratorExtensions,
-                    linkViaSignatures = linkViaSignatures,
                     commonMemberStorage = commonMemberStorage,
                     irBuiltIns = irBuiltIns,
                     irMangler,
@@ -125,8 +125,8 @@ fun FirResult.convertToIrAndActualize(
             }
             fir2IrResult = platformOutput.convertToIr(
                 fir2IrExtensions,
+                fir2IrConfiguration,
                 irGeneratorExtensions,
-                linkViaSignatures = linkViaSignatures,
                 commonMemberStorage = commonMemberStorage,
                 irBuiltIns = irBuiltIns!!,
                 irMangler,
@@ -151,8 +151,8 @@ fun FirResult.convertToIrAndActualize(
 
 private fun ModuleCompilerAnalyzedOutput.convertToIr(
     fir2IrExtensions: Fir2IrExtensions,
+    fir2IrConfiguration: Fir2IrConfiguration,
     irGeneratorExtensions: Collection<IrGenerationExtension>,
-    linkViaSignatures: Boolean,
     commonMemberStorage: Fir2IrCommonMemberStorage,
     irBuiltIns: IrBuiltInsOverFir?,
     irMangler: KotlinMangler.IrMangler,
@@ -161,12 +161,11 @@ private fun ModuleCompilerAnalyzedOutput.convertToIr(
 ): Fir2IrResult {
     return Fir2IrConverter.createModuleFragmentWithSignaturesIfNeeded(
         session, scopeSession, fir,
-        session.languageVersionSettings, fir2IrExtensions,
+        session.languageVersionSettings, fir2IrExtensions, fir2IrConfiguration,
         irMangler, IrFactoryImpl, visibilityConverter,
         Fir2IrJvmSpecialAnnotationSymbolProvider(), // TODO: replace with appropriate (probably empty) implementation for other backends.
         irGeneratorExtensions,
         kotlinBuiltIns = kotlinBuiltIns,
-        generateSignatures = linkViaSignatures,
         commonMemberStorage = commonMemberStorage,
         initializedIrBuiltIns = irBuiltIns
     )

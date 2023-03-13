@@ -151,11 +151,11 @@ fun AbstractFirAnalyzerFacade.convertToJsIr(
         session, scopeSession, firFiles.toList(),
         languageVersionSettings,
         fir2IrExtensions,
+        Fir2IrConfiguration(linkViaSignatures = false),
         JsManglerIr, IrFactoryImpl,
         Fir2IrVisibilityConverter.Default,
         Fir2IrJvmSpecialAnnotationSymbolProvider(), // TODO: replace with appropriate (probably empty) implementation
         irGeneratorExtensions,
-        generateSignatures = false,
         kotlinBuiltIns = builtIns ?: DefaultBuiltIns.Instance, // TODO: consider passing externally,
         commonMemberStorage = commonMemberStorage,
         initializedIrBuiltIns = irBuiltIns

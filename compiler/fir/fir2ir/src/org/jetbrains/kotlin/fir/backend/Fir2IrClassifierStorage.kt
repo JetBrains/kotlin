@@ -341,7 +341,7 @@ class Fir2IrClassifierStorage(
             ClassKind.ANNOTATION_CLASS -> Modality.OPEN
             else -> regularClass.modality ?: Modality.FINAL
         }
-        val signature = runUnless(regularClass.isLocal || !generateSignatures) {
+        val signature = runUnless(regularClass.isLocal || !configuration.linkViaSignatures) {
             signatureComposer.composeSignature(regularClass)
         }
         val irClass = regularClass.convertWithOffsets { startOffset, endOffset ->
@@ -591,7 +591,7 @@ class Fir2IrClassifierStorage(
         // firClass may be referenced by some parent's type parameters as a bound. In that case, getIrClassSymbol will be called recursively.
         getCachedIrClass(firClass)?.let { return it.symbol }
 
-        val signature = runIf(generateSignatures) {
+        val signature = runIf(configuration.linkViaSignatures) {
             signatureComposer.composeSignature(firClass, forceTopLevelPrivate = forceTopLevelPrivate)
         }
         val irClass = firClass.convertWithOffsets { startOffset, endOffset ->

@@ -50,7 +50,7 @@ class Fir2IrConverter(
     private var wereSourcesFakeOverridesBound = false
     private val postponedDeclarationsForFakeOverridesBinding = mutableListOf<IrDeclaration>()
 
-    fun runSourcesConversion(
+    private fun runSourcesConversion(
         allFirFiles: List<FirFile>,
         irModuleFragment: IrModuleFragmentImpl,
         irGenerationExtensions: Collection<IrGenerationExtension>,
@@ -442,12 +442,12 @@ class Fir2IrConverter(
             firFiles: List<FirFile>,
             languageVersionSettings: LanguageVersionSettings,
             fir2IrExtensions: Fir2IrExtensions,
+            fir2IrConfiguration: Fir2IrConfiguration,
             irMangler: KotlinMangler.IrMangler,
             irFactory: IrFactory,
             visibilityConverter: Fir2IrVisibilityConverter,
             specialSymbolProvider: Fir2IrSpecialSymbolProvider,
             irGenerationExtensions: Collection<IrGenerationExtension>,
-            generateSignatures: Boolean,
             kotlinBuiltIns: KotlinBuiltIns,
             commonMemberStorage: Fir2IrCommonMemberStorage,
             initializedIrBuiltIns: IrBuiltInsOverFir?
@@ -460,7 +460,7 @@ class Fir2IrConverter(
                 irFactory,
                 commonMemberStorage.signatureComposer,
                 fir2IrExtensions,
-                generateSignatures
+                fir2IrConfiguration,
             )
             val converter = Fir2IrConverter(moduleDescriptor, components)
 
