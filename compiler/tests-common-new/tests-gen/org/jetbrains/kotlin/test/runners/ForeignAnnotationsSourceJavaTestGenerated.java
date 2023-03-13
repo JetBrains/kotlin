@@ -619,6 +619,12 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
         }
 
         @Test
+        @TestMetadata("overrideOfMethodWithParametricNullness.kt")
+        public void testOverrideOfMethodWithParametricNullness() throws Exception {
+            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/overrideOfMethodWithParametricNullness.kt");
+        }
+
+        @Test
         @TestMetadata("typeUseOnObject.kt")
         public void testTypeUseOnObject() throws Exception {
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/typeUseOnObject.kt");
