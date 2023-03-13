@@ -129,6 +129,7 @@ import org.jetbrains.kotlin.fir.expressions.FirWrappedDelegateExpression
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirNamedReferenceWithCandidateBase
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
+import org.jetbrains.kotlin.fir.references.FirFromMissingDependenciesNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
@@ -649,6 +650,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     open fun visitErrorNamedReference(errorNamedReference: FirErrorNamedReference) {
         visitElement(errorNamedReference)
+    }
+
+    open fun visitFromMissingDependenciesNamedReference(fromMissingDependenciesNamedReference: FirFromMissingDependenciesNamedReference) {
+        visitElement(fromMissingDependenciesNamedReference)
     }
 
     open fun visitSuperReference(superReference: FirSuperReference) {
@@ -1229,6 +1234,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitErrorNamedReference(errorNamedReference: FirErrorNamedReference, data: Nothing?) {
         visitErrorNamedReference(errorNamedReference)
+    }
+
+    final override fun visitFromMissingDependenciesNamedReference(fromMissingDependenciesNamedReference: FirFromMissingDependenciesNamedReference, data: Nothing?) {
+        visitFromMissingDependenciesNamedReference(fromMissingDependenciesNamedReference)
     }
 
     final override fun visitSuperReference(superReference: FirSuperReference, data: Nothing?) {
