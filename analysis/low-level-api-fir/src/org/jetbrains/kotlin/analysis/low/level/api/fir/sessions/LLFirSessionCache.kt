@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
 import org.jetbrains.kotlin.analysis.project.structure.*
 import org.jetbrains.kotlin.analysis.providers.createAnnotationResolver
 import org.jetbrains.kotlin.analysis.providers.createDeclarationProvider
-import org.jetbrains.kotlin.analysis.providers.createPackagePartProvider
 import org.jetbrains.kotlin.analysis.providers.createPackageProvider
 import org.jetbrains.kotlin.analysis.utils.trackers.CompositeModificationTracker
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -269,7 +268,6 @@ internal class LLFirSessionCache(private val project: Project) {
                     session,
                     moduleDataProvider,
                     scopeProvider,
-                    javaSymbolProvider.javaFacade,
                     project.createDeclarationProvider(object : DelegatingGlobalSearchScope(project, contentScope) {
                         override fun contains(file: VirtualFile): Boolean {
                             if (file.extension == "kotlin_builtins") return false

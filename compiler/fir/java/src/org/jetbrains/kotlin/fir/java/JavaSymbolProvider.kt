@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.name.Name
 // in order to load Kotlin classes as well.
 class JavaSymbolProvider(
     session: FirSession,
-    val javaFacade: FirJavaFacade,
+    private val javaFacade: FirJavaFacade,
 ) : FirSymbolProvider(session) {
 
     private val classCache =
