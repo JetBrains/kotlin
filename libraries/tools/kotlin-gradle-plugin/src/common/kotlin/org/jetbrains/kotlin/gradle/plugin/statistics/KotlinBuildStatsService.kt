@@ -38,6 +38,14 @@ interface KotlinBuildStatsMXBean {
     fun reportNumber(name: String, value: Long, subprojectName: String?, weight: Long?): Boolean
 
     fun reportString(name: String, value: String, subprojectName: String?, weight: Long?): Boolean
+
+    //support Idea up to 2023.1 version, before KT-57371 fix
+
+    fun reportBoolean(name: String, value: Boolean, subprojectName: String?): Boolean
+
+    fun reportNumber(name: String, value: Long, subprojectName: String?): Boolean
+
+    fun reportString(name: String, value: String, subprojectName: String?): Boolean
 }
 
 
@@ -165,13 +173,31 @@ internal abstract class KotlinBuildStatsService internal constructor() : BuildAd
 internal class JMXKotlinBuildStatsService(private val mbs: MBeanServer, private val beanName: ObjectName) :
     KotlinBuildStatsService() {
 
-    private fun callJmx(method: String, type: String, metricName: String, value: Any, subprojectName: String?, weight: Long?): Any? {
+    private fun callJmx_v2(method: String, type: String, metricName: String, value: Any, subprojectName: String?, weight: Long): Any? {
         return mbs.invoke(
             beanName,
             method,
             arrayOf(metricName, value, subprojectName, weight),
             arrayOf("java.lang.String", type, "java.lang.String", "java.lang.Long")
         )
+    }
+
+    private fun callJmx_v1(method: String, type: String, metricName: String, value: Any, subprojectName: String?): Any? {
+        return mbs.invoke(
+            beanName,
+            method,
+            arrayOf(metricName, value, subprojectName),
+            arrayOf("java.lang.String", type, "java.lang.String")
+        )
+    }
+
+    //Temporary solution before KT-57371
+    private fun callJmx(method: String, type: String, metricName: String, value: Any, subprojectName: String?, weight: Long?): Any? {
+        return if (weight == null) {
+            callJmx_v1(method, type, metricName, value, subprojectName)
+        } else {
+            callJmx_v2(method, type, metricName, value, subprojectName, weight)
+        }
     }
 
     override fun report(metric: BooleanMetrics, value: Boolean, subprojectName: String?, weight: Long?) =
@@ -243,4 +269,16 @@ internal class DefaultKotlinBuildStatsService internal constructor(
 
     override fun reportString(name: String, value: String, subprojectName: String?, weight: Long?): Boolean =
         report(StringMetrics.valueOf(name), value, subprojectName, weight)
+
+    override fun reportBoolean(name: String, value: Boolean, subprojectName: String?): Boolean =
+        report(BooleanMetrics.valueOf(name), value, subprojectName, null)
+
+
+    override fun reportNumber(name: String, value: Long, subprojectName: String?): Boolean =
+        report(NumericalMetrics.valueOf(name), value, subprojectName, null)
+
+
+    override fun reportString(name: String, value: String, subprojectName: String?): Boolean =
+        report(StringMetrics.valueOf(name), value, subprojectName, null)
+
 }
