@@ -8,7 +8,7 @@ package org.jetbrains.conventions
  */
 
 plugins {
-    `java`
+    java
 }
 
 java {
