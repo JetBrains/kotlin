@@ -276,6 +276,10 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
                         new File(ThirdPartyAnnotationPathsKt.FOREIGN_ANNOTATIONS_SOURCES_PATH).getPath()
                 )
                 .replace(
+                        "$JSR_305_DECLARATIONS$",
+                        new File(ThirdPartyAnnotationPathsKt.JSR_305_SOURCES_PATH).getPath()
+                )
+                .replace(
                         "$FOREIGN_JAVA8_ANNOTATIONS_DIR$",
                         new File(ThirdPartyAnnotationPathsKt.FOREIGN_JDK8_ANNOTATIONS_SOURCES_PATH).getPath()
                 ).replace(
