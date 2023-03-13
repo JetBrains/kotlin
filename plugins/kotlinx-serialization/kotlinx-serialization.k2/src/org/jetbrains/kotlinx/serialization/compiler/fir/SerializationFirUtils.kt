@@ -84,7 +84,11 @@ val FirClassSymbol<*>.hasSerializableAnnotation: Boolean
     get() = serializableAnnotation(needArguments = false, this@FirSession) != null
 
 fun FirBasedSymbol<*>.serializableAnnotation(needArguments: Boolean, session: FirSession): FirAnnotation? {
-    val annotations = if (needArguments) resolvedAnnotationsWithClassIds else resolvedAnnotationsWithArguments
+    val annotations = if (needArguments) {
+        resolvedAnnotationsWithArguments
+    } else {
+        resolvedCompilerAnnotationsWithClassIds
+    }
     return annotations.serializableAnnotation(session)
 }
 
