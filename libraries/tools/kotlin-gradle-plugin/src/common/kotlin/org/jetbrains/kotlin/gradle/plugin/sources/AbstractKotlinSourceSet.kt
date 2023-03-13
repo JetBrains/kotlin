@@ -34,7 +34,7 @@ abstract class AbstractKotlinSourceSet : InternalKotlinSourceSet {
     final override fun dependsOn(other: KotlinSourceSet) {
         if (other == this) return
 
-        assert(project.kotlinPluginLifecycle.stage <= KotlinPluginLifecycle.Stage.FinaliseRefinesEdges) {
+        check(project.kotlinPluginLifecycle.stage <= KotlinPluginLifecycle.Stage.FinaliseRefinesEdges) {
             "Illegal 'dependsOn' call in stage '${project.kotlinPluginLifecycle.stage}'"
         }
 

@@ -99,11 +99,10 @@ class NativeExternalDependenciesIT : BaseGradleIT() {
             )
 
             build(
-                "assemble",
-                options = defaultBuildOptions().copy(dryRun = true)
+                "buildExternalDependenciesFile"
             ) {
                 assertSuccessful()
-
+                assertTasksExecuted(":buildExternalDependenciesFile")
                 val kotlinNativeTargetName = findKotlinNativeTargetName(output)
                 assertNotNull(kotlinNativeTargetName)
 

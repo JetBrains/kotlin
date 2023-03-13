@@ -17,12 +17,16 @@ kotlin {
     }
 }
 
-afterEvaluate {
-    val externalDependenciesFile = Class.forName("org.jetbrains.kotlin.gradle.tasks.ExternalDependenciesBuilder")
-        .getDeclaredMethod("buildExternalDependenciesFileForTests", Project::class.java).apply { isAccessible = true }
-        .invoke(null, project)
-        ?.toString().orEmpty()
+val buildExternalDependenciesFile = tasks.register("buildExternalDependenciesFile") {
+    doLast {
+        val externalDependenciesFile = Class.forName("org.jetbrains.kotlin.gradle.tasks.ExternalDependenciesBuilder")
+            .getDeclaredMethod("buildExternalDependenciesFileForTests", Project::class.java).apply { isAccessible = true }
+            .invoke(null, project)
+            ?.toString().orEmpty()
 
-    println("for_test_kotlin_native_target=<SingleNativeTarget>")
-    println("for_test_external_dependencies_file=$externalDependenciesFile")
+        println("for_test_kotlin_native_target=<SingleNativeTarget>")
+        println("for_test_external_dependencies_file=$externalDependenciesFile")
+    }
 }
+
+tasks.getByName("assemble").dependsOn(buildExternalDependenciesFile)
