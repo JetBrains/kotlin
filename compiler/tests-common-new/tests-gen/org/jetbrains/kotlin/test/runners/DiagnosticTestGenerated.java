@@ -658,6 +658,18 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         }
 
         @Test
+        @TestMetadata("overrideNotNull_Fail.kt")
+        public void testOverrideNotNull_Fail() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/overrideNotNull_Fail.kt");
+        }
+
+        @Test
+        @TestMetadata("overrideNotNull_Ok.kt")
+        public void testOverrideNotNull_Ok() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/overrideNotNull_Ok.kt");
+        }
+
+        @Test
         @TestMetadata("OverridenFunctionAndSpecifiedTypeParameter.kt")
         public void testOverridenFunctionAndSpecifiedTypeParameter() throws Exception {
             runTest("compiler/testData/diagnostics/tests/OverridenFunctionAndSpecifiedTypeParameter.kt");
