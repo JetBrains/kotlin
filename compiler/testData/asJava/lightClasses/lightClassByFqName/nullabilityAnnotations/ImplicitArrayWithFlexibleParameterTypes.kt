@@ -1,3 +1,4 @@
+// SKIP_IDE_TEST
 // ImplicitArrayWithFlexibleParameterTypesKt
 // WITH_STDLIB
 // FILE: ImplicitArrayWithFlexibleParameterTypes.kt
