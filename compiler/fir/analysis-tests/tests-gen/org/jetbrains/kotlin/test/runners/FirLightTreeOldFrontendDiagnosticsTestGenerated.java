@@ -766,6 +766,18 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
         }
 
         @Test
+        @TestMetadata("rawCastToStarProjection_Fail.kt")
+        public void testRawCastToStarProjection_Fail() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/rawCastToStarProjection_Fail.kt");
+        }
+
+        @Test
+        @TestMetadata("rawCastToStarProjection_Ok.kt")
+        public void testRawCastToStarProjection_Ok() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/rawCastToStarProjection_Ok.kt");
+        }
+
+        @Test
         @TestMetadata("RecursiveResolve.kt")
         public void testRecursiveResolve() throws Exception {
             runTest("compiler/testData/diagnostics/tests/RecursiveResolve.kt");

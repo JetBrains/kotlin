@@ -24,7 +24,9 @@ fun FirSession.doUnify(
     result: MutableMap<FirTypeParameterSymbol, ConeTypeProjection>,
 ): Boolean {
     val originalType = originalTypeProjection.type?.lowerBoundIfFlexible()?.fullyExpandedType(this)
+        ?: builtinTypes.nullableAnyType.coneType
     val typeWithParameters = typeWithParametersProjection.type?.lowerBoundIfFlexible()?.fullyExpandedType(this)
+        ?: builtinTypes.nullableAnyType.coneType
 
     if (originalType is ConeIntersectionType) {
         val intersectionResult = mutableMapOf<FirTypeParameterSymbol, ConeTypeProjection>()
@@ -50,15 +52,16 @@ fun FirSession.doUnify(
 
     // in Foo ~ in X  =>  Foo ~ X
     if (originalTypeProjection.kind == typeWithParametersProjection.kind &&
-        originalTypeProjection.kind != ProjectionKind.INVARIANT && originalTypeProjection.kind != ProjectionKind.STAR) {
-        return doUnify(originalType!!, typeWithParameters!!, targetTypeParameters, result)
+        originalTypeProjection.kind != ProjectionKind.INVARIANT && originalTypeProjection.kind != ProjectionKind.STAR
+    ) {
+        return doUnify(originalType, typeWithParameters, targetTypeParameters, result)
     }
 
     // Foo? ~ X?  =>  Foo ~ X
-    if (originalType?.nullability == ConeNullability.NULLABLE && typeWithParameters?.nullability == ConeNullability.NULLABLE) {
+    if (originalType.nullability == ConeNullability.NULLABLE && typeWithParameters.nullability == ConeNullability.NULLABLE) {
         return doUnify(
-            originalTypeProjection.removeQuestionMark(typeContext),
-            typeWithParametersProjection.removeQuestionMark(typeContext),
+            originalTypeProjection.removeQuestionMark(typeContext, this),
+            typeWithParametersProjection.removeQuestionMark(typeContext, this),
             targetTypeParameters, result,
         )
     }
@@ -78,7 +81,7 @@ fun FirSession.doUnify(
     }
 
     // Foo ~ X? => fail
-    if (originalType?.nullability != ConeNullability.NULLABLE && typeWithParameters?.nullability == ConeNullability.NULLABLE) {
+    if (originalType.nullability != ConeNullability.NULLABLE && typeWithParameters.nullability == ConeNullability.NULLABLE) {
         return true
     }
 
@@ -92,10 +95,10 @@ fun FirSession.doUnify(
     }
 
     // Foo? ~ Foo || in Foo ~ Foo || Foo ~ Bar
-    if (originalType?.nullability?.isNullable != typeWithParameters?.nullability?.isNullable) return true
+    if (originalType.nullability.isNullable != typeWithParameters.nullability.isNullable) return true
     if (originalTypeProjection.kind != typeWithParametersProjection.kind) return true
     if ((originalType as? ConeLookupTagBasedType)?.lookupTag != (typeWithParameters as? ConeLookupTagBasedType)?.lookupTag) return true
-    if (originalType == null || typeWithParameters == null) return true
+    if (originalTypeProjection is ConeStarProjection || typeWithParametersProjection is ConeStarProjection) return true
 
     // Foo<A> ~ Foo<B, C>
     if (originalType.typeArguments.size != typeWithParameters.typeArguments.size) {
@@ -115,9 +118,9 @@ fun FirSession.doUnify(
     return true
 }
 
-private fun ConeTypeProjection.removeQuestionMark(typeContext: ConeTypeContext): ConeTypeProjection {
-    val type = type
-    require(type != null && type.nullability.isNullable) {
+private fun ConeTypeProjection.removeQuestionMark(typeContext: ConeTypeContext, session: FirSession): ConeTypeProjection {
+    val type = type ?: session.builtinTypes.nullableAnyType.coneType
+    require(type.nullability.isNullable) {
         "Expected nullable type, got $type"
     }
 
@@ -129,5 +132,7 @@ private fun ConeTypeProjection.replaceType(newType: ConeKotlinType): ConeTypePro
         ProjectionKind.INVARIANT -> newType
         ProjectionKind.IN -> ConeKotlinTypeProjectionIn(newType)
         ProjectionKind.OUT -> ConeKotlinTypeProjectionOut(newType)
-        ProjectionKind.STAR -> error("Should not be a star projection")
+        // * === out Any? === in Nothing, we're
+        // free to choose whichever we like
+        ProjectionKind.STAR -> ConeKotlinTypeProjectionOut(newType)
     }
