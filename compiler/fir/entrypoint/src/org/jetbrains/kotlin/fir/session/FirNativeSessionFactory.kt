@@ -46,7 +46,7 @@ object FirNativeSessionFactory : FirAbstractSessionFactory() {
                     bindSession(session)
                 }
                 listOf(
-                    KlibBasedSymbolProvider(session, moduleDataProvider, kotlinScopeProvider, resolvedLibraries),
+                    KlibBasedSymbolProvider(session, moduleDataProvider, kotlinScopeProvider, resolvedLibraries.map { it.library }),
                     NativeForwardDeclarationsSymbolProvider(session, forwardDeclarationsModuleData, kotlinScopeProvider, resolvedLibraries),
                     FirBuiltinSymbolProvider(session, builtinsModuleData, kotlinScopeProvider),
                     FirExtensionSyntheticFunctionInterfaceProvider(session, builtinsModuleData, kotlinScopeProvider),

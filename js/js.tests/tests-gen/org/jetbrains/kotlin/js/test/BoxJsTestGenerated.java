@@ -7139,6 +7139,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         }
 
         @Test
+        @TestMetadata("transitiveDependency.kt")
+        public void testTransitiveDependency() throws Exception {
+            runTest("js/js.translator/testData/box/multiModule/transitiveDependency.kt");
+        }
+
+        @Test
         @TestMetadata("useElementsFromDefaultPackageInAnotherModule.kt")
         public void testUseElementsFromDefaultPackageInAnotherModule() throws Exception {
             runTest("js/js.translator/testData/box/multiModule/useElementsFromDefaultPackageInAnotherModule.kt");

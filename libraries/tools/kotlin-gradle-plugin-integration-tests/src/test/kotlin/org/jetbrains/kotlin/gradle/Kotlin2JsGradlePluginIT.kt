@@ -385,9 +385,9 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
         }
     }
 
-    @DisplayName("JS IR implementation dependency")
+    @DisplayName("K1/JS IR implementation dependency")
     @GradleTest
-    fun testJsIrImplementationDependency(gradleVersion: GradleVersion) {
+    fun testK1JsIrImplementationDependency(gradleVersion: GradleVersion) {
         project("kotlin-js-browser-project", gradleVersion) {
             buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
 
@@ -398,6 +398,31 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
             }
 
             buildAndFail("assemble")
+        }
+    }
+
+    @DisplayName("K2/JS IR implementation dependency")
+    @GradleTest
+    fun testK2JsIrImplementationDependency(gradleVersion: GradleVersion) {
+        project("kotlin-js-browser-project", gradleVersion) {
+            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
+            buildGradleKts.append(
+                """
+                    rootProject.subprojects.forEach {
+                        it.tasks.withType<org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile> {
+                            kotlinOptions.languageVersion = "2.0"
+                        }
+                    }
+                """.trimIndent()
+            )
+
+            build(":app:compileProductionExecutableKotlinJs")
+
+            projectPath.resolve("app/src/main/kotlin/App.kt").modify {
+                it.replace("sheldon()", "best()")
+            }
+
+            buildAndFail(":app:compileProductionExecutableKotlinJs")
         }
     }
 

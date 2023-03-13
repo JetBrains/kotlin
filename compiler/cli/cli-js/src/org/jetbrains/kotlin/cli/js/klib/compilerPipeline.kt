@@ -78,7 +78,7 @@ fun compileModuleToAnalyzedFir(
         // TODO: !!! dependencies module data?
     }
 
-    val resolvedLibraries = moduleStructure.fullResolvedLibraries
+    val resolvedLibraries = moduleStructure.allDependencies
 
     val sessionsWithSources = prepareJsSessions(
         ktFiles, moduleStructure.compilerConfiguration, escapedMainModuleName,
@@ -106,11 +106,11 @@ fun transformFirToIr(
     var builtInsModule: KotlinBuiltIns? = null
     val dependencies = mutableListOf<ModuleDescriptorImpl>()
 
-    val librariesDescriptors = moduleStructure.fullResolvedLibraries.map { resolvedLibrary ->
+    val librariesDescriptors = moduleStructure.allDependencies.map { resolvedLibrary ->
         val storageManager = LockBasedStorageManager("ModulesStructure")
 
         val moduleDescriptor = JsFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
-            resolvedLibrary.library,
+            resolvedLibrary,
             moduleStructure.compilerConfiguration.languageVersionSettings,
             storageManager,
             builtInsModule,
@@ -120,7 +120,7 @@ fun transformFirToIr(
         dependencies += moduleDescriptor
         moduleDescriptor.setDependencies(ArrayList(dependencies))
 
-        val isBuiltIns = resolvedLibrary.library.unresolvedDependencies.isEmpty()
+        val isBuiltIns = resolvedLibrary.unresolvedDependencies.isEmpty()
         if (isBuiltIns) builtInsModule = moduleDescriptor.builtIns
 
         moduleDescriptor
@@ -170,7 +170,7 @@ fun serializeFirKlib(
         moduleStructure.compilerConfiguration.get(IrMessageLogger.IR_MESSAGE_LOGGER) ?: IrMessageLogger.None,
         sourceFiles,
         klibPath = outputKlibPath,
-        moduleStructure.fullResolvedLibraries.map { it.library },
+        moduleStructure.allDependencies,
         irResult.irModuleFragment,
         expectDescriptorToSymbol = mutableMapOf(),
         cleanFiles = icData,

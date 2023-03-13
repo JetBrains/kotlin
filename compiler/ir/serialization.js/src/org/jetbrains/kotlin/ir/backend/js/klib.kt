@@ -477,10 +477,6 @@ class ModulesStructure(
         compilerConfiguration.get(JSConfigurationKeys.ZIP_FILE_SYSTEM_ACCESSOR)
     )
 
-    val fullResolvedLibraries by lazy {
-        allDependenciesResolution.resolveWithDependencies().getFullResolvedList()
-    }
-
     val allDependencies: List<KotlinLibrary>
         get() = allDependenciesResolution.libraries
 

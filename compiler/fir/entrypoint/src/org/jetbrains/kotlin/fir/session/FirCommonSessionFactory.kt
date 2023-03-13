@@ -66,7 +66,7 @@ object FirCommonSessionFactory : FirAbstractSessionFactory() {
                             session,
                             moduleDataProvider,
                             kotlinScopeProvider,
-                            resolvedKLibs
+                            resolvedKLibs.map { it.library }
                         )
                     },
                     FirBuiltinSymbolProvider(session, builtinsModuleData, kotlinScopeProvider),

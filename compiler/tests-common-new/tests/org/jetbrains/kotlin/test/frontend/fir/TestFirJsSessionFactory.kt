@@ -42,7 +42,7 @@ object TestFirJsSessionFactory {
 
         return FirJsSessionFactory.createLibrarySession(
             mainModuleName,
-            resolvedLibraries,
+            resolvedLibraries.map { it.library },
             sessionProvider,
             moduleDataProvider,
             languageVersionSettings,
