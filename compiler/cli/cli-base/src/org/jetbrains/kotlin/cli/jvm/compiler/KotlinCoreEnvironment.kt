@@ -117,7 +117,7 @@ class KotlinCoreEnvironment private constructor(
     ) :
         KotlinCoreProjectEnvironment(disposable, applicationEnvironment) {
 
-        internal val jarFileSystem: VirtualFileSystem
+        val jarFileSystem: VirtualFileSystem
 
         init {
             val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
@@ -339,7 +339,7 @@ class KotlinCoreEnvironment private constructor(
     val project: Project
         get() = projectEnvironment.project
 
-    internal fun countLinesOfCode(sourceFiles: List<KtFile>): Int =
+    fun countLinesOfCode(sourceFiles: List<KtFile>): Int =
         sourceFiles.sumBy { sourceFile ->
             val text = sourceFile.text
             StringUtil.getLineBreakCount(text) + (if (StringUtil.endsWithLineBreak(text)) 0 else 1)
@@ -384,7 +384,7 @@ class KotlinCoreEnvironment private constructor(
                 throw IllegalStateException("Unexpected root: $root")
         }
 
-    internal fun findLocalFile(path: String): VirtualFile? =
+    fun findLocalFile(path: String): VirtualFile? =
         applicationEnvironment.localFileSystem.findFileByPath(path)
 
     private fun findExistingRoot(root: JvmContentRoot, rootDescription: String): VirtualFile? {

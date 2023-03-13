@@ -89,7 +89,7 @@ class CliLightClassGenerationSupport(
         return ultraLightSupport
     }
 
-    internal val context: LightClassConstructionContext
+    val context: LightClassConstructionContext
         get() = LightClassConstructionContext(
             traceHolder.bindingContext,
             traceHolder.module,

@@ -56,7 +56,6 @@ include ":benchmarks",
         ":compiler:frontend:cfg",
         ":kotlin-compiler-runner-unshaded",
         ":kotlin-compiler-runner",
-        ":compiler:cli-common",
         ":compiler:ir.tree",
         ":compiler:ir.tree:tree-generator",
         ":compiler:ir.psi2ir",
@@ -77,6 +76,8 @@ include ":benchmarks",
         ":compiler:plugin-api",
         ":compiler:light-classes",
         ":compiler:javac-wrapper",
+        ":compiler:cli-common",
+        ":compiler:cli-base",
         ":compiler:cli",
         ":compiler:cli-js",
         ":compiler:incremental-compilation-impl",
@@ -623,6 +624,7 @@ project(':kotlin-compiler-client-embeddable').projectDir = "$rootDir/prepare/com
 project(':kotlin-preloader').projectDir = "$rootDir/compiler/preloader" as File
 project(':kotlin-build-common').projectDir = "$rootDir/build-common" as File
 project(':compiler:cli-common').projectDir = "$rootDir/compiler/cli/cli-common" as File
+project(':compiler:cli-base').projectDir = "$rootDir/compiler/cli/cli-base" as File
 project(':compiler:cli-js').projectDir = "$rootDir/compiler/cli/cli-js" as File
 project(':kotlin-runner').projectDir = "$rootDir/compiler/cli/cli-runner" as File
 project(':kotlin-daemon').projectDir = "$rootDir/compiler/daemon" as File

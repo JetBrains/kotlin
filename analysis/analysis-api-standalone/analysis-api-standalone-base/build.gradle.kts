@@ -7,7 +7,7 @@ dependencies {
     implementation(intellijCore())
     implementation(kotlinStdlib())
     implementation(project(":compiler:psi"))
-    implementation(project(":compiler:cli"))
+    api(project(":compiler:cli-base"))
     api(project(":analysis:analysis-api"))
     api(project(":analysis:analysis-api-providers"))
     api(project(":analysis:project-structure"))

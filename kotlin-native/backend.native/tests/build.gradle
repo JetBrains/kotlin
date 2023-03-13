@@ -6614,6 +6614,7 @@ dependencies {
     nopPluginApi project(":compiler:util")
     nopPluginApi project(":native:frontend.native")
     nopPluginApi project(":compiler:cli-common")
+    nopPluginApi project(":compiler:cli-base")
     nopPluginApi project(":compiler:cli")
     nopPluginApi project(":kotlin-util-klib")
     nopPluginApi project(":kotlin-util-klib-metadata")

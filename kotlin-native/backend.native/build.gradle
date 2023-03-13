@@ -148,6 +148,7 @@ dependencies {
     compilerApi project(":compiler:util")
     compilerApi project(":native:frontend.native")
     compilerApi project(":compiler:cli-common")
+    compilerApi project(":compiler:cli-base")
     compilerApi project(":compiler:cli")
     compilerApi project(":kotlin-util-klib")
     compilerApi project(":kotlin-util-klib-metadata")
