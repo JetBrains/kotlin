@@ -376,6 +376,28 @@ class KotlinPluginLifecycleTest {
         await(Stage.values.last())
     }
 
+    /**
+     * This requirement is important to safely support project.future { }.getOrThrow() patterns (when the lifecycle is finished),
+     */
+    @Test
+    fun `test - launching after Lifecycle finished - will execute code right away`() {
+        project.evaluate()
+        val actionAInvocations = AtomicInteger(0)
+        val actionBInvocations = AtomicInteger(0)
+        project.launch actionB@{
+            project.launch actionA@{
+                assertEquals(0, actionBInvocations.get())
+                assertEquals(1, actionAInvocations.incrementAndGet())
+            }
+
+            assertEquals(1, actionAInvocations.get())
+            assertEquals(1, actionBInvocations.incrementAndGet())
+
+        }
+        assertEquals(1, actionAInvocations.get())
+        assertEquals(1, actionBInvocations.get())
+    }
+
     @Test
     fun `test - Stage - previous next utils`() {
         assertNull(Stage.values.first().previousOrNull)

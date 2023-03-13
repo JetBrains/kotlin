@@ -62,6 +62,8 @@ Util functions
  * It can be executed right away, effectively executing the [block] before this launch function returns
  * However, when called inside an already existing coroutine (or once Gradle has started executing afterEvaluate listeners),
  * then this block executed after this launch function returns and put at the end of the execution queue
+ *
+ * If the lifecycle already finished and Gradle moved to its execution phase, then the block will be invoked right away.
  */
 internal fun Project.launch(block: suspend KotlinPluginLifecycle.() -> Unit) {
     kotlinPluginLifecycle.launch(block)
@@ -431,9 +433,19 @@ private class KotlinPluginLifecycleImpl(override val project: Project) : KotlinP
             throw IllegalLifecycleException("Cannot enqueue Action for stage '${this.stage}' in current stage '${this.stage}'")
         }
 
+        /*
+        Lifecycle finished: action shall not be enqueued, but just executed right away.
+        This is desirable, so that .enqueue (and .launch) functions that are scheduled in execution phase
+        will be executed right away (no suspend necessary or wanted)
+        */
+        if (isFinished.get()) {
+            action()
+            return
+        }
+
         enqueuedActions.getValue(stage).addLast(action)
 
-        if (stage == Stage.Configure || isFinished.get()) {
+        if (stage == Stage.Configure) {
             loopIfNecessary()
         }
     }
