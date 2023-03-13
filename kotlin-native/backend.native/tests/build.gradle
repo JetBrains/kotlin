@@ -114,6 +114,10 @@ if (!isExperimentalMM) {
     }
 }
 
+tasks.withType(KonanCompileNativeBinary).configureEach {
+    extraOpts "-XXLanguage:+ImplicitSignedToUnsignedIntegerConversion"
+}
+
 allprojects {
     // Root directories for test output (logs, compiled files, statistics etc). Only single path must be in each set.
     // backend.native/tests
