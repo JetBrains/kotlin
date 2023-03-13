@@ -63,6 +63,10 @@ object FirFunctionParameterChecker : FirFunctionChecker() {
 
         for (varargParameter in varargParameters) {
             val varargParameterType = varargParameter.returnTypeRef.coneType.arrayElementType() ?: continue
+            // LUB is checked to ensure varargParameterType may
+            // never be anything except `Nothing` or `Nothing?`
+            // in case it is a complex type that quantifies
+            // over many other types.
             if (varargParameterType.leastUpperBound(context.session).isNothingOrNullableNothing ||
                 (varargParameterType.isValueClass(context.session) && !varargParameterType.isUnsignedTypeOrNullableUnsignedType)
             // Note: comparing with FE1.0, we skip checking if the type is not primitive because primitive types are not inline. That
