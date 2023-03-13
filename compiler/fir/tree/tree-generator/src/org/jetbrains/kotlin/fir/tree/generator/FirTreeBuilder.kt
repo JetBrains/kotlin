@@ -156,6 +156,7 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val namedReference by element(Reference, reference)
     val namedReferenceWithCandidateBase by element(Reference, namedReference)
     val errorNamedReference by element(Reference, namedReference, diagnosticHolder)
+    val fromMissingDependenciesNamedReference by element(Reference, namedReference)
     val superReference by element(Reference, reference)
     val thisReference by element(Reference, reference)
     val controlFlowGraphReference by element(Reference, reference)
