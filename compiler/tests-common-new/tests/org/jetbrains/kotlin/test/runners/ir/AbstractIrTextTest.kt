@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.test.runners.ir
 
-import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TargetBackend
@@ -20,7 +19,6 @@ import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_IR
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_KT_IR
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
-import org.jetbrains.kotlin.test.directives.ModuleStructureDirectives
 import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
@@ -31,9 +29,7 @@ import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 import org.jetbrains.kotlin.test.runners.codegen.FirPsiCodegenTest
-import org.jetbrains.kotlin.test.services.JsLibraryProvider
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CodegenHelpersSourceFilesProvider
@@ -151,27 +147,3 @@ open class AbstractFirLightTreeJvmIrTextTest : AbstractFirIrTextTestBase(FirPars
 
 @FirPsiCodegenTest
 open class AbstractFirPsiJvmIrTextTest : AbstractFirIrTextTestBase(FirParser.Psi, TargetBackend.JVM_IR)
-
-open class AbstractFirJsIrTextTestBase(parser: FirParser) : AbstractFirIrTextTestBase(parser, TargetBackend.JS_IR) {
-    override fun TestConfigurationBuilder.applyConfigurators() {
-        useConfigurators(
-            ::CommonEnvironmentConfigurator,
-            ::JsEnvironmentConfigurator,
-        )
-
-        useAdditionalService(::JsLibraryProvider)
-    }
-
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        with(builder) {
-            globalDefaults {
-                targetPlatform = JsPlatforms.defaultJsPlatform
-                artifactKind = BinaryKind.NoArtifact
-                dependencyKind = DependencyKind.Source
-            }
-        }
-    }
-}
-
-open class AbstractFirLightTreeJsIrTextTest : AbstractFirJsIrTextTestBase(FirParser.LightTree)
