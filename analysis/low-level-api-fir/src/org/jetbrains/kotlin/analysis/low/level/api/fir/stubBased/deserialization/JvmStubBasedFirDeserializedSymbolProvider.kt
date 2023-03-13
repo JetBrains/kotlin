@@ -8,12 +8,8 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserializatio
 import com.intellij.psi.util.PsiUtil
 import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.caches.FirCache
-import org.jetbrains.kotlin.fir.caches.createCache
-import org.jetbrains.kotlin.fir.caches.firCachesFactory
-import org.jetbrains.kotlin.fir.caches.getValue
+import org.jetbrains.kotlin.fir.caches.*
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
-import org.jetbrains.kotlin.fir.java.FirJavaFacade
 import org.jetbrains.kotlin.fir.java.deserialization.KotlinBuiltins
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
@@ -33,7 +29,6 @@ class JvmStubBasedFirDeserializedSymbolProvider(
     session: FirSession,
     private val moduleDataProvider: ModuleDataProvider,
     private val kotlinScopeProvider: FirKotlinScopeProvider,
-    private val javaFacade: FirJavaFacade,
     private val declarationProvider: KotlinDeclarationProvider
 ) : FirSymbolProvider(session) {
     private val packageNamesForNonClassDeclarations: Set<String> by lazy(LazyThreadSafetyMode.PUBLICATION) {
@@ -202,7 +197,11 @@ class JvmStubBasedFirDeserializedSymbolProvider(
     }
 
     override fun getPackage(fqName: FqName): FqName? {
-        return javaFacade.getPackage(fqName)
+        return if (classLikeNamesByPackage.getValue(fqName)
+                .isNotEmpty() || packageNamesForNonClassDeclarations.contains(fqName.asString())
+        ) {
+            fqName
+        } else null
     }
 
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
