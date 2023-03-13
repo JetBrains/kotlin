@@ -86,6 +86,12 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeTestGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("manyInterfacesMemberNotImplemented.kt")
+    public void testManyInterfacesMemberNotImplemented() throws Exception {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/manyInterfacesMemberNotImplemented.kt");
+    }
+
+    @Test
     @TestMetadata("modifierApplicability.kt")
     public void testModifierApplicability() throws Exception {
         runTest("compiler/testData/diagnostics/tests/multiplatform/modifierApplicability.kt");

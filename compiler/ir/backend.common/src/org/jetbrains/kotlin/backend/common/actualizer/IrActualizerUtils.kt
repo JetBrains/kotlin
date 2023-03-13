@@ -153,10 +153,6 @@ fun KtDiagnosticReporterWithImplicitIrBasedContext.reportMissingActual(irDeclara
     at(irDeclaration).report(CommonBackendErrors.NO_ACTUAL_FOR_EXPECT, irDeclaration.module)
 }
 
-fun KtDiagnosticReporterWithImplicitIrBasedContext.reportManyInterfacesMembersNotImplemented(declaration: IrClass, actualMember: IrDeclarationWithName) {
-    at(declaration).report(CommonBackendErrors.MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED, actualMember.name.asString())
-}
-
 internal fun IrElement.containsOptionalExpectation(): Boolean {
     return this is IrClass &&
             this.kind == ClassKind.ANNOTATION_CLASS &&
