@@ -109,6 +109,8 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
         testClass<AbstractDiagnosisCompilerTestDataTest>(suiteTestClassName = "DiagnosisCompilerTestFE10TestdataTestGenerated") {
             model(
                 "diagnostics/tests",
+                // MPP tests are not actual for Analysis Api (IDE) infrastructure because it doesn't use IR at all, unlike MPP
+                excludeDirsRecursively = listOf("multiplatform"),
                 excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
             )
             model(
