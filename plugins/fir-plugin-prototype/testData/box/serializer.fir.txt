@@ -4,6 +4,18 @@ FILE: serializer.kt
             super<R|kotlin/Any|>()
         }
 
+        public final fun bFunction(): R|kotlin/Unit| {
+        }
+
+        public final fun aFunction(): R|kotlin/Unit| {
+        }
+
+        public final val bProp: R|kotlin/Int| = Int(1)
+            public get(): R|kotlin/Int|
+
+        public final val aProp: R|kotlin/Int| = Int(2)
+            public get(): R|kotlin/Int|
+
         public final fun serializeA(x: R|A|): R|kotlin/Unit| {
         }
 
@@ -35,14 +47,8 @@ FILE: serializer.kt
         }
 
     }
-    @R|org/jetbrains/kotlin/fir/plugin/MySerializable|() public final class A : R|kotlin/Any| {
-        public constructor(): R|A| {
-            super<R|kotlin/Any|>()
-        }
-
-    }
-    @R|org/jetbrains/kotlin/fir/plugin/MySerializable|() public final class B : R|kotlin/Any| {
-        public constructor(): R|B| {
+    @R|org/jetbrains/kotlin/fir/plugin/MySerializable|() public final class D : R|kotlin/Any| {
+        public constructor(): R|D| {
             super<R|kotlin/Any|>()
         }
 
@@ -53,8 +59,14 @@ FILE: serializer.kt
         }
 
     }
-    @R|org/jetbrains/kotlin/fir/plugin/MySerializable|() public final class D : R|kotlin/Any| {
-        public constructor(): R|D| {
+    @R|org/jetbrains/kotlin/fir/plugin/MySerializable|() public final class B : R|kotlin/Any| {
+        public constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|org/jetbrains/kotlin/fir/plugin/MySerializable|() public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 

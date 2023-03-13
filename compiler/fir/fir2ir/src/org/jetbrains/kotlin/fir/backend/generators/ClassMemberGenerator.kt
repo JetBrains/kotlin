@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.comparators.FirCallableDeclarationComparator
+import org.jetbrains.kotlin.fir.declarations.comparators.FirMemberDeclarationComparator
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
@@ -57,8 +59,8 @@ internal class ClassMemberGenerator(
             val allDeclarations = buildList {
                 addAll(klass.declarations)
                 if (session.extensionService.declarationGenerators.isNotEmpty()) {
-                    addAll(klass.generatedMembers(session))
-                    addAll(klass.generatedNestedClassifiers(session))
+                    addAll(klass.generatedMembers(session).sortedWith(FirCallableDeclarationComparator))
+                    addAll(klass.generatedNestedClassifiers(session).sortedWith(FirMemberDeclarationComparator))
                 }
             }
 

@@ -87,6 +87,11 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
             runTest("compiler/testData/ir/irText/classes/companionObject.kt");
         }
 
+        @TestMetadata("declarationOrder.kt")
+        public void testDeclarationOrder() throws Exception {
+            runTest("compiler/testData/ir/irText/classes/declarationOrder.kt");
+        }
+
         @TestMetadata("delegatedGenericImplementation.kt")
         public void testDelegatedGenericImplementation() throws Exception {
             runTest("compiler/testData/ir/irText/classes/delegatedGenericImplementation.kt");

@@ -89,6 +89,12 @@ public class ClassicJvmIrTextTestGenerated extends AbstractClassicJvmIrTextTest 
         }
 
         @Test
+        @TestMetadata("declarationOrder.kt")
+        public void testDeclarationOrder() throws Exception {
+            runTest("compiler/testData/ir/irText/classes/declarationOrder.kt");
+        }
+
+        @Test
         @TestMetadata("delegatedGenericImplementation.kt")
         public void testDelegatedGenericImplementation() throws Exception {
             runTest("compiler/testData/ir/irText/classes/delegatedGenericImplementation.kt");
