@@ -111,6 +111,9 @@ class WasmSymbols(
         .find { it.valueParameters.firstOrNull()?.type?.isFunctionType == true }
         .let { symbolTable.referenceSimpleFunction(it!!) }
 
+    val enumValueOfIntrinsic = getInternalFunction("enumValueOfIntrinsic")
+    val enumValuesIntrinsic = getInternalFunction("enumValuesIntrinsic")
+
     val coroutineEmptyContinuation: IrPropertySymbol = symbolTable.referenceProperty(
         getProperty(FqName.fromSegments(listOf("kotlin", "wasm", "internal", "EmptyContinuation")))
     )
