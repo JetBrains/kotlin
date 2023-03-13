@@ -53,9 +53,6 @@ abstract class FirBasedSymbol<E : FirDeclaration> {
     val resolvedCompilerAnnotationsWithClassIds: List<FirAnnotation>
         get() = fir.resolvedCompilerRequiredAnnotations(this)
 
-    val resolvedAnnotations: List<FirAnnotation>
-        get() = fir.resolvedAnnotations(this)
-
     val resolvedAnnotationClassIds: List<ClassId>
         get() = fir.resolvedAnnotationClassIds(this)
 }
@@ -114,16 +111,11 @@ fun List<FirAnnotation>.resolvedAnnotationsWithClassIds(anchorElement: FirBasedS
 }
 
 @SymbolInternals
-fun FirAnnotationContainer.resolvedAnnotations(anchorElement: FirBasedSymbol<*>): List<FirAnnotation> {
+fun FirAnnotationContainer.resolvedAnnotationClassIds(anchorElement: FirBasedSymbol<*>): List<ClassId> {
     if (annotations.isEmpty()) return emptyList()
 
     anchorElement.lazyResolveToPhase(FirResolvePhase.TYPES)
-    return annotations
-}
-
-@SymbolInternals
-fun FirAnnotationContainer.resolvedAnnotationClassIds(anchorElement: FirBasedSymbol<*>): List<ClassId> {
-    return resolvedAnnotations(anchorElement).mapNotNull { (it.annotationTypeRef.coneType as? ConeClassLikeType)?.lookupTag?.classId }
+    return annotations.mapNotNull { (it.annotationTypeRef.coneType as? ConeClassLikeType)?.lookupTag?.classId }
 }
 
 @RequiresOptIn
