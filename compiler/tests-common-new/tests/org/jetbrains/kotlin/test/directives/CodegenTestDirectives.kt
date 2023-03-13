@@ -51,7 +51,17 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
     )
 
     val IGNORE_INLINER by enumDirective<TargetInliner>(
-        description = "Ignore failures of tests with given inliner",
+        description = "Ignore failures of tests with given inliner for all frontend kinds",
+        applicability = Global
+    )
+
+    val IGNORE_INLINER_K1 by enumDirective<TargetInliner>(
+        description = "Ignore failures of tests with given inliner for K1 compiler",
+        applicability = Global
+    )
+
+    val IGNORE_INLINER_K2 by enumDirective<TargetInliner>(
+        description = "Ignore failures of tests with given inliner for K2 compiler",
         applicability = Global
     )
 
