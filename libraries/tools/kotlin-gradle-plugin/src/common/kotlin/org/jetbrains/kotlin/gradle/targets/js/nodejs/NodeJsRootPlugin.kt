@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin
 import org.jetbrains.kotlin.gradle.tasks.CleanDataTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.tasks.withType
+import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
 import org.jetbrains.kotlin.gradle.utils.castIsolatedKotlinPluginClassLoaderAware
 import org.jetbrains.kotlin.gradle.utils.doNotTrackStateCompat
@@ -80,7 +81,7 @@ open class NodeJsRootPlugin : Plugin<Project> {
             it.group = TASKS_GROUP_NAME
             it.description = "Find, download and link NPM dependencies and projects"
 
-            it.onlyIf { task ->
+            it.onlyIfCompat("No package.json files for install") { task ->
                 task as KotlinNpmInstallTask
                 task.preparedFiles.all { file ->
                     file.exists()

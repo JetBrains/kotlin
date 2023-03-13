@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockCopyTask.Companion.ST
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockCopyTask.Companion.UPGRADE_YARN_LOCK
 import org.jetbrains.kotlin.gradle.tasks.CleanDataTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
+import org.jetbrains.kotlin.gradle.utils.onlyIfCompat
 
 open class YarnPlugin : Plugin<Project> {
     override fun apply(project: Project): Unit = project.run {
@@ -58,7 +59,7 @@ open class YarnPlugin : Plugin<Project> {
             task.npmResolutionManager.value(kotlinNpmResolutionManager)
                 .disallowChanges()
 
-            task.onlyIf {
+            task.onlyIfCompat("Prepare NPM project only in configuring state") {
                 it as RootPackageJsonTask
                 it.npmResolutionManager.get().isConfiguringState()
             }

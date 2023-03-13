@@ -28,6 +28,7 @@ import org.gradle.api.file.FileTree
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.internal.tasks.testing.TestDescriptorInternal
 import org.gradle.api.provider.Provider
+import org.gradle.api.specs.Spec
 import org.gradle.api.tasks.WorkResult
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.api.tasks.testing.TestDescriptor
@@ -75,6 +76,18 @@ internal fun Task.doNotTrackStateCompat(because: String) {
         outputs.upToDateWhen { false }
     } else {
         doNotTrackState(because)
+    }
+}
+
+/**
+ * According to [Gradle 7.6 release notes](https://docs.gradle.org/7.6/release-notes.html#introduced-ability-to-explain-why-a-task-was-skipped-with-a-message)
+ * [Task.onlyIf] has reason message`
+ */
+internal fun Task.onlyIfCompat(onlyIfReason: String, onlyIfSpec: Spec<in Task>) {
+    if (GradleVersion.current() < GradleVersion.version("7.6")) {
+        onlyIf(onlyIfSpec)
+    } else {
+        onlyIf(onlyIfReason, onlyIfSpec)
     }
 }
 
