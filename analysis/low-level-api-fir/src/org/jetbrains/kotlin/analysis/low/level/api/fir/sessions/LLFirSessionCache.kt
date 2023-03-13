@@ -265,12 +265,10 @@ internal class LLFirSessionCache(private val project: Project) {
             val javaSymbolProvider = createJavaSymbolProvider(this, moduleData, project, contentScope)
             val symbolProvider = if (module is KtBinaryModule) {
                 val moduleDataProvider = SingleModuleDataProvider(moduleData)
-                val packagePartProvider = project.createPackagePartProvider(contentScope)
                 JvmStubBasedFirDeserializedSymbolProvider(
                     session,
                     moduleDataProvider,
                     scopeProvider,
-                    packagePartProvider,
                     javaSymbolProvider.javaFacade,
                     project.createDeclarationProvider(object : DelegatingGlobalSearchScope(project, contentScope) {
                         override fun contains(file: VirtualFile): Boolean {

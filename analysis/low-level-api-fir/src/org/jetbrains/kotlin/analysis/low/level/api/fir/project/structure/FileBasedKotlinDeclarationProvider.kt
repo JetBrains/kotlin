@@ -129,6 +129,9 @@ internal class FileBasedKotlinDeclarationProvider(private val kotlinFile: KtFile
     }
 
     override fun findInternalFilesForFacade(facadeFqName: FqName): Collection<KtFile> = emptyList()
+    override fun computePackageSetWithNonClassDeclarations(): Set<String> {
+        return setOf(kotlinFile.packageFqName.asString())
+    }
 
     private inline fun <reified T : KtCallableDeclaration> getTopLevelCallables(callableId: CallableId): Collection<T> {
         require(callableId.classId == null)

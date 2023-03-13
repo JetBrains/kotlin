@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
@@ -34,12 +33,11 @@ class JvmStubBasedFirDeserializedSymbolProvider(
     session: FirSession,
     private val moduleDataProvider: ModuleDataProvider,
     private val kotlinScopeProvider: FirKotlinScopeProvider,
-    private val packagePartProvider: PackagePartProvider,
     private val javaFacade: FirJavaFacade,
     private val declarationProvider: KotlinDeclarationProvider
 ) : FirSymbolProvider(session) {
     private val packageNamesForNonClassDeclarations: Set<String> by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        packagePartProvider.computePackageSetWithNonClassDeclarations()
+        declarationProvider.computePackageSetWithNonClassDeclarations()
     }
 
     private val classLikeNamesByPackage: FirCache<FqName, Set<Name>, Nothing?> =

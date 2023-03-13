@@ -40,6 +40,7 @@ public abstract class KotlinDeclarationProvider {
      * Currently we want only classes from libraries ([org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile])
      */
     public abstract fun findInternalFilesForFacade(facadeFqName: FqName): Collection<KtFile>
+    public abstract fun computePackageSetWithNonClassDeclarations(): Set<String>
 }
 
 public abstract class KotlinDeclarationProviderFactory {
