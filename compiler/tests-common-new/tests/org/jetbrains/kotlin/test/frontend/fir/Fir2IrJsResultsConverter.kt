@@ -15,8 +15,6 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
-import org.jetbrains.kotlin.diagnostics.KtDiagnostic
-import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.fir.AbstractFirAnalyzerFacade
 import org.jetbrains.kotlin.fir.FirAnalyzerFacade
 import org.jetbrains.kotlin.fir.backend.*
@@ -102,12 +100,6 @@ class Fir2IrJsResultsConverter(
 
         val metadataVersion = configuration.metadataVersion(module.languageVersionSettings.languageVersion)
 
-        // At this point, checkers will already have been run by a previous test step. `runCheckers` returns the cached diagnostics map.
-        val diagnosticsMap = inputArtifact.partsForDependsOnModules.fold(mutableMapOf<FirFile, List<KtDiagnostic>>()) { result, part ->
-            result.also { it.putAll(part.firAnalyzerFacade.runCheckers()) }
-        }
-        val hasErrors = diagnosticsMap.any { entry -> entry.value.any { it.severity == Severity.ERROR } }
-
         return IrBackendInput.JsIrBackendInput(
             mainIrPart,
             dependentIrParts,
@@ -116,7 +108,7 @@ class Fir2IrJsResultsConverter(
             configuration.incrementalDataProvider?.getSerializedData(sourceFiles) ?: emptyList(),
             expectDescriptorToSymbol = mutableMapOf(),
             diagnosticsCollector = DiagnosticReporterFactory.createReporter(),
-            hasErrors = hasErrors
+            hasErrors = inputArtifact.hasErrors
         ) { file ->
             val (firFile, components) = firFilesAndComponentsBySourceFile[file]
                 ?: error("cannot find FIR file by source file ${file.name} (${file.path})")

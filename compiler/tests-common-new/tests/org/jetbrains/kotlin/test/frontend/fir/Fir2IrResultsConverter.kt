@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.model.BackendKinds
 import org.jetbrains.kotlin.test.model.Frontend2BackendConverter
 import org.jetbrains.kotlin.test.model.FrontendKinds
@@ -46,7 +47,22 @@ class Fir2IrResultsConverter(
     override fun transform(
         module: TestModule,
         inputArtifact: FirOutputArtifact
-    ): IrBackendInput {
+    ): IrBackendInput? {
+        return try {
+            transformInternal(module, inputArtifact)
+        } catch (e: Throwable) {
+            if (CodegenTestDirectives.IGNORE_FIR2IR_EXCEPTIONS_IF_FIR_CONTAINS_ERRORS in module.directives && inputArtifact.hasErrors) {
+                null
+            } else {
+                throw e
+            }
+        }
+    }
+
+    private fun transformInternal(
+        module: TestModule,
+        inputArtifact: FirOutputArtifact
+    ): IrBackendInput.JvmIrBackendInput {
         val compilerConfigurationProvider = testServices.compilerConfigurationProvider
         val configuration = compilerConfigurationProvider.getCompilerConfiguration(module)
 

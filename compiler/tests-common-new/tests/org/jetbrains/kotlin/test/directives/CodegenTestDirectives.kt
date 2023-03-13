@@ -212,6 +212,12 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
             is same as required jdk for test
         """.trimIndent()
     )
+
+    val IGNORE_FIR2IR_EXCEPTIONS_IF_FIR_CONTAINS_ERRORS by directive(
+        description = """
+            Ignore FIR2IR exceptions if FIR reported some diagnostics with ERROR severity
+        """.trimIndent()
+    )
 }
 
 fun extractIgnoredDirectivesForTargetBackend(

@@ -36,6 +36,8 @@ import org.jetbrains.kotlin.test.services.fir.FirOldFrontendMetaConfigurator
 import org.jetbrains.kotlin.test.services.service
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
+import org.jetbrains.kotlin.test.FirParser
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 
 abstract class AbstractFirDiagnosticTestBase(val parser: FirParser) : AbstractKotlinCompilerTest() {
     override fun TestConfigurationBuilder.configuration() {
@@ -49,6 +51,15 @@ abstract class AbstractFirPsiDiagnosticTest : AbstractFirDiagnosticTestBase(FirP
 abstract class AbstractFirLightTreeDiagnosticsTest : AbstractFirDiagnosticTestBase(FirParser.LightTree)
 
 abstract class AbstractFirWithActualizerDiagnosticsTest(val parser: FirParser) : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JVM_IR) {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        with (builder) {
+            defaultDirectives {
+                +CodegenTestDirectives.IGNORE_FIR2IR_EXCEPTIONS_IF_FIR_CONTAINS_ERRORS
+            }
+        }
+    }
+
     override fun TestConfigurationBuilder.configuration() {
         configureFirParser(parser)
         baseFirDiagnosticTestConfiguration()
