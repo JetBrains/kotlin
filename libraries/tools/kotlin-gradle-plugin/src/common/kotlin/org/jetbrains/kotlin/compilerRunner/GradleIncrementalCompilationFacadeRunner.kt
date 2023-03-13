@@ -124,7 +124,6 @@ internal class GradleIncrementalCompilationFacadeRunner(
             try {
                 val classpath = workArguments.compilerFacadeClasspath
                 logger.warn("IC facade classpath: $classpath")
-                logger.warn("Trying to invoke IncrementalCompilerFacade.doSomething()...")
                 // TODO: cache classloader
                 val parentClassloader = LimitedScopeClassLoaderDelegator(
                     IncrementalCompilerFacade::class.java.classLoader,
@@ -134,12 +133,20 @@ internal class GradleIncrementalCompilationFacadeRunner(
                 val classloader = URLClassLoader(classpath.toList().map { it.toURI().toURL() }.toTypedArray(), parentClassloader)
                 val facade = ServiceLoader.load(IncrementalCompilerFacade::class.java, classloader).singleOrNull()
                     ?: error("Compiler classpath should contain one and only one implementation of ${IncrementalCompilerFacade::class.java.name}")
-                facade.doSomething()
                 val launcher = GradleKotlinCompilerLauncher(execOperations)
-                facade.compileInProcess(
-                    workArguments.compilerArgs.toList(),
-                    prepareKotlinCompilerOptions(),
-                )
+                when (workArguments.compilerExecutionSettings.strategy) {
+                    KotlinCompilerExecutionStrategy.DAEMON -> facade.compileWithDaemon(
+                        launcher,
+                        CompilerConfiguration("", workArguments.compilerFullClasspath, workArguments.compilerExecutionSettings.daemonJvmArgs ?: listOf()),
+                        workArguments.compilerArgs.toList(),
+                        prepareKotlinCompilerOptions(),
+                    )
+                    KotlinCompilerExecutionStrategy.IN_PROCESS -> facade.compileInProcess(
+                        workArguments.compilerArgs.toList(),
+                        prepareKotlinCompilerOptions(),
+                    )
+                    else -> error("Unsupported compiler execution strategy: ${workArguments.compilerExecutionSettings.strategy}")
+                }
             } catch (e: FailedCompilationException) {
                 // Restore outputs only in cases where we expect that the user will make some changes to their project:
                 //   - For a compilation error, the user will need to fix their source code

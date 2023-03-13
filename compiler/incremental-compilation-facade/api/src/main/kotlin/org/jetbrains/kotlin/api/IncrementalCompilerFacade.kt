@@ -5,17 +5,19 @@
 
 package org.jetbrains.kotlin.api
 
-interface IncrementalCompilerFacade {
-    fun doSomething()
+import java.util.*
 
-//    fun compileOutOfProcess(
-//        launcher: KotlinCompilerLauncher,
-//        configuration: CompilerConfiguration,
-//        arguments: List<String>,
-//        options: KotlinCompilationOptions
-//    )
+interface IncrementalCompilerFacade {
+    fun compileWithDaemon(
+//        buildId: UUID,
+        launcher: KotlinCompilerLauncher,
+        configuration: CompilerConfiguration,
+        arguments: List<String>,
+        options: KotlinCompilationOptions
+    )
 
     fun compileInProcess(
+//        buildId: UUID,
         arguments: List<String>,
         options: KotlinCompilationOptions
     )

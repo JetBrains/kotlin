@@ -3,6 +3,8 @@ plugins {
     id("jps-compatible")
 }
 
+configureKotlinCompileTasksGradleCompatibility()
+
 dependencies {
     implementation(kotlinStdlib())
     compileOnly(project(":kotlin-build-common")) // not sure

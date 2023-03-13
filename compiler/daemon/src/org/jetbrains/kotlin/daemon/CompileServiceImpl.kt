@@ -762,7 +762,7 @@ class CompileServiceImpl(
         compilerArguments: Array<out String>,
         compilationOptions: CompilationOptions,
         servicesFacade: CompilerServicesFacadeBase,
-        compilationResults: CompilationResults?
+        compilationResults: CompilationResults? // actually can't be null, getICReporter will throw NPE ...
     ) = ifAlive {
         compileImpl(
             sessionId,
