@@ -455,7 +455,7 @@ object FirSerializationPluginClassChecker : FirClassChecker() {
             val serializerSymbol = customSerializerType?.toRegularClassSymbol(session)
             val propertySymbol = property.propertySymbol
             val typeRef = propertySymbol.resolvedReturnTypeRef
-            val propertyType = typeRef.coneType
+            val propertyType = typeRef.coneType.fullyExpandedType(session)
             val source = typeRef.source ?: propertySymbol.source
             if (customSerializerType != null && serializerSymbol != null) {
                 // Do not account for @Polymorphic and @Contextual, as they are serializers for T: Any
@@ -498,7 +498,7 @@ object FirSerializationPluginClassChecker : FirClassChecker() {
     private fun checkTypeArguments(type: ConeKotlinType, source: KtSourceElement?, reporter: DiagnosticReporter) {
         for (typeArgument in type.typeArguments) {
             checkType(
-                typeArgument.type ?: continue,
+                typeArgument.type?.fullyExpandedType(session) ?: continue,
                 source,
                 reporter
             )

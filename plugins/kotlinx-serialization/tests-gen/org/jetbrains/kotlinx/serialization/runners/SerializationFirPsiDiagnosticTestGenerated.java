@@ -151,6 +151,18 @@ public class SerializationFirPsiDiagnosticTestGenerated extends AbstractSerializ
         public void testTransients() throws Exception {
             runTest("plugins/kotlinx-serialization/testData/diagnostics/Transients.kt");
         }
+
+        @Test
+        @TestMetadata("typeAliases.kt")
+        public void testTypeAliases() throws Exception {
+            runTest("plugins/kotlinx-serialization/testData/diagnostics/typeAliases.kt");
+        }
+
+        @Test
+        @TestMetadata("typeAliasesCustomized.kt")
+        public void testTypeAliasesCustomized() throws Exception {
+            runTest("plugins/kotlinx-serialization/testData/diagnostics/typeAliasesCustomized.kt");
+        }
     }
 
     @Nested
