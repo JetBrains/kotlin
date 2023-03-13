@@ -48,7 +48,7 @@ private class ProjectMetadataProviderImpl(
     }
 }
 
-internal fun Project.collectSourceSetMetadataOutputs(): Map<SourceSetName, SourceSetMetadataOutputs> {
+internal suspend fun Project.collectSourceSetMetadataOutputs(): Map<SourceSetName, SourceSetMetadataOutputs> {
     val multiplatformExtension = multiplatformExtensionOrNull ?: return emptyMap()
 
     val sourceSetMetadata = multiplatformExtension.sourceSetsMetadataOutputs()
@@ -82,7 +82,7 @@ private fun KotlinMultiplatformExtension.sourceSetsMetadataOutputs(): Map<Kotlin
     }.toMap()
 }
 
-private fun KotlinMultiplatformExtension.cInteropMetadataOfSourceSets(
+private suspend fun KotlinMultiplatformExtension.cInteropMetadataOfSourceSets(
     sourceSets: Iterable<KotlinSourceSet>
 ): Map<KotlinSourceSet, SourceSetMetadataOutputs.CInterop?> {
     val taskForCLI = project.commonizeCInteropTask ?: return emptyMap()

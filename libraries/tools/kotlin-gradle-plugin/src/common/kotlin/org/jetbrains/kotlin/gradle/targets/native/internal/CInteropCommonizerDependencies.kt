@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.utils.filesProvider
+import org.jetbrains.kotlin.gradle.utils.future
 import java.io.File
 
 internal fun Project.setupCInteropCommonizerDependencies() {
@@ -33,7 +34,8 @@ private fun Project.setupCInteropCommonizerDependenciesForCompilation(compilatio
     val cinteropCommonizerTask = project.commonizeCInteropTask ?: return
 
     compilation.compileDependencyFiles += filesProvider {
-        val cinteropCommonizerDependent = CInteropCommonizerDependent.from(compilation) ?: return@filesProvider emptySet<File>()
+        val cinteropCommonizerDependent = future { CInteropCommonizerDependent.from(compilation) }.getOrThrow()
+            ?: return@filesProvider emptySet<File>()
         cinteropCommonizerTask.get().commonizedOutputLibraries(cinteropCommonizerDependent)
     }
 }
@@ -51,12 +53,14 @@ internal fun Project.cinteropCommonizerDependencies(sourceSet: DefaultKotlinSour
     val cinteropCommonizerTask = project.copyCommonizeCInteropForIdeTask ?: return project.files()
 
     return filesProvider {
-        val directlyDependent = CInteropCommonizerDependent.from(sourceSet)
-        val associateDependent = CInteropCommonizerDependent.fromAssociateCompilations(sourceSet)
+        future {
+            val directlyDependent = CInteropCommonizerDependent.from(sourceSet)
+            val associateDependent = CInteropCommonizerDependent.fromAssociateCompilations(sourceSet)
 
-        listOfNotNull(directlyDependent, associateDependent).map { cinteropCommonizerDependent ->
-            cinteropCommonizerTask.get().commonizedOutputLibraries(cinteropCommonizerDependent)
-        }
+            listOfNotNull(directlyDependent, associateDependent).map { cinteropCommonizerDependent ->
+                cinteropCommonizerTask.get().commonizedOutputLibraries(cinteropCommonizerDependent)
+            }
+        }.getOrThrow()
     }
 }
 

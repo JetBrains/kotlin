@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.gradle.plugin.kotlinPluginLifecycle
 import org.jetbrains.kotlin.tooling.core.ExtrasLazyProperty
 import org.jetbrains.kotlin.tooling.core.HasMutableExtras
 import org.jetbrains.kotlin.tooling.core.extrasLazyProperty
+import java.io.Serializable
+import kotlin.reflect.KProperty
 
 /**
  * See [KotlinPluginLifecycle]:
@@ -62,45 +64,31 @@ internal inline fun <Receiver, reified T> lazyFuture(
 
 internal fun <T> Project.future(block: suspend Project.() -> T): Future<T> = kotlinPluginLifecycle.future { block() }
 
-@OptIn(ExperimentalCoroutinesApi::class)
 internal fun <T> KotlinPluginLifecycle.future(block: suspend () -> T): Future<T> {
-    val deferred = CompletableDeferred<T>()
-
-    launch {
-        deferred.completeWith(runCatching { block() })
-    }
-
-    return object : Future<T> {
-        override suspend fun await(): T {
-            return deferred.await()
-        }
-
-        override fun getOrThrow(): T {
-            return if (deferred.isCompleted) deferred.getCompleted() else throw IllegalLifecycleException(
-                "Future was not completed yet. Stage: '${stage}'"
-            )
-        }
+    return FutureImpl<T>(CompletableDeferred()).also { future ->
+        launch { future.completeWith(runCatching { block() }) }
     }
 }
 
-@OptIn(ExperimentalCoroutinesApi::class)
 internal fun <T> CompletableFuture(): CompletableFuture<T> {
-    val deferred = CompletableDeferred<T>()
+    return FutureImpl()
+}
 
+@OptIn(ExperimentalCoroutinesApi::class)
+private class FutureImpl<T>(private val deferred: CompletableDeferred<T> = CompletableDeferred()) : CompletableFuture<T>, Serializable {
+    fun completeWith(result: Result<T>) = deferred.completeWith(result)
 
-    return object : CompletableFuture<T> {
-        override fun complete(value: T) {
-            deferred.complete(value)
-        }
+    override fun complete(value: T) {
+        deferred.complete(value)
+    }
 
-        override suspend fun await(): T {
-            return deferred.await()
-        }
+    override suspend fun await(): T {
+        return deferred.await()
+    }
 
-        override fun getOrThrow(): T {
-            return if (deferred.isCompleted) deferred.getCompleted() else throw IllegalLifecycleException(
-                "Future was not completed yet"
-            )
-        }
+    override fun getOrThrow(): T {
+        return if (deferred.isCompleted) deferred.getCompleted() else throw IllegalLifecycleException(
+            "Future was not completed yet"
+        )
     }
 }

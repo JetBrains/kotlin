@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerDep
 import org.jetbrains.kotlin.gradle.targets.native.internal.from
 import org.jetbrains.kotlin.gradle.targets.native.internal.isAllowCommonizer
 import org.jetbrains.kotlin.gradle.utils.findAppliedAndroidPluginIdOrNull
+import org.jetbrains.kotlin.gradle.utils.future
 import org.jetbrains.kotlin.gradle.utils.runProjectConfigurationHealthCheck
 
 private class KotlinMultiplatformProjectConfigurationException(message: String) : Exception(message)
@@ -77,7 +78,10 @@ internal fun Project.runDisabledCInteropCommonizationOnHmppProjectConfigurationH
 
         val sharedCompilationsWithInterops = multiplatformExtension.targets.flatMap { it.compilations }
             .filterIsInstance<KotlinSharedNativeCompilation>()
-            .mapNotNull { compilation -> compilation to (CInteropCommonizerDependent.from(compilation) ?: return@mapNotNull null) }
+            .mapNotNull { compilation ->
+                val cinteropDependent = future { CInteropCommonizerDependent.from(compilation) }.getOrThrow() ?: return@mapNotNull null
+                compilation to cinteropDependent
+            }
             .toMap()
 
         val affectedCompilations = sharedCompilationsWithInterops.keys

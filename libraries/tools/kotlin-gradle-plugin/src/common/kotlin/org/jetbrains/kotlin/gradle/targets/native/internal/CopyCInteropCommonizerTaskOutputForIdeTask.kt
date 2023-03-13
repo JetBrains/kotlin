@@ -26,14 +26,14 @@ internal open class CopyCommonizeCInteropForIdeTask : AbstractCInteropCommonizer
     override val outputDirectory: File = project.rootDir.resolve(".gradle/kotlin/commonizer")
         .resolve(project.path.removePrefix(":").replace(":", "/"))
 
-    override fun findInteropsGroup(dependent: CInteropCommonizerDependent): CInteropCommonizerGroup? {
+    override suspend fun findInteropsGroup(dependent: CInteropCommonizerDependent): CInteropCommonizerGroup? {
         return commonizeCInteropTask.get().findInteropsGroup(dependent)
     }
 
     @TaskAction
     protected fun copy() {
         outputDirectory.mkdirs()
-        for (group in commonizeCInteropTask.get().getAllInteropsGroups()) {
+        for (group in commonizeCInteropTask.get().allInteropGroups.getOrThrow()) {
             val source = commonizeCInteropTask.get().outputDirectory(group)
             if (!source.exists()) continue
             val target = outputDirectory(group)

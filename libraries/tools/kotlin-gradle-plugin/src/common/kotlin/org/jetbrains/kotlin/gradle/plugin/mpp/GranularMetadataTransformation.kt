@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ArtifactMetadataProvider
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfiguration
+import org.jetbrains.kotlin.gradle.utils.future
 import org.jetbrains.kotlin.gradle.utils.getOrPut
 import java.util.*
 
@@ -143,7 +144,7 @@ internal class GranularMetadataTransformation(
                 params.resolvedMetadataConfiguration
                     .root
                     .dependencies
-                    .filter { !it.isConstraint}
+                    .filter { !it.isConstraint }
                     .filterIsInstance<ResolvedDependencyResult>()
             )
         }
@@ -332,15 +333,18 @@ internal val ResolvedComponentResult.currentBuildProjectIdOrNull
         }
     }
 
-private val Project.allProjectsData: Map<String, GranularMetadataTransformation.ProjectData> get() = rootProject
-    .extraProperties
-    .getOrPut("all${GranularMetadataTransformation.ProjectData::class.java.simpleName}") { collectAllProjectsData() }
+private val Project.allProjectsData: Map<String, GranularMetadataTransformation.ProjectData>
+    get() = rootProject
+        .extraProperties
+        .getOrPut("all${GranularMetadataTransformation.ProjectData::class.java.simpleName}") {
+            future { collectAllProjectsData() }.getOrThrow()
+        }
 
 private fun Project.collectAllProjectsData(): Map<String, GranularMetadataTransformation.ProjectData> {
     return rootProject.allprojects.associateBy { it.path }.mapValues { (path, subProject) ->
         GranularMetadataTransformation.ProjectData(
             path = path,
-            sourceSetMetadataOutputsProvider = { subProject.collectSourceSetMetadataOutputs() },
+            sourceSetMetadataOutputsProvider = future { subProject.collectSourceSetMetadataOutputs() }::getOrThrow,
             moduleIdProvider = { ModuleIds.idOfRootModule(subProject) }
         )
     }
