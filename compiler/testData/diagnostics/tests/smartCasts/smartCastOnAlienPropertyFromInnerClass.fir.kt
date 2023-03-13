@@ -1,3 +1,4 @@
+// RENDER_DIAGNOSTICS_FULL_TEXT
 // MODULE: m1
 // FILE: A.kt
 
@@ -11,5 +12,13 @@ private class Derived : Base("123") {
         if (x is String) {
             <!SMARTCAST_IMPOSSIBLE!>x<!>.length
         }
+    }
+}
+
+internal class Internal : Base("456")
+
+internal fun bar(i: Internal) {
+    if (i.x is String) {
+        i.x.length
     }
 }

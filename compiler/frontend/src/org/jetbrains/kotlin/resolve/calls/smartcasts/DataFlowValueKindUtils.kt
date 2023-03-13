@@ -26,18 +26,28 @@ internal fun PropertyDescriptor.propertyKind(
     if (isVar) return DataFlowValue.Kind.MUTABLE_PROPERTY
     if (isOverridable) return DataFlowValue.Kind.PROPERTY_WITH_GETTER
     if (!hasDefaultGetter()) return DataFlowValue.Kind.PROPERTY_WITH_GETTER
-    if (!isInvisibleFromOtherModules()) {
-        val declarationModule = DescriptorUtils.getContainingModule(this)
-        if (!areCompiledTogether(usageModule, declarationModule)) {
-            return DataFlowValue.Kind.ALIEN_PUBLIC_PROPERTY
+    val visibilityFromOtherModules = visibilityFromOtherModules()
+    if (visibilityFromOtherModules == VisibilityFromOtherModule.INVISIBLE) return DataFlowValue.Kind.STABLE_VALUE
+    val deprecationForInvisibleParentNeeded = visibilityFromOtherModules == VisibilityFromOtherModule.PARENT_INVISIBLE_BASE_PARENT_VISIBLE
+            && !languageVersionSettings.supportsFeature(LanguageFeature.ProhibitSmartcastsOnPropertyFromAlienBaseClassInheritedInInvisibleClass)
+
+    val declarationModule = DescriptorUtils.getContainingModule(this)
+    if (!areCompiledTogether(usageModule, declarationModule)) {
+        return if (deprecationForInvisibleParentNeeded) {
+            DataFlowValue.Kind.LEGACY_ALIEN_BASE_PROPERTY_INHERITED_IN_INVISIBLE_CLASS
+        } else {
+            DataFlowValue.Kind.ALIEN_PUBLIC_PROPERTY
         }
-        if (kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
-            if (overriddenDescriptors.any { isDeclaredInAnotherModule(usageModule) }) {
-                return if (!languageVersionSettings.supportsFeature(LanguageFeature.ProhibitSmartcastsOnPropertyFromAlienBaseClass)) {
+    }
+    if (kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+        if (overriddenDescriptors.any { isDeclaredInAnotherModule(usageModule) }) {
+            return when {
+                deprecationForInvisibleParentNeeded ->
+                    DataFlowValue.Kind.LEGACY_ALIEN_BASE_PROPERTY_INHERITED_IN_INVISIBLE_CLASS
+                !languageVersionSettings.supportsFeature(LanguageFeature.ProhibitSmartcastsOnPropertyFromAlienBaseClass) ->
                     DataFlowValue.Kind.LEGACY_ALIEN_BASE_PROPERTY
-                } else {
+                else ->
                     DataFlowValue.Kind.ALIEN_PUBLIC_PROPERTY
-                }
             }
         }
     }
@@ -157,12 +167,35 @@ private fun isAccessedBeforeAllClosureWriters(
     return true
 }
 
+private enum class VisibilityFromOtherModule {
+    INVISIBLE,
+    PARENT_INVISIBLE_BASE_PARENT_VISIBLE,
+    VISIBLE
+}
 
-private fun DeclarationDescriptorWithVisibility.isInvisibleFromOtherModules(): Boolean {
-    if (DescriptorVisibilities.INVISIBLE_FROM_OTHER_MODULES.contains(visibility)) return true
+private fun DeclarationDescriptorWithVisibility.visibilityFromOtherModules(): VisibilityFromOtherModule {
+    if (DescriptorVisibilities.INVISIBLE_FROM_OTHER_MODULES.contains(visibility)) return VisibilityFromOtherModule.INVISIBLE
 
     val containingDeclaration = containingDeclaration
-    return containingDeclaration is DeclarationDescriptorWithVisibility && containingDeclaration.isInvisibleFromOtherModules()
+    if (containingDeclaration !is DeclarationDescriptorWithVisibility) {
+        return VisibilityFromOtherModule.VISIBLE
+    }
+    val containingDeclarationVisibilityFromOtherModule = containingDeclaration.visibilityFromOtherModules()
+    if (this !is CallableMemberDescriptor || kind != CallableMemberDescriptor.Kind.FAKE_OVERRIDE ||
+        containingDeclarationVisibilityFromOtherModule == VisibilityFromOtherModule.VISIBLE
+    ) {
+        return containingDeclarationVisibilityFromOtherModule
+    }
+    // Note: only the case with one base class is under interest here,
+    // otherwise it's an interface property and smart cast is already not possible
+    val baseContainingDeclaration = DescriptorUtils.unwrapFakeOverride(this).containingDeclaration
+    if (baseContainingDeclaration !is DeclarationDescriptorWithVisibility) {
+        return containingDeclarationVisibilityFromOtherModule
+    }
+    if (baseContainingDeclaration.visibilityFromOtherModules() == VisibilityFromOtherModule.INVISIBLE) {
+        return VisibilityFromOtherModule.INVISIBLE
+    }
+    return VisibilityFromOtherModule.PARENT_INVISIBLE_BASE_PARENT_VISIBLE
 }
 
 private fun PropertyDescriptor.hasDefaultGetter(): Boolean {
