@@ -858,7 +858,7 @@ class FirElementSerializer private constructor(
             }
         }
     }
-
+    
     private fun fillFromPossiblyInnerType(builder: ProtoBuf.Type.Builder, type: ConeClassLikeType) {
         val classifierSymbol = type.lookupTag.toSymbol(session)
         if (classifierSymbol != null) {
