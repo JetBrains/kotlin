@@ -173,7 +173,7 @@ internal class SymbolLightFieldForProperty private constructor(
     }
 
     private val _initializer by lazyPub {
-        _initializerValue?.createPsiLiteral(this)
+        _initializerValue?.createPsiExpression(this)
     }
 
     override fun getInitializer(): PsiExpression? = _initializer
