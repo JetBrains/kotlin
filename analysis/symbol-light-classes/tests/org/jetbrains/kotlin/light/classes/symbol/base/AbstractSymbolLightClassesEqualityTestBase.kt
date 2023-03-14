@@ -24,7 +24,7 @@ import java.nio.file.Path
 abstract class AbstractSymbolLightClassesEqualityTestBase(
     configurator: AnalysisApiTestConfigurator,
     override val currentExtension: String,
-    override val stopIfCompilationErrorDirectivePresent: Boolean
+    override val isTestAgainstCompiledCode: Boolean
 ) : AbstractSymbolLightClassesTestBase(configurator) {
     override fun getRenderResult(ktFile: KtFile, ktFiles: List<KtFile>, testDataFile: Path, module: TestModule, project: Project): String {
         throw IllegalStateException("This test is not rendering light elements")
@@ -34,7 +34,7 @@ abstract class AbstractSymbolLightClassesEqualityTestBase(
         val lightClasses = lightClassesToCheck(ktFiles, module, testServices)
         if (lightClasses.isEmpty()) return
         val project = lightClasses.first().project
-        val modificationTracker = if (stopIfCompilationErrorDirectivePresent) {
+        val modificationTracker = if (isTestAgainstCompiledCode) {
             project.createAllLibrariesModificationTracker()
         } else {
             project.createProjectWideOutOfBlockModificationTracker()

@@ -59,7 +59,7 @@ abstract class AbstractSymbolLightClassesTestBase(
     }
 
     override fun doTestByFileStructure(ktFiles: List<KtFile>, module: TestModule, testServices: TestServices) {
-        if (stopIfCompilationErrorDirectivePresent && CompilerExecutor.Directives.COMPILATION_ERRORS in module.directives) {
+        if (isTestAgainstCompiledCode && CompilerExecutor.Directives.COMPILATION_ERRORS in module.directives) {
             return
         }
 
@@ -101,7 +101,7 @@ abstract class AbstractSymbolLightClassesTestBase(
             action()
         } catch (e: Throwable) {
             val directives = module.directives
-            if (Directives.IGNORE_FIR in directives || stopIfCompilationErrorDirectivePresent && Directives.IGNORE_LIBRARY_EXCEPTIONS in directives) {
+            if (Directives.IGNORE_FIR in directives || isTestAgainstCompiledCode && Directives.IGNORE_LIBRARY_EXCEPTIONS in directives) {
                 return
             }
 
@@ -123,7 +123,7 @@ abstract class AbstractSymbolLightClassesTestBase(
             throwTestIsPassingException(Directives.IGNORE_FIR)
         }
 
-        if (stopIfCompilationErrorDirectivePresent && Directives.IGNORE_LIBRARY_EXCEPTIONS in directives) {
+        if (isTestAgainstCompiledCode && Directives.IGNORE_LIBRARY_EXCEPTIONS in directives) {
             throwTestIsPassingException(Directives.IGNORE_LIBRARY_EXCEPTIONS)
         }
     }
@@ -182,7 +182,7 @@ abstract class AbstractSymbolLightClassesTestBase(
     private fun currentResultPath() = testDataPath.resolveSibling(testDataPath.nameWithoutExtension + currentExtension)
 
     protected abstract val currentExtension: String
-    protected abstract val stopIfCompilationErrorDirectivePresent: Boolean
+    protected abstract val isTestAgainstCompiledCode: Boolean
 
     object EXTENSIONS {
         const val JAVA = ".java"

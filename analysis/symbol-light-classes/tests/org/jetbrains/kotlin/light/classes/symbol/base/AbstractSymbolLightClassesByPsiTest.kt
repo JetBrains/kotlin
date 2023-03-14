@@ -18,7 +18,7 @@ import java.nio.file.Path
 abstract class AbstractSymbolLightClassesByPsiTest(
     configurator: AnalysisApiTestConfigurator,
     override val currentExtension: String,
-    override val stopIfCompilationErrorDirectivePresent: Boolean,
+    override val isTestAgainstCompiledCode: Boolean,
 ) : AbstractSymbolLightClassesTestBase(configurator) {
     override fun getRenderResult(ktFile: KtFile, ktFiles: List<KtFile>, testDataFile: Path, module: TestModule, project: Project): String {
         val lightClasses = ktFiles.flatMap { getLightClassesFromFile(it) }
