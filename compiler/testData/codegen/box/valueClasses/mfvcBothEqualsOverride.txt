@@ -9,7 +9,7 @@ public final class MFVC {
     public final static method constructor-impl(p0: int, p1: int): void
     public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public static method equals-impl(p0: int, p1: int, @org.jetbrains.annotations.Nullable p2: java.lang.Object): boolean
-    public final static method equals-impl0(p0: int, p1: int, p2: int, p3: int): boolean
+    public final static @kotlin.TypedEquals method equals-impl0(p0: int, p1: int, p2: int, p3: int): boolean
     public final method getX(): int
     public final method getY(): int
     public method hashCode(): int
