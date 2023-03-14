@@ -109,7 +109,7 @@ internal class LLFirProvider(
     @NoMutableState
     private inner class SymbolProvider : FirSymbolProvider(session) {
         override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
-            if (!providerHelper.symbolNameCache.mayHaveTopLevelClassifier(classId)) return null
+            if (!providerHelper.symbolNameCache.mayHaveTopLevelClassifier(classId, mayHaveFunctionClass = false)) return null
             return getFirClassifierByFqName(classId)?.symbol
         }
 
@@ -153,7 +153,7 @@ internal class LLFirProvider(
         override fun computePackageSetWithTopLevelCallables(): Set<String>? = null
 
         override fun knownTopLevelClassifiersInPackage(packageFqName: FqName): Set<String>? =
-            providerHelper.symbolNameCache.getTopLevelClassifierNamesInPackage(packageFqName)?.names
+            providerHelper.symbolNameCache.getTopLevelClassifierNamesInPackage(packageFqName)
 
         override fun computeCallableNamesInPackage(packageFqName: FqName): Set<Name>? =
             providerHelper.symbolNameCache.getTopLevelCallableNamesInPackage(packageFqName)
