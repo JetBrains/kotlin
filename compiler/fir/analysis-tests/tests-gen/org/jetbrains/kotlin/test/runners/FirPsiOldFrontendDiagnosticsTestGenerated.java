@@ -37045,6 +37045,18 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             }
 
             @Test
+            @TestMetadata("buildListToUpperBoundInLazy.kt")
+            public void testBuildListToUpperBoundInLazy() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/buildListToUpperBoundInLazy.kt");
+            }
+
+            @Test
+            @TestMetadata("buildListToUpperBoundInLazyForbidden.kt")
+            public void testBuildListToUpperBoundInLazyForbidden() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/buildListToUpperBoundInLazyForbidden.kt");
+            }
+
+            @Test
             @TestMetadata("completeIrrelevantCalls.kt")
             public void testCompleteIrrelevantCalls() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/completeIrrelevantCalls.kt");
@@ -37066,12 +37078,6 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             @TestMetadata("inferCoroutineTypeInOldVersion.kt")
             public void testInferCoroutineTypeInOldVersion() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/inferCoroutineTypeInOldVersion.kt");
-            }
-
-            @Test
-            @TestMetadata("kt48445.kt")
-            public void testKt48445() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/kt48445.kt");
             }
 
             @Test

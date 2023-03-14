@@ -1,5 +1,5 @@
-// !LANGUAGE: +UnrestrictedBuilderInference
-// SKIP_TXT
+// !LANGUAGE: +UnrestrictedBuilderInference +ForbidInferringPostponedTypeVariableIntoDeclaredUpperBound
+// ISSUE: KT-56169
 
 internal class TowerDataElementsForName() {
     val reversedFilteredLocalScopes by lazy(LazyThreadSafetyMode.NONE) {
