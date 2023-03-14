@@ -1885,6 +1885,11 @@ public class KlibTextTestCaseGenerated extends AbstractKlibTextTestCase {
             runTest("compiler/testData/ir/irText/firProblems/AnnotationLoader.kt");
         }
 
+        @TestMetadata("AnonymousAsReturnOfGenericFunction.kt")
+        public void testAnonymousAsReturnOfGenericFunction() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/AnonymousAsReturnOfGenericFunction.kt");
+        }
+
         @TestMetadata("ArrayListOverrides.kt")
         public void testArrayListOverrides() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/ArrayListOverrides.kt");

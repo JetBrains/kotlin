@@ -1,0 +1,22 @@
+interface NestedGroupFragment {
+
+}
+
+private fun addMavenOptionsGroupFragment(): <no name provided><Int> {
+  return addOptionsGroup<Int>()
+}
+
+private fun <S : Any?> addOptionsGroup(): <no name provided><S> {
+  return { // BLOCK
+    local class <no name provided> : NestedGroupFragment {
+      constructor() /* primary */ {
+        super/*Any*/()
+        /* <init>() */
+
+      }
+
+    }
+
+    <no name provided>()
+  }
+}

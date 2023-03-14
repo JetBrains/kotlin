@@ -2553,6 +2553,12 @@ public class FirPsiIrTextTestGenerated extends AbstractFirPsiIrTextTest {
         }
 
         @Test
+        @TestMetadata("AnonymousAsReturnOfGenericFunction.kt")
+        public void testAnonymousAsReturnOfGenericFunction() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/AnonymousAsReturnOfGenericFunction.kt");
+        }
+
+        @Test
         @TestMetadata("ArrayListOverrides.kt")
         public void testArrayListOverrides() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/ArrayListOverrides.kt");
