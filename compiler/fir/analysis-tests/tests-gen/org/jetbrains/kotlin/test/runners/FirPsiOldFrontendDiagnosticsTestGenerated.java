@@ -12547,6 +12547,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             }
 
             @Test
+            @TestMetadata("outerTypeParametersInNestedClasses.kt")
+            public void testOuterTypeParametersInNestedClasses() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/generics/outerTypeParametersInNestedClasses.kt");
+            }
+
+            @Test
             @TestMetadata("Projections.kt")
             public void testProjections() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/generics/Projections.kt");

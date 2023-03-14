@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers
 
-import kotlinx.collections.immutable.toImmutableList
+import kotlinx.collections.immutable.*
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirSession
@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.copyWithNewSourceKind
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isFromVararg
+import org.jetbrains.kotlin.fir.declarations.utils.isInner
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguouslyResolvedAnnotationFromPlugin
@@ -62,8 +64,16 @@ open class FirTypeResolveTransformer(
     initialCurrentFile: FirFile? = null,
     private val classDeclarationsStack: ArrayDeque<FirClass> = ArrayDeque()
 ) : FirAbstractTreeTransformer<Any?>(FirResolvePhase.TYPES) {
-    private val scopes = mutableListOf<FirScope>()
-    private val towerScope = scopes.asReversed()
+    /**
+     * All current scopes sorted from outermost to innermost.
+     */
+    private var scopes = initialScopes.asReversed().toPersistentList()
+
+    /**
+     * Scopes that are accessible statically, i.e. [scopes] minus type parameter scopes.
+     */
+    private var staticScopes = scopes
+
     private var currentDeclaration: FirDeclaration? = null
 
     private inline fun <T> withDeclaration(declaration: FirDeclaration, crossinline action: () -> T): T {
@@ -76,10 +86,6 @@ open class FirTypeResolveTransformer(
         }
     }
 
-    init {
-        scopes.addAll(initialScopes.asReversed())
-    }
-
     private val typeResolverTransformer: FirSpecificTypeResolverTransformer = FirSpecificTypeResolverTransformer(session)
     private var currentFile: FirFile? = initialCurrentFile
 
@@ -87,7 +93,7 @@ open class FirTypeResolveTransformer(
         checkSessionConsistency(file)
         currentFile = file
         return withScopeCleanup {
-            scopes.addAll(createImportingScopes(file, session, scopeSession))
+            addScopes(createImportingScopes(file, session, scopeSession))
             super.transformFile(file, data)
         }
     }
@@ -252,9 +258,18 @@ open class FirTypeResolveTransformer(
 
     override fun transformTypeRef(typeRef: FirTypeRef, data: Any?): FirResolvedTypeRef {
         return typeResolverTransformer.withFile(currentFile) {
+            val scopes = scopes
+            // optimized implementation of reversed Iterable on top of PersistentList
+            val reversedScopes = object : Iterable<FirScope> {
+                override fun iterator() = object : Iterator<FirScope> {
+                    private val iter = scopes.listIterator(scopes.size)
+                    override fun hasNext() = iter.hasPrevious()
+                    override fun next() = iter.previous()
+                }
+            }
             typeRef.transform(
                 typeResolverTransformer,
-                ScopeClassDeclaration(towerScope, classDeclarationsStack, containerDeclaration = currentDeclaration)
+                ScopeClassDeclaration(reversedScopes, classDeclarationsStack, containerDeclaration = currentDeclaration)
             )
         }
     }
@@ -322,13 +337,14 @@ open class FirTypeResolveTransformer(
     }
 
     private inline fun <T> withScopeCleanup(crossinline l: () -> T): T {
-        val sizeBefore = scopes.size
+        val scopesBefore = scopes
+        val staticScopesBefore = staticScopes
+
         val result = l()
-        val size = scopes.size
-        assert(size >= sizeBefore)
-        repeat(size - sizeBefore) {
-            scopes.removeAt(scopes.lastIndex)
-        }
+
+        scopes = scopesBefore
+        staticScopes = staticScopesBefore
+
         return result
     }
 
@@ -337,21 +353,25 @@ open class FirTypeResolveTransformer(
         data: Any?
     ): FirStatement {
 
-        withScopeCleanup {
-            firClass.transformAnnotations(this, null)
-
-            if (firClass is FirRegularClass) {
-                firClass.addTypeParametersScope()
-            }
-
-            // ConstructedTypeRef should be resolved only with type parameters, but not with nested classes and classes from supertypes
-            for (constructor in firClass.declarations.filterIsInstance<FirConstructor>()) {
-                constructor.delegatedConstructor?.let(this::resolveConstructedTypeRefForDelegatedConstructorCall)
-            }
-
-        }
-
         return withScopeCleanup {
+            // Remove type parameter scopes for classes that are neither inner nor local
+            if (!firClass.isInner && !firClass.isLocal) {
+                this.scopes = staticScopes
+            }
+
+            withScopeCleanup {
+                firClass.transformAnnotations(this, null)
+
+                if (firClass is FirRegularClass) {
+                    firClass.addTypeParametersScope()
+                }
+
+                // ConstructedTypeRef should be resolved only with type parameters, but not with nested classes and classes from supertypes
+                for (constructor in firClass.declarations.filterIsInstance<FirConstructor>()) {
+                    constructor.delegatedConstructor?.let(this::resolveConstructedTypeRefForDelegatedConstructorCall)
+                }
+            }
+
             // ? Is it Ok to use original file session here ?
             val superTypes = lookupSuperTypes(
                 firClass,
@@ -360,19 +380,26 @@ open class FirTypeResolveTransformer(
                 substituteTypes = true,
                 useSiteSession = session
             ).asReversed()
+
+            val scopesToAdd = mutableListOf<FirScope>()
+
             for (superType in superTypes) {
                 superType.lookupTag.getNestedClassifierScope(session, scopeSession)?.let { nestedClassifierScope ->
                     val scope = nestedClassifierScope.wrapNestedClassifierScopeWithSubstitutionForSuperType(superType, session)
-                    scopes.add(scope)
+                    scopesToAdd.add(scope)
                 }
             }
-            session.nestedClassifierScope(firClass)?.let(scopes::add)
+            session.nestedClassifierScope(firClass)?.let(scopesToAdd::add)
             if (firClass is FirRegularClass) {
                 val companionObject = firClass.companionObjectSymbol?.fir
                 if (companionObject != null) {
-                    session.nestedClassifierScope(companionObject)?.let(scopes::add)
+                    session.nestedClassifierScope(companionObject)?.let(scopesToAdd::add)
                 }
+
+                addScopes(scopesToAdd)
                 firClass.addTypeParametersScope()
+            } else {
+                addScopes(scopesToAdd)
             }
 
             // Note that annotations are still visited here
@@ -393,8 +420,16 @@ open class FirTypeResolveTransformer(
 
     private fun FirMemberDeclaration.addTypeParametersScope() {
         if (typeParameters.isNotEmpty()) {
-            scopes.add(FirMemberTypeParameterScope(this))
+            scopes = scopes.add(FirMemberTypeParameterScope(this))
         }
+    }
+
+    private fun addScopes(list: List<FirScope>) {
+        // small optimization to skip unnecessary allocations
+        val scopesAreTheSame = scopes === staticScopes
+
+        scopes = scopes.addAll(list)
+        staticScopes = if (scopesAreTheSame) scopes else staticScopes.addAll(list)
     }
 
     /**

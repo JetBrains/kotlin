@@ -131,3 +131,8 @@ fun ConeKotlinType.renderReadableWithFqNames(): String {
     return builder.toString()
 }
 
+fun ConeKotlinType.hasError(): Boolean = when (this) {
+    is ConeErrorType -> true
+    is ConeFlexibleType -> lowerBound.hasError() || upperBound.hasError()
+    else -> typeArguments.any { it is ConeKotlinType && it.hasError() }
+}
