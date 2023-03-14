@@ -3,7 +3,7 @@
 // ISSUE: KT-50520
 
 fun box(): String {
-    buildList {
+    <!INFERRED_INTO_DECLARED_UPPER_BOUNDS!>buildList<!> {
         val foo = { first() }
         add(0, foo)
     }
