@@ -19,6 +19,10 @@ allprojects {
         val kotlinCompilerRepo: String? by rootProject
         kotlinCompilerRepo?.let { maven(it) }
     }
+
+    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile>().configureEach {
+        compilerOptions.freeCompilerArgs.add("-XXLanguage:+ImplicitSignedToUnsignedIntegerConversion")
+    }
 }
 
 val hostOs = System.getProperty("os.name")
