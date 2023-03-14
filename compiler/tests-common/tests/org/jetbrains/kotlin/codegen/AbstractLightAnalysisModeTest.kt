@@ -32,12 +32,20 @@ abstract class AbstractLightAnalysisModeTest : CodegenTestCase() {
             "// TARGET_FRONTEND: FIR",
             "// IGNORE_BACKEND_K1:",
         )
+
+        // current ignore+unmute logic doesn't support the situation when LA successds but codegen fails
+        // so this is a very dirty hack to support it for one particular case - signedToUnsignedConversions.kt
+        // We assume that these tests will soo be irrelevant and therefore the hack will die too
+        private val failDirective = "FAIL_IN_LIGHT_ANALYSIS"
     }
 
     override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {
+        var isIgnored = false
         for (file in files) {
-            if (ignoreDirectives.any { file.content.contains(it) }) return
+            if (file.content.contains(failDirective)) throw RuntimeException("Forced ignore for this test")
+            if (!isIgnored && ignoreDirectives.any { file.content.contains(it) }) isIgnored = true
         }
+        if (isIgnored) return
 
         val fullTxt = compileWithFullAnalysis(files)
             .replace("final enum class", "enum class")
