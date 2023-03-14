@@ -80,7 +80,7 @@ class Fir2IrDeclarationStorage(
 
     private val functionCache: ConcurrentHashMap<FirFunction, IrSimpleFunction> = commonMemberStorage.functionCache
 
-    private val constructorCache: ConcurrentHashMap<FirConstructor, IrConstructor> = ConcurrentHashMap()
+    private val constructorCache: ConcurrentHashMap<FirConstructor, IrConstructor> = commonMemberStorage.constructorCache
 
     private val initializerCache: ConcurrentHashMap<FirAnonymousInitializer, IrAnonymousInitializer> = ConcurrentHashMap()
 
