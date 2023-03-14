@@ -32,9 +32,9 @@ public final class IC2 {
     public synthetic final static method box-impl(p0: int): IC2
     public static method constructor-impl(p0: int): int
     public method equals(p0: java.lang.Object): boolean
-    public method equals-ACFGG4I(p0: int): boolean
+    public @kotlin.TypedEquals method equals-ACFGG4I(p0: int): boolean
     public static method equals-impl(p0: int, p1: java.lang.Object): boolean
-    public static method equals-impl0(p0: int, p1: int): boolean
+    public static @kotlin.TypedEquals method equals-impl0(p0: int, p1: int): boolean
     public final method getValue(): int
     public method hashCode(): int
     public static method hashCode-impl(p0: int): int
@@ -91,7 +91,7 @@ public final class IC5 {
     public static method constructor-impl(p0: int): int
     public method equals(p0: java.lang.Object): boolean
     public static method equals-impl(p0: int, p1: java.lang.Object): boolean
-    public final static method equals-impl0(p0: int, p1: int): boolean
+    public final static @kotlin.TypedEquals method equals-impl0(p0: int, p1: int): boolean
     public final method getValue(): int
     public method hashCode(): int
     public static method hashCode-impl(p0: int): int
