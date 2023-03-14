@@ -630,6 +630,12 @@ public class FirPsiOldFrontendForeignAnnotationsSourceJavaTestGenerated extends 
             runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/typeUseOnObject.kt");
         }
 
+        @Test
+        @TestMetadata("warningModeForHeadType.kt")
+        public void testWarningModeForHeadType() throws Exception {
+            runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/warningModeForHeadType.kt");
+        }
+
         @Nested
         @TestMetadata("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify")
         @TestDataPath("$PROJECT_ROOT")
