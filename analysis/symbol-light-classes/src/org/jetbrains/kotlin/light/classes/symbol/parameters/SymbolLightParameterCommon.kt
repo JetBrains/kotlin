@@ -48,7 +48,7 @@ internal abstract class SymbolLightParameterCommon(
 
     abstract override fun getModifierList(): PsiModifierList
 
-    protected fun nullabilityType(): NullabilityType {
+    protected open fun nullabilityType(): NullabilityType {
         if (isVarArgs) return NullabilityType.NotNull
 
         val nullabilityApplicable = !containingMethod.hasModifierProperty(PsiModifier.PRIVATE) &&
