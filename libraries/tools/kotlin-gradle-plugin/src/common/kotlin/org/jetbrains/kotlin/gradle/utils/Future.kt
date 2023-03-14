@@ -47,6 +47,12 @@ internal interface Future<T> {
     fun getOrThrow(): T
 }
 
+internal interface LenientFuture<T> : Future<T?> {
+    override suspend fun await(): T
+    override fun getOrThrow(): T
+    fun getOrNull(): T?
+}
+
 internal interface CompletableFuture<T> : Future<T> {
     fun complete(value: T)
 }
@@ -68,6 +74,8 @@ internal inline fun <Receiver, reified T> futureExtension(
 }
 
 internal fun <T> Project.future(block: suspend Project.() -> T): Future<T> = kotlinPluginLifecycle.future { block() }
+
+internal val <T> Future<T>.lenient: LenientFuture<T> get() = LenientFutureImpl(this)
 
 /**
  * Shortcut for
@@ -106,7 +114,48 @@ private class FutureImpl<T>(
 
     override fun getOrThrow(): T {
         return if (deferred.isCompleted) deferred.getCompleted() else throw IllegalLifecycleException(
-            "Future was not completed yet" + if (lifecycle != null) " (stage '${lifecycle.stage}')" else ""
+            "Future was not completed yet" + if (lifecycle != null) " (stage '${lifecycle.stage}') (${lifecycle.project.displayName})"
+            else ""
         )
+    }
+
+    private fun writeReplace(): Any {
+        return Surrogate(getOrThrow())
+    }
+
+    private class Surrogate<T>(private val value: T) : Serializable {
+        private fun readResolve(): Any {
+            return FutureImpl(CompletableDeferred(value))
+        }
+    }
+}
+
+private class LenientFutureImpl<T>(
+    private val future: Future<T>
+) : LenientFuture<T>, Serializable {
+    override suspend fun await(): T {
+        return future.await()
+    }
+
+    override fun getOrThrow(): T {
+        return future.getOrThrow()
+    }
+
+    override fun getOrNull(): T? {
+        return try {
+            future.getOrThrow()
+        } catch (t: IllegalLifecycleException) {
+            return null
+        }
+    }
+
+    private fun writeReplace(): Any {
+        return Surrogate(getOrNull())
+    }
+
+    private class Surrogate<T>(private val value: T) : Serializable {
+        private fun readResolve(): Any {
+            return LenientFutureImpl(FutureImpl(CompletableDeferred(value)))
+        }
     }
 }

@@ -17,10 +17,7 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ArtifactMetadataProvider
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
-import org.jetbrains.kotlin.gradle.utils.Future
-import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfiguration
-import org.jetbrains.kotlin.gradle.utils.future
-import org.jetbrains.kotlin.gradle.utils.getOrPut
+import org.jetbrains.kotlin.gradle.utils.*
 import java.util.*
 
 internal sealed class MetadataDependencyResolution(
@@ -116,8 +113,8 @@ internal class GranularMetadataTransformation(
 
     class ProjectData(
         val path: String,
-        val sourceSetMetadataOutputs: Future<Map<String, SourceSetMetadataOutputs>>,
-        val moduleId: Future<ModuleDependencyIdentifier>
+        val sourceSetMetadataOutputs: LenientFuture<Map<String, SourceSetMetadataOutputs>>,
+        val moduleId: LenientFuture<ModuleDependencyIdentifier>
     ) {
         override fun toString(): String = "ProjectData[path='$path']"
     }
@@ -339,11 +336,11 @@ private fun Project.collectAllProjectsData(): Map<String, GranularMetadataTransf
     return rootProject.allprojects.associateBy { it.path }.mapValues { (path, currentProject) ->
         GranularMetadataTransformation.ProjectData(
             path = path,
-            sourceSetMetadataOutputs = currentProject.future { currentProject.collectSourceSetMetadataOutputs() },
+            sourceSetMetadataOutputs = currentProject.future { currentProject.collectSourceSetMetadataOutputs() }.lenient,
             moduleId = currentProject.future {
                 await(KotlinPluginLifecycle.Stage.AfterFinaliseDsl)
                 ModuleIds.idOfRootModule(currentProject)
-            }
+            }.lenient
         )
     }
 }

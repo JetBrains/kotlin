@@ -7,6 +7,8 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
+import org.jetbrains.kotlin.gradle.idea.testFixtures.utils.deserialize
+import org.jetbrains.kotlin.gradle.idea.testFixtures.utils.serialize
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.IllegalLifecycleException
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.FinaliseDsl
 import org.jetbrains.kotlin.gradle.plugin.await
@@ -14,10 +16,15 @@ import org.jetbrains.kotlin.gradle.plugin.currentKotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.startKotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.runLifecycleAwareTest
+import org.jetbrains.kotlin.gradle.utils.CompletableFuture
+import org.jetbrains.kotlin.gradle.utils.LenientFuture
 import org.jetbrains.kotlin.gradle.utils.future
+import org.jetbrains.kotlin.gradle.utils.lenient
 import org.junit.Test
+import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertNull
 
 class FutureTest {
 
@@ -66,5 +73,35 @@ class FutureTest {
         }
 
         assertEquals(42, future.getOrThrow())
+    }
+
+    @Test
+    fun `test - lenient future`() {
+        val future = CompletableFuture<Int>()
+        assertNull(future.lenient.getOrNull())
+        assertThrows<IllegalLifecycleException> { future.lenient.getOrThrow() }
+
+        future.complete(42)
+        assertEquals(42, future.lenient.getOrThrow())
+        assertEquals(42, future.lenient.getOrNull())
+    }
+
+    @Test
+    fun `test - lenient future serialize`() {
+        val future = CompletableFuture<Int>()
+        assertFailsWith<IllegalLifecycleException> { future.serialize() }
+
+        run {
+            val futureBinary = future.lenient.serialize()
+            val deserializedFuture = futureBinary.deserialize() as LenientFuture<*>
+            assertNull(deserializedFuture.getOrNull())
+        }
+
+        run {
+            future.complete(42)
+            val futureBinary = future.lenient.serialize()
+            val deserializedFuture = futureBinary.deserialize() as LenientFuture<*>
+            assertEquals(42, deserializedFuture.getOrNull())
+        }
     }
 }
