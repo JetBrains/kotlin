@@ -242,11 +242,7 @@ class FunctionInlining(
                         expression.transformChildrenVoid(this)
 
                         if (expression.returnTargetSymbol == copiedCallee.symbol) {
-                            val expr =
-                                if (insertAdditionalImplicitCasts)
-                                    expression.value.implicitCastIfNeededTo(callSite.type)
-                                else
-                                    expression.value
+                            val expr = expression.value.doImplicitCastIfNeededTo(callSite.type)
                             return irBuilder.at(expression).irReturn(expr)
                         }
                         return expression
@@ -265,15 +261,13 @@ class FunctionInlining(
 
                 argument.transformChildrenVoid(this) // Default argument can contain subjects for substitution.
 
-                var ret =
+                val ret =
                     if (argument is IrGetValueWithoutLocation)
                         argument.withLocation(newExpression.startOffset, newExpression.endOffset)
                     else
                         argument.copy()
 
-                if (insertAdditionalImplicitCasts)
-                    ret = ret.implicitCastIfNeededTo(newExpression.type)
-                return ret
+                return ret.doImplicitCastIfNeededTo(newExpression.type)
             }
 
             override fun visitCall(expression: IrCall): IrExpression {
@@ -470,15 +464,15 @@ class FunctionInlining(
                             }
                         when (parameter) {
                             function.dispatchReceiverParameter ->
-                                this.dispatchReceiver = argument.implicitCastIfNeededTo(inlinedFunction.dispatchReceiverParameter!!.type)
+                                this.dispatchReceiver = argument.doImplicitCastIfNeededTo(inlinedFunction.dispatchReceiverParameter!!.type)
 
                             function.extensionReceiverParameter ->
-                                this.extensionReceiver = argument.implicitCastIfNeededTo(inlinedFunction.extensionReceiverParameter!!.type)
+                                this.extensionReceiver = argument.doImplicitCastIfNeededTo(inlinedFunction.extensionReceiverParameter!!.type)
 
                             else ->
                                 putValueArgument(
                                     parameter.index,
-                                    argument.implicitCastIfNeededTo(inlinedFunction.valueParameters[parameter.index].type)
+                                    argument.doImplicitCastIfNeededTo(inlinedFunction.valueParameters[parameter.index].type)
                                 )
                         }
                     }
@@ -492,18 +486,15 @@ class FunctionInlining(
                 } else {
                     val transformedExpression = super.visitExpression(immediateCall).transform(this@FunctionInlining, null)
                     wrapInStubFunction(transformedExpression, irCall, irFunctionReference)
-                }.implicitCastIfNeededTo(irCall.type)
+                }.doImplicitCastIfNeededTo(irCall.type)
             }
 
             override fun visitElement(element: IrElement) = element.accept(this, null)
         }
 
-        private fun IrExpression.implicitCastIfNeededTo(type: IrType): IrExpression {
-            // No need to cast expressions of type nothing
-            return if (type == this.type || !insertAdditionalImplicitCasts || this.type == context.irBuiltIns.nothingType)
-                this
-            else
-                IrTypeOperatorCallImpl(startOffset, endOffset, type, IrTypeOperator.IMPLICIT_CAST, type, this)
+        private fun IrExpression.doImplicitCastIfNeededTo(type: IrType): IrExpression {
+            if (!insertAdditionalImplicitCasts) return this
+            return this.implicitCastIfNeededTo(type)
         }
 
         // With `insertAdditionalImplicitCasts` flag we sometimes insert
