@@ -86,6 +86,7 @@
         <option value="$PROJECT_DIR$/plugins/kotlinx-serialization/testData" />
         <option value="$PROJECT_DIR$/plugins/assign-plugin/testData" />
         <option value="$PROJECT_DIR$/analysis/analysis-api/testData" />
+        <option value="$PROJECT_DIR$/analysis/symbol-light-classes/testData" />
       </array>
     </option>
   </component>
