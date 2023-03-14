@@ -933,6 +933,10 @@ class HierarchicalMppIT : KGPBaseTest() {
                         """Task `${task}` of type `.+`: .+(at execution time is unsupported|not supported with the configuration cache)"""
                             .toRegex()
                     )
+                    assertOutputDoesNotContain(
+                        """Task `${task}` of type `.+`: .+cannot serialize object of type .+ as these are not supported with the configuration cache"""
+                            .toRegex()
+                    )
                 }
             }
 

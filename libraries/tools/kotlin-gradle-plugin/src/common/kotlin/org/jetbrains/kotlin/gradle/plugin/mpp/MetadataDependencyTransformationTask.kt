@@ -91,6 +91,7 @@ open class MetadataDependencyTransformationTask
         }
     }
 
+    @delegate:Transient
     private val transformation: GranularMetadataTransformation by lazy {
         GranularMetadataTransformation(
             project,
