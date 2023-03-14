@@ -38,8 +38,10 @@ void processObjectInMark(void* state, ObjHeader* object) noexcept {
     auto* typeInfo = object->type_info();
     RuntimeAssert(typeInfo != theArrayTypeInfo, "Must not be an array of objects");
     for (int i = 0; i < typeInfo->objOffsetsCount_; ++i) {
-        auto* field = *reinterpret_cast<ObjHeader**>(reinterpret_cast<uintptr_t>(object) + typeInfo->objOffsets_[i]);
+        auto offs = typeInfo->objOffsets_[i];
+        auto* field = *reinterpret_cast<ObjHeader**>(reinterpret_cast<uintptr_t>(object) + offs);
         if (!field) continue;
+        TraceMark("Marking field *(%p + %d) -> %p", object, offs, field);
         processFieldInMark<Traits>(state, field);
     }
 }
@@ -52,6 +54,7 @@ void processArrayInMark(void* state, ArrayHeader* array) noexcept {
     for (auto* it = begin; it != end; ++it) {
         auto* field = *it;
         if (!field) continue;
+        TraceMark("Marking array element %p[%" PRIdPTR "] -> %p", array, (it - begin), field);
         processFieldInMark<Traits>(state, field);
     }
 }
@@ -150,7 +153,6 @@ typename Traits::ObjectFactory::FinalizerQueue Sweep(GCHandle handle, typename T
 
     return finalizerQueue;
 }
-
 template <typename Traits>
 typename Traits::ObjectFactory::FinalizerQueue Sweep(GCHandle handle, typename Traits::ObjectFactory& objectFactory) noexcept {
     auto iter = objectFactory.LockForIter();
@@ -164,14 +166,18 @@ void collectRootSetForThread(GCHandle gcHandle, typename Traits::MarkQueue& mark
     // TODO: Remove useless mm::ThreadRootSet abstraction.
     for (auto value : mm::ThreadRootSet(thread)) {
         if (internal::collectRoot<Traits>(markQueue, value.object)) {
+            const char* sourceStr = nullptr;
             switch (value.source) {
                 case mm::ThreadRootSet::Source::kStack:
                     handle.addStackRoot();
+                    sourceStr = "Stack";
                     break;
                 case mm::ThreadRootSet::Source::kTLS:
                     handle.addThreadLocalRoot();
+                    sourceStr = "TLS";
                     break;
             }
+            TraceMark("Found %s root %p", sourceStr, value.object);
         }
     }
 }
@@ -183,14 +189,18 @@ void collectRootSetGlobals(GCHandle gcHandle, typename Traits::MarkQueue& markQu
     // TODO: Remove useless mm::GlobalRootSet abstraction.
     for (auto value : mm::GlobalRootSet()) {
         if (internal::collectRoot<Traits>(markQueue, value.object)) {
+            const char* sourceStr = nullptr;
             switch (value.source) {
                 case mm::GlobalRootSet::Source::kGlobal:
                     handle.addGlobalRoot();
+                    sourceStr = "Global";
                     break;
                 case mm::GlobalRootSet::Source::kStableRef:
                     handle.addStableRoot();
+                    sourceStr = "StableRef";
                     break;
             }
+            TraceMark("Found %s root %p", sourceStr, value.object);
         }
     }
 }

@@ -14,6 +14,8 @@
 #define GCLogDebug(epoch, format, ...) RuntimeLogDebug({kTagGC}, "Epoch #%" PRIu64 ": " format, epoch, ##__VA_ARGS__)
 #define GCLogTrace(epoch, format, ...) RuntimeLogTrace({kTagGC}, "Epoch #%" PRIu64 ": " format, epoch, ##__VA_ARGS__)
 
+#define TraceMark(format, ...) RuntimeLogTrace({"gcMark"}, "[Thread %d] " format, konan::currentThreadId(), ##__VA_ARGS__)
+
 namespace kotlin::gc {
 
 class GCHandle;
