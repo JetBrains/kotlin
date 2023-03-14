@@ -629,7 +629,7 @@ TYPED_TEST(ForwardListTest, EraseAfterEmptyRangeFront) {
     EXPECT_ELEMENTS_ARE(list, 1, 2, 3, 4);
 }
 
-TEST(InstrusiveForwardListTest, TryPushFrontSuccess) {
+TEST(IntrusiveForwardListTest, TryPushFrontSuccess) {
     using List = intrusive_forward_list<Node>;
     auto values = create<List>({1, 2, 3, 4});
     List list(values.begin(), values.end());
@@ -640,7 +640,7 @@ TEST(InstrusiveForwardListTest, TryPushFrontSuccess) {
     EXPECT_ELEMENTS_ARE(list, 5, 1, 2, 3, 4);
 }
 
-TEST(InstrusiveForwardListTest, TryPushFrontFailure) {
+TEST(IntrusiveForwardListTest, TryPushFrontFailure) {
     using List = intrusive_forward_list<Node>;
     auto values = create<List>({1, 2, 3, 4});
     List list(values.begin(), values.end());
@@ -650,7 +650,7 @@ TEST(InstrusiveForwardListTest, TryPushFrontFailure) {
     EXPECT_ELEMENTS_ARE(list, 1, 2, 3, 4);
 }
 
-TEST(InstrusiveForwardListTest, TryPushFrontEmptySuccess) {
+TEST(IntrusiveForwardListTest, TryPushFrontEmptySuccess) {
     using List = intrusive_forward_list<Node>;
     List list;
     typename List::value_type value(5);
@@ -660,7 +660,7 @@ TEST(InstrusiveForwardListTest, TryPushFrontEmptySuccess) {
     EXPECT_ELEMENTS_ARE(list, 5);
 }
 
-TEST(InstrusiveForwardListTest, TryPushFrontEmptyFailure) {
+TEST(IntrusiveForwardListTest, TryPushFrontEmptyFailure) {
     using List = intrusive_forward_list<Node>;
     List list;
     typename List::value_type value(5);
@@ -696,4 +696,77 @@ TEST(IntrusiveForwardListTest, TryPopFrontFromEmpty) {
     auto result = list.try_pop_front();
     EXPECT_THAT(result, nullptr);
     EXPECT_ELEMENTS_ARE(list);
+}
+
+template<typename List>
+typename List::iterator before_end(List& list) {
+    auto cur = list.before_begin();
+    auto next = list.begin();
+    while (next != list.end()) {
+        ++cur;
+        ++next;
+    }
+    return cur;
+}
+
+template<typename List>
+typename List::iterator idxIter(List& list, std::size_t idx) {
+    auto cur = list.begin();
+    for (std::size_t i = 0; i < idx; ++i) {
+        ++cur;
+    }
+    return cur;
+}
+
+TEST(IntrusiveForwardListTest, SpliceAfterEIBeforeBeginAll) {
+    using List = intrusive_forward_list<Node>;
+    auto values1 = create<List>({1, 2, 3, 4});
+    auto values2 = create<List>({11, 12, 13, 14});
+    List l1(values1.begin(), values1.end());
+    List l2(values2.begin(), values2.end());
+
+    l1.splice_after_excl_incl(l1.before_begin(), l2.before_begin(), before_end(l2));
+    EXPECT_ELEMENTS_ARE(l1, 11, 12, 13, 14, 1, 2, 3, 4);
+    EXPECT_ELEMENTS_ARE(l2);
+}
+
+TEST(IntrusiveForwardListTest, SpliceAfterEIBeforeEndAll) {
+    using List = intrusive_forward_list<Node>;
+    auto values1 = create<List>({1, 2, 3, 4});
+    auto values2 = create<List>({11, 12, 13, 14});
+    List l1(values1.begin(), values1.end());
+    List l2(values2.begin(), values2.end());
+
+    l1.splice_after_excl_incl(before_end(l1), l2.before_begin(), before_end(l2));
+    EXPECT_ELEMENTS_ARE(l1, 1, 2, 3, 4, 11, 12, 13, 14);
+    EXPECT_ELEMENTS_ARE(l2);
+}
+
+TEST(IntrusiveForwardListTest, SpliceAfterEIMidMidHalf) {
+    using List = intrusive_forward_list<Node>;
+    auto values1 = create<List>({1, 2, 3, 4});
+    auto values2 = create<List>({11, 12, 13, 14});
+    List l1(values1.begin(), values1.end());
+    List l2(values2.begin(), values2.end());
+
+    l1.splice_after_excl_incl(idxIter(l1, 1), l2.begin(), idxIter(l2, 2));
+    EXPECT_ELEMENTS_ARE(l1, 1, 2, 12, 13, 3, 4);
+    EXPECT_ELEMENTS_ARE(l2, 11, 14);
+}
+
+TEST(IntrusiveForwardListTest, SpliceAfterEIBeginSame) {
+    using List = intrusive_forward_list<Node>;
+    auto values = create<List>({1, 2, 3, 4});
+    List list(values.begin(), values.end());
+
+    list.splice_after_excl_incl(list.begin(), list.before_begin(), idxIter(list, 2));
+    EXPECT_ELEMENTS_ARE(list, 1, 2, 3, 4);
+}
+
+TEST(IntrusiveForwardListTest, SpliceAfterEIBeforeBeginOwnTail) {
+    using List = intrusive_forward_list<Node>;
+    auto values = create<List>({1, 2, 3, 4});
+    List list(values.begin(), values.end());
+    list.splice_after_excl_incl(list.before_begin(), idxIter(list, 1), before_end(list));
+    EXPECT_ELEMENTS_ARE(list, 3, 4, 1, 2);
 }

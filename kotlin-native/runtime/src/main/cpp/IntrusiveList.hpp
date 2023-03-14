@@ -341,6 +341,21 @@ public:
 
     // TODO: Implement splice_after.
 
+    // Moves the elements in the range `(firstExcl, lastIncl]` after the element pointed by `insertAfter`.
+    // No elements are copied or moved, only the internal pointers of the list nodes are re-pointed.
+    // The behavior is undefined if `insertAfter` is an iterator in the range `(++firstExcl, lastIncl]`.
+    // Complexity: O(1)
+    void splice_after_excl_incl(iterator insertAfter, iterator firstExcl, iterator lastIncl) {
+        auto firstIncl = firstExcl;
+        ++firstIncl;
+        auto lastExcl = lastIncl;
+        ++lastExcl;
+        if (firstIncl == insertAfter || firstIncl == lastExcl) return;
+        setNext(firstExcl.node_, lastExcl.node_);
+        setNext(lastIncl.node_, next(insertAfter.node_));
+        setNext(insertAfter.node_, firstIncl.node_);
+    }
+
 private:
     static pointer next(const_pointer node) noexcept { return Traits::next(*node); }
 
@@ -348,8 +363,8 @@ private:
 
     static bool trySetNext(pointer node, pointer next) noexcept { return Traits::trySetNext(*node, next); }
 
-    pointer head() noexcept { return reinterpret_cast<pointer>(headStorage_); }
-    const_pointer head() const noexcept { return reinterpret_cast<const_pointer>(headStorage_); }
+    pointer head() noexcept { return &head_; }
+    const_pointer head() const noexcept { return &head_; }
 
     static pointer tail() noexcept { return reinterpret_cast<pointer>(tailStorage_); }
 
@@ -364,7 +379,10 @@ private:
         return iterator(&value);
     }
 
-    alignas(value_type) char headStorage_[sizeof(value_type)] = {0};
+    union {
+        value_type head_; // for debugger
+        alignas(value_type) char headStorage_[sizeof(value_type)] = {0};
+    };
     alignas(value_type) static inline char tailStorage_[sizeof(value_type)] = {0};
 };
 
