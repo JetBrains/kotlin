@@ -33,8 +33,8 @@ internal class ObjCExportConfigParser(
         private val config: KonanConfig,
         private val allModules: List<ModuleDescriptor>,
 ) {
-    fun readObjCExportConfigFromXml(file: File): List<ObjCExportHeaderInfo> {
-        val result = mutableListOf<ObjCExportHeaderInfo>()
+    fun readObjCExportConfigFromXml(file: File): List<ObjCExportFrameworkStructure> {
+        val result = mutableListOf<ObjCExportFrameworkStructure>()
         val root = file.readXml()
         result += root.children.map { frameworkNode ->
             val frameworkName = frameworkNode.getChild("name").value
@@ -42,21 +42,40 @@ internal class ObjCExportConfigParser(
             val libraries = frameworkNode.getChild("libraries").children.map { libraryNode ->
                 parseLibrary(libraryNode)
             }
-            ObjCExportHeaderInfo(
+            val headerStrategy: ObjCExportHeaderStrategy = parseHeaderStrategy(frameworkName, frameworkNode.getChild("headerStrategy"))
+            ObjCExportFrameworkStructure(
                     topLevelPrefix = topLevelPrefix,
-                    frameworkName = frameworkName,
-                    headerName = "$frameworkName.h",
-                    modules = libraries.map { it.resolve() },
+                    name = frameworkName,
+                    modulesInfo = libraries.map { it.resolve() },
+                    headerStrategy = headerStrategy,
             )
         }
         return result
+    }
+
+    private fun parseHeaderStrategy(frameworkName: String, element: Element): ObjCExportHeaderStrategy {
+        val kind = element.getChildText("kind")
+        return when (kind) {
+            "perKlib" -> {
+                val map = allModules.filter { it.klibModuleOrigin is DeserializedKlibModuleOrigin }.map { it.kotlinLibrary }
+                val mappingNode = element.getChild("mapping")
+                val mapping = mappingNode.children.associate { node ->
+                    map.single { node.name == it.uniqueName } to node.value
+                }
+                ObjCExportHeaderStrategy.PerKlib(frameworkName, mapping)
+            }
+            "global" -> {
+                ObjCExportHeaderStrategy.Global(frameworkName, element.getChildText("headerName"))
+            }
+            else -> error("Unsupported header strategy: $kind")
+        }
     }
 
     private fun ObjCExportConfig.Library.resolve(): ObjCExportModuleInfo {
         val resolvedLibrary = config.resolvedLibraries.getFullList(TopologicalLibraryOrder)
                 .find { it.uniqueName == name }
                 ?: error("Library $name not found. Is it passed to the compiler?")
-        val module = allModules.first { it.klibModuleOrigin is DeserializedKlibModuleOrigin && it.kotlinLibrary == resolvedLibrary }
+        val module = allModules.filter { it.klibModuleOrigin is DeserializedKlibModuleOrigin }.first { it.kotlinLibrary == resolvedLibrary }
         return ObjCExportModuleInfo(module = module, exported = exported)
     }
 

@@ -201,7 +201,7 @@ internal class ObjCExportTranslatorImpl(
     private fun referenceClass(descriptor: ClassDescriptor): ObjCExportNamer.ClassOrProtocolName {
         assert(mapper.shouldBeExposed(descriptor)) { "Shouldn't be exposed: $descriptor" }
         assert(!descriptor.isInterface)
-        generator?.requireClassOrInterface(descriptor)
+        generator?.classGenerator?.requireClassOrInterface(descriptor)
 
         return translateClassOrInterfaceName(descriptor).also { className ->
             val generics = mapTypeConstructorParameters(descriptor)
@@ -213,7 +213,7 @@ internal class ObjCExportTranslatorImpl(
     private fun referenceProtocol(descriptor: ClassDescriptor): ObjCExportNamer.ClassOrProtocolName {
         assert(mapper.shouldBeExposed(descriptor)) { "Shouldn't be exposed: $descriptor" }
         assert(descriptor.isInterface)
-        generator?.requireClassOrInterface(descriptor)
+        generator?.classGenerator?.requireClassOrInterface(descriptor)
 
         return translateClassOrInterfaceName(descriptor).also {
             generator?.referenceProtocol(it.objCName)
@@ -830,7 +830,7 @@ internal class ObjCExportTranslatorImpl(
     private fun exportThrown(method: FunctionDescriptor) {
         getDefinedThrows(method)
                 ?.mapNotNull { method.module.findClassAcrossModuleDependencies(it) }
-                ?.forEach { generator?.requireClassOrInterface(it) }
+                ?.forEach { generator?.classGenerator?.requireClassOrInterface(it) }
     }
 
     private fun getDefinedThrows(method: FunctionDescriptor): Sequence<ClassId>? {
@@ -1097,9 +1097,9 @@ abstract class ObjCExportHeaderGenerator internal constructor(
 
     open val shouldExportKDoc = false
 
-    fun build(): List<String> = mutableListOf<String>().apply {
+    private fun build(dependencies: Set<ObjCExportHeaderId>): List<String> = mutableListOf<String>().apply {
         addImports(foundationImports)
-        addImports(getKotlinDependenciesImports())
+        addImports(dependencies.map { "${it.frameworkId.name}/${it.name}" })
         addImports(getAdditionalImports())
         add("")
 
@@ -1154,8 +1154,8 @@ abstract class ObjCExportHeaderGenerator internal constructor(
         add("NS_ASSUME_NONNULL_END")
     }
 
-    internal fun buildInterface(): ObjCExportedInterface {
-        val headerLines = build()
+    internal fun buildInterface(dependencies: Set<ObjCExportHeaderId>): ObjCExportedInterface {
+        val headerLines = build(dependencies)
         return ObjCExportedInterface(generatedClasses, extensions, topLevel, headerLines, namer, stdlibNamer, mapper)
     }
 
@@ -1164,9 +1164,10 @@ abstract class ObjCExportHeaderGenerator internal constructor(
 
     protected open fun getAdditionalImports(): List<String> = emptyList()
 
-    private fun getKotlinDependenciesImports(): List<String> = emptyList()
+    lateinit var classGenerator: ObjCExportClassGenerator
 
-    fun translateModule() {
+    fun translateModule(classGenerator: ObjCExportClassGenerator) {
+        this.classGenerator = classGenerator
         // TODO: make the translation order stable
         // to stabilize name mangling.
         if (moduleDescriptors.any { it.module.isNativeStdlib() }) {
@@ -1181,8 +1182,14 @@ abstract class ObjCExportHeaderGenerator internal constructor(
 
     fun translateModuleDeclarations() {
         translatePackageFragments()
+    }
+
+    fun processRequests() {
         translateExtraClasses()
     }
+
+    fun hasPendingRequests(): Boolean =
+            extraClassesToTranslate.isNotEmpty()
 
     private fun translatePackageFragments() {
         val packageFragments = moduleDescriptors

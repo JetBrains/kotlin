@@ -8,45 +8,46 @@ package org.jetbrains.kotlin.backend.konan.objcexport
 import org.jetbrains.kotlin.descriptors.*
 
 internal class ObjCExportNamerProxy(
-        private val locator: ObjCExportDeclarationLocator,
+        private val namerProvider: ObjCNamerProvider,
+        private val headerIdProvider: ObjCExportHeaderIdProvider
 ) : ObjCExportNamer {
 
     override fun getFileClassName(file: SourceFile): ObjCExportNamer.ClassOrProtocolName =
-            locator.findNamerForSourceFile(file).getFileClassName(file)
+            namerProvider.getNamer(headerIdProvider.getHeaderId(file)).getFileClassName(file)
 
     override fun getClassOrProtocolName(descriptor: ClassDescriptor): ObjCExportNamer.ClassOrProtocolName =
-            locator.findNamerForDeclaration(descriptor).getClassOrProtocolName(descriptor)
+            namerProvider.getNamer(headerIdProvider.getHeaderId(descriptor)).getClassOrProtocolName(descriptor)
 
     override fun getSelector(method: FunctionDescriptor): String =
-            locator.findNamerForDeclaration(method).getSelector(method)
+            namerProvider.getNamer(headerIdProvider.getHeaderId(method)).getSelector(method)
 
     override fun getParameterName(parameter: ParameterDescriptor): String =
-            locator.findNamerForDeclaration(parameter).getParameterName(parameter)
+            namerProvider.getNamer(headerIdProvider.getHeaderId(parameter)).getParameterName(parameter)
 
     override fun getSwiftName(method: FunctionDescriptor): String =
-            locator.findNamerForDeclaration(method).getSwiftName(method)
+            namerProvider.getNamer(headerIdProvider.getHeaderId(method)).getSwiftName(method)
 
     override fun getPropertyName(property: PropertyDescriptor): ObjCExportNamer.PropertyName =
-            locator.findNamerForDeclaration(property).getPropertyName(property)
+            namerProvider.getNamer(headerIdProvider.getHeaderId(property)).getPropertyName(property)
 
     override fun getObjectInstanceSelector(descriptor: ClassDescriptor): String =
-            locator.findNamerForDeclaration(descriptor).getObjectInstanceSelector(descriptor)
+            namerProvider.getNamer(headerIdProvider.getHeaderId(descriptor)).getObjectInstanceSelector(descriptor)
 
     override fun getEnumEntrySelector(descriptor: ClassDescriptor): String =
-            locator.findNamerForDeclaration(descriptor).getEnumEntrySelector(descriptor)
+            namerProvider.getNamer(headerIdProvider.getHeaderId(descriptor)).getEnumEntrySelector(descriptor)
 
     override fun getEnumEntrySwiftName(descriptor: ClassDescriptor): String =
-            locator.findNamerForDeclaration(descriptor).getEnumEntrySwiftName(descriptor)
+            namerProvider.getNamer(headerIdProvider.getHeaderId(descriptor)).getEnumEntrySwiftName(descriptor)
 
     override fun getEnumValuesSelector(descriptor: FunctionDescriptor): String =
-            locator.findNamerForDeclaration(descriptor).getEnumValuesSelector(descriptor)
+            namerProvider.getNamer(headerIdProvider.getHeaderId(descriptor)).getEnumValuesSelector(descriptor)
 
     override fun getTypeParameterName(typeParameterDescriptor: TypeParameterDescriptor): String =
-            locator.findNamerForDeclaration(typeParameterDescriptor).getTypeParameterName(typeParameterDescriptor)
+            namerProvider.getNamer(headerIdProvider.getHeaderId(typeParameterDescriptor)).getTypeParameterName(typeParameterDescriptor)
 
     override fun getObjectPropertySelector(descriptor: ClassDescriptor): String =
-            locator.findNamerForDeclaration(descriptor).getObjectPropertySelector(descriptor)
+            namerProvider.getNamer(headerIdProvider.getHeaderId(descriptor)).getObjectPropertySelector(descriptor)
 
     override fun getCompanionObjectPropertySelector(descriptor: ClassDescriptor): String =
-            locator.findNamerForDeclaration(descriptor).getCompanionObjectPropertySelector(descriptor)
+            namerProvider.getNamer(headerIdProvider.getHeaderId(descriptor)).getCompanionObjectPropertySelector(descriptor)
 }

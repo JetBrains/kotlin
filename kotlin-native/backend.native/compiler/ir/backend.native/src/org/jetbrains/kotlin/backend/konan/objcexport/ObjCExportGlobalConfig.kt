@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.konan.objcexport
 
 import org.jetbrains.kotlin.backend.konan.*
 
-internal interface ObjCExportGlobalConfig {
+interface ObjCExportGlobalConfig {
     val disableSwiftMemberNameMangling: Boolean
 
     val ignoreInterfaceMethodCollisions: Boolean

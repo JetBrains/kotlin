@@ -29,21 +29,13 @@ internal class ObjCExportedInterface(
         val mapper: ObjCExportMapper
 )
 
-internal fun produceObjCExportInterface(
-        headerGenerator: ObjCExportHeaderGenerator
-): ObjCExportedInterface {
-
-    headerGenerator.translateModule()
-    return headerGenerator.buildInterface()
-}
-
 internal fun createObjCExportHeaderGenerator(
         context: PhaseContext,
         exportConfig: ObjCExportGlobalConfig,
-        headerInfo: ObjCExportHeaderInfo,
+        headerInfo: ObjCExportFrameworkStructure,
         stdlibNamer: ObjCExportStdlibNamer,
 ): ObjCExportHeaderGenerator {
-    require(headerInfo.modules.isNotEmpty())
+    require(headerInfo.modulesInfo.isNotEmpty())
 
     // TODO: emit RTTI to the same modules as classes belong to.
     //   Not possible yet, since ObjCExport translates the entire "world" API at once
@@ -55,8 +47,8 @@ internal fun createObjCExportHeaderGenerator(
     val disableSwiftMemberNameMangling = exportConfig.disableSwiftMemberNameMangling
     val ignoreInterfaceMethodCollisions = exportConfig.ignoreInterfaceMethodCollisions
     val namer = ObjCExportNamerImpl(
-            headerInfo.modules.toSet(),
-            headerInfo.modules.first().module.builtIns,
+            headerInfo.modulesInfo.toSet(),
+            headerInfo.modulesInfo.first().module.builtIns,
             stdlibNamer,
             mapper,
             headerInfo.topLevelPrefix,
@@ -65,7 +57,7 @@ internal fun createObjCExportHeaderGenerator(
             disableSwiftMemberNameMangling = disableSwiftMemberNameMangling,
             ignoreInterfaceMethodCollisions = ignoreInterfaceMethodCollisions,
     )
-    return ObjCExportHeaderGeneratorImpl(context, headerInfo.modules, mapper, namer, stdlibNamer, objcGenerics)
+    return ObjCExportHeaderGeneratorImpl(context, headerInfo.modulesInfo, mapper, namer, stdlibNamer, objcGenerics)
 }
 
 /**

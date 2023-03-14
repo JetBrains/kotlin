@@ -5,26 +5,23 @@
 
 package org.jetbrains.kotlin.backend.konan.objcexport
 
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.SourceFile
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.metadata.DeserializedSourceFile
 import org.jetbrains.kotlin.library.metadata.kotlinLibrary
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
-internal interface ObjCExportKlibMapper {
-    fun getNamerFor(library: KotlinLibrary): ObjCExportNamer
+/**
+ * Uniquely identifies each framework.
+ */
+data class ObjCExportFrameworkId(val name: String)
 
-    fun getHeaderInfoFor(library: KotlinLibrary): ObjCExportHeaderInfo
-
-    fun getGeneratorFor(library: KotlinLibrary): ObjCExportClassGenerator
-
-    companion object {
-        fun create(
-                globalConfig: ObjCExportGlobalConfig,
-                headerInfos: List<ObjCExportHeaderInfo>,
-        ): ObjCExportKlibMapper {
-            return ObjCExportKlibMapperImpl(ObjCExportKlibMappingBuilder(globalConfig, headerInfos))
-        }
-    }
-}
+/**
+ * Uniquely identifies each Objective-C header.
+ */
+data class ObjCExportHeaderId(val frameworkId: ObjCExportFrameworkId, val name: String)
 
 class ObjCExportModuleInfo(
         val module: ModuleDescriptor,
@@ -32,62 +29,180 @@ class ObjCExportModuleInfo(
 )
 
 /**
- * TODO: Should be easily parseable from CLI arg (JSON file)?
+ * Describes how Kotlin declarations are mapped to Objective-C headers.
  */
-class ObjCExportHeaderInfo(
-        val topLevelPrefix: String,
-        val modules: List<ObjCExportModuleInfo>,
-        val frameworkName: String,
-        val headerName: String,
-) {
-    override fun equals(other: Any?): Boolean = other is ObjCExportHeaderInfo &&
-            other.frameworkName == frameworkName &&
-            other.headerName == headerName
+sealed class ObjCExportHeaderStrategy {
 
-    override fun hashCode(): Int = frameworkName.hashCode() * 31 + headerName.hashCode()
+    abstract fun findHeader(declaration: DeclarationDescriptor): String
+
+    abstract fun findHeader(sourceFile: SourceFile): String
+
+    abstract fun containsHeader(headerId: ObjCExportHeaderId): Boolean
+
+    /**
+     * Each Klib is mapped to a separate header.
+     */
+    class PerKlib(
+            private val frameworkName: String,
+            private val klibToHeader: Map<KotlinLibrary, String>
+    ) : ObjCExportHeaderStrategy() {
+        override fun findHeader(declaration: DeclarationDescriptor): String {
+            return klibToHeader.getValue(declaration.module.kotlinLibrary)
+        }
+
+        override fun containsHeader(headerId: ObjCExportHeaderId): Boolean {
+            return headerId.frameworkId.name == frameworkName && klibToHeader.values.any { it == headerId.name }
+        }
+
+        override fun findHeader(sourceFile: SourceFile): String {
+            require(sourceFile is DeserializedSourceFile)
+            return klibToHeader.getValue(sourceFile.library)
+        }
+    }
+
+    class Global(
+            private val frameworkName: String,
+            private val headerName: String
+    ) : ObjCExportHeaderStrategy() {
+        override fun findHeader(declaration: DeclarationDescriptor): String {
+            return headerName
+        }
+
+        override fun findHeader(sourceFile: SourceFile): String {
+            return headerName
+        }
+
+        override fun containsHeader(headerId: ObjCExportHeaderId): Boolean {
+            return headerId.frameworkId.name == frameworkName && headerId.name == headerName
+        }
+    }
 }
 
-internal class ObjCExportKlibMappingEntry(
-        val klib: KotlinLibrary,
-        val namer: ObjCExportNamer,
+data class ObjCExportFrameworkStructure(
+        val name: String,
+        val topLevelPrefix: String,
+        val modulesInfo: List<ObjCExportModuleInfo>,
+        val headerStrategy: ObjCExportHeaderStrategy
 )
 
-internal class ObjCExportKlibMappingBuilder(
-        val globalConfig: ObjCExportGlobalConfig,
-        val headerInfos: List<ObjCExportHeaderInfo>,
-) {
+data class ObjCExportStructure(
+        val frameworks: List<ObjCExportFrameworkStructure>
+)
+
+/**
+ * Maps [KotlinLibrary] to a framework.
+ */
+interface ObjCExportFrameworkIdProvider {
+    fun getFrameworkId(library: KotlinLibrary): ObjCExportFrameworkId
+}
+
+fun ObjCExportFrameworkIdProvider(structure: ObjCExportStructure): ObjCExportFrameworkIdProvider =
+        ObjCExportFrameworkIdProviderImpl(structure)
+
+private class ObjCExportFrameworkIdProviderImpl(private val structure: ObjCExportStructure) : ObjCExportFrameworkIdProvider {
+
+    private val cache = mutableMapOf<KotlinLibrary, ObjCExportFrameworkId>()
+
+    override fun getFrameworkId(library: KotlinLibrary): ObjCExportFrameworkId = cache.getOrPut(library) {
+        val framework = structure.frameworks.first { it.modulesInfo.any { it.module.kotlinLibrary == library } }
+        ObjCExportFrameworkId(framework.name)
+    }
+}
+
+/**
+ * Provides [ObjCExportHeaderId] for each Kotlin declaration
+ */
+interface ObjCExportHeaderIdProvider {
+    fun getHeaderId(declaration: DeclarationDescriptor): ObjCExportHeaderId
+
+    fun getHeaderId(sourceFile: SourceFile): ObjCExportHeaderId
+}
+
+fun ObjCExportHeaderIdProvider(
+        frameworkProvider: ObjCExportFrameworkIdProvider,
+        structure: ObjCExportStructure,
+): ObjCExportHeaderIdProvider = ObjCExportHeaderIdProviderImpl(frameworkProvider, structure)
+
+private class ObjCExportHeaderIdProviderImpl(
+        private val frameworkProvider: ObjCExportFrameworkIdProvider,
+        private val structure: ObjCExportStructure,
+) : ObjCExportHeaderIdProvider {
+
+    override fun getHeaderId(declaration: DeclarationDescriptor): ObjCExportHeaderId {
+        val frameworkId = frameworkProvider.getFrameworkId(declaration.module.kotlinLibrary)
+        val frameworkStructure = structure.frameworks.first { it.name == frameworkId.name }
+        val headerName = frameworkStructure.headerStrategy.findHeader(declaration)
+        return ObjCExportHeaderId(frameworkId, headerName)
+    }
+
+    override fun getHeaderId(sourceFile: SourceFile): ObjCExportHeaderId {
+        require(sourceFile is DeserializedSourceFile)
+        val frameworkId = frameworkProvider.getFrameworkId(sourceFile.library)
+        val frameworkStructure = structure.frameworks.first { it.name == frameworkId.name }
+        val headerName = frameworkStructure.headerStrategy.findHeader(sourceFile)
+        return ObjCExportHeaderId(frameworkId, headerName)
+    }
+}
+
+interface ObjCClassGeneratorProvider : ObjCExportClassGeneratorRegistry {
+    fun getClassGenerator(headerId: ObjCExportHeaderId): ObjCExportClassGenerator
+}
+
+fun ObjCClassGeneratorProvider(mapping: Map<ObjCExportFrameworkId, ObjCExportClassGenerator>): ObjCClassGeneratorProvider =
+        ObjCClassGeneratorProviderImpl(mapping)
+
+private class ObjCClassGeneratorProviderImpl(
+        private val mapping: Map<ObjCExportFrameworkId, ObjCExportClassGenerator>
+) : ObjCClassGeneratorProvider {
+    override fun getClassGenerator(headerId: ObjCExportHeaderId): ObjCExportClassGenerator =
+            mapping.getValue(headerId.frameworkId)
+
+    override fun register(frameworkId: ObjCExportFrameworkId, classGenerator: ObjCExportClassGenerator) {
+        TODO("Not yet implemented")
+    }
+}
+
+interface ObjCNamerProvider {
+    fun getNamer(headerId: ObjCExportHeaderId): ObjCExportNamer
+
+    fun getStdlibNamer(): ObjCExportStdlibNamer
+}
+
+fun ObjCNamerProvider(
+        globalConfig: ObjCExportGlobalConfig,
+        structure: ObjCExportStructure,
+): ObjCNamerProvider = ObjCNamerProviderImpl(globalConfig, structure)
+
+private class ObjCNamerProviderImpl(
+        private val globalConfig: ObjCExportGlobalConfig,
+        private val structure: ObjCExportStructure,
+) : ObjCNamerProvider {
+
+    private val cache = mutableMapOf<ObjCExportFrameworkId, ObjCExportNamer>()
+
+    override fun getNamer(headerId: ObjCExportHeaderId): ObjCExportNamer = cache.getOrPut(headerId.frameworkId) {
+        val frameworkStructure = structure.frameworks.find { it.name == headerId.frameworkId.name }!!
+        createObjCExportNamer(frameworkStructure)
+    }
+
+    override fun getStdlibNamer(): ObjCExportStdlibNamer {
+        return stdlibNamer
+    }
 
     private val stdlibNamer = ObjCExportStdlibNamer.create(globalConfig.stdlibPrefix)
 
-    private val namerMapping = mutableMapOf<KotlinLibrary, ObjCExportNamer>()
-    private val headerInfoMapping = mutableMapOf<KotlinLibrary, ObjCExportHeaderInfo>()
-
-    fun getHeaderInfo(library: KotlinLibrary): ObjCExportHeaderInfo = headerInfoMapping.getOrPut(library) {
-        headerInfos.find { it.modules.any { it.module.kotlinLibrary == library } }
-                ?: error("library ${library.libraryName} does not belong to any header")
-    }
-
-    fun getOrCreateNamer(library: KotlinLibrary): ObjCExportNamer = namerMapping.getOrPut(library) {
-        val headerInfo = headerInfos.find { it.modules.any { it.module.kotlinLibrary == library } }
-                ?: error("library ${library.libraryName} does not belong to any header")
-        createObjCExportNamer(headerInfo)
-    }
-
-    fun getStdlibNamer(): ObjCExportStdlibNamer =
-            stdlibNamer
-
-    private fun createObjCExportNamer(headerInfo: ObjCExportHeaderInfo): ObjCExportNamer {
+    private fun createObjCExportNamer(structure: ObjCExportFrameworkStructure): ObjCExportNamer {
         val unitSuspendFunctionExport = globalConfig.unitSuspendFunctionExport
         val mapper = ObjCExportMapper(globalConfig.frontendServices.deprecationResolver, unitSuspendFunctionExport = unitSuspendFunctionExport)
         val objcGenerics = globalConfig.objcGenerics
         val disableSwiftMemberNameMangling = globalConfig.disableSwiftMemberNameMangling
         val ignoreInterfaceMethodCollisions = globalConfig.ignoreInterfaceMethodCollisions
         return ObjCExportNamerImpl(
-                headerInfo.modules.toSet(),
-                headerInfo.modules.first().module.builtIns,
+                structure.modulesInfo.toSet(),
+                structure.modulesInfo.first().module.builtIns,
                 stdlibNamer,
                 mapper,
-                headerInfo.topLevelPrefix,
+                structure.topLevelPrefix,
                 local = false,
                 objcGenerics = objcGenerics,
                 disableSwiftMemberNameMangling = disableSwiftMemberNameMangling,
@@ -96,11 +211,18 @@ internal class ObjCExportKlibMappingBuilder(
     }
 }
 
-private class ObjCExportKlibMapperImpl(private val builder: ObjCExportKlibMappingBuilder) : ObjCExportKlibMapper {
-    override fun getNamerFor(library: KotlinLibrary): ObjCExportNamer =
-            builder.getOrCreateNamer(library)
+/**
+ * TODO: Should be easily parseable from CLI arg (JSON file)?
+ */
+class ObjCExportFrameworkInfo(
+        val topLevelPrefix: String,
+        val modules: List<ObjCExportModuleInfo>,
+        val frameworkName: String,
+        val headerName: String,
+) {
+    override fun equals(other: Any?): Boolean = other is ObjCExportFrameworkInfo &&
+            other.frameworkName == frameworkName &&
+            other.headerName == headerName
 
-    override fun getHeaderInfoFor(library: KotlinLibrary): ObjCExportHeaderInfo =
-            builder.getHeaderInfo(library)
+    override fun hashCode(): Int = frameworkName.hashCode() * 31 + headerName.hashCode()
 }
-

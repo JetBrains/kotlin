@@ -14,8 +14,19 @@ interface ObjCExportClassGenerator {
     fun requireClassOrInterface(descriptor: ClassDescriptor)
 }
 
-class ObjCExportClassGeneratorProxy() : ObjCExportClassGenerator {
+
+interface ObjCExportClassGeneratorRegistry {
+    fun register(frameworkId: ObjCExportFrameworkId, classGenerator: ObjCExportClassGenerator)
+}
+
+class ObjCExportClassGeneratorProxy(
+        private val classGeneratorProvider: ObjCClassGeneratorProvider,
+        private val headerIdProvider: ObjCExportHeaderIdProvider,
+        private val onHeaderRequested: (ObjCExportHeaderId) -> Unit = {}
+) : ObjCExportClassGenerator {
     override fun requireClassOrInterface(descriptor: ClassDescriptor) {
-        TODO("Not yet implemented")
+        val headerId = headerIdProvider.getHeaderId(descriptor)
+        onHeaderRequested(headerId)
+        classGeneratorProvider.getClassGenerator(headerId).requireClassOrInterface(descriptor)
     }
 }

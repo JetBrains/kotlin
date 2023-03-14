@@ -16,13 +16,14 @@ import org.jetbrains.kotlin.backend.konan.driver.utilities.createTempFiles
 import org.jetbrains.kotlin.backend.konan.getIncludedLibraryDescriptors
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportGlobalConfig
-import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportHeaderInfo
+import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportFrameworkInfo
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.util.usingNativeMemoryAllocator
-import org.jetbrains.kotlin.library.impl.javaFile
+import org.jetbrains.kotlin.library.metadata.kotlinLibrary
 import java.io.Closeable
 import java.io.File
 
@@ -81,25 +82,28 @@ internal class DynamicCompilerDriver(
         } else {
             val exportedModules = (listOf(frontendOutput.moduleDescriptor) + frontendOutput.moduleDescriptor.getExportedDependencies(config))
                     .map { ObjCExportModuleInfo(it, exported = true) }
-            listOf(ObjCExportHeaderInfo(
+            listOf(ObjCExportFrameworkStructure(
                     topLevelPrefix = abbreviate(config.fullExportedNamePrefix),
-                    modules = exportedModules,
-                    frameworkName = "Kotlin",
-                    headerName = "Kotlin.h"
+                    modulesInfo = exportedModules,
+                    name = "Kotlin",
+                    headerStrategy = ObjCExportHeaderStrategy.PerKlib("Kotlin", mapOf(
+                            frontendOutput.moduleDescriptor.allDependencyModules.single { it.isNativeStdlib() }.kotlinLibrary to "Kotlin.h"
+                    ))
             ))
         }
+        val objcExportStructure = ObjCExportStructure(headerInfos)
 
         val objCExportGlobalConfig = ObjCExportGlobalConfig.create(config, frontendOutput.frontendServices,
                 stdlibPrefix = "Kotlin")
         val objCExportedInterfaces = engine.runPhase(ProduceObjCExportMultipleInterfacesPhase, ProduceObjCExportInterfaceInput(
                 globalConfig = objCExportGlobalConfig,
-                headerInfos = headerInfos,
+                structure = objcExportStructure,
         ))
         objCExportedInterfaces.forEach { (headerInfo, objCExportedInterface) ->
             engine.runPhase(CreateObjCFrameworkPhase, CreateObjCFrameworkInput(
                     frontendOutput.moduleDescriptor,
                     objCExportedInterface,
-                    (files.getComponent<CompilationFiles.Component.FrameworkDirectory>().value).parentFile.resolve("${headerInfo.frameworkName}.framework")
+                    (files.getComponent<CompilationFiles.Component.FrameworkDirectory>().value).parentFile.resolve("${headerInfo.name}.framework")
             ))
             if (config.omitFrameworkBinary) {
                 return@forEach
