@@ -12,7 +12,7 @@
 #include "ThreadData.hpp"
 #include "std_support/Optional.hpp"
 #include <cinttypes>
-#include <mutex>
+#include <limits>
 
 
 extern "C" {
@@ -135,12 +135,20 @@ GCHandle GCHandle::create(uint64_t epoch) {
 }
 GCHandle GCHandle::createFakeForTests() { return getByEpoch(std::numeric_limits<uint64_t>::max()); }
 GCHandle GCHandle::getByEpoch(uint64_t epoch) {
+    GCHandle handle{epoch};
+    RuntimeAssert(handle.isValid(), "Must be valid");
     return GCHandle{epoch};
+}
+GCHandle GCHandle::invalid() {
+    return GCHandle{std::numeric_limits<uint64_t>::max()};
 }
 void GCHandle::ClearForTests() {
     std::lock_guard guard(lock);
     current = {};
     last = {};
+}
+bool GCHandle::isValid() const {
+    return epoch_ != GCHandle::invalid().epoch_;
 }
 void GCHandle::finished() {
     std::lock_guard guard(lock);

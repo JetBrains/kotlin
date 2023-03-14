@@ -37,6 +37,8 @@ object BinaryOptions : BinaryOptionRegistry() {
 
     val gcMarkSingleThreaded by booleanOption()
 
+    val auxGCThreads by intOption()
+
     val linkRuntime by option<RuntimeLinkageStrategyBinaryOption>()
 
     val bundleId by stringOption()
@@ -85,6 +87,15 @@ open class BinaryOptionRegistry {
                 }
             }
 
+    protected fun intOption(): PropertyDelegateProvider<Any?, ReadOnlyProperty<Any?, CompilerConfigurationKey<Int>>> =
+            PropertyDelegateProvider { _, property ->
+                val option = BinaryOption(property.name, IntValueParser)
+                register(option)
+                ReadOnlyProperty { _, _ ->
+                    option.compilerConfigurationKey
+                }
+            }
+
     protected fun stringOption(): PropertyDelegateProvider<Any?, ReadOnlyProperty<Any?, CompilerConfigurationKey<String>>> =
             PropertyDelegateProvider { _, property ->
                 val option = BinaryOption(property.name, StringValueParser)
@@ -109,6 +120,13 @@ private object BooleanValueParser : BinaryOption.ValueParser<Boolean> {
 
     override val validValuesHint: String?
         get() = "true|false"
+}
+
+private object IntValueParser : BinaryOption.ValueParser<Int> {
+    override fun parse(value: String): Int? = value.toIntOrNull()
+
+    override val validValuesHint: String?
+        get() = null // FIXME can do better
 }
 
 private object StringValueParser : BinaryOption.ValueParser<String> {

@@ -20,7 +20,8 @@ using GCImpl = ConcurrentMarkAndSweep;
 
 class GC::Impl : private Pinned {
 public:
-    Impl() noexcept : gc_(objectFactory_, gcScheduler_) {}
+    Impl() noexcept: gc_(objectFactory_, gcScheduler_,
+                         !compiler::gcMarkSingleThreaded(), compiler::auxGCThreads()) {}
 
     mm::ObjectFactory<gc::GCImpl>& objectFactory() noexcept { return objectFactory_; }
     GCScheduler& gcScheduler() noexcept { return gcScheduler_; }

@@ -106,6 +106,7 @@ ALWAYS_INLINE inline GCSchedulerType getGCSchedulerType() noexcept {
 WorkerExceptionHandling workerExceptionHandling() noexcept;
 DestroyRuntimeMode destroyRuntimeMode() noexcept;
 bool gcMarkSingleThreaded() noexcept;
+int auxGCThreads() noexcept;
 bool suspendFunctionsFromAnyThreadFromObjCEnabled() noexcept;
 AppStateTracking appStateTracking() noexcept;
 int getSourceInfo(void* addr, SourceInfo *result, int result_size) noexcept;

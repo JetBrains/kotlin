@@ -9,6 +9,7 @@
 #include "GCStatistics.hpp"
 #include "MarkAndSweepUtils.hpp"
 #include "ThreadSuspension.hpp"
+#include "MarkStack.hpp"
 #include "std_support/Memory.hpp"
 
 using namespace kotlin;
@@ -129,15 +130,15 @@ bool gc::GC::FinalizersThreadIsRunning() noexcept {
 
 // static
 ALWAYS_INLINE void gc::GC::processObjectInMark(void* state, ObjHeader* object) noexcept {
-    gc::internal::processObjectInMark<gc::internal::MarkTraits>(state, object);
+    gc::internal::processObjectInMark<gc::mark::MarkTraits>(state, object);
 }
 
 // static
 ALWAYS_INLINE void gc::GC::processArrayInMark(void* state, ArrayHeader* array) noexcept {
-    gc::internal::processArrayInMark<gc::internal::MarkTraits>(state, array);
+    gc::internal::processArrayInMark<gc::mark::MarkTraits>(state, array);
 }
 
 // static
 ALWAYS_INLINE void gc::GC::processFieldInMark(void* state, ObjHeader* field) noexcept {
-    gc::internal::processFieldInMark<gc::internal::MarkTraits>(state, field);
+    gc::internal::processFieldInMark<gc::mark::MarkTraits>(state, field);
 }
