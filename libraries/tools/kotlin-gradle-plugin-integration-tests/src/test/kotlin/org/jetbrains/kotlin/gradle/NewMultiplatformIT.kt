@@ -2045,6 +2045,16 @@ open class NewMultiplatformIT : BaseGradleIT() {
         }
     }
 
+    @Test
+    fun testPublishEmptySourceSets() = with(Project("mpp-empty-sources")) {
+        setupWorkingDir()
+        gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
+
+        build("publish") {
+            assertSuccessful()
+        }
+    }
+
     private fun detectNativeEnabledCompilation(): String = when {
         HostManager.hostIsLinux -> "linuxX64"
         HostManager.hostIsMingw -> "mingwX64"

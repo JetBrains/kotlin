@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.attributes.Usage
 import org.gradle.api.tasks.TaskProvider
+import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.bundling.Zip
 import org.jetbrains.kotlin.gradle.dsl.JsModuleKind
 import org.jetbrains.kotlin.gradle.dsl.JsSourceMapEmbedMode
@@ -32,7 +33,7 @@ open class KotlinJsIrTargetConfigurator :
         get() = KLIB_TYPE
 
     override val archiveTaskType: Class<out Zip>
-        get() = Zip::class.java
+        get() = Jar::class.java
 
     override fun createTestRun(
         name: String,
