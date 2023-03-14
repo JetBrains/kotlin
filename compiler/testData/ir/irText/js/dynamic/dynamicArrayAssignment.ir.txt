@@ -1,0 +1,17 @@
+FILE fqName:<root> fileName:/dynamicArrayAssignment.kt
+  FUN name:testArrayAssignment visibility:public modality:FINAL <> (d:dynamic) returnType:kotlin.Unit
+    VALUE_PARAMETER name:d index:0 type:dynamic
+    BLOCK_BODY
+      DYN_OP operator=EQ type=dynamic
+        receiver: DYN_OP operator=ARRAY_ACCESS type=dynamic
+          receiver: GET_VAR 'd: dynamic declared in <root>.testArrayAssignment' type=dynamic origin=null
+          0: CONST String type=kotlin.String value="KEY"
+        0: CONST Int type=kotlin.Int value=1
+  FUN name:testArrayAssignmentFake visibility:public modality:FINAL <> (d:dynamic) returnType:kotlin.Unit
+    VALUE_PARAMETER name:d index:0 type:dynamic
+    BLOCK_BODY
+      DYN_OP operator=INVOKE type=dynamic
+        receiver: DYN_MEMBER memberName='set' type=dynamic
+          GET_VAR 'd: dynamic declared in <root>.testArrayAssignmentFake' type=dynamic origin=null
+        0: CONST String type=kotlin.String value="KEY"
+        1: CONST Int type=kotlin.Int value=2

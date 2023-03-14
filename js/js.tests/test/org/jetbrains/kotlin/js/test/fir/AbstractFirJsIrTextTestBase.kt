@@ -5,37 +5,38 @@
 
 package org.jetbrains.kotlin.js.test.fir
 
-import org.jetbrains.kotlin.platform.js.JsPlatforms
+import org.jetbrains.kotlin.js.test.ir.AbstractJsIrTextTestBase
+import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.FirParser
-import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.model.BinaryKind
-import org.jetbrains.kotlin.test.model.DependencyKind
-import org.jetbrains.kotlin.test.runners.ir.AbstractFirIrTextTestBase
-import org.jetbrains.kotlin.test.services.JsLibraryProvider
-import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
+import org.jetbrains.kotlin.test.frontend.fir.Fir2IrJsResultsConverter
+import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
+import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
+import org.jetbrains.kotlin.test.model.Frontend2BackendConverter
+import org.jetbrains.kotlin.test.model.FrontendFacade
+import org.jetbrains.kotlin.test.model.FrontendKind
+import org.jetbrains.kotlin.test.model.FrontendKinds
+import org.jetbrains.kotlin.test.runners.codegen.FirPsiCodegenTest
 
-open class AbstractFirJsIrTextTestBase(parser: FirParser) : AbstractFirIrTextTestBase(parser, TargetBackend.JS_IR) {
-    override fun TestConfigurationBuilder.applyConfigurators() {
-        useConfigurators(
-            ::CommonEnvironmentConfigurator,
-            ::JsEnvironmentConfigurator,
-        )
+abstract class AbstractFirJsIrTextTestBase(private val parser: FirParser) : AbstractJsIrTextTestBase<FirOutputArtifact>() {
 
-        useAdditionalService(::JsLibraryProvider)
-    }
+    override val frontend: FrontendKind<*>
+        get() = FrontendKinds.FIR
+
+    override val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>
+        get() = ::FirFrontendFacade
+
+    override val converter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>
+        get() = ::Fir2IrJsResultsConverter
 
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
-        with(builder) {
-            globalDefaults {
-                targetPlatform = JsPlatforms.defaultJsPlatform
-                artifactKind = BinaryKind.NoArtifact
-                dependencyKind = DependencyKind.Source
-            }
-        }
+        builder.commonConfigurationForK2(parser)
     }
 }
 
 open class AbstractFirLightTreeJsIrTextTest : AbstractFirJsIrTextTestBase(FirParser.LightTree)
+
+@FirPsiCodegenTest
+open class AbstractFirPsiJsIrTextTest : AbstractFirJsIrTextTestBase(FirParser.Psi)

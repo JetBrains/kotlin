@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test.runners.ir
 
+import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TargetBackend
@@ -35,24 +36,20 @@ import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsS
 import org.jetbrains.kotlin.test.services.sourceProviders.CodegenHelpersSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 
-abstract class AbstractIrTextTestBase<R : ResultingArtifact.FrontendOutput<R>>(targetBackend: TargetBackend) :
-    AbstractKotlinCompilerWithTargetBackendTest(targetBackend)
-{
+abstract class AbstractIrTextTestBase<FrontendOutput : ResultingArtifact.FrontendOutput<FrontendOutput>>(
+    private val targetPlatform: TargetPlatform,
+    targetBackend: TargetBackend
+) : AbstractKotlinCompilerWithTargetBackendTest(targetBackend) {
     abstract val frontend: FrontendKind<*>
-    abstract val frontendFacade: Constructor<FrontendFacade<R>>
-    abstract val converter: Constructor<Frontend2BackendConverter<R, IrBackendInput>>
+    abstract val frontendFacade: Constructor<FrontendFacade<FrontendOutput>>
+    abstract val converter: Constructor<Frontend2BackendConverter<FrontendOutput, IrBackendInput>>
 
-    open fun TestConfigurationBuilder.applyConfigurators() {
-        useConfigurators(
-            ::CommonEnvironmentConfigurator,
-            ::JvmEnvironmentConfigurator
-        )
-    }
+    open fun TestConfigurationBuilder.applyConfigurators() {}
 
     override fun TestConfigurationBuilder.configuration() {
         globalDefaults {
             frontend = this@AbstractIrTextTestBase.frontend
-            targetPlatform = JvmPlatforms.defaultJvmPlatform
+            targetPlatform = this@AbstractIrTextTestBase.targetPlatform
             artifactKind = BinaryKind.NoArtifact
             targetBackend = this@AbstractIrTextTestBase.targetBackend
             dependencyKind = DependencyKind.Source
@@ -62,6 +59,10 @@ abstract class AbstractIrTextTestBase<R : ResultingArtifact.FrontendOutput<R>>(t
             +DUMP_IR
             +DUMP_KT_IR
         }
+
+        useAfterAnalysisCheckers(
+            ::BlackBoxCodegenSuppressor
+        )
 
         applyConfigurators()
 
@@ -94,30 +95,47 @@ abstract class AbstractIrTextTestBase<R : ResultingArtifact.FrontendOutput<R>>(t
             )
         }
     }
-}
 
-open class AbstractClassicJvmIrTextTest : AbstractIrTextTestBase<ClassicFrontendOutputArtifact>(TargetBackend.JVM_IR) {
-    override val frontend: FrontendKind<*>
-        get() = FrontendKinds.ClassicFrontend
-    override val frontendFacade: Constructor<FrontendFacade<ClassicFrontendOutputArtifact>>
-        get() = ::ClassicFrontendFacade
-    override val converter: Constructor<Frontend2BackendConverter<ClassicFrontendOutputArtifact, IrBackendInput>>
-        get() = ::ClassicFrontend2IrConverter
+    protected fun TestConfigurationBuilder.commonConfigurationForK2(parser: FirParser) {
+        configureFirParser(parser)
+        useAfterAnalysisCheckers(
+            ::FirIrDumpIdenticalChecker,
+        )
 
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        with(builder) {
-            useAfterAnalysisCheckers(
-                ::BlackBoxCodegenSuppressor,
-            )
+        forTestsMatching("compiler/testData/ir/irText/properties/backingField/*") {
+            defaultDirectives {
+                LanguageSettingsDirectives.LANGUAGE with "+ExplicitBackingFields"
+            }
         }
     }
 }
 
+abstract class AbstractJvmIrTextTestBase<FrontendOutput : ResultingArtifact.FrontendOutput<FrontendOutput>> :
+    AbstractIrTextTestBase<FrontendOutput>(JvmPlatforms.defaultJvmPlatform, TargetBackend.JVM_IR) {
+
+    final override fun TestConfigurationBuilder.applyConfigurators() {
+        useConfigurators(
+            ::CommonEnvironmentConfigurator,
+            ::JvmEnvironmentConfigurator
+        )
+    }
+}
+
+open class AbstractClassicJvmIrTextTest : AbstractJvmIrTextTestBase<ClassicFrontendOutputArtifact>() {
+
+    override val frontend: FrontendKind<*>
+        get() = FrontendKinds.ClassicFrontend
+
+    override val frontendFacade: Constructor<FrontendFacade<ClassicFrontendOutputArtifact>>
+        get() = ::ClassicFrontendFacade
+
+    override val converter: Constructor<Frontend2BackendConverter<ClassicFrontendOutputArtifact, IrBackendInput>>
+        get() = ::ClassicFrontend2IrConverter
+}
+
 open class AbstractFirIrTextTestBase(
-    val parser: FirParser,
-    targetBackend: TargetBackend
-) : AbstractIrTextTestBase<FirOutputArtifact>(targetBackend) {
+    private val parser: FirParser,
+) : AbstractJvmIrTextTestBase<FirOutputArtifact>() {
     override val frontend: FrontendKind<*>
         get() = FrontendKinds.FIR
     override val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>
@@ -127,23 +145,11 @@ open class AbstractFirIrTextTestBase(
 
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
-        with(builder) {
-            configureFirParser(parser)
-            useAfterAnalysisCheckers(
-                ::FirIrDumpIdenticalChecker,
-                ::BlackBoxCodegenSuppressor
-            )
-
-            forTestsMatching("compiler/testData/ir/irText/properties/backingField/*") {
-                defaultDirectives {
-                    LanguageSettingsDirectives.LANGUAGE with "+ExplicitBackingFields"
-                }
-            }
-        }
+        builder.commonConfigurationForK2(parser)
     }
 }
 
-open class AbstractFirLightTreeJvmIrTextTest : AbstractFirIrTextTestBase(FirParser.LightTree, TargetBackend.JVM_IR)
+open class AbstractFirLightTreeJvmIrTextTest : AbstractFirIrTextTestBase(FirParser.LightTree)
 
 @FirPsiCodegenTest
-open class AbstractFirPsiJvmIrTextTest : AbstractFirIrTextTestBase(FirParser.Psi, TargetBackend.JVM_IR)
+open class AbstractFirPsiJvmIrTextTest : AbstractFirIrTextTestBase(FirParser.Psi)

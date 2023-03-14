@@ -1,4 +1,7 @@
 // FIR_IDENTICAL
+// IGNORE_BACKEND_K1: JS_IR
+// IGNORE_BACKEND_K1: JS_IR_ES6
+
 annotation class A1
 annotation class A2
 annotation class A3

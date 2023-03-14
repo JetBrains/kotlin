@@ -1915,11 +1915,6 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
             runTest("compiler/testData/ir/irText/firProblems/FirBuilder.kt");
         }
 
-        @TestMetadata("FlushFromAnonymous.kt")
-        public void testFlushFromAnonymous() throws Exception {
-            runTest("compiler/testData/ir/irText/firProblems/FlushFromAnonymous.kt");
-        }
-
         @TestMetadata("ImplicitReceiverStack.kt")
         public void testImplicitReceiverStack() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/ImplicitReceiverStack.kt");
@@ -1973,11 +1968,6 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
         @TestMetadata("recursiveCapturedTypeInPropertyReference.kt")
         public void testRecursiveCapturedTypeInPropertyReference() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/recursiveCapturedTypeInPropertyReference.kt");
-        }
-
-        @TestMetadata("reflectFindAnnotationOnDefaultMethodParameter.kt")
-        public void testReflectFindAnnotationOnDefaultMethodParameter() throws Exception {
-            runTest("compiler/testData/ir/irText/firProblems/reflectFindAnnotationOnDefaultMethodParameter.kt");
         }
 
         @TestMetadata("reflectGetOnNullableTypeAlias.kt")
@@ -2368,11 +2358,6 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
 
         public void testAllFilesPresentInStubs() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/stubs"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
-        }
-
-        @TestMetadata("constFromBuiltins.kt")
-        public void testConstFromBuiltins() throws Exception {
-            runTest("compiler/testData/ir/irText/stubs/constFromBuiltins.kt");
         }
 
         @TestMetadata("genericClassInDifferentModule.kt")

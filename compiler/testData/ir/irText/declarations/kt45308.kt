@@ -1,4 +1,7 @@
 // SKIP_KT_DUMP
+// IGNORE_BACKEND_K1: JS_IR
+// IGNORE_BACKEND_K1: JS_IR_ES6
+
 // MODULE: a
 // FILE: a.kt
 package a

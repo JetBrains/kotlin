@@ -179,7 +179,15 @@ fun main(args: Array<String>) {
                 model("diagnostics/testsWithJsStdLib", pattern = "^([^_](.+))\\.kt$", excludedPattern = excludedFirTestdataPattern)
             }
 
+            testClass<AbstractClassicJsIrTextTest> {
+                model("ir/irText")
+            }
+
             testClass<AbstractFirLightTreeJsIrTextTest> {
+                model("ir/irText")
+            }
+
+            testClass<AbstractFirPsiJsIrTextTest> {
                 model("ir/irText")
             }
 

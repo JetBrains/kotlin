@@ -2070,12 +2070,6 @@ public class FirLightTreeJsIrTextTestGenerated extends AbstractFirLightTreeJsIrT
             }
 
             @Test
-            @TestMetadata("functionSupertype.kt")
-            public void testFunctionSupertype() throws Exception {
-                runTest("compiler/testData/ir/irText/expressions/funInterface/functionSupertype.kt");
-            }
-
-            @Test
             @TestMetadata("partialSam.kt")
             public void testPartialSam() throws Exception {
                 runTest("compiler/testData/ir/irText/expressions/funInterface/partialSam.kt");
@@ -2193,12 +2187,6 @@ public class FirLightTreeJsIrTextTestGenerated extends AbstractFirLightTreeJsIrT
         }
 
         @Test
-        @TestMetadata("FlushFromAnonymous.kt")
-        public void testFlushFromAnonymous() throws Exception {
-            runTest("compiler/testData/ir/irText/firProblems/FlushFromAnonymous.kt");
-        }
-
-        @Test
         @TestMetadata("ImplicitReceiverStack.kt")
         public void testImplicitReceiverStack() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/ImplicitReceiverStack.kt");
@@ -2262,12 +2250,6 @@ public class FirLightTreeJsIrTextTestGenerated extends AbstractFirLightTreeJsIrT
         @TestMetadata("recursiveCapturedTypeInPropertyReference.kt")
         public void testRecursiveCapturedTypeInPropertyReference() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/recursiveCapturedTypeInPropertyReference.kt");
-        }
-
-        @Test
-        @TestMetadata("reflectFindAnnotationOnDefaultMethodParameter.kt")
-        public void testReflectFindAnnotationOnDefaultMethodParameter() throws Exception {
-            runTest("compiler/testData/ir/irText/firProblems/reflectFindAnnotationOnDefaultMethodParameter.kt");
         }
 
         @Test
@@ -2680,12 +2662,6 @@ public class FirLightTreeJsIrTextTestGenerated extends AbstractFirLightTreeJsIrT
         @Test
         public void testAllFilesPresentInStubs() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/stubs"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
-        }
-
-        @Test
-        @TestMetadata("constFromBuiltins.kt")
-        public void testConstFromBuiltins() throws Exception {
-            runTest("compiler/testData/ir/irText/stubs/constFromBuiltins.kt");
         }
 
         @Test

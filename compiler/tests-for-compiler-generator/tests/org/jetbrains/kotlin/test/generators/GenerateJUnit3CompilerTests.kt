@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.KT_OR_KTS_WITHOUT_
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME
 import org.jetbrains.kotlin.integration.AbstractAntTaskTest
 import org.jetbrains.kotlin.ir.AbstractIrCfgTestCase
-import org.jetbrains.kotlin.ir.AbstractClassicJsIrTextTestCase
 import org.jetbrains.kotlin.ir.AbstractIrSourceRangesTestCase
 import org.jetbrains.kotlin.jvm.compiler.*
 import org.jetbrains.kotlin.jvm.compiler.ir.AbstractIrCompileJavaAgainstKotlinTest
@@ -114,10 +113,6 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
 
             testClass<AbstractIrCustomScriptCodegenTest> {
                 model("codegen/customScript", pattern = "^(.*)$")
-            }
-
-            testClass<AbstractClassicJsIrTextTestCase> {
-                model("ir/irText/js", pattern = "^(.+)\\.kt(s)?\$")
             }
 
             testClass<AbstractKlibJsIrTextTestCase> {

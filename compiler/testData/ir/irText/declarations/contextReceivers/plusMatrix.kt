@@ -1,8 +1,8 @@
 // FIR_IDENTICAL
 // !LANGUAGE: +ContextReceivers
 // !DIAGNOSTICS: -UNUSED_PARAMETER
-// IGNORE_BACKEND_K2: JS_IR
-// IGNORE_BACKEND_K2: JS_IR_ES6
+// IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JS_IR_ES6
 
 interface NumberOperations {
     fun Number.plus(other: Number): Number

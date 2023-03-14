@@ -1,5 +1,5 @@
-// IGNORE_BACKEND_K2: JS_IR
-// IGNORE_BACKEND_K2: JS_IR_ES6
+// IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JS_IR_ES6
 
 var p: Int = 0
 val arr = intArrayOf(1, 2, 3)
