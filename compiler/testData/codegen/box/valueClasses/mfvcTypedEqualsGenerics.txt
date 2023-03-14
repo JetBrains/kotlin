@@ -66,7 +66,7 @@ public final class MFVC3 {
     public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public final static method equals-impl(p0: java.lang.Object, p1: int, p2: int, p3: int): boolean
     public static method equals-impl(p0: java.lang.Object, p1: int, p2: java.lang.Object): boolean
-    public final static method equals-impl0(p0: java.lang.Object, p1: int, p2: java.lang.Object, p3: int): boolean
+    public final static @kotlin.TypedEquals method equals-impl0(p0: java.lang.Object, p1: int, p2: java.lang.Object, p3: int): boolean
     public final method getOther(): int
     public final method getValue(): java.lang.Object
     public method hashCode(): int
