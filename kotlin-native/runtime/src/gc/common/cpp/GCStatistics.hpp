@@ -12,6 +12,7 @@
 
 #define GCLogInfo(epoch, format, ...) RuntimeLogInfo({kTagGC}, "Epoch #%" PRIu64 ": " format, epoch, ##__VA_ARGS__)
 #define GCLogDebug(epoch, format, ...) RuntimeLogDebug({kTagGC}, "Epoch #%" PRIu64 ": " format, epoch, ##__VA_ARGS__)
+#define GCLogTrace(epoch, format, ...) RuntimeLogTrace({kTagGC}, "Epoch #%" PRIu64 ": " format, epoch, ##__VA_ARGS__)
 
 namespace kotlin::gc {
 

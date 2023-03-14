@@ -29,6 +29,7 @@ namespace kotlin {
 namespace logging {
 
 enum class Level {
+    kTrace,
     kDebug,
     kInfo,
     kWarning,
@@ -106,12 +107,13 @@ inline constexpr const char* kTagTLS = "tls";
         } \
     } while (false)
 
+#define RuntimeLogTrace(tags, format, ...) RuntimeLog(::kotlin::logging::Level::kTrace, tags, format, ##__VA_ARGS__)
 #define RuntimeLogDebug(tags, format, ...) RuntimeLog(::kotlin::logging::Level::kDebug, tags, format, ##__VA_ARGS__)
 #define RuntimeLogInfo(tags, format, ...) RuntimeLog(::kotlin::logging::Level::kInfo, tags, format, ##__VA_ARGS__)
 #define RuntimeLogWarning(tags, format, ...) RuntimeLog(::kotlin::logging::Level::kWarning, tags, format, ##__VA_ARGS__)
 #define RuntimeLogError(tags, format, ...) RuntimeLog(::kotlin::logging::Level::kError, tags, format, ##__VA_ARGS__)
 
-#define RuntimeVLogDebug(tags, format, args) RuntimeVLog(::kotlin::logging::Level::kDebug, tags, format, args)
+#define RuntimeVLogTrace(tags, format, args) RuntimeVLog(::kotlin::logging::Level::kDebug, tags, format, args)
 #define RuntimeVLogInfo(tags, format, args) RuntimeVLog(::kotlin::logging::Level::kInfo, tags, format, args)
 #define RuntimeVLogWarning(tags, format, args) RuntimeVLog(::kotlin::logging::Level::kWarning, tags, format, args)
 #define RuntimeVLogError(tags, format, args) RuntimeVLog(::kotlin::logging::Level::kError, tags, format, args)

@@ -46,6 +46,7 @@ ParseResult<std::string_view> ParseLevelString(std::string_view input) noexcept 
 }
 
 std::optional<logging::Level> ParseLevel(std::string_view levelString) noexcept {
+    if (levelString == "trace") return logging::Level::kTrace;
     if (levelString == "debug") return logging::Level::kDebug;
     if (levelString == "info") return logging::Level::kInfo;
     if (levelString == "warning") return logging::Level::kWarning;
@@ -112,6 +113,8 @@ public:
 
 std_support::span<char> FormatLevel(std_support::span<char> buffer, logging::Level level) noexcept {
     switch (level) {
+        case logging::Level::kTrace:
+            return FormatToSpan(buffer, "[TRACE]");
         case logging::Level::kDebug:
             return FormatToSpan(buffer, "[DEBUG]");
         case logging::Level::kInfo:
