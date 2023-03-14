@@ -102,3 +102,10 @@ external fun <
 
 <!WRONG_JS_INTEROP_TYPE!>@JsExport
 fun exported(<!WRONG_JS_INTEROP_TYPE!>x: Any<!>): Any<!> = x
+
+typealias EI_alias = EI
+typealias Any_alias = Any
+external fun fooAlias(
+    ei: EI_alias,
+    <!WRONG_JS_INTEROP_TYPE!>any: Any_alias<!>,
+)
