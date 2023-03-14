@@ -199,6 +199,7 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
         "noop" -> GC.NOOP
         "stms" -> GC.SAME_THREAD_MARK_AND_SWEEP
         "cms" -> GC.CONCURRENT_MARK_AND_SWEEP
+        "old_cms" -> GC.OLD_CMS
         else -> {
             report(ERROR, "Unsupported GC ${arguments.gc}")
             null
