@@ -55,6 +55,5 @@ package kotlin
  * - Both equals methods are declared. The compiler considers user responsible for their consistency.
  */
 @Target(AnnotationTarget.FUNCTION)
-@Retention(AnnotationRetention.SOURCE)
 @MustBeDocumented
 public annotation class TypedEquals
