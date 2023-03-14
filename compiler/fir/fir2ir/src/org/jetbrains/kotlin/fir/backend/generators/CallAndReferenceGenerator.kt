@@ -677,6 +677,7 @@ class CallAndReferenceGenerator(
         if (this is FirAnnotationCall) return this
         return buildAnnotationCall {
             useSiteTarget = this@toAnnotationCall.useSiteTarget
+            calculatedUseSiteTarget = this@toAnnotationCall.calculatedUseSiteTarget
             annotationTypeRef = this@toAnnotationCall.annotationTypeRef
             val symbol = annotationTypeRef.coneType.fullyExpandedType(session).toSymbol(session) as? FirRegularClassSymbol ?: return null
             val constructorSymbol = symbol.declarationSymbols.firstIsInstanceOrNull<FirConstructorSymbol>() ?: return null

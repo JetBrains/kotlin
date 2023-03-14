@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.fir.annotations
 import org.jetbrains.kotlin.analysis.api.annotations.AnnotationUseSiteTargetFilter
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationInfo
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationWithArgumentsInfo
+import org.jetbrains.kotlin.analysis.api.fir.effectiveUseSiteTarget
 import org.jetbrains.kotlin.analysis.api.fir.toKtAnnotationApplication
 import org.jetbrains.kotlin.analysis.api.fir.toKtAnnotationInfo
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirEntry
@@ -56,14 +57,14 @@ internal fun annotationsByClassId(
             val annotations = annotationContainer.resolvedCompilerRequiredAnnotations(firSymbol)
             for (index in annotations.indices) {
                 val annotation = annotations[index]
-                if (useSiteTargetFilter.isAllowed(annotation.useSiteTarget) && annotation.toAnnotationClassIdSafe(useSiteSession) == classId) {
+                if (useSiteTargetFilter.isAllowed(annotation.effectiveUseSiteTarget) && annotation.toAnnotationClassIdSafe(useSiteSession) == classId) {
                     add(annotation.toKtAnnotationApplication(useSiteSession, index))
                 }
             }
         }
     } else {
         annotationContainer.resolvedAnnotationsWithArguments(firSymbol).mapIndexedNotNull { index, annotation ->
-            if (!useSiteTargetFilter.isAllowed(annotation.useSiteTarget) || annotation.toAnnotationClassId(useSiteSession) != classId) {
+            if (!useSiteTargetFilter.isAllowed(annotation.effectiveUseSiteTarget) || annotation.toAnnotationClassId(useSiteSession) != classId) {
                 return@mapIndexedNotNull null
             }
 
@@ -108,7 +109,7 @@ internal fun hasAnnotation(
         val annotations = annotationContainer.resolvedCompilerRequiredAnnotations(firSymbol)
         for (index in annotations.indices) {
             val annotation = annotations[index]
-            if (useSiteTargetFilter.isAllowed(annotation.useSiteTarget) && annotation.toAnnotationClassIdSafe(useSiteSession) == classId) {
+            if (useSiteTargetFilter.isAllowed(annotation.effectiveUseSiteTarget) && annotation.toAnnotationClassIdSafe(useSiteSession) == classId) {
                 return true
             }
         }
@@ -116,7 +117,7 @@ internal fun hasAnnotation(
         false
     } else {
         annotationContainer.resolvedAnnotationsWithClassIds(firSymbol).any {
-            useSiteTargetFilter.isAllowed(it.useSiteTarget) && it.toAnnotationClassId(useSiteSession) == classId
+            useSiteTargetFilter.isAllowed(it.effectiveUseSiteTarget) && it.toAnnotationClassId(useSiteSession) == classId
         }
     }
 }

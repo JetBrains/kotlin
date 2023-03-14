@@ -143,9 +143,10 @@ class ValueParameter(
                 status = status.copy(),
             )
             annotations += modifiers.annotations.filter {
-                it.useSiteTarget == null || it.useSiteTarget == AnnotationUseSiteTarget.PROPERTY ||
-                        it.useSiteTarget == AnnotationUseSiteTarget.FIELD ||
-                        it.useSiteTarget == AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD
+                val useSiteTarget = it.calculatedUseSiteTarget ?: it.useSiteTarget
+                useSiteTarget == null || useSiteTarget == AnnotationUseSiteTarget.PROPERTY ||
+                        useSiteTarget == AnnotationUseSiteTarget.FIELD ||
+                        useSiteTarget == AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD
             }
             val defaultAccessorSource = propertySource?.fakeElement(KtFakeSourceElementKind.DefaultAccessor)
             getter = FirDefaultPropertyGetter(

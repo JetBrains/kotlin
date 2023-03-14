@@ -25,6 +25,12 @@ public class SymbolLightClassesParentingByPsiForLibraryTestGenerated extends Abs
     }
 
     @Test
+    @TestMetadata("allowedTargets.kt")
+    public void testAllowedTargets() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/allowedTargets.kt");
+    }
+
+    @Test
     @TestMetadata("annotationWithSetParamPropertyModifier.kt")
     public void testAnnotationWithSetParamPropertyModifier() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/annotationWithSetParamPropertyModifier.kt");

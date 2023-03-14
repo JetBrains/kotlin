@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.annotations.AnnotationUseSiteTargetFilt
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationInfo
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationWithArgumentsInfo
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
+import org.jetbrains.kotlin.analysis.api.fir.effectiveUseSiteTarget
 import org.jetbrains.kotlin.analysis.api.fir.toKtAnnotationApplication
 import org.jetbrains.kotlin.analysis.api.fir.toKtAnnotationInfo
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KtEmptyAnnotationsList
@@ -46,7 +47,7 @@ internal class KtFirAnnotationListForType private constructor(
 
     override fun hasAnnotation(classId: ClassId, useSiteTargetFilter: AnnotationUseSiteTargetFilter): Boolean = withValidityAssertion {
         coneType.customAnnotationsWithLazyResolve(FirResolvePhase.TYPES).any {
-            useSiteTargetFilter.isAllowed(it.useSiteTarget) && it.toAnnotationClassId(useSiteSession) == classId
+            useSiteTargetFilter.isAllowed(it.effectiveUseSiteTarget) && it.toAnnotationClassId(useSiteSession) == classId
         }
     }
 
@@ -55,7 +56,7 @@ internal class KtFirAnnotationListForType private constructor(
         useSiteTargetFilter: AnnotationUseSiteTargetFilter,
     ): List<KtAnnotationApplicationWithArgumentsInfo> = withValidityAssertion {
         coneType.customAnnotationsWithLazyResolve(FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING).mapIndexedNotNull { index, annotation ->
-            if (!useSiteTargetFilter.isAllowed(annotation.useSiteTarget) || annotation.toAnnotationClassId(useSiteSession) != classId) {
+            if (!useSiteTargetFilter.isAllowed(annotation.effectiveUseSiteTarget) || annotation.toAnnotationClassId(useSiteSession) != classId) {
                 return@mapIndexedNotNull null
             }
 

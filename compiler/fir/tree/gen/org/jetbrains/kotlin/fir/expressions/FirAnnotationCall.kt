@@ -23,6 +23,7 @@ abstract class FirAnnotationCall : FirAnnotation(), FirCall, FirResolvable {
     abstract override val typeRef: FirTypeRef
     abstract override val annotations: List<FirAnnotation>
     abstract override val useSiteTarget: AnnotationUseSiteTarget?
+    abstract override val calculatedUseSiteTarget: AnnotationUseSiteTarget?
     abstract override val annotationTypeRef: FirTypeRef
     abstract override val typeArguments: List<FirTypeProjection>
     abstract override val argumentList: FirArgumentList
@@ -39,6 +40,8 @@ abstract class FirAnnotationCall : FirAnnotation(), FirCall, FirResolvable {
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
+    abstract override fun replaceCalculatedUseSiteTarget(newCalculatedUseSiteTarget: AnnotationUseSiteTarget?)
 
     abstract override fun replaceAnnotationTypeRef(newAnnotationTypeRef: FirTypeRef)
 

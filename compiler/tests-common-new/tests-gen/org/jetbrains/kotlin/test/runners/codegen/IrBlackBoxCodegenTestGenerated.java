@@ -36,6 +36,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("allowedTargets.kt")
+        public void testAllowedTargets() throws Exception {
+            runTest("compiler/testData/codegen/box/annotations/allowedTargets.kt");
+        }
+
+        @Test
         @TestMetadata("annotatedAnnotationParameter.kt")
         public void testAnnotatedAnnotationParameter() throws Exception {
             runTest("compiler/testData/codegen/box/annotations/annotatedAnnotationParameter.kt");

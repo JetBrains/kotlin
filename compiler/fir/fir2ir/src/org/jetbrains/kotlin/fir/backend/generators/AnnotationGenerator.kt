@@ -40,7 +40,7 @@ class AnnotationGenerator(private val components: Fir2IrComponents) : Fir2IrComp
     }
 
     private fun FirAnnotation.target(applicable: List<AnnotationUseSiteTarget>): AnnotationUseSiteTarget? =
-        useSiteTarget ?: applicable.firstOrNull(useSiteTargetsFromMetaAnnotation(session)::contains)
+        calculatedUseSiteTarget ?: useSiteTarget ?: applicable.firstOrNull(useSiteTargetsFromMetaAnnotation(session)::contains)
 
     companion object {
         private val propertyTargets = listOf(AnnotationUseSiteTarget.PROPERTY, AnnotationUseSiteTarget.FIELD)
