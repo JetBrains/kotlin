@@ -37033,6 +37033,18 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("buildListToUpperBound.kt")
+            public void testBuildListToUpperBound() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/buildListToUpperBound.kt");
+            }
+
+            @Test
+            @TestMetadata("buildListToUpperBoundForbidden.kt")
+            public void testBuildListToUpperBoundForbidden() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/buildListToUpperBoundForbidden.kt");
+            }
+
+            @Test
             @TestMetadata("completeIrrelevantCalls.kt")
             public void testCompleteIrrelevantCalls() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/completeIrrelevantCalls.kt");
@@ -37060,12 +37072,6 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             @TestMetadata("kt48445.kt")
             public void testKt48445() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/kt48445.kt");
-            }
-
-            @Test
-            @TestMetadata("kt50520.kt")
-            public void testKt50520() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/kt50520.kt");
             }
 
             @Test
