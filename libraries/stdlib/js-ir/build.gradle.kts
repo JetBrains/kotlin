@@ -174,3 +174,31 @@ val packFullRuntimeKLib by tasks.registering(Jar::class) {
     archiveFileName.set("full-runtime.klib")
 }
 
+val sourcesJar by tasks.registering(Jar::class) {
+    dependsOn(jsMainSources)
+    val jsMainSourcesDir = jsMainSources.get().destinationDir
+    archiveClassifier.set("sources")
+    includeEmptyDirs = false
+    duplicatesStrategy = DuplicatesStrategy.FAIL
+    from("${rootDir}/core/builtins/native/kotlin") {
+        into("kotlin")
+        include("Comparable.kt")
+        include("Enum.kt")
+    }
+    from("$jsMainSourcesDir/core/builtins/native") {
+        exclude("kotlin/Comparable.kt")
+    }
+    from("$jsMainSourcesDir/core/builtins/src")
+    from("$jsMainSourcesDir/libraries/stdlib/js/src")
+    from("builtins") {
+        into("kotlin")
+        exclude("Enum.kt")
+    }
+    from("runtime") {
+        into("runtime")
+    }
+    from("src") {
+        include("**/*.kt")
+    }
+}
+

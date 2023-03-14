@@ -135,8 +135,15 @@ fun createStdLibVersionedDocTask(version: String, isLatest: Boolean) =
                 displayName.set("JS")
                 dependsOn("common")
 
-                sourceRoots.from("$kotlin_stdlib_dir/js/src")
-                sourceRoots.from("$kotlin_stdlib_dir/js-v1/src")
+                // list src subdirectories except 'generated' as it should be taken from js-ir/src
+                sourceRoots.from("$kotlin_stdlib_dir/js/src/kotlin")
+                sourceRoots.from("$kotlin_stdlib_dir/js/src/kotlinx")
+                sourceRoots.from("$kotlin_stdlib_dir/js/src/org.w3c")
+
+                sourceRoots.from("$kotlin_stdlib_dir/js-ir/builtins")
+                sourceRoots.from("$kotlin_stdlib_dir/js-ir/runtime/kotlinHacks.kt")
+                sourceRoots.from("$kotlin_stdlib_dir/js-ir/runtime/long.kt")
+                sourceRoots.from("$kotlin_stdlib_dir/js-ir/src")
 
                 perPackageOption("org.w3c") {
                     reportUndocumented.set(false)
