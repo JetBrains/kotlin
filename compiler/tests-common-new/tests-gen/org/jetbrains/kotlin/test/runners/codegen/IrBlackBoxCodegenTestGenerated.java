@@ -43518,6 +43518,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 }
 
                 @Test
+                @TestMetadata("inlineClassTypedEquals.kt")
+                public void testInlineClassTypedEquals() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/inlineClassTypedEquals.kt");
+                }
+
+                @Test
                 @TestMetadata("internalPrimaryValOfInlineClass.kt")
                 public void testInternalPrimaryValOfInlineClass() throws Exception {
                     runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/internalPrimaryValOfInlineClass.kt");
@@ -43855,6 +43861,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 @TestMetadata("suspendFunction.kt")
                 public void testSuspendFunction() throws Exception {
                     runTest("compiler/testData/codegen/box/reflection/call/valueClasses/suspendFunction.kt");
+                }
+
+                @Test
+                @TestMetadata("valueClassTypedEquals.kt")
+                public void testValueClassTypedEquals() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/call/valueClasses/valueClassTypedEquals.kt");
                 }
             }
         }
