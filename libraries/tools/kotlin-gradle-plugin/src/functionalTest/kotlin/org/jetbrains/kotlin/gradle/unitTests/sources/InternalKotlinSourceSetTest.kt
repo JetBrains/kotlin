@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.util.assertAllImplementationsAlsoImplement
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
+import org.jetbrains.kotlin.gradle.utils.future
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -177,7 +178,7 @@ class InternalKotlinSourceSetTest {
         project.evaluate()
 
         val expected = listOf("iosMain", "ios2Main").sorted()
-        val actual = getHostSpecificMainSharedSourceSets(project).map { it.name }.sorted()
+        val actual = project.future { getHostSpecificMainSharedSourceSets(project).map { it.name }.sorted() }.getOrThrow()
 
         assertEquals(expected, actual)
     }

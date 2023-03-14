@@ -6,7 +6,10 @@
 package org.jetbrains.kotlin.gradle.plugin.sources
 
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.await
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataCompilation
 import org.jetbrains.kotlin.gradle.utils.MutableObservableSet
 import org.jetbrains.kotlin.gradle.utils.ObservableSet
 
@@ -20,4 +23,9 @@ internal interface InternalKotlinSourceSet : KotlinSourceSet {
     val dependsOnClosure: ObservableSet<KotlinSourceSet>
     val withDependsOnClosure: ObservableSet<KotlinSourceSet>
     val compilations: MutableObservableSet<KotlinCompilation<*>>
+}
+
+internal suspend fun InternalKotlinSourceSet.awaitPlatformCompilations(): Set<KotlinCompilation<*>> {
+    await(KotlinPluginLifecycle.Stage.FinaliseRefinesEdges)
+    return compilations.filter { it !is KotlinMetadataCompilation }.toSet()
 }

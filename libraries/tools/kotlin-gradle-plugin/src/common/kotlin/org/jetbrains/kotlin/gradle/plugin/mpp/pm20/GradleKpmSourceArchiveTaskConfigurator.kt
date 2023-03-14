@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.unambiguousNameInProject
 import org.jetbrains.kotlin.gradle.plugin.mpp.sourcesJarTaskNamed
+import org.jetbrains.kotlin.gradle.utils.future
 
 interface GradleKpmSourceArchiveTaskConfigurator<in T : GradleKpmVariant> {
     fun registerSourceArchiveTask(variant: T): TaskProvider<*>?
@@ -19,7 +20,7 @@ object GradleKpmDefaultKotlinSourceArchiveTaskConfigurator : GradleKpmSourceArch
             taskName = variant.sourceArchiveTaskName,
             componentName = variant.name,
             project = variant.project,
-            sourceSets = lazy {
+            sourceSets = variant.project.future {
                 GradleKpmFragmentSourcesProvider().getSourcesFromRefinesClosureAsMap(variant)
                     .entries.associate { it.key.unambiguousNameInProject to it.value.get() }
             },

@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.gradle.targets.metadata.*
 import org.jetbrains.kotlin.gradle.targets.metadata.COMMON_MAIN_ELEMENTS_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.targets.metadata.isCompatibilityMetadataVariantEnabled
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
+import org.jetbrains.kotlin.gradle.utils.future
 import org.jetbrains.kotlin.gradle.utils.setProperty
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
@@ -100,7 +101,7 @@ abstract class KotlinSoftwareComponent(
         return _usages.publishableUsages()
     }
 
-    private fun allPublishableCommonSourceSets() = getCommonSourceSetsForMetadataCompilation(project) +
+    private suspend fun allPublishableCommonSourceSets() = getCommonSourceSetsForMetadataCompilation(project) +
             getHostSpecificMainSharedSourceSets(project)
 
     /**
@@ -108,12 +109,12 @@ abstract class KotlinSoftwareComponent(
      * user build scripts want to have access to sourcesJar task to configure it
      */
     private val sourcesJarTask: TaskProvider<Jar> = sourcesJarTaskNamed(
-            "sourcesJar",
-            name,
-            project,
-            lazy { allPublishableCommonSourceSets().associate { it.name to it.kotlin } },
-            name.toLowerCaseAsciiOnly()
-        )
+        "sourcesJar",
+        name,
+        project,
+        project.future { allPublishableCommonSourceSets().associate { it.name to it.kotlin } },
+        name.toLowerCaseAsciiOnly()
+    )
 
     private fun addSourcesJarArtifactToConfiguration(configurationName: String): PublishArtifact {
         return project.artifacts.add(configurationName, sourcesJarTask) { sourcesJarArtifact ->

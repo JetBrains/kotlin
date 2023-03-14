@@ -267,14 +267,14 @@ internal fun applyUserDefinedAttributes(target: AbstractKotlinTarget) {
 internal fun sourcesJarTask(compilation: KotlinCompilation<*>, componentName: String, artifactNameAppendix: String): TaskProvider<Jar> =
     sourcesJarTask(
         compilation.target.project,
-        lazy { compilation.allKotlinSourceSets.associate { it.name to it.kotlin } },
+        compilation.target.project.future { compilation.allKotlinSourceSets.associate { it.name to it.kotlin } },
         componentName,
         artifactNameAppendix
     )
 
 private fun sourcesJarTask(
     project: Project,
-    sourceSets: Lazy<Map<String, Iterable<File>>>,
+    sourceSets: Future<Map<String, Iterable<File>>>,
     taskNamePrefix: String,
     artifactNameAppendix: String
 ): TaskProvider<Jar> =
@@ -284,7 +284,7 @@ internal fun sourcesJarTaskNamed(
     taskName: String,
     componentName: String,
     project: Project,
-    sourceSets: Lazy<Map<String, Iterable<File>>>,
+    sourceSets: Future<Map<String, Iterable<File>>>,
     artifactNameAppendix: String,
     componentTypeName: String = "target",
 ): TaskProvider<Jar> {
@@ -301,9 +301,9 @@ internal fun sourcesJarTaskNamed(
         sourcesJar.description = "Assembles a jar archive containing the sources of $componentTypeName '$componentName'."
     }
 
-    project.whenEvaluated {
-        result.configure {
-            sourceSets.value.forEach { (sourceSetName, sourceSetFiles) ->
+    result.configure {
+        project.launch {
+            sourceSets.await().forEach { (sourceSetName, sourceSetFiles) ->
                 it.from(sourceSetFiles) { copySpec ->
                     copySpec.into(sourceSetName)
                     // Duplicates are coming from `SourceSets` that `sourceSet` depends on.

@@ -20,7 +20,8 @@ import org.jetbrains.kotlin.gradle.targets.metadata.KotlinMetadataTargetConfigur
 import org.jetbrains.kotlin.gradle.targets.metadata.createGenerateProjectStructureMetadataTask
 import org.jetbrains.kotlin.gradle.targets.metadata.filesWithUnpackedArchives
 import org.jetbrains.kotlin.gradle.tasks.*
-import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
+import org.jetbrains.kotlin.gradle.tasks.withType
+import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -72,7 +73,9 @@ private fun configureMetadataExposure(module: GradleKpmModule) {
         module.disambiguateName("allSourcesJar"),
         module.name,
         project,
-        lazy { GradleKpmFragmentSourcesProvider().getAllFragmentSourcesAsMap(module).entries.associate { it.key.fragmentName to it.value.get() } },
+        project.future {
+            GradleKpmFragmentSourcesProvider().getAllFragmentSourcesAsMap(module).entries.associate { it.key.fragmentName to it.value.get() }
+        },
         sourcesArtifactAppendix,
         "module",
     )

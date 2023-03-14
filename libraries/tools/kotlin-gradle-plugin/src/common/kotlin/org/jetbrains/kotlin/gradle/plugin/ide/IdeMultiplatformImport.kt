@@ -174,7 +174,7 @@ interface IdeMultiplatformImport {
         companion object {
             val unconstrained = SourceSetConstraint { true }
 
-            val isNative = SourceSetConstraint { isNativeSourceSet(it) }
+            val isNative = SourceSetConstraint { it.isNativeSourceSet.getOrThrow() }
 
             val isSharedNative = isNative and SourceSetConstraint { sourceSet ->
                 sourceSet.internal.compilations.filterIsInstance<KotlinNativeCompilation>()

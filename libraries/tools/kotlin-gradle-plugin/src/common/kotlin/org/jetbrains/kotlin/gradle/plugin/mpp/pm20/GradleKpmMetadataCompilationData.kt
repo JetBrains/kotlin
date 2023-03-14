@@ -17,10 +17,9 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.archivesName
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.disambiguateName
 import org.jetbrains.kotlin.gradle.targets.metadata.ResolvedMetadataFilesProvider
 import org.jetbrains.kotlin.gradle.targets.native.NativeCompilerOptions
-import org.jetbrains.kotlin.gradle.utils.getValue
+import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.newProperty
-import org.jetbrains.kotlin.gradle.utils.setValue
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
@@ -140,7 +139,7 @@ internal fun GradleKpmFragment.isNativeShared(): Boolean =
     }
 
 internal fun GradleKpmFragment.isNativeHostSpecific(): Boolean =
-    this in getHostSpecificFragments(containingModule)
+    this.project.future { this@isNativeHostSpecific in getHostSpecificFragments(containingModule) }.lenient.getOrNull() ?: false
 
 internal open class GradleKpmNativeFragmentMetadataCompilationDataImpl(
     project: Project,

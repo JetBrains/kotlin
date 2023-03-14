@@ -155,6 +155,11 @@ open class KotlinProjectExtension @Inject constructor(project: Project) : Kotlin
         internal set(value) {
             DslObject(this).extensions.add("sourceSets", value)
         }
+
+    internal suspend fun awaitSourceSets(): NamedDomainObjectContainer<KotlinSourceSet> {
+        await(KotlinPluginLifecycle.Stage.AfterFinaliseDsl)
+        return sourceSets
+    }
 }
 
 abstract class KotlinSingleTargetExtension<TARGET : KotlinTarget>(project: Project) : KotlinProjectExtension(project) {
