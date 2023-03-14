@@ -125,7 +125,7 @@ internal open class CInteropCommonizerTask
      * For Gradle Configuration Cache support the Group-to-Dependencies relation should be pre-cached.
      * It is used during execution phase.
      */
-    private val groupedCommonizerDependencies: Future<GroupedCommonizerDependencies> by project.lazyFuture {
+    private val groupedCommonizerDependencies: Future<GroupedCommonizerDependencies> = project.lazyFuture {
         val multiplatformExtension = project.multiplatformExtensionOrNull ?: return@lazyFuture emptyMap()
 
         val sourceSetsByTarget = multiplatformExtension.sourceSets.groupBy { sourceSet -> sourceSet.commonizerTarget.getOrThrow() }
@@ -232,7 +232,7 @@ internal open class CInteropCommonizerTask
     }
 
     @get:Internal
-    internal val allInteropGroups: Future<Set<CInteropCommonizerGroup>> by project.lazyFuture {
+    internal val allInteropGroups: Future<Set<CInteropCommonizerGroup>> = project.lazyFuture {
         val dependents = allDependents.await()
         val allScopeSets = dependents.map { it.scopes }.toSet()
         val rootScopeSets = allScopeSets.filter { scopeSet ->
@@ -267,7 +267,7 @@ internal open class CInteropCommonizerTask
         return suitableGroups.firstOrNull()
     }
 
-    private val allDependents: Future<Set<CInteropCommonizerDependent>> by project.lazyFuture {
+    private val allDependents: Future<Set<CInteropCommonizerDependent>> = project.lazyFuture {
         val multiplatformExtension = project.multiplatformExtensionOrNull ?: return@lazyFuture emptySet()
 
         val fromSharedNativeCompilations = multiplatformExtension

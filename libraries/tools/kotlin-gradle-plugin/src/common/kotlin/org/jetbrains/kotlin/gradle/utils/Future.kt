@@ -85,7 +85,7 @@ internal val <T> Future<T>.lenient: LenientFuture<T> get() = LenientFutureImpl(t
  *
  * basically creating a future, which is launched lazily
  */
-internal fun <T> Project.lazyFuture(block: suspend Project.() -> T): Lazy<Future<T>> = lazy { future(block) }
+internal fun <T> Project.lazyFuture(block: suspend Project.() -> T): Future<T> = LazyFutureImpl(lazy { future(block) })
 
 internal fun <T> KotlinPluginLifecycle.future(block: suspend () -> T): Future<T> {
     return FutureImpl<T>(lifecycle = this).also { future ->
@@ -156,6 +156,26 @@ private class LenientFutureImpl<T>(
     private class Surrogate<T>(private val value: T) : Serializable {
         private fun readResolve(): Any {
             return LenientFutureImpl(FutureImpl(CompletableDeferred(value)))
+        }
+    }
+}
+
+private class LazyFutureImpl<T>(private val future: Lazy<Future<T>>) : Future<T>, Serializable {
+    override suspend fun await(): T {
+        return future.value.await()
+    }
+
+    override fun getOrThrow(): T {
+        return future.value.getOrThrow()
+    }
+
+    private fun writeReplace(): Any {
+        return Surrogate(getOrThrow())
+    }
+
+    private class Surrogate<T>(private val value: T) : Serializable {
+        private fun readResolve(): Any {
+            return FutureImpl(CompletableDeferred(value))
         }
     }
 }

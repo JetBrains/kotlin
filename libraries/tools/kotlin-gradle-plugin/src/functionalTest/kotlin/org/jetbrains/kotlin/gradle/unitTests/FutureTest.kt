@@ -9,19 +9,15 @@ package org.jetbrains.kotlin.gradle.unitTests
 
 import org.jetbrains.kotlin.gradle.idea.testFixtures.utils.deserialize
 import org.jetbrains.kotlin.gradle.idea.testFixtures.utils.serialize
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.IllegalLifecycleException
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.FinaliseDsl
-import org.jetbrains.kotlin.gradle.plugin.await
-import org.jetbrains.kotlin.gradle.plugin.currentKotlinPluginLifecycle
-import org.jetbrains.kotlin.gradle.plugin.startKotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.runLifecycleAwareTest
-import org.jetbrains.kotlin.gradle.utils.CompletableFuture
-import org.jetbrains.kotlin.gradle.utils.LenientFuture
-import org.jetbrains.kotlin.gradle.utils.future
-import org.jetbrains.kotlin.gradle.utils.lenient
+import org.jetbrains.kotlin.gradle.utils.*
 import org.junit.Test
 import org.junit.jupiter.api.assertThrows
+import java.util.concurrent.atomic.AtomicInteger
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertNull
@@ -102,6 +98,20 @@ class FutureTest {
             val futureBinary = future.lenient.serialize()
             val deserializedFuture = futureBinary.deserialize() as LenientFuture<*>
             assertEquals(42, deserializedFuture.getOrNull())
+        }
+    }
+
+    @Test
+    fun `test - lazy future`() = project.runLifecycleAwareTest {
+        val futureInvocations = AtomicInteger(0)
+        val future = project.lazyFuture {
+            assertEquals(1, futureInvocations.incrementAndGet())
+        }
+
+        project.launchInStage(KotlinPluginLifecycle.Stage.last) {
+            assertEquals(0, futureInvocations.get())
+            future.await()
+            assertEquals(1, futureInvocations.get())
         }
     }
 }
