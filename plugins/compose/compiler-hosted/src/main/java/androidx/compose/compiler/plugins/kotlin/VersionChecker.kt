@@ -122,7 +122,7 @@ class VersionChecker(val context: IrPluginContext) {
          * The maven version string of this compiler. This string should be updated before/after every
          * release.
          */
-        const val compilerVersion: String = "1.4.3"
+        const val compilerVersion: String = "1.4.4"
         private val minimumRuntimeVersion: String
             get() = runtimeVersionToMavenVersionTable[minimumRuntimeVersionInt] ?: "unknown"
     }
