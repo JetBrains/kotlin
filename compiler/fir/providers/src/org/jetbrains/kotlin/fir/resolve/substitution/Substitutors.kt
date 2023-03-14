@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.substitution
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.ConeTypeVariableTypeIsNotInferred
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
@@ -320,7 +321,7 @@ class ConeStubAndTypeVariableToErrorTypeSubstitutor(
     override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
         return when (type) {
             is ConeTypeVariableType -> ConeErrorType(
-                ConeSimpleDiagnostic("Type for ${type.lookupTag.debugName} is not inferred", DiagnosticKind.InferenceError),
+                ConeTypeVariableTypeIsNotInferred(type),
                 isUninferredParameter = true
             )
             is ConeStubType -> runIf(type.constructor in stubTypesToReplace) {
