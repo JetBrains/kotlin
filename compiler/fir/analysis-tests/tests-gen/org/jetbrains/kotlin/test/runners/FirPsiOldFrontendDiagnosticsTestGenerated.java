@@ -30277,9 +30277,15 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             }
 
             @Test
-            @TestMetadata("smartCastOnAlienPropertyFromInnerClass.kt")
-            public void testSmartCastOnAlienPropertyFromInnerClass() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/smartCasts/smartCastOnAlienPropertyFromInnerClass.kt");
+            @TestMetadata("smartCastOnAlienPropertyFromInvisibleClass.kt")
+            public void testSmartCastOnAlienPropertyFromInvisibleClass() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/smartCasts/smartCastOnAlienPropertyFromInvisibleClass.kt");
+            }
+
+            @Test
+            @TestMetadata("smartCastOnAlienPropertyFromInvisibleClassForbidden.kt")
+            public void testSmartCastOnAlienPropertyFromInvisibleClassForbidden() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/smartCasts/smartCastOnAlienPropertyFromInvisibleClassForbidden.kt");
             }
 
             @Test
