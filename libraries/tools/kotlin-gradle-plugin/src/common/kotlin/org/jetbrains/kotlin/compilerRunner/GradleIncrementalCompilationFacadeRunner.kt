@@ -67,14 +67,25 @@ internal class GradleIncrementalCompilationFacadeRunner(
         private val workArguments
             get() = parameters.compilerWorkArguments.get()
 
-        fun prepareKotlinCompilerOptions(): KotlinCompilationOptions {
+        private fun prepareLaunchOptions(): LaunchOptions = when (workArguments.compilerExecutionSettings.strategy) {
+            KotlinCompilerExecutionStrategy.DAEMON -> LaunchOptions.Daemon(
+                "",
+                workArguments.compilerFullClasspath,
+                workArguments.compilerExecutionSettings.daemonJvmArgs ?: listOf(),
+                GradleKotlinCompilerLauncher(execOperations),
+            )
+            KotlinCompilerExecutionStrategy.IN_PROCESS -> LaunchOptions.InProcess
+            else -> error("Unsupported compiler execution strategy: ${workArguments.compilerExecutionSettings.strategy}")
+        }
+
+        private fun prepareKotlinCompilerOptions(): CompilationOptions {
             val icEnv = workArguments.incrementalCompilationEnvironment
             val kotlinScriptExtensions = workArguments.kotlinScriptExtensions
             return if (icEnv != null) {
                 val knownChangedFiles = icEnv.changedFiles as? ChangedFiles.Known
                 val incrementalModuleInfo = workArguments.incrementalModuleInfo
                 val outputFiles = workArguments.outputFiles
-                IncrementalKotlinCompilationOptions(
+                CompilationOptions.Incremental(
                     areFileChangesKnown = knownChangedFiles != null,
                     modifiedFiles = knownChangedFiles?.modified,
                     deletedFiles = knownChangedFiles?.removed,
@@ -97,7 +108,7 @@ internal class GradleIncrementalCompilationFacadeRunner(
                     preciseCompilationResultsBackup = icEnv.preciseCompilationResultsBackup,
                 )
             } else {
-                KotlinCompilationOptions(
+                CompilationOptions.NonIncremental(
                     compilerMode = org.jetbrains.kotlin.api.CompilerMode.NON_INCREMENTAL_COMPILER,
                     targetPlatform = TargetPlatform.JVM,
                     reportCategories = emptyArray(),
@@ -133,20 +144,7 @@ internal class GradleIncrementalCompilationFacadeRunner(
                 val classloader = URLClassLoader(classpath.toList().map { it.toURI().toURL() }.toTypedArray(), parentClassloader)
                 val facade = ServiceLoader.load(IncrementalCompilerFacade::class.java, classloader).singleOrNull()
                     ?: error("Compiler classpath should contain one and only one implementation of ${IncrementalCompilerFacade::class.java.name}")
-                val launcher = GradleKotlinCompilerLauncher(execOperations)
-                when (workArguments.compilerExecutionSettings.strategy) {
-                    KotlinCompilerExecutionStrategy.DAEMON -> facade.compileWithDaemon(
-                        launcher,
-                        CompilerConfiguration("", workArguments.compilerFullClasspath, workArguments.compilerExecutionSettings.daemonJvmArgs ?: listOf()),
-                        workArguments.compilerArgs.toList(),
-                        prepareKotlinCompilerOptions(),
-                    )
-                    KotlinCompilerExecutionStrategy.IN_PROCESS -> facade.compileInProcess(
-                        workArguments.compilerArgs.toList(),
-                        prepareKotlinCompilerOptions(),
-                    )
-                    else -> error("Unsupported compiler execution strategy: ${workArguments.compilerExecutionSettings.strategy}")
-                }
+                facade.compile(prepareLaunchOptions(), workArguments.compilerArgs.toList(), prepareKotlinCompilerOptions())
             } catch (e: FailedCompilationException) {
                 // Restore outputs only in cases where we expect that the user will make some changes to their project:
                 //   - For a compilation error, the user will need to fix their source code

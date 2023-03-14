@@ -8,17 +8,9 @@ package org.jetbrains.kotlin.api
 import java.util.*
 
 interface IncrementalCompilerFacade {
-    fun compileWithDaemon(
-//        buildId: UUID,
-        launcher: KotlinCompilerLauncher,
-        configuration: CompilerConfiguration,
+    fun compile(
+        launchOptions: LaunchOptions,
         arguments: List<String>,
-        options: KotlinCompilationOptions
-    )
-
-    fun compileInProcess(
-//        buildId: UUID,
-        arguments: List<String>,
-        options: KotlinCompilationOptions
+        options: CompilationOptions,
     )
 }
