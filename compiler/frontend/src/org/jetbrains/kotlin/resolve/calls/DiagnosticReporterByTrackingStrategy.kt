@@ -584,7 +584,7 @@ class DiagnosticReporterByTrackingStrategy(
                 val expression = if (psiCall is CallTransformer.CallForImplicitInvoke) {
                     psiCall.outerCall.calleeExpression
                 } else {
-                    psiCall.calleeExpression
+                    psiCall.calleeExpression?.takeIf { it.isPhysical } ?: psiCall.callElement
                 } ?: return
                 val typeVariable = error.typeVariable as? TypeVariableFromCallableDescriptor ?: return
 

@@ -28,7 +28,7 @@ internal class TowerDataElementsForName2() {
 }
 
 internal class TowerDataElementsForName3() {
-    val reversedFilteredLocalScopes by lazy(LazyThreadSafetyMode.NONE) {
+    val reversedFilteredLocalScopes by <!INFERRED_INTO_DECLARED_UPPER_BOUNDS!>lazy(LazyThreadSafetyMode.NONE) {
         @OptIn(ExperimentalStdlibApi::class)
         buildList l1@ {
             for (i in lastIndex downTo 0) {
@@ -43,7 +43,7 @@ internal class TowerDataElementsForName3() {
                 }
             }
         }
-    }
+    }<!>
 }
 
 internal class TowerDataElementsForName4() {
