@@ -185,23 +185,23 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
         if (chunk.isDummy(context)) return
 
-        val kotlinContext = ensureKotlinContextInitialized(context)
+//        val kotlinContext = ensureKotlinContextInitialized(context)
 
         val buildLogger = context.testingContext?.buildLogger
         buildLogger?.chunkBuildStarted(context, chunk)
 
         if (JavaBuilderUtil.isForcedRecompilationAllJavaModules(context)) return
+//von
+//        val targets = chunk.targets
+//        if (targets.none { kotlinContext.hasKotlinMarker[it] == true }) return
+//
+//        val kotlinChunk = kotlinContext.getChunk(chunk) ?: return
+//        kotlinContext.checkChunkCacheVersion(kotlinChunk)
 
-        val targets = chunk.targets
-        if (targets.none { kotlinContext.hasKotlinMarker[it] == true }) return
-
-        val kotlinChunk = kotlinContext.getChunk(chunk) ?: return
-        kotlinContext.checkChunkCacheVersion(kotlinChunk)
-
-        if (!kotlinContext.rebuildingAllKotlin && kotlinChunk.isEnabled) {
-            markAdditionalFilesForInitialRound(kotlinChunk, chunk, kotlinContext)
-        }
-
+//        if (!kotlinContext.rebuildingAllKotlin && kotlinChunk.isEnabled) {
+//            markAdditionalFilesForInitialRound(kotlinChunk, chunk, kotlinContext)
+//        }
+//bis
         buildLogger?.afterChunkBuildStarted(context, chunk)
     }
 
@@ -357,8 +357,20 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             return NOTHING_DONE
         }
 
-        val kotlinContext = context.kotlin
+        val targets = chunk.targets
+        val kotlinContext = ensureKotlinContextInitialized(context) // ?
         val kotlinChunk = chunk.toKotlinChunk(context)!!
+        if (!targets.none { kotlinContext.hasKotlinMarker[it] == true }) {
+            kotlinContext.checkChunkCacheVersion(kotlinChunk)
+            if (!kotlinContext.rebuildingAllKotlin && kotlinChunk.isEnabled) {
+                markAdditionalFilesForInitialRound(kotlinChunk, chunk, kotlinContext)
+            }
+        }
+
+
+
+//        val kotlinContext = context.kotlin
+//        val kotlinChunk = chunk.toKotlinChunk(context)!!
 
         if (!kotlinChunk.haveSameCompiler) {
             messageCollector.report(
@@ -376,7 +388,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         }
 
         val projectDescriptor = context.projectDescriptor
-        val targets = chunk.targets
+//        val targets = chunk.targets
 
         val isChunkRebuilding = JavaBuilderUtil.isForcedRecompilationAllJavaModules(context)
                 || targets.any { kotlinContext.rebuildAfterCacheVersionChanged[it] == true }
