@@ -21,6 +21,8 @@ void PrintAssert(bool allowStacktrace, const char* location, const char* format,
     std::array<char, 1024> bufferStorage;
     std_support::span<char> buffer(bufferStorage);
 
+    buffer = FormatToSpan(buffer, "[Thread %d]", konan::currentThreadId());
+
     // Write the title with a source location.
     if (location != nullptr) {
         buffer = FormatToSpan(buffer, "%s: runtime assert: ", location);
