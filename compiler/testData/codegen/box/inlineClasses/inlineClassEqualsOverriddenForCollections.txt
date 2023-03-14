@@ -8,7 +8,7 @@ public final class IC {
     public static method constructor-impl(p0: double): double
     public method equals(p0: java.lang.Object): boolean
     public static method equals-impl(p0: double, p1: java.lang.Object): boolean
-    public final static method equals-impl0(p0: double, p1: double): boolean
+    public final static @kotlin.TypedEquals method equals-impl0(p0: double, p1: double): boolean
     public final method getX(): double
     public method hashCode(): int
     public static method hashCode-impl(p0: double): int

@@ -19,7 +19,7 @@ public final class IC1 {
     public method equals(p0: java.lang.Object): boolean
     public final static method equals-impl(p0: java.lang.Number, p1: int): boolean
     public static method equals-impl(p0: java.lang.Number, p1: java.lang.Object): boolean
-    public final static method equals-impl0(p0: java.lang.Number, @org.jetbrains.annotations.NotNull p1: java.lang.Number): boolean
+    public final static @kotlin.TypedEquals method equals-impl0(p0: java.lang.Number, @org.jetbrains.annotations.NotNull p1: java.lang.Number): boolean
     public final @org.jetbrains.annotations.NotNull method getX(): java.lang.Number
     public method hashCode(): int
     public static method hashCode-impl(p0: java.lang.Number): int
