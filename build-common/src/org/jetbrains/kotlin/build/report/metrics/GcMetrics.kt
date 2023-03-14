@@ -12,7 +12,10 @@ class GcMetrics : Serializable {
 
     private val myGcMetrics = HashMap<String, GcMetric>()
     fun addAll(gcMetrics: GcMetrics) {
-        myGcMetrics.putAll(gcMetrics.myGcMetrics)
+        gcMetrics.myGcMetrics.forEach { (key, value) ->
+            val gcMetric = myGcMetrics[key]
+            myGcMetrics[key] = gcMetric?.let { gcMetric + value } ?: value
+        }
     }
 
     fun add(metric: String, value: GcMetric) {
@@ -22,6 +25,8 @@ class GcMetrics : Serializable {
     fun asGcCountMap(): Map<String, Long> = myGcMetrics.mapValues { it.value.count }
     fun asGcTimeMap(): Map<String, Long> = myGcMetrics.mapValues { it.value.time }
     fun asMap(): Map<String, GcMetric> = myGcMetrics
+
+    fun isEmpty() = myGcMetrics.isEmpty()
 }
 data class GcMetric(
     val time: Long,
@@ -29,5 +34,9 @@ data class GcMetric(
 ): Serializable {
     operator fun minus(increment: GcMetric): GcMetric {
         return GcMetric(time - increment.time, count - increment.count)
+    }
+
+    operator fun plus(increment: GcMetric?): GcMetric {
+        return GcMetric(time + (increment?.time ?: 0), count + (increment?.count ?: 0))
     }
 }

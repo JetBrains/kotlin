@@ -52,7 +52,7 @@ internal class PlainTextBuildReportWriter(
         // TODO: If it is confusing, consider renaming "tasks" to "build operations" in this class.
         printBuildInfo(build)
         if (printMetrics) {
-            printMetrics(build.aggregatedMetrics, newLineBetweenSections = true)
+            printMetrics(build.aggregatedMetrics, aggregatedMetric = true)
             p.println()
         }
         printTaskOverview(build)
@@ -77,17 +77,19 @@ internal class PlainTextBuildReportWriter(
         }
     }
 
-    private fun printMetrics(buildMetrics: BuildMetrics, newLineBetweenSections: Boolean = false) {
+    private fun printMetrics(buildMetrics: BuildMetrics, aggregatedMetric: Boolean = false) {
         printBuildTimes(buildMetrics.buildTimes)
-        if (newLineBetweenSections) p.println()
+        if (aggregatedMetric) p.println()
 
         printBuildPerformanceMetrics(buildMetrics.buildPerformanceMetrics)
-        if (newLineBetweenSections) p.println()
+        if (aggregatedMetric) p.println()
 
         printBuildAttributes(buildMetrics.buildAttributes)
-        if (newLineBetweenSections) p.println()
 
-        printGcMetrics(buildMetrics.gcMetrics)
+        //TODO: KT-57310 Implement build GC metric in
+        if (!aggregatedMetric) {
+            printGcMetrics(buildMetrics.gcMetrics)
+        }
     }
 
     private fun printBuildTimes(buildTimes: BuildTimes) {
@@ -173,7 +175,7 @@ internal class PlainTextBuildReportWriter(
                 p.println("${gcMetric.key}:")
                 p.withIndent {
                     p.println("GC count: ${gcMetric.value.count}")
-                    p.println("GC time: ${gcMetric.value.time}")
+                    p.println("GC time: ${formatTime(gcMetric.value.time)}")
                 }
             }
         }
