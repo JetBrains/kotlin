@@ -432,7 +432,10 @@ class Fir2IrConverter(
             val interpreter = IrInterpreter(IrInterpreterEnvironment(irModuleFragment.irBuiltins, configuration))
             val mode = if (intrinsicConstEvaluation) EvaluationMode.ONLY_INTRINSIC_CONST else EvaluationMode.ONLY_BUILTINS
             irModuleFragment.files.forEach {
-                it.transformChildren(IrConstTransformer(interpreter, it, mode = mode), null)
+                val transformer = IrConstTransformer(
+                    interpreter, it, mode = mode
+                )
+                it.transformChildren(transformer, null)
             }
         }
 

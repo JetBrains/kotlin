@@ -17,8 +17,10 @@
 package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 
 data class Fir2IrConfiguration(
     val languageVersionSettings: LanguageVersionSettings,
-    val linkViaSignatures: Boolean
+    val linkViaSignatures: Boolean,
+    val evaluatedConstTracker: EvaluatedConstTracker? = null,
 )

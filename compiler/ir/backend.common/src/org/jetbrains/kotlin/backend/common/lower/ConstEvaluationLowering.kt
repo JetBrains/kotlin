@@ -24,11 +24,15 @@ class ConstEvaluationLowering(
     private val onWarning: (IrFile, IrElement, IrErrorExpression) -> Unit = { _, _, _ -> },
     private val onError: (IrFile, IrElement, IrErrorExpression) -> Unit = { _, _, _ -> },
 ) : FileLoweringPass {
-    val interpreter = IrInterpreter(IrInterpreterEnvironment(context.irBuiltIns, configuration), emptyMap())
+    private val interpreter = IrInterpreter(IrInterpreterEnvironment(context.irBuiltIns, configuration), emptyMap())
+    private val evaluatedConstTracker = context.configuration[CommonConfigurationKeys.EVALUATED_CONST_TRACKER]
 
     override fun lower(irFile: IrFile) {
         val transformer = IrConstTransformer(
-            interpreter, irFile, mode = EvaluationMode.ONLY_INTRINSIC_CONST, onWarning, onError, suppressErrors
+            interpreter, irFile,
+            mode = EvaluationMode.ONLY_INTRINSIC_CONST,
+            evaluatedConstTracker,
+            onWarning, onError, suppressErrors
         )
         irFile.transformChildren(transformer, null)
     }

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.interpreter
 
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.UnsignedType
+import org.jetbrains.kotlin.constant.*
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
@@ -177,4 +178,28 @@ internal fun IrBuiltIns.emptyArrayConstructor(arrayType: IrType): IrConstructorC
         constructorCall.putTypeArgument(0, (arrayType as IrSimpleType).arguments.singleOrNull()?.typeOrNull)
     }
     return constructorCall
+}
+
+internal fun IrConst<*>.toConstantValue(): ConstantValue<*> {
+    val constType = this.type.makeNotNull().removeAnnotations()
+    return when (this.type.getPrimitiveType()) {
+        PrimitiveType.BOOLEAN -> BooleanValue(this.value as Boolean)
+        PrimitiveType.CHAR -> CharValue(this.value as Char)
+        PrimitiveType.BYTE -> ByteValue((this.value as Number).toByte())
+        PrimitiveType.SHORT -> ShortValue((this.value as Number).toShort())
+        PrimitiveType.INT -> IntValue((this.value as Number).toInt())
+        PrimitiveType.FLOAT -> FloatValue((this.value as Number).toFloat())
+        PrimitiveType.LONG -> LongValue((this.value as Number).toLong())
+        PrimitiveType.DOUBLE -> DoubleValue((this.value as Number).toDouble())
+        null -> when (constType.getUnsignedType()) {
+            UnsignedType.UBYTE -> UByteValue((this.value as Number).toByte())
+            UnsignedType.USHORT -> UShortValue((this.value as Number).toShort())
+            UnsignedType.UINT -> UIntValue((this.value as Number).toInt())
+            UnsignedType.ULONG -> ULongValue((this.value as Number).toLong())
+            null -> when {
+                constType.isString() -> StringValue(this.value as String)
+                else -> error("Cannot convert IrConst ${this.render()} to ConstantValue")
+            }
+        }
+    }
 }
