@@ -78,7 +78,7 @@ fun FirAnnotation.isJvmFieldAnnotation(session: FirSession): Boolean =
 fun FirAnnotation.useSiteTargetsFromMetaAnnotation(session: FirSession): Set<AnnotationUseSiteTarget> {
     return toAnnotationClass(session)
         ?.annotations
-        ?.find { it.toAnnotationClassId(session) == StandardClassIds.Annotations.Target }
+        ?.find { it.toAnnotationClassIdSafe(session) == StandardClassIds.Annotations.Target }
         ?.findUseSiteTargets()
         ?: DEFAULT_USE_SITE_TARGETS
 }
