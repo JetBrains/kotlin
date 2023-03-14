@@ -17,7 +17,6 @@ import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
 import org.gradle.api.attributes.Usage.USAGE_ATTRIBUTE
-import org.gradle.api.internal.artifacts.ArtifactAttributes
 import org.gradle.api.internal.plugins.DefaultArtifactPublicationSet
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.provider.Provider
@@ -28,6 +27,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinNativeCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.TEST_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationInfo.KPM
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.KOTLIN_NATIVE_IGNORE_INCORRECT_DEPENDENCIES
+import org.jetbrains.kotlin.gradle.plugin.internal.artifactTypeAttribute
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.registerEmbedAndSignAppleFrameworkTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmVariant
@@ -125,7 +125,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
                 artifacts.add(linkArtifact)
                 attributes.attribute(KotlinPlatformType.attribute, binary.target.platformType)
                 attributes.attribute(
-                    ArtifactAttributes.ARTIFACT_FORMAT,
+                    project.artifactTypeAttribute,
                     NativeArtifactFormat.FRAMEWORK
                 )
                 attributes.attribute(
@@ -303,7 +303,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
 
         val apiElements = configurations.getByName(target.apiElementsConfigurationName)
 
-        apiElements.outgoing.attributes.attribute(ArtifactAttributes.ARTIFACT_FORMAT, NativeArtifactFormat.KLIB)
+        apiElements.outgoing.attributes.attribute(artifactTypeAttribute, NativeArtifactFormat.KLIB)
 
         if (project.isKotlinGranularMetadataEnabled) {
             project.configurations.create(target.hostSpecificMetadataElementsConfigurationName) { configuration ->
@@ -580,7 +580,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
                 }
                 project.project.extensions.getByType(DefaultArtifactPublicationSet::class.java).addCandidate(klibArtifact)
                 artifacts.add(klibArtifact)
-                attributes.attribute(ArtifactAttributes.ARTIFACT_FORMAT, NativeArtifactFormat.KLIB)
+                attributes.attribute(project.artifactTypeAttribute, NativeArtifactFormat.KLIB)
             }
         }
     }
