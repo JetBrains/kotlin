@@ -187,6 +187,12 @@ public class SymbolLightClassesParentingByFqNameForSourceTestGenerated extends A
     }
 
     @Test
+    @TestMetadata("InvalidJavaIdentifierAsAnnotationArgument.kt")
+    public void testInvalidJavaIdentifierAsAnnotationArgument() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/InvalidJavaIdentifierAsAnnotationArgument.kt");
+    }
+
+    @Test
     @TestMetadata("JavaBetween.kt")
     public void testJavaBetween() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/JavaBetween.kt");

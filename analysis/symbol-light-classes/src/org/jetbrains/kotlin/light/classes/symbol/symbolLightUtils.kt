@@ -188,15 +188,22 @@ internal fun KtAnnotationValue.toAnnotationMemberValue(parent: PsiElement): PsiA
             }
         }
 
-        is KtEnumEntryAnnotationValue -> {
-            val fqName = this.callableId?.asSingleFqName()?.asString() ?: return null
-            val psiReference = PsiElementFactory.getInstance(parent.project).createReferenceFromText(fqName, parent)
-            SymbolPsiReference(sourcePsi, parent, psiReference)
-        }
-
+        is KtEnumEntryAnnotationValue -> asPsiReferenceExpression(parent)
         KtUnsupportedAnnotationValue -> null
         is KtKClassAnnotationValue -> toAnnotationMemberValue(parent)
     }
+}
+
+private fun KtEnumEntryAnnotationValue.asPsiReferenceExpression(parent: PsiElement): SymbolPsiReference? {
+    val fqName = this.callableId?.asSingleFqName()?.asString() ?: return null
+    val elementFactory = PsiElementFactory.getInstance(parent.project)
+    val psiReference = try {
+        elementFactory.createReferenceFromText(fqName, parent)
+    } catch (_: IncorrectOperationException) {
+        return null
+    }
+
+    return SymbolPsiReference(sourcePsi, parent, psiReference)
 }
 
 private fun KtKClassAnnotationValue.toAnnotationMemberValue(parent: PsiElement): PsiExpression? {
