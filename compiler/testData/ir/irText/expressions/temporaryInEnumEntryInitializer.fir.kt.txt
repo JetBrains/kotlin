@@ -2,7 +2,7 @@ val n: Any?
   field = null
   get
 
-open enum class En : Enum<En> {
+enum class En : Enum<En> {
   private constructor(x: String?) /* primary */ {
     super/*Enum*/<En>()
     /* <init>() */
@@ -29,3 +29,4 @@ open enum class En : Enum<En> {
     get(): EnumEntries<En> /* Synthetic body for ENUM_ENTRIES */
 
 }
+

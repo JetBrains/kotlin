@@ -193,7 +193,9 @@ class Fir2IrClassifierStorage(
             declarations.any { it is FirCallableDeclaration && it.modality == Modality.ABSTRACT } -> {
                 Modality.ABSTRACT
             }
-            declarations.none { it is FirEnumEntry && it.initializer != null } -> {
+            declarations.none {
+                it is FirEnumEntry && isEnumEntryWhichRequiresSubclass(it)
+            } -> {
                 Modality.FINAL
             }
             hasAbstractMembersInScope() -> {
@@ -558,15 +560,14 @@ class Fir2IrClassifierStorage(
                     if (irParent != null) {
                         this.parent = irParent
                     }
-                    val initializer = enumEntry.initializer
-                    if (initializer is FirAnonymousObjectExpression) {
-                        // An enum entry with its own members
-                        if (initializer.anonymousObject.declarations.any { it !is FirConstructor }) {
-                            val klass = getIrAnonymousObjectForEnumEntry(initializer.anonymousObject, enumEntry.name, irParent)
-                            this.correspondingClass = klass
-                        }
+                    if (isEnumEntryWhichRequiresSubclass(enumEntry)) {
+                        // An enum entry with its own members requires an anonymous object generated.
                         // Otherwise, this is a default-ish enum entry whose initializer would be a delegating constructor call,
                         // which will be translated via visitor later.
+                        val klass = getIrAnonymousObjectForEnumEntry(
+                            (enumEntry.initializer as FirAnonymousObjectExpression).anonymousObject, enumEntry.name, irParent
+                        )
+                        this.correspondingClass = klass
                     }
                     declarationStorage.leaveScope(this)
                 }
@@ -574,6 +575,11 @@ class Fir2IrClassifierStorage(
             enumEntryCache[enumEntry] = result
             result
         }
+    }
+
+    private fun isEnumEntryWhichRequiresSubclass(enumEntry: FirEnumEntry): Boolean {
+        val initializer = enumEntry.initializer
+        return initializer is FirAnonymousObjectExpression && initializer.anonymousObject.declarations.any { it !is FirConstructor }
     }
 
     fun getIrClassSymbol(firClassSymbol: FirClassSymbol<*>, forceTopLevelPrivate: Boolean = false): IrClassSymbol {

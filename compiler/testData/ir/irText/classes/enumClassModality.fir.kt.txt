@@ -16,7 +16,7 @@ enum class TestFinalEnum1 : Enum<TestFinalEnum1> {
 
 }
 
-open enum class TestFinalEnum2 : Enum<TestFinalEnum2> {
+enum class TestFinalEnum2 : Enum<TestFinalEnum2> {
   private constructor(x: Int) /* primary */ {
     super/*Enum*/<TestFinalEnum2>()
     /* <init>() */
@@ -184,3 +184,4 @@ abstract enum class TestAbstractEnum2 : IFoo, Enum<TestAbstractEnum2> {
     get(): EnumEntries<TestAbstractEnum2> /* Synthetic body for ENUM_ENTRIES */
 
 }
+

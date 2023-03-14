@@ -1,4 +1,4 @@
-open enum class Test0 : Enum<Test0> {
+enum class Test0 : Enum<Test0> {
   private constructor(x: Int) /* primary */ {
     super/*Enum*/<Test0>()
     /* <init>() */
@@ -24,7 +24,7 @@ open enum class Test0 : Enum<Test0> {
 
 }
 
-open enum class Test1 : Enum<Test1> {
+enum class Test1 : Enum<Test1> {
   private constructor(x: Int) /* primary */ {
     super/*Enum*/<Test1>()
     /* <init>() */
