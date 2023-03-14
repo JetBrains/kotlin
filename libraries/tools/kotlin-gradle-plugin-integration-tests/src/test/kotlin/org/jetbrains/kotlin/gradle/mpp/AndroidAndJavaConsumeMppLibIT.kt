@@ -298,9 +298,13 @@ abstract class AndroidAndJavaConsumeMppLibIT : BaseGradleIT() {
             if (isPublishedLibrary)
                 "com.example:lib:1.0"
             else ":${dependencyProject.projectName}:lib"
+        val javaHome =
+            if (GradleVersion.version(usedConsumerGradleVersion) < GradleVersion.version(TestVersions.Gradle.G_8_0))
+                File(System.getProperty("jdk11Home"))
+            else KtTestUtil.getJdk17Home()
 
         val consumerBuildOptions = defaultBuildOptions().copy(
-            javaHome = File(System.getProperty("jdk11Home")),
+            javaHome = javaHome,
             androidHome = KtTestUtil.findAndroidSdk(),
             androidGradlePluginVersion = consumerAgpVersion,
             kotlinVersion = withKotlinVersion ?: defaultBuildOptions().kotlinVersion
@@ -310,7 +314,7 @@ abstract class AndroidAndJavaConsumeMppLibIT : BaseGradleIT() {
             // looks a bit messy :/
             (!isPublishedLibrary && (withKotlinVersion != null || options.safeAndroidGradlePluginVersion >= AGPVersion.v7_0_0) || isPublishedLibrary && withKotlinVersion == oldKotlinVersion) &&
                     GradleVersion.version(usedConsumerGradleVersion) >= GradleVersion.version(TestVersions.Gradle.G_7_5) &&
-                    options.safeAndroidGradlePluginVersion < AGPVersion.v7_3_0
+                    options.safeAndroidGradlePluginVersion < AGPVersion.v8_0_0
         }
 
         val variantCheckRequests = mutableMapOf<ResolvedVariantRequest, String>()

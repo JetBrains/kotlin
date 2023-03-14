@@ -24,7 +24,3 @@ allprojects {
         maven { url = uri("https://jcenter.bintray.com/") }
     }
 }
-
-task clean(type: Delete) {
-    delete rootProject.buildDir
-}
