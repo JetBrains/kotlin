@@ -10,6 +10,9 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.utils.minSupportedGradleVersion
 
 interface TestVersions {
+
+    // https://gradle.org/nightly/
+    // Gradle nightly releases retention policy is 3 months
     object Gradle {
         const val G_6_8 = "6.8.3"
         const val G_6_9 = "6.9.2"
@@ -20,9 +23,8 @@ interface TestVersions {
         const val G_7_4 = "7.4.2"
         const val G_7_5 = "7.5.1"
         const val G_7_6 = "7.6"
-        // https://gradle.org/nightly/
-        // Retention policy is 3 months
         const val G_8_0 = "8.0.2"
+        const val G_8_1 = "8.1"
         const val MIN_SUPPORTED = minSupportedGradleVersion
         const val MIN_SUPPORTED_KPM = G_7_0
         const val MAX_SUPPORTED = G_7_6
