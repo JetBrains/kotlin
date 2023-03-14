@@ -196,10 +196,10 @@ class KotlinKarma(
 
     fun useChromeCanaryHeadless() = useChromeLike("ChromeCanaryHeadless")
 
-    fun useChromeCanaryHeadlessWasmGc() {
+    fun useChromeHeadlessWasmGc() {
         val chromeCanaryHeadlessWasmGc = "ChromeHeadlessWasmGc"
 
-        config.customLaunchers[chromeCanaryHeadlessWasmGc] = CustomLauncher("ChromeCanaryHeadless").apply {
+        config.customLaunchers[chromeCanaryHeadlessWasmGc] = CustomLauncher("ChromeHeadless").apply {
             flags.add("--js-flags=--experimental-wasm-gc")
         }
 

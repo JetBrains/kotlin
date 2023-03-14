@@ -17,12 +17,12 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.archivesName
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.distsDirectory
 import org.jetbrains.kotlin.gradle.report.BuildMetricsService
-import org.jetbrains.kotlin.gradle.targets.js.addWasmExperimentalArguments
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalDceDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserDsl
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsExtension
+import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.karma.KotlinKarma
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
@@ -32,6 +32,8 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackDevtool
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.utils.doNotTrackStateCompat
 import org.jetbrains.kotlin.gradle.utils.newFileProperty
+import org.jetbrains.kotlin.gradle.utils.relativeOrAbsolute
+import org.jetbrains.kotlin.gradle.utils.relativeToRoot
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.io.File
 import javax.inject.Inject
@@ -60,7 +62,7 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
         if (test.testFramework == null) {
             test.useKarma {
                 if (compilation.platformType == KotlinPlatformType.wasm) {
-                    useChromeCanaryHeadlessWasmGc()
+                    useChromeHeadlessWasmGc()
                 } else {
                     useChromeHeadless()
                 }
@@ -128,27 +130,12 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                     task.args.add(0, "serve")
                     task.description = "start ${mode.name.toLowerCaseAsciiOnly()} webpack dev server"
 
-                    val openValue = if (compilation.platformType == KotlinPlatformType.wasm) {
-                        KotlinWebpackConfig.DevServer.App(
-                            KotlinWebpackConfig.DevServer.App.Browser(
-                                "chrome canary",
-                                listOf(
-                                    "--js-flags=" +
-                                            mutableListOf<String>()
-                                                .apply { addWasmExperimentalArguments() }
-                                                .joinToString(" ")
-                                )
-                            ),
-                        )
-                    } else {
-                        true
-                    }
-
+                    val npmProject = compilation.npmProject
                     task.devServer = KotlinWebpackConfig.DevServer(
-                        open = openValue,
+                        open = true,
                         static = mutableListOf(
-                            "./kotlin",
-                            compilation.output.resourcesDir.canonicalPath
+                            npmProject.dist.normalize().relativeOrAbsolute(npmProject.dir),
+                            compilation.output.resourcesDir.relativeOrAbsolute(npmProject.dir),
                         ),
                         client = KotlinWebpackConfig.DevServer.Client(
                             KotlinWebpackConfig.DevServer.Client.Overlay(
