@@ -4,7 +4,7 @@ import platform.posix.usleep
 import dummy.dummyFunction
 
 fun nativeMain() {
-    usleep(100)
+    usleep(100u)
 }
 
 fun nativeMainUsingCInterop() = dummyFunction()

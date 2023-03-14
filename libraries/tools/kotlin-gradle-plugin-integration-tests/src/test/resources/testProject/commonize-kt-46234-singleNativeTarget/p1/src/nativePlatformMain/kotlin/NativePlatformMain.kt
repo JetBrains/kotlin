@@ -3,5 +3,5 @@
 import platform.posix.usleep
 
 fun main() {
-    usleep(100)
+    usleep(100u)
 }
