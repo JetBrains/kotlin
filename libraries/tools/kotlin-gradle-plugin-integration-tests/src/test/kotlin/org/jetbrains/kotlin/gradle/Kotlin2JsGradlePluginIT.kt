@@ -209,7 +209,6 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
                 assertTasksExecuted(":app:developmentExecutableCompileSync")
 
                 assertFileInProjectNotExists("build/js/packages/kotlin-js-browser-app/kotlin/foo/foo.txt")
-                assertFileInProjectNotExists("build/js/packages/kotlin-js-browser-app/sync-hashes/foo/foo.txt.hash")
             }
         }
     }

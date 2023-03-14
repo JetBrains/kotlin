@@ -1484,6 +1484,16 @@ public abstract interface class org/jetbrains/kotlin/gradle/tasks/CompileUsingKo
 	public abstract fun getUseDaemonFallbackStrategy ()Lorg/gradle/api/provider/Property;
 }
 
+public abstract interface class org/jetbrains/kotlin/gradle/tasks/IncrementalSyncTask : org/gradle/api/Task {
+	public abstract fun getDestinationDir ()Ljava/io/File;
+	public abstract fun getDestinationDirectory ()Lorg/gradle/api/provider/Property;
+	public abstract fun getFrom ()Lorg/gradle/api/file/ConfigurableFileCollection;
+}
+
+public final class org/jetbrains/kotlin/gradle/tasks/IncrementalSyncTask$DefaultImpls {
+	public static fun getDestinationDir (Lorg/jetbrains/kotlin/gradle/tasks/IncrementalSyncTask;)Ljava/io/File;
+}
+
 public abstract interface class org/jetbrains/kotlin/gradle/tasks/Kapt : org/jetbrains/kotlin/gradle/tasks/BaseKapt {
 	public abstract fun getAddJdkClassesToClasspath ()Lorg/gradle/api/provider/Property;
 	public abstract fun getKaptJars ()Lorg/gradle/api/file/ConfigurableFileCollection;

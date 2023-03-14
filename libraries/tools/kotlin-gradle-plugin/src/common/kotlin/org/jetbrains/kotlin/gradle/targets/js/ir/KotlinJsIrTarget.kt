@@ -131,25 +131,22 @@ constructor(
         }
     }
 
-    private fun registerCompileSync(binary: JsIrBinary): TaskProvider<SyncExecutableTask> {
+    private fun registerCompileSync(binary: JsIrBinary): TaskProvider<DefaultIncrementalSyncTask> {
         val compilation = binary.compilation
         val npmProject = compilation.npmProject
 
-        return project.registerTask<SyncExecutableTask>(
+        return project.registerTask<DefaultIncrementalSyncTask>(
             binary.linkSyncTaskName
         ) { task ->
-            task.from(
+            task.from.from(
                 binary.linkTask.flatMap { linkTask ->
                     linkTask.destinationDirectory.map { it.asFile }
                 }
             )
 
-            task.from(project.tasks.named(compilation.processResourcesTaskName))
+            task.from.from(project.tasks.named(compilation.processResourcesTaskName))
 
-            val hashDir = npmProject.dir.resolve("sync-hashes")
-            task.hashDir.set(hashDir)
-
-            task.into(npmProject.dist)
+            task.destinationDirectory.set(npmProject.dist)
         }
     }
 

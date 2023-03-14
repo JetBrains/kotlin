@@ -164,7 +164,7 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                     task.commonConfigure(
                         compilation = compilation,
                         mode = mode,
-                        inputFilesDirectory = binary.linkSyncTask.map { it.destinationDir },
+                        inputFilesDirectory = binary.linkSyncTask.flatMap { it.destinationDirectory },
                         entryModuleName = binary.linkTask.flatMap { it.compilerOptions.moduleName },
                         configurationActions = runTaskConfigurations,
                         nodeJs = nodeJs,
@@ -229,7 +229,7 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                     task.commonConfigure(
                         compilation = compilation,
                         mode = mode,
-                        inputFilesDirectory = binary.linkSyncTask.map { it.destinationDir },
+                        inputFilesDirectory = binary.linkSyncTask.flatMap { it.destinationDirectory },
                         entryModuleName = binary.linkTask.flatMap { it.compilerOptions.moduleName },
                         configurationActions = webpackTaskConfigurations,
                         nodeJs = nodeJs,
