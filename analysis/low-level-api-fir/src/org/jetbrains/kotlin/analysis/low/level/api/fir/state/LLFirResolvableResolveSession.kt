@@ -5,8 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.state
 
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
+import com.intellij.psi.util.CachedValueProvider
+import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirTowerContextProvider
@@ -41,21 +42,22 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
 
-@Suppress("PrivatePropertyName")
-private val LOG = Logger.getInstance(LLFirResolvableResolveSession::class.java)
-
 internal abstract class LLFirResolvableResolveSession(
-    final override val useSiteFirSession: LLFirSession
+    final override val useSiteKtModule: KtModule,
+    private val useSiteSessionFactory: (KtModule) -> LLFirSession
 ) : LLFirResolveSession() {
-    final override val useSiteKtModule: KtModule
-        get() = useSiteFirSession.ktModule
-
     final override val project: Project
         get() = useSiteKtModule.project
 
-    override fun getSessionFor(module: KtModule): LLFirSession {
-        LOG.assertTrue(useSiteFirSession.isValid, "Use-site session is invalid")
+    private val useSiteFirSessionCached = CachedValuesManager.getManager(project).createCachedValue {
+        val session = useSiteSessionFactory(useSiteKtModule)
+        CachedValueProvider.Result.create(session, session.modificationTracker)
+    }
 
+    final override val useSiteFirSession: LLFirSession
+        get() = useSiteFirSessionCached.value
+
+    override fun getSessionFor(module: KtModule): LLFirSession {
         if (module == useSiteFirSession.ktModule) {
             return useSiteFirSession
         }

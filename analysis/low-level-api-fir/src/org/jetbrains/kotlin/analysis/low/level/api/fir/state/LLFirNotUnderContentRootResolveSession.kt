@@ -13,8 +13,9 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 
 internal class LLFirNotUnderContentRootResolveSession(
-    useSiteFirSession: LLFirSession
-) : LLFirResolvableResolveSession(useSiteFirSession) {
+    useSiteKtModule: KtModule,
+    useSiteSessionFactory: (KtModule) -> LLFirSession
+) : LLFirResolvableResolveSession(useSiteKtModule, useSiteSessionFactory) {
     override fun getDiagnostics(element: KtElement, filter: DiagnosticCheckerFilter): List<KtPsiDiagnostic> =
         emptyList()
 

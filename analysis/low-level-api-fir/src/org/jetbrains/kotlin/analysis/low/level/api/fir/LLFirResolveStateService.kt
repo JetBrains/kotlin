@@ -30,13 +30,11 @@ class LLFirResolveSessionService(project: Project) {
     }
 
     private fun create(module: KtModule, factory: (KtModule) -> LLFirSession): LLFirResolvableResolveSession {
-        val session = factory(module)
-
         return when (module) {
-            is KtSourceModule -> LLFirSourceResolveSession(session)
-            is KtLibraryModule, is KtLibrarySourceModule -> LLFirLibraryOrLibrarySourceResolvableResolveSession(session)
-            is KtScriptModule -> LLFirScriptResolveSession(session)
-            is KtNotUnderContentRootModule -> LLFirNotUnderContentRootResolveSession(session)
+            is KtSourceModule -> LLFirSourceResolveSession(module, factory)
+            is KtLibraryModule, is KtLibrarySourceModule -> LLFirLibraryOrLibrarySourceResolvableResolveSession(module, factory)
+            is KtScriptModule -> LLFirScriptResolveSession(module, factory)
+            is KtNotUnderContentRootModule -> LLFirNotUnderContentRootResolveSession(module, factory)
             else -> {
                 errorWithFirSpecificEntries("Unexpected ${module::class.java}") {
                     withEntry("module", module) { it.moduleDescription }
