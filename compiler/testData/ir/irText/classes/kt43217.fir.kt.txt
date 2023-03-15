@@ -8,7 +8,7 @@ class A {
   private val b: <no name provided>
     field = { // BLOCK
       local class <no name provided> : DoubleExpression {
-        private constructor() /* primary */ {
+        constructor() /* primary */ {
           super/*DoubleExpression*/()
           /* <init>() */
 

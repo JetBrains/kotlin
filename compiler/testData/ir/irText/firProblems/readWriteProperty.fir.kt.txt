@@ -49,7 +49,7 @@ class IdeWizard {
   private fun <V : Any, T : SettingType<V>> setting(reference: SettingReference<V, T>): <no name provided><V, T> {
     return { // BLOCK
       local class <no name provided> : ReadWriteProperty<Any?, V?> {
-        private constructor() /* primary */ {
+        constructor() /* primary */ {
           super/*Any*/()
           /* <init>() */
 

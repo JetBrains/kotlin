@@ -44,7 +44,7 @@ interface IOther {
 fun otherImpl(x0: String, y0: Int): IOther {
   return { // BLOCK
     local class <no name provided> : IOther {
-      private constructor() /* primary */ {
+      constructor() /* primary */ {
         super/*Any*/()
         /* <init>() */
 

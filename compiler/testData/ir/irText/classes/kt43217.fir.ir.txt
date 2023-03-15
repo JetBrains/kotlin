@@ -11,7 +11,7 @@ FILE fqName:<root> fileName:/kt43217.kt
           BLOCK type=<root>.A.b.<no name provided> origin=OBJECT_LITERAL
             CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.DoubleExpression]
               $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A.b.<no name provided>
-              CONSTRUCTOR visibility:private <> () returnType:<root>.A.b.<no name provided> [primary]
+              CONSTRUCTOR visibility:public <> () returnType:<root>.A.b.<no name provided> [primary]
                 BLOCK_BODY
                   DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.DoubleExpression'
                   INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.DoubleExpression]'
@@ -52,7 +52,7 @@ FILE fqName:<root> fileName:/kt43217.kt
                 overridden:
                   public open fun toString (): kotlin.String [fake_override] declared in <root>.DoubleExpression
                 $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-            CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.A.b.<no name provided>' type=<root>.A.b.<no name provided> origin=OBJECT_LITERAL
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A.b.<no name provided>' type=<root>.A.b.<no name provided> origin=OBJECT_LITERAL
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-b> visibility:private modality:FINAL <> ($this:<root>.A) returnType:<root>.A.b.<no name provided>
         correspondingProperty: PROPERTY name:b visibility:private modality:FINAL [val]
         $this: VALUE_PARAMETER name:<this> type:<root>.A

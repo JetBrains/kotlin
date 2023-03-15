@@ -37,7 +37,7 @@ open enum class MyEnum : Enum<MyEnum> {
     val anObject: <no name provided>
       field = { // BLOCK
         local class <no name provided> {
-          private constructor() /* primary */ {
+          constructor() /* primary */ {
             super/*Any*/()
             /* <init>() */
 

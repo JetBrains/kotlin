@@ -633,12 +633,13 @@ class Fir2IrDeclarationStorage(
             runUnless(isLocal || !generateSignatures) {
                 signatureComposer.composeSignature(constructor, forceTopLevelPrivate = forceTopLevelPrivate)
             }
+        val visibility = if (irParent.isAnonymousObject) Visibilities.Public else constructor.visibility
         val created = constructor.convertWithOffsets { startOffset, endOffset ->
             declareIrConstructor(signature) { symbol ->
                 classifierStorage.preCacheTypeParameters(constructor, symbol)
                 irFactory.createConstructor(
                     startOffset, endOffset, origin, symbol,
-                    SpecialNames.INIT, components.visibilityConverter.convertToDescriptorVisibility(constructor.visibility),
+                    SpecialNames.INIT, components.visibilityConverter.convertToDescriptorVisibility(visibility),
                     constructor.returnTypeRef.toIrType(),
                     isInline = false, isExternal = false, isPrimary = isPrimary, isExpect = constructor.isExpect
                 ).apply {

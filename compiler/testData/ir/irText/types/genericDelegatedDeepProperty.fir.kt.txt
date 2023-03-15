@@ -68,7 +68,7 @@ class P<P1 : Any?, P2 : Any?> {
 val <T : Any?> Value<T, CR<T>>.additionalText: P<T, T> /* by */
   field = { // BLOCK
     local class <no name provided> : IDelegate1<Value<T, CR<T>>, P<T, T>> {
-      private constructor() /* primary */ {
+      constructor() /* primary */ {
         super/*Any*/()
         /* <init>() */
 
@@ -85,7 +85,7 @@ val <T : Any?> Value<T, CR<T>>.additionalText: P<T, T> /* by */
       private val Value<T, CR<T>>.deepO: T /* by */
         field = { // BLOCK
           local class <no name provided> : IDelegate1<Value<T, CR<T>>, T> {
-            private constructor() /* primary */ {
+            constructor() /* primary */ {
               super/*Any*/()
               /* <init>() */
 
@@ -114,7 +114,7 @@ val <T : Any?> Value<T, CR<T>>.additionalText: P<T, T> /* by */
       private val Value<T, CR<T>>.deepK: T /* by */
         field = { // BLOCK
           local class <no name provided> : IDelegate1<Value<T, CR<T>>, T> {
-            private constructor() /* primary */ {
+            constructor() /* primary */ {
               super/*Any*/()
               /* <init>() */
 
