@@ -17,4 +17,10 @@ object KotlinToolingDiagnostics {
                     "Read the details here: https://kotlinlang.org/docs/multiplatform-compatibility-guide.html#deprecate-hmpp-properties",
         )
     }
+
+    object DeprecatedKotlinNativeTargetsDiagnostic : ToolingDiagnosticFactory(WARNING) {
+        operator fun invoke(usedTargetIds: List<String>) = build(
+            "The following deprecated Kotlin/Native targets were used in the project: ${usedTargetIds.joinToString()}"
+        )
+    }
 }
