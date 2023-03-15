@@ -23,4 +23,8 @@ object KotlinToolingDiagnostics {
             "The following deprecated Kotlin/Native targets were used in the project: ${usedTargetIds.joinToString()}"
         )
     }
+
+    object CommonMainWithDependsOnDiagnostic : ToolingDiagnosticFactory(WARNING) {
+        operator fun invoke() = build("commonMain can't declare dependsOn on other source sets")
+    }
 }
