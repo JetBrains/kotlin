@@ -35,4 +35,23 @@ object KotlinToolingDiagnostics {
                         .onlyIf(changedKotlinNativeHomeProperty != null)
         )
     }
+
+    object DeprecatedJvmWithJavaPresetDiagnostic : ToolingDiagnosticFactory(WARNING) {
+        operator fun invoke() = build(
+            """
+                The 'jvmWithJava' preset is deprecated and will be removed soon. Please use an ordinary JVM target with Java support: 
+
+                    kotlin { 
+                        jvm { 
+                            withJava() 
+                        } 
+                    }
+            
+                After this change, please move the Java sources to the Kotlin source set directories. 
+                For example, if the JVM target is given the default name 'jvm':
+                 * instead of 'src/main/java', use 'src/jvmMain/java'
+                 * instead of 'src/test/java', use 'src/jvmTest/java'
+            """.trimIndent()
+        )
+    }
 }
