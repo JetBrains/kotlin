@@ -12,6 +12,7 @@ plugins {
 
 dependencies {
     embedded(project(":kotlin-annotation-processing")) { isTransitive = false }
+    embedded(project(":kotlin-annotation-processing-k2")) { isTransitive = false }
 }
 
 publish()

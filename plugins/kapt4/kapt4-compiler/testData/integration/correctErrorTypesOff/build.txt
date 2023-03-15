@@ -1,0 +1,66 @@
+# copy
+../correctErrorTypesOn/ap
+ap
+
+# copy
+../correctErrorTypesOn/Test.kt
+Test.kt
+
+# mkdir
+output/ap
+output/stubs
+output/classes
+output/javaClasses
+output/sources
+
+# kotlinc
+-language-version 2.0
+-cp %KOTLIN_STDLIB%
+-d output/ap
+ap/Processor.kt
+
+# kapt
+-language-version 2.0
+-Xuse-kapt4
+-Kapt-mode=stubsAndApt
+-Kapt-stubs=output/stubs
+-Kapt-classes=output/classes
+-Kapt-sources=output/sources
+-Kapt-classpath=output/ap
+-Kapt-processors=apt.SampleApt
+-d output/classes
+-cp output/ap:%KOTLIN_STDLIB%
+Test.kt
+
+# javac
+-cp output/ap
+-d output/javaClasses
+-proc:none
+output/sources/generated/Property.java
+
+# kotlinc
+-language-version 2.0
+-Xuse-kapt4
+-d output/classes
+-cp output/ap:output/classes:output/javaClasses:%KOTLIN_STDLIB%
+Test.kt
+
+# java
+-cp output/classes:output/javaClasses:output/ap:%KOTLIN_STDLIB%
+test.Test
+
+# after
+Return code: 1
+
+WARNING: An illegal reflective access operation has occurred
+WARNING: Illegal reflective access by org.jetbrains.kotlin.kapt3.util.ModuleManipulationUtilsKt (file:/home/pavel/Projects/kotlin/dist/kotlinc/lib/kotlin-annotation-processing.jar) to constructor com.sun.tools.javac.util.Context()
+WARNING: Please consider reporting this to the maintainers of org.jetbrains.kotlin.kapt3.util.ModuleManipulationUtilsKt
+WARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations
+WARNING: All illegal access operations will be denied in a future release
+error: error: NonExistentClass type occurred
+Test.kt:4:8: error: unresolved reference: generated
+import generated.Property
+       ^
+Test.kt:8:28: error: unresolved reference: Property
+    lateinit var property: Property
+                           ^

@@ -1,0 +1,48 @@
+# copy
+../simple/ap
+ap
+
+# copy
+../simple/Test.kt
+Test.kt
+
+# mkdir
+output/ap
+output/stubs
+output/classes
+output/sources
+
+# kotlinc
+-language-version 2.0
+-cp %KOTLIN_STDLIB%
+-d output/ap
+ap/Processor.kt
+
+# kapt
+-language-version 2.0
+-Xuse-kapt4
+-Kapt-mode=stubsAndApt
+-Kapt-stubs=output/stubs
+-Kapt-classes=output/classes
+-Kapt-sources=output/sources
+-Kapt-classpath=output/ap
+-Kapt-processors=apt.SampleApt
+-Kapt-option:kapt.test.writeKotlinFiles=true
+-d output/classes
+-cp output/ap:%KOTLIN_STDLIB%
+Test.kt
+
+# kotlinc
+-language-version 2.0
+-Xuse-kapt4
+-d output/classes
+-cp output/classes:output/ap:%KOTLIN_STDLIB%
+Test.kt
+output/sources
+
+# java
+-cp output/classes:output/ap:%KOTLIN_STDLIB%
+test.TestKt
+
+# after
+Generated class: generated.Test

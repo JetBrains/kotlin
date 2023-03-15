@@ -74,6 +74,7 @@ val kotlinGradlePluginAndItsRequired = arrayOf(
     ":kotlin-lombok-compiler-plugin.embeddable",
     ":kotlinx-serialization-compiler-plugin.embeddable",
     ":kotlin-annotation-processing-embeddable",
+    ":kotlin-annotation-processing-k2",
     ":kotlin-script-runtime",
     ":kotlin-scripting-common",
     ":kotlin-scripting-jvm",

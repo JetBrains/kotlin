@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.fir.reportToMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.messages.reportError
 import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment.Companion.configureProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.*
@@ -47,6 +48,7 @@ import org.jetbrains.kotlin.fir.backend.Fir2IrConfiguration
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
 import org.jetbrains.kotlin.fir.backend.jvm.JvmFir2IrExtensions
+import org.jetbrains.kotlin.fir.extensions.FirAnalysisHandlerExtension
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
@@ -87,11 +89,14 @@ fun compileModulesUsingFrontendIrAndLightTree(
 
     val outputs = mutableListOf<GenerationState>()
     var mainClassFqName: FqName? = null
-
+    val project = (projectEnvironment as? VfsBasedProjectEnvironment)?.project
     for (module in chunk) {
         val moduleConfiguration = compilerConfiguration.copy().applyModuleProperties(module, buildFile).apply {
             put(JVMConfigurationKeys.FRIEND_PATHS, module.getFriendPaths())
         }
+
+        if (project != null && processAnalysisHandlerExtensions(project, moduleConfiguration, messageCollector)) return true
+
         val groupedSources = collectSources(compilerConfiguration, projectEnvironment, messageCollector)
 
         val compilerInput = ModuleCompilerInput(
@@ -160,6 +165,21 @@ fun compileModulesUsingFrontendIrAndLightTree(
         outputs,
         mainClassFqName
     )
+}
+
+private fun processAnalysisHandlerExtensions(project: Project, configuration: CompilerConfiguration, messageCollector: MessageCollector): Boolean {
+    val extensions = FirAnalysisHandlerExtension.getInstances(project)
+    val extension = when (extensions.size) {
+        0 -> return false
+        1 -> extensions.single()
+        else -> {
+            val extensionNames = extensions.map { it::class.qualifiedName }
+            messageCollector.reportError("It's allowed to register only one FirAnalysisHandlerExtension, but several are registered: $extensionNames")
+            return true
+        }
+    }
+
+    return extension.doAnalysis(configuration)
 }
 
 fun convertAnalyzedFirToIr(

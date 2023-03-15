@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.base.kapt3.KaptFlag
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.idea.references.KtReference
-import org.jetbrains.kotlin.ir.interpreter.toIrConst
 import org.jetbrains.kotlin.kapt3.base.javac.kaptError
 import org.jetbrains.kotlin.kapt3.base.javac.reportKaptError
 import org.jetbrains.kotlin.kapt3.base.stubs.KaptStubLineInformation
@@ -512,9 +511,9 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
     }
 
     class KaptStub(val file: JCCompilationUnit, private val kaptMetadata: ByteArray? = null) {
-        fun writeMetadataIfNeeded(forSource: File) {
+        fun writeMetadataIfNeeded(forSource: File): File? {
             if (kaptMetadata == null) {
-                return
+                return null
             }
 
             val metadataFile = File(
@@ -523,6 +522,7 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
             )
 
             metadataFile.writeBytes(kaptMetadata)
+            return metadataFile
         }
     }
 
@@ -1111,3 +1111,6 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
     }
 }
 
+private const val LONG_DEPRECATED = Opcodes.ACC_DEPRECATED.toLong()
+private fun isDeprecated(access: Long) = (access and LONG_DEPRECATED) != 0L
+internal fun isEnum(access: Int) = (access and Opcodes.ACC_ENUM) != 0

@@ -8,27 +8,16 @@
 package org.jetbrains.kotlin.cli.jvm.compiler
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
-import org.jetbrains.kotlin.analysis.api.lifetime.KtAlwaysAccessibleLifetimeTokenFactory
-import org.jetbrains.kotlin.analysis.api.session.KtAnalysisSessionProvider
-import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
-import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
-import org.jetbrains.kotlin.asJava.classes.KtLightClass
-import org.jetbrains.kotlin.asJava.findFacadeClass
-import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensions
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.backend.jvm.JvmIrDeserializerImpl
 import org.jetbrains.kotlin.cli.common.*
-import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoots
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.reportError
-import org.jetbrains.kotlin.cli.jvm.config.addJavaSourceRoots
-import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.CodegenFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -43,6 +32,7 @@ import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.jvm.*
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.extensions.FirAnalysisHandlerExtension
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.session.*
@@ -59,7 +49,6 @@ import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
-import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.multiplatform.hmppModuleName
 import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
@@ -121,14 +110,7 @@ object FirKotlinToJvmBytecodeCompiler {
                 extensionRegistrars = project?.let { FirExtensionRegistrar.getInstances(it) } ?: emptyList(),
                 irGenerationExtensions = project?.let { IrGenerationExtension.getInstances(it) } ?: emptyList()
             )
-
-            if (project != null) {
-                val analysisResult = context.processAnalysisHandlerExtensions(project)
-                if (analysisResult != null) {
-                    return analysisResult.success
-                }
-            }
-
+            if (project != null && context.processAnalysisHandlerExtensions(project)) return true
             val generationState = context.compileModule() ?: return false
             outputs += generationState
         }
@@ -317,46 +299,21 @@ object FirKotlinToJvmBytecodeCompiler {
         val irGenerationExtensions: Collection<IrGenerationExtension>
     )
 
-    private fun CompilationContext.processAnalysisHandlerExtensions(project: Project): K2AnalysisResult? {
+    private fun CompilationContext.processAnalysisHandlerExtensions(project: Project): Boolean {
         val extensions = FirAnalysisHandlerExtension.getInstances(project)
         val extension = when (extensions.size) {
-            0 -> return null
+            0 -> return false
             1 -> extensions.single()
             else -> {
                 val extensionNames = extensions.map { it::class.qualifiedName }
                 messageCollector.reportError("It's allowed to register only one FirAnalysisHandlerExtension, but several are registered: $extensionNames")
-                return null
+                return true
             }
         }
-
-        val configuration = moduleConfiguration
-
-        while (true) {
-            val result = try {
-                processAnalysisHandlerExtensionOnce(project, configuration, extension)
-            } catch (e: Exception) {
-                K2AnalysisResult.InternalError(e)
-            }
-            when (result) {
-                is K2AnalysisResult.RetryWithAdditionalRoots -> {
-                    configuration.update {
-                        addJavaSourceRoots(result.additionalJavaRoots)
-                        addJvmClasspathRoots(result.additionalClassPathRoots)
-                        addKotlinSourceRoots(result.additionalKotlinRoots.map { it.absolutePath })
-                    }
-
-                    val lookupTracker = configuration[CommonConfigurationKeys.LOOKUP_TRACKER]
-                    lookupTracker?.clear()
-
-                    // Clear all diagnostic messages
-                    configuration[CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY]?.clear()
-                }
-                else -> return result
-            }
-        }
+        return extension.doAnalysis(moduleConfiguration)
     }
 
-    private inline fun CompilerConfiguration.update(block: CompilerConfiguration.() -> Unit) {
+    inline fun CompilerConfiguration.update(block: CompilerConfiguration.() -> Unit) {
         val oldReadOnlyValue = isReadOnly
         isReadOnly = false
         try {
@@ -364,35 +321,6 @@ object FirKotlinToJvmBytecodeCompiler {
         } finally {
             isReadOnly = oldReadOnlyValue
         }
-    }
-
-    @OptIn(KtAnalysisApiInternals::class)
-    private fun processAnalysisHandlerExtensionOnce(
-        project: Project,
-        configuration: CompilerConfiguration,
-        extension: FirAnalysisHandlerExtension
-    ): K2AnalysisResult {
-        val module: KtSourceModule
-
-        val analysisSession = buildStandaloneAnalysisAPISession(projectDisposable = project) {
-            buildKtModuleProviderByCompilerConfiguration(configuration) {
-                module = it
-            }
-        }
-        val ktAnalysisSession = KtAnalysisSessionProvider.getInstance(analysisSession.project)
-            .getAnalysisSessionByUseSiteKtModule(module, KtAlwaysAccessibleLifetimeTokenFactory)
-        val ktFiles = module.ktFiles
-
-        val lightClasses = mutableListOf<Pair<KtLightClass, KtFile>>().apply {
-            ktFiles.flatMapTo(this) { file ->
-                file.children.filterIsInstance<KtClassOrObject>().mapNotNull {
-                    it.toLightClass()?.let { it to file }
-                }
-            }
-            ktFiles.mapNotNullTo(this) { ktFile -> ktFile.findFacadeClass()?.let { it to ktFile } }
-        }.toMap()
-
-        return extension.doAnalysis(ktAnalysisSession, lightClasses)
     }
 }
 

@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 description = "Annotation Processor for Kotlin K2"
 
 plugins {
@@ -13,11 +15,17 @@ dependencies {
     api(project(":compiler:frontend.java"))
     api(project(":compiler:plugin-api"))
 
-    api(project(":analysis:analysis-api-standalone"))
-    api(project(":analysis:symbol-light-classes"))
+    embedded(project(":analysis:analysis-api-standalone")) {
+        exclude("org.jetbrains.kotlin", "kotlin-stdlib")
+        exclude("org.jetbrains.kotlin", "kotlin-stdlib-common")
+    }
 
-    compileOnly(project(":kotlin-annotation-processing-base"))
-    compileOnly(project(":kotlin-annotation-processing-runtime"))
+    compileOnly(project(":kotlin-annotation-processing"))
+    embedded(project(":kotlin-annotation-processing")) { isTransitive = false }
+
+    embedded(project(":kotlin-annotation-processing-base")) { isTransitive = false }
+    testImplementation(project(":kotlin-annotation-processing-cli"))
+    embedded(project(":kotlin-annotation-processing-runtime")){ isTransitive = false }
     implementation(project(":compiler:backend.jvm.entrypoint"))
 
     compileOnly(toolsJarApi())
@@ -32,11 +40,14 @@ dependencies {
     testApi(projectTests(":compiler:test-infrastructure"))
     testApi(projectTests(":compiler:test-infrastructure-utils"))
     testApi(projectTests(":kotlin-annotation-processing"))
+    testApi(projectTests(":kotlin-annotation-processing-cli"))
 
     testApi(projectTests(":kotlin-annotation-processing-base"))
 
     testCompileOnly(toolsJarApi())
     testRuntimeOnly(toolsJar())
+    testRuntimeOnly(commonDependency("org.codehaus.woodstox:stax2-api"))
+    testRuntimeOnly(commonDependency("com.fasterxml:aalto-xml"))
 }
 
 optInToExperimentalCompilerApi()
@@ -72,3 +83,12 @@ publish()
 runtimeJar()
 sourcesJar()
 javadocJar()
+
+
+allprojects {
+    tasks.withType(KotlinCompile::class).all {
+        kotlinOptions {
+            freeCompilerArgs += "-Xcontext-receivers"
+        }
+    }
+}

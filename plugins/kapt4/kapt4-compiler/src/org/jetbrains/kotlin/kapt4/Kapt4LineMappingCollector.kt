@@ -108,5 +108,5 @@ class Kapt4LineMappingCollector {
     }
 
     private val PsiClass.qualifiedNameWithSlashes: String
-        get() = qualifiedNameWithDollars?.replace(".", "/") ?: NO_NAME_PROVIDED
+        get() = qualifiedNameWithDollars?.replace(".", "/") ?: "<no name provided>"
 }
