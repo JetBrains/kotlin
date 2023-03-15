@@ -12,7 +12,10 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.SingleRootFileViewProvider
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.toPhaseMap
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
+import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
+import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.cli.js.klib.generateIrForKlibSerialization
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -120,6 +123,7 @@ abstract class AbstractInvalidationTest(
         copy.put(JSConfigurationKeys.MODULE_KIND, JS_MODULE_KIND)
         copy.put(JSConfigurationKeys.PROPERTY_LAZY_INITIALIZATION, true)
         copy.put(JSConfigurationKeys.SOURCE_MAP, true)
+        copy.put(JSConfigurationKeys.PARTIAL_LINKAGE, true)
 
         copy.languageVersionSettings = with(LanguageVersionSettingsBuilder()) {
             language.forEach {

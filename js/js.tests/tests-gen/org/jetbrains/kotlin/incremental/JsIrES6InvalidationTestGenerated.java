@@ -300,6 +300,11 @@ public class JsIrES6InvalidationTestGenerated extends AbstractJsIrES6Invalidatio
         runTest("js/js.translator/testData/incremental/invalidation/nonInlineBecomeInline/");
     }
 
+    @TestMetadata("partialLinkage")
+    public void testPartialLinkage() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/partialLinkage/");
+    }
+
     @TestMetadata("privateDeclarationLeakThroughDefaultParam")
     public void testPrivateDeclarationLeakThroughDefaultParam() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/privateDeclarationLeakThroughDefaultParam/");
