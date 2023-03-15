@@ -17,7 +17,7 @@ import org.junit.Test
 import java.io.File
 
 
-class DepsVerificationMetadataTest {
+class DependenciesVerificationMetadataTest {
     @JacksonXmlRootElement(localName = "verification-metadata")
     private data class VerificationMetadata(
         @field:JacksonXmlElementWrapper(localName = "components")

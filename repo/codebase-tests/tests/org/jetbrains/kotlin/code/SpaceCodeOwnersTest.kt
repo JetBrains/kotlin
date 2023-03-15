@@ -120,7 +120,7 @@ class SpaceCodeOwnersTest : TestCase() {
             // (line = 5, pattern = /some/),
             // (line = 1, pattern = *)
             // With input of parent = (line = 5, pattern = /some/) and path = /some/other
-            // we only search till our parent pattern line, as other rules has lower specifity
+            // we only search till our parent pattern line, as other rules are less specific
             for (use in this) {
                 if (parentMatchLine != null && use.item.line < parentMatchLine) break
                 if (use.rule.isMatch(path, isDirectory)) {

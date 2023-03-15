@@ -17,7 +17,8 @@ class CodeConformanceTest : TestCase() {
     companion object {
         private val JAVA_FILE_PATTERN = Pattern.compile(".+\\.java")
         private val SOURCES_FILE_PATTERN = Pattern.compile(".+\\.(java|kt|js)")
-        private const val MAX_STEPS_COUNT = 100
+
+        @Suppress("SpellCheckingInspection")
         private val nonSourcesMatcher = FileMatcher(
             File("."),
             listOf(
@@ -74,6 +75,7 @@ class CodeConformanceTest : TestCase() {
             )
         )
 
+        @Suppress("SpellCheckingInspection")
         private val COPYRIGHT_EXCLUDED_FILES_AND_DIRS_MATCHER = FileMatcher(
             File("."),
             listOf(
@@ -162,7 +164,7 @@ class CodeConformanceTest : TestCase() {
 
         val atAuthorPattern = Pattern.compile("/\\*.+@author.+\\*/", Pattern.DOTALL)
 
-        val tests = listOf(
+        @Suppress("SpellCheckingInspection") val tests = listOf(
             FileTestCase(
                 "%d source files contain @author javadoc tag.\nPlease remove them or exclude in this test:\n%s"
             ) { _, source ->
@@ -394,7 +396,7 @@ class CodeConformanceTest : TestCase() {
             )
         )
 
-        data class RepoOccurance(val repo: String, val file: File)
+        data class RepoOccurrence(val repo: String, val file: File)
         data class RepoOccurrences(val repo: String, val files: Collection<File>)
 
         val extensionsPattern = Pattern.compile(".+\\.(java|kt|gradle|kts|xml)(\\.\\w+)?")
@@ -405,12 +407,12 @@ class CodeConformanceTest : TestCase() {
                 }
 
                 if (checkers.isNotEmpty()) {
-                    val occurrences = ArrayList<RepoOccurance>()
+                    val occurrences = ArrayList<RepoOccurrence>()
                     file.useLines { lines ->
                         for (line in lines) {
                             for (checker in checkers) {
                                 if (line.contains(checker.repo) && (checker.exclude == null || !line.contains(checker.exclude))) {
-                                    occurrences.add(RepoOccurance(checker.repo, file))
+                                    occurrences.add(RepoOccurrence(checker.repo, file))
                                 }
                             }
                         }
