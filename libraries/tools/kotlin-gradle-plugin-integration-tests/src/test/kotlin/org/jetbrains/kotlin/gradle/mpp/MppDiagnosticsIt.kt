@@ -16,6 +16,16 @@ import kotlin.test.assertTrue
 @MppGradlePluginTests
 class MppDiagnosticsIt : KGPBaseTest() {
     @GradleTest
+    fun testDiagnosticsRenderingSmoke(gradleVersion: GradleVersion) {
+        project("diagnosticsRenderingSmoke", gradleVersion) {
+            val expectedOutputFile = projectName.testProjectPath.resolve("expectedOutput.txt").toFile()
+            build {
+                assertEqualsToFile(expectedOutputFile, extractProjectsAndTheirVerboseDiagnostics())
+            }
+        }
+    }
+
+    @GradleTest
     fun testDeprecatedProperties(gradleVersion: GradleVersion) {
         project("mppDeprecatedProperties", gradleVersion) {
             checkDeprecatedProperties(isDeprecationExpected = false)
@@ -35,19 +45,6 @@ class MppDiagnosticsIt : KGPBaseTest() {
 
             this.gradleProperties.appendText("kotlin.mpp.deprecatedProperties.nowarn=true${System.lineSeparator()}")
             checkDeprecatedProperties(isDeprecationExpected = false)
-        }
-    }
-
-    @GradleTest
-    fun testCommonMainMustNotDependOnOtherSourceSets(gradleVersion: GradleVersion) {
-        project("commonMainDependsOnAnotherSourceSet", gradleVersion) {
-            build("tasks") {
-                assertOutputContains("w: 'commonMain' source set can't depend on other source sets.")
-            }
-
-            build("tasks", buildOptions = defaultBuildOptions.copy(freeArgs = listOf("-PcommonSourceSetDependsOnNothing"))) {
-                assertOutputDoesNotContain("w: 'commonMain' source set can't depend on other source sets.")
-            }
         }
     }
 
