@@ -4945,7 +4945,7 @@ if (PlatformInfo.isAppleTarget(project)) {
     }
 
     interopTest("interop_objc_smoke_noopgc") {
-        enabled = isNoopGC
+        enabled = isNoopGC && !isK2(project) // KT-56030
         source = "interop/objc/smoke_noopgc.kt"
         interop = 'objcSmoke'
         doBeforeBuild {
@@ -6126,6 +6126,7 @@ tasks.register("llvm_variant_dev", KonanDriverTest) {
     // so it is hard to reliably detect LLVM variant for these targets.
     disabled = isAppleTarget(project)
         || isAggressiveGC // No need to test with different GC schedulers
+        || isK2(project) // KT-56855
     flags = [
             "-Xllvm-variant=dev",
             "-Xverbose-phases=ObjectFiles"
