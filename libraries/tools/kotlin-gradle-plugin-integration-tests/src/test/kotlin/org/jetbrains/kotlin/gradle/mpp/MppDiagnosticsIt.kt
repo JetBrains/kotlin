@@ -6,12 +6,12 @@
 package org.jetbrains.kotlin.gradle.mpp
 
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
+import org.jetbrains.kotlin.test.TestMetadata
 import kotlin.io.path.appendText
 import kotlin.io.path.writeText
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 
 @MppGradlePluginTests
 class MppDiagnosticsIt : KGPBaseTest() {
@@ -49,6 +49,7 @@ class MppDiagnosticsIt : KGPBaseTest() {
     }
 
     @GradleTest
+    @TestMetadata("new-mpp-lib-and-app/sample-lib-gradle-kotlin-dsl")
     fun testReportTargetsOfTheSamplePlatformAndWithTheSameAttributes(gradleVersion: GradleVersion) {
         project("new-mpp-lib-and-app/sample-lib-gradle-kotlin-dsl", gradleVersion) {
             // A hack to make project compatible with GradleTestKit infrastructure
@@ -89,15 +90,10 @@ class MppDiagnosticsIt : KGPBaseTest() {
 
     private fun TestProject.checkDeprecatedProperties(isDeprecationExpected: Boolean) {
         build {
-            val assert: (Boolean, String) -> Unit = if (isDeprecationExpected) ::assertTrue else ::assertFalse
-            val warnings = output.lines().filter { it.startsWith("w:") }.toSet()
-
-            defaultFlags.keys.forEach { flag ->
-                assert(
-                    warnings.any { warning -> Regex(".*$flag.*is obsolete.*").matches(warning) },
-                    "A deprecation warning for the '$flag' should have been reported",
-                )
-            }
+            if (isDeprecationExpected)
+                output.assertHasDiagnostic(KotlinToolingDiagnostics.HierarchicalMultiplatformFlagsWarning)
+            else
+                output.assertNoDiagnostic(KotlinToolingDiagnostics.HierarchicalMultiplatformFlagsWarning)
         }
     }
 
