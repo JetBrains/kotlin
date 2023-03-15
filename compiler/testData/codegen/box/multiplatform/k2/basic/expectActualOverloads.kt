@@ -1,5 +1,6 @@
-// TARGET_BACKEND: JVM_IR
+// IGNORE_BACKEND_K1: JS, JS_IR, JS_IR_ES6
 // !LANGUAGE: +MultiPlatformProjects
+
 // MODULE: common
 // TARGET_PLATFORM: Common
 // FILE: commonMain.kt
@@ -12,9 +13,8 @@ expect fun foo(i: Int): Int
 
 fun test(s: S) = foo(s)
 
-// MODULE: main()()(common)
-// TARGET_PLATFORM: JVM
-// FILE: main.kt
+// MODULE: platform()()(common)
+// FILE: platform.kt
 
 actual fun foo(i: Int) = i
 

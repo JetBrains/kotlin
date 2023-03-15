@@ -26545,14 +26545,104 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
                 @FirPipeline()
                 public class Basic {
                     @Test
+                    @TestMetadata("accessToLocalClassFromBackend.kt")
+                    public void testAccessToLocalClassFromBackend() throws Exception {
+                        runTest("compiler/testData/codegen/box/multiplatform/k2/basic/accessToLocalClassFromBackend.kt");
+                    }
+
+                    @Test
                     public void testAllFilesPresentInBasic() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/basic"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+                    }
+
+                    @Test
+                    @TestMetadata("correctParentForTypeParameter.kt")
+                    public void testCorrectParentForTypeParameter() throws Exception {
+                        runTest("compiler/testData/codegen/box/multiplatform/k2/basic/correctParentForTypeParameter.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("enumEntryNameCall.kt")
+                    public void testEnumEntryNameCall() throws Exception {
+                        runTest("compiler/testData/codegen/box/multiplatform/k2/basic/enumEntryNameCall.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("expectActualCallableReference.kt")
+                    public void testExpectActualCallableReference() throws Exception {
+                        runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectActualCallableReference.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("expectActualDifferentExtensionReceiversOnOverloads.kt")
+                    public void testExpectActualDifferentExtensionReceiversOnOverloads() throws Exception {
+                        runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectActualDifferentExtensionReceiversOnOverloads.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("expectActualDifferentPackages.kt")
+                    public void testExpectActualDifferentPackages() throws Exception {
+                        runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectActualDifferentPackages.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("expectActualFakeOverrides.kt")
+                    public void testExpectActualFakeOverrides() throws Exception {
+                        runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectActualFakeOverrides.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("expectActualMultiCommon.kt")
+                    public void testExpectActualMultiCommon() throws Exception {
+                        runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectActualMultiCommon.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("expectActualOverloads.kt")
+                    public void testExpectActualOverloads() throws Exception {
+                        runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectActualOverloads.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("expectActualSimple.kt")
+                    public void testExpectActualSimple() throws Exception {
+                        runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectActualSimple.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("expectActualTypealias.kt")
+                    public void testExpectActualTypealias() throws Exception {
+                        runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectActualTypealias.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("expectInterfaceInSupertypes.kt")
+                    public void testExpectInterfaceInSupertypes() throws Exception {
+                        runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectInterfaceInSupertypes.kt");
                     }
 
                     @Test
                     @TestMetadata("expectProperty.kt")
                     public void testExpectProperty() throws Exception {
                         runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectProperty.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("fakeOverridesInPlatformModule.kt")
+                    public void testFakeOverridesInPlatformModule() throws Exception {
+                        runTest("compiler/testData/codegen/box/multiplatform/k2/basic/fakeOverridesInPlatformModule.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("independentCommonSourceModules.kt")
+                    public void testIndependentCommonSourceModules() throws Exception {
+                        runTest("compiler/testData/codegen/box/multiplatform/k2/basic/independentCommonSourceModules.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("kt-56329.kt")
+                    public void testKt_56329() throws Exception {
+                        runTest("compiler/testData/codegen/box/multiplatform/k2/basic/kt-56329.kt");
                     }
 
                     @Test

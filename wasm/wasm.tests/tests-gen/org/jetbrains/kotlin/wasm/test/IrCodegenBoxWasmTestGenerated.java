@@ -20691,13 +20691,88 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
                     KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
                 }
 
+                @TestMetadata("accessToLocalClassFromBackend.kt")
+                public void testAccessToLocalClassFromBackend() throws Exception {
+                    runTest("compiler/testData/codegen/box/multiplatform/k2/basic/accessToLocalClassFromBackend.kt");
+                }
+
                 public void testAllFilesPresentInBasic() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/basic"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                }
+
+                @TestMetadata("correctParentForTypeParameter.kt")
+                public void testCorrectParentForTypeParameter() throws Exception {
+                    runTest("compiler/testData/codegen/box/multiplatform/k2/basic/correctParentForTypeParameter.kt");
+                }
+
+                @TestMetadata("enumEntryNameCall.kt")
+                public void testEnumEntryNameCall() throws Exception {
+                    runTest("compiler/testData/codegen/box/multiplatform/k2/basic/enumEntryNameCall.kt");
+                }
+
+                @TestMetadata("expectActualCallableReference.kt")
+                public void testExpectActualCallableReference() throws Exception {
+                    runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectActualCallableReference.kt");
+                }
+
+                @TestMetadata("expectActualDifferentExtensionReceiversOnOverloads.kt")
+                public void testExpectActualDifferentExtensionReceiversOnOverloads() throws Exception {
+                    runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectActualDifferentExtensionReceiversOnOverloads.kt");
+                }
+
+                @TestMetadata("expectActualDifferentPackages.kt")
+                public void testExpectActualDifferentPackages() throws Exception {
+                    runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectActualDifferentPackages.kt");
+                }
+
+                @TestMetadata("expectActualFakeOverrides.kt")
+                public void testExpectActualFakeOverrides() throws Exception {
+                    runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectActualFakeOverrides.kt");
+                }
+
+                @TestMetadata("expectActualMultiCommon.kt")
+                public void testExpectActualMultiCommon() throws Exception {
+                    runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectActualMultiCommon.kt");
+                }
+
+                @TestMetadata("expectActualOverloads.kt")
+                public void testExpectActualOverloads() throws Exception {
+                    runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectActualOverloads.kt");
+                }
+
+                @TestMetadata("expectActualSimple.kt")
+                public void testExpectActualSimple() throws Exception {
+                    runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectActualSimple.kt");
+                }
+
+                @TestMetadata("expectActualTypealias.kt")
+                public void testExpectActualTypealias() throws Exception {
+                    runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectActualTypealias.kt");
+                }
+
+                @TestMetadata("expectInterfaceInSupertypes.kt")
+                public void testExpectInterfaceInSupertypes() throws Exception {
+                    runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectInterfaceInSupertypes.kt");
                 }
 
                 @TestMetadata("expectProperty.kt")
                 public void testExpectProperty() throws Exception {
                     runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectProperty.kt");
+                }
+
+                @TestMetadata("fakeOverridesInPlatformModule.kt")
+                public void testFakeOverridesInPlatformModule() throws Exception {
+                    runTest("compiler/testData/codegen/box/multiplatform/k2/basic/fakeOverridesInPlatformModule.kt");
+                }
+
+                @TestMetadata("independentCommonSourceModules.kt")
+                public void testIndependentCommonSourceModules() throws Exception {
+                    runTest("compiler/testData/codegen/box/multiplatform/k2/basic/independentCommonSourceModules.kt");
+                }
+
+                @TestMetadata("kt-56329.kt")
+                public void testKt_56329() throws Exception {
+                    runTest("compiler/testData/codegen/box/multiplatform/k2/basic/kt-56329.kt");
                 }
 
                 @TestMetadata("removeExpectDeclarationsFromMetadata.kt")
