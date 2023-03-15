@@ -5,13 +5,10 @@
 
 package org.jetbrains.kotlin.api
 
-import java.util.*
+data class Callbacks(
+    val messageLogger: MessageLogger?,
+)
 
-interface IncrementalCompilerFacade {
-    fun compile(
-        launchOptions: LaunchOptions,
-        arguments: List<String>,
-        options: CompilationOptions,
-        callbacks: Callbacks,
-    )
+interface MessageLogger {
+
 }

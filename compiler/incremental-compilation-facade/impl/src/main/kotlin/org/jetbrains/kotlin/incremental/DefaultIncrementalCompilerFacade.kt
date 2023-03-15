@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.incremental
 
+import createCompilerRunner
 import org.jetbrains.kotlin.api.*
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.report.DoNothingBuildReporter
@@ -42,11 +43,26 @@ object DumbMessageCollector : MessageCollector {
     }
 }
 
+class MessageReporter(private val messageLogger: MessageLogger) : MessageCollector {
+    override fun clear() {
+        TODO("Not yet implemented")
+    }
+
+    override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageSourceLocation?) {
+        TODO("Not yet implemented")
+    }
+
+    override fun hasErrors(): Boolean {
+        TODO("Not yet implemented")
+    }
+
+}
+
 class DefaultIncrementalCompilerFacade : IncrementalCompilerFacade {
     private fun compileWithDaemon(
         launchOptions: LaunchOptions.Daemon,
         arguments: List<String>,
-        options: org.jetbrains.kotlin.api.CompilationOptions
+        options: org.jetbrains.kotlin.api.CompilationOptions,
     ) {
         println("Compiling with daemon")
         val compilerId = CompilerId.makeCompilerId(launchOptions.classpath)
@@ -105,11 +121,18 @@ class DefaultIncrementalCompilerFacade : IncrementalCompilerFacade {
                 kotlinScriptExtensions = options.kotlinScriptExtensions,
             )
         }
-        daemon.compile(sessionId, arguments.toTypedArray(), daemonCompileOptions, BasicCompilerServicesWithResultsFacadeServer(messageCollector), DaemonCompilationResults())
+        daemon.compile(
+            sessionId,
+            arguments.toTypedArray(),
+            daemonCompileOptions,
+            BasicCompilerServicesWithResultsFacadeServer(messageCollector),
+            DaemonCompilationResults()
+        )
     }
 
     private fun compileInProcess(arguments: List<String>, options: org.jetbrains.kotlin.api.CompilationOptions) {
         println("Compiling in-process")
+//        createCompilerRunner().compile()
         val compiler = K2JVMCompiler()
         val k2PlatformArgs = compiler.createArguments()
         parseCommandLineArguments(arguments, k2PlatformArgs)
@@ -193,7 +216,12 @@ class DefaultIncrementalCompilerFacade : IncrementalCompilerFacade {
         }
     }
 
-    override fun compile(launchOptions: LaunchOptions, arguments: List<String>, options: org.jetbrains.kotlin.api.CompilationOptions) {
+    override fun compile(
+        launchOptions: LaunchOptions,
+        arguments: List<String>,
+        options: org.jetbrains.kotlin.api.CompilationOptions,
+        callbacks: Callbacks,
+    ) {
         when (launchOptions) {
             is LaunchOptions.Daemon -> compileWithDaemon(launchOptions, arguments, options)
             is LaunchOptions.InProcess -> compileInProcess(arguments, options)

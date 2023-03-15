@@ -6,9 +6,9 @@ plugins {
 configureKotlinCompileTasksGradleCompatibility()
 
 dependencies {
-    api(project(":compiler:incremental-compilation-api"))
     implementation(kotlinStdlib())
-    compileOnly(project(":kotlin-build-common")) // not sure
+    implementation(project(":incremental-compilation-facade-api"))
+    compileOnly(project(":compiler:incremental-compilation-impl"))
 }
 
 publish()

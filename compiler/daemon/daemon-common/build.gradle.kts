@@ -9,6 +9,7 @@ plugins {
 dependencies {
     api(project(":compiler:cli-common"))
     api(project(":kotlin-build-common"))
+    api(project(":compiler:incremental-compilation-api"))
     api(kotlinStdlib())
 }
 

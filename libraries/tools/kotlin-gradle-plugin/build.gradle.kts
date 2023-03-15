@@ -33,6 +33,7 @@ dependencies {
     commonApi(project(":kotlin-gradle-plugin-api"))
     commonApi(project(":kotlin-gradle-plugin-model"))
     commonApi(project(":kotlin-tooling-core"))
+    commonApi(project(":compiler:incremental-compilation-api"))
 
     commonCompileOnly(project(":compiler"))
     commonCompileOnly(project(":compiler:incremental-compilation-impl"))

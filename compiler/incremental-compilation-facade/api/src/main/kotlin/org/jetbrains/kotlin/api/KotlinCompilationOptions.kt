@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.api
 
 import java.io.File
-import java.io.Serializable
 import java.util.*
 
 // mostly copied from /compiler/daemon/daemon-common/src/org/jetbrains/kotlin/daemon/common/CompilationOptions.kt

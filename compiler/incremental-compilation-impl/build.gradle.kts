@@ -20,6 +20,7 @@ dependencies {
     api(project(":compiler:backend.jvm.entrypoint"))
     api(project(":kotlin-build-common"))
     api(project(":daemon-common"))
+    api(project(":compiler:incremental-compilation-api"))
     compileOnly(intellijCore())
 
     testApi(commonDependency("junit:junit"))

@@ -143,6 +143,7 @@ val commonCompilerModules = arrayOf(
     ":analysis:project-structure",
     ":analysis:kt-references",
     ":kotlin-build-common",
+    ":compiler:incremental-compilation-api",
 ).also { extra["commonCompilerModules"] = it }
 
 val firCompilerCoreModules = arrayOf(

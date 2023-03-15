@@ -144,7 +144,7 @@ internal class GradleIncrementalCompilationFacadeRunner(
                 val classloader = URLClassLoader(classpath.toList().map { it.toURI().toURL() }.toTypedArray(), parentClassloader)
                 val facade = ServiceLoader.load(IncrementalCompilerFacade::class.java, classloader).singleOrNull()
                     ?: error("Compiler classpath should contain one and only one implementation of ${IncrementalCompilerFacade::class.java.name}")
-                facade.compile(prepareLaunchOptions(), workArguments.compilerArgs.toList(), prepareKotlinCompilerOptions())
+                facade.compile(prepareLaunchOptions(), workArguments.compilerArgs.toList(), prepareKotlinCompilerOptions(), Callbacks(null))
             } catch (e: FailedCompilationException) {
                 // Restore outputs only in cases where we expect that the user will make some changes to their project:
                 //   - For a compilation error, the user will need to fix their source code
