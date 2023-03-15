@@ -14,8 +14,8 @@ import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformAndroidPlugin
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformJvmPlugin
+import org.jetbrains.kotlin.gradle.plugin.KotlinAndroidPluginWrapper
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_COMPATIBILITY_METADATA_VARIANT
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_INTRANSITIVE_METADATA_CONFIGURATION
@@ -51,11 +51,11 @@ fun buildProjectWithJvm(projectBuilder: ProjectBuilder.() -> Unit = {}, code: Pr
 }
 
 fun Project.applyKotlinJvmPlugin() {
-    project.plugins.apply(KotlinPlatformJvmPlugin::class.java)
+    project.plugins.apply(KotlinPluginWrapper::class.java)
 }
 
 fun Project.applyKotlinAndroidPlugin() {
-    project.plugins.apply(KotlinPlatformAndroidPlugin::class.java)
+    project.plugins.apply(KotlinAndroidPluginWrapper::class.java)
 }
 
 fun Project.kotlin(code: KotlinMultiplatformExtension.() -> Unit) {
