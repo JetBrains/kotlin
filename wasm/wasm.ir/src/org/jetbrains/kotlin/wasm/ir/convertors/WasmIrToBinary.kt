@@ -85,9 +85,11 @@ class WasmIrToBinary(
             }
 
             // tag section
-            appendSection(13u) {
-                appendVectorSize(tags.size)
-                tags.forEach { appendTag(it) }
+            if (tags.isNotEmpty()) {
+                appendSection(13u) {
+                    appendVectorSize(tags.size)
+                    tags.forEach { appendTag(it) }
+                }
             }
 
             appendSection(6u) {

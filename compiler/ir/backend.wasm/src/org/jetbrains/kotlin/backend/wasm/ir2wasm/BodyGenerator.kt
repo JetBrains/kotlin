@@ -144,11 +144,21 @@ class BodyGenerator(
 
     override fun visitThrow(expression: IrThrow) {
         generateExpression(expression.value)
+        if (context.backendContext.useTrapsInsteadOfExceptions) {
+            body.buildUnreachableAfterNothingType()
+            return
+        }
+
         body.buildThrow(functionContext.tagIdx, expression.getSourceLocation())
     }
 
     override fun visitTry(aTry: IrTry) {
         assert(aTry.isCanonical(irBuiltIns)) { "expected canonical try/catch" }
+
+        if (context.backendContext.useTrapsInsteadOfExceptions) {
+            generateExpression(aTry.tryResult)
+            return
+        }
 
         val resultType = context.transformBlockResultType(aTry.type)
         body.buildTry(null, resultType)

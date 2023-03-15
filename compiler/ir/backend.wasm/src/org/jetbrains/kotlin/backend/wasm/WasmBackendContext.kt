@@ -39,6 +39,7 @@ class WasmBackendContext(
     val irModuleFragment: IrModuleFragment,
     propertyLazyInitialization: Boolean,
     override val configuration: CompilerConfiguration,
+    val useTrapsInsteadOfExceptions: Boolean = true,
 ) : JsCommonBackendContext {
     override val builtIns = module.builtIns
     override val typeSystem: IrTypeSystemContext = IrTypeSystemContextImpl(irBuiltIns)

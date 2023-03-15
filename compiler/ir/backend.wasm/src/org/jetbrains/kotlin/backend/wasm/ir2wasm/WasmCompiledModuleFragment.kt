@@ -225,7 +225,7 @@ class WasmCompiledModuleFragment(val irBuiltIns: IrBuiltIns) {
             elements = emptyList(),
             data = data,
             dataCount = true,
-            tags = listOf(tag)
+//            tags = listOf(tag)
         )
         module.calculateIds()
         return module

@@ -40,6 +40,11 @@ public class IrCodegenWasmJsInteropWasmTestGenerated extends AbstractIrCodegenWa
         runTest("compiler/testData/codegen/boxWasmJsInterop/defaultValues.kt");
     }
 
+    @TestMetadata("exampleForWasmEdge.kt")
+    public void testExampleForWasmEdge() throws Exception {
+        runTest("compiler/testData/codegen/boxWasmJsInterop/exampleForWasmEdge.kt");
+    }
+
     @TestMetadata("externalTypeOperators.kt")
     public void testExternalTypeOperators() throws Exception {
         runTest("compiler/testData/codegen/boxWasmJsInterop/externalTypeOperators.kt");
