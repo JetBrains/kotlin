@@ -1,12 +1,27 @@
 // TARGET_BACKEND: NATIVE
-// KT-55904
-// IGNORE_BACKEND_K2: NATIVE
 
 @file:Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
 @file:OptIn(kotlin.ExperimentalStdlibApi::class)
 
 import kotlin.native.concurrent.*
 import kotlin.concurrent.*
+import kotlin.native.internal.*
+import kotlin.reflect.KMutableProperty0
+
+
+// Overload resolution is not working in K2 with Supress INVISIBLE_REFERENCE.
+// But resolving constants and annotations work
+// So we are creating local copies of this intrinsic for test
+
+@TypedIntrinsic(IntrinsicType.GET_AND_ADD_FIELD)
+internal external fun KMutableProperty0<Short>.getAndAddFieldLocal(delta: Short): Short
+@TypedIntrinsic(IntrinsicType.GET_AND_ADD_FIELD)
+internal external fun KMutableProperty0<Int>.getAndAddFieldLocal(newValue: Int): Int
+@TypedIntrinsic(IntrinsicType.GET_AND_ADD_FIELD)
+internal external fun KMutableProperty0<Long>.getAndAddFieldLocal(newValue: Long): Long
+@TypedIntrinsic(IntrinsicType.GET_AND_ADD_FIELD)
+internal external fun KMutableProperty0<Byte>.getAndAddFieldLocal(newValue: Byte): Byte
+
 
 interface Wrapper<T> {
     fun compareAndSwap(expected: T, new: T): T
@@ -26,28 +41,28 @@ class IntWrapper(@Volatile var x : Int) : IncWrapper<Int> {
     override fun compareAndSwap(expected: Int, new: Int) = this::x.compareAndSwapField(expected, new)
     override fun compareAndSet(expected: Int, new: Int) = this::x.compareAndSetField(expected, new)
     override fun getAndSet(new: Int) = this::x.getAndSetField(new)
-    override fun getAndAdd(delta: Int) = this::x.getAndAddField(delta)
+    override fun getAndAdd(delta: Int) = this::x.getAndAddFieldLocal(delta)
 }
 
 class LongWrapper(@Volatile var x : Long) : IncWrapper<Long> {
     override fun compareAndSwap(expected: Long, new: Long) = this::x.compareAndSwapField(expected, new)
     override fun compareAndSet(expected: Long, new: Long) = this::x.compareAndSetField(expected, new)
     override fun getAndSet(new: Long) = this::x.getAndSetField(new)
-    override fun getAndAdd(delta: Long) = this::x.getAndAddField(delta)
+    override fun getAndAdd(delta: Long) = this::x.getAndAddFieldLocal(delta)
 }
 
 class ShortWrapper(@Volatile var x : Short) : IncWrapper<Short> {
     override fun compareAndSwap(expected: Short, new: Short) = this::x.compareAndSwapField(expected, new)
     override fun compareAndSet(expected: Short, new: Short) = this::x.compareAndSetField(expected, new)
     override fun getAndSet(new: Short) = this::x.getAndSetField(new)
-    override fun getAndAdd(delta: Short) = this::x.getAndAddField(delta)
+    override fun getAndAdd(delta: Short) = this::x.getAndAddFieldLocal(delta)
 }
 
 class ByteWrapper(@Volatile var x : Byte) : IncWrapper<Byte> {
     override fun compareAndSwap(expected: Byte, new: Byte) = this::x.compareAndSwapField(expected, new)
     override fun compareAndSet(expected: Byte, new: Byte) = this::x.compareAndSetField(expected, new)
     override fun getAndSet(new: Byte) = this::x.getAndSetField(new)
-    override fun getAndAdd(delta: Byte) = this::x.getAndAddField(delta)
+    override fun getAndAdd(delta: Byte) = this::x.getAndAddFieldLocal(delta)
 }
 
 

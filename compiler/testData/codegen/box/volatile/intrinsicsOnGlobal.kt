@@ -1,6 +1,4 @@
 // TARGET_BACKEND: NATIVE
-// KT-55904
-// IGNORE_BACKEND_K2: NATIVE
 
 
 @file:Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
@@ -8,6 +6,22 @@
 
 import kotlin.native.concurrent.*
 import kotlin.concurrent.*
+import kotlin.native.internal.*
+import kotlin.reflect.KMutableProperty0
+
+// Overload resolution is not working in K2 with Supress INVISIBLE_REFERENCE.
+// But resolving constants and annotations work
+// So we are creating local copies of this intrinsic for test
+
+@TypedIntrinsic(IntrinsicType.GET_AND_ADD_FIELD)
+internal external fun KMutableProperty0<Short>.getAndAddFieldLocal(delta: Short): Short
+@TypedIntrinsic(IntrinsicType.GET_AND_ADD_FIELD)
+internal external fun KMutableProperty0<Int>.getAndAddFieldLocal(newValue: Int): Int
+@TypedIntrinsic(IntrinsicType.GET_AND_ADD_FIELD)
+internal external fun KMutableProperty0<Long>.getAndAddFieldLocal(newValue: Long): Long
+@TypedIntrinsic(IntrinsicType.GET_AND_ADD_FIELD)
+internal external fun KMutableProperty0<Byte>.getAndAddFieldLocal(newValue: Byte): Byte
+
 
 val a = "1"
 val b = "2"
@@ -25,8 +39,8 @@ fun box() : String {
     if (::x.compareAndSwapField(2, 1) != 1) return "FAIL Int: 4"
     if (::x.getAndSetField(3) != 1) return "FAIL Int: 5"
     if (::x.getAndSetField(1) != 3) return "FAIL Int: 6"
-    if (::x.getAndAddField(1) != 1) return "FAIL Int: 7"
-    if (::x.getAndAddField(1) != 2) return "FAIL Int: 8"
+    if (::x.getAndAddFieldLocal(1) != 1) return "FAIL Int: 7"
+    if (::x.getAndAddFieldLocal(1) != 2) return "FAIL Int: 8"
     if (x != 3) return "FAIL Int: 9"
 
     if (::y.compareAndSetField(1L, 2L) != true) return "FAIL Long: 1"
@@ -35,8 +49,8 @@ fun box() : String {
     if (::y.compareAndSwapField(2L, 1L) != 1L) return "FAIL Long: 4"
     if (::y.getAndSetField(3L) != 1L) return "FAIL Long: 5"
     if (::y.getAndSetField(1L) != 3L) return "FAIL Long: 6"
-    if (::y.getAndAddField(1L) != 1L) return "FAIL Long: 7"
-    if (::y.getAndAddField(1L) != 2L) return "FAIL Long: 8"
+    if (::y.getAndAddFieldLocal(1L) != 1L) return "FAIL Long: 7"
+    if (::y.getAndAddFieldLocal(1L) != 2L) return "FAIL Long: 8"
     if (y != 3L) return "FAIL Long: 9"
 
 
