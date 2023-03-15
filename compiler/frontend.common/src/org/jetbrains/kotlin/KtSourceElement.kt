@@ -133,6 +133,9 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
     // x = x++ -> x = { val <unary> = x; x = <unary>.inc(); <unary> }
     object DesugaredIncrementOrDecrement : KtFakeSourceElementKind()
 
+    // In ++a[1], a.get(1) will be called twice. This kind is used for the second call reference.
+    object DesugaredPrefixSecondGetReference : KtFakeSourceElementKind()
+
     // ++x --> `inc` calleeReference
     object DesugaredPrefixNameReference : KtFakeSourceElementKind()
 

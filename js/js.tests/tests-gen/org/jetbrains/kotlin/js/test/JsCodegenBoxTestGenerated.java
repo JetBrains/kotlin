@@ -20858,12 +20858,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
-        @TestMetadata("prefixIncDecFir.kt")
-        public void testPrefixIncDecFir() throws Exception {
-            runTest("compiler/testData/codegen/box/intrinsics/prefixIncDecFir.kt");
-        }
-
-        @Test
         @TestMetadata("rangeFromCollection.kt")
         public void testRangeFromCollection() throws Exception {
             runTest("compiler/testData/codegen/box/intrinsics/rangeFromCollection.kt");
@@ -34798,21 +34792,9 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
-        @TestMetadata("incInClassObjectFir.kt")
-        public void testIncInClassObjectFir() throws Exception {
-            runTest("compiler/testData/codegen/box/statics/incInClassObjectFir.kt");
-        }
-
-        @Test
         @TestMetadata("incInObject.kt")
         public void testIncInObject() throws Exception {
             runTest("compiler/testData/codegen/box/statics/incInObject.kt");
-        }
-
-        @Test
-        @TestMetadata("incInObjectFir.kt")
-        public void testIncInObjectFir() throws Exception {
-            runTest("compiler/testData/codegen/box/statics/incInObjectFir.kt");
         }
 
         @Test

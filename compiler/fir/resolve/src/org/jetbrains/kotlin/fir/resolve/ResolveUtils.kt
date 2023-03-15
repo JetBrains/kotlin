@@ -391,6 +391,16 @@ fun BodyResolveComponents.transformWhenSubjectExpressionUsingSmartcastInfo(
     return builder.build()
 }
 
+fun BodyResolveComponents.transformDesugaredAssignmentValueUsingSmartcastInfo(
+    expression: FirDesugaredAssignmentValueReferenceExpression
+): FirExpression {
+    val (stability, typesFromSmartCast) = dataFlowAnalyzer.getTypeUsingSmartcastInfo(expression.expressionRef.value) ?: return expression
+    val builder = transformExpressionUsingSmartcastInfo(
+        expression, stability, typesFromSmartCast
+    ) ?: return expression
+    return builder.build()
+}
+
 private val ConeKotlinType.isKindOfNothing
     get() = lowerBoundIfFlexible().let { it.isNothing || it.isNullableNothing }
 

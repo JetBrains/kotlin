@@ -141,6 +141,12 @@ class ErrorNodeDiagnosticCollectorComponent(
             // See FirForLoopChecker
             return
         }
+
+        // Prefix inc/dec on array access will have two calls to .get(...), don't report for the second one.
+        if (source.kind == KtFakeSourceElementKind.DesugaredPrefixSecondGetReference) {
+            return
+        }
+
         for (coneDiagnostic in diagnostic.toFirDiagnostics(session, source, qualifiedAccessSource)) {
             reporter.report(coneDiagnostic, context)
         }

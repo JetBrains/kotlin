@@ -750,26 +750,16 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 }
 
             if (incrementDecrementExpression.isPrefix) {
-                val targetProperty = expression.calleeReference?.toResolvedPropertySymbol()?.fir
-                val operatorCall = buildAndResolveOperatorCall(expression)
-
-                // Special case for prefix inc/dec on local variable without delegate where unary-result variable generation is skipped.
-                if (targetProperty?.isLocal == true && targetProperty.delegate == null) {
-                    // a = a.inc()
-                    statements += buildAndResolveVariableAssignment(operatorCall)
-                    // ^a
-                    statements += targetProperty.toQualifiedAccess(fakeSource = desugaredSource, typeRef = noExpectedType)
-                        // If inc() returns a subtype of its receiver type, the variable access should be smart-casted.
-                        .transform<FirStatement, ResolutionMode>(transformer, withExpectedType(operatorCall.typeRef.coneType))
-                } else {
-                    val unaryResultVariable = generateTemporaryVariable(SpecialNames.UNARY_RESULT, operatorCall)
-
-                    // val <unary-result> = a.inc()
-                    statements += unaryResultVariable
-                    // a = <unary-result>
-                    statements += buildAndResolveVariableAssignment(unaryResultVariable.toQualifiedAccess(fakeSource = desugaredSource))
-                    // ^<unary-result>
-                    statements += unaryResultVariable.toQualifiedAccess(fakeSource = desugaredSource)
+                // a = a.inc()
+                statements += buildAndResolveVariableAssignment(buildAndResolveOperatorCall(expression))
+                // ^a
+                statements += buildDesugaredAssignmentValueReferenceExpression {
+                    source = ((expression as? FirErrorExpression)?.expression ?: expression).source
+                        ?.fakeElement(KtFakeSourceElementKind.DesugaredIncrementOrDecrement)
+                    expressionRef = FirExpressionRef<FirExpression>().apply { bind(expression.unwrapSmartcastExpression()) }
+                }.let {
+                    it.transform<FirStatement, ResolutionMode>(transformer, ResolutionMode.ContextIndependent)
+                    components.transformDesugaredAssignmentValueUsingSmartcastInfo(it)
                 }
             } else {
                 val unaryVariable = generateTemporaryVariable(SpecialNames.UNARY, expression)

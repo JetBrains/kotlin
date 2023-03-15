@@ -705,9 +705,8 @@ internal class KtFirCallResolver(
         val setPartiallyAppliedSymbol = fir.toPartiallyAppliedSymbol(arrayAccessExpression.arrayExpression) ?: return null
         return when (incDecPrecedence) {
             KtCompoundAccess.IncOrDecOperation.Precedence.PREFIX -> {
-                // For prefix case, the last argument is a reference to a synthetic local variable `<unary-result>` storing the result. So
-                // we find the inc or dec operation call from the initializer of this local variable.
-                val operationCall = getInitializerOfReferencedLocalVariable(lastArg) ?: return null
+                // For prefix case, the last argument is a call to get(...).inc().
+                val operationCall = lastArg as? FirFunctionCall ?: return null
                 val operationPartiallyAppliedSymbol = operationCall.toPartiallyAppliedSymbol(arrayAccessExpression) ?: return null
                 // The get call is the explicit receiver of this operation call
                 val getCall = operationCall.explicitReceiver as? FirFunctionCall ?: return null

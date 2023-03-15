@@ -653,6 +653,13 @@ class Fir2IrVisitor(
         return callGenerator.convertToIrSetCall(variableAssignment, explicitReceiverExpression)
     }
 
+    override fun visitDesugaredAssignmentValueReferenceExpression(
+        desugaredAssignmentValueReferenceExpression: FirDesugaredAssignmentValueReferenceExpression,
+        data: Any?
+    ): IrElement {
+        return desugaredAssignmentValueReferenceExpression.expressionRef.value.accept(this, null)
+    }
+
     override fun <T> visitConstExpression(constExpression: FirConstExpression<T>, data: Any?): IrElement {
         return constExpression.toIrConst(constExpression.typeRef.toIrType())
     }

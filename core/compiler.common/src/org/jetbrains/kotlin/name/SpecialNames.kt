@@ -41,9 +41,6 @@ object SpecialNames {
     val UNARY = Name.special("<unary>")
 
     @JvmField
-    val UNARY_RESULT = Name.special("<unary-result>")
-
-    @JvmField
     val THIS = Name.special("<this>")
 
     @JvmField

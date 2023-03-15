@@ -21836,11 +21836,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/intrinsics/prefixIncDec.kt");
         }
 
-        @TestMetadata("prefixIncDecFir.kt")
-        public void testPrefixIncDecFir() throws Exception {
-            runTest("compiler/testData/codegen/box/intrinsics/prefixIncDecFir.kt");
-        }
-
         @TestMetadata("rangeFromCollection.kt")
         public void testRangeFromCollection() throws Exception {
             runTest("compiler/testData/codegen/box/intrinsics/rangeFromCollection.kt");
@@ -37989,19 +37984,9 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/statics/incInClassObject.kt");
         }
 
-        @TestMetadata("incInClassObjectFir.kt")
-        public void testIncInClassObjectFir() throws Exception {
-            runTest("compiler/testData/codegen/box/statics/incInClassObjectFir.kt");
-        }
-
         @TestMetadata("incInObject.kt")
         public void testIncInObject() throws Exception {
             runTest("compiler/testData/codegen/box/statics/incInObject.kt");
-        }
-
-        @TestMetadata("incInObjectFir.kt")
-        public void testIncInObjectFir() throws Exception {
-            runTest("compiler/testData/codegen/box/statics/incInObjectFir.kt");
         }
 
         @TestMetadata("inheritedPropertyInClassObject.kt")

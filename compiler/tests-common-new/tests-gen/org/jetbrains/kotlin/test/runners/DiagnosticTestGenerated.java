@@ -712,6 +712,18 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         }
 
         @Test
+        @TestMetadata("prefixIncReturnType.kt")
+        public void testPrefixIncReturnType() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/prefixIncReturnType.kt");
+        }
+
+        @Test
+        @TestMetadata("prefixIncSmartCast.kt")
+        public void testPrefixIncSmartCast() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/prefixIncSmartCast.kt");
+        }
+
+        @Test
         @TestMetadata("PrimaryConstructors.kt")
         public void testPrimaryConstructors() throws Exception {
             runTest("compiler/testData/diagnostics/tests/PrimaryConstructors.kt");
