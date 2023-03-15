@@ -550,6 +550,7 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinVersion : java/lang/Enu
 	public static final field KOTLIN_1_8 Lorg/jetbrains/kotlin/gradle/dsl/KotlinVersion;
 	public static final field KOTLIN_1_9 Lorg/jetbrains/kotlin/gradle/dsl/KotlinVersion;
 	public static final field KOTLIN_2_0 Lorg/jetbrains/kotlin/gradle/dsl/KotlinVersion;
+	public static final field KOTLIN_2_1 Lorg/jetbrains/kotlin/gradle/dsl/KotlinVersion;
 	public final fun getVersion ()Ljava/lang/String;
 	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/dsl/KotlinVersion;
 	public static fun values ()[Lorg/jetbrains/kotlin/gradle/dsl/KotlinVersion;

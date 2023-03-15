@@ -288,6 +288,8 @@ enum class LanguageFeature(
     ForbidInferringPostponedTypeVariableIntoDeclaredUpperBound(KOTLIN_2_0, kind = BUG_FIX), // KT-47986
     ProhibitUseSiteGetTargetAnnotations(KOTLIN_2_0, kind = BUG_FIX), // KT-15470
 
+    // 2.1
+
     // End of 2.* language features --------------------------------------------------
 
     // This feature effectively might be removed because we decided to disable it until K2 and there it will be unconditionally enabled.
@@ -426,6 +428,7 @@ enum class LanguageVersion(val major: Int, val minor: Int) : DescriptionAware, L
     KOTLIN_1_9(1, 9),
 
     KOTLIN_2_0(2, 0),
+    KOTLIN_2_1(2, 1),
     ;
 
     override val isStable: Boolean
