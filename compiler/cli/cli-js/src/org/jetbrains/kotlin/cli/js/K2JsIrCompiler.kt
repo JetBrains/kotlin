@@ -27,16 +27,14 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageUtil
-import org.jetbrains.kotlin.cli.js.klib.TopDownAnalyzerFacadeForJSIR
-import org.jetbrains.kotlin.cli.js.klib.TopDownAnalyzerFacadeForWasm
-import org.jetbrains.kotlin.cli.js.klib.compileModuleToAnalyzedFir
-import org.jetbrains.kotlin.cli.js.klib.generateIrForKlibSerialization
-import org.jetbrains.kotlin.cli.js.klib.serializeFirKlib
-import org.jetbrains.kotlin.cli.js.klib.transformFirToIr
+import org.jetbrains.kotlin.cli.js.klib.*
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.config.getModuleNameForSource
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
@@ -68,7 +66,6 @@ import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.join
 import java.io.File
 import java.io.IOException
-import java.nio.charset.Charset
 
 private val K2JSCompilerArguments.granularity: JsGenerationGranularity
     get() = when {
@@ -493,14 +490,14 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         ) ?: return null
 
         // FIR2IR
-        val irResult = transformFirToIr(moduleStructure, outputs, diagnosticsReporter)
+        val fir2IrActualizedResult = transformFirToIr(moduleStructure, outputs, diagnosticsReporter)
 
         // Serialize klib
         if (arguments.irProduceKlibDir || arguments.irProduceKlibFile) {
             serializeFirKlib(
                 moduleStructure = moduleStructure,
                 firOutputs = outputs,
-                irResult = irResult,
+                fir2IrActualizedResult = fir2IrActualizedResult,
                 outputKlibPath = outputKlibPath,
                 messageCollector = messageCollector,
                 diagnosticsReporter = diagnosticsReporter,

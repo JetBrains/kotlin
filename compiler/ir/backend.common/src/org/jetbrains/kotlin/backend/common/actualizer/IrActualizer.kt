@@ -12,28 +12,40 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.name.FqName
 
+data class IrActualizationResult(val actualizedExpectDeclarations: List<IrDeclaration>)
+
 object IrActualizer {
     fun actualize(
         mainFragment: IrModuleFragment,
         dependentFragments: List<IrModuleFragment>,
         diagnosticReporter: DiagnosticReporter,
         languageVersionSettings: LanguageVersionSettings
-    ) {
+    ): IrActualizationResult {
         val ktDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(diagnosticReporter, languageVersionSettings)
         val (expectActualMap, expectActualTypeAliasMap) = ExpectActualCollector(mainFragment, dependentFragments, ktDiagnosticReporter).collect()
         FunctionDefaultParametersActualizer(expectActualMap).actualize()
-        removeExpectDeclarations(dependentFragments, expectActualMap)
+        val removedExpectDeclarationMetadata = removeExpectDeclarations(dependentFragments, expectActualMap)
         addMissingFakeOverrides(expectActualMap, dependentFragments, expectActualTypeAliasMap, ktDiagnosticReporter)
         linkExpectToActual(expectActualMap, dependentFragments)
         mergeIrFragments(mainFragment, dependentFragments)
+        return IrActualizationResult(removedExpectDeclarationMetadata)
     }
 
-    private fun removeExpectDeclarations(dependentFragments: List<IrModuleFragment>, expectActualMap: Map<IrSymbol, IrSymbol>) {
+    private fun removeExpectDeclarations(dependentFragments: List<IrModuleFragment>, expectActualMap: Map<IrSymbol, IrSymbol>): List<IrDeclaration> {
+        val removedDeclarationMetadata = mutableListOf<IrDeclaration>()
         for (fragment in dependentFragments) {
             for (file in fragment.files) {
-                file.declarations.removeIf { shouldRemoveExpectDeclaration(it, expectActualMap) }
+                file.declarations.removeIf {
+                    if (shouldRemoveExpectDeclaration(it, expectActualMap)) {
+                        removedDeclarationMetadata.add(it)
+                        true
+                    } else {
+                        false
+                    }
+                }
             }
         }
+        return removedDeclarationMetadata
     }
 
     private fun shouldRemoveExpectDeclaration(irDeclaration: IrDeclaration, expectActualMap: Map<IrSymbol, IrSymbol>): Boolean {

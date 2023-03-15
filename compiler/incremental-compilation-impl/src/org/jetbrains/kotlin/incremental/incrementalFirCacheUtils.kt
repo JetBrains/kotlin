@@ -52,7 +52,8 @@ internal fun collectNewDirtySources(
                         globalSerializationBindings,
                         data.lastOrNull(),
                         targetId,
-                        configuration
+                        configuration,
+                        irActualizationResult = null
                     )
                     data.push(serializer)
                     body(serializer)

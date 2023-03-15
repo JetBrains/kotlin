@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.serialization.SerializableStringTable
 
 fun serializeSingleFirFile(
     file: FirFile, session: FirSession, scopeSession: ScopeSession,
+    actualizedExpectDeclarations: Set<FirDeclaration>?,
     serializerExtension: FirKLibSerializerExtension,
     languageVersionSettings: LanguageVersionSettings,
 ): ProtoBuf.PackageFragment {
@@ -31,21 +32,26 @@ fun serializeSingleFirFile(
     // TODO: split package fragment (see klib serializer)
     // TODO: handle incremental/monolothic (see klib serializer) - maybe externally
 
-    val packageProto = packageSerializer.packagePartProto(file.packageFqName, listOf(file)).build()
+    val packageProto = packageSerializer.packagePartProto(file.packageFqName, listOf(file), actualizedExpectDeclarations).build()
 
-    fun List<FirDeclaration>.makeClassesProtoWithNested(): List<Pair<ProtoBuf.Class, Int>> =
-        // TODO: filter out expects
-        filterIsInstance<FirClass>().sortedBy { it.classId.asFqNameString() }.flatMap {
-            val classSerializer = FirElementSerializer.create(session, scopeSession, it, serializerExtension, null,
-                approximator, languageVersionSettings)
-            val index = classSerializer.stringTable.getFqNameIndex(it)
-            listOf(classSerializer.classProto(it).build() to index) + it.declarations.makeClassesProtoWithNested()
-        }
+    fun List<FirDeclaration>.makeClassesProtoWithNested(): List<Pair<ProtoBuf.Class, Int>> {
+        return filterIsInstance<FirClass>().filter { it.shouldBeSerialized(actualizedExpectDeclarations) }
+            .sortedBy { it.classId.asFqNameString() }
+            .flatMap {
+                val classSerializer = FirElementSerializer.create(
+                    session, scopeSession, it, serializerExtension, null,
+                    approximator, languageVersionSettings
+                )
+                val index = classSerializer.stringTable.getFqNameIndex(it)
+                listOf(classSerializer.classProto(it).build() to index) + it.declarations.makeClassesProtoWithNested()
+            }
+    }
 
     val classesProto = file.declarations.makeClassesProtoWithNested()
 
     val hasTopLevelDeclarations = file.declarations.any {
-        it is FirProperty || it is FirSimpleFunction || it is FirTypeAlias
+        it is FirMemberDeclaration && it.shouldBeSerialized(actualizedExpectDeclarations) &&
+                (it is FirProperty || it is FirSimpleFunction || it is FirTypeAlias)
     }
 
     return buildKlibPackageFragment(

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.pipeline
 
+import org.jetbrains.kotlin.backend.common.actualizer.IrActualizationResult
 import org.jetbrains.kotlin.backend.common.actualizer.IrActualizer
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmDescriptorMangler
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.util.IdSignatureComposer
 import org.jetbrains.kotlin.ir.util.KotlinMangler
@@ -34,13 +36,20 @@ data class ModuleCompilerAnalyzedOutput(
     val fir: List<FirFile>
 )
 
+data class Fir2IrActualizedResult(
+    val irModuleFragment: IrModuleFragment,
+    val components: Fir2IrComponents,
+    val pluginContext: Fir2IrPluginContext,
+    val irActualizationResult: IrActualizationResult?,
+)
+
 fun FirResult.convertToIrAndActualizeForJvm(
     fir2IrExtensions: Fir2IrExtensions,
     irGeneratorExtensions: Collection<IrGenerationExtension>,
     linkViaSignatures: Boolean,
     diagnosticReporter: DiagnosticReporter,
     languageVersionSettings: LanguageVersionSettings,
-): Fir2IrResult = this.convertToIrAndActualize(
+): Fir2IrActualizedResult = this.convertToIrAndActualize(
     fir2IrExtensions,
     irGeneratorExtensions,
     linkViaSignatures = linkViaSignatures,
@@ -63,8 +72,9 @@ fun FirResult.convertToIrAndActualize(
     diagnosticReporter: DiagnosticReporter,
     languageVersionSettings: LanguageVersionSettings,
     fir2IrResultPostCompute: Fir2IrResult.() -> Unit = {},
-): Fir2IrResult {
-    val result: Fir2IrResult
+): Fir2IrActualizedResult {
+    val fir2IrResult: Fir2IrResult
+    val actualizationResult: IrActualizationResult?
 
     val commonMemberStorage = Fir2IrCommonMemberStorage(
         generateSignatures = linkViaSignatures,
@@ -75,7 +85,7 @@ fun FirResult.convertToIrAndActualize(
     when (outputs.size) {
         0 -> error("No modules found")
         1 -> {
-            result = outputs.single().convertToIr(
+            fir2IrResult = outputs.single().convertToIr(
                 fir2IrExtensions,
                 irGeneratorExtensions,
                 linkViaSignatures = linkViaSignatures,
@@ -85,6 +95,7 @@ fun FirResult.convertToIrAndActualize(
                 visibilityConverter,
                 kotlinBuiltIns,
             )
+            actualizationResult = null
         }
         else -> {
             val platformOutput = outputs.last()
@@ -107,7 +118,7 @@ fun FirResult.convertToIrAndActualize(
                     }
                 }
             }
-            result = platformOutput.convertToIr(
+            fir2IrResult = platformOutput.convertToIr(
                 fir2IrExtensions,
                 irGeneratorExtensions,
                 linkViaSignatures = linkViaSignatures,
@@ -120,8 +131,8 @@ fun FirResult.convertToIrAndActualize(
                 fir2IrResultPostCompute(it)
             }
 
-            IrActualizer.actualize(
-                result.irModuleFragment,
+            actualizationResult = IrActualizer.actualize(
+                fir2IrResult.irModuleFragment,
                 commonIrOutputs.map { it.irModuleFragment },
                 diagnosticReporter,
                 languageVersionSettings
@@ -129,7 +140,8 @@ fun FirResult.convertToIrAndActualize(
         }
     }
 
-    return result
+    val (irModuleFragment, components, pluginContext) = fir2IrResult
+    return Fir2IrActualizedResult(irModuleFragment, components, pluginContext, actualizationResult)
 }
 
 private fun ModuleCompilerAnalyzedOutput.convertToIr(

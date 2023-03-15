@@ -7,6 +7,9 @@ package org.jetbrains.kotlin.fir.serialization
 
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.diagnostics.ConeIntermediateDiagnostic
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
@@ -42,4 +45,8 @@ fun ConeKotlinType.suspendFunctionTypeToFunctionTypeWithContinuation(session: Fi
         isNullable = fullyExpandedType.isNullable,
         attributes = fullyExpandedType.attributes
     )
+}
+
+fun FirMemberDeclaration.shouldBeSerialized(actualizedExpectDeclaration: Set<FirDeclaration>?): Boolean {
+    return !isExpect || actualizedExpectDeclaration == null || this !in actualizedExpectDeclaration
 }

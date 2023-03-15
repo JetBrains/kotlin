@@ -112,7 +112,7 @@ class ClassicFrontend2IrConverter(
             expectDescriptorToSymbol = expectDescriptorToSymbol,
             diagnosticsCollector = DiagnosticReporterFactory.createReporter(),
             hasErrors
-        ) { file ->
+        ) { file, _ ->
             metadataSerializer.serializeScope(file, analysisResult.bindingContext, moduleFragment.descriptor)
         }
     }

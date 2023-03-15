@@ -69,15 +69,24 @@ class FirElementSerializer private constructor(
     private val contractSerializer = FirContractSerializer()
     private val extensionDeclarationProviders = session.extensionService.declarationForMetadataProviders
 
-    fun packagePartProto(packageFqName: FqName, files: List<FirFile>): ProtoBuf.Package.Builder {
+    fun packagePartProto(
+        packageFqName: FqName,
+        files: List<FirFile>,
+        actualizedExpectDeclarations: Set<FirDeclaration>?
+    ): ProtoBuf.Package.Builder {
         val builder = ProtoBuf.Package.newBuilder()
 
         fun addDeclaration(declaration: FirDeclaration, onUnsupportedDeclaration: (FirDeclaration) -> Unit) {
-            when (declaration) {
-                is FirProperty -> propertyProto(declaration)?.let { builder.addProperty(it) }
-                is FirSimpleFunction -> functionProto(declaration)?.let { builder.addFunction(it) }
-                is FirTypeAlias -> typeAliasProto(declaration)?.let { builder.addTypeAlias(it) }
-                else -> onUnsupportedDeclaration(declaration)
+            if (declaration is FirMemberDeclaration) {
+                if (!declaration.shouldBeSerialized(actualizedExpectDeclarations)) return
+                when (declaration) {
+                    is FirProperty -> propertyProto(declaration)?.let { builder.addProperty(it) }
+                    is FirSimpleFunction -> functionProto(declaration)?.let { builder.addFunction(it) }
+                    is FirTypeAlias -> typeAliasProto(declaration)?.let { builder.addTypeAlias(it) }
+                    else -> onUnsupportedDeclaration(declaration)
+                }
+            } else {
+                onUnsupportedDeclaration(declaration)
             }
         }
 

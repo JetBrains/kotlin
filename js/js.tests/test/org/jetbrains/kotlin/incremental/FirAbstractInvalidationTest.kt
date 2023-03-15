@@ -14,7 +14,8 @@ import org.jetbrains.kotlin.codegen.ProjectInfo
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
-import org.jetbrains.kotlin.ir.backend.js.*
+import org.jetbrains.kotlin.ir.backend.js.MainModule
+import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
 import org.jetbrains.kotlin.test.TargetBackend
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -66,12 +67,12 @@ abstract class FirAbstractInvalidationTest(
         )
 
         if (outputs != null) {
-            val irResult = transformFirToIr(moduleStructure, outputs, diagnosticsReporter)
+            val fir2IrActualizedResult = transformFirToIr(moduleStructure, outputs, diagnosticsReporter)
 
             serializeFirKlib(
                 moduleStructure = moduleStructure,
                 firOutputs = outputs,
-                irResult = irResult,
+                fir2IrActualizedResult = fir2IrActualizedResult,
                 outputKlibPath = outputKlibFile.absolutePath,
                 messageCollector = messageCollector,
                 diagnosticsReporter = diagnosticsReporter,

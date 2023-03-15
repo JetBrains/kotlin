@@ -26,15 +26,12 @@ import org.jetbrains.kotlin.fir.BinaryModuleData
 import org.jetbrains.kotlin.fir.DependencyListForCliModule
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.Fir2IrExtensions
-import org.jetbrains.kotlin.fir.backend.Fir2IrResult
 import org.jetbrains.kotlin.fir.backend.Fir2IrVisibilityConverter
+import org.jetbrains.kotlin.fir.backend.extractFirDeclarations
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
-import org.jetbrains.kotlin.fir.pipeline.FirResult
-import org.jetbrains.kotlin.fir.pipeline.ModuleCompilerAnalyzedOutput
-import org.jetbrains.kotlin.fir.pipeline.buildResolveAndCheckFir
-import org.jetbrains.kotlin.fir.pipeline.convertToIrAndActualize
+import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.serialization.FirElementAwareSerializableStringTable
 import org.jetbrains.kotlin.fir.serialization.FirKLibSerializerExtension
@@ -103,7 +100,7 @@ fun transformFirToIr(
     moduleStructure: ModulesStructure,
     firOutputs: List<ModuleCompilerAnalyzedOutput>,
     diagnosticsReporter: PendingDiagnosticsCollectorWithSuppress,
-): Fir2IrResult {
+): Fir2IrActualizedResult {
     val fir2IrExtensions = Fir2IrExtensions.Default
 
     var builtInsModule: KotlinBuiltIns? = null
@@ -149,7 +146,7 @@ fun transformFirToIr(
 fun serializeFirKlib(
     moduleStructure: ModulesStructure,
     firOutputs: List<ModuleCompilerAnalyzedOutput>,
-    irResult: Fir2IrResult,
+    fir2IrActualizedResult: Fir2IrActualizedResult,
     outputKlibPath: String,
     messageCollector: MessageCollector,
     diagnosticsReporter: BaseDiagnosticsCollector,
@@ -169,6 +166,8 @@ fun serializeFirKlib(
 
     val metadataVersion = moduleStructure.compilerConfiguration.metadataVersion()
 
+    val actualizedExpectDeclarations = fir2IrActualizedResult.irActualizationResult.extractFirDeclarations()
+
     serializeModuleIntoKlib(
         moduleStructure.compilerConfiguration[CommonConfigurationKeys.MODULE_NAME]!!,
         moduleStructure.compilerConfiguration,
@@ -176,7 +175,7 @@ fun serializeFirKlib(
         sourceFiles,
         klibPath = outputKlibPath,
         moduleStructure.allDependencies,
-        irResult.irModuleFragment,
+        fir2IrActualizedResult.irModuleFragment,
         expectDescriptorToSymbol = mutableMapOf(),
         cleanFiles = icData,
         nopack = true,
@@ -191,6 +190,7 @@ fun serializeFirKlib(
             firFile,
             session,
             scopeSession,
+            actualizedExpectDeclarations,
             FirKLibSerializerExtension(session, metadataVersion, FirElementAwareSerializableStringTable()),
             moduleStructure.compilerConfiguration.languageVersionSettings,
         )

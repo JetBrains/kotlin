@@ -61,9 +61,10 @@ class JsKlibBackendFacade(
                 perFile = false,
                 containsErrorCode = inputArtifact.hasErrors,
                 abiVersion = KotlinAbiVersion.CURRENT, // TODO get from test file data
-                jsOutputName = null,
-                inputArtifact.serializeSingleFile
-            )
+                jsOutputName = null
+            ) {
+                inputArtifact.serializeSingleFile(it, null)
+            }
         }
 
         val dependencies = JsEnvironmentConfigurator.getAllRecursiveDependenciesFor(module, testServices).toList()

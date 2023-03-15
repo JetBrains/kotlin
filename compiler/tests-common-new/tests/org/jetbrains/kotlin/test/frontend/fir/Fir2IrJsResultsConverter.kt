@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.FirAnalyzerFacade
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.jvm.Fir2IrJvmSpecialAnnotationSymbolProvider
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmKotlinMangler
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.serialization.FirElementAwareSerializableStringTable
@@ -100,6 +101,8 @@ class Fir2IrJsResultsConverter(
 
         val metadataVersion = configuration.metadataVersion(module.languageVersionSettings.languageVersion)
 
+        var actualizedExpectDeclarations: Set<FirDeclaration>? = null
+
         return IrBackendInput.JsIrBackendInput(
             mainIrPart,
             dependentIrParts,
@@ -109,13 +112,17 @@ class Fir2IrJsResultsConverter(
             expectDescriptorToSymbol = mutableMapOf(),
             diagnosticsCollector = DiagnosticReporterFactory.createReporter(),
             hasErrors = inputArtifact.hasErrors
-        ) { file ->
+        ) { file, irActualizationResult ->
             val (firFile, components) = firFilesAndComponentsBySourceFile[file]
                 ?: error("cannot find FIR file by source file ${file.name} (${file.path})")
+            if (actualizedExpectDeclarations == null && irActualizationResult != null) {
+                actualizedExpectDeclarations = irActualizationResult.extractFirDeclarations()
+            }
             serializeSingleFirFile(
                 firFile,
                 components.session,
                 components.scopeSession,
+                actualizedExpectDeclarations,
                 FirKLibSerializerExtension(components.session, metadataVersion, FirElementAwareSerializableStringTable()),
                 configuration.languageVersionSettings,
             )

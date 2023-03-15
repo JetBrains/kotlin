@@ -18,13 +18,15 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.deserialization.PlatformDependentTypeTransformer
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
+import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.fir.backend.Fir2IrExtensions
-import org.jetbrains.kotlin.fir.backend.Fir2IrResult
+import org.jetbrains.kotlin.fir.backend.Fir2IrPluginContext
 import org.jetbrains.kotlin.fir.backend.Fir2IrVisibilityConverter
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.pipeline.convertToIrAndActualize
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
@@ -66,7 +68,7 @@ internal fun PhaseContext.fir2Ir(
     }
     val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter()
 
-    val fir2irResult = input.firResult.convertToIrAndActualize(
+    val (irModuleFragment, components, pluginContext, irActualizationResult) = input.firResult.convertToIrAndActualize(
             fir2IrExtensions,
             IrGenerationExtension.getInstances(config.project),
             linkViaSignatures = false,
@@ -79,11 +81,11 @@ internal fun PhaseContext.fir2Ir(
     ).also {
         (it.irModuleFragment.descriptor as? FirModuleDescriptor)?.let { it.allDependencyModules = librariesDescriptors }
     }
-    assert(fir2irResult.irModuleFragment.name.isSpecial) {
-        "`${fir2irResult.irModuleFragment.name}` must be Name.special, since it's required by KlibMetadataModuleDescriptorFactoryImpl.createDescriptorOptionalBuiltIns()"
+    assert(irModuleFragment.name.isSpecial) {
+        "`${irModuleFragment.name}` must be Name.special, since it's required by KlibMetadataModuleDescriptorFactoryImpl.createDescriptorOptionalBuiltIns()"
     }
 
-    val symbols = createKonanSymbols(fir2irResult)
+    val symbols = createKonanSymbols(irModuleFragment, components, pluginContext)
     // TODO KT-55580 Invoke CopyDefaultValuesToActualPhase, same as PsiToir phase does.
 
     val renderDiagnosticNames = configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
@@ -93,15 +95,17 @@ internal fun PhaseContext.fir2Ir(
         throw KonanCompilationException("Compilation failed: there were some diagnostics during fir2ir")
     }
 
-    return Fir2IrOutput(input.firResult, fir2irResult, symbols)
+    return Fir2IrOutput(input.firResult, symbols, irModuleFragment, components, pluginContext, irActualizationResult)
 }
 
 private fun PhaseContext.createKonanSymbols(
-        fir2irResult: Fir2IrResult,
+        irModuleFragment: IrModuleFragment,
+        components: Fir2IrComponents,
+        pluginContext: Fir2IrPluginContext,
 ): KonanSymbolsOverFir {
-    val moduleDescriptor = fir2irResult.irModuleFragment.descriptor
-    val symbolTable = SymbolTable(KonanIdSignaturer(KonanManglerDesc), fir2irResult.pluginContext.irFactory)
+    val moduleDescriptor = irModuleFragment.descriptor
+    val symbolTable = SymbolTable(KonanIdSignaturer(KonanManglerDesc), pluginContext.irFactory)
     val descriptorsLookup = DescriptorsLookup(moduleDescriptor.builtIns as KonanBuiltIns)
 
-    return KonanSymbolsOverFir(this, descriptorsLookup, fir2irResult.components.irBuiltIns, symbolTable, symbolTable.lazyWrapper)
+    return KonanSymbolsOverFir(this, descriptorsLookup, components.irBuiltIns, symbolTable, symbolTable.lazyWrapper)
 }

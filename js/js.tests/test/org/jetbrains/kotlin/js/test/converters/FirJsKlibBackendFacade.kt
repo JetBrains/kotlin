@@ -65,14 +65,17 @@ class FirJsKlibBackendFacade(
         val diagnosticReporter = DiagnosticReporterFactory.createReporter()
 
         if (firstTimeCompilation) {
-            if (module.frontendKind == FrontendKinds.FIR && module.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)) {
-                IrActualizer.actualize(
-                    inputArtifact.mainModuleFragment,
-                    inputArtifact.dependentModuleFragments,
-                    diagnosticReporter,
-                    configuration.languageVersionSettings
-                )
-            }
+            val irActualizationResult =
+                if (module.frontendKind == FrontendKinds.FIR && module.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)) {
+                    IrActualizer.actualize(
+                        inputArtifact.mainModuleFragment,
+                        inputArtifact.dependentModuleFragments,
+                        diagnosticReporter,
+                        configuration.languageVersionSettings
+                    )
+                } else {
+                    null
+                }
 
             serializeModuleIntoKlib(
                 configuration[CommonConfigurationKeys.MODULE_NAME]!!,
@@ -88,9 +91,10 @@ class FirJsKlibBackendFacade(
                 perFile = false,
                 containsErrorCode = inputArtifact.hasErrors,
                 abiVersion = KotlinAbiVersion.CURRENT, // TODO get from test file data
-                jsOutputName = null,
-                inputArtifact.serializeSingleFile
-            )
+                jsOutputName = null
+            ) {
+                inputArtifact.serializeSingleFile(it, irActualizationResult)
+            }
         }
 
         // TODO: consider avoiding repeated libraries resolution

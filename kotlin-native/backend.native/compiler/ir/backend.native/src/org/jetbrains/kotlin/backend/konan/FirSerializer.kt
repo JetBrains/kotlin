@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.backend.extractFirDeclarations
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -53,12 +54,13 @@ internal fun PhaseContext.firSerializer(
                     ?: configuration.languageVersionSettings.languageVersion.toMetadataVersion()
 
     val resolvedLibraries = config.resolvedLibraries.getFullResolvedList(TopologicalLibraryOrder) // FIXME KT-55603
+    val actualizedFirDeclarations = input.irActualizationResult.extractFirDeclarations()
     return serializeNativeModule(
             configuration = configuration,
             messageLogger = configuration.get(IrMessageLogger.IR_MESSAGE_LOGGER) ?: IrMessageLogger.None,
             sourceFiles,
             resolvedLibraries.map { it.library as KonanLibrary },
-            input.fir2irResult.irModuleFragment,
+            input.irModuleFragment,
             expectDescriptorToSymbol = mutableMapOf() // TODO: expect -> actual mapping
     ) { file ->
         val (firFile, session, scopeSession) = firFilesAndSessionsBySourceFile[file]
@@ -67,6 +69,7 @@ internal fun PhaseContext.firSerializer(
                 firFile,
                 session,
                 scopeSession,
+                actualizedFirDeclarations,
                 FirNativeKLibSerializerExtension(session, metadataVersion, FirElementAwareSerializableStringTable()),
                 configuration.languageVersionSettings,
         )

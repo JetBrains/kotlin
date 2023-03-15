@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.test.backend.ir
 
 import org.jetbrains.kotlin.KtSourceFile
+import org.jetbrains.kotlin.backend.common.actualizer.IrActualizationResult
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -39,7 +40,7 @@ sealed class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>() {
         val expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>, // TODO: abstract from descriptors
         val diagnosticsCollector: BaseDiagnosticsCollector,
         val hasErrors: Boolean,
-        val serializeSingleFile: (KtSourceFile) -> ProtoBuf.PackageFragment
+        val serializeSingleFile: (KtSourceFile, IrActualizationResult?) -> ProtoBuf.PackageFragment
     ) : IrBackendInput() {
         override val irModuleFragment: IrModuleFragment
             get() = mainModuleFragment
