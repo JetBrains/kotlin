@@ -164,13 +164,8 @@ internal class LLFirSessionCache(private val project: Project) {
             })
 
             val javaSymbolProvider = createJavaSymbolProvider(this, moduleData, project, contentScope)
-
-            // We only need to add an extension synthetic function provider if the session's function type service even has extension kinds.
-            // Otherwise, the provider will be completely useless.
-            val syntheticFunctionalInterfaceProvider = if (this.functionTypeService.hasExtensionKinds()) {
-                FirExtensionSyntheticFunctionInterfaceProvider(this, moduleData, scopeProvider)
-            } else null
-
+            val syntheticFunctionInterfaceProvider =
+                FirExtensionSyntheticFunctionInterfaceProvider.createIfNeeded(this, moduleData, scopeProvider)
             register(
                 FirSymbolProvider::class,
                 LLFirModuleWithDependenciesSymbolProvider(
@@ -179,7 +174,7 @@ internal class LLFirSessionCache(private val project: Project) {
                         provider.symbolProvider,
                         switchableExtensionDeclarationsSymbolProvider,
                         javaSymbolProvider,
-                        syntheticFunctionalInterfaceProvider,
+                        syntheticFunctionInterfaceProvider,
                     ),
                     dependencyProvider,
                 )

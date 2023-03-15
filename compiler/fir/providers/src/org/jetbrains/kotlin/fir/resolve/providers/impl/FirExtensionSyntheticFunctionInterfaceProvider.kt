@@ -46,6 +46,21 @@ class FirExtensionSyntheticFunctionInterfaceProvider(
     moduleData: FirModuleData,
     kotlinScopeProvider: FirKotlinScopeProvider
 ) : FirSyntheticFunctionInterfaceProviderBase(session, moduleData, kotlinScopeProvider) {
+    companion object {
+        /**
+         * A [FirExtensionSyntheticFunctionInterfaceProvider] only needs to be created if the session's function type service has extension
+         * function kinds. Otherwise, the provider would be useless.
+         */
+        fun createIfNeeded(
+            session: FirSession,
+            moduleData: FirModuleData,
+            kotlinScopeProvider: FirKotlinScopeProvider,
+        ): FirExtensionSyntheticFunctionInterfaceProvider? {
+            if (!session.functionTypeService.hasExtensionKinds()) return null
+            return FirExtensionSyntheticFunctionInterfaceProvider(session, moduleData, kotlinScopeProvider)
+        }
+    }
+
     override fun FunctionTypeKind.isAcceptable(): Boolean {
         return !this.isBuiltin
     }

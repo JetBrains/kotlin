@@ -45,11 +45,11 @@ object FirNativeSessionFactory : FirAbstractSessionFactory() {
                 ).apply {
                     bindSession(session)
                 }
-                listOf(
+                listOfNotNull(
                     KlibBasedSymbolProvider(session, moduleDataProvider, kotlinScopeProvider, resolvedLibraries.map { it.library }),
                     NativeForwardDeclarationsSymbolProvider(session, forwardDeclarationsModuleData, kotlinScopeProvider, resolvedLibraries),
                     FirBuiltinSymbolProvider(session, builtinsModuleData, kotlinScopeProvider),
-                    FirExtensionSyntheticFunctionInterfaceProvider(session, builtinsModuleData, kotlinScopeProvider),
+                    FirExtensionSyntheticFunctionInterfaceProvider.createIfNeeded(session, builtinsModuleData, kotlinScopeProvider),
                     FirCloneableSymbolProvider(session, builtinsModuleData, kotlinScopeProvider),
                 )
             })
