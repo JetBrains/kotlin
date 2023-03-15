@@ -63,7 +63,7 @@ internal fun PhaseContext.fir2Ir(
     val fir2irResult = input.firResult.convertToIrAndActualize(
             fir2IrExtensions,
             IrGenerationExtension.getInstances(config.project),
-            linkViaSignatures = false,
+            linkViaSignatures = true, // create interop classes as public with signatures to be able to compare it with unbound konan symbols
             signatureComposerCreator = null,
             irMangler = KonanManglerIr,
             visibilityConverter = Fir2IrVisibilityConverter.Default,

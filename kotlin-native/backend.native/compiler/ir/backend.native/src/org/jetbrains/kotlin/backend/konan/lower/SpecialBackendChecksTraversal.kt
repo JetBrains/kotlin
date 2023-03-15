@@ -833,6 +833,8 @@ private fun BackendChecker.checkCanMapType(
 
         type.isCEnumType() -> return
 
+        type.isCValuesRef(symbols) -> return
+        type.isCValues(symbols) -> return
         type.isCValue(symbols) -> if (type.isNullable())
             reportUnsupportedType("must not be nullable")
         else {

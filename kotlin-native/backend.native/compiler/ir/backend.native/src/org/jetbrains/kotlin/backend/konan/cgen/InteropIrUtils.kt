@@ -9,9 +9,9 @@ import org.jetbrains.kotlin.backend.jvm.ir.propertyIfAccessor
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
 import org.jetbrains.kotlin.backend.konan.ir.*
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.hasAnnotation
@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.ir.util.isUnsigned
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
 
 internal fun IrType.isCEnumType(): Boolean {
     if (isNullable()) return false
@@ -79,9 +78,10 @@ internal fun IrType.isObjCReferenceType(target: KonanTarget, irBuiltIns: IrBuilt
     }
 }
 
-internal fun IrType.isCPointer(symbols: KonanSymbols): Boolean = this.classOrNull == symbols.interopCPointer
-internal fun IrType.isCValue(symbols: KonanSymbols): Boolean = this.classOrNull == symbols.interopCValue
-internal fun IrType.isCValuesRef(symbols: KonanSymbols): Boolean = this.classOrNull == symbols.interopCValuesRef
+internal fun IrType.isCPointer(symbols: KonanSymbols): Boolean = equalsToMaybeUnbound(symbols.interopCPointer)
+internal fun IrType.isCValue(symbols: KonanSymbols): Boolean = equalsToMaybeUnbound(symbols.interopCValue)
+internal fun IrType.isCValues(symbols: KonanSymbols): Boolean = equalsToMaybeUnbound(symbols.interopCValues)
+internal fun IrType.isCValuesRef(symbols: KonanSymbols): Boolean = equalsToMaybeUnbound(symbols.interopCValuesRef)
 
 internal fun IrType.isNativePointed(symbols: KonanSymbols): Boolean = isSubtypeOfClass(symbols.nativePointed)
 
@@ -91,10 +91,13 @@ internal fun IrType.isCStructFieldSupportedReferenceType(symbols: KonanSymbols):
         isObjCObjectType()
                 || getClass()?.isAny() == true
                 || isStringClassType()
-                || classOrNull == symbols.list
-                || classOrNull == symbols.mutableList
-                || classOrNull == symbols.set
-                || classOrNull == symbols.map
+                || equalsToMaybeUnbound(symbols.list)
+                || equalsToMaybeUnbound(symbols.mutableList)
+                || equalsToMaybeUnbound(symbols.set)
+                || equalsToMaybeUnbound(symbols.map)
+
+private fun IrType.equalsToMaybeUnbound(symbol: IrClassSymbol) = classOrNull == symbol ||
+        classOrNull?.signature?.let { it == symbol.signature } ?: false
 
 /**
  * Check given function is a getter or setter
@@ -114,4 +117,3 @@ internal fun IrFunction.isCStructMemberAtAccessor() = hasAnnotation(RuntimeNames
 internal fun IrFunction.isCStructArrayMemberAtAccessor() = hasAnnotation(RuntimeNames.cStructArrayMemberAt)
 
 internal fun IrFunction.isCStructBitFieldAccessor() = hasAnnotation(RuntimeNames.cStructBitField)
-
