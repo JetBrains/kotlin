@@ -7,11 +7,11 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.extraProperties
+import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
+import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.plugin.sources.android.androidSourceSetInfoOrNull
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
-import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 
 object UnusedSourceSetsChecker {
     const val WARNING_PREFIX_ONE =
@@ -39,7 +39,7 @@ object UnusedSourceSetsChecker {
     }
 
     fun checkSourceSets(project: Project) {
-        project.whenEvaluated {
+        project.launchInStage(KotlinPluginLifecycle.Stage.ReadyForExecution) {
             val unusedSourceSets = project.kotlinExtension.sourceSets
                 // Ignoring Android source sets
                 .filter { it.androidSourceSetInfoOrNull == null }
