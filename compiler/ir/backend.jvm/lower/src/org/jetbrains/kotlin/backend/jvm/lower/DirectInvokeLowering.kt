@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.backend.common.ir.asInlinableFunctionReference
 import org.jetbrains.kotlin.backend.common.ir.inline
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.phaser.makeIrModulePhase
+import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.ir.builders.irBlock
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.ir.util.explicitParameters
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-internal val directInvokeLowering = makeIrModulePhase(
+internal val directInvokeLowering = makeIrFilePhase(
     ::DirectInvokeLowering,
     name = "DirectInvokes",
     description = "Inline directly invoked lambdas and replace invoked function references with calls"

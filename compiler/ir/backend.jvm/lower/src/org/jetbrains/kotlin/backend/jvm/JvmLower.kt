@@ -57,6 +57,10 @@ private fun makeCheckParentsPhase(): SameTypeNamedCompilerPhase<CommonBackendCon
     )
 }
 
+internal fun JvmBackendContext.irInlinerIsEnabled(): Boolean {
+    return configuration.getBoolean(JVMConfigurationKeys.ENABLE_IR_INLINER)
+}
+
 private class PatchDeclarationParents : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.acceptVoid(PatchDeclarationParentsVisitor())
@@ -82,7 +86,7 @@ private val validateIrAfterLowering = makeCustomPhase(
 )
 
 // TODO make all lambda-related stuff work with IrFunctionExpression and drop this phase
-private val provisionalFunctionExpressionPhase = makeIrModulePhase<CommonBackendContext>(
+private val provisionalFunctionExpressionPhase = makeIrFilePhase<CommonBackendContext>(
     { ProvisionalFunctionExpressionLowering() },
     name = "FunctionExpression",
     description = "Transform IrFunctionExpression to a local function reference"
@@ -283,7 +287,7 @@ private val kotlinNothingValueExceptionPhase = makeIrFilePhase<CommonBackendCont
     description = "Throw proper exception for calls returning value of type 'kotlin.Nothing'"
 )
 
-internal val functionInliningPhase = makeIrModulePhase<JvmBackendContext>(
+internal val functionInliningPhase = makeIrModulePhase(
     { context ->
         class JvmInlineFunctionResolver : InlineFunctionResolver {
             override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction {
@@ -295,9 +299,7 @@ internal val functionInliningPhase = makeIrModulePhase<JvmBackendContext>(
             }
         }
 
-        if (!context.configuration.getBoolean(JVMConfigurationKeys.ENABLE_IR_INLINER)) {
-            return@makeIrModulePhase FileLoweringPass.Empty
-        }
+        if (!context.irInlinerIsEnabled()) return@makeIrModulePhase FileLoweringPass.Empty
 
         FunctionInlining(
             context, JvmInlineFunctionResolver(), context.innerClassesSupport,
@@ -314,6 +316,25 @@ internal val functionInliningPhase = makeIrModulePhase<JvmBackendContext>(
 )
 
 private val jvmFilePhases = listOf(
+    typeAliasAnnotationMethodsPhase,
+    provisionalFunctionExpressionPhase,
+
+    jvmOverloadsAnnotationPhase,
+    mainMethodGenerationPhase,
+
+    kCallableNamePropertyPhase,
+    annotationPhase,
+    annotationImplementationPhase,
+    polymorphicSignaturePhase,
+    varargPhase,
+
+    jvmLateinitLowering,
+    inventNamesForLocalClassesPhase,
+
+    inlineCallableReferenceToLambdaPhase,
+    directInvokeLowering,
+    functionReferencePhase,
+
     suspendLambdaPhase,
     propertyReferenceDelegationPhase,
     singletonOrConstantDelegationPhase,
@@ -438,28 +459,6 @@ private fun buildJvmLoweringPhases(
                 functionInliningPhase then
                 createSeparateCallForInlinedLambdas then
                 markNecessaryInlinedClassesAsRegenerated then
-
-                // Note: following phases can be moved to file level, but are located here because of `functionInliningPhase`
-                // This is needed, for example, for `kt42408` test.
-                // Function expression there must be transformed into ir class before moving to file level phases.
-                typeAliasAnnotationMethodsPhase then
-                provisionalFunctionExpressionPhase then
-
-                jvmOverloadsAnnotationPhase then
-                mainMethodGenerationPhase then
-
-                kCallableNamePropertyPhase then
-                annotationPhase then
-                annotationImplementationPhase then
-                polymorphicSignaturePhase then
-                varargPhase then
-
-                jvmLateinitLowering then
-                inventNamesForLocalClassesPhase then
-
-                inlineCallableReferenceToLambdaPhase then
-                directInvokeLowering then
-                functionReferencePhase then
 
                 buildLoweringsPhase(phases) then
                 generateMultifileFacadesPhase then

@@ -15,7 +15,9 @@ import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
@@ -24,7 +26,10 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.name.NameUtils
 
 internal val removeDuplicatedInlinedLocalClasses = makeIrFilePhase(
-    ::RemoveDuplicatedInlinedLocalClassesLowering,
+    { context ->
+        if (!context.irInlinerIsEnabled()) return@makeIrFilePhase FileLoweringPass.Empty
+        RemoveDuplicatedInlinedLocalClassesLowering(context)
+    },
     name = "RemoveDuplicatedInlinedLocalClasses",
     description = "Drop excess local classes that were copied by ir inliner",
     prerequisite = setOf(functionInliningPhase, localDeclarationsPhase)
@@ -39,7 +44,7 @@ data class Data(
 // There are three types of inlined local classes:
 // 1. MUST BE regenerated according to set of rules in AnonymousObjectTransformationInfo.
 // They all have `originalBeforeInline != null`.
-// 2. MUST NOT BE regenerated and MUST BE CREATED only once because they are copied from call site.
+// 2. MUST NOT BE regenerated and MUST BE CREATED only once because they are copied from call site, for example, from lambda.
 // This lambda will not exist after inline, so we copy declaration into new temporary inline call `singleArgumentInlineFunction`.
 // 3. MUST NOT BE created at all because will be created at callee site.
 // This lowering drops declarations that correspond to second and third type.
@@ -123,7 +128,7 @@ class RemoveDuplicatedInlinedLocalClassesLowering(val context: JvmBackendContext
 
     // Basically we want to remove all anonymous classes after inline. Exceptions are:
     // 1. classes that must be regenerated (declaration.originalBeforeInline != null)
-    // 2. classes that are originally declared on call site or are default lambdas (data == true)
+    // 2. classes that are originally declared on call site or are default lambdas (data.classDeclaredOnCallSiteOrIsDefaultLambda == false)
     override fun visitClass(declaration: IrClass, data: Data): IrStatement {
         if (!data.insideInlineBlock || declaration.originalBeforeInline != null || !data.classDeclaredOnCallSiteOrIsDefaultLambda) {
             return super.visitClass(declaration, data)

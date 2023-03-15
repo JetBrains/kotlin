@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineOnly
+import org.jetbrains.kotlin.backend.jvm.irInlinerIsEnabled
 import org.jetbrains.kotlin.codegen.inline.INLINE_FUN_VAR_SUFFIX
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.ir.IrElement
@@ -27,8 +28,11 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 
-internal val fakeInliningLocalVariablesAfterInlineLowering = makeIrFilePhase(
-    ::FakeInliningLocalVariablesAfterInlineLowering,
+internal val fakeInliningLocalVariablesAfterInlineLowering = makeIrFilePhase<JvmBackendContext>(
+    { context ->
+        if (!context.irInlinerIsEnabled()) return@makeIrFilePhase FileLoweringPass.Empty
+        FakeInliningLocalVariablesAfterInlineLowering(context)
+    },
     name = "FakeInliningLocalVariablesAfterInlineLowering",
     description = """Add fake locals to identify the range of inlined functions and lambdas. 
         |This lowering adds fake locals into already inlined blocks.""".trimMargin()
