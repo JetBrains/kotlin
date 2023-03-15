@@ -572,7 +572,7 @@ class CallAndReferenceGenerator(
                         // If we found neither a setter nor a backing field, check if we have an override (possibly fake) of a val with
                         // backing field. This can happen in a class initializer where `this` was smart-casted. See KT-57105.
                         if (setter == null && backingField == null) {
-                            backingField = irProperty.overriddenSymbols.firstNotNullOfOrNull { it.owner.backingField }
+                            backingField = irProperty.overriddenBackingFieldOrNull()
                         }
 
                         when {
@@ -621,6 +621,13 @@ class CallAndReferenceGenerator(
                 "Error while translating ${variableAssignment.render()} " +
                         "from file ${conversionScope.containingFileIfAny()?.name ?: "???"} to BE IR", e
             )
+        }
+    }
+
+    private fun IrProperty.overriddenBackingFieldOrNull(): IrField? {
+        return overriddenSymbols.firstNotNullOfOrNull {
+            val owner = it.owner
+            owner.backingField ?: owner.overriddenBackingFieldOrNull()
         }
     }
 

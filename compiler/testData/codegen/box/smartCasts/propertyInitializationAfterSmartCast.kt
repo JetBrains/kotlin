@@ -7,10 +7,23 @@ open class MessageBusImpl {
 
     init {
         this as RootBus
-        parentBus = "OK"
+        parentBus = "O"
+    }
+}
+
+class RootBus2: CompositeMessageBus2()
+
+open class CompositeMessageBus2: MessageBusImpl2()
+
+open class MessageBusImpl2 {
+    val parentBus: Any?
+
+    init {
+        this as RootBus2
+        parentBus = "K"
     }
 }
 
 fun box(): String {
-    return RootBus().parentBus as String
+    return "" + RootBus().parentBus + RootBus2().parentBus
 }
