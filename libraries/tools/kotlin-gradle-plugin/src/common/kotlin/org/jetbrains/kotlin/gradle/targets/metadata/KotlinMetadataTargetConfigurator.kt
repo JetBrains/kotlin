@@ -290,10 +290,7 @@ class KotlinMetadataTargetConfigurator :
         val project = target.project
 
         val compilationName = sourceSet.name
-
-        val platformCompilations = sourceSet.internal.compilations
-            .filter { it.target.name != KotlinMultiplatformPlugin.METADATA_TARGET_NAME }
-
+        val platformCompilations = sourceSet.internal.awaitPlatformCompilations()
         val isNativeSourceSet = sourceSet.isNativeSourceSet.await()
 
         val compilationFactory: KotlinCompilationFactory<out KotlinCompilation<*>> = when {

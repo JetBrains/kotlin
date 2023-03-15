@@ -333,7 +333,7 @@ open class NewMultiplatformIT : BaseGradleIT() {
                 options = defaultBuildOptions().copy(jsCompilerType = jsCompilerType)
             ) {
                 assertSuccessful()
-                assertTasksSkipped(":compileCommonMainKotlinMetadata")
+                assertTasksNotExecuted(":compileCommonMainKotlinMetadata")
                 assertTasksExecuted(*compileTasksNames.toTypedArray(), ":allMetadataJar")
 
                 val groupDir = projectDir.resolve("repo/com/example")
