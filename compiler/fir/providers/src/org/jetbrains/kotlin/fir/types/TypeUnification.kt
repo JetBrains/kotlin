@@ -78,7 +78,11 @@ fun FirSession.doUnify(
     }
 
     // Foo ~ X? => fail
-    if (originalType?.nullability != ConeNullability.NULLABLE && typeWithParameters?.nullability == ConeNullability.NULLABLE) {
+    if (
+        originalTypeProjection !is ConeStarProjection &&
+        originalType?.nullability != ConeNullability.NULLABLE &&
+        typeWithParameters?.nullability == ConeNullability.NULLABLE
+    ) {
         return true
     }
 
