@@ -2524,7 +2524,6 @@ public final data class Triple<out A, out B, out C> : kotlin.io.Serializable {
 }
 
 @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION})
-@kotlin.annotation.Retention(value = AnnotationRetention.SOURCE)
 @kotlin.annotation.MustBeDocumented
 public final annotation class TypedEquals : kotlin.Annotation {
     public constructor TypedEquals()
