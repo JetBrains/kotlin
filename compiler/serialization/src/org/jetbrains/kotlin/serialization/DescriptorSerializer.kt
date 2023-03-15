@@ -58,12 +58,7 @@ class DescriptorSerializer private constructor(
 ) {
     private val contractSerializer = ContractSerializer()
 
-    private var metDefinitelyNotNullTypeStack: MutableList<Boolean> = mutableListOf(false)
-    private var metDefinitelyNotNullType: Boolean
-        get() = metDefinitelyNotNullTypeStack.last()
-        set(value) {
-            metDefinitelyNotNullTypeStack[metDefinitelyNotNullTypeStack.lastIndex] = value
-        }
+    private var metDefinitelyNotNullType: Boolean = false
 
     private fun createChildSerializer(descriptor: DeclarationDescriptor): DescriptorSerializer =
         DescriptorSerializer(
@@ -78,16 +73,7 @@ class DescriptorSerializer private constructor(
 
     private fun useTypeTable(): Boolean = extension.shouldUseTypeTable()
 
-    private inline fun <T> withNewMetDefinitelyNotNullType(block: () -> T): T {
-        metDefinitelyNotNullTypeStack.add(false)
-        return try {
-            block()
-        } finally {
-            metDefinitelyNotNullTypeStack.removeAt(metDefinitelyNotNullTypeStack.lastIndex)
-        }
-    }
-
-    fun classProto(classDescriptor: ClassDescriptor): ProtoBuf.Class.Builder = withNewMetDefinitelyNotNullType {
+    fun classProto(classDescriptor: ClassDescriptor): ProtoBuf.Class.Builder {
         val builder = ProtoBuf.Class.newBuilder()
 
         val hasEnumEntries = classDescriptor.kind == ClassKind.ENUM_CLASS &&
@@ -507,7 +493,7 @@ class DescriptorSerializer private constructor(
         )
     }
 
-    private fun typeAliasProto(descriptor: TypeAliasDescriptor): ProtoBuf.TypeAlias.Builder? = withNewMetDefinitelyNotNullType {
+    private fun typeAliasProto(descriptor: TypeAliasDescriptor): ProtoBuf.TypeAlias.Builder? {
         val builder = ProtoBuf.TypeAlias.newBuilder()
         val local = createChildSerializer(descriptor)
 
