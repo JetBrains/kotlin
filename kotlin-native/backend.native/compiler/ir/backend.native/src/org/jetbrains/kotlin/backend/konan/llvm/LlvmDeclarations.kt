@@ -316,6 +316,12 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
         return KotlinObjCClassLlvmDeclarations(classInfoGlobal, bodyOffsetGlobal)
     }
 
+    override fun visitValueParameter(declaration: IrValueParameter) {
+        // In some cases because of inconsistencies of previous lowerings, default values can be not removed.
+        // If they contain class or function, they would not be processed by code generator
+        // So we are skipping them here too.
+    }
+
     private tailrec fun gcd(a: Long, b: Long) : Long = if (b == 0L) a else gcd(b, a % b)
 
     override fun visitField(declaration: IrField) {
