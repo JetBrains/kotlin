@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.gradle.internals
 
 import org.jetbrains.kotlin.gradle.plugin.KOTLIN_12X_MPP_DEPRECATION_WARNING
-
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.DIAGNOSTIC_SEPARATOR
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinProjectStructureMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.MULTIPLATFORM_PROJECT_METADATA_JSON_FILE_NAME
 import org.jetbrains.kotlin.gradle.plugin.mpp.parseKotlinSourceSetMetadataFromJson
@@ -27,3 +27,4 @@ const val NO_NATIVE_STDLIB_PROPERTY_WARNING = NO_NATIVE_STDLIB_PROPERTY_WARNING
 
 val KOTLIN_12X_MPP_DEPRECATION_WARNING = KOTLIN_12X_MPP_DEPRECATION_WARNING
 
+const val VERBOSE_DIAGNOSTIC_SEPARATOR = DIAGNOSTIC_SEPARATOR
