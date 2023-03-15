@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.gradle.android
 
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.plugin.mpp.UnusedSourceSetsChecker
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.TestVersions.AGP.AGP_70
 import org.jetbrains.kotlin.gradle.testbase.TestVersions.AGP.AGP_71
@@ -1015,9 +1015,7 @@ class KotlinAndroidMppIT : KGPBaseTest() {
             buildJdk = jdkVersion.location
         ) {
             build("assembleDebug") {
-                assertOutputDoesNotContain(UnusedSourceSetsChecker.WARNING_PREFIX_ONE)
-                assertOutputDoesNotContain(UnusedSourceSetsChecker.WARNING_PREFIX_MANY)
-                assertOutputDoesNotContain(UnusedSourceSetsChecker.WARNING_INTRO)
+                output.assertNoDiagnostic(KotlinToolingDiagnostics.UnusedSourceSetsWarning)
             }
         }
     }

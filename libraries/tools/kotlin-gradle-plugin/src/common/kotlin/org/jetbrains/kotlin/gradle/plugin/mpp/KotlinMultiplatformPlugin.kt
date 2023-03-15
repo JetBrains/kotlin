@@ -191,8 +191,6 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
             KotlinBuildStatsService.getInstance()?.report(StringMetrics.MPP_PLATFORMS, targetName)
         }
 
-        UnusedSourceSetsChecker.checkSourceSets(project)
-
         project.launchInStage(KotlinPluginLifecycle.Stage.ReadyForExecution) {
             project.runProjectConfigurationHealthCheck {
                 checkSourceSetVisibilityRequirements(project)

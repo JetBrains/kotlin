@@ -54,4 +54,25 @@ object KotlinToolingDiagnostics {
             """.trimIndent()
         )
     }
+
+    object UnusedSourceSetsWarning : ToolingDiagnosticFactory(WARNING) {
+        operator fun invoke(sourceSetNames: Collection<String>): ToolingDiagnostic {
+
+            val cause = if (sourceSetNames.size == 1) {
+                "The Kotlin source set ${sourceSetNames.single()} was configured but not added to any Kotlin compilation.\n"
+            } else {
+                val sourceSetNames = sourceSetNames.joinToString("\n") { " * $it" }
+                "The following Kotlin source sets were configured but not added to any Kotlin compilation:\n" +
+                        sourceSetNames
+            }
+
+            val details =
+                """
+                |You can add a source set to a target's compilation by connecting it with the compilation's default source set using 'dependsOn'.
+                |See https://kotl.in/connecting-source-sets
+            """.trimMargin()
+
+            return build(cause + "\n" + details)
+        }
+    }
 }

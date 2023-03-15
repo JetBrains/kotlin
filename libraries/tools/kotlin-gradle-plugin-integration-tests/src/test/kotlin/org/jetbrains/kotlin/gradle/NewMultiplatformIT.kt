@@ -1605,25 +1605,21 @@ open class NewMultiplatformIT : BaseGradleIT() {
 
         build {
             assertSuccessful()
-            assertContains(UnusedSourceSetsChecker.WARNING_PREFIX_ONE, UnusedSourceSetsChecker.WARNING_INTRO)
+            assertHasDiagnostic(KotlinToolingDiagnostics.UnusedSourceSetsWarning)
         }
 
         gradleBuildScript().appendText("\nkotlin { sourceSets { bar { dependsOn foo } } }")
 
         build {
             assertSuccessful()
-            assertContains(UnusedSourceSetsChecker.WARNING_PREFIX_MANY, UnusedSourceSetsChecker.WARNING_INTRO)
+            assertHasDiagnostic(KotlinToolingDiagnostics.UnusedSourceSetsWarning)
         }
 
         gradleBuildScript().appendText("\nkotlin { sourceSets { jvm6Main { dependsOn bar } } }")
 
         build {
             assertSuccessful()
-            assertNotContains(
-                UnusedSourceSetsChecker.WARNING_PREFIX_ONE,
-                UnusedSourceSetsChecker.WARNING_PREFIX_MANY,
-                UnusedSourceSetsChecker.WARNING_INTRO
-            )
+            assertNoDiagnostic(KotlinToolingDiagnostics.UnusedSourceSetsWarning)
         }
     }
 
