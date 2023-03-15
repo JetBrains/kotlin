@@ -10,8 +10,8 @@ import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsCollector
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
-import org.jetbrains.kotlin.gradle.plugin.sources.android.checker.KotlinAndroidSourceSetLayoutChecker
 import org.jetbrains.kotlin.gradle.utils.getOrCreate
 import org.jetbrains.kotlin.gradle.utils.runProjectConfigurationHealthCheck
 
@@ -19,7 +19,7 @@ internal class KotlinAndroidSourceSetFactory(
     private val target: KotlinAndroidTarget,
     private val kotlin: KotlinProjectExtension,
     private val layout: KotlinAndroidSourceSetLayout,
-    private val diagnosticReporter: KotlinAndroidSourceSetLayoutChecker.DiagnosticReporter,
+    private val diagnosticsCollector: KotlinToolingDiagnosticsCollector
 ) {
     private val configuredKotlinSourceSets = mutableSetOf<KotlinSourceSet>()
 
@@ -29,7 +29,7 @@ internal class KotlinAndroidSourceSetFactory(
             layout.sourceSetConfigurator.configure(target, kotlinSourceSet, androidSourceSet)
             target.project.runProjectConfigurationHealthCheck {
                 val layout = this@KotlinAndroidSourceSetFactory.layout
-                layout.checker.checkCreatedSourceSet(diagnosticReporter, target, layout, kotlinSourceSet, androidSourceSet)
+                layout.checker.checkCreatedSourceSet(diagnosticsCollector, target, layout, kotlinSourceSet, androidSourceSet)
             }
         }
         return kotlinSourceSet

@@ -6,7 +6,10 @@
 package org.jetbrains.kotlin.gradle.plugin.diagnostics
 
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.WARNING
+import org.jetbrains.kotlin.gradle.plugin.sources.android.multiplatformAndroidSourceSetLayoutV1
+import org.jetbrains.kotlin.gradle.plugin.sources.android.multiplatformAndroidSourceSetLayoutV2
 
 @InternalKotlinGradlePluginApi // used in integration tests
 object KotlinToolingDiagnostics {
@@ -74,5 +77,54 @@ object KotlinToolingDiagnostics {
 
             return build(cause + "\n" + details)
         }
+    }
+
+    object PromoteAndroidSourceSetLayoutV2Warning : ToolingDiagnosticFactory(WARNING) {
+        operator fun invoke() = build(
+            """
+                ${multiplatformAndroidSourceSetLayoutV1.name} is deprecated. Use ${multiplatformAndroidSourceSetLayoutV2.name} instead. 
+                To enable ${multiplatformAndroidSourceSetLayoutV2.name}: put the following in your gradle.properties: 
+                ${PropertiesProvider.PropertyNames.KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_VERSION}=2
+                
+                To suppress this warning: put the following in your gradle.properties:
+                ${PropertiesProvider.PropertyNames.KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_VERSION_1_NO_WARN}=true
+                
+                Learn more: https://kotlinlang.org/docs/whatsnew18.html#kotlin-multiplatform-a-new-android-source-set-layout
+            """.trimIndent()
+        )
+    }
+
+    object AgpRequirementNotMetForAndroidSourceSetLayoutV2 : ToolingDiagnosticFactory(WARNING) {
+        operator fun invoke(minimumRequiredAgpVersion: String, currentAgpVersion: String) = build(
+            """
+                    ${multiplatformAndroidSourceSetLayoutV2.name} requires Android Gradle Plugin Version >= $minimumRequiredAgpVersion.
+                    Found $currentAgpVersion
+                """.trimIndent()
+        )
+    }
+
+    object AndroidStyleSourceDirUsageWarning : ToolingDiagnosticFactory(WARNING) {
+        operator fun invoke(androidStyleSourceDirInUse: String, kotlinStyleSourceDirToUse: String) = build(
+            """
+                Usage of 'Android Style' source directory $androidStyleSourceDirInUse is deprecated.
+                Use $kotlinStyleSourceDirToUse instead.
+                
+                To suppress this warning: put the following in your gradle.properties:
+                ${PropertiesProvider.PropertyNames.KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_ANDROID_STYLE_NO_WARN}=true
+                
+                Learn more: https://kotlinlang.org/docs/whatsnew18.html#kotlin-multiplatform-a-new-android-source-set-layout
+            """.trimIndent()
+        )
+    }
+
+    object SourceSetLayoutV1StyleDirUsageWarning : ToolingDiagnosticFactory(WARNING) {
+        operator fun invoke(v1StyleSourceDirInUse: String, currentLayoutName: String, v2StyleSourceDirToUse: String) = build(
+            """
+                Found used source directory $v1StyleSourceDirInUse
+                This source directory was supported by: ${multiplatformAndroidSourceSetLayoutV1.name}
+                Current KotlinAndroidSourceSetLayout: $currentLayoutName
+                New source directory is: $v2StyleSourceDirToUse
+            """.trimIndent()
+        )
     }
 }

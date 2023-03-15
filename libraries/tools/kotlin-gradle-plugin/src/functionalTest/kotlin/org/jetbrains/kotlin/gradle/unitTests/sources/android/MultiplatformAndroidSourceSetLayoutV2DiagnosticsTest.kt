@@ -12,18 +12,13 @@ import org.gradle.api.Project
 import org.gradle.api.internal.project.ProjectInternal
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.sources.android.checker.MultiplatformLayoutV2AndroidStyleSourceDirUsageChecker.AndroidStyleSourceDirUsageDiagnostic
-import org.jetbrains.kotlin.gradle.plugin.sources.android.checker.MultiplatformLayoutV2MultiplatformLayoutV1StyleSourceDirUsageChecker.V1StyleSourceDirUsageDiagnostic
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.kotlinToolingDiagnosticsCollector
 import org.jetbrains.kotlin.gradle.plugin.sources.android.findAndroidSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.android.multiplatformAndroidSourceSetLayoutV2
 import org.jetbrains.kotlin.gradle.util.*
 import org.junit.Test
-import kotlin.test.assertEquals
-import kotlin.test.fail
 
 class MultiplatformAndroidSourceSetLayoutV2DiagnosticsTest {
-
-    private val diagnosticsReporter = TestDiagnosticsReporter()
 
     private fun buildMinimalAndroidMultiplatformProject(): ProjectInternal = buildProjectWithMPP {
         setMultiplatformAndroidSourceSetLayoutVersion(2)
@@ -36,14 +31,12 @@ class MultiplatformAndroidSourceSetLayoutV2DiagnosticsTest {
         }
     }
 
-    private fun Project.checkCreatedSourceSets(
-        diagnosticsReporter: TestDiagnosticsReporter = this@MultiplatformAndroidSourceSetLayoutV2DiagnosticsTest.diagnosticsReporter
-    ) {
+    private fun Project.checkCreatedSourceSets() {
         /* Invoke checkers on all source sets */
         project.multiplatformExtension.sourceSets.forEach { kotlinSourceSet ->
             val androidSourceSet = project.findAndroidSourceSet(kotlinSourceSet) ?: return@forEach
             multiplatformAndroidSourceSetLayoutV2.checker.checkCreatedSourceSet(
-                diagnosticReporter = diagnosticsReporter,
+                diagnosticsCollector = project.kotlinToolingDiagnosticsCollector,
                 target = project.multiplatformExtension.androidTarget(),
                 layout = multiplatformAndroidSourceSetLayoutV2,
                 kotlinSourceSet = kotlinSourceSet,
@@ -63,10 +56,7 @@ class MultiplatformAndroidSourceSetLayoutV2DiagnosticsTest {
 
         /* Invoke checkers on all source sets */
         project.checkCreatedSourceSets()
-
-        val diagnostic = assertIsInstance<AndroidStyleSourceDirUsageDiagnostic>(diagnosticsReporter.assertSingleWarning())
-        assertEquals(androidTestKotlinSourceDir, diagnostic.androidStyleSourceDirInUse)
-        assertEquals(project.file("src/androidInstrumentedTest/kotlin"), diagnostic.kotlinStyleSourceDirToUse)
+        project.checkDiagnostics("kt53709AndroidTest_kotlinInUse")
     }
 
     @Test
@@ -80,25 +70,7 @@ class MultiplatformAndroidSourceSetLayoutV2DiagnosticsTest {
         project.evaluate()
 
         project.checkCreatedSourceSets()
-
-        val warnings = diagnosticsReporter.warnings
-        if (warnings.size != 2) fail("Expected exactly two warnings emitted. Found $warnings")
-
-        val androidMainWarning = warnings.filterIsInstance<AndroidStyleSourceDirUsageDiagnostic>()
-            .find { warning -> warning.androidStyleSourceDirInUse == androidStyleMain }
-            ?: fail("Missing warning for '$androidStyleMain'. Found $warnings")
-
-        assertEquals(
-            project.file("src/androidMain/kotlin"), androidMainWarning.kotlinStyleSourceDirToUse
-        )
-
-        val androidUnitTestWarning = warnings.filterIsInstance<AndroidStyleSourceDirUsageDiagnostic>()
-            .find { warning -> warning.androidStyleSourceDirInUse == androidStyleUnitTest }
-            ?: fail("Missing warning for '$androidStyleUnitTest'. Found $warnings")
-
-        assertEquals(
-            project.file("src/androidUnitTest/kotlin"), androidUnitTestWarning.kotlinStyleSourceDirToUse
-        )
+        project.checkDiagnostics("androidStyleSourceDirUsage")
     }
 
     @Test
@@ -115,9 +87,7 @@ class MultiplatformAndroidSourceSetLayoutV2DiagnosticsTest {
         project.evaluate()
 
         project.checkCreatedSourceSets()
-
-        val warnings = diagnosticsReporter.warnings
-        if (warnings.isNotEmpty()) fail("Expected no warnings emitted. Found $warnings")
+        project.checkDiagnostics("androidStyleSourceDirUsageNoWarn")
     }
 
     @Test
@@ -127,15 +97,6 @@ class MultiplatformAndroidSourceSetLayoutV2DiagnosticsTest {
         v1StyleInstrumentedTest.mkdirs()
         project.evaluate()
         project.checkCreatedSourceSets()
-
-        val warning = assertIsInstance<V1StyleSourceDirUsageDiagnostic>(diagnosticsReporter.assertSingleWarning())
-
-        assertEquals(
-            v1StyleInstrumentedTest, warning.v1StyleSourceDirInUse,
-        )
-
-        assertEquals(
-            project.file("src/androidInstrumentedTest/kotlin"), warning.v2StyleSourceDirToUse
-        )
+        project.checkDiagnostics("v1LayoutStyleSourceDirUsage")
     }
 }
