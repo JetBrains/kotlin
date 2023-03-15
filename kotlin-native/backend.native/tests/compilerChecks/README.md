@@ -14,9 +14,9 @@ K2: `kotlin-native/backend.native/tests/compilerChecks/runtests.sh -language-ver
           with literal `42`:  wrong `error: symbol @GCUnsafeCall(...) fun malloc(size: Long, align: Int): NativePtr is invisible`, since "KT-56583 K1: Implement opt-in for integer cinterop conversions" is not implemented in K2
           with literal `42u`: wrong `error: type kotlinx.cinterop.CPointer<out kotlinx.cinterop.CPointed>?  of return value is not supported here: doesn't correspond to any C type`
 - t51.kt: missing error. K1 has no error as well
-- t54.kt: missing `error: no spread elements allowed here`
-- t55.kt: missing `error: all elements of binary blob must be constants`
-- t56.kt: missing `error: incorrect value for binary data: 1000`
-- t57.kt: missing `error: expected at least one element`
+- t54.kt: missing `error: no spread elements allowed here`, due to callee.symbol.signature is wrongly `kotlin.native/immutableBlobOf|-2521644389226161282[0]` instead of `kotlin.native/immutableBlobOf|3143324480924071126[0]` 
+- t55.kt: missing `error: all elements of binary blob must be constants`, due to same problem
+- t56.kt: missing `error: incorrect value for binary data: 1000`, due to same problem
+- t57.kt: missing `error: expected at least one element`, due to same problem
 - t63.kt: missing error. K1 has no error as well
 - t64.kt: missing error. K1 has no error as well

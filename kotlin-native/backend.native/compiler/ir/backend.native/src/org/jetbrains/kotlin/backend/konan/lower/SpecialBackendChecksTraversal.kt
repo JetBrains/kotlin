@@ -488,7 +488,7 @@ private class BackendChecker(
                     if (function == null)
                         reportBoundFunctionReferenceError(expression, callee, captures)
                 }
-                callee.symbol == symbols.immutableBlobOf -> {
+                callee.symbol.equalsToMaybeUnbound(symbols.immutableBlobOf) -> {
                     val args = expression.getValueArgument(0)
                             ?: reportError(expression, "expected at least one element")
                     val elements = (args as IrVararg).elements
@@ -507,6 +507,9 @@ private class BackendChecker(
             }
         }
     }
+
+    private fun IrSimpleFunctionSymbol.equalsToMaybeUnbound(other: IrSimpleFunctionSymbol) = this == other ||
+            signature?.let { it == other.signature } ?: false
 
     override fun visitFunctionExpression(expression: IrFunctionExpression) {
         expression.acceptChildrenVoid(this)
