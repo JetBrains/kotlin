@@ -82,22 +82,25 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     val memoryModel: MemoryModel by lazy {
         when (configuration.get(BinaryOptions.memoryModel)) {
-            MemoryModel.STRICT -> MemoryModel.STRICT
+            MemoryModel.STRICT -> {
+                configuration.report(CompilerMessageSeverity.STRONG_WARNING, "Legacy MM is deprecated and will be removed in version 1.9.20")
+                MemoryModel.STRICT
+            }
             MemoryModel.RELAXED -> {
                 configuration.report(CompilerMessageSeverity.ERROR,
-                        "Relaxed MM is deprecated and isn't expected to work right way with current Kotlin version. Using legacy MM.")
+                        "Relaxed MM is deprecated and isn't expected to work right way with current Kotlin version.")
                 MemoryModel.STRICT
             }
             MemoryModel.EXPERIMENTAL -> {
                 if (!target.supportsThreads()) {
                     configuration.report(CompilerMessageSeverity.STRONG_WARNING,
-                            "New MM requires threads, which are not supported on target ${target.name}. Using legacy MM.")
+                            "New MM requires threads, which are not supported on a deprecated target ${target.name}. Using deprecated legacy MM.")
                     MemoryModel.STRICT
                 } else {
                     MemoryModel.EXPERIMENTAL
                 }
             }
-            null -> defaultMemoryModel
+            null -> defaultMemoryModel // If target does not support threads, it's deprecated, no need to spam with our own deprecation message.
         }.also {
             if (it == MemoryModel.EXPERIMENTAL && destroyRuntimeMode == DestroyRuntimeMode.LEGACY) {
                 configuration.report(CompilerMessageSeverity.ERROR,
