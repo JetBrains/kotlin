@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.generator.config.ElementConfig.Category.*
 import org.jetbrains.kotlin.ir.generator.config.ListFieldConfig.Mutability.List
 import org.jetbrains.kotlin.ir.generator.config.ListFieldConfig.Mutability.Var
 import org.jetbrains.kotlin.ir.generator.config.SimpleFieldConfig
+import org.jetbrains.kotlin.ir.generator.model.Element.Companion.elementName2typeName
 import org.jetbrains.kotlin.ir.generator.print.toPoet
 import org.jetbrains.kotlin.ir.generator.util.*
 import org.jetbrains.kotlin.name.FqName
@@ -85,7 +86,25 @@ object IrTree : AbstractTreeBuilder() {
         +symbol(symbolType)
     }
     val metadataSourceOwner: ElementConfig by element(Declaration) {
-        +field("metadata", type(Packages.declarations, "MetadataSource"), nullable = true)
+        val metadataField = +field("metadata", type(Packages.declarations, "MetadataSource"), nullable = true) {
+            kdoc = """
+            The arbitrary metadata associated with this IR node.
+            
+            @see ${elementName2typeName(this@element.name)}
+            """.trimIndent()
+        }
+        kDoc = """
+        An [${elementName2typeName(rootElement.name)}] capable of holding something which backends can use to write
+        as the metadata for the declaration.
+        
+        Technically, it can even be ± an array of bytes, but right now it's usually the frontend representation of the declaration,
+        so a descriptor in case of K1, and [org.jetbrains.kotlin.fir.FirElement] in case of K2,
+        and the backend invokes a metadata serializer on it to obtain metadata and write it, for example, to `@kotlin.Metadata`
+        on JVM.
+        
+        In Kotlin/Native, [${metadataField.name}] is used to store some LLVM-related stuff in an IR declaration,
+        but this is only for performance purposes (before it was done using simple maps).
+        """.trimIndent()
     }
     val overridableMember: ElementConfig by element(Declaration) {
         parent(declaration)
