@@ -308,7 +308,7 @@ class CocoaPodsIT : BaseGradleIT() {
     @Test
     fun testSyntheticProjectPodfilePostprocessing() {
         project.gradleBuildScript().apply {
-            appendToCocoapodsBlock("""pod("AWSMobileClient", version = "2.29.1")""")
+            appendToCocoapodsBlock("""pod("AWSMobileClient", version = "2.30.0")""")
 
             appendText("""
                 
@@ -1688,6 +1688,7 @@ class CocoaPodsIT : BaseGradleIT() {
         mode: ImportMode,
         iosAppLocation: String?,
         subprojectsToFrameworkNamesMap: Map<String, String?>,
+        arch: String = "x86_64",
     ) {
 
         gradleProject.projectDir.resolve("gradle.properties")
@@ -1729,6 +1730,7 @@ class CocoaPodsIT : BaseGradleIT() {
                             "-configuration", "Release",
                             "-workspace", "$name.xcworkspace",
                             "-scheme", name,
+                            "-arch", arch,
                             inheritIO = true // Xcode doesn't finish the process if the PIPE redirect is used.
                         ) {
                             assertEquals(
@@ -1882,30 +1884,29 @@ class CocoaPodsIT : BaseGradleIT() {
 
         @BeforeClass
         @JvmStatic
-        fun installCocoaPods() {
-            if (cocoapodsInstallationRequired) {
-                if (cocoapodsInstallationAllowed) {
-                    println("Installing CocoaPods...")
-                    gem("install", "--install-dir", cocoapodsInstallationRoot.absolutePath, "cocoapods", "-v", cocoapodsVersion)
-                } else {
-                    fail(
-                        """
-                            Running CocoaPods integration tests requires cocoapods to be installed.
-                            Please install them manually:
-                                gem install cocoapods
-                            Or re-run the tests with the 'installCocoapods=true' Gradle property.
-                        """.trimIndent()
-                    )
-                }
+        fun ensureCocoapodsInstalled() {
+            if (!HostManager.hostIsMac) {
+                return
+            }
+
+            if (shouldInstallLocalCocoapods) {
+                println("Installing CocoaPods...")
+                gem("install", "--install-dir", cocoapodsInstallationRoot.absolutePath, "cocoapods", "-v", localCocoapodsVersion)
+            } else if (!isCocoapodsInstalled()) {
+                fail(
+                    """
+                        Running CocoaPods integration tests requires cocoapods to be installed.
+                        Please install them manually:
+                            gem install cocoapods
+                        Or re-run the tests with the 'installCocoapods=true' Gradle property.
+                    """.trimIndent()
+                )
             }
         }
 
-        private const val cocoapodsVersion = "1.11.0"
+        private const val localCocoapodsVersion = "1.11.0"
 
-        private val cocoapodsInstallationRequired: Boolean by lazy {
-            !isCocoapodsInstalled()
-        }
-        private val cocoapodsInstallationAllowed: Boolean = System.getProperty("installCocoapods").toBoolean()
+        private val shouldInstallLocalCocoapods: Boolean = System.getProperty("installCocoapods").toBoolean()
 
         private val cocoapodsInstallationRoot: File by lazy { createTempDir("cocoapods") }
         private val cocoapodsBinPath: File by lazy {
@@ -1913,6 +1914,10 @@ class CocoaPodsIT : BaseGradleIT() {
         }
 
         private fun getEnvs(): Map<String, String> {
+            if (!shouldInstallLocalCocoapods) {
+                return emptyMap()
+            }
+
             val path = cocoapodsBinPath.absolutePath + File.pathSeparator + System.getenv("PATH")
             val gemPath = System.getenv("GEM_PATH")?.let {
                 cocoapodsInstallationRoot.absolutePath + File.pathSeparator + it
@@ -1932,7 +1937,6 @@ class CocoaPodsIT : BaseGradleIT() {
                 val result = runProcess(
                     listOf("pod", "--version"),
                     File("."),
-                    environmentVariables = getEnvs()
                 )
                 result.isSuccessful
             } catch (e: IOException) {
