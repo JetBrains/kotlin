@@ -13,7 +13,8 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 
 /**
  * A non-leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.symbolOwner
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.symbolOwner]
  */
 interface IrSymbolOwner : IrElement {
     val symbol: IrSymbol

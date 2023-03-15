@@ -14,7 +14,8 @@ import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
 
 /**
  * A non-leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.returnTarget
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.returnTarget]
  */
 interface IrReturnTarget : IrSymbolOwner {
     @ObsoleteDescriptorBasedAPI

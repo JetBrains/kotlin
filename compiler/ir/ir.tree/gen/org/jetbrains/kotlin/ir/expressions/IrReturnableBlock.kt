@@ -14,7 +14,8 @@ import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 
 /**
  * A leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.returnableBlock
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.returnableBlock]
  */
 abstract class IrReturnableBlock : IrBlock(), IrSymbolOwner, IrReturnTarget {
     abstract override val symbol: IrReturnableBlockSymbol

@@ -13,7 +13,8 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 
 /**
  * A leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.functionWithLateBinding
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.functionWithLateBinding]
  */
 interface IrFunctionWithLateBinding : IrDeclaration {
     override val symbol: IrSimpleFunctionSymbol

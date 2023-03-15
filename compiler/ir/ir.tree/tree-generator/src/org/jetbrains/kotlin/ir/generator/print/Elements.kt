@@ -192,7 +192,7 @@ private fun TypeSpec.Builder.generateElementKDoc(element: Element) {
             appendLine(" IR tree element.")
         }
 
-        append("@sample ${element.propertyName}")
+        append("\nGenerated from: [${element.propertyName}]")
     })
 }
 

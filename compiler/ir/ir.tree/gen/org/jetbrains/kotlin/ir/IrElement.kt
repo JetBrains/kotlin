@@ -13,7 +13,8 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
  * A non-leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.rootElement
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.rootElement]
  */
 interface IrElement {
     val startOffset: Int

@@ -11,7 +11,8 @@ package org.jetbrains.kotlin.ir.expressions
 
 /**
  * A non-leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.breakContinue
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.breakContinue]
  */
 abstract class IrBreakContinue : IrExpression() {
     abstract var loop: IrLoop

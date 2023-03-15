@@ -17,7 +17,8 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
  * A leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.anonymousInitializer
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.anonymousInitializer]
  */
 abstract class IrAnonymousInitializer : IrDeclarationBase() {
     @ObsoleteDescriptorBasedAPI

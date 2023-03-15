@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.IrElement
 
 /**
  * A non-leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.varargElement
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.varargElement]
  */
 interface IrVarargElement : IrElement

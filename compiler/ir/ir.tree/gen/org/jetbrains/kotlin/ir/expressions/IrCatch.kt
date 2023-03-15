@@ -16,7 +16,8 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
  * A leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.catch
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.catch]
  */
 abstract class IrCatch : IrElementBase(), IrElement {
     abstract var catchParameter: IrVariable

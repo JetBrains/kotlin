@@ -15,7 +15,8 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
  * A leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.localDelegatedPropertyReference
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.localDelegatedPropertyReference]
  */
 abstract class IrLocalDelegatedPropertyReference :
         IrCallableReference<IrLocalDelegatedPropertySymbol>() {

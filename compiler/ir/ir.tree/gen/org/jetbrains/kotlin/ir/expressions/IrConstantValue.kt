@@ -11,7 +11,8 @@ package org.jetbrains.kotlin.ir.expressions
 
 /**
  * A non-leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.constantValue
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.constantValue]
  */
 abstract class IrConstantValue : IrExpression() {
     abstract fun contentEquals(other: IrConstantValue): Boolean

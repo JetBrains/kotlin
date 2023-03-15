@@ -14,7 +14,8 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
  * A leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.return
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.return]
  */
 abstract class IrReturn : IrExpression() {
     abstract var value: IrExpression

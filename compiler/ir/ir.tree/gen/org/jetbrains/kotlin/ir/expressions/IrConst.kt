@@ -12,7 +12,8 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
  * A leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.const
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.const]
  */
 abstract class IrConst<T> : IrExpression() {
     abstract var kind: IrConstKind<T>

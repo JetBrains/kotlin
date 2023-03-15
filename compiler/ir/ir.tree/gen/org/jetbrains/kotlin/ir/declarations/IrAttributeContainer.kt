@@ -18,7 +18,8 @@ import org.jetbrains.kotlin.ir.IrElement
  * @property originalBeforeInline original element before inlining. Useful only with IR
  *   inliner. `null` if the element wasn't inlined. Unlike [attributeOwnerId], doesn't have the
  *   idempotence invariant and can contain a chain of declarations.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.attributeContainer
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.attributeContainer]
  */
 interface IrAttributeContainer : IrElement {
     var attributeOwnerId: IrAttributeContainer

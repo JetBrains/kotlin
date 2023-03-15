@@ -16,7 +16,8 @@ import org.jetbrains.kotlin.name.FqName
 
 /**
  * A non-leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.packageFragment
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.packageFragment]
  */
 abstract class IrPackageFragment : IrElementBase(), IrDeclarationContainer, IrSymbolOwner {
     abstract override val symbol: IrPackageFragmentSymbol

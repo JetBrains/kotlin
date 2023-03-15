@@ -16,7 +16,8 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 
 /**
  * A leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.externalPackageFragment
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.externalPackageFragment]
  */
 abstract class IrExternalPackageFragment : IrPackageFragment() {
     abstract override val symbol: IrExternalPackageFragmentSymbol

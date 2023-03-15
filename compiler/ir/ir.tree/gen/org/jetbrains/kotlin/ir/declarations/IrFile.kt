@@ -16,7 +16,8 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
  * A leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.file
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.file]
  */
 abstract class IrFile : IrPackageFragment(), IrMetadataSourceOwner,
         IrMutableAnnotationContainer {

@@ -16,7 +16,8 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
  * A leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.constantObject
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.constantObject]
  */
 abstract class IrConstantObject : IrConstantValue() {
     abstract var constructor: IrConstructorSymbol
