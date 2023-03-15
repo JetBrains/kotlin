@@ -68,6 +68,15 @@ class FatFrameworksTest {
         iosArm64 { binaries.framework("foo", listOf(DEBUG, RELEASE)) }
     }
 
+    @Test
+    fun `fat framework grouping -- multiple build types`() = testFatFrameworkGrouping(
+        "fooReleaseFrameworkIosFat",
+        "fooDebugFrameworkIosFat",
+    ) {
+        iosX64 { binaries.framework("foo", listOf(DEBUG, RELEASE)) }
+        iosArm64 { binaries.framework("foo", listOf(DEBUG, RELEASE)) }
+    }
+
     private fun testFatFrameworkGrouping(
         vararg allExpectedFatFrameworks: String,
         configureTargets: KotlinMultiplatformExtension.() -> Unit,

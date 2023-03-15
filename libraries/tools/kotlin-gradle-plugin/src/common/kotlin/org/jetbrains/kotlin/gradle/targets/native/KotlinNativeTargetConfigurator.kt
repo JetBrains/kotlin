@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.gradle.testing.internal.configureConventions
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
 import org.jetbrains.kotlin.gradle.testing.testTaskName
 import org.jetbrains.kotlin.gradle.utils.Xcode
+import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
 import org.jetbrains.kotlin.gradle.utils.klibModuleName
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -236,8 +237,10 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
         target.binaries.all {
             project.createLinkTask(it)
         }
-        project.runOnceAfterEvaluated("Create fat frameworks") {
-            project.multiplatformExtensionOrNull?.createFatFrameworks()
+        SingleActionPerProject.run(project, "Create fat frameworks") {
+            project.whenEvaluated {
+                project.multiplatformExtensionOrNull?.createFatFrameworks()
+            }
         }
         project.runOnceAfterEvaluated("Sync language settings for NativeLinkTask") {
             target.binaries.all { binary ->

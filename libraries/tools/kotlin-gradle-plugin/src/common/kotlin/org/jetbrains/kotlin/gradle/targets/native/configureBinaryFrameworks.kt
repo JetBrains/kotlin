@@ -53,14 +53,17 @@ internal fun Project.createFrameworkArtifact(binaryFramework: Framework, linkTas
 }
 
 internal fun KotlinMultiplatformExtension.createFatFrameworks() {
-    targets
+    val frameworkGroups = targets
         .filterIsInstance<KotlinNativeTarget>()
         .filter { FatFrameworkTask.isSupportedTarget(it) }
         .flatMap { it.binaries }
         .filterIsInstance<Framework>()
         .groupBy { it.frameworkGroupDescription }
         .filter { (_, frameworks) -> frameworks.size > 1 }
-        .forEach { (groupDescription, frameworks) -> project.createFatFramework(groupDescription, frameworks) }
+
+    for ((groupDescription, frameworkGroup) in frameworkGroups) {
+        project.createFatFramework(groupDescription, frameworkGroup)
+    }
 }
 
 private val Framework.binaryFrameworkConfigurationName get() = lowerCamelCaseName(name, target.name)
