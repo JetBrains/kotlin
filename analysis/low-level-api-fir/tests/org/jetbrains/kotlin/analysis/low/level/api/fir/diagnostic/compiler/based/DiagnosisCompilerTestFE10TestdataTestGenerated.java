@@ -35806,6 +35806,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
         }
 
         @Test
+        @TestMetadata("compileTimeUnsignedArray.kt")
+        public void testCompileTimeUnsignedArray() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/compileTimeUnsignedArray.kt");
+        }
+
+        @Test
         @TestMetadata("elvisOnJavaList.kt")
         public void testElvisOnJavaList() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/elvisOnJavaList.kt");
