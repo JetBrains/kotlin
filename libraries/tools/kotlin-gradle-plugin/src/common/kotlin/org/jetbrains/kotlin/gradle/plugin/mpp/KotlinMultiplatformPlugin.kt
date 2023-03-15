@@ -267,7 +267,10 @@ internal fun applyUserDefinedAttributes(target: AbstractKotlinTarget) {
 internal fun sourcesJarTask(compilation: KotlinCompilation<*>, componentName: String, artifactNameAppendix: String): TaskProvider<Jar> =
     sourcesJarTask(
         compilation.target.project,
-        compilation.target.project.future { compilation.allKotlinSourceSets.associate { it.name to it.kotlin } },
+        compilation.target.project.future {
+            await(KotlinPluginLifecycle.Stage.AfterFinaliseCompilations)
+            compilation.allKotlinSourceSets.associate { it.name to it.kotlin }
+        },
         componentName,
         artifactNameAppendix
     )
