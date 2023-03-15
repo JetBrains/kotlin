@@ -6272,6 +6272,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/coroutines/defaultParametersInSuspend.kt");
         }
 
+        @TestMetadata("defaultParamterLambdaInSuspend.kt")
+        public void testDefaultParamterLambdaInSuspend() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/defaultParamterLambdaInSuspend.kt");
+        }
+
         @TestMetadata("delegatedSuspendMember.kt")
         public void testDelegatedSuspendMember() throws Exception {
             runTest("compiler/testData/codegen/box/coroutines/delegatedSuspendMember.kt");
