@@ -106,6 +106,9 @@ class KotlinMetadataTargetConfigurator :
             if (target.project.isCompatibilityMetadataVariantEnabled) {
                 createCommonMainElementsConfiguration(target)
             }
+        } else {
+            /* We had nothing to do: Still mark this job as complete */
+            target.metadataCompilationsCreated.complete()
         }
     }
 
