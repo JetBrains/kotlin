@@ -27,4 +27,12 @@ object KotlinToolingDiagnostics {
     object CommonMainWithDependsOnDiagnostic : ToolingDiagnosticFactory(WARNING) {
         operator fun invoke() = build("commonMain can't declare dependsOn on other source sets")
     }
+
+    object NativeStdlibIsMissingDiagnostic : ToolingDiagnosticFactory(WARNING) {
+        operator fun invoke(changedKotlinNativeHomeProperty: String?) = build(
+            "The Kotlin/Native distribution used in this build does not provide the standard library." +
+                    " Make sure that the '$changedKotlinNativeHomeProperty' property points to a valid Kotlin/Native distribution."
+                        .onlyIf(changedKotlinNativeHomeProperty != null)
+        )
+    }
 }

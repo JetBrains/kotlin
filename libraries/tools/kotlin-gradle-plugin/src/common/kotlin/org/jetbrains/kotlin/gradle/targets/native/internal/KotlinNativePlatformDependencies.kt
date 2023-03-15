@@ -21,16 +21,11 @@ import org.jetbrains.kotlin.gradle.plugin.sources.getVisibleSourceSetsFromAssoci
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.targets.metadata.findMetadataCompilation
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
-import org.jetbrains.kotlin.gradle.targets.native.internal.MissingNativeStdlibWarning.showMissingNativeStdlibWarning
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 import java.io.File
 
 internal fun Project.setupKotlinNativePlatformDependencies() {
     val kotlin = multiplatformExtensionOrNull ?: return
-
-    if (!konanDistribution.stdlib.exists()) {
-        showMissingNativeStdlibWarning()
-    }
 
     if (isAllowCommonizer()) {
         checkNotNull(commonizeNativeDistributionTask) { "Missing commonizeNativeDistributionTask" }
@@ -106,7 +101,7 @@ private suspend fun Project.addDependencies(
     }
 }
 
-private val Project.konanDistribution: KonanDistribution
+internal val Project.konanDistribution: KonanDistribution
     get() = KonanDistribution(project.file(konanHome))
 
 private fun File.listLibraryFiles(): List<File> = listFiles().orEmpty()
