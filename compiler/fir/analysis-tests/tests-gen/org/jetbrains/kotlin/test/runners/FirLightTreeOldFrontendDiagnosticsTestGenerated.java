@@ -27812,6 +27812,22 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
         }
 
         @Nested
+        @TestMetadata("compiler/testData/diagnostics/tests/safeCalls")
+        @TestDataPath("$PROJECT_ROOT")
+        public class SafeCalls {
+            @Test
+            public void testAllFilesPresentInSafeCalls() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/safeCalls"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+            }
+
+            @Test
+            @TestMetadata("safeCallOnFlexibleTypeAlias.kt")
+            public void testSafeCallOnFlexibleTypeAlias() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/safeCalls/safeCallOnFlexibleTypeAlias.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/diagnostics/tests/samConversions")
         @TestDataPath("$PROJECT_ROOT")
         public class SamConversions {

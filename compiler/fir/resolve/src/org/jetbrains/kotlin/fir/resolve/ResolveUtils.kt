@@ -482,7 +482,7 @@ fun FirCheckedSafeCallSubject.propagateTypeFromOriginalReceiver(
         ?: nullableReceiverExpression.typeRef)
         .coneTypeSafe<ConeKotlinType>() ?: return
 
-    val expandedReceiverType = if (receiverType is ConeClassLikeType) receiverType.fullyExpandedType(session) else receiverType
+    val expandedReceiverType = receiverType.fullyExpandedType(session)
 
     val resolvedTypeRef =
         typeRef.resolvedTypeFromPrototype(expandedReceiverType.makeConeTypeDefinitelyNotNullOrNotNull(session.typeContext))
