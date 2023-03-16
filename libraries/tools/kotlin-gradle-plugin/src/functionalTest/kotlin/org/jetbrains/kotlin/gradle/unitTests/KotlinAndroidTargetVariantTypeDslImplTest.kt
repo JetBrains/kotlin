@@ -44,7 +44,7 @@ class KotlinAndroidTargetVariantTypeDslImplTest {
 
     @Test
     fun `test - module - cannot be set after FinaliseDsl`() = project.runLifecycleAwareTest {
-        launchInStage(KotlinPluginLifecycle.Stage.BeforeFinaliseDsl) {
+        launchInStage(KotlinPluginLifecycle.Stage.FinaliseDsl.previousOrThrow) {
             dsl.targetHierarchy.module.set(KotlinTargetHierarchy.ModuleName("x"))
         }
 

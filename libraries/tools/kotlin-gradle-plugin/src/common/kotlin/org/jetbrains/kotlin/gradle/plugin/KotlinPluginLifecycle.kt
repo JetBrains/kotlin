@@ -241,18 +241,8 @@ internal interface KotlinPluginLifecycle {
          * Configure Phase of Gradle: No .afterEvaluate {} listeners have been called yet,
          * the buildscript is still evaluated!
          */
-        Configure,
-
-        /**
-         * The buildscript has been evaluated, first .afterEvaluate {} listeners get executed.
-         * This can include .afterEvaluates from other plugins as well as other users!
-         */
-        AfterEvaluate,
-
-        /**
-         * Before [FinaliseDsl]
-         */
-        BeforeFinaliseDsl,
+        EvaluateBuildscript,
+        AfterEvaluateBuildscript,
 
         /**
          * Last changes are allowed to be done to the DSL.
@@ -260,42 +250,22 @@ internal interface KotlinPluginLifecycle {
          * disallow further changes
          */
         FinaliseDsl,
-
-        /**
-         * After [FinaliseDsl]
-         */
         AfterFinaliseDsl,
 
-        /**
-         * Before [FinaliseRefinesEdges]
-         */
-        BeforeFinaliseRefinesEdges,
 
         /**
          * All refines edges ([KotlinSourceSet.dependsOn]) have to be finalised here.
          * Adding edges after this stage is forbidden and will throw an exception!
          */
         FinaliseRefinesEdges,
-
-        /**
-         * After [FinaliseRefinesEdges]
-         */
         AfterFinaliseRefinesEdges,
 
-        /**
-         * Before [FinaliseCompilations]
-         */
-        BeforeFinaliseCompilations,
 
         /**
          * [KotlinCompilation] instances have to finalised: Creating compilations after this stage is forbidden.
          * Values and configuration of compilations also shall be finalised already
          */
         FinaliseCompilations,
-
-        /**
-         * After [FinaliseCompilations]
-         */
         AfterFinaliseCompilations,
 
         /**
@@ -305,6 +275,8 @@ internal interface KotlinPluginLifecycle {
 
         val previousOrFirst: Stage get() = previousOrNull ?: values.first()
         val previousOrNull: Stage? get() = values.getOrNull(ordinal - 1)
+        val previousOrThrow: Stage
+            get() = previousOrNull ?: throw IllegalArgumentException("'$this' does not have a next ${Stage::class.simpleName}")
         val nextOrNull: Stage? get() = values.getOrNull(ordinal + 1)
         val nextOrLast: Stage get() = nextOrNull ?: values.last()
         val nextOrThrow: Stage
@@ -447,7 +419,7 @@ private class KotlinPluginLifecycleImpl(override val project: Project) : KotlinP
 
         enqueuedActions.getValue(stage).addLast(action)
 
-        if (stage == Stage.Configure && isStarted.get()) {
+        if (stage == Stage.EvaluateBuildscript && isStarted.get()) {
             loopIfNecessary()
         }
     }

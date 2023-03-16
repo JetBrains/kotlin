@@ -30,7 +30,7 @@ class LifecycleAwarePropertyTest {
         val property by project.newKotlinPluginLifecycleAwareProperty<Int>(AfterFinaliseRefinesEdges)
         assertTrue(property.isKotlinPluginLifecycleAware())
 
-        launchInStage(BeforeFinaliseRefinesEdges) {
+        launchInStage(FinaliseRefinesEdges.previousOrThrow) {
             property.set(1)
         }
 
@@ -39,7 +39,7 @@ class LifecycleAwarePropertyTest {
             property.set(2)
         }
 
-        assertEquals(Configure, currentKotlinPluginLifecycle().stage)
+        assertEquals(EvaluateBuildscript, currentKotlinPluginLifecycle().stage)
         assertEquals(2, property.awaitFinalValue())
         assertEquals(AfterFinaliseRefinesEdges, currentKotlinPluginLifecycle().stage)
     }
@@ -53,10 +53,10 @@ class LifecycleAwarePropertyTest {
 
     @Test
     fun `test - changing value after finalized`() = project.runLifecycleAwareTest {
-        val property by project.newKotlinPluginLifecycleAwareProperty<Int>(AfterEvaluate)
+        val property by project.newKotlinPluginLifecycleAwareProperty<Int>(AfterEvaluateBuildscript)
         property.set(1)
 
-        launchInStage(AfterEvaluate) {
+        launchInStage(AfterEvaluateBuildscript) {
             assertFailsWith<IllegalStateException> { property.set(2) }
         }
     }

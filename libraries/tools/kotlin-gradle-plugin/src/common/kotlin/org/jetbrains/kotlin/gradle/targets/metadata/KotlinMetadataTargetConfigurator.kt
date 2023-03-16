@@ -183,7 +183,7 @@ class KotlinMetadataTargetConfigurator :
     private fun createMetadataCompilationsForCommonSourceSets(
         target: KotlinMetadataTarget,
         allMetadataJar: TaskProvider<out Jar>
-    ) = target.project.launchInStage(KotlinPluginLifecycle.Stage.BeforeFinaliseCompilations) {
+    ) = target.project.launchInStage(KotlinPluginLifecycle.Stage.AfterFinaliseDsl) {
         withRestrictedStages(KotlinPluginLifecycle.Stage.upTo(KotlinPluginLifecycle.Stage.FinaliseCompilations)) {
             // Do this after all targets are configured by the user build script
 

@@ -28,7 +28,7 @@ class KotlinPluginLifecycleTest {
     @Test
     fun `test - configure phase is executed right away`() {
         val invocations = AtomicInteger(0)
-        lifecycle.enqueue(Configure) {
+        lifecycle.enqueue(EvaluateBuildscript) {
             invocations.incrementAndGet()
         }
         assertEquals(1, invocations.get(), "Expected one invocation")
@@ -37,8 +37,8 @@ class KotlinPluginLifecycleTest {
     @Test
     fun `test - launchInState - Configure`() {
         val invocations = AtomicInteger(0)
-        project.launchInStage(Configure) {
-            assertEquals(Configure, stage)
+        project.launchInStage(EvaluateBuildscript) {
+            assertEquals(EvaluateBuildscript, stage)
             assertEquals(1, invocations.incrementAndGet())
         }
         assertEquals(1, invocations.get())
@@ -50,20 +50,20 @@ class KotlinPluginLifecycleTest {
         val nestedAInvocations = AtomicInteger(0)
         val nestedBInvocations = AtomicInteger(0)
         val nestedCInvocations = AtomicInteger(0)
-        lifecycle.enqueue(Configure) {
+        lifecycle.enqueue(EvaluateBuildscript) {
             assertEquals(1, outerInvocations.incrementAndGet())
 
-            lifecycle.enqueue(Configure) nestedA@{
+            lifecycle.enqueue(EvaluateBuildscript) nestedA@{
                 assertEquals(0, nestedBInvocations.get(), "Expected nestedA to be executed before nestedB")
                 assertEquals(1, nestedAInvocations.incrementAndGet())
 
-                lifecycle.enqueue(Configure) nestedC@{
+                lifecycle.enqueue(EvaluateBuildscript) nestedC@{
                     assertEquals(1, nestedBInvocations.get(), "Expected nestedB to be executed before nestedC")
                     assertEquals(1, nestedCInvocations.incrementAndGet())
                 }
             }
 
-            lifecycle.enqueue(Configure) nestedB@{
+            lifecycle.enqueue(EvaluateBuildscript) nestedB@{
                 assertEquals(1, nestedAInvocations.get(), "Expected nestedA to be executed before nestedB")
                 assertEquals(0, nestedCInvocations.get(), "Expected nestedB to be executed before nestedC")
                 assertEquals(1, nestedBInvocations.incrementAndGet())
@@ -110,13 +110,13 @@ class KotlinPluginLifecycleTest {
             assertEquals(1, action3Invocations.incrementAndGet())
         }
 
-        lifecycle.enqueue(AfterEvaluate) action1@{
+        lifecycle.enqueue(AfterEvaluateBuildscript) action1@{
             assertEquals(0, action2Invocations.get(), "Expected action1 to be executed before action2")
             assertEquals(0, action3Invocations.get(), "Expected action1 to be executed before action3")
             assertEquals(1, action1Invocations.incrementAndGet())
         }
 
-        lifecycle.enqueue(AfterEvaluate) action2@{
+        lifecycle.enqueue(AfterEvaluateBuildscript) action2@{
             assertEquals(1, action1Invocations.get(), "Expected action1 to be executed before action2")
             assertEquals(0, action3Invocations.get(), "Expected action2 to be executed before action3")
             assertEquals(1, action2Invocations.incrementAndGet())
@@ -139,20 +139,20 @@ class KotlinPluginLifecycleTest {
         val nestedAInvocations = AtomicInteger(0)
         val nestedBInvocations = AtomicInteger(0)
         val nestedCInvocations = AtomicInteger(0)
-        lifecycle.enqueue(AfterEvaluate) {
+        lifecycle.enqueue(AfterEvaluateBuildscript) {
             assertEquals(1, outerInvocations.incrementAndGet())
 
-            lifecycle.enqueue(AfterEvaluate) nestedA@{
+            lifecycle.enqueue(AfterEvaluateBuildscript) nestedA@{
                 assertEquals(0, nestedBInvocations.get(), "Expected nestedA to be executed before nestedB")
                 assertEquals(1, nestedAInvocations.incrementAndGet())
 
-                lifecycle.enqueue(AfterEvaluate) nestedC@{
+                lifecycle.enqueue(AfterEvaluateBuildscript) nestedC@{
                     assertEquals(1, nestedBInvocations.get(), "Expected nestedB to be executed before nestedC")
                     assertEquals(1, nestedCInvocations.incrementAndGet())
                 }
             }
 
-            lifecycle.enqueue(AfterEvaluate) nestedB@{
+            lifecycle.enqueue(AfterEvaluateBuildscript) nestedB@{
                 assertEquals(1, nestedAInvocations.get(), "Expected nestedA to be executed before nestedB")
                 assertEquals(0, nestedCInvocations.get(), "Expected nestedB to be executed before nestedC")
                 assertEquals(1, nestedBInvocations.incrementAndGet())
@@ -177,7 +177,7 @@ class KotlinPluginLifecycleTest {
         val executed = AtomicBoolean(false)
         lifecycle.enqueue(ReadyForExecution) {
             assertFailsWith<IllegalLifecycleException> {
-                lifecycle.enqueue(AfterEvaluate) { fail("This code shall not be executed!") }
+                lifecycle.enqueue(AfterEvaluateBuildscript) { fail("This code shall not be executed!") }
             }
             assertFalse(executed.getAndSet(true))
         }
@@ -202,14 +202,14 @@ class KotlinPluginLifecycleTest {
         val action2Invocations = AtomicInteger(0)
         val action3Invocations = AtomicInteger(0)
 
-        lifecycle.enqueue(Configure) action1@{
+        lifecycle.enqueue(EvaluateBuildscript) action1@{
             assertEquals(0, action2Invocations.get())
             assertEquals(0, action3Invocations.get())
             assertEquals(1, action1Invocations.incrementAndGet())
         }
 
-        lifecycle.enqueue(Configure) action2@{
-            lifecycle.enqueue(Configure) action3@{
+        lifecycle.enqueue(EvaluateBuildscript) action2@{
+            lifecycle.enqueue(EvaluateBuildscript) action3@{
                 assertEquals(1, action1Invocations.get())
                 assertEquals(1, action2Invocations.get())
                 assertEquals(1, action3Invocations.incrementAndGet())
@@ -259,9 +259,9 @@ class KotlinPluginLifecycleTest {
         val executionPointB = AtomicBoolean(false)
         lifecycle.launch action1@{
             assertFalse(executionPointA.getAndSet(true))
-            assertEquals(Configure, stage)
-            await(AfterEvaluate)
-            assertEquals(AfterEvaluate, stage)
+            assertEquals(EvaluateBuildscript, stage)
+            await(AfterEvaluateBuildscript)
+            assertEquals(AfterEvaluateBuildscript, stage)
             assertFalse(executionPointB.getAndSet(true))
         }
 
@@ -276,9 +276,9 @@ class KotlinPluginLifecycleTest {
     fun `test - launch - await - launch`() {
         val executedInnerAction = AtomicBoolean(false)
         lifecycle.launch {
-            await(AfterEvaluate)
+            await(AfterEvaluateBuildscript)
             launch {
-                assertEquals(AfterEvaluate, stage)
+                assertEquals(AfterEvaluateBuildscript, stage)
                 await(FinaliseRefinesEdges)
                 assertEquals(FinaliseRefinesEdges, stage)
                 assertFalse(executedInnerAction.getAndSet(true))
@@ -303,7 +303,7 @@ class KotlinPluginLifecycleTest {
     fun `test - launch - await - exception`() {
         val testException = object : Throwable() {}
         lifecycle.launch {
-            await(AfterEvaluate)
+            await(AfterEvaluateBuildscript)
             launch {
                 throw testException
             }
@@ -318,7 +318,7 @@ class KotlinPluginLifecycleTest {
 
     @Test
     fun `test - require current stage`() = project.runLifecycleAwareTest {
-        launchInStage(AfterEvaluate) {
+        launchInStage(AfterEvaluateBuildscript) {
             requireCurrentStage { } // OK
 
             requireCurrentStage {
@@ -330,10 +330,10 @@ class KotlinPluginLifecycleTest {
 
     @Test
     fun `test - launch in required stage`() = project.runLifecycleAwareTest {
-        launchInRequiredStage(AfterEvaluate) {
-            assertEquals(AfterEvaluate, stage)
-            await(AfterEvaluate)
-            assertEquals(AfterEvaluate, stage)
+        launchInRequiredStage(AfterEvaluateBuildscript) {
+            assertEquals(AfterEvaluateBuildscript, stage)
+            await(AfterEvaluateBuildscript)
+            assertEquals(AfterEvaluateBuildscript, stage)
             assertFailsWith<IllegalLifecycleException> { await(ReadyForExecution) }
         }
     }
@@ -342,13 +342,13 @@ class KotlinPluginLifecycleTest {
     fun `test - withRestrictedStages`() = project.runLifecycleAwareTest {
         launch {
             withRestrictedStages(Stage.upTo(FinaliseRefinesEdges)) {
-                assertEquals(Configure, stage)
+                assertEquals(EvaluateBuildscript, stage)
 
-                await(AfterEvaluate)
-                assertEquals(AfterEvaluate, stage)
+                await(AfterEvaluateBuildscript)
+                assertEquals(AfterEvaluateBuildscript, stage)
 
-                await(BeforeFinaliseRefinesEdges)
-                assertEquals(BeforeFinaliseRefinesEdges, stage)
+                await(FinaliseDsl)
+                assertEquals(FinaliseDsl, stage)
 
                 await(FinaliseRefinesEdges)
                 assertEquals(FinaliseRefinesEdges, stage)
@@ -366,12 +366,12 @@ class KotlinPluginLifecycleTest {
 
         afterEvaluate {
             launch {
-                assertEquals(AfterEvaluate.nextOrThrow, currentKotlinPluginLifecycle().stage)
+                assertEquals(AfterEvaluateBuildscript.nextOrThrow, currentKotlinPluginLifecycle().stage)
                 assertEquals(1, actionInvocations.incrementAndGet())
             }
         }
 
-        await(AfterEvaluate.nextOrThrow.nextOrThrow)
+        await(AfterEvaluateBuildscript.nextOrThrow.nextOrThrow)
         assertEquals(1, actionInvocations.get())
         await(Stage.values.last())
     }
@@ -411,13 +411,13 @@ class KotlinPluginLifecycleTest {
 
     @Test
     fun `test - Stage - range utils`() {
-        assertEquals(setOf(BeforeFinaliseDsl, FinaliseDsl, AfterFinaliseDsl), BeforeFinaliseDsl..AfterFinaliseDsl)
-        assertEquals(emptySet(), AfterFinaliseDsl..BeforeFinaliseDsl)
-        assertEquals(setOf(BeforeFinaliseDsl), BeforeFinaliseDsl..BeforeFinaliseDsl)
+        assertEquals(setOf(AfterEvaluateBuildscript, FinaliseDsl, AfterFinaliseDsl), AfterEvaluateBuildscript..AfterFinaliseDsl)
+        assertEquals(emptySet(), AfterFinaliseDsl..AfterFinaliseDsl.previousOrThrow)
+        assertEquals(setOf(FinaliseDsl), FinaliseDsl..FinaliseDsl)
 
         assertTrue(FinaliseDsl in Stage.upTo(FinaliseDsl))
         assertTrue(Stage.values.first() in Stage.upTo(FinaliseDsl))
-        assertTrue(BeforeFinaliseDsl in Stage.upTo(FinaliseDsl))
+        assertTrue(FinaliseDsl.previousOrThrow in Stage.upTo(FinaliseDsl))
         assertTrue(FinaliseDsl.nextOrThrow !in Stage.upTo(FinaliseDsl))
 
         assertTrue(FinaliseDsl !in Stage.until(FinaliseDsl))
