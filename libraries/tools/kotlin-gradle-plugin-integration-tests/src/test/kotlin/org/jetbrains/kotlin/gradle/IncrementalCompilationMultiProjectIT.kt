@@ -413,7 +413,6 @@ open class IncrementalCompilationOldICJvmMultiProjectIT : IncrementalCompilation
     override fun testAbiChangeInLib_afterLibClean_withAbiSnapshot(gradleVersion: GradleVersion) {
         defaultProject(
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(useGradleClasspathSnapshot = true)
         ) {
             build("assemble")
 
@@ -772,6 +771,60 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
                     ),
                     output
                 )
+            }
+        }
+    }
+
+    @DisplayName("KT-56197: Change interface in lib which has subclass in app")
+    @GradleTest
+    fun testChangeInterfaceInLib(gradleVersion: GradleVersion) {
+        defaultProject(gradleVersion) {
+            subProject("lib").kotlinSourcesDir().resolve("bar/InterfaceInLib.kt").writeText(
+                """
+                package bar
+                interface InterfaceInLib {
+                    fun someMethod() {}
+                }
+                """.trimIndent()
+            )
+            subProject("app").kotlinSourcesDir().resolve("foo/SubclassInApp.kt").writeText(
+                """
+                package foo
+                import bar.InterfaceInLib
+                class SubclassInApp : InterfaceInLib
+                """.trimIndent()
+            )
+            subProject("app").kotlinSourcesDir().resolve("foo/ClassUsingSubclassInApp.kt").writeText(
+                """
+                package foo
+                fun main() {
+                    SubclassInApp().someMethod()
+                }
+                """.trimIndent()
+            )
+            build(":app:compileKotlin")
+
+            subProject("lib").kotlinSourcesDir().resolve("bar/InterfaceInLib.kt").modify {
+                it.replace("fun someMethod() {}", "fun someMethod(addedParam: Int = 0) {}")
+            }
+
+            build(":app:compileKotlin") {
+                if (defaultBuildOptions.useGradleClasspathSnapshot == false) {
+                    // KT-56197 was fixed for the new IC only, the old IC still doesn't recompile "foo/ClassUsingSubclassInApp.kt"
+                    assertIncrementalCompilation(
+                        expectedCompiledKotlinFiles = getExpectedKotlinSourcesForDefaultProject(
+                            libSources = listOf("bar/InterfaceInLib.kt"),
+                            appSources = listOf("foo/SubclassInApp.kt")
+                        )
+                    )
+                } else {
+                    assertIncrementalCompilation(
+                        expectedCompiledKotlinFiles = getExpectedKotlinSourcesForDefaultProject(
+                            libSources = listOf("bar/InterfaceInLib.kt"),
+                            appSources = listOf("foo/SubclassInApp.kt", "foo/ClassUsingSubclassInApp.kt")
+                        )
+                    )
+                }
             }
         }
     }

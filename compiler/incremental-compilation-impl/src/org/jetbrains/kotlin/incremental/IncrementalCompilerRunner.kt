@@ -522,7 +522,7 @@ abstract class IncrementalCompilerRunner<
                 break
             }
 
-            val (dirtyLookupSymbols, dirtyClassFqNames, forceRecompile) = changesCollector.getDirtyData(
+            val (dirtyLookupSymbols, dirtyClassFqNames, forceRecompile) = changesCollector.getChangedAndImpactedSymbols(
                 listOf(caches.platformCache),
                 reporter
             )
@@ -598,7 +598,7 @@ abstract class IncrementalCompilerRunner<
 
         val changesCollector = ChangesCollector()
         removedClasses.forEach { changesCollector.collectSignature(FqName(it), areSubclassesAffected = true) }
-        return changesCollector.getDirtyData(listOf(caches.platformCache), reporter)
+        return changesCollector.getChangedAndImpactedSymbols(listOf(caches.platformCache), reporter)
     }
 
     open fun runWithNoDirtyKotlinSources(caches: CacheManager): Boolean = false
