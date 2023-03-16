@@ -54,6 +54,12 @@ public class FirNativeKLibContentsTestGenerated extends AbstractNativeKlibConten
     }
 
     @Test
+    @TestMetadata("property_accessors.kt")
+    public void testProperty_accessors() throws Exception {
+        runTest("native/native.tests/testData/klibContents/property_accessors.kt");
+    }
+
+    @Test
     @TestMetadata("type_annotations.kt")
     public void testType_annotations() throws Exception {
         runTest("native/native.tests/testData/klibContents/type_annotations.kt");

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.runner.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.*
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
+import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEqualsToFile
 import org.junit.jupiter.api.Tag
 import java.io.File
 
@@ -31,10 +32,7 @@ abstract class AbstractNativeKlibContentsTest : AbstractNativeSimpleTest() {
         val kotlinNativeClassLoader = testRunSettings.get<KotlinNativeClassLoader>()
         val klibContents = testCompilationResult.assertSuccess().resultingArtifact.getContents(kotlinNativeClassLoader.classLoader)
         val klibContentsFiltered = filterContentsOutput(klibContents, linestoExclude = listOf("package test {", "}", ""))
-        val expectedContents = File("${testPathFull.canonicalPath.substringBeforeLast(".")}.txt").readText()
-        assertEquals(StringUtilRt.convertLineSeparators(expectedContents), StringUtilRt.convertLineSeparators(klibContentsFiltered)) {
-            "Test failed. Compilation result was: $testCompilationResult"
-        }
+        assertEqualsToFile(File("${testPathFull.canonicalPath.substringBeforeLast(".")}.txt"), StringUtilRt.convertLineSeparators(klibContentsFiltered))
     }
 
     private fun generateTestCaseWithSingleSource(source: File, extraArgs: List<String>): TestCase {

@@ -1,0 +1,15 @@
+abstract class A constructor() {
+        abstract val a: Int
+        abstract var b: Int
+            protected set
+        val c: Int
+        val d: Int
+        var e: Int
+        var f: Int
+            private set
+        open val g: Int
+        open val h: Int
+        open var k: Int
+        open var l: Int
+            protected set
+    }

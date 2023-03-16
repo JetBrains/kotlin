@@ -929,7 +929,8 @@ class FirElementSerializer private constructor(
         return Flags.getAccessorFlags(
             nonSourceAnnotations.isNotEmpty(),
             ProtoEnumFlags.visibility(normalizeVisibility(accessor)),
-            ProtoEnumFlags.modality(accessor.modality!!),
+            // non-default accessor modality is always final, so we check property.modality instead
+            ProtoEnumFlags.modality(property.modality!!),
             !isDefault,
             accessor.isExternal,
             accessor.isInline

@@ -48,6 +48,9 @@ object DefaultDeclarationHeaderRenderer : DeclarationHeaderRenderer {
         if (descriptor.visibility != DescriptorVisibilities.DEFAULT_VISIBILITY) {
             append(descriptor.visibility.internalDisplayName).append(" ")
         }
+        if (descriptor.modality != descriptor.correspondingProperty.modality) {
+            append(descriptor.modality.name.lowercase()).append(" ")
+        }
         when (descriptor) {
             is PropertyGetterDescriptor -> append("get")
             is PropertySetterDescriptor -> append("set")
