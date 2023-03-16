@@ -42,8 +42,21 @@ object IrTree : AbstractTreeBuilder() {
         transform = true
         transformByChildren = true
 
-        +field("startOffset", int, mutable = false)
-        +field("endOffset", int, mutable = false)
+        fun offsetField(prefix: String) = field(prefix + "Offset", int, mutable = false) {
+            kdoc = """
+            The $prefix offset of the syntax node from which this IR node was generated,
+            in number of characters from the start of the source file. If there is no source information for this IR node,
+            the [UNDEFINED_OFFSET] constant is used. In order to get the line number and the column number from this offset,
+            [IrFileEntry.getLineNumber] and [IrFileEntry.getColumnNumber] can be used.
+            
+            @see IrFileEntry.getSourceRangeInfo
+            """.trimIndent()
+        }
+
+        +offsetField("start")
+        +offsetField("end")
+
+        kDoc = "The root interface of the IR tree. Each IR node implements this interface."
     }
     val statement: ElementConfig by element(Other)
 
