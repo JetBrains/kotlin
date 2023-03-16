@@ -361,7 +361,8 @@ fun Project.reconfigureMainSourcesSetForGradlePlugin(
                     if (attributes.keySet() != expectedAttributes) {
                         error("Wrong set of attributes:\n" +
                                       "  Expected: ${expectedAttributes.joinToString(", ")}\n" +
-                                      "  Actual: ${attributes.keySet().joinToString(", ") { "${it.name}=${attributes.getAttribute(it)}" }}")
+                                      "  Actual: ${attributes.keySet().joinToString(", ") { "${it.name}=${attributes.getAttribute(it)}" }}"
+                        )
                     }
 
                     javaComponent.addVariantsFromConfiguration(this) {
@@ -523,8 +524,11 @@ fun Project.publishShadowedJar(
 
         // When Gradle traverses the inputs, reject the shaded compiler JAR,
         // which leads to the content of that JAR being excluded as well:
-        val compilerDummyJarConfiguration: FileCollection = project.configurations.getByName("compilerDummyJar")
-        exclude { it.file == compilerDummyJarConfiguration.singleFile }
+        exclude {
+            // Docstring says `file` never returns null, but it does
+            @Suppress("UNNECESSARY_SAFE_CALL", "SAFE_CALL_WILL_CHANGE_NULLABILITY")
+            it.file?.name?.startsWith("kotlin-compiler-embeddable") ?: false
+        }
     }
 
     // Removing artifact produced by Jar task

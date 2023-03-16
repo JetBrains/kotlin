@@ -10,6 +10,7 @@ import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.jvm.tasks.Jar
+import org.gradle.kotlin.dsl.exclude
 import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.project
 import org.gradle.kotlin.dsl.register
@@ -155,8 +156,11 @@ fun Project.rewriteDepsToShadedJar(
 
         // When Gradle traverses the inputs, reject the shaded compiler JAR,
         // which leads to the content of that JAR being excluded as well:
-        val compilerDummyJarConfiguration: FileCollection = project.configurations.getByName("compilerDummyJar")
-        exclude { it.file == compilerDummyJarConfiguration.singleFile }
+        exclude {
+            // Docstring says `file` never returns null, but it does
+            @Suppress("UNNECESSARY_SAFE_CALL", "SAFE_CALL_WILL_CHANGE_NULLABILITY")
+            it.file?.name?.startsWith("kotlin-compiler-embeddable") ?: false
+        }
 
         archiveClassifier.set("original")
         body()
