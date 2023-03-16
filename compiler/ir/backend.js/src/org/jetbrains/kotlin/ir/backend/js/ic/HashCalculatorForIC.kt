@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.library.impl.buffer
 import org.jetbrains.kotlin.protobuf.CodedInputStream
 import org.jetbrains.kotlin.protobuf.CodedOutputStream
+import org.jetbrains.kotlin.serialization.js.ModuleKind
 import java.security.MessageDigest
 
 internal fun Hash128Bits.toProtoStream(out: CodedOutputStream) {
@@ -164,6 +165,13 @@ internal fun CrossModuleReferences.crossModuleReferencesHashForIC() = HashCalcul
         val import = imports[tag]!!
         update(tag)
         update(import.exportedAs)
-        update(import.moduleExporter.toString())
+
+        if (moduleKind == ModuleKind.ES) {
+            update(import.moduleExporter.internalName.toString())
+            update(import.moduleExporter.externalName)
+            update(import.moduleExporter.relativeRequirePath ?: "")
+        } else {
+            update(import.moduleExporter.internalName.toString())
+        }
     }
 }.finalize()

@@ -1342,7 +1342,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
             blockOpen();
             List<JsExport.Element> elements = ((JsExport.Subject.Elements) subject).getElements();
             for (JsExport.Element element : elements) {
-                nameDef(element.getName());
+                visitNameRef(element.getName());
                 JsName alias = element.getAlias();
                 if (alias != null) {
                     p.print(" as ");
@@ -1369,10 +1369,10 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         p.print("import ");
 
         if (target instanceof JsImport.Target.Default) {
-            nameDef(((JsImport.Target.Default) target).getName());
+            visitNameRef(((JsImport.Target.Default) target).getName());
         } else if (target instanceof JsImport.Target.All) {
             p.print("* as ");
-            nameDef(((JsImport.Target.All) target).getAlias());
+            visitNameRef(((JsImport.Target.All) target).getAlias());
         } else if (target instanceof JsImport.Target.Elements) {
             List<JsImport.Element> elements = ((JsImport.Target.Elements) target).getElements();
 
@@ -1386,10 +1386,10 @@ public class JsToStringGenerationVisitor extends JsVisitor {
 
             for (JsImport.Element element : elements) {
                 nameDef(element.getName());
-                JsName alias = element.getAlias();
+                JsNameRef alias = element.getAlias();
                 if (alias != null) {
                     p.print(" as ");
-                    nameDef(alias);
+                    visitNameRef(alias);
                 }
 
                 if (isMultiline) {

@@ -36,7 +36,7 @@ private fun getPropertyRefClass(obj: Ctor, metadata: Metadata, imask: BitMask): 
 }
 
 private fun getInterfaceMaskFor(obj: Ctor, superType: dynamic): BitMask =
-    obj.`$imask$` ?: implement(superType)
+    obj.`$imask$` ?: implement(arrayOf(superType))
 
 @Suppress("UNUSED_PARAMETER")
 private fun getKPropMetadata(paramCount: Int, setter: Any?): dynamic {

@@ -90,6 +90,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         moduleKindMap.put(K2JsArgumentConstants.MODULE_COMMONJS, ModuleKind.COMMON_JS);
         moduleKindMap.put(K2JsArgumentConstants.MODULE_AMD, ModuleKind.AMD);
         moduleKindMap.put(K2JsArgumentConstants.MODULE_UMD, ModuleKind.UMD);
+        moduleKindMap.put(K2JsArgumentConstants.MODULE_ES, ModuleKind.ES);
 
         sourceMapContentEmbeddingMap.put(K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_ALWAYS, SourceMapSourceEmbedding.ALWAYS);
         sourceMapContentEmbeddingMap.put(K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_NEVER, SourceMapSourceEmbedding.NEVER);

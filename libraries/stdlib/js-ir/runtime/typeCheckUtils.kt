@@ -27,24 +27,26 @@ internal fun setMetadataFor(
 
     if (interfaces != null) {
         val receiver = if (metadata.iid != null) ctor else ctor.prototype
-        receiver.`$imask$` = implement(*interfaces)
+        receiver.`$imask$` = implement(interfaces)
     }
 }
 
 // There was a problem with per-module compilation (KT-55758) when the top-level state (iid) was reinitialized during stdlib module initialization
 // As a result we miss already incremented iid and had the same iids in two different modules
-// So, to keep the state consistent it was moved into the object
-private object InterfaceIdService {
-    var iid: Int = 0
+// So, to keep the state consistent it was moved into the next lateinit variable and function
+private lateinit var iid: Any
+
+private fun generateInterfaceId(): Int {
+    if (!::iid.isInitialized) {
+        iid = 0
+    }
+    iid = iid.unsafeCast<Int>() + 1
+    return iid.unsafeCast<Int>()
 }
 
-private fun InterfaceIdService.generateInterfaceId(): Int {
-    iid += 1
-    return iid
-}
 
 internal fun interfaceMeta(name: String?, associatedObjectKey: Number?, associatedObjects: dynamic, suspendArity: Array<Int>?): Metadata {
-    return createMetadata("interface", name, associatedObjectKey, associatedObjects, suspendArity, InterfaceIdService.generateInterfaceId())
+    return createMetadata("interface", name, associatedObjectKey, associatedObjects, suspendArity, generateInterfaceId())
 }
 
 internal fun objectMeta(name: String?, associatedObjectKey: Number?, associatedObjects: dynamic, suspendArity: Array<Int>?): Metadata {
