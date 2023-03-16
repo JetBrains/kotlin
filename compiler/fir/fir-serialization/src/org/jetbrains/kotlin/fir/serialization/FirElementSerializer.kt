@@ -451,7 +451,7 @@ class FirElementSerializer private constructor(
             simpleFunction?.isExternal == true,
             simpleFunction?.isSuspend == true,
             simpleFunction?.isExpect == true,
-            shouldSetStableParameterNames(simpleFunction),
+            shouldSetStableParameterNames(function),
         )
 
         if (flags != builder.flags) {
@@ -530,11 +530,11 @@ class FirElementSerializer private constructor(
         return builder
     }
 
-    private fun shouldSetStableParameterNames(simpleFunction: FirSimpleFunction?): Boolean {
+    private fun shouldSetStableParameterNames(function: FirFunction?): Boolean {
         return when {
-            simpleFunction?.hasStableParameterNames == true -> true
+            function?.hasStableParameterNames == true -> true
             // for backward compatibility with K1, remove this line to fix KT-4758
-            simpleFunction?.origin == FirDeclarationOrigin.Delegated -> true
+            function?.origin == FirDeclarationOrigin.Delegated -> true
             else -> false
         }
     }
@@ -601,7 +601,7 @@ class FirElementSerializer private constructor(
             constructor.nonSourceAnnotations(session).isNotEmpty(),
             ProtoEnumFlags.visibility(normalizeVisibility(constructor)),
             !constructor.isPrimary,
-            constructor.hasStableParameterNames,
+            shouldSetStableParameterNames(constructor)
         )
         if (flags != builder.flags) {
             builder.flags = flags
