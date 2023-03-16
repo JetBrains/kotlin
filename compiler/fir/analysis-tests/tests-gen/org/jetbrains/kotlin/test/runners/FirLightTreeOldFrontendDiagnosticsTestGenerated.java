@@ -35230,6 +35230,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
         }
 
         @Test
+        @TestMetadata("diamondJavaMethodRawSupertype.kt")
+        public void testDiamondJavaMethodRawSupertype() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/diamondJavaMethodRawSupertype.kt");
+        }
+
+        @Test
         @TestMetadata("elvisOnJavaList.kt")
         public void testElvisOnJavaList() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/elvisOnJavaList.kt");

@@ -10,13 +10,13 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.caches.*
-import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeRawScopeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFullBodyResolve
 import org.jetbrains.kotlin.fir.scopes.*
@@ -217,6 +217,9 @@ class FirTypeIntersectionScopeContext(
     private fun <S : FirCallableSymbol<*>> List<MemberWithBaseScope<S>>.nonSubsumed(): List<MemberWithBaseScope<S>> {
         val baseMembers = mutableSetOf<FirCallableSymbol<*>>()
         for ((member, scope) in this) {
+            if (scope is FirClassSubstitutionScope && scope.substitutor is ConeRawScopeSubstitutor) {
+                continue
+            }
             val unwrapped = member.unwrapSubstitutionOverrides<FirCallableSymbol<*>>()
             val addIfDifferent = { it: FirCallableSymbol<*> ->
                 val symbol = it.unwrapSubstitutionOverrides()
