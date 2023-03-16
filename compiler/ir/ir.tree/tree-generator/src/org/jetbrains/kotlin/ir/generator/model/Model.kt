@@ -84,6 +84,8 @@ sealed class Field(
     var needsDescriptorApiAnnotation = false
     abstract val transformable: Boolean
 
+    val kdoc = config?.kdoc
+
     val printProperty = config?.printProperty ?: true
     val generationCallback = config?.generationCallback
 

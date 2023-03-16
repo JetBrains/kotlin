@@ -67,6 +67,10 @@ fun printElements(generationPath: File, model: Model) = sequence {
                         addAnnotation(descriptorApiAnnotation)
                     }
 
+                    field.kdoc?.let {
+                        addKdoc(it)
+                    }
+
                     field.generationCallback?.invoke(this)
                 }.build())
             }

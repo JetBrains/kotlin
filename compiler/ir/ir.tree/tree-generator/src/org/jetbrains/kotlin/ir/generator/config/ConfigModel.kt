@@ -91,6 +91,8 @@ sealed class FieldConfig(
     var printProperty = true
     var strictCastInTransformChildren = false
 
+    var kdoc: String? = null
+
     var generationCallback: (PropertySpec.Builder.() -> Unit)? = null
 
     override fun toString() = name
