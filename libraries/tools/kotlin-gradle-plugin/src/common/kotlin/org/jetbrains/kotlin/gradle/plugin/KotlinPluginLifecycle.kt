@@ -486,12 +486,8 @@ private class RestrictedLifecycleStages(
     private val lifecycle: KotlinPluginLifecycle,
     private val allowedStages: Set<Stage>,
 ) : CoroutineContext.Element, ContinuationInterceptor {
-    @OptIn(ExperimentalStdlibApi::class)
-    companion object Key : AbstractCoroutineContextKey<ContinuationInterceptor, RestrictedLifecycleStages>(
-        ContinuationInterceptor, { it as? RestrictedLifecycleStages }
-    )
 
-    override val key: CoroutineContext.Key<*> = Key
+    override val key: CoroutineContext.Key<*> = ContinuationInterceptor
 
     override fun <T> interceptContinuation(continuation: Continuation<T>): Continuation<T> = object : Continuation<T> {
         override val context: CoroutineContext
