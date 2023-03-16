@@ -186,7 +186,6 @@ class CocoaPodsIT : BaseGradleIT() {
 
         project.testImportWithAsserts()
 
-        suppressGradleWarningsForKt55751()
         hooks.rewriteHooks {
             podImportAsserts("kotlin-library")
         }
@@ -199,16 +198,13 @@ class CocoaPodsIT : BaseGradleIT() {
 
         project.preparePodfile("ios-app", ImportMode.FRAMEWORKS)
 
-        hooks.suppressGradleWarningsForKt55751 = false
         project.testImportWithAsserts()
 
-        hooks.suppressGradleWarningsForKt55751 = true
         hooks.rewriteHooks {
             podImportAsserts("kotlin-library")
         }
         project.testSynthetic(":kotlin-library:podImport")
 
-        hooks.suppressGradleWarningsForKt55751 = false
         hooks.rewriteHooks {
             podImportAsserts("second-library")
         }
@@ -266,8 +262,6 @@ class CocoaPodsIT : BaseGradleIT() {
 
     @Test
     fun testSpecReposImport() {
-        suppressGradleWarningsForKt55751()
-
         val podName = "example"
         val podRepo = "https://github.com/alozhkin/spec_repo"
         with(project.gradleBuildScript()) {
@@ -328,36 +322,26 @@ class CocoaPodsIT : BaseGradleIT() {
 
     @Test
     fun testPodDownloadGitNoTagNorCommit() {
-        suppressGradleWarningsForKt55751()
-
         doTestGit()
     }
 
     @Test
     fun testPodDownloadGitTag() {
-        suppressGradleWarningsForKt55751()
-
         doTestGit(tag = "4.0.0")
     }
 
     @Test
     fun testPodDownloadGitCommit() {
-        suppressGradleWarningsForKt55751()
-
         doTestGit(commit = "9c07ac0a5645abb58850253eeb109ed0dca515c1")
     }
 
     @Test
     fun testPodDownloadGitBranch() {
-        suppressGradleWarningsForKt55751()
-
         doTestGit(branch = "2974")
     }
 
     @Test
     fun testPodDownloadGitSubspec() {
-        suppressGradleWarningsForKt55751()
-
         doTestGit(
             repo = "https://github.com/SDWebImage/SDWebImage.git",
             pod = "SDWebImage/MapKit",
@@ -367,8 +351,6 @@ class CocoaPodsIT : BaseGradleIT() {
 
     @Test
     fun testPodDownloadGitBranchAndCommit() {
-        suppressGradleWarningsForKt55751()
-
         val branch = "2974"
         val commit = "21637dd6164c0641e414bdaf3885af6f1ef15aee"
         with(project.gradleBuildScript()) {
@@ -380,8 +362,6 @@ class CocoaPodsIT : BaseGradleIT() {
     // tag priority is bigger than branch priority
     @Test
     fun testPodDownloadGitBranchAndTag() {
-        suppressGradleWarningsForKt55751()
-
         val branch = "2974"
         val tag = "4.0.0"
         with(project.gradleBuildScript()) {
@@ -392,8 +372,6 @@ class CocoaPodsIT : BaseGradleIT() {
 
     @Test
     fun testDownloadAndImport() {
-        suppressGradleWarningsForKt55751()
-
         val tag = "4.0.0"
         with(project.gradleBuildScript()) {
             addPod(defaultPodName, produceGitBlock(defaultPodRepo, tagName = tag))
@@ -457,20 +435,17 @@ class CocoaPodsIT : BaseGradleIT() {
         """.trimIndent())
 
 
-        hooks.suppressGradleWarningsForKt55751 = false
         hooks.addHook {
             assertTasksExecuted(dummyTaskName)
             assertTasksExecuted(podInstallTaskName)
         }
         project.testImport()
 
-        hooks.suppressGradleWarningsForKt55751 = true
         hooks.rewriteHooks {
             assertTasksExecuted(linkTaskName)
         }
         project.testWithWrapper(linkTaskName)
 
-        hooks.suppressGradleWarningsForKt55751 = false
         hooks.rewriteHooks {
             assertTasksUpToDate(dummyTaskName)
             assertTasksUpToDate(podInstallTaskName)
@@ -519,8 +494,6 @@ class CocoaPodsIT : BaseGradleIT() {
 
     @Test
     fun basicUTDTest() {
-        suppressGradleWarningsForKt55751()
-
         val tasks = listOf(
             podspecTaskName,
             defaultPodGenTaskName,
@@ -582,8 +555,6 @@ class CocoaPodsIT : BaseGradleIT() {
 
     @Test
     fun testUTDPodAdded() {
-        suppressGradleWarningsForKt55751()
-
         with(project.gradleBuildScript()) {
             addPod(defaultPodName, produceGitBlock(defaultPodRepo))
         }
@@ -631,8 +602,6 @@ class CocoaPodsIT : BaseGradleIT() {
 
     @Test
     fun testImportSubspecs() {
-        suppressGradleWarningsForKt55751()
-
         with(project.gradleBuildScript()) {
             addPod("SDWebImage/Core")
             addPod("SDWebImage/MapKit")
@@ -642,8 +611,6 @@ class CocoaPodsIT : BaseGradleIT() {
 
     @Test
     fun testUTDTargetAdded() {
-        suppressGradleWarningsForKt55751()
-
         with(project.gradleBuildScript()) {
             addPod(defaultPodName, produceGitBlock(defaultPodRepo))
             appendToCocoapodsBlock("osx.deploymentTarget = \"10.15\"")
@@ -765,8 +732,6 @@ class CocoaPodsIT : BaseGradleIT() {
 
     @Test
     fun testUTDBuild() {
-        suppressGradleWarningsForKt55751()
-
         with(project.gradleBuildScript()) {
             addPod(defaultPodName, produceGitBlock())
         }
@@ -799,17 +764,14 @@ class CocoaPodsIT : BaseGradleIT() {
         with(project.gradleBuildScript()) {
             addPod(defaultPodName, produceGitBlock())
         }
-        hooks.suppressGradleWarningsForKt55751 = true
         hooks.addHook {
             assertTasksExecuted(defaultBuildTaskName)
         }
         project.testImport()
 
-        hooks.suppressGradleWarningsForKt55751 = false
         hooks.rewriteHooks {}
         project.test(":clean")
 
-        hooks.suppressGradleWarningsForKt55751 = true
         hooks.addHook {
             assertTasksExecuted(defaultBuildTaskName)
         }
@@ -826,8 +788,6 @@ class CocoaPodsIT : BaseGradleIT() {
 
     @Test
     fun testGroovyDownloadAndImport() {
-        suppressGradleWarningsForKt55751()
-
         val project = getProjectByName(groovyTemplateProjectName)
         val tag = "4.0.0"
         with(project.gradleBuildScript()) {
@@ -841,8 +801,6 @@ class CocoaPodsIT : BaseGradleIT() {
 
     @Test
     fun supportPodsWithDependencies() {
-        suppressGradleWarningsForKt55751()
-
         with(project.gradleBuildScript()) {
             addPod("AlamofireImage")
         }
@@ -851,8 +809,6 @@ class CocoaPodsIT : BaseGradleIT() {
 
     @Test
     fun testCustomPackageName() {
-        suppressGradleWarningsForKt55751()
-
         with(project.gradleBuildScript()) {
             addPod("AFNetworking", "packageName = \"AFNetworking\"")
         }
@@ -873,8 +829,6 @@ class CocoaPodsIT : BaseGradleIT() {
 
     @Test
     fun testCinteropExtraOpts() {
-        suppressGradleWarningsForKt55751()
-
         with(project) {
             gradleBuildScript().addPod("AFNetworking", "extraOpts = listOf(\"-help\")")
             hooks.addHook {
@@ -886,8 +840,6 @@ class CocoaPodsIT : BaseGradleIT() {
 
     @Test
     fun testUseLibrariesMode() {
-        suppressGradleWarningsForKt55751()
-
         with(project) {
             gradleBuildScript().appendToCocoapodsBlock("useLibraries()")
             gradleBuildScript().addPod("AFNetworking", configuration = "headers = \"AFNetworking/AFNetworking.h\"")
@@ -898,8 +850,6 @@ class CocoaPodsIT : BaseGradleIT() {
 
     @Test
     fun testUseLibrariesModeWarnWhenPodIsAddedWithoutHeadersSpecified() {
-        suppressGradleWarningsForKt55751()
-
         with(project) {
             gradleBuildScript().appendToCocoapodsBlock("useLibraries()")
             gradleBuildScript().addPod("AFNetworking")
@@ -914,8 +864,6 @@ class CocoaPodsIT : BaseGradleIT() {
 
     @Test
     fun testUseDynamicFramework() {
-        suppressGradleWarningsForKt55751()
-
         with(project) {
             gradleBuildScript().addPod(defaultPodName, produceGitBlock(defaultPodRepo))
             gradleBuildScript().appendToFrameworkBlock("isStatic = false")
@@ -937,8 +885,6 @@ class CocoaPodsIT : BaseGradleIT() {
 
     @Test
     fun testUseStaticFramework() {
-        suppressGradleWarningsForKt55751()
-
         with(project) {
             gradleBuildScript().addPod(defaultPodName, produceGitBlock(defaultPodRepo))
             gradleBuildScript().appendToFrameworkBlock("isStatic = true")
@@ -968,8 +914,6 @@ class CocoaPodsIT : BaseGradleIT() {
 
     @Test
     fun testSyncFramework() {
-        suppressGradleWarningsForKt55751()
-
         with(project) {
             hooks.addHook {
                 assertTasksExecuted(":linkPodDebugFrameworkIOS")
@@ -986,8 +930,6 @@ class CocoaPodsIT : BaseGradleIT() {
 
     @Test
     fun testSyncFrameworkCustomXcodeConfiguration() {
-        suppressGradleWarningsForKt55751()
-
         with(project) {
             gradleBuildScript().appendToCocoapodsBlock("xcodeConfigurationToNativeBuildType[\"CUSTOM\"] = org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType.DEBUG\n")
             hooks.addHook {
@@ -1145,15 +1087,11 @@ class CocoaPodsIT : BaseGradleIT() {
 
     @Test
     fun testPodDependencyInUnitTests() {
-        suppressGradleWarningsForKt55751()
-
         getProjectByName(cocoapodsTestsProjectName).testWithWrapper(":iosX64Test")
     }
 
     @Test
     fun testCinteropUpToDate() {
-        suppressGradleWarningsForKt55751()
-
         project.gradleBuildScript().addPod(defaultPodName, produceGitBlock(defaultPodRepo))
         project.testImport()
         hooks.addHook {
@@ -1197,9 +1135,21 @@ class CocoaPodsIT : BaseGradleIT() {
 
     @Test
     fun testPodPublishing() {
-        suppressGradleWarningsForKt55751()
+        //test that manually created frameworks are not included into cocoapods xcframework
+        project.gradleBuildScript().appendToKotlinBlock("iosX64(\"iOS\") {binaries.framework{}}")
 
-        hooks.addHook {
+        val currentGradleVersion = project.chooseWrapperVersionOrFinishTest()
+        project.build(
+            ":podPublishXCFramework",
+            "-Pkotlin.native.cocoapods.generate.wrapper=true",
+            options = defaultBuildOptions().suppressDeprecationWarningsSinceGradleVersion(
+                TestVersions.Gradle.G_7_4,
+                currentGradleVersion,
+                "Workaround for KT-57483",
+            )
+        ) {
+            assertSuccessful()
+
             assertTasksExecuted(":podPublishReleaseXCFramework")
             assertTasksExecuted(":podPublishDebugXCFramework")
             assertFileExists("build/cocoapods/publish/release/cocoapods.xcframework")
@@ -1213,16 +1163,11 @@ class CocoaPodsIT : BaseGradleIT() {
 
             assertEquals(publishPodspecContent, actualPodspecContentWithoutBlankLines)
         }
-        //test that manually created frameworks are not included into cocoapods xcframework
-        project.gradleBuildScript().appendToKotlinBlock("iosX64(\"iOS\") {binaries.framework{}}")
-        project.testWithWrapper(":podPublishXCFramework")
     }
 
 
     @Test
     fun testPodPublishingWithCustomProperties() {
-        suppressGradleWarningsForKt55751()
-
 
         with(project.gradleBuildScript()) {
             appendToCocoapodsBlock("name = \"CustomPod\"")
@@ -1285,8 +1230,6 @@ class CocoaPodsIT : BaseGradleIT() {
 
     @Test
     fun testCinteropKlibsProvideLinkerOptsToFramework() = with(project) {
-        suppressGradleWarningsForKt55751()
-
         gradleBuildScript().addPod("AFNetworking")
         testWithWrapper(":cinteropAFNetworkingIOS")
 
@@ -1306,15 +1249,9 @@ class CocoaPodsIT : BaseGradleIT() {
             pod("SDWebImage/Core")
         """.trimIndent())
 
-        val currentGradleVersion = chooseWrapperVersionOrFinishTest()
         build(
             ":linkPodDebugFrameworkIOS",
             "-Pkotlin.native.cocoapods.generate.wrapper=true",
-            options = defaultBuildOptions().suppressDeprecationWarningsSinceGradleVersion(
-                TestVersions.Gradle.G_7_4,
-                currentGradleVersion,
-                "Workaround for KT-55751"
-            )
         ) {
             assertSuccessful()
 
@@ -1352,15 +1289,9 @@ class CocoaPodsIT : BaseGradleIT() {
             pod("AFNetworking") { linkOnly = true }
         """.trimIndent())
 
-        val currentGradleVersion = chooseWrapperVersionOrFinishTest()
         build(
             ":linkPodDebugFrameworkIOS",
             "-Pkotlin.native.cocoapods.generate.wrapper=true",
-            options = defaultBuildOptions().suppressDeprecationWarningsSinceGradleVersion(
-                TestVersions.Gradle.G_7_4,
-                currentGradleVersion,
-                "Workaround for KT-55751"
-            )
         ) {
             assertSuccessful()
 
@@ -1372,8 +1303,6 @@ class CocoaPodsIT : BaseGradleIT() {
 
     private class CustomHooks {
         private val hooks = mutableSetOf<CompiledProject.() -> Unit>()
-
-        var suppressGradleWarningsForKt55751 = false
 
         fun addHook(hook: CompiledProject.() -> Unit) {
             hooks.add(hook)
@@ -1389,10 +1318,6 @@ class CocoaPodsIT : BaseGradleIT() {
                 project.function()
             }
         }
-    }
-
-    private fun suppressGradleWarningsForKt55751() {
-        hooks.suppressGradleWarningsForKt55751 = true
     }
 
     private fun doTestGit(
@@ -1446,20 +1371,9 @@ class CocoaPodsIT : BaseGradleIT() {
         taskName: String,
         vararg args: String
     ) {
-        val buildOptions = defaultBuildOptions().run {
-            if (hooks.suppressGradleWarningsForKt55751) {
-                suppressDeprecationWarningsSinceGradleVersion(
-                    TestVersions.Gradle.G_7_4,
-                    chooseWrapperVersionOrFinishTest(),
-                    "Workaround for KT-55751"
-                )
-            } else {
-                this
-            }
-        }
 
         // check that test executable
-        build(taskName, *args, options = buildOptions) {
+        build(taskName, *args) {
             //base checks
             assertSuccessful()
             hooks.trigger(this)

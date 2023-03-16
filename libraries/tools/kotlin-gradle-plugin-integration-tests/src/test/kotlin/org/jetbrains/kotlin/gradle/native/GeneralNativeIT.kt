@@ -302,7 +302,7 @@ class GeneralNativeIT : BaseGradleIT() {
                     .suppressDeprecationWarningsSinceGradleVersion(
                         TestVersions.Gradle.G_7_4,
                         currentGradleVersion,
-                        "Workaround for KT-55751"
+                        "Workaround for KT-57483"
                     ),
                 check = check
             )

@@ -46,7 +46,7 @@ class AppleFrameworkIT : BaseGradleIT() {
             ).suppressDeprecationWarningsSinceGradleVersion(
                 TestVersions.Gradle.G_7_4,
                 currentGradleVersion,
-                "Workaround for KT-55751"
+                "Workaround for KT-57483"
             )
             build("assembleDebugAppleFrameworkForXcodeIosArm64", options = options) {
                 assertSuccessful()
@@ -79,7 +79,7 @@ class AppleFrameworkIT : BaseGradleIT() {
             ).suppressDeprecationWarningsSinceGradleVersion(
                 TestVersions.Gradle.G_7_4,
                 currentGradleVersion,
-                "Workaround for KT-55751"
+                "Workaround for KT-57483"
             )
             build("assembleReleaseAppleFrameworkForXcode", options = options) {
                 assertSuccessful()
@@ -108,7 +108,7 @@ class AppleFrameworkIT : BaseGradleIT() {
             ).suppressDeprecationWarningsSinceGradleVersion(
                 TestVersions.Gradle.G_7_4,
                 currentGradleVersion,
-                "Workaround for KT-55751"
+                "Workaround for KT-57483"
             )
             build(":shared:embedAndSignAppleFrameworkForXcode", options = options) {
                 assertSuccessful()
@@ -221,7 +221,7 @@ class AppleFrameworkIT : BaseGradleIT() {
             ).suppressDeprecationWarningsSinceGradleVersion(
                 TestVersions.Gradle.G_7_4,
                 currentGradleVersion,
-                "Workaround for KT-55751"
+                "Workaround for KT-57483"
             )
             setupWorkingDir()
             projectDir.resolve("shared/build.gradle.kts").modify {
