@@ -13,7 +13,6 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.process.ExecOperations
 import org.gradle.process.ExecResult
 import org.gradle.process.JavaExecSpec
-import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.konan.target.HostManager
 import java.io.File
 import java.lang.reflect.InvocationTargetException
@@ -159,9 +158,7 @@ abstract class KotlinToolRunner(
         )
 
         executionContext.javaexec { spec ->
-            @Suppress("DEPRECATION")
-            if (GradleVersion.current() >= GradleVersion.version("7.0")) spec.mainClass.set(mainClass)
-            else spec.main = mainClass
+            spec.mainClass.set(mainClass)
             spec.classpath = classpath
             spec.jvmArgs(jvmArgs)
             spec.systemProperties(systemProperties)
