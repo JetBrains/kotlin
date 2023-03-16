@@ -27,8 +27,10 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildConstExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.typeAttributeExtensions
-import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
 import org.jetbrains.kotlin.fir.serialization.constant.*
@@ -884,35 +886,52 @@ class FirElementSerializer private constructor(
             }
         }
     }
-    
+
+    private fun fillFromPossiblyInnerType(
+        builder: ProtoBuf.Type.Builder,
+        symbol: FirClassLikeSymbol<*>,
+        typeArguments: Array<out ConeTypeProjection>,
+        typeArgumentIndex: Int
+    ) {
+        var argumentIndex = typeArgumentIndex
+        val classifier = symbol.fir
+        val classifierId = getClassifierId(classifier)
+        if (classifier is FirTypeAlias) {
+            builder.typeAliasName = classifierId
+        } else {
+            builder.className = classifierId
+        }
+        for (i in 0 until classifier.typeParameters.size) {
+            // Next type parameter is not for this type but for an outer type.
+            if (classifier.typeParameters[i] !is FirTypeParameter) break
+            // No explicit type argument provided. For example: `Map.Entry<K, V>` when we get to `Map`
+            // it has type parameters, but no explicit type arguments are provided for it.
+            if (argumentIndex >= typeArguments.size) return
+            builder.addArgument(typeArgument(typeArguments[argumentIndex++]))
+        }
+
+        val outerClassId = symbol.classId.outerClassId
+        if (outerClassId == null || outerClassId.isLocal) return
+        val outerSymbol = outerClassId.toLookupTag().toSymbol(session)
+        if (outerSymbol != null) {
+            val outerBuilder = ProtoBuf.Type.newBuilder()
+            fillFromPossiblyInnerType(outerBuilder, outerSymbol, typeArguments, argumentIndex)
+            if (useTypeTable()) {
+                builder.outerTypeId = typeTable[outerBuilder]
+            } else {
+                builder.setOuterType(outerBuilder)
+            }
+        }
+    }
+
     private fun fillFromPossiblyInnerType(builder: ProtoBuf.Type.Builder, type: ConeClassLikeType) {
         val classifierSymbol = type.lookupTag.toSymbol(session)
         if (classifierSymbol != null) {
-            val classifier = classifierSymbol.fir
-            val classifierId = getClassifierId(classifier)
-            if (classifier is FirTypeAlias) {
-                builder.typeAliasName = classifierId
-            } else {
-                builder.className = classifierId
-            }
+            fillFromPossiblyInnerType(builder, classifierSymbol, type.typeArguments, 0)
         } else {
             builder.className = getClassifierId(type.lookupTag.classId)
+            type.typeArguments.forEach { builder.addArgument(typeArgument(it)) }
         }
-
-        for (projection in type.typeArguments) {
-            builder.addArgument(typeArgument(projection))
-        }
-
-        // TODO: outer type
-//        if (type.outerType != null) {
-//            val outerBuilder = ProtoBuf.Type.newBuilder()
-//            fillFromPossiblyInnerType(outerBuilder, type.outerType!!)
-//            if (useTypeTable()) {
-//                builder.outerTypeId = typeTable[outerBuilder]
-//            } else {
-//                builder.setOuterType(outerBuilder)
-//            }
-//        }
     }
 
     private fun typeArgument(typeProjection: ConeTypeProjection): ProtoBuf.Type.Argument.Builder {
