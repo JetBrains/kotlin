@@ -44,7 +44,7 @@ var KmClass.anonymousObjectOriginName: String?
 /**
  * JVM-specific flags of the class, consisting of [JvmFlag.Class] flags.
  */
-var KmClass.jvmFlags: Flags
+var KmClass.jvmFlags: JvmClassFlags
     get() = jvm.jvmFlags
     set(value) {
         jvm.jvmFlags = value
@@ -95,7 +95,7 @@ var KmFunction.lambdaClassOriginName: String?
 /**
  * JVM-specific flags of the property, consisting of [JvmFlag.Property] flags.
  */
-var KmProperty.jvmFlags: Flags
+var KmProperty.jvmFlags: JvmPropertyFlags
     get() = jvm.jvmFlags
     set(value) {
         jvm.jvmFlags = value

@@ -9,7 +9,6 @@ package kotlinx.metadata.internal
 import kotlinx.metadata.*
 import kotlinx.metadata.Flags // Don't remove this import. See KT-45553
 import kotlinx.metadata.internal.extensions.MetadataExtensions
-import kotlinx.metadata.internal.IgnoreInApiDump
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.*
 import kotlin.contracts.ExperimentalContracts
@@ -62,7 +61,7 @@ fun ProtoBuf.Class.accept(
         contextExtensions = contextExtensions
     ).withTypeParameters(typeParameterList)
 
-    v.visit(flags, c.className(fqName))
+    v.visit(ClassFlags(flags), c.className(fqName))
 
     for (typeParameter in typeParameterList) {
         typeParameter.accept(v::visitTypeParameter, c)
@@ -73,7 +72,7 @@ fun ProtoBuf.Class.accept(
     }
 
     for (constructor in constructorList) {
-        v.visitConstructor(constructor.flags)?.let { constructor.accept(it, c) }
+        v.visitConstructor(ConstructorFlags(constructor.flags))?.let { constructor.accept(it, c) }
     }
 
     v.visitDeclarations(functionList, propertyList, typeAliasList, c)
@@ -184,31 +183,31 @@ private fun KmDeclarationContainerVisitor.visitDeclarations(
     c: ReadContext
 ) {
     for (function in functions) {
-        visitFunction(function.flags, c[function.name])?.let { function.accept(it, c) }
+        visitFunction(FunctionFlags(function.flags), c[function.name])?.let { function.accept(it, c) }
     }
 
     for (property in properties) {
         visitProperty(
-            property.flags, c[property.name], property.getPropertyGetterFlags(), property.getPropertySetterFlags()
+            PropertyFlags(property.flags), c[property.name], property.getPropertyGetterFlags(), property.getPropertySetterFlags()
         )?.let { property.accept(it, c) }
     }
 
     for (typeAlias in typeAliases) {
-        visitTypeAlias(typeAlias.flags, c[typeAlias.name])?.let { typeAlias.accept(it, c) }
+        visitTypeAlias(TypeAliasFlags(typeAlias.flags), c[typeAlias.name])?.let { typeAlias.accept(it, c) }
     }
 }
 
 fun ProtoBuf.Function.accept(v: KmLambdaVisitor, strings: NameResolver) {
     val c = ReadContext(strings, TypeTable(typeTable), VersionRequirementTable.EMPTY)
 
-    v.visitFunction(flags, c[name])?.let { accept(it, c) }
+    v.visitFunction(FunctionFlags(flags), c[name])?.let { accept(it, c) }
 
     v.visitEnd()
 }
 
 private fun ProtoBuf.Constructor.accept(v: KmConstructorVisitor, c: ReadContext) {
     for (parameter in valueParameterList) {
-        v.visitValueParameter(parameter.flags, c[parameter.name])?.let { parameter.accept(it, c) }
+        v.visitValueParameter(ValueParameterFlags(parameter.flags), c[parameter.name])?.let { parameter.accept(it, c) }
     }
 
     for (versionRequirement in versionRequirementList) {
@@ -239,7 +238,7 @@ private fun ProtoBuf.Function.accept(v: KmFunctionVisitor, outer: ReadContext) {
     }
 
     for (parameter in valueParameterList) {
-        v.visitValueParameter(parameter.flags, c[parameter.name])?.let { parameter.accept(it, c) }
+        v.visitValueParameter(ValueParameterFlags(parameter.flags), c[parameter.name])?.let { parameter.accept(it, c) }
     }
 
     returnType(c.types).let { returnType ->
@@ -279,7 +278,7 @@ fun ProtoBuf.Property.accept(v: KmPropertyVisitor, outer: ReadContext) {
 
     if (hasSetterValueParameter()) {
         val parameter = setterValueParameter
-        v.visitSetterParameter(parameter.flags, c[parameter.name])?.let { parameter.accept(it, c) }
+        v.visitSetterParameter(ValueParameterFlags(parameter.flags), c[parameter.name])?.let { parameter.accept(it, c) }
     }
 
     returnType(c.types).let { returnType ->
@@ -485,7 +484,7 @@ private fun ProtoBuf.Effect.accept(v: KmEffectVisitor, c: ReadContext) {
 @ExperimentalContracts
 private fun ProtoBuf.Expression.accept(v: KmEffectExpressionVisitor, c: ReadContext) {
     v.visit(
-        flags,
+        EffectFlags(flags),
         if (hasValueParameterReference()) valueParameterReference else null
     )
 
@@ -514,18 +513,18 @@ private fun ProtoBuf.Expression.accept(v: KmEffectExpressionVisitor, c: ReadCont
     v.visitEnd()
 }
 
-private val ProtoBuf.Type.typeFlags: Flags
-    get() = (if (nullable) 1 shl 0 else 0) +
-            (flags shl 1)
+private val ProtoBuf.Type.typeFlags: TypeFlags
+    get() = TypeFlags((if (nullable) 1 shl 0 else 0) +
+            (flags shl 1))
 
-private val ProtoBuf.TypeParameter.typeParameterFlags: Flags
-    get() = if (reified) 1 else 0
+private val ProtoBuf.TypeParameter.typeParameterFlags: TypeParameterFlags
+    get() = TypeParameterFlags(if (reified) 1 else 0)
 
-fun ProtoBuf.Property.getPropertyGetterFlags(): Flags =
-    if (hasGetterFlags()) getterFlags else getDefaultPropertyAccessorFlags(flags)
+fun ProtoBuf.Property.getPropertyGetterFlags(): PropertyAccessorFlags =
+    PropertyAccessorFlags(if (hasGetterFlags()) getterFlags else getDefaultPropertyAccessorFlags(flags))
 
 fun ProtoBuf.Property.getPropertySetterFlags(): Flags =
-    if (hasSetterFlags()) setterFlags else getDefaultPropertyAccessorFlags(flags)
+    PropertyAccessorFlags(if (hasSetterFlags()) setterFlags else getDefaultPropertyAccessorFlags(flags))
 
-private fun getDefaultPropertyAccessorFlags(flags: Flags): Flags =
+private fun getDefaultPropertyAccessorFlags(flags: Int): Int =
     F.getAccessorFlags(F.HAS_ANNOTATIONS.get(flags), F.VISIBILITY.get(flags), F.MODALITY.get(flags), false, false, false)

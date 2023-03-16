@@ -52,10 +52,10 @@ class MetadataSmokeTest {
         val klass = KmClass().apply {
             name = "Hello"
             flags = flagsOf(Flag.IS_PUBLIC)
-            constructors += KmConstructor(flagsOf(Flag.IS_PUBLIC)).apply {
+            constructors += KmConstructor(ConstructorFlags(VisibilityFlag.IS_PUBLIC)).apply {
                 signature = JvmMethodSignature("<init>", "()V")
             }
-            functions += KmFunction(flagsOf(Flag.IS_PUBLIC, Flag.Function.IS_DECLARATION), "hello").apply {
+            functions += KmFunction(FunctionFlags(VisibilityFlag.IS_PUBLIC, FunctionKindFlag.IS_DECLARATION), "hello").apply {
                 returnType = KmType(flagsOf()).apply {
                     classifier = KmClassifier.Class("kotlin/String")
                 }
@@ -174,11 +174,11 @@ class MetadataSmokeTest {
             KmClass().apply {
                 classWithStableParameterNames.accept(
                     object : KmClassVisitor(this) {
-                        override fun visitConstructor(flags: Flags) =
-                            super.visitConstructor(flags + flagsOf(Flag.Constructor.HAS_NON_STABLE_PARAMETER_NAMES))
+                        override fun visitConstructor(flags: ConstructorFlags) =
+                            super.visitConstructor(flags + ConstructorFlags(ConstructorFlags.hasNonStableParameterNames))
 
-                        override fun visitFunction(flags: Flags, name: String) =
-                            super.visitFunction(flags + flagsOf(Flag.Function.HAS_NON_STABLE_PARAMETER_NAMES), name)
+                        override fun visitFunction(flags: FunctionFlags, name: String) =
+                            super.visitFunction(flags.plus(FunctionFlags(FunctionFlags.hasNonStableParameterNames), ::FunctionFlags), name)
                     }
                 )
             }
@@ -210,9 +210,9 @@ class MetadataSmokeTest {
         // exist are controlled by compiler options, so we have to manually create metadata with the
         // flags set. Since the current flags only apply to interfaces with default functions we modify
         // the metadata for the kotlin.coroutines.CoroutineContext interface.
-        val jvmClassFlags: Flags = flagsOf(
-            JvmFlag.Class.IS_COMPILED_IN_COMPATIBILITY_MODE,
-            JvmFlag.Class.HAS_METHOD_BODIES_IN_INTERFACE
+        val jvmClassFlags = JvmClassFlags(
+            JvmClassFlags.isCompiledInCompatibilityMode,
+            JvmClassFlags.hasMethodBodiesInInterface
         )
 
         val metadata = CoroutineContext::class.java.readMetadata()

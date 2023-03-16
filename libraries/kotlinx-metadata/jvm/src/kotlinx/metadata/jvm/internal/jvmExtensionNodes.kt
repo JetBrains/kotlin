@@ -36,7 +36,7 @@ internal class JvmClassExtension : JvmClassExtensionVisitor(), KmClassExtension 
     val localDelegatedProperties: MutableList<KmProperty> = ArrayList(0)
     var moduleName: String? = null
     var anonymousObjectOriginName: String? = null
-    var jvmFlags: Flags = 0
+    var jvmFlags: JvmClassFlags = JvmClassFlags()
 
     override fun visitLocalDelegatedProperty(flags: Flags, name: String, getterFlags: Flags, setterFlags: Flags): KmPropertyVisitor =
         KmProperty(flags, name, getterFlags, setterFlags).also { localDelegatedProperties.add(it) }
@@ -49,7 +49,7 @@ internal class JvmClassExtension : JvmClassExtensionVisitor(), KmClassExtension 
         this.anonymousObjectOriginName = internalName
     }
 
-    override fun visitJvmFlags(flags: Flags) {
+    override fun visitJvmFlags(flags: JvmClassFlags) {
         this.jvmFlags = flags
     }
 
@@ -60,7 +60,7 @@ internal class JvmClassExtension : JvmClassExtensionVisitor(), KmClassExtension 
         }
         moduleName?.let(visitor::visitModuleName)
         anonymousObjectOriginName?.let(visitor::visitAnonymousObjectOriginName)
-        jvmFlags.takeIf { it != 0 }?.let(visitor::visitJvmFlags)
+        jvmFlags.takeIf { it.rawValue != 0 }?.let(visitor::visitJvmFlags)
         visitor.visitEnd()
     }
 }
@@ -107,7 +107,7 @@ internal class JvmFunctionExtension : JvmFunctionExtensionVisitor(), KmFunctionE
 }
 
 internal class JvmPropertyExtension : JvmPropertyExtensionVisitor(), KmPropertyExtension {
-    var jvmFlags: Flags = 0
+    var jvmFlags: JvmPropertyFlags = JvmPropertyFlags(0)
     var fieldSignature: JvmFieldSignature? = null
     var getterSignature: JvmMethodSignature? = null
     var setterSignature: JvmMethodSignature? = null
@@ -115,7 +115,7 @@ internal class JvmPropertyExtension : JvmPropertyExtensionVisitor(), KmPropertyE
     var syntheticMethodForDelegate: JvmMethodSignature? = null
 
     override fun visit(
-        jvmFlags: Flags,
+        jvmFlags: JvmPropertyFlags,
         fieldSignature: JvmFieldSignature?,
         getterSignature: JvmMethodSignature?,
         setterSignature: JvmMethodSignature?

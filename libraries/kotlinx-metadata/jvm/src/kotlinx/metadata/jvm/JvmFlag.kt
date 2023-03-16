@@ -5,10 +5,34 @@
 
 package kotlinx.metadata.jvm
 
-import kotlinx.metadata.Flag
-import kotlinx.metadata.Flags
+import kotlinx.metadata.*
 import org.jetbrains.kotlin.metadata.deserialization.Flags as F
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmFlags as JF
+
+interface JvmFlagWrapper: FlagWrapper
+
+interface JvmClassFlag: JvmFlagWrapper, ClassFlag
+
+class JvmPropertyFlags(rawValue: Int): Flags(rawValue) {
+    // TODO: ctor, plus, IS_MOVED_FROM_INTERFACE_COMPANION
+}
+
+class JvmClassFlags(rawValue: Int): Flags(rawValue) {
+
+    constructor(vararg flags: JvmClassFlag): this(flagsOfImpl(*flags))
+    operator fun plus(flags: JvmClassFlags): JvmClassFlags = plus(flags, ::JvmClassFlags)
+    companion object {
+        val hasMethodBodiesInInterface = object : JvmClassFlag {
+            override val f: Flag = JvmFlag.booleanFlag(JF.IS_COMPILED_IN_JVM_DEFAULT_MODE)
+        }
+
+        val isCompiledInCompatibilityMode = object : JvmClassFlag {
+            override val f: Flag = JvmFlag.booleanFlag(JF.IS_COMPILED_IN_COMPATIBILITY_MODE)
+        }
+    }
+}
+
+
 
 /**
  * JVM-specific flags in addition to common flags declared in [Flag].
@@ -56,6 +80,6 @@ object JvmFlag {
         val IS_COMPILED_IN_COMPATIBILITY_MODE = booleanFlag(JF.IS_COMPILED_IN_COMPATIBILITY_MODE)
     }
 
-    private fun booleanFlag(f: F.BooleanFlagField): Flag =
+    internal fun booleanFlag(f: F.BooleanFlagField): Flag =
         Flag(f.offset, f.bitWidth, 1)
 }

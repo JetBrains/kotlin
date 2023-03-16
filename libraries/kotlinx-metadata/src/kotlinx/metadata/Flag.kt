@@ -10,6 +10,77 @@ import org.jetbrains.kotlin.metadata.ProtoBuf.*
 import org.jetbrains.kotlin.metadata.ProtoBuf.Class.Kind as ClassKind
 import org.jetbrains.kotlin.metadata.deserialization.Flags as F
 
+// Can't be sealed because of JvmFlagWrapper!
+interface FlagWrapper {
+    // Problem: can't be private or internal
+    val f: Flag
+}
+
+interface ConstructorFlag : FlagWrapper
+interface ClassFlag : FlagWrapper
+interface FunctionFlag : FlagWrapper
+
+enum class ModalityFlag(override val f: Flag) : FlagWrapper, ConstructorFlag, ClassFlag, FunctionFlag {
+    FINAL(Flag.IS_FINAL), OPEN(Flag.IS_OPEN), ABSTRACT(Flag.IS_ABSTRACT), SEALED(Flag.IS_SEALED);
+}
+
+enum class VisibilityFlag(override val f: Flag) : FlagWrapper, ConstructorFlag, ClassFlag, FunctionFlag {
+    IS_INTERNAL(Flag(F.VISIBILITY, Visibility.INTERNAL_VALUE)),
+
+    /**
+     * A visibility flag, signifying that the corresponding declaration is `private`.
+     */
+    IS_PRIVATE(Flag(F.VISIBILITY, Visibility.PRIVATE_VALUE)),
+
+    /**
+     * A visibility flag, signifying that the corresponding declaration is `protected`.
+     */
+    IS_PROTECTED(Flag(F.VISIBILITY, Visibility.PROTECTED_VALUE)),
+
+    /**
+     * A visibility flag, signifying that the corresponding declaration is `public`.
+     */
+    IS_PUBLIC(Flag(F.VISIBILITY, Visibility.PUBLIC_VALUE)),
+
+    /**
+     * A visibility flag, signifying that the corresponding declaration is "private-to-this", which is a non-denotable visibility of
+     * private members in Kotlin which are callable only on the same instance of the declaring class.
+     */
+    @JvmField
+    IS_PRIVATE_TO_THIS(Flag(F.VISIBILITY, Visibility.PRIVATE_TO_THIS_VALUE)),
+
+    /**
+     * A visibility flag, signifying that the corresponding declaration is local, i.e. declared inside a code block
+     * and not visible from the outside.
+     */
+    @JvmField
+    IS_LOCAL(Flag(F.VISIBILITY, Visibility.LOCAL_VALUE)),
+}
+
+enum class FunctionKindFlag(override val f: Flag) : FlagWrapper, FunctionFlag {
+    @JvmField
+    IS_DECLARATION(Flag(F.MEMBER_KIND, MemberKind.DECLARATION_VALUE)),
+
+    /**
+     * A member kind flag, signifying that the corresponding function exists in the containing class because a function with a suitable
+     * signature exists in a supertype. This flag is not written by the Kotlin compiler and its effects are unspecified.
+     */
+    IS_FAKE_OVERRIDE(Flag(F.MEMBER_KIND, MemberKind.FAKE_OVERRIDE_VALUE)),
+
+    /**
+     * A member kind flag, signifying that the corresponding function exists in the containing class because it has been produced
+     * by interface delegation (delegation "by").
+     */
+    IS_DELEGATION(Flag(F.MEMBER_KIND, MemberKind.DELEGATION_VALUE)),
+
+    /**
+     * A member kind flag, signifying that the corresponding function exists in the containing class because it has been synthesized
+     * by the compiler and has no declaration in the source code.
+     */
+    IS_SYNTHESIZED(Flag(F.MEMBER_KIND, MemberKind.SYNTHESIZED_VALUE)),
+}
+
+
 /**
  * Represents a boolean flag that is either present or not in a Kotlin declaration. A "flag" is a boolean trait that is either present
  * or not in a declaration. To check whether the flag is present in the bitmask, call [Flag.invoke] on the flag, passing the bitmask
@@ -45,14 +116,18 @@ class Flag(private val offset: Int, private val bitWidth: Int, private val value
     @IgnoreInApiDump
     internal constructor(field: F.BooleanFlagField) : this(field, 1)
 
-    internal operator fun plus(flags: Flags): Flags =
+    @Deprecated("Use another plus", level = DeprecationLevel.ERROR)
+    internal operator fun plus(flags: Int): Int =
         (flags and (((1 shl bitWidth) - 1) shl offset).inv()) + (value shl offset)
+
+    fun <F : Flags> plus(flags: F, ctor: (Int) -> F): F =
+        ctor((flags.rawValue and (((1 shl bitWidth) - 1) shl offset).inv()) + (value shl offset))
 
     /**
      * Checks whether the flag is present in the given bitmask.
      */
     operator fun invoke(flags: Flags): Boolean =
-        (flags ushr offset) and ((1 shl bitWidth) - 1) == value
+        (flags.rawValue ushr offset) and ((1 shl bitWidth) - 1) == value
 
     companion object Common {
         /**

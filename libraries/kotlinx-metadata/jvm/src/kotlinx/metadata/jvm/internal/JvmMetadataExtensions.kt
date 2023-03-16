@@ -26,13 +26,13 @@ internal class JvmMetadataExtensions : MetadataExtensions {
 
         for (property in proto.getExtension(JvmProtoBuf.classLocalVariable)) {
             ext.visitLocalDelegatedProperty(
-                property.flags, c[property.name], property.getPropertyGetterFlags(), property.getPropertySetterFlags()
+                PropertyFlags(property.flags), c[property.name], property.getPropertyGetterFlags(), property.getPropertySetterFlags()
             )?.let { property.accept(it, c) }
         }
 
         ext.visitModuleName(proto.getExtensionOrNull(JvmProtoBuf.classModuleName)?.let(c::get) ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME)
 
-        proto.getExtensionOrNull(JvmProtoBuf.jvmClassFlags)?.let(ext::visitJvmFlags)
+        proto.getExtensionOrNull(JvmProtoBuf.jvmClassFlags)?.let { ext.visitJvmFlags(JvmClassFlags(it)) }
 
         ext.visitEnd()
     }
@@ -42,7 +42,7 @@ internal class JvmMetadataExtensions : MetadataExtensions {
 
         for (property in proto.getExtension(JvmProtoBuf.packageLocalVariable)) {
             ext.visitLocalDelegatedProperty(
-                property.flags, c[property.name], property.getPropertyGetterFlags(), property.getPropertySetterFlags()
+                PropertyFlags(property.flags), c[property.name], property.getPropertyGetterFlags(), property.getPropertySetterFlags()
             )?.let { property.accept(it, c) }
         }
 
@@ -75,7 +75,7 @@ internal class JvmMetadataExtensions : MetadataExtensions {
         val setterSignature =
             if (propertySignature != null && propertySignature.hasSetter()) propertySignature.setter else null
         ext.visit(
-            proto.getExtension(JvmProtoBuf.flags),
+            JvmPropertyFlags(proto.getExtension(JvmProtoBuf.flags)),
             fieldSignature?.wrapAsPublic(),
             getterSignature?.run { JvmMethodSignature(c[name], c[desc]) },
             setterSignature?.run { JvmMethodSignature(c[name], c[desc]) }
@@ -137,9 +137,9 @@ internal class JvmMetadataExtensions : MetadataExtensions {
                 }
             }
 
-            override fun visitJvmFlags(flags: Flags) {
-                if (flags != 0) {
-                    proto.setExtension(JvmProtoBuf.jvmClassFlags, flags)
+            override fun visitJvmFlags(flags: JvmClassFlags) {
+                if (flags.rawValue != 0) {
+                    proto.setExtension(JvmProtoBuf.jvmClassFlags, flags.rawValue)
                 }
             }
         }
@@ -193,14 +193,14 @@ internal class JvmMetadataExtensions : MetadataExtensions {
     ): KmPropertyExtensionVisitor? {
         if (type != JvmPropertyExtensionVisitor.TYPE) return null
         return object : JvmPropertyExtensionVisitor() {
-            private var jvmFlags: Flags = ProtoBuf.Property.getDefaultInstance().getExtension(JvmProtoBuf.flags)
+            private var jvmFlags: JvmPropertyFlags = JvmPropertyFlags(ProtoBuf.Property.getDefaultInstance().getExtension(JvmProtoBuf.flags))
             private var signatureOrNull: JvmProtoBuf.JvmPropertySignature.Builder? = null
 
             private val signature: JvmProtoBuf.JvmPropertySignature.Builder
                 get() = signatureOrNull ?: JvmProtoBuf.JvmPropertySignature.newBuilder().also { signatureOrNull = it }
 
             override fun visit(
-                jvmFlags: Flags,
+                jvmFlags: JvmPropertyFlags,
                 fieldSignature: JvmFieldSignature?,
                 getterSignature: JvmMethodSignature?,
                 setterSignature: JvmMethodSignature?
@@ -233,8 +233,8 @@ internal class JvmMetadataExtensions : MetadataExtensions {
             }
 
             override fun visitEnd() {
-                if (jvmFlags != ProtoBuf.Property.getDefaultInstance().getExtension(JvmProtoBuf.flags)) {
-                    proto.setExtension(JvmProtoBuf.flags, jvmFlags)
+                if (jvmFlags.rawValue != ProtoBuf.Property.getDefaultInstance().getExtension(JvmProtoBuf.flags)) {
+                    proto.setExtension(JvmProtoBuf.flags, jvmFlags.rawValue)
                 }
                 if (signatureOrNull != null) {
                     proto.setExtension(JvmProtoBuf.propertySignature, signature.build())

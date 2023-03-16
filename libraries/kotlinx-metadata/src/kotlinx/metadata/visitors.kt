@@ -22,7 +22,7 @@ abstract class KmDeclarationContainerVisitor @JvmOverloads constructor(protected
      * @param flags function flags, consisting of [Flag.HAS_ANNOTATIONS], visibility flag, modality flag and [Flag.Function] flags
      * @param name the name of the function
      */
-    open fun visitFunction(flags: Flags, name: String): KmFunctionVisitor? =
+    open fun visitFunction(flags: FunctionFlags, name: String): KmFunctionVisitor? =
         delegate?.visitFunction(flags, name)
 
     /**
@@ -102,7 +102,7 @@ abstract class KmClassVisitor @JvmOverloads constructor(delegate: KmClassVisitor
      *
      * @param flags constructor flags, consisting of [Flag.HAS_ANNOTATIONS], visibility flag and [Flag.Constructor] flags
      */
-    open fun visitConstructor(flags: Flags): KmConstructorVisitor? =
+    open fun visitConstructor(flags: ConstructorFlags): KmConstructorVisitor? =
         delegate?.visitConstructor(flags)
 
     /**
@@ -268,7 +268,7 @@ abstract class KmLambdaVisitor @JvmOverloads constructor(private val delegate: K
      * @param flags function flags, consisting of [Flag.HAS_ANNOTATIONS], visibility flag, modality flag and [Flag.Function] flags
      * @param name the name of the function (usually `"<anonymous>"` or `"<no name provided>"` for lambdas emitted by the Kotlin compiler)
      */
-    open fun visitFunction(flags: Flags, name: String): KmFunctionVisitor? =
+    open fun visitFunction(flags: FunctionFlags, name: String): KmFunctionVisitor? =
         delegate?.visitFunction(flags, name)
 
     /**
@@ -293,7 +293,7 @@ abstract class KmConstructorVisitor @JvmOverloads constructor(private val delega
      * @param flags value parameter flags, consisting of [Flag.ValueParameter] flags
      * @param name the name of the value parameter
      */
-    open fun visitValueParameter(flags: Flags, name: String): KmValueParameterVisitor? =
+    open fun visitValueParameter(flags: ValueParameterFlags, name: String): KmValueParameterVisitor? =
         delegate?.visitValueParameter(flags, name)
 
     /**
@@ -362,7 +362,7 @@ abstract class KmFunctionVisitor @JvmOverloads constructor(private val delegate:
      * @param flags value parameter flags, consisting of [Flag.ValueParameter] flags
      * @param name the name of the value parameter
      */
-    open fun visitValueParameter(flags: Flags, name: String): KmValueParameterVisitor? =
+    open fun visitValueParameter(flags: ValueParameterFlags, name: String): KmValueParameterVisitor? =
         delegate?.visitValueParameter(flags, name)
 
     /**
@@ -446,7 +446,7 @@ abstract class KmPropertyVisitor @JvmOverloads constructor(private val delegate:
      * @param flags value parameter flags, consisting of [Flag.ValueParameter] flags
      * @param name the name of the value parameter (`"<set-?>"` for properties emitted by the Kotlin compiler)
      */
-    open fun visitSetterParameter(flags: Flags, name: String): KmValueParameterVisitor? =
+    open fun visitSetterParameter(flags: ValueParameterFlags, name: String): KmValueParameterVisitor? =
         delegate?.visitSetterParameter(flags, name)
 
     /**

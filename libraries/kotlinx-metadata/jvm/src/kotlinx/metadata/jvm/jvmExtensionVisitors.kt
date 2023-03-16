@@ -67,7 +67,7 @@ open class JvmClassExtensionVisitor @JvmOverloads constructor(
     /**
      * Visits the JVM-specific flags of the class, consisting of [JvmFlag.Class] flags.
      */
-    open fun visitJvmFlags(flags: Flags) {
+    open fun visitJvmFlags(flags: JvmClassFlags) {
         delegate?.visitJvmFlags(flags)
     }
 
@@ -189,7 +189,7 @@ open class JvmPropertyExtensionVisitor @JvmOverloads constructor(
      *                        Example: `JvmMethodSignature("setX", "(Ljava/lang/Object;)V")`
      */
     open fun visit(
-        jvmFlags: Flags,
+        jvmFlags: JvmPropertyFlags,
         fieldSignature: JvmFieldSignature?,
         getterSignature: JvmMethodSignature?,
         setterSignature: JvmMethodSignature?
