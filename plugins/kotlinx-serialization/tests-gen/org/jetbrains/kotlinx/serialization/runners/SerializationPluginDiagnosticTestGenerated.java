@@ -133,6 +133,12 @@ public class SerializationPluginDiagnosticTestGenerated extends AbstractSerializ
     }
 
     @Test
+    @TestMetadata("serializerFromOtherModule.kt")
+    public void testSerializerFromOtherModule() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/diagnostics/serializerFromOtherModule.kt");
+    }
+
+    @Test
     @TestMetadata("SerializerTypeCompatibleForSpecials.kt")
     public void testSerializerTypeCompatibleForSpecials() throws Exception {
         runTest("plugins/kotlinx-serialization/testData/diagnostics/SerializerTypeCompatibleForSpecials.kt");
