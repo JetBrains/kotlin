@@ -1,12 +1,10 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import com.github.jengelman.gradle.plugins.shadow.transformers.DontIncludeResourceTransformer
-import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.pill.PillExtension
 
 plugins {
     id("gradle-plugin-common-configuration")
     id("jps-compatible")
-    `jvm-test-suite`
 }
 
 repositories {
@@ -214,108 +212,76 @@ gradlePlugin {
 // Gradle plugins functional tests
 if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
 
-    testing {
-        suites {
-            val functionalTest by registering(JvmTestSuite::class)
+    val functionalTestSourceSet = sourceSets.create("functionalTest") {
+        compileClasspath += mainSourceSet.output
+        runtimeClasspath += mainSourceSet.output
 
-            val functionalRegressionTest by registering(JvmTestSuite::class) {
-                sources {
-                    java {
-                        setSrcDirs(listOf("src/functionalTest/kotlin"))
-                    }
-                }
-
-                targets.all {
-                    testTask.configure {
-                        include("**/org/jetbrains/kotlin/gradle/regressionTests/**")
-                    }
-                }
-            }
-
-            val functionalDependencyResolutionTest by registering(JvmTestSuite::class) {
-                sources {
-                    java {
-                        setSrcDirs(listOf("src/functionalTest/kotlin"))
-                    }
-                }
-
-                targets.all {
-                    testTask.configure {
-                        include("**/org/jetbrains/kotlin/gradle/dependencyResolutionTests/**")
-                    }
-                }
-            }
-
-            val functionalUnitTest by registering(JvmTestSuite::class) {
-                sources {
-                    java {
-                        setSrcDirs(listOf("src/functionalTest/kotlin"))
-                    }
-                }
-
-                targets.all {
-                    testTask.configure {
-                        include("**/org/jetbrains/kotlin/gradle/unitTests/**")
-                    }
-                }
-            }
-
-            withType<JvmTestSuite>().configureEach {
-                if (name == "test") return@configureEach
-                useJUnit()
-
-                dependencies {
-                    implementation(project())
-                    implementation("com.android.tools.build:gradle:7.2.1")
-                    implementation("com.android.tools.build:gradle-api:7.2.1")
-                    compileOnly("com.android.tools:common:30.2.1")
-                    implementation(gradleKotlinDsl())
-                    implementation(project(":kotlin-gradle-plugin-kpm-android"))
-                    implementation(project(":kotlin-gradle-plugin-tcs-android"))
-                    implementation(project(":kotlin-tooling-metadata"))
-                    implementation(project.dependencies.testFixtures(project(":kotlin-gradle-plugin-idea")))
-                    implementation("com.github.gundy:semver4j:0.16.4:nodeps") {
-                        (this as ExternalModuleDependency).exclude(group = "*")
-                    }
-                    implementation("org.reflections:reflections:0.10.2")
-                }
-
-                configurations.named(sources.implementationConfigurationName) {
-                    extendsFrom(configurations.getByName(mainSourceSet.implementationConfigurationName))
-                    extendsFrom(configurations.getByName(testSourceSet.implementationConfigurationName))
-                }
-
-                configurations.named(sources.runtimeOnlyConfigurationName) {
-                    extendsFrom(configurations.getByName(mainSourceSet.runtimeOnlyConfigurationName))
-                    extendsFrom(configurations.getByName(testSourceSet.runtimeOnlyConfigurationName))
-                }
-
-                targets.all {
-                    testTask.configure {
-                        dependsOnKotlinGradlePluginInstall()
-
-                        testLogging {
-                            events("passed", "skipped", "failed")
-                        }
-
-                        javaLauncher.set(javaToolchains.launcherFor {
-                            languageVersion.set(JavaLanguageVersion.of(11))
-                        })
-                    }
-                }
-
-                // open internal visibility to the test code
-                kotlin.target.compilations {
-                    named(name) {
-                        associateWith(this@compilations.getByName("main"))
-                        associateWith(this@compilations.getByName("common"))
-                    }
-                }
-            }
-
-            tasks.named("check") {
-                dependsOn(functionalTest.name)
-            }
+        configurations.getByName(implementationConfigurationName) {
+            extendsFrom(configurations.getByName(mainSourceSet.implementationConfigurationName))
+            extendsFrom(configurations.getByName(testSourceSet.implementationConfigurationName))
         }
+
+        configurations.getByName(runtimeOnlyConfigurationName) {
+            extendsFrom(configurations.getByName(mainSourceSet.runtimeOnlyConfigurationName))
+            extendsFrom(configurations.getByName(testSourceSet.runtimeOnlyConfigurationName))
+        }
+    }
+
+    val functionalTestCompilation = kotlin.target.compilations.getByName("functionalTest")
+    functionalTestCompilation.associateWith(kotlin.target.compilations.getByName("main"))
+    functionalTestCompilation.associateWith(kotlin.target.compilations.getByName("common"))
+
+    tasks.register<Test>("functionalTest")
+
+    tasks.register<Test>("functionalUnitTest") {
+        include("**/org/jetbrains/kotlin/gradle/unitTests/**")
+    }
+
+    tasks.register<Test>("functionalRegressionTest") {
+        include("**/org/jetbrains/kotlin/gradle/regressionTests/**")
+    }
+
+    tasks.register<Test>("functionalDependencyResolutionTest") {
+        include("**/org/jetbrains/kotlin/gradle/dependencyResolutionTests/**")
+    }
+
+    tasks.withType<Test>().configureEach {
+        if (!name.startsWith("functional")) return@configureEach
+
+        group = JavaBasePlugin.VERIFICATION_GROUP
+        description = "Runs functional tests"
+        testClassesDirs = functionalTestSourceSet.output.classesDirs
+        classpath = functionalTestSourceSet.runtimeClasspath
+        workingDir = projectDir
+        javaLauncher.set(javaToolchains.launcherFor {
+            languageVersion.set(JavaLanguageVersion.of(11))
+        })
+        dependsOnKotlinGradlePluginInstall()
+
+        testLogging {
+            events("passed", "skipped", "failed")
+        }
+    }
+
+    dependencies {
+        val implementation = project.configurations.getByName(functionalTestSourceSet.implementationConfigurationName)
+        val compileOnly = project.configurations.getByName(functionalTestSourceSet.compileOnlyConfigurationName)
+
+        implementation("com.android.tools.build:gradle:7.2.1")
+        implementation("com.android.tools.build:gradle-api:7.2.1")
+        compileOnly("com.android.tools:common:30.2.1")
+        implementation(gradleKotlinDsl())
+        implementation(project(":kotlin-gradle-plugin-kpm-android"))
+        implementation(project(":kotlin-gradle-plugin-tcs-android"))
+        implementation(project(":kotlin-tooling-metadata"))
+        implementation(project.dependencies.testFixtures(project(":kotlin-gradle-plugin-idea")))
+        implementation("com.github.gundy:semver4j:0.16.4:nodeps") {
+            (this as ExternalModuleDependency).exclude(group = "*")
+        }
+        implementation("org.reflections:reflections:0.10.2")
+    }
+
+    tasks.named("check") {
+        dependsOn("functionalTest")
     }
 }
