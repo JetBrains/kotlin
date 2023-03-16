@@ -6,13 +6,13 @@
 package org.jetbrains.kotlin.incremental
 
 import org.jetbrains.kotlin.api.*
-import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.report.DoNothingBuildReporter
-import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.compilerRunner.KotlinCompilerRunnerUtils
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.client.BasicCompilerServicesWithResultsFacadeServer
@@ -20,8 +20,6 @@ import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.daemon.common.CompilationOptions
 import org.jetbrains.kotlin.daemon.common.CompilerMode
 import org.jetbrains.kotlin.daemon.common.MultiModuleICSettings
-import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistoryAndroid
-import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistoryJvm
 import java.io.File
 
 object DumbMessageCollector : MessageCollector {
@@ -131,88 +129,61 @@ class DefaultIncrementalCompilerFacade : IncrementalCompilerFacade {
 
     private fun compileInProcess(arguments: List<String>, options: org.jetbrains.kotlin.api.CompilationOptions) {
         println("Compiling in-process")
-//        createCompilerRunner().compile()
-        val compiler = K2JVMCompiler()
-        val k2PlatformArgs = compiler.createArguments()
-        parseCommandLineArguments(arguments, k2PlatformArgs)
+        val compiler = createCompiler(options.targetPlatform)
+        val parsedArguments = prepareAndValidateCompilerArguments(compiler, arguments)
         when (options) {
-            is org.jetbrains.kotlin.api.CompilationOptions.Incremental -> {
-                when (options.targetPlatform) {
-                    TargetPlatform.JVM -> {
-                        val allKotlinExtensions = (DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS +
-                                (options.kotlinScriptExtensions ?: emptyArray())).distinct()
-                        val dotExtensions = allKotlinExtensions.map { ".$it" }
-                        val modulesApiHistory = options.run {
-                            if (!multiModuleICSettings.useModuleDetection) {
-                                ModulesApiHistoryJvm(modulesInfo)
-                            } else {
-                                ModulesApiHistoryAndroid(modulesInfo)
-                            }
-                        }
-                        val allKotlinFiles = arrayListOf<File>()
-                        val freeArgs = arrayListOf<String>()
-                        for (arg in k2PlatformArgs.freeArgs) {
-                            val file = File(arg)
-                            if (file.isFile && dotExtensions.any { ext -> file.path.endsWith(ext, ignoreCase = true) }) {
-                                allKotlinFiles.add(file)
-                            } else {
-                                freeArgs.add(arg)
-                            }
-                        }
+            is org.jetbrains.kotlin.api.CompilationOptions.Incremental -> compileIncrementally(parsedArguments, options)
+            is org.jetbrains.kotlin.api.CompilationOptions.NonIncremental -> compiler.exec(
+                DumbMessageCollector,
+                Services.EMPTY,
+                parsedArguments
+            )
+        }
+    }
 
-                        val changedFiles = if (options.areFileChangesKnown) {
-                            ChangedFiles.Known(options.modifiedFiles!!, options.deletedFiles!!)
-                        } else {
-                            ChangedFiles.Unknown()
-                        }
-
-                        k2PlatformArgs.freeArgs = freeArgs
-                        k2PlatformArgs.incrementalCompilation = true
-                        val runner = IncrementalJvmCompilerRunner(
-                            options.workingDir,
-                            DoNothingBuildReporter,
-                            options.usePreciseJavaTracking,
-                            options.multiModuleICSettings.buildHistoryFile,
-                            options.outputFiles,
-                            modulesApiHistory,
-                            allKotlinExtensions,
-                            options.classpathChanges,
-                            options.withAbiSnapshot,
-                            options.preciseCompilationResultsBackup
-                        )
-                        runner.compile(allKotlinFiles, k2PlatformArgs, DumbMessageCollector, changedFiles, options.modulesInfo.projectRoot)
-                    }
-                    else -> throw NotImplementedError("Not yet implemented")
-                }
-            }
-            is org.jetbrains.kotlin.api.CompilationOptions.NonIncremental -> {
-                when (options.targetPlatform) {
-                    TargetPlatform.JVM -> {
-//                    val argumentParseError = validateArguments(k2PlatformArgs.errors)
-                        compiler
-                            .exec(object : MessageCollector {
-                                override fun clear() {
-                                    println("Clear messages")
-                                }
-
-                                override fun report(
-                                    severity: CompilerMessageSeverity,
-                                    message: String,
-                                    location: CompilerMessageSourceLocation?
-                                ) {
-                                    println("Report $severity $message $location")
-                                }
-
-                                override fun hasErrors(): Boolean {
-                                    return false
-                                }
-
-                            }, Services.EMPTY, k2PlatformArgs)
-                    }
-                    else -> throw NotImplementedError("Not yet implemented")
-                }
+    private fun compileIncrementally(args: CommonCompilerArguments, options: org.jetbrains.kotlin.api.CompilationOptions.Incremental) {
+        val incrementalCompilerRunner = when (options.targetPlatform) {
+            TargetPlatform.JVM -> IncrementalCompilerRunnerWithArgs(
+                args as K2JVMCompilerArguments,
+                createIncrementalJvmCompilerRunner(
+                    options.workingDir,
+                    DoNothingBuildReporter,
+                    options.multiModuleICSettings.buildHistoryFile,
+                    options.outputFiles,
+                    options.usePreciseJavaTracking,
+                    options.multiModuleICSettings,
+                    options.modulesInfo,
+                    options.kotlinScriptExtensions?.toList() ?: emptyList(),
+                    options.classpathChanges,
+                    options.withAbiSnapshot,
+                    options.preciseCompilationResultsBackup,
+                    false,
+                )
+            )
+            TargetPlatform.JS -> IncrementalCompilerRunnerWithArgs(
+                args as K2JSCompilerArguments,
+                createIncrementalJsCompilerRunner(
+                    args,
+                    options.workingDir,
+                    DoNothingBuildReporter,
+                    options.multiModuleICSettings.buildHistoryFile,
+                    options.modulesInfo,
+                    options.withAbiSnapshot,
+                    options.preciseCompilationResultsBackup,
+                    false,
+                )
+            )
+            else -> {
+                error("Unsupported platform")
             }
         }
+        execIncrementalCompilerRunner(
+            incrementalCompilerRunner,
+            options.kotlinScriptExtensions?.toList() ?: emptyList(),
+            prepareFileChanges(options.areFileChangesKnown, options.modifiedFiles, options.deletedFiles),
+            options.modulesInfo.projectRoot,
+            DumbMessageCollector
+        )
     }
 
     override fun compile(

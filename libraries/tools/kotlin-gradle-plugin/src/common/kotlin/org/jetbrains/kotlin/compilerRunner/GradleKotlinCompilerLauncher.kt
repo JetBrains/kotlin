@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.compilerRunner
 import org.gradle.process.ExecOperations
 import org.jetbrains.kotlin.api.CompilerConfiguration
 import org.jetbrains.kotlin.api.KotlinCompilerLauncher
-import javax.inject.Inject
 
 class GradleKotlinCompilerLauncher(private val execOps: ExecOperations) : KotlinCompilerLauncher {
     override fun launch(compilerConfiguration: CompilerConfiguration) {
