@@ -25044,6 +25044,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
                 }
 
                 @Test
+                @TestMetadata("nonProjectedInnerErasure.kt")
+                public void testNonProjectedInnerErasure() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/platformTypes/rawTypes/nonProjectedInnerErasure.kt");
+                }
+
+                @Test
                 @TestMetadata("nonRawArraysInRawType.kt")
                 public void testNonRawArraysInRawType() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/platformTypes/rawTypes/nonRawArraysInRawType.kt");

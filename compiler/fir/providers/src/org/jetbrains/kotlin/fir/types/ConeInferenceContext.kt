@@ -395,7 +395,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
     override fun KotlinTypeMarker.eraseContainingTypeParameters(): KotlinTypeMarker {
         val typeParameterErasureMap = this.extractTypeParameters()
             .map { (it as ConeTypeParameterLookupTag).typeParameterSymbol }
-            .eraseToUpperBoundsAssociated(session, intersectUpperBounds = true, eraseRecursively = true)
+            .eraseToUpperBoundsAssociated(session)
         val substitutor by lazy { ConeSubstitutorByMap(typeParameterErasureMap, session) }
         val typeWithErasedTypeParameters = if (argumentsCount() != 0) {
             replaceArgumentsDeeply {
