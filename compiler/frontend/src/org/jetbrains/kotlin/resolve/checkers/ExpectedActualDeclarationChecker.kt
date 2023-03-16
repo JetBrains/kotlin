@@ -42,7 +42,11 @@ class ExpectedActualDeclarationChecker(
     val argumentExtractors: Iterable<ActualAnnotationArgumentExtractor>
 ) : DeclarationChecker {
     interface ActualAnnotationArgumentExtractor {
-        fun extractDefaultValue(parameter: ValueParameterDescriptor, expectedType: KotlinType): ConstantValue<*>?
+        fun extractDefaultValue(
+            parameter: ValueParameterDescriptor,
+            expectedType: KotlinType,
+            isNewPrimitiveArrays: Boolean
+        ): ConstantValue<*>?
     }
 
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
@@ -69,9 +73,8 @@ class ExpectedActualDeclarationChecker(
                 declaration,
                 descriptor,
                 checkActualModifier,
-                context.trace,
-                moduleVisibilityFilter = { it in allDependsOnModules }
-            )
+                context
+            ) { it in allDependsOnModules }
         }
     }
 
@@ -230,9 +233,10 @@ class ExpectedActualDeclarationChecker(
         reportOn: KtNamedDeclaration,
         descriptor: MemberDescriptor,
         checkActualModifier: Boolean,
-        trace: BindingTrace,
+        context: DeclarationCheckerContext,
         moduleVisibilityFilter: ModuleFilter
     ) {
+        val trace = context.trace
         val compatibility = ExpectedActualResolver.findExpectedForActual(descriptor, moduleVisibilityFilter)
             ?: return
 
@@ -302,7 +306,7 @@ class ExpectedActualDeclarationChecker(
                         ?: (descriptor as? TypeAliasDescriptor)?.constructors?.singleOrNull()?.underlyingConstructorDescriptor
                 val expectedConstructor = expected.constructors.singleOrNull()
                 if (expectedConstructor != null && actualConstructor != null) {
-                    checkAnnotationConstructors(expectedConstructor, actualConstructor, trace, reportOn)
+                    checkAnnotationConstructors(expectedConstructor, actualConstructor, context, reportOn)
                 }
             }
         }
@@ -357,8 +361,9 @@ class ExpectedActualDeclarationChecker(
         }
 
     private fun checkAnnotationConstructors(
-        expected: ConstructorDescriptor, actual: ConstructorDescriptor, trace: BindingTrace, reportOn: PsiElement
+        expected: ConstructorDescriptor, actual: ConstructorDescriptor, context: DeclarationCheckerContext, reportOn: PsiElement
     ) {
+        val trace = context.trace
         for (expectedParameterDescriptor in expected.valueParameters) {
             // Actual parameter with the same name is guaranteed to exist because this method is only called for compatible annotations
             val actualParameterDescriptor = actual.valueParameters.first { it.name == expectedParameterDescriptor.name }
@@ -371,7 +376,7 @@ class ExpectedActualDeclarationChecker(
                     ?.toConstantValue(expectedParameterDescriptor.type)
 
                 val actualValue =
-                    getActualAnnotationParameterValue(actualParameterDescriptor, trace.bindingContext, expectedParameterDescriptor.type)
+                    getActualAnnotationParameterValue(actualParameterDescriptor, context, expectedParameterDescriptor.type)
                 if (expectedValue != actualValue) {
                     val ktParameter = DescriptorToSourceUtils.descriptorToDeclaration(actualParameterDescriptor)
                     val target = (ktParameter as? KtParameter)?.defaultValue ?: (reportOn as? KtTypeAlias)?.nameIdentifier ?: reportOn
@@ -382,15 +387,15 @@ class ExpectedActualDeclarationChecker(
     }
 
     private fun getActualAnnotationParameterValue(
-        actualParameter: ValueParameterDescriptor, bindingContext: BindingContext, expectedType: KotlinType
+        actualParameter: ValueParameterDescriptor, context: DeclarationCheckerContext, expectedType: KotlinType
     ): ConstantValue<*>? {
         val declaration = DescriptorToSourceUtils.descriptorToDeclaration(actualParameter)
         if (declaration is KtParameter) {
-            return bindingContext.get(BindingContext.COMPILE_TIME_VALUE, declaration.defaultValue)?.toConstantValue(expectedType)
+            return context.trace.bindingContext.get(BindingContext.COMPILE_TIME_VALUE, declaration.defaultValue)?.toConstantValue(expectedType)
         }
-
+        val isNewPrimitiveArrays = context.moduleDescriptor.builtIns.vArray != null
         for (extractor in argumentExtractors) {
-            extractor.extractDefaultValue(actualParameter, expectedType)?.let { return it }
+            extractor.extractDefaultValue(actualParameter, expectedType, isNewPrimitiveArrays)?.let { return it }
         }
 
         return null

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.constants.ConstantValueFactory
@@ -22,14 +23,18 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 
 class JavaActualAnnotationArgumentExtractor : ExpectedActualDeclarationChecker.ActualAnnotationArgumentExtractor {
-    override fun extractDefaultValue(parameter: ValueParameterDescriptor, expectedType: KotlinType): ConstantValue<*>? {
+    override fun extractDefaultValue(
+        parameter: ValueParameterDescriptor,
+        expectedType: KotlinType,
+        isNewPrimitiveArrays: Boolean
+    ): ConstantValue<*>? {
         val element = (parameter.source as? JavaSourceElement)?.javaElement
-        return (element as? JavaMethod)?.annotationParameterDefaultValue?.convert(expectedType)
+        return (element as? JavaMethod)?.annotationParameterDefaultValue?.convert(expectedType, isNewPrimitiveArrays)
     }
 
     // This code is similar to LazyJavaAnnotationDescriptor.resolveAnnotationArgument, but cannot be reused until
     // KClassValue/AnnotationValue are untied from descriptors/types, because here we do not have an instance of LazyJavaResolverContext.
-    private fun JavaAnnotationArgument.convert(expectedType: KotlinType): ConstantValue<*>? {
+    private fun JavaAnnotationArgument.convert(expectedType: KotlinType, isNewPrimitiveArrays: Boolean): ConstantValue<*>? {
         return when (this) {
             is JavaLiteralAnnotationArgument -> value?.let {
                 JavaPropertyInitializerEvaluatorImpl.convertLiteralValue(it, expectedType)
@@ -43,21 +48,24 @@ class JavaActualAnnotationArgumentExtractor : ExpectedActualDeclarationChecker.A
             }
             is JavaArrayAnnotationArgument -> {
                 val elementType = expectedType.builtIns.getArrayElementType(expectedType)
-                ConstantValueFactory.createArrayValue(getElements().mapNotNull { it.convert(elementType) }, expectedType)
+                ConstantValueFactory.createArrayValue(
+                    getElements().mapNotNull { it.convert(elementType, isNewPrimitiveArrays) },
+                    expectedType
+                )
             }
             is JavaAnnotationAsAnnotationArgument -> {
                 // TODO: support annotations as annotation arguments (KT-28077)
                 null
             }
             is JavaClassObjectAnnotationArgument -> {
-                convertTypeToKClassValue(getReferencedType())
+                convertTypeToKClassValue(getReferencedType(), isNewPrimitiveArrays)
             }
             else -> null
         }
     }
 
     // See FileBasedKotlinClass.resolveKotlinNameByType
-    private fun convertTypeToKClassValue(javaType: JavaType): KClassValue? {
+    private fun convertTypeToKClassValue(javaType: JavaType, isNewPrimitiveArrays: Boolean): KClassValue? {
         var type = javaType
         var arrayDimensions = 0
         while (type is JavaArrayType) {
@@ -70,7 +78,8 @@ class JavaActualAnnotationArgumentExtractor : ExpectedActualDeclarationChecker.A
                 // void.class is not representable in Kotlin, we approximate it by Unit::class
                     ?: return KClassValue(ClassId.topLevel(StandardNames.FqNames.unit.toSafe()), 0)
                 if (arrayDimensions > 0) {
-                    KClassValue(ClassId.topLevel(primitiveType.arrayTypeFqName), arrayDimensions - 1)
+                    val classId = if (isNewPrimitiveArrays) StandardClassIds.VArray else ClassId.topLevel(primitiveType.arrayTypeFqName)
+                    KClassValue(classId, arrayDimensions - 1)
                 } else {
                     KClassValue(ClassId.topLevel(primitiveType.typeFqName), arrayDimensions)
                 }

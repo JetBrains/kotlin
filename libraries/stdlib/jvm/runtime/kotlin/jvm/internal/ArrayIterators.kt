@@ -55,11 +55,11 @@ private class VArrayBooleanIterator(private val array: VArray<Boolean>) : Boolea
     override fun nextBoolean() = try { array[index++] } catch (e: ArrayIndexOutOfBoundsException) { index -= 1; throw NoSuchElementException(e.message) }
 }
 
-public fun vArrayIterator(array: VArray<Byte>): ByteIterator = VArrayByteIterator(array)
-public fun vArrayIterator(array: VArray<Char>): CharIterator = VArrayCharIterator(array)
-public fun vArrayIterator(array: VArray<Short>): ShortIterator = VArrayShortIterator(array)
-public fun vArrayIterator(array: VArray<Int>): IntIterator = VArrayIntIterator(array)
-public fun vArrayIterator(array: VArray<Long>): LongIterator = VArrayLongIterator(array)
-public fun vArrayIterator(array: VArray<Float>): FloatIterator = VArrayFloatIterator(array)
-public fun vArrayIterator(array: VArray<Double>): DoubleIterator = VArrayDoubleIterator(array)
-public fun vArrayIterator(array: VArray<Boolean>): BooleanIterator = VArrayBooleanIterator(array)
+public fun iterator(array: VArray<Byte>): ByteIterator = VArrayByteIterator(array)
+public fun iterator(array: VArray<Char>): CharIterator = VArrayCharIterator(array)
+public fun iterator(array: VArray<Short>): ShortIterator = VArrayShortIterator(array)
+public fun iterator(array: VArray<Int>): IntIterator = VArrayIntIterator(array)
+public fun iterator(array: VArray<Long>): LongIterator = VArrayLongIterator(array)
+public fun iterator(array: VArray<Float>): FloatIterator = VArrayFloatIterator(array)
+public fun iterator(array: VArray<Double>): DoubleIterator = VArrayDoubleIterator(array)
+public fun iterator(array: VArray<Boolean>): BooleanIterator = VArrayBooleanIterator(array)

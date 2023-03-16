@@ -84,6 +84,7 @@ private fun loadClass(classLoader: ClassLoader, packageName: String, className: 
     if (packageName == "kotlin") {
         // See mapBuiltInType() in typeSignatureMapping.kt
         when (className) {
+            "VArray" -> return VArray<Any>::class.java
             "Array" -> return Array<Any>::class.java
             "BooleanArray" -> return BooleanArray::class.java
             "ByteArray" -> return ByteArray::class.java
