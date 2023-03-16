@@ -8,6 +8,9 @@ public final class A<T#0 /* T */> : kotlin/Any {
   // signature: a(Ljava/lang/Object;)V
   public final fun <T#1 /* T */> a(t: T#1): kotlin/Unit
 
+  // signature: f(Ljava/util/Map$Entry;)V
+  public final fun <T#1 /* U */> f(m: kotlin/collections/Map.Entry<T#0, T#1>): kotlin/Unit
+
   // nested class: B
 
   // module name: test-module
