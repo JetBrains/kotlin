@@ -12,11 +12,12 @@ kotlin {
     js(IR) {
         sourceSets {
             val main by getting {
-                kotlin.srcDir("$jsStdlibSources/org.w3c")
-                kotlin.srcDir("$jsStdlibSources/kotlinx")
-                kotlin.srcDir("$jsStdlibSources/kotlin/browser")
-                kotlin.srcDir("$jsStdlibSources/kotlin/dom")
-
+                if (!kotlinBuildProperties.isInIdeaSync) {
+                    kotlin.srcDir("$jsStdlibSources/org.w3c")
+                    kotlin.srcDir("$jsStdlibSources/kotlinx")
+                    kotlin.srcDir("$jsStdlibSources/kotlin/browser")
+                    kotlin.srcDir("$jsStdlibSources/kotlin/dom")
+                }
                 dependencies {
                     api(project(":kotlin-stdlib-js"))
                 }
