@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
+import javax.inject.Provider
 import kotlin.reflect.KClass
 
 private const val KOTLIN_PROJECT_EXTENSION_NAME = "kotlin"
@@ -134,14 +135,10 @@ abstract class KotlinTopLevelExtension(internal val project: Project) : KotlinTo
      */
     @ExperimentalKotlinGradlePluginApi
     fun <T : Named> NamedDomainObjectContainer<T>.invokeWhenCreated(name: String, configure: T.() -> Unit) {
-        val invoked = AtomicBoolean(false)
-        matching { it.name == name }.all { value -> if (!invoked.getAndSet(true)) value.configure() }
-        project.whenEvaluated {
-            if (!invoked.getAndSet(true)) {
-                /*
-                Expected to fail, since the listener was not called.
-                Letting Gradle fail here will result in a more natural error message
-                */
+        configureEach { if (it.name == name) it.configure() }
+        project.launchInStage(KotlinPluginLifecycle.Stage.ReadyForExecution) {
+            if (name !in names) {
+                /* Expect 'named' to throw corresponding exception */
                 named(name).configure(configure)
             }
         }
