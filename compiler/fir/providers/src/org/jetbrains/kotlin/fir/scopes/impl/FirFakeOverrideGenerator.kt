@@ -380,7 +380,7 @@ object FirFakeOverrideGenerator {
             getter = baseProperty.getter?.buildCopy(
                 moduleData = session.moduleData,
                 origin = origin,
-                returnTypeRef = this@buildProperty.returnTypeRef,
+                propertyReturnTypeRef = this@buildProperty.returnTypeRef,
                 propertySymbol = newSymbol,
                 dispatchReceiverType = dispatchReceiverType,
                 derivedClassLookupTag = derivedClassLookupTag,
@@ -390,7 +390,7 @@ object FirFakeOverrideGenerator {
             setter = baseProperty.setter?.buildCopy(
                 moduleData = session.moduleData,
                 origin = origin,
-                returnTypeRef = this@buildProperty.returnTypeRef,
+                propertyReturnTypeRef = this@buildProperty.returnTypeRef,
                 propertySymbol = newSymbol,
                 dispatchReceiverType = dispatchReceiverType,
                 derivedClassLookupTag = derivedClassLookupTag,
@@ -404,7 +404,7 @@ object FirFakeOverrideGenerator {
     private fun FirPropertyAccessor.buildCopy(
         moduleData: FirModuleData,
         origin: FirDeclarationOrigin,
-        returnTypeRef: FirTypeRef,
+        propertyReturnTypeRef: FirTypeRef,
         propertySymbol: FirPropertySymbol,
         dispatchReceiverType: ConeSimpleKotlinType?,
         derivedClassLookupTag: ConeClassLikeLookupTag?,
@@ -414,7 +414,7 @@ object FirFakeOverrideGenerator {
             source = source,
             moduleData = moduleData,
             origin = origin,
-            propertyTypeRef = returnTypeRef,
+            propertyTypeRef = propertyReturnTypeRef,
             visibility = visibility,
             propertySymbol = propertySymbol,
             modality = modality ?: Modality.FINAL,
@@ -426,7 +426,7 @@ object FirFakeOverrideGenerator {
             source = source,
             moduleData = moduleData,
             origin = origin,
-            propertyTypeRef = returnTypeRef,
+            propertyTypeRef = propertyReturnTypeRef,
             visibility = visibility,
             propertySymbol = propertySymbol,
             modality = modality ?: Modality.FINAL,
@@ -445,11 +445,11 @@ object FirFakeOverrideGenerator {
             if (it.isSetter) {
                 val newParameter = buildValueParameterCopy(it.valueParameters.first()) {
                     this.symbol = FirValueParameterSymbol(symbol.name)
-                    this.returnTypeRef = returnTypeRef
+                    this.returnTypeRef = propertyReturnTypeRef
                 }
                 it.replaceValueParameters(listOf(newParameter))
             } else {
-                it.replaceReturnTypeRef(returnTypeRef)
+                it.replaceReturnTypeRef(propertyReturnTypeRef)
             }
         }
     }.also { accessor ->
