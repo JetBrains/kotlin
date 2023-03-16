@@ -286,6 +286,7 @@ enum class LanguageFeature(
     AllowEmptyIntersectionsInResultTypeResolver(KOTLIN_2_0, kind = OTHER), // KT-51221
     ProhibitSmartcastsOnPropertyFromAlienBaseClassInheritedInInvisibleClass(KOTLIN_2_0, kind = BUG_FIX), // KT-57290
     ForbidInferringPostponedTypeVariableIntoDeclaredUpperBound(KOTLIN_2_0, kind = BUG_FIX), // KT-47986
+    ProhibitUseSiteGetTargetAnnotations(KOTLIN_2_0, kind = BUG_FIX), // KT-15470
 
     // End of 2.* language features --------------------------------------------------
 

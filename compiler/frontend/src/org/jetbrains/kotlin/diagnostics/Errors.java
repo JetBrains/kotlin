@@ -359,6 +359,7 @@ public interface Errors {
     DiagnosticFactory0<KtExpression> NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory1<PsiElement, String> INAPPLICABLE_TARGET_ON_PROPERTY = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory1<PsiElement, String> INAPPLICABLE_TARGET_ON_PROPERTY_WARNING = DiagnosticFactory1.create(WARNING);
     DiagnosticFactory1<PsiElement, String> INAPPLICABLE_TARGET_PROPERTY_IMMUTABLE = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory0<PsiElement> INAPPLICABLE_TARGET_PROPERTY_HAS_NO_DELEGATE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> INAPPLICABLE_TARGET_PROPERTY_HAS_NO_BACKING_FIELD = DiagnosticFactory0.create(ERROR);

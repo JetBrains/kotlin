@@ -804,6 +804,12 @@ internal class InapplicableTargetOnPropertyImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.InapplicableTargetOnProperty(), KtAbstractFirDiagnostic<KtAnnotationEntry>
 
+internal class InapplicableTargetOnPropertyWarningImpl(
+    override val useSiteDescription: String,
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.InapplicableTargetOnPropertyWarning(), KtAbstractFirDiagnostic<KtAnnotationEntry>
+
 internal class InapplicableTargetPropertyImmutableImpl(
     override val useSiteDescription: String,
     override val firDiagnostic: KtPsiDiagnostic,
