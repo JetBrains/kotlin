@@ -5,84 +5,82 @@
 
 package org.jetbrains.kotlin.commonizer.metadata
 
-import kotlinx.metadata.Flag
-import kotlinx.metadata.Flags
-import kotlinx.metadata.flagsOf
+import kotlinx.metadata.*
 import org.jetbrains.kotlin.commonizer.cir.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 
-internal const val NO_FLAGS: Flags = 0
+internal const val NO_FLAGS: Int = 0
 
-internal fun CirFunction.functionFlags(isExpect: Boolean): Flags =
-    flagsOfNotNull(
+internal fun CirFunction.functionFlags(isExpect: Boolean): FunctionFlags =
+    FunctionFlags(flagsOfNotNull(
         hasAnnotationsFlag,
-        visibilityFlag,
+        visibilityFlag.f,
         modalityFlag,
         memberKindFlag,
         Flag.Function.HAS_NON_STABLE_PARAMETER_NAMES.takeIf { !hasStableParameterNames },
         Flag.Function.IS_EXPECT.takeIf { isExpect }
-    ) or modifiers.modifiersFlags
+    ) or modifiers.modifiersFlags)
 
-internal fun CirProperty.propertyFlags(isExpect: Boolean): Flags =
-    flagsOfNotNull(
+internal fun CirProperty.propertyFlags(isExpect: Boolean): PropertyFlags =
+    PropertyFlags(flagsOfNotNull(
         hasAnnotationsFlag,
-        visibilityFlag,
+        visibilityFlag.f,
         modalityFlag,
         memberKindFlag,
         Flag.Property.HAS_GETTER.takeIf { getter != null },
         Flag.Property.HAS_SETTER.takeIf { setter != null },
         Flag.Property.IS_DELEGATED.takeIf { isDelegate },
         Flag.Property.IS_EXPECT.takeIf { isExpect }
-    ) or modifiersFlags
+    ) or modifiersFlags)
 
 internal fun CirPropertyAccessor.propertyAccessorFlags(
     visibilityHolder: CirHasVisibility,
     modalityHolder: CirHasModality
-): Flags {
-    return flagsOfNotNull(
+): PropertyAccessorFlags {
+    return PropertyAccessorFlags(flagsOfNotNull(
         hasAnnotationsFlag,
-        visibilityHolder.visibilityFlag,
+        visibilityHolder.visibilityFlag.f,
         modalityHolder.modalityFlag,
         Flag.PropertyAccessor.IS_NOT_DEFAULT.takeIf { !isDefault },
         Flag.PropertyAccessor.IS_EXTERNAL.takeIf { isExternal },
         Flag.PropertyAccessor.IS_INLINE.takeIf { isInline }
-    )
+    ))
 }
 
-internal fun CirClassConstructor.classConstructorFlags(): Flags =
-    flagsOfNotNull(
+internal fun CirClassConstructor.classConstructorFlags(): ConstructorFlags =
+    ConstructorFlags(flagsOfNotNull(
         hasAnnotationsFlag,
-        visibilityFlag,
+        visibilityFlag.f,
         Flag.Constructor.IS_SECONDARY.takeIf { !isPrimary },
         Flag.Constructor.HAS_NON_STABLE_PARAMETER_NAMES.takeIf { !hasStableParameterNames }
-    )
+    ))
 
-internal fun CirType.typeFlags(): Flags =
-    flagsOfNotNull(
+internal fun CirType.typeFlags(): TypeFlags =
+    TypeFlags(flagsOfNotNull(
         nullableFlag,
         //Flag.Type.IS_SUSPEND.takeIf { false }
-    )
+    ))
 
-internal fun CirTypeParameter.typeParameterFlags(): Flags =
+internal fun CirTypeParameter.typeParameterFlags() = TypeParameterFlags(
     flagsOfNotNull(
         Flag.TypeParameter.IS_REIFIED.takeIf { isReified }
-    )
+    ))
 
-internal fun CirValueParameter.valueParameterFlags(): Flags =
+internal fun CirValueParameter.valueParameterFlags() = ValueParameterFlags(
     flagsOfNotNull(
         hasAnnotationsFlag,
         Flag.ValueParameter.DECLARES_DEFAULT_VALUE.takeIf { declaresDefaultValue },
         Flag.ValueParameter.IS_CROSSINLINE.takeIf { isCrossinline },
         Flag.ValueParameter.IS_NOINLINE.takeIf { isNoinline }
-    )
+    ))
 
-internal fun CirClass.classFlags(isExpect: Boolean): Flags =
+internal fun CirClass.classFlags(isExpect: Boolean) = ClassFlags(
     flagsOfNotNull(
         hasAnnotationsFlag,
-        visibilityFlag,
+        visibilityFlag.f,
         modalityFlag,
         classKindFlag,
         Flag.Class.IS_COMPANION_OBJECT.takeIf { isCompanion },
@@ -93,13 +91,13 @@ internal fun CirClass.classFlags(isExpect: Boolean): Flags =
         Flag.Class.IS_VALUE.takeIf { isValue },
         Flag.Class.HAS_ENUM_ENTRIES.takeIf { hasEnumEntries }
         //Flag.Class.IS_FUN.takeIf { false }
-    )
+    ))
 
-internal fun CirTypeAlias.typeAliasFlags(): Flags =
+internal fun CirTypeAlias.typeAliasFlags() = TypeAliasFlags(
     flagsOfNotNull(
         hasAnnotationsFlag,
-        visibilityFlag
-    )
+        visibilityFlag.f
+    ))
 
 private inline val CirHasAnnotations.hasAnnotationsFlag: Flag?
     get() = if (annotations.isNotEmpty()) Flag.Common.HAS_ANNOTATIONS else null
@@ -115,12 +113,12 @@ private inline val CirProperty.hasAnnotationsFlag: Flag?
     else
         null
 
-private inline val CirHasVisibility.visibilityFlag: Flag
+private inline val CirHasVisibility.visibilityFlag: VisibilityFlag
     get() = when (visibility) {
-        Visibilities.Public -> Flag.Common.IS_PUBLIC
-        Visibilities.Protected -> Flag.Common.IS_PROTECTED
-        Visibilities.Internal -> Flag.Common.IS_INTERNAL
-        Visibilities.Private -> Flag.Common.IS_PRIVATE
+        Visibilities.Public -> VisibilityFlag.IS_PUBLIC
+        Visibilities.Protected -> VisibilityFlag.IS_PROTECTED
+        Visibilities.Internal -> VisibilityFlag.IS_INTERNAL
+        Visibilities.Private -> VisibilityFlag.IS_PRIVATE
         else -> error("Unexpected visibility: $this")
     }
 
@@ -158,7 +156,7 @@ private inline val CirClass.classKindFlag: Flag
         ClassKind.OBJECT -> Flag.Class.IS_OBJECT
     }
 
-private inline val CirFunctionModifiers.modifiersFlags: Flags
+private inline val CirFunctionModifiers.modifiersFlags: Int
     get() = flagsOfNotNull(
         Flag.Function.IS_OPERATOR.takeIf { isOperator },
         Flag.Function.IS_INFIX.takeIf { isInfix },
@@ -168,7 +166,7 @@ private inline val CirFunctionModifiers.modifiersFlags: Flags
         Flag.Function.IS_EXTERNAL.takeIf { isExternal }
     )
 
-private inline val CirProperty.modifiersFlags: Flags
+private inline val CirProperty.modifiersFlags: Int
     get() = flagsOfNotNull(
         Flag.Property.IS_VAR.takeIf { isVar },
         Flag.Property.IS_CONST.takeIf { isConst },
@@ -187,4 +185,4 @@ private inline val CirType.nullableFlag: Flag?
         return if (isNullable) Flag.Type.IS_NULLABLE else null
     }
 
-private fun flagsOfNotNull(vararg flags: Flag?): Flags = flagsOf(*listOfNotNull(*flags).toTypedArray())
+private fun flagsOfNotNull(vararg flags: Flag?): Int = flagsOfImpl(*listOfNotNull(*flags).toTypedArray())

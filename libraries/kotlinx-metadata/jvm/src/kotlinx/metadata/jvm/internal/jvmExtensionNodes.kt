@@ -38,7 +38,7 @@ internal class JvmClassExtension : JvmClassExtensionVisitor(), KmClassExtension 
     var anonymousObjectOriginName: String? = null
     var jvmFlags: JvmClassFlags = JvmClassFlags()
 
-    override fun visitLocalDelegatedProperty(flags: Flags, name: String, getterFlags: Flags, setterFlags: Flags): KmPropertyVisitor =
+    override fun visitLocalDelegatedProperty(flags: Flags, name: String, getterFlags: PropertyAccessorFlags, setterFlags: PropertyAccessorFlags): KmPropertyVisitor =
         KmProperty(flags, name, getterFlags, setterFlags).also { localDelegatedProperties.add(it) }
 
     override fun visitModuleName(name: String) {
@@ -69,7 +69,7 @@ internal class JvmPackageExtension : JvmPackageExtensionVisitor(), KmPackageExte
     val localDelegatedProperties: MutableList<KmProperty> = ArrayList(0)
     var moduleName: String? = null
 
-    override fun visitLocalDelegatedProperty(flags: Flags, name: String, getterFlags: Flags, setterFlags: Flags): KmPropertyVisitor =
+    override fun visitLocalDelegatedProperty(flags: Flags, name: String, getterFlags: PropertyAccessorFlags, setterFlags: PropertyAccessorFlags): KmPropertyVisitor =
         KmProperty(flags, name, getterFlags, setterFlags).also { localDelegatedProperties.add(it) }
 
     override fun visitModuleName(name: String) {

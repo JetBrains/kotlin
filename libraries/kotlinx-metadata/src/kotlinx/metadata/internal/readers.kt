@@ -523,7 +523,7 @@ private val ProtoBuf.TypeParameter.typeParameterFlags: TypeParameterFlags
 fun ProtoBuf.Property.getPropertyGetterFlags(): PropertyAccessorFlags =
     PropertyAccessorFlags(if (hasGetterFlags()) getterFlags else getDefaultPropertyAccessorFlags(flags))
 
-fun ProtoBuf.Property.getPropertySetterFlags(): Flags =
+fun ProtoBuf.Property.getPropertySetterFlags(): PropertyAccessorFlags =
     PropertyAccessorFlags(if (hasSetterFlags()) setterFlags else getDefaultPropertyAccessorFlags(flags))
 
 private fun getDefaultPropertyAccessorFlags(flags: Int): Int =

@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.commonizer.metadata
 
 import kotlinx.metadata.*
 import kotlinx.metadata.klib.*
-import org.jetbrains.kotlin.backend.common.serialization.metadata.DynamicTypeDeserializer
 import org.jetbrains.kotlin.commonizer.cir.*
 import org.jetbrains.kotlin.commonizer.metadata.TypeAliasExpansion.*
 import org.jetbrains.kotlin.commonizer.utils.DEFAULT_SETTER_VALUE_NAME
@@ -151,8 +150,8 @@ internal fun CirProperty.serializeProperty(
 ): KmProperty = KmProperty(
     flags = propertyFlags(isExpect = context.isCommon && !isLiftedUp),
     name = name.name,
-    getterFlags = getter?.propertyAccessorFlags(this, this) ?: NO_FLAGS,
-    setterFlags = setter?.let { setter -> setter.propertyAccessorFlags(setter, this) } ?: NO_FLAGS
+    getterFlags = getter?.propertyAccessorFlags(this, this) ?: PropertyAccessorFlags(NO_FLAGS),
+    setterFlags = setter?.let { setter -> setter.propertyAccessorFlags(setter, this) } ?: PropertyAccessorFlags(NO_FLAGS)
 ).also { property ->
     annotations.mapTo(property.annotations) { it.serializeAnnotation() }
     getter?.annotations?.mapTo(property.getterAnnotations) { it.serializeAnnotation() }

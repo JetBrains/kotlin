@@ -126,7 +126,7 @@ internal class JvmMetadataExtensions : MetadataExtensions {
             }
 
             override fun visitLocalDelegatedProperty(
-                flags: Flags, name: String, getterFlags: Flags, setterFlags: Flags
+                flags: Flags, name: String, getterFlags: PropertyAccessorFlags, setterFlags: PropertyAccessorFlags
             ): KmPropertyVisitor = writeProperty(c, flags, name, getterFlags, setterFlags) {
                 proto.addExtension(JvmProtoBuf.classLocalVariable, it.build())
             }
@@ -151,7 +151,7 @@ internal class JvmMetadataExtensions : MetadataExtensions {
         if (type != JvmPackageExtensionVisitor.TYPE) return null
         return object : JvmPackageExtensionVisitor() {
             override fun visitLocalDelegatedProperty(
-                flags: Flags, name: String, getterFlags: Flags, setterFlags: Flags
+                flags: Flags, name: String, getterFlags: PropertyAccessorFlags, setterFlags: PropertyAccessorFlags
             ): KmPropertyVisitor = writeProperty(c, flags, name, getterFlags, setterFlags) {
                 proto.addExtension(JvmProtoBuf.packageLocalVariable, it.build())
             }

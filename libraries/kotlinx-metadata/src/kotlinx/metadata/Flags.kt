@@ -81,6 +81,8 @@ class EffectFlags(rawValue: Int) : Flags(rawValue)
 // may be internal if copypasted to JvmFlag.kt
 @Suppress("DEPRECATION_ERROR")
 fun flagsOfImpl(vararg flags: FlagWrapper): Int = flags.fold(0) { acc: Int, flag ->  flag.f.plus(acc)}
+@Suppress("DEPRECATION_ERROR")
+fun flagsOfImpl(vararg flags: Flag): Int = flags.fold(0) { acc: Int, flag ->  flag.plus(acc)}
 /**
  * Combines several flags into an integer bitmask.
  *

@@ -167,6 +167,7 @@ public class kotlinx/metadata/Flags {
 
 public final class kotlinx/metadata/FlagsKt {
 	public static final fun flagsOf ([Lkotlinx/metadata/Flag;)Lkotlinx/metadata/LegacyFlags;
+	public static final fun flagsOfImpl ([Lkotlinx/metadata/Flag;)I
 	public static final fun flagsOfImpl ([Lkotlinx/metadata/FlagWrapper;)I
 }
 
@@ -465,7 +466,7 @@ public final class kotlinx/metadata/KmClass : kotlinx/metadata/KmClassVisitor, k
 	public fun visitInlineClassUnderlyingPropertyName (Ljava/lang/String;)V
 	public fun visitInlineClassUnderlyingType (Lkotlinx/metadata/Flags;)Lkotlinx/metadata/KmTypeVisitor;
 	public fun visitNestedClass (Ljava/lang/String;)V
-	public fun visitProperty (Lkotlinx/metadata/Flags;Ljava/lang/String;Lkotlinx/metadata/Flags;Lkotlinx/metadata/Flags;)Lkotlinx/metadata/KmPropertyVisitor;
+	public fun visitProperty (Lkotlinx/metadata/Flags;Ljava/lang/String;Lkotlinx/metadata/PropertyAccessorFlags;Lkotlinx/metadata/PropertyAccessorFlags;)Lkotlinx/metadata/KmPropertyVisitor;
 	public fun visitSealedSubclass (Ljava/lang/String;)V
 	public fun visitSupertype (Lkotlinx/metadata/Flags;)Lkotlinx/metadata/KmTypeVisitor;
 	public fun visitTypeAlias (Lkotlinx/metadata/Flags;Ljava/lang/String;)Lkotlinx/metadata/KmTypeAliasVisitor;
@@ -602,7 +603,7 @@ public abstract class kotlinx/metadata/KmDeclarationContainerVisitor {
 	protected fun getDelegate ()Lkotlinx/metadata/KmDeclarationContainerVisitor;
 	public abstract fun visitExtensions (Lkotlinx/metadata/KmExtensionType;)Lkotlinx/metadata/KmDeclarationContainerExtensionVisitor;
 	public fun visitFunction (Lkotlinx/metadata/FunctionFlags;Ljava/lang/String;)Lkotlinx/metadata/KmFunctionVisitor;
-	public fun visitProperty (Lkotlinx/metadata/Flags;Ljava/lang/String;Lkotlinx/metadata/Flags;Lkotlinx/metadata/Flags;)Lkotlinx/metadata/KmPropertyVisitor;
+	public fun visitProperty (Lkotlinx/metadata/Flags;Ljava/lang/String;Lkotlinx/metadata/PropertyAccessorFlags;Lkotlinx/metadata/PropertyAccessorFlags;)Lkotlinx/metadata/KmPropertyVisitor;
 	public fun visitTypeAlias (Lkotlinx/metadata/Flags;Ljava/lang/String;)Lkotlinx/metadata/KmTypeAliasVisitor;
 }
 
@@ -801,7 +802,7 @@ public final class kotlinx/metadata/KmPackage : kotlinx/metadata/KmPackageVisito
 	public synthetic fun visitExtensions (Lkotlinx/metadata/KmExtensionType;)Lkotlinx/metadata/KmDeclarationContainerExtensionVisitor;
 	public fun visitExtensions (Lkotlinx/metadata/KmExtensionType;)Lkotlinx/metadata/KmPackageExtensionVisitor;
 	public fun visitFunction (Lkotlinx/metadata/FunctionFlags;Ljava/lang/String;)Lkotlinx/metadata/KmFunctionVisitor;
-	public fun visitProperty (Lkotlinx/metadata/Flags;Ljava/lang/String;Lkotlinx/metadata/Flags;Lkotlinx/metadata/Flags;)Lkotlinx/metadata/KmPropertyVisitor;
+	public fun visitProperty (Lkotlinx/metadata/Flags;Ljava/lang/String;Lkotlinx/metadata/PropertyAccessorFlags;Lkotlinx/metadata/PropertyAccessorFlags;)Lkotlinx/metadata/KmPropertyVisitor;
 	public fun visitTypeAlias (Lkotlinx/metadata/Flags;Ljava/lang/String;)Lkotlinx/metadata/KmTypeAliasVisitor;
 }
 
@@ -821,24 +822,24 @@ public abstract class kotlinx/metadata/KmPackageVisitor : kotlinx/metadata/KmDec
 
 public final class kotlinx/metadata/KmProperty : kotlinx/metadata/KmPropertyVisitor {
 	public field returnType Lkotlinx/metadata/KmType;
-	public fun <init> (Lkotlinx/metadata/Flags;Ljava/lang/String;Lkotlinx/metadata/Flags;Lkotlinx/metadata/Flags;)V
+	public fun <init> (Lkotlinx/metadata/Flags;Ljava/lang/String;Lkotlinx/metadata/PropertyAccessorFlags;Lkotlinx/metadata/PropertyAccessorFlags;)V
 	public final fun accept (Lkotlinx/metadata/KmPropertyVisitor;)V
 	public final fun getContextReceiverTypes ()Ljava/util/List;
 	public final fun getFlags ()Lkotlinx/metadata/Flags;
-	public final fun getGetterFlags ()Lkotlinx/metadata/Flags;
+	public final fun getGetterFlags ()Lkotlinx/metadata/PropertyAccessorFlags;
 	public final fun getName ()Ljava/lang/String;
 	public final fun getReceiverParameterType ()Lkotlinx/metadata/KmType;
 	public final fun getReturnType ()Lkotlinx/metadata/KmType;
-	public final fun getSetterFlags ()Lkotlinx/metadata/Flags;
+	public final fun getSetterFlags ()Lkotlinx/metadata/PropertyAccessorFlags;
 	public final fun getSetterParameter ()Lkotlinx/metadata/KmValueParameter;
 	public final fun getTypeParameters ()Ljava/util/List;
 	public final fun getVersionRequirements ()Ljava/util/List;
 	public final fun setFlags (Lkotlinx/metadata/Flags;)V
-	public final fun setGetterFlags (Lkotlinx/metadata/Flags;)V
+	public final fun setGetterFlags (Lkotlinx/metadata/PropertyAccessorFlags;)V
 	public final fun setName (Ljava/lang/String;)V
 	public final fun setReceiverParameterType (Lkotlinx/metadata/KmType;)V
 	public final fun setReturnType (Lkotlinx/metadata/KmType;)V
-	public final fun setSetterFlags (Lkotlinx/metadata/Flags;)V
+	public final fun setSetterFlags (Lkotlinx/metadata/PropertyAccessorFlags;)V
 	public final fun setSetterParameter (Lkotlinx/metadata/KmValueParameter;)V
 	public fun visitContextReceiverType (Lkotlinx/metadata/Flags;)Lkotlinx/metadata/KmTypeVisitor;
 	public fun visitExtensions (Lkotlinx/metadata/KmExtensionType;)Lkotlinx/metadata/KmPropertyExtensionVisitor;
@@ -1202,7 +1203,7 @@ public abstract class kotlinx/metadata/jvm/JvmDeclarationContainerExtensionVisit
 	public fun <init> (Lkotlinx/metadata/jvm/JvmDeclarationContainerExtensionVisitor;)V
 	public synthetic fun <init> (Lkotlinx/metadata/jvm/JvmDeclarationContainerExtensionVisitor;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	protected fun getDelegate ()Lkotlinx/metadata/jvm/JvmDeclarationContainerExtensionVisitor;
-	public fun visitLocalDelegatedProperty (Lkotlinx/metadata/Flags;Ljava/lang/String;Lkotlinx/metadata/Flags;Lkotlinx/metadata/Flags;)Lkotlinx/metadata/KmPropertyVisitor;
+	public fun visitLocalDelegatedProperty (Lkotlinx/metadata/Flags;Ljava/lang/String;Lkotlinx/metadata/PropertyAccessorFlags;Lkotlinx/metadata/PropertyAccessorFlags;)Lkotlinx/metadata/KmPropertyVisitor;
 	public fun visitModuleName (Ljava/lang/String;)V
 }
 

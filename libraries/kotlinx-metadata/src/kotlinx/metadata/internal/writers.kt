@@ -445,7 +445,7 @@ open class ClassWriter(stringTable: StringTable, contextExtensions: List<WriteCo
     override fun visitFunction(flags: FunctionFlags, name: String): KmFunctionVisitor? =
         writeFunction(c, flags, name) { t.addFunction(it) }
 
-    override fun visitProperty(flags: Flags, name: String, getterFlags: Flags, setterFlags: Flags): KmPropertyVisitor? =
+    override fun visitProperty(flags: Flags, name: String, getterFlags: PropertyAccessorFlags, setterFlags: PropertyAccessorFlags): KmPropertyVisitor? =
         writeProperty(c, flags, name, getterFlags, setterFlags) { t.addProperty(it) }
 
     override fun visitTypeAlias(flags: Flags, name: String): KmTypeAliasVisitor? =
@@ -502,7 +502,7 @@ open class PackageWriter(stringTable: StringTable, contextExtensions: List<Write
     override fun visitFunction(flags: FunctionFlags, name: String): KmFunctionVisitor? =
         writeFunction(c, flags, name) { t.addFunction(it) }
 
-    override fun visitProperty(flags: Flags, name: String, getterFlags: Flags, setterFlags: Flags): KmPropertyVisitor? =
+    override fun visitProperty(flags: Flags, name: String, getterFlags: PropertyAccessorFlags, setterFlags: PropertyAccessorFlags): KmPropertyVisitor? =
         writeProperty(c, flags, name, getterFlags, setterFlags) { t.addProperty(it) }
 
     override fun visitTypeAlias(flags: Flags, name: String): KmTypeAliasVisitor? =

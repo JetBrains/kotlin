@@ -138,7 +138,7 @@ class KmClass : KmClassVisitor(), KmDeclarationContainer {
         KmFunction(flags, name).addTo(functions)
 
     @Deprecated(VISITOR_API_MESSAGE)
-    override fun visitProperty(flags: Flags, name: String, getterFlags: Flags, setterFlags: Flags): KmPropertyVisitor =
+    override fun visitProperty(flags: Flags, name: String, getterFlags: PropertyAccessorFlags, setterFlags: PropertyAccessorFlags): KmPropertyVisitor =
         KmProperty(flags, name, getterFlags, setterFlags).addTo(properties)
 
     @Deprecated(VISITOR_API_MESSAGE)
@@ -247,7 +247,7 @@ class KmPackage : KmPackageVisitor(), KmDeclarationContainer {
         KmFunction(flags, name).addTo(functions)
 
     @Deprecated(VISITOR_API_MESSAGE)
-    override fun visitProperty(flags: Flags, name: String, getterFlags: Flags, setterFlags: Flags): KmPropertyVisitor =
+    override fun visitProperty(flags: Flags, name: String, getterFlags: PropertyAccessorFlags, setterFlags: PropertyAccessorFlags): KmPropertyVisitor =
         KmProperty(flags, name, getterFlags, setterFlags).addTo(properties)
 
     @Deprecated(VISITOR_API_MESSAGE)
@@ -509,8 +509,8 @@ class KmFunction(
 class KmProperty(
     var flags: Flags,
     var name: String,
-    var getterFlags: Flags,
-    var setterFlags: Flags
+    var getterFlags: PropertyAccessorFlags,
+    var setterFlags: PropertyAccessorFlags
 ) : KmPropertyVisitor() {
     /**
      * Type parameters of the property.

@@ -118,7 +118,7 @@ internal class ModuleMetadataEmitter(
             val kmClass = data.withMappingExtensions {
                 KmClass().also { km ->
                     element.annotations.mapTo(km.annotations) { it.map() }
-                    km.flags = element.flags
+                    km.flags = ClassFlags(element.flags)
                     km.name = element.classifier.fqNameSerialized
                     element.superClassInit?.let { km.supertypes += it.type.map() }
                     element.interfaces.mapTo(km.supertypes) { it.map() }
@@ -139,7 +139,7 @@ internal class ModuleMetadataEmitter(
 
         override fun visitTypealias(element: TypealiasStub, data: VisitingContext): KmTypeAlias =
                 data.withMappingExtensions {
-                    KmTypeAlias(element.flags, element.alias.topLevelName).also { km ->
+                    KmTypeAlias(TypeAliasFlags(element.flags), element.alias.topLevelName).also { km ->
                         km.underlyingType = element.aliasee.map(shouldExpandTypeAliases = false)
                         km.expandedType = element.aliasee.map()
                     }
@@ -155,7 +155,7 @@ internal class ModuleMetadataEmitter(
                                 annotations = listOf(AnnotationStub.Deprecated.unableToImport)
                         )
                     }
-                    KmFunction(function.flags, function.name).also { km ->
+                    KmFunction(FunctionFlags(function.flags), function.name).also { km ->
                         km.receiverParameterType = function.receiver?.type?.map()
                         function.typeParameters.mapTo(km.typeParameters) { it.map() }
                         function.parameters.mapTo(km.valueParameters) { it.map() }
@@ -175,7 +175,7 @@ internal class ModuleMetadataEmitter(
                         else -> element.copy(kind = bridgeSupportedKind)
                     }
                     val name = getPropertyNameInScope(property, data.container)
-                    KmProperty(property.flags, name, property.getterFlags, property.setterFlags).also { km ->
+                    KmProperty(PropertyFlags(property.flags), name, PropertyAccessorFlags(property.getterFlags), PropertyAccessorFlags(property.setterFlags)).also { km ->
                         property.annotations.mapTo(km.annotations) { it.map() }
                         km.receiverParameterType = property.receiverType?.map()
                         km.returnType = property.type.map()
@@ -198,7 +198,7 @@ internal class ModuleMetadataEmitter(
 
         override fun visitConstructor(constructorStub: ConstructorStub, data: VisitingContext) =
                 data.withMappingExtensions {
-                    KmConstructor(constructorStub.flags).apply {
+                    KmConstructor(ConstructorFlags(constructorStub.flags)).apply {
                         constructorStub.parameters.mapTo(valueParameters, { it.map() })
                         constructorStub.annotations.mapTo(annotations, { it.map() })
                     }
@@ -232,13 +232,13 @@ private class MappingExtensions(
         private val bridgeBuilderResult: BridgeBuilderResult
 ) {
 
-    private fun flagsOfNotNull(vararg flags: Flag?): Flags =
-            flagsOf(*listOfNotNull(*flags).toTypedArray())
+    private fun flagsOfNotNull(vararg flags: Flag?): Int =
+            flagsOfImpl(*listOfNotNull(*flags).toTypedArray())
 
     private fun <K, V> mapOfNotNull(vararg entries: Pair<K, V>?): Map<K, V> =
             listOfNotNull(*entries).toMap()
 
-    private val VisibilityModifier.flags: Flags
+    private val VisibilityModifier.flags: Int
         get() = flagsOfNotNull(
                 Flag.IS_PUBLIC.takeIf { this == VisibilityModifier.PUBLIC },
                 Flag.IS_PROTECTED.takeIf { this == VisibilityModifier.PROTECTED },
@@ -246,14 +246,14 @@ private class MappingExtensions(
                 Flag.IS_PRIVATE.takeIf { this == VisibilityModifier.PRIVATE }
         )
 
-    private val MemberStubModality.flags: Flags
+    private val MemberStubModality.flags: Int
         get() = flagsOfNotNull(
                 Flag.IS_FINAL.takeIf { this == MemberStubModality.FINAL },
                 Flag.IS_OPEN.takeIf { this == MemberStubModality.OPEN },
                 Flag.IS_ABSTRACT.takeIf { this == MemberStubModality.ABSTRACT }
         )
 
-    val FunctionStub.flags: Flags
+    val FunctionStub.flags: Int
         get() = flagsOfNotNull(
                 Flag.IS_PUBLIC,
                 Flag.Function.IS_EXTERNAL.takeIf { this.external },
@@ -271,7 +271,7 @@ private class MappingExtensions(
             append(getRelativeFqName(asSimpleName = false))
         }
 
-    val PropertyStub.flags: Flags
+    val PropertyStub.flags: Int
         get() = flagsOfNotNull(
                 Flag.IS_PUBLIC,
                 Flag.Property.IS_DECLARATION,
@@ -286,20 +286,20 @@ private class MappingExtensions(
                 }
         ) or modality.flags
 
-    val PropertyStub.getterFlags: Flags
+    val PropertyStub.getterFlags: Int
         get() = when (val kind = kind) {
             is PropertyStub.Kind.Val -> kind.getter.flags(modality)
             is PropertyStub.Kind.Var -> kind.getter.flags(modality)
             is PropertyStub.Kind.Constant -> kind.flags
         }
 
-    val PropertyStub.Kind.Constant.flags: Flags
+    val PropertyStub.Kind.Constant.flags: Int
         get() = flagsOfNotNull(
                 Flag.IS_PUBLIC,
                 Flag.IS_FINAL
         )
 
-    private fun PropertyAccessor.Getter.flags(propertyModality: MemberStubModality): Flags =
+    private fun PropertyAccessor.Getter.flags(propertyModality: MemberStubModality): Int =
         flagsOfNotNull(
                 Flag.HAS_ANNOTATIONS.takeIf { annotations.isNotEmpty() },
                 Flag.IS_PUBLIC,
@@ -307,13 +307,13 @@ private class MappingExtensions(
                 Flag.PropertyAccessor.IS_EXTERNAL.takeIf { this is PropertyAccessor.Getter.ExternalGetter }
         ) or propertyModality.flags
 
-    val PropertyStub.setterFlags: Flags
+    val PropertyStub.setterFlags: Int
         get() = when (val kind = kind) {
             is PropertyStub.Kind.Var -> kind.setter.flags(modality)
-            else -> flagsOf()
+            else -> 0
         }
 
-    private fun PropertyAccessor.Setter.flags(propertyModality: MemberStubModality): Flags =
+    private fun PropertyAccessor.Setter.flags(propertyModality: MemberStubModality): Int =
         flagsOfNotNull(
                 Flag.HAS_ANNOTATIONS.takeIf { annotations.isNotEmpty() },
                 Flag.IS_PUBLIC,
@@ -321,27 +321,27 @@ private class MappingExtensions(
                 Flag.PropertyAccessor.IS_EXTERNAL.takeIf { this is PropertyAccessor.Setter.ExternalSetter }
         ) or propertyModality.flags
 
-    val StubType.flags: Flags
+    val StubType.flags: Int
         get() = flagsOfNotNull(
                 Flag.Type.IS_NULLABLE.takeIf { nullable }
         )
 
-    val AbbreviatedType.expandedTypeFlags: Flags
+    val AbbreviatedType.expandedTypeFlags: Int
         get() = flagsOfNotNull(
                 Flag.Type.IS_NULLABLE.takeIf { isEffectivelyNullable() }
         )
 
-    val TypealiasStub.flags: Flags
+    val TypealiasStub.flags: Int
         get() = flagsOfNotNull(
                 Flag.IS_PUBLIC
         )
 
-    val FunctionParameterStub.flags: Flags
+    val FunctionParameterStub.flags: Int
         get() = flagsOfNotNull(
                 Flag.HAS_ANNOTATIONS.takeIf { annotations.isNotEmpty() }
         )
 
-    val ClassStub.flags: Flags
+    val ClassStub.flags: Int
         get() = flagsOfNotNull(
                 Flag.HAS_ANNOTATIONS.takeIf { annotations.isNotEmpty() },
                 Flag.IS_PUBLIC,
@@ -356,7 +356,7 @@ private class MappingExtensions(
         )
 
 
-    val ConstructorStub.flags: Flags
+    val ConstructorStub.flags: Int
         get() = flagsOfNotNull(
                 Flag.Constructor.IS_SECONDARY.takeIf { !isPrimary },
                 Flag.HAS_ANNOTATIONS.takeIf { annotations.isNotEmpty() }
@@ -480,12 +480,12 @@ private class MappingExtensions(
         is AbbreviatedType -> {
             val typeAliasClassifier = KmClassifier.TypeAlias(abbreviatedClassifier.fqNameSerialized)
             val typeArguments = typeArguments.map { it.map(shouldExpandTypeAliases) }
-            val abbreviatedType = KmType(flags).also { km ->
+            val abbreviatedType = KmType(TypeFlags(flags)).also { km ->
                 km.classifier = typeAliasClassifier
                 km.arguments += typeArguments
             }
             if (shouldExpandTypeAliases) {
-                KmType(expandedTypeFlags).also { km ->
+                KmType(TypeFlags(expandedTypeFlags)).also { km ->
                     km.abbreviatedType = abbreviatedType
                     val kmUnderlyingType = underlyingType.map(true)
                     km.arguments += kmUnderlyingType.arguments
@@ -495,21 +495,21 @@ private class MappingExtensions(
                 abbreviatedType
             }
         }
-        is ClassifierStubType -> KmType(flags).also { km ->
+        is ClassifierStubType -> KmType(TypeFlags(flags)).also { km ->
             typeArguments.mapTo(km.arguments) { it.map(shouldExpandTypeAliases) }
             km.classifier = KmClassifier.Class(classifier.fqNameSerialized)
         }
-        is FunctionalType -> KmType(flags).also { km ->
+        is FunctionalType -> KmType(TypeFlags(flags)).also { km ->
             typeArguments.mapTo(km.arguments) { it.map(shouldExpandTypeAliases) }
             km.classifier = KmClassifier.Class(classifier.fqNameSerialized)
         }
-        is TypeParameterType -> KmType(flags).also { km ->
+        is TypeParameterType -> KmType(TypeFlags(flags)).also { km ->
             km.classifier = KmClassifier.TypeParameter(id)
         }
     }
 
     fun FunctionParameterStub.map(): KmValueParameter =
-            KmValueParameter(flags, name).also { km ->
+            KmValueParameter(ValueParameterFlags(flags), name).also { km ->
                 val kmType = type.map()
                 if (isVararg) {
                     km.varargElementType = kmType
