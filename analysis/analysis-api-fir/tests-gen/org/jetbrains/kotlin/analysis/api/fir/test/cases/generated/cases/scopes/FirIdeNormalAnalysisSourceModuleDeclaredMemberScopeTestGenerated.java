@@ -57,4 +57,10 @@ public class FirIdeNormalAnalysisSourceModuleDeclaredMemberScopeTestGenerated ex
     public void testJavaDeclaredInheritList() throws Exception {
         runTest("analysis/analysis-api/testData/scopes/declaredMemberScope/javaDeclaredInheritList.kt");
     }
+
+    @Test
+    @TestMetadata("javaInnerClassConstructor.kt")
+    public void testJavaInnerClassConstructor() throws Exception {
+        runTest("analysis/analysis-api/testData/scopes/declaredMemberScope/javaInnerClassConstructor.kt");
+    }
 }
