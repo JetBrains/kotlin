@@ -29,17 +29,3 @@ FILE: typeParameters.kt
         }
 
     }
-    @R|kotlin/Self|() public abstract interface Interface<out <Self> : R|Interface<<Self>>|> : R|kotlin/Any| {
-        public abstract fun self(): R|<Self>|
-
-    }
-    @R|kotlin/Self|() public final class Foo<T, out <Self> : R|Foo<T, <Self>>|> : R|Interface<<Self>>| {
-        public constructor<T, out <Self> : R|Foo<T, <Self>>|>(): R|Foo<T, <Self>>| {
-            super<R|kotlin/Any|>()
-        }
-
-        public open override fun self(): R|<Self>| {
-            ^self this@R|/Foo|
-        }
-
-    }
