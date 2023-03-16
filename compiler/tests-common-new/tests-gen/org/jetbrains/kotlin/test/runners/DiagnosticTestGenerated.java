@@ -21158,9 +21158,27 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
-                @TestMetadata("enumConstName.kt")
-                public void testEnumConstName() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/modifiers/const/enumConstName.kt");
+                @TestMetadata("enumConstName_after.kt")
+                public void testEnumConstName_after() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/modifiers/const/enumConstName_after.kt");
+                }
+
+                @Test
+                @TestMetadata("enumConstName_before.kt")
+                public void testEnumConstName_before() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/modifiers/const/enumConstName_before.kt");
+                }
+
+                @Test
+                @TestMetadata("equals_after.kt")
+                public void testEquals_after() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/modifiers/const/equals_after.kt");
+                }
+
+                @Test
+                @TestMetadata("equals_before.kt")
+                public void testEquals_before() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/modifiers/const/equals_before.kt");
                 }
 
                 @Test
@@ -21176,15 +21194,27 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
-                @TestMetadata("ifConstVal.kt")
-                public void testIfConstVal() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/modifiers/const/ifConstVal.kt");
+                @TestMetadata("ifConstVal_after.kt")
+                public void testIfConstVal_after() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/modifiers/const/ifConstVal_after.kt");
                 }
 
                 @Test
-                @TestMetadata("kCallable.kt")
-                public void testKCallable() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/modifiers/const/kCallable.kt");
+                @TestMetadata("ifConstVal_before.kt")
+                public void testIfConstVal_before() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/modifiers/const/ifConstVal_before.kt");
+                }
+
+                @Test
+                @TestMetadata("kCallable_after.kt")
+                public void testKCallable_after() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/modifiers/const/kCallable_after.kt");
+                }
+
+                @Test
+                @TestMetadata("kCallable_before.kt")
+                public void testKCallable_before() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/modifiers/const/kCallable_before.kt");
                 }
 
                 @Test

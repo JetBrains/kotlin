@@ -79,11 +79,10 @@ const val convert3 = oneVal.toLong()
 const val convert4 = oneVal.toFloat()
 const val convert5 = oneVal.toDouble()
 
-const val equals1 = oneVal.equals(twoVal)
-const val equals2 = twoVal.equals(twoVal)
-const val equals3 = threeVal.equals(twoVal)
-const val equals4 = fourVal.equals(twoVal)
-const val equals5 = oneVal.equals("1")
+const val equals1 = oneVal == twoVal
+const val equals2 = twoVal == twoVal
+const val equals3 = threeVal == twoVal
+const val equals4 = fourVal == twoVal
 
 const val toString1 = oneVal.toString()
 const val toString2 = twoVal.toString()
@@ -158,7 +157,6 @@ fun box(): String {
     if (equals2 != true)    return "Fail 9.2"
     if (equals3 != false)   return "Fail 9.3"
     if (equals4 != false)   return "Fail 9.4"
-    if (equals5 != false)   return "Fail 9.5"
 
     if (toString1 != "1.0")   return "Fail 10.1"
     if (toString2 != "2.0")   return "Fail 10.2"

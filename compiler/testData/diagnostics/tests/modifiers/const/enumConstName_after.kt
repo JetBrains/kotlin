@@ -1,3 +1,5 @@
+// !LANGUAGE: +IntrinsicConstEvaluation
+
 enum class EnumClass {
     OK, VALUE, anotherValue, WITH_UNDERSCORE
 }

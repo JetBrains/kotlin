@@ -28335,6 +28335,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("equals_after.kt")
+            public void testEquals_after() throws Exception {
+                runTest("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck/equals_after.kt");
+            }
+
+            @Test
             @TestMetadata("floatOperations.kt")
             public void testFloatOperations() throws Exception {
                 runTest("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck/floatOperations.kt");

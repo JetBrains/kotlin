@@ -26,11 +26,10 @@ const val compareTo2 = trueVal.compareTo(falseVal)
 const val compareTo3 = falseVal.compareTo(trueVal)
 const val compareTo4 = falseVal.compareTo(falseVal)
 
-const val equals1 = trueVal.equals(trueVal)
-const val equals2 = trueVal.equals(falseVal)
-const val equals3 = falseVal.equals(trueVal)
-const val equals4 = falseVal.equals(falseVal)
-const val equals5 = falseVal.equals(1)
+const val equals1 = trueVal == trueVal
+const val equals2 = trueVal == falseVal
+const val equals3 = falseVal == trueVal
+const val equals4 = falseVal == falseVal
 
 const val toString1 = trueVal.toString()
 const val toString2 = falseVal.toString()
@@ -63,7 +62,6 @@ fun box(): String {
     if (equals2 != false)   return "Fail 6.2"
     if (equals3 != false)   return "Fail 6.3"
     if (equals4 != true)    return "Fail 6.4"
-    if (equals5 != false)   return "Fail 6.5"
 
     if (toString1 != "true")    return "Fail 7.1"
     if (toString2 != "false")   return "Fail 7.2"

@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_K2: JS_IR, NATIVE
+// IGNORE_BACKEND_K2: NATIVE
 // WITH_STDLIB
 
 const val a = "INT " + 0x8fffffffU

@@ -18,11 +18,9 @@ const val compareTo1 = someStr.compareTo("123")
 const val compareTo2 = someStr.compareTo(otherStr)
 const val compareTo3 = otherStr.compareTo(someStr)
 
-const val equals1 = someStr.equals("123")
-const val equals2 = someStr.equals(otherStr)
-const val equals3 = otherStr.equals(someStr)
-const val equals4 = someStr.equals(oneVal)
-const val equals5 = someStr.equals(1)
+const val equals1 = someStr == "123"
+const val equals2 = someStr == otherStr
+const val equals3 = otherStr == someStr
 
 const val toString1 = someStr.toString()
 
@@ -43,8 +41,6 @@ fun box(): String {
     if (equals1 != true)    return "Fail 5.1"
     if (equals2 != false)   return "Fail 5.2"
     if (equals3 != false)   return "Fail 5.3"
-    if (equals4 != false)   return "Fail 5.4"
-    if (equals5 != false)   return "Fail 5.5"
 
     if (toString1 != "123") return "Fail 6.1"
     return "OK"
