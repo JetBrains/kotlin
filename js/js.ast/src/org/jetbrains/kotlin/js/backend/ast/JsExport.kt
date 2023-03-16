@@ -11,7 +11,7 @@ class JsExport(
 ) : SourceInfoAwareJsNode(), JsStatement {
 
     constructor(element: Element) : this(Subject.Elements(listOf(element)))
-    constructor(name: JsName, alias: JsName? = null) : this(Element(name, alias))
+    constructor(name: JsNameRef, alias: JsName? = null) : this(Element(name, alias))
 
     sealed class Subject {
         class Elements(val elements: List<Element>) : Subject()
@@ -19,7 +19,7 @@ class JsExport(
     }
 
     class Element(
-        val name: JsName,
+        val name: JsNameRef,
         val alias: JsName?
     )
 
@@ -28,6 +28,11 @@ class JsExport(
     }
 
     override fun acceptChildren(visitor: JsVisitor) {
+        if (subject is Subject.Elements) {
+            subject.elements.forEach {
+                visitor.accept(it.name)
+            }
+        }
     }
 
     override fun deepCopy(): JsStatement =

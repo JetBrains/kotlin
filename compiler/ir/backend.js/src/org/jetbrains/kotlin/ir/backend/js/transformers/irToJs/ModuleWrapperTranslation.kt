@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.common.isValidES5Identifier
 import org.jetbrains.kotlin.serialization.js.ModuleKind
+import org.jetbrains.kotlin.utils.addToStdlib.partitionIsInstance
 
 object ModuleWrapperTranslation {
     object Namer {
@@ -105,7 +106,7 @@ object ModuleWrapperTranslation {
         val scope = program.scope
         val defineName = scope.declareName("define")
         val invocationArgs = listOf(
-            JsArrayLiteral(listOf(JsStringLiteral("exports")) + importedModules.map { JsStringLiteral(it.requireName) }),
+            JsArrayLiteral(listOf(JsStringLiteral("exports")) + importedModules.map { JsStringLiteral(it.getRequireName()) }),
             function
         )
 
@@ -122,23 +123,32 @@ object ModuleWrapperTranslation {
         val moduleName = scope.declareName("module")
         val requireName = scope.declareName("require")
 
-        val invocationArgs = importedModules.map { JsInvocation(requireName.makeRef(), JsStringLiteral(it.requireName)) }
+        val invocationArgs = importedModules.map { JsInvocation(requireName.makeRef(), JsStringLiteral(it.getRequireName())) }
         val invocation = JsInvocation(function, listOf(JsNameRef("exports", moduleName.makeRef())) + invocationArgs)
         return listOf(invocation.makeStmt())
     }
 
     private fun wrapEsModule(function: JsFunction, importedModules: List<JsImportedModule>): List<JsStatement> {
+        val (alreadyPresentedImportStatements, restStatements) = function.body.statements.partitionIsInstance<JsStatement, JsImport>()
+
         val importStatements = importedModules.zip(function.parameters.drop(1)).map {
             JsImport(
-                it.first.externalName,
+                it.first.getRequireName(true),
                 if (it.first.plainReference == null) {
-                    JsImport.Target.All(alias = it.second.name)
+                    JsImport.Target.All(alias = it.second.name.makeRef())
                 } else {
-                    JsImport.Target.Default(name = it.second.name)
+                    JsImport.Target.Default(name = it.second.name.makeRef())
                 }
             )
         }
-       return importStatements + function.body.statements.dropLast(1)
+
+        val alreadyPresentedImportStatementsWithoutDuplicates = alreadyPresentedImportStatements
+            .groupBy { it.module }
+            .map { (module, import) ->
+                JsImport(module, *import.flatMap { it.elements }.toTypedArray())
+            }
+
+       return  importStatements + alreadyPresentedImportStatementsWithoutDuplicates + restStatements.dropLast(1)
     }
 
 
