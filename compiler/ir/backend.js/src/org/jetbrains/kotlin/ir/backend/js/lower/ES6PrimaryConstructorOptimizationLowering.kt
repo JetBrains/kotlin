@@ -177,8 +177,8 @@ class ES6PrimaryConstructorUsageOptimizationLowering(private val context: JsIrBa
  * Otherwise, we can generate a simple ES-class constructor in each class of the hierarchy
  */
 class ES6CollectPrimaryConstructorsWhichCouldBeOptimizedLowering(private val context: JsIrBackendContext) : DeclarationTransformer {
-    private val esClassWhichNeedBoxParameters = context.mapping.esClassWhichNeedBoxParameters
-    private val esClassToPossibilityForOptimization = context.mapping.esClassToPossibilityForOptimization
+    private val IrClass.needsOfBoxParameter by context.mapping.esClassWhichNeedBoxParameters
+    private var IrClass.possibilityToOptimizeForEsClass by context.mapping.esClassToPossibilityForOptimization
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (
@@ -186,7 +186,7 @@ class ES6CollectPrimaryConstructorsWhichCouldBeOptimizedLowering(private val con
             declaration is IrClass &&
             !declaration.isExternal &&
             !context.inlineClassesUtils.isClassInlineLike(declaration) &&
-            !esClassToPossibilityForOptimization.contains(declaration)
+            declaration.possibilityToOptimizeForEsClass == null
         ) {
             declaration.checkIfCanBeOptimized()
         }
@@ -199,7 +199,7 @@ class ES6CollectPrimaryConstructorsWhichCouldBeOptimizedLowering(private val con
         var nearestOptimizationDecision: MutableReference<Boolean>? = null
 
         while (currentClass != null && !currentClass.isExternal) {
-            val currentClassOptimizationDecision = esClassToPossibilityForOptimization[currentClass]
+            val currentClassOptimizationDecision = currentClass.possibilityToOptimizeForEsClass
 
             if (currentClassOptimizationDecision != null) {
                 nearestOptimizationDecision = currentClassOptimizationDecision
@@ -214,8 +214,8 @@ class ES6CollectPrimaryConstructorsWhichCouldBeOptimizedLowering(private val con
         }
 
         currentClass = this
-        while (currentClass != null && !currentClass.isExternal && !esClassToPossibilityForOptimization.contains(currentClass)) {
-            esClassToPossibilityForOptimization[currentClass] = nearestOptimizationDecision
+        while (currentClass != null && !currentClass.isExternal && currentClass.possibilityToOptimizeForEsClass == null) {
+            currentClass.possibilityToOptimizeForEsClass = nearestOptimizationDecision
 
             if (nearestOptimizationDecision.value && !currentClass.canBeOptimized()) {
                 nearestOptimizationDecision.value = false
@@ -249,7 +249,7 @@ class ES6CollectPrimaryConstructorsWhichCouldBeOptimizedLowering(private val con
     }
 
     private fun IrClass.isSubclassOfExternalClassWithRequiredBoxParameter(): Boolean {
-        return superClass?.isExternal == true && esClassWhichNeedBoxParameters.contains(this)
+        return superClass?.isExternal == true && needsOfBoxParameter == true
     }
 }
 

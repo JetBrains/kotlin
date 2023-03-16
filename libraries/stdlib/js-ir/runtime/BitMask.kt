@@ -5,7 +5,38 @@
 
 package kotlin.js
 
-internal fun implement(vararg interfaces: dynamic): BitMask {
+internal typealias BitMask = IntArray
+
+private fun bitMaskWith(activeBit: Int): BitMask {
+    val intArray = IntArray((activeBit shr 5) + 1)
+    val numberIndex = activeBit shr 5
+    val positionInNumber = activeBit and 31
+    val numberWithSettledBit = 1 shl positionInNumber
+    intArray[numberIndex] = intArray[numberIndex] or numberWithSettledBit
+    return intArray
+}
+
+internal fun BitMask.isBitSet(possibleActiveBit: Int): Boolean {
+    val numberIndex = possibleActiveBit shr 5
+    if (numberIndex > size) return false
+    val positionInNumber = possibleActiveBit and 31
+    val numberWithSettledBit = 1 shl positionInNumber
+    return get(numberIndex) and numberWithSettledBit != 0
+}
+
+private fun compositeBitMask(capacity: Int, masks: Array<BitMask>): BitMask {
+    return IntArray(capacity) { i ->
+        var result = 0
+        for (mask in masks) {
+            if (i < mask.size) {
+                result = result or mask[i]
+            }
+        }
+        result
+    }
+}
+
+internal fun implement(interfaces: Array<dynamic>): BitMask {
     var maxSize = 1
     val masks = js("[]")
 
@@ -15,15 +46,15 @@ internal fun implement(vararg interfaces: dynamic): BitMask {
 
         if (imask != null) {
             masks.push(imask)
-            currentSize = imask.intArray.size
+            currentSize = imask.size
         }
 
         val iid: Int? = i.`$metadata$`.iid
-        val iidImask: BitMask? = iid?.let { BitMask(arrayOf(it)) }
+        val iidImask: BitMask? = iid?.let { bitMaskWith(it) }
 
         if (iidImask != null) {
             masks.push(iidImask)
-            currentSize = JsMath.max(currentSize, iidImask.intArray.size)
+            currentSize = JsMath.max(currentSize, iidImask.size)
         }
 
         if (currentSize > maxSize) {
@@ -31,42 +62,5 @@ internal fun implement(vararg interfaces: dynamic): BitMask {
         }
     }
 
-    val resultIntArray = IntArray(maxSize) { i ->
-        masks.reduce({ acc: Int, it: BitMask ->
-            if (i >= it.intArray.size)
-                acc
-            else
-                acc or it.intArray[i]
-        }, 0)
-    }
-
-    val result = BitMask(emptyArray())
-    result.intArray = resultIntArray
-    return result
-}
-
-internal class BitMask(activeBits: Array<Int>) {
-    var intArray: IntArray = run {
-        if (activeBits.size == 0) {
-            IntArray(0)
-        } else {
-            val max: Int = JsMath.asDynamic().max.apply(null, activeBits)
-            val intArray = IntArray((max shr 5) + 1)
-            for (activeBit in activeBits) {
-                val numberIndex = activeBit shr 5
-                val positionInNumber = activeBit and 31
-                val numberWithSettledBit = 1 shl positionInNumber
-                intArray[numberIndex] = intArray[numberIndex] or numberWithSettledBit
-            }
-            intArray
-        }
-    }
-
-    fun isBitSet(possibleActiveBit: Int): Boolean {
-        val numberIndex = possibleActiveBit shr 5
-        if (numberIndex > intArray.size) return false
-        val positionInNumber = possibleActiveBit and 31
-        val numberWithSettledBit = 1 shl positionInNumber
-        return intArray[numberIndex] and numberWithSettledBit != 0
-    }
+    return compositeBitMask(maxSize, masks)
 }
