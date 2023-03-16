@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.incremental
 
-import createCompilerRunner
 import org.jetbrains.kotlin.api.*
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.report.DoNothingBuildReporter
