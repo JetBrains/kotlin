@@ -61,3 +61,18 @@ class QualifiedThisClass {
         }
     }
 }
+
+@Self
+class Outer {
+
+    @kotlin.Self
+    class Nested {
+        fun nested(): Self {
+            return this
+        }
+    }
+
+    fun outer(): Self {
+        return this
+    }
+}

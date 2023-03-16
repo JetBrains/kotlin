@@ -96,3 +96,24 @@ FILE: innerAndNested.kt
         }
 
     }
+    @R|kotlin/Self|() public final class Outer<out <Self> : R|Outer<<Self>>|> : R|kotlin/Any| {
+        public constructor<out <Self> : R|Outer<<Self>>|>(): R|Outer<<Self>>| {
+            super<R|kotlin/Any|>()
+        }
+
+        @R|kotlin/Self|() public final class Nested<out <Self> : R|Outer.Nested<<Self>>|> : R|kotlin/Any| {
+            public constructor<out <Self> : R|Outer.Nested<<Self>>|>(): R|Outer.Nested<<Self>>| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun nested(): R|<Self>| {
+                ^nested this@R|/Outer.Nested|
+            }
+
+        }
+
+        public final fun outer(): R|<Self>| {
+            ^outer this@R|/Outer|
+        }
+
+    }
