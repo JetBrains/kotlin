@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.renderer.types.renderers
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.renderer.types.KtTypeRenderer
+import org.jetbrains.kotlin.analysis.api.symbols.KtTypeAliasSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
 import org.jetbrains.kotlin.analysis.api.types.KtUsualClassType
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
@@ -28,6 +29,25 @@ public interface KtUsualClassTypeRenderer {
                     }
                 },
             )
+        }
+    }
+
+    /**
+     * Renders class type and in case of type alias adds a comment containing fully expanded class type, for example:
+     * ```
+     * typealias MyInt = Int
+     * ```
+     * `MyInt` is rendered as `MyInt /* = Int */`
+     */
+    public object AS_CLASS_TYPE_WITH_TYPE_ARGUMENTS_VERBOSE : KtUsualClassTypeRenderer {
+        context(KtAnalysisSession, KtTypeRenderer)
+        override fun renderType(type: KtUsualClassType, printer: PrettyPrinter): Unit = printer {
+            AS_CLASS_TYPE_WITH_TYPE_ARGUMENTS.renderType(type, printer)
+            if (type.classSymbol is KtTypeAliasSymbol) {
+                append(" /* = ")
+                renderType(type.fullyExpandedType, printer)
+                append(" */")
+            }
         }
     }
 
