@@ -256,6 +256,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_LATE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_OPERATOR_MODIFIER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_PARAM_TARGET
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_TARGET_ON_PROPERTY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_TARGET_ON_PROPERTY_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_TARGET_PROPERTY_HAS_NO_BACKING_FIELD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_TARGET_PROPERTY_HAS_NO_DELEGATE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_TARGET_PROPERTY_IMMUTABLE
@@ -857,6 +858,11 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(ANNOTATION_ON_SUPERCLASS, "Annotations on superclass are meaningless")
         map.put(WRONG_ANNOTATION_TARGET, "This annotation is not applicable to target ''{0}''", TO_STRING)
         map.put(INAPPLICABLE_TARGET_ON_PROPERTY, "''@{0}:'' annotations could be applied only to property declarations", TO_STRING)
+        map.put(
+            INAPPLICABLE_TARGET_ON_PROPERTY_WARNING,
+            "''@{0}:'' annotations could be applied only to property declarations. It will be an error in a future release. See https://youtrack.jetbrains.com/issue/KT-15470",
+            TO_STRING
+        )
         map.put(INAPPLICABLE_TARGET_PROPERTY_IMMUTABLE, "''@{0}:'' annotations could be applied only to mutable properties", TO_STRING)
         map.put(INAPPLICABLE_TARGET_PROPERTY_HAS_NO_DELEGATE, "'@delegate:' annotations could be applied only to delegated properties")
         map.put(

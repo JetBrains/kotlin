@@ -292,6 +292,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val INAPPLICABLE_TARGET_ON_PROPERTY by error<KtAnnotationEntry> {
             parameter<String>("useSiteDescription")
         }
+        val INAPPLICABLE_TARGET_ON_PROPERTY_WARNING by error<KtAnnotationEntry> {
+            parameter<String>("useSiteDescription")
+        }
         val INAPPLICABLE_TARGET_PROPERTY_IMMUTABLE by error<KtAnnotationEntry> {
             parameter<String>("useSiteDescription")
         }

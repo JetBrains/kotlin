@@ -925,6 +925,13 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.INAPPLICABLE_TARGET_ON_PROPERTY_WARNING) { firDiagnostic ->
+        InapplicableTargetOnPropertyWarningImpl(
+            firDiagnostic.a,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.INAPPLICABLE_TARGET_PROPERTY_IMMUTABLE) { firDiagnostic ->
         InapplicableTargetPropertyImmutableImpl(
             firDiagnostic.a,
