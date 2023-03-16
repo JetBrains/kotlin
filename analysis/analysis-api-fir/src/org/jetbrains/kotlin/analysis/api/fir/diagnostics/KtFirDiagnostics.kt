@@ -672,6 +672,11 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val useSiteDescription: String
     }
 
+    abstract class InapplicableTargetOnPropertyWarning : KtFirDiagnostic<KtAnnotationEntry>() {
+        override val diagnosticClass get() = InapplicableTargetOnPropertyWarning::class
+        abstract val useSiteDescription: String
+    }
+
     abstract class InapplicableTargetPropertyImmutable : KtFirDiagnostic<KtAnnotationEntry>() {
         override val diagnosticClass get() = InapplicableTargetPropertyImmutable::class
         abstract val useSiteDescription: String

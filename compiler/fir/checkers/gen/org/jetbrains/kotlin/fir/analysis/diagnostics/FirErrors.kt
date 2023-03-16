@@ -252,6 +252,7 @@ object FirErrors {
     val WRONG_ANNOTATION_TARGET by error1<KtAnnotationEntry, String>()
     val WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET by error2<KtAnnotationEntry, String, String>()
     val INAPPLICABLE_TARGET_ON_PROPERTY by error1<KtAnnotationEntry, String>()
+    val INAPPLICABLE_TARGET_ON_PROPERTY_WARNING by error1<KtAnnotationEntry, String>()
     val INAPPLICABLE_TARGET_PROPERTY_IMMUTABLE by error1<KtAnnotationEntry, String>()
     val INAPPLICABLE_TARGET_PROPERTY_HAS_NO_DELEGATE by error0<KtAnnotationEntry>()
     val INAPPLICABLE_TARGET_PROPERTY_HAS_NO_BACKING_FIELD by error0<KtAnnotationEntry>()

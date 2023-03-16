@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory1
 import org.jetbrains.kotlin.diagnostics.hasValOrVar
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
@@ -29,6 +30,8 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.StandardClassIds
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 object FirAnnotationChecker : FirBasicDeclarationChecker() {
     private val deprecatedClassId = FqName("kotlin.Deprecated")
@@ -196,6 +199,17 @@ object FirAnnotationChecker : FirBasicDeclarationChecker() {
         when (target) {
             PROPERTY,
             PROPERTY_GETTER -> {
+                checkPropertyGetter(
+                    annotated,
+                    annotation,
+                    target,
+                    context,
+                    reporter,
+                    when (context.session.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitUseSiteGetTargetAnnotations)) {
+                        true -> FirErrors.INAPPLICABLE_TARGET_ON_PROPERTY
+                        false -> FirErrors.INAPPLICABLE_TARGET_ON_PROPERTY_WARNING
+                    }
+                )
             }
             FIELD -> {
                 if (annotated is FirProperty && annotated.delegateFieldSymbol != null && !annotated.hasBackingField) {
@@ -209,9 +223,9 @@ object FirAnnotationChecker : FirBasicDeclarationChecker() {
             }
             PROPERTY_SETTER,
             SETTER_PARAMETER -> {
-                if (annotated !is FirProperty || annotated.isLocal) {
-                    reporter.reportOn(annotation.source, FirErrors.INAPPLICABLE_TARGET_ON_PROPERTY, target.renderName, context)
-                } else if (!annotated.isVar) {
+                if (!checkPropertyGetter(annotated, annotation, target, context, reporter, FirErrors.INAPPLICABLE_TARGET_ON_PROPERTY) &&
+                    !annotated.isVar
+                ) {
                     reporter.reportOn(annotation.source, FirErrors.INAPPLICABLE_TARGET_PROPERTY_IMMUTABLE, target.renderName, context)
                 }
             }
@@ -242,6 +256,23 @@ object FirAnnotationChecker : FirBasicDeclarationChecker() {
                 )
             }
         }
+    }
+
+    @OptIn(ExperimentalContracts::class)
+    private fun checkPropertyGetter(
+        annotated: FirAnnotationContainer,
+        annotation: FirAnnotation,
+        target: AnnotationUseSiteTarget,
+        context: CheckerContext,
+        reporter: DiagnosticReporter,
+        diagnostic: KtDiagnosticFactory1<String>
+    ): Boolean {
+        contract {
+            returns(false) implies (annotated is FirProperty)
+        }
+        val isReport = annotated !is FirProperty || annotated.isLocal
+        if (isReport) reporter.reportOn(annotation.source, diagnostic, target.renderName, context)
+        return isReport
     }
 
     private fun checkDeprecatedCalls(

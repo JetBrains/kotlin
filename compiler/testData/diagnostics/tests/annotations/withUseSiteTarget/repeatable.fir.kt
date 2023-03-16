@@ -53,7 +53,7 @@ public class B(<!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@param:fieldOrPro
     <!WRONG_ANNOTATION_TARGET!>@getSetAndParamAnn<!>
     @setparam:getSetAndParamAnn
     var w: Int
-        @getSetAndParamAnn <!REPEATED_ANNOTATION!>@get:getSetAndParamAnn<!> get() = 0
+        @getSetAndParamAnn <!INAPPLICABLE_TARGET_ON_PROPERTY, REPEATED_ANNOTATION!>@get:getSetAndParamAnn<!> get() = 0
         // See KT-15470: fake INAPPLICABLE_TARGET_ON_PROPERTY
         @getSetAndParamAnn <!INAPPLICABLE_TARGET_ON_PROPERTY, REPEATED_ANNOTATION!>@set:getSetAndParamAnn<!> set(arg) {}
 }

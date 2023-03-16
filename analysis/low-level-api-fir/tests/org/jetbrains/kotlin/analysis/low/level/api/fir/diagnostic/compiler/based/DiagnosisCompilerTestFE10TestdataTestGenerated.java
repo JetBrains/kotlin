@@ -2656,6 +2656,18 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
                 }
 
                 @Test
+                @TestMetadata("prohibitUseSiteGetTargetAnnotationsOff.kt")
+                public void testProhibitUseSiteGetTargetAnnotationsOff() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/withUseSiteTarget/prohibitUseSiteGetTargetAnnotationsOff.kt");
+                }
+
+                @Test
+                @TestMetadata("prohibitUseSiteGetTargetAnnotationsOn.kt")
+                public void testProhibitUseSiteGetTargetAnnotationsOn() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/withUseSiteTarget/prohibitUseSiteGetTargetAnnotationsOn.kt");
+                }
+
+                @Test
                 @TestMetadata("PropertyAnnotations.kt")
                 public void testPropertyAnnotations() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/annotations/withUseSiteTarget/PropertyAnnotations.kt");

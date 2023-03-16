@@ -180,6 +180,9 @@ public class DefaultErrorMessages {
         MAP.put(WRONG_EXTENSION_FUNCTION_TYPE_WARNING, "ExtensionFunctionType makes no sense on a non-function type. It will be an error in a future release. See https://youtrack.jetbrains.com/issue/KT-43527");
 
         MAP.put(INAPPLICABLE_TARGET_ON_PROPERTY, "''@{0}:'' annotations could be applied only to property declarations", TO_STRING);
+        MAP.put(INAPPLICABLE_TARGET_ON_PROPERTY_WARNING,
+                "''@{0}:'' annotations could be applied only to property declarations. It will be an error in a future release. See https://youtrack.jetbrains.com/issue/KT-15470",
+                TO_STRING);
         MAP.put(INAPPLICABLE_TARGET_PROPERTY_IMMUTABLE, "''@{0}:'' annotations could be applied only to mutable properties", TO_STRING);
         MAP.put(INAPPLICABLE_TARGET_PROPERTY_HAS_NO_DELEGATE, "'@delegate:' annotations could be applied only to delegated properties");
         MAP.put(INAPPLICABLE_TARGET_PROPERTY_HAS_NO_BACKING_FIELD, "'@field:' annotations could be applied only to properties with backing fields");
