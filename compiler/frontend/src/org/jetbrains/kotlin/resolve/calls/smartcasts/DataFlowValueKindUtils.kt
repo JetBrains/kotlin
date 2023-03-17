@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.resolve.calls.smartcasts
 
 import org.jetbrains.kotlin.cfg.getDeclarationDescriptorIncludingConstructors
 import org.jetbrains.kotlin.cfg.getElementParentDeclaration
-import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageFeature.*
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
@@ -28,23 +28,19 @@ internal fun PropertyDescriptor.propertyKind(
     if (!hasDefaultGetter()) return DataFlowValue.Kind.PROPERTY_WITH_GETTER
     val visibilityFromOtherModules = visibilityFromOtherModules()
     if (visibilityFromOtherModules == VisibilityFromOtherModule.INVISIBLE) return DataFlowValue.Kind.STABLE_VALUE
-    val deprecationForInvisibleParentNeeded = visibilityFromOtherModules == VisibilityFromOtherModule.PARENT_INVISIBLE_BASE_PARENT_VISIBLE
-            && !languageVersionSettings.supportsFeature(LanguageFeature.ProhibitSmartcastsOnPropertyFromAlienBaseClassInheritedInInvisibleClass)
 
     val declarationModule = DescriptorUtils.getContainingModule(this)
-    if (!areCompiledTogether(usageModule, declarationModule)) {
-        return if (deprecationForInvisibleParentNeeded) {
-            DataFlowValue.Kind.LEGACY_ALIEN_BASE_PROPERTY_INHERITED_IN_INVISIBLE_CLASS
-        } else {
-            DataFlowValue.Kind.ALIEN_PUBLIC_PROPERTY
-        }
-    }
+    if (!areCompiledTogether(usageModule, declarationModule)) return DataFlowValue.Kind.ALIEN_PUBLIC_PROPERTY
+
     if (kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
         if (overriddenDescriptors.any { isDeclaredInAnotherModule(usageModule) }) {
+            val deprecationForInvisibleParentNeeded =
+                visibilityFromOtherModules == VisibilityFromOtherModule.PARENT_INVISIBLE_BASE_PARENT_VISIBLE &&
+                        !languageVersionSettings.supportsFeature(ProhibitSmartcastsOnPropertyFromAlienBaseClassInheritedInInvisibleClass)
             return when {
                 deprecationForInvisibleParentNeeded ->
                     DataFlowValue.Kind.LEGACY_ALIEN_BASE_PROPERTY_INHERITED_IN_INVISIBLE_CLASS
-                !languageVersionSettings.supportsFeature(LanguageFeature.ProhibitSmartcastsOnPropertyFromAlienBaseClass) ->
+                !languageVersionSettings.supportsFeature(ProhibitSmartcastsOnPropertyFromAlienBaseClass) ->
                     DataFlowValue.Kind.LEGACY_ALIEN_BASE_PROPERTY
                 else ->
                     DataFlowValue.Kind.ALIEN_PUBLIC_PROPERTY
@@ -86,7 +82,7 @@ internal fun VariableDescriptor.variableKind(
 
     if (this is LocalVariableDescriptor && this.isDelegated) {
         // Local delegated property: normally unstable, but can be treated as stable in legacy mode
-        return if (languageVersionSettings.supportsFeature(LanguageFeature.ProhibitSmartcastsOnLocalDelegatedProperty))
+        return if (languageVersionSettings.supportsFeature(ProhibitSmartcastsOnLocalDelegatedProperty))
             DataFlowValue.Kind.PROPERTY_WITH_GETTER
         else
             DataFlowValue.Kind.LEGACY_STABLE_LOCAL_DELEGATED_PROPERTY
@@ -111,7 +107,7 @@ internal fun VariableDescriptor.variableKind(
     val variableContainingDeclaration = this.containingDeclaration
     if (isAccessedInsideClosure(variableContainingDeclaration, bindingContext, accessElement)) {
         // stable iff we have no writers in closures AND this closure is AFTER all writers
-        return if (preliminaryVisitor.languageVersionSettings.supportsFeature(LanguageFeature.CapturedInClosureSmartCasts) &&
+        return if (preliminaryVisitor.languageVersionSettings.supportsFeature(CapturedInClosureSmartCasts) &&
             hasNoWritersInClosures(variableContainingDeclaration, writers, bindingContext) &&
             isAccessedInsideClosureAfterAllWriters(writers, accessElement)
         ) {
