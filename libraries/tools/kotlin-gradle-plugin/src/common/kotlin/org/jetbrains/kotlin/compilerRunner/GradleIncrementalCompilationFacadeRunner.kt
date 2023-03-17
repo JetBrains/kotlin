@@ -16,17 +16,21 @@ import org.gradle.workers.WorkParameters
 import org.gradle.workers.WorkQueue
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.api.*
+import org.jetbrains.kotlin.api.FacadeLogLevel.*
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.BuildTime
 import org.jetbrains.kotlin.build.report.metrics.measure
-import org.jetbrains.kotlin.daemon.common.CompilerMode
+import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
+import org.jetbrains.kotlin.gradle.logging.SL4JKotlinLogger
+import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskLoggers
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.CompilationErrorException
 import org.jetbrains.kotlin.gradle.tasks.FailedCompilationException
 import org.jetbrains.kotlin.gradle.tasks.OOMErrorException
 import org.jetbrains.kotlin.gradle.tasks.TaskOutputsBackup
 import org.jetbrains.kotlin.incremental.*
+import org.slf4j.LoggerFactory
 import java.io.File
 import java.net.URLClassLoader
 import java.util.*
@@ -119,6 +123,21 @@ internal class GradleIncrementalCompilationFacadeRunner(
             }
         }
 
+        private val taskPath
+            get() = workArguments.taskPath
+        private val log: KotlinLogger =
+            TaskLoggers.get(taskPath)?.let { GradleKotlinLogger(it).apply { debug("Using '$taskPath' logger") } }
+                ?: run {
+                    val logger = LoggerFactory.getLogger("GradleKotlinCompilerWork")
+                    val kotlinLogger = if (logger is org.gradle.api.logging.Logger) {
+                        GradleKotlinLogger(logger)
+                    } else SL4JKotlinLogger(logger)
+
+                    kotlinLogger.apply {
+                        debug("Could not get logger for '$taskPath'. Falling back to sl4j logger")
+                    }
+                }
+
         override fun execute() {
             val taskOutputsBackup = if (parameters.snapshotsDir.isPresent) {
                 TaskOutputsBackup(
@@ -144,7 +163,13 @@ internal class GradleIncrementalCompilationFacadeRunner(
                 val classloader = URLClassLoader(classpath.toList().map { it.toURI().toURL() }.toTypedArray(), parentClassloader)
                 val facade = ServiceLoader.load(IncrementalCompilerFacade::class.java, classloader).singleOrNull()
                     ?: error("Compiler classpath should contain one and only one implementation of ${IncrementalCompilerFacade::class.java.name}")
-                facade.compile(prepareLaunchOptions(), workArguments.compilerArgs.toList(), prepareKotlinCompilerOptions(), Callbacks(null))
+                val messageLogger = GradleFacadeMessageLogger(log, workArguments.allWarningsAsErrors)
+                facade.compile(
+                    prepareLaunchOptions(),
+                    workArguments.compilerArgs.toList(),
+                    prepareKotlinCompilerOptions(),
+                    Callbacks(messageLogger)
+                )
             } catch (e: FailedCompilationException) {
                 // Restore outputs only in cases where we expect that the user will make some changes to their project:
                 //   - For a compilation error, the user will need to fix their source code
@@ -185,6 +210,19 @@ private class LimitedScopeClassLoaderDelegator(
             parent.loadClass(name)
         } else {
             super.loadClass(name, resolve)
+        }
+    }
+}
+
+private class GradleFacadeMessageLogger(private val log: KotlinLogger, private val warningsAsErrors: Boolean) : MessageLogger {
+    override fun report(level: FacadeLogLevel, message: String) {
+        when (level) {
+            INFO -> log.info("i: $message")
+            DEBUG -> log.debug("v: $message")
+            else -> when {
+                level == ERROR || warningsAsErrors -> log.error("e: $message")
+                else -> log.warn("w: $message")
+            }
         }
     }
 }

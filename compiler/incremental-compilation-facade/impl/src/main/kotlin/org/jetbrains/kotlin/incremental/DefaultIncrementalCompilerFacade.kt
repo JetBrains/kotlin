@@ -7,10 +7,12 @@ package org.jetbrains.kotlin.incremental
 
 import org.jetbrains.kotlin.api.*
 import org.jetbrains.kotlin.build.report.DoNothingBuildReporter
+import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.compilerRunner.KotlinCompilerRunnerUtils
@@ -40,19 +42,33 @@ object DumbMessageCollector : MessageCollector {
     }
 }
 
-class MessageReporter(private val messageLogger: MessageLogger) : MessageCollector {
-    override fun clear() {
-        TODO("Not yet implemented")
-    }
+class MessageReporter(private val messageLoggerCallback: MessageLogger) : MessageCollector {
+    override fun clear() {}
 
     override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageSourceLocation?) {
-        TODO("Not yet implemented")
+        val level = when {
+            severity.isError -> FacadeLogLevel.ERROR.also { hasErrors = true }
+            severity.isWarning -> FacadeLogLevel.WARNING
+            severity == INFO -> FacadeLogLevel.INFO
+            severity == LOGGING || severity == OUTPUT -> FacadeLogLevel.DEBUG
+            else -> error("Unknown message severity: $severity")
+        }
+        val formattedMessage = buildString {
+            location?.apply {
+                val fileUri = File(path).toPath().toUri()
+                append("$fileUri")
+                if (line > 0 && column > 0) {
+                    append(":$line:$column ")
+                }
+            }
+            append(message)
+        }
+        messageLoggerCallback.report(level, formattedMessage)
     }
 
-    override fun hasErrors(): Boolean {
-        TODO("Not yet implemented")
-    }
+    private var hasErrors = false
 
+    override fun hasErrors() = hasErrors
 }
 
 class DefaultIncrementalCompilerFacade : IncrementalCompilerFacade {
@@ -60,12 +76,12 @@ class DefaultIncrementalCompilerFacade : IncrementalCompilerFacade {
         launchOptions: LaunchOptions.Daemon,
         arguments: List<String>,
         options: org.jetbrains.kotlin.api.CompilationOptions,
-    ) {
+        messageCollector: MessageCollector,
+    ): ExitCode {
         println("Compiling with daemon")
         val compilerId = CompilerId.makeCompilerId(launchOptions.classpath)
         val clientIsAliveFlagFile = File("1")
         val sessionIsAliveFlagFile = File("2")
-        val messageCollector = DumbMessageCollector
 
         val daemonOptions = configureDaemonJVMOptions(
             inheritMemoryLimits = true,
@@ -118,30 +134,43 @@ class DefaultIncrementalCompilerFacade : IncrementalCompilerFacade {
                 kotlinScriptExtensions = options.kotlinScriptExtensions,
             )
         }
-        daemon.compile(
+        val exitCode = daemon.compile(
             sessionId,
             arguments.toTypedArray(),
             daemonCompileOptions,
             BasicCompilerServicesWithResultsFacadeServer(messageCollector),
             DaemonCompilationResults()
-        )
+        ).get()
+        return ExitCode.values().find { it.code == exitCode } ?: if (exitCode == 0) {
+            ExitCode.OK
+        } else {
+            ExitCode.COMPILATION_ERROR
+        }
     }
 
-    private fun compileInProcess(arguments: List<String>, options: org.jetbrains.kotlin.api.CompilationOptions) {
+    private fun compileInProcess(
+        arguments: List<String>,
+        options: org.jetbrains.kotlin.api.CompilationOptions,
+        messageCollector: MessageCollector,
+    ): ExitCode {
         println("Compiling in-process")
         val compiler = createCompiler(options.targetPlatform)
         val parsedArguments = prepareAndValidateCompilerArguments(compiler, arguments)
-        when (options) {
-            is org.jetbrains.kotlin.api.CompilationOptions.Incremental -> compileIncrementally(parsedArguments, options)
+        return when (options) {
+            is org.jetbrains.kotlin.api.CompilationOptions.Incremental -> compileIncrementally(parsedArguments, options, messageCollector)
             is org.jetbrains.kotlin.api.CompilationOptions.NonIncremental -> compiler.exec(
-                DumbMessageCollector,
+                messageCollector,
                 Services.EMPTY,
                 parsedArguments
             )
         }
     }
 
-    private fun compileIncrementally(args: CommonCompilerArguments, options: org.jetbrains.kotlin.api.CompilationOptions.Incremental) {
+    private fun compileIncrementally(
+        args: CommonCompilerArguments,
+        options: org.jetbrains.kotlin.api.CompilationOptions.Incremental,
+        messageCollector: MessageCollector,
+    ): ExitCode {
         val incrementalCompilerRunner = when (options.targetPlatform) {
             TargetPlatform.JVM -> IncrementalCompilerRunnerWithArgs(
                 args as K2JVMCompilerArguments,
@@ -177,12 +206,12 @@ class DefaultIncrementalCompilerFacade : IncrementalCompilerFacade {
                 error("Unsupported platform")
             }
         }
-        execIncrementalCompilerRunner(
+        return execIncrementalCompilerRunner(
             incrementalCompilerRunner,
             options.kotlinScriptExtensions?.toList() ?: emptyList(),
             prepareFileChanges(options.areFileChangesKnown, options.modifiedFiles, options.deletedFiles),
             options.modulesInfo.projectRoot,
-            DumbMessageCollector
+            messageCollector
         )
     }
 
@@ -192,9 +221,13 @@ class DefaultIncrementalCompilerFacade : IncrementalCompilerFacade {
         options: org.jetbrains.kotlin.api.CompilationOptions,
         callbacks: Callbacks,
     ) {
-        when (launchOptions) {
-            is LaunchOptions.Daemon -> compileWithDaemon(launchOptions, arguments, options)
-            is LaunchOptions.InProcess -> compileInProcess(arguments, options)
+        val messageCollector = callbacks.messageLogger?.let { MessageReporter(it) } ?: DumbMessageCollector
+        val exitCode = when (launchOptions) {
+            is LaunchOptions.Daemon -> compileWithDaemon(launchOptions, arguments, options, messageCollector)
+            is LaunchOptions.InProcess -> compileInProcess(arguments, options, messageCollector)
+        }
+        if (exitCode != ExitCode.OK) {
+            throw Exception("Compilation failed")
         }
     }
 }

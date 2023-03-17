@@ -10,5 +10,12 @@ data class Callbacks(
 )
 
 interface MessageLogger {
+    fun report(level: FacadeLogLevel, message: String)
+}
 
+enum class FacadeLogLevel {
+    ERROR,
+    WARNING,
+    INFO,
+    DEBUG,
 }
