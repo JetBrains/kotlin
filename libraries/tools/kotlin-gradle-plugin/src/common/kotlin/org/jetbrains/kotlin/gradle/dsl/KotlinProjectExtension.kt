@@ -142,6 +142,17 @@ abstract class KotlinTopLevelExtension(internal val project: Project) : KotlinTo
             }
         }
     }
+
+    /**
+     * Allows to use a different version of the Kotlin Build Tools API implementation and effectively a different version of the compiler.
+     *
+     * By default, the Kotlin Build Tools API implementation of the same version as the KGP is used.
+     *
+     * Currently only has an effect if the `kotlin.compiler.runViaBuildToolsApi` Gradle property is set to `true`.
+     */
+    fun useCompilerVersion(version: String) {
+        project.dependencies.add(BUILD_TOOLS_API_CLASSPATH_CONFIGURATION_NAME, "$KOTLIN_MODULE_GROUP:$KOTLIN_BUILD_TOOLS_API_IMPL:$version")
+    }
 }
 
 open class KotlinProjectExtension @Inject constructor(project: Project) : KotlinTopLevelExtension(project), KotlinSourceSetContainer {
