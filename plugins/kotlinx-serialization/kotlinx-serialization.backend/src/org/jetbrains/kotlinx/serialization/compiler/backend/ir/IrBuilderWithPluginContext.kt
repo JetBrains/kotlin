@@ -383,8 +383,8 @@ interface IrBuilderWithPluginContext {
 
     fun collectSerialInfoAnnotations(irClass: IrClass): List<IrConstructorCall> {
         if (!(irClass.isInterface || irClass.hasSerializableOrMetaAnnotation())) return emptyList()
-        val annotationByFq: MutableMap<FqName, IrConstructorCall> =
-            irClass.annotations.associateBy { it.symbol.owner.parentAsClass.fqNameWhenAvailable!! }.toMutableMap()
+        val annotationByFq: MutableMap<FqName, List<IrConstructorCall>> =
+            irClass.annotations.groupBy { it.symbol.owner.parentAsClass.fqNameWhenAvailable!! }.toMutableMap()
         for (clazz in irClass.getAllSuperclasses()) {
             val annotations = clazz.annotations
                 .mapNotNull {
@@ -393,13 +393,14 @@ interface IrBuilderWithPluginContext {
                 }
             annotations.forEach { (fqname, call) ->
                 if (fqname !in annotationByFq) {
-                    annotationByFq[fqname] = call
+                    annotationByFq[fqname] = listOf(call)
                 } else {
                     // SerializationPluginDeclarationChecker already reported inconsistency
+                    // InheritableSerialInfo annotations can not be repeatable
                 }
             }
         }
-        return annotationByFq.values.toList()
+        return annotationByFq.values.toList().flatten()
     }
 
     fun IrBuilderWithScope.copyAnnotationsFrom(annotations: List<IrConstructorCall>): List<IrExpression> =

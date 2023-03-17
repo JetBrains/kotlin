@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.JvmNames.TRANSIENT_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.psi.*
@@ -47,6 +48,7 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
         if (descriptor !is ClassDescriptor) return
 
         checkMetaSerializableApplicable(descriptor, context.trace)
+        checkInheritableSerialInfoNotRepeatable(descriptor, context.trace)
         checkEnum(descriptor, declaration, context.trace)
         checkExternalSerializer(descriptor, declaration, context.trace)
 
@@ -72,6 +74,14 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
         if (descriptor.classId?.isNestedClass != true) return
         val entry = descriptor.findAnnotationDeclaration(SerializationAnnotations.metaSerializableAnnotationFqName) ?: return
         trace.report(SerializationErrors.META_SERIALIZABLE_NOT_APPLICABLE.on(entry))
+    }
+
+    private fun checkInheritableSerialInfoNotRepeatable(descriptor: ClassDescriptor, trace: BindingTrace) {
+        if (descriptor.kind != ClassKind.ANNOTATION_CLASS) return
+        // both kotlin.Repeatable and java.lang.annotation.Repeatable
+        if (!(descriptor.isAnnotatedWithKotlinRepeatable() || descriptor.annotations.hasAnnotation(JvmAnnotationNames.REPEATABLE_ANNOTATION))) return
+        val inheritableAnno = descriptor.findAnnotationDeclaration(SerializationAnnotations.inheritableSerialInfoFqName) ?: return
+        trace.report(SerializationErrors.INHERITABLE_SERIALINFO_CANT_BE_REPEATABLE.on(inheritableAnno))
     }
 
     private fun checkExternalSerializer(classDescriptor: ClassDescriptor, declaration: KtDeclaration, trace: BindingTrace) {

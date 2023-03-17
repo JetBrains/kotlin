@@ -54,6 +54,8 @@ public interface SerializationErrors {
     DiagnosticFactory2<PsiElement, KotlinType, KotlinType> INCONSISTENT_INHERITABLE_SERIALINFO = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory0<PsiElement> META_SERIALIZABLE_NOT_APPLICABLE = DiagnosticFactory0.create(WARNING);
 
+    DiagnosticFactory0<PsiElement> INHERITABLE_SERIALINFO_CANT_BE_REPEATABLE = DiagnosticFactory0.create(ERROR);
+
     DiagnosticFactory1<PsiElement, KotlinType> EXTERNAL_SERIALIZER_USELESS = DiagnosticFactory1.create(WARNING);
 
     DiagnosticFactory2<PsiElement, KotlinType, KotlinType> EXTERNAL_CLASS_NOT_SERIALIZABLE = DiagnosticFactory2.create(ERROR);

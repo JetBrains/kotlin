@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.*
+import org.jetbrains.kotlin.fir.analysis.checkers.containsRepeatableAnnotation
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirClassChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.isSingleFieldValueClass
@@ -46,6 +47,7 @@ object FirSerializationPluginClassChecker : FirClassChecker() {
         with(context) {
             val classSymbol = declaration.symbol
             checkMetaSerializableApplicable(classSymbol, reporter)
+            checkInheritableSerialInfoNotRepeatable(classSymbol, reporter)
             checkEnum(classSymbol, reporter)
             checkExternalSerializer(classSymbol, reporter)
             if (!canBeSerializedInternally(classSymbol, reporter)) return
@@ -69,6 +71,16 @@ object FirSerializationPluginClassChecker : FirClassChecker() {
             .find { it.toAnnotationClassId(session) == SerializationAnnotations.metaSerializableAnnotationClassId }
             ?: return
         reporter.reportOn(anno.source, FirSerializationErrors.META_SERIALIZABLE_NOT_APPLICABLE)
+    }
+
+    context(CheckerContext)
+    private fun checkInheritableSerialInfoNotRepeatable(classSymbol: FirClassSymbol<out FirClass>, reporter: DiagnosticReporter) {
+        if (classSymbol.classKind != ClassKind.ANNOTATION_CLASS) return
+        if (!classSymbol.containsRepeatableAnnotation(session)) return
+        val anno = classSymbol.resolvedAnnotationsWithClassIds
+            .find { it.toAnnotationClassId(session) == SerializationAnnotations.inheritableSerialInfoClassId }
+            ?: return
+        reporter.reportOn(anno.source, FirSerializationErrors.INHERITABLE_SERIALINFO_CANT_BE_REPEATABLE)
     }
 
     context(CheckerContext)

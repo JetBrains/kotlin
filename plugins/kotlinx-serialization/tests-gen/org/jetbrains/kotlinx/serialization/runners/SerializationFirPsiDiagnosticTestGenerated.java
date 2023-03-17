@@ -123,6 +123,12 @@ public class SerializationFirPsiDiagnosticTestGenerated extends AbstractSerializ
         }
 
         @Test
+        @TestMetadata("repeatableSerialInfo.kt")
+        public void testRepeatableSerialInfo() throws Exception {
+            runTest("plugins/kotlinx-serialization/testData/diagnostics/repeatableSerialInfo.kt");
+        }
+
+        @Test
         @TestMetadata("SerializableEnums.kt")
         public void testSerializableEnums() throws Exception {
             runTest("plugins/kotlinx-serialization/testData/diagnostics/SerializableEnums.kt");

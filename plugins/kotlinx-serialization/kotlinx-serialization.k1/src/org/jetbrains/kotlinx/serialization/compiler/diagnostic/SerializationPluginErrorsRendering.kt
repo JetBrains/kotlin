@@ -164,6 +164,10 @@ object SerializationPluginErrorsRendering : DefaultErrorMessages.Extension {
             SerializationErrors.META_SERIALIZABLE_NOT_APPLICABLE,
             "@MetaSerializable annotation should be used only on top-level annotation classes. Usage on nested annotation classes is deprecated and will yield errors in the future."
         )
+        MAP.put(
+           SerializationErrors.INHERITABLE_SERIALINFO_CANT_BE_REPEATABLE,
+           "Repeatable serial info annotations can not be inheritable. Either remove @Repeatable or use a regular @SerialInfo annotation."
+        )
 
         MAP.put(
             SerializationErrors.EXTERNAL_SERIALIZER_USELESS,
