@@ -448,7 +448,8 @@ internal class KtSymbolByFirBuilder constructor(
                     // TODO this is a temporary hack to prevent FIR IDE from crashing on builder inference, see KT-50916
                     val typeVariable = coneType.constructor.variable as? ConeTypeParameterBasedTypeVariable
                     val typeParameterSymbol = typeVariable?.typeParameterSymbol ?: throwUnexpectedElementError(coneType)
-                    val coneTypeParameterType = typeParameterSymbol.toConeType() as ConeTypeParameterType
+                    val coneTypeParameterType = (typeParameterSymbol.toConeType() as ConeTypeParameterType)
+                        .withNullability(coneType.nullability, rootSession.typeContext)
 
                     KtFirTypeParameterType(coneTypeParameterType, this@KtSymbolByFirBuilder)
                 }
