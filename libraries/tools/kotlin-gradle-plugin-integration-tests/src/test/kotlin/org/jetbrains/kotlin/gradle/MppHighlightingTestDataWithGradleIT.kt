@@ -16,6 +16,7 @@ import java.util.*
 
 @RunWith(Parameterized::class)
 class MppHighlightingTestDataWithGradleIT : BaseGradleIT() {
+    override val defaultGradleVersion: GradleVersionRequired = GradleVersionRequired.FOR_MPP_SUPPORT
 
     @Test
     fun runTestK2NativeCli() = doTest(CliCompiler.NATIVE)

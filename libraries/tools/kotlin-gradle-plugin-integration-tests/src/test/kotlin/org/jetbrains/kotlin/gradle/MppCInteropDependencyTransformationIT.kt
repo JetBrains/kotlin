@@ -24,6 +24,7 @@ import org.junit.Test
  * - dependency-mode=repository: In this case p2 will rely on a previously published version of p1
  */
 abstract class MppCInteropDependencyTransformationIT : BaseGradleIT() {
+    override val defaultGradleVersion: GradleVersionRequired = GradleVersionRequired.FOR_MPP_SUPPORT
 
     override fun defaultBuildOptions(): BuildOptions = super.defaultBuildOptions().run {
         copy(

@@ -37,6 +37,7 @@ import kotlin.test.assertTrue
 
 @TestDataPath("\$CONTENT_ROOT/resources")
 class MultiplatformGradleIT : BaseGradleIT() {
+    override val defaultGradleVersion: GradleVersionRequired = GradleVersionRequired.FOR_MPP_SUPPORT
 
     @Test
     fun testMultiplatformCompile() {
@@ -350,7 +351,8 @@ class MultiplatformGradleIT : BaseGradleIT() {
     @Test
     fun testKtKt35942InternalsFromMainInTestViaTransitiveDepsAndroid() = with(
         Project(
-            projectName = "kt-35942-android"
+            projectName = "kt-35942-android",
+            gradleVersionRequirement = GradleVersionRequired.AtLeast(TestVersions.Gradle.G_7_0)
         )
     ) {
         val currentGradleVersion = chooseWrapperVersionOrFinishTest()

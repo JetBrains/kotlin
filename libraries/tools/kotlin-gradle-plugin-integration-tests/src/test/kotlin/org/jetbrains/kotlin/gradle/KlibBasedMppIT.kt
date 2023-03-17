@@ -16,6 +16,8 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 open class KlibBasedMppIT : BaseGradleIT() {
+    override val defaultGradleVersion: GradleVersionRequired = GradleVersionRequired.FOR_MPP_SUPPORT
+
     companion object {
         private const val MODULE_GROUP = "com.example"
     }

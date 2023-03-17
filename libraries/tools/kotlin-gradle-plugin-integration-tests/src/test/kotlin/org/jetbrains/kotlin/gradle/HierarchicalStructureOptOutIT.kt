@@ -15,6 +15,8 @@ import kotlin.test.assertTrue
 
 @RunWith(Parameterized::class)
 internal class HierarchicalStructureOptInMigrationArtifactContentMppIT : BaseGradleIT() {
+    override val defaultGradleVersion: GradleVersionRequired = GradleVersionRequired.FOR_MPP_SUPPORT
+
     enum class Mode {
         HMPP_BY_DEFAULT, OPT_OUT_HMPP, DISABLE_HMPP_BY_DEFAULT
     }

@@ -11,6 +11,8 @@ import kotlin.test.Ignore
 import kotlin.test.assertTrue
 
 class KpmCompilerPluginMppIT : BaseGradleIT() {
+    override val defaultGradleVersion: GradleVersionRequired = GradleVersionRequired.FOR_MPP_SUPPORT
+
     @Test
     @Ignore
     fun testTransientPluginOptions() = with(transformProjectWithPluginsDsl("kpmTransientPluginOptions")) {
