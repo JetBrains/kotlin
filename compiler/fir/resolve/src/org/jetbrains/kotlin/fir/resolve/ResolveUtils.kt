@@ -114,7 +114,7 @@ fun FirFunction.constructFunctionType(kind: FunctionTypeKind? = null): ConeLooku
 fun FirAnonymousFunction.constructFunctionTypeRef(session: FirSession, kind: FunctionTypeKind? = null): FirResolvedTypeRef {
     var diagnostic: ConeDiagnostic? = null
     val kinds = session.functionTypeService.extractAllSpecialKindsForFunction(symbol)
-    val kindFromDeclaration = when(kinds.size) {
+    val kindFromDeclaration = when (kinds.size) {
         0 -> null
         1 -> kinds.single()
         else -> {
@@ -370,35 +370,28 @@ private fun BodyResolveComponents.typeFromSymbol(symbol: FirBasedSymbol<*>, make
 fun BodyResolveComponents.transformQualifiedAccessUsingSmartcastInfo(
     qualifiedAccessExpression: FirQualifiedAccessExpression
 ): FirExpression {
-    val (stability, typesFromSmartCast) =
-        dataFlowAnalyzer.getTypeUsingSmartcastInfo(qualifiedAccessExpression)
-            ?: return qualifiedAccessExpression
-    val builder = transformExpressionUsingSmartcastInfo(
-        qualifiedAccessExpression,
-        stability, typesFromSmartCast
-    ) ?: return qualifiedAccessExpression
-    return builder.build()
+    val (stability, typesFromSmartCast) = dataFlowAnalyzer.getTypeUsingSmartcastInfo(qualifiedAccessExpression)
+        ?: return qualifiedAccessExpression
+
+    return transformExpressionUsingSmartcastInfo(qualifiedAccessExpression, stability, typesFromSmartCast) ?: qualifiedAccessExpression
 }
 
 fun BodyResolveComponents.transformWhenSubjectExpressionUsingSmartcastInfo(
     whenSubjectExpression: FirWhenSubjectExpression
 ): FirExpression {
-    val (stability, typesFromSmartCast) = dataFlowAnalyzer.getTypeUsingSmartcastInfo(whenSubjectExpression) ?: return whenSubjectExpression
-    val builder = transformExpressionUsingSmartcastInfo(
-        whenSubjectExpression,
-        stability, typesFromSmartCast
-    ) ?: return whenSubjectExpression
-    return builder.build()
+    val (stability, typesFromSmartCast) = dataFlowAnalyzer.getTypeUsingSmartcastInfo(whenSubjectExpression)
+        ?: return whenSubjectExpression
+
+    return transformExpressionUsingSmartcastInfo(whenSubjectExpression, stability, typesFromSmartCast) ?: whenSubjectExpression
 }
 
 fun BodyResolveComponents.transformDesugaredAssignmentValueUsingSmartcastInfo(
     expression: FirDesugaredAssignmentValueReferenceExpression
 ): FirExpression {
-    val (stability, typesFromSmartCast) = dataFlowAnalyzer.getTypeUsingSmartcastInfo(expression.expressionRef.value) ?: return expression
-    val builder = transformExpressionUsingSmartcastInfo(
-        expression, stability, typesFromSmartCast
-    ) ?: return expression
-    return builder.build()
+    val (stability, typesFromSmartCast) = dataFlowAnalyzer.getTypeUsingSmartcastInfo(expression.expressionRef.value)
+        ?: return expression
+
+    return transformExpressionUsingSmartcastInfo(expression, stability, typesFromSmartCast) ?: expression
 }
 
 private val ConeKotlinType.isKindOfNothing
@@ -416,7 +409,7 @@ private fun <T : FirExpression> BodyResolveComponents.transformExpressionUsingSm
     expression: T,
     stability: PropertyStability,
     typesFromSmartCast: MutableList<ConeKotlinType>
-): FirSmartCastExpressionBuilder? {
+): FirSmartCastExpression? {
     val smartcastStability = stability.impliedSmartcastStability
         ?: if (dataFlowAnalyzer.isAccessToUnstableLocalVariable(expression)) {
             SmartcastStability.CAPTURED_VARIABLE
@@ -458,7 +451,7 @@ private fun <T : FirExpression> BodyResolveComponents.transformExpressionUsingSm
             annotations += expression.resultType.annotations
             delegatedTypeRef = expression.resultType
         }
-        return FirSmartCastExpressionBuilder().apply {
+        return buildSmartCastExpression {
             originalExpression = expression
             source = originalExpression.source?.fakeElement(KtFakeSourceElementKind.SmartCastExpression)
             smartcastType = intersectedTypeRef
@@ -469,7 +462,7 @@ private fun <T : FirExpression> BodyResolveComponents.transformExpressionUsingSm
         }
     }
 
-    return FirSmartCastExpressionBuilder().apply {
+    return buildSmartCastExpression {
         originalExpression = expression
         source = originalExpression.source?.fakeElement(KtFakeSourceElementKind.SmartCastExpression)
         smartcastType = intersectedTypeRef
