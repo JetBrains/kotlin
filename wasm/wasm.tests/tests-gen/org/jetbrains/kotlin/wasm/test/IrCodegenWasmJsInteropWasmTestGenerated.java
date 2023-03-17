@@ -105,6 +105,11 @@ public class IrCodegenWasmJsInteropWasmTestGenerated extends AbstractIrCodegenWa
         runTest("compiler/testData/codegen/boxWasmJsInterop/kotlinToJsAdapters.kt");
     }
 
+    @TestMetadata("lambdaAdapterNameClash.kt")
+    public void testLambdaAdapterNameClash() throws Exception {
+        runTest("compiler/testData/codegen/boxWasmJsInterop/lambdaAdapterNameClash.kt");
+    }
+
     @TestMetadata("longStrings.kt")
     public void testLongStrings() throws Exception {
         runTest("compiler/testData/codegen/boxWasmJsInterop/longStrings.kt");

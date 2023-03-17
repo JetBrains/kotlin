@@ -10,11 +10,11 @@ import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.ir.addDispatchReceiver
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.serialization.cityHash64
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.isBuiltInWasmRefType
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.isExported
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.isExternalType
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.toJsStringLiteral
 import org.jetbrains.kotlin.backend.wasm.utils.getJsFunAnnotation
 import org.jetbrains.kotlin.backend.wasm.utils.getWasmImportDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -279,7 +280,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
             // Thus, we export helper "caller" method that JavaScript will use to call kotlin closures:
             //
             //     @JsExport
-            //     fun __callFunction_<signatureHash>(f: dataref, p1: JsType1, p2: JsType2, ...): JsTypeRes {
+            //     fun __callFunction_<signatureString>(f: dataref, p1: JsType1, p2: JsType2, ...): JsTypeRes {
             //          return adapt(
             //              cast<FunctionN>(f).invoke(
             //                  adapt(p1),
@@ -289,7 +290,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
             //          )
             //     }
             //
-            context.closureCallExports.getOrPut(this) {
+            context.closureCallExports.getOrPut(functionTypeInfo.signatureString) {
                 createKotlinClosureCaller(functionTypeInfo)
             }
 
@@ -297,11 +298,11 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
             // using above-mentioned "caller" export:
             //
             //     @JsFun("""(f) => {
-            //        (p1, p2, ...) => <wasm-exports>.__callFunction_<signatureHash>(f, p1, p2, ...)
+            //        (p1, p2, ...) => <wasm-exports>.__callFunction_<signatureString>(f, p1, p2, ...)
             //     }""")
-            //     external fun __convertKotlinClosureToJsClosure_<signatureHash>(f: dataref): ExternalRef
+            //     external fun __convertKotlinClosureToJsClosure_<signatureString>(f: dataref): ExternalRef
             //
-            val kotlinToJsClosureConvertor = context.kotlinClosureToJsConverters.getOrPut(this) {
+            val kotlinToJsClosureConvertor = context.kotlinClosureToJsConverters.getOrPut(functionTypeInfo.signatureString) {
                 createKotlinToJsClosureConvertor(functionTypeInfo)
             }
             return FunctionBasedAdapter(kotlinToJsClosureConvertor)
@@ -402,21 +403,21 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
             // Thus, we import helper "caller" method that WebAssembly will use to call JS closures:
             //
             //     @JsFun("(f, p0, p1, ...) => f(p0, p1, ...)")
-            //     external fun __callJsClosure_<signatureHash>(f: ExternalRef, p0: JsType1, p1: JsType2, ...): JsResType
+            //     external fun __callJsClosure_<signatureString>(f: ExternalRef, p0: JsType1, p1: JsType2, ...): JsResType
             //
-            val jsClosureCaller = context.jsClosureCallers.getOrPut(this) {
+            val jsClosureCaller = context.jsClosureCallers.getOrPut(functionTypeInfo.signatureString) {
                 createJsClosureCaller(functionTypeInfo)
             }
 
             // Converter functions creates new Kotlin closure that delegate to JS closure
             // using above-mentioned "caller" import:
             //
-            //     fun __convertJsClosureToKotlinClosure_<signatureHash>(f: ExternalRef) : FunctionN<KotlinType1, ..., KotlinResType> =
+            //     fun __convertJsClosureToKotlinClosure_<signatureString>(f: ExternalRef) : FunctionN<KotlinType1, ..., KotlinResType> =
             //       { p0: KotlinType1, p1: KotlinType2, ... ->
-            //          adapt(__callJsClosure_<signatureHash>(f, adapt(p0), adapt(p1), ..))
+            //          adapt(__callJsClosure_<signatureString>(f, adapt(p0), adapt(p1), ..))
             //       }
             //
-            val jsToKotlinClosure = context.jsToKotlinClosures.getOrPut(this) {
+            val jsToKotlinClosure = context.jsToKotlinClosures.getOrPut(functionTypeInfo.signatureString) {
                 createJsToKotlinClosureConverter(functionTypeInfo, jsClosureCaller)
             }
             return FunctionBasedAdapter(jsToKotlinClosure)
@@ -427,7 +428,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
 
     private fun createKotlinClosureCaller(info: FunctionTypeInfo): IrSimpleFunction {
         val result = context.irFactory.buildFun {
-            name = Name.identifier("__callFunction_${info.hashString}")
+            name = Name.identifier("__callFunction_${info.signatureString}")
             returnType = info.adaptedResultType
         }
         result.parent = currentParent
@@ -464,7 +465,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
 
     private fun createKotlinToJsClosureConvertor(info: FunctionTypeInfo): IrSimpleFunction {
         val result = context.irFactory.buildFun {
-            name = Name.identifier("__convertKotlinClosureToJsClosure_${info.hashString}")
+            name = Name.identifier("__convertKotlinClosureToJsClosure_${info.signatureString}")
             returnType = context.wasmSymbols.jsAnyType
             isExternal = true
         }
@@ -479,9 +480,9 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         val jsCode = buildString {
             append("(f) => (")
             appendParameterList(arity)
-            append(") => wasmExports.__callFunction_")
-            append(info.hashString)
-            append("(f, ")
+            append(") => wasmExports[")
+            append("__callFunction_${info.signatureString}".toJsStringLiteral())
+            append("](f, ")
             appendParameterList(arity)
             append(")")
         }
@@ -500,7 +501,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
     ): IrSimpleFunction {
         val functionType = info.functionType
         val result = context.irFactory.buildFun {
-            name = Name.identifier("__convertJsClosureToKotlinClosure_${info.hashString}")
+            name = Name.identifier("__convertJsClosureToKotlinClosure_${info.signatureString}")
             returnType = functionType
         }
         result.parent = currentParent
@@ -510,7 +511,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         }
 
         val closureClass = context.irFactory.buildClass {
-            name = Name.identifier("__JsClosureToKotlinClosure_${info.hashString}")
+            name = Name.identifier("__JsClosureToKotlinClosure_${info.signatureString}")
         }.apply {
             createImplicitParameterDeclarationWithWrappedDescriptor()
             superTypes = listOf(functionType)
@@ -581,7 +582,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
 
     private fun createJsClosureCaller(info: FunctionTypeInfo): IrSimpleFunction {
         val result = context.irFactory.buildFun {
-            name = Name.identifier("__callJsClosure_${info.hashString}")
+            name = Name.identifier("__callJsClosure_${info.signatureString}")
             returnType = info.adaptedResultType
             isExternal = true
         }
@@ -621,10 +622,6 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
             }
         }
 
-        val hashString: String =
-            // Rendering type to improve hash stability across compiler runs
-            functionType.render().cityHash64().toULong().toString(Character.MAX_RADIX)
-
         val originalParameterTypes: List<IrType> =
             functionType.arguments.dropLast(1).map { (it as IrTypeProjection).type }
 
@@ -652,6 +649,37 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
 
         val adaptedResultType: IrType =
             (if (toJs) resultAdapter?.toType else resultAdapter?.fromType) ?: originalResultType
+
+        val signatureString: String = jsInteropNotNullTypeSignature(this)
+    }
+
+    private fun jsInteropNotNullTypeSignature(type: JsInteropFunctionsLowering.FunctionTypeInfo): String {
+        val parameterTypes = type.originalParameterTypes.joinToString(separator = ",") { jsInteropTypeSignature(it) }
+        val resultType = jsInteropTypeSignature(type.originalResultType)
+        return "(($parameterTypes)->$resultType)"
+    }
+
+    private fun jsInteropNotNullTypeSignature(type: IrType): String {
+        if (isExternalType(type)) {
+            return "Js"
+        }
+        require(type is IrSimpleType)
+        if (type.isFunction()) {
+            return jsInteropNotNullTypeSignature(FunctionTypeInfo(type, true))
+        }
+        val klass = type.classOrNull ?: error("Unsupported JS interop type: ${type.render()}")
+        if (klass.owner.packageFqName == FqName("kotlin")) {
+            return klass.owner.name.identifier
+        }
+        error("Unsupported JS interop type: ${type.render()}")
+    }
+
+    private fun jsInteropTypeSignature(type: IrType): String {
+        return if (type.isNullable()) {
+            jsInteropNotNullTypeSignature(type.makeNotNull()) + "?"
+        } else {
+            jsInteropNotNullTypeSignature(type)
+        }
     }
 
     interface InteropTypeAdapter {
