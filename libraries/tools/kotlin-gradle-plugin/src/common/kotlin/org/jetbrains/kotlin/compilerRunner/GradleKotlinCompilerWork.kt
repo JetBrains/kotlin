@@ -213,7 +213,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
             }
         }
 
-        val memoryUsageBeforeBuild = daemon.getUsedMemory(withGC = true).takeIf { it.isGood }?.get()
+        val memoryUsageBeforeBuild = daemon.getUsedMemory(withGC = false).takeIf { it.isGood }?.get()
 
         val targetPlatform = when (compilerClassName) {
             KotlinCompilerClass.JVM -> CompileService.TargetPlatform.JVM

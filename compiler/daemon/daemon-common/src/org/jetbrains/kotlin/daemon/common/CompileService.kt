@@ -80,6 +80,7 @@ interface CompileService : Remote {
     @Throws(RemoteException::class)
     fun checkCompilerId(expectedCompilerId: CompilerId): Boolean
 
+    //Call with [withGC=true] can cause performance issue
     @Throws(RemoteException::class)
     fun getUsedMemory(withGC: Boolean = true): CallResult<Long>
 
