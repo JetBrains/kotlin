@@ -960,11 +960,12 @@ class FirElementSerializer private constructor(
         // [FirDefaultPropertyAccessor]---a property accessor without body---can still hold other information, such as annotations,
         // user-contributed visibility, and modifiers, such as `external` or `inline`.
         val nonSourceAnnotations = accessor.nonSourceAnnotations(session)
-        val isDefault = accessor is FirDefaultPropertyAccessor &&
-                nonSourceAnnotations.isEmpty() &&
-                accessor.visibility == property.visibility &&
-                !accessor.isExternal &&
-                !accessor.isInline
+        val isDefault = property.isLocal ||
+                (accessor is FirDefaultPropertyAccessor &&
+                        nonSourceAnnotations.isEmpty() &&
+                        accessor.visibility == property.visibility &&
+                        !accessor.isExternal &&
+                        !accessor.isInline)
         return Flags.getAccessorFlags(
             nonSourceAnnotations.isNotEmpty(),
             ProtoEnumFlags.visibility(normalizeVisibility(accessor)),
