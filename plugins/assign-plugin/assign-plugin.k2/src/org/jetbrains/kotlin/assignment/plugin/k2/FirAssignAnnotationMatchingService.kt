@@ -15,16 +15,16 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionSessionComponent.Factory
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
-import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 
 internal class FirAssignAnnotationMatchingService(
     session: FirSession,
-    private val annotationClassIds: List<ClassId>
+    private val annotationClassIds: List<FqName>
 ) : FirExtensionSessionComponent(session) {
 
     companion object {
         fun getFactory(annotations: List<String>): Factory {
-            return Factory { session -> FirAssignAnnotationMatchingService(session, annotations.map { ClassId.fromString(it) }) }
+            return Factory { session -> FirAssignAnnotationMatchingService(session, annotations.map { FqName(it) }) }
         }
     }
 
@@ -40,10 +40,10 @@ internal class FirAssignAnnotationMatchingService(
     }
 
     private fun FirRegularClassSymbol.annotated(): Boolean {
-        if (this.annotations.any { it.toAnnotationClassId(session) in annotationClassIds }) return true
+        if (this.annotations.any { it.toAnnotationClassId(session)?.asSingleFqName() in annotationClassIds }) return true
         return resolvedSuperTypeRefs.any { superTypeRef ->
             val symbol = superTypeRef.type.fullyExpandedType(session).toRegularClassSymbol(session) ?: return@any false
-            symbol.annotations.any { it.toAnnotationClassId(session) in annotationClassIds }
+            symbol.annotations.any { it.toAnnotationClassId(session)?.asSingleFqName() in annotationClassIds }
         }
     }
 }
