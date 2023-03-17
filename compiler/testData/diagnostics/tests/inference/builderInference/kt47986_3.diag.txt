@@ -1,4 +1,13 @@
-/kt47986_3.kt:10:13: error: not enough information to infer type variable K
+/kt47986_3.kt:4:18: warning: parameter 'builderAction' is never used
+fun <K> buildFoo(builderAction: Foo<K>.() -> Unit): Foo<K> = Foo()
+                 ^
+/kt47986_3.kt:6:26: warning: parameter 'x' is never used
+fun <K: N, N> Foo<K>.bar(x: Int = 1) {}
+                         ^
+/kt47986_3.kt:9:9: warning: variable 'x' is never used
+    val x = buildFoo {
+        ^
+/kt47986_3.kt:9:13: warning: type parameter for a type argument K can't be inferred into declared upper bounds. Please provide any use-site type information. It will become an error in future releases.
     val x = buildFoo {
             ^
 

@@ -1,4 +1,5 @@
 // WITH_STDLIB
+// LANGUAGE: +NoBuilderInferenceWithoutAnnotationRestriction
 // SKIP_TXT
 
 fun List<Int>.myExt() {}
@@ -7,11 +8,11 @@ fun <T> List<T>.myGenericExt() {}
 fun <R> a(first: R, second: (List<R>) -> Unit) {}
 
 fun test1() {
-    <!INFERRED_INTO_DECLARED_UPPER_BOUNDS!>a<!>(
+    a(
         buildList { add("") },
-        <!BUILDER_INFERENCE_MULTI_LAMBDA_RESTRICTION("R; a")!>second = {
+        second = {
             it.myGenericExt()
-        }<!>
+        }
     )
 }
 
@@ -23,9 +24,9 @@ fun test2() {
         first = {
             buildList { add("") }
         },
-        <!BUILDER_INFERENCE_MULTI_LAMBDA_RESTRICTION("R; b")!>second = {
+        second = {
             it.myExt() // Note: must be extension to add constraints
-        }<!>
+        }
     )
 }
 
@@ -45,13 +46,13 @@ fun test3() {
     )
 
     select (
-        myBuildList <!BUILDER_INFERENCE_MULTI_LAMBDA_RESTRICTION("R; myBuildList")!>{ add("") }<!>,
-        myBuildList <!BUILDER_INFERENCE_MULTI_LAMBDA_RESTRICTION("R; myBuildList")!>{ add(1) }<!>,
+        myBuildList { add("") },
+        myBuildList { add(1) },
     )
 
     select (
-        run { myBuildList <!BUILDER_INFERENCE_MULTI_LAMBDA_RESTRICTION("R; myBuildList")!>{ add("") }<!> },
-        myBuildList <!BUILDER_INFERENCE_MULTI_LAMBDA_RESTRICTION("R; myBuildList")!>{ add(1) }<!>,
+        run { myBuildList { add("") } },
+        myBuildList { add(1) },
     )
 }
 
@@ -64,7 +65,7 @@ fun <D> buildPartList(left: MutableList<D>.() -> Unit, right: MutableList<D>.() 
 
 fun test4() {
     buildPartList(
-        <!BUILDER_INFERENCE_MULTI_LAMBDA_RESTRICTION("D; buildPartList")!>left = { add(1) }<!>,
-        <!BUILDER_INFERENCE_MULTI_LAMBDA_RESTRICTION("D; buildPartList")!>right = { add("") }<!>
+        left = { add(1) },
+        right = { add("") }
     )
 }
