@@ -9,7 +9,7 @@ package org.jetbrains.kotlin.konan.blackboxtest
 
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCaseId
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestRunnerType
-import org.jetbrains.kotlin.konan.blackboxtest.support.group.FirPipeline
+import org.jetbrains.kotlin.konan.blackboxtest.support.group.K2Pipeline
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.PredefinedPaths.KOTLIN_NATIVE_DISTRIBUTION
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.PredefinedTestCase as TC
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.PredefinedTestCases
@@ -110,7 +110,7 @@ class StdlibTest : AbstractNativeBlackBoxTest() {
         ignoredTests = [DISABLED_STDLIB_TEST]
     )
 )
-@FirPipeline
+@K2Pipeline
 class StdlibK2Test : AbstractNativeBlackBoxTest() {
     @TestFactory
     fun default() = dynamicTestCase(TestCaseId.Named("default"))
