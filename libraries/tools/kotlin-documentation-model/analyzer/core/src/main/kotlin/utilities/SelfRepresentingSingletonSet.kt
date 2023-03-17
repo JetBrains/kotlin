@@ -1,5 +1,8 @@
 package org.jetbrains.dokka.utilities
 
+import org.jetbrains.dokka.*
+
+@InternalDokkaApi
 interface SelfRepresentingSingletonSet<T : SelfRepresentingSingletonSet<T>> : Set<T> {
     override val size: Int get() = 1
 
