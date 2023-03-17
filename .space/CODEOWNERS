@@ -47,6 +47,7 @@
 /compiler/backend/ "Kotlin JVM"
 /compiler/backend.common.jvm/ "Kotlin JVM"
 /compiler/backend-common/ "Kotlin JVM" "Kotlin JS" "Kotlin Native" "Kotlin Wasm"
+/compiler/build-tools/ "Kotlin Build Tools"
 /compiler/builtins-serializer/ "Kotlin Compiler Core"
 /compiler/cli/ "Kotlin Compiler Core"
 /compiler/cli/cli-js/ "Kotlin JS" "Kotlin Wasm"
