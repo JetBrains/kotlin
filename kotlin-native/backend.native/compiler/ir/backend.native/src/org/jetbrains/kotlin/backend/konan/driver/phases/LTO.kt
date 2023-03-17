@@ -159,7 +159,7 @@ internal val EscapeAnalysisPhase = createSimpleNamedCompilerPhase<NativeGenerati
                     nonDevirtualizedCallSitesUnfoldFactor
             ).build()
             //EscapeAnalysis.computeLifetimes(context, generationState, input.moduleDFG, externalModulesDFG, callGraph, lifetimes)
-            ControlFlowSensibleEscapeAnalysis.computeLifetimes(context, callGraph, lifetimes)
+            ControlFlowSensibleEscapeAnalysis.computeLifetimes(context, callGraph, input.moduleDFG, lifetimes)
             lifetimes
         }
 )
