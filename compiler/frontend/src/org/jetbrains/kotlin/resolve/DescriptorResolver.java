@@ -30,6 +30,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.FunctionTypesKt;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.builtins.UnsignedTypes;
 import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.*;
@@ -420,7 +421,7 @@ public class DescriptorResolver {
         if (primitiveArrayType != null) {
             return primitiveArrayType;
         }
-        if (isInlineClassType(elementType)) return builtIns.getVArrayType(Variance.OUT_VARIANCE, elementType);
+        if (isInlineClassType(elementType) && !UnsignedTypes.isUnsignedType(elementType)) return builtIns.getVArrayType(elementType);
         return builtIns.getArrayType(Variance.OUT_VARIANCE, elementType);
     }
 
