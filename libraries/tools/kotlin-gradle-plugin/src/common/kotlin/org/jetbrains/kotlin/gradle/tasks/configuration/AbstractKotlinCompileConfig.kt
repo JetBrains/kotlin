@@ -122,6 +122,7 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
             if (propertiesProvider.useK2 == true) {
                 task.compilerOptions.useK2.value(true)
             }
+            task.runViaBuildToolsApi.convention(propertiesProvider.runKotlinCompilerViaBuildToolsApi).finalizeValueOnRead()
         }
     }
 

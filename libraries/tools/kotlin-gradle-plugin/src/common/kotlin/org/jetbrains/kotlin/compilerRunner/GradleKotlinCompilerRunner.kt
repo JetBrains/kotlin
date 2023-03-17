@@ -12,12 +12,14 @@ import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.api.tasks.bundling.Zip
 import org.gradle.jvm.tasks.Jar
 import org.gradle.workers.WorkQueue
+import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.BuildTime
 import org.jetbrains.kotlin.build.report.metrics.measure
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.compilerRunner.btapi.GradleBuildToolsApiCompilerRunner
 import org.jetbrains.kotlin.daemon.client.CompileServiceSession
 import org.jetbrains.kotlin.daemon.common.CompilerId
 import org.jetbrains.kotlin.daemon.common.configureDaemonJVMOptions
@@ -51,6 +53,33 @@ const val CREATED_SESSION_FILE_PREFIX = "Created session-is-alive flag file: "
 const val EXISTING_SESSION_FILE_PREFIX = "Existing session-is-alive flag file: "
 const val DELETED_SESSION_FILE_PREFIX = "Deleted session-is-alive flag file: "
 const val COULD_NOT_CONNECT_TO_DAEMON_MESSAGE = "Could not connect to Kotlin compile daemon"
+
+internal fun createGradleCompilerRunner(
+    taskProvider: GradleCompileTaskProvider,
+    toolsJar: File?,
+    compilerExecutionSettings: CompilerExecutionSettings,
+    buildMetricsReporter: BuildMetricsReporter,
+    workerExecutor: WorkerExecutor,
+    runViaBuildToolsApi: Boolean
+): GradleCompilerRunner {
+    return if (runViaBuildToolsApi) {
+        GradleBuildToolsApiCompilerRunner(
+            taskProvider,
+            toolsJar,
+            compilerExecutionSettings,
+            buildMetricsReporter,
+            workerExecutor,
+        )
+    } else {
+        GradleCompilerRunnerWithWorkers(
+            taskProvider,
+            toolsJar,
+            compilerExecutionSettings,
+            buildMetricsReporter,
+            workerExecutor,
+        )
+    }
+}
 
 /*
 Using real taskProvider cause "field 'taskProvider' from type 'org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner':

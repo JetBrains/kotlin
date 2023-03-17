@@ -73,6 +73,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
             it.usesService(konanPropertiesBuildService)
             it.toolOptions.freeCompilerArgs.value(compilationCompilerOptions.options.freeCompilerArgs)
             it.toolOptions.freeCompilerArgs.addAll(providers.provider { PropertiesProvider(project).nativeLinkArgs })
+            it.runViaBuildToolsApi.value(false).disallowChanges() // K/N is not yet supported
         }
 
 
@@ -398,6 +399,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
                     it.compilerOptions.useK2.set(true)
                 }
                 it.compilerOptions.useK2.disallowChanges()
+                it.runViaBuildToolsApi.value(false).disallowChanges() // K/N is not yet supported
             }
 
             compilationInfo.classesDirs.from(compileTaskProvider.map { it.outputFile })
