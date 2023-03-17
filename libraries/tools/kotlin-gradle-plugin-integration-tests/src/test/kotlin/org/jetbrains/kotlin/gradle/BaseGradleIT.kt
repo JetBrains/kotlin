@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.test.RunnerWithMuteInDatabase
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.junit.After
 import org.junit.AfterClass
 import org.junit.Assume
@@ -1017,6 +1018,14 @@ abstract class BaseGradleIT {
         assertTrue(source.isDirectory)
         assertTrue(target.isDirectory)
         source.listFiles()?.forEach { copyRecursively(it, target) }
+    }
+
+    fun getJavaHomeByGradleVersion(gradleVersion: String): File {
+        return if (GradleVersion.version(gradleVersion) < GradleVersion.version(TestVersions.Gradle.G_8_0)) {
+            KtTestUtil.getJdk11Home()
+        } else {
+            KtTestUtil.getJdk17Home()
+        }
     }
 
     private fun String.normalizePath() = replace("\\", "/")

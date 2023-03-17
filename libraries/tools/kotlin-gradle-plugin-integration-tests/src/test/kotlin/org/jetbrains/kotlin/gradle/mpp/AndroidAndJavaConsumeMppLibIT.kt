@@ -126,16 +126,14 @@ abstract class AndroidAndJavaConsumeMppLibIT : BaseGradleIT() {
     @Before
     override fun setUp() {
         super.setUp()
-
-        val jdk11Home = File(System.getProperty("jdk11Home"))
-        Assume.assumeTrue("This test requires JDK11 for AGP7", jdk11Home.isDirectory)
+        val javaHome = getJavaHomeByGradleVersion(producerGradleVersion.minVersion)
 
         val producerBuildOptions: BuildOptions
 
         dependencyProject = Project("new-mpp-android", producerGradleVersion, minLogLevel = LogLevel.INFO).apply {
             val usedProducerGradleVersion = chooseWrapperVersionOrFinishTest()
             producerBuildOptions = defaultBuildOptions().copy(
-                javaHome = jdk11Home,
+                javaHome = javaHome,
                 androidHome = KtTestUtil.findAndroidSdk(),
                 androidGradlePluginVersion = producerAgpVersion,
             ).suppressDeprecationWarningsOn(
@@ -298,10 +296,7 @@ abstract class AndroidAndJavaConsumeMppLibIT : BaseGradleIT() {
             if (isPublishedLibrary)
                 "com.example:lib:1.0"
             else ":${dependencyProject.projectName}:lib"
-        val javaHome =
-            if (GradleVersion.version(usedConsumerGradleVersion) < GradleVersion.version(TestVersions.Gradle.G_8_0))
-                File(System.getProperty("jdk11Home"))
-            else KtTestUtil.getJdk17Home()
+        val javaHome = getJavaHomeByGradleVersion(consumerGradleVersion.minVersion)
 
         val consumerBuildOptions = defaultBuildOptions().copy(
             javaHome = javaHome,
