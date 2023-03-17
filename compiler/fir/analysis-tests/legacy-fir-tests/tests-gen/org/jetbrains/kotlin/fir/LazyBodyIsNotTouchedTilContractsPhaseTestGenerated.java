@@ -1414,6 +1414,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/delegates"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
+        @TestMetadata("callOnThisInDelegateExpression.kt")
+        public void testCallOnThisInDelegateExpression() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/delegates/callOnThisInDelegateExpression.kt");
+        }
+
         @TestMetadata("delegateInference.kt")
         public void testDelegateInference() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/delegates/delegateInference.kt");

@@ -227,7 +227,6 @@ open class RawFirBuilder(
             ownerRegularClassTypeParametersCount: Int?
         ): FirProperty = property.toFirProperty(
             ownerRegularOrAnonymousObjectSymbol,
-            ownerRegularClassTypeParametersCount,
             context
         )
 
@@ -1719,7 +1718,6 @@ open class RawFirBuilder(
 
         private fun <T> KtProperty.toFirProperty(
             ownerRegularOrAnonymousObjectSymbol: FirClassSymbol<*>?,
-            ownerRegularClassTypeParametersCount: Int?,
             context: Context<T>
         ): FirProperty {
             val propertyType = typeReference.toFirOrImplicitType()
@@ -1773,9 +1771,8 @@ open class RawFirBuilder(
                             delegateBuilder,
                             baseModuleData,
                             ownerRegularOrAnonymousObjectSymbol = null,
-                            ownerRegularClassTypeParametersCount = null,
-                            isExtension = false,
                             context = context,
+                            isExtension = false,
                         )
                     }
                 } else {
@@ -1835,7 +1832,6 @@ open class RawFirBuilder(
                                 delegateBuilder,
                                 baseModuleData,
                                 ownerRegularOrAnonymousObjectSymbol,
-                                ownerRegularClassTypeParametersCount,
                                 context,
                                 isExtension = receiverTypeReference != null,
                             )
@@ -1868,7 +1864,6 @@ open class RawFirBuilder(
         override fun visitProperty(property: KtProperty, data: Unit): FirElement {
             return property.toFirProperty(
                 ownerRegularOrAnonymousObjectSymbol = null,
-                ownerRegularClassTypeParametersCount = null,
                 context = context
             )
         }

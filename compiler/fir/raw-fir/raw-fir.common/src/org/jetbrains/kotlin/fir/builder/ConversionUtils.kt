@@ -299,7 +299,6 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
     delegateBuilder: FirWrappedDelegateExpressionBuilder?,
     moduleData: FirModuleData,
     ownerRegularOrAnonymousObjectSymbol: FirClassSymbol<*>?,
-    ownerRegularClassTypeParametersCount: Int?,
     context: Context<T>,
     isExtension: Boolean,
 ) {
@@ -339,8 +338,7 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
                     boundSymbol = ownerRegularOrAnonymousObjectSymbol
                 }
                 typeRef = buildResolvedTypeRef {
-                    val typeParameterNumber = ownerRegularClassTypeParametersCount ?: 0
-                    type = ownerRegularOrAnonymousObjectSymbol.constructStarProjectedType(typeParameterNumber)
+                    type = context.dispatchReceiverTypesStack.last()
                 }
             }
             else -> buildConstExpression(null, ConstantValueKind.Null, null)

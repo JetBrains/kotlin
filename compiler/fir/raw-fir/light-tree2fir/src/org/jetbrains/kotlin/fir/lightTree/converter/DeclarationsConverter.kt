@@ -1235,9 +1235,8 @@ class DeclarationsConverter(
                     delegateBuilder,
                     baseModuleData,
                     classWrapper?.classBuilder?.ownerRegularOrAnonymousObjectSymbol,
-                    classWrapper?.classBuilder?.ownerRegularClassTypeParametersCount,
-                    isExtension = false,
-                    context = context
+                    context = context,
+                    isExtension = false
                 )
             } else {
                 this.isLocal = false
@@ -1309,7 +1308,6 @@ class DeclarationsConverter(
                         delegateBuilder,
                         baseModuleData,
                         classWrapper?.classBuilder?.ownerRegularOrAnonymousObjectSymbol,
-                        classWrapper?.classBuilder?.ownerRegularClassTypeParametersCount,
                         context,
                         isExtension = receiverType != null,
                     )

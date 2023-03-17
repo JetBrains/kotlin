@@ -1622,6 +1622,12 @@ public class FirPsiDiagnosticTestGenerated extends AbstractFirPsiDiagnosticTest 
             }
 
             @Test
+            @TestMetadata("callOnThisInDelegateExpression.kt")
+            public void testCallOnThisInDelegateExpression() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/delegates/callOnThisInDelegateExpression.kt");
+            }
+
+            @Test
             @TestMetadata("delegateInference.kt")
             public void testDelegateInference() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/delegates/delegateInference.kt");
