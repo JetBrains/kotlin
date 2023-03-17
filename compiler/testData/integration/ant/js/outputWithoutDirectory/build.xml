@@ -6,10 +6,9 @@
         <pathelement location="${kotlin.lib}/kotlin-stdlib.jar"/>
       </classpath>
       <arg value="${test.data}/root1/foo.kt"/>
-      <arg value="-Xuse-deprecated-legacy-compiler"/>
+      <arg value="-Xforce-deprecated-legacy-compiler-usage"/>
       <arg value="-output"/>
       <arg value="out.js"/>
-      <sysproperty key="kotlin.js.compiler.legacy.force_enabled" value="true"/>
       <jvmarg value="-noverify"/>
     </java>
   </target>

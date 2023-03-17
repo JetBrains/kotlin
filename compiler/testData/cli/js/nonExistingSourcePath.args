@@ -1,6 +1,5 @@
 not/existing/path
 -no-stdlib
--Xlegacy-deprecated-no-warn
--Xuse-deprecated-legacy-compiler
+-Xforce-deprecated-legacy-compiler-usage
 -output
 $TESTDATA_DIR$

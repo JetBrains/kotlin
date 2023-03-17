@@ -68,14 +68,9 @@ class AnalysisHandlerExtensionTest : TestCaseWithTmpdir() {
         val plugin = writePlugin(klass)
         val args = listOf("-Xplugin=$plugin", mainKt.absolutePath)
         val outputPath = if (compiler is K2JSCompiler)
-            listOf("-Xuse-deprecated-legacy-compiler", "-output", tmpdir.resolve("out.js").absolutePath)
+            listOf("-Xforce-deprecated-legacy-compiler-usage", "-output", tmpdir.resolve("out.js").absolutePath)
         else
             listOf("-d", tmpdir.resolve("out").absolutePath)
-
-        if (compiler is K2JSCompiler) {
-            // TODO: It will be deleted after all of our internal vendors will use the new Kotlin/JS compiler
-            CompilerSystemProperties.KOTLIN_JS_COMPILER_LEGACY_FORCE_ENABLED.value = "true"
-        }
 
         val (output, exitCode) = CompilerTestUtil.executeCompiler(compiler, args + outputPath + extras)
         assertEquals(expectedExitCode, exitCode, output)

@@ -1,6 +1,5 @@
 $TEMP_DIR$
--Xlegacy-deprecated-no-warn
--Xuse-deprecated-legacy-compiler
+-Xforce-deprecated-legacy-compiler-usage
 -no-stdlib
 -output
 $TESTDATA_DIR$

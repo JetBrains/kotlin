@@ -325,7 +325,6 @@ open class NewMultiplatformIT : BaseGradleIT() {
             gradleProperties().appendText(
                 """
                 
-                systemProp.kotlin.js.compiler.legacy.force_enabled=true
                 kotlin.compiler.execution.strategy=in-process
                 """.trimIndent()
             )
@@ -388,7 +387,6 @@ open class NewMultiplatformIT : BaseGradleIT() {
             gradleProperties().appendText(
                 """
                 
-                systemProp.kotlin.js.compiler.legacy.force_enabled=true
                 kotlin.compiler.execution.strategy=in-process
                 """.trimIndent()
             )
@@ -1005,7 +1003,6 @@ open class NewMultiplatformIT : BaseGradleIT() {
         libProject.gradleProperties().appendText(
             """
                 
-                systemProp.kotlin.js.compiler.legacy.force_enabled=true
                 kotlin.compiler.execution.strategy=in-process
                 """.trimIndent()
         )
@@ -1025,7 +1022,6 @@ open class NewMultiplatformIT : BaseGradleIT() {
             gradleProperties().appendText(
                 """
                 
-                systemProp.kotlin.js.compiler.legacy.force_enabled=true
                 kotlin.compiler.execution.strategy=in-process
                 """.trimIndent()
             )
@@ -1511,7 +1507,6 @@ open class NewMultiplatformIT : BaseGradleIT() {
         gradleProperties().appendText(
             """
                 
-                systemProp.kotlin.js.compiler.legacy.force_enabled=true
                 kotlin.compiler.execution.strategy=in-process
                 """.trimIndent()
         )
@@ -1692,7 +1687,6 @@ open class NewMultiplatformIT : BaseGradleIT() {
         gradleProperties().appendText(
             """
                 
-                systemProp.kotlin.js.compiler.legacy.force_enabled=true
                 kotlin.compiler.execution.strategy=in-process
                 """.trimIndent()
         )

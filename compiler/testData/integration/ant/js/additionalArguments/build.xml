@@ -4,7 +4,7 @@
     <target name="build">
         <kotlin2js src="${test.data}/hello.kt" output="${temp}/out.js">
             <compilerarg value="-Xno-inline"/>
-            <compilerarg value="-Xuse-deprecated-legacy-compiler"/>
+            <compilerarg value="-Xforce-deprecated-legacy-compiler-usage"/>
         </kotlin2js>
     </target>
 </project>

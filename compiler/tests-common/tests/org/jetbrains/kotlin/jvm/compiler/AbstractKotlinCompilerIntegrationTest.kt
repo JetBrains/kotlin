@@ -163,13 +163,10 @@ abstract class AbstractKotlinCompilerIntegrationTest : TestCaseWithTmpdir() {
                 args.add("-libraries")
                 args.add(classpath.joinToString(File.pathSeparator))
             }
-            args.add("-Xlegacy-deprecated-no-warn")
-            args.add("-Xuse-deprecated-legacy-compiler")
+            args.add("-Xforce-deprecated-legacy-compiler-usage")
             args.add("-output")
             args.add(output.path)
             args.add("-meta-info")
-            // TODO: It will be deleted after all of our internal vendors will use the new Kotlin/JS compiler
-            CompilerSystemProperties.KOTLIN_JS_COMPILER_LEGACY_FORCE_ENABLED.value = "true"
         } else if (compiler is K2JVMCompiler || compiler is K2MetadataCompiler) {
             if (classpath.isNotEmpty()) {
                 args.add("-classpath")

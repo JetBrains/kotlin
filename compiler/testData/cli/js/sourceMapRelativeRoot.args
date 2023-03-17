@@ -1,14 +1,12 @@
 $TESTDATA_DIR$/sourceMapRelativeRoot/lib/src/lib.kt
--Xlegacy-deprecated-no-warn
--Xuse-deprecated-legacy-compiler
+-Xforce-deprecated-legacy-compiler-usage
 -source-map
 -meta-info
 -output
 $TESTDATA_DIR$/sourceMapRelativeRoot/lib/out/lib.js
 ---
 $TESTDATA_DIR$/sourceMapRelativeRoot/main/src/main.kt
--Xlegacy-deprecated-no-warn
--Xuse-deprecated-legacy-compiler
+-Xforce-deprecated-legacy-compiler-usage
 -libraries
 $TESTDATA_DIR$/sourceMapRelativeRoot/lib/out/
 -source-map

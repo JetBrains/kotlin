@@ -144,10 +144,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
             "kotlinc-js",
             "$testDataDirectory/emptyMain.kt",
             "-nowarn",
-            "-Xlegacy-deprecated-no-warn",
-            "-Xuse-deprecated-legacy-compiler",
-            // TODO: It will be deleted after all of our internal vendors will use the new Kotlin/JS compiler
-            "-D${CompilerSystemProperties.KOTLIN_JS_COMPILER_LEGACY_FORCE_ENABLED.property}=true",
+            "-Xforce-deprecated-legacy-compiler-usage",
             "-output",
             File(tmpdir, "out.js").path,
             environment = mapOf("JAVA_HOME" to KtTestUtil.getJdk8Home().absolutePath)

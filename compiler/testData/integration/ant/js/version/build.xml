@@ -3,7 +3,7 @@
 
   <target name="build">
     <kotlin2js src="${test.data}/root1" output="${temp}/out.js" printVersion="true">
-      <compilerarg value="-Xuse-deprecated-legacy-compiler"/>
+      <compilerarg value="-Xforce-deprecated-legacy-compiler-usage"/>
     </kotlin2js>
   </target>
 </project>

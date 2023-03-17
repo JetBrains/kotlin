@@ -6,6 +6,8 @@ where advanced options include:
   -Xenable-extension-functions-in-externals
                              Enable extensions functions members in external interfaces
   -Xfake-override-validator  Enable IR fake override validator
+  -Xforce-deprecated-legacy-compiler-usage
+                             The flag is used only for our inner infrastructure. It will be removed soon, so it's unsafe to use it nowadays.
   -Xfriend-modules=<path>    Paths to friend modules
   -Xfriend-modules-disabled  Disable internal declaration export
   -Xgenerate-dts             Generate TypeScript declarations .d.ts file alongside JS file. Available in IR backend only.
@@ -37,13 +39,10 @@ where advanced options include:
   -Xir-safe-external-boolean Safe access via Boolean() to Boolean properties in externals to safely cast falsy values.
   -Xir-safe-external-boolean-diagnostic={log|exception}
                              Enable runtime diagnostics when access safely to boolean in external declarations
-  -Xlegacy-deprecated-no-warn Disable warnings of deprecation of legacy compiler
   -Xmetadata-only            Generate *.meta.js and *.kjsm files only
   -Xpartial-linkage          Allow unlinked symbols
   -Xstrict-implicit-export-types Generate strict types for implicitly exported entities inside d.ts files. Available in IR backend only.
   -Xtyped-arrays             Translate primitive arrays to JS typed arrays
-  -Xuse-deprecated-legacy-compiler
-                             Use deprecated legacy compiler without error
   -Xes-classes               Generated JavaScript will use ES2015 classes.
   -Xwasm                     Use experimental WebAssembly compiler backend
   -Xwasm-debug-info          Add debug info to WebAssembly compiled module

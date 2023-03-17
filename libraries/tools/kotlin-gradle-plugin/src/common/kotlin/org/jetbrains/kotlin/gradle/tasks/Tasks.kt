@@ -15,4 +15,3 @@ const val USING_JS_IR_BACKEND_MESSAGE = "Using Kotlin/JS IR backend"
 
 internal inline val <reified T : Task> T.thisTaskProvider: TaskProvider<out T>
     get() = checkNotNull(project.locateTask<T>(name))
-

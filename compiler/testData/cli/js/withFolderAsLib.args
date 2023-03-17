@@ -1,6 +1,5 @@
 $TESTDATA_DIR$/withLib.kt
--Xlegacy-deprecated-no-warn
--Xuse-deprecated-legacy-compiler
+-Xforce-deprecated-legacy-compiler-usage
 -libraries
 $TESTDATA_DIR$/folderAsLib
 -output

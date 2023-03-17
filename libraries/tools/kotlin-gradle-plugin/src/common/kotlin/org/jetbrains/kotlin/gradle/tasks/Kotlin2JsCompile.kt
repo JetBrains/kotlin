@@ -233,11 +233,6 @@ abstract class Kotlin2JsCompile @Inject constructor(
             JsLibraryUtils::isKotlinJavascriptLibrary
         }
 
-    @get:Input
-    internal val jsLegacyNoWarn: Provider<Boolean> = objectFactory.property(
-        PropertiesProvider(project).jsCompilerNoWarn
-    )
-
     @get:Internal
     protected val libraryFilter: (File) -> Boolean
         get() = { file ->
@@ -278,9 +273,9 @@ abstract class Kotlin2JsCompile @Inject constructor(
         }
 
         args.friendModules = friendDependencies.files.joinToString(File.pathSeparator) { it.absolutePath }
+
         if (!isIrBackendEnabled()) {
-            args.legacyDeprecatedNoWarn = true
-            args.useDeprecatedLegacyCompiler = true
+            args.forceDeprecatedLegacyCompilerUsage = true
         }
 
         logger.kotlinDebug("compiling with args ${ArgumentUtils.convertArgumentsToStringList(args)}")
