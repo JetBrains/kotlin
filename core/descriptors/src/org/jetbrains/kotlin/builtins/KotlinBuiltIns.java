@@ -718,8 +718,8 @@ public abstract class KotlinBuiltIns {
     }
 
     @NotNull
-    public SimpleType getVArrayType(@NotNull Variance projectionType, @NotNull KotlinType argument) {
-        List<TypeProjectionImpl> types = Collections.singletonList(new TypeProjectionImpl(projectionType, argument));
+    public SimpleType getVArrayType(@NotNull KotlinType argument) {
+        List<TypeProjectionImpl> types = Collections.singletonList(new TypeProjectionImpl(Variance.INVARIANT, argument));
         return KotlinTypeFactory.simpleNotNullType(
                 TypeAttributesKt.toDefaultAttributes(Annotations.Companion.getEMPTY()),
                 getVArray(),
