@@ -1985,6 +1985,11 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
             runTest("compiler/testData/ir/irText/firProblems/SignatureClash.kt");
         }
 
+        @TestMetadata("SignatureComputationComplexJavaGeneric.kt")
+        public void testSignatureComputationComplexJavaGeneric() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/SignatureComputationComplexJavaGeneric.kt");
+        }
+
         @TestMetadata("SimpleTypeMarker.kt")
         public void testSimpleTypeMarker() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/SimpleTypeMarker.kt");

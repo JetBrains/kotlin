@@ -1,0 +1,16 @@
+class Test<T : Any?> : J<T> {
+  constructor(x: T) /* primary */ {
+    super/*J*/<T>()
+    /* <init>() */
+
+  }
+
+  val x: T
+    field = x
+    get
+
+  fun test(b: B<T>) {
+    b.output(x = <this>.<get-x>())
+  }
+
+}

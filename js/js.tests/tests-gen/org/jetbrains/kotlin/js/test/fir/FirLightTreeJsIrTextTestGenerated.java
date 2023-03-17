@@ -2277,6 +2277,12 @@ public class FirLightTreeJsIrTextTestGenerated extends AbstractFirLightTreeJsIrT
         }
 
         @Test
+        @TestMetadata("SignatureComputationComplexJavaGeneric.kt")
+        public void testSignatureComputationComplexJavaGeneric() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/SignatureComputationComplexJavaGeneric.kt");
+        }
+
+        @Test
         @TestMetadata("SimpleTypeMarker.kt")
         public void testSimpleTypeMarker() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/SimpleTypeMarker.kt");

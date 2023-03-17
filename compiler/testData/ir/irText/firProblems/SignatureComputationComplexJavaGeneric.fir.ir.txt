@@ -1,0 +1,42 @@
+FILE fqName:<root> fileName:/test.kt
+  CLASS CLASS name:Test modality:FINAL visibility:public superTypes:[<root>.J<T of <root>.Test>]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test<T of <root>.Test>
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    CONSTRUCTOR visibility:public <> (x:T of <root>.Test) returnType:<root>.Test<T of <root>.Test> [primary]
+      VALUE_PARAMETER name:x index:0 type:T of <root>.Test
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.J'
+          <T>: T of <root>.Test
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test modality:FINAL visibility:public superTypes:[<root>.J<T of <root>.Test>]'
+    PROPERTY name:x visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.Test visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'x: T of <root>.Test declared in <root>.Test.<init>' type=T of <root>.Test origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:<root>.Test<T of <root>.Test>) returnType:T of <root>.Test
+        correspondingProperty: PROPERTY name:x visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.Test<T of <root>.Test>
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-x> (): T of <root>.Test declared in <root>.Test'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.Test visibility:private [final]' type=T of <root>.Test origin=null
+              receiver: GET_VAR '<this>: <root>.Test<T of <root>.Test> declared in <root>.Test.<get-x>' type=<root>.Test<T of <root>.Test> origin=null
+    FUN name:test visibility:public modality:FINAL <> ($this:<root>.Test<T of <root>.Test>, b:<root>.J.B<T of <root>.Test>) returnType:kotlin.Unit
+      $this: VALUE_PARAMETER name:<this> type:<root>.Test<T of <root>.Test>
+      VALUE_PARAMETER name:b index:0 type:<root>.J.B<T of <root>.Test>
+      BLOCK_BODY
+        CALL 'public open fun output (x: @[EnhancedNullability] T of <root>.Test): kotlin.Unit [fake_override] declared in <root>.J.B' type=kotlin.Unit origin=null
+          $this: GET_VAR 'b: <root>.J.B<T of <root>.Test> declared in <root>.Test.test' type=<root>.J.B<T of <root>.Test> origin=null
+          x: CALL 'public final fun <get-x> (): T of <root>.Test declared in <root>.Test' type=T of <root>.Test origin=GET_PROPERTY
+            $this: GET_VAR '<this>: <root>.Test<T of <root>.Test> declared in <root>.Test.test' type=<root>.Test<T of <root>.Test> origin=null
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.J
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.J
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String [fake_override] declared in <root>.J
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
