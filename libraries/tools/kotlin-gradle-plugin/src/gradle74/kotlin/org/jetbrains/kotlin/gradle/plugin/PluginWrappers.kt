@@ -142,4 +142,6 @@ private fun Project.registerVariantImplementations() {
     val factories = VariantImplementationFactoriesConfigurator.get(gradle)
     factories[MppTestReportHelper.MppTestReportHelperVariantFactory::class] =
         MppTestReportHelperG74.MppTestReportHelperVariantFactoryG74()
+    factories[ProjectIsolationStartParameterAccessor.Factory::class] =
+        ProjectIsolationStartParameterAccessorG74.Factory()
 }

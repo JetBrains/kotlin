@@ -39,7 +39,7 @@ import java.net.URL
 import java.util.*
 
 /**
- * Gradle plugins common variants.
+ * Gradle's plugins common variants.
  *
  * [minimalSupportedGradleVersion] - minimal Gradle version that is supported in this variant
  * [gradleApiVersion] - Gradle API dependency version. Usually should be the same as [minimalSupportedGradleVersion].
@@ -55,7 +55,8 @@ enum class GradlePluginVariant(
     GRADLE_71("gradle71", "7.1", "7.1", "https://docs.gradle.org/7.1.1/javadoc/"),
     GRADLE_74("gradle74", "7.4", "7.4", "https://docs.gradle.org/7.4.2/javadoc/"),
     GRADLE_75("gradle75", "7.5", "7.5", "https://docs.gradle.org/7.5.1/javadoc/"),
-    GRADLE_76("gradle76", "7.6", "7.6", "https://docs.gradle.org/7.6/javadoc/"),
+    GRADLE_76("gradle76", "7.6", "7.6", "https://docs.gradle.org/7.6.1/javadoc/"),
+    GRADLE_80("gradle80", "8.0", "8.0", "https://docs.gradle.org/8.0.2/javadoc/"),
 }
 
 val commonSourceSetName = "common"
@@ -438,7 +439,7 @@ fun Project.createGradlePluginVariant(
     }
 
     configurations.configureEach {
-        if (isCanBeConsumed && this@configureEach.name.startsWith(variantSourceSet.name)) {
+        if (this@configureEach.name.startsWith(variantSourceSet.name)) {
             attributes {
                 attribute(
                     GradlePluginApiVersion.GRADLE_PLUGIN_API_VERSION_ATTRIBUTE,
@@ -694,7 +695,9 @@ fun Project.configureDokkaPublication(
 // Workaround for https://github.com/Kotlin/dokka/issues/2097
 // Gradle 7.6 javadoc does not have published 'package-list' file
 private fun GradleExternalDocumentationLinkBuilder.addWorkaroundForElementList(pluginVariant: GradlePluginVariant) {
-    if (pluginVariant == GradlePluginVariant.GRADLE_76) {
+    if (pluginVariant == GradlePluginVariant.GRADLE_76 ||
+        pluginVariant == GradlePluginVariant.GRADLE_80
+    ) {
         packageListUrl.set(URL("${pluginVariant.gradleApiJavadocUrl}element-list"))
     }
 }

@@ -151,4 +151,6 @@ private fun Project.registerVariantImplementations() {
         KotlinTestReportCompatibilityHelperG70.KotlinTestReportCompatibilityHelperVariantFactoryG70()
     factories[ArtifactTypeAttributeAccessor.ArtifactTypeAttributeAccessorVariantFactory::class] =
         ArtifactTypeAttributeAccessorG70.ArtifactTypeAttributeAccessorVariantFactoryG70()
+    factories[ProjectIsolationStartParameterAccessor.Factory::class] =
+        ProjectIsolationStartParameterAccessorG70.Factory()
 }

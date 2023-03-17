@@ -93,7 +93,7 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
         }
 
         val kotlinGradleBuildServices = KotlinGradleBuildServices.registerIfAbsent(project.gradle).get()
-        if (!isProjectIsolationEnabled(project.gradle)) {
+        if (!project.isProjectIsolationEnabled) {
             kotlinGradleBuildServices.detectKotlinPluginLoadedInMultipleProjects(project, kotlinPluginVersion)
         }
 
@@ -166,6 +166,11 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
         factories.putIfAbsent(
             ArtifactTypeAttributeAccessor.ArtifactTypeAttributeAccessorVariantFactory::class,
             DefaultArtifactTypeAttributeAccessorVariantFactory()
+        )
+
+        factories.putIfAbsent(
+            ProjectIsolationStartParameterAccessor.Factory::class,
+            DefaultProjectIsolationStartParameterAccessorVariantFactory()
         )
     }
 
