@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.konan.blackboxtest.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.ClassLevelProperty
 import org.jetbrains.kotlin.konan.blackboxtest.support.EnforcedHostTarget
 import org.jetbrains.kotlin.konan.blackboxtest.support.EnforcedProperty
-import org.jetbrains.kotlin.konan.blackboxtest.support.group.K2Pipeline
+import org.jetbrains.kotlin.konan.blackboxtest.support.group.FirPipeline
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.UseExtTestCaseGroupProvider
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.UseStandardTestCaseGroupProvider
 import org.jetbrains.kotlin.test.TargetBackend
@@ -34,8 +34,8 @@ fun main() {
 
         testGroup("native/native.tests/tests-gen", "compiler/testData") {
             testClass<AbstractNativeCodegenBoxTest>(
-                suiteTestClassName = "K2NativeCodegenBoxTestGenerated",
-                annotations = listOf(codegenK2(), provider<UseExtTestCaseGroupProvider>(), provider<K2Pipeline>())
+                suiteTestClassName = "FirNativeCodegenBoxTestGenerated",
+                annotations = listOf(codegenK2(), provider<UseExtTestCaseGroupProvider>(), provider<FirPipeline>())
             ) {
                 model("codegen/box", targetBackend = TargetBackend.NATIVE)
                 model("codegen/boxInline", targetBackend = TargetBackend.NATIVE)
@@ -104,7 +104,7 @@ fun main() {
         // Klib contents tests
         testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
             testClass<AbstractNativeKlibContentsTest>(
-                suiteTestClassName = "NativeK1LibContentsTestGenerated",
+                suiteTestClassName = "NativeKLibContentsTestGenerated",
                 annotations = listOf(k1libContents())
             ) {
                 model("klibContents", pattern = "^([^_](.+)).kt$", recursive = true)
@@ -112,8 +112,8 @@ fun main() {
         }
         testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
             testClass<AbstractNativeKlibContentsTest>(
-                suiteTestClassName = "NativeK2LibContentsTestGenerated",
-                annotations = listOf(k2libContents(), provider<K2Pipeline>())
+                suiteTestClassName = "FirNativeKLibContentsTestGenerated",
+                annotations = listOf(k2libContents(), provider<FirPipeline>())
             ) {
                 model("klibContents", pattern = "^([^_](.+)).kt$", recursive = true)
             }

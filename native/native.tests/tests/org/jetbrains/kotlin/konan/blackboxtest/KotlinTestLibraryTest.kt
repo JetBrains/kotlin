@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.konan.blackboxtest
 
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCaseId
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestRunnerType
-import org.jetbrains.kotlin.konan.blackboxtest.support.group.K2Pipeline
+import org.jetbrains.kotlin.konan.blackboxtest.support.group.FirPipeline
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.PredefinedTestCases
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.PredefinedTestCase as TC
 import org.junit.jupiter.api.Tag
@@ -51,7 +51,7 @@ class KotlinTestLibraryTest : AbstractNativeBlackBoxTest() {
         sourceLocations = ["libraries/kotlin.test/common/src/test/kotlin/**.kt"]
     )
 )
-@K2Pipeline
+@FirPipeline
 class KotlinTestK2LibraryTest : AbstractNativeBlackBoxTest() {
     @TestFactory
     fun default() = dynamicTestCase(TestCaseId.Named("default"))
