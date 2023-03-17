@@ -57,7 +57,7 @@ projectTest {
     useAndroidEmulator(this)
 }
 
-val generateAndroidTests by generator("org.jetbrains.kotlin.android.tests.CodegenTestsOnAndroidGenerator")
-
-generateAndroidTests.workingDir = rootDir
-generateAndroidTests.dependsOn(rootProject.tasks.named("dist"))
+val generateAndroidTests by generator("org.jetbrains.kotlin.android.tests.CodegenTestsOnAndroidGenerator") {
+    workingDir = rootDir
+    dependsOn(rootProject.tasks.named("dist"))
+}
