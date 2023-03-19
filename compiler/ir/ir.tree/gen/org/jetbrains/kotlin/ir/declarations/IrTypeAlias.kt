@@ -18,7 +18,8 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
  * A leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.typeAlias
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.typeAlias]
  */
 abstract class IrTypeAlias : IrDeclarationBase(), IrDeclarationWithName,
         IrDeclarationWithVisibility, IrTypeParametersContainer {
@@ -27,7 +28,7 @@ abstract class IrTypeAlias : IrDeclarationBase(), IrDeclarationWithName,
 
     abstract override val symbol: IrTypeAliasSymbol
 
-    abstract val isActual: Boolean
+    abstract var isActual: Boolean
 
     abstract var expandedType: IrType
 

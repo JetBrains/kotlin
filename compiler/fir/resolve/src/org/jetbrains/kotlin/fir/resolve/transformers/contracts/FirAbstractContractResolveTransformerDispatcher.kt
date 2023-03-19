@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
-import org.jetbrains.kotlin.fir.errorTypeFromPrototype
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirContractCallBlock
@@ -26,13 +25,12 @@ import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeContractDescriptionError
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformerDispatcher
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDeclarationsResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirExpressionsResolveTransformer
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
-import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.Name
 
@@ -72,25 +70,23 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
             simpleFunction: FirSimpleFunction,
             data: ResolutionMode
         ): FirSimpleFunction {
-            if (!simpleFunction.hasContractToResolve) {
-                return simpleFunction
-            }
-            val containingDeclaration = context.containerIfAny
-            if (containingDeclaration != null && containingDeclaration !is FirClass) {
-                simpleFunction.replaceReturnTypeRef(
-                    simpleFunction.returnTypeRef.errorTypeFromPrototype(
-                        ConeContractDescriptionError("Local function can not be used in contract description")
-                    )
-                )
-                return simpleFunction
-            }
-            @Suppress("UNCHECKED_CAST")
+            if (!simpleFunction.hasContractToResolve) return simpleFunction
+
             return context.withSimpleFunction(simpleFunction, session) {
                 context.forFunctionBody(simpleFunction, components) {
                     transformContractDescriptionOwner(simpleFunction)
                 }
             }
         }
+
+        override fun transformAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: ResolutionMode): FirAnonymousFunction {
+            if (!anonymousFunction.hasContractToResolve) return anonymousFunction
+
+            return context.forFunctionBody(anonymousFunction, components) {
+                transformContractDescriptionOwner(anonymousFunction)
+            }
+        }
+
 
         override fun transformScript(script: FirScript, data: ResolutionMode): FirScript {
             return script
@@ -213,9 +209,9 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
             val effectsBlock = buildAnonymousFunction {
                 moduleData = session.moduleData
                 origin = FirDeclarationOrigin.Source
-                returnTypeRef = buildImplicitTypeRef()
+                returnTypeRef = FirImplicitTypeRefImplWithoutSource
                 receiverParameter = buildReceiverParameter {
-                    typeRef = buildImplicitTypeRef()
+                    typeRef = FirImplicitTypeRefImplWithoutSource
                 }
                 symbol = FirAnonymousFunctionSymbol()
                 isLambda = true
@@ -258,7 +254,7 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
         }
 
         override fun transformRegularClass(regularClass: FirRegularClass, data: ResolutionMode): FirStatement {
-            context.withRegularClass(regularClass, components, forContracts = true) {
+            context.withRegularClass(regularClass, components) {
                 transformDeclarationContent(regularClass, data)
             }
             return regularClass
@@ -282,7 +278,14 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
         }
 
         override fun transformConstructor(constructor: FirConstructor, data: ResolutionMode): FirConstructor {
-            return constructor
+            if (!constructor.hasContractToResolve) {
+                return constructor
+            }
+            return context.withConstructor(constructor) {
+                context.forConstructorBody(constructor, session) {
+                    transformContractDescriptionOwner(constructor)
+                }
+            }
         }
 
         override fun transformEnumEntry(enumEntry: FirEnumEntry, data: ResolutionMode): FirEnumEntry {
@@ -302,15 +305,13 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
 
 private val FirContractDescriptionOwner.valueParameters: List<FirValueParameter>
     get() = when (this) {
-        is FirSimpleFunction -> valueParameters
-        is FirPropertyAccessor -> valueParameters
+        is FirFunction -> valueParameters
         else -> error()
     }
 
 private val FirContractDescriptionOwner.body: FirBlock
     get() = when (this) {
-        is FirSimpleFunction -> body!!
-        is FirPropertyAccessor -> body!!
+        is FirFunction -> body!!
         else -> error()
     }
 

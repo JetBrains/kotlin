@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.plugin.generators
 
 import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
@@ -30,7 +31,9 @@ class AllPropertiesConstructorMetadataProvider(session: FirSession) : FirDeclara
     override fun provideDeclarationsForClass(klass: FirClass, scopeSession: ScopeSession): List<FirDeclaration> {
         if (!session.predicateBasedProvider.matches(PREDICATE, klass)) return emptyList()
         val scope = klass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false)
-        val properties = scope.getCallableNames().flatMap { scope.getProperties(it) }
+        val properties = scope.getCallableNames()
+            .flatMap { scope.getProperties(it) }
+            .sortedBy { it.containingClassLookupTag() == klass.symbol.toLookupTag() }
         val constructor = createConstructor(klass.symbol, Key) {
             for (property in properties) {
                 valueParameter(property.name, property.resolvedReturnType)

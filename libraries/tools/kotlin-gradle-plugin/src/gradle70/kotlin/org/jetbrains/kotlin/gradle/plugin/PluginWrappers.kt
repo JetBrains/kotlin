@@ -149,4 +149,6 @@ private fun Project.registerVariantImplementations() {
         MppTestReportHelperG70.MppTestReportHelperVariantFactoryG70()
     factories[KotlinTestReportCompatibilityHelper.KotlinTestReportCompatibilityHelperVariantFactory::class] =
         KotlinTestReportCompatibilityHelperG70.KotlinTestReportCompatibilityHelperVariantFactoryG70()
+    factories[ArtifactTypeAttributeAccessor.ArtifactTypeAttributeAccessorVariantFactory::class] =
+        ArtifactTypeAttributeAccessorG70.ArtifactTypeAttributeAccessorVariantFactoryG70()
 }

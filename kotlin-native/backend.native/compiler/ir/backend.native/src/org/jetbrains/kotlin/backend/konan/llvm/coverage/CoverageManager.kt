@@ -6,7 +6,7 @@ package org.jetbrains.kotlin.backend.konan.llvm.coverage
 
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.llvm.LlvmCallable
 import org.jetbrains.kotlin.backend.konan.reportCompilationError
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -88,7 +88,7 @@ internal class CoverageManager(val generationState: NativeGenerationState) {
     /**
      * @return [LLVMCoverageInstrumentation] instance if [irFunction] should be covered.
      */
-    fun tryGetInstrumentation(irFunction: IrFunction?, callSitePlacer: (function: LLVMValueRef, args: List<LLVMValueRef>) -> Unit) =
+    fun tryGetInstrumentation(irFunction: IrFunction?, callSitePlacer: (function: LlvmCallable, args: List<LLVMValueRef>) -> Unit) =
             if (enabled && irFunction != null) {
                 getFunctionRegions(irFunction)?.let { LLVMCoverageInstrumentation(generationState, it, callSitePlacer) }
             } else {

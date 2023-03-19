@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.ir.expressions
 
 /**
  * A non-leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.getSingletonValue
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.getSingletonValue]
  */
 abstract class IrGetSingletonValue : IrDeclarationReference()

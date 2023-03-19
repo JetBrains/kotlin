@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.isJs
+import org.jetbrains.kotlin.platform.isWasm
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.psi.KtFile
@@ -117,6 +118,7 @@ fun TargetPlatform.platformToEnvironmentConfigFiles() = when {
     isJvm() -> EnvironmentConfigFiles.JVM_CONFIG_FILES
     isJs() -> EnvironmentConfigFiles.JS_CONFIG_FILES
     isNative() -> EnvironmentConfigFiles.NATIVE_CONFIG_FILES
+    isWasm() -> EnvironmentConfigFiles.WASM_CONFIG_FILES
     // TODO: is it correct?
     isCommon() -> EnvironmentConfigFiles.METADATA_CONFIG_FILES
     else -> error("Unknown platform: ${this}")

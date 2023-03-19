@@ -11,10 +11,11 @@ package org.jetbrains.kotlin.ir.expressions
 
 /**
  * A non-leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.loop
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.loop]
  */
 abstract class IrLoop : IrExpression() {
-    abstract val origin: IrStatementOrigin?
+    abstract var origin: IrStatementOrigin?
 
     var body: IrExpression? = null
 

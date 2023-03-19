@@ -1,3 +1,6 @@
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
+
 description = "Kotlin Daemon Client"
 
 plugins {
@@ -19,10 +22,7 @@ val nativePlatformVariants = listOf(
 )
 
 dependencies {
-    compileOnly(project(":compiler:util"))
-    compileOnly(project(":compiler:cli-common"))
     compileOnly(project(":daemon-common"))
-    compileOnly(project(":js:js.frontend"))
     compileOnly(commonDependency("net.rubygrapefruit", "native-platform"))
 
     embedded(project(":daemon-common")) { isTransitive = false }
@@ -30,16 +30,16 @@ dependencies {
     nativePlatformVariants.forEach {
         embedded(commonDependency("net.rubygrapefruit", "native-platform", "-$it"))
     }
-    api(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) {
-        isTransitive = false
-    }
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
-    kotlinOptions {
+tasks.withType<KotlinCompilationTask<*>> {
+    compilerOptions {
         // This module is being run from within Gradle, older versions of which only have older kotlin-stdlib in the runtime classpath.
-        apiVersion = "1.4"
-        freeCompilerArgs += "-Xsuppress-version-warnings"
+        @Suppress("DEPRECATION")
+        apiVersion.set(KotlinVersion.KOTLIN_1_4)
+        @Suppress("DEPRECATION")
+        languageVersion.set(KotlinVersion.KOTLIN_1_4)
+        freeCompilerArgs.add("-Xsuppress-version-warnings")
     }
 }
 
@@ -51,7 +51,5 @@ sourceSets {
 publish()
 
 runtimeJar()
-
 sourcesJar()
-
 javadocJar()

@@ -7,6 +7,7 @@ dependencies {
     api(project(":compiler:psi"))
     api(project(":analysis:decompiled:decompiler-to-psi"))
     api(project(":analysis:light-classes-base"))
+    api(project(":analysis:analysis-api-providers"))
     implementation(intellijCore())
 }
 

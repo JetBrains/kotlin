@@ -5,6 +5,7 @@ plugins {
 
 repositories {
     mavenLocal()
+    google()
     mavenCentral()
 }
 

@@ -28,11 +28,7 @@ internal class SymbolLightNoArgConstructor(
     override fun getTypeParameterList(): PsiTypeParameterList? = null
     override fun getTypeParameters(): Array<PsiTypeParameter> = PsiTypeParameter.EMPTY_ARRAY
 
-    private val _identifier: PsiIdentifier by lazyPub {
-        KtLightIdentifier(this, ktDeclaration = null)
-    }
-
-    override fun getNameIdentifier(): PsiIdentifier = _identifier
+    override fun getNameIdentifier(): PsiIdentifier = KtLightIdentifier(this, ktDeclaration = null)
 
     override fun isDeprecated(): Boolean = false
 

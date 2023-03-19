@@ -113,9 +113,9 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return this as? ConeDynamicType
     }
 
-    override fun FlexibleTypeMarker.asRawType(): RawTypeMarker? {
-        require(this is ConeFlexibleType)
-        return this as? ConeRawType
+    override fun KotlinTypeMarker.isRawType(): Boolean {
+        require(this is ConeKotlinType)
+        return this.isRaw()
     }
 
     override fun FlexibleTypeMarker.upperBound(): SimpleTypeMarker {
@@ -268,7 +268,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         }
     }
 
-    override fun TypeConstructorMarker.getParameters(): List<TypeParameterMarker> {
+    override fun TypeConstructorMarker.getParameters(): List<ConeTypeParameterLookupTag> {
         return when (val symbol = toClassLikeSymbol()) {
             is FirAnonymousObjectSymbol -> symbol.fir.typeParameters.map { it.symbol.toLookupTag() }
             is FirRegularClassSymbol -> symbol.fir.typeParameters.map { it.symbol.toLookupTag() }

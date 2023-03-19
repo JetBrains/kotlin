@@ -55,9 +55,23 @@ FILE: propertyWithGetterAndSetter.kt
         public? [RAW_FIR] get(): Int { LAZY_BLOCK }
         public? [RAW_FIR] set([RAW_FIR] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
 
+EXPECT_ACTUAL_MATCHING:
+FILE: propertyWithGetterAndSetter.kt
+    public final [EXPECT_ACTUAL_MATCHING] fun resolveMe(): R|kotlin/Unit| {
+        receive#(withGetterAndSetter#)
+        withGetterAndSetter# = IntegerLiteral(123)
+    }
+    public? final? [RAW_FIR] fun receive([RAW_FIR] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [RAW_FIR] var withGetterAndSetter: Int = LAZY_EXPRESSION
+        public? [RAW_FIR] get(): Int { LAZY_BLOCK }
+        public? [RAW_FIR] set([RAW_FIR] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
+
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: propertyWithGetterAndSetter.kt
-    public final [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| {
+        receive#(withGetterAndSetter#)
+        withGetterAndSetter# = IntegerLiteral(123)
+    }
     public? final? [RAW_FIR] fun receive([RAW_FIR] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] var withGetterAndSetter: Int = LAZY_EXPRESSION
         public? [RAW_FIR] get(): Int { LAZY_BLOCK }
@@ -88,17 +102,6 @@ FILE: propertyWithGetterAndSetter.kt
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: propertyWithGetterAndSetter.kt
     public final [ANNOTATIONS_ARGUMENTS_MAPPING] fun resolveMe(): R|kotlin/Unit| {
-        receive#(withGetterAndSetter#)
-        withGetterAndSetter# = IntegerLiteral(123)
-    }
-    public? final? [RAW_FIR] fun receive([RAW_FIR] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
-    public? final? [RAW_FIR] var withGetterAndSetter: Int = LAZY_EXPRESSION
-        public? [RAW_FIR] get(): Int { LAZY_BLOCK }
-        public? [RAW_FIR] set([RAW_FIR] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
-
-EXPECT_ACTUAL_MATCHING:
-FILE: propertyWithGetterAndSetter.kt
-    public final [EXPECT_ACTUAL_MATCHING] fun resolveMe(): R|kotlin/Unit| {
         receive#(withGetterAndSetter#)
         withGetterAndSetter# = IntegerLiteral(123)
     }

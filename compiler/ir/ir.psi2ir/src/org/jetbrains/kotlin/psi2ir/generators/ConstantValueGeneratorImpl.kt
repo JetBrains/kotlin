@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.lazy.descriptors.getSourceForArgument
 import org.jetbrains.kotlin.resolve.source.getPsi
 
-class ConstantValueGeneratorImpl(
+internal class ConstantValueGeneratorImpl(
     moduleDescriptor: ModuleDescriptor,
     symbolTable: ReferenceSymbolTable,
     typeTranslator: TypeTranslator,

@@ -431,7 +431,7 @@ open class KaptIncrementalWithIsolatingApt : KaptIncrementalIT() {
 
 @DisplayName("Kapt incremental tests with isolating apt with precise compilation outputs backup")
 class KaptIncrementalWithIsolatingAptAndPreciseBackup : KaptIncrementalWithIsolatingApt() {
-    override val defaultBuildOptions = super.defaultBuildOptions.copy(usePreciseOutputsBackup = true)
+    override val defaultBuildOptions = super.defaultBuildOptions.copy(usePreciseOutputsBackup = true, keepIncrementalCompilationCachesInMemory = true)
 }
 
 private const val patternApt = "Processing java sources with annotation processors:"

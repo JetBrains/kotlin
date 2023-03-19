@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.resolve.calls.ConeCompositeConflictResolver
 import org.jetbrains.kotlin.fir.resolve.calls.ConeIntegerOperatorConflictResolver
 import org.jetbrains.kotlin.fir.resolve.calls.ConeOverloadConflictResolver
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 import org.jetbrains.kotlin.resolve.jvm.JvmTypeSpecificityComparator
@@ -25,11 +24,14 @@ object JvmCallConflictResolverFactory : ConeCallConflictResolverFactory() {
         transformerComponents: BodyResolveComponents
     ): ConeCompositeConflictResolver {
         val specificityComparator = JvmTypeSpecificityComparator(components.session.typeContext)
+        // NB: Please, be aware that adding might not necessarily help you because ConeOverloadConflictResolver doesn't just filter out
+        // less specific candidates, but leave the set the same if there are more than one same-specifity candidates.
+        // Thus, in that case, your new ConeCallConflictResolver might get all the candidates in that case.
         return ConeCompositeConflictResolver(
             ConeOverloadConflictResolver(specificityComparator, components, transformerComponents),
             ConeEquivalentCallConflictResolver(specificityComparator, components, transformerComponents),
-            JvmPlatformOverloadsConflictResolver(specificityComparator, components, transformerComponents),
-            ConeIntegerOperatorConflictResolver(specificityComparator, components, transformerComponents)
+            JvmPlatformOverloadsConflictResolver(components.session),
+            ConeIntegerOperatorConflictResolver,
         )
     }
 }

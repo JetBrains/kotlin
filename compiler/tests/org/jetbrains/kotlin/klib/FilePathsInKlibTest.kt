@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.klib
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiManager
+import org.jetbrains.kotlin.backend.common.CommonJsKLibResolver
 import org.jetbrains.kotlin.backend.common.serialization.codedInputStream
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
@@ -102,7 +103,7 @@ class FilePathsInKlibTest : CodegenTestCase() {
     private fun File.md5(): Long = readBytes().md5()
 
     private fun File.loadKlibFilePaths(): List<String> {
-        val libs = jsResolveLibraries(listOf(runtimeKlibPath, canonicalPath), DummyLogger).getFullList()
+        val libs = CommonJsKLibResolver.resolve(listOf(runtimeKlibPath, canonicalPath), DummyLogger).getFullList()
         val lib = libs.last()
         val fileSize = lib.fileCount()
         val extReg = ExtensionRegistryLite.newInstance()

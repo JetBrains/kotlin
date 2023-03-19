@@ -1,0 +1,73 @@
+FILE: a.kt
+    package a
+
+    @R|kotlin/Suppress|() <DANGLING MODIFIER: Top level declaration expected>FILE: b.kt
+    package b
+
+    public abstract interface I : R|kotlin/Any| {
+        public open fun <T> f(): <ERROR TYPE REF: Qualified expression with unexpected selector> {
+            ^f <ERROR TYPE REF: Qualified expression with unexpected selector>ERROR_EXPR(The expression cannot be a selector (occur after a dot))String()
+        }
+
+        public final class C : R|b/I| {
+            public constructor(): R|b/I.C| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+FILE: c.kt
+    package c
+
+    public abstract interface I : R|kotlin/Any| {
+        public open fun <T : R|kotlin/String|> f(x: R|T?|): R|T| {
+            ^f R|<local>/x| ?: String(OK).<Unresolved name: strip>#()?.{ $subj$.<Unresolved name: substringBeforeLast>#(Char(61334), R|c/C.C|().R|c/I.f<Inapplicable(INAPPLICABLE): c/I.f>#|<R|kotlin/Long|>(Int(-62))) }!!
+        }
+
+    }
+    public final class C : R|c/I| {
+        public constructor(): R|c/C| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun box(): R|kotlin/String| {
+        ^box R|c/C.C|().R|c/I.f|<R|kotlin/String|>(Null(null))
+    }
+FILE: d.kt
+    package d
+
+    public abstract interface I : R|kotlin/Any| {
+        public open fun <T> f(): <ERROR TYPE REF: cycle> {
+            ^f R|d/I.C.C<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): d/I.C.C>#|(ERROR_EXPR(Argument is absent)).R|d/I.f<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): d/I.f>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(ERROR_EXPR(No right operand))
+        }
+
+        public final class C : R|d/I| {
+            public constructor(): R|d/I.C| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+FILE: e.kt
+    package e
+
+    public final class A<E> : R|kotlin/Any| {
+        public constructor<E>(): R|e/A<E>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final var bar: <ERROR TYPE REF: Expression 'bar' of type 'ERROR CLASS: cycle' cannot be invoked as a function> = R|e/A.EmptyContinuation.EmptyContinuation<Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): e/A.EmptyContinuation.EmptyContinuation>#|(ERROR_EXPR(Argument is absent)).<Expression 'bar' of type 'ERROR CLASS: cycle' cannot be invoked as a function>#(ERROR_EXPR(No right operand))
+            public get(): <ERROR TYPE REF: Expression 'bar' of type 'ERROR CLASS: cycle' cannot be invoked as a function>
+            public set(value: <ERROR TYPE REF: Expression 'bar' of type 'ERROR CLASS: cycle' cannot be invoked as a function>): R|kotlin/Unit|
+
+        public final class EmptyContinuation : R|e/A<ERROR CLASS: Incomplete code>| {
+            public constructor(): R|e/A.EmptyContinuation| {
+                super<R|e/A<ERROR CLASS: Incomplete code>|>()
+            }
+
+        }
+
+    }

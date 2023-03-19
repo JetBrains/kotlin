@@ -6,4 +6,4 @@ The generator is run on every build. If you change something in the model or in 
 
 The model is declared in [IrTree.kt](src/org/jetbrains/kotlin/ir/generator/IrTree.kt).
 
-You can navigate to the model from a generated `Ir*` class by following the `@sample` link in its kdoc.
+You can navigate to the model from a generated `Ir*` class by following the `Generated from` link in its kdoc.

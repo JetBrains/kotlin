@@ -20,7 +20,7 @@ class AnnotationLoader {
   fun loadAnnotation(): Visitor? {
     return { // BLOCK
       local class <no name provided> : Visitor {
-        private constructor() /* primary */ {
+        constructor() /* primary */ {
           super/*Any*/()
           /* <init>() */
 
@@ -32,7 +32,7 @@ class AnnotationLoader {
         override fun visitArray(): Visitor? {
           return { // BLOCK
             local class <no name provided> : Visitor {
-              private constructor() /* primary */ {
+              constructor() /* primary */ {
                 super/*Any*/()
                 /* <init>() */
 
@@ -52,7 +52,7 @@ class AnnotationLoader {
           val visitor: Visitor = CHECK_NOT_NULL<Visitor>(arg0 = <this>.loadAnnotation())
           return { // BLOCK
             local class <no name provided> : Visitor {
-              private constructor() /* primary */ {
+              constructor() /* primary */ {
                 super/*Any*/()
                 /* <init>() */
 

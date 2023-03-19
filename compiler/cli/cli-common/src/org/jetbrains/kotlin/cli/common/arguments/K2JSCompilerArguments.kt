@@ -590,20 +590,10 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
         }
 
     @Argument(
-        value = "-Xuse-deprecated-legacy-compiler",
-        description = "Use deprecated legacy compiler without error"
+        value = "-Xforce-deprecated-legacy-compiler-usage",
+        description = "The flag is used only for our inner infrastructure. It will be removed soon, so it's unsafe to use it nowadays."
     )
-    var useDeprecatedLegacyCompiler = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
-        value = "-Xlegacy-deprecated-no-warn",
-        description = "Disable warnings of deprecation of legacy compiler"
-    )
-    var legacyDeprecatedNoWarn = false
+    var forceDeprecatedLegacyCompilerUsage = false
         set(value) {
             checkFrozen()
             field = value
@@ -622,11 +612,6 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
         collector.deprecationWarn(enableJsScripting, false, "-Xenable-js-scripting")
         collector.deprecationWarn(irBaseClassInMetadata, false, "-Xir-base-class-in-metadata")
         collector.deprecationWarn(irNewIr2Js, true, "-Xir-new-ir2js")
-
-        if (languageVersion >= LanguageVersion.KOTLIN_1_9 && CompilerSystemProperties.KOTLIN_JS_COMPILER_LEGACY_FORCE_ENABLED.value != "true") {
-            collector.deprecationWarn(legacyDeprecatedNoWarn, false, "-Xlegacy-deprecated-no-warn")
-            collector.deprecationWarn(useDeprecatedLegacyCompiler, false, "-Xuse-deprecated-legacy-compiler")
-        }
 
         return super.configureAnalysisFlags(collector, languageVersion).also {
             it[allowFullyQualifiedNameInKClass] = wasm && wasmKClassFqn //Only enabled WASM BE supports this flag

@@ -7,9 +7,7 @@ package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
-import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractImportingScope
@@ -23,7 +21,9 @@ class FirDefaultParametersResolver : FirSessionComponent {
         originScope: FirScope?,
         index: Int,
     ): Boolean {
-        if (valueParameter.defaultValue != null) return true
+        if (valueParameter.defaultValue != null || function.symbol.getSingleCompatibleExpectForActualOrNull().containsDefaultValue(index)) {
+            return true
+        }
         if (function !is FirSimpleFunction) return false
         val symbol = function.symbol
         val typeScope = when (originScope) {
@@ -43,7 +43,9 @@ class FirDefaultParametersResolver : FirSessionComponent {
         var result = false
 
         typeScope.processOverriddenFunctions(symbol) { overridden ->
-            if (overridden.fir.valueParameters[index].defaultValue != null) {
+            if (overridden.containsDefaultValue(index) ||
+                overridden.getSingleCompatibleExpectForActualOrNull().containsDefaultValue(index)
+            ) {
                 result = true
                 return@processOverriddenFunctions ProcessorAction.STOP
             }

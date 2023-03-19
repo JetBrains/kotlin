@@ -217,11 +217,17 @@ abstract class AbstractFirTreeImplementationConfigurator {
 
             var needAcceptAndTransform: Boolean = true
 
+            var notNull: Boolean = false
+
             fun applyConfiguration() {
                 field.withGetter = withGetter
                 field.customSetter = customSetter
                 isMutable?.let { field.isMutable = it }
                 field.needAcceptAndTransform = needAcceptAndTransform
+
+                if (notNull) {
+                    field.notNull = true
+                }
                 when {
                     value != null -> field.defaultValueInImplementation = value
                     delegate != null -> {

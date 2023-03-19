@@ -16,7 +16,8 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
  * A leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.property
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.property]
  */
 abstract class IrProperty : IrDeclarationBase(), IrPossiblyExternalDeclaration,
         IrOverridableDeclaration<IrPropertySymbol>, IrMetadataSourceOwner, IrAttributeContainer,
@@ -26,17 +27,17 @@ abstract class IrProperty : IrDeclarationBase(), IrPossiblyExternalDeclaration,
 
     abstract override val symbol: IrPropertySymbol
 
-    abstract val isVar: Boolean
+    abstract var isVar: Boolean
 
-    abstract val isConst: Boolean
+    abstract var isConst: Boolean
 
-    abstract val isLateinit: Boolean
+    abstract var isLateinit: Boolean
 
-    abstract val isDelegated: Boolean
+    abstract var isDelegated: Boolean
 
-    abstract val isExpect: Boolean
+    abstract var isExpect: Boolean
 
-    abstract override val isFakeOverride: Boolean
+    abstract override var isFakeOverride: Boolean
 
     abstract var backingField: IrField?
 

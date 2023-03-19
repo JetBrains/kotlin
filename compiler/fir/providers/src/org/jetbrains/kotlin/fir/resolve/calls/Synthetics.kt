@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
+import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.SyntheticSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -39,20 +41,23 @@ class FirSyntheticPropertiesScope private constructor(
     val session: FirSession,
     private val baseScope: FirTypeScope,
     private val dispatchReceiverType: ConeKotlinType,
-    private val syntheticNamesProvider: FirSyntheticNamesProvider
+    private val syntheticNamesProvider: FirSyntheticNamesProvider,
+    private val returnTypeCalculator: ReturnTypeCalculator?,
 ) : FirContainingNamesAwareScope() {
     companion object {
         fun createIfSyntheticNamesProviderIsDefined(
             session: FirSession,
             dispatchReceiverType: ConeKotlinType,
-            baseScope: FirTypeScope
+            baseScope: FirTypeScope,
+            returnTypeCalculator: ReturnTypeCalculator? = null,
         ): FirSyntheticPropertiesScope? {
             val syntheticNamesProvider = session.syntheticNamesProvider ?: return null
             return FirSyntheticPropertiesScope(
                 session,
                 baseScope,
                 dispatchReceiverType,
-                syntheticNamesProvider
+                syntheticNamesProvider,
+                returnTypeCalculator,
             )
         }
     }
@@ -103,7 +108,14 @@ class FirSyntheticPropertiesScope private constructor(
         if (getter.typeParameters.isNotEmpty()) return
         if (getter.valueParameters.isNotEmpty()) return
         if (getter.isStatic) return
-        val getterReturnType = (getter.returnTypeRef as? FirResolvedTypeRef)?.type
+
+        var getterReturnType = (getter.returnTypeRef as? FirResolvedTypeRef)?.type
+        if (getterReturnType == null && needCheckForSetter) {
+            // During implicit body resolve phase, we can encounter a reference to a not yet resolved Kotlin class that inherits a
+            // synthetic property from a Java class. In that case, resolve the return type here, ignoring error types (e.g. cycles).
+            getterReturnType = returnTypeCalculator?.tryCalculateReturnTypeOrNull(getter)?.type?.takeUnless { it is ConeErrorType }
+        }
+
         if ((getterReturnType as? ConeClassLikeType)?.lookupTag?.classId == StandardClassIds.Unit) return
 
         if (!getterSymbol.hasJavaOverridden()) return
@@ -118,26 +130,18 @@ class FirSyntheticPropertiesScope private constructor(
                 val parameter = setter.valueParameters.singleOrNull() ?: return
                 if (setter.typeParameters.isNotEmpty() || setter.isStatic) return
                 val parameterType = (parameter.returnTypeRef as? FirResolvedTypeRef)?.type ?: return
-
-                if (!setterTypeIsConsistentWithGetterType(getterSymbol, parameterType, baseScope)) return
+                if (!setterTypeIsConsistentWithGetterType(propertyName, getterSymbol, setterSymbol, parameterType)) return
                 matchingSetter = setterSymbol.fir
             })
         }
 
-        val classLookupTag = getterSymbol.originalOrSelf().dispatchReceiverClassLookupTagOrNull()
-        val packageName = classLookupTag?.classId?.packageFqName ?: getterSymbol.callableId.packageName
-        val className = classLookupTag?.classId?.relativeClassName
-
-        val property = buildSyntheticProperty {
-            moduleData = session.moduleData
-            name = propertyName
-            symbol = FirSimpleSyntheticPropertySymbol(
-                getterId = getterSymbol.callableId,
-                propertyId = CallableId(packageName, className, propertyName)
+        val property = buildSyntheticProperty(propertyName, getter, matchingSetter)
+        getter.originalForSubstitutionOverride?.let {
+            property.originalForSubstitutionOverrideAttr = buildSyntheticProperty(
+                propertyName,
+                it,
+                matchingSetter?.originalForSubstitutionOverride ?: matchingSetter
             )
-            delegateGetter = getter
-            delegateSetter = matchingSetter
-            deprecationsProvider = getDeprecationsProviderFromAccessors(session, getter, matchingSetter)
         }
         val syntheticSymbol = property.symbol
         (baseScope as? FirUnstableSmartcastTypeScope)?.apply {
@@ -148,22 +152,78 @@ class FirSyntheticPropertiesScope private constructor(
         processor(syntheticSymbol)
     }
 
+    private fun buildSyntheticProperty(propertyName: Name, getter: FirSimpleFunction, setter: FirSimpleFunction?): FirSyntheticProperty {
+        val classLookupTag = getter.symbol.originalOrSelf().dispatchReceiverClassLookupTagOrNull()
+        val packageName = classLookupTag?.classId?.packageFqName ?: getter.symbol.callableId.packageName
+        val className = classLookupTag?.classId?.relativeClassName
+
+        return buildSyntheticProperty {
+            moduleData = session.moduleData
+            name = propertyName
+            symbol = FirSimpleSyntheticPropertySymbol(
+                getterId = getter.symbol.callableId,
+                propertyId = CallableId(packageName, className, propertyName)
+            )
+            delegateGetter = getter
+            delegateSetter = setter
+            deprecationsProvider = getDeprecationsProviderFromAccessors(session, getter, setter)
+        }
+    }
+
     private fun setterTypeIsConsistentWithGetterType(
+        propertyName: Name,
         getterSymbol: FirNamedFunctionSymbol,
-        parameterType: ConeKotlinType,
-        scopeOfGetter: FirTypeScope
+        setterSymbol: FirNamedFunctionSymbol,
+        setterParameterType: ConeKotlinType
     ): Boolean {
         val getterReturnType = getterSymbol.resolvedReturnTypeRef.type
-        if (AbstractTypeChecker.equalTypes(session.typeContext, getterReturnType, parameterType)) return true
-        if (!AbstractTypeChecker.isSubtypeOf(session.typeContext, getterReturnType, parameterType)) return false
+        if (AbstractTypeChecker.equalTypes(session.typeContext, getterReturnType, setterParameterType)) return true
+        if (!AbstractTypeChecker.isSubtypeOf(session.typeContext, getterReturnType, setterParameterType)) return false
+
         /*
-         * Here we search for some getter in overrides hierarchy which type is consistent with type of setter
+         * If type of setter parameter is subtype of getter return type, we need to check corresponding "overridden" synthetic
+         *   properties from parent classes. If some of them has this setter or its overridden as base for setter, then current
+         *   setterSymbol can be used as setter for corresponding getterSymbol
+         *
+         * See corresponding code in FE 1.0 in `SyntheticJavaPropertyDescriptor.isGoodSetMethod`
+         * Note that FE 1.0 looks through overrides just ones (by setter hierarchy), but FIR does twice (for setter and getter)
+         *   This is needed because FIR does not create fake overrides for all inherited methods of class, so there may be a
+         *   situation, when in inheritor class only getter is overridden, and setter does not have overriddens at all
+         *
+         * class Base {
+         *     public Object getX() {...}
+         *     public Object setX(Object x) {...} // setterSymbol
+         * }
+         *
+         * class Derived extends Base {
+         *     public String getX() {...} // getterSymbol
+         * //  public fake-override Object setX(Object x) {...} // exist in FE 1.0 but not in FIR
+         * }
          */
-        for ((overriddenGetter, scope) in scopeOfGetter.getDirectOverriddenFunctionsWithBaseScope(getterSymbol)) {
-            val foundGoodOverride = setterTypeIsConsistentWithGetterType(overriddenGetter, parameterType, scope)
-            if (foundGoodOverride) return true
+
+        fun processOverrides(symbolToStart: FirNamedFunctionSymbol, setterSymbolToCompare: FirNamedFunctionSymbol?): Boolean {
+            var hasMatchingSetter = false
+            baseScope.processDirectOverriddenFunctionsWithBaseScope(symbolToStart) l@{ symbol, scope ->
+                if (hasMatchingSetter) return@l ProcessorAction.STOP
+                val baseDispatchReceiverType = symbol.dispatchReceiverType ?: return@l ProcessorAction.NEXT
+                val syntheticScope = FirSyntheticPropertiesScope(session, scope, baseDispatchReceiverType, syntheticNamesProvider, returnTypeCalculator)
+                val baseProperties = syntheticScope.getProperties(propertyName)
+                val propertyFound = baseProperties.any {
+                    val baseProperty = it.fir
+                    baseProperty is FirSyntheticProperty && baseProperty.setter?.delegate?.symbol == (setterSymbolToCompare ?: symbol)
+                }
+                if (propertyFound) {
+                    hasMatchingSetter = true
+                    ProcessorAction.STOP
+                } else {
+                    ProcessorAction.NEXT
+                }
+            }
+            return hasMatchingSetter
         }
-        return false
+
+        return processOverrides(setterSymbol, setterSymbolToCompare = null)
+                || processOverrides(getterSymbol, setterSymbolToCompare = setterSymbol)
     }
 
     private fun FirNamedFunctionSymbol.hasJavaOverridden(): Boolean {

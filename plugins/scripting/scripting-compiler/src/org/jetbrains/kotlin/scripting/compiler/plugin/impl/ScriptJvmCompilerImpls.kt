@@ -7,8 +7,7 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.checkKotlinPackageUsage
+import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.fir.reportToMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
@@ -26,12 +25,8 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
-import org.jetbrains.kotlin.fir.FirModuleDataImpl
-import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
-import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.pipeline.*
-import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.Name
@@ -39,7 +34,6 @@ import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptCompilerProxy
 import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.ScriptsCompilationDependencies
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.scriptDefinitionProviderService
@@ -108,16 +102,17 @@ private fun withScriptCompilationCache(
     messageCollector: ScriptDiagnosticsMessageCollector,
     body: () -> ResultWithDiagnostics<CompiledScript>
 ): ResultWithDiagnostics<CompiledScript> {
-    val cache = scriptCompilationConfiguration[ScriptCompilationConfiguration.hostConfiguration]?.get(ScriptingHostConfiguration.jvm.compilationCache)
+    val cache = scriptCompilationConfiguration[ScriptCompilationConfiguration.hostConfiguration]
+        ?.get(ScriptingHostConfiguration.jvm.compilationCache)
 
     val cached = cache?.get(script, scriptCompilationConfiguration)
 
-    return if (cached != null) cached.asSuccess(messageCollector.diagnostics)
-    else body().also {
-        if (cache != null && it is ResultWithDiagnostics.Success) {
-            cache.store(it.value, script, scriptCompilationConfiguration)
+    return cached?.asSuccess(messageCollector.diagnostics)
+        ?: body().also {
+            if (cache != null && it is ResultWithDiagnostics.Success) {
+                cache.store(it.value, script, scriptCompilationConfiguration)
+            }
         }
-    }
 }
 
 private fun compileImpl(
@@ -312,7 +307,6 @@ private fun doCompileWithK2(
     messageCollector: ScriptDiagnosticsMessageCollector,
     getScriptConfiguration: (KtFile) -> ScriptCompilationConfiguration
 ): ResultWithDiagnostics<KJvmCompiledScript> {
-
     val syntaxErrors = sourceFiles.fold(false) { errorsFound, ktFile ->
         AnalyzerWithCompilerReport.reportSyntaxErrors(ktFile, messageCollector).isHasErrors or errorsFound
     }
@@ -337,63 +331,44 @@ private fun doCompileWithK2(
 
     val compilerInput = ModuleCompilerInput(
         targetId,
-        CommonPlatforms.defaultCommonPlatform, emptyList(),
-        JvmPlatforms.unspecifiedJvmPlatform, sources,
+        GroupedKtSources(platformSources = sources, commonSources = emptySet(), sourcesByModuleName = emptyMap()),
+        CommonPlatforms.defaultCommonPlatform,
+        JvmPlatforms.unspecifiedJvmPlatform,
         kotlinCompilerConfiguration
     )
 
     val projectEnvironment = context.environment.toAbstractProjectEnvironment()
     val compilerEnvironment = ModuleCompilerEnvironment(projectEnvironment, diagnosticsReporter)
 
-    val sourcesScope = compilerEnvironment.projectEnvironment.getSearchScopeBySourceFiles(sources)
-    val sessionProvider = FirProjectSessionProvider()
-    val extendedAnalysisMode = kotlinCompilerConfiguration.getBoolean(CommonConfigurationKeys.USE_FIR_EXTENDED_CHECKERS)
-
     var librariesScope = projectEnvironment.getSearchScopeForProjectLibraries()
-    val providerAndScopeForIncrementalCompilation = createContextForIncrementalCompilation(
+    val incrementalCompilationScope = createIncrementalCompilationScope(
         compilerInput.configuration,
         projectEnvironment,
-        sourcesScope,
-        emptyList(),
-        null
-    )?.also { (_, _, precompiledBinariesFileScope) ->
-        precompiledBinariesFileScope?.let { librariesScope -= it }
-    }
-    val libraryList = createFirLibraryListAndSession(
-        targetId.name,
+        incrementalExcludesScope = null
+    )?.also { librariesScope -= it }
+    val extensionRegistrars = (projectEnvironment as? VfsBasedProjectEnvironment)
+        ?.let { FirExtensionRegistrar.getInstances(it.project) }
+        .orEmpty()
+
+    val rootModuleName = targetId.name
+    val libraryList = createLibraryListForJvm(
+        rootModuleName,
         kotlinCompilerConfiguration,
-        projectEnvironment,
-        scope = projectEnvironment.getSearchScopeForProjectLibraries(),
-        librariesScope = librariesScope,
-        friendPaths = emptyList(),
-        sessionProvider
+        friendPaths = emptyList()
     )
-    val moduleData = FirModuleDataImpl(
-        Name.identifier(targetId.name),
-        libraryList.regularDependencies,
-        listOf(),
-        libraryList.friendsDependencies,
-        JvmPlatforms.unspecifiedJvmPlatform,
-        JvmPlatformAnalyzerServices
-    )
-    val session = FirJvmSessionFactory.createModuleBasedSession(
-        moduleData,
-        sessionProvider,
-        sourcesScope,
-        projectEnvironment,
-        providerAndScopeForIncrementalCompilation,
-        extensionRegistrars = (projectEnvironment as? VfsBasedProjectEnvironment)?.let { FirExtensionRegistrar.getInstances(it.project) }
-            ?: emptyList(),
-        kotlinCompilerConfiguration.languageVersionSettings,
-        lookupTracker = kotlinCompilerConfiguration.get(CommonConfigurationKeys.LOOKUP_TRACKER),
-        enumWhenTracker = kotlinCompilerConfiguration.get(CommonConfigurationKeys.ENUM_WHEN_TRACKER),
-        needRegisterJavaElementFinder = true,
-        registerExtraComponents = {},
-    ) {
-        if (extendedAnalysisMode) {
-            registerExtendedCommonCheckers()
+    val session = prepareJvmSessions(
+        sourceFiles, kotlinCompilerConfiguration, projectEnvironment, Name.identifier(rootModuleName), extensionRegistrars,
+        librariesScope, libraryList, isCommonSourceForPsi, fileBelongsToModuleForPsi,
+        createProviderAndScopeForIncrementalCompilation = { files ->
+            createContextForIncrementalCompilation(
+                compilerInput.configuration,
+                projectEnvironment,
+                compilerEnvironment.projectEnvironment.getSearchScopeBySourceFiles(files.map { KtPsiSourceFile(it) }),
+                emptyList(),
+                incrementalCompilationScope
+            )
         }
-    }
+    ).single().session
 
     session.scriptDefinitionProviderService?.run {
         definitionProvider = ScriptDefinitionProvider.getInstance(context.environment.project)
@@ -406,7 +381,7 @@ private fun doCompileWithK2(
     // checkers
     session.runCheckers(scopeSession, fir, diagnosticsReporter)
 
-    val analysisResults = FirResult(ModuleCompilerAnalyzedOutput(session, scopeSession, fir), null)
+    val analysisResults = FirResult(listOf(ModuleCompilerAnalyzedOutput(session, scopeSession, fir)))
 
     if (diagnosticsReporter.hasErrors) {
         diagnosticsReporter.reportToMessageCollector(messageCollector, renderDiagnosticName)

@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.sourceFiles.LightTreeFile
+import org.jetbrains.kotlin.test.FirParser
 
 abstract class AbstractFirAnalyzerFacade {
     abstract val scopeSession: ScopeSession
@@ -45,7 +46,7 @@ class FirAnalyzerFacade(
     val ktFiles: Collection<KtFile> = emptyList(), // may be empty if light tree mode enabled
     val lightTreeFiles: Collection<LightTreeFile> = emptyList(), // may be empty if light tree mode disabled
     val irGeneratorExtensions: Collection<IrGenerationExtension>,
-    val useLightTree: Boolean = false,
+    val parser: FirParser,
     val enablePluginPhases: Boolean = false,
     val generateSignatures: Boolean = false
 ) : AbstractFirAnalyzerFacade() {
@@ -59,18 +60,21 @@ class FirAnalyzerFacade(
     private fun buildRawFir() {
         if (firFiles != null) return
         val firProvider = (session.firProvider as FirProviderImpl)
-        firFiles = if (useLightTree) {
-            val builder = LightTree2Fir(session, firProvider.kotlinScopeProvider)
-            lightTreeFiles.map {
-                builder.buildFirFile(it.lightTree, it.sourceFile, it.linesMapping).also { firFile ->
-                    firProvider.recordFile(firFile)
+        firFiles = when (parser) {
+            FirParser.LightTree -> {
+                val builder = LightTree2Fir(session, firProvider.kotlinScopeProvider)
+                lightTreeFiles.map {
+                    builder.buildFirFile(it.lightTree, it.sourceFile, it.linesMapping).also { firFile ->
+                        firProvider.recordFile(firFile)
+                    }
                 }
             }
-        } else {
-            val builder = RawFirBuilder(session, firProvider.kotlinScopeProvider)
-            ktFiles.map {
-                builder.buildFirFile(it).also { firFile ->
-                    firProvider.recordFile(firFile)
+            FirParser.Psi -> {
+                val builder = RawFirBuilder(session, firProvider.kotlinScopeProvider)
+                ktFiles.map {
+                    builder.buildFirFile(it).also { firFile ->
+                        firProvider.recordFile(firFile)
+                    }
                 }
             }
         }

@@ -12,7 +12,16 @@ import org.jetbrains.kotlin.fir.resolve.FirSamResolver
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.name.StandardClassIds.Byte
+import org.jetbrains.kotlin.name.StandardClassIds.Double
+import org.jetbrains.kotlin.name.StandardClassIds.Float
+import org.jetbrains.kotlin.name.StandardClassIds.Int
+import org.jetbrains.kotlin.name.StandardClassIds.Long
+import org.jetbrains.kotlin.name.StandardClassIds.Short
+import org.jetbrains.kotlin.name.StandardClassIds.UByte
+import org.jetbrains.kotlin.name.StandardClassIds.UInt
+import org.jetbrains.kotlin.name.StandardClassIds.ULong
+import org.jetbrains.kotlin.name.StandardClassIds.UShort
 import org.jetbrains.kotlin.resolve.calls.results.*
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.requireOrDescribe
@@ -67,45 +76,28 @@ abstract class AbstractConeCallConflictResolver(
             requireOrDescribe(specific is ConeKotlinType, specific)
             requireOrDescribe(general is ConeKotlinType, general)
 
-            // TODO: support unsigned types
-            // see OverloadingConflictResolver.kt:294
-
-            val int = StandardClassIds.Int
-            val long = StandardClassIds.Long
-            val byte = StandardClassIds.Byte
-            val short = StandardClassIds.Short
-
-            val uInt = StandardClassIds.UInt
-            val uLong = StandardClassIds.ULong
-            val uByte = StandardClassIds.UByte
-            val uShort = StandardClassIds.UShort
-
             val specificClassId = specific.lowerBoundIfFlexible().classId ?: return false
             val generalClassId = general.upperBoundIfFlexible().classId ?: return false
 
-
             // int >= long, int >= short, short >= byte
 
-            when {
-                //TypeUtils.equalTypes(specific, _double) && TypeUtils.equalTypes(general, _float) -> return true
-                specificClassId == int -> {
-                    when (generalClassId) {
-                        long -> return true
-                        byte -> return true
-                        short -> return true
-                    }
-                }
-                specificClassId == short && generalClassId == byte -> return true
-                specificClassId == uInt -> {
-                    when (generalClassId) {
-                        uLong -> return true
-                        uByte -> return true
-                        uShort -> return true
-                    }
-                }
-                specificClassId == uShort && generalClassId == uByte -> return true
+            if (specificClassId == Int) {
+                return generalClassId == Long || generalClassId == Short || generalClassId == Byte
+            } else if (specificClassId == Short && generalClassId == Byte) {
+                return true
             }
-            return false
+
+            // uint >= ulong, uint >= ushort, ushort >= ubyte
+
+            if (specificClassId == UInt) {
+                return generalClassId == ULong || generalClassId == UShort || generalClassId == UByte
+            } else if (specificClassId == UShort && generalClassId == UByte) {
+                return true
+            }
+
+            // double >= float
+
+            return specificClassId == Double && generalClassId == Float
         }
     }
 

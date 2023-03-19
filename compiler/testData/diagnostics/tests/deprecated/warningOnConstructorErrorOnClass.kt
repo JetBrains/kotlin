@@ -1,4 +1,3 @@
-// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // KT-15245 Report deprecation on associated declarations if level is greater than the deprecation on the declaration itself
 
 @Deprecated("error", level = DeprecationLevel.ERROR)

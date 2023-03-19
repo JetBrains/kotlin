@@ -28,8 +28,8 @@ class IrGetFieldImpl(
     override val endOffset: Int,
     override val symbol: IrFieldSymbol,
     override var type: IrType,
-    override val origin: IrStatementOrigin? = null,
-    override val superQualifierSymbol: IrClassSymbol? = null,
+    override var origin: IrStatementOrigin? = null,
+    override var superQualifierSymbol: IrClassSymbol? = null,
 ) : IrGetField() {
     constructor(
         startOffset: Int, endOffset: Int,

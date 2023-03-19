@@ -272,6 +272,7 @@
 /libraries/tools/atomicfu/ "Kotlin Libraries"
 /libraries/tools/binary-compatibility-validator/ "Kotlin Libraries"
 /libraries/tools/dukat/ "Kotlin JS"
+/libraries/kotlin-dom-api-compat/ "Kotlin JS"
 /libraries/tools/gradle/ "Kotlin Build Tools"
 /libraries/tools/kotlin-allopen/ "Kotlin Build Tools"
 /libraries/tools/kotlin-annotation-processing/ "Kotlin Build Tools"
@@ -319,6 +320,7 @@
 /libraries/tools/kotlin-serialization/ "Kotlin Build Tools"
 /libraries/tools/kotlin-serialization-unshaded/ "Kotlin Build Tools"
 /libraries/tools/kotlin-stdlib-docs/ A.Qurbonzoda Vsevolod.Tolstopyato Ilya.Gorbunov
+/libraries/tools/kotlin-stdlib-docs-legacy/ A.Qurbonzoda Vsevolod.Tolstopyato Ilya.Gorbunov
 /libraries/tools/kotlin-stdlib-gen/ A.Qurbonzoda Vsevolod.Tolstopyato Ilya.Gorbunov
 /libraries/tools/kotlin-test-js-runner/ "Kotlin JS"
 /libraries/tools/kotlin-tooling-core/ "Kotlin Build Tools" "Kotlin Multiplatform"
@@ -377,7 +379,6 @@
 *Generated.java "Kotlin" "Kotlin IDE"
 
 # Singular files
-/.bunch "Kotlin Build Infrastructure"
 /.gitattributes "Kotlin Build Infrastructure"
 /.space.kts "Kotlin Build Infrastructure"
 /ChangeLog.md "Kotlin Release"
@@ -392,6 +393,7 @@
 /libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/resources/**/*.gradle.kts "Kotlin Build Tools" "Kotlin Multiplatform" 
 /libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/resources/**/*.gradle "Kotlin Build Tools" "Kotlin Multiplatform"
 /kotlin-native/backend.native/tests/**.gradle "Kotlin Native"
+/kotlin-native/backend.native/tests/**/*.gradle.kts "Kotlin Native"
 /kotlin-native/tools/**/*.gradle "Kotlin Native"
 /kotlin-native/tools/**/*.gradle.kts "Kotlin Native"
 /kotlin-native/performance/**/*.gradle "Kotlin Native"

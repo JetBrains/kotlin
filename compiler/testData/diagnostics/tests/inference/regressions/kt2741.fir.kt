@@ -8,5 +8,5 @@ fun <T> _arrayList(vararg values: T) : List<T> = throw Exception()
 class _Pair<A>(val a: A)
 
 fun test() {
-    _arrayList(_Pair(1)).<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>_sortBy<!> { it -> <!UNRESOLVED_REFERENCE!>xxx<!> }
+    _arrayList(_Pair(1))._sortBy { it -> <!UNRESOLVED_REFERENCE!>xxx<!> }
 }

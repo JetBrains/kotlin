@@ -8,15 +8,7 @@ package org.jetbrains.kotlin.parcelize.test.runners
 import org.jetbrains.kotlin.parcelize.test.services.ParcelizeEnvironmentConfigurator
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.AsmLikeInstructionListingDirectives.IR_DIFFERENCE
-import org.jetbrains.kotlin.test.runners.codegen.AbstractAsmLikeInstructionListingTest
 import org.jetbrains.kotlin.test.runners.codegen.AbstractIrAsmLikeInstructionListingTest
-
-open class AbstractParcelizeBytecodeListingTest : AbstractAsmLikeInstructionListingTest() {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        builder.configureParcelizeSpecific()
-    }
-}
 
 open class AbstractParcelizeIrBytecodeListingTest : AbstractIrAsmLikeInstructionListingTest() {
     override fun configure(builder: TestConfigurationBuilder) {

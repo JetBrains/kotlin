@@ -50,9 +50,9 @@ KtFunctionSymbol:
             type: ERROR_TYPE
           KtTypeErrorType:
             annotationsList: []
-            type: ERROR CLASS: Unwrapped type is null
+            type: ERROR CLASS: Incomplete code
         ]
-        type: kotlin/Function2<kotlin/Int, ERROR CLASS: Symbol not found for p2, ERROR CLASS: Unwrapped type is null>
+        type: kotlin/Function2<kotlin/Int, ERROR CLASS: Symbol not found for p2, ERROR CLASS: Incomplete code>
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtSourceModule "Sources of main"

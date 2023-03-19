@@ -199,19 +199,22 @@ internal class SymbolLightAccessorMethod private constructor(
                         annotationUseSiteTargetFilter = accessorSite.toFilter(),
                     ),
                 ),
-                additionalAnnotationsProvider = NullabilityAnnotationsProvider {
-                    val nullabilityApplicable = isGetter &&
-                            !(isParameter && this.containingClass.isAnnotationType) &&
-                            !modifierList.hasModifierProperty(PsiModifier.PRIVATE)
+                additionalAnnotationsProvider = CompositeAdditionalAnnotationsProvider(
+                    NullabilityAnnotationsProvider {
+                        val nullabilityApplicable = isGetter &&
+                                !(isParameter && this.containingClass.isAnnotationType) &&
+                                !modifierList.hasModifierProperty(PsiModifier.PRIVATE)
 
-                    if (nullabilityApplicable) {
-                        containingPropertySymbolPointer.withSymbol(ktModule) { propertySymbol ->
-                            getTypeNullability(propertySymbol.returnType)
+                        if (nullabilityApplicable) {
+                            containingPropertySymbolPointer.withSymbol(ktModule) { propertySymbol ->
+                                if (propertySymbol.isLateInit) NullabilityType.NotNull else getTypeNullability(propertySymbol.returnType)
+                            }
+                        } else {
+                            NullabilityType.Unknown
                         }
-                    } else {
-                        NullabilityType.Unknown
-                    }
-                }
+                    },
+                    MethodAdditionalAnnotationsProvider
+                )
             ),
         )
     }
@@ -229,11 +232,7 @@ internal class SymbolLightAccessorMethod private constructor(
 
     override fun isDeprecated(): Boolean = _isDeprecated
 
-    private val _identifier: PsiIdentifier by lazyPub {
-        KtLightIdentifier(this, containingPropertyDeclaration)
-    }
-
-    override fun getNameIdentifier(): PsiIdentifier = _identifier
+    override fun getNameIdentifier(): PsiIdentifier = KtLightIdentifier(this, containingPropertyDeclaration)
 
     private val _returnedType: PsiType by lazyPub {
         if (!isGetter) return@lazyPub PsiType.VOID
@@ -320,7 +319,7 @@ internal class SymbolLightAccessorMethod private constructor(
 
         containingPropertySymbolPointer.withSymbol(ktModule) { propertySymbol ->
             when (val initializer = propertySymbol.initializer) {
-                is KtConstantInitializerValue -> initializer.constant.createPsiLiteral(this@SymbolLightAccessorMethod)
+                is KtConstantInitializerValue -> initializer.constant.createPsiExpression(this@SymbolLightAccessorMethod)
                 is KtConstantValueForAnnotation -> initializer.annotationValue.toAnnotationMemberValue(this@SymbolLightAccessorMethod)
                 is KtNonConstantInitializerValue -> null
                 null -> null

@@ -80,6 +80,7 @@ internal class SymbolLightTypeParameter private constructor(
 
     private val _extendsList: PsiReferenceList by lazyPub {
         val listBuilder = KotlinSuperTypeListBuilder(
+            this,
             kotlinOrigin = null,
             manager = manager,
             language = language,

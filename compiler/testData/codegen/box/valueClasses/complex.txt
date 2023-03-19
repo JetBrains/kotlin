@@ -84,7 +84,7 @@ public interface Base2 {
     public synthetic abstract method getL-z-x-x-x(): int
     public synthetic abstract method getL-z-x-x-y(): int
     public synthetic abstract method getL-z-x-x-z(): java.lang.String
-    public abstract method setL-sUp7gFk(p0: int, p1: int, p2: int, p3: int, @org.jetbrains.annotations.NotNull p4: java.lang.String, @org.jetbrains.annotations.NotNull p5: java.util.List): void
+    public abstract method setL-dD1ukFQ(p0: int, p1: int, p2: int, p3: int, @org.jetbrains.annotations.NotNull p4: java.lang.String, @org.jetbrains.annotations.NotNull p5: java.util.List): void
 }
 
 @kotlin.Metadata
@@ -137,18 +137,18 @@ public final class ComplexKt {
     private final static @org.jetbrains.annotations.NotNull field lines: java.util.List
     static method <clinit>(): void
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static method equalsChecks-GPBa7dw(p0: int, p1: int, p2: int, p3: int, @org.jetbrains.annotations.NotNull p4: java.lang.String, @org.jetbrains.annotations.NotNull p5: java.util.List, p6: int, p7: int, p8: int, p9: int, @org.jetbrains.annotations.NotNull p10: java.lang.String, @org.jetbrains.annotations.NotNull p11: java.util.List): void
+    public final static method equalsChecks--HuG_sY(p0: int, p1: int, p2: int, p3: int, @org.jetbrains.annotations.NotNull p4: java.lang.String, @org.jetbrains.annotations.NotNull p5: java.util.List, p6: int, p7: int, p8: int, p9: int, @org.jetbrains.annotations.NotNull p10: java.lang.String, @org.jetbrains.annotations.NotNull p11: java.util.List): void
     public final static method equalsChecks1-iUtXLc0(@org.jetbrains.annotations.NotNull p0: java.util.List): void
-    public final static method f-sUp7gFk(p0: int, p1: int, p2: int, p3: int, @org.jetbrains.annotations.NotNull p4: java.lang.String, @org.jetbrains.annotations.NotNull p5: java.util.List): void
-    public final static method g-sUp7gFk(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String): void
+    public final static method f-dD1ukFQ(p0: int, p1: int, p2: int, p3: int, @org.jetbrains.annotations.NotNull p4: java.lang.String, @org.jetbrains.annotations.NotNull p5: java.util.List): void
+    public final static method g-YDOJbQ0(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String): void
     public final static @org.jetbrains.annotations.NotNull method getLate1(): E
     public final static @org.jetbrains.annotations.NotNull method getLines(): java.util.List
-    public final static method h-sUp7gFk(p0: int, p1: int, p2: int, p3: int, @org.jetbrains.annotations.NotNull p4: java.lang.String, @org.jetbrains.annotations.NotNull p5: java.util.List): void
+    public final static method h-dD1ukFQ(p0: int, p1: int, p2: int, p3: int, @org.jetbrains.annotations.NotNull p4: java.lang.String, @org.jetbrains.annotations.NotNull p5: java.util.List): void
     public final static method h1(): void
     public final static @org.jetbrains.annotations.NotNull method inlined-OsBMiQA(p0: int, p1: int, p2: int): D
     public final static @org.jetbrains.annotations.NotNull method notInlined-OsBMiQA(p0: int, p1: int, p2: int): D
     public final static method reuseBoxed(@org.jetbrains.annotations.NotNull p0: java.util.List): void
-    public final static method setLate1-sUp7gFk(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String): void
+    public final static method setLate1-YDOJbQ0(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String): void
     public final static method supply(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
     public final static method testVars(@org.jetbrains.annotations.NotNull p0: NotInlined): void
 }
@@ -195,7 +195,7 @@ public final class E {
     public final @org.jetbrains.annotations.NotNull method getX(): D
     public method hashCode(): int
     public static method hashCode-impl(p0: int, p1: int, p2: java.lang.String): int
-    public final static method setWithNonTrivialSetters-sUp7gFk(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String, p3: int, p4: int, @org.jetbrains.annotations.NotNull p5: java.lang.String): void
+    public final static method setWithNonTrivialSetters-j_b7x2A(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String, p3: int, p4: int, @org.jetbrains.annotations.NotNull p5: java.lang.String): void
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
     public static method toString-impl(p0: int, p1: int, p2: java.lang.String): java.lang.String
     public synthetic final method unbox-impl-x(): D
@@ -274,9 +274,9 @@ public final class NotInlined {
     public synthetic final method getWithNonTrivialSettersWithBF-z-x-x-z(): java.lang.String
     public final method getY(): int
     public synthetic bridge method setL(p0: java.lang.Object): void
-    public method setL-sUp7gFk(p0: int, p1: int, p2: int, p3: int, @org.jetbrains.annotations.NotNull p4: java.lang.String, @org.jetbrains.annotations.NotNull p5: java.util.List): void
-    public final method setWithNonTrivialSetters-sUp7gFk(p0: int, p1: int, p2: int, p3: int, @org.jetbrains.annotations.NotNull p4: java.lang.String, @org.jetbrains.annotations.NotNull p5: java.util.List): void
-    public final method setWithNonTrivialSettersWithBF-sUp7gFk(p0: int, p1: int, p2: int, p3: int, @org.jetbrains.annotations.NotNull p4: java.lang.String, @org.jetbrains.annotations.NotNull p5: java.util.List): void
+    public method setL-dD1ukFQ(p0: int, p1: int, p2: int, p3: int, @org.jetbrains.annotations.NotNull p4: java.lang.String, @org.jetbrains.annotations.NotNull p5: java.util.List): void
+    public final method setWithNonTrivialSetters-dD1ukFQ(p0: int, p1: int, p2: int, p3: int, @org.jetbrains.annotations.NotNull p4: java.lang.String, @org.jetbrains.annotations.NotNull p5: java.util.List): void
+    public final method setWithNonTrivialSettersWithBF-dD1ukFQ(p0: int, p1: int, p2: int, p3: int, @org.jetbrains.annotations.NotNull p4: java.lang.String, @org.jetbrains.annotations.NotNull p5: java.util.List): void
     public final method setY(p0: int): void
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
     public final method trySetter(): void

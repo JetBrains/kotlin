@@ -1,4 +1,3 @@
-// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // MODULE: m1-common
 // FILE: common.kt
 

@@ -1,7 +1,6 @@
 import org.jetbrains.kotlin.BuildRegister
 import org.jetbrains.kotlin.MPPTools
 import org.jetbrains.kotlin.UtilsKt
-import org.jetbrains.kotlin.konan.CompilerVersionKt
 import org.jetbrains.kotlin.konan.target.DistributionKt
 import org.jetbrains.kotlin.konan.target.PlatformManager
 
@@ -17,7 +16,7 @@ buildscript {
         }
     }
     ext["withoutEmbedabble"] = true
-    MiscKt.kotlinInit(project, findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean())
+    UtilsKt.kotlinInit(project, findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean())
     ext["bootstrapKotlinRepo"] = BootstrapKt.getBootstrapKotlinRepo(project)
     ext["bootstrapKotlinVersion"] = BootstrapKt.getBootstrapKotlinVersion(project)
 
@@ -30,6 +29,7 @@ buildscript {
 }
 
 plugins {
+    id("kotlin.native.build-tools-conventions")
     id("org.jetbrains.kotlin.multiplatform") apply false
 }
 
@@ -62,7 +62,7 @@ subprojects { proj ->
         proj.logger.info("${proj.name}<<<[$key] = $value>>>")
         proj.ext.set(key, value)
     }
-    MiscKt.kotlinInit(proj, findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() ?: false)
+    UtilsKt.kotlinInit(proj, findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() ?: false)
     proj.ext.platformManager = platformManager
     proj.ext["bootstrapKotlinRepo"] = BootstrapKt.getBootstrapKotlinRepo(proj)
     proj.ext["bootstrapKotlinVersion"] = BootstrapKt.getBootstrapKotlinVersion(proj)

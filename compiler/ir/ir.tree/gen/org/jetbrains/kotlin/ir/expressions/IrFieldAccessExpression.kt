@@ -13,14 +13,15 @@ import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 
 /**
  * A non-leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.fieldAccessExpression
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.fieldAccessExpression]
  */
 abstract class IrFieldAccessExpression : IrDeclarationReference() {
     abstract override val symbol: IrFieldSymbol
 
-    abstract val superQualifierSymbol: IrClassSymbol?
+    abstract var superQualifierSymbol: IrClassSymbol?
 
     var receiver: IrExpression? = null
 
-    abstract val origin: IrStatementOrigin?
+    abstract var origin: IrStatementOrigin?
 }

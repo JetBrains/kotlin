@@ -21,14 +21,6 @@ actual class Foo2 actual constructor(actual val y: String)
 -- JS --
 Exit code: COMPILATION_ERROR
 Output:
-warning: ==========
-This project currently uses the Kotlin/JS Legacy compiler backend, which has been deprecated and will be removed in a future release.
-
-Please migrate your project to the new IR-based compiler (https://kotl.in/jsir).
-Because your build tool will not support the new Kotlin/JS compiler, you will also need to migrate to Gradle.
-
-You can continue to use the deprecated legacy compiler in the current version of the toolchain by providing the compiler option -Xuse-deprecated-legacy-compiler.
-==========
 compiler/testData/multiplatform/inlineClasses/js.kt:5:1: error: actual class 'Foo2' has no corresponding expected declaration
 The following declaration is incompatible because modifiers are different (companion, inner, inline):
     public final expect inline class Foo2

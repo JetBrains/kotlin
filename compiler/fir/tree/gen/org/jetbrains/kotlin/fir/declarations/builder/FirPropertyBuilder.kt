@@ -26,8 +26,8 @@ import org.jetbrains.kotlin.fir.declarations.FirReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.UnresolvedDeprecationProvider
-import org.jetbrains.kotlin.fir.declarations.builder.FirDeclarationBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.FirTypeParametersOwnerBuilder
+import org.jetbrains.kotlin.fir.declarations.builder.FirVariableBuilder
 import org.jetbrains.kotlin.fir.declarations.impl.FirPropertyImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -47,27 +47,27 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
  */
 
 @FirBuilderDsl
-class FirPropertyBuilder : FirDeclarationBuilder, FirTypeParametersOwnerBuilder, FirAnnotationContainerBuilder {
+class FirPropertyBuilder : FirVariableBuilder, FirTypeParametersOwnerBuilder, FirAnnotationContainerBuilder {
     override var source: KtSourceElement? = null
     override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     override lateinit var moduleData: FirModuleData
     override lateinit var origin: FirDeclarationOrigin
     override var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
-    lateinit var status: FirDeclarationStatus
-    lateinit var returnTypeRef: FirTypeRef
-    var receiverParameter: FirReceiverParameter? = null
-    var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
-    var containerSource: DeserializedContainerSource? = null
-    var dispatchReceiverType: ConeSimpleKotlinType? = null
-    lateinit var name: Name
-    var initializer: FirExpression? = null
-    var delegate: FirExpression? = null
-    var isVar: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
-    var getter: FirPropertyAccessor? = null
-    var setter: FirPropertyAccessor? = null
-    var backingField: FirBackingField? = null
+    override lateinit var status: FirDeclarationStatus
+    override lateinit var returnTypeRef: FirTypeRef
+    override var receiverParameter: FirReceiverParameter? = null
+    override var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
+    override var containerSource: DeserializedContainerSource? = null
+    override var dispatchReceiverType: ConeSimpleKotlinType? = null
+    override lateinit var name: Name
+    override var initializer: FirExpression? = null
+    override var delegate: FirExpression? = null
+    override var isVar: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
+    override var getter: FirPropertyAccessor? = null
+    override var setter: FirPropertyAccessor? = null
+    override var backingField: FirBackingField? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
-    val contextReceivers: MutableList<FirContextReceiver> = mutableListOf()
+    override val contextReceivers: MutableList<FirContextReceiver> = mutableListOf()
     lateinit var symbol: FirPropertySymbol
     var delegateFieldSymbol: FirDelegateFieldSymbol? = null
     var isLocal: Boolean by kotlin.properties.Delegates.notNull<Boolean>()

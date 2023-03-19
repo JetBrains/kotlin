@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.fir
 
 import com.intellij.openapi.project.Project
-import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.analysis.api.KtStarTypeProjection
@@ -95,6 +94,7 @@ internal class KtSymbolByFirBuilder constructor(
             is FirTypeParameterSymbol -> classifierBuilder.buildTypeParameterSymbol(firSymbol)
             is FirCallableSymbol<*> -> callableBuilder.buildCallableSymbol(firSymbol)
             is FirFileSymbol -> buildFileSymbol(firSymbol)
+            is FirScriptSymbol -> buildScriptSymbol(firSymbol)
             else -> throwUnexpectedElementError(firSymbol)
         }
     }
@@ -104,12 +104,12 @@ internal class KtSymbolByFirBuilder constructor(
 
     fun buildFileSymbol(firSymbol: FirFileSymbol) = KtFirFileSymbol(firSymbol, analysisSession)
 
+    fun buildScriptSymbol(firSymbol: FirScriptSymbol) = KtFirScriptSymbol(firSymbol, analysisSession)
+
     private val packageProvider = project.createPackageProvider(GlobalSearchScope.allScope(project))//todo scope
 
     fun createPackageSymbolIfOneExists(packageFqName: FqName): KtFirPackageSymbol? {
-        val exists =
-            packageProvider.doKotlinPackageExists(packageFqName)
-                    || JavaPsiFacade.getInstance(project).findPackage(packageFqName.asString()) != null
+        val exists = packageProvider.doesPackageExist(packageFqName, analysisSession.targetPlatform)
         if (!exists) {
             return null
         }

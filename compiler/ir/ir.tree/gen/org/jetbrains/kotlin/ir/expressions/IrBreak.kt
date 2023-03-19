@@ -12,7 +12,8 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
  * A leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.break
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.break]
  */
 abstract class IrBreak : IrBreakContinue() {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =

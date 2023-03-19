@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import plugins.KotlinBuildPublishingPlugin.Companion.ADHOC_COMPONENT_NAME
 
 plugins {
@@ -7,9 +9,16 @@ plugins {
     id("org.jetbrains.kotlinx.binary-compatibility-validator")
 }
 
+@Suppress("DEPRECATION")
+tasks.withType<KotlinCompilationTask<*>>().configureEach {
+    compilerOptions {
+        apiVersion.value(KotlinVersion.KOTLIN_1_5).finalizeValueOnRead()
+        languageVersion.value(KotlinVersion.KOTLIN_1_5).finalizeValueOnRead()
+        freeCompilerArgs.add("-Xsuppress-version-warnings")
+    }
+}
+
 kotlin.sourceSets.configureEach {
-    languageSettings.apiVersion = "1.4"
-    languageSettings.languageVersion = "1.4"
     languageSettings.optIn("org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi")
 }
 

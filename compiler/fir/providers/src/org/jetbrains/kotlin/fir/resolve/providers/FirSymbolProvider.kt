@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.fir.types.functionTypeService
 
 @RequiresOptIn
 annotation class FirSymbolProviderInternals
@@ -114,6 +115,40 @@ inline fun <reified T : FirBasedSymbol<*>> FirSymbolProvider.getSymbolByTypeRef(
 
 fun FirSymbolProvider.getRegularClassSymbolByClassId(classId: ClassId): FirRegularClassSymbol? {
     return getClassLikeSymbolByClassId(classId) as? FirRegularClassSymbol
+}
+
+/**
+ * Whether [classId] may be contained in the set of known classifier names.
+ *
+ * If it's certain that [classId] cannot be a function class (for example when [classId] is known to come from a package without
+ * function classes), [mayBeFunctionClass] can be set to `false`. This avoids a hash map access in
+ * [org.jetbrains.kotlin.builtins.functions.FunctionTypeKindExtractor.getFunctionalClassKindWithArity].
+ */
+fun Set<String>.mayHaveTopLevelClassifier(
+    classId: ClassId,
+    session: FirSession,
+    mayBeFunctionClass: Boolean = true,
+): Boolean {
+    if (mayBeFunctionClass && isNameForFunctionClass(classId, session)) return true
+
+    if (classId.outerClassId == null) {
+        if (!mayHaveTopLevelClassifier(classId.shortClassName)) return false
+    } else {
+        if (!mayHaveTopLevelClassifier(classId.outermostClassId.shortClassName)) return false
+    }
+
+    return true
+}
+
+@Suppress("NOTHING_TO_INLINE")
+private inline fun Set<String>.mayHaveTopLevelClassifier(shortClassName: Name): Boolean =
+    shortClassName.asString() in this || shortClassName.isSpecial
+
+private fun isNameForFunctionClass(classId: ClassId, session: FirSession): Boolean {
+    // Optimization: `classId` can only be a name for a generated function class if it ends with a digit. See `FunctionTypeKind`.
+    if (classId.relativeClassName.asString().lastOrNull()?.isDigit() != true) return false
+
+    return session.functionTypeService.getKindByClassNamePrefix(classId.packageFqName, classId.shortClassName.asString()) != null
 }
 
 fun ClassId.toSymbol(session: FirSession): FirClassifierSymbol<*>? {

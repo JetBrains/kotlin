@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.klib
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import junit.framework.TestCase
+import org.jetbrains.kotlin.backend.common.CommonJsKLibResolver
 import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
 import org.jetbrains.kotlin.backend.common.serialization.linkerissues.checkNoUnboundSymbols
@@ -26,7 +27,6 @@ import org.jetbrains.kotlin.ir.AbstractIrGeneratorTestCase
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.js.JsFactories
 import org.jetbrains.kotlin.ir.backend.js.KotlinFileSerializedData
-import org.jetbrains.kotlin.ir.backend.js.jsResolveLibraries
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrModuleSerializer
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
@@ -234,7 +234,7 @@ abstract class AbstractKlibTextTestCase : CodegenTestCase() {
     }
 
     private fun loadKlibFromPath(paths: List<String>): List<KotlinLibrary> {
-        val result = jsResolveLibraries(paths, DummyLogger)
+        val result = CommonJsKLibResolver.resolve(paths, DummyLogger)
         return result.getFullList(TopologicalLibraryOrder)
     }
 

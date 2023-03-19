@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -23,7 +23,7 @@ fun main(args: Array<String>) {
                 model("diagnostics", excludedPattern = excludedFirTestdataPattern)
             }
 
-            testClass<AbstractSerializationFirDiagnosticTest> {
+            testClass<AbstractSerializationFirPsiDiagnosticTest> {
                 model("diagnostics", excludedPattern = excludedFirTestdataPattern)
                 model("firMembers")
             }
@@ -38,19 +38,27 @@ fun main(args: Array<String>) {
                 model("codegen")
             }
 
+            testClass<AbstractSerializationFirLightTreeAsmLikeInstructionsListingTest> {
+                model("codegen")
+            }
+
             // ------------------------------- box -------------------------------
 
             testClass<AbstractSerializationIrBoxTest> {
                 model("boxIr")
             }
 
-            testClass<AbstractSerializationFirBlackBoxTest> {
+            testClass<AbstractSerializationFirLightTreeBlackBoxTest> {
                 model("boxIr")
                 model("firMembers")
             }
 
             testClass<AbstractSerializationWithoutRuntimeIrBoxTest> {
                 model("boxWithoutRuntime")
+            }
+
+            testClass<AbstractSerializationIrJsBoxTest> {
+                model("boxIr")
             }
         }
     }

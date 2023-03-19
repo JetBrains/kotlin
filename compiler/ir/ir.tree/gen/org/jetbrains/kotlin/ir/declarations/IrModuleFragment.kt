@@ -20,7 +20,8 @@ import org.jetbrains.kotlin.name.Name
 
 /**
  * A leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.moduleFragment
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.moduleFragment]
  */
 abstract class IrModuleFragment : IrElementBase(), IrElement {
     abstract val descriptor: ModuleDescriptor

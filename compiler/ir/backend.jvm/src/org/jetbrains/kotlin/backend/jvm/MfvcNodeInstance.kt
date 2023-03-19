@@ -23,8 +23,11 @@ interface MfvcNodeInstance {
     val typeArguments: TypeArguments
     val type: IrSimpleType
 
-    fun makeFlattenedGetterExpressions(scope: IrBlockBuilder, registerPossibleExtraBoxCreation: () -> Unit): List<IrExpression>
-    fun makeGetterExpression(scope: IrBuilderWithScope, registerPossibleExtraBoxCreation: () -> Unit): IrExpression
+    fun makeFlattenedGetterExpressions(
+        scope: IrBlockBuilder, currentClass: IrClass, registerPossibleExtraBoxCreation: () -> Unit
+    ): List<IrExpression>
+
+    fun makeGetterExpression(scope: IrBuilderWithScope, currentClass: IrClass, registerPossibleExtraBoxCreation: () -> Unit): IrExpression
     operator fun get(name: Name): MfvcNodeInstance?
     fun makeStatements(scope: IrBuilderWithScope, values: List<IrExpression>): List<IrStatement>
 }
@@ -57,12 +60,12 @@ class ValueDeclarationMfvcNodeInstance(
 
     override val type: IrSimpleType = makeTypeFromMfvcNodeAndTypeArguments(node, typeArguments)
 
-    override fun makeFlattenedGetterExpressions(scope: IrBlockBuilder, registerPossibleExtraBoxCreation: () -> Unit): List<IrExpression> =
+    override fun makeFlattenedGetterExpressions(scope: IrBlockBuilder, currentClass: IrClass, registerPossibleExtraBoxCreation: () -> Unit): List<IrExpression> =
         makeFlattenedGetterExpressions(scope as IrBuilderWithScope)
 
     private fun makeFlattenedGetterExpressions(scope: IrBuilderWithScope): List<IrExpression> = valueDeclarations.map { scope.irGet(it) }
 
-    override fun makeGetterExpression(scope: IrBuilderWithScope, registerPossibleExtraBoxCreation: () -> Unit): IrExpression = when (node) {
+    override fun makeGetterExpression(scope: IrBuilderWithScope, currentClass: IrClass, registerPossibleExtraBoxCreation: () -> Unit): IrExpression = when (node) {
         is LeafMfvcNode -> makeFlattenedGetterExpressions(scope).single()
         is MfvcNodeWithSubnodes -> node.makeBoxedExpression(
             scope, typeArguments, makeFlattenedGetterExpressions(scope), registerPossibleExtraBoxCreation
@@ -138,7 +141,7 @@ fun IrExpression?.isRepeatableSetter(): Boolean = when (this) {
 
 fun IrExpression?.isRepeatableAccessor(): Boolean = isRepeatableGetter() || isRepeatableSetter()
 
-enum class AccessType { AlwaysPublic, PrivateWhenNoBox, AlwaysPrivate }
+enum class AccessType { UseFields, ChooseEffective }
 
 class ReceiverBasedMfvcNodeInstance(
     private val scope: IrBlockBuilder,
@@ -162,20 +165,23 @@ class ReceiverBasedMfvcNodeInstance(
     }
 
     override fun makeFlattenedGetterExpressions(
-        scope: IrBlockBuilder, registerPossibleExtraBoxCreation: () -> Unit
-    ): List<IrExpression> = when (node) {
-        is LeafMfvcNode -> listOf(makeGetterExpression(scope, registerPossibleExtraBoxCreation))
-        is MfvcNodeWithSubnodes -> when {
-            node is IntermediateMfvcNode && canUsePrivateAccessFor(node) && fields != null ->
-                fields.map { scope.irGetField(makeReceiverCopy(), it) }
+        scope: IrBlockBuilder, currentClass: IrClass, registerPossibleExtraBoxCreation: () -> Unit
+    ): List<IrExpression> = makeFlattenedGetterExpressions(scope, currentClass, isInsideRecursion = false, registerPossibleExtraBoxCreation)
 
-            node !is IntermediateMfvcNode || node.hasPureUnboxMethod && (canUsePrivateAccessFor(node) || node.unboxMethod.parentAsClass.isMultiFieldValueClass) ->
-                // We cannot rely on purity of non-mfvc class getter because the incremental compiler will not recompile the code
-                // that relayed after the change of purity if it is not local for the class.
-                node.subnodes.flatMap { get(it.name)!!.makeFlattenedGetterExpressions(scope, registerPossibleExtraBoxCreation) }
+    private fun makeFlattenedGetterExpressions(
+        scope: IrBlockBuilder, currentClass: IrClass, isInsideRecursion: Boolean, registerPossibleExtraBoxCreation: () -> Unit
+    ): List<IrExpression> {
+        fun makeRecursiveResult(node: MfvcNodeWithSubnodes) = node.subnodes.flatMap {
+            get(it.name)!!.makeFlattenedGetterExpressions(scope, currentClass, true, registerPossibleExtraBoxCreation)
+        }
 
-            else -> {
-                val value = makeGetterExpression(scope, registerPossibleExtraBoxCreation = { /* The box is definitely useful */ })
+        return when (node) {
+            is LeafMfvcNode -> listOf(makeGetterExpression(scope, currentClass, registerPossibleExtraBoxCreation))
+            is RootMfvcNode -> makeRecursiveResult(node)
+            is IntermediateMfvcNode -> if (isInsideRecursion || node.hasPureUnboxMethod) {
+                makeRecursiveResult(node) // use real getter for fields
+            } else {
+                val value = makeGetterExpression(scope, currentClass, registerPossibleExtraBoxCreation = { /* The box is definitely useful */ })
                 val asVariable = scope.savableStandaloneVariableWithSetter(
                     value,
                     origin = JvmLoweredDeclarationOrigin.TEMPORARY_MULTI_FIELD_VALUE_CLASS_VARIABLE,
@@ -185,18 +191,26 @@ class ReceiverBasedMfvcNodeInstance(
                 val root = node.rootNode
                 val variableInstance =
                     root.createInstanceFromBox(scope, typeArguments, scope.irGet(asVariable), accessType, saveVariable)
-                variableInstance.makeFlattenedGetterExpressions(scope, registerPossibleExtraBoxCreation)
+                variableInstance.makeFlattenedGetterExpressions(scope, currentClass, registerPossibleExtraBoxCreation)
             }
         }
     }
 
-    override fun makeGetterExpression(scope: IrBuilderWithScope, registerPossibleExtraBoxCreation: () -> Unit): IrExpression = with(scope) {
+    override fun makeGetterExpression(scope: IrBuilderWithScope, currentClass: IrClass, registerPossibleExtraBoxCreation: () -> Unit): IrExpression = with(scope) {
         when {
-            node is LeafMfvcNode && canUsePrivateAccessFor(node) && fields != null -> irGetField(makeReceiverCopy(), fields.single())
-            node is IntermediateMfvcNode && accessType == AccessType.AlwaysPrivate && fields != null -> node.makeBoxedExpression(
-                this, typeArguments, fields.map { irGetField(makeReceiverCopy(), it) }, registerPossibleExtraBoxCreation
-            )
-
+            node is RootMfvcNode -> makeReceiverCopy()!!
+            node is LeafMfvcNode && node.hasPureUnboxMethod && canUsePrivateAccess(node, currentClass) && fields != null ->
+                irGetField(makeReceiverCopy(), fields.single())
+            node is LeafMfvcNode && accessType == AccessType.UseFields -> {
+                require(fields != null) { "Invalid getter to $node" }
+                irGetField(makeReceiverCopy(), fields.single())
+            }
+            node is IntermediateMfvcNode && accessType == AccessType.UseFields -> {
+                require(fields != null) { "Invalid getter to $node" }
+                node.makeBoxedExpression(
+                    this, typeArguments, fields.map { irGetField(makeReceiverCopy(), it) }, registerPossibleExtraBoxCreation
+                )
+            }
             unboxMethod != null -> irCall(unboxMethod).apply {
                 val dispatchReceiverParameter = unboxMethod.dispatchReceiverParameter
                 if (dispatchReceiverParameter != null) {
@@ -207,14 +221,14 @@ class ReceiverBasedMfvcNodeInstance(
                     }
                 }
             }
-
-            node is RootMfvcNode -> makeReceiverCopy()!!
             else -> error("Unbox method must exist for $node")
         }
     }
 
-    private fun canUsePrivateAccessFor(node: NameableMfvcNode) =
-        node.hasPureUnboxMethod && accessType == AccessType.PrivateWhenNoBox || accessType == AccessType.AlwaysPrivate
+    private fun canUsePrivateAccess(node: NameableMfvcNode, currentClass: IrClass): Boolean {
+        val sourceClass = node.unboxMethod.parentAsClass.let { if (it.isCompanion) it.parentAsClass else it }
+        return sourceClass == currentClass
+    }
 
     override fun get(name: Name): ReceiverBasedMfvcNodeInstance? {
         val (newNode, _) = node.getSubnodeAndIndices(name) ?: return null
@@ -241,7 +255,7 @@ fun IrContainerExpression.unwrapBlock(): IrExpression = statements.singleOrNull(
 fun IrBuilderWithScope.savableStandaloneVariable(
     type: IrType,
     name: String? = null,
-    isMutable: Boolean = false,
+    isVar: Boolean,
     origin: IrDeclarationOrigin,
     isTemporary: Boolean = origin == IrDeclarationOrigin.IR_TEMPORARY_VARIABLE
             || origin == JvmLoweredDeclarationOrigin.TEMPORARY_MULTI_FIELD_VALUE_CLASS_VARIABLE
@@ -249,7 +263,7 @@ fun IrBuilderWithScope.savableStandaloneVariable(
     saveVariable: (IrVariable) -> Unit,
 ): IrVariable {
     val variable = if (isTemporary || name == null) scope.createTemporaryVariableDeclaration(
-        type, name, isMutable,
+        type, name, isVar,
         startOffset = startOffset,
         endOffset = endOffset,
         origin = origin,
@@ -260,7 +274,7 @@ fun IrBuilderWithScope.savableStandaloneVariable(
         symbol = IrVariableSymbolImpl(),
         name = Name.identifier(name),
         type = type,
-        isVar = isMutable,
+        isVar = isVar,
         isConst = false,
         isLateinit = false
     ).apply {

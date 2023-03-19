@@ -1,11 +1,20 @@
 // CHECK_BYTECODE_LISTING
 // WITH_STDLIB
 // TARGET_BACKEND: JVM_IR
+// IGNORE_INLINER: IR
 // LANGUAGE: +ValueClasses
 
 @JvmInline
 value class DPoint(/*inline */val x: Double/* = 1.0*/, /*inline */val y: Double/* = 2.0*/) {
     fun f1(a: Int, b: Int = -1, c: DPoint = DPoint(-2.0, -3.0)) = listOf(this, x, y, a, b, c)
+    
+    companion object {
+        inline operator fun invoke(): DPoint = DPoint(0.0, 0.0)
+    }
+}
+
+object RegularObject {
+    fun pointToString(x: DPoint? = DPoint()) = "$x"
 }
 
 @JvmInline
@@ -20,6 +29,14 @@ data class Wrapper(val segment: DSegment = DSegment(DPoint(8.0, 9.0), DPoint(10.
 fun complexFun(a1: Double, a2: DPoint, a3: Double = a1 * a2.x * a2.y, a4: DPoint = DPoint(a2.x * a1 * a3, a2.y * a1 * a3)) = "$a1, $a2, $a3, $a4"
 
 inline fun complexInlineFun(a1: Double, a2: DPoint, a3: Double = a1 * a2.x * a2.y, a4: DPoint = DPoint(a2.x * a1 * a3, a2.y * a1 * a3)) = "$a1, $a2, $a3, $a4"
+
+fun getLineIntersectionPoint(out: DPoint = DPoint()): DPoint? {
+    return getIntersectXY(out)
+}
+
+fun getIntersectXY(out: DPoint = DPoint()): DPoint? {
+    return out
+}
 
 fun box(): String {
 //    comments bellow are because MFVC primary constructors default parameters require support of inline arguments in regular functions
@@ -85,6 +102,9 @@ fun box(): String {
     require(complexInlineFun(2.0, DPoint(3.0, 5.0), 7.0, DPoint(11.0, 13.0)) == "2.0, ${DPoint(3.0, 5.0)}, 7.0, ${DPoint(11.0, 13.0)}") {
         complexInlineFun(2.0, DPoint(3.0, 5.0), 7.0, DPoint(11.0, 13.0))
     }
+    
+    require(RegularObject.pointToString() == "DPoint(x=0.0, y=0.0)") { RegularObject.pointToString() }
+    require(getLineIntersectionPoint().toString() == "DPoint(x=0.0, y=0.0)") { getLineIntersectionPoint().toString() }
     
     return "OK"
 }

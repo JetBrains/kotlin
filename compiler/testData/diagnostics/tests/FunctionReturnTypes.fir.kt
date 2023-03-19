@@ -152,7 +152,7 @@ fun illegalIfBlock(): Boolean {
     else { return <!RETURN_TYPE_MISMATCH!>1<!> }
 }
 fun illegalReturnIf(): Char {
-    return if (1 < 2) 'a' else { 1 }
+    return <!RETURN_TYPE_MISMATCH!>if (1 < 2) 'a' else { 1 }<!>
 }
 
 fun returnNothing(): Nothing {

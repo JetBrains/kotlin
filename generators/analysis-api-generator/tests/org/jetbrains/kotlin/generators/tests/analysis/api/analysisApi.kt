@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeInf
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeInfoProvider.AbstractIsDenotableTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeProvider.AbstractAnalysisApiGetSuperTypesTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeProvider.AbstractHasCommonSubtypeTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeProvider.AbstractTypeReferenceTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.AbstractReferenceResolveTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.AbstractReferenceShortenerTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.scopes.*
@@ -50,6 +51,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.AbstractSi
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.AbstractSymbolByFqNameTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.AbstractSymbolByPsiTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.AbstractSymbolByReferenceTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.AbstractSymbolRestoreFromDifferentModuleTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.AbstractAnalysisApiSubstitutorsTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.AbstractTypeByDeclarationReturnTypeTest
 import org.jetbrains.kotlin.analysis.api.standalone.fir.test.cases.components.psiDeclarationProvider.AbstractPsiDeclarationProviderTest
@@ -115,6 +117,13 @@ private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
         test(AbstractDelegateMemberScopeTest::class) {
             model("delegatedMemberScope")
         }
+
+        test(
+            AbstractDeclaredMemberScopeTest::class,
+            filter = frontendIs(FrontendKind.Fir),
+        ) {
+            model("declaredMemberScope")
+        }
     }
 
     group("symbols", filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
@@ -124,6 +133,10 @@ private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
 
         test(AbstractSingleSymbolByPsi::class) {
             model("singleSymbolByPsi")
+        }
+
+        test(AbstractSymbolRestoreFromDifferentModuleTest::class) {
+            model("symbolRestoreFromDifferentModule")
         }
 
         test(
@@ -363,6 +376,9 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
             test(AbstractHasCommonSubtypeTest::class) {
                 model("haveCommonSubtype")
             }
+        }
+        test(AbstractTypeReferenceTest::class) {
+            model("typeReference")
         }
     }
 

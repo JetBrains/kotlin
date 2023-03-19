@@ -5,22 +5,22 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
+import org.gradle.api.file.ArchiveOperations
+import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.file.FileTree
 import org.jetbrains.kotlin.gradle.targets.js.HTML
 import org.jetbrains.kotlin.gradle.targets.js.JS
 import org.jetbrains.kotlin.gradle.targets.js.JS_MAP
 import org.jetbrains.kotlin.gradle.targets.js.META_JS
 import org.jetbrains.kotlin.gradle.targets.js.ir.KLIB_TYPE
-import org.jetbrains.kotlin.gradle.utils.ArchiveOperationsCompat
-import org.jetbrains.kotlin.gradle.utils.FileSystemOperationsCompat
 import java.io.File
 
 /**
  * Creates fake NodeJS module directory from given gradle [dependency].
  */
 internal class GradleNodeModuleBuilder(
-    val fs: FileSystemOperationsCompat,
-    val archiveOperations: ArchiveOperationsCompat,
+    val fs: FileSystemOperations,
+    val archiveOperations: ArchiveOperations,
     val moduleName: String,
     val moduleVersion: String,
     val srcFiles: Collection<File>,

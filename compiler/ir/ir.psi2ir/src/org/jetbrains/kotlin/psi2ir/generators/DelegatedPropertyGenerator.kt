@@ -45,7 +45,9 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithStarProjections
 
-class DelegatedPropertyGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGeneratorExtension(declarationGenerator) {
+internal class DelegatedPropertyGenerator(
+    declarationGenerator: DeclarationGenerator
+) : DeclarationGeneratorExtension(declarationGenerator) {
     constructor(context: GeneratorContext) : this(DeclarationGenerator(context))
 
     fun generateDelegatedProperty(

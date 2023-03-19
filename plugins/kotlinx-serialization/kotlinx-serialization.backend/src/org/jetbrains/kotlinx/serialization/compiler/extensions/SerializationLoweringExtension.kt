@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,13 +14,13 @@ import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.fileParent
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.findDeclaration
+import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.getPropertyGetter
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -35,6 +35,7 @@ import org.jetbrains.kotlinx.serialization.compiler.backend.ir.*
 import org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializationJvmIrIntrinsicSupport
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationDependencies
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationJsDependenciesClassIds
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationPackages
 import java.util.concurrent.ConcurrentHashMap
 
@@ -76,6 +77,16 @@ class SerializationPluginContext(baseContext: IrPluginContext, val metadataPlugi
         }
     internal val lazyClass = referenceClass(ClassId.topLevel(SerializationDependencies.LAZY_FQ))!!.owner
     internal val lazyValueGetter = lazyClass.getPropertyGetter("value")!!
+
+    internal val jsExportIgnoreClass: IrClass? by lazy {
+        val pkg = SerializationJsDependenciesClassIds.jsExportIgnore.packageFqName
+        val jsExportName = SerializationJsDependenciesClassIds.jsExportIgnore.parentClassId!!.shortClassName
+        val jsExportIgnoreFqName = SerializationJsDependenciesClassIds.jsExportIgnore.asSingleFqName()
+
+        getClassFromRuntimeOrNull(jsExportName.identifier, pkg)
+            ?.owner
+            ?.findDeclaration { it.fqNameWhenAvailable == jsExportIgnoreFqName }
+    }
 
     // serialization runtime declarations
     internal val enumSerializerFactoryFunc = baseContext.referenceFunctions(
@@ -185,25 +196,23 @@ open class SerializationLoweringExtension @JvmOverloads constructor(
     override fun getPlatformIntrinsicExtension(backendContext: BackendContext): IrIntrinsicExtension? {
         val ctx = backendContext as? JvmBackendContext ?: return null
         if (!canEnableIntrinsics(ctx)) return null
-        return SerializationJvmIrIntrinsicSupport(ctx)
+        return SerializationJvmIrIntrinsicSupport(
+            ctx,
+            requireNotNull(ctx.irPluginContext) { "Intrinsics can't be enabled with null irPluginContext, check `canEnableIntrinsics` function for bugs." })
     }
 
     private fun canEnableIntrinsics(ctx: JvmBackendContext): Boolean {
-        if (ctx.state.configuration[CommonConfigurationKeys.USE_FIR] == true) return false
         return when (intrinsicsState) {
             SerializationIntrinsicsState.FORCE_ENABLED -> true
             SerializationIntrinsicsState.DISABLED -> false
             SerializationIntrinsicsState.NORMAL -> {
-                val module = ctx.state.module
-                if (module.findClassAcrossModuleDependencies(
-                        ClassId(
-                            SerializationPackages.packageFqName,
-                            SerialEntityNames.KSERIALIZER_NAME
-                        )
-                    ) == null
-                ) return false
-                module.getPackage(SerializationPackages.packageFqName).memberScope.getFunctionNames()
-                    .any { it.asString() == SerializationJvmIrIntrinsicSupport.noCompiledSerializerMethodName }
+                val requiredFunctionsFromRuntime = ctx.irPluginContext?.referenceFunctions(
+                    CallableId(
+                        SerializationPackages.packageFqName,
+                        Name.identifier(SerializationJvmIrIntrinsicSupport.noCompiledSerializerMethodName)
+                    )
+                ).orEmpty()
+                requiredFunctionsFromRuntime.isNotEmpty() && requiredFunctionsFromRuntime.all { it.isBound }
             }
         }
     }

@@ -45,7 +45,9 @@ internal class KtFirSymbolContainingDeclarationProvider(
             is KtLocalVariableSymbol -> getParentSymbolByPsi()
             is KtAnonymousFunctionSymbol -> getParentSymbolByPsi()
             is KtAnonymousObjectSymbol -> getParentSymbolByPsi()
-            is KtSamConstructorSymbol -> null // SAM constructors are always toplevel
+
+            is KtSamConstructorSymbol -> null // SAM constructors are always top-level
+            is KtScriptSymbol -> null // Scripts are always top-level
 
             is KtClassInitializerSymbol -> {
                 val outerFirClassifier = symbol.firSymbol.getContainingClassSymbol(symbol.firSymbol.llFirSession)
@@ -69,8 +71,6 @@ internal class KtFirSymbolContainingDeclarationProvider(
                 val outerFirClassifier = symbol.firSymbol.llFirSession.firProvider.getFirClassifierByFqName(outerClassId) ?: return null
                 firSymbolBuilder.buildSymbol(outerFirClassifier) as? KtDeclarationSymbol
             }
-
-
         }
     }
 

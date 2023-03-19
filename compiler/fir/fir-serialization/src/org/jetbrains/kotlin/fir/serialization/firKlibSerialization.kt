@@ -61,11 +61,7 @@ open class FirKLibSerializerExtension(
     override val session: FirSession,
     override val metadataVersion: BinaryVersion,
     override val stringTable: FirElementAwareSerializableStringTable
-) : FirSerializerExtension() {
-    override fun shouldSerializeFunction(function: FirFunction): Boolean = true
-
-    override fun shouldSerializeProperty(property: FirProperty): Boolean = true
-}
+) : FirSerializerExtension()
 
 class FirElementAwareSerializableStringTable() : FirElementAwareStringTable, SerializableStringTable() {
     override fun getLocalClassIdReplacement(firClass: FirClass): ClassId? = ClassId.topLevel(StandardNames.FqNames.any.toSafe())

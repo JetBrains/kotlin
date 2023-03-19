@@ -1,0 +1,20 @@
+FILE: longElvisChain.kt
+    public final fun test_1(): R|kotlin/Unit| {
+        lval a: R|kotlin/Throwable?| = Null(null)
+        lval b: R|kotlin/Unit?| = Null(null)
+        lval c: R|kotlin/Throwable| = R|<local>/a| ?: R|<local>/b|?.{ $subj$.R|kotlin/let|<R|kotlin/Unit|, R|kotlin/Nothing|>(<L> = let@fun <anonymous>(it: R|kotlin/Unit|): R|kotlin/Nothing| <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^test_1 R|<local>/it|
+        }
+        ) } ?: ^test_1 Unit
+        R|<local>/c|!!
+        throw R|<local>/a|
+    }
+    public final fun test_2(): R|kotlin/Unit| {
+        lval a: R|kotlin/Throwable?| = Null(null)
+        lval b: R|kotlin/Unit?| = Null(null)
+        lval c: R|kotlin/Throwable| = R|<local>/a| ?: R|<local>/b|?.{ $subj$.R|kotlin/let|<R|kotlin/Unit|, R|kotlin/Nothing|>(<L> = let@fun <anonymous>(it: R|kotlin/Unit|): R|kotlin/Nothing| <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^test_2 R|<local>/it|
+        }
+        ) } ?: ^test_2 Unit
+        throw R|<local>/a|
+    }

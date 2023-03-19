@@ -7,28 +7,19 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.base.KtContextReceiver
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
-import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KtFirClassLikeSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.toKtClassKind
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
-import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.CanNotCreateSymbolPointerForLocalLibraryDeclarationException
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.UnsupportedSymbolKind
-import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.name.ClassId
@@ -37,7 +28,7 @@ import org.jetbrains.kotlin.name.Name
 internal class KtFirNamedClassOrObjectSymbol(
     override val firSymbol: FirRegularClassSymbol,
     override val analysisSession: KtFirAnalysisSession,
-) : KtNamedClassOrObjectSymbol(), KtFirSymbol<FirRegularClassSymbol> {
+) : KtFirNamedClassOrObjectSymbolBase() {
     override val token: KtLifetimeToken get() = builder.token
     override val psi: PsiElement? by cached { firSymbol.findPsi() }
 
@@ -55,7 +46,6 @@ internal class KtFirNamedClassOrObjectSymbol(
                     else -> Modality.FINAL
                 }
         }
-
 
     /* FirRegularClass visibility is not modified by STATUS only for Unknown, so it can be taken from RAW */
     override val visibility: Visibility
@@ -88,16 +78,9 @@ internal class KtFirNamedClassOrObjectSymbol(
         }
     }
 
-    override val superTypes: List<KtType> by cached {
-        firSymbol.superTypesAndAnnotationsListForRegularClass(builder)
-    }
-
     override val typeParameters = withValidityAssertion {
-        firSymbol.fir.typeParameters.filterIsInstance<FirTypeParameter>().map { typeParameter ->
-            builder.classifierBuilder.buildTypeParameterSymbol(typeParameter.symbol)
-        }
+        firSymbol.createRegularKtTypeParameters(builder)
     }
-
 
     @OptIn(KtAnalysisApiInternals::class)
     override val classKind: KtClassKind
@@ -106,22 +89,4 @@ internal class KtFirNamedClassOrObjectSymbol(
         }
 
     override val symbolKind: KtSymbolKind get() = withValidityAssertion { getSymbolKind() }
-
-    context(KtAnalysisSession)
-    override fun createPointer(): KtSymbolPointer<KtNamedClassOrObjectSymbol> = withValidityAssertion {
-        KtPsiBasedSymbolPointer.createForSymbolFromSource<KtNamedClassOrObjectSymbol>(this)?.let { return it }
-
-        when (val symbolKind = symbolKind) {
-            KtSymbolKind.LOCAL ->
-                throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException(classIdIfNonLocal?.asString() ?: name.asString())
-
-            KtSymbolKind.CLASS_MEMBER, KtSymbolKind.TOP_LEVEL ->
-                KtFirClassLikeSymbolPointer(classIdIfNonLocal!!, KtNamedClassOrObjectSymbol::class)
-
-            else -> throw UnsupportedSymbolKind(this::class, symbolKind)
-        }
-    }
-
-    override fun equals(other: Any?): Boolean = symbolEquals(other)
-    override fun hashCode(): Int = symbolHashCode()
 }

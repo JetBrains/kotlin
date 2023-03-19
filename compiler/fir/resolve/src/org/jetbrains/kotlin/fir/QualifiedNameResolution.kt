@@ -111,6 +111,7 @@ fun FirResolvedQualifier.continueQualifier(
                     packageFqName = this@continueQualifier.packageFqName
                     relativeClassFqName = this@continueQualifier.relativeClassFqName?.child(name)
                     symbol = nestedClassSymbol as FirClassLikeSymbol<*>
+                    isFullyQualified = true
 
                     val outerTypeArguments = this.typeArguments.toList()
                     this.typeArguments.clear()
@@ -180,6 +181,7 @@ private fun FqName.continueQualifierInPackage(
                 apiVersion
             )
         )
+        isFullyQualified = true
     }.apply {
         resultType = components.typeForQualifier(this)
     }

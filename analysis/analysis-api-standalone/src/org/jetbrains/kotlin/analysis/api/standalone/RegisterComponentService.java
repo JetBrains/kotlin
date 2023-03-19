@@ -6,21 +6,21 @@
 package org.jetbrains.kotlin.analysis.api.standalone;
 
 import com.intellij.mock.MockProject;
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirGlobalResolveComponents;
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirResolveSessionService;
-import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirLibrarySessionFactory;
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionCache;
 
+@SuppressWarnings("KotlinInternalInJava")
 class RegisterComponentService {
-    static void registerLLFirLibrarySessionFactory(MockProject project) {
-        project.registerService(
-                LLFirLibrarySessionFactory.class,
-                new LLFirLibrarySessionFactory(project)
-        );
+    static void registerLLFirSessionCache(MockProject project) {
+        project.registerService(LLFirSessionCache.class, new LLFirSessionCache(project));
+    }
+
+    static void registerLLFirGlobalResolveComponents(MockProject project) {
+        project.registerService(LLFirGlobalResolveComponents.class, new LLFirGlobalResolveComponents(project));
     }
 
     static void registerLLFirResolveSessionService(MockProject project) {
-        project.registerService(
-                LLFirResolveSessionService.class,
-                new LLFirResolveSessionService(project)
-        );
+        project.registerService(LLFirResolveSessionService.class, new LLFirResolveSessionService(project));
     }
 }

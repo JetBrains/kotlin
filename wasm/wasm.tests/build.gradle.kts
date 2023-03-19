@@ -12,6 +12,7 @@ plugins {
 dependencies {
     testApi(commonDependency("junit:junit"))
     testApi(projectTests(":compiler:tests-common"))
+    testApi(projectTests(":compiler:tests-common-new"))
     testApi(intellijCore())
 }
 
@@ -89,7 +90,8 @@ val currentOsType = run {
     OsType(osName, osArch)
 }
 
-val jsShellDirectory = "https://archive.mozilla.org/pub/firefox/nightly/2023/01/2023-01-23-09-44-44-mozilla-central"
+val jsShellVersion = "2023-03-04-09-52-24-mozilla-central"
+val jsShellDirectory = "https://archive.mozilla.org/pub/firefox/nightly/2023/03/$jsShellVersion"
 val jsShellSuffix = when (currentOsType) {
     OsType(OsName.LINUX, OsArch.X86_32) -> "linux-i686"
     OsType(OsName.LINUX, OsArch.X86_64) -> "linux-x86_64"
@@ -105,14 +107,14 @@ val downloadedTools = File(buildDir, "tools")
 
 val downloadJsShell by task<Download> {
     src(jsShellLocation)
-    dest(File(downloadedTools, "jsshell-$jsShellSuffix.zip"))
+    dest(File(downloadedTools, "jsshell-$jsShellSuffix-$jsShellVersion.zip"))
     overwrite(false)
 }
 
 val unzipJsShell by task<Copy> {
     dependsOn(downloadJsShell)
     from(zipTree(downloadJsShell.get().dest))
-    val unpackedDir = File(downloadedTools, "jsshell-$jsShellSuffix")
+    val unpackedDir = File(downloadedTools, "jsshell-$jsShellSuffix-$jsShellVersion")
     into(unpackedDir)
 }
 
@@ -130,8 +132,22 @@ val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateWa
 
 projectTest(parallel = true) {
     workingDir = rootDir
+    exclude("**/diagnostics/*.class")
     setupV8()
     setupSpiderMonkey()
+    setupWasmStdlib()
+    setupGradlePropertiesForwarding()
+    systemProperty("kotlin.wasm.test.root.out.dir", "$buildDir/")
+}
+
+projectTest(
+    taskName = "diagnosticsTest",
+    parallel = true,
+    jUnitMode = JUnitMode.JUnit5
+) {
+    workingDir = rootDir
+    include("**/diagnostics/*.class")
+    useJUnitPlatform()
     setupWasmStdlib()
     setupGradlePropertiesForwarding()
     systemProperty("kotlin.wasm.test.root.out.dir", "$buildDir/")

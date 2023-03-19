@@ -2,8 +2,7 @@ $TESTDATA_DIR$/sourceMapRoot/foo/file1.kt
 $TESTDATA_DIR$/sourceMapRoot/bar/file2.kt
 $TESTDATA_DIR$/sourceMapRoot/bar/baz/file3.kt
 $TESTDATA_DIR$/sourceMapRoot/foo/baz/file4.kt
--Xlegacy-deprecated-no-warn
--Xuse-deprecated-legacy-compiler
+-Xforce-deprecated-legacy-compiler-usage
 -source-map
 -source-map-base-dirs
 $TESTDATA_DIR$/sourceMapRoot/foo

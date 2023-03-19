@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 public class FileBasedKotlinDeclarationProviderTestGenerated extends AbstractFileBasedKotlinDeclarationProviderTest {
     @Test
     public void testAllFilesPresentInFileBasedDeclarationProvider() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/fileBasedDeclarationProvider"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/fileBasedDeclarationProvider"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
     }
 
     @Test
@@ -46,6 +46,12 @@ public class FileBasedKotlinDeclarationProviderTestGenerated extends AbstractFil
     @TestMetadata("sameNames.kt")
     public void testSameNames() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/fileBasedDeclarationProvider/sameNames.kt");
+    }
+
+    @Test
+    @TestMetadata("script.kts")
+    public void testScript() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/fileBasedDeclarationProvider/script.kts");
     }
 
     @Test

@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("DEPRECATION_ERROR")
+
 package org.jetbrains.kotlin.codegen.extensions
 
 import org.jetbrains.kotlin.codegen.ClassBuilderFactory
@@ -21,6 +23,12 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.resolve.BindingContext
 
+@Deprecated(
+    "This extension is only supported in K1 and will not work properly in K2. " +
+            "Please migrate to org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension or " +
+            "org.jetbrains.kotlin.backend.jvm.extensions.ClassGeneratorExtension.",
+    level = DeprecationLevel.ERROR
+)
 interface ClassBuilderInterceptorExtension {
     companion object : ProjectExtensionDescriptor<ClassBuilderInterceptorExtension>(
             "org.jetbrains.kotlin.classBuilderFactoryInterceptorExtension", ClassBuilderInterceptorExtension::class.java)

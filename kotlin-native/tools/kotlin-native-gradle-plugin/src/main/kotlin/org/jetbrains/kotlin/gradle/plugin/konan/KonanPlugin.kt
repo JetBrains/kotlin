@@ -342,7 +342,7 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
                 // If the JDK that was set is not available get the JDK 11 as a default
                 service.launcherFor(object : Action<JavaToolchainSpec> {
                     override fun execute(toolchainSpec: JavaToolchainSpec) {
-                        toolchainSpec.languageVersion.set(JavaLanguageVersion.of(JdkMajorVersion.JDK_11_0.majorVersion))
+                        toolchainSpec.languageVersion.set(JavaLanguageVersion.of(11))   // FIXME: not resolved from buildSrc JdkMajorVersion.JDK_11_0.majorVersion))
                     }
                 }).get()
             }
@@ -355,7 +355,6 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
         project.plugins.apply("base")
         project.plugins.apply("java")
         // Create necessary tasks and extensions.
-        project.tasks.create(KONAN_DOWNLOAD_TASK_NAME, KonanCompilerDownloadTask::class.java)
         project.extensions.create(KONAN_EXTENSION_NAME, KonanExtension::class.java)
         val container = project.extensions.create(
                 KonanArtifactContainer::class.java,

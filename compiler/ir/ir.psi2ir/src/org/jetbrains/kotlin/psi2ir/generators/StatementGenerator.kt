@@ -51,7 +51,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-class StatementGenerator(
+internal class StatementGenerator(
     val bodyGenerator: BodyGenerator,
     override val scope: Scope
 ) : KtVisitor<IrStatement, Nothing?>(),
@@ -553,7 +553,7 @@ class StatementGenerator(
         ReflectionReferencesGenerator(this).generateCallableReference(expression)
 }
 
-abstract class StatementGeneratorExtension(val statementGenerator: StatementGenerator) : GeneratorWithScope {
+internal abstract class StatementGeneratorExtension(val statementGenerator: StatementGenerator) : GeneratorWithScope {
     override val scope: Scope get() = statementGenerator.scope
     override val context: GeneratorContext get() = statementGenerator.context
 

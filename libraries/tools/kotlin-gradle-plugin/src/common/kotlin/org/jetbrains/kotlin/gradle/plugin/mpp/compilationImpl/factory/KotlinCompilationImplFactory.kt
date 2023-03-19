@@ -42,7 +42,7 @@ internal class KotlinCompilationImplFactory(
         DefaultProcessResourcesTaskNameFactory,
 
     private val preConfigureAction: PreConfigure =
-        EmptyPreConfigure,
+        DefaultKotlinCompilationPreConfigure,
 
     private val postConfigureAction: PostConfigure =
         DefaultKotlinCompilationPostConfigure
@@ -122,11 +122,26 @@ internal class KotlinCompilationImplFactory(
 
         return compilation
     }
+}
 
+internal operator fun KotlinCompilationImplFactory.PreConfigure.plus(
+    other: KotlinCompilationImplFactory.PreConfigure
+): KotlinCompilationImplFactory.PreConfigure {
+    val thisElements = if (this is CompositePreConfigure) this.elements else listOf(this)
+    val otherElements = if (other is CompositePreConfigure) other.elements else listOf(other)
+    return CompositePreConfigure(thisElements + otherElements)
+}
+
+internal operator fun KotlinCompilationImplFactory.PostConfigure.plus(
+    other: KotlinCompilationImplFactory.PostConfigure
+): KotlinCompilationImplFactory.PostConfigure {
+    val thisElements = if (this is CompositePostConfigure) this.elements else listOf(this)
+    val otherElements = if (other is CompositePostConfigure) other.elements else listOf(other)
+    return CompositePostConfigure(thisElements + otherElements)
 }
 
 private class CompositePreConfigure(
-    private val elements: List<KotlinCompilationImplFactory.PreConfigure>
+    val elements: List<KotlinCompilationImplFactory.PreConfigure>
 ) : KotlinCompilationImplFactory.PreConfigure {
     override fun configure(compilation: KotlinCompilationImpl) {
         elements.forEach { element -> element.configure(compilation) }
@@ -134,13 +149,9 @@ private class CompositePreConfigure(
 }
 
 private class CompositePostConfigure(
-    private val elements: List<KotlinCompilationImplFactory.PostConfigure>
+    val elements: List<KotlinCompilationImplFactory.PostConfigure>
 ) : KotlinCompilationImplFactory.PostConfigure {
     override fun configure(compilation: DecoratedKotlinCompilation<*>) {
         elements.forEach { element -> element.configure(compilation) }
     }
-}
-
-private object EmptyPreConfigure : KotlinCompilationImplFactory.PreConfigure {
-    override fun configure(compilation: KotlinCompilationImpl) = Unit
 }

@@ -11,11 +11,16 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDiagnosticsFor
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirOfType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.BeforeElementDiagnosticCollectionHandler
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.SingleNonLocalDeclarationDiagnosticRetriever
+import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.beforeElementDiagnosticCollectionHandler
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.fir.PersistentCheckerContextFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.renderWithClassName
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolveWithClearCaches
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionConfigurator
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLevelApiSingleFileTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
+import org.jetbrains.kotlin.analysis.low.level.api.fir.useFirSessionConfigurator
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollectorVisitor
@@ -26,6 +31,7 @@ import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
@@ -36,21 +42,21 @@ import org.jetbrains.kotlin.test.services.assertions
 abstract class AbstractDiagnosticTraversalCounterTest : AbstractLowLevelApiSingleFileTest() {
     override val configurator = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false)
 
+    override fun configureTest(builder: TestConfigurationBuilder) {
+        super.configureTest(builder)
+        builder.apply {
+            useFirSessionConfigurator { BeforeElementLLFirSessionConfigurator() }
+        }
+    }
+
     override fun doTestByFileStructure(ktFile: KtFile, moduleStructure: TestModuleStructure, testServices: TestServices) {
-        val handler = BeforeElementTestDiagnosticCollectionHandler()
-        resolveWithClearCaches(
-            ktFile,
-            configureSession = {
-                @OptIn(SessionConfiguration::class)
-                register(BeforeElementDiagnosticCollectionHandler::class, handler)
-            }
-        ) { firResolveSession ->
+        resolveWithClearCaches(ktFile) { firResolveSession ->
             // we should get diagnostics before we resolve the whole file by  ktFile.getOrBuildFir
             ktFile.collectDiagnosticsForFile(firResolveSession, DiagnosticCheckerFilter.ONLY_COMMON_CHECKERS)
 
             val firFile = ktFile.getOrBuildFirOfType<FirFile>(firResolveSession)
 
-            val errorElements = collectErrorElements(firFile, handler)
+            val errorElements = collectErrorElements(firFile)
 
             if (errorElements.isNotEmpty()) {
                 val zeroElements = errorElements.filter { it.second == 0 }
@@ -77,10 +83,8 @@ abstract class AbstractDiagnosticTraversalCounterTest : AbstractLowLevelApiSingl
         }
     }
 
-    private fun collectErrorElements(
-        firFile: FirElement,
-        handler: BeforeElementTestDiagnosticCollectionHandler
-    ): List<Pair<FirElement, Int>> {
+    private fun collectErrorElements(firFile: FirFile): List<Pair<FirElement, Int>> {
+        val handler = firFile.llFirSession.beforeElementDiagnosticCollectionHandler as BeforeElementTestDiagnosticCollectionHandler
         val errorElements = mutableListOf<Pair<FirElement, Int>>()
         val nonDuplicatingElements = findNonDuplicatingFirElements(firFile).filter { element ->
             when {
@@ -128,6 +132,13 @@ abstract class AbstractDiagnosticTraversalCounterTest : AbstractLowLevelApiSingl
         return elementUsageCount.filterValues { it == 1 }.keys
     }
 
+    private class BeforeElementLLFirSessionConfigurator : LLFirSessionConfigurator {
+        @OptIn(SessionConfiguration::class)
+        override fun configure(session: LLFirSession) {
+            val handler = BeforeElementTestDiagnosticCollectionHandler()
+            session.register(BeforeElementDiagnosticCollectionHandler::class, handler)
+        }
+    }
 
     class BeforeElementTestDiagnosticCollectionHandler : BeforeElementDiagnosticCollectionHandler() {
         val visitedTimes = mutableMapOf<FirElement, Int>()

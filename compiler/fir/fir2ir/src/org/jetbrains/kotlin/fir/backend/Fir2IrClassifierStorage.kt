@@ -88,6 +88,7 @@ class Fir2IrClassifierStorage(
         }
     }
 
+    // Note: declareTypeParameters should be called before!
     private fun IrClass.setThisReceiver(typeParameters: List<FirTypeParameterRef>) {
         symbolTable.enterScope(this)
         val typeArguments = typeParameters.map {
@@ -129,9 +130,9 @@ class Fir2IrClassifierStorage(
     }
 
     private fun IrClass.declareTypeParameters(klass: FirClass) {
+        preCacheTypeParameters(klass, symbol)
+        setTypeParameters(klass)
         if (klass is FirRegularClass) {
-            preCacheTypeParameters(klass, symbol)
-            setTypeParameters(klass)
             val fieldsForContextReceiversOfCurrentClass = createContextReceiverFields(klass)
             if (fieldsForContextReceiversOfCurrentClass.isNotEmpty()) {
                 declarations.addAll(fieldsForContextReceiversOfCurrentClass)
@@ -173,12 +174,6 @@ class Fir2IrClassifierStorage(
         if (this !is Fir2IrLazyClass) {
             valueClassRepresentation = computeValueClassRepresentation(klass)
         }
-    }
-
-    private fun IrClass.declareSupertypesAndTypeParameters(klass: FirClass): IrClass {
-        declareTypeParameters(klass)
-        declareSupertypes(klass)
-        return this
     }
 
     fun getCachedIrClass(klass: FirClass): IrClass? {
@@ -242,14 +237,7 @@ class Fir2IrClassifierStorage(
                 }
             }
         }.last()
-        val result = when (classOrLocalParent) {
-            is FirAnonymousObject -> createIrAnonymousObject(classOrLocalParent, irParent = temporaryParent).apply {
-                converter.processAnonymousObjectOnTheFly(classOrLocalParent, this)
-            }
-            is FirRegularClass -> {
-                converter.processLocalClassAndNestedClassesOnTheFly(classOrLocalParent, temporaryParent)
-            }
-        }
+        val result = converter.processLocalClassAndNestedClassesOnTheFly(classOrLocalParent, temporaryParent)
         // Note: usually member creation and f/o binding is delayed till non-local classes are processed in Fir2IrConverter
         // If non-local classes are already created (this means we are in body translation) we do everything immediately
         // The last variant is possible for local variables like 'val a = object : Any() { ... }'
@@ -279,16 +267,18 @@ class Fir2IrClassifierStorage(
 
     private fun processMembersOfClassCreatedOnTheFly(klass: FirClass, irClass: IrClass) {
         when (klass) {
-            is FirRegularClass -> converter.processClassMembers(klass, irClass)
+            is FirRegularClass -> converter.processRegularClassMembers(klass, irClass)
             is FirAnonymousObject -> converter.processAnonymousObjectMembers(klass, irClass, processHeaders = false)
         }
     }
 
-    fun processClassHeader(regularClass: FirRegularClass, irClass: IrClass = getCachedIrClass(regularClass)!!): IrClass {
-        irClass.declareTypeParameters(regularClass)
-        irClass.setThisReceiver(regularClass.typeParameters)
-        irClass.declareSupertypes(regularClass)
-        irClass.declareValueClassRepresentation(regularClass)
+    fun processClassHeader(klass: FirClass, irClass: IrClass = getCachedIrClass(klass)!!): IrClass {
+        irClass.declareTypeParameters(klass)
+        irClass.setThisReceiver(klass.typeParameters)
+        irClass.declareSupertypes(klass)
+        if (klass is FirRegularClass) {
+            irClass.declareValueClassRepresentation(klass)
+        }
         return irClass
     }
 
@@ -378,7 +368,7 @@ class Fir2IrClassifierStorage(
         return irClass
     }
 
-    fun createIrAnonymousObject(
+    fun registerIrAnonymousObject(
         anonymousObject: FirAnonymousObject,
         visibility: Visibility = Visibilities.Local,
         name: Name = Name.special("<no name provided>"),
@@ -386,7 +376,7 @@ class Fir2IrClassifierStorage(
     ): IrClass {
         val origin = IrDeclarationOrigin.DEFINED
         val modality = Modality.FINAL
-        val result = anonymousObject.convertWithOffsets { startOffset, endOffset ->
+        val irAnonymousObject = anonymousObject.convertWithOffsets { startOffset, endOffset ->
             irFactory.createClass(
                 startOffset, endOffset, origin, IrClassSymbolImpl(), name,
                 // NB: for unknown reason, IR uses 'CLASS' kind for simple anonymous objects
@@ -394,19 +384,20 @@ class Fir2IrClassifierStorage(
                 components.visibilityConverter.convertToDescriptorVisibility(visibility), modality
             ).apply {
                 metadata = FirMetadataSource.Class(anonymousObject)
-                setThisReceiver(anonymousObject.typeParameters)
-                if (irParent != null) {
-                    this.parent = irParent
-                }
             }
-        }.declareSupertypesAndTypeParameters(anonymousObject)
-        localStorage[anonymousObject] = result
-        return result
+        }
+        if (irParent != null) {
+            irAnonymousObject.parent = irParent
+        }
+        localStorage[anonymousObject] = irAnonymousObject
+        return irAnonymousObject
     }
 
     private fun getIrAnonymousObjectForEnumEntry(anonymousObject: FirAnonymousObject, name: Name, irParent: IrClass?): IrClass {
         localStorage[anonymousObject]?.let { return it }
-        return createIrAnonymousObject(anonymousObject, Visibilities.Private, name, irParent)
+        val irAnonymousObject = registerIrAnonymousObject(anonymousObject, Visibilities.Private, name, irParent)
+        processClassHeader(anonymousObject, irAnonymousObject)
+        return irAnonymousObject
     }
 
     private fun createIrTypeParameterWithoutBounds(

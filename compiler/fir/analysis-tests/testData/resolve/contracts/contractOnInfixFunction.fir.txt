@@ -1,0 +1,47 @@
+FILE: contractOnInfixFunction.kt
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final infix fun R|kotlin/Boolean|.takeRight(cond: R|kotlin/Boolean|): R|kotlin/Boolean|
+        [R|Contract description]
+         <
+            Returns(TRUE) -> cond
+        >
+     {
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returns|(Boolean(true)).R|kotlin/contracts/SimpleEffect.implies|(R|<local>/cond|)
+            }
+            )
+        }
+
+        ^takeRight R|<local>/cond|
+    }
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final infix fun R|kotlin/Boolean?|.ensureLeft(x: R|kotlin/Any|): R|kotlin/Boolean|
+        [R|Contract description]
+         <
+            Returns(TRUE) -> this != null
+        >
+     {
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returns|(Boolean(true)).R|kotlin/contracts/SimpleEffect.implies|(!=(this@R|/ensureLeft|, Null(null)))
+            }
+            )
+        }
+
+        ^ensureLeft !=(this@R|/ensureLeft|, Null(null))
+    }
+    public final fun test_1(b: R|kotlin/Boolean|, x: R|kotlin/Any|): R|kotlin/Unit| {
+        when () {
+            R|<local>/b|.R|/takeRight|((R|<local>/x| is R|kotlin/String|)) ->  {
+                R|<local>/x|.R|kotlin/String.length|
+            }
+        }
+
+    }
+    public final fun test_2(b: R|kotlin/Boolean?|, x: R|kotlin/Any|): R|kotlin/Unit| {
+        when () {
+            R|<local>/b|.R|/ensureLeft|((R|<local>/x| is R|kotlin/String|)) ->  {
+                R|<local>/b|.R|kotlin/Boolean.not|()
+            }
+        }
+
+    }

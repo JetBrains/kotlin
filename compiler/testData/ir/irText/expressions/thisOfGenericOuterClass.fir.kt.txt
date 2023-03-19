@@ -27,7 +27,7 @@ class Outer<T : Any?> {
 fun Outer<Int>.test(): Inner<Int> {
   return { // BLOCK
     local class <no name provided> : Inner<Int> {
-      private constructor() /* primary */ {
+      constructor() /* primary */ {
         <this>.super/*Inner*/(y = 42)
         /* <init>() */
 

@@ -178,6 +178,12 @@ private fun FirAnnotation.getDeprecationLevel(): DeprecationLevelValue? {
     return DeprecationLevelValue.values().find { it.name == targetName }
 }
 
+val deprecationAnnotationSimpleNames: Set<String> = setOf(
+    StandardClassIds.Annotations.Deprecated.shortClassName.asString(),
+    StandardClassIds.Annotations.Java.Deprecated.shortClassName.asString(),
+    StandardClassIds.Annotations.SinceKotlin.shortClassName.asString(),
+)
+
 private fun List<FirAnnotation>.extractDeprecationAnnotationInfoPerUseSite(
     session: FirSession, fromJava: Boolean
 ): DeprecationAnnotationInfoPerUseSiteStorage {

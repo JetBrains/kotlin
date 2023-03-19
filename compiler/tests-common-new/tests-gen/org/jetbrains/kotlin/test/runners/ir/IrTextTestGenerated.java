@@ -305,6 +305,12 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
         }
 
         @Test
+        @TestMetadata("smartCastInValInitialization.kt")
+        public void testSmartCastInValInitialization() throws Exception {
+            runTest("compiler/testData/ir/irText/classes/smartCastInValInitialization.kt");
+        }
+
+        @Test
         @TestMetadata("superCalls.kt")
         public void testSuperCalls() throws Exception {
             runTest("compiler/testData/ir/irText/classes/superCalls.kt");
@@ -2547,6 +2553,12 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
         }
 
         @Test
+        @TestMetadata("AnonymousAsReturnOfGenericFunction.kt")
+        public void testAnonymousAsReturnOfGenericFunction() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/AnonymousAsReturnOfGenericFunction.kt");
+        }
+
+        @Test
         @TestMetadata("ArrayListOverrides.kt")
         public void testArrayListOverrides() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/ArrayListOverrides.kt");
@@ -2604,6 +2616,12 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
         @TestMetadata("emptyWhen.kt")
         public void testEmptyWhen() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/emptyWhen.kt");
+        }
+
+        @Test
+        @TestMetadata("ErrorInDefaultValue.kt")
+        public void testErrorInDefaultValue() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/ErrorInDefaultValue.kt");
         }
 
         @Test

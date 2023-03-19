@@ -25,7 +25,7 @@ class IrLazyTypeAlias(
     override val descriptor: TypeAliasDescriptor,
     override var name: Name,
     override var visibility: DescriptorVisibility,
-    override val isActual: Boolean,
+    override var isActual: Boolean,
     override val stubGenerator: DeclarationStubGenerator,
     override val typeTranslator: TypeTranslator,
 ) : IrTypeAlias(), IrLazyDeclarationBase {

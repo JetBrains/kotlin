@@ -20,7 +20,9 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_BACKEND_K2_MULTI_MODULE
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_BACKEND_MULTI_MODULE
+import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.SERIALIZE_IR
+import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.directives.model.ValueDirective
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2ClassicBackendConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
@@ -102,7 +104,7 @@ open class AbstractIrSerializeCompileKotlinAgainstInlineKotlinTest : AbstractIrC
     }
 }
 
-open class AbstractFirSerializeCompileKotlinAgainstInlineKotlinTest :
+open class AbstractFirSerializeCompileKotlinAgainstInlineKotlinTestBase(val parser: FirParser) :
     AbstractCompileKotlinAgainstInlineKotlinTestBase<FirOutputArtifact, IrBackendInput>(FrontendKinds.FIR, TargetBackend.JVM_IR_SERIALIZE) {
 
     override val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>
@@ -119,5 +121,13 @@ open class AbstractFirSerializeCompileKotlinAgainstInlineKotlinTest :
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configureForSerialization()
+        builder.configureFirParser(parser)
     }
 }
+
+open class AbstractFirLightTreeSerializeCompileKotlinAgainstInlineKotlinTest :
+    AbstractFirSerializeCompileKotlinAgainstInlineKotlinTestBase(FirParser.LightTree)
+
+@FirPsiCodegenTest
+open class AbstractFirPsiSerializeCompileKotlinAgainstInlineKotlinTest :
+    AbstractFirSerializeCompileKotlinAgainstInlineKotlinTestBase(FirParser.Psi)

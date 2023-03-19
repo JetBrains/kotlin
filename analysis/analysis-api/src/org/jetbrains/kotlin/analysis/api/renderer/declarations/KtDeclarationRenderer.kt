@@ -81,6 +81,9 @@ public class KtDeclarationRenderer private constructor(
     public val anonymousObjectRenderer: KtAnonymousObjectSymbolRenderer,
     public val singleTypeParameterRenderer: KtSingleTypeParameterSymbolRenderer,
     public val returnTypeFilter: KtCallableReturnTypeFilter,
+
+    public val scriptRenderer: KtScriptSymbolRenderer,
+    public val scriptInitializerRenderer: KtScriptInitializerRenderer
 ) {
 
     context(KtAnalysisSession)
@@ -104,6 +107,7 @@ public class KtDeclarationRenderer private constructor(
             is KtSyntheticJavaPropertySymbol -> syntheticJavaPropertyRenderer.renderSymbol(symbol, printer)
             is KtTypeParameterSymbol -> singleTypeParameterRenderer.renderSymbol(symbol, printer)
             is KtClassInitializerSymbol -> classInitializerRender.renderClassInitializer(symbol, printer)
+            is KtScriptSymbol -> scriptRenderer.renderSymbol(symbol, printer)
         }
     }
 
@@ -164,6 +168,9 @@ public class KtDeclarationRenderer private constructor(
             this.anonymousObjectRenderer = renderer.anonymousObjectRenderer
             this.singleTypeParameterRenderer = renderer.singleTypeParameterRenderer
             this.returnTypeFilter = renderer.returnTypeFilter
+
+            this.scriptRenderer = renderer.scriptRenderer
+            this.scriptInitializerRenderer = renderer.scriptInitializerRenderer
 
             action()
         }
@@ -229,6 +236,8 @@ public class KtDeclarationRenderer private constructor(
         public lateinit var anonymousObjectRenderer: KtAnonymousObjectSymbolRenderer
         public lateinit var singleTypeParameterRenderer: KtSingleTypeParameterSymbolRenderer
 
+        public lateinit var scriptRenderer: KtScriptSymbolRenderer
+        public lateinit var scriptInitializerRenderer: KtScriptInitializerRenderer
 
         public fun build(): KtDeclarationRenderer = KtDeclarationRenderer(
             nameRenderer,
@@ -284,6 +293,9 @@ public class KtDeclarationRenderer private constructor(
             anonymousObjectRenderer,
             singleTypeParameterRenderer,
             returnTypeFilter,
+
+            scriptRenderer,
+            scriptInitializerRenderer,
         )
     }
 }

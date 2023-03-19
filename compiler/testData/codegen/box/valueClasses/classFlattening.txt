@@ -2,11 +2,13 @@
 public final class ClassFlatteningKt {
     // source: 'classFlattening.kt'
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static method gmfvc-Ket90g4(p0: int, p1: int, p2: int, @org.jetbrains.annotations.NotNull p3: java.lang.String, p4: int, p5: int, p6: int, @org.jetbrains.annotations.NotNull p7: java.lang.String, p8: int): int
+    public final static method gmfvc-esHD5tU(p0: int, p1: int, p2: int, @org.jetbrains.annotations.NotNull p3: java.lang.String, p4: int, p5: int, p6: int, @org.jetbrains.annotations.NotNull p7: java.lang.String, p8: int): int
     public final static method ic-K5cTq2M(p0: int): int
+    public final static method ic-WZ4Q5Ns(p0: int): int
     public final static @org.jetbrains.annotations.NotNull method idBoxed(@org.jetbrains.annotations.Nullable p0: SimpleMfvc): SimpleMfvc
-    public final static @org.jetbrains.annotations.NotNull method idUnboxed-sUp7gFk(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String): SimpleMfvc
-    public final static method smfvc-Ket90g4(p0: int, p1: int, p2: int, @org.jetbrains.annotations.NotNull p3: java.lang.String, p4: int): int
+    public final static @org.jetbrains.annotations.NotNull method idUnboxed-ge5QAg4(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String): SimpleMfvc
+    public final static method smfvc-8dxEgb8(p0: int, p1: int, p2: int, @org.jetbrains.annotations.NotNull p3: java.lang.String, p4: int): int
+    public final static method smfvc-qMG0wUE(p0: int, p1: int, p2: int, @org.jetbrains.annotations.NotNull p3: java.lang.String, p4: int): int
     public final inner class Contexts$Companion
     public final inner class Extensions$Companion
     public final inner class SimpleMfvc$Companion
@@ -17,13 +19,13 @@ public final class Contexts$Companion {
     // source: 'classFlattening.kt'
     private method <init>(): void
     public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
-    public synthetic final static method access$getPrivate2-sUp7gFk(p0: Contexts$Companion, p1: int, p2: int, p3: java.lang.String): SimpleMfvc
-    private final method getPrivate1-sUp7gFk(p0: int, p1: int, p2: java.lang.String): SimpleMfvc
+    public synthetic final static method access$getPrivate2-ge5QAg4(p0: Contexts$Companion, p1: int, p2: int, p3: java.lang.String): SimpleMfvc
+    private final method getPrivate1-ge5QAg4(p0: int, p1: int, p2: java.lang.String): SimpleMfvc
     private synthetic deprecated static @kotlin.jvm.JvmStatic method getPrivate2$annotations(): void
-    private final method getPrivate2-sUp7gFk(p0: int, p1: int, p2: java.lang.String): SimpleMfvc
-    public final @org.jetbrains.annotations.NotNull method getY1-sUp7gFk(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String): SimpleMfvc
+    private final method getPrivate2-ge5QAg4(p0: int, p1: int, p2: java.lang.String): SimpleMfvc
+    public final @org.jetbrains.annotations.NotNull method getY1-ge5QAg4(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String): SimpleMfvc
     public synthetic deprecated static @kotlin.jvm.JvmStatic method getZ1$annotations(): void
-    public final @org.jetbrains.annotations.NotNull method getZ1-sUp7gFk(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String): SimpleMfvc
+    public final @org.jetbrains.annotations.NotNull method getZ1-ge5QAg4(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String): SimpleMfvc
     public final inner class Contexts$Companion
 }
 
@@ -33,10 +35,10 @@ public final class Contexts {
     public final static @org.jetbrains.annotations.NotNull field Companion: Contexts$Companion
     static method <clinit>(): void
     public method <init>(): void
-    private final static method getPrivate2-sUp7gFk(p0: int, p1: int, p2: java.lang.String): SimpleMfvc
-    private final method getPrivate_-sUp7gFk(p0: int, p1: int, p2: java.lang.String): SimpleMfvc
-    public final @org.jetbrains.annotations.NotNull method getX1-sUp7gFk(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String): SimpleMfvc
-    public final static @org.jetbrains.annotations.NotNull method getZ1-sUp7gFk(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String): SimpleMfvc
+    private final static method getPrivate2-ge5QAg4(p0: int, p1: int, p2: java.lang.String): SimpleMfvc
+    private final method getPrivate_-ge5QAg4(p0: int, p1: int, p2: java.lang.String): SimpleMfvc
+    public final @org.jetbrains.annotations.NotNull method getX1-ge5QAg4(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String): SimpleMfvc
+    public final static @org.jetbrains.annotations.NotNull method getZ1-ge5QAg4(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String): SimpleMfvc
     public final inner class Contexts$Companion
 }
 
@@ -45,13 +47,13 @@ public final class Extensions$Companion {
     // source: 'classFlattening.kt'
     private method <init>(): void
     public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
-    public synthetic final static method access$getPrivate2-sUp7gFk(p0: Extensions$Companion, p1: int, p2: int, p3: java.lang.String): SimpleMfvc
-    private final method getPrivate1-sUp7gFk(p0: int, p1: int, p2: java.lang.String): SimpleMfvc
+    public synthetic final static method access$getPrivate2-ge5QAg4(p0: Extensions$Companion, p1: int, p2: int, p3: java.lang.String): SimpleMfvc
+    private final method getPrivate1-ge5QAg4(p0: int, p1: int, p2: java.lang.String): SimpleMfvc
     private synthetic deprecated static @kotlin.jvm.JvmStatic method getPrivate2$annotations(p0: SimpleMfvc): void
-    private final method getPrivate2-sUp7gFk(p0: int, p1: int, p2: java.lang.String): SimpleMfvc
-    public final @org.jetbrains.annotations.NotNull method getY1-sUp7gFk(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String): SimpleMfvc
+    private final method getPrivate2-ge5QAg4(p0: int, p1: int, p2: java.lang.String): SimpleMfvc
+    public final @org.jetbrains.annotations.NotNull method getY1-ge5QAg4(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String): SimpleMfvc
     public synthetic deprecated static @kotlin.jvm.JvmStatic method getZ1$annotations(p0: SimpleMfvc): void
-    public final @org.jetbrains.annotations.NotNull method getZ1-sUp7gFk(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String): SimpleMfvc
+    public final @org.jetbrains.annotations.NotNull method getZ1-ge5QAg4(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String): SimpleMfvc
     public final inner class Extensions$Companion
 }
 
@@ -61,10 +63,10 @@ public final class Extensions {
     public final static @org.jetbrains.annotations.NotNull field Companion: Extensions$Companion
     static method <clinit>(): void
     public method <init>(): void
-    private final static method getPrivate2-sUp7gFk(p0: int, p1: int, p2: java.lang.String): SimpleMfvc
-    private final method getPrivate_-sUp7gFk(p0: int, p1: int, p2: java.lang.String): SimpleMfvc
-    public final @org.jetbrains.annotations.NotNull method getX1-sUp7gFk(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String): SimpleMfvc
-    public final static @org.jetbrains.annotations.NotNull method getZ1-sUp7gFk(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String): SimpleMfvc
+    private final static method getPrivate2-ge5QAg4(p0: int, p1: int, p2: java.lang.String): SimpleMfvc
+    private final method getPrivate_-ge5QAg4(p0: int, p1: int, p2: java.lang.String): SimpleMfvc
+    public final @org.jetbrains.annotations.NotNull method getX1-ge5QAg4(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String): SimpleMfvc
+    public final static @org.jetbrains.annotations.NotNull method getZ1-ge5QAg4(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String): SimpleMfvc
     public final inner class Extensions$Companion
 }
 
@@ -127,20 +129,20 @@ public final class SimpleMfvc$Companion {
     // source: 'classFlattening.kt'
     private method <init>(): void
     public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
-    public synthetic final static method access$getPrivate2-sUp7gFk(p0: SimpleMfvc$Companion, p1: int, p2: int, p3: java.lang.String): SimpleMfvc
-    public synthetic final static method access$getPrivate4-sUp7gFk(p0: SimpleMfvc$Companion, p1: int, p2: int, p3: java.lang.String): SimpleMfvc
-    public final @org.jetbrains.annotations.NotNull method getA1-sUp7gFk(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String): SimpleMfvc
-    public final @org.jetbrains.annotations.NotNull method getA2-sUp7gFk(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String): SimpleMfvc
+    public synthetic final static method access$getPrivate2-ge5QAg4(p0: SimpleMfvc$Companion, p1: int, p2: int, p3: java.lang.String): SimpleMfvc
+    public synthetic final static method access$getPrivate4-ge5QAg4(p0: SimpleMfvc$Companion, p1: int, p2: int, p3: java.lang.String): SimpleMfvc
+    public final @org.jetbrains.annotations.NotNull method getA1-ge5QAg4(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String): SimpleMfvc
+    public final @org.jetbrains.annotations.NotNull method getA2-ge5QAg4(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String): SimpleMfvc
     public synthetic deprecated static @kotlin.jvm.JvmStatic method getB1$annotations(p0: SimpleMfvc): void
-    public final @org.jetbrains.annotations.NotNull method getB1-sUp7gFk(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String): SimpleMfvc
+    public final @org.jetbrains.annotations.NotNull method getB1-ge5QAg4(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String): SimpleMfvc
     public synthetic deprecated static @kotlin.jvm.JvmStatic method getB2$annotations(): void
-    public final @org.jetbrains.annotations.NotNull method getB2-sUp7gFk(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String): SimpleMfvc
-    private final method getPrivate1-sUp7gFk(p0: int, p1: int, p2: java.lang.String): SimpleMfvc
+    public final @org.jetbrains.annotations.NotNull method getB2-ge5QAg4(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String): SimpleMfvc
+    private final method getPrivate1-ge5QAg4(p0: int, p1: int, p2: java.lang.String): SimpleMfvc
     private synthetic deprecated static @kotlin.jvm.JvmStatic method getPrivate2$annotations(p0: SimpleMfvc): void
-    private final method getPrivate2-sUp7gFk(p0: int, p1: int, p2: java.lang.String): SimpleMfvc
-    private final method getPrivate3-sUp7gFk(p0: int, p1: int, p2: java.lang.String): SimpleMfvc
+    private final method getPrivate2-ge5QAg4(p0: int, p1: int, p2: java.lang.String): SimpleMfvc
+    private final method getPrivate3-ge5QAg4(p0: int, p1: int, p2: java.lang.String): SimpleMfvc
     private synthetic deprecated static @kotlin.jvm.JvmStatic method getPrivate4$annotations(): void
-    private final method getPrivate4-sUp7gFk(p0: int, p1: int, p2: java.lang.String): SimpleMfvc
+    private final method getPrivate4-ge5QAg4(p0: int, p1: int, p2: java.lang.String): SimpleMfvc
     public final inner class SimpleMfvc$Companion
 }
 
@@ -159,16 +161,16 @@ public final class SimpleMfvc {
     public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public static method equals-impl(p0: int, p1: int, p2: java.lang.String, p3: java.lang.Object): boolean
     public final static method equals-impl0(p0: int, p1: int, p2: java.lang.String, p3: int, p4: int, p5: java.lang.String): boolean
-    public final static @org.jetbrains.annotations.NotNull method getA3-sUp7gFk(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String, p3: int, p4: int, @org.jetbrains.annotations.NotNull p5: java.lang.String): SimpleMfvc
+    public final static @org.jetbrains.annotations.NotNull method getA3-ge5QAg4(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String, p3: int, p4: int, @org.jetbrains.annotations.NotNull p5: java.lang.String): SimpleMfvc
     public final static method getA4-impl(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String): int
-    public final static @org.jetbrains.annotations.NotNull method getB1-sUp7gFk(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String): SimpleMfvc
-    public final static @org.jetbrains.annotations.NotNull method getB2-sUp7gFk(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String): SimpleMfvc
-    public final static @org.jetbrains.annotations.NotNull method getB3-sUp7gFk(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String, p3: int, p4: int, @org.jetbrains.annotations.NotNull p5: java.lang.String): SimpleMfvc
+    public final static @org.jetbrains.annotations.NotNull method getB1-ge5QAg4(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String): SimpleMfvc
+    public final static @org.jetbrains.annotations.NotNull method getB2-ge5QAg4(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String): SimpleMfvc
+    public final static @org.jetbrains.annotations.NotNull method getB3-ge5QAg4(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String, p3: int, p4: int, @org.jetbrains.annotations.NotNull p5: java.lang.String): SimpleMfvc
     public final static @org.jetbrains.annotations.NotNull method getB4-impl(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String): SimpleMfvc
-    private final static method getPrivate1-sUp7gFk(p0: int, p1: int, p2: java.lang.String, p3: int, p4: int, p5: java.lang.String): SimpleMfvc
-    private final static method getPrivate2-sUp7gFk(p0: int, p1: int, p2: java.lang.String): SimpleMfvc
-    private final static method getPrivate2-sUp7gFk(p0: int, p1: int, p2: java.lang.String, p3: int, p4: int, p5: java.lang.String): SimpleMfvc
-    private final static method getPrivate4-sUp7gFk(p0: int, p1: int, p2: java.lang.String): SimpleMfvc
+    private final static method getPrivate1-ge5QAg4(p0: int, p1: int, p2: java.lang.String, p3: int, p4: int, p5: java.lang.String): SimpleMfvc
+    private final static method getPrivate2-ge5QAg4(p0: int, p1: int, p2: java.lang.String): SimpleMfvc
+    private final static method getPrivate2-ge5QAg4(p0: int, p1: int, p2: java.lang.String, p3: int, p4: int, p5: java.lang.String): SimpleMfvc
+    private final static method getPrivate4-ge5QAg4(p0: int, p1: int, p2: java.lang.String): SimpleMfvc
     public final method getX-pVg5ArA(): int
     public final method getY-fhib4bs(): int
     public final @org.jetbrains.annotations.NotNull method getZ(): java.lang.String
@@ -180,4 +182,28 @@ public final class SimpleMfvc {
     public synthetic final method unbox-impl-y(): int
     public synthetic final method unbox-impl-z(): java.lang.String
     public final inner class SimpleMfvc$Companion
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class Wrapper {
+    // source: 'classFlattening.kt'
+    private final field simpleMfvc-x: int
+    private final field simpleMfvc-y: int
+    private final @org.jetbrains.annotations.NotNull field simpleMfvc-z: java.lang.String
+    private synthetic method <init>(p0: int, p1: int, p2: java.lang.String): void
+    public synthetic final static method box-impl(p0: int, p1: int, p2: java.lang.String): Wrapper
+    public final static method constructor-impl(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public static method equals-impl(p0: int, p1: int, p2: java.lang.String, p3: java.lang.Object): boolean
+    public final static method equals-impl0(p0: int, p1: int, p2: java.lang.String, p3: int, p4: int, p5: java.lang.String): boolean
+    public final @org.jetbrains.annotations.NotNull method getSimpleMfvc(): SimpleMfvc
+    public method hashCode(): int
+    public static method hashCode-impl(p0: int, p1: int, p2: java.lang.String): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+    public static method toString-impl(p0: int, p1: int, p2: java.lang.String): java.lang.String
+    public synthetic final method unbox-impl-simpleMfvc(): SimpleMfvc
+    public synthetic final method unbox-impl-simpleMfvc-x(): int
+    public synthetic final method unbox-impl-simpleMfvc-y(): int
+    public synthetic final method unbox-impl-simpleMfvc-z(): java.lang.String
 }

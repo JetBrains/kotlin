@@ -1,0 +1,25 @@
+FILE: recursiveSelfTypes.kt
+    public abstract class Child<R : R|Recursive<R>|> : R|Parent<ChildParameter<*>, R>| {
+        public constructor<R : R|Recursive<R>|>(): R|Child<R>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun getParent(): R|Child<R>| {
+            ^getParent (this@R|/Child|.R|SubstitutionOverride</Child.self: R|Parent<ChildParameter<*>, R>|>|() as R|Child<R>|)
+        }
+
+    }
+    public abstract interface Parent<P : R|Parameter|, R : R|Recursive<R>|> : R|kotlin/Any| {
+        public abstract fun self(): R|Parent<P, R>|
+
+    }
+    public abstract interface Parameter : R|kotlin/Any| {
+    }
+    public final class ChildParameter<R : R|Recursive<R>|> : R|Parameter| {
+        public constructor<R : R|Recursive<R>|>(): R|ChildParameter<R>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public abstract interface Recursive<R : R|Recursive<R>|> : R|kotlin/Any| {
+    }

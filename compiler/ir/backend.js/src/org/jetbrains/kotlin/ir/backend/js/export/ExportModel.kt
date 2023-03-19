@@ -10,7 +10,13 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 
-sealed class ExportedDeclaration
+sealed class ExportedDeclaration {
+    val attributes = mutableListOf<ExportedAttribute>()
+}
+
+sealed class ExportedAttribute {
+    class DeprecatedAttribute(val message: String): ExportedAttribute()
+}
 
 data class ExportedModule(
     val name: String,
@@ -116,6 +122,7 @@ sealed class ExportedType {
         object Throwable : Primitive("Error")
         object Any : Primitive("any")
         object Unknown : Primitive("unknown")
+        object Undefined : Primitive("undefined")
         object Unit : Primitive("void")
         object Nothing : Primitive("never")
         object UniqueSymbol : Primitive("unique symbol")

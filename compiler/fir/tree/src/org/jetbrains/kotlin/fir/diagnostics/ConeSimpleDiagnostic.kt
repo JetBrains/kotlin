@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeTypeVariableType
 import org.jetbrains.kotlin.name.Name
 
 class ConeSimpleDiagnostic(override val reason: String, val kind: DiagnosticKind = DiagnosticKind.Other) : ConeDiagnostic
@@ -32,6 +33,11 @@ class ConeCannotInferTypeParameterType(
 class ConeCannotInferValueParameterType(
     val valueParameter: FirValueParameterSymbol,
     override val reason: String = "Cannot infer type for parameter ${valueParameter.name}"
+) : ConeDiagnostic
+
+class ConeTypeVariableTypeIsNotInferred(
+    val typeVariableType: ConeTypeVariableType,
+    override val reason: String = "Type for ${typeVariableType.lookupTag.debugName} is not inferred"
 ) : ConeDiagnostic
 
 class ConeUnderscoreUsageWithoutBackticks(source: KtSourceElement) : ConeDiagnosticWithSource(source) {

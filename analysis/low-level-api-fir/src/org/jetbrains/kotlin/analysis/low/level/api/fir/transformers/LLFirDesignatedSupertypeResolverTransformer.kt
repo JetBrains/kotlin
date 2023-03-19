@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyTra
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkTypeRefIsResolved
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withInvalidationOnException
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirElementWithResolvePhase
 import org.jetbrains.kotlin.fir.FirSession
@@ -146,7 +147,7 @@ internal class LLFirDesignatedSupertypeResolverTransformer(
             lockProvider.withLock(designationsPerFile.key) {
                 val session = designationsPerFile.key.llFirResolvableSession
                     ?: error("When FirFile exists for the declaration, the session should be resolvevablable")
-                session.moduleComponents.sessionInvalidator.withInvalidationOnException(session) {
+                withInvalidationOnException(session) {
                     applyToFileSymbols(designationsPerFile.value)
                 }
             }

@@ -85,6 +85,10 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
             field = if (value.isNullOrEmpty()) null else value
         }
 
+    @GradleOption(
+        value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
+        gradleInputType = GradleInputTypes.INPUT
+    )
     @Argument(
         value = "-progressive",
         deprecatedName = "-Xprogressive",
@@ -107,6 +111,10 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
             field = value
         }
 
+    @GradleOption(
+        value = DefaultValue.EMPTY_STRING_ARRAY_DEFAULT,
+        gradleInputType = GradleInputTypes.INPUT
+    )
     @Argument(
         value = "-opt-in",
         deprecatedName = "-Xopt-in",
@@ -711,6 +719,35 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
 
     @Argument(value = "-Xallow-any-scripts-in-source-roots", description = "Allow to compile any scripts along with regular Kotlin sources")
     var allowAnyScriptsInSourceRoots = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
+        value = "-Xfragments",
+        valueDescription = "<fragment name>",
+        description = "Declares all known fragments of a multiplatform compilation"
+    )
+    var fragments: Array<String>? = null
+
+    @Argument(
+        value = "-Xfragment-sources",
+        valueDescription = "<fragment name>:<path>",
+        description = "Adds sources to a specific fragment of a multiplatform compilation",
+    )
+    var fragmentSources: Array<String>? = null
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
+        value = "-Xfragment-refines",
+        valueDescription = "<fromModuleName>:<onModuleName>",
+        description = "Declares that <fromModuleName> refines <onModuleName> with dependsOn/refines relation",
+    )
+    var fragmentRefines: Array<String>? = null
         set(value) {
             checkFrozen()
             field = value

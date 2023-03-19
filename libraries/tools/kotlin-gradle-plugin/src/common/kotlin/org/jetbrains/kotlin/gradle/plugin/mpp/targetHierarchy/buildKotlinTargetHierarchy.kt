@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmTargetDsl
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.konan.target.DEPRECATED_TARGET_MESSAGE
 import org.jetbrains.kotlin.konan.target.Family
@@ -117,7 +119,9 @@ private class KotlinTargetHierarchyBuilderImpl(
 
     override fun withAndroidNative() = addTargets { it is KotlinNativeTarget && it.konanTarget.family == Family.ANDROID }
 
-    override fun withJs() = addTargets { it is KotlinJsTargetDsl }
+    // Don't check for instance of [KotlinJsTargetDsl] or [KotlinWasmTargetDsl] because they are implemented by single target [KotlinJsIrTarget]
+    override fun withJs() = addTargets { it.platformType == KotlinPlatformType.js }
+    override fun withWasm() = addTargets { it.platformType == KotlinPlatformType.wasm }
 
     override fun withJvm() = addTargets {
         it is KotlinJvmTarget ||

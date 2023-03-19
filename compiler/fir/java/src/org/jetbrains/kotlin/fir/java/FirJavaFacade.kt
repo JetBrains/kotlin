@@ -245,7 +245,7 @@ abstract class FirJavaFacade(
             val visibility = javaClass.visibility
             this@buildJavaClass.visibility = visibility
             classKind = javaClass.classKind
-            modality = if (classKind == ClassKind.ANNOTATION_CLASS || classKind == ClassKind.ENUM_CLASS) Modality.FINAL else javaClass.modality
+            modality = javaClass.modality
             this.isTopLevel = classId.outerClassId == null
             isStatic = javaClass.isStatic
             javaPackage = packageCache.getValue(classSymbol.classId.packageFqName)
@@ -284,9 +284,6 @@ abstract class FirJavaFacade(
                 effectiveVisibility
             ).apply {
                 this.isInner = !isTopLevel && !this@buildJavaClass.isStatic
-                isCompanion = false
-                isData = false
-                isInline = false
                 isFun = classKind == ClassKind.INTERFACE
             }
             // TODO: may be we can process fields & methods later.
@@ -367,7 +364,10 @@ abstract class FirJavaFacade(
                         moduleData = moduleData,
                     )
             }
-            if (javaClass.isRecord) {
+
+            // There is no need to generated synthetic declarations for java record from binary dependencies
+            //   because they are actually present in .class files
+            if (javaClass.isRecord && javaClass.isFromSource) {
                 createDeclarationsForJavaRecord(
                     javaClass,
                     classId,
@@ -496,9 +496,6 @@ abstract class FirJavaFacade(
                     javaField.visibility.toEffectiveVisibility(dispatchReceiver.lookupTag)
                 ).apply {
                     isStatic = javaField.isStatic
-                    isExpect = false
-                    isActual = false
-                    isOverride = false
                 }
                 returnTypeRef = returnType.toFirJavaTypeRef(session, javaTypeParameterStack)
                 resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
@@ -520,9 +517,6 @@ abstract class FirJavaFacade(
                     javaField.visibility.toEffectiveVisibility(dispatchReceiver.lookupTag)
                 ).apply {
                     isStatic = javaField.isStatic
-                    isExpect = false
-                    isActual = false
-                    isOverride = false
                 }
                 visibility = javaField.visibility
                 modality = javaField.modality
@@ -578,17 +572,7 @@ abstract class FirJavaFacade(
                 javaMethod.visibility.toEffectiveVisibility(dispatchReceiver.lookupTag)
             ).apply {
                 isStatic = javaMethod.isStatic
-                isExpect = false
-                isActual = false
-                isOverride = false
-                // Approximation: all Java methods with name that allows to use it in operator form are considered operators
-                // We need here more detailed checks (see modifierChecks.kt)
-                isOperator = name in ALL_JAVA_OPERATION_NAMES || OperatorNameConventions.COMPONENT_REGEX.matches(name.asString())
-                isInfix = false
-                isInline = false
-                isTailRec = false
-                isExternal = false
-                isSuspend = false
+                hasStableParameterNames = false
             }
 
             if (!javaMethod.isStatic) {
@@ -644,10 +628,8 @@ abstract class FirJavaFacade(
                 Modality.FINAL,
                 visibility.toEffectiveVisibility(ownerClassBuilder.symbol)
             ).apply {
-                isExpect = false
-                isActual = false
-                isOverride = false
                 isInner = isThisInner
+                hasStableParameterNames = false
             }
             this.visibility = visibility
             isPrimary = javaConstructor == null

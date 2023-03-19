@@ -1,4 +1,3 @@
-// WASM_FAILS_IN: SM
 // FILE: externals.js
 
 // -- Strings --
@@ -73,10 +72,8 @@ external fun getFalseBoolean(): Boolean
 
 external interface EI
 
-external fun createJsObjectAsAny(): Any
 external fun createJsObjectAsExternalInterface(): EI
 external fun getObjectValueEI(x: EI): String
-external fun getObjectValueAny(x: Any): String
 
 fun box(): String {
     // Strings
@@ -99,15 +96,6 @@ fun box(): String {
     val objAsEI: EI = createJsObjectAsExternalInterface()
     if (getObjectValueEI(objAsEI) != "object created by createJsObjectAsExternalInterface")
         return "Fail createJsObjectAsExternalInterface + getObjectValueEI"
-    if (getObjectValueAny(objAsEI) != "object created by createJsObjectAsExternalInterface")
-        return "Fail createJsObjectAsExternalInterface + getObjectValueAny"
-
-    // Any
-    val objAsAny: Any = createJsObjectAsAny()
-    if (getObjectValueAny(objAsAny) != "object created by createJsObjectAsAny")
-        return "Fail createJsObjectAsAny + getObjectValueAny"
-    if (getObjectValueEI(objAsAny as EI) != "object created by createJsObjectAsAny")
-        return "Fail createJsObjectAsAny + getObjectValueEI"
 
     return "OK"
 }

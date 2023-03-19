@@ -24,14 +24,11 @@ import org.jetbrains.kotlin.incremental.IncrementalCompilationContext
 import org.jetbrains.kotlin.utils.Printer
 import java.io.File
 
-abstract class BasicMap<K : Comparable<K>, V>(
+abstract class BasicMap<K : Comparable<K>, V, StorageType : LazyStorage<K, V>>(
     internal val storageFile: File,
-    keyDescriptor: KeyDescriptor<K>,
-    valueExternalizer: DataExternalizer<V>,
+    protected val storage: StorageType,
     protected val icContext: IncrementalCompilationContext,
 ) {
-    protected val storage: LazyStorage<K, V> = CachingLazyStorage(storageFile, keyDescriptor, valueExternalizer)
-
     protected val pathConverter
         get() = icContext.pathConverter
 
@@ -78,15 +75,52 @@ abstract class BasicMap<K : Comparable<K>, V>(
     protected abstract fun dumpValue(value: V): String
 }
 
+abstract class NonAppendableBasicMap<K : Comparable<K>, V>(
+    storageFile: File,
+    keyDescriptor: KeyDescriptor<K>,
+    valueExternalizer: DataExternalizer<V>,
+    icContext: IncrementalCompilationContext,
+) : BasicMap<K, V, LazyStorage<K, V>>(
+    storageFile,
+    createLazyStorage(storageFile, keyDescriptor, valueExternalizer, icContext),
+    icContext
+)
+
+abstract class AppendableBasicMap<K : Comparable<K>, V>(
+    storageFile: File,
+    keyDescriptor: KeyDescriptor<K>,
+    valueExternalizer: AppendableDataExternalizer<V>,
+    icContext: IncrementalCompilationContext,
+) : BasicMap<K, V, AppendableLazyStorage<K, V>>(
+    storageFile,
+    createLazyStorage(storageFile, keyDescriptor, valueExternalizer, icContext),
+    icContext
+)
+
 abstract class BasicStringMap<V>(
     storageFile: File,
     keyDescriptor: KeyDescriptor<String>,
     valueExternalizer: DataExternalizer<V>,
     icContext: IncrementalCompilationContext,
-) : BasicMap<String, V>(storageFile, keyDescriptor, valueExternalizer, icContext) {
+) : NonAppendableBasicMap<String, V>(storageFile, keyDescriptor, valueExternalizer, icContext) {
     constructor(
         storageFile: File,
         valueExternalizer: DataExternalizer<V>,
+        icContext: IncrementalCompilationContext,
+    ) : this(storageFile, EnumeratorStringDescriptor.INSTANCE, valueExternalizer, icContext)
+
+    override fun dumpKey(key: String): String = key
+}
+
+abstract class AppendableBasicStringMap<V>(
+    storageFile: File,
+    keyDescriptor: KeyDescriptor<String>,
+    valueExternalizer: AppendableDataExternalizer<V>,
+    icContext: IncrementalCompilationContext,
+) : AppendableBasicMap<String, V>(storageFile, keyDescriptor, valueExternalizer, icContext) {
+    constructor(
+        storageFile: File,
+        valueExternalizer: AppendableDataExternalizer<V>,
         icContext: IncrementalCompilationContext,
     ) : this(storageFile, EnumeratorStringDescriptor.INSTANCE, valueExternalizer, icContext)
 

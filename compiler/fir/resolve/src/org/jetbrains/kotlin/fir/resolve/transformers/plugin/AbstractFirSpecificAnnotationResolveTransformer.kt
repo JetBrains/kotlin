@@ -7,41 +7,48 @@ package org.jetbrains.kotlin.fir.resolve.transformers.plugin
 
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
-import org.jetbrains.kotlin.fir.FirAnnotationContainer
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.PrivateForInline
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationResolvePhase
-import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedQualifier
 import org.jetbrains.kotlin.fir.extensions.*
+import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
+import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.DesignationState
 import org.jetbrains.kotlin.fir.resolve.transformers.FirSpecificTypeResolverTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.ScopeClassDeclaration
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformerDispatcher
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDeclarationsResolveTransformer
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirExpressionsResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.CompilerRequiredAnnotationsHelper.REQUIRED_ANNOTATIONS
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.CompilerRequiredAnnotationsHelper.REQUIRED_ANNOTATIONS_WITH_ARGUMENTS
 import org.jetbrains.kotlin.fir.resolve.transformers.withClassDeclarationCleanup
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.createImportingScopes
+import org.jetbrains.kotlin.fir.scopes.getProperties
+import org.jetbrains.kotlin.fir.scopes.getSingleClassifier
+import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractImportingScope
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.builder.buildPlaceholderProjection
-import org.jetbrains.kotlin.fir.types.builder.buildStarProjection
-import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
-import org.jetbrains.kotlin.fir.types.builder.buildUserTypeRef
+import org.jetbrains.kotlin.fir.types.builder.*
+import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitUnitTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirQualifierPartImpl
 import org.jetbrains.kotlin.fir.types.impl.FirTypeArgumentListImpl
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.Deprecated
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.DeprecatedSinceKotlin
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.JvmRecord
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.WasExperimental
+import org.jetbrains.kotlin.name.StandardClassIds.Annotations.Target
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 /**
@@ -50,6 +57,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 object CompilerRequiredAnnotationsHelper {
     internal val REQUIRED_ANNOTATIONS_WITH_ARGUMENTS: Set<ClassId> = setOf(
         Deprecated,
+        Target,
     )
 
     val REQUIRED_ANNOTATIONS: Set<ClassId> = REQUIRED_ANNOTATIONS_WITH_ARGUMENTS + setOf(
@@ -69,6 +77,113 @@ internal abstract class AbstractFirSpecificAnnotationResolveTransformer(
         private val REQUIRED_ANNOTATION_NAMES: Set<Name> = REQUIRED_ANNOTATIONS.mapTo(mutableSetOf()) { it.shortClassName }
     }
 
+    inner class FirEnumAnnotationArgumentsTransformerDispatcher : FirAbstractBodyResolveTransformerDispatcher(
+        session,
+        FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS,
+        scopeSession = scopeSession,
+        implicitTypeOnly = false,
+    ) {
+        override val expressionsTransformer: FirExpressionsResolveTransformer = FirEnumAnnotationArgumentsTransformer(this)
+        override val declarationsTransformer: FirDeclarationsResolveTransformer get() = throw NotImplementedError()
+    }
+
+    /**
+     * Special transformer that resolves qualified expressions exclusively to enums from import scope. This doesn't
+     * trigger body resolve.
+     */
+    private inner class FirEnumAnnotationArgumentsTransformer(transformer: FirAbstractBodyResolveTransformerDispatcher) :
+        AbstractFirExpressionsResolveTransformerForAnnotations(transformer) {
+
+        override fun transformFunctionCall(functionCall: FirFunctionCall, data: ResolutionMode): FirStatement {
+            // transform arrayOf arguments to handle `@Foo(bar = arrayOf(X))`
+            functionCall.transformChildren(transformer, data)
+            return super.transformFunctionCall(functionCall, data)
+        }
+
+        override fun resolveQualifiedAccessAndSelectCandidate(
+            qualifiedAccessExpression: FirQualifiedAccessExpression,
+            isUsedAsReceiver: Boolean,
+            callSite: FirElement
+        ): FirStatement {
+            qualifiedAccessExpression.resolveFromImportScope()
+            return qualifiedAccessExpression
+        }
+
+        private fun FirQualifiedAccessExpression.resolveFromImportScope() {
+            val calleeReference = calleeReference as? FirSimpleNamedReference ?: return
+            val receiver = explicitReceiver as? FirQualifiedAccessExpression
+
+            if (receiver != null) {
+                // Simple case X.Y or fully qualified case a.b.X.Y
+                // Resolve receiver from import scope.
+
+                val receiverCalleeReference = receiver.calleeReference as? FirSimpleNamedReference ?: return
+                val receiverName = receiverCalleeReference.name.takeIf { !it.isSpecial } ?: return
+
+                val symbol = scopes.filterIsInstance<FirAbstractImportingScope>().firstNotNullOfOrNull {
+                    it.getSingleClassifier(receiverName) as? FirClassSymbol<*>
+                } ?: return
+
+                // If fully qualified, check that given package name matches the resolved one.
+                val segments = generateSequence(receiver.explicitReceiver) { (it as? FirQualifiedAccessExpression)?.explicitReceiver }
+                    .mapNotNull { (it.calleeReference as? FirSimpleNamedReference)?.name?.identifier }
+                    .toList()
+
+                if (segments.isNotEmpty() && FqName.fromSegments(segments.asReversed()) != symbol.classId.packageFqName) {
+                    return
+                }
+
+                val resolvedReceiver = buildResolvedQualifier {
+                    source = receiver.source
+                    packageFqName = symbol.classId.packageFqName
+                    relativeClassFqName = symbol.classId.relativeClassName
+                    typeRef = FirImplicitUnitTypeRef(receiver.typeRef.source)
+                    this.symbol = symbol
+                    isFullyQualified = segments.isNotEmpty()
+                }
+
+                // Resolve enum entry by name from the declarations of the receiver.
+                val calleeSymbol = symbol.fir.declarations.firstOrNull {
+                    it is FirEnumEntry && it.name == calleeReference.name
+                }?.symbol as? FirEnumEntrySymbol ?: return
+
+                updateCallee(calleeReference, calleeSymbol)
+
+                replaceExplicitReceiver(resolvedReceiver)
+                replaceDispatchReceiver(resolvedReceiver)
+            } else {
+                // Case where enum entry is explicitly imported.
+                val calleeSymbol = scopes.firstNotNullOfOrNull {
+                    it.getProperties(calleeReference.name).firstOrNull()
+                } as? FirEnumEntrySymbol ?: return
+
+                updateCallee(calleeReference, calleeSymbol)
+            }
+        }
+
+        private fun FirQualifiedAccessExpression.updateCallee(
+            calleeReference: FirSimpleNamedReference,
+            calleeSymbol: FirEnumEntrySymbol
+        ) {
+            session.lookupTracker?.recordLookup(
+                calleeReference.name,
+                calleeSymbol.dispatchReceiverType?.classId?.asFqNameString() ?: calleeSymbol.callableId.packageName.asString(),
+                this.source,
+                context.file.source,
+            )
+
+            replaceCalleeReference(buildResolvedNamedReference {
+                source = calleeReference.source
+                name = calleeReference.name
+                resolvedSymbol = calleeSymbol
+            })
+
+            calleeSymbol.containingClassLookupTag()
+                ?.let { ConeClassLikeTypeImpl(it, emptyArray(), false) }
+                ?.let { replaceTypeRef(typeRef.resolvedTypeFromPrototype(it)) }
+        }
+    }
+
     private val predicateBasedProvider = session.predicateBasedProvider
 
     private val annotationsFromPlugins: Set<AnnotationFqn> = session.registeredPluginAnnotations.annotations
@@ -80,15 +195,12 @@ internal abstract class AbstractFirSpecificAnnotationResolveTransformer(
     @PrivateForInline
     val typeResolverTransformer: FirSpecificTypeResolverTransformer = FirSpecificTypeResolverTransformer(
         session,
-        errorTypeAsResolved = false
+        errorTypeAsResolved = false,
+        resolveDeprecations = false,
     )
 
     @PrivateForInline
-    val argumentsTransformer = FirAnnotationArgumentsResolveTransformer(
-        session,
-        scopeSession,
-        FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS
-    )
+    val argumentsTransformer = FirEnumAnnotationArgumentsTransformerDispatcher()
 
     private var owners: PersistentList<FirDeclaration> = persistentListOf()
     private val classDeclarationsStack = ArrayDeque<FirClass>().apply {

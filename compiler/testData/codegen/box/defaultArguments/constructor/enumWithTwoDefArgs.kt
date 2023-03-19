@@ -1,4 +1,3 @@
-// WITH_STDLIB
 enum class Foo(val a: Int = 1, val b: String = "a") {
   A(),
   B(2, "b"),

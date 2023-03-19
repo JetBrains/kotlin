@@ -1,0 +1,13 @@
+KtTypeParameterSymbol:
+  annotationsList: [
+    A()
+      psi: KtAnnotationEntry
+  ]
+  isReified: false
+  name: T
+  origin: SOURCE
+  typeParameters: []
+  upperBounds: []
+  variance: INVARIANT
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null

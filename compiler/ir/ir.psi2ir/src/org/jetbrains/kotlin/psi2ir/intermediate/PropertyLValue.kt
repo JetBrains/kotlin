@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 
-abstract class PropertyLValueBase(
+internal abstract class PropertyLValueBase(
     protected val context: GeneratorContext,
     val scope: Scope,
     val startOffset: Int,
@@ -72,7 +72,7 @@ abstract class PropertyLValueBase(
     protected abstract fun withReceiver(dispatchReceiver: VariableLValue?, extensionReceiver: VariableLValue?, contextReceivers: List<VariableLValue>): PropertyLValueBase
 }
 
-class FieldPropertyLValue(
+internal class FieldPropertyLValue(
     context: GeneratorContext,
     scope: Scope,
     startOffset: Int,
@@ -127,7 +127,7 @@ class FieldPropertyLValue(
         )
 }
 
-class AccessorPropertyLValue(
+internal class AccessorPropertyLValue(
     context: GeneratorContext,
     scope: Scope,
     startOffset: Int,

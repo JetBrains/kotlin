@@ -22,7 +22,6 @@ dependencies {
     api(project(":js:js.config"))
     testApi(project(":analysis:analysis-api-fir"))
     implementation(project(":compiler:frontend.common"))
-    implementation(project(":compiler:ir.psi2ir"))
     implementation(project(":compiler:fir:entrypoint"))
     implementation(project(":analysis:analysis-api-providers"))
     implementation(project(":analysis:analysis-internal-utils"))

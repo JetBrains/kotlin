@@ -23,7 +23,7 @@ fun printTypeCommon(generationPath: File, packageName: String, type: TypeSpec): 
         .addType(type)
         .build()
         .toString()
-        .replace("`", "")
+        .unbacktickIdentifiers("data", "value", "operator", "constructor", "delegate", "receiver", "field")
         .replace("public ", "")
         .replace(":\\s*Unit".toRegex(), "")
         .replace("import kotlin\\..*\\n".toRegex(), "")
@@ -33,6 +33,14 @@ fun printTypeCommon(generationPath: File, packageName: String, type: TypeSpec): 
 
     val text = PREFIX + code
     return GeneratedFile(getPathForFile(generationPath, packageName, type.name!!), text)
+}
+
+private fun String.unbacktickIdentifiers(vararg identifiers: String): String {
+    var result = this
+    for (identifier in identifiers) {
+        result = result.replace("`$identifier`", identifier)
+    }
+    return result
 }
 
 fun getPathForFile(generationPath: File, packageName: String, typeName: String): File {

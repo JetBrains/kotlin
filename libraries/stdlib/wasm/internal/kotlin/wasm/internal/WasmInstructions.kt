@@ -295,10 +295,12 @@ internal external fun wasm_f32_truncate(a: Float): Float
 internal external fun wasm_f32_abs(a: Float): Float
 
 @WasmOp(WasmOp.REF_IS_NULL)
-internal external fun wasm_ref_is_null(a: Any?): Boolean
+internal fun wasm_ref_is_null(a: Any?): Boolean =
+    implementedAsIntrinsic
 
 @WasmOp(WasmOp.REF_EQ)
-internal external fun wasm_ref_eq(a: Any?, b: Any?): Boolean
+internal fun wasm_ref_eq(a: Any?, b: Any?): Boolean =
+    implementedAsIntrinsic
 
 // ---
 

@@ -45,7 +45,7 @@ internal fun MethodNode.acceptWithStateMachine(
         if (klass.startOffset >= 0) {
             // if it suspend lambda transformed into class `runSuspend { .... }`
             irFunction.file.fileEntry.getLineNumber(klass.startOffset) + 1
-        } else error("Cannot determine lineNumber of element ${irFunction.render()}")
+        } else 1 // This lambda might be synthetic
     }
 
     val visitor = CoroutineTransformerMethodVisitor(

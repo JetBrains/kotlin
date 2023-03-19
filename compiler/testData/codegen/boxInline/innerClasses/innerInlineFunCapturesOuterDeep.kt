@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: WASM
 // FILE: 1.kt
 class O(val a: String) {
     inner class I1(val b: String) {

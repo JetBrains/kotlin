@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.multipleDelegatesWithTheSameSignature
+import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -189,20 +190,7 @@ fun FirNamedFunctionSymbol.overriddenFunctions(
     containingClass: FirClassSymbol<*>,
     context: CheckerContext
 ): List<FirFunctionSymbol<*>> {
-    val firTypeScope = containingClass.unsubstitutedScope(
-        context.sessionHolder.session,
-        context.sessionHolder.scopeSession,
-        withForcedTypeCalculator = true
-    )
-
-    val overriddenFunctions = mutableListOf<FirFunctionSymbol<*>>()
-    firTypeScope.processFunctionsByName(callableId.callableName) { }
-    firTypeScope.processOverriddenFunctions(this) {
-        overriddenFunctions.add(it)
-        ProcessorAction.NEXT
-    }
-
-    return overriddenFunctions
+    return overriddenFunctions(containingClass, context.session, context.scopeSession)
 }
 
 fun FirClass.collectSupertypesWithDelegates(): Map<FirTypeRef, FirFieldSymbol?> {
@@ -221,25 +209,26 @@ fun FirClass.modality(): Modality? {
 }
 
 /**
- * returns implicit modality by FirMemberDeclaration<*>
+ * Returns a set of [Modality] modifiers which are redundant for the given [FirMemberDeclaration]. If a modality modifier is redundant, the
+ * declaration's modality won't be changed by the modifier.
  */
-fun FirMemberDeclaration.implicitModality(context: CheckerContext): Modality {
+fun FirMemberDeclaration.redundantModalities(context: CheckerContext): Set<Modality> {
     if (this is FirRegularClass) {
         return when (classKind) {
-            ClassKind.INTERFACE -> Modality.ABSTRACT
-            else -> Modality.FINAL
+            ClassKind.INTERFACE -> setOf(Modality.ABSTRACT, Modality.OPEN)
+            else -> setOf(Modality.FINAL)
         }
     }
 
-    val containingClass = context.findClosestClassOrObject() ?: return Modality.FINAL
+    val containingClass = context.findClosestClassOrObject() ?: return setOf(Modality.FINAL)
 
     return when {
-        isOverride && !containingClass.isFinal -> Modality.OPEN
+        isOverride && !containingClass.isFinal -> setOf(Modality.OPEN)
         containingClass.isInterface -> when {
-            hasBody() -> Modality.OPEN
-            else -> Modality.ABSTRACT
+            hasBody() -> setOf(Modality.OPEN)
+            else -> setOf(Modality.ABSTRACT, Modality.OPEN)
         }
-        else -> Modality.FINAL
+        else -> setOf(Modality.FINAL)
     }
 }
 
@@ -481,7 +470,7 @@ fun checkTypeMismatch(
                     context
                 )
             }
-            source.kind is KtFakeSourceElementKind.DesugaredIncrementOrDecrement -> {
+            source.kind is KtFakeSourceElementKind.DesugaredIncrementOrDecrement || assignment?.source?.kind is KtFakeSourceElementKind.DesugaredIncrementOrDecrement -> {
                 if (!lValueType.isNullable && rValueType.isNullable) {
                     val tempType = rValueType
                     rValueType = lValueType
@@ -586,7 +575,7 @@ fun FirFunctionSymbol<*>.isFunctionForExpectTypeFromCastFeature(): Boolean {
     return true
 }
 
-fun getActualTargetList(annotated: FirDeclaration): AnnotationTargetList {
+fun getActualTargetList(annotated: FirAnnotationContainer): AnnotationTargetList {
     fun CallableId.isMember(): Boolean {
         return classId != null || isLocal // TODO: Replace with .containingClass (after fixing)
     }
@@ -640,6 +629,7 @@ fun getActualTargetList(annotated: FirDeclaration): AnnotationTargetList {
         is FirBackingField -> TargetLists.T_BACKING_FIELD
         is FirFile -> TargetLists.T_FILE
         is FirTypeParameter -> TargetLists.T_TYPE_PARAMETER
+        is FirReceiverParameter -> TargetLists.T_TYPE_REFERENCE
         is FirAnonymousInitializer -> TargetLists.T_INITIALIZER
         is FirAnonymousObject ->
             if (annotated.source?.kind == KtFakeSourceElementKind.EnumInitializer) {
@@ -742,4 +732,38 @@ fun FirElement.isLhsOfAssignment(context: CheckerContext): Boolean {
     if (this !is FirQualifiedAccessExpression) return false
     val lastQualified = context.qualifiedAccessOrAssignmentsOrAnnotationCalls.lastOrNull { it != this } ?: return false
     return lastQualified is FirVariableAssignment && lastQualified.lValue == this
+}
+
+/**
+ * Collects the upper bounds as [ConeClassLikeType].
+ */
+fun ConeKotlinType?.collectUpperBounds(): Set<ConeClassLikeType> {
+    if (this == null) return emptySet()
+    return when (this) {
+        is ConeErrorType -> emptySet() // Ignore error types
+        is ConeLookupTagBasedType -> when (this) {
+            is ConeClassLikeType -> setOf(this)
+            is ConeTypeVariableType -> {
+                (lookupTag.originalTypeParameter as? ConeTypeParameterLookupTag)?.typeParameterSymbol.collectUpperBounds()
+            }
+            is ConeTypeParameterType -> lookupTag.typeParameterSymbol.collectUpperBounds()
+            else -> throw IllegalStateException("missing branch for ${javaClass.name}")
+        }
+        is ConeDefinitelyNotNullType -> original.collectUpperBounds()
+        is ConeIntersectionType -> intersectedTypes.flatMap { it.collectUpperBounds() }.toSet()
+        is ConeFlexibleType -> upperBound.collectUpperBounds()
+        is ConeCapturedType -> constructor.supertypes?.flatMap { it.collectUpperBounds() }?.toSet().orEmpty()
+        is ConeIntegerConstantOperatorType -> setOf(getApproximatedType())
+        is ConeStubType, is ConeIntegerLiteralConstantType -> throw IllegalStateException("$this should not reach here")
+    }
+}
+
+private fun FirTypeParameterSymbol?.collectUpperBounds(): Set<ConeClassLikeType> {
+    if (this == null) return emptySet()
+    return resolvedBounds.flatMap { it.coneType.collectUpperBounds() }.toSet()
+}
+
+fun ConeKotlinType.leastUpperBound(session: FirSession): ConeKotlinType {
+    val upperBounds = collectUpperBounds().takeIf { it.isNotEmpty() } ?: return session.builtinTypes.nullableAnyType.type
+    return ConeTypeIntersector.intersectTypes(session.typeContext, upperBounds)
 }

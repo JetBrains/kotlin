@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.ir.expressions.left
 import org.jetbrains.kotlin.ir.expressions.right
 import org.jetbrains.kotlin.ir.types.IrType
 
-class DynamicMemberLValue(
+internal class DynamicMemberLValue(
     private val context: IrGeneratorContext,
     private val startOffset: Int,
     private val endOffset: Int,

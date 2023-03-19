@@ -1,7 +1,7 @@
 FILE: enums3.kt
     public? final? class C : R|kotlin/Any| {
         public? constructor(): R|C| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
         init { LAZY_BLOCK }

@@ -281,9 +281,7 @@ fun Project.configureTests() {
     // Aggregate task for build related checks
     tasks.register("checkBuild")
 
-    afterEvaluate {
-        apply(from = "$rootDir/gradle/testRetry.gradle.kts")
-    }
+    configureTestRetriesForTestTasks()
 }
 
 // TODO: migrate remaining modules to the new JVM default scheme.

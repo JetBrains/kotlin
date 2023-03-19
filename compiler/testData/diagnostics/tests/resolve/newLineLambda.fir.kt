@@ -99,13 +99,13 @@ fun testTwoLambdas() {
         {}
         <!MANY_LAMBDA_EXPRESSION_ARGUMENTS!>{}<!>
 
-        return if (true) {
+        return <!RETURN_TYPE_MISMATCH!>if (true) {
             twoLambdaArgs({})
             {}
             <!MANY_LAMBDA_EXPRESSION_ARGUMENTS!>{}<!>
         } else {
             {}
-        }
+        }<!>
     }
 }
 

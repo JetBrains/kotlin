@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.containingClassLookupTag
+import org.jetbrains.kotlin.fir.declarations.utils.hasStableParameterNames
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
-import org.jetbrains.kotlin.fir.resolve.getHasStableParameterNames
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.name.ClassId
 
@@ -41,7 +41,7 @@ internal class KtFirConstructorSymbol(
 
     override val hasStableParameterNames: Boolean
         get() = withValidityAssertion {
-            firSymbol.fir.getHasStableParameterNames(firSymbol.moduleData.session)
+            firSymbol.fir.hasStableParameterNames
         }
 
     override val visibility: Visibility get() = withValidityAssertion { firSymbol.visibility }

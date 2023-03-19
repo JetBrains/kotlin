@@ -1,4 +1,3 @@
-// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 class C {
     val v1: String
         @Deprecated("", level = DeprecationLevel.HIDDEN)

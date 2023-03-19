@@ -1,4 +1,5 @@
 expression: ab
-expected type: KtTypeParameterType:
+expected type: KtUsualClassType:
   annotationsList: []
-  type: T
+  ownTypeArguments: []
+  type: kotlin/Int

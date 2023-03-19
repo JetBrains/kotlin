@@ -29,8 +29,8 @@ fun test(foo: Foo, bar: Bar) {
 
 actual class Bar : Foo {
     actual override fun ok(x: Int, y: String) {}
-    
-    actual override fun failX(x: Int = 0, y: String) {}
 
-    actual override fun failY(x: Int, y: String = "") {}
+    actual override fun failX(<!ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS!>x: Int = 0<!>, y: String) {}
+
+    actual override fun failY(x: Int, <!ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS!>y: String = ""<!>) {}
 }

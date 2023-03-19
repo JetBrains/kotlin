@@ -23,6 +23,12 @@ import kotlin.reflect.KClass
  * TODO:
  *  - check that annotations or meta-annotations is not empty
  */
+
+/**
+ * All `generate*` members have the contract that the computation should be side-effect-free.
+ * That means that all `generate*` function implementations should not modify any state or leak the generated `FirElement` or `FirBasedSymbol` (e.g., by putting it to some cache).
+ * This restriction is imposed by the corresponding IDE cache implementation, which might retry the computation several times.
+ */
 abstract class FirDeclarationGenerationExtension(session: FirSession) : FirExtension(session) {
     companion object {
         val NAME = FirExtensionPointName("ExistingClassModification")
@@ -79,11 +85,11 @@ abstract class FirDeclarationGenerationExtension(session: FirSession) : FirExten
         }
 
     @FirExtensionApiInternals
-    val topLevelClassIdsCache: FirLazyValue<Set<ClassId>, Nothing?> =
+    val topLevelClassIdsCache: FirLazyValue<Set<ClassId>> =
         session.firCachesFactory.createLazyValue { getTopLevelClassIds() }
 
     @FirExtensionApiInternals
-    val topLevelCallableIdsCache: FirLazyValue<Set<CallableId>, Nothing?> =
+    val topLevelCallableIdsCache: FirLazyValue<Set<CallableId>> =
         session.firCachesFactory.createLazyValue { getTopLevelCallableIds() }
 
 }

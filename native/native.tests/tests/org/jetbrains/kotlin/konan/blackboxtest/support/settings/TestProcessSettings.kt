@@ -23,7 +23,9 @@ import kotlin.time.Duration.Companion.seconds
 /**
  * The tested and the host Kotlin/Native targets.
  */
-internal class KotlinNativeTargets(val testTarget: KonanTarget, val hostTarget: KonanTarget)
+internal class KotlinNativeTargets(val testTarget: KonanTarget, val hostTarget: KonanTarget) {
+    fun areDifferentTargets() = testTarget != hostTarget
+}
 
 /**
  * The Kotlin/Native home.
@@ -245,4 +247,9 @@ internal enum class PipelineType(val mutedOption: MutedOption, val compilerFlags
     K2(MutedOption.K2, listOf("-language-version", "2.0"));
 
     override fun toString() = if (compilerFlags.isEmpty()) "" else compilerFlags.joinToString(prefix = "(", postfix = ")", separator = " ")
+}
+
+internal enum class CompilerOutputInterceptor {
+    DEFAULT,
+    NONE
 }

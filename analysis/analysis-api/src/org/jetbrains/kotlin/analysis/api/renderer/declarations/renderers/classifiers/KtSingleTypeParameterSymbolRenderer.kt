@@ -26,6 +26,7 @@ public interface KtSingleTypeParameterSymbolRenderer {
         context(KtAnalysisSession, KtDeclarationRenderer)
         override fun renderSymbol(symbol: KtTypeParameterSymbol, printer: PrettyPrinter): Unit = printer {
             " ".separated(
+                { annotationRenderer.renderAnnotations(symbol, printer) },
                 { modifiersRenderer.renderDeclarationModifiers(symbol, printer) },
                 { nameRenderer.renderName(symbol, printer) },
             )
@@ -36,6 +37,7 @@ public interface KtSingleTypeParameterSymbolRenderer {
         context(KtAnalysisSession, KtDeclarationRenderer)
         override fun renderSymbol(symbol: KtTypeParameterSymbol, printer: PrettyPrinter): Unit = printer {
             " ".separated(
+                { annotationRenderer.renderAnnotations(symbol, printer) },
                 { modifiersRenderer.renderDeclarationModifiers(symbol, printer) },
                 { nameRenderer.renderName(symbol, printer) },
                 {

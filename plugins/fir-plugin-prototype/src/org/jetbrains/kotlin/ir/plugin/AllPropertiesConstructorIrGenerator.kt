@@ -55,7 +55,7 @@ class AllPropertiesConstructorIrGenerator(val context: IrPluginContext) : IrElem
                 superClass.constructors.singleOrNull { it.valueParameters.isNotEmpty() }
             }
         } ?: error("All properies constructor not found")
-        Unit
+
         context.irFactory.buildConstructor {
             startOffset = SYNTHETIC_OFFSET
             endOffset = SYNTHETIC_OFFSET

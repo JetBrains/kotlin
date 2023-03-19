@@ -38,19 +38,12 @@ tasks.validatePlugins.configure {
 }
 
 
-sourceSets["main"].withConvention(org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet::class) {
-    kotlin.filter.exclude("**/FileCheckTest.kt")
-    // TODO: Consider moving required stuff from kotlin-native/build-tools/ to buildSrc/ here.
-    kotlin.filter.exclude("**/bitcode/**")
-    kotlin.filter.exclude("**/cpp/**")
-    kotlin.filter.exclude("**/testing/**")
-
-    kotlin.srcDir("src/main/kotlin")
-    kotlin.srcDir("../../build-tools/src/main/kotlin")
-    kotlin.srcDir("../../shared/src/library/kotlin")
-    kotlin.srcDir("../../shared/src/main/kotlin")
-    kotlin.srcDir("../../tools/benchmarks/shared/src/main/kotlin/report")
-    kotlin.srcDir("../../../native/utils/src")
+sourceSets["main"].kotlin {
+    srcDir("src/main/kotlin")
+    srcDir("../../shared/src/library/kotlin")
+    srcDir("../../shared/src/main/kotlin")
+    srcDir("../../tools/benchmarks/shared/src/main/kotlin/report")
+    srcDir("../../../native/utils/src")
 }
 
 tasks.withType<KotlinCompile>().configureEach {
@@ -80,8 +73,6 @@ dependencies {
     implementation("io.ktor:ktor-client-core:$ktorVersion")
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
 
-    api("org.jetbrains.kotlin:kotlin-native-utils:$kotlinVersion")
-
     // Located in <repo root>/shared and always provided by the composite build.
     //api("org.jetbrains.kotlin:kotlin-native-shared:$konanVersion")
     implementation("gradle.plugin.com.github.johnrengelman:shadow:$shadowVersion")
@@ -105,22 +96,16 @@ gradlePlugin {
         }
         create("compileToBitcode") {
             id = "compile-to-bitcode"
-            implementationClass = "org.jetbrains.kotlin.bitcode.CompileToBitcodePlugin"
+            implementationClass = "CompileToBitcodePlugin"
         }
         create("runtimeTesting") {
             id = "runtime-testing"
-            implementationClass = "org.jetbrains.kotlin.testing.native.RuntimeTestingPlugin"
+            implementationClass = "RuntimeTestingPlugin"
         }
     }
 }
 
 afterEvaluate {
-    tasks.withType<KotlinCompile>().configureEach {
-        kotlinOptions {
-            languageVersion = "1.4"
-            apiVersion = "1.4"
-        }
-    }
     tasks.withType<JavaCompile> {
         targetCompatibility = "1.8"
     }

@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.Choos
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ProjectMetadataProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.toKpmModuleIdentifiers
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.sources.compileDependenciesTransformationOrFail
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
+import org.jetbrains.kotlin.gradle.plugin.sources.metadataTransformation
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.withType
@@ -137,12 +137,12 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
     class ChooseVisibleSourceSetProjection(
         @Input val dependencyModuleIdentifiers: List<KpmModuleIdentifier>,
         @Nested val projectStructureMetadata: KotlinProjectStructureMetadata,
-        @Input val visibleSourceSetsProvidingCInterops: Set<String>
+        @Input val visibleSourceSetProvidingCInterops: String?
     ) {
         constructor(chooseVisibleSourceSets: ChooseVisibleSourceSets) : this(
             dependencyModuleIdentifiers = chooseVisibleSourceSets.dependency.toKpmModuleIdentifiers(),
             projectStructureMetadata = chooseVisibleSourceSets.projectStructureMetadata,
-            visibleSourceSetsProvidingCInterops = chooseVisibleSourceSets.visibleSourceSetsProvidingCInterops
+            visibleSourceSetProvidingCInterops = chooseVisibleSourceSets.visibleSourceSetProvidingCInterops
         )
     }
 
@@ -156,8 +156,8 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
     @get:Internal
     protected val chooseVisibleSourceSets
         get() = sourceSet
-            .compileDependenciesTransformationOrFail
-            .metadataDependencyResolutions
+            .metadataTransformation
+            .metadataDependencyResolutionsOrEmpty
             .resolutionsToTransform()
 
     @Suppress("unused")
@@ -201,9 +201,9 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
 
         /* Extract/Materialize all cinterop files from composite jar file */
         is ArtifactMetadataProvider -> chooseVisibleSourceSets.metadataProvider.read { artifactContent ->
-            chooseVisibleSourceSets.visibleSourceSetsProvidingCInterops
-                .mapNotNull { visibleSourceSetName -> artifactContent.findSourceSet(visibleSourceSetName) }
-                .flatMap { sourceSetContent -> sourceSetContent.cinteropMetadataBinaries }
+            val visibleSourceSetName = chooseVisibleSourceSets.visibleSourceSetProvidingCInterops ?: return emptyList()
+            val sourceSetContent = artifactContent.findSourceSet(visibleSourceSetName) ?: return emptyList()
+            sourceSetContent.cinteropMetadataBinaries
                 .onEach { cInteropMetadataBinary -> cInteropMetadataBinary.copyIntoDirectory(outputDirectory) }
                 .map { cInteropMetadataBinary -> outputDirectory.resolve(cInteropMetadataBinary.relativeFile) }
         }

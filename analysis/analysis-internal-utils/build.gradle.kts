@@ -6,6 +6,8 @@ plugins {
 dependencies {
     implementation(project(":compiler:psi"))
     implementation(kotlinxCollectionsImmutable())
+    implementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
+    implementation(project(":analysis:project-structure"))
     implementation(intellijCore())
 }
 

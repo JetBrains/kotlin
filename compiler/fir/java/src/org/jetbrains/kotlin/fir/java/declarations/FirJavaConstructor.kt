@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
+import org.jetbrains.kotlin.fir.contracts.FirContractDescription
+import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirConstructorBuilder
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -44,6 +46,7 @@ class FirJavaConstructor @FirImplementationDetail constructor(
 ) : FirConstructor() {
     override val receiverParameter: FirReceiverParameter? get() = null
     override var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
+    override val contractDescription: FirContractDescription get() = FirEmptyContractDescription
 
     init {
         symbol.bind(this)
@@ -100,6 +103,10 @@ class FirJavaConstructor @FirImplementationDetail constructor(
         return this
     }
 
+    override fun <D> transformContractDescription(transformer: FirTransformer<D>, data: D): FirConstructor {
+        return this
+    }
+
     override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirJavaConstructor {
         status = status.transformSingle(transformer, data)
         return this
@@ -152,6 +159,9 @@ class FirJavaConstructor @FirImplementationDetail constructor(
     }
 
     override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {}
+    override fun replaceContractDescription(newContractDescription: FirContractDescription) {
+        error("Contract description cannot be replaced for FirJavaConstructor")
+    }
 
     override fun replaceBody(newBody: FirBlock?) {
         error("Body cannot be replaced for FirJavaConstructor")

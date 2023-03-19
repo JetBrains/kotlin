@@ -1,9 +1,10 @@
 // FIR_IDENTICAL
+// !DIAGNOSTICS: +ENUM_CLASS_IN_EXTERNAL_DECLARATION_WARNING
 external class C {
     inner class <!WRONG_EXTERNAL_DECLARATION!>Inner<!>
 }
 
-external enum class E {
+external enum class <!ENUM_CLASS_IN_EXTERNAL_DECLARATION_WARNING!>E<!> {
     X;
 
     inner class <!WRONG_EXTERNAL_DECLARATION!>Inner<!>

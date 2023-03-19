@@ -9,10 +9,12 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
+import java.io.File
 import kotlin.io.path.appendText
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
@@ -33,7 +35,7 @@ class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
         project("kotlin-js-ir-ic-rebuild-after-error", gradleVersion) {
             fun readCacheFiles(): Map<String, Int> {
                 val cacheFiles = mutableMapOf<String, Int>()
-                projectPath.resolve("app/build/klib/cache/").toFile().walk().forEach { cachedFile ->
+                projectPath.resolve("app/build/klib/cache/js/developmentExecutable").toFile().walk().forEach { cachedFile ->
                     if (cachedFile.isFile) {
                         cacheFiles[cachedFile.absolutePath] = cachedFile.readBytes().contentHashCode()
                     }
@@ -42,6 +44,7 @@ class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
             }
 
             val srcFile = projectPath.resolve("app/src/main/kotlin/App.kt").toFile()
+            val guardFile = projectPath.resolve("app/build/klib/cache/js/developmentExecutable/cache.guard").toFile()
             val badCode = srcFile.readText()
 
             var successfulBuildCacheFiles = emptyMap<String, Int>()
@@ -54,11 +57,11 @@ class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
             }
 
             srcFile.writeText(badCode)
+
             for (i in 0..1) {
                 buildAndFail("nodeDevelopmentRun") {
                     assertTasksFailed(":app:compileDevelopmentExecutableKotlinJs")
-                    val failedBuildCacheFiles = readCacheFiles()
-                    assertEquals(successfulBuildCacheFiles, failedBuildCacheFiles, "The cache files should not be modified")
+                    assertTrue("guard file after compilation error expected") { guardFile.exists() }
                 }
             }
 
@@ -69,6 +72,7 @@ class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
                 val successfulRebuildCacheFiles = readCacheFiles()
                 assertEquals(successfulBuildCacheFiles.size, successfulRebuildCacheFiles.size, "The number of files must be the same")
                 assertNotEquals(successfulBuildCacheFiles, successfulRebuildCacheFiles, "The cache files should be modified")
+                assertFalse("guard file after successful compilation must be removed") { guardFile.exists() }
             }
         }
     }
@@ -123,15 +127,15 @@ class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
     fun testMultipleArtifacts(gradleVersion: GradleVersion) {
         project("kotlin-js-ir-ic-multiple-artifacts", gradleVersion) {
             build("compileDevelopmentExecutableKotlinJs") {
-                val cacheDir = projectPath.resolve("app/build/klib/cache/").toFile()
+                val cacheDir = projectPath.resolve("app/build/klib/cache/js/developmentExecutable").toFile()
                 val cacheRootDirName = cacheDir.list()?.singleOrNull()
                 assertTrue("Lib cache root dir should contain 1 element 'version.hash'") {
                     cacheRootDirName?.startsWith("version.") ?: false
                 }
                 val cacheRootDir = cacheDir.resolve(cacheRootDirName!!)
                 val klibCacheDirs = cacheRootDir.list()
-                // 2 for lib.klib + 1 for stdlib  + 1 for main
-                assertEquals(4, klibCacheDirs?.size, "cache should contain 4 dirs")
+                // 2 for lib.klib + 1 for stdlib + 1 for dom-api-compat + 1 for main
+                assertEquals(5, klibCacheDirs?.size, "cache should contain 5 dirs")
 
                 val libKlibCacheDirs = klibCacheDirs?.filter { dir -> dir.startsWith("lib.klib.") }
                 assertEquals(2, libKlibCacheDirs?.size, "cache should contain 2 dirs for lib.klib")
@@ -195,6 +199,83 @@ class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
             appBuildGradleKts.writeText(buildGradleKtsWithoutDependency)
             build("compileDevelopmentExecutableKotlinJs") {
                 assertTasksExecuted(":app:compileDevelopmentExecutableKotlinJs")
+            }
+        }
+    }
+
+
+    @DisplayName("Test cache invalidation after detecting guard file")
+    @GradleTest
+    fun testCacheGuardInvalidation(gradleVersion: GradleVersion) {
+        project("kotlin2JsIrICProject", gradleVersion) {
+            build("nodeDevelopmentRun") {
+                assertTasksExecuted(":compileDevelopmentExecutableKotlinJs")
+                assertOutputContains("module [main] was built clean")
+                assertOutputContains(">>> TEST OUT: Hello, Gradle.")
+            }
+
+            val cacheGuard = projectPath.resolve("build/klib/cache/js/developmentExecutable/cache.guard").toFile()
+            assertFalse(cacheGuard.exists(), "Cache guard file should be removed after successful build")
+
+            val srcFile = projectPath.resolve("src/main/kotlin/Main.kt").toFile()
+            srcFile.writeText(srcFile.readText().replace("greeting(\"Gradle\")", "greeting(\"Kotlin\")"))
+
+            cacheGuard.createNewFile()
+            build("nodeDevelopmentRun") {
+                assertTasksExecuted(":compileDevelopmentExecutableKotlinJs")
+                assertOutputContains(Regex("Cache guard file detected, cache directory '.+' cleared"))
+                assertOutputContains("module [main] was built clean")
+                assertOutputContains(">>> TEST OUT: Hello, Kotlin.")
+            }
+
+            assertFalse(cacheGuard.exists(), "Cache guard file should be removed after successful build")
+        }
+    }
+
+    @DisplayName("Separate caches for different binaries")
+    @GradleTest
+    fun testSeparateCachesForDifferentBinaries(gradleVersion: GradleVersion) {
+        project("kotlin-js-ir-ic-multiple-artifacts", gradleVersion) {
+            val filesToModified = mutableMapOf<File, Long>()
+
+            build("compileDevelopmentExecutableKotlinJs") {
+                val cacheDir = projectPath.resolve("app/build/klib/cache/js/developmentExecutable").toFile()
+                val cacheRootDirName = cacheDir.list()?.singleOrNull()
+                val cacheRootDir = cacheDir.resolve(cacheRootDirName!!)
+
+                cacheRootDir.listFiles()!!
+                    .forEach {
+                        it.listFiles()!!
+                            .filter { it.isFile }
+                            .filter { it.name == "module.js" }
+                            .forEach {
+                                filesToModified[it] = it.lastModified()
+                            }
+
+                    }
+
+                assertTasksExecuted(":app:compileDevelopmentExecutableKotlinJs")
+            }
+
+            build("compileTestDevelopmentExecutableKotlinJs") {
+                val cacheDir = projectPath.resolve("app/build/klib/cache/js/developmentExecutable").toFile()
+                val cacheRootDirName = cacheDir.list()?.singleOrNull()
+                val cacheRootDir = cacheDir.resolve(cacheRootDirName!!)
+
+                val allUpToDate = cacheRootDir.listFiles()!!
+                    .all {
+                        it.listFiles()!!
+                            .filter { it.isFile }
+                            .filter { it.name == "module.js" }
+                            .all {
+                                filesToModified[it] == it.lastModified()
+                            }
+
+                    }
+
+                assertTrue { allUpToDate }
+
+                assertTasksExecuted(":app:compileTestDevelopmentExecutableKotlinJs")
             }
         }
     }

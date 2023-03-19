@@ -18,7 +18,4 @@ interface KotlinJsTestFramework : RequiresNpmDependencies {
         nodeJsArgs: MutableList<String>,
         debug: Boolean
     ): TCServiceMessagesTestExecutionSpec
-
-    override val nodeModulesRequired: Boolean
-        get() = true
 }

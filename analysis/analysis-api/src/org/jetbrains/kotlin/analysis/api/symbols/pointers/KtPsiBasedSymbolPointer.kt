@@ -22,6 +22,7 @@ public class KtPsiBasedSymbolPointer<S : KtSymbol> private constructor(
         val psi = psiPointer.element ?: return null
 
         val symbol: KtSymbol = with(analysisSession) {
+            if (!psi.canBeAnalysed()) return null
             when (psi) {
                 is KtDeclaration -> psi.getSymbol()
                 is KtFile -> psi.getFileSymbol()

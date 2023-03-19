@@ -17,7 +17,7 @@ import java.util.zip.ZipException
 // See also:
 // https://bugs.java.com/bugdatabase/view_bug.do?bug_id=7001822
 // https://bugs.java.com/bugdatabase/view_bug.do?bug_id=6994161
-private fun File.zipFileSystem(create: Boolean = false): FileSystem {
+internal fun File.zipFileSystem(create: Boolean = false): FileSystem {
     val attributes = hashMapOf("create" to create.toString())
 
     // There is no FileSystems.newFileSystem overload accepting the attribute map.

@@ -8,7 +8,7 @@ FILE: simpleClass.kt
     }
     public? final? class SomeClass : SomeInterface {
         public? constructor(): R|SomeClass| {
-            super<<implicit>>()
+            LAZY_super<<implicit>>
         }
 
         private final? val baz: <implicit> = LAZY_EXPRESSION
@@ -27,7 +27,7 @@ FILE: simpleClass.kt
     }
     public? final? inline class InlineClass : R|kotlin/Any| {
         public? constructor(): R|InlineClass| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }

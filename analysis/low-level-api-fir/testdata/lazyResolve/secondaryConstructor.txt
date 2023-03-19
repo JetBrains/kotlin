@@ -62,9 +62,22 @@ FILE: secondaryConstructor.kt
 
     }
 
+EXPECT_ACTUAL_MATCHING:
+FILE: secondaryConstructor.kt
+    public final [EXPECT_ACTUAL_MATCHING] fun resolveMe(): R|kotlin/Unit| {
+        receive#(A#(IntegerLiteral(42)))
+    }
+    public? final? [RAW_FIR] fun receive([RAW_FIR] value: A): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [RAW_FIR] class A : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=A] constructor([RAW_FIR] x: Int): R|A| { LAZY_BLOCK }
+
+    }
+
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: secondaryConstructor.kt
-    public final [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| {
+        receive#(A#(IntegerLiteral(42)))
+    }
     public? final? [RAW_FIR] fun receive([RAW_FIR] value: A): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] class A : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=A] constructor([RAW_FIR] x: Int): R|A| { LAZY_BLOCK }
@@ -96,17 +109,6 @@ FILE: secondaryConstructor.kt
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: secondaryConstructor.kt
     public final [ANNOTATIONS_ARGUMENTS_MAPPING] fun resolveMe(): R|kotlin/Unit| {
-        receive#(A#(IntegerLiteral(42)))
-    }
-    public? final? [RAW_FIR] fun receive([RAW_FIR] value: A): R|kotlin/Unit| { LAZY_BLOCK }
-    public? final? [RAW_FIR] class A : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=A] constructor([RAW_FIR] x: Int): R|A| { LAZY_BLOCK }
-
-    }
-
-EXPECT_ACTUAL_MATCHING:
-FILE: secondaryConstructor.kt
-    public final [EXPECT_ACTUAL_MATCHING] fun resolveMe(): R|kotlin/Unit| {
         receive#(A#(IntegerLiteral(42)))
     }
     public? final? [RAW_FIR] fun receive([RAW_FIR] value: A): R|kotlin/Unit| { LAZY_BLOCK }

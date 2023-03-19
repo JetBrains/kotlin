@@ -30,6 +30,7 @@ abstract class FirResolvedQualifier : FirExpression() {
     abstract val symbol: FirClassLikeSymbol<*>?
     abstract val isNullableLHSForCallableReference: Boolean
     abstract val resolvedToCompanionObject: Boolean
+    abstract val isFullyQualified: Boolean
     abstract val nonFatalDiagnostics: List<ConeDiagnostic>
     abstract val typeArguments: List<FirTypeProjection>
 

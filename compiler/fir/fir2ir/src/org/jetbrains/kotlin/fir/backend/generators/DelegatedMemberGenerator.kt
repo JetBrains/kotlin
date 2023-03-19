@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.scopes.*
-import org.jetbrains.kotlin.fir.scopes.impl.delegatedWrapperData
+import org.jetbrains.kotlin.fir.delegatedWrapperData
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
@@ -109,7 +109,7 @@ class DelegatedMemberGenerator(private val components: Fir2IrComponents) : Fir2I
                     ?: return@processAllFunctions
 
             val delegateToSymbol = findDelegateToSymbol(
-                unwrapped.symbol,
+                unwrapped.unwrapSubstitutionOverrides().symbol,
                 delegateToScope::processFunctionsByName,
                 delegateToScope::processOverriddenFunctions
             ) ?: return@processAllFunctions
@@ -130,7 +130,7 @@ class DelegatedMemberGenerator(private val components: Fir2IrComponents) : Fir2I
                     ?: return@processAllProperties
 
             val delegateToSymbol = findDelegateToSymbol(
-                unwrapped.symbol,
+                unwrapped.unwrapSubstitutionOverrides().symbol,
                 { name, processor ->
                     delegateToScope.processPropertiesByName(name) {
                         if (it !is FirPropertySymbol) return@processPropertiesByName

@@ -12,7 +12,8 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 
 /**
  * A non-leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.memberWithContainerSource
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.memberWithContainerSource]
  */
 interface IrMemberWithContainerSource : IrDeclarationWithName {
     val containerSource: DeserializedContainerSource?

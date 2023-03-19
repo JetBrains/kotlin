@@ -155,7 +155,6 @@ object AbstractTypeMapper {
             typeArgument.isStarProjection() -> Variance.OUT_VARIANCE to nullableAnyType()
             else -> typeArgument.getVariance().toVariance() to typeArgument.getType()
         }
-        require(memberType is SimpleTypeMarker)
 
         val arrayElementType: Type
         sw?.writeArrayType()
@@ -202,4 +201,14 @@ object AbstractTypeMapper {
         TypeVariance.OUT -> Variance.OUT_VARIANCE
         TypeVariance.INV -> Variance.INVARIANT
     }
+
+    fun <Writer : JvmDescriptorTypeWriter<Type>> isPrimitiveBacked(
+        context: TypeMappingContext<Writer>,
+        type: KotlinTypeMarker
+    ): Boolean = context.typeContext.isPrimitiveBacked(type)
+
+    private fun TypeSystemCommonBackendContext.isPrimitiveBacked(type: KotlinTypeMarker): Boolean =
+        !type.isNullableType() &&
+                (type is SimpleTypeMarker && type.isPrimitiveType() ||
+                        type.typeConstructor().getValueClassProperties()?.singleOrNull()?.let { isPrimitiveBacked(it.second) } == true)
 }

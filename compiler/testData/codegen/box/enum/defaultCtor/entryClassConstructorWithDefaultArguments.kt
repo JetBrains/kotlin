@@ -1,4 +1,3 @@
-// WITH_STDLIB
 enum class Test(val str: String = "OK") {
     OK {
         fun foo() {}

@@ -189,7 +189,13 @@ internal class JsIrLinkerLoader(
                 for (loadingSrcFileSignatures in loadingSrcFiles.values) {
                     for (loadingSignature in loadingSrcFileSignatures.getExportedSignatures()) {
                         if (checkIsFunctionInterface(loadingSignature)) {
-                            moduleDeserializer.tryDeserializeIrSymbol(loadingSignature, BinarySymbolData.SymbolKind.CLASS_SYMBOL)
+                            // The signature may refer to function type interface properties (e.g. name) or methods.
+                            // It is impossible to detect (without hacks) here which binary symbol is required.
+                            // However, when loading a property or a method the entire function type interface is loaded.
+                            // And vice versa, a loading of function type interface loads properties and methods as well.
+                            // Therefore, load the top level signature only - it must be the signature of function type interface.
+                            val topLevelSignature = loadingSignature.topLevelSignature()
+                            moduleDeserializer.tryDeserializeIrSymbol(topLevelSignature, BinarySymbolData.SymbolKind.CLASS_SYMBOL)
                         } else if (loadingSignature in moduleDeserializer) {
                             moduleDeserializer.addModuleReachableTopLevel(loadingSignature)
                         }

@@ -115,7 +115,15 @@ internal sealed class FileSignatureProvider(val irFile: IrFile) {
         }
 
         override fun getImplementedSymbols(): Map<IdSignature, IrSymbol> {
-            return collectImplementedSymbol(fileDeserializer.symbolDeserializer.deserializedSymbols)
+            // Sometimes linker may leave unbound symbols in IrSymbolDeserializer::deserializedSymbols map.
+            // Generally, all unbound symbols must be caught in KotlinIrLinker::checkNoUnboundSymbols,
+            // unfortunately it does not work properly in the current implementation.
+            // Also, reachable unbound symbols are caught by IrValidator, it works fine, but it works after this place.
+            // Filter unbound symbols here, because an error from IC infrastructure about the unbound symbols looks pretty wired
+            // and if the unbound symbol is really reachable from IR the error will be fired from IrValidator later.
+            // Otherwise, the unbound symbol is unreachable, and it cannot appear in IC dependency graph, so we can ignore them.
+            val deserializedSymbols = fileDeserializer.symbolDeserializer.deserializedSymbols.filter { it.value.isBound }
+            return collectImplementedSymbol(deserializedSymbols)
         }
     }
 

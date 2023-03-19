@@ -85,11 +85,12 @@ fun deserializeClassToSymbol(
     val context =
         parentContext?.childContext(
             classProto.typeParameterList,
+            containingDeclarationSymbol = symbol,
             nameResolver,
             TypeTable(classProto.typeTable),
             classId.relativeClassName,
             containerSource,
-            symbol,
+            outerClassSymbol = symbol,
             annotationDeserializer,
             if (status.isCompanion) {
                 parentContext.constDeserializer
@@ -243,6 +244,10 @@ fun deserializeClassToSymbol(
         }
         session.deserializedClassConfigurator?.run {
             configure(classId)
+        }
+
+        if (!Flags.HAS_ENUM_ENTRIES.get(flags)) {
+            hasNoEnumEntriesAttr = true
         }
     }
 }

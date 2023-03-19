@@ -17,11 +17,11 @@
 package org.jetbrains.kotlin.allopen
 
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
-import org.jetbrains.kotlin.test.runners.AbstractFirDiagnosticTest
+import org.jetbrains.kotlin.test.FirParser
+import org.jetbrains.kotlin.test.runners.AbstractFirDiagnosticTestBase
 import org.jetbrains.kotlin.test.runners.configurationForClassicAndFirTestsAlongside
 
-abstract class AbstractFirDiagnosticTestForAllOpen : AbstractFirDiagnosticTest() {
+abstract class AbstractFirDiagnosticTestForAllOpenBase(parser: FirParser) : AbstractFirDiagnosticTestBase(parser) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
 
@@ -32,14 +32,5 @@ abstract class AbstractFirDiagnosticTestForAllOpen : AbstractFirDiagnosticTest()
     }
 }
 
-abstract class AbstractFirDiagnosticsWithLightTreeTestForAllOpen : AbstractFirDiagnosticTestForAllOpen() {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-
-        with(builder) {
-            defaultDirectives {
-                +FirDiagnosticsDirectives.USE_LIGHT_TREE
-            }
-        }
-    }
-}
+abstract class AbstractFirPsiDiagnosticTestForAllOpen : AbstractFirDiagnosticTestForAllOpenBase(FirParser.Psi)
+abstract class AbstractFirLightTreeDiagnosticTestForAllOpen : AbstractFirDiagnosticTestForAllOpenBase(FirParser.LightTree)

@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.DELEGATION_B
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.IMPLEMENTING_FUNCTION_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.INLINE_CLASS_IN_EXTERNAL_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.INLINE_CLASS_IN_EXTERNAL_DECLARATION_WARNING
+import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.ENUM_CLASS_IN_EXTERNAL_DECLARATION_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.INLINE_EXTERNAL_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_MODULE_PROHIBITED_ON_NON_NATIVE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_MODULE_PROHIBITED_ON_VAR
@@ -105,6 +106,10 @@ object FirJsErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             INLINE_CLASS_IN_EXTERNAL_DECLARATION_WARNING,
             "Using value classes as parameter type or return type of external declarations is experimental"
+        )
+        map.put(
+            ENUM_CLASS_IN_EXTERNAL_DECLARATION_WARNING,
+            "Using enum classes with an `external` qualifier becomes deprecated and will be an error in future releases"
         )
         map.put(
             INLINE_CLASS_IN_EXTERNAL_DECLARATION,

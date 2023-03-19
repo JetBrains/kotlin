@@ -40,6 +40,11 @@ public class JsIrES6InvalidationTestGenerated extends AbstractJsIrES6Invalidatio
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/incremental/invalidation"), Pattern.compile("^([^_](.+))$"), null, TargetBackend.JS_IR_ES6, false);
     }
 
+    @TestMetadata("breakKlibBinaryCompatibilityWithVariance")
+    public void testBreakKlibBinaryCompatibilityWithVariance() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/breakKlibBinaryCompatibilityWithVariance/");
+    }
+
     @TestMetadata("circleExportsUpdate")
     public void testCircleExportsUpdate() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/circleExportsUpdate/");
@@ -170,9 +175,14 @@ public class JsIrES6InvalidationTestGenerated extends AbstractJsIrES6Invalidatio
         runTest("js/js.translator/testData/incremental/invalidation/functionSignature/");
     }
 
-    @TestMetadata("functionalInterface")
-    public void testFunctionalInterface() throws Exception {
-        runTest("js/js.translator/testData/incremental/invalidation/functionalInterface/");
+    @TestMetadata("functionTypeInterface")
+    public void testFunctionTypeInterface() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/functionTypeInterface/");
+    }
+
+    @TestMetadata("functionTypeInterfaceReflect")
+    public void testFunctionTypeInterfaceReflect() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/functionTypeInterfaceReflect/");
     }
 
     @TestMetadata("genericFunctions")
@@ -240,6 +250,11 @@ public class JsIrES6InvalidationTestGenerated extends AbstractJsIrES6Invalidatio
         runTest("js/js.translator/testData/incremental/invalidation/jsCode/");
     }
 
+    @TestMetadata("jsCodeWithConstString")
+    public void testJsCodeWithConstString() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/jsCodeWithConstString/");
+    }
+
     @TestMetadata("jsExport")
     public void testJsExport() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/jsExport/");
@@ -248,6 +263,11 @@ public class JsIrES6InvalidationTestGenerated extends AbstractJsIrES6Invalidatio
     @TestMetadata("jsModuleAnnotation")
     public void testJsModuleAnnotation() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/jsModuleAnnotation/");
+    }
+
+    @TestMetadata("languageVersionSettings")
+    public void testLanguageVersionSettings() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/languageVersionSettings/");
     }
 
     @TestMetadata("localInlineFunction")

@@ -61,12 +61,26 @@ open class FirPropertySymbol(
 
     val isVar: Boolean
         get() = fir.isVar
+
+    override fun canBeDeprecated(): Boolean {
+        if (isLocal || callableId.className == null) {
+            return annotations.isNotEmpty()
+                    || getterSymbol?.annotations?.isNotEmpty() == true
+                    || setterSymbol?.annotations?.isNotEmpty() == true
+        }
+        return true
+    }
 }
 
 class FirIntersectionOverridePropertySymbol(
     callableId: CallableId,
     override val intersections: Collection<FirCallableSymbol<*>>
 ) : FirPropertySymbol(callableId), FirIntersectionCallableSymbol
+
+class FirIntersectionOverrideFieldSymbol(
+    callableId: CallableId,
+    override val intersections: Collection<FirCallableSymbol<*>>
+) : FirFieldSymbol(callableId), FirIntersectionCallableSymbol
 
 class FirBackingFieldSymbol(callableId: CallableId) : FirVariableSymbol<FirBackingField>(callableId) {
     val isVal: Boolean
@@ -84,7 +98,7 @@ class FirBackingFieldSymbol(callableId: CallableId) : FirVariableSymbol<FirBacki
 
 class FirDelegateFieldSymbol(callableId: CallableId) : FirVariableSymbol<FirProperty>(callableId)
 
-class FirFieldSymbol(callableId: CallableId) : FirVariableSymbol<FirField>(callableId) {
+open class FirFieldSymbol(callableId: CallableId) : FirVariableSymbol<FirField>(callableId) {
     val hasInitializer: Boolean
         get() = fir.initializer != null
 
@@ -116,6 +130,9 @@ class FirValueParameterSymbol(name: Name) : FirVariableSymbol<FirValueParameter>
     val containingFunctionSymbol: FirFunctionSymbol<*>
         get() = fir.containingFunctionSymbol
 
+    override fun canBeDeprecated(): Boolean {
+        return false
+    }
 }
 
 class FirErrorPropertySymbol(

@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // !LANGUAGE: +ProhibitUseSiteTargetAnnotationsOnSuperTypes
 
 interface Foo

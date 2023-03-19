@@ -55,8 +55,7 @@ enum class CompilerSystemProperties(val property: String, val alwaysDirectAccess
     USER_HOME("user.home", alwaysDirectAccess = true),
     JAVA_VERSION("java.specification.version", alwaysDirectAccess = true),
     JAVA_HOME("java.home", alwaysDirectAccess = true),
-    JAVA_CLASS_PATH("java.class.path", alwaysDirectAccess = true),
-    KOTLIN_JS_COMPILER_LEGACY_FORCE_ENABLED("kotlin.js.compiler.legacy.force_enabled", alwaysDirectAccess = true)
+    JAVA_CLASS_PATH("java.class.path", alwaysDirectAccess = true)
     ;
 
     private fun <T> getProperFunction(custom: T?, default: T): T {

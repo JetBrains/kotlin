@@ -57,16 +57,13 @@ FILE: main.kt
         }
         ).R|kotlin/reflect/jvm/javaConstructor|<R|Derived|>!!
         lval derived: R|Derived!| = R|<local>/constructor|.R|SubstitutionOverride<java/lang/reflect/Constructor.newInstance: R|Derived!|>|(vararg(R|/A.A|(String(a)), R|/B.B|(String(b)), R|/C.C|(String(c))))
-        ^box R|kotlin/with|<R|Derived!|, R|kotlin/String|>(R|<local>/derived|, <L> = with@fun R|Derived!|.<anonymous>(): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
-            ^ when () {
-                ==(this@R|special/anonymous|.R|/Base.a|.R|/A.s|, String(a)) && ==(this@R|special/anonymous|.R|/Base.b|.R|/B.s|, String(b)) && ==(this@R|special/anonymous|.R|/Derived.c|.R|/C.s|, String(c)) ->  {
-                    String(OK)
-                }
-                else ->  {
-                    String(Error)
-                }
+        ^box when () {
+            !=(R|<local>/derived|, Null(null)) ->  {
+                String(OK)
             }
-
+            else ->  {
+                String(Error)
+            }
         }
-        )
+
     }

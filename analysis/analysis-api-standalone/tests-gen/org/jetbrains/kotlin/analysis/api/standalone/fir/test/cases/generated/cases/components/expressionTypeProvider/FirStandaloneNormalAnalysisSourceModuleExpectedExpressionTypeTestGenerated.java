@@ -42,8 +42,74 @@ public class FirStandaloneNormalAnalysisSourceModuleExpectedExpressionTypeTestGe
     }
 
     @Test
+    @TestMetadata("afterExclOperand.kt")
+    public void testAfterExclOperand() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/afterExclOperand.kt");
+    }
+
+    @Test
     public void testAllFilesPresentInExpectedExpressionType() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("arrayAccessExpressionGet.kt")
+    public void testArrayAccessExpressionGet() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/arrayAccessExpressionGet.kt");
+    }
+
+    @Test
+    @TestMetadata("arrayAccessExpressionGetWithTypeParameters.kt")
+    public void testArrayAccessExpressionGetWithTypeParameters() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/arrayAccessExpressionGetWithTypeParameters.kt");
+    }
+
+    @Test
+    @TestMetadata("arrayAccessExpressionSet.kt")
+    public void testArrayAccessExpressionSet() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/arrayAccessExpressionSet.kt");
+    }
+
+    @Test
+    @TestMetadata("arrayAccessExpressionSetWithTypeParameters.kt")
+    public void testArrayAccessExpressionSetWithTypeParameters() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/arrayAccessExpressionSetWithTypeParameters.kt");
+    }
+
+    @Test
+    @TestMetadata("conditionInWhenWithSubject.kt")
+    public void testConditionInWhenWithSubject() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/conditionInWhenWithSubject.kt");
+    }
+
+    @Test
+    @TestMetadata("conditionInWhenWithoutSubject.kt")
+    public void testConditionInWhenWithoutSubject() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/conditionInWhenWithoutSubject.kt");
+    }
+
+    @Test
+    @TestMetadata("elvisExpressionLeftOperand.kt")
+    public void testElvisExpressionLeftOperand() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/elvisExpressionLeftOperand.kt");
+    }
+
+    @Test
+    @TestMetadata("elvisExpressionLeftOperandWithoutExplicitType.kt")
+    public void testElvisExpressionLeftOperandWithoutExplicitType() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/elvisExpressionLeftOperandWithoutExplicitType.kt");
+    }
+
+    @Test
+    @TestMetadata("elvisExpressionRightOperand.kt")
+    public void testElvisExpressionRightOperand() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/elvisExpressionRightOperand.kt");
+    }
+
+    @Test
+    @TestMetadata("elvisExpressionRightOperandWithoutExplicitType.kt")
+    public void testElvisExpressionRightOperandWithoutExplicitType() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/elvisExpressionRightOperandWithoutExplicitType.kt");
     }
 
     @Test
@@ -137,6 +203,12 @@ public class FirStandaloneNormalAnalysisSourceModuleExpectedExpressionTypeTestGe
     }
 
     @Test
+    @TestMetadata("infixFunctionTypeParameter.kt")
+    public void testInfixFunctionTypeParameter() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/infixFunctionTypeParameter.kt");
+    }
+
+    @Test
     @TestMetadata("lambdaWithExplicitTypeFromVariable.kt")
     public void testLambdaWithExplicitTypeFromVariable() throws Exception {
         runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/lambdaWithExplicitTypeFromVariable.kt");
@@ -146,6 +218,42 @@ public class FirStandaloneNormalAnalysisSourceModuleExpectedExpressionTypeTestGe
     @TestMetadata("lambdaWithoutReturnNorExplicitType.kt")
     public void testLambdaWithoutReturnNorExplicitType() throws Exception {
         runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/lambdaWithoutReturnNorExplicitType.kt");
+    }
+
+    @Test
+    @TestMetadata("lastStatementInFunctionBlockBody.kt")
+    public void testLastStatementInFunctionBlockBody() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/lastStatementInFunctionBlockBody.kt");
+    }
+
+    @Test
+    @TestMetadata("lastStatementInLambda.kt")
+    public void testLastStatementInLambda() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/lastStatementInLambda.kt");
+    }
+
+    @Test
+    @TestMetadata("lastStatementInLambdaWithTypeMismatch.kt")
+    public void testLastStatementInLambdaWithTypeMismatch() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/lastStatementInLambdaWithTypeMismatch.kt");
+    }
+
+    @Test
+    @TestMetadata("lastStatementInLambdaWithoutExplicitType.kt")
+    public void testLastStatementInLambdaWithoutExplicitType() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/lastStatementInLambdaWithoutExplicitType.kt");
+    }
+
+    @Test
+    @TestMetadata("lastStatementInTry.kt")
+    public void testLastStatementInTry() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/lastStatementInTry.kt");
+    }
+
+    @Test
+    @TestMetadata("lastStatementInTryWithoutExplicitType.kt")
+    public void testLastStatementInTryWithoutExplicitType() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/lastStatementInTryWithoutExplicitType.kt");
     }
 
     @Test
@@ -272,6 +380,42 @@ public class FirStandaloneNormalAnalysisSourceModuleExpectedExpressionTypeTestGe
     @TestMetadata("samWithTypeCast.kt")
     public void testSamWithTypeCast() throws Exception {
         runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/samWithTypeCast.kt");
+    }
+
+    @Test
+    @TestMetadata("statementInIf.kt")
+    public void testStatementInIf() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/statementInIf.kt");
+    }
+
+    @Test
+    @TestMetadata("statementInIfBlockExpression.kt")
+    public void testStatementInIfBlockExpression() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/statementInIfBlockExpression.kt");
+    }
+
+    @Test
+    @TestMetadata("statementInIfWithoutExplicitType.kt")
+    public void testStatementInIfWithoutExplicitType() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/statementInIfWithoutExplicitType.kt");
+    }
+
+    @Test
+    @TestMetadata("statementInWhen.kt")
+    public void testStatementInWhen() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/statementInWhen.kt");
+    }
+
+    @Test
+    @TestMetadata("statementInWhenBlockExpression.kt")
+    public void testStatementInWhenBlockExpression() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/statementInWhenBlockExpression.kt");
+    }
+
+    @Test
+    @TestMetadata("statementInWhenWithoutExplicitType.kt")
+    public void testStatementInWhenWithoutExplicitType() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/statementInWhenWithoutExplicitType.kt");
     }
 
     @Test

@@ -4,6 +4,7 @@
  */
 
 @file:Suppress("FunctionName", "DuplicatedCode")
+@file:OptIn(ExperimentalWasmDsl::class)
 
 package org.jetbrains.kotlin.gradle.unitTests
 
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetHierarchyDescriptor
 import org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy.buildKotlinTargetHierarchy
 import org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy.naturalKotlinTargetHierarchy
+import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.util.*
 import kotlin.test.*
 
@@ -316,6 +318,67 @@ class KotlinTargetHierarchyDslTest {
         assertEquals(
             stringSetOf("linuxX64Main", "macosX64Main"),
             kotlin.dependingSourceSetNames("nixMain")
+        )
+    }
+
+    @Test
+    fun `test - hierarchy js and wasm`() {
+        kotlin.targetHierarchy.custom {
+            common {
+                group("web") {
+                    withJs()
+                    withWasm()
+                }
+            }
+        }
+
+        kotlin.wasm()
+        kotlin.js()
+
+        assertEquals(
+            stringSetOf("webMain", "jsMain", "wasmMain"),
+            kotlin.dependingSourceSetNames("commonMain")
+        )
+
+        assertEquals(
+            stringSetOf("jsMain", "wasmMain"),
+            kotlin.dependingSourceSetNames("webMain")
+        )
+    }
+
+    @Test
+    fun `test - hierarchy js and wasm split`() {
+        kotlin.targetHierarchy.custom {
+            common {
+                group("jsAndJvm") {
+                    withJs()
+                    withJvm()
+                }
+                group("wasmAndLinux") {
+                    withWasm()
+                    withLinuxX64()
+                }
+            }
+        }
+
+        kotlin.wasm()
+        kotlin.js()
+        kotlin.jvm()
+        kotlin.linuxX64()
+
+        assertEquals(
+            stringSetOf("jsAndJvmMain", "wasmAndLinuxMain", "jvmMain", "linuxX64Main", "jsMain", "wasmMain"),
+            kotlin.dependingSourceSetNames("commonMain")
+        )
+
+        assertEquals(
+            stringSetOf("jsMain", "jvmMain"),
+            kotlin.dependingSourceSetNames("jsAndJvmMain")
+        )
+
+        assertEquals(
+            stringSetOf("wasmMain", "linuxX64Main"),
+            kotlin.dependingSourceSetNames("wasmAndLinuxMain")
         )
     }
 

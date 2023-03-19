@@ -95,6 +95,7 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
 
     val jsInstanceOf = getInternalFunction("jsInstanceOfIntrinsic")
     val jsTypeOf = getInternalFunction("jsTypeOf")
+    val isExternalObject = getInternalFunction("isExternalObject")
 
     // Number conversions:
 

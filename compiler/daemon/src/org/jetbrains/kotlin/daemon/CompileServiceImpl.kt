@@ -23,6 +23,8 @@ import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.report.RemoteBuildReporter
 import org.jetbrains.kotlin.build.report.info
+import org.jetbrains.kotlin.build.report.metrics.endMeasureGc
+import org.jetbrains.kotlin.build.report.metrics.startMeasureGc
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.ExitCode
@@ -38,6 +40,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
 import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.daemon.report.CompileServicesFacadeMessageCollector
@@ -531,6 +534,7 @@ abstract class CompileServiceImplBase(
         compilerMessageCollector: MessageCollector,
         reporter: RemoteBuildReporter
     ): ExitCode {
+        reporter.startMeasureGc()
         val allKotlinFiles = arrayListOf<File>()
         val freeArgsWithoutKotlinFiles = arrayListOf<String>()
         args.freeArgs.forEach {
@@ -559,10 +563,12 @@ abstract class CompileServiceImplBase(
             modulesApiHistory = modulesApiHistory,
             withAbiSnapshot = incrementalCompilationOptions.withAbiSnapshot,
             preciseCompilationResultsBackup = incrementalCompilationOptions.preciseCompilationResultsBackup,
+            keepIncrementalCompilationCachesInMemory = incrementalCompilationOptions.keepIncrementalCompilationCachesInMemory,
         )
         return try {
             compiler.compile(allKotlinFiles, args, compilerMessageCollector, changedFiles)
         } finally {
+            reporter.endMeasureGc()
             reporter.flush()
         }
     }
@@ -573,6 +579,7 @@ abstract class CompileServiceImplBase(
         compilerMessageCollector: MessageCollector,
         reporter: RemoteBuildReporter
     ): ExitCode {
+        reporter.startMeasureGc()
         val allKotlinExtensions = (DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS +
                 (incrementalCompilationOptions.kotlinScriptExtensions ?: emptyArray())).distinct()
         val dotExtensions = allKotlinExtensions.map { ".$it" }
@@ -607,22 +614,28 @@ abstract class CompileServiceImplBase(
         }
 
         val projectRoot = incrementalCompilationOptions.modulesInfo.projectRoot
+        val useK2 = k2jvmArgs.useK2 || LanguageVersion.fromVersionString(k2jvmArgs.languageVersion)?.usesK2 == true
+        // TODO: This should be reverted after implementing of fir-based java tracker (KT-57147).
+        //  See org.jetbrains.kotlin.incremental.IncrementalJvmCompilerRunnerKt.makeIncrementally
+        val usePreciseJavaTracking = if (useK2) false else incrementalCompilationOptions.usePreciseJavaTracking
 
         val compiler = IncrementalJvmCompilerRunner(
             workingDir,
             reporter,
             buildHistoryFile = incrementalCompilationOptions.multiModuleICSettings.buildHistoryFile,
             outputDirs = incrementalCompilationOptions.outputFiles,
-            usePreciseJavaTracking = incrementalCompilationOptions.usePreciseJavaTracking,
+            usePreciseJavaTracking = usePreciseJavaTracking,
             modulesApiHistory = modulesApiHistory,
             kotlinSourceFilesExtensions = allKotlinExtensions,
             classpathChanges = incrementalCompilationOptions.classpathChanges,
             withAbiSnapshot = incrementalCompilationOptions.withAbiSnapshot,
             preciseCompilationResultsBackup = incrementalCompilationOptions.preciseCompilationResultsBackup,
+            keepIncrementalCompilationCachesInMemory = incrementalCompilationOptions.keepIncrementalCompilationCachesInMemory,
         )
         return try {
             compiler.compile(allKotlinFiles, k2jvmArgs, compilerMessageCollector, changedFiles, projectRoot)
         } finally {
+            reporter.endMeasureGc()
             reporter.flush()
         }
     }
@@ -716,8 +729,8 @@ class CompileServiceImpl(
                 (compilerId.compilerClasspath.all { expectedCompilerId.compilerClasspath.contains(it) }) &&
                 !classpathWatcher.isChanged
 
-    override fun getUsedMemory(): CompileService.CallResult<Long> =
-        ifAlive { CompileService.CallResult.Good(usedMemory(withGC = true)) }
+    override fun getUsedMemory(withGC: Boolean): CompileService.CallResult<Long> =
+        ifAlive { CompileService.CallResult.Good(usedMemory(withGC = withGC)) }
 
     override fun shutdown(): CompileService.CallResult<Nothing> = ifAliveExclusive(minAliveness = Aliveness.LastSession) {
         shutdownWithDelay()

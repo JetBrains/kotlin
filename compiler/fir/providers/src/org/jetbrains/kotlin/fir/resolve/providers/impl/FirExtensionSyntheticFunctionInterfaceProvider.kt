@@ -74,13 +74,16 @@ abstract class FirSyntheticFunctionInterfaceProviderBase(
     }
 
     @FirSymbolProviderInternals
-    override fun getTopLevelCallableSymbolsTo(destination: MutableList<FirCallableSymbol<*>>, packageFqName: FqName, name: Name) {}
+    override fun getTopLevelCallableSymbolsTo(destination: MutableList<FirCallableSymbol<*>>, packageFqName: FqName, name: Name) {
+    }
 
     @FirSymbolProviderInternals
-    override fun getTopLevelFunctionSymbolsTo(destination: MutableList<FirNamedFunctionSymbol>, packageFqName: FqName, name: Name) {}
+    override fun getTopLevelFunctionSymbolsTo(destination: MutableList<FirNamedFunctionSymbol>, packageFqName: FqName, name: Name) {
+    }
 
     @FirSymbolProviderInternals
-    override fun getTopLevelPropertySymbolsTo(destination: MutableList<FirPropertySymbol>, packageFqName: FqName, name: Name) {}
+    override fun getTopLevelPropertySymbolsTo(destination: MutableList<FirPropertySymbol>, packageFqName: FqName, name: Name) {
+    }
 
     override fun getPackage(fqName: FqName): FqName? {
         return fqName.takeIf { session.functionTypeService.hasKindWithSpecificPackage(it) }
@@ -121,14 +124,7 @@ abstract class FirSyntheticFunctionInterfaceProviderBase(
                         Visibilities.Public,
                         Modality.ABSTRACT,
                         EffectiveVisibility.Public
-                    ).apply {
-                        isExpect = false
-                        isActual = false
-                        isInner = false
-                        isCompanion = false
-                        isData = false
-                        isInline = false
-                    }
+                    )
                     classKind = ClassKind.INTERFACE
                     scopeProvider = kotlinScopeProvider
                     symbol = this@symbol
@@ -167,15 +163,9 @@ abstract class FirSyntheticFunctionInterfaceProviderBase(
                         Modality.ABSTRACT,
                         EffectiveVisibility.Public
                     ).apply {
-                        isExpect = false
-                        isActual = false
-                        isOverride = false
                         isOperator = true
-                        isInfix = false
-                        isInline = false
-                        isTailRec = false
-                        isExternal = false
                         isSuspend = kind.isSuspendOrKSuspendFunction
+                        hasStableParameterNames = false
                     }
                     val typeArguments = typeParameters.map {
                         ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false).toFirResolvedTypeRef()

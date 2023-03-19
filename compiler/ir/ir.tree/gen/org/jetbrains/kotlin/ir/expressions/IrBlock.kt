@@ -12,12 +12,10 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
  * A non-leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.block
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.block]
  */
 abstract class IrBlock : IrContainerExpression() {
-    override val isTransparentScope: Boolean
-        get() = false
-
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitBlock(this, data)
 }

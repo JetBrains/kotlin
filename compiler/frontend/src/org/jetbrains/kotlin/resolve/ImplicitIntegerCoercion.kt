@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.resolve
 
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.FqName
 
@@ -12,13 +14,10 @@ object ImplicitIntegerCoercion {
 
     val MODULE_CAPABILITY = ModuleCapability<Boolean>("ImplicitIntegerCoercion")
 
-    fun isEnabledForParameter(descriptor: ParameterDescriptor): Boolean = isEnabledFor(descriptor)
-
-    fun isEnabledForConstVal(descriptor: VariableDescriptor): Boolean = isEnabledFor(descriptor)
-
-    private fun isEnabledFor(descriptor: DeclarationDescriptor): Boolean =
+    fun isEnabledFor(descriptor: DeclarationDescriptor, languageVersionSettings: LanguageVersionSettings): Boolean =
         descriptor.hasImplicitIntegerCoercionAnnotation() ||
-                DescriptorUtils.getContainingModuleOrNull(descriptor)?.hasImplicitIntegerCoercionCapability() == true
+                (languageVersionSettings.supportsFeature(LanguageFeature.ImplicitSignedToUnsignedIntegerConversion) &&
+                        DescriptorUtils.getContainingModuleOrNull(descriptor)?.hasImplicitIntegerCoercionCapability() == true)
 
     private val IMPLICIT_INTEGER_COERCION_ANNOTATION_FQ_NAME = FqName("kotlin.internal.ImplicitIntegerCoercion")
 

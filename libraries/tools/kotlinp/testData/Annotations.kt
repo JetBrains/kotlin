@@ -1,3 +1,5 @@
+// IGNORE K2
+
 import kotlin.reflect.KClass
 
 @Target(AnnotationTarget.TYPE)

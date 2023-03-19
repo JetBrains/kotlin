@@ -191,6 +191,12 @@ public class Fe10IdeNormalAnalysisSourceModuleSymbolByReferenceTestGenerated ext
     }
 
     @Test
+    @TestMetadata("typeParameter.kt")
+    public void testTypeParameter() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByReference/typeParameter.kt");
+    }
+
+    @Test
     @TestMetadata("valueParameter.kt")
     public void testValueParameter() throws Exception {
         runTest("analysis/analysis-api/testData/symbols/symbolByReference/valueParameter.kt");

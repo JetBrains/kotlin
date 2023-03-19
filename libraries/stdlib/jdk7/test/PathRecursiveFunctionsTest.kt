@@ -359,7 +359,7 @@ class PathRecursiveFunctionsTest : AbstractPathTest() {
             OnErrorResult.SKIP_SUBTREE
         })
 
-        src.copyToRecursively(dst.apply { parent?.createDirectories() }, followLinks = false)
+        src.copyToRecursively(dst.createParentDirectories(), followLinks = false)
     }
 
     @Test

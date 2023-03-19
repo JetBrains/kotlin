@@ -510,17 +510,6 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
             diagnostic = ConeSimpleDiagnostic("Inc/dec without operand", DiagnosticKind.Syntax)
         }
 
-        if (unwrappedReceiver.elementType == DOT_QUALIFIED_EXPRESSION || unwrappedReceiver.elementType == SAFE_ACCESS_EXPRESSION) {
-            return generateIncrementOrDecrementBlockForQualifiedAccess(
-                wholeExpression,
-                operationReference,
-                unwrappedReceiver,
-                callName,
-                prefix,
-                convert
-            )
-        }
-
         if (unwrappedReceiver.elementType == ARRAY_ACCESS_EXPRESSION) {
             return generateIncrementOrDecrementBlockForArrayAccess(
                 wholeExpression,
@@ -532,43 +521,13 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
             )
         }
 
-        return buildBlock {
+        return buildIncrementDecrementExpression {
             val baseSource = wholeExpression?.toFirSourceElement()
-            val desugaredSource = baseSource?.fakeElement(KtFakeSourceElementKind.DesugaredIncrementOrDecrement)
-            source = desugaredSource
-
-            val convertedReceiver = unwrappedReceiver.convert()
-
-            putIncrementOrDecrementStatements(
-                convertedReceiver,
-                operationReference,
-                callName,
-                prefix,
-                unwrappedReceiver.takeIf { it.elementType == REFERENCE_EXPRESSION }?.getReferencedNameAsName(),
-                desugaredSource,
-            ) { resultInitializer: FirExpression, resultVar: FirVariable ->
-                val assignment = unwrappedReceiver.generateAssignment(
-                    desugaredSource,
-                    null,
-                    if (prefix && unwrappedReceiver.elementType != REFERENCE_EXPRESSION)
-                        generateResolvedAccessExpression(source, resultVar)
-                    else
-                        resultInitializer,
-                    FirOperation.ASSIGN,
-                    resultInitializer.annotations,
-                    null
-                ) {
-                    // We want the DesugaredAssignmentValueReferenceExpression on the LHS to point to the same receiver instance
-                    // as in the initializer, therefore don't create a new instance here if the argument is the receiver.
-                    if (this == unwrappedReceiver) convertedReceiver else convert()
-                }
-
-                if (assignment is FirBlock) {
-                    statements += assignment.statements
-                } else {
-                    statements += assignment
-                }
-            }
+            source = baseSource
+            operationSource = operationReference?.toFirSourceElement()
+            operationName = callName
+            isPrefix = prefix
+            expression = unwrappedReceiver.convert()
         }
     }
 
@@ -668,86 +627,6 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                 LABELED_EXPRESSION -> unwrapped?.getLabeledExpression()
                 ANNOTATED_EXPRESSION -> unwrapped?.getAnnotatedExpression()
                 else -> return unwrapped
-            }
-        }
-    }
-
-    /**
-     * given:
-     * a.b++
-     *
-     * result:
-     * {
-     *     val <receiver> = a
-     *     val <unary> = <receiver>.b
-     *     <receiver>.b = <unary>.inc()
-     *     ^<unary>
-     * }
-     *
-     * given:
-     * ++a.b
-     *
-     * result:
-     * {
-     *     val <receiver> = a
-     *     val <unary-result> = <receiver>.b.inc()
-     *     <receiver>.b = <unary-result>
-     *     ^<unary-result>
-     * }
-     *
-     */
-    @OptIn(FirContractViolation::class)
-    private fun generateIncrementOrDecrementBlockForQualifiedAccess(
-        wholeExpression: T,
-        operationReference: T?,
-        receiverForOperation: T, // a.b
-        callName: Name,
-        prefix: Boolean,
-        convert: T.() -> FirExpression
-    ): FirExpression {
-        return buildBlockProbablyUnderSafeCall(
-            receiverForOperation,
-            convert,
-            receiverForOperation.toFirSourceElement(),
-        ) { qualifiedFir ->
-            val receiverFir = (qualifiedFir as? FirQualifiedAccessExpression)?.explicitReceiver ?: buildErrorExpression {
-                source = receiverForOperation.toFirSourceElement()
-                diagnostic = ConeSimpleDiagnostic("Qualified expression without selector", DiagnosticKind.Syntax)
-            }
-
-            val baseSource = wholeExpression?.toFirSourceElement()
-            val desugaredSource = baseSource?.fakeElement(KtFakeSourceElementKind.DesugaredIncrementOrDecrement)
-            source = desugaredSource
-
-            val argumentReceiverVariable = generateTemporaryVariable(
-                baseModuleData,
-                desugaredSource,
-                SpecialNames.RECEIVER,
-                initializer = receiverFir,
-            ).also { statements += it }
-
-            val receiverSource = receiverFir.source?.fakeElement(KtFakeSourceElementKind.DesugaredIncrementOrDecrement)
-            val firArgument = generateResolvedAccessExpression(receiverSource, argumentReceiverVariable).let { receiver ->
-                qualifiedFir.also { if (it is FirQualifiedAccessExpression) it.replaceExplicitReceiver(receiver) }
-            }
-
-            putIncrementOrDecrementStatements(
-                firArgument, operationReference, callName, prefix,
-                nameIfSimpleReference = null, desugaredSource
-            ) { resultInitializer: FirExpression, resultVar: FirVariable ->
-                if (firArgument !is FirQualifiedAccessExpression) return@putIncrementOrDecrementStatements
-                statements += buildVariableAssignment {
-                    source = desugaredSource
-                    lValue = buildDesugaredAssignmentValueReferenceExpression {
-                        expressionRef = FirExpressionRef<FirExpression>().apply { bind(firArgument) }
-                        source = firArgument.source?.fakeElement(KtFakeSourceElementKind.DesugaredIncrementOrDecrement)
-                    }
-                    rValue = if (prefix) {
-                        generateResolvedAccessExpression(source, resultVar)
-                    } else {
-                        resultInitializer
-                    }
-                }
             }
         }
     }

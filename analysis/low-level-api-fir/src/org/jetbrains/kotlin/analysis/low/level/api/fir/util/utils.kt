@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
 import com.intellij.openapi.progress.ProgressManager
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableModuleSession
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
@@ -18,11 +19,13 @@ import org.jetbrains.kotlin.psi.psiUtil.isObjectLiteral
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.Lock
 
-internal inline fun <T> executeWithoutPCE(crossinline action: () -> T): T {
-    var result: T? = null
-    ProgressManager.getInstance().executeNonCancelableSection { result = action() }
-    @Suppress("UNCHECKED_CAST")
-    return result as T
+internal fun <R : Any> withInvalidationOnException(session: LLFirResolvableModuleSession, action: () -> R): R {
+    try {
+        return action()
+    } catch (e: Throwable) {
+        session.invalidate()
+        throw e
+    }
 }
 
 internal inline fun <T> Lock.lockWithPCECheck(lockingIntervalMs: Long, action: () -> T): T {
@@ -70,4 +73,3 @@ internal val FirDeclaration.containingKtFileIfAny: KtFile?
 internal fun KtDeclaration.isNonAnonymousClassOrObject() =
     this is KtClassOrObject
             && !this.isObjectLiteral()
-

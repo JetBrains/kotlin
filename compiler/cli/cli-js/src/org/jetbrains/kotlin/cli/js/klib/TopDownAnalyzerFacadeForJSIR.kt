@@ -11,11 +11,18 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
 import org.jetbrains.kotlin.ir.backend.js.JsFactories
-import org.jetbrains.kotlin.js.analyze.AbstractTopDownAnalyzerFacadeForJS
+import org.jetbrains.kotlin.js.analyze.AbstractTopDownAnalyzerFacadeForWeb
+import org.jetbrains.kotlin.js.resolve.JsPlatformAnalyzerServices
+import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
+import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 
 // TODO: put it in separated module `frontend.js`
-object TopDownAnalyzerFacadeForJSIR : AbstractTopDownAnalyzerFacadeForJS() {
+object TopDownAnalyzerFacadeForJSIR : AbstractTopDownAnalyzerFacadeForWeb() {
+    override val analyzerServices: PlatformDependentAnalyzerServices = JsPlatformAnalyzerServices
+    override val platform: TargetPlatform = JsPlatforms.defaultJsPlatform
+
     override fun loadIncrementalCacheMetadata(
         incrementalData: IncrementalDataProvider,
         moduleContext: ModuleContext,

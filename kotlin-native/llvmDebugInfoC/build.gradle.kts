@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-import org.jetbrains.gradle.plugins.tools.lib
+import org.jetbrains.kotlin.tools.lib
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.konan.target.ClangArgs
 import org.jetbrains.kotlin.konan.target.HostManager
 
 plugins {
-    `native`
+    id("native")
 }
 
 val llvmDir = project.findProperty("llvmDir")
@@ -49,6 +49,6 @@ native {
 
     target(lib("debugInfo"), objSet) {
         tool(*platformManager.hostPlatform.clangForJni.llvmAr("").toTypedArray())
-        flags("-qv", ruleOut(), *ruleInAll())
+        flags("-qcv", ruleOut(), *ruleInAll())
     }
 }

@@ -18,9 +18,9 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.*
-import org.jetbrains.kotlin.psi2ir.deparenthesize
-
+import org.jetbrains.kotlin.psi.psiUtil.isAncestor
+import org.jetbrains.kotlin.psi.psiUtil.isObjectLiteral
+import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 
 @ThreadSafe
 internal class FirElementBuilder(
@@ -28,9 +28,8 @@ internal class FirElementBuilder(
 ) {
     companion object {
         fun getPsiAsFirElementSource(element: KtElement): KtElement? {
-            val deparenthesized = if (element is KtPropertyDelegate) element.deparenthesize() else element
+            val deparenthesized = if (element is KtExpression) KtPsiUtil.safeDeparenthesize(element) else element
             return when {
-                deparenthesized is KtParenthesizedExpression -> deparenthesized.deparenthesize()
                 deparenthesized is KtPropertyDelegate -> deparenthesized.expression ?: element
                 deparenthesized is KtQualifiedExpression && deparenthesized.selectorExpression is KtCallExpression -> {
                     /*
@@ -49,7 +48,6 @@ internal class FirElementBuilder(
             }
         }
     }
-
 
     fun doKtElementHasCorrespondingFirElement(ktElement: KtElement): Boolean = when (ktElement) {
         is KtImportList -> false
@@ -107,24 +105,27 @@ internal fun PsiElement.getNonLocalContainingOrThisDeclaration(predicate: (KtDec
 
     for (parent in parentsWithSelf) {
         if (candidate != null) {
-            if (parent is KtEnumEntry || parent is KtCallableDeclaration) {
-                // Candidate turned to be local. Let's find another one
+            if (parent is KtEnumEntry || parent is KtCallableDeclaration || parent is KtClassInitializer) {
+                // Candidate turned out to be local. Let's find another one.
                 candidate = null
             }
         }
 
-        when (parent) {
-            is KtScript -> propose(parent)
-            is KtDestructuringDeclaration -> propose(parent)
-            is KtNamedDeclaration -> {
-                val isKindApplicable = when (parent) {
-                    is KtClassOrObject -> !parent.isObjectLiteral()
-                    is KtDeclarationWithBody, is KtProperty, is KtTypeAlias -> true
-                    else -> false
-                }
+        // A new candidate only needs to be proposed when `candidate` is null.
+        if (candidate == null) {
+            when (parent) {
+                is KtScript -> propose(parent)
+                is KtDestructuringDeclaration -> propose(parent)
+                is KtNamedDeclaration -> {
+                    val isKindApplicable = when (parent) {
+                        is KtClassOrObject -> !parent.isObjectLiteral()
+                        is KtDeclarationWithBody, is KtProperty, is KtTypeAlias -> true
+                        else -> false
+                    }
 
-                if (isKindApplicable && declarationCanBeLazilyResolved(parent) && predicate(parent)) {
-                    propose(parent)
+                    if (isKindApplicable && declarationCanBeLazilyResolved(parent) && predicate(parent)) {
+                        propose(parent)
+                    }
                 }
             }
         }

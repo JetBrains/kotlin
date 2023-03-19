@@ -12,13 +12,9 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrGetValue
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.extractTypeParameters
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.multiplatform.OptionalAnnotationUtil
 import org.jetbrains.kotlin.resolve.multiplatform.findCompatibleActualsForExpected
@@ -153,72 +149,18 @@ open class ExpectDeclarationRemover(val symbolTable: ReferenceSymbolTable, priva
         }
 
         defaultValue.let { originalDefault ->
-            declaration.defaultValue = declaration.factory.createExpressionBody(originalDefault.startOffset, originalDefault.endOffset) {
-                expression = originalDefault.expression
-                    .deepCopyWithSymbols(function) { symbolRemapper, _ ->
-                        DeepCopyIrTreeWithSymbols(
-                            symbolRemapper,
-                            IrTypeParameterRemapper(typeParameterSubstitutionMap.getValue(expectToActual))
-                        )
-                    }
-                    .remapExpectValueSymbols()
-            }
+            declaration.defaultValue = originalDefault.copyAndActualizeDefaultValue(
+                function,
+                declaration,
+                typeParameterSubstitutionMap.getValue(expectToActual),
+                classActualizer = { symbolTable.referenceClass(it.descriptor.findActualForExpect() as ClassDescriptor).owner },
+                functionActualizer = { symbolTable.referenceFunction(it.descriptor.findActualForExpect() as FunctionDescriptor).owner }
+            )
         }
     }
 
     private fun MemberDescriptor.findExpectForActual(): MemberDescriptor? {
         if (!isActual) error(this)
         return findCompatibleExpectsForActual().singleOrNull()
-    }
-
-    private fun IrExpression.remapExpectValueSymbols(): IrExpression {
-        return this.transform(object : IrElementTransformerVoid() {
-
-            override fun visitGetValue(expression: IrGetValue): IrExpression {
-                expression.transformChildrenVoid()
-                val newValue = remapExpectValue(expression.symbol)
-                    ?: return expression
-
-                return IrGetValueImpl(
-                    expression.startOffset,
-                    expression.endOffset,
-                    newValue.type,
-                    newValue.symbol,
-                    expression.origin
-                )
-            }
-        }, data = null)
-    }
-
-    private fun remapExpectValue(symbol: IrValueSymbol): IrValueParameter? {
-        if (symbol !is IrValueParameterSymbol) {
-            return null
-        }
-
-        val parameter = symbol.owner
-
-        return when (val parent = parameter.parent) {
-            is IrClass -> {
-                assert(parameter == parent.thisReceiver)
-                symbolTable.referenceClass(parent.descriptor.findActualForExpect() as ClassDescriptor).owner.thisReceiver!!
-            }
-
-            is IrFunction -> {
-                val actualFunction =
-                    symbolTable.referenceFunction(parent.descriptor.findActualForExpect() as FunctionDescriptor).owner
-                when (parameter) {
-                    parent.dispatchReceiverParameter ->
-                        actualFunction.dispatchReceiverParameter!!
-                    parent.extensionReceiverParameter ->
-                        actualFunction.extensionReceiverParameter!!
-                    else -> {
-                        assert(parent.valueParameters[parameter.index] == parameter)
-                        actualFunction.valueParameters[parameter.index]
-                    }
-                }
-            }
-
-            else -> error(parent)
-        }
     }
 }

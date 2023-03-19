@@ -12,10 +12,11 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
  * A non-leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.errorExpression
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.errorExpression]
  */
 abstract class IrErrorExpression : IrExpression() {
-    abstract val description: String
+    abstract var description: String
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitErrorExpression(this, data)

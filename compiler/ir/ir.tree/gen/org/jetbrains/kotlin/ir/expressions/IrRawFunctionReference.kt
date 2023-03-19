@@ -13,7 +13,8 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
  * A leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.rawFunctionReference
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.rawFunctionReference]
  */
 abstract class IrRawFunctionReference : IrDeclarationReference() {
     abstract override val symbol: IrFunctionSymbol

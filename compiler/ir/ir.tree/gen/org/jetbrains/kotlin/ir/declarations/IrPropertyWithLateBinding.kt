@@ -13,7 +13,8 @@ import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 
 /**
  * A leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.propertyWithLateBinding
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.propertyWithLateBinding]
  */
 interface IrPropertyWithLateBinding : IrDeclaration {
     override val symbol: IrPropertySymbol

@@ -14,11 +14,11 @@ import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.resolve.providers.flatMapToNullableSet
+import org.jetbrains.kotlin.fir.resolve.providers.mayHaveTopLevelClassifier
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.types.functionTypeService
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -106,17 +106,9 @@ class FirCachingCompositeSymbolProvider(
 
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
         val knownClassifierNames = knownTopLevelClassifierNamesInPackage.getValue(classId.packageFqName)
-        if (knownClassifierNames != null && !isNameForFunctionClass(classId)) {
-            val outerClassId = classId.outerClassId
-            if (outerClassId == null && classId.shortClassName.asString() !in knownClassifierNames) return null
-            if (outerClassId != null && classId.outermostClassId.shortClassName.asString() !in knownClassifierNames) return null
-        }
+        if (knownClassifierNames != null && !knownClassifierNames.mayHaveTopLevelClassifier(classId, session)) return null
 
         return classLikeCache.getValue(classId)
-    }
-
-    private fun isNameForFunctionClass(classId: ClassId): Boolean {
-        return session.functionTypeService.getKindByClassNamePrefix(classId.packageFqName, classId.shortClassName.asString()) != null
     }
 
     @OptIn(FirSymbolProviderInternals::class)

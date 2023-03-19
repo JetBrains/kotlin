@@ -70,7 +70,6 @@ object KotlinToJVMBytecodeCompiler {
 
         val projectConfiguration = environment.configuration
         if (projectConfiguration.getBoolean(CommonConfigurationKeys.USE_FIR)) {
-            val extendedAnalysisMode = projectConfiguration.getBoolean(CommonConfigurationKeys.USE_FIR_EXTENDED_CHECKERS)
             val projectEnvironment =
                 VfsBasedProjectEnvironment(
                     environment.project,
@@ -81,7 +80,7 @@ object KotlinToJVMBytecodeCompiler {
                 environment.configuration,
                 environment.messageCollector,
                 environment.getSourceFiles(),
-                buildFile, chunk, extendedAnalysisMode
+                buildFile, chunk
             )
         }
 
@@ -376,11 +375,12 @@ object KotlinToJVMBytecodeCompiler {
 }
 
 fun CompilerConfiguration.configureSourceRoots(chunk: List<Module>, buildFile: File? = null) {
+    val hmppCliModuleStructure = get(CommonConfigurationKeys.HMPP_MODULE_STRUCTURE)
     for (module in chunk) {
         val commonSources = getBuildFilePaths(buildFile, module.getCommonSourceFiles()).toSet()
 
         for (path in getBuildFilePaths(buildFile, module.getSourceFiles())) {
-            addKotlinSourceRoot(path, isCommon = path in commonSources)
+            addKotlinSourceRoot(path, isCommon = path in commonSources, hmppCliModuleStructure?.getModuleNameForSource(path))
         }
     }
 

@@ -1,5 +1,3 @@
-// FIR_DISABLE_LAZY_RESOLVE_CHECKS
-// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 @Deprecated("Deprecated class")
 open class DeprecatedClass
 

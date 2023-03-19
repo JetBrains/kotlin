@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.addWasmExperimentalArguments
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.tasks.registerTask
@@ -47,10 +48,6 @@ constructor(
     @InputFile
     @NormalizeLineEndings
     val inputFileProperty: RegularFileProperty = project.newFileProperty()
-
-    @get:Internal
-    override val nodeModulesRequired: Boolean
-        get() = true
 
     @get:Internal
     override val requiredNpmDependencies: Set<RequiredKotlinJsDependency> by lazy {
@@ -92,7 +89,9 @@ constructor(
         ): TaskProvider<NodeJsExec> {
             val target = compilation.target
             val project = target.project
-            val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
+            NodeJsRootPlugin.apply(project.rootProject)
+            val nodeJs = project.rootProject.kotlinNodeJsExtension
+            val nodeJsTaskProviders = project.rootProject.kotlinNodeJsExtension
             val npmProject = compilation.npmProject
 
             return project.registerTask(
@@ -103,8 +102,8 @@ constructor(
                 it.executable = nodeJs.requireConfigured().nodeExecutable
                 it.workingDir = npmProject.dir
                 it.dependsOn(
-                    nodeJs.npmInstallTaskProvider,
-                    nodeJs.storeYarnLockTaskProvider,
+                    nodeJsTaskProviders.npmInstallTaskProvider,
+                    nodeJsTaskProviders.storeYarnLockTaskProvider,
                 )
                 it.dependsOn(compilation.compileKotlinTaskProvider)
                 if (compilation.platformType == KotlinPlatformType.wasm) {

@@ -470,6 +470,12 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
             }
 
             @Test
+            @TestMetadata("propertyGetterSeveralUseSiteTargets.kt")
+            public void testPropertyGetterSeveralUseSiteTargets() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/annotations/repeatable/propertyGetterSeveralUseSiteTargets.kt");
+            }
+
+            @Test
             @TestMetadata("propertyGetterUseSiteTarget.kt")
             public void testPropertyGetterUseSiteTarget() throws Exception {
                 runTest("compiler/testData/codegen/bytecodeListing/annotations/repeatable/propertyGetterUseSiteTarget.kt");

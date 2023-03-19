@@ -121,17 +121,8 @@ public final class kotlinx/metadata/FlagsKt {
 	public static final fun flagsOf ([Lkotlinx/metadata/Flag;)I
 }
 
-public final class kotlinx/metadata/InconsistentKotlinMetadataException : java/lang/RuntimeException {
-	public fun <init> (Ljava/lang/String;Ljava/lang/Throwable;)V
-	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-}
-
 public final class kotlinx/metadata/KmAnnotation {
 	public fun <init> (Ljava/lang/String;Ljava/util/Map;)V
-	public final fun component1 ()Ljava/lang/String;
-	public final fun component2 ()Ljava/util/Map;
-	public final fun copy (Ljava/lang/String;Ljava/util/Map;)Lkotlinx/metadata/KmAnnotation;
-	public static synthetic fun copy$default (Lkotlinx/metadata/KmAnnotation;Ljava/lang/String;Ljava/util/Map;ILjava/lang/Object;)Lkotlinx/metadata/KmAnnotation;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getArguments ()Ljava/util/Map;
 	public final fun getClassName ()Ljava/lang/String;
@@ -149,6 +140,19 @@ public final class kotlinx/metadata/KmAnnotationArgument$AnnotationValue : kotli
 	public static synthetic fun copy$default (Lkotlinx/metadata/KmAnnotationArgument$AnnotationValue;Lkotlinx/metadata/KmAnnotation;ILjava/lang/Object;)Lkotlinx/metadata/KmAnnotationArgument$AnnotationValue;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAnnotation ()Lkotlinx/metadata/KmAnnotation;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class kotlinx/metadata/KmAnnotationArgument$ArrayKClassValue : kotlinx/metadata/KmAnnotationArgument {
+	public fun <init> (Ljava/lang/String;I)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()I
+	public final fun copy (Ljava/lang/String;I)Lkotlinx/metadata/KmAnnotationArgument$ArrayKClassValue;
+	public static synthetic fun copy$default (Lkotlinx/metadata/KmAnnotationArgument$ArrayKClassValue;Ljava/lang/String;IILjava/lang/Object;)Lkotlinx/metadata/KmAnnotationArgument$ArrayKClassValue;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getArrayDimensionCount ()I
+	public final fun getClassName ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -250,6 +254,7 @@ public final class kotlinx/metadata/KmAnnotationArgument$IntValue : kotlinx/meta
 }
 
 public final class kotlinx/metadata/KmAnnotationArgument$KClassValue : kotlinx/metadata/KmAnnotationArgument {
+	public fun <init> (Ljava/lang/String;)V
 	public fun <init> (Ljava/lang/String;I)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()I
@@ -577,6 +582,7 @@ public final class kotlinx/metadata/KmEffectInvocationKind : java/lang/Enum {
 	public static final field AT_LEAST_ONCE Lkotlinx/metadata/KmEffectInvocationKind;
 	public static final field AT_MOST_ONCE Lkotlinx/metadata/KmEffectInvocationKind;
 	public static final field EXACTLY_ONCE Lkotlinx/metadata/KmEffectInvocationKind;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lkotlinx/metadata/KmEffectInvocationKind;
 	public static fun values ()[Lkotlinx/metadata/KmEffectInvocationKind;
 }
@@ -585,6 +591,7 @@ public final class kotlinx/metadata/KmEffectType : java/lang/Enum {
 	public static final field CALLS Lkotlinx/metadata/KmEffectType;
 	public static final field RETURNS_CONSTANT Lkotlinx/metadata/KmEffectType;
 	public static final field RETURNS_NOT_NULL Lkotlinx/metadata/KmEffectType;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lkotlinx/metadata/KmEffectType;
 	public static fun values ()[Lkotlinx/metadata/KmEffectType;
 }
@@ -952,6 +959,7 @@ public final class kotlinx/metadata/KmVariance : java/lang/Enum {
 	public static final field IN Lkotlinx/metadata/KmVariance;
 	public static final field INVARIANT Lkotlinx/metadata/KmVariance;
 	public static final field OUT Lkotlinx/metadata/KmVariance;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lkotlinx/metadata/KmVariance;
 	public static fun values ()[Lkotlinx/metadata/KmVariance;
 }
@@ -995,6 +1003,7 @@ public final class kotlinx/metadata/KmVersionRequirementLevel : java/lang/Enum {
 	public static final field ERROR Lkotlinx/metadata/KmVersionRequirementLevel;
 	public static final field HIDDEN Lkotlinx/metadata/KmVersionRequirementLevel;
 	public static final field WARNING Lkotlinx/metadata/KmVersionRequirementLevel;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lkotlinx/metadata/KmVersionRequirementLevel;
 	public static fun values ()[Lkotlinx/metadata/KmVersionRequirementLevel;
 }
@@ -1003,6 +1012,7 @@ public final class kotlinx/metadata/KmVersionRequirementVersionKind : java/lang/
 	public static final field API_VERSION Lkotlinx/metadata/KmVersionRequirementVersionKind;
 	public static final field COMPILER_VERSION Lkotlinx/metadata/KmVersionRequirementVersionKind;
 	public static final field LANGUAGE_VERSION Lkotlinx/metadata/KmVersionRequirementVersionKind;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lkotlinx/metadata/KmVersionRequirementVersionKind;
 	public static fun values ()[Lkotlinx/metadata/KmVersionRequirementVersionKind;
 }

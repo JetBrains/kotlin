@@ -16,15 +16,16 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
  * A leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.file
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.file]
  */
 abstract class IrFile : IrPackageFragment(), IrMetadataSourceOwner,
         IrMutableAnnotationContainer {
     abstract override val symbol: IrFileSymbol
 
-    abstract val module: IrModuleFragment
+    abstract var module: IrModuleFragment
 
-    abstract val fileEntry: IrFileEntry
+    abstract var fileEntry: IrFileEntry
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitFile(this, data)

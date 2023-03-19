@@ -67,8 +67,8 @@ enum class TestEnum : Enum<TestEnum> {
 
   fun valueOf(value: String): TestEnum /* Synthetic body for ENUM_VALUEOF */
 
-  val entries: EnumEntries
-    get(): EnumEntries /* Synthetic body for ENUM_ENTRIES */
+  val entries: EnumEntries<TestEnum>
+    get(): EnumEntries<TestEnum> /* Synthetic body for ENUM_ENTRIES */
 
 }
 
@@ -81,4 +81,3 @@ open annotation class TestAnnotation : Annotation {
   }
 
 }
-

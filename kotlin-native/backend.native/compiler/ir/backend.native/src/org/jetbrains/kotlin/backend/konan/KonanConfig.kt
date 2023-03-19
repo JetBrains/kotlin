@@ -24,6 +24,12 @@ import org.jetbrains.kotlin.konan.util.visibleName
 import org.jetbrains.kotlin.library.metadata.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
 
+enum class IrVerificationMode {
+    NONE,
+    WARNING,
+    ERROR
+}
+
 class KonanConfig(val project: Project, val configuration: CompilerConfiguration) {
     internal val distribution = run {
         val overridenProperties = mutableMapOf<String, String>().apply {
@@ -76,22 +82,25 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     val memoryModel: MemoryModel by lazy {
         when (configuration.get(BinaryOptions.memoryModel)) {
-            MemoryModel.STRICT -> MemoryModel.STRICT
+            MemoryModel.STRICT -> {
+                configuration.report(CompilerMessageSeverity.STRONG_WARNING, "Legacy MM is deprecated and will be removed in version 1.9.20")
+                MemoryModel.STRICT
+            }
             MemoryModel.RELAXED -> {
                 configuration.report(CompilerMessageSeverity.ERROR,
-                        "Relaxed MM is deprecated and isn't expected to work right way with current Kotlin version. Using legacy MM.")
+                        "Relaxed MM is deprecated and isn't expected to work right way with current Kotlin version.")
                 MemoryModel.STRICT
             }
             MemoryModel.EXPERIMENTAL -> {
                 if (!target.supportsThreads()) {
                     configuration.report(CompilerMessageSeverity.STRONG_WARNING,
-                            "New MM requires threads, which are not supported on target ${target.name}. Using legacy MM.")
+                            "New MM requires threads, which are not supported on a deprecated target ${target.name}. Using deprecated legacy MM.")
                     MemoryModel.STRICT
                 } else {
                     MemoryModel.EXPERIMENTAL
                 }
             }
-            null -> defaultMemoryModel
+            null -> defaultMemoryModel // If target does not support threads, it's deprecated, no need to spam with our own deprecation message.
         }.also {
             if (it == MemoryModel.EXPERIMENTAL && destroyRuntimeMode == DestroyRuntimeMode.LEGACY) {
                 configuration.report(CompilerMessageSeverity.ERROR,
@@ -165,8 +174,8 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     val gcMarkSingleThreaded: Boolean
         get() = configuration.get(BinaryOptions.gcMarkSingleThreaded) == true
 
-    val needVerifyIr: Boolean
-        get() = configuration.get(KonanConfigKeys.VERIFY_IR) == true
+    val irVerificationMode: IrVerificationMode
+        get() = configuration.getNotNull(KonanConfigKeys.VERIFY_IR)
 
     val needCompilerVerification: Boolean
         get() = configuration.get(KonanConfigKeys.VERIFY_COMPILER)
@@ -470,11 +479,6 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         }
                 ?: File(outputPath).name
 
-    val infoArgsOnly = (configuration.kotlinSourceRoots.isEmpty()
-            && configuration[KonanConfigKeys.INCLUDED_LIBRARIES].isNullOrEmpty()
-            && configuration[KonanConfigKeys.EXPORTED_LIBRARIES].isNullOrEmpty()
-            && libraryToCache == null)
-
     /**
      * Do not compile binary when compiling framework.
      * This is useful when user care only about framework's interface.
@@ -487,6 +491,35 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             }
         }
     }
+
+    /**
+     * Continue from bitcode. Skips the frontend and codegen phase of the compiler
+     * and instead reads the provided bitcode file.
+     * This option can be used for continuing the compilation from a previous invocation.
+     */
+    internal val compileFromBitcode: String? by lazy {
+        configuration.get(KonanConfigKeys.COMPILE_FROM_BITCODE)
+    }
+
+    /**
+     * Path to serialized dependencies to use for bitcode compilation.
+     */
+    internal val readSerializedDependencies: String? by lazy {
+        configuration.get(KonanConfigKeys.SERIALIZED_DEPENDENCIES)
+    }
+
+    /**
+     * Path to store backend dependency information.
+     */
+    internal val writeSerializedDependencies: String? by lazy {
+        configuration.get(KonanConfigKeys.SAVE_DEPENDENCIES_PATH)
+    }
+
+    val infoArgsOnly = (configuration.kotlinSourceRoots.isEmpty()
+            && configuration[KonanConfigKeys.INCLUDED_LIBRARIES].isNullOrEmpty()
+            && configuration[KonanConfigKeys.EXPORTED_LIBRARIES].isNullOrEmpty()
+            && libraryToCache == null && compileFromBitcode.isNullOrEmpty())
+
 
     /**
      * Directory to store LLVM IR from -Xsave-llvm-ir-after.

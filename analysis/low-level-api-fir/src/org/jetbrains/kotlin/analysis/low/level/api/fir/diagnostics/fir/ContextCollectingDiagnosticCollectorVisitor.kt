@@ -60,6 +60,7 @@ internal object PersistenceContextCollector {
             is FirClassLikeDeclaration -> declaration.symbol.classId.isLocal
             is FirCallableDeclaration -> declaration.symbol.callableId.isLocal
             is FirDanglingModifierList -> declaration.containingClass()?.classId?.isLocal == true
+            is FirScript -> false
             else -> error("Unsupported declaration ${declaration.renderWithType()}")
         }
         require(!isLocal) {

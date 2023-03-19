@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
+import org.jetbrains.kotlin.ir.expressions.IrInlinedFunctionBlock
 import org.jetbrains.kotlin.ir.expressions.IrReturn
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
@@ -45,6 +46,10 @@ fun IrDeclaration?.isExportedInterface(context: JsIrBackendContext) =
     this is IrClass && kind.isInterface && isExported(context)
 
 fun IrReturn.isTheLastReturnStatementIn(target: IrReturnableBlockSymbol): Boolean {
+    val ownerFirstStatement = target.owner.statements.singleOrNull()
+    if (ownerFirstStatement is IrInlinedFunctionBlock) {
+        return ownerFirstStatement.statements.lastOrNull() === this
+    }
     return target.owner.statements.lastOrNull() === this
 }
 

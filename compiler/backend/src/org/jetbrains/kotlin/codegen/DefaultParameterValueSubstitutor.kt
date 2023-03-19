@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.annotations.findJvmOverloadsAnnotation
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
-import org.jetbrains.kotlin.resolve.jvm.shouldHideConstructorDueToInlineClassTypeValueParameters
+import org.jetbrains.kotlin.resolve.jvm.shouldHideConstructorDueToValueClassTypeValueParameters
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
@@ -269,7 +269,7 @@ class DefaultParameterValueSubstitutor(val state: GenerationState) {
 
         if (classOrObject.isLocal) return false
         if (classDescriptor.isInlineClass()) return false
-        if (shouldHideConstructorDueToInlineClassTypeValueParameters(constructorDescriptor)) return false
+        if (shouldHideConstructorDueToValueClassTypeValueParameters(constructorDescriptor)) return false
         if (DescriptorUtils.isSealedClass(classDescriptor)) return false
 
         if (CodegenBinding.canHaveOuter(state.bindingContext, classDescriptor)) return false

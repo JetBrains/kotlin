@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -44,7 +44,12 @@ fun ProtoBuf.Annotation.Argument.Value.readAnnotationArgument(strings: NameResol
         DOUBLE -> KmAnnotationArgument.DoubleValue(doubleValue)
         BOOLEAN -> KmAnnotationArgument.BooleanValue(intValue != 0L)
         STRING -> KmAnnotationArgument.StringValue(strings.getString(stringValue))
-        CLASS -> KmAnnotationArgument.KClassValue(strings.getClassName(classId), arrayDimensionCount)
+        CLASS -> strings.getClassName(classId).let { className ->
+            if (arrayDimensionCount == 0)
+                KmAnnotationArgument.KClassValue(className)
+            else
+                KmAnnotationArgument.ArrayKClassValue(className, arrayDimensionCount)
+        }
         ENUM -> KmAnnotationArgument.EnumValue(strings.getClassName(classId), strings.getString(enumValueId))
         ANNOTATION -> KmAnnotationArgument.AnnotationValue(annotation.readAnnotation(strings))
         ARRAY -> KmAnnotationArgument.ArrayValue(arrayElementList.mapNotNull { it.readAnnotationArgument(strings) })

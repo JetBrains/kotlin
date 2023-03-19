@@ -3,7 +3,7 @@ RAW_FIR:
 FILE: functionCallWithGenericResult.kt
     public? open [RAW_FIR] class Foo<[RAW_FIR] T : CharSequence> : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=Foo] constructor<[RAW_FIR] T : CharSequence>(): R|Foo<T>| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
@@ -14,7 +14,7 @@ IMPORTS:
 FILE: functionCallWithGenericResult.kt
     public? open [RAW_FIR] class Foo<[RAW_FIR] T : CharSequence> : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=Foo] constructor<[RAW_FIR] T : CharSequence>(): R|Foo<T>| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
@@ -25,7 +25,7 @@ COMPILER_REQUIRED_ANNOTATIONS:
 FILE: functionCallWithGenericResult.kt
     public? open [RAW_FIR] class Foo<[RAW_FIR] T : CharSequence> : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=Foo] constructor<[RAW_FIR] T : CharSequence>(): R|Foo<T>| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
@@ -36,7 +36,7 @@ COMPANION_GENERATION:
 FILE: functionCallWithGenericResult.kt
     public? open [RAW_FIR] class Foo<[RAW_FIR] T : CharSequence> : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=Foo] constructor<[RAW_FIR] T : CharSequence>(): R|Foo<T>| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
@@ -47,7 +47,7 @@ SUPER_TYPES:
 FILE: functionCallWithGenericResult.kt
     public? open [RAW_FIR] class Foo<[RAW_FIR] T : CharSequence> : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=Foo] constructor<[RAW_FIR] T : CharSequence>(): R|Foo<T>| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
@@ -58,7 +58,7 @@ TYPES:
 FILE: functionCallWithGenericResult.kt
     public? open [RAW_FIR] class Foo<[RAW_FIR] T : CharSequence> : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=Foo] constructor<[RAW_FIR] T : CharSequence>(): R|Foo<T>| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
@@ -69,29 +69,44 @@ STATUS:
 FILE: functionCallWithGenericResult.kt
     public? open [RAW_FIR] class Foo<[RAW_FIR] T : CharSequence> : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=Foo] constructor<[RAW_FIR] T : CharSequence>(): R|Foo<T>| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
     public? final? [RAW_FIR] fun bar(): Foo<String>? { LAZY_BLOCK }
     public final [STATUS] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
-ARGUMENTS_OF_ANNOTATIONS:
+EXPECT_ACTUAL_MATCHING:
 FILE: functionCallWithGenericResult.kt
     public? open [RAW_FIR] class Foo<[RAW_FIR] T : CharSequence> : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=Foo] constructor<[RAW_FIR] T : CharSequence>(): R|Foo<T>| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
     public? final? [RAW_FIR] fun bar(): Foo<String>? { LAZY_BLOCK }
-    public final [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [EXPECT_ACTUAL_MATCHING] fun resolveMe(): R|kotlin/Unit| {
+        [RAW_FIR] lval x: <implicit> = bar#()
+    }
+
+ARGUMENTS_OF_ANNOTATIONS:
+FILE: functionCallWithGenericResult.kt
+    public? open [RAW_FIR] class Foo<[RAW_FIR] T : CharSequence> : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=Foo] constructor<[RAW_FIR] T : CharSequence>(): R|Foo<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public? final? [RAW_FIR] fun bar(): Foo<String>? { LAZY_BLOCK }
+    public final [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| {
+        [RAW_FIR] lval x: <implicit> = bar#()
+    }
 
 CONTRACTS:
 FILE: functionCallWithGenericResult.kt
     public? open [RAW_FIR] class Foo<[RAW_FIR] T : CharSequence> : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=Foo] constructor<[RAW_FIR] T : CharSequence>(): R|Foo<T>| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
@@ -104,7 +119,7 @@ IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: functionCallWithGenericResult.kt
     public? open [RAW_FIR] class Foo<[RAW_FIR] T : CharSequence> : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=Foo] constructor<[RAW_FIR] T : CharSequence>(): R|Foo<T>| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
@@ -117,7 +132,7 @@ ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: functionCallWithGenericResult.kt
     public? open [RAW_FIR] class Foo<[RAW_FIR] T : CharSequence> : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=Foo] constructor<[RAW_FIR] T : CharSequence>(): R|Foo<T>| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
@@ -126,24 +141,11 @@ FILE: functionCallWithGenericResult.kt
         [RAW_FIR] lval x: <implicit> = bar#()
     }
 
-EXPECT_ACTUAL_MATCHING:
+BODY_RESOLVE:
 FILE: functionCallWithGenericResult.kt
     public? open [RAW_FIR] class Foo<[RAW_FIR] T : CharSequence> : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=Foo] constructor<[RAW_FIR] T : CharSequence>(): R|Foo<T>| {
-            super<R|kotlin/Any|>()
-        }
-
-    }
-    public? final? [RAW_FIR] fun bar(): Foo<String>? { LAZY_BLOCK }
-    public final [EXPECT_ACTUAL_MATCHING] fun resolveMe(): R|kotlin/Unit| {
-        [RAW_FIR] lval x: <implicit> = bar#()
-    }
-
-BODY_RESOLVE:
-FILE: functionCallWithGenericResult.kt
-    public? open [COMPILER_REQUIRED_ANNOTATIONS] class Foo<[COMPILER_REQUIRED_ANNOTATIONS] T : CharSequence> : R|kotlin/Any| {
-        public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=Foo] constructor<[COMPILER_REQUIRED_ANNOTATIONS] T : CharSequence>(): R|Foo<T>| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }

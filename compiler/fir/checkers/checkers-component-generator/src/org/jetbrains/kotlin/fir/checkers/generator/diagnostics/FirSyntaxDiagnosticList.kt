@@ -14,5 +14,8 @@ import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.DiagnosticL
 object SYNTAX_DIAGNOSTIC_LIST : DiagnosticList("FirSyntaxErrors") {
     val Syntax by object : DiagnosticGroup("Syntax") {
         val SYNTAX by error<PsiElement>()
+        val SYNTAX_WITH_MESSAGE by error<PsiElement>() {
+            parameter<String>("message")
+        }
     }
 }

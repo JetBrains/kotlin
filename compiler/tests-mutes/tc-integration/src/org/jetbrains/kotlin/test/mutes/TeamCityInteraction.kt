@@ -11,7 +11,7 @@ private val headers = mapOf("Content-type" to "application/json", "Accept" to "a
 private val authUser = object : Authorization {
     override val header = "Authorization" to "Bearer ${getMandatoryProperty("org.jetbrains.kotlin.test.mutes.teamcity.server.token")}"
 }
-private const val requestTimeoutSec = 120.0
+private const val REQUEST_TIMEOUT_SEC = 120.0
 
 
 internal fun getMutedTestsOnTeamcityForRootProject(rootScopeId: String): List<MuteTestJson> {
@@ -29,11 +29,14 @@ internal fun getMutedTestsOnTeamcityForRootProject(rootScopeId: String): List<Mu
     return alreadyMutedTestsOnTeamCity.mapNotNull { jsonObjectMapper.treeToValue<MuteTestJson>(it) }
 }
 
-private fun traverseAll(requestHref: String, requestParams: Map<String, String>): List<JsonNode> {
+private fun traverseAll(
+    @Suppress("SameParameterValue") requestHref: String,
+    requestParams: Map<String, String>
+): List<JsonNode> {
     val jsonResponses = mutableListOf<JsonNode>()
 
     fun request(url: String, params: Map<String, String>): String {
-        val currentResponse = khttp.get(url, headers, params, auth = authUser, timeout = requestTimeoutSec)
+        val currentResponse = khttp.get(url, headers, params, auth = authUser, timeout = REQUEST_TIMEOUT_SEC)
         checkResponseAndLog(currentResponse)
         val currentJsonResponse = jsonObjectMapper.readTree(currentResponse.text)
         jsonResponses.add(currentJsonResponse)
@@ -41,7 +44,7 @@ private fun traverseAll(requestHref: String, requestParams: Map<String, String>)
     }
 
     var nextHref = request("$buildServerUrl$requestHref", requestParams)
-    while (!nextHref.isBlank()) {
+    while (nextHref.isNotBlank()) {
         nextHref = request("$buildServerUrl$nextHref", emptyMap())
     }
 
@@ -55,7 +58,7 @@ internal fun uploadMutedTests(uploadMap: Map<String, MuteTestJson>) {
             headers = headers,
             data = jsonObjectMapper.writeValueAsString(muteTestJson),
             auth = authUser,
-            timeout = requestTimeoutSec
+            timeout = REQUEST_TIMEOUT_SEC
         )
         checkResponseAndLog(response)
     }
@@ -67,7 +70,7 @@ internal fun deleteMutedTests(deleteMap: Map<String, MuteTestJson>) {
             "$buildServerUrl/app/rest/mutes/id:${muteTestJson.id}",
             headers = headers,
             auth = authUser,
-            timeout = requestTimeoutSec
+            timeout = REQUEST_TIMEOUT_SEC
         )
         try {
             checkResponseAndLog(response)

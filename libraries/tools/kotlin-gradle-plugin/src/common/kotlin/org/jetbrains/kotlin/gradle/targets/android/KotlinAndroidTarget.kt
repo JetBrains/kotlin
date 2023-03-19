@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.gradle.utils.forAllAndroidVariants
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.setProperty
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
+import org.jetbrains.kotlin.utils.addIfNotNull
 import javax.inject.Inject
 
 abstract class KotlinAndroidTarget @Inject constructor(
@@ -188,17 +189,6 @@ abstract class KotlinAndroidTarget @Inject constructor(
             apiElementsConfigurationName,
             sourcesElementsConfigurationName
         )
-        configureSourcesJarArtifact(
-            compilation,
-            compilation.disambiguateName(""),
-            dashSeparatedName(
-                compilation.target.name.toLowerCaseAsciiOnly(),
-                *flavorNames.map { it.toLowerCaseAsciiOnly() }.toTypedArray(),
-                buildTypeName.takeIf { it != "release" }?.toLowerCaseAsciiOnly()
-            ),
-            classifierPrefix = artifactClassifier,
-            sourcesElementsConfigurationName = sourcesElementsConfigurationName
-        )
 
         fun AttributeContainer.filterOutAndroidVariantAttributes(): AttributeContainer =
             HierarchyAttributeContainer(this) {
@@ -211,14 +201,20 @@ abstract class KotlinAndroidTarget @Inject constructor(
                         filterOutAndroidAgpVersionAttribute(it)
             }
 
-        val sourcesUsageContext = DefaultKotlinUsageContext(
-            compilation = compilation,
-            dependencyConfigurationName = sourcesElementsConfigurationName,
-            overrideConfigurationAttributes = sourcesElementsConfiguration.attributes.filterOutAndroidVariantAttributes(),
-            includeIntoProjectStructureMetadata = false
+        val sourcesUsageContext = createSourcesJarAndUsageContextIfPublishable(
+            producingCompilation = compilation,
+            componentName = compilation.disambiguateName(""),
+            artifactNameAppendix = dashSeparatedName(
+                compilation.target.name.toLowerCaseAsciiOnly(),
+                *flavorNames.map { it.toLowerCaseAsciiOnly() }.toTypedArray(),
+                buildTypeName.takeIf { it != "release" }?.toLowerCaseAsciiOnly()
+            ),
+            classifierPrefix = artifactClassifier,
+            sourcesElementsConfigurationName = sourcesElementsConfigurationName,
+            overrideConfigurationAttributes = sourcesElementsConfiguration.attributes.filterOutAndroidVariantAttributes()
         )
 
-        return listOf(
+        val usageContexts = listOf(
             apiElementsConfigurationName to KotlinUsageContext.MavenScope.COMPILE,
             runtimeElementsConfigurationName to KotlinUsageContext.MavenScope.RUNTIME,
         ).mapTo(mutableSetOf()) { (dependencyConfigurationName, mavenScope) ->
@@ -230,7 +226,10 @@ abstract class KotlinAndroidTarget @Inject constructor(
                 overrideConfigurationArtifacts = project.setProperty { listOf(artifact) },
                 overrideConfigurationAttributes = configuration.attributes.filterOutAndroidVariantAttributes()
             )
-        } + sourcesUsageContext
+        }
+        usageContexts.addIfNotNull(sourcesUsageContext)
+
+        return usageContexts
     }
 
     /**

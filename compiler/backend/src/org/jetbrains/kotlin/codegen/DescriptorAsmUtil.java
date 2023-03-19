@@ -53,7 +53,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isBoolean;
-import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isPrimitiveClass;
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
 import static org.jetbrains.kotlin.codegen.CodegenUtilKt.isToArrayFromCollection;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isConstOrHasJvmFieldAnnotation;
@@ -355,7 +354,7 @@ public class DescriptorAsmUtil {
         if (kind != OwnerKind.ERASED_INLINE_CLASS &&
             memberDescriptor instanceof ConstructorDescriptor &&
             !(memberDescriptor instanceof AccessorForConstructorDescriptor) &&
-            InlineClassManglingRulesKt.shouldHideConstructorDueToInlineClassTypeValueParameters((ConstructorDescriptor) memberDescriptor)
+            InlineClassManglingRulesKt.shouldHideConstructorDueToValueClassTypeValueParameters((ConstructorDescriptor) memberDescriptor)
         ) {
             return ACC_PRIVATE;
         }
@@ -898,7 +897,7 @@ public class DescriptorAsmUtil {
         if (!(descriptor instanceof ClassConstructorDescriptor)) return false;
 
         ClassConstructorDescriptor classConstructorDescriptor = (ClassConstructorDescriptor) descriptor;
-        if (InlineClassManglingRulesKt.shouldHideConstructorDueToInlineClassTypeValueParameters(descriptor)) {
+        if (InlineClassManglingRulesKt.shouldHideConstructorDueToValueClassTypeValueParameters(descriptor)) {
             return true;
         }
         if (isSealedClass(classConstructorDescriptor.getConstructedClass()) &&

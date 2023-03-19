@@ -8,8 +8,6 @@ package kotlin.js
 @PublishedApi
 internal val undefined: Nothing? = null
 
-/**
- * Exposes the JavaScript [eval function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/eval) to Kotlin.
- */
-@JsFun("(s) => eval(s)")
-external fun js(code: String): Dynamic
+@PublishedApi
+internal fun newJsObject(): Dynamic =
+    js("({})")

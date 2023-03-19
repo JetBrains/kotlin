@@ -1,4 +1,3 @@
-// WITH_STDLIB
 class Outer {
     enum class Nested {
         O,

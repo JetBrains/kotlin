@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.*;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.name.NameUtils;
-import org.jetbrains.kotlin.name.StandardClassIds;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ContextClassReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ContextReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver;
@@ -175,8 +174,9 @@ public class DescriptorFactory {
 
     @Nullable
     public static PropertyDescriptor createEnumEntriesProperty(@NotNull ClassDescriptor enumClass) {
-        ClassDescriptor enumEntriesClass = FindClassInModuleKt.findClassAcrossModuleDependencies(getContainingModule(enumClass),
-                                                                                                 StandardClassIds.INSTANCE.getEnumEntries());
+        ModuleDescriptor module = getContainingModule(enumClass);
+        StdlibClassFinder stdlibClassFinder = StdlibClassFinderKt.getStdlibClassFinder(module);
+        ClassDescriptor enumEntriesClass = stdlibClassFinder.findEnumEntriesClass(module);
         if (enumEntriesClass == null) {
             return null;
         }

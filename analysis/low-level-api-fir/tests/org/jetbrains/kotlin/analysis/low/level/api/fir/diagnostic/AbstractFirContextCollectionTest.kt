@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilt
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getDiagnostics
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.BeforeElementDiagnosticCollectionHandler
+import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.beforeElementDiagnosticCollectionHandler
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.fir.PersistenceContextCollector
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.DanglingTopLevelModifierListStructureElement
@@ -26,29 +27,32 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.isSourceSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.name
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolveWithClearCaches
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableModuleSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLevelApiSingleFileTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirOutOfContentRootTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
+import org.jetbrains.kotlin.analysis.low.level.api.fir.useFirSessionConfigurator
 import org.jetbrains.kotlin.analysis.project.structure.getKtModule
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.test.services.AssertionsService
-import org.jetbrains.kotlin.test.services.TestModuleStructure
-import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.assertions
+import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.services.*
 
 abstract class AbstractFirContextCollectionTest : AbstractLowLevelApiSingleFileTest() {
+    override fun configureTest(builder: TestConfigurationBuilder) {
+        super.configureTest(builder)
+        builder.apply {
+            useFirSessionConfigurator(::BeforeElementLLFirSessionConfigurator)
+        }
+    }
+
     override fun doTestByFileStructure(ktFile: KtFile, moduleStructure: TestModuleStructure, testServices: TestServices) {
-        val handler = BeforeElementTestDiagnosticCollectionHandler(testServices.assertions)
-        resolveWithClearCaches(
-            ktFile,
-            configureSession = {
-                @OptIn(SessionConfiguration::class)
-                register(BeforeElementDiagnosticCollectionHandler::class, handler)
-            }
-        ) { firResolveSession ->
+        resolveWithClearCaches(ktFile) { firResolveSession ->
             check(firResolveSession.isSourceSession)
 
             val session = firResolveSession.getSessionFor(ktFile.getKtModule()) as LLFirResolvableModuleSession
+            val handler = session.beforeElementDiagnosticCollectionHandler as BeforeElementTestDiagnosticCollectionHandler
+
             val fileStructureCache = session.moduleComponents.fileStructureCache
 
             val fileStructure = fileStructureCache.getFileStructure(ktFile)
@@ -68,11 +72,17 @@ abstract class AbstractFirContextCollectionTest : AbstractLowLevelApiSingleFileT
         is DanglingTopLevelModifierListStructureElement -> fir
     }
 
+    private class BeforeElementLLFirSessionConfigurator(private val testServices: TestServices) : LLFirSessionConfigurator {
+        @OptIn(SessionConfiguration::class)
+        override fun configure(session: LLFirSession) {
+            val handler = BeforeElementTestDiagnosticCollectionHandler(testServices.assertions)
+            session.register(BeforeElementDiagnosticCollectionHandler::class, handler)
+        }
+    }
 
     private class BeforeElementTestDiagnosticCollectionHandler(
         private val assertions: AssertionsService
-    ) :
-        BeforeElementDiagnosticCollectionHandler() {
+    ) : BeforeElementDiagnosticCollectionHandler() {
         lateinit var elementsToCheckContext: List<FirDeclaration>
         lateinit var firFile: FirFile
 

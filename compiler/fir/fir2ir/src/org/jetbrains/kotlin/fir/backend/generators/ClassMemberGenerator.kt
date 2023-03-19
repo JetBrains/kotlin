@@ -110,7 +110,7 @@ internal class ClassMemberGenerator(
                 val annotationMode = containingClass?.classKind == ClassKind.ANNOTATION_CLASS && irFunction is IrConstructor
                 for ((valueParameter, firValueParameter) in irParameters.zip(firFunction.valueParameters)) {
                     valueParameter.setDefaultValue(firValueParameter, annotationMode)
-                    annotationGenerator.generate(valueParameter, firValueParameter, irFunction is IrConstructor)
+                    annotationGenerator.generate(valueParameter, firValueParameter)
                 }
                 annotationGenerator.generate(irFunction, firFunction)
             }

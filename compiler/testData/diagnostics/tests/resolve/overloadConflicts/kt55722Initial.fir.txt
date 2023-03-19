@@ -1,0 +1,14 @@
+FILE: kt55722Initial.kt
+    public abstract interface MyConsumer<T> : R|kotlin/Any| {
+        public open fun consume(x: R|T|): R|kotlin/Unit| {
+        }
+
+    }
+    public final fun foo(x: R|MyConsumer<in kotlin/CharSequence>?|, v: R|kotlin/CharSequence|): R|kotlin/Unit| {
+        when () {
+            !=(R|<local>/x|, Null(null)) ->  {
+                R|<local>/x|.R|SubstitutionOverride</MyConsumer.consume: R|kotlin/Unit|>|(R|<local>/v|)
+            }
+        }
+
+    }

@@ -167,6 +167,12 @@ public class FirIdeDependentAnalysisSourceModuleReferenceResolveTestGenerated ex
     }
 
     @Test
+    @TestMetadata("DestructuringDeclarationInInit.kt")
+    public void testDestructuringDeclarationInInit() throws Exception {
+        runTest("analysis/analysis-api/testData/referenceResolve/DestructuringDeclarationInInit.kt");
+    }
+
+    @Test
     @TestMetadata("EnumValues.kt")
     public void testEnumValues() throws Exception {
         runTest("analysis/analysis-api/testData/referenceResolve/EnumValues.kt");

@@ -17,13 +17,12 @@
 #include "ExtraObjectData.hpp"
 #include "ExtraObjectPage.hpp"
 #include "GCScheduler.hpp"
-#include "LargePage.hpp"
-#include "MediumPage.hpp"
+#include "SingleObjectPage.hpp"
+#include "NextFitPage.hpp"
 #include "Memory.h"
-#include "SmallPage.hpp"
+#include "FixedBlockPage.hpp"
 #include "GCImpl.hpp"
 #include "TypeInfo.h"
-#include "Types.h"
 
 namespace kotlin::alloc {
 
@@ -55,9 +54,9 @@ uint64_t ArrayAllocatedDataSize(const TypeInfo* typeInfo, uint32_t count) noexce
 }
 
 CustomAllocator::CustomAllocator(Heap& heap, gc::GCSchedulerThreadData& gcScheduler) noexcept :
-    heap_(heap), gcScheduler_(gcScheduler), mediumPage_(nullptr), extraObjectPage_(nullptr) {
+    heap_(heap), gcScheduler_(gcScheduler), nextFitPage_(nullptr), extraObjectPage_(nullptr) {
     CustomAllocInfo("CustomAllocator::CustomAllocator(heap)");
-    memset(smallPages_, 0, sizeof(smallPages_));
+    memset(fixedBlockPages_, 0, sizeof(fixedBlockPages_));
 }
 
 ObjHeader* CustomAllocator::CreateObject(const TypeInfo* typeInfo) noexcept {
@@ -115,8 +114,8 @@ mm::ExtraObjectData& CustomAllocator::CreateExtraObjectDataForObject(
 
 void CustomAllocator::PrepareForGC() noexcept {
     CustomAllocInfo("CustomAllocator@%p::PrepareForGC()", this);
-    mediumPage_ = nullptr;
-    memset(smallPages_, 0, sizeof(smallPages_));
+    nextFitPage_ = nullptr;
+    memset(fixedBlockPages_, 0, sizeof(fixedBlockPages_));
     extraObjectPage_ = nullptr;
 }
 
@@ -125,49 +124,49 @@ uint8_t* CustomAllocator::Allocate(uint64_t size) noexcept {
     CustomAllocDebug("CustomAllocator::Allocate(%" PRIu64 ")", size);
     uint64_t cellCount = (size + sizeof(Cell) - 1) / sizeof(Cell);
     uint8_t* ptr;
-    if (cellCount <= SMALL_PAGE_MAX_BLOCK_SIZE) {
-        ptr = AllocateInSmallPage(cellCount);
-    } else if (cellCount > MEDIUM_PAGE_MAX_BLOCK_SIZE) {
-        ptr = AllocateInLargePage(cellCount);
+    if (cellCount <= FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE) {
+        ptr = AllocateInFixedBlockPage(cellCount);
+    } else if (cellCount > NEXT_FIT_PAGE_MAX_BLOCK_SIZE) {
+        ptr = AllocateInSingleObjectPage(cellCount);
     } else {
-        ptr = AllocateInMediumPage(cellCount);
+        ptr = AllocateInNextFitPage(cellCount);
     }
     memset(ptr, 0, size);
     return ptr;
 }
 
-uint8_t* CustomAllocator::AllocateInLargePage(uint64_t cellCount) noexcept {
-    CustomAllocDebug("CustomAllocator::AllocateInLargePage(%" PRIu64 ")", cellCount);
-    uint8_t* block = heap_.GetLargePage(cellCount)->TryAllocate();
+uint8_t* CustomAllocator::AllocateInSingleObjectPage(uint64_t cellCount) noexcept {
+    CustomAllocDebug("CustomAllocator::AllocateInSingleObjectPage(%" PRIu64 ")", cellCount);
+    uint8_t* block = heap_.GetSingleObjectPage(cellCount)->TryAllocate();
     return block;
 }
 
-uint8_t* CustomAllocator::AllocateInMediumPage(uint32_t cellCount) noexcept {
-    CustomAllocDebug("CustomAllocator::AllocateInMediumPage(%u)", cellCount);
-    if (mediumPage_) {
-        uint8_t* block = mediumPage_->TryAllocate(cellCount);
+uint8_t* CustomAllocator::AllocateInNextFitPage(uint32_t cellCount) noexcept {
+    CustomAllocDebug("CustomAllocator::AllocateInNextFitPage(%u)", cellCount);
+    if (nextFitPage_) {
+        uint8_t* block = nextFitPage_->TryAllocate(cellCount);
         if (block) return block;
     }
     CustomAllocDebug("Failed to allocate in curPage");
     while (true) {
-        mediumPage_ = heap_.GetMediumPage(cellCount);
-        uint8_t* block = mediumPage_->TryAllocate(cellCount);
+        nextFitPage_ = heap_.GetNextFitPage(cellCount);
+        uint8_t* block = nextFitPage_->TryAllocate(cellCount);
         if (block) return block;
     }
 }
 
-uint8_t* CustomAllocator::AllocateInSmallPage(uint32_t cellCount) noexcept {
-    CustomAllocDebug("CustomAllocator::AllocateInSmallPage(%u)", cellCount);
-    SmallPage* page = smallPages_[cellCount];
+uint8_t* CustomAllocator::AllocateInFixedBlockPage(uint32_t cellCount) noexcept {
+    CustomAllocDebug("CustomAllocator::AllocateInFixedBlockPage(%u)", cellCount);
+    FixedBlockPage* page = fixedBlockPages_[cellCount];
     if (page) {
         uint8_t* block = page->TryAllocate();
         if (block) return block;
     }
-    CustomAllocDebug("Failed to allocate in current SmallPage");
-    while ((page = heap_.GetSmallPage(cellCount))) {
+    CustomAllocDebug("Failed to allocate in current FixedBlockPage");
+    while ((page = heap_.GetFixedBlockPage(cellCount))) {
         uint8_t* block = page->TryAllocate();
         if (block) {
-            smallPages_[cellCount] = page;
+            fixedBlockPages_[cellCount] = page;
             return block;
         }
     }

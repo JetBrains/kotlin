@@ -37,6 +37,7 @@ public interface KtTypeParametersRenderer {
                 .ifEmpty { return }
             printer.printCollection(typeParameters, prefix = "<", postfix = ">") { typeParameter ->
                 codeStyle.getSeparatorBetweenAnnotationAndOwner(typeParameter).separated(
+                    { annotationRenderer.renderAnnotations(typeParameter, printer) },
                     { modifiersRenderer.renderDeclarationModifiers(typeParameter, printer) },
                     { nameRenderer.renderName(typeParameter, printer) },
                 )
@@ -56,6 +57,7 @@ public interface KtTypeParametersRenderer {
                 .ifEmpty { return }
             printer.printCollection(typeParameters, prefix = "<", postfix = ">") { typeParameter ->
                 codeStyle.getSeparatorBetweenAnnotationAndOwner(typeParameter).separated(
+                    { annotationRenderer.renderAnnotations(typeParameter, printer) },
                     { modifiersRenderer.renderDeclarationModifiers(typeParameter, printer) },
                     { nameRenderer.renderName(typeParameter, printer) },
                 )

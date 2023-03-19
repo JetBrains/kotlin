@@ -105,6 +105,79 @@ public class CliTestGenerated extends AbstractCliTest {
         }
     }
 
+    @TestMetadata("compiler/testData/cli/jvm/hmpp")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Hmpp extends AbstractCliTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doJvmTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInHmpp() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cli/jvm/hmpp"), Pattern.compile("^(.+)\\.args$"), null, false);
+        }
+
+        @TestMetadata("cycleInDependencies.args")
+        public void testCycleInDependencies() throws Exception {
+            runTest("compiler/testData/cli/jvm/hmpp/cycleInDependencies.args");
+        }
+
+        @TestMetadata("duplicatedFragments.args")
+        public void testDuplicatedFragments() throws Exception {
+            runTest("compiler/testData/cli/jvm/hmpp/duplicatedFragments.args");
+        }
+
+        @TestMetadata("fragmentSourcesIncorrectSyntax.args")
+        public void testFragmentSourcesIncorrectSyntax() throws Exception {
+            runTest("compiler/testData/cli/jvm/hmpp/fragmentSourcesIncorrectSyntax.args");
+        }
+
+        @TestMetadata("fragmentWithoutSources.args")
+        public void testFragmentWithoutSources() throws Exception {
+            runTest("compiler/testData/cli/jvm/hmpp/fragmentWithoutSources.args");
+        }
+
+        @TestMetadata("lowLanguageVersion.args")
+        public void testLowLanguageVersion() throws Exception {
+            runTest("compiler/testData/cli/jvm/hmpp/lowLanguageVersion.args");
+        }
+
+        @TestMetadata("missingFragment.args")
+        public void testMissingFragment() throws Exception {
+            runTest("compiler/testData/cli/jvm/hmpp/missingFragment.args");
+        }
+
+        @TestMetadata("refinesSingleModule.args")
+        public void testRefinesSingleModule() throws Exception {
+            runTest("compiler/testData/cli/jvm/hmpp/refinesSingleModule.args");
+        }
+
+        @TestMetadata("refinesWithoutFragments.args")
+        public void testRefinesWithoutFragments() throws Exception {
+            runTest("compiler/testData/cli/jvm/hmpp/refinesWithoutFragments.args");
+        }
+
+        @TestMetadata("sameSourceInDifferentFragments.args")
+        public void testSameSourceInDifferentFragments() throws Exception {
+            runTest("compiler/testData/cli/jvm/hmpp/sameSourceInDifferentFragments.args");
+        }
+
+        @TestMetadata("sourceNotInAnyFragment.args")
+        public void testSourceNotInAnyFragment() throws Exception {
+            runTest("compiler/testData/cli/jvm/hmpp/sourceNotInAnyFragment.args");
+        }
+
+        @TestMetadata("successfulCompilation.args")
+        public void testSuccessfulCompilation() throws Exception {
+            runTest("compiler/testData/cli/jvm/hmpp/successfulCompilation.args");
+        }
+
+        @TestMetadata("successfulCompilation2.args")
+        public void testSuccessfulCompilation2() throws Exception {
+            runTest("compiler/testData/cli/jvm/hmpp/successfulCompilation2.args");
+        }
+    }
+
     @TestMetadata("compiler/testData/cli/jvm")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -442,6 +515,16 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/firError.args");
         }
 
+        @TestMetadata("firErrorOnLastLine.args")
+        public void testFirErrorOnLastLine() throws Exception {
+            runTest("compiler/testData/cli/jvm/firErrorOnLastLine.args");
+        }
+
+        @TestMetadata("firErrorOnLastLineNoEol.args")
+        public void testFirErrorOnLastLineNoEol() throws Exception {
+            runTest("compiler/testData/cli/jvm/firErrorOnLastLineNoEol.args");
+        }
+
         @TestMetadata("firHello.args")
         public void testFirHello() throws Exception {
             runTest("compiler/testData/cli/jvm/firHello.args");
@@ -490,6 +573,11 @@ public class CliTestGenerated extends AbstractCliTest {
         @TestMetadata("firStdlibDependency.args")
         public void testFirStdlibDependency() throws Exception {
             runTest("compiler/testData/cli/jvm/firStdlibDependency.args");
+        }
+
+        @TestMetadata("firSyntaxError.args")
+        public void testFirSyntaxError() throws Exception {
+            runTest("compiler/testData/cli/jvm/firSyntaxError.args");
         }
 
         @TestMetadata("firVsClassicAnnotation.args")
@@ -595,6 +683,11 @@ public class CliTestGenerated extends AbstractCliTest {
         @TestMetadata("irSupported.args")
         public void testIrSupported() throws Exception {
             runTest("compiler/testData/cli/jvm/irSupported.args");
+        }
+
+        @TestMetadata("javaSealedClass.args")
+        public void testJavaSealedClass() throws Exception {
+            runTest("compiler/testData/cli/jvm/javaSealedClass.args");
         }
 
         @TestMetadata("javaSrcWrongPackage.args")
@@ -1245,11 +1338,6 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/js/jsHelp.args");
         }
 
-        @TestMetadata("jsOldBackend_strict.args")
-        public void testJsOldBackend_strict() throws Exception {
-            runTest("compiler/testData/cli/js/jsOldBackend_strict.args");
-        }
-
         @TestMetadata("kotlinHomeWithoutStdlib.args")
         public void testKotlinHomeWithoutStdlib() throws Exception {
             runTest("compiler/testData/cli/js/kotlinHomeWithoutStdlib.args");
@@ -1373,6 +1461,11 @@ public class CliTestGenerated extends AbstractCliTest {
         @TestMetadata("sourceMapRootMultiple.args")
         public void testSourceMapRootMultiple() throws Exception {
             runTest("compiler/testData/cli/js/sourceMapRootMultiple.args");
+        }
+
+        @TestMetadata("successfulHmpp.args")
+        public void testSuccessfulHmpp() throws Exception {
+            runTest("compiler/testData/cli/js/successfulHmpp.args");
         }
 
         @TestMetadata("suppressAllWarningsJS.args")
@@ -1531,6 +1624,16 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/metadata/moduleNameWithFir.args");
         }
 
+        @TestMetadata("optionalAnnotationsFromMetadata.args")
+        public void testOptionalAnnotationsFromMetadata() throws Exception {
+            runTest("compiler/testData/cli/metadata/optionalAnnotationsFromMetadata.args");
+        }
+
+        @TestMetadata("optionalAnnotationsFromMetadataWithFir.args")
+        public void testOptionalAnnotationsFromMetadataWithFir() throws Exception {
+            runTest("compiler/testData/cli/metadata/optionalAnnotationsFromMetadataWithFir.args");
+        }
+
         @TestMetadata("optionalExpectationUsage.args")
         public void testOptionalExpectationUsage() throws Exception {
             runTest("compiler/testData/cli/metadata/optionalExpectationUsage.args");
@@ -1539,6 +1642,11 @@ public class CliTestGenerated extends AbstractCliTest {
         @TestMetadata("optionalExpectationUsageWithFir.args")
         public void testOptionalExpectationUsageWithFir() throws Exception {
             runTest("compiler/testData/cli/metadata/optionalExpectationUsageWithFir.args");
+        }
+
+        @TestMetadata("successfulHmpp.args")
+        public void testSuccessfulHmpp() throws Exception {
+            runTest("compiler/testData/cli/metadata/successfulHmpp.args");
         }
     }
 }

@@ -15,9 +15,9 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.FileStructure
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.SingleNonLocalDeclarationDiagnosticRetriever
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.RawFirNonLocalDeclarationBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.declarationCanBeLazilyResolved
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withInvalidationOnException
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -119,7 +119,7 @@ internal class ReanalyzableFunctionStructureElement(
         return moduleComponents.globalResolveComponents.lockProvider.withLock(firFile) {
             val upgradedPhase = minOf(originalFunction.resolvePhase, FirResolvePhase.DECLARATIONS)
 
-            moduleComponents.sessionInvalidator.withInvalidationOnException(moduleComponents.session) {
+            withInvalidationOnException(moduleComponents.session) {
                 with(originalFunction) {
                     replaceBody(temporaryFunction.body)
                     replaceContractDescription(temporaryFunction.contractDescription)
@@ -168,7 +168,7 @@ internal class ReanalyzablePropertyStructureElement(
             val setterPhase = originalProperty.setter?.resolvePhase ?: originalProperty.resolvePhase
             val upgradedPhase = minOf(originalProperty.resolvePhase, getterPhase, setterPhase, FirResolvePhase.DECLARATIONS)
 
-            moduleComponents.sessionInvalidator.withInvalidationOnException(moduleComponents.session) {
+            withInvalidationOnException(moduleComponents.session) {
                 with(originalProperty) {
                     getter?.replaceBody(temporaryProperty.getter?.body)
                     setter?.replaceBody(temporaryProperty.setter?.body)

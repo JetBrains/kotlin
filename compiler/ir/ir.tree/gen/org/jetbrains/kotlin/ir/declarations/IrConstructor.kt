@@ -15,7 +15,8 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
  * A leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.constructor
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.constructor]
  */
 abstract class IrConstructor : IrFunction() {
     @ObsoleteDescriptorBasedAPI
@@ -23,7 +24,7 @@ abstract class IrConstructor : IrFunction() {
 
     abstract override val symbol: IrConstructorSymbol
 
-    abstract val isPrimary: Boolean
+    abstract var isPrimary: Boolean
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitConstructor(this, data)

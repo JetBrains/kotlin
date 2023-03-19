@@ -31,6 +31,7 @@ abstract class FirErrorResolvedQualifier : FirResolvedQualifier(), FirDiagnostic
     abstract override val symbol: FirClassLikeSymbol<*>?
     abstract override val isNullableLHSForCallableReference: Boolean
     abstract override val resolvedToCompanionObject: Boolean
+    abstract override val isFullyQualified: Boolean
     abstract override val nonFatalDiagnostics: List<ConeDiagnostic>
     abstract override val typeArguments: List<FirTypeProjection>
     abstract override val diagnostic: ConeDiagnostic

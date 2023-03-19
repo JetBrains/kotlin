@@ -48,7 +48,7 @@ import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.expressions.DoubleColonLHS
 
-class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : StatementGeneratorExtension(statementGenerator) {
+internal class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : StatementGeneratorExtension(statementGenerator) {
 
     fun generateClassLiteral(ktClassLiteral: KtClassLiteralExpression): IrExpression {
         val ktArgument = ktClassLiteral.receiverExpression!!

@@ -1,4 +1,3 @@
-// WITH_STDLIB
 enum class Test(val x: String, val closure1: () -> String) {
     FOO("O", run { { FOO.x } }) {
         override val y: String = "K"

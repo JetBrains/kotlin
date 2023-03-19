@@ -47,6 +47,7 @@ object FirSerializationErrors {
     val INCONSISTENT_INHERITABLE_SERIALINFO by error2<PsiElement, ConeKotlinType, ConeKotlinType>()
     val META_SERIALIZABLE_NOT_APPLICABLE by error0<PsiElement>()
 
+    val EXTERNAL_SERIALIZER_USELESS by warning1<PsiElement, FirClassSymbol<*>>()
     val EXTERNAL_CLASS_NOT_SERIALIZABLE by error2<PsiElement, FirClassSymbol<*>, ConeKotlinType>()
     val EXTERNAL_CLASS_IN_ANOTHER_MODULE by error2<PsiElement, FirClassSymbol<*>, ConeKotlinType>()
 

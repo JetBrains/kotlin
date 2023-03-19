@@ -10,7 +10,7 @@
     public constructor(): R|A|
 
 }
-@R|kotlin/annotation/Retention|(value = R|kotlin/annotation/AnnotationRetention.RUNTIME|()) @R|kotlin/annotation/MustBeDocumented|() @R|javax/annotation/CheckForNull|() @R|javax/annotation/meta/TypeQualifierDefault|(value = <implicitArrayOf>(R|java/lang/annotation/ElementType.FIELD|())) public final annotation class FieldsAreNullable : R|kotlin/Annotation| {
+@R|kotlin/annotation/Retention|(value = R|kotlin/annotation/AnnotationRetention.RUNTIME|) @R|kotlin/annotation/MustBeDocumented|() @R|javax/annotation/CheckForNull|() @R|javax/annotation/meta/TypeQualifierDefault|(value = <implicitArrayOf>(R|java/lang/annotation/ElementType.FIELD|)) public final annotation class FieldsAreNullable : R|kotlin/Annotation| {
     public constructor(): R|FieldsAreNullable|
 
 }

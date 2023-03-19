@@ -148,7 +148,7 @@ internal interface ContextUtils : RuntimeAware {
     val llvmTargetData: LLVMTargetDataRef
         get() = runtime.targetData
 
-    val llvm: Llvm
+    val llvm: CodegenLlvmHelpers
         get() = generationState.llvm
 
     val staticData: KotlinStaticData
@@ -184,7 +184,7 @@ internal interface ContextUtils : RuntimeAware {
                                 ?: context.irLinker.getExternalDeclarationFileName(this)
                         this.computePrivateSymbolName(containerName)
                     }
-                    val proto = LlvmFunctionProto(this, symbolName, this@ContextUtils)
+                    val proto = LlvmFunctionProto(this, symbolName, this@ContextUtils, LLVMLinkage.LLVMExternalLinkage)
                     llvm.externalFunction(proto)
                 }
             } else {
@@ -197,8 +197,7 @@ internal interface ContextUtils : RuntimeAware {
      */
     val IrFunction.entryPointAddress: ConstPointer
         get() {
-            val result = LLVMConstBitCast(this.llvmFunction.llvmValue, llvm.int8PtrType)!!
-            return constPointer(result)
+            return llvmFunction.toConstPointer().bitcast(llvm.int8PtrType)
         }
 
     val IrClass.typeInfoPtr: ConstPointer
@@ -256,42 +255,61 @@ internal class InitializersGenerationState {
     }
 }
 
-internal class ConstInt1(llvm: Llvm, val value: Boolean) : ConstValue {
+internal class ConstInt1(llvm: CodegenLlvmHelpers, val value: Boolean) : ConstValue {
     override val llvm = LLVMConstInt(llvm.int1Type, if (value) 1 else 0, 1)!!
 }
 
-internal class ConstInt8(llvm: Llvm, val value: Byte) : ConstValue {
+internal class ConstInt8(llvm: CodegenLlvmHelpers, val value: Byte) : ConstValue {
     override val llvm = LLVMConstInt(llvm.int8Type, value.toLong(), 1)!!
 }
 
-internal class ConstInt16(llvm: Llvm, val value: Short) : ConstValue {
+internal class ConstInt16(llvm: CodegenLlvmHelpers, val value: Short) : ConstValue {
     override val llvm = LLVMConstInt(llvm.int16Type, value.toLong(), 1)!!
 }
 
-internal class ConstChar16(llvm: Llvm, val value: Char) : ConstValue {
+internal class ConstChar16(llvm: CodegenLlvmHelpers, val value: Char) : ConstValue {
     override val llvm = LLVMConstInt(llvm.int16Type, value.code.toLong(), 1)!!
 }
 
-internal class ConstInt32(llvm: Llvm, val value: Int) : ConstValue {
+internal class ConstInt32(llvm: CodegenLlvmHelpers, val value: Int) : ConstValue {
     override val llvm = LLVMConstInt(llvm.int32Type, value.toLong(), 1)!!
 }
 
-internal class ConstInt64(llvm: Llvm, val value: Long) : ConstValue {
+internal class ConstInt64(llvm: CodegenLlvmHelpers, val value: Long) : ConstValue {
     override val llvm = LLVMConstInt(llvm.int64Type, value, 1)!!
 }
 
-internal class ConstFloat32(llvm: Llvm, val value: Float) : ConstValue {
+internal class ConstFloat32(llvm: CodegenLlvmHelpers, val value: Float) : ConstValue {
     override val llvm = LLVMConstReal(llvm.floatType, value.toDouble())!!
 }
 
-internal class ConstFloat64(llvm: Llvm, val value: Double) : ConstValue {
+internal class ConstFloat64(llvm: CodegenLlvmHelpers, val value: Double) : ConstValue {
     override val llvm = LLVMConstReal(llvm.doubleType, value)!!
 }
 
+internal open class BasicLlvmHelpers(bitcodeContext: BitcodePostProcessingContext, val module: LLVMModuleRef) {
+
+    val llvmContext = bitcodeContext.llvmContext
+    val targetTriple by lazy {
+        LLVMGetTarget(module)!!.toKString()
+    }
+
+    val runtimeAnnotationMap by lazy {
+        StaticData.getGlobal(module, "llvm.global.annotations")
+                ?.getInitializer()
+                ?.let { getOperands(it) }
+                ?.groupBy(
+                        { LLVMGetInitializer(LLVMGetOperand(LLVMGetOperand(it, 1), 0))?.getAsCString() ?: "" },
+                        { LLVMGetOperand(LLVMGetOperand(it, 0), 0)!! }
+                )
+                ?.filterKeys { it != "" }
+                ?: emptyMap()
+    }
+}
+
 @Suppress("FunctionName", "PropertyName", "PrivatePropertyName")
-internal class Llvm(private val generationState: NativeGenerationState, val module: LLVMModuleRef) : RuntimeAware {
+internal class CodegenLlvmHelpers(private val generationState: NativeGenerationState, module: LLVMModuleRef) : BasicLlvmHelpers(generationState, module), RuntimeAware {
     private val context = generationState.context
-    val llvmContext = generationState.llvmContext
 
     private fun importFunction(name: String, otherModule: LLVMModuleRef): LlvmCallable {
         if (LLVMGetNamedFunction(module, name) != null) {
@@ -337,19 +355,19 @@ internal class Llvm(private val generationState: NativeGenerationState, val modu
     }
 
     internal fun externalFunction(llvmFunctionProto: LlvmFunctionProto): LlvmCallable {
-        this.dependenciesTracker.add(llvmFunctionProto.origin, onlyBitcode = llvmFunctionProto.independent)
+        if (llvmFunctionProto.origin != null) {
+            this.dependenciesTracker.add(llvmFunctionProto.origin, onlyBitcode = llvmFunctionProto.independent)
+        }
         val found = LLVMGetNamedFunction(module, llvmFunctionProto.name)
         if (found != null) {
-            assert(getFunctionType(found) == llvmFunctionProto.llvmFunctionType) {
-                "Expected: ${LLVMPrintTypeToString(llvmFunctionProto.llvmFunctionType)!!.toKString()} " +
+            require(getFunctionType(found) == llvmFunctionProto.signature.llvmFunctionType) {
+                "Expected: ${LLVMPrintTypeToString(llvmFunctionProto.signature.llvmFunctionType)!!.toKString()} " +
                         "found: ${LLVMPrintTypeToString(getFunctionType(found))!!.toKString()}"
             }
-            assert(LLVMGetLinkage(found) == LLVMLinkage.LLVMExternalLinkage)
-            return LlvmCallable(found, llvmFunctionProto)
+            require(LLVMGetLinkage(found) == llvmFunctionProto.linkage)
+            return LlvmCallable(found, llvmFunctionProto.signature)
         } else {
-            val function = addLlvmFunctionWithDefaultAttributes(context, module, llvmFunctionProto.name, llvmFunctionProto.llvmFunctionType)
-            llvmFunctionProto.addFunctionAttributes(function)
-            return LlvmCallable(function, llvmFunctionProto)
+            return llvmFunctionProto.createLlvmFunction(context, module)
         }
     }
 
@@ -360,9 +378,12 @@ internal class Llvm(private val generationState: NativeGenerationState, val modu
             functionAttributes: List<LlvmFunctionAttribute> = emptyList(),
             isVararg: Boolean = false
     ) = externalFunction(
-            LlvmFunctionProto(name, returnType, parameterTypes, functionAttributes,
+            LlvmFunctionSignature(returnType, parameterTypes, isVararg, functionAttributes).toProto(
+                    name,
                     origin = FunctionOrigin.FromNativeRuntime,
-                    isVararg, independent = false)
+                    linkage = LLVMLinkage.LLVMExternalLinkage,
+                    independent = false
+            )
     )
 
     internal fun externalNativeRuntimeFunction(name: String, signature: LlvmFunctionSignature) =
@@ -378,11 +399,9 @@ internal class Llvm(private val generationState: NativeGenerationState, val modu
 
     override val runtime get() = generationState.runtime
 
-    val targetTriple = runtime.target
-
     init {
         LLVMSetDataLayout(module, runtime.dataLayout)
-        LLVMSetTarget(module, targetTriple)
+        LLVMSetTarget(module, runtime.target)
     }
 
     private fun importRtFunction(name: String) = importFunction(name, runtime.llvmModule)
@@ -462,7 +481,6 @@ internal class Llvm(private val generationState: NativeGenerationState, val modu
     val CompareAndSwapVolatileHeapRef by lazyRtFunction
     val GetAndSetVolatileHeapRef by lazyRtFunction
 
-
     val tlsMode by lazy {
         when (target) {
             KonanTarget.WASM32,
@@ -471,36 +489,22 @@ internal class Llvm(private val generationState: NativeGenerationState, val modu
         }
     }
 
-    val usedFunctions = mutableListOf<LLVMValueRef>()
+    val usedFunctions = mutableListOf<LlvmCallable>()
     val usedGlobals = mutableListOf<LLVMValueRef>()
     val compilerUsedGlobals = mutableListOf<LLVMValueRef>()
     val irStaticInitializers = mutableListOf<IrStaticInitializer>()
-    val otherStaticInitializers = mutableListOf<LLVMValueRef>()
-    val globalSharedObjects = mutableSetOf<LLVMValueRef>()
+    val otherStaticInitializers = mutableListOf<LlvmCallable>()
     val initializersGenerationState = InitializersGenerationState()
     val boxCacheGlobals = mutableMapOf<BoxCache, StaticData.Global>()
 
-    val runtimeAnnotationMap by lazy {
-        staticData.getGlobal("llvm.global.annotations")
-                ?.getInitializer()
-                ?.let { getOperands(it) }
-                ?.groupBy(
-                        { LLVMGetInitializer(LLVMGetOperand(LLVMGetOperand(it, 1), 0))?.getAsCString() ?: "" },
-                        { LLVMGetOperand(LLVMGetOperand(it, 0), 0)!! }
-                )
-                ?.filterKeys { it != "" }
-                ?: emptyMap()
-    }
-
-
     private object lazyRtFunction {
         operator fun provideDelegate(
-                thisRef: Llvm, property: KProperty<*>
-        ) = object : ReadOnlyProperty<Llvm, LlvmCallable> {
+                thisRef: CodegenLlvmHelpers, property: KProperty<*>
+        ) = object : ReadOnlyProperty<CodegenLlvmHelpers, LlvmCallable> {
 
             val value: LlvmCallable by lazy { thisRef.importRtFunction(property.name) }
 
-            override fun getValue(thisRef: Llvm, property: KProperty<*>): LlvmCallable = value
+            override fun getValue(thisRef: CodegenLlvmHelpers, property: KProperty<*>): LlvmCallable = value
         }
     }
 
@@ -601,25 +605,23 @@ internal class Llvm(private val generationState: NativeGenerationState, val modu
             functionAttributes = listOf(LlvmFunctionAttribute.NoUnwind)
     )
 
-    private fun getSizeOfReturnTypeInBits(functionPointer: LLVMValueRef): Long {
-        // LLVMGetElementType is called because we need to dereference a pointer to function.
-        val nsIntegerType = LLVMGetReturnType(LLVMGetElementType(functionPointer.type))
-        return LLVMSizeOfTypeInBits(runtime.targetData, nsIntegerType)
+    private fun getSizeOfTypeInBits(type: LLVMTypeRef): Long {
+        return LLVMSizeOfTypeInBits(runtime.targetData, type)
     }
 
     /**
      * Width of NSInteger in bits.
      */
     val nsIntegerTypeWidth: Long by lazy {
-        getSizeOfReturnTypeInBits(Kotlin_ObjCExport_NSIntegerTypeProvider.llvmValue)
+        getSizeOfTypeInBits(Kotlin_ObjCExport_NSIntegerTypeProvider.returnType)
     }
 
     /**
      * Width of C long type in bits.
      */
     val longTypeWidth: Long by lazy {
-        getSizeOfReturnTypeInBits(Kotlin_longTypeProvider.llvmValue)
+        getSizeOfTypeInBits(Kotlin_longTypeProvider.returnType)
     }
 }
 
-class IrStaticInitializer(val konanLibrary: KotlinLibrary?, val initializer: LLVMValueRef)
+class IrStaticInitializer(val konanLibrary: KotlinLibrary?, val initializer: LlvmCallable)

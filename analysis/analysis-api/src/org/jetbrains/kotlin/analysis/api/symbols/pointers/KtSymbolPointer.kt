@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.symbols.pointers
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
+import org.jetbrains.kotlin.analysis.utils.relfection.renderAsDataClassToString
 
 /**
  * `KtSymbol` is valid only during read action it was created in
@@ -36,6 +37,8 @@ public abstract class KtSymbolPointer<out S : KtSymbol> {
      * @return **true** if [other] pointer can be restored to the same symbol. The operation is symmetric and transitive.
      */
     public open fun pointsToTheSameSymbolAs(other: KtSymbolPointer<KtSymbol>): Boolean = this === other
+
+    override fun toString(): String = renderAsDataClassToString()
 }
 
 public inline fun <S : KtSymbol> symbolPointer(crossinline getSymbol: (KtAnalysisSession) -> S?): KtSymbolPointer<S> =

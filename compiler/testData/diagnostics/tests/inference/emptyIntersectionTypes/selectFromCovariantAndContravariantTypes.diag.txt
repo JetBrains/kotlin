@@ -1,3 +1,12 @@
-/selectFromCovariantAndContravariantTypes.kt:15:5: error: type argument for a type parameter V can't be inferred because it has incompatible upper bounds: A, B (multiple incompatible classes)
+/selectFromCovariantAndContravariantTypes.kt:12:22: warning: parameter 'y' is never used
+fun <K> select(x: K, y: K): K = x
+                     ^
+/selectFromCovariantAndContravariantTypes.kt:13:19: warning: parameter 'x' is never used
+fun <V> genericIn(x: In<V>) {}
+                  ^
+/selectFromCovariantAndContravariantTypes.kt:14:20: warning: parameter 'x' is never used
+fun <V> genericOut(x: Out<V>) {}
+                   ^
+/selectFromCovariantAndContravariantTypes.kt:17:5: warning: type argument for a type parameter V can't be inferred because it has incompatible upper bounds: A, B (multiple incompatible classes). This will become an error in a future release
     genericIn(select(a, b))
     ^

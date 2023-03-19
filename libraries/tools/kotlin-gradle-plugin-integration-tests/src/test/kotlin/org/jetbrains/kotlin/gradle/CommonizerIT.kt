@@ -19,7 +19,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 import kotlin.test.fail
 
-class CommonizerIT : BaseGradleIT() {
+open class CommonizerIT : BaseGradleIT() {
     override val defaultGradleVersion: GradleVersionRequired = GradleVersionRequired.FOR_MPP_SUPPORT
 
     companion object {
@@ -415,16 +415,7 @@ class CommonizerIT : BaseGradleIT() {
     @Test
     fun `test KT-49735 two kotlin targets with same konanTarget`() {
         with(Project("commonize-kt-49735-twoKotlinTargets-oneKonanTarget")) {
-            val currentGradleVersion = chooseWrapperVersionOrFinishTest()
-            build(
-                ":assemble",
-                options = defaultBuildOptions()
-                    .suppressDeprecationWarningsSinceGradleVersion(
-                        TestVersions.Gradle.G_7_4,
-                        currentGradleVersion,
-                        "Workaround for KT-55751"
-                    )
-            ) {
+            build(":assemble") {
                 assertTasksExecuted(":compileCommonMainKotlinMetadata")
                 assertSuccessful()
             }
@@ -675,7 +666,8 @@ class CommonizerIT : BaseGradleIT() {
     fun `test KT-52243 cinterop caching`() {
         with(preparedProject("commonizeCurlInterop")) {
             val localBuildCacheDir = projectDir.resolve("local-build-cache-dir").also { assertTrue(it.mkdirs()) }
-            gradleSettingsScript().appendText("""
+            gradleSettingsScript().appendText(
+                """
                 
                 buildCache {
                     local {
@@ -704,6 +696,22 @@ class CommonizerIT : BaseGradleIT() {
                 assertTasksExecuted(":lib:compileCommonMainKotlinMetadata")
                 assertTasksExecuted(":app:commonizeCInterop")
                 assertTasksExecuted(":app:compileNativeMainKotlinMetadata")
+            }
+        }
+    }
+
+    @Test
+    fun `test KT-56729 commonization with library containing two roots`() {
+        with(Project("commonize-kt-56729-consume-library-with-two-roots")) {
+            build("publish") {
+                assertSuccessful()
+            }
+
+            build(":consumer:assemble") {
+                assertSuccessful()
+                assertTasksExecuted(":consumer:compileCommonMainKotlinMetadata")
+                assertNotContains("Duplicated libraries:")
+                assertNotContains("w: duplicate library name")
             }
         }
     }

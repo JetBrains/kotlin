@@ -1,0 +1,57 @@
+FILE: kt53494.kt
+    public open class C<out T> : R|kotlin/Any| {
+        public constructor<out T>(): R|C<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final data class Wrapped<out T> : R|C<T>| {
+        public constructor<out T>(value: R|T|): R|Wrapped<T>| {
+            super<R|C<T>|>()
+        }
+
+        public final val value: R|T| = R|<local>/value|
+            public get(): R|T|
+
+        public final operator fun component1(): R|T|
+
+        public final fun copy(value: R|T| = this@R|/Wrapped|.R|/Wrapped.value|): R|Wrapped<T>|
+
+    }
+    public final object Default : R|C<kotlin/Nothing>| {
+        private constructor(): R|Default| {
+            super<R|C<kotlin/Nothing>|>()
+        }
+
+    }
+    public final inline fun <reified T> test_1(t: R|T?|): R|C<T>| {
+        when () {
+            !=(R|<local>/t|, Null(null)) ->  {
+                ^test_1 R|/Wrapped.Wrapped|<R|T? & Any|>(R|<local>/t|)
+            }
+        }
+
+        ^test_1 when () {
+            (R|<local>/t| is R|T|) ->  {
+                R|/Wrapped.Wrapped|<R|it(kotlin/Nothing? & T)|>(R|<local>/t|)
+            }
+            else ->  {
+                Q|Default|
+            }
+        }
+
+    }
+    public final inline fun <reified T> test_2(t: R|T?|): R|C<T>| {
+        ^test_2 when () {
+            !=(R|<local>/t|, Null(null)) ->  {
+                R|/Wrapped.Wrapped|<R|T? & Any|>(R|<local>/t|)
+            }
+            (R|<local>/t| is R|T|) ->  {
+                R|/Wrapped.Wrapped|<R|it(kotlin/Nothing? & T)|>(R|<local>/t|)
+            }
+            else ->  {
+                Q|Default|
+            }
+        }
+
+    }

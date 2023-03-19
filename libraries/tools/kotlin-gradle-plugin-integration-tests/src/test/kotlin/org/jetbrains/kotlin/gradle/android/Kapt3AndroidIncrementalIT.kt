@@ -206,5 +206,5 @@ open class Kapt3AndroidIncrementalIT : Kapt3BaseIT() {
 
 @DisplayName("android with kapt3 incremental build tests with precise compilation outputs backup")
 class Kapt3AndroidIncrementalWithPreciseBackupIT : Kapt3AndroidIncrementalIT() {
-    override val defaultBuildOptions = super.defaultBuildOptions.copy(usePreciseOutputsBackup = true)
+    override val defaultBuildOptions = super.defaultBuildOptions.copy(usePreciseOutputsBackup = true, keepIncrementalCompilationCachesInMemory = true)
 }

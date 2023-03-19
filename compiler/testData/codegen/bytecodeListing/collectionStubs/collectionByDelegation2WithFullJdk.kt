@@ -1,4 +1,8 @@
 // FULL_JDK
+
+// IGNORE_BACKEND_K2: JVM_IR
+// FIR status: KT-57269 K2: collection stub for `sort` is not generated for custom List subclasses
+
 class DStringIterator(d: Iterator<String>) : Iterator<String> by d
 
 class DStringListIterator(d: ListIterator<String>) : ListIterator<String> by d

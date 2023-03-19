@@ -5,9 +5,9 @@
 // SKIP_TXT
 // Issue: KT-49714
 
-expect class Counter {
+expect <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>class Counter<!> {
     operator fun inc(): Counter
     operator fun dec(): Counter
 }
 
-actual typealias Counter = Int
+actual typealias <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>Counter<!> = Int

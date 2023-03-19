@@ -33,6 +33,8 @@ open class KotlinJsPlugin(
 
         checkGradleCompatibility()
 
+        project.enableKgpDependencyResolution(isEnabled = false)
+
         val kotlinExtension = project.kotlinExtension as KotlinJsProjectExtension
         customizeKotlinDependencies(project)
 

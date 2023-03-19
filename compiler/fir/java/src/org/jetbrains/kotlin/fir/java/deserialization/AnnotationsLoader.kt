@@ -57,7 +57,7 @@ internal class AnnotationsLoader(private val session: FirSession, private val ko
             }
 
             private fun ClassId.toEnumEntryReferenceExpression(name: Name): FirExpression {
-                return buildFunctionCall {
+                return buildPropertyAccessExpression {
                     val entryPropertySymbol =
                         session.symbolProvider.getClassDeclaredPropertySymbols(
                             this@toEnumEntryReferenceExpression, name,

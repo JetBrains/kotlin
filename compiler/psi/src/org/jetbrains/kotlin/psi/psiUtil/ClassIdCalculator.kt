@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.psi.psiUtil
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.SpecialNames
@@ -14,9 +13,9 @@ import org.jetbrains.kotlin.psi.*
 internal object ClassIdCalculator {
     fun calculateClassId(declaration: KtClassLikeDeclaration): ClassId? {
         var ktFile: KtFile? = null
-        var element: PsiElement? = declaration
         val containingClasses = mutableListOf<KtClassLikeDeclaration>()
-        while (element != null) {
+
+        for (element in declaration.parentsWithSelf) {
             when (element) {
                 is KtEnumEntry -> {
                     return null
@@ -24,24 +23,23 @@ internal object ClassIdCalculator {
                 is KtClassLikeDeclaration -> {
                     containingClasses += element
                 }
-                is KtObjectLiteralExpression -> {
-                    return null
-                }
                 is KtFile -> {
                     ktFile = element
                     break
                 }
-                is KtDeclaration -> {
+                is KtScript -> {
+                    // Skip script parent
+                }
+                is KtDeclaration, is KtObjectLiteralExpression -> {
+                    // Local declarations don't have a 'ClassId'
                     return null
                 }
             }
-            element = element.parent
         }
         if (ktFile == null) return null
-        val relativeClassName = FqName.fromSegments(
-            containingClasses.reversed().map { containingClass ->
-                containingClass.name ?: SpecialNames.NO_NAME_PROVIDED.asString()
-            }
+        val relativeClassName = FqName.fromSegments(containingClasses.reversed().map { containingClass ->
+            containingClass.name ?: SpecialNames.NO_NAME_PROVIDED.asString()
+        }
         )
         return ClassId(ktFile.packageFqName, relativeClassName, /*local=*/false)
     }

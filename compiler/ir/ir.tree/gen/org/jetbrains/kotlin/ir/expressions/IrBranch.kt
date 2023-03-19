@@ -15,7 +15,8 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
  * A non-leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.branch
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.branch]
  */
 abstract class IrBranch : IrElementBase(), IrElement {
     abstract var condition: IrExpression

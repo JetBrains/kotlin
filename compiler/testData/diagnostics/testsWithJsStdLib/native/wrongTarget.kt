@@ -1,4 +1,5 @@
 // FIR_IDENTICAL
+// !DIAGNOSTICS: +ENUM_CLASS_IN_EXTERNAL_DECLARATION_WARNING
 external annotation class <!WRONG_EXTERNAL_DECLARATION!>A(val x: Int)<!>
 
 val x: Int
@@ -20,3 +21,7 @@ external class D {
 }
 
 external data class <!WRONG_EXTERNAL_DECLARATION!>E(val x: Int)<!>
+
+external enum class <!ENUM_CLASS_IN_EXTERNAL_DECLARATION_WARNING!>F<!> {
+    A, B, C
+}

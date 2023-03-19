@@ -8,10 +8,8 @@ package org.jetbrains.kotlin.fir.backend.generators
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.backend.*
-import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.containingClassLookupTag
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
@@ -24,9 +22,12 @@ import org.jetbrains.kotlin.fir.resolve.calls.getExpectedType
 import org.jetbrains.kotlin.fir.resolve.calls.isFunctional
 import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFullBodyResolve
+import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.builders.declarations.UNDEFINED_PARAMETER_INDEX
 import org.jetbrains.kotlin.ir.declarations.*
@@ -44,6 +45,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.model.TypeVariance
 
 /**
  * A generator that converts callable references or arguments that needs an adapter in between. This covers:
@@ -98,8 +100,7 @@ internal class AdapterGenerator(
      * At the use site, instead of referenced, we can put the suspend lambda as an adapter.
      */
     private fun needSuspendConversion(type: IrSimpleType, function: IrFunction): Boolean =
-        // TODO: should refer to LanguageVersionSettings.SuspendConversion
-        type.isKSuspendFunction() && !function.isSuspend
+        type.isSuspendFunction() && !function.isSuspend
 
     /**
      * For example,
@@ -132,9 +133,6 @@ internal class AdapterGenerator(
             value is ResolvedCallArgument.VarargArgument || value is ResolvedCallArgument.DefaultArgument
         }
     }
-
-    internal fun ConeKotlinType.kFunctionTypeToFunctionType(): IrSimpleType =
-        reflectFunctionTypeToNonReflectFunctionType(session).toIrType() as IrSimpleType
 
     internal fun generateAdaptedCallableReference(
         callableReferenceAccess: FirCallableReferenceAccess,
@@ -324,7 +322,12 @@ internal class AdapterGenerator(
             )
             if (boundDispatchReceiver != null) irCall.dispatchReceiver = receiverValue
             else irCall.extensionReceiver = receiverValue
-        } else if (callableReferenceAccess.explicitReceiver is FirResolvedQualifier && ((firAdaptee as? FirMemberDeclaration)?.isStatic != true)) {
+        } else if (
+            callableReferenceAccess.explicitReceiver is FirResolvedQualifier &&
+            (firAdaptee !is FirConstructor ||
+                    firAdaptee.containingClassLookupTag()?.toFirRegularClassSymbol(session)?.isInner == true) &&
+            ((firAdaptee as? FirMemberDeclaration)?.isStatic != true)
+        ) {
             // Unbound callable reference 'A::foo'
             val adaptedReceiverParameter = adapterFunction.valueParameters[0]
             val adaptedReceiverValue = IrGetValueImpl(
@@ -432,15 +435,97 @@ internal class AdapterGenerator(
             return this
         }
         val parameterType = parameter.returnTypeRef.coneType
-        val substitutedParameterType = starProjectionApproximator.substituteOrSelf(substitutor.substituteOrSelf(parameterType))
-        val samFirType = if (substitutedParameterType is ConeRawType) substitutedParameterType.lowerBound else substitutedParameterType
-        var samType = samFirType.toIrType(ConversionTypeContext.WITH_INVARIANT)
-        if (shouldUnwrapVarargType) {
-            samType = samType.getArrayElementType(irBuiltIns)
-        }
+        val substitutedParameterType =
+            starProjectionApproximator.substituteOrSelf(substitutor.substituteOrSelf(parameterType)).let {
+                if (shouldUnwrapVarargType)
+                    it.arrayElementType() ?: it
+                else
+                    it
+            }
+
+        val samFirType = substitutedParameterType.removeExternalProjections() ?: substitutedParameterType
+        val samType = samFirType.toIrType(ConversionTypeContext.DEFAULT)
         // Make sure the converted IrType owner indeed has a single abstract method, since FunctionReferenceLowering relies on it.
         if (!samType.isSamType) return this
-        return IrTypeOperatorCallImpl(this.startOffset, this.endOffset, samType, IrTypeOperator.SAM_CONVERSION, samType, this)
+        return IrTypeOperatorCallImpl(
+            this.startOffset, this.endOffset, samType, IrTypeOperator.SAM_CONVERSION, samType,
+            castArgumentToFunctionalInterfaceForSamType(this, argument.typeRef.coneType, samFirType)
+        )
+    }
+
+    // See org.jetbrains.kotlin.psi2ir.generators.ArgumentsGenerationUtilsKt.castArgumentToFunctionalInterfaceForSamType (K1 counterpart)
+    private fun castArgumentToFunctionalInterfaceForSamType(
+        argument: IrExpression,
+        argumentConeType: ConeKotlinType,
+        samType: ConeKotlinType
+    ): IrExpression {
+        val coneKotlinFunctionType = getFunctionTypeForPossibleSamType(samType) ?: return argument
+        // This line is not present in the K1 counterpart because there is InsertImplicitCasts::cast that effectively removes
+        // such unnecessary casts. At the same time, many IR lowerings assume that there are no such redundant casts and many
+        // tests from FirBlackBoxCodegenTestGenerated relevant to INDY start failing once this line is removed.
+        if (argumentConeType.isSubtypeOf(coneKotlinFunctionType, session)) return argument
+        val irFunctionType = coneKotlinFunctionType.toIrType()
+        return argument.implicitCastTo(irFunctionType)
+    }
+
+    // This function is mostly a mirror of org.jetbrains.kotlin.backend.common.SamTypeApproximator.removeExternalProjections
+    // First attempts, to share the code between K1 and K2 via type contexts stumbled upon the absence of star-projection-type in K2
+    // and the possibility of incorrectly mapped details that might break some code when using K1.
+    private fun ConeKotlinType.removeExternalProjections(): ConeKotlinType? =
+        when (this) {
+            is ConeSimpleKotlinType -> removeExternalProjections()
+            is ConeFlexibleType -> ConeFlexibleType(
+                lowerBound.removeExternalProjections() ?: lowerBound,
+                upperBound.removeExternalProjections() ?: upperBound,
+            )
+        }
+
+    private fun ConeSimpleKotlinType.removeExternalProjections(): ConeSimpleKotlinType? =
+        with(session.typeContext) {
+            val typeConstructor = typeConstructor()
+            val parameters = typeConstructor.getParameters()
+            val parameterSet = parameters.toSet()
+
+            @Suppress("UNCHECKED_CAST")
+            val newArguments = getArguments().mapIndexed { i, argument ->
+                val parameter = parameters.getOrNull(i) ?: return null
+
+                when {
+                    argument.getVariance() == TypeVariance.IN -> {
+                        // Just erasing `in` from the type projection would lead to an incorrect type for the SAM adapter,
+                        // and error at runtime on JVM if invokedynamic + LambdaMetafactory is used, see KT-51868.
+                        // So we do it "carefully". If we have a class `A<T>` and a method that takes e.g. `A<in String>`, we check
+                        // if `T` has a non-trivial upper bound. If it has one, we don't attempt to perform a SAM conversion at all.
+                        // Otherwise we erase the type to `Any?`, so `A<in String>` becomes `A<Any?>`, which is the computed SAM type.
+                        val upperBound = parameter.getUpperBounds().singleOrNull()?.upperBoundIfFlexible() ?: return null
+                        if (!upperBound.isNullableAny()) return null
+
+                        upperBound
+                    }
+                    !argument.isStarProjection() -> argument.getType()
+                    else -> parameter.typeParameterSymbol.starProjectionTypeRepresentation(parameterSet)
+                }
+            } as List<ConeTypeProjection>
+
+            withArguments(newArguments.toTypedArray())
+        }
+
+    // See the definition from K1 at org.jetbrains.kotlin.types.StarProjectionImpl.get_type
+    // In K1, it's used more frequently because of not-nullable TypeProjection::getType, but in K2 we almost got rid of it
+    // But here, we still need it to more-or-less fully reproduce the semantics of K1 when generating SAM conversions
+    private fun FirTypeParameterSymbol.starProjectionTypeRepresentation(containingParameterSet: Set<ConeTypeParameterLookupTag>): ConeKotlinType {
+        val substitutor = object : AbstractConeSubstitutor(session.typeContext) {
+            // We don't substitute types
+            override fun substituteType(type: ConeKotlinType): ConeKotlinType? = null
+
+            override fun substituteArgument(projection: ConeTypeProjection, index: Int): ConeTypeProjection? {
+                // But we substitute type parameters from the class-owner of this@FirTypeParameterSymbol as it's done in K1
+                if (projection is ConeTypeParameterType && projection.lookupTag in containingParameterSet) return ConeStarProjection
+                return super.substituteArgument(projection, index)
+            }
+        }
+
+        return substitutor.substituteOrSelf(resolvedBounds.first().type)
     }
 
     private fun IrVararg.applyConversionOnVararg(

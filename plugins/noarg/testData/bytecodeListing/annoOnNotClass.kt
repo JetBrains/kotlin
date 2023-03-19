@@ -1,4 +1,3 @@
-// WITH_STDLIB
 @NoArg
 annotation class NoArg
 

@@ -1,0 +1,22 @@
+FILE: starProjectionForMultipleBounds.kt
+    public final class Inv<T : R|A|, R|B|> : R|kotlin/Any| {
+        public constructor<T : R|A|, R|B|>(value: R|T|): R|Inv<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val value: R|T| = R|<local>/value|
+            public get(): R|T|
+
+    }
+    public abstract interface A : R|kotlin/Any| {
+        public abstract fun doA(): R|kotlin/Unit|
+
+    }
+    public abstract interface B : R|kotlin/Any| {
+        public abstract fun doB(): R|kotlin/Unit|
+
+    }
+    public final fun process(c: R|Inv<*>|): R|kotlin/Unit| {
+        R|<local>/c|.R|SubstitutionOverride</Inv.value: R|CapturedType(*)|>|.R|/A.doA|()
+        R|<local>/c|.R|SubstitutionOverride</Inv.value: R|CapturedType(*)|>|.R|/B.doB|()
+    }

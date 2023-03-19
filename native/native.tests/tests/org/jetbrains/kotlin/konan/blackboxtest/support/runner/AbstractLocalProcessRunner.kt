@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Assertions.fail
 import java.io.ByteArrayOutputStream
 import kotlin.time.*
 
-internal abstract class AbstractLocalProcessRunner<R>(private val checks: TestRunChecks) : AbstractRunner<R>() {
+internal abstract class AbstractLocalProcessRunner<R>(protected val checks: TestRunChecks) : AbstractRunner<R>() {
     protected abstract val visibleProcessName: String
     protected abstract val executable: TestExecutable
     protected abstract val programArgs: List<String>
@@ -72,64 +72,68 @@ internal abstract class AbstractLocalProcessRunner<R>(private val checks: TestRu
         }
     }
 
-    abstract override fun buildResultHandler(runResult: RunResult): ResultHandler // Narrow returned type.
+    abstract override fun buildResultHandler(runResult: RunResult): LocalResultHandler<R> // ?? Narrow returned type.
+}
 
-    abstract inner class ResultHandler(runResult: RunResult) : AbstractRunner<R>.ResultHandler(runResult) {
-        override fun handle(): R {
-            checks.forEach { check ->
-                when (check) {
-                    is ExecutionTimeout.ShouldNotExceed -> verifyExpectation(runResult.hasFinishedOnTime) {
-                        "Timeout exceeded during test execution."
-                    }
-                    is ExecutionTimeout.ShouldExceed -> verifyExpectation(!runResult.hasFinishedOnTime) {
-                        "Test is expected to fail with exceeded timeout, which hasn't happened."
-                    }
-                    is ExitCode -> {
-                        // Don't check exit code if it is unknown.
-                        val knownExitCode: Int = runResult.exitCode ?: return@forEach
-                        when (check) {
-                            is ExitCode.Expected -> verifyExpectation(knownExitCode == check.expectedExitCode) {
-                                "$visibleProcessName exit code is $knownExitCode while ${check.expectedExitCode} was expected."
-                            }
-                            is ExitCode.AnyNonZero -> verifyExpectation(knownExitCode != 0) {
-                                "$visibleProcessName exited with zero code, which wasn't expected."
-                            }
+internal abstract class LocalResultHandler<R>(
+    runResult: RunResult,
+    private val visibleProcessName: String,
+    private val checks: TestRunChecks
+) : AbstractResultHandler<R>(runResult) {
+    override fun handle(): R {
+        checks.forEach { check ->
+            when (check) {
+                is ExecutionTimeout.ShouldNotExceed -> verifyExpectation(runResult.hasFinishedOnTime) {
+                    "Timeout exceeded during test execution."
+                }
+                is ExecutionTimeout.ShouldExceed -> verifyExpectation(!runResult.hasFinishedOnTime) {
+                    "Test is expected to fail with exceeded timeout, which hasn't happened."
+                }
+                is ExitCode -> {
+                    // Don't check exit code if it is unknown.
+                    val knownExitCode: Int = runResult.exitCode ?: return@forEach
+                    when (check) {
+                        is ExitCode.Expected -> verifyExpectation(knownExitCode == check.expectedExitCode) {
+                            "$visibleProcessName exit code is $knownExitCode while ${check.expectedExitCode} was expected."
+                        }
+                        is ExitCode.AnyNonZero -> verifyExpectation(knownExitCode != 0) {
+                            "$visibleProcessName exited with zero code, which wasn't expected."
                         }
                     }
-                    is TestRunCheck.OutputDataFile -> {
-                        val expectedOutput = check.file.readText()
-                        val actualFilteredOutput = runResult.processOutput.stdOut.filteredOutput + runResult.processOutput.stdErr
+                }
+                is TestRunCheck.OutputDataFile -> {
+                    val expectedOutput = check.file.readText()
+                    val actualFilteredOutput = runResult.processOutput.stdOut.filteredOutput + runResult.processOutput.stdErr
 
-                        // Don't use verifyExpectation(expected, actual) to avoid exposing potentially large test output in exception message
-                        // and blowing up test logs.
-                        verifyExpectation(convertLineSeparators(expectedOutput) == convertLineSeparators(actualFilteredOutput)) {
-                            "Tested process output mismatch. See \"TEST STDOUT\" and \"EXPECTED OUTPUT DATA FILE\" below."
-                        }
+                    // Don't use verifyExpectation(expected, actual) to avoid exposing potentially large test output in exception message
+                    // and blowing up test logs.
+                    verifyExpectation(convertLineSeparators(expectedOutput) == convertLineSeparators(actualFilteredOutput)) {
+                        "Tested process output mismatch. See \"TEST STDOUT\" and \"EXPECTED OUTPUT DATA FILE\" below."
                     }
-                    is TestRunCheck.OutputMatcher -> {
-                        try {
-                            verifyExpectation(check.match(runResult.processOutput.stdOut.filteredOutput)) {
-                                "Tested process output has not passed validation."
-                            }
-                        } catch (t: Throwable) {
-                            if (t is Exception || t is AssertionError) {
-                                fail<Nothing>(
-                                    getLoggedRun().withErrorMessage("Tested process output has not passed validation: " + t.message),
-                                    t
-                                )
-                            } else {
-                                throw t
-                            }
+                }
+                is TestRunCheck.OutputMatcher -> {
+                    try {
+                        verifyExpectation(check.match(runResult.processOutput.stdOut.filteredOutput)) {
+                            "Tested process output has not passed validation."
+                        }
+                    } catch (t: Throwable) {
+                        if (t is Exception || t is AssertionError) {
+                            fail<Nothing>(
+                                getLoggedRun().withErrorMessage("Tested process output has not passed validation: " + t.message),
+                                t
+                            )
+                        } else {
+                            throw t
                         }
                     }
                 }
             }
-
-            return doHandle()
         }
 
-        protected abstract fun doHandle(): R
+        return doHandle()
     }
+
+    protected abstract fun doHandle(): R
 }
 
 private class UnfilteredProcessOutput {

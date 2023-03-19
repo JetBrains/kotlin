@@ -1,3 +1,5 @@
+// IGNORE K2
+
 fun test() {
     class Local {
         inner class Inner {

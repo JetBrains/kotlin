@@ -25,7 +25,7 @@ import org.gradle.process.*
 import org.gradle.process.internal.DefaultExecSpec
 import org.gradle.process.internal.ExecException
 import org.jetbrains.kotlin.konan.target.*
-import org.jetbrains.kotlin.executors.*
+import org.jetbrains.kotlin.native.executors.*
 
 import java.io.*
 

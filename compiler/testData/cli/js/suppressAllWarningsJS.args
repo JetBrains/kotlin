@@ -1,6 +1,5 @@
 $TESTDATA_DIR$/../warnings.kt
--Xlegacy-deprecated-no-warn
--Xuse-deprecated-legacy-compiler
+-Xforce-deprecated-legacy-compiler-usage
 -nowarn
 -output
 $TEMP_DIR$/out.js

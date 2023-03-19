@@ -24,6 +24,14 @@ object KtRealSourceElementKind : KtSourceElementKind() {
         get() = false
 }
 
+/**
+ * When an element has a kind of KtFakeSourceElementKind it means that relevant FIR element was created synthetically.
+ * And while this definition might look a bit vaguely because, e.g. RawFirBuilder might create a lot of "synthetic" things
+ * and not all of them we want to treat as "fake" (like when's created from if's), there is a criteria that ultimately means
+ * that one need to use KtFakeSourceElementKind, and it's the situation when several FIR elements might share the same source element.
+ *
+ * And vice versa, KtRealSourceElementKind means that there's a single FIR node in the resulting tree that has the same source element.
+ */
 sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeReporting: Boolean = false) : KtSourceElementKind() {
     // for some fir expression implicit return typeRef is generated
     // some of them are: break, continue, return, throw, string concat,
@@ -251,6 +259,12 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
 
     // for return type of value parameters in lambdas
     object ImplicitReturnTypeOfLambdaValueParameter : KtFakeSourceElementKind()
+
+    // Synthetic calls for if/when/try/etc.
+    object SyntheticCall : KtFakeSourceElementKind()
+
+    // When property doesn't have an initializer and explicit return type, but its getter's return type is specified
+    object PropertyTypeFromGetterReturnType : KtFakeSourceElementKind()
 }
 
 sealed class AbstractKtSourceElement {
@@ -503,4 +517,3 @@ inline fun LighterASTNode.toKtLightSourceElement(
     startOffset: Int = this.startOffset,
     endOffset: Int = this.endOffset
 ): KtLightSourceElement = KtLightSourceElement(this, startOffset, endOffset, tree, kind)
-

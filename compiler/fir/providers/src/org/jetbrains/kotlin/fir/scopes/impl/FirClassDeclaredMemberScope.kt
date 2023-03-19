@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.isSynthetic
+import org.jetbrains.kotlin.fir.isEnumEntries
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
@@ -38,7 +39,10 @@ class FirClassDeclaredMemberScopeImpl(
             if (declaration is FirCallableDeclaration) {
                 val name = when (declaration) {
                     is FirConstructor -> SpecialNames.INIT
-                    is FirVariable -> if (declaration.isSynthetic) continue@loop else declaration.name
+                    is FirVariable -> when {
+                        declaration.isSynthetic || declaration.isEnumEntries(klass) && !klass.supportsEnumEntries -> continue@loop
+                        else -> declaration.name
+                    }
                     is FirSimpleFunction -> declaration.name
                     else -> continue@loop
                 }
@@ -47,6 +51,8 @@ class FirClassDeclaredMemberScopeImpl(
         }
         result
     }
+
+    private val FirClass.supportsEnumEntries get() = useSiteSession.enumEntriesSupport.canSynthesizeEnumEntriesFor(this)
 
     override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
         if (name == SpecialNames.INIT) return

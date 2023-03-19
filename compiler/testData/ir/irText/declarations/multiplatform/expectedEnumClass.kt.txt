@@ -7,6 +7,9 @@ expect enum class MyEnum : Enum<MyEnum> {
 
   fun valueOf(value: String): MyEnum /* Synthetic body for ENUM_VALUEOF */
 
+  val entries: EnumEntries<MyEnum>
+    get(): EnumEntries<MyEnum> /* Synthetic body for ENUM_ENTRIES */
+
 }
 
 enum class MyEnum : Enum<MyEnum> {
@@ -25,5 +28,8 @@ enum class MyEnum : Enum<MyEnum> {
   fun values(): Array<MyEnum> /* Synthetic body for ENUM_VALUES */
 
   fun valueOf(value: String): MyEnum /* Synthetic body for ENUM_VALUEOF */
+
+  val entries: EnumEntries<MyEnum>
+    get(): EnumEntries<MyEnum> /* Synthetic body for ENUM_ENTRIES */
 
 }

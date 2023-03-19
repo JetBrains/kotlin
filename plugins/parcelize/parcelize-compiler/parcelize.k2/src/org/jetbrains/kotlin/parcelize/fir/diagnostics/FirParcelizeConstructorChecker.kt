@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.diagnostics.hasValOrVar
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirConstructorChecker
+import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
@@ -37,7 +38,7 @@ object FirParcelizeConstructorChecker : FirConstructorChecker() {
                     )
                 }
                 if (valueParameter.defaultValue == null) {
-                    val illegalAnnotation = valueParameter.annotations.firstOrNull {
+                    val illegalAnnotation = valueParameter.correspondingProperty?.annotations?.firstOrNull {
                         it.toAnnotationClassId(context.session) in ParcelizeNames.IGNORED_ON_PARCEL_CLASS_IDS
                     }
                     if (illegalAnnotation != null) {

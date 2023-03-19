@@ -1,7 +1,7 @@
 FILE: enums.kt
     public? final? enum class Order : R|kotlin/Enum<Order>| {
         private constructor(): R|Order| {
-            super<R|kotlin/Enum<Order>|>()
+            LAZY_super<R|kotlin/Enum<Order>|>
         }
 
         public final static enum entry FIRST: R|Order|
@@ -38,7 +38,7 @@ FILE: enums.kt
 
         public? final? companion object Companion : R|kotlin/Any| {
             private constructor(): R|Planet.Companion| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public? final? const val G: <implicit> = LAZY_EXPRESSION

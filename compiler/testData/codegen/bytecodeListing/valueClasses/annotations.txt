@@ -49,12 +49,12 @@ public final class AnnotationsKt {
     public synthetic deprecated static @Ann$Container(value=[Ann, Ann]) method getT$annotations(p0: A): void
     public synthetic deprecated static @Ann$Container(value=[Ann, Ann]) method getT$annotations(p0: C): void
     public final static @Ann$Container(value=[Ann, Ann]) @org.jetbrains.annotations.NotNull method getT(@Ann$Container(value=[Ann, Ann]) @org.jetbrains.annotations.NotNull p0: C): A
-    public final static @Ann$Container(value=[Ann, Ann]) @org.jetbrains.annotations.NotNull method getT-sUp7gFk(p0: int, p1: int): A
-    public final static @Ann$Container(value=[Ann, Ann]) method setT-GPBa7dw(@Ann$Container(value=[Ann, Ann]) @org.jetbrains.annotations.NotNull p0: C, p1: int, p2: int): void
-    public final static @Ann$Container(value=[Ann, Ann]) method setT-GPBa7dw(p0: int, p1: int, p2: int, p3: int): void
-    public final static @Ann$Container(value=[Ann, Ann]) method t-552ch2I(@Ann$Container(value=[Ann, Ann]) @org.jetbrains.annotations.NotNull p0: C, p1: int, p2: int, p3: int, p4: int, @org.jetbrains.annotations.Nullable p5: A, @Ann$Container(value=[Ann, Ann]) @org.jetbrains.annotations.NotNull p6: C): int
-    public final static @Ann$Container(value=[Ann, Ann]) method t-552ch2I(p0: int, p1: int, p2: int, p3: int, p4: int, p5: int, @org.jetbrains.annotations.Nullable p6: A, @Ann$Container(value=[Ann, Ann]) @org.jetbrains.annotations.NotNull p7: C): void
-    private final static method t_552ch2I$f(): void
+    public final static @Ann$Container(value=[Ann, Ann]) @org.jetbrains.annotations.NotNull method getT-iUtXLc0(p0: int, p1: int): A
+    public final static @Ann$Container(value=[Ann, Ann]) method setT-0BsKfkc(p0: int, p1: int, p2: int, p3: int): void
+    public final static @Ann$Container(value=[Ann, Ann]) method setT-sJYW7s8(@Ann$Container(value=[Ann, Ann]) @org.jetbrains.annotations.NotNull p0: C, p1: int, p2: int): void
+    public final static @Ann$Container(value=[Ann, Ann]) method t-9uZSGF8(@Ann$Container(value=[Ann, Ann]) @org.jetbrains.annotations.NotNull p0: C, p1: int, p2: int, p3: int, p4: int, @org.jetbrains.annotations.Nullable p5: A, @Ann$Container(value=[Ann, Ann]) @org.jetbrains.annotations.NotNull p6: C): int
+    public final static @Ann$Container(value=[Ann, Ann]) method t-bZ3EKo0(p0: int, p1: int, p2: int, p3: int, p4: int, p5: int, @org.jetbrains.annotations.Nullable p6: A, @Ann$Container(value=[Ann, Ann]) @org.jetbrains.annotations.NotNull p7: C): void
+    private final static method t_bZ3EKo0$f(): void
     public inner class Ann$Container
 }
 
@@ -132,7 +132,7 @@ public final class C {
     public final @org.jetbrains.annotations.NotNull method getZ(): A
     public synthetic final method getZ-x(): int
     public synthetic final method getZ-y(): int
-    public final @Ann$Container(value=[Ann, Ann]) method setX-sUp7gFk(p0: int, p1: int): void
+    public final @Ann$Container(value=[Ann, Ann]) method setX-iUtXLc0(p0: int, p1: int): void
     public final @Ann$Container(value=[Ann, Ann]) method setY(@Ann$Container(value=[Ann, Ann]) @org.jetbrains.annotations.Nullable p0: A): void
     public inner class Ann$Container
 }

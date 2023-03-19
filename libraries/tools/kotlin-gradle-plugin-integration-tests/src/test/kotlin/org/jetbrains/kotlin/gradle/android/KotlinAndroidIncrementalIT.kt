@@ -180,5 +180,5 @@ open class KotlinAndroidIncrementalIT : KGPBaseTest() {
 }
 
 class KotlinAndroidIncrementalWithPreciseBackupIT : KotlinAndroidIncrementalIT() {
-    override val defaultBuildOptions = super.defaultBuildOptions.copy(usePreciseOutputsBackup = true)
+    override val defaultBuildOptions = super.defaultBuildOptions.copy(usePreciseOutputsBackup = true, keepIncrementalCompilationCachesInMemory = true)
 }

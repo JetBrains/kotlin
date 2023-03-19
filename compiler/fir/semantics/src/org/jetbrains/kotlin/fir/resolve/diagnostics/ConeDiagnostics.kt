@@ -251,3 +251,15 @@ class ConeAmbiguouslyResolvedAnnotationFromPlugin(
               - types stage: $typeFromTypesPhase
         """
 }
+
+class ConeAmbiguouslyResolvedAnnotationArgument(
+    val symbolFromCompilerPhase: FirBasedSymbol<*>,
+    val symbolFromAnnotationArgumentsPhase: FirBasedSymbol<*>?
+) : ConeDiagnostic {
+    override val reason: String
+        get() = """
+            Annotation symbol resolved differently on compiler annotation and symbols stages:
+              - compiler annotations: $symbolFromCompilerPhase
+              - compiler arguments stage: $symbolFromAnnotationArgumentsPhase
+        """
+}

@@ -132,7 +132,7 @@ internal class DebugInfo(override val generationState: NativeGenerationState) : 
     }
 
     val files = mutableMapOf<String, DIFileRef>()
-    val subprograms = mutableMapOf<LLVMValueRef, DISubprogramRef>()
+    val subprograms = mutableMapOf<LlvmCallable, DISubprogramRef>()
 
     /* Some functions are inlined on all callsites and body is eliminated by DCE, so there's no LLVM value */
     val inlinedSubprograms = mutableMapOf<IrFunction, DISubprogramRef>()
@@ -264,7 +264,7 @@ internal fun String?.toFileAndFolder(config: KonanConfig): FileAndFolder {
 
 internal fun alignTo(value: Long, align: Long): Long = (value + align - 1) / align * align
 
-internal fun setupBridgeDebugInfo(generationState: NativeGenerationState, function: LLVMValueRef): LocationInfo? {
+internal fun setupBridgeDebugInfo(generationState: NativeGenerationState, function: LlvmCallable): LocationInfo? {
     if (!generationState.shouldContainLocationDebugInfo()) {
         return null
     }
@@ -273,17 +273,16 @@ internal fun setupBridgeDebugInfo(generationState: NativeGenerationState, functi
     val file = debugInfo.compilerGeneratedFile
 
     // TODO: can we share the scope among all bridges?
-    val scope: DIScopeOpaqueRef = DICreateBridgeFunction(
+    val scope: DIScopeOpaqueRef = function.createBridgeFunctionDebugInfo(
             builder = debugInfo.builder,
             scope = file.reinterpret(),
-            function = function,
             file = file,
             lineNo = 0,
             type = debugInfo.subroutineType(generationState.runtime.targetData, emptyList()), // TODO: use proper type.
             isLocal = 0,
             isDefinition = 1,
             scopeLine = 0
-    )!!.reinterpret()
+    ).reinterpret()
 
     return LocationInfo(scope, 1, 0)
 }

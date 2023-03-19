@@ -1,4 +1,4 @@
-# Module kotlin.test
+# Module kotlin-test
 
 ## kotlin.test
 

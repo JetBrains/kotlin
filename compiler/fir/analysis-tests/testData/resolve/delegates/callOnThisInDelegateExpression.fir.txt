@@ -1,0 +1,33 @@
+FILE: callOnThisInDelegateExpression.kt
+    public abstract interface Delegate<R, T> : R|kotlin/properties/ReadWriteProperty<R, T>| {
+        public abstract infix fun resource(factory: R|Factory<R, T>|): R|Delegate<R, T>|
+
+    }
+    public abstract interface Factory<Source, Target> : R|kotlin/Any| {
+    }
+    public abstract interface Some : R|kotlin/Any| {
+    }
+    public final fun <Self : R|Some|, Target : R|Some|> R|Self|.delegateOf(clazz: R|java/lang/Class<Target>|): R|Delegate<Self, Target?>| {
+        ^delegateOf Null(null)!!
+    }
+    public abstract class SomeImpl<R : R|Some|> : R|Some| {
+        public constructor<R : R|Some|>(): R|SomeImpl<R>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public abstract val type: R|java/lang/Class<R>|
+            public get(): R|java/lang/Class<R>|
+
+        public final var bundle: R|R?|by this@R|/SomeImpl|.R|/delegateOf|<R|SomeImpl<R>|, R|R|>(this@R|/SomeImpl|.R|/SomeImpl.type|).R|SubstitutionOverride</Delegate.resource: R|Delegate<SomeImpl<R>, R?>|>|(this@R|/SomeImpl|.R|/SomeImpl.getFactory|<R|SomeImpl<R>|, R|R|>())
+            public get(): R|R?| {
+                ^ this@R|/SomeImpl|.D|/SomeImpl.bundle|.R|SubstitutionOverride</Delegate.getValue: R|R?|>|(this@R|/SomeImpl|, ::R|/SomeImpl.bundle|)
+            }
+            public set(<set-?>: R|R?|): R|kotlin/Unit| {
+                this@R|/SomeImpl|.D|/SomeImpl.bundle|.R|SubstitutionOverride</Delegate.setValue: R|kotlin/Unit|>|(this@R|/SomeImpl|, ::R|/SomeImpl.bundle|, R|<local>/bundle|)
+            }
+
+        public final fun <M : R|SomeImpl<T>|, T : R|Some|> getFactory(): R|Factory<M, T?>| {
+            ^getFactory Null(null)!!
+        }
+
+    }

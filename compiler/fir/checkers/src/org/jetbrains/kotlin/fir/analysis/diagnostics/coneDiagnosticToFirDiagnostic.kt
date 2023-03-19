@@ -110,6 +110,7 @@ private fun ConeDiagnostic.toKtDiagnostic(
     is ConeDestructuringDeclarationsOnTopLevel -> FirSyntaxErrors.SYNTAX.createOn(source)
     is ConeCannotInferTypeParameterType -> FirErrors.CANNOT_INFER_PARAMETER_TYPE.createOn(source)
     is ConeCannotInferValueParameterType -> FirErrors.CANNOT_INFER_PARAMETER_TYPE.createOn(source)
+    is ConeTypeVariableTypeIsNotInferred -> FirErrors.INFERENCE_ERROR.createOn(qualifiedAccessSource ?: source)
     is ConeInstanceAccessBeforeSuperCall -> FirErrors.INSTANCE_ACCESS_BEFORE_SUPER_CALL.createOn(source, this.target)
     is ConeStubDiagnostic -> null
     is ConeIntermediateDiagnostic -> null
@@ -132,6 +133,8 @@ private fun ConeDiagnostic.toKtDiagnostic(
     is ConeAmbiguouslyResolvedAnnotationFromPlugin -> {
         FirErrors.PLUGIN_ANNOTATION_AMBIGUITY.createOn(source, typeFromCompilerPhase, typeFromTypesPhase)
     }
+    is ConeAmbiguouslyResolvedAnnotationArgument ->
+        FirErrors.AMBIGUOUS_ANNOTATION_ARGUMENT.createOn(source, listOfNotNull(symbolFromCompilerPhase, symbolFromAnnotationArgumentsPhase))
     is ConeAmbiguousFunctionTypeKinds -> FirErrors.AMBIGUOUS_FUNCTION_TYPE_KIND.createOn(source, kinds)
     else -> throw IllegalArgumentException("Unsupported diagnostic type: ${this.javaClass}")
 }
@@ -225,6 +228,10 @@ private fun mapInapplicableCandidateError(
                 )
             }
 
+            // We don't report anything here, because there are already some errors inside the call or declaration
+            // And the errors should be reported there
+            is ErrorTypeInArguments -> null
+
             is MultipleContextReceiversApplicableForExtensionReceivers ->
                 FirErrors.AMBIGUOUS_CALL_WITH_IMPLICIT_CONTEXT_RECEIVER.createOn(qualifiedAccessSource ?: source)
 
@@ -286,8 +293,13 @@ private fun mapInapplicableCandidateError(
                 )
             }
 
-            is InferredEmptyIntersectionDiagnostic -> reportInferredIntoEmptyIntersectionError(
-                source, rootCause.typeVariable, rootCause.incompatibleTypes, rootCause.causingTypes, rootCause.kind
+            is InferredEmptyIntersectionDiagnostic -> reportInferredIntoEmptyIntersection(
+                source,
+                rootCause.typeVariable,
+                rootCause.incompatibleTypes,
+                rootCause.causingTypes,
+                rootCause.kind,
+                isError = rootCause.isError
             )
 
             else -> genericDiagnostic
@@ -375,10 +387,6 @@ private fun ConstraintSystemError.toDiagnostic(
 
             when (position) {
                 is ConeExpectedTypeConstraintPosition -> {
-                    if (position.expectedTypeMismatchIsReportedInChecker) {
-                        errorsToIgnore.add(this)
-                        return null
-                    }
                     val inferredType =
                         if (!lowerConeType.isNullableNothing)
                             lowerConeType
@@ -432,12 +440,13 @@ private fun ConstraintSystemError.toDiagnostic(
 
         is InferredEmptyIntersection -> {
             @Suppress("UNCHECKED_CAST")
-            reportInferredIntoEmptyIntersectionError(
+            reportInferredIntoEmptyIntersection(
                 source,
                 typeVariable as ConeTypeVariable,
                 incompatibleTypes as Collection<ConeKotlinType>,
                 causingTypes as Collection<ConeKotlinType>,
-                kind
+                kind,
+                this is InferredEmptyIntersectionError,
             )
         }
 
@@ -452,20 +461,24 @@ private fun ConstraintSystemError.toDiagnostic(
     }
 }
 
-private fun reportInferredIntoEmptyIntersectionError(
+private fun reportInferredIntoEmptyIntersection(
     source: KtSourceElement,
     typeVariable: ConeTypeVariable,
     incompatibleTypes: Collection<ConeKotlinType>,
     causingTypes: Collection<ConeKotlinType>,
-    kind: EmptyIntersectionTypeKind
+    kind: EmptyIntersectionTypeKind,
+    isError: Boolean
 ): KtDiagnostic? {
     val typeVariableText =
         (typeVariable.typeConstructor.originalTypeParameter as? ConeTypeParameterLookupTag)?.name?.asString()
             ?: typeVariable.toString()
     val causingTypesText = if (incompatibleTypes == causingTypes) "" else ": ${causingTypes.joinToString()}"
     val factory =
-        if (kind.isDefinitelyEmpty) FirErrors.INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION
-        else FirErrors.INFERRED_TYPE_VARIABLE_INTO_POSSIBLE_EMPTY_INTERSECTION
+        when {
+            !kind.isDefinitelyEmpty -> FirErrors.INFERRED_TYPE_VARIABLE_INTO_POSSIBLE_EMPTY_INTERSECTION
+            isError -> FirErrors.INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION.errorFactory
+            else -> FirErrors.INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION.warningFactory
+        }
 
     return factory.createOn(source, typeVariableText, incompatibleTypes, kind.description, causingTypesText)
 }

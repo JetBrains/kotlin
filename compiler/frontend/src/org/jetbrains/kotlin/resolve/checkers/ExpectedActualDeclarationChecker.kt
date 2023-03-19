@@ -329,10 +329,6 @@ class ExpectedActualDeclarationChecker(
         }
     }
 
-    private fun ExpectActualCompatibility<MemberDescriptor>.isCompatibleOrWeakCompatible() =
-        this is Compatible ||
-                this is Incompatible && kind == IncompatibilityKind.WEAK
-
     // we don't require `actual` modifier on
     //  - annotation constructors, because annotation classes can only have one constructor
     //  - inline class primary constructors, because inline class must have primary constructor
@@ -399,6 +395,10 @@ class ExpectedActualDeclarationChecker(
     companion object {
         fun Map<out ExpectActualCompatibility<MemberDescriptor>, Collection<MemberDescriptor>>.allStrongIncompatibilities(): Boolean =
             this.keys.all { it is Incompatible && it.kind == IncompatibilityKind.STRONG }
+
+        internal fun ExpectActualCompatibility<MemberDescriptor>.isCompatibleOrWeakCompatible() =
+            this is Compatible ||
+                    this is Incompatible && kind == IncompatibilityKind.WEAK
     }
 }
 

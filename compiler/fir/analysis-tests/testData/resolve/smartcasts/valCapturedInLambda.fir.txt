@@ -1,0 +1,27 @@
+FILE: valCapturedInLambda.kt
+    public final fun test_1(x: R|kotlin/Any|): R|kotlin/String| {
+        when () {
+            (R|<local>/x| is R|kotlin/String|) ->  {
+                lval thunk: R|() -> kotlin/String| = fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
+                    ^ R|<local>/x|
+                }
+
+                ^test_1 R|<local>/thunk|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()
+            }
+        }
+
+        ^test_1 String(str)
+    }
+    public final fun test_2(x: R|kotlin/Any|): R|kotlin/String| {
+        when () {
+            (R|<local>/x| is R|kotlin/String|) ->  {
+                lval thunk: R|() -> kotlin/String| = fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
+                    ^ R|<local>/x|.R|kotlin/String.plus|(String(a))
+                }
+
+                ^test_2 R|<local>/thunk|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()
+            }
+        }
+
+        ^test_2 String(str)
+    }

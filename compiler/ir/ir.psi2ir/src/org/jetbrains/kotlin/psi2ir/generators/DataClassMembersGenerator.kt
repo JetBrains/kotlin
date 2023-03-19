@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.types.typeUtil.representativeUpperBound
  * This one uses [DataClassMethodGenerator] to determine which members are needed to generate; uses [DataClassMembersGenerator] to generate
  * function bodies; and provides ways to declare functions or parameters based on descriptors and binding context.
  */
-class DataClassMembersGenerator(
+internal class DataClassMembersGenerator(
     declarationGenerator: DeclarationGenerator,
     private val generateBodies: Boolean
 ) : DeclarationGeneratorExtension(declarationGenerator) {

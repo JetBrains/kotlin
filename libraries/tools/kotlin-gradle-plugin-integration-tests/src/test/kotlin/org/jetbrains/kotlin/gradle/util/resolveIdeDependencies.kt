@@ -24,22 +24,27 @@ internal fun TestProject.resolveIdeDependencies(
     assertions: BuildResult.(dependencies: IdeaKotlinDependenciesContainer) -> Unit
 ) {
     build("${subproject.orEmpty()}:resolveIdeDependencies") {
-        val subprojectPathPrefix = subproject?.removePrefix(":")?.takeIf { it.isNotEmpty() }?.replace(":", "/")?.plus("/") ?: ""
-        val output = projectPath.resolve("${subprojectPathPrefix}build/ide/dependencies/proto").toFile()
-        if (!output.isDirectory) fail("Missing output directory: $output")
+        assertions(readIdeDependencies(subproject))
+    }
+}
 
-        val dependenciesBySourceSetName = output.listFiles().orEmpty().associate { sourceSetDirectory ->
-            if (!sourceSetDirectory.isDirectory) fail("Expected $sourceSetDirectory to be directory")
-            val serializedDependencyFiles = sourceSetDirectory.listFiles().orEmpty()
-            val deserializedDependencies = serializedDependencyFiles.map { dependencyFile ->
-                deserializeIdeaKotlinDependencyOrFail(dependencyFile)
-            }
+internal fun TestProject.readIdeDependencies(subproject: String? = null): IdeaKotlinDependenciesContainer {
+    val subprojectPathPrefix = subproject?.removePrefix(":")?.takeIf { it.isNotEmpty() }?.replace(":", "/")?.plus("/") ?: ""
+    val output = projectPath.resolve("${subprojectPathPrefix}build/ide/dependencies/proto").toFile()
+    if (!output.isDirectory) fail("Missing output directory: $output")
 
-            sourceSetDirectory.name to deserializedDependencies.toSet()
+    val dependenciesBySourceSetName = output.listFiles().orEmpty().associate { sourceSetDirectory ->
+        if (!sourceSetDirectory.isDirectory) fail("Expected $sourceSetDirectory to be directory")
+        val serializedDependencyFiles = sourceSetDirectory.listFiles().orEmpty()
+        val deserializedDependencies = serializedDependencyFiles.map { dependencyFile ->
+            deserializeIdeaKotlinDependencyOrFail(dependencyFile)
         }
 
-        assertions(IdeaKotlinDependenciesContainer(dependenciesBySourceSetName))
+        sourceSetDirectory.name to deserializedDependencies.toSet()
     }
+
+
+    return IdeaKotlinDependenciesContainer(dependenciesBySourceSetName)
 }
 
 private fun deserializeIdeaKotlinDependencyOrFail(file: File): IdeaKotlinDependency {
@@ -57,7 +62,7 @@ private object GradleIntegrationTestIdeaKotlinSerializationContext : IdeaKotlinS
     }
 }
 
- class IdeaKotlinDependenciesContainer(
+class IdeaKotlinDependenciesContainer(
     private val dependencies: Map<String, Set<IdeaKotlinDependency>>
 ) {
     operator fun get(sourceSetName: String) = dependencies[sourceSetName]

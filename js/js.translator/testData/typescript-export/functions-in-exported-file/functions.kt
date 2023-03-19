@@ -72,3 +72,10 @@ fun formatList(value: List<*>): String = value.joinToString(", ") { it.toString(
 
 
 fun createList(): List<*> = listOf(1, 2, 3)
+
+// KT-53180
+
+fun defaultParametersAtTheBegining(a: String = "Default Value", b: String) = "$a and $b"
+
+
+fun nonDefaultParameterInBetween(a: String = "Default A", b: String, c: String = "Default C") = "$a and $b and $c"

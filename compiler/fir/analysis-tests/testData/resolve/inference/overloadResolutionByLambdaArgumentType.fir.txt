@@ -1,0 +1,27 @@
+FILE: overloadResolutionByLambdaArgumentType.kt
+    public final class A<K> : R|kotlin/Any| {
+        public constructor<K>(): R|A<K>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun <K> R|A<K>|.foo(k: R|K|): R|K| {
+        ^foo R|<local>/k|
+    }
+    public final fun <K> R|A<K>|.foo(a: R|A<K>.() -> kotlin/Unit|): R|kotlin/Int| {
+        ^foo Int(2)
+    }
+    public final fun test(): R|kotlin/Unit| {
+        R|/A.A|<R|kotlin/Int|>().<Ambiguity: foo, [/foo, /foo]>#(<L> = foo@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+            ^@foo Unit
+        }
+        )
+        R|/A.A|<R|kotlin/Int|>().R|/foo|<R|kotlin/Int|>(<L> = foo@fun R|A<kotlin/Int>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            ^@foo Unit
+        }
+        )
+        R|/A.A|<R|kotlin/Int|>().<Ambiguity: foo, [/foo, /foo]>#<R|kotlin/Any|>(<L> = foo@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+            ^@foo Unit
+        }
+        )
+    }

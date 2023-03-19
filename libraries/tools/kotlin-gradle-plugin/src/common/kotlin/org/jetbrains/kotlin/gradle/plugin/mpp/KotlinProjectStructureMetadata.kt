@@ -450,14 +450,6 @@ internal object GlobalProjectStructureMetadataStorage {
     }
 }
 
-internal fun collectAllProjectStructureMetadataInCurrentBuild(project: Project): Map<String, Lazy<KotlinProjectStructureMetadata?>> {
-    return project
-        .rootProject
-        .allprojects
-        .associateBy { it.path }
-        .mapValues { (_, subProject) -> lazy { subProject.multiplatformExtensionOrNull?.kotlinProjectStructureMetadata } }
-}
-
 private const val ROOT_NODE_NAME = "projectStructure"
 private const val PUBLISHED_AS_ROOT_NAME = "isPublishedAsRoot"
 private const val FORMAT_VERSION_NODE_NAME = "formatVersion"

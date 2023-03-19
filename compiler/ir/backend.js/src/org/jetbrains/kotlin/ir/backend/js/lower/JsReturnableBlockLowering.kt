@@ -68,7 +68,7 @@ class JsReturnableBlockTransformer(val context: CommonBackendContext) : IrElemen
 
         val builder = context.createIrBuilder(expression.symbol)
 
-        expression.type = context.irBuiltIns.unitType
+        expression.type = unitType
         return builder.irComposite(expression, expression.origin, variable.type) {
             +variable
             +expression

@@ -17,7 +17,8 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
  * A leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.variable
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.variable]
  */
 abstract class IrVariable : IrDeclarationBase(), IrValueDeclaration {
     @ObsoleteDescriptorBasedAPI
@@ -25,11 +26,11 @@ abstract class IrVariable : IrDeclarationBase(), IrValueDeclaration {
 
     abstract override val symbol: IrVariableSymbol
 
-    abstract val isVar: Boolean
+    abstract var isVar: Boolean
 
-    abstract val isConst: Boolean
+    abstract var isConst: Boolean
 
-    abstract val isLateinit: Boolean
+    abstract var isLateinit: Boolean
 
     abstract var initializer: IrExpression?
 

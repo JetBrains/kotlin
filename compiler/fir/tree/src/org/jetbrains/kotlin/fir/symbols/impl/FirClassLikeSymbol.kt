@@ -26,7 +26,8 @@ sealed class FirClassLikeSymbol<D : FirClassLikeDeclaration>(
 
     val name get() = classId.shortClassName
 
-    fun getDeprecation(apiVersion: ApiVersion): DeprecationsPerUseSite? {
+     fun getDeprecation(apiVersion: ApiVersion): DeprecationsPerUseSite? {
+        if (annotations.isEmpty()) return null
         lazyResolveToPhase(FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS)
         return fir.deprecationsProvider.getDeprecationsInfo(apiVersion)
     }
@@ -80,6 +81,7 @@ class FirRegularClassSymbol(classId: ClassId) : FirClassSymbol<FirRegularClass>(
 
     val resolvedContextReceivers: List<FirContextReceiver>
         get() {
+            if (fir.contextReceivers.isEmpty()) return emptyList()
             lazyResolveToPhase(FirResolvePhase.TYPES)
             return fir.contextReceivers
         }

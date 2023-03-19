@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.caches.*
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -104,7 +106,6 @@ class FirTypeIntersectionScopeContext(
         return collectIntersectionResultsForCallables(name, FirScope::processFunctionsByName)
     }
 
-    @OptIn(PrivateForInline::class)
     inline fun <D : FirCallableSymbol<*>> collectMembersGroupedByScope(
         name: Name,
         processCallables: FirScope.(Name, (D) -> Unit) -> Unit
@@ -123,7 +124,6 @@ class FirTypeIntersectionScopeContext(
         }
     }
 
-    @OptIn(PrivateForInline::class)
     inline fun <D : FirCallableSymbol<*>> collectIntersectionResultsForCallables(
         name: Name,
         processCallables: FirScope.(Name, (D) -> Unit) -> Unit
@@ -152,24 +152,25 @@ class FirTypeIntersectionScopeContext(
             val groupWithPrivate =
                 overrideService.extractBothWaysOverridable(allMembersWithScope.maxByVisibility(), allMembersWithScope, overrideChecker)
             val group = groupWithPrivate.filter { !Visibilities.isPrivate(it.member.fir.visibility) }.ifEmpty { groupWithPrivate }
-            val directOverrides = group.onlyDirectlyInherited()
-            val mostSpecific = overrideService.selectMostSpecificMembers(directOverrides, ReturnTypeCalculatorForFullBodyResolve)
+            val nonSubsumed = if (forClassUseSiteScope) group.nonSubsumed() else group
+            val mostSpecific = overrideService.selectMostSpecificMembers(nonSubsumed, ReturnTypeCalculatorForFullBodyResolve)
             val nonTrivial = if (forClassUseSiteScope) {
                 // Create a non-trivial intersection override when the base methods come from different scopes,
-                // even if one of them is more specific than the others. This is necessary for proper reporting of
-                // MANY_{IMPL,INTERFACES}_MEMBER_NOT_IMPLEMENTED diagnostics.
+                // even if one of them is more specific than the others, i.e. when there is more than one method that is not subsumed.
+                // This is necessary for proper reporting of MANY_{IMPL,INTERFACES}_MEMBER_NOT_IMPLEMENTED diagnostics.
                 //
                 // It is also possible to have the opposite case (> 1 most specific member, but all members are from
                 // the same base scope), but this means there are different instantiations of the same base class,
                 // which should generally result in INCONSISTENT_TYPE_PARAMETER_VALUES errors.
-                directOverrides.size > 1 &&
-                        directOverrides.mapTo(mutableSetOf()) { it.member.fir.unwrapSubstitutionOverrides().symbol }.size > 1
+                nonSubsumed.size > 1 &&
+                        nonSubsumed.mapTo(mutableSetOf()) { it.member.fir.unwrapSubstitutionOverrides().symbol }.size > 1
             } else {
                 // Create a non-trivial intersection override when return types should be intersected.
                 mostSpecific.size > 1
             }
             if (nonTrivial) {
-                result += ResultOfIntersection.NonTrivial(this, mostSpecific, group, containingScope = null)
+                // Only add non-subsumed members to list of overridden in intersection override.
+                result += ResultOfIntersection.NonTrivial(this, mostSpecific, overriddenMembers = nonSubsumed, containingScope = null)
             } else {
                 val (member, containingScope) = mostSpecific.first()
                 result += ResultOfIntersection.SingleMember(member, group, containingScope)
@@ -200,16 +201,25 @@ class FirTypeIntersectionScopeContext(
             is FirPropertySymbol ->
                 createIntersectionOverrideProperty(mostSpecificSymbols, extractedOverridesSymbols, newModality, newVisibility)
 
-            else -> throw IllegalStateException("Should not be here")
+            is FirFieldSymbol -> {
+                if (forClassUseSiteScope) error("Can not create intersection override in class scope for field ${key.member}")
+                createIntersectionOverrideField(mostSpecificSymbols, extractedOverridesSymbols, newModality, newVisibility)
+            }
+
+            else -> error("Unsupported symbol type for creating intersection overrides: ${key.member}")
         }.withScope(key.baseScope)
     }
 
-    private fun <S : FirCallableSymbol<*>> List<MemberWithBaseScope<S>>.onlyDirectlyInherited(): List<MemberWithBaseScope<S>> {
+    /**
+     * A callable declaration D [subsumes](https://kotlinlang.org/spec/inheritance.html#matching-and-subsumption-of-declarations)
+     * a callable declaration B if D overrides B.
+     */
+    private fun <S : FirCallableSymbol<*>> List<MemberWithBaseScope<S>>.nonSubsumed(): List<MemberWithBaseScope<S>> {
         val baseMembers = mutableSetOf<FirCallableSymbol<*>>()
         for ((member, scope) in this) {
-            val unwrapped = member.fir.unwrapSubstitutionOverrides().symbol
+            val unwrapped = member.unwrapSubstitutionOverrides<FirCallableSymbol<*>>()
             val addIfDifferent = { it: FirCallableSymbol<*> ->
-                val symbol = it.fir.unwrapSubstitutionOverrides().symbol
+                val symbol = it.unwrapSubstitutionOverrides()
                 if (symbol != unwrapped) {
                     baseMembers += symbol
                 }
@@ -221,7 +231,7 @@ class FirTypeIntersectionScopeContext(
                 scope.processOverriddenProperties(member, addIfDifferent)
             }
         }
-        return filter { it.member.fir.unwrapSubstitutionOverrides().symbol !in baseMembers }
+        return filter { it.member.unwrapSubstitutionOverrides<FirCallableSymbol<*>>() !in baseMembers }
     }
 
     private fun <S : FirCallableSymbol<*>> Collection<MemberWithBaseScope<S>>.maxByVisibility(): MemberWithBaseScope<S> {
@@ -296,15 +306,6 @@ class FirTypeIntersectionScopeContext(
         return result
     }
 
-    private inline fun <reified D : FirCallableDeclaration> D.unwrapSubstitutionOverrides(): D {
-        var current = this
-
-        do {
-            val next = current.originalForSubstitutionOverride ?: return current
-            current = next
-        } while (true)
-    }
-
     private fun <D : FirCallableSymbol<*>> collectRealOverridden(
         symbol: D,
         scope: FirTypeScope,
@@ -372,26 +373,62 @@ class FirTypeIntersectionScopeContext(
         newModality: Modality?,
         newVisibility: Visibility,
     ): FirPropertySymbol {
-        val key = mostSpecific.first() as FirPropertySymbol
+        return createIntersectionOverrideVariable<FirPropertySymbol, _>(
+            mostSpecific,
+            overrides,
+            ::FirIntersectionOverridePropertySymbol,
+        ) { symbol, fir, returnType ->
+            FirFakeOverrideGenerator.createCopyForFirProperty(
+                symbol, fir, derivedClassLookupTag = null, session,
+                FirDeclarationOrigin.IntersectionOverride,
+                newModality = newModality,
+                newVisibility = newVisibility,
+                newDispatchReceiverType = dispatchReceiverType,
+                // If any of the properties are vars and the types are not equal, these declarations are conflicting
+                // anyway and their uses should result in an overload resolution error.
+                newReturnType = returnType
+            )
+        }
+    }
+
+    private fun createIntersectionOverrideField(
+        mostSpecific: Collection<FirCallableSymbol<*>>,
+        overrides: Collection<FirCallableSymbol<*>>,
+        newModality: Modality?,
+        newVisibility: Visibility,
+    ): FirFieldSymbol {
+        return createIntersectionOverrideVariable<FirFieldSymbol, _>(
+            mostSpecific,
+            overrides,
+            ::FirIntersectionOverrideFieldSymbol
+        ) { symbol, fir, returnType ->
+            FirFakeOverrideGenerator.createCopyForFirField(
+                symbol, fir, derivedClassLookupTag = null, session,
+                FirDeclarationOrigin.IntersectionOverride,
+                newModality = newModality,
+                newVisibility = newVisibility,
+                newDispatchReceiverType = dispatchReceiverType,
+                // If any of the properties are vars and the types are not equal, these declarations are conflicting
+                // anyway and their uses should result in an overload resolution error.
+                newReturnType = returnType
+            )
+        }
+    }
+
+    private inline fun <reified S : FirVariableSymbol<F>, F : FirVariable> createIntersectionOverrideVariable(
+        mostSpecific: Collection<FirCallableSymbol<*>>,
+        overrides: Collection<FirCallableSymbol<*>>,
+        createIntersectionOverrideSymbol: (CallableId, Collection<FirCallableSymbol<*>>) -> S,
+        createCopy: (S, F, returnType: ConeKotlinType?) -> F
+    ): S {
+        val key = mostSpecific.first() as S
         val keyFir = key.fir
-        val callableId = CallableId(
-            dispatchReceiverType.classId ?: keyFir.dispatchReceiverClassLookupTagOrNull()?.classId!!,
-            keyFir.name
-        )
-        val newSymbol = FirIntersectionOverridePropertySymbol(callableId, overrides)
-        FirFakeOverrideGenerator.createCopyForFirProperty(
-            newSymbol, keyFir, derivedClassLookupTag = null, session,
-            FirDeclarationOrigin.IntersectionOverride,
-            newModality = newModality,
-            newVisibility = newVisibility,
-            newDispatchReceiverType = dispatchReceiverType,
-            // If any of the properties are vars and the types are not equal, these declarations are conflicting
-            // anyway and their uses should result in an overload resolution error.
-            newReturnType = if (!forClassUseSiteScope && !mostSpecific.any { (it as FirPropertySymbol).fir.isVar })
-                intersectReturnTypes(mostSpecific)
-            else
-                null,
-        ).apply {
+        val callableId = CallableId(dispatchReceiverType.classId ?: keyFir.dispatchReceiverClassLookupTagOrNull()?.classId!!, keyFir.name)
+        val newSymbol = createIntersectionOverrideSymbol(callableId, overrides)
+        val newReturnType = runIf(!forClassUseSiteScope && mostSpecific.none { (it as FirVariableSymbol<*>).fir.isVar }) {
+            intersectReturnTypes(mostSpecific)
+        }
+        createCopy(newSymbol, keyFir, newReturnType).apply {
             originalForIntersectionOverrideAttr = keyFir
         }
         return newSymbol

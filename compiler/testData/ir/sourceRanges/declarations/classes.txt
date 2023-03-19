@@ -89,6 +89,9 @@
     @-1:-1..-1 FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.Test5
       @-1:-1..-1 VALUE_PARAMETER name:value index:0 type:kotlin.String
       @-1:-1..-1 SYNTHETIC_BODY kind=ENUM_VALUEOF
+    @-1:-1..-1 PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [val]
+      @-1:-1..-1 FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> visibility:public modality:FINAL <> () returnType:kotlin.enums.EnumEntries<<root>.Test5>
+        @-1:-1..-1 SYNTHETIC_BODY kind=ENUM_ENTRIES
     @17:0..18:11 VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test5
   @21:0..22:11 CLASS ANNOTATION_CLASS name:Test6 modality:OPEN visibility:public superTypes:[kotlin.Annotation]
     @22:0..11 CONSTRUCTOR visibility:public <> () returnType:<root>.Test6 [primary]

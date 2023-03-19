@@ -168,4 +168,7 @@ public class JVMConfigurationKeys {
 
     public static final CompilerConfigurationKey<Boolean> OLD_INNER_CLASSES_LOGIC =
             CompilerConfigurationKey.create("Use old logic for generation of InnerClasses attributes");
+
+    public static final CompilerConfigurationKey<Boolean> ENABLE_IR_INLINER =
+            CompilerConfigurationKey.create("Enable inlining on IR, instead of inlining on bytecode");
 }

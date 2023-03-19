@@ -18,8 +18,9 @@ import org.jetbrains.kotlin.test.builders.firHandlersStep
 import org.jetbrains.kotlin.test.builders.irHandlersStep
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_IR
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_KT_IR
-import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
+import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
+import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
+import org.jetbrains.kotlin.test.runners.codegen.FirPsiCodegenTest
 import org.jetbrains.kotlin.test.services.JsLibraryProvider
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
@@ -115,7 +117,7 @@ open class AbstractIrTextTest : AbstractIrTextTestBase<ClassicFrontendOutputArti
     }
 }
 
-open class AbstractFir2IrTextTest : AbstractIrTextTestBase<FirOutputArtifact>() {
+open class AbstractFirIrTextTestBase(val parser: FirParser) : AbstractIrTextTestBase<FirOutputArtifact>() {
     override val frontend: FrontendKind<*>
         get() = FrontendKinds.FIR
     override val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>
@@ -126,6 +128,7 @@ open class AbstractFir2IrTextTest : AbstractIrTextTestBase<FirOutputArtifact>() 
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         with(builder) {
+            configureFirParser(parser)
             useAfterAnalysisCheckers(
                 ::FirIrDumpIdenticalChecker,
                 ::BlackBoxCodegenSuppressor
@@ -140,18 +143,12 @@ open class AbstractFir2IrTextTest : AbstractIrTextTestBase<FirOutputArtifact>() 
     }
 }
 
-open class AbstractLightTreeFir2IrTextTest : AbstractFir2IrTextTest() {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        with (builder) {
-            defaultDirectives {
-                +FirDiagnosticsDirectives.USE_LIGHT_TREE
-            }
-        }
-    }
-}
+open class AbstractFirLightTreeIrTextTest : AbstractFirIrTextTestBase(FirParser.LightTree)
 
-open class AbstractFir2IrJsTextTest : AbstractFir2IrTextTest() {
+@FirPsiCodegenTest
+open class AbstractFirPsiIrTextTest : AbstractFirIrTextTestBase(FirParser.Psi)
+
+open class AbstractFirIrJsTextTestBase(parser: FirParser) : AbstractFirIrTextTestBase(parser) {
     override fun TestConfigurationBuilder.applyConfigurators() {
         useConfigurators(
             ::CommonEnvironmentConfigurator,
@@ -173,3 +170,5 @@ open class AbstractFir2IrJsTextTest : AbstractFir2IrTextTest() {
         }
     }
 }
+
+open class AbstractFirLightTreeIrJsTextTest : AbstractFirIrJsTextTestBase(FirParser.LightTree)

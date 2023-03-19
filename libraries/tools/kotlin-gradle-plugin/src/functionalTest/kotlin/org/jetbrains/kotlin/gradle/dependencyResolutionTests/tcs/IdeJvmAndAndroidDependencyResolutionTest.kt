@@ -10,7 +10,9 @@ package org.jetbrains.kotlin.gradle.dependencyResolutionTests.tcs
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.mavenCentralCacheRedirector
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.*
+import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.IdeJvmAndAndroidPlatformBinaryDependencyResolver
 import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImport
 import org.jetbrains.kotlin.gradle.util.*
@@ -25,13 +27,14 @@ class IdeJvmAndAndroidDependencyResolutionTest {
         assumeAndroidSdkAvailable()
     }
 
-    private fun Project.configureAndroidAndMultiplatform() {
-        enableDefaultStdlibDependency(false)
+    private fun Project.configureAndroidAndMultiplatform(enableDefaultStdlib: Boolean = false) {
+        enableDefaultStdlibDependency(enableDefaultStdlib)
         enableDependencyVerification(false)
         setMultiplatformAndroidSourceSetLayoutVersion(2)
         applyMultiplatformPlugin()
         plugins.apply("com.android.library")
         androidExtension.compileSdkVersion(33)
+        if (enableDefaultStdlib) repositories.mavenLocal()
         repositories.mavenCentralCacheRedirector()
 
         project.multiplatformExtension.targetHierarchy.custom {
@@ -48,9 +51,14 @@ class IdeJvmAndAndroidDependencyResolutionTest {
 
     }
 
+    private fun Project.assertBinaryDependencies(sourceSetName: String, notation: Any) {
+        project.kotlinIdeMultiplatformImport.resolveDependencies(sourceSetName).filterIsInstance<IdeaKotlinResolvedBinaryDependency>()
+            .assertMatches(notation)
+    }
+
     @Test
     fun `test - MVIKotlin - on jvmAndAndroidMain`() {
-        val project = buildProject { configureAndroidAndMultiplatform() }
+        val project = buildProject { configureAndroidAndMultiplatform(enableDefaultStdlib = false) }
         val kotlin = project.multiplatformExtension
         kotlin.sourceSets.getByName("commonMain").dependencies {
             implementation("com.arkivanov.mvikotlin:mvikotlin:3.0.2")
@@ -62,12 +70,10 @@ class IdeJvmAndAndroidDependencyResolutionTest {
             binaryCoordinates("com.arkivanov.mvikotlin:mvikotlin-jvm:3.0.2"),
             binaryCoordinates("com.arkivanov.essenty:lifecycle-jvm:0.4.2"),
             binaryCoordinates("com.arkivanov.essenty:instance-keeper-jvm:0.4.2"),
-            binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10"),
+            binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10"), // transitive
             binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.7.10"),
             binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib:1.7.10"),
             binaryCoordinates("org.jetbrains:annotations:13.0"),
-            /* This resolver cannot differentiate between non-hmpp metadata libraries and platform libraries. This is OK */
-            binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib-common:1.7.10")
         )
 
         IdeJvmAndAndroidPlatformBinaryDependencyResolver(project).resolve(kotlin.sourceSets.getByName("jvmAndAndroidMain"))
@@ -104,5 +110,51 @@ class IdeJvmAndAndroidDependencyResolutionTest {
             regularSourceDependency(":producer/commonMain"),
             regularSourceDependency(":producer/jvmAndAndroidMain"),
         )
+    }
+
+    @Test
+    fun `test - default stdlib with no other dependencies`() {
+        val project = buildProject { configureAndroidAndMultiplatform(enableDefaultStdlib = true) }
+        project.evaluate()
+
+        val stdlibVersion = project.getKotlinPluginVersion()
+        val stdlibDependencies = listOf(
+            binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib:${stdlibVersion}"),
+            binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib-jdk7:${stdlibVersion}"),
+            binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${stdlibVersion}"),
+            binaryCoordinates("org.jetbrains:annotations:13.0"),
+        )
+
+        project.assertBinaryDependencies("commonMain", stdlibDependencies)
+        project.assertBinaryDependencies("jvmAndAndroidMain", stdlibDependencies)
+        project.assertBinaryDependencies("commonTest", stdlibDependencies)
+        project.assertBinaryDependencies("jvmAndAndroidTest", stdlibDependencies)
+    }
+
+    @Test
+    fun `test - MVIKotlin - binary dependencies - with stdlib enabled by default`() {
+        val project = buildProject { configureAndroidAndMultiplatform(enableDefaultStdlib = true) }
+        val kotlin = project.multiplatformExtension
+        kotlin.sourceSets.getByName("commonMain").dependencies {
+            implementation("com.arkivanov.mvikotlin:mvikotlin:3.0.2")
+        }
+
+        project.evaluate()
+
+        val kgpVersion = project.getKotlinPluginVersion()
+        val jvmAndAndroidDependencies = listOf(
+            binaryCoordinates("com.arkivanov.mvikotlin:mvikotlin-jvm:3.0.2"),
+            binaryCoordinates("com.arkivanov.essenty:lifecycle-jvm:0.4.2"),
+            binaryCoordinates("com.arkivanov.essenty:instance-keeper-jvm:0.4.2"),
+            binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kgpVersion"), // uplifted to plugin version
+            binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kgpVersion"),
+            binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib:$kgpVersion"),
+            binaryCoordinates("org.jetbrains:annotations:13.0"),
+        )
+
+        project.assertBinaryDependencies("commonMain", jvmAndAndroidDependencies)
+        project.assertBinaryDependencies("jvmAndAndroidMain", jvmAndAndroidDependencies)
+        project.assertBinaryDependencies("commonTest", jvmAndAndroidDependencies)
+        project.assertBinaryDependencies("jvmAndAndroidTest", jvmAndAndroidDependencies)
     }
 }

@@ -38,7 +38,7 @@ fun case_5(): Boolean? {
 
 // TESTCASE NUMBER: 6
 fun case_6(value_1: Boolean): Boolean? {
-    contract { <!ERROR_IN_CONTRACT_DESCRIPTION!>returns(null) implies <!ARGUMENT_TYPE_MISMATCH!>contract { returns(null) implies (!value_1) }<!><!> }
+    contract { <!ERROR_IN_CONTRACT_DESCRIPTION!>returns(null) implies <!ARGUMENT_TYPE_MISMATCH!><!CONTRACT_NOT_ALLOWED!>contract<!> { returns(null) implies (!value_1) }<!><!> }
     return null
 }
 

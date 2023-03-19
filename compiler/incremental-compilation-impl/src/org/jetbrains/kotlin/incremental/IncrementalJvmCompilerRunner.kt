@@ -104,7 +104,7 @@ fun makeIncrementally(
                     cachesDir,
                     buildReporter,
                     // Use precise setting in case of non-Gradle build
-                    usePreciseJavaTracking = !useK2, // TODO: add fir-based java classes tracker when available and set this to true
+                    usePreciseJavaTracking = !useK2, // TODO: add fir-based java classes tracker when available and set this to true (KT-57147)
                     buildHistoryFile = buildHistoryFile,
                     outputDirs = null,
                     modulesApiHistory = EmptyModulesApiHistory,
@@ -142,6 +142,7 @@ open class IncrementalJvmCompilerRunner(
     private val classpathChanges: ClasspathChanges,
     withAbiSnapshot: Boolean = false,
     preciseCompilationResultsBackup: Boolean = false,
+    keepIncrementalCompilationCachesInMemory: Boolean = false,
 ) : IncrementalCompilerRunner<K2JVMCompilerArguments, IncrementalJvmCachesManager>(
     workingDir,
     "caches-jvm",
@@ -150,15 +151,13 @@ open class IncrementalJvmCompilerRunner(
     outputDirs = outputDirs,
     withAbiSnapshot = withAbiSnapshot,
     preciseCompilationResultsBackup = preciseCompilationResultsBackup,
+    keepIncrementalCompilationCachesInMemory = keepIncrementalCompilationCachesInMemory,
 ) {
-    override fun createIncrementalCompilationContext(projectDir: File?, transaction: CompilationTransaction) =
-        IncrementalCompilationContext(
-            transaction = transaction,
-            rootProjectDir = projectDir,
-            reporter = reporter,
-            trackChangesInLookupCache = classpathChanges is ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun,
-            storeFullFqNamesInLookupCache = withAbiSnapshot || classpathChanges is ClasspathChanges.ClasspathSnapshotEnabled,
-        )
+    override val shouldTrackChangesInLookupCache
+        get() = classpathChanges is ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun
+
+    override val shouldStoreFullFqNamesInLookupCache
+        get() = withAbiSnapshot || classpathChanges is ClasspathChanges.ClasspathSnapshotEnabled
 
     override fun createCacheManager(icContext: IncrementalCompilationContext, args: K2JVMCompilerArguments) =
         IncrementalJvmCachesManager(icContext, args.destination?.let { File(it) }, cacheDirectory)
@@ -473,7 +472,8 @@ open class IncrementalJvmCompilerRunner(
         isIncremental: Boolean
     ): Services.Builder =
         super.makeServices(args, lookupTracker, expectActualTracker, caches, dirtySources, isIncremental).apply {
-            val targetId = TargetId(args.moduleName!!, "java-production")
+            val moduleName = requireNotNull(args.moduleName) { "'moduleName' is null!" }
+            val targetId = TargetId(moduleName, "java-production")
             val targetToCache = mapOf(targetId to caches.platformCache)
             val incrementalComponents = IncrementalCompilationComponentsImpl(targetToCache)
             register(IncrementalCompilationComponents::class.java, incrementalComponents)

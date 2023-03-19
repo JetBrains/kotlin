@@ -16,6 +16,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.internal.customizeKotlinDependencies
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImport
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTargetPreset
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinWasmTargetPreset
+import org.jetbrains.kotlin.gradle.targets.native.createFatFrameworks
 import org.jetbrains.kotlin.gradle.targets.native.tasks.artifact.registerKotlinArtifactsExtension
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompileTool
 import org.jetbrains.kotlin.gradle.tasks.locateTask
@@ -80,6 +82,7 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
         project.locateOrRegisterIdeResolveDependenciesTask()
 
         project.addBuildListenerForXcode()
+        project.whenEvaluated { kotlinMultiplatformExtension.createFatFrameworks() }
     }
 
     private fun exportProjectStructureMetadataForOtherBuilds(
@@ -243,6 +246,14 @@ internal fun applyUserDefinedAttributes(target: AbstractKotlinTarget) {
             compilation.relatedConfigurationNames
                 .mapNotNull { configurationName -> target.project.configurations.findByName(configurationName) }
                 .forEach { configuration -> copyAttributes(compilationAttributes, configuration.attributes) }
+        }
+
+        // Copy to host-specific metadata elements configurations
+        if (target is KotlinNativeTarget) {
+            val hostSpecificMetadataElements = project.configurations.findByName(target.hostSpecificMetadataElementsConfigurationName)
+            if (hostSpecificMetadataElements != null) {
+                copyAttributes(from = target.attributes, to = hostSpecificMetadataElements.attributes)
+            }
         }
     }
 }

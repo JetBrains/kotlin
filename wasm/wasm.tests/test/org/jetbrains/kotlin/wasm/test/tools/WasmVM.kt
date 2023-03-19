@@ -17,30 +17,28 @@ internal sealed class WasmVM(val shortName: String) {
     val name: String = javaClass.simpleName
     protected val tool = ExternalTool(System.getProperty("javascript.engine.path.$name"))
 
-    abstract fun run(entryMjs: String, jsFilesBefore: List<String>, jsFilesAfter: List<String>, workingDirectory: File?)
+    abstract fun run(entryMjs: String, jsFiles: List<String>, workingDirectory: File?)
 
     object V8 : WasmVM("V8") {
-        override fun run(entryMjs: String, jsFilesBefore: List<String>, jsFilesAfter: List<String>, workingDirectory: File?) {
+        override fun run(entryMjs: String, jsFiles: List<String>, workingDirectory: File?) {
             tool.run(
                 "--experimental-wasm-gc",
-                *jsFilesBefore.toTypedArray(),
+                *jsFiles.toTypedArray(),
                 "--module",
                 entryMjs,
-                *jsFilesAfter.toTypedArray(),
                 workingDirectory = workingDirectory
             )
         }
     }
 
     object SpiderMonkey : WasmVM("SM") {
-        override fun run(entryMjs: String, jsFilesBefore: List<String>, jsFilesAfter: List<String>, workingDirectory: File?) {
+        override fun run(entryMjs: String, jsFiles: List<String>, workingDirectory: File?) {
             tool.run(
                 "--wasm-verbose",
                 "--wasm-gc",
                 "--wasm-function-references",
-                *jsFilesBefore.flatMap { listOf("-f", it) }.toTypedArray(),
+                *jsFiles.flatMap { listOf("-f", it) }.toTypedArray(),
                 "--module=$entryMjs",
-                *jsFilesAfter.flatMap { listOf("-f", it) }.toTypedArray(),
                 workingDirectory = workingDirectory
             )
         }

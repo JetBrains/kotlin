@@ -24,16 +24,15 @@ import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.nio.file.Path
 import java.util.zip.ZipFile
-import kotlin.io.path.absolutePathString
-import kotlin.io.path.appendText
-import kotlin.io.path.writeText
+import kotlin.io.path.*
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
+import kotlin.test.fail
 
 @MppGradlePluginTests
 @DisplayName("Hierarchical multiplatform")
-class HierarchicalMppIT : KGPBaseTest() {
+open class HierarchicalMppIT : KGPBaseTest() {
 
     private val String.withPrefix get() = "hierarchical-mpp-published-modules/$this"
 
@@ -277,7 +276,8 @@ class HierarchicalMppIT : KGPBaseTest() {
                         "my-lib-foo-metadata-1.0-all.jar",
                         "my-lib-bar-metadata-1.0-all.jar",
                         "third-party-lib-metadata-1.0.jar",
-                        "kotlin-test-js-${buildOptions.kotlinVersion}.jar"
+                        "kotlin-test-js-${buildOptions.kotlinVersion}.jar",
+                        "kotlin-dom-api-compat-${buildOptions.kotlinVersion}.klib"
                     ),
                     transformedArtifacts()
                 )
@@ -328,12 +328,7 @@ class HierarchicalMppIT : KGPBaseTest() {
     fun testMultiModulesHmppKt48370(gradleVersion: GradleVersion) {
         project(
             "hierarchical-mpp-multi-modules",
-            gradleVersion,
-            buildOptions = defaultBuildOptions.suppressDeprecationWarningsSinceGradleVersion(
-                TestVersions.Gradle.G_7_4,
-                gradleVersion,
-                "Workaround for KT-55751"
-            )
+            gradleVersion
         ) {
             build("assemble")
         }
@@ -922,6 +917,54 @@ class HierarchicalMppIT : KGPBaseTest() {
     }
 
     @GradleTest
+    @OsCondition(enabledOnCI = [OS.LINUX, OS.MAC, OS.WINDOWS])
+    @DisplayName("Sources publication can be disabled per target")
+    fun testDisableSourcesPublication(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
+        project(
+            "mpp-sources-publication/producer",
+            gradleVersion = gradleVersion,
+            localRepoDir = tempDir
+        ) {
+            // Disable sources publication for all targets except JVM
+            buildGradleKts.appendText(
+                """
+                    kotlin {
+                        withSourcesJar(publish = false)
+                    }
+                    
+                    kotlin.targets.getByName("jvm").withSourcesJar()
+                """.trimIndent()
+            )
+
+            build("publish")
+
+            val gradleModuleFileContent = tempDir.resolve("test/lib/1.0/lib-1.0.module").readText()
+            fun assertNoSourcesPublished(expectedJarLocation: String, variantName: String) {
+                val jarFile = tempDir.resolve(expectedJarLocation).toFile()
+                if (jarFile.exists()) fail("Sources jar '$expectedJarLocation' shouldn't be published")
+                if (gradleModuleFileContent.contains(variantName)) fail("Variant '$variantName' shouldn't be published")
+            }
+
+            assertNoSourcesPublished("test/lib/1.0/lib-1.0-sources.jar", "metadataSourcesElements")
+            assertNoSourcesPublished("test/lib-linuxx64/1.0/lib-linuxx64-1.0-sources.jar", "linuxX64SourcesElements-published")
+            assertNoSourcesPublished("test/lib-linuxarm64/1.0/lib-linuxarm64-1.0-sources.jar", "linuxArm64SourcesElements-published")
+            if (OS.MAC.isCurrentOs) {
+                assertNoSourcesPublished("test/lib-iosx64/1.0/lib-iosx64-1.0-sources.jar", "iosX64SourcesElements-published")
+                assertNoSourcesPublished("test/lib-iosarm64/1.0/lib-iosarm64-1.0-sources.jar", "iosArm64SourcesElements-published")
+            }
+
+            // Check that JVM sources were published
+            val jvmSourcesJar = tempDir.resolve("test/lib-jvm/1.0/lib-jvm-1.0-sources.jar")
+            if (!jvmSourcesJar.exists()) {
+                fail("JVM Sources should be published")
+            }
+            if (!gradleModuleFileContent.contains("jvmSourcesElements-published")) {
+                fail("'jvmSourcesElements-published' variant should be published")
+            }
+        }
+    }
+
+    @GradleTest
     @DisplayName("KT-44845: all external dependencies is unresolved in IDE with kotlin.mpp.enableGranularSourceSetsMetadata=true")
     fun testMixedScopesFilesExistKt44845(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
         publishThirdPartyLib(withGranularMetadata = true, gradleVersion = gradleVersion, localRepoDir = tempDir)
@@ -1065,6 +1108,27 @@ class HierarchicalMppIT : KGPBaseTest() {
         }
     }
 
+    @GradleTest
+    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_7_1)
+    @DisplayName("KT-51940: Test ArtifactCollection.getResolvedArtifactsCompat with Gradle earlier than 7.4")
+    fun `test getResolvedArtifactsCompat with Gradle earlier than 7_4`(gradleVersion: GradleVersion) {
+        project("kt-51940-hmpp-resolves-configurations-during-configuration", gradleVersion = gradleVersion) {
+            build("assemble", "--dry-run") {
+                assertOutputContains("Configuration Resolved")
+            }
+        }
+    }
+
+    @GradleTest
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
+    @DisplayName("KT-51940: Configurations should not resolved during configuration phase")
+    fun `test configurations should not resolved during configuration phase`(gradleVersion: GradleVersion) {
+        project("kt-51940-hmpp-resolves-configurations-during-configuration", gradleVersion = gradleVersion) {
+            build("assemble", "--dry-run") {
+                assertOutputDoesNotContain("Configuration Resolved")
+            }
+        }
+    }
 
     private fun TestProject.testDependencyTransformations(
         subproject: String? = null,

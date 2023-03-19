@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.calleeReference
 import org.jetbrains.kotlin.fir.expressions.dispatchReceiver
+import org.jetbrains.kotlin.fir.expressions.unwrapSmartcastExpression
 import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -51,7 +52,7 @@ class PropertyInitializationInfoCollector(
         data: PathAwarePropertyInitializationInfo
     ): PathAwarePropertyInitializationInfo {
         val dataForNode = visitNode(node, data)
-        val receiver = (node.fir.dispatchReceiver as? FirThisReceiverExpression)?.calleeReference?.boundSymbol
+        val receiver = (node.fir.dispatchReceiver.unwrapSmartcastExpression() as? FirThisReceiverExpression)?.calleeReference?.boundSymbol
         if (receiver != expectedReceiver) return dataForNode
         val symbol = node.fir.calleeReference?.toResolvedPropertySymbol() ?: return dataForNode
         if (symbol !in localProperties) return dataForNode
@@ -71,6 +72,18 @@ class PropertyInitializationInfoCollector(
             else ->
                 overwriteRange(dataForNode, node.fir.symbol, EventOccurrencesRange.EXACTLY_ONCE)
         }
+    }
+
+    override fun visitPropertyInitializerExitNode(
+        node: PropertyInitializerExitNode,
+        data: PathAwareControlFlowInfo<PropertyInitializationInfo>
+    ): PathAwareControlFlowInfo<PropertyInitializationInfo> {
+        // If member property initializer is empty (there are no nodes between enter and exit node)
+        //   then property is not initialized in its declaration
+        // Otherwise it is
+        val dataForNode = visitNode(node, data)
+        if (node.firstPreviousNode is PropertyInitializerEnterNode) return dataForNode
+        return overwriteRange(dataForNode, node.fir.symbol, EventOccurrencesRange.EXACTLY_ONCE)
     }
 
     // --------------------------------------------------

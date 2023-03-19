@@ -74,7 +74,7 @@ class FirGeneratedClassDeclaredMemberScope private constructor(
         generateMemberProperties(callableId)
     }
 
-    private val constructorCache: FirLazyValue<List<FirConstructorSymbol>, Nothing?> = firCachesFactory.createLazyValue {
+    private val constructorCache: FirLazyValue<List<FirConstructorSymbol>> = firCachesFactory.createLazyValue {
         generateConstructors()
     }
 

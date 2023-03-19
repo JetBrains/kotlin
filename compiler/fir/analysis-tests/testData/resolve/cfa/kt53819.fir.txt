@@ -1,0 +1,20 @@
+FILE: kt53819.kt
+    public final fun bar(): R|kotlin/Unit| {
+        local final class Foo : R|kotlin/Any| {
+            private final var _x: R|kotlin/Int|
+                private get(): R|kotlin/Int|
+                private set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+            public constructor(x: R|kotlin/Int|): R|Foo| {
+                super<R|kotlin/Any|>()
+                this@R|/Foo|.R|<local>/_x| = R|<local>/x|
+            }
+
+            public final val x: R|kotlin/Int|
+                public get(): R|kotlin/Int| {
+                    ^ this@R|/Foo|.R|<local>/_x|
+                }
+
+        }
+
+    }

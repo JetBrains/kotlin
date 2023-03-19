@@ -40,8 +40,9 @@ public final class Container /* p1.Container*/ {
     @java.lang.Override()
     public char get(int);//  get(int)
 
-    public  MyString();//  .ctor()
-
+    @java.lang.Override()
     public int getLength();//  getLength()
+
+    public  MyString();//  .ctor()
   }
 }

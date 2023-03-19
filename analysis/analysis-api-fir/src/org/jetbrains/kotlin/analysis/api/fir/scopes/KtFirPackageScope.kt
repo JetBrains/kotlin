@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirPackageMemberScope
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.platform.jvm.isJvm
 
 internal class KtFirPackageScope(
     private val fqName: FqName,
@@ -111,21 +110,8 @@ internal class KtFirPackageScope(
 
     override fun getPackageSymbols(nameFilter: KtScopeNameFilter): Sequence<KtPackageSymbol> = withValidityAssertion {
         sequence {
-            if (targetPlatform.isJvm()) {
-                val javaPackage = JavaPsiFacade.getInstance(project).findPackage(fqName.asString())
-                if (javaPackage != null) {
-                    for (psiPackage in javaPackage.getSubPackages(searchScope)) {
-                        val fqName = FqName(psiPackage.qualifiedName)
-                        if (nameFilter(fqName.shortName())) {
-                            yield(builder.createPackageSymbol(fqName))
-                        }
-                    }
-                }
-            }
-            packageProvider.getKotlinSubPackageFqNames(fqName).forEach {
-                if (nameFilter(it)) {
-                    yield(builder.createPackageSymbol(fqName.child(it)))
-                }
+            packageProvider.getSubPackageFqNames(fqName, targetPlatform, nameFilter).forEach {
+                yield(builder.createPackageSymbol(fqName.child(it)))
             }
         }
     }

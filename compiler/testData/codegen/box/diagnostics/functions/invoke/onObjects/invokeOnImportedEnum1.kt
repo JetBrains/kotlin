@@ -1,4 +1,3 @@
-// WITH_STDLIB
 import A.ONE
 
 enum class A {

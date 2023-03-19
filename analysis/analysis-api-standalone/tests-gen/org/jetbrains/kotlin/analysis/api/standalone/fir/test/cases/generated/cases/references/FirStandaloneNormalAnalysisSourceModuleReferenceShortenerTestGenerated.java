@@ -197,6 +197,42 @@ public class FirStandaloneNormalAnalysisSourceModuleReferenceShortenerTestGenera
     }
 
     @Test
+    @TestMetadata("nestedClassFromSupertypes.kt")
+    public void testNestedClassFromSupertypes() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/nestedClassFromSupertypes.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedClassFromSupertypes2.kt")
+    public void testNestedClassFromSupertypes2() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/nestedClassFromSupertypes2.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedClassFromSupertypes3.kt")
+    public void testNestedClassFromSupertypes3() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/nestedClassFromSupertypes3.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedClassFromSupertypes4.kt")
+    public void testNestedClassFromSupertypes4() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/nestedClassFromSupertypes4.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedClassFromSupertypes5.kt")
+    public void testNestedClassFromSupertypes5() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/nestedClassFromSupertypes5.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedClassFromSupertypes6.kt")
+    public void testNestedClassFromSupertypes6() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/nestedClassFromSupertypes6.kt");
+    }
+
+    @Test
     @TestMetadata("parameterTypeTopLevelTypeLoses.kt")
     public void testParameterTypeTopLevelTypeLoses() throws Exception {
         runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/parameterTypeTopLevelTypeLoses.kt");

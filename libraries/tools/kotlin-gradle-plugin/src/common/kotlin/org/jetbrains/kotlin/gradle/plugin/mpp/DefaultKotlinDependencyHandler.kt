@@ -106,7 +106,7 @@ class DefaultKotlinDependencyHandler(
         version: String,
     ): NpmDependency =
         NpmDependency(
-            project = project,
+            objectFactory = project.objects,
             name = name,
             version = version,
         )
@@ -134,7 +134,7 @@ class DefaultKotlinDependencyHandler(
         version: String
     ): NpmDependency =
         NpmDependency(
-            project = project,
+            objectFactory = project.objects,
             name = name,
             version = version,
             scope = NpmDependency.Scope.DEV
@@ -161,7 +161,7 @@ class DefaultKotlinDependencyHandler(
         version: String,
     ): NpmDependency =
         NpmDependency(
-            project = project,
+            objectFactory = project.objects,
             name = name,
             version = version,
             scope = NpmDependency.Scope.OPTIONAL,
@@ -190,7 +190,7 @@ class DefaultKotlinDependencyHandler(
         version: String
     ): NpmDependency =
         NpmDependency(
-            project = project,
+            objectFactory = project.objects,
             name = name,
             version = version,
             scope = NpmDependency.Scope.PEER
@@ -202,7 +202,7 @@ class DefaultKotlinDependencyHandler(
         scope: NpmDependency.Scope,
     ): NpmDependency =
         directoryNpmDependency(
-            project = project,
+            objectFactory = project.objects,
             name = name,
             directory = directory,
             scope = scope,

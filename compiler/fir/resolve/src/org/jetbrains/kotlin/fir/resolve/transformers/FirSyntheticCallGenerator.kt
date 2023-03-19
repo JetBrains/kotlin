@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirSimpleFunctionBuilder
@@ -21,6 +23,7 @@ import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.impl.FirStubReference
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
+import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.createErrorReferenceWithExistingCandidate
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableCandidateError
@@ -152,34 +155,36 @@ class FirSyntheticCallGenerator(
     ): FirCallableReferenceAccess? {
         val argumentList = buildUnaryArgumentList(callableReferenceAccess)
 
-        val typeArguments =
+        val parameterTypeRef =
             when {
-                expectedTypeRef is FirResolvedTypeRef && !expectedTypeRef.coneType.isUnitOrFlexibleUnit -> listOf(
-                    buildTypeProjectionWithVariance {
-                        variance = Variance.INVARIANT
-                        typeRef = expectedTypeRef
-                    }
-                )
-                else -> emptyList()
+                expectedTypeRef is FirResolvedTypeRef && !expectedTypeRef.coneType.isUnitOrFlexibleUnit -> expectedTypeRef
+                else -> context.session.builtinTypes.anyType
             }
+
+        val callableId = SyntheticCallableId.ACCEPT_SPECIFIC_TYPE
+        val functionSymbol = FirSyntheticFunctionSymbol(callableId)
+        // fun accept(p: <parameterTypeRef>): Unit
+        val function =
+            generateMemberFunction(functionSymbol, callableId.callableName, returnType = context.session.builtinTypes.unitType).apply {
+                valueParameters += parameterTypeRef.toValueParameter("reference", functionSymbol, isVararg = false)
+            }.build()
 
         val reference =
             generateCalleeReferenceWithCandidate(
                 callableReferenceAccess,
-                idFunction,
+                function,
                 argumentList,
-                SyntheticCallableId.ID.callableName,
+                callableId.callableName,
                 CallKind.SyntheticIdForCallableReferencesResolution,
                 context,
-                typeArguments,
             )
         val fakeCallElement = buildFunctionCall {
             calleeReference = reference
             this.argumentList = argumentList
         }
 
-        val argument = components.callCompleter.completeCall(fakeCallElement, expectedTypeRef).result.argument
-        return ((argument as? FirVarargArgumentsExpression)?.arguments?.get(0) ?: argument) as FirCallableReferenceAccess?
+        val argument = components.callCompleter.completeCall(fakeCallElement, ResolutionMode.ContextIndependent).result.argument
+        return argument as FirCallableReferenceAccess?
     }
 
     private fun generateCalleeReferenceWithCandidate(
@@ -189,9 +194,8 @@ class FirSyntheticCallGenerator(
         name: Name,
         callKind: CallKind = CallKind.SyntheticSelect,
         context: ResolutionContext,
-        typeArguments: List<FirTypeProjection> = emptyList()
     ): FirNamedReferenceWithCandidate {
-        val callInfo = generateCallInfo(callSite, name, argumentList, callKind, typeArguments)
+        val callInfo = generateCallInfo(callSite, name, argumentList, callKind)
         val candidate = generateCandidate(callInfo, function, context)
         val applicability = components.resolutionStageRunner.processCandidate(candidate, context)
         if (applicability <= CandidateApplicability.INAPPLICABLE) {
@@ -204,7 +208,7 @@ class FirSyntheticCallGenerator(
             )
         }
 
-        return FirNamedReferenceWithCandidate(null, name, candidate)
+        return FirNamedReferenceWithCandidate(callSite.source?.fakeElement(KtFakeSourceElementKind.SyntheticCall), name, candidate)
     }
 
     private fun generateCandidate(callInfo: CallInfo, function: FirSimpleFunction, context: ResolutionContext): Candidate {
@@ -222,7 +226,6 @@ class FirSyntheticCallGenerator(
         name: Name,
         argumentList: FirArgumentList,
         callKind: CallKind,
-        typeArguments: List<FirTypeProjection> = emptyList()
     ) = CallInfo(
         callSite = callSite,
         callKind = callKind,
@@ -230,7 +233,7 @@ class FirSyntheticCallGenerator(
         explicitReceiver = null,
         argumentList = argumentList,
         isImplicitInvoke = false,
-        typeArguments = typeArguments,
+        typeArguments = emptyList(),
         session = session,
         containingFile = components.file,
         containingDeclarations = components.containingDeclarations
@@ -347,17 +350,7 @@ class FirSyntheticCallGenerator(
             origin = FirDeclarationOrigin.Synthetic
             this.symbol = symbol
             this.name = name
-            status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL).apply {
-                isExpect = false
-                isActual = false
-                isOverride = false
-                isOperator = false
-                isInfix = false
-                isInline = false
-                isTailRec = false
-                isExternal = false
-                isSuspend = false
-            }
+            status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL)
             returnTypeRef = returnType
             resolvePhase = FirResolvePhase.BODY_RESOLVE
         }

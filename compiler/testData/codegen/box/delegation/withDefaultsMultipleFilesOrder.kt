@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_K2: JS_IR, NATIVE
 // FILE: lib.kt
 interface ResolutionScope {
     fun getContributedDescriptors(s: String = "OK"): String

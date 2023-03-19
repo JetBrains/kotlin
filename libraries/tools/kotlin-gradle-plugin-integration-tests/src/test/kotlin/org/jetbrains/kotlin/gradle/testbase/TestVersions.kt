@@ -37,7 +37,6 @@ interface TestVersions {
     }
 
     object AGP {
-        const val AGP_41 = "4.1.3"
         const val AGP_42 = "4.2.2"
         const val AGP_70 = "7.0.4"
         const val AGP_71 = "7.1.3"
@@ -46,7 +45,7 @@ interface TestVersions {
         const val AGP_74 = "7.4.0"
         const val AGP_80 = "8.0.0-alpha11"
 
-        const val MIN_SUPPORTED = AGP_41 // KotlinAndroidPlugin.MINIMAL_SUPPORTED_AGP_VERSION
+        const val MIN_SUPPORTED = AGP_42 // KotlinAndroidPlugin.minimalSupportedAgpVersion
         const val MAX_SUPPORTED = AGP_74 // Update once Gradle MAX_SUPPORTED version will be bumped
     }
 
@@ -56,7 +55,6 @@ interface TestVersions {
         val maxSupportedGradleVersion: GradleVersion,
         val requiredJdkVersion: JavaVersion
     ) {
-        AGP_41(AGP.AGP_41, GradleVersion.version(Gradle.MIN_SUPPORTED), GradleVersion.version(Gradle.G_6_9), JavaVersion.VERSION_1_8),
         AGP_42(AGP.AGP_42, GradleVersion.version(Gradle.MIN_SUPPORTED), GradleVersion.version(Gradle.G_6_9), JavaVersion.VERSION_1_8),
         AGP_70(AGP.AGP_70, GradleVersion.version(Gradle.G_7_0), GradleVersion.version(Gradle.G_7_4), JavaVersion.VERSION_11),
         AGP_71(AGP.AGP_71, GradleVersion.version(Gradle.G_7_2), GradleVersion.version(Gradle.G_7_4), JavaVersion.VERSION_11),

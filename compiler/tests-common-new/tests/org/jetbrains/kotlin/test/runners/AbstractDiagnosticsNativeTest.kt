@@ -7,13 +7,11 @@ package org.jetbrains.kotlin.test.runners
 
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.test.Constructor
+import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.classicFrontendHandlersStep
 import org.jetbrains.kotlin.test.builders.firHandlersStep
-import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
-import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
-import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
-import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
+import org.jetbrains.kotlin.test.directives.*
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
 import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicDiagnosticsHandler
@@ -88,7 +86,7 @@ abstract class AbstractDiagnosticsNativeTest : AbstractDiagnosticsNativeTestBase
     }
 }
 
-abstract class AbstractFirNativeDiagnosticsTest : AbstractDiagnosticsNativeTestBase<FirOutputArtifact>() {
+abstract class AbstractFirNativeDiagnosticsTestBase(val parser: FirParser) : AbstractDiagnosticsNativeTestBase<FirOutputArtifact>() {
     override val targetFrontend: FrontendKind<FirOutputArtifact>
         get() = FrontendKinds.FIR
 
@@ -110,22 +108,18 @@ abstract class AbstractFirNativeDiagnosticsTest : AbstractDiagnosticsNativeTestB
 
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
-        builder.enableLazyResolvePhaseChecking()
-
-        builder.forTestsMatching("compiler/testData/diagnostics/*") {
-            configurationForClassicAndFirTestsAlongside()
-        }
-    }
-}
-
-abstract class AbstractFirNativeDiagnosticsWithLightTreeTest : AbstractFirNativeDiagnosticsTest() {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
         with(builder) {
-            defaultDirectives {
-                +FirDiagnosticsDirectives.USE_LIGHT_TREE
+            configureFirParser(parser)
+            enableLazyResolvePhaseChecking()
+
+            forTestsMatching("compiler/testData/diagnostics/*") {
+                configurationForClassicAndFirTestsAlongside()
             }
         }
     }
 }
+
+abstract class AbstractFirPsiNativeDiagnosticsTest : AbstractFirNativeDiagnosticsTestBase(FirParser.Psi)
+abstract class AbstractFirLightTreeNativeDiagnosticsTest : AbstractFirNativeDiagnosticsTestBase(FirParser.LightTree)
+
 

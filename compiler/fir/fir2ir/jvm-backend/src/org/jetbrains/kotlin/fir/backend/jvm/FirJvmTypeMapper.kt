@@ -65,6 +65,9 @@ class FirJvmTypeMapper(val session: FirSession) : FirSessionComponent {
         return AbstractTypeMapper.mapType(context, type, mode, sw)
     }
 
+    fun isPrimitiveBacked(type: ConeKotlinType): Boolean =
+        AbstractTypeMapper.isPrimitiveBacked(defaultContext, type)
+
     private val defaultContext = Context { null }
     val typeContext: TypeSystemCommonBackendContext
         get() = defaultContext.typeContext

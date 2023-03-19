@@ -175,8 +175,8 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
             symbol = FirNamedFunctionSymbol(callableId)
             origin = SerializationPluginKey.origin
             status = original.status.copy(modality = Modality.FINAL)
-
         }
+        copy.excludeFromJsExport()
         return listOf(copy.symbol)
     }
 
@@ -208,6 +208,8 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
             }
         }
 
+        function.excludeFromJsExport()
+
         return function.symbol
     }
 
@@ -223,6 +225,8 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
             callableId.callableName,
             target.resolvedReturnType
         )
+
+        property.excludeFromJsExport()
 
         return listOf(property.symbol)
     }
@@ -270,6 +274,7 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
         }
         // TODO: add deprecate hidden
         // serializerFirClass.replaceAnnotations(listOf(Annotations.create(listOf(KSerializerDescriptorResolver.createDeprecatedHiddenAnnotation(thisDescriptor.module)))))
+        serializerFirClass.excludeFromJsExport()
 
         return serializerFirClass.symbol
     }
@@ -282,6 +287,7 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
                 superType(serializerFactoryClassId.constructClassLikeType(emptyArray(), false))
             }
         }
+
         return companion.symbol
     }
 

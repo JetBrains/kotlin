@@ -38,6 +38,8 @@ internal fun generateKotlinVersion(
                 println("fun fromVersion(version: String): KotlinVersion =")
                 println("    KotlinVersion.values().firstOrNull { it.version == version }")
                 println("        ?: throw IllegalArgumentException(\"Unknown Kotlin version: ${'$'}version\")")
+                println()
+                println("val DEFAULT = KOTLIN_${LanguageVersion.LATEST_STABLE.major}_${LanguageVersion.LATEST_STABLE.minor}")
             }
             println("}")
         }

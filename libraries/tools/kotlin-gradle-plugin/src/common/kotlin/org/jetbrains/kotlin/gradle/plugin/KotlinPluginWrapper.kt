@@ -162,6 +162,11 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
             KotlinTestReportCompatibilityHelper.KotlinTestReportCompatibilityHelperVariantFactory::class,
             DefaultKotlinTestReportCompatibilityHelperVariantFactory()
         )
+
+        factories.putIfAbsent(
+            ArtifactTypeAttributeAccessor.ArtifactTypeAttributeAccessorVariantFactory::class,
+            DefaultArtifactTypeAttributeAccessorVariantFactory()
+        )
     }
 
     protected fun setupAttributeMatchingStrategy(

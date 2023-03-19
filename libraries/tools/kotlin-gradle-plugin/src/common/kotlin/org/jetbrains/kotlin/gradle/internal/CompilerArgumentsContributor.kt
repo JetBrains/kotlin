@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.internal
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptionsDefault
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptionsHelper
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompileArgumentsProvider
@@ -68,7 +68,6 @@ internal open class KotlinJvmCompilerArgumentsContributor(
 ) : AbstractKotlinCompileArgumentsContributor<K2JVMCompilerArguments>(taskProvider) {
 
     private val taskName = taskProvider.taskName
-    private val moduleName = taskProvider.moduleName
     private val friendPaths = taskProvider.friendPaths
     private val compileClasspath = taskProvider.compileClasspath
     private val destinationDir = taskProvider.destinationDir
@@ -78,11 +77,11 @@ internal open class KotlinJvmCompilerArgumentsContributor(
         args: K2JVMCompilerArguments,
         flags: Collection<CompilerArgumentsConfigurationFlag>
     ) {
-        (compilerOptions as KotlinJvmCompilerOptionsDefault).fillDefaultValues(args)
+        KotlinJvmCompilerOptionsHelper.fillDefaultValues(args)
 
         super.contributeArguments(args, flags)
 
-        args.moduleName = moduleName
+        args.moduleName = compilerOptions.moduleName.orNull
         logger.kotlinDebug { "$taskName | args.moduleName = ${args.moduleName}" }
 
         args.friendPaths = friendPaths.files.map { it.absolutePath }.toTypedArray()
@@ -98,7 +97,7 @@ internal open class KotlinJvmCompilerArgumentsContributor(
         }
         args.destinationAsFile = destinationDir
 
-        compilerOptions.fillCompilerArguments(args)
+        KotlinJvmCompilerOptionsHelper.fillCompilerArguments(compilerOptions, args)
         logger.kotlinDebug { "$taskName | args.moduleName = ${args.moduleName} (w/ compilerOptions applied)" }
     }
 }

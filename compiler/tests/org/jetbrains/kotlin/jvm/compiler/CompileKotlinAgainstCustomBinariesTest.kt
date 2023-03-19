@@ -132,16 +132,11 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
             when (compiler) {
                 is K2JSCompiler -> compileJsLibrary(
                     libraryName,
-                    additionalOptions = libraryOptions + "-Xlegacy-deprecated-no-warn" + "-Xuse-deprecated-legacy-compiler"
+                    additionalOptions = libraryOptions + "-Xforce-deprecated-legacy-compiler-usage"
                 )
                 is K2JVMCompiler -> compileLibrary(libraryName, additionalOptions = libraryOptions)
                 else -> throw UnsupportedOperationException(compiler.toString())
             }
-
-        if (compiler is K2JSCompiler) {
-            // TODO: It will be deleted after all of our internal vendors will use the new Kotlin/JS compiler
-            CompilerSystemProperties.KOTLIN_JS_COMPILER_LEGACY_FORCE_ENABLED.value = "true"
-        }
 
         compileKotlin(
             "source.kt", usageDestination, listOf(result), compiler,
@@ -369,6 +364,11 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
 
     fun testRequireKotlin() {
         compileKotlin("source.kt", tmpdir, listOf(compileLibrary("library")))
+    }
+
+    fun testHasStableParameterNames() {
+        val library = compileLibrary("library", additionalOptions = listOf("-language-version", "2.0"))
+        compileKotlin("source.kt", tmpdir, listOf(library), additionalOptions = listOf("-language-version", "2.0"))
     }
 
     fun testRequireKotlinInNestedClasses() {

@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmFieldAnnotation
+import org.jetbrains.kotlin.light.classes.symbol.cachedValue
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
@@ -65,10 +66,7 @@ internal class SymbolLightClassForAnonymousObject : SymbolLightClassForClassLike
     override fun getExtendsList(): PsiReferenceList? = _extendsList
     override fun getImplementsList(): PsiReferenceList? = _implementsList
 
-    override fun getOwnFields(): List<KtLightField> = _ownFields
-    override fun getOwnMethods(): List<PsiMethod> = _ownMethods
-
-    private val _ownMethods: List<KtLightMethod> by lazyPub {
+    override fun getOwnMethods(): List<PsiMethod> = cachedValue {
         withClassOrObjectSymbol {
             val result = mutableListOf<KtLightMethod>()
             val declaredMemberScope = it.getDeclaredMemberScope()
@@ -79,7 +77,7 @@ internal class SymbolLightClassForAnonymousObject : SymbolLightClassForClassLike
         }
     }
 
-    private val _ownFields: List<KtLightField> by lazyPub {
+    override fun getOwnFields(): List<KtLightField> = cachedValue {
         val result = mutableListOf<KtLightField>()
         val nameGenerator = SymbolLightField.FieldNameGenerator()
 

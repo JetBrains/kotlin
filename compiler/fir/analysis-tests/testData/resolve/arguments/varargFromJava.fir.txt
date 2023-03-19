@@ -1,0 +1,11 @@
+FILE: main.kt
+    public final class Some : R|kotlin/Any| {
+        public constructor(): R|Some| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun test(handle: R|VarHandle|): R|kotlin/Unit| {
+            R|<local>/handle|.R|/VarHandle.set|(vararg(this@R|/Some|, Boolean(false)))
+        }
+
+    }

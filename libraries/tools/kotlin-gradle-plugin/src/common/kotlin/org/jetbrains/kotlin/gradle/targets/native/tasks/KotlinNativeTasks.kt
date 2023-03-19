@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmMetadataCompilationData
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmNativeCompilationData
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
-import org.jetbrains.kotlin.gradle.plugin.tcsOrNull
+import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.targets.native.KonanPropertiesBuildService
 import org.jetbrains.kotlin.gradle.targets.native.internal.isAllowCommonizer
 import org.jetbrains.kotlin.gradle.targets.native.tasks.*
@@ -50,6 +50,8 @@ import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.project.model.LanguageSettings
+import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
+import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 import java.io.File
 import java.nio.file.Files
 import javax.inject.Inject
@@ -198,7 +200,9 @@ abstract class AbstractKotlinNativeCompile<
         compilation.languageSettings
     }
 
-    @get:Input
+    @Suppress("DeprecatedCallableAddReplaceWith")
+    @get:Deprecated("Replaced with 'compilerOptions.progressiveMode'")
+    @get:Internal
     val progressiveMode: Boolean
         get() = languageSettings.progressiveMode
     // endregion.
@@ -307,12 +311,14 @@ internal constructor(
     @get:Internal
     @Transient  // can't be serialized for Gradle configuration cache
     final override val compilation: KotlinCompilationInfo,
+    override val compilerOptions: KotlinNativeCompilerOptions,
     private val objectFactory: ObjectFactory,
     private val providerFactory: ProviderFactory,
     private val execOperations: ExecOperations
 ) : AbstractKotlinNativeCompile<KotlinCommonOptions, StubK2NativeCompilerArguments>(objectFactory),
     KotlinCompile<KotlinCommonOptions>,
-    KotlinCompilationTask<KotlinCommonCompilerOptions> {
+    K2MultiplatformCompilationTask,
+    KotlinCompilationTask<KotlinNativeCompilerOptions> {
 
     @get:Input
     override val outputKind = LIBRARY
@@ -332,10 +338,12 @@ internal constructor(
     // Store as an explicit provider in order to allow Gradle Instant Execution to capture the state
 //    private val allSourceProvider = compilation.map { project.files(it.allSources).asFileTree }
 
-    @get:Input
-    val moduleName: String by lazy {
-        project.klibModuleName(baseName)
-    }
+    @Deprecated(
+        message = "Please use 'compilerOptions.moduleName' to configure",
+        replaceWith = ReplaceWith("compilerOptions.moduleName.get()")
+    )
+    @get:Internal
+    val moduleName: String get() = compilerOptions.moduleName.get()
 
     @get:OutputFile
     override val outputFile: Provider<File>
@@ -349,6 +357,9 @@ internal constructor(
 
     @get:Internal // these sources are normally a subset of `source` ones which are already tracked
     val commonSources: ConfigurableFileCollection = project.files()
+
+    @get:Nested
+    override val multiplatformStructure: K2MultiplatformStructure = objectFactory.newInstance()
 
     private val commonSourcesTree: FileTree
         get() = commonSources.asFileTree
@@ -373,12 +384,15 @@ internal constructor(
     val enabledLanguageFeatures: Set<String>
         @Input get() = languageSettings.enabledLanguageFeatures
 
+    @Deprecated(
+        message = "Replaced with compilerOptions.optIn",
+        replaceWith = ReplaceWith("compilerOptions.optIn")
+    )
     val optInAnnotationsInUse: Set<String>
-        @Input get() = languageSettings.optInAnnotationsInUse
+        @Internal get() = compilerOptions.optIn.get().toSet()
     // endregion.
 
-    // region Kotlin options.
-    override val compilerOptions: KotlinCommonCompilerOptions = compilation.compilerOptions.options
+    // region Kotlin options
 
     override val kotlinOptions: KotlinCommonOptions = object : KotlinCommonOptions {
         override val options: KotlinCommonCompilerOptions
@@ -451,39 +465,51 @@ internal constructor(
         return SharedCompilationData(manifestFile, isAllowCommonizer, refinesModule)
     }
 
+    internal fun buildCompilerArgs(): List<String> = buildKotlinNativeKlibCompilerArgs(
+        outFile = outputFile.get(),
+        optimized = optimized,
+        debuggable = debuggable,
+        target = konanTarget,
+        libraries = libraries.files.filterKlibsPassedToCompiler(),
+        languageSettings = languageSettings,
+        compilerOptions = compilerOptions,
+        compilerPlugins = listOfNotNull(
+            compilerPluginClasspath?.let { CompilerPluginData(it, compilerPluginOptions) },
+            kotlinPluginData?.orNull?.let { CompilerPluginData(it.classpath, it.options) }
+        ),
+        shortModuleName = shortModuleName,
+        friendModule = friendModule,
+        libraryVersion = artifactVersion,
+        sharedCompilationData = createSharedCompilationDataOrNull(),
+        source = sources.asFileTree,
+        commonSourcesTree = commonSourcesTree,
+        k2MultiplatformCompilationData = multiplatformStructure
+    )
 
     @TaskAction
     fun compile() {
         val output = outputFile.get()
         output.parentFile.mkdirs()
 
-        val plugins = listOfNotNull(
-            compilerPluginClasspath?.let { CompilerPluginData(it, compilerPluginOptions) },
-            kotlinPluginData?.orNull?.let { CompilerPluginData(it.classpath, it.options) }
-        )
-
-        val buildArgs = buildKotlinNativeKlibCompilerArgs(
-            output,
-            optimized,
-            debuggable,
-            konanTarget,
-            libraries.files.filterKlibsPassedToCompiler(),
-            languageSettings,
-            compilerOptions,
-            plugins,
-            moduleName,
-            shortModuleName,
-            friendModule,
-            artifactVersion,
-            createSharedCompilationDataOrNull(),
-            sources.asFileTree,
-            commonSourcesTree
-        )
+        collectCommonCompilerStats()
+        val buildArgs = buildCompilerArgs()
 
         KotlinNativeCompilerRunner(
             settings = runnerSettings,
             executionContext = KotlinToolRunner.GradleExecutionContext.fromTaskContext(objectFactory, execOperations, logger)
         ).run(buildArgs)
+    }
+
+    private fun collectCommonCompilerStats() {
+        KotlinBuildStatsService.getInstance()?.apply {
+            report(BooleanMetrics.KOTLIN_PROGRESSIVE_MODE, compilerOptions.progressiveMode.get())
+            compilerOptions.apiVersion.orNull?.also { v ->
+                report(StringMetrics.KOTLIN_API_VERSION, v.version)
+            }
+            compilerOptions.languageVersion.orNull?.also { v ->
+                report(StringMetrics.KOTLIN_LANGUAGE_VERSION, v.version)
+            }
+        }
     }
 }
 

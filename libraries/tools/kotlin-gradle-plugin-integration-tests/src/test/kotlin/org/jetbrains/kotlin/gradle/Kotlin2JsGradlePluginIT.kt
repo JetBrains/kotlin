@@ -25,10 +25,10 @@ import org.jetbrains.kotlin.gradle.tasks.USING_JS_IR_BACKEND_MESSAGE
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.jsCompilerType
 import org.jetbrains.kotlin.gradle.util.normalizePath
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.DisabledIf
 import java.nio.file.Files
+import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.zip.ZipFile
 import kotlin.io.path.*
@@ -110,7 +110,6 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
     }
 
     @GradleTest
-    @Disabled  // Persistent IR is no longer supported
     fun testJsIrIncrementalInParallel(gradleVersion: GradleVersion) {
         project("kotlin-js-browser-project", gradleVersion) {
             buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
@@ -123,6 +122,94 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
             )
 
             build("assemble")
+        }
+    }
+
+    @DisplayName("Only changed files synced during JS IR build")
+    @GradleTest
+    fun testJsIrOnlyChangedFilesSynced(gradleVersion: GradleVersion) {
+        project("kotlin-js-browser-project", gradleVersion) {
+            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
+
+            val filesModified: MutableMap<String, Long> = mutableMapOf()
+
+            build("compileDevelopmentExecutableKotlinJs") {
+                assertTasksExecuted(":app:developmentExecutableCompileSync")
+
+                projectPath.resolve("build/js/packages/kotlin-js-browser-app")
+                    .resolve("kotlin")
+                    .toFile()
+                    .walkTopDown()
+                    .associateByTo(filesModified, { it.path }) {
+                        it.lastModified()
+                    }
+            }
+
+            projectPath.resolve("base/src/main/kotlin/Base.kt").modify {
+                it.replace("73", "37")
+            }
+
+            val fooTxt = projectPath.resolve("app/src/main/resources/foo/foo.txt")
+            fooTxt.parent.toFile().mkdirs()
+            fooTxt.createFile().writeText("foo")
+
+            build("compileDevelopmentExecutableKotlinJs") {
+                assertTasksExecuted(":app:developmentExecutableCompileSync")
+
+                val modified = projectPath.resolve("build/js/packages/kotlin-js-browser-app")
+                    .resolve("kotlin")
+                    .toFile()
+                    .walkTopDown()
+                    .filter { it.isFile }
+                    .filterNot { filesModified[it.path] == it.lastModified() }
+                    .toSet()
+
+                assertEquals(
+                    setOf(
+                        projectPath.resolve("build/js/packages/kotlin-js-browser-app/kotlin/kotlin-js-browser-base-js-ir.js").toFile(),
+                        projectPath.resolve("build/js/packages/kotlin-js-browser-app/kotlin/foo/foo.txt").toFile(),
+                    ),
+                    modified.toSet()
+                )
+            }
+
+            projectPath.resolve("build/js/packages/kotlin-js-browser-app")
+                .resolve("kotlin")
+                .toFile()
+                .walkTopDown()
+                .associateByTo(filesModified, { it.path }) {
+                    it.lastModified()
+                }
+
+            fooTxt.writeText("bar")
+
+            build("compileDevelopmentExecutableKotlinJs") {
+                assertTasksExecuted(":app:developmentExecutableCompileSync")
+
+                val modified = projectPath.resolve("build/js/packages/kotlin-js-browser-app")
+                    .resolve("kotlin")
+                    .toFile()
+                    .walkTopDown()
+                    .filter { it.isFile }
+                    .filterNot { filesModified[it.path] == it.lastModified() }
+                    .toSet()
+
+                assertEquals(
+                    setOf(
+                        projectPath.resolve("build/js/packages/kotlin-js-browser-app/kotlin/foo/foo.txt").toFile(),
+                    ),
+                    modified.toSet()
+                )
+            }
+
+            fooTxt.deleteExisting()
+
+
+            build("compileDevelopmentExecutableKotlinJs") {
+                assertTasksExecuted(":app:developmentExecutableCompileSync")
+
+                assertFileInProjectNotExists("build/js/packages/kotlin-js-browser-app/kotlin/foo/foo.txt")
+            }
         }
     }
 
@@ -298,9 +385,9 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
         }
     }
 
-    @DisplayName("JS IR implementation dependency")
+    @DisplayName("K1/JS IR implementation dependency")
     @GradleTest
-    fun testJsIrImplementationDependency(gradleVersion: GradleVersion) {
+    fun testK1JsIrImplementationDependency(gradleVersion: GradleVersion) {
         project("kotlin-js-browser-project", gradleVersion) {
             buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
 
@@ -311,6 +398,72 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
             }
 
             buildAndFail("assemble")
+        }
+    }
+
+    @DisplayName("K2/JS IR implementation dependency")
+    @GradleTest
+    fun testK2JsIrImplementationDependency(gradleVersion: GradleVersion) {
+        project("kotlin-js-browser-project", gradleVersion) {
+            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
+            buildGradleKts.append(
+                """
+                    rootProject.subprojects.forEach {
+                        it.tasks.withType<org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile> {
+                            kotlinOptions.languageVersion = "2.0"
+                        }
+                    }
+                """.trimIndent()
+            )
+
+            build(":app:compileProductionExecutableKotlinJs")
+
+            projectPath.resolve("app/src/main/kotlin/App.kt").modify {
+                it.replace("sheldon()", "best()")
+            }
+
+            buildAndFail(":app:compileProductionExecutableKotlinJs")
+        }
+    }
+
+    @DisplayName("JS IR compiled against automatically added dom-api-compat")
+    @GradleTest
+    fun testJsIrCompiledAgainstAutomaticallyAddedDomApiCompat(gradleVersion: GradleVersion) {
+        project("kotlin-js-coroutines", gradleVersion) {
+            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
+
+            build("assemble")
+            build("compileDevelopmentExecutableKotlinJs")
+        }
+    }
+
+    @DisplayName("klib fingerprints")
+    @GradleTest
+    fun testKlibFingerprints(gradleVersion: GradleVersion) {
+        project("kotlin2JsIrICProject", gradleVersion) {
+            val fingerprints = Array(2) {
+                build("compileDevelopmentExecutableKotlinJs")
+
+                val manifestLines = projectPath.resolve("build/classes/kotlin/main/default/manifest").readLines()
+                val serializedKlibFingerprint = manifestLines.singleOrNull { it.startsWith("serializedKlibFingerprint=") }
+                assertNotNull(serializedKlibFingerprint) { "can not find serializedKlibFingerprint" }
+                assertTrue("bad serializedKlibFingerprint format '$serializedKlibFingerprint'") {
+                    Regex("serializedKlibFingerprint=[a-z0-9]+\\.[a-z0-9]+").matches(serializedKlibFingerprint)
+                }
+
+                val serializedIrFileFingerprints = manifestLines.singleOrNull { it.startsWith("serializedIrFileFingerprints=") }
+                assertNotNull(serializedIrFileFingerprints) { "can not find serializedIrFileFingerprints" }
+                assertTrue("bad serializedIrFileFingerprints format '$serializedIrFileFingerprints'") {
+                    // kotlin2JsIrICProject has 2 files
+                    Regex("serializedIrFileFingerprints=[a-z0-9]+\\.[a-z0-9]+ [a-z0-9]+\\.[a-z0-9]+").matches(serializedIrFileFingerprints)
+                }
+
+                build("clean")
+
+                serializedKlibFingerprint to serializedIrFileFingerprints
+            }
+
+            assertEquals(fingerprints[0], fingerprints[1], "fingerprints must be stable")
         }
     }
 }
@@ -1446,6 +1599,7 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
         project("kotlin-js-browser-project", gradleVersion) {
             buildGradleKts.modify { originalScript ->
                 buildString {
+                    append("import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNpmResolutionManager")
                     append(originalScript)
                     append(
                         """
@@ -1454,7 +1608,7 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
                         |    val nodejs = the<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension>()
                         |    tasks.named<org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask>("kotlinNpmInstall") {
                         |        doFirst {
-                        |            nodejs.npmResolutionManager.state = 
+                        |            project.rootProject.kotlinNpmResolutionManager.get().state = 
                         |            org.jetbrains.kotlin.gradle.targets.js.npm.KotlinNpmResolutionManager.ResolutionState.Error(GradleException("someSpecialException"))
                         |        }
                         |    }

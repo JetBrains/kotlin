@@ -201,10 +201,12 @@ class Fir2IrImplicitCastInserter(
         if (this is IrTypeOperatorCall) {
             return this
         }
+
+        if (this is IrContainerExpression) {
+            insertImplicitCasts()
+        }
+
         return when {
-            this is IrContainerExpression -> {
-                insertImplicitCasts()
-            }
             expectedType.isUnit -> {
                 coerceToUnitIfNeeded(this, irBuiltIns)
             }

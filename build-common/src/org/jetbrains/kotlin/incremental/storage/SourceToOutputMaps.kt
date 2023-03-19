@@ -36,7 +36,7 @@ internal abstract class AbstractSourceToOutputMap<Name>(
     private val nameTransformer: NameTransformer<Name>,
     storageFile: File,
     icContext: IncrementalCompilationContext,
-) : BasicStringMap<Collection<String>>(storageFile, PathStringDescriptor, StringCollectionExternalizer, icContext) {
+) : AppendableBasicStringMap<Collection<String>>(storageFile, PathStringDescriptor, StringCollectionExternalizer, icContext) {
     fun clearOutputsForSource(sourceFile: File) {
         remove(pathConverter.toPath(sourceFile))
     }

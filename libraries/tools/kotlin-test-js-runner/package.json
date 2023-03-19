@@ -14,6 +14,7 @@
     "build": "rimraf lib/* && copyfiles static/* lib && rollup -c rollup.config.js"
   },
   "dependencies": {
+    "format-util": "^1.0.5"
   },
   "devDependencies": {
     "@types/node": "^12.12.14",
@@ -26,8 +27,6 @@
     "@rollup/plugin-typescript": "^8.3.0",
     "rollup-plugin-terser": "^7.0.2",
     "typescript": "^3.7.2",
-    "format-util": "^1.0.5",
-    "tslib": "^2.3.1",
-    "is-wsl": "^2.2.0"
+    "tslib": "^2.3.1"
   }
 }

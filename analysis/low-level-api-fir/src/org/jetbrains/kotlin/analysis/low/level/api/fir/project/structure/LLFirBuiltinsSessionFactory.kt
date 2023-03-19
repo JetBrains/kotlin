@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.ModificationTracker
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirBuiltinSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirBuiltinsAndCloneableSessionProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirBuiltinsAndCloneableSession
@@ -37,9 +38,7 @@ import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 import java.util.concurrent.ConcurrentHashMap
 
 @OptIn(PrivateSessionConstructor::class, SessionConfiguration::class)
-class LLFirBuiltinsSessionFactory(
-    private val project: Project,
-) {
+class LLFirBuiltinsSessionFactory(private val project: Project) {
     private val builtInTypes = BuiltinTypes() // TODO should be platform-specific
     private val builtinsAndCloneableSession = ConcurrentHashMap<TargetPlatform, LLFirBuiltinsAndCloneableSession>()
 
@@ -49,10 +48,11 @@ class LLFirBuiltinsSessionFactory(
 
     private fun createBuiltinsAndCloneableSession(platform: TargetPlatform): LLFirBuiltinsAndCloneableSession {
         val builtinsModule = KtBuiltinsModule(platform, platform.getAnalyzerServices(), project)
-        return LLFirBuiltinsAndCloneableSession(builtinsModule, project, builtInTypes).apply session@{
-            val moduleData = LLFirModuleData(builtinsModule).apply {
-                bindSession(this@session)
-            }
+
+        val session = LLFirBuiltinsAndCloneableSession(builtinsModule, ModificationTracker.NEVER_CHANGED, builtInTypes)
+        val moduleData = LLFirModuleData(builtinsModule).apply { bindSession(session) }
+
+        return session.apply {
             registerIdeComponents(project)
             register(FirLazyDeclarationResolver::class, FirDummyCompilerLazyDeclarationResolver)
             registerCommonComponents(LanguageVersionSettingsImpl.DEFAULT/*TODO*/)
@@ -62,10 +62,11 @@ class LLFirBuiltinsSessionFactory(
 
             val kotlinScopeProvider = FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
             register(FirKotlinScopeProvider::class, kotlinScopeProvider)
+
             val symbolProvider = createCompositeSymbolProvider(this) {
-                add(LLFirBuiltinSymbolProvider(this@session, moduleData, kotlinScopeProvider))
-                add(FirExtensionSyntheticFunctionInterfaceProvider(this@session, moduleData, kotlinScopeProvider))
-                add(FirCloneableSymbolProvider(this@session, moduleData, kotlinScopeProvider))
+                add(LLFirBuiltinSymbolProvider(session, moduleData, kotlinScopeProvider))
+                add(FirExtensionSyntheticFunctionInterfaceProvider(session, moduleData, kotlinScopeProvider))
+                add(FirCloneableSymbolProvider(session, moduleData, kotlinScopeProvider))
             }
 
             register(FirSymbolProvider::class, symbolProvider)

@@ -43,6 +43,11 @@ internal class LLFirModuleWithDependenciesSymbolProvider(
     }
 
     @FirSymbolProviderInternals
+    fun getTopLevelCallableSymbolsWithoutDependencies(packageFqName: FqName, name: Name): List<FirCallableSymbol<*>> {
+        return buildList { getTopLevelCallableSymbolsToWithoutDependencies(this, packageFqName, name) }
+    }
+
+    @FirSymbolProviderInternals
     fun getTopLevelCallableSymbolsToWithoutDependencies(destination: MutableList<FirCallableSymbol<*>>, packageFqName: FqName, name: Name) {
         providers.forEach { it.getTopLevelCallableSymbolsTo(destination, packageFqName, name) }
     }

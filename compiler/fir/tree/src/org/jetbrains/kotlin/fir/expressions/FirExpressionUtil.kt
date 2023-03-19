@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.builder.buildConstExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildErrorExpression
@@ -17,10 +18,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirBlockImpl
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
-import org.jetbrains.kotlin.fir.references.FirReference
-import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.references.resolved
-import org.jetbrains.kotlin.fir.references.toResolvedFunctionSymbol
+import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
@@ -128,6 +126,16 @@ fun <T : FirStatement> FirBlock.replaceFirstStatement(factory: (T) -> FirStateme
 
 fun FirExpression.unwrapArgument(): FirExpression = (this as? FirWrappedArgumentExpression)?.expression ?: this
 
+fun FirExpression.unwrapAndFlattenArgument(): List<FirExpression> = buildList { unwrapAndFlattenArgumentTo(this) }
+
+private fun FirExpression.unwrapAndFlattenArgumentTo(list: MutableList<FirExpression>) {
+    when (val unwrapped = unwrapArgument()) {
+        is FirArrayOfCall, is FirFunctionCall -> (unwrapped as FirCall).arguments.forEach { it.unwrapAndFlattenArgumentTo(list) }
+        is FirVarargArgumentsExpression -> unwrapped.arguments.forEach { it.unwrapAndFlattenArgumentTo(list) }
+        else -> list.add(unwrapped)
+    }
+}
+
 val FirVariableAssignment.explicitReceiver: FirExpression? get() = unwrapLValue()?.explicitReceiver
 
 val FirVariableAssignment.dispatchReceiver: FirExpression get() = unwrapLValue()?.dispatchReceiver ?: FirNoReceiverExpression
@@ -146,3 +154,18 @@ fun FirVariableAssignment.unwrapLValue(): FirQualifiedAccessExpression? {
 
 val FirElement.calleeReference: FirReference?
     get() = (this as? FirResolvable)?.calleeReference ?: (this as? FirVariableAssignment)?.calleeReference
+
+fun FirExpression.unwrapSmartcastExpression(): FirExpression =
+    when (this) {
+        is FirSmartCastExpression -> originalExpression
+        else -> this
+    }
+
+/**
+ * A callable reference is bound iff
+ * - one of [dispatchReceiver] or [extensionReceiver] is **not** [FirNoReceiverExpression] and
+ * - it's not referring to a static member.
+ */
+val FirCallableReferenceAccess.isBound: Boolean
+    get() = (dispatchReceiver != FirNoReceiverExpression || extensionReceiver != FirNoReceiverExpression) &&
+            calleeReference.toResolvedCallableSymbol()?.isStatic != true

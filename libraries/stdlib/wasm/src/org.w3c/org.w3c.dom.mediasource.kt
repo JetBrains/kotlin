@@ -16,7 +16,7 @@ import org.w3c.dom.events.*
 /**
  * Exposes the JavaScript [MediaSource](https://developer.mozilla.org/en/docs/Web/API/MediaSource) to Kotlin
  */
-public external open class MediaSource : EventTarget, MediaProvider {
+public external open class MediaSource : EventTarget, MediaProvider, JsAny {
     open val sourceBuffers: SourceBufferList
     open val activeSourceBuffers: SourceBufferList
     open val readyState: ReadyState
@@ -38,7 +38,7 @@ public external open class MediaSource : EventTarget, MediaProvider {
 /**
  * Exposes the JavaScript [SourceBuffer](https://developer.mozilla.org/en/docs/Web/API/SourceBuffer) to Kotlin
  */
-public external abstract class SourceBuffer : EventTarget {
+public external abstract class SourceBuffer : EventTarget, JsAny {
     open var mode: AppendMode
     open val updating: Boolean
     open val buffered: TimeRanges
@@ -53,7 +53,7 @@ public external abstract class SourceBuffer : EventTarget {
     open var onupdateend: ((Event) -> Dynamic?)?
     open var onerror: ((Event) -> Dynamic?)?
     open var onabort: ((Event) -> Dynamic?)?
-    fun appendBuffer(data: Dynamic?)
+    fun appendBuffer(data: JsAny?)
     fun abort()
     fun remove(start: Double, end: Double)
 }
@@ -61,20 +61,19 @@ public external abstract class SourceBuffer : EventTarget {
 /**
  * Exposes the JavaScript [SourceBufferList](https://developer.mozilla.org/en/docs/Web/API/SourceBufferList) to Kotlin
  */
-public external abstract class SourceBufferList : EventTarget {
+public external abstract class SourceBufferList : EventTarget, JsAny {
     open val length: Int
     open var onaddsourcebuffer: ((Event) -> Dynamic?)?
     open var onremovesourcebuffer: ((Event) -> Dynamic?)?
 }
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline operator fun SourceBufferList.get(index: Int): SourceBuffer? = asDynamic().getAny(index)
 
 /* please, don't implement this interface! */
 @JsName("null")
 @Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
-public external interface ReadyState {
+public external interface ReadyState : JsAny {
     companion object
 }
 
@@ -87,7 +86,7 @@ public inline val ReadyState.Companion.ENDED: ReadyState get() = "ended".asDynam
 /* please, don't implement this interface! */
 @JsName("null")
 @Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
-public external interface EndOfStreamError {
+public external interface EndOfStreamError : JsAny {
     companion object
 }
 
@@ -98,7 +97,7 @@ public inline val EndOfStreamError.Companion.DECODE: EndOfStreamError get() = "d
 /* please, don't implement this interface! */
 @JsName("null")
 @Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
-public external interface AppendMode {
+public external interface AppendMode : JsAny {
     companion object
 }
 

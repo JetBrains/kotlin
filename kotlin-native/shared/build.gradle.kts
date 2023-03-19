@@ -15,17 +15,16 @@
  */
 @file:Suppress("UnstableApiUsage")
 
+import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import java.util.*
 
 plugins {
     id("kotlin")
 }
 
 val rootBuildDirectory by extra(file(".."))
-apply(from="../gradle/loadRootProperties.gradle")
-
-val kotlinVersion = project.bootstrapKotlinVersion
+apply(from = "../gradle/loadRootProperties.gradle")
 
 group = "org.jetbrains.kotlin"
 
@@ -34,30 +33,68 @@ repositories {
     mavenCentral()
 }
 
-sourceSets["main"].withConvention(KotlinSourceSet::class) {
-    kotlin.srcDir("src/main/kotlin")
-    kotlin.srcDir("src/library/kotlin")
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(8))
+    }
 }
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "1.8"
-    kotlinOptions.freeCompilerArgs += listOf("-Xskip-prerelease-check")
+kotlin {
+    sourceSets {
+        main {
+            // TODO: All code was moved to utils. Bootstrap should be advanced to make these classes appear
+            //  in the bootstrap version of kotlin-native-utils. Only then this project should be removed, all usages
+            //  of `:kotlin-native-shared` should be replaced with `:native:kotlin-native-utils`
+            kotlin.srcDir("../../native/utils/src")
+        }
+    }
 }
 
-tasks.jar {
-    archiveFileName.set("shared.jar")
+tasks.withType<KotlinCompile>().configureEach {
+    kotlinOptions {
+        languageVersion = "1.4"
+        apiVersion = "1.4"
+        allWarningsAsErrors = false
+        jvmTarget = "1.8"
+        freeCompilerArgs += "-Xskip-prerelease-check"
+    }
 }
 
-projectTest(jUnitMode = JUnitMode.JUnit5) {
-    useJUnitPlatform()
+val isCompositeBootstrap = project.extraProperties.has("kotlin.native.build.composite-bootstrap")
+
+/**
+ * Depending on the `kotlin.native.build.composite-bootstrap` property returns either coordinates or the project dependency.
+ *
+ * It to use this project in composite build (build-tools) and as a project itself.
+ * Project should depend on a current snapshot builds while build-tools use bootstrap dependencies.
+ * TODO: finalize merge of this project with kotlin-native-utils to get rid of this hack
+ */
+fun compositeDependency(coordinates: String, subproject: String = ""): Any {
+    val parts = coordinates.split(':')
+    check(parts.size == 3) {
+        "Full dependency coordinates should be specified group:name:version"
+    }
+    return if (!isCompositeBootstrap) {
+        // returns dependency on the project specified with coordinates
+        dependencies.project("$subproject:${parts[1]}")
+    } else {
+        // returns full coordinates
+        coordinates
+    }
 }
 
 dependencies {
-    kotlinCompilerClasspath("org.jetbrains.kotlin:kotlin-compiler-embeddable:$kotlinVersion")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:${project.bootstrapKotlinVersion}")
+    api(compositeDependency("org.jetbrains.kotlin:kotlin-util-klib:${project.bootstrapKotlinVersion}"))
+    api(compositeDependency("org.jetbrains.kotlin:kotlin-util-io:${project.bootstrapKotlinVersion}"))
 
-    implementation(kotlinStdlib())
-    implementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
-    api("org.jetbrains.kotlin:kotlin-native-utils:$kotlinVersion")
-    api(project(":kotlin-util-klib"))
-    testApiJUnit5()
+    if (!isCompositeBootstrap) {
+        val versionProperties = Properties()
+        project.rootProject.projectDir.resolve("gradle/versions.properties").inputStream().use { propInput ->
+            versionProperties.load(propInput)
+        }
+        val platformVersion = versionProperties["versions.junit-bom"]
+        testApi(platform("org.junit:junit-bom:$platformVersion"))
+        testApi("org.junit.jupiter:junit-jupiter")
+    }
 }

@@ -35,12 +35,14 @@ fun testVarPostfix() {
 
 fun testPropPrefix() {
   val p1: Int = { // BLOCK
-    <set-p>(<set-?> = <get-p>().inc())
-    <get-p>()
+    val <unary-result>: Int = <get-p>().inc()
+    <set-p>(<set-?> = <unary-result>)
+    <unary-result>
   }
   val p2: Int = { // BLOCK
-    <set-p>(<set-?> = <get-p>().dec())
-    <get-p>()
+    val <unary-result>: Int = <get-p>().dec()
+    <set-p>(<set-?> = <unary-result>)
+    <unary-result>
   }
 }
 
@@ -51,8 +53,9 @@ fun testPropPostfix() {
     <unary>
   }
   val p2: Int = { // BLOCK
-    <set-p>(<set-?> = <get-p>().dec())
-    <get-p>()
+    val <unary-result>: Int = <get-p>().dec()
+    <set-p>(<set-?> = <unary-result>)
+    <unary-result>
   }
 }
 

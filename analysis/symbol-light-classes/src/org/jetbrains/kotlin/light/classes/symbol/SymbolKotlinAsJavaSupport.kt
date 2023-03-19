@@ -79,11 +79,11 @@ class SymbolKotlinAsJavaSupport(project: Project) : KotlinAsJavaSupportBase<KtMo
             .toSet()
 
     override fun packageExists(fqName: FqName, scope: GlobalSearchScope): Boolean =
-        project.createPackageProvider(scope).doKotlinPackageExists(fqName)
+        project.createPackageProvider(scope).doesKotlinOnlyPackageExist(fqName)
 
     override fun getSubPackages(fqn: FqName, scope: GlobalSearchScope): Collection<FqName> =
         project.createPackageProvider(scope)
-            .getKotlinSubPackageFqNames(fqn)
+            .getKotlinOnlySubPackagesFqNames(fqn, nameFilter = { true })
             .map { fqn.child(it) }
 
     override fun createInstanceOfLightScript(script: KtScript): KtLightClass? = error("Should not be called")

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedString
+import org.jetbrains.kotlin.backend.common.ir.isFunctionInlining
 import org.jetbrains.kotlin.backend.common.lower.inline.isInlineParameter
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -102,6 +103,15 @@ class LocalDeclarationsLowering(
         classesToLower: Set<IrClass>, functionsToSkip: Set<IrSimpleFunction>
     ) {
         LocalDeclarationsTransformer(irBlock, container, closestParent, classesToLower, functionsToSkip).lowerLocalDeclarations()
+    }
+
+    fun lowerWithoutActualChange(irBody: IrBody, container: IrDeclaration) {
+        val oldCapturedConstructors = context.mapping.capturedConstructors.keys
+            .mapNotNull { context.mapping.capturedConstructors[it] }
+        LocalDeclarationsTransformer(irBody, container).cacheLocalConstructors()
+        oldCapturedConstructors
+            .filter { context.mapping.capturedConstructors[it] != null }
+            .forEach { context.mapping.capturedConstructors[it] = null }
     }
 
     internal class ScopeWithCounter(val irElement: IrElement) {
@@ -265,6 +275,15 @@ class LocalDeclarationsLowering(
         val newParameterToOld: MutableMap<IrValueParameter, IrValueParameter> = mutableMapOf()
         val oldParameterToNew: MutableMap<IrValueParameter, IrValueParameter> = mutableMapOf()
         val newParameterToCaptured: MutableMap<IrValueParameter, IrValueSymbol> = mutableMapOf()
+
+        fun cacheLocalConstructors() {
+            collectLocalDeclarations()
+            collectClosureForLocalDeclarations()
+
+            localClassConstructors.values.forEach {
+                createTransformedConstructorDeclaration(it)
+            }
+        }
 
         fun lowerLocalDeclarations() {
             collectLocalDeclarations()
@@ -777,6 +796,20 @@ class LocalDeclarationsLowering(
             val localClassContext = localClasses[oldDeclaration.parent]!!
             val capturedValues = localClassContext.closure.capturedValues
 
+            // Restore context if constructor was cached
+            context.mapping.capturedConstructors[oldDeclaration]?.let { newDeclaration ->
+                transformedDeclarations[oldDeclaration] = newDeclaration
+                constructorContext.transformedDeclaration = newDeclaration
+                newDeclaration.valueParameters.zip(capturedValues).forEach { (it, capturedValue) ->
+                    newParameterToCaptured[it] = capturedValue
+                }
+                oldDeclaration.valueParameters.zip(newDeclaration.valueParameters).forEach { (v, it) ->
+                    newParameterToOld.putAbsentOrSame(it, v)
+                }
+                newDeclaration.recordTransformedValueParameters(constructorContext)
+                return
+            }
+
             val newDeclaration = context.irFactory.buildConstructor {
                 updateFrom(oldDeclaration)
                 visibility = visibilityPolicy.forConstructor(oldDeclaration, constructorContext.inInlineFunctionScope)
@@ -953,6 +986,11 @@ class LocalDeclarationsLowering(
             irElement.accept(object : IrElementVisitor<Unit, Data> {
                 override fun visitElement(element: IrElement, data: Data) {
                     element.acceptChildren(this, data)
+                }
+
+                override fun visitBlock(expression: IrBlock, data: Data) {
+                    if (expression !is IrInlinedFunctionBlock) return super.visitBlock(expression, data)
+                    super.visitBlock(expression, data.withInline(expression.isFunctionInlining()))
                 }
 
                 override fun visitFunctionExpression(expression: IrFunctionExpression, data: Data) {

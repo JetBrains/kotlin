@@ -15,6 +15,11 @@ configurations {
 }
 
 sourceSets {
+    compileOnlyDeclarations {
+        java {
+            srcDir 'compileOnly'
+        }
+    }
     main {
         java {
             srcDir "${rootDir}/core/builtins/src"
@@ -74,6 +79,7 @@ dependencies {
 
     api group: 'org.jetbrains', name: 'annotations', version:'13.0'
 
+    compileOnly sourceSets.compileOnlyDeclarations.output
     mainJdk7Api sourceSets.main.output
     mainJdk8Api sourceSets.main.output
     mainJdk8Api sourceSets.mainJdk7.output
@@ -176,6 +182,14 @@ compileMainJdk8Kotlin {
     kotlinOptions.moduleName = "kotlin-stdlib-jdk8"
 }
 
+compileCompileOnlyDeclarationsKotlin {
+    kotlinOptions {
+        freeCompilerArgs = [
+                "-Xallow-kotlin-package",
+        ]
+    }
+}
+
 compileTestKotlin {
     kotlinOptions {
         freeCompilerArgs += [
@@ -187,6 +201,9 @@ compileTestKotlin {
                 "-XXLanguage:+RangeUntilOperator",
                 "-Xallow-kotlin-package", // TODO: maybe rename test packages
         ]
+        if (project.kotlinBuildProperties.useFir) {
+            freeCompilerArgs += "-Xuse-k2"
+        }
         // This is needed for JavaTypeTest; typeOf for non-reified type parameters doesn't work otherwise, for implementation reasons.
         def args = new ArrayList(freeCompilerArgs)
         args.remove("-Xno-optimized-callable-references")

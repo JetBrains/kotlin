@@ -81,9 +81,12 @@ FILE: CanBeValChecker.kt
         when () {
             R|<local>/flag| ->  {
                 while(CMP(>, R|<local>/a|.R|kotlin/Int.compareTo|(Int(0)))) {
-                    lval <unary>: R|kotlin/Int| = R|<local>/a|
-                    R|<local>/a| = R|<local>/<unary>|.R|kotlin/Int.dec|()
-                    R|<local>/<unary>|
+                     {
+                        lval <unary>: R|kotlin/Int| = R|<local>/a|
+                        R|<local>/a| = R|<local>/<unary>|.R|kotlin/Int.dec|()
+                        R|<local>/<unary>|
+                    }
+
                 }
 
             }
@@ -111,17 +114,23 @@ FILE: CanBeValChecker.kt
         lvar v2: R|kotlin/Int| = Int(2)
         lvar v3: R|kotlin/Int| = Int(3)
         R|<local>/v1| = Int(1)
-        lval <unary>: R|kotlin/Int| = R|<local>/v2|
-        R|<local>/v2| = R|<local>/<unary>|.R|kotlin/Int.inc|()
-        R|<local>/<unary>|
+         {
+            lval <unary>: R|kotlin/Int| = R|<local>/v2|
+            R|<local>/v2| = R|<local>/<unary>|.R|kotlin/Int.inc|()
+            R|<local>/<unary>|
+        }
+
         R|kotlin/io/print|(R|<local>/v3|)
     }
     public final fun test(): R|kotlin/Unit| {
         lvar a: R|kotlin/Int| = Int(0)
         while(CMP(>, R|<local>/a|.R|kotlin/Int.compareTo|(Int(0)))) {
-            lval <unary>: R|kotlin/Int| = R|<local>/a|
-            R|<local>/a| = R|<local>/<unary>|.R|kotlin/Int.inc|()
-            R|<local>/<unary>|
+             {
+                lval <unary>: R|kotlin/Int| = R|<local>/a|
+                R|<local>/a| = R|<local>/<unary>|.R|kotlin/Int.inc|()
+                R|<local>/<unary>|
+            }
+
         }
 
     }
@@ -143,16 +152,22 @@ FILE: CanBeValChecker.kt
     public final fun cycles(): R|kotlin/Unit| {
         lvar a: R|kotlin/Int| = Int(10)
         while(CMP(>, R|<local>/a|.R|kotlin/Int.compareTo|(Int(0)))) {
-            lval <unary>: R|kotlin/Int| = R|<local>/a|
-            R|<local>/a| = R|<local>/<unary>|.R|kotlin/Int.dec|()
-            R|<local>/<unary>|
+             {
+                lval <unary>: R|kotlin/Int| = R|<local>/a|
+                R|<local>/a| = R|<local>/<unary>|.R|kotlin/Int.dec|()
+                R|<local>/<unary>|
+            }
+
         }
 
         lvar b: R|kotlin/Int|
         while(CMP(<, R|<local>/a|.R|kotlin/Int.compareTo|(Int(10)))) {
-            lval <unary>: R|kotlin/Int| = R|<local>/a|
-            R|<local>/a| = R|<local>/<unary>|.R|kotlin/Int.inc|()
-            R|<local>/<unary>|
+             {
+                lval <unary>: R|kotlin/Int| = R|<local>/a|
+                R|<local>/a| = R|<local>/<unary>|.R|kotlin/Int.inc|()
+                R|<local>/<unary>|
+            }
+
             R|<local>/b| = R|<local>/a|
         }
 

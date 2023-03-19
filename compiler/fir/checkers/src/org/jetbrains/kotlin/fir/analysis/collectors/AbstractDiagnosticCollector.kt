@@ -42,6 +42,11 @@ abstract class AbstractDiagnosticCollector(
 
         private val SUPPRESS_NAMES_NAME = Name.identifier("names")
 
+        private fun correctDiagnosticCase(diagnostic: String): String = when (diagnostic) {
+            SUPPRESS_ALL_INFOS, SUPPRESS_ALL_WARNINGS, SUPPRESS_ALL_ERRORS -> diagnostic
+            else -> diagnostic.uppercase()
+        }
+
         fun getDiagnosticsSuppressedForContainer(annotationContainer: FirAnnotationContainer): List<String>? {
             var result: MutableList<String>? = null
 
@@ -56,7 +61,7 @@ abstract class AbstractDiagnosticCollector(
                     if (result == null) {
                         result = mutableListOf()
                     }
-                    result.add(value)
+                    result.add(correctDiagnosticCase(value))
                 }
             }
 

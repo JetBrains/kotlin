@@ -1,4 +1,3 @@
-// WITH_STDLIB
 // DONT_SORT_DECLARATIONS
 
 class Main {

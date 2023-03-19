@@ -262,10 +262,10 @@ fun case_16() {
 }
 
 // TESTCASE NUMBER: 17
-val case_17 = if (nullableIntProperty == null == true == false) 0 else {
+val case_17 = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>if (nullableIntProperty == null == true == false) 0 else {
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing?")!>nullableIntProperty<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing?")!>nullableIntProperty<!><!UNSAFE_CALL!>.<!>java
-}
+}<!>
 
 //TESTCASE NUMBER: 18
 fun case_18(a: DeepObject.A.B.C.D.E.F.G.J?) {

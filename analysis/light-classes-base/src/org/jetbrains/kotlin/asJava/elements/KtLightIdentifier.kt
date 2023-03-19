@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -36,4 +36,14 @@ open class KtLightIdentifier @JvmOverloads constructor(
     override fun getTextRange(): TextRange = origin?.textRange ?: TextRange.EMPTY_RANGE
 
     override fun getTextOffset(): Int = origin?.textOffset ?: -1
+
+    override fun equals(other: Any?): Boolean {
+        return other === this ||
+                other is KtLightIdentifier &&
+                other.lightOwner == lightOwner &&
+                other.ktDeclaration == ktDeclaration &&
+                other.name == name
+    }
+
+    override fun hashCode(): Int = lightOwner.hashCode()
 }

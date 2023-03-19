@@ -27,4 +27,9 @@ internal class KtFe10JvmTypeMapper(
         val kotlinType = (type as KtFe10Type).fe10Type
         return typeMapper.mapType(kotlinType, mode)
     }
+
+    override fun isPrimitiveBacked(type: KtType): Boolean {
+        val kotlinType = (type as KtFe10Type).fe10Type
+        return typeMapper.isPrimitiveBacked(kotlinType)
+    }
 }

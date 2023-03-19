@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.providers
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirFileBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirElementFinder
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirSymbolProviderNameCache
 import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
 import org.jetbrains.kotlin.analysis.providers.KotlinPackageProvider
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -48,7 +49,6 @@ internal class LLFirProviderHelper(
                 ?: error("Classifier $classId was found in file ${ktClass.containingKtFile.virtualFilePath} but was not found in FirFile")
         }
 
-
     private val callablesByCallableId = firSession.firCachesFactory.createCache<CallableId, List<FirCallableSymbol<*>>> { callableId ->
         val files = declarationProvider.getTopLevelCallableFiles(callableId).ifEmpty { return@createCache emptyList() }
         buildList {
@@ -57,6 +57,16 @@ internal class LLFirProviderHelper(
                 firFile.collectCallableDeclarationsTo(this, callableId.callableName)
             }
         }
+    }
+
+    val symbolNameCache = object : LLFirSymbolProviderNameCache(firSession) {
+        override fun computeClassifierNames(packageFqName: FqName): Set<String>? =
+            declarationProvider
+                .getTopLevelKotlinClassLikeDeclarationNamesInPackage(packageFqName)
+                .mapTo(mutableSetOf()) { it.asString() }
+
+        override fun computeCallableNames(packageFqName: FqName): Set<Name>? =
+            declarationProvider.getTopLevelCallableNamesInPackage(packageFqName)
     }
 
     fun getFirClassifierByFqNameAndDeclaration(
@@ -92,7 +102,7 @@ internal class LLFirProviderHelper(
 
     fun getPackage(fqName: FqName): FqName? {
         if (!allowKotlinPackage && fqName.isKotlinPackage()) return null
-        return fqName.takeIf(packageProvider::doKotlinPackageExists)
+        return fqName.takeIf(packageProvider::doesKotlinOnlyPackageExist)
     }
 }
 

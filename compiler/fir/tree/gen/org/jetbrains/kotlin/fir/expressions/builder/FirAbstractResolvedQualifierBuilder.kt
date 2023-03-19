@@ -35,6 +35,7 @@ interface FirAbstractResolvedQualifierBuilder {
     abstract var symbol: FirClassLikeSymbol<*>?
     abstract var isNullableLHSForCallableReference: Boolean
     abstract var resolvedToCompanionObject: Boolean
+    abstract var isFullyQualified: Boolean
     abstract val nonFatalDiagnostics: MutableList<ConeDiagnostic>
     abstract val typeArguments: MutableList<FirTypeProjection>
 

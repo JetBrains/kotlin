@@ -1,4 +1,3 @@
-// WITH_STDLIB
 package test
 
 fun box() = MyEnum.E1.f() + MyEnum.E2.f()

@@ -133,6 +133,12 @@ public class SerializationPluginDiagnosticTestGenerated extends AbstractSerializ
     }
 
     @Test
+    @TestMetadata("serializerFromOtherModule.kt")
+    public void testSerializerFromOtherModule() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/diagnostics/serializerFromOtherModule.kt");
+    }
+
+    @Test
     @TestMetadata("SerializerTypeCompatibleForSpecials.kt")
     public void testSerializerTypeCompatibleForSpecials() throws Exception {
         runTest("plugins/kotlinx-serialization/testData/diagnostics/SerializerTypeCompatibleForSpecials.kt");
@@ -148,5 +154,17 @@ public class SerializationPluginDiagnosticTestGenerated extends AbstractSerializ
     @TestMetadata("Transients.kt")
     public void testTransients() throws Exception {
         runTest("plugins/kotlinx-serialization/testData/diagnostics/Transients.kt");
+    }
+
+    @Test
+    @TestMetadata("typeAliases.kt")
+    public void testTypeAliases() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/diagnostics/typeAliases.kt");
+    }
+
+    @Test
+    @TestMetadata("typeAliasesCustomized.kt")
+    public void testTypeAliasesCustomized() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/diagnostics/typeAliasesCustomized.kt");
     }
 }

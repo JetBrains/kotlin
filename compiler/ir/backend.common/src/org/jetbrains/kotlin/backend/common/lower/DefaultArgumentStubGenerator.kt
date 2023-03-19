@@ -355,7 +355,7 @@ open class DefaultParameterInjector(
         return visitFunctionAccessExpression(expression) {
             with(expression) {
                 IrCallImpl(
-                    startOffset, endOffset, type, it as IrSimpleFunctionSymbol,
+                    startOffset, endOffset, (it as IrSimpleFunctionSymbol).owner.returnType, it,
                     typeArgumentsCount = typeArgumentsCount,
                     valueArgumentsCount = it.owner.valueParameters.size,
                     origin = LoweredStatementOrigins.DEFAULT_DISPATCH_CALL,
@@ -462,7 +462,9 @@ class DefaultParameterCleaner(
             if (replaceDefaultValuesWithStubs) {
                 if (context.mapping.defaultArgumentsOriginalFunction[declaration.parent as IrFunction] == null) {
                     declaration.defaultValue = context.irFactory.createExpressionBody(
-                        IrErrorExpressionImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, declaration.type, "Default Stub")
+                        IrErrorExpressionImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, declaration.type, "Default Stub").apply {
+                            attributeOwnerId = declaration.defaultValue!!.expression
+                        }
                     )
                 }
             } else {

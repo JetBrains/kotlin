@@ -481,6 +481,7 @@ __attribute__((swift_name("EnumLeftRightUpDown")))
 @property (class, readonly) KtEnumLeftRightUpDown *up __attribute__((swift_name("up")));
 @property (class, readonly) KtEnumLeftRightUpDown *down __attribute__((swift_name("down")));
 + (KtKotlinArray<KtEnumLeftRightUpDown *> *)values __attribute__((swift_name("values()")));
+@property (class, readonly) NSArray<KtEnumLeftRightUpDown *> *entries __attribute__((swift_name("entries")));
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -493,7 +494,9 @@ __attribute__((swift_name("EnumOneTwoThreeValues")))
 @property (class, readonly) KtEnumOneTwoThreeValues *two __attribute__((swift_name("two")));
 @property (class, readonly) KtEnumOneTwoThreeValues *three __attribute__((swift_name("three")));
 @property (class, readonly) KtEnumOneTwoThreeValues *values __attribute__((swift_name("values")));
+@property (class, readonly) KtEnumOneTwoThreeValues *entries __attribute__((swift_name("entries")));
 + (KtKotlinArray<KtEnumOneTwoThreeValues *> *)values __attribute__((swift_name("values()")));
+@property (class, readonly) NSArray<KtEnumOneTwoThreeValues *> *entries __attribute__((swift_name("entries")));
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -504,7 +507,10 @@ __attribute__((swift_name("EnumValuesValues_")))
 - (instancetype)initWithName:(NSString *)name ordinal:(int32_t)ordinal __attribute__((swift_name("init(name:ordinal:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
 @property (class, readonly) KtEnumValuesValues_ *values __attribute__((swift_name("values")));
 @property (class, readonly) KtEnumValuesValues_ *values __attribute__((swift_name("values")));
+@property (class, readonly) KtEnumValuesValues_ *entries __attribute__((swift_name("entries")));
+@property (class, readonly) KtEnumValuesValues_ *entries __attribute__((swift_name("entries")));
 + (KtKotlinArray<KtEnumValuesValues_ *> *)values __attribute__((swift_name("values()")));
+@property (class, readonly) NSArray<KtEnumValuesValues_ *> *entries __attribute__((swift_name("entries")));
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -514,6 +520,13 @@ __attribute__((swift_name("EmptyEnum")))
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 - (instancetype)initWithName:(NSString *)name ordinal:(int32_t)ordinal __attribute__((swift_name("init(name:ordinal:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
 + (KtKotlinArray<KtEmptyEnum *> *)values __attribute__((swift_name("values()")));
+@property (class, readonly) NSArray<KtEmptyEnum *> *entries __attribute__((swift_name("entries")));
+@end
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("EnumValuesKt")))
+@interface KtEnumValuesKt : KtBase
++ (KtNoEnumEntriesEnum *)dceAvoidance __attribute__((swift_name("dceAvoidance()")));
 @end
 
 __attribute__((swift_name("FunInterface")))
@@ -1030,6 +1043,7 @@ __attribute__((swift_name("KT43780Enum")))
 @property (class, readonly) KtKT43780Enum *otherEntry __attribute__((swift_name("otherEntry")));
 @property (class, readonly) KtKT43780Enum *companion __attribute__((swift_name("companion")));
 + (KtKotlinArray<KtKT43780Enum *> *)values __attribute__((swift_name("values()")));
+@property (class, readonly) NSArray<KtKT43780Enum *> *entries __attribute__((swift_name("entries")));
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -1308,6 +1322,7 @@ __attribute__((swift_name("NoAutoreleaseEnum")))
 - (instancetype)initWithName:(NSString *)name ordinal:(int32_t)ordinal __attribute__((swift_name("init(name:ordinal:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
 @property (class, readonly) KtNoAutoreleaseEnum *entry __attribute__((swift_name("entry")));
 + (KtKotlinArray<KtNoAutoreleaseEnum *> *)values __attribute__((swift_name("values()")));
+@property (class, readonly) NSArray<KtNoAutoreleaseEnum *> *entries __attribute__((swift_name("entries")));
 @property (readonly) int32_t x __attribute__((swift_name("x")));
 @end
 
@@ -1443,6 +1458,7 @@ __attribute__((swift_name("ObjCNameSwiftEnum")))
 @property (class, readonly) KtObjCNameObjCEnum *objcTwo __attribute__((swift_name("companion")));
 @property (class, readonly) KtObjCNameObjCEnum *objcThree __attribute__((swift_name("swiftThree")));
 + (KtKotlinArray<KtObjCNameObjCEnum *> *)values __attribute__((swift_name("values()")));
+@property (class, readonly) NSArray<KtObjCNameObjCEnum *> *entries __attribute__((swift_name("entries")));
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -1808,6 +1824,7 @@ __attribute__((swift_name("Enumeration")))
 @property (class, readonly) KtEnumeration *year __attribute__((swift_name("year")));
 @property (class, readonly) KtEnumeration *temperature __attribute__((swift_name("temperature")));
 + (KtKotlinArray<KtEnumeration *> *)values __attribute__((swift_name("values()")));
+@property (class, readonly) NSArray<KtEnumeration *> *entries __attribute__((swift_name("entries")));
 @property (readonly) int32_t enumValue __attribute__((swift_name("enumValue")));
 @end
 
@@ -2502,6 +2519,7 @@ __attribute__((swift_name("TestInvalidIdentifiers.E")))
 @property (class, readonly) KtTestInvalidIdentifiersE *__ __attribute__((swift_name("__")));
 @property (class, readonly) KtTestInvalidIdentifiersE *__ __attribute__((swift_name("__")));
 + (KtKotlinArray<KtTestInvalidIdentifiersE *> *)values __attribute__((swift_name("values()")));
+@property (class, readonly) NSArray<KtTestInvalidIdentifiersE *> *entries __attribute__((swift_name("entries")));
 @property (readonly) int32_t value __attribute__((swift_name("value")));
 @end
 

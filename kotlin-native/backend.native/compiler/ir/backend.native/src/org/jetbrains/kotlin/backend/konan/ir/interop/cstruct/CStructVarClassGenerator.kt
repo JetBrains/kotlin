@@ -200,7 +200,7 @@ internal class CStructVarClassGenerator(
                             }
                     )
                     body = irBlockBody {
-                        val itCpp = irGet(valueParameters.single())
+                        val itCpp = valueParameters.single()
                         if (traceCleaners) {
                             +irCall(symbols.println).apply {
                                 putValueArgument(0,
@@ -214,7 +214,7 @@ internal class CStructVarClassGenerator(
                                     .filterIsInstance<IrSimpleFunction>()
                                     .single { it.name.toString() == "unref" }
                             +irCall(unref).apply {
-                                dispatchReceiver = itCpp
+                                dispatchReceiver = this@irBlockBody.irGet(itCpp)
                             }
                         } else {
                             val destroy = cppClass.declarations
@@ -222,7 +222,7 @@ internal class CStructVarClassGenerator(
                                     .singleOrNull() { it.name.toString() == "__destroy__" }
                             if (destroy!= null) {
                                 +irCall(destroy).apply {
-                                    dispatchReceiver = itCpp
+                                    dispatchReceiver = this@irBlockBody.irGet(itCpp)
                                 }
                             }
                             val nativeHeap = symbols.nativeHeap
@@ -233,7 +233,7 @@ internal class CStructVarClassGenerator(
                                 dispatchReceiver = irGetObject(nativeHeap)
                                 putValueArgument(0,
                                         irCall(symbols.interopNativePointedGetRawPointer).apply {
-                                            extensionReceiver = itCpp
+                                            extensionReceiver = this@irBlockBody.irGet(itCpp)
                                         }
                                 )
                             }

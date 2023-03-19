@@ -19,7 +19,8 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
  * A leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.field
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.field]
  */
 abstract class IrField : IrDeclarationBase(), IrPossiblyExternalDeclaration,
         IrDeclarationWithVisibility, IrDeclarationParent, IrMetadataSourceOwner {
@@ -30,9 +31,9 @@ abstract class IrField : IrDeclarationBase(), IrPossiblyExternalDeclaration,
 
     abstract var type: IrType
 
-    abstract val isFinal: Boolean
+    abstract var isFinal: Boolean
 
-    abstract val isStatic: Boolean
+    abstract var isStatic: Boolean
 
     abstract var initializer: IrExpressionBody?
 

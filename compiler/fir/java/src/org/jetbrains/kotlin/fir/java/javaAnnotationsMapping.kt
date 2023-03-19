@@ -15,11 +15,13 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.buildUnaryArgumentList
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaValueParameter
+import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
+import org.jetbrains.kotlin.fir.references.builder.buildFromMissingDependenciesNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.bindSymbolToLookupTag
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedReferenceError
@@ -134,9 +136,9 @@ private val JAVA_TARGETS_TO_KOTLIN = mapOf(
     "TYPE_USE" to EnumSet.of(AnnotationTarget.TYPE)
 )
 
-private fun buildEnumCall(session: FirSession, classId: ClassId?, entryName: Name?): FirFunctionCall {
-    return buildFunctionCall {
-        val calleeReference = if (classId != null && entryName != null) {
+private fun buildEnumCall(session: FirSession, classId: ClassId?, entryName: Name?): FirPropertyAccessExpression {
+    return buildPropertyAccessExpression {
+        val resolvedCalleeReference: FirResolvedNamedReference? = if (classId != null && entryName != null) {
             session.symbolProvider.getClassDeclaredPropertySymbols(classId, entryName)
                 .firstOrNull()?.let { propertySymbol ->
                     buildResolvedNamedReference {
@@ -147,9 +149,18 @@ private fun buildEnumCall(session: FirSession, classId: ClassId?, entryName: Nam
         } else {
             null
         }
-        this.calleeReference = calleeReference ?: buildErrorNamedReference {
-            diagnostic = ConeSimpleDiagnostic("Strange Java enum value: $classId.$entryName", DiagnosticKind.Java)
-        }
+
+        this.calleeReference =
+            resolvedCalleeReference
+                // if we haven't found the containing class for the entry in the classpath, let's just remember its name, so we could use it,
+                // e.g. during Java enhancement
+                ?: entryName?.let {
+                    buildFromMissingDependenciesNamedReference {
+                        name = entryName
+                    }
+                } ?: buildErrorNamedReference {
+                    diagnostic = ConeSimpleDiagnostic("Enum entry name is null in Java for $classId", DiagnosticKind.Java)
+                }
 
         if (classId != null) {
             this.typeRef = buildResolvedTypeRef {

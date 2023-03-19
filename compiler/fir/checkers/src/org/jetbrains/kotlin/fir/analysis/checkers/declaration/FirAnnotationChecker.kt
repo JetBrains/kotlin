@@ -39,6 +39,20 @@ object FirAnnotationChecker : FirBasicDeclarationChecker() {
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
+        checkAnnotationContainer(declaration, context, reporter)
+
+        if (declaration is FirCallableDeclaration) {
+            declaration.receiverParameter?.let {
+                checkAnnotationContainer(it, context, reporter)
+            }
+        }
+    }
+
+    private fun checkAnnotationContainer(
+        declaration: FirAnnotationContainer,
+        context: CheckerContext,
+        reporter: DiagnosticReporter
+    ) {
         var deprecated: FirAnnotation? = null
         var deprecatedSinceKotlin: FirAnnotation? = null
 
@@ -88,7 +102,7 @@ object FirAnnotationChecker : FirBasicDeclarationChecker() {
     }
 
     private fun checkMultiFieldValueClassAnnotationRestrictions(
-        declaration: FirDeclaration,
+        declaration: FirAnnotationContainer,
         annotation: FirAnnotation,
         context: CheckerContext,
         reporter: DiagnosticReporter
@@ -123,7 +137,7 @@ object FirAnnotationChecker : FirBasicDeclarationChecker() {
     }
 
     private fun checkAnnotationTarget(
-        declaration: FirDeclaration,
+        declaration: FirAnnotationContainer,
         annotation: FirAnnotation,
         context: CheckerContext,
         reporter: DiagnosticReporter
@@ -162,7 +176,6 @@ object FirAnnotationChecker : FirBasicDeclarationChecker() {
                 context
             )
         } else {
-            if (declaration is FirProperty && declaration.source?.kind == KtFakeSourceElementKind.PropertyFromParameter) return
             reporter.reportOn(
                 annotation.source,
                 FirErrors.WRONG_ANNOTATION_TARGET,
@@ -173,7 +186,7 @@ object FirAnnotationChecker : FirBasicDeclarationChecker() {
     }
 
     private fun checkAnnotationUseSiteTarget(
-        annotated: FirDeclaration,
+        annotated: FirAnnotationContainer,
         annotation: FirAnnotation,
         target: AnnotationUseSiteTarget,
         context: CheckerContext,
@@ -212,8 +225,6 @@ object FirAnnotationChecker : FirBasicDeclarationChecker() {
                     } else {
                         reporter.reportOn(annotation.source, FirErrors.INAPPLICABLE_PARAM_TARGET, context)
                     }
-                }
-                annotated is FirProperty && annotated.source?.kind == KtFakeSourceElementKind.PropertyFromParameter -> {
                 }
                 else -> reporter.reportOn(annotation.source, FirErrors.INAPPLICABLE_PARAM_TARGET, context)
             }

@@ -132,7 +132,7 @@ private class ObjCMethodStubBuilder(
         kotlinMethodParameters = method.getKotlinParameters(context, forConstructorOrFactory = false)
         external = (container !is ObjCProtocol)
         modality = when (container) {
-            is ObjCClass -> MemberStubModality.OPEN
+            is ObjCClass -> if (method.isDirect) MemberStubModality.FINAL else MemberStubModality.OPEN
             is ObjCProtocol -> if (method.isOptional) MemberStubModality.OPEN else MemberStubModality.ABSTRACT
             is ObjCCategory -> MemberStubModality.FINAL
         }
@@ -145,7 +145,17 @@ private class ObjCMethodStubBuilder(
     private fun buildObjCMethodAnnotations(main: AnnotationStub): List<AnnotationStub> = listOfNotNull(
             main,
             AnnotationStub.ObjC.ConsumesReceiver.takeIf { method.nsConsumesSelf },
-            AnnotationStub.ObjC.ReturnsRetained.takeIf { method.nsReturnsRetained }
+            AnnotationStub.ObjC.ReturnsRetained.takeIf { method.nsReturnsRetained },
+            if (method.isDirect) {
+                when (container) {
+                    is ObjCClass -> container.name
+                    is ObjCCategory -> container.clazz.name
+                    is ObjCProtocol -> null
+                }?.let {
+                    val prefix = if (method.isClass) '+' else '-'
+                    AnnotationStub.ObjC.Direct("$prefix[$it ${method.selector}]")
+                }
+            } else { null },
     )
 
     fun isDefaultConstructor(): Boolean =

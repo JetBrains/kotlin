@@ -1,4 +1,6 @@
 pluginManagement {
+    includeBuild("repo/gradle-settings-conventions")
+
     apply from: 'repo/scripts/cache-redirector.settings.gradle.kts'
     apply from: 'repo/scripts/kotlin-bootstrap.settings.gradle.kts'
 
@@ -13,66 +15,14 @@ pluginManagement {
     }
 }
 
-buildscript {
-    def buildGradlePluginVersion = ext["kotlin.build.gradlePlugin.version"]
-    dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:${buildGradlePluginVersion}")
-    }
-}
-
 plugins {
-    id "com.gradle.enterprise" version "3.11.2"
-    id "com.gradle.common-custom-user-data-gradle-plugin" version "1.8.1" apply false
-    id "org.gradle.toolchains.foojay-resolver-convention" version "0.4.0"
+    id "build-cache"
+    id "gradle-enterprise"
+    id "jvm-toolchain-provisioning"
+    id "kotlin-daemon-config"
 }
 
 def buildProperties = BuildPropertiesKt.getKotlinBuildPropertiesForSettings(settings)
-
-if (buildProperties.buildScanServer != null) {
-    apply plugin: com.gradle.CommonCustomUserDataGradlePlugin
-}
-
-gradleEnterprise {
-    def buildScanServer = buildProperties.buildScanServer
-    def isTeamCity = buildProperties.isTeamcityBuild
-
-    buildScan {
-        if (buildScanServer != null) {
-            server = buildScanServer
-            captureTaskInputFiles = true
-            publishAlways()
-        } else {
-            setTermsOfServiceUrl("https://gradle.com/terms-of-service")
-            setTermsOfServiceAgree("yes")
-        }
-
-        obfuscation {
-            ipAddresses { addresses -> ["0.0.0.0"] }
-            hostname { host -> "concealed" }
-            username { name -> isTeamCity ? "TeamCity" : "concealed" }
-        }
-    }
-}
-
-buildCache {
-    local {
-        enabled = buildProperties.localBuildCacheEnabled
-        if (buildProperties.localBuildCacheDirectory != null) {
-            directory = buildProperties.localBuildCacheDirectory
-        }
-    }
-
-    if (buildProperties.buildCacheUrl != null) {
-        remote(HttpBuildCache) {
-            url = buildProperties.buildCacheUrl
-            push = buildProperties.pushToBuildCache
-            if (buildProperties.buildCacheUser != null && buildProperties.buildCachePassword != null) {
-                credentials.username = buildProperties.buildCacheUser
-                credentials.password = buildProperties.buildCachePassword
-            }
-        }
-    }
-}
 
 // modules
 include ":benchmarks",
@@ -106,7 +56,6 @@ include ":benchmarks",
         ":compiler:frontend:cfg",
         ":kotlin-compiler-runner-unshaded",
         ":kotlin-compiler-runner",
-        ":compiler:cli-common",
         ":compiler:ir.tree",
         ":compiler:ir.tree:tree-generator",
         ":compiler:ir.psi2ir",
@@ -127,6 +76,8 @@ include ":benchmarks",
         ":compiler:plugin-api",
         ":compiler:light-classes",
         ":compiler:javac-wrapper",
+        ":compiler:cli-common",
+        ":compiler:cli-base",
         ":compiler:cli",
         ":compiler:cli-js",
         ":compiler:incremental-compilation-impl",
@@ -151,6 +102,7 @@ include ":benchmarks",
         ":native:kotlin-klib-commonizer",
         ":native:kotlin-klib-commonizer-api",
         ":native:kotlin-klib-commonizer-embeddable",
+        ":native:executors",
         ":core:compiler.common",
         ":core:compiler.common.jvm",
         ":core:compiler.common.js",
@@ -304,6 +256,8 @@ include ":kotlin-imports-dumper-compiler-plugin",
         ":test-instrumenter",
         ":wasm:wasm.ir",
         ":wasm:wasm.tests",
+        ":wasm:wasm.frontend",
+        ":wasm:wasm.config",
         ":repo:codebase-tests"
 
 include ":kotlinx-atomicfu-compiler-plugin",
@@ -606,6 +560,7 @@ if (buildProperties.inJpsBuildIdeaSync) {
             ":kotlin-stdlib",
             ":kotlin-stdlib-js",
             ":kotlin-stdlib-js-ir",
+            ":kotlin-dom-api-compat",
             ":kotlin-stdlib-js-ir-minimal-for-test",
             ":kotlin-stdlib-wasm",
             ":kotlin-stdlib-jdk7",
@@ -627,6 +582,7 @@ if (buildProperties.inJpsBuildIdeaSync) {
     project(':kotlin-stdlib').projectDir = "$rootDir/libraries/stdlib/jvm" as File
     project(':kotlin-stdlib-js').projectDir = "$rootDir/libraries/stdlib/js-v1" as File
     project(':kotlin-stdlib-js-ir').projectDir = "$rootDir/libraries/stdlib/js-ir" as File
+    project(':kotlin-dom-api-compat').projectDir = "$rootDir/libraries/kotlin-dom-api-compat" as File
     project(':kotlin-stdlib-wasm').projectDir = "$rootDir/libraries/stdlib/wasm" as File
     project(':kotlin-stdlib-js-ir-minimal-for-test').projectDir = "$rootDir/libraries/stdlib/js-ir-minimal-for-test" as File
     project(':kotlin-stdlib-jdk7').projectDir = "$rootDir/libraries/stdlib/jdk7" as File
@@ -668,6 +624,7 @@ project(':kotlin-compiler-client-embeddable').projectDir = "$rootDir/prepare/com
 project(':kotlin-preloader').projectDir = "$rootDir/compiler/preloader" as File
 project(':kotlin-build-common').projectDir = "$rootDir/build-common" as File
 project(':compiler:cli-common').projectDir = "$rootDir/compiler/cli/cli-common" as File
+project(':compiler:cli-base').projectDir = "$rootDir/compiler/cli/cli-base" as File
 project(':compiler:cli-js').projectDir = "$rootDir/compiler/cli/cli-js" as File
 project(':kotlin-runner').projectDir = "$rootDir/compiler/cli/cli-runner" as File
 project(':kotlin-daemon').projectDir = "$rootDir/compiler/daemon" as File
@@ -835,6 +792,9 @@ project(':kotlin-scripting-ide-common').projectDir = "$rootDir/plugins/scripting
 // Uncomment to use locally built protobuf-relocated
 // includeBuild("dependencies/protobuf")
 if (buildProperties.isKotlinNativeEnabled) {
+    includeBuild("kotlin-native/build-tools") {
+        name = "native-build-tools"
+    }
     include ':kotlin-native:dependencies'
     include ':kotlin-native:endorsedLibraries:kotlinx.cli'
     include ':kotlin-native:endorsedLibraries'
@@ -857,7 +817,6 @@ if (buildProperties.isKotlinNativeEnabled) {
     include ':kotlin-native:backend.native:tests'
     include ":kotlin-native-compiler-embeddable"
     project(":kotlin-native-compiler-embeddable").projectDir = "$rootDir/kotlin-native/prepare/kotlin-native-embeddable-compiler" as File
-    include ':kotlin-native:build-tools'
     include ':kotlin-native-shared'
     project(":kotlin-native-shared").projectDir = "$rootDir/kotlin-native/shared" as File
 }

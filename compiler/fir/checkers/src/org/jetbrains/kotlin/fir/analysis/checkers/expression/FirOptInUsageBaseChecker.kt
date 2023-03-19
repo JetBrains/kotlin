@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.correspondingValueParameterFromPrimaryConstructor
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.resolved
@@ -262,7 +264,8 @@ object FirOptInUsageBaseChecker {
         experimentalities: Collection<Experimentality>,
         element: FirElement,
         context: CheckerContext,
-        reporter: DiagnosticReporter
+        reporter: DiagnosticReporter,
+        source: KtSourceElement? = element.source,
     ) {
         for ((annotationClassId, severity, message, _, fromSupertype) in experimentalities) {
             if (!isExperimentalityAcceptableInContext(annotationClassId, context, fromSupertype)) {
@@ -273,7 +276,7 @@ object FirOptInUsageBaseChecker {
                 val fqName = annotationClassId.asSingleFqName()
                 val reportedMessage = message?.takeIf { it.isNotBlank() }
                     ?: OptInNames.buildDefaultDiagnosticMessage(OptInNames.buildMessagePrefix(verb), fqName.asString())
-                reporter.reportOn(element.source, diagnostic, fqName, reportedMessage, context)
+                reporter.reportOn(source, diagnostic, fqName, reportedMessage, context)
             }
         }
     }
@@ -327,8 +330,22 @@ object FirOptInUsageBaseChecker {
         annotationClassId: ClassId,
         fromSupertype: Boolean
     ): Boolean {
-        return getAnnotationByClassId(annotationClassId, session) != null || isAnnotatedWithOptIn(annotationClassId, session) ||
-                fromSupertype && isAnnotatedWithSubclassOptInRequired(session, annotationClassId)
+        return getAnnotationByClassId(annotationClassId, session) != null ||
+                isAnnotatedWithOptIn(annotationClassId, session) ||
+                fromSupertype && isAnnotatedWithSubclassOptInRequired(session, annotationClassId) ||
+                // Technically wrong but required for K1 compatibility
+                primaryConstructorParameterIsExperimentalityAcceptable(session, annotationClassId)
+    }
+
+    @OptIn(SymbolInternals::class)
+    private fun FirAnnotationContainer.primaryConstructorParameterIsExperimentalityAcceptable(
+        session: FirSession,
+        annotationClassId: ClassId
+    ): Boolean {
+        if (this !is FirProperty) return false
+        val parameterSymbol = correspondingValueParameterFromPrimaryConstructor ?: return false
+
+        return parameterSymbol.fir.isExperimentalityAcceptable(session, annotationClassId, fromSupertype = false)
     }
 
     private fun FirAnnotationContainer.isAnnotatedWithOptIn(annotationClassId: ClassId, session: FirSession): Boolean {

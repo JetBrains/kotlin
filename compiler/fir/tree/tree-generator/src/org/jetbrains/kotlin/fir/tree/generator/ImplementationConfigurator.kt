@@ -317,6 +317,8 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
         impl(assignmentOperatorStatement)
 
+        impl(incrementDecrementExpression)
+
         impl(equalityOperatorCall) {
             default("typeRef", "FirImplicitBooleanTypeRef(null)")
             useTypes(implicitBooleanTypeRefType)
@@ -480,6 +482,9 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         impl(functionTypeRef)
         impl(implicitTypeRef) {
             defaultEmptyList("annotations")
+            default("source") {
+                notNull = true
+            }
         }
 
         impl(reference, "FirStubReference") {
@@ -493,6 +498,8 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         impl(errorNamedReference) {
             default("name", "Name.special(\"<\${diagnostic.reason}>\")")
         }
+
+        impl(fromMissingDependenciesNamedReference)
 
         impl(breakExpression) {
             defaultTypeRefWithSource("FirImplicitNothingTypeRef")
@@ -620,8 +627,8 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             implementationPredicate = { it.type !in implementationWithConfigurableTypeRef },
             fieldPredicate = { it.defaultValueInImplementation == null }
         ) {
-            default(it, "FirImplicitTypeRefImpl(null)")
-            useTypes(implicitTypeRefType)
+            default(it, "FirImplicitTypeRefImplWithoutSource")
+            useTypes(firImplicitTypeWithoutSourceType)
         }
 
         configureFieldInAllImplementations(
@@ -629,8 +636,8 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             implementationPredicate = { it.type in "FirVariableAssignmentImpl" },
             fieldPredicate = { it.defaultValueInImplementation == null }
         ) {
-            default(it, "FirImplicitTypeRefImpl(null)")
-            useTypes(implicitTypeRefType)
+            default(it, "FirImplicitTypeRefImplWithoutSource")
+            useTypes(firImplicitTypeWithoutSourceType)
         }
     }
 
@@ -645,5 +652,3 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         }
     }
 }
-
-

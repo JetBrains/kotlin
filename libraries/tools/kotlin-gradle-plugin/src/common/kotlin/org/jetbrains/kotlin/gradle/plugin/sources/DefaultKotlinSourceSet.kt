@@ -121,11 +121,6 @@ abstract class DefaultKotlinSourceSet @Inject constructor(
         explicitlyAddedCustomSourceFilesExtensions.addAll(extensions)
     }
 
-    /**
-     * Returns [GranularMetadataTransformation] for all requested compile dependencies
-     * scopes: API, IMPLEMENTATION, COMPILE_ONLY; See [KotlinDependencyScope.compileScopes]
-     */
-    internal var compileDependenciesTransformation: GranularMetadataTransformation? = null
 
     private val _requiresVisibilityOf = mutableSetOf<KotlinSourceSet>()
 
@@ -158,7 +153,7 @@ abstract class DefaultKotlinSourceSet @Inject constructor(
 
     internal fun getDependenciesTransformation(): Iterable<MetadataDependencyTransformation> {
         val metadataDependencyResolutionByModule =
-            compileDependenciesTransformation.metadataDependencyResolutionsOrEmpty
+            metadataTransformation.metadataDependencyResolutionsOrEmpty
                 .associateBy { ModuleIds.fromComponent(project, it.dependency) }
 
         return metadataDependencyResolutionByModule.mapNotNull { (groupAndName, resolution) ->
@@ -187,7 +182,6 @@ abstract class DefaultKotlinSourceSet @Inject constructor(
 
     //endregion
 }
-
 
 internal val defaultSourceSetLanguageSettingsChecker =
     FragmentConsistencyChecker<KotlinSourceSet>(
@@ -225,8 +219,3 @@ val Iterable<KotlinSourceSet>.withDependsOnClosure: Set<KotlinSourceSet>
 fun KotlinMultiplatformExtension.findSourceSetsDependingOn(sourceSet: KotlinSourceSet): Set<KotlinSourceSet> {
     return sourceSet.closure { seedSourceSet -> sourceSets.filter { otherSourceSet -> seedSourceSet in otherSourceSet.dependsOn } }
 }
-
-internal val DefaultKotlinSourceSet.compileDependenciesTransformationOrFail: GranularMetadataTransformation
-    get() = compileDependenciesTransformation
-        ?: error("Accessing Compile Dependencies Transformations that is not yet initialised; " +
-                 "Check when compileDependenciesTransformation is set")

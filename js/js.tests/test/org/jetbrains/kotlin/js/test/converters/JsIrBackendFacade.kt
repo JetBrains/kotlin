@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.js.test.converters
 
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.toPhaseMap
+import org.jetbrains.kotlin.backend.common.serialization.cityHash64
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.cli.common.isWindows
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
@@ -15,14 +16,14 @@ import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.backend.js.ic.JsExecutableProducer
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
 import org.jetbrains.kotlin.ir.backend.js.SourceMapsInfo
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CompilationOutputs
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.*
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.irMessageLogger
+import org.jetbrains.kotlin.js.backend.ast.ESM_EXTENSION
+import org.jetbrains.kotlin.js.backend.ast.REGULAR_EXTENSION
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.test.handlers.JsBoxRunner.Companion.TEST_FUNCTION
 import org.jetbrains.kotlin.js.test.utils.extractTestPackage
@@ -37,12 +38,11 @@ import org.jetbrains.kotlin.test.frontend.classic.moduleDescriptorProvider
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator.Companion.getJsArtifactSimpleName
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.fileUtils.withReplacedExtensionOrNull
 import java.io.File
-
-const val REGULAR_EXTENSION = ".js"
-const val ESM_EXTENSION = ".mjs"
 
 class JsIrBackendFacade(
     val testServices: TestServices,
@@ -132,10 +132,10 @@ class JsIrBackendFacade(
 
 
         val loweredIr = compileIr(
-            irModuleFragment.apply { resolveTestPathes() },
+            irModuleFragment.apply { resolveTestPaths() },
             MainModule.Klib(inputArtifact.outputFile.absolutePath),
             configuration,
-            dependencyModules.apply { forEach { it.resolveTestPathes() } },
+            dependencyModules.onEach { it.resolveTestPaths() },
             emptyMap(),
             irModuleFragment.irBuiltins,
             symbolTable,
@@ -150,14 +150,10 @@ class JsIrBackendFacade(
             granularity = granularity,
         )
 
-        return loweredIr2JsArtifact(module, loweredIr, granularity)
+        return loweredIr2JsArtifact(module, loweredIr)
     }
 
-    private fun loweredIr2JsArtifact(
-        module: TestModule,
-        loweredIr: LoweredIr,
-        granularity: JsGenerationGranularity,
-    ): BinaryArtifacts.Js {
+    private fun loweredIr2JsArtifact(module: TestModule, loweredIr: LoweredIr): BinaryArtifacts.Js {
         val mainArguments = JsEnvironmentConfigurator.getMainCallParametersForModule(module)
             .run { if (shouldBeGenerated()) arguments() else null }
         val runIrDce = JsEnvironmentConfigurationDirectives.RUN_IR_DCE in module.directives
@@ -172,10 +168,13 @@ class JsIrBackendFacade(
         val transformer = IrModuleToJsTransformer(
             loweredIr.context,
             mainArguments,
-            moduleToName = JsIrModuleToPath(
-                testServices,
-                isEsModules && granularity != JsGenerationGranularity.WHOLE_PROGRAM
-            )
+            moduleToName = runIf(isEsModules) {
+                loweredIr.allModules.associateWith {
+                    "./${getJsArtifactSimpleName(testServices, it.safeName)}_v5.mjs".run {
+                        if (isWindows) minify() else this
+                    }
+                }
+            } ?: emptyMap()
         )
         // If runIrDce then include DCE results
         // If perModuleOnly then skip whole program
@@ -188,7 +187,7 @@ class JsIrBackendFacade(
         return BinaryArtifacts.Js.JsIrArtifact(outputFile, compilationOut).dump(module)
     }
 
-    private fun IrModuleFragment.resolveTestPathes() {
+    private fun IrModuleFragment.resolveTestPaths() {
         JsIrPathReplacer(testServices).let {
             files.forEach(it::lower)
         }
@@ -274,7 +273,7 @@ class JsIrBackendFacade(
 
     private fun CompilationOutputs.writeTo(outputFile: File, moduleId: String, moduleKind: ModuleKind) {
         val allJsFiles = writeAll(outputFile.parentFile, outputFile.nameWithoutExtension, false, moduleId, moduleKind).filter {
-            it.extension == "js"
+            it.extension == "js" || it.extension == "mjs"
         }
 
         val mainModuleFile = allJsFiles.last()
@@ -296,12 +295,6 @@ class JsIrBackendFacade(
     }
 }
 
-val ModuleKind.extension: String
-    get() = when (this) {
-        ModuleKind.ES -> ESM_EXTENSION
-        else -> REGULAR_EXTENSION
-    }
-
 val RegisteredDirectives.moduleKind: ModuleKind
     get() = get(JsEnvironmentConfigurationDirectives.MODULE_KIND).singleOrNull()
         ?: if (contains(JsEnvironmentConfigurationDirectives.ES_MODULES)) ModuleKind.ES else ModuleKind.PLAIN
@@ -310,16 +303,17 @@ val TestModule.kind: ModuleKind
     get() = directives.moduleKind
 
 fun String.augmentWithModuleName(moduleName: String): String {
-    val normalizedName = moduleName.run { if (isWindows) minify() else this }
+    val shouldMinimize = isWindows && moduleName.isPath()
+    val normalizedName = moduleName.run { if (shouldMinimize) minify() else this }
+    val suffix = when {
+        endsWith(ESM_EXTENSION) -> ESM_EXTENSION
+        endsWith(REGULAR_EXTENSION) -> REGULAR_EXTENSION
+        else -> error("Unexpected file '$this' extension")
+    }
 
-    return if (normalizedName.isPath()) {
-        replaceAfterLast(File.separator, normalizedName.replace("./", ""))
+    return if (suffix == ESM_EXTENSION) {
+        replaceAfterLast(File.separator, normalizedName.replace("./", "")).removeSuffix(suffix) + suffix
     } else {
-        val suffix = when {
-            endsWith(ESM_EXTENSION) -> ESM_EXTENSION
-            endsWith(REGULAR_EXTENSION) -> REGULAR_EXTENSION
-            else -> error("Unexpected file '$this' extension")
-        }
         return removeSuffix("_v5$suffix") + "-${normalizedName}_v5$suffix"
     }
 }
@@ -328,8 +322,14 @@ fun String.augmentWithModuleName(moduleName: String): String {
 // The hack should be deleted when D8 fixes the bug.
 // The issue is here: https://bugs.chromium.org/p/v8/issues/detail?id=13318
 fun String.minify(): String {
-    return replace("kotlin_org_jetbrains_kotlin_kotlin_", "")
-        .replace("_minimal_for_test", "_min")
+    if (length <= 80) return this
+
+    val directoryPath = substringBeforeLast('/')
+    val fileFullName = substringAfterLast('/')
+    val fileName = fileFullName.substringBeforeLast('.')
+    val fileExtension = fileFullName.substringAfterLast('.')
+
+    return "$directoryPath/${fileName.cityHash64().toULong().toString(16)}.$fileExtension"
 }
 
 private fun String.isPath(): Boolean = contains("/")

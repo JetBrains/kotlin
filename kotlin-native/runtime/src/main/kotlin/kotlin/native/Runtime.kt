@@ -35,15 +35,6 @@ public class IncorrectDereferenceException : RuntimeException {
     constructor(message: String) : super(message)
 }
 
-/**
- * Exception thrown when there was an error during file initalization.
- */
-@ExperimentalStdlibApi
-public class FileFailedToInitializeException : RuntimeException {
-    constructor() : super()
-
-    constructor(message: String) : super(message)
-}
 
 /**
  * Typealias describing custom exception reporting hook.

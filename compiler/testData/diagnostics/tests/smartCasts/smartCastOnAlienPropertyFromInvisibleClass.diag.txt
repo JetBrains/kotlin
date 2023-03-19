@@ -1,0 +1,10 @@
+// -- Module: <m1> --
+
+// -- Module: <m2> --
+/B.kt:14:13: warning: smart cast to 'String' is deprecated, because 'x' is a property declared in base class from different module inherited in non-public API class
+            x.length
+            ^
+/B.kt:23:9: warning: smart cast to 'String' is deprecated, because 'i.x' is a property declared in base class from different module inherited in non-public API class
+        i.x.length
+        ^
+

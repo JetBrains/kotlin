@@ -20,8 +20,7 @@ import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsPlatformTestRun
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetDsl
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmResolverPlugin
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.tasks.registerTask
@@ -35,7 +34,8 @@ abstract class KotlinJsSubTarget(
 ) : KotlinJsSubTargetDsl {
     val project get() = target.project
 
-    private val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
+    private val nodeJs = project.rootProject.kotlinNodeJsExtension
+    private val nodeJsTaskProviders = project.rootProject.kotlinNodeJsExtension
 
     abstract val testTaskDescription: String
 
@@ -53,8 +53,6 @@ abstract class KotlinJsSubTarget(
     }
 
     internal fun configure() {
-        NpmResolverPlugin.apply(project)
-
         configureTests()
 
         target.compilations.all {
@@ -108,10 +106,10 @@ abstract class KotlinJsSubTarget(
             testJs.inputFileProperty.fileProvider(compileOutputFile)
 
             testJs.dependsOn(
-                nodeJs.npmInstallTaskProvider,
-                nodeJs.storeYarnLockTaskProvider,
+                nodeJsTaskProviders.npmInstallTaskProvider,
+                nodeJsTaskProviders.storeYarnLockTaskProvider,
                 compileTask,
-                nodeJs.nodeJsSetupTaskProvider
+                nodeJsTaskProviders.nodeJsSetupTaskProvider
             )
 
             testJs.onlyIf {

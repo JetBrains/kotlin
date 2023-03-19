@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.jvm.JvmIrDeserializerImpl
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.report.BuildReporter
-import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
@@ -40,26 +39,15 @@ import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.backend.Fir2IrConverter
-import org.jetbrains.kotlin.fir.backend.jvm.Fir2IrJvmSpecialAnnotationSymbolProvider
-import org.jetbrains.kotlin.fir.backend.jvm.FirJvmKotlinMangler
-import org.jetbrains.kotlin.fir.backend.jvm.FirJvmVisibilityConverter
 import org.jetbrains.kotlin.fir.backend.jvm.JvmFir2IrExtensions
-import org.jetbrains.kotlin.fir.languageVersionSettings
-import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.pipeline.FirResult
-import org.jetbrains.kotlin.fir.pipeline.ModuleCompilerAnalyzedOutput
 import org.jetbrains.kotlin.fir.pipeline.convertToIrAndActualizeForJvm
-import org.jetbrains.kotlin.fir.resolve.providers.firProvider
-import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistory
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
-import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.load.java.JavaClassesTracker
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
@@ -185,11 +173,15 @@ class IncrementalFirJvmCompilerRunner(
             // -sources
             val allPlatformSourceFiles = linkedSetOf<KtSourceFile>() // TODO: get from caller
             val allCommonSourceFiles = linkedSetOf<KtSourceFile>()
+            val sourcesByModuleName = mutableMapOf<String, MutableSet<KtSourceFile>>()
 
-            configuration.kotlinSourceRoots.forAllFiles(configuration, projectEnvironment.project) { virtualFile, isCommon ->
+            configuration.kotlinSourceRoots.forAllFiles(configuration, projectEnvironment.project) { virtualFile, isCommon, hmppModule ->
                 val file = KtVirtualFileSourceFile(virtualFile)
                 if (isCommon) allCommonSourceFiles.add(file)
                 else allPlatformSourceFiles.add(file)
+                if (hmppModule != null) {
+                    sourcesByModuleName.getOrPut(hmppModule) { mutableSetOf() }.add(file)
+                }
             }
 
             val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter()
@@ -207,11 +199,19 @@ class IncrementalFirJvmCompilerRunner(
 
             fun firIncrementalCycle(): FirResult? {
                 while (true) {
-
+                    val dirtySourcesByModuleName = sourcesByModuleName.mapValues { (_, sources) ->
+                        sources.filterTo(mutableSetOf()) { dirtySources.any { df -> df.path == it.path } }
+                    }
+                    val groupedSource = GroupedKtSources(
+                        commonSources = allCommonSourceFiles.filter { dirtySources.any { df -> df.path == it.path } },
+                        platformSources = allPlatformSourceFiles.filter { dirtySources.any { df -> df.path == it.path } },
+                        sourcesByModuleName = dirtySourcesByModuleName
+                    )
                     val compilerInput = ModuleCompilerInput(
                         targetId,
-                        CommonPlatforms.defaultCommonPlatform, allCommonSourceFiles.filter { dirtySources.any { df -> df.path == it.path } },
-                        JvmPlatforms.unspecifiedJvmPlatform, allPlatformSourceFiles.filter { dirtySources.any { df -> df.path == it.path } },
+                        groupedSource,
+                        CommonPlatforms.defaultCommonPlatform,
+                        JvmPlatforms.unspecifiedJvmPlatform,
                         configuration
                     )
 
@@ -231,7 +231,7 @@ class IncrementalFirJvmCompilerRunner(
 
                     // TODO: consider what to do if many compilations find a main class
                     if (mainClassFqName == null && configuration.get(JVMConfigurationKeys.OUTPUT_JAR) != null) {
-                        mainClassFqName = findMainClass(analysisResults.platformOutput.fir)
+                        mainClassFqName = findMainClass(analysisResults.outputs.last().fir)
                     }
 
                     // TODO: switch the whole IC to KtSourceFile instead of FIle
@@ -348,11 +348,13 @@ fun CompilerConfiguration.configureBaseRoots(args: K2JVMCompilerArguments) {
 fun CompilerConfiguration.configureSourceRootsFromSources(
     allSources: Collection<File>, commonSources: Set<File>, javaPackagePrefix: String?
 ) {
+    val hmppCliModuleStructure = get(CommonConfigurationKeys.HMPP_MODULE_STRUCTURE)
     for (sourceFile in allSources) {
         if (sourceFile.name.endsWith(JavaFileType.DOT_DEFAULT_EXTENSION)) {
             addJavaSourceRoot(sourceFile, javaPackagePrefix)
         } else {
-            addKotlinSourceRoot(sourceFile.path, isCommon = sourceFile in commonSources)
+            val path = sourceFile.path
+            addKotlinSourceRoot(path, isCommon = sourceFile in commonSources, hmppCliModuleStructure?.getModuleNameForSource(path))
 
             if (sourceFile.isDirectory) {
                 addJavaSourceRoot(sourceFile, javaPackagePrefix)

@@ -1,0 +1,32 @@
+package
+
+public fun TODO(): kotlin.Nothing
+public fun kotlin.String.put(/*0*/ value: JsonObject?, /*1*/ node: ObjectNode): kotlin.Unit
+
+public open class JsonNode {
+    public constructor JsonNode()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface JsonObject {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface ObjectNode {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract operator fun </*0*/ T : JsonNode!> set(/*0*/ fieldName: kotlin.String!, /*1*/ value: JsonNode!): T!
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class SomeJsonObject : JsonObject {
+    public constructor SomeJsonObject()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+

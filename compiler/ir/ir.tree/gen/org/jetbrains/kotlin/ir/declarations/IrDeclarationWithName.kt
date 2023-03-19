@@ -12,7 +12,8 @@ import org.jetbrains.kotlin.name.Name
 
 /**
  * A non-leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.declarationWithName
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.declarationWithName]
  */
 interface IrDeclarationWithName : IrDeclaration {
     var name: Name

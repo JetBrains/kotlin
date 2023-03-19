@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.isBuiltInWasmRefType
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.isExported
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.isExternalType
+import org.jetbrains.kotlin.backend.wasm.utils.getJsFunAnnotation
 import org.jetbrains.kotlin.backend.wasm.utils.getWasmImportDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
@@ -32,7 +33,6 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import kotlin.math.absoluteValue
 
 /**
  * Create wrappers for external and @JsExport functions when type adaptation is needed
@@ -49,7 +49,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         if (declaration.isFakeOverride) return null
         if (declaration !is IrSimpleFunction) return null
         val isExported = declaration.isExported()
-        val isExternal = declaration.isExternal
+        val isExternal = declaration.isExternal || declaration.getJsFunAnnotation() != null
         if (declaration.isPropertyAccessor) return null
         if (declaration.parent !is IrPackageFragment) return null
         if (!isExported && !isExternal) return null
@@ -465,7 +465,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
     private fun createKotlinToJsClosureConvertor(info: FunctionTypeInfo): IrSimpleFunction {
         val result = context.irFactory.buildFun {
             name = Name.identifier("__convertKotlinClosureToJsClosure_${info.hashString}")
-            returnType = context.wasmSymbols.externalInterfaceType
+            returnType = context.wasmSymbols.jsAnyType
             isExternal = true
         }
         result.parent = currentParent
@@ -506,7 +506,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         result.parent = currentParent
         result.addValueParameter {
             name = Name.identifier("f")
-            type = context.wasmSymbols.externalInterfaceType
+            type = context.wasmSymbols.jsAnyType
         }
 
         val closureClass = context.irFactory.buildClass {
@@ -519,7 +519,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
 
         val closureClassField = closureClass.addField {
             name = Name.identifier("jsClosure")
-            type = context.wasmSymbols.externalInterfaceType
+            type = context.wasmSymbols.jsAnyType
             visibility = DescriptorVisibilities.PRIVATE
             isFinal = true
         }
@@ -588,7 +588,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         result.parent = currentParent
         result.addValueParameter {
             name = Name.identifier("f")
-            type = symbols.externalInterfaceType
+            type = symbols.jsAnyType
         }
         val arity = info.adaptedParameterTypes.size
         repeat(arity) { paramIndex ->
@@ -789,7 +789,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         private val fromElementType: IrType,
     ) : InteropTypeAdapter {
         override val toType: IrType =
-            context.wasmSymbols.externalInterfaceType
+            context.wasmSymbols.jsAnyType
 
         private val elementAdapter =
             primitivesToExternRefAdapters[fromElementType]

@@ -40,6 +40,14 @@ private fun ConeKotlinType.enhanceConeKotlinType(
 ): ConeKotlinType? {
     return when (this) {
         is ConeFlexibleType -> {
+            // Currently, the warnings are left unsupported in K2 (see KT-57307)
+            // But modulo information for warnings, we reproduce the K1 behavior: if head type qualifier is for warnings, we totally ignore
+            // enhancement on its arguments, too (see JavaTypeEnhancement.enhancePossiblyFlexible).
+            // It's not totally correct, but tolerable since we would like to avoid excessive breaking changes and the warnings should be
+            // anyway reported.
+            // TODO: support not loosing information for warnings here, too
+            if (qualifiers(index).isNullabilityQualifierForWarning) return null
+
             val lowerResult = lowerBound.enhanceInflexibleType(
                 session, TypeComponentPosition.FLEXIBLE_LOWER, qualifiers, index, subtreeSizes
             )
@@ -88,7 +96,7 @@ private fun ConeSimpleKotlinType.enhanceInflexibleType(
     val effectiveQualifiers = qualifiers(index)
     val enhancedTag = lookupTag.enhanceMutability(effectiveQualifiers, position)
 
-    // TODO: implement warnings
+    // TODO: implement warnings (see KT-57307)
     val nullabilityFromQualifiers = effectiveQualifiers.nullability
         .takeIf { shouldEnhance && !effectiveQualifiers.isNullabilityQualifierForWarning }
     val enhancedIsNullable = when (nullabilityFromQualifiers) {

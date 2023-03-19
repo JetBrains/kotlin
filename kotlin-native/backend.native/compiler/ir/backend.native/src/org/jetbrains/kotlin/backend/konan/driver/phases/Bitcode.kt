@@ -108,7 +108,7 @@ internal val CoveragePhase = createSimpleNamedCompilerPhase<NativeGenerationStat
         op = { context, _ -> runCoveragePass(context) }
 )
 
-internal val RemoveRedundantSafepointsPhase = createSimpleNamedCompilerPhase<NativeGenerationState, Unit>(
+internal val RemoveRedundantSafepointsPhase = createSimpleNamedCompilerPhase<BitcodePostProcessingContext, Unit>(
         name = "RemoveRedundantSafepoints",
         description = "Remove function prologue safepoints inlined to another function",
         postactions = getDefaultLlvmModuleActions(),
@@ -120,7 +120,7 @@ internal val RemoveRedundantSafepointsPhase = createSimpleNamedCompilerPhase<Nat
         }
 )
 
-internal val OptimizeTLSDataLoadsPhase = createSimpleNamedCompilerPhase<NativeGenerationState, Unit>(
+internal val OptimizeTLSDataLoadsPhase = createSimpleNamedCompilerPhase<BitcodePostProcessingContext, Unit>(
         name = "OptimizeTLSDataLoads",
         description = "Optimize multiple loads of thread data",
         postactions = getDefaultLlvmModuleActions(),
@@ -153,15 +153,11 @@ internal val PrintBitcodePhase = createSimpleNamedCompilerPhase<PhaseContext, LL
         op = { _, llvmModule -> LLVMDumpModule(llvmModule) }
 )
 
-internal fun PhaseEngine<NativeGenerationState>.runBitcodePostProcessing() {
-    val checkExternalCalls = context.config.configuration.getBoolean(KonanConfigKeys.CHECK_EXTERNAL_CALLS)
-    if (checkExternalCalls) {
-        runPhase(CheckExternalCallsPhase)
-    }
+internal fun <T : BitcodePostProcessingContext> PhaseEngine<T>.runBitcodePostProcessing() {
     val optimizationConfig = createLTOFinalPipelineConfig(
             context,
             context.llvm.targetTriple,
-            closedWorld = context.llvmModuleSpecification.isFinal,
+            closedWorld = context.config.isFinalBinary,
             timePasses = context.config.flexiblePhaseConfig.needProfiling,
     )
     useContext(OptimizationState(context.config, optimizationConfig)) {
@@ -175,14 +171,14 @@ internal fun PhaseEngine<NativeGenerationState>.runBitcodePostProcessing() {
             null -> {}
         }
     }
-    runPhase(CoveragePhase)
+    val checkExternalCalls = context.config.configuration.getBoolean(KonanConfigKeys.CHECK_EXTERNAL_CALLS)
+    if (checkExternalCalls && context is NativeGenerationState) {
+        newEngine(context) { it.runPhase(CoveragePhase) }
+    }
     if (context.config.memoryModel == MemoryModel.EXPERIMENTAL) {
         runPhase(RemoveRedundantSafepointsPhase)
     }
     if (context.config.optimizationsEnabled) {
         runPhase(OptimizeTLSDataLoadsPhase)
-    }
-    if (checkExternalCalls) {
-        runPhase(RewriteExternalCallsCheckerGlobals)
     }
 }

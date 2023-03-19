@@ -4,15 +4,73 @@
 // TARGET_BACKEND: JVM_IR
 // LANGUAGE: +ValueClasses
 
+// MODULE: dependency
+@JvmInline
+value class MfvcDependency(val x: Int, val y: Int) {
+    val z: Int
+        get() = 1
+    val t: MfvcDependency
+        get() = MfvcDependency(10, 20)
+    companion object {
+        var x: Int = -100
+        val y: Int
+            get() = 1
+        var z: MfvcDependency = MfvcDependency(10, 20)
+        val t: MfvcDependency
+            get() = MfvcDependency(10, 20)
+
+        @JvmStatic
+        var xStatic: Int = -100
+        @JvmStatic
+        val yStatic: Int
+            get() = 1
+        @JvmStatic
+        var zStatic: MfvcDependency = MfvcDependency(10, 20)
+        @JvmStatic
+        val tStatic: MfvcDependency
+            get() = MfvcDependency(10, 20)
+    }
+}
+class RegularDependency {
+    var x: Int = -100
+    val y: Int
+        get() = 1
+    var z: MfvcDependency = MfvcDependency(10, 20)
+    val t: MfvcDependency
+        get() = MfvcDependency(10, 20)
+    
+    companion object {
+        var x: Int = -100
+        val y: Int
+            get() = 1
+        var z: MfvcDependency = MfvcDependency(10, 20)
+        val t: MfvcDependency
+            get() = MfvcDependency(10, 20)
+        
+        @JvmStatic
+        var xStatic: Int = -100
+        @JvmStatic
+        val yStatic: Int
+            get() = 1
+        @JvmStatic
+        var zStatic: MfvcDependency = MfvcDependency(10, 20)
+        @JvmStatic
+        val tStatic: MfvcDependency
+            get() = MfvcDependency(10, 20)
+    }
+}
+
+// MODULE: main(dependency)
+
 @JvmInline
 value class Public(val x: Int, val y: Int) {
     companion object {
-        var x: Int = 0
+        var x: Int = -100
         val y: Int
             get() = 1
-        var z: Public = Public(0, 0)
+        var z: Public = Public(10, 20)
         val t: Public
-            get() = Public(0, 0)
+            get() = Public(10, 20)
     }
 }
 
@@ -20,16 +78,16 @@ value class Public(val x: Int, val y: Int) {
 value class Internal(internal val x: Int, internal val y: Int) {
     companion object {
         @JvmStatic
-        var x: Int = 0
+        var x: Int = -100
 
         @JvmStatic
         val y: Int
             get() = 1
-        var z: Internal = Internal(0, 0)
+        var z: Internal = Internal(10, 20)
 
         @JvmStatic
         val t: Internal
-            get() = Internal(0, 0)
+            get() = Internal(10, 20)
     }
 }
 
@@ -291,6 +349,28 @@ fun box(): String {
         jvmStaticZ1; jvmStaticZ2; jvmStaticZ4; jvmStaticZ5; jvmStaticZ6
         jvmStaticZ1 = jvmStaticZ1; jvmStaticZ2 = jvmStaticZ2; jvmStaticZ6 = jvmStaticZ6
     }
+    
+    require(MfvcDependency.x == -100)
+    require(MfvcDependency.xStatic == -100)
+    require(MfvcDependency.y == 1)
+    require(MfvcDependency.yStatic == 1)
+    require(MfvcDependency.z == MfvcDependency(10, 20))
+    require(MfvcDependency.zStatic == MfvcDependency(10, 20))
+    require(MfvcDependency(1, 2).x == 1)
+    require(MfvcDependency(1, 2).y == 2)
+    require(MfvcDependency(1, 2).z == 1)
+    require(MfvcDependency(1, 2).t == MfvcDependency(10, 20))
+    
+    require(RegularDependency.x == -100)
+    require(RegularDependency.xStatic == -100)
+    require(RegularDependency.y == 1)
+    require(RegularDependency.yStatic == 1)
+    require(RegularDependency.z == MfvcDependency(10, 20))
+    require(RegularDependency.zStatic == MfvcDependency(10, 20))
+    require(RegularDependency().x == -100)
+    require(RegularDependency().y == 1)
+    require(RegularDependency().z == MfvcDependency(10, 20))
+    require(RegularDependency().t == MfvcDependency(10, 20))
 
     return "OK"
 }

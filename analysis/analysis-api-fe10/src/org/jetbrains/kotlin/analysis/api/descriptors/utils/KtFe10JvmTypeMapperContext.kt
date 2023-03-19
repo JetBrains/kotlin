@@ -57,6 +57,9 @@ internal class KtFe10JvmTypeMapperContext(private val resolveSession: ResolveSes
         return AbstractTypeMapper.mapType(this, type, mode, sw)
     }
 
+    fun isPrimitiveBacked(type: KotlinType): Boolean =
+        AbstractTypeMapper.isPrimitiveBacked(this, type)
+
     override fun getClassInternalName(typeConstructor: TypeConstructorMarker): String {
         require(typeConstructor is TypeConstructor)
 

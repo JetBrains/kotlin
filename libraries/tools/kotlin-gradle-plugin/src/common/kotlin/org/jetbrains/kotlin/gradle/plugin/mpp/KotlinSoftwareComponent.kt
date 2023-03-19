@@ -50,13 +50,13 @@ abstract class KotlinSoftwareComponent(
             target.components.filter { it.name in targetPublishableComponentNames }
         }.toSet()
 
-    private val _usages: Set<UsageContext> by lazy {
+    private val _usages: Set<DefaultKotlinUsageContext> by lazy {
         if (!project.isKotlinGranularMetadataEnabled) {
             val metadataCompilation = metadataTarget.compilations.getByName(MAIN_COMPILATION_NAME)
             return@lazy metadataTarget.createUsageContexts(metadataCompilation)
         }
 
-        mutableSetOf<UsageContext>().apply {
+        mutableSetOf<DefaultKotlinUsageContext>().apply {
             val allMetadataJar = project.tasks.named(KotlinMetadataTargetConfigurator.ALL_METADATA_JAR_NAME)
             val allMetadataArtifact = project.artifacts.add(Dependency.ARCHIVES_CONFIGURATION, allMetadataJar) { allMetadataArtifact ->
                 allMetadataArtifact.classifier = if (project.isCompatibilityMetadataVariantEnabled) "all" else ""
@@ -84,17 +84,20 @@ abstract class KotlinSoftwareComponent(
             }
 
             val sourcesElements = metadataTarget.sourcesElementsConfigurationName
-            addSourcesJarArtifactToConfiguration(sourcesElements)
-            this += DefaultKotlinUsageContext(
-                compilation = metadataTarget.compilations.getByName(MAIN_COMPILATION_NAME),
-                dependencyConfigurationName = sourcesElements,
-                includeIntoProjectStructureMetadata = false,
-            )
+            if (metadataTarget.isSourcesPublishable) {
+                addSourcesJarArtifactToConfiguration(sourcesElements)
+                this += DefaultKotlinUsageContext(
+                    compilation = metadataTarget.compilations.getByName(MAIN_COMPILATION_NAME),
+                    dependencyConfigurationName = sourcesElements,
+                    includeIntoProjectStructureMetadata = false,
+                    publishOnlyIf = { metadataTarget.isSourcesPublishable }
+                )
+            }
         }
     }
 
     override fun getUsages(): Set<UsageContext> {
-        return _usages
+        return _usages.publishableUsages()
     }
 
     private fun allPublishableCommonSourceSets() = getCommonSourceSetsForMetadataCompilation(project) +
@@ -149,7 +152,12 @@ class DefaultKotlinUsageContext(
     internal val overrideConfigurationArtifacts: SetProperty<PublishArtifact>? = null,
     internal val overrideConfigurationAttributes: AttributeContainer? = null,
     override val includeIntoProjectStructureMetadata: Boolean = true,
+    internal val publishOnlyIf: PublishOnlyIf = PublishOnlyIf { true },
 ) : KotlinUsageContext {
+    fun interface PublishOnlyIf {
+        fun predicate(): Boolean
+    }
+
     private val kotlinTarget: KotlinTarget get() = compilation.target
     private val project: Project get() = kotlinTarget.project
 
@@ -220,3 +228,7 @@ class DefaultKotlinUsageContext(
                     it.name != "org.gradle.jvm.environment"
         }
 }
+
+internal fun Iterable<DefaultKotlinUsageContext>.publishableUsages() = this
+    .filter { it.publishOnlyIf.predicate() }
+    .toSet()

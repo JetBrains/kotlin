@@ -32,21 +32,27 @@ interface AdditionalGradleProperties {
 
 private data class GeneratedOptions(
     val optionsName: FqName,
-    val deprecatedOptionsName: FqName,
+    val deprecatedOptionsName: FqName?,
     val properties: List<KProperty1<*, *>>
+)
+
+private data class GeneratedImplOptions(
+    val baseImplName: FqName,
+    val helperName: FqName
 )
 
 private const val GRADLE_API_SRC_DIR = "libraries/tools/kotlin-gradle-plugin-api/src/common/kotlin"
 private const val GRADLE_PLUGIN_SRC_DIR = "libraries/tools/kotlin-gradle-plugin/src/common/kotlin"
 private const val OPTIONS_PACKAGE_PREFIX = "org.jetbrains.kotlin.gradle.dsl"
 private const val IMPLEMENTATION_SUFFIX = "Default"
+private const val IMPLEMENTATION_HELPERS_SUFFIX = "Helper"
 
 fun generateKotlinGradleOptions(withPrinterToFile: (targetFile: File, Printer.() -> Unit) -> Unit) {
     val apiSrcDir = File(GRADLE_API_SRC_DIR)
     val srcDir = File(GRADLE_PLUGIN_SRC_DIR)
 
     val commonToolOptions = generateKotlinCommonToolOptions(apiSrcDir, withPrinterToFile)
-    val commonToolImplFqName = generateKotlinCommonToolOptionsImpl(
+    val commonToolImplOptions = generateKotlinCommonToolOptionsImpl(
         srcDir,
         commonToolOptions.optionsName,
         commonToolOptions.properties,
@@ -58,10 +64,11 @@ fun generateKotlinGradleOptions(withPrinterToFile: (targetFile: File, Printer.()
         commonToolOptions,
         withPrinterToFile
     )
-    val commonCompilerOptionsImplFqName = generateKotlinCommonOptionsImpl(
+    val commonCompilerOptionsImpl = generateKotlinCommonOptionsImpl(
         srcDir,
         commonCompilerOptions.optionsName,
-        commonToolImplFqName,
+        commonToolImplOptions.baseImplName,
+        commonToolImplOptions.helperName,
         commonCompilerOptions.properties,
         withPrinterToFile
     )
@@ -74,7 +81,8 @@ fun generateKotlinGradleOptions(withPrinterToFile: (targetFile: File, Printer.()
     generateKotlinJvmOptionsImpl(
         srcDir,
         jvmOptions.optionsName,
-        commonCompilerOptionsImplFqName,
+        commonCompilerOptionsImpl.baseImplName,
+        commonCompilerOptionsImpl.helperName,
         jvmOptions.properties,
         withPrinterToFile
     )
@@ -87,8 +95,23 @@ fun generateKotlinGradleOptions(withPrinterToFile: (targetFile: File, Printer.()
     generateKotlinJsOptionsImpl(
         srcDir,
         jsOptions.optionsName,
-        commonCompilerOptionsImplFqName,
+        commonCompilerOptionsImpl.baseImplName,
+        commonCompilerOptionsImpl.helperName,
         jsOptions.properties,
+        withPrinterToFile
+    )
+
+    val nativeOptions = generateKotlinNativeOptions(
+        apiSrcDir,
+        commonCompilerOptions,
+        withPrinterToFile
+    )
+    generateKotlinNativeOptionsImpl(
+        srcDir,
+        nativeOptions.optionsName,
+        commonCompilerOptionsImpl.baseImplName,
+        commonCompilerOptionsImpl.helperName,
+        nativeOptions.properties,
         withPrinterToFile
     )
 
@@ -100,7 +123,8 @@ fun generateKotlinGradleOptions(withPrinterToFile: (targetFile: File, Printer.()
     generateJsDceOptionsImpl(
         srcDir,
         jsDceOptions.optionsName,
-        commonCompilerOptionsImplFqName,
+        commonToolImplOptions.baseImplName,
+        commonToolImplOptions.helperName,
         jsDceOptions.properties,
         withPrinterToFile
     )
@@ -113,7 +137,8 @@ fun generateKotlinGradleOptions(withPrinterToFile: (targetFile: File, Printer.()
     generateMultiplatformCommonOptionsImpl(
         srcDir,
         multiplatformCommonOptions.optionsName,
-        commonCompilerOptionsImplFqName,
+        commonCompilerOptionsImpl.baseImplName,
+        commonCompilerOptionsImpl.helperName,
         multiplatformCommonOptions.properties,
         withPrinterToFile
     )
@@ -169,20 +194,32 @@ private fun generateKotlinCommonToolOptionsImpl(
     commonToolOptionsInterfaceFqName: FqName,
     options: List<KProperty1<*, *>>,
     withPrinterToFile: (targetFile: File, Printer.() -> Unit) -> Unit
-): FqName {
-    val k2CommonToolCompilerArgumentsFqName = FqName(CommonToolArguments::class.qualifiedName!!)
-    val commonToolImplFqName = FqName("${commonToolOptionsInterfaceFqName.asString()}$IMPLEMENTATION_SUFFIX")
-    withPrinterToFile(fileFromFqName(srcDir, commonToolImplFqName)) {
+): GeneratedImplOptions {
+    val commonToolBaseImplFqName = FqName("${commonToolOptionsInterfaceFqName.asString()}$IMPLEMENTATION_SUFFIX")
+    withPrinterToFile(fileFromFqName(srcDir, commonToolBaseImplFqName)) {
         generateImpl(
-            commonToolImplFqName,
+            commonToolBaseImplFqName,
             null,
             commonToolOptionsInterfaceFqName,
-            k2CommonToolCompilerArgumentsFqName,
             options,
         )
     }
 
-    return commonToolImplFqName
+    val k2CommonToolCompilerArgumentsFqName = FqName(CommonToolArguments::class.qualifiedName!!)
+    val commonToolCompilerArgsImplFqName = FqName(
+        "${commonToolOptionsInterfaceFqName.asString()}$IMPLEMENTATION_HELPERS_SUFFIX"
+    )
+    withPrinterToFile(fileFromFqName(srcDir, commonToolCompilerArgsImplFqName)) {
+        generateCompilerOptionsHelper(
+            commonToolOptionsInterfaceFqName,
+            commonToolCompilerArgsImplFqName,
+            null,
+            k2CommonToolCompilerArgumentsFqName,
+            options
+        )
+    }
+
+    return GeneratedImplOptions(commonToolBaseImplFqName, commonToolCompilerArgsImplFqName)
 }
 
 private fun generateKotlinCommonOptions(
@@ -220,22 +257,35 @@ private fun generateKotlinCommonOptionsImpl(
     srcDir: File,
     commonOptionsInterfaceFqName: FqName,
     commonToolImpl: FqName,
+    commonToolCompilerHelperName: FqName,
     options: List<KProperty1<*, *>>,
     withPrinterToFile: (targetFile: File, Printer.() -> Unit) -> Unit
-): FqName {
-    val k2CommonCompilerArgumentsFqName = FqName(CommonCompilerArguments::class.qualifiedName!!)
+): GeneratedImplOptions {
     val commonCompilerImplFqName = FqName("${commonOptionsInterfaceFqName.asString()}$IMPLEMENTATION_SUFFIX")
     withPrinterToFile(fileFromFqName(srcDir, commonCompilerImplFqName)) {
         generateImpl(
             commonCompilerImplFqName,
             commonToolImpl,
             commonOptionsInterfaceFqName,
-            k2CommonCompilerArgumentsFqName,
             options,
         )
     }
 
-    return commonCompilerImplFqName
+    val k2CommonCompilerArgumentsFqName = FqName(CommonCompilerArguments::class.qualifiedName!!)
+    val commonCompilerHelperFqName = FqName(
+        "${commonOptionsInterfaceFqName.asString()}$IMPLEMENTATION_HELPERS_SUFFIX"
+    )
+    withPrinterToFile(fileFromFqName(srcDir, commonCompilerHelperFqName)) {
+        generateCompilerOptionsHelper(
+            commonOptionsInterfaceFqName,
+            commonCompilerHelperFqName,
+            commonToolCompilerHelperName,
+            k2CommonCompilerArgumentsFqName,
+            options
+        )
+    }
+
+    return GeneratedImplOptions(commonCompilerImplFqName, commonCompilerHelperFqName)
 }
 
 private fun generateKotlinJvmOptions(
@@ -273,16 +323,29 @@ private fun generateKotlinJvmOptionsImpl(
     srcDir: File,
     jvmInterfaceFqName: FqName,
     commonCompilerImpl: FqName,
+    commonCompilerHelperName: FqName,
     jvmOptions: List<KProperty1<*, *>>,
     withPrinterToFile: (targetFile: File, Printer.() -> Unit) -> Unit
 ) {
-    val k2JvmCompilerArgumentsFqName = FqName(K2JVMCompilerArguments::class.qualifiedName!!)
     val jvmImplFqName = FqName("${jvmInterfaceFqName.asString()}$IMPLEMENTATION_SUFFIX")
     withPrinterToFile(fileFromFqName(srcDir, jvmImplFqName)) {
         generateImpl(
             jvmImplFqName,
             commonCompilerImpl,
             jvmInterfaceFqName,
+            jvmOptions
+        )
+    }
+
+    val k2JvmCompilerArgumentsFqName = FqName(K2JVMCompilerArguments::class.qualifiedName!!)
+    val jvmCompilerOptionsHelperFqName = FqName(
+        "${jvmInterfaceFqName.asString()}$IMPLEMENTATION_HELPERS_SUFFIX"
+    )
+    withPrinterToFile(fileFromFqName(srcDir, jvmCompilerOptionsHelperFqName)) {
+        generateCompilerOptionsHelper(
+            jvmInterfaceFqName,
+            jvmCompilerOptionsHelperFqName,
+            commonCompilerHelperName,
             k2JvmCompilerArgumentsFqName,
             jvmOptions
         )
@@ -324,21 +387,89 @@ private fun generateKotlinJsOptionsImpl(
     srcDir: File,
     jsInterfaceFqName: FqName,
     commonCompilerImpl: FqName,
+    commonCompilerHelperName: FqName,
     jsOptions: List<KProperty1<*, *>>,
     withPrinterToFile: (targetFile: File, Printer.() -> Unit) -> Unit
 ) {
-    val k2JsCompilerArgumentsFqName = FqName(K2JSCompilerArguments::class.qualifiedName!!)
     val jsImplFqName = FqName("${jsInterfaceFqName.asString()}$IMPLEMENTATION_SUFFIX")
     withPrinterToFile(fileFromFqName(srcDir, jsImplFqName)) {
         generateImpl(
             jsImplFqName,
             commonCompilerImpl,
             jsInterfaceFqName,
+            jsOptions
+        )
+    }
+
+    val k2JsCompilerArgumentsFqName = FqName(K2JSCompilerArguments::class.qualifiedName!!)
+    val jsCompilerOptionsHelperFqName = FqName(
+        "${jsInterfaceFqName.asString()}$IMPLEMENTATION_HELPERS_SUFFIX"
+    )
+    withPrinterToFile(fileFromFqName(srcDir, jsCompilerOptionsHelperFqName)) {
+        generateCompilerOptionsHelper(
+            jsInterfaceFqName,
+            jsCompilerOptionsHelperFqName,
+            commonCompilerHelperName,
             k2JsCompilerArgumentsFqName,
             jsOptions
         )
     }
 }
+
+private fun generateKotlinNativeOptions(
+    apiSrcDir: File,
+    commonCompilerOptions: GeneratedOptions,
+    withPrinterToFile: (targetFile: File, Printer.() -> Unit) -> Unit
+): GeneratedOptions {
+    val nativeInterfaceFqName = FqName("$OPTIONS_PACKAGE_PREFIX.KotlinNativeCompilerOptions")
+    val nativeOptions = gradleOptions<K2NativeCompilerArguments>()
+    withPrinterToFile(fileFromFqName(apiSrcDir, nativeInterfaceFqName)) {
+        generateInterface(
+            nativeInterfaceFqName,
+            nativeOptions,
+            parentType = commonCompilerOptions.optionsName,
+        )
+    }
+
+    println("\n### Attributes specific for Native\n")
+    generateMarkdown(nativeOptions)
+
+    return GeneratedOptions(nativeInterfaceFqName, null, nativeOptions)
+}
+
+private fun generateKotlinNativeOptionsImpl(
+    srcDir: File,
+    nativeInterfaceFqName: FqName,
+    commonCompilerImpl: FqName,
+    commonCompilerHelper: FqName,
+    nativeOptions: List<KProperty1<*, *>>,
+    withPrinterToFile: (targetFile: File, Printer.() -> Unit) -> Unit
+) {
+    val nativeImplFqName = FqName("${nativeInterfaceFqName.asString()}$IMPLEMENTATION_SUFFIX")
+    withPrinterToFile(fileFromFqName(srcDir, nativeImplFqName)) {
+        generateImpl(
+            nativeImplFqName,
+            commonCompilerImpl,
+            nativeInterfaceFqName,
+            nativeOptions
+        )
+    }
+
+    val k2NativeCompilerArgumentsFqName = FqName(K2NativeCompilerArguments::class.qualifiedName!!)
+    val nativeCompilerOptionsHelperFqName = FqName(
+        "${nativeInterfaceFqName.asString()}$IMPLEMENTATION_HELPERS_SUFFIX"
+    )
+    withPrinterToFile(fileFromFqName(srcDir, nativeCompilerOptionsHelperFqName)) {
+        generateCompilerOptionsHelper(
+            nativeInterfaceFqName,
+            nativeCompilerOptionsHelperFqName,
+            commonCompilerHelper,
+            k2NativeCompilerArgumentsFqName,
+            nativeOptions
+        )
+    }
+}
+
 
 private fun generateJsDceOptions(
     apiSrcDir: File,
@@ -374,17 +505,30 @@ private fun generateJsDceOptions(
 private fun generateJsDceOptionsImpl(
     srcDir: File,
     jsDceInterfaceFqName: FqName,
-    commonCompilerImpl: FqName,
+    commonToolImpl: FqName,
+    commonToolHelper: FqName,
     jsDceOptions: List<KProperty1<*, *>>,
     withPrinterToFile: (targetFile: File, Printer.() -> Unit) -> Unit
 ) {
-    val k2JsDceArgumentsFqName = FqName(K2JSDceArguments::class.qualifiedName!!)
     val jsDceImplFqName = FqName("${jsDceInterfaceFqName.asString()}$IMPLEMENTATION_SUFFIX")
     withPrinterToFile(fileFromFqName(srcDir, jsDceImplFqName)) {
         generateImpl(
             jsDceImplFqName,
-            commonCompilerImpl,
+            commonToolImpl,
             jsDceInterfaceFqName,
+            jsDceOptions
+        )
+    }
+
+    val k2JsDceArgumentsFqName = FqName(K2JSDceArguments::class.qualifiedName!!)
+    val jsDceCompilerHelperFqName = FqName(
+        "${jsDceInterfaceFqName.asString()}$IMPLEMENTATION_HELPERS_SUFFIX"
+    )
+    withPrinterToFile(fileFromFqName(srcDir, jsDceCompilerHelperFqName)) {
+        generateCompilerOptionsHelper(
+            jsDceInterfaceFqName,
+            jsDceCompilerHelperFqName,
+            commonToolHelper,
             k2JsDceArgumentsFqName,
             jsDceOptions
         )
@@ -426,16 +570,29 @@ private fun generateMultiplatformCommonOptionsImpl(
     srcDir: File,
     multiplatformCommonInterfaceFqName: FqName,
     commonCompilerImpl: FqName,
+    commonCompilerHelper: FqName,
     multiplatformCommonOptions: List<KProperty1<*, *>>,
     withPrinterToFile: (targetFile: File, Printer.() -> Unit) -> Unit
 ) {
-    val k2metadataCompilerArgumentsFqName = FqName(K2MetadataCompilerArguments::class.qualifiedName!!)
     val multiplatformCommonImplFqName = FqName("${multiplatformCommonInterfaceFqName.asString()}$IMPLEMENTATION_SUFFIX")
     withPrinterToFile(fileFromFqName(srcDir, multiplatformCommonImplFqName)) {
         generateImpl(
             multiplatformCommonImplFqName,
             commonCompilerImpl,
             multiplatformCommonInterfaceFqName,
+            multiplatformCommonOptions
+        )
+    }
+
+    val k2metadataCompilerArgumentsFqName = FqName(K2MetadataCompilerArguments::class.qualifiedName!!)
+    val metadataCompilerHelperFqName = FqName(
+        "${multiplatformCommonInterfaceFqName.asString()}$IMPLEMENTATION_HELPERS_SUFFIX"
+    )
+    withPrinterToFile(fileFromFqName(srcDir, metadataCompilerHelperFqName)) {
+        generateCompilerOptionsHelper(
+            multiplatformCommonInterfaceFqName,
+            metadataCompilerHelperFqName,
+            commonCompilerHelper,
             k2metadataCompilerArgumentsFqName,
             multiplatformCommonOptions
         )
@@ -509,7 +666,6 @@ private fun Printer.generateImpl(
     type: FqName,
     parentImplFqName: FqName?,
     parentType: FqName,
-    argsType: FqName,
     properties: List<KProperty1<*, *>>
 ) {
     val modifiers = "internal abstract class"
@@ -528,30 +684,54 @@ private fun Printer.generateImpl(
             println()
             generatePropertyProviderImpl(property)
         }
+    }
+}
 
+private fun Printer.generateCompilerOptionsHelper(
+    type: FqName,
+    helperName: FqName,
+    parentHelperName: FqName?,
+    argsType: FqName,
+    properties: List<KProperty1<*, *>>
+) {
+    val modifiers = "internal object"
+
+    generateDeclaration(
+        modifiers,
+        helperName,
+    ) {
         println()
-        println("internal fun fillCompilerArguments(args: $argsType) {")
+        println("internal fun fillCompilerArguments(")
         withIndent {
-            if (parentImplFqName != null) println("super.fillCompilerArguments(args)")
+            println("from: $type,")
+            println("args: $argsType,")
+        }
+        println(") {")
+        withIndent {
+            if (parentHelperName != null) println("$parentHelperName.fillCompilerArguments(from, args)")
             for (property in properties) {
                 val defaultValue = property.gradleValues
                 if (property.name != "freeCompilerArgs") {
                     val getter = if (property.gradleReturnType.endsWith("?")) ".orNull" else ".get()"
                     val toArg = defaultValue.toArgumentConverter?.substringAfter("this") ?: ""
-                    println("args.${property.name} = ${property.name}$getter$toArg")
+                    println("args.${property.name} = from.${property.name}$getter$toArg")
                 } else {
-                    println("args.freeArgs += ${property.name}.get()")
+                    println("args.freeArgs += from.${property.name}.get()")
                 }
             }
 
-            addAdditionalJvmArgs(type)
+            addAdditionalJvmArgs(helperName)
         }
         println("}")
 
         println()
-        println("internal fun fillDefaultValues(args: $argsType) {")
+        println("internal fun fillDefaultValues(")
         withIndent {
-            if (parentImplFqName != null) println("super.fillDefaultValues(args)")
+            println("args: $argsType,")
+        }
+        println(") {")
+        withIndent {
+            if (parentHelperName != null) println("$parentHelperName.fillDefaultValues(args)")
             properties
                 .filter { it.name != "freeCompilerArgs" }
                 .forEach {
@@ -563,7 +743,22 @@ private fun Printer.generateImpl(
                     println("args.${it.name} = $value")
                 }
 
-            addAdditionalJvmArgs(type)
+            addAdditionalJvmArgs(helperName)
+        }
+        println("}")
+
+        println()
+        println("internal fun syncOptionsAsConvention(")
+        withIndent {
+            println("from: $type,")
+            println("into: $type,")
+        }
+        println(") {")
+        withIndent {
+            if (parentHelperName != null) println("$parentHelperName.syncOptionsAsConvention(from, into)")
+            for (property in properties) {
+                println("into.${property.name}.convention(from.${property.name})")
+            }
         }
         println("}")
     }
@@ -572,7 +767,7 @@ private fun Printer.generateImpl(
 private fun Printer.addAdditionalJvmArgs(implType: FqName) {
     // Adding required 'noStdlib' and 'noReflect' compiler arguments for JVM compilation
     // Otherwise compilation via build tools will fail
-    if (implType.shortName().toString() == "KotlinJvmCompilerOptions$IMPLEMENTATION_SUFFIX") {
+    if (implType.shortName().toString() == "KotlinJvmCompilerOptions$IMPLEMENTATION_HELPERS_SUFFIX") {
         println()
         println("// Arguments with always default values when used from build tools")
         println("args.noStdlib = true")
@@ -698,7 +893,7 @@ private fun Printer.generateDoc(property: KProperty1<*, *>) {
     val defaultValue = property.gradleDefaultValue
 
     println("/**")
-    println(" * $description")
+    println(" * ${description.replace("\n", " ")}")
     if (possibleValues != null) {
         println(" * Possible values: ${possibleValues.joinToString()}")
     }
@@ -739,6 +934,7 @@ private val KProperty1<*, *>.gradleValues: DefaultValues
             DefaultValue.BOOLEAN_TRUE_DEFAULT -> DefaultValues.BooleanTrueDefault
             DefaultValue.STRING_NULL_DEFAULT -> DefaultValues.StringNullDefault
             DefaultValue.EMPTY_STRING_LIST_DEFAULT -> DefaultValues.EmptyStringListDefault
+            DefaultValue.EMPTY_STRING_ARRAY_DEFAULT -> DefaultValues.EmptyStringArrayDefault
             DefaultValue.JVM_TARGET_VERSIONS -> DefaultValues.JvmTargetVersions
             DefaultValue.LANGUAGE_VERSIONS -> DefaultValues.LanguageVersions
             DefaultValue.API_VERSIONS -> DefaultValues.ApiVersions

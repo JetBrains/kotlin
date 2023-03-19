@@ -1,0 +1,12 @@
+STEP 0:
+    modifications:
+        U : A.0.kt -> A.kt
+        U : B.0.kt -> B.kt
+        U : C.0.kt -> C.kt
+    added file: A.kt, B.kt, C.kt
+STEP 1:
+    updated exports: A.kt, B.kt
+STEP 2:
+    updated exports: A.kt
+STEP 3:
+    updated exports: C.kt

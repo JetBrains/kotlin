@@ -72,7 +72,7 @@ fun FirRegularClass.getAllowedAnnotationTargets(session: FirSession): Set<Kotlin
 fun FirClassLikeSymbol<*>.getAllowedAnnotationTargets(session: FirSession): Set<KotlinTarget> {
     lazyResolveToPhase(FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING)
     val targetAnnotation = getTargetAnnotation(session) ?: return defaultAnnotationTargets
-    val arguments = targetAnnotation.findArgumentByName(ParameterNames.targetAllowedTargets)?.unfoldArrayOrVararg().orEmpty()
+    val arguments = targetAnnotation.findArgumentByName(ParameterNames.targetAllowedTargets)?.unwrapAndFlattenArgument().orEmpty()
 
     return arguments.mapNotNullTo(mutableSetOf()) { argument ->
         val targetExpression = argument as? FirQualifiedAccessExpression
@@ -94,7 +94,7 @@ fun FirClassLikeSymbol<*>.getTargetAnnotation(session: FirSession): FirAnnotatio
 }
 
 fun FirExpression.extractClassesFromArgument(session: FirSession): List<FirRegularClassSymbol> {
-    return unfoldArrayOrVararg().mapNotNull {
+    return unwrapAndFlattenArgument().mapNotNull {
         it.extractClassFromArgument(session)
     }
 }
@@ -175,14 +175,6 @@ fun FirAnnotationContainer.getImplicitUseSiteTargetList(context: CheckerContext)
             if (isGetter) listOf(AnnotationUseSiteTarget.PROPERTY_GETTER) else listOf(AnnotationUseSiteTarget.PROPERTY_SETTER)
         else ->
             emptyList()
-    }
-}
-
-private fun FirExpression.unfoldArrayOrVararg(): List<FirExpression> {
-    return when (this) {
-        is FirVarargArgumentsExpression -> arguments
-        is FirArrayOfCall -> arguments
-        else -> return emptyList()
     }
 }
 

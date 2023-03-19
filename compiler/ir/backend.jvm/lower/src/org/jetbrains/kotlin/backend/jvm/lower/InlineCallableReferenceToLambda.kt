@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.addExtensionReceiver
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.makeIrModulePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredStatementOrigin
@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 
-internal val inlineCallableReferenceToLambdaPhase = makeIrFilePhase(
+internal val inlineCallableReferenceToLambdaPhase = makeIrModulePhase(
     ::InlineCallableReferenceToLambdaPhase,
     name = "InlineCallableReferenceToLambdaPhase",
     description = "Transform callable reference to inline lambdas, mark inline lambdas for later passes"
@@ -78,8 +78,16 @@ private class InlineCallableReferenceToLambdaVisitor(val context: JvmBackendCont
         this is IrFunctionReference -> // ::function -> { args... -> function(args...) }
             wrapFunction(symbol.owner).toLambda(this, scope!!)
 
-        this is IrPropertyReference -> // ::property -> { receiver -> receiver.property }; prefer direct field access if allowed.
-            (if (field != null) wrapField(field!!.owner) else wrapFunction(getter!!.owner)).toLambda(this, scope!!)
+        this is IrPropertyReference ->
+            // References to generic synthetic Java properties aren't inlined in K1. Fixes KT-57103
+            if (typeArgumentsCount > 0 &&
+                symbol.owner.origin.let {
+                    it == IrDeclarationOrigin.SYNTHETIC_JAVA_PROPERTY_DELEGATE || it == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
+                }
+            ) this
+            // ::property -> { receiver -> receiver.property }; prefer direct field access if allowed.
+            else (if (field != null) wrapField(field!!.owner) else wrapFunction(getter!!.owner)).toLambda(this, scope!!)
+
 
         else -> this // not an inline argument
     }

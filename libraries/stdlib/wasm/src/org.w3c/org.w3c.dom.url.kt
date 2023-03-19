@@ -16,7 +16,7 @@ import org.w3c.files.*
 /**
  * Exposes the JavaScript [URL](https://developer.mozilla.org/en/docs/Web/API/URL) to Kotlin
  */
-public external open class URL(url: String, base: String = definedExternally) {
+public external open class URL(url: String, base: String = definedExternally) : JsAny {
     var href: String
     open val origin: String
     var protocol: String
@@ -43,11 +43,11 @@ public external open class URL(url: String, base: String = definedExternally) {
 /**
  * Exposes the JavaScript [URLSearchParams](https://developer.mozilla.org/en/docs/Web/API/URLSearchParams) to Kotlin
  */
-public external open class URLSearchParams(init: Dynamic? = definedExternally) {
+public external open class URLSearchParams(init: JsAny? = definedExternally) : JsAny {
     fun append(name: String, value: String)
     fun delete(name: String)
     fun get(name: String): String?
-    fun getAll(name: String): Array<String>
+    fun getAll(name: String): JsArray<JsString>
     fun has(name: String): Boolean
     fun set(name: String, value: String)
 }

@@ -29,6 +29,7 @@ public open enum class EN : kotlin.Enum<EN> {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<EN>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): EN
     public final /*synthesized*/ fun values(): kotlin.Array<EN>
 }

@@ -16,6 +16,19 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.yieldIfNotNull
 
 internal class FileBasedKotlinDeclarationProvider(private val kotlinFile: KtFile) : KotlinDeclarationProvider() {
+    private val topLevelDeclarations: Sequence<KtDeclaration>
+        get() {
+            return sequence {
+                for (child in kotlinFile.declarations) {
+                    if (child is KtScript) {
+                        yieldAll(child.declarations)
+                    } else {
+                        yield(child)
+                    }
+                }
+            }
+        }
+
     override fun getClassLikeDeclarationByClassId(classId: ClassId): KtClassLikeDeclaration? {
         return getClassLikeDeclarationsByClassId(classId).firstOrNull()
     }
@@ -39,7 +52,7 @@ internal class FileBasedKotlinDeclarationProvider(private val kotlinFile: KtFile
             val tasks = ArrayDeque<Task>()
 
             val startingChunks = classId.relativeClassName.pathSegments()
-            for (declaration in kotlinFile.declarations) {
+            for (declaration in topLevelDeclarations) {
                 tasks.addLast(Task(startingChunks, declaration))
             }
 
@@ -106,7 +119,7 @@ internal class FileBasedKotlinDeclarationProvider(private val kotlinFile: KtFile
     override fun findFilesForFacade(facadeFqName: FqName): Collection<KtFile> {
         if (kotlinFile.javaFileFacadeFqName != facadeFqName) return emptyList()
 
-        for (declaration in kotlinFile.declarations) {
+        for (declaration in topLevelDeclarations) {
             if (declaration !is KtClassLikeDeclaration) {
                 return listOf(kotlinFile)
             }
@@ -128,7 +141,7 @@ internal class FileBasedKotlinDeclarationProvider(private val kotlinFile: KtFile
         }
 
         return buildList {
-            for (declaration in kotlinFile.declarations) {
+            for (declaration in topLevelDeclarations) {
                 if (declaration is T && declaration.nameAsName == name) {
                     add(declaration)
                 }
@@ -142,7 +155,7 @@ internal class FileBasedKotlinDeclarationProvider(private val kotlinFile: KtFile
         }
 
         return buildSet {
-            for (declaration in kotlinFile.declarations) {
+            for (declaration in topLevelDeclarations) {
                 if (declaration is T) {
                     addIfNotNull(declaration.nameAsName)
                 }

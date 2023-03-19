@@ -37,10 +37,12 @@ object IrErrorClassImpl : IrClassImpl(
                 get() = TODO("Not yet implemented")
             override val symbol: IrFileSymbol
                 get() = TODO("Not yet implemented")
-            override val module: IrModuleFragment
+            override var module: IrModuleFragment
                 get() = TODO("Not yet implemented")
-            override val fileEntry: IrFileEntry
+                set(_) = TODO("Not yet implemented")
+            override var fileEntry: IrFileEntry
                 get() = TODO("Not yet implemented")
+                set(_) = TODO("Not yet implemented")
             override var metadata: MetadataSource?
                 get() = TODO("Not yet implemented")
                 set(_) {}
@@ -48,8 +50,9 @@ object IrErrorClassImpl : IrClassImpl(
             @ObsoleteDescriptorBasedAPI
             override val packageFragmentDescriptor: PackageFragmentDescriptor
                 get() = TODO("Not yet implemented")
-            override val fqName: FqName
+            override var fqName: FqName
                 get() = FqName.ROOT
+                set(_) = TODO("Not yet implemented")
         }
         set(_) = TODO()
 }

@@ -329,6 +329,12 @@ public class BlackBoxModernJdkCodegenTestGenerated extends AbstractBlackBoxCodeg
             }
 
             @Test
+            @TestMetadata("callableReferenceToGenericRecord.kt")
+            public void testCallableReferenceToGenericRecord() throws Exception {
+                runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/records/callableReferenceToGenericRecord.kt");
+            }
+
+            @Test
             @TestMetadata("collectionSizeOverrides.kt")
             public void testCollectionSizeOverrides() throws Exception {
                 runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/records/collectionSizeOverrides.kt");

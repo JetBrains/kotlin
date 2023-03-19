@@ -73,7 +73,7 @@ internal class SymbolLightParameterForReceiver private constructor(
                 ),
                 additionalAnnotationsProvider = NullabilityAnnotationsProvider {
                     withReceiverSymbol { receiver ->
-                        receiver.type.nullabilityType
+                        receiver.type.let { if (it.isPrimitiveBacked) NullabilityType.Unknown else it.nullabilityType }
                     }
                 },
             ),
@@ -84,7 +84,7 @@ internal class SymbolLightParameterForReceiver private constructor(
         withReceiverSymbol { receiver ->
             val ktType = receiver.type
             ktType.asPsiTypeElement(this, allowErrorTypes = true)?.let {
-                annotateByKtType(it.type, ktType, it)
+                annotateByKtType(it.type, ktType, it, modifierList)
             }
         } ?: nonExistentType()
     }

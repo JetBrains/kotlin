@@ -52,7 +52,7 @@
                         <configuration>
                             <multiPlatform>true</multiPlatform>
                             <args>
-                                <arg>-Xuse-deprecated-legacy-compiler</arg>
+                                <arg>-Xforce-deprecated-legacy-compiler-usage</arg>
                             </args>
                         </configuration>
                     </execution>
@@ -66,7 +66,7 @@
                         <configuration>
                             <multiPlatform>true</multiPlatform>
                             <args>
-                                <arg>-Xuse-deprecated-legacy-compiler</arg>
+                                <arg>-Xforce-deprecated-legacy-compiler-usage</arg>
                             </args>
                         </configuration>
                     </execution>

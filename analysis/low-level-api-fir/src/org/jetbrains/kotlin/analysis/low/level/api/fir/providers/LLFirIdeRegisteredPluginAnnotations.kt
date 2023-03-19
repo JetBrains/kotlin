@@ -25,7 +25,7 @@ internal class LLFirIdeRegisteredPluginAnnotations(
     override val annotations: Set<AnnotationFqn>
         get() = allAnnotationsCache.getValue()
 
-    private val allAnnotationsCache: FirLazyValue<Set<AnnotationFqn>, Nothing?> = session.firCachesFactory.createLazyValue {
+    private val allAnnotationsCache: FirLazyValue<Set<AnnotationFqn>> = session.firCachesFactory.createLazyValue {
         // at this point, both metaAnnotations and annotationsFromPlugins should be collected
         val result = metaAnnotations.flatMapTo(mutableSetOf()) { getAnnotationsWithMetaAnnotation(it) }
 

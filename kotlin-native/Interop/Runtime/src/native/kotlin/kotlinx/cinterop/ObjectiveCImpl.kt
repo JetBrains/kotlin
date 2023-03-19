@@ -112,6 +112,10 @@ annotation class ExternalObjCClass(val protocolGetter: String = "", val binaryNa
 @Retention(AnnotationRetention.BINARY)
 annotation class ObjCMethod(val selector: String, val encoding: String, val isStret: Boolean = false)
 
+@Target(AnnotationTarget.FUNCTION)
+@Retention(AnnotationRetention.BINARY)
+annotation class ObjCDirect(val symbol: String)
+
 @Target(AnnotationTarget.CONSTRUCTOR)
 @Retention(AnnotationRetention.BINARY)
 annotation class ObjCConstructor(val initSelector: String, val designated: Boolean)

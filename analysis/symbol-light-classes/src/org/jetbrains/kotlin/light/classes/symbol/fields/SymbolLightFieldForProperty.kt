@@ -98,12 +98,10 @@ internal class SymbolLightFieldForProperty private constructor(
         in GranularModifiersBox.VISIBILITY_MODIFIERS -> GranularModifiersBox.computeVisibilityForMember(ktModule, propertySymbolPointer)
         in GranularModifiersBox.MODALITY_MODIFIERS -> {
             val modality = withPropertySymbol { propertySymbol ->
-                if (propertySymbol.isVal) {
+                if (propertySymbol.isVal || propertySymbol.isDelegatedProperty) {
                     PsiModifier.FINAL
                 } else {
-                    propertySymbol.computeSimpleModality()?.takeIf {
-                        it != PsiModifier.FINAL || isTopLevel && propertySymbol.isDelegatedProperty
-                    }
+                    propertySymbol.computeSimpleModality()?.takeIf { it != PsiModifier.FINAL }
                 }
             }
 
@@ -154,10 +152,10 @@ internal class SymbolLightFieldForProperty private constructor(
                 ),
                 additionalAnnotationsProvider = NullabilityAnnotationsProvider {
                     withPropertySymbol { propertySymbol ->
-                        if (!(propertySymbol is KtKotlinPropertySymbol && propertySymbol.isLateInit)) {
-                            getTypeNullability(propertySymbol.returnType)
-                        } else {
-                            NullabilityType.Unknown
+                        when {
+                            propertySymbol.isDelegatedProperty -> NullabilityType.NotNull
+                            !(propertySymbol is KtKotlinPropertySymbol && propertySymbol.isLateInit) -> getTypeNullability(propertySymbol.returnType)
+                            else -> NullabilityType.Unknown
                         }
                     }
                 }
@@ -175,7 +173,7 @@ internal class SymbolLightFieldForProperty private constructor(
     }
 
     private val _initializer by lazyPub {
-        _initializerValue?.createPsiLiteral(this)
+        _initializerValue?.createPsiExpression(this)
     }
 
     override fun getInitializer(): PsiExpression? = _initializer
@@ -188,7 +186,7 @@ internal class SymbolLightFieldForProperty private constructor(
                         // NB: not as?, since _initializerValue already checks that
                         (propertySymbol as KtKotlinPropertySymbol).isConst &&
                         // javac rejects all non-primitive and non String constants
-                        (propertySymbol.returnType.isPrimitive || propertySymbol.returnType.isString)
+                        (propertySymbol.returnType.isPrimitiveBacked || propertySymbol.returnType.isString)
             }
         }
     }

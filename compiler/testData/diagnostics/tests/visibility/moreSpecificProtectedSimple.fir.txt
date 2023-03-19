@@ -1,0 +1,63 @@
+FILE: moreSpecificProtectedSimple.fir.kt
+    public abstract interface Base : R|kotlin/Any| {
+    }
+    public abstract interface Derived : R|Base| {
+    }
+    public abstract interface M1 : R|kotlin/Any| {
+        public abstract val success: R|kotlin/Boolean|
+            public get(): R|kotlin/Boolean|
+
+    }
+    public abstract interface M1Sub : R|M1| {
+    }
+    public open class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        protected open fun baz(a: R|Derived|): R|M1| {
+            ^baz R|kotlin/TODO|()
+        }
+
+        protected open fun foo(a: R|Derived|): R|M1| {
+            ^foo R|kotlin/TODO|()
+        }
+
+        public final fun f(a: R|A|, b: R|B|, d: R|Derived|): R|kotlin/Unit| {
+            R|<local>/a|.R|/A.baz|(R|<local>/d|).R|/M1.success|
+            R|<local>/a|.R|/A.foo|(R|<local>/d|).R|/M1.success|
+            R|<local>/b|.R|/B.baz|(R|<local>/d|).R|kotlin/String.length|
+            R|<local>/b|.R|/B.foo|(R|<local>/d|).R|kotlin/String.length|
+            when (R|<local>/a|) {
+                ($subj$ is R|B|) ->  {
+                    R|<local>/a|.R|/A.baz|(R|<local>/d|).<Unresolved name: length>#
+                    R|<local>/a|.R|/A.baz|(R|<local>/d|).R|/M1.success|
+                    R|<local>/a|.R|/A.foo|(R|<local>/d|).R|/M1.success|
+                }
+            }
+
+        }
+
+    }
+    public final class B : R|A| {
+        public constructor(): R|B| {
+            super<R|A|>()
+        }
+
+        protected open override fun baz(a: R|Derived|): R|M1Sub| {
+            ^baz R|kotlin/TODO|()
+        }
+
+        public final fun baz(a: R|Base|): R|kotlin/String| {
+            ^baz R|kotlin/TODO|()
+        }
+
+        protected open override fun foo(a: R|Derived|): R|M1| {
+            ^foo R|kotlin/TODO|()
+        }
+
+        public final fun foo(a: R|Base|): R|kotlin/String| {
+            ^foo R|kotlin/TODO|()
+        }
+
+    }

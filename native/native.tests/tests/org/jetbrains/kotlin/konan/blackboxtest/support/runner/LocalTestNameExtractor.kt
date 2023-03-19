@@ -26,17 +26,21 @@ internal class LocalTestNameExtractor(
         runParameters = null
     )
 
-    override fun buildResultHandler(runResult: RunResult) = ResultHandler(runResult)
+    override fun buildResultHandler(runResult: RunResult) =
+        TestNameResultHandler(runResult, visibleProcessName, checks, getLoggedParameters())
 
     override fun handleUnexpectedFailure(t: Throwable) = fail {
         LoggedData.TestRunUnexpectedFailure(getLoggedParameters(), t)
             .withErrorMessage("Test name extraction failed with unexpected exception.")
     }
+}
 
-    inner class ResultHandler(
-        runResult: RunResult
-    ) : AbstractLocalProcessRunner<Collection<TestName>>.ResultHandler(runResult) {
-        override fun getLoggedRun() = LoggedData.TestRun(getLoggedParameters(), runResult)
-        override fun doHandle() = GTestListing.parse(runResult.processOutput.stdOut.filteredOutput)
-    }
+internal class TestNameResultHandler(
+    runResult: RunResult,
+    visibleProcessName: String,
+    checks: TestRunChecks,
+    private val loggedParameters: LoggedData.TestRunParameters
+) : LocalResultHandler<Collection<TestName>>(runResult, visibleProcessName, checks) {
+    override fun getLoggedRun() = LoggedData.TestRun(loggedParameters, runResult)
+    override fun doHandle() = GTestListing.parse(runResult.processOutput.stdOut.filteredOutput)
 }

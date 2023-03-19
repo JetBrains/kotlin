@@ -1,9 +1,6 @@
 package org.jetbrains.kotlin.library.impl
 
-import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.konan.file.file
-import org.jetbrains.kotlin.konan.file.unzipTo
-import org.jetbrains.kotlin.konan.file.withZipFileSystem
+import org.jetbrains.kotlin.konan.file.*
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import java.nio.file.FileSystem
@@ -54,8 +51,10 @@ class IrLibraryLayoutImpl(klib: File, component: String) : KotlinLibraryLayoutIm
 }
 
 @Suppress("UNCHECKED_CAST")
-open class BaseLibraryAccess<L : KotlinLibraryLayout>(val klib: File, component: String?) {
+open class BaseLibraryAccess<L : KotlinLibraryLayout>(val klib: File, component: String?, zipAccessor: ZipFileSystemAccessor? = null) {
     open val layout = KotlinLibraryLayoutImpl(klib, component)
+
+    private val klibZipAccessor = zipAccessor ?: ZipFileSystemInPlaceAccessor
 
     fun <T> realFiles(action: (L) -> T): T =
         if (layout.isZipped)
@@ -65,7 +64,7 @@ open class BaseLibraryAccess<L : KotlinLibraryLayout>(val klib: File, component:
 
     fun <T> inPlace(action: (L) -> T): T =
         if (layout.isZipped)
-            layout.klib.withZipFileSystem { zipFileSystem ->
+            klibZipAccessor.withZipFileSystem(layout.klib) { zipFileSystem ->
                 action(layout.directlyFromZip(zipFileSystem) as L)
             }
         else
@@ -73,11 +72,13 @@ open class BaseLibraryAccess<L : KotlinLibraryLayout>(val klib: File, component:
 }
 
 
-class MetadataLibraryAccess<L : KotlinLibraryLayout>(klib: File, component: String) : BaseLibraryAccess<L>(klib, component) {
+class MetadataLibraryAccess<L : KotlinLibraryLayout>(klib: File, component: String, zipAccessor: ZipFileSystemAccessor? = null) :
+    BaseLibraryAccess<L>(klib, component, zipAccessor) {
     override val layout = MetadataLibraryLayoutImpl(klib, component)
 }
 
-class IrLibraryAccess<L : KotlinLibraryLayout>(klib: File, component: String) : BaseLibraryAccess<L>(klib, component) {
+class IrLibraryAccess<L : KotlinLibraryLayout>(klib: File, component: String, zipAccessor: ZipFileSystemAccessor? = null) :
+    BaseLibraryAccess<L>(klib, component, zipAccessor) {
     override val layout = IrLibraryLayoutImpl(klib, component)
 }
 

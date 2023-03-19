@@ -1,0 +1,4 @@
+FILE: invalidLhsOfClassLiteral.kt
+    public final fun main(args: R|kotlin/Array<kotlin/String>|): R|kotlin/Unit| {
+        <getClass>(<Unresolved name: foo>#().<Unresolved name: Wrapper>#<*>)
+    }

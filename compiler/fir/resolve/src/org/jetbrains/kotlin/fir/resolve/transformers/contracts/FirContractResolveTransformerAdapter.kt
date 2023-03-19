@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -49,6 +50,16 @@ fun <F : FirClassLikeDeclaration> F.runContractResolveForLocalClass(
         targetedClasses
     )
     val transformer = FirContractResolveTransformer(session, scopeSession, newContext)
+
+    return this.transformSingle(transformer, ResolutionMode.ContextIndependent)
+}
+
+fun <F : FirFunction> F.runContractResolveForFunction(
+    session: FirSession,
+    scopeSession: ScopeSession,
+    outerBodyResolveContext: BodyResolveContext,
+): F {
+    val transformer = FirContractResolveTransformer(session, scopeSession, outerBodyResolveContext)
 
     return this.transformSingle(transformer, ResolutionMode.ContextIndependent)
 }

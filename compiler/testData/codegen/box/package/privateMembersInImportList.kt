@@ -1,4 +1,3 @@
-// WITH_STDLIB
 package test
 
 import test.C.E1

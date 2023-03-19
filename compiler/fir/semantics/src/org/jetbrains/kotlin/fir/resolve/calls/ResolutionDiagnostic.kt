@@ -33,7 +33,8 @@ class InferredEmptyIntersectionDiagnostic(
     val incompatibleTypes: Collection<ConeKotlinType>,
     val causingTypes: Collection<ConeKotlinType>,
     val typeVariable: ConeTypeVariable,
-    val kind: EmptyIntersectionTypeKind
+    val kind: EmptyIntersectionTypeKind,
+    val isError: Boolean
 ) : ResolutionDiagnostic(INAPPLICABLE)
 
 class TooManyArguments(
@@ -77,6 +78,8 @@ class NameForAmbiguousParameter(
 ) : ResolutionDiagnostic(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR)
 
 object InapplicableCandidate : ResolutionDiagnostic(INAPPLICABLE)
+
+object ErrorTypeInArguments : ResolutionDiagnostic(INAPPLICABLE)
 
 object HiddenCandidate : ResolutionDiagnostic(HIDDEN)
 

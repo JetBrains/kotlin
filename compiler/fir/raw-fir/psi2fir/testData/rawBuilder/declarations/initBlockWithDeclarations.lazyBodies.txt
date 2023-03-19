@@ -1,7 +1,7 @@
 FILE: initBlockWithDeclarations.kt
     public? final? class X : R|kotlin/Any| {
         public? constructor(): R|X| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
         init { LAZY_BLOCK }
@@ -9,7 +9,7 @@ FILE: initBlockWithDeclarations.kt
     }
     public? final? object <no name provided> : R|kotlin/Any| {
         private constructor(): R|<no name provided>| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
         init { LAZY_BLOCK }

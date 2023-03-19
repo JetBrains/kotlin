@@ -57,6 +57,9 @@ object CommonConfigurationKeys {
     val USE_LIGHT_TREE = CompilerConfigurationKey.create<Boolean>("light tree")
 
     @JvmField
+    val HMPP_MODULE_STRUCTURE = CompilerConfigurationKey.create<HmppCliModuleStructure>("HMPP module structure")
+
+    @JvmField
     val EXPECT_ACTUAL_LINKER = CompilerConfigurationKey.create<Boolean>("Experimental expect/actual linker")
 
     @JvmField

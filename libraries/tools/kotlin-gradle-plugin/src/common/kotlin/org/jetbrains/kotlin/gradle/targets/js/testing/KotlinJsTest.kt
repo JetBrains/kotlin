@@ -14,7 +14,7 @@ import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.karma.KotlinKarma
@@ -33,15 +33,11 @@ constructor(
 ) : KotlinTest(),
     RequiresNpmDependencies {
     @Transient
-    private val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
-
-    private val npmResolutionManager by project.provider { nodeJs.npmResolutionManager }
+    private val nodeJs = project.rootProject.kotlinNodeJsExtension
 
     private val nodeExecutable by project.provider { nodeJs.requireConfigured().nodeExecutable }
 
     private val npmProjectDir by project.provider { compilation.npmProject.dir }
-
-    private val projectPath = project.path
 
     @Input
     var environment = mutableMapOf<String, String>()
@@ -110,9 +106,6 @@ constructor(
     val nodeJsArgs: MutableList<String> =
         mutableListOf()
 
-    override val nodeModulesRequired: Boolean
-        @Internal get() = testFramework!!.nodeModulesRequired
-
     override val requiredNpmDependencies: Set<RequiredKotlinJsDependency>
         @Internal get() = testFramework!!.requiredNpmDependencies
 
@@ -162,11 +155,6 @@ constructor(
         this.testFramework = testFramework
 
         return testFramework
-    }
-
-    override fun executeTests() {
-        npmResolutionManager.checkRequiredDependencies(task = this)
-        super.executeTests()
     }
 
     override fun createTestExecutionSpec(): TCServiceMessagesTestExecutionSpec {

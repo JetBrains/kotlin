@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode.DEVELOPMENT
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode.PRODUCTION
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
@@ -50,15 +51,6 @@ abstract class KotlinJsIrLink @Inject constructor(
         return !entryModule.get().asFile.exists()
     }
 
-    @get:Internal
-    val platformType by lazy {
-        compilation.platformType
-    }
-
-    @Transient
-    @get:Internal
-    internal lateinit var compilation: KotlinCompilation<*>
-
     @Transient
     @get:Internal
     internal val propertiesProvider = PropertiesProvider(project)
@@ -85,8 +77,6 @@ abstract class KotlinJsIrLink @Inject constructor(
     @get:Input
     internal abstract val modeProperty: Property<KotlinJsBinaryMode>
 
-    private val buildDir = project.buildDir
-
     @get:SkipWhenEmpty
     @get:IgnoreEmptyDirectories
     @get:NormalizeLineEndings
@@ -94,9 +84,14 @@ abstract class KotlinJsIrLink @Inject constructor(
     @get:PathSensitive(PathSensitivity.RELATIVE)
     internal abstract val entryModule: DirectoryProperty
 
+    // Do not change the visibility - the property could be used outside
     @get:Internal
-    val rootCacheDirectory by lazy {
-        buildDir.resolve("klib/cache")
+    abstract val rootCacheDirectory: DirectoryProperty
+
+    override fun cleanOutputsAndLocalState(reason: String?) {
+        if (!usingCacheDirectory()) {
+            super.cleanOutputsAndLocalState(reason)
+        }
     }
 
     override fun processArgs(args: K2JSCompilerArguments) {
@@ -104,13 +99,6 @@ abstract class KotlinJsIrLink @Inject constructor(
         KotlinBuildStatsService.applyIfInitialised {
             it.report(BooleanMetrics.JS_IR_INCREMENTAL, incrementalJsIr)
             val newArgs = K2JSCompilerArguments()
-            // moduleName can start with @ for group of NPM packages
-            // but args parsing @ as start of argfile
-            // so WA we provide moduleName as one parameter
-            if (args.moduleName != null) {
-                args.freeArgs += "-ir-output-name=${args.moduleName}"
-                args.moduleName = null
-            }
             parseCommandLineArguments(ArgumentUtils.convertArgumentsToStringList(args), newArgs)
             it.report(
                 StringMetrics.JS_OUTPUT_GRANULARITY,
@@ -121,12 +109,23 @@ abstract class KotlinJsIrLink @Inject constructor(
             )
         }
 
+        // moduleName can start with @ for group of NPM packages
+        // but args parsing @ as start of argfile
+        // so WA we provide moduleName as one parameter
+        if (args.moduleName != null) {
+            args.freeArgs += "-ir-output-name=${args.moduleName}"
+            args.moduleName = null
+        }
+
         args.includes = entryModule.get().asFile.canonicalPath
 
-        if (incrementalJsIr && mode == DEVELOPMENT) {
-            args.cacheDirectory = rootCacheDirectory.also { it.mkdirs() }.absolutePath
+        if (usingCacheDirectory()) {
+            args.cacheDirectory = rootCacheDirectory.get().asFile.also { it.mkdirs() }.absolutePath
         }
     }
+
+    private fun usingCacheDirectory() =
+        incrementalJsIr && modeProperty.get() == DEVELOPMENT
 }
 
 val KotlinPlatformType.fileExtension

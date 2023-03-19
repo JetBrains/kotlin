@@ -4,6 +4,7 @@
  */
 package org.jetbrains.kotlin.checkers
 
+import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -118,6 +119,7 @@ abstract class KotlinMultiFileTestWithJava<M : KotlinBaseTest.TestModule, F : Ko
 
     protected abstract fun createTestFile(module: M?, fileName: String, text: String, directives: Directives): F
 
+    @OptIn(ObsoleteTestInfrastructure::class)
     protected open fun createTestFiles(
         file: File,
         expectedText: String,
@@ -139,7 +141,7 @@ abstract class KotlinMultiFileTestWithJava<M : KotlinBaseTest.TestModule, F : Ko
                 return createTestFile(module, fileName, text, directives)
             }
 
-            override fun createModule(name: String, dependencies: List<String>, friends: List<String>, abiVersions: List<Int>): M? {
+            override fun createModule(name: String, dependencies: List<String>, friends: List<String>, dependsOn: List<String>): M? {
                 val module = createTestModule(name, dependencies, friends)
                 val oldValue = modules.put(name, ModuleAndDependencies(module, dependencies, friends))
                 assert(oldValue == null) { "Module $name declared more than once" }

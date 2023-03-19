@@ -5,14 +5,20 @@
 
 package org.jetbrains.kotlin.backend.common.actualizer
 
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrFail
+import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.kotlinFqName
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.multiplatform.OptionalAnnotationUtil
 
 fun generateIrElementFullName(
     declaration: IrElement,
@@ -73,4 +79,10 @@ fun reportMissingActual(irElement: IrElement) {
 fun reportManyInterfacesMembersNotImplemented(declaration: IrClass, actualMember: IrDeclarationWithName) {
     // TODO: setup diagnostics reporting
     throw AssertionError("${declaration.name} must override ${actualMember.name} because it inherits multiple interface methods of it")
+}
+
+internal fun IrElement.containsOptionalExpectation(): Boolean {
+    return this is IrClass &&
+            this.kind == ClassKind.ANNOTATION_CLASS &&
+            this.hasAnnotation(OptionalAnnotationUtil.OPTIONAL_EXPECTATION_FQ_NAME)
 }

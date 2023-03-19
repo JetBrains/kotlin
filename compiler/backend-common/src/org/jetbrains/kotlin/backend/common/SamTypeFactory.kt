@@ -61,6 +61,8 @@ class SamTypeApproximator(builtIns: KotlinBuiltIns, languageVersionSettings: Lan
         return approximatedOriginalTypeToUse.removeExternalProjections(carefulApproximationOfContravariantProjection)
     }
 
+    // When changing this, please consider also changing the mirroring K2 function at
+    // org.jetbrains.kotlin.fir.backend.generators.AdapterGenerator.removeExternalProjections
     private fun KotlinType.removeExternalProjections(carefulApproximationOfContravariantProjection: Boolean): KotlinType? {
         val newArguments = arguments.mapIndexed { i, argument ->
             if (carefulApproximationOfContravariantProjection && argument.projectionKind == Variance.IN_VARIANCE) {

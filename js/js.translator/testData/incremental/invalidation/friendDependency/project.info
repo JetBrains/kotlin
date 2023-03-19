@@ -12,6 +12,12 @@ STEP 3:
 STEP 4:
     libs: lib1, main
     dirty js: main
-STEP 5..9:
+STEP 5..6:
+    libs: lib1, main
+    dirty js: lib1, main
+STEP 7:
+    libs: lib1, main
+    dirty js: main
+STEP 8..9:
     libs: lib1, main
     dirty js: lib1, main

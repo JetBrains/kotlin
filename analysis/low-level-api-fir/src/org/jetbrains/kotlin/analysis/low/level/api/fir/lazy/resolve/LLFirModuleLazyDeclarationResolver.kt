@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFil
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.tryCollectDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
-import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyTransformerExecutor
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.withOnAirDesignation
@@ -96,7 +95,7 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
         try {
             doLazyResolve(target, scopeSession, toPhase)
         } catch (e: Exception) {
-            handleExceptionFromResolve(e, moduleComponents.sessionInvalidator, target, fromPhase, toPhase)
+            handleExceptionFromResolve(e, target, fromPhase, toPhase)
         }
     }
 
@@ -204,12 +203,11 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
 
 private fun handleExceptionFromResolve(
     exception: Exception,
-    sessionInvalidator: LLFirSessionInvalidator,
     firDeclarationToResolve: FirElementWithResolvePhase,
     fromPhase: FirResolvePhase,
     toPhase: FirResolvePhase?
 ): Nothing {
-    sessionInvalidator.invalidate(firDeclarationToResolve.llFirSession)
+    firDeclarationToResolve.llFirSession.invalidate()
     rethrowExceptionWithDetails(
         buildString {
             val moduleData = firDeclarationToResolve.llFirModuleData

@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.samWithReceiver.k2.FirSamWithReceiverExtensionRegist
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.runners.AbstractDiagnosticTest
-import org.jetbrains.kotlin.test.runners.AbstractFirDiagnosticTest
-import org.jetbrains.kotlin.test.runners.codegen.AbstractFirBlackBoxCodegenTest
+import org.jetbrains.kotlin.test.runners.AbstractFirPsiDiagnosticTest
+import org.jetbrains.kotlin.test.runners.codegen.AbstractFirLightTreeBlackBoxCodegenTest
 import org.jetbrains.kotlin.test.runners.codegen.AbstractIrBlackBoxCodegenTest
 import org.jetbrains.kotlin.test.runners.configurationForClassicAndFirTestsAlongside
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
@@ -31,7 +31,7 @@ abstract class AbstractSamWithReceiverTest : AbstractDiagnosticTest() {
     }
 }
 
-abstract class AbstractFirSamWithReceiverTest : AbstractFirDiagnosticTest() {
+abstract class AbstractFirPsiSamWithReceiverDiagnosticTest : AbstractFirPsiDiagnosticTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         with(builder) {
@@ -50,7 +50,7 @@ open class AbstractIrBlackBoxCodegenTestForSamWithReceiver : AbstractIrBlackBoxC
     }
 }
 
-open class AbstractFirBlackBoxCodegenTestForSamWithReceiver : AbstractFirBlackBoxCodegenTest() {
+open class AbstractFirLightTreeBlackBoxCodegenTestForSamWithReceiver : AbstractFirLightTreeBlackBoxCodegenTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configurePlugin()

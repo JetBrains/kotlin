@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.descriptorUtil.inlineClassRepresentation
+import org.jetbrains.kotlin.resolve.descriptorUtil.multiFieldValueClassRepresentation
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.TypeUtils
@@ -42,6 +43,8 @@ fun KotlinType.unsubstitutedUnderlyingTypes(): List<KotlinType> {
 
 
 fun KotlinType.isInlineClassType(): Boolean = constructor.declarationDescriptor?.isInlineClass() ?: false
+fun KotlinType.isMultiFieldValueClassType(): Boolean = constructor.declarationDescriptor?.isMultiFieldValueClass() ?: false
+fun KotlinType.isValueClassType(): Boolean = constructor.declarationDescriptor?.isValueClass() ?: false
 
 fun KotlinType.needsMfvcFlattening(): Boolean =
     constructor.declarationDescriptor?.run { isMultiFieldValueClass() && !isNullableType() } == true
@@ -77,6 +80,20 @@ fun KotlinType.isNullableUnderlyingType(): Boolean {
 fun CallableDescriptor.isGetterOfUnderlyingPropertyOfInlineClass() =
     this is PropertyGetterDescriptor && correspondingProperty.isUnderlyingPropertyOfInlineClass()
 
+fun CallableDescriptor.isGetterOfUnderlyingPropertyOfMultiFieldValueClass() =
+    this is PropertyGetterDescriptor && correspondingProperty.isUnderlyingPropertyOfMultiFieldValueClass()
+
+fun CallableDescriptor.isGetterOfUnderlyingPropertyOfValueClass() =
+    this is PropertyGetterDescriptor && correspondingProperty.isUnderlyingPropertyOfValueClass()
+
 fun VariableDescriptor.isUnderlyingPropertyOfInlineClass(): Boolean =
     extensionReceiverParameter == null &&
             (containingDeclaration as? ClassDescriptor)?.inlineClassRepresentation?.underlyingPropertyName == this.name
+
+fun VariableDescriptor.isUnderlyingPropertyOfMultiFieldValueClass(): Boolean =
+    extensionReceiverParameter == null &&
+            (containingDeclaration as? ClassDescriptor)?.multiFieldValueClassRepresentation?.containsPropertyWithName(this.name) == true
+
+fun VariableDescriptor.isUnderlyingPropertyOfValueClass(): Boolean =
+    extensionReceiverParameter == null &&
+            (containingDeclaration as? ClassDescriptor)?.valueClassRepresentation?.containsPropertyWithName(this.name) == true

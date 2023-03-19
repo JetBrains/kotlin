@@ -88,7 +88,7 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
         }
 
         testClass<AbstractFileBasedKotlinDeclarationProviderTest> {
-            model("fileBasedDeclarationProvider")
+            model("fileBasedDeclarationProvider", pattern = TestGeneratorUtil.KT_OR_KTS)
         }
     }
 

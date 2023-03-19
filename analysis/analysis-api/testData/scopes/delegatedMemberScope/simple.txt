@@ -1,6 +1,6 @@
 KtKotlinPropertySymbol:
   annotationsList: []
-  callableIdIfNonLocal: /I.zoo
+  callableIdIfNonLocal: /A.zoo
   contextReceivers: []
   getter: null
   hasBackingField: false
@@ -21,7 +21,7 @@ KtKotlinPropertySymbol:
   receiverParameter: KtReceiverParameterSymbol:
     annotationsList: []
     origin: DELEGATED
-    owningCallableSymbol: KtKotlinPropertySymbol(/I.zoo)
+    owningCallableSymbol: KtKotlinPropertySymbol(/A.zoo)
     type: KtUsualClassType:
       annotationsList: []
       ownTypeArguments: []
@@ -49,7 +49,7 @@ KtKotlinPropertySymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: /I.foo
+  callableIdIfNonLocal: /A.foo
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -83,7 +83,7 @@ KtFunctionSymbol:
 
 KtKotlinPropertySymbol:
   annotationsList: []
-  callableIdIfNonLocal: /I.foo
+  callableIdIfNonLocal: /A.foo
   contextReceivers: []
   getter: null
   hasBackingField: false
@@ -123,7 +123,7 @@ KtKotlinPropertySymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: /I.smth
+  callableIdIfNonLocal: /A.smth
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -142,7 +142,7 @@ KtFunctionSymbol:
   receiverParameter: KtReceiverParameterSymbol:
     annotationsList: []
     origin: DELEGATED
-    owningCallableSymbol: KtFunctionSymbol(/I.smth)
+    owningCallableSymbol: KtFunctionSymbol(/A.smth)
     type: KtUsualClassType:
       annotationsList: []
       ownTypeArguments: []
@@ -166,7 +166,7 @@ KtFunctionSymbol:
 
 KtKotlinPropertySymbol:
   annotationsList: []
-  callableIdIfNonLocal: /I.bar
+  callableIdIfNonLocal: /A.bar
   contextReceivers: []
   getter: null
   hasBackingField: false
@@ -206,7 +206,7 @@ KtKotlinPropertySymbol:
 
 KtKotlinPropertySymbol:
   annotationsList: []
-  callableIdIfNonLocal: /I.doo
+  callableIdIfNonLocal: /A.doo
   contextReceivers: []
   getter: null
   hasBackingField: false
@@ -227,7 +227,7 @@ KtKotlinPropertySymbol:
   receiverParameter: KtReceiverParameterSymbol:
     annotationsList: []
     origin: DELEGATED
-    owningCallableSymbol: KtKotlinPropertySymbol(/I.doo)
+    owningCallableSymbol: KtKotlinPropertySymbol(/A.doo)
     type: KtUsualClassType:
       annotationsList: []
       ownTypeArguments: []

@@ -9,13 +9,14 @@ import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.impl.generateTestGroupSuite
 import org.jetbrains.kotlin.incremental.AbstractJsIrES6InvalidationTest
 import org.jetbrains.kotlin.incremental.AbstractJsIrInvalidationTest
+import org.jetbrains.kotlin.incremental.AbstractJsFirInvalidationTest
 import org.jetbrains.kotlin.js.test.*
 import org.jetbrains.kotlin.js.test.fir.*
 import org.jetbrains.kotlin.js.test.ir.*
 import org.jetbrains.kotlin.js.testOld.AbstractDceTest
 import org.jetbrains.kotlin.js.testOld.compatibility.binary.AbstractJsKlibBinaryCompatibilityTest
 import org.jetbrains.kotlin.test.TargetBackend
-import org.jetbrains.kotlin.test.runners.ir.AbstractFir2IrJsTextTest
+import org.jetbrains.kotlin.test.runners.ir.AbstractFirLightTreeIrJsTextTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -54,6 +55,10 @@ fun main(args: Array<String>) {
 
             testClass<AbstractJsIrES6InvalidationTest> {
                 model("incremental/invalidation/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR_ES6, recursive = false)
+            }
+
+            testClass<AbstractJsFirInvalidationTest> {
+                model("incremental/invalidation/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false)
             }
         }
 
@@ -170,12 +175,12 @@ fun main(args: Array<String>) {
                 model("debug/localVariables")
             }
 
-            testClass<AbstractFirJsDiagnosticTest>(suiteTestClassName = "FirJsOldFrontendDiagnosticsTestGenerated") {
+            testClass<AbstractFirPsiJsDiagnosticTest>(suiteTestClassName = "FirPsiJsOldFrontendDiagnosticsTestGenerated") {
                 model("diagnostics/testsWithJsStdLib", pattern = "^([^_](.+))\\.kt$", excludedPattern = excludedFirTestdataPattern)
             }
 
-            testClass<AbstractFir2IrJsTextTest>(
-                suiteTestClassName = "Fir2IrJsTextTestGenerated"
+            testClass<AbstractFirLightTreeIrJsTextTest>(
+                suiteTestClassName = "FirLightTreeJsIrTextTestGenerated"
             ) {
                 model("ir/irJsText")
             }

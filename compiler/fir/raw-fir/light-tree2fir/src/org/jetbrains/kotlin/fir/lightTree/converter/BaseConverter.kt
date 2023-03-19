@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.builder.BaseFirBuilder
 import org.jetbrains.kotlin.fir.builder.Context
 import org.jetbrains.kotlin.fir.builder.escapedStringToCharacter
-import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.Name
@@ -29,7 +29,7 @@ abstract class BaseConverter(
 ) : BaseFirBuilder<LighterASTNode>(baseSession, context) {
     abstract val offset: Int
 
-    protected val implicitType = buildImplicitTypeRef()
+    protected val implicitType = FirImplicitTypeRefImplWithoutSource
 
     protected open fun reportSyntaxError(node: LighterASTNode) {}
 

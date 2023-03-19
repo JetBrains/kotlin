@@ -57,6 +57,10 @@ value class SerializedIrFileFingerprint private constructor(val fileFingerprint:
     constructor(file: SerializedIrFile) : this(calculateFileFingerprint(file))
 
     constructor(lib: KotlinLibrary, fileIndex: Int) : this(calculateFileFingerprint(lib, fileIndex))
+
+    override fun toString(): String {
+        return fileFingerprint.toString()
+    }
 }
 
 @JvmInline
@@ -96,6 +100,10 @@ value class SerializedKlibFingerprint(val klibFingerprint: FingerprintHash) {
     constructor(fileFingerprints: List<SerializedIrFileFingerprint>) : this(fileFingerprints.calculateKlibFingerprint())
 
     constructor(klibFile: File) : this(FingerprintHash(klibFile.calculateKlibHash()))
+
+    override fun toString(): String {
+        return klibFingerprint.toString()
+    }
 }
 
 private const val FILE_FINGERPRINTS_SEPARATOR = " "

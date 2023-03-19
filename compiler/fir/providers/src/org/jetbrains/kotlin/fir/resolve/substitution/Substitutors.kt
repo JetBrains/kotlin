@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.substitution
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.ConeTypeVariableTypeIsNotInferred
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
@@ -236,7 +237,7 @@ class ConeRawScopeSubstitutor(
         return when {
             type is ConeTypeParameterType -> {
                 substituteOrSelf(
-                    listOf(type.lookupTag.symbol).eraseToUpperBounds(useSiteSession)[0] as ConeKotlinType
+                    listOf(type.lookupTag.symbol).getProjectionsForRawType(useSiteSession)[0] as ConeKotlinType
                 )
             }
             type is ConeClassLikeType && type.typeArguments.isNotEmpty() -> {
@@ -251,7 +252,7 @@ class ConeRawScopeSubstitutor(
 
                 val firClass = type.fullyExpandedType(useSiteSession).lookupTag.toFirRegularClassSymbol(useSiteSession) ?: return null
                 ConeRawType.create(
-                    type.withArguments(firClass.typeParameterSymbols.eraseToUpperBounds(useSiteSession)),
+                    type.withArguments(firClass.typeParameterSymbols.getProjectionsForRawType(useSiteSession)),
                     type.replaceArgumentsWithStarProjections()
                 )
             }
@@ -320,7 +321,7 @@ class ConeStubAndTypeVariableToErrorTypeSubstitutor(
     override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
         return when (type) {
             is ConeTypeVariableType -> ConeErrorType(
-                ConeSimpleDiagnostic("Type for ${type.lookupTag.debugName} is not inferred", DiagnosticKind.InferenceError),
+                ConeTypeVariableTypeIsNotInferred(type),
                 isUninferredParameter = true
             )
             is ConeStubType -> runIf(type.constructor in stubTypesToReplace) {

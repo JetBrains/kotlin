@@ -42,6 +42,7 @@ class Element(
     val generationCallback = config.generationCallback
     val suppressPrint = config.suppressPrint
     val propertyName = config.propertyName
+    val kDoc = config.kDoc
 
     override fun toString() = name
 
@@ -82,6 +83,8 @@ sealed class Field(
     var isOverride = false
     var needsDescriptorApiAnnotation = false
     abstract val transformable: Boolean
+
+    val kdoc = config?.kdoc
 
     val printProperty = config?.printProperty ?: true
     val generationCallback = config?.generationCallback

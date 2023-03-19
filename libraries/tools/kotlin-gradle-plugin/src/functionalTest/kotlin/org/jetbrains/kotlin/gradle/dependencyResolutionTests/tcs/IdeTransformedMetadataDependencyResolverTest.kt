@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryDependency
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.assertMatches
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.binaryCoordinates
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.IdeTransformedMetadataDependencyResolver
 import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImport
 import org.jetbrains.kotlin.gradle.util.*
@@ -98,19 +99,20 @@ class IdeTransformedMetadataDependencyResolverTest {
         fun KotlinSourceSet.binaryDependencies() =
             project.kotlinIdeMultiplatformImport.resolveDependencies(this).filterIsInstance<IdeaKotlinBinaryDependency>()
 
+        val kgpVersion = project.getKotlinPluginVersion()
         commonMain.binaryDependencies().assertMatches(
             binaryCoordinates("com.squareup.okio:okio-jvm:3.2.0"),
-            binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.20"),
-            binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.6.20"),
-            binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib:1.6.20"),
+            binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kgpVersion"),
+            binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kgpVersion"),
+            binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib:$kgpVersion"),
             binaryCoordinates("org.jetbrains:annotations:13.0"),
         )
 
         commonTest.binaryDependencies().assertMatches(
             binaryCoordinates("com.squareup.okio:okio-jvm:3.2.0"),
-            binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.20"),
-            binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.6.20"),
-            binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib:1.6.20"),
+            binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kgpVersion"),
+            binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kgpVersion"),
+            binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib:$kgpVersion"),
             binaryCoordinates("org.jetbrains:annotations:13.0"),
         )
     }

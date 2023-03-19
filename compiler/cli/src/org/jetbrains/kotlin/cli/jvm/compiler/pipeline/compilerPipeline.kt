@@ -22,8 +22,7 @@ import org.jetbrains.kotlin.KtVirtualFileSourceFile
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.backend.jvm.JvmIrDeserializerImpl
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.CommonCompilerPerformanceManager
+import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
 import org.jetbrains.kotlin.cli.common.fir.reportToMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
@@ -40,21 +39,19 @@ import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleResolver
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.CodegenFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
-import org.jetbrains.kotlin.fir.FirModuleDataImpl
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
 import org.jetbrains.kotlin.fir.backend.jvm.JvmFir2IrExtensions
-import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
-import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
-import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory
-import org.jetbrains.kotlin.fir.session.FirSessionConfigurator
 import org.jetbrains.kotlin.fir.session.IncrementalCompilationContext
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
@@ -74,8 +71,6 @@ import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.resolve.ModuleAnnotationsResolver
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.File
 import kotlin.reflect.KFunction2
 
@@ -104,12 +99,13 @@ fun compileModulesUsingFrontendIrAndLightTree(
         val moduleConfiguration = compilerConfiguration.copy().applyModuleProperties(module, buildFile).apply {
             put(JVMConfigurationKeys.FRIEND_PATHS, module.getFriendPaths())
         }
-        val (platformSources, commonSources) = collectSources(compilerConfiguration, projectEnvironment, messageCollector)
+        val groupedSources = collectSources(compilerConfiguration, projectEnvironment, messageCollector)
 
         val compilerInput = ModuleCompilerInput(
             TargetId(module),
-            CommonPlatforms.defaultCommonPlatform, commonSources,
-            JvmPlatforms.unspecifiedJvmPlatform, platformSources,
+            groupedSources,
+            CommonPlatforms.defaultCommonPlatform,
+            JvmPlatforms.unspecifiedJvmPlatform,
             moduleConfiguration
         )
 
@@ -132,7 +128,7 @@ fun compileModulesUsingFrontendIrAndLightTree(
 
         // TODO: consider what to do if many modules has main classes
         if (mainClassFqName == null && moduleConfiguration.get(JVMConfigurationKeys.OUTPUT_JAR) != null) {
-            mainClassFqName = findMainClass(analysisResults.platformOutput.fir)
+            mainClassFqName = findMainClass(analysisResults.outputs.last().fir)
         }
 
         if (diagnosticsReporter.hasErrors) {
@@ -169,26 +165,41 @@ fun compileModulesUsingFrontendIrAndLightTree(
     )
 }
 
+data class GroupedKtSources(
+    val platformSources: Collection<KtSourceFile>,
+    val commonSources: Collection<KtSourceFile>,
+    val sourcesByModuleName: Map<String, Set<KtSourceFile>>,
+)
+
 fun collectSources(
     compilerConfiguration: CompilerConfiguration,
     projectEnvironment: VfsBasedProjectEnvironment,
     messageCollector: MessageCollector
-): Pair<LinkedHashSet<KtSourceFile>, LinkedHashSet<KtSourceFile>> {
+): GroupedKtSources {
     val platformSources = linkedSetOf<KtSourceFile>()
     val commonSources = linkedSetOf<KtSourceFile>()
+    val sourcesByModuleName = mutableMapOf<String, MutableSet<KtSourceFile>>()
 
     // TODO: the scripts checking should be part of the scripting plugin functionality, as it is implemented now in ScriptingProcessSourcesBeforeCompilingExtension
     // TODO: implement in the next round of K2 scripting support (https://youtrack.jetbrains.com/issue/KT-55728)
-    val skipScriptsInLtMode = compilerConfiguration.getBoolean(CommonConfigurationKeys.USE_FIR) && compilerConfiguration.getBoolean(CommonConfigurationKeys.USE_LIGHT_TREE)
+    val skipScriptsInLtMode = compilerConfiguration.getBoolean(CommonConfigurationKeys.USE_FIR) &&
+            compilerConfiguration.getBoolean(CommonConfigurationKeys.USE_LIGHT_TREE)
     var skipScriptsInLtModeWarning = false
 
-    compilerConfiguration.kotlinSourceRoots.forAllFiles(compilerConfiguration, projectEnvironment.project) { virtualFile, isCommon ->
+    compilerConfiguration.kotlinSourceRoots.forAllFiles(
+        compilerConfiguration,
+        projectEnvironment.project
+    ) { virtualFile, isCommon, moduleName ->
         val file = KtVirtualFileSourceFile(virtualFile)
         when {
             file.path.endsWith(javaFileExtensionWithDot) -> {}
             file.path.endsWith(kotlinFileExtensionWithDot) || !skipScriptsInLtMode -> {
                 if (isCommon) commonSources.add(file)
                 else platformSources.add(file)
+
+                if (moduleName != null) {
+                    sourcesByModuleName.getOrPut(moduleName) { mutableSetOf() }.add(file)
+                }
             }
             else -> {
                 // temporarily assume it is a script, see the TODO above
@@ -204,7 +215,7 @@ fun collectSources(
             "Scripts are not yet supported with K2 in LightTree mode, consider using K1 or disable LightTree mode with -Xuse-fir-lt=false"
         )
     }
-    return Pair(platformSources, commonSources)
+    return GroupedKtSources(platformSources, commonSources, sourcesByModuleName)
 }
 
 fun convertAnalyzedFirToIr(
@@ -293,122 +304,52 @@ fun compileModuleToAnalyzedFir(
     diagnosticsReporter: DiagnosticReporter,
     performanceManager: CommonCompilerPerformanceManager?
 ): FirResult {
-    val languageVersionSettings = input.configuration.languageVersionSettings
     val projectEnvironment = environment.projectEnvironment
     val moduleConfiguration = input.configuration
-    val isMppEnabled = languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)
-    val sourcesScope = environment.projectEnvironment.getSearchScopeBySourceFiles(input.platformSources)
-
-    val commonSourcesScope: AbstractProjectFileSearchScope?
-    val platformSourcesScope: AbstractProjectFileSearchScope
-    if (isMppEnabled) {
-        commonSourcesScope = projectEnvironment.getSearchScopeBySourceFiles(input.commonSources)
-        platformSourcesScope = sourcesScope - commonSourcesScope
-    } else {
-        commonSourcesScope = null
-        platformSourcesScope = sourcesScope
-    }
 
     var librariesScope = projectEnvironment.getSearchScopeForProjectLibraries()
-    val commonProviderAndScopeForIncrementalCompilation = runIf(isMppEnabled) {
-        createContextForIncrementalCompilation(
-            moduleConfiguration,
-            projectEnvironment,
-            commonSourcesScope!!,
-            previousStepsSymbolProviders,
-            incrementalExcludesScope
-        )?.also { (_, _, precompiledBinariesFileScope) ->
-            precompiledBinariesFileScope?.let { librariesScope -= it }
-        }
-    }
-    val platformProviderAndScopeForIncrementalCompilation = createContextForIncrementalCompilation(
+    val rootModuleName = input.targetId.name
+
+    val incrementalCompilationScope = createIncrementalCompilationScope(
         moduleConfiguration,
         projectEnvironment,
-        platformSourcesScope,
-        previousStepsSymbolProviders,
         incrementalExcludesScope
-    )?.also { (_, _, precompiledBinariesFileScope) ->
-        precompiledBinariesFileScope?.let { librariesScope -= it }
-    }
+    )?.also { librariesScope -= it }
 
-    val sessionProvider = FirProjectSessionProvider()
-    val moduleName = input.targetId.name
-
-    val libraryList = createFirLibraryListAndSession(
-        moduleName, input.configuration, projectEnvironment,
-        scope = projectEnvironment.getSearchScopeForProjectLibraries(),
-        librariesScope = librariesScope,
-        friendPaths = emptyList(),
-        sessionProvider
-    )
-
-    val commonModuleData = runIf(isMppEnabled) {
-        FirModuleDataImpl(
-            Name.identifier("${moduleName}-common"),
-            libraryList.regularDependencies,
-            listOf(),
-            libraryList.friendsDependencies,
-            JvmPlatforms.unspecifiedJvmPlatform,
-            JvmPlatformAnalyzerServices
-        )
-    }
-    val platformModuleData = FirModuleDataImpl(
-        Name.identifier(moduleName),
-        libraryList.regularDependencies,
-        listOfNotNull(commonModuleData),
-        libraryList.friendsDependencies,
-        JvmPlatforms.unspecifiedJvmPlatform,
-        JvmPlatformAnalyzerServices
-    )
-
-    val extensionRegistrars = (projectEnvironment as? VfsBasedProjectEnvironment)?.let { FirExtensionRegistrar.getInstances(it.project) }
+    val extensionRegistrars = (projectEnvironment as? VfsBasedProjectEnvironment)
+        ?.let { FirExtensionRegistrar.getInstances(it.project) }
         ?: emptyList()
-    val lookupTracker = moduleConfiguration.get(CommonConfigurationKeys.LOOKUP_TRACKER)
-    val enumWhenTracker = moduleConfiguration.get(CommonConfigurationKeys.ENUM_WHEN_TRACKER)
-    val extendedAnalysisMode = input.configuration.getBoolean(CommonConfigurationKeys.USE_FIR_EXTENDED_CHECKERS)
-    val sessionConfigurator: FirSessionConfigurator.() -> Unit = {
-        if (extendedAnalysisMode) {
-            registerExtendedCommonCheckers()
-        }
-    }
-    val javaSourcesScope = projectEnvironment.getSearchScopeForProjectJavaSources()
 
-    val commonSession = runIf(isMppEnabled) {
-        FirJvmSessionFactory.createModuleBasedSession(
-            commonModuleData!!,
-            sessionProvider,
-            javaSourcesScope,
-            projectEnvironment,
-            commonProviderAndScopeForIncrementalCompilation,
-            extensionRegistrars,
-            languageVersionSettings,
-            lookupTracker,
-            enumWhenTracker,
-            needRegisterJavaElementFinder = true,
-            registerExtraComponents = {},
-            sessionConfigurator,
-        )
+    val allSources = mutableListOf<KtSourceFile>().apply {
+        addAll(input.groupedSources.commonSources)
+        addAll(input.groupedSources.platformSources)
     }
-    val platformSession = FirJvmSessionFactory.createModuleBasedSession(
-        platformModuleData,
-        sessionProvider,
-        javaSourcesScope,
-        projectEnvironment,
-        platformProviderAndScopeForIncrementalCompilation,
-        extensionRegistrars,
-        languageVersionSettings,
-        lookupTracker,
-        enumWhenTracker,
-        needRegisterJavaElementFinder = true,
-        registerExtraComponents = {},
-        sessionConfigurator
+    // TODO: handle friends paths
+    val libraryList = createLibraryListForJvm(rootModuleName, moduleConfiguration, friendPaths = emptyList())
+    val sessionWithSources = prepareJvmSessions(
+        allSources, moduleConfiguration, projectEnvironment, Name.identifier(rootModuleName),
+        extensionRegistrars, librariesScope, libraryList,
+        isCommonSource = input.groupedSources.isCommonSourceForLt,
+        fileBelongsToModule = input.groupedSources.fileBelongsToModuleForLt,
+        createProviderAndScopeForIncrementalCompilation = { files ->
+            val scope = projectEnvironment.getSearchScopeBySourceFiles(files)
+            createContextForIncrementalCompilation(
+                moduleConfiguration,
+                projectEnvironment,
+                scope,
+                previousStepsSymbolProviders,
+                incrementalCompilationScope
+            )
+        }
     )
 
     val countFilesAndLines = if (performanceManager == null) null else performanceManager::addSourcesStats
-    val commonOutput = commonSession?.let { buildResolveAndCheckFir(it, input.commonSources, diagnosticsReporter, countFilesAndLines) }
-    val platformOutput = buildResolveAndCheckFir(platformSession, input.platformSources, diagnosticsReporter, countFilesAndLines)
 
-    return FirResult(platformOutput, commonOutput)
+    val outputs = sessionWithSources.map { (session, sources) ->
+        buildResolveAndCheckFir(session, sources, diagnosticsReporter, countFilesAndLines)
+    }
+
+    return FirResult(outputs)
 }
 
 private fun buildResolveAndCheckFir(
@@ -454,30 +395,43 @@ fun writeOutputs(
     return true
 }
 
+fun createIncrementalCompilationScope(
+    configuration: CompilerConfiguration,
+    projectEnvironment: AbstractProjectEnvironment,
+    incrementalExcludesScope: AbstractProjectFileSearchScope?
+): AbstractProjectFileSearchScope? {
+    if (!needCreateIncrementalCompilationScope(configuration)) return null
+    val dir = configuration[JVMConfigurationKeys.OUTPUT_DIRECTORY] ?: return null
+    return projectEnvironment.getSearchScopeByDirectories(setOf(dir)).let {
+        if (incrementalExcludesScope?.isEmpty != false) it
+        else it - incrementalExcludesScope
+    }
+}
+
+private fun needCreateIncrementalCompilationScope(configuration: CompilerConfiguration, ): Boolean {
+    if (configuration.get(JVMConfigurationKeys.MODULES) == null) return false
+    if (configuration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS) == null) return false
+    return true
+}
+
 fun createContextForIncrementalCompilation(
-    compilerConfiguration: CompilerConfiguration,
+    configuration: CompilerConfiguration,
     projectEnvironment: AbstractProjectEnvironment,
     sourceScope: AbstractProjectFileSearchScope,
     previousStepsSymbolProviders: List<FirSymbolProvider>,
-    incrementalExcludesScope: AbstractProjectFileSearchScope?,
+    incrementalCompilationScope: AbstractProjectFileSearchScope?
 ): IncrementalCompilationContext? {
-    val targetIds = compilerConfiguration.get(JVMConfigurationKeys.MODULES)?.map(::TargetId)
-    val incrementalComponents = compilerConfiguration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS)
-    if (targetIds == null || incrementalComponents == null) return null
-    val incrementalCompilationScope =
-        compilerConfiguration[JVMConfigurationKeys.OUTPUT_DIRECTORY]?.let { dir ->
-            projectEnvironment.getSearchScopeByDirectories(setOf(dir)).let {
-                if (incrementalExcludesScope?.isEmpty != false) it
-                else it - incrementalExcludesScope
-            }
-        }
+    if (incrementalCompilationScope == null && previousStepsSymbolProviders.isEmpty()) return null
+    val targetIds = configuration.get(JVMConfigurationKeys.MODULES)?.map(::TargetId) ?: return null
+    val incrementalComponents = configuration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS) ?: return null
 
-    return if (incrementalCompilationScope == null && previousStepsSymbolProviders.isEmpty()) null
-    else IncrementalCompilationContext(
-        previousStepsSymbolProviders, IncrementalPackagePartProvider(
+    return IncrementalCompilationContext(
+        previousStepsSymbolProviders,
+        IncrementalPackagePartProvider(
             projectEnvironment.getPackagePartProvider(sourceScope),
             targetIds.map(incrementalComponents::getIncrementalCache)
-        ), incrementalCompilationScope
+        ),
+        incrementalCompilationScope
     )
 }
 
@@ -564,6 +518,8 @@ fun createProjectEnvironment(
     val finderFactory = CliVirtualFileFinderFactory(rootsIndex, releaseTarget != null)
     project.registerService(MetadataFinderFactory::class.java, finderFactory)
     project.registerService(VirtualFileFinderFactory::class.java, finderFactory)
+
+    project.setupHighestLanguageLevel()
 
     return ProjectEnvironmentWithCoreEnvironmentEmulation(
         project,

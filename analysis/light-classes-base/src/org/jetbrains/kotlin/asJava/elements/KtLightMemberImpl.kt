@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,7 +12,6 @@ import com.intellij.psi.PsiModifierList
 import com.intellij.psi.javadoc.PsiDocComment
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
-import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 
@@ -20,8 +19,6 @@ abstract class KtLightMemberImpl<out D : PsiMember>(
     override val lightMemberOrigin: LightMemberOriginForDeclaration?,
     private val containingClass: KtLightClass,
 ) : KtLightElementBase(containingClass), PsiMember, KtLightMember<D> {
-    private val lightIdentifier by lazyPub { KtLightIdentifier(this, kotlinOrigin as? KtNamedDeclaration) }
-
     abstract override fun hasModifierProperty(name: String): Boolean
 
     abstract override fun getModifierList(): PsiModifierList?
@@ -32,7 +29,7 @@ abstract class KtLightMemberImpl<out D : PsiMember>(
 
     abstract override fun getName(): String
 
-    override fun getNameIdentifier(): PsiIdentifier = lightIdentifier
+    override fun getNameIdentifier(): PsiIdentifier = KtLightIdentifier(this, kotlinOrigin as? KtNamedDeclaration)
 
     override val kotlinOrigin: KtDeclaration? get() = lightMemberOrigin?.originalElement
 

@@ -9,12 +9,14 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiManager
+import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.toPhaseMap
 import org.jetbrains.kotlin.backend.wasm.*
 import org.jetbrains.kotlin.backend.wasm.dce.eliminateDeadDeclarations
 import org.jetbrains.kotlin.checkers.parseLanguageVersionSettings
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
+import org.jetbrains.kotlin.cli.js.klib.TopDownAnalyzerFacadeForWasm
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.*
@@ -54,6 +56,8 @@ abstract class BasicWasmBoxTest(
     )
 
     fun doTest(filePath: String) = doTestWithTransformer(filePath) { it }
+
+    @OptIn(ObsoleteTestInfrastructure::class)
     fun doTestWithTransformer(filePath: String, transformer: java.util.function.Function<String, String>) {
         val file = File(filePath)
 
@@ -67,8 +71,7 @@ abstract class BasicWasmBoxTest(
             val languageVersionSettings = inputFiles.firstNotNullOfOrNull { it.languageVersionSettings }
 
             val kotlinFiles = mutableListOf<String>()
-            val jsFilesBefore = mutableListOf<String>()
-            val jsFilesAfter = mutableListOf<String>()
+            val jsFiles = mutableListOf<String>()
             val mjsFiles = mutableListOf<String>()
 
             var entryMjs: String? = "test.mjs"
@@ -79,11 +82,8 @@ abstract class BasicWasmBoxTest(
                     name.endsWith(".kt") ->
                         kotlinFiles += name
 
-                    name.endsWith("__after.js") ->
-                        jsFilesAfter += name
-
                     name.endsWith(".js") ->
-                        jsFilesBefore += name
+                        jsFiles += name
 
                     name.endsWith(".mjs") -> {
                         mjsFiles += name
@@ -97,7 +97,7 @@ abstract class BasicWasmBoxTest(
 
             val additionalJsFile = filePath.removeSuffix(".kt") + ".js"
             if (File(additionalJsFile).exists()) {
-                jsFilesBefore += additionalJsFile
+                jsFiles += additionalJsFile
             }
             val additionalMjsFile = filePath.removeSuffix(".kt") + ".mjs"
             if (File(additionalMjsFile).exists()) {
@@ -140,7 +140,8 @@ abstract class BasicWasmBoxTest(
                 // TODO: Bypass the resolver fow wasm.
                 listOf(System.getProperty("kotlin.wasm.stdlib.path")!!, System.getProperty("kotlin.wasm.kotlin.test.path")!!),
                 emptyList(),
-                AnalyzerWithCompilerReport(config.configuration)
+                AnalyzerWithCompilerReport(config.configuration),
+                analyzerFacade = TopDownAnalyzerFacadeForWasm
             )
 
             val (allModules, backendContext) = compileToLoweredIr(
@@ -258,8 +259,7 @@ abstract class BasicWasmBoxTest(
                         }
                         vm.run(
                             "./${entryMjs}",
-                            jsFilesBefore.map { File(it).absolutePath },
-                            jsFilesAfter.map { File(it).absolutePath },
+                            jsFiles.map { File(it).absolutePath },
                             workingDirectory = dir
                         )
                         if (vm.shortName in failsIn) {
@@ -311,6 +311,7 @@ abstract class BasicWasmBoxTest(
         return JsConfig(project, configuration, CompilerEnvironment, null, null)
     }
 
+    @OptIn(ObsoleteTestInfrastructure::class)
     private inner class TestFileFactoryImpl : TestFiles.TestFileFactoryNoModules<TestFile>(), Closeable {
         override fun create(fileName: String, text: String, directives: Directives): TestFile {
             val ktFile = KtPsiFactory(project).createFile(text)

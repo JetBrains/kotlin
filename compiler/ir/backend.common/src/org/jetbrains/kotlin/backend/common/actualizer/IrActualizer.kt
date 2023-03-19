@@ -6,24 +6,34 @@
 package org.jetbrains.kotlin.backend.common.actualizer
 
 import org.jetbrains.kotlin.backend.common.ir.isProperExpect
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.name.FqName
 
 object IrActualizer {
     fun actualize(mainFragment: IrModuleFragment, dependentFragments: List<IrModuleFragment>) {
         val (expectActualMap, typeAliasMap) = ExpectActualCollector(mainFragment, dependentFragments).collect()
-        removeExpectDeclaration(dependentFragments) // TODO: consider removing this call. See ExpectDeclarationRemover.kt
+        FunctionDefaultParametersActualizer(expectActualMap).actualize()
+        removeExpectDeclarations(dependentFragments, expectActualMap)
         addMissingFakeOverrides(expectActualMap, dependentFragments, typeAliasMap)
         linkExpectToActual(expectActualMap, dependentFragments)
         mergeIrFragments(mainFragment, dependentFragments)
     }
 
-    private fun removeExpectDeclaration(dependentFragments: List<IrModuleFragment>) {
+    private fun removeExpectDeclarations(dependentFragments: List<IrModuleFragment>, expectActualMap: Map<IrSymbol, IrSymbol>) {
         for (fragment in dependentFragments) {
             for (file in fragment.files) {
-                file.declarations.removeAll { it.isProperExpect }
+                file.declarations.removeIf { shouldRemoveExpectDeclaration(it, expectActualMap) }
             }
+        }
+    }
+
+    private fun shouldRemoveExpectDeclaration(irDeclaration: IrDeclaration, expectActualMap: Map<IrSymbol, IrSymbol>): Boolean {
+        return when (irDeclaration) {
+            is IrClass -> irDeclaration.isExpect && (!irDeclaration.containsOptionalExpectation() || expectActualMap.containsKey(irDeclaration.symbol))
+            is IrProperty -> irDeclaration.isExpect
+            is IrFunction -> irDeclaration.isExpect
+            else -> false
         }
     }
 

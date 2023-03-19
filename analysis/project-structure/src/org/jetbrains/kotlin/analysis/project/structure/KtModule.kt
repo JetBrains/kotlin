@@ -10,6 +10,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import java.nio.file.Path
 
@@ -177,6 +178,34 @@ public class KtBuiltinsModule(
     override fun hashCode(): Int = platform.hashCode()
 }
 
+/**
+ * A module for a Kotlin script file.
+ */
+public interface KtScriptModule : KtModule {
+    /**
+     * A script PSI.
+     */
+    public val file: KtFile
+
+    /**
+     * A set of Kotlin settings, like API version, supported features and flags.
+     */
+    public val languageVersionSettings: LanguageVersionSettings
+
+    override val moduleDescription: String
+        get() = "Script " + file.name
+}
+
+/**
+ * A module for Kotlin script dependencies.
+ * Must be either a [KtLibraryModule] or [KtLibrarySourceModule].
+ */
+public interface KtScriptDependencyModule : KtModule {
+    /**
+     * A `VirtualFile` that backs the dependent script PSI, or `null` if the module is for project-level dependencies.
+     */
+    public val file: KtFile?
+}
 
 /**
  * A set of sources which live outside the project content root. E.g, testdata files or source files of some other project.

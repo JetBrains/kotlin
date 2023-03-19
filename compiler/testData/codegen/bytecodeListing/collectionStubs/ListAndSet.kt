@@ -1,6 +1,9 @@
 // WITH_STDLIB
 // FULL_JDK
 
+// IGNORE_BACKEND_K2: JVM_IR
+// FIR status: KT-57269 K2: collection stub for `sort` is not generated for custom List subclasses
+
 import java.util.*
 
 class ListSet<out E : Any> : List<E>, Set<E> {

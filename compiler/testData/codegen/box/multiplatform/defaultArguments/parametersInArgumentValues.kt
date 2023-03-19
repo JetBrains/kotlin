@@ -1,6 +1,6 @@
 // !LANGUAGE: +MultiPlatformProjects
-// IGNORE_BACKEND_K2: JVM_IR, JS_IR, NATIVE
-// FIR status: default argument mapping in MPP isn't designed yet
+// IGNORE_BACKEND_K2: ANY
+// FIR status: outdated code (expect and actual in the same module)
 
 // FILE: common.kt
 

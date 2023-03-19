@@ -1,3 +1,6 @@
+// K1 generates `accept(Object)` and bridge `accept(X)` in the SAM adapter.
+// K2 generates `accept(X)` only. It is fine though, because if `check`'s parameter is passed where Z is expected, checkcast is added.
+
 interface X
 interface Z
 

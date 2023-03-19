@@ -1,0 +1,5 @@
+KtDeclaration: KtNamedFunction foo
+annotations: [
+  A(xs = [1234uL, 18446744073709551615uL])
+    psi: KtAnnotationEntry
+]

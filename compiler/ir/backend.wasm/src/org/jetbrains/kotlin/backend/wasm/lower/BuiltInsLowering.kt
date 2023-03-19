@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.ir.backend.js.lower.calls.EnumIntrinsicsUtils
 import org.jetbrains.kotlin.ir.backend.js.utils.erasedUpperBound
 import org.jetbrains.kotlin.ir.backend.js.utils.isEqualsInheritedFromAny
 import org.jetbrains.kotlin.ir.builders.*
@@ -172,6 +173,10 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
                     }
                 }
             }
+            symbols.enumValueOfIntrinsic ->
+                return EnumIntrinsicsUtils.transformEnumValueOfIntrinsic(call)
+            symbols.enumValuesIntrinsic ->
+                return EnumIntrinsicsUtils.transformEnumValuesIntrinsic(call)
         }
 
         return call

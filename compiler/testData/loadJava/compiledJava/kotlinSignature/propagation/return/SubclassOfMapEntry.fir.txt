@@ -1,4 +1,4 @@
 public abstract interface SubclassOfMapEntry<K : R|kotlin/Any!|, V : R|kotlin/Any!|> : R|kotlin/collections/MutableMap.MutableEntry<ft<K & Any, K?>, ft<V & Any, V?>>| {
-    public abstract operator fun setValue(value: R|ft<V & Any, V?>|): R|ft<V & Any, V?>|
+    public abstract fun setValue(value: R|ft<V & Any, V?>|): R|ft<V & Any, V?>|
 
 }

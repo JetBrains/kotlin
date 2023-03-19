@@ -171,7 +171,7 @@ internal class TaskRecord(
     override val buildMetrics: BuildMetrics,
     override val didWork: Boolean,
     override val skipMessage: String?,
-    override val icLogLines: List<String>
+    override val icLogLines: List<String>,
 ) : BuildOperationRecord {
     override val isFromKotlinPlugin: Boolean = classFqName.startsWith("org.jetbrains.kotlin")
 }

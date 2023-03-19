@@ -116,7 +116,7 @@ internal class ObjCDataGenerator(val codegen: CodeGenerator) {
             )
 
             val globalName = "\u0001l_OBJC_\$_INSTANCE_METHODS_$name"
-            val global = llvm.staticData.placeGlobal(globalName, methodList).also {
+            val global = codegen.staticData.placeGlobal(globalName, methodList).also {
                 it.setLinkage(LLVMLinkage.LLVMPrivateLinkage)
                 it.setAlignment(runtime.pointerAlignment)
                 it.setSection("__DATA, __objc_const")
@@ -165,7 +165,7 @@ internal class ObjCDataGenerator(val codegen: CodeGenerator) {
                 "\u0001l_OBJC_CLASS_RO_\$_"
             } + name
 
-            val roGlobal = llvm.staticData.placeGlobal(roLabel, roValue).also {
+            val roGlobal = codegen.staticData.placeGlobal(roLabel, roValue).also {
                 it.setLinkage(LLVMLinkage.LLVMPrivateLinkage)
                 it.setAlignment(runtime.pointerAlignment)
                 it.setSection("__DATA, __objc_const")
@@ -223,7 +223,7 @@ internal class ObjCDataGenerator(val codegen: CodeGenerator) {
     private fun addModuleClassList(elements: List<ConstPointer>, name: String, section: String) {
         if (elements.isEmpty()) return
 
-        val global = llvm.staticData.placeGlobalArray(
+        val global = codegen.staticData.placeGlobalArray(
                 name,
                 llvm.int8PtrType,
                 elements.map { it.bitcast(llvm.int8PtrType) }
@@ -270,7 +270,7 @@ internal class ObjCDataGenerator(val codegen: CodeGenerator) {
     }
 
     class CStringLiteralsGenerator(val label: String, val section: String) {
-        fun generate(module: LLVMModuleRef, llvm: Llvm, value: String): ConstPointer {
+        fun generate(module: LLVMModuleRef, llvm: CodegenLlvmHelpers, value: String): ConstPointer {
             val bytes = value.toByteArray(Charsets.UTF_8).map { llvm.constInt8(it) } + llvm.constInt8(0)
             val initializer = ConstArray(llvm.int8Type, bytes)
             val llvmGlobal = LLVMAddGlobal(module, initializer.llvmType, label)!!

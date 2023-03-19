@@ -1,5 +1,5 @@
 public open class EnumArgumentWithCustomToString : R|kotlin/Any| {
-    @R|test/EnumArgumentWithCustomToString.EnumAnno|(value = R|test/EnumArgumentWithCustomToString.E.CAKE|()) @R|test/EnumArgumentWithCustomToString.EnumArrayAnno|(value = <implicitArrayOf>(R|test/EnumArgumentWithCustomToString.E.CAKE|(), R|test/EnumArgumentWithCustomToString.E.CAKE|())) public/*package*/ open fun annotated(): R|kotlin/Unit|
+    @R|test/EnumArgumentWithCustomToString.EnumAnno|(value = R|test/EnumArgumentWithCustomToString.E.CAKE|) @R|test/EnumArgumentWithCustomToString.EnumArrayAnno|(value = <implicitArrayOf>(R|test/EnumArgumentWithCustomToString.E.CAKE|, R|test/EnumArgumentWithCustomToString.E.CAKE|)) public/*package*/ open fun annotated(): R|kotlin/Unit|
 
     public constructor(): R|test/EnumArgumentWithCustomToString|
 

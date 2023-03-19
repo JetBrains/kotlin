@@ -14,8 +14,5 @@ class KtContractEffectList : KtElementImplStub<KotlinPlaceHolderStub<KtContractE
     constructor(stub: KotlinPlaceHolderStub<KtContractEffectList>) : super(stub, KtStubElementTypes.CONTRACT_EFFECT_LIST)
 }
 
-fun KtContractEffectList.getExpressions(): List<KtExpression> =
+fun KtContractEffectList.getContractEffects(): List<KtContractEffect> =
     getStubOrPsiChildrenAsList(KtStubElementTypes.CONTRACT_EFFECT)
-        .map {
-            it.getExpression()
-        }

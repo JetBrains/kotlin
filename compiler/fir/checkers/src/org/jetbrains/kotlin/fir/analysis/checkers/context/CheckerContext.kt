@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.ImplicitReceiverStack
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.SessionHolder
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 
@@ -46,6 +47,9 @@ abstract class CheckerContext : DiagnosticContext {
 
     val session: FirSession
         get() = sessionHolder.session
+
+    val scopeSession: ScopeSession
+        get() = sessionHolder.scopeSession
 
     override fun isDiagnosticSuppressed(diagnostic: KtDiagnostic): Boolean {
         val factory = diagnostic.factory
