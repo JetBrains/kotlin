@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.backend.konan.ir.isVirtualCall
 import org.jetbrains.kotlin.backend.konan.llvm.Lifetime
 import org.jetbrains.kotlin.backend.konan.logMultiple
 import org.jetbrains.kotlin.backend.konan.lower.erasedUpperBound
+import org.jetbrains.kotlin.backend.konan.lower.isStaticInitializer
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irDoWhile
@@ -152,15 +153,15 @@ internal object ControlFlowSensibleEscapeAnalysis {
 
         private fun analyze(multiNode: DirectedGraphMultiNode<DataFlowIR.FunctionSymbol.Declared>,
                             escapeAnalysisResults: MutableMap<IrFunctionSymbol, EscapeAnalysisResult>) {
-            val nodes = multiNode.nodes.filter { callGraph.directEdges.containsKey(it) }.toMutableSet()
+            val nodes = multiNode.nodes.filter { callGraph.directEdges.containsKey(it) && it.irFunction != null }.toMutableSet()
 
             nodes.forEach {
-                val function = it.irFunction ?: error("No IR for $it")
+                val function = it.irFunction!!
                 escapeAnalysisResults[function.symbol] = EscapeAnalysisResult.optimistic(function)
             }
 
             context.logMultiple {
-                +"Analyzing multiNode:\n    ${nodes.joinToString("\n   ") { it.toString() }}"
+                +"Analyzing multiNode:\n    ${multiNode.nodes.joinToString("\n   ") { it.toString() }}"
                 nodes.forEach { from ->
                     +"IR"
                     +(from.irFunction?.dump() ?: "")
@@ -397,7 +398,6 @@ internal object ControlFlowSensibleEscapeAnalysis {
             }
         }
 
-        // TODO: Add a special Null node.
         private sealed class Node(var id: Int) {
 //            @Suppress("LeakingThis")
 //            var mirroredNode = this
@@ -443,17 +443,14 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 override fun toString() = "$label$id"
             }
 
-            object Nothing : Object(NOTHING_ID, null, "⊥") {
+            open class SpecialObject(id: Int, label: String) : Object(id, null, label) {
+                override fun toString() = label!!
                 override fun shallowCopy() = this
             }
 
-            object Null : Object(NULL_ID, null, "NULL") {
-                override fun shallowCopy() = this
-            }
-
-            object Unit : Object(UNIT_ID, null, "( )") {
-                override fun shallowCopy() = this
-            }
+            object Nothing : SpecialObject(NOTHING_ID, "⊥")
+            object Null : SpecialObject(NULL_ID, "NULL")
+            object Unit : SpecialObject(UNIT_ID, "( )")
 
             inline fun forEachPointee(block: (Node) -> kotlin.Unit) {
                 when (this) {
@@ -582,10 +579,14 @@ internal object ControlFlowSensibleEscapeAnalysis {
 
             companion object {
                 fun graphsAreEqual(first: PointsToGraph, second: PointsToGraph): Boolean {
-                    if (first.nodes.size != second.nodes.size) return false
-                    val firstPointsTo = BitSet(first.nodes.size)
-                    val secondPointsTo = BitSet(first.nodes.size)
-                    for (id in 0 until first.nodes.size) {
+                    val size = kotlin.math.min(first.nodes.size, second.nodes.size)
+                    for (id in size until first.nodes.size)
+                        if (first.nodes[id] != null) return false
+                    for (id in size until second.nodes.size)
+                        if (second.nodes[id] != null) return false
+                    val firstPointsTo = BitSet(size)
+                    val secondPointsTo = BitSet(size)
+                    for (id in 0 until size) {
                         val firstNode = first.nodes[id]
                         val secondNode = second.nodes[id]
                         when (firstNode) {
@@ -665,6 +666,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
             }
 
             fun clear() {
+                globalNode.fields.clear()
                 for (id in Node.LOWEST_NODE_ID until nodes.size) {
                     val node = nodes[id] ?: continue
                     when {
@@ -745,12 +747,13 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 is Node.Reference -> {
                     val visited = BitSet()
                     visited.set(Node.NULL_ID) // Skip null, as getting/setting its field would lead to NPE.
+                    visited.set(Node.UNIT_ID) // Unit might get here because of generics and non-exact devirtualization.
                     val reachable = mutableListOf<Node.Reference>()
 
                     fun findReachable(node: Node.Reference) {
                         visited.set(node.id)
                         reachable.add(node)
-                        node.forEachPointee { pointee ->
+                        for (pointee in node.assignedWith) {
                             if (pointee is Node.Reference && !visited.get(pointee.id))
                                 findReachable(pointee)
                         }
@@ -1081,13 +1084,13 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 context.log { "after evaluating receiver" }
                 logDigraph(receiverNode)
 
-                val receiverObjects = getObjectNodes(receiverNode, data.loop, expression.receiver)
-                context.log { "after getting receiver's objects" }
-                logDigraph(context, receiverObjects)
-
                 val valueNode = expression.value.accept(this@PointsToGraphBuilder, data)
                 context.log { "after evaluating value" }
                 logDigraph(valueNode)
+
+                val receiverObjects = getObjectNodes(data.graph.nodes[receiverNode.id]!!, data.loop, expression.receiver)
+                context.log { "after getting receiver's objects" }
+                logDigraph(context, receiverObjects)
 
                 return (if (receiverObjects.isEmpty()) { // This will lead to NPE at runtime.
                     clear()
@@ -1336,7 +1339,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 val referencesCount = IntArray(calleeGraph.nodes.size)
                 for (node in calleeGraph.nodes) {
                     if (node !is Node.Reference) continue
-                    node.forEachPointee { pointee ->
+                    for (pointee in node.assignedWith) {
                         if (pointee is Node.Object) ++referencesCount[pointee.id]
                     }
                 }
@@ -1383,14 +1386,22 @@ internal object ControlFlowSensibleEscapeAnalysis {
                                 && fieldPointee.isFictitious
                                 && inMirroredNodes[fieldPointee.id] == null // Skip cycles.
 
-                        val mirroredNode = if (actualObjects.size == 1 && actualObjects[0].loop == state.loop && !state.insideATry)
-                            null
-                        else PossiblySplitMirroredNode().also {
-                            if (hasIncomingEdges || fieldPointee == null)
-                                it.inNode = state.graph.at(state.loop, callSite, fieldValue.id).newPhiNode()
-                            if (fieldPointee != null && !canOmitFictitiousObject)
-                                it.outNode = state.graph.at(state.loop, callSite, fieldValue.id + calleeGraph.nodes.size).newTempVariable()
-                        }.takeIf { it.inNode != null || it.outNode != null }
+                        val mirroredNode = when {
+                            actualObjects.size == 1 && actualObjects[0].loop == state.loop && !state.insideATry -> {
+                                // Can reflect directly field value to field value.
+                                null
+                            }
+                            actualObjects.isEmpty() -> { // This is going to be NPE at runtime.
+                                reflectNode(fieldValue, Node.Null)
+                                null
+                            }
+                            else -> PossiblySplitMirroredNode().also {
+                                if (hasIncomingEdges || fieldPointee == null)
+                                    it.inNode = state.graph.at(state.loop, callSite, fieldValue.id).newPhiNode()
+                                if (fieldPointee != null && !canOmitFictitiousObject)
+                                    it.outNode = state.graph.at(state.loop, callSite, fieldValue.id + calleeGraph.nodes.size).newTempVariable()
+                            }.takeIf { it.inNode != null || it.outNode != null }
+                        }
                         mirroredNode?.reflect(fieldValue)
 
                         if (canOmitFictitiousObject) {
@@ -1418,12 +1429,14 @@ internal object ControlFlowSensibleEscapeAnalysis {
                                 nextActualObjects.forEach { obj -> obj.loop = it }
                             }
                             if (referencesCount[fieldPointee.id] > 1) {
-                                if (nextActualObjects.size == 1)
-                                    reflectNode(fieldPointee, nextActualObjects[0])
-                                else {
-                                    val mirroredFieldPointee = state.graph.at(state.loop, callSite, fieldPointee.id).newPhiNode()
-                                    mirroredFieldPointee.assignedWith.addAll(nextActualObjects)
-                                    reflectNode(fieldPointee, mirroredFieldPointee)
+                                when (nextActualObjects.size) {
+                                    0 -> reflectNode(fieldPointee, Node.Null)
+                                    1 -> reflectNode(fieldPointee, nextActualObjects[0])
+                                    else -> {
+                                        val mirroredFieldPointee = state.graph.at(state.loop, callSite, fieldPointee.id).newPhiNode()
+                                        mirroredFieldPointee.assignedWith.addAll(nextActualObjects)
+                                        reflectNode(fieldPointee, mirroredFieldPointee)
+                                    }
                                 }
                             }
                             reflectFieldsOf(fieldPointee, nextActualObjects)
@@ -1487,9 +1500,13 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 for (node in calleeGraph.nodes) {
                     if (handledNodes.get(node!!.id) || node !is Node.Reference) continue
 
-                    val outMirroredNode = outMirroredNodes[node.id] as Node.Reference
-                    node.forEachPointee { pointee ->
-                        outMirroredNode.addEdge(inMirroredNodes[pointee.id] ?: error("Node $pointee hasn't been reflected"))
+                    val outMirroredNode = outMirroredNodes[node.id]
+                    if (outMirroredNode == Node.Null) continue
+                    require(outMirroredNode is Node.Reference)
+                    for (pointee in node.assignedWith) {
+                        val inMirroredNode = inMirroredNodes[pointee.id]
+                        if (inMirroredNode == Node.Null && pointee != Node.Null) continue
+                        outMirroredNode.addEdge(inMirroredNode ?: error("Node $pointee hasn't been reflected"))
                     }
                 }
 
@@ -1514,7 +1531,9 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 context.log { "An external call: ${function.render()}" }
                 // TODO: use package instead.
                 val fqName = function.fqNameForIrSerialization.asString()
-                return if (fqName.startsWith("kotlin.")
+                return if (function.isStaticInitializer) // TODO: Is this correct?
+                    EscapeAnalysisResult.optimistic(function)
+                else if (fqName.startsWith("kotlin.")
                         // TODO: Is it possible to do it in a more fine-grained fashion?
                         && !fqName.startsWith("kotlin.native.concurrent")) {
                     context.log { "A function from K/N runtime - can use annotations" }
