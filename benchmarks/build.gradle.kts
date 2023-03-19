@@ -89,7 +89,7 @@ tasks.register<JavaExec>("runBenchmark") {
 
     val benchmarkJarPath = "$buildDir/benchmarks/main/jars/benchmarks.jar"
     args = mutableListOf("-Didea.home.path=$ideaHome", benchmarkJarPath, "-rf", "json", "-rff", resultFilePath) + jmhArgs.split("\\s".toRegex())
-    main = "-jar"
+    mainClass.set("-jar")
 
     doLast {
         if (project.kotlinBuildProperties.isTeamcityBuild) {

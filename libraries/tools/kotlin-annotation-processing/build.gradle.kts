@@ -22,7 +22,7 @@ projectTest(parallel = true) {
 publish()
 
 tasks.named<Jar>("jar").configure {
-    classifier = "base"
+    archiveClassifier.set("base")
 }
 
 runtimeJar(rewriteDepsToShadedCompiler(

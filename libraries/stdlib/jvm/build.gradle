@@ -117,7 +117,7 @@ sourcesJar {
 task distSourcesJar(type: Jar) {
     dependsOn(sourcesJar, configurations.commonSources)
     destinationDirectory = file("$buildDir/lib/dist")
-    classifier = 'sources'
+    archiveClassifier.set('sources')
     duplicatesStrategy = DuplicatesStrategy.FAIL
 
     from zipTree(sourcesJar.outputs.files.singleFile)

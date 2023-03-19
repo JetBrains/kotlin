@@ -66,7 +66,7 @@ jar {
 }
 
 task java9Jar(type: Jar) {
-    classifier = "java9"
+    archiveClassifier.set("java9")
     if (includeJava9) {
         from sourceSets.java9.output
     }

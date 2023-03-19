@@ -44,7 +44,7 @@ jar {
 }
 
 task libraryJarWithoutIr(type: Jar, dependsOn: compileKotlin2Js) {
-    classifier = null
+    archiveClassifier.set(null)
     destinationDirectory = file("$buildDir/lib/dist")
     from("$buildDir/classes/main")
     manifestAttributes(manifest, project, 'Test')
@@ -69,7 +69,7 @@ task libraryJarWithIr(type: Zip, dependsOn: libraryJarWithoutIr) {
 jar.dependsOn(libraryJarWithIr)
 
 task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = 'sources'
+    archiveClassifier.set('sources')
     from (sourceSets.main.allSource)
 }
 

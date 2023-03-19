@@ -627,14 +627,14 @@ task samples {
 
 task samplesZip(type: Zip)
 task samplesTar(type: Tar) {
-    extension = 'tar.gz'
+    archiveExtension = 'tar.gz'
     compression = Compression.GZIP
 }
 
 configure([samplesZip, samplesTar]) {
-    baseName "kotlin-native-samples-$kotlinVersion"
-    destinationDir = projectDir
-    into(baseName)
+    archiveBaseName = "kotlin-native-samples-$kotlinVersion"
+    destinationDirectory = projectDir
+    into(archiveBaseName)
 
     from(file('samples')) {
         // Process properties files separately.
