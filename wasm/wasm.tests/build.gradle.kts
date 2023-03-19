@@ -1,4 +1,3 @@
-import org.jetbrains.kotlin.gradle.targets.js.d8.D8RootPlugin
 import org.gradle.internal.os.OperatingSystem
 import de.undercouch.gradle.tasks.download.Download
 import java.util.*
@@ -18,6 +17,7 @@ dependencies {
 
 val generationRoot = projectDir.resolve("tests-gen")
 
+useD8Plugin()
 optInToExperimentalCompilerApi()
 
 sourceSets {
@@ -25,19 +25,6 @@ sourceSets {
     "test" {
         projectDefault()
         this.java.srcDir(generationRoot.name)
-    }
-}
-
-val d8Plugin = D8RootPlugin.apply(rootProject)
-d8Plugin.version = v8Version
-
-fun Test.setupV8() {
-    dependsOn(d8Plugin.setupTaskProvider)
-    val v8ExecutablePath = project.provider {
-        d8Plugin.requireConfigured().executablePath.absolutePath
-    }
-    doFirst {
-        systemProperty("javascript.engine.path.V8", v8ExecutablePath.get())
     }
 }
 

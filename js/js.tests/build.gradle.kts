@@ -1,7 +1,6 @@
 import com.github.gradle.node.npm.task.NpmTask
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
-import org.jetbrains.kotlin.gradle.targets.js.d8.D8RootPlugin
 import org.jetbrains.kotlin.ideaExt.idea
 import org.apache.tools.ant.filters.FixCrLfFilter
 import java.util.Properties
@@ -85,6 +84,7 @@ dependencies {
 
 val generationRoot = projectDir.resolve("tests-gen")
 
+useD8Plugin()
 optInToExperimentalCompilerApi()
 
 sourceSets {
@@ -207,21 +207,9 @@ fun Test.setupNodeJs() {
     )
 }
 
-val d8Plugin = D8RootPlugin.apply(rootProject)
-d8Plugin.version = v8Version
-
-fun Test.setupV8() {
-    dependsOn(d8Plugin.setupTaskProvider)
-    val v8ExecutablePath = project.provider {
-        d8Plugin.requireConfigured().executablePath.absolutePath
-    }
-    doFirst {
-        systemProperty("javascript.engine.path.V8", v8ExecutablePath.get())
-    }
-}
-
 fun Test.setUpJsBoxTests(jsEnabled: Boolean, jsIrEnabled: Boolean, firEnabled: Boolean, es6Enabled: Boolean) {
     setupV8()
+
     if (jsIrEnabled) {
         setupNodeJs()
         dependsOn(npmInstall)
@@ -446,17 +434,11 @@ val runMocha by tasks.registering {
 }
 
 projectTest("invalidationTest", jUnitMode = JUnitMode.JUnit4) {
-    setupV8()
     workingDir = rootDir
 
+    useJsIrBoxTests(version = version, buildDir = "$buildDir/")
     include("org/jetbrains/kotlin/incremental/*")
-
     dependsOn(":dist")
-    dependsOn(":kotlin-stdlib-js-ir:compileKotlinJs")
-
-    systemProperty("kotlin.js.stdlib.klib.path", "libraries/stdlib/js-ir/build/libs/kotlin-stdlib-js-ir-js-$version.klib")
-    systemProperty("kotlin.js.test.root.out.dir", "$buildDir/")
-
     forwardProperties()
 }
 

@@ -1,7 +1,6 @@
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
-import org.jetbrains.kotlin.gradle.targets.js.d8.D8RootPlugin
 
 description = "Atomicfu Compiler Plugin"
 
@@ -105,43 +104,24 @@ runtimeJar()
 sourcesJar()
 javadocJar()
 testsJar()
+useD8Plugin()
 
 projectTest(jUnitMode = JUnitMode.JUnit5) {
     useJUnitPlatform()
+    useJsIrBoxTests(version = version, buildDir = "$buildDir/")
+
     workingDir = rootDir
+
+    dependsOn(":dist")
     dependsOn(atomicfuJsIrRuntimeForTests)
+
     val localAtomicfuJsIrRuntimeForTests: FileCollection = atomicfuJsIrRuntimeForTests
     val localAtomicfuJsClasspath: FileCollection = atomicfuJsClasspath
     val localAtomicfuJvmClasspath: FileCollection = atomicfuJvmClasspath
+
     doFirst {
         systemProperty("atomicfuJsIrRuntimeForTests.classpath", localAtomicfuJsIrRuntimeForTests.asPath)
         systemProperty("atomicfuJs.classpath", localAtomicfuJsClasspath.asPath)
         systemProperty("atomicfuJvm.classpath", localAtomicfuJvmClasspath.asPath)
     }
-    setUpJsIrBoxTests()
-}
-
-val d8Plugin = D8RootPlugin.apply(rootProject)
-d8Plugin.version = v8Version
-
-fun Test.setupV8() {
-    dependsOn(d8Plugin.setupTaskProvider)
-    val v8ExecutablePath = d8Plugin.requireConfigured().executablePath.absolutePath
-    doFirst {
-        systemProperty("javascript.engine.path.V8", v8ExecutablePath)
-    }
-}
-
-fun Test.setUpJsIrBoxTests() {
-    setupV8()
-
-    dependsOn(":dist")
-    dependsOn(":kotlin-stdlib-js-ir:compileKotlinJs")
-    systemProperty("kotlin.js.full.stdlib.path", "libraries/stdlib/js-ir/build/classes/kotlin/js/main")
-    dependsOn(":kotlin-stdlib-js-ir-minimal-for-test:compileKotlinJs")
-    systemProperty("kotlin.js.reduced.stdlib.path", "libraries/stdlib/js-ir-minimal-for-test/build/classes/kotlin/js/main")
-    dependsOn(":kotlin-test:kotlin-test-js-ir:compileKotlinJs")
-    systemProperty("kotlin.js.kotlin.test.path", "libraries/kotlin.test/js-ir/build/classes/kotlin/js/main")
-    systemProperty("kotlin.js.kotlin.test.path", "libraries/kotlin.test/js-ir/build/classes/kotlin/js/main")
-    systemProperty("kotlin.js.test.root.out.dir", "$buildDir/")
 }
