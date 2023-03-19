@@ -77,6 +77,15 @@ sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level:
             }
             from._followingNodes.clear()
         }
+
+        @CfgInternals
+        fun removeAllIncomingEdges(to: CFGNode<*>) {
+            for (from in to._previousNodes) {
+                from._followingNodes.remove(to)
+            }
+            to._previousNodes.clear()
+            to._incomingEdges?.clear()
+        }
     }
 
     private val _previousNodes: MutableList<CFGNode<*>> = SmartList()

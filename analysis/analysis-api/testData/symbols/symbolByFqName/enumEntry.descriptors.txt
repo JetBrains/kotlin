@@ -7,7 +7,10 @@ KtEnumEntrySymbol:
   name: SYNCHRONIZED
   origin: LIBRARY
   receiverParameter: null
-  returnType: kotlin/LazyThreadSafetyMode
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/LazyThreadSafetyMode
   symbolKind: CLASS_MEMBER
   typeParameters: []
   getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KtFe10DescEnumEntrySymbol

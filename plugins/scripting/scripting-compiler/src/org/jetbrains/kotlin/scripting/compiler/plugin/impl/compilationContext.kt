@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 
 import com.intellij.openapi.Disposable
+import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
@@ -41,14 +42,14 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.builder.scriptConfigurators
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
-import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.resolve.FirSamConversionTransformerExtension
-import org.jetbrains.kotlin.fir.resolve.createFunctionalType
+import org.jetbrains.kotlin.fir.resolve.createFunctionType
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeLookupTagBasedType
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.functionTypeService
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi.KtFile
@@ -153,16 +154,17 @@ internal class FirScriptingSamWithReceiverExtensionRegistrar() : FirExtensionReg
             }
         }
 
-        override fun getCustomFunctionalTypeForSamConversion(function: FirSimpleFunction): ConeLookupTagBasedType? {
+        override fun getCustomFunctionTypeForSamConversion(function: FirSimpleFunction): ConeLookupTagBasedType? {
             val containingClassSymbol = function.containingClassLookupTag()?.toFirRegularClassSymbol(session) ?: return null
             return runIf(containingClassSymbol.resolvedAnnotationClassIds.any { it.asSingleFqName().asString() in knownAnnotations }) {
                 val parameterTypes = function.valueParameters.map { it.returnTypeRef.coneType }
                 if (parameterTypes.isEmpty()) return null
-                createFunctionalType(
+                val kind = session.functionTypeService.extractSingleSpecialKindForFunction(function.symbol) ?: FunctionTypeKind.Function
+                createFunctionType(
+                    kind,
                     parameters = parameterTypes.subList(1, parameterTypes.size),
                     receiverType = parameterTypes[0],
-                    rawReturnType = function.returnTypeRef.coneType,
-                    isSuspend = function.isSuspend
+                    rawReturnType = function.returnTypeRef.coneType
                 )
             }
         }

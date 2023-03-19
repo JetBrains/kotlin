@@ -1,4 +1,7 @@
-interface List<out T : Any> {
+@Target(allowedTargets = [kotlin.annotation.AnnotationTarget.TYPE_PARAMETER])
+annotation class A
+
+interface List<@A out T : Any> {
   infix fun concat(other: List<T>): List<T>
 
   operator fun get(index: Int): T

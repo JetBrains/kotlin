@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
 import org.jetbrains.kotlin.fir.declarations.origin
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
+import org.jetbrains.kotlin.fir.extensions.FirExtension
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -99,12 +100,13 @@ public class ClassBuildingContext(
 /**
  * Creates top-level class with given [classId]
  * All declarations in class should be generated using methods from [FirDeclarationGenerationExtension]
+ * Generation of top-level classes with [FirDeclarationsForMetadataProviderExtension] is prohibited
  *
  * If no supertypes added then [kotlin.Any] supertype will be added automatically
  *
  * Created class won't have a constructor; constructor can be added separately with [createConstructor] function
  */
-public fun FirDeclarationGenerationExtension.createTopLevelClass(
+public fun FirExtension.createTopLevelClass(
     classId: ClassId,
     key: GeneratedDeclarationKey,
     classKind: ClassKind = ClassKind.CLASS,
@@ -115,7 +117,10 @@ public fun FirDeclarationGenerationExtension.createTopLevelClass(
 
 /**
  * Creates nested class for [owner] class with name [name]
- * All declarations in class should be generated using methods from [FirDeclarationGenerationExtension]
+ * If class is generated in [FirDeclarationGenerationExtension], all its declarations should be generated
+ *   using methods from [FirDeclarationGenerationExtension]
+ * If class is generated in [FirDeclarationsForMetadataProviderExtension] all its declarations should be manually added right to
+ *   FIR node of created class
  *
  * If no supertypes added then [kotlin.Any] supertype will be added automatically
  *
@@ -123,7 +128,7 @@ public fun FirDeclarationGenerationExtension.createTopLevelClass(
  *
  * By default, the class is only nested; to create an inner class, create nested class and add inner status via status()
  */
-public fun FirDeclarationGenerationExtension.createNestedClass(
+public fun FirExtension.createNestedClass(
     owner: FirClassSymbol<*>,
     name: Name,
     key: GeneratedDeclarationKey,
@@ -135,13 +140,16 @@ public fun FirDeclarationGenerationExtension.createNestedClass(
 
 /**
  * Creates companion object for [owner] class
- * All declarations in class should be generated using methods from [FirDeclarationGenerationExtension]
+ * If class is generated in [FirDeclarationGenerationExtension], all its declarations should be generated
+ *   using methods from [FirDeclarationGenerationExtension]
+ * If class is generated in [FirDeclarationsForMetadataProviderExtension] all its declarations should be manually added right to
+ *   FIR node of created class
  *
  * If no supertypes added then [kotlin.Any] supertype will be added automatically
  *
  * Created class won't have a constructor; constructor can be added separately with [createDefaultPrivateConstructor] function
  */
-public fun FirDeclarationGenerationExtension.createCompanionObject(
+public fun FirExtension.createCompanionObject(
     owner: FirClassSymbol<*>,
     key: GeneratedDeclarationKey,
     config: ClassBuildingContext.() -> Unit = {}

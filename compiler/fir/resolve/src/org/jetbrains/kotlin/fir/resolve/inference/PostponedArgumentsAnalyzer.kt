@@ -213,6 +213,7 @@ class PostponedArgumentsAnalyzer(
 
         lambda.analyzed = true
         lambda.returnStatements = returnArguments
+        c.resolveForkPointsConstraints()
 
         if (inferenceSession != null) {
             val postponedVariables = inferenceSession.inferPostponedVariables(lambda, builder, completionMode)

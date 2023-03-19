@@ -82,6 +82,7 @@ import org.jetbrains.kotlin.fir.expressions.FirErrorAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirComparisonExpression
 import org.jetbrains.kotlin.fir.expressions.FirTypeOperatorCall
 import org.jetbrains.kotlin.fir.expressions.FirAssignmentOperatorStatement
+import org.jetbrains.kotlin.fir.expressions.FirIncrementDecrementExpression
 import org.jetbrains.kotlin.fir.expressions.FirEqualityOperatorCall
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenBranch
@@ -128,6 +129,7 @@ import org.jetbrains.kotlin.fir.expressions.FirWrappedDelegateExpression
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirNamedReferenceWithCandidateBase
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
+import org.jetbrains.kotlin.fir.references.FirFromMissingDependenciesNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
@@ -214,6 +216,8 @@ abstract class FirDefaultVisitorVoid : FirVisitorVoid() {
 
     override fun visitAssignmentOperatorStatement(assignmentOperatorStatement: FirAssignmentOperatorStatement)  = visitStatement(assignmentOperatorStatement)
 
+    override fun visitIncrementDecrementExpression(incrementDecrementExpression: FirIncrementDecrementExpression)  = visitExpression(incrementDecrementExpression)
+
     override fun visitAugmentedArraySetCall(augmentedArraySetCall: FirAugmentedArraySetCall)  = visitStatement(augmentedArraySetCall)
 
     override fun visitClassReferenceExpression(classReferenceExpression: FirClassReferenceExpression)  = visitExpression(classReferenceExpression)
@@ -267,6 +271,8 @@ abstract class FirDefaultVisitorVoid : FirVisitorVoid() {
     override fun visitNamedReference(namedReference: FirNamedReference)  = visitReference(namedReference)
 
     override fun visitNamedReferenceWithCandidateBase(namedReferenceWithCandidateBase: FirNamedReferenceWithCandidateBase)  = visitNamedReference(namedReferenceWithCandidateBase)
+
+    override fun visitFromMissingDependenciesNamedReference(fromMissingDependenciesNamedReference: FirFromMissingDependenciesNamedReference)  = visitNamedReference(fromMissingDependenciesNamedReference)
 
     override fun visitSuperReference(superReference: FirSuperReference)  = visitReference(superReference)
 

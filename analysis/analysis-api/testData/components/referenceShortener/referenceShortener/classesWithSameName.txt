@@ -1,0 +1,7 @@
+Before shortening: a.b.c.Outer.Inner::class.java
+with DO_NOT_SHORTEN:
+with SHORTEN_IF_ALREADY_IMPORTED:
+with SHORTEN_AND_IMPORT:
+[qualifier] a.b.c.Outer.Inner
+with SHORTEN_AND_STAR_IMPORT:
+[qualifier] a.b.c.Outer.Inner

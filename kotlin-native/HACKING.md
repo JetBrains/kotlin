@@ -357,10 +357,13 @@ The following values are supported:
 
 The following compiler phases control different parts of LLVM pipeline:
 1. `LinkBitcodeDependencies`. Linkage of produced bitcode with runtime and some other dependencies.
-2. `BitcodeOptimization`. Running LLVM optimization pipeline.
+2. Running different parts of LLVM optimization pipeline:
+   1. `MandatoryBitcodeLLVMPostprocessingPhase`: important postprocessing. Disabling can break generated code.
+   2. `ModuleBitcodeOptimization`: Basic optimization pipeline. Something close to clang -O3
+   3. `LTOBitcodeOptimization`: LTO pipeline. Slower, but better optimizations, assuming whole program knowlage.  
 3. `ObjectFiles`. Compilation of bitcode with Clang.
 
-For example, pass `-Xdisable-phases=BitcodeOptimization` to skip optimization pipeline.
+For example, pass `-Xdisable-phases=LTOBitcodeOptimization` to skip this part of optimization pipeline for faster compilation with slower code.
 Note that disabling `LinkBitcodeDependencies` or `ObjectFiles` will break compilation pipeline.
 
 Compiler takes options for Clang from [konan.properties](konan/konan.properties) file
@@ -375,7 +378,7 @@ Please note:
 #### Example: replace predefined LLVM pipeline with Clang options.
 ```shell script
 CLANG_FLAGS="clangFlags.macos_x64=-cc1 -emit-obj;clangNooptFlags.macos_x64=-O2"
-kotlinc-native main.kt -Xdisable-phases=BitcodeOptimization -Xoverride-konan-properties="$CLANG_FLAGS"
+kotlinc-native main.kt -Xdisable-phases=MandatoryBitcodeLLVMPostprocessingPhase,ModuleBitcodeOptimization,LTOBitcodeOptimization -Xoverride-konan-properties="$CLANG_FLAGS"
 ```
 
 ### Dumping LLVM IR

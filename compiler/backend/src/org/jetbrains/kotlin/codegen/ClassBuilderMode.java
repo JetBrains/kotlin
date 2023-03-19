@@ -50,16 +50,6 @@ public class ClassBuilderMode {
             /* mightBeIncorrectCode = */ false);
 
     /**
-     * ABI for compilation (non-private signatures + inline function bodies)
-     */
-    public final static ClassBuilderMode ABI = new ClassBuilderMode(
-            /* bodies = */ true,
-            /* metadata = */ true,
-            /* sourceRetention = */ false,
-            /* generateMultiFileFacadePartClasses = */ true,
-            /* mightBeIncorrectCode = */ false);
-
-    /**
      * Generating light classes: Only function signatures
      */
     public final static ClassBuilderMode LIGHT_CLASSES = new ClassBuilderMode(

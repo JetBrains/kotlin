@@ -8,23 +8,17 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 import org.jetbrains.kotlin.analysis.api.components.KtSymbolInfoProvider
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.*
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirBackingFieldSymbol
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirSymbol
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirSyntheticJavaPropertySymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtReceiverParameterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.fir.analysis.checkers.getAllowedAnnotationTargets
-import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.getDeprecationForCallSite
-import org.jetbrains.kotlin.fir.declarations.getJvmNameFromAnnotation
-import org.jetbrains.kotlin.fir.declarations.hasAnnotation
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -41,6 +35,12 @@ internal class KtFirSymbolInfoProvider(
     override fun getDeprecation(symbol: KtSymbol): DeprecationInfo? {
         if (symbol is KtFirBackingFieldSymbol || symbol is KtFirPackageSymbol || symbol is KtReceiverParameterSymbol) return null
         require(symbol is KtFirSymbol<*>) { "${this::class}" }
+
+        // Optimization: Avoid building `firSymbol` of `KtFirPsiJavaClassSymbol` if it definitely isn't deprecated.
+        if (symbol is KtFirPsiJavaClassSymbol && !symbol.mayHaveDeprecation()) {
+            return null
+        }
+
         return when (val firSymbol = symbol.firSymbol) {
             is FirPropertySymbol -> {
                 firSymbol.getDeprecationForCallSite(apiVersion, AnnotationUseSiteTarget.PROPERTY)
@@ -49,6 +49,15 @@ internal class KtFirSymbolInfoProvider(
                 firSymbol.getDeprecationForCallSite(apiVersion)
             }
         }
+    }
+
+    private fun KtFirPsiJavaClassSymbol.mayHaveDeprecation(): Boolean {
+        if (!hasAnnotations) return false
+
+        // Check the simple names of the Java annotations. While presence of such an annotation name does not prove deprecation, it is a
+        // necessary condition for it. Type aliases are not a problem here: Java code cannot access Kotlin type aliases. (Currently,
+        // deprecation annotation type aliases do not work in Kotlin, either, but this might change in the future.)
+        return annotationSimpleNames.any { it != null && it in deprecationAnnotationSimpleNames }
     }
 
     override fun getDeprecation(symbol: KtSymbol, annotationUseSiteTarget: AnnotationUseSiteTarget?): DeprecationInfo? {

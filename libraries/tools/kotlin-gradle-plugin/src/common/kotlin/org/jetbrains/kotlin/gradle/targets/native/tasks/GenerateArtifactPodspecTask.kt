@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.native.tasks
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFile
+import org.gradle.api.logging.Logger
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
@@ -20,7 +21,17 @@ import org.jetbrains.kotlin.gradle.utils.appendLine
 abstract class GenerateArtifactPodspecTask : DefaultTask() {
 
     enum class ArtifactType {
-        Library, Framework, FatFramework, XCFramework
+        StaticLibrary, DynamicLibrary, Framework, FatFramework, XCFramework
+    }
+
+    init {
+        this.onlyIf {
+            val shouldRun = attributes.get().isNotEmpty() || rawStatements.get().isNotEmpty()
+            if (!shouldRun) {
+                logger.info("Skipping task '$path' because there are no podspec attributes defined")
+            }
+            shouldRun
+        }
     }
 
     @get:Input
@@ -126,18 +137,26 @@ abstract class GenerateArtifactPodspecTask : DefaultTask() {
             }
 
             if (vendoredKeys.none { attributes.get().containsKey(it) }) {
-                val vendoredKey = when (artifactTypeValue) {
-                    Library -> vendoredLibrary
+                val key = when (artifactTypeValue) {
+                    StaticLibrary, DynamicLibrary -> vendoredLibrary
                     Framework, FatFramework, XCFramework -> vendoredFrameworks
                 }
 
-                val vendoredValue = specName.get() + "." + when (artifactTypeValue) {
-                    Library -> "dylib"
+                val prefix = when (artifactTypeValue) {
+                    StaticLibrary, DynamicLibrary -> "lib"
+                    else -> ""
+                }
+
+                val suffix = when (artifactTypeValue) {
+                    StaticLibrary -> "a"
+                    DynamicLibrary -> "dylib"
                     Framework, FatFramework -> "framework"
                     XCFramework -> "xcframework"
                 }
 
-                put(vendoredKey, vendoredValue)
+                val value = "$prefix${specName.get()}.$suffix"
+
+                put(key, value)
             }
         }
     }

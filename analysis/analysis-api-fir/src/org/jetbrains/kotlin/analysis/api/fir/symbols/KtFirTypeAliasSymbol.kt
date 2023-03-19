@@ -8,12 +8,11 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
-import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KtFirClassLikeSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtTypeAliasSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
@@ -22,7 +21,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointe
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.UnsupportedSymbolKind
 import org.jetbrains.kotlin.analysis.api.types.KtType
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
@@ -32,11 +30,8 @@ import org.jetbrains.kotlin.name.Name
 
 internal class KtFirTypeAliasSymbol(
     override val firSymbol: FirTypeAliasSymbol,
-    override val firResolveSession: LLFirResolveSession,
-    override val token: KtLifetimeToken,
-    private val builder: KtSymbolByFirBuilder,
+    override val analysisSession: KtFirAnalysisSession,
 ) : KtTypeAliasSymbol(), KtFirSymbol<FirTypeAliasSymbol> {
-
     override val psi: PsiElement? by cached { firSymbol.findPsi() }
     override val name: Name get() = withValidityAssertion { firSymbol.name }
     override val classIdIfNonLocal: ClassId? get() = withValidityAssertion { firSymbol.getClassIdIfNonLocal() }
@@ -54,7 +49,7 @@ internal class KtFirTypeAliasSymbol(
     override val expandedType: KtType by cached { builder.typeBuilder.buildKtType(firSymbol.resolvedExpandedTypeRef) }
 
     override val annotationsList: KtAnnotationsList by cached {
-        KtFirAnnotationListForDeclaration.create(firSymbol, firResolveSession.useSiteFirSession, token)
+        KtFirAnnotationListForDeclaration.create(firSymbol, analysisSession.useSiteSession, token)
     }
 
     override val symbolKind: KtSymbolKind get() = withValidityAssertion { getSymbolKind() }

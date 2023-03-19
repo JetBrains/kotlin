@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmClassSignature
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
+import kotlin.collections.set
 
 class IrFrameMap : FrameMapBase<IrSymbol>() {
     private val typeMap = mutableMapOf<IrSymbol, Type>()
@@ -68,7 +69,10 @@ fun IrFrameMap.leave(irDeclaration: IrSymbolOwner): Int {
 }
 
 fun JvmBackendContext.getSourceMapper(declaration: IrClass): SourceMapper {
-    val fileEntry = declaration.fileParent.fileEntry
+    val irFile = declaration.fileParentBeforeInline
+    val type = declaration.getAttributeOwnerBeforeInline()?.let { getLocalClassType(it) } ?: defaultTypeMapper.mapClass(declaration)
+
+    val fileEntry = irFile.fileEntry
     // NOTE: apparently inliner requires the source range to cover the
     //       whole file the class is declared in rather than the class only.
     val endLineNumber = when (fileEntry) {
@@ -77,12 +81,12 @@ fun JvmBackendContext.getSourceMapper(declaration: IrClass): SourceMapper {
     }
     val sourceFileName = when (fileEntry) {
         is MultifileFacadeFileEntry -> fileEntry.partFiles.singleOrNull()?.name
-        else -> declaration.fileParent.name
+        else -> irFile.name
     }
     return SourceMapper(
         SourceInfo(
             sourceFileName,
-            defaultTypeMapper.mapClass(declaration).internalName,
+            type.internalName,
             endLineNumber + 1
         )
     )
@@ -218,7 +222,7 @@ private val KOTLIN_MARKER_INTERFACES: Map<FqName, String> = run {
     kotlinMarkerInterfaces
 }
 
-internal fun IrTypeMapper.mapClassSignature(irClass: IrClass, type: Type): JvmClassSignature {
+internal fun IrTypeMapper.mapClassSignature(irClass: IrClass, type: Type, generateBodies: Boolean): JvmClassSignature {
     val sw = BothSignatureWriter(BothSignatureWriter.Mode.CLASS)
     writeFormalTypeParameters(irClass.typeParameters, sw)
 
@@ -234,7 +238,11 @@ internal fun IrTypeMapper.mapClassSignature(irClass: IrClass, type: Type): JvmCl
     sw.writeSuperclassEnd()
 
     val kotlinMarkerInterfaces = LinkedHashSet<String>()
-    if (irClass.superTypes.any { it.isSuspendFunction() || it.isKSuspendFunction() }) {
+    if (generateBodies && irClass.superTypes.any { it.isSuspendFunction() || it.isKSuspendFunction() }) {
+        // Do not generate this class in the kapt3 mode (generateBodies=false), because kapt3 transforms supertypes correctly in the
+        // "correctErrorTypes" mode only when the number of supertypes between PSI and bytecode is equal. Otherwise it tries to "correct"
+        // the FunctionN type and fails, because that type doesn't need an import in the Kotlin source (kotlin.FunctionN), but needs one
+        // in the Java source (kotlin.jvm.functions.FunctionN), and kapt3 doesn't perform any Kotlin->Java name lookup.
         kotlinMarkerInterfaces.add("kotlin/coroutines/jvm/internal/SuspendFunction")
     }
 

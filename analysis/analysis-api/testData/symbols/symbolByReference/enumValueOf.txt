@@ -17,7 +17,10 @@ KtFunctionSymbol:
   name: valueOf
   origin: SOURCE_MEMBER_GENERATED
   receiverParameter: null
-  returnType: MyKotlinEnum
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: MyKotlinEnum
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -35,7 +38,10 @@ KtFunctionSymbol:
       name: value
       origin: SOURCE_MEMBER_GENERATED
       receiverParameter: null
-      returnType: kotlin/String
+      returnType: KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
+        type: kotlin/String
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtSourceModule "Sources of main"

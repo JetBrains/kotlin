@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
 
 object KtFirArrayOfSymbolProvider {
     internal fun KtFirAnalysisSession.arrayOfSymbol(identifier: Name): KtFirFunctionSymbol? {
-        val firSymbol = firResolveSession.useSiteFirSession.symbolProvider.getTopLevelCallableSymbols(kotlinPackage, identifier).firstOrNull {
+        val firSymbol = useSiteSession.symbolProvider.getTopLevelCallableSymbols(kotlinPackage, identifier).firstOrNull {
             /* choose (for byte array)
              * public fun byteArrayOf(vararg elements: kotlin.Byte): kotlin.ByteArray
              */

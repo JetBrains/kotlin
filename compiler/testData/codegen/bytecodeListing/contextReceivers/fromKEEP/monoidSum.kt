@@ -1,7 +1,5 @@
 // !LANGUAGE: +ContextReceivers
 // TARGET_BACKEND: JVM_IR
-// IGNORE_BACKEND_K2: JVM_IR
-// IGNORE_BACKEND: JVM
 // WITH_STDLIB
 
 interface Semigroup<T> {

@@ -1,0 +1,25 @@
+@kotlin.jvm.internal.RepeatableContainer
+@java.lang.annotation.Retention(value=RUNTIME)
+@kotlin.Metadata
+public annotation class A$Container {
+    // source: 'propertyGetterSeveralUseSiteTargets.kt'
+    public abstract method value(): A[]
+    public inner class A$Container
+}
+
+@kotlin.annotation.Repeatable
+@java.lang.annotation.Retention(value=RUNTIME)
+@java.lang.annotation.Repeatable(value=A$Container::class)
+@kotlin.Metadata
+public annotation class A {
+    // source: 'propertyGetterSeveralUseSiteTargets.kt'
+    public abstract method v(): java.lang.String
+    public inner class A$Container
+}
+
+@kotlin.Metadata
+public final class PropertyGetterSeveralUseSiteTargetsKt {
+    // source: 'propertyGetterSeveralUseSiteTargets.kt'
+    public final static @A$Container(value=[A(v="a"), A(v="b"), A(v="c"), A(v="d")]) method getAb(): int
+    public inner class A$Container
+}

@@ -9,19 +9,19 @@ import org.jetbrains.kotlin.builtins.CompanionObjectMapping
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.StandardNames.FqNames
 import org.jetbrains.kotlin.builtins.functions.BuiltInFunctionArity
-import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
+import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 
 object JavaToKotlinClassMap {
     private val NUMBERED_FUNCTION_PREFIX: String =
-        FunctionClassKind.Function.packageFqName.toString() + "." + FunctionClassKind.Function.classNamePrefix
+        FunctionTypeKind.Function.packageFqName.toString() + "." + FunctionTypeKind.Function.classNamePrefix
     private val NUMBERED_K_FUNCTION_PREFIX: String =
-        FunctionClassKind.KFunction.packageFqName.toString() + "." + FunctionClassKind.KFunction.classNamePrefix
+        FunctionTypeKind.KFunction.packageFqName.toString() + "." + FunctionTypeKind.KFunction.classNamePrefix
     private val NUMBERED_SUSPEND_FUNCTION_PREFIX: String =
-        FunctionClassKind.SuspendFunction.packageFqName.toString() + "." + FunctionClassKind.SuspendFunction.classNamePrefix
+        FunctionTypeKind.SuspendFunction.packageFqName.toString() + "." + FunctionTypeKind.SuspendFunction.classNamePrefix
     private val NUMBERED_K_SUSPEND_FUNCTION_PREFIX: String =
-        FunctionClassKind.KSuspendFunction.packageFqName.toString() + "." + FunctionClassKind.KSuspendFunction.classNamePrefix
+        FunctionTypeKind.KSuspendFunction.packageFqName.toString() + "." + FunctionTypeKind.KSuspendFunction.classNamePrefix
 
     private val FUNCTION_N_CLASS_ID: ClassId = ClassId.topLevel(FqName("kotlin.jvm.functions.FunctionN"))
     val FUNCTION_N_FQ_NAME: FqName = FUNCTION_N_CLASS_ID.asSingleFqName()
@@ -97,7 +97,7 @@ object JavaToKotlinClassMap {
             addKotlinToJava(FqName(NUMBERED_K_FUNCTION_PREFIX + i), K_FUNCTION_CLASS_ID)
         }
         for (i in 0 until BuiltInFunctionArity.BIG_ARITY - 1) {
-            val kSuspendFunction = FunctionClassKind.KSuspendFunction
+            val kSuspendFunction = FunctionTypeKind.KSuspendFunction
             val kSuspendFun = kSuspendFunction.packageFqName.toString() + "." + kSuspendFunction.classNamePrefix
             addKotlinToJava(FqName(kSuspendFun + i), K_FUNCTION_CLASS_ID)
         }

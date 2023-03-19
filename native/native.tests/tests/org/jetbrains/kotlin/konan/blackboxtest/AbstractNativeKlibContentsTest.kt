@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.runner.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.*
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
-import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Tag
 import java.io.File
 
@@ -40,7 +39,7 @@ abstract class AbstractNativeKlibContentsTest : AbstractNativeSimpleTest() {
 
     private fun generateTestCaseWithSingleSource(source: File, extraArgs: List<String>): TestCase {
         val moduleName: String = source.name
-        val module = TestModule.Exclusive(moduleName, emptySet(), emptySet())
+        val module = TestModule.Exclusive(moduleName, emptySet(), emptySet(), emptySet())
         module.files += TestFile.createCommitted(source, module)
 
         return TestCase(
@@ -57,7 +56,8 @@ abstract class AbstractNativeKlibContentsTest : AbstractNativeSimpleTest() {
     }
 
     private fun filterContentsOutput(contents: String, linestoExclude: List<String>) =
-        contents.split("\n").filterNot { line ->
-            linestoExclude.any { exclude -> exclude == line }
-        }.joinToString(separator = "\n")
+        contents.lines()
+            .filterNot { line ->
+                linestoExclude.any { exclude -> exclude == line }
+            }.joinToString(separator = "\n")
 }

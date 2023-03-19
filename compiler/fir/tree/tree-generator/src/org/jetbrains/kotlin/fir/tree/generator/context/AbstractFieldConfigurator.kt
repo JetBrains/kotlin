@@ -22,7 +22,7 @@ abstract class AbstractFieldConfigurator<T : AbstractFirTreeBuilder>(private val
 
         fun generateBooleanFields(vararg names: String) {
             names.forEach {
-                +booleanField("is${it.replaceFirstChar(Char::uppercaseChar)}")
+                +booleanField(if (it.startsWith("is") || it.startsWith("has")) it else "is${it.replaceFirstChar(Char::uppercaseChar)}")
             }
         }
 

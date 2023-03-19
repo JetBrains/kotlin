@@ -30,14 +30,18 @@ sealed class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>() {
     abstract val irPluginContext: IrPluginContext
 
     data class JsIrBackendInput(
-        override val irModuleFragment: IrModuleFragment,
+        val mainModuleFragment: IrModuleFragment,
+        val dependentModuleFragments: List<IrModuleFragment>,
         override val irPluginContext: IrPluginContext,
         val sourceFiles: List<KtSourceFile>,
         val icData: List<KotlinFileSerializedData>,
         val expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>, // TODO: abstract from descriptors
         val hasErrors: Boolean,
         val serializeSingleFile: (KtSourceFile) -> ProtoBuf.PackageFragment
-    ) : IrBackendInput()
+    ) : IrBackendInput() {
+        override val irModuleFragment: IrModuleFragment
+            get() = mainModuleFragment
+    }
 
     data class JvmIrBackendInput(
         val state: GenerationState,

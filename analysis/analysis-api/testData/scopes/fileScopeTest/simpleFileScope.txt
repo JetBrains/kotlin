@@ -28,7 +28,10 @@ KtFunctionSymbol:
   name: test
   origin: SOURCE
   receiverParameter: null
-  returnType: kotlin/Int
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Int
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []
@@ -53,7 +56,10 @@ KtKotlinPropertySymbol:
     modality: FINAL
     origin: SOURCE
     receiverParameter: null
-    returnType: kotlin/Int
+    returnType: KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Int
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
@@ -76,7 +82,10 @@ KtKotlinPropertySymbol:
   name: testVal
   origin: SOURCE
   receiverParameter: null
-  returnType: kotlin/Int
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Int
   setter: null
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -107,7 +116,10 @@ KtNamedClassOrObjectSymbol:
   name: C
   origin: SOURCE
   superTypes: [
-    kotlin/Any
+    KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Any
   ]
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -131,7 +143,10 @@ KtNamedClassOrObjectSymbol:
   name: I
   origin: SOURCE
   superTypes: [
-    kotlin/Any
+    KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Any
   ]
   symbolKind: TOP_LEVEL
   typeParameters: []

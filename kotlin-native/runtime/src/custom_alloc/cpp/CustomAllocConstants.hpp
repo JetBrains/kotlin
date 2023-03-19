@@ -9,23 +9,23 @@
 #include <cstddef>
 #include <cstdint>
 
-#include "SmallPage.hpp"
-#include "MediumPage.hpp"
+#include "FixedBlockPage.hpp"
+#include "NextFitPage.hpp"
 #include "ExtraObjectPage.hpp"
 
 inline constexpr const size_t KiB = 1024;
 
-inline constexpr const size_t SMALL_PAGE_SIZE = (256 * KiB);
-inline constexpr const int SMALL_PAGE_MAX_BLOCK_SIZE = 128;
-inline constexpr const size_t SMALL_PAGE_CELL_COUNT =
-        ((SMALL_PAGE_SIZE - sizeof(kotlin::alloc::SmallPage)) / sizeof(kotlin::alloc::SmallCell));
+inline constexpr const size_t FIXED_BLOCK_PAGE_SIZE = (256 * KiB);
+inline constexpr const int FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE = 128;
+inline constexpr const size_t FIXED_BLOCK_PAGE_CELL_COUNT =
+        ((FIXED_BLOCK_PAGE_SIZE - sizeof(kotlin::alloc::FixedBlockPage)) / sizeof(kotlin::alloc::FixedBlockCell));
 
-inline constexpr const size_t MEDIUM_PAGE_SIZE = (256 * KiB);
-inline constexpr const size_t MEDIUM_PAGE_CELL_COUNT =
-        ((MEDIUM_PAGE_SIZE - sizeof(kotlin::alloc::MediumPage)) / sizeof(kotlin::alloc::Cell));
+inline constexpr const size_t NEXT_FIT_PAGE_SIZE = (256 * KiB);
+inline constexpr const size_t NEXT_FIT_PAGE_CELL_COUNT =
+        ((NEXT_FIT_PAGE_SIZE - sizeof(kotlin::alloc::NextFitPage)) / sizeof(kotlin::alloc::Cell));
 
-// MEDIUM_PAGE_CELL_COUNT minus one cell for header minus another for the 0-sized dummy block at cells_[0]
-inline constexpr const size_t MEDIUM_PAGE_MAX_BLOCK_SIZE = (MEDIUM_PAGE_CELL_COUNT - 2);
+// NEXT_FIT_PAGE_CELL_COUNT minus one cell for header minus another for the 0-sized dummy block at cells_[0]
+inline constexpr const size_t NEXT_FIT_PAGE_MAX_BLOCK_SIZE = (NEXT_FIT_PAGE_CELL_COUNT - 2);
 
 inline constexpr const size_t EXTRA_OBJECT_PAGE_SIZE = 64 * KiB;
 inline constexpr const int EXTRA_OBJECT_COUNT =

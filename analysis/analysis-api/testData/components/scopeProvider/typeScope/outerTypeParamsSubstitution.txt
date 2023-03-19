@@ -74,7 +74,17 @@ KtFunctionSymbol:
   name: foo
   origin: SOURCE
   receiverParameter: null
-  returnType: kotlin/collections/Map<X, Y>
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: [
+      KtTypeParameterType:
+        annotationsList: []
+        type: X
+      KtTypeParameterType:
+        annotationsList: []
+        type: Y
+    ]
+    type: kotlin/collections/Map<X, Y>
   symbolKind: CLASS_MEMBER
   typeParameters: [
     KtTypeParameterSymbol(Y)
@@ -94,7 +104,9 @@ KtFunctionSymbol:
       name: x
       origin: SOURCE
       receiverParameter: null
-      returnType: X
+      returnType: KtTypeParameterType:
+        annotationsList: []
+        type: X
       symbolKind: LOCAL
       typeParameters: []
     KtValueParameterSymbol:
@@ -111,7 +123,9 @@ KtFunctionSymbol:
       name: y
       origin: SOURCE
       receiverParameter: null
-      returnType: Y
+      returnType: KtTypeParameterType:
+        annotationsList: []
+        type: Y
       symbolKind: LOCAL
       typeParameters: []
   ]
@@ -133,7 +147,18 @@ KtKotlinPropertySymbol:
     modality: FINAL
     origin: SOURCE
     receiverParameter: null
-    returnType: kotlin/collections/Map<X, kotlin/String>
+    returnType: KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: [
+        KtTypeParameterType:
+          annotationsList: []
+          type: X
+        KtUsualClassType:
+          annotationsList: []
+          ownTypeArguments: []
+          type: kotlin/String
+      ]
+      type: kotlin/collections/Map<X, kotlin/String>
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
@@ -154,7 +179,18 @@ KtKotlinPropertySymbol:
   name: map
   origin: SOURCE
   receiverParameter: null
-  returnType: kotlin/collections/Map<X, kotlin/String>
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: [
+      KtTypeParameterType:
+        annotationsList: []
+        type: X
+      KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
+        type: kotlin/String
+    ]
+    type: kotlin/collections/Map<X, kotlin/String>
   setter: null
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -178,7 +214,10 @@ KtFunctionSymbol:
   name: equals
   origin: LIBRARY
   receiverParameter: null
-  returnType: kotlin/Boolean
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Boolean
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -196,7 +235,10 @@ KtFunctionSymbol:
       name: other
       origin: LIBRARY
       receiverParameter: null
-      returnType: kotlin/Any?
+      returnType: KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
+        type: kotlin/Any?
       symbolKind: LOCAL
       typeParameters: []
   ]
@@ -220,7 +262,10 @@ KtFunctionSymbol:
   name: hashCode
   origin: LIBRARY
   receiverParameter: null
-  returnType: kotlin/Int
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
@@ -244,7 +289,10 @@ KtFunctionSymbol:
   name: toString
   origin: LIBRARY
   receiverParameter: null
-  returnType: kotlin/String
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/String
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []

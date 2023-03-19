@@ -32,7 +32,13 @@ tasks.named<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockCopyTask>("kotli
 
 kotlin {
     wasm {
-        <JsEngine>()
+        <JsEngine> {
+            testTask {
+                filter.apply {
+                    excludeTest("WasmTest", "testShouldBeExcluded")
+                }
+            }
+        }
         <ApplyBinaryen>
     }
 

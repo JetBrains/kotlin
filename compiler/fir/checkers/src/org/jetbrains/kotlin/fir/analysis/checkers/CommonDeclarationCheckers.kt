@@ -39,6 +39,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirKClassWithIncorrectTypeArgumentChecker,
             FirImplicitNothingReturnTypeChecker,
             FirDynamicReceiverChecker,
+            FirActualCallableDeclarationChecker,
         )
 
     override val functionCheckers: Set<FirFunctionChecker>
@@ -151,6 +152,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
     override val typeAliasCheckers: Set<FirTypeAliasChecker>
         get() = setOf(
             FirTopLevelTypeAliasChecker,
+            FirActualTypeAliasChecker,
         )
 
     override val anonymousFunctionCheckers: Set<FirAnonymousFunctionChecker>

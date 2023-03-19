@@ -9,6 +9,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
+import com.intellij.util.CachedValueBase
 import com.intellij.util.containers.ContainerUtil
 import java.util.concurrent.ConcurrentHashMap
 
@@ -16,6 +17,8 @@ public abstract class SoftCachedMap<K : Any, V : Any> {
     public abstract fun getOrPut(key: K, create: () -> V): V
 
     public abstract fun clear()
+
+    public abstract fun clearCachedValues()
 
     public companion object {
         public fun <K : Any, V : Any> create(
@@ -48,6 +51,12 @@ private class SoftCachedMapWithTrackers<K : Any, V : Any>(
         cache.clear()
     }
 
+    override fun clearCachedValues() {
+        cache.values.forEach {
+            (it as? CachedValueBase<*>)?.clear()
+        }
+    }
+
     override fun getOrPut(key: K, create: () -> V): V {
         return cache.getOrPut(key) {
             CachedValuesManager.getManager(project).createCachedValue {
@@ -66,6 +75,8 @@ private class SoftCachedMapWithoutTrackers<K : Any, V : Any>(kind: Kind) : SoftC
     override fun clear() {
         cache.clear()
     }
+
+    override fun clearCachedValues() {}
 
     override fun getOrPut(key: K, create: () -> V): V {
         return cache.getOrPut(key, create)

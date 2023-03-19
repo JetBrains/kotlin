@@ -9,6 +9,7 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiReferenceList
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
+import org.jetbrains.kotlin.light.classes.symbol.cachedValue
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
@@ -51,13 +53,11 @@ internal open class SymbolLightClassForInterface : SymbolLightClassForInterfaceO
         manager = manager,
     )
 
-    private val _ownMethods: List<KtLightMethod> by lazyPub {
+    override fun getOwnMethods(): List<PsiMethod> = cachedValue {
         withClassOrObjectSymbol { classOrObjectSymbol ->
             val result = mutableListOf<KtLightMethod>()
 
-            val visibleDeclarations = classOrObjectSymbol.getDeclaredMemberScope().getCallableSymbols()
-                .filterNot { it is KtFunctionSymbol && it.visibility.isPrivateOrPrivateToThis() }
-                .filterNot { it.hasTypeForValueClassInSignature() }
+            val visibleDeclarations = classOrObjectSymbol.getDeclaredMemberScope().getCallableSymbols().filter { acceptCallableSymbol(it) }
 
             createMethods(visibleDeclarations, result)
             addMethodsFromCompanionIfNeeded(result, classOrObjectSymbol)
@@ -66,7 +66,9 @@ internal open class SymbolLightClassForInterface : SymbolLightClassForInterfaceO
         }
     }
 
-    override fun getOwnMethods(): List<PsiMethod> = _ownMethods
+    context(KtAnalysisSession)
+    protected open fun acceptCallableSymbol(symbol: KtCallableSymbol): Boolean =
+        !(symbol is KtFunctionSymbol && symbol.visibility.isPrivateOrPrivateToThis() || symbol.hasTypeForValueClassInSignature())
 
     override fun copy(): SymbolLightClassForInterface =
         SymbolLightClassForInterface(classOrObjectDeclaration, classOrObjectSymbolPointer, ktModule, manager)
@@ -78,4 +80,5 @@ internal open class SymbolLightClassForInterface : SymbolLightClassForInterfaceO
     }
 
     override fun getExtendsList(): PsiReferenceList? = _extendsList
+    override fun classKind(): KtClassKind = KtClassKind.INTERFACE
 }

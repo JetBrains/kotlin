@@ -1,0 +1,68 @@
+FILE: elvisAtTheEndOfLoop.kt
+    public final fun condition(): R|kotlin/Boolean| {
+        ^condition Boolean(true)
+    }
+    public final fun test_1(x: R|kotlin/String?|): R|kotlin/Unit| {
+        do {
+            R|<local>/x| ?: ^test_1 Unit
+        }
+        while(R|/condition|())
+        R|<local>/x|.R|kotlin/String.length|
+    }
+    public final fun test_2(x: R|kotlin/String?|): R|kotlin/Unit| {
+        do {
+            R|<local>/x| ?: R|<local>/x|!!
+        }
+        while(R|/condition|())
+        R|<local>/x|.R|kotlin/String.length|
+    }
+    public final fun test_3(): R|kotlin/Unit| {
+        lvar a: R|kotlin/String?| = Null(null)
+        while(R|/condition|()) {
+            R|<local>/a| ?: ^test_3 Unit
+        }
+
+        R|<local>/a|.R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|
+    }
+    public final fun test_4(): R|kotlin/Unit| {
+        lvar a: R|kotlin/String?| = Null(null)
+        while(Boolean(true)) {
+            R|<local>/a| ?: ^test_4 Unit
+        }
+
+        R|<local>/a|.R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|
+    }
+    public final fun test_5(x: R|kotlin/String?|): R|kotlin/Unit| {
+        do {
+            R|<local>/x| ?: ^test_5 Unit
+            Q|kotlin/Unit|
+        }
+        while(R|/condition|())
+        R|<local>/x|.R|kotlin/String.length|
+    }
+    public final fun test_6(x: R|kotlin/String?|): R|kotlin/Unit| {
+        do {
+            R|<local>/x| ?: R|<local>/x|!!
+            Q|kotlin/Unit|
+        }
+        while(R|/condition|())
+        R|<local>/x|.R|kotlin/String.length|
+    }
+    public final fun test_7(): R|kotlin/Unit| {
+        lvar a: R|kotlin/String?| = Null(null)
+        while(R|/condition|()) {
+            R|<local>/a| ?: ^test_7 Unit
+            R|<local>/a|
+        }
+
+        R|<local>/a|.R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|
+    }
+    public final fun test_8(): R|kotlin/Unit| {
+        lvar a: R|kotlin/String?| = Null(null)
+        while(Boolean(true)) {
+            R|<local>/a| ?: ^test_8 Unit
+            R|<local>/a|
+        }
+
+        R|<local>/a|.R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|
+    }

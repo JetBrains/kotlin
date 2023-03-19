@@ -5,10 +5,15 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
+import com.intellij.openapi.diagnostic.Logger
+import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.calls.KtCallCandidateInfo
 import org.jetbrains.kotlin.analysis.api.calls.KtCallInfo
+import org.jetbrains.kotlin.analysis.api.calls.KtErrorCallInfo
+import org.jetbrains.kotlin.analysis.api.diagnostics.KtNonBoundToPsiErrorDiagnostic
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
+import org.jetbrains.kotlin.analysis.utils.errors.ExceptionAttachmentBuilder
+import org.jetbrains.kotlin.analysis.utils.errors.logErrorWithAttachment
 import org.jetbrains.kotlin.analysis.utils.errors.withPsiEntry
 import org.jetbrains.kotlin.psi.KtArrayAccessExpression
 import org.jetbrains.kotlin.psi.KtCallElement
@@ -20,17 +25,34 @@ public abstract class KtCallResolver : KtAnalysisSessionComponent() {
 
     public abstract fun collectCallCandidates(psi: KtElement): List<KtCallCandidateInfo>
 
-    public open fun unresolvedKtCallError(psi: KtElement): Nothing {
-        buildErrorWithAttachment("${psi::class.simpleName}(${psi::class.simpleName}) should always resolve to a KtCallInfo") {
+    @KtAnalysisApiInternals
+    public fun unresolvedKtCallError(psi: KtElement): KtErrorCallInfo {
+        LOG.logErrorWithAttachment("${psi::class.simpleName} should always resolve to a KtCallInfo") {
             withPsiEntry("psi", psi)
+            provideAdditionalAttachmentToUnresolvedCall(psi, this)
         }
+        return KtErrorCallInfo(
+            _candidateCalls = emptyList(),
+            KtNonBoundToPsiErrorDiagnostic(factoryName = null, "Unresolved call", token),
+            token
+        )
+    }
+
+    @KtAnalysisApiInternals
+    protected open fun provideAdditionalAttachmentToUnresolvedCall(psi: KtElement, builder: ExceptionAttachmentBuilder) {
+    }
+
+    public companion object {
+        @KtAnalysisApiInternals
+        public val LOG: Logger = Logger.getInstance(KtCallResolver::class.java)
     }
 }
 
+@OptIn(KtAnalysisApiInternals::class)
 public interface KtCallResolverMixIn : KtAnalysisSessionMixIn {
 
     public fun KtElement.resolveCall(): KtCallInfo? =
-        withValidityAssertion { withValidityAssertion { analysisSession.callResolver.resolveCall(this) } }
+        withValidityAssertion { analysisSession.callResolver.resolveCall(this) }
 
     public fun KtCallElement.resolveCall(): KtCallInfo = withValidityAssertion {
         analysisSession.callResolver.resolveCall(this)

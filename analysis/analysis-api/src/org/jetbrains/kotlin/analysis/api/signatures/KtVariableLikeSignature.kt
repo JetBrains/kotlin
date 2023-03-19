@@ -1,11 +1,11 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.signatures
 
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplication
+import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationWithArgumentsInfo
 import org.jetbrains.kotlin.analysis.api.annotations.KtConstantAnnotationValue
 import org.jetbrains.kotlin.analysis.api.annotations.annotationsByClassId
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
@@ -81,7 +81,7 @@ public class KtVariableLikeSignature<out S : KtVariableLikeSymbol>(
         return (constantArgumentValue.constantValue.value as? String)?.let(Name::identifier)
     }
 
-    private fun findParameterNameAnnotation(): KtAnnotationApplication? {
+    private fun findParameterNameAnnotation(): KtAnnotationApplicationWithArgumentsInfo? {
         val allParameterNameAnnotations = returnType.annotationsByClassId(StandardNames.FqNames.parameterNameClassId)
         val (explicitAnnotations, implicitAnnotations) = allParameterNameAnnotations.partition { it.psi != null }
 

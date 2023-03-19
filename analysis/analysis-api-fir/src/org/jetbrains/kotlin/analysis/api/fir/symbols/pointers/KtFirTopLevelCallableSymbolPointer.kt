@@ -37,5 +37,5 @@ internal abstract class KtTopLevelCallableSymbolPointer<S : KtCallableSymbol>(
 }
 
 private fun KtFirAnalysisSession.getCallableSymbols(callableId: CallableId) =
-    firResolveSession.useSiteFirSession.symbolProvider.getTopLevelCallableSymbols(callableId.packageName, callableId.callableName)
+    useSiteSession.symbolProvider.getTopLevelCallableSymbols(callableId.packageName, callableId.callableName)
 

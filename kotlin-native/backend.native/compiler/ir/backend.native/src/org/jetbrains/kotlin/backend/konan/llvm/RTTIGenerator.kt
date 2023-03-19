@@ -262,7 +262,7 @@ internal class RTTIGenerator(
                 llvmDeclarations.writableTypeInfoGlobal?.pointer,
                 associatedObjects = genAssociatedObjects(irClass),
                 processObjectInMark = when {
-                    irClass.symbol == context.ir.symbols.array -> constPointer(llvm.Kotlin_processArrayInMark.llvmValue)
+                    irClass.symbol == context.ir.symbols.array -> llvm.Kotlin_processArrayInMark.toConstPointer()
                     else -> genProcessObjectInMark(bodyType)
                 },
                 requiredAlignment = llvmDeclarations.alignment
@@ -469,9 +469,9 @@ internal class RTTIGenerator(
 
         val associatedObjectTableRecords = associatedObjects.map { (key, value) ->
             val function = context.getObjectClassInstanceFunction(value)
-            val llvmFunction = generationState.llvmDeclarations.forFunction(function).llvmValue
+            val llvmFunction = generationState.llvmDeclarations.forFunction(function)
 
-            Struct(runtime.associatedObjectTableRecordType, key.typeInfoPtr, constPointer(llvmFunction))
+            Struct(runtime.associatedObjectTableRecordType, key.typeInfoPtr, llvmFunction.toConstPointer())
         }
 
         return staticData.placeGlobalConstArray(
@@ -486,11 +486,11 @@ internal class RTTIGenerator(
         return when {
             indicesOfObjectFields.isEmpty() -> {
                 // TODO: Try to generate it here instead of importing from the runtime.
-                constPointer(llvm.Kotlin_processEmptyObjectInMark.llvmValue)
+                llvm.Kotlin_processEmptyObjectInMark.toConstPointer()
             }
             else -> {
                 // TODO: specialize for "small" objects
-                constPointer(llvm.Kotlin_processObjectInMark.llvmValue)
+                llvm.Kotlin_processObjectInMark.toConstPointer()
             }
         }
     }

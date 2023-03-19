@@ -1,5 +1,6 @@
 Pod::Spec.new do |spec|
     spec.name                     = 'myslib'
-    spec.version                  = '0.1'
-    spec.vendored_library         = 'myslib.dylib'
+    spec.vendored_library         = 'libmyslib.dylib'
+
+    spec.version                  = '111'
 end

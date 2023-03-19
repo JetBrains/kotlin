@@ -1,0 +1,38 @@
+FILE: setWithTrailingLambda.kt
+    public final fun test(m: R|MyMap<EditorData, kotlin/Any>|): R|kotlin/Unit| {
+        R|<local>/m|.R|SubstitutionOverride</MyMap.set: R|kotlin/Unit|>|<R|(kotlin/String, @R|kotlin/ParameterName|(name = String(bar))  kotlin/Any) -> kotlin/Unit|>(Q|SomeKey|, <L> = set@fun <anonymous>(<unused var>: R|kotlin/String|, <unused var>: R|@R|kotlin/ParameterName|(name = String(bar))  kotlin/Any|): R|kotlin/Unit| <inline=NoInline>  {
+            ^@set Unit
+        }
+        )
+        R|<local>/m|.R|SubstitutionOverride</MyMap.set: R|kotlin/Unit|>|<R|(kotlin/String, @R|kotlin/ParameterName|(name = String(bar))  kotlin/Any) -> kotlin/Unit|>(Q|SomeKey|, fun <anonymous>(<unused var>: R|kotlin/String|, <unused var>: R|@R|kotlin/ParameterName|(name = String(bar))  kotlin/Any|): R|kotlin/Unit| <inline=NoInline>  {
+            ^ Unit
+        }
+        )
+    }
+    public final data class EditorData : R|kotlin/Any| {
+        public constructor(meta: R|MyMap<EditorData, kotlin/Any>|): R|EditorData| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val meta: R|MyMap<EditorData, kotlin/Any>| = R|<local>/meta|
+            public get(): R|MyMap<EditorData, kotlin/Any>|
+
+        public final operator fun component1(): R|MyMap<EditorData, kotlin/Any>|
+
+        public final fun copy(meta: R|MyMap<EditorData, kotlin/Any>| = this@R|/EditorData|.R|/EditorData.meta|): R|EditorData|
+
+    }
+    public abstract interface MyMap<Domain, V : R|kotlin/Any|> : R|kotlin/Any| {
+        public abstract operator fun <T : R|V|> set(k: R|Key<T, Domain>|, v: R|T|): R|kotlin/Unit|
+
+    }
+    public abstract interface Key<V : R|kotlin/Any|, in Domain> : R|kotlin/Any| {
+    }
+    public abstract interface EditorDataKey<T : R|kotlin/Any|> : R|Key<T, EditorData>| {
+    }
+    public final object SomeKey : R|EditorDataKey<kotlin/Function2<kotlin/String, @R|kotlin/ParameterName|(name = String(bar))  kotlin/Any, kotlin/Unit>>| {
+        private constructor(): R|SomeKey| {
+            super<R|kotlin/Any|>()
+        }
+
+    }

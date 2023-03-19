@@ -18,8 +18,10 @@ import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.util.addBuildEventsListenerRegistryMock
 import org.jetbrains.kotlin.gradle.util.disableLegacyWarning
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import kotlin.test.*
 
 class MppPublicationTest {
@@ -127,10 +129,64 @@ class MppPublicationTest {
         }
     }
 
+    @Test
+    fun `sources elements should not have any dependencies`() {
+        project.evaluate()
+        project.configurations
+            .filter { it.name.toLowerCaseAsciiOnly().contains("sourceselements") }
+            .forEach { configuration ->
+                if (configuration.dependencies.isNotEmpty()) fail("Configuration $configuration should not have dependencies")
+            }
+    }
+
 
     @Test
     fun `sourcesJar task should be available during configuration time`() {
         kotlin.linuxX64("linux")
+
+        val sourcesJars = listOf(
+            "sourcesJar", // sources of common source sets i.e. root module
+            "jvmSourcesJar",
+            "jsSourcesJar",
+            "linuxSourcesJar"
+        )
+
+        for (sourcesJarTaskName in sourcesJars) {
+            val sourcesJar = project.tasks.findByName(sourcesJarTaskName)
+            assertNotNull(sourcesJar, "Task '$sourcesJarTaskName' should exist during project configuration time")
+        }
+    }
+
+    @Test
+    fun `test withSourcesJar DSL on extension level`() {
+        kotlin.linuxX64()
+
+        kotlin.withSourcesJar(publish = false)
+
+        for (target in kotlin.targets) {
+            assertFalse(target.internal.isSourcesPublishable)
+        }
+    }
+
+    @Test
+    fun `test withSourcesJar DSL on target level`() {
+        kotlin.linuxX64("linux") {
+            withSourcesJar(publish = false)
+        }
+
+        for (target in kotlin.targets) {
+            if (target.name == "linux") {
+                assertFalse(target.internal.isSourcesPublishable)
+            } else {
+                assertTrue(target.internal.isSourcesPublishable)
+            }
+        }
+    }
+
+    @Test
+    fun `test that sourcesJar tasks still exist even if sources should not be published`() {
+        kotlin.linuxX64("linux")
+        kotlin.withSourcesJar(publish = false)
 
         val sourcesJars = listOf(
             "sourcesJar", // sources of common source sets i.e. root module

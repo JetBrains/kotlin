@@ -44,6 +44,7 @@ object FirProjectionRelationChecker : FirBasicDeclarationChecker() {
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
+        if (typeRef.source?.kind?.shouldSkipErrorTypeReporting != false) return
         val type = typeRef.coneTypeSafe<ConeClassLikeType>()
         val fullyExpandedType = type?.fullyExpandedType(context.session) ?: return
         val declaration = fullyExpandedType.toSymbol(context.session) as? FirRegularClassSymbol ?: return

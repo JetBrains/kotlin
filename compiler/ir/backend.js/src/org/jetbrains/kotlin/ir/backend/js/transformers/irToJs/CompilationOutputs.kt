@@ -7,10 +7,18 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.ir.backend.js.export.TypeScriptFragment
 import org.jetbrains.kotlin.ir.backend.js.export.toTypeScript
+import org.jetbrains.kotlin.js.backend.ast.ESM_EXTENSION
 import org.jetbrains.kotlin.js.backend.ast.JsProgram
+import org.jetbrains.kotlin.js.backend.ast.REGULAR_EXTENSION
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import java.io.File
 import java.nio.file.Files
+
+val ModuleKind.extension: String
+    get() = when (this) {
+        ModuleKind.ES -> ESM_EXTENSION
+        else -> REGULAR_EXTENSION
+    }
 
 abstract class CompilationOutputs {
     var dependencies: Collection<Pair<String, CompilationOutputs>> = emptyList()
@@ -35,10 +43,10 @@ abstract class CompilationOutputs {
         }
 
         dependencies.forEach { (name, content) ->
-            outputDir.resolve("$name.js").writeAsJsFile(content)
+            outputDir.resolve("$name${moduleKind.extension}").writeAsJsFile(content)
         }
 
-        val outputJsFile = outputDir.resolve("$outputName.js")
+        val outputJsFile = outputDir.resolve("$outputName${moduleKind.extension}")
         outputJsFile.writeAsJsFile(this)
 
         if (genDTS) {
@@ -64,23 +72,6 @@ abstract class CompilationOutputs {
         get() = resolveSibling("$nameWithoutExtension.d.ts").canonicalFile
 }
 
-class CompilationOutputsBuilt(
-    private val rawJsCode: String,
-    private val sourceMap: String?,
-    override val tsDefinitions: TypeScriptFragment?,
-    override val jsProgram: JsProgram?,
-) : CompilationOutputs() {
-    override fun writeJsCode(outputJsFile: File, outputJsMapFile: File) {
-        var jsCodeWithSourceMap = rawJsCode
-
-        sourceMap?.let {
-            outputJsMapFile.writeText(it)
-            jsCodeWithSourceMap = "$jsCodeWithSourceMap\n//# sourceMappingURL=${outputJsMapFile.name}\n"
-        }
-        outputJsFile.writeText(jsCodeWithSourceMap)
-    }
-}
-
 private fun File.copyModificationTimeFrom(from: File) {
     val mtime = from.lastModified()
     if (mtime > 0) {
@@ -88,38 +79,67 @@ private fun File.copyModificationTimeFrom(from: File) {
     }
 }
 
+private fun File.asSourceMappingUrl(): String {
+    return "\n//# sourceMappingURL=${name}\n"
+}
+
+class CompilationOutputsBuilt(
+    private val rawJsCode: String,
+    private val sourceMap: String?,
+    override val tsDefinitions: TypeScriptFragment?,
+    override val jsProgram: JsProgram?,
+) : CompilationOutputs() {
+    override fun writeJsCode(outputJsFile: File, outputJsMapFile: File) {
+        val sourceMappingUrl = sourceMap?.let {
+            outputJsMapFile.writeText(it)
+            outputJsMapFile.asSourceMappingUrl()
+        } ?: ""
+        outputJsFile.writeText(rawJsCode + sourceMappingUrl)
+    }
+
+    fun writeJsCodeIntoModuleCache(outputJsFile: File, outputJsMapFile: File): CompilationOutputsBuiltForCache {
+        sourceMap?.let { outputJsMapFile.writeText(it) }
+        outputJsFile.writeText(rawJsCode)
+        return CompilationOutputsBuiltForCache(outputJsFile, outputJsMapFile, this)
+    }
+}
+
 class CompilationOutputsCached(
-    private val jsCodeFilePath: String,
-    private val sourceMapFilePath: String?,
-    private val tsDefinitionsFilePath: String?
+    private val jsCodeFile: File,
+    private val sourceMapFile: File?,
+    private val tsDefinitionsFile: File?
 ) : CompilationOutputs() {
     override val tsDefinitions: TypeScriptFragment?
-        get() = tsDefinitionsFilePath?.let { TypeScriptFragment(File(it).readText()) }
+        get() = tsDefinitionsFile?.let { TypeScriptFragment(it.readText()) }
 
     override val jsProgram: JsProgram?
         get() = null
 
     override fun writeJsCode(outputJsFile: File, outputJsMapFile: File) {
-        File(jsCodeFilePath).copyToIfModified(outputJsFile)
+        val sourceMappingUrl = sourceMapFile?.let {
+            if (it.isUpdateRequired(outputJsMapFile)) {
+                it.copyTo(outputJsMapFile, true)
+                it.copyModificationTimeFrom(outputJsMapFile)
+            }
+            outputJsMapFile.asSourceMappingUrl()
+        } ?: ""
 
-        sourceMapFilePath?.let {
-            File(it).copyToIfModified(outputJsMapFile)
+        if (jsCodeFile.isUpdateRequired(outputJsFile)) {
+            outputJsFile.writeText(jsCodeFile.readText() + sourceMappingUrl)
+            jsCodeFile.copyModificationTimeFrom(outputJsFile)
         }
     }
 
-    private fun File.copyToIfModified(target: File) {
+    private fun File.isUpdateRequired(target: File): Boolean {
         val thisMtime = lastModified()
         val targetMtime = target.lastModified()
-        if (thisMtime <= 0 || targetMtime <= 0 || targetMtime > thisMtime) {
-            copyTo(target, true)
-            copyModificationTimeFrom(target)
-        }
+        return thisMtime <= 0 || targetMtime <= 0 || targetMtime > thisMtime
     }
 }
 
 class CompilationOutputsBuiltForCache(
-    private val jsCodeFilePath: String,
-    private val sourceMapFilePath: String,
+    private val jsCodeFile: File,
+    private val sourceMapFile: File,
     private val outputBuilt: CompilationOutputsBuilt
 ) : CompilationOutputs() {
 
@@ -136,7 +156,7 @@ class CompilationOutputsBuiltForCache(
     override fun writeJsCode(outputJsFile: File, outputJsMapFile: File) {
         outputBuilt.writeJsCode(outputJsFile, outputJsMapFile)
 
-        File(jsCodeFilePath).copyModificationTimeFrom(outputJsFile)
-        File(sourceMapFilePath).copyModificationTimeFrom(outputJsMapFile)
+        jsCodeFile.copyModificationTimeFrom(outputJsFile)
+        sourceMapFile.copyModificationTimeFrom(outputJsMapFile)
     }
 }

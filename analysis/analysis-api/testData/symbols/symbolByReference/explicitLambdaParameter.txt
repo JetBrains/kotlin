@@ -12,7 +12,10 @@ KtValueParameterSymbol:
   name: it
   origin: SOURCE
   receiverParameter: null
-  returnType: kotlin/Int
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Int
   symbolKind: LOCAL
   typeParameters: []
   getContainingModule: KtSourceModule "Sources of main"

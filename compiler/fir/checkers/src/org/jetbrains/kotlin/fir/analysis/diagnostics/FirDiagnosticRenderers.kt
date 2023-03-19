@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.diagnostics
 
+import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
@@ -141,6 +142,12 @@ object FirDiagnosticRenderers {
             "'${classId}'"
         }
     }
+
+    val FUNCTIONAL_TYPE_KIND = Renderer { kind: FunctionTypeKind ->
+        kind.prefixForTypeRender ?: kind.classNamePrefix
+    }
+
+    val FUNCTIONAL_TYPE_KINDS = KtDiagnosticRenderers.COLLECTION(FUNCTIONAL_TYPE_KIND)
 
     @Suppress("FunctionName")
     fun <T> COLLECTION(renderer: ContextIndependentParameterRenderer<T>): ContextIndependentParameterRenderer<Collection<T>> {

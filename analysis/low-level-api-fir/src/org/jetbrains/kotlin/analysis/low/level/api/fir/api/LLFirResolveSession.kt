@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.psi.KtFile
 abstract class LLFirResolveSession {
     abstract val project: Project
 
-    abstract val useSiteFirSession: FirSession
+    abstract val useSiteFirSession: LLFirSession
 
     abstract val useSiteKtModule: KtModule
 

@@ -28,7 +28,10 @@ KtFunctionSymbol:
   name: foo
   origin: SOURCE
   receiverParameter: null
-  returnType: kotlin/Unit
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: [
     KtTypeParameterSymbol(X)
@@ -48,7 +51,9 @@ KtFunctionSymbol:
       name: x
       origin: SOURCE
       receiverParameter: null
-      returnType: X
+      returnType: KtTypeParameterType:
+        annotationsList: []
+        type: X
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtSourceModule "Sources of main"

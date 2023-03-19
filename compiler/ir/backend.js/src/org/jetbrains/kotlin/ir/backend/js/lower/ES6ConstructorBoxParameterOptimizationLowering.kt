@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.util.collectionUtils.filterIsInstanceAnd
 
 class ES6ConstructorBoxParameterOptimizationLowering(private val context: JsIrBackendContext) : BodyLoweringPass {
-    private val esClassWhichNeedBoxParameters = context.mapping.esClassWhichNeedBoxParameters
+    private val IrClass.needsOfBoxParameter by context.mapping.esClassWhichNeedBoxParameters
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         if (!context.es6mode) return
@@ -85,12 +85,12 @@ class ES6ConstructorBoxParameterOptimizationLowering(private val context: JsIrBa
     }
 
     private fun IrClass.requiredToHaveBoxParameter(): Boolean {
-        return esClassWhichNeedBoxParameters.contains(this)
+        return needsOfBoxParameter == true
     }
 }
 
 class ES6CollectConstructorsWhichNeedBoxParameters(private val context: JsIrBackendContext) : DeclarationTransformer {
-    private val esClassWhichNeedBoxParameters = context.mapping.esClassWhichNeedBoxParameters
+    private var IrClass.needsOfBoxParameter by context.mapping.esClassWhichNeedBoxParameters
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (!context.es6mode || declaration !is IrClass) return null
@@ -134,7 +134,7 @@ class ES6CollectConstructorsWhichNeedBoxParameters(private val context: JsIrBack
 
     private fun IrClass.addToClassListWhichNeedBoxParameter() {
         if (isExternal) return
-        esClassWhichNeedBoxParameters.add(this)
+        needsOfBoxParameter = true
         superClass?.addToClassListWhichNeedBoxParameter()
     }
 }

@@ -35,9 +35,9 @@ class IrVariableImpl(
     override val symbol: IrVariableSymbol,
     override var name: Name,
     override var type: IrType,
-    override val isVar: Boolean,
-    override val isConst: Boolean,
-    override val isLateinit: Boolean
+    override var isVar: Boolean,
+    override var isConst: Boolean,
+    override var isLateinit: Boolean
 ) : IrVariable() {
     private var _parent: IrDeclarationParent? = null
     override var parent: IrDeclarationParent

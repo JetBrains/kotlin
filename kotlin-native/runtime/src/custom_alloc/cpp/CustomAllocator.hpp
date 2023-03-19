@@ -13,9 +13,9 @@
 #include "ExtraObjectPage.hpp"
 #include "GCScheduler.hpp"
 #include "Heap.hpp"
-#include "MediumPage.hpp"
+#include "NextFitPage.hpp"
 #include "Memory.h"
-#include "SmallPage.hpp"
+#include "FixedBlockPage.hpp"
 
 namespace kotlin::alloc {
 
@@ -36,14 +36,14 @@ public:
 
 private:
     uint8_t* Allocate(uint64_t cellCount) noexcept;
-    uint8_t* AllocateInLargePage(uint64_t cellCount) noexcept;
-    uint8_t* AllocateInMediumPage(uint32_t cellCount) noexcept;
-    uint8_t* AllocateInSmallPage(uint32_t cellCount) noexcept;
+    uint8_t* AllocateInSingleObjectPage(uint64_t cellCount) noexcept;
+    uint8_t* AllocateInNextFitPage(uint32_t cellCount) noexcept;
+    uint8_t* AllocateInFixedBlockPage(uint32_t cellCount) noexcept;
 
     Heap& heap_;
     gc::GCSchedulerThreadData& gcScheduler_;
-    MediumPage* mediumPage_;
-    SmallPage* smallPages_[SMALL_PAGE_MAX_BLOCK_SIZE + 1];
+    NextFitPage* nextFitPage_;
+    FixedBlockPage* fixedBlockPages_[FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE + 1];
     ExtraObjectPage* extraObjectPage_;
 };
 

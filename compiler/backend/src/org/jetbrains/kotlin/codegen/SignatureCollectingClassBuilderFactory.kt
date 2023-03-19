@@ -78,7 +78,8 @@ abstract class SignatureCollectingClassBuilderFactory(
                         classInternalName,
                         classCreatedFor,
                         signature,
-                        elementsAndDescriptors
+                        elementsAndDescriptors,
+                        elementsAndDescriptors.mapNotNull(JvmDeclarationOrigin::descriptor),
                 ))
             }
             onClassDone(classCreatedFor, classInternalName, signatures)

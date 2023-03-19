@@ -28,16 +28,16 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.dfa.unwrapSmartcastExpression
+import org.jetbrains.kotlin.fir.expressions.unwrapSmartcastExpression
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnmatchedTypeArgumentsError
 import org.jetbrains.kotlin.fir.resolve.scope
+import org.jetbrains.kotlin.fir.resolve.providers.toSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.FirImportResolveTransformer
 import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.impl.FirExplicitSimpleImportingScope
 import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -72,7 +72,7 @@ internal object FirReferenceResolveHelper {
         symbolBuilder: KtSymbolByFirBuilder,
         calleeReference: FirReference? = null,
     ): KtSymbol? {
-        val classLikeDeclaration = ConeClassLikeLookupTagImpl(this).toSymbol(session)?.fir
+        val classLikeDeclaration = this.toSymbol(session)?.fir
         if (classLikeDeclaration is FirRegularClass) {
             if (calleeReference is FirResolvedNamedReference) {
                 val callee = calleeReference.resolvedSymbol.fir as? FirCallableDeclaration
@@ -517,12 +517,12 @@ internal object FirReferenceResolveHelper {
                     // If we're looking for the deepest qualifier, then just resolve to the companion
                     if (expression === deepestQualifier) return referencedSymbolsByFir
 
-                    if (deepestQualifier?.getReferencedName() != referencedClass.classId.shortClassName.asString()) {
-                        // Remove the last companion name part if the qualified access does not contain it.
-                        // This is needed because the companion name part is optional.
+                    if (fir.resolvedToCompanionObject) {
+                        // this flag is true only when companion object is resolved through its containing class name,
+                        // so we want to drop companion object own name from the classId
                         referencedClass.classId.outerClassId ?: return referencedSymbolsByFir
                     } else {
-                        referencedClass.classId
+                        referencedClass.classId // ?: return referencedSymbolsByFir
                     }
                 } else {
                     referencedClass.classId

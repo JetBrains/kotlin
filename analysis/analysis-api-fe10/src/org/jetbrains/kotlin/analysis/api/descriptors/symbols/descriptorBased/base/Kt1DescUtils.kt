@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -31,9 +31,13 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.impl.*
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.load.java.descriptors.*
+import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
+import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
+import org.jetbrains.kotlin.load.java.descriptors.JavaForKotlinOverridePropertyDescriptor
+import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor
 import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
 import org.jetbrains.kotlin.load.kotlin.toSourceElement
 import org.jetbrains.kotlin.name.CallableId
@@ -422,8 +426,10 @@ internal tailrec fun KotlinBuiltIns.areSameArrayTypeIgnoringProjections(left: Ko
 }
 
 
-internal fun List<ConstantValue<*>>.expandArrayAnnotationValue(containingArrayType: KotlinType, analysisContext: Fe10AnalysisContext)
-        : List<KtAnnotationValue> = flatMap { constantValue ->
+internal fun List<ConstantValue<*>>.expandArrayAnnotationValue(
+    containingArrayType: KotlinType,
+    analysisContext: Fe10AnalysisContext,
+): List<KtAnnotationValue> = flatMap { constantValue: ConstantValue<*> ->
     val constantType = constantValue.getType(analysisContext.resolveSession.moduleDescriptor)
     if (analysisContext.builtIns.areSameArrayTypeIgnoringProjections(containingArrayType, constantType)) {
         // If an element in the array has the same type as the containing array, it's a spread component that needs
@@ -451,11 +457,12 @@ internal fun ConstantValue<*>.toKtAnnotationValue(analysisContext: Fe10AnalysisC
 
         is AnnotationValue -> {
             KtAnnotationApplicationValue(
-                KtAnnotationApplication(
+                KtAnnotationApplicationWithArgumentsInfo(
                     value.annotationClass?.classId,
                     psi = null,
                     useSiteTarget = null,
                     arguments = value.getKtNamedAnnotationArguments(analysisContext),
+                    index = null,
                 )
             )
         }
@@ -602,26 +609,41 @@ internal fun createKtInitializerValue(
     return KtNonConstantInitializerValue(initializer)
 }
 
-internal fun AnnotationDescriptor.toKtAnnotationApplication(analysisContext: Fe10AnalysisContext): KtAnnotationApplication {
-    return KtAnnotationApplication(
-        annotationClass?.maybeLocalClassId,
-        (source as? PsiSourceElement)?.psi as? KtCallElement,
-        (this as? LazyAnnotationDescriptor)?.annotationEntry?.useSiteTarget?.getAnnotationUseSiteTarget(),
-        getKtNamedAnnotationArguments(analysisContext),
-    )
-}
+internal fun AnnotationDescriptor.toKtAnnotationApplication(
+    analysisContext: Fe10AnalysisContext,
+    index: Int,
+): KtAnnotationApplicationWithArgumentsInfo = KtAnnotationApplicationWithArgumentsInfo(
+    classId = classIdForAnnotation,
+    psi = psi,
+    useSiteTarget = useSiteTarget,
+    arguments = getKtNamedAnnotationArguments(analysisContext),
+    index = index,
+)
 
-internal fun AnnotationDescriptor.getKtNamedAnnotationArguments(analysisContext: Fe10AnalysisContext) =
+internal fun AnnotationDescriptor.toKtAnnotationInfo(index: Int): KtAnnotationApplicationInfo = KtAnnotationApplicationInfo(
+    classId = classIdForAnnotation,
+    psi = psi,
+    useSiteTarget = useSiteTarget,
+    isCallWithArguments = allValueArguments.isNotEmpty(),
+    index = index,
+)
+
+private val AnnotationDescriptor.psi: KtCallElement? get() = (source as? PsiSourceElement)?.psi as? KtCallElement
+internal val AnnotationDescriptor.classIdForAnnotation: ClassId? get() = annotationClass?.maybeLocalClassId
+internal val AnnotationDescriptor.useSiteTarget: AnnotationUseSiteTarget?
+    get() = (this as? LazyAnnotationDescriptor)?.annotationEntry?.useSiteTarget?.getAnnotationUseSiteTarget()
+
+internal fun AnnotationDescriptor.getKtNamedAnnotationArguments(analysisContext: Fe10AnalysisContext): List<KtNamedAnnotationValue> =
     allValueArguments.map { (name, value) ->
         KtNamedAnnotationValue(name, value.toKtAnnotationValue(analysisContext))
     }
-
 
 internal fun CallableDescriptor.createContextReceivers(
     analysisContext: Fe10AnalysisContext
 ): List<KtContextReceiver> {
     return contextReceiverParameters.map { createContextReceiver(it, analysisContext) }
 }
+
 internal fun ClassDescriptor.createContextReceivers(
     analysisContext: Fe10AnalysisContext
 ): List<KtContextReceiver> {

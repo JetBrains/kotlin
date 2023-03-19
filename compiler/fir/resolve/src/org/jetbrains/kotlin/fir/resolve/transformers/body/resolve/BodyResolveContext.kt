@@ -382,15 +382,9 @@ class BodyResolveContext(
     fun <T> withRegularClass(
         regularClass: FirRegularClass,
         holder: SessionHolder,
-        forContracts: Boolean = false,
         f: () -> T
     ): T {
         storeClassIfNotNested(regularClass, holder.session)
-        if (forContracts) {
-            return withTypeParametersOf(regularClass) {
-                withContainerClass(regularClass, f)
-            }
-        }
         return withTowerDataModeCleanup {
             if (!regularClass.isInner && containerIfAny is FirRegularClass) {
                 towerDataMode = if (regularClass.isCompanion) {
@@ -631,8 +625,10 @@ class BodyResolveContext(
              *   special towerDataContext
              */
             withTowerDataMode(FirTowerDataMode.CONSTRUCTOR_HEADER) {
-                getPrimaryConstructorAllParametersScope()?.let { addLocalScope(it) }
-                f()
+                withTowerDataCleanup {
+                    getPrimaryConstructorAllParametersScope()?.let { addLocalScope(it) }
+                    f()
+                }
             }
         } else {
             withTowerDataCleanup {
@@ -649,11 +645,9 @@ class BodyResolveContext(
         mode: ResolutionMode,
         f: () -> T
     ): T {
+        require(mode !is ResolutionMode.ContextDependent && mode !is ResolutionMode.ContextDependentDelegate)
         if (mode !is ResolutionMode.LambdaResolution) {
-            specialTowerDataContexts.storeAnonymousFunctionContext(anonymousFunction.symbol, towerDataContext)
-        }
-        if (mode is ResolutionMode.ContextDependent || mode is ResolutionMode.ContextDependentDelegate) {
-            return f()
+            storeContextForAnonymousFunction(anonymousFunction)
         }
         return withTowerDataCleanup {
             addLocalScope(FirLocalScope(holder.session))
@@ -669,6 +663,11 @@ class BodyResolveContext(
                 }
             }
         }
+    }
+
+    @OptIn(PrivateForInline::class)
+    fun storeContextForAnonymousFunction(anonymousFunction: FirAnonymousFunction) {
+        specialTowerDataContexts.storeAnonymousFunctionContext(anonymousFunction.symbol, towerDataContext)
     }
 
     @OptIn(PrivateForInline::class)

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.light.classes.symbol.annotations
 
 import com.intellij.psi.*
+import com.intellij.psi.impl.PsiImplUtil
 import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
@@ -36,15 +37,6 @@ internal abstract class SymbolLightAbstractAnnotation(parent: PsiElement) :
 
     override fun getNameReferenceElement(): PsiJavaCodeReferenceElement = _nameReferenceElement
 
-    private class SymbolAnnotationParameterList(parent: PsiAnnotation) : KtLightElementBase(parent), PsiAnnotationParameterList {
-        override val kotlinOrigin: KtElement? = null
-        override fun getAttributes(): Array<PsiNameValuePair> = emptyArray() //TODO()
-    }
-
-    private val annotationParameterList: PsiAnnotationParameterList = SymbolAnnotationParameterList(this)
-
-    override fun getParameterList(): PsiAnnotationParameterList = annotationParameterList
-
     override fun delete() {
         kotlinOrigin?.delete()
     }
@@ -56,6 +48,11 @@ internal abstract class SymbolLightAbstractAnnotation(parent: PsiElement) :
     abstract override fun hashCode(): Int
 
     override fun <T : PsiAnnotationMemberValue?> setDeclaredAttributeValue(attributeName: String?, value: T?) = cannotModify()
+
+    override fun findAttributeValue(attributeName: String?): PsiAnnotationMemberValue? = PsiImplUtil.findAttributeValue(this, attributeName)
+
+    override fun findDeclaredAttributeValue(attributeName: String?): PsiAnnotationMemberValue? =
+        PsiImplUtil.findDeclaredAttributeValue(this, attributeName)
 
     override fun accept(visitor: PsiElementVisitor) {
         if (visitor is JavaElementVisitor) {

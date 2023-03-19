@@ -53,11 +53,16 @@ class DeclarationGenerator(
         // Type aliases are not material
     }
 
+
+    private val jsCodeCounter = mutableMapOf<String, Int>()
     private fun jsCodeName(declaration: IrFunction): String {
         require(declaration is IrSimpleFunction)
-        val fqName = declaration.fqNameWhenAvailable!!.asString()
-        val hashCode = declaration.wasmSignature(irBuiltIns).hashCode() + declaration.file.path.hashCode()
-        return "${fqName}_$hashCode"
+        val key = declaration.fqNameWhenAvailable.toString()
+        // counter is used to resolve fqName clashes
+        val counterValue = jsCodeCounter.getOrPut(key, defaultValue = { 0 })
+        jsCodeCounter[key] = counterValue + 1
+        val counterSuffix = if (counterValue == 0 && key.lastOrNull()?.isDigit() == false) "" else "_$counterValue"
+        return "$key$counterSuffix"
     }
 
     override fun visitFunction(declaration: IrFunction) {
@@ -71,7 +76,7 @@ class DeclarationGenerator(
         }
 
         val wasmImportModule = declaration.getWasmImportDescriptor()
-        val jsCode = if (declaration.isExternal) declaration.getJsFunAnnotation() else null
+        val jsCode = declaration.getJsFunAnnotation()
         val importedName = when {
             wasmImportModule != null -> {
                 check(declaration.isExternal) { "Non-external fun with @WasmImport ${declaration.fqNameWhenAvailable}"}
@@ -79,11 +84,10 @@ class DeclarationGenerator(
                 wasmImportModule
             }
             jsCode != null -> {
-                // TODO: check consistency (currently fails with generated __convertKotlinClosureToJsClosure)
                 // check(declaration.isExternal) { "Non-external fun with @JsFun ${declaration.fqNameWhenAvailable}"}
                 val jsCodeName = jsCodeName(declaration)
                 context.addJsFun(jsCodeName, jsCode)
-                WasmImportDescriptor("js_code", jsCodeName(declaration))
+                WasmImportDescriptor("js_code", jsCodeName)
             }
             else -> {
                 null

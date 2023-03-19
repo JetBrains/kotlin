@@ -10,7 +10,7 @@ FILE: kt55286.kt
             super<R|kotlin/Any|>()
         }
 
-        @R|Deprecated<Base.Nested>|() public final val a: R|kotlin/String| = R|<local>/a|
+        public final val a: R|kotlin/String| = R|<local>/a|
             public get(): R|kotlin/String|
 
         public final class Nested : R|kotlin/Any| {
@@ -26,7 +26,7 @@ FILE: kt55286.kt
             super<R|Base|>(String())
         }
 
-        @R|Deprecated<Base.Nested>|() public final val b: R|kotlin/String| = R|<local>/b|
+        public final val b: R|kotlin/String| = R|<local>/b|
             public get(): R|kotlin/String|
 
     }

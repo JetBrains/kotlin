@@ -79,7 +79,7 @@ open class VirtualFileScriptSource(val virtualFile: VirtualFile, private val pre
  * The implementation of the SourceCode for a script located in a KtFile
  */
 open class KtFileScriptSource(val ktFile: KtFile, preloadedText: String? = null) :
-    VirtualFileScriptSource(ktFile.virtualFile ?: ktFile.originalFile.virtualFile, preloadedText) {
+    VirtualFileScriptSource(ktFile.virtualFile ?: ktFile.originalFile.virtualFile ?: ktFile.viewProvider.virtualFile, preloadedText) {
 
     override val text: String by lazy { preloadedText ?: ktFile.text }
     override val name: String? get() = ktFile.name

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -67,9 +67,7 @@ internal class KtUltraLightFieldForSourceDeclaration(
 ) : KtUltraLightFieldImpl(declaration, name, containingClass, support, modifiers),
     KtLightFieldForSourceDeclarationSupport {
 
-    private val lightIdentifier = KtLightIdentifier(this, declaration)
-
-    override fun getNameIdentifier(): PsiIdentifier = lightIdentifier
+    override fun getNameIdentifier(): PsiIdentifier = KtLightIdentifier(this, declaration)
     override fun getStartOffsetInParent(): Int = kotlinOrigin.startOffsetInParent
     override fun isWritable(): Boolean = kotlinOrigin.isWritable
     override fun getNavigationElement(): PsiElement = kotlinOrigin.navigationElement ?: this
@@ -143,7 +141,9 @@ internal open class KtUltraLightFieldImpl protected constructor(
         get() = type
 
     private val _type: PsiType by lazyPub {
-        fun nonExistent() = JavaPsiFacade.getElementFactory(project).createTypeFromText(StandardNames.NON_EXISTENT_CLASS.asString(), declaration)
+        fun nonExistent() = JavaPsiFacade.getElementFactory(project).createTypeFromText(
+            StandardNames.NON_EXISTENT_CLASS.asString(), declaration
+        )
 
         when {
             (declaration is KtProperty && declaration.hasDelegate()) || declaration is KtEnumEntry || declaration is KtObjectDeclaration ->

@@ -75,9 +75,11 @@ private fun IrFunction.isInlineArrayConstructor(context: JvmBackendContext): Boo
         it == context.irBuiltIns.arrayClass || it in context.irBuiltIns.primitiveArraysToPrimitiveTypes
     }
 
-fun IrFunction.isInlineOnly(): Boolean =
-    (isInline && hasAnnotation(INLINE_ONLY_ANNOTATION_FQ_NAME)) ||
-            (this is IrSimpleFunction && correspondingPropertySymbol?.owner?.hasAnnotation(INLINE_ONLY_ANNOTATION_FQ_NAME) == true)
+fun IrDeclaration.isInlineOnly(): Boolean =
+    this is IrFunction && (
+            (isInline && hasAnnotation(INLINE_ONLY_ANNOTATION_FQ_NAME)) ||
+                    (this is IrSimpleFunction && correspondingPropertySymbol?.owner?.hasAnnotation(INLINE_ONLY_ANNOTATION_FQ_NAME) == true)
+            )
 
 fun IrDeclarationWithVisibility.isEffectivelyInlineOnly(): Boolean =
     this is IrFunction && (isReifiable() || isInlineOnly() || isPrivateInlineSuspend())
@@ -87,3 +89,21 @@ fun IrFunction.isPrivateInlineSuspend(): Boolean =
 
 fun IrFunction.isReifiable(): Boolean =
     typeParameters.any { it.isReified }
+
+private fun IrAttributeContainer.getDeclarationBeforeInline(): IrDeclaration? {
+    val original = this.originalBeforeInline ?: return null
+    return original.extractRelatedDeclaration()
+}
+
+fun IrAttributeContainer.getAttributeOwnerBeforeInline(): IrAttributeContainer? {
+    if (this.originalBeforeInline == null) return null
+    return generateSequence(this) { it.originalBeforeInline }.last()
+}
+
+val IrDeclaration.fileParentBeforeInline: IrFile
+    get() {
+        val original = (this as? IrAttributeContainer)?.getDeclarationBeforeInline()
+            ?: this.parentClassOrNull?.getDeclarationBeforeInline()
+            ?: this
+        return original.fileParent
+    }

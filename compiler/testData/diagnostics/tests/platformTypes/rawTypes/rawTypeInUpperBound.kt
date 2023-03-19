@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 // FILE: A.java
 
@@ -26,8 +27,7 @@ public class Test {
 // FILE: main.kt
 
 fun foo(x: B<*>) {
-    // TODO: In K1, x.foo() now is flexible type instead of raw, because of captured type approximation
-    // Works in K2 as expected: x.foo() returns raw `A`, thus it's `getChildrenStubs` has a type `MutableList<Any!>..List<*>?`
+    // x.foo()  is flexible type instead of raw, because of captured type approximation
     val q: MutableList<String> = x.foo().getChildrenStubs()
 
     // Raw(B).field erased to A<Any!>..A<out Any!>?

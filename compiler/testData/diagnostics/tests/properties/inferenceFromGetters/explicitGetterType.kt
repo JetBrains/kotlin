@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !CHECK_TYPE
 val x get(): String = foo()
 val y get(): List<Int> = bar()

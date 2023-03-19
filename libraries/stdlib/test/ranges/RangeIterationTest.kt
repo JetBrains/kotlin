@@ -70,8 +70,8 @@ public open class RangeIterationTestBase {
             else -> throw IllegalArgumentException("Unsupported sequence type: $sequence")
         }
 
-        assertEquals(expectedFirst, first)
-        assertEquals(expectedLast, last)
+        assertEquals<Any>(expectedFirst, first)
+        assertEquals<Any>(expectedLast, last)
         assertEquals(expectedIncrement, increment)
 
         assertEquals(expectedElements.isEmpty(), sequence.none())

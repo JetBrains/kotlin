@@ -113,7 +113,7 @@ private fun tryRenderVar(type: Type, name: String): String? = when (type) {
     is IntegerType -> "${type.spelling} $name"
     is FloatingType -> "${type.spelling} $name"
     is VectorType -> "${type.spelling} $name"
-    is RecordType -> "${tryRenderStructOrUnion(type.decl.def!!)} $name"
+    is RecordType -> tryRenderStructOrUnion(type.decl.def!!)?.let { "$it $name" }
     is EnumType -> tryRenderVar(type.def.baseType, name)
     is PointerType -> "void* $name"
     is ConstArrayType -> tryRenderVar(type.elemType, "$name[${type.length}]")

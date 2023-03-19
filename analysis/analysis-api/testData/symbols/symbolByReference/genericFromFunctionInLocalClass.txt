@@ -17,11 +17,16 @@ KtFunctionSymbol:
   name: withOuter
   origin: SOURCE
   receiverParameter: null
-  returnType: Outer?
+  returnType: KtTypeParameterType:
+    annotationsList: []
+    type: Outer?
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getDispatchReceiver(): test/Base<Outer>
+  getDispatchReceiver(): KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: test/Base<Outer>
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

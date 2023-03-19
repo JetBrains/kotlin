@@ -31,7 +31,10 @@ KtFunctionSymbol:
                   name: foo
                   origin: SOURCE
                   receiverParameter: null
-                  returnType: kotlin/Any?
+                  returnType: KtUsualClassType:
+                    annotationsList: []
+                    ownTypeArguments: []
+                    type: kotlin/Any?
                   symbolKind: LOCAL
                   typeParameters: []
                   getContainingModule: KtSourceModule "Sources of main"
@@ -52,7 +55,10 @@ KtFunctionSymbol:
   name: returnsTrueContract
   origin: SOURCE
   receiverParameter: null
-  returnType: kotlin/Boolean
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Boolean
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
@@ -70,7 +76,10 @@ KtFunctionSymbol:
       name: foo
       origin: SOURCE
       receiverParameter: null
-      returnType: kotlin/Any?
+      returnType: KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
+        type: kotlin/Any?
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtSourceModule "Sources of main"

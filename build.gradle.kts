@@ -35,10 +35,13 @@ plugins {
     id("jps-compatible")
     id("org.jetbrains.gradle.plugin.idea-ext")
     id("org.gradle.crypto.checksum") version "1.2.0"
-    id("org.jetbrains.kotlinx.binary-compatibility-validator") version "0.12.0" apply false
+    id("org.jetbrains.kotlinx.binary-compatibility-validator") version "0.13.0" apply false
     signing
     id("org.jetbrains.kotlin.jvm") apply false
     id("org.jetbrains.kotlin.plugin.serialization") apply false
+    if (kotlinBuildProperties.isKotlinNativeEnabled) {
+        id("kotlin.native.build-tools-conventions") apply false
+    }
 }
 
 pill {
@@ -60,7 +63,7 @@ val kotlinVersion by extra(
     } ?: buildNumber
 )
 
-val kotlinLanguageVersion by extra("1.8")
+val kotlinLanguageVersion: String by extra
 
 extra["kotlin_root"] = rootDir
 
@@ -74,17 +77,6 @@ val commonLocalDataDir = "$rootDir/local"
 val ideaSandboxDir = "$commonLocalDataDir/ideaSandbox"
 val artifactsDir = "$distDir/artifacts"
 val ideaPluginDir = "$artifactsDir/ideaPlugin/Kotlin"
-
-extra["ktorExcludesForDaemon"] = listOf(
-    "org.jetbrains.kotlin" to "kotlin-reflect",
-    "org.jetbrains.kotlin" to "kotlin-stdlib",
-    "org.jetbrains.kotlin" to "kotlin-stdlib-common",
-    "org.jetbrains.kotlin" to "kotlin-stdlib-jdk8",
-    "org.jetbrains.kotlin" to "kotlin-stdlib-jdk7",
-    "org.jetbrains.kotlinx" to "kotlinx-coroutines-jdk8",
-    "org.jetbrains.kotlinx" to "kotlinx-coroutines-core",
-    "org.jetbrains.kotlinx" to "kotlinx-coroutines-core-common"
-)
 
 // TODO: use "by extra()" syntax where possible
 extra["distLibDir"] = project.file(distLibDir)
@@ -108,7 +100,8 @@ rootProject.apply {
 IdeVersionConfigurator.setCurrentIde(project)
 
 if (!project.hasProperty("versions.kotlin-native")) {
-    extra["versions.kotlin-native"] = "1.9.0-dev-886"
+    // BEWARE! Bumping this version doesn't take an immediate effect on TeamCity: KTI-1107
+    extra["versions.kotlin-native"] = "1.9.0-dev-2639"
 }
 
 val irCompilerModules = arrayOf(
@@ -146,7 +139,10 @@ val commonCompilerModules = arrayOf(
     ":analysis:decompiled:decompiler-to-file-stubs",
     ":analysis:decompiled:decompiler-to-psi",
     ":analysis:decompiled:light-classes-for-decompiled",
+    ":analysis:analysis-api-providers",
+    ":analysis:project-structure",
     ":analysis:kt-references",
+    ":kotlin-build-common",
 ).also { extra["commonCompilerModules"] = it }
 
 val firCompilerCoreModules = arrayOf(
@@ -187,7 +183,6 @@ val fe10CompilerModules = arrayOf(
     ":compiler:serialization",
     ":compiler:frontend",
     ":compiler:container",
-    ":compiler:cli-common",
     ":core:deserialization",
     ":compiler:frontend:cfg",
     ":compiler:ir.psi2ir",
@@ -204,6 +199,8 @@ val fe10CompilerModules = arrayOf(
     ":compiler:backend",
     ":compiler:plugin-api",
     ":compiler:javac-wrapper",
+    ":compiler:cli-common",
+    ":compiler:cli-base",
     ":compiler:cli",
     ":compiler:cli-js",
     ":compiler:incremental-compilation-impl",
@@ -218,7 +215,8 @@ val fe10CompilerModules = arrayOf(
     ":js:js.dce",
     ":native:frontend.native",
     ":native:kotlin-native-utils",
-    ":kotlin-build-common",
+    ":wasm:wasm.frontend",
+    ":wasm:wasm.config",
     ":compiler:backend.common.jvm",
     ":analysis:decompiled:light-classes-for-decompiled-fe10",
 ).also { extra["fe10CompilerModules"] = it }
@@ -666,6 +664,7 @@ tasks {
 
     register("wasmCompilerTest") {
         dependsOn(":wasm:wasm.tests:test")
+        dependsOn(":wasm:wasm.tests:diagnosticsTest")
         // Windows WABT release requires Visual C++ Redistributable
         if (!kotlinBuildProperties.isTeamcityBuild || !org.gradle.internal.os.OperatingSystem.current().isWindows) {
             dependsOn(":wasm:wasm.ir:test")
@@ -681,18 +680,11 @@ tasks {
         dependsOn(":compiler:fir:raw-fir:light-tree2fir:test")
         dependsOn(":compiler:fir:analysis-tests:test")
         dependsOn(":compiler:fir:analysis-tests:legacy-fir-tests:test")
-        dependsOn(":compiler:fir:fir2ir:test")
+        dependsOn(":compiler:fir:fir2ir:aggregateTests")
     }
 
-    register("firAllTest") {
-        dependsOn(
-            ":dist",
-            ":compiler:fir:raw-fir:psi2fir:test",
-            ":compiler:fir:raw-fir:light-tree2fir:test",
-            ":compiler:fir:analysis-tests:test",
-            ":compiler:fir:analysis-tests:legacy-fir-tests:test",
-            ":compiler:fir:fir2ir:test",
-        )
+    register("nightlyFirCompilerTest") {
+        dependsOn(":compiler:fir:fir2ir:nightlyTests")
     }
 
     register("compilerFrontendVisualizerTest") {
@@ -882,31 +874,6 @@ val zipCompiler by task<Zip> {
     }
 }
 
-val zipStdlibTests by task<Zip> {
-    destinationDirectory.set(file(distDir))
-    archiveFileName.set("kotlin-stdlib-tests.zip")
-    from("libraries/stdlib/common/test") { into("common") }
-    from("libraries/stdlib/test") { into("test") }
-    from("libraries/kotlin.test/common/src/test/kotlin") { into("kotlin-test") }
-    doLast {
-        logger.lifecycle("Stdlib tests are packed to ${archiveFile.get()}")
-    }
-}
-
-val zipTestData by task<Zip> {
-    dependsOn(zipStdlibTests)
-    destinationDirectory.set(file(distDir))
-    archiveFileName.set("kotlin-test-data.zip")
-    isZip64 = true
-    from("compiler/testData") { into("compiler") }
-    from("idea/testData") { into("ide") }
-    from("idea/idea-completion/testData") { into("ide/completion") }
-    from("compiler/tests-common/tests/org/jetbrains/kotlin/coroutineTestUtil.kt") { into("compiler") }
-    doLast {
-        logger.lifecycle("Test data packed to ${archiveFile.get()}")
-    }
-}
-
 fun Project.secureZipTask(zipTask: TaskProvider<Zip>): RegisteringDomainObjectDelegateProviderWithAction<out TaskContainer, Task> {
     val checkSumTask = tasks.register("${zipTask.name}Checksum", Checksum::class) {
         dependsOn(zipTask)
@@ -948,7 +915,7 @@ configure<IdeaModel> {
 }
 
 val disableVerificationTasks = providers.gradleProperty("kotlin.build.disable.verification.tasks")
-    .forUseAtConfigurationTime().orNull?.toBoolean() ?: false
+    .orNull?.toBoolean() ?: false
 if (disableVerificationTasks) {
     logger.info("Verification tasks are disabled because `kotlin.build.disable.verification.tasks` is true")
     gradle.taskGraph.whenReady {

@@ -8,9 +8,8 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
-import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForReceiverParameter
-import org.jetbrains.kotlin.analysis.api.fir.findPsi
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KtFirReceiverParameterSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
@@ -21,26 +20,25 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtReceiverParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KtType
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
+import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 
 internal class KtFirReceiverParameterSymbol(
     val firSymbol: FirCallableSymbol<*>,
-    val firResolveSession: LLFirResolveSession,
-    override val token: KtLifetimeToken,
-    private val builder: KtSymbolByFirBuilder
+    val analysisSession: KtFirAnalysisSession,
 ) : KtReceiverParameterSymbol(), KtLifetimeOwner {
-    override val psi: PsiElement? by cached { firSymbol.fir.receiverParameter?.typeRef?.findPsi(firSymbol.fir.moduleData.session) }
+    override val token: KtLifetimeToken get() = analysisSession.token
+    override val psi: PsiElement? = withValidityAssertion{ firSymbol.fir.receiverParameter?.typeRef?.psi }
 
     init {
         require(firSymbol.fir.receiverParameter != null) { "$firSymbol doesn't have an extension receiver." }
     }
 
     override val type: KtType by cached {
-        firSymbol.receiverType(builder) ?: error("$firSymbol doesn't have an extension receiver.")
+        firSymbol.receiverType(analysisSession.firSymbolBuilder) ?: error("$firSymbol doesn't have an extension receiver.")
     }
 
-    override val owningCallableSymbol: KtCallableSymbol by cached { builder.callableBuilder.buildCallableSymbol(firSymbol) }
+    override val owningCallableSymbol: KtCallableSymbol by cached { analysisSession.firSymbolBuilder.callableBuilder.buildCallableSymbol(firSymbol) }
 
     override val origin: KtSymbolOrigin = withValidityAssertion { firSymbol.fir.ktSymbolOrigin() }
 
@@ -50,6 +48,6 @@ internal class KtFirReceiverParameterSymbol(
     }
 
     override val annotationsList: KtAnnotationsList by cached {
-        KtFirAnnotationListForReceiverParameter.create(firSymbol, firResolveSession.useSiteFirSession, token)
+        KtFirAnnotationListForReceiverParameter.create(firSymbol, analysisSession.useSiteSession, token)
     }
 }

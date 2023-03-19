@@ -17,7 +17,10 @@ KtFunctionSymbol:
   name: foo
   origin: SOURCE
   receiverParameter: null
-  returnType: kotlin/Unit
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
@@ -35,7 +38,15 @@ KtFunctionSymbol:
       name: inlineParameter
       origin: SOURCE
       receiverParameter: null
-      returnType: kotlin/Function0<kotlin/Int>
+      returnType: KtFunctionalType:
+        annotationsList: []
+        ownTypeArguments: [
+          KtUsualClassType:
+            annotationsList: []
+            ownTypeArguments: []
+            type: kotlin/Int
+        ]
+        type: kotlin/Function0<kotlin/Int>
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtSourceModule "Sources of main"
@@ -54,7 +65,15 @@ KtFunctionSymbol:
       name: crossinlineParameter
       origin: SOURCE
       receiverParameter: null
-      returnType: kotlin/Function0<kotlin/Int>
+      returnType: KtFunctionalType:
+        annotationsList: []
+        ownTypeArguments: [
+          KtUsualClassType:
+            annotationsList: []
+            ownTypeArguments: []
+            type: kotlin/Int
+        ]
+        type: kotlin/Function0<kotlin/Int>
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtSourceModule "Sources of main"
@@ -73,7 +92,15 @@ KtFunctionSymbol:
       name: noinlineParameter
       origin: SOURCE
       receiverParameter: null
-      returnType: kotlin/Function0<kotlin/Int>
+      returnType: KtFunctionalType:
+        annotationsList: []
+        ownTypeArguments: [
+          KtUsualClassType:
+            annotationsList: []
+            ownTypeArguments: []
+            type: kotlin/Int
+        ]
+        type: kotlin/Function0<kotlin/Int>
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtSourceModule "Sources of main"

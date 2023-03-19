@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.konan.blackboxtest.support.compilation
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.konan.blackboxtest.support.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCase.*
+import org.jetbrains.kotlin.konan.blackboxtest.support.TestModule.Companion.allDependsOn
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.ExecutableCompilation.Companion.applyTestRunnerSpecificArgs
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.ExecutableCompilation.Companion.assertTestDumpFileNotEmptyIfExists
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationArtifact.*
@@ -31,6 +32,7 @@ internal abstract class BasicCompilation<A : TestCompilationArtifact>(
     protected val home: KotlinNativeHome,
     private val classLoader: KotlinNativeClassLoader,
     private val optimizationMode: OptimizationMode,
+    private val compilerOutputInterceptor: CompilerOutputInterceptor,
     protected val freeCompilerArgs: TestCompilerArgs,
     protected val dependencies: CategorizedDependencies,
     protected val expectedArtifact: A
@@ -52,8 +54,7 @@ internal abstract class BasicCompilation<A : TestCompilationArtifact>(
         optimizationMode.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
         add(
             "-enable-assertions",
-            "-Xskip-prerelease-check",
-            "-Xverify-ir"
+            "-Xverify-ir=error"
         )
         addFlattened(binaryOptions.entries) { (name, value) -> listOf("-Xbinary=$name=$value") }
     }
@@ -83,10 +84,18 @@ internal abstract class BasicCompilation<A : TestCompilationArtifact>(
         val loggedCompilerParameters = LoggedData.CompilerParameters(home, compilerArgs, sourceModules)
 
         val (loggedCompilerCall: LoggedData, result: TestCompilationResult.ImmediateResult<out A>) = try {
-            val (exitCode, compilerOutput, compilerOutputHasErrors, duration) = callCompiler(
-                compilerArgs = compilerArgs,
-                kotlinNativeClassLoader = classLoader.classLoader
-            )
+            val compilerToolCallResult = when (compilerOutputInterceptor) {
+                CompilerOutputInterceptor.DEFAULT -> callCompiler(
+                    compilerArgs = compilerArgs,
+                    kotlinNativeClassLoader = classLoader.classLoader
+                )
+                CompilerOutputInterceptor.NONE -> callCompilerWithoutOutputInterceptor(
+                    compilerArgs = compilerArgs,
+                    kotlinNativeClassLoader = classLoader.classLoader
+                )
+            }
+
+            val (exitCode, compilerOutput, compilerOutputHasErrors, duration) = compilerToolCallResult
 
             val loggedCompilationToolCall =
                 LoggedData.CompilationToolCall("COMPILER", loggedCompilerParameters, exitCode, compilerOutput, compilerOutputHasErrors, duration)
@@ -117,6 +126,7 @@ internal abstract class SourceBasedCompilation<A : TestCompilationArtifact>(
     home: KotlinNativeHome,
     classLoader: KotlinNativeClassLoader,
     optimizationMode: OptimizationMode,
+    compilerOutputInterceptor: CompilerOutputInterceptor,
     private val memoryModel: MemoryModel,
     private val threadStateChecker: ThreadStateChecker,
     private val sanitizer: Sanitizer,
@@ -132,6 +142,7 @@ internal abstract class SourceBasedCompilation<A : TestCompilationArtifact>(
     home = home,
     classLoader = classLoader,
     optimizationMode = optimizationMode,
+    compilerOutputInterceptor = compilerOutputInterceptor,
     freeCompilerArgs = freeCompilerArgs,
     dependencies = dependencies,
     expectedArtifact = expectedArtifact
@@ -144,6 +155,7 @@ internal abstract class SourceBasedCompilation<A : TestCompilationArtifact>(
         gcType.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
         gcScheduler.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
         pipelineType.compilerFlags.forEach { compilerFlag -> add(compilerFlag) }
+        applyK2MPPArgs(this)
     }
 
     override fun applyDependencies(argsBuilder: ArgsBuilder): Unit = with(argsBuilder) {
@@ -152,6 +164,17 @@ internal abstract class SourceBasedCompilation<A : TestCompilationArtifact>(
             add("-friend-modules", friends.joinToString(File.pathSeparator) { friend -> friend.path })
         }
         add(dependencies.includedLibraries) { include -> "-Xinclude=${include.path}" }
+    }
+
+    private fun applyK2MPPArgs(argsBuilder: ArgsBuilder): Unit = with(argsBuilder) {
+        if (pipelineType == PipelineType.K2 && freeCompilerArgs.compilerArgs.any { it == "-XXLanguage:+MultiPlatformProjects" }) {
+            sourceModules.mapToSet { "-Xfragments=${it.name}" }
+                .sorted().forEach { add(it) }
+            sourceModules.flatMapToSet { module -> module.allDependsOn.map { "-Xfragment-refines=${module.name}:${it.name}" } }
+                .sorted().forEach { add(it) }
+            sourceModules.flatMapToSet { module -> module.files.map { "-Xfragment-sources=${module.name}:${it.location.path}" } }
+                .sorted().forEach { add(it) }
+        }
     }
 }
 
@@ -166,6 +189,7 @@ internal class LibraryCompilation(
     home = settings.get(),
     classLoader = settings.get(),
     optimizationMode = settings.get(),
+    compilerOutputInterceptor = settings.get(),
     memoryModel = settings.get(),
     threadStateChecker = settings.get(),
     sanitizer = settings.get(),
@@ -250,6 +274,7 @@ internal class ExecutableCompilation(
     home = settings.get(),
     classLoader = settings.get(),
     optimizationMode = settings.get(),
+    compilerOutputInterceptor = settings.get(),
     memoryModel = settings.get(),
     threadStateChecker = settings.get(),
     sanitizer = settings.get(),
@@ -326,6 +351,7 @@ internal class StaticCacheCompilation(
     settings: Settings,
     freeCompilerArgs: TestCompilerArgs,
     private val options: Options,
+    private val pipelineType: PipelineType,
     dependencies: Iterable<TestCompilationDependency<*>>,
     expectedArtifact: KLIBStaticCache
 ) : BasicCompilation<KLIBStaticCache>(
@@ -333,6 +359,7 @@ internal class StaticCacheCompilation(
     home = settings.get(),
     classLoader = settings.get(),
     optimizationMode = settings.get(),
+    compilerOutputInterceptor = settings.get(),
     freeCompilerArgs = freeCompilerArgs,
     dependencies = CategorizedDependencies(dependencies),
     expectedArtifact = expectedArtifact
@@ -354,6 +381,7 @@ internal class StaticCacheCompilation(
 
     override fun applySpecificArgs(argsBuilder: ArgsBuilder): Unit = with(argsBuilder) {
         add("-produce", "static_cache")
+        pipelineType.compilerFlags.forEach { compilerFlag -> add(compilerFlag) }
 
         when (options) {
             is Options.Regular -> Unit /* Nothing to do. */

@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.interpreter.accessesTopLevelOrObjectField
 import org.jetbrains.kotlin.ir.interpreter.fqName
-import org.jetbrains.kotlin.ir.interpreter.isAccessToObject
+import org.jetbrains.kotlin.ir.interpreter.isAccessToNotNullableObject
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.statements
@@ -160,7 +160,7 @@ class IrCompileTimeChecker(
     }
 
     override fun visitGetValue(expression: IrGetValue, data: Nothing?): Boolean {
-        return visitedStack.contains(expression.symbol.owner.parent) || expression.isAccessToObject()
+        return visitedStack.contains(expression.symbol.owner.parent) || expression.isAccessToNotNullableObject()
     }
 
     override fun visitSetValue(expression: IrSetValue, data: Nothing?): Boolean {

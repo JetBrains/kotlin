@@ -11,22 +11,23 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.scopes.KtScopeNameFilter
 import org.jetbrains.kotlin.analysis.api.scopes.KtTypeScope
+import org.jetbrains.kotlin.analysis.api.signatures.KtCallableSignature
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassifierSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
-import org.jetbrains.kotlin.analysis.api.signatures.KtCallableSignature
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.name.Name
 
 internal open class KtFirDelegatingTypeScope(
     val firScope: FirContainingNamesAwareScope,
     private val builder: KtSymbolByFirBuilder,
-    final override val token: KtLifetimeToken
 ) : KtTypeScope {
+    override val token: KtLifetimeToken get() = builder.token
+
     private val allNamesCached by cached {
         getPossibleCallableNames() + getPossibleClassifierNames()
     }
 
-    override fun getAllPossibleNames(): Set<Name> = withValidityAssertion { withValidityAssertion { allNamesCached } }
+    override fun getAllPossibleNames(): Set<Name> = withValidityAssertion { allNamesCached }
 
     override fun getPossibleCallableNames(): Set<Name> = withValidityAssertion {
         firScope.getCallableNames()

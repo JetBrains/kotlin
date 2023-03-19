@@ -32,6 +32,11 @@ import org.jetbrains.kotlin.utils.keysToMap
 import java.util.function.Predicate
 import java.util.regex.Pattern
 
+/**
+ * Compares dump of descriptors if with expected
+ * Dump lays in file testName.txt
+ * If there is no .txt file than handler does nothing
+ */
 class DeclarationsDumpHandler(
     testServices: TestServices
 ) : ClassicFrontendAnalysisHandler(testServices) {
@@ -62,10 +67,10 @@ class DeclarationsDumpHandler(
         }
         val expectedFileName = "${testDataFile.nameWithoutExtension}$prefix.txt"
         val expectedFile = testDataFile.parentFile.resolve(expectedFileName)
+        if (!expectedFile.exists()) return
         assertions.assertEqualsToFile(expectedFile, resultDump)
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     override fun processModule(module: TestModule, info: ClassicFrontendOutputArtifact) {
         if (DiagnosticsDirectives.SKIP_TXT in module.directives) return
         val moduleDescriptor = info.analysisResult.moduleDescriptor

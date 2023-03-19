@@ -254,6 +254,8 @@ public final enum class DeprecationLevel : kotlin.Enum<kotlin.DeprecationLevel> 
     public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<kotlin.DeprecationLevel!>!
 
     // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<kotlin.DeprecationLevel>
+        public final /*synthesized*/ fun `<get-entries>`(): kotlin.enums.EnumEntries<kotlin.DeprecationLevel>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): kotlin.DeprecationLevel
     public final /*synthesized*/ fun values(): kotlin.Array<kotlin.DeprecationLevel>
 }
@@ -693,6 +695,8 @@ public abstract class Number : kotlin.Any, java.io.Serializable {
         public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<kotlin.RequiresOptIn.Level!>!
 
         // Static members
+        public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<kotlin.RequiresOptIn.Level>
+            public final /*synthesized*/ fun `<get-entries>`(): kotlin.enums.EnumEntries<kotlin.RequiresOptIn.Level>
         public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): kotlin.RequiresOptIn.Level
         public final /*synthesized*/ fun values(): kotlin.Array<kotlin.RequiresOptIn.Level>
     }

@@ -23,6 +23,7 @@ public final class Test {
             Example() {
             }
 
+            @org.jetbrains.annotations.NotNull()
             public static kotlin.enums.EnumEntries<Test.Companion.Example> getEntries() {
                 return null;
             }
@@ -58,6 +59,7 @@ public final class Test2 {
             Example() {
             }
 
+            @org.jetbrains.annotations.NotNull()
             public static kotlin.enums.EnumEntries<Test2.Amigo.Example> getEntries() {
                 return null;
             }
@@ -93,6 +95,7 @@ public final class Test3 {
             Example() {
             }
 
+            @org.jetbrains.annotations.NotNull()
             public static kotlin.enums.EnumEntries<Test3.Amigo.Example> getEntries() {
                 return null;
             }
@@ -175,6 +178,7 @@ public final class Test5 {
                     Example() {
                     }
 
+                    @org.jetbrains.annotations.NotNull()
                     public static kotlin.enums.EnumEntries<Test5.Amigos.Companion.Goo.Example> getEntries() {
                         return null;
                     }

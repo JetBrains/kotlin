@@ -18,11 +18,17 @@ KtSyntheticJavaPropertySymbol:
       annotationsList: []
       origin: SOURCE
       owningCallableSymbol: KtSyntheticJavaPropertySymbol(/JavaClass.foo)
-      type: JavaClass
+      type: KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
+        type: JavaClass
       getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KtFe10ReceiverParameterSymbol
 
       deprecationStatus: null
-    returnType: kotlin/Int
+    returnType: KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Int
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
@@ -49,11 +55,17 @@ KtSyntheticJavaPropertySymbol:
     annotationsList: []
     origin: SOURCE
     owningCallableSymbol: KtSyntheticJavaPropertySymbol(/JavaClass.foo)
-    type: JavaClass
+    type: KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: JavaClass
     getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KtFe10ReceiverParameterSymbol
 
     deprecationStatus: null
-  returnType: kotlin/Int
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Int
   setter: null
   symbolKind: CLASS_MEMBER
   typeParameters: []

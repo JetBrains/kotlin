@@ -34,13 +34,19 @@ KtPropertySetterSymbol:
     name: value
     origin: SOURCE
     receiverParameter: null
-    returnType: kotlin/Int
+    returnType: KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Int
     symbolKind: LOCAL
     typeParameters: []
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   receiverParameter: null
-  returnType: kotlin/Unit
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Unit
   symbolKind: ACCESSOR
   typeParameters: []
   valueParameters: [
@@ -63,7 +69,10 @@ KtPropertySetterSymbol:
       name: value
       origin: SOURCE
       receiverParameter: null
-      returnType: kotlin/Int
+      returnType: KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
+        type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtSourceModule "Sources of main"

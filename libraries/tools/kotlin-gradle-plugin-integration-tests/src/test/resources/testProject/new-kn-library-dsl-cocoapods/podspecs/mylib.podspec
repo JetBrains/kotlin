@@ -1,7 +1,7 @@
 Pod::Spec.new do |spec|
     spec.name                     = 'mylib'
     spec.version                  = '0.1'
-    spec.vendored_library         = 'mylib.dylib'
+    spec.vendored_library         = 'libmylib.a'
 
     spec.description              = <<-DESC
                                       Computes the meaning of life.

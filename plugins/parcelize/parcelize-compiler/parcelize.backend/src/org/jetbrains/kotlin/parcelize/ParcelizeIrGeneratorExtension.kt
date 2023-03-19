@@ -8,8 +8,6 @@ package org.jetbrains.kotlin.parcelize
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.parcelize.ir.AndroidSymbols
-import org.jetbrains.kotlin.parcelize.ir.ParcelizeIrTransformer
 
 class ParcelizeIrGeneratorExtension : IrGenerationExtension {
     override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
@@ -17,4 +15,3 @@ class ParcelizeIrGeneratorExtension : IrGenerationExtension {
         ParcelizeIrTransformer(pluginContext, androidSymbols).transform(moduleFragment)
     }
 }
-

@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.config.getModuleNameForSource
 import org.jetbrains.kotlin.metadata.builtins.BuiltInsBinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
@@ -64,8 +65,9 @@ class K2MetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
         if (pluginLoadResult != ExitCode.OK) return pluginLoadResult
 
         val commonSources = arguments.commonSources?.toSet() ?: emptySet()
+        val hmppCliModuleStructure = configuration.get(CommonConfigurationKeys.HMPP_MODULE_STRUCTURE)
         for (arg in arguments.freeArgs) {
-            configuration.addKotlinSourceRoot(arg, isCommon = arg in commonSources)
+            configuration.addKotlinSourceRoot(arg, isCommon = arg in commonSources, hmppCliModuleStructure?.getModuleNameForSource(arg))
         }
         if (arguments.classpath != null) {
             configuration.addJvmClasspathRoots(arguments.classpath!!.split(File.pathSeparatorChar).map(::File))

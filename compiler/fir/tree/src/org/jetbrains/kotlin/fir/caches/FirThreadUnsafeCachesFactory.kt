@@ -24,6 +24,9 @@ object FirThreadUnsafeCachesFactory : FirCachesFactory() {
         postCompute: (K, V, DATA) -> Unit
     ): FirCache<K, V, CONTEXT> =
         FirThreadUnsafeCacheWithPostCompute(createValue, postCompute)
+
+    override fun <V> createLazyValue(createValue: () -> V): FirLazyValue<V> =
+        FirThreadUnsafeValue(createValue)
 }
 
 @Suppress("UNCHECKED_CAST")
@@ -62,4 +65,9 @@ private class FirThreadUnsafeCacheWithPostCompute<K : Any, V, CONTEXT, DATA>(
     @Suppress("UNCHECKED_CAST")
     override fun getValueIfComputed(key: K): V? =
         map.getOrElse(key) { null as V }
+}
+
+private class FirThreadUnsafeValue<V>(createValue: () -> V) : FirLazyValue<V>() {
+    private val lazyValue by lazy(LazyThreadSafetyMode.NONE, createValue)
+    override fun getValue(): V = lazyValue
 }

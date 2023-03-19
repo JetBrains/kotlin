@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.tooling.core
 
-import javax.sound.midi.Receiver
+import java.util.*
 import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
@@ -21,6 +21,9 @@ val <T : Any> Extras.Key<T>.readWriteProperty get() = extrasReadWriteProperty(th
 fun <T : Any> Extras.Key<T>.factoryProperty(factory: () -> T) = extrasFactoryProperty(this, factory)
 
 fun <Receiver : HasMutableExtras, T : Any> Extras.Key<T>.lazyProperty(factory: Receiver.() -> T) = extrasLazyProperty(this, factory)
+
+fun <Receiver : HasMutableExtras, T : Any> Extras.Key<Optional<T>>.nullableLazyProperty(factory: Receiver.() -> T?) =
+    extrasNullableLazyProperty(this, factory)
 
 fun <T : Any> extrasReadProperty(key: Extras.Key<T>): ExtrasReadOnlyProperty<T> = object : ExtrasReadOnlyProperty<T> {
     override val key: Extras.Key<T> = key
@@ -43,6 +46,14 @@ fun <Receiver : HasMutableExtras, T : Any> extrasLazyProperty(
         override val factory: Receiver.() -> T = factory
     }
 
+fun <Receiver : HasMutableExtras, T : Any> extrasNullableLazyProperty(
+    key: Extras.Key<Optional<T>>, factory: Receiver.() -> T?
+): NullableExtrasLazyProperty<Receiver, T> =
+    object : NullableExtrasLazyProperty<Receiver, T> {
+        override val key: Extras.Key<Optional<T>> = key
+        override val factory: Receiver.() -> T? = factory
+    }
+
 inline fun <reified T : Any> extrasReadWriteProperty(name: String? = null) =
     extrasReadWriteProperty(extrasKeyOf<T>(name))
 
@@ -54,6 +65,10 @@ inline fun <reified T : Any> extrasFactoryProperty(name: String? = null, noinlin
 
 inline fun <Receiver : HasMutableExtras, reified T : Any> extrasLazyProperty(name: String? = null, noinline factory: Receiver.() -> T) =
     extrasLazyProperty(extrasKeyOf(name), factory)
+
+inline fun <Receiver : HasMutableExtras, reified T : Any> extrasNullableLazyProperty(
+    name: String? = null, noinline factory: Receiver.() -> T?
+) = extrasNullableLazyProperty(extrasKeyOf(name), factory)
 
 interface ExtrasReadOnlyProperty<T : Any> : ExtrasProperty<T>, ReadOnlyProperty<HasExtras, T?> {
     override fun getValue(thisRef: HasExtras, property: KProperty<*>): T? {
@@ -123,5 +138,13 @@ interface ExtrasLazyProperty<Receiver : HasMutableExtras, T : Any> : ExtrasPrope
 
     override fun setValue(thisRef: Receiver, property: KProperty<*>, value: T) {
         thisRef.extras[key] = value
+    }
+}
+
+interface NullableExtrasLazyProperty<Receiver : HasMutableExtras, T : Any> : ExtrasProperty<Optional<T>>, ReadOnlyProperty<Receiver, T?> {
+    val factory: Receiver.() -> T?
+
+    override fun getValue(thisRef: Receiver, property: KProperty<*>): T? {
+        return thisRef.extras.getOrPut(key) { Optional.ofNullable(thisRef.factory()) }.let { if (it.isPresent) it.get() else null }
     }
 }

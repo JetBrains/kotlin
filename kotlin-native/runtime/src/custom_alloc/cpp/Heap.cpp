@@ -32,21 +32,21 @@ void Heap::PrepareForGC() noexcept {
         thread.gc().impl().alloc().PrepareForGC();
     }
 
-    mediumPages_.PrepareForGC();
-    largePages_.PrepareForGC();
-    for (int blockSize = 0; blockSize <= SMALL_PAGE_MAX_BLOCK_SIZE; ++blockSize) {
-        smallPages_[blockSize].PrepareForGC();
+    nextFitPages_.PrepareForGC();
+    singleObjectPages_.PrepareForGC();
+    for (int blockSize = 0; blockSize <= FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE; ++blockSize) {
+        fixedBlockPages_[blockSize].PrepareForGC();
     }
     usedExtraObjectPages_.TransferAllFrom(std::move(extraObjectPages_));
 }
 
 void Heap::Sweep() noexcept {
     CustomAllocDebug("Heap::Sweep()");
-    for (int blockSize = 0; blockSize <= SMALL_PAGE_MAX_BLOCK_SIZE; ++blockSize) {
-        smallPages_[blockSize].Sweep();
+    for (int blockSize = 0; blockSize <= FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE; ++blockSize) {
+        fixedBlockPages_[blockSize].Sweep();
     }
-    mediumPages_.Sweep();
-    largePages_.SweepAndFree();
+    nextFitPages_.Sweep();
+    singleObjectPages_.SweepAndFree();
 }
 
 AtomicStack<ExtraObjectCell> Heap::SweepExtraObjects(gc::GCHandle gcHandle) noexcept {
@@ -64,19 +64,19 @@ AtomicStack<ExtraObjectCell> Heap::SweepExtraObjects(gc::GCHandle gcHandle) noex
     return finalizerQueue;
 }
 
-MediumPage* Heap::GetMediumPage(uint32_t cellCount) noexcept {
-    CustomAllocDebug("Heap::GetMediumPage()");
-    return mediumPages_.GetPage(cellCount);
+NextFitPage* Heap::GetNextFitPage(uint32_t cellCount) noexcept {
+    CustomAllocDebug("Heap::GetNextFitPage()");
+    return nextFitPages_.GetPage(cellCount);
 }
 
-SmallPage* Heap::GetSmallPage(uint32_t cellCount) noexcept {
-    CustomAllocDebug("Heap::GetSmallPage()");
-    return smallPages_[cellCount].GetPage(cellCount);
+FixedBlockPage* Heap::GetFixedBlockPage(uint32_t cellCount) noexcept {
+    CustomAllocDebug("Heap::GetFixedBlockPage()");
+    return fixedBlockPages_[cellCount].GetPage(cellCount);
 }
 
-LargePage* Heap::GetLargePage(uint64_t cellCount) noexcept {
-    CustomAllocInfo("CustomAllocator::AllocateInLargePage(%" PRIu64 ")", cellCount);
-    return largePages_.NewPage(cellCount);
+SingleObjectPage* Heap::GetSingleObjectPage(uint64_t cellCount) noexcept {
+    CustomAllocInfo("CustomAllocator::AllocateInSingleObjectPage(%" PRIu64 ")", cellCount);
+    return singleObjectPages_.NewPage(cellCount);
 }
 
 ExtraObjectPage* Heap::GetExtraObjectPage() noexcept {

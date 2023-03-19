@@ -7,21 +7,14 @@ package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
-import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.canNarrowDownGetterType
-import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
-import org.jetbrains.kotlin.fir.declarations.utils.isFinal
-import org.jetbrains.kotlin.fir.declarations.utils.modality
-import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
-import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
-import org.jetbrains.kotlin.fir.diagnostics.ConeStubDiagnostic
-import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
+import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
@@ -36,7 +29,6 @@ import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
-import org.jetbrains.kotlin.fir.scopes.impl.delegatedWrapperData
 import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectOrStaticData
 import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -55,18 +47,13 @@ import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.SmartcastStability
 import org.jetbrains.kotlin.types.model.safeSubstitute
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addIfNotNull
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
-fun List<FirQualifierPart>.toTypeProjections(): Array<ConeTypeProjection> =
-    asReversed().flatMap { it.typeArgumentList.typeArguments.map { typeArgument -> typeArgument.toConeTypeProjection() } }.toTypedArray()
-
 fun FirAnonymousFunction.shouldReturnUnit(returnStatements: Collection<FirExpression>): Boolean =
     isLambda && returnStatements.any { it is FirUnitExpression }
-
-fun FirAnonymousFunction.isExplicitlySuspend(session: FirSession): Boolean =
-    typeRef.coneTypeSafe<ConeKotlinType>()?.isSuspendOrKSuspendFunctionType(session) == true
 
 fun FirAnonymousFunction.addReturnToLastStatementIfNeeded() {
     // If this lambda's resolved, expected return type is Unit, we don't need an explicit return statement.
@@ -95,7 +82,10 @@ fun FirAnonymousFunction.addReturnToLastStatementIfNeeded() {
     )
 }
 
-fun FirFunction.constructFunctionalType(isSuspend: Boolean = false): ConeLookupTagBasedType {
+/**
+ * [kind] == null means that [FunctionTypeKind.Function] will be used
+ */
+fun FirFunction.constructFunctionType(kind: FunctionTypeKind? = null): ConeLookupTagBasedType {
     val receiverTypeRef = when (this) {
         is FirSimpleFunction -> receiverParameter
         is FirAnonymousFunction -> receiverParameter
@@ -112,26 +102,48 @@ fun FirFunction.constructFunctionalType(isSuspend: Boolean = false): ConeLookupT
     }
     val rawReturnType = (this as FirCallableDeclaration).returnTypeRef.coneType
 
-    return createFunctionalType(
-        parameters, receiverTypeRef?.coneType, rawReturnType, isSuspend = isSuspend,
+    return createFunctionType(
+        kind ?: FunctionTypeKind.Function, parameters, receiverTypeRef?.coneType, rawReturnType,
         contextReceivers = contextReceivers.map { it.typeRef.coneType }
     )
 }
 
-fun FirFunction.constructFunctionalTypeRef(isSuspend: Boolean = false): FirResolvedTypeRef {
-    return buildResolvedTypeRef {
-        source = this@constructFunctionalTypeRef.source?.fakeElement(KtFakeSourceElementKind.ImplicitTypeRef)
-        type = constructFunctionalType(isSuspend)
+/**
+ * [kind] == null means that [FunctionTypeKind.Function] will be used
+ */
+fun FirAnonymousFunction.constructFunctionTypeRef(session: FirSession, kind: FunctionTypeKind? = null): FirResolvedTypeRef {
+    var diagnostic: ConeDiagnostic? = null
+    val kinds = session.functionTypeService.extractAllSpecialKindsForFunction(symbol)
+    val kindFromDeclaration = when(kinds.size) {
+        0 -> null
+        1 -> kinds.single()
+        else -> {
+            diagnostic = ConeAmbiguousFunctionTypeKinds(kinds)
+            FunctionTypeKind.Function
+        }
+    }
+    val type = constructFunctionType(kindFromDeclaration ?: kind)
+    val source = this@constructFunctionTypeRef.source?.fakeElement(KtFakeSourceElementKind.ImplicitTypeRef)
+    return if (diagnostic == null) {
+        buildResolvedTypeRef {
+            this.source = source
+            this.type = type
+        }
+    } else {
+        buildErrorTypeRef {
+            this.source = source
+            this.type = type
+            this.diagnostic = diagnostic
+        }
     }
 }
 
-fun createFunctionalType(
+fun createFunctionType(
+    kind: FunctionTypeKind,
     parameters: List<ConeKotlinType>,
     receiverType: ConeKotlinType?,
     rawReturnType: ConeKotlinType,
-    isSuspend: Boolean,
     contextReceivers: List<ConeKotlinType> = emptyList(),
-    isKFunctionType: Boolean = false
 ): ConeLookupTagBasedType {
     val receiverAndParameterTypes =
         buildList {
@@ -141,13 +153,7 @@ fun createFunctionalType(
             add(rawReturnType)
         }
 
-    val kind = if (isSuspend) {
-        if (isKFunctionType) FunctionClassKind.KSuspendFunction else FunctionClassKind.SuspendFunction
-    } else {
-        if (isKFunctionType) FunctionClassKind.KFunction else FunctionClassKind.Function
-    }
-
-    val functionalTypeId = ClassId(kind.packageFqName, kind.numberedClassName(receiverAndParameterTypes.size - 1))
+    val functionTypeId = ClassId(kind.packageFqName, kind.numberedClassName(receiverAndParameterTypes.size - 1))
     val attributes = when {
         contextReceivers.isNotEmpty() -> ConeAttributes.create(
             buildList {
@@ -161,7 +167,7 @@ fun createFunctionalType(
         else -> ConeAttributes.Empty
     }
     return ConeClassLikeTypeImpl(
-        ConeClassLikeLookupTagImpl(functionalTypeId),
+        functionTypeId.toLookupTag(),
         receiverAndParameterTypes.toTypedArray(),
         isNullable = false,
         attributes = attributes
@@ -175,7 +181,7 @@ fun createKPropertyType(
 ): ConeLookupTagBasedType {
     val arguments = if (receiverType != null) listOf(receiverType, rawReturnType) else listOf(rawReturnType)
     val classId = StandardClassIds.reflectByName("K${if (isMutable) "Mutable" else ""}Property${arguments.size - 1}")
-    return ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(classId), arguments.toTypedArray(), isNullable = false)
+    return ConeClassLikeTypeImpl(classId.toLookupTag(), arguments.toTypedArray(), isNullable = false)
 }
 
 fun BodyResolveComponents.buildResolvedQualifierForClass(
@@ -347,11 +353,7 @@ private fun BodyResolveComponents.typeFromSymbol(symbol: FirBasedSymbol<*>, make
                     KtFakeSourceElementKind.ImplicitTypeRef
                 )
             } else {
-                buildResolvedTypeRef {
-                    source = returnTypeRef.source?.fakeElement(KtFakeSourceElementKind.ImplicitTypeRef)
-                    type = returnTypeRef.type
-                    annotations += returnTypeRef.annotations
-                }
+                returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.ImplicitTypeRef)
             }
         }
         is FirClassifierSymbol<*> -> {
@@ -480,7 +482,7 @@ fun FirCheckedSafeCallSubject.propagateTypeFromOriginalReceiver(
         ?: nullableReceiverExpression.typeRef)
         .coneTypeSafe<ConeKotlinType>() ?: return
 
-    val expandedReceiverType = if (receiverType is ConeClassLikeType) receiverType.fullyExpandedType(session) else receiverType
+    val expandedReceiverType = receiverType.fullyExpandedType(session)
 
     val resolvedTypeRef =
         typeRef.resolvedTypeFromPrototype(expandedReceiverType.makeConeTypeDefinitelyNotNullOrNotNull(session.typeContext))
@@ -489,36 +491,33 @@ fun FirCheckedSafeCallSubject.propagateTypeFromOriginalReceiver(
 }
 
 fun FirSafeCallExpression.propagateTypeFromQualifiedAccessAfterNullCheck(
-    nullableReceiverExpression: FirExpression,
     session: FirSession,
     file: FirFile,
 ) {
-    val receiverType = nullableReceiverExpression.typeRef.coneTypeSafe<ConeKotlinType>()
-    val typeAfterNullCheck = selector.expressionTypeOrUnitForAssignment() ?: return
-    val isReceiverActuallyNullable = if (session.languageVersionSettings.supportsFeature(LanguageFeature.SafeCallsAreAlwaysNullable)) {
-        true
-    } else {
-        receiverType != null && session.typeContext.run { receiverType.isNullableType() }
+    val selector = selector
+
+    val resultingType = when {
+        selector is FirExpression && !selector.isCallToStatementLikeFunction -> {
+            val type = selector.typeRef.coneTypeSafe<ConeKotlinType>() ?: return
+            type.withNullability(ConeNullability.NULLABLE, session.typeContext)
+        }
+        // Branch for things that shouldn't be used as expressions.
+        // They are forced to return not-null `Unit`, regardless of the receiver.
+        else -> {
+            StandardClassIds.Unit.constructClassLikeType(emptyArray(), isNullable = false)
+        }
     }
-    val resultingType =
-        if (isReceiverActuallyNullable)
-            typeAfterNullCheck.withNullability(ConeNullability.NULLABLE, session.typeContext)
-        else
-            typeAfterNullCheck
 
     val resolvedTypeRef = typeRef.resolvedTypeFromPrototype(resultingType)
     replaceTypeRef(resolvedTypeRef)
     session.lookupTracker?.recordTypeResolveAsLookup(resolvedTypeRef, source, file.source)
 }
 
-private fun FirStatement.expressionTypeOrUnitForAssignment(): ConeKotlinType? {
-    if (this is FirExpression) return typeRef.coneTypeSafe()
-
-    require(this is FirVariableAssignment) {
-        "The only non-expression FirQualifiedAccess is FirVariableAssignment, but ${this::class} was found"
+private val FirExpression.isCallToStatementLikeFunction: Boolean
+    get() {
+        val symbol = (this as? FirFunctionCall)?.calleeReference?.toResolvedFunctionSymbol() ?: return false
+        return origin == FirFunctionCallOrigin.Operator && symbol.name in OperatorNameConventions.STATEMENT_LIKE_OPERATORS
     }
-    return StandardClassIds.Unit.constructClassLikeType(emptyArray(), isNullable = false)
-}
 
 fun FirAnnotation.getCorrespondingClassSymbolOrNull(session: FirSession): FirRegularClassSymbol? {
     return annotationTypeRef.coneType.fullyExpandedType(session).classId?.let {
@@ -553,23 +552,15 @@ fun FirFunction.getAsForbiddenNamedArgumentsTarget(
     // for intersection/substitution overrides
     originScope: FirTypeScope? = null
 ): ForbiddenNamedArgumentsTarget? {
-    if (this is FirConstructor && this.isPrimary) {
-        this.getContainingClass(session)?.let { containingClass ->
-            if (containingClass.classKind == ClassKind.ANNOTATION_CLASS) {
-                // Java annotation classes allow (actually require) named parameters.
-                return null
-            }
-        }
-    }
+    if (hasStableParameterNames) return null
+
     return when (origin) {
-        FirDeclarationOrigin.Source, FirDeclarationOrigin.Precompiled, FirDeclarationOrigin.Library -> null
-        FirDeclarationOrigin.Delegated -> delegatedWrapperData?.wrapped?.getAsForbiddenNamedArgumentsTarget(session)
-        FirDeclarationOrigin.ImportedFromObjectOrStatic -> importedFromObjectOrStaticData?.original?.getAsForbiddenNamedArgumentsTarget(session)
-        is FirDeclarationOrigin.Java, FirDeclarationOrigin.Enhancement -> ForbiddenNamedArgumentsTarget.NON_KOTLIN_FUNCTION
-        FirDeclarationOrigin.SamConstructor -> null
-        FirDeclarationOrigin.IntersectionOverride, FirDeclarationOrigin.SubstitutionOverride -> {
+        FirDeclarationOrigin.ImportedFromObjectOrStatic ->
+            importedFromObjectOrStaticData?.original?.getAsForbiddenNamedArgumentsTarget(session)
+
+        FirDeclarationOrigin.IntersectionOverride, FirDeclarationOrigin.SubstitutionOverride, FirDeclarationOrigin.Delegated -> {
             var result: ForbiddenNamedArgumentsTarget? =
-                originalIfFakeOverride()?.getAsForbiddenNamedArgumentsTarget(session) ?: return null
+                unwrapFakeOverridesOrDelegated().getAsForbiddenNamedArgumentsTarget(session) ?: return null
             originScope?.processOverriddenFunctions(symbol as FirNamedFunctionSymbol) {
                 if (it.fir.getAsForbiddenNamedArgumentsTarget(session) == null) {
                     result = null
@@ -580,27 +571,12 @@ fun FirFunction.getAsForbiddenNamedArgumentsTarget(
             }
             result
         }
-        // referenced function of a Kotlin function type
-        FirDeclarationOrigin.BuiltIns -> {
-            if (dispatchReceiverClassLookupTagOrNull()?.isBuiltinFunctionalType() == true) {
-                ForbiddenNamedArgumentsTarget.INVOKE_ON_FUNCTION_TYPE
-            } else {
-                null
-            }
-        }
-        FirDeclarationOrigin.Synthetic -> null
-        FirDeclarationOrigin.DynamicScope -> null
-        FirDeclarationOrigin.RenamedForOverride -> null
-        FirDeclarationOrigin.WrappedIntegerOperator -> null
-        FirDeclarationOrigin.ScriptCustomization -> null
+
+        FirDeclarationOrigin.BuiltIns -> ForbiddenNamedArgumentsTarget.INVOKE_ON_FUNCTION_TYPE
         is FirDeclarationOrigin.Plugin -> null // TODO: figure out what to do with plugin generated functions
+        else -> ForbiddenNamedArgumentsTarget.NON_KOTLIN_FUNCTION
     }
 }
-
-// TODO: handle functions with non-stable parameter names, see also
-//  org.jetbrains.kotlin.fir.serialization.FirElementSerializer.functionProto
-//  org.jetbrains.kotlin.fir.serialization.FirElementSerializer.constructorProto
-fun FirFunction.getHasStableParameterNames(session: FirSession): Boolean = getAsForbiddenNamedArgumentsTarget(session) == null
 
 @OptIn(ExperimentalContracts::class)
 fun FirExpression?.isIntegerLiteralOrOperatorCall(): Boolean {

@@ -17,7 +17,10 @@ KtFunctionSymbol:
   name: primitive
   origin: SOURCE
   receiverParameter: null
-  returnType: kotlin/Unit
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
@@ -35,7 +38,10 @@ KtFunctionSymbol:
       name: a
       origin: SOURCE
       receiverParameter: null
-      returnType: kotlin/Int
+      returnType: KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
+        type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtSourceModule "Sources of main"
@@ -64,7 +70,10 @@ KtFunctionSymbol:
   name: nullablePrimitive
   origin: SOURCE
   receiverParameter: null
-  returnType: kotlin/Unit
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
@@ -82,7 +91,10 @@ KtFunctionSymbol:
       name: b
       origin: SOURCE
       receiverParameter: null
-      returnType: kotlin/Float?
+      returnType: KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
+        type: kotlin/Float?
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtSourceModule "Sources of main"
@@ -111,7 +123,10 @@ KtFunctionSymbol:
   name: nonPrimitive
   origin: SOURCE
   receiverParameter: null
-  returnType: kotlin/Unit
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
@@ -129,7 +144,10 @@ KtFunctionSymbol:
       name: c
       origin: SOURCE
       receiverParameter: null
-      returnType: kotlin/Any
+      returnType: KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
+        type: kotlin/Any
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtSourceModule "Sources of main"
@@ -158,7 +176,10 @@ KtFunctionSymbol:
   name: error
   origin: SOURCE
   receiverParameter: null
-  returnType: kotlin/Unit
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
@@ -176,7 +197,9 @@ KtFunctionSymbol:
       name: d
       origin: SOURCE
       receiverParameter: null
-      returnType: ERROR_TYPE
+      returnType: KtClassErrorType:
+        annotationsList: []
+        type: ERROR_TYPE
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtSourceModule "Sources of main"

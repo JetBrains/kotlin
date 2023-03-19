@@ -137,6 +137,10 @@ open class FirPropertyAccessorImpl @FirImplementationDetail constructor(
         resolvePhase = newResolvePhase
     }
 
+    override fun replaceStatus(newStatus: FirDeclarationStatus) {
+        status = newStatus
+    }
+
     override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef) {
         returnTypeRef = newReturnTypeRef
     }

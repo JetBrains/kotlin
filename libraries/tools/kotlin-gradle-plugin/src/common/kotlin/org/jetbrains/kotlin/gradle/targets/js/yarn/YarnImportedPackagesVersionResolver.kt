@@ -11,12 +11,12 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.GradleNodeModule
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
 import org.jetbrains.kotlin.gradle.targets.js.npm.fileVersion
-import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
+import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.PreparedKotlinCompilationNpmResolution
 import java.io.File
 
 class YarnImportedPackagesVersionResolver(
     private val logger: Logger,
-    private val npmProjects: Collection<KotlinCompilationNpmResolution>,
+    npmProjects: Collection<PreparedKotlinCompilationNpmResolution>,
     private val nodeJsWorldDir: File
 ) {
     private val resolvedVersion = mutableMapOf<String, ResolvedNpmDependency>()

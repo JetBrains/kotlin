@@ -7,18 +7,18 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.KtDeclarationAndFirDeclarationEqualityChecker
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
+import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirModuleWithDependenciesSymbolProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirBuiltinsAndCloneableSession
 import org.jetbrains.kotlin.analysis.project.structure.getKtModule
 import org.jetbrains.kotlin.analysis.utils.errors.ExceptionAttachmentBuilder
 import org.jetbrains.kotlin.analysis.utils.errors.withClassEntry
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.providers.getClassDeclaredConstructors
-import org.jetbrains.kotlin.fir.resolve.providers.getClassDeclaredFunctionSymbols
-import org.jetbrains.kotlin.fir.resolve.providers.getClassDeclaredPropertySymbols
+import org.jetbrains.kotlin.fir.resolve.providers.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 
@@ -55,11 +55,22 @@ internal class FirDeclarationForCompiledElementSearcher(private val symbolProvid
         val classId = declaration.getClassId()
             ?: errorWithFirSpecificEntries("Non-local class should have classId", psi = declaration)
 
-        val classCandidate = symbolProvider.getClassLikeSymbolByClassId(classId)
-            ?: errorWithFirSpecificEntries("We should be able to find a symbol for $classId", psi = declaration) {
+        val classCandidate = when (symbolProvider) {
+            is LLFirModuleWithDependenciesSymbolProvider -> {
+                symbolProvider.getClassLikeSymbolByFqNameWithoutDependencies(classId)
+                    ?: symbolProvider.friendBuiltinsProvider?.getClassLikeSymbolByClassId(classId)
+            }
+            else -> {
+                symbolProvider.getClassLikeSymbolByClassId(classId)
+            }
+        }
+
+        if (classCandidate == null) {
+            errorWithFirSpecificEntries("We should be able to find a symbol for $classId", psi = declaration) {
                 withEntry("classId", classId) { it.asString() }
                 withEntry("ktModule", declaration.getKtModule()) { it.moduleDescription }
             }
+        }
 
         return classCandidate.fir
     }
@@ -86,7 +97,7 @@ internal class FirDeclarationForCompiledElementSearcher(private val symbolProvid
         val candidates = symbolProvider.findFunctionCandidates(declaration)
         val functionCandidate =
             candidates
-                .singleOrNull { KtDeclarationAndFirDeclarationEqualityChecker.representsTheSameDeclaration(declaration, it.fir) }
+                .firstOrNull { KtDeclarationAndFirDeclarationEqualityChecker.representsTheSameDeclaration(declaration, it.fir) }
                 ?: errorWithFirSpecificEntries("We should be able to find a symbol for function", psi = declaration) {
                     withCandidates(candidates)
                 }
@@ -100,7 +111,7 @@ internal class FirDeclarationForCompiledElementSearcher(private val symbolProvid
 
         val candidates = symbolProvider.findPropertyCandidates(declaration)
         val propertyCandidate =
-            candidates.singleOrNull { KtDeclarationAndFirDeclarationEqualityChecker.representsTheSameDeclaration(declaration, it.fir) }
+            candidates.firstOrNull { KtDeclarationAndFirDeclarationEqualityChecker.representsTheSameDeclaration(declaration, it.fir) }
                 ?: errorWithFirSpecificEntries("We should be able to find a symbol for property", psi = declaration) {
                     withCandidates(candidates)
                 }
@@ -109,6 +120,16 @@ internal class FirDeclarationForCompiledElementSearcher(private val symbolProvid
     }
 
 }
+
+// Returns a built-in provider for a Kotlin standard library, as built-in declarations are its logical part.
+private val LLFirModuleWithDependenciesSymbolProvider.friendBuiltinsProvider: FirSymbolProvider?
+    get() {
+        if (getPackageWithoutDependencies(StandardClassIds.BASE_KOTLIN_PACKAGE) != null) {
+            return dependencyProvider.dependentProviders.find { it.session is LLFirBuiltinsAndCloneableSession }
+        }
+
+        return null
+    }
 
 private fun FirSymbolProvider.findFunctionCandidates(function: KtNamedFunction): List<FirFunctionSymbol<*>> =
     findCallableCandidates(function, function.isTopLevel).filterIsInstance<FirFunctionSymbol<*>>()
@@ -120,15 +141,26 @@ private fun FirSymbolProvider.findCallableCandidates(
     declaration: KtCallableDeclaration,
     isTopLevel: Boolean
 ): List<FirCallableSymbol<*>> {
+    val shortName = declaration.nameAsSafeName
+
     if (isTopLevel) {
-        return getTopLevelCallableSymbols(declaration.containingKtFile.packageFqName, declaration.nameAsSafeName)
+        val packageFqName = declaration.containingKtFile.packageFqName
+
+        @OptIn(FirSymbolProviderInternals::class)
+        return when (this) {
+            is LLFirModuleWithDependenciesSymbolProvider -> buildList {
+                getTopLevelCallableSymbolsToWithoutDependencies(this, packageFqName, shortName)
+                friendBuiltinsProvider?.getTopLevelCallableSymbolsTo(this, packageFqName, shortName)
+            }
+            else -> getTopLevelCallableSymbols(packageFqName, shortName)
+        }
     }
 
     val containerClassId = declaration.containingClassOrObject?.getClassId()
         ?: errorWithFirSpecificEntries("No containing non-local declaration found for", psi = declaration)
 
-    return getClassDeclaredFunctionSymbols(containerClassId, declaration.nameAsSafeName) +
-            getClassDeclaredPropertySymbols(containerClassId, declaration.nameAsSafeName)
+    return getClassDeclaredFunctionSymbols(containerClassId, shortName) +
+            getClassDeclaredPropertySymbols(containerClassId, shortName)
 }
 
 private fun representSameConstructor(psiConstructor: KtConstructor<*>, firConstructor: FirConstructor): Boolean {

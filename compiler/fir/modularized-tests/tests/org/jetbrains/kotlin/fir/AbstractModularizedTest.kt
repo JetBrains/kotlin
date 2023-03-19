@@ -5,22 +5,18 @@
 
 package org.jetbrains.kotlin.fir
 
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot
-import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
-import org.jetbrains.kotlin.cli.jvm.config.addJavaSourceRoot
-import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
-import org.jetbrains.kotlin.config.*
+import com.intellij.openapi.util.JDOMUtil
+import com.intellij.util.xmlb.XmlSerializer
+import org.jdom.Element
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
-import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.types.AbstractTypeChecker
-import org.w3c.dom.Node
-import org.w3c.dom.NodeList
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
-import javax.xml.parsers.DocumentBuilderFactory
 
 data class ModuleData(
     val name: String,
@@ -45,22 +41,16 @@ data class ModuleData(
     val friendDirs = rawFriendDirs.map { it.fixPath() }
     val jdkHome = rawJdkHome?.fixPath()
     val modularJdkRoot = rawModularJdkRoot?.fixPath()
+
+    /**
+     * Raw compiler arguments, as it was passed to original module build
+     */
+    var arguments: CommonCompilerArguments? = null
 }
 
 data class JavaSourceRootData<Path : Any>(val path: Path, val packagePrefix: String?)
 
-private fun String.fixPath(): File = File(ROOT_PATH_PREFIX, this.removePrefix("/"))
-
-private fun NodeList.toList(): List<Node> {
-    val list = mutableListOf<Node>()
-    for (index in 0 until this.length) {
-        list += item(index)
-    }
-    return list
-}
-
-
-private val Node.childNodesList get() = childNodes.toList()
+internal fun String.fixPath(): File = File(ROOT_PATH_PREFIX, this.removePrefix("/"))
 
 private val ROOT_PATH_PREFIX:String = System.getProperty("fir.bench.prefix", "/")
 private val OUTPUT_DIR_REGEX_FILTER:String = System.getProperty("fir.bench.filter", ".*")
@@ -96,74 +86,43 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
         AbstractTypeChecker.RUN_SLOW_ASSERTIONS = true
     }
 
-    fun createDefaultConfiguration(moduleData: ModuleData): CompilerConfiguration {
-        val configuration = KotlinTestUtils.newConfiguration()
-        moduleData.javaSourceRoots.forEach {
-            configuration.addJavaSourceRoot(it.path, it.packagePrefix)
-        }
-        configuration.addJvmClasspathRoots(moduleData.classpath)
-        configuration.languageVersionSettings = LanguageVersionSettingsImpl(
-            LanguageVersion.LATEST_STABLE,
-            ApiVersion.LATEST_STABLE,
-            analysisFlags = mutableMapOf(AnalysisFlags.optIn to moduleData.optInAnnotations)
-        )
-        configuration.configureJdkClasspathRoots()
-
-        // in case of modular jdk only
-        configuration.putIfNotNull(JVMConfigurationKeys.JDK_HOME, moduleData.modularJdkRoot)
-
-        configuration.addAll(
-            CLIConfigurationKeys.CONTENT_ROOTS,
-            moduleData.sources.filter { it.extension == "kt" || it.isDirectory }.map { KotlinSourceRoot(it.absolutePath, false) })
-        return configuration
-    }
-
-    private fun loadModule(file: File): ModuleData {
-
-        val factory = DocumentBuilderFactory.newInstance()
-        factory.isIgnoringComments = true
-        factory.isIgnoringElementContentWhitespace = true
-        val builder = factory.newDocumentBuilder()
-        val document = builder.parse(file)
-        val moduleElement = document.childNodes.item(0).childNodesList.first { it.nodeType == Node.ELEMENT_NODE }
-        val moduleName = moduleElement.attributes.getNamedItem("name").nodeValue
-        val outputDir = moduleElement.attributes.getNamedItem("outputDir").nodeValue
+    private fun loadModule(moduleElement: Element): ModuleData {
+        val outputDir = moduleElement.getAttribute("outputDir").value
+        val moduleName = moduleElement.getAttribute("name").value
         val moduleNameQualifier = outputDir.substringAfterLast("/")
         val javaSourceRoots = mutableListOf<JavaSourceRootData<String>>()
         val classpath = mutableListOf<String>()
         val sources = mutableListOf<String>()
         val friendDirs = mutableListOf<String>()
         val optInAnnotations = mutableListOf<String>()
-        val timestamp = moduleElement.attributes.getNamedItem("timestamp")?.nodeValue?.toLong() ?: 0
-        val jdkHome = moduleElement.attributes.getNamedItem("jdkHome")?.nodeValue
+        val timestamp = moduleElement.getAttribute("timestamp")?.longValue ?: 0
+        val jdkHome = moduleElement.getAttribute("jdkHome")?.value
         var modularJdkRoot: String? = null
         var isCommon = false
 
-        for (index in 0 until moduleElement.childNodes.length) {
-            val item = moduleElement.childNodes.item(index)
-
-            when (item.nodeName) {
+        for (item in moduleElement.children) {
+            when (item.name) {
                 "classpath" -> {
-                    val path = item.attributes.getNamedItem("path").nodeValue
+                    val path = item.getAttribute("path").value
                     if (path != outputDir) {
                         classpath += path
                     }
                 }
                 "friendDir" -> {
-                    val path = item.attributes.getNamedItem("path").nodeValue
+                    val path = item.getAttribute("path").value
                     friendDirs += path
                 }
                 "javaSourceRoots" -> {
                     javaSourceRoots +=
                         JavaSourceRootData(
-                            item.attributes.getNamedItem("path").nodeValue,
-                            item.attributes.getNamedItem("packagePrefix")?.nodeValue,
+                            item.getAttribute("path").value,
+                            item.getAttribute("packagePrefix")?.value,
                         )
                 }
-                "sources" -> sources += item.attributes.getNamedItem("path").nodeValue
+                "sources" -> sources += item.getAttribute("path").value
                 "commonSources" -> isCommon = true
-                "modularJdkRoot" -> modularJdkRoot = item.attributes.getNamedItem("path").nodeValue
-                "useOptIn" -> optInAnnotations += item.attributes.getNamedItem("annotation").nodeValue
+                "modularJdkRoot" -> modularJdkRoot = item.getAttribute("path").value
+                "useOptIn" -> optInAnnotations += item.getAttribute("annotation").value
             }
         }
 
@@ -183,6 +142,20 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
         )
     }
 
+    private fun loadModuleDumpFile(file: File): List<ModuleData> {
+        val rootElement = JDOMUtil.load(file)
+        val modules = rootElement.getChildren("module")
+        val arguments = rootElement.getChild("compilerArguments")?.let { loadCompilerArguments(it) }
+        return modules.map { node -> loadModule(node).also { it.arguments = arguments } }
+    }
+
+    private fun loadCompilerArguments(argumentsRoot: Element): CommonCompilerArguments? {
+        val element = argumentsRoot.children.singleOrNull() ?: return null
+        return when (element.name) {
+            "K2JVMCompilerArguments" -> K2JVMCompilerArguments().also { XmlSerializer.deserializeInto(it, element) }
+            else -> null
+        }
+    }
 
     protected abstract fun beforePass(pass: Int)
     protected abstract fun afterPass(pass: Int)
@@ -201,7 +174,7 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
         val files = root.listFiles() ?: emptyArray()
         val modules = files.filter { it.extension == "xml" }
             .sortedBy { it.lastModified() }
-            .map { loadModule(it) }
+            .flatMap { loadModuleDumpFile(it) }
             .sortedBy { it.timestamp }
             .filter { it.rawOutputDir.matches(filterRegex) }
             .filter { (moduleName == null) || it.name == moduleName }
@@ -216,4 +189,11 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
 
         afterPass(pass)
     }
+}
+
+
+internal fun K2JVMCompilerArguments.jvmTargetIfSupported(): JvmTarget? {
+    val specified = jvmTarget?.let { JvmTarget.fromString(it) } ?: return null
+    if (specified != JvmTarget.JVM_1_6) return specified
+    return null
 }

@@ -1,4 +1,3 @@
-// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 import org.jetbrains.kotlin.fir.plugin.AllPublic
 import org.jetbrains.kotlin.fir.plugin.Visibility
 

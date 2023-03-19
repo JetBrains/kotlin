@@ -29,11 +29,11 @@ val testSafeCall4: String? = J.m[""]?.let { it.toString() }
 val testIf1: String = if (true) J.s else J.s
 val testIf2: String? = if (true) J.s else J.s
 
-val testIf3: String = <!INITIALIZER_TYPE_MISMATCH!>if (true) J.m[""] else J.m[""]<!>
+val testIf3: String = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!>if (true) <!TYPE_MISMATCH!>J.m[""]<!> else <!TYPE_MISMATCH!>J.m[""]<!><!>
 val testIf4: String? = if (true) J.m[""] else J.m[""]
 
 val testWhen1: String = when { else -> J.s }
 val testWhen2: String? = when { else -> J.s }
 
-val testWhen3: String = <!INITIALIZER_TYPE_MISMATCH!>when { else -> J.m[""] }<!>
+val testWhen3: String = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!>when { else -> <!TYPE_MISMATCH!>J.m[""]<!> }<!>
 val testWhen4: String? = when { else -> J.m[""] }

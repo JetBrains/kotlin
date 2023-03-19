@@ -1,0 +1,3 @@
+package
+
+public fun </*0*/ F> [Error type: Unresolved type for F.X].f(): kotlin.Boolean

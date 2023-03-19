@@ -3,13 +3,13 @@ RAW_FIR:
 FILE: enumEntry.kt
     public? final? [RAW_FIR] annotation class Anno : R|kotlin/Annotation| {
         public? [RAW_FIR] [ContainingClassKey=Anno] constructor(): R|Anno| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
     public? final? [RAW_FIR] enum class Foo : R|kotlin/Enum<Foo>| {
         private [RAW_FIR] [ContainingClassKey=Foo] constructor(): R|Foo| {
-            super<R|kotlin/Enum<Foo>|>()
+            LAZY_super<R|kotlin/Enum<Foo>|>
         }
 
         @Anno() public final static [RAW_FIR] [ContainingClassKey=Foo] enum entry ResolveMe: R|Foo| = LAZY_EXPRESSION
@@ -28,13 +28,13 @@ IMPORTS:
 FILE: enumEntry.kt
     public? final? [RAW_FIR] annotation class Anno : R|kotlin/Annotation| {
         public? [RAW_FIR] [ContainingClassKey=Anno] constructor(): R|Anno| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
     public? final? [RAW_FIR] enum class Foo : R|kotlin/Enum<Foo>| {
         private [RAW_FIR] [ContainingClassKey=Foo] constructor(): R|Foo| {
-            super<R|kotlin/Enum<Foo>|>()
+            LAZY_super<R|kotlin/Enum<Foo>|>
         }
 
         @Anno() public final static [RAW_FIR] [ContainingClassKey=Foo] enum entry ResolveMe: R|Foo| = LAZY_EXPRESSION
@@ -53,13 +53,13 @@ COMPILER_REQUIRED_ANNOTATIONS:
 FILE: enumEntry.kt
     public? final? [RAW_FIR] annotation class Anno : R|kotlin/Annotation| {
         public? [RAW_FIR] [ContainingClassKey=Anno] constructor(): R|Anno| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
     public? final? [RAW_FIR] enum class Foo : R|kotlin/Enum<Foo>| {
         private [RAW_FIR] [ContainingClassKey=Foo] constructor(): R|Foo| {
-            super<R|kotlin/Enum<Foo>|>()
+            LAZY_super<R|kotlin/Enum<Foo>|>
         }
 
         @Anno() public final static [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=Foo] enum entry ResolveMe: R|Foo| = LAZY_EXPRESSION
@@ -78,13 +78,13 @@ COMPANION_GENERATION:
 FILE: enumEntry.kt
     public? final? [RAW_FIR] annotation class Anno : R|kotlin/Annotation| {
         public? [RAW_FIR] [ContainingClassKey=Anno] constructor(): R|Anno| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
     public? final? [RAW_FIR] enum class Foo : R|kotlin/Enum<Foo>| {
         private [RAW_FIR] [ContainingClassKey=Foo] constructor(): R|Foo| {
-            super<R|kotlin/Enum<Foo>|>()
+            LAZY_super<R|kotlin/Enum<Foo>|>
         }
 
         @Anno() public final static [COMPANION_GENERATION] [ContainingClassKey=Foo] enum entry ResolveMe: R|Foo| = LAZY_EXPRESSION
@@ -103,13 +103,13 @@ SUPER_TYPES:
 FILE: enumEntry.kt
     public? final? [RAW_FIR] annotation class Anno : R|kotlin/Annotation| {
         public? [RAW_FIR] [ContainingClassKey=Anno] constructor(): R|Anno| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
     public? final? [RAW_FIR] enum class Foo : R|kotlin/Enum<Foo>| {
         private [RAW_FIR] [ContainingClassKey=Foo] constructor(): R|Foo| {
-            super<R|kotlin/Enum<Foo>|>()
+            LAZY_super<R|kotlin/Enum<Foo>|>
         }
 
         @Anno() public final static [SUPER_TYPES] [ContainingClassKey=Foo] enum entry ResolveMe: R|Foo| = LAZY_EXPRESSION
@@ -126,15 +126,15 @@ FILE: enumEntry.kt
 
 TYPES:
 FILE: enumEntry.kt
-    public? final? [COMPILER_REQUIRED_ANNOTATIONS] annotation class Anno : R|kotlin/Annotation| {
-        public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=Anno] constructor(): R|Anno| {
-            super<R|kotlin/Any|>()
+    public? final? [RAW_FIR] annotation class Anno : R|kotlin/Annotation| {
+        public? [RAW_FIR] [ContainingClassKey=Anno] constructor(): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
     public? final? [SUPER_TYPES] enum class Foo : R|kotlin/Enum<Foo>| {
         private [SUPER_TYPES] [ContainingClassKey=Foo] constructor(): R|Foo| {
-            super<R|kotlin/Enum<Foo>|>()
+            LAZY_super<R|kotlin/Enum<Foo>|>
         }
 
         @R|Anno|() public final static [TYPES] [ContainingClassKey=Foo] enum entry ResolveMe: R|Foo| = LAZY_EXPRESSION
@@ -151,15 +151,15 @@ FILE: enumEntry.kt
 
 STATUS:
 FILE: enumEntry.kt
-    public? final? [COMPILER_REQUIRED_ANNOTATIONS] annotation class Anno : R|kotlin/Annotation| {
-        public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=Anno] constructor(): R|Anno| {
-            super<R|kotlin/Any|>()
+    public? final? [RAW_FIR] annotation class Anno : R|kotlin/Annotation| {
+        public? [RAW_FIR] [ContainingClassKey=Anno] constructor(): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
     public final [SUPER_TYPES] enum class Foo : R|kotlin/Enum<Foo>| {
         private [TYPES] [ContainingClassKey=Foo] constructor(): R|Foo| {
-            super<R|kotlin/Enum<Foo>|>()
+            LAZY_super<R|kotlin/Enum<Foo>|>
         }
 
         @R|Anno|() public final static [STATUS] [ContainingClassKey=Foo] enum entry ResolveMe: R|Foo| = LAZY_EXPRESSION
@@ -174,20 +174,57 @@ FILE: enumEntry.kt
 
     }
 
+EXPECT_ACTUAL_MATCHING:
+FILE: enumEntry.kt
+    public? final? [RAW_FIR] annotation class Anno : R|kotlin/Annotation| {
+        public? [RAW_FIR] [ContainingClassKey=Anno] constructor(): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [SUPER_TYPES] enum class Foo : R|kotlin/Enum<Foo>| {
+        private [TYPES] [ContainingClassKey=Foo] constructor(): R|Foo| {
+            LAZY_super<R|kotlin/Enum<Foo>|>
+        }
+
+        @R|Anno|() public final static [EXPECT_ACTUAL_MATCHING] [ContainingClassKey=Foo] enum entry ResolveMe: R|Foo| = object : R|Foo| {
+            private [RAW_FIR] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+                super<R|Foo|>()
+            }
+
+        }
+
+        public final static [TYPES] [ContainingClassKey=Foo] fun values(): R|kotlin/Array<Foo>| {
+        }
+
+        public final static [TYPES] [ContainingClassKey=Foo] fun valueOf([TYPES] value: R|kotlin/String|): R|Foo| {
+        }
+
+        public final static [TYPES] [ContainingClassKey=Foo] val entries: R|kotlin/enums/EnumEntries<Foo>|
+            public [TYPES] get(): R|kotlin/enums/EnumEntries<Foo>|
+
+    }
+
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: enumEntry.kt
-    public? final? [COMPILER_REQUIRED_ANNOTATIONS] annotation class Anno : R|kotlin/Annotation| {
-        public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=Anno] constructor(): R|Anno| {
-            super<R|kotlin/Any|>()
+    public? final? [RAW_FIR] annotation class Anno : R|kotlin/Annotation| {
+        public? [RAW_FIR] [ContainingClassKey=Anno] constructor(): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
     public final [STATUS] enum class Foo : R|kotlin/Enum<Foo>| {
         private [STATUS] [ContainingClassKey=Foo] constructor(): R|Foo| {
-            super<R|kotlin/Enum<Foo>|>()
+            LAZY_super<R|kotlin/Enum<Foo>|>
         }
 
-        @R|Anno|() public final static [ARGUMENTS_OF_ANNOTATIONS] [ContainingClassKey=Foo] enum entry ResolveMe: R|Foo| = LAZY_EXPRESSION
+        @R|Anno|() public final static [ARGUMENTS_OF_ANNOTATIONS] [ContainingClassKey=Foo] enum entry ResolveMe: R|Foo| = object : R|Foo| {
+            private [RAW_FIR] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+                super<R|Foo|>()
+            }
+
+        }
+
         public final static [STATUS] [ContainingClassKey=Foo] fun values(): R|kotlin/Array<Foo>| {
         }
 
@@ -201,15 +238,15 @@ FILE: enumEntry.kt
 
 CONTRACTS:
 FILE: enumEntry.kt
-    public? final? [COMPILER_REQUIRED_ANNOTATIONS] annotation class Anno : R|kotlin/Annotation| {
-        public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=Anno] constructor(): R|Anno| {
-            super<R|kotlin/Any|>()
+    public? final? [RAW_FIR] annotation class Anno : R|kotlin/Annotation| {
+        public? [RAW_FIR] [ContainingClassKey=Anno] constructor(): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
     public final [STATUS] enum class Foo : R|kotlin/Enum<Foo>| {
         private [STATUS] [ContainingClassKey=Foo] constructor(): R|Foo| {
-            super<R|kotlin/Enum<Foo>|>()
+            LAZY_super<R|kotlin/Enum<Foo>|>
         }
 
         @R|Anno|() public final static [CONTRACTS] [ContainingClassKey=Foo] enum entry ResolveMe: R|Foo| = object : R|Foo| {
@@ -232,15 +269,15 @@ FILE: enumEntry.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: enumEntry.kt
-    public? final? [COMPILER_REQUIRED_ANNOTATIONS] annotation class Anno : R|kotlin/Annotation| {
-        public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=Anno] constructor(): R|Anno| {
-            super<R|kotlin/Any|>()
+    public? final? [RAW_FIR] annotation class Anno : R|kotlin/Annotation| {
+        public? [RAW_FIR] [ContainingClassKey=Anno] constructor(): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
     public final [STATUS] enum class Foo : R|kotlin/Enum<Foo>| {
         private [STATUS] [ContainingClassKey=Foo] constructor(): R|Foo| {
-            super<R|kotlin/Enum<Foo>|>()
+            LAZY_super<R|kotlin/Enum<Foo>|>
         }
 
         @R|Anno|() public final static [IMPLICIT_TYPES_BODY_RESOLVE] [ContainingClassKey=Foo] enum entry ResolveMe: R|Foo| = object : R|Foo| {
@@ -265,47 +302,16 @@ ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: enumEntry.kt
     public final [SUPER_TYPES] annotation class Anno : R|kotlin/Annotation| {
         public [STATUS] [ContainingClassKey=Anno] constructor(): R|Anno| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
     public final [STATUS] enum class Foo : R|kotlin/Enum<Foo>| {
         private [STATUS] [ContainingClassKey=Foo] constructor(): R|Foo| {
-            super<R|kotlin/Enum<Foo>|>()
+            LAZY_super<R|kotlin/Enum<Foo>|>
         }
 
         @R|Anno|() public final static [ANNOTATIONS_ARGUMENTS_MAPPING] [ContainingClassKey=Foo] enum entry ResolveMe: R|Foo| = object : R|Foo| {
-            private [RAW_FIR] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
-                super<R|Foo|>()
-            }
-
-        }
-
-        public final static [STATUS] [ContainingClassKey=Foo] fun values(): R|kotlin/Array<Foo>| {
-        }
-
-        public final static [STATUS] [ContainingClassKey=Foo] fun valueOf([STATUS] value: R|kotlin/String|): R|Foo| {
-        }
-
-        public final static [STATUS] [ContainingClassKey=Foo] val entries: R|kotlin/enums/EnumEntries<Foo>|
-            public [STATUS] get(): R|kotlin/enums/EnumEntries<Foo>|
-
-    }
-
-EXPECT_ACTUAL_MATCHING:
-FILE: enumEntry.kt
-    public final [SUPER_TYPES] annotation class Anno : R|kotlin/Annotation| {
-        public [STATUS] [ContainingClassKey=Anno] constructor(): R|Anno| {
-            super<R|kotlin/Any|>()
-        }
-
-    }
-    public final [STATUS] enum class Foo : R|kotlin/Enum<Foo>| {
-        private [STATUS] [ContainingClassKey=Foo] constructor(): R|Foo| {
-            super<R|kotlin/Enum<Foo>|>()
-        }
-
-        @R|Anno|() public final static [EXPECT_ACTUAL_MATCHING] [ContainingClassKey=Foo] enum entry ResolveMe: R|Foo| = object : R|Foo| {
             private [RAW_FIR] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
                 super<R|Foo|>()
             }
@@ -327,13 +333,13 @@ BODY_RESOLVE:
 FILE: enumEntry.kt
     public final [SUPER_TYPES] annotation class Anno : R|kotlin/Annotation| {
         public [STATUS] [ContainingClassKey=Anno] constructor(): R|Anno| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
     public final [STATUS] enum class Foo : R|kotlin/Enum<Foo>| {
         private [STATUS] [ContainingClassKey=Foo] constructor(): R|Foo| {
-            super<R|kotlin/Enum<Foo>|>()
+            LAZY_super<R|kotlin/Enum<Foo>|>
         }
 
         @R|Anno|() public final static [BODY_RESOLVE] [ContainingClassKey=Foo] enum entry ResolveMe: R|Foo| = object : R|Foo| {

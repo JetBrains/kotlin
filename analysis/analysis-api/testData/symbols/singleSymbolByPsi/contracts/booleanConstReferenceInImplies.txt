@@ -30,7 +30,10 @@ KtFunctionSymbol:
   name: booleanConstReferenceInImplies
   origin: SOURCE
   receiverParameter: null
-  returnType: kotlin/Boolean
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Boolean
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []

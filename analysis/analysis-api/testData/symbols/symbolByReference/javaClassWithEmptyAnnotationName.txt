@@ -16,7 +16,10 @@ KtNamedClassOrObjectSymbol:
   name: JavaClass
   origin: JAVA
   superTypes: [
-    kotlin/Any
+    KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Any
   ]
   symbolKind: TOP_LEVEL
   typeParameters: []

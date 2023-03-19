@@ -13,17 +13,9 @@ internal class FirThreadSafeCache<K : Any, V, CONTEXT>(
     private val createValue: (K, CONTEXT) -> V
 ) : FirCache<K, V, CONTEXT>() {
 
-    private val updating: ThreadLocal<Boolean> = ThreadLocal.withInitial { false }
-
     override fun getValue(key: K, context: CONTEXT): V =
         map.getOrPutWithNullableValue(key) {
-            if (updating.get()) error("Recursive update")
-            try {
-                updating.set(true)
-                createValue(it, context)
-            } finally {
-                updating.set(false)
-            }
+            createValue(it, context)
         }
 
     override fun getValueIfComputed(key: K): V? =

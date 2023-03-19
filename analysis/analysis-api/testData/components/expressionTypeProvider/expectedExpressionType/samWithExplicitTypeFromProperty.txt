@@ -1,2 +1,5 @@
 expression: { /* Variable */ }
-expected type: java/lang/Runnable
+expected type: KtUsualClassType:
+  annotationsList: []
+  ownTypeArguments: []
+  type: java/lang/Runnable

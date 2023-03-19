@@ -27,6 +27,15 @@ int LLVMInlineCall(LLVMValueRef call);
 
 void LLVMAddThreadSanitizerPass(LLVMPassManagerRef PM);
 
+/// Control LLVM -time-passes flag.
+void LLVMSetTimePasses(int enabled);
+
+/// Print timing results. Useful in combination with LLVMSetTimePasses.
+void LLVMPrintAllTimersToStdOut();
+
+/// Clear all LLVM timers. Allows avoiding automatic printing on shutdown
+void LLVMClearAllTimers();
+
 # ifdef __cplusplus
 }
 # endif

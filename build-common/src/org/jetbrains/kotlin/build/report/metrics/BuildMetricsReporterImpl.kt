@@ -13,9 +13,11 @@ class BuildMetricsReporterImpl : BuildMetricsReporter, Serializable {
         EnumMap(
             BuildTime::class.java
         )
+    private val myGcPerformance = HashMap<String, GcMetric>()
     private val myBuildTimes = BuildTimes()
     private val myBuildMetrics = BuildPerformanceMetrics()
     private val myBuildAttributes = BuildAttributes()
+    private val myGcMetrics = GcMetrics()
 
     override fun startMeasure(time: BuildTime) {
         if (time in myBuildTimeStartNs) {
@@ -28,6 +30,19 @@ class BuildMetricsReporterImpl : BuildMetricsReporter, Serializable {
         val startNs = myBuildTimeStartNs.remove(time) ?: error("$time finished before it started")
         val durationNs = System.nanoTime() - startNs
         myBuildTimes.addTimeNs(time, durationNs)
+    }
+
+    override fun startGcMetric(name: String, value: GcMetric) {
+        if (name in myGcPerformance) {
+            error("$name was restarted before it finished")
+        }
+        myGcPerformance[name] = value
+    }
+
+    override fun endGcMetric(name: String, value: GcMetric) {
+        val startValue = myGcPerformance.remove(name) ?: error("$name finished before it started")
+        val diff = value - startValue
+        myGcMetrics.add(name, diff)
     }
 
     override fun addTimeMetricNs(time: BuildTime, durationNs: Long) {
@@ -47,6 +62,10 @@ class BuildMetricsReporterImpl : BuildMetricsReporter, Serializable {
 
     }
 
+    override fun addGcMetric(metric: String, value: GcMetric) {
+        myGcMetrics.add(metric, value)
+    }
+
     override fun addAttribute(attribute: BuildAttribute) {
         myBuildAttributes.add(attribute)
     }
@@ -55,12 +74,14 @@ class BuildMetricsReporterImpl : BuildMetricsReporter, Serializable {
         BuildMetrics(
             buildTimes = myBuildTimes,
             buildPerformanceMetrics = myBuildMetrics,
-            buildAttributes = myBuildAttributes
+            buildAttributes = myBuildAttributes,
+            gcMetrics = myGcMetrics
         )
 
     override fun addMetrics(metrics: BuildMetrics) {
         myBuildAttributes.addAll(metrics.buildAttributes)
         myBuildTimes.addAll(metrics.buildTimes)
         myBuildMetrics.addAll(metrics.buildPerformanceMetrics)
+        myGcMetrics.addAll(metrics.gcMetrics)
     }
 }

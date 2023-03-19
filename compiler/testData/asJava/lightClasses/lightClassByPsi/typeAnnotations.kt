@@ -1,3 +1,5 @@
+// IGNORE_PARENTING_CHECK
+
 @Target(AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.TYPE)
 annotation class A0
 @Target(AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.TYPE)

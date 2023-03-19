@@ -58,7 +58,7 @@ public final class klass /* klass*/ {
   private final int x = 2 /* initializer type: int */;
 
   @org.jetbrains.annotations.NotNull()
-  public final X annotatedMethod(@org.jetbrains.annotations.NotNull() P<X, P<X, Y>>, @org.jetbrains.annotations.NotNull() Y[]);//  annotatedMethod(P<X, P<X, Y>>, Y[])
+  public final @A6() X annotatedMethod(@org.jetbrains.annotations.NotNull() @A0() P<@A1() X, P<@A2() @A3() X, @A4() Y>>, @org.jetbrains.annotations.NotNull() @A5() Y[]);//  annotatedMethod(@A0() P<@A1() X, P<@A2() @A3() X, @A4() Y>>, @A5() Y[])
 
   @org.jetbrains.annotations.Nullable()
   public final java.util.List<java.lang.Integer> getY();//  getY()

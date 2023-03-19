@@ -41,6 +41,13 @@ export default [
         plugins: plugins()
     },
     {
+        input: './karma-kotlin-debug-plugin.js',
+        output: {
+            file: 'lib/karma-kotlin-debug-plugin.js',
+            format: 'esm'
+        }
+    },
+    {
         input: './karma-debug-runner.js',
         output: {
             file: 'lib/karma-debug-runner.js',
@@ -90,14 +97,7 @@ export default [
             file: 'lib/mocha-kotlin-reporter.js',
             format: 'cjs'
         }
-    },
-    {
-        input: './detect-correct-browser.js',
-        output: {
-            file: 'lib/detect-correct-browser.js',
-            format: 'esm'
-        }
-    },
+    }
 ]
 
 function plugins() {

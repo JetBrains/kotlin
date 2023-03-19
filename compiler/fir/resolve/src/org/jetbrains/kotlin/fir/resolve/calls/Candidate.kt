@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeVariable
-import org.jetbrains.kotlin.resolve.calls.components.SuspendConversionStrategy
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemError
@@ -40,7 +39,9 @@ class Candidate(
     private val baseSystem: ConstraintStorage,
     override val callInfo: CallInfo,
     val originScope: FirScope?,
-    val isFromCompanionObjectTypeScope: Boolean = false
+    val isFromCompanionObjectTypeScope: Boolean = false,
+    // It's only true if we're in the member scope of smart cast receiver and this particular candidate came from original type
+    val isFromOriginalTypeInPresenceOfSmartCast: Boolean = false,
 ) : AbstractCandidate() {
 
     var systemInitialized: Boolean = false
@@ -63,13 +64,13 @@ class Candidate(
     internal var callableReferenceAdaptation: CallableReferenceAdaptation? = null
         set(value) {
             field = value
-            usesSuspendConversion = value?.suspendConversionStrategy == SuspendConversionStrategy.SUSPEND_CONVERSION
+            usesFunctionConversion = value?.suspendConversionStrategy is CallableReferenceConversionStrategy.CustomConversion
             if (value != null) {
                 numDefaults = value.defaults
             }
         }
 
-    var usesSuspendConversion: Boolean = false
+    var usesFunctionConversion: Boolean = false
 
     var argumentMapping: LinkedHashMap<FirExpression, FirValueParameter>? = null
     var numDefaults: Int = 0

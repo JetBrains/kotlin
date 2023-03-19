@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.types.checker
 
 import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.builtins.StandardNames.FqNames
+import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -152,9 +153,13 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return this as? DynamicType
     }
 
-    override fun FlexibleTypeMarker.asRawType(): RawTypeMarker? {
-        require(this is FlexibleType, this::errorMessage)
-        return this as? RawType
+    override fun KotlinTypeMarker.isRawType(): Boolean {
+        require(this is KotlinType, this::errorMessage)
+        return this is RawType
+    }
+
+    override fun KotlinTypeMarker.convertToNonRaw(): KotlinTypeMarker {
+        error("Is not expected to be called in K1")
     }
 
     override fun FlexibleTypeMarker.upperBound(): SimpleTypeMarker {
@@ -410,7 +415,7 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return KotlinBuiltIns.isUnit(this)
     }
 
-    override fun KotlinTypeMarker.isBuiltinFunctionalTypeOrSubtype(): Boolean {
+    override fun KotlinTypeMarker.isBuiltinFunctionTypeOrSubtype(): Boolean {
         require(this is UnwrappedType, this::errorMessage)
         return isBuiltinFunctionalTypeOrSubtype
     }
@@ -849,32 +854,40 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return this.isFunctionOrKFunctionTypeWithAnySuspendability
     }
 
-    override fun KotlinTypeMarker.isSuspendFunctionTypeOrSubtype(): Boolean {
-        require(this is KotlinType, this::errorMessage)
-        return this.isSuspendFunctionTypeOrSubtype
-    }
-
     override fun KotlinTypeMarker.isExtensionFunctionType(): Boolean {
         require(this is KotlinType, this::errorMessage)
         return this.isBuiltinExtensionFunctionalType
     }
 
-    override fun KotlinTypeMarker.extractArgumentsForFunctionalTypeOrSubtype(): List<KotlinTypeMarker> {
+    override fun KotlinTypeMarker.extractArgumentsForFunctionTypeOrSubtype(): List<KotlinTypeMarker> {
         require(this is KotlinType, this::errorMessage)
         return this.getPureArgumentsForFunctionalTypeOrSubtype()
     }
 
-    override fun KotlinTypeMarker.getFunctionalTypeFromSupertypes(): KotlinTypeMarker {
+    override fun KotlinTypeMarker.getFunctionTypeFromSupertypes(): KotlinTypeMarker {
         require(this is KotlinType)
         return this.extractFunctionalTypeFromSupertypes()
     }
 
-    override fun getFunctionTypeConstructor(parametersNumber: Int, isSuspend: Boolean): TypeConstructorMarker {
-        return getFunctionDescriptor(builtIns, parametersNumber, isSuspend).typeConstructor
+    override fun KotlinTypeMarker.functionTypeKind(): FunctionTypeKind? {
+        require(this is KotlinType)
+        return this.functionTypeKind
     }
 
-    override fun getKFunctionTypeConstructor(parametersNumber: Int, isSuspend: Boolean): TypeConstructorMarker {
-        return getKFunctionDescriptor(builtIns, parametersNumber, isSuspend).typeConstructor
+    override fun getNonReflectFunctionTypeConstructor(parametersNumber: Int, kind: FunctionTypeKind): TypeConstructorMarker {
+        return getFunctionDescriptor(
+            builtIns,
+            parametersNumber,
+            isSuspendFunction = kind.nonReflectKind() == FunctionTypeKind.SuspendFunction
+        ).typeConstructor
+    }
+
+    override fun getReflectFunctionTypeConstructor(parametersNumber: Int, kind: FunctionTypeKind): TypeConstructorMarker {
+        return getKFunctionDescriptor(
+            builtIns,
+            parametersNumber,
+            isSuspendFunction = kind.reflectKind() == FunctionTypeKind.KSuspendFunction
+        ).typeConstructor
     }
 
     override fun createSubstitutorForSuperTypes(baseType: KotlinTypeMarker): TypeSubstitutorMarker? {

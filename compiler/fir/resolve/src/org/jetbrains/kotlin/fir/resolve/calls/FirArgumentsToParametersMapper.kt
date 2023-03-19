@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.utils.isOperator
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildNamedArgumentExpression
-import org.jetbrains.kotlin.fir.isIntersectionOverride
 import org.jetbrains.kotlin.fir.isSubstitutionOrIntersectionOverride
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.defaultParameterResolver
@@ -65,6 +64,7 @@ fun BodyResolveComponents.mapArguments(
     arguments: List<FirExpression>,
     function: FirFunction,
     originScope: FirScope?,
+    callSiteIsOperatorCall: Boolean
 ): ArgumentMapping {
     if (arguments.isEmpty() && function.valueParameters.isEmpty()) {
         return EmptyArgumentMapping
@@ -87,7 +87,8 @@ fun BodyResolveComponents.mapArguments(
 
     // If this is an indexed access set operator, it could have default values or a vararg parameter in the middle.
     // For proper argument mapping, wrap the last one, which is supposed to be the updated value, as a named argument.
-    val isIndexedSetOperator = function is FirSimpleFunction
+    val isIndexedSetOperator = callSiteIsOperatorCall
+            && function is FirSimpleFunction
             && function.isOperator
             && function.name == OperatorNameConventions.SET
             && function.origin !is FirDeclarationOrigin.DynamicScope

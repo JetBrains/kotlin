@@ -8,7 +8,10 @@ KtConstructorSymbol:
   isPrimary: false
   origin: SOURCE
   receiverParameter: null
-  returnType: A
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: A
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -26,7 +29,10 @@ KtConstructorSymbol:
       name: i
       origin: SOURCE
       receiverParameter: null
-      returnType: kotlin/Int
+      returnType: KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
+        type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtSourceModule "Sources of main"
@@ -51,7 +57,10 @@ KtNamedClassOrObjectSymbol:
   name: A
   origin: SOURCE
   superTypes: [
-    kotlin/Any
+    KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Any
   ]
   symbolKind: TOP_LEVEL
   typeParameters: []

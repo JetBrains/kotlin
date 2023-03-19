@@ -60,17 +60,17 @@ fun IrStatement.isInductionVariable(context: CommonBackendContext) =
             origin == context.inductionVariableOrigin &&
             name.asString() == inductionVariableName
 
-internal class InitializerCallReplacer(private val replacementCall: IrCall) : IrElementTransformerVoid() {
+internal class InitializerCallReplacer(private val replacement: IrExpression) : IrElementTransformerVoid() {
     var initializerCall: IrCall? = null
 
-    override fun visitCall(expression: IrCall): IrCall {
+    override fun visitCall(expression: IrCall): IrExpression {
         if (initializerCall != null) {
             throw IllegalStateException(
                 "Multiple initializer calls found. First: ${initializerCall!!.render()}\nSecond: ${expression.render()}"
             )
         }
         initializerCall = expression
-        return replacementCall
+        return replacement
     }
 }
 

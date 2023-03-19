@@ -18,17 +18,23 @@ KtKotlinPropertySymbol:
       annotationsList: []
       origin: SOURCE
       owningCallableSymbol: KtKotlinPropertySymbol(/foo)
-      type: [
-        Anno3()
-          psi: KtAnnotationEntry
-        Anno2()
-          psi: KtAnnotationEntry
-        Anno1()
-          psi: KtAnnotationEntry
-      ] @R|Anno3|() @R|Anno2|() @R|Anno1|()  @R|Anno3|()  SecondTypeAlias
+      type: KtUsualClassType:
+        annotationsList: [
+          Anno3()
+            psi: KtAnnotationEntry
+          Anno2()
+            psi: KtAnnotationEntry
+          Anno1()
+            psi: KtAnnotationEntry
+        ]
+        ownTypeArguments: []
+        type: @R|Anno3|() @R|Anno2|() @R|Anno1|()  @R|Anno3|()  SecondTypeAlias
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
-    returnType: kotlin/Int
+    returnType: KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Int
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
@@ -54,17 +60,23 @@ KtKotlinPropertySymbol:
     annotationsList: []
     origin: SOURCE
     owningCallableSymbol: KtKotlinPropertySymbol(/foo)
-    type: [
-      Anno3()
-        psi: KtAnnotationEntry
-      Anno2()
-        psi: KtAnnotationEntry
-      Anno1()
-        psi: KtAnnotationEntry
-    ] @R|Anno3|() @R|Anno2|() @R|Anno1|()  @R|Anno3|()  SecondTypeAlias
+    type: KtUsualClassType:
+      annotationsList: [
+        Anno3()
+          psi: KtAnnotationEntry
+        Anno2()
+          psi: KtAnnotationEntry
+        Anno1()
+          psi: KtAnnotationEntry
+      ]
+      ownTypeArguments: []
+      type: @R|Anno3|() @R|Anno2|() @R|Anno1|()  @R|Anno3|()  SecondTypeAlias
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
-  returnType: kotlin/Int
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Int
   setter: null
   symbolKind: TOP_LEVEL
   typeParameters: []

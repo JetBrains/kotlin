@@ -13,6 +13,20 @@ import java.util.*
 
 class KotlinJavascriptMetadata(val version: JsMetadataVersion, val moduleName: String, val body: ByteArray)
 
+/**
+ * The version of the format in which the `js.proto` is stored. This version also includes the version of the core protobuf messages
+ * (`metadata.proto`).
+ *
+ * This version must be bumped when:
+ * - Incompatible changes are made in `js.proto`
+ * - Incompatible changes are made in `metadata.proto`
+ * - Incompatible changes are made in JS metadata serialization/deserialization logic
+ *
+ * This version must **NOT** be bumped when:
+ * - Incompatible changes are made in `js-ast.proto`. `js-ast.proto` is and internal format used for incremental compilation caches
+ *
+ * The version bump must obey [org.jetbrains.kotlin.metadata.deserialization.BinaryVersion] rules (See `BinaryVersion` KDoc).
+ */
 class JsMetadataVersion(vararg numbers: Int) : BinaryVersion(*numbers) {
     override fun isCompatibleWithCurrentCompilerVersion(): Boolean =
         this.isCompatibleTo(INSTANCE)

@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.resolve;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
+import com.intellij.openapi.diagnostic.ControlFlowException;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import kotlin.Pair;
@@ -315,81 +317,89 @@ public class DescriptorResolver {
             @NotNull Annotations additionalAnnotations,
             @Nullable InferenceSession inferenceSession
     ) {
-        KotlinType varargElementType = null;
-        KotlinType variableType = type;
-        if (valueParameter.hasModifier(VARARG_KEYWORD)) {
-            varargElementType = type;
-            variableType = getVarargParameterType(type);
-        }
-
-        Annotations valueParameterAnnotations = resolveValueParameterAnnotations(scope, valueParameter, trace, additionalAnnotations);
-
-        KtDestructuringDeclaration destructuringDeclaration = valueParameter.getDestructuringDeclaration();
-
-        Function0<List<VariableDescriptor>> destructuringVariables;
-        if (destructuringDeclaration != null) {
-            if (!languageVersionSettings.supportsFeature(LanguageFeature.DestructuringLambdaParameters)) {
-                trace.report(Errors.UNSUPPORTED_FEATURE.on(valueParameter,
-                                                           TuplesKt.to(LanguageFeature.DestructuringLambdaParameters, languageVersionSettings)));
+        try {
+            KotlinType varargElementType = null;
+            KotlinType variableType = type;
+            if (valueParameter.hasModifier(VARARG_KEYWORD)) {
+                varargElementType = type;
+                variableType = getVarargParameterType(type);
             }
 
-            destructuringVariables = () -> {
-                ReceiverParameterDescriptor dispatchReceiver = owner.getDispatchReceiverParameter();
-                assert dispatchReceiver == null || dispatchReceiver.getContainingDeclaration() instanceof ScriptDescriptor
-                        : "Destructuring declarations are only be parsed for lambdas, and they must not have a dispatch receiver";
-                LexicalScope scopeForDestructuring =
-                        ScopeUtilsKt.createScopeForDestructuring(scope, owner.getExtensionReceiverParameter());
+            Annotations valueParameterAnnotations = resolveValueParameterAnnotations(scope, valueParameter, trace, additionalAnnotations);
 
-                List<VariableDescriptor> result =
-                        destructuringDeclarationResolver.resolveLocalVariablesFromDestructuringDeclaration(
-                                scope,
-                                destructuringDeclaration, new TransientReceiver(type), /* initializer = */ null,
-                                ExpressionTypingContext.newContext(
-                                        trace, scopeForDestructuring, DataFlowInfoFactory.EMPTY, TypeUtils.NO_EXPECTED_TYPE,
-                                        languageVersionSettings, dataFlowValueFactory, inferenceSession
-                                )
-                        );
+            KtDestructuringDeclaration destructuringDeclaration = valueParameter.getDestructuringDeclaration();
 
-                modifiersChecker.withTrace(trace).checkModifiersForDestructuringDeclaration(destructuringDeclaration);
-                return result;
-            };
+            Function0<List<VariableDescriptor>> destructuringVariables;
+            if (destructuringDeclaration != null) {
+                if (!languageVersionSettings.supportsFeature(LanguageFeature.DestructuringLambdaParameters)) {
+                    trace.report(Errors.UNSUPPORTED_FEATURE.on(valueParameter,
+                                                               TuplesKt.to(LanguageFeature.DestructuringLambdaParameters, languageVersionSettings)));
+                }
+
+                destructuringVariables = () -> {
+                    ReceiverParameterDescriptor dispatchReceiver = owner.getDispatchReceiverParameter();
+                    assert dispatchReceiver == null || dispatchReceiver.getContainingDeclaration() instanceof ScriptDescriptor
+                            : "Destructuring declarations are only be parsed for lambdas, and they must not have a dispatch receiver";
+                    LexicalScope scopeForDestructuring =
+                            ScopeUtilsKt.createScopeForDestructuring(scope, owner.getExtensionReceiverParameter());
+
+                    List<VariableDescriptor> result =
+                            destructuringDeclarationResolver.resolveLocalVariablesFromDestructuringDeclaration(
+                                    scope,
+                                    destructuringDeclaration, new TransientReceiver(type), /* initializer = */ null,
+                                    ExpressionTypingContext.newContext(
+                                            trace, scopeForDestructuring, DataFlowInfoFactory.EMPTY, TypeUtils.NO_EXPECTED_TYPE,
+                                            languageVersionSettings, dataFlowValueFactory, inferenceSession
+                                    )
+                            );
+
+                    modifiersChecker.withTrace(trace).checkModifiersForDestructuringDeclaration(destructuringDeclaration);
+                    return result;
+                };
+            }
+            else {
+                destructuringVariables = null;
+            }
+
+            Name parameterName;
+
+            if (destructuringDeclaration == null) {
+                // NB: val/var for parameter is only allowed in primary constructors where single underscore names are still prohibited.
+                // The problem with val/var is that when lazy resolve try to find their descriptor, it searches through the member scope
+                // of containing class where, it can not find a descriptor with special name.
+                // Thus, to preserve behavior, we don't use a special name for val/var.
+                parameterName = !valueParameter.hasValOrVar() && UnderscoreUtilKt.isSingleUnderscore(valueParameter)
+                                ? Name.special("<anonymous parameter " + index + ">")
+                                : KtPsiUtil.safeName(valueParameter.getName());
+            }
+            else {
+                parameterName = Name.special("<name for destructuring parameter " + index + ">");
+            }
+
+            ValueParameterDescriptorImpl valueParameterDescriptor = ValueParameterDescriptorImpl.createWithDestructuringDeclarations(
+                    owner,
+                    null,
+                    index,
+                    valueParameterAnnotations,
+                    parameterName,
+                    variableType,
+                    valueParameter.hasDefaultValue(),
+                    valueParameter.hasModifier(CROSSINLINE_KEYWORD),
+                    valueParameter.hasModifier(NOINLINE_KEYWORD),
+                    varargElementType,
+                    KotlinSourceElementKt.toSourceElement(valueParameter),
+                    destructuringVariables
+            );
+
+            trace.record(BindingContext.VALUE_PARAMETER, valueParameter, valueParameterDescriptor);
+            return valueParameterDescriptor;
         }
-        else {
-            destructuringVariables = null;
+        catch (Exception e) {
+            if (e instanceof ControlFlowException) {
+                throw new IllegalStateException("Method should be run under nonCancelableSection", e);
+            }
+            throw e;
         }
-
-        Name parameterName;
-
-        if (destructuringDeclaration == null) {
-            // NB: val/var for parameter is only allowed in primary constructors where single underscore names are still prohibited.
-            // The problem with val/var is that when lazy resolve try to find their descriptor, it searches through the member scope
-            // of containing class where, it can not find a descriptor with special name.
-            // Thus, to preserve behavior, we don't use a special name for val/var.
-            parameterName = !valueParameter.hasValOrVar() && UnderscoreUtilKt.isSingleUnderscore(valueParameter)
-                            ? Name.special("<anonymous parameter " + index + ">")
-                            : KtPsiUtil.safeName(valueParameter.getName());
-        }
-        else {
-            parameterName = Name.special("<name for destructuring parameter " + index + ">");
-        }
-
-        ValueParameterDescriptorImpl valueParameterDescriptor = ValueParameterDescriptorImpl.createWithDestructuringDeclarations(
-                owner,
-                null,
-                index,
-                valueParameterAnnotations,
-                parameterName,
-                variableType,
-                valueParameter.hasDefaultValue(),
-                valueParameter.hasModifier(CROSSINLINE_KEYWORD),
-                valueParameter.hasModifier(NOINLINE_KEYWORD),
-                varargElementType,
-                KotlinSourceElementKt.toSourceElement(valueParameter),
-                destructuringVariables
-        );
-
-        trace.record(BindingContext.VALUE_PARAMETER, valueParameter, valueParameterDescriptor);
-        return valueParameterDescriptor;
     }
 
     @NotNull
@@ -913,148 +923,150 @@ public class DescriptorResolver {
                 annotationSplitter.getOtherAnnotations())
         );
 
-        PropertyDescriptorImpl propertyDescriptor = PropertyDescriptorImpl.create(
-                container,
-                propertyAnnotations,
-                modality,
-                visibility,
-                isVar,
-                KtPsiUtil.safeName(variableDeclaration.getName()),
-                CallableMemberDescriptor.Kind.DECLARATION,
-                KotlinSourceElementKt.toSourceElement(variableDeclaration),
-                modifierList != null && modifierList.hasModifier(KtTokens.LATEINIT_KEYWORD),
-                modifierList != null && modifierList.hasModifier(KtTokens.CONST_KEYWORD),
-                modifierList != null && PsiUtilsKt.hasExpectModifier(modifierList) && container instanceof PackageFragmentDescriptor ||
-                container instanceof ClassDescriptor && ((ClassDescriptor) container).isExpect(),
-                modifierList != null && PsiUtilsKt.hasActualModifier(modifierList),
-                modifierList != null && modifierList.hasModifier(KtTokens.EXTERNAL_KEYWORD),
-                propertyInfo.getHasDelegate()
-        );
+        return ProgressManager.getInstance().computeInNonCancelableSection(() -> {
+            PropertyDescriptorImpl propertyDescriptor = PropertyDescriptorImpl.create(
+                    container,
+                    propertyAnnotations,
+                    modality,
+                    visibility,
+                    isVar,
+                    KtPsiUtil.safeName(variableDeclaration.getName()),
+                    CallableMemberDescriptor.Kind.DECLARATION,
+                    KotlinSourceElementKt.toSourceElement(variableDeclaration),
+                    modifierList != null && modifierList.hasModifier(KtTokens.LATEINIT_KEYWORD),
+                    modifierList != null && modifierList.hasModifier(KtTokens.CONST_KEYWORD),
+                    modifierList != null && PsiUtilsKt.hasExpectModifier(modifierList) && container instanceof PackageFragmentDescriptor ||
+                    container instanceof ClassDescriptor && ((ClassDescriptor) container).isExpect(),
+                    modifierList != null && PsiUtilsKt.hasActualModifier(modifierList),
+                    modifierList != null && modifierList.hasModifier(KtTokens.EXTERNAL_KEYWORD),
+                    propertyInfo.getHasDelegate()
+            );
 
-        List<TypeParameterDescriptorImpl> typeParameterDescriptors;
-        LexicalScope scopeForDeclarationResolutionWithTypeParameters;
-        LexicalScope scopeForInitializerResolutionWithTypeParameters;
-        KotlinType receiverType = null;
+            List<TypeParameterDescriptorImpl> typeParameterDescriptors;
+            LexicalScope scopeForDeclarationResolutionWithTypeParameters;
+            LexicalScope scopeForInitializerResolutionWithTypeParameters;
+            KotlinType receiverType = null;
 
-        {
-            List<KtTypeParameter> typeParameters = variableDeclaration.getTypeParameters();
-            if (typeParameters.isEmpty()) {
-                scopeForDeclarationResolutionWithTypeParameters = scopeForDeclarationResolution;
-                scopeForInitializerResolutionWithTypeParameters = scopeForInitializerResolution;
-                typeParameterDescriptors = Collections.emptyList();
-            }
-            else {
-                LexicalWritableScope writableScopeForDeclarationResolution = new LexicalWritableScope(
-                        scopeForDeclarationResolution, container, false, new TraceBasedLocalRedeclarationChecker(trace, overloadChecker),
-                        LexicalScopeKind.PROPERTY_HEADER);
-                LexicalWritableScope writableScopeForInitializerResolution = new LexicalWritableScope(
-                        scopeForInitializerResolution, container, false, LocalRedeclarationChecker.DO_NOTHING.INSTANCE,
-                        LexicalScopeKind.PROPERTY_HEADER);
-                typeParameterDescriptors = resolveTypeParametersForDescriptor(
-                        propertyDescriptor,
-                        scopeForDeclarationResolution, typeParameters, trace);
-                for (TypeParameterDescriptor descriptor : typeParameterDescriptors) {
-                    writableScopeForDeclarationResolution.addClassifierDescriptor(descriptor);
-                    writableScopeForInitializerResolution.addClassifierDescriptor(descriptor);
+            {
+                List<KtTypeParameter> typeParameters = variableDeclaration.getTypeParameters();
+                if (typeParameters.isEmpty()) {
+                    scopeForDeclarationResolutionWithTypeParameters = scopeForDeclarationResolution;
+                    scopeForInitializerResolutionWithTypeParameters = scopeForInitializerResolution;
+                    typeParameterDescriptors = Collections.emptyList();
                 }
-                writableScopeForDeclarationResolution.freeze();
-                writableScopeForInitializerResolution.freeze();
-                resolveGenericBounds(variableDeclaration, propertyDescriptor, writableScopeForDeclarationResolution, typeParameterDescriptors, trace);
-                scopeForDeclarationResolutionWithTypeParameters = writableScopeForDeclarationResolution;
-                scopeForInitializerResolutionWithTypeParameters = writableScopeForInitializerResolution;
+                else {
+                    LexicalWritableScope writableScopeForDeclarationResolution = new LexicalWritableScope(
+                            scopeForDeclarationResolution, container, false, new TraceBasedLocalRedeclarationChecker(trace, overloadChecker),
+                            LexicalScopeKind.PROPERTY_HEADER);
+                    LexicalWritableScope writableScopeForInitializerResolution = new LexicalWritableScope(
+                            scopeForInitializerResolution, container, false, LocalRedeclarationChecker.DO_NOTHING.INSTANCE,
+                            LexicalScopeKind.PROPERTY_HEADER);
+                    typeParameterDescriptors = resolveTypeParametersForDescriptor(
+                            propertyDescriptor,
+                            scopeForDeclarationResolution, typeParameters, trace);
+                    for (TypeParameterDescriptor descriptor : typeParameterDescriptors) {
+                        writableScopeForDeclarationResolution.addClassifierDescriptor(descriptor);
+                        writableScopeForInitializerResolution.addClassifierDescriptor(descriptor);
+                    }
+                    writableScopeForDeclarationResolution.freeze();
+                    writableScopeForInitializerResolution.freeze();
+                    resolveGenericBounds(variableDeclaration, propertyDescriptor, writableScopeForDeclarationResolution, typeParameterDescriptors, trace);
+                    scopeForDeclarationResolutionWithTypeParameters = writableScopeForDeclarationResolution;
+                    scopeForInitializerResolutionWithTypeParameters = writableScopeForInitializerResolution;
+                }
             }
-        }
 
-        KtTypeReference receiverTypeRef = variableDeclaration.getReceiverTypeReference();
-        ReceiverParameterDescriptor receiverDescriptor = null;
-        if (receiverTypeRef != null) {
-            receiverType = typeResolver.resolveType(scopeForDeclarationResolutionWithTypeParameters, receiverTypeRef, trace, true);
-            AnnotationSplitter splitter = new AnnotationSplitter(storageManager, receiverType.getAnnotations(), EnumSet.of(RECEIVER));
-            receiverDescriptor = DescriptorFactory.createExtensionReceiverParameterForCallable(
-                    propertyDescriptor, receiverType, splitter.getAnnotationsForTarget(RECEIVER)
-            );
-        }
-
-        List<KtContextReceiver> contextReceivers = variableDeclaration.getContextReceivers();
-        List<ReceiverParameterDescriptor> contextReceiverDescriptors = IntStream.range(0, contextReceivers.size()).mapToObj(index -> {
-            KtContextReceiver contextReceiver = contextReceivers.get(index);
-            KtTypeReference typeReference = contextReceiver.typeReference();
-            if (typeReference == null) {
-                return null;
-            }
-            KotlinType type = typeResolver.resolveType(scopeForDeclarationResolutionWithTypeParameters, typeReference, trace, true);
-            AnnotationSplitter splitter = new AnnotationSplitter(storageManager, type.getAnnotations(), EnumSet.of(RECEIVER));
-            return DescriptorFactory.createContextReceiverParameterForCallable(
-                    propertyDescriptor, type, contextReceiver.labelNameAsName(), splitter.getAnnotationsForTarget(RECEIVER), index
-            );
-        }).collect(Collectors.toList());
-
-        if (languageVersionSettings.supportsFeature(LanguageFeature.ContextReceivers)) {
-            Multimap<String, ReceiverParameterDescriptor> nameToReceiverMap = HashMultimap.create();
+            KtTypeReference receiverTypeRef = variableDeclaration.getReceiverTypeReference();
+            ReceiverParameterDescriptor receiverDescriptor = null;
             if (receiverTypeRef != null) {
-                String receiverName = receiverTypeRef.nameForReceiverLabel();
-                if (receiverName != null) {
-                    nameToReceiverMap.put(receiverName, receiverDescriptor);
-                }
+                receiverType = typeResolver.resolveType(scopeForDeclarationResolutionWithTypeParameters, receiverTypeRef, trace, true);
+                AnnotationSplitter splitter = new AnnotationSplitter(storageManager, receiverType.getAnnotations(), EnumSet.of(RECEIVER));
+                receiverDescriptor = DescriptorFactory.createExtensionReceiverParameterForCallable(
+                        propertyDescriptor, receiverType, splitter.getAnnotationsForTarget(RECEIVER)
+                );
             }
-            for (int i = 0; i < contextReceivers.size(); i++) {
-                String contextReceiverName = contextReceivers.get(i).name();
-                if (contextReceiverName != null) {
-                    nameToReceiverMap.put(contextReceiverName, contextReceiverDescriptors.get(i));
+
+            List<KtContextReceiver> contextReceivers = variableDeclaration.getContextReceivers();
+            List<ReceiverParameterDescriptor> contextReceiverDescriptors = IntStream.range(0, contextReceivers.size()).mapToObj(index -> {
+                KtContextReceiver contextReceiver = contextReceivers.get(index);
+                KtTypeReference typeReference = contextReceiver.typeReference();
+                if (typeReference == null) {
+                    return null;
                 }
+                KotlinType type = typeResolver.resolveType(scopeForDeclarationResolutionWithTypeParameters, typeReference, trace, true);
+                AnnotationSplitter splitter = new AnnotationSplitter(storageManager, type.getAnnotations(), EnumSet.of(RECEIVER));
+                return DescriptorFactory.createContextReceiverParameterForCallable(
+                        propertyDescriptor, type, contextReceiver.labelNameAsName(), splitter.getAnnotationsForTarget(RECEIVER), index
+                );
+            }).collect(Collectors.toList());
+
+            if (languageVersionSettings.supportsFeature(LanguageFeature.ContextReceivers)) {
+                Multimap<String, ReceiverParameterDescriptor> nameToReceiverMap = HashMultimap.create();
+                if (receiverTypeRef != null) {
+                    String receiverName = receiverTypeRef.nameForReceiverLabel();
+                    if (receiverName != null) {
+                        nameToReceiverMap.put(receiverName, receiverDescriptor);
+                    }
+                }
+                for (int i = 0; i < contextReceivers.size(); i++) {
+                    String contextReceiverName = contextReceivers.get(i).name();
+                    if (contextReceiverName != null) {
+                        nameToReceiverMap.put(contextReceiverName, contextReceiverDescriptors.get(i));
+                    }
+                }
+                trace.record(DESCRIPTOR_TO_CONTEXT_RECEIVER_MAP, propertyDescriptor, nameToReceiverMap);
             }
-            trace.record(DESCRIPTOR_TO_CONTEXT_RECEIVER_MAP, propertyDescriptor, nameToReceiverMap);
-        }
 
-        LexicalScope scopeForInitializer = ScopeUtils.makeScopeForPropertyInitializer(scopeForInitializerResolutionWithTypeParameters, propertyDescriptor);
-        KotlinType propertyType = propertyInfo.getVariableType();
-        KotlinType typeIfKnown = propertyType != null ? propertyType : variableTypeAndInitializerResolver.resolveTypeNullable(
-                propertyDescriptor, scopeForInitializer,
-                variableDeclaration, dataFlowInfo, inferenceSession,
-                trace, /* local = */ false
-        );
+            LexicalScope scopeForInitializer = ScopeUtils.makeScopeForPropertyInitializer(scopeForInitializerResolutionWithTypeParameters, propertyDescriptor);
+            KotlinType propertyType = propertyInfo.getVariableType();
+            KotlinType typeIfKnown = propertyType != null ? propertyType : variableTypeAndInitializerResolver.resolveTypeNullable(
+                    propertyDescriptor, scopeForInitializer,
+                    variableDeclaration, dataFlowInfo, inferenceSession,
+                    trace, /* local = */ false
+            );
 
-        PropertyGetterDescriptorImpl getter = resolvePropertyGetterDescriptor(
-                scopeForDeclarationResolutionWithTypeParameters,
-                variableDeclaration,
-                propertyDescriptor,
-                annotationSplitter,
-                trace,
-                typeIfKnown,
-                propertyInfo.getPropertyGetter(),
-                propertyInfo.getHasDelegate(),
-                inferenceSession
-        );
+            PropertyGetterDescriptorImpl getter = resolvePropertyGetterDescriptor(
+                    scopeForDeclarationResolutionWithTypeParameters,
+                    variableDeclaration,
+                    propertyDescriptor,
+                    annotationSplitter,
+                    trace,
+                    typeIfKnown,
+                    propertyInfo.getPropertyGetter(),
+                    propertyInfo.getHasDelegate(),
+                    inferenceSession
+            );
 
-        KotlinType type = typeIfKnown != null ? typeIfKnown : getter.getReturnType();
+            KotlinType type = typeIfKnown != null ? typeIfKnown : getter.getReturnType();
 
-        assert type != null : "At least getter type must be initialized via resolvePropertyGetterDescriptor";
+            assert type != null : "At least getter type must be initialized via resolvePropertyGetterDescriptor";
 
-        variableTypeAndInitializerResolver.setConstantForVariableIfNeeded(
-                propertyDescriptor, scopeForInitializer, variableDeclaration, dataFlowInfo, type, inferenceSession, trace
-        );
+            variableTypeAndInitializerResolver.setConstantForVariableIfNeeded(
+                    propertyDescriptor, scopeForInitializer, variableDeclaration, dataFlowInfo, type, inferenceSession, trace
+            );
 
-        propertyDescriptor.setType(type, typeParameterDescriptors, getDispatchReceiverParameterIfNeeded(container), receiverDescriptor,
-                                   contextReceiverDescriptors);
+            propertyDescriptor.setType(type, typeParameterDescriptors, getDispatchReceiverParameterIfNeeded(container), receiverDescriptor,
+                                       contextReceiverDescriptors);
 
-        PropertySetterDescriptor setter = resolvePropertySetterDescriptor(
-                scopeForDeclarationResolutionWithTypeParameters,
-                variableDeclaration,
-                propertyDescriptor,
-                annotationSplitter,
-                trace,
-                propertyInfo.getPropertySetter(),
-                propertyInfo.getHasDelegate(),
-                inferenceSession
-        );
+            PropertySetterDescriptor setter = resolvePropertySetterDescriptor(
+                    scopeForDeclarationResolutionWithTypeParameters,
+                    variableDeclaration,
+                    propertyDescriptor,
+                    annotationSplitter,
+                    trace,
+                    propertyInfo.getPropertySetter(),
+                    propertyInfo.getHasDelegate(),
+                    inferenceSession
+            );
 
-        propertyDescriptor.initialize(
-                getter, setter,
-                new FieldDescriptorImpl(annotationSplitter.getAnnotationsForTarget(FIELD), propertyDescriptor),
-                new FieldDescriptorImpl(annotationSplitter.getAnnotationsForTarget(PROPERTY_DELEGATE_FIELD), propertyDescriptor)
-        );
-        trace.record(BindingContext.VARIABLE, variableDeclaration, propertyDescriptor);
-        return propertyDescriptor;
+            propertyDescriptor.initialize(
+                    getter, setter,
+                    new FieldDescriptorImpl(annotationSplitter.getAnnotationsForTarget(FIELD), propertyDescriptor),
+                    new FieldDescriptorImpl(annotationSplitter.getAnnotationsForTarget(PROPERTY_DELEGATE_FIELD), propertyDescriptor)
+            );
+            trace.record(BindingContext.VARIABLE, variableDeclaration, propertyDescriptor);
+            return propertyDescriptor;
+        });
     }
 
     @NotNull

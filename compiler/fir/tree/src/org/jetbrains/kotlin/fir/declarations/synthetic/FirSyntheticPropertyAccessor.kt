@@ -92,78 +92,86 @@ class FirSyntheticPropertyAccessor(
     }
 
     override fun replaceBody(newBody: FirBlock?) {
-        throw AssertionError("Transformation of synthetic property accessor isn't supported")
+        notSupported()
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirPropertyAccessorImpl {
-        throw AssertionError("Transformation of synthetic property accessor isn't supported")
+        notSupported()
     }
 
     override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirPropertyAccessorImpl {
-        throw AssertionError("Transformation of synthetic property accessor isn't supported")
+        notSupported()
     }
 
     override fun <D> transformReceiverParameter(transformer: FirTransformer<D>, data: D): FirPropertyAccessorImpl {
-        throw AssertionError("Transformation of synthetic property accessor isn't supported")
+        notSupported()
     }
 
     override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirPropertyAccessorImpl {
-        throw AssertionError("Transformation of synthetic property accessor isn't supported")
+        notSupported()
     }
 
     override fun <D> transformContractDescription(transformer: FirTransformer<D>, data: D): FirPropertyAccessorImpl {
-        throw AssertionError("Transformation of synthetic property accessor isn't supported")
+        notSupported()
     }
 
     override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirPropertyAccessorImpl {
-        throw AssertionError("Transformation of synthetic property accessor isn't supported")
+        notSupported()
     }
 
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirPropertyAccessor {
-        throw AssertionError("Transformation of synthetic property accessor isn't supported")
+        notSupported()
     }
 
     override fun <D> transformBody(transformer: FirTransformer<D>, data: D): FirPropertyAccessor {
-        throw AssertionError("Transformation of synthetic property accessor isn't supported")
+        notSupported()
     }
 
     override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirPropertyAccessor {
-        throw AssertionError("Transformation of synthetic property accessor isn't supported")
+        notSupported()
     }
 
     override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
-        throw AssertionError("Mutation of synthetic property accessor isn't supported")
+        notSupported()
     }
 
     override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef) {
-        throw AssertionError("Mutation of synthetic property accessor isn't supported")
+        notSupported()
     }
 
     override fun replaceReceiverParameter(newReceiverParameter: FirReceiverParameter?) {
-        throw AssertionError("Mutation of synthetic property accessor isn't supported")
+        notSupported()
     }
 
     override fun replaceDeprecationsProvider(newDeprecationsProvider: DeprecationsProvider) {
-        throw AssertionError("Mutation of synthetic property accessor isn't supported")
+        notSupported()
     }
 
     override fun replaceValueParameters(newValueParameters: List<FirValueParameter>) {
-        throw AssertionError("Mutation of synthetic property accessor isn't supported")
+        notSupported()
     }
 
     override fun replaceContractDescription(newContractDescription: FirContractDescription) {
-        throw AssertionError("Mutation of synthetic property accessor isn't supported")
+        notSupported()
     }
 
     override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {
-        throw AssertionError("Mutation of synthetic property accessor isn't supported")
+        notSupported()
     }
 
     override fun replaceContextReceivers(newContextReceivers: List<FirContextReceiver>) {
-        throw AssertionError("Mutation of synthetic property accessor isn't supported")
+        notSupported()
     }
 
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
-        throw AssertionError("Mutation of synthetic property accessor isn't supported")
+        notSupported()
+    }
+
+    override fun replaceStatus(newStatus: FirDeclarationStatus) {
+        notSupported()
+    }
+
+    private fun notSupported(): Nothing {
+        error("Mutation of synthetic property accessor isn't supported")
     }
 }

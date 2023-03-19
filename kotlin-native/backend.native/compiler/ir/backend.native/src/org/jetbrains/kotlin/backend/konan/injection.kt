@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.frontend.di.configureModule
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.konan.platform.NativePlatformAnalyzerServices
+import org.jetbrains.kotlin.resolve.lazy.BasicAbsentDescriptorHandler
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
@@ -29,7 +30,10 @@ fun createTopDownAnalyzerProviderForKonan(
         initContainer: StorageComponentContainer.() -> Unit
 ): ComponentProvider {
     return createContainer("TopDownAnalyzerForKonan", NativePlatformAnalyzerServices) {
-        configureModule(moduleContext, NativePlatforms.unspecifiedNativePlatform, NativePlatformAnalyzerServices, bindingTrace, languageVersionSettings)
+        configureModule(moduleContext, NativePlatforms.unspecifiedNativePlatform, NativePlatformAnalyzerServices, bindingTrace,
+                languageVersionSettings,
+                optimizingOptions = null,
+                absentDescriptorHandlerClass = BasicAbsentDescriptorHandler::class.java)
 
         useInstance(declarationProviderFactory)
         useImpl<AnnotationResolverImpl>()

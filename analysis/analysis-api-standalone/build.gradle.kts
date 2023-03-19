@@ -10,7 +10,6 @@ kotlin {
 dependencies {
     implementation(intellijCore())
     implementation(project(":compiler:psi"))
-    implementation(project(":compiler:cli"))
     api(project(":analysis:analysis-api"))
     api(project(":analysis:analysis-api-providers"))
     api(project(":analysis:project-structure"))
@@ -19,7 +18,6 @@ dependencies {
     api(project(":analysis:symbol-light-classes"))
     api(project(":analysis:decompiled:light-classes-for-decompiled"))
     api(project(":analysis:analysis-api-standalone:analysis-api-standalone-base"))
-
     testApi(projectTests(":analysis:analysis-test-framework"))
     testApi(projectTests(":analysis:analysis-api-impl-base"))
     testApi(projectTests(":analysis:analysis-api-fir"))

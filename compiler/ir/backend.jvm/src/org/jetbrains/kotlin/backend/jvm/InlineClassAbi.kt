@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
+import org.jetbrains.kotlin.backend.jvm.ir.isValueClassType
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.state.InfoForMangling
 import org.jetbrains.kotlin.codegen.state.collectFunctionSignatureForManglingSuffix
@@ -107,7 +108,7 @@ object InlineClassAbi {
             // TODO: Move suspend function view creation before JvmInlineClassLowering.
             if (addContinuation)
                 valueParameters.map { it.asInfoForMangling() } +
-                        InfoForMangling(FqNameUnsafe("kotlin.coroutines.Continuation"), isInline = false, isNullable = false)
+                        InfoForMangling(FqNameUnsafe("kotlin.coroutines.Continuation"), isValue = false, isNullable = false)
             else
                 valueParameters.map { it.asInfoForMangling() },
             returnType?.asInfoForMangling()
@@ -116,7 +117,7 @@ object InlineClassAbi {
     private fun IrType.asInfoForMangling(): InfoForMangling =
         InfoForMangling(
             erasedUpperBound.fqNameWhenAvailable!!.toUnsafe(),
-            isInline = isInlineClassType(),
+            isValue = isValueClassType(),
             isNullable = isNullable()
         )
 

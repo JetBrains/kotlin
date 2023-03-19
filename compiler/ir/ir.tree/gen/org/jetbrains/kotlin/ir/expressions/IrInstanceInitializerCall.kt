@@ -13,10 +13,11 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
  * A leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.instanceInitializerCall
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.instanceInitializerCall]
  */
 abstract class IrInstanceInitializerCall : IrExpression() {
-    abstract val classSymbol: IrClassSymbol
+    abstract var classSymbol: IrClassSymbol
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitInstanceInitializerCall(this, data)

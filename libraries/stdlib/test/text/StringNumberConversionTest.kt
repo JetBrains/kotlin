@@ -233,17 +233,16 @@ class StringNumberConversionTest {
             assertFailsOrNull("   ")
         }
 
-        @Suppress("SIGNED_CONSTANT_CONVERTED_TO_UNSIGNED")
         compareConversionWithRadix(String::toUInt, String::toUIntOrNull) {
             assertProduces(10, "0", 0u)
             assertProduces(10, "473", 473u)
             assertProduces(10, "+42", 42u)
             assertProduces(10, "2147483647", 2147483647u)
 
-            assertProduces(16, "FF", 255)
+            assertProduces(16, "FF", 255u)
             assertProduces(16, "ffFFff01", 0u - 255u)
-            assertProduces(2, "1100110", 102)
-            assertProduces(27, "Kona", 411787)
+            assertProduces(2, "1100110", 102u)
+            assertProduces(27, "Kona", 411787u)
 
             assertFailsOrNull(10, "-0")
             assertFailsOrNull(10, "42949672940")

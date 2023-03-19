@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: WASM
 // MODULE: lib
 // FILE: lib.kt
 interface I {

@@ -297,7 +297,7 @@ object CheckDslScopeViolation : ResolutionStage() {
         // ```
         // `useX()` is a call to `invoke` with `useX` as the dispatch receiver. In the FIR tree, extension receiver is represented as an
         // implicit `this` expression passed as the first argument.
-        if (candidate.dispatchReceiverValue?.type?.fullyExpandedType(context.session)?.isBuiltinFunctionalType(context.session) == true &&
+        if (candidate.dispatchReceiverValue?.type?.fullyExpandedType(context.session)?.isSomeFunctionType(context.session) == true &&
             (candidate.symbol as? FirNamedFunctionSymbol)?.name == OperatorNameConventions.INVOKE
         ) {
             val firstArg = candidate.argumentMapping?.keys?.firstOrNull() as? FirThisReceiverExpression ?: return
@@ -424,8 +424,12 @@ internal object MapArguments : ResolutionStage() {
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
         val symbol = candidate.symbol as? FirFunctionSymbol<*> ?: return sink.reportDiagnostic(HiddenCandidate)
         val function = symbol.fir
-
-        val mapping = context.bodyResolveComponents.mapArguments(callInfo.arguments, function, candidate.originScope)
+        val mapping = context.bodyResolveComponents.mapArguments(
+            callInfo.arguments,
+            function,
+            candidate.originScope,
+            callSiteIsOperatorCall = (callInfo.callSite as? FirFunctionCall)?.origin == FirFunctionCallOrigin.Operator
+        )
         candidate.argumentMapping = mapping.toArgumentToParameterMapping()
         candidate.numDefaults = mapping.numDefaults()
 
@@ -593,7 +597,10 @@ internal object CheckIncompatibleTypeVariableUpperBounds : ResolutionStage() {
                         upperTypes as List<ConeKotlinType>,
                         emptyIntersectionTypeInfo.casingTypes.toList() as List<ConeKotlinType>,
                         variableWithConstraints.typeVariable as ConeTypeVariable,
-                        emptyIntersectionTypeInfo.kind
+                        emptyIntersectionTypeInfo.kind,
+                        isError = context.session.languageVersionSettings.supportsFeature(
+                            LanguageFeature.ForbidInferringTypeVariablesIntoEmptyIntersection
+                        )
                     )
                 )
             }

@@ -15,7 +15,8 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
  * A leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.blockBody
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.blockBody]
  */
 abstract class IrBlockBody : IrBody(), IrStatementContainer {
     abstract val factory: IrFactory

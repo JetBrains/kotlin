@@ -18,7 +18,8 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
  * A leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.valueParameter
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.valueParameter]
  */
 abstract class IrValueParameter : IrDeclarationBase(), IrValueDeclaration {
     @ObsoleteDescriptorBasedAPI
@@ -26,15 +27,15 @@ abstract class IrValueParameter : IrDeclarationBase(), IrValueDeclaration {
 
     abstract override val symbol: IrValueParameterSymbol
 
-    abstract val index: Int
+    abstract var index: Int
 
     abstract var varargElementType: IrType?
 
-    abstract val isCrossinline: Boolean
+    abstract var isCrossinline: Boolean
 
-    abstract val isNoinline: Boolean
+    abstract var isNoinline: Boolean
 
-    abstract val isHidden: Boolean
+    abstract var isHidden: Boolean
 
     abstract var defaultValue: IrExpressionBody?
 

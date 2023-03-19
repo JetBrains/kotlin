@@ -9,19 +9,24 @@ import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.checkDeclarationParents
 import org.jetbrains.kotlin.backend.common.lower.*
+import org.jetbrains.kotlin.backend.common.lower.inline.*
 import org.jetbrains.kotlin.backend.common.lower.loops.forLoopsPhase
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.jvm.ir.constantValue
 import org.jetbrains.kotlin.backend.jvm.ir.shouldContainSuspendMarkers
 import org.jetbrains.kotlin.backend.jvm.lower.*
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.util.PatchDeclarationParentsVisitor
 import org.jetbrains.kotlin.ir.util.isAnonymousObject
 import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.resolveFakeOverride
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -77,7 +82,7 @@ private val validateIrAfterLowering = makeCustomPhase(
 )
 
 // TODO make all lambda-related stuff work with IrFunctionExpression and drop this phase
-private val provisionalFunctionExpressionPhase = makeIrFilePhase<CommonBackendContext>(
+private val provisionalFunctionExpressionPhase = makeIrModulePhase<CommonBackendContext>(
     { ProvisionalFunctionExpressionLowering() },
     name = "FunctionExpression",
     description = "Transform IrFunctionExpression to a local function reference"
@@ -90,7 +95,12 @@ private val arrayConstructorPhase = makeIrFilePhase(
 )
 
 internal val expectDeclarationsRemovingPhase = makeIrModulePhase(
-    ::ExpectDeclarationRemover,
+    { context: JvmBackendContext ->
+        if (context.state.configuration.getBoolean(CommonConfigurationKeys.USE_FIR))
+            FileLoweringPass.Empty
+        else
+            ExpectDeclarationRemover(context)
+    },
     name = "ExpectDeclarationsRemoving",
     description = "Remove expect declaration from module fragment"
 )
@@ -111,33 +121,35 @@ internal val IrClass.isGeneratedLambdaClass: Boolean
             origin == JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL ||
             origin == JvmLoweredDeclarationOrigin.GENERATED_PROPERTY_REFERENCE
 
+internal class JvmVisibilityPolicy : VisibilityPolicy {
+    // Note: any condition that results in non-`LOCAL` visibility here should be duplicated in `JvmLocalClassPopupLowering`,
+    // else it won't detect the class as local.
+    override fun forClass(declaration: IrClass, inInlineFunctionScope: Boolean): DescriptorVisibility =
+        if (declaration.isGeneratedLambdaClass) {
+            scopedVisibility(inInlineFunctionScope)
+        } else {
+            declaration.visibility
+        }
+
+    override fun forConstructor(declaration: IrConstructor, inInlineFunctionScope: Boolean): DescriptorVisibility =
+        if (declaration.parentAsClass.isAnonymousObject)
+            scopedVisibility(inInlineFunctionScope)
+        else
+            declaration.visibility
+
+    override fun forCapturedField(value: IrValueSymbol): DescriptorVisibility =
+        JavaDescriptorVisibilities.PACKAGE_VISIBILITY // avoid requiring a synthetic accessor for it
+
+    private fun scopedVisibility(inInlineFunctionScope: Boolean): DescriptorVisibility =
+        if (inInlineFunctionScope) DescriptorVisibilities.PUBLIC else JavaDescriptorVisibilities.PACKAGE_VISIBILITY
+}
+
 internal val localDeclarationsPhase = makeIrFilePhase(
     { context ->
         LocalDeclarationsLowering(
             context,
             NameUtils::sanitizeAsJavaIdentifier,
-            object : VisibilityPolicy {
-                // Note: any condition that results in non-`LOCAL` visibility here should be duplicated in `JvmLocalClassPopupLowering`,
-                // else it won't detect the class as local.
-                override fun forClass(declaration: IrClass, inInlineFunctionScope: Boolean): DescriptorVisibility =
-                    if (declaration.isGeneratedLambdaClass) {
-                        scopedVisibility(inInlineFunctionScope)
-                    } else {
-                        declaration.visibility
-                    }
-
-                override fun forConstructor(declaration: IrConstructor, inInlineFunctionScope: Boolean): DescriptorVisibility =
-                    if (declaration.parentAsClass.isAnonymousObject)
-                        scopedVisibility(inInlineFunctionScope)
-                    else
-                        declaration.visibility
-
-                override fun forCapturedField(value: IrValueSymbol): DescriptorVisibility =
-                    JavaDescriptorVisibilities.PACKAGE_VISIBILITY // avoid requiring a synthetic accessor for it
-
-                private fun scopedVisibility(inInlineFunctionScope: Boolean): DescriptorVisibility =
-                    if (inInlineFunctionScope) DescriptorVisibilities.PUBLIC else JavaDescriptorVisibilities.PACKAGE_VISIBILITY
-            },
+            JvmVisibilityPolicy(),
             compatibilityModeForInlinedLocalDelegatedPropertyAccessors = true,
             forceFieldsForInlineCaptures = true,
             postLocalDeclarationLoweringCallback = context.localDeclarationsLoweringData?.let {
@@ -271,25 +283,37 @@ private val kotlinNothingValueExceptionPhase = makeIrFilePhase<CommonBackendCont
     description = "Throw proper exception for calls returning value of type 'kotlin.Nothing'"
 )
 
+internal val functionInliningPhase = makeIrModulePhase<JvmBackendContext>(
+    { context ->
+        class JvmInlineFunctionResolver : InlineFunctionResolver {
+            override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction {
+                return (symbol.owner as? IrSimpleFunction)?.resolveFakeOverride() ?: symbol.owner
+            }
+
+            override fun getFunctionSymbol(irFunction: IrFunction): IrFunctionSymbol {
+                return irFunction.symbol
+            }
+        }
+
+        if (!context.configuration.getBoolean(JVMConfigurationKeys.ENABLE_IR_INLINER)) {
+            return@makeIrModulePhase FileLoweringPass.Empty
+        }
+
+        FunctionInlining(
+            context, JvmInlineFunctionResolver(), context.innerClassesSupport,
+            inlinePureArguments = false,
+            regenerateInlinedAnonymousObjects = true,
+            inlineArgumentsWithTheirOriginalTypeAndOffset = true
+        )
+    },
+    name = "FunctionInliningPhase",
+    description = "Perform function inlining",
+    prerequisite = setOf(
+        expectDeclarationsRemovingPhase,
+    )
+)
+
 private val jvmFilePhases = listOf(
-    typeAliasAnnotationMethodsPhase,
-    provisionalFunctionExpressionPhase,
-
-    jvmOverloadsAnnotationPhase,
-    mainMethodGenerationPhase,
-
-    inventNamesForLocalClassesPhase,
-    kCallableNamePropertyPhase,
-    annotationPhase,
-    annotationImplementationPhase,
-    polymorphicSignaturePhase,
-    varargPhase,
-
-    jvmLateinitLowering,
-
-    inlineCallableReferenceToLambdaPhase,
-    directInvokeLowering,
-    functionReferencePhase,
     suspendLambdaPhase,
     propertyReferenceDelegationPhase,
     singletonOrConstantDelegationPhase,
@@ -322,6 +346,9 @@ private val jvmFilePhases = listOf(
     sharedVariablesPhase,
     localDeclarationsPhase,
     // makePatchParentsPhase(),
+
+    removeDuplicatedInlinedLocalClasses,
+    inventNamesForInlinedLocalClassesPhase,
 
     jvmLocalClassExtractionPhase,
     staticCallableReferencePhase,
@@ -376,9 +403,11 @@ private val jvmFilePhases = listOf(
     replaceKFunctionInvokeWithFunctionInvokePhase,
     kotlinNothingValueExceptionPhase,
     makePropertyDelegateMethodsStaticPhase,
+    addSuperQualifierToJavaFieldAccessPhase,
 
     renameFieldsPhase,
     fakeInliningLocalVariablesLowering,
+    fakeInliningLocalVariablesAfterInlineLowering,
 
     // makePatchParentsPhase()
 )
@@ -405,6 +434,33 @@ private fun buildJvmLoweringPhases(
                 fileClassPhase then
                 jvmStaticInObjectPhase then
                 repeatedAnnotationPhase then
+
+                functionInliningPhase then
+                createSeparateCallForInlinedLambdas then
+                markNecessaryInlinedClassesAsRegenerated then
+
+                // Note: following phases can be moved to file level, but are located here because of `functionInliningPhase`
+                // This is needed, for example, for `kt42408` test.
+                // Function expression there must be transformed into ir class before moving to file level phases.
+                typeAliasAnnotationMethodsPhase then
+                provisionalFunctionExpressionPhase then
+
+                jvmOverloadsAnnotationPhase then
+                mainMethodGenerationPhase then
+
+                kCallableNamePropertyPhase then
+                annotationPhase then
+                annotationImplementationPhase then
+                polymorphicSignaturePhase then
+                varargPhase then
+
+                jvmLateinitLowering then
+                inventNamesForLocalClassesPhase then
+
+                inlineCallableReferenceToLambdaPhase then
+                directInvokeLowering then
+                functionReferencePhase then
+
                 buildLoweringsPhase(phases) then
                 generateMultifileFacadesPhase then
                 resolveInlineCallsPhase then

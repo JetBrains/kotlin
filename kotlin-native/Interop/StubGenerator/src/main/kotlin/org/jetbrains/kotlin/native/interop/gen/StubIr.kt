@@ -185,6 +185,9 @@ sealed class AnnotationStub(val classifier: Classifier) {
         class Method(val selector: String, val encoding: String, val isStret: Boolean = false) :
                 ObjC(Classifier.topLevel(cinteropPackage, "ObjCMethod"))
 
+        class Direct(val symbol: String) :
+                ObjC(Classifier.topLevel(cinteropPackage, "ObjCDirect"))
+
         class Factory(val selector: String, val encoding: String, val isStret: Boolean = false) :
                 ObjC(Classifier.topLevel(cinteropPackage, "ObjCFactory"))
 

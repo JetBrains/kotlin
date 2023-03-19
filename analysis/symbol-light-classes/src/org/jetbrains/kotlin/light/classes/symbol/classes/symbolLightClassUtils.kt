@@ -34,10 +34,7 @@ import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.lexer.KtTokens.*
-import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmFieldAnnotation
-import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmOverloadsAnnotation
-import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmStaticAnnotation
-import org.jetbrains.kotlin.light.classes.symbol.annotations.isHiddenOrSynthetic
+import org.jetbrains.kotlin.light.classes.symbol.annotations.*
 import org.jetbrains.kotlin.light.classes.symbol.copy
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForEnumEntry
@@ -169,7 +166,7 @@ private fun SymbolLightClassBase.shouldGenerateNoArgOverload(
 private fun SymbolLightClassBase.defaultConstructor(): KtLightMethod {
     val classOrObject = kotlinOrigin
     val visibility = when {
-        this is SymbolLightClassForClassLike<*> && (isObject || isEnum) -> PsiModifier.PRIVATE
+        this is SymbolLightClassForClassLike<*> && (classKind().let { it.isObject || it == KtClassKind.ENUM_CLASS }) -> PsiModifier.PRIVATE
         classOrObject?.hasModifier(SEALED_KEYWORD) == true -> PsiModifier.PROTECTED
         this is SymbolLightClassForEnumEntry -> PsiModifier.PACKAGE_LOCAL
         else -> PsiModifier.PUBLIC
@@ -290,7 +287,8 @@ internal fun SymbolLightClassBase.createPropertyAccessors(
     if (declaration.getter?.hasBody != true && declaration.setter?.hasBody != true && declaration.visibility.isPrivateOrPrivateToThis()) return
 
     if (declaration.hasJvmFieldAnnotation()) return
-    val propertyTypeIsValueClass = declaration.returnType.typeForValueClass
+    val propertyTypeIsValueClass = declaration.hasTypeForValueClassInSignature()
+
     /*
      * For top-level properties with value class in return type compiler mangles only setter
      *
@@ -311,15 +309,16 @@ internal fun SymbolLightClassBase.createPropertyAccessors(
     if (this !is SymbolLightClassForFacade && propertyTypeIsValueClass) return
 
     fun KtPropertyAccessorSymbol.needToCreateAccessor(siteTarget: AnnotationUseSiteTarget): Boolean {
+        val useSiteTargetFilterForPropertyAccessor = siteTarget.toOptionalFilter()
         if (onlyJvmStatic &&
-            !hasJvmStaticAnnotation(siteTarget, acceptAnnotationsWithoutUseSite = true) &&
-            !declaration.hasJvmStaticAnnotation(siteTarget, acceptAnnotationsWithoutUseSite = true)
+            !hasJvmStaticAnnotation(useSiteTargetFilterForPropertyAccessor) &&
+            !declaration.hasJvmStaticAnnotation(useSiteTargetFilterForPropertyAccessor)
         ) return false
 
         if (declaration.hasReifiedParameters) return false
         if (!hasBody && visibility.isPrivateOrPrivateToThis()) return false
         if (declaration.isHiddenOrSynthetic(siteTarget)) return false
-        return !isHiddenOrSynthetic(siteTarget, acceptAnnotationsWithoutUseSite = true)
+        return !isHiddenOrSynthetic(siteTarget, useSiteTargetFilterForPropertyAccessor)
     }
 
     val originalElement = declaration.sourcePsiSafe<KtDeclaration>()
@@ -403,8 +402,9 @@ private fun hasBackingField(property: KtPropertySymbol): Boolean {
         return hasBackingFieldByPsi
     }
 
+    val fieldUseSite = AnnotationUseSiteTarget.FIELD
     if (property.modality == Modality.ABSTRACT ||
-        property.isHiddenOrSynthetic(AnnotationUseSiteTarget.FIELD, acceptAnnotationsWithoutUseSite = true)
+        property.isHiddenOrSynthetic(fieldUseSite, fieldUseSite.toOptionalFilter())
     ) return false
 
     return hasBackingFieldByPsi ?: property.hasBackingField
@@ -431,6 +431,7 @@ internal fun SymbolLightClassForClassLike<*>.createInheritanceList(
     val role = if (forExtendsList) PsiReferenceList.Role.EXTENDS_LIST else PsiReferenceList.Role.IMPLEMENTS_LIST
 
     val listBuilder = KotlinSuperTypeListBuilder(
+        this,
         kotlinOrigin = kotlinOrigin?.getSuperTypeList(),
         manager = manager,
         language = language,
@@ -620,6 +621,21 @@ internal fun SymbolLightClassBase.addPropertyBackingFields(
     propertyGroups[true]?.forEach(::addPropertyBackingField)
     // Then, regular member properties
     propertyGroups[false]?.forEach(::addPropertyBackingField)
+}
+
+context(KtAnalysisSession)
+internal fun KtCallableSymbol.hasTypeForValueClassInSignature(ignoreReturnType: Boolean = false): Boolean {
+    if (!ignoreReturnType) {
+        val psiDeclaration = sourcePsiSafe<KtCallableDeclaration>()
+        if (psiDeclaration?.typeReference != null && returnType.typeForValueClass) return true
+    }
+
+    if (receiverType?.typeForValueClass == true) return true
+    if (this is KtFunctionLikeSymbol) {
+        return valueParameters.any { it.returnType.typeForValueClass }
+    }
+
+    return false
 }
 
 context(KtAnalysisSession)

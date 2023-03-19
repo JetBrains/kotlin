@@ -28,12 +28,12 @@ FILE fqName:<root> fileName:/kt47527.kt
     VALUE_PARAMETER name:value index:0 type:kotlin.Any?
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test_2 (value: kotlin.Any?): kotlin.String? declared in <root>'
-        CALL 'public final fun run <R> (block: kotlin.Function0<R of kotlin.StandardKt.run>): R of kotlin.StandardKt.run [inline] declared in kotlin.StandardKt' type=kotlin.Nothing? origin=null
-          <R>: kotlin.Nothing?
-          block: FUN_EXPR type=kotlin.Function0<kotlin.Nothing?> origin=LAMBDA
-            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Nothing?
+        CALL 'public final fun run <R> (block: kotlin.Function0<R of kotlin.StandardKt.run>): R of kotlin.StandardKt.run [inline] declared in kotlin.StandardKt' type=kotlin.String? origin=null
+          <R>: kotlin.String?
+          block: FUN_EXPR type=kotlin.Function0<kotlin.String?> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.String?
               BLOCK_BODY
-                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Nothing? declared in <root>.test_2'
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.String? declared in <root>.test_2'
                   BLOCK type=kotlin.Nothing? origin=SAFE_CALL
                     VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Any? [val]
                       GET_VAR 'value: kotlin.Any? declared in <root>.test_2' type=kotlin.Any? origin=null

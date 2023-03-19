@@ -24,7 +24,15 @@ KtFunctionSymbol:
               name: block
               origin: SOURCE
               receiverParameter: null
-              returnType: kotlin/Function0<kotlin/Unit>
+              returnType: KtFunctionalType:
+                annotationsList: []
+                ownTypeArguments: [
+                  KtUsualClassType:
+                    annotationsList: []
+                    ownTypeArguments: []
+                    type: kotlin/Unit
+                ]
+                type: kotlin/Function0<kotlin/Unit>
               symbolKind: LOCAL
               typeParameters: []
               getContainingModule: KtSourceModule "Sources of main"
@@ -45,7 +53,10 @@ KtFunctionSymbol:
   name: atLeastOnceContract
   origin: SOURCE
   receiverParameter: null
-  returnType: kotlin/Unit
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
@@ -63,7 +74,15 @@ KtFunctionSymbol:
       name: block
       origin: SOURCE
       receiverParameter: null
-      returnType: kotlin/Function0<kotlin/Unit>
+      returnType: KtFunctionalType:
+        annotationsList: []
+        ownTypeArguments: [
+          KtUsualClassType:
+            annotationsList: []
+            ownTypeArguments: []
+            type: kotlin/Unit
+        ]
+        type: kotlin/Function0<kotlin/Unit>
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtSourceModule "Sources of main"

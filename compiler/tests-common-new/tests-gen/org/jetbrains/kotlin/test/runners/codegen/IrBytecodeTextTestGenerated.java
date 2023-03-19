@@ -254,6 +254,18 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
     }
 
     @Test
+    @TestMetadata("javaFieldsWithIntersectionTypes_k1.kt")
+    public void testJavaFieldsWithIntersectionTypes_k1() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeText/javaFieldsWithIntersectionTypes_k1.kt");
+    }
+
+    @Test
+    @TestMetadata("javaFields_k1.kt")
+    public void testJavaFields_k1() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeText/javaFields_k1.kt");
+    }
+
+    @Test
     @TestMetadata("javaStatics.kt")
     public void testJavaStatics() throws Exception {
         runTest("compiler/testData/codegen/bytecodeText/javaStatics.kt");
@@ -335,6 +347,12 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
     @TestMetadata("kt5016intOrNull.kt")
     public void testKt5016intOrNull() throws Exception {
         runTest("compiler/testData/codegen/bytecodeText/kt5016intOrNull.kt");
+    }
+
+    @Test
+    @TestMetadata("kt56923.kt")
+    public void testKt56923() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeText/kt56923.kt");
     }
 
     @Test

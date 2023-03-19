@@ -18,7 +18,8 @@ import org.jetbrains.kotlin.types.Variance
 
 /**
  * A leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.typeParameter
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.typeParameter]
  */
 abstract class IrTypeParameter : IrDeclarationBase(), IrDeclarationWithName {
     @ObsoleteDescriptorBasedAPI
@@ -26,11 +27,11 @@ abstract class IrTypeParameter : IrDeclarationBase(), IrDeclarationWithName {
 
     abstract override val symbol: IrTypeParameterSymbol
 
-    abstract val variance: Variance
+    abstract var variance: Variance
 
-    abstract val index: Int
+    abstract var index: Int
 
-    abstract val isReified: Boolean
+    abstract var isReified: Boolean
 
     abstract var superTypes: List<IrType>
 

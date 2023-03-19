@@ -15,6 +15,9 @@ abstract class FirCachesFactory : FirSessionComponent {
      *
      * [FirCache.getValue] should not be called inside [createValue]
      *
+     * Note, that [createValue] might be called multiple times for the same value,
+     * but all threads will always get the same value
+     *
      * Where:
      * [CONTEXT] -- type of value which be used to create value by [createValue]
      */
@@ -56,9 +59,7 @@ abstract class FirCachesFactory : FirSessionComponent {
         postCompute: (K, V, DATA) -> Unit
     ): FirCache<K, V, CONTEXT>
 
-    fun <V, CONTEXT> createLazyValue(createValue: (CONTEXT) -> V): FirLazyValue<V, CONTEXT> {
-        return FirLazyValue(createCache { _, context -> createValue(context) })
-    }
+    abstract fun <V> createLazyValue(createValue: () -> V): FirLazyValue<V>
 }
 
 val FirSession.firCachesFactory: FirCachesFactory by FirSession.sessionComponentAccessor()

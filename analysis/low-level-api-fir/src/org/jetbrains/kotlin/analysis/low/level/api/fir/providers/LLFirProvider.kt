@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtClassLikeDeclaration
 
 @ThreadSafeMutableState
 internal class LLFirProvider(
@@ -45,10 +46,19 @@ internal class LLFirProvider(
 
     override val isPhasedFirAllowed: Boolean get() = true
 
-    override fun getFirClassifierByFqName(classId: ClassId): FirClassLikeDeclaration? {
-        return SyntheticFirClassProvider.getInstance(session).getFirClassifierByFqName(classId)
-            ?: providerHelper.getFirClassifierByFqName(classId)
+    override fun getFirClassifierByFqName(classId: ClassId): FirClassLikeDeclaration? =
+        getFirClassifierByFqNameAndDeclaration(classId, classLikeDeclaration = null)
+
+    fun getFirClassifierByDeclaration(classLikeDeclaration: KtClassLikeDeclaration): FirClassLikeDeclaration? {
+        val classId = classLikeDeclaration.getClassId() ?: return null
+        return getFirClassifierByFqNameAndDeclaration(classId, classLikeDeclaration)
     }
+
+    private fun getFirClassifierByFqNameAndDeclaration(
+        classId: ClassId,
+        classLikeDeclaration: KtClassLikeDeclaration?,
+    ): FirClassLikeDeclaration? = SyntheticFirClassProvider.getInstance(session).getFirClassifierByFqName(classId)
+        ?: providerHelper.getFirClassifierByFqNameAndDeclaration(classId, classLikeDeclaration)
 
     override fun getFirClassifierContainerFile(fqName: ClassId): FirFile {
         return getFirClassifierContainerFileIfAny(fqName)
@@ -74,12 +84,20 @@ internal class LLFirProvider(
         symbol.fir.originalForSubstitutionOverride?.symbol?.let { originalSymbol ->
             return originalSymbol.moduleData.session.firProvider.getFirCallableContainerFile(originalSymbol)
         }
+
         val fir = symbol.fir
         return when {
             symbol is FirBackingFieldSymbol -> getFirCallableContainerFile(symbol.fir.propertySymbol)
             symbol is FirSyntheticPropertySymbol && fir is FirSyntheticProperty -> getFirCallableContainerFile(fir.getter.delegate.symbol)
-            else -> moduleComponents.cache.getContainerFirFile(symbol.fir)
+            else -> {
+                symbol.callableId.classId?.let { SyntheticFirClassProvider.getInstance(session).getFirClassifierContainerFileIfAny(it) }
+                    ?: moduleComponents.cache.getContainerFirFile(symbol.fir)
+            }
         }
+    }
+
+    override fun getFirScriptContainerFile(symbol: FirScriptSymbol): FirFile? {
+        return moduleComponents.cache.getContainerFirFile(symbol.fir)
     }
 
     override fun getFirFilesByPackage(fqName: FqName): List<FirFile> = error("Should not be called in FIR IDE")
@@ -90,40 +108,54 @@ internal class LLFirProvider(
 
     @NoMutableState
     private inner class SymbolProvider : FirSymbolProvider(session) {
-        override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<FirCallableSymbol<*>> =
-            providerHelper.getTopLevelCallableSymbols(packageFqName, name)
+        override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
+            if (!providerHelper.symbolNameCache.mayHaveTopLevelClassifier(classId)) return null
+            return getFirClassifierByFqName(classId)?.symbol
+        }
+
+        override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<FirCallableSymbol<*>> {
+            if (!providerHelper.symbolNameCache.mayHaveTopLevelCallable(packageFqName, name)) return emptyList()
+            return providerHelper.getTopLevelCallableSymbols(packageFqName, name)
+        }
 
         @FirSymbolProviderInternals
         override fun getTopLevelCallableSymbolsTo(destination: MutableList<FirCallableSymbol<*>>, packageFqName: FqName, name: Name) {
-            destination += getTopLevelCallableSymbols(packageFqName, name)
+            if (!providerHelper.symbolNameCache.mayHaveTopLevelCallable(packageFqName, name)) return
+            destination += providerHelper.getTopLevelCallableSymbols(packageFqName, name)
         }
 
-        override fun getTopLevelFunctionSymbols(packageFqName: FqName, name: Name): List<FirNamedFunctionSymbol> =
-            providerHelper.getTopLevelFunctionSymbols(packageFqName, name)
+        override fun getTopLevelFunctionSymbols(packageFqName: FqName, name: Name): List<FirNamedFunctionSymbol> {
+            if (!providerHelper.symbolNameCache.mayHaveTopLevelCallable(packageFqName, name)) return emptyList()
+            return providerHelper.getTopLevelFunctionSymbols(packageFqName, name)
+        }
 
         @FirSymbolProviderInternals
         override fun getTopLevelFunctionSymbolsTo(destination: MutableList<FirNamedFunctionSymbol>, packageFqName: FqName, name: Name) {
-            destination += getTopLevelFunctionSymbols(packageFqName, name)
+            if (!providerHelper.symbolNameCache.mayHaveTopLevelCallable(packageFqName, name)) return
+            destination += providerHelper.getTopLevelFunctionSymbols(packageFqName, name)
         }
 
-        override fun getTopLevelPropertySymbols(packageFqName: FqName, name: Name): List<FirPropertySymbol> =
-            providerHelper.getTopLevelPropertySymbols(packageFqName, name)
+        override fun getTopLevelPropertySymbols(packageFqName: FqName, name: Name): List<FirPropertySymbol> {
+            if (!providerHelper.symbolNameCache.mayHaveTopLevelCallable(packageFqName, name)) return emptyList()
+            return providerHelper.getTopLevelPropertySymbols(packageFqName, name)
+        }
 
         @FirSymbolProviderInternals
         override fun getTopLevelPropertySymbolsTo(destination: MutableList<FirPropertySymbol>, packageFqName: FqName, name: Name) {
-            destination += getTopLevelPropertySymbols(packageFqName, name)
+            if (!providerHelper.symbolNameCache.mayHaveTopLevelCallable(packageFqName, name)) return
+            destination += providerHelper.getTopLevelPropertySymbols(packageFqName, name)
         }
 
         override fun getPackage(fqName: FqName): FqName? =
             providerHelper.getPackage(fqName)
 
-        // TODO: Consider having proper implementations for sake of optimizations
+        // Computing the set of such package names is expensive and would require a new index. For now, it is not worth the marginal gains.
         override fun computePackageSetWithTopLevelCallables(): Set<String>? = null
-        override fun knownTopLevelClassifiersInPackage(packageFqName: FqName): Set<String>? = null
-        override fun computeCallableNamesInPackage(packageFqName: FqName): Set<Name>? = null
 
-        override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
-            return getFirClassifierByFqName(classId)?.symbol
-        }
+        override fun knownTopLevelClassifiersInPackage(packageFqName: FqName): Set<String>? =
+            providerHelper.symbolNameCache.getTopLevelClassifierNamesInPackage(packageFqName)?.names
+
+        override fun computeCallableNamesInPackage(packageFqName: FqName): Set<Name>? =
+            providerHelper.symbolNameCache.getTopLevelCallableNamesInPackage(packageFqName)
     }
 }

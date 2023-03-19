@@ -16,7 +16,10 @@ KtPropertyGetterSymbol:
   modality: FINAL
   origin: SOURCE
   receiverParameter: null
-  returnType: kotlin/Int
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Int
   symbolKind: ACCESSOR
   typeParameters: []
   valueParameters: []

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.toLookupTag
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.SpecialNames
@@ -25,7 +26,8 @@ sealed class FirClassLikeSymbol<D : FirClassLikeDeclaration>(
 
     val name get() = classId.shortClassName
 
-    fun getDeprecation(apiVersion: ApiVersion): DeprecationsPerUseSite? {
+     fun getDeprecation(apiVersion: ApiVersion): DeprecationsPerUseSite? {
+        if (annotations.isEmpty()) return null
         lazyResolveToPhase(FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS)
         return fir.deprecationsProvider.getDeprecationsInfo(apiVersion)
     }
@@ -50,7 +52,7 @@ sealed class FirClassLikeSymbol<D : FirClassLikeDeclaration>(
 sealed class FirClassSymbol<C : FirClass>(classId: ClassId) : FirClassLikeSymbol<C>(classId) {
     private val lookupTag: ConeClassLikeLookupTag =
         if (classId.isLocal) ConeClassLookupTagWithFixedSymbol(classId, this)
-        else ConeClassLikeLookupTagImpl(classId)
+        else classId.toLookupTag()
 
     override fun toLookupTag(): ConeClassLikeLookupTag = lookupTag
 
@@ -79,6 +81,7 @@ class FirRegularClassSymbol(classId: ClassId) : FirClassSymbol<FirRegularClass>(
 
     val resolvedContextReceivers: List<FirContextReceiver>
         get() {
+            if (fir.contextReceivers.isEmpty()) return emptyList()
             lazyResolveToPhase(FirResolvePhase.TYPES)
             return fir.contextReceivers
         }
@@ -89,7 +92,7 @@ val ANONYMOUS_CLASS_ID = ClassId(FqName.ROOT, FqName.topLevel(SpecialNames.ANONY
 class FirAnonymousObjectSymbol : FirClassSymbol<FirAnonymousObject>(ANONYMOUS_CLASS_ID)
 
 class FirTypeAliasSymbol(classId: ClassId) : FirClassLikeSymbol<FirTypeAlias>(classId) {
-    override fun toLookupTag(): ConeClassLikeLookupTag = ConeClassLikeLookupTagImpl(classId)
+    override fun toLookupTag(): ConeClassLikeLookupTag = classId.toLookupTag()
 
     val resolvedExpandedTypeRef: FirResolvedTypeRef
         get() {

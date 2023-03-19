@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.types.typeUtil.representativeUpperBound
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.ANNOTATED_ENUM_SERIALIZER_FACTORY_FUNC_NAME
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.ENUM_SERIALIZER_FACTORY_FUNC_NAME
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations.inheritableSerialInfoFqName
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations.metaSerializableAnnotationFqName
@@ -273,6 +275,11 @@ fun ClassDescriptor.needSerializerFactory(): Boolean {
     if (serializableClass.isSealedSerializableInterface) return true
     if (serializableClass.declaredTypeParameters.isEmpty()) return false
     return true
+}
+
+fun DeclarationDescriptor.jsExportIgnore(): AnnotationDescriptor? {
+    val jsExportIgnore = runIf(platform.isJs()) { module.getJsExportIgnore() } ?: return null
+    return AnnotationDescriptorImpl(jsExportIgnore.defaultType, mapOf(), jsExportIgnore.source)
 }
 
 fun getSerializableClassDescriptorBySerializer(serializerDescriptor: ClassDescriptor): ClassDescriptor? {

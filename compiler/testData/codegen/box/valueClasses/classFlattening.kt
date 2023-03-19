@@ -9,6 +9,7 @@
 value class IC(val x: UInt)
 
 fun ic(x: IC) = x.x
+fun ic(x: UInt) = ic(IC(x))
 
 @JvmInline
 value class SimpleMfvc(val x: UInt, val y: IC, val z: String) {
@@ -68,6 +69,10 @@ value class SimpleMfvc(val x: UInt, val y: IC, val z: String) {
 }
 
 fun smfvc(ic: IC, x: SimpleMfvc, ic1: UInt) = ic(ic) + x.x + ic(x.y) + ic1
+
+@JvmInline
+value class Wrapper(val simpleMfvc: SimpleMfvc)
+fun smfvc(ic: IC, x: Wrapper, ic1: UInt) = smfvc(ic, x.simpleMfvc, ic1)
 
 @JvmInline
 value class GreaterMfvc(val x: SimpleMfvc, val y: IC, val z: SimpleMfvc)
@@ -135,6 +140,7 @@ fun box(): String {
     val o2 = SimpleMfvc(1U, o1, "3")
     val o2_ = SimpleMfvc(1U, o1, "-3")
     require(smfvc(IC(4U), o2, 5U) == 12U)
+    require(smfvc(IC(4U), Wrapper(o2), 5U) == 12U)
     val o3 = GreaterMfvc(o2, IC(6U), SimpleMfvc(7U, IC(8U), "9"))
     require(gmfvc(IC(10U), o3, 11U) == 45U)
     with(Extensions()) {

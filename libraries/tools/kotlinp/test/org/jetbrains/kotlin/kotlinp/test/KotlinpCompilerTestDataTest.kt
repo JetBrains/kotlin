@@ -25,7 +25,7 @@ class KotlinpCompilerTestDataTest(private val file: File) {
 
         val disposable = TestDisposable()
         try {
-            compileAndPrintAllFiles(file, disposable, tmpdir, compareWithTxt = false, readWriteAndCompare = true)
+            compileAndPrintAllFiles(file, disposable, tmpdir, compareWithTxt = false, readWriteAndCompare = true, useK2 = false)
         } finally {
             Disposer.dispose(disposable)
         }

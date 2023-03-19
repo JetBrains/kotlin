@@ -29,9 +29,9 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
 import org.jetbrains.kotlin.name.FqName
 
 class IrFileImpl(
-    override val fileEntry: IrFileEntry,
+    override var fileEntry: IrFileEntry,
     override val symbol: IrFileSymbol,
-    override val fqName: FqName
+    override var fqName: FqName
 ) : IrFile() {
     constructor(
         fileEntry: IrFileEntry,

@@ -21,13 +21,19 @@ KtKotlinPropertySymbol:
       ]
       origin: SOURCE
       owningCallableSymbol: KtKotlinPropertySymbol(/prop)
-      type: [
-        ReceiverTypeAnnotation()
-          psi: KtAnnotationEntry
-      ] @R|ReceiverTypeAnnotation|()  kotlin/Long
+      type: KtUsualClassType:
+        annotationsList: [
+          ReceiverTypeAnnotation()
+            psi: KtAnnotationEntry
+        ]
+        ownTypeArguments: []
+        type: @R|ReceiverTypeAnnotation|()  kotlin/Long
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
-    returnType: kotlin/Boolean
+    returnType: KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Boolean
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
@@ -56,13 +62,19 @@ KtKotlinPropertySymbol:
     ]
     origin: SOURCE
     owningCallableSymbol: KtKotlinPropertySymbol(/prop)
-    type: [
-      ReceiverTypeAnnotation()
-        psi: KtAnnotationEntry
-    ] @R|ReceiverTypeAnnotation|()  kotlin/Long
+    type: KtUsualClassType:
+      annotationsList: [
+        ReceiverTypeAnnotation()
+          psi: KtAnnotationEntry
+      ]
+      ownTypeArguments: []
+      type: @R|ReceiverTypeAnnotation|()  kotlin/Long
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
-  returnType: kotlin/Boolean
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Boolean
   setter: null
   symbolKind: TOP_LEVEL
   typeParameters: []

@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.utils.errors
 
+import com.intellij.openapi.diagnostic.Attachment
+import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.util.SourceCodeAnalysisException
@@ -68,6 +70,16 @@ public inline fun buildErrorWithAttachment(
     val exception = KotlinExceptionWithAttachments(message, cause)
     exception.buildAttachment(attachmentName) { buildAttachment() }
     throw exception
+}
+
+public inline fun Logger.logErrorWithAttachment(
+    message: String,
+    cause: Exception? = null,
+    attachmentName: String = "info.txt",
+    buildAttachment: ExceptionAttachmentBuilder.() -> Unit = {}
+) {
+    val attachment = Attachment(attachmentName, ExceptionAttachmentBuilder().apply(buildAttachment).buildString())
+    this.error(message, cause, attachment)
 }
 
 public inline fun rethrowExceptionWithDetails(

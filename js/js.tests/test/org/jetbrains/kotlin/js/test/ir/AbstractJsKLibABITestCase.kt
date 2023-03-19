@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.testOld.V8IrJsTestChecker
 import org.jetbrains.kotlin.klib.KlibABITestUtils
 import org.jetbrains.kotlin.klib.KlibABITestUtils.MAIN_MODULE_NAME
+import org.jetbrains.kotlin.konan.file.ZipFileSystemCacheableAccessor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.serialization.js.ModuleKind
@@ -54,6 +55,8 @@ abstract class AbstractJsKLibABITestCase : KtUsefulTestCase() {
     private lateinit var buildDir: File
     private lateinit var environment: KotlinCoreEnvironment
 
+    private val zipAccessor = ZipFileSystemCacheableAccessor(2)
+
     override fun setUp() {
         super.setUp()
         buildDir = createTempDirectory().toFile().also { it.mkdirs() }
@@ -66,8 +69,22 @@ abstract class AbstractJsKLibABITestCase : KtUsefulTestCase() {
     }
 
     override fun tearDown() {
+        zipAccessor.reset()
         buildDir.deleteRecursively()
         super.tearDown()
+    }
+
+    private fun createConfig(moduleName: String): CompilerConfiguration {
+        val config = environment.configuration.copy()
+        config.put(CommonConfigurationKeys.MODULE_NAME, moduleName)
+        config.put(JSConfigurationKeys.PARTIAL_LINKAGE, true)
+        config.put(JSConfigurationKeys.MODULE_KIND, ModuleKind.PLAIN)
+        config.put(JSConfigurationKeys.PROPERTY_LAZY_INITIALIZATION, true)
+
+        zipAccessor.reset()
+        config.put(JSConfigurationKeys.ZIP_FILE_SYSTEM_ACCESSOR, zipAccessor)
+
+        return config
     }
 
     private inner class JsTestConfiguration(testPath: String) : KlibABITestUtils.TestConfiguration {
@@ -82,6 +99,7 @@ abstract class AbstractJsKLibABITestCase : KtUsefulTestCase() {
             this@AbstractJsKLibABITestCase.buildBinaryAndRun(mainModuleKlibFile, dependencies)
 
         override fun onNonEmptyBuildDirectory(directory: File) {
+            zipAccessor.reset()
             directory.listFiles()?.forEach(File::deleteRecursively)
         }
 
@@ -108,10 +126,8 @@ abstract class AbstractJsKLibABITestCase : KtUsefulTestCase() {
     fun doTest(testPath: String) = KlibABITestUtils.runTest(JsTestConfiguration(testPath))
 
     private fun buildKlib(moduleName: String, moduleSourceDir: File, dependencies: KlibABITestUtils.Dependencies, klibFile: File) {
+        val config = createConfig(moduleName)
         val ktFiles = environment.createPsiFiles(moduleSourceDir)
-
-        val config = environment.configuration.copy()
-        config.put(CommonConfigurationKeys.MODULE_NAME, moduleName)
 
         val sourceModule = prepareAnalyzedSourceModule(
             environment.project,
@@ -156,12 +172,7 @@ abstract class AbstractJsKLibABITestCase : KtUsefulTestCase() {
     }
 
     private fun buildBinaryAndRun(mainModuleKlibFile: File, allDependencies: KlibABITestUtils.Dependencies) {
-        val configuration = environment.configuration.copy()
-
-        configuration.put(JSConfigurationKeys.PARTIAL_LINKAGE, true)
-        configuration.put(JSConfigurationKeys.MODULE_KIND, ModuleKind.PLAIN)
-        configuration.put(JSConfigurationKeys.PROPERTY_LAZY_INITIALIZATION, true)
-        configuration.put(CommonConfigurationKeys.MODULE_NAME, MAIN_MODULE_NAME)
+        val configuration = createConfig(MAIN_MODULE_NAME)
 
         val compilationOutputs = if (useIncrementalCompiler)
             buildBinaryWithIC(configuration, mainModuleKlibFile, allDependencies)

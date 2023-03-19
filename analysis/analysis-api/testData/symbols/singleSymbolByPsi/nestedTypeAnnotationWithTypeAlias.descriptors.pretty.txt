@@ -1,0 +1,1 @@
+fun foo2(): kotlin.collections.List<kotlin.collections.List<@Anno3 @Anno2 @Anno1(s = "s") BaseAnnotation>>?

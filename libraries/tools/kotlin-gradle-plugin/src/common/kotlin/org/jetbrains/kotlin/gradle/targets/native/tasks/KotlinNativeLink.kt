@@ -14,7 +14,6 @@ import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileCollection
 import org.gradle.api.model.ObjectFactory
-import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
@@ -80,10 +79,7 @@ constructor(
         {
             // Avoid resolving these dependencies during task graph construction when we can't build the target:
             @Suppress("DEPRECATION")
-            if (konanTarget.enabledOnCurrentHost)
-                objectFactory.fileCollection().from(
-                    compilation.compileDependencyFiles.filterOutPublishableInteropLibs(project)
-                )
+            if (konanTarget.enabledOnCurrentHost) compilation.compileDependencyFiles
             else objectFactory.fileCollection()
         }
     )
@@ -267,10 +263,14 @@ constructor(
             objectFactory.property(it.file(filename).asFile)
         }
 
-    @Suppress("DEPRECATION", "DeprecatedCallableAddReplaceWith")
-    @Deprecated("Please declare explicit dependency on kotlinx-cli. This option is scheduled to be removed in 1.9.0")
+    @Suppress("unused", "DeprecatedCallableAddReplaceWith")
+    @Deprecated(
+        "Please declare explicit dependency on kotlinx-cli. This option has no longer effect since 1.9.0",
+        level = DeprecationLevel.ERROR
+    )
     @get:Input
-    val enableEndorsedLibs: Boolean by lazy { compilation.enableEndorsedLibs }
+    val enableEndorsedLibs: Boolean
+        get() = false
 
     @Internal
     val compilerPluginOptions = CompilerPluginOptions()
@@ -303,8 +303,12 @@ constructor(
             addAll(externalDependenciesArgs)
             when (cacheSettings.orchestration) {
                 NativeCacheOrchestration.Compiler -> {
-                    if (cacheSettings.kind != NativeCacheKind.NONE && konanPropertiesService.get().cacheWorksFor(konanTarget))
+                    if (cacheSettings.kind != NativeCacheKind.NONE
+                        && !optimized
+                        && konanPropertiesService.get().cacheWorksFor(konanTarget)
+                    ) {
                         add("-Xauto-cache-from=${cacheSettings.gradleUserHomeDir}")
+                    }
                 }
                 NativeCacheOrchestration.Gradle -> {
                     val cacheBuilder = CacheBuilder(
@@ -317,8 +321,6 @@ constructor(
             }
         }
 
-        @Suppress("DEPRECATION") val enableEndorsedLibs = this.enableEndorsedLibs // TODO: remove before 1.9.0, see KT-54098
-
         val buildArgs = buildKotlinNativeBinaryLinkerArgs(
             output,
             optimized,
@@ -327,7 +329,6 @@ constructor(
             outputKind,
             libraries.files.filterKlibsPassedToCompiler(),
             friendModule.files.toList(),
-            enableEndorsedLibs,
             toolOptions,
             plugins,
             processTests,

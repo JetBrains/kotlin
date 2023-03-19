@@ -14,14 +14,15 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
  * A leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.constructorCall
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.constructorCall]
  */
 abstract class IrConstructorCall : IrFunctionAccessExpression() {
     abstract override val symbol: IrConstructorSymbol
 
-    abstract val source: SourceElement
+    abstract var source: SourceElement
 
-    abstract val constructorTypeArgumentsCount: Int
+    abstract var constructorTypeArgumentsCount: Int
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitConstructorCall(this, data)

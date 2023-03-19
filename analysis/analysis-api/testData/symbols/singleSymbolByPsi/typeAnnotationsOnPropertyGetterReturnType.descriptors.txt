@@ -11,14 +11,17 @@ KtPropertyGetterSymbol:
   modality: FINAL
   origin: SOURCE
   receiverParameter: null
-  returnType: [
-    Anno3()
-      psi: KtAnnotationEntry
-    Anno2()
-      psi: KtAnnotationEntry
-    Anno1()
-      psi: KtAnnotationEntry
-  ] @R|Anno3|() @R|Anno2|() @R|Anno1|()  @R|Anno3|()  SecondTypeAlias
+  returnType: KtUsualClassType:
+    annotationsList: [
+      Anno3()
+        psi: KtAnnotationEntry
+      Anno2()
+        psi: KtAnnotationEntry
+      Anno1()
+        psi: KtAnnotationEntry
+    ]
+    ownTypeArguments: []
+    type: @R|Anno3|() @R|Anno2|() @R|Anno1|()  @R|Anno3|()  SecondTypeAlias
   symbolKind: ACCESSOR
   typeParameters: []
   valueParameters: []

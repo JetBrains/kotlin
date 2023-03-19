@@ -37,6 +37,7 @@ private val objCProtocolFqName = interopPackageName.child(Name.identifier("ObjCP
 private val objCProtocolIdSignature = getTopLevelPublicSignature(objCProtocolFqName)
 internal val externalObjCClassFqName = interopPackageName.child(Name.identifier("ExternalObjCClass"))
 private val objCMethodFqName = interopPackageName.child(Name.identifier("ObjCMethod"))
+private val objCDirectFqName = interopPackageName.child(Name.identifier("ObjCDirect"))
 private val objCConstructorFqName = FqName("kotlinx.cinterop.ObjCConstructor")
 private val objCFactoryFqName = interopPackageName.child(Name.identifier("ObjCFactory"))
 private val objcnamesForwardDeclarationsPackageName = Name.identifier("objcnames")
@@ -111,30 +112,53 @@ fun IrClass.isKotlinObjCClass(): Boolean = this.isObjCClass() && !this.isExterna
 
 data class ObjCMethodInfo(val selector: String,
                           val encoding: String,
-                          val isStret: Boolean)
+                          val isStret: Boolean,
+                          val directSymbol: String?)
 
 private fun FunctionDescriptor.decodeObjCMethodAnnotation(): ObjCMethodInfo? {
     assert (this.kind.isReal)
-    val methodAnnotation = this.annotations.findAnnotation(objCMethodFqName) ?: return null
-    return objCMethodInfo(methodAnnotation)
+
+    val methodInfo = this.annotations.findAnnotation(objCMethodFqName)?.let {
+        ObjCMethodInfo(
+                selector = it.getStringValue("selector"),
+                encoding = it.getStringValue("encoding"),
+                isStret = it.getArgumentValueOrNull<Boolean>("isStret") ?: false,
+                directSymbol = this.annotations.findAnnotation(objCDirectFqName)?.let {
+                    it.getStringValue("symbol")
+                },
+        )
+    }
+
+    return methodInfo
 }
 
 private fun IrFunction.decodeObjCMethodAnnotation(): ObjCMethodInfo? {
     assert (this.isReal)
-    val methodAnnotation = this.annotations.findAnnotation(objCMethodFqName) ?: return null
-    return objCMethodInfo(methodAnnotation)
+
+    val methodInfo = this.annotations.findAnnotation(objCMethodFqName)?.let {
+        ObjCMethodInfo(
+                selector = it.getAnnotationStringValue("selector"),
+                encoding = it.getAnnotationStringValue("encoding"),
+                isStret = it.getAnnotationValueOrNull<Boolean>("isStret") ?: false,
+                directSymbol = this.annotations.findAnnotation(objCDirectFqName)?.getAnnotationStringValue("symbol"),
+        )
+    }
+
+    return methodInfo
 }
 
 private fun objCMethodInfo(annotation: AnnotationDescriptor) = ObjCMethodInfo(
         selector = annotation.getStringValue("selector"),
         encoding = annotation.getStringValue("encoding"),
-        isStret = annotation.getArgumentValueOrNull<Boolean>("isStret") ?: false
+        isStret = annotation.getArgumentValueOrNull<Boolean>("isStret") ?: false,
+        directSymbol = null,
 )
 
 private fun objCMethodInfo(annotation: IrConstructorCall) = ObjCMethodInfo(
         selector = annotation.getAnnotationStringValue("selector"),
         encoding = annotation.getAnnotationStringValue("encoding"),
-        isStret = annotation.getAnnotationValueOrNull<Boolean>("isStret") ?: false
+        isStret = annotation.getAnnotationValueOrNull<Boolean>("isStret") ?: false,
+        directSymbol = null,
 )
 
 /**

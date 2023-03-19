@@ -46,7 +46,7 @@ public class KtValueArgument extends KtElementImplStub<KotlinValueArgumentStub<?
         return visitor.visitArgument(this, data);
     }
 
-    private static final TokenSet CONSTANT_EXPRESSIONS_TYPES = TokenSet.create(
+    public static final TokenSet CONSTANT_EXPRESSIONS_TYPES = TokenSet.create(
             KtStubElementTypes.NULL,
             KtStubElementTypes.BOOLEAN_CONSTANT,
             KtStubElementTypes.FLOAT_CONSTANT,
@@ -56,7 +56,11 @@ public class KtValueArgument extends KtElementImplStub<KotlinValueArgumentStub<?
             KtStubElementTypes.REFERENCE_EXPRESSION,
             KtStubElementTypes.DOT_QUALIFIED_EXPRESSION,
 
-            KtStubElementTypes.STRING_TEMPLATE
+            KtStubElementTypes.STRING_TEMPLATE,
+
+            KtStubElementTypes.CLASS_LITERAL_EXPRESSION,
+
+            KtStubElementTypes.COLLECTION_LITERAL_EXPRESSION
     );
 
     private static final TokenSet STRING_TEMPLATE_EXPRESSIONS_TYPES = TokenSet.create(

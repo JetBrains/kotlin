@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
  */
 
 internal class FirImplicitTypeRefImpl(
-    override val source: KtSourceElement?,
+    override val source: KtSourceElement,
 ) : FirImplicitTypeRef() {
     override val annotations: List<FirAnnotation> get() = emptyList()
 

@@ -8,20 +8,23 @@ package kotlin.native.internal
 import kotlin.reflect.KFunction
 import kotlin.reflect.KType
 
-@FixmeReflection
-internal abstract class KFunctionImpl<out R>: KFunction<R> {
-    final override val returnType get() = computeReturnType()
-    val flags get() = computeFlags()
-    val arity get() = computeArity()
-    val fqName get() = computeFqName()
-    val receiver get() = computeReceiver()
-    final override val name get() = computeName()
+internal class KFunctionDescription(
+        val flags: Int,
+        val arity: Int,
+        val fqName: String,
+        val name: String,
+        val returnType: KType
+)
 
-    abstract fun computeReturnType() : KType
-    abstract fun computeFlags() : Int
-    abstract fun computeArity() : Int
-    abstract fun computeFqName() : String
-    abstract fun computeName() : String
+@FixmeReflection
+internal abstract class KFunctionImpl<out R>(val description: KFunctionDescription): KFunction<R> {
+    final override val returnType get() = description.returnType
+    val flags get() = description.flags
+    val arity get() = description.arity
+    val fqName get() = description.fqName
+    val receiver get() = computeReceiver()
+    final override val name get() = description.name
+
     open fun computeReceiver(): Any? = null
 
     override fun equals(other: Any?): Boolean {

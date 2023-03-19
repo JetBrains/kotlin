@@ -13,22 +13,24 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KtTypeErrorType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
-import org.jetbrains.kotlin.fir.diagnostics.ConeCannotInferParameterType
+import org.jetbrains.kotlin.fir.diagnostics.ConeCannotInferTypeParameterType
+import org.jetbrains.kotlin.fir.diagnostics.ConeTypeVariableTypeIsNotInferred
 import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.renderForDebugging
 
 internal class KtFirTypeErrorType(
     override val coneType: ConeErrorType,
-    override val token: KtLifetimeToken,
     private val builder: KtSymbolByFirBuilder,
 ) : KtTypeErrorType(), KtFirType {
+    override val token: KtLifetimeToken get() = builder.token
 
     override val nullability: KtTypeNullability get() = withValidityAssertion { coneType.nullability.asKtNullability() }
     override val errorMessage: String get() = withValidityAssertion { coneType.diagnostic.reason }
 
     override fun tryRenderAsNonErrorType(): String? = withValidityAssertion {
         when (val diagnostic = coneType.diagnostic) {
-            is ConeCannotInferParameterType -> diagnostic.typeParameter.name.asString()
+            is ConeCannotInferTypeParameterType -> diagnostic.typeParameter.name.asString()
+            is ConeTypeVariableTypeIsNotInferred -> diagnostic.typeVariableType.lookupTag.debugName
             else -> null
         }
     }

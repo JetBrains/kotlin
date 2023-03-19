@@ -7,11 +7,13 @@ package org.jetbrains.kotlin.ir.backend.js.ic
 
 import org.jetbrains.kotlin.backend.common.serialization.Hash128Bits
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CrossModuleReferences
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.DumpIrTreeVisitor
@@ -19,6 +21,7 @@ import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.library.impl.buffer
 import org.jetbrains.kotlin.protobuf.CodedInputStream
 import org.jetbrains.kotlin.protobuf.CodedOutputStream
+import org.jetbrains.kotlin.serialization.js.ModuleKind
 import java.security.MessageDigest
 
 internal fun Hash128Bits.toProtoStream(out: CodedOutputStream) {
@@ -87,6 +90,8 @@ internal class ICHasher {
     private val hashCalculator = HashCalculatorForIC()
 
     fun calculateConfigHash(config: CompilerConfiguration): ICHash {
+        hashCalculator.update(KotlinCompilerVersion.VERSION)
+
         val importantSettings = listOf(
             JSConfigurationKeys.GENERATE_DTS,
             JSConfigurationKeys.MODULE_KIND,
@@ -128,6 +133,11 @@ internal class ICHasher {
             }
         }
         (symbol.owner as? IrAnnotationContainer)?.let(hashCalculator::updateAnnotationContainer)
+        (symbol.owner as? IrProperty)?.let { irProperty ->
+            if (irProperty.isConst) {
+                irProperty.backingField?.initializer?.let(hashCalculator::update)
+            }
+        }
         return hashCalculator.finalize()
     }
 }
@@ -155,6 +165,13 @@ internal fun CrossModuleReferences.crossModuleReferencesHashForIC() = HashCalcul
         val import = imports[tag]!!
         update(tag)
         update(import.exportedAs)
-        update(import.moduleExporter.toString())
+
+        if (moduleKind == ModuleKind.ES) {
+            update(import.moduleExporter.internalName.toString())
+            update(import.moduleExporter.externalName)
+            update(import.moduleExporter.relativeRequirePath ?: "")
+        } else {
+            update(import.moduleExporter.internalName.toString())
+        }
     }
 }.finalize()

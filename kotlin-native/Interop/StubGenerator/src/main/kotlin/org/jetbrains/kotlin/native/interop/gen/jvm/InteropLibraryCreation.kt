@@ -10,7 +10,6 @@ import kotlinx.metadata.klib.KlibModuleFragmentWriteStrategy
 import kotlinx.metadata.klib.KlibModuleMetadata
 import kotlinx.metadata.klib.className
 import kotlinx.metadata.klib.fqName
-import org.jetbrains.kotlin.backend.common.serialization.KlibIrVersion
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.impl.KonanLibraryLayoutForWriter
@@ -42,7 +41,6 @@ fun createInteropLibrary(
             abiVersion = KotlinAbiVersion.CURRENT,
             compilerVersion = KotlinCompilerVersion.VERSION,
             metadataVersion = KlibMetadataVersion.INSTANCE.toString(),
-            irVersion = KlibIrVersion.INSTANCE.toString()
     )
     val libFile = File(outputPath)
     val unzippedDir = if (nopack) libFile else org.jetbrains.kotlin.konan.file.createTempDir("klib")

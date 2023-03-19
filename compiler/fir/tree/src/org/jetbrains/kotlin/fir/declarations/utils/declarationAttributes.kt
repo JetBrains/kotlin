@@ -120,9 +120,12 @@ fun FirDeclaration.getDanglingTypeConstraintsOrEmpty(): List<DanglingTypeConstra
 }
 
 val FirPropertySymbol.correspondingValueParameterFromPrimaryConstructor: FirValueParameterSymbol?
+    get() = fir.correspondingValueParameterFromPrimaryConstructor
+
+val FirProperty.correspondingValueParameterFromPrimaryConstructor: FirValueParameterSymbol?
     get() {
-        if (!fromPrimaryConstructor) return null
-        val initializer = resolvedInitializer as? FirPropertyAccessExpression ?: return null
+        if (fromPrimaryConstructor != true) return null
+        val initializer = initializer as? FirPropertyAccessExpression ?: return null
         val reference = initializer.calleeReference as? FirPropertyFromParameterResolvedNamedReference ?: return null
         return reference.resolvedSymbol as? FirValueParameterSymbol
     }

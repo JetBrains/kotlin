@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan
 
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.driver.BasicPhaseContext
+import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.utilities.BackendContextHolder
 import org.jetbrains.kotlin.backend.konan.driver.utilities.LlvmIrHolder
 import org.jetbrains.kotlin.backend.konan.llvm.*
@@ -16,8 +17,6 @@ import org.jetbrains.kotlin.backend.konan.serialization.SerializedClassFields
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedEagerInitializedFile
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedInlineFunctionReference
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.konan.TempFiles
-import org.jetbrains.kotlin.konan.file.File
 
 internal class InlineFunctionOriginInfo(val irFunction: IrFunction, val irFile: IrFile, val startOffset: Int, val endOffset: Int)
 
@@ -39,24 +38,30 @@ internal class FileLowerState {
             "$prefix${cStubCount++}"
 }
 
+internal interface BitcodePostProcessingContext : PhaseContext, LlvmIrHolder {
+    val llvm: BasicLlvmHelpers
+    val llvmContext: LLVMContextRef
+}
+
+internal class BitcodePostProcessingContextImpl(
+        config: KonanConfig,
+        override val llvmModule: LLVMModuleRef,
+        override val llvmContext: LLVMContextRef
+) : BitcodePostProcessingContext, BasicPhaseContext(config) {
+    override val llvm: BasicLlvmHelpers = BasicLlvmHelpers(this, llvmModule)
+}
+
 internal class NativeGenerationState(
         config: KonanConfig,
         // TODO: Get rid of this property completely once transition to the dynamic driver is complete.
         //  It will reduce code coupling and make it easier to create NativeGenerationState instances.
         val context: Context,
-        val cacheDeserializationStrategy: CacheDeserializationStrategy?
-) : BasicPhaseContext(config), BackendContextHolder<Context>, LlvmIrHolder {
-    private val outputPath = config.cacheSupport.tryGetImplicitOutput(cacheDeserializationStrategy) ?: config.outputPath
-    val outputFiles = OutputFiles(outputPath, config.target, config.produce)
-    val tempFiles = run {
-        val pathToTempDir = config.configuration.get(KonanConfigKeys.TEMPORARY_FILES_DIR)?.let {
-            val singleFileStrategy = cacheDeserializationStrategy as? CacheDeserializationStrategy.SingleFile
-            if (singleFileStrategy == null)
-                it
-            else File(it, CacheSupport.cacheFileId(singleFileStrategy.fqName, singleFileStrategy.filePath)).path
-        }
-        TempFiles(outputFiles.outputName, pathToTempDir)
-    }
+        val cacheDeserializationStrategy: CacheDeserializationStrategy?,
+        val dependenciesTracker: DependenciesTracker,
+        val llvmModuleSpecification: LlvmModuleSpecification,
+        val outputFiles: OutputFiles,
+        val llvmModuleName: String,
+) : BasicPhaseContext(config), BackendContextHolder<Context>, LlvmIrHolder, BitcodePostProcessingContext {
     val outputFile = outputFiles.mainFileName
 
     val inlineFunctionBodies = mutableListOf<SerializedInlineFunctionReference>()
@@ -64,7 +69,7 @@ internal class NativeGenerationState(
     val eagerInitializedFiles = mutableListOf<SerializedEagerInitializedFile>()
     val calledFromExportedInlineFunctions = mutableSetOf<IrFunction>()
     val constructedFromExportedInlineFunctions = mutableSetOf<IrClass>()
-    val loweredInlineFunctions = mutableMapOf<IrFunction, InlineFunctionOriginInfo>()
+    val inlineFunctionOrigins = mutableMapOf<IrFunction, InlineFunctionOriginInfo>()
 
     private val localClassNames = mutableMapOf<IrAttributeContainer, String>()
     fun getLocalClassName(container: IrAttributeContainer): String? = localClassNames[container.attributeOwnerId]
@@ -77,24 +82,15 @@ internal class NativeGenerationState(
 
     lateinit var fileLowerState: FileLowerState
 
-    val llvmModuleSpecification by lazy {
-        if (config.produce.isCache)
-            CacheLlvmModuleSpecification(this, config.cachedLibraries,
-                    PartialCacheInfo(config.libraryToCache!!.klib, cacheDeserializationStrategy!!))
-        else DefaultLlvmModuleSpecification(config.cachedLibraries)
-    }
-
     val producedLlvmModuleContainsStdlib get() = llvmModuleSpecification.containsModule(context.stdlibModule)
 
-    val dependenciesTracker: DependenciesTracker = DependenciesTrackerImpl(this)
-
     private val runtimeDelegate = lazy { Runtime(llvmContext, config.distribution.compilerInterface(config.target)) }
-    private val llvmDelegate = lazy { Llvm(this, LLVMModuleCreateWithNameInContext("out", llvmContext)!!) }
+    private val llvmDelegate = lazy { CodegenLlvmHelpers(this, LLVMModuleCreateWithNameInContext(llvmModuleName, llvmContext)!!) }
     private val debugInfoDelegate = lazy { DebugInfo(this) }
 
-    val llvmContext = LLVMContextCreate()!!
+    override val llvmContext = LLVMContextCreate()!!
     val runtime by runtimeDelegate
-    val llvm by llvmDelegate
+    override val llvm by llvmDelegate
     val debugInfo by debugInfoDelegate
     val cStubsManager = CStubsManager(config.target, this)
     lateinit var llvmDeclarations: LlvmDeclarations
@@ -106,6 +102,18 @@ internal class NativeGenerationState(
     fun hasDebugInfo() = debugInfoDelegate.isInitialized()
 
     private var isDisposed = false
+
+    // Both NativeGenerationState and Context could be used for logging purposes.
+    // Unfortunately, only NativeGenerationState is used as a PhaseContext, so logging in Context
+    // will do nothing. Workaround that by setting inVerbosePhase of "parent" context.
+    //
+    // A proper solution would be decoupling of logging, error reporting, etc. into a separate (PhaseEnvironment?) object.
+    override var inVerbosePhase: Boolean
+        get() = super.inVerbosePhase
+        set(value) {
+            super.inVerbosePhase = value
+            context.inVerbosePhase = value
+        }
 
     override fun dispose() {
         if (isDisposed) return
@@ -121,7 +129,6 @@ internal class NativeGenerationState(
             LLVMDisposeModule(runtime.llvmModule)
         }
         LLVMContextDispose(llvmContext)
-        tempFiles.dispose()
 
         isDisposed = true
     }

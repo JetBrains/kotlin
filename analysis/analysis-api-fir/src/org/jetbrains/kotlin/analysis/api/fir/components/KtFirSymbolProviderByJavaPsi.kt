@@ -9,11 +9,10 @@ import com.intellij.psi.*
 import com.intellij.psi.impl.compiled.ClsElementImpl
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirPsiJavaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolProviderByJavaPsi
-import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.firClassByPsiClassProvider
-import org.jetbrains.kotlin.analysis.project.structure.getKtModule
 import org.jetbrains.kotlin.asJava.KtLightClassMarker
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.Name
@@ -28,10 +27,7 @@ internal class KtFirSymbolProviderByJavaPsi(
         if (psiClass is KtLightClassMarker) return null
         if (psiClass.isKotlinCompiledClass()) return null
 
-        val module = psiClass.getKtModule(analysisSession.project)
-        val provider = firResolveSession.getSessionFor(module).firClassByPsiClassProvider
-        val firClass = provider.getFirClass(psiClass) ?: return null
-        return firSymbolBuilder.classifierBuilder.buildNamedClassOrObjectSymbol(firClass)
+        return KtFirPsiJavaClassSymbol(psiClass, analysisSession)
     }
 
     private fun PsiClass.isKotlinCompiledClass() =

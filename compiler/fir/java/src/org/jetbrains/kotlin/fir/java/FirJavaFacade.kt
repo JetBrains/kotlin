@@ -20,18 +20,22 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildConstructedClassTypePa
 import org.jetbrains.kotlin.fir.declarations.builder.buildEnumEntry
 import org.jetbrains.kotlin.fir.declarations.builder.buildOuterClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.builder.buildTypeParameter
+import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
 import org.jetbrains.kotlin.fir.declarations.utils.modality
+import org.jetbrains.kotlin.fir.extensions.FirStatusTransformerExtension
+import org.jetbrains.kotlin.fir.extensions.extensionService
+import org.jetbrains.kotlin.fir.extensions.statusTransformerExtensions
 import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.java.enhancement.FirSignatureEnhancement
-import org.jetbrains.kotlin.fir.types.constructType
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
+import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.structure.*
@@ -72,6 +76,7 @@ abstract class FirJavaFacade(
 
     private val parentClassTypeParameterStackCache = mutableMapOf<FirRegularClassSymbol, JavaTypeParameterStack>()
     private val parentClassEffectiveVisibilityCache = mutableMapOf<FirRegularClassSymbol, EffectiveVisibility>()
+    private val statusExtensions = session.extensionService.statusTransformerExtensions
 
     fun findClass(classId: ClassId, knownContent: ByteArray? = null): JavaClass? =
         classFinder.findClass(JavaClassFinder.Request(classId, knownContent))
@@ -180,7 +185,43 @@ abstract class FirJavaFacade(
 
         enhancement.enhanceTypeParameterBoundsAfterFirstRound(firJavaClass.typeParameters, initialBounds)
 
+        updateStatuses(firJavaClass, parentClassSymbol)
+
         return firJavaClass
+    }
+
+    private fun updateStatuses(firJavaClass: FirJavaClass, parentClassSymbol: FirRegularClassSymbol?) {
+        if (statusExtensions.isEmpty()) return
+        val classSymbol = firJavaClass.symbol
+        val visitor = object : FirVisitorVoid() {
+            override fun visitElement(element: FirElement) {}
+
+            override fun visitRegularClass(regularClass: FirRegularClass) {
+                regularClass.applyExtensionTransformers {
+                    transformStatus(it, regularClass, parentClassSymbol, isLocal = false)
+                }
+                regularClass.acceptChildren(this)
+            }
+
+            override fun visitSimpleFunction(simpleFunction: FirSimpleFunction) {
+                simpleFunction.applyExtensionTransformers {
+                    transformStatus(it, simpleFunction, classSymbol, isLocal = false)
+                }
+            }
+
+            override fun visitField(field: FirField) {
+                field.applyExtensionTransformers {
+                    transformStatus(it, field, classSymbol, isLocal = false)
+                }
+            }
+
+            override fun visitConstructor(constructor: FirConstructor) {
+                constructor.applyExtensionTransformers {
+                    transformStatus(it, constructor, classSymbol, isLocal = false)
+                }
+            }
+        }
+        firJavaClass.accept(visitor)
     }
 
     private fun createFirJavaClass(
@@ -204,7 +245,7 @@ abstract class FirJavaFacade(
             val visibility = javaClass.visibility
             this@buildJavaClass.visibility = visibility
             classKind = javaClass.classKind
-            modality = if (classKind == ClassKind.ANNOTATION_CLASS || classKind == ClassKind.ENUM_CLASS) Modality.FINAL else javaClass.modality
+            modality = javaClass.modality
             this.isTopLevel = classId.outerClassId == null
             isStatic = javaClass.isStatic
             javaPackage = packageCache.getValue(classSymbol.classId.packageFqName)
@@ -243,9 +284,6 @@ abstract class FirJavaFacade(
                 effectiveVisibility
             ).apply {
                 this.isInner = !isTopLevel && !this@buildJavaClass.isStatic
-                isCompanion = false
-                isData = false
-                isInline = false
                 isFun = classKind == ClassKind.INTERFACE
             }
             // TODO: may be we can process fields & methods later.
@@ -326,7 +364,10 @@ abstract class FirJavaFacade(
                         moduleData = moduleData,
                     )
             }
-            if (javaClass.isRecord) {
+
+            // There is no need to generated synthetic declarations for java record from binary dependencies
+            //   because they are actually present in .class files
+            if (javaClass.isRecord && javaClass.isFromSource) {
                 createDeclarationsForJavaRecord(
                     javaClass,
                     classId,
@@ -455,15 +496,12 @@ abstract class FirJavaFacade(
                     javaField.visibility.toEffectiveVisibility(dispatchReceiver.lookupTag)
                 ).apply {
                     isStatic = javaField.isStatic
-                    isExpect = false
-                    isActual = false
-                    isOverride = false
                 }
                 returnTypeRef = returnType.toFirJavaTypeRef(session, javaTypeParameterStack)
                 resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                 origin = javaOrigin(javaField.isFromSource)
             }.apply {
-                containingClassForStaticMemberAttr = ConeClassLikeLookupTagImpl(classId)
+                containingClassForStaticMemberAttr = classId.toLookupTag()
                 // TODO: check if this works properly with annotations that take the enum class as an argument
                 setAnnotationsFromJava(session, javaField, javaTypeParameterStack)
             }
@@ -479,9 +517,6 @@ abstract class FirJavaFacade(
                     javaField.visibility.toEffectiveVisibility(dispatchReceiver.lookupTag)
                 ).apply {
                     isStatic = javaField.isStatic
-                    isExpect = false
-                    isActual = false
-                    isOverride = false
                 }
                 visibility = javaField.visibility
                 modality = javaField.modality
@@ -500,7 +535,7 @@ abstract class FirJavaFacade(
                 }
             }.apply {
                 if (javaField.isStatic) {
-                    containingClassForStaticMemberAttr = ConeClassLikeLookupTagImpl(classId)
+                    containingClassForStaticMemberAttr = classId.toLookupTag()
                 }
             }
         }
@@ -537,17 +572,7 @@ abstract class FirJavaFacade(
                 javaMethod.visibility.toEffectiveVisibility(dispatchReceiver.lookupTag)
             ).apply {
                 isStatic = javaMethod.isStatic
-                isExpect = false
-                isActual = false
-                isOverride = false
-                // Approximation: all Java methods with name that allows to use it in operator form are considered operators
-                // We need here more detailed checks (see modifierChecks.kt)
-                isOperator = name in ALL_JAVA_OPERATION_NAMES || OperatorNameConventions.COMPONENT_REGEX.matches(name.asString())
-                isInfix = false
-                isInline = false
-                isTailRec = false
-                isExternal = false
-                isSuspend = false
+                hasStableParameterNames = false
             }
 
             if (!javaMethod.isStatic) {
@@ -555,7 +580,7 @@ abstract class FirJavaFacade(
             }
         }.apply {
             if (javaMethod.isStatic) {
-                containingClassForStaticMemberAttr = ConeClassLikeLookupTagImpl(classId)
+                containingClassForStaticMemberAttr = classId.toLookupTag()
             }
             if (containingClass.isRecord && valueParameters.isEmpty() && containingClass.recordComponents.any { it.name == methodName }) {
                 isJavaRecordComponent = true
@@ -603,10 +628,8 @@ abstract class FirJavaFacade(
                 Modality.FINAL,
                 visibility.toEffectiveVisibility(ownerClassBuilder.symbol)
             ).apply {
-                isExpect = false
-                isActual = false
-                isOverride = false
                 isInner = isThisInner
+                hasStableParameterNames = false
             }
             this.visibility = visibility
             isPrimary = javaConstructor == null
@@ -672,5 +695,26 @@ abstract class FirJavaFacade(
 
     private fun List<FirTypeParameter>.toRefs(): List<FirTypeParameterRef> {
         return this.map { buildConstructedClassTypeParameterRef { symbol = it.symbol } }
+    }
+
+    private inline fun FirMemberDeclaration.applyExtensionTransformers(
+        operation: FirStatusTransformerExtension.(FirDeclarationStatus) -> FirDeclarationStatus
+    ) {
+        val declaration = this
+        val oldStatus = declaration.status as FirResolvedDeclarationStatusImpl
+        val newStatus = statusExtensions.fold(status) { acc, it ->
+            if (it.needTransformStatus(declaration)) {
+                it.operation(acc)
+            } else {
+                acc
+            }
+        } as FirDeclarationStatusImpl
+        if (newStatus === oldStatus) return
+        val resolvedStatus = newStatus.resolved(
+            newStatus.visibility,
+            newStatus.modality ?: oldStatus.modality,
+            oldStatus.effectiveVisibility
+        )
+        replaceStatus(resolvedStatus)
     }
 }

@@ -27,9 +27,15 @@ STATUS:
 FILE: functionWithTypeParameters.kt
     public final [STATUS] fun <[STATUS] T : R|kotlin/Int|, [STATUS] K> resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
+EXPECT_ACTUAL_MATCHING:
+FILE: functionWithTypeParameters.kt
+    public final [EXPECT_ACTUAL_MATCHING] fun <[EXPECT_ACTUAL_MATCHING] T : R|kotlin/Int|, [EXPECT_ACTUAL_MATCHING] K> resolveMe(): R|kotlin/Unit| {
+    }
+
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: functionWithTypeParameters.kt
-    public final [ARGUMENTS_OF_ANNOTATIONS] fun <[ARGUMENTS_OF_ANNOTATIONS] T : R|kotlin/Int|, [ARGUMENTS_OF_ANNOTATIONS] K> resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ARGUMENTS_OF_ANNOTATIONS] fun <[ARGUMENTS_OF_ANNOTATIONS] T : R|kotlin/Int|, [ARGUMENTS_OF_ANNOTATIONS] K> resolveMe(): R|kotlin/Unit| {
+    }
 
 CONTRACTS:
 FILE: functionWithTypeParameters.kt
@@ -44,11 +50,6 @@ FILE: functionWithTypeParameters.kt
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: functionWithTypeParameters.kt
     public final [ANNOTATIONS_ARGUMENTS_MAPPING] fun <[ANNOTATIONS_ARGUMENTS_MAPPING] T : R|kotlin/Int|, [ANNOTATIONS_ARGUMENTS_MAPPING] K> resolveMe(): R|kotlin/Unit| {
-    }
-
-EXPECT_ACTUAL_MATCHING:
-FILE: functionWithTypeParameters.kt
-    public final [EXPECT_ACTUAL_MATCHING] fun <[EXPECT_ACTUAL_MATCHING] T : R|kotlin/Int|, [EXPECT_ACTUAL_MATCHING] K> resolveMe(): R|kotlin/Unit| {
     }
 
 BODY_RESOLVE:

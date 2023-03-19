@@ -16,7 +16,10 @@ KtFunctionSymbol:
               annotationsList: []
               origin: SOURCE
               owningCallableSymbol: KtFunctionSymbol(/referenceReceiverInContract)
-              type: kotlin/Boolean
+              type: KtUsualClassType:
+                annotationsList: []
+                ownTypeArguments: []
+                type: kotlin/Boolean
               getContainingModule: KtSourceModule "Sources of main"
               deprecationStatus: null
   ]
@@ -37,10 +40,16 @@ KtFunctionSymbol:
     annotationsList: []
     origin: SOURCE
     owningCallableSymbol: KtFunctionSymbol(/referenceReceiverInContract)
-    type: kotlin/Boolean
+    type: KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Boolean
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
-  returnType: kotlin/Unit
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []

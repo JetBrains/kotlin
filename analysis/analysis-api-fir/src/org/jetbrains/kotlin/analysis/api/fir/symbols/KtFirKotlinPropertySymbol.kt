@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.KtInitializerValue
 import org.jetbrains.kotlin.analysis.api.base.KtContextReceiver
+import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
@@ -39,9 +40,7 @@ import org.jetbrains.kotlin.name.Name
 
 internal class KtFirKotlinPropertySymbol(
     override val firSymbol: FirPropertySymbol,
-    override val firResolveSession: LLFirResolveSession,
-    override val token: KtLifetimeToken,
-    private val builder: KtSymbolByFirBuilder
+    override val analysisSession: KtFirAnalysisSession,
 ) : KtKotlinPropertySymbol(), KtFirSymbol<FirPropertySymbol> {
     init {
         assert(!firSymbol.isLocal)
@@ -63,7 +62,7 @@ internal class KtFirKotlinPropertySymbol(
     override val contextReceivers: List<KtContextReceiver> by cached { firSymbol.createContextReceivers(builder) }
 
     override val isExtension: Boolean get() = withValidityAssertion { firSymbol.isExtension }
-    override val initializer: KtInitializerValue? by cached { firSymbol.getKtConstantInitializer(firResolveSession) }
+    override val initializer: KtInitializerValue? by cached { firSymbol.getKtConstantInitializer(analysisSession.firResolveSession) }
 
     override val symbolKind: KtSymbolKind
         get() = withValidityAssertion {
@@ -79,7 +78,7 @@ internal class KtFirKotlinPropertySymbol(
     override val annotationsList by cached {
         KtFirAnnotationListForDeclaration.create(
             firSymbol,
-            firResolveSession.useSiteFirSession,
+            analysisSession.useSiteSession,
             token
         )
     }

@@ -9,8 +9,6 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.isLong
 import org.jetbrains.kotlin.fir.isULong
-import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.types.ConeIntegerLiteralTypeExtensions.approximateIntegerLiteralBounds
 import org.jetbrains.kotlin.fir.types.ConeIntegerLiteralTypeExtensions.createClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeIntegerLiteralTypeExtensions.createSupertypeList
@@ -18,6 +16,7 @@ import org.jetbrains.kotlin.fir.types.ConeIntegerLiteralTypeExtensions.getApprox
 import org.jetbrains.kotlin.fir.types.ConeIntegerLiteralTypeExtensions.withNullabilityAndAttributes
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 
@@ -85,7 +84,7 @@ class ConeIntegerLiteralConstantTypeImpl(
         }
 
         private fun createType(classId: ClassId): ConeClassLikeType {
-            return ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(classId), emptyArray(), false)
+            return ConeClassLikeTypeImpl(classId.toLookupTag(), emptyArray(), false)
         }
 
         private val INT_RANGE = Int.MIN_VALUE.toLong()..Int.MAX_VALUE.toLong()
@@ -143,12 +142,12 @@ private object ConeIntegerLiteralTypeExtensions {
     fun createSupertypeList(type: ConeIntegerLiteralType): List<ConeClassLikeType> {
         return listOf(
             createClassLikeType(StandardClassIds.Number),
-            ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(StandardClassIds.Comparable), arrayOf(ConeKotlinTypeProjectionIn(type)), false)
+            ConeClassLikeTypeImpl(StandardClassIds.Comparable.toLookupTag(), arrayOf(ConeKotlinTypeProjectionIn(type)), false)
         )
     }
 
     fun createClassLikeType(classId: ClassId): ConeClassLikeType {
-        return ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(classId), emptyArray(), false)
+        return ConeClassLikeTypeImpl(classId.toLookupTag(), emptyArray(), false)
     }
 
     fun ConeIntegerLiteralType.getApproximatedTypeImpl(expectedType: ConeKotlinType?): ConeClassLikeType {

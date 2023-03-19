@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
-import org.jetbrains.kotlin.ir.util.DeserializableClass
 import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.ir.util.withScope
 import org.jetbrains.kotlin.name.Name
@@ -33,18 +32,18 @@ class IrLazyFunction(
     override val descriptor: FunctionDescriptor,
     override var name: Name,
     override var visibility: DescriptorVisibility,
-    override val modality: Modality,
-    override val isInline: Boolean,
-    override val isExternal: Boolean,
-    override val isTailrec: Boolean,
-    override val isSuspend: Boolean,
-    override val isExpect: Boolean,
-    override val isFakeOverride: Boolean,
-    override val isOperator: Boolean,
-    override val isInfix: Boolean,
+    override var modality: Modality,
+    override var isInline: Boolean,
+    override var isExternal: Boolean,
+    override var isTailrec: Boolean,
+    override var isSuspend: Boolean,
+    override var isExpect: Boolean,
+    override var isFakeOverride: Boolean,
+    override var isOperator: Boolean,
+    override var isInfix: Boolean,
     override val stubGenerator: DeclarationStubGenerator,
     override val typeTranslator: TypeTranslator,
-) : IrSimpleFunction(), IrLazyFunctionBase {
+) : AbstractIrLazyFunction(), IrLazyFunctionBase {
     override var parent: IrDeclarationParent by createLazyParent()
 
     override var annotations: List<IrConstructorCall> by createLazyAnnotations()
@@ -105,28 +104,19 @@ class IrLazyFunction(
         get() = this
         set(_) = error("We should never need to change attributeOwnerId of external declarations.")
 
+    override var originalBeforeInline: IrAttributeContainer?
+        get() = null
+        set(_) = error("We should never need to change originalBeforeInline of external declarations.")
+
     override var correspondingPropertySymbol: IrPropertySymbol? = null
 
     override val containerSource: DeserializedContainerSource?
         get() = (descriptor as? DescriptorWithContainerSource)?.containerSource
 
-    private fun tryLoadIr(): Boolean {
-        if (!stubGenerator.extensions.irDeserializationEnabled) return false
-        if (!isInline || isFakeOverride) return false
-        val toplevel = getToplevel()
-        return (toplevel as? DeserializableClass)?.loadIr() ?: false
-    }
-
-    private fun getToplevel(): IrDeclaration {
-        var current: IrDeclaration = this
-        while (current.parent !is IrPackageFragment) {
-            current = current.parent as IrDeclaration
-        }
-        return current
-    }
+    override val isDeserializationEnabled: Boolean
+        get() = stubGenerator.extensions.irDeserializationEnabled
 
     init {
         symbol.bind(this)
     }
 }
-

@@ -26,7 +26,10 @@ KtFunctionSymbol:
               name: value
               origin: SOURCE
               receiverParameter: null
-              returnType: kotlin/Boolean
+              returnType: KtUsualClassType:
+                annotationsList: []
+                ownTypeArguments: []
+                type: kotlin/Boolean
               symbolKind: LOCAL
               typeParameters: []
               getContainingModule: KtSourceModule "Sources of main"
@@ -46,7 +49,10 @@ KtFunctionSymbol:
   name: check
   origin: SOURCE
   receiverParameter: null
-  returnType: kotlin/Unit
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
@@ -64,7 +70,10 @@ KtFunctionSymbol:
       name: value
       origin: SOURCE
       receiverParameter: null
-      returnType: kotlin/Boolean
+      returnType: KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
+        type: kotlin/Boolean
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtSourceModule "Sources of main"

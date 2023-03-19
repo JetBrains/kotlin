@@ -13,7 +13,10 @@ KtNamedClassOrObjectSymbol:
   name: A
   origin: SOURCE
   superTypes: [
-    kotlin/Any
+    KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Any
   ]
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -37,7 +40,10 @@ KtNamedClassOrObjectSymbol:
   name: B
   origin: SOURCE
   superTypes: [
-    kotlin/Any
+    KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Any
   ]
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -50,7 +56,12 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: /tooo
   contextReceivers: [
-    ContextReceiver(A)
+    KtContextReceiver:
+      label: null
+      type: KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
+        type: A
   ]
   contractEffects: []
   hasStableParameterNames: true
@@ -67,7 +78,10 @@ KtFunctionSymbol:
   name: tooo
   origin: SOURCE
   receiverParameter: null
-  returnType: kotlin/Unit
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []
@@ -79,7 +93,12 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: /tooo
   contextReceivers: [
-    ContextReceiver(B)
+    KtContextReceiver:
+      label: null
+      type: KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
+        type: B
   ]
   contractEffects: []
   hasStableParameterNames: true
@@ -96,7 +115,10 @@ KtFunctionSymbol:
   name: tooo
   origin: SOURCE
   receiverParameter: null
-  returnType: kotlin/Unit
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []
@@ -108,8 +130,18 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: /tooo
   contextReceivers: [
-    ContextReceiver(A)
-    ContextReceiver(B)
+    KtContextReceiver:
+      label: null
+      type: KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
+        type: A
+    KtContextReceiver:
+      label: null
+      type: KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
+        type: B
   ]
   contractEffects: []
   hasStableParameterNames: true
@@ -126,7 +158,10 @@ KtFunctionSymbol:
   name: tooo
   origin: SOURCE
   receiverParameter: null
-  returnType: kotlin/Unit
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []
@@ -138,8 +173,18 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: /tooo
   contextReceivers: [
-    ContextReceiver(B)
-    ContextReceiver(A)
+    KtContextReceiver:
+      label: null
+      type: KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
+        type: B
+    KtContextReceiver:
+      label: null
+      type: KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
+        type: A
   ]
   contractEffects: []
   hasStableParameterNames: true
@@ -156,7 +201,10 @@ KtFunctionSymbol:
   name: tooo
   origin: SOURCE
   receiverParameter: null
-  returnType: kotlin/Unit
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []

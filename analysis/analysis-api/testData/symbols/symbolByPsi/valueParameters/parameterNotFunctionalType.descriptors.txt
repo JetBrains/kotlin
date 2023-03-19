@@ -17,7 +17,10 @@ KtFunctionSymbol:
   name: f
   origin: SOURCE
   receiverParameter: null
-  returnType: kotlin/Unit
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
@@ -35,7 +38,21 @@ KtFunctionSymbol:
       name: p
       origin: SOURCE
       receiverParameter: null
-      returnType: kotlin/Function2<kotlin/Int, ERROR_TYPE, ERROR_TYPE>
+      returnType: KtFunctionalType:
+        annotationsList: []
+        ownTypeArguments: [
+          KtUsualClassType:
+            annotationsList: []
+            ownTypeArguments: []
+            type: kotlin/Int
+          KtClassErrorType:
+            annotationsList: []
+            type: ERROR_TYPE
+          KtTypeErrorType:
+            annotationsList: []
+            type: ERROR_TYPE
+        ]
+        type: kotlin/Function2<kotlin/Int, ERROR_TYPE, ERROR_TYPE>
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtSourceModule "Sources of main"
@@ -54,7 +71,9 @@ KtFunctionSymbol:
       name: <no name provided>
       origin: SOURCE
       receiverParameter: null
-      returnType: ERROR_TYPE
+      returnType: KtTypeErrorType:
+        annotationsList: []
+        type: ERROR_TYPE
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtSourceModule "Sources of main"

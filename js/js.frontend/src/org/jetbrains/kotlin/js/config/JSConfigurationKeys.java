@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.js.config;
 
+import org.jetbrains.kotlin.konan.file.ZipFileSystemAccessor;
 import org.jetbrains.kotlin.config.CompilerConfigurationKey;
 import org.jetbrains.kotlin.incremental.js.IncrementalNextRoundChecker;
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider;
@@ -120,4 +121,8 @@ public class JSConfigurationKeys {
 
     public static final CompilerConfigurationKey<Boolean> WASM_GENERATE_WAT =
             CompilerConfigurationKey.create("generate wat file");
+
+    public static final CompilerConfigurationKey<ZipFileSystemAccessor> ZIP_FILE_SYSTEM_ACCESSOR =
+            CompilerConfigurationKey.create("zip file system accessor, used for klib reading");
+
 }

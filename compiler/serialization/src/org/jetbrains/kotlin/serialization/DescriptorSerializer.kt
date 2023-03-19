@@ -70,6 +70,7 @@ class DescriptorSerializer private constructor(
             descriptor, Interner(typeParameters), extension, typeTable, versionRequirementTable,
             serializeTypeTableToFunction = false, typeAttributeTranslators = typeAttributeTranslators,
             languageVersionSettings = languageVersionSettings,
+            plugins = plugins,
         )
 
     val stringTable: DescriptorAwareStringTable
@@ -155,10 +156,6 @@ class DescriptorSerializer private constructor(
             if (descriptor is TypeAliasDescriptor) {
                 typeAliasProto(descriptor)?.let { builder.addTypeAlias(it) }
             } else {
-                if (descriptor is ClassDescriptor && !extension.shouldSerializeNestedClass(descriptor)) {
-                    continue
-                }
-
                 val name = getSimpleNameIndex(descriptor.name)
                 if (isEnumEntry(descriptor)) {
                     builder.addEnumEntry(enumEntryProto(descriptor as ClassDescriptor))
@@ -218,12 +215,6 @@ class DescriptorSerializer private constructor(
             )
         }
 
-        if (classDescriptor.contextReceivers.isNotEmpty()) {
-            builder.addVersionRequirement(
-                writeCompilerVersionRequirement(1, 6, 20, versionRequirementTable)
-            )
-        }
-
         typeTable.serialize()?.let { builder.typeTable = it }
         versionRequirementTable.serialize()?.let { builder.versionRequirementTable = it }
 
@@ -253,8 +244,6 @@ class DescriptorSerializer private constructor(
     }
 
     fun propertyProto(descriptor: PropertyDescriptor): ProtoBuf.Property.Builder? {
-        if (!extension.shouldSerializeProperty(descriptor)) return null
-
         val builder = ProtoBuf.Property.newBuilder()
 
         val local = createChildSerializer(descriptor)
@@ -351,16 +340,14 @@ class DescriptorSerializer private constructor(
                 builder.addVersionRequirement(writeVersionRequirement(LanguageFeature.InlineClasses))
             }
 
-            if (descriptor.contextReceiverParameters.isNotEmpty()) {
-                builder.addVersionRequirement(writeCompilerVersionRequirement(1, 6, 20))
-            }
-
             if (local.metDefinitelyNotNullType) {
                 builder.addVersionRequirement(writeVersionRequirement(LanguageFeature.DefinitelyNonNullableTypes))
             }
         }
 
         extension.serializeProperty(descriptor, builder, versionRequirementTable, local)
+
+        plugins.forEach { it.afterProperty(descriptor, builder, versionRequirementTable, this, extension) }
 
         return builder
     }
@@ -381,8 +368,6 @@ class DescriptorSerializer private constructor(
     }
 
     fun functionProto(descriptor: FunctionDescriptor): ProtoBuf.Function.Builder? {
-        if (!extension.shouldSerializeFunction(descriptor)) return null
-
         val builder = ProtoBuf.Function.newBuilder()
 
         val local = createChildSerializer(descriptor)
@@ -435,6 +420,8 @@ class DescriptorSerializer private constructor(
 
         extension.serializeFunction(descriptor, builder, versionRequirementTable, local)
 
+        plugins.forEach { it.afterFunction(descriptor, builder, versionRequirementTable, this, extension) }
+
         if (serializeTypeTableToFunction) {
             typeTable.serialize()?.let { builder.typeTable = it }
         }
@@ -448,10 +435,6 @@ class DescriptorSerializer private constructor(
 
             if (descriptor.hasInlineClassTypesInSignature()) {
                 builder.addVersionRequirement(writeVersionRequirement(LanguageFeature.InlineClasses))
-            }
-
-            if (descriptor.contextReceiverParameters.isNotEmpty()) {
-                builder.addVersionRequirement(writeCompilerVersionRequirement(1, 6, 20))
             }
 
             if (local.metDefinitelyNotNullType) {
@@ -497,6 +480,8 @@ class DescriptorSerializer private constructor(
 
         extension.serializeConstructor(descriptor, builder, local)
 
+        plugins.forEach { it.afterConstructor(descriptor, builder, versionRequirementTable, this, extension) }
+
         return builder
     }
 
@@ -523,8 +508,6 @@ class DescriptorSerializer private constructor(
     }
 
     private fun typeAliasProto(descriptor: TypeAliasDescriptor): ProtoBuf.TypeAlias.Builder? = withNewMetDefinitelyNotNullType {
-        if (!extension.shouldSerializeTypeAlias(descriptor)) return null
-
         val builder = ProtoBuf.TypeAlias.newBuilder()
         val local = createChildSerializer(descriptor)
 
@@ -568,6 +551,8 @@ class DescriptorSerializer private constructor(
         }
 
         extension.serializeTypeAlias(descriptor, builder)
+
+        plugins.forEach { it.afterTypealias(descriptor, builder, versionRequirementTable, this, extension) }
 
         return builder
     }
@@ -874,6 +859,7 @@ class DescriptorSerializer private constructor(
                 null, Interner(), extension, MutableTypeTable(), MutableVersionRequirementTable(), serializeTypeTableToFunction = false,
                 typeAttributeTranslators = project?.let { TypeAttributeTranslatorExtension.createTranslators(it) },
                 languageVersionSettings = languageVersionSettings,
+                plugins = project?.let { DescriptorSerializerPlugin.getInstances(it) }.orEmpty(),
             )
 
         @JvmStatic

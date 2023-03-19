@@ -13,7 +13,10 @@ KtNamedClassOrObjectSymbol:
   name: Companion
   origin: PLUGIN
   superTypes: [
-    kotlin/Any
+    KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Any
   ]
   symbolKind: CLASS_MEMBER
   typeParameters: []

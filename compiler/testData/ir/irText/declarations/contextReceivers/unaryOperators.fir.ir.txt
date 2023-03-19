@@ -185,22 +185,24 @@ FILE fqName:<root> fileName:/unaryOperators.kt
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:kotlin.Int) returnType:<root>.Result
               $receiver: VALUE_PARAMETER name:$this$with type:kotlin.Int
               BLOCK_BODY
-                VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:<root>.Result [val]
-                  GET_VAR 'var result: <root>.Result [var] declared in <root>.box' type=<root>.Result origin=null
-                SET_VAR 'var result: <root>.Result [var] declared in <root>.box' type=kotlin.Unit origin=EQ
-                  CALL 'public final fun inc (_context_receiver_0: kotlin.Int): <root>.Result [operator] declared in <root>' type=<root>.Result origin=null
-                    $receiver: GET_VAR 'val tmp_1: <root>.Result [val] declared in <root>.box.<anonymous>' type=<root>.Result origin=null
-                    _context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=null
                 TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-                  GET_VAR 'val tmp_1: <root>.Result [val] declared in <root>.box.<anonymous>' type=<root>.Result origin=null
-                VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:<root>.Result [val]
-                  GET_VAR 'var result: <root>.Result [var] declared in <root>.box' type=<root>.Result origin=null
-                SET_VAR 'var result: <root>.Result [var] declared in <root>.box' type=kotlin.Unit origin=EQ
-                  CALL 'public final fun inc (_context_receiver_0: kotlin.Int): <root>.Result [operator] declared in <root>' type=<root>.Result origin=null
-                    $receiver: GET_VAR 'val tmp_2: <root>.Result [val] declared in <root>.box.<anonymous>' type=<root>.Result origin=null
-                    _context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=null
+                  BLOCK type=<root>.Result origin=null
+                    VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:<root>.Result [val]
+                      GET_VAR 'var result: <root>.Result [var] declared in <root>.box' type=<root>.Result origin=null
+                    SET_VAR 'var result: <root>.Result [var] declared in <root>.box' type=kotlin.Unit origin=EQ
+                      CALL 'public final fun inc (_context_receiver_0: kotlin.Int): <root>.Result [operator] declared in <root>' type=<root>.Result origin=null
+                        $receiver: GET_VAR 'val tmp_1: <root>.Result [val] declared in <root>.box.<anonymous>' type=<root>.Result origin=null
+                        _context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=null
+                    GET_VAR 'val tmp_1: <root>.Result [val] declared in <root>.box.<anonymous>' type=<root>.Result origin=null
                 TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-                  GET_VAR 'val tmp_2: <root>.Result [val] declared in <root>.box.<anonymous>' type=<root>.Result origin=null
+                  BLOCK type=<root>.Result origin=null
+                    VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:<root>.Result [val]
+                      GET_VAR 'var result: <root>.Result [var] declared in <root>.box' type=<root>.Result origin=null
+                    SET_VAR 'var result: <root>.Result [var] declared in <root>.box' type=kotlin.Unit origin=EQ
+                      CALL 'public final fun inc (_context_receiver_0: kotlin.Int): <root>.Result [operator] declared in <root>' type=<root>.Result origin=null
+                        $receiver: GET_VAR 'val tmp_2: <root>.Result [val] declared in <root>.box.<anonymous>' type=<root>.Result origin=null
+                        _context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=null
+                    GET_VAR 'val tmp_2: <root>.Result [val] declared in <root>.box.<anonymous>' type=<root>.Result origin=null
                 TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
                   CALL 'public final fun unaryMinus (_context_receiver_0: kotlin.Int): <root>.Result [operator] declared in <root>' type=<root>.Result origin=null
                     $receiver: GET_VAR 'var result: <root>.Result [var] declared in <root>.box' type=<root>.Result origin=null
@@ -209,14 +211,15 @@ FILE fqName:<root> fileName:/unaryOperators.kt
                   CALL 'public final fun unaryPlus (_context_receiver_0: kotlin.Int): <root>.Result [operator] declared in <root>' type=<root>.Result origin=null
                     $receiver: GET_VAR 'var result: <root>.Result [var] declared in <root>.box' type=<root>.Result origin=null
                     _context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=null
-                VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:<root>.Result [val]
-                  GET_VAR 'var result: <root>.Result [var] declared in <root>.box' type=<root>.Result origin=null
-                SET_VAR 'var result: <root>.Result [var] declared in <root>.box' type=kotlin.Unit origin=EQ
-                  CALL 'public final fun dec (_context_receiver_0: kotlin.Int): <root>.Result [operator] declared in <root>' type=<root>.Result origin=null
-                    $receiver: GET_VAR 'val tmp_3: <root>.Result [val] declared in <root>.box.<anonymous>' type=<root>.Result origin=null
-                    _context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=null
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): <root>.Result declared in <root>.box'
-                  GET_VAR 'val tmp_3: <root>.Result [val] declared in <root>.box.<anonymous>' type=<root>.Result origin=null
+                  BLOCK type=<root>.Result origin=null
+                    VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:<root>.Result [val]
+                      GET_VAR 'var result: <root>.Result [var] declared in <root>.box' type=<root>.Result origin=null
+                    SET_VAR 'var result: <root>.Result [var] declared in <root>.box' type=kotlin.Unit origin=EQ
+                      CALL 'public final fun dec (_context_receiver_0: kotlin.Int): <root>.Result [operator] declared in <root>' type=<root>.Result origin=null
+                        $receiver: GET_VAR 'val tmp_3: <root>.Result [val] declared in <root>.box.<anonymous>' type=<root>.Result origin=null
+                        _context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=null
+                    GET_VAR 'val tmp_3: <root>.Result [val] declared in <root>.box.<anonymous>' type=<root>.Result origin=null
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
         WHEN type=kotlin.String origin=IF
           BRANCH

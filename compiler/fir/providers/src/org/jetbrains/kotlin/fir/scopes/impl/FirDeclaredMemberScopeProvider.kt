@@ -58,7 +58,7 @@ class FirDeclaredMemberScopeProvider(val useSiteSession: FirSession) : FirSessio
             origin.generated -> {
                 FirGeneratedClassDeclaredMemberScope.create(
                     useSiteSession,
-                    MemberGenerationContext(klass.symbol, declaredMemberScope = null),
+                    MemberGenerationContext(klass.symbol, declaredScope = null),
                     needNestedClassifierScope = true
                 ) ?: FirTypeScope.Empty
             }
@@ -92,10 +92,10 @@ class FirDeclaredMemberScopeProvider(val useSiteSession: FirSession) : FirSessio
 
     private fun createNestedClassifierScope(klass: FirClass): FirNestedClassifierScope? {
         return if (klass.origin.generated) {
-            FirGeneratedClassNestedClassifierScope.create(useSiteSession, klass)
+            FirGeneratedClassNestedClassifierScope.create(useSiteSession, klass, baseScope = null)
         } else {
             val baseScope = FirNestedClassifierScopeImpl(klass, useSiteSession)
-            val generatedScope = FirGeneratedClassNestedClassifierScope.create(useSiteSession, klass)
+            val generatedScope = FirGeneratedClassNestedClassifierScope.create(useSiteSession, klass, baseScope)
             if (generatedScope != null) {
                 FirCompositeNestedClassifierScope(
                     listOf(baseScope, generatedScope),

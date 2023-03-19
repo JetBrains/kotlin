@@ -17,9 +17,11 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.symbolPointerOfType
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightField
-import org.jetbrains.kotlin.light.classes.symbol.NullabilityType
-import org.jetbrains.kotlin.light.classes.symbol.annotations.computeAnnotations
-import org.jetbrains.kotlin.light.classes.symbol.modifierLists.LazyModifiersBox
+import org.jetbrains.kotlin.light.classes.symbol.annotations.AbstractClassAdditionalAnnotationsProvider
+import org.jetbrains.kotlin.light.classes.symbol.annotations.GranularAnnotationsBox
+import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolAnnotationsProvider
+import org.jetbrains.kotlin.light.classes.symbol.cachedValue
+import org.jetbrains.kotlin.light.classes.symbol.modifierLists.GranularModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.with
 import org.jetbrains.kotlin.psi.KtClass
@@ -67,28 +69,23 @@ internal abstract class SymbolLightClassForInterfaceOrAnnotationClass : SymbolLi
 
     protected open fun computeModifierList(): PsiModifierList? = SymbolLightClassModifierList(
         containingDeclaration = this,
-        initialValue = LazyModifiersBox.MODALITY_MODIFIERS_MAP.with(PsiModifier.ABSTRACT),
-        lazyModifiersComputer = ::computeModifiers
-    ) { modifierList ->
-        withClassOrObjectSymbol { classOrObjectSymbol ->
-            classOrObjectSymbol.computeAnnotations(
-                modifierList = modifierList,
-                nullability = NullabilityType.Unknown,
-                annotationUseSiteTarget = null,
-            )
-        }
-    }
+        modifiersBox = GranularModifiersBox(
+            initialValue = GranularModifiersBox.MODALITY_MODIFIERS_MAP.with(PsiModifier.ABSTRACT),
+            computer = ::computeModifiers
+        ),
+        annotationsBox = GranularAnnotationsBox(
+            annotationsProvider = SymbolAnnotationsProvider(ktModule, classOrObjectSymbolPointer),
+            additionalAnnotationsProvider = AbstractClassAdditionalAnnotationsProvider,
+        ),
+    )
 
     private val _modifierList: PsiModifierList? by lazyPub {
         computeModifierList()
     }
 
-    override fun isInterface(): Boolean = true
-    override fun isEnum(): Boolean = false
-
     final override fun getModifierList(): PsiModifierList? = _modifierList
 
-    private val _ownFields: List<KtLightField> by lazyPub {
+    override fun getOwnFields(): List<KtLightField> = cachedValue {
         withClassOrObjectSymbol { classOrObjectSymbol ->
             buildList {
                 addCompanionObjectFieldIfNeeded(this, classOrObjectSymbol)
@@ -96,8 +93,6 @@ internal abstract class SymbolLightClassForInterfaceOrAnnotationClass : SymbolLi
             }
         }
     }
-
-    override fun getOwnFields(): List<KtLightField> = _ownFields
 
     override fun getImplementsList(): PsiReferenceList? = null
 }

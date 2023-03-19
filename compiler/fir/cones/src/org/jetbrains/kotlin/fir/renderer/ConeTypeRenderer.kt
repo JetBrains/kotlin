@@ -5,21 +5,21 @@
 
 package org.jetbrains.kotlin.fir.renderer
 
-import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
+import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.fir.types.*
-import kotlin.contracts.ExperimentalContracts
-import kotlin.contracts.contract
 
-open class ConeTypeRenderer() {
+open class ConeTypeRenderer {
 
     lateinit var builder: StringBuilder
     lateinit var idRenderer: ConeIdRenderer
 
     open fun renderAsPossibleFunctionType(
-        type: ConeKotlinType, renderType: ConeTypeProjection.() -> Unit = { render() }
+        type: ConeKotlinType,
+        functionClassKindExtractor: (ConeKotlinType) -> FunctionTypeKind?,
+        renderType: ConeTypeProjection.() -> Unit = { render() }
     ) {
-        val kind = type.functionTypeKind
-        if (!kind.withPrettyRender()) {
+        val kind = functionClassKindExtractor(type)
+        if (kind?.isReflectType != false) {
             type.renderType()
             return
         }
@@ -27,8 +27,9 @@ open class ConeTypeRenderer() {
         if (type.isMarkedNullable) {
             builder.append("(")
         }
-        if (kind == FunctionClassKind.SuspendFunction) {
-            builder.append("suspend ")
+        kind.prefixForTypeRender?.let {
+            builder.append(it)
+            builder.append(" ")
         }
         val typeArguments = type.typeArguments
         val isExtension = type.isExtensionFunctionType
@@ -55,14 +56,6 @@ open class ConeTypeRenderer() {
         if (type.isMarkedNullable) {
             builder.append(")?")
         }
-    }
-
-    @OptIn(ExperimentalContracts::class)
-    private fun FunctionClassKind?.withPrettyRender(): Boolean {
-        contract {
-            returns(true) implies (this@withPrettyRender != null)
-        }
-        return this != null && this != FunctionClassKind.KSuspendFunction && this != FunctionClassKind.KFunction
     }
 
     fun render(type: ConeKotlinType) {

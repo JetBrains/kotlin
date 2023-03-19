@@ -72,6 +72,7 @@ abstract class IncrementalCompilerRunner<
 
     protected val withAbiSnapshot: Boolean = false,
     private val preciseCompilationResultsBackup: Boolean = false,
+    private val keepIncrementalCompilationCachesInMemory: Boolean = false,
 ) {
 
     protected val cacheDirectory = File(workingDir, cacheDirName)
@@ -83,10 +84,21 @@ abstract class IncrementalCompilerRunner<
     /**
      * Creates an instance of [IncrementalCompilationContext] that holds common incremental compilation context mostly required for [CacheManager]
      */
-    protected abstract fun createIncrementalCompilationContext(
+    private fun createIncrementalCompilationContext(
         projectDir: File?,
         transaction: CompilationTransaction
-    ): IncrementalCompilationContext
+    ) = IncrementalCompilationContext(
+        transaction = transaction,
+        rootProjectDir = projectDir,
+        reporter = reporter,
+        trackChangesInLookupCache = shouldTrackChangesInLookupCache,
+        storeFullFqNamesInLookupCache = shouldStoreFullFqNamesInLookupCache,
+        keepIncrementalCompilationCachesInMemory = keepIncrementalCompilationCachesInMemory,
+    )
+
+    protected abstract val shouldTrackChangesInLookupCache: Boolean
+
+    protected abstract val shouldStoreFullFqNamesInLookupCache: Boolean
 
     protected abstract fun createCacheManager(icContext: IncrementalCompilationContext, args: Args): CacheManager
     protected abstract fun destinationDir(args: Args): File
@@ -148,6 +160,11 @@ abstract class IncrementalCompilerRunner<
         class Failed(val reason: BuildAttribute, val cause: Throwable) : ICResult
     }
 
+    private fun incrementalCompilationExceptionTransformer(t: Throwable): ICResult = when (t) {
+        is CachesManagerCloseException -> ICResult.Failed(IC_FAILED_TO_CLOSE_CACHES, t)
+        else -> throw t
+    }
+
     /**
      * Attempts to compile incrementally and returns either [ICResult.Completed], [ICResult.RequiresRebuild], or [ICResult.Failed].
      *
@@ -166,9 +183,12 @@ abstract class IncrementalCompilerRunner<
         }
         changedFiles as ChangedFiles.Known?
 
-        createTransaction().use { transaction ->
+        return createTransaction().runWithin(::incrementalCompilationExceptionTransformer) { transaction ->
             val icContext = createIncrementalCompilationContext(projectDir, transaction)
-            val caches = createCacheManager(icContext, args)
+            val caches = createCacheManager(icContext, args).also {
+                // this way we make the transaction to be responsible for closing the caches manager
+                transaction.cachesManager = it
+            }
 
             fun compile(): ICResult {
                 // Step 1: Get changed files
@@ -223,41 +243,11 @@ abstract class IncrementalCompilerRunner<
                 return ICResult.Completed(exitCode)
             }
 
-            fun closeCaches(caches: CacheManager, activeException: Throwable) {
-                try {
-                    caches.close()
-                } catch (e: Throwable) {
-                    activeException.addSuppressed(e)
+            compile().also { icResult ->
+                if (icResult is ICResult.Completed && icResult.exitCode == ExitCode.OK) {
+                    transaction.markAsSuccessful()
                 }
             }
-
-            // Because `caches` is a Closeable resource, it is important to close them in both cases:
-            //    1. in the event of an exception
-            //    2. after a normal execution
-            // Note: Historically, closing caches used to throw exceptions sometimes, so currently we want to collect those exceptions. In the
-            // future, if closing caches is safe, we can simplify the code by using Kotlin's `Closable.use` function (similar to the code in
-            // `compileNonIncrementally`).
-            val icResult = try {
-                compile()
-            } catch (e: Throwable) {
-                // Case 1 - Close the caches upon an exception
-                closeCaches(caches, e)
-                throw e
-            }
-
-            // Case 2 - Close the caches after a normal execution
-            try {
-                caches.close()
-            } catch (e: Throwable) {
-                return ICResult.Failed(
-                    IC_FAILED_TO_CLOSE_CACHES,
-                    RuntimeException("Failed to close caches, previous ICResult `$icResult` was discarded", e)
-                )
-            }
-            if (icResult is ICResult.Completed && icResult.exitCode == ExitCode.OK) {
-                transaction.markAsSuccessful()
-            }
-            return icResult
         }
     }
 
@@ -278,7 +268,7 @@ abstract class IncrementalCompilerRunner<
             reporter.debug { "Cleaning ${outputDirsToClean.size} output directories" }
             cleanOrCreateDirectories(outputDirsToClean)
         }
-        val icContext = createIncrementalCompilationContext(projectDir, DummyCompilationTransaction())
+        val icContext = createIncrementalCompilationContext(projectDir, NonRecoverableCompilationTransaction())
         return createCacheManager(icContext, args).use { caches ->
             if (trackChangedFiles) {
                 caches.inputsCache.sourceSnapshotMap.compareAndUpdate(allSourceFiles)
@@ -415,7 +405,7 @@ abstract class IncrementalCompilerRunner<
     private fun createTransaction() = if (preciseCompilationResultsBackup) {
         RecoverableCompilationTransaction(reporter, Files.createTempDirectory("kotlin-backups"))
     } else {
-        DummyCompilationTransaction()
+        NonRecoverableCompilationTransaction()
     }
 
     protected open fun performWorkBeforeCompilation(compilationMode: CompilationMode, args: Args) {}
@@ -568,7 +558,7 @@ abstract class IncrementalCompilerRunner<
 
         if (exitCode == ExitCode.OK) {
             reporter.measure(BuildTime.STORE_BUILD_INFO) {
-                BuildInfo.write(currentBuildInfo, lastBuildInfoFile)
+                BuildInfo.write(icContext, currentBuildInfo, lastBuildInfoFile)
 
                 //write abi snapshot
                 if (withAbiSnapshot) {

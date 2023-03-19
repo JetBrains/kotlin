@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
+import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
@@ -144,7 +145,7 @@ internal fun checkConstantArguments(
         }
         expression is FirQualifiedAccessExpression -> {
             val expressionType = expression.typeRef.coneType
-            if (expressionType.isKFunctionType(session) || expressionType.isKProperty(session) || expressionType.isKMutableProperty(session)) {
+            if (expressionType.isReflectFunctionType(session) || expressionType.isKProperty(session) || expressionType.isKMutableProperty(session)) {
                 return checkConstantArguments(expression.dispatchReceiver, session)
             }
 

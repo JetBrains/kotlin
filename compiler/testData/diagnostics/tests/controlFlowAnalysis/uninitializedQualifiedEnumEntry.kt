@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // LANGUAGE: +ProhibitQualifiedAccessToUninitializedEnumEntry
 // ISSUE: KT-41124
 

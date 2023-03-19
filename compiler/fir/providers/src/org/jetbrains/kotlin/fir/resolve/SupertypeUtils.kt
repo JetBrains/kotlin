@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.resolve
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
@@ -109,7 +108,7 @@ fun FirClass.isSubclassOf(
     supertypeSupplier: SupertypeSupplier = SupertypeSupplier.Default,
     lookupInterfaces: Boolean = true,
 ): Boolean {
-    if (classId.isSame(ownerLookupTag.classId)) {
+    if (symbol.toLookupTag() == ownerLookupTag) {
         return !isStrict
     }
 
@@ -121,14 +120,10 @@ fun FirClass.isSubclassOf(
         substituteTypes = false,
         supertypeSupplier
     ).any { superType ->
-        // Note: We check just classId here, so type substitution isn't needed
-        superType.lookupTag.classId.isSame(ownerLookupTag.classId)
+        // Note: We just check lookupTag here, so type substitution isn't needed
+        superType.lookupTag == ownerLookupTag
     }
 }
-
-// 'local' isn't taken into account here
-fun ClassId.isSame(other: ClassId): Boolean =
-    packageFqName == other.packageFqName && relativeClassName == other.relativeClassName
 
 fun FirClass.isThereLoopInSupertypes(session: FirSession): Boolean {
     val visitedSymbols: MutableSet<FirClassifierSymbol<*>> = SmartSet.create()

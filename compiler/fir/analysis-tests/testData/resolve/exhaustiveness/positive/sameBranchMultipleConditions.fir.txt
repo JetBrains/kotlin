@@ -1,0 +1,50 @@
+FILE: sameBranchMultipleConditions.kt
+    public sealed interface A : R|kotlin/Any| {
+    }
+    public sealed interface B : R|kotlin/Any| {
+    }
+    public final data class X : R|A|, R|B| {
+        public constructor(something: R|kotlin/String|): R|X| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val something: R|kotlin/String| = R|<local>/something|
+            public get(): R|kotlin/String|
+
+        public final operator fun component1(): R|kotlin/String|
+
+        public final fun copy(something: R|kotlin/String| = this@R|/X|.R|/X.something|): R|X|
+
+    }
+    public final data class Y : R|A|, R|B| {
+        public constructor(something: R|kotlin/String|): R|Y| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val something: R|kotlin/String| = R|<local>/something|
+            public get(): R|kotlin/String|
+
+        public final operator fun component1(): R|kotlin/String|
+
+        public final fun copy(something: R|kotlin/String| = this@R|/Y|.R|/Y.something|): R|Y|
+
+    }
+    public final fun ok(a: R|A|): R|B| {
+        ^ok when (R|<local>/a|) {
+            ($subj$ is R|X|) ->  {
+                R|<local>/a|
+            }
+            ($subj$ is R|Y|) ->  {
+                R|<local>/a|
+            }
+        }
+
+    }
+    public final fun problem(a: R|A|): R|B| {
+        ^problem when (R|<local>/a|) {
+            ($subj$ is R|X|) || ($subj$ is R|Y|) ->  {
+                R|<local>/a|
+            }
+        }
+
+    }

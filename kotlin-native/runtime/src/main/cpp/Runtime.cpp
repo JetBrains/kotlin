@@ -464,14 +464,14 @@ static void CallInitGlobalAwaitInitialized(int *state) {
             localState = atomicGetAcquire(state);
         } while (localState != FILE_INITIALIZED && localState != FILE_FAILED_TO_INITIALIZE);
     }
-    if (localState == FILE_FAILED_TO_INITIALIZE) ThrowFileFailedToInitializeException();
+    if (localState == FILE_FAILED_TO_INITIALIZE) ThrowFileFailedToInitializeException(nullptr);
 }
 
 NO_INLINE void CallInitGlobalPossiblyLock(int* state, void (*init)()) {
     int localState = atomicGetAcquire(state);
     if (localState == FILE_INITIALIZED) return;
     if (localState == FILE_FAILED_TO_INITIALIZE)
-        ThrowFileFailedToInitializeException();
+        ThrowFileFailedToInitializeException(nullptr);
     int threadId = konan::currentThreadId();
     if ((localState & 3) == FILE_BEING_INITIALIZED) {
         if ((localState & ~3) != (threadId << 2)) {
@@ -485,10 +485,13 @@ NO_INLINE void CallInitGlobalPossiblyLock(int* state, void (*init)()) {
         init();
 #else
         try {
+            CurrentFrameGuard guard;
             init();
-        } catch (...) {
+        } catch (ExceptionObjHolder& e) {
+            ObjHolder holder;
+            auto *exception = Kotlin_getExceptionObject(&e, holder.slot());
             atomicSetRelease(state, FILE_FAILED_TO_INITIALIZE);
-            throw;
+            ThrowFileFailedToInitializeException(exception);
         }
 #endif
         atomicSetRelease(state, FILE_INITIALIZED);
@@ -499,16 +502,19 @@ NO_INLINE void CallInitGlobalPossiblyLock(int* state, void (*init)()) {
 
 void CallInitThreadLocal(int volatile* globalState, int* localState, void (*init)()) {
     if (*localState == FILE_FAILED_TO_INITIALIZE || (globalState != nullptr && *globalState == FILE_FAILED_TO_INITIALIZE))
-        ThrowFileFailedToInitializeException();
+        ThrowFileFailedToInitializeException(nullptr);
     *localState = FILE_INITIALIZED;
 #if KONAN_NO_EXCEPTIONS
     init();
 #else
     try {
+        CurrentFrameGuard guard;
         init();
-    } catch(...) {
+    } catch(ExceptionObjHolder& e) {
+        ObjHolder holder;
+        auto *exception = Kotlin_getExceptionObject(&e, holder.slot());
         *localState = FILE_FAILED_TO_INITIALIZE;
-        throw;
+        ThrowFileFailedToInitializeException(exception);
     }
 #endif
 }

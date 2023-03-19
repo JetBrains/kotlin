@@ -24,5 +24,5 @@ FILE: supertypeGenericsComplex.kt
     }
     public final fun f(list: R|kotlin/collections/MutableList<X>|, s: R|kotlin/collections/MutableList<kotlin/CharSequence>|): R|kotlin/Unit| {
         R|/C.C|().R|SubstitutionOverride</C.f: R|kotlin/Unit|>|<R|X|>(R|<local>/list|, R|<local>/s|)
-        R|/C.C|().R|SubstitutionOverride</C.f: R|kotlin/Unit|><Inapplicable(INAPPLICABLE): /C.f>#|<R|ERROR CLASS: Cannot infer argument for type parameter D|>(R|<local>/s|, R|<local>/list|)
+        R|/C.C|().R|SubstitutionOverride</C.f: R|kotlin/Unit|><Inapplicable(INAPPLICABLE): /C.f>#|<<ERROR TYPE REF: Cannot infer argument for type parameter D>>(R|<local>/s|, R|<local>/list|)
     }

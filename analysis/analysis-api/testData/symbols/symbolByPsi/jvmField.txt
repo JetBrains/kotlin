@@ -18,7 +18,10 @@ KtKotlinPropertySymbol:
     modality: FINAL
     origin: SOURCE
     receiverParameter: null
-    returnType: kotlin/Long
+    returnType: KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Long
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
@@ -41,7 +44,10 @@ KtKotlinPropertySymbol:
   name: jvmField
   origin: SOURCE
   receiverParameter: null
-  returnType: kotlin/Long
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Long
   setter: KtPropertySetterSymbol:
     annotationsList: []
     callableIdIfNonLocal: null
@@ -68,13 +74,19 @@ KtKotlinPropertySymbol:
       name: value
       origin: SOURCE
       receiverParameter: null
-      returnType: kotlin/Long
+      returnType: KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
+        type: kotlin/Long
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
     receiverParameter: null
-    returnType: kotlin/Unit
+    returnType: KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Unit
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: [
@@ -92,7 +104,10 @@ KtKotlinPropertySymbol:
         name: value
         origin: SOURCE
         receiverParameter: null
-        returnType: kotlin/Long
+        returnType: KtUsualClassType:
+          annotationsList: []
+          ownTypeArguments: []
+          type: kotlin/Long
         symbolKind: LOCAL
         typeParameters: []
         getContainingModule: KtSourceModule "Sources of main"
@@ -131,7 +146,10 @@ KtKotlinPropertySymbol:
     modality: FINAL
     origin: SOURCE
     receiverParameter: null
-    returnType: kotlin/Int
+    returnType: KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Int
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
@@ -154,7 +172,10 @@ KtKotlinPropertySymbol:
   name: jvmFieldOnField
   origin: SOURCE
   receiverParameter: null
-  returnType: kotlin/Int
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Int
   setter: KtPropertySetterSymbol:
     annotationsList: []
     callableIdIfNonLocal: null
@@ -181,13 +202,19 @@ KtKotlinPropertySymbol:
       name: value
       origin: SOURCE
       receiverParameter: null
-      returnType: kotlin/Int
+      returnType: KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
+        type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
     receiverParameter: null
-    returnType: kotlin/Unit
+    returnType: KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Unit
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: [
@@ -205,7 +232,10 @@ KtKotlinPropertySymbol:
         name: value
         origin: SOURCE
         receiverParameter: null
-        returnType: kotlin/Int
+        returnType: KtUsualClassType:
+          annotationsList: []
+          ownTypeArguments: []
+          type: kotlin/Int
         symbolKind: LOCAL
         typeParameters: []
         getContainingModule: KtSourceModule "Sources of main"

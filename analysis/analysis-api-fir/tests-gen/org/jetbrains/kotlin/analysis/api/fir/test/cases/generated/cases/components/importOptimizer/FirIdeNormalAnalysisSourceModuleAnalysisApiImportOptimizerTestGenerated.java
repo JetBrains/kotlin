@@ -47,6 +47,12 @@ public class FirIdeNormalAnalysisSourceModuleAnalysisApiImportOptimizerTestGener
     }
 
     @Test
+    @TestMetadata("unsedObjectWithExtensionFromObject.kt")
+    public void testUnsedObjectWithExtensionFromObject() throws Exception {
+        runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/unsedObjectWithExtensionFromObject.kt");
+    }
+
+    @Test
     @TestMetadata("unusedAliasedTypeImport.kt")
     public void testUnusedAliasedTypeImport() throws Exception {
         runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/unusedAliasedTypeImport.kt");

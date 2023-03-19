@@ -52,9 +52,15 @@ internal sealed class RuntimeLinkageStrategy {
                 }
             }
             val config = createLTOPipelineConfigForRuntime(generationState)
-            LlvmOptimizationPipeline(config, runtimeModule, generationState).use {
-                it.run()
+
+            // TODO: reconsider pipeline here. Module optimizations instead of LTO can make a lot of sense, but require testing
+            MandatoryOptimizationPipeline(config, generationState).use {
+                it.execute(runtimeModule)
             }
+            LTOOptimizationPipeline(config, generationState).use {
+                it.execute(runtimeModule)
+            }
+
             return listOf(runtimeModule)
         }
     }

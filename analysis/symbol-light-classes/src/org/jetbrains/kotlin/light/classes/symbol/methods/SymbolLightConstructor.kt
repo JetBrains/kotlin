@@ -9,11 +9,11 @@ import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
 import org.jetbrains.kotlin.asJava.classes.lazyPub
-import org.jetbrains.kotlin.light.classes.symbol.NullabilityType
-import org.jetbrains.kotlin.light.classes.symbol.annotations.computeAnnotations
+import org.jetbrains.kotlin.light.classes.symbol.annotations.GranularAnnotationsBox
+import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolAnnotationsProvider
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForEnumEntry
-import org.jetbrains.kotlin.light.classes.symbol.modifierLists.LazyModifiersBox
+import org.jetbrains.kotlin.light.classes.symbol.modifierLists.GranularModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.with
 import java.util.*
@@ -44,30 +44,30 @@ internal class SymbolLightConstructor(
     override fun getTypeParameters(): Array<PsiTypeParameter> = PsiTypeParameter.EMPTY_ARRAY
 
     private val _modifierList: PsiModifierList by lazyPub {
-        val initialValue = if (containingClass is SymbolLightClassForEnumEntry) {
-            LazyModifiersBox.VISIBILITY_MODIFIERS_MAP.with(PsiModifier.PACKAGE_LOCAL)
+        val initialValue = if (this.containingClass is SymbolLightClassForEnumEntry) {
+            GranularModifiersBox.VISIBILITY_MODIFIERS_MAP.with(PsiModifier.PACKAGE_LOCAL)
         } else {
             emptyMap()
         }
 
         SymbolLightMemberModifierList(
             containingDeclaration = this,
-            initialValue = initialValue,
-            lazyModifiersComputer = ::computeModifiers,
-        ) { modifierList ->
-            withFunctionSymbol { constructorSymbol ->
-                constructorSymbol.computeAnnotations(
-                    modifierList = modifierList,
-                    nullability = NullabilityType.Unknown,
-                    annotationUseSiteTarget = null,
+            modifiersBox = GranularModifiersBox(
+                initialValue = initialValue,
+                computer = ::computeModifiers,
+            ),
+            annotationsBox = GranularAnnotationsBox(
+                annotationsProvider = SymbolAnnotationsProvider(
+                    ktModule = ktModule,
+                    annotatedSymbolPointer = functionSymbolPointer,
                 )
-            }
-        }
+            ),
+        )
     }
 
     private fun computeModifiers(modifier: String): Map<String, Boolean>? {
-        if (modifier !in LazyModifiersBox.VISIBILITY_MODIFIERS) return null
-        return LazyModifiersBox.computeVisibilityForMember(ktModule, functionSymbolPointer)
+        if (modifier !in GranularModifiersBox.VISIBILITY_MODIFIERS) return null
+        return GranularModifiersBox.computeVisibilityForMember(ktModule, functionSymbolPointer)
     }
 
     override fun getModifierList(): PsiModifierList = _modifierList

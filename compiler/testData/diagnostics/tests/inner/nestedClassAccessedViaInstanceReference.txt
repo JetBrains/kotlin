@@ -37,6 +37,7 @@ public object Obj {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
         // Static members
+        public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<Obj.NestedEnum>
         public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): Obj.NestedEnum
         public final /*synthesized*/ fun values(): kotlin.Array<Obj.NestedEnum>
     }
@@ -101,6 +102,7 @@ public final class WithClassObject {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
         // Static members
+        public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<WithClassObject.NestedEnum>
         public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): WithClassObject.NestedEnum
         public final /*synthesized*/ fun values(): kotlin.Array<WithClassObject.NestedEnum>
     }
@@ -158,6 +160,7 @@ public final class WithoutClassObject {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
         // Static members
+        public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<WithoutClassObject.NestedEnum>
         public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): WithoutClassObject.NestedEnum
         public final /*synthesized*/ fun values(): kotlin.Array<WithoutClassObject.NestedEnum>
     }

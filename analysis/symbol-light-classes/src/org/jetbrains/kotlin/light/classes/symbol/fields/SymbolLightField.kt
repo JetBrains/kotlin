@@ -14,7 +14,6 @@ import com.intellij.util.PlatformIcons
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.cannotModify
-import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
 import org.jetbrains.kotlin.idea.KotlinLanguage
@@ -37,11 +36,7 @@ internal abstract class SymbolLightField protected constructor(
 
     override fun hasInitializer(): Boolean = initializer !== null
 
-    private val _identifier: PsiIdentifier by lazyPub {
-        KtLightIdentifier(this, kotlinOrigin)
-    }
-
-    override fun getNameIdentifier(): PsiIdentifier = _identifier
+    override fun getNameIdentifier(): PsiIdentifier = KtLightIdentifier(this, kotlinOrigin)
 
     override fun computeConstantValue(): Any? = null
 

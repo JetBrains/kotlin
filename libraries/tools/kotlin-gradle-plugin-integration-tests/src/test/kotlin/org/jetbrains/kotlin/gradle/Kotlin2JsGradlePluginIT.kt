@@ -9,11 +9,9 @@ import com.google.gson.Gson
 import com.google.gson.JsonNull
 import com.google.gson.JsonObject
 import org.gradle.api.logging.LogLevel
-import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
-import org.jetbrains.kotlin.gradle.plugin.sources.METADATA_CONFIGURATION_NAME_SUFFIX
 import org.jetbrains.kotlin.gradle.targets.js.ir.KLIB_TYPE
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
@@ -27,10 +25,10 @@ import org.jetbrains.kotlin.gradle.tasks.USING_JS_IR_BACKEND_MESSAGE
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.jsCompilerType
 import org.jetbrains.kotlin.gradle.util.normalizePath
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.DisabledIf
 import java.nio.file.Files
+import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.zip.ZipFile
 import kotlin.io.path.*
@@ -112,7 +110,6 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
     }
 
     @GradleTest
-    @Disabled  // Persistent IR is no longer supported
     fun testJsIrIncrementalInParallel(gradleVersion: GradleVersion) {
         project("kotlin-js-browser-project", gradleVersion) {
             buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
@@ -128,128 +125,90 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
         }
     }
 
-    @DisplayName("Check IR incremental cache invalidation by compiler args")
+    @DisplayName("Only changed files synced during JS IR build")
     @GradleTest
-    fun testJsIrIncrementalCacheInvalidationByArgs(gradleVersion: GradleVersion) {
-        project("kotlin2JsIrICProject", gradleVersion) {
-            val buildConfig = buildGradleKts.readText()
+    fun testJsIrOnlyChangedFilesSynced(gradleVersion: GradleVersion) {
+        project("kotlin-js-browser-project", gradleVersion) {
+            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
 
-            fun setLazyInitializationArg(value: Boolean) {
-                buildGradleKts.writeText(buildConfig)
-                buildGradleKts.appendText(
-                    """
-                    |
-                    |tasks.named<org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink>("compileDevelopmentExecutableKotlinJs") {
-                    |    kotlinOptions {
-                    |        freeCompilerArgs += "-Xir-property-lazy-initialization=$value"
-                    |   }
-                    |}
-                    """.trimMargin()
+            val filesModified: MutableMap<String, Long> = mutableMapOf()
+
+            build("compileDevelopmentExecutableKotlinJs") {
+                assertTasksExecuted(":app:developmentExecutableCompileSync")
+
+                projectPath.resolve("build/js/packages/kotlin-js-browser-app")
+                    .resolve("kotlin")
+                    .toFile()
+                    .walkTopDown()
+                    .associateByTo(filesModified, { it.path }) {
+                        it.lastModified()
+                    }
+            }
+
+            projectPath.resolve("base/src/main/kotlin/Base.kt").modify {
+                it.replace("73", "37")
+            }
+
+            val fooTxt = projectPath.resolve("app/src/main/resources/foo/foo.txt")
+            fooTxt.parent.toFile().mkdirs()
+            fooTxt.createFile().writeText("foo")
+
+            build("compileDevelopmentExecutableKotlinJs") {
+                assertTasksExecuted(":app:developmentExecutableCompileSync")
+
+                val modified = projectPath.resolve("build/js/packages/kotlin-js-browser-app")
+                    .resolve("kotlin")
+                    .toFile()
+                    .walkTopDown()
+                    .filter { it.isFile }
+                    .filterNot { filesModified[it.path] == it.lastModified() }
+                    .toSet()
+
+                assertEquals(
+                    setOf(
+                        projectPath.resolve("build/js/packages/kotlin-js-browser-app/kotlin/kotlin-js-browser-base-js-ir.js").toFile(),
+                        projectPath.resolve("build/js/packages/kotlin-js-browser-app/kotlin/foo/foo.txt").toFile(),
+                    ),
+                    modified.toSet()
                 )
             }
 
-            fun String.testScriptOutLines() = this.lines().mapNotNull {
-                val trimmed = it.removePrefix(">>> TEST OUT: ")
-                if (trimmed == it) null else trimmed
-            }
-
-            // -Xir-property-lazy-initialization default is true
-            build("nodeRun") {
-                assertTasksExecuted(":compileDevelopmentExecutableKotlinJs")
-                assertEquals(listOf("Hello, Gradle."), output.testScriptOutLines())
-            }
-
-            setLazyInitializationArg(false)
-            build("nodeRun") {
-                assertTasksExecuted(":compileDevelopmentExecutableKotlinJs")
-                assertEquals(listOf("TOP LEVEL!", "Hello, Gradle."), output.testScriptOutLines())
-            }
-
-            setLazyInitializationArg(true)
-            build("nodeRun") {
-                assertTasksExecuted(":compileDevelopmentExecutableKotlinJs")
-                assertEquals(listOf("Hello, Gradle."), output.testScriptOutLines())
-            }
-        }
-    }
-
-    @DisplayName("incremental compilation for JS IR consider multiple artifacts in one project")
-    @GradleTest
-    fun testJsIrIncrementalMultipleArtifacts(gradleVersion: GradleVersion) {
-        project("kotlin-js-ir-ic-multiple-artifacts", gradleVersion) {
-            build("compileDevelopmentExecutableKotlinJs") {
-                val cacheDir = projectPath.resolve("app/build/klib/cache/").toFile()
-                val cacheRootDirName = cacheDir.list()?.singleOrNull()
-                assertTrue("Lib cache root dir should contain 1 element 'version.hash'") {
-                    cacheRootDirName?.startsWith("version.") ?: false
+            projectPath.resolve("build/js/packages/kotlin-js-browser-app")
+                .resolve("kotlin")
+                .toFile()
+                .walkTopDown()
+                .associateByTo(filesModified, { it.path }) {
+                    it.lastModified()
                 }
-                val cacheRootDir = cacheDir.resolve(cacheRootDirName!!)
-                val klibCacheDirs = cacheRootDir.list()
-                // 2 for lib.klib + 1 for stdlib  + 1 for main
-                assertEquals(4, klibCacheDirs?.size, "cache should contain 4 dirs")
 
-                val libKlibCacheDirs = klibCacheDirs?.filter { dir -> dir.startsWith("lib.klib.") }
-                assertEquals(2, libKlibCacheDirs?.size, "cache should contain 2 dirs for lib.klib")
-
-                var lib = false
-                var libOther = false
-
-                cacheRootDir.listFiles()!!
-                    .forEach {
-                        it.listFiles()!!
-                            .filter { it.isFile }
-                            .forEach {
-                                val text = it.readText()
-                                // cache keeps the js code of compiled module, this substring from that js code
-                                if (text.contains("root['kotlin-js-ir-ic-multiple-artifacts-lib']")) {
-                                    if (lib) {
-                                        error("lib should be only once in cache")
-                                    }
-                                    lib = true
-                                }
-                                // cache keeps the js code of compiled module, this substring from that js code
-                                if (text.contains("root['kotlin-js-ir-ic-multiple-artifacts-lib-other']")) {
-                                    if (libOther) {
-                                        error("libOther should be only once in cache")
-                                    }
-                                    libOther = true
-                                }
-                            }
-
-                    }
-
-                assertTrue("lib and libOther should be once in cache") {
-                    lib && libOther
-                }
-                assertTasksExecuted(":app:compileDevelopmentExecutableKotlinJs")
-            }
-        }
-    }
-
-    @DisplayName("Remove unused dependency from klib")
-    @GradleTest
-    fun testJsIrIncrementalKlibRemoveUnusedDependency(gradleVersion: GradleVersion) {
-        project("kotlin-js-ir-ic-remove-unused-dep", gradleVersion) {
-            val appBuildGradleKts = subProject("app").buildGradleKts
-
-            val buildGradleKtsWithoutDependency = appBuildGradleKts.readText()
-            appBuildGradleKts.appendText(
-                """
-                |
-                |dependencies {
-                |    implementation(project(":lib"))
-                |}
-                |
-                """.trimMargin()
-            )
+            fooTxt.writeText("bar")
 
             build("compileDevelopmentExecutableKotlinJs") {
-                assertTasksExecuted(":app:compileDevelopmentExecutableKotlinJs")
+                assertTasksExecuted(":app:developmentExecutableCompileSync")
+
+                val modified = projectPath.resolve("build/js/packages/kotlin-js-browser-app")
+                    .resolve("kotlin")
+                    .toFile()
+                    .walkTopDown()
+                    .filter { it.isFile }
+                    .filterNot { filesModified[it.path] == it.lastModified() }
+                    .toSet()
+
+                assertEquals(
+                    setOf(
+                        projectPath.resolve("build/js/packages/kotlin-js-browser-app/kotlin/foo/foo.txt").toFile(),
+                    ),
+                    modified.toSet()
+                )
             }
 
-            appBuildGradleKts.writeText(buildGradleKtsWithoutDependency)
+            fooTxt.deleteExisting()
+
+
             build("compileDevelopmentExecutableKotlinJs") {
-                assertTasksExecuted(":app:compileDevelopmentExecutableKotlinJs")
+                assertTasksExecuted(":app:developmentExecutableCompileSync")
+
+                assertFileInProjectNotExists("build/js/packages/kotlin-js-browser-app/kotlin/foo/foo.txt")
             }
         }
     }
@@ -426,9 +385,9 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
         }
     }
 
-    @DisplayName("JS IR implementation dependency")
+    @DisplayName("K1/JS IR implementation dependency")
     @GradleTest
-    fun testJsIrImplementationDependency(gradleVersion: GradleVersion) {
+    fun testK1JsIrImplementationDependency(gradleVersion: GradleVersion) {
         project("kotlin-js-browser-project", gradleVersion) {
             buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
 
@@ -439,6 +398,72 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
             }
 
             buildAndFail("assemble")
+        }
+    }
+
+    @DisplayName("K2/JS IR implementation dependency")
+    @GradleTest
+    fun testK2JsIrImplementationDependency(gradleVersion: GradleVersion) {
+        project("kotlin-js-browser-project", gradleVersion) {
+            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
+            buildGradleKts.append(
+                """
+                    rootProject.subprojects.forEach {
+                        it.tasks.withType<org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile> {
+                            kotlinOptions.languageVersion = "2.0"
+                        }
+                    }
+                """.trimIndent()
+            )
+
+            build(":app:compileProductionExecutableKotlinJs")
+
+            projectPath.resolve("app/src/main/kotlin/App.kt").modify {
+                it.replace("sheldon()", "best()")
+            }
+
+            buildAndFail(":app:compileProductionExecutableKotlinJs")
+        }
+    }
+
+    @DisplayName("JS IR compiled against automatically added dom-api-compat")
+    @GradleTest
+    fun testJsIrCompiledAgainstAutomaticallyAddedDomApiCompat(gradleVersion: GradleVersion) {
+        project("kotlin-js-coroutines", gradleVersion) {
+            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
+
+            build("assemble")
+            build("compileDevelopmentExecutableKotlinJs")
+        }
+    }
+
+    @DisplayName("klib fingerprints")
+    @GradleTest
+    fun testKlibFingerprints(gradleVersion: GradleVersion) {
+        project("kotlin2JsIrICProject", gradleVersion) {
+            val fingerprints = Array(2) {
+                build("compileDevelopmentExecutableKotlinJs")
+
+                val manifestLines = projectPath.resolve("build/classes/kotlin/main/default/manifest").readLines()
+                val serializedKlibFingerprint = manifestLines.singleOrNull { it.startsWith("serializedKlibFingerprint=") }
+                assertNotNull(serializedKlibFingerprint) { "can not find serializedKlibFingerprint" }
+                assertTrue("bad serializedKlibFingerprint format '$serializedKlibFingerprint'") {
+                    Regex("serializedKlibFingerprint=[a-z0-9]+\\.[a-z0-9]+").matches(serializedKlibFingerprint)
+                }
+
+                val serializedIrFileFingerprints = manifestLines.singleOrNull { it.startsWith("serializedIrFileFingerprints=") }
+                assertNotNull(serializedIrFileFingerprints) { "can not find serializedIrFileFingerprints" }
+                assertTrue("bad serializedIrFileFingerprints format '$serializedIrFileFingerprints'") {
+                    // kotlin2JsIrICProject has 2 files
+                    Regex("serializedIrFileFingerprints=[a-z0-9]+\\.[a-z0-9]+ [a-z0-9]+\\.[a-z0-9]+").matches(serializedIrFileFingerprints)
+                }
+
+                build("clean")
+
+                serializedKlibFingerprint to serializedIrFileFingerprints
+            }
+
+            assertEquals(fingerprints[0], fingerprints[1], "fingerprints must be stable")
         }
     }
 }
@@ -1545,10 +1570,11 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
                 Gson().fromJson(it.readText(), PackageJson::class.java)
             }
 
-    @DisplayName("incremental compilation with multiple js modules after compilation error works")
+    @DisplayName("incremental compilation with multiple js modules after frontend compilation error works")
     @GradleTest
     fun testIncrementalCompilationWithMultipleModulesAfterCompilationError(gradleVersion: GradleVersion) {
-        project("kotlin-js-ir-ic-multiple-artifacts", gradleVersion) {
+        val buildOptions = defaultBuildOptions.copy(jsOptions = defaultJsOptions.copy(incrementalJsKlib = true))
+        project("kotlin-js-ir-ic-multiple-artifacts", gradleVersion, buildOptions = buildOptions) {
             build("compileKotlinJs")
 
             val libKt = subProject("lib").kotlinSourcesDir().resolve("Lib.kt") ?: error("No Lib.kt file in test project")
@@ -1558,7 +1584,7 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
             buildAndFail("compileKotlinJs")
             libKt.modify { it.replace("func answe", "fun answer") } // revert compilation error
             appKt.modify { it.replace("Sheldon:", "Sheldon :") } // some change for incremental compilation
-            build("compileKotlinJs", buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
+            build("compileKotlinJs", buildOptions = buildOptions.copy(logLevel = LogLevel.DEBUG)) {
                 assertOutputContains(USING_JS_INCREMENTAL_COMPILATION_MESSAGE)
                 assertTasksUpToDate(":lib:compileKotlinJs")
                 assertTasksExecuted(":app:compileKotlinJs")
@@ -1573,6 +1599,7 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
         project("kotlin-js-browser-project", gradleVersion) {
             buildGradleKts.modify { originalScript ->
                 buildString {
+                    append("import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNpmResolutionManager")
                     append(originalScript)
                     append(
                         """
@@ -1581,7 +1608,7 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
                         |    val nodejs = the<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension>()
                         |    tasks.named<org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask>("kotlinNpmInstall") {
                         |        doFirst {
-                        |            nodejs.npmResolutionManager.state = 
+                        |            project.rootProject.kotlinNpmResolutionManager.get().state = 
                         |            org.jetbrains.kotlin.gradle.targets.js.npm.KotlinNpmResolutionManager.ResolutionState.Error(GradleException("someSpecialException"))
                         |        }
                         |    }
@@ -1601,9 +1628,6 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
 
 @JsGradlePluginTests
 class GeneralKotlin2JsGradlePluginIT : KGPBaseTest() {
-    // TODO: This test fails with deprecation error on Gradle <7.0
-    // Should be fixed via planned fixes in Kotlin/JS plugin: https://youtrack.jetbrains.com/issue/KFC-252
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_0)
     @DisplayName("js with both backends mode builds successfully")
     @GradleTest
     fun testJsBothModeWithTests(gradleVersion: GradleVersion) {

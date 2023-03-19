@@ -10,8 +10,10 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
-import org.jetbrains.kotlin.light.classes.symbol.NullabilityType
-import org.jetbrains.kotlin.light.classes.symbol.annotations.computeAnnotations
+import org.jetbrains.kotlin.light.classes.symbol.annotations.GranularAnnotationsBox
+import org.jetbrains.kotlin.light.classes.symbol.annotations.NullabilityAnnotationsProvider
+import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolAnnotationsProvider
+import org.jetbrains.kotlin.light.classes.symbol.annotations.toOptionalFilter
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
 import org.jetbrains.kotlin.light.classes.symbol.withSymbol
@@ -29,22 +31,17 @@ internal class SymbolLightParameter(
     private val _modifierList: PsiModifierList by lazyPub {
         SymbolLightClassModifierList(
             containingDeclaration = this,
-            staticModifiers = emptySet(),
-        ) { modifierList ->
-            val annotationSite = isConstructorParameterSymbol.ifTrue {
-                AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER
-            }
-
-            parameterSymbolPointer.withSymbol(ktModule) { parameterSymbol ->
-                val nullability = if (parameterSymbol.isVararg) NullabilityType.NotNull else super.nullabilityType
-                parameterSymbol.computeAnnotations(
-                    modifierList = modifierList,
-                    nullability = nullability,
-                    annotationUseSiteTarget = annotationSite,
-                    includeAnnotationsWithoutSite = true,
-                )
-            }
-        }
+            annotationsBox = GranularAnnotationsBox(
+                annotationsProvider = SymbolAnnotationsProvider(
+                    ktModule = ktModule,
+                    annotatedSymbolPointer = parameterSymbolPointer,
+                    annotationUseSiteTargetFilter = isConstructorParameterSymbol.ifTrue {
+                        AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER
+                    }.toOptionalFilter(),
+                ),
+                additionalAnnotationsProvider = NullabilityAnnotationsProvider(::nullabilityType),
+            ),
+        )
     }
 
     private val isVararg: Boolean by lazyPub {

@@ -153,7 +153,6 @@ class TopLevelArrayTest {
         val a = abcNode.value
         assertTrue(refArr[3].compareAndSet(a3, a))
     }
-
 }
 
 data class ANode<T>(val b: T)

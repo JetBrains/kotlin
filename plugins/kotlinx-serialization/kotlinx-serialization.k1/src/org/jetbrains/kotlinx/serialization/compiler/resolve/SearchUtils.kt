@@ -82,6 +82,9 @@ fun ClassDescriptor.getKSerializer(): ClassDescriptor =
         )
     )!!
 
+fun ModuleDescriptor.getJsExportIgnore(): ClassDescriptor? =
+    findClassAcrossModuleDependencies(SerializationJsDependenciesClassIds.jsExportIgnore)
+
 fun getInternalPackageFqn(classSimpleName: String): FqName =
     SerializationPackages.internalPackageFqName.child(Name.identifier(classSimpleName))
 

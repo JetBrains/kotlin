@@ -355,8 +355,6 @@ internal abstract class KonanSymbols(
     val invokeSuspendFunction =
             baseContinuationImpl.findMemberSimpleFunction(Name.identifier("invokeSuspend"))!!
 
-    val completionGetter = baseContinuationImpl.findMemberPropertyGetter(Name.identifier("completion"))!!
-
     override val coroutineSuspendedGetter = symbolTable.referenceSimpleFunction(
             coroutinesIntrinsicsPackage
                     .getContributedVariables(COROUTINE_SUSPENDED_NAME, NoLookupLocation.FROM_BACKEND)
@@ -379,6 +377,7 @@ internal abstract class KonanSymbols(
     private fun reflectionClass(name: String) = irBuiltIns.findClass(Name.identifier(name), StandardNames.KOTLIN_REFLECT_FQ_NAME)!!
 
     val kFunctionImpl = internalClass("KFunctionImpl")
+    val kFunctionDescription = internalClass("KFunctionDescription")
     val kSuspendFunctionImpl = internalClass("KSuspendFunctionImpl")
 
     val kMutableProperty0 = reflectionClass("KMutableProperty0")
@@ -406,9 +405,6 @@ internal abstract class KonanSymbols(
     val kTypeImplIntrinsicConstructor by lazy { kTypeImpl.constructors.single { it.descriptor.valueParameters.isEmpty() } }
     val kTypeImplForTypeParametersWithRecursiveBounds = internalClass("KTypeImplForTypeParametersWithRecursiveBounds")
     val kTypeProjectionList = internalClass("KTypeProjectionList")
-
-
-    val arrayAsList = internalClass("ArrayAsList")
 
     val threadLocal = topLevelClass(KonanFqNames.threadLocal)
 

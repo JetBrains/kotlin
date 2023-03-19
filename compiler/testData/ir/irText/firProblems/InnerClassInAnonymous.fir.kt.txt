@@ -1,7 +1,7 @@
 fun box(): String {
   val obj: <no name provided> = { // BLOCK
     local class <no name provided> {
-      private constructor() /* primary */ {
+      constructor() /* primary */ {
         super/*Any*/()
         /* <init>() */
 

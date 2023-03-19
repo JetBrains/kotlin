@@ -1,6 +1,13 @@
 public final class C /* C*/ {
+  @kotlin.jvm.JvmStatic()
   @org.jetbrains.annotations.NotNull()
-  private static java.lang.String x;
+  private static java.lang.String x = "" /* initializer type: java.lang.String */;
+
+  @org.jetbrains.annotations.NotNull()
+  private static java.lang.String c1;
+
+  @org.jetbrains.annotations.NotNull()
+  private static java.lang.String c;
 
   @org.jetbrains.annotations.NotNull()
   public static final C.Companion Companion;
@@ -26,8 +33,6 @@ public final class C /* C*/ {
   public static final void setX(@org.jetbrains.annotations.NotNull() java.lang.String);//  setX(java.lang.String)
 
   class Companion ...
-
-  class Factory ...
 }
 
 public final class C1 /* C1*/ {
@@ -35,6 +40,15 @@ public final class C1 /* C1*/ {
   private static final C1.Companion Companion;
 
   public  C1();//  .ctor()
+
+  class Companion ...
+}
+
+public final class C2 /* C2*/ {
+  @org.jetbrains.annotations.NotNull()
+  public static final C2.Companion Companion;
+
+  public  C2();//  .ctor()
 
   class Companion ...
 }
@@ -98,6 +112,10 @@ public static final class Companion /* I.Companion*/ {
   private  Companion();//  .ctor()
 }
 
+public static final class Companion /* C2.Companion*/ {
+  private  Companion();//  .ctor()
+}
+
 public static final class Companion /* ClassWithConstContainer.Companion*/ {
   private  Companion();//  .ctor()
 }
@@ -124,10 +142,6 @@ public final class ConstContainer /* ConstContainer*/ {
   private  ConstContainer();//  .ctor()
 }
 
-public static final class Factory /* C.Factory*/ {
-  private  Factory();//  .ctor()
-}
-
 public abstract interface I /* I*/ {
   @org.jetbrains.annotations.NotNull()
   public static final I.Companion Companion;
@@ -136,11 +150,15 @@ public abstract interface I /* I*/ {
 }
 
 public final class Obj /* Obj*/ implements java.lang.Runnable {
+  @kotlin.jvm.JvmStatic()
   @org.jetbrains.annotations.NotNull()
-  private static java.lang.String x;
+  private static java.lang.String x = "" /* initializer type: java.lang.String */;
 
   @org.jetbrains.annotations.NotNull()
   public static final Obj INSTANCE;
+
+  @java.lang.Override()
+  public void run();//  run()
 
   @kotlin.jvm.JvmStatic()
   public static final int zoo();//  zoo()
@@ -151,6 +169,4 @@ public final class Obj /* Obj*/ implements java.lang.Runnable {
   private  Obj();//  .ctor()
 
   public static final void setX(@org.jetbrains.annotations.NotNull() java.lang.String);//  setX(java.lang.String)
-
-  public void run();//  run()
 }

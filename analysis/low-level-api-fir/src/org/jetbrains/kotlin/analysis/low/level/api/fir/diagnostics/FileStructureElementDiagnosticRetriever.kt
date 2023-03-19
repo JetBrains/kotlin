@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveCompone
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.fir.PersistenceContextCollector
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.fir.PersistentCheckerContextFactory
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContextForProvider
 import org.jetbrains.kotlin.fir.analysis.collectors.DiagnosticCollectorComponents
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
@@ -46,7 +46,7 @@ internal class SingleNonLocalDeclarationDiagnosticRetriever(
 
     private class Visitor(
         private val structureElementDeclaration: FirDeclaration,
-        context: CheckerContext,
+        context: CheckerContextForProvider,
         components: DiagnosticCollectorComponents
     ) : LLFirDiagnosticVisitor(context, components) {
         private var insideAlwaysVisitableDeclarations = 0
@@ -121,7 +121,7 @@ internal object FileDiagnosticRetriever : FileStructureElementDiagnosticRetrieve
     ) {
         override fun visitFile(file: FirFile, data: Nothing?) {
             withAnnotationContainer(file) {
-                visitWithDeclaration(file) {
+                visitWithFile(file) {
                     file.annotations.forEach { it.accept(this, data) }
                     file.packageDirective.accept(this, data)
                     file.imports.forEach { it.accept(this, data) }

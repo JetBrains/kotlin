@@ -6,7 +6,11 @@
 package org.jetbrains.kotlin.fir.resolve.transformers
 
 import kotlinx.collections.immutable.toImmutableList
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.correspondingProperty
+import org.jetbrains.kotlin.fir.copyWithNewSourceKind
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isFromVararg
 import org.jetbrains.kotlin.fir.expressions.*
@@ -113,8 +117,18 @@ open class FirTypeResolveTransformer(
     override fun transformConstructor(constructor: FirConstructor, data: Any?): FirConstructor = whileAnalysing(session, constructor) {
         return withScopeCleanup {
             constructor.addTypeParametersScope()
-            transformDeclaration(constructor, data)
-        } as FirConstructor
+            val result = transformDeclaration(constructor, data) as FirConstructor
+
+            if (result.isPrimary) {
+                for (valueParameter in result.valueParameters) {
+                    if (valueParameter.correspondingProperty != null) {
+                        valueParameter.removeDuplicateAnnotationsOfPrimaryConstructorElement()
+                    }
+                }
+            }
+
+            result
+        }
     }
 
     override fun transformTypeAlias(typeAlias: FirTypeAlias, data: Any?): FirTypeAlias = whileAnalysing(session, typeAlias) {
@@ -154,11 +168,23 @@ open class FirTypeResolveTransformer(
                     setAccessorTypesByPropertyType(property)
                 }
 
-                if (property.returnTypeRef is FirResolvedTypeRef && property.delegate != null) {
-                    setAccessorTypesByPropertyType(property)
+                when {
+                    property.returnTypeRef is FirResolvedTypeRef && property.delegate != null -> {
+                        setAccessorTypesByPropertyType(property)
+                    }
+                    property.returnTypeRef !is FirResolvedTypeRef && property.initializer == null &&
+                            property.getter?.returnTypeRef is FirResolvedTypeRef -> {
+                        property.replaceReturnTypeRef(
+                            property.getter!!.returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.PropertyTypeFromGetterReturnType)
+                        )
+                    }
                 }
 
                 unboundCyclesInTypeParametersSupertypes(property)
+
+                if (property.source?.kind == KtFakeSourceElementKind.PropertyFromParameter) {
+                    property.removeDuplicateAnnotationsOfPrimaryConstructorElement()
+                }
 
                 property
             }
@@ -253,17 +279,21 @@ open class FirTypeResolveTransformer(
         shouldNotBeCalled()
     }
 
-    override fun transformAnnotationCall(annotationCall: FirAnnotationCall, data: Any?): FirStatement = whileAnalysing(session, annotationCall) {
+    override fun transformAnnotationCall(
+        annotationCall: FirAnnotationCall,
+        data: Any?
+    ): FirStatement = whileAnalysing(session, annotationCall) {
         when (val originalTypeRef = annotationCall.annotationTypeRef) {
             is FirResolvedTypeRef -> {
                 when (annotationCall.annotationResolvePhase) {
-                    FirAnnotationResolvePhase.Unresolved -> when (originalTypeRef){
+                    FirAnnotationResolvePhase.Unresolved -> when (originalTypeRef) {
                         is FirErrorTypeRef -> return annotationCall.also { it.replaceAnnotationResolvePhase(FirAnnotationResolvePhase.Types) }
                         else -> shouldNotBeCalled()
                     }
                     FirAnnotationResolvePhase.CompilerRequiredAnnotations -> {
                         annotationCall.replaceAnnotationResolvePhase(FirAnnotationResolvePhase.Types)
-                        val alternativeResolvedTypeRef = originalTypeRef.delegatedTypeRef?.transformSingle(this, data) ?: return annotationCall
+                        val alternativeResolvedTypeRef =
+                            originalTypeRef.delegatedTypeRef?.transformSingle(this, data) ?: return annotationCall
                         val coneTypeFromCompilerRequiredPhase = originalTypeRef.coneType
                         val coneTypeFromTypesPhase = alternativeResolvedTypeRef.coneType
                         if (coneTypeFromTypesPhase != coneTypeFromCompilerRequiredPhase) {
@@ -365,5 +395,31 @@ open class FirTypeResolveTransformer(
         if (typeParameters.isNotEmpty()) {
             scopes.add(FirMemberTypeParameterScope(this))
         }
+    }
+
+    /**
+     * In a scenario like
+     *
+     * ```
+     * annotation class Ann
+     * class Foo(@Ann val x: String)
+     * ```
+     *
+     * both, the primary ctor value parameter and the property `x` will be annotated with `@Ann`. This is due to the fact, that the
+     * annotation needs to be resolved in order to determine its annotation targets. We remove annotations from the wrong target if they
+     * don't explicitly specify the use-site target (in which case they shouldn't have been added to the element in the raw FIR).
+     *
+     * For value parameters, we remove the annotation if the targets don't include [AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER].
+     * For properties, we remove the annotation, if the targets include [AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER].
+     */
+    private fun FirVariable.removeDuplicateAnnotationsOfPrimaryConstructorElement() {
+        val isParameter = this is FirValueParameter
+        replaceAnnotations(annotations.filter {
+            it.useSiteTarget != null ||
+                    // equivalent to
+                    // CONSTRUCTOR_PARAMETER in targets && isParameter ||
+                    // CONSTRUCTOR_PARAMETER !in targets && !isParameter
+                    AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER in it.useSiteTargetsFromMetaAnnotation(session) == isParameter
+        })
     }
 }

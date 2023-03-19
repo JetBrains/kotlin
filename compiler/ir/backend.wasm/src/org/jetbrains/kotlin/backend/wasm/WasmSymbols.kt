@@ -39,6 +39,8 @@ class WasmSymbols(
         context.module.getPackage(FqName("kotlin.enums"))
     private val wasmInternalPackage: PackageViewDescriptor =
         context.module.getPackage(FqName("kotlin.wasm.internal"))
+    private val kotlinJsPackage: PackageViewDescriptor =
+        context.module.getPackage(FqName("kotlin.js"))
     private val collectionsPackage: PackageViewDescriptor =
         context.module.getPackage(StandardNames.COLLECTIONS_PACKAGE_FQ_NAME)
     private val builtInsPackage: PackageViewDescriptor =
@@ -108,6 +110,9 @@ class WasmSymbols(
     val createEnumEntries = findFunctions(enumsInternalPackage.memberScope, Name.identifier("enumEntries"))
         .find { it.valueParameters.firstOrNull()?.type?.isFunctionType == true }
         .let { symbolTable.referenceSimpleFunction(it!!) }
+
+    val enumValueOfIntrinsic = getInternalFunction("enumValueOfIntrinsic")
+    val enumValuesIntrinsic = getInternalFunction("enumValuesIntrinsic")
 
     val coroutineEmptyContinuation: IrPropertySymbol = symbolTable.referenceProperty(
         getProperty(FqName.fromSegments(listOf("kotlin", "wasm", "internal", "EmptyContinuation")))
@@ -285,8 +290,8 @@ class WasmSymbols(
 
     val wasmAnyRefClass = getIrClass(FqName("kotlin.wasm.internal.reftypes.anyref"))
 
-    private val externalInterfaceClass = getIrClass(FqName("kotlin.wasm.internal.ExternalInterfaceType"))
-    val externalInterfaceType by lazy { externalInterfaceClass.defaultType }
+    private val jsAnyClass = getIrClass(FqName("kotlin.js.JsAny"))
+    val jsAnyType by lazy { jsAnyClass.defaultType }
 
     inner class JsInteropAdapters {
         val kotlinToJsStringAdapter = getInternalFunction("kotlinToJsStringAdapter")
@@ -328,6 +333,8 @@ class WasmSymbols(
 
     private val jsFunClass = getIrClass(FqName("kotlin.JsFun"))
     val jsFunConstructor by lazy { jsFunClass.constructors.single() }
+
+    val jsCode = getFunction("js", kotlinJsPackage)
 
     private fun findClass(memberScope: MemberScope, name: Name): ClassDescriptor =
         memberScope.getContributedClassifier(name, NoLookupLocation.FROM_BACKEND) as ClassDescriptor

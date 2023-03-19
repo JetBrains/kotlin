@@ -1,14 +1,12 @@
 $TESTDATA_DIR$/separateModules/sepModule1.kt
--Xlegacy-deprecated-no-warn
--Xuse-deprecated-legacy-compiler
+-Xforce-deprecated-legacy-compiler-usage
 -meta-info
 -Xmetadata-only
 -output
 $TEMP_DIR$/m1/m1.js
 ---
 $TESTDATA_DIR$/separateModules/sepModule2.kt
--Xlegacy-deprecated-no-warn
--Xuse-deprecated-legacy-compiler
+-Xforce-deprecated-legacy-compiler-usage
 -libraries
 $TEMP_DIR$/m1
 -output

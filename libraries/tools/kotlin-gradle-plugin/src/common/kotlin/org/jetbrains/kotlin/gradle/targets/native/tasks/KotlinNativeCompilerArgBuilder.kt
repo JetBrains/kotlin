@@ -9,8 +9,12 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileTree
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerToolOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinNativeCompilerOptions
+import org.jetbrains.kotlin.gradle.dsl.usesK2
 import org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode
-import org.jetbrains.kotlin.gradle.tasks.CompilerPluginOptions
+import org.jetbrains.kotlin.gradle.tasks.*
+import org.jetbrains.kotlin.gradle.tasks.fragmentSourcesCompilerArgs
+import org.jetbrains.kotlin.gradle.tasks.fragmentsCompilerArgs
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.project.model.LanguageSettings
@@ -37,17 +41,16 @@ internal fun buildKotlinNativeKlibCompilerArgs(
     libraries: List<File>,
 
     languageSettings: LanguageSettings,
-    enableEndorsedLibs: Boolean,
-    compilerOptions: KotlinCommonCompilerOptions,
+    compilerOptions: KotlinNativeCompilerOptions,
     compilerPlugins: List<CompilerPluginData>,
 
-    moduleName: String,
     shortModuleName: String,
     friendModule: FileCollection,
     libraryVersion: String,
     sharedCompilationData: SharedCompilationData?,
     source: FileTree,
-    commonSourcesTree: FileTree
+    commonSourcesTree: FileTree,
+    k2MultiplatformCompilationData: K2MultiplatformStructure
 ): List<String> = mutableListOf<String>().apply {
     addAll(buildKotlinNativeMainArgs(outFile, optimized, debuggable, target, CompilerOutputKind.LIBRARY, libraries))
 
@@ -59,7 +62,7 @@ internal fun buildKotlinNativeKlibCompilerArgs(
     }
 
     // Configure FQ module name to avoid cyclic dependencies in klib manifests (see KT-36721).
-    addArg("-module-name", moduleName)
+    addArg("-module-name", compilerOptions.moduleName.get())
     add("-Xshort-module-name=$shortModuleName")
 
     val friends = friendModule.files
@@ -77,10 +80,23 @@ internal fun buildKotlinNativeKlibCompilerArgs(
         }
     }
 
-    addAll(buildKotlinNativeCompileCommonArgs(enableEndorsedLibs, languageSettings, compilerOptions, compilerPlugins))
+    if (compilerOptions.usesK2.get()) {
+        /*
+        For now, we only pass multiplatform structure to K2 for platform compilations
+        Metadata compilations will compile against pre-compiled klibs from their dependsOn
+        */
+        if (sharedCompilationData == null) {
+            add("-Xfragments=${k2MultiplatformCompilationData.fragmentsCompilerArgs.joinToString(",")}")
+            add("-Xfragment-sources=${k2MultiplatformCompilationData.fragmentSourcesCompilerArgs.joinToString(",")}")
+            add("-Xfragment-refines=${k2MultiplatformCompilationData.fragmentRefinesCompilerArgs.joinToString(",")}")
+        }
+    }
+
+    addAll(buildKotlinNativeCompileCommonArgs(languageSettings, compilerOptions, compilerPlugins))
 
     addAll(source.map { it.absolutePath })
-    if (!commonSourcesTree.isEmpty) {
+
+    if (!compilerOptions.usesK2.get() && !commonSourcesTree.isEmpty) {
         add("-Xcommon-sources=${commonSourcesTree.joinToString(separator = ",") { it.absolutePath }}")
     }
 }
@@ -94,7 +110,6 @@ internal fun buildKotlinNativeBinaryLinkerArgs(
     libraries: List<File>,
     friendModules: List<File>,
 
-    enableEndorsedLibs: Boolean,
     toolOptions: KotlinCommonCompilerToolOptions,
     compilerPlugins: List<CompilerPluginData>,
 
@@ -122,7 +137,7 @@ internal fun buildKotlinNativeBinaryLinkerArgs(
     binaryOptions.forEach { (name, value) -> add("-Xbinary=$name=$value") }
     addKey("-Xstatic-framework", isStaticFramework)
 
-    addAll(buildKotlinNativeCommonArgs(enableEndorsedLibs, toolOptions, compilerPlugins))
+    addAll(buildKotlinNativeCommonArgs(toolOptions, compilerPlugins))
 
     exportLibraries.forEach { add("-Xexport-library=${it.absolutePath}") }
     includeLibraries.forEach { add("-Xinclude=${it.absolutePath}") }
@@ -150,13 +165,12 @@ private fun buildKotlinNativeMainArgs(
 }
 
 internal fun buildKotlinNativeCompileCommonArgs(
-    enableEndorsedLibs: Boolean,
     languageSettings: LanguageSettings,
     compilerOptions: KotlinCommonCompilerOptions,
     compilerPlugins: List<CompilerPluginData>
 ): List<String> = mutableListOf<String>().apply {
     add("-Xmulti-platform")
-    addKey("-no-endorsed-libs", !enableEndorsedLibs)
+    addKey("-no-endorsed-libs", true)
 
     compilerPlugins.forEach { plugin ->
         plugin.files.map { it.canonicalPath }.sorted().forEach { add("-Xplugin=$it") }
@@ -164,9 +178,7 @@ internal fun buildKotlinNativeCompileCommonArgs(
     }
 
     languageSettings.run {
-        addKey("-progressive", progressiveMode)
         enabledLanguageFeatures.forEach { add("-XXLanguage:+$it") }
-        optInAnnotationsInUse.forEach { add("-opt-in=$it") }
     }
 
     addArgIfNotNull("-language-version", compilerOptions.languageVersion.orNull?.version)
@@ -174,17 +186,18 @@ internal fun buildKotlinNativeCompileCommonArgs(
     addKey("-Werror", compilerOptions.allWarningsAsErrors.get())
     addKey("-nowarn", compilerOptions.suppressWarnings.get())
     addKey("-verbose", compilerOptions.verbose.get())
+    addKey("-progressive", compilerOptions.progressiveMode.get())
+    compilerOptions.optIn.get().forEach { add("-opt-in=$it") }
 
     addAll(compilerOptions.freeCompilerArgs.get())
 }
 
 internal fun buildKotlinNativeCommonArgs(
-    enableEndorsedLibs: Boolean,
     toolOptions: KotlinCommonCompilerToolOptions,
     compilerPlugins: List<CompilerPluginData>
 ): List<String> = mutableListOf<String>().apply {
     add("-Xmulti-platform")
-    addKey("-no-endorsed-libs", !enableEndorsedLibs)
+    addKey("-no-endorsed-libs", true)
 
     compilerPlugins.forEach { plugin ->
         plugin.files.map { it.canonicalPath }.sorted().forEach { add("-Xplugin=$it") }

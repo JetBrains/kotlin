@@ -47,7 +47,7 @@ data class A {
 data class B {
   constructor(x: Any = { // BLOCK
     local class <no name provided> {
-      private constructor() /* primary */ {
+      constructor() /* primary */ {
         super/*Any*/()
         /* <init>() */
 

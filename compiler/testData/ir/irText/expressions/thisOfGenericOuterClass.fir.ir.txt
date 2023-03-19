@@ -70,7 +70,7 @@ FILE fqName:<root> fileName:/thisOfGenericOuterClass.kt
         BLOCK type=<root>.test.<no name provided> origin=OBJECT_LITERAL
           CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Outer.Inner<kotlin.Int>]
             $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.test.<no name provided>
-            CONSTRUCTOR visibility:private <> () returnType:<root>.test.<no name provided> [primary]
+            CONSTRUCTOR visibility:public <> () returnType:<root>.test.<no name provided> [primary]
               BLOCK_BODY
                 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (y: kotlin.Int) [primary] declared in <root>.Outer.Inner'
                   $this: GET_VAR '<this>: <root>.Outer<kotlin.Int> declared in <root>.test' type=<root>.Outer<kotlin.Int> origin=null
@@ -112,4 +112,4 @@ FILE fqName:<root> fileName:/thisOfGenericOuterClass.kt
               overridden:
                 public open fun toString (): kotlin.String [fake_override] declared in <root>.Outer.Inner
               $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-          CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.test.<no name provided>' type=<root>.test.<no name provided> origin=OBJECT_LITERAL
+          CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.test.<no name provided>' type=<root>.test.<no name provided> origin=OBJECT_LITERAL

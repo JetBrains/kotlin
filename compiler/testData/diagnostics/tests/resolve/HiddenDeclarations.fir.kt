@@ -1,4 +1,3 @@
-// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 package test
 
 // imports should be resolved
@@ -41,7 +40,7 @@ open class A {
     fun foo() {
         <!UNRESOLVED_REFERENCE!>topLevelFun<!>()
         <!UNRESOLVED_REFERENCE!>topLevelFun<!>(1)
-        <!UNRESOLVED_REFERENCE!>topLevelProperty<!><!UNRESOLVED_REFERENCE!>++<!>
+        <!UNRESOLVED_REFERENCE!>topLevelProperty<!><!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>++<!>
         "".<!UNRESOLVED_REFERENCE!>topLevelExtensionFun<!>()
         1.<!UNRESOLVED_REFERENCE!>topLevelExtensionFun<!>()
         "".<!UNRESOLVED_REFERENCE!>topLevelExtensionProperty<!>

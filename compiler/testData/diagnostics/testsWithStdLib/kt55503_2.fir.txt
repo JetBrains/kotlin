@@ -1,0 +1,34 @@
+FILE: First.kt
+    package sample.pack
+
+    @R|kotlin/Suppress|(names = vararg(String(INVISIBLE_REFERENCE), String(INVISIBLE_MEMBER))) @<ERROR TYPE REF: HIDDEN: kotlin/internal/HidesMembers is invisible>() public final fun R|sample/pack/A|.forEach(): R|kotlin/String| {
+        ^forEach String(::A.forEach)
+    }
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|sample/pack/A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun R|sample/pack/B|.forEach(): R|kotlin/String| {
+            ^forEach String(A::B.forEach)
+        }
+
+    }
+    public final class B : R|kotlin/Any| {
+        public constructor(): R|sample/pack/B| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+FILE: Second.kt
+    package sample
+
+    public final fun box(): R|kotlin/Unit| {
+        ^box R|kotlin/with|<R|sample/pack/A|, R|kotlin/Unit|>(R|sample/pack/A.A|(), <L> = with@fun R|sample/pack/A|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            R|kotlin/with|<R|sample/pack/B|, R|kotlin/Unit|>(R|sample/pack/B.B|(), <L> = with@fun R|sample/pack/B|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+                (this@R|special/anonymous|, this@R|special/anonymous|).R|sample/pack/A.forEach|()
+            }
+            )
+        }
+        )
+    }

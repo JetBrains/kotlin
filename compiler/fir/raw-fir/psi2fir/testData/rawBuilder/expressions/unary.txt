@@ -1,28 +1,10 @@
 FILE: unary.kt
     public? final? fun test(): R|kotlin/Unit| {
         lvar x: <implicit> = IntegerLiteral(0)
-        lval x1: <implicit> =  {
-            lval <unary>: <implicit> = x#
-            x# = R|<local>/<unary>|.inc#()
-            R|<local>/<unary>|
-        }
-
-        lval x2: <implicit> =  {
-            x# = x#.inc#()
-            x#
-        }
-
-        lval x3: <implicit> =  {
-            x# = x#.dec#()
-            x#
-        }
-
-        lval x4: <implicit> =  {
-            lval <unary>: <implicit> = x#
-            x# = R|<local>/<unary>|.dec#()
-            R|<local>/<unary>|
-        }
-
+        lval x1: <implicit> = x#++
+        lval x2: <implicit> = ++x#
+        lval x3: <implicit> = --x#
+        lval x4: <implicit> = x#--
         when () {
             ==(x#, IntegerLiteral(0)).not#() ->  {
                 println#(String(000))
@@ -40,20 +22,8 @@ FILE: unary.kt
 
     }
     public? final? fun test2(x: X): R|kotlin/Unit| {
-        lval x1: <implicit> =  {
-            lval <receiver>: <implicit> = x#
-            lval <unary>: <implicit> = R|<local>/<receiver>|.i#
-            R|<local>/<receiver>|.i# = R|<local>/<unary>|.inc#()
-            R|<local>/<unary>|
-        }
-
-        lval x2: <implicit> =  {
-            lval <receiver>: <implicit> = x#
-            lval <unary-result>: <implicit> = R|<local>/<receiver>|.i#.inc#()
-            R|<local>/<receiver>|.i# = R|<local>/<unary-result>|
-            R|<local>/<unary-result>|
-        }
-
+        lval x1: <implicit> = x#.i#++
+        lval x2: <implicit> = ++x#.i#
     }
     public? final? fun test3(arr: Array<Int>): R|kotlin/Unit| {
         lval x1: <implicit> =  {

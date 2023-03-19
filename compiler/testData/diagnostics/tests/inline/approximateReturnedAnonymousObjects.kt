@@ -11,7 +11,7 @@ private inline fun foo2(crossinline f: () -> Int) = object : I1 {
     fun bar(): Int = f()
 }
 
-<!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>private inline fun foo3(crossinline f: () -> Int)<!> = object : I1, I2 {
+<!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>private inline fun <!PRIVATE_INLINE_FUNCTIONS_RETURNING_ANONYMOUS_OBJECTS!>foo3<!>(crossinline f: () -> Int)<!> = object : I1, I2 {
     fun bar(): Int = f()
 }
 

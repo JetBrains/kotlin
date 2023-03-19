@@ -62,7 +62,7 @@ class MembersOfSerializerGenerator(session: FirSession) : FirDeclarationGenerati
         return listOf(function.symbol)
     }
 
-    override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>): Set<Name> {
+    override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> {
         return when (classSymbol) {
             in matchedCoreSerializerClasses -> serializeMethodNames.keys
             else -> emptySet()

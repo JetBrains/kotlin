@@ -133,7 +133,6 @@ class ValueParameter(
                 isActual = modifiers.hasActual()
                 isOverride = modifiers.hasOverride()
                 isConst = modifiers.hasConst()
-                isLateInit = false
             }
             backingField = FirDefaultPropertyBackingField(
                 moduleData = moduleData,

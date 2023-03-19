@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
+import org.jetbrains.kotlin.light.classes.symbol.modifierLists.InitializedModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightParameterList
 
@@ -27,16 +28,15 @@ internal class SymbolLightNoArgConstructor(
     override fun getTypeParameterList(): PsiTypeParameterList? = null
     override fun getTypeParameters(): Array<PsiTypeParameter> = PsiTypeParameter.EMPTY_ARRAY
 
-    private val _identifier: PsiIdentifier by lazyPub {
-        KtLightIdentifier(this, ktDeclaration = null)
-    }
-
-    override fun getNameIdentifier(): PsiIdentifier = _identifier
+    override fun getNameIdentifier(): PsiIdentifier = KtLightIdentifier(this, ktDeclaration = null)
 
     override fun isDeprecated(): Boolean = false
 
     private val _modifierList: PsiModifierList by lazyPub {
-        SymbolLightMemberModifierList(containingDeclaration = this, staticModifiers = setOf(visibility), annotationsComputer = null)
+        SymbolLightMemberModifierList(
+            containingDeclaration = this,
+            modifiersBox = InitializedModifiersBox(visibility),
+        )
     }
 
     override fun getModifierList(): PsiModifierList = _modifierList

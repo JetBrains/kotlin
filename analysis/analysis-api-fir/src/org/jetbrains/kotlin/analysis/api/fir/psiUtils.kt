@@ -29,7 +29,7 @@ private val allowedFakeElementKinds = setOf(
     KtFakeSourceElementKind.ImplicitConstructor,
 )
 
-private fun FirElement.getAllowedPsi() = when (val source = source) {
+internal fun FirElement.getAllowedPsi() = when (val source = source) {
     null -> null
     is KtRealPsiSourceElement -> source.psi
     is KtFakeSourceElement -> if (source.kind in allowedFakeElementKinds) psi else null
@@ -51,6 +51,9 @@ fun FirElement.findPsi(session: FirSession): PsiElement? =
  * For data classes & enums generated members like `copy` `componentN`, `values` it will return corresponding enum/data class
  * Otherwise, behaves the same way as [findPsi] returns exact PSI declaration corresponding to passed [FirDeclaration]
  */
-fun FirDeclaration.findReferencePsi(): PsiElement? =
-    psi
-        ?: FirDeserializedDeclarationSourceProvider.findPsi(this, (moduleData.session as LLFirSession).project)
+fun FirDeclaration.findReferencePsi(): PsiElement? {
+    psi?.let { return it }
+    val project = (moduleData.session as LLFirSession).project
+    return FirDeserializedDeclarationSourceProvider.findPsi(this, project)
+        ?: FirDeserializedDeclarationSourceProvider.findClassPsiForGeneratedMembers(this, project)
+}

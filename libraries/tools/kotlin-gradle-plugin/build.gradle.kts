@@ -47,14 +47,14 @@ dependencies {
     commonCompileOnly(project(":kotlin-scripting-compiler"))
     commonCompileOnly(project(":kotlin-gradle-statistics"))
     commonCompileOnly(project(":kotlin-gradle-build-metrics"))
-    commonCompileOnly("com.android.tools.build:gradle:3.6.4")
-    commonCompileOnly("com.android.tools.build:gradle-api:3.6.4")
-    commonCompileOnly("com.android.tools.build:builder:3.6.4")
-    commonCompileOnly("com.android.tools.build:builder-model:3.6.4")
+    commonCompileOnly("com.android.tools.build:gradle:4.2.2")
+    commonCompileOnly("com.android.tools.build:gradle-api:4.2.2")
+    commonCompileOnly("com.android.tools.build:builder:4.2.2")
+    commonCompileOnly("com.android.tools.build:builder-model:4.2.2")
     commonCompileOnly("org.codehaus.groovy:groovy-all:2.4.12")
     commonCompileOnly(intellijCore())
     commonCompileOnly(commonDependency("org.jetbrains.teamcity:serviceMessages"))
-    commonCompileOnly("com.gradle:gradle-enterprise-gradle-plugin:3.11.2")
+    commonCompileOnly("com.gradle:gradle-enterprise-gradle-plugin:3.12.3")
     commonCompileOnly(commonDependency("com.google.code.gson:gson"))
     commonCompileOnly(commonDependency("com.google.guava:guava"))
     commonCompileOnly("de.undercouch:gradle-download-task:4.1.1")
@@ -72,7 +72,10 @@ dependencies {
     commonRuntimeOnly(project(":kotlin-compiler-embeddable"))
     commonRuntimeOnly(project(":kotlin-annotation-processing-gradle"))
     commonRuntimeOnly(project(":kotlin-android-extensions"))
-    commonRuntimeOnly(project(":kotlin-compiler-runner"))
+    commonRuntimeOnly(project(":kotlin-compiler-runner")) {
+        // Excluding dependency with not-relocated 'com.intellij' types
+        exclude(group = "org.jetbrains.kotlin", module = "kotlin-build-common")
+    }
     commonRuntimeOnly(project(":kotlin-scripting-compiler-embeddable"))
     commonRuntimeOnly(project(":kotlin-scripting-compiler-impl-embeddable"))
 
@@ -213,11 +216,56 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
 
     testing {
         suites {
-            val functionalTest by registering(JvmTestSuite::class) {
+            val functionalTest by registering(JvmTestSuite::class)
+
+            val functionalRegressionTest by registering(JvmTestSuite::class) {
+                sources {
+                    java {
+                        setSrcDirs(listOf("src/functionalTest/kotlin"))
+                    }
+                }
+
+                targets.all {
+                    testTask.configure {
+                        include("**/org/jetbrains/kotlin/gradle/regressionTests/**")
+                    }
+                }
+            }
+
+            val functionalDependencyResolutionTest by registering(JvmTestSuite::class) {
+                sources {
+                    java {
+                        setSrcDirs(listOf("src/functionalTest/kotlin"))
+                    }
+                }
+
+                targets.all {
+                    testTask.configure {
+                        include("**/org/jetbrains/kotlin/gradle/dependencyResolutionTests/**")
+                    }
+                }
+            }
+
+            val functionalUnitTest by registering(JvmTestSuite::class) {
+                sources {
+                    java {
+                        setSrcDirs(listOf("src/functionalTest/kotlin"))
+                    }
+                }
+
+                targets.all {
+                    testTask.configure {
+                        include("**/org/jetbrains/kotlin/gradle/unitTests/**")
+                    }
+                }
+            }
+
+            withType<JvmTestSuite>().configureEach {
+                if (name == "test") return@configureEach
                 useJUnit()
 
                 dependencies {
-                    implementation(project)
+                    implementation(project())
                     implementation("com.android.tools.build:gradle:7.2.1")
                     implementation("com.android.tools.build:gradle-api:7.2.1")
                     compileOnly("com.android.tools:common:30.2.1")
@@ -240,24 +288,6 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
                 configurations.named(sources.runtimeOnlyConfigurationName) {
                     extendsFrom(configurations.getByName(mainSourceSet.runtimeOnlyConfigurationName))
                     extendsFrom(configurations.getByName(testSourceSet.runtimeOnlyConfigurationName))
-                }
-
-                targets.create("functionalRegressionTest") {
-                    testTask.configure {
-                        include("**/org/jetbrains/kotlin/gradle/regressionTests/**")
-                    }
-                }
-
-                targets.create("functionalDependencyResolutionTest") {
-                    testTask.configure {
-                        include("**/org/jetbrains/kotlin/gradle/dependencyResolutionTests/**")
-                    }
-                }
-
-                targets.create("functionalUnitTest") {
-                    testTask.configure {
-                        include("**/org/jetbrains/kotlin/gradle/unitTests/**")
-                    }
                 }
 
                 targets.all {

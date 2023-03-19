@@ -81,7 +81,7 @@ interface CompileService : Remote {
     fun checkCompilerId(expectedCompilerId: CompilerId): Boolean
 
     @Throws(RemoteException::class)
-    fun getUsedMemory(): CallResult<Long>
+    fun getUsedMemory(withGC: Boolean = true): CallResult<Long>
 
     @Throws(RemoteException::class)
     fun getDaemonOptions(): CallResult<DaemonOptions>

@@ -65,7 +65,7 @@ abstract class KotlinCompileCommon @Inject constructor(
         K2MetadataCompilerArguments()
 
     override fun setupCompilerArgs(args: K2MetadataCompilerArguments, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
-        (compilerOptions as KotlinMultiplatformCommonCompilerOptionsDefault).fillDefaultValues(args)
+        KotlinMultiplatformCommonCompilerOptionsHelper.fillDefaultValues(args)
         super.setupCompilerArgs(args, defaultsOnly = defaultsOnly, ignoreClasspathResolutionErrors = ignoreClasspathResolutionErrors)
 
         args.moduleName = this@KotlinCompileCommon.moduleName.get()
@@ -86,7 +86,7 @@ abstract class KotlinCompileCommon @Inject constructor(
             refinesPaths = refinesMetadataPaths.map { it.absolutePath }.toTypedArray()
         }
 
-        (compilerOptions as KotlinMultiplatformCommonCompilerOptionsDefault).fillCompilerArguments(args)
+        KotlinMultiplatformCommonCompilerOptionsHelper.fillCompilerArguments(compilerOptions, args)
 
         val localExecutionTimeFreeCompilerArgs = executionTimeFreeCompilerArgs
         if (localExecutionTimeFreeCompilerArgs != null) {

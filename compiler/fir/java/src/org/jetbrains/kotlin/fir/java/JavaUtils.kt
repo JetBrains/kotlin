@@ -8,9 +8,6 @@ package org.jetbrains.kotlin.fir.java
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationDataKey
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationDataRegistry
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.FirArrayOfCall
@@ -37,15 +34,16 @@ internal val JavaModifierListOwner.modality: Modality
         else -> Modality.OPEN
     }
 
-internal val JavaClass.modality: Modality
+val JavaClass.modality: Modality
     get() = when {
+        isAnnotationType || isEnum -> Modality.FINAL
         isSealed -> Modality.SEALED
         isAbstract -> Modality.ABSTRACT
         isFinal -> Modality.FINAL
         else -> Modality.OPEN
     }
 
-internal val JavaClass.classKind: ClassKind
+val JavaClass.classKind: ClassKind
     get() = when {
         isAnnotationType -> ClassKind.ANNOTATION_CLASS
         isInterface -> ClassKind.INTERFACE

@@ -21,12 +21,20 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 internal class LLVMCoverageInstrumentation(
         override val generationState: NativeGenerationState,
         private val functionRegions: FunctionRegions,
-        private val callSitePlacer: (function: LLVMValueRef, args: List<LLVMValueRef>) -> Unit
+        private val callSitePlacer: (function: LlvmCallable, args: List<LLVMValueRef>) -> Unit
 ) : ContextUtils {
 
     private val functionNameGlobal = createFunctionNameGlobal(functionRegions.function)
 
     private val functionHash = llvm.int64(functionRegions.structuralHash)
+
+    private val instrProfIncrement by lazy {
+        val incrementFun = LLVMInstrProfIncrement(llvm.module)!!
+        LlvmCallable(
+                incrementFun,
+                LlvmFunctionAttributeProvider.copyFromExternal(incrementFun)
+        )
+    }
 
     // TODO: It's a great place for some debug output.
     fun instrumentIrElement(element: IrElement) {
@@ -42,13 +50,12 @@ internal class LLVMCoverageInstrumentation(
         val numberOfRegions = llvm.int32(functionRegions.regions.size)
         val regionNumber = llvm.int32(functionRegions.regionEnumeration.getValue(region))
         val args = listOf(functionNameGlobal, functionHash, numberOfRegions, regionNumber)
-        callSitePlacer(LLVMInstrProfIncrement(llvm.module)!!, args)
+        callSitePlacer(instrProfIncrement, args)
     }
 
     // Each profiled function should have a global with its name in a specific format.
     private fun createFunctionNameGlobal(function: IrFunction): LLVMValueRef {
-        val name = function.llvmFunction.llvmValue.name
-        val pgoFunctionName = LLVMCreatePGOFunctionNameVar(function.llvmFunction.llvmValue, name)!!
+        val pgoFunctionName = function.llvmFunction.pgoFunctionNameVar
         return LLVMConstBitCast(pgoFunctionName, llvm.int8PtrType)!!
     }
 }

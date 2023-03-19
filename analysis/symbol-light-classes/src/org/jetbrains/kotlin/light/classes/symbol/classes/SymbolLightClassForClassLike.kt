@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.sourcePsiSafe
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.asJava.classes.getParentForLocalDeclaration
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
@@ -29,10 +28,8 @@ import org.jetbrains.kotlin.light.classes.symbol.*
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasDeprecatedAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightTypeParameterList
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
-import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassBody
 import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.psi.debugText.getDebugText
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
@@ -68,44 +65,6 @@ abstract class SymbolLightClassForClassLike<SType : KtClassOrObjectSymbol> prote
         classOrObjectDeclaration?.isTopLevel() ?: withClassOrObjectSymbol { it.symbolKind == KtSymbolKind.TOP_LEVEL }
     }
 
-    internal val isCompanionObject: Boolean by lazyPub {
-        classOrObjectDeclaration?.let { it is KtObjectDeclaration && it.isCompanion() } ?: withClassOrObjectSymbol {
-            it.classKind == KtClassKind.COMPANION_OBJECT
-        }
-    }
-
-    internal val isLocal: Boolean by lazyPub {
-        classOrObjectDeclaration?.isLocal ?: withClassOrObjectSymbol { it.symbolKind == KtSymbolKind.LOCAL }
-    }
-
-    internal val isNamedObject: Boolean by lazyPub {
-        classOrObjectDeclaration?.let { it is KtObjectDeclaration && !it.isCompanion() } ?: withClassOrObjectSymbol {
-            it.classKind == KtClassKind.OBJECT
-        }
-    }
-
-    internal val isObject: Boolean by lazyPub {
-        classOrObjectDeclaration?.let { it is KtObjectDeclaration } ?: withClassOrObjectSymbol { it.classKind.isObject }
-    }
-
-    internal val isInterface: Boolean by lazyPub {
-        classOrObjectDeclaration?.let { it is KtClass && it.isInterface() } ?: withClassOrObjectSymbol {
-            it.classKind == KtClassKind.INTERFACE
-        }
-    }
-
-    internal val isAnnotation: Boolean by lazyPub {
-        classOrObjectDeclaration?.let { it is KtClass && it.isAnnotation() } ?: withClassOrObjectSymbol {
-            it.classKind == KtClassKind.ANNOTATION_CLASS
-        }
-    }
-
-    internal val isEnum: Boolean by lazyPub {
-        classOrObjectDeclaration?.let { it is KtClass && it.isEnum() } ?: withClassOrObjectSymbol {
-            it.classKind == KtClassKind.ENUM_CLASS
-        }
-    }
-
     private val _isDeprecated: Boolean by lazyPub {
         withClassOrObjectSymbol { it.hasDeprecatedAnnotation() }
     }
@@ -113,16 +72,14 @@ abstract class SymbolLightClassForClassLike<SType : KtClassOrObjectSymbol> prote
     override fun isDeprecated(): Boolean = _isDeprecated
 
     abstract override fun getModifierList(): PsiModifierList?
+
     abstract override fun getOwnFields(): List<KtLightField>
     abstract override fun getOwnMethods(): List<PsiMethod>
 
-    private val _identifier: PsiIdentifier by lazyPub {
-        KtLightIdentifier(this, classOrObjectDeclaration)
-    }
-
-    override fun getNameIdentifier(): PsiIdentifier? = _identifier
+    override fun getNameIdentifier(): PsiIdentifier? = KtLightIdentifier(this, classOrObjectDeclaration)
 
     abstract override fun getExtendsList(): PsiReferenceList?
+
     abstract override fun getImplementsList(): PsiReferenceList?
 
     private val _typeParameterList: PsiTypeParameterList? by lazyPub {
@@ -139,20 +96,19 @@ abstract class SymbolLightClassForClassLike<SType : KtClassOrObjectSymbol> prote
     override fun hasTypeParameters(): Boolean = hasTypeParameters(ktModule, classOrObjectDeclaration, classOrObjectSymbolPointer)
 
     override fun getTypeParameterList(): PsiTypeParameterList? = _typeParameterList
+
     override fun getTypeParameters(): Array<PsiTypeParameter> = _typeParameterList?.typeParameters ?: PsiTypeParameter.EMPTY_ARRAY
 
-    private val _ownInnerClasses: List<SymbolLightClassBase> by lazyPub {
+    override fun getOwnInnerClasses(): List<PsiClass> = cachedValue {
         withClassOrObjectSymbol {
             it.createInnerClasses(manager, this@SymbolLightClassForClassLike, classOrObjectDeclaration)
         }
     }
 
-    override fun getOwnInnerClasses(): List<PsiClass> = _ownInnerClasses
-
     override fun getTextOffset(): Int = classOrObjectDeclaration?.textOffset ?: -1
+
     override fun getStartOffsetInParent(): Int = classOrObjectDeclaration?.startOffsetInParent ?: -1
     override fun isWritable() = false
-
     override fun getNavigationElement(): PsiElement = classOrObjectDeclaration ?: this
 
     override fun isEquivalentTo(another: PsiElement?): Boolean =
@@ -180,9 +136,10 @@ abstract class SymbolLightClassForClassLike<SType : KtClassOrObjectSymbol> prote
 
     override fun hasModifierProperty(@NonNls name: String): Boolean = modifierList?.hasModifierProperty(name) ?: false
 
-    override fun isInterface(): Boolean = isInterface
-    override fun isAnnotationType(): Boolean = isAnnotation
-    override fun isEnum(): Boolean = isEnum
+    abstract fun classKind(): KtClassKind
+    override fun isInterface(): Boolean = classKind().let { it == KtClassKind.INTERFACE || it == KtClassKind.ANNOTATION_CLASS }
+    override fun isAnnotationType(): Boolean = classKind() == KtClassKind.ANNOTATION_CLASS
+    override fun isEnum(): Boolean = classKind() == KtClassKind.ENUM_CLASS
 
     override fun isValid(): Boolean = classOrObjectDeclaration?.isValid ?: classOrObjectSymbolPointer.isValid(ktModule)
 
@@ -208,14 +165,7 @@ abstract class SymbolLightClassForClassLike<SType : KtClassOrObjectSymbol> prote
         return null
     }
 
-    override fun getParent(): PsiElement? {
-        if (isLocal) {
-            return classOrObjectDeclaration?.let(::getParentForLocalDeclaration)
-        }
-
-        return containingClass ?: containingFile
-    }
-
+    abstract override fun getParent(): PsiElement?
     override fun getScope(): PsiElement? = parent
 
     override fun isInheritorDeep(baseClass: PsiClass?, classToByPass: PsiClass?): Boolean =

@@ -7,26 +7,27 @@ package org.jetbrains.kotlin.analysis.api.components
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiType
+import com.intellij.psi.PsiTypeElement
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
 
 public abstract class KtPsiTypeProvider : KtAnalysisSessionComponent() {
-    public abstract fun asPsiType(
+    public abstract fun asPsiTypeElement(
         type: KtType,
         useSitePosition: PsiElement,
         mode: KtTypeMappingMode,
         isAnnotationMethod: Boolean,
         allowErrorTypes: Boolean
-    ): PsiType?
+    ): PsiTypeElement?
 }
 
 public interface KtPsiTypeProviderMixIn : KtAnalysisSessionMixIn {
     /**
-     * Converts the given [KtType] to [PsiType] under [useSitePosition] context.
+     * Converts the given [KtType] to [PsiTypeElement] under [useSitePosition] context.
      *
-     * [useSitePosition] is used as the parent of the resulting [PsiType],
-     * which is in turn used to resolve [PsiType].
+     * [useSitePosition] is used as the parent of the resulting [PsiTypeElement],
+     * which is in turn used to resolve [PsiTypeElement].
      *
      * [useSitePosition] is also used to determine if the given [KtType] needs to be approximated.
      * For example, if the given type is local yet available in the same scope of use site, we can
@@ -40,12 +41,27 @@ public interface KtPsiTypeProviderMixIn : KtAnalysisSessionMixIn {
      *
      * If [allowErrorTypes] set to true then erroneous types will be replaced with `error.NonExistentClass` type
      */
+    public fun KtType.asPsiTypeElement(
+        useSitePosition: PsiElement,
+        allowErrorTypes: Boolean,
+        mode: KtTypeMappingMode = KtTypeMappingMode.DEFAULT,
+        isAnnotationMethod: Boolean = false
+    ): PsiTypeElement? = withValidityAssertion {
+        analysisSession.psiTypeProvider.asPsiTypeElement(this, useSitePosition, mode, isAnnotationMethod, allowErrorTypes)
+    }
+
+    /**
+     * Converts the given [KtType] to [PsiType] under [useSitePosition] context.
+     *
+     * This simply unwraps [PsiTypeElement] returned from [asPsiTypeElement].
+     * Use this version if type annotation is not required. Otherwise, use [asPsiTypeElement] to get [PsiTypeElement] as an owner of
+     * annotations on [PsiType] and annotate the resulting [PsiType] with proper [PsiAnnotation].
+     */
     public fun KtType.asPsiType(
         useSitePosition: PsiElement,
         allowErrorTypes: Boolean,
         mode: KtTypeMappingMode = KtTypeMappingMode.DEFAULT,
         isAnnotationMethod: Boolean = false
-    ): PsiType? = withValidityAssertion {
-        analysisSession.psiTypeProvider.asPsiType(this, useSitePosition, mode, isAnnotationMethod, allowErrorTypes)
-    }
+    ): PsiType? =
+        asPsiTypeElement(useSitePosition, allowErrorTypes, mode, isAnnotationMethod)?.type
 }

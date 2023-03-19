@@ -6,21 +6,42 @@
 package org.jetbrains.kotlin.gradle.targets.js.subtargets
 
 import org.gradle.api.Project
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.provider.Property
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.distsDirectory
 import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution
 import org.jetbrains.kotlin.gradle.utils.property
 import java.io.File
 
+internal fun createDefaultDistribution(project: Project, name: String? = null) =
+    DefaultDistribution(project, project.objects.property(name))
+
+internal fun createDefaultDistribution(project: Project, name: Property<String>?) =
+    DefaultDistribution(project, project.objects.property<String>().apply {
+        if (name != null) {
+            value(name)
+        }
+    })
+
 class DefaultDistribution(
     private val project: Project,
-    override var name: String? = null
+    override val distributionName: Property<String>,
 ) : Distribution {
+    @Deprecated("Use `distributionName` instead", ReplaceWith("distributionName"))
+    override var name: String?
+        get() = distributionName.orNull
+        set(value) {
+            distributionName.set(value)
+        }
 
-    override var directory: File by property {
-        project.buildDir
-            .let { buildDir ->
-                name?.let { buildDir.resolve(it) }
-                    ?: project.distsDirectory.asFile.get()
-            }
-    }
+    @Deprecated("Use `outputDirectory` instead", ReplaceWith("outputDirectory"))
+    override var directory: File
+        get() = outputDirectory.get().asFile
+        set(value) {
+            outputDirectory.set(value)
+        }
+
+    override val outputDirectory: DirectoryProperty = project.objects.directoryProperty().convention(
+        distributionName.flatMap { project.layout.buildDirectory.dir(it) }.orElse(project.distsDirectory)
+    )
 }

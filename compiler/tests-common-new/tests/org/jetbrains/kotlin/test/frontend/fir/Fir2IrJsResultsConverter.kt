@@ -5,26 +5,24 @@
 
 package org.jetbrains.kotlin.test.frontend.fir
 
+import org.jetbrains.kotlin.KtSourceFile
+import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.fir.AbstractFirAnalyzerFacade
 import org.jetbrains.kotlin.fir.FirAnalyzerFacade
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.jvm.Fir2IrJvmSpecialAnnotationSymbolProvider
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmKotlinMangler
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
-import org.jetbrains.kotlin.fir.moduleData
-import org.jetbrains.kotlin.fir.resolve.providers.firProvider
-import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.serialization.FirElementAwareSerializableStringTable
 import org.jetbrains.kotlin.fir.serialization.FirKLibSerializerExtension
 import org.jetbrains.kotlin.fir.serialization.serializeSingleFirFile
@@ -33,8 +31,8 @@ import org.jetbrains.kotlin.ir.backend.js.JsFactories
 import org.jetbrains.kotlin.ir.backend.js.getSerializedData
 import org.jetbrains.kotlin.ir.backend.js.incrementalDataProvider
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.library.unresolvedDependencies
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
@@ -59,34 +57,67 @@ class Fir2IrJsResultsConverter(
         module: TestModule,
         inputArtifact: FirOutputArtifact
     ): IrBackendInput {
-        val compilerConfigurationProvider = testServices.compilerConfigurationProvider
-        val configuration = compilerConfigurationProvider.getCompilerConfiguration(module)
+        val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
 
-        val fir2IrExtensions = Fir2IrExtensions.Default
-        val firFiles = inputArtifact.allFirFiles.values
-        val (irModuleFragment, components, pluginContext) =
-            inputArtifact.partsForDependsOnModules.last().firAnalyzerFacade.convertToJsIr(firFiles, fir2IrExtensions, module, configuration, testServices)
+        lateinit var mainIrPart: IrModuleFragment
+        val dependentIrParts = mutableListOf<IrModuleFragment>()
+        val sourceFiles = mutableListOf<KtSourceFile>()
+        val firFilesAndComponentsBySourceFile = mutableMapOf<KtSourceFile, Pair<FirFile, Fir2IrComponents>>()
+        lateinit var mainPluginContext: IrPluginContext
+        var irBuiltIns: IrBuiltInsOverFir? = null
 
-        val sourceFiles = firFiles.mapNotNull { it.sourceFile }
-        val firFilesBySourceFile = firFiles.associateBy { it.sourceFile }
+        val commonMemberStorage = Fir2IrCommonMemberStorage(
+            generateSignatures = false,
+            signatureComposerCreator = null,
+            manglerCreator = { FirJvmKotlinMangler() } // TODO: replace with potentially simpler JS version
+        )
 
-        val icData = configuration.incrementalDataProvider?.getSerializedData(sourceFiles) ?: emptyList()
-        val expectDescriptorToSymbol = mutableMapOf<DeclarationDescriptor, IrSymbol>()
+        for ((index, part) in inputArtifact.partsForDependsOnModules.withIndex()) {
+            val (irModuleFragment, components, pluginContext) =
+                part.firAnalyzerFacade.convertToJsIr(
+                    part.firFiles.values,
+                    fir2IrExtensions = Fir2IrExtensions.Default,
+                    module,
+                    configuration,
+                    testServices,
+                    commonMemberStorage,
+                    irBuiltIns
+                )
+            irBuiltIns = components.irBuiltIns
+            mainPluginContext = pluginContext
+
+            if (index < inputArtifact.partsForDependsOnModules.size - 1) {
+                dependentIrParts.add(irModuleFragment)
+            } else {
+                mainIrPart = irModuleFragment
+            }
+
+            sourceFiles.addAll(part.firFiles.mapNotNull { it.value.sourceFile })
+
+            for (firFile in part.firFiles.values) {
+                firFilesAndComponentsBySourceFile[firFile.sourceFile!!] = firFile to components
+            }
+        }
+
         val metadataVersion = configuration.metadataVersion(module.languageVersionSettings.languageVersion)
 
         // At this point, checkers will already have been run by a previous test step. `runCheckers` returns the cached diagnostics map.
-        val diagnosticsMap = inputArtifact.partsForDependsOnModules.last().firAnalyzerFacade.runCheckers()
+        val diagnosticsMap = inputArtifact.partsForDependsOnModules.fold(mutableMapOf<FirFile, List<KtDiagnostic>>()) { result, part ->
+            result.also { it.putAll(part.firAnalyzerFacade.runCheckers()) }
+        }
         val hasErrors = diagnosticsMap.any { entry -> entry.value.any { it.severity == Severity.ERROR } }
 
         return IrBackendInput.JsIrBackendInput(
-            irModuleFragment,
-            pluginContext,
+            mainIrPart,
+            dependentIrParts,
+            mainPluginContext,
             sourceFiles,
-            icData,
-            expectDescriptorToSymbol,
-            hasErrors,
+            configuration.incrementalDataProvider?.getSerializedData(sourceFiles) ?: emptyList(),
+            expectDescriptorToSymbol = mutableMapOf(),
+            hasErrors = hasErrors
         ) { file ->
-            val firFile = firFilesBySourceFile[file] ?: error("cannot find FIR file by source file ${file.name} (${file.path})")
+            val (firFile, components) = firFilesAndComponentsBySourceFile[file]
+                ?: error("cannot find FIR file by source file ${file.name} (${file.path})")
             serializeSingleFirFile(
                 firFile,
                 components.session,
@@ -103,26 +134,17 @@ fun AbstractFirAnalyzerFacade.convertToJsIr(
     fir2IrExtensions: Fir2IrExtensions,
     module: TestModule,
     configuration: CompilerConfiguration,
-    testServices: TestServices
+    testServices: TestServices,
+    commonMemberStorage: Fir2IrCommonMemberStorage,
+    irBuiltIns: IrBuiltInsOverFir?
 ): Fir2IrResult {
     this as FirAnalyzerFacade
-    val commonFirFiles = session.moduleData.dependsOnDependencies
-        .map { it.session }
-        .filter { it.kind == FirSession.Kind.Source }
-        .flatMap { (it.firProvider as FirProviderImpl).getAllFirFiles() }
-
     // TODO: consider avoiding repeated libraries resolution
     val libraries = resolveJsLibraries(module, testServices, configuration)
     val (dependencies, builtIns) = loadResolvedLibraries(libraries, configuration.languageVersionSettings, testServices)
 
-    val commonMemberStorage = Fir2IrCommonMemberStorage(
-        generateSignatures = false,
-        signatureComposerCreator = null,
-        manglerCreator = { FirJvmKotlinMangler() } // TODO: replace with potentially simpler JS version
-    )
-
     return Fir2IrConverter.createModuleFragmentWithSignaturesIfNeeded(
-        session, scopeSession, firFiles + commonFirFiles,
+        session, scopeSession, firFiles.toList(),
         languageVersionSettings,
         fir2IrExtensions,
         JsManglerIr, IrFactoryImpl,
@@ -132,7 +154,7 @@ fun AbstractFirAnalyzerFacade.convertToJsIr(
         generateSignatures = false,
         kotlinBuiltIns = builtIns ?: DefaultBuiltIns.Instance, // TODO: consider passing externally,
         commonMemberStorage = commonMemberStorage,
-        initializedIrBuiltIns = null
+        initializedIrBuiltIns = irBuiltIns
     ).also {
         (it.irModuleFragment.descriptor as? FirModuleDescriptor)?.let { it.allDependencyModules = dependencies }
     }

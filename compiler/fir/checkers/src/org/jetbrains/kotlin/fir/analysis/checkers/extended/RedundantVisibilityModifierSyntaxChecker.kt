@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.fir.analysis.checkers.extended
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.config.ExplicitApiMode
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -59,20 +61,18 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
     ) {
         var setterImplicitVisibility: Visibility? = null
 
-        context.withDeclaration(property) {
-            property.setter?.let { setter ->
-                val visibility = setter.implicitVisibility(it)
-                setterImplicitVisibility = visibility
-                checkElementAndReport(setter, visibility, property, it, reporter)
-            }
+        property.setter?.let { setter ->
+            val visibility = setter.implicitVisibility(context)
+            setterImplicitVisibility = visibility
+            checkElementAndReport(setter, visibility, property, context, reporter)
+        }
 
-            property.getter?.let { getter ->
-                checkElementAndReport(getter, property, it, reporter)
-            }
+        property.getter?.let { getter ->
+            checkElementAndReport(getter, property, context, reporter)
+        }
 
-            property.backingField?.let { field ->
-                checkElementAndReport(field, property, it, reporter)
-            }
+        property.backingField?.let { field ->
+            checkElementAndReport(field, property, context, reporter)
         }
 
         if (property.canMakeSetterMoreAccessible(setterImplicitVisibility)) {
@@ -117,20 +117,29 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
             return
         }
 
-        val isAccessorWithSameVisibility = element is FirPropertyAccessor
-                && element.visibility == context.containingPropertyVisibility
-
-        if (element !is FirMemberDeclaration && !isAccessorWithSameVisibility) {
+        if (element !is FirMemberDeclaration) {
             return
         }
 
         val explicitVisibility = element.source?.explicitVisibility
         val isHidden = explicitVisibility.isEffectivelyHiddenBy(containingMemberDeclaration)
-
-        if (explicitVisibility != implicitVisibility && !isHidden) {
+        if (isHidden) {
+            reportElement(element, context, reporter)
             return
         }
 
+        // In explicit API mode, `public` is explicitly required.
+        val explicitApiMode = context.languageVersionSettings.getFlag(AnalysisFlags.explicitApiMode)
+        if (explicitApiMode != ExplicitApiMode.DISABLED && explicitVisibility == Visibilities.Public) {
+            return
+        }
+
+        if (explicitVisibility == implicitVisibility) {
+            reportElement(element, context, reporter)
+        }
+    }
+
+    private fun reportElement(element: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         reporter.reportOn(element.source, FirErrors.REDUNDANT_VISIBILITY_MODIFIER, context)
     }
 
@@ -183,13 +192,10 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
         return when {
             this is FirPropertyAccessor
                     && isSetter
-                    && context.containingDeclarations.size >= 2
-                    && context.containingDeclarations.asReversed()[1] is FirClass
+                    && context.containingDeclarations.last() is FirClass
                     && propertySymbol.isOverride -> findPropertyAccessorVisibility(this, context)
 
-            this is FirPropertyAccessor -> {
-                context.findClosest<FirProperty>()?.visibility ?: Visibilities.DEFAULT_VISIBILITY
-            }
+            this is FirPropertyAccessor -> propertySymbol.visibility
 
             this is FirConstructor -> {
                 val classSymbol = this.getContainingClassSymbol(context.session)
@@ -281,7 +287,4 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
             scope.processOverriddenFunctions(function.symbol, it)
         }
     }
-
-    private val CheckerContext.containingPropertyVisibility
-        get() = (this.containingDeclarations.last() as? FirProperty)?.visibility
 }

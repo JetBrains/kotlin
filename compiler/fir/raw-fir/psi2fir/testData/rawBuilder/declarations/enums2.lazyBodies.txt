@@ -3,13 +3,13 @@ FILE: enums2.kt
     }
     public? final? object O1 : Some {
         private constructor(): R|O1| {
-            super<<implicit>>()
+            LAZY_super<<implicit>>
         }
 
     }
     public? final? object O2 : Some {
         private constructor(): R|O2| {
-            super<<implicit>>()
+            LAZY_super<<implicit>>
         }
 
     }

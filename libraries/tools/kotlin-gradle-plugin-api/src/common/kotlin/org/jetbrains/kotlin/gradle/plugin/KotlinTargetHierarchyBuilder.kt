@@ -28,9 +28,10 @@ interface KotlinTargetHierarchyBuilder {
     fun withMingw()
     fun withLinux()
     fun withAndroidNative()
-    fun withJs()
 
     /* Actual targets */
+    fun withJs()
+    fun withWasm()
     fun withJvm()
     fun withAndroid()
     fun withAndroidNativeX64()

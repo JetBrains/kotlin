@@ -28,10 +28,9 @@ import org.jetbrains.kotlin.cli.common.arguments.DevModeOverwritingStrategies
 import org.jetbrains.kotlin.cli.common.arguments.K2JSDceArguments
 import org.jetbrains.kotlin.cli.js.dce.K2JSDce
 import org.jetbrains.kotlin.compilerRunner.runToolInSeparateProcess
-import org.jetbrains.kotlin.gradle.dsl.KotlinJsDceCompilerToolOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinJsDceCompilerToolOptionsDefault
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsDce
-import org.jetbrains.kotlin.gradle.dsl.KotlinJsDceOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinJsDceCompilerToolOptionsDefault
 import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
 import org.jetbrains.kotlin.gradle.utils.absolutePathWithoutExtension
 import org.jetbrains.kotlin.gradle.utils.fileExtensionCasePermutations
@@ -58,7 +57,7 @@ abstract class KotlinJsDce @Inject constructor(
     override fun createCompilerArgs(): K2JSDceArguments = K2JSDceArguments()
 
     override fun setupCompilerArgs(args: K2JSDceArguments, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
-        (toolOptions as KotlinJsDceCompilerToolOptionsDefault).fillCompilerArguments(args)
+        KotlinJsDceCompilerToolOptionsHelper.fillCompilerArguments(toolOptions, args)
         args.declarationsToKeep = keep.toTypedArray()
     }
 

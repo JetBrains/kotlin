@@ -96,6 +96,10 @@ kotlin {
                 }
             }
         }
+
+        nativeMain { dependsOn commonMain }
+        linux64Main { dependsOn nativeMain }
+        macos64Main { dependsOn nativeMain }
     }
 }
 

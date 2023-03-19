@@ -292,7 +292,7 @@ abstract class LazyJavaScope(
     }
 
     private fun resolveProperty(field: JavaField): PropertyDescriptor {
-        val propertyDescriptor = createPropertyDescriptor(field)
+        var propertyDescriptor = createPropertyDescriptor(field)
         // Annotations on Java fields are loaded as property annotations, therefore backingField = null below
         propertyDescriptor.initialize(null, null, null, null)
 
@@ -305,6 +305,9 @@ abstract class LazyJavaScope(
             null,
             emptyList()
         )
+        (ownerDescriptor as? ClassDescriptor)?.let { classDescriptor ->
+            propertyDescriptor = with(c) { c.components.syntheticPartsProvider.modifyField(classDescriptor, propertyDescriptor) }
+        }
 
         if (DescriptorUtils.shouldRecordInitializerForProperty(propertyDescriptor, propertyDescriptor.type)) {
             propertyDescriptor.setCompileTimeInitializerFactory {

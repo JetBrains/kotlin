@@ -1,0 +1,17 @@
+FILE: overloadsWithGenericAndGenericLambda.kt
+    public final class Inv<T> : R|kotlin/Any| {
+        public constructor<T>(): R|Inv<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun <T> foo(c: R|Inv<T>|, f: R|() -> T|): R|kotlin/Unit| {
+    }
+    public final fun <T> foo(c: R|Inv<T>|, v: R|T|): R|kotlin/Unit| {
+    }
+    public final fun <T> test(x: R|Inv<T>|, v: R|T|): R|kotlin/Unit| {
+        <Ambiguity: foo, [/foo, /foo]>#(R|<local>/x|, <L> = foo@fun <anonymous>(): R|T| <inline=Unknown>  {
+            ^ R|<local>/v|
+        }
+        )
+    }

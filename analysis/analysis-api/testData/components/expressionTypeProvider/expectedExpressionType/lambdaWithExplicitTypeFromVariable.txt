@@ -1,4 +1,12 @@
 expression: {
     val (a, b) = listOf(1, 2)
 }
-expected type: kotlin/Function0<kotlin/Unit>
+expected type: KtFunctionalType:
+  annotationsList: []
+  ownTypeArguments: [
+    KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Unit
+  ]
+  type: kotlin/Function0<kotlin/Unit>

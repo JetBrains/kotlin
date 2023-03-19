@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirWrappedArgumentExpression
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.isFunctionalOrSuspendFunctionalType
+import org.jetbrains.kotlin.fir.types.isNonReflectFunctionType
 
 tailrec fun FirExpression.unwrapAnonymousFunctionExpression(): FirAnonymousFunction? = when (this) {
     is FirAnonymousFunctionExpression -> anonymousFunction
@@ -47,7 +47,7 @@ fun FirFunctionCall.replaceLambdaArgumentInvocationKinds(session: FirSession) {
         val kind = byParameter[parameter] ?: EventOccurrencesRange.UNKNOWN.takeIf {
             // Inline functional parameters have to be called in-place; that's the only permitted operation on them.
             isInline && !parameter.isNoinline && !parameter.isCrossinline &&
-                    parameter.returnTypeRef.coneType.isFunctionalOrSuspendFunctionalType(session)
+                    parameter.returnTypeRef.coneType.isNonReflectFunctionType(session)
         } ?: continue
         lambda.replaceInvocationKind(kind)
     }

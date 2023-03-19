@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.types
 
+import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.diagnostics.ConeIntermediateDiagnostic
@@ -66,7 +67,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
     ): SimpleTypeMarker {
         val attributesList = attributes?.filterIsInstanceTo<ConeAttribute<*>, MutableList<ConeAttribute<*>>>(mutableListOf())
         val coneAttributes: ConeAttributes = if (isExtensionFunction) {
-            require(constructor is ConeClassLikeLookupTag && constructor.isBuiltinFunctionalType())
+            require(constructor is ConeClassLikeLookupTag && constructor.isSomeFunctionType(session))
             // We don't want to create new instance of ConeAttributes which
             //   contains only CompilerConeAttributes.ExtensionFunctionType
             //   to avoid memory consumption
@@ -223,10 +224,10 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return this.typeConstructor().isUnitTypeConstructor() && !this.isNullable
     }
 
-    override fun KotlinTypeMarker.isBuiltinFunctionalTypeOrSubtype(): Boolean {
+    override fun KotlinTypeMarker.isBuiltinFunctionTypeOrSubtype(): Boolean {
         require(this is ConeKotlinType)
         return this.isTypeOrSubtypeOf {
-            (it.lowerBoundIfFlexible() as ConeKotlinType).isBuiltinFunctionalType(session)
+            (it.lowerBoundIfFlexible() as ConeKotlinType).isSomeFunctionType(session)
         }
     }
 
@@ -463,10 +464,10 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
 
     override fun KotlinTypeMarker.isFunctionOrKFunctionWithAnySuspendability(): Boolean {
         require(this is ConeKotlinType)
-        return this.isBuiltinFunctionalType(session)
+        return this.isSomeFunctionType(session)
     }
 
-    private fun ConeKotlinType.isTypeOrSubtypeOf(predicate: (ConeKotlinType) -> Boolean): Boolean {
+    fun ConeKotlinType.isTypeOrSubtypeOf(predicate: (ConeKotlinType) -> Boolean): Boolean {
         return predicate(this) || DFS.dfsFromNode(
             this,
             {
@@ -489,46 +490,40 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         )
     }
 
-    override fun KotlinTypeMarker.isSuspendFunctionTypeOrSubtype(): Boolean {
-        require(this is ConeKotlinType)
-        return isTypeOrSubtypeOf {
-            (it.lowerBoundIfFlexible() as ConeKotlinType).isSuspendOrKSuspendFunctionType(session)
-        }
-    }
-
     override fun KotlinTypeMarker.isExtensionFunctionType(): Boolean {
         require(this is ConeKotlinType)
         return (this.lowerBoundIfFlexible() as? ConeKotlinType)?.isExtensionFunctionType(session) == true
     }
 
-    override fun KotlinTypeMarker.extractArgumentsForFunctionalTypeOrSubtype(): List<KotlinTypeMarker> {
-        val builtInFunctionalType = getFunctionalTypeFromSupertypes() as ConeKotlinType
+    override fun KotlinTypeMarker.extractArgumentsForFunctionTypeOrSubtype(): List<KotlinTypeMarker> {
+        val builtInFunctionType = getFunctionTypeFromSupertypes() as ConeKotlinType
         return buildList {
             // excluding return type
-            for (index in 0 until builtInFunctionalType.argumentsCount() - 1) {
-                add(builtInFunctionalType.getArgument(index).getType())
+            for (index in 0 until builtInFunctionType.argumentsCount() - 1) {
+                add(builtInFunctionType.getArgument(index).getType())
             }
         }
     }
 
-    override fun KotlinTypeMarker.getFunctionalTypeFromSupertypes(): KotlinTypeMarker {
+    override fun KotlinTypeMarker.getFunctionTypeFromSupertypes(): KotlinTypeMarker {
         require(this is ConeKotlinType)
-        assert(this.isBuiltinFunctionalTypeOrSubtype()) {
+        assert(this.isBuiltinFunctionTypeOrSubtype()) {
             "Not a function type or subtype: ${this.renderForDebugging()}"
         }
 
         return fullyExpandedType(session).let {
             val simpleType = it.lowerBoundIfFlexible()
-            if ((simpleType as ConeKotlinType).isBuiltinFunctionalType(session))
+            if ((simpleType as ConeKotlinType).isSomeFunctionType(session))
                 this
             else {
                 var functionalSupertype: KotlinTypeMarker? = null
                 simpleType.anySuperTypeConstructor { type ->
                     simpleType.fastCorrespondingSupertypes(type.typeConstructor())?.any { superType ->
-                        val isFunctional = (superType as ConeKotlinType).isBuiltinFunctionalType(session)
-                        if (isFunctional)
+                        val isFunction = (superType as ConeKotlinType).isSomeFunctionType(session)
+                        if (isFunction) {
                             functionalSupertype = superType
-                        isFunctional
+                        }
+                        isFunction
                     } ?: false
                 }
                 functionalSupertype ?: error("Failed to find functional supertype for $simpleType")
@@ -536,24 +531,17 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         }
     }
 
-    override fun getFunctionTypeConstructor(parametersNumber: Int, isSuspend: Boolean): TypeConstructorMarker {
-        val classId = if (isSuspend) {
-            StandardClassIds.SuspendFunctionN(parametersNumber)
-        } else {
-            StandardClassIds.FunctionN(parametersNumber)
-        }
-        return session.symbolProvider.getClassLikeSymbolByClassId(classId)?.toLookupTag()
-            ?: error("Can't find Function type")
+    override fun KotlinTypeMarker.functionTypeKind(): FunctionTypeKind? {
+        require(this is ConeKotlinType)
+        return this.functionTypeKind(session)
     }
 
-    override fun getKFunctionTypeConstructor(parametersNumber: Int, isSuspend: Boolean): TypeConstructorMarker {
-        val classId = if (isSuspend) {
-            StandardClassIds.KSuspendFunctionN(parametersNumber)
-        } else {
-            StandardClassIds.KFunctionN(parametersNumber)
-        }
-        return session.symbolProvider.getClassLikeSymbolByClassId(classId)?.toLookupTag()
-            ?: error("Can't find KFunction type")
+    override fun getNonReflectFunctionTypeConstructor(parametersNumber: Int, kind: FunctionTypeKind): TypeConstructorMarker {
+        return kind.nonReflectKind().numberedClassId(parametersNumber).toLookupTag()
+    }
+
+    override fun getReflectFunctionTypeConstructor(parametersNumber: Int, kind: FunctionTypeKind): TypeConstructorMarker {
+        return kind.reflectKind().numberedClassId(parametersNumber).toLookupTag()
     }
 
     override fun createTypeWithAlternativeForIntersectionResult(
@@ -569,6 +557,11 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
     }
 
     override fun useRefinedBoundsForTypeVariableInFlexiblePosition(): Boolean = true
+
+    override fun KotlinTypeMarker.convertToNonRaw(): KotlinTypeMarker {
+        require(this is ConeKotlinType)
+        return this.convertToNonRawVersion()
+    }
 
     override fun createSubstitutorForSuperTypes(baseType: KotlinTypeMarker): TypeSubstitutorMarker? =
         if (baseType is ConeLookupTagBasedType) createSubstitutionForSupertype(baseType, session) else null

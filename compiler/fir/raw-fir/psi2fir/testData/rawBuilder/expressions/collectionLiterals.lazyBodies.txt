@@ -28,25 +28,25 @@ FILE: collectionLiterals.kt
     }
     @Ann1(LAZY_EXPRESSION) @Ann2(LAZY_EXPRESSION) @Ann3(LAZY_EXPRESSION) public? final? class Zero : R|kotlin/Any| {
         public? constructor(): R|Zero| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
     @Ann1(LAZY_EXPRESSION) public? final? class First : R|kotlin/Any| {
         public? constructor(): R|First| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
     @Ann2(LAZY_EXPRESSION) public? final? class Second : R|kotlin/Any| {
         public? constructor(): R|Second| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
     @Ann3(LAZY_EXPRESSION) public? final? class Third : R|kotlin/Any| {
         public? constructor(): R|Third| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }

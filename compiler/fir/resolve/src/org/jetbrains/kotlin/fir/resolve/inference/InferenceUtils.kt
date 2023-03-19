@@ -6,15 +6,14 @@
 package org.jetbrains.kotlin.fir.resolve.inference
 
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
-import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
-import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
+import org.jetbrains.kotlin.fir.diagnostics.ConeCannotInferValueParameterType
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.types.*
 
-fun extractLambdaInfoFromFunctionalType(
+fun extractLambdaInfoFromFunctionType(
     expectedType: ConeKotlinType?,
     expectedTypeRef: FirTypeRef?,
     argument: FirAnonymousFunction,
@@ -26,7 +25,7 @@ fun extractLambdaInfoFromFunctionalType(
     val session = components.session
     if (expectedType == null) return null
     if (expectedType is ConeFlexibleType) {
-        return extractLambdaInfoFromFunctionalType(
+        return extractLambdaInfoFromFunctionType(
             expectedType.lowerBound,
             expectedTypeRef,
             argument,
@@ -36,7 +35,8 @@ fun extractLambdaInfoFromFunctionalType(
             duringCompletion
         )
     }
-    if (!expectedType.isBuiltinFunctionalType(session)) return null
+    val expectedFunctionKind = expectedType.functionTypeKind(session) ?: return null
+    val actualFunctionKind = session.functionTypeService.extractSingleSpecialKindForFunction(argument.symbol)
 
     val singleStatement = argument.body?.statements?.singleOrNull() as? FirReturnExpression
     if (argument.returnType == null && singleStatement != null &&
@@ -84,9 +84,7 @@ fun extractLambdaInfoFromFunctionalType(
         argumentValueParameters.mapIndexed { index, parameter ->
             parameter.returnTypeRef.coneTypeSafe()
                 ?: expectedParameters.getOrNull(index)
-                ?: ConeErrorType(
-                    ConeSimpleDiagnostic("Cannot infer type for parameter ${parameter.name}", DiagnosticKind.CannotInferParameterType)
-                )
+                ?: ConeErrorType(ConeCannotInferValueParameterType(parameter.symbol))
         }
     }
 
@@ -100,7 +98,7 @@ fun extractLambdaInfoFromFunctionalType(
     return ResolvedLambdaAtom(
         argument,
         expectedType,
-        expectedType.isSuspendOrKSuspendFunctionType(session),
+        actualFunctionKind ?: expectedFunctionKind,
         receiverType,
         contextReceivers,
         parameters,

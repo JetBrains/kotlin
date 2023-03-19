@@ -48,9 +48,9 @@ fun case_3() {
  */
 fun case_4() {
     var x: Int? = null
-    if (x == try { x = 10; null } finally {} && <!SENSELESS_COMPARISON!>x != null<!>) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing")!>x<!>.inv()
+    if (x == try { x = 10; null } finally {} && x != null) {
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.inv()
         println(1)
     }
 }

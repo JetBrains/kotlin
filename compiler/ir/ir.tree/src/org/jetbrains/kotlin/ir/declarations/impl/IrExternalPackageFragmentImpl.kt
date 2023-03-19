@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 
 class IrExternalPackageFragmentImpl(
     override val symbol: IrExternalPackageFragmentSymbol,
-    override val fqName: FqName
+    override var fqName: FqName
 ) : IrExternalPackageFragment() {
     override val startOffset: Int
         get() = UNDEFINED_OFFSET

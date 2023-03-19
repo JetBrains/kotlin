@@ -1007,6 +1007,15 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.AMBIGUOUS_ANNOTATION_ARGUMENT) { firDiagnostic ->
+        AmbiguousAnnotationArgumentImpl(
+            firDiagnostic.a.map { firBasedSymbol ->
+                firSymbolBuilder.buildSymbol(firBasedSymbol)
+            },
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJsErrors.WRONG_JS_QUALIFIER) { firDiagnostic ->
         WrongJsQualifierImpl(
             firDiagnostic as KtPsiDiagnostic,
@@ -1814,6 +1823,15 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.AMBIGUOUS_FUNCTION_TYPE_KIND) { firDiagnostic ->
+        AmbiguousFunctionTypeKindImpl(
+            firDiagnostic.a.map { functionTypeKind ->
+                functionTypeKind
+            },
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.NO_CONTEXT_RECEIVER) { firDiagnostic ->
         NoContextReceiverImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
@@ -2206,8 +2224,20 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION) { firDiagnostic ->
-        InferredTypeVariableIntoEmptyIntersectionImpl(
+    add(FirErrors.INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION.errorFactory) { firDiagnostic ->
+        InferredTypeVariableIntoEmptyIntersectionErrorImpl(
+            firDiagnostic.a,
+            firDiagnostic.b.map { coneKotlinType ->
+                firSymbolBuilder.typeBuilder.buildKtType(coneKotlinType)
+            },
+            firDiagnostic.c,
+            firDiagnostic.d,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION.warningFactory) { firDiagnostic ->
+        InferredTypeVariableIntoEmptyIntersectionWarningImpl(
             firDiagnostic.a,
             firDiagnostic.b.map { coneKotlinType ->
                 firSymbolBuilder.typeBuilder.buildKtType(coneKotlinType)
@@ -3660,6 +3690,13 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.CONTRACT_NOT_ALLOWED) { firDiagnostic ->
+        ContractNotAllowedImpl(
+            firDiagnostic.a,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.NO_GET_METHOD) { firDiagnostic ->
         NoGetMethodImpl(
             firDiagnostic as KtPsiDiagnostic,
@@ -4879,6 +4916,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirJsErrors.ENUM_CLASS_IN_EXTERNAL_DECLARATION_WARNING) { firDiagnostic ->
+        EnumClassInExternalDeclarationWarningImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJsErrors.INLINE_CLASS_IN_EXTERNAL_DECLARATION_WARNING) { firDiagnostic ->
         InlineClassInExternalDeclarationWarningImpl(
             firDiagnostic as KtPsiDiagnostic,
@@ -4918,6 +4961,13 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     }
     add(FirSyntaxErrors.SYNTAX) { firDiagnostic ->
         SyntaxImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirSyntaxErrors.SYNTAX_WITH_MESSAGE) { firDiagnostic ->
+        SyntaxWithMessageImpl(
+            firDiagnostic.a,
             firDiagnostic as KtPsiDiagnostic,
             token,
         )

@@ -9,7 +9,8 @@ import kotlin.test.FrameworkAdapter
 import kotlin.math.abs
 import kotlin.js.*
 
-@JsFun("() => (typeof arguments !== 'undefined' && typeof arguments.join !== 'undefined') ? arguments.join(' ') : '' ")
+// Using 'globalThis.arguments' because 'arguments' can refer to current JS function arguments
+@JsFun("() => globalThis.arguments?.join?.(' ') ?? ''")
 private external fun d8Arguments(): String
 @JsFun("() => (typeof process != 'undefined' && typeof process.argv != 'undefined') ? process.argv.slice(2).join(' ') : ''")
 private external fun nodeArguments(): String

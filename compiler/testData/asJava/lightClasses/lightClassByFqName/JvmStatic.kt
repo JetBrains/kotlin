@@ -3,15 +3,21 @@
 
 class A {
     companion object {
-        @JvmStatic fun f() {
-
-        }
+        @JvmStatic fun f() { }
     }
 
     object B {
-        @JvmStatic
-        fun g() {
+        @JvmStatic fun g() { }
+    }
 
+    interface I {
+        companion object {
+            @JvmStatic fun h() { }
+        }
+
+        object C {
+            @JvmStatic
+            fun i() { }
         }
     }
 }

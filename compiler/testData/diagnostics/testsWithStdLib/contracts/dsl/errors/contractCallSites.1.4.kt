@@ -7,6 +7,11 @@ import kotlin.contracts.*
 
 // ============= Class =====================
 open class Class {
+    constructor(f: () -> Unit = {}) {
+        contract { callsInPlace(f, InvocationKind.EXACTLY_ONCE) }
+        f()
+    }
+
     fun member(x: Boolean) {
         contract { returns() implies (x) }
     }

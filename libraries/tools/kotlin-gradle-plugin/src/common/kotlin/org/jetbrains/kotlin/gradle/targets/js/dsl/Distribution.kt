@@ -5,9 +5,18 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.dsl
 
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.provider.Property
 import java.io.File
 
 interface Distribution {
+    @Deprecated("Use `distributionName` instead", ReplaceWith("distributionName"))
     var name: String?
+
+    val distributionName: Property<String>
+
+    @Deprecated("Use `outputDirectory` instead", ReplaceWith("outputDirectory"))
     var directory: File
+
+    val outputDirectory: DirectoryProperty
 }

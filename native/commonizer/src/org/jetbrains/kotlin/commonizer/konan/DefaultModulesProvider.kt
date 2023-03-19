@@ -7,16 +7,30 @@ package org.jetbrains.kotlin.commonizer.konan
 
 import org.jetbrains.kotlin.commonizer.ModulesProvider
 import org.jetbrains.kotlin.commonizer.ModulesProvider.ModuleInfo
+import org.jetbrains.kotlin.commonizer.konan.DefaultModulesProvider.DuplicateLibraryHandler
 import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.library.metadata.parseModuleHeader
-import java.io.File
+import org.jetbrains.kotlin.util.Logger
 
-internal class DefaultModulesProvider(libraries: Collection<NativeLibrary>) : ModulesProvider {
+internal class DefaultModulesProvider private constructor(
+    libraries: Collection<NativeLibrary>,
+    duplicateLibraryHandler: DuplicateLibraryHandler
+) : ModulesProvider {
+
     internal class NativeModuleInfo(
         name: String,
         val dependencies: Set<String>,
         cInteropAttributes: ModulesProvider.CInteropModuleAttributes?
     ) : ModuleInfo(name, cInteropAttributes)
+
+    private fun interface DuplicateLibraryHandler {
+        fun onDuplicateLibrary(name: String)
+
+        companion object {
+            val error = DuplicateLibraryHandler { name -> error("Duplicated libraries: $name") }
+            fun warning(logger: Logger) = DuplicateLibraryHandler { name -> logger.warning("Duplicated libraries: $name") }
+        }
+    }
 
     private val libraryMap: Map<String, NativeLibrary>
     private val moduleInfoMap: Map<String, NativeModuleInfo>
@@ -36,7 +50,7 @@ internal class DefaultModulesProvider(libraries: Collection<NativeLibrary>) : Mo
                 ModulesProvider.CInteropModuleAttributes(packageFqName, manifestData.exportForwardDeclarations)
             } else null
 
-            libraryMap.put(name, library)?.let { error("Duplicated libraries: $name") }
+            libraryMap.put(name, library)?.let { duplicateLibraryHandler.onDuplicateLibrary(name) }
             moduleInfoMap[name] = NativeModuleInfo(name, dependencies, cInteropAttributes)
         }
 
@@ -65,9 +79,9 @@ internal class DefaultModulesProvider(libraries: Collection<NativeLibrary>) : Mo
 
     companion object {
         fun create(librariesToCommonize: NativeLibrariesToCommonize): ModulesProvider =
-            DefaultModulesProvider(librariesToCommonize.libraries)
+            DefaultModulesProvider(librariesToCommonize.libraries, DuplicateLibraryHandler.error)
 
-        fun create(libraries: Iterable<NativeLibrary>): ModulesProvider =
-            DefaultModulesProvider(libraries.toList())
+        fun forDependencies(libraries: Iterable<NativeLibrary>, logger: Logger): ModulesProvider =
+            DefaultModulesProvider(libraries.toList(), DuplicateLibraryHandler.warning(logger))
     }
 }

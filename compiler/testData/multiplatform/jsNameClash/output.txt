@@ -5,11 +5,3 @@ Output:
 -- JS --
 Exit code: OK
 Output:
-warning: ==========
-This project currently uses the Kotlin/JS Legacy compiler backend, which has been deprecated and will be removed in a future release.
-
-Please migrate your project to the new IR-based compiler (https://kotl.in/jsir).
-Because your build tool will not support the new Kotlin/JS compiler, you will also need to migrate to Gradle.
-
-You can continue to use the deprecated legacy compiler in the current version of the toolchain by providing the compiler option -Xuse-deprecated-legacy-compiler.
-==========

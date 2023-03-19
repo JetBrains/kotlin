@@ -19,7 +19,7 @@ class J {
 val fsi: Fn<String, Int>
   field = { // BLOCK
     local class <no name provided> : Fn<String, Int> {
-      private constructor() /* primary */ {
+      constructor() /* primary */ {
         super/*Any*/()
         /* <init>() */
 
@@ -38,7 +38,7 @@ val fsi: Fn<String, Int>
 val fis: Fn<Int, String>
   field = { // BLOCK
     local class <no name provided> : Fn<Int, String> {
-      private constructor() /* primary */ {
+      constructor() /* primary */ {
         super/*Any*/()
         /* <init>() */
 

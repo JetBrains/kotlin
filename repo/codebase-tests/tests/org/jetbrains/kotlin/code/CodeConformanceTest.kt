@@ -106,6 +106,7 @@ class CodeConformanceTest : TestCase() {
                 "libraries/stdlib/js-v1/.gradle",
                 "libraries/stdlib/js-v1/build",
                 "libraries/stdlib/js-v1/node_modules",
+                "libraries/stdlib/jvm-minimal-for-test/build",
                 "libraries/stdlib/wasm/build",
                 "libraries/tools/atomicfu/build",
                 "libraries/tools/gradle/android-test-fixes/build",
@@ -134,6 +135,10 @@ class CodeConformanceTest : TestCase() {
                 "kotlin-native", "libraries/stdlib/native-wasm", // Have a separate licences manager
                 "out",
                 "repo/codebase-tests/tests/org/jetbrains/kotlin/code/CodeConformanceTest.kt",
+                "repo/gradle-settings-conventions/build-cache/build/generated-sources",
+                "repo/gradle-settings-conventions/jvm-toolchain-provisioning/build/generated-sources",
+                "repo/gradle-settings-conventions/gradle-enterprise/build/generated-sources",
+                "repo/gradle-settings-conventions/kotlin-daemon-config/build/generated-sources"
             )
         )
     }
@@ -146,49 +151,6 @@ class CodeConformanceTest : TestCase() {
             if (matcher.find()) {
                 fail("An at-method with side-effects is used inside assert: ${matcher.group()}\nin file: $sourceFile")
             }
-        }
-    }
-
-    private fun isCorrectExtension(filename: String, extensions: Set<String>): Boolean {
-        val additionalExtensions = listOf(
-            "after", "new", "before", "expected",
-            "todo", "delete", "touch", "prefix", "postfix", "map",
-            "fragment", "after2", "result", "log", "messages", "conflicts", "match", "imports", "txt", "xml"
-        )
-        val possibleAdditionalExtensions = extensions.plus(additionalExtensions)
-        val fileExtensions = filename.split("\\.").drop(1)
-        if (fileExtensions.size < 2) {
-            return true
-        }
-        val extension = fileExtensions.last()
-
-        return !((extension !in possibleAdditionalExtensions && (extension.toIntOrNull() ?: MAX_STEPS_COUNT) >= MAX_STEPS_COUNT))
-    }
-
-    fun testForgottenBunchDirectivesAndFiles() {
-        val sourceBunchFilePattern = Pattern.compile("(.+\\.java|.+\\.kt|.+\\.js)(\\.\\w+)?")
-        val root = nonSourcesMatcher.root
-        val extensions = File(root, ".bunch").readLines().map { it.split("_") }.flatten().toSet()
-        val failBuilder = mutableListOf<String>()
-        nonSourcesMatcher.excludeWalkTopDown(sourceBunchFilePattern).forEach { sourceFile ->
-            val matches = Regex("BUNCH (\\w+)")
-                .findAll(sourceFile.readText())
-                .map { it.groupValues[1] }
-                .toSet()
-                .filterNot { it in extensions }
-            for (bunch in matches) {
-                val filename = FileUtil.toSystemIndependentName(sourceFile.toRelativeString(root))
-                failBuilder.add("$filename has unregistered $bunch bunch directive")
-            }
-
-            if (!isCorrectExtension(sourceFile.name, extensions)) {
-                val filename = FileUtil.toSystemIndependentName(sourceFile.toRelativeString(root))
-                failBuilder.add("$filename has unknown bunch extension")
-            }
-        }
-
-        if (failBuilder.isNotEmpty()) {
-            fail("\n" + failBuilder.joinToString("\n"))
         }
     }
 

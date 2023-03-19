@@ -8,19 +8,19 @@ package org.jetbrains.kotlin.analysis.api.fir.types
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.impl.base.KtMapBackedSubstitutor
-import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtSubstitutor
 import org.jetbrains.kotlin.analysis.api.types.KtType
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
 
 internal abstract class AbstractKtFirSubstitutor<T : ConeSubstitutor>(
     val substitutor: T,
     protected val builder: KtSymbolByFirBuilder,
-    override val token: KtLifetimeToken,
 ) : KtSubstitutor {
+    override val token: KtLifetimeToken get() = builder.token
 
     override fun substituteOrNull(type: KtType): KtType? = withValidityAssertion {
         require(type is KtFirType)
@@ -31,15 +31,13 @@ internal abstract class AbstractKtFirSubstitutor<T : ConeSubstitutor>(
 internal class KtFirGenericSubstitutor(
     substitutor: ConeSubstitutor,
     builder: KtSymbolByFirBuilder,
-    token: KtLifetimeToken
-) : AbstractKtFirSubstitutor<ConeSubstitutor>(substitutor, builder, token)
+) : AbstractKtFirSubstitutor<ConeSubstitutor>(substitutor, builder)
 
 @OptIn(KtAnalysisApiInternals::class)
 internal class KtFirMapBackedSubstitutor(
     substitutor: ConeSubstitutorByMap,
     builder: KtSymbolByFirBuilder,
-    token: KtLifetimeToken
-) : AbstractKtFirSubstitutor<ConeSubstitutorByMap>(substitutor, builder, token), KtMapBackedSubstitutor {
+) : AbstractKtFirSubstitutor<ConeSubstitutorByMap>(substitutor, builder,), KtMapBackedSubstitutor {
     override fun getAsMap(): Map<KtTypeParameterSymbol, KtType> = withValidityAssertion {
         val result = mutableMapOf<KtTypeParameterSymbol, KtType>()
         for ((typeParameter, type) in substitutor.substitution) {

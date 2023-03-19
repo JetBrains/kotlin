@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.isFunctionalType
+import org.jetbrains.kotlin.fir.types.isBasicFunctionType
 
 object UnusedChecker : AbstractFirPropertyInitializationChecker() {
     override fun analyze(data: PropertyInitializationInfoData, reporter: DiagnosticReporter, context: CheckerContext) {
@@ -278,7 +278,7 @@ object UnusedChecker : AbstractFirPropertyInitializationChecker() {
             val reference = node.fir.calleeReference.resolved ?: return dataForNode
             val functionSymbol = reference.resolvedSymbol as? FirFunctionSymbol<*> ?: return dataForNode
             val symbol = if (functionSymbol.callableId.callableName.identifier == "invoke") {
-                localProperties.find { it.name == reference.name && it.resolvedReturnTypeRef.coneType.isFunctionalType(session) }
+                localProperties.find { it.name == reference.name && it.resolvedReturnTypeRef.coneType.isBasicFunctionType(session) }
             } else null
             symbol ?: return dataForNode
 

@@ -12,13 +12,18 @@ KtJavaFieldSymbol:
   name: field
   origin: JAVA
   receiverParameter: null
-  returnType: [
-    Anno1()
-      psi: null
-  ] @R|Anno1|()  @R|Anno1|()  kotlin/String!
+  returnType: KtFlexibleType:
+    annotationsList: [
+      Anno1()
+        psi: null
+    ]
+    type: @R|Anno1|()  @R|Anno1|()  kotlin/String!
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
-  getDispatchReceiver(): JavaClass
+  getDispatchReceiver(): KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: JavaClass
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

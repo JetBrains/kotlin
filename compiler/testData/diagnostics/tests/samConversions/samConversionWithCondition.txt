@@ -1,0 +1,14 @@
+package
+
+public fun consumeTicker(/*0*/ ticker: Ticker?): kotlin.Unit
+public fun main(/*0*/ arg: kotlin.Nothing?): kotlin.Unit
+public fun </*0*/ T> select(/*0*/ a: T, /*1*/ b: T): T
+public fun tick(/*0*/ num: kotlin.Int): kotlin.Unit
+
+public fun interface Ticker {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract fun tick(/*0*/ num: kotlin.Int): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+

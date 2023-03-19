@@ -1,0 +1,4 @@
+compiler/testData/cli/metadata/lambdaWithReceiver.kt:2:18: warning: the expression is unused
+    "OK".apply { this }
+                 ^
+OK

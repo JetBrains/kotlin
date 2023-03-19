@@ -6,7 +6,7 @@
                output="${temp}/out.js"
                outputPrefix="${test.data}/prefix"
                outputPostfix="${test.data}/postfix">
-      <compilerarg value="-Xuse-deprecated-legacy-compiler"/>
+      <compilerarg value="-Xforce-deprecated-legacy-compiler-usage"/>
     </kotlin2js>
   </target>
 </project>

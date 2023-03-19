@@ -2,8 +2,18 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: /y
   contextReceivers: [
-    ContextReceiver(kotlin/Int)
-    ContextReceiver(s@kotlin/String)
+    KtContextReceiver:
+      label: null
+      type: KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
+        type: kotlin/Int
+    KtContextReceiver:
+      label: s
+      type: KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
+        type: kotlin/String
   ]
   contractEffects: []
   hasStableParameterNames: true
@@ -20,7 +30,10 @@ KtFunctionSymbol:
   name: y
   origin: SOURCE
   receiverParameter: null
-  returnType: kotlin/Unit
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []

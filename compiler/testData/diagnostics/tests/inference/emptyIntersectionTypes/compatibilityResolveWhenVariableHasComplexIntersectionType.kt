@@ -1,3 +1,5 @@
+// FIR_IDENTICAL
+// !LANGUAGE: -ForbidInferringTypeVariablesIntoEmptyIntersection
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 
 abstract class Foo<T>
@@ -20,7 +22,7 @@ object OnlyOne {
     fun <T : Comparable<T>, S : T> greater(x: Bar<in S>, t: T) {}
 
     fun test(b: Bar<Long>) {
-        <!DEBUG_INFO_CALL("fqName: OnlyOne.greater; typeCall: function")!><!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_ERROR!>greater<!>(b, b)<!>
+        <!DEBUG_INFO_CALL("fqName: OnlyOne.greater; typeCall: function")!><!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING!>greater<!>(b, b)<!>
     }
 }
 

@@ -82,7 +82,7 @@ import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getInlineClassRepresentation;
 import static org.jetbrains.kotlin.resolve.inline.InlineOnlyKt.isInlineOnlyPrivateInBytecode;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE;
-import static org.jetbrains.kotlin.resolve.jvm.InlineClassManglingRulesKt.shouldHideConstructorDueToInlineClassTypeValueParameters;
+import static org.jetbrains.kotlin.resolve.jvm.InlineClassManglingRulesKt.shouldHideConstructorDueToValueClassTypeValueParameters;
 import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.*;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
@@ -270,11 +270,11 @@ public class FunctionCodegen {
     ) {
         if (functionDescriptor instanceof AccessorForConstructorDescriptor) {
             ConstructorDescriptor originalConstructor = ((AccessorForConstructorDescriptor) functionDescriptor).getCalleeDescriptor();
-            if (shouldHideConstructorDueToInlineClassTypeValueParameters(originalConstructor)) {
+            if (shouldHideConstructorDueToValueClassTypeValueParameters(originalConstructor)) {
                 functionDescriptor = originalConstructor;
             }
         }
-        else if (shouldHideConstructorDueToInlineClassTypeValueParameters(functionDescriptor)) {
+        else if (shouldHideConstructorDueToValueClassTypeValueParameters(functionDescriptor)) {
             return;
         }
 
@@ -293,7 +293,7 @@ public class FunctionCodegen {
             boolean skipNullabilityAnnotations
     ) {
         FunctionDescriptor annotationsOwner;
-        if (shouldHideConstructorDueToInlineClassTypeValueParameters(functionDescriptor)) {
+        if (shouldHideConstructorDueToValueClassTypeValueParameters(functionDescriptor)) {
             if (functionDescriptor instanceof AccessorForConstructorDescriptor) {
                 annotationsOwner = ((AccessorForConstructorDescriptor) functionDescriptor).getCalleeDescriptor();
             }
@@ -461,10 +461,7 @@ public class FunctionCodegen {
             boolean staticInCompanionObject
     ) {
         OwnerKind contextKind = methodContext.getContextKind();
-        if (!state.getClassBuilderMode().generateBodies
-            || isAbstractMethod(functionDescriptor, contextKind, state.getJvmDefaultMode())
-            || shouldSkipMethodBodyInAbiMode(state.getClassBuilderMode(), origin)
-        ) {
+        if (!state.getClassBuilderMode().generateBodies || isAbstractMethod(functionDescriptor, contextKind, state.getJvmDefaultMode())) {
             generateLocalVariableTable(
                     mv,
                     jvmSignature,
@@ -495,13 +492,6 @@ public class FunctionCodegen {
         }
 
         endVisit(mv, null, origin.getElement());
-    }
-
-    private static boolean shouldSkipMethodBodyInAbiMode(@NotNull ClassBuilderMode classBuilderMode, @NotNull JvmDeclarationOrigin origin) {
-        if (classBuilderMode != ClassBuilderMode.ABI) return false;
-
-        DeclarationDescriptor descriptor = origin.getDescriptor();
-        return descriptor != null && !InlineUtil.isInlineOrContainingInline(descriptor);
     }
 
     public static void generateParameterAnnotations(

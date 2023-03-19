@@ -34,10 +34,19 @@ FILE: propertyWithTypeParameters.kt
     public final [STATUS] val <[STATUS] T : R|kotlin/Int|, [STATUS] K> R|T|.resolveMe: R|K|
         public [STATUS] get(): R|K| { LAZY_BLOCK }
 
+EXPECT_ACTUAL_MATCHING:
+FILE: propertyWithTypeParameters.kt
+    public final [EXPECT_ACTUAL_MATCHING] val <[EXPECT_ACTUAL_MATCHING] T : R|kotlin/Int|, [EXPECT_ACTUAL_MATCHING] K> R|T|.resolveMe: R|K|
+        public [EXPECT_ACTUAL_MATCHING] get(): R|K| {
+            ^ TODO#()
+        }
+
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: propertyWithTypeParameters.kt
     public final [ARGUMENTS_OF_ANNOTATIONS] val <[ARGUMENTS_OF_ANNOTATIONS] T : R|kotlin/Int|, [ARGUMENTS_OF_ANNOTATIONS] K> R|T|.resolveMe: R|K|
-        public [ARGUMENTS_OF_ANNOTATIONS] get(): R|K| { LAZY_BLOCK }
+        public [ARGUMENTS_OF_ANNOTATIONS] get(): R|K| {
+            ^ TODO#()
+        }
 
 CONTRACTS:
 FILE: propertyWithTypeParameters.kt
@@ -57,13 +66,6 @@ ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: propertyWithTypeParameters.kt
     public final [ANNOTATIONS_ARGUMENTS_MAPPING] val <[ANNOTATIONS_ARGUMENTS_MAPPING] T : R|kotlin/Int|, [ANNOTATIONS_ARGUMENTS_MAPPING] K> R|T|.resolveMe: R|K|
         public [ANNOTATIONS_ARGUMENTS_MAPPING] get(): R|K| {
-            ^ TODO#()
-        }
-
-EXPECT_ACTUAL_MATCHING:
-FILE: propertyWithTypeParameters.kt
-    public final [EXPECT_ACTUAL_MATCHING] val <[EXPECT_ACTUAL_MATCHING] T : R|kotlin/Int|, [EXPECT_ACTUAL_MATCHING] K> R|T|.resolveMe: R|K|
-        public [EXPECT_ACTUAL_MATCHING] get(): R|K| {
             ^ TODO#()
         }
 

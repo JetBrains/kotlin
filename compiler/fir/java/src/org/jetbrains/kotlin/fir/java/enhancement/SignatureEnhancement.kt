@@ -21,15 +21,12 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
-import org.jetbrains.kotlin.fir.declarations.utils.isInner
-import org.jetbrains.kotlin.fir.declarations.utils.isStatic
-import org.jetbrains.kotlin.fir.declarations.utils.modality
-import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.unexpandedClassId
+import org.jetbrains.kotlin.fir.java.*
 import org.jetbrains.kotlin.fir.java.FirJavaTypeConversionMode
-import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.java.resolveIfJavaType
 import org.jetbrains.kotlin.fir.java.symbols.FirJavaOverriddenSyntheticPropertySymbol
@@ -261,10 +258,9 @@ class FirSignatureEnhancement(
                         } else {
                             FirDeclarationStatusImpl(firMethod.visibility, Modality.FINAL)
                         }.apply {
-                            isExpect = false
-                            isActual = false
-                            isOverride = false
                             isInner = firMethod.isInner
+                            // Java annotation class constructors have stable names, copy flag.
+                            hasStableParameterNames = firMethod.hasStableParameterNames
                         }
                         this.symbol = symbol
                         dispatchReceiverType = firMethod.dispatchReceiverType
@@ -343,9 +339,18 @@ class FirSignatureEnhancement(
             if (isJavaRecordComponent) {
                 this.isJavaRecordComponent = true
             }
+            updateIsOperatorFlagIfNeeded(this)
         }
 
         return function.symbol
+    }
+
+    private fun updateIsOperatorFlagIfNeeded(function: FirFunction) {
+        if (function !is FirSimpleFunction) return
+        val isOperator = OperatorFunctionChecks.isOperator(function, session, scopeSession = null).isSuccess
+        if (!isOperator) return
+        val newStatus = function.status.copy(isOperator = true)
+        function.replaceStatus(newStatus)
     }
 
     /**
@@ -489,7 +494,7 @@ class FirSignatureEnhancement(
             else -> return null
         }
         return ConeClassLikeTypeImpl(
-            ConeClassLikeLookupTagImpl(purelyImplementedClassId),
+            purelyImplementedClassId.toLookupTag(),
             parametersAsTypeProjections.toTypedArray(),
             isNullable = false
         )

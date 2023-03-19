@@ -21,4 +21,8 @@ internal class KtFirJvmTypeMapper(
     override fun mapTypeToJvmType(type: KtType, mode: TypeMappingMode): Type {
         return analysisSession.useSiteSession.jvmTypeMapper.mapType(type.coneType, mode, sw = null, unresolvedQualifierRemapper = null)
     }
+
+    override fun isPrimitiveBacked(type: KtType): Boolean {
+        return analysisSession.useSiteSession.jvmTypeMapper.isPrimitiveBacked(type.coneType)
+    }
 }

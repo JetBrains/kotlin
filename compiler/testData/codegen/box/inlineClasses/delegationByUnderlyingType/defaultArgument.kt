@@ -1,7 +1,6 @@
 // WITH_STDLIB
 // IGNORE_LIGHT_ANALYSIS
 // IGNORE_BACKEND: JVM
-// IGNORE_BACKEND_K2: JS_IR, NATIVE
 // LANGUAGE: +InlineClassImplementationByDelegation
 
 interface I {

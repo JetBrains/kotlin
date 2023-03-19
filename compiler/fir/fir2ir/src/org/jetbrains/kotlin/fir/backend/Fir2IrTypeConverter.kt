@@ -20,7 +20,10 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeArgument
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
-import org.jetbrains.kotlin.ir.types.impl.*
+import org.jetbrains.kotlin.ir.types.impl.IrDynamicTypeImpl
+import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
+import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
+import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -158,7 +161,7 @@ class Fir2IrTypeConverter(
                 val approximatedType = approximateType(expandedType)
                 IrSimpleTypeImpl(
                     irSymbol,
-                    hasQuestionMark = !typeContext.definitelyNotNull && approximatedType.isMarkedNullable,
+                    hasQuestionMark = approximatedType.isMarkedNullable,
                     arguments = approximatedType.typeArguments.map { it.toIrTypeArgument(typeContext) },
                     annotations = typeAnnotations
                 )
@@ -226,7 +229,7 @@ class Fir2IrTypeConverter(
     private fun ConeTypeProjection.toIrTypeArgument(typeContext: ConversionTypeContext): IrTypeArgument {
         fun toIrTypeArgument(type: ConeKotlinType, variance: Variance): IrTypeProjection {
             val irType = type.toIrType(typeContext)
-            return makeTypeProjection(irType, if (typeContext.invariantProjection) Variance.INVARIANT else variance)
+            return makeTypeProjection(irType, variance)
         }
 
         return when (this) {

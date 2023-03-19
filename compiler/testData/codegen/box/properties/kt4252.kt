@@ -1,5 +1,3 @@
-// KT-56326
-// IGNORE_BACKEND_K2: NATIVE
 class CallbackBlock {}
 
 public class Foo

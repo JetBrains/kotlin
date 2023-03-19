@@ -1,3 +1,5 @@
+// IGNORE K2
+
 @JvmInline
 value class A(private val i: Int?)
 

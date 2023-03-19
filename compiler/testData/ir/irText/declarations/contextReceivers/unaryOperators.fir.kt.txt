@@ -72,17 +72,23 @@ operator fun Result.dec(_context_receiver_0: Int): Result {
 fun box(): String {
   var result: Result = Result(i = 0)
   with<Int, Result>(receiver = 1, block = local fun Int.<anonymous>(): Result {
-    val <unary>: Result = result
-    result = <unary>.inc(_context_receiver_0 = $this$with)
-    <unary> /*~> Unit */
-    val <unary>: Result = result
-    result = <unary>.inc(_context_receiver_0 = $this$with)
-    <unary> /*~> Unit */
+    { // BLOCK
+      val <unary>: Result = result
+      result = <unary>.inc(_context_receiver_0 = $this$with)
+      <unary>
+    } /*~> Unit */
+    { // BLOCK
+      val <unary>: Result = result
+      result = <unary>.inc(_context_receiver_0 = $this$with)
+      <unary>
+    } /*~> Unit */
     result.unaryMinus(_context_receiver_0 = $this$with) /*~> Unit */
     result.unaryPlus(_context_receiver_0 = $this$with) /*~> Unit */
-    val <unary>: Result = result
-    result = <unary>.dec(_context_receiver_0 = $this$with)
-    return <unary>
+    return { // BLOCK
+      val <unary>: Result = result
+      result = <unary>.dec(_context_receiver_0 = $this$with)
+      <unary>
+    }
   }
 ) /*~> Unit */
   return when {

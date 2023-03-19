@@ -58,6 +58,7 @@ object FirJvmSessionFactory : FirAbstractSessionFactory() {
                         projectEnvironment.getFirJavaFacade(session, moduleDataProvider.allModuleData.last(), scope)
                     ),
                     FirBuiltinSymbolProvider(session, builtinsModuleData, kotlinScopeProvider),
+                    FirExtensionSyntheticFunctionInterfaceProvider(session, builtinsModuleData, kotlinScopeProvider),
                     FirCloneableSymbolProvider(session, builtinsModuleData, kotlinScopeProvider),
                     OptionalAnnotationClassesProvider(
                         session,
@@ -100,7 +101,7 @@ object FirJvmSessionFactory : FirAbstractSessionFactory() {
             },
             registerExtraCheckers = { it.registerJvmCheckers() },
             createKotlinScopeProvider = { FirKotlinScopeProvider(::wrapScopeWithJvmMapped) },
-            createProviders = { session, kotlinScopeProvider, symbolProvider, generatedSymbolsProvider, dependencies ->
+            createProviders = { session, kotlinScopeProvider, symbolProvider, generatedSymbolsProvider, syntheticFunctionInterfaceProvider, dependencies ->
                 var symbolProviderForBinariesFromIncrementalCompilation: JvmClassFileBasedSymbolProvider? = null
                 var optionalAnnotationClassesProviderForBinariesFromIncrementalCompilation: OptionalAnnotationClassesProvider? = null
                 incrementalCompilationContext?.let {
@@ -137,6 +138,7 @@ object FirJvmSessionFactory : FirAbstractSessionFactory() {
                     symbolProviderForBinariesFromIncrementalCompilation,
                     generatedSymbolsProvider,
                     javaSymbolProvider,
+                    syntheticFunctionInterfaceProvider,
                     *dependencies.toTypedArray(),
                     optionalAnnotationClassesProviderForBinariesFromIncrementalCompilation,
                 )

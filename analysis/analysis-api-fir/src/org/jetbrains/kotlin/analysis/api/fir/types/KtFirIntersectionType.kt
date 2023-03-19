@@ -19,9 +19,10 @@ import org.jetbrains.kotlin.fir.types.renderForDebugging
 
 internal class KtFirIntersectionType(
     override val coneType: ConeIntersectionType,
-    override val token: KtLifetimeToken,
     private val builder: KtSymbolByFirBuilder,
 ) : KtIntersectionType(), KtFirType {
+    override val token: KtLifetimeToken get() = builder.token
+
     override val conjuncts: List<KtType> by cached {
         coneType.intersectedTypes.map { conjunct -> builder.typeBuilder.buildKtType(conjunct) }
     }

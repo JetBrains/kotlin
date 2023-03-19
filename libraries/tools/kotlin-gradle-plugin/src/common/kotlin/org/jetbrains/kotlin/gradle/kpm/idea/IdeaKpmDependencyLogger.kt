@@ -9,11 +9,14 @@ import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmDependency
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmFragment
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.path
 
+private const val IDEA_KOTLIN_LOG_DEPENDENCIES = "idea.kotlin.log.dependencies"
+
 internal object IdeaKpmDependencyLogger : IdeaKpmDependencyEffect {
     override fun invoke(
         fragment: GradleKpmFragment, dependencies: Set<IdeaKpmDependency>
     ) {
-        val fragmentPathRegex = fragment.project.properties["idea.kotlin.log.dependencies"]?.toString() ?: return
+        if (!fragment.project.hasProperty(IDEA_KOTLIN_LOG_DEPENDENCIES)) return
+        val fragmentPathRegex = fragment.project.property(IDEA_KOTLIN_LOG_DEPENDENCIES).toString()
         if (!fragment.path.matches(Regex(fragmentPathRegex))) return
 
         val message = buildString {

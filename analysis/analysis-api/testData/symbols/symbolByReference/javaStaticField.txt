@@ -9,7 +9,10 @@ KtJavaFieldSymbol:
   name: field
   origin: JAVA
   receiverParameter: null
-  returnType: kotlin/Int
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public

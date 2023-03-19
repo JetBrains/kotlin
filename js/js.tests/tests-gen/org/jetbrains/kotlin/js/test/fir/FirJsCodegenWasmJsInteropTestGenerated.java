@@ -50,9 +50,9 @@ public class FirJsCodegenWasmJsInteropTestGenerated extends AbstractFirJsCodegen
     }
 
     @Test
-    @TestMetadata("jsExport.kt")
-    public void testJsExport() throws Exception {
-        runTest("compiler/testData/codegen/boxWasmJsInterop/jsExport.kt");
+    @TestMetadata("jsCode.kt")
+    public void testJsCode() throws Exception {
+        runTest("compiler/testData/codegen/boxWasmJsInterop/jsCode.kt");
     }
 
     @Test

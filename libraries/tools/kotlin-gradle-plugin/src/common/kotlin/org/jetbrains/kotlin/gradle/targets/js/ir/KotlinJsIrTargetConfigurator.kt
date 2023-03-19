@@ -7,11 +7,13 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.attributes.Usage
 import org.gradle.api.tasks.TaskProvider
+import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.bundling.Zip
 import org.jetbrains.kotlin.gradle.dsl.JsModuleKind
 import org.jetbrains.kotlin.gradle.dsl.JsSourceMapEmbedMode
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.internal.BasePluginConfiguration
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.libsDirectory
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsReportAggregatingTestRun
@@ -19,7 +21,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
 import org.jetbrains.kotlin.gradle.testing.testTaskName
 
-open class KotlinJsIrTargetConfigurator() :
+open class KotlinJsIrTargetConfigurator :
     KotlinOnlyTargetConfigurator<KotlinJsIrCompilation, KotlinJsIrTarget>(true),
     KotlinTargetWithTestsConfigurator<KotlinJsReportAggregatingTestRun, KotlinJsIrTarget> {
 
@@ -31,7 +33,7 @@ open class KotlinJsIrTargetConfigurator() :
         get() = KLIB_TYPE
 
     override val archiveTaskType: Class<out Zip>
-        get() = Zip::class.java
+        get() = Jar::class.java
 
     override fun createTestRun(
         name: String,
@@ -66,10 +68,11 @@ open class KotlinJsIrTargetConfigurator() :
     }
 
     override fun createArchiveTasks(target: KotlinJsIrTarget): TaskProvider<out Zip> {
+        val libsDirectory = target.project.libsDirectory
         return super.createArchiveTasks(target).apply {
             configure {
                 it.archiveExtension.set(KLIB_TYPE)
-                it.destinationDirectory.set(it.project.libsDirectory)
+                it.destinationDirectory.set(libsDirectory)
             }
         }
     }

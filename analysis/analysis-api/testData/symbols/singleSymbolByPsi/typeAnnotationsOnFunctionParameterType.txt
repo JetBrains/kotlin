@@ -17,7 +17,10 @@ KtFunctionSymbol:
   name: foo
   origin: SOURCE
   receiverParameter: null
-  returnType: kotlin/Unit
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
@@ -35,14 +38,17 @@ KtFunctionSymbol:
       name: para
       origin: SOURCE
       receiverParameter: null
-      returnType: [
-        Anno1()
-          psi: KtAnnotationEntry
-        Anno2()
-          psi: KtAnnotationEntry
-        Anno3()
-          psi: KtAnnotationEntry
-      ] @R|Anno1|()  @R|Anno2|()  @R|Anno3|()  BaseInterface
+      returnType: KtUsualClassType:
+        annotationsList: [
+          Anno1()
+            psi: KtAnnotationEntry
+          Anno2()
+            psi: KtAnnotationEntry
+          Anno3()
+            psi: KtAnnotationEntry
+        ]
+        ownTypeArguments: []
+        type: @R|Anno1|()  @R|Anno2|()  @R|Anno3|()  BaseInterface
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtSourceModule "Sources of main"

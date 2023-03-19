@@ -925,6 +925,12 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
         public void testSuspendFunctionIsAs() throws Exception {
             runTest("js/js.translator/testData/box/coroutines/suspendFunctionIsAs.kt");
         }
+
+        @Test
+        @TestMetadata("suspendFunctionalInterface.kt")
+        public void testSuspendFunctionalInterface() throws Exception {
+            runTest("js/js.translator/testData/box/coroutines/suspendFunctionalInterface.kt");
+        }
     }
 
     @Nested
@@ -2395,12 +2401,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
             @TestMetadata("overriddenExternalMethodWithSameStableNameMethodInExportedFile.kt")
             public void testOverriddenExternalMethodWithSameStableNameMethodInExportedFile() throws Exception {
                 runTest("js/js.translator/testData/box/esModules/export/overriddenExternalMethodWithSameStableNameMethodInExportedFile.kt");
-            }
-
-            @Test
-            @TestMetadata("reexport.kt")
-            public void testReexport() throws Exception {
-                runTest("js/js.translator/testData/box/esModules/export/reexport.kt");
             }
 
             @Test
@@ -4539,6 +4539,12 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
             @TestMetadata("simpleIsInterface.kt")
             public void testSimpleIsInterface() throws Exception {
                 runTest("js/js.translator/testData/box/expression/typeCheck/simpleIsInterface.kt");
+            }
+
+            @Test
+            @TestMetadata("simpleIsObject.kt")
+            public void testSimpleIsObject() throws Exception {
+                runTest("js/js.translator/testData/box/expression/typeCheck/simpleIsObject.kt");
             }
         }
 
@@ -7915,6 +7921,12 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
         }
 
         @Test
+        @TestMetadata("transitiveDependency.kt")
+        public void testTransitiveDependency() throws Exception {
+            runTest("js/js.translator/testData/box/multiModule/transitiveDependency.kt");
+        }
+
+        @Test
         @TestMetadata("useElementsFromDefaultPackageInAnotherModule.kt")
         public void testUseElementsFromDefaultPackageInAnotherModule() throws Exception {
             runTest("js/js.translator/testData/box/multiModule/useElementsFromDefaultPackageInAnotherModule.kt");
@@ -9930,6 +9942,12 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
         @TestMetadata("findAssociatedObject.kt")
         public void testFindAssociatedObject() throws Exception {
             runTest("js/js.translator/testData/box/reflection/findAssociatedObject.kt");
+        }
+
+        @Test
+        @TestMetadata("findAssociatedObjectInSeparatedFile.kt")
+        public void testFindAssociatedObjectInSeparatedFile() throws Exception {
+            runTest("js/js.translator/testData/box/reflection/findAssociatedObjectInSeparatedFile.kt");
         }
 
         @Test

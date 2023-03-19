@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KtFe10Type
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
-import org.jetbrains.kotlin.builtins.getFunctionalClassKind
+import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
+import org.jetbrains.kotlin.builtins.getFunctionTypeKind
 import org.jetbrains.kotlin.load.java.sam.JavaSingleAbstractMethodUtils
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.DefinitelyNotNullType
@@ -31,9 +31,9 @@ internal class KtFe10TypeInfoProvider(
         return JavaSingleAbstractMethodUtils.isSamType(type.fe10Type)
     }
 
-    override fun getFunctionClassKind(type: KtType): FunctionClassKind? {
+    override fun getFunctionClassKind(type: KtType): FunctionTypeKind? {
         require(type is KtFe10Type)
-        return type.fe10Type.constructor.declarationDescriptor?.getFunctionalClassKind()
+        return type.fe10Type.constructor.declarationDescriptor?.getFunctionTypeKind()
     }
 
     override fun canBeNull(type: KtType): Boolean {

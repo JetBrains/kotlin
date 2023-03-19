@@ -1,3 +1,4 @@
+// IGNORE_INLINER: IR
 // WITH_STDLIB
 
 fun g(b: (Int, (Int) -> String) -> Array<String>): Array<String> =

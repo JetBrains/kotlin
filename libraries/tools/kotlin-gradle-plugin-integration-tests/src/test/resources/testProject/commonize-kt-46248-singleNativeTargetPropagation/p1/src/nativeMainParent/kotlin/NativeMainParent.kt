@@ -5,7 +5,7 @@ import dummy.dummyFunction
 
 
 fun commonMain() {
-    usleep(100)
+    usleep(100u)
 }
 
 fun nativeMainParentUsingCInterop() = dummyFunction()

@@ -1,4 +1,3 @@
-// WASM_FAILS_IN: SM
 // EXPECTED_REACHABLE_NODES: 1282
 // FILE: castToNativeInterface.kt
 external interface I {

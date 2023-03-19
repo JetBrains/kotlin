@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.fir.renderer
 
+import org.jetbrains.kotlin.builtins.functions.FunctionTypeKindExtractor
+import org.jetbrains.kotlin.builtins.functions.AllowedToUsedOnlyInK1
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
@@ -25,6 +27,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import java.util.*
 
 class FirRenderer(
@@ -741,8 +744,15 @@ class FirRenderer(
             visitTypeRefWithNullability(functionTypeRef)
         }
 
+        @OptIn(AllowedToUsedOnlyInK1::class)
         override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef) {
-            typeRenderer.renderAsPossibleFunctionType(resolvedTypeRef.type)
+            typeRenderer.renderAsPossibleFunctionType(
+                resolvedTypeRef.type,
+                l@{
+                    val classId = it.classId ?: return@l null
+                    FunctionTypeKindExtractor.Default.getFunctionalClassKind(classId.packageFqName, classId.shortClassName.asString())
+                }
+            )
         }
 
         override fun visitUserTypeRef(userTypeRef: FirUserTypeRef) {
@@ -1011,6 +1021,14 @@ class FirRenderer(
             print(", ")
             assignmentOperatorStatement.rightArgument.accept(visitor)
             print(")")
+        }
+
+        override fun visitIncrementDecrementExpression(incrementDecrementExpression: FirIncrementDecrementExpression) {
+            annotationRenderer?.render(incrementDecrementExpression)
+            val operator = if (incrementDecrementExpression.operationName == OperatorNameConventions.INC) "++" else "--"
+            if (incrementDecrementExpression.isPrefix) print(operator)
+            incrementDecrementExpression.expression.accept(visitor)
+            if (!incrementDecrementExpression.isPrefix) print(operator)
         }
 
         override fun visitEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall) {

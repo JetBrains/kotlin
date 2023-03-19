@@ -26,6 +26,20 @@ interface KotlinCommonCompilerOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCo
     val languageVersion: org.gradle.api.provider.Property<org.jetbrains.kotlin.gradle.dsl.KotlinVersion>
 
     /**
+     * Enable usages of API that requires opt-in with an opt-in requirement marker with the given fully qualified name
+     * Default value: emptyList<String>()
+     */
+    @get:org.gradle.api.tasks.Input
+    val optIn: org.gradle.api.provider.ListProperty<kotlin.String>
+
+    /**
+     * Enable progressive compiler mode. In this mode, deprecations and bug fixes for unstable code take effect immediately, instead of going through a graceful migration cycle. Code written in the progressive mode is backward compatible; however, code written in non-progressive mode may cause compilation errors in the progressive mode.
+     * Default value: false
+     */
+    @get:org.gradle.api.tasks.Input
+    val progressiveMode: org.gradle.api.provider.Property<kotlin.Boolean>
+
+    /**
      * Compile using experimental K2. K2 is a new compiler pipeline, no compatibility guarantees are yet provided
      * Default value: false
      */

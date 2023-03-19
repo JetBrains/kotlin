@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
+import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
+import org.jetbrains.kotlin.builtins.functions.isBasicFunctionOrKFunction
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
@@ -28,7 +30,7 @@ class PostponedArgumentInputTypesResolver(
         val parametersFromConstraints: Set<List<TypeWithKind>>?,
         val annotations: List<AnnotationMarker>?,
         val isExtensionFunction: Boolean,
-        val isSuspend: Boolean,
+        val functionTypeKind: FunctionTypeKind,
         val isNullable: Boolean
     )
 
@@ -42,7 +44,7 @@ class PostponedArgumentInputTypesResolver(
         variableDependencyProvider: TypeVariableDependencyInformationProvider
     ): List<TypeWithKind> {
         fun List<Constraint>.extractFunctionalTypes() = mapNotNull { constraint ->
-            TypeWithKind(constraint.type.getFunctionalTypeFromSupertypes(), constraint.kind)
+            TypeWithKind(constraint.type.getFunctionTypeFromSupertypes(), constraint.kind)
         }
 
         val typeVariableTypeConstructor = variable.typeVariable.freshTypeConstructor()
@@ -51,7 +53,7 @@ class PostponedArgumentInputTypesResolver(
 
         return dependentVariables.flatMap { type ->
             val constraints = notFixedTypeVariables[type]?.constraints ?: return@flatMap emptyList()
-            val constraintsWithFunctionalType = constraints.filter { it.type.isBuiltinFunctionalTypeOrSubtype() }
+            val constraintsWithFunctionalType = constraints.filter { it.type.isBuiltinFunctionTypeOrSubtype() }
             constraintsWithFunctionalType.extractFunctionalTypes()
         }
     }
@@ -73,7 +75,7 @@ class PostponedArgumentInputTypesResolver(
             if (argument is LambdaWithTypeVariableAsExpectedTypeMarker) argument.parameterTypesFromDeclaration else null
 
         val parameterTypesFromConstraints = functionalTypesFromConstraints.mapTo(SmartSet.create()) { typeWithKind ->
-            typeWithKind.type.extractArgumentsForFunctionalTypeOrSubtype().map {
+            typeWithKind.type.extractArgumentsForFunctionTypeOrSubtype().map {
                 // We should use opposite kind as lambda's parameters are contravariant
                 TypeWithKind(it, typeWithKind.direction.opposite())
             }
@@ -94,14 +96,16 @@ class PostponedArgumentInputTypesResolver(
                 parameterTypesFromDeclaration,
             )
 
-        var isSuspend = false
+        var functionTypeKind: FunctionTypeKind? = null
         var isNullable = false
-        if (!functionalTypesFromConstraints.isNullOrEmpty()) {
+        if (functionalTypesFromConstraints.isNotEmpty()) {
             isNullable = true
             for (funType in functionalTypesFromConstraints) {
-                if (!isSuspend && funType.type.isSuspendFunctionTypeOrSubtype()) isSuspend = true
+                if (functionTypeKind == null) {
+                    funType.type.functionTypeKind()?.takeUnless { it.isBasicFunctionOrKFunction }?.let { functionTypeKind = it }
+                }
                 if (isNullable && !funType.type.isMarkedNullable()) isNullable = false
-                if (isSuspend && !isNullable) break
+                if ((functionTypeKind != null) && !isNullable) break
             }
         }
 
@@ -122,7 +126,7 @@ class PostponedArgumentInputTypesResolver(
             parameterTypesFromConstraints,
             annotations = annotations,
             isExtensionFunction,
-            isSuspend = isSuspend,
+            functionTypeKind ?: FunctionTypeKind.Function,
             isNullable = isNullable
         )
     }
@@ -254,7 +258,7 @@ class PostponedArgumentInputTypesResolver(
     private fun Context.computeResultingFunctionalConstructor(
         argument: PostponedAtomWithRevisableExpectedType,
         parametersNumber: Int,
-        isSuspend: Boolean,
+        functionTypeKind: FunctionTypeKind,
         resultTypeResolver: ResultTypeResolver
     ): TypeConstructorMarker {
         val expectedType = argument.expectedType
@@ -264,7 +268,7 @@ class PostponedArgumentInputTypesResolver(
 
         return when (argument) {
             is LambdaWithTypeVariableAsExpectedTypeMarker ->
-                getFunctionTypeConstructor(parametersNumber, isSuspend)
+                getNonReflectFunctionTypeConstructor(parametersNumber, functionTypeKind)
             is PostponedCallableReferenceMarker -> {
                 val computedResultType = resultTypeResolver.findResultType(
                     this@computeResultingFunctionalConstructor,
@@ -273,10 +277,10 @@ class PostponedArgumentInputTypesResolver(
                 )
 
                 // Avoid KFunction<...>/Function<...> types
-                if (computedResultType.isBuiltinFunctionalTypeOrSubtype() && computedResultType.argumentsCount() > 1) {
+                if (computedResultType.isBuiltinFunctionTypeOrSubtype() && computedResultType.argumentsCount() > 1) {
                     computedResultType.typeConstructor()
                 } else {
-                    getKFunctionTypeConstructor(parametersNumber, isSuspend)
+                    getReflectFunctionTypeConstructor(parametersNumber, functionTypeKind)
                 }
             }
             else -> throw IllegalStateException("Unsupported postponed argument type of $argument")
@@ -378,7 +382,7 @@ class PostponedArgumentInputTypesResolver(
         val functionalConstructor = computeResultingFunctionalConstructor(
             argument,
             variablesForParameterTypes.size,
-            parameterTypesInfo.isSuspend,
+            parameterTypesInfo.functionTypeKind,
             resultTypeResolver
         )
 
@@ -554,7 +558,7 @@ class PostponedArgumentInputTypesResolver(
         dependencyProvider: TypeVariableDependencyInformationProvider,
         resolvedAtomByTypeVariableProvider: ResolvedAtomProvider,
     ): Boolean = with(resolutionTypeSystemContext) {
-        val relatedVariables = type.extractArgumentsForFunctionalTypeOrSubtype()
+        val relatedVariables = type.extractArgumentsForFunctionTypeOrSubtype()
             .flatMap { getAllDeeplyRelatedTypeVariables(it, dependencyProvider) }
         val variableForFixation = variableFixationFinder.findFirstVariableForFixation(
             this@fixNextReadyVariableForParameterType,

@@ -33,12 +33,10 @@ import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.js.resolve.JsPlatformAnalyzerServices
 import org.jetbrains.kotlin.platform.js.JsPlatforms
-import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.LazyTopDownAnalyzer
-import org.jetbrains.kotlin.resolve.TargetEnvironment
-import org.jetbrains.kotlin.resolve.createContainer
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
+import org.jetbrains.kotlin.platform.TargetPlatform
 
 fun createContainerForJS(
     moduleContext: ModuleContext,
@@ -51,14 +49,18 @@ fun createContainerForJS(
     enumWhenTracker: EnumWhenTracker,
     additionalPackages: List<PackageFragmentProvider>,
     targetEnvironment: TargetEnvironment,
+    analyzerServices: PlatformDependentAnalyzerServices,
+    platform: TargetPlatform
 ): StorageComponentContainer {
-    val storageComponentContainer = createContainer("TopDownAnalyzerForJs", JsPlatformAnalyzerServices) {
+    val storageComponentContainer = createContainer("TopDownAnalyzerForJs", analyzerServices) {
         configureModule(
             moduleContext,
-            JsPlatforms.defaultJsPlatform,
-            JsPlatformAnalyzerServices,
+            platform,
+            analyzerServices,
             bindingTrace,
-            languageVersionSettings
+            languageVersionSettings,
+            optimizingOptions = null,
+            absentDescriptorHandlerClass = null
         )
 
         configureIncrementalCompilation(lookupTracker, expectActualTracker, inlineConstTracker, enumWhenTracker)
@@ -91,6 +93,7 @@ fun createTopDownAnalyzerForJs(
 ): LazyTopDownAnalyzer {
     return createContainerForJS(
         moduleContext, bindingTrace, declarationProviderFactory, languageVersionSettings,
-        lookupTracker, expectActualTracker, inlineConstTracker, enumWhenTracker, additionalPackages, targetEnvironment
+        lookupTracker, expectActualTracker, inlineConstTracker, enumWhenTracker, additionalPackages, targetEnvironment,
+        JsPlatformAnalyzerServices, JsPlatforms.defaultJsPlatform
     ).get<LazyTopDownAnalyzer>()
 }

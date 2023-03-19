@@ -5,10 +5,8 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.annotations
 
-import com.intellij.psi.PsiAnnotationMemberValue
 import com.intellij.psi.PsiAnnotationParameterList
 import com.intellij.psi.PsiElement
-import com.intellij.psi.impl.PsiImplUtil
 import org.jetbrains.kotlin.analysis.api.annotations.KtNamedAnnotationValue
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.psi.KtCallElement
@@ -30,16 +28,9 @@ internal class SymbolLightSimpleAnnotation(
 
     override fun hashCode(): Int = fqName.hashCode()
 
-    override fun findAttributeValue(attributeName: String?): PsiAnnotationMemberValue? =
-        PsiImplUtil.findAttributeValue(this, attributeName)
-
-    override fun findDeclaredAttributeValue(attributeName: String?) =
-        PsiImplUtil.findDeclaredAttributeValue(this, attributeName)
-
     private val _parameterList: PsiAnnotationParameterList by lazyPub {
-        SymbolAnnotationParameterList(this, arguments)
+        symbolLightAnnotationParameterList(arguments)
     }
 
     override fun getParameterList(): PsiAnnotationParameterList = _parameterList
-
 }

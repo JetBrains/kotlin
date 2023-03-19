@@ -7,21 +7,18 @@ package org.jetbrains.kotlin.light.classes.symbol.classes
 
 import com.intellij.navigation.ItemPresentation
 import com.intellij.navigation.ItemPresentationProviders
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Pair
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
-import com.intellij.psi.impl.*
+import com.intellij.psi.impl.InheritanceImplUtil
+import com.intellij.psi.impl.PsiClassImplUtil
+import com.intellij.psi.impl.PsiImplUtil
+import com.intellij.psi.impl.PsiSuperMethodImplUtil
 import com.intellij.psi.impl.light.LightElement
 import com.intellij.psi.javadoc.PsiDocComment
 import com.intellij.psi.scope.PsiScopeProcessor
-import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.PsiUtil
 import org.jetbrains.annotations.NonNls
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionLikeSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.receiverType
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.providers.createProjectWideOutOfBlockModificationTracker
 import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
@@ -37,29 +34,14 @@ import javax.swing.Icon
 
 abstract class SymbolLightClassBase protected constructor(val ktModule: KtModule, manager: PsiManager) :
     LightElement(manager, KotlinLanguage.INSTANCE), PsiClass, KtExtensibleLightClass {
-    private class SymbolLightClassesLazyCreator(private val project: Project) : KotlinClassInnerStuffCache.LazyCreator() {
-        override fun <T : Any> get(initializer: () -> T, dependencies: List<Any>): Lazy<T> = object : Lazy<T> {
-            private val cachedValue = PsiCachedValueImpl(PsiManager.getInstance(project)) {
-                CachedValueProvider.Result.create(initializer(), dependencies)
-            }
 
-            override val value: T get() = cachedValue.value ?: error("Unexpected null value from PsiCachedValueImpl")
-
-            override fun isInitialized(): Boolean {
-                // Lazy is a bad interface here as it has unneeded and unused in LC `isInitialized` method
-                // considering Interface Segregation Principle, Lazy should be repaced with a simpler interface with only `value` method
-                error("Should not be called for LC")
-            }
-        }
+    private val myInnersCache by lazyPub {
+        ClassInnerStuffCache(
+            /* aClass = */ this,
+            /* generateEnumMethods = */ false,
+            /* modificationTracker = */ project.createProjectWideOutOfBlockModificationTracker(),
+        )
     }
-
-    @Suppress("LeakingThis")
-    private val myInnersCache = KotlinClassInnerStuffCache(
-        myClass = this@SymbolLightClassBase,
-        dependencies = listOf(manager.project.createProjectWideOutOfBlockModificationTracker()),
-        lazyCreator = SymbolLightClassesLazyCreator(project),
-        generateEnumMethods = false,
-    )
 
     override fun getFields(): Array<PsiField> = myInnersCache.fields
 
@@ -111,7 +93,7 @@ abstract class SymbolLightClassBase protected constructor(val ktModule: KtModule
         }
     }
 
-    protected open val isTopLevel: Boolean = false
+    internal open val isTopLevel: Boolean get() = false
 
     private val _containingFile: PsiFile? by lazyPub {
         val kotlinOrigin = kotlinOrigin ?: return@lazyPub null
@@ -153,15 +135,15 @@ abstract class SymbolLightClassBase protected constructor(val ktModule: KtModule
 
     override fun hasTypeParameters(): Boolean = PsiImplUtil.hasTypeParameters(this)
 
-    override fun getExtendsListTypes(): Array<PsiClassType?> = PsiClassImplUtil.getExtendsListTypes(this)
+    override fun getExtendsListTypes(): Array<PsiClassType> = PsiClassImplUtil.getExtendsListTypes(this)
 
-    override fun getImplementsListTypes(): Array<PsiClassType?> = PsiClassImplUtil.getImplementsListTypes(this)
+    override fun getImplementsListTypes(): Array<PsiClassType> = PsiClassImplUtil.getImplementsListTypes(this)
 
     override fun findMethodBySignature(patternMethod: PsiMethod?, checkBases: Boolean): PsiMethod? =
         patternMethod?.let { PsiClassImplUtil.findMethodBySignature(this, it, checkBases) }
 
-    override fun findMethodsBySignature(patternMethod: PsiMethod?, checkBases: Boolean): Array<PsiMethod?> =
-        patternMethod?.let { PsiClassImplUtil.findMethodsBySignature(this, it, checkBases) } ?: emptyArray()
+    override fun findMethodsBySignature(patternMethod: PsiMethod?, checkBases: Boolean): Array<PsiMethod> =
+        patternMethod?.let { PsiClassImplUtil.findMethodsBySignature(this, it, checkBases) } ?: PsiMethod.EMPTY_ARRAY
 
     override fun findMethodsAndTheirSubstitutorsByName(
         @NonNls name: String?,
@@ -194,15 +176,5 @@ abstract class SymbolLightClassBase protected constructor(val ktModule: KtModule
         } else {
             visitor.visitElement(this)
         }
-    }
-
-    context(KtAnalysisSession)
-    protected fun KtCallableSymbol.hasTypeForValueClassInSignature(ignoreReturnType: Boolean = false): Boolean {
-        if (!ignoreReturnType && returnType.typeForValueClass) return true
-        if (receiverType?.typeForValueClass == true) return true
-        if (this is KtFunctionLikeSymbol) {
-            return valueParameters.any { it.returnType.typeForValueClass }
-        }
-        return false
     }
 }

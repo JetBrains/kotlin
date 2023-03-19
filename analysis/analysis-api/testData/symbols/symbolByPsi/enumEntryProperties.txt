@@ -15,12 +15,18 @@ KtKotlinPropertySymbol:
     modality: FINAL
     origin: SOURCE
     receiverParameter: null
-    returnType: kotlin/Int
+    returnType: KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Int
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
     visibility: Public
-    getDispatchReceiver(): <anonymous>
+    getDispatchReceiver(): KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: <anonymous>
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
@@ -39,12 +45,18 @@ KtKotlinPropertySymbol:
   name: a
   origin: SOURCE
   receiverParameter: null
-  returnType: kotlin/Int
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Int
   setter: null
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
-  getDispatchReceiver(): <anonymous>
+  getDispatchReceiver(): KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: <anonymous>
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
@@ -61,7 +73,10 @@ KtEnumEntrySymbol:
   name: FirstEntry
   origin: SOURCE
   receiverParameter: null
-  returnType: MyEnumClass
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: MyEnumClass
   symbolKind: CLASS_MEMBER
   typeParameters: []
   getContainingModule: KtSourceModule "Sources of main"
@@ -76,7 +91,10 @@ KtEnumEntrySymbol:
   name: SecondEntry
   origin: SOURCE
   receiverParameter: null
-  returnType: MyEnumClass
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: MyEnumClass
   symbolKind: CLASS_MEMBER
   typeParameters: []
   getContainingModule: KtSourceModule "Sources of main"
@@ -99,12 +117,18 @@ KtKotlinPropertySymbol:
     modality: FINAL
     origin: SOURCE
     receiverParameter: null
-    returnType: kotlin/Int
+    returnType: KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Int
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
     visibility: Public
-    getDispatchReceiver(): <anonymous>
+    getDispatchReceiver(): KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: <anonymous>
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
@@ -123,12 +147,18 @@ KtKotlinPropertySymbol:
   name: b
   origin: SOURCE
   receiverParameter: null
-  returnType: kotlin/Int
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Int
   setter: null
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
-  getDispatchReceiver(): <anonymous>
+  getDispatchReceiver(): KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: <anonymous>
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
@@ -156,10 +186,16 @@ KtKotlinPropertySymbol:
       annotationsList: []
       origin: SOURCE
       owningCallableSymbol: KtKotlinPropertySymbol(<local>/d)
-      type: kotlin/Int
+      type: KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
+        type: kotlin/Int
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
-    returnType: kotlin/Int
+    returnType: KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Int
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
@@ -185,15 +221,24 @@ KtKotlinPropertySymbol:
     annotationsList: []
     origin: SOURCE
     owningCallableSymbol: KtKotlinPropertySymbol(<local>/d)
-    type: kotlin/Int
+    type: KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Int
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
-  returnType: kotlin/Int
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Int
   setter: null
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
-  getDispatchReceiver(): <anonymous>
+  getDispatchReceiver(): KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: <anonymous>
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
@@ -210,7 +255,10 @@ KtEnumEntrySymbol:
   name: ThirdEntry
   origin: SOURCE
   receiverParameter: null
-  returnType: MyEnumClass
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: MyEnumClass
   symbolKind: CLASS_MEMBER
   typeParameters: []
   getContainingModule: KtSourceModule "Sources of main"
@@ -231,7 +279,15 @@ KtNamedClassOrObjectSymbol:
   name: MyEnumClass
   origin: SOURCE
   superTypes: [
-    kotlin/Enum<MyEnumClass>
+    KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: [
+        KtUsualClassType:
+          annotationsList: []
+          ownTypeArguments: []
+          type: MyEnumClass
+      ]
+      type: kotlin/Enum<MyEnumClass>
   ]
   symbolKind: TOP_LEVEL
   typeParameters: []

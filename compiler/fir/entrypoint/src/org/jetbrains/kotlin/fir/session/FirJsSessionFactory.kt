@@ -16,12 +16,14 @@ import org.jetbrains.kotlin.fir.resolve.calls.ConeCallConflictResolverFactory
 import org.jetbrains.kotlin.fir.resolve.providers.impl.*
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.scopes.FirPlatformClassMapper
+import org.jetbrains.kotlin.fir.scopes.impl.FirEnumEntriesSupport
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.name.Name
 
 object FirJsSessionFactory : FirAbstractSessionFactory() {
-    fun createJsModuleBasedSession(
+    fun createModuleBasedSession(
         moduleData: FirModuleData,
         sessionProvider: FirProjectSessionProvider,
         extensionRegistrars: List<FirExtensionRegistrar>,
@@ -44,19 +46,20 @@ object FirJsSessionFactory : FirAbstractSessionFactory() {
             },
             registerExtraCheckers = { it.registerJsCheckers() },
             createKotlinScopeProvider = { FirKotlinScopeProvider { _, declaredMemberScope, _, _ -> declaredMemberScope } },
-            createProviders = { _, _, symbolProvider, generatedSymbolsProvider, dependencies ->
+            createProviders = { _, _, symbolProvider, generatedSymbolsProvider, syntheticFunctionInterfaceProvider, dependencies ->
                 listOfNotNull(
                     symbolProvider,
                     generatedSymbolsProvider,
+                    syntheticFunctionInterfaceProvider,
                     *dependencies.toTypedArray(),
                 )
             }
         )
     }
 
-    fun createJsLibrarySession(
+    fun createLibrarySession(
         mainModuleName: Name,
-        resolvedLibraries: List<KotlinResolvedLibrary>,
+        resolvedLibraries: List<KotlinLibrary>,
         sessionProvider: FirProjectSessionProvider,
         moduleDataProvider: ModuleDataProvider,
         languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
@@ -78,6 +81,7 @@ object FirJsSessionFactory : FirAbstractSessionFactory() {
                 // TODO: consider using "poisoning" provider for builtins to ensure that proper ones are taken from dependencies
                 // NOTE: it requires precise filtering for true nuiltins, like Function*
                 FirBuiltinSymbolProvider(session, builtinsModuleData, kotlinScopeProvider),
+                FirExtensionSyntheticFunctionInterfaceProvider(session, builtinsModuleData, kotlinScopeProvider),
             )
         }
     )
@@ -88,5 +92,6 @@ object FirJsSessionFactory : FirAbstractSessionFactory() {
         register(ConeCallConflictResolverFactory::class, JsCallConflictResolverFactory)
         register(FirPlatformClassMapper::class, FirPlatformClassMapper.Default)
         register(FirOverridesBackwardCompatibilityHelper::class, FirOverridesBackwardCompatibilityHelper.Default())
+        register(FirEnumEntriesSupport::class, FirEnumEntriesSupport(this))
     }
 }

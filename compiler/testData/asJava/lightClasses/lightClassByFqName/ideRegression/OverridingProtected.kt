@@ -1,4 +1,6 @@
 // p.C
+// COMPILATION_ERRORS
+// FILE: C.kt
 package p
 
 class C : A() {
@@ -10,4 +12,10 @@ class C : A() {
     }
 }
 
-// COMPILATION_ERRORS
+// FILE: A.kt
+package p
+
+abstract class A {
+    protected val ap: Int = 4
+    abstract protected fun af(): Int
+}

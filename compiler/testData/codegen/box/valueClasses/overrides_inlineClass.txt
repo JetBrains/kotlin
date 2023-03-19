@@ -60,10 +60,10 @@ public final class DPointWithInterface {
     public method hashCode(): int
     public static method hashCode-impl(p0: double, p1: double): int
     public synthetic bridge method setSomethingGeneric(p0: java.lang.Object): void
-    public method setSomethingGeneric-sUp7gFk(p0: double, p1: double): void
-    public static method setSomethingGeneric-sUp7gFk(p0: double, p1: double, p2: double, p3: double): void
-    public method setSomethingMFVC-sUp7gFk(p0: double, p1: double): void
-    public static method setSomethingMFVC-sUp7gFk(p0: double, p1: double, p2: double, p3: double): void
+    public method setSomethingGeneric-nuuzChU(p0: double, p1: double): void
+    public static method setSomethingGeneric-nuuzChU(p0: double, p1: double, p2: double, p3: double): void
+    public method setSomethingMFVC-nuuzChU(p0: double, p1: double): void
+    public static method setSomethingMFVC-nuuzChU(p0: double, p1: double, p2: double, p3: double): void
     public method setSomethingRegular(p0: int): void
     public static method setSomethingRegular-impl(p0: double, p1: double, p2: int): void
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
@@ -154,11 +154,11 @@ public final class GenericFakeOverrideMFVC {
     public method hashCode(): int
     public static method hashCode-impl(p0: double, p1: double): int
     public synthetic bridge method setP(p0: java.lang.Object): void
-    public method setP-sUp7gFk(@org.jetbrains.annotations.NotNull p0: DPoint): void
-    public static method setP-sUp7gFk(p0: double, p1: double, p2: double, p3: double): void
+    public method setP-nuuzChU(@org.jetbrains.annotations.NotNull p0: DPoint): void
+    public static method setP-nuuzChU(p0: double, p1: double, p2: double, p3: double): void
     public synthetic bridge method setP1(p0: java.lang.Object): void
-    public method setP1-sUp7gFk(@org.jetbrains.annotations.NotNull p0: DPoint): void
-    public static method setP1-sUp7gFk(p0: double, p1: double, p2: double, p3: double): void
+    public method setP1-nuuzChU(@org.jetbrains.annotations.NotNull p0: DPoint): void
+    public static method setP1-nuuzChU(p0: double, p1: double, p2: double, p3: double): void
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
     public static method toString-impl(p0: double, p1: double): java.lang.String
     public synthetic final method unbox-impl-field1(): double
@@ -186,10 +186,10 @@ public final class GenericFakeOverrideMFVCWithMFVCUpperBound {
     public static @org.jetbrains.annotations.NotNull method getP1-impl(p0: double, p1: double): DPoint
     public method hashCode(): int
     public static method hashCode-impl(p0: double, p1: double): int
-    public method setP-sUp7gFk(p0: double, p1: double): void
-    public static method setP-sUp7gFk(p0: double, p1: double, p2: double, p3: double): void
-    public method setP1-sUp7gFk(p0: double, p1: double): void
-    public static method setP1-sUp7gFk(p0: double, p1: double, p2: double, p3: double): void
+    public method setP-nuuzChU(p0: double, p1: double): void
+    public static method setP-nuuzChU(p0: double, p1: double, p2: double, p3: double): void
+    public method setP1-nuuzChU(p0: double, p1: double): void
+    public static method setP1-nuuzChU(p0: double, p1: double, p2: double, p3: double): void
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
     public static method toString-impl(p0: double, p1: double): java.lang.String
     public synthetic final method unbox-impl-field1(): double
@@ -203,8 +203,8 @@ public final class GenericFakeOverrideWithMFVCUpperBound {
     public method <init>(): void
     public @org.jetbrains.annotations.NotNull method getP(): DPoint
     public @org.jetbrains.annotations.NotNull method getP1(): DPoint
-    public method setP-sUp7gFk(p0: double, p1: double): void
-    public method setP1-sUp7gFk(p0: double, p1: double): void
+    public method setP-nuuzChU(p0: double, p1: double): void
+    public method setP1-nuuzChU(p0: double, p1: double): void
     public final inner class GenericMFVCHolderWithMFVCUpperBoundWithImpls$DefaultImpls
 }
 
@@ -246,8 +246,8 @@ public interface GenericMFVCHolderWithMFVCUpperBound {
     public abstract @org.jetbrains.annotations.NotNull method getP1(): DPoint
     public synthetic abstract method getP1-x(): double
     public synthetic abstract method getP1-y(): double
-    public abstract method setP-sUp7gFk(p0: double, p1: double): void
-    public abstract method setP1-sUp7gFk(p0: double, p1: double): void
+    public abstract method setP-nuuzChU(p0: double, p1: double): void
+    public abstract method setP1-nuuzChU(p0: double, p1: double): void
 }
 
 @kotlin.Metadata
@@ -259,8 +259,8 @@ public final class GenericMFVCHolderWithMFVCUpperBoundWithImpls$DefaultImpls {
     public static @org.jetbrains.annotations.NotNull method getP1(@org.jetbrains.annotations.NotNull p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls): DPoint
     public synthetic static method getP1-x(p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls): double
     public synthetic static method getP1-y(p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls): double
-    public static method setP-sUp7gFk(@org.jetbrains.annotations.NotNull p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls, p1: double, p2: double): void
-    public static method setP1-sUp7gFk(@org.jetbrains.annotations.NotNull p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls, p1: double, p2: double): void
+    public static method setP-nuuzChU(@org.jetbrains.annotations.NotNull p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls, p1: double, p2: double): void
+    public static method setP1-nuuzChU(@org.jetbrains.annotations.NotNull p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls, p1: double, p2: double): void
     public final inner class GenericMFVCHolderWithMFVCUpperBoundWithImpls$DefaultImpls
 }
 
@@ -273,8 +273,8 @@ public interface GenericMFVCHolderWithMFVCUpperBoundWithImpls {
     public abstract @org.jetbrains.annotations.NotNull method getP1(): DPoint
     public synthetic abstract method getP1-x(): double
     public synthetic abstract method getP1-y(): double
-    public abstract method setP-sUp7gFk(p0: double, p1: double): void
-    public abstract method setP1-sUp7gFk(p0: double, p1: double): void
+    public abstract method setP-nuuzChU(p0: double, p1: double): void
+    public abstract method setP1-nuuzChU(p0: double, p1: double): void
     public final inner class GenericMFVCHolderWithMFVCUpperBoundWithImpls$DefaultImpls
 }
 
@@ -2494,9 +2494,9 @@ public final class RealOverride {
     public synthetic method getP1-x(): double
     public synthetic method getP1-y(): double
     public synthetic bridge method setP(p0: java.lang.Object): void
-    public method setP-sUp7gFk(p0: double, p1: double): void
+    public method setP-nuuzChU(p0: double, p1: double): void
     public synthetic bridge method setP1(p0: java.lang.Object): void
-    public method setP1-sUp7gFk(p0: double, p1: double): void
+    public method setP1-nuuzChU(p0: double, p1: double): void
 }
 
 @kotlin.Metadata
@@ -2505,8 +2505,8 @@ public final class ReifiedFakeOverride {
     public method <init>(): void
     public @org.jetbrains.annotations.NotNull method getP(): DPoint
     public @org.jetbrains.annotations.NotNull method getP1(): DPoint
-    public method setP-sUp7gFk(p0: double, p1: double): void
-    public method setP1-sUp7gFk(p0: double, p1: double): void
+    public method setP-nuuzChU(p0: double, p1: double): void
+    public method setP1-nuuzChU(p0: double, p1: double): void
     public final inner class ReifiedMFVCHolderWithImpls$DefaultImpls
 }
 
@@ -2530,10 +2530,10 @@ public final class ReifiedFakeOverrideMFVC {
     public static @org.jetbrains.annotations.NotNull method getP1-impl(p0: double, p1: double): DPoint
     public method hashCode(): int
     public static method hashCode-impl(p0: double, p1: double): int
-    public method setP-sUp7gFk(p0: double, p1: double): void
-    public static method setP-sUp7gFk(p0: double, p1: double, p2: double, p3: double): void
-    public method setP1-sUp7gFk(p0: double, p1: double): void
-    public static method setP1-sUp7gFk(p0: double, p1: double, p2: double, p3: double): void
+    public method setP-nuuzChU(p0: double, p1: double): void
+    public static method setP-nuuzChU(p0: double, p1: double, p2: double, p3: double): void
+    public method setP1-nuuzChU(p0: double, p1: double): void
+    public static method setP1-nuuzChU(p0: double, p1: double, p2: double, p3: double): void
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
     public static method toString-impl(p0: double, p1: double): java.lang.String
     public synthetic final method unbox-impl-field1(): double
@@ -2550,8 +2550,8 @@ public interface ReifiedMFVCHolder {
     public abstract @org.jetbrains.annotations.NotNull method getP1(): DPoint
     public synthetic abstract method getP1-x(): double
     public synthetic abstract method getP1-y(): double
-    public abstract method setP-sUp7gFk(p0: double, p1: double): void
-    public abstract method setP1-sUp7gFk(p0: double, p1: double): void
+    public abstract method setP-nuuzChU(p0: double, p1: double): void
+    public abstract method setP1-nuuzChU(p0: double, p1: double): void
 }
 
 @kotlin.Metadata
@@ -2563,8 +2563,8 @@ public final class ReifiedMFVCHolderWithImpls$DefaultImpls {
     public static @org.jetbrains.annotations.NotNull method getP1(@org.jetbrains.annotations.NotNull p0: ReifiedMFVCHolderWithImpls): DPoint
     public synthetic static method getP1-x(p0: ReifiedMFVCHolderWithImpls): double
     public synthetic static method getP1-y(p0: ReifiedMFVCHolderWithImpls): double
-    public static method setP-sUp7gFk(@org.jetbrains.annotations.NotNull p0: ReifiedMFVCHolderWithImpls, p1: double, p2: double): void
-    public static method setP1-sUp7gFk(@org.jetbrains.annotations.NotNull p0: ReifiedMFVCHolderWithImpls, p1: double, p2: double): void
+    public static method setP-nuuzChU(@org.jetbrains.annotations.NotNull p0: ReifiedMFVCHolderWithImpls, p1: double, p2: double): void
+    public static method setP1-nuuzChU(@org.jetbrains.annotations.NotNull p0: ReifiedMFVCHolderWithImpls, p1: double, p2: double): void
     public final inner class ReifiedMFVCHolderWithImpls$DefaultImpls
 }
 
@@ -2577,8 +2577,8 @@ public interface ReifiedMFVCHolderWithImpls {
     public abstract @org.jetbrains.annotations.NotNull method getP1(): DPoint
     public synthetic abstract method getP1-x(): double
     public synthetic abstract method getP1-y(): double
-    public abstract method setP-sUp7gFk(p0: double, p1: double): void
-    public abstract method setP1-sUp7gFk(p0: double, p1: double): void
+    public abstract method setP-nuuzChU(p0: double, p1: double): void
+    public abstract method setP1-nuuzChU(p0: double, p1: double): void
     public final inner class ReifiedMFVCHolderWithImpls$DefaultImpls
 }
 
@@ -2591,7 +2591,7 @@ public interface SomePointInterface {
     public synthetic abstract method getSomethingMFVC-y(): double
     public abstract method getSomethingRegular(): int
     public abstract method setSomethingGeneric(p0: java.lang.Object): void
-    public abstract method setSomethingMFVC-sUp7gFk(p0: double, p1: double): void
+    public abstract method setSomethingMFVC-nuuzChU(p0: double, p1: double): void
     public abstract method setSomethingRegular(p0: int): void
 }
 
@@ -2605,7 +2605,7 @@ public interface SomePointInterfaceWithMFVCBound {
     public synthetic abstract method getSomethingMFVC-x(): double
     public synthetic abstract method getSomethingMFVC-y(): double
     public abstract method getSomethingRegular(): int
-    public abstract method setSomethingGeneric-sUp7gFk(p0: double, p1: double): void
-    public abstract method setSomethingMFVC-sUp7gFk(p0: double, p1: double): void
+    public abstract method setSomethingGeneric-nuuzChU(p0: double, p1: double): void
+    public abstract method setSomethingMFVC-nuuzChU(p0: double, p1: double): void
     public abstract method setSomethingRegular(p0: int): void
 }

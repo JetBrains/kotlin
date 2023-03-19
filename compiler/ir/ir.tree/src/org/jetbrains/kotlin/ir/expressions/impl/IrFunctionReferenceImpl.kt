@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.name.Name
 
 class IrFunctionReferenceImpl(
     override val startOffset: Int,
@@ -31,12 +30,9 @@ class IrFunctionReferenceImpl(
     override val symbol: IrFunctionSymbol,
     typeArgumentsCount: Int,
     valueArgumentsCount: Int,
-    override val reflectionTarget: IrFunctionSymbol? = symbol,
+    override var reflectionTarget: IrFunctionSymbol? = symbol,
     override val origin: IrStatementOrigin? = null,
 ) : IrFunctionReference() {
-    override val referencedName: Name
-        get() = symbol.owner.name
-
     override val typeArgumentsByIndex: Array<IrType?> = arrayOfNulls(typeArgumentsCount)
 
     override val argumentsByParameterIndex: Array<IrExpression?> = arrayOfNulls(valueArgumentsCount)

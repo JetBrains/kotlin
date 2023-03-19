@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.model.annotation
 import org.jetbrains.kotlin.konan.blackboxtest.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.ClassLevelProperty
+import org.jetbrains.kotlin.konan.blackboxtest.support.EnforcedHostTarget
 import org.jetbrains.kotlin.konan.blackboxtest.support.EnforcedProperty
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.K2Pipeline
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.UseExtTestCaseGroupProvider
@@ -103,7 +104,8 @@ fun main() {
         // Klib contents tests
         testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
             testClass<AbstractNativeKlibContentsTest>(
-                suiteTestClassName = "NativeK1LibContentsTestGenerated"
+                suiteTestClassName = "NativeK1LibContentsTestGenerated",
+                annotations = listOf(k1libContents())
             ) {
                 model("klibContents", pattern = "^([^_](.+)).kt$", recursive = true)
             }
@@ -111,7 +113,7 @@ fun main() {
         testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
             testClass<AbstractNativeKlibContentsTest>(
                 suiteTestClassName = "NativeK2LibContentsTestGenerated",
-                annotations = listOf(provider<K2Pipeline>())
+                annotations = listOf(k2libContents(), provider<K2Pipeline>())
             ) {
                 model("klibContents", pattern = "^([^_](.+)).kt$", recursive = true)
             }
@@ -121,7 +123,12 @@ fun main() {
         testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
             testClass<AbstractNativeBlackBoxTest>(
                 suiteTestClassName = "LldbTestGenerated",
-                annotations = listOf(debugger(), provider<UseStandardTestCaseGroupProvider>(), debugOnly())
+                annotations = listOf(
+                    debugger(),
+                    provider<UseStandardTestCaseGroupProvider>(),
+                    debugOnly(),
+                    hostOnly()
+                )
             ) {
                 model("lldb")
             }
@@ -137,7 +144,11 @@ private fun debugOnly() = annotation(
     "propertyValue" to "DEBUG"
 )
 
+private fun hostOnly() = provider<EnforcedHostTarget>()
+
 private fun codegen() = annotation(Tag::class.java, "codegen")
 private fun codegenK2() = annotation(Tag::class.java, "codegenK2")
 private fun debugger() = annotation(Tag::class.java, "debugger")
 private fun infrastructure() = annotation(Tag::class.java, "infrastructure")
+private fun k1libContents() = annotation(Tag::class.java, "k1libContents")
+private fun k2libContents() = annotation(Tag::class.java, "k2libContents")

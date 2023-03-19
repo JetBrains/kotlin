@@ -40,11 +40,6 @@ android {
     }
 
     publishNonDefault true
-
-    kotlinOptions {
-        noJdk = true
-    }
-
     lintOptions.abortOnError = false
 }
 

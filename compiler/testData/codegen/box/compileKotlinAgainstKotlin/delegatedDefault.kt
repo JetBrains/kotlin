@@ -1,5 +1,3 @@
-// KT-55465
-// IGNORE_BACKEND_K2: NATIVE
 // MODULE: lib
 // FILE: A.kt
 package lib

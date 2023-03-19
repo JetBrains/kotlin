@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.fir.renderer.ConeTypeRendererForDebugging
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
-import org.jetbrains.kotlin.fir.scopes.impl.delegatedWrapperData
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
@@ -337,7 +336,10 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
                 return
             }
             val projectionBuilder = StringBuilder()
-            ConeTypeRendererForDebugging(projectionBuilder).renderAsPossibleFunctionType(this) {
+            ConeTypeRendererForDebugging(projectionBuilder).renderAsPossibleFunctionType(
+                this,
+                { it.functionTypeKind(session) }
+            ) {
                 localTypeProjectionRenderer(projectionBuilder)
             }
             builder.append(projectionBuilder.toString().removeCurrentFilePackage())
@@ -459,24 +461,6 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             }
         }
 
-        private inline fun <reified D : FirCallableDeclaration> D.originalIfFakeOverrideOrDelegated(): D? {
-            return when (origin) {
-                FirDeclarationOrigin.SubstitutionOverride, FirDeclarationOrigin.IntersectionOverride -> originalIfFakeOverride()
-                FirDeclarationOrigin.Delegated -> delegatedWrapperData!!.wrapped
-                else -> this
-            }
-        }
-
-        private inline fun <reified D : FirCallableDeclaration> D.getOriginal(): D {
-            var current = this
-            var next = this.originalIfFakeOverrideOrDelegated() ?: this
-            while (current != next) {
-                current = next
-                next = current.originalIfFakeOverrideOrDelegated() ?: current
-            }
-            return current
-        }
-
         private fun renderImplicitReceiver(symbol: FirBasedSymbol<*>, psi: PsiElement?) {
             val receiverType = (symbol.fir as? FirCallableDeclaration)?.dispatchReceiverType ?: return
             val implicitReceiverIndex = implicitReceivers.indexOf(receiverType)
@@ -490,7 +474,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
         }
 
         private fun renderField(field: FirField, data: StringBuilder) {
-            val original = field.getOriginal()
+            val original = field.unwrapFakeOverridesOrDelegated()
             if (original.isVal) data.append("val ") else if (original.isVar) data.append("var ")
 
             data.append("(")
@@ -534,7 +518,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
         }
 
         private fun renderPropertySymbol(symbol: FirPropertySymbol, data: StringBuilder) {
-            val fir = symbol.fir.getOriginal()
+            val fir = symbol.fir.unwrapFakeOverridesOrDelegated()
             data.append(if (fir.isVar) "var" else "val").append(" ")
             renderListInTriangles(fir.typeParameters, data, withSpace = true)
 
@@ -556,7 +540,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
 
         private fun renderFunctionSymbol(symbol: FirNamedFunctionSymbol, data: StringBuilder, call: FirFunctionCall? = null) {
             data.append("fun ")
-            val fir = symbol.fir.getOriginal()
+            val fir = symbol.fir.unwrapFakeOverridesOrDelegated()
             renderListInTriangles(fir.typeParameters, data, true)
 
             val id = getSymbolId(symbol)
@@ -622,7 +606,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
 
         override fun visitConstructor(constructor: FirConstructor, data: StringBuilder) {
             renderConstructorSymbol(constructor.symbol, data)
-            visitValueParameters(constructor.getOriginal().valueParameters, data)
+            visitValueParameters(constructor.unwrapFakeOverridesOrDelegated().valueParameters, data)
         }
 
         override fun visitTypeParameterRef(typeParameterRef: FirTypeParameterRef, data: StringBuilder) {

@@ -40,6 +40,7 @@ internal class CirTreeClassDeserializer(
                     name = className,
                     annotations = classEntry.annotations,
                     enumClassId = classEntry.enumClassId,
+                    hasEnumEntries = Flag.Class.HAS_ENUM_ENTRIES(classEntry.enumClass.flags),
                     typeResolver = classTypeResolver
                 )
             }

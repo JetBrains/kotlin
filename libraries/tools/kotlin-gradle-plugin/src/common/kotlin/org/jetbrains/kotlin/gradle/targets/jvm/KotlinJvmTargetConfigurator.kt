@@ -41,6 +41,19 @@ open class KotlinJvmTargetConfigurator :
         }
     }
 
+    override fun configureCompilations(target: KotlinJvmTarget) {
+        super.configureCompilations(target)
+
+        target.compilations.configureEach {
+            it.compilerOptions.options.moduleName.convention(
+                target.project.providers.provider {
+                    @Suppress("DEPRECATION")
+                    it.moduleName
+                }
+            )
+        }
+    }
+
     override val testRunClass: Class<KotlinJvmTestRun>
         get() = KotlinJvmTestRun::class.java
 

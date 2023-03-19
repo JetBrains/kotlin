@@ -27,9 +27,7 @@ FILE: destructuring.kt
         lvar x: <implicit> = R|<local>/<destruct>|.component1#()
         lvar y: <implicit> = R|<local>/<destruct>|.component2#()
         lvar z: String = R|<local>/<destruct>|.component3#()
-        lval <unary>: <implicit> = x#
-        x# = R|<local>/<unary>|.inc#()
-        R|<local>/<unary>|
+        x#++
         *=(y#, Double(2.0))
         z# = String()
     }

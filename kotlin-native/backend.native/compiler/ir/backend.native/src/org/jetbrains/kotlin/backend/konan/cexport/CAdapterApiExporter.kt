@@ -5,26 +5,34 @@
 
 package org.jetbrains.kotlin.backend.konan.cexport
 
-import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.konan.target.Family
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import java.io.PrintWriter
+import java.io.File
 
 /**
  * Third phase of C export:
  *  1. Create a C++ file with runtime bindings
  *  2. Create a header file with API
  *  3. (MinGW only) create EXPORTS def file.
+ *
+ *  @param headerFile C header file that will be populated with the exported C API.
+ *  @param defFile DLL module definition file
+ *  @param cppAdapterFile C++ source that will be populated with glue code between K/N runtime and exported API.
  */
 internal class CAdapterApiExporter(
-        private val generationState: NativeGenerationState,
         private val elements: CAdapterExportedElements,
+        private val headerFile: File,
+        private val defFile: File?,
+        private val cppAdapterFile: File,
+        private val target: KonanTarget,
 ) {
     private val typeTranslator = elements.typeTranslator
     private val builtIns = elements.typeTranslator.builtIns
@@ -155,7 +163,6 @@ internal class CAdapterApiExporter(
     // TODO: Pass temp and output files explicitly and untie from `NativeGenerationState`.
     fun makeGlobalStruct() {
         val top = elements.scopes.first()
-        val headerFile = generationState.outputFiles.cAdapterHeader
         outputStreamWriter = headerFile.printWriter()
 
         val exportedSymbol = "${prefix}_symbols"
@@ -188,7 +195,7 @@ internal class CAdapterApiExporter(
         output("typedef double             ${prefix}_KDouble;")
 
         val typedef_KVector128 = "typedef float __attribute__ ((__vector_size__ (16))) ${prefix}_KVector128;"
-        if (generationState.config.target.family == Family.MINGW) {
+        if (target.family == Family.MINGW) {
             // Separate `output` for each line to ensure Windows EOL (LFCR), otherwise generated file will have inconsistent line ending.
             output("#ifndef _MSC_VER")
             output(typedef_KVector128)
@@ -240,9 +247,7 @@ internal class CAdapterApiExporter(
         outputStreamWriter.close()
         println("Produced library API in ${prefix}_api.h")
 
-        outputStreamWriter = generationState.tempFiles
-                .cAdapterCpp
-                .printWriter()
+        outputStreamWriter = cppAdapterFile.printWriter()
 
         // Include header into C++ source.
         headerFile.forEachLine { it -> output(it) }
@@ -379,10 +384,8 @@ internal class CAdapterApiExporter(
         output("RUNTIME_USED ${prefix}_ExportedSymbols* $exportedSymbol(void) { return &__konan_symbols;}")
         outputStreamWriter.close()
 
-        if (generationState.config.target.family == Family.MINGW) {
-            outputStreamWriter = generationState.outputFiles
-                    .cAdapterDef
-                    .printWriter()
+        if (defFile != null) {
+            outputStreamWriter = defFile.printWriter()
             output("EXPORTS")
             exportedSymbols.forEach { output(it) }
             outputStreamWriter.close()

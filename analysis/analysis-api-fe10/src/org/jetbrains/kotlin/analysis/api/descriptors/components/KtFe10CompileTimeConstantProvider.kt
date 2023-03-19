@@ -31,18 +31,11 @@ internal class KtFe10CompileTimeConstantProvider(
     ): KtConstantValue? {
         val bindingContext = analysisContext.analyze(expression)
 
-        if (mode == KtConstantEvaluationMode.CONSTANT_EXPRESSION_EVALUATION) {
-            // TODO: how to _not_ evaluate composite expression with a non-const property?
-            // TODO: how to _not_ evaluate expressions with a compilation error, e.g., uninitialized property access
-            when (expression) {
-                is KtNameReferenceExpression -> {
-                    val reference = bindingContext[BindingContext.REFERENCE_TARGET, expression]
-                    if (reference is PropertyDescriptor && !reference.isConst) return null
-                }
-            }
-        }
-
         val constant = ConstantExpressionEvaluator.getPossiblyErrorConstant(expression, bindingContext)
+        if (mode == KtConstantEvaluationMode.CONSTANT_EXPRESSION_EVALUATION) {
+            // TODO: how to _not_ evaluate expressions with a compilation error, e.g., uninitialized property access
+            if (constant?.usesNonConstValAsConstant == true) return null
+        }
         return constant?.toConstantValue(TypeUtils.NO_EXPECTED_TYPE)?.toKtConstantValue()
     }
 }

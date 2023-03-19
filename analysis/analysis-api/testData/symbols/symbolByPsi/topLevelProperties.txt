@@ -15,7 +15,10 @@ KtKotlinPropertySymbol:
     modality: FINAL
     origin: SOURCE
     receiverParameter: null
-    returnType: kotlin/Int
+    returnType: KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Int
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
@@ -38,7 +41,10 @@ KtKotlinPropertySymbol:
   name: x
   origin: SOURCE
   receiverParameter: null
-  returnType: kotlin/Int
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Int
   setter: null
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -70,10 +76,16 @@ KtKotlinPropertySymbol:
       annotationsList: []
       origin: SOURCE
       owningCallableSymbol: KtKotlinPropertySymbol(/y)
-      type: kotlin/Int
+      type: KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
+        type: kotlin/Int
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
-    returnType: kotlin/Int
+    returnType: KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Int
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
@@ -99,10 +111,16 @@ KtKotlinPropertySymbol:
     annotationsList: []
     origin: SOURCE
     owningCallableSymbol: KtKotlinPropertySymbol(/y)
-    type: kotlin/Int
+    type: KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Int
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
-  returnType: kotlin/Int
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Int
   setter: null
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -134,10 +152,16 @@ KtKotlinPropertySymbol:
       annotationsList: []
       origin: SOURCE
       owningCallableSymbol: KtKotlinPropertySymbol(/get)
-      type: kotlin/Short
+      type: KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
+        type: kotlin/Short
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
-    returnType: kotlin/Long
+    returnType: KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Long
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
@@ -163,10 +187,16 @@ KtKotlinPropertySymbol:
     annotationsList: []
     origin: SOURCE
     owningCallableSymbol: KtKotlinPropertySymbol(/get)
-    type: kotlin/Short
+    type: KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Short
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
-  returnType: kotlin/Long
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Long
   setter: KtPropertySetterSymbol:
     annotationsList: []
     callableIdIfNonLocal: null
@@ -193,7 +223,10 @@ KtKotlinPropertySymbol:
       name: value
       origin: SOURCE
       receiverParameter: null
-      returnType: kotlin/Long
+      returnType: KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
+        type: kotlin/Long
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtSourceModule "Sources of main"
@@ -202,10 +235,16 @@ KtKotlinPropertySymbol:
       annotationsList: []
       origin: SOURCE
       owningCallableSymbol: KtKotlinPropertySymbol(/get)
-      type: kotlin/Short
+      type: KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
+        type: kotlin/Short
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
-    returnType: kotlin/Unit
+    returnType: KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Unit
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: [
@@ -223,7 +262,10 @@ KtKotlinPropertySymbol:
         name: value
         origin: SOURCE
         receiverParameter: null
-        returnType: kotlin/Long
+        returnType: KtUsualClassType:
+          annotationsList: []
+          ownTypeArguments: []
+          type: kotlin/Long
         symbolKind: LOCAL
         typeParameters: []
         getContainingModule: KtSourceModule "Sources of main"

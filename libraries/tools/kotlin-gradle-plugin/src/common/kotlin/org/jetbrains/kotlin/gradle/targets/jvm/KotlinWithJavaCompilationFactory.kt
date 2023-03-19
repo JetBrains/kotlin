@@ -9,10 +9,12 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.plugin.HasCompilerOptions
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.DefaultKotlinCompilationPreConfigure
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinJvmCompilationAssociator
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.JvmWithJavaCompilationDependencyConfigurationsFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.JvmWithJavaCompilationTaskNamesContainerFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinCompilationImplFactory
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.plus
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 
 class KotlinWithJavaCompilationFactory<KotlinOptionsType : KotlinCommonOptions, CO : KotlinCommonCompilerOptions> internal constructor(
@@ -38,6 +40,7 @@ class KotlinWithJavaCompilationFactory<KotlinOptionsType : KotlinCommonOptions, 
         }
 
         val compilationImplFactory = KotlinCompilationImplFactory(
+            processResourcesTaskNameFactory = { _, _ -> javaSourceSet.processResourcesTaskName },
             compilerOptionsFactory = { _, _ ->
                 val compilerOptions = compilerOptionsFactory()
                 val kotlinOptions = kotlinOptionsFactory(compilerOptions.options)
@@ -51,7 +54,7 @@ class KotlinWithJavaCompilationFactory<KotlinOptionsType : KotlinCommonOptions, 
             compilationTaskNamesContainerFactory = JvmWithJavaCompilationTaskNamesContainerFactory(javaSourceSet),
 
             /* Use compile & runtime classpath from javaSourceSet by default */
-            preConfigureAction = { compilation ->
+            preConfigureAction = DefaultKotlinCompilationPreConfigure + { compilation ->
                 compilation.compileDependencyFiles = project.filesProvider { javaSourceSet.compileClasspath }
                 compilation.runtimeDependencyFiles = project.filesProvider { javaSourceSet.runtimeClasspath }
             }

@@ -5,7 +5,6 @@
 package org.jetbrains.kotlin.backend.konan
 
 import llvm.*
-import org.jetbrains.kotlin.backend.konan.cexport.produceCAdapterBitcode
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.objc.patchObjCRuntimeModule
@@ -15,6 +14,7 @@ import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.library.BaseKotlinLibrary
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
+import java.io.File
 
 /**
  * Supposed to be true for a single LLVM module within final binary.
@@ -44,9 +44,11 @@ internal val NativeGenerationState.shouldDefineCachedBoxes: Boolean
     get() = producedLlvmModuleContainsStdlib &&
             cacheDeserializationStrategy?.contains(KonanFqNames.internalPackageName, "Boxing.kt") != false
 
+internal val CacheDeserializationStrategy?.containsRuntime: Boolean
+    get() = this?.contains(KonanFqNames.internalPackageName, "Runtime.kt") != false
+
 internal val NativeGenerationState.shouldLinkRuntimeNativeLibraries: Boolean
-    get() = producedLlvmModuleContainsStdlib &&
-            cacheDeserializationStrategy?.contains(KonanFqNames.internalPackageName, "Runtime.kt") != false
+    get() = producedLlvmModuleContainsStdlib && cacheDeserializationStrategy.containsRuntime
 
 val CompilerOutputKind.isCache: Boolean
     get() = this == CompilerOutputKind.STATIC_CACHE || this == CompilerOutputKind.DYNAMIC_CACHE
@@ -142,23 +144,15 @@ internal fun insertAliasToEntryPoint(context: PhaseContext, module: LLVMModuleRe
     LLVMAddAlias(module, LLVMTypeOf(entryPoint)!!, entryPoint, "main")
 }
 
-internal fun linkBitcodeDependencies(generationState: NativeGenerationState) {
+internal fun linkBitcodeDependencies(generationState: NativeGenerationState,
+                                     generatedBitcodeFiles: List<File>) {
     val config = generationState.config
-    val tempFiles = generationState.tempFiles
     val produce = config.produce
 
-    val generatedBitcodeFiles =
-            if (produce == CompilerOutputKind.DYNAMIC || produce == CompilerOutputKind.STATIC) {
-                produceCAdapterBitcode(
-                        config.clang,
-                        tempFiles.cAdapterCppName,
-                        tempFiles.cAdapterBitcodeName)
-                listOf(tempFiles.cAdapterBitcodeName)
-            } else emptyList()
     if (produce == CompilerOutputKind.FRAMEWORK && config.produceStaticFramework) {
         embedAppleLinkerOptionsToBitcode(generationState.llvm, config)
     }
-    linkAllDependencies(generationState, generatedBitcodeFiles)
+    linkAllDependencies(generationState, generatedBitcodeFiles.map { it.absoluteFile.normalize().path })
 
 }
 
@@ -173,7 +167,7 @@ private fun parseAndLinkBitcodeFile(generationState: NativeGenerationState, llvm
     }
 }
 
-private fun embedAppleLinkerOptionsToBitcode(llvm: Llvm, config: KonanConfig) {
+private fun embedAppleLinkerOptionsToBitcode(llvm: CodegenLlvmHelpers, config: KonanConfig) {
     fun findEmbeddableOptions(options: List<String>): List<List<String>> {
         val result = mutableListOf<List<String>>()
         val iterator = options.iterator()

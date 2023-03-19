@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.konan.blackboxtest;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
+import org.junit.jupiter.api.Tag;
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.K2Pipeline;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
@@ -19,6 +20,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("native/native.tests/testData/klibContents")
 @TestDataPath("$PROJECT_ROOT")
+@Tag("k2libContents")
 @K2Pipeline()
 public class NativeK2LibContentsTestGenerated extends AbstractNativeKlibContentsTest {
     @Test
@@ -59,6 +61,7 @@ public class NativeK2LibContentsTestGenerated extends AbstractNativeKlibContents
     @Nested
     @TestMetadata("native/native.tests/testData/klibContents/builtinsSerializer")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("k2libContents")
     @K2Pipeline()
     public class BuiltinsSerializer {
         @Test
@@ -123,6 +126,7 @@ public class NativeK2LibContentsTestGenerated extends AbstractNativeKlibContents
         @Nested
         @TestMetadata("native/native.tests/testData/klibContents/builtinsSerializer/annotationArguments")
         @TestDataPath("$PROJECT_ROOT")
+        @Tag("k2libContents")
         @K2Pipeline()
         public class AnnotationArguments {
             @Test
@@ -171,6 +175,7 @@ public class NativeK2LibContentsTestGenerated extends AbstractNativeKlibContents
     @Nested
     @TestMetadata("native/native.tests/testData/klibContents/klib")
     @TestDataPath("$PROJECT_ROOT")
+    @Tag("k2libContents")
     @K2Pipeline()
     public class Klib {
         @Test

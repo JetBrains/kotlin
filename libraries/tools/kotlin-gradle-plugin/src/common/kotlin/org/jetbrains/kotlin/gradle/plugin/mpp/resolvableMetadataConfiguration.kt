@@ -7,14 +7,20 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.attributes.Category
+import org.gradle.api.attributes.Usage
 import org.gradle.api.provider.Provider
+import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.categoryByName
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.copyAttributes
-import org.jetbrains.kotlin.gradle.utils.markResolvable
+import org.jetbrains.kotlin.gradle.plugin.sources.*
 import org.jetbrains.kotlin.gradle.plugin.sources.InternalKotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.sources.METADATA_CONFIGURATION_NAME_SUFFIX
 import org.jetbrains.kotlin.gradle.plugin.sources.disambiguateName
-import org.jetbrains.kotlin.gradle.plugin.sources.getVisibleSourceSetsFromAssociateCompilations
-import org.jetbrains.kotlin.gradle.targets.metadata.ALL_COMPILE_METADATA_CONFIGURATION_NAME
+import org.jetbrains.kotlin.gradle.utils.markResolvable
+import org.jetbrains.kotlin.gradle.plugin.usageByName
+import org.jetbrains.kotlin.gradle.plugin.usesPlatformOf
+import org.jetbrains.kotlin.gradle.utils.getOrCreate
 import org.jetbrains.kotlin.gradle.utils.listProperty
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.tooling.core.extrasLazyProperty
@@ -56,14 +62,55 @@ internal val InternalKotlinSourceSet.resolvableMetadataConfiguration: Configurat
         }
     })
 
-    val allCompileMetadataConfiguration = project.configurations.getByName(ALL_COMPILE_METADATA_CONFIGURATION_NAME)
+    val allCompileMetadataConfiguration = project.allCompileMetadataConfiguration
 
     /* Ensure consistent dependency resolution result within the whole module */
     configuration.shouldResolveConsistentlyWith(allCompileMetadataConfiguration)
     copyAttributes(allCompileMetadataConfiguration.attributes, configuration.attributes)
 
+    configureMetadataDependenciesConfigurations(configuration)
+
     configuration
 }
+
+/**
+Older IDEs still rely on resolving the metadata configurations explicitly.
+Dependencies will be coming from extending the newer 'resolvableMetadataConfiguration'.
+
+the intransitiveMetadataConfigurationName will not extend this mechanism, since it only
+relies on dependencies being added explicitly by the Kotlin Gradle Plugin
+*/
+private fun InternalKotlinSourceSet.configureMetadataDependenciesConfigurations(resolvableMetadataConfiguration: Configuration) {
+    @Suppress("DEPRECATION")
+    listOf(
+        apiMetadataConfigurationName,
+        implementationMetadataConfigurationName,
+        compileOnlyMetadataConfigurationName
+    ).forEach { configurationName ->
+        val configuration = project.configurations.getByName(configurationName)
+        configuration.extendsFrom(resolvableMetadataConfiguration)
+        configuration.shouldResolveConsistentlyWith(resolvableMetadataConfiguration)
+    }
+}
+
+/**
+ * Configuration containing all compile dependencies from *all* source sets.
+ * This configuration is used to provide a dependency 'consistency scope' for
+ * the [InternalKotlinSourceSet.resolvableMetadataConfiguration]
+ */
+private val Project.allCompileMetadataConfiguration
+    get(): Configuration = configurations.getOrCreate("allSourceSetsCompileDependenciesMetadata", invokeWhenCreated = { configuration ->
+        configuration.markResolvable()
+        configuration.usesPlatformOf(multiplatformExtension.metadata())
+        configuration.attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
+        configuration.attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
+
+        kotlinExtension.sourceSets.all { sourceSet ->
+            configuration.extendsFrom(configurations.getByName(sourceSet.apiConfigurationName))
+            configuration.extendsFrom(configurations.getByName(sourceSet.implementationConfigurationName))
+            configuration.extendsFrom(configurations.getByName(sourceSet.compileOnlyConfigurationName))
+        }
+    })
 
 private inline fun <reified T> Project.listProvider(noinline provider: () -> List<T>): Provider<List<T>> {
     return project.objects.listProperty<T>().apply {

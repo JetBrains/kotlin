@@ -83,8 +83,9 @@ open class SerializerIrGenerator(
         private set
 
     // child serializers cached if serializable class is internal
-    private val cachedChildSerializersProperty =
+    private val cachedChildSerializersProperty = if (isGeneratedSerializer)
         serializableIrClass.companionObject()?.properties?.singleOrNull { it.name == CACHED_CHILD_SERIALIZERS_PROPERTY_NAME }
+    else null
 
     // non-object serializers which can be cached
     private val cacheableChildSerializers =
@@ -630,7 +631,7 @@ open class SerializerIrGenerator(
         ) {
             val serializableDesc = context.getSerializableClassDescriptorBySerializer(irClass) ?: return
             val generator = when {
-                serializableDesc.isEnumWithLegacyGeneratedSerializer(context) -> SerializerForEnumsGenerator(
+                serializableDesc.isEnumWithLegacyGeneratedSerializer() -> SerializerForEnumsGenerator(
                     irClass,
                     context
                 )

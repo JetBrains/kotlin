@@ -6,12 +6,12 @@ import org.jetbrains.kotlin.UtilsKt
 
 buildscript {
     apply from: "$rootDir/kotlin-native/gradle/kotlinGradlePlugin.gradle"
-
-    ext.useCustomDist = UtilsKt.getUseCustomDist(project)
 }
 
 apply plugin: 'kotlin'
 apply plugin: 'konan'
+
+ext.useCustomDist = UtilsKt.getUseCustomDist(project)
 
 konanArtifacts {
     def testFiles = fileTree('src/test/testData') {

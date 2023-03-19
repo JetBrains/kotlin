@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmMetadataCompilationData
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmNativeCompilationData
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
-import org.jetbrains.kotlin.gradle.plugin.tcsOrNull
+import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.targets.native.KonanPropertiesBuildService
 import org.jetbrains.kotlin.gradle.targets.native.internal.isAllowCommonizer
 import org.jetbrains.kotlin.gradle.targets.native.tasks.*
@@ -50,9 +50,10 @@ import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.project.model.LanguageSettings
+import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
+import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 import java.io.File
 import java.nio.file.Files
-import java.nio.file.Path
 import javax.inject.Inject
 import kotlin.collections.associateBy
 import kotlin.collections.component1
@@ -92,20 +93,6 @@ internal fun MutableList<String>.addArgIfNotNull(parameter: String, value: Strin
 internal fun MutableList<String>.addFileArgs(parameter: String, values: FileCollection) {
     values.files.forEach {
         addArg(parameter, it.canonicalPath)
-    }
-}
-
-// We need to filter out interop duplicates because we create copy of them for IDE.
-// TODO: Remove this after interop rework.
-internal fun FileCollection.filterOutPublishableInteropLibs(project: Project): FileCollection =
-    filterOutPublishableInteropLibs(project.buildLibDirectories())
-
-private fun Project.buildLibDirectories(): List<Path> =
-    rootProject.allprojects.map { it.buildDir.resolve("libs").absoluteFile.toPath() }
-
-private fun FileCollection.filterOutPublishableInteropLibs(libDirectories: List<Path>): FileCollection {
-    return filter { file ->
-        !(file.name.contains("-cinterop-") && libDirectories.any { file.toPath().startsWith(it) })
     }
 }
 
@@ -213,16 +200,21 @@ abstract class AbstractKotlinNativeCompile<
         compilation.languageSettings
     }
 
-    @get:Input
+    @Suppress("DeprecatedCallableAddReplaceWith")
+    @get:Deprecated("Replaced with 'compilerOptions.progressiveMode'")
+    @get:Internal
     val progressiveMode: Boolean
         get() = languageSettings.progressiveMode
     // endregion.
 
-    @Deprecated("Please declare explicit dependency on kotlinx-cli. This option is scheduled to be removed in 1.9.0")
+    @Suppress("DeprecatedCallableAddReplaceWith")
+    @Deprecated(
+        "Please declare explicit dependency on kotlinx-cli. This option has no longer effect since 1.9.0",
+        level = DeprecationLevel.ERROR
+    )
     @get:Input
-    val enableEndorsedLibs: Boolean by project.provider {
-        compilation.tcsOrNull?.compilation?.run { this as? KotlinNativeCompilation }?.enableEndorsedLibs ?: false
-    }
+    val enableEndorsedLibs: Boolean
+        get() = false
 
     @get:Input
     val kotlinNativeVersion: String
@@ -319,12 +311,14 @@ internal constructor(
     @get:Internal
     @Transient  // can't be serialized for Gradle configuration cache
     final override val compilation: KotlinCompilationInfo,
+    override val compilerOptions: KotlinNativeCompilerOptions,
     private val objectFactory: ObjectFactory,
     private val providerFactory: ProviderFactory,
     private val execOperations: ExecOperations
 ) : AbstractKotlinNativeCompile<KotlinCommonOptions, StubK2NativeCompilerArguments>(objectFactory),
     KotlinCompile<KotlinCommonOptions>,
-    KotlinCompilationTask<KotlinCommonCompilerOptions> {
+    K2MultiplatformCompilationTask,
+    KotlinCompilationTask<KotlinNativeCompilerOptions> {
 
     @get:Input
     override val outputKind = LIBRARY
@@ -344,10 +338,12 @@ internal constructor(
     // Store as an explicit provider in order to allow Gradle Instant Execution to capture the state
 //    private val allSourceProvider = compilation.map { project.files(it.allSources).asFileTree }
 
-    @get:Input
-    val moduleName: String by lazy {
-        project.klibModuleName(baseName)
-    }
+    @Deprecated(
+        message = "Please use 'compilerOptions.moduleName' to configure",
+        replaceWith = ReplaceWith("compilerOptions.moduleName.get()")
+    )
+    @get:Internal
+    val moduleName: String get() = compilerOptions.moduleName.get()
 
     @get:OutputFile
     override val outputFile: Provider<File>
@@ -361,6 +357,9 @@ internal constructor(
 
     @get:Internal // these sources are normally a subset of `source` ones which are already tracked
     val commonSources: ConfigurableFileCollection = project.files()
+
+    @get:Nested
+    override val multiplatformStructure: K2MultiplatformStructure = objectFactory.newInstance()
 
     private val commonSourcesTree: FileTree
         get() = commonSources.asFileTree
@@ -385,12 +384,15 @@ internal constructor(
     val enabledLanguageFeatures: Set<String>
         @Input get() = languageSettings.enabledLanguageFeatures
 
+    @Deprecated(
+        message = "Replaced with compilerOptions.optIn",
+        replaceWith = ReplaceWith("compilerOptions.optIn")
+    )
     val optInAnnotationsInUse: Set<String>
-        @Input get() = languageSettings.optInAnnotationsInUse
+        @Internal get() = compilerOptions.optIn.get().toSet()
     // endregion.
 
-    // region Kotlin options.
-    override val compilerOptions: KotlinCommonCompilerOptions = compilation.compilerOptions.options
+    // region Kotlin options
 
     override val kotlinOptions: KotlinCommonOptions = object : KotlinCommonOptions {
         override val options: KotlinCommonCompilerOptions
@@ -440,7 +442,6 @@ internal constructor(
         )
 
         return buildKotlinNativeCompileCommonArgs(
-            enableEndorsedLibs,
             languageSettings,
             compilerOptions,
             plugins
@@ -464,41 +465,51 @@ internal constructor(
         return SharedCompilationData(manifestFile, isAllowCommonizer, refinesModule)
     }
 
-    private val libDirectories = project.buildLibDirectories()
+    internal fun buildCompilerArgs(): List<String> = buildKotlinNativeKlibCompilerArgs(
+        outFile = outputFile.get(),
+        optimized = optimized,
+        debuggable = debuggable,
+        target = konanTarget,
+        libraries = libraries.files.filterKlibsPassedToCompiler(),
+        languageSettings = languageSettings,
+        compilerOptions = compilerOptions,
+        compilerPlugins = listOfNotNull(
+            compilerPluginClasspath?.let { CompilerPluginData(it, compilerPluginOptions) },
+            kotlinPluginData?.orNull?.let { CompilerPluginData(it.classpath, it.options) }
+        ),
+        shortModuleName = shortModuleName,
+        friendModule = friendModule,
+        libraryVersion = artifactVersion,
+        sharedCompilationData = createSharedCompilationDataOrNull(),
+        source = sources.asFileTree,
+        commonSourcesTree = commonSourcesTree,
+        k2MultiplatformCompilationData = multiplatformStructure
+    )
 
     @TaskAction
     fun compile() {
         val output = outputFile.get()
         output.parentFile.mkdirs()
 
-        val plugins = listOfNotNull(
-            compilerPluginClasspath?.let { CompilerPluginData(it, compilerPluginOptions) },
-            kotlinPluginData?.orNull?.let { CompilerPluginData(it.classpath, it.options) }
-        )
-
-        val buildArgs = buildKotlinNativeKlibCompilerArgs(
-            output,
-            optimized,
-            debuggable,
-            konanTarget,
-            libraries.filterOutPublishableInteropLibs(libDirectories).files.filterKlibsPassedToCompiler(),
-            languageSettings,
-            enableEndorsedLibs,
-            compilerOptions,
-            plugins,
-            moduleName,
-            shortModuleName,
-            friendModule,
-            artifactVersion,
-            createSharedCompilationDataOrNull(),
-            sources.asFileTree,
-            commonSourcesTree
-        )
+        collectCommonCompilerStats()
+        val buildArgs = buildCompilerArgs()
 
         KotlinNativeCompilerRunner(
             settings = runnerSettings,
             executionContext = KotlinToolRunner.GradleExecutionContext.fromTaskContext(objectFactory, execOperations, logger)
         ).run(buildArgs)
+    }
+
+    private fun collectCommonCompilerStats() {
+        KotlinBuildStatsService.getInstance()?.apply {
+            report(BooleanMetrics.KOTLIN_PROGRESSIVE_MODE, compilerOptions.progressiveMode.get())
+            compilerOptions.apiVersion.orNull?.also { v ->
+                report(StringMetrics.KOTLIN_API_VERSION, v.version)
+            }
+            compilerOptions.languageVersion.orNull?.also { v ->
+                report(StringMetrics.KOTLIN_LANGUAGE_VERSION, v.version)
+            }
+        }
     }
 }
 
@@ -707,7 +718,7 @@ internal class CacheBuilder(
                 return Settings(
                     runnerSettings = KotlinNativeCompilerRunner.Settings.fromProject(project),
                     konanCacheKind = konanCacheKind,
-                    libraries = binary.compilation.compileDependencyFiles.filterOutPublishableInteropLibs(project),
+                    libraries = binary.compilation.compileDependencyFiles,
                     gradleUserHomeDir = project.gradle.gradleUserHomeDir,
                     binary, konanTarget, toolOptions, externalDependenciesArgs
                 )
@@ -1046,13 +1057,11 @@ open class CInteropProcess @Inject internal constructor(params: Params) : Defaul
     @get:PathSensitive(PathSensitivity.RELATIVE)
     val headerFilterDirs: Set<File> get() = settings.includeDirs.headerFilterDirs.files
 
-    private val libDirectories = project.buildLibDirectories()
-
     @get:IgnoreEmptyDirectories
     @get:InputFiles
     @get:NormalizeLineEndings
     @get:PathSensitive(PathSensitivity.RELATIVE)
-    val libraries: FileCollection get() = settings.dependencyFiles.filterOutPublishableInteropLibs(libDirectories)
+    val libraries: FileCollection get() = settings.dependencyFiles
 
     @get:Input
     val extraOpts: List<String> get() = settings.extraOpts

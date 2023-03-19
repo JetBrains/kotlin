@@ -48,6 +48,27 @@ class PhaseConfig(
     override val checkConditions: Boolean = false,
     override val checkStickyConditions: Boolean = false
 ) : PhaseConfigurationService {
+    @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+    constructor(
+        compoundPhase: CompilerPhase<*, *, *>,
+        phases: Map<String, AnyNamedPhase> = compoundPhase.toPhaseMap(),
+        initiallyEnabled: Set<AnyNamedPhase> = phases.values.toSet(),
+        verbose: Set<AnyNamedPhase> = emptySet(),
+        toDumpStateBefore: Set<AnyNamedPhase> = emptySet(),
+        toDumpStateAfter: Set<AnyNamedPhase> = emptySet(),
+        dumpToDirectory: String? = null,
+        dumpOnlyFqName: String? = null,
+        toValidateStateBefore: Set<AnyNamedPhase> = emptySet(),
+        toValidateStateAfter: Set<AnyNamedPhase> = emptySet(),
+        @Suppress("UNUSED_PARAMETER") namesOfElementsExcludedFromDumping: Set<String> = emptySet(),
+        needProfiling: Boolean = false,
+        checkConditions: Boolean = false,
+        checkStickyConditions: Boolean = false,
+    ) : this(
+        compoundPhase, phases, initiallyEnabled, verbose, toDumpStateBefore, toDumpStateAfter, dumpToDirectory, dumpOnlyFqName,
+        toValidateStateBefore, toValidateStateAfter, needProfiling, checkConditions, checkStickyConditions
+    )
+
     fun toBuilder() = PhaseConfigBuilder(compoundPhase).also {
         it.enabled.addAll(initiallyEnabled)
         it.verbose.addAll(verbose)

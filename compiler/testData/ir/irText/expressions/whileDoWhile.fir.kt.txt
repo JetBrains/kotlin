@@ -24,11 +24,11 @@ fun test() {
     }    while (less(arg0 = x, arg1 = 15))
   }
   { // BLOCK
-    do// COMPOSITE {
-    val <unary>: Int = x
-    x = <unary>.inc()
-    <unary>
-    // }    while (less(arg0 = x, arg1 = 20))
+    do{ // BLOCK
+      val <unary>: Int = x
+      x = <unary>.inc()
+      <unary>
+    }    while (less(arg0 = x, arg1 = 20))
   }
 }
 

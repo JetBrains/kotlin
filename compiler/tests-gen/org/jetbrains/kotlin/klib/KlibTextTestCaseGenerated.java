@@ -227,6 +227,11 @@ public class KlibTextTestCaseGenerated extends AbstractKlibTextTestCase {
             runTest("compiler/testData/ir/irText/classes/secondaryConstructors.kt");
         }
 
+        @TestMetadata("smartCastInValInitialization.kt")
+        public void testSmartCastInValInitialization() throws Exception {
+            runTest("compiler/testData/ir/irText/classes/smartCastInValInitialization.kt");
+        }
+
         @TestMetadata("superCalls.kt")
         public void testSuperCalls() throws Exception {
             runTest("compiler/testData/ir/irText/classes/superCalls.kt");
@@ -1880,6 +1885,11 @@ public class KlibTextTestCaseGenerated extends AbstractKlibTextTestCase {
             runTest("compiler/testData/ir/irText/firProblems/AnnotationLoader.kt");
         }
 
+        @TestMetadata("AnonymousAsReturnOfGenericFunction.kt")
+        public void testAnonymousAsReturnOfGenericFunction() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/AnonymousAsReturnOfGenericFunction.kt");
+        }
+
         @TestMetadata("ArrayListOverrides.kt")
         public void testArrayListOverrides() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/ArrayListOverrides.kt");
@@ -1913,6 +1923,11 @@ public class KlibTextTestCaseGenerated extends AbstractKlibTextTestCase {
         @TestMetadata("emptyWhen.kt")
         public void testEmptyWhen() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/emptyWhen.kt");
+        }
+
+        @TestMetadata("ErrorInDefaultValue.kt")
+        public void testErrorInDefaultValue() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/ErrorInDefaultValue.kt");
         }
 
         @TestMetadata("Fir2IrClassifierStorage.kt")

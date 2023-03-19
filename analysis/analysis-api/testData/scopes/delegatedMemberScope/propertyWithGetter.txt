@@ -1,6 +1,6 @@
 KtKotlinPropertySymbol:
   annotationsList: []
-  callableIdIfNonLocal: /I.foo
+  callableIdIfNonLocal: /A.foo
   contextReceivers: []
   getter: null
   hasBackingField: false
@@ -19,12 +19,18 @@ KtKotlinPropertySymbol:
   name: foo
   origin: DELEGATED
   receiverParameter: null
-  returnType: kotlin/Int
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Int
   setter: null
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
-  getDispatchReceiver(): A
+  getDispatchReceiver(): KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: A
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null

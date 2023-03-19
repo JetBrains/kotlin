@@ -27,7 +27,7 @@ internal object IdeCInteropMetadataDependencyClasspathResolver : IdeDependencyRe
         project.locateDependencyTask(sourceSet) ?: return emptySet()
 
         val cinteropFiles = project.createCInteropMetadataDependencyClasspathForIde(sourceSet)
-        return project.resolveCinteropDependencies(cinteropFiles)
+        return project.resolveCInteropDependencies(cinteropFiles)
     }
 
     override fun dependencies(project: Project): Iterable<Any> {

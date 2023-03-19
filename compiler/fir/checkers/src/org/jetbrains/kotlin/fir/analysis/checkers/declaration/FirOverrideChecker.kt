@@ -213,7 +213,7 @@ object FirOverrideChecker : FirClassChecker() {
             return null
         }
 
-        val bounds = overriddenSymbols.map { context.returnTypeCalculator.tryCalculateReturnType(it).coneType.upperBoundIfFlexible() }
+        val bounds = overriddenSymbols.map { context.returnTypeCalculator.tryCalculateReturnType(it).coneType }
 
         for (it in bounds.indices) {
             val overriddenDeclaration = overriddenSymbols[it]

@@ -6,15 +6,18 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.components
 
 import com.intellij.openapi.util.TextRange
+import com.intellij.psi.SmartPsiElementPointer
 import org.jetbrains.kotlin.analysis.api.components.KtReferenceShortener
 import org.jetbrains.kotlin.analysis.api.components.ShortenCommand
 import org.jetbrains.kotlin.analysis.api.components.ShortenOption
 import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.Fe10KtAnalysisSessionComponent
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtUserType
 
 internal class KtFe10ReferenceShortener(
     override val analysisSession: KtFe10AnalysisSession
@@ -33,6 +36,10 @@ internal class KtFe10ReferenceShortener(
         return object : ShortenCommand {
             override val isEmpty: Boolean
                 get() = true
+
+            override fun getTypesToShorten(): List<SmartPsiElementPointer<KtUserType>> = emptyList()
+
+            override fun getQualifiersToShorten(): List<SmartPsiElementPointer<KtDotQualifiedExpression>> = emptyList()
 
             override fun invokeShortening() {}
         }

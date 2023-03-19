@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.IrElementBase
 
 /**
  * A non-leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.declarationBase
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.declarationBase]
  */
 abstract class IrDeclarationBase : IrElementBase(), IrDeclaration

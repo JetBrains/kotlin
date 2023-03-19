@@ -37,7 +37,7 @@ open enum class MyEnum : Enum<MyEnum> {
     val anObject: <no name provided>
       field = { // BLOCK
         local class <no name provided> {
-          private constructor() /* primary */ {
+          constructor() /* primary */ {
             super/*Any*/()
             /* <init>() */
 
@@ -65,8 +65,7 @@ open enum class MyEnum : Enum<MyEnum> {
 
   fun valueOf(value: String): MyEnum /* Synthetic body for ENUM_VALUEOF */
 
-  val entries: EnumEntries
-    get(): EnumEntries /* Synthetic body for ENUM_ENTRIES */
+  val entries: EnumEntries<MyEnum>
+    get(): EnumEntries<MyEnum> /* Synthetic body for ENUM_ENTRIES */
 
 }
-

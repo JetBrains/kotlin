@@ -158,30 +158,34 @@ sealed class FunctionOrigin {
  * Prototype of a LLVM function that is not tied to a specific LLVM module.
  */
 internal class LlvmFunctionProto(
-        val name: String,
-        returnType: LlvmRetType,
-        parameterTypes: List<LlvmParamType> = emptyList(),
-        functionAttributes: List<LlvmFunctionAttribute> = emptyList(),
-        val origin: FunctionOrigin,
-        isVararg: Boolean = false,
-        val independent: Boolean = false,
-) : LlvmFunctionSignature(returnType, parameterTypes, isVararg, functionAttributes) {
-    constructor(
-            name: String,
-            signature: LlvmFunctionSignature,
-            origin: FunctionOrigin,
-            independent: Boolean = false,
-    ) : this(name, signature.returnType, signature.parameterTypes, signature.functionAttributes, origin, signature.isVararg, independent)
-
-    constructor(irFunction: IrFunction, symbolName: String, contextUtils: ContextUtils) : this(
+      val name: String,
+      val signature: LlvmFunctionSignature,
+      val origin: FunctionOrigin?,
+      val linkage: LLVMLinkage,
+      val independent: Boolean = false,
+) {
+    constructor(irFunction: IrFunction, symbolName: String, contextUtils: ContextUtils, linkage: LLVMLinkage) : this(
             name = symbolName,
-            returnType = contextUtils.getLlvmFunctionReturnType(irFunction),
-            parameterTypes = contextUtils.getLlvmFunctionParameterTypes(irFunction),
-            functionAttributes = inferFunctionAttributes(contextUtils, irFunction),
+            signature = LlvmFunctionSignature(irFunction, contextUtils),
             origin = FunctionOrigin.OwnedBy(irFunction),
+            linkage = linkage,
             independent = irFunction.hasAnnotation(RuntimeNames.independent)
     )
+
+    fun createLlvmFunction(context: Context, llvmModule: LLVMModuleRef): LlvmCallable {
+        val function = LLVMAddFunction(llvmModule, name, signature.llvmFunctionType)!!
+        addDefaultLlvmFunctionAttributes(context, function)
+        addTargetCpuAndFeaturesAttributes(context, function)
+        signature.addFunctionAttributes(function)
+        LLVMSetLinkage(function, linkage)
+        return LlvmCallable(function, signature)
+    }
 }
+
+internal fun LlvmFunctionSignature.toProto(name: String, origin: FunctionOrigin?, linkage: LLVMLinkage, independent: Boolean = false) =
+        LlvmFunctionProto(name, this, origin, linkage, independent)
+
+
 
 private fun mustNotInline(context: Context, irFunction: IrFunction): Boolean {
     if (context.shouldContainLocationDebugInfo()) {

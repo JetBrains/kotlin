@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.name.Name
 
 class IrPropertyReferenceImpl(
     override val startOffset: Int,
@@ -31,9 +30,9 @@ class IrPropertyReferenceImpl(
     override var type: IrType,
     override val symbol: IrPropertySymbol,
     typeArgumentsCount: Int,
-    override val field: IrFieldSymbol?,
-    override val getter: IrSimpleFunctionSymbol?,
-    override val setter: IrSimpleFunctionSymbol?,
+    override var field: IrFieldSymbol?,
+    override var getter: IrSimpleFunctionSymbol?,
+    override var setter: IrSimpleFunctionSymbol?,
     override val origin: IrStatementOrigin? = null,
 ) : IrPropertyReference() {
     override val typeArgumentsByIndex: Array<IrType?> = arrayOfNulls(typeArgumentsCount)
@@ -43,7 +42,4 @@ class IrPropertyReferenceImpl(
 
     override val valueArgumentsCount: Int
         get() = 0
-
-    override val referencedName: Name
-        get() = symbol.owner.name
 }

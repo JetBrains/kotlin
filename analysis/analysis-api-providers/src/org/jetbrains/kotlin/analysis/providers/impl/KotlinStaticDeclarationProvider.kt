@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.analysis.providers.impl
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
-import com.intellij.psi.*
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiManager
+import com.intellij.psi.SingleRootFileViewProvider
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubElement
 import com.intellij.util.indexing.FileContent
@@ -75,6 +77,10 @@ public class KotlinStaticDeclarationProvider internal constructor(
         if (facadeFqName.shortNameOrSpecial().isSpecial) return emptyList()
         return findFilesForFacadeByPackage(facadeFqName.parent()) //TODO Not work correctly for classes with JvmPackageName
             .filter { it.javaFileFacadeFqName == facadeFqName }
+    }
+
+    override fun findInternalFilesForFacade(facadeFqName: FqName): Collection<KtFile> {
+        return index.multiFileClassPartMap[facadeFqName].orEmpty().filter { it.virtualFile in scope }
     }
 
     override fun getTopLevelProperties(callableId: CallableId): Collection<KtProperty> =
@@ -240,7 +246,18 @@ public class KotlinStaticDeclarationProviderFactory(
         }
 
         loadBuiltIns().forEach { ktFileStub ->
-            addToFacadeFileMap(ktFileStub.psi)
+            val ktFile: KtFile = ktFileStub.psi
+            addToFacadeFileMap(ktFile)
+
+            val partNames = ktFileStub.facadePartSimpleNames
+            if (partNames != null) {
+                val packageFqName = ktFileStub.getPackageFqName()
+                for (partName in partNames) {
+                    val multiFileClassPartFqName: FqName = packageFqName.child(Name.identifier(partName))
+                    index.multiFileClassPartMap.computeIfAbsent(multiFileClassPartFqName) { mutableSetOf() }.add(ktFile)
+                }
+            }
+
             // top-level functions and properties, built-in classes
             ktFileStub.childrenStubs.forEach(::indexStub)
         }

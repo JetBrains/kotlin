@@ -9,7 +9,10 @@ KtSuccessCallInfo:
             annotationsList: []
             origin: SOURCE
             owningCallableSymbol: KtFunctionSymbol(/test)
-            type: kotlin/Any
+            type: KtUsualClassType:
+              annotationsList: []
+              ownTypeArguments: []
+              type: kotlin/Any
           type = kotlin.Any
         type = kotlin.String
       signature = KtFunctionLikeSignature:

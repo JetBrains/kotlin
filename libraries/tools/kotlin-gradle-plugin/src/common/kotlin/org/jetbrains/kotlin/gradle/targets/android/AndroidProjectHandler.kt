@@ -59,14 +59,6 @@ internal class AndroidProjectHandler(
 
         applyKotlinAndroidSourceSetLayout(kotlinAndroidTarget)
 
-        val androidExtensionCompilerOptions = project.objects.newInstance<KotlinJvmCompilerOptionsDefault>()
-        androidExtensionCompilerOptions.noJdk.value(true).finalizeValueOnRead()
-        @Suppress("DEPRECATION") val kotlinOptions = object : KotlinJvmOptions {
-            override val options: KotlinJvmCompilerOptions
-                get() = androidExtensionCompilerOptions
-        }
-        ext.addExtension(KOTLIN_OPTIONS_DSL_NAME, kotlinOptions)
-
         val plugin = androidPluginIds
             .asSequence()
             .mapNotNull { project.plugins.findPlugin(it) as? BasePlugin }
@@ -84,11 +76,6 @@ internal class AndroidProjectHandler(
             // handlers might break when fired on a compilation that is not yet properly configured (e.g. KT-29964):
             compilationFactory.create(variantName).let { compilation ->
                 setUpDependencyResolution(variant, compilation)
-                project.wireExtensionOptionsToCompilation(
-                    androidExtensionCompilerOptions,
-                    compilation.compilerOptions.options as KotlinJvmCompilerOptions
-                )
-
                 preprocessVariant(variant, compilation, project, kotlinTasksProvider)
 
                 @Suppress("UNCHECKED_CAST")
@@ -113,38 +100,6 @@ internal class AndroidProjectHandler(
         project.includeKotlinToolingMetadataInApk()
 
         addAndroidUnitTestTasksAsDependenciesToAllTest(project)
-    }
-
-    private fun Project.wireExtensionOptionsToCompilation(
-        extensionCompilerOptions: KotlinJvmCompilerOptions,
-        compilationCompilerOptions: KotlinJvmCompilerOptions
-    ) {
-        // CompilerCommonToolOptions
-        compilationCompilerOptions.allWarningsAsErrors.convention(extensionCompilerOptions.allWarningsAsErrors)
-        compilationCompilerOptions.suppressWarnings.convention(extensionCompilerOptions.suppressWarnings)
-        compilationCompilerOptions.verbose.convention(extensionCompilerOptions.verbose)
-        compilationCompilerOptions.freeCompilerArgs.addAll(extensionCompilerOptions.freeCompilerArgs)
-
-        // CompilerCommonOptions
-        compilationCompilerOptions.apiVersion.convention(extensionCompilerOptions.apiVersion)
-        compilationCompilerOptions.languageVersion.convention(extensionCompilerOptions.languageVersion)
-        compilationCompilerOptions.useK2.convention(extensionCompilerOptions.useK2)
-
-        // CompilerJvmOptions
-        compilationCompilerOptions.javaParameters.convention(extensionCompilerOptions.javaParameters)
-        compilationCompilerOptions.noJdk.value(extensionCompilerOptions.noJdk).finalizeValue()
-
-        // Special handling of jvmTarget to correctly override convention set by DefaultJavaToolchainSetter
-        // plus for 'moduleName' which could be overriden either by compilation or by task itself
-        // TODO: fix it once proper extension DSL will be available
-        afterEvaluate {
-            if (extensionCompilerOptions.jvmTarget.isPresent) {
-                compilationCompilerOptions.jvmTarget.set(extensionCompilerOptions.jvmTarget)
-            }
-            if (extensionCompilerOptions.moduleName.isPresent) {
-                compilationCompilerOptions.moduleName.set(extensionCompilerOptions.moduleName)
-            }
-        }
     }
 
     /**

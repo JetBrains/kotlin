@@ -63,13 +63,17 @@ abstract class AbstractOverriddenDeclarationProviderTest : AbstractAnalysisApiBa
     private fun KtAnalysisSession.getPath(symbol: KtCallableSymbol): String = when (symbol) {
         is KtSyntheticJavaPropertySymbol -> symbol.callableIdIfNonLocal?.toString()!!
         else -> {
-            val ktDeclaration = symbol.psi as KtDeclaration
-            ktDeclaration
-                .parentsOfType<KtDeclaration>(withSelf = true)
-                .map { it.name ?: "<no name>" }
-                .toList()
-                .asReversed()
-                .joinToString(separator = ".")
+            val ktDeclaration = symbol.psi as? KtDeclaration
+            if (ktDeclaration == null) {
+                symbol.callableIdIfNonLocal?.toString()!!
+            } else {
+                ktDeclaration
+                    .parentsOfType<KtDeclaration>(withSelf = true)
+                    .map { it.name ?: "<no name>" }
+                    .toList()
+                    .asReversed()
+                    .joinToString(separator = ".")
+            }
         }
     }
 }

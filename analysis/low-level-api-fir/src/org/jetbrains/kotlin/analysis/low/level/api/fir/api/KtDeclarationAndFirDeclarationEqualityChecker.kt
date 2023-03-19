@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.api
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.createEmptySession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
+import org.jetbrains.kotlin.analysis.utils.printer.parentsOfType
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.builder.BodyBuildingMode
@@ -24,18 +25,29 @@ import org.jetbrains.kotlin.fir.types.impl.FirImplicitNullableAnyTypeRef
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtConstructor
+import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtTypeReference
+import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
+import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 // TODO replace with structural type comparison?
 object KtDeclarationAndFirDeclarationEqualityChecker {
     fun representsTheSameDeclaration(psi: KtCallableDeclaration, fir: FirCallableDeclaration): Boolean {
+        if (!modifiersMatch(psi, fir)) return false
         if (!receiverTypeMatch(psi, fir)) return false
         if (!returnTypesMatch(psi, fir)) return false
         if (!typeParametersMatch(psi, fir)) return false
         if (fir is FirFunction && !valueParametersMatch(psi, fir)) return false
+        return true
+    }
+
+    private fun modifiersMatch(psi: KtCallableDeclaration, fir: FirCallableDeclaration): Boolean {
+        // According to asymmetric logic in 'RawFirBuilder'
+        if (psi.parentsOfType<KtDeclaration>().any { it.hasExpectModifier() } != fir.symbol.rawStatus.isExpect) return false
+        if (psi.hasActualModifier() != fir.symbol.rawStatus.isActual) return false
         return true
     }
 
@@ -193,13 +205,21 @@ object KtDeclarationAndFirDeclarationEqualityChecker {
             }
             is ConeTypeVariableType -> lookupTag.name.asString()
             is ConeLookupTagBasedType -> lookupTag.name.asString()
+
+            // NOTE: Flexible types can occur not only as implicit return types,
+            // but also as implicit parameter types, for example in setters with implicit types
             is ConeFlexibleType -> {
-                // Can be present as return type
-                "${lowerBound.renderTypeAsKotlinType()}..${upperBound.renderTypeAsKotlinType()}"
+                // since Kotlin decompiler always "renders" flexible types as their lower bound, we can do the same here
+                lowerBound.renderTypeAsKotlinType()
             }
+
             else -> errorWithFirSpecificEntries("Type should not be present in Kotlin declaration", coneType = this)
         }.replace('/', '.')
-        return rendered + nullability.suffix
+
+        // UNKNOWN nullability occurs only on flexible types
+        val nullabilitySuffix = nullability.takeUnless { it == ConeNullability.UNKNOWN }?.suffix.orEmpty()
+
+        return rendered + nullabilitySuffix
     }
 
     private fun ConeTypeProjection.renderTypeAsKotlinType(): String = when (this) {

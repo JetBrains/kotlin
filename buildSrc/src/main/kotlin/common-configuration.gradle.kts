@@ -162,6 +162,7 @@ fun Project.configureKotlinCompilationOptions() {
         // TODO: fix remaining warnings and remove this property.
         val tasksWithWarnings = listOf(
             ":kotlin-gradle-plugin:compileCommonKotlin",
+            ":kotlin-native:build-tools:compileKotlin"
         )
 
         val projectsWithEnabledContextReceivers: List<String> by rootProject.extra
@@ -280,9 +281,7 @@ fun Project.configureTests() {
     // Aggregate task for build related checks
     tasks.register("checkBuild")
 
-    afterEvaluate {
-        apply(from = "$rootDir/gradle/testRetry.gradle.kts")
-    }
+    configureTestRetriesForTestTasks()
 }
 
 // TODO: migrate remaining modules to the new JVM default scheme.

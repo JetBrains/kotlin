@@ -78,7 +78,6 @@ internal open class GradleCompilerRunner(
      */
     fun runJvmCompilerAsync(
         sourcesToCompile: List<File>,
-        commonSources: List<File>,
         javaPackagePrefix: String?,
         args: K2JVMCompilerArguments,
         environment: GradleCompilerEnvironment,
@@ -86,7 +85,6 @@ internal open class GradleCompilerRunner(
         taskOutputsBackup: TaskOutputsBackup?
     ): WorkQueue? {
         args.freeArgs += sourcesToCompile.map { it.absolutePath }
-        args.commonSources = commonSources.map { it.absolutePath }.toTypedArray()
         args.javaPackagePrefix = javaPackagePrefix
         if (args.jdkHome == null && !args.noJdk) args.jdkHome = jdkHome.absolutePath
         loggerProvider.kotlinInfo("Kotlin compilation 'jdkHome' argument: ${args.jdkHome}")
@@ -99,13 +97,11 @@ internal open class GradleCompilerRunner(
      */
     fun runJsCompilerAsync(
         kotlinSources: List<File>,
-        kotlinCommonSources: List<File>,
         args: K2JSCompilerArguments,
         environment: GradleCompilerEnvironment,
         taskOutputsBackup: TaskOutputsBackup?
     ): WorkQueue? {
         args.freeArgs += kotlinSources.map { it.absolutePath }
-        args.commonSources = kotlinCommonSources.map { it.absolutePath }.toTypedArray()
         return runCompilerAsync(KotlinCompilerClass.JS, args, environment, taskOutputsBackup)
     }
 

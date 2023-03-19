@@ -1,0 +1,3 @@
+FILE: ambigousKinds.kt
+    public final fun incorrect(block: <ERROR TYPE REF: There are multiple function kinds for functional type ref>): R|kotlin/Unit| {
+    }

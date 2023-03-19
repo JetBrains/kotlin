@@ -1,9 +1,11 @@
 fun <F : Any?> test(j: J<F>) {
   j.getFoo() /*~> Unit */
   j.setFoo(x = 1)
-  val <receiver>: J<F> = j
-  val <unary>: Int = <receiver>.getFoo()
-  <receiver>.setFoo(x = <unary>.inc())
-  <unary> /*~> Unit */
+  { // BLOCK
+    val <receiver>: J<F> = j
+    val <unary>: Int = <receiver>.getFoo()
+    <receiver>.setFoo(x = <unary>.inc())
+    <unary>
+  } /*~> Unit */
   j.setFoo(x = j.getFoo().plus(other = 1))
 }

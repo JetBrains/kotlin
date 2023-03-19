@@ -5,10 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.state
 
-import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirGlobalResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
-import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.project.structure.KtBuiltinsModule
 import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
@@ -19,11 +17,9 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 
 internal class LLFirSourceResolveSession(
-    override val globalComponents: LLFirGlobalResolveComponents,
-    override val project: Project,
-    override val useSiteKtModule: KtModule,
-    sessionProvider: LLFirSessionProvider,
-) : LLFirResolvableResolveSession(sessionProvider) {
+    useSiteKtModule: KtModule,
+    useSiteSessionFactory: (KtModule) -> LLFirSession
+) : LLFirResolvableResolveSession(useSiteKtModule, useSiteSessionFactory) {
     override fun getDiagnostics(element: KtElement, filter: DiagnosticCheckerFilter): List<KtPsiDiagnostic> {
         val moduleComponents = getModuleComponentsForElement(element)
         return moduleComponents.diagnosticsCollector.getDiagnosticsFor(element, filter)

@@ -9,10 +9,11 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.JsModuleAndQualifierReference
+import org.jetbrains.kotlin.backend.wasm.utils.getJsFunAnnotation
+import org.jetbrains.kotlin.backend.wasm.utils.getJsPrimitiveType
+import org.jetbrains.kotlin.backend.wasm.utils.getWasmImportDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.backend.wasm.utils.getJsFunAnnotation
-import org.jetbrains.kotlin.backend.wasm.utils.getWasmImportDescriptor
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsModule
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
@@ -30,7 +31,6 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
-import java.lang.StringBuilder
 
 /**
  * Lower complex external declarations to top-level functions:
@@ -201,6 +201,10 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
             return
         }
 
+        if (function.isFakeOverride) {
+            return
+        }
+
         val jsFunctionReference = when {
             jsFun != null -> "($jsFun)"
             function.isTopLevelDeclaration -> referenceTopLevelExternalDeclaration(function)
@@ -336,8 +340,13 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
             "_\$external_class_instanceof",
             resultType = context.irBuiltIns.booleanType,
             jsCode = buildString {
-                append("(x) => x instanceof ")
-                appendExternalClassReference(klass)
+                val jsPrimitiveType = klass.getJsPrimitiveType()
+                if (jsPrimitiveType != null) {
+                    append("(x) => typeof x === '$jsPrimitiveType'")
+                } else {
+                    append("(x) => x instanceof ")
+                    appendExternalClassReference(klass)
+                }
             }
         ).also {
             it.addValueParameter("x", context.irBuiltIns.anyType)
@@ -350,15 +359,7 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
         resultType: IrType,
         jsCode: String,
     ): IrSimpleFunction {
-        val res = context.irFactory.buildFun {
-            name = Name.identifier(originalName.asStringStripSpecialMarkers() + suffix)
-            returnType = resultType
-            isExternal = true
-        }
-        val builder = context.createIrBuilder(res.symbol)
-        res.annotations += builder.irCallConstructor(context.wasmSymbols.jsFunConstructor, typeArguments = emptyList()).also {
-            it.putValueArgument(0, builder.irString(jsCode))
-        }
+        val res = createExternalJsFunction(context, originalName, suffix, resultType, jsCode)
         res.parent = currentFile
         addedDeclarations += res
         return res
@@ -382,6 +383,25 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
         context.jsModuleAndQualifierReferences += qualifieReference
         return qualifieReference.jsVariableName + "." + name
     }
+}
+
+fun createExternalJsFunction(
+    context: WasmBackendContext,
+    originalName: Name,
+    suffix: String,
+    resultType: IrType,
+    jsCode: String,
+): IrSimpleFunction {
+    val res = context.irFactory.buildFun {
+        name = Name.identifier(originalName.asStringStripSpecialMarkers() + suffix)
+        returnType = resultType
+        isExternal = true
+    }
+    val builder = context.createIrBuilder(res.symbol)
+    res.annotations += builder.irCallConstructor(context.wasmSymbols.jsFunConstructor, typeArguments = emptyList()).also {
+        it.putValueArgument(0, builder.irString(jsCode))
+    }
+    return res
 }
 
 /**
@@ -472,6 +492,18 @@ class ComplexExternalDeclarationsUsageLowering(val context: WasmBackendContext) 
 }
 
 private fun numDefaultParametersForExternalFunction(function: IrFunction): Int {
+    if (function is IrSimpleFunction) {
+        // Default parameters can be in overridden external functions
+        val numDefaultParametersInOverrides =
+            function.overriddenSymbols.maxOfOrNull {
+                numDefaultParametersForExternalFunction(it.owner)
+            } ?: 0
+
+        if (numDefaultParametersInOverrides > 0) {
+            return numDefaultParametersInOverrides
+        }
+    }
+
     val firstDefaultParameterIndex: Int? =
         function.valueParameters.firstOrNull { it.defaultValue != null }?.index
 

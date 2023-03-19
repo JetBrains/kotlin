@@ -168,7 +168,7 @@ class FirCallResolver(
         fun chooseMostSpecific(): Set<Candidate> {
             val onSuperReference = (explicitReceiver as? FirQualifiedAccessExpression)?.calleeReference is FirSuperReference
             return conflictResolver.chooseMaximallySpecificCandidates(
-                bestCandidates, discriminateGenerics = true, discriminateAbstracts = onSuperReference
+                bestCandidates, discriminateAbstracts = onSuperReference
             )
         }
 
@@ -367,7 +367,7 @@ class FirCallResolver(
         val reducedCandidates = if (noSuccessfulCandidates) {
             bestCandidates.toSet()
         } else {
-            conflictResolver.chooseMaximallySpecificCandidates(bestCandidates, discriminateGenerics = true)
+            conflictResolver.chooseMaximallySpecificCandidates(bestCandidates)
         }
 
         (callableReferenceAccess.explicitReceiver as? FirResolvedQualifier)?.replaceResolvedToCompanionObject(
@@ -407,18 +407,6 @@ class FirCallResolver(
         }
 
         val chosenCandidate = reducedCandidates.single()
-        if (!resolvedCallableReferenceAtom.hasBeenPostponed &&
-            expectedType is ConeTypeVariableType &&
-            chosenCandidate.symbol.fir.let { func ->
-                func is FirSimpleFunction && func.valueParameters.any { param ->
-                    param.defaultValue != null
-                }
-            }
-        ) {
-            resolvedCallableReferenceAtom.hasBeenPostponed = true
-            return applicability to true
-        }
-
 
         constraintSystemBuilder.runTransaction {
             chosenCandidate.outerConstraintBuilderEffect!!(this)
@@ -586,7 +574,7 @@ class FirCallResolver(
         val reducedCandidates = if (!result.currentApplicability.isSuccess) {
             bestCandidates.toSet()
         } else {
-            conflictResolver.chooseMaximallySpecificCandidates(bestCandidates, discriminateGenerics = true)
+            conflictResolver.chooseMaximallySpecificCandidates(bestCandidates)
         }
 
         val nameReference = createResolvedNamedReference(

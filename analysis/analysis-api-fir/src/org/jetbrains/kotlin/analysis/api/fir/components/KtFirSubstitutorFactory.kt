@@ -30,6 +30,6 @@ internal class KtFirSubstitutorFactory(
         }
 
         val coneSubstitutor = ConeSubstitutorByMap(firSubstitution, analysisSession.useSiteSession)
-        return KtFirMapBackedSubstitutor(coneSubstitutor, analysisSession.firSymbolBuilder, token)
+        return KtFirMapBackedSubstitutor(coneSubstitutor, analysisSession.firSymbolBuilder)
     }
 }

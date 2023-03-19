@@ -141,8 +141,7 @@ open class KotlinPlatformCommonPlugin : KotlinPlatformPluginBase("common") {
 }
 
 private fun Project.registerVariantImplementations() {
-    @Suppress("DEPRECATION_ERROR")
-    val factories = VariantImplementationFactories.get(gradle)
+    val factories = VariantImplementationFactoriesConfigurator.get(gradle)
     factories[IdeaSyncDetector.IdeaSyncDetectorVariantFactory::class] =
         IdeaSyncDetectorG71.IdeaSyncDetectorVariantFactoryG71()
     factories[ConfigurationTimePropertiesAccessor.ConfigurationTimePropertiesAccessorVariantFactory::class] =
@@ -151,4 +150,6 @@ private fun Project.registerVariantImplementations() {
         MppTestReportHelperG71.MppTestReportHelperVariantFactoryG71()
     factories[KotlinTestReportCompatibilityHelper.KotlinTestReportCompatibilityHelperVariantFactory::class] =
         KotlinTestReportCompatibilityHelperG71.KotlinTestReportCompatibilityHelperVariantFactoryG71()
+    factories[ArtifactTypeAttributeAccessor.ArtifactTypeAttributeAccessorVariantFactory::class] =
+        ArtifactTypeAttributeAccessorG71.ArtifactTypeAttributeAccessorVariantFactoryG71()
 }

@@ -170,21 +170,4 @@ class JvmVersionRequirementTest : AbstractVersionRequirementTest() {
             shouldBeSingleRequirement = false
         )
     }
-
-    fun testContextReceivers() {
-        doTest(
-            VersionRequirement.Version(1, 6, 20), DeprecationLevel.ERROR, null, COMPILER_VERSION, null,
-            fqNamesWithRequirements = listOf(
-                "test.ClassWithCR",
-                "test.ClassWithCR.memberPropWithCR",
-                "test.ClassWithCR.memberFunWithCR",
-                "test.topLevelFunWithCR",
-                "test.topLevelPropWithCR"
-            ),
-            customLanguageVersion = LanguageVersion.KOTLIN_1_7,
-            specificFeatures = mapOf(
-                LanguageFeature.ContextReceivers to LanguageFeature.State.ENABLED
-            )
-        )
-    }
 }

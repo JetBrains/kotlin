@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.transformStatement
 import org.jetbrains.kotlin.ir.types.*
@@ -283,11 +282,11 @@ internal class JvmInlineClassLowering(
             if (left.type.isUnsigned() && right.type.isUnsigned() && rightIsUnboxed)
                 return irEquals(left.coerceToUnboxed(), right.coerceToUnboxed())
 
-            val klass = left.type.classOrNull!!.owner
-            val equalsMethod = if (rightIsUnboxed) {
-                this@JvmInlineClassLowering.context.inlineClassReplacements.getSpecializedEqualsMethod(klass, context.irBuiltIns)
+            val leftOperandClass = left.type.classOrNull!!.owner
+            val equalsMethod = if (rightIsUnboxed && leftOperandClass == right.type.classOrNull!!.owner) {
+                this@JvmInlineClassLowering.context.inlineClassReplacements.getSpecializedEqualsMethod(leftOperandClass, context.irBuiltIns)
             } else {
-                val equals = klass.functions.single { it.name.asString() == "equals" && it.overriddenSymbols.isNotEmpty() }
+                val equals = leftOperandClass.functions.single { it.name.asString() == "equals" && it.overriddenSymbols.isNotEmpty() }
                 this@JvmInlineClassLowering.context.inlineClassReplacements.getReplacementFunction(equals)!!
             }
 
@@ -335,11 +334,11 @@ internal class JvmInlineClassLowering(
                 coerceInlineClasses(arg, expression.symbol.owner.dispatchReceiverParameter!!.type, expression.type)
             }
             // Specialize calls to equals when the left argument is a value of inline class type.
-            expression.isSpecializedInlineClassEqEq || expression.isSpecializedInlineClassEquals -> {
+            expression.isEqEqCallOnInlineClass || expression.isEqualsMethodCallOnInlineClass -> {
                 expression.transformChildrenVoid()
                 val leftOp: IrExpression
                 val rightOp: IrExpression
-                if (expression.isSpecializedInlineClassEqEq) {
+                if (expression.isEqEqCallOnInlineClass) {
                     leftOp = expression.getValueArgument(0)!!
                     rightOp = expression.getValueArgument(1)!!
                 } else {
@@ -354,29 +353,29 @@ internal class JvmInlineClassLowering(
                 super.visitCall(expression)
         }
 
-    private val IrCall.isSpecializedInlineClassEquals: Boolean
+    private val IrCall.isEqualsMethodCallOnInlineClass: Boolean
         get() {
-            return isSpecializedInlineClassEqualityCheck { symbol.owner.isEquals() }
+            if (!symbol.owner.isEquals()) return false
+            val receiverClass = dispatchReceiver?.type?.classOrNull?.owner
+            return receiverClass?.canUseSpecializedEqMethod ?: false
         }
 
-    private val IrCall.isSpecializedInlineClassEqEq: Boolean
+    private val IrCall.isEqEqCallOnInlineClass: Boolean
         get() {
             // Note that reference equality (x === y) is not allowed on values of inline class type,
             // so it is enough to check for eqeq.
-            return isSpecializedInlineClassEqualityCheck { symbol == context.irBuiltIns.eqeqSymbol }
+            if (symbol != context.irBuiltIns.eqeqSymbol) return false
+            val leftOperandClass = getValueArgument(0)?.type?.classOrNull?.owner
+            return leftOperandClass?.canUseSpecializedEqMethod ?: false
         }
 
-    private inline fun IrCall.isSpecializedInlineClassEqualityCheck(calleePredicate: (IrSimpleFunctionSymbol) -> Boolean): Boolean {
-
-        if (!calleePredicate(symbol)) return false
-
-        val leftClass = getValueArgument(0)?.type?.classOrNull?.owner?.takeIf { it.isSingleFieldValueClass }
-            ?: return false
-
-        // Before version 1.4, we cannot rely on the Result.equals-impl0 method
-        return (leftClass.fqNameWhenAvailable != StandardNames.RESULT_FQ_NAME) ||
-                context.state.languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_1_4
-    }
+    private val IrClass.canUseSpecializedEqMethod: Boolean
+        get() {
+            if (!isSingleFieldValueClass) return false
+            // Before version 1.4, we cannot rely on the Result.equals-impl0 method
+            return fqNameWhenAvailable != StandardNames.RESULT_FQ_NAME ||
+                    context.state.languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_1_4
+        }
 
     override fun visitGetField(expression: IrGetField): IrExpression {
         val field = expression.symbol.owner

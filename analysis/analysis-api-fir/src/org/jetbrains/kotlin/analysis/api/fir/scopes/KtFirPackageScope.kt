@@ -9,14 +9,14 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.scopes.KtScope
 import org.jetbrains.kotlin.analysis.api.scopes.KtScopeNameFilter
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassifierSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPackageSymbol
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
 import org.jetbrains.kotlin.analysis.providers.createPackageProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionService
@@ -26,17 +26,17 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirPackageMemberScope
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.platform.jvm.isJvm
 
 internal class KtFirPackageScope(
     private val fqName: FqName,
     private val project: Project,
     private val builder: KtSymbolByFirBuilder,
-    override val token: KtLifetimeToken,
     private val searchScope: GlobalSearchScope,
     private val declarationProvider: KotlinDeclarationProvider,
     private val targetPlatform: TargetPlatform,
 ) : KtScope {
+    override val token: KtLifetimeToken get() = builder.token
+
     private val packageProvider = project.createPackageProvider(searchScope)
 
     private val firScope: FirPackageMemberScope by lazy(LazyThreadSafetyMode.PUBLICATION) {
@@ -110,21 +110,8 @@ internal class KtFirPackageScope(
 
     override fun getPackageSymbols(nameFilter: KtScopeNameFilter): Sequence<KtPackageSymbol> = withValidityAssertion {
         sequence {
-            if (targetPlatform.isJvm()) {
-                val javaPackage = JavaPsiFacade.getInstance(project).findPackage(fqName.asString())
-                if (javaPackage != null) {
-                    for (psiPackage in javaPackage.getSubPackages(searchScope)) {
-                        val fqName = FqName(psiPackage.qualifiedName)
-                        if (nameFilter(fqName.shortName())) {
-                            yield(builder.createPackageSymbol(fqName))
-                        }
-                    }
-                }
-            }
-            packageProvider.getKotlinSubPackageFqNames(fqName).forEach {
-                if (nameFilter(it)) {
-                    yield(builder.createPackageSymbol(fqName.child(it)))
-                }
+            packageProvider.getSubPackageFqNames(fqName, targetPlatform, nameFilter).forEach {
+                yield(builder.createPackageSymbol(fqName.child(it)))
             }
         }
     }

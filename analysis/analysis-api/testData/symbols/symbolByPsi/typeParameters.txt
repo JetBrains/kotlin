@@ -5,7 +5,9 @@ KtTypeParameterSymbol:
   origin: SOURCE
   typeParameters: []
   upperBounds: [
-    ERROR_TYPE
+    KtClassErrorType:
+      annotationsList: []
+      type: ERROR_TYPE
   ]
   variance: INVARIANT
   getContainingModule: KtSourceModule "Sources of main"
@@ -20,7 +22,10 @@ KtLocalVariableSymbol:
   name: x
   origin: SOURCE
   receiverParameter: null
-  returnType: kotlin/Int
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Int
   symbolKind: LOCAL
   typeParameters: []
   getContainingModule: KtSourceModule "Sources of main"
@@ -45,7 +50,10 @@ KtFunctionSymbol:
   name: f
   origin: SOURCE
   receiverParameter: null
-  returnType: kotlin/Unit
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []

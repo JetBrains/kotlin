@@ -7,7 +7,10 @@ KtSamConstructorSymbol:
   name: Runnable
   origin: SAM_CONSTRUCTOR
   receiverParameter: null
-  returnType: java/lang/Runnable
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: java/lang/Runnable
   symbolKind: SAM_CONSTRUCTOR
   typeParameters: []
   valueParameters: [
@@ -25,7 +28,15 @@ KtSamConstructorSymbol:
       name: function
       origin: SAM_CONSTRUCTOR
       receiverParameter: null
-      returnType: kotlin/Function0<kotlin/Unit>
+      returnType: KtFunctionalType:
+        annotationsList: []
+        ownTypeArguments: [
+          KtUsualClassType:
+            annotationsList: []
+            ownTypeArguments: []
+            type: kotlin/Unit
+        ]
+        type: kotlin/Function0<kotlin/Unit>
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtSourceModule "Sources of main"

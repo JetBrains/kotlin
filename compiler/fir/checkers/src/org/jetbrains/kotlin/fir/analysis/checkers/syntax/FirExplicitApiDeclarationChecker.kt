@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
 import org.jetbrains.kotlin.fir.declarations.utils.isData
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
-import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.resolve.transformers.publishedApiEffectiveVisibility
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -48,8 +47,8 @@ object FirExplicitApiDeclarationChecker : FirDeclarationSyntaxChecker<FirDeclara
         // Enum entries do not have visibilities
         if (element is FirEnumEntry) return
         if (!element.effectiveVisibility.publicApi && element.publishedApiEffectiveVisibility == null) return
-        val lastDeclaration = context.containingDeclarations.lastOrNull()
-        if ((lastDeclaration as? FirMemberDeclaration)?.effectiveVisibility?.publicApi == false) {
+        val lastContainingDeclaration = context.containingDeclarations.lastOrNull()
+        if ((lastContainingDeclaration as? FirMemberDeclaration)?.effectiveVisibility?.publicApi == false) {
             return
         }
 
@@ -64,7 +63,7 @@ object FirExplicitApiDeclarationChecker : FirDeclarationSyntaxChecker<FirDeclara
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
-        val visibilityModifier = source.getChild(KtNodeTypes.MODIFIER_LIST)?.getChild(KtTokens.VISIBILITY_MODIFIERS)
+        val visibilityModifier = source.getChild(KtNodeTypes.MODIFIER_LIST, depth = 1)?.getChild(KtTokens.VISIBILITY_MODIFIERS)
         if (visibilityModifier != null) return
 
         if (explicitVisibilityIsNotRequired(declaration, context)) return

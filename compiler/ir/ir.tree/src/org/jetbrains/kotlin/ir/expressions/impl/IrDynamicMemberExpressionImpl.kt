@@ -13,6 +13,6 @@ class IrDynamicMemberExpressionImpl(
     override val startOffset: Int,
     override val endOffset: Int,
     override var type: IrType,
-    override val memberName: String,
+    override var memberName: String,
     override var receiver: IrExpression
 ) : IrDynamicMemberExpression()

@@ -24,6 +24,15 @@ object DoNothingBuildMetricsReporter : BuildMetricsReporter {
     override fun addAttribute(attribute: BuildAttribute) {
     }
 
+    override fun addGcMetric(metric: String, value: GcMetric) {
+    }
+
+    override fun startGcMetric(name: String, value: GcMetric) {
+    }
+
+    override fun endGcMetric(name: String, value: GcMetric) {
+    }
+
     override fun getMetrics(): BuildMetrics =
         BuildMetrics(
             BuildTimes(),

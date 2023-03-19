@@ -47,6 +47,12 @@ public class FirIdeNormalAnalysisSourceModuleOverriddenDeclarationProviderTestGe
     }
 
     @Test
+    @TestMetadata("arraylistSubtype.kt")
+    public void testArraylistSubtype() throws Exception {
+        runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/overriddenSymbols/arraylistSubtype.kt");
+    }
+
+    @Test
     @TestMetadata("backingField.kt")
     public void testBackingField() throws Exception {
         runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/overriddenSymbols/backingField.kt");

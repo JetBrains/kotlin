@@ -21,8 +21,9 @@ import org.jetbrains.kotlin.name.Name
 internal open class KtFirDelegatingScope(
     val firScope: FirContainingNamesAwareScope,
     private val builder: KtSymbolByFirBuilder,
-    final override val token: KtLifetimeToken
 ) : KtScope {
+    override val token: KtLifetimeToken get() = builder.token
+
     private val allNamesCached by cached {
         getPossibleCallableNames() + getPossibleClassifierNames()
     }

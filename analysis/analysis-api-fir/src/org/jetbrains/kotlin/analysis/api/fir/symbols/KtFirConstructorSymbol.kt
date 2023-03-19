@@ -7,14 +7,13 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.FirCallableSignature
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KtFirConstructorSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.requireOwnerPointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
@@ -23,19 +22,16 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.CanNotCreateSymbolPoin
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KtType
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.containingClassLookupTag
+import org.jetbrains.kotlin.fir.declarations.utils.hasStableParameterNames
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
-import org.jetbrains.kotlin.fir.resolve.getHasStableParameterNames
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.name.ClassId
 
 internal class KtFirConstructorSymbol(
     override val firSymbol: FirConstructorSymbol,
-    override val firResolveSession: LLFirResolveSession,
-    override val token: KtLifetimeToken,
-    private val builder: KtSymbolByFirBuilder
+    override val analysisSession: KtFirAnalysisSession,
 ) : KtConstructorSymbol(), KtFirSymbol<FirConstructorSymbol> {
     override val psi: PsiElement? by cached { firSymbol.findPsi() }
 
@@ -45,7 +41,7 @@ internal class KtFirConstructorSymbol(
 
     override val hasStableParameterNames: Boolean
         get() = withValidityAssertion {
-            firSymbol.fir.getHasStableParameterNames(firSymbol.moduleData.session)
+            firSymbol.fir.hasStableParameterNames
         }
 
     override val visibility: Visibility get() = withValidityAssertion { firSymbol.visibility }
@@ -53,7 +49,7 @@ internal class KtFirConstructorSymbol(
     override val annotationsList by cached {
         KtFirAnnotationListForDeclaration.create(
             firSymbol,
-            firResolveSession.useSiteFirSession,
+            analysisSession.useSiteSession,
             token,
         )
     }

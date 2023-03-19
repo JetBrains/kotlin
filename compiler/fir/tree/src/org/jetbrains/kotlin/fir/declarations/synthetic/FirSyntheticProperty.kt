@@ -186,7 +186,11 @@ class FirSyntheticProperty(
         notSupported()
     }
 
+    override fun replaceStatus(newStatus: FirDeclarationStatus) {
+        notSupported()
+    }
+
     private fun notSupported(): Nothing {
-        throw AssertionError("Transformation of synthetic property isn't supported")
+        error("Transformation of synthetic property isn't supported")
     }
 }

@@ -1,6 +1,5 @@
 $TESTDATA_DIR$/simple2js.kt
--Xlegacy-deprecated-no-warn
--Xuse-deprecated-legacy-compiler
+-Xforce-deprecated-legacy-compiler-usage
 -output
 $TEMP_DIR$/out.js
 -output-prefix

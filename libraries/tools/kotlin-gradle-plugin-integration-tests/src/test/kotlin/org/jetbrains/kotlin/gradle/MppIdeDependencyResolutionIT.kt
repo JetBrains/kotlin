@@ -11,13 +11,21 @@ import org.jetbrains.kotlin.commonizer.identityString
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinUnresolvedBinaryDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.*
+import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.IdeaKotlinDependencyMatcher
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.assertMatches
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.binaryCoordinates
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.util.kotlinNativeDistributionDependencies
 import org.jetbrains.kotlin.gradle.util.resolveIdeDependencies
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
+import org.junit.AssumptionViolatedException
 import org.junit.jupiter.api.DisplayName
+import java.nio.ByteBuffer
+import java.util.*
+import java.util.zip.CRC32
 import kotlin.test.assertEquals
 import kotlin.test.fail
 
@@ -70,13 +78,13 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
                 /* Find posix library */
                 run {
                     nativeMainDependencies.assertMatches(
-                        binaryCoordinates(Regex("org\\.jetbrains\\.kotlin\\.native:platform.posix:.*")),
-                        binaryCoordinates(Regex("org\\.jetbrains\\.kotlin\\.native:platform.*"))
+                        binaryCoordinates(Regex("org\\.jetbrains\\.kotlin\\.native:posix:.*")),
+                        binaryCoordinates(Regex("org\\.jetbrains\\.kotlin\\.native:.*"))
                     )
 
                     linuxMainDependencies.assertMatches(
-                        binaryCoordinates(Regex("org\\.jetbrains\\.kotlin\\.native:platform.posix:.*")),
-                        binaryCoordinates(Regex("org\\.jetbrains\\.kotlin\\.native:platform.*"))
+                        binaryCoordinates(Regex("org\\.jetbrains\\.kotlin\\.native:posix:.*")),
+                        binaryCoordinates(Regex("org\\.jetbrains\\.kotlin\\.native:.*"))
                     )
                 }
             }
@@ -85,11 +93,6 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
 
     @GradleTest
     fun testCinterops(gradleVersion: GradleVersion) {
-        fun Iterable<IdeaKotlinDependency>.cinteropDependencies() =
-            this.filterIsInstance<IdeaKotlinBinaryDependency>().filter {
-                it.klibExtra?.isInterop == true && !it.isNativeStdlib && !it.isNativeDistribution
-            }
-
         project(projectName = "cinteropImport", gradleVersion = gradleVersion) {
             build(":dep-with-cinterop:publishAllPublicationsToBuildRepository")
 
@@ -184,4 +187,79 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
             }
         }
     }
+
+    @GradleTest
+    fun `test cinterops - are stored in root gradle folder`(gradleVersion: GradleVersion) {
+        project(projectName = "cinteropImport", gradleVersion = gradleVersion) {
+            resolveIdeDependencies("dep-with-cinterop") { dependencies ->
+
+                /* Check behaviour of platform cinterops on linuxX64Main */
+                val cinterops = dependencies["linuxX64Main"].filterIsInstance<IdeaKotlinResolvedBinaryDependency>()
+                    .filter { !it.isNativeDistribution && it.klibExtra?.isInterop == true }
+                    .ifEmpty { fail("Expected at least one cinterop on linuxX64Main") }
+
+                cinterops.forEach { cinterop ->
+                    if (cinterop.classpath.isEmpty()) fail("Missing classpath for $cinterop")
+                    cinterop.classpath.forEach { cinteropFile ->
+                        /* Check file was copied into root .gradle folder */
+                        val expectedParent = projectPath.toFile().resolve(".gradle/kotlin/kotlinCInteropLibraries").canonicalFile
+                        assertEquals(expectedParent, cinteropFile.parentFile.canonicalFile)
+
+                        /* Check crc in file name */
+                        val crc = CRC32()
+                        crc.update(cinteropFile.readBytes())
+                        val crcValue = crc.value.toInt()
+                        val crcString = Base64.getUrlEncoder().withoutPadding().encodeToString(
+                            ByteBuffer.allocate(4).putInt(crcValue).array()
+                        )
+
+                        if (!cinteropFile.name.endsWith("-$crcString.klib")) {
+                            fail("Expected crc $crcString to be part of cinterop file name. Found ${cinteropFile.name}")
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @GradleTest
+    fun `test cinterops - with failing cinterop process`(gradleVersion: GradleVersion) {
+        project(
+            projectName = "cinterop-withFailingCInteropProcess", gradleVersion = gradleVersion,
+            /* Adding idea.sync.active to ensure lenient cinterop generation */
+            buildOptions = defaultBuildOptions.copy(freeArgs = listOf("-Didea.sync.active=true"))
+        ) {
+            resolveIdeDependencies { dependencies ->
+                dependencies["commonMain"].assertMatches(
+                    kotlinNativeDistributionDependencies,
+                    binaryCoordinates(Regex("com.example:cinterop-.*-dummy:.*:linux_x64")),
+                    IdeaKotlinDependencyMatcher("Unresolved 'failing' cinterop") { dependency ->
+                        dependency is IdeaKotlinUnresolvedBinaryDependency && dependency.cause.orEmpty().contains(
+                            "cinterop-withFailingCInteropProcess-cinterop-failing.klib"
+                        )
+                    }
+                )
+            }
+        }
+    }
+
+    @GradleTest
+    fun `test cinterops - commonized interop name should include targets unsupported on host`(gradleVersion: GradleVersion) {
+        if (HostManager.hostIsMac) {
+            throw AssumptionViolatedException("Host shouldn't support ios target")
+        }
+
+        project("cinterop-ios", gradleVersion) {
+            resolveIdeDependencies { dependencies ->
+                dependencies["commonMain"].cinteropDependencies().assertMatches(
+                    binaryCoordinates(Regex("""a:cinterop-ios-cinterop-myinterop.*\(ios_x64, linux_x64\)"""))
+                )
+            }
+        }
+    }
+
+    private fun Iterable<IdeaKotlinDependency>.cinteropDependencies() =
+        this.filterIsInstance<IdeaKotlinBinaryDependency>().filter {
+            it.klibExtra?.isInterop == true && !it.isNativeStdlib && !it.isNativeDistribution
+        }
 }

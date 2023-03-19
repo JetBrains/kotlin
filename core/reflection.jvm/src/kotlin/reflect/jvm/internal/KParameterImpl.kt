@@ -18,8 +18,10 @@ package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.declaresOrInheritsDefaultValue
+import java.lang.reflect.Type
 import kotlin.reflect.KParameter
 import kotlin.reflect.KType
+import kotlin.reflect.jvm.internal.calls.ValueClassAwareCaller
 
 internal class KParameterImpl(
     val callable: KCallableImpl<*>,
@@ -39,6 +41,27 @@ internal class KParameterImpl(
             return if (name.isSpecial) null else name.asString()
         }
 
+
+    private fun compoundType(vararg types: Type): Type = when (types.size) {
+        0 -> throw KotlinReflectionNotSupportedError("Expected at least 1 type for compound type")
+        1 -> types.single()
+        else -> CompoundTypeImpl(types)
+    }
+
+    private class CompoundTypeImpl(val types: Array<out Type>) : Type {
+        private val hashCode = types.contentHashCode()
+        override fun getTypeName(): String {
+            return types.joinToString(", ", "[", "]")
+        }
+
+        override fun equals(other: Any?): Boolean =
+            other is CompoundTypeImpl && this.types contentEquals other.types
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString(): String = typeName
+    }
+
     override val type: KType
         get() = KTypeImpl(descriptor.type) {
             val descriptor = descriptor
@@ -53,7 +76,16 @@ internal class KParameterImpl(
                 (callable.descriptor.containingDeclaration as ClassDescriptor).toJavaClass()
                     ?: throw KotlinReflectionInternalError("Cannot determine receiver Java type of inherited declaration: $descriptor")
             } else {
-                callable.caller.parameterTypes[index]
+                when (val caller = callable.caller) {
+                    is ValueClassAwareCaller -> {
+                        val slice = caller.getRealSlicesOfParameters(index)
+                        val parameterTypes = caller.parameterTypes.slice(slice)
+                        compoundType(*parameterTypes.toTypedArray())
+                    }
+                    is ValueClassAwareCaller.MultiFieldValueClassPrimaryConstructorCaller ->
+                        compoundType(*caller.originalParametersGroups[index].toTypedArray())
+                    else -> caller.parameterTypes[index]
+                }
             }
         }
 

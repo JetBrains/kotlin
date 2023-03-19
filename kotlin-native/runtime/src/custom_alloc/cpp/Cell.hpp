@@ -27,7 +27,7 @@ public:
     Cell* Next() noexcept;
 
 private:
-    friend class MediumPage;
+    friend class NextFitPage;
 
     uint32_t isAllocated_;
     uint32_t size_;

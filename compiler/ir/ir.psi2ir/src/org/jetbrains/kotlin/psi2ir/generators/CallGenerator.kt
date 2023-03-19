@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.psi2ir.generators
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
-import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.types.IrDynamicType
@@ -38,7 +37,7 @@ import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.descriptorUtil.classValueType
 import org.jetbrains.kotlin.types.KotlinType
 
-class CallGenerator(statementGenerator: StatementGenerator) : StatementGeneratorExtension(statementGenerator) {
+internal class CallGenerator(statementGenerator: StatementGenerator) : StatementGeneratorExtension(statementGenerator) {
     fun generateCall(startOffset: Int, endOffset: Int, call: CallBuilder, origin: IrStatementOrigin? = null): IrExpression {
         val descriptor = call.descriptor
 
@@ -454,23 +453,14 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
     }
 }
 
-fun IrExpression.isUnchanging() =
-    this is IrFunctionExpression ||
-            (this is IrCallableReference<*> && dispatchReceiver == null && extensionReceiver == null) ||
-            this is IrClassReference ||
-            this is IrConst<*> ||
-            (this is IrGetValue && !symbol.owner.let { it is IrVariable && it.isVar })
-
-fun IrExpression.hasNoSideEffects() = isUnchanging() || this is IrGetValue
-
-fun CallGenerator.generateCall(
+internal fun CallGenerator.generateCall(
     ktElement: KtElement,
     call: CallBuilder,
     origin: IrStatementOrigin? = null,
     startOffset: Int = ktElement.startOffsetSkippingComments,
     endOffset: Int = ktElement.endOffset,
-) =
+): IrExpression =
     generateCall(startOffset, endOffset, call, origin)
 
-fun CallGenerator.generateCall(irExpression: IrExpression, call: CallBuilder, origin: IrStatementOrigin? = null) =
+internal fun CallGenerator.generateCall(irExpression: IrExpression, call: CallBuilder, origin: IrStatementOrigin? = null): IrExpression =
     generateCall(irExpression.startOffset, irExpression.endOffset, call, origin)

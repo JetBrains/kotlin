@@ -23,7 +23,7 @@ internal class KtFirScopeSubstitution(
     @OptIn(KtAnalysisApiInternals::class)
     override fun getDeclarationScope(scope: KtTypeScope): KtScope {
         return when (scope) {
-            is KtFirDelegatingTypeScope -> KtFirDelegatingScope(scope.firScope, analysisSession.firSymbolBuilder, token)
+            is KtFirDelegatingTypeScope -> KtFirDelegatingScope(scope.firScope, analysisSession.firSymbolBuilder)
             is KtCompositeTypeScope -> KtCompositeScope(scope.subScopes.map(::getDeclarationScope), token)
             else -> unexpectedElementError<KtTypeScope>(scope)
         }

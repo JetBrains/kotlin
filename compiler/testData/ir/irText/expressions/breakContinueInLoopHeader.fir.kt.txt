@@ -65,14 +65,16 @@ fun test4(ss: List<String>?) {
 fun test5() {
   var i: Int = 0
   Outer@ while (true) { // BLOCK
-    i = i.inc()
-    i /*~> Unit */
+    { // BLOCK
+      i = i.inc()
+      i
+    } /*~> Unit */
     var j: Int = 0
     { // BLOCK
-      Inner@ do// COMPOSITE {
-      j = j.inc()
-      j
-      // }      while (when {
+      Inner@ do{ // BLOCK
+        j = j.inc()
+        j
+      }      while (when {
         greaterOrEqual(arg0 = j, arg1 = 3) -> false
         else -> break@Inner
       })

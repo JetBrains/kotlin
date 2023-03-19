@@ -5,15 +5,15 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics
 
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.collectors.CheckerRunningDiagnosticCollectorVisitor
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
+import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContextForProvider
+import org.jetbrains.kotlin.fir.analysis.collectors.CheckerRunningDiagnosticCollectorVisitor
 import org.jetbrains.kotlin.fir.analysis.collectors.DiagnosticCollectorComponents
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 
 internal open class LLFirDiagnosticVisitor(
-    context: CheckerContext,
+    context: CheckerContextForProvider,
     components: DiagnosticCollectorComponents,
 ) : CheckerRunningDiagnosticCollectorVisitor(context, components) {
     private val beforeElementDiagnosticCollectionHandler = context.session.beforeElementDiagnosticCollectionHandler

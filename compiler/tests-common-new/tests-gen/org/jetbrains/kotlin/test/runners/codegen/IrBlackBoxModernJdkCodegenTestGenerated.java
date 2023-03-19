@@ -341,9 +341,21 @@ public class IrBlackBoxModernJdkCodegenTestGenerated extends AbstractIrBlackBoxC
             }
 
             @Test
+            @TestMetadata("binaryRecord.kt")
+            public void testBinaryRecord() throws Exception {
+                runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/records/binaryRecord.kt");
+            }
+
+            @Test
             @TestMetadata("bytecodeShapeForJava.kt")
             public void testBytecodeShapeForJava() throws Exception {
                 runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/records/bytecodeShapeForJava.kt");
+            }
+
+            @Test
+            @TestMetadata("callableReferenceToGenericRecord.kt")
+            public void testCallableReferenceToGenericRecord() throws Exception {
+                runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/records/callableReferenceToGenericRecord.kt");
             }
 
             @Test
@@ -758,6 +770,12 @@ public class IrBlackBoxModernJdkCodegenTestGenerated extends AbstractIrBlackBoxC
             @TestMetadata("javaSealedInterface.kt")
             public void testJavaSealedInterface() throws Exception {
                 runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/sealed/javaSealedInterface.kt");
+            }
+
+            @Test
+            @TestMetadata("kotlinExhaustiveWhenOnJavaSealedClass.kt")
+            public void testKotlinExhaustiveWhenOnJavaSealedClass() throws Exception {
+                runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/sealed/kotlinExhaustiveWhenOnJavaSealedClass.kt");
             }
 
             @Test

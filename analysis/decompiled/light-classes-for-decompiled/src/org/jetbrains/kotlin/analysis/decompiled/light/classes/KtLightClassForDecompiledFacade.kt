@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -23,8 +23,6 @@ internal class KtLightClassForDecompiledFacade(
     override val files: Collection<KtFile>,
 ) : KtLightClassForDecompiledDeclaration(clsDelegate, clsParent, file, kotlinOrigin), KtLightClassForFacade {
     override fun getName(): String = super<KtLightClassForFacade>.getName()
-
-    override val facadeClassFqName: FqName = file.javaFileFacadeFqName
-
+    override val facadeClassFqName: FqName get() = file.javaFileFacadeFqName
     override val originKind: LightClassOriginKind get() = LightClassOriginKind.BINARY
 }

@@ -1,3 +1,5 @@
+// IGNORE K2
+
 class A<T> {
     fun <T> a(t: T) {}
 

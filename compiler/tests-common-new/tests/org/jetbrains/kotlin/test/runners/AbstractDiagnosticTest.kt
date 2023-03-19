@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirective
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.EXPLICIT_API_MODE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.OPT_IN
+import org.jetbrains.kotlin.test.directives.MultiplatformDiagnosticsDirectives
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFailingTestSuppressor
 import org.jetbrains.kotlin.test.frontend.classic.handlers.*
 import org.jetbrains.kotlin.test.model.DependencyKind
@@ -124,6 +125,12 @@ abstract class AbstractDiagnosticTest : AbstractKotlinCompilerTest() {
         forTestsMatching("compiler/testData/diagnostics/tests/multiplatform/*") {
             defaultDirectives {
                 LANGUAGE with "+MultiPlatformProjects"
+            }
+        }
+
+        forTestsMatching("compiler/testData/diagnostics/tests/multiplatform/hmpp/multiplatformCompositeAnalysis/*") {
+            defaultDirectives {
+                +MultiplatformDiagnosticsDirectives.ENABLE_MULTIPLATFORM_COMPOSITE_ANALYSIS_MODE
             }
         }
 

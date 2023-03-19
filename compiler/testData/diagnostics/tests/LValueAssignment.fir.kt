@@ -106,7 +106,7 @@ class Test() {
 
     fun testIncompleteSyntax() {
         val s = "s"
-        <!UNRESOLVED_REFERENCE!>++<!>s.<!SYNTAX!><!>
+        <!UNRESOLVED_REFERENCE!>++<!><!VARIABLE_EXPECTED!>s<!>.<!SYNTAX!><!>
     }
 
     fun testVariables() {

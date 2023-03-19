@@ -105,7 +105,8 @@ internal class FirInvokeResolveTowerExtension(
             towerDataElementsForName = towerDataElementsForName,
             invokeBuiltinExtensionMode = true
         ) {
-            it.runResolverForNoReceiver(invokeReceiverVariableWithNoReceiverInfo)
+            // Synthetic properties can never have an extension function type
+            it.runResolverForNoReceiver(invokeReceiverVariableWithNoReceiverInfo, skipSynthetics = true)
         }
     }
 

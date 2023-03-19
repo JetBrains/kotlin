@@ -64,5 +64,5 @@ class JavaSymbolProvider(
     override fun getTopLevelPropertySymbolsTo(destination: MutableList<FirPropertySymbol>, packageFqName: FqName, name: Name) {}
 }
 
-val FirSession.javaSymbolProvider: JavaSymbolProvider by FirSession.sessionComponentAccessor()
+val FirSession.javaSymbolProvider: JavaSymbolProvider? by FirSession.nullableSessionComponentAccessor()
 

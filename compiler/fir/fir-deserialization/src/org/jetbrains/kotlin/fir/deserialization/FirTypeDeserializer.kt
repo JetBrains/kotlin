@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.deserialization
 
-import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
+import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.computeTypeAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -38,13 +37,13 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.shouldIjPlatformExceptionBeRethrown
 
 class FirTypeDeserializer(
-    val moduleData: FirModuleData,
-    val nameResolver: NameResolver,
-    val typeTable: TypeTable,
-    val annotationDeserializer: AbstractAnnotationDeserializer,
+    private val moduleData: FirModuleData,
+    private val nameResolver: NameResolver,
+    private val typeTable: TypeTable,
+    private val annotationDeserializer: AbstractAnnotationDeserializer,
     typeParameterProtos: List<ProtoBuf.TypeParameter>,
-    val parent: FirTypeDeserializer?,
-    val containingSymbol: FirBasedSymbol<*>?
+    private val parent: FirTypeDeserializer?,
+    private val containingSymbol: FirBasedSymbol<*>?
 ) {
     private val typeParameterDescriptors: Map<Int, FirTypeParameterSymbol> = if (typeParameterProtos.isNotEmpty()) {
         LinkedHashMap<Int, FirTypeParameterSymbol>()
@@ -101,7 +100,7 @@ class FirTypeDeserializer(
             // We can't just load local types as is, because later we will get an exception
             // while trying to get corresponding FIR class
             val id = nameResolver.getClassId(fqNameIndex).takeIf { !it.isLocal } ?: StandardClassIds.Any
-            return ConeClassLikeLookupTagImpl(id)
+            return id.toLookupTag()
         } catch (e: Throwable) {
             if (shouldIjPlatformExceptionBeRethrown(e)) throw e
             throw RuntimeException("Looking up for ${nameResolver.getClassId(fqNameIndex)}", e)
@@ -203,9 +202,9 @@ class FirTypeDeserializer(
         val suspendReturnType = continuationType.typeArguments.single() as ConeKotlinTypeProjection
         val valueParameters = arguments.dropLast(2)
 
-        val kind = FunctionClassKind.SuspendFunction
+        val kind = FunctionTypeKind.SuspendFunction
         return ConeClassLikeTypeImpl(
-            ConeClassLikeLookupTagImpl(ClassId(kind.packageFqName, kind.numberedClassName(valueParameters.size))),
+            ClassId(kind.packageFqName, kind.numberedClassName(valueParameters.size)).toLookupTag(),
             (valueParameters + suspendReturnType).toTypedArray(),
             isNullable, attributes
         )
@@ -223,9 +222,9 @@ class FirTypeDeserializer(
                 1 -> {
                     val arity = arguments.size - 1
                     if (arity >= 0) {
-                        val kind = FunctionClassKind.SuspendFunction
+                        val kind = FunctionTypeKind.SuspendFunction
                         ConeClassLikeTypeImpl(
-                            ConeClassLikeLookupTagImpl(ClassId(kind.packageFqName, kind.numberedClassName(arity))),
+                            ClassId(kind.packageFqName, kind.numberedClassName(arity)).toLookupTag(),
                             arguments,
                             isNullable,
                             attributes

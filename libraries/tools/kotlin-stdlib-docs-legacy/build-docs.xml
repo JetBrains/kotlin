@@ -1,0 +1,438 @@
+<project name="Kotlin standard library" default="v2" basedir=".">
+
+  <property name="base" location="${basedir}"/>
+  <property name="build" location="${base}/build"/>
+
+  <!-- Generates the standard library documentation using Dokka. -->
+
+  <property name="docs.output" location="${build}/doc"/>
+  <property name="dokka.format" value="kotlin-website-html"/>
+
+  <property name="github_revision" value="IT_IS_SET_FROM_GRADLE0"/>
+
+  <property name="kotlin_root" location="IT_IS_SET_FROM_GRADLE1"/>
+  <property name="kotlin_libs" location="IS_IS_SET_FROM_GRADLE2"/>
+
+  <property name="kotlin_builtins_dir" location="${kotlin_root}/core/builtins"/>
+  <property name="kotlin_stdlib_dir" location="${kotlin_root}/libraries/stdlib"/>
+  <property name="kotlin_test_dir" location="${kotlin_root}/libraries/kotlin.test"/>
+
+  <property name="kotlin_native_root" location="IT_IS_SET_FROM_GRADLE3"/>
+  <property name="kotlin_native_libs" location="IT_IS_SET_FROM_GRADLE4"/>
+
+  <property name="language.version" value="1.5"/>
+
+  <typedef resource="dokka-antlib.xml">
+    <classpath>
+      <fileset dir="${base}/build/dokka-home" erroronmissingdir="true">
+        <include name="*.jar"/>
+      </fileset>
+    </classpath>
+  </typedef>
+
+  <path id="stdlib-common.classpath">
+    <fileset dir="${kotlin_libs}/kotlin-stdlib-common" includes="*.jar"/>
+  </path>
+
+  <path id="stdlib-jvm.classpath">
+    <fileset dir="${kotlin_libs}/kotlin-stdlib-jdk8" includes="*.jar"/>
+  </path>
+
+  <path id="stdlib-js.classpath">
+    <fileset dir="${kotlin_libs}/kotlin-stdlib-js" includes="*.jar"/>
+  </path>
+
+  <path id="stdlib-native.classpath">
+    <pathelement location="${kotlin_native_libs}/klib/common/stdlib"/>
+  </path>
+
+  <path id="kotlin-test-jvm.classpath">
+    <fileset dir="${kotlin_libs}/kotlin-test" includes="*.jar"/>
+    <!--<pathelement location="${basedir}/lib/junit-4.11.jar"/>-->
+  </path>
+
+  <path id="kotlin-test-js.classpath">
+    <fileset dir="${kotlin_libs}/kotlin-test-js" includes="*.jar"/>
+    <!--<pathelement location="${basedir}/lib/junit-4.11.jar"/>-->
+  </path>
+
+  <path id="kotlin-test-common.classpath">
+    <fileset dir="${kotlin_libs}/kotlin-test-common" includes="*.jar"/>
+    <!--<pathelement location="${basedir}/lib/junit-4.11.jar"/>-->
+  </path>
+
+  <path id="kotlin-test-junit.classpath">
+    <fileset dir="${kotlin_libs}/kotlin-test-junit" includes="*.jar"/>
+    <!--<pathelement location="${basedir}/lib/junit-4.11.jar"/>-->
+  </path>
+
+  <path id="kotlin-test-junit5.classpath">
+    <fileset dir="${kotlin_libs}/kotlin-test-junit5" includes="*.jar"/>
+    <!--<pathelement location="${basedir}/lib/junit-4.11.jar"/>-->
+  </path>
+
+  <path id="kotlin-test-testng.classpath">
+    <fileset dir="${kotlin_libs}/kotlin-test-testng" includes="*.jar"/>
+    <!--<pathelement location="${basedir}/lib/junit-4.11.jar"/>-->
+  </path>
+
+  <property name="stdlib-samples" location="${kotlin_stdlib_dir}/samples/test"/>
+
+  <!-- TODO: one file for all modules? -->
+  <property name="stdlib-include-md" location="${kotlin_stdlib_dir}/src/Module.md"/>
+
+  <property name="kotlin-test-include-md" location="${kotlin_test_dir}/Module.md"/>
+
+  <target name="v2">
+    <delete dir="${docs.output}/kotlin-stdlib" failonerror="false"/>
+
+    <dokka outputDir="${docs.output}"
+           format="${dokka.format}"
+           generateindexpages="true">
+
+
+      <passconfig
+              samples="${stdlib-samples}"
+              moduleName="kotlin-stdlib"
+              skipDeprecated="false"
+              jdkversion="8"
+              analysisplatform="common"
+              include="${stdlib-include-md}"
+              noStdlibLink="true"
+              nojdklink="true"
+              classpathref="stdlib-common.classpath"
+              languageVersion="${language.version}"
+              includeRootPackage="false"
+              sincekotlin="1.0">
+
+        <sourceroot path="${kotlin_builtins_dir}/native"/>
+        <sourceroot path="${kotlin_builtins_dir}/src"/>
+
+        <sourceroot path="${kotlin_stdlib_dir}/common/src"/>
+        <sourceroot path="${kotlin_stdlib_dir}/src"/>
+        <sourceroot path="${kotlin_stdlib_dir}/unsigned/src"/>
+
+        <sourcelink path="${kotlin_root}" url="https://github.com/JetBrains/kotlin/tree/${github_revision}" linesuffix="#L"/>
+
+        <target value="Common"/>
+        <target value="JVM"/>
+        <target value="JRE6"/>
+        <target value="JS"/>
+        <target value="Native"/>
+
+      </passconfig>
+
+      <passconfig samples="${stdlib-samples}"
+                  moduleName="kotlin-stdlib"
+                  skipDeprecated="false"
+                  jdkversion="8"
+                  analysisPlatform="jvm"
+                  include="${stdlib-include-md}"
+                  noStdlibLink="true"
+                  classpathref="stdlib-jvm.classpath"
+                  languageVersion="${language.version}"
+                  includeRootPackage="false">
+
+        <sourceroot path="${kotlin_builtins_dir}/native"/>
+        <sourceroot path="${kotlin_builtins_dir}/src"/>
+        <sourceroot path="${kotlin_stdlib_dir}/jvm/runtime"/>
+        <sourceroot path="${kotlin_stdlib_dir}/jvm/src"/>
+
+        <sourceroot path="${kotlin_root}/core/reflection.jvm/src"/>
+
+        <packageoptions prefix="kotlin.reflect.jvm.internal" suppress="true"/>
+        <packageoptions prefix="kotlin.jvm.functions" suppress="true"/>
+        <packageoptions prefix="kotlin.jvm.internal" suppress="true"/>
+        <packageoptions prefix="kotlin.coroutines.jvm.internal" suppress="true"/>
+        <packageoptions prefix="kotlin.coroutines.experimental.migration" suppress="true"/>
+
+        <sourcelink path="${kotlin_root}" url="https://github.com/JetBrains/kotlin/tree/${github_revision}" linesuffix="#L"/>
+
+        <target value="JVM"/>
+        <target value="JRE6"/>
+      </passconfig>
+
+      <passconfig samples="${stdlib-samples}"
+                  moduleName="kotlin-stdlib"
+                  skipDeprecated="false"
+                  jdkversion="8"
+                  analysisPlatform="jvm"
+                  include="${stdlib-include-md}"
+                  noStdlibLink="true"
+                  classpathref="stdlib-jvm.classpath"
+                  languageVersion="${language.version}"
+                  includeRootPackage="false">
+
+        <sourceroot path="${kotlin_stdlib_dir}/jdk7/src"/>
+
+        <packageoptions prefix="kotlin.reflect.jvm.internal" suppress="true"/>
+        <packageoptions prefix="kotlin.jvm.internal" suppress="true"/>
+        <packageoptions prefix="kotlin.coroutines.jvm.internal" suppress="true"/>
+        <packageoptions prefix="kotlin.coroutines.experimental.migration" suppress="true"/>
+
+        <sourcelink path="${kotlin_root}" url="https://github.com/JetBrains/kotlin/tree/${github_revision}" linesuffix="#L"/>
+
+        <target value="JVM"/>
+        <target value="JRE7"/>
+      </passconfig>
+
+
+      <passconfig samples="${stdlib-samples}"
+                  moduleName="kotlin-stdlib"
+                  skipDeprecated="false"
+                  jdkversion="8"
+                  analysisPlatform="jvm"
+                  include="${stdlib-include-md}"
+                  noStdlibLink="true"
+                  classpathref="stdlib-jvm.classpath"
+                  languageVersion="${language.version}"
+                  includeRootPackage="false">
+
+        <sourceroot path="${kotlin_stdlib_dir}/jdk8/src"/>
+
+        <packageoptions prefix="kotlin.reflect.jvm.internal" suppress="true"/>
+        <packageoptions prefix="kotlin.jvm.internal" suppress="true"/>
+        <packageoptions prefix="kotlin.coroutines.jvm.internal" suppress="true"/>
+        <packageoptions prefix="kotlin.coroutines.experimental.migration" suppress="true"/>
+
+        <sourcelink path="${kotlin_root}" url="https://github.com/JetBrains/kotlin/tree/${github_revision}" linesuffix="#L"/>
+
+        <target value="JVM"/>
+        <target value="JRE8"/>
+      </passconfig>
+
+      <!--include="${stdlib-include-md}"-->
+      <passconfig samples="${stdlib-samples}"
+                  moduleName="kotlin-stdlib"
+                  skipDeprecated="false"
+                  jdkversion="8"
+                  analysisPlatform="js"
+                  include="${stdlib-include-md}"
+                  noStdlibLink="true"
+                  nojdklink="true"
+                  classpathref="stdlib-js.classpath"
+                  languageVersion="${language.version}"
+                  includeRootPackage="false"
+                  sincekotlin="1.1">
+
+        <sourceroot path="${kotlin_stdlib_dir}/js/src"/>
+        <sourceroot path="${kotlin_stdlib_dir}/js-v1/src"/>
+
+        <sourceroot path="${kotlin_builtins_dir}/native/kotlin/Comparable.kt"/>
+        <sourceroot path="${kotlin_builtins_dir}/native/kotlin/Enum.kt"/>
+
+        <sourceroot path="${kotlin_builtins_dir}/native/kotlin/Iterator.kt"/>
+        <sourceroot path="${kotlin_builtins_dir}/native/kotlin/Collections.kt"/>
+        <sourceroot path="${kotlin_builtins_dir}/native/kotlin/CharSequence.kt"/>
+        <sourceroot path="${kotlin_builtins_dir}/native/kotlin/Annotation.kt"/>
+
+        <sourceroot path="${kotlin_builtins_dir}/src/kotlin/annotation/Annotations.kt"/>
+        <sourceroot path="${kotlin_builtins_dir}/src/kotlin/Function.kt"/>
+        <sourceroot path="${kotlin_builtins_dir}/src/kotlin/internal/InternalAnnotations.kt"/>
+        <sourceroot path="${kotlin_builtins_dir}/src/kotlin/Unit.kt"/>
+
+        <!-- TODO Docs? -->
+        <packageoptions prefix="org.w3c" reportUndocumented="false"/>
+        <packageoptions prefix="org.khronos" reportUndocumented="false"/>
+        <packageoptions prefix="jquery" suppress="true"/>
+        <packageoptions prefix="kotlin.reflect.jvm.internal" suppress="true"/>
+        <packageoptions prefix="kotlin.js.internal" suppress="true"/>
+
+        <sourcelink path="${kotlin_root}" url="https://github.com/JetBrains/kotlin/tree/${github_revision}" linesuffix="#L"/>
+
+        <target value="JS"/>
+      </passconfig>
+
+      <passconfig
+              samples="${stdlib-samples}"
+              moduleName="kotlin-stdlib"
+              skipDeprecated="false"
+              jdkversion="8"
+              analysisplatform="native"
+              noStdlibLink="true"
+              nojdklink="true"
+              classpathref="stdlib-native.classpath"
+              languageVersion="${language.version}"
+              includeRootPackage="false"
+              sincekotlin="1.3">
+
+        <sourceroot path="${kotlin_native_root}/Interop/Runtime/src/main/kotlin"/>
+        <sourceroot path="${kotlin_native_root}/Interop/Runtime/src/native/kotlin"/>
+        <sourceroot path="${kotlin_native_root}/Interop/JsRuntime/src/main/kotlin"/>
+        <sourceroot path="${kotlin_native_root}/runtime/src/main/kotlin"/>
+        <sourceroot path="${kotlin_stdlib_dir}/native-wasm/src"/>
+
+        <packageoptions prefix="kotlin.native.internal" suppress="true"/>
+        <packageoptions prefix="kotlin.test" suppress="true"/>
+
+        <sourcelink path="${kotlin_root}" url="https://github.com/JetBrains/kotlin/tree/${github_revision}" linesuffix="#L"/>
+
+        <target value="Native" />
+      </passconfig>
+
+      <impliedplatform value="Common"/>
+      <impliedplatform value="Native"/>
+      <impliedplatform value="JVM"/>
+      <impliedplatform value="JS"/>
+
+    </dokka>
+
+    <echo message=" ##teamcity[publishArtifacts '${docs.output}/kotlin-stdlib => kotlin-stdlib.zip'] " />
+
+    <makeurl file="${docs.output}/kotlin-stdlib/package-list" property="stdlib.package.list"/>
+
+    <delete dir="${docs.output}/kotlin.test" failonerror="false"/>
+
+    <dokka outputDir="${docs.output}"
+             format="${dokka.format}"
+             generateindexpages="true">
+
+      <passconfig
+              include="${kotlin-test-include-md}"
+              moduleName="kotlin.test"
+              skipDeprecated="false"
+              jdkversion="8"
+              analysisplatform="common"
+              noStdlibLink="true"
+              classpathref="kotlin-test-common.classpath"
+              languageVersion="${language.version}"
+              includeRootPackage="false"
+              sincekotlin="1.0">
+        <sourceroot path="${kotlin_test_dir}/common/src/main/kotlin"/>
+        <sourceroot path="${kotlin_test_dir}/annotations-common/src/main/kotlin"/>
+
+        <sourcelink path="${kotlin_root}" url="https://github.com/JetBrains/kotlin/tree/${github_revision}" linesuffix="#L"/>
+
+        <target value="Common" />
+        <target value="JVM"/>
+        <target value="JS"/>
+        <target value="Native"/>
+        <ExternalDocumentationLink url="https://kotlinlang.org/api/latest/jvm/stdlib/" packageListUrl="${stdlib.package.list}" />
+     </passconfig>
+
+        <passconfig
+                include="${kotlin-test-include-md}"
+                moduleName="kotlin.test"
+                skipDeprecated="false"
+                jdkversion="8"
+                analysisplatform="jvm"
+                noStdlibLink="true"
+                classpathref="kotlin-test-jvm.classpath"
+                languageVersion="${language.version}"
+                includeRootPackage="false">
+            <sourceroot path="${kotlin_test_dir}/jvm/src/main/kotlin"/>
+
+            <sourcelink path="${kotlin_root}" url="https://github.com/JetBrains/kotlin/tree/${github_revision}" linesuffix="#L"/>
+
+            <target value="JVM" />
+            <packageoptions prefix="org.junit" skipdeprecated="true"/>
+          <ExternalDocumentationLink url="https://kotlinlang.org/api/latest/jvm/stdlib/" packageListUrl="${stdlib.package.list}" />
+        </passconfig>
+
+
+      <passconfig
+              include="${kotlin-test-include-md}"
+              moduleName="kotlin.test"
+              skipDeprecated="false"
+              jdkversion="8"
+              analysisplatform="jvm"
+              noStdlibLink="true"
+              classpathref="kotlin-test-junit.classpath"
+              languageVersion="${language.version}"
+              includeRootPackage="false">
+        <sourceroot path="${kotlin_test_dir}/junit/src/main/kotlin"/>
+
+        <sourcelink path="${kotlin_root}" url="https://github.com/JetBrains/kotlin/tree/${github_revision}" linesuffix="#L"/>
+
+        <!--<target value="JVM" />-->
+        <target value="JUnit"/>
+        <ExternalDocumentationLink url="https://kotlinlang.org/api/latest/jvm/stdlib/" packageListUrl="${stdlib.package.list}" />
+        <ExternalDocumentationLink url="http://junit.org/junit4/javadoc/latest/" />
+      </passconfig>
+
+      <passconfig
+              include="${kotlin-test-include-md}"
+              moduleName="kotlin.test"
+              skipDeprecated="false"
+              jdkversion="8"
+              analysisplatform="jvm"
+              noStdlibLink="true"
+              classpathref="kotlin-test-junit5.classpath"
+              languageVersion="${language.version}"
+              includeRootPackage="false">
+        <sourceroot path="${kotlin_test_dir}/junit5/src/main/kotlin"/>
+
+        <sourcelink path="${kotlin_root}" url="https://github.com/JetBrains/kotlin/tree/${github_revision}" linesuffix="#L"/>
+
+        <!--<target value="JVM" />-->
+        <target value="JUnit5"/>
+        <ExternalDocumentationLink url="https://kotlinlang.org/api/latest/jvm/stdlib/" packageListUrl="${stdlib.package.list}" />
+        <ExternalDocumentationLink url="https://junit.org/junit5/docs/current/api/org.junit.jupiter.api/" packageListUrl="https://junit.org/junit5/docs/current/api/element-list" />
+
+      </passconfig>
+
+      <passconfig
+              include="${kotlin-test-include-md}"
+              moduleName="kotlin.test"
+              skipDeprecated="false"
+              jdkversion="8"
+              analysisplatform="jvm"
+              noStdlibLink="true"
+              classpathref="kotlin-test-testng.classpath"
+              languageVersion="${language.version}"
+              includeRootPackage="false">
+        <sourceroot path="${kotlin_test_dir}/testng/src/main/kotlin"/>
+
+        <sourcelink path="${kotlin_root}" url="https://github.com/JetBrains/kotlin/tree/${github_revision}" linesuffix="#L"/>
+
+        <!--<target value="JVM" />-->
+        <target value="TestNG"/>
+        <ExternalDocumentationLink url="https://kotlinlang.org/api/latest/jvm/stdlib/" packageListUrl="${stdlib.package.list}" />
+<!--        <ExternalDocumentationLink url="https://jitpack.io/com/github/cbeust/testng/master/javadoc/"/>-->
+      </passconfig>
+
+      <passconfig
+              include="${kotlin-test-include-md}"
+              moduleName="kotlin.test"
+              skipDeprecated="false"
+              jdkversion="8"
+              analysisplatform="js"
+              noStdlibLink="true"
+              classpathref="kotlin-test-js.classpath"
+              languageVersion="${language.version}"
+              includeRootPackage="false"
+              sincekotlin="1.1">
+        <sourceroot path="${kotlin_test_dir}/js/src/main/kotlin"/>
+
+        <sourcelink path="${kotlin_root}" url="https://github.com/JetBrains/kotlin/tree/${github_revision}" linesuffix="#L"/>
+
+        <packageoptions prefix="org.junit" skipdeprecated="true"/>
+        <target value="JS" />
+        <ExternalDocumentationLink url="https://kotlinlang.org/api/latest/jvm/stdlib/" packageListUrl="${stdlib.package.list}" />
+      </passconfig>
+
+      <passconfig
+              include="${kotlin-test-include-md}"
+              moduleName="kotlin.test"
+              skipDeprecated="false"
+              jdkversion="8"
+              analysisplatform="js"
+              noStdlibLink="true"
+              classpathref="kotlin-test-js.classpath"
+              languageVersion="${language.version}"
+              includeRootPackage="false"
+              sincekotlin="1.3">
+        <sourceroot path="${kotlin_native_root}/runtime/src/main/kotlin/kotlin/test"/>
+
+        <sourcelink path="${kotlin_root}" url="https://github.com/JetBrains/kotlin/tree/${github_revision}" linesuffix="#L"/>
+
+        <target value="Native" />
+        <ExternalDocumentationLink url="https://kotlinlang.org/api/latest/jvm/stdlib/" packageListUrl="${stdlib.package.list}" />
+      </passconfig>
+
+
+    </dokka>
+
+    <echo message=" ##teamcity[publishArtifacts '${docs.output}/kotlin.test => kotlin.test.zip'] " />
+  </target>
+</project>

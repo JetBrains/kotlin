@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.jetbrains.kotlin.gradle.targets.metadata.KotlinMetadataTargetConfigurator
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.konan.target.HostManager
 import java.io.File
@@ -16,7 +15,7 @@ import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class KlibBasedMppIT : BaseGradleIT() {
+open class KlibBasedMppIT : BaseGradleIT() {
     companion object {
         private const val MODULE_GROUP = "com.example"
     }

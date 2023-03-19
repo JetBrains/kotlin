@@ -9,11 +9,9 @@ import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.contracts.description.*
-import org.jetbrains.kotlin.fir.declarations.FirContractDescriptionOwner
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.resolve.getContainingClass
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
@@ -156,7 +154,10 @@ class ConeEffectExtractor(
         data: Nothing?
     ): ConeContractDescriptionElement? {
         val declaration = thisReceiverExpression.calleeReference.boundSymbol?.fir ?: return null
-        return if (declaration == owner || owner.isAccessorOf(declaration)) {
+        val callableOwner = owner as? FirCallableDeclaration
+        val ownerHasReceiver = callableOwner?.receiverParameter != null
+        val ownerIsMemberOfDeclaration = callableOwner?.getContainingClass(session) == declaration
+        return if (declaration == owner || owner.isAccessorOf(declaration) || ownerIsMemberOfDeclaration && !ownerHasReceiver) {
             val type = thisReceiverExpression.typeRef.coneType
             toValueParameterReference(type, -1, "this")
         } else {

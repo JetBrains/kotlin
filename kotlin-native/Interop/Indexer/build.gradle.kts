@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import org.jetbrains.gradle.plugins.tools.lib
-import org.jetbrains.gradle.plugins.tools.solib
+import org.jetbrains.kotlin.tools.lib
+import org.jetbrains.kotlin.tools.solib
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.target.ClangArgs
@@ -24,8 +24,9 @@ import org.jetbrains.kotlin.konan.target.HostManager.Companion.hostIsMac
 
 plugins {
     `kotlin`
-    `native-interop-plugin`
-    `native`
+    id("kotlin.native.build-tools-conventions")
+    id("native-interop-plugin")
+    id("native")
 }
 
 

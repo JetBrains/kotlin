@@ -118,7 +118,7 @@ private abstract class NpmDependencyExtensionDelegate(
         version: String,
     ): NpmDependency =
         NpmDependency(
-            project = project,
+            objectFactory = project.objects,
             name = name,
             version = version,
             scope = scope,
@@ -289,10 +289,10 @@ private fun defaultNpmDependencyDelegate(
             directory: File,
         ): NpmDependency =
             directoryNpmDependency(
-                project = project,
+                objectFactory = project.objects,
+                scope = scope,
                 name = name,
                 directory = directory,
-                scope = scope,
             )
 
         override fun processNonStringFirstArgument(arg: Any?, vararg args: Any?): NpmDependency {

@@ -16,13 +16,9 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
-import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.types.classId
-import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
-import org.jetbrains.kotlin.fir.types.isSubtypeOf
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.CREATOR_NAME
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.OLD_PARCELER_ID
@@ -81,7 +77,7 @@ object FirParcelizeClassChecker : FirClassChecker() {
             val superTypeRef = klass.superTypeRefs[index]
             val superType = superTypeRef.coneType
             val parcelableType = ConeClassLikeTypeImpl(
-                ConeClassLikeLookupTagImpl(PARCELABLE_ID),
+                PARCELABLE_ID.toLookupTag(),
                 emptyArray(),
                 isNullable = false
             )

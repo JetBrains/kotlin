@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtVariableLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtVariableSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -727,6 +728,11 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val typeFromTypesPhase: KtType
     }
 
+    abstract class AmbiguousAnnotationArgument : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = AmbiguousAnnotationArgument::class
+        abstract val symbols: List<KtSymbol>
+    }
+
     abstract class WrongJsQualifier : KtFirDiagnostic<KtElement>() {
         override val diagnosticClass get() = WrongJsQualifier::class
     }
@@ -1292,6 +1298,11 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val candidates: List<KtSymbol>
     }
 
+    abstract class AmbiguousFunctionTypeKind : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = AmbiguousFunctionTypeKind::class
+        abstract val kinds: List<FunctionTypeKind>
+    }
+
     abstract class NoContextReceiver : KtFirDiagnostic<KtElement>() {
         override val diagnosticClass get() = NoContextReceiver::class
         abstract val contextReceiverRepresentation: KtType
@@ -1568,8 +1579,16 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val kotlinClass: FqName
     }
 
-    abstract class InferredTypeVariableIntoEmptyIntersection : KtFirDiagnostic<PsiElement>() {
-        override val diagnosticClass get() = InferredTypeVariableIntoEmptyIntersection::class
+    abstract class InferredTypeVariableIntoEmptyIntersectionError : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = InferredTypeVariableIntoEmptyIntersectionError::class
+        abstract val typeVariableDescription: String
+        abstract val incompatibleTypes: List<KtType>
+        abstract val description: String
+        abstract val causingTypes: String
+    }
+
+    abstract class InferredTypeVariableIntoEmptyIntersectionWarning : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = InferredTypeVariableIntoEmptyIntersectionWarning::class
         abstract val typeVariableDescription: String
         abstract val incompatibleTypes: List<KtType>
         abstract val description: String
@@ -2307,7 +2326,7 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val parameter: KtSymbol
     }
 
-    abstract class UninitializedEnumEntry : KtFirDiagnostic<KtSimpleNameExpression>() {
+    abstract class UninitializedEnumEntry : KtFirDiagnostic<KtExpression>() {
         override val diagnosticClass get() = UninitializedEnumEntry::class
         abstract val enumEntry: KtSymbol
     }
@@ -2553,6 +2572,11 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     abstract class ErrorInContractDescription : KtFirDiagnostic<KtElement>() {
         override val diagnosticClass get() = ErrorInContractDescription::class
+        abstract val reason: String
+    }
+
+    abstract class ContractNotAllowed : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = ContractNotAllowed::class
         abstract val reason: String
     }
 
@@ -3393,6 +3417,10 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = InlineExternalDeclaration::class
     }
 
+    abstract class EnumClassInExternalDeclarationWarning : KtFirDiagnostic<KtDeclaration>() {
+        override val diagnosticClass get() = EnumClassInExternalDeclarationWarning::class
+    }
+
     abstract class InlineClassInExternalDeclarationWarning : KtFirDiagnostic<KtElement>() {
         override val diagnosticClass get() = InlineClassInExternalDeclarationWarning::class
     }
@@ -3420,6 +3448,11 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     abstract class Syntax : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = Syntax::class
+    }
+
+    abstract class SyntaxWithMessage : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = SyntaxWithMessage::class
+        abstract val message: String
     }
 
 }

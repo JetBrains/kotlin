@@ -171,6 +171,9 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
             gradleProperties.appendText(
                 "\nkotlin.stdlib.default.dependency=false"
             )
+            gradleProperties.appendText(
+                "\nkotlin.js.stdlib.dom.api.included=false"
+            )
 
             listOf(
                 "compileKotlinJvm",

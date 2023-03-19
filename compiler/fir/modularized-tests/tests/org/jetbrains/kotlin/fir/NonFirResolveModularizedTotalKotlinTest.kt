@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir
 
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY
@@ -16,13 +17,16 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
+import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
+import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.types.FlexibleTypeImpl
 import java.io.FileOutputStream
 import java.io.PrintStream
 import kotlin.system.measureNanoTime
 
 private val USE_NI = System.getProperty("fir.bench.oldfe.ni", "true") == "true"
 
-class NonFirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
+class NonFirResolveModularizedTotalKotlinTest : AbstractFrontendModularizedTest() {
     private var totalTime = 0L
     private var files = 0
     private var lines = 0
@@ -67,28 +71,28 @@ class NonFirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
         writeMessageToLog("$message: ${time * 1e-6} ms")
     }
 
-    override fun processModule(moduleData: ModuleData): ProcessorAction {
-        val disposable = Disposer.newDisposable()
-
+    private fun configureAndSetupEnvironment(moduleData: ModuleData, disposable: Disposable): KotlinCoreEnvironment {
 
         val configuration = createDefaultConfiguration(moduleData)
 
-
-        configuration.languageVersionSettings =
-            LanguageVersionSettingsImpl(
-                configuration.languageVersionSettings.languageVersion,
-                configuration.languageVersionSettings.apiVersion,
-                specificFeatures = mapOf(
-                    LanguageFeature.NewInference to if (USE_NI) LanguageFeature.State.ENABLED else LanguageFeature.State.DISABLED
-                ),
-                analysisFlags = mapOf(
-                    AnalysisFlags.skipPrereleaseCheck to true,
-                    AnalysisFlags.optIn to moduleData.optInAnnotations
-                )
-            )
-
-        System.getProperty("fir.bench.oldfe.jvm_target")?.let {
-            configuration.put(JVMConfigurationKeys.JVM_TARGET, JvmTarget.fromString(it) ?: error("Unknown JvmTarget"))
+        configureLanguageVersionSettings(
+            configuration, moduleData,
+            LanguageVersion.fromVersionString(LANGUAGE_VERSION_K1)!!,
+            configureFeatures = {
+                put(LanguageFeature.NewInference, if (USE_NI) LanguageFeature.State.ENABLED else LanguageFeature.State.DISABLED)
+            },
+            configureFlags = {
+                // TODO: Remove when old tests are no longer supported
+                if (moduleData.arguments == null) {
+                    put(AnalysisFlags.skipPrereleaseCheck, true)
+                }
+            }
+        )
+        // TODO: Remove when old tests are no longer supported
+        if (moduleData.arguments == null) {
+            System.getProperty("fir.bench.oldfe.jvm_target")?.let {
+                configuration.put(JVMConfigurationKeys.JVM_TARGET, JvmTarget.fromString(it) ?: error("Unknown JvmTarget"))
+            }
         }
         configuration.put(MESSAGE_COLLECTOR_KEY, object : MessageCollector {
             override fun clear() {
@@ -110,6 +114,18 @@ class NonFirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
 
         })
         val environment = KotlinCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+
+        val visibilityManager = ModuleVisibilityManager.SERVICE.getInstance(environment.project)
+        for (friendDir in configuration.getList(JVMConfigurationKeys.FRIEND_PATHS)) {
+            visibilityManager.addFriendPath(friendDir)
+        }
+
+        return environment
+    }
+
+    override fun processModule(moduleData: ModuleData): ProcessorAction {
+        val disposable = Disposer.newDisposable()
+        val environment = configureAndSetupEnvironment(moduleData, disposable)
 
         runAnalysis(environment)
 

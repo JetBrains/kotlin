@@ -30,6 +30,7 @@ where advanced options include:
   -Xemit-jvm-type-annotations Emit JVM type annotations in bytecode
   -Xdebug                    Enable debug mode for compilation.
                              Currently this includes spilling all variables in a suspending context regardless their liveness.
+  -Xir-inliner               Inline functions using IR inliner instead of bytecode inliner
   -Xjvm-enable-preview       Allow using features from Java language that are in preview phase.
                              Works as `--enable-preview` in Java. All class files are marked as preview-generated thus it won't be possible to use them in release environment
   -Xenhance-type-parameter-types-to-def-not-null
@@ -187,6 +188,11 @@ where advanced options include:
                              Use 'warning' level to issue warnings instead of errors.
   -Xextended-compiler-checks Enable additional compiler checks that might provide verbose diagnostic information for certain errors.
                              Warning: this mode is not backward-compatible and might cause compilation errors in previously compiled code.
+  -Xfragment-refines=<fromModuleName>:<onModuleName>
+                             Declares that <fromModuleName> refines <onModuleName> with dependsOn/refines relation
+  -Xfragment-sources=<fragment name>:<path>
+                             Adds sources to a specific fragment of a multiplatform compilation
+  -Xfragments=<fragment name> Declares all known fragments of a multiplatform compilation
   -Xenable-incremental-compilation
                              Enable incremental compilation
   -Xinference-compatibility  Enable compatibility changes for generic type inference algorithm

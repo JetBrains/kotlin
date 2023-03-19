@@ -10,10 +10,9 @@ import kotlinx.collections.immutable.persistentHashSetOf
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.light.classes.symbol.NullabilityType
-import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolLightSimpleAnnotation
-import org.jetbrains.kotlin.light.classes.symbol.annotations.computeAnnotations
+import org.jetbrains.kotlin.light.classes.symbol.annotations.*
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightRepeatableAnnotationContainerMethod
+import org.jetbrains.kotlin.light.classes.symbol.modifierLists.InitializedModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
 import org.jetbrains.kotlin.load.java.JvmAbi
 
@@ -39,21 +38,19 @@ internal class SymbolLightClassForRepeatableAnnotationContainer(private val cont
     override fun computeModifierList(): PsiModifierList = SymbolLightClassModifierList(
         containingDeclaration = this,
         // It is marked as Abstract because all the annotation classes are marked as Abstract
-        // It is marked as Static because all nested interfaces marked as Static
-        staticModifiers = setOf(PsiModifier.PUBLIC, PsiModifier.STATIC, PsiModifier.ABSTRACT),
-        annotationsComputer = { psiModifierList ->
-            val annotations = withClassOrObjectSymbol { classOrObjectSymbol ->
-                classOrObjectSymbol.computeAnnotations(
-                    modifierList = psiModifierList,
-                    nullability = NullabilityType.Unknown,
-                    annotationUseSiteTarget = null,
-                )
-            }.filter {
-                it.qualifiedName in allowedAnnotations
-            }
-
-            annotations + SymbolLightSimpleAnnotation(fqName = KOTLIN_JVM_INTERNAL_REPEATABLE_CONTAINER, parent = psiModifierList)
-        },
+        // It is marked as Static because all nested interfaces are marked as Static
+        modifiersBox = InitializedModifiersBox(PsiModifier.PUBLIC, PsiModifier.STATIC, PsiModifier.ABSTRACT),
+        annotationsBox = GranularAnnotationsBox(
+            annotationsProvider = SymbolAnnotationsProvider(
+                ktModule = ktModule,
+                annotatedSymbolPointer = classOrObjectSymbolPointer,
+            ),
+            additionalAnnotationsProvider = CompositeAdditionalAnnotationsProvider(
+                CollectionAdditionalAnnotationsProvider(KOTLIN_JVM_INTERNAL_REPEATABLE_CONTAINER),
+                AbstractClassAdditionalAnnotationsProvider,
+            ),
+            annotationFilter = CollectionAnnotationFilter(allowedAnnotations),
+        ),
     )
 
     override fun computeOwnMethods(): List<PsiMethod> = listOf(
@@ -72,13 +69,14 @@ internal class SymbolLightClassForRepeatableAnnotationContainer(private val cont
     override fun hashCode(): Int = containerOwner.hashCode()
 
     companion object {
+        private const val KOTLIN_JVM_INTERNAL_REPEATABLE_CONTAINER = "kotlin.jvm.internal.RepeatableContainer"
+
         private val allowedAnnotations = persistentHashSetOf(
             CommonClassNames.JAVA_LANG_ANNOTATION_RETENTION,
             StandardNames.FqNames.retention.asString(),
             CommonClassNames.JAVA_LANG_ANNOTATION_TARGET,
             StandardNames.FqNames.target.asString(),
+            KOTLIN_JVM_INTERNAL_REPEATABLE_CONTAINER,
         )
-
-        private const val KOTLIN_JVM_INTERNAL_REPEATABLE_CONTAINER = "kotlin.jvm.internal.RepeatableContainer"
     }
 }

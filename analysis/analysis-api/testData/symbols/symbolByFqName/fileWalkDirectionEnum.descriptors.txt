@@ -17,7 +17,14 @@ KtFunctionSymbol:
   name: listOf
   origin: LIBRARY
   receiverParameter: null
-  returnType: kotlin/collections/List<T>
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: [
+      KtTypeParameterType:
+        annotationsList: []
+        type: T
+    ]
+    type: kotlin/collections/List<T>
   symbolKind: TOP_LEVEL
   typeParameters: [
     KtTypeParameterSymbol(T)
@@ -37,7 +44,9 @@ KtFunctionSymbol:
       name: element
       origin: SOURCE
       receiverParameter: null
-      returnType: T
+      returnType: KtTypeParameterType:
+        annotationsList: []
+        type: T
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KtFe10DescValueParameterSymbol
@@ -70,7 +79,14 @@ KtFunctionSymbol:
   name: listOf
   origin: LIBRARY
   receiverParameter: null
-  returnType: kotlin/collections/List<T>
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: [
+      KtTypeParameterType:
+        annotationsList: []
+        type: T
+    ]
+    type: kotlin/collections/List<T>
   symbolKind: TOP_LEVEL
   typeParameters: [
     KtTypeParameterSymbol(T)
@@ -99,7 +115,14 @@ KtFunctionSymbol:
   name: listOf
   origin: LIBRARY
   receiverParameter: null
-  returnType: kotlin/collections/List<T>
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: [
+      KtTypeParameterType:
+        annotationsList: []
+        type: T
+    ]
+    type: kotlin/collections/List<T>
   symbolKind: TOP_LEVEL
   typeParameters: [
     KtTypeParameterSymbol(T)
@@ -119,7 +142,9 @@ KtFunctionSymbol:
       name: elements
       origin: SOURCE
       receiverParameter: null
-      returnType: T
+      returnType: KtTypeParameterType:
+        annotationsList: []
+        type: T
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KtFe10DescValueParameterSymbol

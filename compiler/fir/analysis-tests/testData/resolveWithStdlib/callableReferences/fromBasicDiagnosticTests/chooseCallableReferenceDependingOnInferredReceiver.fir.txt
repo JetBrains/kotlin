@@ -30,14 +30,14 @@ FILE: chooseCallableReferenceDependingOnInferredReceiver.kt
         ^bar R|kotlin/TODO|()
     }
     public final fun test(): R|kotlin/Unit| {
-        R|/myWith<CS errors: /myWith>#|<R|A|, R|ERROR CLASS: Cannot infer argument for type parameter R|>(R|/A.A|(), <L> = myWith@fun R|A|.<anonymous>(): <ERROR TYPE REF: Cannot infer argument for type parameter R> <inline=Inline, kind=UNKNOWN>  {
+        R|/myWith<CS errors: /myWith>#|<R|A|, <ERROR TYPE REF: Cannot infer argument for type parameter R>>(R|/A.A|(), <L> = myWith@fun R|A|.<anonymous>(): <ERROR TYPE REF: Cannot infer argument for type parameter R> <inline=Inline, kind=UNKNOWN>  {
             lval t1: R|A| = R|/bar|<R|A|>(::R|/A.foo|)
             lval t2: R|A| = R|/bar|<R|A|>(::R|/A.baz|)
-            ^ R|/myWith|<R|B|, R|ERROR CLASS: Cannot infer argument for type parameter R|>(R|/B.B|(), <L> = myWith@fun R|B|.<anonymous>(): <ERROR TYPE REF: Cannot infer argument for type parameter R> <inline=Inline, kind=UNKNOWN>  {
+            ^ R|/myWith|<R|B|, <ERROR TYPE REF: Cannot infer argument for type parameter R>>(R|/B.B|(), <L> = myWith@fun R|B|.<anonymous>(): <ERROR TYPE REF: Cannot infer argument for type parameter R> <inline=Inline, kind=UNKNOWN>  {
                 lval a: R|A| = R|/bar|<R|A|>(::R|/A.foo|)
                 lval b: R|B| = R|/bar|<R|B|>(::R|/B.foo|)
                 lval t3: R|B| = R|/bar|<R|B|>(::R|/B.baz|)
-                ^ R|/bar|<R|ERROR CLASS: Cannot infer argument for type parameter T|>(::<Ambiguity: foo, [/B.foo, /B.foo]>#)
+                ^ R|/bar|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(::<Ambiguity: foo, [/B.foo, /B.foo]>#)
             }
             )
         }

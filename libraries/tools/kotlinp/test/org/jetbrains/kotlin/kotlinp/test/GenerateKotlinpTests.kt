@@ -12,7 +12,10 @@ fun main(args: Array<String>) {
 
     generateTestGroupSuite(args) {
         testGroup("libraries/tools/kotlinp/test", "libraries/tools/kotlinp/testData") {
-            testClass<AbstractKotlinpTest> {
+            testClass<AbstractK1KotlinpTest> {
+                model("")
+            }
+            testClass<AbstractK2KotlinpTest> {
                 model("")
             }
         }

@@ -24,6 +24,7 @@ public final class EnumCapturesProperty : kotlin.script.templates.standard.Scrip
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
         // Static members
+        public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<EnumCapturesProperty.Bar>
         public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): EnumCapturesProperty.Bar
         public final /*synthesized*/ fun values(): kotlin.Array<EnumCapturesProperty.Bar>
     }

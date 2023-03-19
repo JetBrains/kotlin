@@ -17,11 +17,9 @@ import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.light.classes.symbol.*
-import org.jetbrains.kotlin.light.classes.symbol.annotations.computeAnnotations
-import org.jetbrains.kotlin.light.classes.symbol.annotations.hasInlineOnlyAnnotation
-import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmStaticAnnotation
+import org.jetbrains.kotlin.light.classes.symbol.annotations.*
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
-import org.jetbrains.kotlin.light.classes.symbol.modifierLists.LazyModifiersBox
+import org.jetbrains.kotlin.light.classes.symbol.modifierLists.GranularModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.with
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightTypeParameterList
@@ -49,7 +47,10 @@ internal class SymbolLightSimpleMethod(
 ) {
     private val _name: String by lazyPub {
         withFunctionSymbol { functionSymbol ->
-            functionSymbol.computeJvmMethodName(functionSymbol.name.asString(), containingClass, annotationUseSiteTarget = null)
+            functionSymbol.computeJvmMethodName(
+                functionSymbol.name.asString(),
+                this@SymbolLightSimpleMethod.containingClass,
+            )
         }
     }
 
@@ -71,27 +72,8 @@ internal class SymbolLightSimpleMethod(
     override fun getTypeParameterList(): PsiTypeParameterList? = _typeParameterList
     override fun getTypeParameters(): Array<PsiTypeParameter> = _typeParameterList?.typeParameters ?: PsiTypeParameter.EMPTY_ARRAY
 
-    private fun computeAnnotations(
-        modifierList: PsiModifierList,
-    ): List<PsiAnnotation> = withFunctionSymbol { functionSymbol ->
-        val nullability = when {
-            modifierList.hasModifierProperty(PsiModifier.PRIVATE) -> NullabilityType.Unknown
-            functionSymbol.isSuspend -> /* Any? */ NullabilityType.Nullable
-            else -> {
-                val returnType = functionSymbol.returnType
-                if (returnType.isVoidType) NullabilityType.Unknown else getTypeNullability(returnType)
-            }
-        }
-
-        functionSymbol.computeAnnotations(
-            modifierList = modifierList,
-            nullability = nullability,
-            annotationUseSiteTarget = null,
-        )
-    }
-
     private fun computeModifiers(modifier: String): Map<String, Boolean>? = when (modifier) {
-        in LazyModifiersBox.MODALITY_MODIFIERS -> {
+        in GranularModifiersBox.MODALITY_MODIFIERS -> {
             ifInlineOnly { return modifiersForInlineOnlyCase() }
             val modality = if (isTopLevel) {
                 PsiModifier.FINAL
@@ -101,12 +83,12 @@ internal class SymbolLightSimpleMethod(
                 }
             }
 
-            LazyModifiersBox.MODALITY_MODIFIERS_MAP.with(modality)
+            GranularModifiersBox.MODALITY_MODIFIERS_MAP.with(modality)
         }
 
-        in LazyModifiersBox.VISIBILITY_MODIFIERS -> {
+        in GranularModifiersBox.VISIBILITY_MODIFIERS -> {
             ifInlineOnly { return modifiersForInlineOnlyCase() }
-            LazyModifiersBox.computeVisibilityForMember(ktModule, functionSymbolPointer)
+            GranularModifiersBox.computeVisibilityForMember(ktModule, functionSymbolPointer)
         }
 
         PsiModifier.STATIC -> {
@@ -147,8 +129,8 @@ internal class SymbolLightSimpleMethod(
         }
     }
 
-    private fun modifiersForInlineOnlyCase(): PersistentMap<String, Boolean> = LazyModifiersBox.MODALITY_MODIFIERS_MAP.mutate {
-        it.putAll(LazyModifiersBox.VISIBILITY_MODIFIERS_MAP)
+    private fun modifiersForInlineOnlyCase(): PersistentMap<String, Boolean> = GranularModifiersBox.MODALITY_MODIFIERS_MAP.mutate {
+        it.putAll(GranularModifiersBox.VISIBILITY_MODIFIERS_MAP)
         it[PsiModifier.FINAL] = true
         it[PsiModifier.PRIVATE] = true
     }
@@ -158,8 +140,30 @@ internal class SymbolLightSimpleMethod(
     private val _modifierList: PsiModifierList by lazyPub {
         SymbolLightMemberModifierList(
             containingDeclaration = this,
-            lazyModifiersComputer = ::computeModifiers,
-            annotationsComputer = ::computeAnnotations,
+            modifiersBox = GranularModifiersBox(computer = ::computeModifiers),
+            annotationsBox = GranularAnnotationsBox(
+                annotationsProvider = SymbolAnnotationsProvider(
+                    ktModule = ktModule,
+                    annotatedSymbolPointer = functionSymbolPointer,
+                ),
+                additionalAnnotationsProvider = CompositeAdditionalAnnotationsProvider(
+                    NullabilityAnnotationsProvider {
+                        if (modifierList.hasModifierProperty(PsiModifier.PRIVATE)) {
+                            NullabilityType.Unknown
+                        } else {
+                            withFunctionSymbol { functionSymbol ->
+                                if (functionSymbol.isSuspend) { // Any?
+                                    NullabilityType.Nullable
+                                } else {
+                                    val returnType = functionSymbol.returnType
+                                    if (returnType.isVoidType) NullabilityType.Unknown else getTypeNullability(returnType)
+                                }
+                            }
+                        }
+                    },
+                    MethodAdditionalAnnotationsProvider,
+                ),
+            )
         )
     }
 
@@ -183,12 +187,14 @@ internal class SymbolLightSimpleMethod(
                 functionSymbol.returnType.takeUnless { it.isVoidType } ?: return@withFunctionSymbol PsiType.VOID
             }
 
-            ktType.asPsiType(
+            ktType.asPsiTypeElement(
                 this@SymbolLightSimpleMethod,
                 allowErrorTypes = true,
                 KtTypeMappingMode.RETURN_TYPE,
-                containingClass.isAnnotationType,
-            )
+                this@SymbolLightSimpleMethod.containingClass.isAnnotationType,
+            )?.let {
+                annotateByKtType(it.type, ktType, it, modifierList)
+            }
         } ?: nonExistentType()
     }
 

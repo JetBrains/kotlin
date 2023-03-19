@@ -126,7 +126,6 @@ val distSourcesProjects = listOfNotNull(
     ":kotlin-test:kotlin-test-js".takeIf { !kotlinBuildProperties.isInJpsBuildIdeaSync },
     ":kotlin-test:kotlin-test-junit",
     ":kotlin-test:kotlin-test-junit5",
-    ":kotlin-test:kotlin-test-jvm",
     ":kotlin-test:kotlin-test-testng"
 )
 
@@ -183,6 +182,7 @@ dependencies {
         sources(project(":kotlin-stdlib", configuration = "distSources"))
         sources(project(":kotlin-stdlib-js", configuration = "distSources"))
         sources(project(":kotlin-reflect", configuration = "sources"))
+        sources(project(":kotlin-test", "combinedJvmSourcesJar"))
 
         distStdlibMinimalForTests(project(":kotlin-stdlib-jvm-minimal-for-test"))
 
@@ -334,7 +334,7 @@ sourcesJar {
         }
     }
 
-    dependsOn(":compiler:fir:checkers:generateCheckersComponents")
+    dependsOn(":compiler:fir:checkers:generateCheckersComponents", ":compiler:ir.tree:generateTree")
 }
 
 javadocJar()

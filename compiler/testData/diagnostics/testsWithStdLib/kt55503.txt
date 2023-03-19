@@ -1,0 +1,5 @@
+package
+
+public fun foo(): kotlin.Unit
+public fun withIntList(/*0*/ x: kotlin.collections.List<kotlin.Int>.() -> kotlin.Unit): kotlin.Unit
+public fun </*0*/ T> withStringSequence(/*0*/ action: kotlin.sequences.Sequence<kotlin.String>.() -> T): T

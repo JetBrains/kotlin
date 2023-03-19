@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.library.metadata;
 
+// Changes to this proto are tracked by KlibMetadataVersion version. See KlibMetadataVersion KDoc.
+
 import "core/metadata/src/metadata.proto";
 import "core/metadata/src/ext_options.proto";
 

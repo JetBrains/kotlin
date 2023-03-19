@@ -1,0 +1,3 @@
+struct ProducerCLibraryStruct {
+    int value;
+};

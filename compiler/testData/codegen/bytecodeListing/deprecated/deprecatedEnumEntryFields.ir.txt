@@ -10,7 +10,7 @@ public final enum class Test {
     private synthetic final static method $values(): Test[]
     static method <clinit>(): void
     private method <init>(p0: java.lang.String, p1: int): void
-    public static method getEntries(): kotlin.enums.EnumEntries
+    public static @org.jetbrains.annotations.NotNull method getEntries(): kotlin.enums.EnumEntries
     public static method valueOf(p0: java.lang.String): Test
     public static method values(): Test[]
 }

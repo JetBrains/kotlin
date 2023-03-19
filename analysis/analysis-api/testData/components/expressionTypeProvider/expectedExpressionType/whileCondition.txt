@@ -1,2 +1,5 @@
 expression: xy
-expected type: kotlin/Boolean
+expected type: KtUsualClassType:
+  annotationsList: []
+  ownTypeArguments: []
+  type: kotlin/Boolean

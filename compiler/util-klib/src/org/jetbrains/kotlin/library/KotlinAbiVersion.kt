@@ -26,8 +26,20 @@ fun String.parseKotlinAbiVersion(): KotlinAbiVersion {
     }
 }
 
-// TODO: it would be nice to inherit this one from BinaryVersion,
-// but that requires a module structure refactoring.
+// TODO: consider inheriting this class from BinaryVersion (but that requires a module structure refactoring.)
+//  Advantages: code reuse.
+//  Disadvantages: BinaryVersion is a problematic class, because it doesn't represent any logical entity in the codebase, it's just a
+//  way to reuse common logic for Kotlin versions. But unfortunately, BinaryVersion is used in a lot of API definitions, which makes
+//  code hard to read because it's not obvious which subclasses are supposed to be passed into a particular API.
+/**
+ * The version of the Kotlin IR.
+ *
+ * This version must be bumped when:
+ * - Incompatible changes are made in `KotlinIr.proto`
+ * - Incompatible changes are made in serialization/deserialization logic
+ *
+ * The version bump must obey [org.jetbrains.kotlin.metadata.deserialization.BinaryVersion] rules (See `BinaryVersion` KDoc)
+ */
 data class KotlinAbiVersion(val major: Int, val minor: Int, val patch: Int) {
     // For 1.4 compiler we switched klib abi_version to a triple,
     // but we don't break if we still encounter a single digit from 1.3.
@@ -60,6 +72,9 @@ data class KotlinAbiVersion(val major: Int, val minor: Int, val patch: Int) {
     override fun toString() = "$major.$minor.$patch"
 
     companion object {
-        val CURRENT = KotlinAbiVersion(1, 7, 0)
+        /**
+         * See: [KotlinAbiVersion bump history](compiler/util-klib/KotlinAbiVersionBumpHistory.md)
+         */
+        val CURRENT = KotlinAbiVersion(1, 8, 0)
     }
 }

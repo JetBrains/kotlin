@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.inference
 
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.diagnostics.ConeCannotInferParameterType
+import org.jetbrains.kotlin.fir.diagnostics.ConeCannotInferTypeParameterType
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
@@ -133,7 +133,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
 
                 // Stage 4: create atoms with revised expected types if needed
                 for (argument in postponedArgumentsWithRevisableType) {
-                    val argumentWasTransformed = transformToAtomWithNewFunctionalExpectedType(
+                    val argumentWasTransformed = transformToAtomWithNewFunctionExpectedType(
                         this, context, argument
                     )
 
@@ -214,7 +214,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
         return variableForFixation?.hasProperConstraint == true
     }
 
-    private fun transformToAtomWithNewFunctionalExpectedType(
+    private fun transformToAtomWithNewFunctionExpectedType(
         c: ConstraintSystemCompletionContext,
         resolutionContext: ResolutionContext,
         argument: PostponedAtomWithRevisableExpectedType,
@@ -459,7 +459,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
         ): ConeErrorType {
             val diagnostic = when (typeParameterSymbol) {
                 null -> ConeSimpleDiagnostic(message, DiagnosticKind.CannotInferParameterType)
-                else -> ConeCannotInferParameterType(
+                else -> ConeCannotInferTypeParameterType(
                     typeParameterSymbol,
                     message,
                 )

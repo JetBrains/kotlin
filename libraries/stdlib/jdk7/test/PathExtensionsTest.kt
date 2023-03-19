@@ -60,6 +60,45 @@ class PathExtensionsTest : AbstractPathTest() {
     }
 
     @Test
+    fun createParentDirectories() {
+        val dir = createTempDirectory().cleanupRecursively()
+        val file = dir / "test-dir" / "sub-dir" / "new-file"
+        val parent = file.parent!!
+
+        assertTrue(file.notExists())
+        assertTrue(parent.notExists())
+
+        val result = file.createParentDirectories()
+        assertTrue(file.notExists())
+        assertTrue(parent.isDirectory())
+        assertEquals(file, result)
+
+        file.createFile()
+        file.createParentDirectories()
+        assertTrue(file.exists())
+        assertTrue(parent.isDirectory())
+    }
+
+    @Test
+    fun createParentDirectoriesRelativePath() {
+        run {
+            val path = Path("test_path_without_parent")
+            path.createParentDirectories()
+            assertTrue(path.toAbsolutePath().parent!!.isDirectory())
+        }
+
+        run {
+            val path = Path("build/test_subdirectory/test_path")
+            val parent = path.parent!!
+            assertTrue(parent.notExists())
+            parent.cleanupRecursively()
+            path.createParentDirectories()
+            assertTrue(path.notExists())
+            assertTrue(parent.isDirectory())
+        }
+    }
+
+    @Test
     fun createTempFileDefaultDir() {
         val file1 = createTempFile().cleanup()
         val file2 = createTempFile(directory = null).cleanup()

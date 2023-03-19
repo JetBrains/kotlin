@@ -10,12 +10,14 @@ import java.io.Serializable
 data class BuildMetrics(
     val buildTimes: BuildTimes = BuildTimes(),
     val buildPerformanceMetrics: BuildPerformanceMetrics = BuildPerformanceMetrics(),
-    val buildAttributes: BuildAttributes = BuildAttributes()
+    val buildAttributes: BuildAttributes = BuildAttributes(),
+    val gcMetrics: GcMetrics = GcMetrics()
 ) : Serializable {
     fun addAll(other: BuildMetrics) {
         buildTimes.addAll(other.buildTimes)
         buildPerformanceMetrics.addAll(other.buildPerformanceMetrics)
         buildAttributes.addAll(other.buildAttributes)
+        gcMetrics.addAll(other.gcMetrics)
     }
 
     companion object {

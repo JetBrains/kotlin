@@ -6,13 +6,10 @@
 package org.jetbrains.kotlin.fir.plugin
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.types.constructType
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
-import org.jetbrains.kotlin.fir.types.constructStarProjectedType
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.ConeTypeProjection
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.ClassId
 
@@ -29,7 +26,7 @@ public fun ClassId.createConeType(
             else -> symbol.constructType(typeArguments, nullable)
         }
         else -> ConeClassLikeTypeImpl(
-            ConeClassLikeLookupTagImpl(this),
+            this.toLookupTag(),
             typeArguments,
             nullable
         )

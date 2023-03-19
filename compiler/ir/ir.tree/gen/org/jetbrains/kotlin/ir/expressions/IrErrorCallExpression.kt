@@ -14,7 +14,8 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
  * A leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.errorCallExpression
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.errorCallExpression]
  */
 abstract class IrErrorCallExpression : IrErrorExpression() {
     abstract var explicitReceiver: IrExpression?

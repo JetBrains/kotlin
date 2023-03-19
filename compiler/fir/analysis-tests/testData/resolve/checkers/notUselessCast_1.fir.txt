@@ -1,0 +1,33 @@
+FILE: notUselessCast_1.kt
+    public open class Base : R|kotlin/Any| {
+        public constructor(): R|Base| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class Derived : R|Base| {
+        public constructor(): R|Derived| {
+            super<R|Base|>()
+        }
+
+    }
+    public final fun test_0(d: R|Derived|): R|kotlin/Unit| {
+        local final fun take(d: R|Derived|): R|kotlin/Unit| {
+        }
+
+        R|<local>/take|((R|<local>/d| as R|Derived|))
+    }
+    public final fun test_1(): R|kotlin/Unit| {
+        lval list: R|kotlin/collections/MutableList<Base>| = R|kotlin/collections/listOf|<R|kotlin/Any|>().R|kotlin/collections/map|<R|kotlin/Any|, R|Base|>(<L> = map@fun <anonymous>(it: R|kotlin/Any|): R|Base| <inline=Inline, kind=UNKNOWN>  {
+            ^ (R|/Derived.Derived|() as R|Base|)
+        }
+        ).R|kotlin/collections/toMutableList|<R|Base|>()
+        R|<local>/list|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(R|/Base.Base|())
+    }
+    public final fun test_2(): R|kotlin/Unit| {
+        lval list: R|kotlin/collections/MutableList<Derived>| = R|kotlin/collections/listOf|<R|kotlin/Any|>().R|kotlin/collections/map|<R|kotlin/Any|, R|Derived|>(<L> = map@fun <anonymous>(it: R|kotlin/Any|): R|Derived| <inline=Inline, kind=UNKNOWN>  {
+            ^ R|/Derived.Derived|()
+        }
+        ).R|kotlin/collections/toMutableList|<R|Derived|>()
+        R|<local>/list|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|><Inapplicable(INAPPLICABLE): kotlin/collections/MutableList.add>#|(R|/Base.Base|())
+    }

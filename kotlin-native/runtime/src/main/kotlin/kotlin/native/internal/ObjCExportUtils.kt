@@ -16,7 +16,7 @@ import kotlin.native.internal.ReportUnhandledException
 @ExportTypeInfo("theObjCObjectWrapperTypeInfo")
 internal interface ObjCObjectWrapper
 
-internal class NSArrayAsKList : AbstractList<Any?>(), ObjCObjectWrapper {
+internal class NSArrayAsKList : AbstractList<Any?>(), RandomAccess, ObjCObjectWrapper {
 
     override val size: Int get() = getSize()
 
@@ -27,7 +27,7 @@ internal class NSArrayAsKList : AbstractList<Any?>(), ObjCObjectWrapper {
     external override fun get(index: Int): Any?
 }
 
-internal class NSMutableArrayAsKMutableList : AbstractMutableList<Any?>(), ObjCObjectWrapper {
+internal class NSMutableArrayAsKMutableList : AbstractMutableList<Any?>(), RandomAccess, ObjCObjectWrapper {
 
     override val size: Int get() = getSize()
 

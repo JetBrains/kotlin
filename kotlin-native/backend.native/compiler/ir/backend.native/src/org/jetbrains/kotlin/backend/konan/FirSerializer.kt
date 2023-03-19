@@ -16,7 +16,11 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.serialization.*
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.serialization.FirElementAwareSerializableStringTable
+import org.jetbrains.kotlin.fir.serialization.FirElementSerializer
+import org.jetbrains.kotlin.fir.serialization.FirKLibSerializerExtension
+import org.jetbrains.kotlin.fir.serialization.serializeSingleFirFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
@@ -25,17 +29,25 @@ import org.jetbrains.kotlin.library.SerializedIrFile
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.library.metadata.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.metadata.ProtoBuf
-import org.jetbrains.kotlin.utils.toMetadataVersion
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.serialization.MutableVersionRequirementTable
 import org.jetbrains.kotlin.psi
+import org.jetbrains.kotlin.utils.toMetadataVersion
 
 internal fun PhaseContext.firSerializer(
         input: Fir2IrOutput
 ): SerializerOutput {
     val configuration = config.configuration
-    val sourceFiles = input.firFiles.mapNotNull { it.sourceFile }
-    val firFilesBySourceFile = input.firFiles.associateBy { it.sourceFile }
+    val sourceFiles = mutableListOf<KtSourceFile>()
+    val firFilesAndSessionsBySourceFile = mutableMapOf<KtSourceFile, Triple<FirFile, FirSession, ScopeSession>>()
+
+    for (firOutput in input.firResult.outputs) {
+        for (firFile in firOutput.fir) {
+            sourceFiles.add(firFile.sourceFile!!)
+            firFilesAndSessionsBySourceFile[firFile.sourceFile!!] = Triple(firFile, firOutput.session, firOutput.scopeSession)
+        }
+    }
+
     val metadataVersion =
             configuration.get(CommonConfigurationKeys.METADATA_VERSION)
                     ?: configuration.languageVersionSettings.languageVersion.toMetadataVersion()
@@ -49,12 +61,13 @@ internal fun PhaseContext.firSerializer(
             input.fir2irResult.irModuleFragment,
             expectDescriptorToSymbol = mutableMapOf() // TODO: expect -> actual mapping
     ) { file ->
-        val firFile = firFilesBySourceFile[file] ?: error("cannot find FIR file by source file ${file.name} (${file.path})")
+        val (firFile, session, scopeSession) = firFilesAndSessionsBySourceFile[file]
+                ?: error("cannot find FIR file by source file ${file.name} (${file.path})")
         serializeSingleFirFile(
                 firFile,
-                input.session,
-                input.scopeSession,
-                FirNativeKLibSerializerExtension(input.session, metadataVersion, FirElementAwareSerializableStringTable()),
+                session,
+                scopeSession,
+                FirNativeKLibSerializerExtension(session, metadataVersion, FirElementAwareSerializableStringTable()),
                 configuration.languageVersionSettings,
         )
     }
@@ -168,6 +181,9 @@ class FirNativeKLibSerializerExtension(
                 else -> KlibMetadataProtoBuf.propertyAnnotation
             }
             proto.addExtension(extension, annotationSerializer.serializeAnnotation(it))
+        }
+        property.receiverParameter?.nonSourceAnnotations(session)?.forEach {
+            proto.addExtension(KlibMetadataProtoBuf.propertyExtensionReceiverAnnotation, annotationSerializer.serializeAnnotation(it))
         }
         property.getter?.nonSourceAnnotations(session)?.forEach {
             proto.addExtension(KlibMetadataProtoBuf.propertyGetterAnnotation, annotationSerializer.serializeAnnotation(it))

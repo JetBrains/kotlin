@@ -17,10 +17,14 @@ internal class GradleKpmNativeVariantCompilationData(
     override val konanTarget: KonanTarget
         get() = variant.konanTarget
 
-    @Suppress("DEPRECATION", "DeprecatedCallableAddReplaceWith")
-    @Deprecated("Please declare explicit dependency on kotlinx-cli. This option is scheduled to be removed in 1.9.0")
+
+    @Suppress("DeprecatedCallableAddReplaceWith")
+    @Deprecated(
+        "Please declare explicit dependency on kotlinx-cli. This option has no longer effect since 1.9.0",
+        level = DeprecationLevel.ERROR
+    )
     override val enableEndorsedLibs: Boolean
-        get() = variant.enableEndorsedLibraries
+        get() = false
 
     override val project: Project
         get() = variant.containingModule.project

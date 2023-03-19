@@ -6,10 +6,11 @@
 package org.jetbrains.kotlinx.serialization.runners
 
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_DUMP
-import org.jetbrains.kotlin.test.runners.codegen.AbstractFirBlackBoxCodegenTest
+import org.jetbrains.kotlin.test.runners.codegen.AbstractFirLightTreeBlackBoxCodegenTest
 import org.jetbrains.kotlin.test.runners.codegen.AbstractIrBlackBoxCodegenTest
 import org.jetbrains.kotlinx.serialization.configureForKotlinxSerialization
+import org.jetbrains.kotlin.js.test.ir.AbstractJsIrTest;
+import org.jetbrains.kotlin.test.TargetBackend
 
 open class AbstractSerializationIrBoxTest : AbstractIrBlackBoxCodegenTest() {
     override fun configure(builder: TestConfigurationBuilder) {
@@ -25,9 +26,19 @@ open class AbstractSerializationWithoutRuntimeIrBoxTest : AbstractIrBlackBoxCode
     }
 }
 
-open class AbstractSerializationFirBlackBoxTest : AbstractFirBlackBoxCodegenTest() {
+open class AbstractSerializationFirLightTreeBlackBoxTest : AbstractFirLightTreeBlackBoxCodegenTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configureForKotlinxSerialization()
+    }
+}
+
+open class AbstractSerializationIrJsBoxTest : AbstractJsIrTest(
+    pathToTestDir = "plugins/kotlinx-serialization/testData/boxIr/",
+    testGroupOutputDirPrefix = "codegen/serializationBoxIr/"
+) {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.configureForKotlinxSerialization(target = TargetBackend.JS_IR)
     }
 }

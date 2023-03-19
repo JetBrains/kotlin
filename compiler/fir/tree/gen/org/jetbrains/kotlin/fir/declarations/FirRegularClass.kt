@@ -51,6 +51,8 @@ abstract class FirRegularClass : FirClass(), FirControlFlowGraphOwner {
 
     abstract override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
 
+    abstract override fun replaceStatus(newStatus: FirDeclarationStatus)
+
     abstract override fun replaceDeprecationsProvider(newDeprecationsProvider: DeprecationsProvider)
 
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)

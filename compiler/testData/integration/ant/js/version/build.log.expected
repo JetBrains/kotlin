@@ -4,14 +4,6 @@ Buildfile: [TestData]/build.xml
 build:
 [kotlin2js] Compiling [[TestData]/root1] => [[Temp]/out.js]
 [kotlin2js] info: kotlinc-js [KotlinVersion] (JRE [JREVersion])
-[kotlin2js] warning: ==========
-[kotlin2js] This project currently uses the Kotlin/JS Legacy compiler backend, which has been deprecated and will be removed in a future release.
-[kotlin2js]
-[kotlin2js] Please migrate your project to the new IR-based compiler (https://kotl.in/jsir).
-[kotlin2js] Because your build tool will not support the new Kotlin/JS compiler, you will also need to migrate to Gradle.
-[kotlin2js]
-[kotlin2js] You can continue to use the deprecated legacy compiler in the current version of the toolchain by providing the compiler option -Xuse-deprecated-legacy-compiler.
-[kotlin2js] ==========
 
 BUILD SUCCESSFUL
 Total time: [time]

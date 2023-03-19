@@ -19,6 +19,7 @@ public enum EnumError {
     @org.jetbrains.annotations.NotNull()
     public abstract java.lang.String doIt();
 
+    @org.jetbrains.annotations.NotNull()
     public static kotlin.enums.EnumEntries<EnumError> getEntries() {
         return null;
     }
@@ -93,6 +94,14 @@ public final class Test {
     }
 
     /**
+     * prop2.
+     */
+    @Anno()
+    @java.lang.Deprecated()
+    public static void getProp2$annotations() {
+    }
+
+    /**
      * get.
      */
     @org.jetbrains.annotations.NotNull()
@@ -105,11 +114,6 @@ public final class Test {
      */
     public final void setProp3(@org.jetbrains.annotations.NotNull()
     java.lang.String v) {
-    }
-
-    @Anno()
-    @java.lang.Deprecated()
-    public static void getProp2$annotations() {
     }
 }
 

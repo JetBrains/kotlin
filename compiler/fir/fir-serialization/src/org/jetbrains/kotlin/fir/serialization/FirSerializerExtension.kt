@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.fir.serialization
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.types.ConeFlexibleType
 import org.jetbrains.kotlin.fir.types.ConeErrorType
+import org.jetbrains.kotlin.fir.types.ConeFlexibleType
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.serialization.MutableVersionRequirementTable
@@ -24,12 +24,8 @@ abstract class FirSerializerExtension {
 
     val annotationSerializer by lazy { FirAnnotationSerializer(session, stringTable) }
 
-    open fun shouldSerializeNestedClass(nestedClass: FirRegularClass): Boolean = true
-    open fun shouldSerializeTypeAlias(typeAlias: FirTypeAlias): Boolean = true
     open fun shouldUseTypeTable(): Boolean = false
     open fun shouldUseNormalizedVisibility(): Boolean = false
-    abstract fun shouldSerializeFunction(function: FirFunction): Boolean
-    abstract fun shouldSerializeProperty(property: FirProperty): Boolean
 
     open fun serializePackage(packageFqName: FqName, proto: ProtoBuf.Package.Builder) {
     }

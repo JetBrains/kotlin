@@ -23,7 +23,7 @@ abstract class AbstractFunctionClassKindTest  : AbstractAnalysisApiSingleFileTes
         val (type, functionClassKind) = executeOnPooledThreadInReadAction {
             analyseForTest(expressionAtCaret) {
                 val functionType = expressionAtCaret.getExpectedType()
-                functionType?.render(position = Variance.INVARIANT) to functionType?.functionClassKind
+                functionType?.render(position = Variance.INVARIANT) to functionType?.functionTypeKind
             }
         }
         val actual = buildString {

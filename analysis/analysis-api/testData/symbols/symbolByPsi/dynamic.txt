@@ -15,12 +15,17 @@ KtKotlinPropertySymbol:
     modality: FINAL
     origin: SOURCE
     receiverParameter: null
-    returnType: dynamic
+    returnType: KtDynamicType:
+      annotationsList: []
+      type: dynamic
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
     visibility: Public
-    getDispatchReceiver(): Foo
+    getDispatchReceiver(): KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: Foo
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
@@ -39,12 +44,17 @@ KtKotlinPropertySymbol:
   name: p
   origin: SOURCE
   receiverParameter: null
-  returnType: dynamic
+  returnType: KtDynamicType:
+    annotationsList: []
+    type: dynamic
   setter: null
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
-  getDispatchReceiver(): Foo
+  getDispatchReceiver(): KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: Foo
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
@@ -60,7 +70,9 @@ KtAnonymousFunctionSymbol:
   isExtension: false
   origin: SOURCE
   receiverParameter: null
-  returnType: dynamic
+  returnType: KtDynamicType:
+    annotationsList: []
+    type: dynamic
   symbolKind: LOCAL
   typeParameters: []
   valueParameters: []
@@ -86,7 +98,9 @@ KtFunctionSymbol:
   name: f
   origin: SOURCE
   receiverParameter: null
-  returnType: dynamic
+  returnType: KtDynamicType:
+    annotationsList: []
+    type: dynamic
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -104,14 +118,19 @@ KtFunctionSymbol:
       name: p
       origin: SOURCE
       receiverParameter: null
-      returnType: dynamic
+      returnType: KtDynamicType:
+        annotationsList: []
+        type: dynamic
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): Foo
+  getDispatchReceiver(): KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: Foo
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -130,7 +149,10 @@ KtNamedClassOrObjectSymbol:
   name: Foo
   origin: SOURCE
   superTypes: [
-    kotlin/Any
+    KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Any
   ]
   symbolKind: TOP_LEVEL
   typeParameters: []

@@ -1,3 +1,7 @@
+fun <T> T.foo(): kotlin.collections.List<@Anno5(s = "1") T>?
+
+fun <T> T.foo2(): kotlin.collections.List<kotlin.collections.List<@Anno5(s = "1") T>>?
+
 @kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.TYPE])
 annotation class Anno1
 
@@ -9,6 +13,11 @@ annotation class Anno3
 
 @kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.TYPE])
 annotation class Anno4
+
+@kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.TYPE])
+annotation class Anno5(s: kotlin.String) {
+  val s: kotlin.String
+}
 
 interface I
 

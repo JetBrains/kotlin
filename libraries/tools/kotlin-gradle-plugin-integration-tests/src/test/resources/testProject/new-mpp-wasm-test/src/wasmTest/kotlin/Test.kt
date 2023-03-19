@@ -27,4 +27,9 @@ class WasmTest {
         @Test
         fun test6() = assertEquals(foo(), 3)
     }
+
+    @Test
+    fun testShouldBeExcluded() {
+        error("This test should be excluded")
+    }
 }

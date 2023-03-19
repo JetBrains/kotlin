@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
-import org.gradle.api.Project
 import org.gradle.api.logging.Logger
 import org.gradle.internal.service.ServiceRegistry
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
-import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsEnv
+import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.PreparedKotlinCompilationNpmResolution
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnEnv
+import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnResolution
 import java.io.File
 import java.io.Serializable
 
@@ -18,35 +18,25 @@ import java.io.Serializable
  * NodeJS package manager API
  */
 interface NpmApi : Serializable {
-    fun setup(project: Project)
-
     fun preparedFiles(nodeJs: NpmEnvironment): Collection<File>
 
     fun prepareRootProject(
-        rootProject: Project?,
         nodeJs: NpmEnvironment,
         rootProjectName: String,
         rootProjectVersion: String,
         logger: Logger,
-        subProjects: Collection<KotlinCompilationNpmResolution>,
+        subProjects: Collection<PreparedKotlinCompilationNpmResolution>,
         resolutions: Map<String, String>,
-        forceFullResolve: Boolean
     )
 
     fun resolveRootProject(
         services: ServiceRegistry,
         logger: Logger,
         nodeJs: NpmEnvironment,
-        yarn: YarnEnv,
-        npmProjects: Collection<KotlinCompilationNpmResolution>,
+        yarn: YarnEnvironment,
+        npmProjects: Collection<PreparedKotlinCompilationNpmResolution>,
         cliArgs: List<String>
     )
-
-    fun resolveDependency(
-        npmResolution: KotlinCompilationNpmResolution,
-        dependency: NpmDependency,
-        transitive: Boolean
-    ): Set<File>
 
     companion object {
         fun resolveOperationDescription(packageManagerTitle: String): String =
@@ -57,12 +47,29 @@ interface NpmApi : Serializable {
 data class NpmEnvironment(
     val rootPackageDir: File,
     val nodeExecutable: String,
-    val isWindows: Boolean
+    val isWindows: Boolean,
+    val packageManager: NpmApi
 ) : Serializable
 
-internal val NodeJsRootExtension.asNpmEnvironment
+internal val NodeJsEnv.asNpmEnvironment
     get() = NpmEnvironment(
         rootPackageDir,
-        requireConfigured().nodeExecutable,
-        requireConfigured().isWindows
+        nodeExecutable,
+        isWindows,
+        packageManager
+    )
+
+data class YarnEnvironment(
+    val executable: String,
+    val standalone: Boolean,
+    val ignoreScripts: Boolean,
+    val yarnResolutions: List<YarnResolution>
+) : Serializable
+
+internal val YarnEnv.asYarnEnvironment
+    get() = YarnEnvironment(
+        executable,
+        standalone,
+        ignoreScripts,
+        yarnResolutions
     )

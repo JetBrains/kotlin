@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtVariableLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtVariableSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -872,6 +873,12 @@ internal class PluginAnnotationAmbiguityImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.PluginAnnotationAmbiguity(), KtAbstractFirDiagnostic<PsiElement>
 
+internal class AmbiguousAnnotationArgumentImpl(
+    override val symbols: List<KtSymbol>,
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.AmbiguousAnnotationArgument(), KtAbstractFirDiagnostic<PsiElement>
+
 internal class WrongJsQualifierImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: KtLifetimeToken,
@@ -1552,6 +1559,12 @@ internal class NextAmbiguityImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.NextAmbiguity(), KtAbstractFirDiagnostic<PsiElement>
 
+internal class AmbiguousFunctionTypeKindImpl(
+    override val kinds: List<FunctionTypeKind>,
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.AmbiguousFunctionTypeKind(), KtAbstractFirDiagnostic<PsiElement>
+
 internal class NoContextReceiverImpl(
     override val contextReceiverRepresentation: KtType,
     override val firDiagnostic: KtPsiDiagnostic,
@@ -1886,14 +1899,23 @@ internal class PlatformClassMappedToKotlinImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.PlatformClassMappedToKotlin(), KtAbstractFirDiagnostic<PsiElement>
 
-internal class InferredTypeVariableIntoEmptyIntersectionImpl(
+internal class InferredTypeVariableIntoEmptyIntersectionErrorImpl(
     override val typeVariableDescription: String,
     override val incompatibleTypes: List<KtType>,
     override val description: String,
     override val causingTypes: String,
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: KtLifetimeToken,
-) : KtFirDiagnostic.InferredTypeVariableIntoEmptyIntersection(), KtAbstractFirDiagnostic<PsiElement>
+) : KtFirDiagnostic.InferredTypeVariableIntoEmptyIntersectionError(), KtAbstractFirDiagnostic<PsiElement>
+
+internal class InferredTypeVariableIntoEmptyIntersectionWarningImpl(
+    override val typeVariableDescription: String,
+    override val incompatibleTypes: List<KtType>,
+    override val description: String,
+    override val causingTypes: String,
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.InferredTypeVariableIntoEmptyIntersectionWarning(), KtAbstractFirDiagnostic<PsiElement>
 
 internal class InferredTypeVariableIntoPossibleEmptyIntersectionImpl(
     override val typeVariableDescription: String,
@@ -2786,7 +2808,7 @@ internal class UninitializedEnumEntryImpl(
     override val enumEntry: KtSymbol,
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: KtLifetimeToken,
-) : KtFirDiagnostic.UninitializedEnumEntry(), KtAbstractFirDiagnostic<KtSimpleNameExpression>
+) : KtFirDiagnostic.UninitializedEnumEntry(), KtAbstractFirDiagnostic<KtExpression>
 
 internal class UninitializedEnumCompanionImpl(
     override val enumClass: KtClassLikeSymbol,
@@ -3082,6 +3104,12 @@ internal class ErrorInContractDescriptionImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.ErrorInContractDescription(), KtAbstractFirDiagnostic<KtElement>
+
+internal class ContractNotAllowedImpl(
+    override val reason: String,
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.ContractNotAllowed(), KtAbstractFirDiagnostic<KtElement>
 
 internal class NoGetMethodImpl(
     override val firDiagnostic: KtPsiDiagnostic,
@@ -4107,6 +4135,11 @@ internal class InlineExternalDeclarationImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.InlineExternalDeclaration(), KtAbstractFirDiagnostic<KtDeclaration>
 
+internal class EnumClassInExternalDeclarationWarningImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.EnumClassInExternalDeclarationWarning(), KtAbstractFirDiagnostic<KtDeclaration>
+
 internal class InlineClassInExternalDeclarationWarningImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: KtLifetimeToken,
@@ -4142,4 +4175,10 @@ internal class SyntaxImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.Syntax(), KtAbstractFirDiagnostic<PsiElement>
+
+internal class SyntaxWithMessageImpl(
+    override val message: String,
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.SyntaxWithMessage(), KtAbstractFirDiagnostic<PsiElement>
 

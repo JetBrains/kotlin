@@ -8,7 +8,6 @@ import org.gradle.api.Action
 import org.gradle.api.DomainObjectSet
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ConfigurablePublishArtifact
-import org.gradle.api.artifacts.PublishArtifact
 import org.gradle.api.attributes.*
 import org.gradle.api.component.ComponentWithCoordinates
 import org.gradle.api.component.ComponentWithVariants
@@ -28,6 +27,7 @@ import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.tooling.core.MutableExtras
 import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 internal const val PRIMARY_SINGLE_COMPONENT_NAME = "kotlin"
 
@@ -67,6 +67,11 @@ abstract class AbstractKotlinTarget(
     override val publishable: Boolean
         get() = true
 
+    override var isSourcesPublishable: Boolean = true
+    override fun withSourcesJar(publish: Boolean) {
+        isSourcesPublishable = publish
+    }
+
     @InternalKotlinGradlePluginApi
     override val kotlinComponents: Set<KotlinTargetComponent> by lazy {
         val mainCompilation = compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
@@ -77,18 +82,13 @@ abstract class AbstractKotlinTarget(
                 targetName
             else PRIMARY_SINGLE_COMPONENT_NAME
 
-        val sourcesArtifact = configureSourcesJarArtifact(
-            mainCompilation,
-            componentName,
-            dashSeparatedName(targetName.toLowerCaseAsciiOnly())
-        )
-        if (sourcesArtifact != null) {
-            usageContexts += DefaultKotlinUsageContext(
-                compilation = mainCompilation,
-                dependencyConfigurationName = sourcesElementsConfigurationName,
-                includeIntoProjectStructureMetadata = false,
+        usageContexts.addIfNotNull(
+            createSourcesJarAndUsageContextIfPublishable(
+                producingCompilation = mainCompilation,
+                componentName = componentName,
+                artifactNameAppendix = dashSeparatedName(targetName.toLowerCaseAsciiOnly())
             )
-        }
+        )
 
         val result = createKotlinVariant(componentName, mainCompilation, usageContexts)
 
@@ -135,14 +135,19 @@ abstract class AbstractKotlinTarget(
         }
     }
 
-    protected fun configureSourcesJarArtifact(
+    protected fun createSourcesJarAndUsageContextIfPublishable(
         producingCompilation: KotlinCompilation<*>,
         componentName: String,
         artifactNameAppendix: String,
         classifierPrefix: String? = null,
         sourcesElementsConfigurationName: String = this.sourcesElementsConfigurationName,
-    ): PublishArtifact? {
+        overrideConfigurationAttributes: AttributeContainer? = null,
+        mavenScope: KotlinUsageContext.MavenScope? = null,
+    ): DefaultKotlinUsageContext? {
+        // We want to create task anyway, even if sources are not going to be published by KGP
+        // So users or other plugins can still use it
         val sourcesJarTask = sourcesJarTask(producingCompilation, componentName, artifactNameAppendix)
+        if (!isSourcesPublishable) return null
 
         // If sourcesElements configuration not found, don't create artifact.
         // This can happen in pure JVM plugin where source publication is delegated to Java Gradle Plugin.
@@ -151,7 +156,15 @@ abstract class AbstractKotlinTarget(
 
         val artifact = project.artifacts.add(sourcesElementsConfigurationName, sourcesJarTask) as ConfigurablePublishArtifact
         artifact.classifier = dashSeparatedName(classifierPrefix, "sources")
-        return artifact
+
+        return DefaultKotlinUsageContext(
+            compilation = producingCompilation,
+            dependencyConfigurationName = sourcesElementsConfigurationName,
+            overrideConfigurationAttributes = overrideConfigurationAttributes,
+            mavenScope = mavenScope,
+            includeIntoProjectStructureMetadata = false,
+            publishOnlyIf = { isSourcesPublishable }
+        )
     }
 
     @Suppress("UNCHECKED_CAST")

@@ -187,6 +187,7 @@ abstract class BuildReportsService : BuildService<BuildReportsService.Parameters
                         event, parameters.projectName.get(), buildUuid, parameters.label.orNull,
                         parameters.kotlinVersion.get(),
                         parameters.buildMetricsService.get().buildOperationRecords,
+                        metricsToShow = buildScanSettings.metrics
                     )
                 }
                 log.debug("Collect data takes $collectDataDuration: $compileStatData")
@@ -260,7 +261,7 @@ abstract class BuildReportsService : BuildService<BuildReportsService.Parameters
             when (key.type) {
                 ValueType.BYTES -> "${key.readableString}: ${formatSize(value)}"
                 ValueType.MILLISECONDS -> DATE_FORMATTER.format(value)
-                else -> "${key.readableString}: $value}"
+                else -> "${key.readableString}: $value"
             }
         }
         timeData.union(perfData).joinTo(readableString, ",", "Performance: [", "]")

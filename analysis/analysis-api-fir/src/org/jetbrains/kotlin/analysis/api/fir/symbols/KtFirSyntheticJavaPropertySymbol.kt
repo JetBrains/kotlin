@@ -8,18 +8,16 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.KtInitializerValue
-import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KtFirJavaSyntheticPropertySymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.requireOwnerPointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KtType
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
@@ -35,9 +33,7 @@ import org.jetbrains.kotlin.name.Name
 
 internal class KtFirSyntheticJavaPropertySymbol(
     override val firSymbol: FirSyntheticPropertySymbol,
-    override val firResolveSession: LLFirResolveSession,
-    override val token: KtLifetimeToken,
-    private val builder: KtSymbolByFirBuilder
+    override val analysisSession: KtFirAnalysisSession,
 ) : KtSyntheticJavaPropertySymbol(), KtFirSymbol<FirSyntheticPropertySymbol> {
     override val psi: PsiElement? by cached { firSymbol.findPsi() }
 
@@ -53,7 +49,7 @@ internal class KtFirSyntheticJavaPropertySymbol(
 
     override val isExtension: Boolean get() = withValidityAssertion { firSymbol.isExtension }
 
-    override val initializer: KtInitializerValue? by cached { firSymbol.getKtConstantInitializer(firResolveSession) }
+    override val initializer: KtInitializerValue? by cached { firSymbol.getKtConstantInitializer(analysisSession.firResolveSession) }
 
     override val modality: Modality get() = withValidityAssertion { firSymbol.modality ?: firSymbol.invalidModalityError() }
     override val visibility: Visibility get() = withValidityAssertion { firSymbol.visibility }
@@ -61,7 +57,7 @@ internal class KtFirSyntheticJavaPropertySymbol(
     override val annotationsList by cached {
         KtFirAnnotationListForDeclaration.create(
             firSymbol,
-            firResolveSession.useSiteFirSession,
+            analysisSession.useSiteSession,
             token
         )
     }

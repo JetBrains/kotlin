@@ -13,7 +13,8 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
  * A leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.throw
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.throw]
  */
 abstract class IrThrow : IrExpression() {
     abstract var value: IrExpression

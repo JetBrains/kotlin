@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.context.CodegenContext
 import org.jetbrains.kotlin.codegen.context.RootContext
-import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.codegen.extensions.ClassFileFactoryFinalizerExtension
 import org.jetbrains.kotlin.codegen.inline.GlobalInlineContext
 import org.jetbrains.kotlin.codegen.inline.InlineCache
@@ -397,12 +396,22 @@ class GenerationState private constructor(
                         ?.let { destination -> SignatureDumpingBuilderFactory(it, File(destination)) } ?: it
                 }
             )
-            .wrapWith(ClassBuilderInterceptorExtension.getInstances(project)) { classBuilderFactory, extension ->
+            .wrapWith(loadClassBuilderInterceptors()) { classBuilderFactory, extension ->
                 extension.interceptClassBuilderFactory(classBuilderFactory, originalFrontendBindingContext, diagnostics)
             }
 
         val finalizers = ClassFileFactoryFinalizerExtension.getInstances(project)
         this.factory = ClassFileFactory(this, interceptedBuilderFactory, finalizers)
+    }
+
+    @Suppress("UNCHECKED_CAST", "DEPRECATION_ERROR")
+    private fun loadClassBuilderInterceptors(): List<org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension> {
+        // Using Class.forName here because we're in the old JVM backend, and we need to load extensions declared in the JVM IR backend.
+        val adapted = Class.forName("org.jetbrains.kotlin.backend.jvm.extensions.ClassBuilderExtensionAdapter")
+            .getDeclaredMethod("getExtensions", Project::class.java)
+            .invoke(null, project) as List<org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension>
+
+        return org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension.getInstances(project) + adapted
     }
 
     fun beforeCompile() {

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.descriptors.utils
 import org.jetbrains.kotlin.builtins.FAKE_CONTINUATION_CLASS_DESCRIPTOR
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
+import org.jetbrains.kotlin.builtins.functions.isSuspendOrKSuspendFunction
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -60,7 +61,7 @@ internal class KtFe10TypeSystemCommonBackendContextForTypeMapping(
     override fun SimpleTypeMarker.isSuspendFunction(): Boolean {
         require(this is SimpleType)
         val declaration = constructor.declarationDescriptor
-        return declaration is FunctionClassDescriptor && declaration.functionKind.isSuspendType
+        return declaration is FunctionClassDescriptor && declaration.functionTypeKind.isSuspendOrKSuspendFunction
     }
 
     override fun SimpleTypeMarker.isKClass(): Boolean {

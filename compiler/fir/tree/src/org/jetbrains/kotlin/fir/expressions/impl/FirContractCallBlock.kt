@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformInplace
@@ -29,7 +29,7 @@ class FirContractCallBlock(var call: FirFunctionCall) : FirBlock() {
         get() = listOf(call)
 
     override var annotations: MutableOrEmptyList<FirAnnotation> = MutableOrEmptyList.empty()
-    override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
+    override var typeRef: FirTypeRef = FirImplicitTypeRefImplWithoutSource
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         call.accept(visitor, data)

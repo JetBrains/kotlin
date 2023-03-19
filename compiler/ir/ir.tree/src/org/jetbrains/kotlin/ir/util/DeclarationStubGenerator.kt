@@ -254,26 +254,37 @@ abstract class DeclarationStubGenerator(
             classDescriptor.modality
 
     fun generateClassStub(descriptor: ClassDescriptor): IrClass {
-        val referenceClass = symbolTable.referenceClass(descriptor)
-        if (referenceClass.isBound) {
-            return referenceClass.owner
+        val irClassSymbol = symbolTable.referenceClass(descriptor)
+        if (irClassSymbol.isBound) {
+            return irClassSymbol.owner
         }
-        val origin = computeOrigin(descriptor)
-        return symbolTable.declareClass(descriptor) {
-            IrLazyClass(
-                UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin,
-                it, descriptor,
-                descriptor.name, descriptor.kind, descriptor.visibility, getEffectiveModality(descriptor),
-                isCompanion = descriptor.isCompanionObject,
-                isInner = descriptor.isInner,
-                isData = descriptor.isData,
-                isExternal = descriptor.isEffectivelyExternal(),
-                isValue = descriptor.isValueClass(),
-                isExpect = descriptor.isExpect,
-                isFun = descriptor.isFun,
-                stubGenerator = this,
-                typeTranslator = typeTranslator
-            )
+
+        // `irClassSymbol` may have a different descriptor than `descriptor`. For example, a `SymbolTableWithBuiltInsDeduplication` might
+        // return a built-in symbol that hasn't been bound yet (e.g. `OptIn`). If the stub generator calls `declareClass` with the incorrect
+        // `descriptor`, a symbol created for `descriptor` will be bound, not the built-in symbol which should be. If `generateClassStub` is
+        // called twice for such a `descriptor`, an exception will occur because `descriptor`'s symbol will already have been bound.
+        //
+        // Note as well that not all symbols have descriptors. For example, `irClassSymbol` might be an `IrClassPublicSymbolImpl` without a
+        // descriptor. For such symbols, the `descriptor` argument needs to be used.
+        val targetDescriptor = if (irClassSymbol.hasDescriptor) irClassSymbol.descriptor else descriptor
+        with(targetDescriptor) {
+            val origin = computeOrigin(this)
+            return symbolTable.declareClass(this) {
+                IrLazyClass(
+                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin,
+                    it, this,
+                    name, kind, visibility, getEffectiveModality(this),
+                    isCompanion = isCompanionObject,
+                    isInner = isInner,
+                    isData = isData,
+                    isExternal = isEffectivelyExternal(),
+                    isValue = isValueClass(),
+                    isExpect = isExpect,
+                    isFun = isFun,
+                    stubGenerator = this@DeclarationStubGenerator,
+                    typeTranslator = typeTranslator
+                )
+            }
         }
     }
 

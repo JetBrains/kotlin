@@ -65,6 +65,11 @@ public class IrCodegenWasmJsInteropWasmTestGenerated extends AbstractIrCodegenWa
         runTest("compiler/testData/codegen/boxWasmJsInterop/imperativeWrapperUninitialised.kt");
     }
 
+    @TestMetadata("jsCode.kt")
+    public void testJsCode() throws Exception {
+        runTest("compiler/testData/codegen/boxWasmJsInterop/jsCode.kt");
+    }
+
     @TestMetadata("jsExport.kt")
     public void testJsExport() throws Exception {
         runTest("compiler/testData/codegen/boxWasmJsInterop/jsExport.kt");
@@ -88,6 +93,11 @@ public class IrCodegenWasmJsInteropWasmTestGenerated extends AbstractIrCodegenWa
     @TestMetadata("jsToKotlinAdapters.kt")
     public void testJsToKotlinAdapters() throws Exception {
         runTest("compiler/testData/codegen/boxWasmJsInterop/jsToKotlinAdapters.kt");
+    }
+
+    @TestMetadata("jsTypes.kt")
+    public void testJsTypes() throws Exception {
+        runTest("compiler/testData/codegen/boxWasmJsInterop/jsTypes.kt");
     }
 
     @TestMetadata("kotlinToJsAdapters.kt")

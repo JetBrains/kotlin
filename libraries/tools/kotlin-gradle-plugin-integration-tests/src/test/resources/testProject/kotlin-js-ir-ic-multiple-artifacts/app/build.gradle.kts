@@ -1,9 +1,13 @@
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
+import org.jetbrains.kotlin.gradle.targets.js.ir.JsIrBinary
+
 plugins {
     kotlin("js")
 }
 
 dependencies {
     implementation(project(":lib"))
+    testImplementation(kotlin("test-js"))
 }
 
 kotlin {
@@ -11,9 +15,16 @@ kotlin {
         browser {
         }
         binaries.executable()
+        val main by compilations.getting
+        main.binaries
+            .matching { it.mode == KotlinJsBinaryMode.DEVELOPMENT }
+            .matching { it is JsIrBinary }
+            .all  {
+                this as JsIrBinary
+                linkTask.configure {
+                    val rootCacheDir = rootCacheDirectory.get()
+                    rootCacheDirectory.set(rootCacheDir)
+                }
+            }
     }
-}
-
-configurations["compileClasspath"].apply {
-    attributes.attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage::class.java, "kotlin-runtime"))
 }

@@ -16,13 +16,16 @@ import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.modules.KotlinModuleXmlBuilder
+import org.jetbrains.kotlin.test.kotlinPathsForDistDirectoryForTests
 import org.jetbrains.kotlin.util.PerformanceCounter
+import org.jetbrains.kotlin.utils.KotlinPaths
+import org.jetbrains.kotlin.utils.PathUtil
+import java.io.File
 import java.io.FileOutputStream
 import java.io.PrintStream
 import java.nio.file.Files
 import java.nio.file.Path
 
-private val USE_BUILD_FILE: Boolean = System.getProperty("fir.bench.use.build.file", "true").toBooleanLenient()!!
 private val JVM_TARGET: String = System.getProperty("fir.bench.jvm.target", "1.8")
 
 abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
@@ -129,23 +132,35 @@ abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
     }
 
     private fun configureBaseArguments(args: K2JVMCompilerArguments, moduleData: ModuleData, tmp: Path) {
-        args.reportPerf = true
-        args.jvmTarget = JVM_TARGET
-        args.allowKotlinPackage = true
-        if (USE_BUILD_FILE) {
-            configureArgsUsingBuildFile(args, moduleData, tmp)
-        } else {
-            configureRegularArgs(args, moduleData, tmp)
-        }
-    }
+        val originalArguments = moduleData.arguments as? K2JVMCompilerArguments
+        if (originalArguments != null) {
+            args.apiVersion = originalArguments.apiVersion
+            args.noJdk = originalArguments.noJdk
+            args.noStdlib = originalArguments.noStdlib
+            args.noReflect = originalArguments.noReflect
+            args.jvmTarget = originalArguments.jvmTargetIfSupported()?.description
+            args.jsr305 = originalArguments.jsr305
+            args.nullabilityAnnotations = originalArguments.nullabilityAnnotations
+            args.jspecifyAnnotations = originalArguments.jspecifyAnnotations
+            args.jvmDefault = originalArguments.jvmDefault
+            args.jdkRelease = originalArguments.jdkRelease
+            args.progressiveMode = originalArguments.progressiveMode
+            args.optIn = (moduleData.optInAnnotations + (originalArguments.optIn ?: emptyArray())).toTypedArray()
+            args.allowKotlinPackage = originalArguments.allowKotlinPackage
 
-    private fun configureRegularArgs(args: K2JVMCompilerArguments, moduleData: ModuleData, tmp: Path) {
-        args.classpath = moduleData.classpath.joinToString(separator = ":") { it.absolutePath }
-        args.javaSourceRoots = moduleData.javaSourceRoots.map { it.path.absolutePath }.toTypedArray()
-        args.freeArgs = moduleData.sources.map { it.absolutePath }
-        args.destination = tmp.toAbsolutePath().toFile().toString()
-        args.friendPaths = moduleData.friendDirs.map { it.canonicalPath }.toTypedArray()
-        args.optIn = moduleData.optInAnnotations.toTypedArray()
+            args.pluginOptions = originalArguments.pluginOptions
+            args.pluginClasspaths = originalArguments.pluginClasspaths?.mapNotNull {
+                substituteCompilerPluginPathForKnownPlugins(it)?.absolutePath
+            }?.toTypedArray()
+
+        } else {
+            args.jvmTarget = JVM_TARGET
+            args.allowKotlinPackage = true
+        }
+        args.reportPerf = true
+        args.jdkHome = moduleData.jdkHome?.absolutePath ?: originalArguments?.jdkHome?.fixPath()?.absolutePath
+        args.renderInternalDiagnosticNames = true
+        configureArgsUsingBuildFile(args, moduleData, tmp)
     }
 
     private fun configureArgsUsingBuildFile(args: K2JVMCompilerArguments, moduleData: ModuleData, tmp: Path) {
@@ -167,7 +182,6 @@ abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
         val modulesFile = tmp.toFile().resolve("modules.xml")
         modulesFile.writeText(builder.asText().toString())
         args.buildFile = modulesFile.absolutePath
-        args.jdkHome = moduleData.jdkHome?.absolutePath
     }
 
     abstract fun configureArguments(args: K2JVMCompilerArguments, moduleData: ModuleData)
@@ -359,5 +373,22 @@ abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
         }
     }
 
+
+}
+
+
+
+fun substituteCompilerPluginPathForKnownPlugins(path: String): File? {
+    val file = File(path)
+    val paths = PathUtil.kotlinPathsForDistDirectoryForTests
+    return when {
+        file.name.startsWith("kotlinx-serialization") || file.name.startsWith("kotlin-serialization") ->
+            paths.jar(KotlinPaths.Jar.SerializationPlugin)
+        file.name.startsWith("kotlin-sam-with-receiver") -> paths.jar(KotlinPaths.Jar.SamWithReceiver)
+        file.name.startsWith("kotlin-allopen") -> paths.jar(KotlinPaths.Jar.AllOpenPlugin)
+        file.name.startsWith("kotlin-noarg") -> paths.jar(KotlinPaths.Jar.NoArgPlugin)
+        file.name.startsWith("kotlin-lombok") -> paths.jar(KotlinPaths.Jar.LombokPlugin)
+        else -> null
+    }
 
 }

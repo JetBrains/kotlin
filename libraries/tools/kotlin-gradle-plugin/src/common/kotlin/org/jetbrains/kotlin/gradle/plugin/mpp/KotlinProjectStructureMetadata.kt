@@ -16,6 +16,7 @@ import org.gradle.api.tasks.Nested
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmModule
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.currentBuildId
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
 import org.jetbrains.kotlin.gradle.targets.metadata.dependsOnClosureWithInterCompilationDependencies
@@ -417,7 +418,7 @@ internal object GlobalProjectStructureMetadataStorage {
 
     fun registerProjectStructureMetadata(project: Project, metadataProvider: () -> KotlinProjectStructureMetadata) {
         project.compositeBuildRootProject.extensions.extraProperties.set(
-            propertyName(project.rootProject.name, project.path),
+            propertyName(project.currentBuildId().name, project.path),
             { metadataProvider().toJson() }
         )
     }
@@ -447,14 +448,6 @@ internal object GlobalProjectStructureMetadataStorage {
             buildName = buildName
         )
     }
-}
-
-internal fun collectAllProjectStructureMetadataInCurrentBuild(project: Project): Map<String, Lazy<KotlinProjectStructureMetadata?>> {
-    return project
-        .rootProject
-        .allprojects
-        .associateBy { it.path }
-        .mapValues { (_, subProject) -> lazy { subProject.multiplatformExtensionOrNull?.kotlinProjectStructureMetadata } }
 }
 
 private const val ROOT_NODE_NAME = "projectStructure"

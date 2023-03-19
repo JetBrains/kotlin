@@ -254,6 +254,13 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +field("rightArgument", expression).withTransform()
         }
 
+        incrementDecrementExpression.configure {
+            +booleanField("isPrefix")
+            +field("operationName", nameType)
+            +field("expression", expression)
+            +field("operationSource", sourceElementType, nullable = true)
+        }
+
         equalityOperatorCall.configure {
             +field("operation", operationType)
         }
@@ -382,7 +389,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             generateBooleanFields(
                 "expect", "actual", "override", "operator", "infix", "inline", "tailRec",
                 "external", "const", "lateInit", "inner", "companion", "data", "suspend", "static",
-                "fromSealedClass", "fromEnumClass", "fun"
+                "fromSealedClass", "fromEnumClass", "fun", "hasStableParameterNames",
             )
         }
 
@@ -453,7 +460,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         anonymousInitializer.configure {
             +body(nullable = true, withReplace = true)
             +symbol("FirAnonymousInitializerSymbol")
-            +field("dispatchReceiverType", coneSimpleKotlinTypeType, nullable = true)
+            +field("dispatchReceiverType", coneClassLikeTypeType, nullable = true)
         }
 
         danglingModifierList.configure {
@@ -595,6 +602,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +field("symbol", classLikeSymbolType, nullable = true)
             +booleanField("isNullableLHSForCallableReference", withReplace = true)
             +booleanField("resolvedToCompanionObject", withReplace = true)
+            +booleanField("isFullyQualified")
             +fieldList("nonFatalDiagnostics", coneDiagnosticType, useMutableOrEmpty = true)
             +typeArguments.withTransform()
         }
@@ -628,7 +636,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         wrappedDelegateExpression.configure {
-            +field("delegateProvider", expression)
+            +field("delegateProvider", expression).withReplace()
         }
 
         namedReference.configure {

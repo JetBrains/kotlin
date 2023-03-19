@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: WASM
 enum class E { OK }
 
 fun <T> id(x: T) = x

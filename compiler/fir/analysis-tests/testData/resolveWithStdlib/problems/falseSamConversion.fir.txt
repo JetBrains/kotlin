@@ -1,0 +1,16 @@
+FILE: test.kt
+    public final class Wrapper : R|kotlin/Any| {
+        public constructor(si: R|SamInterface?|): R|Wrapper| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val si: R|SamInterface?| = R|<local>/si|
+            public get(): R|SamInterface?|
+
+    }
+    public final fun test(w: R|Wrapper?|): R|kotlin/Unit| {
+        R|/Wrapper.Wrapper|(R|<local>/w|?.{ $subj$.R|kotlin/let|<R|Wrapper|, R|SamInterface?|>(<L> = let@fun <anonymous>(it: R|Wrapper|): R|SamInterface?| <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^ R|<local>/it|.R|/Wrapper.si|
+        }
+        ) })
+    }

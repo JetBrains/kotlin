@@ -1,10 +1,9 @@
 apply plugin: "kotlin-multiplatform"
 
 kotlin {
-    targets {
-        fromPreset(presets.jvm, 'jvm')
-        fromPreset(presets.js, 'js')
-    }
+    jvm {}
+    js(IR) {}
+
     sourceSets {
         commonMain {
             dependencies {

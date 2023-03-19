@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirScriptSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -24,6 +25,7 @@ class FirLibrarySessionProvider(
 
     override fun getFirClassifierContainerFileIfAny(fqName: ClassId): FirFile? = null
     override fun getFirCallableContainerFile(symbol: FirCallableSymbol<*>): FirFile? = null
+    override fun getFirScriptContainerFile(symbol: FirScriptSymbol): FirFile? = null
     override fun getFirFilesByPackage(fqName: FqName): List<FirFile> = emptyList()
 
     override fun getClassNamesInPackage(fqName: FqName): Set<Name> = shouldNotBeCalled()

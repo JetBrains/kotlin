@@ -165,6 +165,8 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinArtifactsE
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinCommonCompilerOptions : org/jetbrains/kotlin/gradle/dsl/KotlinCommonCompilerToolOptions {
 	public abstract fun getApiVersion ()Lorg/gradle/api/provider/Property;
 	public abstract fun getLanguageVersion ()Lorg/gradle/api/provider/Property;
+	public abstract fun getOptIn ()Lorg/gradle/api/provider/ListProperty;
+	public abstract fun getProgressiveMode ()Lorg/gradle/api/provider/Property;
 	public abstract fun getUseK2 ()Lorg/gradle/api/provider/Property;
 }
 
@@ -464,6 +466,10 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinNativeArti
 public abstract interface annotation class org/jetbrains/kotlin/gradle/dsl/KotlinNativeArtifactDSL$ExperimentalArtifactDsl : java/lang/annotation/Annotation {
 }
 
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinNativeCompilerOptions : org/jetbrains/kotlin/gradle/dsl/KotlinCommonCompilerOptions {
+	public abstract fun getModuleName ()Lorg/gradle/api/provider/Property;
+}
+
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinNativeFatFramework : org/jetbrains/kotlin/gradle/dsl/KotlinNativeArtifact {
 	public abstract fun getEmbedBitcode ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;
 	public abstract fun getTargets ()Ljava/util/Set;
@@ -551,6 +557,7 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinVersion : java/lang/Enu
 
 public final class org/jetbrains/kotlin/gradle/dsl/KotlinVersion$Companion {
 	public final fun fromVersion (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/dsl/KotlinVersion;
+	public final fun getDEFAULT ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinVersion;
 }
 
 public abstract class org/jetbrains/kotlin/gradle/plugin/AbstractCompileWithDependenciesTracking : org/gradle/api/tasks/compile/AbstractCompile {
@@ -1019,6 +1026,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTarget 
 	public abstract fun getUseDisambiguationClassifierAsSourceSetNamePrefix ()Z
 	public abstract fun mavenPublication (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun mavenPublication (Lorg/gradle/api/Action;)V
+	public abstract fun withSourcesJar (Z)V
 }
 
 public final class org/jetbrains/kotlin/gradle/plugin/KotlinTarget$DefaultImpls {
@@ -1027,6 +1035,7 @@ public final class org/jetbrains/kotlin/gradle/plugin/KotlinTarget$DefaultImpls 
 	public static fun getDisambiguationClassifier (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;)Ljava/lang/String;
 	public static fun getName (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;)Ljava/lang/String;
 	public static fun mavenPublication (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;Lkotlin/jvm/functions/Function1;)V
+	public static synthetic fun withSourcesJar$default (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;ZILjava/lang/Object;)V
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTargetComponent : org/gradle/api/component/SoftwareComponent {
@@ -1077,6 +1086,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTargetH
 	public abstract fun withTvosArm64 ()V
 	public abstract fun withTvosSimulatorArm64 ()V
 	public abstract fun withTvosX64 ()V
+	public abstract fun withWasm ()V
 	public abstract fun withWasm32 ()V
 	public abstract fun withWatchos ()V
 	public abstract fun withWatchosArm32 ()V
@@ -1472,6 +1482,16 @@ public abstract interface class org/jetbrains/kotlin/gradle/tasks/CompileUsingKo
 	public abstract fun getCompilerExecutionStrategy ()Lorg/gradle/api/provider/Property;
 	public abstract fun getKotlinDaemonJvmArguments ()Lorg/gradle/api/provider/ListProperty;
 	public abstract fun getUseDaemonFallbackStrategy ()Lorg/gradle/api/provider/Property;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/tasks/IncrementalSyncTask : org/gradle/api/Task {
+	public abstract fun getDestinationDir ()Ljava/io/File;
+	public abstract fun getDestinationDirectory ()Lorg/gradle/api/provider/Property;
+	public abstract fun getFrom ()Lorg/gradle/api/file/ConfigurableFileCollection;
+}
+
+public final class org/jetbrains/kotlin/gradle/tasks/IncrementalSyncTask$DefaultImpls {
+	public static fun getDestinationDir (Lorg/jetbrains/kotlin/gradle/tasks/IncrementalSyncTask;)Ljava/io/File;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/tasks/Kapt : org/jetbrains/kotlin/gradle/tasks/BaseKapt {

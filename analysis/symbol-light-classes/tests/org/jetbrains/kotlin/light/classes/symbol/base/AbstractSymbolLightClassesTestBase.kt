@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.ModuleStructureDirectives
+import org.jetbrains.kotlin.test.directives.model.Directive
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.model.TestModule
@@ -35,6 +36,7 @@ import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.exists
 import kotlin.io.path.nameWithoutExtension
+import kotlin.test.fail
 
 // Same as LightProjectDescriptor.TEST_MODULE_NAME
 private const val TEST_MODULE_NAME = "light_idea_test_case"
@@ -57,19 +59,25 @@ abstract class AbstractSymbolLightClassesTestBase(
     }
 
     override fun doTestByFileStructure(ktFiles: List<KtFile>, module: TestModule, testServices: TestServices) {
-        if (stopIfCompilationErrorDirectivePresent && CompilerExecutor.Directives.COMPILATION_ERRORS in module.directives) {
+        if (isTestAgainstCompiledCode && CompilerExecutor.Directives.COMPILATION_ERRORS in module.directives) {
             return
         }
 
         val ktFile = ktFiles.first()
         val project = ktFile.project
 
-        ignoreExceptionIfIgnoreFirPresent(module) {
-            val actual = getRenderResult(ktFile, ktFiles, testDataPath, module, project).cleanup()
-            compareResults(testServices, actual)
-            removeIgnoreFir(module)
-            removeDuplicatedFirJava(testServices)
+        ignoreExceptionIfIgnoreDirectivePresent(module) {
+            compareResults(module, testServices) {
+                getRenderResult(ktFile, ktFiles, testDataPath, module, project)
+            }
         }
+    }
+
+    protected fun compareResults(module: TestModule, testServices: TestServices, computeActual: () -> String) {
+        val actual = computeActual().cleanup()
+        compareResults(testServices, actual)
+        removeIgnoreDirectives(module)
+        removeDuplicatedFirJava(testServices)
     }
 
     private fun String.cleanup(): String {
@@ -88,13 +96,15 @@ abstract class AbstractSymbolLightClassesTestBase(
         project: Project
     ): String
 
-    private inline fun ignoreExceptionIfIgnoreFirPresent(module: TestModule, action: () -> Unit) {
+    private inline fun ignoreExceptionIfIgnoreDirectivePresent(module: TestModule, action: () -> Unit) {
         try {
             action()
         } catch (e: Throwable) {
-            if (Directives.IGNORE_FIR in module.directives) {
+            val directives = module.directives
+            if (Directives.IGNORE_FIR in directives || isTestAgainstCompiledCode && Directives.IGNORE_LIBRARY_EXCEPTIONS in directives) {
                 return
             }
+
             throw e
         }
     }
@@ -107,10 +117,19 @@ abstract class AbstractSymbolLightClassesTestBase(
         testServices.assertions.assertEqualsToFile(path, actual)
     }
 
-    private fun removeIgnoreFir(module: TestModule) {
-        if (Directives.IGNORE_FIR in module.directives) {
-            error("Test is passing. Please, remove `// ${Directives.IGNORE_FIR.name}` directive")
+    private fun removeIgnoreDirectives(module: TestModule) {
+        val directives = module.directives
+        if (Directives.IGNORE_FIR in directives) {
+            throwTestIsPassingException(Directives.IGNORE_FIR)
         }
+
+        if (isTestAgainstCompiledCode && Directives.IGNORE_LIBRARY_EXCEPTIONS in directives) {
+            throwTestIsPassingException(Directives.IGNORE_LIBRARY_EXCEPTIONS)
+        }
+    }
+
+    private fun throwTestIsPassingException(directive: Directive): Nothing {
+        error("Test is passing. Please, remove `// ${directive.name}` directive")
     }
 
     protected fun findLightClass(fqname: String, project: Project): PsiClass? {
@@ -141,6 +160,7 @@ abstract class AbstractSymbolLightClassesTestBase(
         val identicalCheckerHelper = IdenticalCheckerHelper(testServices)
         if (identicalCheckerHelper.contentsAreEquals(java.toFile(), firJava.toFile(), trimLines = true)) {
             identicalCheckerHelper.deleteFirFile(java.toFile())
+            fail("$firJava is equals to $java. The redundant test data file removed")
         }
     }
 
@@ -162,7 +182,7 @@ abstract class AbstractSymbolLightClassesTestBase(
     private fun currentResultPath() = testDataPath.resolveSibling(testDataPath.nameWithoutExtension + currentExtension)
 
     protected abstract val currentExtension: String
-    protected abstract val stopIfCompilationErrorDirectivePresent: Boolean
+    protected abstract val isTestAgainstCompiledCode: Boolean
 
     object EXTENSIONS {
         const val JAVA = ".java"
@@ -174,6 +194,10 @@ abstract class AbstractSymbolLightClassesTestBase(
         val IGNORE_FIR by directive(
             description = "Ignore the test for Symbol FIR-based implementation of LC",
             applicability = DirectiveApplicability.Global
+        )
+
+        val IGNORE_LIBRARY_EXCEPTIONS by stringDirective(
+            description = "Ignore the test for decompiled-based implementation of LC"
         )
     }
 }

@@ -30,6 +30,8 @@ dependencies {
     testApi(project(":compiler:fir:semantics"))
     testApi(project(":compiler:fir:dump"))
 
+    testRuntimeOnly(project(":compiler:fir:plugin-utils"))
+
     val asyncProfilerClasspath = project.findProperty("fir.bench.async.profiler.classpath") as? String
     if (asyncProfilerClasspath != null) {
         testRuntimeOnly(files(*asyncProfilerClasspath.split(File.pathSeparatorChar).toTypedArray()))
@@ -42,6 +44,7 @@ sourceSets {
 }
 
 projectTest(minHeapSizeMb = 8192, maxHeapSizeMb = 8192, reservedCodeCacheSizeMb = 512) {
+    dependsOn(":dist")
     systemProperties(project.properties.filterKeys { it.startsWith("fir.") })
     workingDir = rootDir
 

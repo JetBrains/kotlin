@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JS, JS_IR
-// IGNORE_BACKEND: JS_IR_ES6
 // WITH_STDLIB
 
 package a.b
@@ -22,7 +20,7 @@ fun test() {
     }
 
     val size = a.toList().size
-    assert(size == 5) { "actual size: $size"}
+    require(size == 5) { "actual size: $size"}
 }
 
 fun box(): String {

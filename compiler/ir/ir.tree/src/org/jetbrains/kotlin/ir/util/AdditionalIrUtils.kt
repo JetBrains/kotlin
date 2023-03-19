@@ -223,10 +223,12 @@ class NaiveSourceBasedFileEntryImpl(
         }
     }
 
+    private val lineNumberLock = Any()
+
     override fun getLineNumber(offset: Int): Int {
         if (offset == SYNTHETIC_OFFSET) return 0
         if (offset < 0) return -1
-        return calculatedBeforeLineNumbers.get(offset)
+        return synchronized(lineNumberLock) { calculatedBeforeLineNumbers.get(offset) }
     }
 
     override fun getColumnNumber(offset: Int): Int {

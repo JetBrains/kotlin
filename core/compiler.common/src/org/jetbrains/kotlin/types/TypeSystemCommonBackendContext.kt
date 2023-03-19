@@ -62,8 +62,6 @@ interface TypeSystemCommonBackendContextForTypeMapping : TypeSystemCommonBackend
     fun SimpleTypeMarker.isSuspendFunction(): Boolean
     fun SimpleTypeMarker.isKClass(): Boolean
 
-    fun KotlinTypeMarker.isRawType(): Boolean
-
     fun TypeConstructorMarker.typeWithArguments(arguments: List<KotlinTypeMarker>): SimpleTypeMarker
     fun TypeConstructorMarker.typeWithArguments(vararg arguments: KotlinTypeMarker): SimpleTypeMarker {
         return typeWithArguments(arguments.toList())

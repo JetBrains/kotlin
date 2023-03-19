@@ -74,7 +74,7 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
             generateParameterNames(irFunction, methodVisitor, context.state)
         }
 
-        if (irFunction.origin !in methodOriginsWithoutAnnotations) {
+        if (irFunction.isWithAnnotations) {
             val skipNullabilityAnnotations = flags and Opcodes.ACC_PRIVATE != 0 || flags and Opcodes.ACC_SYNTHETIC != 0
             object : AnnotationCodegen(classCodegen, skipNullabilityAnnotations) {
                 override fun visitAnnotation(descr: String, visible: Boolean): AnnotationVisitor {
@@ -306,13 +306,12 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
     }
 
     companion object {
-        internal val methodOriginsWithoutAnnotations =
+        private val methodOriginsWithoutAnnotations =
             setOf(
                 // Not generating parameter annotations for default stubs fixes KT-7892, though
                 // this certainly looks like a workaround for a javac bug.
                 IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER,
                 JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR,
-                IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER,
                 IrDeclarationOrigin.GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER,
                 IrDeclarationOrigin.BRIDGE,
                 IrDeclarationOrigin.BRIDGE_SPECIAL,
@@ -321,6 +320,13 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
                 IrDeclarationOrigin.IR_BUILTINS_STUB,
                 IrDeclarationOrigin.PROPERTY_DELEGATE,
             )
+
+        private val IrFunction.isWithAnnotations: Boolean
+            get() = when (origin) {
+                in methodOriginsWithoutAnnotations -> false
+                IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER -> name.asString() == "<get-entries>"
+                else -> true
+            }
     }
 }
 
@@ -331,7 +337,7 @@ private fun IrValueParameter.isSyntheticMarkerParameter(): Boolean =
 
 private fun generateParameterNames(irFunction: IrFunction, mv: MethodVisitor, state: GenerationState) {
     irFunction.extensionReceiverParameter?.let {
-        mv.visitParameter(irFunction.extensionReceiverName(state), Opcodes.ACC_MANDATED)
+        mv.visitParameter(irFunction.extensionReceiverName(state), 0)
     }
     for (irParameter in irFunction.valueParameters) {
         // A construct emitted by a Java compiler must be marked as synthetic if it does not correspond to a construct declared

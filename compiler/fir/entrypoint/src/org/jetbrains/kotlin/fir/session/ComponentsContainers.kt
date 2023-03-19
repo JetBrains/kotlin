@@ -40,12 +40,11 @@ import org.jetbrains.kotlin.fir.resolve.transformers.plugin.GeneratedClassIndex
 import org.jetbrains.kotlin.fir.scopes.FirOverrideService
 import org.jetbrains.kotlin.fir.scopes.FirPlatformClassMapper
 import org.jetbrains.kotlin.fir.scopes.PlatformSpecificOverridabilityRules
-import org.jetbrains.kotlin.fir.scopes.impl.FirDeclaredMemberScopeProvider
-import org.jetbrains.kotlin.fir.scopes.impl.FirDynamicMembersStorage
-import org.jetbrains.kotlin.fir.scopes.impl.FirIntersectionOverrideStorage
-import org.jetbrains.kotlin.fir.scopes.impl.FirSubstitutionOverrideStorage
+import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.symbols.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.fir.types.FirCorrespondingSupertypesCache
+import org.jetbrains.kotlin.fir.types.FirFunctionTypeKindService
+import org.jetbrains.kotlin.fir.types.FirFunctionTypeKindServiceImpl
 import org.jetbrains.kotlin.fir.types.TypeComponents
 import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -74,6 +73,11 @@ fun FirSession.registerCommonComponents(languageVersionSettings: LanguageVersion
 }
 
 @OptIn(SessionConfiguration::class)
+fun FirSession.registerCommonComponentsAfterExtensionsAreConfigured() {
+    register(FirFunctionTypeKindService::class, FirFunctionTypeKindServiceImpl(this))
+}
+
+@OptIn(SessionConfiguration::class)
 fun FirSession.registerCliCompilerOnlyComponents() {
     register(FirCachesFactory::class, FirThreadUnsafeCachesFactory)
     register(SealedClassInheritorsProvider::class, SealedClassInheritorsProviderImpl)
@@ -97,6 +101,7 @@ fun FirSession.registerCommonJavaComponents(javaModuleResolver: JavaModuleResolv
     register(PlatformSupertypeUpdater::class, JvmSupertypeUpdater(this))
     register(PlatformSpecificOverridabilityRules::class, JavaOverridabilityRules(this))
     register(DeserializedClassConfigurator::class, JvmDeserializedClassConfigurator(this))
+    register(FirEnumEntriesSupport::class, FirJvmEnumEntriesSupport(this))
 }
 
 // -------------------------- Resolve components --------------------------

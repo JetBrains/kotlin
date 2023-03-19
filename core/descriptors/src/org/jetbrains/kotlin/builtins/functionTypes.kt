@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.builtins
 
 import org.jetbrains.kotlin.builtins.StandardNames.BUILT_INS_PACKAGE_NAME
-import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
+import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
+import org.jetbrains.kotlin.builtins.functions.FunctionTypeKindExtractor
+import org.jetbrains.kotlin.builtins.functions.AllowedToUsedOnlyInK1
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -24,7 +26,6 @@ import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.addIfNotNull
-import java.util.*
 
 private fun KotlinType.isTypeOrSubtypeOf(predicate: (KotlinType) -> Boolean): Boolean =
         predicate(this) ||
@@ -58,17 +59,20 @@ val KotlinType.isBuiltinFunctionalTypeOrSubtype: Boolean
 fun KotlinType.isFunctionTypeOrSubtype(predicate: (KotlinType) -> Boolean): Boolean =
     isTypeOrSubtypeOf { it.isFunctionType && predicate(it) }
 
+val KotlinType.functionTypeKind: FunctionTypeKind?
+    get() = constructor.declarationDescriptor?.getFunctionTypeKind()
+
 val KotlinType.isFunctionType: Boolean
-    get() = constructor.declarationDescriptor?.getFunctionalClassKind() == FunctionClassKind.Function
+    get() = functionTypeKind == FunctionTypeKind.Function
 
 val KotlinType.isKFunctionType: Boolean
-    get() = constructor.declarationDescriptor?.getFunctionalClassKind() == FunctionClassKind.KFunction
+    get() = functionTypeKind == FunctionTypeKind.KFunction
 
 val KotlinType.isSuspendFunctionType: Boolean
-    get() = constructor.declarationDescriptor?.getFunctionalClassKind() == FunctionClassKind.SuspendFunction
+    get() = functionTypeKind == FunctionTypeKind.SuspendFunction
 
 val KotlinType.isKSuspendFunctionType: Boolean
-    get() = constructor.declarationDescriptor?.getFunctionalClassKind() == FunctionClassKind.KSuspendFunction
+    get() = functionTypeKind == FunctionTypeKind.KSuspendFunction
 
 val KotlinType.isFunctionOrSuspendFunctionType: Boolean
     get() = isFunctionType || isSuspendFunctionType
@@ -81,17 +85,17 @@ val KotlinType.isBuiltinFunctionalType: Boolean
 
 val DeclarationDescriptor.isBuiltinFunctionalClassDescriptor: Boolean
     get() {
-        val functionalClassKind = getFunctionalClassKind()
-        return functionalClassKind == FunctionClassKind.Function ||
-                functionalClassKind == FunctionClassKind.SuspendFunction
+        val functionalClassKind = getFunctionTypeKind()
+        return functionalClassKind == FunctionTypeKind.Function ||
+                functionalClassKind == FunctionTypeKind.SuspendFunction
     }
 
 fun isBuiltinFunctionClass(classId: ClassId): Boolean {
     if (!classId.startsWith(StandardNames.BUILT_INS_PACKAGE_NAME)) return false
 
-    val kind = classId.asSingleFqName().toUnsafe().getFunctionalClassKind()
-    return kind == FunctionClassKind.Function ||
-           kind == FunctionClassKind.SuspendFunction
+    val kind = classId.asSingleFqName().toUnsafe().getFunctionTypeKind()
+    return kind == FunctionTypeKind.Function ||
+           kind == FunctionTypeKind.SuspendFunction
 }
 
 val KotlinType.isNonExtensionFunctionType: Boolean
@@ -112,20 +116,21 @@ private val KotlinType.isTypeAnnotatedWithExtensionFunctionType: Boolean
  */
 fun isNumberedFunctionClassFqName(fqName: FqNameUnsafe): Boolean {
     return fqName.startsWith(BUILT_INS_PACKAGE_NAME) &&
-           fqName.getFunctionalClassKind() == FunctionClassKind.Function
+           fqName.getFunctionTypeKind() == FunctionTypeKind.Function
 }
 
-fun DeclarationDescriptor.getFunctionalClassKind(): FunctionClassKind? {
+fun DeclarationDescriptor.getFunctionTypeKind(): FunctionTypeKind? {
     if (this !is ClassDescriptor) return null
     if (!KotlinBuiltIns.isUnderKotlinPackage(this)) return null
 
-    return fqNameUnsafe.getFunctionalClassKind()
+    return fqNameUnsafe.getFunctionTypeKind()
 }
 
-private fun FqNameUnsafe.getFunctionalClassKind(): FunctionClassKind? {
+@OptIn(AllowedToUsedOnlyInK1::class)
+private fun FqNameUnsafe.getFunctionTypeKind(): FunctionTypeKind? {
     if (!isSafe || isRoot) return null
 
-    return FunctionClassKind.getFunctionalClassKind(shortName().asString(), toSafe().parent())
+    return FunctionTypeKindExtractor.Default.getFunctionalClassKind(toSafe().parent(), shortName().asString())
 }
 
 fun KotlinType.contextFunctionTypeParamsCount(): Int {

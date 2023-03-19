@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isBooleanOrNullableBoolean
+import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
 import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 
 object FirExhaustiveWhenChecker : FirWhenExpressionChecker() {
@@ -45,7 +46,7 @@ object FirExhaustiveWhenChecker : FirWhenExpressionChecker() {
                 reporter.reportOn(source, FirErrors.NO_ELSE_IN_WHEN, whenExpression.missingCases, context)
             }
         } else {
-            val subjectType = whenExpression.subject?.typeRef?.coneType ?: return
+            val subjectType = whenExpression.subject?.typeRef?.coneType?.lowerBoundIfFlexible() ?: return
             val subjectClassSymbol = subjectType.fullyExpandedType(context.session).toRegularClassSymbol(context.session) ?: return
             val kind = when {
                 subjectClassSymbol.modality == Modality.SEALED -> AlgebraicTypeKind.Sealed

@@ -7,8 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fakeElement
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
@@ -16,9 +15,7 @@ import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildVarargArgumentsExpression
-import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
-import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
@@ -90,11 +87,7 @@ fun FirBlock.writeResultType(session: FirSession) {
     } else {
         val theType = resultExpression.resultType
         if (theType is FirResolvedTypeRef) {
-            buildResolvedTypeRef {
-                source = theType.source?.fakeElement(KtFakeSourceElementKind.ImplicitTypeRef)
-                type = theType.type
-                annotations += theType.annotations
-            }
+            theType.copyWithNewSourceKind(KtFakeSourceElementKind.ImplicitTypeRef)
         } else {
             buildErrorTypeRef {
                 diagnostic = ConeSimpleDiagnostic("No type for block", DiagnosticKind.InferenceError)

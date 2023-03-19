@@ -24,7 +24,10 @@ KtNamedClassOrObjectSymbol:
   name: X
   origin: SOURCE
   superTypes: [
-    kotlin/Any
+    KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Any
   ]
   symbolKind: TOP_LEVEL
   typeParameters: [
@@ -38,7 +41,15 @@ KtNamedClassOrObjectSymbol:
 KtTypeAliasSymbol:
   annotationsList: []
   classIdIfNonLocal: TopLevelAlias
-  expandedType: X<kotlin/Int>
+  expandedType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: [
+      KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
+        type: kotlin/Int
+    ]
+    type: X<kotlin/Int>
   name: TopLevelAlias
   origin: SOURCE
   symbolKind: TOP_LEVEL
@@ -50,7 +61,15 @@ KtTypeAliasSymbol:
 KtTypeAliasSymbol:
   annotationsList: []
   classIdIfNonLocal: A.NestedLevelAlias
-  expandedType: X<kotlin/String>
+  expandedType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: [
+      KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
+        type: kotlin/String
+    ]
+    type: X<kotlin/String>
   name: NestedLevelAlias
   origin: SOURCE
   symbolKind: CLASS_MEMBER
@@ -62,7 +81,15 @@ KtTypeAliasSymbol:
 KtTypeAliasSymbol:
   annotationsList: []
   classIdIfNonLocal: null
-  expandedType: X<kotlin/String>
+  expandedType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: [
+      KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
+        type: kotlin/String
+    ]
+    type: X<kotlin/String>
   name: LocalTypeAlias
   origin: SOURCE
   symbolKind: CLASS_MEMBER
@@ -74,7 +101,15 @@ KtTypeAliasSymbol:
 KtTypeAliasSymbol:
   annotationsList: []
   classIdIfNonLocal: null
-  expandedType: X<kotlin/String>
+  expandedType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: [
+      KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
+        type: kotlin/String
+    ]
+    type: X<kotlin/String>
   name: NestedLevelAliasInLocalClass
   origin: SOURCE
   symbolKind: CLASS_MEMBER
@@ -86,7 +121,15 @@ KtTypeAliasSymbol:
 KtTypeAliasSymbol:
   annotationsList: []
   classIdIfNonLocal: null
-  expandedType: X<kotlin/String>
+  expandedType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: [
+      KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
+        type: kotlin/String
+    ]
+    type: X<kotlin/String>
   name: LocalTypeAlias
   origin: SOURCE
   symbolKind: CLASS_MEMBER
@@ -98,7 +141,15 @@ KtTypeAliasSymbol:
 KtTypeAliasSymbol:
   annotationsList: []
   classIdIfNonLocal: null
-  expandedType: X<kotlin/String>
+  expandedType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: [
+      KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
+        type: kotlin/String
+    ]
+    type: X<kotlin/String>
   name: NestedLevelAliasInLocalClass
   origin: SOURCE
   symbolKind: CLASS_MEMBER
@@ -126,12 +177,18 @@ KtFunctionSymbol:
   name: check
   origin: SOURCE
   receiverParameter: null
-  returnType: kotlin/Unit
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Unit
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getDispatchReceiver(): A.LocalClass.LocalClass
+  getDispatchReceiver(): KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: A.LocalClass.LocalClass
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -150,7 +207,10 @@ KtNamedClassOrObjectSymbol:
   name: LocalClass
   origin: SOURCE
   superTypes: [
-    kotlin/Any
+    KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Any
   ]
   symbolKind: LOCAL
   typeParameters: []
@@ -178,12 +238,18 @@ KtFunctionSymbol:
   name: check
   origin: SOURCE
   receiverParameter: null
-  returnType: kotlin/Unit
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Unit
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getDispatchReceiver(): A.LocalClass
+  getDispatchReceiver(): KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: A.LocalClass
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -202,7 +268,10 @@ KtNamedClassOrObjectSymbol:
   name: LocalClass
   origin: SOURCE
   superTypes: [
-    kotlin/Any
+    KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Any
   ]
   symbolKind: LOCAL
   typeParameters: []
@@ -230,12 +299,18 @@ KtFunctionSymbol:
   name: check
   origin: SOURCE
   receiverParameter: null
-  returnType: kotlin/Unit
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Unit
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getDispatchReceiver(): A
+  getDispatchReceiver(): KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: A
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -254,7 +329,10 @@ KtNamedClassOrObjectSymbol:
   name: A
   origin: SOURCE
   superTypes: [
-    kotlin/Any
+    KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Any
   ]
   symbolKind: TOP_LEVEL
   typeParameters: []

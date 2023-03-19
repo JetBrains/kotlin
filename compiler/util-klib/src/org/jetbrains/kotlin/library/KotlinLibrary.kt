@@ -4,12 +4,18 @@ import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.properties.propertyList
 
+/**
+ * [org.jetbrains.kotlin.library.KotlinAbiVersion]
+ */
 const val KLIB_PROPERTY_ABI_VERSION = "abi_version"
 const val KLIB_PROPERTY_COMPILER_VERSION = "compiler_version"
+
+/**
+ * [org.jetbrains.kotlin.library.metadata.KlibMetadataVersion]
+ */
+const val KLIB_PROPERTY_METADATA_VERSION = "metadata_version"
 const val KLIB_PROPERTY_DEPENDENCY_VERSION = "dependency_version"
 const val KLIB_PROPERTY_LIBRARY_VERSION = "library_version"
-const val KLIB_PROPERTY_METADATA_VERSION = "metadata_version"
-const val KLIB_PROPERTY_IR_VERSION = "ir_version"
 const val KLIB_PROPERTY_UNIQUE_NAME = "unique_name"
 const val KLIB_PROPERTY_SHORT_NAME = "short_name"
 const val KLIB_PROPERTY_DEPENDS = "depends"

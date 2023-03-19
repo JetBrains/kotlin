@@ -51,8 +51,7 @@ import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import kotlin.collections.contains
 import kotlin.collections.set
 
-
-class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : StatementGeneratorExtension(statementGenerator) {
+internal class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : StatementGeneratorExtension(statementGenerator) {
 
     private fun createErrorExpression(ktExpression: KtExpression, text: String) =
         IrErrorExpressionImpl(

@@ -11,9 +11,18 @@ package org.jetbrains.kotlin.ir.declarations
 import org.jetbrains.kotlin.ir.IrElement
 
 /**
- * A non-leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.attributeContainer
+ * Represents an IR element that can be copied, but must remember its original element. It is
+ * useful, for example, to keep track of generated names for anonymous declarations.
+ * @property attributeOwnerId original element before copying. Always satisfies the following
+ *   invariant: `this.attributeOwnerId == this.attributeOwnerId.attributeOwnerId`.
+ * @property originalBeforeInline original element before inlining. Useful only with IR
+ *   inliner. `null` if the element wasn't inlined. Unlike [attributeOwnerId], doesn't have the
+ *   idempotence invariant and can contain a chain of declarations.
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.attributeContainer]
  */
 interface IrAttributeContainer : IrElement {
     var attributeOwnerId: IrAttributeContainer
+
+    var originalBeforeInline: IrAttributeContainer?
 }

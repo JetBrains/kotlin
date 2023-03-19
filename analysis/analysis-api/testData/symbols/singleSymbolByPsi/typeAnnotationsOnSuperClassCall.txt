@@ -13,14 +13,17 @@ KtNamedClassOrObjectSymbol:
   name: Foo
   origin: SOURCE
   superTypes: [
-    [
-      Anno1()
-        psi: KtAnnotationEntry
-      Anno2()
-        psi: KtAnnotationEntry
-      Anno3()
-        psi: KtAnnotationEntry
-    ] @R|Anno1|()  @R|Anno2|()  @R|Anno3|()  BaseClass
+    KtUsualClassType:
+      annotationsList: [
+        Anno1()
+          psi: KtAnnotationEntry
+        Anno2()
+          psi: KtAnnotationEntry
+        Anno3()
+          psi: KtAnnotationEntry
+      ]
+      ownTypeArguments: []
+      type: @R|Anno1|()  @R|Anno2|()  @R|Anno3|()  BaseClass
   ]
   symbolKind: TOP_LEVEL
   typeParameters: []

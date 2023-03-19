@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve
 
+import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
@@ -164,13 +165,6 @@ class FirSamResolver(
             ).apply {
                 isExpect = firRegularClass.isExpect
                 isActual = firRegularClass.isActual
-                isOverride = false
-                isOperator = false
-                isInfix = false
-                isExternal = false
-                isInline = false
-                isSuspend = false
-                isTailRec = false
             }
             this.symbol = syntheticFunctionSymbol
             typeParameters += newTypeParameters.map { it.build() }
@@ -262,10 +256,10 @@ class FirSamResolver(
             // TODO: val shouldConvertFirstParameterToDescriptor = samWithReceiverResolvers.any { it.shouldConvertFirstSamParameterToReceiver(abstractMethod) }
 
             val typeFromExtension = samConversionTransformers.firstNotNullOfOrNull {
-                it.getCustomFunctionalTypeForSamConversion(abstractMethod)
+                it.getCustomFunctionTypeForSamConversion(abstractMethod)
             }
 
-            SAMInfo(abstractMethod.symbol, typeFromExtension ?: abstractMethod.getFunctionTypeForAbstractMethod())
+            SAMInfo(abstractMethod.symbol, typeFromExtension ?: abstractMethod.getFunctionTypeForAbstractMethod(session))
         }
     }
 
@@ -407,18 +401,19 @@ fun FirSimpleFunction.isPublicInObject(checkOnlyName: Boolean): Boolean {
 
 private val PUBLIC_METHOD_NAMES_IN_OBJECT = setOf("equals", "hashCode", "getClass", "wait", "notify", "notifyAll", "toString")
 
-private fun FirSimpleFunction.getFunctionTypeForAbstractMethod(): ConeLookupTagBasedType {
+private fun FirSimpleFunction.getFunctionTypeForAbstractMethod(session: FirSession): ConeLookupTagBasedType {
     val parameterTypes = valueParameters.map {
         it.returnTypeRef.coneTypeSafe<ConeKotlinType>() ?: ConeErrorType(ConeIntermediateDiagnostic("No type for parameter $it"))
     }
     val contextReceiversTypes = contextReceivers.map {
         it.typeRef.coneTypeSafe<ConeKotlinType>() ?: ConeErrorType(ConeIntermediateDiagnostic("No type for context receiver $it"))
     }
-    return createFunctionalType(
+    val kind = session.functionTypeService.extractSingleSpecialKindForFunction(symbol) ?: FunctionTypeKind.Function
+    return createFunctionType(
+        kind,
         parameterTypes,
         receiverType = receiverParameter?.typeRef?.coneType,
         rawReturnType = returnTypeRef.coneType,
-        isSuspend = this.isSuspend,
         contextReceivers = contextReceiversTypes
     )
 }

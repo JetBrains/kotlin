@@ -1,0 +1,37 @@
+FILE: referenceToNestedClass.kt
+    public final class Param : R|kotlin/Any| {
+        public constructor(): R|Param| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public open class Base : R|kotlin/Any| {
+        public constructor(param: R|Param|): R|Base| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val param: R|Param| = R|<local>/param|
+            public get(): R|Param|
+
+    }
+    public final class Outer : R|Base| {
+        public constructor(param: R|Param|): R|Outer| {
+            super<R|Base|>(R|<local>/param|)
+        }
+
+        public final class Nested : R|Base| {
+            public constructor(param: R|Param|): R|Outer.Nested| {
+                super<R|Base|>(R|<local>/param|)
+            }
+
+        }
+
+    }
+    public final fun funWithCtor(ctor: R|kotlin/reflect/KFunction1<Param, Base>|): R|kotlin/Unit| {
+    }
+    public final fun main(): R|kotlin/Unit| {
+        R|/funWithCtor|(::R|/Outer.Outer|)
+        R|/funWithCtor|(::R|/Outer.Nested.Nested|)
+        R|/funWithCtor|(Q|Outer|::R|/Outer.Nested.Nested|)
+        R|/funWithCtor|(Q|Outer|::R|/Outer.Nested.Nested|::R|SubstitutionOverride<kotlin/reflect/KFunction1.invoke: R|Outer.Nested|>|)
+    }

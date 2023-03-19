@@ -113,7 +113,7 @@ fun Project.projectTest(
     body: Test.() -> Unit = {}
 ): TaskProvider<Test> {
     val shouldInstrument = project.providers.gradleProperty("kotlin.test.instrumentation.disable")
-        .forUseAtConfigurationTime().orNull?.toBoolean() != true
+        .orNull?.toBoolean() != true
     if (shouldInstrument) {
         evaluationDependsOn(":test-instrumenter")
     }
@@ -248,7 +248,7 @@ fun Project.projectTest(
         if (parallel && jUnitMode != JUnitMode.JUnit5) {
             val forks = (totalMaxMemoryForTestsMb / memoryPerTestProcessMb).coerceAtMost(16)
             maxParallelForks =
-                project.providers.gradleProperty("kotlin.test.maxParallelForks").forUseAtConfigurationTime().orNull?.toInt()
+                project.providers.gradleProperty("kotlin.test.maxParallelForks").orNull?.toInt()
                     ?: forks.coerceIn(1, Runtime.getRuntime().availableProcessors())
         }
 

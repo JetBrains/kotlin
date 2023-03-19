@@ -12,12 +12,12 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.buildFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.builder.buildPackageDirective
-import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildFile
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.isJava
+import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.extensions.FirExtensionApiInternals
@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
-import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectOrStaticData
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -102,36 +101,17 @@ internal enum class ConversionTypeOrigin {
     SETTER
 }
 
-class ConversionTypeContext internal constructor(
-    internal val definitelyNotNull: Boolean,
-    internal val invariantProjection: Boolean = false,
-    internal val origin: ConversionTypeOrigin = ConversionTypeOrigin.DEFAULT,
-) {
-    fun definitelyNotNull() = ConversionTypeContext(
-        definitelyNotNull = true,
-        invariantProjection = invariantProjection,
-        origin = origin
-    )
-
+class ConversionTypeContext internal constructor(internal val origin: ConversionTypeOrigin) {
     fun inSetter() = ConversionTypeContext(
-        definitelyNotNull = definitelyNotNull,
-        invariantProjection = invariantProjection,
         origin = ConversionTypeOrigin.SETTER
-    )
-
-    fun withInvariantProjections() = ConversionTypeContext(
-        definitelyNotNull = definitelyNotNull,
-        invariantProjection = true,
-        origin = origin
     )
 
     companion object {
         internal val DEFAULT = ConversionTypeContext(
-            definitelyNotNull = false, origin = ConversionTypeOrigin.DEFAULT, invariantProjection = false
+            origin = ConversionTypeOrigin.DEFAULT
         )
-        internal val WITH_INVARIANT = DEFAULT.withInvariantProjections()
         internal val IN_SETTER = ConversionTypeContext(
-            definitelyNotNull = false, origin = ConversionTypeOrigin.SETTER, invariantProjection = false
+            origin = ConversionTypeOrigin.SETTER
         )
     }
 }

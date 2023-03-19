@@ -127,8 +127,7 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
     }
 
     private fun Project.registerDefaultVariantImplementations() {
-        @Suppress("DEPRECATION_ERROR")
-        val factories = VariantImplementationFactories.get(project.gradle)
+        val factories = VariantImplementationFactoriesConfigurator.get(project.gradle)
         factories.putIfAbsent(
             MavenPluginConfigurator.MavenPluginConfiguratorVariantFactory::class,
             MavenPluginConfigurator.DefaultMavenPluginConfiguratorVariantFactory()
@@ -162,6 +161,11 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
         factories.putIfAbsent(
             KotlinTestReportCompatibilityHelper.KotlinTestReportCompatibilityHelperVariantFactory::class,
             DefaultKotlinTestReportCompatibilityHelperVariantFactory()
+        )
+
+        factories.putIfAbsent(
+            ArtifactTypeAttributeAccessor.ArtifactTypeAttributeAccessorVariantFactory::class,
+            DefaultArtifactTypeAttributeAccessorVariantFactory()
         )
     }
 

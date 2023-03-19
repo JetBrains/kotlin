@@ -16,7 +16,7 @@ internal val konanHome: File by lazy {
     val project = ProjectBuilder
         .builder()
         .build()
-        ?.run {
+        .run {
             project.plugins.apply("kotlin-multiplatform")
 
             (project.kotlinExtension as KotlinMultiplatformExtension).apply {

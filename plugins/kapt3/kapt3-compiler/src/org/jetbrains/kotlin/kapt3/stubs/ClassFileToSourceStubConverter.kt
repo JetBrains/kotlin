@@ -539,6 +539,12 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
         val sameSuperClassCount = (superClass == null) == (defaultSuperTypes.superClass == null)
         val sameSuperInterfaceCount = superInterfaces.size == defaultSuperTypes.interfaces.size
 
+        // Note: if the number of supertypes is different, it might mean either that one of them is unresolved, or that backend generated
+        // additional supertypes which were not present in the PSI.
+        // In the former case, the subsequent code behaves as expected, trying to recover the types from the PSI.
+        // In the latter case, ideally we shouldn't do anything, but most of the time invoking error type correction is harmless because
+        // it will be a no-op. However, it might lead to problems for non-trivial types such as `kotlin.FunctionN` which are mapped to
+        // `kotlin.jvm.functions.FunctionN`, because the Java source requires a new import, unlike the Kotlin source.
         if (sameSuperClassCount && sameSuperInterfaceCount) {
             return defaultSuperTypes
         }

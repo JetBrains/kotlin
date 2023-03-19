@@ -46,6 +46,7 @@ public enum Result {
     Result() {
     }
 
+    @org.jetbrains.annotations.NotNull()
     public static kotlin.enums.EnumEntries<Result> getEntries() {
         return null;
     }

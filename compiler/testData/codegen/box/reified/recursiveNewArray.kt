@@ -1,8 +1,3 @@
-// IGNORE_BACKEND: JS_IR
-// IGNORE_BACKEND: JS_IR_ES6
-// TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS
-
 // WITH_STDLIB
 
 inline fun<reified T> createArray(n: Int, crossinline block: () -> T): Array<T> {
@@ -18,6 +13,6 @@ inline fun<T1, T2, T3, T4, T5, T6, reified R> recursive(
 fun box(): String {
     val x = recursive<Int, Int, Int, Int, Int, Int, String>(){ "abc" }
 
-    assert(x.all { it == "abc" })
+    require(x.all { it == "abc" })
     return "OK"
 }

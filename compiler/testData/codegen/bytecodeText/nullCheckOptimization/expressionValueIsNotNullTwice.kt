@@ -1,3 +1,5 @@
+// IGNORE_BACKEND_K2_LIGHT_TREE: JVM_IR
+//   Reason: KT-56756
 // FILE: j/J.java
 
 package j;

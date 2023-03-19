@@ -114,7 +114,7 @@ object FirParcelizePropertyChecker : FirPropertyChecker() {
             type.anySuperTypeConstructor {
                 it is ConeKotlinType &&
                         (it.classId?.asFqNameString() in BuiltinParcelableTypes.PARCELABLE_SUPERTYPE_FQNAMES ||
-                                it.isBuiltinFunctionalType(session))
+                                it.isSomeFunctionType(session))
             }
         }
     }

@@ -121,9 +121,11 @@ internal abstract class FirBaseTowerResolveTask(
     protected fun ReceiverValue.toMemberScopeTowerLevel(
         extensionReceiver: ReceiverValue? = null,
         contextReceiverGroup: ContextReceiverGroup? = null,
+        skipSynthetics: Boolean = false,
     ) = MemberScopeTowerLevel(
         components, this,
         givenExtensionReceiverOptions = contextReceiverGroup ?: listOfNotNull(extensionReceiver),
+        skipSynthetics = skipSynthetics,
     )
 
     protected fun ContextReceiverGroup.toMemberScopeTowerLevel(
@@ -278,7 +280,10 @@ internal open class FirTowerResolveTask(
     ) {
         val explicitReceiverValue = ExpressionReceiverValue(receiver)
 
-        processExtensionsThatHideMembers(info, explicitReceiverValue, parentGroup)
+        processExtensionsThatHideMembers(
+            info, explicitReceiverValue, parentGroup,
+            ExplicitReceiverKind.EXTENSION_RECEIVER,
+        )
 
         // Member scope of expression receiver
         processLevel(
@@ -312,10 +317,9 @@ internal open class FirTowerResolveTask(
     }
 
     suspend fun runResolverForNoReceiver(
-        info: CallInfo
+        info: CallInfo,
+        skipSynthetics: Boolean = false,
     ) {
-        processExtensionsThatHideMembers(info, explicitReceiverValue = null)
-
         val emptyScopes = mutableSetOf<FirScope>()
         val implicitReceiverValuesWithEmptyScopes = mutableSetOf<ImplicitReceiverValue<*>>()
 
@@ -341,7 +345,8 @@ internal open class FirTowerResolveTask(
                     info,
                     group,
                     implicitReceiverValuesWithEmptyScopes,
-                    emptyScopes
+                    emptyScopes,
+                    skipSynthetics,
                 )
             },
             onContextReceiverGroup = { contextReceiverGroup, towerGroup ->
@@ -366,28 +371,19 @@ internal open class FirTowerResolveTask(
 
     private suspend fun processExtensionsThatHideMembers(
         info: CallInfo,
-        explicitReceiverValue: ReceiverValue?,
-        parentGroup: TowerGroup = TowerGroup.EmptyRoot
+        receiverValue: ReceiverValue,
+        parentGroup: TowerGroup,
+        explicitReceiverKind: ExplicitReceiverKind,
     ) {
         // We will process hides members only for function calls with name in HIDES_MEMBERS_NAME_LIST
         if (info.callKind != CallKind.Function || info.name !in HIDES_MEMBERS_NAME_LIST) return
 
         val importingScopes = components.fileImportsScope.asReversed()
         for ((index, topLevelScope) in importingScopes.withIndex()) {
-            if (explicitReceiverValue != null) {
-                processHideMembersLevel(
-                    explicitReceiverValue, topLevelScope, info, index, depth = null,
-                    ExplicitReceiverKind.EXTENSION_RECEIVER, parentGroup
-                )
-            } else {
-                // context?
-                for ((depth, implicitReceiverValue) in towerDataElementsForName.implicitReceivers) {
-                    processHideMembersLevel(
-                        implicitReceiverValue, topLevelScope, info, index, depth,
-                        ExplicitReceiverKind.NO_EXPLICIT_RECEIVER, parentGroup
-                    )
-                }
-            }
+            processHideMembersLevel(
+                receiverValue, topLevelScope, info, index,
+                explicitReceiverKind, parentGroup
+            )
         }
     }
 
@@ -409,10 +405,16 @@ internal open class FirTowerResolveTask(
         info: CallInfo,
         parentGroup: TowerGroup,
         implicitReceiverValuesWithEmptyScopes: MutableSet<ImplicitReceiverValue<*>>,
-        emptyScopes: MutableSet<FirScope>
+        emptyScopes: MutableSet<FirScope>,
+        skipSynthetics: Boolean,
     ) {
+        processExtensionsThatHideMembers(
+            info, receiver, TowerGroup.EmptyRoot,
+            ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
+        )
+
         processLevel(
-            receiver.toMemberScopeTowerLevel(), info, parentGroup.Member,
+            receiver.toMemberScopeTowerLevel(skipSynthetics = skipSynthetics), info, parentGroup.Member,
             onEmptyLevel = {
                 implicitReceiverValuesWithEmptyScopes += receiver
             }
@@ -485,7 +487,6 @@ internal open class FirTowerResolveTask(
         topLevelScope: FirScope,
         info: CallInfo,
         index: Int,
-        depth: Int?,
         explicitReceiverKind: ExplicitReceiverKind,
         parentGroup: TowerGroup
     ) {
@@ -494,7 +495,7 @@ internal open class FirTowerResolveTask(
                 extensionReceiver = receiverValue, withHideMembersOnly = true
             ),
             info,
-            parentGroup.TopPrioritized(index).let { if (depth != null) it.Implicit(depth) else it },
+            parentGroup.TopPrioritized(index),
             explicitReceiverKind,
         )
     }

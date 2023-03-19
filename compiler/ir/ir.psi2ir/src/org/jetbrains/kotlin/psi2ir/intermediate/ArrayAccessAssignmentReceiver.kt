@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 
-class ArrayAccessAssignmentReceiver(
+internal class ArrayAccessAssignmentReceiver(
     private val irArray: IrExpression,
     private val ktIndexExpressions: List<KtExpression>,
     private val irIndexExpressions: List<IrExpression>,

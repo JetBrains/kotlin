@@ -19,7 +19,8 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
  * A non-leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.function
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.function]
  */
 abstract class IrFunction : IrDeclarationBase(), IrPossiblyExternalDeclaration,
         IrDeclarationWithVisibility, IrTypeParametersContainer, IrSymbolOwner, IrDeclarationParent,
@@ -29,9 +30,9 @@ abstract class IrFunction : IrDeclarationBase(), IrPossiblyExternalDeclaration,
 
     abstract override val symbol: IrFunctionSymbol
 
-    abstract val isInline: Boolean
+    abstract var isInline: Boolean
 
-    abstract val isExpect: Boolean
+    abstract var isExpect: Boolean
 
     abstract var returnType: IrType
 

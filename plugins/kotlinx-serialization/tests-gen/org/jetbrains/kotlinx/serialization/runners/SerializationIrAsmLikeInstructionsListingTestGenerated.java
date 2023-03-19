@@ -32,12 +32,6 @@ public class SerializationIrAsmLikeInstructionsListingTestGenerated extends Abst
     }
 
     @Test
-    @TestMetadata("Delegated.kt")
-    public void testDelegated() throws Exception {
-        runTest("plugins/kotlinx-serialization/testData/codegen/Delegated.kt");
-    }
-
-    @Test
     @TestMetadata("Intrinsics.kt")
     public void testIntrinsics() throws Exception {
         runTest("plugins/kotlinx-serialization/testData/codegen/Intrinsics.kt");

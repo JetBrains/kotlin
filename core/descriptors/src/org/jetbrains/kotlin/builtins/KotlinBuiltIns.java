@@ -10,7 +10,7 @@ import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.functions.BuiltInFictitiousFunctionClassFactory;
-import org.jetbrains.kotlin.builtins.functions.FunctionClassKind;
+import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.deserialization.AdditionalClassPartsProvider;
@@ -33,8 +33,8 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 
 import java.util.*;
 
-import static org.jetbrains.kotlin.builtins.StandardNames.*;
 import static org.jetbrains.kotlin.builtins.PrimitiveType.*;
+import static org.jetbrains.kotlin.builtins.StandardNames.*;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.getFqName;
 
 public abstract class KotlinBuiltIns {
@@ -315,7 +315,7 @@ public abstract class KotlinBuiltIns {
 
     @NotNull
     public ClassDescriptor getKSuspendFunction(int parameterCount) {
-        Name name = Name.identifier(FunctionClassKind.KSuspendFunction.getClassNamePrefix() + parameterCount);
+        Name name = Name.identifier(FunctionTypeKind.KSuspendFunction.INSTANCE.getClassNamePrefix() + parameterCount);
         return getBuiltInClassByFqName(COROUTINES_PACKAGE_FQ_NAME.child(name));
     }
 

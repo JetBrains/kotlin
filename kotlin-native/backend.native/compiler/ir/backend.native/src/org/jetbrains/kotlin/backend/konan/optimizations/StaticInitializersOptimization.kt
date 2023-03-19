@@ -162,13 +162,13 @@ internal object StaticInitializersOptimization {
                     val containter = function.calledInitializer ?: return@forEach
                     val backingField = (function as? IrSimpleFunction)?.correspondingPropertySymbol?.owner?.backingField
                     val isDefaultAccessor = backingField != null && function.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
-                    if ((!functionInitializedFiles.get(containerIds[containter]!!)
-                                    && function !in functionsWhoseInitializerCallCanBeExtractedToCallSites
+                    val initializerCallCouldBeDropped =
+                            functionInitializedFiles.get(containerIds[containter]!!)
+                                    || function in functionsWhoseInitializerCallCanBeExtractedToCallSites
                                     // Extract calls to file initializers off of default accessors to simplify their inlining.
-                                    && (!isDefaultAccessor || function in rootSet))
-                    ) {
+                                    || isDefaultAccessor
+                    if (function in rootSet || !initializerCallCouldBeDropped)
                         result += function
-                    }
                 }
                 return result
             }

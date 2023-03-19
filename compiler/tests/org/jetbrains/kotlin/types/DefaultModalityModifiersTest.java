@@ -119,7 +119,8 @@ public class DefaultModalityModifiersTest extends KotlinTestWithEnvironment {
                     CommonPlatforms.INSTANCE.getDefaultCommonPlatform(),
                     CommonPlatformAnalyzerServices.INSTANCE,
                     CompilerEnvironment.INSTANCE,
-                    LanguageVersionSettingsImpl.DEFAULT
+                    LanguageVersionSettingsImpl.DEFAULT,
+                    null
             );
 
             ResolveSession resolveSession = DslKt.getService(container, ResolveSession.class);

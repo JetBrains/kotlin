@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeParameterBasedTypeVariable
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
@@ -37,8 +36,14 @@ class ConeOverloadConflictResolver(
 
     override fun chooseMaximallySpecificCandidates(
         candidates: Set<Candidate>,
-        discriminateGenerics: Boolean,
         discriminateAbstracts: Boolean
+    ): Set<Candidate> = chooseMaximallySpecificCandidates(candidates, discriminateAbstracts, discriminateGenerics = true)
+
+    private fun chooseMaximallySpecificCandidates(
+        candidates: Set<Candidate>,
+        discriminateAbstracts: Boolean,
+        // Set to 'false' only for property-for-invoke case
+        discriminateGenerics: Boolean,
     ): Set<Candidate> {
         if (candidates.size == 1) return candidates
         val fixedCandidates =
@@ -52,7 +57,8 @@ class ConeOverloadConflictResolver(
             discriminateGenerics,
             discriminateAbstracts,
             discriminateSAMs = true,
-            discriminateSuspendConversions = true
+            discriminateSuspendConversions = true,
+            discriminateByUnwrappedSmartCastOrigin = true,
         )
     }
 
@@ -63,7 +69,7 @@ class ConeOverloadConflictResolver(
         }
 
         val bestInvokeReceiver =
-            chooseMaximallySpecificCandidates(propertyReceiverCandidates, discriminateGenerics = false)
+            chooseMaximallySpecificCandidates(propertyReceiverCandidates, discriminateGenerics = false, discriminateAbstracts = false)
                 .singleOrNull() ?: return candidates
 
         return candidates.filterTo(mutableSetOf()) { it.callInfo.candidateForCommonInvokeReceiver == bestInvokeReceiver }
@@ -73,8 +79,10 @@ class ConeOverloadConflictResolver(
         candidates: Set<Candidate>,
         discriminateGenerics: Boolean,
         discriminateAbstracts: Boolean,
+        // Only set to 'false' by recursive calls when the relevant discrimination kind has been already applied
         discriminateSAMs: Boolean,
         discriminateSuspendConversions: Boolean,
+        discriminateByUnwrappedSmartCastOrigin: Boolean,
     ): Set<Candidate> {
         findMaximallySpecificCall(candidates, false)?.let { return setOf(it) }
 
@@ -89,13 +97,17 @@ class ConeOverloadConflictResolver(
                 0, candidates.size -> {
                 }
                 else -> return chooseMaximallySpecificCandidates(
-                    filtered, discriminateGenerics, discriminateAbstracts, discriminateSAMs = false, discriminateSuspendConversions
+                    filtered, discriminateGenerics,
+                    discriminateAbstracts,
+                    discriminateSAMs = false,
+                    discriminateSuspendConversions,
+                    discriminateByUnwrappedSmartCastOrigin,
                 )
             }
         }
 
         if (discriminateSuspendConversions) {
-            val filtered = candidates.filterTo(mutableSetOf()) { !it.usesSuspendConversion }
+            val filtered = candidates.filterTo(mutableSetOf()) { !it.usesFunctionConversion }
             when (filtered.size) {
                 1 -> return filtered
                 0, candidates.size -> {
@@ -104,8 +116,9 @@ class ConeOverloadConflictResolver(
                     filtered,
                     discriminateGenerics,
                     discriminateAbstracts,
-                    discriminateSAMs = false,
-                    discriminateSuspendConversions = false
+                    discriminateSAMs,
+                    discriminateSuspendConversions = false,
+                    discriminateByUnwrappedSmartCastOrigin,
                 )
             }
         }
@@ -120,8 +133,53 @@ class ConeOverloadConflictResolver(
                     filtered,
                     discriminateGenerics,
                     discriminateAbstracts = false,
-                    discriminateSAMs = false,
-                    discriminateSuspendConversions = false
+                    discriminateSAMs,
+                    discriminateSuspendConversions,
+                    discriminateByUnwrappedSmartCastOrigin,
+                )
+            }
+        }
+
+        if (discriminateByUnwrappedSmartCastOrigin) {
+            // In case of MemberScopeTowerLevel with smart cast dispatch receiver, we may create candidates both from smart cast type and
+            // from the member scope of original expression's type (without smart cast).
+            // It might be necessary because the ones from smart cast might be invisible (e.g., because they are protected in other class).
+            // open class A {
+            //      open protected fun foo(a: Derived) {}
+            //      fun f(a: A, d: Derived) {
+            //          when (a) {
+            //              is B -> {
+            //                  a.foo(d) // should be resolved to A::foo, not the public B::foo
+            //              }
+            //          }
+            //      }
+            // }
+            //
+            // class B : A() {
+            //      override fun foo(a: Derived) {}
+            //      public fun foo(a: Base) {}
+            // }
+            // If we would just resolve a.foo(d) if a had a type B, then we would choose a public B::foo, because the other
+            // one foo is protected in B, so we can't call it outside the B subclasses.
+            // But that resolution result would be less precise result that the one before smart-cast applied (A::foo has more specific parameters),
+            // so at MemberScopeTowerLevel we create candidates both from A's and B's scopes on the same level.
+            // But in case when there would be successful candidates from both types, we discriminate ones from original type,
+            // thus sticking to the candidates from smart cast type.
+            // See more details at KT-51460, KT-55722, KT-56310 and relevant tests
+            //    testData/diagnostics/tests/visibility/moreSpecificProtectedSimple.kt
+            //    testData/diagnostics/tests/smartCasts/kt51460.kt
+            val filtered = candidates.filterTo(mutableSetOf()) { !it.isFromOriginalTypeInPresenceOfSmartCast }
+            when (filtered.size) {
+                1 -> return filtered
+                0, candidates.size -> {
+                }
+                else -> return chooseMaximallySpecificCandidates(
+                    filtered,
+                    discriminateGenerics,
+                    discriminateAbstracts,
+                    discriminateSAMs,
+                    discriminateSuspendConversions,
+                    discriminateByUnwrappedSmartCastOrigin = false,
                 )
             }
         }

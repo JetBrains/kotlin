@@ -24,9 +24,9 @@ class IrLazyTypeParameter(
     override val symbol: IrTypeParameterSymbol,
     override val descriptor: TypeParameterDescriptor,
     override var name: Name,
-    override val index: Int,
-    override val isReified: Boolean,
-    override val variance: Variance,
+    override var index: Int,
+    override var isReified: Boolean,
+    override var variance: Variance,
     override val stubGenerator: DeclarationStubGenerator,
     override val typeTranslator: TypeTranslator,
 ) : IrTypeParameter(), IrLazyDeclarationBase {

@@ -8,11 +8,8 @@ package org.jetbrains.kotlin.fir.plugin.generators
 import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
-import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
-import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
+import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.extensions.predicate.LookupPredicate
-import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.plugin.*
 import org.jetbrains.kotlin.fir.resolve.providers.getRegularClassSymbolByClassId
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
@@ -60,7 +57,11 @@ class ExternalClassGenerator(session: FirSession) : FirDeclarationGenerationExte
         return createTopLevelClass(classId, Key).symbol
     }
 
-    override fun generateNestedClassLikeDeclaration(owner: FirClassSymbol<*>, name: Name): FirClassLikeSymbol<*>? {
+    override fun generateNestedClassLikeDeclaration(
+        owner: FirClassSymbol<*>,
+        name: Name,
+        context: NestedClassGenerationContext
+    ): FirClassLikeSymbol<*>? {
         return when (val origin = owner.origin) {
             is FirDeclarationOrigin.Plugin -> when (origin.key) {
                 Key -> generateNestedClass(owner.classId.createNestedClassId(name), owner)
@@ -95,7 +96,7 @@ class ExternalClassGenerator(session: FirSession) : FirDeclarationGenerationExte
         return listOf(function.symbol)
     }
 
-    override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>): Set<Name> {
+    override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> {
         return when (classSymbol.classId) {
             in classIdsForMatchedClasses -> setOf(MATERIALIZE_NAME, SpecialNames.INIT)
             GENERATED_CLASS_ID -> setOf(SpecialNames.INIT)
@@ -103,7 +104,7 @@ class ExternalClassGenerator(session: FirSession) : FirDeclarationGenerationExte
         }
     }
 
-    override fun getNestedClassifiersNames(classSymbol: FirClassSymbol<*>): Set<Name> {
+    override fun getNestedClassifiersNames(classSymbol: FirClassSymbol<*>, context: NestedClassGenerationContext): Set<Name> {
         return if (classSymbol.classId == GENERATED_CLASS_ID) {
             return classIdsForMatchedClasses.keys.mapTo(mutableSetOf()) { it.shortClassName }
         } else {

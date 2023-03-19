@@ -13,10 +13,10 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.symbolPointerOfType
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.light.classes.symbol.cachedValue
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 
@@ -45,7 +45,7 @@ internal class SymbolLightClassForInlineClass : SymbolLightClassForClassOrObject
         manager = manager,
     )
 
-    private val _ownMethods: List<KtLightMethod> by lazyPub {
+    override fun getOwnMethods(): List<PsiMethod> = cachedValue {
         withClassOrObjectSymbol { classOrObjectSymbol ->
             val result = mutableListOf<KtLightMethod>()
 
@@ -82,17 +82,13 @@ internal class SymbolLightClassForInlineClass : SymbolLightClassForClassOrObject
         }
     }
 
-    private val _ownFields: List<KtLightField> by lazyPub {
+    override fun getOwnFields(): List<KtLightField> = cachedValue {
         withClassOrObjectSymbol { classOrObjectSymbol ->
             mutableListOf<KtLightField>().apply {
                 addPropertyBackingFields(this, classOrObjectSymbol)
             }
         }
     }
-
-    override fun getOwnMethods(): List<PsiMethod> = _ownMethods
-
-    override fun getOwnFields(): List<KtLightField> = _ownFields
 
     override fun copy(): SymbolLightClassForInlineClass =
         SymbolLightClassForInlineClass(classOrObjectDeclaration, classOrObjectSymbolPointer, ktModule, manager)

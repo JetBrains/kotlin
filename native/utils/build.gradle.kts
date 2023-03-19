@@ -8,11 +8,13 @@ description = "Kotlin/Native utils"
 dependencies {
     compileOnly(kotlinStdlib())
     api(project(":kotlin-util-io"))
+    api(project(":kotlin-util-klib"))
     api(platform(project(":kotlin-gradle-plugins-bom")))
 
     testImplementation(commonDependency("junit:junit"))
     testImplementation(kotlinStdlib())
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
+    testApiJUnit5()
 }
 
 sourceSets {
@@ -28,10 +30,12 @@ tasks {
             freeCompilerArgs += "-Xsuppress-version-warnings"
         }
     }
+
+    withType<Test>().configureEach {
+        useJUnitPlatform()
+    }
 }
 
-// TODO: this single known external consumer of this artifact is Kotlin/Native backend,
-//  so publishing could be stopped after migration to monorepo
 publish()
 
 standardPublicJars()

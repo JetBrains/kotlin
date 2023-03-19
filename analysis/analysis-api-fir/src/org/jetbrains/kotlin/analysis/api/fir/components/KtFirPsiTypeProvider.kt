@@ -49,13 +49,13 @@ internal class KtFirPsiTypeProvider(
     override val token: KtLifetimeToken,
 ) : KtPsiTypeProvider(), KtFirAnalysisSessionComponent {
 
-    override fun asPsiType(
+    override fun asPsiTypeElement(
         type: KtType,
         useSitePosition: PsiElement,
         mode: KtTypeMappingMode,
         isAnnotationMethod: Boolean,
         allowErrorTypes: Boolean
-    ): PsiType? {
+    ): PsiTypeElement? {
         val coneType = type.coneType
 
         with(rootModuleSession.typeContext) {
@@ -65,7 +65,7 @@ internal class KtFirPsiTypeProvider(
         }
 
         return coneType.simplifyType(rootModuleSession, useSitePosition)
-            .asPsiType(rootModuleSession, mode.toTypeMappingMode(type, isAnnotationMethod), useSitePosition, allowErrorTypes)
+            .asPsiTypeElement(rootModuleSession, mode.toTypeMappingMode(type, isAnnotationMethod), useSitePosition, allowErrorTypes)
     }
 
     private fun KtTypeMappingMode.toTypeMappingMode(type: KtType, isAnnotationMethod: Boolean): TypeMappingMode {
@@ -189,12 +189,12 @@ private fun ConeKotlinType.isLocalButAvailableAtPosition(
             context.parents.any { it == localPsi }
 }
 
-private fun ConeKotlinType.asPsiType(
+private fun ConeKotlinType.asPsiTypeElement(
     session: FirSession,
     mode: TypeMappingMode,
     useSitePosition: PsiElement,
     allowErrorTypes: Boolean
-): PsiType? {
+): PsiTypeElement? {
     if (this !is SimpleTypeMarker) return null
 
     if (!allowErrorTypes && (this is ConeErrorType)) return null
@@ -224,8 +224,7 @@ private fun ConeKotlinType.asPsiType(
     val typeInfo = TypeInfo.fromString(javaType, false)
     val typeText = TypeInfo.createTypeText(typeInfo) ?: return null
 
-    val typeElement = ClsTypeElementImpl(useSitePosition, typeText, '\u0000')
-    return typeElement.type
+    return ClsTypeElementImpl(useSitePosition, typeText, '\u0000')
 }
 
 private val PsiElement.containingKtFile: KtFile?

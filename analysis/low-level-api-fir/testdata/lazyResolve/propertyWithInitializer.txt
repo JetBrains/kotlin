@@ -41,9 +41,19 @@ FILE: propertyWithInitializer.kt
     public? final? [RAW_FIR] val property: Int = LAZY_EXPRESSION
         public? [RAW_FIR] get(): Int
 
+EXPECT_ACTUAL_MATCHING:
+FILE: propertyWithInitializer.kt
+    public final [EXPECT_ACTUAL_MATCHING] fun resolveMe(): R|kotlin/Unit| {
+        receive#(property#)
+    }
+    public? final? [RAW_FIR] val property: Int = LAZY_EXPRESSION
+        public? [RAW_FIR] get(): Int
+
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: propertyWithInitializer.kt
-    public final [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| {
+        receive#(property#)
+    }
     public? final? [RAW_FIR] val property: Int = LAZY_EXPRESSION
         public? [RAW_FIR] get(): Int
 
@@ -66,14 +76,6 @@ FILE: propertyWithInitializer.kt
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: propertyWithInitializer.kt
     public final [ANNOTATIONS_ARGUMENTS_MAPPING] fun resolveMe(): R|kotlin/Unit| {
-        receive#(property#)
-    }
-    public? final? [RAW_FIR] val property: Int = LAZY_EXPRESSION
-        public? [RAW_FIR] get(): Int
-
-EXPECT_ACTUAL_MATCHING:
-FILE: propertyWithInitializer.kt
-    public final [EXPECT_ACTUAL_MATCHING] fun resolveMe(): R|kotlin/Unit| {
         receive#(property#)
     }
     public? final? [RAW_FIR] val property: Int = LAZY_EXPRESSION

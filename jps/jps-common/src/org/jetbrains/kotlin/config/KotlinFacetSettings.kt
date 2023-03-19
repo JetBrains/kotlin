@@ -112,20 +112,27 @@ val KotlinMultiplatformVersion?.isHmpp: Boolean
 interface ExternalSystemRunTask {
     val taskName: String
     val externalSystemProjectId: String
-    val targetName: String?
+    val targetName: String
+    val kotlinPlatformId: String? //one of id org.jetbrains.kotlin.idea.projectModel.KotlinPlatform
 }
 
 data class ExternalSystemTestRunTask(
     override val taskName: String,
     override val externalSystemProjectId: String,
-    override val targetName: String?
+    override val targetName: String,
+    override val kotlinPlatformId: String?,
 ) : ExternalSystemRunTask {
 
-    fun toStringRepresentation() = "$taskName|$externalSystemProjectId|$targetName"
+    fun toStringRepresentation() = buildString {
+        append("$taskName|$externalSystemProjectId|$targetName")
+        kotlinPlatformId?.let { append("|$it") }
+    }
 
     companion object {
-        fun fromStringRepresentation(line: String) =
-            line.split("|").let { if (it.size == 3) ExternalSystemTestRunTask(it[0], it[1], it[2]) else null }
+        fun fromStringRepresentation(line: String) = line.split("|").let {
+            if (it.size < 3) null
+            else ExternalSystemTestRunTask(it[0], it[1], it[2], it.getOrNull(3))
+        }
     }
 
     override fun toString() = "$taskName@$externalSystemProjectId [$targetName]"
@@ -134,10 +141,11 @@ data class ExternalSystemTestRunTask(
 data class ExternalSystemNativeMainRunTask(
     override val taskName: String,
     override val externalSystemProjectId: String,
-    override val targetName: String?,
+    override val targetName: String,
     val entryPoint: String,
     val debuggable: Boolean,
 ) : ExternalSystemRunTask {
+    override val kotlinPlatformId = "native"
 
     fun toStringRepresentation() = "$taskName|$externalSystemProjectId|$targetName|$entryPoint|$debuggable"
 

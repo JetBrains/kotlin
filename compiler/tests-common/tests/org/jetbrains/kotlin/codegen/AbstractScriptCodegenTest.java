@@ -42,9 +42,16 @@ public abstract class AbstractScriptCodegenTest extends CodegenTestCase {
 
     @Override
     protected void doTest(@NotNull String filename) {
-        configurationKind = InTextDirectivesUtils.findLinesWithPrefixesRemoved(
-                FilesKt.readText(new File(filename), Charsets.UTF_8), "// WITH_REFLECT"
-        ).isEmpty() ? ConfigurationKind.JDK_ONLY : ConfigurationKind.ALL;
+        String fileContent = FilesKt.readText(new File(filename), Charsets.UTF_8);
+
+        if (InTextDirectivesUtils.isDirectiveDefined(fileContent, "WITH_REFLECT")) {
+            configurationKind = ConfigurationKind.ALL;
+        } else if (InTextDirectivesUtils.isDirectiveDefined(fileContent, "WITH_STDLIB")) {
+            configurationKind = ConfigurationKind.NO_KOTLIN_REFLECT;
+        } else {
+            configurationKind = ConfigurationKind.JDK_ONLY;
+        }
+
         createEnvironmentWithMockJdkAndIdeaAnnotations(configurationKind);
         loadFileByFullPath(filename);
 

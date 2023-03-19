@@ -82,6 +82,7 @@ import org.jetbrains.kotlin.fir.expressions.FirErrorAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirComparisonExpression
 import org.jetbrains.kotlin.fir.expressions.FirTypeOperatorCall
 import org.jetbrains.kotlin.fir.expressions.FirAssignmentOperatorStatement
+import org.jetbrains.kotlin.fir.expressions.FirIncrementDecrementExpression
 import org.jetbrains.kotlin.fir.expressions.FirEqualityOperatorCall
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenBranch
@@ -128,6 +129,7 @@ import org.jetbrains.kotlin.fir.expressions.FirWrappedDelegateExpression
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirNamedReferenceWithCandidateBase
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
+import org.jetbrains.kotlin.fir.references.FirFromMissingDependenciesNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
@@ -463,6 +465,10 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformElement(assignmentOperatorStatement, data)
     }
 
+    open fun transformIncrementDecrementExpression(incrementDecrementExpression: FirIncrementDecrementExpression, data: D): FirStatement {
+        return transformElement(incrementDecrementExpression, data)
+    }
+
     open fun transformEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall, data: D): FirStatement {
         return transformElement(equalityOperatorCall, data)
     }
@@ -645,6 +651,10 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
 
     open fun transformErrorNamedReference(errorNamedReference: FirErrorNamedReference, data: D): FirReference {
         return transformElement(errorNamedReference, data)
+    }
+
+    open fun transformFromMissingDependenciesNamedReference(fromMissingDependenciesNamedReference: FirFromMissingDependenciesNamedReference, data: D): FirReference {
+        return transformElement(fromMissingDependenciesNamedReference, data)
     }
 
     open fun transformSuperReference(superReference: FirSuperReference, data: D): FirReference {
@@ -1039,6 +1049,10 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformAssignmentOperatorStatement(assignmentOperatorStatement, data)
     }
 
+    final override fun visitIncrementDecrementExpression(incrementDecrementExpression: FirIncrementDecrementExpression, data: D): FirStatement {
+        return transformIncrementDecrementExpression(incrementDecrementExpression, data)
+    }
+
     final override fun visitEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall, data: D): FirStatement {
         return transformEqualityOperatorCall(equalityOperatorCall, data)
     }
@@ -1221,6 +1235,10 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
 
     final override fun visitErrorNamedReference(errorNamedReference: FirErrorNamedReference, data: D): FirReference {
         return transformErrorNamedReference(errorNamedReference, data)
+    }
+
+    final override fun visitFromMissingDependenciesNamedReference(fromMissingDependenciesNamedReference: FirFromMissingDependenciesNamedReference, data: D): FirReference {
+        return transformFromMissingDependenciesNamedReference(fromMissingDependenciesNamedReference, data)
     }
 
     final override fun visitSuperReference(superReference: FirSuperReference, data: D): FirReference {

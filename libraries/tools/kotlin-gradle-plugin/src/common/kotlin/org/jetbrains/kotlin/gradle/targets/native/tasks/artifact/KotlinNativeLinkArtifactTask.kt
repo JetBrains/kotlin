@@ -55,7 +55,10 @@ abstract class KotlinNativeLinkArtifactTask @Inject constructor(
     @get:Input
     abstract val debuggable: Property<Boolean>
 
-    @Deprecated("Please declare explicit dependency on kotlinx-cli. This option is scheduled to be removed in 1.9.0")
+    @Deprecated(
+        "Please declare explicit dependency on kotlinx-cli. This option has no longer effect since 1.9.0",
+        level = DeprecationLevel.ERROR
+    )
     @get:Input
     abstract val enableEndorsedLibs: Property<Boolean>
 
@@ -156,7 +159,8 @@ abstract class KotlinNativeLinkArtifactTask @Inject constructor(
         baseName.convention(project.name)
         debuggable.convention(true)
         optimized.convention(false)
-        enableEndorsedLibs.convention(false)
+        @Suppress("DEPRECATION_ERROR")
+        enableEndorsedLibs.value(false).finalizeValue()
         processTests.convention(false)
         staticFramework.convention(false)
         embedBitcode.convention(BitcodeEmbeddingMode.DISABLE)
@@ -183,7 +187,6 @@ abstract class KotlinNativeLinkArtifactTask @Inject constructor(
             outputKind = outputKind,
             libraries = libraries.klibs(),
             friendModules = emptyList(), //FriendModules aren't needed here because it's no test artifact
-            enableEndorsedLibs = enableEndorsedLibs.get(),  // TODO: remove before 1.9.0, see KT-54098
             toolOptions = toolOptions,
             compilerPlugins = emptyList(),//CompilerPlugins aren't needed here because it's no compilation but linking
             processTests = processTests.get(),

@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.light.classes.symbol.methods
 import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_BASE
 import org.jetbrains.kotlin.asJava.classes.lazyPub
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
+import org.jetbrains.kotlin.light.classes.symbol.modifierLists.InitializedModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightParameterList
 
@@ -22,7 +24,7 @@ internal class SymbolLightRepeatableAnnotationContainerMethod(
 ) {
     override fun getNameIdentifier(): PsiIdentifier? = null
     override fun isDeprecated(): Boolean = false
-    override fun getName(): String = "value"
+    override fun getName(): String = StandardNames.DEFAULT_VALUE_PARAMETER.asString()
     override fun getTypeParameters(): Array<PsiTypeParameter> = PsiTypeParameter.EMPTY_ARRAY
     override fun hasTypeParameters(): Boolean = false
     override fun getTypeParameterList(): PsiTypeParameterList? = null
@@ -31,8 +33,7 @@ internal class SymbolLightRepeatableAnnotationContainerMethod(
     private val _modifierList by lazyPub {
         SymbolLightMemberModifierList(
             containingDeclaration = this,
-            staticModifiers = setOf(PsiModifier.PUBLIC, PsiModifier.ABSTRACT),
-            annotationsComputer = null,
+            modifiersBox = InitializedModifiersBox(PsiModifier.PUBLIC, PsiModifier.ABSTRACT),
         )
     }
 

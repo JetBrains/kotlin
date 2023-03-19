@@ -24,19 +24,35 @@ abstract class CommonToolArguments : Freezable(), Serializable {
         private val serialVersionUID = 0L
     }
 
-    var freeArgs: List<String> by FreezableVar(emptyList())
+    var freeArgs: List<String> = emptyList()
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Transient
     var errors: ArgumentParseErrors? = null
 
     @Argument(value = "-help", shortName = "-h", description = "Print a synopsis of standard options")
-    var help: Boolean by FreezableVar(false)
+    var help = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(value = "-X", description = "Print a synopsis of advanced options")
-    var extraHelp: Boolean by FreezableVar(false)
+    var extraHelp = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(value = "-version", description = "Display compiler version")
-    var version: Boolean by FreezableVar(false)
+    var version = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @GradleOption(
         value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
@@ -44,7 +60,11 @@ abstract class CommonToolArguments : Freezable(), Serializable {
         shouldGenerateDeprecatedKotlinOptions = true,
     )
     @Argument(value = "-verbose", description = "Enable verbose logging output")
-    var verbose: Boolean by FreezableVar(false)
+    var verbose = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @GradleOption(
         value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
@@ -52,7 +72,11 @@ abstract class CommonToolArguments : Freezable(), Serializable {
         shouldGenerateDeprecatedKotlinOptions = true,
     )
     @Argument(value = "-nowarn", description = "Generate no warnings")
-    var suppressWarnings: Boolean by FreezableVar(false)
+    var suppressWarnings = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @GradleOption(
         value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
@@ -60,7 +84,15 @@ abstract class CommonToolArguments : Freezable(), Serializable {
         shouldGenerateDeprecatedKotlinOptions = true,
     )
     @Argument(value = "-Werror", description = "Report an error if there are any warnings")
-    var allWarningsAsErrors: Boolean by FreezableVar(false)
+    var allWarningsAsErrors = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
-    var internalArguments: List<InternalArgument> by FreezableVar(emptyList())
+    var internalArguments: List<InternalArgument> = emptyList()
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 }

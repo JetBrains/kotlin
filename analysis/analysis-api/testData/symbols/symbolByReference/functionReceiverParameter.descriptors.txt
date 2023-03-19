@@ -23,13 +23,19 @@ KtFunctionSymbol:
     ]
     origin: SOURCE
     owningCallableSymbol: KtFunctionSymbol(/foo)
-    type: [
-      ReceiverTypeAnnotation()
-        psi: KtAnnotationEntry
-    ] @R|ReceiverTypeAnnotation|()  kotlin/Int
+    type: KtUsualClassType:
+      annotationsList: [
+        ReceiverTypeAnnotation()
+          psi: KtAnnotationEntry
+      ]
+      ownTypeArguments: []
+      type: @R|ReceiverTypeAnnotation|()  kotlin/Int
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
-  returnType: kotlin/Unit
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.pipeline
 
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -51,6 +52,14 @@ fun FirSession.buildFirFromKtFiles(ktFiles: Collection<KtFile>): List<FirFile> {
             firProvider.recordFile(firFile)
         }
     }
+}
+
+fun buildResolveAndCheckFir(
+    session: FirSession,
+    ktFiles: List<KtFile>,
+    diagnosticsReporter: BaseDiagnosticsCollector
+): ModuleCompilerAnalyzedOutput {
+    return resolveAndCheckFir(session, session.buildFirFromKtFiles(ktFiles), diagnosticsReporter)
 }
 
 fun resolveAndCheckFir(

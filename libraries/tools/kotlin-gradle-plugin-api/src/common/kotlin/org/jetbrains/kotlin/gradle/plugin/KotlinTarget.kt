@@ -38,6 +38,8 @@ interface KotlinTarget : Named, HasAttributes {
 
     val publishable: Boolean
 
+    fun withSourcesJar(publish: Boolean = true)
+
     val components: Set<SoftwareComponent>
 
     fun mavenPublication(action: MavenPublication.() -> Unit) = mavenPublication(Action { action(it) })

@@ -138,4 +138,299 @@ internal class CompilerOptionsIT : KGPBaseTest() {
             }
         }
     }
+
+    @DisplayName("Should pass -opt-in from compiler options DSL")
+    @JvmGradlePluginTests
+    @GradleTest
+    fun passesOptInAnnotation(gradleVersion: GradleVersion) {
+        project(
+            projectName = "simpleProject",
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
+        ) {
+            buildGradle.appendText(
+                """
+                |
+                |tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask.class).configureEach {
+                |    compilerOptions.optIn.addAll("kotlin.RequiresOptIn", "my.CustomOptIn")
+                |}
+                """.trimMargin()
+            )
+
+            build("compileKotlin") {
+                val compilerArgs = output
+                    .lineSequence()
+                    .first {
+                        it.contains("Kotlin compiler args:")
+                    }
+                    .substringAfter("Kotlin compiler args:")
+
+                val expectedOptIn = "-opt-in kotlin.RequiresOptIn,my.CustomOptIn"
+                assert(compilerArgs.contains(expectedOptIn)) {
+                    printBuildOutput()
+                    "compiler arguments does not contain '$expectedOptIn' - actual value: $compilerArgs"
+                }
+            }
+        }
+    }
+
+    @DisplayName("Should combine -opt-in arguments from languageSettings DSL")
+    @MppGradlePluginTests
+    @GradleTest
+    fun combinesOptInFromLanguageSettings(gradleVersion: GradleVersion) {
+        project(
+            projectName = "new-mpp-lib-and-app/sample-lib",
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
+        ) {
+            buildGradle.appendText(
+                //language=Groovy
+                """
+                |
+                |kotlin {
+                |    sourceSets {
+                |        jvm6Main {
+                |            languageSettings.optIn("my.custom.OptInAnnotation")
+                |        }
+                |    }
+                |}
+                |
+                |tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask.class).configureEach {
+                |    compilerOptions.optIn.add("another.custom.UnderOptIn")
+                |}
+                """.trimMargin()
+            )
+
+            build("compileKotlinJvm6", forceOutput = true) {
+                assertTasksExecuted(":compileKotlinJvm6")
+                assert(output.contains("-opt-in another.custom.UnderOptIn,my.custom.OptInAnnotation")) {
+                    printBuildOutput()
+                    "Output does not contain '-opt-in another.custom.UnderOptIn,my.custom.OptInAnnotation'!"
+                }
+            }
+        }
+    }
+
+    @DisplayName("Should combine -opt-in arguments from languageSettings DSL for Native")
+    @MppGradlePluginTests
+    @GradleTest
+    fun combinesOptInFromLanguageSettingsNative(gradleVersion: GradleVersion) {
+        project(
+            projectName = "new-mpp-lib-and-app/sample-lib",
+            gradleVersion = gradleVersion
+        ) {
+            buildGradle.appendText(
+                //language=Groovy
+                """
+                |
+                |kotlin {
+                |    sourceSets {
+                |        nativeMain {
+                |            languageSettings.optIn("my.custom.OptInAnnotation")
+                |        }
+                |        linux64Main {
+                |            languageSettings.optIn("my.custom.OptInAnnotation")
+                |        }
+                |        macos64Main {
+                |            languageSettings.optIn("my.custom.OptInAnnotation")
+                |        }
+                |    }
+                |}
+                |
+                |tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask.class).configureEach {
+                |    compilerOptions.optIn.add("another.custom.UnderOptIn")
+                |}
+                """.trimMargin()
+            )
+
+            build("compileNativeMainKotlinMetadata") {
+                assertTasksExecuted(":compileNativeMainKotlinMetadata")
+                assert(
+                    output.contains("-opt-in=another.custom.UnderOptIn") &&
+                            output.contains("-opt-in=my.custom.OptInAnnotation")
+                ) {
+                    printBuildOutput()
+                    "Output does not contain '-opt-in=another.custom.UnderOptIn, -opt-in=my.custom.OptInAnnotation'!"
+                }
+            }
+
+            build("compileKotlinLinux64") {
+                assertTasksExecuted(":compileKotlinLinux64")
+                assert(
+                    output.contains("-opt-in=another.custom.UnderOptIn") &&
+                            output.contains("-opt-in=my.custom.OptInAnnotation")
+                ) {
+                    printBuildOutput()
+                    "Output does not contain '-opt-in=another.custom.UnderOptIn, -opt-in=my.custom.OptInAnnotation'!"
+                }
+            }
+        }
+    }
+
+    @DisplayName("Should pass -opt-in from compiler options DSL in native project")
+    @NativeGradlePluginTests
+    @GradleTest
+    fun passesOptInAnnotationNative(gradleVersion: GradleVersion) {
+        nativeProject(
+            projectName = "native-link-simple",
+            gradleVersion = gradleVersion,
+        ) {
+            buildGradle.appendText(
+                """
+                |
+                |tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask.class).configureEach {
+                |    compilerOptions.optIn.addAll("kotlin.RequiresOptIn", "my.CustomOptIn")
+                |}
+                """.trimMargin()
+            )
+
+            build("compileKotlinHost", forceOutput = true) {
+                val expectedOptIn = listOf("-opt-in=kotlin.RequiresOptIn", "-opt-in=my.CustomOptIn")
+                val optInArgs = output
+                    .substringAfter("Arguments = [")
+                    .substringBefore("]")
+                    .lines()
+                    .filter { it.trim() in expectedOptIn }
+
+                assert(optInArgs.size == 2) {
+                    printBuildOutput()
+                    "compiler arguments does not contain '${expectedOptIn.joinToString()}': ${optInArgs.joinToString()}"
+                }
+            }
+        }
+    }
+
+    @DisplayName("Should pass -progressive from compiler options DSL")
+    @JvmGradlePluginTests
+    @GradleTest
+    fun passesProgressive(gradleVersion: GradleVersion) {
+        project(
+            projectName = "simpleProject",
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
+        ) {
+            buildGradle.appendText(
+                //language=Groovy
+                """
+                |
+                |tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask.class).configureEach {
+                |    compilerOptions.progressiveMode.set(true)
+                |}
+                """.trimMargin()
+            )
+
+            build("compileKotlin") {
+                val compilerArgs = output
+                    .lineSequence()
+                    .first {
+                        it.contains("Kotlin compiler args:")
+                    }
+                    .substringAfter("Kotlin compiler args:")
+
+                val expectedArg = "-progressive"
+                assert(compilerArgs.contains(expectedArg)) {
+                    printBuildOutput()
+                    "compiler arguments does not contain '$expectedArg' - actual value: $compilerArgs"
+                }
+            }
+        }
+    }
+
+    @DisplayName("Should not pass -progressive by default from compiler options DSL")
+    @JvmGradlePluginTests
+    @GradleTest
+    fun notPassesDefaultProgressive(gradleVersion: GradleVersion) {
+        project(
+            projectName = "simpleProject",
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
+        ) {
+            build("compileKotlin") {
+                val compilerArgs = output
+                    .lineSequence()
+                    .first {
+                        it.contains("Kotlin compiler args:")
+                    }
+                    .substringAfter("Kotlin compiler args:")
+
+                val expectedArg = "-progressive"
+                assert(!compilerArgs.contains(expectedArg)) {
+                    printBuildOutput()
+                    "compiler arguments contains '$expectedArg' - actual value: $compilerArgs"
+                }
+            }
+        }
+    }
+
+    @DisplayName("Should pass -progressive from languageSettings if compiler options DSL is not configured")
+    @JvmGradlePluginTests
+    @GradleTest
+    fun passesProgressiveFromLanguageSettings(gradleVersion: GradleVersion) {
+        project(
+            projectName = "simpleProject",
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
+        ) {
+            buildGradle.appendText(
+                //language=Groovy
+                """
+                |
+                |kotlin.sourceSets.all {
+                |    languageSettings {
+                |        progressiveMode = true
+                |    }
+                |}
+                """.trimMargin()
+            )
+
+            build("compileKotlin") {
+                val compilerArgs = output
+                    .lineSequence()
+                    .first {
+                        it.contains("Kotlin compiler args:")
+                    }
+                    .substringAfter("Kotlin compiler args:")
+
+                val expectedArg = "-progressive"
+                assert(compilerArgs.contains(expectedArg)) {
+                    printBuildOutput()
+                    "compiler arguments does not contain '$expectedArg' - actual value: $compilerArgs"
+                }
+            }
+        }
+    }
+
+    @DisplayName("Should pass -progressive from compiler options DSL in native project")
+    @NativeGradlePluginTests
+    @GradleTest
+    fun passesProgressiveModeNative(gradleVersion: GradleVersion) {
+        nativeProject(
+            projectName = "native-link-simple",
+            gradleVersion = gradleVersion,
+        ) {
+            buildGradle.appendText(
+                //language=Groovy
+                """
+                |
+                |tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask.class).configureEach {
+                |    compilerOptions.progressiveMode.set(true)
+                |}
+                """.trimMargin()
+            )
+
+            build("compileKotlinHost", forceOutput = true) {
+                val expectedArg = "-progressive"
+                val compilerArgs = output
+                    .substringAfter("Arguments = [")
+                    .substringBefore("]")
+                    .lines()
+                val progressiveArg = compilerArgs.find { it.trim() == expectedArg }
+
+                assert(progressiveArg != null) {
+                    printBuildOutput()
+                    "compiler arguments does not contain '$expectedArg': ${compilerArgs.joinToString()}"
+                }
+            }
+        }
+    }
 }

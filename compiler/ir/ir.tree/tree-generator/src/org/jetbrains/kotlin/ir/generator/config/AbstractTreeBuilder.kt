@@ -38,7 +38,7 @@ abstract class AbstractTreeBuilder {
         name: String,
         type: TypeRef?,
         nullable: Boolean = false,
-        mutable: Boolean = false,
+        mutable: Boolean = true,
         isChild: Boolean = false,
         initializer: SimpleFieldConfig.() -> Unit = {}
     ): SimpleFieldConfig {

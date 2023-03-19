@@ -82,7 +82,7 @@ public final class DelegatedProperties {
 @kotlin.Metadata
 public final class DelegatedPropertiesTestKt {
     // source: 'DelegatedPropertiesTest.kt'
-    public final static @org.jetbrains.annotations.NotNull field _topLevelInt$DelegatedPropertiesTest$VolatileWrapper: _topLevelInt$DelegatedPropertiesTest$VolatileWrapper
+    private final static @org.jetbrains.annotations.NotNull field _topLevelInt$DelegatedPropertiesTest$VolatileWrapper: _topLevelInt$DelegatedPropertiesTest$VolatileWrapper
     private volatile static @kotlin.jvm.Volatile field topLevelVolatile: int
     static method <clinit>(): void
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
@@ -95,12 +95,13 @@ public final class DelegatedPropertiesTestKt {
 }
 
 @kotlin.Metadata
-public final class _topLevelInt$DelegatedPropertiesTest$VolatileWrapper {
+final class _topLevelInt$DelegatedPropertiesTest$VolatileWrapper {
     // source: 'DelegatedPropertiesTest.kt'
     private final static @org.jetbrains.annotations.NotNull field _topLevelInt$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
     private volatile @kotlin.jvm.Volatile field _topLevelInt: int
     static method <clinit>(): void
-    public method <init>(): void
+    private method <init>(): void
+    public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
     public synthetic final static method access$get_topLevelInt$FU$p(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
     public synthetic final static method access$get_topLevelInt$p(p0: _topLevelInt$DelegatedPropertiesTest$VolatileWrapper): int
     public synthetic final static method access$set_topLevelInt$p(p0: _topLevelInt$DelegatedPropertiesTest$VolatileWrapper, p1: int): void

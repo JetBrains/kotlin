@@ -8,6 +8,8 @@
 package kotlin
 
 import kotlin.internal.PureReifiable
+import kotlin.wasm.internal.enumValueOfIntrinsic
+import kotlin.wasm.internal.enumValuesIntrinsic
 
 public inline fun <T> emptyArray(): Array<T> = arrayOf()
 
@@ -80,12 +82,12 @@ public inline fun booleanArrayOf(vararg elements: Boolean): BooleanArray = eleme
  * Returns an array containing enum T entries.
  */
 @SinceKotlin("1.1")
-@Suppress("NON_MEMBER_FUNCTION_NO_BODY")
-public inline fun <reified T : Enum<T>> enumValues(): Array<T>
+public inline fun <reified T : Enum<T>> enumValues(): Array<T> =
+    enumValuesIntrinsic()
 
 /**
  * Returns an enum entry with specified name.
  */
 @SinceKotlin("1.1")
-@Suppress("NON_MEMBER_FUNCTION_NO_BODY", "UNUSED_PARAMETER")
-public inline fun <reified T : Enum<T>> enumValueOf(name: String): T
+public inline fun <reified T : Enum<T>> enumValueOf(name: String): T =
+    enumValueOfIntrinsic(name)

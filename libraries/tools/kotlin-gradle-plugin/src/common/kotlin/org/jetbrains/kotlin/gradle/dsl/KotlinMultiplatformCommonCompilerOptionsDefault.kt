@@ -8,12 +8,4 @@ package org.jetbrains.kotlin.gradle.dsl
 internal abstract class KotlinMultiplatformCommonCompilerOptionsDefault @javax.inject.Inject constructor(
     objectFactory: org.gradle.api.model.ObjectFactory
 ) : org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptionsDefault(objectFactory), org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformCommonCompilerOptions {
-
-    internal fun fillCompilerArguments(args: org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments) {
-        super.fillCompilerArguments(args)
-    }
-
-    internal fun fillDefaultValues(args: org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments) {
-        super.fillDefaultValues(args)
-    }
 }

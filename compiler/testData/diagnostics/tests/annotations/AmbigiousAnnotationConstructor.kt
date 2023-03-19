@@ -1,4 +1,3 @@
-// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 import java.util.ArrayList
 
 <!NOT_AN_ANNOTATION_CLASS!>@ArrayList<Int>(<!TOO_MANY_ARGUMENTS!>1<!>, <!TOO_MANY_ARGUMENTS!>1<!>)<!> fun b() {}

@@ -23,9 +23,9 @@ class IrTypeParameterImpl(
     override var origin: IrDeclarationOrigin,
     override val symbol: IrTypeParameterSymbol,
     override var name: Name,
-    override val index: Int,
-    override val isReified: Boolean,
-    override val variance: Variance,
+    override var index: Int,
+    override var isReified: Boolean,
+    override var variance: Variance,
     override val factory: IrFactory = IrFactoryImpl,
 ) : IrTypeParameter() {
     init {

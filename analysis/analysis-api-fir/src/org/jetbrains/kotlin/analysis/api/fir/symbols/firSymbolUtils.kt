@@ -57,6 +57,13 @@ internal fun <D> FirBasedSymbol<D>.createKtTypeParameters(
     }
 }
 
+internal fun <D> FirBasedSymbol<D>.createRegularKtTypeParameters(
+    builder: KtSymbolByFirBuilder,
+): List<KtFirTypeParameterSymbol> where D : FirTypeParameterRefsOwner, D : FirDeclaration {
+    return fir.typeParameters.filterIsInstance<FirTypeParameter>().map { typeParameter ->
+        builder.classifierBuilder.buildTypeParameterSymbol(typeParameter.symbol)
+    }
+}
 
 internal fun FirCallableSymbol<*>.createContextReceivers(
     builder: KtSymbolByFirBuilder

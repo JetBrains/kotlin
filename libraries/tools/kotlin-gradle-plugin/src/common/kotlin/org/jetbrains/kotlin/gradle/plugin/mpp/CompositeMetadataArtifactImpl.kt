@@ -5,15 +5,13 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
+import org.jetbrains.kotlin.gradle.utils.checksumString
 import org.jetbrains.kotlin.gradle.utils.copyPartially
 import org.jetbrains.kotlin.gradle.utils.ensureValidZipDirectoryPath
 import org.jetbrains.kotlin.gradle.utils.listDescendants
 import java.io.Closeable
 import java.io.File
 import java.io.IOException
-import java.nio.ByteBuffer
-import java.util.*
-import java.util.Base64.Encoder
 import java.util.zip.CRC32
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
@@ -192,10 +190,6 @@ internal class CompositeMetadataArtifactImpl(
      */
     private class ArtifactFile(private val file: File) : Closeable {
 
-        companion object {
-            val checksumStringEncoder: Encoder = Base64.getUrlEncoder().withoutPadding()
-        }
-
         private var isClosed = false
 
         private val lazyZip = lazy {
@@ -212,7 +206,7 @@ internal class CompositeMetadataArtifactImpl(
         val checksum: String by lazy(LazyThreadSafetyMode.NONE) {
             val crc32 = CRC32()
             entries.forEach { entry -> crc32.update(entry.crc.toInt()) }
-            checksumStringEncoder.encodeToString(ByteBuffer.allocate(4).putInt(crc32.value.toInt()).array())
+            checksumString(crc32.value.toInt())
         }
 
         /**

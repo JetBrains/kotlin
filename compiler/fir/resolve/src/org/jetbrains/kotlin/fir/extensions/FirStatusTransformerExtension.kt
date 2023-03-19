@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import kotlin.reflect.KClass
 
 abstract class FirStatusTransformerExtension(session: FirSession) : FirExtension(session) {
@@ -34,7 +35,7 @@ abstract class FirStatusTransformerExtension(session: FirSession) : FirExtension
     open fun transformStatus(
         status: FirDeclarationStatus,
         property: FirProperty,
-        containingClass: FirClass?,
+        containingClass: FirClassLikeSymbol<*>?,
         isLocal: Boolean
     ): FirDeclarationStatus {
         return transformStatus(status, property)
@@ -43,7 +44,7 @@ abstract class FirStatusTransformerExtension(session: FirSession) : FirExtension
     open fun transformStatus(
         status: FirDeclarationStatus,
         function: FirSimpleFunction,
-        containingClass: FirClass?,
+        containingClass: FirClassLikeSymbol<*>?,
         isLocal: Boolean
     ): FirDeclarationStatus {
         return transformStatus(status, function)
@@ -52,7 +53,7 @@ abstract class FirStatusTransformerExtension(session: FirSession) : FirExtension
     open fun transformStatus(
         status: FirDeclarationStatus,
         regularClass: FirRegularClass,
-        containingClass: FirClass?,
+        containingClass: FirClassLikeSymbol<*>?,
         isLocal: Boolean
     ): FirDeclarationStatus {
         return transformStatus(status, regularClass)
@@ -61,7 +62,7 @@ abstract class FirStatusTransformerExtension(session: FirSession) : FirExtension
     open fun transformStatus(
         status: FirDeclarationStatus,
         typeAlias: FirTypeAlias,
-        containingClass: FirClass?,
+        containingClass: FirClassLikeSymbol<*>?,
         isLocal: Boolean
     ): FirDeclarationStatus {
         return transformStatus(status, typeAlias)
@@ -70,7 +71,7 @@ abstract class FirStatusTransformerExtension(session: FirSession) : FirExtension
     open fun transformStatus(
         status: FirDeclarationStatus,
         propertyAccessor: FirPropertyAccessor,
-        containingClass: FirClass?,
+        containingClass: FirClassLikeSymbol<*>?,
         containingProperty: FirProperty?,
         isLocal: Boolean
     ): FirDeclarationStatus {
@@ -80,7 +81,7 @@ abstract class FirStatusTransformerExtension(session: FirSession) : FirExtension
     open fun transformStatus(
         status: FirDeclarationStatus,
         constructor: FirConstructor,
-        containingClass: FirClass?,
+        containingClass: FirClassLikeSymbol<*>?,
         isLocal: Boolean
     ): FirDeclarationStatus {
         return transformStatus(status, constructor)
@@ -89,7 +90,7 @@ abstract class FirStatusTransformerExtension(session: FirSession) : FirExtension
     open fun transformStatus(
         status: FirDeclarationStatus,
         field: FirField,
-        containingClass: FirClass?,
+        containingClass: FirClassLikeSymbol<*>?,
         isLocal: Boolean
     ): FirDeclarationStatus {
         return transformStatus(status, field)
@@ -98,7 +99,7 @@ abstract class FirStatusTransformerExtension(session: FirSession) : FirExtension
     open fun transformStatus(
         status: FirDeclarationStatus,
         backingField: FirBackingField,
-        containingClass: FirClass?,
+        containingClass: FirClassLikeSymbol<*>?,
         isLocal: Boolean
     ): FirDeclarationStatus {
         return transformStatus(status, backingField)
@@ -107,7 +108,7 @@ abstract class FirStatusTransformerExtension(session: FirSession) : FirExtension
     open fun transformStatus(
         status: FirDeclarationStatus,
         enumEntry: FirEnumEntry,
-        containingClass: FirClass?,
+        containingClass: FirClassLikeSymbol<*>?,
         isLocal: Boolean
     ): FirDeclarationStatus {
         return transformStatus(status, enumEntry)

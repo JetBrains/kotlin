@@ -15,6 +15,7 @@ class Container {
 
     abstract class Base {
         val a: String by delegate()
+        var mutable: String? by delegate()
         open val b: String by delegate()
         open val c: String = ""
         abstract val d: String

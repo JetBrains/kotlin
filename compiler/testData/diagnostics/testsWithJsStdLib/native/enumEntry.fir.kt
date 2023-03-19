@@ -1,4 +1,5 @@
-external enum class E {
+// !DIAGNOSTICS: +ENUM_CLASS_IN_EXTERNAL_DECLARATION_WARNING
+external enum class <!ENUM_CLASS_IN_EXTERNAL_DECLARATION_WARNING!>E<!> {
     X,
     <!EXTERNAL_ENUM_ENTRY_WITH_BODY!>Y {
         fun foo()

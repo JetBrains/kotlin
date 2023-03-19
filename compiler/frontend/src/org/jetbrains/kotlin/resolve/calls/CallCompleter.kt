@@ -369,7 +369,7 @@ class CallCompleter(
             updatedType = argumentTypeResolver.updateResultArgumentTypeIfNotDenotable(context, expression) ?: updatedType
         }
 
-        if (parameter != null && ImplicitIntegerCoercion.isEnabledForParameter(parameter)) {
+        if (parameter != null && ImplicitIntegerCoercion.isEnabledFor(parameter, context.languageVersionSettings)) {
             val argumentCompileTimeValue = context.trace[BindingContext.COMPILE_TIME_VALUE, deparenthesized]
             if (argumentCompileTimeValue != null && argumentCompileTimeValue.parameters.isConvertableConstVal) {
                 val generalNumberType = createTypeForConvertableConstant(argumentCompileTimeValue)

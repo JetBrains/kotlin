@@ -55,9 +55,11 @@ open class KtLightFieldForDecompiledDeclaration(
 
     override fun computeConstantValue(): Any? = fldDelegate.computeConstantValue()
 
-    override fun computeConstantValue(visitedVars: MutableSet<PsiVariable>?): Any? = (fldDelegate as? PsiVariableEx)?.computeConstantValue(visitedVars)
+    override fun computeConstantValue(visitedVars: MutableSet<PsiVariable>?): Any? =
+        (fldDelegate as? PsiVariableEx)?.computeConstantValue(visitedVars)
 
-    override fun equals(other: Any?): Boolean = other is KtLightFieldForDecompiledDeclaration &&
+    override fun equals(other: Any?): Boolean = other === this ||
+            other is KtLightFieldForDecompiledDeclaration &&
             name == other.name &&
             fldParent == other.fldParent &&
             fldDelegate == other.fldDelegate
@@ -76,5 +78,13 @@ open class KtLightFieldForDecompiledDeclaration(
         return this == another ||
                 another is KtLightFieldForDecompiledDeclaration && fldDelegate.isEquivalentTo(another.fldDelegate) ||
                 fldDelegate.isEquivalentTo(another)
+    }
+
+    override fun accept(visitor: PsiElementVisitor) {
+        if (visitor is JavaElementVisitor) {
+            visitor.visitField(this)
+        } else {
+            visitor.visitElement(this)
+        }
     }
 }

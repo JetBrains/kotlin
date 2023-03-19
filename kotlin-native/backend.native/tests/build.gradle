@@ -21,17 +21,11 @@ buildscript {
             url project.bootstrapKotlinRepo
         }
     }
-    ext.useCustomDist = UtilsKt.getUseCustomDist(project)
-    ext.kotlinNativeDist = UtilsKt.getKotlinNativeDist(project)
-    if (!useCustomDist) {
-        ext.setProperty("kotlin.native.home", kotlinNativeDist.absolutePath)
-        ext.setProperty("org.jetbrains.kotlin.native.home", kotlinNativeDist.absolutePath)
-        ext.setProperty("konan.home", kotlinNativeDist.absolutePath)
-    }
 }
 
 apply plugin: 'konan'
 apply plugin: 'kotlin'
+apply plugin: 'kotlin.native.build-tools-conventions'
 
 configurations {
     cli_bc
@@ -56,6 +50,13 @@ ext.testLibraryDir = "${ext.testOutputRoot}/klib/platform/${project.target.name}
 // NOTE: If this persists in a gradle daemon, environment update (e.g. an Xcode update) may lead to execution failures.
 project.extensions.executor = ExecutorServiceKt.create(project)
 
+ext.useCustomDist = UtilsKt.getUseCustomDist(project)
+ext.kotlinNativeDist = UtilsKt.getKotlinNativeDist(project)
+if (!useCustomDist) {
+    ext.setProperty("kotlin.native.home", kotlinNativeDist.absolutePath)
+    ext.setProperty("org.jetbrains.kotlin.native.home", kotlinNativeDist.absolutePath)
+    ext.setProperty("konan.home", kotlinNativeDist.absolutePath)
+}
 
 compileTestKotlin {
     kotlinOptions {
@@ -111,6 +112,10 @@ if (!isExperimentalMM) {
     tasks.withType(KonanCompileNativeBinary.class).configureEach {
         extraOpts "-opt-in=kotlin.native.FreezingIsDeprecated"
     }
+}
+
+tasks.withType(KonanCompileNativeBinary).configureEach {
+    extraOpts "-XXLanguage:+ImplicitSignedToUnsignedIntegerConversion"
 }
 
 allprojects {
@@ -209,28 +214,7 @@ task sanity {
     })
     dependsOn(":kotlin-native:Interop:Indexer:check")
     dependsOn(":kotlin-native:Interop:StubGenerator:check")
-    dependsOn(":kotlin-native-shared:check")
-}
-
-// Collect reports in one json.
-task resultsTask() {
-    doLast {
-        def statistics = new Statistics()
-
-        tasks.withType(KonanGTest).matching { it.state.executed }.each {
-            statistics.add(it.statistics)
-        }
-
-        ExternalReportUtilsKt.saveReport("$testOutputExternal/reports.json", statistics)
-        use(KonanTestSuiteReportKt) {
-            project.logger.quiet("DONE.\n\n" +
-                    "TOTAL: $statistics.total\n" +
-                    "PASSED: $statistics.passed\n" +
-                    "FAILED: $statistics.failed\n" +
-                    (statistics.error != 0 ? "ERROR: $statistics.error\n" : "") +
-                    "SKIPPED: $statistics.skipped")
-        }
-    }
+    dependsOn(":native:kotlin-native-utils:check")
 }
 
 boolean isExcluded(String dir) {
@@ -331,16 +315,6 @@ Task dynamicTest(String name, Closure<KonanDynamicTest> configureClosure) {
             UtilsKt.dependsOnDist(buildTask)
         }
     }
-}
-
-task slackReport(type:Reporter) {
-    reportHome = rootProject.file("test.output").absoluteFile
-}
-
-task slackReportNightly(type:NightlyReporter) {
-    externalMacosReport = "external_macos_results/reports.json"
-    externalLinuxReport = "external_linux_results/reports.json"
-    externalWindowsReport = "external_windows_results/reports.json"
 }
 
 linkTest("localDelegatedPropertyLink") {
@@ -658,6 +632,7 @@ task runtime_random(type: KonanLocalTest) {
 }
 
 task runtime_basic_simd(type: KonanLocalTest) {
+    disabled = (project.testTarget == 'linux_mips32')
     expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
     source = "runtime/basic/simd.kt"
 }
@@ -908,7 +883,8 @@ standaloneTest("cleaner_in_tls_worker") {
 }
 
 standaloneTest("worker_bound_reference0") {
-    enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
+    enabled = (project.testTarget != 'wasm32') && // Workers need pthreads.
+            !isK2(project) // KT-56272
     source = "runtime/concurrent/worker_bound_reference0.kt"
     flags = ['-tr']
 
@@ -1444,7 +1420,8 @@ task localClass_localHierarchy(type: KonanLocalTest) {
 }
 
 standaloneTest("objectDeclaration_globalConstants") {
-    disabled = (cacheTesting != null) // Cache is not compatible with -opt.
+    disabled = (cacheTesting != null) || // Cache is not compatible with -opt.
+            isK2(project) // KT-56189
     flags = ["-opt", "-opt-in=kotlin.native.internal.InternalForKotlinNative", "-tr"]
     source = "codegen/objectDeclaration/globalConstants.kt"
 }
@@ -1578,34 +1555,6 @@ standaloneTest("initializers_workers2") {
     expectedFail = (project.testTarget == 'wasm32') // Workers are not supported
     source = "codegen/initializers/workers2.kt"
     useGoldenData = true
-}
-
-standaloneTest("initializers_failInInitializer1") {
-    expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
-    source = "codegen/initializers/failInInitializer1.kt"
-    useGoldenData = true
-    flags = ['-Xir-property-lazy-initialization=enable']
-}
-
-standaloneTest("initializers_failInInitializer2") {
-    expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
-    source = "codegen/initializers/failInInitializer2.kt"
-    useGoldenData = true
-    flags = ['-Xir-property-lazy-initialization=enable']
-}
-
-standaloneTest("initializers_failInInitializer3") {
-    expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
-    source = "codegen/initializers/failInInitializer3.kt"
-    useGoldenData = true
-    flags = ['-Xir-property-lazy-initialization=enable']
-}
-
-standaloneTest("initializers_failInInitializer4") {
-    expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
-    source = "codegen/initializers/failInInitializer4.kt"
-    useGoldenData = true
-    flags = ['-Xir-property-lazy-initialization=enable']
 }
 
 standaloneTest("initializers_when1") {
@@ -2754,12 +2703,6 @@ standaloneTest("kt-49240-stack-trace-completeness") {
     source = "runtime/exceptions/kt-49240-stack-trace-completeness.kt"
 }
 
-standaloneTest("stack_trace_out_of_bounds") {
-    disabled = !supportsCoreSymbolication(project) || project.globalTestArgs.contains('-opt') || (project.testTarget == 'ios_arm64')
-    flags = ['-g', '-Xg-generate-debug-trampoline=enable', '-Xbinary=stripDebugInfoFromNativeLibs=false']
-    source = "runtime/exceptions/stack_trace_out_of_bounds.kt"
-}
-
 standaloneTest("kt-37572") {
     disabled = !supportsCoreSymbolication(project) || project.globalTestArgs.contains('-opt')
     flags = ['-g', '-Xbinary=sourceInfoType=coresymbolication']
@@ -2868,7 +2811,7 @@ standaloneTest("exception_in_global_init") {
     enabled = (project.testTarget != 'wasm32') // Uses exceptions.
     source = "runtime/exceptions/exception_in_global_init.kt"
     expectedExitStatusChecker = { it != 0 }
-    outputChecker = { s -> s.contains("Uncaught Kotlin exception: kotlin.IllegalStateException: FAIL") && !s.contains("in kotlin main") }
+    outputChecker = { s -> s.contains("Uncaught Kotlin exception:") && s.contains("FAIL") && !s.contains("in kotlin main") }
 }
 
 task rethrow_exception(type: KonanLocalTest) {
@@ -2903,6 +2846,7 @@ standaloneTest("runtime_math_exceptions") {
 }
 
 standaloneTest("runtime_math") {
+    disabled = isK2(project) // KT-56189
     source = "stdlib_external/numbers/MathTest.kt"
     flags = ['-tr']
 }
@@ -3151,6 +3095,7 @@ task concatenation(type: KonanLocalTest) {
 }
 
 task const_infinity(type: KonanLocalTest) {
+    disabled = isK2(project) // KT-56189
     source = "codegen/basics/const_infinity.kt"
 }
 
@@ -3272,6 +3217,7 @@ task initializers3(type: KonanLocalTest) {
 }
 
 task initializers4(type: KonanLocalTest) {
+    disabled = isK2(project)  // KT-56189
     useGoldenData = true
     source = "runtime/basic/initializers4.kt"
 }
@@ -3468,11 +3414,13 @@ standaloneTest("array_out_of_memory") {
 }
 
 standaloneTest("mpp1") {
+    disabled = isK2(project) // KT-56071
     source = "codegen/mpp/mpp1.kt"
     flags = ['-tr', '-Xmulti-platform']
 }
 
 linkTest("mpp2") {
+    disabled = isK2(project) // KT-56071
     useGoldenData = true
     source = "codegen/mpp/mpp2.kt"
     lib = "codegen/mpp/libmpp2.kt"
@@ -3480,6 +3428,7 @@ linkTest("mpp2") {
 }
 
 standaloneTest("mpp_default_args") {
+    disabled = isK2(project) // KT-56071
     source = "codegen/mpp/mpp_default_args.kt"
     flags = ['-tr', '-Xmulti-platform']
 }
@@ -3570,7 +3519,8 @@ task vararg_of_literals(type: KonanLocalTest) {
 }
 
 standaloneTest('tailrec') {
-    disabled = isAggressiveGC // TODO: Investigate why too slow
+    disabled = isAggressiveGC || // TODO: Investigate why too slow
+            isK2(project) // KT-56269
     useGoldenData = true
     source = "lower/tailrec.kt"
     flags = ['-XXLanguage:-ProhibitTailrecOnVirtualMember', '-e', 'lower.tailrec.main']
@@ -4079,12 +4029,14 @@ standaloneTest("testing_stacktrace") {
 // Just check that the driver is able to produce runnable binaries.
 tasks.register("driver0", KonanDriverTest) {
     disabled = isAggressiveGC // No need to test with different GC schedulers
+        || isK2(project) // KT-56855
     useGoldenData = true
     source = "runtime/basic/driver0.kt"
 }
 
 tasks.register("driver_opt", KonanDriverTest) {
     disabled = (cacheTesting != null) // Cache is not compatible with -opt.
+        || isK2(project) // KT-56855
         || isAggressiveGC // No need to test with different GC schedulers
     useGoldenData = true
     source = "runtime/basic/driver_opt.kt"
@@ -4405,6 +4357,13 @@ if (PlatformInfo.isAppleTarget(project)) {
         it.headers "$projectDir/interop/objc/msg_send/messaging.h"
     }
 
+    createInterop("objcDirect") {
+        it.defFile 'interop/objc/direct/direct.def'
+        it.headers "$projectDir/interop/objc/direct/direct.h"
+        it.extraOpts "-Xcompile-source", "$projectDir/interop/objc/direct/direct.m", "-Xsource-compiler-option", "-DNS_FORMAT_ARGUMENT(A)="
+        it.compilerOpts '-DNS_FORMAT_ARGUMENT(A)='
+    }
+
     createInterop("foreignException") {
         it.defFile 'interop/objc/foreignException/objc_wrap.def'
         it.headers "$projectDir/interop/objc/foreignException/objc_wrap.h"
@@ -4643,7 +4602,8 @@ interopTest("interop_globals") {
 }
 
 interopTest("interop_macros") {
-    disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
+    disabled = (project.testTarget == 'wasm32') || // No interop for wasm yet.
+            isK2(project) // KT-56041
     source = "interop/basics/macros.kt"
     interop = 'cmacros'
 }
@@ -4674,7 +4634,7 @@ interopTest("interop_structAnonym") {
 }
 
 interopTest("interop_vectors") {
-    disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
+    disabled = (project.testTarget == 'wasm32') || (project.testTarget == 'linux_mips32') // No interop for wasm yet.
     source = "interop/basics/vectors.kt"
     interop = 'cvectors'
 }
@@ -4718,7 +4678,8 @@ interopTest("interop_concurrentTerminate") {
 }
 
 interopTest("interop_incompleteTypes") {
-    disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
+    disabled = (project.testTarget == 'wasm32') || // No interop for wasm yet.
+            isK2(project) // KT-56027
     source = "interop/incomplete_types/main.kt"
     interop = 'incomplete_types'
 }
@@ -4959,7 +4920,7 @@ standaloneTest("interop_opengl_teapot") {
 
 if (PlatformInfo.isAppleTarget(project)) {
     interopTest("interop_objc_smoke") {
-        enabled = !isNoopGC
+        enabled = !isNoopGC && !isK2(project) // KT-56030
         source = "interop/objc/smoke.kt"
         interop = 'objcSmoke'
         doBeforeBuild {
@@ -4984,7 +4945,7 @@ if (PlatformInfo.isAppleTarget(project)) {
     }
 
     interopTest("interop_objc_smoke_noopgc") {
-        enabled = isNoopGC
+        enabled = isNoopGC && !isK2(project) // KT-56030
         source = "interop/objc/smoke_noopgc.kt"
         interop = 'objcSmoke'
         doBeforeBuild {
@@ -5010,6 +4971,7 @@ if (PlatformInfo.isAppleTarget(project)) {
     }
 
     interopTestMultifile("interop_objc_tests") {
+        disabled = isK2(project) // KT-55909
         source = "interop/objc/tests/"
         interop = 'objcTests'
         flags = ['-tr', '-e', 'main']
@@ -5061,7 +5023,7 @@ if (PlatformInfo.isAppleTarget(project)) {
     }
 
     interopTest("interop_kt49034_objcprotocol") {
-        disabled = (project.testTarget == 'wasm32')
+        disabled = (project.testTarget == 'wasm32') || isK2(project) // KT-56028
         interop = 'kt49034_objcprotocol'
         source = 'interop/objc/kt49034/objcprotocol/main.kt'
 
@@ -5104,7 +5066,13 @@ if (PlatformInfo.isAppleTarget(project)) {
         }
     }
 
+    interopTest("interop_objc_direct") {
+        source = "interop/objc/direct/main.kt"
+        interop = "objcDirect"
+    }
+
     interopTest("interop_objc_foreignException") {
+        disabled = isK2(project) // KT-55909
         source = "interop/objc/foreignException/objc_wrap.kt"
         interop = 'foreignException'
         UtilsKt.dependsOnPlatformLibs(it)
@@ -5243,6 +5211,7 @@ if (PlatformInfo.isAppleTarget(project)) {
                 "-Xauto-cache-from=$testOutputRoot/local/objc_kt55938",
                 "-Xauto-cache-from=$testOutputRoot/local/interop_objc_kt55938",
                 "-Xauto-cache-dir=$testOutputRoot/local/interop_objc_kt55938/cache",
+                "-Xsuppress-version-warnings",  // suppresses warning about experimental language version, otherwise test fails with K2 due to -Werror
                 "-Werror" // to forbid retry with auto-cache disabled
         ]
 
@@ -5293,7 +5262,8 @@ if (PlatformInfo.isAppleTarget(project)) {
 
     standaloneTest("interop_kt55653") {
         // Test depends on macOS-specific AppKit
-        enabled = (project.testTarget == 'macos_x64' || project.testTarget == 'macos_arm64' || project.testTarget == null)
+        enabled = (project.testTarget == 'macos_x64' || project.testTarget == 'macos_arm64' || project.testTarget == null) &&
+                !isK2(project) // KT-56030
         source = "interop/objc/kt55653/main.kt"
         useGoldenData = true
         UtilsKt.dependsOnPlatformLibs(it)
@@ -5301,7 +5271,8 @@ if (PlatformInfo.isAppleTarget(project)) {
 
     standaloneTest("interop_kt40426") {
         // Test depends on iOS-specific UIKit
-        enabled = (project.testTarget == 'ios_x64' || project.testTarget == 'ios_simulator_arm64' || project.testTarget == 'ios_arm64')
+        enabled = (project.testTarget == 'ios_x64' || project.testTarget == 'ios_simulator_arm64' || project.testTarget == 'ios_arm64') &&
+                !isK2(project) // KT-56030
         source = "interop/objc/kt40426/main.kt"
         useGoldenData = true
         UtilsKt.dependsOnPlatformLibs(it)
@@ -5415,7 +5386,8 @@ dynamicTest("kt41904") {
 for (i in 0..2) {
     dynamicTest("kt42796_$i") {
         clangTool = "clang++"
-        disabled = (project.testTarget == 'wasm32') // wasm doesn't support -produce dynamic
+        disabled = (project.testTarget == 'wasm32') || // wasm doesn't support -produce dynamic
+                (i==1 && isK2(project)) // KT-56182
         source = "produce_dynamic/kt-42796/main-${i}.kt"
         cSource = "$projectDir/produce_dynamic/kt-42796/main.cpp"
         useGoldenData = true
@@ -5451,7 +5423,8 @@ dynamicTest("interop_concurrentRuntime") {
 }
 
 dynamicTest("interop_kt42397") {
-    disabled = (project.testTarget == 'wasm32') // wasm doesn't support -produce dynamic
+    disabled = (project.testTarget == 'wasm32') || // wasm doesn't support -produce dynamic
+            isK2(project) // KT-56182
     source = "interop/kt42397/knlibrary.kt"
     cSource = "$projectDir/interop/kt42397/test.cpp"
     clangTool = "clang++"
@@ -5543,7 +5516,8 @@ interopTest("interop_exceptions_cCallback") {
 }
 
 tasks.register("library_ir_provider_mismatch", KonanDriverTest) {
-    disabled = isAggressiveGC // No need to test with different GC schedulers
+    disabled = isAggressiveGC || // No need to test with different GC schedulers
+            isK2(project) // KT-56855
 
     def dir = buildDir.absolutePath
     def lib = "$projectDir/link/ir_providers/library/empty.kt"
@@ -5588,6 +5562,25 @@ standaloneTest("fake_override_0") {
     useGoldenData = true
 }
 
+standaloneTest("split_compilation_pipeline") {
+    // Test infrastructure does not support passing flags only to the second stage,
+    // and we can't pass -Xcompile-from-bitcode when producing library. Thus, this test
+    // does not support 2-stage compilation for now.
+    // Also, it is failing for some reason on Windows CI, but since MinGW targets are not inteneded
+    // to use this mode, we can disable it for these targets.
+    enabled = !twoStageEnabled && project.target.name != "mingw_x64" && project.target.name != "mingw_x86"
+    def dir = buildDir.absolutePath
+    source = "link/private_fake_overrides/override_main.kt"
+    doBeforeBuild {
+        konanc("$projectDir/link/private_fake_overrides/override_lib.kt -p library -target ${target.name} -o $dir/lib")
+        konanc("$projectDir/$source -target ${target.name} -o $dir/out -r $dir -l lib " +
+                "-Xtemporary-files-dir=$dir/tmp/split " +
+                "-Xwrite-dependencies-to=${dir}/split_compilation_pipeline.deps")
+    }
+    flags = ["-Xread-dependencies-from=${dir}/split_compilation_pipeline.deps", "-Xcompile-from-bitcode=${dir}/tmp/split/out.bc"]
+    useGoldenData = true
+}
+
 linkTest("private_fake_overrides_0") {
     source = "link/private_fake_overrides/inherit_main.kt"
     lib = "link/private_fake_overrides/inherit_lib.kt"
@@ -5601,6 +5594,7 @@ linkTest("private_fake_overrides_1") {
 }
 
 linkTest("remap_expect_property_refs") {
+    disabled = isK2(project) // KT-56071
     source = "codegen/mpp/remap_expect_property_ref_main.kt"
     lib = "codegen/mpp/remap_expect_property_ref_lib.kt"
     flags = ["-Xmulti-platform"]
@@ -5621,13 +5615,13 @@ Task frameworkTest(String name, Closure<FrameworkTest> configurator) {
                         }
                         baseDir "$testOutputFramework/${task.name}"
 
-                        if (fr.library != null) {
-                            dependsOn konanArtifacts[fr.library].getByTarget(target.name)
+                        fr.libraries.forEach { library ->
+                            dependsOn konanArtifacts[library].getByTarget(target.name)
                             libraries {
-                                file konanArtifacts[fr.library].getArtifactByTarget(target.name)
+                                file konanArtifacts[library].getArtifactByTarget(target.name)
                             }
                             linkerOpts "-L$buildDir"
-                            UtilsKt.dependsOnKonanBuildingTask(task, fr.library, target)
+                            UtilsKt.dependsOnKonanBuildingTask(task, library, target)
                         }
 
                         extraOpts fr.bitcode ? "-Xembed-bitcode" : "-Xembed-bitcode-marker"
@@ -5644,35 +5638,45 @@ Task frameworkTest(String name, Closure<FrameworkTest> configurator) {
     }
 }
 
-if (isAppleTarget(project)) {
-    frameworkTest('testObjCExport') {
-        final String frameworkName = 'Kt'
-        final String dir = "$testOutputFramework/testObjCExport"
+Task objcExportTest(
+        Task allTask,
+        String suffix,
+        List<String> frameworkOpts,
+        List<String> swiftOpts,
+        Boolean isStaticFramework,
+        Boolean needLazyHeaderCheck
+) {
+    final String name = "testObjCExport$suffix"
+    final String frameworkName = "Kt$suffix"
+    final String expectedLazyHeaderName = "expectedLazy${suffix}.h"
+    final Task task = frameworkTest(name) {
+        final String dir = "$testOutputFramework/$name"
         final File lazyHeader = file("$dir/$target-lazy.h")
 
         doLast {
             // Check lazy header.
-            final String expectedLazyHeaderName = "expectedLazy.h"
-            final String expectedLazyHeaderDir = file("objcexport/")
-            final File expectedLazyHeader = new File(expectedLazyHeaderDir, expectedLazyHeaderName)
+            if (needLazyHeaderCheck) {
+                final String expectedLazyHeaderDir = file("objcexport/")
+                final File expectedLazyHeader = new File(expectedLazyHeaderDir, expectedLazyHeaderName)
 
-            if (expectedLazyHeader.readLines() != lazyHeader.readLines()) {
-                exec {
-                    commandLine 'diff', '-u', expectedLazyHeader, lazyHeader
-                    ignoreExitValue = true
+                if (!expectedLazyHeader.exists() || expectedLazyHeader.readLines() != lazyHeader.readLines()) {
+                    exec {
+                        commandLine 'diff', '-u', expectedLazyHeader, lazyHeader
+                        ignoreExitValue = true
+                    }
+
+                    copy {
+                        from(lazyHeader)
+                        into(expectedLazyHeaderDir)
+                        rename { expectedLazyHeaderName }
+                    }
+
+                    throw new Error("$expectedLazyHeader file patched;\nRun gradlew ${allTask.path} --continue and don't forget to commit the patch")
                 }
-
-                copy {
-                    from(lazyHeader)
-                    into(expectedLazyHeaderDir)
-                    rename { expectedLazyHeaderName }
-                }
-
-                throw new Error("$expectedLazyHeader file patched;\nre-run the test and don't forget to commit the patch")
             }
 
             // Check bundle ID.
-            final String frameworkPath = "$dir/$target/${frameworkName}.framework"
+            final String frameworkPath = "$dir/$target/Kt.framework"
             final Pattern pattern = ~"<key>CFBundleIdentifier</key>\n\\s*<string>foo.bar</string>"
             final String plistPath = (target.family == Family.OSX) ?
                     "$frameworkPath/Resources/Info.plist" :
@@ -5684,10 +5688,11 @@ if (isAppleTarget(project)) {
         }
 
         def libraryName = frameworkName + "Library"
+        def noEnumEntriesLibraryName = frameworkName + "NoEnumEntriesLibrary"
         konanArtifacts {
             library(libraryName, targets: [target.name]) {
                 srcDir "objcexport/library"
-                artifactName "test-library"
+                artifactName "test-$libraryName"
                 delegate.getByTarget(target.name).configure{
                     UtilsKt.dependsOnDist(it)
                 }
@@ -5695,13 +5700,38 @@ if (isAppleTarget(project)) {
                 extraOpts "-Xshort-module-name=MyLibrary"
                 extraOpts "-module-name", "org.jetbrains.kotlin.native.test-library"
             }
+            library(noEnumEntriesLibraryName, targets: [target.name]) {
+                srcDir "objcexport/noEnumEntries"
+                artifactName "test-no-enum-entries-$libraryName"
+                delegate.getByTarget(target.name).configure{
+                    UtilsKt.dependsOnDist(it)
+                }
+
+                extraOpts "-Xshort-module-name=NoEnumEntriesLibrary"
+                extraOpts "-module-name", "org.jetbrains.kotlin.native.test-no-enum-entries-library"
+                extraOpts "-XXLanguage:-EnumEntries"
+            }
         }
+        codesign = !isStaticFramework
         framework(frameworkName) {
+            enabled = !isK2(project) // KT-56182
             sources = ['objcexport']
-            library = libraryName
-            opts = ["-Xemit-lazy-objc-header=$lazyHeader", "-Xexport-kdoc", "-Xbinary=bundleId=foo.bar"]
+            libraries = [libraryName, noEnumEntriesLibraryName]
+            artifact = 'Kt'
+            bitcode = !isStaticFramework
+            isStatic = isStaticFramework
+            if (needLazyHeaderCheck) {
+                opts += "-Xemit-lazy-objc-header=$lazyHeader"
+            }
+            opts += [
+                    "-Xexport-kdoc",
+                    "-Xbinary=bundleId=foo.bar",
+                    "-Xexport-library=test-no-enum-entries-${libraryName}.klib"
+            ]
+            opts += frameworkOpts
         }
         swiftSources = ['objcexport']
+        swiftExtraOpts = swiftOpts
         if (isNoopGC) {
             swiftExtraOpts += ["-D", "NOOP_GC"]
         }
@@ -5709,215 +5739,64 @@ if (isAppleTarget(project)) {
             swiftExtraOpts += ["-D", "AGGRESSIVE_GC"]
         }
     }
+    allTask.dependsOn(task)
+    return task
+}
 
-    frameworkTest('testObjCExportNoGenerics') {
-        final String frameworkName = 'KtNoGenerics'
-        final String frameworkArtifactName = 'Kt'
-        final String dir = "$testOutputFramework/testObjCExportNoGenerics"
-        final File lazyHeader = file("$dir/$target-lazy.h")
 
-        doLast {
-            final String expectedLazyHeaderName = "expectedLazyNoGenerics.h"
-            final String expectedLazyHeaderDir = file("objcexport/")
-            final File expectedLazyHeader = new File(expectedLazyHeaderDir, expectedLazyHeaderName)
 
-            if (expectedLazyHeader.readLines() != lazyHeader.readLines()) {
-                exec {
-                    commandLine 'diff', '-u', expectedLazyHeader, lazyHeader
-                    ignoreExitValue = true
-                }
+if (isAppleTarget(project)) {
+    final Task ObjCExportAllTask = tasks.create("testObjCExportAll")
+    objcExportTest(
+            ObjCExportAllTask,
+            '',
+            [],
+            [],
+            false,
+            true
+    )
+    objcExportTest(
+            ObjCExportAllTask,
+            'NoGenerics',
+            ["-Xno-objc-generics"],
+            [ '-D', 'NO_GENERICS' ],
+            false,
+            true
+    )
+    objcExportTest(
+            ObjCExportAllTask,
+            'LegacySuspendUnit',
+            ["-Xbinary=unitSuspendFunctionObjCExport=legacy"],
+            [ '-D', 'LEGACY_SUSPEND_UNIT_FUNCTION_EXPORT' ],
+            false,
+            true
+    )
+    objcExportTest(
+            ObjCExportAllTask,
+            'NoSwiftMemberNameMangling',
+            ["-Xbinary=objcExportDisableSwiftMemberNameMangling=true"],
+            [ '-D', 'DISABLE_MEMBER_NAME_MANGLING' ],
+            false,
+            false
+    )
+    objcExportTest(
+            ObjCExportAllTask,
+            'NoInterfaceMemberNameMangling',
+            ["-Xbinary=objcExportIgnoreInterfaceMethodCollisions=true"],
+            [ '-D', 'DISABLE_INTERFACE_METHOD_NAME_MANGLING' ],
+            false,
+            false
+    )
 
-                copy {
-                    from(lazyHeader)
-                    into(expectedLazyHeaderDir)
-                    rename { expectedLazyHeaderName }
-                }
+    objcExportTest(
+            ObjCExportAllTask,
+            'Static',
+            ["-Xbinary=objcExportSuspendFunctionLaunchThreadRestriction=none"],
+            [ '-D', 'ALLOW_SUSPEND_ANY_THREAD' ],
+            true,
+            false
+    )
 
-                throw new Error("$expectedLazyHeader file patched;\nre-run the test and don't forget to commit the patch")
-            }
-
-        }
-
-        def libraryName = frameworkName + "Library"
-        konanArtifacts {
-            library(libraryName, targets: [target.name]) {
-                srcDir "objcexport/library"
-                artifactName "test-library"
-
-                if (!useCustomDist) {
-                    dependsOn ":${target.name}CrossDistRuntime", ':distCompiler'
-                }
-
-                extraOpts "-Xshort-module-name=MyLibrary"
-                extraOpts "-module-name", "org.jetbrains.kotlin.native.test-library"
-            }
-        }
-        framework(frameworkName) {
-            sources = ['objcexport']
-            artifact = frameworkArtifactName
-            library = libraryName
-            opts = ["-Xemit-lazy-objc-header=$lazyHeader", "-Xno-objc-generics"]
-        }
-        swiftSources = ['objcexport']
-        swiftExtraOpts = [ '-D', 'NO_GENERICS' ]
-        if (isNoopGC) {
-            swiftExtraOpts += ["-D", "NOOP_GC"]
-        }
-    }
-
-    frameworkTest('testObjCExportLegacySuspendUnit') {
-        final String frameworkName = 'KtLegacySuspendUnit'
-        final String frameworkArtifactName = 'Kt'
-        final String dir = "$testOutputFramework/testObjCExportLegacySuspendUnit"
-        final File lazyHeader = file("$dir/$target-lazy.h")
-
-        doLast {
-            final String expectedLazyHeaderName = "expectedLazyLegacySuspendUnit.h"
-            final String expectedLazyHeaderDir = file("objcexport/")
-            final File expectedLazyHeader = new File(expectedLazyHeaderDir, expectedLazyHeaderName)
-
-            if (expectedLazyHeader.readLines() != lazyHeader.readLines()) {
-                exec {
-                    commandLine 'diff', '-u', expectedLazyHeader, lazyHeader
-                    ignoreExitValue = true
-                }
-
-                copy {
-                    from(lazyHeader)
-                    into(expectedLazyHeaderDir)
-                    rename { expectedLazyHeaderName }
-                }
-
-                throw new Error("$expectedLazyHeader file patched;\nre-run the test and don't forget to commit the patch")
-            }
-
-        }
-
-        def libraryName = frameworkName + "Library"
-        konanArtifacts {
-            library(libraryName, targets: [target.name]) {
-                srcDir "objcexport/library"
-                artifactName "test-library"
-
-                if (!useCustomDist) {
-                    dependsOn ":${target.name}CrossDistRuntime", ':distCompiler'
-                }
-
-                extraOpts "-Xshort-module-name=MyLibrary"
-                extraOpts "-module-name", "org.jetbrains.kotlin.native.test-library"
-            }
-        }
-        framework(frameworkName) {
-            sources = ['objcexport']
-            artifact = frameworkArtifactName
-            library = libraryName
-            opts = ["-Xemit-lazy-objc-header=$lazyHeader", "-Xbinary=unitSuspendFunctionObjCExport=legacy"]
-        }
-        swiftSources = ['objcexport']
-        swiftExtraOpts = [ '-D', 'LEGACY_SUSPEND_UNIT_FUNCTION_EXPORT' ]
-        if (isNoopGC) {
-            swiftExtraOpts += ["-D", "NOOP_GC"]
-        }
-    }
-
-    frameworkTest('testObjCExportNoSwiftMemberNameMangling') {
-        final String frameworkName = 'KtNoSwiftMemberNameMangling'
-        final String frameworkArtifactName = 'Kt'
-        final String dir = "$testOutputFramework/testObjCExportNoSwiftMemberNameMangling"
-
-        def libraryName = frameworkName + "Library"
-        konanArtifacts {
-            library(libraryName, targets: [target.name]) {
-                srcDir "objcexport/library"
-                artifactName "test-library"
-
-                if (!useCustomDist) {
-                    dependsOn ":${target.name}CrossDistRuntime", ':distCompiler'
-                }
-
-                extraOpts "-Xshort-module-name=MyLibrary"
-                extraOpts "-module-name", "org.jetbrains.kotlin.native.test-library"
-            }
-        }
-        framework(frameworkName) {
-            sources = ['objcexport']
-            artifact = frameworkArtifactName
-            library = libraryName
-            opts = ["-Xbinary=objcExportDisableSwiftMemberNameMangling=true"]
-        }
-        swiftSources = ['objcexport']
-        swiftExtraOpts = [ '-D', 'DISABLE_MEMBER_NAME_MANGLING' ]
-        if (isNoopGC) {
-            swiftExtraOpts += ["-D", "NOOP_GC"]
-        }
-    }
-
-    frameworkTest('testObjCExportNoInterfaceMemberNameMangling') {
-        final String frameworkName = 'KtNoInterfaceMemberNameMangling'
-        final String frameworkArtifactName = 'Kt'
-        final String dir = "$testOutputFramework/testObjCExportNoInterfaceMemberNameMangling"
-
-        def libraryName = frameworkName + "Library"
-        konanArtifacts {
-            library(libraryName, targets: [target.name]) {
-                srcDir "objcexport/library"
-                artifactName "test-library"
-
-                if (!useCustomDist) {
-                    dependsOn ":${target.name}CrossDistRuntime", ':distCompiler'
-                }
-
-                extraOpts "-Xshort-module-name=MyLibrary"
-                extraOpts "-module-name", "org.jetbrains.kotlin.native.test-library"
-            }
-        }
-        framework(frameworkName) {
-            sources = ['objcexport']
-            artifact = frameworkArtifactName
-            library = libraryName
-            opts = ["-Xbinary=objcExportIgnoreInterfaceMethodCollisions=true"]
-        }
-        swiftSources = ['objcexport']
-        swiftExtraOpts = [ '-D', 'DISABLE_INTERFACE_METHOD_NAME_MANGLING' ]
-        if (isNoopGC) {
-            swiftExtraOpts += ["-D", "NOOP_GC"]
-        }
-    }
-
-    frameworkTest('testObjCExportStatic') {
-        final String frameworkName = 'KtStatic'
-        final String frameworkArtifactName = 'Kt'
-        final String libraryName = frameworkName + "Library"
-
-        konanArtifacts {
-            library(libraryName, targets: [target.name]) {
-                srcDir "objcexport/library"
-                artifactName "test-library"
-
-                delegate.getByTarget(target.name).configure{
-                    UtilsKt.dependsOnDist(it)
-                }
-
-                extraOpts "-Xshort-module-name=MyLibrary"
-                extraOpts "-module-name", "org.jetbrains.kotlin.native.test-library"
-            }
-        }
-
-        codesign = false
-        framework(frameworkName) {
-            sources = ['objcexport']
-            bitcode = false
-            artifact = frameworkArtifactName
-            library = libraryName
-            isStatic = true
-            opts = ["-Xbinary=objcExportSuspendFunctionLaunchThreadRestriction=none"]
-        }
-        swiftSources = ['objcexport']
-        swiftExtraOpts = [ '-D', 'ALLOW_SUSPEND_ANY_THREAD' ]
-        if (isNoopGC) {
-            swiftExtraOpts += ["-D", "NOOP_GC"]
-        }
-    }
 
     frameworkTest('testValuesGenericsFramework') {
         framework('ValuesGenerics') {
@@ -5926,6 +5805,7 @@ if (isAppleTarget(project)) {
         swiftSources = ['framework/values_generics/']
     }
 
+    if(!isK2(project))  // KT-56271
     frameworkTest("testStdlibFramework") {
         framework('Stdlib') {
             sources = ['framework/stdlib']
@@ -5977,7 +5857,7 @@ if (isAppleTarget(project)) {
     frameworkTest("testGh3343Framework") {
         framework('Gh3343') {
             sources = ['framework/gh3343']
-            library = 'objcGh3343'
+            libraries = ['objcGh3343']
         }
         swiftSources = ['framework/gh3343/']
     }
@@ -5993,7 +5873,7 @@ if (isAppleTarget(project)) {
     frameworkTest("testKt43517Framework") {
         framework('Kt43517') {
             sources = ['framework/kt43517']
-            library = 'objcKt43517'
+            libraries = ['objcKt43517']
         }
         swiftSources = ['framework/kt43517/']
     }
@@ -6065,9 +5945,24 @@ if (isAppleTarget(project)) {
     frameworkTest("testForwardDeclarationsFramework") {
         framework('ForwardDeclarations') {
             sources = ['framework/forwardDeclarations']
-            library = 'frameworkForwardDeclarations'
+            libraries = ['frameworkForwardDeclarations']
         }
         swiftSources = ['framework/forwardDeclarations/']
+    }
+
+    frameworkTest("testFrameworkUsesFoundationModule") {
+        framework("Bar") {
+            sources = ["framework/use_foundation_module/framework.kt"]
+        }
+        swiftSources = []
+        doLast {
+            def frameworkPath = "$testOutputFramework/testFrameworkUsesFoundationModule/$target/Bar.framework"
+            def moduleMapContent = file("$frameworkPath/Modules/module.modulemap").text
+            def useFoundationPattern = ~"use Foundation"
+            if (!useFoundationPattern.matcher(moduleMapContent).find()) {
+                throw new Error("Expected use of Foundation module:\n$moduleMapContent")
+            }
+        }
     }
 }
 
@@ -6090,8 +5985,6 @@ KotlinNativeTestKt.createTest(project, 'harmonyRegexTest', KonanGTest) { task ->
             extraOpts project.globalTestArgs
         }
     }
-
-    task.finalizedBy("resultsTask")
 }
 
 if (UtilsKt.getTestTargetSupportsCodeCoverage(project)) {
@@ -6209,12 +6102,13 @@ standaloneTest("local_ea_arraysfieldwrite") {
 
 tasks.register("override_konan_properties0", KonanDriverTest) {
     disabled = isAggressiveGC // No need to test with different GC schedulers
+        || isK2(project)  // KT-56855
     def overrides = PlatformInfo.isWindows()
             ? '-Xoverride-konan-properties="llvmInlineThreshold=76"'
             : '-Xoverride-konan-properties=llvmInlineThreshold=76'
     flags = [
             "-opt",
-            "-Xverbose-phases=BitcodeOptimization",
+            "-Xverbose-phases=MandatoryBitcodeLLVMPostprocessingPhase",
             overrides
     ]
     compilerMessages = true
@@ -6232,6 +6126,7 @@ tasks.register("llvm_variant_dev", KonanDriverTest) {
     // so it is hard to reliably detect LLVM variant for these targets.
     disabled = isAppleTarget(project)
         || isAggressiveGC // No need to test with different GC schedulers
+        || isK2(project) // KT-56855
     flags = [
             "-Xllvm-variant=dev",
             "-Xverbose-phases=ObjectFiles"
@@ -6251,6 +6146,10 @@ task buildKonanTests { t ->
 
     // These tests should not be built into the TestRunner's test executable
     def excludeList = [ "codegen/inline/returnLocalClassFromBlock.kt" ]
+    if (isK2(project)) {
+        excludeList += "codegen/basics/const_infinity.kt" // KT-56189
+        excludeList += "runtime/basic/initializers4.kt"   // KT-56189
+    }
     project.tasks
             .withType(KonanStandaloneTest.class)
             .each {
@@ -6270,7 +6169,7 @@ task buildKonanTests { t ->
             baseDir testOutputLocal
             extraOpts '-ea' // Without this option assertions would remain inactive.
             extraOpts '-tr'
-            extraOpts '-Xverify-ir'
+            extraOpts '-Xverify-ir=error'
             extraOpts project.globalTestArgs
         }
     }
@@ -6416,7 +6315,7 @@ if (HostManager.@Companion.hostIsMac) {
         targetName = "watchos_arm32"
         // Perform check after optimization pipeline because
         // LLVM might infer attributes.
-        phaseToCheck = "BitcodeOptimization"
+        phaseToCheck = "LTOBitcodeOptimization"
     }
 
     fileCheckTest("filecheck_redundant_safepoints_removal_smallbinary") {
@@ -6628,8 +6527,12 @@ fileCheckTest("filecheck_suspend_returnNothing") {
     annotatedSource = project.file('filecheck/suspend_returnNothing.kt')
 }
 
-fileCheckTest("filecheck_suspend_tailcalls") {
-    annotatedSource = project.file('filecheck/suspend_tailcalls.kt')
+fileCheckTest("filecheck_suspend_tailcalls_functions") {
+    annotatedSource = project.file('filecheck/suspend_tailcalls_functions.kt')
+}
+
+fileCheckTest("filecheck_suspend_tailcalls_lambdas") {
+    annotatedSource = project.file('filecheck/suspend_tailcalls_lambdas.kt')
 }
 
 fileCheckTest("filecheck_bce") {
@@ -6693,6 +6596,15 @@ fileCheckTest("filecheck_constants_merge") {
     annotatedSource = project.file('filecheck/constants_merge.kt')
 }
 
+
+fileCheckTest("filecheck_objc_direct") {
+    enabled = enabled && cacheTesting == null
+    annotatedSource = project.file('filecheck/objc_direct.kt')
+    interop = "objcDirect"
+    enabled = target.family.appleFamily
+}
+
+
 dependencies {
     nopPluginApi kotlinCompilerModule
     nopPluginApi project(":native:kotlin-native-utils")
@@ -6702,6 +6614,7 @@ dependencies {
     nopPluginApi project(":compiler:util")
     nopPluginApi project(":native:frontend.native")
     nopPluginApi project(":compiler:cli-common")
+    nopPluginApi project(":compiler:cli-base")
     nopPluginApi project(":compiler:cli")
     nopPluginApi project(":kotlin-util-klib")
     nopPluginApi project(":kotlin-util-klib-metadata")

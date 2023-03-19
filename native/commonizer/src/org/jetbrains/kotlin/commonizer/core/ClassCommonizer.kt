@@ -18,6 +18,7 @@ class ClassCommonizer internal constructor(
     private var isInner = false
     private var isValue = false
     private var isCompanion = false
+    private var hasEnumEntries = false
     private val supertypesCommonizer = supertypesCommonizer.asCommonizer()
     private val typeParameterListCommonizer: TypeParameterListCommonizer = TypeParameterListCommonizer(typeCommonizer)
     private val modalityCommonizer: ModalityCommonizer = ModalityCommonizer()
@@ -37,7 +38,8 @@ class ClassCommonizer internal constructor(
             isData = false,
             isValue = isValue,
             isInner = isInner,
-            isExternal = false
+            isExternal = false,
+            hasEnumEntries = hasEnumEntries
         )
     }
 
@@ -47,10 +49,13 @@ class ClassCommonizer internal constructor(
         isInner = first.isInner
         isValue = first.isValue
         isCompanion = first.isCompanion
+        hasEnumEntries = first.hasEnumEntries
     }
 
-    override fun doCommonizeWith(next: CirClass) =
-        kind == next.kind
+    override fun doCommonizeWith(next: CirClass): Boolean {
+        this.hasEnumEntries = this.hasEnumEntries && next.hasEnumEntries
+
+        return kind == next.kind
                 && isInner == next.isInner
                 && isValue == next.isValue
                 && isCompanion == next.isCompanion
@@ -58,4 +63,5 @@ class ClassCommonizer internal constructor(
                 && visibilityCommonizer.commonizeWith(next)
                 && typeParameterListCommonizer.commonizeWith(next.typeParameters)
                 && supertypesCommonizer.commonizeWith(next.supertypes)
+    }
 }

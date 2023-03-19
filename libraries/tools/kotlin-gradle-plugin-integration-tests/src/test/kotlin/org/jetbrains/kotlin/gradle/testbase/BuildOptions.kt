@@ -12,8 +12,6 @@ import org.jetbrains.kotlin.cli.common.CompilerSystemProperties.COMPILE_INCREMEN
 import org.jetbrains.kotlin.gradle.BaseGradleIT
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.report.BuildReportType
-import org.jetbrains.kotlin.gradle.suppressDeprecationWarningsOn
-import org.jetbrains.kotlin.gradle.util.AGPVersion
 import org.junit.jupiter.api.condition.OS
 import java.util.*
 
@@ -38,9 +36,11 @@ data class BuildOptions(
     val buildReport: List<BuildReportType> = emptyList(),
     val useFir: Boolean = false,
     val usePreciseJavaTracking: Boolean? = null,
+    val languageVersion: String? = null,
     val freeArgs: List<String> = emptyList(),
     val statisticsForceValidation: Boolean = true,
     val usePreciseOutputsBackup: Boolean? = null,
+    val keepIncrementalCompilationCachesInMemory: Boolean? = null,
 ) {
     val safeAndroidVersion: String
         get() = androidVersion ?: error("AGP version is expected to be set")
@@ -57,6 +57,7 @@ data class BuildOptions(
         val jsCompilerType: KotlinJsCompilerType? = null,
         val incrementalJs: Boolean? = null,
         val incrementalJsKlib: Boolean? = null,
+        val incrementalJsIr: Boolean? = null,
         val compileNoWarn: Boolean = true
     )
 
@@ -119,6 +120,7 @@ data class BuildOptions(
         if (jsOptions != null) {
             jsOptions.incrementalJs?.let { arguments.add("-Pkotlin.incremental.js=$it") }
             jsOptions.incrementalJsKlib?.let { arguments.add("-Pkotlin.incremental.js.klib=$it") }
+            jsOptions.incrementalJsIr?.let { arguments.add("-Pkotlin.incremental.js.ir=$it") }
             jsOptions.useIrBackend?.let { arguments.add("-Pkotlin.js.useIrBackend=$it") }
             jsOptions.jsCompilerType?.let { arguments.add("-Pkotlin.js.compiler=$it") }
             // because we have legacy compiler tests, we need nowarn for compiler testing
@@ -142,6 +144,10 @@ data class BuildOptions(
             arguments.add("-Pkotlin.useK2=true")
         }
 
+        if (languageVersion != null) {
+            arguments.add("-Pkotlin.internal.languageVersion=$languageVersion")
+        }
+
         if (usePreciseJavaTracking != null) {
             arguments.add("-Pkotlin.incremental.usePreciseJavaTracking=$usePreciseJavaTracking")
         }
@@ -152,6 +158,10 @@ data class BuildOptions(
 
         if (usePreciseOutputsBackup != null) {
             arguments.add("-Pkotlin.compiler.preciseCompilationResultsBackup=$usePreciseOutputsBackup")
+        }
+
+        if (keepIncrementalCompilationCachesInMemory != null) {
+            arguments.add("-Pkotlin.compiler.keepIncrementalCompilationCachesInMemory=$keepIncrementalCompilationCachesInMemory")
         }
 
         arguments.addAll(freeArgs)

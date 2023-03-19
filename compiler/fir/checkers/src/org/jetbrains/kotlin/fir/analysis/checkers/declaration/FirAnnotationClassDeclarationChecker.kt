@@ -72,6 +72,7 @@ object FirAnnotationClassDeclarationChecker : FirRegularClassChecker() {
 
                     val typeRef = parameter.returnTypeRef
                     val coneType = typeRef.coneTypeSafe<ConeLookupTagBasedType>()
+                        ?.fullyExpandedType(context.session) as? ConeLookupTagBasedType
                     val classId = coneType?.classId
 
                     if (coneType != null) when {
@@ -100,7 +101,7 @@ object FirAnnotationClassDeclarationChecker : FirRegularClassChecker() {
                             // DO NOTHING: arrays of unsigned types are allowed
                         }
                         classId == StandardClassIds.Array -> {
-                            if (!isAllowedArray(typeRef, context.session))
+                            if (!isAllowedArray(coneType, context.session))
                                 reporter.reportOn(typeRef.source, FirErrors.INVALID_TYPE_OF_ANNOTATION_MEMBER, context)
                         }
                         isAllowedClassKind(coneType, context.session) -> {
@@ -136,13 +137,12 @@ object FirAnnotationClassDeclarationChecker : FirRegularClassChecker() {
         return typeRefClassKind == ANNOTATION_CLASS || typeRefClassKind == ENUM_CLASS
     }
 
-    private fun isAllowedArray(typeRef: FirTypeRef, session: FirSession): Boolean {
-        val typeArguments = typeRef.coneType.typeArguments
+    private fun isAllowedArray(type: ConeKotlinType, session: FirSession): Boolean {
+        val typeArguments = type.typeArguments
 
         if (typeArguments.size != 1) return false
 
-        val arrayType = (typeArguments[0] as? ConeKotlinTypeProjection)
-            ?.type
+        val arrayType = (typeArguments[0] as? ConeKotlinTypeProjection)?.type?.fullyExpandedType(session)
             ?: return false
 
         if (arrayType.isNullable) return false

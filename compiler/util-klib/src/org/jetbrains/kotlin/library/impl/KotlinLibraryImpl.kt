@@ -17,11 +17,12 @@
 package org.jetbrains.kotlin.library.impl
 
 import org.jetbrains.kotlin.konan.file.File
+import org.jetbrains.kotlin.konan.file.ZipFileSystemAccessor
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.library.*
 
-open class BaseKotlinLibraryImpl(
+class BaseKotlinLibraryImpl(
     val access: BaseLibraryAccess<KotlinLibraryLayout>,
     override val isDefault: Boolean
 ) : BaseKotlinLibrary {
@@ -53,7 +54,7 @@ open class BaseKotlinLibraryImpl(
     }
 }
 
-open class MetadataLibraryImpl(
+class MetadataLibraryImpl(
     val access: MetadataLibraryAccess<MetadataKotlinLibraryLayout>
 ) : MetadataLibrary {
 
@@ -292,7 +293,7 @@ class IrPerFileLibraryImpl(_access: IrLibraryAccess<IrKotlinLibraryLayout>) : Ir
     }
 }
 
-open class KotlinLibraryImpl(
+class KotlinLibraryImpl(
     val base: BaseKotlinLibraryImpl,
     val metadata: MetadataLibraryImpl,
     val ir: IrLibraryImpl
@@ -322,11 +323,12 @@ fun createKotlinLibrary(
     libraryFile: File,
     component: String,
     isDefault: Boolean = false,
-    perFile: Boolean = false
+    perFile: Boolean = false,
+    zipAccessor: ZipFileSystemAccessor? = null,
 ): KotlinLibrary {
-    val baseAccess = BaseLibraryAccess<KotlinLibraryLayout>(libraryFile, component)
-    val metadataAccess = MetadataLibraryAccess<MetadataKotlinLibraryLayout>(libraryFile, component)
-    val irAccess = IrLibraryAccess<IrKotlinLibraryLayout>(libraryFile, component)
+    val baseAccess = BaseLibraryAccess<KotlinLibraryLayout>(libraryFile, component, zipAccessor)
+    val metadataAccess = MetadataLibraryAccess<MetadataKotlinLibraryLayout>(libraryFile, component, zipAccessor)
+    val irAccess = IrLibraryAccess<IrKotlinLibraryLayout>(libraryFile, component, zipAccessor)
 
     val base = BaseKotlinLibraryImpl(baseAccess, isDefault)
     val metadata = MetadataLibraryImpl(metadataAccess)
@@ -337,12 +339,13 @@ fun createKotlinLibrary(
 
 fun createKotlinLibraryComponents(
     libraryFile: File,
-    isDefault: Boolean = true
-) : List<KotlinLibrary> {
-    val baseAccess = BaseLibraryAccess<KotlinLibraryLayout>(libraryFile, null)
+    isDefault: Boolean = true,
+    zipAccessor: ZipFileSystemAccessor? = null,
+): List<KotlinLibrary> {
+    val baseAccess = BaseLibraryAccess<KotlinLibraryLayout>(libraryFile, null, zipAccessor)
     val base = BaseKotlinLibraryImpl(baseAccess, isDefault)
     return base.componentList.map {
-        createKotlinLibrary(libraryFile, it, isDefault)
+        createKotlinLibrary(libraryFile, it, isDefault, zipAccessor = zipAccessor)
     }
 }
 

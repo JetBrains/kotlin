@@ -12,10 +12,11 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
  * A leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.syntheticBody
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.syntheticBody]
  */
 abstract class IrSyntheticBody : IrBody() {
-    abstract val kind: IrSyntheticBodyKind
+    abstract var kind: IrSyntheticBodyKind
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitSyntheticBody(this, data)

@@ -17,7 +17,14 @@ KtFunctionSymbol:
   name: listOf
   origin: LIBRARY
   receiverParameter: null
-  returnType: kotlin/collections/List<T>
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: [
+      KtTypeParameterType:
+        annotationsList: []
+        type: T
+    ]
+    type: kotlin/collections/List<T>
   symbolKind: TOP_LEVEL
   typeParameters: [
     KtTypeParameterSymbol(T)
@@ -37,7 +44,9 @@ KtFunctionSymbol:
       name: element
       origin: LIBRARY
       receiverParameter: null
-      returnType: T
+      returnType: KtTypeParameterType:
+        annotationsList: []
+        type: T
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtLibraryModule "Library kotlin-stdlib"
@@ -69,7 +78,14 @@ KtFunctionSymbol:
   name: listOf
   origin: LIBRARY
   receiverParameter: null
-  returnType: kotlin/collections/List<T>
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: [
+      KtTypeParameterType:
+        annotationsList: []
+        type: T
+    ]
+    type: kotlin/collections/List<T>
   symbolKind: TOP_LEVEL
   typeParameters: [
     KtTypeParameterSymbol(T)
@@ -98,7 +114,14 @@ KtFunctionSymbol:
   name: listOf
   origin: LIBRARY
   receiverParameter: null
-  returnType: kotlin/collections/List<T>
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: [
+      KtTypeParameterType:
+        annotationsList: []
+        type: T
+    ]
+    type: kotlin/collections/List<T>
   symbolKind: TOP_LEVEL
   typeParameters: [
     KtTypeParameterSymbol(T)
@@ -118,7 +141,9 @@ KtFunctionSymbol:
       name: elements
       origin: LIBRARY
       receiverParameter: null
-      returnType: T
+      returnType: KtTypeParameterType:
+        annotationsList: []
+        type: T
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtLibraryModule "Library kotlin-stdlib"

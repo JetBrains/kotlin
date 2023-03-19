@@ -188,6 +188,12 @@ public class IrBlackBoxCodegenTestForLombokGenerated extends AbstractIrBlackBoxC
     }
 
     @Test
+    @TestMetadata("valueFieldAccess.kt")
+    public void testValueFieldAccess() throws Exception {
+        runTest("plugins/lombok/testData/box/valueFieldAccess.kt");
+    }
+
+    @Test
     @TestMetadata("with.kt")
     public void testWith() throws Exception {
         runTest("plugins/lombok/testData/box/with.kt");

@@ -6,33 +6,40 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Nested
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject.Companion.PACKAGE_JSON
 import org.jetbrains.kotlin.gradle.utils.property
 import java.io.File
-import javax.inject.Inject
 
-open class PublicPackageJsonTask
-@Inject
-constructor(
-    @Transient
-    private val compilation: KotlinJsCompilation
-) : DefaultTask() {
-    private val npmProject = compilation.npmProject
+abstract class PublicPackageJsonTask :
+    DefaultTask(),
+    UsesKotlinNpmResolutionManager {
 
-    @Transient
-    private val nodeJs = npmProject.nodeJs
-    private val resolutionManager = nodeJs.npmResolutionManager
+    @get:Internal
+    abstract val compilationDisambiguatedName: Property<String>
 
-    private val compilationName = compilation.disambiguatedName
     private val projectPath = project.path
 
-    private val packageJsonHandlers = compilation.packageJsonHandlers
+    @get:Input
+    val projectVersion = project.version.toString()
+
+    @get:Input
+    abstract val jsIrCompilation: Property<Boolean>
+
+    @get:Input
+    abstract val npmProjectName: Property<String>
+
+    @get:Internal
+    abstract val npmProjectMain: Property<String>
+
+    private val packageJsonHandlers: List<PackageJson.() -> Unit>
+        get() = npmResolutionManager.get().parameters.packageJsonHandlers.get()
+            .getValue("$projectPath:${compilationDisambiguatedName.get()}")
+
 
     @get:Input
     val packageJsonCustomFields: Map<String, Any?>
@@ -41,47 +48,40 @@ constructor(
                 packageJsonHandlers.forEach { it() }
             }.customFields
 
-    private val compilationResolver
-        get() = resolutionManager.resolver[projectPath][compilationName]
-
     private val compilationResolution
-        get() = compilationResolver.getResolutionOrResolveIfForced() ?: error("Compilation resolution isn't available")
+        get() = npmResolutionManager.get().resolution.get()[projectPath][compilationDisambiguatedName.get()]
+            .getResolutionOrPrepare(
+                npmResolutionManager.get(),
+                logger
+            )
 
-    @get:Nested
-    internal val externalDependencies: Collection<NpmDependencyDeclaration>
+    @get:Input
+    val externalDependencies: Collection<NpmDependencyDeclaration>
         get() = compilationResolution.externalNpmDependencies
-            .map {
-                NpmDependencyDeclaration(
-                    scope = it.scope,
-                    name = it.name,
-                    version = it.version,
-                )
-            }
-
-    private val publicPackageJsonTaskName by lazy {
-        npmProject.publicPackageJsonTaskName
-    }
 
     private val defaultPackageJsonFile by lazy {
         project.buildDir
             .resolve("tmp")
-            .resolve(publicPackageJsonTaskName)
+            .resolve(name)
             .resolve(PACKAGE_JSON)
     }
 
     @get:OutputFile
     var packageJsonFile: File by property { defaultPackageJsonFile }
 
-    private val isJrIrCompilation = compilation is KotlinJsIrCompilation
-    private val projectVersion = project.version.toString()
-
     @TaskAction
     fun resolve() {
-        packageJson(npmProject.name, projectVersion, npmProject.main, externalDependencies, packageJsonHandlers).let { packageJson ->
-            packageJson.main = "${npmProject.name}.js"
+        packageJson(
+            npmProjectName.get(),
+            projectVersion,
+            npmProjectMain.get(),
+            externalDependencies,
+            packageJsonHandlers
+        ).let { packageJson ->
+            packageJson.main = "${npmProjectName}.js"
 
-            if (isJrIrCompilation) {
-                packageJson.types = "${npmProject.name}.d.ts"
+            if (jsIrCompilation.get()) {
+                packageJson.types = "${npmProjectName}.d.ts"
             }
 
             packageJson.apply {

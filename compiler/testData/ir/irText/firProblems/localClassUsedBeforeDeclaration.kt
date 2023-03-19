@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 fun box(): String {
     return object {
         val a = A("OK")

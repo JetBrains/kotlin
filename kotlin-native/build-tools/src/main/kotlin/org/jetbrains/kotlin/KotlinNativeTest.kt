@@ -16,7 +16,6 @@ import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.gradle.process.ExecSpec
 import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.konan.target.HostManager
-import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.LinkerOutputKind
 import java.io.ByteArrayOutputStream
@@ -42,7 +41,7 @@ abstract class KonanTest : DefaultTask(), KonanTestExecutable {
     /**
      * Test output directory. Used to store processed sources and binary artifacts.
      */
-    @get:OutputDirectory
+    @get:Internal
     abstract val outputDirectory: String
 
     /**
@@ -54,12 +53,13 @@ abstract class KonanTest : DefaultTask(), KonanTestExecutable {
     /**
      * Test executable arguments.
      */
-    @Input
+    @get:Input
     var arguments = mutableListOf<String>()
 
     /**
      * Test executable.
      */
+    @get:Input
     abstract override val executable: String
 
     /**
@@ -406,7 +406,7 @@ open class KonanStandaloneTest : KonanLocalTest() {
             if (enableKonanAssertions)
                 result += "-ea"
             if (verifyIr)
-                result += "-Xverify-ir"
+                result += "-Xverify-ir=error"
             return result
         }
 

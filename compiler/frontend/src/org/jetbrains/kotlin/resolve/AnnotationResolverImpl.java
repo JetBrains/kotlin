@@ -96,7 +96,6 @@ public class AnnotationResolverImpl extends AnnotationResolver {
             if (descriptor == null) {
                 LazyAnnotationDescriptor lazyAnnotationDescriptor =
                         new LazyAnnotationDescriptor(new LazyAnnotationsContextImpl(this, storageManager, trace, scope), entryElement);
-                lazyAnnotationDescriptor.recordToTrace();
                 descriptor = lazyAnnotationDescriptor;
             }
             if (shouldResolveArguments) {

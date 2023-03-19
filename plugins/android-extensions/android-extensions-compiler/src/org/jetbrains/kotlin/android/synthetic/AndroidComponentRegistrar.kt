@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.android.synthetic.res.CliAndroidPackageFragmentProvi
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.compiler.plugin.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -119,7 +118,10 @@ class AndroidComponentRegistrar : ComponentRegistrar {
             ExpressionCodegenExtension.registerExtension(project, ParcelableCodegenExtension())
             IrGenerationExtension.registerExtension(project, ParcelableIrGeneratorExtension())
             SyntheticResolveExtension.registerExtension(project, ParcelableResolveExtension())
-            ClassBuilderInterceptorExtension.registerExtension(project, ParcelableClinitClassBuilderInterceptorExtension())
+            @Suppress("DEPRECATION_ERROR")
+            org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension.registerExtension(
+                project, ParcelableClinitClassBuilderInterceptorExtension()
+            )
             StorageComponentContainerContributor.registerExtension(project, ParcelizeDeclarationCheckerComponentContainerContributor())
         }
 
@@ -150,8 +152,10 @@ class AndroidComponentRegistrar : ComponentRegistrar {
             StorageComponentContainerContributor.registerExtension(project,
                     AndroidExtensionPropertiesComponentContainerContributor())
 
-            ClassBuilderInterceptorExtension.registerExtension(project,
-                    CliAndroidOnDestroyClassBuilderInterceptorExtension(globalCacheImpl))
+            @Suppress("DEPRECATION_ERROR")
+            org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension.registerExtension(
+                project, CliAndroidOnDestroyClassBuilderInterceptorExtension(globalCacheImpl)
+            )
 
             PackageFragmentProviderExtension.registerExtension(project,
                     CliAndroidPackageFragmentProviderExtension(isExperimental))

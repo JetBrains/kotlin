@@ -82,10 +82,10 @@ internal abstract class JvmValueClassAbstractLowering(
 
     private fun transformFlattenedConstructor(function: IrConstructor, replacement: IrConstructor): List<IrDeclaration> {
         replacement.valueParameters.forEach {
-            visitParameter(it)
             it.defaultValue?.patchDeclarationParents(replacement)
+            visitParameter(it)
         }
-        allScopes.push(createScope(function))
+        allScopes.push(createScope(replacement))
         replacement.body = function.body?.transform(this, null)?.patchDeclarationParents(replacement)
         allScopes.pop()
         return listOf(replacement)
@@ -110,8 +110,8 @@ internal abstract class JvmValueClassAbstractLowering(
 
     private fun transformSimpleFunctionFlat(function: IrSimpleFunction, replacement: IrSimpleFunction): List<IrDeclaration> {
         replacement.valueParameters.forEach {
-            visitParameter(it)
             it.defaultValue?.patchDeclarationParents(replacement)
+            visitParameter(it)
         }
         allScopes.push(createScope(replacement))
         replacement.body = function.body?.transform(this, null)?.patchDeclarationParents(replacement)
@@ -170,7 +170,7 @@ internal abstract class JvmValueClassAbstractLowering(
 
     // Anonymous initializers in inline classes are processed when building the primary constructor.
     final override fun visitAnonymousInitializerNew(declaration: IrAnonymousInitializer): IrStatement =
-        if ((declaration.parent as? IrClass)?.isSpecificLoweringLogicApplicable() == true)
+        if ((declaration.parent as? IrClass)?.isSpecificLoweringLogicApplicable() == true && !declaration.isStatic)
             declaration
         else
             super.visitAnonymousInitializerNew(declaration)

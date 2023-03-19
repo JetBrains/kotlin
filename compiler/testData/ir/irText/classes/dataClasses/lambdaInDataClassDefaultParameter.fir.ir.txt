@@ -104,7 +104,7 @@ FILE fqName:<root> fileName:/lambdaInDataClassDefaultParameter.kt
           BLOCK type=<root>.B.<init>.<no name provided> origin=OBJECT_LITERAL
             CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.Any]
               $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B.<init>.<no name provided>
-              CONSTRUCTOR visibility:private <> () returnType:<root>.B.<init>.<no name provided> [primary]
+              CONSTRUCTOR visibility:public <> () returnType:<root>.B.<init>.<no name provided> [primary]
                 BLOCK_BODY
                   DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
                   INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.Any]'
@@ -121,7 +121,7 @@ FILE fqName:<root> fileName:/lambdaInDataClassDefaultParameter.kt
                 overridden:
                   public open fun toString (): kotlin.String declared in kotlin.Any
                 $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-            CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.B.<init>.<no name provided>' type=<root>.B.<init>.<no name provided> origin=OBJECT_LITERAL
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.B.<init>.<no name provided>' type=<root>.B.<init>.<no name provided> origin=OBJECT_LITERAL
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:FINAL visibility:public [data] superTypes:[kotlin.Any]'

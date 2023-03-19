@@ -1,7 +1,7 @@
 FILE: external.kt
     public? final? external class External : R|kotlin/Any| {
         public? constructor(): R|External| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
@@ -10,7 +10,7 @@ FILE: external.kt
         public? external get(): Int
     public? final? class NotExternal : R|kotlin/Any| {
         public? constructor(): R|NotExternal| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
         public? final? external fun bar(): String

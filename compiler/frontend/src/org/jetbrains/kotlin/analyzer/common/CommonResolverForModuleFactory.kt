@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.resolve.extensions.AnalysisHandlerExtension
+import org.jetbrains.kotlin.resolve.lazy.AbsentDescriptorHandler
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
@@ -93,6 +94,7 @@ class CommonResolverForModuleFactory(
         languageVersionSettings: LanguageVersionSettings,
         sealedInheritorsProvider: SealedClassInheritorsProvider,
         resolveOptimizingOptions: OptimizingOptions?,
+        absentDescriptorHandlerClass: Class<out AbsentDescriptorHandler>?
     ): ResolverForModule {
         val (moduleInfo, syntheticFiles, moduleContentScope) = moduleContent
         val project = moduleContext.project
@@ -105,8 +107,17 @@ class CommonResolverForModuleFactory(
         val metadataPartProvider = platformParameters.metadataPartProviderFactory(moduleContent)
         val trace = CodeAnalyzerInitializer.getInstance(project).createTrace()
         val container = createContainerToResolveCommonCode(
-            moduleContext, trace, declarationProviderFactory, moduleContentScope, targetEnvironment, metadataPartProvider,
-            languageVersionSettings, targetPlatform, CommonPlatformAnalyzerServices, shouldCheckExpectActual
+            moduleContext,
+            trace,
+            declarationProviderFactory,
+            moduleContentScope,
+            targetEnvironment,
+            metadataPartProvider,
+            languageVersionSettings,
+            targetPlatform,
+            CommonPlatformAnalyzerServices,
+            shouldCheckExpectActual,
+            absentDescriptorHandlerClass
         )
 
         val klibMetadataPackageFragmentProvider =
@@ -243,10 +254,19 @@ private fun createContainerToResolveCommonCode(
     languageVersionSettings: LanguageVersionSettings,
     platform: TargetPlatform,
     analyzerServices: PlatformDependentAnalyzerServices,
-    shouldCheckExpectActual: Boolean
+    shouldCheckExpectActual: Boolean,
+    absentDescriptorHandlerClass: Class<out AbsentDescriptorHandler>?
 ): StorageComponentContainer =
     createContainer("ResolveCommonCode", analyzerServices) {
-        configureModule(moduleContext, platform, analyzerServices, bindingTrace, languageVersionSettings)
+        configureModule(
+            moduleContext,
+            platform,
+            analyzerServices,
+            bindingTrace,
+            languageVersionSettings,
+            optimizingOptions = null,
+            absentDescriptorHandlerClass = absentDescriptorHandlerClass
+        )
 
         useInstance(moduleContentScope)
         useInstance(declarationProviderFactory)

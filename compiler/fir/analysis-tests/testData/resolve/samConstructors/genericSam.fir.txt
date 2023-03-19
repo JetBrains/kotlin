@@ -8,7 +8,7 @@ FILE: main.kt
             ^ R|<local>/x|.R|kotlin/Int.toString|()
         }
         )
-        R|/MyFunction<CS errors: /MyFunction>#|<R|ERROR CLASS: Cannot infer argument for type parameter T|, R|ERROR CLASS: Cannot infer argument for type parameter R|>(<L> = MyFunction@fun <anonymous>(x: <ERROR TYPE REF: Cannot infer argument for type parameter T>): <ERROR TYPE REF: Cannot infer argument for type parameter R> <inline=NoInline>  {
+        R|/MyFunction<CS errors: /MyFunction>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>, <ERROR TYPE REF: Cannot infer argument for type parameter R>>(<L> = MyFunction@fun <anonymous>(x: <ERROR TYPE REF: Cannot infer argument for type parameter T>): <ERROR TYPE REF: Cannot infer argument for type parameter R> <inline=NoInline>  {
             ^ String()
         }
         )

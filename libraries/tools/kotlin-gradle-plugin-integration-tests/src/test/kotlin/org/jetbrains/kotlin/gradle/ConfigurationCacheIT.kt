@@ -84,7 +84,6 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
             ":lib:cinteropMyCinteropLinuxX64",
             ":lib:commonizeCInterop",
             ":lib:compileKotlinLinuxX64",
-            ":lib:copyCinteropMyCinteropLinuxX64",
             ":lib:linkExecutableDebugExecutableLinuxX64",
             ":lib:linkSharedDebugSharedLinuxX64",
             ":lib:linkStaticDebugStaticLinuxX64",
@@ -95,7 +94,6 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
             expectedTasks += listOf(
                 ":lib:cinteropMyCinteropIosX64",
                 ":lib:compileKotlinIosX64",
-                ":lib:copyCinteropMyCinteropIosX64",
                 ":lib:assembleMyframeDebugFrameworkIosArm64",
                 ":lib:assembleMyfatframeDebugFatFramework",
                 ":lib:assembleLibDebugXCFramework",

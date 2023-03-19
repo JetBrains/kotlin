@@ -40,6 +40,7 @@ class ElementConfig(
 
     var generationCallback: (TypeSpec.Builder.() -> Unit)? = null
     var suppressPrint = false
+    var kDoc: String? = null
 
     override val element get() = this
     override val args get() = emptyMap<NamedTypeParameterRef, TypeRef>()
@@ -89,6 +90,8 @@ sealed class FieldConfig(
     var baseGetter: CodeBlock? = null
     var printProperty = true
     var strictCastInTransformChildren = false
+
+    var kdoc: String? = null
 
     var generationCallback: (PropertySpec.Builder.() -> Unit)? = null
 

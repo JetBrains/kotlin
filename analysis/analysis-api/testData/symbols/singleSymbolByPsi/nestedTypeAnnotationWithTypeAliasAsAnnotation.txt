@@ -1,0 +1,51 @@
+KtFunctionSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: /foo2
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
+  isExtension: true
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: FINAL
+  name: foo2
+  origin: SOURCE
+  receiverParameter: KtReceiverParameterSymbol:
+    annotationsList: []
+    origin: SOURCE
+    owningCallableSymbol: KtFunctionSymbol(/foo2)
+    type: KtTypeParameterType:
+      annotationsList: []
+      type: T
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: [
+      KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: [
+          KtTypeParameterType:
+            annotationsList: [
+              BaseAnnotation()
+                psi: KtAnnotationEntry
+            ]
+            type: @R|SecondTypeAlias|()  T
+        ]
+        type: kotlin/collections/List<@R|SecondTypeAlias|()  T>
+    ]
+    type: kotlin/collections/List<kotlin/collections/List<@R|SecondTypeAlias|()  T>>?
+  symbolKind: TOP_LEVEL
+  typeParameters: [
+    KtTypeParameterSymbol(T)
+  ]
+  valueParameters: []
+  visibility: Public
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null

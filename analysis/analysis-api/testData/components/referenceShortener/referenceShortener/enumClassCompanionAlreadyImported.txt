@@ -1,0 +1,11 @@
+Before shortening: a.b.c.MyEnum.Companion.foo()
+with DO_NOT_SHORTEN:
+with SHORTEN_IF_ALREADY_IMPORTED:
+[qualifier] a.b.c.MyEnum
+[qualifier] a.b.c.MyEnum.Companion.foo()
+with SHORTEN_AND_IMPORT:
+[qualifier] a.b.c.MyEnum.Companion
+[qualifier] a.b.c.MyEnum.Companion.foo()
+with SHORTEN_AND_STAR_IMPORT:
+[qualifier] a.b.c.MyEnum.Companion
+[qualifier] a.b.c.MyEnum.Companion.foo()

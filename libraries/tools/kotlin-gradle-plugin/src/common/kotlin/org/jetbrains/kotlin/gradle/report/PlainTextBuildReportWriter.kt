@@ -52,7 +52,7 @@ internal class PlainTextBuildReportWriter(
         // TODO: If it is confusing, consider renaming "tasks" to "build operations" in this class.
         printBuildInfo(build)
         if (printMetrics) {
-            printMetrics(build.aggregatedMetrics, newLineBetweenSections = true)
+            printMetrics(build.aggregatedMetrics, aggregatedMetric = true)
             p.println()
         }
         printTaskOverview(build)
@@ -77,14 +77,19 @@ internal class PlainTextBuildReportWriter(
         }
     }
 
-    private fun printMetrics(buildMetrics: BuildMetrics, newLineBetweenSections: Boolean = false) {
+    private fun printMetrics(buildMetrics: BuildMetrics, aggregatedMetric: Boolean = false) {
         printBuildTimes(buildMetrics.buildTimes)
-        if (newLineBetweenSections) p.println()
+        if (aggregatedMetric) p.println()
 
         printBuildPerformanceMetrics(buildMetrics.buildPerformanceMetrics)
-        if (newLineBetweenSections) p.println()
+        if (aggregatedMetric) p.println()
 
         printBuildAttributes(buildMetrics.buildAttributes)
+
+        //TODO: KT-57310 Implement build GC metric in
+        if (!aggregatedMetric) {
+            printGcMetrics(buildMetrics.gcMetrics)
+        }
     }
 
     private fun printBuildTimes(buildTimes: BuildTimes) {
@@ -158,6 +163,20 @@ internal class PlainTextBuildReportWriter(
             val attributesByKind = allAttributes.entries.groupBy { it.key.kind }.toSortedMap()
             for ((kind, attributesCounts) in attributesByKind) {
                 printMap(p, kind.name, attributesCounts.map { (k, v) -> k.readableString to v }.toMap())
+            }
+        }
+    }
+
+    private fun printGcMetrics(gcMetrics: GcMetrics) {
+        val allGcMetrics = gcMetrics.asMap()
+        if (allGcMetrics.isEmpty()) return
+        p.withIndent("GC metrics:") {
+            for (gcMetric in allGcMetrics) {
+                p.println("${gcMetric.key}:")
+                p.withIndent {
+                    p.println("GC count: ${gcMetric.value.count}")
+                    p.println("GC time: ${formatTime(gcMetric.value.time)}")
+                }
             }
         }
     }

@@ -19,9 +19,9 @@ import org.jetbrains.kotlin.fir.types.renderForDebugging
 
 internal class KtFirCapturedType(
     override val coneType: ConeCapturedType,
-    override val token: KtLifetimeToken,
     private val builder: KtSymbolByFirBuilder,
 ) : KtCapturedType(), KtFirType {
+    override val token: KtLifetimeToken get() = builder.token
     override val nullability: KtTypeNullability get() = withValidityAssertion { coneType.nullability.asKtNullability() }
 
     override val projection: KtTypeProjection

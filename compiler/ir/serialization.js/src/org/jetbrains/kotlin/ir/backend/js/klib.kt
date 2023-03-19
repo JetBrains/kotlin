@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.KtVirtualFileSourceFile
 import org.jetbrains.kotlin.analyzer.AbstractAnalyzerWithCompilerReport
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.analyzer.CompilationErrorException
+import org.jetbrains.kotlin.backend.common.CommonJsKLibResolver
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
@@ -29,7 +30,6 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
@@ -38,16 +38,16 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.*
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.descriptors.IrDescriptorBasedFunctionFactory
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
-import org.jetbrains.kotlin.js.analyze.AbstractTopDownAnalyzerFacadeForJS
+import org.jetbrains.kotlin.js.analyze.AbstractTopDownAnalyzerFacadeForWeb
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
 import org.jetbrains.kotlin.js.config.ErrorTolerancePolicy
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.konan.file.ZipFileSystemAccessor
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.properties.propertyList
 import org.jetbrains.kotlin.library.*
@@ -71,6 +71,7 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.util.DummyLogger
 import org.jetbrains.kotlin.util.Logger
 import org.jetbrains.kotlin.utils.DFS
+import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import java.io.File
 
 val KotlinLibrary.moduleName: String
@@ -184,14 +185,6 @@ fun deserializeDependencies(
     }
 }
 
-fun getFunctionFactoryCallback(stdlibModule: IrModuleFragment) = { packageFragmentDescriptor: PackageFragmentDescriptor ->
-    IrFileImpl(
-        NaiveSourceBasedFileEntryImpl("${packageFragmentDescriptor.fqName}-[K][Suspend]Functions"),
-        packageFragmentDescriptor,
-        stdlibModule
-    ).also { stdlibModule.files += it }
-}
-
 fun loadIr(
     depsDescriptors: ModulesStructure,
     irFactory: IrFactory,
@@ -287,7 +280,9 @@ fun getIrModuleInfoForKlib(
         irBuiltIns,
         symbolTable,
         typeTranslator,
-        if (loadFunctionInterfacesIntoStdlib) getFunctionFactoryCallback(deserializedModuleFragments.first()) else null,
+        loadFunctionInterfacesIntoStdlib.ifTrue {
+            FunctionTypeInterfacePackages().makePackageAccessor(deserializedModuleFragments.first())
+        },
         true
     )
 
@@ -345,7 +340,9 @@ fun getIrModuleInfoForSourceFiles(
             irBuiltIns,
             symbolTable,
             psi2IrContext.typeTranslator,
-            if (loadFunctionInterfacesIntoStdlib) getFunctionFactoryCallback(deserializedModuleFragments.first()) else null,
+            loadFunctionInterfacesIntoStdlib.ifTrue {
+                FunctionTypeInterfacePackages().makePackageAccessor(deserializedModuleFragments.first())
+            },
             true
         )
 
@@ -474,9 +471,10 @@ class ModulesStructure(
     friendDependenciesPaths: Collection<String>,
 ) {
 
-    val allDependenciesResolution = jsResolveLibrariesWithoutDependencies(
+    val allDependenciesResolution = CommonJsKLibResolver.resolveWithoutDependencies(
         dependencies,
-        compilerConfiguration.resolverLogger
+        compilerConfiguration.resolverLogger,
+        compilerConfiguration.get(JSConfigurationKeys.ZIP_FILE_SYSTEM_ACCESSOR)
     )
 
     val allDependencies: List<KotlinLibrary>
@@ -511,7 +509,7 @@ class ModulesStructure(
     fun runAnalysis(
         errorPolicy: ErrorTolerancePolicy,
         analyzer: AbstractAnalyzerWithCompilerReport,
-        analyzerFacade: AbstractTopDownAnalyzerFacadeForJS
+        analyzerFacade: AbstractTopDownAnalyzerFacadeForWeb
     ) {
         require(mainModule is MainModule.SourceFiles)
         val files = mainModule.files
@@ -703,7 +701,6 @@ fun serializeModuleIntoKlib(
         libraryVersion = null,
         compilerVersion = KotlinCompilerVersion.VERSION,
         metadataVersion = KlibMetadataVersion.INSTANCE.toString(),
-        irVersion = KlibIrVersion.INSTANCE.toString()
     )
 
     val properties = Properties().also { p ->

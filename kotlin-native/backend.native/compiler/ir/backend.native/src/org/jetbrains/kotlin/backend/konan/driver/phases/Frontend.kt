@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
 import org.jetbrains.kotlin.analyzer.AnalysisResult
-import org.jetbrains.kotlin.backend.konan.FrontendServices
-import org.jetbrains.kotlin.backend.konan.KonanCompilationException
-import org.jetbrains.kotlin.backend.konan.KonanConfig
+import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.TopDownAnalyzerFacadeForKonan
 import org.jetbrains.kotlin.backend.konan.driver.BasicPhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
@@ -16,9 +14,11 @@ import org.jetbrains.kotlin.backend.konan.driver.PhaseEngine
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 sealed class FrontendPhaseOutput {
     object ShouldNotGenerateCode : FrontendPhaseOutput()
@@ -54,9 +54,30 @@ internal val FrontendPhase = createSimpleNamedCompilerPhase(
                 input.configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
         )
 
+        val sourceFiles = input.getSourceFiles()
+
+        if (sourceFiles.isNotEmpty()) {
+            if (input.configuration.getBoolean(CommonConfigurationKeys.USE_FIR)) {
+                context.reportCompilationError(
+                        "language version 2.0 doesn't support compiling sources " +
+                                "(${sourceFiles.first().virtualFilePath} in particular) " +
+                                "directly to native binaries " +
+                                "(e.g. a ${context.config.produce.name.toLowerCaseAsciiOnly()}).\n" +
+                                "If you are using the command-line compiler (e.g. konanc or kotlinc-native), then " +
+                                "compile the sources to a klib first with '-p library' compiler flag, " +
+                                "and then use '-Xinclude=<klib>' flag to compile this to a binary.\n" +
+                                "See more details at https://youtrack.jetbrains.com/issue/KT-56855\n" +
+                                "If you are seeing this error message when compiling with Gradle, " +
+                                "please report this here: https://kotl.in/issue"
+                )
+            }
+        } else {
+            // TODO: we shouldn't be here in this case.
+        }
+
         // Build AST and binding info.
-        analyzerWithCompilerReport.analyzeAndReport(input.getSourceFiles()) {
-            TopDownAnalyzerFacadeForKonan.analyzeFiles(input.getSourceFiles(), context)
+        analyzerWithCompilerReport.analyzeAndReport(sourceFiles) {
+            TopDownAnalyzerFacadeForKonan.analyzeFiles(sourceFiles, context)
         }
         if (analyzerWithCompilerReport.hasErrors()) {
             throw KonanCompilationException()

@@ -310,7 +310,7 @@ private fun processCLib(
 
     val libName = additionalArgs.cstubsName ?: fqParts.joinToString("") + "stubs"
 
-    val tempFiles = TempFiles(libName, cinteropArguments.tempDir)
+    val tempFiles = TempFiles(cinteropArguments.tempDir)
 
     val imports = parseImports(allLibraryDependencies)
 

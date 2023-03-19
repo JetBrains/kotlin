@@ -304,13 +304,15 @@ class Fir2IrDeclarationStorage(
         endOffset: Int,
         type: IrType,
         parent: IrFunction,
-        name: Name? = null
+        name: Name? = null,
+        isCrossinline: Boolean = false,
+        isNoinline: Boolean = false,
     ): IrValueParameter {
         return irFactory.createValueParameter(
             startOffset, endOffset, IrDeclarationOrigin.DEFINED, IrValueParameterSymbolImpl(),
             name ?: SpecialNames.IMPLICIT_SET_PARAMETER, 0, type,
             varargElementType = null,
-            isCrossinline = false, isNoinline = false,
+            isCrossinline = isCrossinline, isNoinline = isNoinline,
             isHidden = false, isAssignable = false
         ).apply {
             this.parent = parent
@@ -332,7 +334,6 @@ class Fir2IrDeclarationStorage(
         }
         val forSetter = function is FirPropertyAccessor && function.isSetter
         val typeContext = ConversionTypeContext(
-            definitelyNotNull = false,
             origin = if (forSetter) ConversionTypeOrigin.SETTER else ConversionTypeOrigin.DEFAULT
         )
         if (function is FirDefaultPropertySetter) {
@@ -350,7 +351,7 @@ class Fir2IrDeclarationStorage(
                         valueParameter, index + contextReceiverParametersCount,
                         useStubForDefaultValueStub = function !is FirConstructor || containingClass?.name != Name.identifier("Enum"),
                         typeContext,
-                        skipDefaultParameter = isFakeOverride
+                        skipDefaultParameter = isFakeOverride || origin == IrDeclarationOrigin.DELEGATED_MEMBER
                     ).apply {
                         this.parent = parent
                     }
@@ -632,12 +633,13 @@ class Fir2IrDeclarationStorage(
             runUnless(isLocal || !generateSignatures) {
                 signatureComposer.composeSignature(constructor, forceTopLevelPrivate = forceTopLevelPrivate)
             }
+        val visibility = if (irParent.isAnonymousObject) Visibilities.Public else constructor.visibility
         val created = constructor.convertWithOffsets { startOffset, endOffset ->
             declareIrConstructor(signature) { symbol ->
                 classifierStorage.preCacheTypeParameters(constructor, symbol)
                 irFactory.createConstructor(
                     startOffset, endOffset, origin, symbol,
-                    SpecialNames.INIT, components.visibilityConverter.convertToDescriptorVisibility(constructor.visibility),
+                    SpecialNames.INIT, components.visibilityConverter.convertToDescriptorVisibility(visibility),
                     constructor.returnTypeRef.toIrType(),
                     isInline = false, isExternal = false, isPrimary = isPrimary, isExpect = constructor.isExpect
                 ).apply {
@@ -728,7 +730,6 @@ class Fir2IrDeclarationStorage(
                 with(classifierStorage) {
                     setTypeParameters(
                         property, ConversionTypeContext(
-                            definitelyNotNull = false,
                             origin = if (isSetter) ConversionTypeOrigin.SETTER else ConversionTypeOrigin.DEFAULT
                         )
                     )
@@ -826,7 +827,7 @@ class Fir2IrDeclarationStorage(
             createIrProperty(
                 field.toStubProperty(),
                 irParent,
-                fakeOverrideOwnerLookupTag = containingClassId?.let { ConeClassLikeLookupTagImpl(it) }
+                fakeOverrideOwnerLookupTag = containingClassId?.let { it.toLookupTag() }
             )
         }
     }
@@ -854,7 +855,7 @@ class Fir2IrDeclarationStorage(
         thisReceiverOwner: IrClass? = irParent as? IrClass,
         predefinedOrigin: IrDeclarationOrigin? = null,
         isLocal: Boolean = false,
-        fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag? = (irParent as? IrClass)?.classId?.let { ConeClassLikeLookupTagImpl(it) },
+        fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag? = (irParent as? IrClass)?.classId?.let { it.toLookupTag() },
         forceTopLevelPrivate: Boolean = false,
     ): IrProperty = convertCatching(property) {
         val origin =
@@ -1077,7 +1078,7 @@ class Fir2IrDeclarationStorage(
     ): IrField = convertCatching(field) {
         val type = typeRef.toIrType()
         val classId = (irParent as? IrClass)?.classId
-        val containingClassLookupTag = classId?.let { ConeClassLikeLookupTagImpl(it) }
+        val containingClassLookupTag = classId?.let { it.toLookupTag() }
         val signature = signatureComposer.composeSignature(field, containingClassLookupTag)
         return field.convertWithOffsets { startOffset, endOffset ->
             if (signature != null) {
@@ -1657,7 +1658,7 @@ class Fir2IrDeclarationStorage(
             annotationGenerator.generate(this, firAnnotationContainer)
             if (this is IrFunction && firAnnotationContainer is FirSimpleFunction) {
                 valueParameters.zip(firAnnotationContainer.valueParameters).forEach { (irParameter, firParameter) ->
-                    annotationGenerator.generate(irParameter, firParameter, isInConstructor = false)
+                    annotationGenerator.generate(irParameter, firParameter)
                 }
             }
         }

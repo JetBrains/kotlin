@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 
-import org.jetbrains.kotlin.backend.common.extensions.FirIncompatiblePluginAPI
+import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.codegen.*
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IntrinsicMethod
@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.Companion.pluginIn
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.Companion.pluginIntrinsicsMarkerOwner
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.Companion.pluginIntrinsicsMarkerSignature
 import org.jetbrains.kotlin.config.ApiVersion
-import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
@@ -58,7 +57,10 @@ import org.jetbrains.org.objectweb.asm.tree.InsnList
 import org.jetbrains.org.objectweb.asm.tree.LdcInsnNode
 import org.jetbrains.org.objectweb.asm.tree.VarInsnNode
 
-class SerializationJvmIrIntrinsicSupport(val jvmBackendContext: JvmBackendContext) : SerializationBaseContext, JvmIrIntrinsicExtension {
+class SerializationJvmIrIntrinsicSupport(
+    private val jvmBackendContext: JvmBackendContext,
+    private val irPluginContext: IrPluginContext
+) : SerializationBaseContext, JvmIrIntrinsicExtension {
     sealed class IntrinsicType(val methodDescriptor: String) {
         object Simple : IntrinsicType(stubCallDescriptor)
 
@@ -150,14 +152,7 @@ class SerializationJvmIrIntrinsicSupport(val jvmBackendContext: JvmBackendContex
     private val typeSystemContext = jvmBackendContext.typeSystem
     private val typeMapper = jvmBackendContext.defaultTypeMapper
 
-    /**
-     * This likely won't work in FIR because module is empty there and can't reference dependencies
-     * Proper referencing can be done via FirPluginContext, but it's not available in the intrinsics.
-     */
-    @FirIncompatiblePluginAPI
-    override fun referenceClassId(classId: ClassId): IrClassSymbol? {
-        return module.findClassAcrossModuleDependencies(classId)?.let { jvmBackendContext.referenceClass(it) }
-    }
+    override fun referenceClassId(classId: ClassId): IrClassSymbol? = irPluginContext.referenceClass(classId)
 
     private val currentVersion by lazy {
         VersionReader.getVersionsForCurrentModuleFromTrace(module, jvmBackendContext.state.bindingTrace)
@@ -165,7 +160,7 @@ class SerializationJvmIrIntrinsicSupport(val jvmBackendContext: JvmBackendContex
     }
 
     override val runtimeHasEnumSerializerFactoryFunctions: Boolean
-        get() = currentVersion != null && currentVersion!! > ApiVersion.parse("1.4.0")!!
+        get() = currentVersion != null && currentVersion!! >= ApiVersion.parse("1.5.0")!!
 
     private val hasNewContextSerializerSignature: Boolean
         get() = currentVersion != null && currentVersion!! >= ApiVersion.parse("1.2.0")!!
@@ -381,8 +376,8 @@ class SerializationJvmIrIntrinsicSupport(val jvmBackendContext: JvmBackendContex
             val descriptor = StringBuilder("(${serializersModuleType.descriptor}${AsmTypes.K_CLASS_TYPE.descriptor}")
             // Generic args (if present)
             if (argSerializers.isNotEmpty()) {
-                fillArray(kSerializerType, argSerializers) { _, serializer ->
-                    instantiate(serializer, null)
+                fillArray(kSerializerType, argSerializers) { _, (type, _) ->
+                    generateSerializerForType(type, this, intrinsicType)
                 }
                 descriptor.append(kSerializerArrayType.descriptor)
             }
@@ -485,8 +480,8 @@ class SerializationJvmIrIntrinsicSupport(val jvmBackendContext: JvmBackendContex
                             aconst(null)
                         }
                         signature.append(kSerializerType.descriptor)
-                        fillArray(kSerializerType, argSerializers) { _, serializer ->
-                            instantiate(serializer, null)
+                        fillArray(kSerializerType, argSerializers) { _, (type, _) ->
+                            generateSerializerForType(type, this, intrinsicType)
                         }
                         signature.append(kSerializerArrayType.descriptor)
                     }
@@ -498,7 +493,8 @@ class SerializationJvmIrIntrinsicSupport(val jvmBackendContext: JvmBackendContex
                     AsmUtil.wrapJavaClassIntoKClass(this)
                     signature.append(AsmTypes.K_CLASS_TYPE.descriptor)
                     // Reference array serializer still needs serializer for its argument type
-                    instantiate(argSerializers[0], signature)
+                    generateSerializerForType(argSerializers[0].first, this, intrinsicType)
+                    signature.append(kSerializerType.descriptor)
                 }
 
                 sealedSerializerId -> {
@@ -550,7 +546,10 @@ class SerializationJvmIrIntrinsicSupport(val jvmBackendContext: JvmBackendContex
                     signature.append("Ljava/lang/Object;")
                 }
                 // all serializers get arguments with serializers of their generic types
-                else -> argSerializers.forEach { instantiate(it, signature) }
+                else -> argSerializers.forEach { (type, _) ->
+                    generateSerializerForType(type, this, intrinsicType)
+                    signature.append(kSerializerType.descriptor)
+                }
             }
             signature.append(")V")
             // invoke constructor

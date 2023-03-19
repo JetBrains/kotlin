@@ -51,8 +51,7 @@ public interface KtAnnotationUseSiteTargetRenderer {
 
                 is KtJavaFieldSymbol -> true
                 is KtLocalVariableSymbol -> true
-                is KtKotlinPropertySymbol -> annotation.useSiteTarget != AnnotationUseSiteTarget.PROPERTY
-                is KtSyntheticJavaPropertySymbol -> annotation.useSiteTarget != AnnotationUseSiteTarget.PROPERTY
+                is KtPropertySymbol -> annotation.useSiteTarget != AnnotationUseSiteTarget.PROPERTY
                 else -> return
             }
 

@@ -14,7 +14,15 @@ KtFunctionSymbol:
               annotationsList: []
               origin: SOURCE
               owningCallableSymbol: KtFunctionSymbol(/referenceReceiverInContract)
-              type: kotlin/Function0<kotlin/Unit>
+              type: KtFunctionalType:
+                annotationsList: []
+                ownTypeArguments: [
+                  KtUsualClassType:
+                    annotationsList: []
+                    ownTypeArguments: []
+                    type: kotlin/Unit
+                ]
+                type: kotlin/Function0<kotlin/Unit>
               getContainingModule: KtSourceModule "Sources of main"
               deprecationStatus: null
       occurrencesRange: EXACTLY_ONCE
@@ -36,10 +44,21 @@ KtFunctionSymbol:
     annotationsList: []
     origin: SOURCE
     owningCallableSymbol: KtFunctionSymbol(/referenceReceiverInContract)
-    type: kotlin/Function0<kotlin/Unit>
+    type: KtFunctionalType:
+      annotationsList: []
+      ownTypeArguments: [
+        KtUsualClassType:
+          annotationsList: []
+          ownTypeArguments: []
+          type: kotlin/Unit
+      ]
+      type: kotlin/Function0<kotlin/Unit>
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
-  returnType: kotlin/Unit
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []

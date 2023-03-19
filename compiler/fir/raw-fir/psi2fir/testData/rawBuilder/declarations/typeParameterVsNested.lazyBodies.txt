@@ -3,12 +3,12 @@ FILE: typeParameterVsNested.kt
     }
     public? abstract class My<T : Some> : R|kotlin/Any| {
         public? constructor<T : Some>(): R|test/My<T>| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
         public? final? inner class T<T : Some> : R|kotlin/Any| {
             public? test/My<T>.constructor(): R|test/My.T<T>| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
         }
@@ -26,7 +26,7 @@ FILE: typeParameterVsNested.kt
 
         public? final? class Some : T {
             public? constructor(): R|test/My.Some| {
-                super<T>()
+                LAZY_super<T>
             }
 
         }

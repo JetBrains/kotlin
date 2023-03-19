@@ -39,11 +39,37 @@ public class DefaultErrorMessages {
     }
 
     private static final DiagnosticFactoryToRendererMap MAP = new DiagnosticFactoryToRendererMap("Default");
-    private static final List<DiagnosticFactoryToRendererMap> RENDERER_MAPS =
-            CollectionsKt.plus(
-                    Collections.singletonList(MAP),
-                    CollectionsKt.map(ServiceLoader.load(Extension.class, DefaultErrorMessages.class.getClassLoader()), Extension::getMap)
-            );
+
+    private static final List<String> RENDERER_PLATFORM_EXTENSIONS = CollectionsKt.listOf(
+            "org.jetbrains.kotlin.resolve.jvm.diagnostics.DefaultErrorMessagesJvm",
+            "org.jetbrains.kotlin.js.resolve.diagnostics.DefaultErrorMessagesJs",
+            "org.jetbrains.kotlin.resolve.konan.diagnostics.DefaultErrorMessagesNative",
+            "org.jetbrains.kotlin.wasm.resolve.diagnostics.DefaultErrorMessagesWasm"
+    );
+
+    private static final List<DiagnosticFactoryToRendererMap> RENDERER_MAPS;
+
+    static {
+        List<DiagnosticFactoryToRendererMap> rendererMaps = new ArrayList<>(RENDERER_PLATFORM_EXTENSIONS.size() + 1);
+        rendererMaps.add(MAP);
+
+        for (String extensionFqName : RENDERER_PLATFORM_EXTENSIONS) {
+            try {
+                Class<?> extensionClass = Class.forName(extensionFqName);
+                if (!Extension.class.isAssignableFrom(extensionClass)) {
+                    throw new IllegalStateException(extensionClass.getName() + " is not a " + Extension.class.getName());
+                }
+
+                Extension extension = (Extension) extensionClass.newInstance();
+                rendererMaps.add(extension.getMap());
+            }
+            catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        RENDERER_MAPS = Collections.unmodifiableList(rendererMaps);
+    }
 
     @NotNull
     @SuppressWarnings("unchecked")
@@ -339,6 +365,9 @@ public class DefaultErrorMessages {
         MAP.put(NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS, "Actual class ''{0}'' has no corresponding members for expected class members:{1}",
                 NAME, adaptGenerics2(IncompatibleExpectedActualClassScopesRenderer.TEXT));
         MAP.put(ACTUAL_MISSING, "Declaration must be marked with 'actual'");
+        MAP.put(EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE,
+                "{0}: expect and corresponding actual are declared in the same module, which will be prohibited in Kotlin 2.0. See https://youtrack.jetbrains.com/issue/KT-55177",
+                CAPITALIZED_DECLARATION_NAME_WITH_KIND_AND_PLATFORM);
 
         MAP.put(OPTIONAL_EXPECTATION_NOT_ON_EXPECTED, "'@OptionalExpectation' can only be used on an expected annotation class");
         MAP.put(OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY, "Declaration annotated with '@OptionalExpectation' can only be used inside an annotation entry");
@@ -806,7 +835,6 @@ public class DefaultErrorMessages {
         MAP.put(VALUE_CLASS_CANNOT_EXTEND_CLASSES, "Value class cannot extend classes");
         MAP.put(VALUE_CLASS_CANNOT_BE_RECURSIVE, "Value class cannot be recursive");
         MAP.put(MULTI_FIELD_VALUE_CLASS_PRIMARY_CONSTRUCTOR_DEFAULT_PARAMETER, "Default parameters are not supported in the primary constructor of a multi-field value class");
-        MAP.put(SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_VALUE_CLASS, "Secondary constructors with bodies are reserved for for future releases");
         MAP.put(RESERVED_MEMBER_INSIDE_VALUE_CLASS, "Member with the name ''{0}'' is reserved for future releases", STRING);
         MAP.put(TYPE_ARGUMENT_ON_TYPED_VALUE_CLASS_EQUALS, "Type arguments for typed value class equals must be only star projections");
         MAP.put(INNER_CLASS_INSIDE_VALUE_CLASS, "Value class cannot have inner classes");

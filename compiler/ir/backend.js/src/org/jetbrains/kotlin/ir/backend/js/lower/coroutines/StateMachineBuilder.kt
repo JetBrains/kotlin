@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.isElseBranch
 import org.jetbrains.kotlin.ir.util.isSuspend
+import org.jetbrains.kotlin.ir.util.previousOffset
 import org.jetbrains.kotlin.ir.visitors.*
 
 class SuspendState(type: IrType) {
@@ -96,13 +97,13 @@ class StateMachineBuilder(
     fun finalizeStateMachine() {
         globalCatch = buildGlobalCatch()
         if (currentBlock.statements.lastOrNull() !is IrReturn) {
-            // Set both offsets to rootLoop.endOffset - 1 so that a breakpoint set at the closing brace of a lambda expression
-            // could be hit.
+            // Set both offsets to rootLoop.endOffset.previousOffset (check the description of the `previousOffset` method)
+            // so that a breakpoint set at the closing brace of a lambda expression could be hit.
             // NOTE: rootLoop's offsets are the same as in the original function.
             addStatement(
                 IrReturnImpl(
-                    startOffset = rootLoop.endOffset - 1,
-                    endOffset = rootLoop.endOffset - 1,
+                    startOffset = rootLoop.endOffset.previousOffset,
+                    endOffset = rootLoop.endOffset.previousOffset,
                     nothing,
                     function,
                     unitValue

@@ -16,6 +16,7 @@ object LombokNames {
     val WITH = FqName("lombok.With")
     val DATA = FqName("lombok.Data")
     val VALUE = FqName("lombok.Value")
+    val PACKAGE_PRIVATE = FqName("lombok.PackagePrivate")
     val NO_ARGS_CONSTRUCTOR = FqName("lombok.NoArgsConstructor")
     val ALL_ARGS_CONSTRUCTOR = FqName("lombok.AllArgsConstructor")
     val REQUIRED_ARGS_CONSTRUCTOR = FqName("lombok.RequiredArgsConstructor")

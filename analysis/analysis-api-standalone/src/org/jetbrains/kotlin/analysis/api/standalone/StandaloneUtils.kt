@@ -161,7 +161,7 @@ internal fun configureProjectEnvironment(
     )
     project.picoContainer.registerComponentInstance(
         KotlinPackageProviderFactory::class.qualifiedName,
-        KotlinStaticPackageProviderFactory(ktFiles)
+        KotlinStaticPackageProviderFactory(project, ktFiles)
     )
     project.picoContainer.registerComponentInstance(
         PackagePartProviderFactory::class.qualifiedName,

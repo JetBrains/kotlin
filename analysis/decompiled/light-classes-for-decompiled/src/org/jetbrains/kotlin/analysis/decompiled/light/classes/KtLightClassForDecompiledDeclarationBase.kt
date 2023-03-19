@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.decompiled.light.classes
 
+import com.intellij.psi.JavaElementVisitor
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.asJava.classes.KtExtensibleLightClass
 import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -15,4 +17,12 @@ abstract class KtLightClassForDecompiledDeclarationBase(
     val clsDelegate: PsiClass,
     clsParent: PsiElement,
     final override val kotlinOrigin: KtClassOrObject?
-) : KtLightElementBase(clsParent), PsiClass, KtExtensibleLightClass
+) : KtLightElementBase(clsParent), PsiClass, KtExtensibleLightClass {
+    override fun accept(visitor: PsiElementVisitor) {
+        if (visitor is JavaElementVisitor) {
+            visitor.visitClass(this)
+        } else {
+            visitor.visitElement(this)
+        }
+    }
+}

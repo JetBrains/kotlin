@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.resolve.jvm
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
+import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.name.Name
 
@@ -45,6 +46,9 @@ interface SyntheticJavaPartsProvider {
 
     context(LazyJavaResolverContext)
     fun generateNestedClass(thisDescriptor: ClassDescriptor, name: Name, result: MutableList<ClassDescriptor>)
+
+    context(LazyJavaResolverContext)
+    fun modifyField(thisDescriptor: ClassDescriptor, propertyDescriptor: PropertyDescriptorImpl): PropertyDescriptorImpl
 }
 
 @Suppress("IncorrectFormatting") // KTIJ-22227
@@ -85,5 +89,13 @@ class CompositeSyntheticJavaPartsProvider(private val inner: List<SyntheticJavaP
     context(LazyJavaResolverContext)
     override fun generateNestedClass(thisDescriptor: ClassDescriptor, name: Name, result: MutableList<ClassDescriptor>) {
         inner.forEach { it.generateNestedClass(thisDescriptor, name, result) }
+    }
+
+    context(LazyJavaResolverContext)
+    override fun modifyField(
+        thisDescriptor: ClassDescriptor,
+        propertyDescriptor: PropertyDescriptorImpl
+    ): PropertyDescriptorImpl {
+        return inner.fold(propertyDescriptor) { property, provider -> provider.modifyField(thisDescriptor, property) }
     }
 }

@@ -10,12 +10,8 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotation
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.extensions.FirTypeAttributeExtension
-import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
-import org.jetbrains.kotlin.fir.types.ConeAttribute
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.classId
-import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -46,7 +42,7 @@ class FirNumberSignAttributeExtension(session: FirSession) : FirTypeAttributeExt
         return buildAnnotation {
             annotationTypeRef = buildResolvedTypeRef {
                 type = ConeClassLikeTypeImpl(
-                    ConeClassLikeLookupTagImpl(classId),
+                    classId.toLookupTag(),
                     emptyArray(),
                     isNullable = false
                 )

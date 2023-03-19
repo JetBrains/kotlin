@@ -3,7 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("MemberVisibilityCanBePrivate", "DEPRECATION")
+@file:Suppress(
+    "MemberVisibilityCanBePrivate",
+    "DEPRECATION",
+    "INVISIBLE_MEMBER", // InconsistentKotlinMetadataException
+    "INVISIBLE_REFERENCE"
+)
 
 package kotlinx.metadata.jvm
 
@@ -11,6 +16,8 @@ import kotlinx.metadata.*
 import kotlinx.metadata.internal.accept
 import kotlinx.metadata.jvm.internal.IgnoreInApiDump
 import kotlinx.metadata.jvm.KotlinClassMetadata.Companion.COMPATIBLE_METADATA_VERSION
+import kotlinx.metadata.jvm.internal.wrapIntoMetadataExceptionWhenNeeded
+import kotlinx.metadata.jvm.internal.wrapWriteIntoIAE
 import org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
@@ -123,25 +130,20 @@ class KotlinModuleMetadata(@Suppress("MemberVisibilityCanBePrivate") val bytes: 
          * Parses the given byte array with the .kotlin_module file content and returns the [KotlinModuleMetadata] instance,
          * or `null` if this byte array encodes a module with an unsupported metadata version.
          *
-         * Throws [InconsistentKotlinMetadataException] if an error happened while parsing the given byte array,
+         * @throws IllegalArgumentException if an error happened while parsing the given byte array,
          * which means that it's either not the content of a .kotlin_module file, or it has been corrupted.
          */
         @JvmStatic
         @UnstableMetadataApi
         fun read(bytes: ByteArray): KotlinModuleMetadata? {
-            try {
+            return wrapIntoMetadataExceptionWhenNeeded {
                 val result = KotlinModuleMetadata(bytes)
-                if (result.data == ModuleMapping.EMPTY) return null
-
-                if (result.data == ModuleMapping.CORRUPTED) {
-                    throw InconsistentKotlinMetadataException("Data doesn't look like the content of a .kotlin_module file")
+                when (result.data) {
+                    ModuleMapping.EMPTY -> null
+                    ModuleMapping.CORRUPTED ->
+                        throw InconsistentKotlinMetadataException("Data is not the content of a .kotlin_module file, or it has been corrupted.")
+                    else -> result
                 }
-
-                return result
-            } catch (e: InconsistentKotlinMetadataException) {
-                throw e
-            } catch (e: Throwable) {
-                throw InconsistentKotlinMetadataException("Exception occurred when reading Kotlin metadata", e)
             }
         }
 
@@ -150,10 +152,13 @@ class KotlinModuleMetadata(@Suppress("MemberVisibilityCanBePrivate") val bytes: 
          *
          * @param metadataVersion metadata version to be written to the metadata (see [Metadata.metadataVersion]),
          *   [KotlinClassMetadata.COMPATIBLE_METADATA_VERSION] by default
+         *
+         * @throws IllegalArgumentException if [kmModule] is not correct and cannot be written or if [metadataVersion] is not supported for writing.
          */
         @UnstableMetadataApi
-        fun write(kmModule: KmModule, metadataVersion: IntArray = COMPATIBLE_METADATA_VERSION): KotlinModuleMetadata =
+        fun write(kmModule: KmModule, metadataVersion: IntArray = COMPATIBLE_METADATA_VERSION): KotlinModuleMetadata = wrapWriteIntoIAE {
             Writer().also { kmModule.accept(it) }.write(metadataVersion)
+        }
     }
 }
 

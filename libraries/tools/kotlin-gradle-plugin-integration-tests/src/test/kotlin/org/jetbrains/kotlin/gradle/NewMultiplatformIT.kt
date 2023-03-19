@@ -33,7 +33,7 @@ import java.util.jar.JarFile
 import java.util.zip.ZipFile
 import kotlin.test.*
 
-class NewMultiplatformIT : BaseGradleIT() {
+open class NewMultiplatformIT : BaseGradleIT() {
     private val gradleVersion = GradleVersionRequired.FOR_MPP_SUPPORT
 
     private val nativeHostTargetName = MPPNativeTargets.current
@@ -322,6 +322,12 @@ class NewMultiplatformIT : BaseGradleIT() {
             ).map { ":compileKotlin$it" }
 
         with(libProject) {
+            gradleProperties().appendText(
+                """
+                
+                kotlin.compiler.execution.strategy=in-process
+                """.trimIndent()
+            )
             build(
                 "publish",
                 options = defaultBuildOptions().copy(jsCompilerType = jsCompilerType)
@@ -377,6 +383,13 @@ class NewMultiplatformIT : BaseGradleIT() {
 
         with(appProject) {
             setupWorkingDir()
+
+            gradleProperties().appendText(
+                """
+                
+                kotlin.compiler.execution.strategy=in-process
+                """.trimIndent()
+            )
 
             // we use `maven { setUrl(...) }` because this syntax actually works both for Groovy and Kotlin DSLs in Gradle
             gradleBuildScript().appendText("\nrepositories { maven { setUrl(\"$libLocalRepoUri\") } }")
@@ -795,11 +808,24 @@ class NewMultiplatformIT : BaseGradleIT() {
         )
 
         listOf(
-            "compileCommonMainKotlinMetadata", "compileKotlinJvm6", "compileKotlinNodeJs", "compileKotlinLinux64"
+            "compileCommonMainKotlinMetadata", "compileKotlinJvm6", "compileKotlinNodeJs"
         ).forEach {
             build(it) {
                 assertSuccessful()
                 assertTasksExecuted(":$it")
+                assertContains(
+                    "-XXLanguage:+InlineClasses",
+                    "-progressive",
+                    "-opt-in kotlin.ExperimentalUnsignedTypes,kotlin.contracts.ExperimentalContracts",
+                    "-Xno-inline"
+                )
+            }
+        }
+
+        listOf("compileNativeMainKotlinMetadata", "compileKotlinLinux64").forEach { task ->
+            build(task) {
+                assertSuccessful()
+                assertTasksExecuted(":$task")
                 assertContains(
                     "-XXLanguage:+InlineClasses",
                     "-progressive", "-opt-in=kotlin.ExperimentalUnsignedTypes",
@@ -973,6 +999,13 @@ class NewMultiplatformIT : BaseGradleIT() {
         val appProject = Project("sample-app", gradleVersion, "new-mpp-lib-and-app")
 
         val buildOptions = hmppFlags.buildOptions
+        libProject.setupWorkingDir()
+        libProject.gradleProperties().appendText(
+            """
+                
+                kotlin.compiler.execution.strategy=in-process
+                """.trimIndent()
+        )
         @Suppress("DEPRECATION")
         libProject.build(
             "publish",
@@ -985,6 +1018,13 @@ class NewMultiplatformIT : BaseGradleIT() {
 
         with(appProject) {
             setupWorkingDir()
+
+            gradleProperties().appendText(
+                """
+                
+                kotlin.compiler.execution.strategy=in-process
+                """.trimIndent()
+            )
 
             val pathPrefix = "metadataDependency: "
 
@@ -1206,12 +1246,12 @@ class NewMultiplatformIT : BaseGradleIT() {
             }
 
             assertEquals(
-                setOf("commonMain"),
+                setOf("commonMain", "nativeMain"),
                 sourceJarSourceRoots[null]
             )
             assertEquals(setOf("commonMain", "jvm6Main"), sourceJarSourceRoots["jvm6"])
             assertEquals(setOf("commonMain", "nodeJsMain"), sourceJarSourceRoots["nodejs"])
-            assertEquals(setOf("commonMain", "linux64Main"), sourceJarSourceRoots["linux64"])
+            assertEquals(setOf("commonMain", "nativeMain", "linux64Main"), sourceJarSourceRoots["linux64"])
         }
     }
 
@@ -1463,6 +1503,14 @@ class NewMultiplatformIT : BaseGradleIT() {
 
     @Test
     fun testJsDceInMpp() = with(Project("new-mpp-js-dce", gradleVersion)) {
+        setupWorkingDir()
+        gradleProperties().appendText(
+            """
+                
+                kotlin.compiler.execution.strategy=in-process
+                """.trimIndent()
+        )
+
         @Suppress("DEPRECATION")
         build(
             "runRhino",
@@ -1593,6 +1641,8 @@ class NewMultiplatformIT : BaseGradleIT() {
 
     @Test
     fun testIncrementalCompilation() = with(Project("new-mpp-jvm-js-ic", gradleVersion)) {
+        setupWorkingDir()
+
         build("build") {
             assertSuccessful()
         }
@@ -1633,6 +1683,13 @@ class NewMultiplatformIT : BaseGradleIT() {
     fun testPomRewritingInSinglePlatformProject() = with(Project("kt-27059-pom-rewriting")) {
         setupWorkingDir()
         gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
+
+        gradleProperties().appendText(
+            """
+                
+                kotlin.compiler.execution.strategy=in-process
+                """.trimIndent()
+        )
 
         val groupDir = "build/repo/com/example/"
 
@@ -1979,6 +2036,16 @@ class NewMultiplatformIT : BaseGradleIT() {
                 assertContains(">> :metadataCommonMainCompileClasspath --> lib-metadata-1.0.jar")
                 assertContains(">> :metadataCommonMainCompileClasspath --> subproject-metadata.jar")
             }
+        }
+    }
+
+    @Test
+    fun testPublishEmptySourceSets() = with(Project("mpp-empty-sources")) {
+        setupWorkingDir()
+        gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
+
+        build("publish") {
+            assertSuccessful()
         }
     }
 

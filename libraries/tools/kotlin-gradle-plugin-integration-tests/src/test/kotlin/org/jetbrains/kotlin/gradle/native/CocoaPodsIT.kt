@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.gradle.util.createTempDir
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.gradle.util.runProcess
 import org.jetbrains.kotlin.konan.target.HostManager
-import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.BeforeClass
@@ -309,7 +308,7 @@ class CocoaPodsIT : BaseGradleIT() {
     @Test
     fun testSyntheticProjectPodfilePostprocessing() {
         project.gradleBuildScript().apply {
-            appendToCocoapodsBlock("""pod("AWSMobileClient", version = "2.29.1")""")
+            appendToCocoapodsBlock("""pod("AWSMobileClient", version = "2.30.0")""")
 
             appendText("""
                 
@@ -948,7 +947,7 @@ class CocoaPodsIT : BaseGradleIT() {
                 val framework = fileInWorkingDir("build/bin/iOS/podDebugFramework/cocoapods.framework/cocoapods")
                 with(runProcess(listOf("file", framework.absolutePath), projectDir, environmentVariables = getEnvs())) {
                     assertTrue(isSuccessful)
-                    assertTrue(output.contains("current ar archive random library"))
+                    kotlin.test.assertContains(output, "current ar archive")
                 }
             }
 
@@ -1264,6 +1263,8 @@ class CocoaPodsIT : BaseGradleIT() {
         val subprojectPodInstallTask = ":$subProjectName$podInstallTaskName"
         with(project) {
             preparePodfile("ios-app", ImportMode.FRAMEWORKS)
+            gradleBuildScript(subProjectName).appendToCocoapodsBlock("ios.deploymentTarget = \"14.0\"")
+
             build(subprojectPodImportTask, "-Pkotlin.native.cocoapods.generate.wrapper=true") {
                 assertTasksExecuted(listOf(subprojectPodspecTask, subprojectPodInstallTask))
             }
@@ -1687,6 +1688,7 @@ class CocoaPodsIT : BaseGradleIT() {
         mode: ImportMode,
         iosAppLocation: String?,
         subprojectsToFrameworkNamesMap: Map<String, String?>,
+        arch: String = "x86_64",
     ) {
 
         gradleProject.projectDir.resolve("gradle.properties")
@@ -1725,10 +1727,10 @@ class CocoaPodsIT : BaseGradleIT() {
                         runCommand(
                             this, "xcodebuild",
                             "-sdk", "iphonesimulator",
-                            "-arch", "x86_64",
                             "-configuration", "Release",
                             "-workspace", "$name.xcworkspace",
                             "-scheme", name,
+                            "-arch", arch,
                             inheritIO = true // Xcode doesn't finish the process if the PIPE redirect is used.
                         ) {
                             assertEquals(
@@ -1882,49 +1884,40 @@ class CocoaPodsIT : BaseGradleIT() {
 
         @BeforeClass
         @JvmStatic
-        fun installCocoaPods() {
-            if (cocoapodsInstallationRequired) {
-                if (cocoapodsInstallationAllowed) {
-                    println("Installing CocoaPods...")
-                    gem("install", "--install-dir", cocoapodsInstallationRoot.absolutePath, "cocoapods")
-                    if (hostIsArmMac) {
-                        // Force running CocoaPods via `arch -x86_64` on ARM MacOS to workaround problems with libffi.
-                        // https://stackoverflow.com/questions/64901180/running-cocoapods-on-apple-silicon-m1
-                        cocoapodsBinPath.mkdirs()
-                        val wrapper = cocoapodsBinPath.resolve("pod")
-                        wrapper.writeText(
-                            """
-                                #!/bin/bash
-                                arch -x86_64 "${cocoapodsInstallationRoot.absolutePath}/bin/pod" ${'$'}@
-                            """.trimIndent()
-                        )
-                        wrapper.setExecutable(true)
-                    }
+        fun ensureCocoapodsInstalled() {
+            if (!HostManager.hostIsMac) {
+                return
+            }
 
-                } else {
-                    fail(
-                        """
-                            Running CocoaPods integration tests requires cocoapods to be installed.
-                            Please install them manually:
-                                gem install cocoapods
-                            Or re-run the tests with the 'installCocoapods=true' Gradle property.
-                        """.trimIndent()
-                    )
-                }
+            if (shouldInstallLocalCocoapods) {
+                println("Installing CocoaPods...")
+                gem("install", "--install-dir", cocoapodsInstallationRoot.absolutePath, "cocoapods", "-v", localCocoapodsVersion)
+            } else if (!isCocoapodsInstalled()) {
+                fail(
+                    """
+                        Running CocoaPods integration tests requires cocoapods to be installed.
+                        Please install them manually:
+                            gem install cocoapods
+                        Or re-run the tests with the 'installCocoapods=true' Gradle property.
+                    """.trimIndent()
+                )
             }
         }
 
-        private val cocoapodsInstallationRequired: Boolean by lazy {
-            !isCocoapodsInstalled()
-        }
-        private val cocoapodsInstallationAllowed: Boolean = System.getProperty("installCocoapods").toBoolean()
+        private const val localCocoapodsVersion = "1.11.0"
+
+        private val shouldInstallLocalCocoapods: Boolean = System.getProperty("installCocoapods").toBoolean()
 
         private val cocoapodsInstallationRoot: File by lazy { createTempDir("cocoapods") }
         private val cocoapodsBinPath: File by lazy {
-            if (hostIsArmMac) cocoapodsInstallationRoot.resolve("bin/wrapper") else cocoapodsInstallationRoot.resolve("bin")
+            cocoapodsInstallationRoot.resolve("bin")
         }
 
         private fun getEnvs(): Map<String, String> {
+            if (!shouldInstallLocalCocoapods) {
+                return emptyMap()
+            }
+
             val path = cocoapodsBinPath.absolutePath + File.pathSeparator + System.getenv("PATH")
             val gemPath = System.getenv("GEM_PATH")?.let {
                 cocoapodsInstallationRoot.absolutePath + File.pathSeparator + it
@@ -1944,7 +1937,6 @@ class CocoaPodsIT : BaseGradleIT() {
                 val result = runProcess(
                     listOf("pod", "--version"),
                     File("."),
-                    environmentVariables = getEnvs()
                 )
                 result.isSuccessful
             } catch (e: IOException) {
@@ -1955,11 +1947,7 @@ class CocoaPodsIT : BaseGradleIT() {
         private fun gem(vararg args: String): String {
             // On ARM MacOS, run gem using arch -x86_64 to workaround problems with libffi.
             // https://stackoverflow.com/questions/64901180/running-cocoapods-on-apple-silicon-m1
-            val command = if (hostIsArmMac) {
-                listOf("arch", "-x86_64", "gem", *args)
-            } else {
-                listOf("gem", *args)
-            }
+            val command = listOf("gem", *args)
             println("Run command: ${command.joinToString(separator = " ")}")
             val result = runProcess(command, File("."), options = BuildOptions(forceOutputToStdout = true))
             check(result.isSuccessful) {
@@ -1967,8 +1955,5 @@ class CocoaPodsIT : BaseGradleIT() {
             }
             return result.output
         }
-
-        private val hostIsArmMac: Boolean
-            get() = HostManager.host == KonanTarget.MACOS_ARM64
     }
 }

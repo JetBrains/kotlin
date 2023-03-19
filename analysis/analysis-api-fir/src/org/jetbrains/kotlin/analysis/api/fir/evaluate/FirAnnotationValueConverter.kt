@@ -1,23 +1,21 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.fir.evaluate
 
 import org.jetbrains.kotlin.analysis.api.annotations.*
-import org.jetbrains.kotlin.analysis.api.base.KtConstantValueFactory
+import org.jetbrains.kotlin.analysis.api.base.KtConstantValue
 import org.jetbrains.kotlin.analysis.api.components.KtConstantEvaluationMode
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
-import org.jetbrains.kotlin.fir.analysis.checkers.toClassLikeSymbol
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.psi
-import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedTypeQualifierError
@@ -25,11 +23,11 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
-import org.jetbrains.kotlin.fir.types.ConeErrorType
-import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.parents
+import org.jetbrains.kotlin.psi.KtCallElement
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.ArrayFqNames
 
 internal object FirAnnotationValueConverter {
@@ -45,7 +43,27 @@ internal object FirAnnotationValueConverter {
         }
 
     private fun <T> FirConstExpression<T>.convertConstantExpression(): KtConstantAnnotationValue? {
-        val constantValue = KtConstantValueFactory.createConstantValue(value, psi as? KtElement) ?: return null
+        val expression = psi as? KtElement
+        val type = (typeRef as? FirResolvedTypeRef)?.type
+        val constantValue = when {
+            value == null -> KtConstantValue.KtNullConstantValue(expression)
+            type == null -> return null
+            type.isBoolean -> KtConstantValue.KtBooleanConstantValue(value as Boolean, expression)
+            type.isChar -> KtConstantValue.KtCharConstantValue((value as? Char) ?: (value as Number).toInt().toChar(), expression)
+            type.isByte -> KtConstantValue.KtByteConstantValue((value as Number).toByte(), expression)
+            type.isUByte -> KtConstantValue.KtUnsignedByteConstantValue((value as Number).toByte().toUByte(), expression)
+            type.isShort -> KtConstantValue.KtShortConstantValue((value as Number).toShort(), expression)
+            type.isUShort -> KtConstantValue.KtUnsignedShortConstantValue((value as Number).toShort().toUShort(), expression)
+            type.isInt -> KtConstantValue.KtIntConstantValue((value as Number).toInt(), expression)
+            type.isUInt -> KtConstantValue.KtUnsignedIntConstantValue((value as Number).toInt().toUInt(), expression)
+            type.isLong -> KtConstantValue.KtLongConstantValue((value as Number).toLong(), expression)
+            type.isULong -> KtConstantValue.KtUnsignedLongConstantValue((value as Number).toLong().toULong(), expression)
+            type.isString -> KtConstantValue.KtStringConstantValue(value.toString(), expression)
+            type.isFloat -> KtConstantValue.KtFloatConstantValue((value as Number).toFloat(), expression)
+            type.isDouble -> KtConstantValue.KtDoubleConstantValue((value as Number).toDouble(), expression)
+            else -> return null
+        }
+
         return KtConstantAnnotationValue(constantValue)
     }
 
@@ -73,8 +91,7 @@ internal object FirAnnotationValueConverter {
     fun toConstantValue(
         firExpression: FirExpression,
         session: FirSession,
-    ): KtAnnotationValue? =
-        firExpression.convertConstantExpression(session)
+    ): KtAnnotationValue? = firExpression.convertConstantExpression(session)
 
     private fun FirExpression.convertConstantExpression(
         session: FirSession,
@@ -112,12 +129,14 @@ internal object FirAnnotationValueConverter {
                             resolvedArgumentMapping?.entries?.forEach { (arg, param) ->
                                 resultMap[param.name] = arg
                             }
+
                             KtAnnotationApplicationValue(
-                                KtAnnotationApplication(
+                                KtAnnotationApplicationWithArgumentsInfo(
                                     resolvedSymbol.callableId.classId,
                                     psi as? KtCallElement,
                                     useSiteTarget = null,
                                     toNamedConstantValue(resultMap, session),
+                                    index = null,
                                 )
                             )
                         } else null

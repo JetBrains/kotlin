@@ -22,13 +22,19 @@ KtPropertyGetterSymbol:
     ]
     origin: SOURCE
     owningCallableSymbol: KtKotlinPropertySymbol(/x)
-    type: [
-      ReceiverTypeAnnotation()
-        psi: KtAnnotationEntry
-    ] @R|ReceiverTypeAnnotation|()  kotlin/Long
+    type: KtUsualClassType:
+      annotationsList: [
+        ReceiverTypeAnnotation()
+          psi: KtAnnotationEntry
+      ]
+      ownTypeArguments: []
+      type: @R|ReceiverTypeAnnotation|()  kotlin/Long
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
-  returnType: kotlin/Int
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Int
   symbolKind: ACCESSOR
   typeParameters: []
   valueParameters: []

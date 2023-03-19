@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js.yarn
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.file.ArchiveOperations
 import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
@@ -15,28 +16,26 @@ import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.targets.js.extractWithUpToDate
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
-import org.jetbrains.kotlin.gradle.utils.ArchiveOperationsCompat
 import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
 import java.io.File
 import java.net.URI
 import javax.inject.Inject
 
-open class YarnSetupTask : DefaultTask() {
+abstract class YarnSetupTask : DefaultTask() {
     @Transient
     private val settings = project.yarn
     private val env by lazy { settings.requireConfigured() }
 
     private val shouldDownload = settings.download
 
-    private val archiveOperations = ArchiveOperationsCompat(project)
+    @get:Inject
+    internal abstract val archiveOperations: ArchiveOperations
 
     @get:Inject
-    internal open val fileHasher: FileHasher
-        get() = error("Should be injected")
+    internal abstract val fileHasher: FileHasher
 
     @get:Inject
-    internal open val fs: FileSystemOperations
-        get() = error("Should be injected")
+    internal abstract val fs: FileSystemOperations
 
     @Suppress("MemberVisibilityCanBePrivate")
     val downloadUrl

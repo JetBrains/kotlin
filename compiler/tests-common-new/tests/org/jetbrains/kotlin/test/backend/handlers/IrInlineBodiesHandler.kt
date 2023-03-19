@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.test.backend.handlers
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.lazy.AbstractIrLazyFunction
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
+import org.jetbrains.kotlin.ir.util.DeserializableClass
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.allUnbound
 import org.jetbrains.kotlin.ir.util.resolveFakeOverride
@@ -53,9 +55,18 @@ class IrInlineBodiesHandler(testServices: TestServices) : AbstractIrHandler(test
             val callee = symbol.owner
             if (callee.symbol.signature in declaredInlineFunctionSignatures) {
                 val trueCallee = (callee as IrSimpleFunction).resolveFakeOverride()!!
-                assertions.assertNotNull(trueCallee.body)
+                assertions.assertTrue(trueCallee.hasBody()) {
+                    "IrInlineBodiesHandler: function with body expected"
+                }
             }
             super.visitMemberAccess(expression)
+        }
+
+        private fun IrSimpleFunction.hasBody(): Boolean {
+            if (this !is AbstractIrLazyFunction) return body != null
+            if (!isDeserializationEnabled) return false
+            if (!isInline || isFakeOverride) return false
+            return getTopLevelDeclaration() is DeserializableClass
         }
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -35,14 +35,7 @@ abstract class KtLightClassForSourceDeclaration(
     protected val jvmDefaultMode: JvmDefaultMode,
 ) : KtLightClassBase(classOrObject.manager),
     StubBasedPsiElement<KotlinClassOrObjectStub<out KtClassOrObject>> {
-
-    override val myInnersCache: KotlinClassInnerStuffCache = KotlinClassInnerStuffCache(
-        myClass = this,
-        dependencies = classOrObject.getExternalDependencies(),
-        lazyCreator = LightClassesLazyCreator(project)
-    )
-
-    private val lightIdentifier = KtLightIdentifier(this, classOrObject)
+    override fun cacheDependencies(): List<Any> = classOrObject.getExternalDependencies()
 
     override fun getText() = kotlinOrigin.text ?: ""
 
@@ -138,7 +131,7 @@ abstract class KtLightClassForSourceDeclaration(
     override fun getElementType(): IStubElementType<out StubElement<*>, *>? = classOrObject.elementType
     override fun getStub(): KotlinClassOrObjectStub<out KtClassOrObject>? = classOrObject.stub
 
-    override fun getNameIdentifier(): KtLightIdentifier? = lightIdentifier
+    override fun getNameIdentifier(): KtLightIdentifier? = KtLightIdentifier(this, classOrObject)
 
     override fun getExtendsList(): PsiReferenceList? = _extendsList
     override fun getImplementsList(): PsiReferenceList? = _implementsList

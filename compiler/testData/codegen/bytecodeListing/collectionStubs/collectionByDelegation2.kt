@@ -1,3 +1,6 @@
+// IGNORE_BACKEND_K2: JVM_IR
+// FIR status: KT-57268 K2: extra methods `remove` and/or `getOrDefault` are generated for Map subclasses with JDK 1.6 in dependencies
+
 class DStringIterator(d: Iterator<String>) : Iterator<String> by d
 
 class DStringListIterator(d: ListIterator<String>) : ListIterator<String> by d

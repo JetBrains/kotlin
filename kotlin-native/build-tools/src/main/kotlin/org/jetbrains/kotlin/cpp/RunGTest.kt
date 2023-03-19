@@ -13,7 +13,7 @@ import org.gradle.kotlin.dsl.getByType
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
 import org.gradle.workers.WorkerExecutor
-import org.jetbrains.kotlin.executors.*
+import org.jetbrains.kotlin.native.executors.*
 import org.jetbrains.kotlin.konan.target.*
 import javax.inject.Inject
 

@@ -8,7 +8,14 @@ KtConstructorSymbol:
   isPrimary: false
   origin: JAVA
   receiverParameter: null
-  returnType: java/util/ArrayList<E>
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: [
+      KtTypeParameterType:
+        annotationsList: []
+        type: E
+    ]
+    type: java/util/ArrayList<E>
   symbolKind: CLASS_MEMBER
   typeParameters: [
     KtTypeParameterSymbol(E)
@@ -28,7 +35,9 @@ KtConstructorSymbol:
       name: c
       origin: JAVA
       receiverParameter: null
-      returnType: ft<kotlin/collections/MutableCollection<out ft<E & Any, E?>>, kotlin/collections/Collection<out ft<E & Any, E?>>?>
+      returnType: KtFlexibleType:
+        annotationsList: []
+        type: ft<kotlin/collections/MutableCollection<out ft<E & Any, E?>>, kotlin/collections/Collection<out ft<E & Any, E?>>?>
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtSdkModule "SDK jdk"

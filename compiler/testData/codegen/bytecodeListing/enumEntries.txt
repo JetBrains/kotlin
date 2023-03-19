@@ -16,7 +16,7 @@ public final enum class SimpleEnum {
     private synthetic final static method $values(): SimpleEnum[]
     static method <clinit>(): void
     private method <init>(p0: java.lang.String, p1: int): void
-    public static method getEntries(): kotlin.enums.EnumEntries
+    public static @org.jetbrains.annotations.NotNull method getEntries(): kotlin.enums.EnumEntries
     public static method valueOf(p0: java.lang.String): SimpleEnum
     public static method values(): SimpleEnum[]
 }
@@ -32,7 +32,7 @@ public final enum class WithAnnotations {
     private synthetic final static method $values(): WithAnnotations[]
     static method <clinit>(): void
     private method <init>(p0: java.lang.String, p1: int): void
-    public static method getEntries(): kotlin.enums.EnumEntries
+    public static @org.jetbrains.annotations.NotNull method getEntries(): kotlin.enums.EnumEntries
     public static method valueOf(p0: java.lang.String): WithAnnotations
     public static method values(): WithAnnotations[]
 }
@@ -50,7 +50,7 @@ public final enum class WithConstructor {
     private synthetic final static method $values(): WithConstructor[]
     static method <clinit>(): void
     private method <init>(p0: java.lang.String, p1: int, p2: java.lang.String): void
-    public static method getEntries(): kotlin.enums.EnumEntries
+    public static @org.jetbrains.annotations.NotNull method getEntries(): kotlin.enums.EnumEntries
     public final @org.jetbrains.annotations.NotNull method getX(): java.lang.String
     public static method valueOf(p0: java.lang.String): WithConstructor
     public static method values(): WithConstructor[]
@@ -77,7 +77,7 @@ public abstract enum class WithEntryClass {
     private method <init>(p0: java.lang.String, p1: int): void
     public synthetic method <init>(p0: java.lang.String, p1: int, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
     public abstract method foo(): void
-    public static method getEntries(): kotlin.enums.EnumEntries
+    public static @org.jetbrains.annotations.NotNull method getEntries(): kotlin.enums.EnumEntries
     public static method valueOf(p0: java.lang.String): WithEntryClass
     public static method values(): WithEntryClass[]
 }

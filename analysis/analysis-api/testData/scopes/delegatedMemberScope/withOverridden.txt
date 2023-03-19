@@ -1,6 +1,6 @@
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: /I2.bar
+  callableIdIfNonLocal: /B.bar
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -17,11 +17,17 @@ KtFunctionSymbol:
   name: bar
   origin: DELEGATED
   receiverParameter: null
-  returnType: kotlin/Unit
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Unit
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getDispatchReceiver(): B
+  getDispatchReceiver(): KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: B
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

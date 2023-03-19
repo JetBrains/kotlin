@@ -20,8 +20,9 @@ internal class IncrementalCompilationEnvironment(
     val multiModuleICSettings: MultiModuleICSettings,
     val withAbiSnapshot: Boolean = false,
     val preciseCompilationResultsBackup: Boolean = false,
+    val keepIncrementalCompilationCachesInMemory: Boolean = false,
 ) : Serializable {
     companion object {
-        const val serialVersionUID: Long = 2
+        const val serialVersionUID: Long = 3
     }
 }

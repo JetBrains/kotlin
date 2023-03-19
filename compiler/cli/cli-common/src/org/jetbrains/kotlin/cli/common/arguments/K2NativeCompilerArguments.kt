@@ -59,7 +59,16 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(value="-memory-model", valueDescription = "<model>", description = "Memory model to use, 'strict' and 'experimental' are currently supported")
     var memoryModel: String? = null
 
-    @Argument(value="-module-name", deprecatedName = "-module_name", valueDescription = "<name>", description = "Specify a name for the compilation module")
+    @GradleOption(
+        value = DefaultValue.STRING_NULL_DEFAULT,
+        gradleInputType = GradleInputTypes.INPUT
+    )
+    @Argument(
+        value = "-module-name",
+        deprecatedName = "-module_name",
+        valueDescription = "<name>",
+        description = "Specify a name for the compilation module"
+    )
     var moduleName: String? = null
 
     @Argument(
@@ -238,6 +247,15 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xmake-per-file-cache", description = "Force compiler to produce per-file cache")
     var makePerFileCache: Boolean = false
 
+    @Argument(
+        value = "-Xbackend-threads",
+        valueDescription = "<N>",
+        description = "Run codegen by file in N parallel threads.\n" +
+                "0 means use a thread per processor core.\n" +
+                "Default value is 1"
+    )
+    var backendThreads: String = "1"
+
     @Argument(value = "-Xexport-kdoc", description = "Export KDoc in framework header")
     var exportKDoc: Boolean = false
 
@@ -285,8 +303,12 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xverify-bitcode", deprecatedName = "--verify_bitcode", description = "Verify llvm bitcode after each method")
     var verifyBitCode: Boolean = false
 
-    @Argument(value = "-Xverify-ir", description = "Verify IR")
-    var verifyIr: Boolean = false
+    @Argument(
+        value = "-Xverify-ir",
+        valueDescription = "{none|warning|error}",
+        description = "IR verification mode (no verification by default)"
+    )
+    var verifyIr: String? = null
 
     @Argument(value = "-Xverify-compiler", description = "Verify compiler")
     var verifyCompiler: String? = null
@@ -407,6 +429,19 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
 
     @Argument(value = "-Xomit-framework-binary", description = "Omit binary when compiling framework")
     var omitFrameworkBinary: Boolean = false
+
+    @Argument(value = "-Xcompile-from-bitcode", description = "Continue compilation from bitcode file", valueDescription = "<path>")
+    var compileFromBitcode: String? = null
+
+    @Argument(
+        value = "-Xread-dependencies-from",
+        description = "Serialized dependencies to use for linking",
+        valueDescription = "<path>"
+    )
+    var serializedDependencies: String? = null
+
+    @Argument(value = "-Xwrite-dependencies-to", description = "Path for writing backend dependencies")
+    var saveDependenciesPath: String? = null
 
     @Argument(value = "-Xsave-llvm-ir-directory", description = "Directory that should contain results of -Xsave-llvm-ir-after=<phase>")
     var saveLlvmIrDirectory: String? = null

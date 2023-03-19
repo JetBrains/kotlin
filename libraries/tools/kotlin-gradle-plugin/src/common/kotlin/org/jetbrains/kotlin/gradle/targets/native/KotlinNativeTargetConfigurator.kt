@@ -10,27 +10,25 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.Dependency
-import org.gradle.api.attributes.Attribute
-import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
 import org.gradle.api.attributes.Usage.USAGE_ATTRIBUTE
-import org.gradle.api.internal.artifacts.ArtifactAttributes
 import org.gradle.api.internal.plugins.DefaultArtifactPublicationSet
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.Exec
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
+import org.jetbrains.kotlin.gradle.dsl.KotlinNativeCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.TEST_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationInfo.KPM
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.KOTLIN_NATIVE_IGNORE_INCORRECT_DEPENDENCIES
+import org.jetbrains.kotlin.gradle.plugin.internal.artifactTypeAttribute
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.registerEmbedAndSignAppleFrameworkTask
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmVariant
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.copyAttributes
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.targets.native.*
@@ -38,16 +36,18 @@ import org.jetbrains.kotlin.gradle.targets.native.internal.commonizeCInteropTask
 import org.jetbrains.kotlin.gradle.targets.native.internal.createCInteropApiElementsKlibArtifact
 import org.jetbrains.kotlin.gradle.targets.native.internal.locateOrCreateCInteropApiElementsConfiguration
 import org.jetbrains.kotlin.gradle.targets.native.internal.locateOrCreateCInteropDependencyConfiguration
-import org.jetbrains.kotlin.gradle.targets.native.tasks.*
+import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeHostTest
+import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeSimulatorTest
+import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.testing.internal.configureConventions
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
 import org.jetbrains.kotlin.gradle.testing.testTaskName
-import org.jetbrains.kotlin.gradle.utils.*
+import org.jetbrains.kotlin.gradle.utils.Xcode
+import org.jetbrains.kotlin.gradle.utils.klibModuleName
+import org.jetbrains.kotlin.gradle.utils.newInstance
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
-import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.io.File
 
 open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotlinTargetConfigurator<T>(
@@ -61,7 +61,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
         // this afterEvaluate comes from NativeCompilerOptions
         val compilationCompilerOptions = binary.compilation.compilerOptions
         val konanPropertiesBuildService = KonanPropertiesBuildService.registerIfAbsent(project)
-        val result = registerTask<KotlinNativeLink>(
+        val linkTask = registerTask<KotlinNativeLink>(
             binary.linkTaskName, listOf(binary)
         ) {
             val target = binary.target
@@ -76,12 +76,12 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
 
 
         if (binary !is TestExecutable) {
-            tasks.named(binary.compilation.target.artifactsTaskName).dependsOn(result)
-            locateOrRegisterTask<Task>(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).dependsOn(result)
+            tasks.named(binary.compilation.target.artifactsTaskName).dependsOn(linkTask)
+            locateOrRegisterTask<Task>(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).dependsOn(linkTask)
         }
 
         if (binary is Framework) {
-            createFrameworkArtifact(binary, result)
+            createFrameworkArtifact(binary, linkTask)
         }
     }
 
@@ -94,102 +94,6 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
                     defaultLanguageSettings.freeCompilerArgs
                 )
             }
-        }
-    }
-
-    private fun Project.createFrameworkArtifact(
-        binary: Framework,
-        linkTask: TaskProvider<KotlinNativeLink>
-    ) {
-        fun <T : Task> Configuration.configureConfiguration(taskProvider: TaskProvider<T>) {
-            project.afterEvaluate {
-                val task = taskProvider.get()
-                val artifactFile = when (task) {
-                    is FatFrameworkTask -> task.fatFramework
-                    else -> binary.outputFile
-                }
-                val linkArtifact = project.artifacts.add(name, artifactFile) { artifact ->
-                    artifact.name = name
-                    artifact.extension = "framework"
-                    artifact.type = "binary"
-                    artifact.classifier = "framework"
-                    artifact.builtBy(task)
-                }
-                project.extensions.getByType(org.gradle.api.internal.plugins.DefaultArtifactPublicationSet::class.java)
-                    .addCandidate(linkArtifact)
-                artifacts.add(linkArtifact)
-                attributes.attribute(KotlinPlatformType.attribute, binary.target.platformType)
-                attributes.attribute(
-                    ArtifactAttributes.ARTIFACT_FORMAT,
-                    NativeArtifactFormat.FRAMEWORK
-                )
-                attributes.attribute(
-                    KotlinNativeTarget.kotlinNativeBuildTypeAttribute,
-                    binary.buildType.name
-                )
-                if (attributes.getAttribute(Framework.frameworkTargets) == null) {
-                    attributes.attribute(
-                        Framework.frameworkTargets,
-                        setOf(binary.target.konanTarget.name)
-                    )
-                }
-                // capture type parameter T
-                fun <T> copyAttribute(key: Attribute<T>, from: AttributeContainer, to: AttributeContainer) {
-                    to.attribute(key, from.getAttribute(key)!!)
-                }
-                binary.attributes.keySet().filter { it != KotlinNativeTarget.konanTargetAttribute }.forEach {
-                    copyAttribute(it, binary.attributes, this.attributes)
-                }
-            }
-        }
-
-        fun configureFatFramework() {
-            val fatFrameworkConfigurationName = lowerCamelCaseName(
-                binary.name,
-                binary.target.konanTarget.family.name.toLowerCaseAsciiOnly(),
-                "fat"
-            )
-            val fatFrameworkTaskName = "link${fatFrameworkConfigurationName.capitalizeAsciiOnly()}"
-
-            val fatFrameworkTask = if (fatFrameworkTaskName in tasks.names) {
-                tasks.named(fatFrameworkTaskName, FatFrameworkTask::class.java)
-            } else {
-                tasks.register(fatFrameworkTaskName, FatFrameworkTask::class.java) {
-                    it.baseName = binary.baseName
-                    it.destinationDir = it.destinationDir.resolve(binary.buildType.name.toLowerCaseAsciiOnly())
-                }
-            }
-
-            fatFrameworkTask.configure {
-                try {
-                    it.from(binary)
-                } catch (e: Exception) {
-                    logger.warn("Cannot add binary ${binary.name} dependency to default fat framework", e)
-                }
-            }
-
-            // maybeCreate is not used as it does not provide way to configure once
-            val fatConfiguration =
-                configurations.findByName(fatFrameworkConfigurationName) ?: configurations.create(fatFrameworkConfigurationName) {
-                    it.isCanBeConsumed = true
-                    it.isCanBeResolved = false
-                    it.configureConfiguration(fatFrameworkTask)
-                }
-
-            fatConfiguration.attributes.attribute(
-                Framework.frameworkTargets,
-                (fatConfiguration.attributes.getAttribute(Framework.frameworkTargets) ?: setOf<String>()) + binary.target.konanTarget.name
-            )
-        }
-
-        configurations.create(lowerCamelCaseName(binary.name, binary.target.name)) {
-            it.isCanBeConsumed = true
-            it.isCanBeResolved = false
-            it.configureConfiguration(linkTask)
-        }
-
-        if (FatFrameworkTask.isSupportedTarget(binary.target)) {
-            configureFatFramework()
         }
     }
 
@@ -247,9 +151,6 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
                 // Register the interop library as a dependency of the compilation to make IDE happy.
                 project.dependencies.add(compileDependencyConfigurationName, interopOutput)
                 if (isMain()) {
-                    // Register the interop library as an outgoing klib to allow depending on projects with cinterops.
-                    project.dependencies.add(target.apiElementsConfigurationName, interopOutput)
-
                     // Add interop library to special CInteropApiElements configuration
                     createCInteropApiElementsKlibArtifact(compilation.target, interop, interopTask)
 
@@ -260,9 +161,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
                         artifactFile = interopTask.map { it.outputFile },
                         classifier = "cinterop-${interop.name}",
                         producingTask = interopTask,
-                        copy = true
                     )
-
 
                     // We cannot add the interop library in an compilation output because in this case
                     // IDE doesn't see this library in module dependencies. So we have to manually add
@@ -303,7 +202,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
 
         val apiElements = configurations.getByName(target.apiElementsConfigurationName)
 
-        apiElements.outgoing.attributes.attribute(ArtifactAttributes.ARTIFACT_FORMAT, NativeArtifactFormat.KLIB)
+        apiElements.outgoing.attributes.attribute(artifactTypeAttribute, NativeArtifactFormat.KLIB)
 
         if (project.isKotlinGranularMetadataEnabled) {
             project.configurations.create(target.hostSpecificMetadataElementsConfigurationName) { configuration ->
@@ -312,10 +211,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
 
                 configuration.extendsFrom(*apiElements.extendsFrom.toTypedArray())
 
-                fun <T> copyAttribute(from: AttributeContainer, to: AttributeContainer, attribute: Attribute<T>) {
-                    to.attribute(attribute, from.getAttribute(attribute)!!)
-                }
-                with(apiElements.attributes) { keySet().forEach { copyAttribute(this, configuration.attributes, it) } }
+                copyAttributes(from = apiElements.attributes, to = configuration.attributes)
                 configuration.attributes.attribute(USAGE_ATTRIBUTE, objects.named(Usage::class.java, KotlinUsages.KOTLIN_METADATA))
             }
         }
@@ -484,14 +380,18 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
             val project = compilationInfo.project
             val compileTaskProvider = project.registerTask<KotlinNativeCompile>(
                 compilationInfo.compileKotlinTaskName,
-                listOf(compilationInfo)
+                listOf(
+                    compilationInfo,
+                    compilationInfo.compilerOptions.options as KotlinNativeCompilerOptions
+                )
             ) {
                 it.group = BasePlugin.BUILD_GROUP
                 it.description = "Compiles a klibrary from the '${compilationInfo.compilationName}' " +
-                        "compilation for target '${compilationInfo.platformType.name}'."
+                        "compilation in target '${compilationInfo.targetDisambiguationClassifier}'."
                 it.enabled = konanTarget.enabledOnCurrentHost
 
                 it.destinationDirectory.set(project.klibOutputDirectory(compilationInfo).resolve("klib"))
+                it.compilerOptions.moduleName.set(project.klibModuleName(it.baseName))
             }
 
             compilationInfo.classesDirs.from(compileTaskProvider.map { it.outputFile })
@@ -555,7 +455,6 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
             artifactFile: Provider<File>,
             classifier: String?,
             producingTask: TaskProvider<*>,
-            copy: Boolean = false
         ) {
             val project = compilationInfo.project
             if (!konanTarget.enabledOnCurrentHost) {
@@ -567,34 +466,17 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
                 is KotlinCompilationInfo.TCS -> compilationInfo.compilation.target.apiElementsConfigurationName
             }
 
-            val apiElements = project.configurations.getByName(apiElementsName)
-
-            val realProducingTask: TaskProvider<*>
-            // TODO: Someone remove this HACK PLEASE!
-            val realArtifactFile = if (copy) {
-                realProducingTask = project.project.registerTask<Copy>("copy${producingTask.name.capitalizeAsciiOnly()}") {
-                    val targetSubDirectory = compilationInfo.targetDisambiguationClassifier?.let { "$it/" }.orEmpty()
-                    it.destinationDir = project.project.buildDir.resolve("libs/$targetSubDirectory${compilationInfo.compilationName}")
-                    it.from(artifactFile)
-                    it.dependsOn(producingTask)
-                }
-                realProducingTask.map { (it as Copy).destinationDir.resolve(artifactFile.get().name) }
-            } else {
-                realProducingTask = producingTask
-                artifactFile
-            }
-
-            with(apiElements) {
-                val klibArtifact = project.project.artifacts.add(apiElements.name, realArtifactFile) { artifact ->
+            with(project.configurations.getByName(apiElementsName)) {
+                val klibArtifact = project.project.artifacts.add(name, artifactFile) { artifact ->
                     artifact.name = compilationInfo.compilationName
                     artifact.extension = "klib"
                     artifact.type = "klib"
                     artifact.classifier = classifier
-                    artifact.builtBy(realProducingTask)
+                    artifact.builtBy(producingTask)
                 }
                 project.project.extensions.getByType(DefaultArtifactPublicationSet::class.java).addCandidate(klibArtifact)
                 artifacts.add(klibArtifact)
-                attributes.attribute(ArtifactAttributes.ARTIFACT_FORMAT, NativeArtifactFormat.KLIB)
+                attributes.attribute(project.artifactTypeAttribute, NativeArtifactFormat.KLIB)
             }
         }
     }

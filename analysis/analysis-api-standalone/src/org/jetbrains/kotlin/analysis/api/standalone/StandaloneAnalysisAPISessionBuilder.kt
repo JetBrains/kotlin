@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.Stand
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.ClsJavaStubByVirtualFileCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.FirSealedClassInheritorsProcessorFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirBuiltinsSessionFactory
-import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirLibrarySessionFactory
 import org.jetbrains.kotlin.analysis.project.structure.KtModuleScopeProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtModuleScopeProviderImpl
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
@@ -40,7 +39,7 @@ import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.setupIdeaStandaloneExecution
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProvider
 import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProviderImpl
 import org.jetbrains.kotlin.idea.references.KotlinFirReferenceContributor
@@ -59,6 +58,11 @@ public class StandaloneAnalysisAPISessionBuilder(
     projectDisposable: Disposable,
 ) {
     init {
+        // We depend on swing (indirectly through PSI or something), so we want to declare headless mode,
+        // to avoid accidentally starting the UI thread. But, don't set it if it was set externally.
+        if (System.getProperty("java.awt.headless") == null) {
+            System.setProperty("java.awt.headless", "true")
+        }
         setupIdeaStandaloneExecution()
     }
 
@@ -117,6 +121,7 @@ public class StandaloneAnalysisAPISessionBuilder(
 
             registerService(KtModuleScopeProvider::class.java, KtModuleScopeProviderImpl())
             registerService(KotlinAnnotationsResolverFactory::class.java, KotlinStaticAnnotationsResolverFactory(ktFiles))
+            registerService(KotlinResolutionScopeProvider::class.java, KotlinByModulesResolutionScopeProvider::class.java)
             registerService(
                 KotlinDeclarationProviderFactory::class.java,
                 KotlinStaticDeclarationProviderFactory(
@@ -125,7 +130,7 @@ public class StandaloneAnalysisAPISessionBuilder(
                     kotlinCoreProjectEnvironment.environment.jarFileSystem as CoreJarFileSystem
                 )
             )
-            registerService(KotlinPackageProviderFactory::class.java, KotlinStaticPackageProviderFactory(ktFiles))
+            registerService(KotlinPackageProviderFactory::class.java, KotlinStaticPackageProviderFactory(project, ktFiles))
 
             registerService(KtAnalysisSessionProvider::class.java, KtFirAnalysisSessionProvider(this))
             registerService(
@@ -137,7 +142,8 @@ public class StandaloneAnalysisAPISessionBuilder(
                 }
             )
             registerService(LLFirBuiltinsSessionFactory::class.java, LLFirBuiltinsSessionFactory(this))
-            RegisterComponentService.registerLLFirLibrarySessionFactory(this)
+            RegisterComponentService.registerLLFirSessionCache(this)
+            RegisterComponentService.registerLLFirGlobalResolveComponents(this)
 
             registerService(KotlinReferenceProvidersService::class.java, HLApiReferenceProviderService::class.java)
             registerService(KotlinReferenceProviderContributor::class.java, KotlinFirReferenceContributor::class.java)

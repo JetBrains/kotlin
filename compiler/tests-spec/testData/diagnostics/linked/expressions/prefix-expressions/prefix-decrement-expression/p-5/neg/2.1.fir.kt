@@ -5,7 +5,7 @@
 
 fun case1() {
     var a = Case1()
-    val res: Any? = <!RESULT_TYPE_MISMATCH!>++a<!>
+    val res: Any? = <!RESULT_TYPE_MISMATCH!>++<!>a
 }
 
 
@@ -22,7 +22,7 @@ class B() {}
 
 fun case2() {
     var a = Case2()
-    val res: Any? = <!RESULT_TYPE_MISMATCH!>++a<!>
+    val res: Any? = <!RESULT_TYPE_MISMATCH!>++<!>a
 }
 
 class Case2() : C() {

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers
 
 import org.gradle.api.artifacts.ArtifactView
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.DependencySubstitutions
 import org.gradle.api.artifacts.component.*
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.logging.Logger
@@ -27,12 +28,12 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmFragment
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmVariant
-import org.jetbrains.kotlin.gradle.utils.markResolvable
 import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.InternalKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.plugin.sources.project
+import org.jetbrains.kotlin.gradle.utils.markResolvable
 import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
 
 @ExternalKotlinTargetApi
@@ -51,7 +52,8 @@ class IdeBinaryDependencyResolver(
         data class Compilation(
             internal val compilationSelector: (KotlinSourceSet) -> KotlinCompilation<*>? =
                 { sourceSet -> sourceSet.internal.compilations.singleOrNull { it.platformType != KotlinPlatformType.common } },
-            internal val setupArtifactViewAttributes: AttributeContainer.(sourceSet: KotlinSourceSet) -> Unit = {}
+            internal val setupArtifactViewAttributes: AttributeContainer.(sourceSet: KotlinSourceSet) -> Unit = {},
+            internal val componentFilter: ((ComponentIdentifier) -> Boolean)? = null
         ) : ArtifactResolutionStrategy()
 
         /**
@@ -60,7 +62,8 @@ class IdeBinaryDependencyResolver(
          */
         data class ResolvableConfiguration(
             internal val configurationSelector: (KotlinSourceSet) -> Configuration?,
-            internal val setupArtifactViewAttributes: AttributeContainer.(sourceSet: KotlinSourceSet) -> Unit = {}
+            internal val setupArtifactViewAttributes: AttributeContainer.(sourceSet: KotlinSourceSet) -> Unit = {},
+            internal val componentFilter: ((ComponentIdentifier) -> Boolean)? = null
         ) : ArtifactResolutionStrategy()
 
         /**
@@ -73,7 +76,8 @@ class IdeBinaryDependencyResolver(
         data class PlatformLikeSourceSet(
             internal val setupPlatformResolutionAttributes: AttributeContainer.(sourceSet: KotlinSourceSet) -> Unit,
             internal val setupArtifactViewAttributes: AttributeContainer.(sourceSet: KotlinSourceSet) -> Unit = {},
-            internal val componentFilter: ((ComponentIdentifier) -> Boolean)? = null
+            internal val componentFilter: ((ComponentIdentifier) -> Boolean)? = null,
+            internal val dependencySubstitution: ((DependencySubstitutions) -> Unit)? = null,
         ) : ArtifactResolutionStrategy()
     }
 
@@ -166,6 +170,9 @@ class IdeBinaryDependencyResolver(
         return compilation.internal.configurations.compileDependencyConfiguration.incoming.artifactView { view ->
             view.isLenient = true
             view.attributes.setupArtifactViewAttributes(sourceSet)
+            if (componentFilter != null) {
+                view.componentFilter(componentFilter)
+            }
         }
     }
 
@@ -174,6 +181,9 @@ class IdeBinaryDependencyResolver(
         return configuration.incoming.artifactView { view ->
             view.isLenient = true
             view.attributes.setupArtifactViewAttributes(sourceSet)
+            if (componentFilter != null) {
+                view.componentFilter(componentFilter)
+            }
         }
     }
 
@@ -185,6 +195,9 @@ class IdeBinaryDependencyResolver(
         platformLikeCompileDependenciesConfiguration.markResolvable()
         platformLikeCompileDependenciesConfiguration.attributes.setupPlatformResolutionAttributes(sourceSet)
         platformLikeCompileDependenciesConfiguration.dependencies.addAll(sourceSet.resolvableMetadataConfiguration.allDependencies)
+
+        if (dependencySubstitution != null)
+            platformLikeCompileDependenciesConfiguration.resolutionStrategy.dependencySubstitution(dependencySubstitution)
 
         return platformLikeCompileDependenciesConfiguration.incoming.artifactView { view ->
             view.isLenient = true

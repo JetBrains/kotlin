@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
-import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
@@ -49,8 +48,7 @@ import org.jetbrains.org.objectweb.asm.Type
 class FirJvmTypeMapper(val session: FirSession) : FirSessionComponent {
     companion object {
         val NON_EXISTENT_ID = ClassId.topLevel(StandardNames.NON_EXISTENT_CLASS)
-        private val typeForNonExistentClass = ConeClassLikeLookupTagImpl(NON_EXISTENT_ID)
-            .constructClassType(emptyArray(), isNullable = false)
+        private val typeForNonExistentClass = NON_EXISTENT_ID.toLookupTag().constructClassType(emptyArray(), isNullable = false)
     }
 
     fun mapType(
@@ -66,6 +64,9 @@ class FirJvmTypeMapper(val session: FirSession) : FirSessionComponent {
         }
         return AbstractTypeMapper.mapType(context, type, mode, sw)
     }
+
+    fun isPrimitiveBacked(type: ConeKotlinType): Boolean =
+        AbstractTypeMapper.isPrimitiveBacked(defaultContext, type)
 
     private val defaultContext = Context { null }
     val typeContext: TypeSystemCommonBackendContext
@@ -174,8 +175,8 @@ class FirJvmTypeMapper(val session: FirSession) : FirSessionComponent {
             val parameters = classifier?.typeParameters.orEmpty().map { it.symbol }
             val arguments = type.arguments
 
-            if ((defaultType.isFunctionalType(session) && arguments.size > BuiltInFunctionArity.BIG_ARITY)
-                || defaultType.isKFunctionType(session)
+            if ((defaultType.isBasicFunctionType(session) && arguments.size > BuiltInFunctionArity.BIG_ARITY)
+                || defaultType.isReflectFunctionType(session)
             ) {
                 writeGenericArguments(sw, listOf(arguments.last()), listOf(parameters.last()), mode)
                 return

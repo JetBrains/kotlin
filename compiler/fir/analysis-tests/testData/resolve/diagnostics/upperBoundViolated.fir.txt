@@ -83,7 +83,7 @@ FILE: upperBoundViolated.kt
     }
     public final val np1: R|NumberPhile<kotlin/Int>| = R|/NumberPhile.NumberPhile|<R|kotlin/Int|>(Int(10))
         public get(): R|NumberPhile<kotlin/Int>|
-    public final val np2: R|NumberPhile<ERROR CLASS: Cannot infer argument for type parameter T>| = R|/NumberPhile.NumberPhile<Inapplicable(INAPPLICABLE): /NumberPhile.NumberPhile>#|<R|ERROR CLASS: Cannot infer argument for type parameter T|>(String(Test))
+    public final val np2: R|NumberPhile<ERROR CLASS: Cannot infer argument for type parameter T>| = R|/NumberPhile.NumberPhile<Inapplicable(INAPPLICABLE): /NumberPhile.NumberPhile>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(String(Test))
         public get(): R|NumberPhile<ERROR CLASS: Cannot infer argument for type parameter T>|
     public final class Test1<S1 : R|Test1<S1, K>|, K : R|kotlin/Any|> : R|kotlin/Any| {
         public constructor<S1 : R|Test1<S1, K>|, K : R|kotlin/Any|>(): R|Test1<S1, K>| {

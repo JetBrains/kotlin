@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.DefaultMapping
 import org.jetbrains.kotlin.backend.common.Mapping
+import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.backend.jvm.caches.BridgeLoweringCache
 import org.jetbrains.kotlin.backend.jvm.caches.CollectionStubComputer
 import org.jetbrains.kotlin.backend.jvm.mapping.IrTypeMapper
 import org.jetbrains.kotlin.backend.jvm.mapping.MethodSignatureMapper
+import org.jetbrains.kotlin.codegen.inline.SMAP
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
@@ -28,7 +30,6 @@ import org.jetbrains.kotlin.ir.builders.irBlock
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
@@ -48,6 +49,7 @@ class JvmBackendContext(
     val generatorExtensions: JvmGeneratorExtensions,
     val backendExtension: JvmBackendExtension,
     val irSerializer: JvmIrSerializer?,
+    val irPluginContext: IrPluginContext?,
 ) : CommonBackendContext {
 
     @Suppress("UNUSED_PARAMETER")
@@ -61,7 +63,7 @@ class JvmBackendContext(
         generatorExtensions: JvmGeneratorExtensions,
         backendExtension: JvmBackendExtension,
         irSerializer: JvmIrSerializer?,
-    ) : this(state, irBuiltIns, symbolTable, phaseConfig, generatorExtensions, backendExtension, irSerializer)
+    ) : this(state, irBuiltIns, symbolTable, phaseConfig, generatorExtensions, backendExtension, irSerializer, null)
 
     data class LocalFunctionData(
         val localContext: LocalDeclarationsLowering.LocalFunctionContext,
@@ -102,6 +104,9 @@ class JvmBackendContext(
     override val sharedVariablesManager = JvmSharedVariablesManager(state.module, ir.symbols, irBuiltIns, irFactory)
 
     lateinit var getIntrinsic: (IrFunctionSymbol) -> IntrinsicMarker?
+
+    // Store evaluated SMAP for anonymous classes. Used only with IR inliner.
+    val typeToCachedSMAP = mutableMapOf<Type, SMAP>()
 
     private val localClassType = ConcurrentHashMap<IrAttributeContainer, Type>()
 
@@ -155,7 +160,7 @@ class JvmBackendContext(
 
     override val internalPackageFqn = FqName("kotlin.jvm")
 
-    val suspendLambdaToOriginalFunctionMap = ConcurrentHashMap<IrFunctionReference, IrFunction>()
+    val suspendLambdaToOriginalFunctionMap = ConcurrentHashMap<IrAttributeContainer, IrFunction>()
     val suspendFunctionOriginalToView = ConcurrentHashMap<IrSimpleFunction, IrSimpleFunction>()
 
     val staticDefaultStubs = ConcurrentHashMap<IrSimpleFunctionSymbol, IrSimpleFunction>()
@@ -170,6 +175,8 @@ class JvmBackendContext(
     val inlineMethodGenerationLock = Any()
 
     val publicAbiSymbols = mutableSetOf<IrClassSymbol>()
+
+    val visitedDeclarationsForRegenerationLowering: MutableSet<IrDeclaration> = ConcurrentHashMap.newKeySet()
 
     init {
         state.mapInlineClass = { descriptor ->

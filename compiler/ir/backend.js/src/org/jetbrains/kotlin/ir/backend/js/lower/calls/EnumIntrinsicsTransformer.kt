@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.ir.util.isEnumClass
 import org.jetbrains.kotlin.name.Name
 
 
-class EnumIntrinsicsTransformer(private val context: JsIrBackendContext) : CallsTransformer {
+object EnumIntrinsicsUtils {
     private fun transformEnumTopLevelIntrinsic(
         call: IrFunctionAccessExpression,
         staticMethodPredicate: (IrSimpleFunction) -> Boolean
@@ -36,19 +36,21 @@ class EnumIntrinsicsTransformer(private val context: JsIrBackendContext) : Calls
         return irCall(call, staticMethod.symbol)
     }
 
-    private fun transformEnumValueOfIntrinsic(call: IrFunctionAccessExpression) = transformEnumTopLevelIntrinsic(call) {
+    fun transformEnumValueOfIntrinsic(call: IrFunctionAccessExpression) = transformEnumTopLevelIntrinsic(call) {
         it.name == Name.identifier("valueOf") &&
                 it.valueParameters.count() == 1 &&
                 it.valueParameters[0].type.isString()
     }
 
-    private fun transformEnumValuesIntrinsic(call: IrFunctionAccessExpression) = transformEnumTopLevelIntrinsic(call) {
+    fun transformEnumValuesIntrinsic(call: IrFunctionAccessExpression) = transformEnumTopLevelIntrinsic(call) {
         it.name == Name.identifier("values") && it.valueParameters.count() == 0
     }
+}
 
+class EnumIntrinsicsTransformer(private val context: JsIrBackendContext) : CallsTransformer {
     override fun transformFunctionAccess(call: IrFunctionAccessExpression, doNotIntrinsify: Boolean) = when (call.symbol) {
-        context.intrinsics.enumValueOfIntrinsic -> transformEnumValueOfIntrinsic(call)
-        context.intrinsics.enumValuesIntrinsic -> transformEnumValuesIntrinsic(call)
+        context.intrinsics.enumValueOfIntrinsic -> EnumIntrinsicsUtils.transformEnumValueOfIntrinsic(call)
+        context.intrinsics.enumValuesIntrinsic -> EnumIntrinsicsUtils.transformEnumValuesIntrinsic(call)
         else -> call
     }
 }

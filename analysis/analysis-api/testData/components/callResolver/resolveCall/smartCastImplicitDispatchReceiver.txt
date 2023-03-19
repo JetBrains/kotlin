@@ -7,7 +7,10 @@ KtSuccessCallInfo:
             annotationsList: []
             origin: SOURCE
             owningCallableSymbol: KtFunctionSymbol(/test)
-            type: kotlin/Any
+            type: KtUsualClassType:
+              annotationsList: []
+              ownTypeArguments: []
+              type: kotlin/Any
           type = kotlin.Any
         type = kotlin.String
       extensionReceiver = null
@@ -18,5 +21,5 @@ KtSuccessCallInfo:
         symbol = val length: kotlin.Int
         callableIdIfNonLocal = kotlin/String.length
     simpleAccess = Read:
-
+      
     typeArgumentsMapping = {}

@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusIm
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
+import org.jetbrains.kotlin.fir.expressions.impl.FirContractCallBlock
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.expressions.impl.buildSingleExpressionBlock
 import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
@@ -126,6 +127,7 @@ class ExpressionsConverter(
 
             OBJECT_LITERAL -> declarationsConverter.convertObjectLiteral(expression)
             FUN -> declarationsConverter.convertFunctionDeclaration(expression)
+            DESTRUCTURING_DECLARATION -> declarationsConverter.convertDestructingDeclaration(expression).toFirDestructingDeclaration(baseModuleData)
             else -> buildErrorExpression(null, ConeSimpleDiagnostic(errorReason, DiagnosticKind.ExpressionExpected))
         }
     }
@@ -200,6 +202,13 @@ class ExpressionsConverter(
             body = if (block != null) {
                 declarationsConverter.withOffset(expressionSource.startOffset) {
                     declarationsConverter.convertBlockExpressionWithoutBuilding(block!!).apply {
+                        statements.firstOrNull()?.let {
+                            if (it.isContractBlockFirCheck()) {
+                                this@buildAnonymousFunction.contractDescription = it.toLegacyRawContractDescription()
+                                statements[0] = FirContractCallBlock(it)
+                            }
+                        }
+
                         if (statements.isEmpty()) {
                             statements.add(
                                 buildReturnExpression {
@@ -1190,7 +1199,7 @@ class ExpressionsConverter(
      */
     private fun convertTryExpression(tryExpression: LighterASTNode): FirExpression {
         lateinit var tryBlock: FirBlock
-        val catchClauses = mutableListOf<Pair<ValueParameter?, FirBlock>>()
+        val catchClauses = mutableListOf<Triple<ValueParameter?, FirBlock, KtLightSourceElement>>()
         var finallyBlock: FirBlock? = null
         tryExpression.forEachChildren {
             when (it.tokenType) {
@@ -1203,7 +1212,7 @@ class ExpressionsConverter(
             source = tryExpression.toFirSourceElement()
             this.tryBlock = tryBlock
             this.finallyBlock = finallyBlock
-            for ((parameter, block) in catchClauses) {
+            for ((parameter, block, clauseSource) in catchClauses) {
                 if (parameter == null) continue
                 catches += buildCatch {
                     this.parameter = buildProperty {
@@ -1221,6 +1230,7 @@ class ExpressionsConverter(
                         it.isCatchParameter = true
                     }
                     this.block = block
+                    this.source = clauseSource
                 }
             }
         }
@@ -1229,7 +1239,7 @@ class ExpressionsConverter(
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinExpressionParsing.parseTry
      */
-    private fun convertCatchClause(catchClause: LighterASTNode): Pair<ValueParameter?, FirBlock>? {
+    private fun convertCatchClause(catchClause: LighterASTNode): Triple<ValueParameter?, FirBlock, KtLightSourceElement>? {
         var valueParameter: ValueParameter? = null
         var blockNode: LighterASTNode? = null
         catchClause.forEachChildren {
@@ -1240,7 +1250,7 @@ class ExpressionsConverter(
             }
         }
 
-        return Pair(valueParameter, declarationsConverter.convertBlock(blockNode))
+        return Triple(valueParameter, declarationsConverter.convertBlock(blockNode), catchClause.toFirSourceElement())
     }
 
     /**

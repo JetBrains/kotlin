@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.lazy
 
-import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.*
@@ -18,7 +17,6 @@ import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.isStatic
 import org.jetbrains.kotlin.fir.types.isNullableAny
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
@@ -61,51 +59,56 @@ class Fir2IrLazyClass(
 
     override var name: Name
         get() = fir.name
-        set(_) {
-            throw UnsupportedOperationException()
-        }
+        set(_) = mutationNotSupported()
 
-    @Suppress("SetterBackingFieldAssignment")
     override var visibility: DescriptorVisibility = components.visibilityConverter.convertToDescriptorVisibility(fir.visibility)
-        set(_) {
-            error("Mutating Fir2Ir lazy elements is not possible")
-        }
+        set(_) = mutationNotSupported()
 
     override var modality: Modality
         get() = fir.modality!!
-        set(_) {
-            error("Mutating Fir2Ir lazy elements is not possible")
-        }
+        set(_) = mutationNotSupported()
 
     override var attributeOwnerId: IrAttributeContainer
         get() = this
+        set(_) = mutationNotSupported()
+
+    override var originalBeforeInline: IrAttributeContainer?
+        get() = null
         set(_) {
             error("Mutating Fir2Ir lazy elements is not possible")
         }
 
-    override val kind: ClassKind
+    override var kind: ClassKind
         get() = fir.classKind
+        set(_) = mutationNotSupported()
 
-    override val isCompanion: Boolean
+    override var isCompanion: Boolean
         get() = fir.isCompanion
+        set(_) = mutationNotSupported()
 
-    override val isInner: Boolean
+    override var isInner: Boolean
         get() = fir.isInner
+        set(_) = mutationNotSupported()
 
-    override val isData: Boolean
+    override var isData: Boolean
         get() = fir.isData
+        set(_) = mutationNotSupported()
 
-    override val isExternal: Boolean
+    override var isExternal: Boolean
         get() = fir.isExternal
+        set(_) = mutationNotSupported()
 
-    override val isValue: Boolean
+    override var isValue: Boolean
         get() = fir.isInline
+        set(_) = mutationNotSupported()
 
-    override val isExpect: Boolean
+    override var isExpect: Boolean
         get() = fir.isExpect
+        set(_) = mutationNotSupported()
 
-    override val isFun: Boolean
+    override var isFun: Boolean
         get() = fir.isFun
+        set(_) = mutationNotSupported()
 
     override var superTypes: List<IrType> by lazyVar(lock) {
         fir.superTypeRefs.map { it.toIrType(typeConverter) }
@@ -137,9 +140,7 @@ class Fir2IrLazyClass(
 
     override var valueClassRepresentation: ValueClassRepresentation<IrSimpleType>?
         get() = computeValueClassRepresentation(fir)
-        set(_) {
-            error("Mutating Fir2Ir lazy elements is not possible")
-        }
+        set(_) = mutationNotSupported()
 
     private val fakeOverridesByName = mutableMapOf<Name, Collection<IrDeclaration>>()
 

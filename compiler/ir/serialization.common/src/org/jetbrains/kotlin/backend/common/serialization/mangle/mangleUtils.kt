@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.common.serialization.mangle
 
 import org.jetbrains.kotlin.name.FqName
 
-fun <T> Collection<T>.collectForMangler(builder: StringBuilder, params: MangleConstant, collect: StringBuilder.(T) -> Unit) {
+fun <T> Iterable<T>.collectForMangler(builder: StringBuilder, params: MangleConstant, collect: StringBuilder.(T) -> Unit) {
     var first = true
 
     builder.append(params.prefix)

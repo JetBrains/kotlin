@@ -187,6 +187,12 @@ public class SymbolLightClassesByFqNameForSourceTestGenerated extends AbstractSy
     }
 
     @Test
+    @TestMetadata("InvalidJavaIdentifierAsAnnotationArgument.kt")
+    public void testInvalidJavaIdentifierAsAnnotationArgument() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/InvalidJavaIdentifierAsAnnotationArgument.kt");
+    }
+
+    @Test
     @TestMetadata("JavaBetween.kt")
     public void testJavaBetween() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/JavaBetween.kt");
@@ -232,6 +238,12 @@ public class SymbolLightClassesByFqNameForSourceTestGenerated extends AbstractSy
     @TestMetadata("OnlySecondaryConstructors.kt")
     public void testOnlySecondaryConstructors() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/OnlySecondaryConstructors.kt");
+    }
+
+    @Test
+    @TestMetadata("PrivateObject.kt")
+    public void testPrivateObject() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/PrivateObject.kt");
     }
 
     @Test
@@ -462,6 +474,12 @@ public class SymbolLightClassesByFqNameForSourceTestGenerated extends AbstractSy
         }
 
         @Test
+        @TestMetadata("InternalFacadeClass.kt")
+        public void testInternalFacadeClass() throws Exception {
+            runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/facades/InternalFacadeClass.kt");
+        }
+
+        @Test
         @TestMetadata("MultiFile.kt")
         public void testMultiFile() throws Exception {
             runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/facades/MultiFile.kt");
@@ -584,6 +602,12 @@ public class SymbolLightClassesByFqNameForSourceTestGenerated extends AbstractSy
         }
 
         @Test
+        @TestMetadata("ImplicitArrayWithFlexibleParameterTypes.kt")
+        public void testImplicitArrayWithFlexibleParameterTypes() throws Exception {
+            runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/nullabilityAnnotations/ImplicitArrayWithFlexibleParameterTypes.kt");
+        }
+
+        @Test
         @TestMetadata("IntOverridesAny.kt")
         public void testIntOverridesAny() throws Exception {
             runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/nullabilityAnnotations/IntOverridesAny.kt");
@@ -611,6 +635,12 @@ public class SymbolLightClassesByFqNameForSourceTestGenerated extends AbstractSy
         @TestMetadata("PlatformTypes.kt")
         public void testPlatformTypes() throws Exception {
             runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/nullabilityAnnotations/PlatformTypes.kt");
+        }
+
+        @Test
+        @TestMetadata("PrimitiveBackedInlineClasses.kt")
+        public void testPrimitiveBackedInlineClasses() throws Exception {
+            runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/nullabilityAnnotations/PrimitiveBackedInlineClasses.kt");
         }
 
         @Test

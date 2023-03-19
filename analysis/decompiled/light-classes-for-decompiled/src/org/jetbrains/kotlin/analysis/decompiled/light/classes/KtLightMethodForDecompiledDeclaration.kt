@@ -87,7 +87,8 @@ class KtLightMethodForDecompiledDeclaration(
     override fun getSignature(substitutor: PsiSubstitutor): MethodSignature =
         MethodSignatureBackedByPsiMethod.create(this, substitutor)
 
-    override fun equals(other: Any?): Boolean = other is KtLightMethodForDecompiledDeclaration &&
+    override fun equals(other: Any?): Boolean = other === this ||
+            other is KtLightMethodForDecompiledDeclaration &&
             name == other.name &&
             funParent == other.funParent &&
             funDelegate == other.funDelegate
@@ -108,6 +109,14 @@ class KtLightMethodForDecompiledDeclaration(
         return this == another ||
                 another is KtLightMethodForDecompiledDeclaration && funDelegate.isEquivalentTo(another.funDelegate) ||
                 funDelegate.isEquivalentTo(another)
+    }
+
+    override fun accept(visitor: PsiElementVisitor) {
+        if (visitor is JavaElementVisitor) {
+            visitor.visitMethod(this)
+        } else {
+            visitor.visitElement(this)
+        }
     }
 }
 

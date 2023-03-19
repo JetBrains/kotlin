@@ -104,7 +104,7 @@ private val sharedVariablesPhase = createFileLoweringPhase(
         prerequisite = setOf(lateinitPhase)
 )
 
-private val extractLocalClassesFromInlineBodies = createFileLoweringPhase(
+private val lowerOuterThisInInlineFunctionsPhase = createFileLoweringPhase(
         { context, irFile ->
             irFile.acceptChildrenVoid(object : IrElementVisitorVoid {
                 override fun visitElement(element: IrElement) {
@@ -112,15 +112,24 @@ private val extractLocalClassesFromInlineBodies = createFileLoweringPhase(
                 }
 
                 override fun visitFunction(declaration: IrFunction) {
-                    if (declaration.isInline)
-                        context.inlineFunctionsSupport.saveNonLoweredInlineFunction(declaration)
                     declaration.acceptChildrenVoid(this)
+
+                    if (declaration.isInline)
+                        OuterThisLowering(context).lower(declaration)
                 }
             })
+        },
+        name = "LowerOuterThisInInlineFunctions",
+        description = "Lower outer this in inline functions"
+)
 
+private val extractLocalClassesFromInlineBodies = createFileLoweringPhase(
+        { context, irFile ->
             LocalClassesInInlineLambdasLowering(context).lower(irFile)
-            LocalClassesInInlineFunctionsLowering(context).lower(irFile)
-            LocalClassesExtractionFromInlineFunctionsLowering(context).lower(irFile)
+            if (!context.config.produce.isCache) {
+                LocalClassesInInlineFunctionsLowering(context).lower(irFile)
+                LocalClassesExtractionFromInlineFunctionsLowering(context).lower(irFile)
+            }
         },
         name = "ExtractLocalClassesFromInlineBodies",
         description = "Extraction of local classes from inline bodies",
@@ -321,6 +330,18 @@ private val inlinePhase = createFileLoweringPhase(
         lowering = { context: NativeGenerationState ->
             object : FileLoweringPass {
                 override fun lower(irFile: IrFile) {
+                    irFile.acceptChildrenVoid(object : IrElementVisitorVoid {
+                        override fun visitElement(element: IrElement) {
+                            element.acceptChildrenVoid(this)
+                        }
+
+                        override fun visitFunction(declaration: IrFunction) {
+                            if (declaration.isInline)
+                                context.context.inlineFunctionsSupport.savePartiallyLoweredInlineFunction(declaration)
+                            declaration.acceptChildrenVoid(this)
+                        }
+                    })
+
                     FunctionInlining(
                             context.context,
                             NativeInlineFunctionResolver(context.context, context),
@@ -492,6 +513,7 @@ private fun PhaseEngine<NativeGenerationState>.getAllLowerings() = listOfNotNull
         arrayConstructorPhase,
         lateinitPhase,
         sharedVariablesPhase,
+        lowerOuterThisInInlineFunctionsPhase,
         inventNamesForLocalClasses,
         extractLocalClassesFromInlineBodies,
         wrapInlineDeclarationsWithReifiedTypeParametersLowering,
@@ -521,7 +543,6 @@ private fun PhaseEngine<NativeGenerationState>.getAllLowerings() = listOfNotNull
         functionReferencePhase,
         singleAbstractMethodPhase,
         enumWhenPhase,
-        builtinOperatorPhase,
         finallyBlocksPhase,
         enumClassPhase,
         enumUsagePhase,
@@ -531,9 +552,10 @@ private fun PhaseEngine<NativeGenerationState>.getAllLowerings() = listOfNotNull
         coroutinesPhase,
         typeOperatorPhase,
         expressionBodyTransformPhase,
-        objectClassesPhase,
         constantInliningPhase,
+        objectClassesPhase,
         staticInitializersPhase,
+        builtinOperatorPhase,
         bridgesPhase,
         exportInternalAbiPhase.takeIf { context.config.produce.isCache },
         useInternalAbiPhase,

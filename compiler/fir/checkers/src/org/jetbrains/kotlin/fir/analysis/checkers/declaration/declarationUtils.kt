@@ -10,17 +10,12 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.modality
-import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
-import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
-import org.jetbrains.kotlin.fir.resolve.defaultType
-import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitUnitTypeRef
-import org.jetbrains.kotlin.util.OperatorNameConventions
 
 internal fun isInsideExpectClass(containingClass: FirClass, context: CheckerContext): Boolean {
     return isInsideSpecificClass(containingClass, context) { klass -> klass is FirRegularClass && klass.isExpect }
@@ -83,12 +78,6 @@ internal fun FirMemberDeclaration.isEffectivelyExternal(
 
 internal val FirClass.canHaveOpenMembers: Boolean get() = modality() != Modality.FINAL || classKind == ClassKind.ENUM_CLASS
 
-internal val FirDeclaration.isEnumEntryInitializer: Boolean
-    get() {
-        if (this !is FirConstructor || !this.isPrimary) return false
-        return (containingClassForStaticMemberAttr as? ConeClassLookupTagWithFixedSymbol)?.symbol?.classKind == ClassKind.ENUM_ENTRY
-    }
-
 // contract: returns(true) implies (this is FirMemberDeclaration<*>)
 val FirDeclaration.isLocalMember: Boolean
     get() = symbol.isLocalMember
@@ -115,18 +104,6 @@ fun FirClassSymbol<*>.primaryConstructorSymbol(): FirConstructorSymbol? {
     }
     return null
 }
-
-fun FirSimpleFunction.isTypedEqualsInValueClass(session: FirSession): Boolean =
-    containingClassLookupTag()?.toFirRegularClassSymbol(session)?.run {
-        val valueClassStarProjection = this@run.defaultType().replaceArgumentsWithStarProjections()
-        with(this@isTypedEqualsInValueClass) {
-            contextReceivers.isEmpty() && receiverParameter == null
-                    && name == OperatorNameConventions.EQUALS
-                    && this@run.isInline && valueParameters.size == 1
-                    && (returnTypeRef.isBoolean || returnTypeRef.isNothing)
-                    && valueParameters[0].returnTypeRef.coneType.let { it is ConeClassLikeType && it.replaceArgumentsWithStarProjections() == valueClassStarProjection }
-        }
-    } ?: false
 
 fun FirTypeRef.needsMultiFieldValueClassFlattening(session: FirSession) = with(session.typeContext) {
     coneType.typeConstructor().isMultiFieldValueClass() && !coneType.isNullable

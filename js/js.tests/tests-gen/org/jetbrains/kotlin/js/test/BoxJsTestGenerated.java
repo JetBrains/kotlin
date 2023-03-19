@@ -861,6 +861,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         public void testSuspendFunctionIsAs() throws Exception {
             runTest("js/js.translator/testData/box/coroutines/suspendFunctionIsAs.kt");
         }
+
+        @Test
+        @TestMetadata("suspendFunctionalInterface.kt")
+        public void testSuspendFunctionalInterface() throws Exception {
+            runTest("js/js.translator/testData/box/coroutines/suspendFunctionalInterface.kt");
+        }
     }
 
     @Nested
@@ -3817,6 +3823,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             @TestMetadata("simpleIsInterface.kt")
             public void testSimpleIsInterface() throws Exception {
                 runTest("js/js.translator/testData/box/expression/typeCheck/simpleIsInterface.kt");
+            }
+
+            @Test
+            @TestMetadata("simpleIsObject.kt")
+            public void testSimpleIsObject() throws Exception {
+                runTest("js/js.translator/testData/box/expression/typeCheck/simpleIsObject.kt");
             }
         }
 
@@ -7127,6 +7139,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         }
 
         @Test
+        @TestMetadata("transitiveDependency.kt")
+        public void testTransitiveDependency() throws Exception {
+            runTest("js/js.translator/testData/box/multiModule/transitiveDependency.kt");
+        }
+
+        @Test
         @TestMetadata("useElementsFromDefaultPackageInAnotherModule.kt")
         public void testUseElementsFromDefaultPackageInAnotherModule() throws Exception {
             runTest("js/js.translator/testData/box/multiModule/useElementsFromDefaultPackageInAnotherModule.kt");
@@ -8914,6 +8932,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         @TestMetadata("findAssociatedObject.kt")
         public void testFindAssociatedObject() throws Exception {
             runTest("js/js.translator/testData/box/reflection/findAssociatedObject.kt");
+        }
+
+        @Test
+        @TestMetadata("findAssociatedObjectInSeparatedFile.kt")
+        public void testFindAssociatedObjectInSeparatedFile() throws Exception {
+            runTest("js/js.translator/testData/box/reflection/findAssociatedObjectInSeparatedFile.kt");
         }
 
         @Test

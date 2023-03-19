@@ -13,16 +13,18 @@ import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
+import org.jetbrains.kotlin.light.classes.symbol.cachedValue
 import org.jetbrains.kotlin.light.classes.symbol.codeReferences.SymbolLightPsiJavaCodeReferenceElementWithNoReference
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForEnumEntry
 import org.jetbrains.kotlin.light.classes.symbol.isOriginEquivalentTo
+import org.jetbrains.kotlin.light.classes.symbol.modifierLists.InitializedModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 import org.jetbrains.kotlin.psi.KtEnumEntry
 
 internal class SymbolLightClassForEnumEntry(
     private val enumConstant: SymbolLightFieldForEnumEntry,
-    private val enumClass: SymbolLightClassForClassOrObject,
+    private val enumClass: SymbolLightClassBase,
     ktModule: KtModule,
 ) : SymbolLightClassBase(ktModule, enumConstant.manager), PsiEnumConstantInitializer {
     override fun getBaseClassType(): PsiClassType = enumConstant.type as PsiClassType //???TODO
@@ -52,8 +54,7 @@ internal class SymbolLightClassForEnumEntry(
     private val _modifierList: PsiModifierList by lazyPub {
         SymbolLightClassModifierList(
             containingDeclaration = this,
-            staticModifiers = setOf(PsiModifier.STATIC, PsiModifier.FINAL),
-            annotationsComputer = null,
+            modifiersBox = InitializedModifiersBox(PsiModifier.STATIC, PsiModifier.FINAL),
         )
     }
 
@@ -63,7 +64,7 @@ internal class SymbolLightClassForEnumEntry(
 
     override fun getContainingClass(): PsiClass = enumClass
 
-    override fun getTypeParameters(): Array<PsiTypeParameter> = emptyArray()
+    override fun getTypeParameters(): Array<PsiTypeParameter> = PsiTypeParameter.EMPTY_ARRAY
     override fun getTypeParameterList(): PsiTypeParameterList? = null
 
     override fun getQualifiedName(): String = "${enumConstant.containingClass.qualifiedName}.${enumConstant.name}"
@@ -80,6 +81,7 @@ internal class SymbolLightClassForEnumEntry(
         } ?: return@lazyPub null
 
         KotlinSuperTypeListBuilder(
+            this,
             kotlinOrigin = enumClass.kotlinOrigin?.getSuperTypeList(),
             manager = manager,
             language = language,
@@ -100,7 +102,7 @@ internal class SymbolLightClassForEnumEntry(
 
     override fun getScope(): PsiElement = parent
 
-    private val _ownFields: List<KtLightField> by lazyPub {
+    override fun getOwnFields(): List<KtLightField> = cachedValue {
         enumConstant.withEnumEntrySymbol { enumEntrySymbol ->
             val result = mutableListOf<KtLightField>()
 
@@ -111,9 +113,7 @@ internal class SymbolLightClassForEnumEntry(
         }
     }
 
-    override fun getOwnFields(): List<KtLightField> = _ownFields
-
-    private val _ownMethods: List<KtLightMethod> by lazyPub {
+    override fun getOwnMethods(): List<KtLightMethod> = cachedValue {
         enumConstant.withEnumEntrySymbol { enumEntrySymbol ->
             val result = mutableListOf<KtLightMethod>()
 
@@ -127,20 +127,16 @@ internal class SymbolLightClassForEnumEntry(
         }
     }
 
-    override fun getOwnMethods(): List<KtLightMethod> = _ownMethods
-    override fun getOwnInnerClasses(): MutableList<PsiClass> = mutableListOf()
+    override fun getOwnInnerClasses(): List<PsiClass> = emptyList()
+
     override fun isInheritor(baseClass: PsiClass, checkDeep: Boolean): Boolean {
         if (!checkDeep) return baseClass == enumClass
 
         return super.isInheritor(baseClass, checkDeep = true)
     }
 
-    private val _identifier: PsiIdentifier by lazyPub {
-        KtLightIdentifier(this, kotlinOrigin)
-    }
-
     // probably should be dropped after KT-54798
-    override fun getNameIdentifier(): PsiIdentifier = _identifier
+    override fun getNameIdentifier(): PsiIdentifier = KtLightIdentifier(this, kotlinOrigin)
     override fun getName(): String? = kotlinOrigin.name
 
     override fun isDeprecated(): Boolean = false

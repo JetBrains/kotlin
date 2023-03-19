@@ -10,7 +10,10 @@ import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 /**
  * The version of the metadata serialized by the compiler and deserialized by the compiler and reflection.
  * This version includes the version of the core protobuf messages (metadata.proto) as well as JVM extensions (jvm_metadata.proto).
- */
+ *
+ * Please note that [JvmMetadataVersion] is different compared to other [BinaryVersion]s. The version bump **DOESN'T** obey [BinaryVersion]
+ * rules. Starting from Kotlin 1.4, [JvmMetadataVersion] major and minor tokens always match the compilers corresponding version tokens.
+ **/
 class JvmMetadataVersion(versionArray: IntArray, val isStrictSemantics: Boolean) : BinaryVersion(*versionArray) {
     constructor(vararg numbers: Int) : this(numbers, isStrictSemantics = false)
 

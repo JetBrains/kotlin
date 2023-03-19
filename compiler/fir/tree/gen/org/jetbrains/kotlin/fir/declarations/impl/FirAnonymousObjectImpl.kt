@@ -103,6 +103,10 @@ internal class FirAnonymousObjectImpl(
         resolvePhase = newResolvePhase
     }
 
+    override fun replaceStatus(newStatus: FirDeclarationStatus) {
+        status = newStatus
+    }
+
     override fun replaceDeprecationsProvider(newDeprecationsProvider: DeprecationsProvider) {
         deprecationsProvider = newDeprecationsProvider
     }

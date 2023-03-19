@@ -171,7 +171,7 @@ private fun printType(type: KmType): String {
         } else {
             val (variance, argumentType) = argument
             if (variance == null || argumentType == null)
-                throw InconsistentKotlinMetadataException("Variance and type must be set for non-star type projection")
+                throw IllegalArgumentException("Variance and type must be set for non-star type projection")
             val argumentTypeString = printType(argumentType)
             buildString {
                 if (variance != KmVariance.INVARIANT) {
@@ -285,7 +285,8 @@ private fun renderAnnotationArgument(arg: KmAnnotationArgument): String =
         is KmAnnotationArgument.ULongValue -> arg.value.toString() + "uL"
         is KmAnnotationArgument.BooleanValue -> arg.value.toString()
         is KmAnnotationArgument.StringValue -> "\"${arg.value.sanitize(quote = '"')}\""
-        is KmAnnotationArgument.KClassValue -> buildString {
+        is KmAnnotationArgument.KClassValue -> "${arg.className}::class"
+        is KmAnnotationArgument.ArrayKClassValue -> buildString {
             repeat(arg.arrayDimensionCount) { append("kotlin/Array<") }
             append(arg.className).append("::class")
             repeat(arg.arrayDimensionCount) { append(">") }
@@ -368,6 +369,10 @@ private fun StringBuilder.appendDeclarationContainerExtensions(
         appendLine()
         appendLine("  // module name: $moduleName")
     }
+}
+
+private fun <T, R : Comparable<R>> Iterable<T>.sortIfNeededBy(settings: KotlinpSettings, selector: (T) -> R?): Iterable<T> {
+    return if (settings.sortDeclarations) sortedBy(selector) else this
 }
 
 @ExperimentalContracts
@@ -545,7 +550,7 @@ class ClassPrinter(private val settings: KotlinpSettings) : AbstractPrinter<Kotl
         val jvmFlags: Flags = kclass.jvmFlags
         anonymousObjectOriginName = kclass.anonymousObjectOriginName
 
-        kclass.localDelegatedProperties.forEach { p ->
+        kclass.localDelegatedProperties.sortIfNeededBy(settings) { it.getterSignature?.toString() ?: it.name }.forEach { p ->
             visitProperty(
                 p, settings, StringBuilder().also { localDelegatedProperties.add(it) }
             )
@@ -571,14 +576,16 @@ class ClassPrinter(private val settings: KotlinpSettings) : AbstractPrinter<Kotl
         kmClass.typeParameters.forEach { typeParams.add(printTypeParameter(it, settings)) }
         supertypes.addAll(kmClass.supertypes.map { printType(it) })
 
-        kmClass.constructors.forEach { visitConstructor(it, sb) }
-        kmClass.functions.forEach { visitFunction(it, settings, sb) }
-        kmClass.properties.forEach { visitProperty(it, settings, sb) }
-        kmClass.typeAliases.forEach { visitTypeAlias(it, settings, sb) }
+        kmClass.constructors.sortIfNeededBy(settings) { it.signature.toString() }.forEach { visitConstructor(it, sb) }
+        kmClass.functions.sortIfNeededBy(settings) { it.signature.toString() }.forEach { visitFunction(it, settings, sb) }
+        kmClass.properties.sortIfNeededBy(settings) {
+            it.getterSignature?.toString() ?: it.name
+        }.forEach { visitProperty(it, settings, sb) }
+        kmClass.typeAliases.sortIfNeededBy(settings) { it.name }.forEach { visitTypeAlias(it, settings, sb) }
         kmClass.companionObject?.let { visitCompanionObject(it) }
         kmClass.nestedClasses.forEach { visitNestedClass(it) }
         kmClass.enumEntries.forEach { visitEnumEntry(it) }
-        kmClass.sealedSubclasses.forEach { visitSealedSubclass(it) }
+        kmClass.sealedSubclasses.sortIfNeededBy(settings) { it }.forEach { visitSealedSubclass(it) }
         kmClass.inlineClassUnderlyingPropertyName?.let { visitInlineClassUnderlyingPropertyName(it) }
         kmClass.inlineClassUnderlyingType?.let { visitInlineClassUnderlyingType(printType(it)) }
         kmClass.contextReceiverTypes.forEach { contextReceiverTypes.add(printType(it)) }
@@ -599,16 +606,18 @@ abstract class PackagePrinter(private val settings: KotlinpSettings) {
         val localDelegatedProperties = mutableListOf<StringBuilder>()
         val moduleName: String? = kmPackage.moduleName
 
-        kmPackage.localDelegatedProperties.forEach { p ->
+        kmPackage.localDelegatedProperties.sortIfNeededBy(settings) { it.getterSignature?.toString() ?: it.name }.forEach { p ->
             visitProperty(p, settings, StringBuilder().also { localDelegatedProperties.add(it) })
         }
         sb.appendDeclarationContainerExtensions(settings, localDelegatedProperties, moduleName)
     }
 
     fun print(kmPackage: KmPackage) {
-        kmPackage.functions.forEach { visitFunction(it, settings, sb) }
-        kmPackage.properties.forEach { visitProperty(it, settings, sb) }
-        kmPackage.typeAliases.forEach { visitTypeAlias(it, settings, sb) }
+        kmPackage.functions.sortIfNeededBy(settings) { it.signature.toString() }.forEach { visitFunction(it, settings, sb) }
+        kmPackage.properties.sortIfNeededBy(settings) {
+            it.getterSignature?.toString() ?: it.name
+        }.forEach { visitProperty(it, settings, sb) }
+        kmPackage.typeAliases.sortIfNeededBy(settings) { it.name }.forEach { visitTypeAlias(it, settings, sb) }
         visitExtensions(kmPackage)
         sb.appendLine("}")
     }

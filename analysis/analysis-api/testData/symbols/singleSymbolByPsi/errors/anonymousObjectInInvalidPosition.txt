@@ -5,7 +5,15 @@ KtAnonymousObjectSymbol:
   name: null
   origin: SOURCE
   superTypes: [
-    A<kotlin/Int>
+    KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: [
+        KtUsualClassType:
+          annotationsList: []
+          ownTypeArguments: []
+          type: kotlin/Int
+      ]
+      type: A<kotlin/Int>
   ]
   symbolKind: LOCAL
   typeParameters: []

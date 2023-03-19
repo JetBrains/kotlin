@@ -90,6 +90,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         moduleKindMap.put(K2JsArgumentConstants.MODULE_COMMONJS, ModuleKind.COMMON_JS);
         moduleKindMap.put(K2JsArgumentConstants.MODULE_AMD, ModuleKind.AMD);
         moduleKindMap.put(K2JsArgumentConstants.MODULE_UMD, ModuleKind.UMD);
+        moduleKindMap.put(K2JsArgumentConstants.MODULE_ES, ModuleKind.ES);
 
         sourceMapContentEmbeddingMap.put(K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_ALWAYS, SourceMapSourceEmbedding.ALWAYS);
         sourceMapContentEmbeddingMap.put(K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_NEVER, SourceMapSourceEmbedding.NEVER);
@@ -184,27 +185,10 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         }
 
         LanguageVersionSettings languageVersionSettings = CommonConfigurationKeysKt.getLanguageVersionSettings(configuration);
-        if (!Objects.equals(CompilerSystemProperties.KOTLIN_JS_COMPILER_LEGACY_FORCE_ENABLED.getValue(), "true") && languageVersionSettings.getLanguageVersion().compareTo(LanguageVersion.KOTLIN_1_9) >= 0) {
+
+        if (!arguments.getForceDeprecatedLegacyCompilerUsage() && languageVersionSettings.getLanguageVersion().compareTo(LanguageVersion.KOTLIN_1_9) >= 0) {
             messageCollector.report(ERROR, "Old Kotlin/JS compiler is no longer supported. Please migrate to the new JS IR backend", null);
             return COMPILATION_ERROR;
-        }
-
-        String deprecatedMessage = "==========\n" +
-                                   "This project currently uses the Kotlin/JS Legacy compiler backend, which has been deprecated and will be removed in a future release.\n" +
-                                   "\n" +
-                                   "Please migrate your project to the new IR-based compiler (https://kotl.in/jsir).\n" +
-                                   "Because your build tool will not support the new Kotlin/JS compiler, you will also need to migrate to Gradle.\n" +
-                                   "\n" +
-                                   "You can continue to use the deprecated legacy compiler in the current version of the toolchain by providing the compiler option -Xuse-deprecated-legacy-compiler.\n" +
-                                   "==========";
-
-        if (!arguments.getUseDeprecatedLegacyCompiler()) {
-            messageCollector.report(ERROR, deprecatedMessage, null);
-            return COMPILATION_ERROR;
-        }
-
-        if (!arguments.getLegacyDeprecatedNoWarn()) {
-            messageCollector.report(STRONG_WARNING, deprecatedMessage, null);
         }
 
         if (arguments.getFreeArgs().isEmpty() && (!incrementalCompilationIsEnabledForJs(arguments))) {

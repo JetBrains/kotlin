@@ -22,13 +22,14 @@ import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.getPrimitiveType
 import org.jetbrains.kotlin.ir.types.isMarkedNullable
+import org.jetbrains.kotlin.ir.types.makeNullable
 
 class IrConstImpl<T>(
     override val startOffset: Int,
     override val endOffset: Int,
     override var type: IrType,
-    override val kind: IrConstKind<T>,
-    override val value: T
+    override var kind: IrConstKind<T>,
+    override var value: T
 ) : IrConst<T>() {
     companion object {
         fun string(startOffset: Int, endOffset: Int, type: IrType, value: String): IrConstImpl<String> =
@@ -78,7 +79,7 @@ class IrConstImpl<T>(
                 PrimitiveType.FLOAT -> float(startOffset, endOffset, type, 0.0F)
                 PrimitiveType.LONG -> long(startOffset, endOffset, type, 0)
                 PrimitiveType.DOUBLE -> double(startOffset, endOffset, type, 0.0)
-                else -> constNull(startOffset, endOffset, type)
+                else -> constNull(startOffset, endOffset, type.makeNullable())
             }
         }
     }

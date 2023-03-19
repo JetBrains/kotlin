@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.annotations
 
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.name.ClassId
 
 /**
@@ -18,36 +17,41 @@ public interface KtAnnotated {
 /**
  * A list of annotations applied.
  *
+ * To check if annotation is present, please use [hasAnnotation].
+ * [annotationInfos] is more preferable if suits your needs because it is lightweight.
+ *
  * @see [KtAnnotationsList.annotations]
  */
-public val KtAnnotated.annotations: List<KtAnnotationApplication>
+public val KtAnnotated.annotations: List<KtAnnotationApplicationWithArgumentsInfo>
     get() = annotationsList.annotations
 
 /**
- * Checks if entity has annotation with specified [classId].
+ * A list of annotation infos.
  *
- * @see [KtAnnotationsList.hasAnnotation]
+ * @see [KtAnnotationsList.annotationInfos]
  */
-public fun KtAnnotated.hasAnnotation(classId: ClassId): Boolean = annotationsList.hasAnnotation(classId)
+public val KtAnnotated.annotationInfos: List<KtAnnotationApplicationInfo>
+    get() = annotationsList.annotationInfos
 
 /**
- * Checks if entity has annotation with specified [classId] and [useSiteTarget].
+ * Checks if entity has annotation with specified [classId] and filtered by [useSiteTargetFilter].
  *
  * @see [KtAnnotationsList.hasAnnotation]
  */
 public fun KtAnnotated.hasAnnotation(
     classId: ClassId,
-    useSiteTarget: AnnotationUseSiteTarget?,
-    acceptAnnotationsWithoutUseSite: Boolean = false,
-): Boolean = annotationsList.hasAnnotation(classId, useSiteTarget, acceptAnnotationsWithoutUseSite)
+    useSiteTargetFilter: AnnotationUseSiteTargetFilter = AnyAnnotationUseSiteTargetFilter,
+): Boolean = annotationsList.hasAnnotation(classId, useSiteTargetFilter)
 
 /**
- * A list of annotations applied with specified [classId].
+ * A list of annotations applied with specified [classId] and filtered by [useSiteTargetFilter].
  *
  * @see [KtAnnotationsList.annotationClassIds]
  */
-public fun KtAnnotated.annotationsByClassId(classId: ClassId): List<KtAnnotationApplication> =
-    annotationsList.annotationsByClassId(classId)
+public fun KtAnnotated.annotationsByClassId(
+    classId: ClassId,
+    useSiteTargetFilter: AnnotationUseSiteTargetFilter = AnyAnnotationUseSiteTargetFilter,
+): List<KtAnnotationApplicationWithArgumentsInfo> = annotationsList.annotationsByClassId(classId, useSiteTargetFilter)
 
 /**
  * A list of annotations applied.

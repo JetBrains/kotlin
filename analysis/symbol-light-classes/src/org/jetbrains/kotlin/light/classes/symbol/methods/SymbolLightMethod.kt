@@ -108,10 +108,6 @@ internal abstract class SymbolLightMethod<FType : KtFunctionLikeSymbol> private 
         }
     }
 
-    private val _identifier: PsiIdentifier by lazyPub {
-        KtLightIdentifier(this, functionDeclaration)
-    }
-
     private val _isDeprecated: Boolean by lazyPub {
         withFunctionSymbol { functionSymbol ->
             functionSymbol.hasDeprecatedAnnotation()
@@ -120,7 +116,7 @@ internal abstract class SymbolLightMethod<FType : KtFunctionLikeSymbol> private 
 
     override fun isDeprecated(): Boolean = _isDeprecated
 
-    override fun getNameIdentifier(): PsiIdentifier = _identifier
+    override fun getNameIdentifier(): PsiIdentifier = KtLightIdentifier(this, functionDeclaration)
 
     override fun getParameterList(): PsiParameterList = _parametersList
 
@@ -128,9 +124,8 @@ internal abstract class SymbolLightMethod<FType : KtFunctionLikeSymbol> private 
         withFunctionSymbol { functionSymbol ->
             functionSymbol.computeThrowsList(
                 builder,
-                annotationUseSiteTarget = null,
                 this@SymbolLightMethod,
-                containingClass
+                containingClass,
             )
         }
     }

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
+import org.jetbrains.kotlin.fir.contracts.FirLegacyRawContractDescription
 import org.jetbrains.kotlin.fir.contracts.builder.buildLegacyRawContractDescription
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
@@ -33,13 +34,8 @@ import org.jetbrains.kotlin.fir.references.builder.buildDelegateFieldReference
 import org.jetbrains.kotlin.fir.references.builder.buildImplicitThisReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
-import org.jetbrains.kotlin.fir.types.constructStarProjectedType
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.ConeStarProjection
-import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
-import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -48,6 +44,8 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 fun String.parseCharacter(): CharacterWithDiagnostic {
     // Strip the quotes
@@ -301,7 +299,6 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
     delegateBuilder: FirWrappedDelegateExpressionBuilder?,
     moduleData: FirModuleData,
     ownerRegularOrAnonymousObjectSymbol: FirClassSymbol<*>?,
-    ownerRegularClassTypeParametersCount: Int?,
     context: Context<T>,
     isExtension: Boolean,
 ) {
@@ -341,8 +338,7 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
                     boundSymbol = ownerRegularOrAnonymousObjectSymbol
                 }
                 typeRef = buildResolvedTypeRef {
-                    val typeParameterNumber = ownerRegularClassTypeParametersCount ?: 0
-                    type = ownerRegularOrAnonymousObjectSymbol.constructStarProjectedType(typeParameterNumber)
+                    type = context.dispatchReceiverTypesStack.last()
                 }
             }
             else -> buildConstExpression(null, ConstantValueKind.Null, null)
@@ -404,7 +400,7 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
             this.source = fakeSource
             this.moduleData = moduleData
             origin = FirDeclarationOrigin.Source
-            returnTypeRef = buildImplicitTypeRef()
+            returnTypeRef = FirImplicitTypeRefImplWithoutSource
             isGetter = true
             status = FirDeclarationStatusImpl(getterStatus?.visibility ?: Visibilities.Unknown, Modality.FINAL).apply {
                 isInline = getterStatus?.isInline ?: isInline
@@ -454,7 +450,7 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
                 containingFunctionSymbol = this@buildPropertyAccessor.symbol
                 this.moduleData = moduleData
                 origin = FirDeclarationOrigin.Source
-                returnTypeRef = buildImplicitTypeRef()
+                returnTypeRef = FirImplicitTypeRefImplWithoutSource
                 name = SpecialNames.IMPLICIT_SET_PARAMETER
                 symbol = FirValueParameterSymbol(this@generateAccessorsByDelegate.name)
                 isCrossinline = false
@@ -500,18 +496,29 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
 fun processLegacyContractDescription(block: FirBlock): FirContractDescription? {
     if (block.isContractPresentFirCheck()) {
         val contractCall = block.replaceFirstStatement<FirFunctionCall> { FirContractCallBlock(it) }
-        return buildLegacyRawContractDescription {
-            source = contractCall.source
-            this.contractCall = contractCall
-        }
+        return contractCall.toLegacyRawContractDescription()
     }
 
     return null
 }
 
+fun FirFunctionCall.toLegacyRawContractDescription(): FirLegacyRawContractDescription {
+    return buildLegacyRawContractDescription {
+        this.source = this@toLegacyRawContractDescription.source
+        this.contractCall = this@toLegacyRawContractDescription
+    }
+}
+
 fun FirBlock.isContractPresentFirCheck(): Boolean {
     val firstStatement = statements.firstOrNull() ?: return false
-    val contractCall = firstStatement as? FirFunctionCall ?: return false
+    return firstStatement.isContractBlockFirCheck()
+}
+
+@OptIn(ExperimentalContracts::class)
+fun FirStatement.isContractBlockFirCheck(): Boolean {
+    contract { returns(true) implies (this@isContractBlockFirCheck is FirFunctionCall) }
+
+    val contractCall = this as? FirFunctionCall ?: return false
     if (contractCall.calleeReference.name.asString() != "contract") return false
     val receiver = contractCall.explicitReceiver as? FirQualifiedAccessExpression ?: return true
     if (!contractCall.checkReceiver("contracts")) return false

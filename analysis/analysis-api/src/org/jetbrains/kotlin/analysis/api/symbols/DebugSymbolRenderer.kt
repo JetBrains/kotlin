@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.KtNamedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtPossiblyNamedSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtClassErrorType
 import org.jetbrains.kotlin.analysis.api.types.KtClassTypeQualifier
+import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
@@ -87,7 +88,7 @@ public class DebugSymbolRenderer(
     public fun KtAnalysisSession.renderForSubstitutionOverrideUnwrappingTest(symbol: KtSymbol): String = prettyPrint {
         if (symbol !is KtCallableSymbol) return@prettyPrint
 
-        renderSymbolHeader(symbol)
+        renderFrontendIndependentKClassNameOf(symbol)
 
         withIndent {
             appendLine()
@@ -125,8 +126,8 @@ public class DebugSymbolRenderer(
 
     context(KtAnalysisSession)
     private fun PrettyPrinter.renderSymbolInternals(symbol: KtSymbol) {
-        renderSymbolHeader(symbol)
-        val apiClass = getSymbolApiClass(symbol)
+        renderFrontendIndependentKClassNameOf(symbol)
+        val apiClass = getFrontendIndependentKClassOf(symbol)
         withIndent {
             val members = apiClass.members
                 .filterIsInstance<KProperty<*>>()
@@ -144,8 +145,8 @@ public class DebugSymbolRenderer(
     }
 
     context(KtAnalysisSession)
-    private fun PrettyPrinter.renderSymbolHeader(symbol: KtSymbol) {
-        val apiClass = getSymbolApiClass(symbol)
+    private fun PrettyPrinter.renderFrontendIndependentKClassNameOf(instanceOfClassToRender: Any) {
+        val apiClass = getFrontendIndependentKClassOf(instanceOfClassToRender)
         append(apiClass.simpleName).append(':')
     }
 
@@ -177,7 +178,7 @@ public class DebugSymbolRenderer(
             return
         }
 
-        append(getSymbolApiClass(symbol).simpleName)
+        append(getFrontendIndependentKClassOf(symbol).simpleName)
         append("(")
         when (symbol) {
             is KtClassLikeSymbol -> renderId(symbol.classIdIfNonLocal, symbol)
@@ -207,14 +208,24 @@ public class DebugSymbolRenderer(
             return
         }
 
-        if (typeToRender.annotations.isNotEmpty()) {
-            renderList(typeToRender.annotations, renderSymbolsFully = false)
-            append(' ')
-        }
+        renderFrontendIndependentKClassNameOf(typeToRender)
+        withIndent {
+            appendLine()
+            append("annotationsList: ")
+            renderAnnotationsList(typeToRender.annotationsList)
 
-        when (typeToRender) {
-            is KtClassErrorType -> append("ERROR_TYPE")
-            else -> append(typeToRender.asStringForDebugging())
+            if (typeToRender is KtNonErrorClassType) {
+                appendLine()
+                append("ownTypeArguments: ")
+                renderList(typeToRender.ownTypeArguments, renderSymbolsFully = false)
+            }
+
+            appendLine()
+            append("type: ")
+            when (typeToRender) {
+                is KtClassErrorType -> append("ERROR_TYPE")
+                else -> append(typeToRender.asStringForDebugging())
+            }
         }
     }
 
@@ -238,11 +249,15 @@ public class DebugSymbolRenderer(
     private fun PrettyPrinter.renderAnnotationApplication(call: KtAnnotationApplication) {
         renderValue(call.classId, renderSymbolsFully = false)
         append('(')
-        call.arguments.sortedBy { it.name }.forEachIndexed { index, value ->
-            if (index > 0) {
-                append(", ")
+        if (call is KtAnnotationApplicationWithArgumentsInfo) {
+            call.arguments.sortedBy { it.name }.forEachIndexed { index, value ->
+                if (index > 0) {
+                    append(", ")
+                }
+                renderValue(value, renderSymbolsFully = false)
             }
-            renderValue(value, renderSymbolsFully = false)
+        } else {
+            append("isCallWithArguments=${call.isCallWithArguments}")
         }
         append(')')
 
@@ -273,7 +288,7 @@ public class DebugSymbolRenderer(
                 .renderKtContractEffectDeclaration(value, endWithNewLine = false)
             is KtNamedAnnotationValue -> renderNamedConstantValue(value)
             is KtInitializerValue -> renderKtInitializerValue(value)
-            is KtContextReceiver -> rendeContextReceiver(value)
+            is KtContextReceiver -> renderContextReceiver(value)
             is KtAnnotationApplication -> renderAnnotationApplication(value)
             is KtAnnotationsList -> renderAnnotationsList(value)
             is KtModule -> renderKtModule(value)
@@ -317,19 +332,21 @@ public class DebugSymbolRenderer(
     }
 
     context(KtAnalysisSession)
-    private fun PrettyPrinter.rendeContextReceiver(receiver: KtContextReceiver) {
-        append("ContextReceiver(")
-        receiver.label?.let { label ->
-            renderValue(label, renderSymbolsFully = false)
-            append("@")
+    private fun PrettyPrinter.renderContextReceiver(receiver: KtContextReceiver) {
+        append("KtContextReceiver:")
+        withIndent {
+            appendLine()
+            append("label: ")
+            renderValue(receiver.label, renderSymbolsFully = false)
+            appendLine()
+            append("type: ")
+            renderType(receiver.type)
         }
-        renderType(receiver.type)
-        append(")")
     }
 
     context(KtAnalysisSession)
     private fun PrettyPrinter.renderKtModule(ktModule: KtModule) {
-        val ktModuleClass = ktModule::class.allSuperclasses.filter { it in ktModuleSubclasses }.first()
+        val ktModuleClass = ktModule::class.allSuperclasses.first { it in ktModuleSubclasses }
         append("${ktModuleClass.simpleName} \"${ktModule.moduleDescription}\"")
     }
 
@@ -375,8 +392,8 @@ public class DebugSymbolRenderer(
         renderList(value.annotations, renderSymbolsFully = false)
     }
 
-    private fun getSymbolApiClass(symbol: KtSymbol): KClass<*> {
-        var current: Class<in KtSymbol> = symbol.javaClass
+    private fun getFrontendIndependentKClassOf(instanceOfClass: Any): KClass<*> {
+        var current: Class<*> = instanceOfClass.javaClass
 
         while (true) {
             val className = current.name

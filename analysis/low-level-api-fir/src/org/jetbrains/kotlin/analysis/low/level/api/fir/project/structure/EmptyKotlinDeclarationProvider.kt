@@ -6,7 +6,10 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure
 
 import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
-import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 
 internal object EmptyKotlinDeclarationProvider : KotlinDeclarationProvider() {
@@ -20,4 +23,5 @@ internal object EmptyKotlinDeclarationProvider : KotlinDeclarationProvider() {
     override fun getTopLevelCallableNamesInPackage(packageFqName: FqName) = emptySet<Name>()
     override fun findFilesForFacadeByPackage(packageFqName: FqName) = emptyList<KtFile>()
     override fun findFilesForFacade(facadeFqName: FqName) = emptyList<KtFile>()
+    override fun findInternalFilesForFacade(facadeFqName: FqName) = emptyList<KtFile>()
 }

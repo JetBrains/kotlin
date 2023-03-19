@@ -49,7 +49,7 @@ internal object EmptyArrayMap : ArrayMap<Nothing> {
   override operator fun iterator(): Iterator<Nothing> {
     return { // BLOCK
       local class <no name provided> : Iterator<Nothing> {
-        private constructor() /* primary */ {
+        constructor() /* primary */ {
           super/*Any*/()
           /* <init>() */
 
@@ -109,7 +109,7 @@ internal class OneElementArrayMap<T : Any> : ArrayMap<T> {
   override operator fun iterator(): Iterator<T> {
     return { // BLOCK
       local class <no name provided> : Iterator<T> {
-        private constructor() /* primary */ {
+        constructor() /* primary */ {
           super/*Any*/()
           /* <init>() */
 
@@ -195,7 +195,7 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T> {
         val <unary>: Int = <this>.<get-size>()
         <this>.<set-size>(<set-?> = <unary>.inc())
         <unary>
-      }
+      } /*~> Unit */
     }
     <this>.<get-data>().set(index = index, value = value)
   }
@@ -211,7 +211,7 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T> {
   override operator fun iterator(): Iterator<T> {
     return { // BLOCK
       local class <no name provided> : AbstractIterator<T> {
-        private constructor() /* primary */ {
+        constructor() /* primary */ {
           super/*AbstractIterator*/<T>()
           /* <init>() */
 
@@ -224,11 +224,11 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T> {
 
         protected override fun computeNext() {
           { // BLOCK
-            do// COMPOSITE {
-            val <unary>: Int = <this>.<get-index>()
-            <this>.<set-index>(<set-?> = <unary>.inc())
-            <unary>
-            // }            while (when {
+            do{ // BLOCK
+              val <unary>: Int = <this>.<get-index>()
+              <this>.<set-index>(<set-?> = <unary>.inc())
+              <unary>
+            }            while (when {
               less(arg0 = <this>.<get-index>(), arg1 = <this>.<get-data>().<get-size>()) -> EQEQ(arg0 = <this>.<get-data>().get(index = <this>.<get-index>()), arg1 = null)
               else -> false
             })
@@ -251,7 +251,7 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T> {
         val <unary>: Int = <this>.<get-size>()
         <this>.<set-size>(<set-?> = <unary>.dec())
         <unary>
-      }
+      } /*~> Unit */
     }
     <this>.<get-data>().set(index = index, value = null)
   }

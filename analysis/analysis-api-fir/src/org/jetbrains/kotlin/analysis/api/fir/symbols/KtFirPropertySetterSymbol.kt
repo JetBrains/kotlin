@@ -8,13 +8,12 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.requireOwnerPointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KtPropertyAccessorSymbolPointer
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySetterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtReceiverParameterSymbol
@@ -22,7 +21,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KtType
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -37,9 +35,7 @@ import org.jetbrains.kotlin.name.CallableId
 
 internal class KtFirPropertySetterSymbol(
     override val firSymbol: FirPropertyAccessorSymbol,
-    override val firResolveSession: LLFirResolveSession,
-    override val token: KtLifetimeToken,
-    private val builder: KtSymbolByFirBuilder,
+    override val analysisSession: KtFirAnalysisSession,
 ) : KtPropertySetterSymbol(), KtFirSymbol<FirPropertyAccessorSymbol> {
 
     init {
@@ -55,10 +51,10 @@ internal class KtFirPropertySetterSymbol(
             if (firSymbol.isOverride) return true
             val propertySymbol = firSymbol.fir.propertySymbol
             if (!propertySymbol.isOverride) return false
-            val session = firResolveSession.useSiteFirSession
+            val session = analysisSession.useSiteSession
             val containingClassScope = firSymbol.dispatchReceiverType?.scope(
                 session,
-                firResolveSession.getScopeSessionFor(session),
+                analysisSession.getScopeSessionFor(session),
                 FakeOverrideTypeCalculator.DoNothing,
                 requiredPhase = FirResolvePhase.STATUS,
             ) ?: return false
@@ -74,7 +70,7 @@ internal class KtFirPropertySetterSymbol(
     override val annotationsList by cached {
         KtFirAnnotationListForDeclaration.create(
             firSymbol,
-            firResolveSession.useSiteFirSession,
+            analysisSession.useSiteSession,
             token,
         )
     }

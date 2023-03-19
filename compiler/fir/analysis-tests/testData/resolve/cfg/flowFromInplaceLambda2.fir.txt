@@ -11,9 +11,9 @@ FILE: flowFromInplaceLambda2.kt
         ^someCompletedCall R|<local>/arg|
     }
     public final fun test1(x: R|kotlin/String?|): R|kotlin/Unit| {
-        R|/foo|<R|kotlin/Int|>(R|/id|<R|kotlin/Nothing?|>(R|kotlin/run|<R|kotlin/Nothing?|>(<L> = run@fun <anonymous>(): R|kotlin/Nothing?| <inline=Inline, kind=EXACTLY_ONCE>  {
+        R|/foo|<R|kotlin/Int|>(R|/id|<R|kotlin/Int?|>(R|kotlin/run|<R|kotlin/Int?|>(<L> = run@fun <anonymous>(): R|kotlin/Int?| <inline=Inline, kind=EXACTLY_ONCE>  {
             (R|<local>/x| as R|kotlin/String|)
-            ^ R|/n|<R|kotlin/Nothing?|>()
+            ^ R|/n|<R|kotlin/Int?|>()
         }
         )), Int(1), R|kotlin/run|<R|kotlin/Int|>(<L> = run@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
             R|<local>/x|.R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|
@@ -23,9 +23,9 @@ FILE: flowFromInplaceLambda2.kt
         R|<local>/x|.R|kotlin/String.length|
     }
     public final fun test2(x: R|kotlin/String?|): R|kotlin/Unit| {
-        R|/foo|<R|kotlin/Int|>(R|/id|<R|kotlin/Nothing?|>(R|kotlin/run|<R|kotlin/Nothing?|>(<L> = run@fun <anonymous>(): R|kotlin/Nothing?| <inline=Inline, kind=EXACTLY_ONCE>  {
+        R|/foo|<R|kotlin/Int|>(R|/id|<R|kotlin/Int?|>(R|kotlin/run|<R|kotlin/Int?|>(<L> = run@fun <anonymous>(): R|kotlin/Int?| <inline=Inline, kind=EXACTLY_ONCE>  {
             (R|<local>/x| as R|kotlin/String|)
-            ^ R|/n|<R|kotlin/Nothing?|>()
+            ^ R|/n|<R|kotlin/Int?|>()
         }
         )), R|/someCompletedCall|(Int(1)), R|kotlin/run|<R|kotlin/Int|>(<L> = run@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
             R|<local>/x|.R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|
@@ -35,9 +35,9 @@ FILE: flowFromInplaceLambda2.kt
         R|<local>/x|.R|kotlin/String.length|
     }
     public final fun test3(x: R|kotlin/String?|): R|kotlin/Unit| {
-        R|/foo|<R|kotlin/Int|>(R|/id|<R|kotlin/Nothing?|>(R|kotlin/run|<R|kotlin/Nothing?|>(<L> = run@fun <anonymous>(): R|kotlin/Nothing?| <inline=Inline, kind=EXACTLY_ONCE>  {
+        R|/foo|<R|kotlin/Int|>(R|/id|<R|kotlin/Int?|>(R|kotlin/run|<R|kotlin/Int?|>(<L> = run@fun <anonymous>(): R|kotlin/Int?| <inline=Inline, kind=EXACTLY_ONCE>  {
             (R|<local>/x| as R|kotlin/String|)
-            ^ R|/n|<R|kotlin/Nothing?|>()
+            ^ R|/n|<R|kotlin/Int?|>()
         }
         )), when () {
             Boolean(true) ->  {
@@ -58,17 +58,17 @@ FILE: flowFromInplaceLambda2.kt
         lvar p: R|kotlin/String?| = R|<local>/x|
         when () {
             !=(R|<local>/p|, Null(null)) ->  {
-                R|/foo|<R|kotlin/Int|>(R|/id|<R|kotlin/Nothing?|>(when () {
+                R|/foo|<R|kotlin/Int|>(R|/id|<R|kotlin/Int?|>(when () {
                     Boolean(true) ->  {
-                        R|kotlin/run|<R|kotlin/Nothing?|>(<L> = run@fun <anonymous>(): R|kotlin/Nothing?| <inline=Inline, kind=EXACTLY_ONCE>  {
+                        R|kotlin/run|<R|kotlin/Int?|>(<L> = run@fun <anonymous>(): R|kotlin/Int?| <inline=Inline, kind=EXACTLY_ONCE>  {
                             R|<local>/p| = Null(null)
-                            ^ R|/n|<R|kotlin/Nothing?|>()
+                            ^ R|/n|<R|kotlin/Int?|>()
                         }
                         )
                     }
                     else ->  {
-                        R|kotlin/run|<R|kotlin/Nothing?|>(<L> = run@fun <anonymous>(): R|kotlin/Nothing?| <inline=Inline, kind=EXACTLY_ONCE>  {
-                            ^ R|/n|<R|kotlin/Nothing?|>()
+                        R|kotlin/run|<R|kotlin/Int?|>(<L> = run@fun <anonymous>(): R|kotlin/Int?| <inline=Inline, kind=EXACTLY_ONCE>  {
+                            ^ R|/n|<R|kotlin/Int?|>()
                         }
                         )
                     }
@@ -84,9 +84,9 @@ FILE: flowFromInplaceLambda2.kt
 
     }
     public final fun test5(x: R|kotlin/String?|, y: R|kotlin/String?|): R|kotlin/Unit| {
-        R|/foo|<R|kotlin/String|>(R|<local>/y|?.{ $subj$.R|kotlin/let|<R|kotlin/String|, R|kotlin/Nothing?|>(<L> = let@fun <anonymous>(it: R|kotlin/String|): R|kotlin/Nothing?| <inline=Inline, kind=EXACTLY_ONCE>  {
+        R|/foo|<R|kotlin/String|>(R|<local>/y|?.{ $subj$.R|kotlin/let|<R|kotlin/String|, R|kotlin/String?|>(<L> = let@fun <anonymous>(it: R|kotlin/String|): R|kotlin/String?| <inline=Inline, kind=EXACTLY_ONCE>  {
             (R|<local>/x| as R|kotlin/String|)
-            ^ R|/n|<R|kotlin/Nothing?|>()
+            ^ R|/n|<R|kotlin/String?|>()
         }
         ) }, Int(1), R|kotlin/run|<R|kotlin/String|>(<L> = run@fun <anonymous>(): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
             ^ String()
@@ -95,18 +95,18 @@ FILE: flowFromInplaceLambda2.kt
         R|<local>/x|.R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|
     }
     public final fun test6(x: R|kotlin/String?|): R|kotlin/Unit| {
-        R|/foo|<R|kotlin/Int|>(R|/id|<R|kotlin/Nothing?|>(when () {
+        R|/foo|<R|kotlin/Int|>(R|/id|<R|kotlin/Int?|>(when () {
             Boolean(true) ->  {
-                R|kotlin/run|<R|kotlin/Nothing?|>(<L> = run@fun <anonymous>(): R|kotlin/Nothing?| <inline=Inline, kind=EXACTLY_ONCE>  {
+                R|kotlin/run|<R|kotlin/Int?|>(<L> = run@fun <anonymous>(): R|kotlin/Int?| <inline=Inline, kind=EXACTLY_ONCE>  {
                     (R|<local>/x| as R|kotlin/String|)
-                    ^ R|/n|<R|kotlin/Nothing?|>()
+                    ^ R|/n|<R|kotlin/Int?|>()
                 }
                 )
             }
             else ->  {
-                R|kotlin/run|<R|kotlin/Nothing?|>(<L> = run@fun <anonymous>(): R|kotlin/Nothing?| <inline=Inline, kind=EXACTLY_ONCE>  {
+                R|kotlin/run|<R|kotlin/Int?|>(<L> = run@fun <anonymous>(): R|kotlin/Int?| <inline=Inline, kind=EXACTLY_ONCE>  {
                     (R|<local>/x| as R|kotlin/String|)
-                    ^ R|/n|<R|kotlin/Nothing?|>()
+                    ^ R|/n|<R|kotlin/Int?|>()
                 }
                 )
             }
@@ -122,9 +122,9 @@ FILE: flowFromInplaceLambda2.kt
         lvar p: R|kotlin/String?| = R|<local>/x|
         when () {
             !=(R|<local>/p|, Null(null)) ->  {
-                R|/foo|<R|kotlin/Int|>(R|/id|<R|kotlin/Nothing?|>(R|kotlin/run|<R|kotlin/Nothing?|>(<L> = run@fun <anonymous>(): R|kotlin/Nothing?| <inline=Inline, kind=EXACTLY_ONCE>  {
+                R|/foo|<R|kotlin/Int|>(R|/id|<R|kotlin/Int?|>(R|kotlin/run|<R|kotlin/Int?|>(<L> = run@fun <anonymous>(): R|kotlin/Int?| <inline=Inline, kind=EXACTLY_ONCE>  {
                     R|<local>/p| = Null(null)
-                    ^ R|/n|<R|kotlin/Nothing?|>()
+                    ^ R|/n|<R|kotlin/Int?|>()
                 }
                 )), Int(1), R|kotlin/run|<R|kotlin/Int|>(<L> = run@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
                     R|<local>/p|.R|kotlin/String.length<Inapplicable(UNSTABLE_SMARTCAST): kotlin/String.length>#|

@@ -184,6 +184,10 @@ class FirJavaMethod @FirImplementationDetail constructor(
     override fun replaceContextReceivers(newContextReceivers: List<FirContextReceiver>) {
         error("Body cannot be replaced for FirJavaMethod")
     }
+
+    override fun replaceStatus(newStatus: FirDeclarationStatus) {
+        status = newStatus
+    }
 }
 
 val ALL_JAVA_OPERATION_NAMES =

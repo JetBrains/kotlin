@@ -27,6 +27,8 @@ fun File.isDirectiveDefined(directive: String): Boolean = this.useLines { line -
 }
 
 fun File.removeDirectiveFromFile(directive: Directive) {
+    if (!exists()) return
+
     val directiveName = directive.name
     val directiveRegexp = "^// $directiveName(:.*)?$(\n)?".toRegex(RegexOption.MULTILINE)
     val text = readText()

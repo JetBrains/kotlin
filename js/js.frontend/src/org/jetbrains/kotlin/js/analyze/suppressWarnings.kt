@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.name.JsStandardClassIds
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.checkers.PlatformDiagnosticSuppressor
 
 private val nativeAnnotations = JsStandardClassIds.Annotations.nativeAnnotations.map { it.asSingleFqName() }
@@ -35,7 +36,8 @@ private fun DeclarationDescriptor.isLexicallyInsideJsNative(): Boolean {
 }
 
 object JsNativeDiagnosticSuppressor : PlatformDiagnosticSuppressor {
-    override fun shouldReportUnusedParameter(parameter: VariableDescriptor): Boolean = !parameter.isLexicallyInsideJsNative()
+    override fun shouldReportUnusedParameter(parameter: VariableDescriptor, bindingContext: BindingContext): Boolean =
+        !parameter.isLexicallyInsideJsNative()
 
     override fun shouldReportNoBody(descriptor: CallableMemberDescriptor): Boolean = !descriptor.isLexicallyInsideJsNative()
 }

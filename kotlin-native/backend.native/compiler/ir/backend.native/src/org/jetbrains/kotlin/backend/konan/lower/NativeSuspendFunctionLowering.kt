@@ -2,7 +2,6 @@ package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.common.lower.*
-import org.jetbrains.kotlin.backend.common.lower.coroutines.getOrCreateFunctionWithContinuationStub
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.descriptors.Modality
@@ -62,13 +61,11 @@ internal class NativeSuspendFunctionsLowering(
         )
     }
 
-    private val getContinuation = context.ir.symbols.getContinuation
-    private val completionGetter = context.ir.symbols.completionGetter
-
-    override fun buildStateMachine(stateMachineFunction: IrFunction,
-                                   transformingFunction: IrFunction,
-                                   argumentToPropertiesMap: Map<IrValueParameter, IrField>,
-                                   tailSuspendCalls: Set<IrCall>) {
+    override fun buildStateMachine(
+            stateMachineFunction: IrFunction,
+            transformingFunction: IrFunction,
+            argumentToPropertiesMap: Map<IrValueParameter, IrField>,
+    ) {
         val originalBody = transformingFunction.body!!
         val resultArgument = stateMachineFunction.valueParameters.single()
 
@@ -83,72 +80,6 @@ internal class NativeSuspendFunctionsLowering(
 
         val irBuilder = context.createIrBuilder(stateMachineFunction.symbol, startOffset, endOffset)
         stateMachineFunction.body = irBuilder.irBlockBody(startOffset, endOffset) {
-            if (tailSuspendCalls.isNotEmpty()) {
-                /*
-                 * Usual suspend call of, say, function foo will be transformed to something like this:
-                 * val result = foo(.., continuation = this)
-                 * if (result == COROUTINE_SUSPENDED) return COROUTINE_SUSPENDED
-                 * if (result.failed)
-                 *     this.completion.resumeWithException(result.exception)
-                 * else this.completion.resumeWith(result.value)
-                 *
-                 * But, if a call to foo is a tail call, we can replace the above with just:
-                 * return foo(.., continuation = this.completion)
-                 *
-                 * The visitor below does exactly this.
-                 */
-                originalBody.transformChildren(object : IrElementTransformer<Boolean> {
-                    fun IrBuilderWithScope.irGetCompletion() = irCall(completionGetter).apply { dispatchReceiver = irGet(thisReceiver) }
-
-                    override fun visitCall(expression: IrCall, /* substituteContinuation */ data: Boolean): IrExpression {
-                        val isTailSuspendCall = expression in tailSuspendCalls
-
-                        return when {
-                            expression.symbol == getContinuation -> {
-                                if (data)
-                                    irBuilder.at(expression).irGetCompletion()
-                                else
-                                    expression
-                            }
-
-                            expression.isReturnIfSuspendedCall() -> {
-                                if (!isTailSuspendCall)
-                                    expression
-                                else {
-                                    expression.transformChildren(this, /* substituteContinuation = */ true)
-
-                                    irBuilder.at(expression).irReturn(expression.getValueArgument(0)!!)
-                                }
-                            }
-
-                            else -> {
-                                // Only the top-most call should have its continuation substituted.
-                                val substituteContinuation = data && !expression.isSuspendCall
-                                expression.transformChildren(this, substituteContinuation)
-
-                                if (!isTailSuspendCall)
-                                    expression
-                                else {
-                                    val oldFun = expression.symbol.owner
-                                    val newFun: IrSimpleFunction = oldFun.getOrCreateFunctionWithContinuationStub(this@NativeSuspendFunctionsLowering.context)
-
-                                    irBuilder.at(expression).irReturn(
-                                            irCall(
-                                                    expression,
-                                                    newFun.symbol,
-                                                    newReturnType = newFun.returnType,
-                                                    newSuperQualifierSymbol = expression.superQualifierSymbol
-                                            ).also {
-                                                it.putValueArgument(it.valueArgumentsCount - 1, irGetCompletion())
-                                            }
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }, /* substituteContinuation = */ false)
-            }
-
             val suspendResult = irVar("suspendResult".synthesizedName, context.irBuiltIns.anyNType, true)
 
             // Extract all suspend calls to temporaries in order to make correct jumps to them.

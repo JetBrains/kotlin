@@ -1,6 +1,5 @@
 compiler/testData/integration/ant/js/simpleWithoutStdlibAndFolderAsAnotherLib/jslib-example/LibraryExample.kt
--Xlegacy-deprecated-no-warn
--Xuse-deprecated-legacy-compiler
+-Xforce-deprecated-legacy-compiler-usage
 -meta-info
 -output
 $TEMP_DIR$/jslib-example.js

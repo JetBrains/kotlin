@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.utils.classId
-import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
+import org.jetbrains.kotlin.fir.types.toLookupTag
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 
@@ -29,7 +29,7 @@ object StandardTypes {
 }
 
 private fun ClassId.createType(isNullable: Boolean = false): ConeClassLikeType =
-    ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(this), emptyArray(), isNullable)
+    ConeClassLikeTypeImpl(this.toLookupTag(), emptyArray(), isNullable)
 
 fun ConeClassLikeType.isDouble(): Boolean = lookupTag.classId == StandardClassIds.Double
 fun ConeClassLikeType.isFloat(): Boolean = lookupTag.classId == StandardClassIds.Float

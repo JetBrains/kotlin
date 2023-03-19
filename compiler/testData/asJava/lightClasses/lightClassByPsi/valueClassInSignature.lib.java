@@ -3,10 +3,19 @@ public final class RegularClass /* RegularClass*/ {
   private java.lang.String classProp;
 
   @org.jetbrains.annotations.NotNull()
+  private java.lang.String classPropImplicit;
+
+  @org.jetbrains.annotations.NotNull()
+  public final java.lang.String classFunInImplicitReturn-YO-7n-0();//  classFunInImplicitReturn-YO-7n-0()
+
+  @org.jetbrains.annotations.NotNull()
   public final java.lang.String classFunInReturn-YO-7n-0();//  classFunInReturn-YO-7n-0()
 
   @org.jetbrains.annotations.NotNull()
   public final java.lang.String getClassProp-YO-7n-0();//  getClassProp-YO-7n-0()
+
+  @org.jetbrains.annotations.NotNull()
+  public final java.lang.String getClassPropImplicit-YO-7n-0();//  getClassPropImplicit-YO-7n-0()
 
   public  RegularClass();//  .ctor()
 
@@ -17,6 +26,8 @@ public final class RegularClass /* RegularClass*/ {
   public final void classFunInParameter-5lyY9Q4(@org.jetbrains.annotations.NotNull() java.lang.String);//  classFunInParameter-5lyY9Q4(java.lang.String)
 
   public final void setClassProp-5lyY9Q4(@org.jetbrains.annotations.NotNull() java.lang.String);//  setClassProp-5lyY9Q4(java.lang.String)
+
+  public final void setClassPropImplicit-5lyY9Q4(@org.jetbrains.annotations.NotNull() java.lang.String);//  setClassPropImplicit-5lyY9Q4(java.lang.String)
 
   public final void setClassPropInExtension-54afNMI(@org.jetbrains.annotations.NotNull() java.lang.String, int);//  setClassPropInExtension-54afNMI(java.lang.String, int)
 }
@@ -37,8 +48,6 @@ public abstract interface RegularInterface /* RegularInterface*/ {
   public abstract void setInterfaceProp-5lyY9Q4(@org.jetbrains.annotations.NotNull() java.lang.String);//  setInterfaceProp-5lyY9Q4(java.lang.String)
 
   public abstract void setInterfacePropInExtension-54afNMI(@org.jetbrains.annotations.NotNull() java.lang.String, int);//  setInterfacePropInExtension-54afNMI(java.lang.String, int)
-
-  class DefaultImpls ...
 }
 
 @kotlin.jvm.JvmInline()

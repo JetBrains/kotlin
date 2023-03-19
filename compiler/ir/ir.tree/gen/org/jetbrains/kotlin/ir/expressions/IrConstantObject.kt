@@ -16,10 +16,11 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
  * A leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.constantObject
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.constantObject]
  */
 abstract class IrConstantObject : IrConstantValue() {
-    abstract val constructor: IrConstructorSymbol
+    abstract var constructor: IrConstructorSymbol
 
     abstract val valueArguments: MutableList<IrConstantValue>
 

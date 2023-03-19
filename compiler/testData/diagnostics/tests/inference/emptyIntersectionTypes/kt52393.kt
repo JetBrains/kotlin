@@ -12,6 +12,6 @@ fun main() {
 //    val number: Long = 5 // works
 
     with (WrapperFunctions()) {
-        wrapper <!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_ERROR!>greaterEq<!> number
+        wrapper <!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING!>greaterEq<!> number
     }
 }

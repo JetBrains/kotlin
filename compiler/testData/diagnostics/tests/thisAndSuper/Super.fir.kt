@@ -59,6 +59,6 @@ class CG : G<Int> {
 class ERROR<E>() : <!UNRESOLVED_REFERENCE!>UR<!> {
 
     fun test() {
-        super.<!UNRESOLVED_REFERENCE!>foo<!>()
+        <!UNRESOLVED_REFERENCE!>super<!>.<!UNRESOLVED_REFERENCE!>foo<!>()
     }
 }

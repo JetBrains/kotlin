@@ -16,11 +16,14 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 
 /**
  * A non-leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.expression
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.expression]
  */
 abstract class IrExpression : IrElementBase(), IrStatement, IrVarargElement,
         IrAttributeContainer {
     override var attributeOwnerId: IrAttributeContainer = this
+
+    override var originalBeforeInline: IrAttributeContainer? = null
 
     abstract var type: IrType
 

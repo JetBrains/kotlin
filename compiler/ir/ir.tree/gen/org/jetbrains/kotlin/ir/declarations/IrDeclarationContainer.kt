@@ -11,7 +11,8 @@ package org.jetbrains.kotlin.ir.declarations
 
 /**
  * A non-leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.declarationContainer
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.declarationContainer]
  */
 interface IrDeclarationContainer : IrDeclarationParent {
     val declarations: MutableList<IrDeclaration>

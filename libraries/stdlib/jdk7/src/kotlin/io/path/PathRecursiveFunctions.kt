@@ -19,10 +19,10 @@ import java.nio.file.attribute.BasicFileAttributes
  * Note that if this function throws, partial copying may have taken place.
  *
  * Unlike `File.copyRecursively`, if some directories on the way to the [target] are missing, then they won't be created automatically.
- * You can use the following approach to ensure that required intermediate directories are created:
+ * You can use the [createParentDirectories] function to ensure that required intermediate directories are created:
  * ```
  * sourcePath.copyToRecursively(
- *     destinationPath.apply { parent?.createDirectories() },
+ *     destinationPath.createParentDirectories(),
  *     followLinks = false
  * )
  * ```
@@ -93,10 +93,10 @@ public fun Path.copyToRecursively(
  * Note that if this function throws, partial copying may have taken place.
  *
  * Unlike `File.copyRecursively`, if some directories on the way to the [target] are missing, then they won't be created automatically.
- * You can use the following approach to ensure that required intermediate directories are created:
+ * You can use the [createParentDirectories] function to ensure that required intermediate directories are created:
  * ```
  * sourcePath.copyToRecursively(
- *     destinationPath.apply { parent?.createDirectories() },
+ *     destinationPath.createParentDirectories(),
  *     followLinks = false
  * )
  * ```
@@ -161,11 +161,13 @@ public fun Path.copyToRecursively(
             // TODO: KT-38678
             // source and target files are the same entry, continue recursive copy operation
         } else {
-            val realPath = this.toRealPath()
-            val isSubdirectory = if (targetExistsAndNotSymlink) {
-                target.toRealPath().startsWith(realPath)
-            } else {
-                target.parent?.let { it.exists() && it.toRealPath().startsWith(realPath) } ?: false
+            val isSubdirectory = when {
+                this.fileSystem != target.fileSystem ->
+                    false
+                targetExistsAndNotSymlink ->
+                    target.toRealPath().startsWith(this.toRealPath())
+                else ->
+                    target.parent?.let { it.exists() && it.toRealPath().startsWith(this.toRealPath()) } ?: false
             }
             if (isSubdirectory)
                 throw FileSystemException(
@@ -178,7 +180,7 @@ public fun Path.copyToRecursively(
 
     fun destination(source: Path): Path {
         val relativePath = source.relativeTo(this@copyToRecursively)
-        return target.resolve(relativePath)
+        return target.resolve(relativePath.pathString)
     }
 
     fun error(source: Path, exception: Exception): FileVisitResult {

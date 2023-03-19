@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.light.classes.symbol.classes
 
 import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.api.symbols.KtAnonymousObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.symbolPointerOfType
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmFieldAnnotation
+import org.jetbrains.kotlin.light.classes.symbol.cachedValue
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
@@ -64,10 +66,7 @@ internal class SymbolLightClassForAnonymousObject : SymbolLightClassForClassLike
     override fun getExtendsList(): PsiReferenceList? = _extendsList
     override fun getImplementsList(): PsiReferenceList? = _implementsList
 
-    override fun getOwnFields(): List<KtLightField> = _ownFields
-    override fun getOwnMethods(): List<PsiMethod> = _ownMethods
-
-    private val _ownMethods: List<KtLightMethod> by lazyPub {
+    override fun getOwnMethods(): List<PsiMethod> = cachedValue {
         withClassOrObjectSymbol {
             val result = mutableListOf<KtLightMethod>()
             val declaredMemberScope = it.getDeclaredMemberScope()
@@ -78,7 +77,7 @@ internal class SymbolLightClassForAnonymousObject : SymbolLightClassForClassLike
         }
     }
 
-    private val _ownFields: List<KtLightField> by lazyPub {
+    override fun getOwnFields(): List<KtLightField> = cachedValue {
         val result = mutableListOf<KtLightField>()
         val nameGenerator = SymbolLightField.FieldNameGenerator()
 
@@ -107,6 +106,9 @@ internal class SymbolLightClassForAnonymousObject : SymbolLightClassForClassLike
     override fun getNameIdentifier(): KtLightIdentifier? = null
     override fun getModifierList(): PsiModifierList? = null
     override fun hasModifierProperty(name: String): Boolean = name == PsiModifier.FINAL
+
+    override fun classKind(): KtClassKind = KtClassKind.ANONYMOUS_OBJECT
+
     override fun getContainingClass(): PsiClass? = null
     override fun getTypeParameters(): Array<PsiTypeParameter> = PsiTypeParameter.EMPTY_ARRAY
     override fun getTypeParameterList(): PsiTypeParameterList? = null

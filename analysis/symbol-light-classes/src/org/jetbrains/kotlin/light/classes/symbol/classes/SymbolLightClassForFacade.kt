@@ -8,13 +8,13 @@ package org.jetbrains.kotlin.light.classes.symbol.classes
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.impl.light.LightEmptyImplementsList
-import com.intellij.psi.impl.light.LightModifierList
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.scopes.KtScope
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtAnnotatedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithVisibility
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.symbolPointerOfType
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.classes.lazyPub
@@ -24,13 +24,11 @@ import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fileClasses.isJvmMultifileClassFile
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
-import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.light.classes.symbol.NullabilityType
 import org.jetbrains.kotlin.light.classes.symbol.analyzeForLightClasses
-import org.jetbrains.kotlin.light.classes.symbol.annotations.computeAnnotations
-import org.jetbrains.kotlin.light.classes.symbol.annotations.hasInlineOnlyAnnotation
-import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmFieldAnnotation
+import org.jetbrains.kotlin.light.classes.symbol.annotations.*
+import org.jetbrains.kotlin.light.classes.symbol.cachedValue
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
+import org.jetbrains.kotlin.light.classes.symbol.modifierLists.InitializedModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
 import org.jetbrains.kotlin.light.classes.symbol.toPsiVisibilityForMember
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
@@ -38,7 +36,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 
-class SymbolLightClassForFacade(
+internal class SymbolLightClassForFacade(
     override val facadeClassFqName: FqName,
     override val files: Collection<KtFile>,
     ktModule: KtModule,
@@ -59,35 +57,31 @@ class SymbolLightClassForFacade(
             action(files.map { it.getFileSymbol() })
         }
 
-    private val firstFileInFacade by lazyPub { files.first() }
+    private val firstFileInFacade: KtFile get() = files.first()
 
     private val _modifierList: PsiModifierList by lazyPub {
         SymbolLightClassModifierList(
             containingDeclaration = this,
-            staticModifiers = setOf(PsiModifier.PUBLIC, PsiModifier.FINAL),
-        ) { modifierList ->
-            if (multiFileClass) {
-                emptyList()
+            modifiersBox = InitializedModifiersBox(PsiModifier.PUBLIC, PsiModifier.FINAL),
+            annotationsBox = if (multiFileClass) {
+                EmptyAnnotationsBox
             } else {
-                withFileSymbols { fileSymbols ->
-                    fileSymbols.flatMap {
-                        it.computeAnnotations(
-                            modifierList = modifierList,
-                            nullability = NullabilityType.Unknown,
-                            annotationUseSiteTarget = AnnotationUseSiteTarget.FILE,
-                            includeAnnotationsWithoutSite = false,
-                        )
-                    }
-                }
-            }
-        }
+                GranularAnnotationsBox(
+                    annotationsProvider = SymbolAnnotationsProvider(
+                        ktModule = this.ktModule,
+                        annotatedSymbolPointer = firstFileInFacade.symbolPointerOfType<KtFileSymbol>(),
+                        annotationUseSiteTargetFilter = AnnotationUseSiteTarget.FILE.toOptionalFilter(),
+                    )
+                )
+            },
+        )
     }
 
     override fun getModifierList(): PsiModifierList = _modifierList
 
     override fun getScope(): PsiElement = parent
 
-    private val _ownMethods: List<KtLightMethod> by lazyPub {
+    override fun getOwnMethods(): List<PsiMethod> = cachedValue {
         withFileSymbols { fileSymbols ->
             val result = mutableListOf<KtLightMethod>()
             val methodsAndProperties = sequence<KtCallableSymbol> {
@@ -108,9 +102,7 @@ class SymbolLightClassForFacade(
         }
     }
 
-    private val multiFileClass: Boolean by lazyPub {
-        files.size > 1 || firstFileInFacade.isJvmMultifileClassFile
-    }
+    private val multiFileClass: Boolean get() = files.size > 1 || firstFileInFacade.isJvmMultifileClassFile
 
     context(KtAnalysisSession)
     private fun loadFieldsFromFile(
@@ -144,7 +136,7 @@ class SymbolLightClassForFacade(
     private fun KtPropertyAccessorSymbol?.isNullOrPublic(): Boolean =
         this?.toPsiVisibilityForMember()?.let { it == PsiModifier.PUBLIC } != false
 
-    private val _ownFields: List<KtLightField> by lazyPub {
+    override fun getOwnFields(): List<PsiField> = cachedValue {
         val result = mutableListOf<KtLightField>()
         val nameGenerator = SymbolLightField.FieldNameGenerator()
         withFileSymbols { fileSymbols ->
@@ -156,70 +148,40 @@ class SymbolLightClassForFacade(
         result
     }
 
-    override fun getOwnFields() = _ownFields
-
-    override fun getOwnMethods() = _ownMethods
-
     override fun copy(): SymbolLightClassForFacade = SymbolLightClassForFacade(facadeClassFqName, files, ktModule)
-
-    private val packageFqName: FqName = facadeClassFqName.parent()
-
-    private val modifierList: PsiModifierList = LightModifierList(manager, KotlinLanguage.INSTANCE, PsiModifier.PUBLIC, PsiModifier.FINAL)
-
-    private val implementsList: LightEmptyImplementsList = LightEmptyImplementsList(manager)
 
     private val packageClsFile = FakeFileForLightClass(
         firstFileInFacade,
         lightClass = { this },
-        packageFqName = packageFqName
+        packageFqName = facadeClassFqName.parent()
     )
 
     override fun getParent(): PsiElement = containingFile
-
     override val kotlinOrigin: KtClassOrObject? get() = null
-
-    val fqName: FqName get() = facadeClassFqName
-
-    override fun hasModifierProperty(@NonNls name: String) = modifierList.hasModifierProperty(name)
-
+    override fun hasModifierProperty(@NonNls name: String) = name == PsiModifier.PUBLIC || name == PsiModifier.FINAL
     override fun getExtendsList(): PsiReferenceList? = null
-
     override fun isDeprecated() = false
-
     override fun isInterface() = false
-
     override fun isAnnotationType() = false
-
     override fun isEnum() = false
-
     override fun getContainingClass(): PsiClass? = null
 
     override fun getContainingFile() = packageClsFile
-
     override fun hasTypeParameters() = false
-
     override fun getTypeParameters(): Array<out PsiTypeParameter> = PsiTypeParameter.EMPTY_ARRAY
-
     override fun getTypeParameterList(): PsiTypeParameterList? = null
-
-    override fun getImplementsList() = implementsList
+    override fun getImplementsList(): LightEmptyImplementsList = object : LightEmptyImplementsList(manager) {
+        override fun getParent(): PsiElement = this@SymbolLightClassForFacade
+    }
 
     override fun getInterfaces(): Array<out PsiClass> = PsiClass.EMPTY_ARRAY
-
     override fun getInnerClasses(): Array<out PsiClass> = PsiClass.EMPTY_ARRAY
-
     override fun getOwnInnerClasses(): List<PsiClass> = listOf()
-
     override fun getAllInnerClasses(): Array<PsiClass> = PsiClass.EMPTY_ARRAY
-
     override fun findInnerClassByName(@NonNls name: String, checkBases: Boolean): PsiClass? = null
-
     override fun isInheritorDeep(baseClass: PsiClass?, classToByPass: PsiClass?): Boolean = false
-
-    override fun getName() = super<KtLightClassForFacade>.getName()
-
-    override fun getQualifiedName() = facadeClassFqName.asString()
-
+    override fun getName(): String = super<KtLightClassForFacade>.getName()
+    override fun getQualifiedName(): String = facadeClassFqName.asString()
     override fun getNameIdentifier(): PsiIdentifier? = null
 
     override fun isValid() = files.all {
@@ -241,11 +203,8 @@ class SymbolLightClassForFacade(
         return JavaPsiFacade.getInstance(project).findClass(CommonClassNames.JAVA_LANG_OBJECT, resolveScope)
     }
 
-    override fun getSupers(): Array<PsiClass> =
-        superClass?.let { arrayOf(it) } ?: arrayOf()
-
-    override fun getSuperTypes(): Array<PsiClassType> =
-        arrayOf(PsiType.getJavaLangObject(manager, resolveScope))
+    override fun getSupers(): Array<PsiClass> = superClass?.let { arrayOf(it) } ?: PsiClass.EMPTY_ARRAY
+    override fun getSuperTypes(): Array<PsiClassType> = arrayOf(PsiType.getJavaLangObject(manager, resolveScope))
 
     override fun equals(other: Any?): Boolean {
         return this === other || other is SymbolLightClassForFacade &&
@@ -254,18 +213,11 @@ class SymbolLightClassForFacade(
     }
 
     override fun hashCode() = facadeClassFqName.hashCode()
-
     override fun toString() = "${SymbolLightClassForFacade::class.java.simpleName}:$facadeClassFqName"
-
     override val originKind: LightClassOriginKind get() = LightClassOriginKind.SOURCE
-
     override fun getText() = firstFileInFacade.text ?: ""
-
     override fun getTextRange(): TextRange = firstFileInFacade.textRange ?: TextRange.EMPTY_RANGE
-
     override fun getTextOffset() = firstFileInFacade.textOffset
-
     override fun getStartOffsetInParent() = firstFileInFacade.startOffsetInParent
-
     override fun isWritable() = files.all { it.isWritable }
 }

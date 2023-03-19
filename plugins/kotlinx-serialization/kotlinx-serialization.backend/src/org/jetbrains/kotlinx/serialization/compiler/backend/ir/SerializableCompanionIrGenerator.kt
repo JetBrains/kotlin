@@ -178,7 +178,7 @@ class SerializableCompanionIrGenerator(
             type = compilerContext.irBuiltIns.arrayClass.typeWith(kSerializerStarType)
             origin = SERIALIZATION_PLUGIN_ORIGIN
         }
-        return f
+        return f.apply { excludeFromJsExport() }
     }
 
     private fun generateSerializerFactoryIfNeeded(getterDescriptor: IrSimpleFunction) {

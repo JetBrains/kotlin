@@ -15,7 +15,15 @@ KtKotlinPropertySymbol:
     modality: FINAL
     origin: SOURCE_MEMBER_GENERATED
     receiverParameter: null
-    returnType: kotlin/enums/EnumEntries<MyKotlinEnum>
+    returnType: KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: [
+        KtUsualClassType:
+          annotationsList: []
+          ownTypeArguments: []
+          type: MyKotlinEnum
+      ]
+      type: kotlin/enums/EnumEntries<MyKotlinEnum>
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
@@ -38,7 +46,15 @@ KtKotlinPropertySymbol:
   name: entries
   origin: SOURCE_MEMBER_GENERATED
   receiverParameter: null
-  returnType: kotlin/enums/EnumEntries<MyKotlinEnum>
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: [
+      KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
+        type: MyKotlinEnum
+    ]
+    type: kotlin/enums/EnumEntries<MyKotlinEnum>
   setter: null
   symbolKind: CLASS_MEMBER
   typeParameters: []

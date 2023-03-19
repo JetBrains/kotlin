@@ -37,9 +37,27 @@ public class SymbolLightClassesByPsiForSourceTestGenerated extends AbstractSymbo
     }
 
     @Test
+    @TestMetadata("AnnotationsOnEnumEntry.kt")
+    public void testAnnotationsOnEnumEntry() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/AnnotationsOnEnumEntry.kt");
+    }
+
+    @Test
+    @TestMetadata("AnnotationsWithUnresolvedAnnotations.kt")
+    public void testAnnotationsWithUnresolvedAnnotations() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/AnnotationsWithUnresolvedAnnotations.kt");
+    }
+
+    @Test
     @TestMetadata("classModifiers.kt")
     public void testClassModifiers() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/classModifiers.kt");
+    }
+
+    @Test
+    @TestMetadata("companionDuplication.kt")
+    public void testCompanionDuplication() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/companionDuplication.kt");
     }
 
     @Test
@@ -106,6 +124,12 @@ public class SymbolLightClassesByPsiForSourceTestGenerated extends AbstractSymbo
     @TestMetadata("exposedAnonymousType.kt")
     public void testExposedAnonymousType() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/exposedAnonymousType.kt");
+    }
+
+    @Test
+    @TestMetadata("fieldModifiers.kt")
+    public void testFieldModifiers() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/fieldModifiers.kt");
     }
 
     @Test
@@ -247,6 +271,12 @@ public class SymbolLightClassesByPsiForSourceTestGenerated extends AbstractSymbo
     }
 
     @Test
+    @TestMetadata("targetAnnotation.kt")
+    public void testTargetAnnotation() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/targetAnnotation.kt");
+    }
+
+    @Test
     @TestMetadata("throwsAnnotation.kt")
     public void testThrowsAnnotation() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/throwsAnnotation.kt");
@@ -274,6 +304,12 @@ public class SymbolLightClassesByPsiForSourceTestGenerated extends AbstractSymbo
     @TestMetadata("typealiasInTypeArguments.kt")
     public void testTypealiasInTypeArguments() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/typealiasInTypeArguments.kt");
+    }
+
+    @Test
+    @TestMetadata("unresolvedGenericSupertypes.kt")
+    public void testUnresolvedGenericSupertypes() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/unresolvedGenericSupertypes.kt");
     }
 
     @Test

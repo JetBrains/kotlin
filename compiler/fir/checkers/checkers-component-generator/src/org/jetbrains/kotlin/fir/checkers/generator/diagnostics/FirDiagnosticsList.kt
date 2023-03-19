@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.checkers.generator.diagnostics
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -308,9 +309,13 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val WRONG_EXTENSION_FUNCTION_TYPE_WARNING by warning<KtAnnotationEntry>()
         val ANNOTATION_IN_WHERE_CLAUSE_ERROR by error<KtAnnotationEntry>()
 
-        val PLUGIN_ANNOTATION_AMBIGUITY by error<PsiElement>() {
+        val PLUGIN_ANNOTATION_AMBIGUITY by error<PsiElement> {
             parameter<ConeKotlinType>("typeFromCompilerPhase")
             parameter<ConeKotlinType>("typeFromTypesPhase")
+        }
+
+        val AMBIGUOUS_ANNOTATION_ARGUMENT by error<PsiElement> {
+            parameter<List<FirBasedSymbol<*>>>("symbols")
         }
     }
 
@@ -567,6 +572,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val NEXT_AMBIGUITY by error<PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
             parameter<Collection<FirBasedSymbol<*>>>("candidates")
         }
+        val AMBIGUOUS_FUNCTION_TYPE_KIND by error<PsiElement> {
+            parameter<Collection<FunctionTypeKind>>("kinds")
+        }
     }
 
     val CONTEXT_RECEIVERS_RESOLUTION by object : DiagnosticGroup("Context receivers resolution") {
@@ -729,7 +737,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<FqName>("kotlinClass")
         }
 
-        val INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION by error<PsiElement> {
+        val INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION by deprecationError<PsiElement>(
+            LanguageFeature.ForbidInferringTypeVariablesIntoEmptyIntersection
+        ) {
             parameter<String>("typeVariableDescription")
             parameter<Collection<ConeKotlinType>>("incompatibleTypes")
             parameter<String>("description")
@@ -1129,7 +1139,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val UNINITIALIZED_PARAMETER by error<KtSimpleNameExpression> {
             parameter<FirValueParameterSymbol>("parameter")
         }
-        val UNINITIALIZED_ENUM_ENTRY by error<KtSimpleNameExpression> {
+        val UNINITIALIZED_ENUM_ENTRY by error<KtExpression>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
             parameter<FirEnumEntrySymbol>("enumEntry")
         }
         val UNINITIALIZED_ENUM_COMPANION by error<KtExpression>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
@@ -1262,6 +1272,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
 
     val FUNCTION_CONTRACTS by object : DiagnosticGroup("Function contracts") {
         val ERROR_IN_CONTRACT_DESCRIPTION by error<KtElement>(PositioningStrategy.SELECTOR_BY_QUALIFIED) {
+            parameter<String>("reason")
+        }
+        val CONTRACT_NOT_ALLOWED by error<KtElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
             parameter<String>("reason")
         }
     }

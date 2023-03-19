@@ -1,2 +1,5 @@
 expression: fd
-expected type: kotlin/Int
+expected type: KtUsualClassType:
+  annotationsList: []
+  ownTypeArguments: []
+  type: kotlin/Int

@@ -9,11 +9,8 @@ import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
-import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
-import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
+import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.extensions.predicate.LookupPredicate
-import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.plugin.createCompanionObject
 import org.jetbrains.kotlin.fir.plugin.createDefaultPrivateConstructor
 import org.jetbrains.kotlin.fir.plugin.createMemberFunction
@@ -32,7 +29,7 @@ class CompanionGenerator(session: FirSession) : FirDeclarationGenerationExtensio
         private val FOO_NAME = Name.identifier("foo")
     }
 
-    override fun generateNestedClassLikeDeclaration(owner: FirClassSymbol<*>, name: Name): FirClassLikeSymbol<*>? {
+    override fun generateNestedClassLikeDeclaration(owner: FirClassSymbol<*>, name: Name, context: NestedClassGenerationContext): FirClassLikeSymbol<*>? {
         if (name != SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT) return null
         return createCompanionObject(owner, Key).symbol
     }
@@ -51,7 +48,7 @@ class CompanionGenerator(session: FirSession) : FirDeclarationGenerationExtensio
         return listOf(constructor.symbol)
     }
 
-    override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>): Set<Name> {
+    override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> {
         if (classSymbol.classKind != ClassKind.OBJECT) return emptySet()
         if (classSymbol !is FirRegularClassSymbol) return emptySet()
         val classId = classSymbol.classId
@@ -64,7 +61,7 @@ class CompanionGenerator(session: FirSession) : FirDeclarationGenerationExtensio
         }
     }
 
-    override fun getNestedClassifiersNames(classSymbol: FirClassSymbol<*>): Set<Name> {
+    override fun getNestedClassifiersNames(classSymbol: FirClassSymbol<*>, context: NestedClassGenerationContext): Set<Name> {
         return if (session.predicateBasedProvider.matches(PREDICATE, classSymbol)) {
             setOf(SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT)
         } else {

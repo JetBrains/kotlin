@@ -32,27 +32,27 @@ class NativeLibraryDslWithCocoapodsIT : BaseGradleIT() {
             build(":shared:tasks") {
                 assertSuccessful()
                 assertTasksRegistered(
-                    ":shared:generateMylibPodspec",
-                    ":shared:generateMyslibPodspec",
-                    ":shared:generateMyframePodspec",
-                    ":shared:generateMyfatframePodspec",
-                    ":shared:generateSharedPodspec",
-                    ":lib:generateGrooframePodspec",
-                )
-                assertTasksNotRegistered(
-                    ":shared:generateMyfatframewithoutpodspecPodspec",
+                    ":shared:generateMylibStaticLibraryLinuxX64Podspec",
+                    ":shared:generateMyslibSharedLibraryLinuxX64Podspec",
+                    ":shared:generateMyframeFrameworkIosArm64Podspec",
+                    ":shared:generateMyfatframeFatFrameworkPodspec",
+                    ":shared:generateSharedXCFrameworkPodspec",
+                    ":lib:generateGrooframeFrameworkIosArm64Podspec",
+                    ":lib:generateGrooxcframeXCFrameworkPodspec",
+                    ":shared:generateMyframewihtoutpodspecFrameworkIosArm64Podspec",
+                    ":lib:generateGrooxcframewithoutpodspecXCFrameworkPodspec",
                 )
             }
         }
     }
 
     @Test
-    fun `generate podspec when assembling lib`() {
+    fun `generate podspec when assembling static lib`() {
         project {
-            build(":shared:assembleMylibSharedLibraryLinuxX64") {
+            build(":shared:assembleMylibStaticLibraryLinuxX64") {
                 assertSuccessful()
-                assertTasksExecuted(":shared:generateMylibPodspec")
-                assertFilesContentEqual("podspecs/mylib.podspec", "/shared/build/out/dynamic/mylib.podspec")
+                assertTasksExecuted(":shared:generateMylibStaticLibraryLinuxX64Podspec")
+                assertFilesContentEqual("podspecs/mylib.podspec", "/shared/build/out/static/mylib.podspec")
             }
         }
     }
@@ -62,8 +62,19 @@ class NativeLibraryDslWithCocoapodsIT : BaseGradleIT() {
         project {
             build(":shared:assembleMyslibSharedLibraryLinuxX64") {
                 assertSuccessful()
-                assertTasksExecuted(":shared:generateMyslibPodspec")
+                assertTasksExecuted(":shared:generateMyslibSharedLibraryLinuxX64Podspec")
                 assertFilesContentEqual("podspecs/myslib.podspec", "/shared/build/out/dynamic/myslib.podspec")
+            }
+        }
+    }
+
+    @Test
+    fun `not generate podspec when withPodspec is empty`() {
+        project {
+            build(":shared:assembleMyslibwithoutpodspecSharedLibraryLinuxX64") {
+                assertSuccessful()
+                assertTasksSkipped(":shared:generateMyslibwithoutpodspecSharedLibraryLinuxX64Podspec")
+                assertContains("Skipping task ':shared:generateMyslibwithoutpodspecSharedLibraryLinuxX64Podspec' because there are no podspec attributes defined")
             }
         }
     }
@@ -73,8 +84,18 @@ class NativeLibraryDslWithCocoapodsIT : BaseGradleIT() {
         project {
             build(":shared:assembleMyframeFrameworkIosArm64") {
                 assertSuccessful()
-                assertTasksExecuted(":shared:generateMyframePodspec")
+                assertTasksExecuted(":shared:generateMyframeFrameworkIosArm64Podspec")
                 assertFilesContentEqual("podspecs/myframe.podspec", "/shared/build/out/framework/myframe.podspec")
+            }
+        }
+    }
+
+    @Test
+    fun `not generate podspec when there is no withPodspec`() {
+        project {
+            build(":shared:assembleMyframewihtoutpodspecFrameworkIosArm64") {
+                assertSuccessful()
+                assertTasksSkipped(":shared:generateMyframewihtoutpodspecFrameworkIosArm64Podspec")
             }
         }
     }
@@ -84,7 +105,7 @@ class NativeLibraryDslWithCocoapodsIT : BaseGradleIT() {
         project {
             build(":shared:assembleMyfatframeFatFramework") {
                 assertSuccessful()
-                assertTasksExecuted(":shared:generateMyfatframePodspec")
+                assertTasksExecuted(":shared:generateMyfatframeFatFrameworkPodspec")
                 assertFilesContentEqual("podspecs/myfatframe.podspec", "/shared/build/out/fatframework/myfatframe.podspec")
             }
         }
@@ -95,19 +116,58 @@ class NativeLibraryDslWithCocoapodsIT : BaseGradleIT() {
         project {
             build(":shared:assembleSharedXCFramework") {
                 assertSuccessful()
-                assertTasksExecuted(":shared:generateSharedPodspec")
+                assertTasksExecuted(":shared:generateSharedXCFrameworkPodspec")
                 assertFilesContentEqual("podspecs/shared.podspec", "/shared/build/out/xcframework/shared.podspec")
             }
         }
     }
 
     @Test
-    fun `generate podspec when assembling framework from groovy`() {
+    fun `generate podspec when assembling xcframework from groovy`() {
         project {
             build(":lib:assembleGrooframeFrameworkIosArm64") {
                 assertSuccessful()
-                assertTasksExecuted(":lib:generateGrooframePodspec")
+                assertTasksExecuted(":lib:generateGrooframeFrameworkIosArm64Podspec")
                 assertFilesContentEqual("podspecs/grooframe.podspec", "/lib/build/out/framework/grooframe.podspec")
+            }
+        }
+    }
+
+    @Test
+    fun `not generate podspec from groovy when withPodspec is empty`() {
+        project {
+            build(":lib:assembleGrooxcframeXCFramework") {
+                assertSuccessful()
+                assertTasksSkipped(":lib:generateGrooxcframeXCFrameworkPodspec")
+            }
+        }
+    }
+
+    @Test
+    fun `not generate podspec from groovy when there is no withPodspec`() {
+        project {
+            build(":lib:assembleGrooxcframewithoutpodspecXCFramework") {
+                assertSuccessful()
+                assertTasksSkipped(":lib:generateGrooxcframewithoutpodspecXCFrameworkPodspec")
+            }
+        }
+    }
+
+    @Test
+    fun `generate podspecs when several frameworks have with the same name`() {
+        project {
+            projectDir.resolve("shared/build.gradle.kts").appendText("""
+                kotlinArtifacts {
+                    Native.Library {
+                         target = linuxX64
+                         
+                         withPodspec {}
+                    }
+                }
+            """.trimIndent())
+
+            build(":shared:assembleSharedXCFramework") {
+                assertSuccessful()
             }
         }
     }

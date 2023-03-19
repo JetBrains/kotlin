@@ -1,0 +1,12 @@
+expression: av
+expected type: KtUsualClassType:
+  annotationsList: []
+  ownTypeArguments: [
+    KtTypeParameterType:
+      annotationsList: []
+      type: K
+    KtTypeParameterType:
+      annotationsList: []
+      type: V
+  ]
+  type: kotlin/Pair<K, V>

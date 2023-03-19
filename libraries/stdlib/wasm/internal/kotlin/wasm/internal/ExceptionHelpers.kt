@@ -5,16 +5,16 @@
 
 package kotlin.wasm.internal
 
-@JsFun(
-"""(message, wasmTypeName, stack) => { 
-        const error = new Error();
-        error.message = message;
-        error.name = wasmTypeName;
-        error.stack = stack;
-        throw error;
-   }"""
-)
-private external fun throwJsError(message: String?, wasmTypeName: String?, stack: String): Nothing
+@Suppress("UNUSED_PARAMETER") // TODO: Remove after bootstrap update
+private fun throwJsError(message: String?, wasmTypeName: String?, stack: String): Nothing {
+    js("""
+    const error = new Error();
+    error.message = message;
+    error.name = wasmTypeName;
+    error.stack = stack;
+    throw error;
+    """)
+}
 
 internal fun throwAsJsException(t: Throwable): Nothing {
     throwJsError(t.message, t::class.simpleName, t.stackTraceToString())

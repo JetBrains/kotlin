@@ -29,19 +29,20 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.archivesName
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.distsDirectory
 import org.jetbrains.kotlin.gradle.report.UsesBuildMetricsService
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWebpackRulesContainer
 import org.jetbrains.kotlin.gradle.targets.js.dsl.WebpackRulesDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.WebpackRulesDsl.Companion.webpackRulesContainer
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode
 import org.jetbrains.kotlin.gradle.utils.getValue
 import org.jetbrains.kotlin.gradle.utils.injected
 import org.jetbrains.kotlin.gradle.utils.property
+import org.jetbrains.kotlin.gradle.utils.providerWithLazyConvention
 import java.io.File
 import javax.inject.Inject
 
@@ -55,9 +56,8 @@ constructor(
     private val objects: ObjectFactory
 ) : DefaultTask(), RequiresNpmDependencies, WebpackRulesDsl, UsesBuildMetricsService {
     @Transient
-    private val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
+    private val nodeJs = project.rootProject.kotlinNodeJsExtension
     private val versions = nodeJs.versions
-    private val resolutionManager = nodeJs.npmResolutionManager
     private val rootPackageDir by lazy { nodeJs.rootPackageDir }
 
     private val npmProject = compilation.npmProject
@@ -140,36 +140,34 @@ constructor(
     )
 
     @get:Internal
-    @Deprecated("use destinationDirectory instead", ReplaceWith("destinationDirectory"))
-    val outputPath: File
-        get() = destinationDirectory
-
-    @get:Internal
-    internal var _destinationDirectory: File? = null
-
-    private val defaultDestinationDirectory by lazy {
-        project.distsDirectory.asFile.get()
-    }
-
-    @get:OutputDirectory
+    @Deprecated("Use `outputDirectory` instead", ReplaceWith("outputDirectory"))
     var destinationDirectory: File
-        get() = _destinationDirectory ?: defaultDestinationDirectory
+        get() = outputDirectory.asFile.get()
         set(value) {
-            _destinationDirectory = value
+            outputDirectory.set(value)
         }
 
-    private val defaultOutputFileName by lazy {
-        project.archivesName.orNull + ".js"
-    }
+    @get:OutputDirectory
+    abstract val outputDirectory: DirectoryProperty
 
     @get:Internal
-    var outputFileName: String by property {
-        defaultOutputFileName
-    }
+    @Deprecated("Use `mainOutputFileName` instead", ReplaceWith("mainOutputFileName"))
+    var outputFileName: String
+        get() = mainOutputFileName.get()
+        set(value) {
+            mainOutputFileName.set(value)
+        }
 
     @get:Internal
+    abstract val mainOutputFileName: Property<String>
+
+    @get:Internal
+    @Deprecated("Use `mainOutputFile` instead", ReplaceWith("mainOutputFile"))
     open val outputFile: File
-        get() = destinationDirectory.resolve(outputFileName)
+        get() = mainOutputFile.get().asFile
+
+    @get:Internal
+    val mainOutputFile: Provider<RegularFile> = objects.providerWithLazyConvention { outputDirectory.file(mainOutputFileName) }.flatMap { it }
 
     private val projectDir = project.projectDir
 
@@ -204,9 +202,6 @@ constructor(
     @Internal
     var generateConfigOnly: Boolean = false
 
-    @Input
-    val webpackMajorVersion = PropertiesProvider(project).webpackMajorVersion
-
     fun webpackConfigApplier(body: Action<KotlinWebpackConfig>) {
         webpackConfigAppliers.add(body)
     }
@@ -220,7 +215,7 @@ constructor(
     }
 
     /**
-     * [forNpmDependencies] is used to avoid querying [destinationDirectory] before task execution.
+     * [forNpmDependencies] is used to avoid querying [outputDirectory] before task execution.
      * Otherwise, Gradle will fail the build.
      */
     private fun createWebpackConfig(forNpmDependencies: Boolean = false) = KotlinWebpackConfig(
@@ -228,15 +223,14 @@ constructor(
         mode = mode,
         entry = if (forNpmDependencies) null else entry.get().asFile,
         output = output,
-        outputPath = if (forNpmDependencies) null else destinationDirectory,
-        outputFileName = outputFileName,
+        outputPath = if (forNpmDependencies) null else outputDirectory.get().asFile,
+        outputFileName = mainOutputFileName.get(),
         configDirectory = configDirectory,
         rules = rules,
         devServer = devServer,
         devtool = devtool,
         sourceMaps = sourceMaps,
         resolveFromModulesFirst = resolveFromModulesFirst,
-        webpackMajorVersion = webpackMajorVersion
     )
 
     private fun createRunner(): KotlinWebpackRunner {
@@ -264,9 +258,6 @@ constructor(
         )
     }
 
-    override val nodeModulesRequired: Boolean
-        @Internal get() = true
-
     override val requiredNpmDependencies: Set<RequiredKotlinJsDependency>
         @Internal get() = createWebpackConfig(true).getRequiredDependencies(versions)
 
@@ -274,8 +265,6 @@ constructor(
 
     @TaskAction
     fun doExecute() {
-        resolutionManager.checkRequiredDependencies(task = this)
-
         val runner = createRunner()
 
         if (generateConfigOnly) {
@@ -298,7 +287,7 @@ constructor(
             ).execute(services)
 
             val buildMetrics = metrics.get()
-            destinationDirectory.walkTopDown()
+            outputDirectory.get().asFile.walkTopDown()
                 .filter { it.isFile }
                 .filter { it.extension == "js" }
                 .map { it.length() }

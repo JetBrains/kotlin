@@ -73,9 +73,11 @@ open class KonanCacheTask: DefaultTask() {
 
     @TaskAction
     fun compile() {
-        check(klibUniqName == readKlibUniqNameFromManifest()) {
-            "klibUniqName mismatch: configured '$klibUniqName', resolved '${readKlibUniqNameFromManifest()}'"
-        }
+        // This code uses bootstrap version of util-klib and fails due to the older default ABI than library being used
+        // A possible solution is to read it manually from manifest file or this check should be done by the compiler itself
+//        check(klibUniqName == readKlibUniqNameFromManifest()) {
+//            "klibUniqName mismatch: configured '$klibUniqName', resolved '${readKlibUniqNameFromManifest()}'"
+//        }
 
         // Compiler doesn't create a cache if the cacheFile already exists. So we need to remove it manually.
         if (cacheFile.exists()) {

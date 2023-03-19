@@ -13,21 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import org.jetbrains.gradle.plugins.tools.lib
-import org.jetbrains.gradle.plugins.tools.solib
+import org.jetbrains.kotlin.tools.lib
+import org.jetbrains.kotlin.tools.solib
 import org.jetbrains.kotlin.*
-import org.jetbrains.kotlin.konan.target.HostManager
-import java.io.ByteArrayOutputStream
 
-val kotlinVersion = project.bootstrapKotlinVersion
 plugins {
-    `native`
-    `kotlin`
+    kotlin
+    id("native")
 }
-//apply plugin: 'c'
-
-
-
 
 native {
     val isWindows = PlatformInfo.isWindows()

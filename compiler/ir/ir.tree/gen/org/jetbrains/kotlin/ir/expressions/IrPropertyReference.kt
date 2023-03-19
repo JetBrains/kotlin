@@ -15,14 +15,15 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
  * A leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.propertyReference
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.propertyReference]
  */
 abstract class IrPropertyReference : IrCallableReference<IrPropertySymbol>() {
-    abstract val field: IrFieldSymbol?
+    abstract var field: IrFieldSymbol?
 
-    abstract val getter: IrSimpleFunctionSymbol?
+    abstract var getter: IrSimpleFunctionSymbol?
 
-    abstract val setter: IrSimpleFunctionSymbol?
+    abstract var setter: IrSimpleFunctionSymbol?
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitPropertyReference(this, data)

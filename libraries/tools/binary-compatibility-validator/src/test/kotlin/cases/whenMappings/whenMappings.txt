@@ -7,6 +7,7 @@ public final class cases/whenMappings/SampleEnum : java/lang/Enum {
 	public static final field A Lcases/whenMappings/SampleEnum;
 	public static final field B Lcases/whenMappings/SampleEnum;
 	public static final field C Lcases/whenMappings/SampleEnum;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lcases/whenMappings/SampleEnum;
 	public static fun values ()[Lcases/whenMappings/SampleEnum;
 }

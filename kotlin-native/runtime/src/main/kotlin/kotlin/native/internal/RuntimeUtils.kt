@@ -107,10 +107,20 @@ internal fun ThrowIncorrectDereferenceException() {
             "Trying to access top level value not marked as @ThreadLocal or @SharedImmutable from non-main thread")
 }
 
+internal class FileFailedToInitializeException(message: String?, cause: Throwable?) : Error(message, cause)
+
 @ExportForCppRuntime
 @OptIn(ExperimentalStdlibApi::class)
-internal fun ThrowFileFailedToInitializeException() {
-    throw FileFailedToInitializeException("There was an error during file initialization")
+internal fun ThrowFileFailedToInitializeException(reason: Throwable?) {
+    if (reason is Error) {
+        throw reason
+    } else {
+        // https://youtrack.jetbrains.com/issue/KT-57134
+        // TODO: align exact exception hierarchy with jvm
+        // in jvm it's NoClassDefFound if reason is null, i.e. this is already failed class
+        // and ExceptionInInitializerError if it's non-null
+        throw FileFailedToInitializeException("There was an error during file or class initialization", reason)
+    }
 }
 
 internal class IrLinkageError(message: String?) : Error(message)

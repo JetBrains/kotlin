@@ -73,6 +73,9 @@ class BuildReportsIT : KGPBaseTest() {
             //for non-incremental builds
             assertTrue { report.contains("Build attributes:") }
             assertTrue { report.contains("REBUILD_REASON:") }
+            //gc metrics
+            assertTrue {report.contains("GC count:")}
+            assertTrue {report.contains("GC time:")}
         }
     }
 
@@ -219,6 +222,18 @@ class BuildReportsIT : KGPBaseTest() {
             kotlinFile.modify { it.replace("ArrayList","skjfghsjk") }
             buildAndFail("compileKotlin") {
                 assertTrue { projectPath.resolve(kotlinErrorPath).listDirectoryEntries().isEmpty() }
+            }
+        }
+    }
+
+    @DisplayName("build scan metrics validation")
+    @GradleTest
+    fun testBuildScanMetricsValidation(gradleVersion: GradleVersion) {
+        project("simpleProject", gradleVersion) {
+            buildAndFail(
+                "compileKotlin", "-Pkotlin.build.report.output=BUILD_SCAN", "-Pkotlin.build.report.build_scan.metrics=unknown_prop"
+            ) {
+                assertOutputContains("Unknown metric: 'unknown_prop', list of available metrics")
             }
         }
     }

@@ -14,7 +14,7 @@ FILE: tryInference.kt
             R|/materialize|<R|A|>()
         }
         finally {
-            R|/materialize<CS errors: /materialize>#|<R|ERROR CLASS: Cannot infer argument for type parameter T|>()
+            R|/materialize<CS errors: /materialize>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>()
         }
         )
     }

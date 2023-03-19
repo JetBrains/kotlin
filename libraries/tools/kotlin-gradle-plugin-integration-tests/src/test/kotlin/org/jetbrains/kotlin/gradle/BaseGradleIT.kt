@@ -275,6 +275,7 @@ abstract class BaseGradleIT {
         val configurationCacheProblems: ConfigurationCacheProblems = ConfigurationCacheProblems.FAIL,
         val warningMode: WarningMode = WarningMode.Fail,
         val useFir: Boolean = false,
+        val languageVersion: String? = null,
         val customEnvironmentVariables: Map<String, String> = mapOf(),
         val dryRun: Boolean = false,
         val abiSnapshot: Boolean = false,
@@ -938,6 +939,10 @@ abstract class BaseGradleIT {
 
             if (options.useFir) {
                 add("-Pkotlin.useK2=true")
+            }
+
+            if(options.languageVersion != null) {
+                add("-Pkotlin.internal.languageVersion=${options.languageVersion}")
             }
 
             if (options.dryRun) {

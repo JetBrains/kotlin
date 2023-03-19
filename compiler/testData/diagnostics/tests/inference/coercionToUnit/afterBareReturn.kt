@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 interface I
 open class C
 
@@ -27,7 +28,7 @@ fun test3() = <!INFERRED_TYPE_VARIABLE_INTO_POSSIBLE_EMPTY_INTERSECTION!>run<!> 
     incompatibleI() // ? either uninferred T or error (Unit </: I)
 }
 
-fun test4() = <!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_ERROR!>run<!> {
+fun test4() = <!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING!>run<!> {
     if (p) return@run
     incompatibleC() // ? either uninferred T or error (Unit </: C)
 }

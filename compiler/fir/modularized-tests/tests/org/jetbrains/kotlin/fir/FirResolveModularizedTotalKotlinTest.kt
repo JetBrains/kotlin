@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.collectSources
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
@@ -57,8 +58,6 @@ private val RUN_CHECKERS = System.getProperty("fir.bench.run.checkers", "false")
 private val USE_LIGHT_TREE = System.getProperty("fir.bench.use.light.tree", "true").toBooleanLenient()!!
 private val DUMP_MEMORY = System.getProperty("fir.bench.dump.memory", "false").toBooleanLenient()!!
 
-private val REPORT_PASS_EVENTS = System.getProperty("fir.bench.report.pass.events", "false").toBooleanLenient()!!
-
 private interface CLibrary : Library {
     fun getpid(): Int
     fun gettid(): Int
@@ -87,39 +86,12 @@ internal fun isolate() {
     }
 }
 
-class PassEventReporter(private val stream: PrintStream) : AutoCloseable {
-
-    private val decimalFormat = DecimalFormat().apply {
-        this.maximumFractionDigits = 3
-    }
-
-    private fun formatStamp(): String {
-        val uptime = ManagementFactoryHelper.getRuntimeMXBean().uptime
-        return decimalFormat.format(uptime.toDouble() / 1000)
-    }
-
-    fun reportPassStart(num: Int) {
-        stream.println("<pass_start num='$num' stamp='${formatStamp()}'/>")
-    }
-
-    fun reportPassEnd(num: Int) {
-        stream.println("<pass_end num='$num' stamp='${formatStamp()}'/>")
-        stream.flush()
-    }
-
-    override fun close() {
-        stream.close()
-    }
-}
-
-class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
+class FirResolveModularizedTotalKotlinTest : AbstractFrontendModularizedTest() {
 
     private lateinit var dump: MultiModuleHtmlFirDump
     private lateinit var bench: FirResolveBench
     private var bestStatistics: FirResolveBench.TotalStatistics? = null
     private var bestPass: Int = 0
-
-    private var passEventReporter: PassEventReporter? = null
 
     private val asyncProfilerControl = AsyncProfilerControl()
 
@@ -132,7 +104,7 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
         val (sourceFiles: Collection<KtSourceFile>, scope) =
             if (USE_LIGHT_TREE) {
                 val (platformSources, _) = collectSources(environment.configuration, projectEnvironment, environment.messageCollector)
-                platformSources to projectEnvironment.getSearchScopeBySourceFiles(platformSources)
+                platformSources to projectEnvironment.getSearchScopeForProjectJavaSources()
             } else {
                 val ktFiles = environment.getSourceFiles()
                 ktFiles.map { KtPsiSourceFile(it) } to
@@ -213,6 +185,7 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
     override fun processModule(moduleData: ModuleData): ProcessorAction {
         val disposable = Disposer.newDisposable()
         val configuration = createDefaultConfiguration(moduleData)
+        configureLanguageVersionSettings(configuration, moduleData, LanguageVersion.fromVersionString(LANGUAGE_VERSION_K2)!!)
         val environment = KotlinCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
         PsiElementFinder.EP.getPoint(environment.project)
@@ -228,7 +201,6 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
     override fun beforePass(pass: Int) {
         if (DUMP_FIR) dump = MultiModuleHtmlFirDump(File(FIR_HTML_DUMP_PATH))
         System.gc()
-        passEventReporter?.reportPassStart(pass)
         asyncProfilerControl.beforePass(pass, reportDateStr)
     }
 
@@ -250,8 +222,6 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
         if (FAIL_FAST) {
             bench.throwFailure()
         }
-
-        passEventReporter?.reportPassEnd(pass)
     }
 
     override fun afterAllPasses() {
@@ -289,11 +259,6 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
 
     private fun beforeAllPasses() {
         isolate()
-
-        if (REPORT_PASS_EVENTS) {
-            passEventReporter =
-                PassEventReporter(PrintStream(FileOutputStream(reportDir().resolve("pass-events-$reportDateStr.log"), true)))
-        }
     }
 
     fun testTotalKotlin() {

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test.frontend.fir
 
+import org.jetbrains.kotlin.backend.common.CommonJsKLibResolver
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.fir.FirModuleData
@@ -15,9 +16,7 @@ import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.session.FirJsSessionFactory
 import org.jetbrains.kotlin.fir.session.FirSessionConfigurator
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.ir.backend.js.jsResolveLibraries
 import org.jetbrains.kotlin.ir.backend.js.resolverLogger
-import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.test.model.DependencyRelation
@@ -39,11 +38,11 @@ object TestFirJsSessionFactory {
     ): FirSession {
         val logger = configuration.resolverLogger
         val libraries = getAllJsDependenciesPaths(module, testServices)
-        val resolvedLibraries = jsResolveLibraries(libraries, logger).getFullResolvedList()
+        val resolvedLibraries = CommonJsKLibResolver.resolve(libraries, logger).getFullResolvedList()
 
-        return FirJsSessionFactory.createJsLibrarySession(
+        return FirJsSessionFactory.createLibrarySession(
             mainModuleName,
-            resolvedLibraries,
+            resolvedLibraries.map { it.library },
             sessionProvider,
             moduleDataProvider,
             languageVersionSettings,
@@ -57,7 +56,7 @@ object TestFirJsSessionFactory {
         registerExtraComponents: ((FirSession) -> Unit),
         sessionConfigurator: FirSessionConfigurator.() -> Unit,
     ): FirSession =
-        FirJsSessionFactory.createJsModuleBasedSession(
+        FirJsSessionFactory.createModuleBasedSession(
             mainModuleData,
             sessionProvider,
             extensionRegistrars,
@@ -75,7 +74,7 @@ fun resolveJsLibraries(
 ): List<KotlinResolvedLibrary> {
     val paths = getAllJsDependenciesPaths(module, testServices)
     val logger = configuration.resolverLogger
-    return jsResolveLibraries(paths, logger).getFullResolvedList()
+    return CommonJsKLibResolver.resolve(paths, logger).getFullResolvedList()
 }
 
 fun getAllJsDependenciesPaths(module: TestModule, testServices: TestServices): List<String> {

@@ -15,7 +15,7 @@ public final annotation class Api : R|kotlin/Annotation| {
 
     }
 }
-@R|test/Api|(status = R|test/Api.Status.Ok|()) public open class NestedEnumInAnnotation : R|kotlin/Any| {
+@R|test/Api|(status = R|test/Api.Status.Ok|) public open class NestedEnumInAnnotation : R|kotlin/Any| {
     public constructor(): R|test/NestedEnumInAnnotation|
 
 }
