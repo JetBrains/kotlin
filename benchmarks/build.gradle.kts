@@ -5,7 +5,7 @@ val benchmarks_version = "0.3.1"
 plugins {
     java
     kotlin("jvm")
-    id("org.jetbrains.kotlinx.benchmark") version "0.3.1"
+    id("org.jetbrains.kotlinx.benchmark") version "0.4.6"
 }
 
 dependencies {
