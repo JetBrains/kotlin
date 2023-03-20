@@ -189,7 +189,7 @@ class JsIrBackendContext(
 
     override val enumEntries = getIrClass(ENUMS_PACKAGE_FQNAME.child(Name.identifier("EnumEntries")))
     override val createEnumEntries = getFunctions(ENUMS_PACKAGE_FQNAME.child(Name.identifier("enumEntries")))
-        .find { it.valueParameters.firstOrNull()?.type?.isFunctionType == true }
+        .find { it.valueParameters.firstOrNull()?.type?.isFunctionType == false }
         .let { symbolTable.referenceSimpleFunction(it!!) }
 
     override val ir = object : Ir<JsIrBackendContext>(this) {

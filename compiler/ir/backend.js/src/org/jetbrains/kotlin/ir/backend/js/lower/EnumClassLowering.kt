@@ -462,9 +462,7 @@ class EnumEntryCreateGetInstancesFunsLowering(val context: JsCommonBackendContex
 private const val ENTRIES_FIELD_NAME = "\$ENTRIES"
 
 class EnumSyntheticFunctionsAndPropertiesLowering(
-    val context: JsCommonBackendContext,
-    private val supportRawFunctionReference: Boolean = false,
-    private val syntheticFieldsShouldBeReinitialized: Boolean = false,
+    val context: JsCommonBackendContext
 ) : DeclarationTransformer {
     private val IrEnumEntry.getInstanceFun by context.mapping.enumEntryToGetInstanceFun
     private val IrClass.initEntryInstancesFun: IrSimpleFunction? by context.mapping.enumClassToInitEntryInstancesFun
@@ -506,29 +504,27 @@ class EnumSyntheticFunctionsAndPropertiesLowering(
     private val throwISESymbol = context.ir.symbols.throwISE
 
     private fun createEnumEntriesBody(entriesGetter: IrFunction, enumClass: IrClass): IrBlockBody {
-        val entriesField = enumClass.addEnumEntriesField()
+        val entriesField = enumClass.buildEntriesField()
+        val valuesFunction = enumClass.searchForValuesFunction()
+        val createEnumEntriesFunction = context.createEnumEntries
         return context.createIrBuilder(entriesGetter.symbol).run {
             irBlockBody {
-                if (syntheticFieldsShouldBeReinitialized) {
-                    +irIfThen(
-                        irEqualsNull(irGetField(null, entriesField)),
-                        irSetField(null, entriesField, entriesField.initializer!!.expression)
-                    )
-                }
+                +irIfThen(
+                    irEqualsNull(irGetField(null, entriesField)),
+                    irSetField(null, entriesField, irCall(createEnumEntriesFunction).apply {
+                        putValueArgument(0, irCall(valuesFunction))
+                    })
+                )
                 +irReturn(irGetField(null, entriesField))
             }
         }
-    }
-
-    private fun IrClass.addEnumEntriesField(): IrField {
-        return buildEntriesField(searchForValuesFunction())
     }
 
     private fun IrClass.searchForValuesFunction(): IrFunction {
         return declarations.find { it is IrFunction && it.isStatic && it.returnType.isArray() } as IrFunction
     }
 
-    private fun IrClass.buildEntriesField(entriesHelper: IrFunction): IrField = with(context) {
+    private fun IrClass.buildEntriesField(): IrField = with(context) {
         addField {
             name = Name.identifier(ENTRIES_FIELD_NAME)
             type = enumEntries.defaultType
@@ -536,24 +532,8 @@ class EnumSyntheticFunctionsAndPropertiesLowering(
             origin = IrDeclarationOrigin.FIELD_FOR_ENUM_ENTRIES
             isFinal = true
             isStatic = true
-        }.apply {
-            initializer = context.createIrBuilder(symbol).run {
-                irExprBody(irCall(createEnumEntries).apply {
-                    val referenceType = context.irBuiltIns.functionN(0).typeWith(enumEntries.defaultType)
-                    putValueArgument(0, referenceFor(entriesHelper, referenceType))
-                })
-            }
         }
     }
-
-    private fun IrBuilderWithScope.referenceFor(function: IrFunction, type: IrType): IrDeclarationReference {
-        return if (supportRawFunctionReference) {
-            irRawFunctionReference(type, function.symbol)
-        } else {
-            irFunctionReference(type, function.symbol)
-        }
-    }
-
 
     private fun createEnumValueOfBody(valueOfFun: IrFunction, irClass: IrClass): IrBlockBody {
         val nameParameter = valueOfFun.valueParameters[0]

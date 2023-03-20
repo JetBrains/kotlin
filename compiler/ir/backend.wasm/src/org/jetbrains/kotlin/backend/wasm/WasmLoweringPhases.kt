@@ -258,7 +258,7 @@ private val enumEntryCreateGetInstancesFunsLoweringPhase = makeWasmModulePhase(
 )
 
 private val enumSyntheticFunsLoweringPhase = makeWasmModulePhase(
-    { EnumSyntheticFunctionsAndPropertiesLowering(it, syntheticFieldsShouldBeReinitialized = true) },
+    ::EnumSyntheticFunctionsAndPropertiesLowering,
     name = "EnumSyntheticFunctionsAndPropertiesLowering",
     description = "Implement `valueOf`, `values` and `entries`",
     prerequisite = setOf(

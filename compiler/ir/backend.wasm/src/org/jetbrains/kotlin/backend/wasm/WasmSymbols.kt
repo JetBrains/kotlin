@@ -108,7 +108,7 @@ class WasmSymbols(
 
     val enumEntries = getIrClass(FqName.fromSegments(listOf("kotlin", "enums", "EnumEntries")))
     val createEnumEntries = findFunctions(enumsInternalPackage.memberScope, Name.identifier("enumEntries"))
-        .find { it.valueParameters.firstOrNull()?.type?.isFunctionType == true }
+        .find { it.valueParameters.firstOrNull()?.type?.isFunctionType == false }
         .let { symbolTable.referenceSimpleFunction(it!!) }
 
     val enumValueOfIntrinsic = getInternalFunction("enumValueOfIntrinsic")

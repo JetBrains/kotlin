@@ -365,7 +365,7 @@ private val enumEntryCreateGetInstancesFunsLoweringPhase = makeDeclarationTransf
 )
 
 private val enumSyntheticFunsLoweringPhase = makeDeclarationTransformerPhase(
-    { EnumSyntheticFunctionsAndPropertiesLowering(it, supportRawFunctionReference = true) },
+    ::EnumSyntheticFunctionsAndPropertiesLowering,
     name = "EnumSyntheticFunctionsAndPropertiesLowering",
     description = "Implement `valueOf, `values` and `entries`",
     prerequisite = setOf(
