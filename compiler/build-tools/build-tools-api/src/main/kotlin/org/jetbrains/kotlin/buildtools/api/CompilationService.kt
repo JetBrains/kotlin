@@ -11,4 +11,9 @@ package org.jetbrains.kotlin.buildtools.api
  */
 interface CompilationService {
     fun compile()
+
+    companion object {
+        @JvmStatic
+        fun loadImplementation(classLoader: ClassLoader) = loadImplementation(CompilationService::class, classLoader)
+    }
 }

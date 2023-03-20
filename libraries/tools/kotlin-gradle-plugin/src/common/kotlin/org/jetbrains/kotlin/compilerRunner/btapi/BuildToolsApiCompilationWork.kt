@@ -11,9 +11,13 @@ import org.gradle.api.provider.Property
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
+import org.jetbrains.kotlin.buildtools.api.CompilationService
+import org.jetbrains.kotlin.buildtools.api.SharedApiClassesClassLoader
 import org.jetbrains.kotlin.compilerRunner.GradleKotlinCompilerWorkArguments
 import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
+import org.jetbrains.kotlin.gradle.internal.ParentClassLoaderProvider
 import java.io.File
+import java.util.*
 
 internal abstract class BuildToolsApiCompilationWork : WorkAction<BuildToolsApiCompilationWork.BuildToolsApiCompilationParameters> {
     internal interface BuildToolsApiCompilationParameters : WorkParameters {
@@ -29,6 +33,17 @@ internal abstract class BuildToolsApiCompilationWork : WorkAction<BuildToolsApiC
         get() = parameters.compilerWorkArguments.get()
 
     override fun execute() {
-        println("I'm simulating compilation, the compilation classpath would be ${workArguments.compilerFullClasspath}")
+        val classLoader = parameters.classLoadersCachingService.get()
+            .getClassLoader(workArguments.compilerFullClasspath, SharedApiClassesClassLoaderProvider)
+        val compilationService = CompilationService.loadImplementation(classLoader)
+        compilationService.compile()
     }
+}
+
+private object SharedApiClassesClassLoaderProvider : ParentClassLoaderProvider {
+    override fun getClassLoader() = SharedApiClassesClassLoader()
+
+    override fun hashCode() = SharedApiClassesClassLoaderProvider::class.hashCode()
+
+    override fun equals(other: Any?) = other is SharedApiClassesClassLoaderProvider
 }
