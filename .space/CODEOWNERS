@@ -28,7 +28,6 @@
 /.space/ "Kotlin Build Infrastructure"
 
 /analysis/ "Kotlin IDE"
-/analysis/low-level-api-fir/tests/org/jetbrains/kotlin/analysis/low/level/api/fir/diagnostic/compiler/based/FirIdeSpecTest.java "Kotlin Compiler Core"
 
 # UNKNOWN: /annotations/
 

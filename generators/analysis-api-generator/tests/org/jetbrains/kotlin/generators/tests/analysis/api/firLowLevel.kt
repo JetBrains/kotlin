@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.generators.tests.analysis.api
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.*
-import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.AbstractDiagnosisCompilerTestDataSpecTest
+import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.AbstractLLFirDiagnosisCompilerTestDataSpecTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.AbstractDiagnosisCompilerTestDataTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.AbstractOutOfContentRootFileStructureTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.AbstractSourceFileStructureTest
@@ -96,7 +96,7 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
         "analysis/low-level-api-fir/tests",
         "compiler/fir/analysis-tests/testData",
     ) {
-        testClass<AbstractDiagnosisCompilerTestDataTest>(suiteTestClassName = "DiagnosisCompilerFirTestdataTestGenerated") {
+        testClass<AbstractDiagnosisCompilerTestDataTest>(suiteTestClassName = "DiagnosisCompilerTestFirTestdataTestGenerated") {
             model("resolve", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
             model("resolveWithStdlib", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
         }
@@ -121,7 +121,7 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
 
 
     testGroup("analysis/low-level-api-fir/tests", testDataRoot = GeneralConfiguration.SPEC_TESTDATA_PATH) {
-        testClass<AbstractDiagnosisCompilerTestDataSpecTest>(suiteTestClassName = "FirIdeSpecTest") {
+        testClass<AbstractLLFirDiagnosisCompilerTestDataSpecTest>(suiteTestClassName = "FirIdeSpecTestGenerated") {
             model(
                 "diagnostics",
                 excludeDirs = listOf("helpers") + detectDirsWithTestsMapFileOnly("diagnostics"),
