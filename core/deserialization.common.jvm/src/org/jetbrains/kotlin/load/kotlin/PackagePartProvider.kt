@@ -28,12 +28,19 @@ interface PackagePartProvider {
 
     fun getAllOptionalAnnotationClasses(): List<ClassData>
 
+    /**
+     * Returns `true` if [getAllOptionalAnnotationClasses] may return a non-empty list.
+     */
+    fun mayHaveOptionalAnnotationClasses(): Boolean
+
     object Empty : PackagePartProvider {
         override fun findPackageParts(packageFqName: String): List<String> = emptyList()
 
         override fun getAnnotationsOnBinaryModule(moduleName: String): List<ClassId> = emptyList()
 
         override fun getAllOptionalAnnotationClasses(): List<ClassData> = emptyList()
+
+        override fun mayHaveOptionalAnnotationClasses(): Boolean = false
 
         override fun computePackageSetWithNonClassDeclarations(): Set<String> = emptySet()
     }

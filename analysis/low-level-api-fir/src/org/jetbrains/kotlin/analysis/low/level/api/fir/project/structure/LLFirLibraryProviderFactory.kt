@@ -35,7 +35,7 @@ internal object LLFirLibraryProviderFactory {
         val packagePartProvider = project.createPackagePartProvider(scope)
         return LLFirModuleWithDependenciesSymbolProvider(
             session,
-            providers = listOf(
+            providers = listOfNotNull(
                 JvmClassFileBasedSymbolProvider(
                     session,
                     moduleDataProvider,
@@ -44,7 +44,7 @@ internal object LLFirLibraryProviderFactory {
                     VirtualFileFinderFactory.getInstance(project).create(scope),
                     LLFirJavaFacadeForBinaries(session, builtinTypes, project.createJavaClassFinder(scope), moduleDataProvider)
                 ),
-                OptionalAnnotationClassesProvider(session, moduleDataProvider, kotlinScopeProvider, packagePartProvider),
+                OptionalAnnotationClassesProvider.createIfNeeded(session, moduleDataProvider, kotlinScopeProvider, packagePartProvider),
             ),
             LLFirDependenciesSymbolProvider(session, listOf(builtinSymbolProvider)),
         )
@@ -60,18 +60,16 @@ internal object LLFirLibraryProviderFactory {
     ): List<FirSymbolProvider> {
         val moduleDataProvider = SingleModuleDataProvider(moduleData)
         val packagePartProvider = project.createPackagePartProvider(scope)
-        return buildList {
-            add(
-                JvmClassFileBasedSymbolProvider(
-                    session,
-                    moduleDataProvider,
-                    kotlinScopeProvider,
-                    packagePartProvider,
-                    VirtualFileFinderFactory.getInstance(project).create(scope),
-                    LLFirJavaFacadeForBinaries(session, builtinTypes, project.createJavaClassFinder(scope), moduleDataProvider)
-                )
-            )
-            add(OptionalAnnotationClassesProvider(session, moduleDataProvider, kotlinScopeProvider, packagePartProvider))
-        }
+        return listOfNotNull(
+            JvmClassFileBasedSymbolProvider(
+                session,
+                moduleDataProvider,
+                kotlinScopeProvider,
+                packagePartProvider,
+                VirtualFileFinderFactory.getInstance(project).create(scope),
+                LLFirJavaFacadeForBinaries(session, builtinTypes, project.createJavaClassFinder(scope), moduleDataProvider)
+            ),
+            OptionalAnnotationClassesProvider.createIfNeeded(session, moduleDataProvider, kotlinScopeProvider, packagePartProvider),
+        )
     }
 }
