@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.jvm.serialization
 
+import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupportForLinker
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
 import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
@@ -41,7 +42,7 @@ class JvmIrLinker(
     private val stubGenerator: DeclarationStubGenerator,
     private val manglerDesc: JvmDescriptorMangler,
     private val enableIdSignatures: Boolean,
-) : KotlinIrLinker(currentModule, messageLogger, typeSystem.irBuiltIns, symbolTable, emptyList(), partialLinkageEnabled = false) {
+) : KotlinIrLinker(currentModule, messageLogger, typeSystem.irBuiltIns, symbolTable, emptyList()) {
 
     override val fakeOverrideBuilder = FakeOverrideBuilder(
         linker = this,

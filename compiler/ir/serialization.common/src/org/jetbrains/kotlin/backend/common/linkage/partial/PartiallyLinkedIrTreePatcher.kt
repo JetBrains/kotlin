@@ -19,11 +19,8 @@ import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin.PARTIAL_LINKAGE_RUNTIME_ERROR
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
-import org.jetbrains.kotlin.ir.linkage.partial.ExploredClassifier
-import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageCase
+import org.jetbrains.kotlin.ir.linkage.partial.*
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageCase.*
-import org.jetbrains.kotlin.ir.linkage.partial.PartiallyLinkedDeclarationOrigin
-import org.jetbrains.kotlin.ir.linkage.partial.isPartialLinkageRuntimeError
 import org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
@@ -46,6 +43,7 @@ internal class PartiallyLinkedIrTreePatcher(
     private val builtIns: IrBuiltIns,
     private val classifierExplorer: ClassifierExplorer,
     private val stubGenerator: MissingDeclarationStubGenerator,
+    logLevel: PartialLinkageLogLevel,
     private val messageLogger: IrMessageLogger
 ) {
     // Avoid revisiting roots that already have been visited.
@@ -58,7 +56,7 @@ internal class PartiallyLinkedIrTreePatcher(
     private val IrModuleFragment.shouldBeSkipped: Boolean get() = files.isEmpty() || name.asString() == stdlibModule.name
 
     // Used only to generate IR expressions that throw linkage errors.
-    private val supportForLowerings by lazy { PartialLinkageSupportForLoweringsImpl(builtIns, messageLogger) }
+    private val supportForLowerings by lazy { PartialLinkageSupportForLoweringsImpl(builtIns, logLevel, messageLogger) }
 
     fun patchModuleFragments(roots: Sequence<IrModuleFragment>) {
         roots.forEach { root ->
@@ -183,10 +181,7 @@ internal class PartiallyLinkedIrTreePatcher(
                 anonInitializer.body.statements.clear()
 
                 // Generate IR call that throws linkage error. Report compiler warning.
-                anonInitializer.body.statements += partialLinkageCase.throwLinkageError(
-                    anonInitializer,
-                    suppressWarningInCompilerOutput = false
-                )
+                anonInitializer.body.statements += partialLinkageCase.throwLinkageError(anonInitializer)
 
                 // Finish processing of the current class.
                 declaration.typeParameters.forEach { tp ->
@@ -251,7 +246,7 @@ internal class PartiallyLinkedIrTreePatcher(
                         // Note: Don't log errors for members of unlinked class.
                         // - All such members are unusable anyway since their dispatch receiver (class) is unusable.
                         // - Also, this reduces the number of compiler error messages and makes the compiler output less polluted.
-                        suppressWarningInCompilerOutput = declaration.isDirectMemberOf(unusableClassifierInSignature)
+                        doNotLog = declaration.isDirectMemberOf(unusableClassifierInSignature)
                     )
                 )
             }
@@ -286,7 +281,7 @@ internal class PartiallyLinkedIrTreePatcher(
                     // Note: Don't log errors for members of unlinked class.
                     // - All such members are unusable anyway since their dispatch receiver (class) is unusable.
                     // - Also, this reduces the number of compiler error messages and makes the compiler output less polluted.
-                    suppressWarningInCompilerOutput = declaration.isDirectMemberOf(unusableClassifierInSignature)
+                    doNotLog = declaration.isDirectMemberOf(unusableClassifierInSignature)
                 )
 
                 // Don't remove inline functions, this may harm linkage in K/N backend with enabled static caches.
@@ -442,8 +437,8 @@ internal class PartiallyLinkedIrTreePatcher(
             }
         }
 
-        private fun PartialLinkageCase.throwLinkageError(declaration: IrDeclaration, suppressWarningInCompilerOutput: Boolean): IrCall =
-            supportForLowerings.throwLinkageError(this, declaration, currentFile, suppressWarningInCompilerOutput)
+        private fun PartialLinkageCase.throwLinkageError(declaration: IrDeclaration, doNotLog: Boolean = false): IrCall =
+            supportForLowerings.throwLinkageError(this, declaration, currentFile, doNotLog)
     }
 
     private inner class ExpressionTransformer(startingFile: PLFile?) : FileAwareIrElementTransformerVoid(startingFile) {
@@ -981,8 +976,7 @@ internal class PartiallyLinkedIrTreePatcher(
         val linkageError = supportForLowerings.throwLinkageError(
             partialLinkageCase,
             element = this,
-            transformer.currentFile,
-            suppressWarningInCompilerOutput = false
+            transformer.currentFile
         )
 
         return if (directChildren.statements.isNotEmpty())
