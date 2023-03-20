@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.backend.konan
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
 import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
+import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLinker
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideChecker
 import org.jetbrains.kotlin.backend.common.serialization.DescriptorByIdSignatureFinderImpl
 import org.jetbrains.kotlin.backend.common.serialization.mangle.ManglerChecker
@@ -54,11 +55,11 @@ internal fun PsiToIrContext.psiToIr(
     val expectActualLinker = config.configuration[CommonConfigurationKeys.EXPECT_ACTUAL_LINKER] ?: false
     val messageLogger = config.configuration.irMessageLogger
 
-    val partialLinkageEnabled = config.configuration.partialLinkageConfig.isEnabled
+    val partialLinkageConfig = config.configuration.partialLinkageConfig
 
     val translator = Psi2IrTranslator(
             config.configuration.languageVersionSettings,
-            Psi2IrConfiguration(ignoreErrors = false, partialLinkageEnabled),
+            Psi2IrConfiguration(ignoreErrors = false, partialLinkageConfig.isEnabled),
             messageLogger::checkNoUnboundSymbols
     )
     val generatorContext = translator.createGeneratorContext(moduleDescriptor, bindingContext, symbolTable)
@@ -142,7 +143,7 @@ internal fun PsiToIrContext.psiToIr(
                 stubGenerator = stubGenerator,
                 cenumsProvider = irProviderForCEnumsAndCStructs,
                 exportedDependencies = exportedDependencies,
-                partialLinkageEnabled = partialLinkageEnabled,
+                partialLinkageSupport = createPartialLinkageSupportForLinker(partialLinkageConfig, generatorContext.irBuiltIns, messageLogger),
                 cachedLibraries = config.cachedLibraries,
                 lazyIrForCaches = config.lazyIrForCaches,
                 libraryBeingCached = config.libraryToCache,

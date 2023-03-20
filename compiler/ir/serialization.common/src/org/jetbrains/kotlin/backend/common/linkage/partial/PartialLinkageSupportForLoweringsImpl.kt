@@ -14,31 +14,42 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
-import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageCase
-import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageSupportForLowerings
-import org.jetbrains.kotlin.ir.linkage.partial.PartiallyLinkedDeclarationOrigin
+import org.jetbrains.kotlin.ir.linkage.partial.*
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageUtils.File as PLFile
 
-fun createPartialLinkageSupportForLowerings(isEnabled: Boolean, builtIns: IrBuiltIns, messageLogger: IrMessageLogger) =
-    if (isEnabled) PartialLinkageSupportForLoweringsImpl(builtIns, messageLogger) else PartialLinkageSupportForLowerings.DISABLED
+fun createPartialLinkageSupportForLowerings(
+    partialLinkageConfig: PartialLinkageConfig,
+    builtIns: IrBuiltIns,
+    messageLogger: IrMessageLogger
+): PartialLinkageSupportForLowerings = if (partialLinkageConfig.isEnabled)
+    PartialLinkageSupportForLoweringsImpl(builtIns, partialLinkageConfig.logLevel, messageLogger)
+else
+    PartialLinkageSupportForLowerings.DISABLED
 
 internal class PartialLinkageSupportForLoweringsImpl(
     private val builtIns: IrBuiltIns,
+    logLevel: PartialLinkageLogLevel,
     private val messageLogger: IrMessageLogger
 ) : PartialLinkageSupportForLowerings {
     override val isEnabled get() = true
+
+    private val irLoggerSeverity = when (logLevel) {
+        PartialLinkageLogLevel.INFO -> IrMessageLogger.Severity.INFO
+        PartialLinkageLogLevel.WARNING -> IrMessageLogger.Severity.WARNING
+        PartialLinkageLogLevel.ERROR -> IrMessageLogger.Severity.ERROR
+    }
 
     override fun throwLinkageError(
         partialLinkageCase: PartialLinkageCase,
         element: IrElement,
         file: PLFile,
-        suppressWarningInCompilerOutput: Boolean
+        doNotLog: Boolean
     ): IrCall {
-        val errorMessage = if (suppressWarningInCompilerOutput)
-            partialLinkageCase.renderLinkageError()
+        val errorMessage = if (doNotLog)
+            partialLinkageCase.renderLinkageError() // Just render a message.
         else
-            renderAndLogLinkageError(partialLinkageCase, element, file)
+            renderAndLogLinkageError(partialLinkageCase, element, file) // Render + log with the appropriate severity.
 
         return IrCallImpl(
             startOffset = element.startOffset,
@@ -57,7 +68,7 @@ internal class PartialLinkageSupportForLoweringsImpl(
         val errorMessage = partialLinkageCase.renderLinkageError()
         val locationInSourceCode = file.computeLocationForOffset(element.startOffsetOfFirstDenotableIrElement())
 
-        messageLogger.report(IrMessageLogger.Severity.WARNING, errorMessage, locationInSourceCode) // It's OK. We log it as a warning.
+        messageLogger.report(irLoggerSeverity, errorMessage, locationInSourceCode) // It's OK. We log it as a warning.
 
         return errorMessage
     }

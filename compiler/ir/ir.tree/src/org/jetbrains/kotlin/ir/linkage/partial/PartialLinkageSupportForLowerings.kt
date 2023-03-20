@@ -16,7 +16,7 @@ interface PartialLinkageSupportForLowerings {
         partialLinkageCase: PartialLinkageCase,
         element: IrElement,
         file: PLFile,
-        suppressWarningInCompilerOutput: Boolean
+        doNotLog: Boolean = false
     ): IrCall
 
     companion object {
@@ -26,7 +26,7 @@ interface PartialLinkageSupportForLowerings {
                 partialLinkageCase: PartialLinkageCase,
                 element: IrElement,
                 file: PLFile,
-                suppressWarningInCompilerOutput: Boolean
+                doNotLog: Boolean
             ): IrCall = error("Should not be called")
         }
     }

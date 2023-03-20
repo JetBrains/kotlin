@@ -14,6 +14,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
+import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLinker
 import org.jetbrains.kotlin.backend.common.lower.ExpectDeclarationRemover
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideChecker
 import org.jetbrains.kotlin.backend.common.serialization.DescriptorByIdSignatureFinderImpl
@@ -83,7 +84,7 @@ fun generateIrForKlibSerialization(
         messageLogger,
         psi2IrContext.irBuiltIns,
         psi2IrContext.symbolTable,
-        partialLinkageEnabled = configuration.partialLinkageConfig.isEnabled,
+        partialLinkageSupport = createPartialLinkageSupportForLinker(configuration.partialLinkageConfig, psi2IrContext.irBuiltIns, messageLogger),
         feContext,
         ICData(icData.map { it.irData }, errorPolicy.allowErrors),
         stubGenerator = stubGenerator

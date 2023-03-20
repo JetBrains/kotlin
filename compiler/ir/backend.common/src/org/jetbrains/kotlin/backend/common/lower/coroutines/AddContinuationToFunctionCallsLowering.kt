@@ -98,9 +98,6 @@ abstract class AbstractAddContinuationToFunctionCallsLowering : BodyLoweringPass
         context.partialLinkageSupport.throwLinkageError(
             SuspendableFunctionCallWithoutCoroutineContext(this),
             element = this,
-            file,
-            suppressWarningInCompilerOutput = false
+            file
         )
 }
-
-

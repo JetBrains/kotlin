@@ -115,7 +115,7 @@ internal class Context(
     override fun dispose() {}
 
     override val partialLinkageSupport = createPartialLinkageSupportForLowerings(
-            config.partialLinkageConfig.isEnabled,
+            config.partialLinkageConfig,
             irBuiltIns,
             configuration.irMessageLogger
     )

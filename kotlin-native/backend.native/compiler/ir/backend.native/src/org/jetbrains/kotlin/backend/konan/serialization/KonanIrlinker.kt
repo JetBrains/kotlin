@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.backend.konan.serialization
 
 import org.jetbrains.kotlin.backend.common.linkage.issues.UserVisibleIrModulesSupport
 import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
+import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupportForLinker
 import org.jetbrains.kotlin.backend.common.lower.parents
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideClassFilter
@@ -349,12 +350,12 @@ internal class KonanIrLinker(
         private val stubGenerator: DeclarationStubGenerator,
         private val cenumsProvider: IrProviderForCEnumAndCStructStubs,
         exportedDependencies: List<ModuleDescriptor>,
-        partialLinkageEnabled: Boolean,
+        override val partialLinkageSupport: PartialLinkageSupportForLinker,
         private val cachedLibraries: CachedLibraries,
         private val lazyIrForCaches: Boolean,
         private val libraryBeingCached: PartialCacheInfo?,
         override val userVisibleIrModulesSupport: UserVisibleIrModulesSupport
-) : KotlinIrLinker(currentModule, messageLogger, builtIns, symbolTable, exportedDependencies, partialLinkageEnabled) {
+) : KotlinIrLinker(currentModule, messageLogger, builtIns, symbolTable, exportedDependencies) {
 
     companion object {
         private val C_NAMES_NAME = Name.identifier("cnames")

@@ -10,17 +10,29 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageConfig
+import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageLogLevel
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.allUnbound
 
-fun createPartialLinkageSupportForLinker(isEnabled: Boolean, builtIns: IrBuiltIns, messageLogger: IrMessageLogger) =
-    if (isEnabled) PartialLinkageSupportForLinkerImpl(builtIns, messageLogger) else PartialLinkageSupportForLinker.DISABLED
+fun createPartialLinkageSupportForLinker(
+    partialLinkageConfig: PartialLinkageConfig,
+    builtIns: IrBuiltIns,
+    messageLogger: IrMessageLogger
+): PartialLinkageSupportForLinker = if (partialLinkageConfig.isEnabled)
+    PartialLinkageSupportForLinkerImpl(builtIns, partialLinkageConfig.logLevel, messageLogger)
+else
+    PartialLinkageSupportForLinker.DISABLED
 
-internal class PartialLinkageSupportForLinkerImpl(builtIns: IrBuiltIns, messageLogger: IrMessageLogger) : PartialLinkageSupportForLinker {
+internal class PartialLinkageSupportForLinkerImpl(
+    builtIns: IrBuiltIns,
+    logLevel: PartialLinkageLogLevel,
+    messageLogger: IrMessageLogger
+) : PartialLinkageSupportForLinker {
     private val stubGenerator = MissingDeclarationStubGenerator(builtIns)
     private val classifierExplorer = ClassifierExplorer(builtIns, stubGenerator)
-    private val patcher = PartiallyLinkedIrTreePatcher(builtIns, classifierExplorer, stubGenerator, messageLogger)
+    private val patcher = PartiallyLinkedIrTreePatcher(builtIns, classifierExplorer, stubGenerator, logLevel, messageLogger)
 
     override val isEnabled get() = true
 
