@@ -1,3 +1,21 @@
+## 1.8.20-RC2
+
+### Compiler
+
+- [`KT-57242`](https://youtrack.jetbrains.com/issue/KT-57242) Equals behaviour for value classes implementing interfaces is different between 1.8.10 and 1.8.20-RC
+- [`KT-57261`](https://youtrack.jetbrains.com/issue/KT-57261) "IllegalArgumentException was thrown at: MemoizedInlineClassReplacements.getSpecializedEqualsMethod" when comparing non-inline class instance with an inline class instance
+- [`KT-56527`](https://youtrack.jetbrains.com/issue/KT-56527) K2: "AssertionError: Assertion failed" during compilation in SequentialFilePositionFinder
+- [`KT-57107`](https://youtrack.jetbrains.com/issue/KT-57107) Handling of Windows line endings CRLF broken in latest snapshot with K2
+
+### Tools. Gradle
+
+- [`KT-57296`](https://youtrack.jetbrains.com/issue/KT-57296) Build statistics sending errors in case of buildSrc directory usage with kotlin-dsl plugin applied
+
+### Tools. Gradle. JS
+
+- [`KT-57285`](https://youtrack.jetbrains.com/issue/KT-57285) KJS / Gradle / MPP: FileNotFoundException on publishing empty KJS sourceset
+
+
 ## 1.8.20-RC
 
 ### Backend. Wasm
