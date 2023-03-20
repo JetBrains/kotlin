@@ -174,6 +174,7 @@ private class ExtTestDataFile(
         testDataFileSettings.optInsForCompiler.sorted().mapTo(args) { "-opt-in=$it" }
         args += "-opt-in=kotlin.native.internal.InternalForKotlinNativeTests" // for ReflectionPackageName
         if (testDataFileSettings.expectActualLinker) args += "-Xexpect-actual-linker"
+        args += listOf("-Xpartial-linkage", "-Xpartial-linkage-loglevel=error")
         return TestCompilerArgs(args)
     }
 
