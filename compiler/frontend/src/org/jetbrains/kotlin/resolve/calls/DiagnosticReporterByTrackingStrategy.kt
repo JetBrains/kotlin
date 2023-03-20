@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.builtins.isExtensionFunctionType
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory2
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.diagnostics.Errors.BadNamedArgumentsTarget.*
 import org.jetbrains.kotlin.diagnostics.reportDiagnosticOnce
@@ -449,47 +451,29 @@ class DiagnosticReporterByTrackingStrategy(
             return
         }
 
-        val argument =
-            when (position) {
-                is ArgumentConstraintPosition<*> -> position.argument as KotlinCallArgument
-                is ReceiverConstraintPosition<*> -> position.argument as KotlinCallArgument
-                is LambdaArgumentConstraintPosition<*> -> (position.lambda as ResolvedLambdaAtom).atom
-                else -> null
-            }
         val isWarning = error is NewConstraintWarning
         val typeMismatchDiagnostic = if (isWarning) TYPE_MISMATCH_WARNING else TYPE_MISMATCH
         val report = if (isWarning) trace::reportDiagnosticOnce else trace::report
-        if (argument != null) {
-            (argument as? LambdaKotlinCallArgument)?.let lambda@{ lambda ->
-                val parameterTypes = lambda.parametersTypes?.toList() ?: return@lambda
-                val index = parameterTypes.indexOf(error.upperKotlinType.unwrap())
-                val lambdaExpression = lambda.psiExpression as? KtLambdaExpression ?: return@lambda
-                val parameter = lambdaExpression.valueParameters.getOrNull(index) ?: return@lambda
-                val diagnosticFactory =
-                    if (isWarning) EXPECTED_PARAMETER_TYPE_MISMATCH_WARNING else EXPECTED_PARAMETER_TYPE_MISMATCH
-                report(diagnosticFactory.on(parameter, error.lowerKotlinType))
-                return
-            }
 
-            val expression = argument.psiExpression ?: return
-            val deparenthesized = KtPsiUtil.safeDeparenthesize(expression)
-            if (reportConstantTypeMismatch(error, deparenthesized)) return
-
-            val compileTimeConstant = trace[BindingContext.COMPILE_TIME_VALUE, deparenthesized] as? TypedCompileTimeConstant
-            if (compileTimeConstant != null) {
-                val expressionType = trace[BindingContext.EXPRESSION_TYPE_INFO, expression]?.type
-                if (expressionType != null &&
-                    !UnsignedTypes.isUnsignedType(compileTimeConstant.type) && UnsignedTypes.isUnsignedType(expressionType)
-                ) {
-                    return
-                }
-            }
-            report(typeMismatchDiagnostic.on(deparenthesized, error.upperKotlinType, error.lowerKotlinType))
-            return
-        }
-
-        @Suppress("KotlinConstantConditions")
         when (position) {
+            is ArgumentConstraintPosition<*> -> {
+                reportArgumentConstraintErrorByPosition(
+                    error, position.argument as KotlinCallArgument,
+                    isWarning, typeMismatchDiagnostic, report
+                )
+            }
+            is ReceiverConstraintPosition<*> -> {
+                reportArgumentConstraintErrorByPosition(
+                    error, position.argument as KotlinCallArgument,
+                    isWarning, typeMismatchDiagnostic, report
+                )
+            }
+            is LambdaArgumentConstraintPosition<*> -> {
+                reportArgumentConstraintErrorByPosition(
+                    error, (position.lambda as ResolvedLambdaAtom).atom,
+                    isWarning, typeMismatchDiagnostic, report
+                )
+            }
             is BuilderInferenceExpectedTypeConstraintPosition -> {
                 val inferredType =
                     if (!error.lowerKotlinType.isNullableNothing()) error.lowerKotlinType
@@ -540,13 +524,50 @@ class DiagnosticReporterByTrackingStrategy(
             }
             is LHSArgumentConstraintPosition<*, *> -> TODO()
             SimpleConstraintSystemConstraintPosition -> TODO()
-            // Never reachable
-            is ArgumentConstraintPosition<*>,
-            is LambdaArgumentConstraintPosition<*>,
-            is ReceiverConstraintPosition<*> -> {
-                throw AssertionError("Should not be here")
+        }
+    }
+
+    private fun reportArgumentConstraintErrorByPosition(
+        error: NewConstraintMismatch,
+        argument: KotlinCallArgument,
+        isWarning: Boolean,
+        typeMismatchDiagnostic: DiagnosticFactory2<KtExpression, KotlinType, KotlinType>,
+        report: (Diagnostic) -> Unit
+    ) {
+        if (argument is LambdaKotlinCallArgument) {
+            val parameterTypes = argument.parametersTypes?.toList()
+            if (parameterTypes != null) {
+                val index = parameterTypes.indexOf(error.upperKotlinType.unwrap())
+                val lambdaExpression = argument.psiExpression as? KtLambdaExpression
+                val parameter = lambdaExpression?.valueParameters?.getOrNull(index)
+                if (parameter != null) {
+                    val diagnosticFactory =
+                        if (isWarning) EXPECTED_PARAMETER_TYPE_MISMATCH_WARNING else EXPECTED_PARAMETER_TYPE_MISMATCH
+                    report(diagnosticFactory.on(parameter, error.lowerKotlinType))
+                    return
+                }
             }
         }
+
+        // TODO: FIXME (KT-55056)
+        val expression = argument.psiExpression ?: return
+
+        val deparenthesized = KtPsiUtil.safeDeparenthesize(expression)
+        if (reportConstantTypeMismatch(error, deparenthesized)) return
+
+        val compileTimeConstant = trace[BindingContext.COMPILE_TIME_VALUE, deparenthesized] as? TypedCompileTimeConstant
+        if (compileTimeConstant != null) {
+            val expressionType = trace[BindingContext.EXPRESSION_TYPE_INFO, expression]?.type
+            if (expressionType != null &&
+                !UnsignedTypes.isUnsignedType(compileTimeConstant.type) && UnsignedTypes.isUnsignedType(expressionType)
+            ) {
+                // This is a special "hack" to prevent TYPE_MISMATCH
+                // in case of a compile-time constant with signed VS unsigned type
+                // See conversionOfSignedToUnsigned.kt diagnostic test
+                return
+            }
+        }
+        report(typeMismatchDiagnostic.on(deparenthesized, error.upperKotlinType, error.lowerKotlinType))
     }
 
     override fun constraintError(error: ConstraintSystemError) {
