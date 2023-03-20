@@ -135,6 +135,20 @@ open class IncrementalCompilationJsMultiProjectIT : BaseIncrementalCompilationMu
             }
         }
     }
+
+    @DisplayName("Lib project classes became final")
+    @GradleTest
+    override fun testLibClassBecameFinal(gradleVersion: GradleVersion) {
+        // `impactedClassInAppIsRecompiled = false` for Kotlin/JS (KT-56197 was fixed for Kotlin/JVM only)
+        doTestLibClassBecameFinal(gradleVersion, impactedClassInAppIsRecompiled = false)
+    }
+
+    @DisplayName("KT-56197: Change interface in lib which has subclass in app")
+    @GradleTest
+    override fun testChangeInterfaceInLib(gradleVersion: GradleVersion) {
+        // `impactedClassInAppIsRecompiled = false` for Kotlin/JS (KT-56197 was fixed for Kotlin/JVM only)
+        doTestChangeInterfaceInLib(gradleVersion, impactedClassInAppIsRecompiled = false)
+    }
 }
 
 class IncrementalCompilationJsMultiProjectWithPreciseBackupIT : IncrementalCompilationJsMultiProjectIT() {
@@ -436,6 +450,20 @@ open class IncrementalCompilationOldICJvmMultiProjectIT : IncrementalCompilation
             }
         }
     }
+
+    @DisplayName("Lib project classes became final")
+    @GradleTest
+    override fun testLibClassBecameFinal(gradleVersion: GradleVersion) {
+        // `impactedClassInAppIsRecompiled = false` for the old IC (KT-56197 was fixed for the new IC only)
+        doTestLibClassBecameFinal(gradleVersion, impactedClassInAppIsRecompiled = false)
+    }
+
+    @DisplayName("KT-56197: Change interface in lib which has subclass in app")
+    @GradleTest
+    override fun testChangeInterfaceInLib(gradleVersion: GradleVersion) {
+        // `impactedClassInAppIsRecompiled = false` for the old IC (KT-56197 was fixed for the new IC only)
+        doTestChangeInterfaceInLib(gradleVersion, impactedClassInAppIsRecompiled = false)
+    }
 }
 
 class IncrementalCompilationOldICJvmMultiProjectWithPreciseBackupIT : IncrementalCompilationOldICJvmMultiProjectIT() {
@@ -621,7 +649,11 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
 
     @DisplayName("Lib project classes became final")
     @GradleTest
-    fun testLibClassBecameFinal(gradleVersion: GradleVersion) {
+    open fun testLibClassBecameFinal(gradleVersion: GradleVersion) {
+        doTestLibClassBecameFinal(gradleVersion)
+    }
+
+    protected fun doTestLibClassBecameFinal(gradleVersion: GradleVersion, impactedClassInAppIsRecompiled: Boolean = true) {
         defaultProject(gradleVersion) {
             build("assemble")
 
@@ -632,7 +664,10 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
             buildAndFail("assemble") {
                 val expectedSources = getExpectedKotlinSourcesForDefaultProject(
                     libSources = listOf("bar/B.kt", "bar/barUseAB.kt", "bar/barUseB.kt"),
-                    appSources = listOf("foo/BB.kt", "foo/fooCallUseAB.kt", "foo/fooUseB.kt")
+                    appSources = listOfNotNull(
+                        "foo/BB.kt", "foo/fooUseB.kt", "foo/fooCallUseAB.kt",
+                        "foo/fooUseBB.kt".takeIf { impactedClassInAppIsRecompiled }
+                    )
                 )
                 assertCompiledKotlinSources(expectedSources, output)
             }
@@ -777,7 +812,11 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
 
     @DisplayName("KT-56197: Change interface in lib which has subclass in app")
     @GradleTest
-    fun testChangeInterfaceInLib(gradleVersion: GradleVersion) {
+    open fun testChangeInterfaceInLib(gradleVersion: GradleVersion) {
+        doTestChangeInterfaceInLib(gradleVersion)
+    }
+
+    protected fun doTestChangeInterfaceInLib(gradleVersion: GradleVersion, impactedClassInAppIsRecompiled: Boolean = true) {
         defaultProject(gradleVersion) {
             subProject("lib").kotlinSourcesDir().resolve("bar/InterfaceInLib.kt").writeText(
                 """
@@ -809,22 +848,15 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
             }
 
             build(":app:compileKotlin") {
-                if (defaultBuildOptions.useGradleClasspathSnapshot == false) {
-                    // KT-56197 was fixed for the new IC only, the old IC still doesn't recompile "foo/ClassUsingSubclassInApp.kt"
-                    assertIncrementalCompilation(
-                        expectedCompiledKotlinFiles = getExpectedKotlinSourcesForDefaultProject(
-                            libSources = listOf("bar/InterfaceInLib.kt"),
-                            appSources = listOf("foo/SubclassInApp.kt")
+                assertIncrementalCompilation(
+                    expectedCompiledKotlinFiles = getExpectedKotlinSourcesForDefaultProject(
+                        libSources = listOf("bar/InterfaceInLib.kt"),
+                        appSources = listOfNotNull(
+                            "foo/SubclassInApp.kt",
+                            "foo/ClassUsingSubclassInApp.kt".takeIf { impactedClassInAppIsRecompiled }
                         )
                     )
-                } else {
-                    assertIncrementalCompilation(
-                        expectedCompiledKotlinFiles = getExpectedKotlinSourcesForDefaultProject(
-                            libSources = listOf("bar/InterfaceInLib.kt"),
-                            appSources = listOf("foo/SubclassInApp.kt", "foo/ClassUsingSubclassInApp.kt")
-                        )
-                    )
-                }
+                )
             }
         }
     }
