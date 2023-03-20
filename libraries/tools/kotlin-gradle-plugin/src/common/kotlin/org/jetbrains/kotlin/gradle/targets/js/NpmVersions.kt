@@ -35,7 +35,6 @@ class NpmVersions : Serializable {
     val karmaWebpack = NpmPackageVersion("karma-webpack", "5.0.0")
     val karmaCoverage = NpmPackageVersion("karma-coverage", "2.2.0")
     val karmaSourcemapLoader = NpmPackageVersion("karma-sourcemap-loader", "0.4.0")
-    val formatUtil = NpmPackageVersion("format-util", "1.0.5")
     val typescript = NpmPackageVersion("typescript", "4.9.5")
 
     val kotlinJsTestRunner = KotlinGradleNpmPackage("test-js-runner")

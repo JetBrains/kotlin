@@ -36,7 +36,6 @@ class KotlinMocha(@Transient override val compilation: KotlinJsCompilation, priv
         get() = setOf(
             versions.mocha,
             versions.sourceMapSupport,
-            versions.formatUtil
         )
 
     override fun getPath() = "$basePath:kotlinMocha"

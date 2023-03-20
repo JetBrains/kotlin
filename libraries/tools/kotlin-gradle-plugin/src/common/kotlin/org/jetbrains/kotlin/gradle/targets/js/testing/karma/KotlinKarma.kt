@@ -266,7 +266,6 @@ class KotlinKarma(
         requiredDependencies.add(
             versions.webpackCli
         )
-        requiredDependencies.add(versions.formatUtil)
         requiredDependencies.add(
             versions.sourceMapLoader
         )
