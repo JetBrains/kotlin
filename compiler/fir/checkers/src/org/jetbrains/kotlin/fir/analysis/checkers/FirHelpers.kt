@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.analysis.checkers
 
 import com.intellij.lang.LighterASTNode
-import com.intellij.openapi.util.Ref
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.builtins.StandardNames.HASHCODE_NAME
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -44,6 +43,7 @@ import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeCheckerProviderContext
 import org.jetbrains.kotlin.util.ImplementationStatus
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.util.getChildren
 
 private val INLINE_ONLY_ANNOTATION_CLASS_ID: ClassId = ClassId.topLevel(FqName("kotlin.internal.InlineOnly"))
 
@@ -666,14 +666,11 @@ internal val KtSourceElement.defaultValueForParameter: KtSourceElement?
     }
 
 private fun findDefaultValue(source: KtLightSourceElement): KtLightSourceElement? {
-    val childrenRef = Ref<Array<LighterASTNode?>>()
-    source.treeStructure.getChildren(source.lighterASTNode, childrenRef)
-
     var defaultValue: LighterASTNode? = null
     var defaultValueOffset = source.startOffset
 
-    for (node in childrenRef.get()) {
-        if (node == null) continue
+    val nodes = source.lighterASTNode.getChildren(source.treeStructure)
+    for (node in nodes) {
         if (node.isExpression()) {
             defaultValue = node
             break
