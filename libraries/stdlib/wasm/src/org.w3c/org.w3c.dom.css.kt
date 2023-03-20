@@ -20,6 +20,7 @@ public external abstract class MediaList : ItemArrayLike<JsString>, JsAny {
 }
 
 @PublishedApi
+@Suppress("UNUSED_PARAMETER")
 internal fun getMethodImplForMediaList(obj: MediaList, index: Int): String? { js("return obj[index];") }
 
 @kotlin.internal.InlineOnly
@@ -56,6 +57,7 @@ public external abstract class StyleSheetList : ItemArrayLike<StyleSheet>, JsAny
 }
 
 @PublishedApi
+@Suppress("UNUSED_PARAMETER")
 internal fun getMethodImplForStyleSheetList(obj: StyleSheetList, index: Int): StyleSheet? { js("return obj[index];") }
 
 @kotlin.internal.InlineOnly
@@ -77,6 +79,7 @@ public external abstract class CSSRuleList : ItemArrayLike<CSSRule>, JsAny {
 }
 
 @PublishedApi
+@Suppress("UNUSED_PARAMETER")
 internal fun getMethodImplForCSSRuleList(obj: CSSRuleList, index: Int): CSSRule? { js("return obj[index];") }
 
 @kotlin.internal.InlineOnly
@@ -474,6 +477,7 @@ public external abstract class CSSStyleDeclaration : ItemArrayLike<JsString>, Js
 }
 
 @PublishedApi
+@Suppress("UNUSED_PARAMETER")
 internal fun getMethodImplForCSSStyleDeclaration(obj: CSSStyleDeclaration, index: Int): String? { js("return obj[index];") }
 
 @kotlin.internal.InlineOnly

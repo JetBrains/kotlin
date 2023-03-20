@@ -85,6 +85,11 @@ private val PUBLISHED_API_ANNOTATION = AnnotationModel(
     params = listOf()
 )
 
+private val SUPPRESS_UNUSED_PARAMETER_ANNOTATION = AnnotationModel(
+    IdentifierEntity("Suppress"),
+    listOf(IdentifierEntity("UNUSED_PARAMETER"))
+)
+
 private class IdlFileConverter(
     private val fileDeclaration: IDLFileDeclaration,
     private val typeMap: Map<String, NameEntity?>,
@@ -292,7 +297,8 @@ private class IdlFileConverter(
             extend = null,
             operator = false,
             annotations = mutableListOf(
-                PUBLISHED_API_ANNOTATION
+                PUBLISHED_API_ANNOTATION,
+                SUPPRESS_UNUSED_PARAMETER_ANNOTATION,
             ),
             body = BlockStatementModel(
                 listOf(
@@ -365,7 +371,8 @@ private class IdlFileConverter(
             extend = null,
             operator = false,
             annotations = mutableListOf(
-                PUBLISHED_API_ANNOTATION
+                PUBLISHED_API_ANNOTATION,
+                SUPPRESS_UNUSED_PARAMETER_ANNOTATION
             ),
             body = BlockStatementModel(
                 listOf(
@@ -578,10 +585,7 @@ private class IdlFileConverter(
             ),
             typeParameters = listOf(),
             annotations = mutableListOf(
-                AnnotationModel(
-                    IdentifierEntity("Suppress"),
-                    listOf(IdentifierEntity("UNUSED_PARAMETER"))
-                )
+                SUPPRESS_UNUSED_PARAMETER_ANNOTATION
             ),
             export = false,
             inline = false,

@@ -193,12 +193,14 @@ public external abstract class SVGNameList : JsAny {
 }
 
 @PublishedApi
+@Suppress("UNUSED_PARAMETER")
 internal fun getMethodImplForSVGNameList(obj: SVGNameList, index: Int): JsAny? { js("return obj[index];") }
 
 @kotlin.internal.InlineOnly
 public inline operator fun SVGNameList.get(index: Int): JsAny? = getMethodImplForSVGNameList(this, index)
 
 @PublishedApi
+@Suppress("UNUSED_PARAMETER")
 internal fun setMethodImplForSVGNameList(obj: SVGNameList, index: Int, newItem: JsAny?) { js("obj[index] = newItem;") }
 
 @kotlin.internal.InlineOnly
@@ -220,12 +222,14 @@ public external abstract class SVGNumberList : JsAny {
 }
 
 @PublishedApi
+@Suppress("UNUSED_PARAMETER")
 internal fun getMethodImplForSVGNumberList(obj: SVGNumberList, index: Int): SVGNumber? { js("return obj[index];") }
 
 @kotlin.internal.InlineOnly
 public inline operator fun SVGNumberList.get(index: Int): SVGNumber? = getMethodImplForSVGNumberList(this, index)
 
 @PublishedApi
+@Suppress("UNUSED_PARAMETER")
 internal fun setMethodImplForSVGNumberList(obj: SVGNumberList, index: Int, newItem: SVGNumber) { js("obj[index] = newItem;") }
 
 @kotlin.internal.InlineOnly
@@ -247,12 +251,14 @@ public external abstract class SVGLengthList : JsAny {
 }
 
 @PublishedApi
+@Suppress("UNUSED_PARAMETER")
 internal fun getMethodImplForSVGLengthList(obj: SVGLengthList, index: Int): SVGLength? { js("return obj[index];") }
 
 @kotlin.internal.InlineOnly
 public inline operator fun SVGLengthList.get(index: Int): SVGLength? = getMethodImplForSVGLengthList(this, index)
 
 @PublishedApi
+@Suppress("UNUSED_PARAMETER")
 internal fun setMethodImplForSVGLengthList(obj: SVGLengthList, index: Int, newItem: SVGLength) { js("obj[index] = newItem;") }
 
 @kotlin.internal.InlineOnly
@@ -354,12 +360,14 @@ public external abstract class SVGStringList : JsAny {
 }
 
 @PublishedApi
+@Suppress("UNUSED_PARAMETER")
 internal fun getMethodImplForSVGStringList(obj: SVGStringList, index: Int): String? { js("return obj[index];") }
 
 @kotlin.internal.InlineOnly
 public inline operator fun SVGStringList.get(index: Int): String? = getMethodImplForSVGStringList(this, index)
 
 @PublishedApi
+@Suppress("UNUSED_PARAMETER")
 internal fun setMethodImplForSVGStringList(obj: SVGStringList, index: Int, newItem: String) { js("obj[index] = newItem;") }
 
 @kotlin.internal.InlineOnly
@@ -814,12 +822,14 @@ public external abstract class SVGTransformList : JsAny {
 }
 
 @PublishedApi
+@Suppress("UNUSED_PARAMETER")
 internal fun getMethodImplForSVGTransformList(obj: SVGTransformList, index: Int): SVGTransform? { js("return obj[index];") }
 
 @kotlin.internal.InlineOnly
 public inline operator fun SVGTransformList.get(index: Int): SVGTransform? = getMethodImplForSVGTransformList(this, index)
 
 @PublishedApi
+@Suppress("UNUSED_PARAMETER")
 internal fun setMethodImplForSVGTransformList(obj: SVGTransformList, index: Int, newItem: SVGTransform) { js("obj[index] = newItem;") }
 
 @kotlin.internal.InlineOnly
@@ -1064,12 +1074,14 @@ public external abstract class SVGPointList : JsAny {
 }
 
 @PublishedApi
+@Suppress("UNUSED_PARAMETER")
 internal fun getMethodImplForSVGPointList(obj: SVGPointList, index: Int): DOMPoint? { js("return obj[index];") }
 
 @kotlin.internal.InlineOnly
 public inline operator fun SVGPointList.get(index: Int): DOMPoint? = getMethodImplForSVGPointList(this, index)
 
 @PublishedApi
+@Suppress("UNUSED_PARAMETER")
 internal fun setMethodImplForSVGPointList(obj: SVGPointList, index: Int, newItem: DOMPoint) { js("obj[index] = newItem;") }
 
 @kotlin.internal.InlineOnly

@@ -59,6 +59,7 @@ public external abstract class FileList : ItemArrayLike<File>, JsAny {
 }
 
 @PublishedApi
+@Suppress("UNUSED_PARAMETER")
 internal fun getMethodImplForFileList(obj: FileList, index: Int): File? { js("return obj[index];") }
 
 @kotlin.internal.InlineOnly
