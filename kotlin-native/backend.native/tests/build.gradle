@@ -6193,11 +6193,6 @@ sourceSets {
             srcDir 'extensions/nop/src/main/kotlin'
         }
     }
-    test {
-        kotlin {
-            srcDir 'debugger/src/test/kotlin'
-        }
-    }
 }
 
 compileNopPluginKotlin {
@@ -6623,25 +6618,6 @@ dependencies {
     implementation kotlinCompilerModule
     api project(path: ':kotlin-native:backend.native', configuration: 'cli_bcApiElements')
     api DependenciesKt.commonDependency(project, "junit")
-}
-
-project.tasks.named("test").configure {
-    // Don't run this task as it will try to execute debugger tests too
-    // that is not desired as they are platform-specific.
-    enabled = false
-}
-
-project.tasks.register("debugger_test", Test.class) {
-    enabled = (target.family.appleFamily)  // KT-30366
-        && !isAggressiveGC // No need to test with different GC schedulers
-    testLogging { exceptionFormat = 'full' }
-    UtilsKt.dependsOnDist(it)
-    systemProperties = ['kotlin.native.home': kotlinNativeDist,
-    'kotlin.native.host': HostManager.@Companion.getHost(),
-    'kotlin.native.test.target': target,
-    'kotlin.native.test.debugger.simulator.enabled': findProperty("kotlin.native.test.debugger.simulator.enabled"),
-    'kotlin.native.test.debugger.simulator.delay': findProperty("kotlin.native.test.debugger.simulator.delay")]
-    outputs.upToDateWhen { false }
 }
 
 // Configure build for iOS device targets.
