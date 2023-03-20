@@ -87,6 +87,7 @@
         <option value="$PROJECT_DIR$/plugins/assign-plugin/testData" />
         <option value="$PROJECT_DIR$/analysis/analysis-api/testData" />
         <option value="$PROJECT_DIR$/analysis/symbol-light-classes/testData" />
+        <option value="$PROJECT_DIR$/analysis/low-level-api-fir/testdata" />
       </array>
     </option>
   </component>
