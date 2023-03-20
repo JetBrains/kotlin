@@ -133,6 +133,7 @@ include ":kotlin-allopen-compiler-plugin",
         ":kotlin-allopen-compiler-plugin.cli"
 
 include ":kotlin-noarg-compiler-plugin",
+        ":kotlin-noarg-compiler-plugin.embeddable",
         ":kotlin-noarg-compiler-plugin.common",
         ":kotlin-noarg-compiler-plugin.k1",
         ":kotlin-noarg-compiler-plugin.k2",
@@ -681,6 +682,7 @@ project(':kotlin-lombok-compiler-plugin.k2').projectDir = "$rootDir/plugins/lomb
 project(':kotlin-lombok-compiler-plugin.common').projectDir = "$rootDir/plugins/lombok/lombok.common" as File
 
 project(':kotlin-noarg-compiler-plugin').projectDir = "$rootDir/plugins/noarg" as File
+project(':kotlin-noarg-compiler-plugin.embeddable').projectDir = "$rootDir/plugins/noarg/noarg.embeddable" as File
 project(':kotlin-noarg-compiler-plugin.common').projectDir = "$rootDir/plugins/noarg/noarg.common" as File
 project(':kotlin-noarg-compiler-plugin.k1').projectDir = "$rootDir/plugins/noarg/noarg.k1" as File
 project(':kotlin-noarg-compiler-plugin.k2').projectDir = "$rootDir/plugins/noarg/noarg.k2" as File
