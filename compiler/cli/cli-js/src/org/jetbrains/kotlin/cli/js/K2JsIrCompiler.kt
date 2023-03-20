@@ -170,6 +170,9 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         configuration.put(JSConfigurationKeys.TRANSITIVE_LIBRARIES, libraries)
 
         configuration.put(JSConfigurationKeys.PARTIAL_LINKAGE, arguments.partialLinkage)
+        arguments.partialLinkageLogLevel?.let {
+            configuration.put(JSConfigurationKeys.PARTIAL_LINKAGE_LOG_LEVEL, PartialLinkageLogLevel.resolveLogLevel(it))
+        }
 
         configuration.put(JSConfigurationKeys.WASM_ENABLE_ARRAY_RANGE_CHECKS, arguments.wasmEnableArrayRangeChecks)
         configuration.put(JSConfigurationKeys.WASM_ENABLE_ASSERTS, arguments.wasmEnableAsserts)

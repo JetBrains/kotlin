@@ -7,13 +7,13 @@ package org.jetbrains.kotlin.js.config;
 
 import org.jetbrains.kotlin.konan.file.ZipFileSystemAccessor;
 import org.jetbrains.kotlin.config.CompilerConfigurationKey;
+import org.jetbrains.kotlin.config.PartialLinkageLogLevel;
 import org.jetbrains.kotlin.incremental.js.IncrementalNextRoundChecker;
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider;
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer;
 import org.jetbrains.kotlin.serialization.js.ModuleKind;
 
 import java.io.File;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -102,7 +102,10 @@ public class JSConfigurationKeys {
             CompilerConfigurationKey.create("set up policy to ignore compilation errors");
 
     public static final CompilerConfigurationKey<Boolean> PARTIAL_LINKAGE =
-            CompilerConfigurationKey.create("allows some symbols in klibs be missed");
+            CompilerConfigurationKey.create("enables partial linkage mode");
+
+    public static final CompilerConfigurationKey<PartialLinkageLogLevel> PARTIAL_LINKAGE_LOG_LEVEL =
+            CompilerConfigurationKey.create("partial linkage compile-time log level");
 
     public static final CompilerConfigurationKey<Boolean> PROPERTY_LAZY_INITIALIZATION =
             CompilerConfigurationKey.create("perform lazy initialization for properties");
