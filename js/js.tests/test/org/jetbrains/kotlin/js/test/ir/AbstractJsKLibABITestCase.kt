@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.js.klib.generateIrForKlibSerialization
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.codegen.ProjectInfo
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -28,6 +27,9 @@ import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransf
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
+import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageConfig
+import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageLogLevel
+import org.jetbrains.kotlin.ir.linkage.partial.setupPartialLinkageConfig
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.testOld.V8IrJsTestChecker
@@ -77,7 +79,6 @@ abstract class AbstractJsKLibABITestCase : KtUsefulTestCase() {
     private fun createConfig(moduleName: String): CompilerConfiguration {
         val config = environment.configuration.copy()
         config.put(CommonConfigurationKeys.MODULE_NAME, moduleName)
-        config.put(JSConfigurationKeys.PARTIAL_LINKAGE, true)
         config.put(JSConfigurationKeys.MODULE_KIND, ModuleKind.PLAIN)
         config.put(JSConfigurationKeys.PROPERTY_LAZY_INITIALIZATION, true)
 
@@ -160,6 +161,7 @@ abstract class AbstractJsKLibABITestCase : KtUsefulTestCase() {
 
     private fun buildBinaryAndRun(mainModuleKlibFile: File, allDependencies: KlibABITestUtils.Dependencies) {
         val configuration = createConfig(MAIN_MODULE_NAME)
+        configuration.setupPartialLinkageConfig(PartialLinkageConfig(isEnabled = true, logLevel = PartialLinkageLogLevel.WARN))
 
         val compilationOutputs = if (useIncrementalCompiler)
             buildBinaryWithIC(configuration, mainModuleKlibFile, allDependencies)

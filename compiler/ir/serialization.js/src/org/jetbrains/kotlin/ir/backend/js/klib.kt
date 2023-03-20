@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.descriptors.IrDescriptorBasedFunctionFactory
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
+import org.jetbrains.kotlin.ir.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -198,7 +199,7 @@ fun loadIr(
     val allDependencies = depsDescriptors.allDependencies
     val errorPolicy = configuration.get(JSConfigurationKeys.ERROR_TOLERANCE_POLICY) ?: ErrorTolerancePolicy.DEFAULT
     val messageLogger = configuration.irMessageLogger
-    val partialLinkageEnabled = configuration[JSConfigurationKeys.PARTIAL_LINKAGE] ?: false
+    val partialLinkageEnabled = configuration.partialLinkageConfig.isEnabled
 
     val signaturer = IdSignatureDescriptor(JsManglerDesc)
     val symbolTable = SymbolTable(signaturer, irFactory)
@@ -261,7 +262,7 @@ fun getIrModuleInfoForKlib(
     val typeTranslator = TypeTranslatorImpl(symbolTable, configuration.languageVersionSettings, moduleDescriptor)
     val irBuiltIns = IrBuiltInsOverDescriptors(moduleDescriptor.builtIns, typeTranslator, symbolTable)
 
-    val partialLinkageEnabled = configuration[JSConfigurationKeys.PARTIAL_LINKAGE] ?: false
+    val partialLinkageEnabled = configuration.partialLinkageConfig.isEnabled
 
     val irLinker = JsIrLinker(
         currentModule = null,
@@ -321,7 +322,7 @@ fun getIrModuleInfoForSourceFiles(
         JsIrLinker.JsFePluginContext(moduleDescriptor, symbolTable, typeTranslator, irBuiltIns)
     }
 
-    val partialLinkageEnabled = configuration[JSConfigurationKeys.PARTIAL_LINKAGE] ?: false
+    val partialLinkageEnabled = configuration.partialLinkageConfig.isEnabled
 
     val irLinker = JsIrLinker(
         currentModule = psi2IrContext.moduleDescriptor,

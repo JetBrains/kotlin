@@ -12,10 +12,8 @@ import org.jetbrains.kotlin.backend.konan.serialization.KonanUserVisibleIrModule
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.KotlinCompilerVersion
-import org.jetbrains.kotlin.config.PartialLinkageLogLevel
+import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.ir.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.properties.loadProperties
@@ -400,8 +398,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     internal val useDebugInfoInNativeLibs= configuration.get(BinaryOptions.stripDebugInfoFromNativeLibs) == false
 
-    internal val partialLinkageEnabled = configuration[KonanConfigKeys.PARTIAL_LINKAGE] ?: false
-    internal val partialLinkageLogLevel = configuration[KonanConfigKeys.PARTIAL_LINKAGE_LOG_LEVEL] ?: PartialLinkageLogLevel.DEFAULT
+    internal val partialLinkageConfig = configuration.partialLinkageConfig
 
     internal val additionalCacheFlags by lazy { platformManager.loader(target).additionalCacheFlags }
 
@@ -435,7 +432,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     private val userCacheFlavorString = buildString {
         appendCommonCacheFlavor()
-        if (partialLinkageEnabled) append("-pl")
+        if (partialLinkageConfig.isEnabled) append("-pl")
     }
 
     private val systemCacheRootDirectory = File(distribution.konanHome).child("klib").child("cache")

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
-import org.jetbrains.kotlin.config.PartialLinkageLogLevel
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 
 class KonanConfigKeys {
@@ -159,8 +158,6 @@ class KonanConfigKeys {
         val LLVM_VARIANT: CompilerConfigurationKey<LlvmVariant?> = CompilerConfigurationKey.create("llvm variant")
         val RUNTIME_LOGS: CompilerConfigurationKey<String> = CompilerConfigurationKey.create("enable runtime logging")
         val LAZY_IR_FOR_CACHES: CompilerConfigurationKey<Boolean> = CompilerConfigurationKey.create("use lazy IR for cached libraries")
-        val PARTIAL_LINKAGE: CompilerConfigurationKey<Boolean> = CompilerConfigurationKey.create("enables partial linkage mode")
-        val PARTIAL_LINKAGE_LOG_LEVEL: CompilerConfigurationKey<PartialLinkageLogLevel> = CompilerConfigurationKey.create("partial linkage compile-time log level")
         val TEST_DUMP_OUTPUT_PATH: CompilerConfigurationKey<String?> = CompilerConfigurationKey.create("path to a file to dump the list of all available tests")
         val OMIT_FRAMEWORK_BINARY: CompilerConfigurationKey<Boolean> = CompilerConfigurationKey.create("do not generate binary in framework")
         val COMPILE_FROM_BITCODE: CompilerConfigurationKey<String?> = CompilerConfigurationKey.create("path to bitcode file to compile")
