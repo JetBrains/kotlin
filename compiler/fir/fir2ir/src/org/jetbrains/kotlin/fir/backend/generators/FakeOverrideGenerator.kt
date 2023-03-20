@@ -94,7 +94,6 @@ class FakeOverrideGenerator(
                 )
             }
         }
-        if (firClass.isEnumClass) return@buildList // F/O for values/valueOf/entries aren't needed, for other members aren't possible
         val staticScope = firClass.scopeProvider.getStaticMemberScopeForCallables(firClass, session, scopeSession)
         if (staticScope != null) {
             generateFakeOverridesForName(

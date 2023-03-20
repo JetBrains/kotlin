@@ -49304,6 +49304,12 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
         }
 
         @Test
+        @TestMetadata("enumWithInheritedStaticField.kt")
+        public void testEnumWithInheritedStaticField() throws Exception {
+            runTest("compiler/testData/codegen/box/statics/enumWithInheritedStaticField.kt");
+        }
+
+        @Test
         @TestMetadata("fields.kt")
         public void testFields() throws Exception {
             runTest("compiler/testData/codegen/box/statics/fields.kt");

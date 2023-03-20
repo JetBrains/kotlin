@@ -37969,6 +37969,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/statics/anonymousInitializerInClassObject.kt");
         }
 
+        @TestMetadata("enumWithInheritedStaticField.kt")
+        public void testEnumWithInheritedStaticField() throws Exception {
+            runTest("compiler/testData/codegen/box/statics/enumWithInheritedStaticField.kt");
+        }
+
         @TestMetadata("fields.kt")
         public void testFields() throws Exception {
             runTest("compiler/testData/codegen/box/statics/fields.kt");
