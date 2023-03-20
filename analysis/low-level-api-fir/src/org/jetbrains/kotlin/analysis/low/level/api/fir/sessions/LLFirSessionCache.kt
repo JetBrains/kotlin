@@ -154,9 +154,10 @@ internal class LLFirSessionCache(private val project: Project) {
             registerCompilerPluginExtensions(project, module)
             registerCommonComponentsAfterExtensionsAreConfigured()
 
-            val switchableExtensionDeclarationsSymbolProvider = FirSwitchableExtensionDeclarationsSymbolProvider.create(session)?.also {
-                register(FirSwitchableExtensionDeclarationsSymbolProvider::class, it)
-            }
+            val switchableExtensionDeclarationsSymbolProvider =
+                FirSwitchableExtensionDeclarationsSymbolProvider.createIfNeeded(session)?.also {
+                    register(FirSwitchableExtensionDeclarationsSymbolProvider::class, it)
+                }
 
             val dependencyProvider = LLFirDependenciesSymbolProvider(this, buildList {
                 addDependencySymbolProvidersTo(session, dependencies, this)

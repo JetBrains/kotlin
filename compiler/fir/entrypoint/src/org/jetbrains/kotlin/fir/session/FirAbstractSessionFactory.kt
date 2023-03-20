@@ -111,7 +111,7 @@ abstract class FirAbstractSessionFactory {
             registerCommonComponentsAfterExtensionsAreConfigured()
 
             val dependencyProviders = computeDependencyProviderList(moduleData)
-            val generatedSymbolsProvider = FirSwitchableExtensionDeclarationsSymbolProvider.create(this)
+            val generatedSymbolsProvider = FirSwitchableExtensionDeclarationsSymbolProvider.createIfNeeded(this)
             val syntheticFunctionInterfaceProvider =
                 FirExtensionSyntheticFunctionInterfaceProvider.createIfNeeded(this, moduleData, kotlinScopeProvider)
 

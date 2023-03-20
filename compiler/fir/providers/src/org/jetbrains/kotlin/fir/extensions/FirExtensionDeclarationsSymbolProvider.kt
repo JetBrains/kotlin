@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.fir.extensions
 
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.caches.*
 import org.jetbrains.kotlin.fir.declarations.validate
 import org.jetbrains.kotlin.fir.ownerGenerator
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
@@ -28,7 +30,7 @@ class FirExtensionDeclarationsSymbolProvider private constructor(
     private val extensions: List<FirDeclarationGenerationExtension>
 ) : FirSymbolProvider(session), FirSessionComponent {
     companion object {
-        fun create(session: FirSession): FirExtensionDeclarationsSymbolProvider? {
+        fun createIfNeeded(session: FirSession): FirExtensionDeclarationsSymbolProvider? {
             val extensions = session.extensionService.declarationGenerators
             if (extensions.isEmpty()) return null
             return FirExtensionDeclarationsSymbolProvider(session, session.firCachesFactory, extensions)
