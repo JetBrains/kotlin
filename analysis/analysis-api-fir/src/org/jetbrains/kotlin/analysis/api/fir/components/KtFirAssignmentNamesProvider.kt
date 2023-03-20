@@ -22,6 +22,6 @@ internal class KtFirAssignmentNamesProvider(
         val firElement = expression.getOrBuildFir(analysisSession.firResolveSession)
         val errorReference = firElement as? FirErrorNamedReference ?: return null
         val altererExtensions = rootModuleSession.extensionService.assignAltererExtensions
-        return altererExtensions.firstNotNullOfOrNull { it.getName(errorReference) }
+        return altererExtensions.firstNotNullOfOrNull { it.getOperationName(errorReference) }
     }
 }

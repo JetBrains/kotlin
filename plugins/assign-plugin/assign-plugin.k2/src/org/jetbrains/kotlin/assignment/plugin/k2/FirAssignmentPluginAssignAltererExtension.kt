@@ -37,7 +37,7 @@ class FirAssignmentPluginAssignAltererExtension(
         }
     }
 
-    override fun getName(reference: FirErrorNamedReference): Name? {
+    override fun getOperationName(reference: FirErrorNamedReference): Name? {
         return if (reference.dealsWith(ASSIGN_METHOD) && reference.originallyIs(KtBinaryExpression::class.java)) ASSIGN_METHOD
         else null
     }

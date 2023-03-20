@@ -38,5 +38,5 @@ interface AssignResolutionAltererExtension : AnnotationBasedExtension {
         scope: LexicalWritableScope
     ): KotlinTypeInfo?
 
-    fun getName(expression: KtBinaryExpression, leftType: KotlinType?, bindingContext: BindingContext): Name?
+    fun getOperationName(expression: KtBinaryExpression, leftType: KotlinType?, bindingContext: BindingContext): Name?
 }

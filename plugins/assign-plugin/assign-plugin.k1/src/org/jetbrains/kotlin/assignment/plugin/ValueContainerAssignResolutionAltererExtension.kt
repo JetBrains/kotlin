@@ -91,7 +91,7 @@ abstract class AbstractAssignPluginResolutionAltererExtension : AssignResolution
         return null
     }
 
-    override fun getName(expression: KtBinaryExpression, leftType: KotlinType?, bindingContext: BindingContext): Name? {
+    override fun getOperationName(expression: KtBinaryExpression, leftType: KotlinType?, bindingContext: BindingContext): Name? {
         return if (needOverloadAssign(expression, leftType, bindingContext)) ASSIGN_METHOD else null
     }
 

@@ -32,7 +32,7 @@ abstract class FirAssignExpressionAltererExtension(session: FirSession) : FirExt
      */
     abstract fun transformVariableAssignment(variableAssignment: FirVariableAssignment): FirStatement?
 
-    abstract fun getName(reference: FirErrorNamedReference): Name?
+    abstract fun getOperationName(reference: FirErrorNamedReference): Name?
 
     fun interface Factory : FirExtension.Factory<FirAssignExpressionAltererExtension>
 }

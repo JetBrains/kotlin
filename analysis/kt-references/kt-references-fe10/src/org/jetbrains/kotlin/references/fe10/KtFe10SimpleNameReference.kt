@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.resolve.ImportedFromObjectCallableDescriptor
 import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
 
 
-open class KtFe10SimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleNameReference(expression), KtFe10Reference {
+class KtFe10SimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleNameReference(expression), KtFe10Reference {
 
     override fun canBeReferenceTo(candidateTarget: PsiElement): Boolean {
         return element.containingFile == candidateTarget.containingFile ||

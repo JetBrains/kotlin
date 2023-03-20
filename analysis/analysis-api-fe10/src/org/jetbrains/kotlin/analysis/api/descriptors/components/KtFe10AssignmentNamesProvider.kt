@@ -25,6 +25,6 @@ internal class KtFe10AssignmentNamesProvider(
         val bindingContext = KtFe10ReferenceResolutionHelper.getInstance().partialAnalyze(expression)
         val lhsType = expression.left?.getType(bindingContext) ?: return null
         val assignAlterers = AssignResolutionAltererExtension.getInstances(expression.project)
-        return assignAlterers.firstNotNullOfOrNull { it.getName(expression, lhsType, bindingContext) }
+        return assignAlterers.firstNotNullOfOrNull { it.getOperationName(expression, lhsType, bindingContext) }
     }
 }
