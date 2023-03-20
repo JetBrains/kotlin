@@ -268,12 +268,13 @@ internal class LLFirSessionCache(private val project: Project) {
                     session,
                     moduleDataProvider,
                     scopeProvider,
-                    project.createDeclarationProvider(object : DelegatingGlobalSearchScope(project, contentScope) {
+                    project,
+                    object : DelegatingGlobalSearchScope(project, contentScope) {
                         override fun contains(file: VirtualFile): Boolean {
                             if (file.extension == "kotlin_builtins") return false
                             return super.contains(file)
                         }
-                    })
+                    }
                 )
             } else {
                 provider.symbolProvider

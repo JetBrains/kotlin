@@ -74,6 +74,9 @@ class AnnotationLoaderForStubBuilderImpl(
 
     private fun createAnnotationWithArgs(
         nameResolver: NameResolver,
-        it: ProtoBuf.Annotation
-    ) = AnnotationWithArgs(nameResolver.getClassId(it.id), emptyMap())
+        protoAnno: ProtoBuf.Annotation
+    ): AnnotationWithArgs {
+        val valueMap = protoAnno.argumentList.associate { nameResolver.getName(it.nameId) to toConstantValue(it.value, nameResolver) }
+        return AnnotationWithArgs(nameResolver.getClassId(protoAnno.id), valueMap)
+    }
 }

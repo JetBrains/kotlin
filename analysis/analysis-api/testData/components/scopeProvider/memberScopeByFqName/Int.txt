@@ -1,7 +1,7 @@
 KtFunctionSymbol:
   annotationsList: [
     kotlin/internal/IntrinsicConstEvaluation()
-      psi: null
+      psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: kotlin/Int.and
   contextReceivers: []
@@ -61,7 +61,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: [
     kotlin/internal/IntrinsicConstEvaluation()
-      psi: null
+      psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: kotlin/Int.compareTo
   contextReceivers: []
@@ -121,7 +121,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: [
     kotlin/internal/IntrinsicConstEvaluation()
-      psi: null
+      psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: kotlin/Int.compareTo
   contextReceivers: []
@@ -181,7 +181,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: [
     kotlin/internal/IntrinsicConstEvaluation()
-      psi: null
+      psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: kotlin/Int.compareTo
   contextReceivers: []
@@ -241,7 +241,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: [
     kotlin/internal/IntrinsicConstEvaluation()
-      psi: null
+      psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: kotlin/Int.compareTo
   contextReceivers: []
@@ -301,7 +301,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: [
     kotlin/internal/IntrinsicConstEvaluation()
-      psi: null
+      psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: kotlin/Int.compareTo
   contextReceivers: []
@@ -361,7 +361,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: [
     kotlin/internal/IntrinsicConstEvaluation()
-      psi: null
+      psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: kotlin/Int.compareTo
   contextReceivers: []
@@ -455,7 +455,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: [
     kotlin/internal/IntrinsicConstEvaluation()
-      psi: null
+      psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: kotlin/Int.div
   contextReceivers: []
@@ -515,7 +515,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: [
     kotlin/internal/IntrinsicConstEvaluation()
-      psi: null
+      psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: kotlin/Int.div
   contextReceivers: []
@@ -575,7 +575,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: [
     kotlin/internal/IntrinsicConstEvaluation()
-      psi: null
+      psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: kotlin/Int.div
   contextReceivers: []
@@ -635,7 +635,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: [
     kotlin/internal/IntrinsicConstEvaluation()
-      psi: null
+      psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: kotlin/Int.div
   contextReceivers: []
@@ -695,7 +695,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: [
     kotlin/internal/IntrinsicConstEvaluation()
-      psi: null
+      psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: kotlin/Int.div
   contextReceivers: []
@@ -755,7 +755,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: [
     kotlin/internal/IntrinsicConstEvaluation()
-      psi: null
+      psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: kotlin/Int.div
   contextReceivers: []
@@ -815,7 +815,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: [
     kotlin/internal/IntrinsicConstEvaluation()
-      psi: null
+      psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: kotlin/Int.equals
   contextReceivers: []
@@ -909,7 +909,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: [
     kotlin/internal/IntrinsicConstEvaluation()
-      psi: null
+      psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: kotlin/Int.inv
   contextReceivers: []
@@ -946,7 +946,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: [
     kotlin/internal/IntrinsicConstEvaluation()
-      psi: null
+      psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: kotlin/Int.minus
   contextReceivers: []
@@ -1006,7 +1006,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: [
     kotlin/internal/IntrinsicConstEvaluation()
-      psi: null
+      psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: kotlin/Int.minus
   contextReceivers: []
@@ -1066,7 +1066,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: [
     kotlin/internal/IntrinsicConstEvaluation()
-      psi: null
+      psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: kotlin/Int.minus
   contextReceivers: []
@@ -1126,7 +1126,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: [
     kotlin/internal/IntrinsicConstEvaluation()
-      psi: null
+      psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: kotlin/Int.minus
   contextReceivers: []
@@ -1186,7 +1186,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: [
     kotlin/internal/IntrinsicConstEvaluation()
-      psi: null
+      psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: kotlin/Int.minus
   contextReceivers: []
@@ -1246,7 +1246,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: [
     kotlin/internal/IntrinsicConstEvaluation()
-      psi: null
+      psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: kotlin/Int.minus
   contextReceivers: []
@@ -1306,7 +1306,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: [
     kotlin/internal/IntrinsicConstEvaluation()
-      psi: null
+      psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: kotlin/Int.or
   contextReceivers: []
@@ -1366,7 +1366,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: [
     kotlin/internal/IntrinsicConstEvaluation()
-      psi: null
+      psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: kotlin/Int.plus
   contextReceivers: []
@@ -1426,7 +1426,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: [
     kotlin/internal/IntrinsicConstEvaluation()
-      psi: null
+      psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: kotlin/Int.plus
   contextReceivers: []
@@ -1486,7 +1486,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: [
     kotlin/internal/IntrinsicConstEvaluation()
-      psi: null
+      psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: kotlin/Int.plus
   contextReceivers: []
@@ -1546,7 +1546,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: [
     kotlin/internal/IntrinsicConstEvaluation()
-      psi: null
+      psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: kotlin/Int.plus
   contextReceivers: []
@@ -1606,7 +1606,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: [
     kotlin/internal/IntrinsicConstEvaluation()
-      psi: null
+      psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: kotlin/Int.plus
   contextReceivers: []
@@ -1666,7 +1666,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: [
     kotlin/internal/IntrinsicConstEvaluation()
-      psi: null
+      psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: kotlin/Int.plus
   contextReceivers: []
@@ -1954,9 +1954,9 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: [
     kotlin/SinceKotlin(version = "1.7")
-      psi: null
+      psi: KtAnnotationEntry
     kotlin/ExperimentalStdlibApi()
-      psi: null
+      psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: kotlin/Int.rangeUntil
   contextReceivers: []
@@ -2016,9 +2016,9 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: [
     kotlin/SinceKotlin(version = "1.7")
-      psi: null
+      psi: KtAnnotationEntry
     kotlin/ExperimentalStdlibApi()
-      psi: null
+      psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: kotlin/Int.rangeUntil
   contextReceivers: []
@@ -2078,9 +2078,9 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: [
     kotlin/SinceKotlin(version = "1.7")
-      psi: null
+      psi: KtAnnotationEntry
     kotlin/ExperimentalStdlibApi()
-      psi: null
+      psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: kotlin/Int.rangeUntil
   contextReceivers: []
@@ -2140,9 +2140,9 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: [
     kotlin/SinceKotlin(version = "1.7")
-      psi: null
+      psi: KtAnnotationEntry
     kotlin/ExperimentalStdlibApi()
-      psi: null
+      psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: kotlin/Int.rangeUntil
   contextReceivers: []
@@ -2202,9 +2202,9 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: [
     kotlin/SinceKotlin(version = "1.1")
-      psi: null
+      psi: KtAnnotationEntry
     kotlin/internal/IntrinsicConstEvaluation()
-      psi: null
+      psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: kotlin/Int.rem
   contextReceivers: []
@@ -2264,9 +2264,9 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: [
     kotlin/SinceKotlin(version = "1.1")
-      psi: null
+      psi: KtAnnotationEntry
     kotlin/internal/IntrinsicConstEvaluation()
-      psi: null
+      psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: kotlin/Int.rem
   contextReceivers: []
@@ -2326,9 +2326,9 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: [
     kotlin/SinceKotlin(version = "1.1")
-      psi: null
+      psi: KtAnnotationEntry
     kotlin/internal/IntrinsicConstEvaluation()
-      psi: null
+      psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: kotlin/Int.rem
   contextReceivers: []
@@ -2388,9 +2388,9 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: [
     kotlin/SinceKotlin(version = "1.1")
-      psi: null
+      psi: KtAnnotationEntry
     kotlin/internal/IntrinsicConstEvaluation()
-      psi: null
+      psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: kotlin/Int.rem
   contextReceivers: []
@@ -2450,9 +2450,9 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: [
     kotlin/SinceKotlin(version = "1.1")
-      psi: null
+      psi: KtAnnotationEntry
     kotlin/internal/IntrinsicConstEvaluation()
-      psi: null
+      psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: kotlin/Int.rem
   contextReceivers: []
@@ -2512,9 +2512,9 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: [
     kotlin/SinceKotlin(version = "1.1")
-      psi: null
+      psi: KtAnnotationEntry
     kotlin/internal/IntrinsicConstEvaluation()
-      psi: null
+      psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: kotlin/Int.rem
   contextReceivers: []
@@ -2574,7 +2574,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: [
     kotlin/internal/IntrinsicConstEvaluation()
-      psi: null
+      psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: kotlin/Int.shl
   contextReceivers: []
@@ -2634,7 +2634,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: [
     kotlin/internal/IntrinsicConstEvaluation()
-      psi: null
+      psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: kotlin/Int.shr
   contextReceivers: []
@@ -2694,7 +2694,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: [
     kotlin/internal/IntrinsicConstEvaluation()
-      psi: null
+      psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: kotlin/Int.times
   contextReceivers: []
@@ -2754,7 +2754,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: [
     kotlin/internal/IntrinsicConstEvaluation()
-      psi: null
+      psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: kotlin/Int.times
   contextReceivers: []
@@ -2814,7 +2814,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: [
     kotlin/internal/IntrinsicConstEvaluation()
-      psi: null
+      psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: kotlin/Int.times
   contextReceivers: []
@@ -2874,7 +2874,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: [
     kotlin/internal/IntrinsicConstEvaluation()
-      psi: null
+      psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: kotlin/Int.times
   contextReceivers: []
@@ -2934,7 +2934,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: [
     kotlin/internal/IntrinsicConstEvaluation()
-      psi: null
+      psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: kotlin/Int.times
   contextReceivers: []
@@ -2994,7 +2994,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: [
     kotlin/internal/IntrinsicConstEvaluation()
-      psi: null
+      psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: kotlin/Int.times
   contextReceivers: []
@@ -3054,7 +3054,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: [
     kotlin/internal/IntrinsicConstEvaluation()
-      psi: null
+      psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: kotlin/Int.toByte
   contextReceivers: []
@@ -3091,7 +3091,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: [
     kotlin/internal/IntrinsicConstEvaluation()
-      psi: null
+      psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: kotlin/Int.toChar
   contextReceivers: []
@@ -3128,7 +3128,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: [
     kotlin/internal/IntrinsicConstEvaluation()
-      psi: null
+      psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: kotlin/Int.toDouble
   contextReceivers: []
@@ -3165,7 +3165,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: [
     kotlin/internal/IntrinsicConstEvaluation()
-      psi: null
+      psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: kotlin/Int.toFloat
   contextReceivers: []
@@ -3202,7 +3202,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: [
     kotlin/internal/IntrinsicConstEvaluation()
-      psi: null
+      psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: kotlin/Int.toInt
   contextReceivers: []
@@ -3239,7 +3239,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: [
     kotlin/internal/IntrinsicConstEvaluation()
-      psi: null
+      psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: kotlin/Int.toLong
   contextReceivers: []
@@ -3276,7 +3276,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: [
     kotlin/internal/IntrinsicConstEvaluation()
-      psi: null
+      psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: kotlin/Int.toShort
   contextReceivers: []
@@ -3313,7 +3313,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: [
     kotlin/internal/IntrinsicConstEvaluation()
-      psi: null
+      psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: kotlin/Int.toString
   contextReceivers: []
@@ -3350,7 +3350,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: [
     kotlin/internal/IntrinsicConstEvaluation()
-      psi: null
+      psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: kotlin/Int.unaryMinus
   contextReceivers: []
@@ -3387,7 +3387,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: [
     kotlin/internal/IntrinsicConstEvaluation()
-      psi: null
+      psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: kotlin/Int.unaryPlus
   contextReceivers: []
@@ -3424,7 +3424,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: [
     kotlin/internal/IntrinsicConstEvaluation()
-      psi: null
+      psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: kotlin/Int.ushr
   contextReceivers: []
@@ -3484,7 +3484,7 @@ KtFunctionSymbol:
 KtFunctionSymbol:
   annotationsList: [
     kotlin/internal/IntrinsicConstEvaluation()
-      psi: null
+      psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: kotlin/Int.xor
   contextReceivers: []

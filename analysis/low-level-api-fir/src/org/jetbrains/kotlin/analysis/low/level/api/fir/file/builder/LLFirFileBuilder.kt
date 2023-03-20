@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.builder.BodyBuildingMode
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 
 /**
  * Responsible for building [FirFile] by [KtFile]
@@ -31,6 +32,7 @@ internal class LLFirFileBuilder(
                 it.toString()
             }
         }
+        require(!ktFile.isCompiled)
         val bodyBuildingMode = when {
             ktFile.isScript() -> {
                 // As 'FirScript' content is never transformed, lazy bodies are not replaced with calculated ones even on BODY_RESOLVE.

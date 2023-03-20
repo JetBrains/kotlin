@@ -11,6 +11,7 @@ import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.PsiWhiteSpace
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
@@ -77,6 +78,9 @@ private fun getEndOffset(element: PsiElement): Int {
 
 fun hasSyntaxErrors(psiElement: PsiElement): Boolean {
     if (psiElement is PsiErrorElement) return true
+    if ((psiElement.containingFile as? KtFile)?.isCompiled == true) {
+        return true
+    }
 
     val children = psiElement.children
     return children.isNotEmpty() && hasSyntaxErrors(children.last())

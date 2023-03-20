@@ -19,6 +19,7 @@ import com.intellij.psi.stubs.StubElement
 import com.intellij.util.indexing.FileContent
 import com.intellij.util.indexing.FileContentImpl
 import com.intellij.util.io.URLUtil
+import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltInDefinitionFile
 import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinBuiltInDecompiler
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsKotlinBinaryClassCache
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.KotlinClsStubBuilder
@@ -285,16 +286,29 @@ public class KotlinStaticDeclarationProviderFactory(
             ktFileStub.childrenStubs.forEach(::indexStub)
         }
 
-        loadBuiltIns().forEach { processStub(it) }
+        val builtins = mutableSetOf<String>()
+        loadBuiltIns().forEach { stub ->
+            processStub(stub)
+            builtins.add(stub.psi.virtualFile.name)
+        }
 
         val binaryClassCache = ClsKotlinBinaryClassCache.getInstance()
         for (root in additionalRoots) {
             VfsUtilCore.visitChildrenRecursively(root, object : VirtualFileVisitor<Void>() {
                 override fun visitFile(file: VirtualFile): Boolean {
-                    if (!file.isDirectory && file.fileType == JavaClassFileType.INSTANCE) {
+                    if (!file.isDirectory) {
                         val fileContent = FileContentImpl.createByFile(file)
-                        if (!binaryClassCache.isKotlinJvmCompiledFile(file, fileContent.content)) return true
-                        val stub = KotlinClsStubBuilder().buildFileStub(fileContent) as? KotlinFileStubImpl ?: return true
+                        val stub: KotlinFileStubImpl = when {
+                            file.fileType == JavaClassFileType.INSTANCE -> {
+                                if (!binaryClassCache.isKotlinJvmCompiledFile(file, fileContent.content)) return true
+                                KotlinClsStubBuilder().buildFileStub(fileContent) as? KotlinFileStubImpl ?: return true
+                            }
+                            file.extension == BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION -> {
+                                if (!builtins.add(file.name)) return true
+                                builtInDecompiler.stubBuilder.buildFileStub(fileContent) as? KotlinFileStubImpl ?: return true
+                            }
+                            else -> return true
+                        }
                         val fakeFile = object : KtFile(KtClassFileViewProvider(psiManager, fileContent.file), isCompiled = true) {
                             override fun getStub() = stub
                             override fun isPhysical() = false

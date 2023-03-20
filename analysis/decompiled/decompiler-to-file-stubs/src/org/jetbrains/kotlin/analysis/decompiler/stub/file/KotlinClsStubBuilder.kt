@@ -162,43 +162,6 @@ private class AnnotationLoaderForClassFileStubBuilder(
         return AnnotationWithArgs(nameResolver.getClassId(proto.id), args)
     }
 
-    fun toConstantValue(value: ProtoBuf.Annotation.Argument.Value, nameResolver: NameResolver): ConstantValue<*> {
-        val isUnsigned = Flags.IS_UNSIGNED.get(value.flags)
-
-        fun <T, R> T.letIf(predicate: Boolean, f: (T) -> R, g: (T) -> R): R =
-            if (predicate) f(this) else g(this)
-
-        return when (value.type) {
-            ProtoBuf.Annotation.Argument.Value.Type.BYTE -> value.intValue.toByte().letIf(isUnsigned, ::UByteValue, ::ByteValue)
-            ProtoBuf.Annotation.Argument.Value.Type.CHAR -> CharValue(value.intValue.toInt().toChar())
-            ProtoBuf.Annotation.Argument.Value.Type.SHORT -> value.intValue.toShort().letIf(isUnsigned, ::UShortValue, ::ShortValue)
-            ProtoBuf.Annotation.Argument.Value.Type.INT -> value.intValue.toInt().letIf(isUnsigned, ::UIntValue, ::IntValue)
-            ProtoBuf.Annotation.Argument.Value.Type.LONG -> value.intValue.letIf(isUnsigned, ::ULongValue, ::LongValue)
-            ProtoBuf.Annotation.Argument.Value.Type.FLOAT -> FloatValue(value.floatValue)
-            ProtoBuf.Annotation.Argument.Value.Type.DOUBLE -> DoubleValue(value.doubleValue)
-            ProtoBuf.Annotation.Argument.Value.Type.BOOLEAN -> BooleanValue(value.intValue != 0L)
-            ProtoBuf.Annotation.Argument.Value.Type.STRING -> StringValue(nameResolver.getString(value.stringValue))
-            ProtoBuf.Annotation.Argument.Value.Type.CLASS -> KClassValue(nameResolver.getClassId(value.classId), value.arrayDimensionCount)
-            ProtoBuf.Annotation.Argument.Value.Type.ENUM -> EnumValue(
-                nameResolver.getClassId(value.classId),
-                nameResolver.getName(value.enumValueId)
-            )
-            ProtoBuf.Annotation.Argument.Value.Type.ANNOTATION -> AnnotationValue(object : AnnotationDescriptor {
-                override val type: KotlinType
-                    get() = error("Should not be called")
-                override val allValueArguments: Map<Name, ConstantValue<*>>
-                    get() = value.annotation.argumentList.associate { nameResolver.getName(it.nameId) to toConstantValue(it.value, nameResolver) }
-                override val source: SourceElement
-                    get() = SourceElement.NO_SOURCE
-            })
-            ProtoBuf.Annotation.Argument.Value.Type.ARRAY -> ConstantValueFactory.createArrayValue(
-                value.arrayElementList.map { toConstantValue(it, nameResolver) },
-                DefaultBuiltIns.Instance.anyType
-            )
-            else -> error("Unsupported annotation argument type: ${value.type}")
-        }
-    }
-
     override fun loadAnnotation(
         annotationClassId: ClassId, source: SourceElement, result: MutableList<AnnotationWithArgs>
     ): KotlinJvmBinaryClass.AnnotationArgumentVisitor {
@@ -376,5 +339,46 @@ private class AnnotationLoaderForClassFileStubBuilder(
             propertyConstants,
             annotationParametersDefaultValues
         )
+    }
+}
+
+internal fun toConstantValue(value: ProtoBuf.Annotation.Argument.Value, nameResolver: NameResolver): ConstantValue<*> {
+    val isUnsigned = Flags.IS_UNSIGNED.get(value.flags)
+
+    fun <T, R> T.letIf(predicate: Boolean, f: (T) -> R, g: (T) -> R): R =
+        if (predicate) f(this) else g(this)
+
+    return when (value.type) {
+        ProtoBuf.Annotation.Argument.Value.Type.BYTE -> value.intValue.toByte().letIf(isUnsigned, ::UByteValue, ::ByteValue)
+        ProtoBuf.Annotation.Argument.Value.Type.CHAR -> CharValue(value.intValue.toInt().toChar())
+        ProtoBuf.Annotation.Argument.Value.Type.SHORT -> value.intValue.toShort().letIf(isUnsigned, ::UShortValue, ::ShortValue)
+        ProtoBuf.Annotation.Argument.Value.Type.INT -> value.intValue.toInt().letIf(isUnsigned, ::UIntValue, ::IntValue)
+        ProtoBuf.Annotation.Argument.Value.Type.LONG -> value.intValue.letIf(isUnsigned, ::ULongValue, ::LongValue)
+        ProtoBuf.Annotation.Argument.Value.Type.FLOAT -> FloatValue(value.floatValue)
+        ProtoBuf.Annotation.Argument.Value.Type.DOUBLE -> DoubleValue(value.doubleValue)
+        ProtoBuf.Annotation.Argument.Value.Type.BOOLEAN -> BooleanValue(value.intValue != 0L)
+        ProtoBuf.Annotation.Argument.Value.Type.STRING -> StringValue(nameResolver.getString(value.stringValue))
+        ProtoBuf.Annotation.Argument.Value.Type.CLASS -> KClassValue(nameResolver.getClassId(value.classId), value.arrayDimensionCount)
+        ProtoBuf.Annotation.Argument.Value.Type.ENUM -> EnumValue(
+            nameResolver.getClassId(value.classId),
+            nameResolver.getName(value.enumValueId)
+        )
+        ProtoBuf.Annotation.Argument.Value.Type.ANNOTATION -> AnnotationValue(object : AnnotationDescriptor {
+            override val type: KotlinType
+                get() {
+                    error("Should not be called")
+                }
+            override val fqName: FqName
+                get() = nameResolver.getClassId(value.annotation.id).asSingleFqName()
+            override val allValueArguments: Map<Name, ConstantValue<*>>
+                get() = value.annotation.argumentList.associate { nameResolver.getName(it.nameId) to toConstantValue(it.value, nameResolver) }
+            override val source: SourceElement
+                get() = SourceElement.NO_SOURCE
+        })
+        ProtoBuf.Annotation.Argument.Value.Type.ARRAY -> ConstantValueFactory.createArrayValue(
+            value.arrayElementList.map { toConstantValue(it, nameResolver) },
+            DefaultBuiltIns.Instance.anyType
+        )
+        else -> error("Unsupported annotation argument type: ${value.type}")
     }
 }

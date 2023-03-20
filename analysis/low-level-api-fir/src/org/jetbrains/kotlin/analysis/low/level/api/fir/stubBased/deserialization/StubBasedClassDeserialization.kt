@@ -55,7 +55,8 @@ fun deserializeClassToSymbol(
     scopeProvider: FirScopeProvider,
     parentContext: StubBasedFirDeserializationContext? = null,
     containerSource: DeserializedContainerSource? = null,
-    deserializeNestedClass: (ClassId, StubBasedFirDeserializationContext) -> FirRegularClassSymbol?
+    deserializeNestedClass: (ClassId, StubBasedFirDeserializationContext) -> FirRegularClassSymbol?,
+    initialOrigin: FirDeclarationOrigin
 ) {
     val kind = when (classOrObject) {
         is KtObjectDeclaration -> ClassKind.OBJECT
@@ -89,6 +90,7 @@ fun deserializeClassToSymbol(
     val context =
         parentContext?.childContext(
             classOrObject,
+            initialOrigin,
             classId.relativeClassName,
             containerSource,
             symbol,
@@ -98,6 +100,7 @@ fun deserializeClassToSymbol(
         ) ?: StubBasedFirDeserializationContext.createForClass(
             classId,
             classOrObject,
+            initialOrigin,
             moduleData,
             annotationDeserializer,
             constDeserializer,
@@ -112,7 +115,7 @@ fun deserializeClassToSymbol(
     buildRegularClass {
         source = KtRealPsiSourceElement(classOrObject)
         this.moduleData = moduleData
-        this.origin = FirDeclarationOrigin.Library
+        this.origin = initialOrigin
         name = classId.shortClassName
         this.status = status
         classKind = kind
@@ -135,7 +138,7 @@ fun deserializeClassToSymbol(
                     it.typeReference ?: error("Super entry doesn't have type reference $it")
                 )
             })
-        } else if (StandardClassIds.Any != classId) {
+        } else if (StandardClassIds.Any != classId && StandardClassIds.Nothing != classId) {
             superTypeRefs.add(session.builtinTypes.anyType)
         }
 
@@ -154,7 +157,7 @@ fun deserializeClassToSymbol(
                     val property = buildEnumEntry {
                         source = KtRealPsiSourceElement(declaration)
                         this.moduleData = moduleData
-                        this.origin = FirDeclarationOrigin.Library
+                        this.origin = initialOrigin
                         returnTypeRef = buildResolvedTypeRef { type = enumType }
                         name = Name.identifier(enumEntryName)
                         this.symbol = FirEnumEntrySymbol(CallableId(classId, name))
