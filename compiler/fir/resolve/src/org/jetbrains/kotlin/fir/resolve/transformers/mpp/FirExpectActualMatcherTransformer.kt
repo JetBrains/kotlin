@@ -89,12 +89,5 @@ open class FirExpectActualMatcherTransformer(
             scopeSession
         ) ?: mapOf()
         memberDeclaration.expectForActual = expectForActualData
-        for ((compatibility, expectSymbols) in expectForActualData) {
-            if (compatibility.compatible) {
-                for (expectSymbol in expectSymbols) {
-                    expectSymbol.fir.setActualForExpect(session, actualSymbol)
-                }
-            }
-        }
     }
 }

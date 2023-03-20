@@ -5,23 +5,19 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.compatible
-import java.util.*
 
 private object ExpectForActualAttributeKey : FirDeclarationDataKey()
-private object ActualForExpectAttributeKey : FirDeclarationDataKey()
 
 typealias ExpectForActualData = Map<ExpectActualCompatibility<FirBasedSymbol<*>>, List<FirBasedSymbol<*>>>
 
 @SymbolInternals
 var FirDeclaration.expectForActual: ExpectForActualData? by FirDeclarationDataRegistry.data(ExpectForActualAttributeKey)
-private var FirDeclaration.actualForExpectMap: WeakHashMap<FirSession, FirBasedSymbol<*>>? by FirDeclarationDataRegistry.data(ActualForExpectAttributeKey)
 
 fun FirFunctionSymbol<*>.getSingleCompatibleExpectForActualOrNull() =
     (this as FirBasedSymbol<*>).getSingleCompatibleExpectForActualOrNull() as? FirFunctionSymbol<*>
@@ -46,33 +42,4 @@ val FirBasedSymbol<*>.expectForActual: ExpectForActualData?
         lazyResolveToPhase(FirResolvePhase.EXPECT_ACTUAL_MATCHING)
         return fir.expectForActual
     }
-
-private fun FirDeclaration.getOrCreateActualForExpectMap(): WeakHashMap<FirSession, FirBasedSymbol<*>> {
-    var map = actualForExpectMap
-    if (map != null) return map
-    synchronized(this) {
-        map = actualForExpectMap
-        if (map == null) {
-            map = WeakHashMap()
-            actualForExpectMap = map
-        }
-    }
-    return map!!
-}
-
-@SymbolInternals
-fun FirDeclaration.getActualForExpect(useSiteSession: FirSession): FirBasedSymbol<*>? {
-    return actualForExpectMap?.get(useSiteSession)
-}
-
-fun FirBasedSymbol<*>.getActualForExpect(session: FirSession): FirBasedSymbol<*>? {
-    lazyResolveToPhase(FirResolvePhase.EXPECT_ACTUAL_MATCHING)
-    return fir.getActualForExpect(session)
-}
-
-@SymbolInternals
-fun FirDeclaration.setActualForExpect(useSiteSession: FirSession, actualSymbol: FirBasedSymbol<*>) {
-    val map = getOrCreateActualForExpectMap()
-    map[useSiteSession] = actualSymbol
-}
 
