@@ -10,13 +10,11 @@ import org.jetbrains.kotlin.psi.KtBinaryExpression
 
 
 public interface KtAssignmentNamesProviderMixIn : KtAnalysisSessionMixIn {
-
-    public fun KtBinaryExpression.getNames(): Collection<Name> {
-        return analysisSession.assignmentNamesProvider.getNames(this)
+    public fun KtBinaryExpression.getOperationName(): Name? {
+        return analysisSession.assignmentNamesProvider.getOperationName(this)
     }
 }
 
-
 public abstract class KtAssignmentNamesProvider : KtAnalysisSessionComponent() {
-    public abstract fun getNames(expression: KtBinaryExpression): Collection<Name>
+    public abstract fun getOperationName(expression: KtBinaryExpression): Name?
 }

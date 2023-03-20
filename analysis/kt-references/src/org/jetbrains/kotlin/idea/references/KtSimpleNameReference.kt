@@ -65,8 +65,10 @@ abstract class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSim
                 if (tokenType != null) {
                     val name = OperatorConventions.getNameForOperationSymbol(
                         tokenType, element.parent is KtUnaryExpression, element.parent is KtBinaryExpression
-                    ) ?: getOperationNameFromExtensions()
-                    ?: return emptyList()
+                    )
+                        ?: (expression.parent as? KtBinaryExpression)?.let { getOperationNameFromExtensions(it) }
+                        ?: return emptyList()
+
                     val counterpart = OperatorConventions.ASSIGNMENT_OPERATION_COUNTERPARTS[tokenType]
                     return if (counterpart != null) {
                         val counterpartName = OperatorConventions.getNameForOperationSymbol(counterpart, false, true)!!
@@ -80,7 +82,7 @@ abstract class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSim
             return listOf(element.getReferencedNameAsName())
         }
 
-    abstract fun getOperationNameFromExtensions(): Name?
+    abstract fun getOperationNameFromExtensions(binaryExpression: KtBinaryExpression): Name?
 
     abstract fun getImportAlias(): KtImportAlias?
 }

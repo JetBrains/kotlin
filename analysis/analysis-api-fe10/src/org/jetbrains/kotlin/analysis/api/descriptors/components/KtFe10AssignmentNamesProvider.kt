@@ -21,10 +21,10 @@ internal class KtFe10AssignmentNamesProvider(
 ) : KtAssignmentNamesProvider(), Fe10KtAnalysisSessionComponent {
 
     @OptIn(InternalNonStableExtensionPoints::class)
-    override fun getNames(expression: KtBinaryExpression): Collection<Name> {
+    override fun getOperationName(expression: KtBinaryExpression): Name? {
         val bindingContext = KtFe10ReferenceResolutionHelper.getInstance().partialAnalyze(expression)
-        val lhsType = expression.left?.getType(bindingContext) ?: return emptyList()
+        val lhsType = expression.left?.getType(bindingContext) ?: return null
         val assignAlterers = AssignResolutionAltererExtension.getInstances(expression.project)
-        return assignAlterers.mapNotNull { it.getName(expression, lhsType, bindingContext) }
+        return assignAlterers.firstNotNullOfOrNull { it.getName(expression, lhsType, bindingContext) }
     }
 }

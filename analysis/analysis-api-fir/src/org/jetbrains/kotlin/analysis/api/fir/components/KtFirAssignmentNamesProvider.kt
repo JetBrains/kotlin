@@ -18,10 +18,10 @@ internal class KtFirAssignmentNamesProvider(
     override val analysisSession: KtFirAnalysisSession,
 ) : KtAssignmentNamesProvider(), KtFirAnalysisSessionComponent {
 
-    override fun getNames(expression: KtBinaryExpression): Collection<Name> {
+    override fun getOperationName(expression: KtBinaryExpression): Name? {
         val firElement = expression.getOrBuildFir(analysisSession.firResolveSession)
-        val errorReference = firElement as? FirErrorNamedReference ?: return emptyList()
+        val errorReference = firElement as? FirErrorNamedReference ?: return null
         val altererExtensions = rootModuleSession.extensionService.assignAltererExtensions
-        return altererExtensions.mapNotNull { it.getName(errorReference) }
+        return altererExtensions.firstNotNullOfOrNull { it.getName(errorReference) }
     }
 }

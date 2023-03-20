@@ -101,10 +101,7 @@ open class KtFe10SimpleNameReference(expression: KtSimpleNameExpression) : KtSim
         return null
     }
 
-    override fun getOperationNameFromExtensions(): Name? {
-        return analyze(expression) {
-            val binaryExpression = expression.parent as? KtBinaryExpression ?: return null
-            binaryExpression.getNames().firstOrNull()
-        }
+    override fun getOperationNameFromExtensions(binaryExpression: KtBinaryExpression): Name? {
+        return analyze(expression) { binaryExpression.getOperationName() }
     }
 }
