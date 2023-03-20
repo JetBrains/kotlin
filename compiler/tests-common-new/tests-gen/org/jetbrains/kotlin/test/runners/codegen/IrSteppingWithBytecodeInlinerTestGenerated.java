@@ -536,6 +536,12 @@ public class IrSteppingWithBytecodeInlinerTestGenerated extends AbstractIrSteppi
     }
 
     @Test
+    @TestMetadata("whenExpr.kt")
+    public void testWhenExpr() throws Exception {
+        runTest("compiler/testData/debug/stepping/whenExpr.kt");
+    }
+
+    @Test
     @TestMetadata("whenIsChecks.kt")
     public void testWhenIsChecks() throws Exception {
         runTest("compiler/testData/debug/stepping/whenIsChecks.kt");

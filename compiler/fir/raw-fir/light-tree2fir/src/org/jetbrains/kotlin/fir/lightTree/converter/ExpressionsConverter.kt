@@ -835,22 +835,24 @@ class ExpressionsConverter(
         }
 
         val calculatedFirExpression = firExpression ?: buildErrorExpression(
-            null,
+            source = null,
             ConeSimpleDiagnostic("No expression in condition with expression", DiagnosticKind.Syntax)
         )
 
-        return if (whenRefWithSubject != null) {
-            buildEqualityOperatorCall {
-                source = whenCondition.toFirSourceElement(KtFakeSourceElementKind.WhenCondition)
-                operation = FirOperation.EQ
-                argumentList = buildBinaryArgumentList(
-                    buildWhenSubjectExpression {
-                        whenRef = whenRefWithSubject
-                    }, calculatedFirExpression
-                )
-            }
-        } else {
-            calculatedFirExpression
+        if (whenRefWithSubject == null) {
+            return calculatedFirExpression
+        }
+
+        return buildEqualityOperatorCall {
+            source = whenCondition.toFirSourceElement(KtFakeSourceElementKind.WhenCondition)
+            operation = FirOperation.EQ
+            argumentList = buildBinaryArgumentList(
+                left = buildWhenSubjectExpression {
+                    source = whenCondition.toFirSourceElement()
+                    whenRef = whenRefWithSubject
+                },
+                right = calculatedFirExpression
+            )
         }
     }
 
@@ -918,6 +920,7 @@ class ExpressionsConverter(
 
         val subjectExpression = if (whenRefWithSubject != null) {
             buildWhenSubjectExpression {
+                source = whenCondition.toFirSourceElement()
                 whenRef = whenRefWithSubject
             }
         } else {
