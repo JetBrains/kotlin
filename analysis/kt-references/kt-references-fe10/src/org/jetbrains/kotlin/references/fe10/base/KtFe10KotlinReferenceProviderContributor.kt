@@ -61,13 +61,4 @@ class KtFe10KotlinReferenceProviderContributor : KotlinReferenceProviderContribu
             }
         }
     }
-
-    interface Extension {
-        fun getCustomReference(expression: KtSimpleNameExpression): PsiReference?
-
-        companion object : ProjectExtensionDescriptor<Extension>(
-            "org.jetbrains.kotlin.referenceProviderContributorExtension",
-            Extension::class.java
-        )
-    }
 }
