@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.compilerRunner
 import org.gradle.api.Project
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.logging.Logger
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.api.tasks.bundling.Zip
 import org.gradle.jvm.tasks.Jar
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.daemon.common.filterExtractProps
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
+import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
@@ -60,7 +62,8 @@ internal fun createGradleCompilerRunner(
     compilerExecutionSettings: CompilerExecutionSettings,
     buildMetricsReporter: BuildMetricsReporter,
     workerExecutor: WorkerExecutor,
-    runViaBuildToolsApi: Boolean
+    runViaBuildToolsApi: Boolean,
+    cachedClassLoadersService: Property<ClassLoadersCachingBuildService>
 ): GradleCompilerRunner {
     return if (runViaBuildToolsApi) {
         GradleBuildToolsApiCompilerRunner(
@@ -69,6 +72,7 @@ internal fun createGradleCompilerRunner(
             compilerExecutionSettings,
             buildMetricsReporter,
             workerExecutor,
+            cachedClassLoadersService,
         )
     } else {
         GradleCompilerRunnerWithWorkers(

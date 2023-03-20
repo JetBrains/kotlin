@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner
 import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension
 import org.jetbrains.kotlin.gradle.dsl.topLevelExtension
 import org.jetbrains.kotlin.gradle.incremental.IncrementalModuleInfoBuildService
+import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
@@ -69,6 +70,7 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
                 GradleCompilerRunner.buildModulesInfo(project.gradle)
             })
         val buildFinishedListenerService = BuildFinishedListenerService.registerIfAbsent(project)
+        val cachedClassLoadersService = ClassLoadersCachingBuildService.registerIfAbsent(project)
         configureTask { task ->
             val propertiesProvider = project.kotlinPropertiesProvider
 
@@ -123,6 +125,7 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
                 task.compilerOptions.useK2.value(true)
             }
             task.runViaBuildToolsApi.convention(propertiesProvider.runKotlinCompilerViaBuildToolsApi).finalizeValueOnRead()
+            task.classLoadersCachingService.value(cachedClassLoadersService).disallowChanges()
         }
     }
 

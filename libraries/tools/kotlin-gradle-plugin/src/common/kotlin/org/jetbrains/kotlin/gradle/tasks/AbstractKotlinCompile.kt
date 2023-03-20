@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.compilerRunner.createGradleCompilerRunner
 import org.jetbrains.kotlin.daemon.common.MultiModuleICSettings
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
 import org.jetbrains.kotlin.gradle.incremental.UsesIncrementalModuleInfoBuildService
+import org.jetbrains.kotlin.gradle.internal.UsesClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.tasks.allOutputFiles
 import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
@@ -61,6 +62,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
     UsesCompilerSystemPropertiesService,
     UsesVariantImplementationFactories,
     UsesBuildFinishedListenerService,
+    UsesClassLoadersCachingBuildService,
     BaseKotlinCompile {
 
     init {
@@ -184,6 +186,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
                                     params.first,
                                     workerExecutor,
                                     runViaBuildToolsApi.get(),
+                                    classLoadersCachingService,
                                 )
                             }
                     }

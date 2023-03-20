@@ -12,10 +12,12 @@ import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.compilerRunner.GradleKotlinCompilerWorkArguments
+import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import java.io.File
 
 internal abstract class BuildToolsApiCompilationWork : WorkAction<BuildToolsApiCompilationWork.BuildToolsApiCompilationParameters> {
     internal interface BuildToolsApiCompilationParameters : WorkParameters {
+        val classLoadersCachingService: Property<ClassLoadersCachingBuildService>
         val compilerWorkArguments: Property<GradleKotlinCompilerWorkArguments>
         val taskOutputsToRestore: ListProperty<File>
         val snapshotsDir: DirectoryProperty
