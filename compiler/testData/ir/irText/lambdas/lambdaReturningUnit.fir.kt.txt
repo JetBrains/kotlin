@@ -4,7 +4,7 @@ inline fun flaf(block: Function0<Any?>) {
 
 suspend fun box() {
   flaf(block = local fun <anonymous>(): Any? {
-    Unit
+    return Unit
   }
 )
 }

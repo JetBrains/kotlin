@@ -65,7 +65,7 @@ fun FirAnonymousFunction.addReturnToLastStatementIfNeeded() {
     if (lastStatement is FirReturnExpression) return
 
     val returnType = (body.typeRef as? FirResolvedTypeRef) ?: return
-    if (returnType.isNothing || returnType.isUnit) return
+    if (returnType.isNothing) return
 
     val returnTarget = FirFunctionTarget(null, isLambda = isLambda).also { it.bind(this) }
     val returnExpression = buildReturnExpression {
