@@ -5,11 +5,6 @@
 
     <modelVersion>4.0.0</modelVersion>
     <properties>
-        <lombok.common.src>${basedir}/../../../plugins/lombok/lombok.common/src</lombok.common.src>
-        <lombok.k1.src>${basedir}/../../../plugins/lombok/lombok.k1/src</lombok.k1.src>
-        <lombok.k2.src>${basedir}/../../../plugins/lombok/lombok.k2/src</lombok.k2.src>
-        <lombok.cli.src>${basedir}/../../../plugins/lombok/lombok.cli/src</lombok.cli.src>
-        <lombok.resources>${basedir}/../../../plugins/lombok/lombok.cli/resources</lombok.resources>
         <lombok.maven.plugin.src>${basedir}/src/main/kotlin</lombok.maven.plugin.src>
     </properties>
 
@@ -38,6 +33,11 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-lombok-compiler-plugin</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-core</artifactId>
             <version>${maven.version}</version>
@@ -46,12 +46,6 @@
     </dependencies>
 
     <build>
-        <resources>
-            <resource>
-                <directory>${lombok.resources}</directory>
-            </resource>
-        </resources>
-
         <plugins>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -64,10 +58,6 @@
                         </goals>
                         <configuration>
                             <sources>
-                                <source>${lombok.common.src}</source>
-                                <source>${lombok.k1.src}</source>
-                                <source>${lombok.k2.src}</source>
-                                <source>${lombok.cli.src}</source>
                                 <source>${lombok.maven.plugin.src}</source>
                             </sources>
                         </configuration>
@@ -88,12 +78,6 @@
                         </goals>
                     </execution>
                 </executions>
-                <configuration>
-                    <args>
-                        <arg>-opt-in=org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi</arg>
-                        <arg>-Xcontext-receivers</arg>
-                    </args>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.plexus</groupId>

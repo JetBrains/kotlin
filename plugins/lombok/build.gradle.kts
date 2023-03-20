@@ -67,6 +67,8 @@ projectTest(jUnitMode = JUnitMode.JUnit5) {
     }
 }
 
+publish()
+
 runtimeJar()
 sourcesJar()
 javadocJar()
