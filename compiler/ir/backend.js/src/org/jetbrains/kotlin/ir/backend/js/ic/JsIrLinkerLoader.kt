@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.ic
 
 import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
+import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLinker
 import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
 import org.jetbrains.kotlin.backend.common.serialization.checkIsFunctionInterface
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
@@ -108,13 +109,13 @@ internal class JsIrLinkerLoader(
         val moduleDescriptor = loadedModules.keys.last()
         val typeTranslator = TypeTranslatorImpl(symbolTable, compilerConfiguration.languageVersionSettings, moduleDescriptor)
         val irBuiltIns = IrBuiltInsOverDescriptors(moduleDescriptor.builtIns, typeTranslator, symbolTable)
-        val partialLinkageEnabled = compilerConfiguration.partialLinkageConfig.isEnabled
+        val messageLogger = compilerConfiguration.irMessageLogger
         val linker = JsIrLinker(
             currentModule = null,
-            messageLogger = compilerConfiguration.irMessageLogger,
+            messageLogger = messageLogger,
             builtIns = irBuiltIns,
             symbolTable = symbolTable,
-            partialLinkageEnabled = partialLinkageEnabled,
+            partialLinkageSupport = createPartialLinkageSupportForLinker(compilerConfiguration.partialLinkageConfig, irBuiltIns, messageLogger),
             translationPluginContext = null,
             friendModules = mapOf(mainLibrary.uniqueName to mainModuleFriends.map { it.uniqueName })
         )

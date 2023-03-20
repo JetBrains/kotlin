@@ -410,7 +410,7 @@ class JsIrBackendContext(
     }
 
     override val partialLinkageSupport = createPartialLinkageSupportForLowerings(
-        isEnabled = configuration.partialLinkageConfig.isEnabled,
+        configuration.partialLinkageConfig,
         irBuiltIns,
         configuration.irMessageLogger
     )
