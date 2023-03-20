@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.DescriptorlessExternalPackageFragmentSymbol
 import org.jetbrains.kotlin.ir.types.*
@@ -409,7 +410,7 @@ class JsIrBackendContext(
     }
 
     override val partialLinkageSupport = createPartialLinkageSupportForLowerings(
-        isEnabled = configuration[JSConfigurationKeys.PARTIAL_LINKAGE] ?: false,
+        isEnabled = configuration.partialLinkageConfig.isEnabled,
         irBuiltIns,
         configuration.irMessageLogger
     )
