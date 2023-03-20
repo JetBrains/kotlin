@@ -294,11 +294,13 @@ open class IncrementalJvmCompilerRunner(
             is NotAvailableForJSCompiler -> error("Unexpected type for this code path: ${classpathChanges.javaClass.name}.")
         }
 
-        if (changedAndImpactedSymbols is ChangesEither.Unknown) {
-            reporter.info { "Could not get classpath changes: ${changedAndImpactedSymbols.reason}" }
-            return CompilationMode.Rebuild(changedAndImpactedSymbols.reason)
-        }
-        changedAndImpactedSymbols as ChangesEither.Known
+        when (changedAndImpactedSymbols) {
+            is ChangesEither.Unknown -> {
+                reporter.info { "Could not get classpath changes: ${changedAndImpactedSymbols.reason}" }
+                return CompilationMode.Rebuild(changedAndImpactedSymbols.reason)
+            }
+            is ChangesEither.Known -> Unit
+        }.forceExhaustiveWhen()
 
         dirtyFiles.addByDirtySymbols(changedAndImpactedSymbols.lookupSymbols)
         dirtyFiles.addByDirtyClasses(changedAndImpactedSymbols.fqNames)
@@ -352,6 +354,13 @@ open class IncrementalJvmCompilerRunner(
             fqNames = dirtyClassesFqNames + dirtyClassesFqNamesForceRecompile
         )
     }
+
+    /**
+     * Helper function to force exhaustive when for statements (see https://youtrack.jetbrains.com/issue/KT-47709).
+     *
+     * If the current IDE/Kotlin compiler already supports exhaustive when for statements, consider removing this function and its usages.
+     */
+    private fun Any.forceExhaustiveWhen() = this
 
     private fun processChangedJava(changedFiles: ChangedFiles.Known, caches: IncrementalJvmCachesManager): BuildAttribute? {
         val javaFiles = (changedFiles.modified + changedFiles.removed).filter(File::isJavaFile)
