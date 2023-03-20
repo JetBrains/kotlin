@@ -192,11 +192,17 @@ public external abstract class SVGNameList : JsAny {
     fun getItem(index: Int): JsAny?
 }
 
-@kotlin.internal.InlineOnly
-public inline operator fun SVGNameList.get(index: Int): JsAny? = asDynamic().getAny(index)
+@PublishedApi
+internal fun getMethodImplForSVGNameList(obj: SVGNameList, index: Int): JsAny? { js("return obj[index];") }
 
 @kotlin.internal.InlineOnly
-public inline operator fun SVGNameList.set(index: Int, newItem: JsAny?) { asDynamic()[index] = newItem }
+public inline operator fun SVGNameList.get(index: Int): JsAny? = getMethodImplForSVGNameList(this, index)
+
+@PublishedApi
+internal fun setMethodImplForSVGNameList(obj: SVGNameList, index: Int, newItem: JsAny?) { js("obj[index] = newItem;") }
+
+@kotlin.internal.InlineOnly
+public inline operator fun SVGNameList.set(index: Int, newItem: JsAny?) = setMethodImplForSVGNameList(this, index, newItem)
 
 /**
  * Exposes the JavaScript [SVGNumberList](https://developer.mozilla.org/en/docs/Web/API/SVGNumberList) to Kotlin
@@ -213,11 +219,17 @@ public external abstract class SVGNumberList : JsAny {
     fun getItem(index: Int): SVGNumber
 }
 
-@kotlin.internal.InlineOnly
-public inline operator fun SVGNumberList.get(index: Int): SVGNumber? = asDynamic().getAny(index)
+@PublishedApi
+internal fun getMethodImplForSVGNumberList(obj: SVGNumberList, index: Int): SVGNumber? { js("return obj[index];") }
 
 @kotlin.internal.InlineOnly
-public inline operator fun SVGNumberList.set(index: Int, newItem: SVGNumber) { asDynamic()[index] = newItem }
+public inline operator fun SVGNumberList.get(index: Int): SVGNumber? = getMethodImplForSVGNumberList(this, index)
+
+@PublishedApi
+internal fun setMethodImplForSVGNumberList(obj: SVGNumberList, index: Int, newItem: SVGNumber) { js("obj[index] = newItem;") }
+
+@kotlin.internal.InlineOnly
+public inline operator fun SVGNumberList.set(index: Int, newItem: SVGNumber) = setMethodImplForSVGNumberList(this, index, newItem)
 
 /**
  * Exposes the JavaScript [SVGLengthList](https://developer.mozilla.org/en/docs/Web/API/SVGLengthList) to Kotlin
@@ -234,11 +246,17 @@ public external abstract class SVGLengthList : JsAny {
     fun getItem(index: Int): SVGLength
 }
 
-@kotlin.internal.InlineOnly
-public inline operator fun SVGLengthList.get(index: Int): SVGLength? = asDynamic().getAny(index)
+@PublishedApi
+internal fun getMethodImplForSVGLengthList(obj: SVGLengthList, index: Int): SVGLength? { js("return obj[index];") }
 
 @kotlin.internal.InlineOnly
-public inline operator fun SVGLengthList.set(index: Int, newItem: SVGLength) { asDynamic()[index] = newItem }
+public inline operator fun SVGLengthList.get(index: Int): SVGLength? = getMethodImplForSVGLengthList(this, index)
+
+@PublishedApi
+internal fun setMethodImplForSVGLengthList(obj: SVGLengthList, index: Int, newItem: SVGLength) { js("obj[index] = newItem;") }
+
+@kotlin.internal.InlineOnly
+public inline operator fun SVGLengthList.set(index: Int, newItem: SVGLength) = setMethodImplForSVGLengthList(this, index, newItem)
 
 /**
  * Exposes the JavaScript [SVGAnimatedBoolean](https://developer.mozilla.org/en/docs/Web/API/SVGAnimatedBoolean) to Kotlin
@@ -335,11 +353,17 @@ public external abstract class SVGStringList : JsAny {
     fun getItem(index: Int): String
 }
 
-@kotlin.internal.InlineOnly
-public inline operator fun SVGStringList.get(index: Int): String? = asDynamic().getString(index)
+@PublishedApi
+internal fun getMethodImplForSVGStringList(obj: SVGStringList, index: Int): String? { js("return obj[index];") }
 
 @kotlin.internal.InlineOnly
-public inline operator fun SVGStringList.set(index: Int, newItem: String) { asDynamic()[index] = newItem }
+public inline operator fun SVGStringList.get(index: Int): String? = getMethodImplForSVGStringList(this, index)
+
+@PublishedApi
+internal fun setMethodImplForSVGStringList(obj: SVGStringList, index: Int, newItem: String) { js("obj[index] = newItem;") }
+
+@kotlin.internal.InlineOnly
+public inline operator fun SVGStringList.set(index: Int, newItem: String) = setMethodImplForSVGStringList(this, index, newItem)
 
 /**
  * Exposes the JavaScript [SVGUnitTypes](https://developer.mozilla.org/en/docs/Web/API/SVGUnitTypes) to Kotlin
@@ -789,11 +813,17 @@ public external abstract class SVGTransformList : JsAny {
     fun getItem(index: Int): SVGTransform
 }
 
-@kotlin.internal.InlineOnly
-public inline operator fun SVGTransformList.get(index: Int): SVGTransform? = asDynamic().getAny(index)
+@PublishedApi
+internal fun getMethodImplForSVGTransformList(obj: SVGTransformList, index: Int): SVGTransform? { js("return obj[index];") }
 
 @kotlin.internal.InlineOnly
-public inline operator fun SVGTransformList.set(index: Int, newItem: SVGTransform) { asDynamic()[index] = newItem }
+public inline operator fun SVGTransformList.get(index: Int): SVGTransform? = getMethodImplForSVGTransformList(this, index)
+
+@PublishedApi
+internal fun setMethodImplForSVGTransformList(obj: SVGTransformList, index: Int, newItem: SVGTransform) { js("obj[index] = newItem;") }
+
+@kotlin.internal.InlineOnly
+public inline operator fun SVGTransformList.set(index: Int, newItem: SVGTransform) = setMethodImplForSVGTransformList(this, index, newItem)
 
 /**
  * Exposes the JavaScript [SVGAnimatedTransformList](https://developer.mozilla.org/en/docs/Web/API/SVGAnimatedTransformList) to Kotlin
@@ -1033,11 +1063,17 @@ public external abstract class SVGPointList : JsAny {
     fun getItem(index: Int): DOMPoint
 }
 
-@kotlin.internal.InlineOnly
-public inline operator fun SVGPointList.get(index: Int): DOMPoint? = asDynamic().getAny(index)
+@PublishedApi
+internal fun getMethodImplForSVGPointList(obj: SVGPointList, index: Int): DOMPoint? { js("return obj[index];") }
 
 @kotlin.internal.InlineOnly
-public inline operator fun SVGPointList.set(index: Int, newItem: DOMPoint) { asDynamic()[index] = newItem }
+public inline operator fun SVGPointList.get(index: Int): DOMPoint? = getMethodImplForSVGPointList(this, index)
+
+@PublishedApi
+internal fun setMethodImplForSVGPointList(obj: SVGPointList, index: Int, newItem: DOMPoint) { js("obj[index] = newItem;") }
+
+@kotlin.internal.InlineOnly
+public inline operator fun SVGPointList.set(index: Int, newItem: DOMPoint) = setMethodImplForSVGPointList(this, index, newItem)
 
 /**
  * Exposes the JavaScript [SVGPolylineElement](https://developer.mozilla.org/en/docs/Web/API/SVGPolylineElement) to Kotlin

@@ -18,13 +18,13 @@ import org.w3c.files.*
  * Exposes the JavaScript [XMLHttpRequestEventTarget](https://developer.mozilla.org/en/docs/Web/API/XMLHttpRequestEventTarget) to Kotlin
  */
 public external abstract class XMLHttpRequestEventTarget : EventTarget, JsAny {
-    open var onloadstart: ((ProgressEvent) -> Dynamic?)?
-    open var onprogress: ((ProgressEvent) -> Dynamic?)?
-    open var onabort: ((Event) -> Dynamic?)?
-    open var onerror: ((Event) -> Dynamic?)?
-    open var onload: ((Event) -> Dynamic?)?
-    open var ontimeout: ((Event) -> Dynamic?)?
-    open var onloadend: ((Event) -> Dynamic?)?
+    open var onloadstart: ((ProgressEvent) -> JsAny?)?
+    open var onprogress: ((ProgressEvent) -> JsAny?)?
+    open var onabort: ((Event) -> JsAny?)?
+    open var onerror: ((Event) -> JsAny?)?
+    open var onload: ((Event) -> JsAny?)?
+    open var ontimeout: ((Event) -> JsAny?)?
+    open var onloadend: ((Event) -> JsAny?)?
 }
 
 public external abstract class XMLHttpRequestUpload : XMLHttpRequestEventTarget, JsAny
@@ -33,7 +33,7 @@ public external abstract class XMLHttpRequestUpload : XMLHttpRequestEventTarget,
  * Exposes the JavaScript [XMLHttpRequest](https://developer.mozilla.org/en/docs/Web/API/XMLHttpRequest) to Kotlin
  */
 public external open class XMLHttpRequest : XMLHttpRequestEventTarget, JsAny {
-    var onreadystatechange: ((Event) -> Dynamic?)?
+    var onreadystatechange: ((Event) -> JsAny?)?
     open val readyState: Short
     var timeout: Int
     var withCredentials: Boolean
@@ -115,14 +115,14 @@ public external interface XMLHttpRequestResponseType : JsAny {
     companion object
 }
 
-public inline val XMLHttpRequestResponseType.Companion.EMPTY: XMLHttpRequestResponseType get() = "".asDynamic().unsafeCast<XMLHttpRequestResponseType>()
+public inline val XMLHttpRequestResponseType.Companion.EMPTY: XMLHttpRequestResponseType get() = "".toJsString().unsafeCast<XMLHttpRequestResponseType>()
 
-public inline val XMLHttpRequestResponseType.Companion.ARRAYBUFFER: XMLHttpRequestResponseType get() = "arraybuffer".asDynamic().unsafeCast<XMLHttpRequestResponseType>()
+public inline val XMLHttpRequestResponseType.Companion.ARRAYBUFFER: XMLHttpRequestResponseType get() = "arraybuffer".toJsString().unsafeCast<XMLHttpRequestResponseType>()
 
-public inline val XMLHttpRequestResponseType.Companion.BLOB: XMLHttpRequestResponseType get() = "blob".asDynamic().unsafeCast<XMLHttpRequestResponseType>()
+public inline val XMLHttpRequestResponseType.Companion.BLOB: XMLHttpRequestResponseType get() = "blob".toJsString().unsafeCast<XMLHttpRequestResponseType>()
 
-public inline val XMLHttpRequestResponseType.Companion.DOCUMENT: XMLHttpRequestResponseType get() = "document".asDynamic().unsafeCast<XMLHttpRequestResponseType>()
+public inline val XMLHttpRequestResponseType.Companion.DOCUMENT: XMLHttpRequestResponseType get() = "document".toJsString().unsafeCast<XMLHttpRequestResponseType>()
 
-public inline val XMLHttpRequestResponseType.Companion.JSON: XMLHttpRequestResponseType get() = "json".asDynamic().unsafeCast<XMLHttpRequestResponseType>()
+public inline val XMLHttpRequestResponseType.Companion.JSON: XMLHttpRequestResponseType get() = "json".toJsString().unsafeCast<XMLHttpRequestResponseType>()
 
-public inline val XMLHttpRequestResponseType.Companion.TEXT: XMLHttpRequestResponseType get() = "text".asDynamic().unsafeCast<XMLHttpRequestResponseType>()
+public inline val XMLHttpRequestResponseType.Companion.TEXT: XMLHttpRequestResponseType get() = "text".toJsString().unsafeCast<XMLHttpRequestResponseType>()

@@ -21,7 +21,7 @@ import org.w3c.notifications.*
 public external abstract class ServiceWorker : EventTarget, AbstractWorker, UnionMessagePortOrServiceWorker, UnionClientOrMessagePortOrServiceWorker, JsAny {
     open val scriptURL: String
     open val state: ServiceWorkerState
-    open var onstatechange: ((Event) -> Dynamic?)?
+    open var onstatechange: ((Event) -> JsAny?)?
     fun postMessage(message: JsAny?, transfer: JsArray<JsAny> = definedExternally)
 }
 
@@ -33,7 +33,7 @@ public external abstract class ServiceWorkerRegistration : EventTarget, JsAny {
     open val waiting: ServiceWorker?
     open val active: ServiceWorker?
     open val scope: String
-    open var onupdatefound: ((Event) -> Dynamic?)?
+    open var onupdatefound: ((Event) -> JsAny?)?
     open val APISpace: JsAny?
     fun update(): Promise<Nothing?>
     fun unregister(): Promise<JsBoolean>
@@ -48,8 +48,8 @@ public external abstract class ServiceWorkerRegistration : EventTarget, JsAny {
 public external abstract class ServiceWorkerContainer : EventTarget, JsAny {
     open val controller: ServiceWorker?
     open val ready: Promise<ServiceWorkerRegistration>
-    open var oncontrollerchange: ((Event) -> Dynamic?)?
-    open var onmessage: ((MessageEvent) -> Dynamic?)?
+    open var oncontrollerchange: ((Event) -> JsAny?)?
+    open var onmessage: ((MessageEvent) -> JsAny?)?
     fun register(scriptURL: String, options: RegistrationOptions = definedExternally): Promise<ServiceWorkerRegistration>
     fun getRegistration(clientURL: String = definedExternally): Promise<JsAny?>
     fun getRegistrations(): Promise<JsArray<ServiceWorkerRegistration>>
@@ -113,14 +113,14 @@ public fun ServiceWorkerMessageEventInit(data: JsAny? = undefined, origin: Strin
 public external abstract class ServiceWorkerGlobalScope : WorkerGlobalScope, JsAny {
     open val clients: Clients
     open val registration: ServiceWorkerRegistration
-    open var oninstall: ((Event) -> Dynamic?)?
-    open var onactivate: ((Event) -> Dynamic?)?
-    open var onfetch: ((FetchEvent) -> Dynamic?)?
-    open var onforeignfetch: ((Event) -> Dynamic?)?
-    open var onmessage: ((MessageEvent) -> Dynamic?)?
-    open var onnotificationclick: ((NotificationEvent) -> Dynamic?)?
-    open var onnotificationclose: ((NotificationEvent) -> Dynamic?)?
-    open var onfunctionalevent: ((Event) -> Dynamic?)?
+    open var oninstall: ((Event) -> JsAny?)?
+    open var onactivate: ((Event) -> JsAny?)?
+    open var onfetch: ((FetchEvent) -> JsAny?)?
+    open var onforeignfetch: ((Event) -> JsAny?)?
+    open var onmessage: ((MessageEvent) -> JsAny?)?
+    open var onnotificationclick: ((NotificationEvent) -> JsAny?)?
+    open var onnotificationclose: ((NotificationEvent) -> JsAny?)?
+    open var onfunctionalevent: ((Event) -> JsAny?)?
     fun skipWaiting(): Promise<Nothing?>
 }
 
@@ -392,15 +392,15 @@ public external interface ServiceWorkerState : JsAny {
     companion object
 }
 
-public inline val ServiceWorkerState.Companion.INSTALLING: ServiceWorkerState get() = "installing".asDynamic().unsafeCast<ServiceWorkerState>()
+public inline val ServiceWorkerState.Companion.INSTALLING: ServiceWorkerState get() = "installing".toJsString().unsafeCast<ServiceWorkerState>()
 
-public inline val ServiceWorkerState.Companion.INSTALLED: ServiceWorkerState get() = "installed".asDynamic().unsafeCast<ServiceWorkerState>()
+public inline val ServiceWorkerState.Companion.INSTALLED: ServiceWorkerState get() = "installed".toJsString().unsafeCast<ServiceWorkerState>()
 
-public inline val ServiceWorkerState.Companion.ACTIVATING: ServiceWorkerState get() = "activating".asDynamic().unsafeCast<ServiceWorkerState>()
+public inline val ServiceWorkerState.Companion.ACTIVATING: ServiceWorkerState get() = "activating".toJsString().unsafeCast<ServiceWorkerState>()
 
-public inline val ServiceWorkerState.Companion.ACTIVATED: ServiceWorkerState get() = "activated".asDynamic().unsafeCast<ServiceWorkerState>()
+public inline val ServiceWorkerState.Companion.ACTIVATED: ServiceWorkerState get() = "activated".toJsString().unsafeCast<ServiceWorkerState>()
 
-public inline val ServiceWorkerState.Companion.REDUNDANT: ServiceWorkerState get() = "redundant".asDynamic().unsafeCast<ServiceWorkerState>()
+public inline val ServiceWorkerState.Companion.REDUNDANT: ServiceWorkerState get() = "redundant".toJsString().unsafeCast<ServiceWorkerState>()
 
 /* please, don't implement this interface! */
 @JsName("null")
@@ -409,13 +409,13 @@ public external interface FrameType : JsAny {
     companion object
 }
 
-public inline val FrameType.Companion.AUXILIARY: FrameType get() = "auxiliary".asDynamic().unsafeCast<FrameType>()
+public inline val FrameType.Companion.AUXILIARY: FrameType get() = "auxiliary".toJsString().unsafeCast<FrameType>()
 
-public inline val FrameType.Companion.TOP_LEVEL: FrameType get() = "top-level".asDynamic().unsafeCast<FrameType>()
+public inline val FrameType.Companion.TOP_LEVEL: FrameType get() = "top-level".toJsString().unsafeCast<FrameType>()
 
-public inline val FrameType.Companion.NESTED: FrameType get() = "nested".asDynamic().unsafeCast<FrameType>()
+public inline val FrameType.Companion.NESTED: FrameType get() = "nested".toJsString().unsafeCast<FrameType>()
 
-public inline val FrameType.Companion.NONE: FrameType get() = "none".asDynamic().unsafeCast<FrameType>()
+public inline val FrameType.Companion.NONE: FrameType get() = "none".toJsString().unsafeCast<FrameType>()
 
 /* please, don't implement this interface! */
 @JsName("null")
@@ -424,10 +424,10 @@ public external interface ClientType : JsAny {
     companion object
 }
 
-public inline val ClientType.Companion.WINDOW: ClientType get() = "window".asDynamic().unsafeCast<ClientType>()
+public inline val ClientType.Companion.WINDOW: ClientType get() = "window".toJsString().unsafeCast<ClientType>()
 
-public inline val ClientType.Companion.WORKER: ClientType get() = "worker".asDynamic().unsafeCast<ClientType>()
+public inline val ClientType.Companion.WORKER: ClientType get() = "worker".toJsString().unsafeCast<ClientType>()
 
-public inline val ClientType.Companion.SHAREDWORKER: ClientType get() = "sharedworker".asDynamic().unsafeCast<ClientType>()
+public inline val ClientType.Companion.SHAREDWORKER: ClientType get() = "sharedworker".toJsString().unsafeCast<ClientType>()
 
-public inline val ClientType.Companion.ALL: ClientType get() = "all".asDynamic().unsafeCast<ClientType>()
+public inline val ClientType.Companion.ALL: ClientType get() = "all".toJsString().unsafeCast<ClientType>()

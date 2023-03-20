@@ -58,8 +58,11 @@ public external abstract class FileList : ItemArrayLike<File>, JsAny {
     override fun item(index: Int): File?
 }
 
+@PublishedApi
+internal fun getMethodImplForFileList(obj: FileList, index: Int): File? { js("return obj[index];") }
+
 @kotlin.internal.InlineOnly
-public inline operator fun FileList.get(index: Int): File? = asDynamic().getAny(index)
+public inline operator fun FileList.get(index: Int): File? = getMethodImplForFileList(this, index)
 
 /**
  * Exposes the JavaScript [FileReader](https://developer.mozilla.org/en/docs/Web/API/FileReader) to Kotlin
@@ -68,12 +71,12 @@ public external open class FileReader : EventTarget, JsAny {
     open val readyState: Short
     open val result: JsAny?
     open val error: JsAny?
-    var onloadstart: ((ProgressEvent) -> Dynamic?)?
-    var onprogress: ((ProgressEvent) -> Dynamic?)?
-    var onload: ((Event) -> Dynamic?)?
-    var onabort: ((Event) -> Dynamic?)?
-    var onerror: ((Event) -> Dynamic?)?
-    var onloadend: ((Event) -> Dynamic?)?
+    var onloadstart: ((ProgressEvent) -> JsAny?)?
+    var onprogress: ((ProgressEvent) -> JsAny?)?
+    var onload: ((Event) -> JsAny?)?
+    var onabort: ((Event) -> JsAny?)?
+    var onerror: ((Event) -> JsAny?)?
+    var onloadend: ((Event) -> JsAny?)?
     fun readAsArrayBuffer(blob: Blob)
     fun readAsBinaryString(blob: Blob)
     fun readAsText(blob: Blob, label: String = definedExternally)

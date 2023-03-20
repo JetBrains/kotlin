@@ -30,11 +30,17 @@ public external abstract class HTMLAllCollection : JsAny {
     fun namedItem(name: String): UnionElementOrHTMLCollection?
 }
 
-@kotlin.internal.InlineOnly
-public inline operator fun HTMLAllCollection.get(index: Int): Element? = asDynamic().getAny(index)
+@PublishedApi
+internal fun getMethodImplForHTMLAllCollection(obj: HTMLAllCollection, index: Int): Element? { js("return obj[index];") }
 
 @kotlin.internal.InlineOnly
-public inline operator fun HTMLAllCollection.get(name: String): UnionElementOrHTMLCollection? = asDynamic().getAny(name)
+public inline operator fun HTMLAllCollection.get(index: Int): Element? = getMethodImplForHTMLAllCollection(this, index)
+
+@PublishedApi
+internal fun getMethodImplForHTMLAllCollection(obj: HTMLAllCollection, name: String): UnionElementOrHTMLCollection? { js("return obj[name];") }
+
+@kotlin.internal.InlineOnly
+public inline operator fun HTMLAllCollection.get(name: String): UnionElementOrHTMLCollection? = getMethodImplForHTMLAllCollection(this, name)
 
 /**
  * Exposes the JavaScript [HTMLFormControlsCollection](https://developer.mozilla.org/en/docs/Web/API/HTMLFormControlsCollection) to Kotlin
@@ -58,8 +64,11 @@ public external abstract class HTMLOptionsCollection : HTMLCollection, JsAny {
     fun remove(index: Int)
 }
 
+@PublishedApi
+internal fun setMethodImplForHTMLOptionsCollection(obj: HTMLOptionsCollection, index: Int, option: HTMLOptionElement?) { js("obj[index] = option;") }
+
 @kotlin.internal.InlineOnly
-public inline operator fun HTMLOptionsCollection.set(index: Int, option: HTMLOptionElement?) { asDynamic()[index] = option }
+public inline operator fun HTMLOptionsCollection.set(index: Int, option: HTMLOptionElement?) = setMethodImplForHTMLOptionsCollection(this, index, option)
 
 /**
  * Exposes the JavaScript [HTMLElement](https://developer.mozilla.org/en/docs/Web/API/HTMLElement) to Kotlin
@@ -142,11 +151,17 @@ public external abstract class HTMLUnknownElement : HTMLElement, JsAny {
  */
 public external abstract class DOMStringMap : JsAny
 
-@kotlin.internal.InlineOnly
-public inline operator fun DOMStringMap.get(name: String): String? = asDynamic().getString(name)
+@PublishedApi
+internal fun getMethodImplForDOMStringMap(obj: DOMStringMap, name: String): String? { js("return obj[name];") }
 
 @kotlin.internal.InlineOnly
-public inline operator fun DOMStringMap.set(name: String, value: String) { asDynamic()[name] = value }
+public inline operator fun DOMStringMap.get(name: String): String? = getMethodImplForDOMStringMap(this, name)
+
+@PublishedApi
+internal fun setMethodImplForDOMStringMap(obj: DOMStringMap, name: String, value: String) { js("obj[name] = value;") }
+
+@kotlin.internal.InlineOnly
+public inline operator fun DOMStringMap.set(name: String, value: String) = setMethodImplForDOMStringMap(this, name, value)
 
 /**
  * Exposes the JavaScript [HTMLHtmlElement](https://developer.mozilla.org/en/docs/Web/API/HTMLHtmlElement) to Kotlin
@@ -1301,8 +1316,8 @@ public external abstract class HTMLMediaElement : HTMLElement, JsAny {
     open val videoTracks: VideoTrackList
     open val textTracks: TextTrackList
     open val mediaKeys: MediaKeys?
-    open var onencrypted: ((Event) -> Dynamic?)?
-    open var onwaitingforkey: ((Event) -> Dynamic?)?
+    open var onencrypted: ((Event) -> JsAny?)?
+    open var onwaitingforkey: ((Event) -> JsAny?)?
     fun load()
     fun canPlayType(type: String): CanPlayTypeResult
     fun fastSeek(time: Double)
@@ -1362,14 +1377,17 @@ public external abstract class MediaError : JsAny {
  */
 public external abstract class AudioTrackList : EventTarget, JsAny {
     open val length: Int
-    open var onchange: ((Event) -> Dynamic?)?
-    open var onaddtrack: ((TrackEvent) -> Dynamic?)?
-    open var onremovetrack: ((TrackEvent) -> Dynamic?)?
+    open var onchange: ((Event) -> JsAny?)?
+    open var onaddtrack: ((TrackEvent) -> JsAny?)?
+    open var onremovetrack: ((TrackEvent) -> JsAny?)?
     fun getTrackById(id: String): AudioTrack?
 }
 
+@PublishedApi
+internal fun getMethodImplForAudioTrackList(obj: AudioTrackList, index: Int): AudioTrack? { js("return obj[index];") }
+
 @kotlin.internal.InlineOnly
-public inline operator fun AudioTrackList.get(index: Int): AudioTrack? = asDynamic().getAny(index)
+public inline operator fun AudioTrackList.get(index: Int): AudioTrack? = getMethodImplForAudioTrackList(this, index)
 
 /**
  * Exposes the JavaScript [AudioTrack](https://developer.mozilla.org/en/docs/Web/API/AudioTrack) to Kotlin
@@ -1389,14 +1407,17 @@ public external abstract class AudioTrack : UnionAudioTrackOrTextTrackOrVideoTra
 public external abstract class VideoTrackList : EventTarget, JsAny {
     open val length: Int
     open val selectedIndex: Int
-    open var onchange: ((Event) -> Dynamic?)?
-    open var onaddtrack: ((TrackEvent) -> Dynamic?)?
-    open var onremovetrack: ((TrackEvent) -> Dynamic?)?
+    open var onchange: ((Event) -> JsAny?)?
+    open var onaddtrack: ((TrackEvent) -> JsAny?)?
+    open var onremovetrack: ((TrackEvent) -> JsAny?)?
     fun getTrackById(id: String): VideoTrack?
 }
 
+@PublishedApi
+internal fun getMethodImplForVideoTrackList(obj: VideoTrackList, index: Int): VideoTrack? { js("return obj[index];") }
+
 @kotlin.internal.InlineOnly
-public inline operator fun VideoTrackList.get(index: Int): VideoTrack? = asDynamic().getAny(index)
+public inline operator fun VideoTrackList.get(index: Int): VideoTrack? = getMethodImplForVideoTrackList(this, index)
 
 /**
  * Exposes the JavaScript [VideoTrack](https://developer.mozilla.org/en/docs/Web/API/VideoTrack) to Kotlin
@@ -1412,14 +1433,17 @@ public external abstract class VideoTrack : UnionAudioTrackOrTextTrackOrVideoTra
 
 public external abstract class TextTrackList : EventTarget, JsAny {
     open val length: Int
-    open var onchange: ((Event) -> Dynamic?)?
-    open var onaddtrack: ((TrackEvent) -> Dynamic?)?
-    open var onremovetrack: ((TrackEvent) -> Dynamic?)?
+    open var onchange: ((Event) -> JsAny?)?
+    open var onaddtrack: ((TrackEvent) -> JsAny?)?
+    open var onremovetrack: ((TrackEvent) -> JsAny?)?
     fun getTrackById(id: String): TextTrack?
 }
 
+@PublishedApi
+internal fun getMethodImplForTextTrackList(obj: TextTrackList, index: Int): TextTrack? { js("return obj[index];") }
+
 @kotlin.internal.InlineOnly
-public inline operator fun TextTrackList.get(index: Int): TextTrack? = asDynamic().getAny(index)
+public inline operator fun TextTrackList.get(index: Int): TextTrack? = getMethodImplForTextTrackList(this, index)
 
 /**
  * Exposes the JavaScript [TextTrack](https://developer.mozilla.org/en/docs/Web/API/TextTrack) to Kotlin
@@ -1433,7 +1457,7 @@ public external abstract class TextTrack : EventTarget, UnionAudioTrackOrTextTra
     open var mode: TextTrackMode
     open val cues: TextTrackCueList?
     open val activeCues: TextTrackCueList?
-    open var oncuechange: ((Event) -> Dynamic?)?
+    open var oncuechange: ((Event) -> JsAny?)?
     open val sourceBuffer: SourceBuffer?
     fun addCue(cue: TextTrackCue)
     fun removeCue(cue: TextTrackCue)
@@ -1444,8 +1468,11 @@ public external abstract class TextTrackCueList : JsAny {
     fun getCueById(id: String): TextTrackCue?
 }
 
+@PublishedApi
+internal fun getMethodImplForTextTrackCueList(obj: TextTrackCueList, index: Int): TextTrackCue? { js("return obj[index];") }
+
 @kotlin.internal.InlineOnly
-public inline operator fun TextTrackCueList.get(index: Int): TextTrackCue? = asDynamic().getAny(index)
+public inline operator fun TextTrackCueList.get(index: Int): TextTrackCue? = getMethodImplForTextTrackCueList(this, index)
 
 /**
  * Exposes the JavaScript [TextTrackCue](https://developer.mozilla.org/en/docs/Web/API/TextTrackCue) to Kotlin
@@ -1456,8 +1483,8 @@ public external abstract class TextTrackCue : EventTarget, JsAny {
     open var startTime: Double
     open var endTime: Double
     open var pauseOnExit: Boolean
-    open var onenter: ((Event) -> Dynamic?)?
-    open var onexit: ((Event) -> Dynamic?)?
+    open var onenter: ((Event) -> JsAny?)?
+    open var onexit: ((Event) -> JsAny?)?
 }
 
 /**
@@ -1824,11 +1851,17 @@ public external abstract class HTMLFormElement : HTMLElement, JsAny {
     }
 }
 
-@kotlin.internal.InlineOnly
-public inline operator fun HTMLFormElement.get(index: Int): Element? = asDynamic().getAny(index)
+@PublishedApi
+internal fun getMethodImplForHTMLFormElement(obj: HTMLFormElement, index: Int): Element? { js("return obj[index];") }
 
 @kotlin.internal.InlineOnly
-public inline operator fun HTMLFormElement.get(name: String): UnionElementOrRadioNodeList? = asDynamic().getAny(name)
+public inline operator fun HTMLFormElement.get(index: Int): Element? = getMethodImplForHTMLFormElement(this, index)
+
+@PublishedApi
+internal fun getMethodImplForHTMLFormElement(obj: HTMLFormElement, name: String): UnionElementOrRadioNodeList? { js("return obj[name];") }
+
+@kotlin.internal.InlineOnly
+public inline operator fun HTMLFormElement.get(name: String): UnionElementOrRadioNodeList? = getMethodImplForHTMLFormElement(this, name)
 
 /**
  * Exposes the JavaScript [HTMLLabelElement](https://developer.mozilla.org/en/docs/Web/API/HTMLLabelElement) to Kotlin
@@ -2041,11 +2074,17 @@ public external abstract class HTMLSelectElement : HTMLElement, ItemArrayLike<El
     }
 }
 
-@kotlin.internal.InlineOnly
-public inline operator fun HTMLSelectElement.get(index: Int): Element? = asDynamic().getAny(index)
+@PublishedApi
+internal fun getMethodImplForHTMLSelectElement(obj: HTMLSelectElement, index: Int): Element? { js("return obj[index];") }
 
 @kotlin.internal.InlineOnly
-public inline operator fun HTMLSelectElement.set(index: Int, option: HTMLOptionElement?) { asDynamic()[index] = option }
+public inline operator fun HTMLSelectElement.get(index: Int): Element? = getMethodImplForHTMLSelectElement(this, index)
+
+@PublishedApi
+internal fun setMethodImplForHTMLSelectElement(obj: HTMLSelectElement, index: Int, option: HTMLOptionElement?) { js("obj[index] = option;") }
+
+@kotlin.internal.InlineOnly
+public inline operator fun HTMLSelectElement.set(index: Int, option: HTMLOptionElement?) = setMethodImplForHTMLSelectElement(this, index, option)
 
 /**
  * Exposes the JavaScript [HTMLDataListElement](https://developer.mozilla.org/en/docs/Web/API/HTMLDataListElement) to Kotlin
@@ -2961,7 +3000,7 @@ public fun ImageBitmapRenderingContextSettings(alpha: Boolean? = true): ImageBit
  * Exposes the JavaScript [CustomElementRegistry](https://developer.mozilla.org/en/docs/Web/API/CustomElementRegistry) to Kotlin
  */
 public external abstract class CustomElementRegistry : JsAny {
-    fun define(name: String, constructor: () -> Dynamic?, options: ElementDefinitionOptions = definedExternally)
+    fun define(name: String, constructor: () -> JsAny?, options: ElementDefinitionOptions = definedExternally)
     fun get(name: String): JsAny?
     fun whenDefined(name: String): Promise<Nothing?>
 }
@@ -3006,8 +3045,11 @@ public external abstract class DataTransferItemList : JsAny {
     fun clear()
 }
 
+@PublishedApi
+internal fun getMethodImplForDataTransferItemList(obj: DataTransferItemList, index: Int): DataTransferItem? { js("return obj[index];") }
+
 @kotlin.internal.InlineOnly
-public inline operator fun DataTransferItemList.get(index: Int): DataTransferItem? = asDynamic().getAny(index)
+public inline operator fun DataTransferItemList.get(index: Int): DataTransferItem? = getMethodImplForDataTransferItemList(this, index)
 
 /**
  * Exposes the JavaScript [DataTransferItem](https://developer.mozilla.org/en/docs/Web/API/DataTransferItem) to Kotlin
@@ -3111,8 +3153,11 @@ public external abstract class Window : EventTarget, GlobalEventHandlers, Window
     fun getComputedStyle(elt: Element, pseudoElt: String? = definedExternally): CSSStyleDeclaration
 }
 
+@PublishedApi
+internal fun getMethodImplForWindow(obj: Window, name: String): JsAny? { js("return obj[name];") }
+
 @kotlin.internal.InlineOnly
-public inline operator fun Window.get(name: String): JsAny? = asDynamic().getAny(name)
+public inline operator fun Window.get(name: String): JsAny? = getMethodImplForWindow(this, name)
 
 public external abstract class BarProp : JsAny {
     open val visible: Boolean
@@ -3240,14 +3285,14 @@ public external open class BeforeUnloadEvent : Event, JsAny {
 
 public external abstract class ApplicationCache : EventTarget, JsAny {
     open val status: Short
-    open var onchecking: ((Event) -> Dynamic?)?
-    open var onerror: ((Event) -> Dynamic?)?
-    open var onnoupdate: ((Event) -> Dynamic?)?
-    open var ondownloading: ((Event) -> Dynamic?)?
-    open var onprogress: ((ProgressEvent) -> Dynamic?)?
-    open var onupdateready: ((Event) -> Dynamic?)?
-    open var oncached: ((Event) -> Dynamic?)?
-    open var onobsolete: ((Event) -> Dynamic?)?
+    open var onchecking: ((Event) -> JsAny?)?
+    open var onerror: ((Event) -> JsAny?)?
+    open var onnoupdate: ((Event) -> JsAny?)?
+    open var ondownloading: ((Event) -> JsAny?)?
+    open var onprogress: ((ProgressEvent) -> JsAny?)?
+    open var onupdateready: ((Event) -> JsAny?)?
+    open var oncached: ((Event) -> JsAny?)?
+    open var onobsolete: ((Event) -> JsAny?)?
     fun update()
     fun abort()
     fun swapCache()
@@ -3337,217 +3382,217 @@ public fun PromiseRejectionEventInit(promise: Promise<JsAny?>?, reason: JsAny? =
  * Exposes the JavaScript [GlobalEventHandlers](https://developer.mozilla.org/en/docs/Web/API/GlobalEventHandlers) to Kotlin
  */
 public external interface GlobalEventHandlers : JsAny {
-    var onabort: ((Event) -> Dynamic?)?
+    var onabort: ((Event) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var onblur: ((FocusEvent) -> Dynamic?)?
+    var onblur: ((FocusEvent) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var oncancel: ((Event) -> Dynamic?)?
+    var oncancel: ((Event) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var oncanplay: ((Event) -> Dynamic?)?
+    var oncanplay: ((Event) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var oncanplaythrough: ((Event) -> Dynamic?)?
+    var oncanplaythrough: ((Event) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var onchange: ((Event) -> Dynamic?)?
+    var onchange: ((Event) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var onclick: ((MouseEvent) -> Dynamic?)?
+    var onclick: ((MouseEvent) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var onclose: ((Event) -> Dynamic?)?
+    var onclose: ((Event) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var oncontextmenu: ((MouseEvent) -> Dynamic?)?
+    var oncontextmenu: ((MouseEvent) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var oncuechange: ((Event) -> Dynamic?)?
+    var oncuechange: ((Event) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var ondblclick: ((MouseEvent) -> Dynamic?)?
+    var ondblclick: ((MouseEvent) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var ondrag: ((DragEvent) -> Dynamic?)?
+    var ondrag: ((DragEvent) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var ondragend: ((DragEvent) -> Dynamic?)?
+    var ondragend: ((DragEvent) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var ondragenter: ((DragEvent) -> Dynamic?)?
+    var ondragenter: ((DragEvent) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var ondragexit: ((DragEvent) -> Dynamic?)?
+    var ondragexit: ((DragEvent) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var ondragleave: ((DragEvent) -> Dynamic?)?
+    var ondragleave: ((DragEvent) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var ondragover: ((DragEvent) -> Dynamic?)?
+    var ondragover: ((DragEvent) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var ondragstart: ((DragEvent) -> Dynamic?)?
+    var ondragstart: ((DragEvent) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var ondrop: ((DragEvent) -> Dynamic?)?
+    var ondrop: ((DragEvent) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var ondurationchange: ((Event) -> Dynamic?)?
+    var ondurationchange: ((Event) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var onemptied: ((Event) -> Dynamic?)?
+    var onemptied: ((Event) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var onended: ((Event) -> Dynamic?)?
+    var onended: ((Event) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var onerror: ((JsAny?, String, Int, Int, JsAny?) -> Dynamic?)?
+    var onerror: ((JsAny?, String, Int, Int, JsAny?) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var onfocus: ((FocusEvent) -> Dynamic?)?
+    var onfocus: ((FocusEvent) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var oninput: ((InputEvent) -> Dynamic?)?
+    var oninput: ((InputEvent) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var oninvalid: ((Event) -> Dynamic?)?
+    var oninvalid: ((Event) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var onkeydown: ((KeyboardEvent) -> Dynamic?)?
+    var onkeydown: ((KeyboardEvent) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var onkeypress: ((KeyboardEvent) -> Dynamic?)?
+    var onkeypress: ((KeyboardEvent) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var onkeyup: ((KeyboardEvent) -> Dynamic?)?
+    var onkeyup: ((KeyboardEvent) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var onload: ((Event) -> Dynamic?)?
+    var onload: ((Event) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var onloadeddata: ((Event) -> Dynamic?)?
+    var onloadeddata: ((Event) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var onloadedmetadata: ((Event) -> Dynamic?)?
+    var onloadedmetadata: ((Event) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var onloadend: ((Event) -> Dynamic?)?
+    var onloadend: ((Event) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var onloadstart: ((ProgressEvent) -> Dynamic?)?
+    var onloadstart: ((ProgressEvent) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var onmousedown: ((MouseEvent) -> Dynamic?)?
+    var onmousedown: ((MouseEvent) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var onmouseenter: ((MouseEvent) -> Dynamic?)?
+    var onmouseenter: ((MouseEvent) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var onmouseleave: ((MouseEvent) -> Dynamic?)?
+    var onmouseleave: ((MouseEvent) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var onmousemove: ((MouseEvent) -> Dynamic?)?
+    var onmousemove: ((MouseEvent) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var onmouseout: ((MouseEvent) -> Dynamic?)?
+    var onmouseout: ((MouseEvent) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var onmouseover: ((MouseEvent) -> Dynamic?)?
+    var onmouseover: ((MouseEvent) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var onmouseup: ((MouseEvent) -> Dynamic?)?
+    var onmouseup: ((MouseEvent) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var onwheel: ((WheelEvent) -> Dynamic?)?
+    var onwheel: ((WheelEvent) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var onpause: ((Event) -> Dynamic?)?
+    var onpause: ((Event) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var onplay: ((Event) -> Dynamic?)?
+    var onplay: ((Event) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var onplaying: ((Event) -> Dynamic?)?
+    var onplaying: ((Event) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var onprogress: ((ProgressEvent) -> Dynamic?)?
+    var onprogress: ((ProgressEvent) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var onratechange: ((Event) -> Dynamic?)?
+    var onratechange: ((Event) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var onreset: ((Event) -> Dynamic?)?
+    var onreset: ((Event) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var onresize: ((Event) -> Dynamic?)?
+    var onresize: ((Event) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var onscroll: ((Event) -> Dynamic?)?
+    var onscroll: ((Event) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var onseeked: ((Event) -> Dynamic?)?
+    var onseeked: ((Event) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var onseeking: ((Event) -> Dynamic?)?
+    var onseeking: ((Event) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var onselect: ((Event) -> Dynamic?)?
+    var onselect: ((Event) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var onshow: ((Event) -> Dynamic?)?
+    var onshow: ((Event) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var onstalled: ((Event) -> Dynamic?)?
+    var onstalled: ((Event) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var onsubmit: ((Event) -> Dynamic?)?
+    var onsubmit: ((Event) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var onsuspend: ((Event) -> Dynamic?)?
+    var onsuspend: ((Event) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var ontimeupdate: ((Event) -> Dynamic?)?
+    var ontimeupdate: ((Event) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var ontoggle: ((Event) -> Dynamic?)?
+    var ontoggle: ((Event) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var onvolumechange: ((Event) -> Dynamic?)?
+    var onvolumechange: ((Event) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var onwaiting: ((Event) -> Dynamic?)?
+    var onwaiting: ((Event) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var ongotpointercapture: ((PointerEvent) -> Dynamic?)?
+    var ongotpointercapture: ((PointerEvent) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var onlostpointercapture: ((PointerEvent) -> Dynamic?)?
+    var onlostpointercapture: ((PointerEvent) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var onpointerdown: ((PointerEvent) -> Dynamic?)?
+    var onpointerdown: ((PointerEvent) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var onpointermove: ((PointerEvent) -> Dynamic?)?
+    var onpointermove: ((PointerEvent) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var onpointerup: ((PointerEvent) -> Dynamic?)?
+    var onpointerup: ((PointerEvent) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var onpointercancel: ((PointerEvent) -> Dynamic?)?
+    var onpointercancel: ((PointerEvent) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var onpointerover: ((PointerEvent) -> Dynamic?)?
+    var onpointerover: ((PointerEvent) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var onpointerout: ((PointerEvent) -> Dynamic?)?
+    var onpointerout: ((PointerEvent) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var onpointerenter: ((PointerEvent) -> Dynamic?)?
+    var onpointerenter: ((PointerEvent) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var onpointerleave: ((PointerEvent) -> Dynamic?)?
+    var onpointerleave: ((PointerEvent) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
 }
@@ -3556,61 +3601,61 @@ public external interface GlobalEventHandlers : JsAny {
  * Exposes the JavaScript [WindowEventHandlers](https://developer.mozilla.org/en/docs/Web/API/WindowEventHandlers) to Kotlin
  */
 public external interface WindowEventHandlers : JsAny {
-    var onafterprint: ((Event) -> Dynamic?)?
+    var onafterprint: ((Event) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var onbeforeprint: ((Event) -> Dynamic?)?
+    var onbeforeprint: ((Event) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
     var onbeforeunload: ((BeforeUnloadEvent) -> String?)?
         get() = definedExternally
         set(value) = definedExternally
-    var onhashchange: ((HashChangeEvent) -> Dynamic?)?
+    var onhashchange: ((HashChangeEvent) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var onlanguagechange: ((Event) -> Dynamic?)?
+    var onlanguagechange: ((Event) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var onmessage: ((MessageEvent) -> Dynamic?)?
+    var onmessage: ((MessageEvent) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var onoffline: ((Event) -> Dynamic?)?
+    var onoffline: ((Event) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var ononline: ((Event) -> Dynamic?)?
+    var ononline: ((Event) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var onpagehide: ((PageTransitionEvent) -> Dynamic?)?
+    var onpagehide: ((PageTransitionEvent) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var onpageshow: ((PageTransitionEvent) -> Dynamic?)?
+    var onpageshow: ((PageTransitionEvent) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var onpopstate: ((PopStateEvent) -> Dynamic?)?
+    var onpopstate: ((PopStateEvent) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var onrejectionhandled: ((Event) -> Dynamic?)?
+    var onrejectionhandled: ((Event) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var onstorage: ((StorageEvent) -> Dynamic?)?
+    var onstorage: ((StorageEvent) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var onunhandledrejection: ((PromiseRejectionEvent) -> Dynamic?)?
+    var onunhandledrejection: ((PromiseRejectionEvent) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var onunload: ((Event) -> Dynamic?)?
+    var onunload: ((Event) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
 }
 
 public external interface DocumentAndElementEventHandlers : JsAny {
-    var oncopy: ((ClipboardEvent) -> Dynamic?)?
+    var oncopy: ((ClipboardEvent) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var oncut: ((ClipboardEvent) -> Dynamic?)?
+    var oncut: ((ClipboardEvent) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var onpaste: ((ClipboardEvent) -> Dynamic?)?
+    var onpaste: ((ClipboardEvent) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
 }
@@ -3701,11 +3746,17 @@ public external abstract class PluginArray : ItemArrayLike<Plugin>, JsAny {
     fun namedItem(name: String): Plugin?
 }
 
-@kotlin.internal.InlineOnly
-public inline operator fun PluginArray.get(index: Int): Plugin? = asDynamic().getAny(index)
+@PublishedApi
+internal fun getMethodImplForPluginArray(obj: PluginArray, index: Int): Plugin? { js("return obj[index];") }
 
 @kotlin.internal.InlineOnly
-public inline operator fun PluginArray.get(name: String): Plugin? = asDynamic().getAny(name)
+public inline operator fun PluginArray.get(index: Int): Plugin? = getMethodImplForPluginArray(this, index)
+
+@PublishedApi
+internal fun getMethodImplForPluginArray(obj: PluginArray, name: String): Plugin? { js("return obj[name];") }
+
+@kotlin.internal.InlineOnly
+public inline operator fun PluginArray.get(name: String): Plugin? = getMethodImplForPluginArray(this, name)
 
 /**
  * Exposes the JavaScript [MimeTypeArray](https://developer.mozilla.org/en/docs/Web/API/MimeTypeArray) to Kotlin
@@ -3715,11 +3766,17 @@ public external abstract class MimeTypeArray : ItemArrayLike<MimeType>, JsAny {
     fun namedItem(name: String): MimeType?
 }
 
-@kotlin.internal.InlineOnly
-public inline operator fun MimeTypeArray.get(index: Int): MimeType? = asDynamic().getAny(index)
+@PublishedApi
+internal fun getMethodImplForMimeTypeArray(obj: MimeTypeArray, index: Int): MimeType? { js("return obj[index];") }
 
 @kotlin.internal.InlineOnly
-public inline operator fun MimeTypeArray.get(name: String): MimeType? = asDynamic().getAny(name)
+public inline operator fun MimeTypeArray.get(index: Int): MimeType? = getMethodImplForMimeTypeArray(this, index)
+
+@PublishedApi
+internal fun getMethodImplForMimeTypeArray(obj: MimeTypeArray, name: String): MimeType? { js("return obj[name];") }
+
+@kotlin.internal.InlineOnly
+public inline operator fun MimeTypeArray.get(name: String): MimeType? = getMethodImplForMimeTypeArray(this, name)
 
 /**
  * Exposes the JavaScript [Plugin](https://developer.mozilla.org/en/docs/Web/API/Plugin) to Kotlin
@@ -3732,11 +3789,17 @@ public external abstract class Plugin : ItemArrayLike<MimeType>, JsAny {
     fun namedItem(name: String): MimeType?
 }
 
-@kotlin.internal.InlineOnly
-public inline operator fun Plugin.get(index: Int): MimeType? = asDynamic().getAny(index)
+@PublishedApi
+internal fun getMethodImplForPlugin(obj: Plugin, index: Int): MimeType? { js("return obj[index];") }
 
 @kotlin.internal.InlineOnly
-public inline operator fun Plugin.get(name: String): MimeType? = asDynamic().getAny(name)
+public inline operator fun Plugin.get(index: Int): MimeType? = getMethodImplForPlugin(this, index)
+
+@PublishedApi
+internal fun getMethodImplForPlugin(obj: Plugin, name: String): MimeType? { js("return obj[name];") }
+
+@kotlin.internal.InlineOnly
+public inline operator fun Plugin.get(name: String): MimeType? = getMethodImplForPlugin(this, name)
 
 /**
  * Exposes the JavaScript [MimeType](https://developer.mozilla.org/en/docs/Web/API/MimeType) to Kotlin
@@ -3828,9 +3891,9 @@ public external open class EventSource(url: String, eventSourceInitDict: EventSo
     open val url: String
     open val withCredentials: Boolean
     open val readyState: Short
-    var onopen: ((Event) -> Dynamic?)?
-    var onmessage: ((MessageEvent) -> Dynamic?)?
-    var onerror: ((Event) -> Dynamic?)?
+    var onopen: ((Event) -> JsAny?)?
+    var onmessage: ((MessageEvent) -> JsAny?)?
+    var onerror: ((Event) -> JsAny?)?
     fun close()
 
     companion object {
@@ -3856,12 +3919,12 @@ public external open class WebSocket(url: String, protocols: JsAny? = definedExt
     open val url: String
     open val readyState: Short
     open val bufferedAmount: JsNumber
-    var onopen: ((Event) -> Dynamic?)?
-    var onerror: ((Event) -> Dynamic?)?
-    var onclose: ((Event) -> Dynamic?)?
+    var onopen: ((Event) -> JsAny?)?
+    var onerror: ((Event) -> JsAny?)?
+    var onclose: ((Event) -> JsAny?)?
     open val extensions: String
     open val protocol: String
-    var onmessage: ((MessageEvent) -> Dynamic?)?
+    var onmessage: ((MessageEvent) -> JsAny?)?
     var binaryType: BinaryType
     fun close(code: Short = definedExternally, reason: String = definedExternally)
     fun send(data: String)
@@ -3920,7 +3983,7 @@ public external open class MessageChannel : JsAny {
  * Exposes the JavaScript [MessagePort](https://developer.mozilla.org/en/docs/Web/API/MessagePort) to Kotlin
  */
 public external abstract class MessagePort : EventTarget, UnionMessagePortOrWindowProxy, UnionMessagePortOrServiceWorker, UnionClientOrMessagePortOrServiceWorker, JsAny {
-    open var onmessage: ((MessageEvent) -> Dynamic?)?
+    open var onmessage: ((MessageEvent) -> JsAny?)?
     fun postMessage(message: JsAny?, transfer: JsArray<JsAny> = definedExternally)
     fun start()
     fun close()
@@ -3931,7 +3994,7 @@ public external abstract class MessagePort : EventTarget, UnionMessagePortOrWind
  */
 public external open class BroadcastChannel(name: String) : EventTarget, JsAny {
     open val name: String
-    var onmessage: ((MessageEvent) -> Dynamic?)?
+    var onmessage: ((MessageEvent) -> JsAny?)?
     fun postMessage(message: JsAny?)
     fun close()
 }
@@ -3943,12 +4006,12 @@ public external abstract class WorkerGlobalScope : EventTarget, WindowOrWorkerGl
     open val self: WorkerGlobalScope
     open val location: WorkerLocation
     open val navigator: WorkerNavigator
-    open var onerror: ((JsAny?, String, Int, Int, JsAny?) -> Dynamic?)?
-    open var onlanguagechange: ((Event) -> Dynamic?)?
-    open var onoffline: ((Event) -> Dynamic?)?
-    open var ononline: ((Event) -> Dynamic?)?
-    open var onrejectionhandled: ((Event) -> Dynamic?)?
-    open var onunhandledrejection: ((PromiseRejectionEvent) -> Dynamic?)?
+    open var onerror: ((JsAny?, String, Int, Int, JsAny?) -> JsAny?)?
+    open var onlanguagechange: ((Event) -> JsAny?)?
+    open var onoffline: ((Event) -> JsAny?)?
+    open var ononline: ((Event) -> JsAny?)?
+    open var onrejectionhandled: ((Event) -> JsAny?)?
+    open var onunhandledrejection: ((PromiseRejectionEvent) -> JsAny?)?
     fun importScripts(vararg urls: String)
 }
 
@@ -3956,7 +4019,7 @@ public external abstract class WorkerGlobalScope : EventTarget, WindowOrWorkerGl
  * Exposes the JavaScript [DedicatedWorkerGlobalScope](https://developer.mozilla.org/en/docs/Web/API/DedicatedWorkerGlobalScope) to Kotlin
  */
 public external abstract class DedicatedWorkerGlobalScope : WorkerGlobalScope, JsAny {
-    open var onmessage: ((MessageEvent) -> Dynamic?)?
+    open var onmessage: ((MessageEvent) -> JsAny?)?
     fun postMessage(message: JsAny?, transfer: JsArray<JsAny> = definedExternally)
     fun close()
 }
@@ -3967,7 +4030,7 @@ public external abstract class DedicatedWorkerGlobalScope : WorkerGlobalScope, J
 public external abstract class SharedWorkerGlobalScope : WorkerGlobalScope, JsAny {
     open val name: String
     open val applicationCache: ApplicationCache
-    open var onconnect: ((Event) -> Dynamic?)?
+    open var onconnect: ((Event) -> JsAny?)?
     fun close()
 }
 
@@ -3975,7 +4038,7 @@ public external abstract class SharedWorkerGlobalScope : WorkerGlobalScope, JsAn
  * Exposes the JavaScript [AbstractWorker](https://developer.mozilla.org/en/docs/Web/API/AbstractWorker) to Kotlin
  */
 public external interface AbstractWorker : JsAny {
-    var onerror: ((Event) -> Dynamic?)?
+    var onerror: ((Event) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
 }
@@ -3984,8 +4047,8 @@ public external interface AbstractWorker : JsAny {
  * Exposes the JavaScript [Worker](https://developer.mozilla.org/en/docs/Web/API/Worker) to Kotlin
  */
 public external open class Worker(scriptURL: String, options: WorkerOptions = definedExternally) : EventTarget, AbstractWorker, JsAny {
-    var onmessage: ((MessageEvent) -> Dynamic?)?
-    override var onerror: ((Event) -> Dynamic?)?
+    var onmessage: ((MessageEvent) -> JsAny?)?
+    override var onerror: ((Event) -> JsAny?)?
     fun terminate()
     fun postMessage(message: JsAny?, transfer: JsArray<JsAny> = definedExternally)
 }
@@ -4007,7 +4070,7 @@ public fun WorkerOptions(type: WorkerType? = WorkerType.CLASSIC, credentials: Re
  */
 public external open class SharedWorker(scriptURL: String, name: String = definedExternally, options: WorkerOptions = definedExternally) : EventTarget, AbstractWorker, JsAny {
     open val port: MessagePort
-    override var onerror: ((Event) -> Dynamic?)?
+    override var onerror: ((Event) -> JsAny?)?
 }
 
 /**
@@ -4051,11 +4114,17 @@ public external abstract class Storage : JsAny {
     fun setItem(key: String, value: String)
 }
 
-@kotlin.internal.InlineOnly
-public inline operator fun Storage.get(key: String): String? = asDynamic().getString(key)
+@PublishedApi
+internal fun getMethodImplForStorage(obj: Storage, key: String): String? { js("return obj[key];") }
 
 @kotlin.internal.InlineOnly
-public inline operator fun Storage.set(key: String, value: String) { asDynamic()[key] = value }
+public inline operator fun Storage.get(key: String): String? = getMethodImplForStorage(this, key)
+
+@PublishedApi
+internal fun setMethodImplForStorage(obj: Storage, key: String, value: String) { js("obj[key] = value;") }
+
+@kotlin.internal.InlineOnly
+public inline operator fun Storage.set(key: String, value: String) = setMethodImplForStorage(this, key, value)
 
 /**
  * Exposes the JavaScript [WindowSessionStorage](https://developer.mozilla.org/en/docs/Web/API/WindowSessionStorage) to Kotlin
@@ -4160,9 +4229,9 @@ public external abstract class HTMLMarqueeElement : HTMLElement, JsAny {
     open var trueSpeed: Boolean
     open var vspace: Int
     open var width: String
-    open var onbounce: ((Event) -> Dynamic?)?
-    open var onfinish: ((Event) -> Dynamic?)?
-    open var onstart: ((Event) -> Dynamic?)?
+    open var onbounce: ((Event) -> JsAny?)?
+    open var onfinish: ((Event) -> JsAny?)?
+    open var onstart: ((Event) -> JsAny?)?
     fun start()
     fun stop()
 
@@ -4434,8 +4503,11 @@ public external abstract class NodeList : ItemArrayLike<Node>, JsAny {
     override fun item(index: Int): Node?
 }
 
+@PublishedApi
+internal fun getMethodImplForNodeList(obj: NodeList, index: Int): Node? { js("return obj[index];") }
+
 @kotlin.internal.InlineOnly
-public inline operator fun NodeList.get(index: Int): Node? = asDynamic().getAny(index)
+public inline operator fun NodeList.get(index: Int): Node? = getMethodImplForNodeList(this, index)
 
 /**
  * Exposes the JavaScript [HTMLCollection](https://developer.mozilla.org/en/docs/Web/API/HTMLCollection) to Kotlin
@@ -4445,11 +4517,17 @@ public external abstract class HTMLCollection : ItemArrayLike<Element>, UnionEle
     fun namedItem(name: String): Element?
 }
 
-@kotlin.internal.InlineOnly
-public inline operator fun HTMLCollection.get(index: Int): Element? = asDynamic().getAny(index)
+@PublishedApi
+internal fun getMethodImplForHTMLCollection(obj: HTMLCollection, index: Int): Element? { js("return obj[index];") }
 
 @kotlin.internal.InlineOnly
-public inline operator fun HTMLCollection.get(name: String): Element? = asDynamic().getAny(name)
+public inline operator fun HTMLCollection.get(index: Int): Element? = getMethodImplForHTMLCollection(this, index)
+
+@PublishedApi
+internal fun getMethodImplForHTMLCollection(obj: HTMLCollection, name: String): Element? { js("return obj[name];") }
+
+@kotlin.internal.InlineOnly
+public inline operator fun HTMLCollection.get(name: String): Element? = getMethodImplForHTMLCollection(this, name)
 
 /**
  * Exposes the JavaScript [MutationObserver](https://developer.mozilla.org/en/docs/Web/API/MutationObserver) to Kotlin
@@ -4605,7 +4683,7 @@ public external open class Document : Node, GlobalEventHandlers, DocumentAndElem
     open val defaultView: Window?
     open val activeElement: Element?
     var designMode: String
-    var onreadystatechange: ((Event) -> Dynamic?)?
+    var onreadystatechange: ((Event) -> JsAny?)?
     var fgColor: String
     var linkColor: String
     var vlinkColor: String
@@ -4619,82 +4697,82 @@ public external open class Document : Node, GlobalEventHandlers, DocumentAndElem
     open val rootElement: SVGSVGElement?
     open val fullscreenEnabled: Boolean
     open val fullscreen: Boolean
-    var onfullscreenchange: ((Event) -> Dynamic?)?
-    var onfullscreenerror: ((Event) -> Dynamic?)?
-    override var onabort: ((Event) -> Dynamic?)?
-    override var onblur: ((FocusEvent) -> Dynamic?)?
-    override var oncancel: ((Event) -> Dynamic?)?
-    override var oncanplay: ((Event) -> Dynamic?)?
-    override var oncanplaythrough: ((Event) -> Dynamic?)?
-    override var onchange: ((Event) -> Dynamic?)?
-    override var onclick: ((MouseEvent) -> Dynamic?)?
-    override var onclose: ((Event) -> Dynamic?)?
-    override var oncontextmenu: ((MouseEvent) -> Dynamic?)?
-    override var oncuechange: ((Event) -> Dynamic?)?
-    override var ondblclick: ((MouseEvent) -> Dynamic?)?
-    override var ondrag: ((DragEvent) -> Dynamic?)?
-    override var ondragend: ((DragEvent) -> Dynamic?)?
-    override var ondragenter: ((DragEvent) -> Dynamic?)?
-    override var ondragexit: ((DragEvent) -> Dynamic?)?
-    override var ondragleave: ((DragEvent) -> Dynamic?)?
-    override var ondragover: ((DragEvent) -> Dynamic?)?
-    override var ondragstart: ((DragEvent) -> Dynamic?)?
-    override var ondrop: ((DragEvent) -> Dynamic?)?
-    override var ondurationchange: ((Event) -> Dynamic?)?
-    override var onemptied: ((Event) -> Dynamic?)?
-    override var onended: ((Event) -> Dynamic?)?
-    override var onerror: ((JsAny?, String, Int, Int, JsAny?) -> Dynamic?)?
-    override var onfocus: ((FocusEvent) -> Dynamic?)?
-    override var oninput: ((InputEvent) -> Dynamic?)?
-    override var oninvalid: ((Event) -> Dynamic?)?
-    override var onkeydown: ((KeyboardEvent) -> Dynamic?)?
-    override var onkeypress: ((KeyboardEvent) -> Dynamic?)?
-    override var onkeyup: ((KeyboardEvent) -> Dynamic?)?
-    override var onload: ((Event) -> Dynamic?)?
-    override var onloadeddata: ((Event) -> Dynamic?)?
-    override var onloadedmetadata: ((Event) -> Dynamic?)?
-    override var onloadend: ((Event) -> Dynamic?)?
-    override var onloadstart: ((ProgressEvent) -> Dynamic?)?
-    override var onmousedown: ((MouseEvent) -> Dynamic?)?
-    override var onmouseenter: ((MouseEvent) -> Dynamic?)?
-    override var onmouseleave: ((MouseEvent) -> Dynamic?)?
-    override var onmousemove: ((MouseEvent) -> Dynamic?)?
-    override var onmouseout: ((MouseEvent) -> Dynamic?)?
-    override var onmouseover: ((MouseEvent) -> Dynamic?)?
-    override var onmouseup: ((MouseEvent) -> Dynamic?)?
-    override var onwheel: ((WheelEvent) -> Dynamic?)?
-    override var onpause: ((Event) -> Dynamic?)?
-    override var onplay: ((Event) -> Dynamic?)?
-    override var onplaying: ((Event) -> Dynamic?)?
-    override var onprogress: ((ProgressEvent) -> Dynamic?)?
-    override var onratechange: ((Event) -> Dynamic?)?
-    override var onreset: ((Event) -> Dynamic?)?
-    override var onresize: ((Event) -> Dynamic?)?
-    override var onscroll: ((Event) -> Dynamic?)?
-    override var onseeked: ((Event) -> Dynamic?)?
-    override var onseeking: ((Event) -> Dynamic?)?
-    override var onselect: ((Event) -> Dynamic?)?
-    override var onshow: ((Event) -> Dynamic?)?
-    override var onstalled: ((Event) -> Dynamic?)?
-    override var onsubmit: ((Event) -> Dynamic?)?
-    override var onsuspend: ((Event) -> Dynamic?)?
-    override var ontimeupdate: ((Event) -> Dynamic?)?
-    override var ontoggle: ((Event) -> Dynamic?)?
-    override var onvolumechange: ((Event) -> Dynamic?)?
-    override var onwaiting: ((Event) -> Dynamic?)?
-    override var ongotpointercapture: ((PointerEvent) -> Dynamic?)?
-    override var onlostpointercapture: ((PointerEvent) -> Dynamic?)?
-    override var onpointerdown: ((PointerEvent) -> Dynamic?)?
-    override var onpointermove: ((PointerEvent) -> Dynamic?)?
-    override var onpointerup: ((PointerEvent) -> Dynamic?)?
-    override var onpointercancel: ((PointerEvent) -> Dynamic?)?
-    override var onpointerover: ((PointerEvent) -> Dynamic?)?
-    override var onpointerout: ((PointerEvent) -> Dynamic?)?
-    override var onpointerenter: ((PointerEvent) -> Dynamic?)?
-    override var onpointerleave: ((PointerEvent) -> Dynamic?)?
-    override var oncopy: ((ClipboardEvent) -> Dynamic?)?
-    override var oncut: ((ClipboardEvent) -> Dynamic?)?
-    override var onpaste: ((ClipboardEvent) -> Dynamic?)?
+    var onfullscreenchange: ((Event) -> JsAny?)?
+    var onfullscreenerror: ((Event) -> JsAny?)?
+    override var onabort: ((Event) -> JsAny?)?
+    override var onblur: ((FocusEvent) -> JsAny?)?
+    override var oncancel: ((Event) -> JsAny?)?
+    override var oncanplay: ((Event) -> JsAny?)?
+    override var oncanplaythrough: ((Event) -> JsAny?)?
+    override var onchange: ((Event) -> JsAny?)?
+    override var onclick: ((MouseEvent) -> JsAny?)?
+    override var onclose: ((Event) -> JsAny?)?
+    override var oncontextmenu: ((MouseEvent) -> JsAny?)?
+    override var oncuechange: ((Event) -> JsAny?)?
+    override var ondblclick: ((MouseEvent) -> JsAny?)?
+    override var ondrag: ((DragEvent) -> JsAny?)?
+    override var ondragend: ((DragEvent) -> JsAny?)?
+    override var ondragenter: ((DragEvent) -> JsAny?)?
+    override var ondragexit: ((DragEvent) -> JsAny?)?
+    override var ondragleave: ((DragEvent) -> JsAny?)?
+    override var ondragover: ((DragEvent) -> JsAny?)?
+    override var ondragstart: ((DragEvent) -> JsAny?)?
+    override var ondrop: ((DragEvent) -> JsAny?)?
+    override var ondurationchange: ((Event) -> JsAny?)?
+    override var onemptied: ((Event) -> JsAny?)?
+    override var onended: ((Event) -> JsAny?)?
+    override var onerror: ((JsAny?, String, Int, Int, JsAny?) -> JsAny?)?
+    override var onfocus: ((FocusEvent) -> JsAny?)?
+    override var oninput: ((InputEvent) -> JsAny?)?
+    override var oninvalid: ((Event) -> JsAny?)?
+    override var onkeydown: ((KeyboardEvent) -> JsAny?)?
+    override var onkeypress: ((KeyboardEvent) -> JsAny?)?
+    override var onkeyup: ((KeyboardEvent) -> JsAny?)?
+    override var onload: ((Event) -> JsAny?)?
+    override var onloadeddata: ((Event) -> JsAny?)?
+    override var onloadedmetadata: ((Event) -> JsAny?)?
+    override var onloadend: ((Event) -> JsAny?)?
+    override var onloadstart: ((ProgressEvent) -> JsAny?)?
+    override var onmousedown: ((MouseEvent) -> JsAny?)?
+    override var onmouseenter: ((MouseEvent) -> JsAny?)?
+    override var onmouseleave: ((MouseEvent) -> JsAny?)?
+    override var onmousemove: ((MouseEvent) -> JsAny?)?
+    override var onmouseout: ((MouseEvent) -> JsAny?)?
+    override var onmouseover: ((MouseEvent) -> JsAny?)?
+    override var onmouseup: ((MouseEvent) -> JsAny?)?
+    override var onwheel: ((WheelEvent) -> JsAny?)?
+    override var onpause: ((Event) -> JsAny?)?
+    override var onplay: ((Event) -> JsAny?)?
+    override var onplaying: ((Event) -> JsAny?)?
+    override var onprogress: ((ProgressEvent) -> JsAny?)?
+    override var onratechange: ((Event) -> JsAny?)?
+    override var onreset: ((Event) -> JsAny?)?
+    override var onresize: ((Event) -> JsAny?)?
+    override var onscroll: ((Event) -> JsAny?)?
+    override var onseeked: ((Event) -> JsAny?)?
+    override var onseeking: ((Event) -> JsAny?)?
+    override var onselect: ((Event) -> JsAny?)?
+    override var onshow: ((Event) -> JsAny?)?
+    override var onstalled: ((Event) -> JsAny?)?
+    override var onsubmit: ((Event) -> JsAny?)?
+    override var onsuspend: ((Event) -> JsAny?)?
+    override var ontimeupdate: ((Event) -> JsAny?)?
+    override var ontoggle: ((Event) -> JsAny?)?
+    override var onvolumechange: ((Event) -> JsAny?)?
+    override var onwaiting: ((Event) -> JsAny?)?
+    override var ongotpointercapture: ((PointerEvent) -> JsAny?)?
+    override var onlostpointercapture: ((PointerEvent) -> JsAny?)?
+    override var onpointerdown: ((PointerEvent) -> JsAny?)?
+    override var onpointermove: ((PointerEvent) -> JsAny?)?
+    override var onpointerup: ((PointerEvent) -> JsAny?)?
+    override var onpointercancel: ((PointerEvent) -> JsAny?)?
+    override var onpointerover: ((PointerEvent) -> JsAny?)?
+    override var onpointerout: ((PointerEvent) -> JsAny?)?
+    override var onpointerenter: ((PointerEvent) -> JsAny?)?
+    override var onpointerleave: ((PointerEvent) -> JsAny?)?
+    override var oncopy: ((ClipboardEvent) -> JsAny?)?
+    override var oncut: ((ClipboardEvent) -> JsAny?)?
+    override var onpaste: ((ClipboardEvent) -> JsAny?)?
     override val fullscreenElement: Element?
     override val children: HTMLCollection
     override val firstElementChild: Element?
@@ -4774,8 +4852,11 @@ public external open class Document : Node, GlobalEventHandlers, DocumentAndElem
     }
 }
 
+@PublishedApi
+internal fun getMethodImplForDocument(obj: Document, name: String): JsAny? { js("return obj[name];") }
+
 @kotlin.internal.InlineOnly
-public inline operator fun Document.get(name: String): JsAny? = asDynamic().getAny(name)
+public inline operator fun Document.get(name: String): JsAny? = getMethodImplForDocument(this, name)
 
 /**
  * Exposes the JavaScript [XMLDocument](https://developer.mozilla.org/en/docs/Web/API/XMLDocument) to Kotlin
@@ -5024,11 +5105,17 @@ public external abstract class NamedNodeMap : ItemArrayLike<Attr>, JsAny {
     fun getNamedItem(qualifiedName: String): Attr?
 }
 
-@kotlin.internal.InlineOnly
-public inline operator fun NamedNodeMap.get(index: Int): Attr? = asDynamic().getAny(index)
+@PublishedApi
+internal fun getMethodImplForNamedNodeMap(obj: NamedNodeMap, index: Int): Attr? { js("return obj[index];") }
 
 @kotlin.internal.InlineOnly
-public inline operator fun NamedNodeMap.get(qualifiedName: String): Attr? = asDynamic().getAny(qualifiedName)
+public inline operator fun NamedNodeMap.get(index: Int): Attr? = getMethodImplForNamedNodeMap(this, index)
+
+@PublishedApi
+internal fun getMethodImplForNamedNodeMap(obj: NamedNodeMap, qualifiedName: String): Attr? { js("return obj[qualifiedName];") }
+
+@kotlin.internal.InlineOnly
+public inline operator fun NamedNodeMap.get(qualifiedName: String): Attr? = getMethodImplForNamedNodeMap(this, qualifiedName)
 
 /**
  * Exposes the JavaScript [Attr](https://developer.mozilla.org/en/docs/Web/API/Attr) to Kotlin
@@ -5339,8 +5426,11 @@ public external abstract class DOMTokenList : ItemArrayLike<JsString>, JsAny {
     override fun item(index: Int): JsString?
 }
 
+@PublishedApi
+internal fun getMethodImplForDOMTokenList(obj: DOMTokenList, index: Int): String? { js("return obj[index];") }
+
 @kotlin.internal.InlineOnly
-public inline operator fun DOMTokenList.get(index: Int): String? = asDynamic().getString(index)
+public inline operator fun DOMTokenList.get(index: Int): String? = getMethodImplForDOMTokenList(this, index)
 
 /**
  * Exposes the JavaScript [DOMPointReadOnly](https://developer.mozilla.org/en/docs/Web/API/DOMPointReadOnly) to Kotlin
@@ -5432,8 +5522,11 @@ public external interface DOMRectList : ItemArrayLike<DOMRect>, JsAny {
     override fun item(index: Int): DOMRect?
 }
 
+@PublishedApi
+internal fun getMethodImplForDOMRectList(obj: DOMRectList, index: Int): DOMRect? { js("return obj[index];") }
+
 @kotlin.internal.InlineOnly
-public inline operator fun DOMRectList.get(index: Int): DOMRect? = asDynamic().getAny(index)
+public inline operator fun DOMRectList.get(index: Int): DOMRect? = getMethodImplForDOMRectList(this, index)
 
 /**
  * Exposes the JavaScript [DOMQuad](https://developer.mozilla.org/en/docs/Web/API/DOMQuad) to Kotlin
@@ -5570,7 +5663,7 @@ public fun ScrollToOptions(left: Double? = undefined, top: Double? = undefined, 
 public external abstract class MediaQueryList : EventTarget, JsAny {
     open val media: String
     open val matches: Boolean
-    open var onchange: ((Event) -> Dynamic?)?
+    open var onchange: ((Event) -> JsAny?)?
     fun addListener(listener: EventListener?)
     fun addListener(listener: ((Event) -> Unit)?)
     fun removeListener(listener: EventListener?)
@@ -5690,8 +5783,11 @@ public external abstract class TouchList : ItemArrayLike<Touch>, JsAny {
     override fun item(index: Int): Touch?
 }
 
+@PublishedApi
+internal fun getMethodImplForTouchList(obj: TouchList, index: Int): Touch? { js("return obj[index];") }
+
 @kotlin.internal.InlineOnly
-public inline operator fun TouchList.get(index: Int): Touch? = asDynamic().getAny(index)
+public inline operator fun TouchList.get(index: Int): Touch? = getMethodImplForTouchList(this, index)
 
 public external open class TouchEvent : UIEvent, JsAny {
     open val touches: TouchList
@@ -5714,80 +5810,80 @@ public external open class TouchEvent : UIEvent, JsAny {
  * Exposes the JavaScript [Image](https://developer.mozilla.org/en/docs/Web/API/Image) to Kotlin
  */
 public external open class Image(width: Int = definedExternally, height: Int = definedExternally) : HTMLImageElement, JsAny {
-    override var onabort: ((Event) -> Dynamic?)?
-    override var onblur: ((FocusEvent) -> Dynamic?)?
-    override var oncancel: ((Event) -> Dynamic?)?
-    override var oncanplay: ((Event) -> Dynamic?)?
-    override var oncanplaythrough: ((Event) -> Dynamic?)?
-    override var onchange: ((Event) -> Dynamic?)?
-    override var onclick: ((MouseEvent) -> Dynamic?)?
-    override var onclose: ((Event) -> Dynamic?)?
-    override var oncontextmenu: ((MouseEvent) -> Dynamic?)?
-    override var oncuechange: ((Event) -> Dynamic?)?
-    override var ondblclick: ((MouseEvent) -> Dynamic?)?
-    override var ondrag: ((DragEvent) -> Dynamic?)?
-    override var ondragend: ((DragEvent) -> Dynamic?)?
-    override var ondragenter: ((DragEvent) -> Dynamic?)?
-    override var ondragexit: ((DragEvent) -> Dynamic?)?
-    override var ondragleave: ((DragEvent) -> Dynamic?)?
-    override var ondragover: ((DragEvent) -> Dynamic?)?
-    override var ondragstart: ((DragEvent) -> Dynamic?)?
-    override var ondrop: ((DragEvent) -> Dynamic?)?
-    override var ondurationchange: ((Event) -> Dynamic?)?
-    override var onemptied: ((Event) -> Dynamic?)?
-    override var onended: ((Event) -> Dynamic?)?
-    override var onerror: ((JsAny?, String, Int, Int, JsAny?) -> Dynamic?)?
-    override var onfocus: ((FocusEvent) -> Dynamic?)?
-    override var oninput: ((InputEvent) -> Dynamic?)?
-    override var oninvalid: ((Event) -> Dynamic?)?
-    override var onkeydown: ((KeyboardEvent) -> Dynamic?)?
-    override var onkeypress: ((KeyboardEvent) -> Dynamic?)?
-    override var onkeyup: ((KeyboardEvent) -> Dynamic?)?
-    override var onload: ((Event) -> Dynamic?)?
-    override var onloadeddata: ((Event) -> Dynamic?)?
-    override var onloadedmetadata: ((Event) -> Dynamic?)?
-    override var onloadend: ((Event) -> Dynamic?)?
-    override var onloadstart: ((ProgressEvent) -> Dynamic?)?
-    override var onmousedown: ((MouseEvent) -> Dynamic?)?
-    override var onmouseenter: ((MouseEvent) -> Dynamic?)?
-    override var onmouseleave: ((MouseEvent) -> Dynamic?)?
-    override var onmousemove: ((MouseEvent) -> Dynamic?)?
-    override var onmouseout: ((MouseEvent) -> Dynamic?)?
-    override var onmouseover: ((MouseEvent) -> Dynamic?)?
-    override var onmouseup: ((MouseEvent) -> Dynamic?)?
-    override var onwheel: ((WheelEvent) -> Dynamic?)?
-    override var onpause: ((Event) -> Dynamic?)?
-    override var onplay: ((Event) -> Dynamic?)?
-    override var onplaying: ((Event) -> Dynamic?)?
-    override var onprogress: ((ProgressEvent) -> Dynamic?)?
-    override var onratechange: ((Event) -> Dynamic?)?
-    override var onreset: ((Event) -> Dynamic?)?
-    override var onresize: ((Event) -> Dynamic?)?
-    override var onscroll: ((Event) -> Dynamic?)?
-    override var onseeked: ((Event) -> Dynamic?)?
-    override var onseeking: ((Event) -> Dynamic?)?
-    override var onselect: ((Event) -> Dynamic?)?
-    override var onshow: ((Event) -> Dynamic?)?
-    override var onstalled: ((Event) -> Dynamic?)?
-    override var onsubmit: ((Event) -> Dynamic?)?
-    override var onsuspend: ((Event) -> Dynamic?)?
-    override var ontimeupdate: ((Event) -> Dynamic?)?
-    override var ontoggle: ((Event) -> Dynamic?)?
-    override var onvolumechange: ((Event) -> Dynamic?)?
-    override var onwaiting: ((Event) -> Dynamic?)?
-    override var ongotpointercapture: ((PointerEvent) -> Dynamic?)?
-    override var onlostpointercapture: ((PointerEvent) -> Dynamic?)?
-    override var onpointerdown: ((PointerEvent) -> Dynamic?)?
-    override var onpointermove: ((PointerEvent) -> Dynamic?)?
-    override var onpointerup: ((PointerEvent) -> Dynamic?)?
-    override var onpointercancel: ((PointerEvent) -> Dynamic?)?
-    override var onpointerover: ((PointerEvent) -> Dynamic?)?
-    override var onpointerout: ((PointerEvent) -> Dynamic?)?
-    override var onpointerenter: ((PointerEvent) -> Dynamic?)?
-    override var onpointerleave: ((PointerEvent) -> Dynamic?)?
-    override var oncopy: ((ClipboardEvent) -> Dynamic?)?
-    override var oncut: ((ClipboardEvent) -> Dynamic?)?
-    override var onpaste: ((ClipboardEvent) -> Dynamic?)?
+    override var onabort: ((Event) -> JsAny?)?
+    override var onblur: ((FocusEvent) -> JsAny?)?
+    override var oncancel: ((Event) -> JsAny?)?
+    override var oncanplay: ((Event) -> JsAny?)?
+    override var oncanplaythrough: ((Event) -> JsAny?)?
+    override var onchange: ((Event) -> JsAny?)?
+    override var onclick: ((MouseEvent) -> JsAny?)?
+    override var onclose: ((Event) -> JsAny?)?
+    override var oncontextmenu: ((MouseEvent) -> JsAny?)?
+    override var oncuechange: ((Event) -> JsAny?)?
+    override var ondblclick: ((MouseEvent) -> JsAny?)?
+    override var ondrag: ((DragEvent) -> JsAny?)?
+    override var ondragend: ((DragEvent) -> JsAny?)?
+    override var ondragenter: ((DragEvent) -> JsAny?)?
+    override var ondragexit: ((DragEvent) -> JsAny?)?
+    override var ondragleave: ((DragEvent) -> JsAny?)?
+    override var ondragover: ((DragEvent) -> JsAny?)?
+    override var ondragstart: ((DragEvent) -> JsAny?)?
+    override var ondrop: ((DragEvent) -> JsAny?)?
+    override var ondurationchange: ((Event) -> JsAny?)?
+    override var onemptied: ((Event) -> JsAny?)?
+    override var onended: ((Event) -> JsAny?)?
+    override var onerror: ((JsAny?, String, Int, Int, JsAny?) -> JsAny?)?
+    override var onfocus: ((FocusEvent) -> JsAny?)?
+    override var oninput: ((InputEvent) -> JsAny?)?
+    override var oninvalid: ((Event) -> JsAny?)?
+    override var onkeydown: ((KeyboardEvent) -> JsAny?)?
+    override var onkeypress: ((KeyboardEvent) -> JsAny?)?
+    override var onkeyup: ((KeyboardEvent) -> JsAny?)?
+    override var onload: ((Event) -> JsAny?)?
+    override var onloadeddata: ((Event) -> JsAny?)?
+    override var onloadedmetadata: ((Event) -> JsAny?)?
+    override var onloadend: ((Event) -> JsAny?)?
+    override var onloadstart: ((ProgressEvent) -> JsAny?)?
+    override var onmousedown: ((MouseEvent) -> JsAny?)?
+    override var onmouseenter: ((MouseEvent) -> JsAny?)?
+    override var onmouseleave: ((MouseEvent) -> JsAny?)?
+    override var onmousemove: ((MouseEvent) -> JsAny?)?
+    override var onmouseout: ((MouseEvent) -> JsAny?)?
+    override var onmouseover: ((MouseEvent) -> JsAny?)?
+    override var onmouseup: ((MouseEvent) -> JsAny?)?
+    override var onwheel: ((WheelEvent) -> JsAny?)?
+    override var onpause: ((Event) -> JsAny?)?
+    override var onplay: ((Event) -> JsAny?)?
+    override var onplaying: ((Event) -> JsAny?)?
+    override var onprogress: ((ProgressEvent) -> JsAny?)?
+    override var onratechange: ((Event) -> JsAny?)?
+    override var onreset: ((Event) -> JsAny?)?
+    override var onresize: ((Event) -> JsAny?)?
+    override var onscroll: ((Event) -> JsAny?)?
+    override var onseeked: ((Event) -> JsAny?)?
+    override var onseeking: ((Event) -> JsAny?)?
+    override var onselect: ((Event) -> JsAny?)?
+    override var onshow: ((Event) -> JsAny?)?
+    override var onstalled: ((Event) -> JsAny?)?
+    override var onsubmit: ((Event) -> JsAny?)?
+    override var onsuspend: ((Event) -> JsAny?)?
+    override var ontimeupdate: ((Event) -> JsAny?)?
+    override var ontoggle: ((Event) -> JsAny?)?
+    override var onvolumechange: ((Event) -> JsAny?)?
+    override var onwaiting: ((Event) -> JsAny?)?
+    override var ongotpointercapture: ((PointerEvent) -> JsAny?)?
+    override var onlostpointercapture: ((PointerEvent) -> JsAny?)?
+    override var onpointerdown: ((PointerEvent) -> JsAny?)?
+    override var onpointermove: ((PointerEvent) -> JsAny?)?
+    override var onpointerup: ((PointerEvent) -> JsAny?)?
+    override var onpointercancel: ((PointerEvent) -> JsAny?)?
+    override var onpointerover: ((PointerEvent) -> JsAny?)?
+    override var onpointerout: ((PointerEvent) -> JsAny?)?
+    override var onpointerenter: ((PointerEvent) -> JsAny?)?
+    override var onpointerleave: ((PointerEvent) -> JsAny?)?
+    override var oncopy: ((ClipboardEvent) -> JsAny?)?
+    override var oncut: ((ClipboardEvent) -> JsAny?)?
+    override var onpaste: ((ClipboardEvent) -> JsAny?)?
     override var contentEditable: String
     override val isContentEditable: Boolean
     override val style: CSSStyleDeclaration
@@ -5834,80 +5930,80 @@ public external open class Image(width: Int = definedExternally, height: Int = d
 }
 
 public external open class Audio(src: String = definedExternally) : HTMLAudioElement, JsAny {
-    override var onabort: ((Event) -> Dynamic?)?
-    override var onblur: ((FocusEvent) -> Dynamic?)?
-    override var oncancel: ((Event) -> Dynamic?)?
-    override var oncanplay: ((Event) -> Dynamic?)?
-    override var oncanplaythrough: ((Event) -> Dynamic?)?
-    override var onchange: ((Event) -> Dynamic?)?
-    override var onclick: ((MouseEvent) -> Dynamic?)?
-    override var onclose: ((Event) -> Dynamic?)?
-    override var oncontextmenu: ((MouseEvent) -> Dynamic?)?
-    override var oncuechange: ((Event) -> Dynamic?)?
-    override var ondblclick: ((MouseEvent) -> Dynamic?)?
-    override var ondrag: ((DragEvent) -> Dynamic?)?
-    override var ondragend: ((DragEvent) -> Dynamic?)?
-    override var ondragenter: ((DragEvent) -> Dynamic?)?
-    override var ondragexit: ((DragEvent) -> Dynamic?)?
-    override var ondragleave: ((DragEvent) -> Dynamic?)?
-    override var ondragover: ((DragEvent) -> Dynamic?)?
-    override var ondragstart: ((DragEvent) -> Dynamic?)?
-    override var ondrop: ((DragEvent) -> Dynamic?)?
-    override var ondurationchange: ((Event) -> Dynamic?)?
-    override var onemptied: ((Event) -> Dynamic?)?
-    override var onended: ((Event) -> Dynamic?)?
-    override var onerror: ((JsAny?, String, Int, Int, JsAny?) -> Dynamic?)?
-    override var onfocus: ((FocusEvent) -> Dynamic?)?
-    override var oninput: ((InputEvent) -> Dynamic?)?
-    override var oninvalid: ((Event) -> Dynamic?)?
-    override var onkeydown: ((KeyboardEvent) -> Dynamic?)?
-    override var onkeypress: ((KeyboardEvent) -> Dynamic?)?
-    override var onkeyup: ((KeyboardEvent) -> Dynamic?)?
-    override var onload: ((Event) -> Dynamic?)?
-    override var onloadeddata: ((Event) -> Dynamic?)?
-    override var onloadedmetadata: ((Event) -> Dynamic?)?
-    override var onloadend: ((Event) -> Dynamic?)?
-    override var onloadstart: ((ProgressEvent) -> Dynamic?)?
-    override var onmousedown: ((MouseEvent) -> Dynamic?)?
-    override var onmouseenter: ((MouseEvent) -> Dynamic?)?
-    override var onmouseleave: ((MouseEvent) -> Dynamic?)?
-    override var onmousemove: ((MouseEvent) -> Dynamic?)?
-    override var onmouseout: ((MouseEvent) -> Dynamic?)?
-    override var onmouseover: ((MouseEvent) -> Dynamic?)?
-    override var onmouseup: ((MouseEvent) -> Dynamic?)?
-    override var onwheel: ((WheelEvent) -> Dynamic?)?
-    override var onpause: ((Event) -> Dynamic?)?
-    override var onplay: ((Event) -> Dynamic?)?
-    override var onplaying: ((Event) -> Dynamic?)?
-    override var onprogress: ((ProgressEvent) -> Dynamic?)?
-    override var onratechange: ((Event) -> Dynamic?)?
-    override var onreset: ((Event) -> Dynamic?)?
-    override var onresize: ((Event) -> Dynamic?)?
-    override var onscroll: ((Event) -> Dynamic?)?
-    override var onseeked: ((Event) -> Dynamic?)?
-    override var onseeking: ((Event) -> Dynamic?)?
-    override var onselect: ((Event) -> Dynamic?)?
-    override var onshow: ((Event) -> Dynamic?)?
-    override var onstalled: ((Event) -> Dynamic?)?
-    override var onsubmit: ((Event) -> Dynamic?)?
-    override var onsuspend: ((Event) -> Dynamic?)?
-    override var ontimeupdate: ((Event) -> Dynamic?)?
-    override var ontoggle: ((Event) -> Dynamic?)?
-    override var onvolumechange: ((Event) -> Dynamic?)?
-    override var onwaiting: ((Event) -> Dynamic?)?
-    override var ongotpointercapture: ((PointerEvent) -> Dynamic?)?
-    override var onlostpointercapture: ((PointerEvent) -> Dynamic?)?
-    override var onpointerdown: ((PointerEvent) -> Dynamic?)?
-    override var onpointermove: ((PointerEvent) -> Dynamic?)?
-    override var onpointerup: ((PointerEvent) -> Dynamic?)?
-    override var onpointercancel: ((PointerEvent) -> Dynamic?)?
-    override var onpointerover: ((PointerEvent) -> Dynamic?)?
-    override var onpointerout: ((PointerEvent) -> Dynamic?)?
-    override var onpointerenter: ((PointerEvent) -> Dynamic?)?
-    override var onpointerleave: ((PointerEvent) -> Dynamic?)?
-    override var oncopy: ((ClipboardEvent) -> Dynamic?)?
-    override var oncut: ((ClipboardEvent) -> Dynamic?)?
-    override var onpaste: ((ClipboardEvent) -> Dynamic?)?
+    override var onabort: ((Event) -> JsAny?)?
+    override var onblur: ((FocusEvent) -> JsAny?)?
+    override var oncancel: ((Event) -> JsAny?)?
+    override var oncanplay: ((Event) -> JsAny?)?
+    override var oncanplaythrough: ((Event) -> JsAny?)?
+    override var onchange: ((Event) -> JsAny?)?
+    override var onclick: ((MouseEvent) -> JsAny?)?
+    override var onclose: ((Event) -> JsAny?)?
+    override var oncontextmenu: ((MouseEvent) -> JsAny?)?
+    override var oncuechange: ((Event) -> JsAny?)?
+    override var ondblclick: ((MouseEvent) -> JsAny?)?
+    override var ondrag: ((DragEvent) -> JsAny?)?
+    override var ondragend: ((DragEvent) -> JsAny?)?
+    override var ondragenter: ((DragEvent) -> JsAny?)?
+    override var ondragexit: ((DragEvent) -> JsAny?)?
+    override var ondragleave: ((DragEvent) -> JsAny?)?
+    override var ondragover: ((DragEvent) -> JsAny?)?
+    override var ondragstart: ((DragEvent) -> JsAny?)?
+    override var ondrop: ((DragEvent) -> JsAny?)?
+    override var ondurationchange: ((Event) -> JsAny?)?
+    override var onemptied: ((Event) -> JsAny?)?
+    override var onended: ((Event) -> JsAny?)?
+    override var onerror: ((JsAny?, String, Int, Int, JsAny?) -> JsAny?)?
+    override var onfocus: ((FocusEvent) -> JsAny?)?
+    override var oninput: ((InputEvent) -> JsAny?)?
+    override var oninvalid: ((Event) -> JsAny?)?
+    override var onkeydown: ((KeyboardEvent) -> JsAny?)?
+    override var onkeypress: ((KeyboardEvent) -> JsAny?)?
+    override var onkeyup: ((KeyboardEvent) -> JsAny?)?
+    override var onload: ((Event) -> JsAny?)?
+    override var onloadeddata: ((Event) -> JsAny?)?
+    override var onloadedmetadata: ((Event) -> JsAny?)?
+    override var onloadend: ((Event) -> JsAny?)?
+    override var onloadstart: ((ProgressEvent) -> JsAny?)?
+    override var onmousedown: ((MouseEvent) -> JsAny?)?
+    override var onmouseenter: ((MouseEvent) -> JsAny?)?
+    override var onmouseleave: ((MouseEvent) -> JsAny?)?
+    override var onmousemove: ((MouseEvent) -> JsAny?)?
+    override var onmouseout: ((MouseEvent) -> JsAny?)?
+    override var onmouseover: ((MouseEvent) -> JsAny?)?
+    override var onmouseup: ((MouseEvent) -> JsAny?)?
+    override var onwheel: ((WheelEvent) -> JsAny?)?
+    override var onpause: ((Event) -> JsAny?)?
+    override var onplay: ((Event) -> JsAny?)?
+    override var onplaying: ((Event) -> JsAny?)?
+    override var onprogress: ((ProgressEvent) -> JsAny?)?
+    override var onratechange: ((Event) -> JsAny?)?
+    override var onreset: ((Event) -> JsAny?)?
+    override var onresize: ((Event) -> JsAny?)?
+    override var onscroll: ((Event) -> JsAny?)?
+    override var onseeked: ((Event) -> JsAny?)?
+    override var onseeking: ((Event) -> JsAny?)?
+    override var onselect: ((Event) -> JsAny?)?
+    override var onshow: ((Event) -> JsAny?)?
+    override var onstalled: ((Event) -> JsAny?)?
+    override var onsubmit: ((Event) -> JsAny?)?
+    override var onsuspend: ((Event) -> JsAny?)?
+    override var ontimeupdate: ((Event) -> JsAny?)?
+    override var ontoggle: ((Event) -> JsAny?)?
+    override var onvolumechange: ((Event) -> JsAny?)?
+    override var onwaiting: ((Event) -> JsAny?)?
+    override var ongotpointercapture: ((PointerEvent) -> JsAny?)?
+    override var onlostpointercapture: ((PointerEvent) -> JsAny?)?
+    override var onpointerdown: ((PointerEvent) -> JsAny?)?
+    override var onpointermove: ((PointerEvent) -> JsAny?)?
+    override var onpointerup: ((PointerEvent) -> JsAny?)?
+    override var onpointercancel: ((PointerEvent) -> JsAny?)?
+    override var onpointerover: ((PointerEvent) -> JsAny?)?
+    override var onpointerout: ((PointerEvent) -> JsAny?)?
+    override var onpointerenter: ((PointerEvent) -> JsAny?)?
+    override var onpointerleave: ((PointerEvent) -> JsAny?)?
+    override var oncopy: ((ClipboardEvent) -> JsAny?)?
+    override var oncut: ((ClipboardEvent) -> JsAny?)?
+    override var onpaste: ((ClipboardEvent) -> JsAny?)?
     override var contentEditable: String
     override val isContentEditable: Boolean
     override val style: CSSStyleDeclaration
@@ -5966,80 +6062,80 @@ public external open class Audio(src: String = definedExternally) : HTMLAudioEle
  * Exposes the JavaScript [Option](https://developer.mozilla.org/en/docs/Web/API/Option) to Kotlin
  */
 public external open class Option(text: String = definedExternally, value: String = definedExternally, defaultSelected: Boolean = definedExternally, selected: Boolean = definedExternally) : HTMLOptionElement, JsAny {
-    override var onabort: ((Event) -> Dynamic?)?
-    override var onblur: ((FocusEvent) -> Dynamic?)?
-    override var oncancel: ((Event) -> Dynamic?)?
-    override var oncanplay: ((Event) -> Dynamic?)?
-    override var oncanplaythrough: ((Event) -> Dynamic?)?
-    override var onchange: ((Event) -> Dynamic?)?
-    override var onclick: ((MouseEvent) -> Dynamic?)?
-    override var onclose: ((Event) -> Dynamic?)?
-    override var oncontextmenu: ((MouseEvent) -> Dynamic?)?
-    override var oncuechange: ((Event) -> Dynamic?)?
-    override var ondblclick: ((MouseEvent) -> Dynamic?)?
-    override var ondrag: ((DragEvent) -> Dynamic?)?
-    override var ondragend: ((DragEvent) -> Dynamic?)?
-    override var ondragenter: ((DragEvent) -> Dynamic?)?
-    override var ondragexit: ((DragEvent) -> Dynamic?)?
-    override var ondragleave: ((DragEvent) -> Dynamic?)?
-    override var ondragover: ((DragEvent) -> Dynamic?)?
-    override var ondragstart: ((DragEvent) -> Dynamic?)?
-    override var ondrop: ((DragEvent) -> Dynamic?)?
-    override var ondurationchange: ((Event) -> Dynamic?)?
-    override var onemptied: ((Event) -> Dynamic?)?
-    override var onended: ((Event) -> Dynamic?)?
-    override var onerror: ((JsAny?, String, Int, Int, JsAny?) -> Dynamic?)?
-    override var onfocus: ((FocusEvent) -> Dynamic?)?
-    override var oninput: ((InputEvent) -> Dynamic?)?
-    override var oninvalid: ((Event) -> Dynamic?)?
-    override var onkeydown: ((KeyboardEvent) -> Dynamic?)?
-    override var onkeypress: ((KeyboardEvent) -> Dynamic?)?
-    override var onkeyup: ((KeyboardEvent) -> Dynamic?)?
-    override var onload: ((Event) -> Dynamic?)?
-    override var onloadeddata: ((Event) -> Dynamic?)?
-    override var onloadedmetadata: ((Event) -> Dynamic?)?
-    override var onloadend: ((Event) -> Dynamic?)?
-    override var onloadstart: ((ProgressEvent) -> Dynamic?)?
-    override var onmousedown: ((MouseEvent) -> Dynamic?)?
-    override var onmouseenter: ((MouseEvent) -> Dynamic?)?
-    override var onmouseleave: ((MouseEvent) -> Dynamic?)?
-    override var onmousemove: ((MouseEvent) -> Dynamic?)?
-    override var onmouseout: ((MouseEvent) -> Dynamic?)?
-    override var onmouseover: ((MouseEvent) -> Dynamic?)?
-    override var onmouseup: ((MouseEvent) -> Dynamic?)?
-    override var onwheel: ((WheelEvent) -> Dynamic?)?
-    override var onpause: ((Event) -> Dynamic?)?
-    override var onplay: ((Event) -> Dynamic?)?
-    override var onplaying: ((Event) -> Dynamic?)?
-    override var onprogress: ((ProgressEvent) -> Dynamic?)?
-    override var onratechange: ((Event) -> Dynamic?)?
-    override var onreset: ((Event) -> Dynamic?)?
-    override var onresize: ((Event) -> Dynamic?)?
-    override var onscroll: ((Event) -> Dynamic?)?
-    override var onseeked: ((Event) -> Dynamic?)?
-    override var onseeking: ((Event) -> Dynamic?)?
-    override var onselect: ((Event) -> Dynamic?)?
-    override var onshow: ((Event) -> Dynamic?)?
-    override var onstalled: ((Event) -> Dynamic?)?
-    override var onsubmit: ((Event) -> Dynamic?)?
-    override var onsuspend: ((Event) -> Dynamic?)?
-    override var ontimeupdate: ((Event) -> Dynamic?)?
-    override var ontoggle: ((Event) -> Dynamic?)?
-    override var onvolumechange: ((Event) -> Dynamic?)?
-    override var onwaiting: ((Event) -> Dynamic?)?
-    override var ongotpointercapture: ((PointerEvent) -> Dynamic?)?
-    override var onlostpointercapture: ((PointerEvent) -> Dynamic?)?
-    override var onpointerdown: ((PointerEvent) -> Dynamic?)?
-    override var onpointermove: ((PointerEvent) -> Dynamic?)?
-    override var onpointerup: ((PointerEvent) -> Dynamic?)?
-    override var onpointercancel: ((PointerEvent) -> Dynamic?)?
-    override var onpointerover: ((PointerEvent) -> Dynamic?)?
-    override var onpointerout: ((PointerEvent) -> Dynamic?)?
-    override var onpointerenter: ((PointerEvent) -> Dynamic?)?
-    override var onpointerleave: ((PointerEvent) -> Dynamic?)?
-    override var oncopy: ((ClipboardEvent) -> Dynamic?)?
-    override var oncut: ((ClipboardEvent) -> Dynamic?)?
-    override var onpaste: ((ClipboardEvent) -> Dynamic?)?
+    override var onabort: ((Event) -> JsAny?)?
+    override var onblur: ((FocusEvent) -> JsAny?)?
+    override var oncancel: ((Event) -> JsAny?)?
+    override var oncanplay: ((Event) -> JsAny?)?
+    override var oncanplaythrough: ((Event) -> JsAny?)?
+    override var onchange: ((Event) -> JsAny?)?
+    override var onclick: ((MouseEvent) -> JsAny?)?
+    override var onclose: ((Event) -> JsAny?)?
+    override var oncontextmenu: ((MouseEvent) -> JsAny?)?
+    override var oncuechange: ((Event) -> JsAny?)?
+    override var ondblclick: ((MouseEvent) -> JsAny?)?
+    override var ondrag: ((DragEvent) -> JsAny?)?
+    override var ondragend: ((DragEvent) -> JsAny?)?
+    override var ondragenter: ((DragEvent) -> JsAny?)?
+    override var ondragexit: ((DragEvent) -> JsAny?)?
+    override var ondragleave: ((DragEvent) -> JsAny?)?
+    override var ondragover: ((DragEvent) -> JsAny?)?
+    override var ondragstart: ((DragEvent) -> JsAny?)?
+    override var ondrop: ((DragEvent) -> JsAny?)?
+    override var ondurationchange: ((Event) -> JsAny?)?
+    override var onemptied: ((Event) -> JsAny?)?
+    override var onended: ((Event) -> JsAny?)?
+    override var onerror: ((JsAny?, String, Int, Int, JsAny?) -> JsAny?)?
+    override var onfocus: ((FocusEvent) -> JsAny?)?
+    override var oninput: ((InputEvent) -> JsAny?)?
+    override var oninvalid: ((Event) -> JsAny?)?
+    override var onkeydown: ((KeyboardEvent) -> JsAny?)?
+    override var onkeypress: ((KeyboardEvent) -> JsAny?)?
+    override var onkeyup: ((KeyboardEvent) -> JsAny?)?
+    override var onload: ((Event) -> JsAny?)?
+    override var onloadeddata: ((Event) -> JsAny?)?
+    override var onloadedmetadata: ((Event) -> JsAny?)?
+    override var onloadend: ((Event) -> JsAny?)?
+    override var onloadstart: ((ProgressEvent) -> JsAny?)?
+    override var onmousedown: ((MouseEvent) -> JsAny?)?
+    override var onmouseenter: ((MouseEvent) -> JsAny?)?
+    override var onmouseleave: ((MouseEvent) -> JsAny?)?
+    override var onmousemove: ((MouseEvent) -> JsAny?)?
+    override var onmouseout: ((MouseEvent) -> JsAny?)?
+    override var onmouseover: ((MouseEvent) -> JsAny?)?
+    override var onmouseup: ((MouseEvent) -> JsAny?)?
+    override var onwheel: ((WheelEvent) -> JsAny?)?
+    override var onpause: ((Event) -> JsAny?)?
+    override var onplay: ((Event) -> JsAny?)?
+    override var onplaying: ((Event) -> JsAny?)?
+    override var onprogress: ((ProgressEvent) -> JsAny?)?
+    override var onratechange: ((Event) -> JsAny?)?
+    override var onreset: ((Event) -> JsAny?)?
+    override var onresize: ((Event) -> JsAny?)?
+    override var onscroll: ((Event) -> JsAny?)?
+    override var onseeked: ((Event) -> JsAny?)?
+    override var onseeking: ((Event) -> JsAny?)?
+    override var onselect: ((Event) -> JsAny?)?
+    override var onshow: ((Event) -> JsAny?)?
+    override var onstalled: ((Event) -> JsAny?)?
+    override var onsubmit: ((Event) -> JsAny?)?
+    override var onsuspend: ((Event) -> JsAny?)?
+    override var ontimeupdate: ((Event) -> JsAny?)?
+    override var ontoggle: ((Event) -> JsAny?)?
+    override var onvolumechange: ((Event) -> JsAny?)?
+    override var onwaiting: ((Event) -> JsAny?)?
+    override var ongotpointercapture: ((PointerEvent) -> JsAny?)?
+    override var onlostpointercapture: ((PointerEvent) -> JsAny?)?
+    override var onpointerdown: ((PointerEvent) -> JsAny?)?
+    override var onpointermove: ((PointerEvent) -> JsAny?)?
+    override var onpointerup: ((PointerEvent) -> JsAny?)?
+    override var onpointercancel: ((PointerEvent) -> JsAny?)?
+    override var onpointerover: ((PointerEvent) -> JsAny?)?
+    override var onpointerout: ((PointerEvent) -> JsAny?)?
+    override var onpointerenter: ((PointerEvent) -> JsAny?)?
+    override var onpointerleave: ((PointerEvent) -> JsAny?)?
+    override var oncopy: ((ClipboardEvent) -> JsAny?)?
+    override var oncut: ((ClipboardEvent) -> JsAny?)?
+    override var onpaste: ((ClipboardEvent) -> JsAny?)?
     override var contentEditable: String
     override val isContentEditable: Boolean
     override val style: CSSStyleDeclaration
@@ -6116,11 +6212,11 @@ public external interface DocumentReadyState : JsAny {
     companion object
 }
 
-public inline val DocumentReadyState.Companion.LOADING: DocumentReadyState get() = "loading".asDynamic().unsafeCast<DocumentReadyState>()
+public inline val DocumentReadyState.Companion.LOADING: DocumentReadyState get() = "loading".toJsString().unsafeCast<DocumentReadyState>()
 
-public inline val DocumentReadyState.Companion.INTERACTIVE: DocumentReadyState get() = "interactive".asDynamic().unsafeCast<DocumentReadyState>()
+public inline val DocumentReadyState.Companion.INTERACTIVE: DocumentReadyState get() = "interactive".toJsString().unsafeCast<DocumentReadyState>()
 
-public inline val DocumentReadyState.Companion.COMPLETE: DocumentReadyState get() = "complete".asDynamic().unsafeCast<DocumentReadyState>()
+public inline val DocumentReadyState.Companion.COMPLETE: DocumentReadyState get() = "complete".toJsString().unsafeCast<DocumentReadyState>()
 
 /* please, don't implement this interface! */
 @JsName("null")
@@ -6129,11 +6225,11 @@ public external interface CanPlayTypeResult : JsAny {
     companion object
 }
 
-public inline val CanPlayTypeResult.Companion.EMPTY: CanPlayTypeResult get() = "".asDynamic().unsafeCast<CanPlayTypeResult>()
+public inline val CanPlayTypeResult.Companion.EMPTY: CanPlayTypeResult get() = "".toJsString().unsafeCast<CanPlayTypeResult>()
 
-public inline val CanPlayTypeResult.Companion.MAYBE: CanPlayTypeResult get() = "maybe".asDynamic().unsafeCast<CanPlayTypeResult>()
+public inline val CanPlayTypeResult.Companion.MAYBE: CanPlayTypeResult get() = "maybe".toJsString().unsafeCast<CanPlayTypeResult>()
 
-public inline val CanPlayTypeResult.Companion.PROBABLY: CanPlayTypeResult get() = "probably".asDynamic().unsafeCast<CanPlayTypeResult>()
+public inline val CanPlayTypeResult.Companion.PROBABLY: CanPlayTypeResult get() = "probably".toJsString().unsafeCast<CanPlayTypeResult>()
 
 /* please, don't implement this interface! */
 @JsName("null")
@@ -6142,11 +6238,11 @@ public external interface TextTrackMode : JsAny {
     companion object
 }
 
-public inline val TextTrackMode.Companion.DISABLED: TextTrackMode get() = "disabled".asDynamic().unsafeCast<TextTrackMode>()
+public inline val TextTrackMode.Companion.DISABLED: TextTrackMode get() = "disabled".toJsString().unsafeCast<TextTrackMode>()
 
-public inline val TextTrackMode.Companion.HIDDEN: TextTrackMode get() = "hidden".asDynamic().unsafeCast<TextTrackMode>()
+public inline val TextTrackMode.Companion.HIDDEN: TextTrackMode get() = "hidden".toJsString().unsafeCast<TextTrackMode>()
 
-public inline val TextTrackMode.Companion.SHOWING: TextTrackMode get() = "showing".asDynamic().unsafeCast<TextTrackMode>()
+public inline val TextTrackMode.Companion.SHOWING: TextTrackMode get() = "showing".toJsString().unsafeCast<TextTrackMode>()
 
 /* please, don't implement this interface! */
 @JsName("null")
@@ -6155,15 +6251,15 @@ public external interface TextTrackKind : JsAny {
     companion object
 }
 
-public inline val TextTrackKind.Companion.SUBTITLES: TextTrackKind get() = "subtitles".asDynamic().unsafeCast<TextTrackKind>()
+public inline val TextTrackKind.Companion.SUBTITLES: TextTrackKind get() = "subtitles".toJsString().unsafeCast<TextTrackKind>()
 
-public inline val TextTrackKind.Companion.CAPTIONS: TextTrackKind get() = "captions".asDynamic().unsafeCast<TextTrackKind>()
+public inline val TextTrackKind.Companion.CAPTIONS: TextTrackKind get() = "captions".toJsString().unsafeCast<TextTrackKind>()
 
-public inline val TextTrackKind.Companion.DESCRIPTIONS: TextTrackKind get() = "descriptions".asDynamic().unsafeCast<TextTrackKind>()
+public inline val TextTrackKind.Companion.DESCRIPTIONS: TextTrackKind get() = "descriptions".toJsString().unsafeCast<TextTrackKind>()
 
-public inline val TextTrackKind.Companion.CHAPTERS: TextTrackKind get() = "chapters".asDynamic().unsafeCast<TextTrackKind>()
+public inline val TextTrackKind.Companion.CHAPTERS: TextTrackKind get() = "chapters".toJsString().unsafeCast<TextTrackKind>()
 
-public inline val TextTrackKind.Companion.METADATA: TextTrackKind get() = "metadata".asDynamic().unsafeCast<TextTrackKind>()
+public inline val TextTrackKind.Companion.METADATA: TextTrackKind get() = "metadata".toJsString().unsafeCast<TextTrackKind>()
 
 /* please, don't implement this interface! */
 @JsName("null")
@@ -6172,13 +6268,13 @@ public external interface SelectionMode : JsAny {
     companion object
 }
 
-public inline val SelectionMode.Companion.SELECT: SelectionMode get() = "select".asDynamic().unsafeCast<SelectionMode>()
+public inline val SelectionMode.Companion.SELECT: SelectionMode get() = "select".toJsString().unsafeCast<SelectionMode>()
 
-public inline val SelectionMode.Companion.START: SelectionMode get() = "start".asDynamic().unsafeCast<SelectionMode>()
+public inline val SelectionMode.Companion.START: SelectionMode get() = "start".toJsString().unsafeCast<SelectionMode>()
 
-public inline val SelectionMode.Companion.END: SelectionMode get() = "end".asDynamic().unsafeCast<SelectionMode>()
+public inline val SelectionMode.Companion.END: SelectionMode get() = "end".toJsString().unsafeCast<SelectionMode>()
 
-public inline val SelectionMode.Companion.PRESERVE: SelectionMode get() = "preserve".asDynamic().unsafeCast<SelectionMode>()
+public inline val SelectionMode.Companion.PRESERVE: SelectionMode get() = "preserve".toJsString().unsafeCast<SelectionMode>()
 
 /* please, don't implement this interface! */
 @JsName("null")
@@ -6187,9 +6283,9 @@ public external interface CanvasFillRule : JsAny {
     companion object
 }
 
-public inline val CanvasFillRule.Companion.NONZERO: CanvasFillRule get() = "nonzero".asDynamic().unsafeCast<CanvasFillRule>()
+public inline val CanvasFillRule.Companion.NONZERO: CanvasFillRule get() = "nonzero".toJsString().unsafeCast<CanvasFillRule>()
 
-public inline val CanvasFillRule.Companion.EVENODD: CanvasFillRule get() = "evenodd".asDynamic().unsafeCast<CanvasFillRule>()
+public inline val CanvasFillRule.Companion.EVENODD: CanvasFillRule get() = "evenodd".toJsString().unsafeCast<CanvasFillRule>()
 
 /* please, don't implement this interface! */
 @JsName("null")
@@ -6198,11 +6294,11 @@ public external interface ImageSmoothingQuality : JsAny {
     companion object
 }
 
-public inline val ImageSmoothingQuality.Companion.LOW: ImageSmoothingQuality get() = "low".asDynamic().unsafeCast<ImageSmoothingQuality>()
+public inline val ImageSmoothingQuality.Companion.LOW: ImageSmoothingQuality get() = "low".toJsString().unsafeCast<ImageSmoothingQuality>()
 
-public inline val ImageSmoothingQuality.Companion.MEDIUM: ImageSmoothingQuality get() = "medium".asDynamic().unsafeCast<ImageSmoothingQuality>()
+public inline val ImageSmoothingQuality.Companion.MEDIUM: ImageSmoothingQuality get() = "medium".toJsString().unsafeCast<ImageSmoothingQuality>()
 
-public inline val ImageSmoothingQuality.Companion.HIGH: ImageSmoothingQuality get() = "high".asDynamic().unsafeCast<ImageSmoothingQuality>()
+public inline val ImageSmoothingQuality.Companion.HIGH: ImageSmoothingQuality get() = "high".toJsString().unsafeCast<ImageSmoothingQuality>()
 
 /* please, don't implement this interface! */
 @JsName("null")
@@ -6211,11 +6307,11 @@ public external interface CanvasLineCap : JsAny {
     companion object
 }
 
-public inline val CanvasLineCap.Companion.BUTT: CanvasLineCap get() = "butt".asDynamic().unsafeCast<CanvasLineCap>()
+public inline val CanvasLineCap.Companion.BUTT: CanvasLineCap get() = "butt".toJsString().unsafeCast<CanvasLineCap>()
 
-public inline val CanvasLineCap.Companion.ROUND: CanvasLineCap get() = "round".asDynamic().unsafeCast<CanvasLineCap>()
+public inline val CanvasLineCap.Companion.ROUND: CanvasLineCap get() = "round".toJsString().unsafeCast<CanvasLineCap>()
 
-public inline val CanvasLineCap.Companion.SQUARE: CanvasLineCap get() = "square".asDynamic().unsafeCast<CanvasLineCap>()
+public inline val CanvasLineCap.Companion.SQUARE: CanvasLineCap get() = "square".toJsString().unsafeCast<CanvasLineCap>()
 
 /* please, don't implement this interface! */
 @JsName("null")
@@ -6224,11 +6320,11 @@ public external interface CanvasLineJoin : JsAny {
     companion object
 }
 
-public inline val CanvasLineJoin.Companion.ROUND: CanvasLineJoin get() = "round".asDynamic().unsafeCast<CanvasLineJoin>()
+public inline val CanvasLineJoin.Companion.ROUND: CanvasLineJoin get() = "round".toJsString().unsafeCast<CanvasLineJoin>()
 
-public inline val CanvasLineJoin.Companion.BEVEL: CanvasLineJoin get() = "bevel".asDynamic().unsafeCast<CanvasLineJoin>()
+public inline val CanvasLineJoin.Companion.BEVEL: CanvasLineJoin get() = "bevel".toJsString().unsafeCast<CanvasLineJoin>()
 
-public inline val CanvasLineJoin.Companion.MITER: CanvasLineJoin get() = "miter".asDynamic().unsafeCast<CanvasLineJoin>()
+public inline val CanvasLineJoin.Companion.MITER: CanvasLineJoin get() = "miter".toJsString().unsafeCast<CanvasLineJoin>()
 
 /* please, don't implement this interface! */
 @JsName("null")
@@ -6237,15 +6333,15 @@ public external interface CanvasTextAlign : JsAny {
     companion object
 }
 
-public inline val CanvasTextAlign.Companion.START: CanvasTextAlign get() = "start".asDynamic().unsafeCast<CanvasTextAlign>()
+public inline val CanvasTextAlign.Companion.START: CanvasTextAlign get() = "start".toJsString().unsafeCast<CanvasTextAlign>()
 
-public inline val CanvasTextAlign.Companion.END: CanvasTextAlign get() = "end".asDynamic().unsafeCast<CanvasTextAlign>()
+public inline val CanvasTextAlign.Companion.END: CanvasTextAlign get() = "end".toJsString().unsafeCast<CanvasTextAlign>()
 
-public inline val CanvasTextAlign.Companion.LEFT: CanvasTextAlign get() = "left".asDynamic().unsafeCast<CanvasTextAlign>()
+public inline val CanvasTextAlign.Companion.LEFT: CanvasTextAlign get() = "left".toJsString().unsafeCast<CanvasTextAlign>()
 
-public inline val CanvasTextAlign.Companion.RIGHT: CanvasTextAlign get() = "right".asDynamic().unsafeCast<CanvasTextAlign>()
+public inline val CanvasTextAlign.Companion.RIGHT: CanvasTextAlign get() = "right".toJsString().unsafeCast<CanvasTextAlign>()
 
-public inline val CanvasTextAlign.Companion.CENTER: CanvasTextAlign get() = "center".asDynamic().unsafeCast<CanvasTextAlign>()
+public inline val CanvasTextAlign.Companion.CENTER: CanvasTextAlign get() = "center".toJsString().unsafeCast<CanvasTextAlign>()
 
 /* please, don't implement this interface! */
 @JsName("null")
@@ -6254,17 +6350,17 @@ public external interface CanvasTextBaseline : JsAny {
     companion object
 }
 
-public inline val CanvasTextBaseline.Companion.TOP: CanvasTextBaseline get() = "top".asDynamic().unsafeCast<CanvasTextBaseline>()
+public inline val CanvasTextBaseline.Companion.TOP: CanvasTextBaseline get() = "top".toJsString().unsafeCast<CanvasTextBaseline>()
 
-public inline val CanvasTextBaseline.Companion.HANGING: CanvasTextBaseline get() = "hanging".asDynamic().unsafeCast<CanvasTextBaseline>()
+public inline val CanvasTextBaseline.Companion.HANGING: CanvasTextBaseline get() = "hanging".toJsString().unsafeCast<CanvasTextBaseline>()
 
-public inline val CanvasTextBaseline.Companion.MIDDLE: CanvasTextBaseline get() = "middle".asDynamic().unsafeCast<CanvasTextBaseline>()
+public inline val CanvasTextBaseline.Companion.MIDDLE: CanvasTextBaseline get() = "middle".toJsString().unsafeCast<CanvasTextBaseline>()
 
-public inline val CanvasTextBaseline.Companion.ALPHABETIC: CanvasTextBaseline get() = "alphabetic".asDynamic().unsafeCast<CanvasTextBaseline>()
+public inline val CanvasTextBaseline.Companion.ALPHABETIC: CanvasTextBaseline get() = "alphabetic".toJsString().unsafeCast<CanvasTextBaseline>()
 
-public inline val CanvasTextBaseline.Companion.IDEOGRAPHIC: CanvasTextBaseline get() = "ideographic".asDynamic().unsafeCast<CanvasTextBaseline>()
+public inline val CanvasTextBaseline.Companion.IDEOGRAPHIC: CanvasTextBaseline get() = "ideographic".toJsString().unsafeCast<CanvasTextBaseline>()
 
-public inline val CanvasTextBaseline.Companion.BOTTOM: CanvasTextBaseline get() = "bottom".asDynamic().unsafeCast<CanvasTextBaseline>()
+public inline val CanvasTextBaseline.Companion.BOTTOM: CanvasTextBaseline get() = "bottom".toJsString().unsafeCast<CanvasTextBaseline>()
 
 /* please, don't implement this interface! */
 @JsName("null")
@@ -6273,11 +6369,11 @@ public external interface CanvasDirection : JsAny {
     companion object
 }
 
-public inline val CanvasDirection.Companion.LTR: CanvasDirection get() = "ltr".asDynamic().unsafeCast<CanvasDirection>()
+public inline val CanvasDirection.Companion.LTR: CanvasDirection get() = "ltr".toJsString().unsafeCast<CanvasDirection>()
 
-public inline val CanvasDirection.Companion.RTL: CanvasDirection get() = "rtl".asDynamic().unsafeCast<CanvasDirection>()
+public inline val CanvasDirection.Companion.RTL: CanvasDirection get() = "rtl".toJsString().unsafeCast<CanvasDirection>()
 
-public inline val CanvasDirection.Companion.INHERIT: CanvasDirection get() = "inherit".asDynamic().unsafeCast<CanvasDirection>()
+public inline val CanvasDirection.Companion.INHERIT: CanvasDirection get() = "inherit".toJsString().unsafeCast<CanvasDirection>()
 
 /* please, don't implement this interface! */
 @JsName("null")
@@ -6286,9 +6382,9 @@ public external interface ScrollRestoration : JsAny {
     companion object
 }
 
-public inline val ScrollRestoration.Companion.AUTO: ScrollRestoration get() = "auto".asDynamic().unsafeCast<ScrollRestoration>()
+public inline val ScrollRestoration.Companion.AUTO: ScrollRestoration get() = "auto".toJsString().unsafeCast<ScrollRestoration>()
 
-public inline val ScrollRestoration.Companion.MANUAL: ScrollRestoration get() = "manual".asDynamic().unsafeCast<ScrollRestoration>()
+public inline val ScrollRestoration.Companion.MANUAL: ScrollRestoration get() = "manual".toJsString().unsafeCast<ScrollRestoration>()
 
 /* please, don't implement this interface! */
 @JsName("null")
@@ -6297,9 +6393,9 @@ public external interface ImageOrientation : JsAny {
     companion object
 }
 
-public inline val ImageOrientation.Companion.NONE: ImageOrientation get() = "none".asDynamic().unsafeCast<ImageOrientation>()
+public inline val ImageOrientation.Companion.NONE: ImageOrientation get() = "none".toJsString().unsafeCast<ImageOrientation>()
 
-public inline val ImageOrientation.Companion.FLIPY: ImageOrientation get() = "flipY".asDynamic().unsafeCast<ImageOrientation>()
+public inline val ImageOrientation.Companion.FLIPY: ImageOrientation get() = "flipY".toJsString().unsafeCast<ImageOrientation>()
 
 /* please, don't implement this interface! */
 @JsName("null")
@@ -6308,11 +6404,11 @@ public external interface PremultiplyAlpha : JsAny {
     companion object
 }
 
-public inline val PremultiplyAlpha.Companion.NONE: PremultiplyAlpha get() = "none".asDynamic().unsafeCast<PremultiplyAlpha>()
+public inline val PremultiplyAlpha.Companion.NONE: PremultiplyAlpha get() = "none".toJsString().unsafeCast<PremultiplyAlpha>()
 
-public inline val PremultiplyAlpha.Companion.PREMULTIPLY: PremultiplyAlpha get() = "premultiply".asDynamic().unsafeCast<PremultiplyAlpha>()
+public inline val PremultiplyAlpha.Companion.PREMULTIPLY: PremultiplyAlpha get() = "premultiply".toJsString().unsafeCast<PremultiplyAlpha>()
 
-public inline val PremultiplyAlpha.Companion.DEFAULT: PremultiplyAlpha get() = "default".asDynamic().unsafeCast<PremultiplyAlpha>()
+public inline val PremultiplyAlpha.Companion.DEFAULT: PremultiplyAlpha get() = "default".toJsString().unsafeCast<PremultiplyAlpha>()
 
 /* please, don't implement this interface! */
 @JsName("null")
@@ -6321,9 +6417,9 @@ public external interface ColorSpaceConversion : JsAny {
     companion object
 }
 
-public inline val ColorSpaceConversion.Companion.NONE: ColorSpaceConversion get() = "none".asDynamic().unsafeCast<ColorSpaceConversion>()
+public inline val ColorSpaceConversion.Companion.NONE: ColorSpaceConversion get() = "none".toJsString().unsafeCast<ColorSpaceConversion>()
 
-public inline val ColorSpaceConversion.Companion.DEFAULT: ColorSpaceConversion get() = "default".asDynamic().unsafeCast<ColorSpaceConversion>()
+public inline val ColorSpaceConversion.Companion.DEFAULT: ColorSpaceConversion get() = "default".toJsString().unsafeCast<ColorSpaceConversion>()
 
 /* please, don't implement this interface! */
 @JsName("null")
@@ -6332,13 +6428,13 @@ public external interface ResizeQuality : JsAny {
     companion object
 }
 
-public inline val ResizeQuality.Companion.PIXELATED: ResizeQuality get() = "pixelated".asDynamic().unsafeCast<ResizeQuality>()
+public inline val ResizeQuality.Companion.PIXELATED: ResizeQuality get() = "pixelated".toJsString().unsafeCast<ResizeQuality>()
 
-public inline val ResizeQuality.Companion.LOW: ResizeQuality get() = "low".asDynamic().unsafeCast<ResizeQuality>()
+public inline val ResizeQuality.Companion.LOW: ResizeQuality get() = "low".toJsString().unsafeCast<ResizeQuality>()
 
-public inline val ResizeQuality.Companion.MEDIUM: ResizeQuality get() = "medium".asDynamic().unsafeCast<ResizeQuality>()
+public inline val ResizeQuality.Companion.MEDIUM: ResizeQuality get() = "medium".toJsString().unsafeCast<ResizeQuality>()
 
-public inline val ResizeQuality.Companion.HIGH: ResizeQuality get() = "high".asDynamic().unsafeCast<ResizeQuality>()
+public inline val ResizeQuality.Companion.HIGH: ResizeQuality get() = "high".toJsString().unsafeCast<ResizeQuality>()
 
 /* please, don't implement this interface! */
 @JsName("null")
@@ -6347,9 +6443,9 @@ public external interface BinaryType : JsAny {
     companion object
 }
 
-public inline val BinaryType.Companion.BLOB: BinaryType get() = "blob".asDynamic().unsafeCast<BinaryType>()
+public inline val BinaryType.Companion.BLOB: BinaryType get() = "blob".toJsString().unsafeCast<BinaryType>()
 
-public inline val BinaryType.Companion.ARRAYBUFFER: BinaryType get() = "arraybuffer".asDynamic().unsafeCast<BinaryType>()
+public inline val BinaryType.Companion.ARRAYBUFFER: BinaryType get() = "arraybuffer".toJsString().unsafeCast<BinaryType>()
 
 /* please, don't implement this interface! */
 @JsName("null")
@@ -6358,9 +6454,9 @@ public external interface WorkerType : JsAny {
     companion object
 }
 
-public inline val WorkerType.Companion.CLASSIC: WorkerType get() = "classic".asDynamic().unsafeCast<WorkerType>()
+public inline val WorkerType.Companion.CLASSIC: WorkerType get() = "classic".toJsString().unsafeCast<WorkerType>()
 
-public inline val WorkerType.Companion.MODULE: WorkerType get() = "module".asDynamic().unsafeCast<WorkerType>()
+public inline val WorkerType.Companion.MODULE: WorkerType get() = "module".toJsString().unsafeCast<WorkerType>()
 
 /* please, don't implement this interface! */
 @JsName("null")
@@ -6369,9 +6465,9 @@ public external interface ShadowRootMode : JsAny {
     companion object
 }
 
-public inline val ShadowRootMode.Companion.OPEN: ShadowRootMode get() = "open".asDynamic().unsafeCast<ShadowRootMode>()
+public inline val ShadowRootMode.Companion.OPEN: ShadowRootMode get() = "open".toJsString().unsafeCast<ShadowRootMode>()
 
-public inline val ShadowRootMode.Companion.CLOSED: ShadowRootMode get() = "closed".asDynamic().unsafeCast<ShadowRootMode>()
+public inline val ShadowRootMode.Companion.CLOSED: ShadowRootMode get() = "closed".toJsString().unsafeCast<ShadowRootMode>()
 
 /* please, don't implement this interface! */
 @JsName("null")
@@ -6380,11 +6476,11 @@ public external interface ScrollBehavior : JsAny {
     companion object
 }
 
-public inline val ScrollBehavior.Companion.AUTO: ScrollBehavior get() = "auto".asDynamic().unsafeCast<ScrollBehavior>()
+public inline val ScrollBehavior.Companion.AUTO: ScrollBehavior get() = "auto".toJsString().unsafeCast<ScrollBehavior>()
 
-public inline val ScrollBehavior.Companion.INSTANT: ScrollBehavior get() = "instant".asDynamic().unsafeCast<ScrollBehavior>()
+public inline val ScrollBehavior.Companion.INSTANT: ScrollBehavior get() = "instant".toJsString().unsafeCast<ScrollBehavior>()
 
-public inline val ScrollBehavior.Companion.SMOOTH: ScrollBehavior get() = "smooth".asDynamic().unsafeCast<ScrollBehavior>()
+public inline val ScrollBehavior.Companion.SMOOTH: ScrollBehavior get() = "smooth".toJsString().unsafeCast<ScrollBehavior>()
 
 /* please, don't implement this interface! */
 @JsName("null")
@@ -6393,13 +6489,13 @@ public external interface ScrollLogicalPosition : JsAny {
     companion object
 }
 
-public inline val ScrollLogicalPosition.Companion.START: ScrollLogicalPosition get() = "start".asDynamic().unsafeCast<ScrollLogicalPosition>()
+public inline val ScrollLogicalPosition.Companion.START: ScrollLogicalPosition get() = "start".toJsString().unsafeCast<ScrollLogicalPosition>()
 
-public inline val ScrollLogicalPosition.Companion.CENTER: ScrollLogicalPosition get() = "center".asDynamic().unsafeCast<ScrollLogicalPosition>()
+public inline val ScrollLogicalPosition.Companion.CENTER: ScrollLogicalPosition get() = "center".toJsString().unsafeCast<ScrollLogicalPosition>()
 
-public inline val ScrollLogicalPosition.Companion.END: ScrollLogicalPosition get() = "end".asDynamic().unsafeCast<ScrollLogicalPosition>()
+public inline val ScrollLogicalPosition.Companion.END: ScrollLogicalPosition get() = "end".toJsString().unsafeCast<ScrollLogicalPosition>()
 
-public inline val ScrollLogicalPosition.Companion.NEAREST: ScrollLogicalPosition get() = "nearest".asDynamic().unsafeCast<ScrollLogicalPosition>()
+public inline val ScrollLogicalPosition.Companion.NEAREST: ScrollLogicalPosition get() = "nearest".toJsString().unsafeCast<ScrollLogicalPosition>()
 
 /* please, don't implement this interface! */
 @JsName("null")
@@ -6408,10 +6504,10 @@ public external interface CSSBoxType : JsAny {
     companion object
 }
 
-public inline val CSSBoxType.Companion.MARGIN: CSSBoxType get() = "margin".asDynamic().unsafeCast<CSSBoxType>()
+public inline val CSSBoxType.Companion.MARGIN: CSSBoxType get() = "margin".toJsString().unsafeCast<CSSBoxType>()
 
-public inline val CSSBoxType.Companion.BORDER: CSSBoxType get() = "border".asDynamic().unsafeCast<CSSBoxType>()
+public inline val CSSBoxType.Companion.BORDER: CSSBoxType get() = "border".toJsString().unsafeCast<CSSBoxType>()
 
-public inline val CSSBoxType.Companion.PADDING: CSSBoxType get() = "padding".asDynamic().unsafeCast<CSSBoxType>()
+public inline val CSSBoxType.Companion.PADDING: CSSBoxType get() = "padding".toJsString().unsafeCast<CSSBoxType>()
 
-public inline val CSSBoxType.Companion.CONTENT: CSSBoxType get() = "content".asDynamic().unsafeCast<CSSBoxType>()
+public inline val CSSBoxType.Companion.CONTENT: CSSBoxType get() = "content".toJsString().unsafeCast<CSSBoxType>()

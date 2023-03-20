@@ -7,7 +7,3 @@ package kotlin.js
 
 @PublishedApi
 internal val undefined: Nothing? = null
-
-@PublishedApi
-internal fun newJsObject(): Dynamic =
-    js("({})")

@@ -21,8 +21,8 @@ public external open class MediaStream() : EventTarget, MediaProvider, JsAny {
     constructor(tracks: JsArray<MediaStreamTrack>)
     open val id: String
     open val active: Boolean
-    var onaddtrack: ((MediaStreamTrackEvent) -> Dynamic?)?
-    var onremovetrack: ((MediaStreamTrackEvent) -> Dynamic?)?
+    var onaddtrack: ((MediaStreamTrackEvent) -> JsAny?)?
+    var onremovetrack: ((MediaStreamTrackEvent) -> JsAny?)?
     fun getAudioTracks(): JsArray<MediaStreamTrack>
     fun getVideoTracks(): JsArray<MediaStreamTrack>
     fun getTracks(): JsArray<MediaStreamTrack>
@@ -41,11 +41,11 @@ public external abstract class MediaStreamTrack : EventTarget, JsAny {
     open val label: String
     open var enabled: Boolean
     open val muted: Boolean
-    open var onmute: ((Event) -> Dynamic?)?
-    open var onunmute: ((Event) -> Dynamic?)?
+    open var onmute: ((Event) -> JsAny?)?
+    open var onunmute: ((Event) -> JsAny?)?
     open val readyState: MediaStreamTrackState
-    open var onended: ((Event) -> Dynamic?)?
-    open var onoverconstrained: ((Event) -> Dynamic?)?
+    open var onended: ((Event) -> JsAny?)?
+    open var onoverconstrained: ((Event) -> JsAny?)?
     fun clone(): MediaStreamTrack
     fun stop()
     fun getCapabilities(): MediaTrackCapabilities
@@ -333,7 +333,7 @@ public fun OverconstrainedErrorEventInit(error: JsAny? = null, bubbles: Boolean?
  * Exposes the JavaScript [MediaDevices](https://developer.mozilla.org/en/docs/Web/API/MediaDevices) to Kotlin
  */
 public external abstract class MediaDevices : EventTarget, JsAny {
-    open var ondevicechange: ((Event) -> Dynamic?)?
+    open var ondevicechange: ((Event) -> JsAny?)?
     fun enumerateDevices(): Promise<JsArray<MediaDeviceInfo>>
     fun getSupportedConstraints(): MediaTrackSupportedConstraints
     fun getUserMedia(constraints: MediaStreamConstraints = definedExternally): Promise<MediaStream>
@@ -370,7 +370,7 @@ public external interface MediaStreamConstraints : JsAny {
 public fun MediaStreamConstraints(video: JsAny? = false.toJsBoolean(), audio: JsAny? = false.toJsBoolean()): MediaStreamConstraints { js("return { video, audio };") }
 
 public external interface ConstrainablePattern : JsAny {
-    var onoverconstrained: ((Event) -> Dynamic?)?
+    var onoverconstrained: ((Event) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
     fun getCapabilities(): Capabilities
@@ -491,9 +491,9 @@ public external interface MediaStreamTrackState : JsAny {
     companion object
 }
 
-public inline val MediaStreamTrackState.Companion.LIVE: MediaStreamTrackState get() = "live".asDynamic().unsafeCast<MediaStreamTrackState>()
+public inline val MediaStreamTrackState.Companion.LIVE: MediaStreamTrackState get() = "live".toJsString().unsafeCast<MediaStreamTrackState>()
 
-public inline val MediaStreamTrackState.Companion.ENDED: MediaStreamTrackState get() = "ended".asDynamic().unsafeCast<MediaStreamTrackState>()
+public inline val MediaStreamTrackState.Companion.ENDED: MediaStreamTrackState get() = "ended".toJsString().unsafeCast<MediaStreamTrackState>()
 
 /* please, don't implement this interface! */
 @JsName("null")
@@ -502,13 +502,13 @@ public external interface VideoFacingModeEnum : JsAny {
     companion object
 }
 
-public inline val VideoFacingModeEnum.Companion.USER: VideoFacingModeEnum get() = "user".asDynamic().unsafeCast<VideoFacingModeEnum>()
+public inline val VideoFacingModeEnum.Companion.USER: VideoFacingModeEnum get() = "user".toJsString().unsafeCast<VideoFacingModeEnum>()
 
-public inline val VideoFacingModeEnum.Companion.ENVIRONMENT: VideoFacingModeEnum get() = "environment".asDynamic().unsafeCast<VideoFacingModeEnum>()
+public inline val VideoFacingModeEnum.Companion.ENVIRONMENT: VideoFacingModeEnum get() = "environment".toJsString().unsafeCast<VideoFacingModeEnum>()
 
-public inline val VideoFacingModeEnum.Companion.LEFT: VideoFacingModeEnum get() = "left".asDynamic().unsafeCast<VideoFacingModeEnum>()
+public inline val VideoFacingModeEnum.Companion.LEFT: VideoFacingModeEnum get() = "left".toJsString().unsafeCast<VideoFacingModeEnum>()
 
-public inline val VideoFacingModeEnum.Companion.RIGHT: VideoFacingModeEnum get() = "right".asDynamic().unsafeCast<VideoFacingModeEnum>()
+public inline val VideoFacingModeEnum.Companion.RIGHT: VideoFacingModeEnum get() = "right".toJsString().unsafeCast<VideoFacingModeEnum>()
 
 /* please, don't implement this interface! */
 @JsName("null")
@@ -517,9 +517,9 @@ public external interface VideoResizeModeEnum : JsAny {
     companion object
 }
 
-public inline val VideoResizeModeEnum.Companion.NONE: VideoResizeModeEnum get() = "none".asDynamic().unsafeCast<VideoResizeModeEnum>()
+public inline val VideoResizeModeEnum.Companion.NONE: VideoResizeModeEnum get() = "none".toJsString().unsafeCast<VideoResizeModeEnum>()
 
-public inline val VideoResizeModeEnum.Companion.CROP_AND_SCALE: VideoResizeModeEnum get() = "crop-and-scale".asDynamic().unsafeCast<VideoResizeModeEnum>()
+public inline val VideoResizeModeEnum.Companion.CROP_AND_SCALE: VideoResizeModeEnum get() = "crop-and-scale".toJsString().unsafeCast<VideoResizeModeEnum>()
 
 /* please, don't implement this interface! */
 @JsName("null")
@@ -528,8 +528,8 @@ public external interface MediaDeviceKind : JsAny {
     companion object
 }
 
-public inline val MediaDeviceKind.Companion.AUDIOINPUT: MediaDeviceKind get() = "audioinput".asDynamic().unsafeCast<MediaDeviceKind>()
+public inline val MediaDeviceKind.Companion.AUDIOINPUT: MediaDeviceKind get() = "audioinput".toJsString().unsafeCast<MediaDeviceKind>()
 
-public inline val MediaDeviceKind.Companion.AUDIOOUTPUT: MediaDeviceKind get() = "audiooutput".asDynamic().unsafeCast<MediaDeviceKind>()
+public inline val MediaDeviceKind.Companion.AUDIOOUTPUT: MediaDeviceKind get() = "audiooutput".toJsString().unsafeCast<MediaDeviceKind>()
 
-public inline val MediaDeviceKind.Companion.VIDEOINPUT: MediaDeviceKind get() = "videoinput".asDynamic().unsafeCast<MediaDeviceKind>()
+public inline val MediaDeviceKind.Companion.VIDEOINPUT: MediaDeviceKind get() = "videoinput".toJsString().unsafeCast<MediaDeviceKind>()

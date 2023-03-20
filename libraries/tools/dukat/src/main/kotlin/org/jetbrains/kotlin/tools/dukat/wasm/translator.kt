@@ -41,7 +41,6 @@ fun translateIdlToSourceSet(fileName: String): SourceSetModel {
         .lower(ReplaceDynamics())  // Wasm-specific
         .addKDocs()
         .relocateDeclarations()
-        .resolveTopLevelVisibility(alwaysPublic())
         .addImportsForUsedPackages()
         .omitStdLib()
         .lower(WasmPostProcessingHacks())
@@ -96,9 +95,4 @@ class WasmPostProcessingHacks : TopLevelModelLowering {
             else -> error("Unknown ClassLikeModel: ${klass::class}")
         }
     }
-}
-
-
-private fun alwaysPublic(): VisibilityModifierResolver = object : VisibilityModifierResolver {
-    override fun resolve(): VisibilityModifierModel = VisibilityModifierModel.PUBLIC
 }

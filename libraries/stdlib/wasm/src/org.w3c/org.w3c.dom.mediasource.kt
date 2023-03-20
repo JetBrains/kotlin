@@ -21,9 +21,9 @@ public external open class MediaSource : EventTarget, MediaProvider, JsAny {
     open val activeSourceBuffers: SourceBufferList
     open val readyState: ReadyState
     var duration: Double
-    var onsourceopen: ((Event) -> Dynamic?)?
-    var onsourceended: ((Event) -> Dynamic?)?
-    var onsourceclose: ((Event) -> Dynamic?)?
+    var onsourceopen: ((Event) -> JsAny?)?
+    var onsourceended: ((Event) -> JsAny?)?
+    var onsourceclose: ((Event) -> JsAny?)?
     fun addSourceBuffer(type: String): SourceBuffer
     fun removeSourceBuffer(sourceBuffer: SourceBuffer)
     fun endOfStream(error: EndOfStreamError = definedExternally)
@@ -48,11 +48,11 @@ public external abstract class SourceBuffer : EventTarget, JsAny {
     open val textTracks: TextTrackList
     open var appendWindowStart: Double
     open var appendWindowEnd: Double
-    open var onupdatestart: ((Event) -> Dynamic?)?
-    open var onupdate: ((Event) -> Dynamic?)?
-    open var onupdateend: ((Event) -> Dynamic?)?
-    open var onerror: ((Event) -> Dynamic?)?
-    open var onabort: ((Event) -> Dynamic?)?
+    open var onupdatestart: ((Event) -> JsAny?)?
+    open var onupdate: ((Event) -> JsAny?)?
+    open var onupdateend: ((Event) -> JsAny?)?
+    open var onerror: ((Event) -> JsAny?)?
+    open var onabort: ((Event) -> JsAny?)?
     fun appendBuffer(data: JsAny?)
     fun abort()
     fun remove(start: Double, end: Double)
@@ -63,12 +63,15 @@ public external abstract class SourceBuffer : EventTarget, JsAny {
  */
 public external abstract class SourceBufferList : EventTarget, JsAny {
     open val length: Int
-    open var onaddsourcebuffer: ((Event) -> Dynamic?)?
-    open var onremovesourcebuffer: ((Event) -> Dynamic?)?
+    open var onaddsourcebuffer: ((Event) -> JsAny?)?
+    open var onremovesourcebuffer: ((Event) -> JsAny?)?
 }
 
+@PublishedApi
+internal fun getMethodImplForSourceBufferList(obj: SourceBufferList, index: Int): SourceBuffer? { js("return obj[index];") }
+
 @kotlin.internal.InlineOnly
-public inline operator fun SourceBufferList.get(index: Int): SourceBuffer? = asDynamic().getAny(index)
+public inline operator fun SourceBufferList.get(index: Int): SourceBuffer? = getMethodImplForSourceBufferList(this, index)
 
 /* please, don't implement this interface! */
 @JsName("null")
@@ -77,11 +80,11 @@ public external interface ReadyState : JsAny {
     companion object
 }
 
-public inline val ReadyState.Companion.CLOSED: ReadyState get() = "closed".asDynamic().unsafeCast<ReadyState>()
+public inline val ReadyState.Companion.CLOSED: ReadyState get() = "closed".toJsString().unsafeCast<ReadyState>()
 
-public inline val ReadyState.Companion.OPEN: ReadyState get() = "open".asDynamic().unsafeCast<ReadyState>()
+public inline val ReadyState.Companion.OPEN: ReadyState get() = "open".toJsString().unsafeCast<ReadyState>()
 
-public inline val ReadyState.Companion.ENDED: ReadyState get() = "ended".asDynamic().unsafeCast<ReadyState>()
+public inline val ReadyState.Companion.ENDED: ReadyState get() = "ended".toJsString().unsafeCast<ReadyState>()
 
 /* please, don't implement this interface! */
 @JsName("null")
@@ -90,9 +93,9 @@ public external interface EndOfStreamError : JsAny {
     companion object
 }
 
-public inline val EndOfStreamError.Companion.NETWORK: EndOfStreamError get() = "network".asDynamic().unsafeCast<EndOfStreamError>()
+public inline val EndOfStreamError.Companion.NETWORK: EndOfStreamError get() = "network".toJsString().unsafeCast<EndOfStreamError>()
 
-public inline val EndOfStreamError.Companion.DECODE: EndOfStreamError get() = "decode".asDynamic().unsafeCast<EndOfStreamError>()
+public inline val EndOfStreamError.Companion.DECODE: EndOfStreamError get() = "decode".toJsString().unsafeCast<EndOfStreamError>()
 
 /* please, don't implement this interface! */
 @JsName("null")
@@ -101,6 +104,6 @@ public external interface AppendMode : JsAny {
     companion object
 }
 
-public inline val AppendMode.Companion.SEGMENTS: AppendMode get() = "segments".asDynamic().unsafeCast<AppendMode>()
+public inline val AppendMode.Companion.SEGMENTS: AppendMode get() = "segments".toJsString().unsafeCast<AppendMode>()
 
-public inline val AppendMode.Companion.SEQUENCE: AppendMode get() = "sequence".asDynamic().unsafeCast<AppendMode>()
+public inline val AppendMode.Companion.SEQUENCE: AppendMode get() = "sequence".toJsString().unsafeCast<AppendMode>()

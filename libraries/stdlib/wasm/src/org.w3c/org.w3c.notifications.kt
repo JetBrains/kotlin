@@ -17,8 +17,8 @@ import org.w3c.workers.*
  * Exposes the JavaScript [Notification](https://developer.mozilla.org/en/docs/Web/API/Notification) to Kotlin
  */
 public external open class Notification(title: String, options: NotificationOptions = definedExternally) : EventTarget, JsAny {
-    var onclick: ((MouseEvent) -> Dynamic?)?
-    var onerror: ((Event) -> Dynamic?)?
+    var onclick: ((MouseEvent) -> JsAny?)?
+    var onerror: ((Event) -> JsAny?)?
     open val title: String
     open val dir: NotificationDirection
     open val lang: String
@@ -155,11 +155,11 @@ public external interface NotificationPermission : JsAny {
     companion object
 }
 
-public inline val NotificationPermission.Companion.DEFAULT: NotificationPermission get() = "default".asDynamic().unsafeCast<NotificationPermission>()
+public inline val NotificationPermission.Companion.DEFAULT: NotificationPermission get() = "default".toJsString().unsafeCast<NotificationPermission>()
 
-public inline val NotificationPermission.Companion.DENIED: NotificationPermission get() = "denied".asDynamic().unsafeCast<NotificationPermission>()
+public inline val NotificationPermission.Companion.DENIED: NotificationPermission get() = "denied".toJsString().unsafeCast<NotificationPermission>()
 
-public inline val NotificationPermission.Companion.GRANTED: NotificationPermission get() = "granted".asDynamic().unsafeCast<NotificationPermission>()
+public inline val NotificationPermission.Companion.GRANTED: NotificationPermission get() = "granted".toJsString().unsafeCast<NotificationPermission>()
 
 /* please, don't implement this interface! */
 @JsName("null")
@@ -168,8 +168,8 @@ public external interface NotificationDirection : JsAny {
     companion object
 }
 
-public inline val NotificationDirection.Companion.AUTO: NotificationDirection get() = "auto".asDynamic().unsafeCast<NotificationDirection>()
+public inline val NotificationDirection.Companion.AUTO: NotificationDirection get() = "auto".toJsString().unsafeCast<NotificationDirection>()
 
-public inline val NotificationDirection.Companion.LTR: NotificationDirection get() = "ltr".asDynamic().unsafeCast<NotificationDirection>()
+public inline val NotificationDirection.Companion.LTR: NotificationDirection get() = "ltr".toJsString().unsafeCast<NotificationDirection>()
 
-public inline val NotificationDirection.Companion.RTL: NotificationDirection get() = "rtl".asDynamic().unsafeCast<NotificationDirection>()
+public inline val NotificationDirection.Companion.RTL: NotificationDirection get() = "rtl".toJsString().unsafeCast<NotificationDirection>()
