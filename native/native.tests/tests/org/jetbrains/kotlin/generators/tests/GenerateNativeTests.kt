@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.konan.blackboxtest.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.ClassLevelProperty
 import org.jetbrains.kotlin.konan.blackboxtest.support.EnforcedHostTarget
 import org.jetbrains.kotlin.konan.blackboxtest.support.EnforcedProperty
-import org.jetbrains.kotlin.konan.blackboxtest.support.group.K2Pipeline
+import org.jetbrains.kotlin.konan.blackboxtest.support.group.FirPipeline
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.UseExtTestCaseGroupProvider
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.UseStandardTestCaseGroupProvider
 import org.jetbrains.kotlin.test.TargetBackend
@@ -24,8 +24,8 @@ fun main() {
         // Codegen box tests.
         testGroup("native/native.tests/tests-gen", "compiler/testData") {
             testClass<AbstractNativeCodegenBoxTest>(
-                suiteTestClassName = "NativeCodegenBoxTestGenerated",
-                annotations = listOf(codegen(), provider<UseExtTestCaseGroupProvider>())
+                suiteTestClassName = "K1NativeCodegenBoxTestGenerated",
+                annotations = listOf(codegen(), k1Codegen(), provider<UseExtTestCaseGroupProvider>())
             ) {
                 model("codegen/box", targetBackend = TargetBackend.NATIVE)
                 model("codegen/boxInline", targetBackend = TargetBackend.NATIVE)
@@ -34,8 +34,8 @@ fun main() {
 
         testGroup("native/native.tests/tests-gen", "compiler/testData") {
             testClass<AbstractNativeCodegenBoxTest>(
-                suiteTestClassName = "K2NativeCodegenBoxTestGenerated",
-                annotations = listOf(codegenK2(), provider<UseExtTestCaseGroupProvider>(), provider<K2Pipeline>())
+                suiteTestClassName = "FirNativeCodegenBoxTestGenerated",
+                annotations = listOf(codegenK2(), firCodegen(), provider<UseExtTestCaseGroupProvider>(), provider<FirPipeline>())
             ) {
                 model("codegen/box", targetBackend = TargetBackend.NATIVE)
                 model("codegen/boxInline", targetBackend = TargetBackend.NATIVE)
@@ -45,8 +45,8 @@ fun main() {
         // Samples (how to utilize the abilities of new test infrastructure).
         testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
             testClass<AbstractNativeBlackBoxTest>(
-                suiteTestClassName = "InfrastructureTestGenerated",
-                annotations = listOf(infrastructure(), provider<UseStandardTestCaseGroupProvider>())
+                suiteTestClassName = "K1InfrastructureTestGenerated",
+                annotations = listOf(infrastructure(), k1Infrastructure(), provider<UseStandardTestCaseGroupProvider>())
             ) {
                 model("samples")
                 model("samples2")
@@ -65,7 +65,8 @@ fun main() {
         // KLIB binary compatibility tests.
         testGroup("native/native.tests/tests-gen", "compiler/testData") {
             testClass<AbstractNativeKlibBinaryCompatibilityTest>(
-                suiteTestClassName = "KlibBinaryCompatibilityTestGenerated"
+                suiteTestClassName = "K1KlibBinaryCompatibilityTestGenerated",
+                annotations = listOf(k1KLibCompatibility())
             ) {
                 model("binaryCompatibility/klibEvolution", recursive = false)
             }
@@ -104,7 +105,7 @@ fun main() {
         // Klib contents tests
         testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
             testClass<AbstractNativeKlibContentsTest>(
-                suiteTestClassName = "NativeK1LibContentsTestGenerated",
+                suiteTestClassName = "K1NativeKLibContentsTestGenerated",
                 annotations = listOf(k1libContents())
             ) {
                 model("klibContents", pattern = "^([^_](.+)).kt$", recursive = true)
@@ -112,8 +113,8 @@ fun main() {
         }
         testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
             testClass<AbstractNativeKlibContentsTest>(
-                suiteTestClassName = "NativeK2LibContentsTestGenerated",
-                annotations = listOf(k2libContents(), provider<K2Pipeline>())
+                suiteTestClassName = "FirNativeKLibContentsTestGenerated",
+                annotations = listOf(k2libContents(), firKLibContents(), provider<FirPipeline>())
             ) {
                 model("klibContents", pattern = "^([^_](.+)).kt$", recursive = true)
             }
@@ -147,8 +148,13 @@ private fun debugOnly() = annotation(
 private fun hostOnly() = provider<EnforcedHostTarget>()
 
 private fun codegen() = annotation(Tag::class.java, "codegen")
+private fun k1Codegen() = annotation(Tag::class.java, "k1Codegen")
 private fun codegenK2() = annotation(Tag::class.java, "codegenK2")
+private fun firCodegen() = annotation(Tag::class.java, "firCodegen")
 private fun debugger() = annotation(Tag::class.java, "debugger")
 private fun infrastructure() = annotation(Tag::class.java, "infrastructure")
+private fun k1Infrastructure() = annotation(Tag::class.java, "k1Infrastructure")
 private fun k1libContents() = annotation(Tag::class.java, "k1libContents")
 private fun k2libContents() = annotation(Tag::class.java, "k2libContents")
+private fun firKLibContents() = annotation(Tag::class.java, "firKlibContents")
+private fun k1KLibCompatibility() = annotation(Tag::class.java, "k1KlibCompatibility")

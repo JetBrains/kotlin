@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.NativeTestSupport.getOrCr
 import org.jetbrains.kotlin.konan.blackboxtest.support.NativeTestSupport.getOrCreateTestRunProvider
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.DisabledTests
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.DisabledTestsIfProperty
-import org.jetbrains.kotlin.konan.blackboxtest.support.group.K2Pipeline
+import org.jetbrains.kotlin.konan.blackboxtest.support.group.FirPipeline
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.TestCaseGroupProvider
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.SimpleTestRunProvider
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunProvider
@@ -441,7 +441,7 @@ private object NativeTestSupport {
     }
 
     private fun computePipelineType(testClass: Class<*>): PipelineType {
-        return if (testClass.annotations.any { it is K2Pipeline })
+        return if (testClass.annotations.any { it is FirPipeline })
             PipelineType.K2
         else PipelineType.K1
     }

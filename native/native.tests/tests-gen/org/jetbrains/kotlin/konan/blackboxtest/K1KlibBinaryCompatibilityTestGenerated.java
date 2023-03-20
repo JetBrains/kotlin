@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.konan.blackboxtest;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
+import org.junit.jupiter.api.Tag;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -18,7 +19,8 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/binaryCompatibility/klibEvolution")
 @TestDataPath("$PROJECT_ROOT")
-public class KlibBinaryCompatibilityTestGenerated extends AbstractNativeKlibBinaryCompatibilityTest {
+@Tag("k1KlibCompatibility")
+public class K1KlibBinaryCompatibilityTestGenerated extends AbstractNativeKlibBinaryCompatibilityTest {
     @Test
     @TestMetadata("addAbstractMemberBody.kt")
     public void testAddAbstractMemberBody() throws Exception {
