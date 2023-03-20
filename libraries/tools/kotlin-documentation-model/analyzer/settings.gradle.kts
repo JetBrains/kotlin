@@ -25,7 +25,7 @@ dependencyResolutionManagement {
         // Required by Gradle Node plugin: https://github.com/node-gradle/gradle-node-plugin/blob/3.5.1/docs/faq.md#is-this-plugin-compatible-with-centralized-repositories-declaration
         exclusiveContent {
             forRepository {
-                ivy("https://nodejs.org/dist/") {
+                ivy("https://cache-redirector.jetbrains.com/nodejs.org/dist/") {
                     name = "Node Distributions at $url"
                     patternLayout { artifact("v[revision]/[artifact](-v[revision]-[classifier]).[ext]") }
                     metadataSources { artifact() }
