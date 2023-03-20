@@ -126,6 +126,7 @@ include ":benchmarks",
         ":kotlin-android-extensions-runtime"
 
 include ":kotlin-allopen-compiler-plugin",
+        ":kotlin-allopen-compiler-plugin.embeddable",
         ":kotlin-allopen-compiler-plugin.common",
         ":kotlin-allopen-compiler-plugin.k1",
         ":kotlin-allopen-compiler-plugin.k2",
@@ -665,6 +666,7 @@ project(':kotlin-parcelize-compiler').projectDir = "$rootDir/prepare/parcelize-c
 project(':kotlin-android-extensions-runtime').projectDir = "$rootDir/plugins/android-extensions/android-extensions-runtime" as File
 
 project(':kotlin-allopen-compiler-plugin').projectDir = "$rootDir/plugins/allopen" as File
+project(":kotlin-allopen-compiler-plugin.embeddable").projectDir = "$rootDir/plugins/allopen/allopen.embeddable" as File
 project(':kotlin-allopen-compiler-plugin.common').projectDir = "$rootDir/plugins/allopen/allopen.common" as File
 project(':kotlin-allopen-compiler-plugin.k1').projectDir = "$rootDir/plugins/allopen/allopen.k1" as File
 project(':kotlin-allopen-compiler-plugin.k2').projectDir = "$rootDir/plugins/allopen/allopen.k2" as File

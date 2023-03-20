@@ -5,11 +5,6 @@
 
     <modelVersion>4.0.0</modelVersion>
     <properties>
-        <allopen.common.src>${basedir}/../../../plugins/allopen/allopen.common/src</allopen.common.src>
-        <allopen.k1.src>${basedir}/../../../plugins/allopen/allopen.k1/src</allopen.k1.src>
-        <allopen.k2.src>${basedir}/../../../plugins/allopen/allopen.k2/src</allopen.k2.src>
-        <allopen.cli.src>${basedir}/../../../plugins/allopen/allopen.cli/src</allopen.cli.src>
-        <allopen.resources>${basedir}/../../../plugins/allopen/allopen.cli/resources</allopen.resources>
         <allopen.maven.plugin.src>${basedir}/src/main/kotlin</allopen.maven.plugin.src>
     </properties>
 
@@ -38,6 +33,11 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-allopen-compiler-plugin</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-core</artifactId>
             <version>${maven.version}</version>
@@ -46,10 +46,6 @@
     </dependencies>
 
     <build>
-        <resources>
-            <resource><directory>${allopen.resources}</directory></resource>
-        </resources>
-
         <plugins>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -60,10 +56,6 @@
                         <goals><goal>add-source</goal></goals>
                         <configuration>
                             <sources>
-                                <source>${allopen.common.src}</source>
-                                <source>${allopen.k1.src}</source>
-                                <source>${allopen.k2.src}</source>
-                                <source>${allopen.cli.src}</source>
                                 <source>${allopen.maven.plugin.src}</source>
                             </sources>
                         </configuration>
