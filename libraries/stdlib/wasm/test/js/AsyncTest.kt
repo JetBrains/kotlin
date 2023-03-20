@@ -3,19 +3,19 @@ package test.js
 import kotlin.js.*
 import kotlin.test.*
 
-internal fun jsAsyncFoo(): Promise<Dynamic?> =
+internal fun jsAsyncFoo(): Promise<JsAny?> =
     js("(async () => 'foo')()")
 
-internal fun jsFoo(): Dynamic =
+internal fun jsFoo(): JsAny =
     js("'foo'")
 
-var state: Dynamic? = null
+var state: JsAny? = null
 
 class MyThrowable : Throwable()
 
 class AsyncTest {
     @Test
-    fun test1(): Promise<Dynamic?> {
+    fun test1(): Promise<JsAny?> {
         var thenExecuted = false
         val p = jsAsyncFoo().then { value ->
             state = value
@@ -27,7 +27,7 @@ class AsyncTest {
     }
 
     @Test
-    fun test2(): Promise<Dynamic?> {
+    fun test2(): Promise<JsAny?> {
         assertEquals(state, jsFoo())
         var thenExecuted = false
         val p = jsAsyncFoo().then {
@@ -44,10 +44,9 @@ class AsyncTest {
     }
 
     @Test
-    fun testJsValueToThrowableOrNull1(): Promise<Dynamic?> {
+    fun testJsValueToThrowableOrNull1(): Promise<JsAny?> {
         val p = jsAsyncFoo().then {
             throw MyThrowable()
-            null
         }.catch { e ->
             assert(e.toThrowableOrNull() is MyThrowable)
             null
@@ -58,6 +57,6 @@ class AsyncTest {
     @Test
     fun testJsValueToThrowableOrNull2() {
         val e = MyThrowable()
-        assertEquals((e as Dynamic).toThrowableOrNull(), e)
+        assertEquals((e.toJsHandle()).toThrowableOrNull(), e)
     }
 }

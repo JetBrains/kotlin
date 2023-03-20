@@ -17,7 +17,7 @@ private external fun nodeArguments(): String
 
 internal class TeamcityAdapter : FrameworkAdapter {
 
-    private var scheduleNextTaskAfter: Promise<Dynamic?>? = null
+    private var scheduleNextTaskAfter: Promise<JsAny?>? = null
     private fun runOrScheduleNext(block: () -> Unit) {
         if (scheduleNextTaskAfter == null) {
             block()
@@ -26,14 +26,14 @@ internal class TeamcityAdapter : FrameworkAdapter {
         }
     }
 
-    private fun runOrScheduleNextWithResult(block: () -> Promise<Dynamic?>?) {
+    private fun runOrScheduleNextWithResult(block: () -> Promise<JsAny?>?) {
         if (scheduleNextTaskAfter == null) {
             val result = block()
             if (result != null)
                 scheduleNextTaskAfter = result
         } else {
             scheduleNextTaskAfter = scheduleNextTaskAfter!!.then {
-                block() as Dynamic?
+                block()
             }
         }
     }

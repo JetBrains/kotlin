@@ -21,15 +21,15 @@ private fun it(name: String, fn: () -> JsAny?): Unit =
 private fun xit(name: String, fn: () -> JsAny?): Unit =
     js("xit(name, fn)")
 
-private fun jsThrow(jsException: Dynamic) {
+private fun jsThrow(jsException: JsAny) {
     js("throw e")
 }
 
-private fun throwableToJsError(message: String, stack: String): Dynamic {
+private fun throwableToJsError(message: String, stack: String): JsAny {
     js("var e = new Error(); e.message = message; e.stack = stack; return e;")
 }
 
-private fun Throwable.toJsError(): Dynamic =
+private fun Throwable.toJsError(): JsAny =
     throwableToJsError(message ?: "", stackTraceToString())
 
 /**
@@ -52,7 +52,7 @@ internal class JasmineLikeAdapter : FrameworkAdapter {
                     .toThrowableOrNull()
                     ?.let { it.toJsError() }
                     ?: exception
-                Promise.reject(jsException) as Dynamic
+                Promise.reject(jsException)
             }
         } catch (exception: Throwable) {
             jsThrow(exception.toJsError())
