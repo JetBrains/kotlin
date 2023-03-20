@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
+import org.jetbrains.kotlin.ir.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -53,7 +54,7 @@ internal fun PsiToIrContext.psiToIr(
     val expectActualLinker = config.configuration[CommonConfigurationKeys.EXPECT_ACTUAL_LINKER] ?: false
     val messageLogger = config.configuration.irMessageLogger
 
-    val partialLinkageEnabled = config.configuration[KonanConfigKeys.PARTIAL_LINKAGE] ?: false
+    val partialLinkageEnabled = config.configuration.partialLinkageConfig.isEnabled
 
     val translator = Psi2IrTranslator(
             config.configuration.languageVersionSettings,

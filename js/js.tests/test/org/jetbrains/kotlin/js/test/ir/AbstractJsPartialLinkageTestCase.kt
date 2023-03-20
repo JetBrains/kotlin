@@ -33,6 +33,9 @@ import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransf
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
+import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageConfig
+import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageLogLevel
+import org.jetbrains.kotlin.ir.linkage.partial.setupPartialLinkageConfig
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.testOld.V8IrJsTestChecker
@@ -86,7 +89,6 @@ abstract class AbstractJsPartialLinkageTestCase(val compilerType: CompilerType) 
     private fun createConfig(moduleName: String): CompilerConfiguration {
         val config = environment.configuration.copy()
         config.put(CommonConfigurationKeys.MODULE_NAME, moduleName)
-        config.put(JSConfigurationKeys.PARTIAL_LINKAGE, true)
         config.put(JSConfigurationKeys.MODULE_KIND, ModuleKind.PLAIN)
         config.put(JSConfigurationKeys.PROPERTY_LAZY_INITIALIZATION, true)
 
@@ -233,6 +235,7 @@ abstract class AbstractJsPartialLinkageTestCase(val compilerType: CompilerType) 
 
     private fun buildBinaryAndRun(mainModuleKlibFile: File, allDependencies: Dependencies) {
         val configuration = createConfig(MAIN_MODULE_NAME)
+        configuration.setupPartialLinkageConfig(PartialLinkageConfig(isEnabled = true, logLevel = PartialLinkageLogLevel.WARNING))
 
         val compilationOutputs = when (compilerType) {
             CompilerType.K1_NO_IC, CompilerType.K2_NO_IC -> buildBinaryNoIC(configuration, mainModuleKlibFile, allDependencies)
