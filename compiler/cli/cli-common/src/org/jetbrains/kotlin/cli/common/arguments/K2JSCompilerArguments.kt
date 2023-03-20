@@ -540,11 +540,18 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
             field = if (value.isNullOrEmpty()) null else value
         }
 
-    @Argument(value = "-Xpartial-linkage", description = "Allow unlinked symbols")
+    @Argument(value = "-Xpartial-linkage", description = "Enable partial linkage mode")
     var partialLinkage = false
         set(value) {
             checkFrozen()
             field = value
+        }
+
+    @Argument(value = "-Xpartial-linkage-loglevel", valueDescription = "{info|warn|error}", description = "Partial linkage compile-time log level (info, warn, error)")
+    var partialLinkageLogLevel: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
         }
 
     @Argument(value = "-Xwasm", description = "Use experimental WebAssembly compiler backend")

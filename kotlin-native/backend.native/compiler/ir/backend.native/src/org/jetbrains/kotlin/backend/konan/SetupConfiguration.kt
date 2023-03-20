@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.PartialLinkageLogLevel
 import org.jetbrains.kotlin.config.getModuleNameForSource
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
@@ -272,6 +273,8 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     putIfNotNull(BUNDLE_ID, parseBundleId(arguments, outputKind, this@setupFromArguments))
     arguments.testDumpOutputPath?.let { put(TEST_DUMP_OUTPUT_PATH, it) }
     put(PARTIAL_LINKAGE, arguments.partialLinkage)
+    arguments.partialLinkageLogLevel?.let { put(PARTIAL_LINKAGE_LOG_LEVEL, PartialLinkageLogLevel.resolveLogLevel(it)) }
+
     put(OMIT_FRAMEWORK_BINARY, arguments.omitFrameworkBinary)
     putIfNotNull(COMPILE_FROM_BITCODE, parseCompileFromBitcode(arguments, this@setupFromArguments, outputKind))
     putIfNotNull(SERIALIZED_DEPENDENCIES, parseSerializedDependencies(arguments, this@setupFromArguments))
@@ -285,6 +288,7 @@ internal fun CompilerConfiguration.setupCommonOptionsForCaches(konanConfig: Kona
     put(TARGET, konanConfig.target.toString())
     put(DEBUG, konanConfig.debug)
     put(PARTIAL_LINKAGE, konanConfig.partialLinkageEnabled)
+    put(PARTIAL_LINKAGE_LOG_LEVEL, konanConfig.partialLinkageLogLevel)
     putIfNotNull(EXTERNAL_DEPENDENCIES, konanConfig.externalDependenciesFile?.absolutePath)
     put(BinaryOptions.memoryModel, konanConfig.memoryModel)
     put(PROPERTY_LAZY_INITIALIZATION, konanConfig.propertyLazyInitialization)
