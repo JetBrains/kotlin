@@ -86,6 +86,30 @@ public class IrJsSteppingTestGenerated extends AbstractIrJsSteppingTest {
     }
 
     @Test
+    @TestMetadata("commentBeforeClass.kt")
+    public void testCommentBeforeClass() throws Exception {
+        runTest("compiler/testData/debug/stepping/commentBeforeClass.kt");
+    }
+
+    @Test
+    @TestMetadata("commentBeforeCompanionProperty.kt")
+    public void testCommentBeforeCompanionProperty() throws Exception {
+        runTest("compiler/testData/debug/stepping/commentBeforeCompanionProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("commentBeforeFunctionWithDefault.kt")
+    public void testCommentBeforeFunctionWithDefault() throws Exception {
+        runTest("compiler/testData/debug/stepping/commentBeforeFunctionWithDefault.kt");
+    }
+
+    @Test
+    @TestMetadata("comments.kt")
+    public void testComments() throws Exception {
+        runTest("compiler/testData/debug/stepping/comments.kt");
+    }
+
+    @Test
     @TestMetadata("compileTimeConstant.kt")
     public void testCompileTimeConstant() throws Exception {
         runTest("compiler/testData/debug/stepping/compileTimeConstant.kt");
@@ -365,6 +389,12 @@ public class IrJsSteppingTestGenerated extends AbstractIrJsSteppingTest {
     @TestMetadata("nullcheck.kt")
     public void testNullcheck() throws Exception {
         runTest("compiler/testData/debug/stepping/nullcheck.kt");
+    }
+
+    @Test
+    @TestMetadata("overridenGetterSetter.kt")
+    public void testOverridenGetterSetter() throws Exception {
+        runTest("compiler/testData/debug/stepping/overridenGetterSetter.kt");
     }
 
     @Test

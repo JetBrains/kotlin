@@ -737,7 +737,7 @@ public abstract class Result : java/lang/Object, X {
 
     private void <init>() {
         LABEL (L0)
-        LINENUMBER (11)
+        LINENUMBER (12)
           ALOAD (0)
           INVOKESPECIAL (java/lang/Object, <init>, ()V)
           RETURN
@@ -746,7 +746,7 @@ public abstract class Result : java/lang/Object, X {
 
     public void <init>(int seen0, kotlinx.serialization.internal.SerializationConstructorMarker serializationConstructorMarker) {
         LABEL (L0)
-        LINENUMBER (11)
+        LINENUMBER (12)
           ALOAD (0)
           INVOKESPECIAL (java/lang/Object, <init>, ()V)
           RETURN

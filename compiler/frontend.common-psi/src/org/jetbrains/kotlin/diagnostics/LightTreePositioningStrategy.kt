@@ -10,6 +10,7 @@ import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.TokenType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
+import org.jetbrains.kotlin.KtLightSourceElement
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -100,4 +101,17 @@ private fun hasSyntaxErrors(node: LighterASTNode, tree: FlyweightCapableTreeStru
         tokenType !is KtSingleValueToken && tokenType !in DOC_AND_COMMENT_TOKENS
     }?.let { hasSyntaxErrors(it, tree) } == true
 }
+
+val KtLightSourceElement.startOffsetSkippingComments: Int
+    get() {
+        val kidsRef = Ref<Array<LighterASTNode?>>()
+        treeStructure.getChildren(this.lighterASTNode, kidsRef)
+        val children = kidsRef.get()
+
+        // The solution to find first non comment children will not work here. `treeStructure` can have different root
+        // than original program. Because of that `startOffset` is relative and not in absolute value.
+        val comments = children.filterNotNull()
+            .takeWhile { it.tokenType in DOC_AND_COMMENT_TOKENS }
+        return startOffset + comments.sumOf { it.textLength }
+    }
 
