@@ -95,6 +95,7 @@ inline constexpr const char* kTagTLS = "tls";
 
 #define RuntimeLog(level, tags, format, ...) \
     do { \
+        if (level < kotlin::logging::Level::kInfo) break; \
         if (!::kotlin::compiler::runtimeLogs().empty()) { \
             ::kotlin::logging::Log(level, tags, format, ##__VA_ARGS__); \
         } \

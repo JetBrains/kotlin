@@ -4,8 +4,14 @@
 #include "MarkStack.hpp"
 #include "StealableWorkList.hpp"
 #include "Utils.hpp"
+#include <mutex>
+#include <condition_variable>
 
 namespace kotlin::gc::mark {
+
+namespace test {
+class ParallelMarkTestSupport;
+}
 
 class MarkPacer : private Pinned {
 public:
@@ -69,36 +75,46 @@ private:
  * Mark jobs are able to balance work between each other through sharing/stealing.
  */
 class MarkDispatcher : private Pinned {
+    friend test::ParallelMarkTestSupport;
 public:
     static const std::size_t kInitialJobsArraySize = 128; // big enough to avoid most of the possible reallocations
 
     // These numbers were chosen pretty arbitrary.
     /** A marker will from time to time share this amount of jobs with others. */
-    static const std::size_t kMinWorkSizeToShare = 512;
+    static const std::size_t kMinWorkSizeToShare = 128;
     /** A marker depleted of work will try to steal `1/kFractionToSteal` jobs from a victim worker at once. */
     static const std::size_t kFractionToSteal = 2;
     /** A marker will iterate over other workers this number of times searching for a victim for work-stealing. */
     static const std::size_t kStealingAttemptCyclesBeforeWait = 4;
 
+    /** See `MarkDispatcher`. */
     class MarkJob : private Pinned {
         friend class MarkDispatcher;
+        friend test::ParallelMarkTestSupport;
     public:
         explicit MarkJob(MarkDispatcher& dispatcher) : dispatcher_(dispatcher) {}
 
+        /** To be run by a single "main" GC thread during STW. */
         void runMainInSTW();
+        /**
+         * To be run by mutator threads that would like to participate in mark.
+         * Will wait for STW detection by a "main" routine.
+         */
         void runOnMutator(mm::ThreadData& mutatorThread);
+        /**
+         * To be run by auxiliary GC threads.
+         * Will wait for STW detection by a "main" routine.
+         */
         void runAuxiliary();
 
     private:
-        void registerInDispatcher();
-
         void completeMutatorsRootSet();
         void collectRootSet(mm::ThreadData& thread);
 
         void parallelMark();
         bool tryAcquireWork();
         void performWork(GCHandle::GCMarkScope& markHandle);
-        void shareWork();
+        bool shareWork();
 
         MarkDispatcher& dispatcher_;
         StealableWorkList<ObjectData> workList_;
@@ -111,12 +127,6 @@ public:
 
     void beginMarkingEpoch(gc::GCHandle gcHandle);
     void waitForThreadsPauseMutation() noexcept;
-
-    void registerTask(MarkJob& task);
-    // primarily to be used in assertions
-    bool isRegistered(const MarkJob& task) const;
-
-    void allCooperativeMutatorsAreRegistered();
 
     void requestShutdown();
     bool shutdownRequested() const;
@@ -133,8 +143,23 @@ public:
 private:
     GCHandle& gcHandle();
 
+    void expandJobsArrayIfNeeded();
+
+    void registerTask(MarkJob& task);
+    // primarily to be used in assertions
+    bool isRegistered(const MarkJob& task) const;
+
+    void allCooperativeMutatorsAreRegistered();
+
     template <typename Pred>
-    bool allMutators(Pred predicate) noexcept;
+    bool allMutators(Pred predicate) noexcept {
+        for (auto& thread : *lockedMutatorsList_) {
+            if (!predicate(thread)) {
+                return false;
+            }
+        }
+        return true;
+    }
     void resetMutatorFlags();
 
     std::size_t gcWorkerPoolSize_;

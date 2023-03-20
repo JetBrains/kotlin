@@ -133,7 +133,7 @@ GCHandle GCHandle::create(uint64_t epoch) {
     }
     return getByEpoch(epoch);
 }
-GCHandle GCHandle::createFakeForTests() { return getByEpoch(std::numeric_limits<uint64_t>::max()); }
+GCHandle GCHandle::createFakeForTests() { return getByEpoch(invalid().getEpoch() - 1); }
 GCHandle GCHandle::getByEpoch(uint64_t epoch) {
     GCHandle handle{epoch};
     RuntimeAssert(handle.isValid(), "Must be valid");

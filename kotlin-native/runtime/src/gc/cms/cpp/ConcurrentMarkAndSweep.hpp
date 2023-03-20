@@ -67,13 +67,13 @@ public:
 
         Allocator CreateAllocator() noexcept { return Allocator(gc::Allocator(), *this); }
 
-        bool tryLockRootSet(bool own);
+        bool tryLockRootSet();
         bool rootSetLocked() const;
-        bool cooperate() const;
-        void clearMarkedBy();
-
+        void beginCooperation();
+        bool cooperative() const;
+        void publish(); // TODO make publish
         bool published() const;
-        void markPublished(); // TODO make publish
+        void clearMarkFlags();
 
         mm::ThreadData& commonThreadData() const;
 
@@ -83,9 +83,9 @@ public:
         mm::ThreadData& threadData_;
         GCSchedulerThreadData& gcScheduler_;
 
-        enum class MarkedBy { kNone, kItself, kOther, };
-        std::atomic<MarkedBy> markedBy_ = MarkedBy::kNone; // TODO split cooperative?
+        std::atomic<bool> rootSetLocked_ = false;
         std::atomic<bool> published_ = false;
+        std::atomic<bool> cooperative_ = false;
     };
 
     using ObjectData = ThreadData::ObjectData;

@@ -38,6 +38,13 @@ void yield() noexcept {
     std::this_thread::yield();
 }
 
+template<typename Cond>
+void waitFast(Cond&& until) {
+    while (!until()) {
+        yield();
+    }
+}
+
 } // namespace
 
 void gc::mark::MarkPacer::beginEpoch(uint64_t epoch) {
@@ -103,13 +110,12 @@ void gc::mark::MarkPacer::begin(gc::mark::MarkPacer::Phase phase) {
 }
 
 void gc::mark::MarkDispatcher::MarkJob::runMainInSTW() {
-    registerInDispatcher();
+    dispatcher_.registerTask(*this);
     dispatcher_.pacer_.requestParallelMark();
     completeMutatorsRootSet();
-    // TODO generalize this allMutators + yield stuff
-    while (!dispatcher_.allMutators([](mm::ThreadData& mut){ return mut.gc().impl().gc().published(); })) {
-        yield();
-    }
+    waitFast([&] { 
+        return dispatcher_.allMutators([](mm::ThreadData& mut){ return mut.gc().impl().gc().published(); }); 
+    });
     // global root set must be collected after all the mutator's global data have been published
     collectRootSetGlobals<gc::mark::MarkTraits>(dispatcher_.gcHandle(), workList_);
     dispatcher_.allCooperativeMutatorsAreRegistered();
@@ -127,11 +133,12 @@ void gc::mark::MarkDispatcher::MarkJob::runOnMutator(mm::ThreadData& mutatorThre
     // It's possible that some other worker has already acquired this thread's root set.
     // e.g. if the thread was in native context during workers awakening
     // but then has returned from native and arrived ad a safe point
-    if (gcData.tryLockRootSet(true)) {
+    if (gcData.tryLockRootSet()) {
+        gcData.beginCooperation();
         auto epoch = dispatcher_.gcHandle().getEpoch();
         GCLogDebug(epoch, "Mutator thread %d takes part in marking", konan::currentThreadId());
 
-        registerInDispatcher();
+        dispatcher_.registerTask(*this);
         collectRootSet(mutatorThread);
 
         dispatcher_.pacer_.waitForParallelMark();
@@ -144,7 +151,7 @@ void gc::mark::MarkDispatcher::MarkJob::runAuxiliary() {
     dispatcher_.pacer_.waitNewEpochReadyOrShutdown();
     if (dispatcher_.pacer_.shutdownRequested()) return;
 
-    registerInDispatcher();
+    dispatcher_.registerTask(*this);
     auto curEpoch = dispatcher_.gcHandle().getEpoch();
     dispatcher_.pacer_.waitForParallelMark();
     completeMutatorsRootSet();
@@ -152,19 +159,11 @@ void gc::mark::MarkDispatcher::MarkJob::runAuxiliary() {
     dispatcher_.pacer_.waitEpochFinished(curEpoch);
 }
 
-void gc::mark::MarkDispatcher::MarkJob::registerInDispatcher() {
-    RuntimeAssert(workList_.localEmpty(), "Mark queue has to be empty (e.g. fully depleted during previous GC)");
-    RuntimeAssert(workList_.sharedEmpty(), "Shared mark queue has to be empty (e.g. fully depleted during previous GC)");
-    RuntimeAssert(!dispatcher_.allDone_, "Dispatcher must wait for every possible task before finishing mark");
-    RuntimeAssert(!dispatcher_.isRegistered(*this), "Task registration is not idempotent");
-    dispatcher_.registerTask(*this);
-}
-
 void gc::mark::MarkDispatcher::MarkJob::completeMutatorsRootSet() {
     // workers compete for mutators to collect their root set
-    for (auto& thread: dispatcher_.lockedMutatorsList_.value()) {
+    for (auto& thread: *dispatcher_.lockedMutatorsList_) {
         auto& gcData = thread.gc().impl().gc();
-        if (gcData.tryLockRootSet(false)) {
+        if (gcData.tryLockRootSet()) {
             collectRootSet(thread);
         }
     }
@@ -173,8 +172,7 @@ void gc::mark::MarkDispatcher::MarkJob::completeMutatorsRootSet() {
 void gc::mark::MarkDispatcher::MarkJob::collectRootSet(mm::ThreadData& thread) {
     GCLogDebug(dispatcher_.gcHandle().getEpoch(), "Root set collection on thread %d for thread %d",
                konan::currentThreadId(), thread.threadId());
-    thread.Publish();
-    thread.gc().impl().gc().markPublished();
+    thread.gc().impl().gc().publish();
     collectRootSetForThread<gc::mark::MarkTraits>(dispatcher_.gcHandle(), workList_, thread);
 }
 
@@ -227,12 +225,13 @@ void gc::mark::MarkDispatcher::MarkJob::parallelMark() {
         RuntimeAssert(workList_.sharedEmpty(), "There should be no shared tasks left");
     }
     RuntimeAssert(dispatcher_.allDone_, "Work must be done");
-    auto notYetTerminated = dispatcher_.waitingJobs_.fetch_sub(1, std::memory_order_relaxed) - 1;
+    dispatcher_.waitingJobs_.fetch_sub(1, std::memory_order_relaxed);
     GCLogTrace(dispatcher_.gcHandle().getEpoch(), "Mark task %d waits for others to terminate", carrierThreadId_);
-    while (dispatcher_.allDone_.load(std::memory_order_relaxed) && notYetTerminated > 0) {
-        std::this_thread::yield();
-        notYetTerminated = dispatcher_.waitingJobs_.load(std::memory_order_relaxed);
-    }
+    waitFast([&] {
+        bool allDone = dispatcher_.allDone_.load(std::memory_order_relaxed);
+        bool allTerminated = dispatcher_.waitingJobs_.load(std::memory_order_relaxed) == 0;
+        return !allDone || allTerminated;
+    });
     GCLogTrace(dispatcher_.gcHandle().getEpoch(), "Mark task %d finally finishes", carrierThreadId_);
 }
 
@@ -295,7 +294,7 @@ void gc::mark::MarkDispatcher::MarkJob::performWork(gc::GCHandle::GCMarkScope& m
     }
 }
 
-void gc::mark::MarkDispatcher::MarkJob::shareWork() {
+bool gc::mark::MarkDispatcher::MarkJob::shareWork() {
     // TODO consider sharing only half of the work
     //  to avoid pretty common sequence of "share all" -> "steal half from itself"
     RuntimeAssert(!workList_.localEmpty(), "There has to be something to share");
@@ -306,6 +305,7 @@ void gc::mark::MarkDispatcher::MarkJob::shareWork() {
             dispatcher_.waitCV_.notify_all();
         }
     }
+    return shared > 0;
 }
 
 // dispatcher
@@ -320,15 +320,10 @@ void gc::mark::MarkDispatcher::beginMarkingEpoch(gc::GCHandle gcHandle) {
 
     // ensure there is enough storage for all the mark tasks possible:
     // one for each mutator existing at the moment and one for each gc thread
-    auto maxPossibleMutators = mutatorsCooperate_ ? count(lockedMutatorsList_.value()) : 0;
+    auto maxPossibleMutators = mutatorsCooperate_ ? count(*lockedMutatorsList_) : 0;
     expectedJobs_ = maxPossibleMutators + gcWorkerPoolSize_;
+    expandJobsArrayIfNeeded();
     GCLogDebug(gcHandle.getEpoch(), "Expecting at most %zu markers", expectedJobs_);
-    if (expectedJobs_ > jobs_.size()) {
-        jobs_ = std_support::vector<std::atomic<MarkJob*>>(expectedJobs_);
-    }
-    for (auto& task : jobs_) {
-        task.store(nullptr, std::memory_order_relaxed);
-    }
     registeredJobs_ = 0;
     RuntimeAssert(waitingJobs_ == 0, "There must be no workers waiting from the previous epoch");
 
@@ -339,15 +334,17 @@ void gc::mark::MarkDispatcher::beginMarkingEpoch(gc::GCHandle gcHandle) {
 
 void gc::mark::MarkDispatcher::waitForThreadsPauseMutation() noexcept {
     RuntimeAssert(!kotlin::mm::IsCurrentThreadRegistered(), "Dispatcher thread must not be registered");
-    while(!allMutators([](kotlin::mm::ThreadData& thread) {
-        return mm::isSuspendedOrNative(thread) || thread.gc().impl().gc().cooperate();
-    })) {
-        yield();
-    }
+    waitFast([this] {
+        return allMutators([](mm::ThreadData& mut){ return mm::isSuspendedOrNative(mut) || mut.gc().impl().gc().cooperative(); });
+    });
 }
 
 void gc::mark::MarkDispatcher::registerTask(MarkJob& task) {
     RuntimeAssert(pacer_.isRecruiting(), "Dispatcher must be ready to register new workers");
+    RuntimeAssert(task.workList_.localEmpty(), "Mark queue of unregistered task must be empty (e.g. fully depleted during previous GC)");
+    RuntimeAssert(task.workList_.sharedEmpty(), "Shared mark queue of unregistered task must be empty (e.g. fully depleted during previous GC)");
+    RuntimeAssert(!allDone_, "Dispatcher must wait for every possible task to register before finishing mark");
+    RuntimeAssert(!isRegistered(task), "Task registration is not idempotent");
 
     std::size_t newTaskIdx;
     while (true) {
@@ -391,19 +388,21 @@ gc::GCHandle& gc::mark::MarkDispatcher::gcHandle() {
     return gcHandle_;
 }
 
-template <typename Pred>
-bool gc::mark::MarkDispatcher::allMutators(Pred predicate) noexcept {
-    for (auto& thread : lockedMutatorsList_.value()) {
-        if (!predicate(thread)) {
-            return false;
-        }
+void gc::mark::MarkDispatcher::expandJobsArrayIfNeeded() {
+    if (expectedJobs_ > jobs_.size()) {
+        jobs_ = std_support::vector<std::atomic<MarkJob*>>(expectedJobs_);
     }
-    return true;
+    for (auto& task : jobs_) {
+        task.store(nullptr, std::memory_order_relaxed);
+    }
 }
 
 void gc::mark::MarkDispatcher::resetMutatorFlags() {
-    for (auto& mut: lockedMutatorsList_.value()) {
-        mut.gc().impl().gc().clearMarkedBy();
+    for (auto& mut: *lockedMutatorsList_) {
+        auto& gcData = mut.gc().impl().gc();
+        RuntimeAssert(gcData.rootSetLocked(), "Must have been locked during mark");
+        RuntimeAssert(gcData.published(), "Must have been published during mark");
+        gcData.clearMarkFlags();
     }
 }
 
@@ -415,8 +414,8 @@ void gc::mark::MarkDispatcher::allCooperativeMutatorsAreRegistered() {
     RuntimeAssert(allMutators(
             [](mm::ThreadData& mut) { return mut.gc().impl().gc().rootSetLocked(); }), 
                   "All the mutators must be either cooperative or locked by other marker");
-    auto exactExpectedJobs = count(lockedMutatorsList_.value(),
-                                   [](mm::ThreadData& mut){ return mut.gc().impl().gc().cooperate(); })
+    auto exactExpectedJobs = count(*lockedMutatorsList_,
+                                   [](mm::ThreadData& mut){ return mut.gc().impl().gc().cooperative(); })
                                            + gcWorkerPoolSize_;
     RuntimeAssert(exactExpectedJobs <= expectedJobs_, "Previous expectation must have been not less");
     expectedJobs_ = exactExpectedJobs;

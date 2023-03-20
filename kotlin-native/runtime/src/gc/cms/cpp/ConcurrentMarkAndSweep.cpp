@@ -56,6 +56,25 @@ ScopedThread createGCThread(const char* name, Body&& body) {
     });
 }
 
+// TODO move to common
+[[maybe_unused]] inline void checkMarkCorrectness(mm::ObjectFactory<gc::ConcurrentMarkAndSweep>::Iterable& heap) {
+    if (compiler::runtimeAssertsMode() == compiler::RuntimeAssertsMode::kIgnore) return;
+    for (auto objRef: heap) {
+        auto obj = objRef.GetObjHeader();
+        auto& objData = objRef.ObjectData();
+        if (objData.marked()) {
+            gc::internal::forEachRefField(obj, [obj](KRef* fieldPtr) {
+                auto field = *fieldPtr;
+                if (field && field->heap()) {
+                    auto& fieldObjData =
+                            mm::ObjectFactory<gc::ConcurrentMarkAndSweep>::NodeRef::From(field).ObjectData();
+                    RuntimeAssert(fieldObjData.marked(), "Field %p of an alive obj %p must be alive", field, obj);
+                }
+            });
+        }
+    }
+}
+
 } // namespace
 
 void gc::ConcurrentMarkAndSweep::ThreadData::SafePointAllocation(size_t size) noexcept {
@@ -90,34 +109,40 @@ void gc::ConcurrentMarkAndSweep::ThreadData::OnSuspendForGC() noexcept {
     markJob.runOnMutator(commonThreadData());
 }
 
-bool gc::ConcurrentMarkAndSweep::ThreadData::tryLockRootSet(bool own) {
-    MarkedBy expected = MarkedBy::kNone;
-    MarkedBy desired = own ? MarkedBy::kItself : MarkedBy::kOther;
-    bool locked = markedBy_.compare_exchange_strong(expected, desired, std::memory_order_release);
+bool gc::ConcurrentMarkAndSweep::ThreadData::tryLockRootSet() {
+    bool expected = false;
+    bool locked = rootSetLocked_.compare_exchange_strong(expected, true, std::memory_order_acq_rel);
     if (locked) {
         RuntimeLogDebug({kTagGC}, "Thread %d have exclusively acquired thread %d's root set", konan::currentThreadId(), threadData_.threadId());
     }
     return locked;
 }
 
-void gc::ConcurrentMarkAndSweep::ThreadData::clearMarkedBy() {
-    markedBy_.store(MarkedBy::kNone, std::memory_order_relaxed);
-}
-
 bool gc::ConcurrentMarkAndSweep::ThreadData::rootSetLocked() const {
-    return markedBy_.load(std::memory_order_relaxed) != MarkedBy::kNone;
+    return rootSetLocked_.load(std::memory_order_acquire);
 }
 
-bool gc::ConcurrentMarkAndSweep::ThreadData::cooperate() const {
-    return markedBy_.load(std::memory_order_relaxed) == MarkedBy::kItself;
+void gc::ConcurrentMarkAndSweep::ThreadData::beginCooperation() {
+    cooperative_.store(true, std::memory_order_release);
+}
+
+bool gc::ConcurrentMarkAndSweep::ThreadData::cooperative() const {
+    return cooperative_.load(std::memory_order_relaxed);
+}
+
+void gc::ConcurrentMarkAndSweep::ThreadData::publish() {
+    threadData_.Publish();
+    published_.store(true, std::memory_order_release);
 }
 
 bool gc::ConcurrentMarkAndSweep::ThreadData::published() const {
     return published_.load(std::memory_order_acquire);
 }
 
-void gc::ConcurrentMarkAndSweep::ThreadData::markPublished() {
-    published_.store(true, std::memory_order_release);
+void gc::ConcurrentMarkAndSweep::ThreadData::clearMarkFlags() {
+    published_.store(false, std::memory_order_relaxed);
+    cooperative_.store(false, std::memory_order_relaxed);
+    rootSetLocked_.store(false, std::memory_order_release);
 }
 
 mm::ThreadData& gc::ConcurrentMarkAndSweep::ThreadData::commonThreadData() const {
@@ -228,23 +253,7 @@ bool gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch, mark::MarkDispatch
     gc::SweepExtraObjects<SweepTraits>(gcHandle, extraObjectDataFactory);
 
     auto objectFactoryIterable = objectFactory_.LockForIter();
-    // TODO outline
-//    for (auto objRef: objectFactoryIterable) {
-//        auto obj = objRef.GetObjHeader();
-//        auto& objData = objRef.ObjectData();
-//        auto* typeInfo = obj->type_info();
-//        if (objData.marked()) {
-//            if (typeInfo != theArrayTypeInfo) {
-//                for (int i = 0; i < typeInfo->objOffsetsCount_; ++i) {
-//                    auto offs = typeInfo->objOffsets_[i];
-//                    auto* field = *reinterpret_cast<ObjHeader**>(reinterpret_cast<uintptr_t>(obj) + offs);
-//                    if (!field) continue;
-//                    auto& fieldObjData = mm::ObjectFactory<ConcurrentMarkAndSweep>::NodeRef::From(obj).ObjectData();
-//                    RuntimeAssert(fieldObjData.marked(), "Field %p of an alive obj %p must be alive", field, obj);
-//                }
-//            }
-//        }
-//    }
+    checkMarkCorrectness(objectFactoryIterable);
 
     mm::ResumeThreads();
     gcHandle.threadsAreResumed();
