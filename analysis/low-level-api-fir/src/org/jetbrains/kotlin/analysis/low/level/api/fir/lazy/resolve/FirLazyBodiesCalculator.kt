@@ -18,16 +18,13 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirLazyBlock
 import org.jetbrains.kotlin.fir.expressions.impl.FirLazyDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.impl.FirLazyExpression
 import org.jetbrains.kotlin.fir.extensions.registeredPluginAnnotations
+import org.jetbrains.kotlin.fir.resolve.transformers.plugin.CompilerRequiredAnnotationsHelper
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.types.FirUserTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.name.StandardClassIds.Annotations.Deprecated
-import org.jetbrains.kotlin.name.StandardClassIds.Annotations.DeprecatedSinceKotlin
-import org.jetbrains.kotlin.name.StandardClassIds.Annotations.JvmRecord
-import org.jetbrains.kotlin.name.StandardClassIds.Annotations.WasExperimental
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.SinceKotlin
 
 internal object FirLazyBodiesCalculator {
@@ -211,13 +208,9 @@ private data class FirLazyAnnotationTransformerData(
 )
 
 private object FirLazyAnnotationTransformer : FirTransformer<FirLazyAnnotationTransformerData>() {
-    private val COMPILER_ANNOTATION_NAMES: Set<Name> = setOf(
-        Deprecated,
-        DeprecatedSinceKotlin,
-        WasExperimental,
-        JvmRecord,
-        SinceKotlin,
-    ).mapTo(mutableSetOf()) { it.shortClassName }
+    private val COMPILER_ANNOTATION_NAMES: Set<Name> = CompilerRequiredAnnotationsHelper.REQUIRED_ANNOTATIONS
+        .plus(SinceKotlin)
+        .mapTo(mutableSetOf()) { it.shortClassName }
 
     private fun canBeCompilerAnnotation(annotationCall: FirAnnotationCall, session: FirSession): Boolean {
         val annotationTypeRef = annotationCall.annotationTypeRef
