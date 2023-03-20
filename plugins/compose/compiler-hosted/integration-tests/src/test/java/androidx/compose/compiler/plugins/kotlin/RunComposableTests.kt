@@ -94,6 +94,264 @@ class RunComposableTests : AbstractCodegenTest() {
         }
     }
 
+    @Test
+    fun testExpectWithGetExpectedPropertyInDefaultValueExpression() {
+        runCompose(
+            testFunBody = """
+                ExpectComposable { value ->
+                    results["defaultValue"] = value
+                }
+                ExpectComposable({ expectedProperty + expectedProperty.reversed() }) { value ->
+                    results["anotherValue"] = value
+                }
+            """.trimIndent(),
+            files = mapOf(
+                "Expect.kt" to """
+                    import androidx.compose.runtime.*
+
+                    expect val expectedProperty: String
+
+                    @Composable
+                    expect fun ExpectComposable(
+                        value: () -> String = { expectedProperty },
+                        content: @Composable (v: String) -> Unit
+                    )
+                """.trimIndent(),
+                "Actual.kt" to """
+                    import androidx.compose.runtime.*
+
+                    actual val expectedProperty = "actualExpectedProperty"
+
+                    @Composable
+                    actual fun ExpectComposable(
+                        value: () -> String,
+                        content: @Composable (v: String) -> Unit
+                    ) {
+                        content(value())
+                    }
+                """.trimIndent()
+            )
+        ) { results ->
+            assertEquals("actualExpectedProperty", results["defaultValue"])
+            assertEquals(
+                "actualExpectedProperty" + "actualExpectedProperty".reversed(),
+                results["anotherValue"]
+            )
+        }
+    }
+
+    @Test
+    fun testExpectWithComposableExpressionInDefaultValue() {
+        runCompose(
+            testFunBody = """
+                ExpectComposable { value ->
+                    results["defaultValue"] = value
+                }
+                ExpectComposable("anotherValue") { value ->
+                    results["anotherValue"] = value
+                }
+            """.trimIndent(),
+            files = mapOf(
+                "Expect.kt" to """
+                    import androidx.compose.runtime.*
+
+                    @Composable
+                    fun defaultValueComposable(): String {
+                        return "defaultValueComposable"
+                    }
+
+                    @Composable
+                    expect fun ExpectComposable(
+                        value: String = defaultValueComposable(),
+                        content: @Composable (v: String) -> Unit
+                    )
+                """.trimIndent(),
+                "Actual.kt" to """
+                    import androidx.compose.runtime.*
+
+                    @Composable
+                    actual fun ExpectComposable(
+                        value: String,
+                        content: @Composable (v: String) -> Unit
+                    ) {
+                        content(value)
+                    }
+                """.trimIndent()
+            )
+        ) { results ->
+            assertEquals("defaultValueComposable", results["defaultValue"])
+            assertEquals("anotherValue", results["anotherValue"])
+        }
+    }
+
+    @Test
+    fun testExpectWithTypedParameter() {
+        runCompose(
+            testFunBody = """
+                ExpectComposable<String>("aeiouy") { value ->
+                    results["defaultValue"] = value
+                }
+                ExpectComposable<String>("aeiouy", { "anotherValue" }) { value ->
+                    results["anotherValue"] = value
+                }
+            """.trimIndent(),
+            files = mapOf(
+                "Expect.kt" to """
+                    import androidx.compose.runtime.*
+
+                    @Composable
+                    expect fun <T> ExpectComposable(
+                        value: T,
+                        composeValue: @Composable () -> T = { value },
+                        content: @Composable (T) -> Unit
+                    )
+                """.trimIndent(),
+                "Actual.kt" to """
+                    import androidx.compose.runtime.*
+
+                    @Composable
+                    actual fun <T> ExpectComposable(
+                        value: T,
+                        composeValue: @Composable () -> T,
+                        content: @Composable (T) -> Unit
+                    ) {
+                        content(composeValue())
+                    }
+                """.trimIndent()
+            )
+        ) { results ->
+            assertEquals("aeiouy", results["defaultValue"])
+            assertEquals("anotherValue", results["anotherValue"])
+        }
+    }
+
+    @Test
+    fun testExpectWithRememberInDefaultValueExpression() {
+        runCompose(
+            testFunBody = """
+                ExpectComposable { value ->
+                    results["defaultValue"] = value
+                }
+                ExpectComposable(remember { "anotherRememberedValue" }) { value ->
+                    results["anotherValue"] = value
+                }
+            """.trimIndent(),
+            files = mapOf(
+                "Expect.kt" to """
+                    import androidx.compose.runtime.*
+
+                    @Composable
+                    expect fun ExpectComposable(
+                        value: String = remember { "rememberedDefaultValue" },
+                        content: @Composable (v: String) -> Unit
+                    )
+                """.trimIndent(),
+                "Actual.kt" to """
+                    import androidx.compose.runtime.*
+
+                    @Composable
+                    actual fun ExpectComposable(
+                        value: String,
+                        content: @Composable (v: String) -> Unit
+                    ) {
+                        content(value)
+                    }
+                """.trimIndent()
+            )
+        ) { results ->
+            assertEquals("rememberedDefaultValue", results["defaultValue"])
+            assertEquals("anotherRememberedValue", results["anotherValue"])
+        }
+    }
+
+    @Test
+    fun testExpectWithDefaultValueUsingAnotherArgument() {
+        runCompose(
+            testFunBody = """
+                ExpectComposable("AbccbA") { value ->
+                    results["defaultValue"] = value
+                }
+                ExpectComposable("123", { s -> s + s.reversed() }) { value ->
+                    results["anotherValue"] = value
+                }
+            """.trimIndent(),
+            files = mapOf(
+                "Expect.kt" to """
+                    import androidx.compose.runtime.*
+
+                    @Composable
+                    expect fun ExpectComposable(
+                        value: String,
+                        composeText: (String) -> String = { value },
+                        content: @Composable (v: String) -> Unit
+                    )
+                """.trimIndent(),
+                "Actual.kt" to """
+                    import androidx.compose.runtime.*
+
+                    @Composable
+                    actual fun ExpectComposable(
+                        value: String,
+                        composeText: (String) -> String,
+                        content: @Composable (v: String) -> Unit
+                    ) {
+                        content(composeText(value))
+                    }
+                """.trimIndent()
+            )
+        ) { results ->
+            assertEquals("AbccbA", results["defaultValue"])
+            assertEquals("123321", results["anotherValue"])
+        }
+    }
+
+    @Test
+    fun testNonComposableFunWithComposableParam() {
+        runCompose(
+            testFunBody = """
+                savedContentLambda = null
+                ExpectFunWithComposableParam { value ->
+                    results["defaultValue"] = value
+                }
+                savedContentLambda!!.invoke()
+
+                savedContentLambda = null
+                ExpectFunWithComposableParam("3.14") { value ->
+                    results["anotherValue"] = value
+                }
+                savedContentLambda!!.invoke()
+            """.trimIndent(),
+            files = mapOf(
+                "Expect.kt" to """
+                    import androidx.compose.runtime.*
+
+                    var savedContentLambda: (@Composable () -> Unit)? = null
+
+                    expect fun ExpectFunWithComposableParam(
+                        value: String = "000",
+                        content: @Composable (v: String) -> Unit
+                    )
+                """.trimIndent(),
+                "Actual.kt" to """
+                    import androidx.compose.runtime.*
+
+                    @Composable
+                    actual fun ExpectFunWithComposableParam(
+                        value: String,
+                        content: @Composable (v: String) -> Unit
+                    ) {
+                        savedContentLambda = {
+                            content(value)
+                        }
+                    }
+                """.trimIndent()
+            )
+        ) { results ->
+            assertEquals("000", results["defaultValue"])
+            assertEquals("3.14", results["anotherValue"])
+        }
+    }
+
     // This method was partially borrowed/copy-pasted from RobolectricComposeTester
     // where some of the code was commented out. Those commented out parts are needed here.
     private fun runCompose(
