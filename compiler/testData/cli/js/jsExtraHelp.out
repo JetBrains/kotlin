@@ -40,7 +40,9 @@ where advanced options include:
   -Xir-safe-external-boolean-diagnostic={log|exception}
                              Enable runtime diagnostics when access safely to boolean in external declarations
   -Xmetadata-only            Generate *.meta.js and *.kjsm files only
-  -Xpartial-linkage          Allow unlinked symbols
+  -Xpartial-linkage          Enable partial linkage mode
+  -Xpartial-linkage-loglevel={info|warning|error}
+                             Partial linkage compile-time log level
   -Xstrict-implicit-export-types Generate strict types for implicitly exported entities inside d.ts files. Available in IR backend only.
   -Xtyped-arrays             Translate primitive arrays to JS typed arrays
   -Xes-classes               Generated JavaScript will use ES2015 classes.
