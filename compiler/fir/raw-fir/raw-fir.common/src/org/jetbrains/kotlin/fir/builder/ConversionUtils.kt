@@ -34,8 +34,14 @@ import org.jetbrains.kotlin.fir.references.builder.buildDelegateFieldReference
 import org.jetbrains.kotlin.fir.references.builder.buildImplicitThisReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
-import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.ConeStarProjection
+import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -141,6 +147,9 @@ fun IElementType.toUnaryName(): Name? {
 }
 
 fun IElementType.toFirOperation(): FirOperation =
+    toFirOperationOrNull() ?: error("Cannot convert element type to FIR operation: $this")
+
+fun IElementType.toFirOperationOrNull(): FirOperation? =
     when (this) {
         KtTokens.LT -> FirOperation.LT
         KtTokens.GT -> FirOperation.GT
@@ -161,7 +170,7 @@ fun IElementType.toFirOperation(): FirOperation =
         KtTokens.AS_KEYWORD -> FirOperation.AS
         KtTokens.AS_SAFE -> FirOperation.SAFE_AS
 
-        else -> throw AssertionError(this.toString())
+        else -> null
     }
 
 fun FirExpression.generateNotNullOrOther(

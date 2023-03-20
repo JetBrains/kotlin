@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.DuplicatedFirSourceElementsException
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isErrorElement
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.builder.toFirOperationOrNull
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildConstExpression
 import org.jetbrains.kotlin.fir.references.*
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.fir.types.FirUserTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 import org.jetbrains.kotlin.types.ConstantValueKind
@@ -147,15 +149,31 @@ internal open class FirElementsRecorder : FirVisitor<Unit, MutableMap<KtElement,
     private fun FirElement.isReadInCompoundCall(): Boolean {
         if (this is FirPropertyAccessExpression) return true
         if (this !is FirFunctionCall) return false
-        val name = (calleeReference as? FirResolvedNamedReference)?.name
+        val name = (calleeReference as? FirResolvedNamedReference)?.name ?: getFallbackCompoundCalleeName()
         return name == OperatorNameConventions.GET
     }
 
     private fun FirElement.isWriteInCompoundCall(): Boolean {
         if (this is FirVariableAssignment) return true
         if (this !is FirFunctionCall) return false
-        val name = (calleeReference as? FirResolvedNamedReference)?.name
+        val name = (calleeReference as? FirResolvedNamedReference)?.name ?: getFallbackCompoundCalleeName()
         return name == OperatorNameConventions.SET || name in OperatorNameConventions.ASSIGNMENT_OPERATIONS
+    }
+
+    /**
+     * If the callee reference is not a [FirResolvedNamedReference], we can get the compound callee name from the source instead. For
+     * example, if the callee reference is a [FirErrorNamedReference] with an unresolved name `plusAssign`, the operation element type from
+     * the source will be `KtTokens.PLUSEQ`, which can be transformed to `plusAssign`.
+     */
+    private fun FirElement.getFallbackCompoundCalleeName(): Name? {
+        val psi = source.psi as? KtOperationExpression ?: return null
+        val operationReference = psi.operationReference
+        return operationReference.getAssignmentOperationName() ?: operationReference.getReferencedNameAsName()
+    }
+
+    private fun KtSimpleNameExpression.getAssignmentOperationName(): Name? {
+        val firOperation = getReferencedNameElementType().toFirOperationOrNull() ?: return null
+        return FirOperationNameConventions.ASSIGNMENTS[firOperation]
     }
 
     private val FirConstExpression<*>.isConverted: Boolean
