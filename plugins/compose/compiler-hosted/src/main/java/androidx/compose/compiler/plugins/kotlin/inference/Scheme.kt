@@ -417,3 +417,24 @@ private class SchemeStringSerializationReader(private val value: String) {
         }
     }
 }
+
+internal fun Scheme.mergeWith(schemes: List<Scheme>): Scheme {
+    if (schemes.isEmpty()) return this
+
+    val lazyScheme = LazyScheme(this)
+    val bindings = lazyScheme.bindings
+
+    fun unifySchemes(a: LazyScheme, b: LazyScheme) {
+        bindings.unify(a.target, b.target)
+        for ((ap, bp) in a.parameters.zip(b.parameters)) {
+            unifySchemes(ap, bp)
+        }
+    }
+
+    schemes.forEach {
+        val overrideScheme = LazyScheme(it, bindings = lazyScheme.bindings)
+        unifySchemes(lazyScheme, overrideScheme)
+    }
+
+    return lazyScheme.toScheme()
+}

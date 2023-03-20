@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package androidx.compose.compiler.plugins.kotlin
+package androidx.compose.compiler.plugins.kotlin.k1
 
-import androidx.compose.compiler.plugins.kotlin.analysis.ComposeWritableSlices
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionalType
 import org.jetbrains.kotlin.container.StorageComponentContainer
@@ -160,7 +159,7 @@ open class ComposableCallChecker :
                     val arg = getArgumentDescriptor(node.functionLiteral, bindingContext)
                     if (arg?.type?.hasDisallowComposableCallsAnnotation() == true) {
                         context.trace.record(
-                            ComposeWritableSlices.LAMBDA_CAPABLE_OF_COMPOSER_CAPTURE,
+                            FrontendWritableSlices.LAMBDA_CAPABLE_OF_COMPOSER_CAPTURE,
                             descriptor,
                             false
                         )
@@ -187,7 +186,7 @@ open class ComposableCallChecker :
                         // since the function is inlined, we continue going up the PSI tree
                         // until we find a composable context. We also mark this lambda
                         context.trace.record(
-                            ComposeWritableSlices.LAMBDA_CAPABLE_OF_COMPOSER_CAPTURE,
+                            FrontendWritableSlices.LAMBDA_CAPABLE_OF_COMPOSER_CAPTURE,
                             descriptor,
                             true
                         )
@@ -381,7 +380,7 @@ open class ComposableCallChecker :
 
                 if (!expectedComposable && isComposable) {
                     val inferred = c.trace.bindingContext[
-                        ComposeWritableSlices.INFERRED_COMPOSABLE_DESCRIPTOR,
+                        FrontendWritableSlices.INFERRED_COMPOSABLE_DESCRIPTOR,
                         descriptor
                     ] == true
                     if (inferred) {
@@ -524,7 +523,7 @@ fun CallableDescriptor.isComposableCallable(bindingContext: BindingContext): Boo
     if (isMarkedAsComposable()) return true
     if (
         this is FunctionDescriptor &&
-        bindingContext[ComposeWritableSlices.INFERRED_COMPOSABLE_DESCRIPTOR, this] == true
+        bindingContext[FrontendWritableSlices.INFERRED_COMPOSABLE_DESCRIPTOR, this] == true
     ) {
         // even though it's not marked, it is inferred as so by the type system (by being passed
         // into a parameter marked as composable or a variable typed as one. This isn't much
@@ -543,7 +542,7 @@ fun CallableDescriptor.isComposableCallable(bindingContext: BindingContext): Boo
     val lambdaExpr = functionLiteral.parent as? KtLambdaExpression
     if (
         lambdaExpr != null &&
-        bindingContext[ComposeWritableSlices.INFERRED_COMPOSABLE_LITERAL, lambdaExpr] == true
+        bindingContext[FrontendWritableSlices.INFERRED_COMPOSABLE_LITERAL, lambdaExpr] == true
     ) {
         // this lambda was marked as inferred to be composable
         return true
@@ -559,7 +558,7 @@ fun FunctionDescriptor.allowsComposableCalls(bindingContext: BindingContext): Bo
     // otherwise, this is only true if it is a lambda which can be capable of composer
     // capture
     return bindingContext[
-        ComposeWritableSlices.LAMBDA_CAPABLE_OF_COMPOSER_CAPTURE,
+        FrontendWritableSlices.LAMBDA_CAPABLE_OF_COMPOSER_CAPTURE,
         this
     ] == true
 }
