@@ -212,3 +212,43 @@ public actual annotation class JsExport {
 @SinceKotlin("1.6")
 @Deprecated("This annotation is a temporal migration assistance and may be removed in the future releases, please consider filing an issue about the case where it is needed")
 public annotation class EagerInitialization
+
+
+/**
+ * When placed on an external interface or class, requires all its child
+ * interfaces, classes, and objects to be external as well.
+ *
+ * The compiler mangles identifiers of functions and properties from non-external interfaces and classes,
+ * and doesn't mangle from external ones. Requiring external interfaces and classes inheritors being external
+ * is necessary to avoid non-obvious bugs when identifier naming in an inheritor doesn't correspond to
+ * naming in the base class or interface.
+ *
+ * Example:
+ *
+ * ```kotlin
+ * // From kotlin-wrappers
+ * external interface Props {
+ *     var key: Key?
+ * }
+ *
+ * // User code
+ * @OptIn(ExperimentalStdlibApi::class)
+ * @JsExternalInheritorsOnly
+ * external interface LayoutProps : Props {
+ *     var layout: Layout?
+ * }
+ *
+ * external interface ComponentProps : LayoutProps // OK
+ *
+ * external interface ComponentA : ComponentProps // OK
+ *
+ * interface ComponentB : ComponentProps // Compilation error!
+ * ```
+ *
+ * This annotation is experimental, meaning that the restrictions mentioned above are subject to change.
+ */
+@ExperimentalStdlibApi
+@Retention(AnnotationRetention.BINARY)
+@Target(CLASS)
+@SinceKotlin("1.9")
+public annotation class JsExternalInheritorsOnly

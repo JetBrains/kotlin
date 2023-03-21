@@ -109,6 +109,11 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
 
         put(ErrorsJs.NON_CONSUMABLE_EXPORTED_IDENTIFIER, "Exported declaration contains non-consumable identifier '${0}', that can't be represented inside TS definitions and ESM", STRING)
 
+        put(ErrorsJs.JS_EXTERNAL_INHERITORS_ONLY,
+            "External {0} can''t be a parent of non-external {1}",
+            Renderers.DECLARATION_NAME_WITH_KIND,
+            Renderers.DECLARATION_NAME_WITH_KIND)
+
         this
     }
 }

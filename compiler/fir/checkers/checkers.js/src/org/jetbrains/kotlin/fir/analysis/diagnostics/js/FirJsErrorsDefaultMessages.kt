@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.IMPLEMENTING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.INLINE_CLASS_IN_EXTERNAL_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.INLINE_CLASS_IN_EXTERNAL_DECLARATION_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.ENUM_CLASS_IN_EXTERNAL_DECLARATION_WARNING
+import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_EXTERNAL_INHERITORS_ONLY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.INLINE_EXTERNAL_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_MODULE_PROHIBITED_ON_NON_NATIVE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_MODULE_PROHIBITED_ON_VAR
@@ -152,6 +153,12 @@ object FirJsErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             NON_EXTERNAL_DECLARATION_IN_INAPPROPRIATE_FILE,
             "Can''t put non-external declarations in file marked with {0} annotation",
             FirDiagnosticRenderers.RENDER_TYPE
+        )
+        map.put(
+            JS_EXTERNAL_INHERITORS_ONLY,
+            "External {0} can''t be a parent of non-external {1}",
+            FirDiagnosticRenderers.RENDER_CLASS_OR_OBJECT_NAME,
+            FirDiagnosticRenderers.RENDER_CLASS_OR_OBJECT_NAME
         )
         map.put(JS_NAME_PROHIBITED_FOR_EXTENSION_PROPERTY, "@JsName is prohibited for extension properties")
         map.put(JS_NAME_IS_NOT_ON_ALL_ACCESSORS, "@JsName should be on all the property accessors")

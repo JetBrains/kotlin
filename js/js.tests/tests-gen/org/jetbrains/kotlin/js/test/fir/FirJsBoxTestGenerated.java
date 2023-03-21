@@ -2458,6 +2458,12 @@ public class FirJsBoxTestGenerated extends AbstractFirJsBoxTest {
             }
 
             @Test
+            @TestMetadata("jsExternalInheritorsOnly.kt")
+            public void testJsExternalInheritorsOnly() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/jsModule/jsExternalInheritorsOnly.kt");
+            }
+
+            @Test
             @TestMetadata("topLevelVarargFun.kt")
             public void testTopLevelVarargFun() throws Exception {
                 runTest("js/js.translator/testData/box/esModules/jsModule/topLevelVarargFun.kt");

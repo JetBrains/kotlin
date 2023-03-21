@@ -46,6 +46,7 @@ public final class AnnotationsUtils {
     private static final FqName JS_MODULE_ANNOTATION = Annotations.JsModule.asSingleFqName();
     private static final FqName JS_NON_MODULE_ANNOTATION = Annotations.JsNonModule.asSingleFqName();
     private static final FqName JS_QUALIFIER_ANNOTATION = Annotations.JsQualifier.asSingleFqName();
+    private static final FqName JS_EXTERNAL_INHERITORS_ONLY = Annotations.JsExternalInheritorsOnly.asSingleFqName();
 
     private AnnotationsUtils() {
     }
@@ -256,6 +257,10 @@ public final class AnnotationsUtils {
         return CollectionsKt.any(getContainingFileAnnotations(bindingContext, declaration), annotation ->
                 JS_NON_MODULE_ANNOTATION.equals(annotation.getFqName())
         );
+    }
+
+    public static boolean isJsExternalInheritorsOnly(@NotNull ClassDescriptor declaration) {
+        return declaration.getAnnotations().hasAnnotation(JS_EXTERNAL_INHERITORS_ONLY);
     }
 
     @Nullable
