@@ -377,7 +377,7 @@ object FirFakeOverrideGenerator {
             )
             deprecationsProvider = baseProperty.deprecationsProvider
 
-            getter = baseProperty.getter?.buildCopy(
+            getter = baseProperty.getter?.buildCopyIfNeeded(
                 moduleData = session.moduleData,
                 origin = origin,
                 propertyReturnTypeRef = this@buildProperty.returnTypeRef,
@@ -387,7 +387,7 @@ object FirFakeOverrideGenerator {
                 baseProperty = baseProperty,
             )
 
-            setter = baseProperty.setter?.buildCopy(
+            setter = baseProperty.setter?.buildCopyIfNeeded(
                 moduleData = session.moduleData,
                 origin = origin,
                 propertyReturnTypeRef = this@buildProperty.returnTypeRef,
@@ -399,6 +399,27 @@ object FirFakeOverrideGenerator {
         }.apply {
             containingClassForStaticMemberAttr = derivedClassLookupTag.takeIf { shouldOverrideSetContainingClass(baseProperty) }
         }
+    }
+
+    private fun FirPropertyAccessor.buildCopyIfNeeded(
+        moduleData: FirModuleData,
+        origin: FirDeclarationOrigin,
+        propertyReturnTypeRef: FirTypeRef,
+        propertySymbol: FirPropertySymbol,
+        dispatchReceiverType: ConeSimpleKotlinType?,
+        derivedClassLookupTag: ConeClassLikeLookupTag?,
+        baseProperty: FirProperty,
+    ) = when {
+        annotations.isNotEmpty() || visibility != baseProperty.visibility -> buildCopy(
+            moduleData,
+            origin,
+            propertyReturnTypeRef,
+            propertySymbol,
+            dispatchReceiverType,
+            derivedClassLookupTag,
+            baseProperty,
+        )
+        else -> null
     }
 
     private fun FirPropertyAccessor.buildCopy(
