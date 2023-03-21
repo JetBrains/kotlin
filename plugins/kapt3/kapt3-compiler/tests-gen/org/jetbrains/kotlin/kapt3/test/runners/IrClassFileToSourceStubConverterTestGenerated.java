@@ -632,6 +632,12 @@ public class IrClassFileToSourceStubConverterTestGenerated extends AbstractIrCla
     }
 
     @Test
+    @TestMetadata("unresolvedDelegateExpression.kt")
+    public void testUnresolvedDelegateExpression() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/unresolvedDelegateExpression.kt");
+    }
+
+    @Test
     @TestMetadata("unsafePropertyInitializers.kt")
     public void testUnsafePropertyInitializers() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/unsafePropertyInitializers.kt");
