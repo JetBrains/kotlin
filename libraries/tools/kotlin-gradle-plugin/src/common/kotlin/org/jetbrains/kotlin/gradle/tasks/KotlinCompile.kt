@@ -30,7 +30,9 @@ import org.jetbrains.kotlin.compilerRunner.IncrementalCompilationEnvironment
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptionsHelper
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
+import org.jetbrains.kotlin.gradle.dsl.usesK2
 import org.jetbrains.kotlin.gradle.internal.CompilerArgumentsContributor
 import org.jetbrains.kotlin.gradle.internal.KotlinJvmCompilerArgumentsContributor
 import org.jetbrains.kotlin.gradle.internal.compilerArgumentsConfigurationFlags
@@ -38,25 +40,25 @@ import org.jetbrains.kotlin.gradle.internal.tasks.allOutputFiles
 import org.jetbrains.kotlin.gradle.logging.GradleErrorMessageCollector
 import org.jetbrains.kotlin.gradle.logging.GradlePrintingMessageCollector
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.ArgumentType
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.create
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.report.BuildReportMode
 import org.jetbrains.kotlin.gradle.tasks.internal.KotlinJvmOptionsCompat
 import org.jetbrains.kotlin.gradle.utils.*
-import org.jetbrains.kotlin.gradle.utils.chainedDisallowChanges
-import org.jetbrains.kotlin.gradle.utils.newInstance
-import org.jetbrains.kotlin.gradle.utils.property
-import org.jetbrains.kotlin.gradle.utils.propertyWithNewInstance
 import org.jetbrains.kotlin.incremental.ClasspathChanges
 import org.jetbrains.kotlin.incremental.ClasspathChanges.*
 import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnabled.*
 import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun.NoChanges
 import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun.ToBeComputedByIncrementalCompiler
 import org.jetbrains.kotlin.incremental.ClasspathSnapshotFiles
+import org.jetbrains.kotlin.incremental.classpathAsList
+import org.jetbrains.kotlin.incremental.destinationAsFile
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import java.io.File
 import javax.inject.Inject
-import kotlin.text.appendLine
 
 @CacheableTask
 abstract class KotlinCompile @Inject constructor(
@@ -67,6 +69,7 @@ abstract class KotlinCompile @Inject constructor(
     K2MultiplatformCompilationTask,
     @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") KotlinJvmCompileDsl,
     KotlinCompilationTask<KotlinJvmCompilerOptions>,
+    KotlinCompilerArgumentsProducer,
     UsesKotlinJavaToolchain {
 
     @get:Internal // covered by compiler options
@@ -250,6 +253,67 @@ abstract class KotlinCompile @Inject constructor(
         KotlinJvmCompilerArgumentsContributor(KotlinJvmCompilerArgumentsProvider(this))
     }
 
+    override fun createCompilerArguments(
+        context: KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext
+    ): K2JVMCompilerArguments = context.create<K2JVMCompilerArguments> {
+        contribute(ArgumentType.Primitive) { args ->
+            args.allowNoSourceFiles = true
+
+            args.multiPlatform = multiPlatformEnabled.get()
+
+            args.pluginOptions = (pluginOptions.toSingleCompilerPluginOptions() + kotlinPluginData?.orNull?.options)
+                .arguments.toTypedArray()
+
+            args.moduleName = compilerOptions.moduleName.orNull
+
+            args.destinationAsFile = destinationDirectory.get().asFile
+
+            args.javaPackagePrefix = javaPackagePrefix
+
+
+            if (compilerOptions.usesK2.get()) {
+                args.fragments = multiplatformStructure.fragmentsCompilerArgs
+                args.fragmentRefines = multiplatformStructure.fragmentRefinesCompilerArgs
+            }
+
+            if (reportingSettings().buildReportMode == BuildReportMode.VERBOSE) {
+                args.reportPerf = true
+            }
+
+            KotlinJvmCompilerOptionsHelper.fillCompilerArguments(compilerOptions, args)
+
+            val localExecutionTimeFreeCompilerArgs = executionTimeFreeCompilerArgs
+            if (localExecutionTimeFreeCompilerArgs != null) {
+                args.freeArgs = localExecutionTimeFreeCompilerArgs
+            }
+        }
+
+        contribute(ArgumentType.PluginClasspath) { args ->
+            args.pluginClasspaths = tryLenient {
+                listOfNotNull(
+                    pluginClasspath, kotlinPluginData?.orNull?.classpath
+                ).reduce(FileCollection::plus).toPathsArray()
+            }
+        }
+
+        contribute(ArgumentType.DependencyClasspath) { args ->
+            args.friendPaths = friendPaths.toPathsArray()
+            args.classpathAsList = tryLenient {
+                libraries.toList().filter { it.exists() }
+            }.orEmpty()
+        }
+
+        contribute(ArgumentType.Sources) { args ->
+            if (compilerOptions.usesK2.get()) {
+                args.fragmentSources = multiplatformStructure.fragmentSourcesCompilerArgs
+            } else {
+                args.commonSources = commonSourceSet.asFileTree.toPathsArray()
+            }
+
+            args.freeArgs += (scriptSources.asFileTree.files + javaSources.files + sources.asFileTree.files).map { it.absolutePath }
+        }
+    }
+
     override fun callCompilerAsync(
         args: K2JVMCompilerArguments,
         kotlinSources: Set<File>,
@@ -297,8 +361,6 @@ abstract class KotlinCompile @Inject constructor(
         logger.info("Script source files: ${scriptSources.joinToString()}")
         logger.info("Script file extensions: ${scriptExtensions.get().joinToString()}")
         compilerRunner.runJvmCompilerAsync(
-            (kotlinSources + scriptSources + javaSources).toList(),
-            javaPackagePrefix,
             args,
             environment,
             defaultKotlinJavaToolchain.get().buildJvm.get().javaHome,
