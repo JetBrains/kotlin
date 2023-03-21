@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.settings.KotlinNativeTarg
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.SimpleTestDirectories
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.*
+import org.jetbrains.kotlin.test.Directives
 import org.jetbrains.kotlin.utils.DFS
 import org.junit.jupiter.api.Tag
 import java.io.File
@@ -42,7 +43,7 @@ abstract class AbstractNativeKlibBinaryCompatibilityTest : AbstractNativeSimpleT
     private fun buildKlib(
         binaryCompatibilityTestModule: BinaryCompatibilityTestModule,
         version: Int
-    ) {
+    ): LibraryCompilation {
         val module = binaryCompatibilityTestModule.toLightDependencyWithVersion(version)
         val moduleDependencies = collectDependencies(
             binaryCompatibilityTestModule.dependenciesSymbols,
@@ -63,6 +64,7 @@ abstract class AbstractNativeKlibBinaryCompatibilityTest : AbstractNativeSimpleT
         compilation.trigger()
 
         updateModule(module, moduleDependencies)
+        return compilation
     }
 
     private fun buildAndExecuteBinary(
@@ -71,20 +73,20 @@ abstract class AbstractNativeKlibBinaryCompatibilityTest : AbstractNativeSimpleT
     ) {
         val binaryVersion = moduleVersions.values.maxOrNull() ?: 2
 
-        buildKlib(mainTestModule, binaryVersion)
-
         val (binarySourceDir, binaryOutputDir) = listOf(BINARY_SOURCE_DIR_NAME, BINARY_OUTPUT_DIR_NAME).map {
             buildDir.resolve(LAUNCHER_MODULE_NAME).resolve(it).apply { mkdirs() }
         }
 
-        val launcherModule = LightDependencyWithVersion(LAUNCHER_MODULE_NAME, binaryVersion).apply {
-            module.files += TestFile.createUncommitted(
-                location = binarySourceDir.resolve(LAUNCHER_FILE_NAME),
-                module = module,
-                text = generateBoxFunctionLauncher("box", expectedResult)
-            )
-        }
-        val launcherDependencies = collectDependencies(mainTestModule.name, binaryVersion)
+        // insert launcher into main module sources
+        org.jetbrains.kotlin.compatibility.binary.TestFile(
+            fileName = binarySourceDir.resolve(LAUNCHER_FILE_NAME).absolutePath,
+            module = mainTestModule,
+            text = generateBoxFunctionLauncher("box", expectedResult),
+            directives = Directives()
+        )
+        val mainLibraryCompilation = buildKlib(mainTestModule, binaryVersion)
+
+        val mainModuleDependencies = collectDependencies(mainTestModule.name, binaryVersion)
         val executableFile = binaryOutputDir.resolve(
             "app." + testRunSettings.get<KotlinNativeTargets>().testTarget.family.exeSuffix
         )
@@ -98,16 +100,22 @@ abstract class AbstractNativeKlibBinaryCompatibilityTest : AbstractNativeSimpleT
             emptyList()
         }
 
-        val testCase = mkTestCase(launcherModule, COMPILER_ARGS_FOR_STATIC_CACHE_AND_EXECUTABLE)
+        val testCase = mkTestCase(mainTestModule.toLightDependencyWithVersion(binaryVersion), COMPILER_ARGS_FOR_STATIC_CACHE_AND_EXECUTABLE)
 
+        val includedLibraryDependencies = listOf(mainLibraryCompilation.toCompiledDependency())
+        val libraryDependencies = mainModuleDependencies
+            .filter {
+                // exclude main module from Library dependencies, since it will be used as IncludedLibrary dependency
+                it != LightDependencyWithVersion(mainTestModule.name, binaryVersion)
+            }.map {
+                it.klibFile.toKlib().toDependency()
+            }
         val compilation = ExecutableCompilation(
             settings = testRunSettings,
             freeCompilerArgs = testCase.freeCompilerArgs,
-            sourceModules = testCase.modules,
+            sourceModules = setOf(),  // Fir pipeline requires no sources for executable compilation, see KT-56855
             extras = testCase.extras,
-            dependencies = launcherDependencies.map {
-                it.klibFile.toKlib().toDependency()
-            } + cachedDependencies,
+            dependencies = libraryDependencies + cachedDependencies + includedLibraryDependencies,
             expectedArtifact = TestCompilationArtifact.Executable(executableFile)
         )
 
@@ -283,6 +291,8 @@ private fun File.toStaticCacheArtifact() = KLIBStaticCache(
     klib = KLIB(this)
 )
 
+private fun TestCompilation<KLIB>.toCompiledDependency() =
+    CompiledDependency(this, TestCompilationDependencyType.IncludedLibrary)
 private fun KLIB.toDependency() =
     ExistingDependency(this, TestCompilationDependencyType.Library)
 private fun KLIBStaticCache.toDependency() =
