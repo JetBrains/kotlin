@@ -42,6 +42,9 @@ object JsStandardClassIds {
         val JsExport = "JsExport".jsId()
 
         @JvmField
+        val JsExternalInheritorsOnly = "JsExternalInheritorsOnly".jsId()
+
+        @JvmField
         val JsExportIgnore = ClassId(JsExport.asSingleFqName(), Name.identifier("Ignore"))
 
         @JvmField

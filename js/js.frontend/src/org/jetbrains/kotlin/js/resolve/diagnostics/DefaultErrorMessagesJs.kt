@@ -110,6 +110,11 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
 
         put(ErrorsJs.WRONG_OPERATION_WITH_EXTERNAL_ENUM, "Wrong operation with external enum")
 
+        put(ErrorsJs.JS_EXTERNAL_INHERITORS_ONLY,
+            "External {0} can''t be a parent of non-external {1}",
+            Renderers.DECLARATION_NAME_WITH_KIND,
+            Renderers.DECLARATION_NAME_WITH_KIND)
+
         this
     }
 }
