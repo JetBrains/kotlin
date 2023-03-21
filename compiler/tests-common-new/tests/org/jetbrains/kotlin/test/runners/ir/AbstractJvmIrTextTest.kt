@@ -3,9 +3,9 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.js.test.ir
+package org.jetbrains.kotlin.test.runners.ir
 
-import org.jetbrains.kotlin.platform.js.JsPlatforms
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
@@ -14,25 +14,21 @@ import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
 import org.jetbrains.kotlin.test.model.*
-import org.jetbrains.kotlin.test.runners.ir.AbstractIrTextTest
-import org.jetbrains.kotlin.test.services.JsLibraryProvider
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
 
-abstract class AbstractJsIrTextTestBase<FrontendOutput : ResultingArtifact.FrontendOutput<FrontendOutput>> :
-    AbstractIrTextTest<FrontendOutput>(JsPlatforms.defaultJsPlatform, TargetBackend.JS_IR) {
+abstract class AbstractJvmIrTextTest<FrontendOutput : ResultingArtifact.FrontendOutput<FrontendOutput>> :
+    AbstractIrTextTest<FrontendOutput>(JvmPlatforms.defaultJvmPlatform, TargetBackend.JVM_IR) {
 
     final override fun TestConfigurationBuilder.applyConfigurators() {
         useConfigurators(
             ::CommonEnvironmentConfigurator,
-            ::JsEnvironmentConfigurator,
+            ::JvmEnvironmentConfigurator
         )
-
-        useAdditionalService(::JsLibraryProvider)
     }
 }
 
-open class AbstractClassicJsIrTextTest : AbstractJsIrTextTestBase<ClassicFrontendOutputArtifact>() {
+open class AbstractClassicJvmIrTextTest : AbstractJvmIrTextTest<ClassicFrontendOutputArtifact>() {
 
     override val frontend: FrontendKind<*>
         get() = FrontendKinds.ClassicFrontend
