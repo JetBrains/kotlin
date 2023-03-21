@@ -147,7 +147,7 @@ open class FirTypeResolveTransformer(
             if (result.isPrimary) {
                 for (valueParameter in result.valueParameters) {
                     if (valueParameter.correspondingProperty != null) {
-                        valueParameter.removeDuplicateAnnotationsOfPrimaryConstructorElement()
+                        valueParameter.removeIrrelevantAnnotations()
                     }
                 }
             }
@@ -219,7 +219,7 @@ open class FirTypeResolveTransformer(
                 unboundCyclesInTypeParametersSupertypes(property)
 
                 if (property.source?.kind == KtFakeSourceElementKind.PropertyFromParameter) {
-                    property.removeDuplicateAnnotationsOfPrimaryConstructorElement()
+                    property.removeIrrelevantAnnotations()
                 }
 
                 calculateDeprecations(property)
@@ -480,28 +480,37 @@ open class FirTypeResolveTransformer(
     }
 
     /**
-     * In a scenario like
-     *
+     * Filters annotations by target.
+     * For example, in the following snippet the annotation may apply to the constructor value parameter, the property or the underlying field:
      * ```
-     * annotation class Ann
      * class Foo(@Ann val x: String)
      * ```
-     *
-     * both, the primary ctor value parameter and the property `x` will be annotated with `@Ann`. This is due to the fact, that the
-     * annotation needs to be resolved in order to determine its annotation targets. We remove annotations from the wrong target if they
-     * don't explicitly specify the use-site target (in which case they shouldn't have been added to the element in the raw FIR).
-     *
-     * For value parameters, we remove the annotation if the targets don't include [AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER].
-     * For properties, we remove the annotation, if the targets include [AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER].
+     * This ambiguity may be resolved by specifying the use-site explicitly, i.e. `@field:Ann` or by analysing the allowed targets from
+     * the [kotlin.annotation.Target] meta-annotation. In latter case, the method will assign a use-site target to the corresponding
+     * annotation.
      */
-    private fun FirVariable.removeDuplicateAnnotationsOfPrimaryConstructorElement() {
-        val isParameter = this is FirValueParameter
-        replaceAnnotations(annotations.filter {
-            it.useSiteTarget != null ||
-                    // equivalent to
-                    // CONSTRUCTOR_PARAMETER in targets && isParameter ||
-                    // CONSTRUCTOR_PARAMETER !in targets && !isParameter
-                    AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER in it.useSiteTargetsFromMetaAnnotation(session) == isParameter
+    private fun FirVariable.removeIrrelevantAnnotations() {
+        replaceAnnotations(annotations.filter { annotation ->
+            when(annotation.useSiteTarget) {
+                null -> {
+                    val allowedTargets = annotation.useSiteTargetsFromMetaAnnotation(session)
+                    when {
+                        this is FirValueParameter -> AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER in allowedTargets
+                        this.source?.kind == KtFakeSourceElementKind.PropertyFromParameter && AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER in allowedTargets -> false
+                        this is FirProperty && AnnotationUseSiteTarget.FIELD in allowedTargets && AnnotationUseSiteTarget.PROPERTY !in allowedTargets && backingField != null -> {
+                            (this as? FirProperty)?.backingField?.replaceAnnotations(backingField!!.annotations + annotation)
+                            false
+                        }
+                        else -> true
+                    }
+                }
+                AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER -> this is FirValueParameter
+                AnnotationUseSiteTarget.FIELD -> {
+                    (this as? FirProperty)?.backingField?.replaceAnnotations(backingField!!.annotations + annotation)
+                    false
+                }
+                else -> true
+            }
         })
     }
 

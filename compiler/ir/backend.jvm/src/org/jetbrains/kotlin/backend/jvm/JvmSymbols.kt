@@ -1135,6 +1135,7 @@ class JvmSymbols(
             KotlinTarget.PROPERTY_GETTER to etMethod,
             KotlinTarget.PROPERTY_SETTER to etMethod,
             KotlinTarget.FIELD to buildEnumEntry(elementTypeEnum, "FIELD"),
+            KotlinTarget.BACKING_FIELD to buildEnumEntry(elementTypeEnum, "FIELD"),
             KotlinTarget.VALUE_PARAMETER to buildEnumEntry(elementTypeEnum, "PARAMETER")
         )
 

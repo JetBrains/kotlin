@@ -62,10 +62,12 @@ class AnnotationGenerator(private val components: Fir2IrComponents) : Fir2IrComp
         val irProperty = irField.correspondingPropertySymbol?.owner ?: throw AssertionError("$irField is not a property field")
 
         val applicableTargets = if (irProperty.isDelegated) delegatedPropertyTargets else propertyTargets
-        irField.annotations += property.annotations.filter {
-            val target = it.target(applicableTargets)
-            target == AnnotationUseSiteTarget.FIELD || target == AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD
-        }.toIrAnnotations()
+        property.backingField?.let {
+            irField.annotations += it.annotations.filter {
+                val target = it.target(applicableTargets)
+                target == AnnotationUseSiteTarget.FIELD || target == AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD
+            }.toIrAnnotations()
+        }
     }
 
     fun generate(propertyAccessor: IrFunction, property: FirProperty) {
