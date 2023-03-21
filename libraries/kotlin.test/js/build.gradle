@@ -5,6 +5,11 @@ apply plugin: 'kotlin-platform-js'
 configurations {
     distJs
     distLibrary
+    [compileClasspath, testCompileClasspath, testRuntimeClasspath].forEach {
+        it.attributes {
+            attribute(org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute.jsCompilerAttribute, org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute.legacy)
+        }
+    }
 }
 
 dependencies {
