@@ -89,13 +89,17 @@ public class KtPropertyAccessor extends KtDeclarationStub<KotlinPropertyAccessor
     @Override
     public KtExpression getBodyExpression() {
         KotlinPropertyAccessorStub stub = getStub();
-        if (stub != null && !stub.hasBody()) {
-            return null;
+        if (stub != null) {
+            if (!stub.hasBody()) {
+                return null;
+            }
+
+            if (getContainingKtFile().isCompiled()) {
+                return null;
+            }
         }
 
-        return AstLoadingFilter.forceAllowTreeLoading(this.getContainingFile(), () ->
-                findChildByClass(KtExpression.class)
-        );
+        return  findChildByClass(KtExpression.class);
     }
 
     @Nullable

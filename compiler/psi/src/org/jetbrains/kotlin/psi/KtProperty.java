@@ -279,9 +279,7 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
             }
         }
 
-        return AstLoadingFilter.forceAllowTreeLoading(this.getContainingFile(), () ->
-                PsiTreeUtil.getNextSiblingOfType(findChildByType(EQ), KtExpression.class)
-        );
+        return PsiTreeUtil.getNextSiblingOfType(findChildByType(EQ), KtExpression.class);
     }
 
     public boolean hasDelegateExpressionOrInitializer() {
