@@ -218,7 +218,7 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
                 A(x)
                 F(x)
                 A(x=x)
-                F(x=x)
+                F(<!NAMED_ARGUMENTS_NOT_ALLOWED!>x<!>=x)
             }
 
         """.trimIndent()
