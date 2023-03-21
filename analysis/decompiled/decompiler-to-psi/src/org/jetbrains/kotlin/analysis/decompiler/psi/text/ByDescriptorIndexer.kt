@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtDeclarationContainer
+import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
@@ -77,7 +78,12 @@ object ByDescriptorIndexer : DecompiledTextIndexer<String> {
 
                 if (declarationContainer != null) {
                     val descriptorName = original.name.asString()
-                    val singleOrNull = declarationContainer.declarations.singleOrNull { it.name == descriptorName }
+                    val singleOrNull = declarationContainer.declarations
+                        .filter { it.name == descriptorName }.singleOrNull { declaration ->
+                            if (original is FunctionDescriptor) {
+                                declaration is KtFunction && declaration.valueParameters.size == original.valueParameters.size
+                            } else true
+                        }
                     if (singleOrNull != null) {
                         return singleOrNull
                     }
