@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.references.impl.FirPropertyFromParameterResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.coneType
@@ -88,6 +89,7 @@ val FirProperty.hasBackingField: Boolean
         if (isAbstract) return false
         if (delegate != null) return false
         if (hasExplicitBackingField) return true
+        if (symbol is FirSyntheticPropertySymbol) return false
         if (isStatic) return false // For Enum.entries
         when (origin) {
             FirDeclarationOrigin.SubstitutionOverride -> return false

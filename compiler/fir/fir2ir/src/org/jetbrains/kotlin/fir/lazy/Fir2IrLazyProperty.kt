@@ -129,7 +129,7 @@ class Fir2IrLazyProperty(
                     }
                 }
             }
-            assumesBackingField && origin != IrDeclarationOrigin.FAKE_OVERRIDE -> {
+            fir.hasBackingField && origin != IrDeclarationOrigin.FAKE_OVERRIDE -> {
                 with(declarationStorage) {
                     createBackingField(
                         fir, IrDeclarationOrigin.PROPERTY_BACKING_FIELD,
@@ -156,9 +156,6 @@ class Fir2IrLazyProperty(
             this.parent = this@Fir2IrLazyProperty.parent
         }
     }
-
-    private val assumesBackingField: Boolean
-        get() = fir.initializer != null || fir.getter is FirDefaultPropertyGetter || fir.isVar && fir.setter is FirDefaultPropertySetter
 
     override var getter: IrSimpleFunction? by lazyVar(lock) {
         val signature = signatureComposer.composeAccessorSignature(

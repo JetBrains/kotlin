@@ -7,7 +7,6 @@ CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB ENUM_CLASS name:JEnum modality:FINAL vis
   FUN IR_EXTERNAL_JAVA_DECLARATION_STUB name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.JEnum
     VALUE_PARAMETER name:value index:0 type:kotlin.String
   PROPERTY IR_EXTERNAL_JAVA_DECLARATION_STUB name:entries visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:entries type:kotlin.enums.EnumEntries<<root>.JEnum> visibility:public [final,static]
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-entries> visibility:public modality:FINAL <> () returnType:kotlin.enums.EnumEntries<<root>.JEnum>
       correspondingProperty: PROPERTY IR_EXTERNAL_JAVA_DECLARATION_STUB name:entries visibility:public modality:FINAL [val]
   FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:<root>.JEnum) returnType:kotlin.Any [fake_override]
