@@ -124,6 +124,7 @@ abstract class KotlinJsDce @Inject constructor(
 
         val outputDirArgs = arrayOf("-output-dir", destinationDirectory.get().asFile.path)
 
+        @Suppress("DEPRECATION_ERROR")
         val processedSerializedArgs = if (shouldPerformIncrementalCopy) {
             var shouldAddStrategyAllArgument = true
             val processedArgs = serializedCompilerArguments

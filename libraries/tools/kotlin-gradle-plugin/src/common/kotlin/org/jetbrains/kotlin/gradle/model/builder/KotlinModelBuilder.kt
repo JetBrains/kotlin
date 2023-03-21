@@ -122,6 +122,7 @@ class KotlinModelBuilder(private val kotlinPluginVersion: String, private val an
             )
         }
 
+        @Suppress("DEPRECATION_ERROR")
         private fun AbstractKotlinCompile<*>.createCompilerArguments(): CompilerArguments {
             return CompilerArgumentsImpl(
                 serializedCompilerArguments,
