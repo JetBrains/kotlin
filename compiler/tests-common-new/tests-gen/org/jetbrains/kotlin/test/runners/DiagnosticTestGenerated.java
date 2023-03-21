@@ -23691,6 +23691,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("lambdasWithDifferentParameterNumber.kt")
+            public void testLambdasWithDifferentParameterNumber() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/overload/lambdasWithDifferentParameterNumber.kt");
+            }
+
+            @Test
             @TestMetadata("LocalFunctions.kt")
             public void testLocalFunctions() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/overload/LocalFunctions.kt");
