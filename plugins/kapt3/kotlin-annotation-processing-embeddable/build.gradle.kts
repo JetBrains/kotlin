@@ -1,7 +1,7 @@
 description = "Annotation Processor for Kotlin (for using with embeddable compiler)"
 
 plugins {
-    java
+    `java-library`
 }
 
 dependencies {
@@ -11,7 +11,5 @@ dependencies {
 publish()
 
 runtimeJar(rewriteDefaultJarDepsToShadedCompiler())
-
 sourcesJar()
-
 javadocJar()

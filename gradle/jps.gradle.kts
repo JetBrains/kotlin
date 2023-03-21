@@ -24,7 +24,6 @@ fun updateCompilerXml() {
         "libraries/tools/gradle",
         "libraries/tools/kotlin-allopen",
         "libraries/tools/kotlin-annotation-processing",
-        "libraries/tools/kotlin-annotation-processing-maven",
         "libraries/tools/kotlin-assignment",
         "libraries/tools/kotlin-bom",
         "libraries/tools/kotlin-gradle-build-metrics",

@@ -87,7 +87,7 @@ class KotlinJvmApiTest : KGPBaseTest() {
                         
                         apiPlugin.addCompilerPluginDependency(
                             project.provider {
-                                "org.jetbrains.kotlin:kotlin-annotation-processing-gradle:${"$"}kotlin_version"
+                                "org.jetbrains.kotlin:kotlin-annotation-processing-embeddable:${"$"}kotlin_version"
                             }
                         )
                         

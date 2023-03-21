@@ -390,7 +390,6 @@ val gradlePluginProjects = listOf(
     ":kotlin-gradle-plugin-kpm-android",
     ":kotlin-gradle-plugin-tcs-android",
     ":kotlin-allopen",
-    ":kotlin-annotation-processing-gradle",
     ":kotlin-noarg",
     ":kotlin-sam-with-receiver",
     ":kotlin-parcelize-compiler",

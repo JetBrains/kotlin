@@ -278,8 +278,6 @@
 /libraries/kotlin-dom-api-compat/ "Kotlin JS"
 /libraries/tools/gradle/ "Kotlin Build Tools"
 /libraries/tools/kotlin-allopen/ "Kotlin Build Tools"
-/libraries/tools/kotlin-annotation-processing/ "Kotlin Build Tools"
-/libraries/tools/kotlin-annotation-processing-maven/ "Kotlin Build Tools"
 /libraries/tools/kotlin-annotations-jvm/ "Kotlin Libraries"
 /libraries/tools/kotlin-assignment/ "Kotlin Build Tools"
 /libraries/tools/kotlin-bom/ "Kotlin Build Infrastructure"

@@ -54,7 +54,7 @@ val kotlinGradlePluginAndItsRequired = arrayOf(
     ":kotlin-tooling-metadata",
     ":kotlin-tooling-core",
     ":kotlin-reflect",
-    ":kotlin-annotation-processing-gradle",
+    ":kotlin-annotation-processing-embeddable",
     ":kotlin-test",
     ":kotlin-gradle-subplugin-example",
     ":kotlin-stdlib-common",
