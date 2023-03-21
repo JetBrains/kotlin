@@ -5,7 +5,7 @@
 
 @file:Suppress("FunctionName")
 
-package org.jetbrains.kotlin.gradle.unitTests
+package org.jetbrains.kotlin.gradle.unitTests.compilerArgumetns
 
 import org.gradle.kotlin.dsl.repositories
 import org.jetbrains.kotlin.cli.common.arguments.Argument

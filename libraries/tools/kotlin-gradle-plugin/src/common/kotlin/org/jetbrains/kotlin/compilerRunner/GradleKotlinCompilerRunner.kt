@@ -92,12 +92,10 @@ internal open class GradleCompilerRunner(
      * @see [GradleKotlinCompilerWork]
      */
     fun runJsCompilerAsync(
-        kotlinSources: List<File>,
         args: K2JSCompilerArguments,
         environment: GradleCompilerEnvironment,
         taskOutputsBackup: TaskOutputsBackup?
     ): WorkQueue? {
-        args.freeArgs += kotlinSources.map { it.absolutePath }
         return runCompilerAsync(KotlinCompilerClass.JS, args, environment, taskOutputsBackup)
     }
 
