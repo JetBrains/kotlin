@@ -22,7 +22,7 @@ fun box() : String {
         y
         return "FAIL 4"
     } catch(t: Error) {
-        if (t.cause != null) return "FAIL 5"
+        // On JVM < 20, t.cause is null, but on JVM >= 20, it's ExceptionInInitializerError.
     }
     return "OK"
 }
