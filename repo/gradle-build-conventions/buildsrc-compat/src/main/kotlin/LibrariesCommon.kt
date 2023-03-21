@@ -7,6 +7,7 @@
 
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.FileCollection
 import org.gradle.api.java.archives.Manifest
 import org.gradle.api.plugins.BasePluginExtension
@@ -20,11 +21,14 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 @JvmOverloads
 fun Project.configureJava9Compilation(
     moduleName: String,
-    moduleOutputs: Collection<FileCollection> = setOf(sourceSets["main"].output)
+    moduleOutputs: Collection<FileCollection> = setOf(sourceSets["main"].output),
+    compileClasspathConfiguration: Configuration = configurations["compileClasspath"],
 ) {
-    configurations["java9CompileClasspath"].extendsFrom(configurations["compileClasspath"])
+    configurations["java9CompileClasspath"].extendsFrom(compileClasspathConfiguration)
 
-    tasks.named("compileJava9Kotlin", KotlinCompile::class.java) {
+    tasks.withType(KotlinCompile::class.java).matching {
+        it.name == "compileJava9Kotlin" || it.name == "compileJava9KotlinJvm"
+    }.configureEach {
         configureTaskToolchain(JdkMajorVersion.JDK_9_0)
         @Suppress("DEPRECATION")
         kotlinOptions.jvmTarget = JdkMajorVersion.JDK_9_0.targetName
