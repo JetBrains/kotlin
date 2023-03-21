@@ -1,0 +1,51 @@
+Module: lib
+FILE: lib.kt
+    @R|org/jetbrains/kotlin/fir/plugin/AllOpen2|() public abstract interface Intf : R|kotlin/Any| {
+        public open fun intfMethod(): R|kotlin/Unit| {
+        }
+
+    }
+Module: main
+FILE: module_main_superCompiledClassAnnotation.kt
+    public open class BaseImpl : R|Base_ShouldBeOpen| {
+        public constructor(): R|BaseImpl| {
+            super<R|Base_ShouldBeOpen|>()
+        }
+
+        public open fun baseImplMethod_ShouldBeOpen(): R|kotlin/Unit| {
+        }
+
+    }
+    public open class BaseImpl2_ShouldBeOpen : R|BaseImpl| {
+        public constructor(): R|BaseImpl2_ShouldBeOpen| {
+            super<R|BaseImpl|>()
+        }
+
+        public open fun baseImpl2Method_ShouldBeOpen(): R|kotlin/Unit| {
+        }
+
+        public open val baseImpl2Property_ShouldBeOpen: R|kotlin/String| = String()
+            public get(): R|kotlin/String|
+
+    }
+    public open class IntfImpl : R|Intf| {
+        public constructor(): R|IntfImpl| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open fun intfImplMethod_ShouldBeOpen(): R|kotlin/Unit| {
+        }
+
+    }
+    public open class IntfImpl2_ShouldBeOpen : R|IntfImpl| {
+        public constructor(): R|IntfImpl2_ShouldBeOpen| {
+            super<R|IntfImpl|>()
+        }
+
+        public open fun intfImpl2Method_ShouldBeOpen(): R|kotlin/Unit| {
+        }
+
+    }
+    public final fun box(): R|kotlin/String| {
+        ^box String(OK)
+    }

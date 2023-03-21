@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.plugin
 import kotlin.reflect.KClass
 
 annotation class AllOpen
+annotation class AllOpen2
 
 annotation class DummyFunction
 annotation class ExternalClassWithNested
