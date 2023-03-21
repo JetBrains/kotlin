@@ -1,5 +1,8 @@
 // TARGET_FRONTEND: FIR
 // FIR_IDENTICAL
+
+// IGNORE_BACKEND_KLIB: JS_IR
+
 class A {
     var it: Int
         field = 3.14

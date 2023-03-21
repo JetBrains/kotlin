@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class KlibJsIrTextTestCaseGenerated extends AbstractKlibJsIrTextTestCase {
     private void runTest(String testDataFilePath) throws Exception {
-        KotlinTestUtils.runTest(this::doTest, TargetBackend.JS_IR, testDataFilePath);
+        KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JS_IR, testDataFilePath, "// IGNORE_BACKEND_KLIB: ");
     }
 
     public void testAllFilesPresentInJs() throws Exception {
@@ -35,7 +35,7 @@ public class KlibJsIrTextTestCaseGenerated extends AbstractKlibJsIrTextTestCase 
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Dynamic extends AbstractKlibJsIrTextTestCase {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.JS_IR, testDataFilePath);
+            KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JS_IR, testDataFilePath, "// IGNORE_BACKEND_KLIB: ");
         }
 
         public void testAllFilesPresentInDynamic() throws Exception {
@@ -158,7 +158,7 @@ public class KlibJsIrTextTestCaseGenerated extends AbstractKlibJsIrTextTestCase 
     @RunWith(JUnit3RunnerWithInners.class)
     public static class External extends AbstractKlibJsIrTextTestCase {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.JS_IR, testDataFilePath);
+            KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JS_IR, testDataFilePath, "// IGNORE_BACKEND_KLIB: ");
         }
 
         public void testAllFilesPresentInExternal() throws Exception {
@@ -176,7 +176,7 @@ public class KlibJsIrTextTestCaseGenerated extends AbstractKlibJsIrTextTestCase 
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Native extends AbstractKlibJsIrTextTestCase {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.JS_IR, testDataFilePath);
+            KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JS_IR, testDataFilePath, "// IGNORE_BACKEND_KLIB: ");
         }
 
         public void testAllFilesPresentInNative() throws Exception {

@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
     private void runTest(String testDataFilePath) throws Exception {
-        KotlinTestUtils.runTest(this::doTest, TargetBackend.JS_IR, testDataFilePath);
+        KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JS_IR, testDataFilePath, "// IGNORE_BACKEND_KLIB: ");
     }
 
     public void testAllFilesPresentInIrText() throws Exception {
@@ -35,7 +35,7 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Classes extends AbstractKlibIrTextTestCase {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.JS_IR, testDataFilePath);
+            KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JS_IR, testDataFilePath, "// IGNORE_BACKEND_KLIB: ");
         }
 
         @TestMetadata("47424.kt")
@@ -247,7 +247,7 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class DataClasses extends AbstractKlibIrTextTestCase {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.JS_IR, testDataFilePath);
+                KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JS_IR, testDataFilePath, "// IGNORE_BACKEND_KLIB: ");
             }
 
             public void testAllFilesPresentInDataClasses() throws Exception {
@@ -301,7 +301,7 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Declarations extends AbstractKlibIrTextTestCase {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.JS_IR, testDataFilePath);
+            KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JS_IR, testDataFilePath, "// IGNORE_BACKEND_KLIB: ");
         }
 
         public void testAllFilesPresentInDeclarations() throws Exception {
@@ -433,7 +433,7 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Annotations extends AbstractKlibIrTextTestCase {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.JS_IR, testDataFilePath);
+                KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JS_IR, testDataFilePath, "// IGNORE_BACKEND_KLIB: ");
             }
 
             public void testAllFilesPresentInAnnotations() throws Exception {
@@ -611,7 +611,7 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ContextReceivers extends AbstractKlibIrTextTestCase {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.JS_IR, testDataFilePath);
+                KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JS_IR, testDataFilePath, "// IGNORE_BACKEND_KLIB: ");
             }
 
             public void testAllFilesPresentInContextReceivers() throws Exception {
@@ -688,7 +688,7 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
             @RunWith(JUnit3RunnerWithInners.class)
             public static class FromKEEP extends AbstractKlibIrTextTestCase {
                 private void runTest(String testDataFilePath) throws Exception {
-                    KotlinTestUtils.runTest(this::doTest, TargetBackend.JS_IR, testDataFilePath);
+                    KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JS_IR, testDataFilePath, "// IGNORE_BACKEND_KLIB: ");
                 }
 
                 public void testAllFilesPresentInFromKEEP() throws Exception {
@@ -702,7 +702,7 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class JvmRecord extends AbstractKlibIrTextTestCase {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.JS_IR, testDataFilePath);
+                KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JS_IR, testDataFilePath, "// IGNORE_BACKEND_KLIB: ");
             }
 
             public void testAllFilesPresentInJvmRecord() throws Exception {
@@ -715,7 +715,7 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Multiplatform extends AbstractKlibIrTextTestCase {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.JS_IR, testDataFilePath);
+                KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JS_IR, testDataFilePath, "// IGNORE_BACKEND_KLIB: ");
             }
 
             public void testAllFilesPresentInMultiplatform() throws Exception {
@@ -748,7 +748,7 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Parameters extends AbstractKlibIrTextTestCase {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.JS_IR, testDataFilePath);
+                KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JS_IR, testDataFilePath, "// IGNORE_BACKEND_KLIB: ");
             }
 
             public void testAllFilesPresentInParameters() throws Exception {
@@ -826,7 +826,7 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ProvideDelegate extends AbstractKlibIrTextTestCase {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.JS_IR, testDataFilePath);
+                KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JS_IR, testDataFilePath, "// IGNORE_BACKEND_KLIB: ");
             }
 
             public void testAllFilesPresentInProvideDelegate() throws Exception {
@@ -870,7 +870,7 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Errors extends AbstractKlibIrTextTestCase {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.JS_IR, testDataFilePath);
+            KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JS_IR, testDataFilePath, "// IGNORE_BACKEND_KLIB: ");
         }
 
         public void testAllFilesPresentInErrors() throws Exception {
@@ -893,7 +893,7 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Expressions extends AbstractKlibIrTextTestCase {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.JS_IR, testDataFilePath);
+            KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JS_IR, testDataFilePath, "// IGNORE_BACKEND_KLIB: ");
         }
 
         public void testAllFilesPresentInExpressions() throws Exception {
@@ -1600,7 +1600,7 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class CallableReferences extends AbstractKlibIrTextTestCase {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.JS_IR, testDataFilePath);
+                KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JS_IR, testDataFilePath, "// IGNORE_BACKEND_KLIB: ");
             }
 
             @TestMetadata("adaptedExtensionFunctions.kt")
@@ -1713,7 +1713,7 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class FloatingPointComparisons extends AbstractKlibIrTextTestCase {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.JS_IR, testDataFilePath);
+                KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JS_IR, testDataFilePath, "// IGNORE_BACKEND_KLIB: ");
             }
 
             public void testAllFilesPresentInFloatingPointComparisons() throws Exception {
@@ -1781,7 +1781,7 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class FunInterface extends AbstractKlibIrTextTestCase {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.JS_IR, testDataFilePath);
+                KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JS_IR, testDataFilePath, "// IGNORE_BACKEND_KLIB: ");
             }
 
             public void testAllFilesPresentInFunInterface() throws Exception {
@@ -1801,11 +1801,6 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
             @TestMetadata("castFromAny.kt")
             public void testCastFromAny() throws Exception {
                 runTest("compiler/testData/ir/irText/expressions/funInterface/castFromAny.kt");
-            }
-
-            @TestMetadata("functionSupertype.kt")
-            public void testFunctionSupertype() throws Exception {
-                runTest("compiler/testData/ir/irText/expressions/funInterface/functionSupertype.kt");
             }
 
             @TestMetadata("partialSam.kt")
@@ -1839,7 +1834,7 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Sam extends AbstractKlibIrTextTestCase {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.JS_IR, testDataFilePath);
+                KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JS_IR, testDataFilePath, "// IGNORE_BACKEND_KLIB: ");
             }
 
             public void testAllFilesPresentInSam() throws Exception {
@@ -1853,7 +1848,7 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class FirProblems extends AbstractKlibIrTextTestCase {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.JS_IR, testDataFilePath);
+            KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JS_IR, testDataFilePath, "// IGNORE_BACKEND_KLIB: ");
         }
 
         public void testAllFilesPresentInFirProblems() throws Exception {
@@ -2016,7 +2011,7 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Js extends AbstractKlibIrTextTestCase {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.JS_IR, testDataFilePath);
+            KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JS_IR, testDataFilePath, "// IGNORE_BACKEND_KLIB: ");
         }
 
         public void testAllFilesPresentInJs() throws Exception {
@@ -2028,7 +2023,7 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Dynamic extends AbstractKlibIrTextTestCase {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.JS_IR, testDataFilePath);
+                KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JS_IR, testDataFilePath, "// IGNORE_BACKEND_KLIB: ");
             }
 
             public void testAllFilesPresentInDynamic() throws Exception {
@@ -2151,7 +2146,7 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class External extends AbstractKlibIrTextTestCase {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.JS_IR, testDataFilePath);
+                KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JS_IR, testDataFilePath, "// IGNORE_BACKEND_KLIB: ");
             }
 
             public void testAllFilesPresentInExternal() throws Exception {
@@ -2169,7 +2164,7 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Native extends AbstractKlibIrTextTestCase {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.JS_IR, testDataFilePath);
+                KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JS_IR, testDataFilePath, "// IGNORE_BACKEND_KLIB: ");
             }
 
             public void testAllFilesPresentInNative() throws Exception {
@@ -2188,7 +2183,7 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Lambdas extends AbstractKlibIrTextTestCase {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.JS_IR, testDataFilePath);
+            KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JS_IR, testDataFilePath, "// IGNORE_BACKEND_KLIB: ");
         }
 
         public void testAllFilesPresentInLambdas() throws Exception {
@@ -2241,7 +2236,7 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Properties extends AbstractKlibIrTextTestCase {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.JS_IR, testDataFilePath);
+            KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JS_IR, testDataFilePath, "// IGNORE_BACKEND_KLIB: ");
         }
 
         public void testAllFilesPresentInProperties() throws Exception {
@@ -2253,7 +2248,7 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class BackingField extends AbstractKlibIrTextTestCase {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.JS_IR, testDataFilePath);
+                KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JS_IR, testDataFilePath, "// IGNORE_BACKEND_KLIB: ");
             }
 
             public void testAllFilesPresentInBackingField() throws Exception {
@@ -2287,7 +2282,7 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Regressions extends AbstractKlibIrTextTestCase {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.JS_IR, testDataFilePath);
+            KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JS_IR, testDataFilePath, "// IGNORE_BACKEND_KLIB: ");
         }
 
         public void testAllFilesPresentInRegressions() throws Exception {
@@ -2325,7 +2320,7 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Singletons extends AbstractKlibIrTextTestCase {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.JS_IR, testDataFilePath);
+            KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JS_IR, testDataFilePath, "// IGNORE_BACKEND_KLIB: ");
         }
 
         public void testAllFilesPresentInSingletons() throws Exception {
@@ -2353,7 +2348,7 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Stubs extends AbstractKlibIrTextTestCase {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.JS_IR, testDataFilePath);
+            KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JS_IR, testDataFilePath, "// IGNORE_BACKEND_KLIB: ");
         }
 
         public void testAllFilesPresentInStubs() throws Exception {
@@ -2381,7 +2376,7 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Types extends AbstractKlibIrTextTestCase {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.JS_IR, testDataFilePath);
+            KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JS_IR, testDataFilePath, "// IGNORE_BACKEND_KLIB: ");
         }
 
         @TestMetadata("abbreviatedTypes.kt")
@@ -2523,7 +2518,7 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class NullChecks extends AbstractKlibIrTextTestCase {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.JS_IR, testDataFilePath);
+                KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JS_IR, testDataFilePath, "// IGNORE_BACKEND_KLIB: ");
             }
 
             public void testAllFilesPresentInNullChecks() throws Exception {
@@ -2535,7 +2530,7 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
             @RunWith(JUnit3RunnerWithInners.class)
             public static class NullCheckOnLambdaResult extends AbstractKlibIrTextTestCase {
                 private void runTest(String testDataFilePath) throws Exception {
-                    KotlinTestUtils.runTest(this::doTest, TargetBackend.JS_IR, testDataFilePath);
+                    KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JS_IR, testDataFilePath, "// IGNORE_BACKEND_KLIB: ");
                 }
 
                 public void testAllFilesPresentInNullCheckOnLambdaResult() throws Exception {

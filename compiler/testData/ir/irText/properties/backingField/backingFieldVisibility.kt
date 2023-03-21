@@ -1,6 +1,8 @@
 // TARGET_FRONTEND: FIR
 // FIR_IDENTICAL
 
+// IGNORE_BACKEND_KLIB: JS_IR
+
 class A {
     val a: Number
         private field = 1

@@ -115,14 +115,6 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
                 model("codegen/customScript", pattern = "^(.*)$")
             }
 
-            testClass<AbstractKlibJsIrTextTestCase> {
-                model("ir/irText/js", pattern = "^(.+)\\.kt\$", targetBackend = TargetBackend.JS_IR)
-            }
-
-            testClass<AbstractKlibIrTextTestCase> {
-                model("ir/irText", pattern = "^(.+)\\.kt\$", targetBackend = TargetBackend.JS_IR)
-            }
-
             testClass<AbstractIrCfgTestCase> {
                 model("ir/irCfg")
             }
@@ -389,6 +381,21 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
 
             testClass<AbstractIrScriptCodegenTest> {
                 model("codegen/script", extension = "kts", targetBackend = TargetBackend.JVM_IR)
+            }
+        }
+
+        testGroup(
+            testsRoot = "compiler/tests-gen",
+            testDataRoot = "compiler/testData",
+            testRunnerMethodName = "runTestWithCustomIgnoreDirective", // FIXME: This is a temporary hack to smooth the transition to the new test infrastructure
+            additionalRunnerArguments = listOf("\"// IGNORE_BACKEND_KLIB: \"")
+        ) {
+            testClass<AbstractKlibJsIrTextTestCase> {
+                model("ir/irText/js", pattern = "^(.+)\\.kt\$", targetBackend = TargetBackend.JS_IR)
+            }
+
+            testClass<AbstractKlibIrTextTestCase> {
+                model("ir/irText", pattern = "^(.+)\\.kt\$", targetBackend = TargetBackend.JS_IR)
             }
         }
 

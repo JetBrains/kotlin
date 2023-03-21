@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JS_IR
+// DONT_TARGET_EXACT_BACKEND: JS_IR
 
 fun interface Foo : () -> Int
 
