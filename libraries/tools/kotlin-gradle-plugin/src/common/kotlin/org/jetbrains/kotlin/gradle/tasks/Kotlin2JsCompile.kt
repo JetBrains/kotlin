@@ -58,7 +58,6 @@ abstract class Kotlin2JsCompile @Inject constructor(
     workerExecutor: WorkerExecutor
 ) : AbstractKotlinCompile<K2JSCompilerArguments>(objectFactory, workerExecutor),
     KotlinCompilationTask<KotlinJsCompilerOptions>,
-    KotlinCompilerArgumentsProducer,
     UsesLibraryFilterCachingService,
     KotlinJsCompile,
     K2MultiplatformCompilationTask {
@@ -131,44 +130,6 @@ abstract class Kotlin2JsCompile @Inject constructor(
     @Suppress("OVERRIDE_DEPRECATION")
     override fun createCompilerArgs(): K2JSCompilerArguments =
         K2JSCompilerArguments()
-
-    @Suppress("OVERRIDE_DEPRECATION")
-    override fun setupCompilerArgs(args: K2JSCompilerArguments, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
-        KotlinJsCompilerOptionsHelper.fillDefaultValues(args)
-        super.setupCompilerArgs(args, defaultsOnly = defaultsOnly, ignoreClasspathResolutionErrors = ignoreClasspathResolutionErrors)
-
-        if (defaultsOnly) return
-
-        KotlinJsCompilerOptionsHelper.fillCompilerArguments(compilerOptions, args)
-        if (!args.sourceMapPrefix.isNullOrEmpty()) {
-            args.sourceMapBaseDirs = sourceMapBaseDir.get().asFile.absolutePath
-        }
-        if (isIrBackendEnabled()) {
-            val outputFilePath: String? = compilerOptions.outputFile.orNull
-            if (outputFilePath != null) {
-                val outputFile = File(outputFilePath)
-                args.outputDir = (if (outputFile.extension == "") outputFile else outputFile.parentFile).normalize().absolutePath
-                args.moduleName = outputFile.nameWithoutExtension
-            } else {
-                args.outputDir = destinationDirectory.get().asFile.normalize().absolutePath
-                args.moduleName = compilerOptions.moduleName.get()
-            }
-        } else {
-            args.outputFile = outputFileProperty.get().absoluteFile.normalize().absolutePath
-        }
-
-        args.configureMultiplatform(
-            compilerOptions,
-            k1CommonSources = commonSourceSet.asFileTree,
-            k2MultiplatformFragments = multiplatformStructure
-        )
-
-        // Overriding freeArgs from compilerOptions with enhanced one + additional one set on execution phase
-        // containing additional arguments based on the js compilation configuration
-        val localExecutionTimeFreeCompilerArgs = executionTimeFreeCompilerArgs
-        args.freeArgs =
-            if (localExecutionTimeFreeCompilerArgs != null) localExecutionTimeFreeCompilerArgs else enhancedFreeCompilerArgs.get()
-    }
 
     override fun createCompilerArguments(context: CreateCompilerArgumentsContext) = context.create<K2JSCompilerArguments> {
         contribute(KotlinCompilerArgumentsProducer.ArgumentType.Primitive) { args ->

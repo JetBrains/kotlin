@@ -9,7 +9,6 @@ package org.jetbrains.kotlin.gradle.unitTests.compilerArgumetns
 
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.internal.prepareCompilerArguments
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.lenient
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompileCommon
@@ -21,7 +20,6 @@ import kotlin.test.assertNull
 
 class KotlinCompileCommonArgumentsTest {
     @Test
-    @Suppress("DEPRECATION")
     fun `test - simple project - old CompilerArgumentsAware and new CompilerArgumentsProducer - return same arguments`() {
         val project = buildProjectWithMPP()
         project.repositories.mavenLocal()
@@ -34,10 +32,10 @@ class KotlinCompileCommonArgumentsTest {
         val commonMainCompileTask = commonMainCompilation.compileTaskProvider.get() as KotlinCompileCommon
 
         val argumentsFromCompilerArgumentsProducer = commonMainCompileTask.createCompilerArguments(lenient)
-        val argumentsFromCompilerArgumentsAware = commonMainCompileTask.prepareCompilerArguments(true)
 
+        @Suppress("DEPRECATION_ERROR")
         assertEquals(
-            ArgumentUtils.convertArgumentsToStringList(argumentsFromCompilerArgumentsAware),
+            commonMainCompileTask.serializedCompilerArgumentsIgnoreClasspathIssues,
             ArgumentUtils.convertArgumentsToStringList(argumentsFromCompilerArgumentsProducer)
         )
     }

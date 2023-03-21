@@ -270,22 +270,9 @@ abstract class AbstractKotlinNativeCompile<
     @get:Nested
     var kotlinPluginData: Provider<KotlinCompilerPluginData>? = null
 
-    // Used by IDE via reflection.
-    @get:Internal
-    override val serializedCompilerArguments: List<String>
-        get() = buildCommonArgs()
-
-    // Used by IDE via reflection.
-    @get:Internal
-    override val defaultSerializedCompilerArguments: List<String>
-        get() = buildCommonArgs(true)
-
     private val languageSettingsBuilder by project.provider {
         compilation.languageSettings
     }
-
-    // Args used by both the compiler and IDEA.
-    abstract fun buildCommonArgs(defaultsOnly: Boolean = false): List<String>
 
     @get:Input
     @get:Optional
@@ -321,9 +308,8 @@ internal constructor(
     private val objectFactory: ObjectFactory,
     private val providerFactory: ProviderFactory,
     private val execOperations: ExecOperations
-) : AbstractKotlinNativeCompile<KotlinCommonOptions, StubK2NativeCompilerArguments>(objectFactory),
+) : AbstractKotlinNativeCompile<KotlinCommonOptions, K2NativeCompilerArguments>(objectFactory),
     KotlinCompile<KotlinCommonOptions>,
-    KotlinCompilerArgumentsProducer,
     K2MultiplatformCompilationTask,
     KotlinCompilationTask<KotlinNativeCompilerOptions> {
 
@@ -433,27 +419,6 @@ internal constructor(
     private val runnerSettings = KotlinNativeCompilerRunner.Settings.fromProject(project)
     private val isAllowCommonizer: Boolean by lazy { project.isAllowCommonizer() }
     // endregion.
-
-    override fun createCompilerArgs(): StubK2NativeCompilerArguments = StubK2NativeCompilerArguments()
-
-    override fun setupCompilerArgs(
-        args: StubK2NativeCompilerArguments,
-        defaultsOnly: Boolean,
-        ignoreClasspathResolutionErrors: Boolean
-    ) = Unit
-
-    override fun buildCommonArgs(defaultsOnly: Boolean): List<String> {
-        val plugins = listOfNotNull(
-            compilerPluginClasspath?.let { CompilerPluginData(it, compilerPluginOptions) },
-            kotlinPluginData?.orNull?.let { CompilerPluginData(it.classpath, it.options) }
-        )
-
-        return buildKotlinNativeCompileCommonArgs(
-            languageSettings,
-            compilerOptions,
-            plugins
-        )
-    }
 
     override fun createCompilerArguments(context: CreateCompilerArgumentsContext) = context.create<K2NativeCompilerArguments> {
         val sharedCompilationData = createSharedCompilationDataOrNull()

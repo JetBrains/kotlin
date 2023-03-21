@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin
 
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.ContributeCompilerArgumentsContext
 import kotlin.reflect.KClass
@@ -26,7 +27,7 @@ interface KotlinCompilerArgumentsProducer {
     }
 
     interface CreateCompilerArgumentsContext {
-        fun <T : CommonCompilerArguments> create(type: KClass<T>, action: ContributeCompilerArgumentsContext<T>.() -> Unit): T
+        fun <T : CommonToolArguments> create(type: KClass<T>, action: ContributeCompilerArgumentsContext<T>.() -> Unit): T
 
         companion object {
             val default: CreateCompilerArgumentsContext = CreateCompilerArgumentsContext()
@@ -38,14 +39,14 @@ interface KotlinCompilerArgumentsProducer {
         }
     }
 
-    interface ContributeCompilerArgumentsContext<T : CommonCompilerArguments> {
+    interface ContributeCompilerArgumentsContext<T : CommonToolArguments> {
         fun <T> tryLenient(action: () -> T): T?
         fun contribute(type: ArgumentType, contribution: (T) -> Unit)
     }
 
     fun createCompilerArguments(
         context: CreateCompilerArgumentsContext = CreateCompilerArgumentsContext()
-    ): CommonCompilerArguments
+    ): CommonToolArguments
 }
 
 internal fun CreateCompilerArgumentsContext(
@@ -60,7 +61,7 @@ private class CreateCompilerArgumentsContextImpl(
     private val isLenient: Boolean
 ) : KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext {
 
-    override fun <T : CommonCompilerArguments> create(
+    override fun <T : CommonToolArguments> create(
         type: KClass<T>, action: ContributeCompilerArgumentsContext<T>.() -> Unit
     ): T {
         val constructor = type.java.constructors.firstOrNull { it.parameters.isEmpty() }
@@ -70,7 +71,7 @@ private class CreateCompilerArgumentsContextImpl(
         return arguments
     }
 
-    private inner class ContributeCompilerArgumentsContextImpl<T : CommonCompilerArguments>(
+    private inner class ContributeCompilerArgumentsContextImpl<T : CommonToolArguments>(
         private val arguments: T
     ) : ContributeCompilerArgumentsContext<T> {
 

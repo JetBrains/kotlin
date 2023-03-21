@@ -10,19 +10,18 @@ package org.jetbrains.kotlin.gradle.unitTests
 import org.gradle.kotlin.dsl.newInstance
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.CompilerArgumentAware
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.lenient
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType.IR
 import org.jetbrains.kotlin.gradle.tasks.K2MultiplatformCompilationTask
 import org.jetbrains.kotlin.gradle.tasks.K2MultiplatformStructure
-import org.jetbrains.kotlin.gradle.tasks.K2MultiplatformStructure.RefinesEdge
 import org.jetbrains.kotlin.gradle.tasks.K2MultiplatformStructure.Fragment
-import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
+import org.jetbrains.kotlin.gradle.tasks.K2MultiplatformStructure.RefinesEdge
 import org.jetbrains.kotlin.gradle.tasks.configureK2Multiplatform
 import org.jetbrains.kotlin.gradle.util.applyMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.util.buildProject
@@ -156,16 +155,7 @@ class K2MultiplatformStructureTest {
 
 private fun K2MultiplatformCompilationTask.buildCompilerArguments(): CommonCompilerArguments {
     /* KotlinNative implements CompilerArgumentAware, but does not adhere to its contract */
-
-    if (this is KotlinNativeCompile) {
-        val arguments = K2NativeCompilerArguments()
-        val argsList = this.buildCompilerArgs()
-        parseCommandLineArguments(argsList, arguments)
-        return arguments
-    }
     @Suppress("UNCHECKED_CAST")
     this as CompilerArgumentAware<CommonCompilerArguments>
-    val args = createCompilerArgs()
-    setupCompilerArgs(args)
-    return args
+    return this.createCompilerArguments(lenient)
 }

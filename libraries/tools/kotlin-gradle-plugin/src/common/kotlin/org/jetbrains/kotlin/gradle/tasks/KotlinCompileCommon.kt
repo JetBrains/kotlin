@@ -47,7 +47,6 @@ abstract class KotlinCompileCommon @Inject constructor(
     objectFactory: ObjectFactory
 ) : AbstractKotlinCompile<K2MetadataCompilerArguments>(objectFactory, workerExecutor),
     KotlinCompilationTask<KotlinMultiplatformCommonCompilerOptions>,
-    KotlinCompilerArgumentsProducer,
     KotlinCommonCompile {
 
     init {
@@ -68,43 +67,6 @@ abstract class KotlinCompileCommon @Inject constructor(
      */
     @get:Internal
     internal var executionTimeFreeCompilerArgs: List<String>? = null
-
-    override fun createCompilerArgs(): K2MetadataCompilerArguments =
-        K2MetadataCompilerArguments()
-
-    override fun setupCompilerArgs(args: K2MetadataCompilerArguments, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
-        KotlinMultiplatformCommonCompilerOptionsHelper.fillDefaultValues(args)
-        super.setupCompilerArgs(args, defaultsOnly = defaultsOnly, ignoreClasspathResolutionErrors = ignoreClasspathResolutionErrors)
-
-        args.moduleName = this@KotlinCompileCommon.moduleName.get()
-
-        if (expectActualLinker.get()) {
-            args.expectActualLinker = true
-        }
-
-        if (defaultsOnly) return
-
-        val classpathList = try {
-            libraries.files.filter { it.exists() }.toMutableList()
-        } catch (t: Throwable) {
-            if (ignoreClasspathResolutionErrors) null else throw t
-        }
-
-        with(args) {
-            classpath = classpathList?.joinToString(File.pathSeparator)
-            destination = destinationDirectory.get().asFile.normalize().absolutePath
-
-            friendPaths = this@KotlinCompileCommon.friendPaths.files.map { it.absolutePath }.toTypedArray()
-            refinesPaths = refinesMetadataPaths.map { it.absolutePath }.toTypedArray()
-        }
-
-        KotlinMultiplatformCommonCompilerOptionsHelper.fillCompilerArguments(compilerOptions, args)
-
-        val localExecutionTimeFreeCompilerArgs = executionTimeFreeCompilerArgs
-        if (localExecutionTimeFreeCompilerArgs != null) {
-            args.freeArgs = localExecutionTimeFreeCompilerArgs
-        }
-    }
 
     override fun createCompilerArguments(context: CreateCompilerArgumentsContext) = context.create<K2MetadataCompilerArguments> {
         contribute(KotlinCompilerArgumentsProducer.ArgumentType.Primitive) { args ->

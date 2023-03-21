@@ -69,7 +69,6 @@ abstract class KotlinCompile @Inject constructor(
     K2MultiplatformCompilationTask,
     @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") KotlinJvmCompileDsl,
     KotlinCompilationTask<KotlinJvmCompilerOptions>,
-    KotlinCompilerArgumentsProducer,
     UsesKotlinJavaToolchain {
 
     @get:Internal // covered by compiler options
@@ -211,9 +210,6 @@ abstract class KotlinCompile @Inject constructor(
 
     override fun skipCondition(): Boolean = sources.isEmpty && scriptSources.isEmpty
 
-    override fun createCompilerArgs(): K2JVMCompilerArguments =
-        K2JVMCompilerArguments()
-
     /**
      * Workaround for those "nasty" plugins that are adding 'freeCompilerArgs' on task execution phase.
      * With properties api it is not possible to update property value after task configuration is finished.
@@ -223,30 +219,6 @@ abstract class KotlinCompile @Inject constructor(
      */
     @get:Internal
     internal var executionTimeFreeCompilerArgs: List<String>? = null
-
-    override fun setupCompilerArgs(args: K2JVMCompilerArguments, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
-        compilerArgumentsContributor.contributeArguments(
-            args, compilerArgumentsConfigurationFlags(
-                defaultsOnly,
-                ignoreClasspathResolutionErrors
-            )
-        )
-
-        args.configureMultiplatform(
-            compilerOptions,
-            k1CommonSources = commonSourceSet.asFileTree,
-            k2MultiplatformFragments = multiplatformStructure
-        )
-
-        if (reportingSettings().buildReportMode == BuildReportMode.VERBOSE) {
-            args.reportPerf = true
-        }
-
-        val localExecutionTimeFreeCompilerArgs = executionTimeFreeCompilerArgs
-        if (localExecutionTimeFreeCompilerArgs != null) {
-            args.freeArgs = localExecutionTimeFreeCompilerArgs
-        }
-    }
 
     @get:Internal
     internal val compilerArgumentsContributor: CompilerArgumentsContributor<K2JVMCompilerArguments> by lazy {
@@ -325,7 +297,9 @@ abstract class KotlinCompile @Inject constructor(
         val scriptSources = scriptSources.asFileTree.files
         val javaSources = javaSources.files
         val gradlePrintingMessageCollector = GradlePrintingMessageCollector(logger, args.allWarningsAsErrors)
-        val gradleMessageCollector = GradleErrorMessageCollector(gradlePrintingMessageCollector, kotlinPluginVersion = getKotlinPluginVersion(logger))
+        val gradleMessageCollector = GradleErrorMessageCollector(
+            gradlePrintingMessageCollector, kotlinPluginVersion = getKotlinPluginVersion(logger)
+        )
         val outputItemCollector = OutputItemsCollectorImpl()
         val compilerRunner = compilerRunner.get()
 

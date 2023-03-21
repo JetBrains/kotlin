@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporterImpl
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
 import org.jetbrains.kotlin.gradle.internal.CompilerArgumentAware
 import org.jetbrains.kotlin.gradle.internal.tasks.TaskWithLocalState
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer
 import org.jetbrains.kotlin.gradle.utils.fileExtensionCasePermutations
 import org.jetbrains.kotlin.gradle.utils.property
 import javax.inject.Inject
@@ -31,6 +32,7 @@ abstract class AbstractKotlinCompileTool<T : CommonToolArguments> @Inject constr
     objectFactory: ObjectFactory
 ) : DefaultTask(),
     KotlinCompileTool,
+    KotlinCompilerArgumentsProducer,
     CompilerArgumentAware<T>,
     TaskWithLocalState {
 

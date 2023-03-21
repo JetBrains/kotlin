@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.gradle.dependencyResolutionTests.mavenCentralCacheRe
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.dsl.kotlinJvmExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.internal.prepareCompilerArguments
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.lenient
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.util.assertNotNull
@@ -30,7 +29,6 @@ import kotlin.test.*
 
 class KotlinCompileArgumentsTest {
 
-    @Suppress("DEPRECATION")
     @Test
     fun `test - simple project - compare CompilerArgumentsAware with KotlinCompilerArgumentsAware implementations`() {
         val project = buildProjectWithJvm()
@@ -45,11 +43,11 @@ class KotlinCompileArgumentsTest {
 
         val mainCompilation = kotlin.target.compilations.getByName("main")
         val mainCompilationTask = mainCompilation.compileTaskProvider.get() as KotlinCompile
-        val argumentsFromCompilerArgumentsAware = mainCompilationTask.prepareCompilerArguments(true)
         val argumentsFromKotlinCompilerArgumentsAware = mainCompilationTask.createCompilerArguments(lenient)
 
+        @Suppress("DEPRECATION_ERROR")
         assertEquals(
-            ArgumentUtils.convertArgumentsToStringList(argumentsFromCompilerArgumentsAware),
+            mainCompilationTask.serializedCompilerArgumentsIgnoreClasspathIssues,
             ArgumentUtils.convertArgumentsToStringList(argumentsFromKotlinCompilerArgumentsAware)
         )
     }
