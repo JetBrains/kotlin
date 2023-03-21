@@ -12,10 +12,7 @@ import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSignatures
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.psi.KtCallableDeclaration
-import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtDeclarationContainer
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
@@ -77,7 +74,13 @@ object ByDescriptorIndexer : DecompiledTextIndexer<String> {
 
                 if (declarationContainer != null) {
                     val descriptorName = original.name.asString()
-                    val singleOrNull = declarationContainer.declarations.singleOrNull { it.name == descriptorName }
+                    val singleOrNull = declarationContainer.declarations
+                        .filter { it.name == descriptorName }.singleOrNull { declaration ->
+                            if (original is FunctionDescriptor) {
+                                declaration is KtFunction && declaration.valueParameters.size == original.valueParameters.size
+                            } else true
+                        }
+                    //todo distinguish receiver parameters as well
                     if (singleOrNull != null) {
                         return singleOrNull
                     }
@@ -85,9 +88,7 @@ object ByDescriptorIndexer : DecompiledTextIndexer<String> {
             }
         }
 
-        return file.getDeclaration(this, descriptorKey) ?: run {
-            return getBuiltinsDescriptorKey(descriptor)?.let { file.getDeclaration(this, it) }
-        }
+        error("Should not load decompiled text")
     }
 
     fun getBuiltinsDescriptorKey(descriptor: DeclarationDescriptor): String? {
