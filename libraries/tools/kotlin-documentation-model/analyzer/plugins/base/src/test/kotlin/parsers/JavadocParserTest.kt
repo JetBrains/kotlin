@@ -2,6 +2,7 @@ package parsers
 
 import com.jetbrains.rd.util.first
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
+import org.jetbrains.dokka.base.translators.psi.parsers.*
 import org.jetbrains.dokka.links.Callable
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.links.JavaClassReference
@@ -13,7 +14,8 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import utils.docs
 import utils.text
-import kotlin.test.assertNotNull
+import kotlin.random.*
+import kotlin.test.*
 
 class JavadocParserTest : BaseAbstractTest() {
 
@@ -60,8 +62,12 @@ class JavadocParserTest : BaseAbstractTest() {
     @Test
     fun `correctly parsed list`() {
         performJavadocTest { module ->
-            val docs = (module.packages.single().classlikes.single() as DEnum).entries.single().documentation.values.single().children.single().root.text()
-            assertEquals("content being refreshed, which can be a result of invalidation, refresh that may contain content updates, or the initial load.", docs.trimEnd())
+            val docs =
+                (module.packages.single().classlikes.single() as DEnum).entries.single().documentation.values.single().children.single().root.text()
+            assertEquals(
+                "content being refreshed, which can be a result of invalidation, refresh that may contain content updates, or the initial load.",
+                docs.trimEnd()
+            )
         }
     }
 
@@ -171,7 +177,8 @@ class JavadocParserTest : BaseAbstractTest() {
                 kotlin.test.assertEquals(
                     listOf(
                         P(children = listOf(Text(body = "An example of using the literal tag "))),
-                        Pre(children =
+                        Pre(
+                            children =
                             listOf(
                                 Text(body = "@"),
                                 Text(body = "Entity\npublic class User {}\n")
@@ -206,10 +213,12 @@ class JavadocParserTest : BaseAbstractTest() {
 
                 kotlin.test.assertEquals(
                     listOf(
-                        P(children = listOf(
-                            Text(body = "An example of using the literal tag "),
-                            Text(body = "a<B>c")
-                        )),
+                        P(
+                            children = listOf(
+                                Text(body = "An example of using the literal tag "),
+                                Text(body = "a<B>c")
+                            )
+                        ),
                     ),
                     root.children
                 )
@@ -355,7 +364,7 @@ class JavadocParserTest : BaseAbstractTest() {
             }
         }
     }
-    
+
     @Test
     fun `header tags are handled properly`() {
         val source = """
@@ -424,10 +433,12 @@ class JavadocParserTest : BaseAbstractTest() {
 
                 kotlin.test.assertEquals(
                     listOf(
-                        P(children = listOf(
-                            Text("An example of using var tag: "),
-                            Var(children = listOf(Text("variable"))),
-                        )),
+                        P(
+                            children = listOf(
+                                Text("An example of using var tag: "),
+                                Var(children = listOf(Text("variable"))),
+                            )
+                        ),
                     ),
                     root.children
                 )
@@ -456,10 +467,12 @@ class JavadocParserTest : BaseAbstractTest() {
 
                 assertEquals(
                     listOf(
-                        P(children = listOf(
-                            Text("An example of using u tag: "),
-                            U(children = listOf(Text("underlined"))),
-                        )),
+                        P(
+                            children = listOf(
+                                Text("An example of using u tag: "),
+                                U(children = listOf(Text("underlined"))),
+                            )
+                        ),
                     ),
                     root.children
                 )
@@ -468,7 +481,7 @@ class JavadocParserTest : BaseAbstractTest() {
     }
 
     @Test
-    fun `undocumented see also from java`(){
+    fun `undocumented see also from java`() {
         testInline(
             """
             |/src/main/java/example/Source.java
@@ -485,7 +498,8 @@ class JavadocParserTest : BaseAbstractTest() {
         """.trimIndent(), configuration
         ) {
             documentablesTransformationStage = { module ->
-                val functionWithSeeTag = module.packages.flatMap { it.classlikes }.flatMap { it.functions }.find { it.name == "getProperty" && it.parameters.count() == 1 }
+                val functionWithSeeTag = module.packages.flatMap { it.classlikes }.flatMap { it.functions }
+                    .find { it.name == "getProperty" && it.parameters.count() == 1 }
                 val seeTag = functionWithSeeTag?.docs()?.firstIsInstanceOrNull<See>()
                 val expectedLinkDestinationDRI = DRI(
                     packageName = "example",
@@ -505,7 +519,7 @@ class JavadocParserTest : BaseAbstractTest() {
     }
 
     @Test
-    fun `documented see also from java`(){
+    fun `documented see also from java`() {
         testInline(
             """
             |/src/main/java/example/Source.java
@@ -522,7 +536,8 @@ class JavadocParserTest : BaseAbstractTest() {
         """.trimIndent(), configuration
         ) {
             documentablesTransformationStage = { module ->
-                val functionWithSeeTag = module.packages.flatMap { it.classlikes }.flatMap { it.functions }.find { it.name == "getProperty" && it.parameters.size == 1 }
+                val functionWithSeeTag = module.packages.flatMap { it.classlikes }.flatMap { it.functions }
+                    .find { it.name == "getProperty" && it.parameters.size == 1 }
                 val seeTag = functionWithSeeTag?.docs()?.firstIsInstanceOrNull<See>()
                 val expectedLinkDestinationDRI = DRI(
                     packageName = "example",
@@ -542,6 +557,60 @@ class JavadocParserTest : BaseAbstractTest() {
                 )
                 assertEquals(1, seeTag.children.size)
             }
+        }
+    }
+
+    @Test
+    fun `tags are case-sensitive`() {
+        val source = """
+            |/src/main/kotlin/test/Test.java
+            |package example
+            |
+            | /**
+            | * Java's tag with wrong case
+            | * {@liTeRal @}Entity
+            | * public class User {}
+            | */
+            | public class Test {}
+            """.trimIndent()
+        testInline(
+            source,
+            configuration,
+        ) {
+            documentablesCreationStage = { modules ->
+                val docs = modules.first().packages.first().classlikes.single().documentation.first().value
+                val root = docs.children.first().root
+
+                kotlin.test.assertEquals(
+                    listOf(
+                        Text(body = "Java's tag with wrong case {@liTeRal @}Entity public class User {}"),
+                    ),
+                    root.children.first().children
+                )
+            }
+        }
+    }
+
+    @Test
+    fun `test isolated parsing is case sensitive`() {
+        // Ensure that it won't accidentally break
+        val values = JavadocTag.values().map { it.toString().toLowerCase() }
+        val withRandomizedCapitalization = values.map {
+            val result = buildString {
+                for (char in it) {
+                    if (Random.nextBoolean()) {
+                        append(char)
+                    } else {
+                        append(char.toLowerCase())
+                    }
+                }
+            }
+            if (result == it) result.toUpperCase() else result
+        }
+
+        for ((index, value) in JavadocTag.values().withIndex()) {
+            assertEquals(value, JavadocTag.lowercaseValueOfOrNull(values[index]))
+            assertNull(JavadocTag.lowercaseValueOfOrNull(withRandomizedCapitalization[index]))
         }
     }
 }
