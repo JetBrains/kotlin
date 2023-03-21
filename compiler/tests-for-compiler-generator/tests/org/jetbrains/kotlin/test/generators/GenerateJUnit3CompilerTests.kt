@@ -100,6 +100,10 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
                 model("codegen/kapt", targetBackend = TargetBackend.JVM)
             }
 
+            testClass<AbstractIrKapt3BuilderModeBytecodeShapeTest> {
+                model("codegen/kapt", targetBackend = TargetBackend.JVM_IR)
+            }
+
             testClass<AbstractScriptCodegenTest> {
                 model("codegen/script", extension = "kts", targetBackend = TargetBackend.JVM)
             }
