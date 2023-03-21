@@ -93,15 +93,7 @@ class PackageJson(
             .setPrettyPrinting()
             .disableHtmlEscaping()
             .serializeNulls()
-            .addSerializationExclusionStrategy(
-                object : ExclusionStrategy {
-                    override fun shouldSkipField(f: FieldAttributes?): Boolean =
-                        f?.name == this@PackageJson::customFields.name
-
-                    override fun shouldSkipClass(clazz: Class<*>?): Boolean =
-                        false
-                }
-            )
+            .registerTypeAdapterFactory(PackageJsonTypeAdapter())
             .create()
 
         packageJsonFile.ensureParentDirsCreated()
@@ -112,11 +104,6 @@ class PackageJson(
             }
         } else null
 
-        customFields
-            .forEach { (key, value) ->
-                val valueElement = gson.toJsonTree(value)
-                jsonTree.asJsonObject.add(key, valueElement)
-            }
         if (jsonTree != previous) {
             packageJsonFile.writer().use {
                 gson.toJson(jsonTree, it)

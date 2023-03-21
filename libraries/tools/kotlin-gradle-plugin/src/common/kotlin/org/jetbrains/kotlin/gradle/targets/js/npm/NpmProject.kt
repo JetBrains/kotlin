@@ -128,8 +128,8 @@ open class NpmProject(@Transient val compilation: KotlinJsCompilation) : Seriali
         val rootProjectName = project.rootProject.name
 
         val localName = if (project != project.rootProject) {
-            project.name
-        } else null
+            (rootProjectName + project.path).replace(":", "-")
+        } else rootProjectName
 
         val targetName = if (target.name.isNotEmpty() && target.name.toLowerCaseAsciiOnly() != "js") {
             target.name
@@ -142,7 +142,6 @@ open class NpmProject(@Transient val compilation: KotlinJsCompilation) : Seriali
         } else null
 
         return sequenceOf(
-            rootProjectName,
             localName,
             targetName,
             compilationName
