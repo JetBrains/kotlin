@@ -298,7 +298,6 @@ abstract class Kotlin2JsCompile @Inject constructor(
 
     override fun callCompilerAsync(
         args: K2JSCompilerArguments,
-        kotlinSources: Set<File>,
         inputChanges: InputChanges,
         taskOutputsBackup: TaskOutputsBackup?
     ) {

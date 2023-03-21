@@ -124,7 +124,6 @@ abstract class KotlinCompileCommon @Inject constructor(
 
     override fun callCompilerAsync(
         args: K2MetadataCompilerArguments,
-        kotlinSources: Set<File>,
         inputChanges: InputChanges,
         taskOutputsBackup: TaskOutputsBackup?
     ) {

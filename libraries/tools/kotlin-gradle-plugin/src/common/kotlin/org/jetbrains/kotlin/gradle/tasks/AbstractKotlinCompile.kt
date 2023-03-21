@@ -318,7 +318,6 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
         taskBuildLocalStateDirectory.get().asFile.mkdirs()
         callCompilerAsync(
             args,
-            allKotlinSources,
             inputChanges,
             taskOutputsBackup
         )
@@ -352,7 +351,6 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
      */
     internal abstract fun callCompilerAsync(
         args: T,
-        kotlinSources: Set<File>,
         inputChanges: InputChanges,
         taskOutputsBackup: TaskOutputsBackup?
     )

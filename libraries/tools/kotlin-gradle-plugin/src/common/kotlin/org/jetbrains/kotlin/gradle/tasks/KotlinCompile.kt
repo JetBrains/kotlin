@@ -288,7 +288,6 @@ abstract class KotlinCompile @Inject constructor(
 
     override fun callCompilerAsync(
         args: K2JVMCompilerArguments,
-        kotlinSources: Set<File>,
         inputChanges: InputChanges,
         taskOutputsBackup: TaskOutputsBackup?
     ) {
@@ -330,7 +329,7 @@ abstract class KotlinCompile @Inject constructor(
             incrementalCompilationEnvironment = icEnv,
             kotlinScriptExtensions = scriptExtensions.get().toTypedArray()
         )
-        logger.info("Kotlin source files: ${kotlinSources.joinToString()}")
+        logger.info("Kotlin source files: ${sources.asFileTree.joinToString()}")
         logger.info("Java source files: ${javaSources.joinToString()}")
         logger.info("Script source files: ${scriptSources.joinToString()}")
         logger.info("Script file extensions: ${scriptExtensions.get().joinToString()}")
