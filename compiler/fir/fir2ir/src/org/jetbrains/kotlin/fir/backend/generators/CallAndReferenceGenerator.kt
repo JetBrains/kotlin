@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.approximateDeclarationType
+import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -43,7 +44,6 @@ import org.jetbrains.kotlin.ir.util.isMethodOfAny
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator.commonSuperType
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 class CallAndReferenceGenerator(
     private val components: Fir2IrComponents,
@@ -691,7 +691,11 @@ class CallAndReferenceGenerator(
             useSiteTarget = this@toAnnotationCall.useSiteTarget
             annotationTypeRef = this@toAnnotationCall.annotationTypeRef
             val symbol = annotationTypeRef.coneType.fullyExpandedType(session).toSymbol(session) as? FirRegularClassSymbol ?: return null
-            val constructorSymbol = symbol.declarationSymbols.firstIsInstanceOrNull<FirConstructorSymbol>() ?: return null
+
+            val constructorSymbol =
+                symbol.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false)
+                    .getDeclaredConstructors().firstOrNull() ?: return null
+
             val argumentToParameterToMapping = constructorSymbol.valueParameterSymbols.mapNotNull {
                 val parameter = it.fir
                 val argument = this@toAnnotationCall.argumentMapping.mapping[parameter.name] ?: return@mapNotNull null

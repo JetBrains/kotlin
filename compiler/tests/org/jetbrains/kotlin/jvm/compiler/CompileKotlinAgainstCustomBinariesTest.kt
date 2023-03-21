@@ -795,6 +795,25 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         )
     }
 
+    fun testDeserializedAnnotationReferencesJava() {
+        // Only Java
+        val libraryAnnotation = compileLibrary("libraryAnnotation")
+        // Specifically, use K1
+        // Remove "-Xuse-k2=false" argument once it becomes forbidden
+        val libraryUsingAnnotation = compileLibrary(
+            "libraryUsingAnnotation",
+            additionalOptions = listOf("-language-version", "1.8", "-Xuse-k2=false"),
+            extraClassPath = listOf(libraryAnnotation)
+        )
+
+        compileKotlin(
+            "usage.kt",
+            output = tmpdir,
+            classpath = listOf(libraryAnnotation, libraryUsingAnnotation),
+            additionalOptions = listOf("-language-version", "2.0")
+        )
+    }
+
     private fun loadClassFile(className: String, dir: File, library: File) {
         val classLoader = URLClassLoader(arrayOf(dir.toURI().toURL(), library.toURI().toURL()))
         val mainClass = classLoader.loadClass(className)
