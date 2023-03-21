@@ -1,0 +1,61 @@
+package
+
+@kotlin.OptIn(markerClass = {kotlin.ExperimentalStdlibApi::class}) public fun anyExample(/*0*/ @kotlin.js.JsExternalArgument x: kotlin.Any): kotlin.Any
+@kotlin.OptIn(markerClass = {kotlin.ExperimentalStdlibApi::class}) public fun anyOrNullExample(/*0*/ @kotlin.js.JsExternalArgument x: kotlin.Any?): kotlin.Any?
+public fun boxArgExpression(/*0*/ i: Interface, /*1*/ iOrNull: Interface?): kotlin.Unit
+public fun boxDynamic(/*0*/ d: dynamic): kotlin.Unit
+public fun boxExternalClass(/*0*/ c: ExternalClass): kotlin.Unit
+public fun boxExternalInterface(/*0*/ i: ExternalInterface): kotlin.Unit
+public fun boxExternalInterfaceOrNull(/*0*/ iOrNull: ExternalInterface?): kotlin.Unit
+public fun boxExternalObject(): kotlin.Unit
+public fun boxInterface(/*0*/ c: Class): kotlin.Unit
+public fun boxInterface(/*0*/ i: Interface): kotlin.Unit
+public fun boxInterfaceOrNull(/*0*/ iOrNull: Interface?): kotlin.Unit
+public fun boxNamedArgExpression(/*0*/ i: Interface, /*1*/ iOrNull: Interface?, /*2*/ d: dynamic): kotlin.Unit
+public fun boxObject(): kotlin.Unit
+public fun boxPrimitiveTypes(): kotlin.Unit
+@kotlin.OptIn(markerClass = {kotlin.ExperimentalStdlibApi::class}) public fun dynamicExample(/*0*/ @kotlin.js.JsExternalArgument x: dynamic): dynamic
+@kotlin.OptIn(markerClass = {kotlin.ExperimentalStdlibApi::class}) public fun </*0*/ T> genericExample(/*0*/ @kotlin.js.JsExternalArgument x: T): T
+@kotlin.OptIn(markerClass = {kotlin.ExperimentalStdlibApi::class}) public fun </*0*/ T> genericOrNullExample(/*0*/ @kotlin.js.JsExternalArgument x: T?): T?
+@kotlin.OptIn(markerClass = {kotlin.ExperimentalStdlibApi::class}) public fun severalParams(/*0*/ @kotlin.js.JsExternalArgument x: kotlin.Any?, /*1*/ @kotlin.js.JsExternalArgument y: kotlin.Any?, /*2*/ @kotlin.js.JsExternalArgument z: dynamic): dynamic
+
+public final class Class {
+    public constructor Class()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final external class ExternalClass {
+    public constructor ExternalClass()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public external interface ExternalInterface {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public external object ExternalObject {
+    private constructor ExternalObject()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface Interface {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public object Object {
+    private constructor Object()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+

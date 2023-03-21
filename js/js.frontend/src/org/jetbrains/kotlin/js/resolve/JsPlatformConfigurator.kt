@@ -33,7 +33,8 @@ object JsPlatformConfigurator : PlatformConfiguratorBase(
         JsDynamicCallChecker,
         JsDefinedExternallyCallChecker,
         JsExternalEnumChecker,
-        LateinitIntrinsicApplicabilityChecker(isWarningInPre19 = true)
+        LateinitIntrinsicApplicabilityChecker(isWarningInPre19 = true),
+        JsExternalArgumentCallChecker
     ),
 ) {
     override fun configureModuleComponents(container: StorageComponentContainer) {
