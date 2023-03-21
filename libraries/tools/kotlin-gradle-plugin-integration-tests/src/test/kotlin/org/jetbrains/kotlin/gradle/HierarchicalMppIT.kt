@@ -948,6 +948,30 @@ class HierarchicalMppIT : KGPBaseTest() {
     }
 
     @GradleTest
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4, maxVersion = TestVersions.Gradle.G_7_4)
+    @DisplayName("KT-57460: Check 'org.gradle.configuration-cache.internal.load-after-store=false' flag")
+    fun testGradleConfigurationCacheInternalLoadAfterStoreFlag(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
+        with(project("hmppGradleConfigurationCache", gradleVersion = gradleVersion, localRepoDir = tempDir)) {
+            val options = buildOptions.copy(
+                    configurationCache = true,
+                    configurationCacheProblems = BaseGradleIT.ConfigurationCacheProblems.WARN,
+                    freeArgs = buildOptions.freeArgs + "-Dorg.gradle.configuration-cache.internal.load-after-store=false"
+            )
+
+            build(":lib:publish") {
+                assertTasksExecuted(":lib:publish")
+            }
+
+            build("assemble", buildOptions = options) {
+                assertTasksExecuted(":transformCommonMainDependenciesMetadata")
+            }
+            build("assemble", buildOptions = options) {
+                assertTasksUpToDate(":transformCommonMainDependenciesMetadata")
+            }
+        }
+    }
+
+    @GradleTest
     @GradleTestVersions(maxVersion = TestVersions.Gradle.G_7_3)
     @DisplayName("KT-51946: Print warning on tasks that are not compatible with configuration cache")
     fun testHmppTasksReportConfigurationCacheWarningForGradleLessThan74(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
