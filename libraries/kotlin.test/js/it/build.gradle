@@ -1,5 +1,6 @@
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
+import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
 
 plugins {
     id "com.github.node-gradle.node" version "5.0.0"
@@ -13,8 +14,15 @@ configurations {
     nodeModules {
         extendsFrom api
         attributes {
+            attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category, Category.LIBRARY))
             attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage, KotlinUsages.KOTLIN_RUNTIME))
             attribute(KotlinPlatformType.attribute, KotlinPlatformType.js)
+            attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.legacy)
+        }
+    }
+    [compileClasspath, testCompileClasspath, testRuntimeClasspath].forEach {
+        it.attributes {
+            attribute(org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute.jsCompilerAttribute, org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute.legacy)
         }
     }
 }
@@ -39,6 +47,7 @@ tasks.register("populateNodeModules", Copy) {
     dependsOn(compileKotlin2Js)
     dependsOn(configurations.nodeModules)
     from compileKotlin2Js.destinationDirectory
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE // temporary until stdlib mpp migration is completed
 
     from {
         configurations.nodeModules.collect {

@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.ideaExt.idea
 import org.apache.tools.ant.filters.FixCrLfFilter
+import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
 import java.util.Properties
 
 plugins {
@@ -24,8 +25,10 @@ node {
 val antLauncherJar by configurations.creating
 val testJsRuntime by configurations.creating {
     attributes {
+        attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
         attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_RUNTIME))
         attribute(KotlinPlatformType.attribute, KotlinPlatformType.js)
+        attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.legacy)
     }
 }
 
