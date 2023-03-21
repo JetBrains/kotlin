@@ -247,7 +247,7 @@ object ClasspathChangesComputer {
         incrementalJvmCache.clearCacheForRemovedClasses(changesCollector)
 
         // Get the changes and clean up
-        val dirtyData = changesCollector.getDirtyData(listOf(incrementalJvmCache), DoNothingICReporter)
+        val dirtyData = changesCollector.getChangedSymbols(DoNothingICReporter)
         workingDir.deleteRecursively()
 
         // Normalize the changes (convert DirtyData to `ProgramSymbol`s)
@@ -290,6 +290,10 @@ object ClasspathChangesComputer {
         val unmatchedFqNames = this.dirtyClassesFqNames.toMutableSet().also {
             it.addAll(this.dirtyClassesFqNamesForceRecompile)
             it.removeAll(changedFqNames)
+        }
+
+        if (unmatchedLookupSymbols.isEmpty() && unmatchedFqNames.isEmpty()) {
+            return changedProgramSymbols
         }
 
         /* When `unmatchedLookupSymbols` or `unmatchedFqNames` is not empty, there are two cases:

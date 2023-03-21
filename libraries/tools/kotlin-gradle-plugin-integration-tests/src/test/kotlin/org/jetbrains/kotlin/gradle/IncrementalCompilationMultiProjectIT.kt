@@ -135,6 +135,20 @@ open class IncrementalCompilationJsMultiProjectIT : BaseIncrementalCompilationMu
             }
         }
     }
+
+    @DisplayName("Lib project classes became final")
+    @GradleTest
+    override fun testLibClassBecameFinal(gradleVersion: GradleVersion) {
+        // `impactedClassInAppIsRecompiled = false` for Kotlin/JS (KT-56197 was fixed for Kotlin/JVM only)
+        doTestLibClassBecameFinal(gradleVersion, impactedClassInAppIsRecompiled = false)
+    }
+
+    @DisplayName("KT-56197: Change interface in lib which has subclass in app")
+    @GradleTest
+    override fun testChangeInterfaceInLib(gradleVersion: GradleVersion) {
+        // `impactedClassInAppIsRecompiled = false` for Kotlin/JS (KT-56197 was fixed for Kotlin/JVM only)
+        doTestChangeInterfaceInLib(gradleVersion, impactedClassInAppIsRecompiled = false)
+    }
 }
 
 class IncrementalCompilationJsMultiProjectWithPreciseBackupIT : IncrementalCompilationJsMultiProjectIT() {
@@ -413,7 +427,6 @@ open class IncrementalCompilationOldICJvmMultiProjectIT : IncrementalCompilation
     override fun testAbiChangeInLib_afterLibClean_withAbiSnapshot(gradleVersion: GradleVersion) {
         defaultProject(
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(useGradleClasspathSnapshot = true)
         ) {
             build("assemble")
 
@@ -436,6 +449,20 @@ open class IncrementalCompilationOldICJvmMultiProjectIT : IncrementalCompilation
                 )
             }
         }
+    }
+
+    @DisplayName("Lib project classes became final")
+    @GradleTest
+    override fun testLibClassBecameFinal(gradleVersion: GradleVersion) {
+        // `impactedClassInAppIsRecompiled = false` for the old IC (KT-56197 was fixed for the new IC only)
+        doTestLibClassBecameFinal(gradleVersion, impactedClassInAppIsRecompiled = false)
+    }
+
+    @DisplayName("KT-56197: Change interface in lib which has subclass in app")
+    @GradleTest
+    override fun testChangeInterfaceInLib(gradleVersion: GradleVersion) {
+        // `impactedClassInAppIsRecompiled = false` for the old IC (KT-56197 was fixed for the new IC only)
+        doTestChangeInterfaceInLib(gradleVersion, impactedClassInAppIsRecompiled = false)
     }
 }
 
@@ -622,7 +649,11 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
 
     @DisplayName("Lib project classes became final")
     @GradleTest
-    fun testLibClassBecameFinal(gradleVersion: GradleVersion) {
+    open fun testLibClassBecameFinal(gradleVersion: GradleVersion) {
+        doTestLibClassBecameFinal(gradleVersion)
+    }
+
+    protected fun doTestLibClassBecameFinal(gradleVersion: GradleVersion, impactedClassInAppIsRecompiled: Boolean = true) {
         defaultProject(gradleVersion) {
             build("assemble")
 
@@ -633,7 +664,10 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
             buildAndFail("assemble") {
                 val expectedSources = getExpectedKotlinSourcesForDefaultProject(
                     libSources = listOf("bar/B.kt", "bar/barUseAB.kt", "bar/barUseB.kt"),
-                    appSources = listOf("foo/BB.kt", "foo/fooCallUseAB.kt", "foo/fooUseB.kt")
+                    appSources = listOfNotNull(
+                        "foo/BB.kt", "foo/fooUseB.kt", "foo/fooCallUseAB.kt",
+                        "foo/fooUseBB.kt".takeIf { impactedClassInAppIsRecompiled }
+                    )
                 )
                 assertCompiledKotlinSources(expectedSources, output)
             }
@@ -771,6 +805,57 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
                         libSources = listOf("bar/BarDummy.kt")
                     ),
                     output
+                )
+            }
+        }
+    }
+
+    @DisplayName("KT-56197: Change interface in lib which has subclass in app")
+    @GradleTest
+    open fun testChangeInterfaceInLib(gradleVersion: GradleVersion) {
+        doTestChangeInterfaceInLib(gradleVersion)
+    }
+
+    protected fun doTestChangeInterfaceInLib(gradleVersion: GradleVersion, impactedClassInAppIsRecompiled: Boolean = true) {
+        defaultProject(gradleVersion) {
+            subProject("lib").kotlinSourcesDir().resolve("bar/InterfaceInLib.kt").writeText(
+                """
+                package bar
+                interface InterfaceInLib {
+                    fun someMethod() {}
+                }
+                """.trimIndent()
+            )
+            subProject("app").kotlinSourcesDir().resolve("foo/SubclassInApp.kt").writeText(
+                """
+                package foo
+                import bar.InterfaceInLib
+                class SubclassInApp : InterfaceInLib
+                """.trimIndent()
+            )
+            subProject("app").kotlinSourcesDir().resolve("foo/ClassUsingSubclassInApp.kt").writeText(
+                """
+                package foo
+                fun main() {
+                    SubclassInApp().someMethod()
+                }
+                """.trimIndent()
+            )
+            build(":app:compileKotlin")
+
+            subProject("lib").kotlinSourcesDir().resolve("bar/InterfaceInLib.kt").modify {
+                it.replace("fun someMethod() {}", "fun someMethod(addedParam: Int = 0) {}")
+            }
+
+            build(":app:compileKotlin") {
+                assertIncrementalCompilation(
+                    expectedCompiledKotlinFiles = getExpectedKotlinSourcesForDefaultProject(
+                        libSources = listOf("bar/InterfaceInLib.kt"),
+                        appSources = listOfNotNull(
+                            "foo/SubclassInApp.kt",
+                            "foo/ClassUsingSubclassInApp.kt".takeIf { impactedClassInAppIsRecompiled }
+                        )
+                    )
                 )
             }
         }

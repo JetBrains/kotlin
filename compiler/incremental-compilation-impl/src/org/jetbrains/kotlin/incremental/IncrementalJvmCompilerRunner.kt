@@ -38,22 +38,15 @@ import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.IncrementalCompilation
-import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.config.Services
-import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotDisabled
 import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun.NoChanges
 import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun.ToBeComputedByIncrementalCompiler
 import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnabled.NotAvailableDueToMissingClasspathSnapshot
 import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnabled.NotAvailableForNonIncrementalRun
 import org.jetbrains.kotlin.incremental.ClasspathChanges.NotAvailableForJSCompiler
-import org.jetbrains.kotlin.incremental.classpathDiff.AccessibleClassSnapshot
+import org.jetbrains.kotlin.incremental.classpathDiff.*
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathChangesComputer.computeClasspathChanges
-import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotBuildReporter
-import org.jetbrains.kotlin.incremental.classpathDiff.shrinkAndSaveClasspathSnapshot
-import org.jetbrains.kotlin.incremental.classpathDiff.toChangesEither
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.multiproject.EmptyModulesApiHistory
@@ -165,8 +158,6 @@ open class IncrementalJvmCompilerRunner(
     override fun destinationDir(args: K2JVMCompilerArguments): File =
         args.destinationAsFile
 
-    private var dirtyClasspathChanges: Collection<FqName> = emptySet()
-
     private val messageCollector = BufferingMessageCollector()
     private val compilerConfiguration: CompilerConfiguration by lazy {
         val filterMessageCollector = FilteringMessageCollector(messageCollector) { !it.isError }
@@ -256,7 +247,7 @@ open class IncrementalJvmCompilerRunner(
         initDirtyFiles(dirtyFiles, changedFiles)
 
         reporter.debug { "Classpath changes info passed from Gradle task: ${classpathChanges::class.simpleName}" }
-        val classpathChanges = when (classpathChanges) {
+        val changedAndImpactedSymbols = when (classpathChanges) {
             // Note: classpathChanges is deserialized, so they are no longer singleton objects and need to be compared using `is` (not `==`)
             is NoChanges -> ChangesEither.Known(emptySet(), emptySet())
             is ToBeComputedByIncrementalCompiler -> reporter.measure(BuildTime.COMPUTE_CLASSPATH_CHANGES) {
@@ -267,12 +258,15 @@ open class IncrementalJvmCompilerRunner(
                         currentClasspathSnapshot = currentClasspathSnapshotArg
                         shrunkCurrentClasspathAgainstPreviousLookups = shrunkCurrentClasspathAgainstPreviousLookupsArg
                     }
-                computeClasspathChanges(
+                val classpathChanges = computeClasspathChanges(
                     classpathChanges.classpathSnapshotFiles,
                     caches.lookupCache,
                     storeCurrentClasspathSnapshotForReuse,
                     ClasspathSnapshotBuildReporter(reporter)
-                ).toChangesEither()
+                )
+                // `classpathChanges` contains changed and impacted symbols on the classpath.
+                // We also need to compute symbols in the current module that are impacted by `classpathChanges`.
+                classpathChanges.toChangeInfoList().getChangedAndImpactedSymbols(listOf(caches.platformCache), reporter).toChangesEither()
             }
             is NotAvailableDueToMissingClasspathSnapshot -> ChangesEither.Unknown(BuildAttribute.CLASSPATH_SNAPSHOT_NOT_FOUND)
             is NotAvailableForNonIncrementalRun -> ChangesEither.Unknown(BuildAttribute.UNKNOWN_CHANGES_IN_GRADLE_INPUTS)
@@ -291,6 +285,7 @@ open class IncrementalJvmCompilerRunner(
                 reporter.debug { "Last Kotlin Build info -- $lastBuildInfo" }
                 val scopes = caches.lookupCache.lookupSymbols.map { it.scope.ifBlank { it.name } }.distinct()
 
+                // FIXME The old IC currently doesn't compute impacted symbols
                 getClasspathChanges(
                     args.classpathAsList, changedFiles, lastBuildInfo, modulesApiHistory, reporter, abiSnapshots, withAbiSnapshot,
                     caches.platformCache, scopes
@@ -299,20 +294,16 @@ open class IncrementalJvmCompilerRunner(
             is NotAvailableForJSCompiler -> error("Unexpected type for this code path: ${classpathChanges.javaClass.name}.")
         }
 
-        @Suppress("UNUSED_VARIABLE") // for sealed when
-        val unused = when (classpathChanges) {
+        when (changedAndImpactedSymbols) {
             is ChangesEither.Unknown -> {
-                reporter.info {
-                    "Could not get classpath's changes: ${classpathChanges.reason}"
-                }
-                return CompilationMode.Rebuild(classpathChanges.reason)
+                reporter.info { "Could not get classpath changes: ${changedAndImpactedSymbols.reason}" }
+                return CompilationMode.Rebuild(changedAndImpactedSymbols.reason)
             }
-            is ChangesEither.Known -> {
-                dirtyFiles.addByDirtySymbols(classpathChanges.lookupSymbols)
-                dirtyClasspathChanges = classpathChanges.fqNames
-                dirtyFiles.addByDirtyClasses(classpathChanges.fqNames)
-            }
-        }
+            is ChangesEither.Known -> Unit
+        }.forceExhaustiveWhen()
+
+        dirtyFiles.addByDirtySymbols(changedAndImpactedSymbols.lookupSymbols)
+        dirtyFiles.addByDirtyClasses(changedAndImpactedSymbols.fqNames)
 
         reporter.measure(BuildTime.IC_ANALYZE_CHANGES_IN_JAVA_SOURCES) {
             if (!usePreciseJavaTracking) {
@@ -341,6 +332,35 @@ open class IncrementalJvmCompilerRunner(
         dirtyFiles.addByDirtyClasses(removedClassesChanges.dirtyClassesFqNamesForceRecompile)
         return CompilationMode.Incremental(dirtyFiles)
     }
+
+    private fun ProgramSymbolSet.toChangeInfoList(): List<ChangeInfo> {
+        val changes = mutableListOf<ChangeInfo>()
+        classes.forEach { classId ->
+            // It's important to set `areSubclassesAffected = true` when we don't know
+            changes.add(ChangeInfo.SignatureChanged(classId.asSingleFqName(), areSubclassesAffected = true))
+        }
+        classMembers.forEach { (classId, members) ->
+            changes.add(ChangeInfo.MembersChanged(classId.asSingleFqName(), members))
+        }
+        packageMembers.forEach { (packageFqName, members) ->
+            changes.add(ChangeInfo.MembersChanged(packageFqName, members))
+        }
+        return changes
+    }
+
+    private fun DirtyData.toChangesEither(): ChangesEither.Known {
+        return ChangesEither.Known(
+            lookupSymbols = dirtyLookupSymbols,
+            fqNames = dirtyClassesFqNames + dirtyClassesFqNamesForceRecompile
+        )
+    }
+
+    /**
+     * Helper function to force exhaustive when for statements (see https://youtrack.jetbrains.com/issue/KT-47709).
+     *
+     * If the current IDE/Kotlin compiler already supports exhaustive when for statements, consider removing this function and its usages.
+     */
+    private fun Any.forceExhaustiveWhen() = this
 
     private fun processChangedJava(changedFiles: ChangedFiles.Known, caches: IncrementalJvmCachesManager): BuildAttribute? {
         val javaFiles = (changedFiles.modified + changedFiles.removed).filter(File::isJavaFile)
