@@ -67,12 +67,10 @@ public external abstract class SourceBufferList : EventTarget, JsAny {
     open var onremovesourcebuffer: ((Event) -> JsAny?)?
 }
 
-@PublishedApi
 @Suppress("UNUSED_PARAMETER")
 internal fun getMethodImplForSourceBufferList(obj: SourceBufferList, index: Int): SourceBuffer? { js("return obj[index];") }
 
-@kotlin.internal.InlineOnly
-public inline operator fun SourceBufferList.get(index: Int): SourceBuffer? = getMethodImplForSourceBufferList(this, index)
+public operator fun SourceBufferList.get(index: Int): SourceBuffer? = getMethodImplForSourceBufferList(this, index)
 
 /* please, don't implement this interface! */
 @JsName("null")

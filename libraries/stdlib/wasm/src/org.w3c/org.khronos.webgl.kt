@@ -924,19 +924,15 @@ public external open class Int8Array : ArrayBufferView, JsAny {
     }
 }
 
-@PublishedApi
 @Suppress("UNUSED_PARAMETER")
 internal fun getMethodImplForInt8Array(obj: Int8Array, index: Int): Byte { js("return obj[index];") }
 
-@kotlin.internal.InlineOnly
-public inline operator fun Int8Array.get(index: Int): Byte = getMethodImplForInt8Array(this, index)
+public operator fun Int8Array.get(index: Int): Byte = getMethodImplForInt8Array(this, index)
 
-@PublishedApi
 @Suppress("UNUSED_PARAMETER")
 internal fun setMethodImplForInt8Array(obj: Int8Array, index: Int, value: Byte) { js("obj[index] = value;") }
 
-@kotlin.internal.InlineOnly
-public inline operator fun Int8Array.set(index: Int, value: Byte) = setMethodImplForInt8Array(this, index, value)
+public operator fun Int8Array.set(index: Int, value: Byte) = setMethodImplForInt8Array(this, index, value)
 
 /**
  * Exposes the JavaScript [Uint8Array](https://developer.mozilla.org/en/docs/Web/API/Uint8Array) to Kotlin
@@ -959,19 +955,15 @@ public external open class Uint8Array : ArrayBufferView, JsAny {
     }
 }
 
-@PublishedApi
 @Suppress("UNUSED_PARAMETER")
 internal fun getMethodImplForUint8Array(obj: Uint8Array, index: Int): Byte { js("return obj[index];") }
 
-@kotlin.internal.InlineOnly
-public inline operator fun Uint8Array.get(index: Int): Byte = getMethodImplForUint8Array(this, index)
+public operator fun Uint8Array.get(index: Int): Byte = getMethodImplForUint8Array(this, index)
 
-@PublishedApi
 @Suppress("UNUSED_PARAMETER")
 internal fun setMethodImplForUint8Array(obj: Uint8Array, index: Int, value: Byte) { js("obj[index] = value;") }
 
-@kotlin.internal.InlineOnly
-public inline operator fun Uint8Array.set(index: Int, value: Byte) = setMethodImplForUint8Array(this, index, value)
+public operator fun Uint8Array.set(index: Int, value: Byte) = setMethodImplForUint8Array(this, index, value)
 
 /**
  * Exposes the JavaScript [Uint8ClampedArray](https://developer.mozilla.org/en/docs/Web/API/Uint8ClampedArray) to Kotlin
@@ -994,19 +986,15 @@ public external open class Uint8ClampedArray : ArrayBufferView, JsAny {
     }
 }
 
-@PublishedApi
 @Suppress("UNUSED_PARAMETER")
 internal fun getMethodImplForUint8ClampedArray(obj: Uint8ClampedArray, index: Int): Byte { js("return obj[index];") }
 
-@kotlin.internal.InlineOnly
-public inline operator fun Uint8ClampedArray.get(index: Int): Byte = getMethodImplForUint8ClampedArray(this, index)
+public operator fun Uint8ClampedArray.get(index: Int): Byte = getMethodImplForUint8ClampedArray(this, index)
 
-@PublishedApi
 @Suppress("UNUSED_PARAMETER")
 internal fun setMethodImplForUint8ClampedArray(obj: Uint8ClampedArray, index: Int, value: Byte) { js("obj[index] = value;") }
 
-@kotlin.internal.InlineOnly
-public inline operator fun Uint8ClampedArray.set(index: Int, value: Byte) = setMethodImplForUint8ClampedArray(this, index, value)
+public operator fun Uint8ClampedArray.set(index: Int, value: Byte) = setMethodImplForUint8ClampedArray(this, index, value)
 
 /**
  * Exposes the JavaScript [Int16Array](https://developer.mozilla.org/en/docs/Web/API/Int16Array) to Kotlin
@@ -1029,19 +1017,15 @@ public external open class Int16Array : ArrayBufferView, JsAny {
     }
 }
 
-@PublishedApi
 @Suppress("UNUSED_PARAMETER")
 internal fun getMethodImplForInt16Array(obj: Int16Array, index: Int): Short { js("return obj[index];") }
 
-@kotlin.internal.InlineOnly
-public inline operator fun Int16Array.get(index: Int): Short = getMethodImplForInt16Array(this, index)
+public operator fun Int16Array.get(index: Int): Short = getMethodImplForInt16Array(this, index)
 
-@PublishedApi
 @Suppress("UNUSED_PARAMETER")
 internal fun setMethodImplForInt16Array(obj: Int16Array, index: Int, value: Short) { js("obj[index] = value;") }
 
-@kotlin.internal.InlineOnly
-public inline operator fun Int16Array.set(index: Int, value: Short) = setMethodImplForInt16Array(this, index, value)
+public operator fun Int16Array.set(index: Int, value: Short) = setMethodImplForInt16Array(this, index, value)
 
 /**
  * Exposes the JavaScript [Uint16Array](https://developer.mozilla.org/en/docs/Web/API/Uint16Array) to Kotlin
@@ -1064,19 +1048,15 @@ public external open class Uint16Array : ArrayBufferView, JsAny {
     }
 }
 
-@PublishedApi
 @Suppress("UNUSED_PARAMETER")
 internal fun getMethodImplForUint16Array(obj: Uint16Array, index: Int): Short { js("return obj[index];") }
 
-@kotlin.internal.InlineOnly
-public inline operator fun Uint16Array.get(index: Int): Short = getMethodImplForUint16Array(this, index)
+public operator fun Uint16Array.get(index: Int): Short = getMethodImplForUint16Array(this, index)
 
-@PublishedApi
 @Suppress("UNUSED_PARAMETER")
 internal fun setMethodImplForUint16Array(obj: Uint16Array, index: Int, value: Short) { js("obj[index] = value;") }
 
-@kotlin.internal.InlineOnly
-public inline operator fun Uint16Array.set(index: Int, value: Short) = setMethodImplForUint16Array(this, index, value)
+public operator fun Uint16Array.set(index: Int, value: Short) = setMethodImplForUint16Array(this, index, value)
 
 /**
  * Exposes the JavaScript [Int32Array](https://developer.mozilla.org/en/docs/Web/API/Int32Array) to Kotlin
@@ -1099,19 +1079,15 @@ public external open class Int32Array : ArrayBufferView, JsAny {
     }
 }
 
-@PublishedApi
 @Suppress("UNUSED_PARAMETER")
 internal fun getMethodImplForInt32Array(obj: Int32Array, index: Int): Int { js("return obj[index];") }
 
-@kotlin.internal.InlineOnly
-public inline operator fun Int32Array.get(index: Int): Int = getMethodImplForInt32Array(this, index)
+public operator fun Int32Array.get(index: Int): Int = getMethodImplForInt32Array(this, index)
 
-@PublishedApi
 @Suppress("UNUSED_PARAMETER")
 internal fun setMethodImplForInt32Array(obj: Int32Array, index: Int, value: Int) { js("obj[index] = value;") }
 
-@kotlin.internal.InlineOnly
-public inline operator fun Int32Array.set(index: Int, value: Int) = setMethodImplForInt32Array(this, index, value)
+public operator fun Int32Array.set(index: Int, value: Int) = setMethodImplForInt32Array(this, index, value)
 
 /**
  * Exposes the JavaScript [Uint32Array](https://developer.mozilla.org/en/docs/Web/API/Uint32Array) to Kotlin
@@ -1134,19 +1110,15 @@ public external open class Uint32Array : ArrayBufferView, JsAny {
     }
 }
 
-@PublishedApi
 @Suppress("UNUSED_PARAMETER")
 internal fun getMethodImplForUint32Array(obj: Uint32Array, index: Int): Int { js("return obj[index];") }
 
-@kotlin.internal.InlineOnly
-public inline operator fun Uint32Array.get(index: Int): Int = getMethodImplForUint32Array(this, index)
+public operator fun Uint32Array.get(index: Int): Int = getMethodImplForUint32Array(this, index)
 
-@PublishedApi
 @Suppress("UNUSED_PARAMETER")
 internal fun setMethodImplForUint32Array(obj: Uint32Array, index: Int, value: Int) { js("obj[index] = value;") }
 
-@kotlin.internal.InlineOnly
-public inline operator fun Uint32Array.set(index: Int, value: Int) = setMethodImplForUint32Array(this, index, value)
+public operator fun Uint32Array.set(index: Int, value: Int) = setMethodImplForUint32Array(this, index, value)
 
 /**
  * Exposes the JavaScript [Float32Array](https://developer.mozilla.org/en/docs/Web/API/Float32Array) to Kotlin
@@ -1169,19 +1141,15 @@ public external open class Float32Array : ArrayBufferView, JsAny {
     }
 }
 
-@PublishedApi
 @Suppress("UNUSED_PARAMETER")
 internal fun getMethodImplForFloat32Array(obj: Float32Array, index: Int): Float { js("return obj[index];") }
 
-@kotlin.internal.InlineOnly
-public inline operator fun Float32Array.get(index: Int): Float = getMethodImplForFloat32Array(this, index)
+public operator fun Float32Array.get(index: Int): Float = getMethodImplForFloat32Array(this, index)
 
-@PublishedApi
 @Suppress("UNUSED_PARAMETER")
 internal fun setMethodImplForFloat32Array(obj: Float32Array, index: Int, value: Float) { js("obj[index] = value;") }
 
-@kotlin.internal.InlineOnly
-public inline operator fun Float32Array.set(index: Int, value: Float) = setMethodImplForFloat32Array(this, index, value)
+public operator fun Float32Array.set(index: Int, value: Float) = setMethodImplForFloat32Array(this, index, value)
 
 /**
  * Exposes the JavaScript [Float64Array](https://developer.mozilla.org/en/docs/Web/API/Float64Array) to Kotlin
@@ -1204,19 +1172,15 @@ public external open class Float64Array : ArrayBufferView, JsAny {
     }
 }
 
-@PublishedApi
 @Suppress("UNUSED_PARAMETER")
 internal fun getMethodImplForFloat64Array(obj: Float64Array, index: Int): Double { js("return obj[index];") }
 
-@kotlin.internal.InlineOnly
-public inline operator fun Float64Array.get(index: Int): Double = getMethodImplForFloat64Array(this, index)
+public operator fun Float64Array.get(index: Int): Double = getMethodImplForFloat64Array(this, index)
 
-@PublishedApi
 @Suppress("UNUSED_PARAMETER")
 internal fun setMethodImplForFloat64Array(obj: Float64Array, index: Int, value: Double) { js("obj[index] = value;") }
 
-@kotlin.internal.InlineOnly
-public inline operator fun Float64Array.set(index: Int, value: Double) = setMethodImplForFloat64Array(this, index, value)
+public operator fun Float64Array.set(index: Int, value: Double) = setMethodImplForFloat64Array(this, index, value)
 
 /**
  * Exposes the JavaScript [DataView](https://developer.mozilla.org/en/docs/Web/API/DataView) to Kotlin

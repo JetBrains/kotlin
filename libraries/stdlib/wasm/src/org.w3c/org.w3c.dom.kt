@@ -30,19 +30,15 @@ public external abstract class HTMLAllCollection : JsAny {
     fun namedItem(name: String): UnionElementOrHTMLCollection?
 }
 
-@PublishedApi
 @Suppress("UNUSED_PARAMETER")
 internal fun getMethodImplForHTMLAllCollection(obj: HTMLAllCollection, index: Int): Element? { js("return obj[index];") }
 
-@kotlin.internal.InlineOnly
-public inline operator fun HTMLAllCollection.get(index: Int): Element? = getMethodImplForHTMLAllCollection(this, index)
+public operator fun HTMLAllCollection.get(index: Int): Element? = getMethodImplForHTMLAllCollection(this, index)
 
-@PublishedApi
 @Suppress("UNUSED_PARAMETER")
 internal fun getMethodImplForHTMLAllCollection(obj: HTMLAllCollection, name: String): UnionElementOrHTMLCollection? { js("return obj[name];") }
 
-@kotlin.internal.InlineOnly
-public inline operator fun HTMLAllCollection.get(name: String): UnionElementOrHTMLCollection? = getMethodImplForHTMLAllCollection(this, name)
+public operator fun HTMLAllCollection.get(name: String): UnionElementOrHTMLCollection? = getMethodImplForHTMLAllCollection(this, name)
 
 /**
  * Exposes the JavaScript [HTMLFormControlsCollection](https://developer.mozilla.org/en/docs/Web/API/HTMLFormControlsCollection) to Kotlin
@@ -66,12 +62,10 @@ public external abstract class HTMLOptionsCollection : HTMLCollection, JsAny {
     fun remove(index: Int)
 }
 
-@PublishedApi
 @Suppress("UNUSED_PARAMETER")
 internal fun setMethodImplForHTMLOptionsCollection(obj: HTMLOptionsCollection, index: Int, option: HTMLOptionElement?) { js("obj[index] = option;") }
 
-@kotlin.internal.InlineOnly
-public inline operator fun HTMLOptionsCollection.set(index: Int, option: HTMLOptionElement?) = setMethodImplForHTMLOptionsCollection(this, index, option)
+public operator fun HTMLOptionsCollection.set(index: Int, option: HTMLOptionElement?) = setMethodImplForHTMLOptionsCollection(this, index, option)
 
 /**
  * Exposes the JavaScript [HTMLElement](https://developer.mozilla.org/en/docs/Web/API/HTMLElement) to Kotlin
@@ -154,19 +148,15 @@ public external abstract class HTMLUnknownElement : HTMLElement, JsAny {
  */
 public external abstract class DOMStringMap : JsAny
 
-@PublishedApi
 @Suppress("UNUSED_PARAMETER")
 internal fun getMethodImplForDOMStringMap(obj: DOMStringMap, name: String): String? { js("return obj[name];") }
 
-@kotlin.internal.InlineOnly
-public inline operator fun DOMStringMap.get(name: String): String? = getMethodImplForDOMStringMap(this, name)
+public operator fun DOMStringMap.get(name: String): String? = getMethodImplForDOMStringMap(this, name)
 
-@PublishedApi
 @Suppress("UNUSED_PARAMETER")
 internal fun setMethodImplForDOMStringMap(obj: DOMStringMap, name: String, value: String) { js("obj[name] = value;") }
 
-@kotlin.internal.InlineOnly
-public inline operator fun DOMStringMap.set(name: String, value: String) = setMethodImplForDOMStringMap(this, name, value)
+public operator fun DOMStringMap.set(name: String, value: String) = setMethodImplForDOMStringMap(this, name, value)
 
 /**
  * Exposes the JavaScript [HTMLHtmlElement](https://developer.mozilla.org/en/docs/Web/API/HTMLHtmlElement) to Kotlin
@@ -1388,12 +1378,10 @@ public external abstract class AudioTrackList : EventTarget, JsAny {
     fun getTrackById(id: String): AudioTrack?
 }
 
-@PublishedApi
 @Suppress("UNUSED_PARAMETER")
 internal fun getMethodImplForAudioTrackList(obj: AudioTrackList, index: Int): AudioTrack? { js("return obj[index];") }
 
-@kotlin.internal.InlineOnly
-public inline operator fun AudioTrackList.get(index: Int): AudioTrack? = getMethodImplForAudioTrackList(this, index)
+public operator fun AudioTrackList.get(index: Int): AudioTrack? = getMethodImplForAudioTrackList(this, index)
 
 /**
  * Exposes the JavaScript [AudioTrack](https://developer.mozilla.org/en/docs/Web/API/AudioTrack) to Kotlin
@@ -1419,12 +1407,10 @@ public external abstract class VideoTrackList : EventTarget, JsAny {
     fun getTrackById(id: String): VideoTrack?
 }
 
-@PublishedApi
 @Suppress("UNUSED_PARAMETER")
 internal fun getMethodImplForVideoTrackList(obj: VideoTrackList, index: Int): VideoTrack? { js("return obj[index];") }
 
-@kotlin.internal.InlineOnly
-public inline operator fun VideoTrackList.get(index: Int): VideoTrack? = getMethodImplForVideoTrackList(this, index)
+public operator fun VideoTrackList.get(index: Int): VideoTrack? = getMethodImplForVideoTrackList(this, index)
 
 /**
  * Exposes the JavaScript [VideoTrack](https://developer.mozilla.org/en/docs/Web/API/VideoTrack) to Kotlin
@@ -1446,12 +1432,10 @@ public external abstract class TextTrackList : EventTarget, JsAny {
     fun getTrackById(id: String): TextTrack?
 }
 
-@PublishedApi
 @Suppress("UNUSED_PARAMETER")
 internal fun getMethodImplForTextTrackList(obj: TextTrackList, index: Int): TextTrack? { js("return obj[index];") }
 
-@kotlin.internal.InlineOnly
-public inline operator fun TextTrackList.get(index: Int): TextTrack? = getMethodImplForTextTrackList(this, index)
+public operator fun TextTrackList.get(index: Int): TextTrack? = getMethodImplForTextTrackList(this, index)
 
 /**
  * Exposes the JavaScript [TextTrack](https://developer.mozilla.org/en/docs/Web/API/TextTrack) to Kotlin
@@ -1476,12 +1460,10 @@ public external abstract class TextTrackCueList : JsAny {
     fun getCueById(id: String): TextTrackCue?
 }
 
-@PublishedApi
 @Suppress("UNUSED_PARAMETER")
 internal fun getMethodImplForTextTrackCueList(obj: TextTrackCueList, index: Int): TextTrackCue? { js("return obj[index];") }
 
-@kotlin.internal.InlineOnly
-public inline operator fun TextTrackCueList.get(index: Int): TextTrackCue? = getMethodImplForTextTrackCueList(this, index)
+public operator fun TextTrackCueList.get(index: Int): TextTrackCue? = getMethodImplForTextTrackCueList(this, index)
 
 /**
  * Exposes the JavaScript [TextTrackCue](https://developer.mozilla.org/en/docs/Web/API/TextTrackCue) to Kotlin
@@ -1860,19 +1842,15 @@ public external abstract class HTMLFormElement : HTMLElement, JsAny {
     }
 }
 
-@PublishedApi
 @Suppress("UNUSED_PARAMETER")
 internal fun getMethodImplForHTMLFormElement(obj: HTMLFormElement, index: Int): Element? { js("return obj[index];") }
 
-@kotlin.internal.InlineOnly
-public inline operator fun HTMLFormElement.get(index: Int): Element? = getMethodImplForHTMLFormElement(this, index)
+public operator fun HTMLFormElement.get(index: Int): Element? = getMethodImplForHTMLFormElement(this, index)
 
-@PublishedApi
 @Suppress("UNUSED_PARAMETER")
 internal fun getMethodImplForHTMLFormElement(obj: HTMLFormElement, name: String): UnionElementOrRadioNodeList? { js("return obj[name];") }
 
-@kotlin.internal.InlineOnly
-public inline operator fun HTMLFormElement.get(name: String): UnionElementOrRadioNodeList? = getMethodImplForHTMLFormElement(this, name)
+public operator fun HTMLFormElement.get(name: String): UnionElementOrRadioNodeList? = getMethodImplForHTMLFormElement(this, name)
 
 /**
  * Exposes the JavaScript [HTMLLabelElement](https://developer.mozilla.org/en/docs/Web/API/HTMLLabelElement) to Kotlin
@@ -2085,19 +2063,15 @@ public external abstract class HTMLSelectElement : HTMLElement, ItemArrayLike<El
     }
 }
 
-@PublishedApi
 @Suppress("UNUSED_PARAMETER")
 internal fun getMethodImplForHTMLSelectElement(obj: HTMLSelectElement, index: Int): Element? { js("return obj[index];") }
 
-@kotlin.internal.InlineOnly
-public inline operator fun HTMLSelectElement.get(index: Int): Element? = getMethodImplForHTMLSelectElement(this, index)
+public operator fun HTMLSelectElement.get(index: Int): Element? = getMethodImplForHTMLSelectElement(this, index)
 
-@PublishedApi
 @Suppress("UNUSED_PARAMETER")
 internal fun setMethodImplForHTMLSelectElement(obj: HTMLSelectElement, index: Int, option: HTMLOptionElement?) { js("obj[index] = option;") }
 
-@kotlin.internal.InlineOnly
-public inline operator fun HTMLSelectElement.set(index: Int, option: HTMLOptionElement?) = setMethodImplForHTMLSelectElement(this, index, option)
+public operator fun HTMLSelectElement.set(index: Int, option: HTMLOptionElement?) = setMethodImplForHTMLSelectElement(this, index, option)
 
 /**
  * Exposes the JavaScript [HTMLDataListElement](https://developer.mozilla.org/en/docs/Web/API/HTMLDataListElement) to Kotlin
@@ -3058,12 +3032,10 @@ public external abstract class DataTransferItemList : JsAny {
     fun clear()
 }
 
-@PublishedApi
 @Suppress("UNUSED_PARAMETER")
 internal fun getMethodImplForDataTransferItemList(obj: DataTransferItemList, index: Int): DataTransferItem? { js("return obj[index];") }
 
-@kotlin.internal.InlineOnly
-public inline operator fun DataTransferItemList.get(index: Int): DataTransferItem? = getMethodImplForDataTransferItemList(this, index)
+public operator fun DataTransferItemList.get(index: Int): DataTransferItem? = getMethodImplForDataTransferItemList(this, index)
 
 /**
  * Exposes the JavaScript [DataTransferItem](https://developer.mozilla.org/en/docs/Web/API/DataTransferItem) to Kotlin
@@ -3167,12 +3139,10 @@ public external abstract class Window : EventTarget, GlobalEventHandlers, Window
     fun getComputedStyle(elt: Element, pseudoElt: String? = definedExternally): CSSStyleDeclaration
 }
 
-@PublishedApi
 @Suppress("UNUSED_PARAMETER")
 internal fun getMethodImplForWindow(obj: Window, name: String): JsAny? { js("return obj[name];") }
 
-@kotlin.internal.InlineOnly
-public inline operator fun Window.get(name: String): JsAny? = getMethodImplForWindow(this, name)
+public operator fun Window.get(name: String): JsAny? = getMethodImplForWindow(this, name)
 
 public external abstract class BarProp : JsAny {
     open val visible: Boolean
@@ -3761,19 +3731,15 @@ public external abstract class PluginArray : ItemArrayLike<Plugin>, JsAny {
     fun namedItem(name: String): Plugin?
 }
 
-@PublishedApi
 @Suppress("UNUSED_PARAMETER")
 internal fun getMethodImplForPluginArray(obj: PluginArray, index: Int): Plugin? { js("return obj[index];") }
 
-@kotlin.internal.InlineOnly
-public inline operator fun PluginArray.get(index: Int): Plugin? = getMethodImplForPluginArray(this, index)
+public operator fun PluginArray.get(index: Int): Plugin? = getMethodImplForPluginArray(this, index)
 
-@PublishedApi
 @Suppress("UNUSED_PARAMETER")
 internal fun getMethodImplForPluginArray(obj: PluginArray, name: String): Plugin? { js("return obj[name];") }
 
-@kotlin.internal.InlineOnly
-public inline operator fun PluginArray.get(name: String): Plugin? = getMethodImplForPluginArray(this, name)
+public operator fun PluginArray.get(name: String): Plugin? = getMethodImplForPluginArray(this, name)
 
 /**
  * Exposes the JavaScript [MimeTypeArray](https://developer.mozilla.org/en/docs/Web/API/MimeTypeArray) to Kotlin
@@ -3783,19 +3749,15 @@ public external abstract class MimeTypeArray : ItemArrayLike<MimeType>, JsAny {
     fun namedItem(name: String): MimeType?
 }
 
-@PublishedApi
 @Suppress("UNUSED_PARAMETER")
 internal fun getMethodImplForMimeTypeArray(obj: MimeTypeArray, index: Int): MimeType? { js("return obj[index];") }
 
-@kotlin.internal.InlineOnly
-public inline operator fun MimeTypeArray.get(index: Int): MimeType? = getMethodImplForMimeTypeArray(this, index)
+public operator fun MimeTypeArray.get(index: Int): MimeType? = getMethodImplForMimeTypeArray(this, index)
 
-@PublishedApi
 @Suppress("UNUSED_PARAMETER")
 internal fun getMethodImplForMimeTypeArray(obj: MimeTypeArray, name: String): MimeType? { js("return obj[name];") }
 
-@kotlin.internal.InlineOnly
-public inline operator fun MimeTypeArray.get(name: String): MimeType? = getMethodImplForMimeTypeArray(this, name)
+public operator fun MimeTypeArray.get(name: String): MimeType? = getMethodImplForMimeTypeArray(this, name)
 
 /**
  * Exposes the JavaScript [Plugin](https://developer.mozilla.org/en/docs/Web/API/Plugin) to Kotlin
@@ -3808,19 +3770,15 @@ public external abstract class Plugin : ItemArrayLike<MimeType>, JsAny {
     fun namedItem(name: String): MimeType?
 }
 
-@PublishedApi
 @Suppress("UNUSED_PARAMETER")
 internal fun getMethodImplForPlugin(obj: Plugin, index: Int): MimeType? { js("return obj[index];") }
 
-@kotlin.internal.InlineOnly
-public inline operator fun Plugin.get(index: Int): MimeType? = getMethodImplForPlugin(this, index)
+public operator fun Plugin.get(index: Int): MimeType? = getMethodImplForPlugin(this, index)
 
-@PublishedApi
 @Suppress("UNUSED_PARAMETER")
 internal fun getMethodImplForPlugin(obj: Plugin, name: String): MimeType? { js("return obj[name];") }
 
-@kotlin.internal.InlineOnly
-public inline operator fun Plugin.get(name: String): MimeType? = getMethodImplForPlugin(this, name)
+public operator fun Plugin.get(name: String): MimeType? = getMethodImplForPlugin(this, name)
 
 /**
  * Exposes the JavaScript [MimeType](https://developer.mozilla.org/en/docs/Web/API/MimeType) to Kotlin
@@ -4135,19 +4093,15 @@ public external abstract class Storage : JsAny {
     fun setItem(key: String, value: String)
 }
 
-@PublishedApi
 @Suppress("UNUSED_PARAMETER")
 internal fun getMethodImplForStorage(obj: Storage, key: String): String? { js("return obj[key];") }
 
-@kotlin.internal.InlineOnly
-public inline operator fun Storage.get(key: String): String? = getMethodImplForStorage(this, key)
+public operator fun Storage.get(key: String): String? = getMethodImplForStorage(this, key)
 
-@PublishedApi
 @Suppress("UNUSED_PARAMETER")
 internal fun setMethodImplForStorage(obj: Storage, key: String, value: String) { js("obj[key] = value;") }
 
-@kotlin.internal.InlineOnly
-public inline operator fun Storage.set(key: String, value: String) = setMethodImplForStorage(this, key, value)
+public operator fun Storage.set(key: String, value: String) = setMethodImplForStorage(this, key, value)
 
 /**
  * Exposes the JavaScript [WindowSessionStorage](https://developer.mozilla.org/en/docs/Web/API/WindowSessionStorage) to Kotlin
@@ -4526,12 +4480,10 @@ public external abstract class NodeList : ItemArrayLike<Node>, JsAny {
     override fun item(index: Int): Node?
 }
 
-@PublishedApi
 @Suppress("UNUSED_PARAMETER")
 internal fun getMethodImplForNodeList(obj: NodeList, index: Int): Node? { js("return obj[index];") }
 
-@kotlin.internal.InlineOnly
-public inline operator fun NodeList.get(index: Int): Node? = getMethodImplForNodeList(this, index)
+public operator fun NodeList.get(index: Int): Node? = getMethodImplForNodeList(this, index)
 
 /**
  * Exposes the JavaScript [HTMLCollection](https://developer.mozilla.org/en/docs/Web/API/HTMLCollection) to Kotlin
@@ -4541,19 +4493,15 @@ public external abstract class HTMLCollection : ItemArrayLike<Element>, UnionEle
     fun namedItem(name: String): Element?
 }
 
-@PublishedApi
 @Suppress("UNUSED_PARAMETER")
 internal fun getMethodImplForHTMLCollection(obj: HTMLCollection, index: Int): Element? { js("return obj[index];") }
 
-@kotlin.internal.InlineOnly
-public inline operator fun HTMLCollection.get(index: Int): Element? = getMethodImplForHTMLCollection(this, index)
+public operator fun HTMLCollection.get(index: Int): Element? = getMethodImplForHTMLCollection(this, index)
 
-@PublishedApi
 @Suppress("UNUSED_PARAMETER")
 internal fun getMethodImplForHTMLCollection(obj: HTMLCollection, name: String): Element? { js("return obj[name];") }
 
-@kotlin.internal.InlineOnly
-public inline operator fun HTMLCollection.get(name: String): Element? = getMethodImplForHTMLCollection(this, name)
+public operator fun HTMLCollection.get(name: String): Element? = getMethodImplForHTMLCollection(this, name)
 
 /**
  * Exposes the JavaScript [MutationObserver](https://developer.mozilla.org/en/docs/Web/API/MutationObserver) to Kotlin
@@ -4878,12 +4826,10 @@ public external open class Document : Node, GlobalEventHandlers, DocumentAndElem
     }
 }
 
-@PublishedApi
 @Suppress("UNUSED_PARAMETER")
 internal fun getMethodImplForDocument(obj: Document, name: String): JsAny? { js("return obj[name];") }
 
-@kotlin.internal.InlineOnly
-public inline operator fun Document.get(name: String): JsAny? = getMethodImplForDocument(this, name)
+public operator fun Document.get(name: String): JsAny? = getMethodImplForDocument(this, name)
 
 /**
  * Exposes the JavaScript [XMLDocument](https://developer.mozilla.org/en/docs/Web/API/XMLDocument) to Kotlin
@@ -5132,19 +5078,15 @@ public external abstract class NamedNodeMap : ItemArrayLike<Attr>, JsAny {
     fun getNamedItem(qualifiedName: String): Attr?
 }
 
-@PublishedApi
 @Suppress("UNUSED_PARAMETER")
 internal fun getMethodImplForNamedNodeMap(obj: NamedNodeMap, index: Int): Attr? { js("return obj[index];") }
 
-@kotlin.internal.InlineOnly
-public inline operator fun NamedNodeMap.get(index: Int): Attr? = getMethodImplForNamedNodeMap(this, index)
+public operator fun NamedNodeMap.get(index: Int): Attr? = getMethodImplForNamedNodeMap(this, index)
 
-@PublishedApi
 @Suppress("UNUSED_PARAMETER")
 internal fun getMethodImplForNamedNodeMap(obj: NamedNodeMap, qualifiedName: String): Attr? { js("return obj[qualifiedName];") }
 
-@kotlin.internal.InlineOnly
-public inline operator fun NamedNodeMap.get(qualifiedName: String): Attr? = getMethodImplForNamedNodeMap(this, qualifiedName)
+public operator fun NamedNodeMap.get(qualifiedName: String): Attr? = getMethodImplForNamedNodeMap(this, qualifiedName)
 
 /**
  * Exposes the JavaScript [Attr](https://developer.mozilla.org/en/docs/Web/API/Attr) to Kotlin
@@ -5455,12 +5397,10 @@ public external abstract class DOMTokenList : ItemArrayLike<JsString>, JsAny {
     override fun item(index: Int): JsString?
 }
 
-@PublishedApi
 @Suppress("UNUSED_PARAMETER")
 internal fun getMethodImplForDOMTokenList(obj: DOMTokenList, index: Int): String? { js("return obj[index];") }
 
-@kotlin.internal.InlineOnly
-public inline operator fun DOMTokenList.get(index: Int): String? = getMethodImplForDOMTokenList(this, index)
+public operator fun DOMTokenList.get(index: Int): String? = getMethodImplForDOMTokenList(this, index)
 
 /**
  * Exposes the JavaScript [DOMPointReadOnly](https://developer.mozilla.org/en/docs/Web/API/DOMPointReadOnly) to Kotlin
@@ -5552,12 +5492,10 @@ public external interface DOMRectList : ItemArrayLike<DOMRect>, JsAny {
     override fun item(index: Int): DOMRect?
 }
 
-@PublishedApi
 @Suppress("UNUSED_PARAMETER")
 internal fun getMethodImplForDOMRectList(obj: DOMRectList, index: Int): DOMRect? { js("return obj[index];") }
 
-@kotlin.internal.InlineOnly
-public inline operator fun DOMRectList.get(index: Int): DOMRect? = getMethodImplForDOMRectList(this, index)
+public operator fun DOMRectList.get(index: Int): DOMRect? = getMethodImplForDOMRectList(this, index)
 
 /**
  * Exposes the JavaScript [DOMQuad](https://developer.mozilla.org/en/docs/Web/API/DOMQuad) to Kotlin
@@ -5814,12 +5752,10 @@ public external abstract class TouchList : ItemArrayLike<Touch>, JsAny {
     override fun item(index: Int): Touch?
 }
 
-@PublishedApi
 @Suppress("UNUSED_PARAMETER")
 internal fun getMethodImplForTouchList(obj: TouchList, index: Int): Touch? { js("return obj[index];") }
 
-@kotlin.internal.InlineOnly
-public inline operator fun TouchList.get(index: Int): Touch? = getMethodImplForTouchList(this, index)
+public operator fun TouchList.get(index: Int): Touch? = getMethodImplForTouchList(this, index)
 
 public external open class TouchEvent : UIEvent, JsAny {
     open val touches: TouchList

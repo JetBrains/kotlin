@@ -58,12 +58,10 @@ public external abstract class FileList : ItemArrayLike<File>, JsAny {
     override fun item(index: Int): File?
 }
 
-@PublishedApi
 @Suppress("UNUSED_PARAMETER")
 internal fun getMethodImplForFileList(obj: FileList, index: Int): File? { js("return obj[index];") }
 
-@kotlin.internal.InlineOnly
-public inline operator fun FileList.get(index: Int): File? = getMethodImplForFileList(this, index)
+public operator fun FileList.get(index: Int): File? = getMethodImplForFileList(this, index)
 
 /**
  * Exposes the JavaScript [FileReader](https://developer.mozilla.org/en/docs/Web/API/FileReader) to Kotlin

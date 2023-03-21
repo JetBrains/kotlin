@@ -297,7 +297,6 @@ private class IdlFileConverter(
             extend = null,
             operator = false,
             annotations = mutableListOf(
-                PUBLISHED_API_ANNOTATION,
                 SUPPRESS_UNUSED_PARAMETER_ANNOTATION,
             ),
             body = BlockStatementModel(
@@ -316,10 +315,9 @@ private class IdlFileConverter(
             type = unitType,
             typeParameters = listOf(),
             annotations = mutableListOf(
-                INLINE_ONLY_ANNOTATION
             ),
             export = false,
-            inline = true,
+            inline = false,
             operator = true,
             extend = ClassLikeReferenceModel(
                 name = ownerName,
@@ -341,7 +339,7 @@ private class IdlFileConverter(
             ),
             visibilityModifier = VisibilityModifierModel.PUBLIC,
             comment = null,
-            external = true
+            external = false
         )
         return listOf(privateSetterImpl, publicSetter)
     }
@@ -371,7 +369,6 @@ private class IdlFileConverter(
             extend = null,
             operator = false,
             annotations = mutableListOf(
-                PUBLISHED_API_ANNOTATION,
                 SUPPRESS_UNUSED_PARAMETER_ANNOTATION
             ),
             body = BlockStatementModel(
@@ -390,10 +387,9 @@ private class IdlFileConverter(
             type = valueType.toNullableIfNotPrimitive().convertToModel(),
             typeParameters = listOf(),
             annotations = mutableListOf(
-                INLINE_ONLY_ANNOTATION
             ),
             export = false,
-            inline = true,
+            inline = false,
             operator = true,
             extend = ClassLikeReferenceModel(
                 name = ownerName,
@@ -411,7 +407,7 @@ private class IdlFileConverter(
             ),
             visibilityModifier = VisibilityModifierModel.PUBLIC,
             comment = null,
-            external = true
+            external = false
         )
 
         return listOf(privateGetterImpl, publicGetter)

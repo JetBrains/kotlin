@@ -19,12 +19,10 @@ public external abstract class MediaList : ItemArrayLike<JsString>, JsAny {
     override fun item(index: Int): JsString?
 }
 
-@PublishedApi
 @Suppress("UNUSED_PARAMETER")
 internal fun getMethodImplForMediaList(obj: MediaList, index: Int): String? { js("return obj[index];") }
 
-@kotlin.internal.InlineOnly
-public inline operator fun MediaList.get(index: Int): String? = getMethodImplForMediaList(this, index)
+public operator fun MediaList.get(index: Int): String? = getMethodImplForMediaList(this, index)
 
 /**
  * Exposes the JavaScript [StyleSheet](https://developer.mozilla.org/en/docs/Web/API/StyleSheet) to Kotlin
@@ -56,12 +54,10 @@ public external abstract class StyleSheetList : ItemArrayLike<StyleSheet>, JsAny
     override fun item(index: Int): StyleSheet?
 }
 
-@PublishedApi
 @Suppress("UNUSED_PARAMETER")
 internal fun getMethodImplForStyleSheetList(obj: StyleSheetList, index: Int): StyleSheet? { js("return obj[index];") }
 
-@kotlin.internal.InlineOnly
-public inline operator fun StyleSheetList.get(index: Int): StyleSheet? = getMethodImplForStyleSheetList(this, index)
+public operator fun StyleSheetList.get(index: Int): StyleSheet? = getMethodImplForStyleSheetList(this, index)
 
 /**
  * Exposes the JavaScript [LinkStyle](https://developer.mozilla.org/en/docs/Web/API/LinkStyle) to Kotlin
@@ -78,12 +74,10 @@ public external abstract class CSSRuleList : ItemArrayLike<CSSRule>, JsAny {
     override fun item(index: Int): CSSRule?
 }
 
-@PublishedApi
 @Suppress("UNUSED_PARAMETER")
 internal fun getMethodImplForCSSRuleList(obj: CSSRuleList, index: Int): CSSRule? { js("return obj[index];") }
 
-@kotlin.internal.InlineOnly
-public inline operator fun CSSRuleList.get(index: Int): CSSRule? = getMethodImplForCSSRuleList(this, index)
+public operator fun CSSRuleList.get(index: Int): CSSRule? = getMethodImplForCSSRuleList(this, index)
 
 /**
  * Exposes the JavaScript [CSSRule](https://developer.mozilla.org/en/docs/Web/API/CSSRule) to Kotlin
@@ -476,12 +470,10 @@ public external abstract class CSSStyleDeclaration : ItemArrayLike<JsString>, Js
     override fun item(index: Int): JsString
 }
 
-@PublishedApi
 @Suppress("UNUSED_PARAMETER")
 internal fun getMethodImplForCSSStyleDeclaration(obj: CSSStyleDeclaration, index: Int): String? { js("return obj[index];") }
 
-@kotlin.internal.InlineOnly
-public inline operator fun CSSStyleDeclaration.get(index: Int): String? = getMethodImplForCSSStyleDeclaration(this, index)
+public operator fun CSSStyleDeclaration.get(index: Int): String? = getMethodImplForCSSStyleDeclaration(this, index)
 
 public external interface ElementCSSInlineStyle : JsAny {
     val style: CSSStyleDeclaration
