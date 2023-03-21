@@ -17,11 +17,13 @@
 package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.file.FileCollection
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.*
 import org.gradle.work.InputChanges
 import org.gradle.work.NormalizeLineEndings
 import org.gradle.workers.WorkerExecutor
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
@@ -29,7 +31,12 @@ import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.internal.tasks.allOutputFiles
 import org.jetbrains.kotlin.gradle.logging.GradleErrorMessageCollector
 import org.jetbrains.kotlin.gradle.logging.GradlePrintingMessageCollector
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.create
+import org.jetbrains.kotlin.gradle.report.BuildReportMode
 import org.jetbrains.kotlin.gradle.tasks.internal.KotlinMultiplatformCommonOptionsCompat
+import org.jetbrains.kotlin.gradle.utils.toPathsArray
 import java.io.File
 import javax.inject.Inject
 
@@ -40,6 +47,7 @@ abstract class KotlinCompileCommon @Inject constructor(
     objectFactory: ObjectFactory
 ) : AbstractKotlinCompile<K2MetadataCompilerArguments>(objectFactory, workerExecutor),
     KotlinCompilationTask<KotlinMultiplatformCommonCompilerOptions>,
+    KotlinCompilerArgumentsProducer,
     KotlinCommonCompile {
 
     init {
@@ -76,10 +84,14 @@ abstract class KotlinCompileCommon @Inject constructor(
 
         if (defaultsOnly) return
 
-        val classpathList = libraries.files.filter { it.exists() }.toMutableList()
+        val classpathList = try {
+            libraries.files.filter { it.exists() }.toMutableList()
+        } catch (t: Throwable) {
+            if (ignoreClasspathResolutionErrors) null else throw t
+        }
 
         with(args) {
-            classpath = classpathList.joinToString(File.pathSeparator)
+            classpath = classpathList?.joinToString(File.pathSeparator)
             destination = destinationDirectory.get().asFile.normalize().absolutePath
 
             friendPaths = this@KotlinCompileCommon.friendPaths.files.map { it.absolutePath }.toTypedArray()
@@ -91,6 +103,51 @@ abstract class KotlinCompileCommon @Inject constructor(
         val localExecutionTimeFreeCompilerArgs = executionTimeFreeCompilerArgs
         if (localExecutionTimeFreeCompilerArgs != null) {
             args.freeArgs = localExecutionTimeFreeCompilerArgs
+        }
+    }
+
+    override fun createCompilerArguments(context: CreateCompilerArgumentsContext) = context.create<K2MetadataCompilerArguments> {
+        contribute(KotlinCompilerArgumentsProducer.ArgumentType.Primitive) { args ->
+            args.multiPlatform = multiPlatformEnabled.get()
+
+            args.moduleName = this@KotlinCompileCommon.moduleName.get()
+
+            args.pluginOptions = (pluginOptions.toSingleCompilerPluginOptions() + kotlinPluginData?.orNull?.options)
+                .arguments.toTypedArray()
+
+            if (reportingSettings().buildReportMode == BuildReportMode.VERBOSE) {
+                args.reportPerf = true
+            }
+
+            args.expectActualLinker = expectActualLinker.get()
+
+            args.destination = destinationDirectory.get().asFile.normalize().absolutePath
+
+            KotlinCommonCompilerOptionsHelper.fillCompilerArguments(compilerOptions, args)
+
+            val localExecutionTimeFreeCompilerArgs = executionTimeFreeCompilerArgs
+            if (localExecutionTimeFreeCompilerArgs != null) {
+                args.freeArgs = localExecutionTimeFreeCompilerArgs
+            }
+        }
+
+        contribute(KotlinCompilerArgumentsProducer.ArgumentType.PluginClasspath) { args ->
+            args.pluginClasspaths = tryLenient {
+                listOfNotNull(
+                    pluginClasspath, kotlinPluginData?.orNull?.classpath
+                ).reduce(FileCollection::plus).toPathsArray()
+            }
+        }
+
+        contribute(KotlinCompilerArgumentsProducer.ArgumentType.DependencyClasspath) { args ->
+            args.classpath = tryLenient { libraries.files.filter { it.exists() }.joinToString(File.pathSeparator) }
+            args.friendPaths = tryLenient { this@KotlinCompileCommon.friendPaths.files.toPathsArray() }
+            args.refinesPaths = refinesMetadataPaths.toPathsArray()
+        }
+
+        contribute(KotlinCompilerArgumentsProducer.ArgumentType.Sources) { args ->
+            args.freeArgs += sources.asFileTree.map { it.absolutePath }
+            args.commonSources = commonSourceSet.asFileTree.toPathsArray()
         }
     }
 
@@ -118,12 +175,7 @@ abstract class KotlinCompileCommon @Inject constructor(
             reportingSettings = reportingSettings(),
             outputFiles = allOutputFiles()
         )
-        compilerRunner.runMetadataCompilerAsync(
-            kotlinSources.toList(),
-            commonSourceSet.files.toList(),
-            args,
-            environment
-        )
+        compilerRunner.runMetadataCompilerAsync(args, environment)
         compilerRunner.errorsFile?.also { gradleMessageCollector.flush(it) }
     }
 }

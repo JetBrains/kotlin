@@ -13,17 +13,22 @@ import org.jetbrains.kotlin.gradle.dependencyResolutionTests.mavenCentralCacheRe
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.prepareCompilerArguments
 import org.jetbrains.kotlin.gradle.plugin.CreateCompilerArgumentsContext
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.ArgumentType
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.default
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.lenient
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.main
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFails
+import kotlin.test.assertNull
 
-class JsCompilerArgumentTests {
+class Kotlin2JsCompileArgumentsTest {
     @Suppress("DEPRECATION")
     @Test
-    fun `test - simple project`() {
+    fun `test - simple project - old CompilerArgumentsAware and new CompilerArgumentsProducer - return same arguments`() {
         val project = buildProjectWithMPP {
             repositories {
                 mavenLocal()
@@ -49,5 +54,19 @@ class JsCompilerArgumentTests {
             ArgumentUtils.convertArgumentsToStringList(argumentsFromCompilerArgumentsAware),
             ArgumentUtils.convertArgumentsToStringList(argumentsFromCompilerArgumentsProducer),
         )
+    }
+
+    @Test
+    fun `test - simple project - failing dependency - lenient`() {
+        val project = buildProjectWithMPP()
+        val kotlin = project.multiplatformExtension
+        val jsTarget = kotlin.js()
+        kotlin.sourceSets.getByName("commonMain").dependencies { implementation("not-a:dependency:1.0.0") }
+        project.evaluate()
+
+        val jsMainCompileTask = jsTarget.compilations.main.compileTaskProvider.get()
+        assertNull(jsMainCompileTask.createCompilerArguments(lenient).libraries)
+
+        assertFails { jsMainCompileTask.createCompilerArguments(default) }
     }
 }

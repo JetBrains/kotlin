@@ -28,7 +28,7 @@ import kotlin.reflect.full.findAnnotation
 import kotlin.test.*
 
 
-class JvmCompilerArgumentsTest {
+class KotlinCompileArgumentsTest {
 
     @Suppress("DEPRECATION")
     @Test

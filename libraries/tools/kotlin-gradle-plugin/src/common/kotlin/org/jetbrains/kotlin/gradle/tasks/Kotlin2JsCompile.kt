@@ -222,14 +222,13 @@ abstract class Kotlin2JsCompile @Inject constructor(
         contribute(KotlinCompilerArgumentsProducer.ArgumentType.DependencyClasspath) { args ->
             args.friendModules = friendDependencies.files.joinToString(File.pathSeparator) { it.absolutePath }
 
-            val dependencies = libraries
-                .filter { it.exists() && libraryFilter(it) }
-                .map { it.normalize().absolutePath }
-
-            args.libraries = dependencies.distinct().let {
-                if (it.isNotEmpty())
-                    it.joinToString(File.pathSeparator) else
-                    null
+            args.libraries = tryLenient {
+                libraries
+                    .filter { it.exists() && libraryFilter(it) }
+                    .map { it.normalize().absolutePath }
+                    .toSet()
+                    .takeIf { it.isNotEmpty() }
+                    ?.joinToString(File.pathSeparator)
             }
         }
 
