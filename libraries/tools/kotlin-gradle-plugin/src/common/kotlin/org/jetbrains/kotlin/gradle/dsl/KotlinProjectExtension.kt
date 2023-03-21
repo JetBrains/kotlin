@@ -15,6 +15,7 @@ import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.jvm.toolchain.JavaToolchainSpec
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsSingleTargetPreset
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
@@ -231,14 +232,13 @@ abstract class KotlinJsProjectExtension(project: Project) :
             }
         }
 
-        internal fun warnAboutDeprecatedCompiler(project: Project, compilerType: KotlinJsCompilerType?) {
+        internal fun warnAboutDeprecatedCompiler(project: Project, compilerType: KotlinJsCompilerType) {
             if (PropertiesProvider(project).jsCompilerNoWarn) return
             val logger = project.logger
             when (compilerType) {
                 KotlinJsCompilerType.LEGACY -> logger.warn(LEGACY_DEPRECATED)
                 KotlinJsCompilerType.IR -> {}
                 KotlinJsCompilerType.BOTH -> logger.warn(BOTH_DEPRECATED)
-                null -> throw GradleException(DEFAULT_COMPILER_ERROR)
             }
         }
 
@@ -264,19 +264,6 @@ abstract class KotlinJsProjectExtension(project: Project) :
                 |==========
                 |
             """.trimMargin()
-
-        private val DEFAULT_COMPILER_ERROR =
-            """
-                |
-                |==========
-                |This project currently uses the Kotlin/JS Legacy compiler backend, which has been deprecated and will be removed in a future release.
-                |Please migrate the project to the new IR-based compiler (https://kotl.in/jsir) by adding:
-                |- kotlin.js.compiler=ir to your gradle.properties file.
-                |- js(IR) { ... } to your build file.
-                |You can continue to use the deprecated legacy compiler in the current version of the toolchain by specifying it explicitly.
-                |==========
-                |
-            """.trimMargin()
     }
 
     @Deprecated("Use js() instead", ReplaceWith("js()"))
@@ -289,7 +276,7 @@ abstract class KotlinJsProjectExtension(project: Project) :
             return _target!!
         }
 
-    override var compilerTypeFromProperties: KotlinJsCompilerType? = null
+    override val compilerTypeFromProperties: KotlinJsCompilerType? = project.kotlinPropertiesProvider.jsCompiler
 
     @Suppress("DEPRECATION")
     private fun jsInternal(
@@ -307,7 +294,7 @@ abstract class KotlinJsProjectExtension(project: Project) :
             val compilerOrFromProperties = compiler ?: compilerTypeFromProperties
             val compilerOrDefault = compilerOrFromProperties ?: defaultJsCompilerType
             reportJsCompilerMode(compilerOrDefault)
-            warnAboutDeprecatedCompiler(project, compilerOrFromProperties)
+            warnAboutDeprecatedCompiler(project, compilerOrDefault)
             val target: KotlinJsTargetDsl = when (compilerOrDefault) {
                 KotlinJsCompilerType.LEGACY -> legacyPreset
                     .also {

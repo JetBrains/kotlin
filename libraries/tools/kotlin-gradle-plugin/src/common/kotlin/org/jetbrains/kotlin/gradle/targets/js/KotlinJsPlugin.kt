@@ -19,9 +19,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.setupGeneralKotlinExtensionParamet
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSingleTargetPreset
 import org.jetbrains.kotlin.gradle.utils.*
 
-open class KotlinJsPlugin(
-    private val kotlinPluginVersion: String
-) : Plugin<Project> {
+open class KotlinJsPlugin: Plugin<Project> {
 
     override fun apply(project: Project) {
         project.setupGeneralKotlinExtensionParameters()
@@ -41,7 +39,6 @@ open class KotlinJsPlugin(
         kotlinExtension.apply {
             irPreset = KotlinJsIrSingleTargetPreset(project)
             legacyPreset = KotlinJsSingleTargetPreset(project)
-            compilerTypeFromProperties = PropertiesProvider(project).jsCompiler
         }
 
         project.runProjectConfigurationHealthCheckWhenEvaluated {

@@ -288,7 +288,7 @@ abstract class AbstractKotlin2JsPluginWrapper(
 
 abstract class AbstractKotlinJsPluginWrapper : KotlinBasePluginWrapper() {
     override fun getPlugin(project: Project): Plugin<Project> =
-        KotlinJsPlugin(project.getKotlinPluginVersion())
+        KotlinJsPlugin()
 
     override val projectExtensionClass: KClass<out KotlinJsProjectExtension>
         get() = KotlinJsProjectExtension::class
