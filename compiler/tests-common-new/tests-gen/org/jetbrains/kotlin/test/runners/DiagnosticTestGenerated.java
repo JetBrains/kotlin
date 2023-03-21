@@ -32281,6 +32281,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("kFunctionalCST.kt")
+            public void testKFunctionalCST() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/subtyping/kFunctionalCST.kt");
+            }
+
+            @Test
             @TestMetadata("kt2069.kt")
             public void testKt2069() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/subtyping/kt2069.kt");
