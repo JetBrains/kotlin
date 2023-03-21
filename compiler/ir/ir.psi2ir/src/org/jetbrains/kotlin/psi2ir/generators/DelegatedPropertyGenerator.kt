@@ -43,6 +43,8 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 import org.jetbrains.kotlin.psi2ir.intermediate.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.error.ErrorTypeKind
+import org.jetbrains.kotlin.types.error.ErrorUtils.createErrorType
 import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithStarProjections
 
 internal class DelegatedPropertyGenerator(
@@ -323,8 +325,11 @@ internal class DelegatedPropertyGenerator(
         val provideDelegateResolvedCall = get(BindingContext.PROVIDE_DELEGATE_RESOLVED_CALL, delegatedPropertyDescriptor)
         val delegateType = if (provideDelegateResolvedCall != null) {
             provideDelegateResolvedCall.resultingDescriptor.returnType!!
-        } else {
+        } else if (context.configuration.generateBodies) {
             getTypeInferredByFrontendOrFail(ktDelegate.expression!!)
+        } else {
+            getTypeInferredByFrontend(ktDelegate.expression!!)
+                ?: createErrorType(ErrorTypeKind.UNRESOLVED_TYPE, ktDelegate.expression!!.text)
         }
         // For KAPT stub generation, we approximate the type of the delegate.
         // Since we are not generating bodies, we could end up with unbound
