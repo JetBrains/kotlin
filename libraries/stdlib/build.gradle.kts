@@ -626,6 +626,18 @@ tasks {
         dependsOn(mergeJsV1)
     }
 
+    jsV1Target.compilations["test"].compileTaskProvider.configure {
+        val fs = serviceOf<FileSystemOperations>()
+        val jsOutputFileName = jsOutputFileName
+        doLast {
+            // copy freshly-built legacy kotlin.js into node_modules subdir of kotlin-stdlib-js-v1-test module
+            fs.copy {
+                from(jsOutputFileName)
+                into(destinationDirectory.dir("node_modules"))
+            }
+        }
+    }
+
     val jsResultingJar by registering(Jar::class) {
         archiveClassifier.set("js")
         archiveVersion.set("")
