@@ -25,4 +25,9 @@ object JsExpressionCheckers : ExpressionCheckers() {
         get() = setOf(
             FirJsDynamicCallChecker,
         )
+
+    override val callCheckers: Set<FirCallChecker>
+        get() = setOf(
+            FirJsExternalArgumentCallChecker
+        )
 }

@@ -49,6 +49,12 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
     }
 
     @Test
+    @TestMetadata("jsExternalArgument.kt")
+    public void testJsExternalArgument() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithJsStdLib/jsExternalArgument.kt");
+    }
+
+    @Test
     @TestMetadata("jsExternalInheritorsOnly.kt")
     public void testJsExternalInheritorsOnly() throws Exception {
         runTest("compiler/testData/diagnostics/testsWithJsStdLib/jsExternalInheritorsOnly.kt");

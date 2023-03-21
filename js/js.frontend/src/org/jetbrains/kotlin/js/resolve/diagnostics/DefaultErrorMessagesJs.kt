@@ -114,6 +114,10 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
             Renderers.DECLARATION_NAME_WITH_KIND,
             Renderers.DECLARATION_NAME_WITH_KIND)
 
+        put(ErrorsJs.JS_EXTERNAL_ARGUMENT,
+            "Expected argument with external type, but type {0} is non-external",
+            Renderers.RENDER_TYPE)
+
         this
     }
 }

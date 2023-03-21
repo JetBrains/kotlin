@@ -252,3 +252,41 @@ public annotation class EagerInitialization
 @Target(CLASS)
 @SinceKotlin("1.9")
 public annotation class JsExternalInheritorsOnly
+
+
+/**
+ * When placed on a function parameter, requires the type of the passed argument to be external.
+ *
+ * The compiler mangles identifiers of properties from non-external interfaces and classes,
+ * and doesn't mangle from external ones. Requiring a type of the passing argument being external is necessary
+ * to avoid non-obvious bugs when identifier has an unstable and unpredictable name in generated JS code.
+ *
+ * Example:
+ *
+ * ```kotlin
+ *
+ * @OptIn(ExperimentalStdlibApi::class)
+ * fun extractUuid(@JsExternalArgument x: dynamic) = x.uuid as String
+ *
+ * external interface User {
+ *     val uuid: String
+ * }
+ *
+ * interface Owner {
+ *     val uuid: String
+ * }
+ *
+ * fun checkUser(user: User, owner: Owner): Boolean {
+ *     val userUuid = extractUuid(user) // OK
+ *     val ownerUuid = extractUuid(owner) // Compilation error! Possible bug
+ *     return userUuid == ownerUuid
+ * }
+ * ```
+ *
+ * This annotation is experimental, meaning that the restrictions mentioned above are subject to change.
+ */
+@ExperimentalStdlibApi
+@Retention(AnnotationRetention.BINARY)
+@Target(VALUE_PARAMETER)
+@SinceKotlin("1.9")
+public annotation class JsExternalArgument

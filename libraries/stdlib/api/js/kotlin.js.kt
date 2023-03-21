@@ -251,6 +251,14 @@ public final annotation class JsExport : kotlin.Annotation {
 
 @kotlin.ExperimentalStdlibApi
 @kotlin.annotation.Retention(value = AnnotationRetention.BINARY)
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.VALUE_PARAMETER})
+@kotlin.SinceKotlin(version = "1.9")
+public final annotation class JsExternalArgument : kotlin.Annotation {
+    public constructor JsExternalArgument()
+}
+
+@kotlin.ExperimentalStdlibApi
+@kotlin.annotation.Retention(value = AnnotationRetention.BINARY)
 @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS})
 @kotlin.SinceKotlin(version = "1.9")
 public final annotation class JsExternalInheritorsOnly : kotlin.Annotation {

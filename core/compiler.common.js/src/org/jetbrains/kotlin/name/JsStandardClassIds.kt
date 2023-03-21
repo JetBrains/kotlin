@@ -45,6 +45,9 @@ object JsStandardClassIds {
         val JsExternalInheritorsOnly = "JsExternalInheritorsOnly".jsId()
 
         @JvmField
+        val JsExternalArgument = "JsExternalArgument".jsId()
+
+        @JvmField
         val JsExportIgnore = JsExport.createNestedClassId(Name.identifier("Ignore"))
 
         @JvmField

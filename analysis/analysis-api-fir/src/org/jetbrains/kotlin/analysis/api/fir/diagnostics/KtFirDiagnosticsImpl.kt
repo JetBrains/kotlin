@@ -4249,6 +4249,12 @@ internal class JsExternalInheritorsOnlyImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.JsExternalInheritorsOnly(), KtAbstractFirDiagnostic<KtDeclaration>
 
+internal class JsExternalArgumentImpl(
+    override val argType: KtType,
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.JsExternalArgument(), KtAbstractFirDiagnostic<KtExpression>
+
 internal class NestedJsExportImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: KtLifetimeToken,

@@ -99,6 +99,9 @@ object JS_DIAGNOSTICS_LIST : DiagnosticList("FirJsErrors") {
             parameter<FirClassLikeSymbol<*>>("parent")
             parameter<FirClassLikeSymbol<*>>("kid")
         }
+        val JS_EXTERNAL_ARGUMENT by error<KtExpression>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
+            parameter<ConeKotlinType>("argType")
+        }
     }
 
     val EXPORT by object : DiagnosticGroup("Export") {
