@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
 import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.util.*
 
 class CliAssignPluginResolutionAltererExtension(
@@ -92,7 +93,7 @@ abstract class AbstractAssignPluginResolutionAltererExtension : AssignResolution
     }
 
     override fun getOperationName(expression: KtBinaryExpression, leftType: KotlinType?, bindingContext: BindingContext): Name? {
-        return if (needOverloadAssign(expression, leftType, bindingContext)) ASSIGN_METHOD else null
+        return runIf(needOverloadAssign(expression, leftType, bindingContext)) { ASSIGN_METHOD }
     }
 
     private fun CallResolver.resolveMethodCall(
