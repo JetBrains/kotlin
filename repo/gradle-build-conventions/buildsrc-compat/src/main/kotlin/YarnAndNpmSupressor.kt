@@ -12,7 +12,7 @@ import org.gradle.api.tasks.TaskProvider
 
 private val rootNpmRelatedTasks = setOf("kotlinNpmInstall", "kotlinStoreYarnLock")
 
-private val allowImplicitDependOnNpmForTasks = setOf("kotlinUpgradeYarnLock", "compileTestKotlinJs", "compileTestKotlinWasm")
+private val allowImplicitDependOnNpmForTasks = setOf("kotlinUpgradeYarnLock", "compileTestKotlinJs", "compileTestKotlinJsIr", "compileTestKotlinJsV1", "compileTestKotlinWasm", "jsV1BrowserProductionWebpack")
 
 private fun findRootTasks(taskGraph: TaskExecutionGraph): List<Task> {
     val allDependentTasksPaths = mutableSetOf<String>()
