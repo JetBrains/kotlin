@@ -225,6 +225,7 @@ inline fun <reified T : PsiElement> PsiElement.forEachDescendantOfType(
     crossinline canGoInside: (PsiElement) -> Boolean,
     noinline action: (T) -> Unit
 ) {
+    checkDecompiledText()
     this.accept(object : PsiRecursiveElementVisitor() {
         override fun visitElement(element: PsiElement) {
             if (canGoInside(element)) {
@@ -257,6 +258,7 @@ inline fun <reified T : PsiElement> PsiElement.findDescendantOfType(
     crossinline canGoInside: (PsiElement) -> Boolean,
     noinline predicate: (T) -> Boolean = { true }
 ): T? {
+    checkDecompiledText()
     var result: T? = null
     this.accept(object : PsiRecursiveElementWalkingVisitor() {
         override fun visitElement(element: PsiElement) {
@@ -272,6 +274,13 @@ inline fun <reified T : PsiElement> PsiElement.findDescendantOfType(
         }
     })
     return result
+}
+
+fun PsiElement.checkDecompiledText() {
+    val file = containingFile
+    if (file is KtFile && file.isCompiled) {
+        error("Attempt to load decompiled text, please use stubs instead. Decompile process might be slow and should be avoided")
+    }
 }
 
 inline fun <reified T : PsiElement> PsiElement.collectDescendantsOfType(noinline predicate: (T) -> Boolean = { true }): List<T> {

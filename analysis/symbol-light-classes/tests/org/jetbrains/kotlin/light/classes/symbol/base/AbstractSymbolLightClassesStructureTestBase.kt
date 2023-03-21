@@ -12,7 +12,9 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.asJava.toLightClass
+import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
@@ -101,9 +103,27 @@ open class AbstractSymbolLightClassesStructureTestBase(
     private fun wrongInheritorStructure(line: String): Nothing = error("Can't parse '$line' line correctly")
     protected fun PrettyPrinter.handleFile(ktFile: KtFile) {
         val text = ktFile.text
-        ktFile.forEachDescendantOfType<KtClassOrObject> { classOrObject ->
-            handleClassDeclaration(classOrObject, text)
-            appendLine()
+        if (ktFile.isCompiled) {
+            ktFile.declarations.forEach { classOrObject ->
+                if (classOrObject is KtClassOrObject) {
+                    if (classOrObject is KtClass && classOrObject.isEnum()) {
+                        classOrObject.declarations.forEach { declaration ->
+                            if (declaration is KtEnumEntry) {
+                                handleClassDeclaration(declaration, text)
+                                appendLine()
+                            }
+                        }
+                    }
+
+                    handleClassDeclaration(classOrObject, text)
+                    appendLine()
+                }
+            }
+        } else {
+            ktFile.forEachDescendantOfType<KtClassOrObject> { classOrObject ->
+                handleClassDeclaration(classOrObject, text)
+                appendLine()
+            }
         }
     }
 
