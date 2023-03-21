@@ -17,21 +17,22 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
-import org.jetbrains.kotlin.compilerRunner.KotlinNativeCompilerRunner
-import org.jetbrains.kotlin.compilerRunner.KotlinToolRunner
-import org.jetbrains.kotlin.compilerRunner.getKonanCacheKind
-import org.jetbrains.kotlin.compilerRunner.getKonanCacheOrchestration
+import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
+import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.create
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.targets.native.UsesKonanPropertiesBuildService
 import org.jetbrains.kotlin.gradle.targets.native.tasks.CompilerPluginData
-import org.jetbrains.kotlin.gradle.targets.native.tasks.buildKotlinNativeBinaryLinkerArgs
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.project.model.LanguageSettings
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.io.File
 import javax.inject.Inject
 
@@ -46,7 +47,7 @@ constructor(
     val binary: NativeBinary,
     private val objectFactory: ObjectFactory,
     private val execOperations: ExecOperations
-) : AbstractKotlinCompileTool<StubK2NativeCompilerArguments>(objectFactory),
+) : AbstractKotlinCompileTool<K2NativeCompilerArguments>(objectFactory),
     UsesKonanPropertiesBuildService,
     KotlinToolTask<KotlinCommonCompilerToolOptions> {
     @Deprecated("Visibility will be lifted to private in the future releases")
@@ -193,13 +194,53 @@ constructor(
         CacheSettings(project.getKonanCacheOrchestration(), project.getKonanCacheKind(konanTarget), project.gradle.gradleUserHomeDir)
     }
 
-    override fun createCompilerArgs(): StubK2NativeCompilerArguments = StubK2NativeCompilerArguments()
+    override fun createCompilerArguments(context: CreateCompilerArgumentsContext) = context.create<K2NativeCompilerArguments> {
+        val compilerPlugins = listOfNotNull(
+            compilerPluginClasspath?.let { CompilerPluginData(it, compilerPluginOptions) },
+            kotlinPluginData?.orNull?.let { CompilerPluginData(it.classpath, it.options) }
+        )
 
-    override fun setupCompilerArgs(
-        args: StubK2NativeCompilerArguments,
-        defaultsOnly: Boolean,
-        ignoreClasspathResolutionErrors: Boolean
-    ) = Unit
+        contribute(KotlinCompilerArgumentsProducer.ArgumentType.Primitive) { args ->
+            args.outputName = outputFile.get().absolutePath
+            args.optimization = optimized
+            args.debug = debuggable
+            args.enableAssertions = debuggable
+            args.target = konanTarget.name
+            args.produce = outputKind.name.toLowerCaseAsciiOnly()
+            args.multiPlatform = true
+            args.noendorsedlibs = true
+            args.pluginOptions = compilerPlugins.flatMap { it.options.arguments }.toTypedArray()
+            args.generateTestRunner = processTests
+            args.mainPackage = entryPoint
+
+            when (embedBitcodeMode.get()) {
+                BitcodeEmbeddingMode.BITCODE -> args.embedBitcode = true
+                BitcodeEmbeddingMode.MARKER -> args.embedBitcodeMarker = true
+                null, BitcodeEmbeddingMode.DISABLE -> Unit
+            }
+
+            args.linkerArguments = linkerOpts.toTypedArray()
+            args.binaryOptions = binaryOptions.map { (key, value) -> "$key=$value" }.toTypedArray()
+            args.staticFramework = isStaticFramework
+
+            KotlinCommonCompilerToolOptionsHelper.fillCompilerArguments(toolOptions, args)
+        }
+
+        contribute(KotlinCompilerArgumentsProducer.ArgumentType.PluginClasspath) { args ->
+            args.pluginClasspaths = compilerPlugins.flatMap { classpath -> tryLenient { classpath.files } ?: emptySet() }.toPathsArray()
+        }
+
+        contribute(KotlinCompilerArgumentsProducer.ArgumentType.DependencyClasspath) { args ->
+            args.libraries = tryLenient { libraries.files.filterKlibsPassedToCompiler() }?.toPathsArray()
+            args.exportedLibraries = tryLenient { exportLibraries.files.filterKlibsPassedToCompiler() }?.toPathsArray()
+            args.friendModules = tryLenient { friendModule.files.toList().takeIf { it.isNotEmpty() } }
+                ?.joinToString(File.pathSeparator) { it.absolutePath }
+        }
+
+        contribute(KotlinCompilerArgumentsProducer.ArgumentType.Sources) { args ->
+            args.includes = sources.asFileTree.files.toPathsArray()
+        }
+    }
 
     private fun validatedExportedLibraries() {
         if (exportLibrariesResolvedConfiguration == null) return
@@ -293,11 +334,6 @@ constructor(
         val output = outputFile.get()
         output.parentFile.mkdirs()
 
-        val plugins = listOfNotNull(
-            compilerPluginClasspath?.let { CompilerPluginData(it, compilerPluginOptions) },
-            kotlinPluginData?.orNull?.let { CompilerPluginData(it.classpath, it.options) }
-        )
-
         val executionContext = KotlinToolRunner.GradleExecutionContext.fromTaskContext(objectFactory, execOperations, logger)
         val additionalOptions = mutableListOf<String>().apply {
             addAll(externalDependenciesArgs)
@@ -321,30 +357,12 @@ constructor(
             }
         }
 
-        val buildArgs = buildKotlinNativeBinaryLinkerArgs(
-            output,
-            optimized,
-            debuggable,
-            konanTarget,
-            outputKind,
-            libraries.files.filterKlibsPassedToCompiler(),
-            friendModule.files.toList(),
-            toolOptions,
-            plugins,
-            processTests,
-            entryPoint,
-            embedBitcodeMode.get(),
-            linkerOpts,
-            binaryOptions,
-            isStaticFramework,
-            exportLibraries.files.filterKlibsPassedToCompiler(),
-            sources.asFileTree.files.toList(),
-            additionalOptions
-        )
+        val arguments = createCompilerArguments()
+        val buildArguments = ArgumentUtils.convertArgumentsToStringList(arguments) + additionalOptions
 
         KotlinNativeCompilerRunner(
             settings = runnerSettings,
             executionContext = executionContext
-        ).run(buildArgs)
+        ).run(buildArguments)
     }
 }
