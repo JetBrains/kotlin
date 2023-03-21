@@ -52,7 +52,7 @@ open class MetadataDependencyTransformationTask
     @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:IgnoreEmptyDirectories
     @get:NormalizeLineEndings
-    internal val configurationToResolve: FileCollection get() = kotlinSourceSet.internal.resolvableMetadataConfiguration
+    internal val configurationToResolve: FileCollection = project.filesProvider { kotlinSourceSet.internal.resolvableMetadataConfiguration }
 
     @Suppress("unused") // Gradle input
     @get:InputFiles
