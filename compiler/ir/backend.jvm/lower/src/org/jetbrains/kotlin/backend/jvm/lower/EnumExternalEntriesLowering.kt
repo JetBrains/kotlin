@@ -15,13 +15,16 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.declarations.addField
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
+import org.jetbrains.kotlin.ir.builders.irCall
+import org.jetbrains.kotlin.ir.builders.irExprBody
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
-import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
@@ -123,9 +126,14 @@ class EnumExternalEntriesLowering(private val context: JvmBackendContext) : File
 
         for ((enum, field) in mappingState.mappings) {
             val enumValues = enum.findEnumValuesFunction(context)
-            val enumArrayType = field.type
-            val builder = context.createIrBuilder(field.symbol)
-            field.initializer = builder.irCreateEnumEntriesIndy(enumValues, enumArrayType, context)
+            field.initializer =
+                context.createIrBuilder(field.symbol).run {
+                    irExprBody(
+                        irCall(this@EnumExternalEntriesLowering.context.ir.symbols.createEnumEntries).apply {
+                            putValueArgument(0, irCall(enumValues))
+                        }
+                    )
+                }
         }
 
         if (mappingState.mappings.isNotEmpty()) {

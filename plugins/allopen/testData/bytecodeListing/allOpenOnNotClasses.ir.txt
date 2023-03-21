@@ -11,7 +11,6 @@ public final enum class Enum {
     // source: 'allOpenOnNotClasses.kt'
     private synthetic final static field $ENTRIES: kotlin.enums.EnumEntries
     private synthetic final static field $VALUES: Enum[]
-    private synthetic final static method $entries(): Enum[]
     private synthetic final static method $values(): Enum[]
     static method <clinit>(): void
     private method <init>(p0: java.lang.String, p1: int): void

@@ -6,7 +6,6 @@ public final enum class Colors {
     private synthetic final static field $VALUES: Colors[]
     public final enum static field RED: Colors
     public final enum static field WHITE: Colors
-    private synthetic final static method $entries(): Colors[]
     private synthetic final static method $values(): Colors[]
     static method <clinit>(): void
     private method <init>(p0: java.lang.String, p1: int): void

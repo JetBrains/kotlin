@@ -13,8 +13,6 @@ public class foo/Kotlin : java/lang/Enum {
 
     public final static foo.Kotlin A
 
-    private final static foo.Kotlin[] $entries()
-
     private final static foo.Kotlin[] $values()
 
     static void <clinit>()

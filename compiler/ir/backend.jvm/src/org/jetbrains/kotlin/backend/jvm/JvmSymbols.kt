@@ -230,8 +230,8 @@ class JvmSymbols(
 
     private val enumEntriesKt: IrClassSymbol = createClass(FqName("kotlin.enums.EnumEntriesKt")) { klass ->
         klass.addFunction("enumEntries", enumEntries.defaultType, isStatic = true).apply {
-            addValueParameter("entriesProvider",
-                              irBuiltIns.functionN(0).typeWith(irBuiltIns.arrayClass.typeWith(klass.typeParameters.map { it.defaultType })))
+            val e = addTypeParameter("E", irBuiltIns.enumClass.defaultType)
+            addValueParameter("entries", irBuiltIns.arrayClass.typeWith(e.defaultType))
         }
     }
 

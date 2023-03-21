@@ -34,7 +34,6 @@ public final enum class TestEnum {
     private synthetic final static field $VALUES: TestEnum[]
     public final enum static field ANSWER: TestEnum
     private final field z: int
-    private synthetic final static method $entries(): TestEnum[]
     private synthetic final static method $values(): TestEnum[]
     static method <clinit>(): void
     private method <init>(p0: java.lang.String, p1: int, p2: int): void
