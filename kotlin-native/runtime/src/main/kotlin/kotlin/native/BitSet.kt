@@ -11,6 +11,7 @@ package kotlin.native
  * @constructor creates an empty bit set with the specified [size]
  * @param size the size of one element in the array used to store bits.
  */
+@ObsoleteNativeApi
 public class BitSet(size: Int = ELEMENT_SIZE) {
 
     @kotlin.native.internal.CanBePrecreated
