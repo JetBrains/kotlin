@@ -1,7 +1,5 @@
 // IGNORE_BACKEND_K1: JS, JS_IR, JS_IR_ES6
-// IGNORE_BACKEND_K2: JS_IR
 // !LANGUAGE: +MultiPlatformProjects
-// TODO: K2 JS_IR Fail Reason: IrSimpleFunctionPublicSymbolImpl for kotlin/assertArrayEquals|-1961670457646030164[0] is already bound...
 
 // MODULE: common1
 // TARGET_PLATFORM: Common
