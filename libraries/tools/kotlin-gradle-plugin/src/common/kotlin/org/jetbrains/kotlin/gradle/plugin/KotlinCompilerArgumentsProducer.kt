@@ -33,7 +33,7 @@ interface KotlinCompilerArgumentsProducer {
             val default: CreateCompilerArgumentsContext = CreateCompilerArgumentsContext()
             val lenient: CreateCompilerArgumentsContext = CreateCompilerArgumentsContext(isLenient = true)
 
-            inline fun <reified T : CommonCompilerArguments> CreateCompilerArgumentsContext.create(
+            inline fun <reified T : CommonToolArguments> CreateCompilerArgumentsContext.create(
                 noinline action: ContributeCompilerArgumentsContext<T>.() -> Unit
             ) = create(T::class, action)
         }
