@@ -23,7 +23,9 @@ fun Project.configureJava9Compilation(
 ) {
     configurations["java9CompileClasspath"].extendsFrom(configurations["compileClasspath"])
 
-    tasks.named("compileJava9Kotlin", KotlinCompile::class.java) {
+    tasks.withType(KotlinCompile::class.java).matching {
+        it.name == "compileJava9Kotlin" || it.name == "compileJava9KotlinJvm"
+    }.configureEach {
         configureTaskToolchain(JdkMajorVersion.JDK_9_0)
         @Suppress("DEPRECATION")
         kotlinOptions.jvmTarget = JdkMajorVersion.JDK_9_0.targetName
