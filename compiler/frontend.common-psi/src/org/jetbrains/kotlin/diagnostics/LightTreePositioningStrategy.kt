@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.diagnostics
 
 import com.intellij.lang.LighterASTNode
-import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.TokenType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
@@ -107,7 +106,7 @@ val KtLightSourceElement.startOffsetSkippingComments: Int
 
         // The solution to find first non comment children will not work here. `treeStructure` can have different root
         // than original program. Because of that `startOffset` is relative and not in absolute value.
-        val comments = children.takeWhile { it.tokenType in DOC_AND_COMMENT_TOKENS }
+        val comments = children.takeWhile { it.tokenType in FILLER_TOKENS }
         return startOffset + comments.sumOf { it.textLength }
     }
 
