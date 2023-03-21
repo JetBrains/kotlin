@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.tasks.UsesKotlinJavaToolchain
 import plugins.configureDefaultPublishing
 import org.gradle.jvm.tasks.Jar
+import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 
 plugins {
     id("kotlin-multiplatform")
@@ -602,6 +603,20 @@ tasks {
 
     val jsV1MainClasses by existing {
         dependsOn(mergeJsV1)
+    }
+
+    jsV1Target.compilations["test"].compileTaskProvider.configure {
+        val fs = serviceOf<FileSystemOperations>()
+        val jsOutputFileName = jsOutputFileName
+        val kotlinTestJsV1Output = (project.tasks.getByPath(":kotlin-test:kotlin-test-js-v1:compileKotlinJs") as Kotlin2JsCompile).outputFileProperty
+        doLast {
+            // copy freshly-built legacy kotlin.js into node_modules subdir of kotlin-stdlib-js-v1-test module
+            fs.copy {
+                from(jsOutputFileName)
+                from(kotlinTestJsV1Output)
+                into(destinationDirectory.dir("node_modules"))
+            }
+        }
     }
 
     val jsResultingJar by registering(Jar::class) {
