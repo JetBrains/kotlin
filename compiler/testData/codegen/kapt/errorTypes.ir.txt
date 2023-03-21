@@ -11,7 +11,6 @@ public final class A {
 @kotlin.Suppress(names=["UNRESOLVED_REFERENCE"])
 public final class B {
     // source: 'errorTypes.kt'
-    synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     private final @org.jetbrains.annotations.NotNull field a$delegate: error.NonExistentClass
     public method <init>(): void
     public synthetic deprecated static @kotlin.Suppress(names=["UNRESOLVED_REFERENCE_WRONG_RECEIVER"]) method getA$annotations(): void
