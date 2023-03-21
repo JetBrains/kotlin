@@ -7,19 +7,24 @@ package org.jetbrains.kotlin.analysis.decompiler.psi.text
 
 import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtDecompiledFile
-import org.jetbrains.kotlin.builtins.DefaultBuiltIns
-import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSignatures
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.psi.KtCallableDeclaration
-import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtDeclarationContainer
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.hasSuspendModifier
+import org.jetbrains.kotlin.psi.psiUtil.unwrapNullability
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
-import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.types.AbbreviatedType
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.typeUtil.isNullableAny
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 
 object ByDescriptorIndexer : DecompiledTextIndexer<String> {
@@ -58,47 +63,119 @@ object ByDescriptorIndexer : DecompiledTextIndexer<String> {
             return getDeclarationForDescriptor(original.containingDeclaration, file)
         }
 
-        val descriptorKey = original.toStringKey()
+        if (original is MemberDescriptor) {
+            val declarationContainer: KtDeclarationContainer? = when {
+                DescriptorUtils.isTopLevelDeclaration(original) -> file
+                original.containingDeclaration is ClassDescriptor ->
+                    getDeclarationForDescriptor(original.containingDeclaration as ClassDescriptor, file) as? KtClassOrObject
+                else -> null
+            }
 
-        if (!file.isContentsLoaded && original is MemberDescriptor) {
-            val hasDeclarationByKey = file.hasDeclarationWithKey(this, descriptorKey) || (getBuiltinsDescriptorKey(descriptor)?.let {
-                file.hasDeclarationWithKey(
-                    this,
-                    it
-                )
-            } ?: false)
-            if (hasDeclarationByKey) {
-                val declarationContainer: KtDeclarationContainer? = when {
-                    DescriptorUtils.isTopLevelDeclaration(original) -> file
-                    original.containingDeclaration is ClassDescriptor ->
-                        getDeclarationForDescriptor(original.containingDeclaration as ClassDescriptor, file) as? KtClassOrObject
-                    else -> null
+            if (declarationContainer != null) {
+                val descriptorName = original.name.asString()
+                val declarations = when {
+                    original is ConstructorDescriptor && declarationContainer is KtClass -> declarationContainer.allConstructors
+                    else -> declarationContainer.declarations.filter { it.name == descriptorName }
                 }
-
-                if (declarationContainer != null) {
-                    val descriptorName = original.name.asString()
-                    val singleOrNull = declarationContainer.declarations.singleOrNull { it.name == descriptorName }
-                    if (singleOrNull != null) {
-                        return singleOrNull
+                return declarations
+                    .firstOrNull { declaration ->
+                        if (original is CallableDescriptor) {
+                            declaration is KtCallableDeclaration && isSameCallable(declaration, original)
+                        } else declaration !is KtCallableDeclaration
                     }
-                }
             }
         }
 
-        return file.getDeclaration(this, descriptorKey) ?: run {
-            return getBuiltinsDescriptorKey(descriptor)?.let { file.getDeclaration(this, it) }
-        }
+        error("Should not be reachable")
     }
 
-    fun getBuiltinsDescriptorKey(descriptor: DeclarationDescriptor): String? {
-        if (descriptor !is ClassDescriptor) return null
+    private fun isSameCallable(
+        declaration: KtCallableDeclaration,
+        original: CallableDescriptor
+    ): Boolean {
+        if (!receiverTypesMatch(declaration.receiverTypeReference, original.extensionReceiverParameter)) return false
 
-        val classFqName = descriptor.fqNameUnsafe
-        if (!JvmBuiltInsSignatures.isSerializableInJava(classFqName)) return null
+        if (!returnTypesMatch(declaration, original)) return false
+        if (!typeParametersMatch(declaration, original)) return false
 
-        val builtInDescriptor =
-            DefaultBuiltIns.Instance.builtInsModule.resolveTopLevelClass(classFqName.toSafe(), NoLookupLocation.FROM_IDE)
-        return builtInDescriptor?.toStringKey()
+        if (!parametersMatch(declaration, original)) return false
+        return true
+    }
+
+    private fun returnTypesMatch(declaration: KtCallableDeclaration, descriptor: CallableDescriptor): Boolean {
+        if (declaration is KtConstructor<*>) return true
+        return areTypesTheSame(descriptor.returnType!!, declaration.typeReference!!)
+    }
+
+    private fun typeParametersMatch(declaration: KtCallableDeclaration, descriptor: CallableDescriptor): Boolean {
+        if (declaration.typeParameters.size != declaration.typeParameters.size) return false
+        val boundsByName = declaration.typeConstraints.groupBy { it.subjectTypeParameterName?.getReferencedName() }
+        descriptor.typeParameters.zip(declaration.typeParameters) { descriptorTypeParam, psiTypeParameter ->
+            if (descriptorTypeParam.name.toString() != psiTypeParameter.name) return false
+            val psiBounds = mutableListOf<KtTypeReference>()
+            psiBounds.addIfNotNull(psiTypeParameter.extendsBound)
+            boundsByName[psiTypeParameter.name]?.forEach {
+                psiBounds.addIfNotNull(it.boundTypeReference)
+            }
+            val expectedBounds = descriptorTypeParam.upperBounds.filter { !it.isNullableAny() }
+            if (psiBounds.size != expectedBounds.size) return false
+            expectedBounds.zip(psiBounds) { expectedBound, candidateBound ->
+                if (!areTypesTheSame(expectedBound, candidateBound)) {
+                    return false
+                }
+            }
+        }
+        return true
+    }
+
+    private fun parametersMatch(
+        declaration: KtCallableDeclaration,
+        original: CallableDescriptor
+    ): Boolean {
+        if (declaration.valueParameters.size != original.valueParameters.size) {
+            return false
+        }
+        declaration.valueParameters.zip(original.valueParameters).forEach { (ktParam, paramDesc) ->
+            if (!areTypesTheSame(paramDesc.type, ktParam.typeReference!!, ktParam.isVarArg)) {
+                return false
+            }
+        }
+        return true
+    }
+
+    private fun receiverTypesMatch(
+        ktTypeReference: KtTypeReference?,
+        receiverParameter: ReceiverParameterDescriptor?,
+    ): Boolean {
+        if (ktTypeReference != null) {
+            if (receiverParameter == null) return false
+            val receiverType = receiverParameter.type
+            if (!areTypesTheSame(receiverType, ktTypeReference)) {
+                return false
+            }
+        } else if (receiverParameter != null) return false
+        return true
+    }
+
+    private fun areTypesTheSame(
+        kotlinType: KotlinType,
+        ktTypeReference: KtTypeReference,
+        varArg: Boolean = false
+    ): Boolean {
+        var qualifiedName = getQualifiedName(
+            ktTypeReference.typeElement,
+            ktTypeReference.getAllModifierLists().any { it.hasSuspendModifier() }) ?: return false
+        if (varArg) {
+            val classId = ClassId.fromString(qualifiedName.replace('.', '/'))
+            qualifiedName =
+                StandardClassIds.primitiveArrayTypeByElementType[classId]?.asFqNameString() ?: StandardNames.FqNames.array.asString()
+        }
+        val declarationDescriptor =
+            ((kotlinType as? AbbreviatedType)?.abbreviation ?: kotlinType).constructor.declarationDescriptor ?: return false
+        if (declarationDescriptor is TypeParameterDescriptor) {
+            return declarationDescriptor.name.asString() == qualifiedName
+        }
+        return declarationDescriptor.fqNameSafe.asString() == qualifiedName
     }
 
     private fun DeclarationDescriptor.toStringKey(): String {
@@ -114,3 +191,29 @@ object ByDescriptorIndexer : DecompiledTextIndexer<String> {
 
     private val LOG = Logger.getInstance(this::class.java)
 }
+
+fun getQualifiedName(typeElement: KtTypeElement?, isSuspend: Boolean): String? {
+    val referencedName = when (typeElement) {
+        is KtUserType -> getQualifiedName(typeElement)
+        is KtFunctionType -> {
+            var parametersCount = typeElement.parameters.size
+            typeElement.receiverTypeReference?.let { parametersCount++ }
+            if (isSuspend) {
+                StandardNames.getSuspendFunctionClassId(parametersCount).asFqNameString()
+            } else {
+                StandardNames.getFunctionClassId(parametersCount).asFqNameString()
+            }
+        }
+        is KtNullableType -> getQualifiedName(typeElement.unwrapNullability(), isSuspend)
+        else -> null
+    }
+    return referencedName
+}
+
+private fun getQualifiedName(userType: KtUserType): String? {
+    val qualifier = userType.qualifier ?: return userType.referencedName
+    return getQualifiedName(qualifier) + "." + userType.referencedName
+}
+
+fun KtElementImplStub<*>.getAllModifierLists(): Array<out KtDeclarationModifierList> =
+    getStubOrPsiChildren(KtStubElementTypes.MODIFIER_LIST, KtStubElementTypes.MODIFIER_LIST.arrayFactory)

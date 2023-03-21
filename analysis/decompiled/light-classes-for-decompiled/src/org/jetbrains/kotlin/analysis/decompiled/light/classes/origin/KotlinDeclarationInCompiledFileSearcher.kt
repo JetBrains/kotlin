@@ -6,14 +6,21 @@
 package org.jetbrains.kotlin.analysis.decompiled.light.classes.origin
 
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.psi.PsiField
-import com.intellij.psi.PsiMember
-import com.intellij.psi.PsiMethod
+import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile
-import org.jetbrains.kotlin.asJava.syntheticAccessors
+import org.jetbrains.kotlin.analysis.decompiler.psi.text.getAllModifierLists
+import org.jetbrains.kotlin.analysis.decompiler.psi.text.getQualifiedName
+import org.jetbrains.kotlin.asJava.elements.psiType
+import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil.getLiteralStringFromAnnotation
+import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.load.java.propertyNameByGetMethodName
+import org.jetbrains.kotlin.load.java.propertyNamesBySetMethodName
 import org.jetbrains.kotlin.load.kotlin.MemberSignature
+import org.jetbrains.kotlin.name.JvmNames
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.hasSuspendModifier
 import org.jetbrains.kotlin.type.MapPsiToAsmDesc
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -49,24 +56,117 @@ abstract class KotlinDeclarationInCompiledFileSearcher {
             classOrFile
         else {
             relativeClassName.fold(classOrFile) { declaration: KtDeclarationContainer?, name: Name ->
-                declaration?.declarations?.singleOrNull() { it is KtClassOrObject && it.name == name.asString() } as? KtClassOrObject
+                declaration?.declarations?.singleOrNull { it is KtClassOrObject && getJvmName(it) == name.asString() } as? KtClassOrObject
             }
         } ?: return null
 
         if (member is PsiMethod && member.isConstructor) {
-            return container.safeAs<KtClassOrObject>()?.takeIf { it.name == memberName }?.allConstructors?.singleOrNull()
+            return container.safeAs<KtClassOrObject>()
+                ?.takeIf { getJvmName(it) == memberName }
+                ?.allConstructors
+                ?.firstOrNull { doParametersMatch(member, it) }
         }
 
         val declarations = container.declarations
         return when (member) {
             is PsiMethod -> {
-                val names = member.syntheticAccessors(withoutOverrideCheck = true).map(Name::asString) + memberName
-                declarations.singleOrNull { it.name in names }
+                val names = mutableListOf(memberName)
+                val setter = if (JvmAbi.isGetterName(memberName) && !PsiType.VOID.equals(member.returnType)) {
+                    propertyNameByGetMethodName(Name.identifier(memberName))?.let { names.add(it.identifier) }
+                    false
+                } else if (JvmAbi.isSetterName(memberName) && PsiType.VOID.equals(member.returnType)) {
+                    propertyNamesBySetMethodName(Name.identifier(memberName)).forEach { names.add(it.identifier) }
+                    true
+                } else true
+                declarations
+                    .filter { getJvmName(it) in names || it is KtProperty && (getJvmName(it.getter) in names || getJvmName(it.setter) in names)}
+                    .firstOrNull { declaration ->
+                        declaration is KtNamedFunction && doParametersMatch(member, declaration) ||
+                                declaration is KtProperty && doPropertyMatch(member, declaration, setter)
+                    }
             }
 
-            is PsiField -> declarations.singleOrNull { it !is KtNamedFunction && it.name == memberName }
-            else -> declarations.singleOrNull { it.name == memberName }
+            is PsiField -> {
+                if (container is KtObjectDeclaration && memberName == "INSTANCE") {
+                    return container
+                }
+                declarations.singleOrNull { it !is KtNamedFunction && getJvmName(it) == memberName }
+            }
+            else -> declarations.singleOrNull { getJvmName(it) == memberName }
         }
+    }
+
+    private fun getJvmName(declaration: KtDeclaration?): String? {
+        if (declaration == null) return null
+        val annotationEntry = declaration.annotationEntries.firstOrNull {
+            it.calleeExpression?.constructorReferenceExpression?.getReferencedName() == JvmNames.JVM_NAME_SHORT
+        }
+        if (annotationEntry != null) {
+            val name = getLiteralStringFromAnnotation(annotationEntry)
+            if (name != null) {
+                return name
+            }
+        }
+        return declaration.name
+    }
+
+    private fun doPropertyMatch(member: PsiMethod, property: KtProperty, setter: Boolean): Boolean {
+        val ktTypes = mutableListOf<KtTypeReference>()
+        property.receiverTypeReference?.let { ktTypes.add(it) }
+        property.typeReference?.let { ktTypes.add(it) }
+
+        val psiTypes = mutableListOf<PsiType>()
+        member.parameterList.parameters.forEach { psiTypes.add(it.type) }
+        if (!setter) {
+            val returnType = member.returnType ?: return false
+            psiTypes.add(returnType)
+        }
+
+        if (ktTypes.size != psiTypes.size) return false
+        ktTypes.zip(psiTypes).forEach { (ktType, psiType) ->
+            if (!areTypesTheSame(ktType, psiType, false)) return false
+        }
+        return true
+    }
+
+    private fun doParametersMatch(member: PsiMethod, ktNamedFunction: KtFunction): Boolean {
+        val ktTypes = mutableListOf<KtTypeReference?>()
+        ktNamedFunction.receiverTypeReference?.let { ktTypes.add(it) }
+        val parametersCount = member.parameterList.parametersCount
+        val numberOfDefaultParameters = ktNamedFunction.valueParameters.filter { it.hasDefaultValue() }.size
+        val numberOfDefaultParametersAsDefaults = ktNamedFunction.valueParameters.size + ktTypes.size - parametersCount
+        val firstDefaultParametersToPass = numberOfDefaultParameters - numberOfDefaultParametersAsDefaults
+        var defaultParamIdx = 0
+        for (valueParameter in ktNamedFunction.valueParameters) {
+            if (valueParameter.hasDefaultValue()) {
+                if (defaultParamIdx >= firstDefaultParametersToPass) {
+                    continue
+                }
+                defaultParamIdx++
+            }
+
+            ktTypes.add(valueParameter.typeReference)
+        }
+        if (parametersCount != ktTypes.size) return false
+        member.parameterList.parameters.map { it.type }
+            .zip(ktTypes)
+            .forEach { (psiType, ktTypeRef) ->
+                if (!areTypesTheSame(ktTypeRef!!, psiType, (ktTypeRef.parent as? KtParameter)?.isVarArg == true)) return false
+            }
+        return true
+    }
+
+    /**
+     * Compare erased types
+     */
+    private fun areTypesTheSame(ktTypeRef: KtTypeReference, psiType: PsiType, varArgs: Boolean): Boolean {
+        val qualifiedName =
+            getQualifiedName(ktTypeRef.typeElement, ktTypeRef.getAllModifierLists().any { it.hasSuspendModifier() }) ?: return false
+        if (psiType is PsiArrayType && psiType.componentType !is PsiPrimitiveType) {
+            return qualifiedName == StandardNames.FqNames.array.asString() ||
+                    varArgs && areTypesTheSame(ktTypeRef, psiType.componentType, false)
+        }
+        return ((psiType as? PsiClassType)?.rawType() ?: psiType).canonicalText == psiType(qualifiedName, ktTypeRef).canonicalText
     }
 
     companion object {
