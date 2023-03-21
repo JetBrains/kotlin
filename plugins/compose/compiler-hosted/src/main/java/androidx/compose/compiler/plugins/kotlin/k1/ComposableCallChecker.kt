@@ -143,6 +143,8 @@ open class ComposableCallChecker :
             return
         }
 
+        warnOnUnstableNamedArguments(resolvedCall, context)
+
         var node: PsiElement? = reportOn
         loop@while (node != null) {
             when (node) {
@@ -297,6 +299,21 @@ open class ComposableCallChecker :
                 }
             }
             node = node.parent as? KtElement
+        }
+    }
+
+    private fun warnOnUnstableNamedArguments(
+        resolvedCall: ResolvedCall<*>,
+        context: CallCheckerContext
+    ) {
+        if (resolvedCall.candidateDescriptor?.hasStableParameterNames() != true) {
+            for (valueArgument in resolvedCall.call.valueArguments) {
+                val nameReference = valueArgument.getArgumentName()?.referenceExpression
+                    ?: continue
+                context.trace.report(
+                    ComposeErrors.NAMED_ARGUMENTS_NOT_ALLOWED.on(nameReference)
+                )
+            }
         }
     }
 

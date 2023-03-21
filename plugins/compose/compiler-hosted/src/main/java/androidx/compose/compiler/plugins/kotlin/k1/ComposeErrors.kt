@@ -161,6 +161,9 @@ object ComposeErrors {
         )
 
     @JvmField
+    val NAMED_ARGUMENTS_NOT_ALLOWED = DiagnosticFactory0.create<PsiElement>(Severity.WARNING)
+
+    @JvmField
     val REDUNDANT_COMPOSABLE_ANNOTATION = DiagnosticFactory0.create<PsiElement>(Severity.WARNING)
 
     init {
