@@ -36,7 +36,7 @@ internal class CacheStorage(private val generationState: NativeGenerationState) 
     }
 
     private fun saveKlibContentsHash() {
-        outputFiles.hashFile!!.writeBytes(generationState.klibHash!!.toByteArray())
+        outputFiles.hashFile!!.writeBytes(generationState.klibHash.toByteArray())
     }
 
     private fun saveCacheBitcodeDependencies() {
