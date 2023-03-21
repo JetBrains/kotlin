@@ -37,6 +37,7 @@ object FirCommonSessionFactory : FirAbstractSessionFactory() {
         sessionProvider: FirProjectSessionProvider,
         moduleDataProvider: ModuleDataProvider,
         projectEnvironment: AbstractProjectEnvironment,
+        extensionRegistrars: List<FirExtensionRegistrar>,
         librariesScope: AbstractProjectFileSearchScope,
         resolvedKLibs: List<KotlinResolvedLibrary>,
         packageAndMetadataPartProvider: PackageAndMetadataPartProvider,
@@ -48,6 +49,7 @@ object FirCommonSessionFactory : FirAbstractSessionFactory() {
             sessionProvider,
             moduleDataProvider,
             languageVersionSettings,
+            extensionRegistrars,
             registerExtraComponents = {
                 registerExtraComponents(it)
             },

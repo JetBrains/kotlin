@@ -10,20 +10,20 @@ fun test_1(
     someInt: Int
 ) {
     consumePositiveInt(positiveInt)
-    consumePositiveInt(negativeInt) // should be error
-    consumePositiveInt(someInt) // should be error
+    consumePositiveInt(<!ILLEGAL_NUMBER_SIGN!>negativeInt<!>) // should be error
+    consumePositiveInt(<!ILLEGAL_NUMBER_SIGN!>someInt<!>) // should be error
 }
 
 fun test_2() {
     val x = producePositiveInt()
-    takePositive(<!ILLEGAL_NUMBER_SIGN!>x<!>)
+    takePositive(x)
     takeNegative(<!ILLEGAL_NUMBER_SIGN!>x<!>) // should be error
     takeAny(x)
 }
 
 fun test_3() {
     val x = produceBoxedPositiveInt().value
-    takePositive(<!ILLEGAL_NUMBER_SIGN!>x<!>)
+    takePositive(x)
     takeNegative(<!ILLEGAL_NUMBER_SIGN!>x<!>) // should be error
     takeAny(x)
 }

@@ -51,6 +51,7 @@ object FirSessionFactoryHelper {
             sessionProvider,
             dependencyList.moduleDataProvider,
             projectEnvironment,
+            extensionRegistrars,
             librariesScope,
             packagePartProvider,
             languageVersionSettings,

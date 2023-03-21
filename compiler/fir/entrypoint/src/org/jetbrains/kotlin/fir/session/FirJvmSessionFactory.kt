@@ -37,6 +37,7 @@ object FirJvmSessionFactory : FirAbstractSessionFactory() {
         sessionProvider: FirProjectSessionProvider,
         moduleDataProvider: ModuleDataProvider,
         projectEnvironment: AbstractProjectEnvironment,
+        extensionRegistrars: List<FirExtensionRegistrar>,
         scope: AbstractProjectFileSearchScope,
         packagePartProvider: PackagePartProvider,
         languageVersionSettings: LanguageVersionSettings,
@@ -47,6 +48,7 @@ object FirJvmSessionFactory : FirAbstractSessionFactory() {
             sessionProvider,
             moduleDataProvider,
             languageVersionSettings,
+            extensionRegistrars,
             registerExtraComponents = {
                 it.registerCommonJavaComponents(projectEnvironment.getJavaModuleResolver())
                 registerExtraComponents(it)

@@ -11,13 +11,13 @@ FILE: dependencyWithoutAttributePlugin.kt
         R|org/jetbrains/kotlin/fir/plugin/consumePositiveInt|(R|<local>/someInt|)
     }
     public final fun test_2(): R|kotlin/Unit| {
-        lval x: R|@R|org/jetbrains/kotlin/fir/plugin/Positive|()  kotlin/Int| = R|org/jetbrains/kotlin/fir/plugin/producePositiveInt|()
+        lval x: R|@Positive kotlin/Int| = R|org/jetbrains/kotlin/fir/plugin/producePositiveInt|()
         R|/takePositive|(R|<local>/x|)
         R|/takeNegative|(R|<local>/x|)
         R|/takeAny|(R|<local>/x|)
     }
     public final fun test_3(): R|kotlin/Unit| {
-        lval x: R|@R|org/jetbrains/kotlin/fir/plugin/Positive|()  kotlin/Int| = R|org/jetbrains/kotlin/fir/plugin/produceBoxedPositiveInt|().R|SubstitutionOverride<org/jetbrains/kotlin/fir/plugin/Box.value: R|@R|org/jetbrains/kotlin/fir/plugin/Positive|()  kotlin/Int|>|
+        lval x: R|@Positive kotlin/Int| = R|org/jetbrains/kotlin/fir/plugin/produceBoxedPositiveInt|().R|SubstitutionOverride<org/jetbrains/kotlin/fir/plugin/Box.value: R|@Positive kotlin/Int|>|
         R|/takePositive|(R|<local>/x|)
         R|/takeNegative|(R|<local>/x|)
         R|/takeAny|(R|<local>/x|)

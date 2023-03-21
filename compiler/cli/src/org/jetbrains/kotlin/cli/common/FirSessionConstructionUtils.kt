@@ -75,12 +75,12 @@ fun <F> prepareJvmSessions(
                 sessionProvider,
                 libraryList.moduleDataProvider,
                 projectEnvironment,
+                extensionRegistrars,
                 librariesScope,
                 projectEnvironment.getPackagePartProvider(librariesScope),
                 configuration.languageVersionSettings,
                 registerExtraComponents = {},
             )
-
         }
     ) { moduleFiles, moduleData, sessionProvider, sessionConfigurator ->
         FirJvmSessionFactory.createModuleBasedSession(
@@ -126,6 +126,7 @@ fun <F> prepareJsSessions(
                 resolvedLibraries,
                 sessionProvider,
                 libraryList.moduleDataProvider,
+                extensionRegistrars,
                 configuration.languageVersionSettings,
                 registerExtraComponents = {},
             )
@@ -168,6 +169,7 @@ fun <F> prepareNativeSessions(
                 resolvedLibraries,
                 sessionProvider,
                 libraryList.moduleDataProvider,
+                extensionRegistrars,
                 configuration.languageVersionSettings,
                 registerExtraComponents = {},
             )
@@ -211,6 +213,7 @@ fun <F> prepareCommonSessions(
                 sessionProvider,
                 libraryList.moduleDataProvider,
                 projectEnvironment,
+                extensionRegistrars,
                 librariesScope,
                 resolvedLibraries,
                 projectEnvironment.getPackagePartProvider(librariesScope) as PackageAndMetadataPartProvider,

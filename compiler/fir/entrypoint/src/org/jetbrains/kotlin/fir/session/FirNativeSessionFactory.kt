@@ -27,6 +27,7 @@ object FirNativeSessionFactory : FirAbstractSessionFactory() {
         resolvedLibraries: List<KotlinResolvedLibrary>,
         sessionProvider: FirProjectSessionProvider,
         moduleDataProvider: ModuleDataProvider,
+        extensionRegistrars: List<FirExtensionRegistrar>,
         languageVersionSettings: LanguageVersionSettings,
         registerExtraComponents: ((FirSession) -> Unit) = {},
     ): FirSession {
@@ -35,6 +36,7 @@ object FirNativeSessionFactory : FirAbstractSessionFactory() {
             sessionProvider,
             moduleDataProvider,
             languageVersionSettings,
+            extensionRegistrars,
             registerExtraComponents,
             createKotlinScopeProvider = { FirKotlinScopeProvider { _, declaredMemberScope, _, _, _ -> declaredMemberScope } },
             createProviders = { session, builtinsModuleData, kotlinScopeProvider ->

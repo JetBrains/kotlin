@@ -88,18 +88,21 @@ open class FirFrontendFacade(
 
         val (moduleDataMap, moduleDataProvider) = initializeModuleData(sortedModules)
 
+        val project = testServices.compilerConfigurationProvider.getProject(module)
+        val extensionRegistrars = FirExtensionRegistrar.getInstances(project)
         val projectEnvironment = createLibrarySession(
             module,
-            testServices.compilerConfigurationProvider.getProject(module),
+            project,
             Name.special("<${module.name}>"),
             testServices.firModuleInfoProvider.firSessionProvider,
             moduleDataProvider,
-            testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
+            testServices.compilerConfigurationProvider.getCompilerConfiguration(module),
+            extensionRegistrars
         )
 
         val targetPlatform = module.targetPlatform
         val firOutputPartForDependsOnModules = sortedModules.map {
-            analyze(it, moduleDataMap[it]!!, targetPlatform, projectEnvironment)
+            analyze(it, moduleDataMap[it]!!, targetPlatform, projectEnvironment, extensionRegistrars)
         }
 
         return FirOutputArtifactImpl(firOutputPartForDependsOnModules)
@@ -182,7 +185,8 @@ open class FirFrontendFacade(
         moduleName: Name,
         sessionProvider: FirProjectSessionProvider,
         moduleDataProvider: ModuleDataProvider,
-        configuration: CompilerConfiguration
+        configuration: CompilerConfiguration,
+        extensionRegistrars: List<FirExtensionRegistrar>
     ): AbstractProjectEnvironment? {
         val compilerConfigurationProvider = testServices.compilerConfigurationProvider
         val projectEnvironment: AbstractProjectEnvironment?
@@ -202,6 +206,7 @@ open class FirFrontendFacade(
                     sessionProvider,
                     moduleDataProvider,
                     projectEnvironment,
+                    extensionRegistrars,
                     projectFileSearchScope,
                     packagePartProvider,
                     languageVersionSettings,
@@ -217,6 +222,7 @@ open class FirFrontendFacade(
                     module,
                     testServices,
                     configuration,
+                    extensionRegistrars,
                     languageVersionSettings,
                     registerExtraComponents = ::registerExtraComponents,
                 )
@@ -228,6 +234,7 @@ open class FirFrontendFacade(
                     listOf(),
                     sessionProvider,
                     moduleDataProvider,
+                    extensionRegistrars,
                     languageVersionSettings,
                     registerExtraComponents = ::registerExtraComponents,
                 )
@@ -241,7 +248,8 @@ open class FirFrontendFacade(
         module: TestModule,
         moduleData: FirModuleData,
         targetPlatform: TargetPlatform,
-        projectEnvironment: AbstractProjectEnvironment?
+        projectEnvironment: AbstractProjectEnvironment?,
+        extensionRegistrars: List<FirExtensionRegistrar>,
     ): FirOutputPartForDependsOnModule {
         val compilerConfigurationProvider = testServices.compilerConfigurationProvider
         val moduleInfoProvider = testServices.firModuleInfoProvider
@@ -258,7 +266,6 @@ open class FirFrontendFacade(
             FirParser.Psi -> testServices.sourceFileProvider.getKtFilesForSourceFiles(module.files, project).values to emptyList()
         }
 
-        val extensionRegistrars = FirExtensionRegistrar.getInstances(project)
         val sessionConfigurator: FirSessionConfigurator.() -> Unit = {
             if (FirDiagnosticsDirectives.WITH_EXTENDED_CHECKERS in module.directives) {
                 registerExtendedCommonCheckers()

@@ -66,13 +66,15 @@ object FirJsSessionFactory : FirAbstractSessionFactory() {
         resolvedLibraries: List<KotlinLibrary>,
         sessionProvider: FirProjectSessionProvider,
         moduleDataProvider: ModuleDataProvider,
+        extensionRegistrars: List<FirExtensionRegistrar>,
         languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
         registerExtraComponents: ((FirSession) -> Unit),
-    ) = createLibrarySession(
+    ): FirSession = createLibrarySession(
         mainModuleName,
         sessionProvider,
         moduleDataProvider,
         languageVersionSettings,
+        extensionRegistrars,
         registerExtraComponents = {
             it.registerJsSpecificResolveComponents()
             registerExtraComponents(it)
@@ -83,7 +85,7 @@ object FirJsSessionFactory : FirAbstractSessionFactory() {
                 KlibBasedSymbolProvider(session, moduleDataProvider, kotlinScopeProvider, resolvedLibraries),
                 // (Most) builtins should be taken from the dependencies in JS compilation, therefore builtins provider is the last one
                 // TODO: consider using "poisoning" provider for builtins to ensure that proper ones are taken from dependencies
-                // NOTE: it requires precise filtering for true nuiltins, like Function*
+                // NOTE: it requires precise filtering for true builtins, like Function*
                 FirBuiltinSymbolProvider(session, builtinsModuleData, kotlinScopeProvider),
                 FirExtensionSyntheticFunctionInterfaceProvider.createIfNeeded(session, builtinsModuleData, kotlinScopeProvider),
             )

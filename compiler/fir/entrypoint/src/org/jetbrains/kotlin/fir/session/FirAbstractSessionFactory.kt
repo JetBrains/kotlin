@@ -34,6 +34,7 @@ abstract class FirAbstractSessionFactory {
         sessionProvider: FirProjectSessionProvider,
         moduleDataProvider: ModuleDataProvider,
         languageVersionSettings: LanguageVersionSettings,
+        extensionRegistrars: List<FirExtensionRegistrar>,
         registerExtraComponents: ((FirSession) -> Unit),
         createKotlinScopeProvider: () -> FirKotlinScopeProvider,
         createProviders: (FirSession, FirModuleData, FirKotlinScopeProvider) -> List<FirSymbolProvider>
@@ -58,6 +59,12 @@ abstract class FirAbstractSessionFactory {
                 moduleDataProvider.analyzerServices,
             )
             builtinsModuleData.bindSession(this)
+
+            FirSessionConfigurator(this).apply {
+                for (extensionRegistrar in extensionRegistrars) {
+                    registerExtensions(extensionRegistrar.configure())
+                }
+            }.configure()
 
             val providers = createProviders(this, builtinsModuleData, kotlinScopeProvider)
 

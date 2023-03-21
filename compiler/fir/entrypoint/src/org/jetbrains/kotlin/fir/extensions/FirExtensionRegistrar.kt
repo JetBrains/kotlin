@@ -35,6 +35,11 @@ abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
             FirFunctionTypeKindExtension::class,
             FirDeclarationsForMetadataProviderExtension::class,
         )
+
+        internal val ALLOWED_EXTENSIONS_FOR_LIBRARY_SESSION = listOf(
+            FirTypeAttributeExtension::class,
+            FirFunctionTypeKindExtension::class,
+        )
     }
 
     protected abstract fun ExtensionRegistrarContext.configurePlugin()
