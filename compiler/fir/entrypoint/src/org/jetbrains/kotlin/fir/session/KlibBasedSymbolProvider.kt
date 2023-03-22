@@ -6,9 +6,6 @@
 package org.jetbrains.kotlin.fir.session
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.caches.FirCache
-import org.jetbrains.kotlin.fir.caches.firCachesFactory
-import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.deserialization.*
 import org.jetbrains.kotlin.fir.isNewPlaceForBodyGeneration
@@ -17,7 +14,6 @@ import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.*
-import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
@@ -47,6 +43,20 @@ class KlibBasedSymbolProvider(
                 for (fragmentName in header.packageFragmentNameList) {
                     getOrPut(fragmentName) { SmartList() }
                         .add(library)
+                }
+            }
+        }
+    }
+
+    private val knownPackagesInLibraries: Set<FqName> by lazy {
+        buildSet<FqName> {
+            for ((_, header) in moduleHeaders) {
+                for (fragmentName in header.packageFragmentNameList) {
+                    var curPackage = FqName(fragmentName)
+                    while (!curPackage.isRoot) {
+                        add(curPackage)
+                        curPackage = curPackage.parent()
+                    }
                 }
             }
         }
@@ -182,7 +192,7 @@ class KlibBasedSymbolProvider(
     override fun isNewPlaceForBodyGeneration(classProto: ProtoBuf.Class) = false
 
     override fun getPackage(fqName: FqName): FqName? {
-        return if (fqName.toString() in fragmentNamesInLibraries) {
+        return if (fqName in knownPackagesInLibraries) {
             fqName
         } else {
             null

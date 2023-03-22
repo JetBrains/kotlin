@@ -26,6 +26,12 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true, "compileKotlinAgainstKotlin");
     }
 
+    @Test
+    @TestMetadata("kt-57353.kt")
+    public void testKt_57353() throws Exception {
+        runTest("compiler/testData/codegen/box/kt-57353.kt");
+    }
+
     @Nested
     @TestMetadata("compiler/testData/codegen/box/annotations")
     @TestDataPath("$PROJECT_ROOT")
