@@ -227,7 +227,7 @@ fun Test.setUpJsBoxTests(jsEnabled: Boolean, jsIrEnabled: Boolean, firEnabled: B
     }
 
     if (jsIrEnabled) {
-        dependsOn(":kotlin-stdlib-js-ir:compileKotlinJs")
+        dependsOn(":kotlin-stdlib-js-ir:assemble")
         systemProperty("kotlin.js.full.stdlib.path", "libraries/stdlib/js-ir/build/classes/kotlin/js/main")
         inputs.dir(rootDir.resolve("libraries/stdlib/js-ir/build/classes/kotlin/js/main"))
 
