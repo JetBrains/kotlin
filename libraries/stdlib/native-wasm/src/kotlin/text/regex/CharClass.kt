@@ -23,11 +23,13 @@
 package kotlin.text.regex
 
 import kotlin.native.BitSet
+import kotlin.native.ObsoleteNativeApi
 
 /**
  * User defined character classes (e.g. [abef]).
  */
 // TODO: replace the implementation with one using BitSet for first 256 symbols and a hash table / tree for the rest of UTF.
+@OptIn(ObsoleteNativeApi::class)
 internal class CharClass(val ignoreCase: Boolean = false, negative: Boolean = false)  : AbstractCharClass()  {
 
     var invertedSurrogates = false

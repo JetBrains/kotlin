@@ -28,6 +28,7 @@ import kotlin.native.concurrent.AtomicReference
 import kotlin.native.concurrent.freeze
 import kotlin.native.BitSet
 import kotlin.native.FreezingIsDeprecated
+import kotlin.native.ObsoleteNativeApi
 
 /**
  * Unicode category (i.e. Ll, Lu).
@@ -49,7 +50,7 @@ internal class UnicodeCategoryScope(category: Int) : UnicodeCategory(category) {
  * This class represents character classes, i.e. sets of character either predefined or user defined.
  * Note: this class represent a token, not node, so being constructed by lexer.
  */
-@OptIn(FreezingIsDeprecated::class)
+@OptIn(FreezingIsDeprecated::class, ObsoleteNativeApi::class)
 internal abstract class AbstractCharClass : SpecialToken() {
     /**
      * Show if the class has alternative meaning:
