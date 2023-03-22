@@ -29,6 +29,7 @@ dependencies {
     testApi(protobufFull())
     testApi(kotlinStdlib())
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
+    testImplementation("org.reflections:reflections:0.10.2")
 }
 
 sourceSets {
