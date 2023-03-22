@@ -41,7 +41,7 @@ internal class KaptGenerateStubsConfig : BaseKotlinCompileConfig<KaptGenerateStu
             task.useModuleDetection.value(kotlinCompileTask.useModuleDetection).disallowChanges()
             task.moduleName.value(kotlinCompileTask.moduleName).disallowChanges()
             task.libraries.from({ kotlinCompileTask.libraries - project.files(kaptClassesDir) })
-            task.compileKotlinArgumentsContributor.set(providers.provider { kotlinCompileTask.compilerArgumentsContributor })
+            task.compileTaskCompilerOptions.set(providers.provider { kotlinCompileTask.compilerOptions })
             task.pluginOptions.addAll(kotlinCompileTask.pluginOptions)
             task.compilerOptions.moduleName.convention(kotlinCompileTask.compilerOptions.moduleName)
             task.compilerOptions.freeCompilerArgs.convention(kotlinCompileTask.compilerOptions.freeCompilerArgs)
@@ -74,10 +74,8 @@ internal class KaptGenerateStubsConfig : BaseKotlinCompileConfig<KaptGenerateStu
     constructor(project: Project, ext: KotlinTopLevelExtension, kaptExtension: KaptExtension) : super(project, ext) {
         configureFromExtension(kaptExtension)
         configureTask { task ->
-            task.compileKotlinArgumentsContributor.set(
-                providers.provider {
-                    KotlinJvmCompilerArgumentsContributor(KotlinJvmCompilerArgumentsProvider(task))
-                }
+            task.compileTaskCompilerOptions.set(
+                providers.provider { task.compilerOptions }
             )
         }
     }

@@ -32,8 +32,6 @@ import org.jetbrains.kotlin.compilerRunner.UsesCompilerSystemPropertiesService
 import org.jetbrains.kotlin.daemon.common.MultiModuleICSettings
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
 import org.jetbrains.kotlin.gradle.incremental.UsesIncrementalModuleInfoBuildService
-import org.jetbrains.kotlin.gradle.internal.AbstractKotlinCompileArgumentsContributor
-import org.jetbrains.kotlin.gradle.internal.compilerArgumentsConfigurationFlags
 import org.jetbrains.kotlin.gradle.internal.tasks.allOutputFiles
 import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
@@ -354,21 +352,4 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
         inputChanges: InputChanges,
         taskOutputsBackup: TaskOutputsBackup?
     )
-
-    @get:Internal
-    internal val abstractKotlinCompileArgumentsContributor by lazy {
-        AbstractKotlinCompileArgumentsContributor(
-            KotlinCompileArgumentsProvider(this)
-        )
-    }
-
-    override fun setupCompilerArgs(args: T, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
-        abstractKotlinCompileArgumentsContributor.contributeArguments(
-            args,
-            compilerArgumentsConfigurationFlags(defaultsOnly, ignoreClasspathResolutionErrors)
-        )
-        if (reportingSettings().buildReportMode == BuildReportMode.VERBOSE) {
-            args.reportPerf = true
-        }
-    }
 }

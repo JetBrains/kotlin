@@ -25,12 +25,17 @@ import org.gradle.work.Incremental
 import org.gradle.work.NormalizeLineEndings
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptionsDefault
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptionsHelper
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.create
 import org.jetbrains.kotlin.gradle.report.BuildReportMode
 import org.jetbrains.kotlin.gradle.tasks.KaptGenerateStubs
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.toSingleCompilerPluginOptions
+import org.jetbrains.kotlin.gradle.utils.toPathsArray
 import org.jetbrains.kotlin.incremental.classpathAsList
 import org.jetbrains.kotlin.incremental.destinationAsFile
 import javax.inject.Inject
@@ -94,39 +99,48 @@ abstract class KaptGenerateStubsTask @Inject constructor(
         )
 
     @get:Internal
-    internal abstract val compileKotlinArgumentsContributor: Property<CompilerArgumentsContributor<K2JVMCompilerArguments>>
+    internal abstract val compileTaskCompilerOptions: Property<KotlinJvmCompilerOptions>
 
-    override fun setupCompilerArgs(
-        args: K2JVMCompilerArguments,
-        defaultsOnly: Boolean,
-        ignoreClasspathResolutionErrors: Boolean
-    ) {
-        compileKotlinArgumentsContributor.get().contributeArguments(
-            args,
-            compilerArgumentsConfigurationFlags(
-                defaultsOnly,
-                ignoreClasspathResolutionErrors
-            )
-        )
+    override fun createCompilerArguments(context: CreateCompilerArgumentsContext) = context.create<K2JVMCompilerArguments> {
+        contribute(KotlinCompilerArgumentsProducer.ArgumentType.Primitive) { args ->
+            args.allowNoSourceFiles = true
+            KotlinJvmCompilerOptionsHelper.fillCompilerArguments(compileTaskCompilerOptions.get(), args)
 
-        // Workaround for freeCompiler args duplication when they were configured for both this task
-        // and linked KotlinCompile task with the same values. For now linked KotlinCompile task
-        // freeCompilerArgs is used as convention for this task freeCompilerArgs
-        args.freeArgs = emptyList()
-        // Also use KotlinOptions configuration that was directly set to this task
-        // as 'compileKotlinArgumentsContributor' has KotlinOptions from linked KotlinCompile task
-        KotlinJvmCompilerOptionsHelper.fillCompilerArguments(compilerOptions, args)
+            // Workaround for freeCompiler args duplication when they were configured for both this task
+            // and linked KotlinCompile task with the same values. For now linked KotlinCompile task
+            // freeCompilerArgs is used as convention for this task freeCompilerArgs
+            args.freeArgs = emptyList()
+            KotlinJvmCompilerOptionsHelper.fillCompilerArguments(compilerOptions, args)
 
-        // Copied from KotlinCompile
-        if (reportingSettings().buildReportMode == BuildReportMode.VERBOSE) {
-            args.reportPerf = true
+            // Copied from KotlinCompile
+            if (reportingSettings().buildReportMode == BuildReportMode.VERBOSE) {
+                args.reportPerf = true
+            }
+
+            val pluginOptionsWithKapt = pluginOptions.toSingleCompilerPluginOptions()
+                .withWrappedKaptOptions(withApClasspath = kaptClasspath)
+
+            args.pluginOptions = (pluginOptionsWithKapt.arguments).toTypedArray()
+
+            args.verbose = verbose.get()
+            args.destinationAsFile = destinationDirectory.get().asFile
         }
 
-        val pluginOptionsWithKapt = pluginOptions.toSingleCompilerPluginOptions().withWrappedKaptOptions(withApClasspath = kaptClasspath)
-        args.pluginOptions = (pluginOptionsWithKapt.arguments).toTypedArray()
+        contribute(KotlinCompilerArgumentsProducer.ArgumentType.PluginClasspath) { args ->
+            args.pluginClasspaths = tryLenient {
+                listOfNotNull(
+                    pluginClasspath, kotlinPluginData?.orNull?.classpath
+                ).reduce(FileCollection::plus).toPathsArray()
+            }
+        }
 
-        args.verbose = verbose.get()
-        args.classpathAsList = this.libraries.filter { it.exists() }.toList()
-        args.destinationAsFile = this.destinationDirectory.get().asFile
+        contribute(KotlinCompilerArgumentsProducer.ArgumentType.DependencyClasspath) { args ->
+            args.classpathAsList = tryLenient { libraries.toList().filter { it.exists() } }.orEmpty()
+            args.friendPaths = friendPaths.toPathsArray()
+        }
+
+        contribute(KotlinCompilerArgumentsProducer.ArgumentType.Sources) { args ->
+            args.freeArgs += (scriptSources.asFileTree.files + javaSources.files + sources.asFileTree.files).map { it.absolutePath }
+        }
     }
 }

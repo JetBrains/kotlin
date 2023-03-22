@@ -33,9 +33,6 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptionsHelper
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 import org.jetbrains.kotlin.gradle.dsl.usesK2
-import org.jetbrains.kotlin.gradle.internal.CompilerArgumentsContributor
-import org.jetbrains.kotlin.gradle.internal.KotlinJvmCompilerArgumentsContributor
-import org.jetbrains.kotlin.gradle.internal.compilerArgumentsConfigurationFlags
 import org.jetbrains.kotlin.gradle.internal.tasks.allOutputFiles
 import org.jetbrains.kotlin.gradle.logging.GradleErrorMessageCollector
 import org.jetbrains.kotlin.gradle.logging.GradlePrintingMessageCollector
@@ -219,11 +216,6 @@ abstract class KotlinCompile @Inject constructor(
      */
     @get:Internal
     internal var executionTimeFreeCompilerArgs: List<String>? = null
-
-    @get:Internal
-    internal val compilerArgumentsContributor: CompilerArgumentsContributor<K2JVMCompilerArguments> by lazy {
-        KotlinJvmCompilerArgumentsContributor(KotlinJvmCompilerArgumentsProvider(this))
-    }
 
     override fun createCompilerArguments(
         context: KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext
