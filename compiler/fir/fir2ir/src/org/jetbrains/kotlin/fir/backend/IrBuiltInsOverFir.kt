@@ -467,6 +467,10 @@ class IrBuiltInsOverFir(
         }.toMap()
     }
 
+    override val unsignedArraysElementTypes: Map<IrClassSymbol, IrType?> by lazy {
+        unsignedTypesToUnsignedArrays.map { (k,v) -> v to referenceClassByClassId(k.classId)?.owner?.defaultType }.toMap()
+    }
+
     override fun getKPropertyClass(mutable: Boolean, n: Int): IrClassSymbol = when (n) {
         0 -> if (mutable) kMutableProperty0Class else kProperty0Class
         1 -> if (mutable) kMutableProperty1Class else kProperty1Class
