@@ -59,7 +59,7 @@ abstract class AbstractInvalidationTest(
         private val STDLIB_KLIB = File(System.getProperty("kotlin.js.stdlib.klib.path") ?: error("Please set stdlib path")).canonicalPath
 
         private const val BOX_FUNCTION_NAME = "box"
-        private const val STDLIB_MODULE_NAME = "kotlin-kotlin-stdlib-js-ir"
+        private const val STDLIB_MODULE_NAME = "kotlin-kotlin-stdlib"
 
         private val TEST_FILE_IGNORE_PATTERN = Regex("^.*\\..+\\.\\w\\w$")
 

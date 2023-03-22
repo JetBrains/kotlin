@@ -45,7 +45,7 @@ class FilePathsInKlibTest : CodegenTestCase() {
         return psiManager.findDirectory(vDirectory)?.files?.map { it as KtFile } ?: error("Cannot load KtFiles")
     }
 
-    private val runtimeKlibPath = "libraries/stdlib/js-ir/build/classes/kotlin/js/main"
+    private val runtimeKlibPath = "libraries/stdlib/build/classes/kotlin/js/main"
 
     private fun analyseKtFiles(configuration: CompilerConfiguration, ktFiles: List<KtFile>): ModulesStructure {
         return prepareAnalyzedSourceModule(

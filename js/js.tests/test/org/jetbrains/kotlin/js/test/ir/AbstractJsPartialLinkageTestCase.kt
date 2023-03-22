@@ -46,7 +46,7 @@ abstract class AbstractJsPartialLinkageTestCase(private val compilerType: Compil
     private inner class JsTestConfiguration(testPath: String) : PartialLinkageTestUtils.TestConfiguration {
         override val testDir: File = File(testPath).absoluteFile
         override val buildDir: File get() = this@AbstractJsPartialLinkageTestCase.buildDir
-        override val stdlibFile: File get() = File("libraries/stdlib/js-ir/build/classes/kotlin/js/main").absoluteFile
+        override val stdlibFile: File get() = File("libraries/stdlib/build/classes/kotlin/js/main").absoluteFile
         override val testModeConstructorParameters = mapOf("isJs" to "true")
 
         override fun customizeModuleSources(moduleName: String, moduleSourceDir: File) {

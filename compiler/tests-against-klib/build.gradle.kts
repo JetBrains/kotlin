@@ -23,7 +23,7 @@ sourceSets {
 testsJar {}
 
 projectTest(parallel = true) {
-    dependsOn(":kotlin-stdlib-js-ir:compileKotlinJs")
+    dependsOn(":kotlin-stdlib:jsJar")
     workingDir = rootDir
     systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
 }

@@ -9,4 +9,4 @@ $TEMP_DIR$
 firMpp
 -XXLanguage\:+MultiPlatformProjects
 -libraries
-libraries/stdlib/js-ir/build/classes/kotlin/js/main
+libraries/stdlib/build/classes/kotlin/js/main

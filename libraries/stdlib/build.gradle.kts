@@ -650,6 +650,13 @@ tasks {
         manifest.attributes(mapOf("Implementation-Title" to "kotlin-stdlib-js"))
     }
 
+    val jsJarForTests by registering(Copy::class) {
+        from(jsJar)
+        rename { _ -> "full-runtime.klib" }
+        // some tests expect stdlib-js klib in this location
+        into(rootProject.buildDir.resolve("js-ir-runtime"))
+    }
+
     val jsV1Jar by existing(Jar::class) {
         val jsResultingJarFile = jsResultingJar.get().archiveFile
         inputs.file(jsResultingJarFile)

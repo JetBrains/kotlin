@@ -6,4 +6,4 @@ $TEMP_DIR$
 -ir-output-name
 fir
 -libraries
-libraries/stdlib/js-ir/build/classes/kotlin/js/main
+libraries/stdlib/build/classes/kotlin/js/main

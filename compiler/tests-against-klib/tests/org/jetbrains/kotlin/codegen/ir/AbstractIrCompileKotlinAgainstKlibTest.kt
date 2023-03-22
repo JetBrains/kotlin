@@ -78,7 +78,7 @@ abstract class AbstractCompileKotlinAgainstKlibTest : AbstractBlackBoxCodegenTes
             listOf(
                 "-output", klibName,
                 "-Xir-produce-klib-file",
-                "-libraries", "libraries/stdlib/js-ir/build/classes/kotlin/js/main/"
+                "-libraries", "libraries/stdlib/build/classes/kotlin/js/main/"
             ) + sourceFiles
         )
         if (exitCode != ExitCode.OK) {
