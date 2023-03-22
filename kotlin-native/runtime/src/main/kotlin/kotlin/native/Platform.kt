@@ -4,6 +4,7 @@
  */
 package kotlin.native
 
+import kotlin.experimental.ExperimentalNativeApi
 import kotlin.native.internal.GCUnsafeCall
 import kotlin.native.internal.TypedIntrinsic
 import kotlin.native.internal.IntrinsicType
@@ -11,6 +12,7 @@ import kotlin.native.internal.IntrinsicType
 /**
  * Operating system family.
  */
+@ExperimentalNativeApi
 public enum class OsFamily {
     UNKNOWN,
     MACOSX,
@@ -26,6 +28,7 @@ public enum class OsFamily {
 /**
  * Central Processor Unit architecture.
  */
+@ExperimentalNativeApi
 public enum class CpuArchitecture(val bitness: Int) {
     UNKNOWN(-1),
     ARM32(32),
@@ -41,6 +44,7 @@ public enum class CpuArchitecture(val bitness: Int) {
  * Memory model.
  */
 // NOTE: Must match `MemoryModel` in `Memory.h`
+@ExperimentalNativeApi
 public enum class MemoryModel {
     STRICT,
     RELAXED,
@@ -50,6 +54,7 @@ public enum class MemoryModel {
 /**
  * Object describing the current platform program executes upon.
  */
+@ExperimentalNativeApi
 public object Platform {
     /**
      * Check if current architecture allows unaligned access to wider than byte locations.
@@ -177,5 +182,5 @@ private external fun Platform_getAvailableProcessors(): Int
 
 
 @TypedIntrinsic(IntrinsicType.IS_EXPERIMENTAL_MM)
-@ExperimentalStdlibApi
+@ExperimentalNativeApi
 external fun isExperimentalMM(): Boolean

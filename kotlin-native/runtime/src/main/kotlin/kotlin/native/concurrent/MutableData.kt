@@ -33,6 +33,7 @@ public class MutableData constructor(capacity: Int = 16) {
 
     private var buffer_ = ByteArray(capacity).apply { share() }
     private var buffer: ByteArray
+        @OptIn(ExperimentalNativeApi::class)
         get() =
             when (kotlin.native.Platform.memoryModel) {
                 kotlin.native.MemoryModel.EXPERIMENTAL -> buffer_
