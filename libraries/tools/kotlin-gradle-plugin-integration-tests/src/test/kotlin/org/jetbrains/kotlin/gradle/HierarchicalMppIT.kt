@@ -335,6 +335,17 @@ open class HierarchicalMppIT : KGPBaseTest() {
     }
 
     @GradleTest
+    @DisplayName("KT-57369 K2/MPP: supertypes established in actual-classifiers from other source sets are not visible")
+    fun testHmppActualHasAdditionalSuperTypes(gradleVersion: GradleVersion) {
+        project(
+            "hierarchical-mpp-actual-has-additional-supertypes",
+            gradleVersion
+        ) {
+            build("assemble")
+        }
+    }
+
+    @GradleTest
     @DisplayName("Test that disambiguation attribute of Kotlin JVM Target is propagated to Java configurations")
     fun testMultipleJvmTargetsWithJavaAndDisambiguationAttributeKt31468(gradleVersion: GradleVersion) {
         project(

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.konan.blackboxtest.support.compilation
 
+import org.jetbrains.kotlin.container.topologicalSort
 import org.jetbrains.kotlin.konan.blackboxtest.support.PackageName
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCase
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCase.*
@@ -205,21 +206,8 @@ internal class TestCompilationFactory {
         return CompilationDependencies(klibDependencies, staticCacheDependencies)
     }
 
-    // mimics FirFrontendFacade.sortDependsOnTopologically(org.jetbrains.kotlin.test.model.TestModule)
     private fun sortDependsOnTopologically(module: TestModule): List<TestModule> {
-        val sortedModules = mutableListOf<TestModule>()
-        val visitedModules = mutableSetOf<TestModule>()
-        val modulesQueue = ArrayDeque<TestModule>()
-        modulesQueue.add(module)
-
-        while (modulesQueue.isNotEmpty()) {
-            val currentModule = modulesQueue.removeFirst()
-            if (!visitedModules.add(currentModule)) continue
-            sortedModules.add(currentModule)
-            modulesQueue += currentModule.allDependsOn
-        }
-
-        return sortedModules.reversed()
+        return topologicalSort(listOf(module), reverseOrder = true) { it.allDependsOn }
     }
 
     companion object {

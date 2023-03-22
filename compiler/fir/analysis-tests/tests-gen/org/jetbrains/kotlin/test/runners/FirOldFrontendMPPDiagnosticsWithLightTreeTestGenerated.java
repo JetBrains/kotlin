@@ -551,6 +551,12 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeTestGenerated extends Abst
         }
 
         @Test
+        @TestMetadata("intermediateActualHasAdditionalSupertypes.kt")
+        public void testIntermediateActualHasAdditionalSupertypes() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/intermediateActualHasAdditionalSupertypes.kt");
+        }
+
+        @Test
         @TestMetadata("kt-55570.kt")
         public void testKt_55570() throws Exception {
             runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/kt-55570.kt");

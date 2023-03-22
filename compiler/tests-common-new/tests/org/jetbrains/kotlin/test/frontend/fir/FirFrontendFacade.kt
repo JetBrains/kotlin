@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.cli.jvm.config.jvmModularRoots
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.container.topologicalSort
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
@@ -105,22 +106,9 @@ open class FirFrontendFacade(
     }
 
     protected fun sortDependsOnTopologically(module: TestModule): List<TestModule> {
-        val sortedModules = mutableListOf<TestModule>()
-        val visitedModules = mutableSetOf<TestModule>()
-        val modulesQueue = ArrayDeque<TestModule>()
-        modulesQueue.add(module)
-
-        while (modulesQueue.isNotEmpty()) {
-            val currentModule = modulesQueue.removeFirst()
-            if (!visitedModules.add(currentModule)) continue
-            sortedModules.add(currentModule)
-
-            for (dependency in currentModule.dependsOnDependencies) {
-                modulesQueue.add(testServices.dependencyProvider.getTestModule(dependency.moduleName))
-            }
+        return topologicalSort(listOf(module), reverseOrder = true) { item ->
+            item.dependsOnDependencies.map { testServices.dependencyProvider.getTestModule(it.moduleName) }
         }
-
-        return sortedModules.reversed()
     }
 
     private fun initializeModuleData(modules: List<TestModule>): Pair<Map<TestModule, FirModuleData>, ModuleDataProvider> {
