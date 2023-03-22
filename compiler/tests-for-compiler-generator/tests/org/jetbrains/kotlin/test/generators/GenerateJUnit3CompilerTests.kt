@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.codegen.defaultConstructor.AbstractDefaultArgumentsR
 import org.jetbrains.kotlin.codegen.flags.AbstractWriteFlagsTest
 import org.jetbrains.kotlin.codegen.ir.*
 import org.jetbrains.kotlin.fir.AbstractFirLoadCompiledKotlin
-import org.jetbrains.kotlin.fir.AbstractLazyBodyIsNotTouchedTilContractsPhaseTest
+import org.jetbrains.kotlin.fir.AbstractLazyBodyIsNotTouchedTest
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderLazyBodiesTestCase
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderSourceElementMappingTestCase
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderTestCase
@@ -418,7 +418,7 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
         }
 
         testGroup("compiler/fir/analysis-tests/legacy-fir-tests/tests-gen", "compiler/fir/analysis-tests/testData") {
-            testClass<AbstractLazyBodyIsNotTouchedTilContractsPhaseTest> {
+            testClass<AbstractLazyBodyIsNotTouchedTest> {
                 model("resolve", pattern = KT_WITHOUT_DOTS_IN_NAME)
             }
         }
