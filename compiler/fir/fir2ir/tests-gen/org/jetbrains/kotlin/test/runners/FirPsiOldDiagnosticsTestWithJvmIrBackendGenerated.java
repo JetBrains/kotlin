@@ -49,6 +49,18 @@ public class FirPsiOldDiagnosticsTestWithJvmIrBackendGenerated extends AbstractF
     }
 
     @Test
+    @TestMetadata("kt57104.kt")
+    public void testKt57104() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithJvmBackend/kt57104.kt");
+    }
+
+    @Test
+    @TestMetadata("kt57104_2.kt")
+    public void testKt57104_2() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithJvmBackend/kt57104_2.kt");
+    }
+
+    @Test
     @TestMetadata("multipleBigArityFunsImplemented.kt")
     public void testMultipleBigArityFunsImplemented() throws Exception {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/multipleBigArityFunsImplemented.kt");

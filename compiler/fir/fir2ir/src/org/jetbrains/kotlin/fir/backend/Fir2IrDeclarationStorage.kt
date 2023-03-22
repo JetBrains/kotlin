@@ -323,6 +323,7 @@ class Fir2IrDeclarationStorage(
         function: FirFunction?,
         containingClass: IrClass?,
         isStatic: Boolean,
+        forSetter: Boolean,
         // Can be not-null only for property accessors
         parentPropertyReceiver: FirReceiverParameter?
     ) {
@@ -332,7 +333,6 @@ class Fir2IrDeclarationStorage(
                 setTypeParameters(function)
             }
         }
-        val forSetter = function is FirPropertyAccessor && function.isSetter
         val typeContext = ConversionTypeContext(
             origin = if (forSetter) ConversionTypeOrigin.SETTER else ConversionTypeOrigin.DEFAULT
         )
@@ -417,10 +417,11 @@ class Fir2IrDeclarationStorage(
         irParent: IrDeclarationParent?,
         thisReceiverOwner: IrClass? = irParent as? IrClass,
         isStatic: Boolean,
+        forSetter: Boolean,
         parentPropertyReceiver: FirReceiverParameter? = null
     ): T {
         setAndModifyParent(irParent)
-        declareParameters(function, thisReceiverOwner, isStatic, parentPropertyReceiver)
+        declareParameters(function, thisReceiverOwner, isStatic, forSetter, parentPropertyReceiver)
         return this
     }
 
@@ -563,7 +564,8 @@ class Fir2IrDeclarationStorage(
                     enterScope(this)
                     bindAndDeclareParameters(
                         function, irParent,
-                        thisReceiverOwner, isStatic = simpleFunction?.isStatic == true
+                        thisReceiverOwner, isStatic = simpleFunction?.isStatic == true,
+                        forSetter = false,
                     )
                     convertAnnotationsForNonDeclaredMembers(function, origin)
                     leaveScope(this)
@@ -645,7 +647,7 @@ class Fir2IrDeclarationStorage(
                 ).apply {
                     metadata = FirMetadataSource.Function(constructor)
                     enterScope(this)
-                    bindAndDeclareParameters(constructor, irParent, isStatic = false)
+                    bindAndDeclareParameters(constructor, irParent, isStatic = false, forSetter = false)
                     leaveScope(this)
                 }
             }
@@ -745,6 +747,7 @@ class Fir2IrDeclarationStorage(
                 bindAndDeclareParameters(
                     propertyAccessor, irParent,
                     thisReceiverOwner, isStatic = irParent !is IrClass || propertyAccessor?.isStatic == true,
+                    forSetter = isSetter,
                     parentPropertyReceiver = property.receiverParameter,
                 )
                 leaveScope(this)
@@ -940,6 +943,8 @@ class Fir2IrDeclarationStorage(
                             origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB -> origin
                             origin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER -> origin
                             delegate != null -> IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR
+                            origin == IrDeclarationOrigin.FAKE_OVERRIDE -> origin
+                            origin == IrDeclarationOrigin.DELEGATED_MEMBER -> origin
                             getter is FirDefaultPropertyGetter -> IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
                             else -> origin
                         },
@@ -953,6 +958,8 @@ class Fir2IrDeclarationStorage(
                             setter, property, this, type, irParent, thisReceiverOwner, true,
                             when {
                                 delegate != null -> IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR
+                                origin == IrDeclarationOrigin.FAKE_OVERRIDE -> origin
+                                origin == IrDeclarationOrigin.DELEGATED_MEMBER -> origin
                                 setter is FirDefaultPropertySetter -> IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
                                 else -> origin
                             },

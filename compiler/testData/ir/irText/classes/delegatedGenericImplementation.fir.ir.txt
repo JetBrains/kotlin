@@ -94,20 +94,20 @@ FILE fqName:<root> fileName:/delegatedGenericImplementation.kt
               $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.IBase<E of <root>.Test1> visibility:private [final]' type=<root>.IBase<E of <root>.Test1> origin=null
                 receiver: GET_VAR '<this>: <root>.Test1<E of <root>.Test1> declared in <root>.Test1.<get-x>' type=<root>.Test1<E of <root>.Test1> origin=null
               $receiver: GET_VAR '<this>: kotlin.collections.List<D of <root>.Test1.<get-x>> declared in <root>.Test1.<get-x>' type=kotlin.collections.List<D of <root>.Test1.<get-x>> origin=null
-      FUN DELEGATED_MEMBER name:<set-x> visibility:public modality:OPEN <D> ($this:<root>.Test1<E of <root>.Test1>, $receiver:kotlin.collections.List<D of <root>.Test1.<get-x>>, <set-?>:D of <root>.Test1.<set-x>?) returnType:kotlin.Unit
+      FUN DELEGATED_MEMBER name:<set-x> visibility:public modality:OPEN <D> ($this:<root>.Test1<E of <root>.Test1>, $receiver:kotlin.collections.List<D of <root>.Test1.<set-x>>, <set-?>:D of <root>.Test1.<set-x>?) returnType:kotlin.Unit
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:x visibility:public modality:OPEN [var]
         overridden:
           public abstract fun <set-x> <D> (<set-?>: D of <root>.IBase.<set-x>?): kotlin.Unit declared in <root>.IBase
         TYPE_PARAMETER name:D index:0 variance: superTypes:[kotlin.Any?] reified:false
         $this: VALUE_PARAMETER name:<this> type:<root>.Test1<E of <root>.Test1>
-        $receiver: VALUE_PARAMETER name:<this> type:kotlin.collections.List<D of <root>.Test1.<get-x>>
+        $receiver: VALUE_PARAMETER name:<this> type:kotlin.collections.List<D of <root>.Test1.<set-x>>
         VALUE_PARAMETER name:<set-?> index:0 type:D of <root>.Test1.<set-x>?
         BLOCK_BODY
           CALL 'public abstract fun <set-x> <D> (<set-?>: D of <root>.IBase.<set-x>?): kotlin.Unit declared in <root>.IBase' type=kotlin.Unit origin=null
             <D>: D of <root>.Test1.<set-x>
             $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.IBase<E of <root>.Test1> visibility:private [final]' type=<root>.IBase<E of <root>.Test1> origin=null
               receiver: GET_VAR '<this>: <root>.Test1<E of <root>.Test1> declared in <root>.Test1.<set-x>' type=<root>.Test1<E of <root>.Test1> origin=null
-            $receiver: GET_VAR '<this>: kotlin.collections.List<D of <root>.Test1.<get-x>> declared in <root>.Test1.<set-x>' type=kotlin.collections.List<D of <root>.Test1.<get-x>> origin=null
+            $receiver: GET_VAR '<this>: kotlin.collections.List<D of <root>.Test1.<set-x>> declared in <root>.Test1.<set-x>' type=kotlin.collections.List<D of <root>.Test1.<set-x>> origin=null
             <set-?>: GET_VAR '<set-?>: D of <root>.Test1.<set-x>? declared in <root>.Test1.<set-x>' type=D of <root>.Test1.<set-x>? origin=null
     FIELD DELEGATE name:$$delegate_0 type:<root>.IBase<E of <root>.Test1> visibility:private [final]
       EXPRESSION_BODY
@@ -180,20 +180,20 @@ FILE fqName:<root> fileName:/delegatedGenericImplementation.kt
               $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:j type:<root>.IBase<kotlin.String> visibility:private' type=<root>.IBase<kotlin.String> origin=null
                 receiver: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.<get-x>' type=<root>.Test2 origin=null
               $receiver: GET_VAR '<this>: kotlin.collections.List<D of <root>.Test2.<get-x>> declared in <root>.Test2.<get-x>' type=kotlin.collections.List<D of <root>.Test2.<get-x>> origin=null
-      FUN DELEGATED_MEMBER name:<set-x> visibility:public modality:OPEN <D> ($this:<root>.Test2, $receiver:kotlin.collections.List<D of <root>.Test2.<get-x>>, <set-?>:D of <root>.Test2.<set-x>?) returnType:kotlin.Unit
+      FUN DELEGATED_MEMBER name:<set-x> visibility:public modality:OPEN <D> ($this:<root>.Test2, $receiver:kotlin.collections.List<D of <root>.Test2.<set-x>>, <set-?>:D of <root>.Test2.<set-x>?) returnType:kotlin.Unit
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:x visibility:public modality:OPEN [var]
         overridden:
           public abstract fun <set-x> <D> (<set-?>: D of <root>.IBase.<set-x>?): kotlin.Unit declared in <root>.IBase
         TYPE_PARAMETER name:D index:0 variance: superTypes:[kotlin.Any?] reified:false
         $this: VALUE_PARAMETER name:<this> type:<root>.Test2
-        $receiver: VALUE_PARAMETER name:<this> type:kotlin.collections.List<D of <root>.Test2.<get-x>>
+        $receiver: VALUE_PARAMETER name:<this> type:kotlin.collections.List<D of <root>.Test2.<set-x>>
         VALUE_PARAMETER name:<set-?> index:0 type:D of <root>.Test2.<set-x>?
         BLOCK_BODY
           CALL 'public abstract fun <set-x> <D> (<set-?>: D of <root>.IBase.<set-x>?): kotlin.Unit declared in <root>.IBase' type=kotlin.Unit origin=null
             <D>: D of <root>.Test2.<set-x>
             $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:j type:<root>.IBase<kotlin.String> visibility:private' type=<root>.IBase<kotlin.String> origin=null
               receiver: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.<set-x>' type=<root>.Test2 origin=null
-            $receiver: GET_VAR '<this>: kotlin.collections.List<D of <root>.Test2.<get-x>> declared in <root>.Test2.<set-x>' type=kotlin.collections.List<D of <root>.Test2.<get-x>> origin=null
+            $receiver: GET_VAR '<this>: kotlin.collections.List<D of <root>.Test2.<set-x>> declared in <root>.Test2.<set-x>' type=kotlin.collections.List<D of <root>.Test2.<set-x>> origin=null
             <set-?>: GET_VAR '<set-?>: D of <root>.Test2.<set-x>? declared in <root>.Test2.<set-x>' type=D of <root>.Test2.<set-x>? origin=null
     PROPERTY name:j visibility:public modality:FINAL [var]
       FIELD PROPERTY_BACKING_FIELD name:j type:<root>.IBase<kotlin.String> visibility:private

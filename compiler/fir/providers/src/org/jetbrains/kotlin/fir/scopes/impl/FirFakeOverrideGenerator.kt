@@ -10,10 +10,12 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
-import org.jetbrains.kotlin.fir.declarations.utils.isExpect
-import org.jetbrains.kotlin.fir.declarations.utils.isStatic
+import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ChainedSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
@@ -374,8 +376,112 @@ object FirFakeOverrideGenerator {
                 fakeOverrideSubstitution
             )
             deprecationsProvider = baseProperty.deprecationsProvider
+
+            getter = baseProperty.getter?.buildCopyIfNeeded(
+                moduleData = session.moduleData,
+                origin = origin,
+                propertyReturnTypeRef = this@buildProperty.returnTypeRef,
+                propertySymbol = newSymbol,
+                dispatchReceiverType = dispatchReceiverType,
+                derivedClassLookupTag = derivedClassLookupTag,
+                baseProperty = baseProperty,
+            )
+
+            setter = baseProperty.setter?.buildCopyIfNeeded(
+                moduleData = session.moduleData,
+                origin = origin,
+                propertyReturnTypeRef = this@buildProperty.returnTypeRef,
+                propertySymbol = newSymbol,
+                dispatchReceiverType = dispatchReceiverType,
+                derivedClassLookupTag = derivedClassLookupTag,
+                baseProperty = baseProperty,
+            )
         }.apply {
             containingClassForStaticMemberAttr = derivedClassLookupTag.takeIf { shouldOverrideSetContainingClass(baseProperty) }
+        }
+    }
+
+    private fun FirPropertyAccessor.buildCopyIfNeeded(
+        moduleData: FirModuleData,
+        origin: FirDeclarationOrigin,
+        propertyReturnTypeRef: FirTypeRef,
+        propertySymbol: FirPropertySymbol,
+        dispatchReceiverType: ConeSimpleKotlinType?,
+        derivedClassLookupTag: ConeClassLikeLookupTag?,
+        baseProperty: FirProperty,
+    ) = when {
+        annotations.isNotEmpty() || visibility != baseProperty.visibility -> buildCopy(
+            moduleData,
+            origin,
+            propertyReturnTypeRef,
+            propertySymbol,
+            dispatchReceiverType,
+            derivedClassLookupTag,
+            baseProperty,
+        )
+        else -> null
+    }
+
+    private fun FirPropertyAccessor.buildCopy(
+        moduleData: FirModuleData,
+        origin: FirDeclarationOrigin,
+        propertyReturnTypeRef: FirTypeRef,
+        propertySymbol: FirPropertySymbol,
+        dispatchReceiverType: ConeSimpleKotlinType?,
+        derivedClassLookupTag: ConeClassLikeLookupTag?,
+        baseProperty: FirProperty,
+    ) = when (this) {
+        is FirDefaultPropertyGetter -> FirDefaultPropertyGetter(
+            source = source,
+            moduleData = moduleData,
+            origin = origin,
+            propertyTypeRef = propertyReturnTypeRef,
+            visibility = visibility,
+            propertySymbol = propertySymbol,
+            modality = modality ?: Modality.FINAL,
+            effectiveVisibility = effectiveVisibility,
+        ).apply {
+            replaceAnnotations(annotations)
+        }
+        is FirDefaultPropertySetter -> FirDefaultPropertySetter(
+            source = source,
+            moduleData = moduleData,
+            origin = origin,
+            propertyTypeRef = propertyReturnTypeRef,
+            visibility = visibility,
+            propertySymbol = propertySymbol,
+            modality = modality ?: Modality.FINAL,
+            effectiveVisibility = effectiveVisibility,
+        ).apply {
+            replaceAnnotations(annotations)
+        }
+        else -> buildPropertyAccessorCopy(this) {
+            this.symbol = FirPropertyAccessorSymbol()
+            this.moduleData = moduleData
+            this.origin = origin
+            this.propertySymbol = propertySymbol
+            this.dispatchReceiverType = dispatchReceiverType
+            this.body = null
+        }.also {
+            if (it.isSetter) {
+                val newParameter = buildValueParameterCopy(it.valueParameters.first()) {
+                    this.symbol = FirValueParameterSymbol(symbol.name)
+                    this.returnTypeRef = propertyReturnTypeRef
+                }
+                it.replaceValueParameters(listOf(newParameter))
+            } else {
+                it.replaceReturnTypeRef(propertyReturnTypeRef)
+            }
+        }
+    }.also { accessor ->
+        when (accessor.origin) {
+            FirDeclarationOrigin.IntersectionOverride -> accessor.originalForIntersectionOverrideAttr = this
+            FirDeclarationOrigin.SubstitutionOverride -> accessor.originalForSubstitutionOverrideAttr = this
+            else -> {}
+        }
+
+        accessor.containingClassForStaticMemberAttr = derivedClassLookupTag.takeIf {
+            accessor is FirDefaultPropertyAccessor || shouldOverrideSetContainingClass(baseProperty)
         }
     }
 

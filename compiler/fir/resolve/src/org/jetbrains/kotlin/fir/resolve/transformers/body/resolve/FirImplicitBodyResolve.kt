@@ -257,6 +257,10 @@ private class ReturnTypeCalculatorWithJump(
                 val coneType = substitutor.substituteOrSelf(baseReturnType)
                 val returnType = declaration.returnTypeRef.resolvedTypeFromPrototype(coneType)
                 declaration.replaceReturnTypeRef(returnType)
+                if (declaration is FirProperty) {
+                    declaration.getter?.replaceReturnTypeRef(returnType)
+                    declaration.setter?.valueParameters?.firstOrNull()?.replaceReturnTypeRef(returnType)
+                }
                 return returnType
             }
         }
