@@ -7,7 +7,7 @@ plugins {
 
 dependencies {
     commonApi(project(":kotlin-gradle-plugin-api"))
-    commonApi(project(":kotlin-gradle-plugin"))
+    commonCompileOnly(project(":kotlin-gradle-plugin"))
     commonCompileOnly(gradleKotlinDsl())
 }
 
