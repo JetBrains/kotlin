@@ -4,6 +4,7 @@
  */
 package kotlin.native
 
+import kotlin.experimental.ExperimentalNativeApi
 import kotlin.native.internal.GCUnsafeCall
 import kotlin.native.internal.TypedIntrinsic
 import kotlin.native.internal.IntrinsicType
@@ -11,6 +12,7 @@ import kotlin.native.internal.IntrinsicType
 /**
  * Operating system family.
  */
+@ExperimentalNativeApi
 public enum class OsFamily {
     UNKNOWN,
     MACOSX,
@@ -26,6 +28,7 @@ public enum class OsFamily {
 /**
  * Central Processor Unit architecture.
  */
+@ExperimentalNativeApi
 public enum class CpuArchitecture(val bitness: Int) {
     UNKNOWN(-1),
     ARM32(32),
@@ -41,6 +44,7 @@ public enum class CpuArchitecture(val bitness: Int) {
  * Memory model.
  */
 // NOTE: Must match `MemoryModel` in `Memory.h`
+@ExperimentalNativeApi
 public enum class MemoryModel {
     STRICT,
     RELAXED,
@@ -50,6 +54,7 @@ public enum class MemoryModel {
 /**
  * Object describing the current platform program executes upon.
  */
+@ExperimentalNativeApi
 public object Platform {
     /**
      * Check if current architecture allows unaligned access to wider than byte locations.
@@ -125,7 +130,6 @@ public object Platform {
      * `KOTLIN_NATIVE_AVAILABLE_PROCESSORS` environment variable. When the variable is set and contains a value that is not
      * positive [Int], [IllegalStateException] will be thrown.
      */
-    @ExperimentalStdlibApi
     public fun getAvailableProcessors() : Int {
         val fromEnv = Platform_getAvailableProcessorsEnv()
         if (fromEnv == null) {
