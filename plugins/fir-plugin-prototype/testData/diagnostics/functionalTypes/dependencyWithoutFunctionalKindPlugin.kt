@@ -10,22 +10,22 @@ fun test_1(
     suspendBlock: suspend () -> Unit,
 ) {
     consumeComposableFunction(block)
-    consumeComposableFunction(<!ARGUMENT_TYPE_MISMATCH!>composableBlock<!>)
+    consumeComposableFunction(composableBlock)
     consumeComposableFunction(<!ARGUMENT_TYPE_MISMATCH!>suspendBlock<!>) // should be error
 }
 
 fun test_2() {
     val block = produceComposableFunction()
-    consumeRegularFunction(block) // should be error
-    consumeSuspendFunction(block) // should be error
+    consumeRegularFunction(<!ARGUMENT_TYPE_MISMATCH!>block<!>) // should be error
+    consumeSuspendFunction(<!ARGUMENT_TYPE_MISMATCH!>block<!>) // should be error
     consumeOurComposableFunction(block)
     consumeComposableFunction(block)
 }
 
 fun test_3() {
     val block = produceBoxedComposableFunction().value
-    consumeRegularFunction(block) // should be error
-    consumeSuspendFunction(block) // should be error
+    consumeRegularFunction(<!ARGUMENT_TYPE_MISMATCH!>block<!>) // should be error
+    consumeSuspendFunction(<!ARGUMENT_TYPE_MISMATCH!>block<!>) // should be error
     consumeOurComposableFunction(block)
     consumeComposableFunction(block)
 }

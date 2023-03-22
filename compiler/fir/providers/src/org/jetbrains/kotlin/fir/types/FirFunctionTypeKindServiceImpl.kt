@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.builtins.functions.FunctionTypeKindExtractor
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.extensions.FirFunctionTypeKindExtension
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.functionTypeKindExtensions
@@ -75,6 +76,23 @@ class FirFunctionTypeKindServiceImpl(private val session: FirSession) : FirFunct
         return extractSpecialKindsImpl(typeRef, { isSuspend }, { annotations.mapNotNull { it.toAnnotationClassId(session) } })
     }
 
+    override fun extractSingleExtensionKindForDeserializedConeType(
+        classId: ClassId,
+        annotations: List<FirAnnotation>
+    ): FunctionTypeKind? {
+        if (nonReflectKindsFromExtensions.isEmpty() || annotations.isEmpty()) return null
+        val baseKind = extractor.getFunctionalClassKind(classId.packageFqName, classId.shortClassName.asString()) ?: return null
+        if (baseKind.nonReflectKind() != FunctionTypeKind.Function) return null
+        val matchingExtensionKinds = buildList {
+            extractKindsFromAnnotations(annotations.mapNotNull { it.toAnnotationClassId(session) })
+        }
+        val matchingKind = matchingExtensionKinds.singleOrNull() ?: return null
+        return when (baseKind.isReflectType) {
+            false -> matchingKind
+            true -> matchingKind.reflectKind()
+        }
+    }
+
     private inline fun <T> extractSpecialKindsImpl(
         source: T,
         isSuspend: T.() -> Boolean,
@@ -85,12 +103,16 @@ class FirFunctionTypeKindServiceImpl(private val session: FirSession) : FirFunct
                 add(FunctionTypeKind.SuspendFunction)
             }
             if (nonReflectKindsFromExtensions.isNotEmpty()) {
-                for (annotationClassId in source.annotations()) {
-                    for (kind in nonReflectKindsFromExtensions) {
-                        if (kind.annotationOnInvokeClassId == annotationClassId) {
-                            add(kind)
-                        }
-                    }
+                extractKindsFromAnnotations(source.annotations())
+            }
+        }
+    }
+
+    private fun MutableList<FunctionTypeKind>.extractKindsFromAnnotations(annotations: List<ClassId>) {
+        for (annotationClassId in annotations) {
+            for (kind in nonReflectKindsFromExtensions) {
+                if (kind.annotationOnInvokeClassId == annotationClassId) {
+                    add(kind)
                 }
             }
         }

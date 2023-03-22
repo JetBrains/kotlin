@@ -47,7 +47,6 @@ abstract class FirAbstractSessionFactory {
 
             registerCliCompilerOnlyComponents()
             registerCommonComponents(languageVersionSettings)
-            registerCommonComponentsAfterExtensionsAreConfigured()
             registerExtraComponents(this)
 
             val kotlinScopeProvider = createKotlinScopeProvider.invoke()
@@ -65,6 +64,7 @@ abstract class FirAbstractSessionFactory {
                     registerExtensions(extensionRegistrar.configure())
                 }
             }.configure()
+            registerCommonComponentsAfterExtensionsAreConfigured()
 
             val providers = createProviders(this, builtinsModuleData, kotlinScopeProvider)
 
