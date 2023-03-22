@@ -20,8 +20,26 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 public class KlibABITestGenerated extends AbstractNativeKlibABITest {
     @Test
+    @TestMetadata("addEnumEntry")
+    public void testAddEnumEntry() throws Exception {
+        runTest("compiler/testData/klibABI/addEnumEntry/");
+    }
+
+    @Test
+    @TestMetadata("addSealedSubclass")
+    public void testAddSealedSubclass() throws Exception {
+        runTest("compiler/testData/klibABI/addSealedSubclass/");
+    }
+
+    @Test
     public void testAllFilesPresentInKlibABI() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klibABI"), Pattern.compile("^([^_](.+))$"), null, false);
+    }
+
+    @Test
+    @TestMetadata("changeClassVisibility")
+    public void testChangeClassVisibility() throws Exception {
+        runTest("compiler/testData/klibABI/changeClassVisibility/");
     }
 
     @Test
@@ -37,135 +55,81 @@ public class KlibABITestGenerated extends AbstractNativeKlibABITest {
     }
 
     @Test
+    @TestMetadata("classTransformations")
+    public void testClassTransformations() throws Exception {
+        runTest("compiler/testData/klibABI/classTransformations/");
+    }
+
+    @Test
+    @TestMetadata("functionTransformations")
+    public void testFunctionTransformations() throws Exception {
+        runTest("compiler/testData/klibABI/functionTransformations/");
+    }
+
+    @Test
+    @TestMetadata("inheritanceIssues")
+    public void testInheritanceIssues() throws Exception {
+        runTest("compiler/testData/klibABI/inheritanceIssues/");
+    }
+
+    @Test
     @TestMetadata("noNonImplementedCallableFalsePositives")
     public void testNoNonImplementedCallableFalsePositives() throws Exception {
         runTest("compiler/testData/klibABI/noNonImplementedCallableFalsePositives/");
     }
 
     @Test
-    @TestMetadata("nonAbstractFunctionInAbstractClassBecomesAbstract")
-    public void testNonAbstractFunctionInAbstractClassBecomesAbstract() throws Exception {
-        runTest("compiler/testData/klibABI/nonAbstractFunctionInAbstractClassBecomesAbstract/");
+    @TestMetadata("nonAbstractCallableBecomesAbstract")
+    public void testNonAbstractCallableBecomesAbstract() throws Exception {
+        runTest("compiler/testData/klibABI/nonAbstractCallableBecomesAbstract/");
     }
 
     @Test
-    @TestMetadata("nonAbstractFunctionInInterfaceBecomesAbstract")
-    public void testNonAbstractFunctionInInterfaceBecomesAbstract() throws Exception {
-        runTest("compiler/testData/klibABI/nonAbstractFunctionInInterfaceBecomesAbstract/");
+    @TestMetadata("nonExhaustivenessOfWhenClause")
+    public void testNonExhaustivenessOfWhenClause() throws Exception {
+        runTest("compiler/testData/klibABI/nonExhaustivenessOfWhenClause/");
     }
 
     @Test
-    @TestMetadata("nonAbstractPropertyInAbstractClassBecomesAbstract")
-    public void testNonAbstractPropertyInAbstractClassBecomesAbstract() throws Exception {
-        runTest("compiler/testData/klibABI/nonAbstractPropertyInAbstractClassBecomesAbstract/");
+    @TestMetadata("propertyTransformations")
+    public void testPropertyTransformations() throws Exception {
+        runTest("compiler/testData/klibABI/propertyTransformations/");
     }
 
     @Test
-    @TestMetadata("nonAbstractPropertyInInterfaceBecomesAbstract")
-    public void testNonAbstractPropertyInInterfaceBecomesAbstract() throws Exception {
-        runTest("compiler/testData/klibABI/nonAbstractPropertyInInterfaceBecomesAbstract/");
+    @TestMetadata("referencingUnusableDeclarations")
+    public void testReferencingUnusableDeclarations() throws Exception {
+        runTest("compiler/testData/klibABI/referencingUnusableDeclarations/");
     }
 
     @Test
-    @TestMetadata("removeAbstractFunctionFromAbstractClass")
-    public void testRemoveAbstractFunctionFromAbstractClass() throws Exception {
-        runTest("compiler/testData/klibABI/removeAbstractFunctionFromAbstractClass/");
+    @TestMetadata("removeAbstractCallableFromAbstractClassOrInterface")
+    public void testRemoveAbstractCallableFromAbstractClassOrInterface() throws Exception {
+        runTest("compiler/testData/klibABI/removeAbstractCallableFromAbstractClassOrInterface/");
     }
 
     @Test
-    @TestMetadata("removeAbstractFunctionFromInterface")
-    public void testRemoveAbstractFunctionFromInterface() throws Exception {
-        runTest("compiler/testData/klibABI/removeAbstractFunctionFromInterface/");
+    @TestMetadata("removeCallable")
+    public void testRemoveCallable() throws Exception {
+        runTest("compiler/testData/klibABI/removeCallable/");
     }
 
     @Test
-    @TestMetadata("removeAbstractPropertyFromAbstractClass")
-    public void testRemoveAbstractPropertyFromAbstractClass() throws Exception {
-        runTest("compiler/testData/klibABI/removeAbstractPropertyFromAbstractClass/");
+    @TestMetadata("removeClass")
+    public void testRemoveClass() throws Exception {
+        runTest("compiler/testData/klibABI/removeClass/");
     }
 
     @Test
-    @TestMetadata("removeAbstractPropertyFromInterface")
-    public void testRemoveAbstractPropertyFromInterface() throws Exception {
-        runTest("compiler/testData/klibABI/removeAbstractPropertyFromInterface/");
+    @TestMetadata("removeEnumEntry")
+    public void testRemoveEnumEntry() throws Exception {
+        runTest("compiler/testData/klibABI/removeEnumEntry/");
     }
 
     @Test
-    @TestMetadata("removeClassAsConstructorCall")
-    public void testRemoveClassAsConstructorCall() throws Exception {
-        runTest("compiler/testData/klibABI/removeClassAsConstructorCall/");
-    }
-
-    @Test
-    @TestMetadata("removeClassAsParameterType")
-    public void testRemoveClassAsParameterType() throws Exception {
-        runTest("compiler/testData/klibABI/removeClassAsParameterType/");
-    }
-
-    @Test
-    @TestMetadata("removeClassAsReturnType")
-    public void testRemoveClassAsReturnType() throws Exception {
-        runTest("compiler/testData/klibABI/removeClassAsReturnType/");
-    }
-
-    @Test
-    @TestMetadata("removeClassAsSuperTypeArgument")
-    public void testRemoveClassAsSuperTypeArgument() throws Exception {
-        runTest("compiler/testData/klibABI/removeClassAsSuperTypeArgument/");
-    }
-
-    @Test
-    @TestMetadata("removeClassAsTypeArgument")
-    public void testRemoveClassAsTypeArgument() throws Exception {
-        runTest("compiler/testData/klibABI/removeClassAsTypeArgument/");
-    }
-
-    @Test
-    @TestMetadata("removeClassAsVariableType")
-    public void testRemoveClassAsVariableType() throws Exception {
-        runTest("compiler/testData/klibABI/removeClassAsVariableType/");
-    }
-
-    @Test
-    @TestMetadata("removeFunction")
-    public void testRemoveFunction() throws Exception {
-        runTest("compiler/testData/klibABI/removeFunction/");
-    }
-
-    @Test
-    @TestMetadata("removeInlinedClass")
-    public void testRemoveInlinedClass() throws Exception {
-        runTest("compiler/testData/klibABI/removeInlinedClass/");
-    }
-
-    @Test
-    @TestMetadata("removeInlinedFunction")
-    public void testRemoveInlinedFunction() throws Exception {
-        runTest("compiler/testData/klibABI/removeInlinedFunction/");
-    }
-
-    @Test
-    @TestMetadata("removeInlinedProperty")
-    public void testRemoveInlinedProperty() throws Exception {
-        runTest("compiler/testData/klibABI/removeInlinedProperty/");
-    }
-
-    @Test
-    @TestMetadata("removeOpenFunction")
-    public void testRemoveOpenFunction() throws Exception {
-        runTest("compiler/testData/klibABI/removeOpenFunction/");
-    }
-
-    @Test
-    @TestMetadata("removeOpenProperty")
-    public void testRemoveOpenProperty() throws Exception {
-        runTest("compiler/testData/klibABI/removeOpenProperty/");
-    }
-
-    @Test
-    @TestMetadata("removeProperty")
-    public void testRemoveProperty() throws Exception {
-        runTest("compiler/testData/klibABI/removeProperty/");
+    @TestMetadata("removeSealedSubclass")
+    public void testRemoveSealedSubclass() throws Exception {
+        runTest("compiler/testData/klibABI/removeSealedSubclass/");
     }
 
     @Test
@@ -175,8 +139,8 @@ public class KlibABITestGenerated extends AbstractNativeKlibABITest {
     }
 
     @Test
-    @TestMetadata("typeAliasRHSTypeChange")
-    public void testTypeAliasRHSTypeChange() throws Exception {
-        runTest("compiler/testData/klibABI/typeAliasRHSTypeChange/");
+    @TestMetadata("typeAliasChanges")
+    public void testTypeAliasChanges() throws Exception {
+        runTest("compiler/testData/klibABI/typeAliasChanges/");
     }
 }

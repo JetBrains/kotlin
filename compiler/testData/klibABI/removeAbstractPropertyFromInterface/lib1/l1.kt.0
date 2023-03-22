@@ -1,5 +1,0 @@
-package lib1
-
-interface A {
-    val foo: Int
-}

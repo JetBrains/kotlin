@@ -91,6 +91,7 @@ abstract class AbstractJsKLibABITestCase : KtUsefulTestCase() {
         override val testDir: File = File(testPath).absoluteFile
         override val buildDir: File get() = this@AbstractJsKLibABITestCase.buildDir
         override val stdlibFile: File get() = File("libraries/stdlib/js-ir/build/classes/kotlin/js/main").absoluteFile
+        override val testModeName = if (this@AbstractJsKLibABITestCase.useIncrementalCompiler) "JS_WITH_IC" else "JS_NO_IC"
 
         override fun buildKlib(moduleName: String, moduleSourceDir: File, dependencies: KlibABITestUtils.Dependencies, klibFile: File) =
             this@AbstractJsKLibABITestCase.buildKlib(moduleName, moduleSourceDir, dependencies, klibFile)
@@ -101,20 +102,6 @@ abstract class AbstractJsKLibABITestCase : KtUsefulTestCase() {
         override fun onNonEmptyBuildDirectory(directory: File) {
             zipAccessor.reset()
             directory.listFiles()?.forEach(File::deleteRecursively)
-        }
-
-        // TODO: Suppress the tests failing with ISE "Symbol for <signature> is unbound" until KT-54491 is fixed.
-        //  Such failures are caused by references to unbound symbols still preserved in CacheUpdater in JS IR IC.
-        override fun isIgnoredTest(projectInfo: ProjectInfo) = when {
-            super.isIgnoredTest(projectInfo) -> true
-            !useIncrementalCompiler -> false
-            else -> projectInfo.name in setOf(
-                "removeFunction",
-                "removeProperty",
-                "removeOpenFunction",
-                "removeOpenProperty",
-                "removeInlinedClass"
-            )
         }
 
         override fun onIgnoredTest() {
