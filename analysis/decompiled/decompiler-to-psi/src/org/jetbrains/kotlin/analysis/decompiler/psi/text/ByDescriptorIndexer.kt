@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
+import org.jetbrains.kotlin.types.KotlinType
 
 
 object ByDescriptorIndexer : DecompiledTextIndexer<String> {
@@ -55,51 +56,62 @@ object ByDescriptorIndexer : DecompiledTextIndexer<String> {
             return getDeclarationForDescriptor(original.containingDeclaration, file)
         }
 
-        val descriptorKey = original.toStringKey()
-
         if (!file.isContentsLoaded && original is MemberDescriptor) {
-            val hasDeclarationByKey = file.hasDeclarationWithKey(this, descriptorKey) || (getBuiltinsDescriptorKey(descriptor)?.let {
-                file.hasDeclarationWithKey(
-                    this,
-                    it
-                )
-            } ?: false)
-            if (hasDeclarationByKey) {
-                val declarationContainer: KtDeclarationContainer? = when {
-                    DescriptorUtils.isTopLevelDeclaration(original) -> file
-                    original.containingDeclaration is ClassDescriptor ->
-                        getDeclarationForDescriptor(original.containingDeclaration as ClassDescriptor, file) as? KtClassOrObject
-                    else -> null
-                }
+            val declarationContainer: KtDeclarationContainer? = when {
+                DescriptorUtils.isTopLevelDeclaration(original) -> file
+                original.containingDeclaration is ClassDescriptor ->
+                    getDeclarationForDescriptor(original.containingDeclaration as ClassDescriptor, file) as? KtClassOrObject
+                else -> null
+            }
 
-                if (declarationContainer != null) {
-                    val descriptorName = original.name.asString()
-                    val singleOrNull = declarationContainer.declarations
-                        .filter { it.name == descriptorName }.singleOrNull { declaration ->
-                            if (original is FunctionDescriptor) {
-                                declaration is KtFunction && declaration.valueParameters.size == original.valueParameters.size
-                            } else true
-                        }
-                    //todo distinguish receiver parameters as well
-                    if (singleOrNull != null) {
-                        return singleOrNull
+            if (declarationContainer != null) {
+                val descriptorName = original.name.asString()
+                val firstOrNull = declarationContainer.declarations
+                    .filter { it.name == descriptorName }
+                    .firstOrNull { declaration ->
+                        if (original is FunctionDescriptor) {
+                            declaration is KtFunction && isSameFunction(declaration, original)
+                        } else true
                     }
-                }
+                return firstOrNull
             }
         }
 
-        error("Should not load decompiled text")
+        error("Should not be reachable")
     }
 
-    fun getBuiltinsDescriptorKey(descriptor: DeclarationDescriptor): String? {
-        if (descriptor !is ClassDescriptor) return null
+    private fun isSameFunction(
+        declaration: KtFunction,
+        original: FunctionDescriptor
+    ): Boolean {
+        if (declaration.valueParameters.size != original.valueParameters.size) {
+            return false
+        }
 
-        val classFqName = descriptor.fqNameUnsafe
-        if (!JvmBuiltInsSignatures.isSerializableInJava(classFqName)) return null
+        val ktTypeReference = declaration.receiverTypeReference
+        val receiverParameter = original.extensionReceiverParameter
+        if (ktTypeReference != null) {
+            if (receiverParameter == null) return false
+            val receiverType = receiverParameter.type
+            if (!isPotentiallySameType(receiverType, ktTypeReference)) {
+                return false
+            }
+        } else if (receiverParameter != null) return false
 
-        val builtInDescriptor =
-            DefaultBuiltIns.Instance.builtInsModule.resolveTopLevelClass(classFqName.toSafe(), NoLookupLocation.FROM_IDE)
-        return builtInDescriptor?.toStringKey()
+
+        declaration.valueParameters.zip(original.valueParameters).forEach { (ktParam, paramDesc) ->
+            if (!isPotentiallySameType(paramDesc.type, ktParam.typeReference!!)) {
+                return false
+            }
+        }
+        return true
+    }
+
+    private fun isPotentiallySameType(
+        kotlinType: KotlinType,
+        ktTypeReference: KtTypeReference
+    ): Boolean {
+        return kotlinType.constructor.declarationDescriptor?.name?.identifier == (ktTypeReference.typeElement as? KtUserType)?.referencedName
     }
 
     private fun DeclarationDescriptor.toStringKey(): String {
