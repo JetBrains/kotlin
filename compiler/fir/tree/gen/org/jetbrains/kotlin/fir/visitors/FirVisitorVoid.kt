@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvedDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirControlFlowGraphOwner
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirLazyExpression
 import org.jetbrains.kotlin.fir.declarations.FirContextReceiver
 import org.jetbrains.kotlin.fir.FirElementWithResolvePhase
 import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
@@ -61,6 +62,7 @@ import org.jetbrains.kotlin.fir.expressions.FirErrorLoop
 import org.jetbrains.kotlin.fir.expressions.FirDoWhileLoop
 import org.jetbrains.kotlin.fir.expressions.FirWhileLoop
 import org.jetbrains.kotlin.fir.expressions.FirBlock
+import org.jetbrains.kotlin.fir.expressions.FirLazyBlock
 import org.jetbrains.kotlin.fir.expressions.FirBinaryLogicExpression
 import org.jetbrains.kotlin.fir.expressions.FirJump
 import org.jetbrains.kotlin.fir.expressions.FirLoopJump
@@ -202,6 +204,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     open fun visitExpression(expression: FirExpression) {
         visitElement(expression)
+    }
+
+    open fun visitLazyExpression(lazyExpression: FirLazyExpression) {
+        visitElement(lazyExpression)
     }
 
     open fun visitContextReceiver(contextReceiver: FirContextReceiver) {
@@ -378,6 +384,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     open fun visitBlock(block: FirBlock) {
         visitElement(block)
+    }
+
+    open fun visitLazyBlock(lazyBlock: FirLazyBlock) {
+        visitElement(lazyBlock)
     }
 
     open fun visitBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression) {
@@ -788,6 +798,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitExpression(expression)
     }
 
+    final override fun visitLazyExpression(lazyExpression: FirLazyExpression, data: Nothing?) {
+        visitLazyExpression(lazyExpression)
+    }
+
     final override fun visitContextReceiver(contextReceiver: FirContextReceiver, data: Nothing?) {
         visitContextReceiver(contextReceiver)
     }
@@ -962,6 +976,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitBlock(block: FirBlock, data: Nothing?) {
         visitBlock(block)
+    }
+
+    final override fun visitLazyBlock(lazyBlock: FirLazyBlock, data: Nothing?) {
+        visitLazyBlock(lazyBlock)
     }
 
     final override fun visitBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression, data: Nothing?) {

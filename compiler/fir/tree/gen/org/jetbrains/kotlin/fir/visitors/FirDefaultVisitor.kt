@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvedDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirControlFlowGraphOwner
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirLazyExpression
 import org.jetbrains.kotlin.fir.declarations.FirContextReceiver
 import org.jetbrains.kotlin.fir.FirElementWithResolvePhase
 import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
@@ -61,6 +62,7 @@ import org.jetbrains.kotlin.fir.expressions.FirErrorLoop
 import org.jetbrains.kotlin.fir.expressions.FirDoWhileLoop
 import org.jetbrains.kotlin.fir.expressions.FirWhileLoop
 import org.jetbrains.kotlin.fir.expressions.FirBlock
+import org.jetbrains.kotlin.fir.expressions.FirLazyBlock
 import org.jetbrains.kotlin.fir.expressions.FirBinaryLogicExpression
 import org.jetbrains.kotlin.fir.expressions.FirJump
 import org.jetbrains.kotlin.fir.expressions.FirLoopJump
@@ -166,6 +168,8 @@ abstract class FirDefaultVisitor<out R, in D> : FirVisitor<R, D>() {
 
     override fun visitExpression(expression: FirExpression, data: D): R  = visitStatement(expression, data)
 
+    override fun visitLazyExpression(lazyExpression: FirLazyExpression, data: D): R  = visitExpression(lazyExpression, data)
+
     override fun visitTypeParametersOwner(typeParametersOwner: FirTypeParametersOwner, data: D): R  = visitTypeParameterRefsOwner(typeParametersOwner, data)
 
     override fun visitCallableDeclaration(callableDeclaration: FirCallableDeclaration, data: D): R  = visitMemberDeclaration(callableDeclaration, data)
@@ -189,6 +193,8 @@ abstract class FirDefaultVisitor<out R, in D> : FirVisitor<R, D>() {
     override fun visitWhileLoop(whileLoop: FirWhileLoop, data: D): R  = visitLoop(whileLoop, data)
 
     override fun visitBlock(block: FirBlock, data: D): R  = visitExpression(block, data)
+
+    override fun visitLazyBlock(lazyBlock: FirLazyBlock, data: D): R  = visitBlock(lazyBlock, data)
 
     override fun visitBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression, data: D): R  = visitExpression(binaryLogicExpression, data)
 

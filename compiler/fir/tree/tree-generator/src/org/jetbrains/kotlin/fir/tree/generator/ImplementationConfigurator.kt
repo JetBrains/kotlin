@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -173,7 +173,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             publicImplementation()
         }
 
-        impl(block, "FirLazyBlock") {
+        impl(lazyBlock) {
             val error = """error("FirLazyBlock should be calculated before accessing")"""
             default("source") {
                 value = error
@@ -191,7 +191,6 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
                 value = error
                 withGetter = true
             }
-            publicImplementation()
         }
 
         impl(errorLoop) {
@@ -204,7 +203,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             publicImplementation()
         }
 
-        impl(expression, "FirLazyExpression") {
+        impl(lazyExpression) {
             val error = """error("FirLazyExpression should be calculated before accessing")"""
             default("typeRef") {
                 value = error
@@ -214,7 +213,6 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
                 value = error
                 withGetter = true
             }
-            publicImplementation()
         }
 
         impl(functionCall) {

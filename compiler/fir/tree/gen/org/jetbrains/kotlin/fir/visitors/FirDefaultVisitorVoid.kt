@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvedDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirControlFlowGraphOwner
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirLazyExpression
 import org.jetbrains.kotlin.fir.declarations.FirContextReceiver
 import org.jetbrains.kotlin.fir.FirElementWithResolvePhase
 import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
@@ -61,6 +62,7 @@ import org.jetbrains.kotlin.fir.expressions.FirErrorLoop
 import org.jetbrains.kotlin.fir.expressions.FirDoWhileLoop
 import org.jetbrains.kotlin.fir.expressions.FirWhileLoop
 import org.jetbrains.kotlin.fir.expressions.FirBlock
+import org.jetbrains.kotlin.fir.expressions.FirLazyBlock
 import org.jetbrains.kotlin.fir.expressions.FirBinaryLogicExpression
 import org.jetbrains.kotlin.fir.expressions.FirJump
 import org.jetbrains.kotlin.fir.expressions.FirLoopJump
@@ -166,6 +168,8 @@ abstract class FirDefaultVisitorVoid : FirVisitorVoid() {
 
     override fun visitExpression(expression: FirExpression)  = visitStatement(expression)
 
+    override fun visitLazyExpression(lazyExpression: FirLazyExpression)  = visitExpression(lazyExpression)
+
     override fun visitTypeParametersOwner(typeParametersOwner: FirTypeParametersOwner)  = visitTypeParameterRefsOwner(typeParametersOwner)
 
     override fun visitCallableDeclaration(callableDeclaration: FirCallableDeclaration)  = visitMemberDeclaration(callableDeclaration)
@@ -189,6 +193,8 @@ abstract class FirDefaultVisitorVoid : FirVisitorVoid() {
     override fun visitWhileLoop(whileLoop: FirWhileLoop)  = visitLoop(whileLoop)
 
     override fun visitBlock(block: FirBlock)  = visitExpression(block)
+
+    override fun visitLazyBlock(lazyBlock: FirLazyBlock)  = visitBlock(lazyBlock)
 
     override fun visitBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression)  = visitExpression(binaryLogicExpression)
 

@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvedDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirControlFlowGraphOwner
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirLazyExpression
 import org.jetbrains.kotlin.fir.declarations.FirContextReceiver
 import org.jetbrains.kotlin.fir.FirElementWithResolvePhase
 import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
@@ -61,6 +62,7 @@ import org.jetbrains.kotlin.fir.expressions.FirErrorLoop
 import org.jetbrains.kotlin.fir.expressions.FirDoWhileLoop
 import org.jetbrains.kotlin.fir.expressions.FirWhileLoop
 import org.jetbrains.kotlin.fir.expressions.FirBlock
+import org.jetbrains.kotlin.fir.expressions.FirLazyBlock
 import org.jetbrains.kotlin.fir.expressions.FirBinaryLogicExpression
 import org.jetbrains.kotlin.fir.expressions.FirJump
 import org.jetbrains.kotlin.fir.expressions.FirLoopJump
@@ -182,6 +184,8 @@ abstract class FirVisitor<out R, in D> {
 
     open fun visitExpression(expression: FirExpression, data: D): R  = visitElement(expression, data)
 
+    open fun visitLazyExpression(lazyExpression: FirLazyExpression, data: D): R  = visitElement(lazyExpression, data)
+
     open fun visitContextReceiver(contextReceiver: FirContextReceiver, data: D): R  = visitElement(contextReceiver, data)
 
     open fun visitElementWithResolvePhase(elementWithResolvePhase: FirElementWithResolvePhase, data: D): R  = visitElement(elementWithResolvePhase, data)
@@ -269,6 +273,8 @@ abstract class FirVisitor<out R, in D> {
     open fun visitWhileLoop(whileLoop: FirWhileLoop, data: D): R  = visitElement(whileLoop, data)
 
     open fun visitBlock(block: FirBlock, data: D): R  = visitElement(block, data)
+
+    open fun visitLazyBlock(lazyBlock: FirLazyBlock, data: D): R  = visitElement(lazyBlock, data)
 
     open fun visitBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression, data: D): R  = visitElement(binaryLogicExpression, data)
 

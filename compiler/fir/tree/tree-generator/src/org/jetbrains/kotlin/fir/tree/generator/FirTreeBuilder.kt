@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -26,6 +26,7 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
 
     val statement by element(Expression, annotationContainer)
     val expression by element(Expression, statement)
+    val lazyExpression by element(Expression, expression)
 
     val contextReceiver by element(Declaration)
 
@@ -83,6 +84,8 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val whileLoop by element(Expression, loop)
 
     val block by element(Expression, expression)
+    val lazyBlock by element(Expression, block)
+
     val binaryLogicExpression by element(Expression, expression)
     val jump by sealedElement(Expression, expression)
     val loopJump by element(Expression, jump)

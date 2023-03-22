@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvedDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirControlFlowGraphOwner
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirLazyExpression
 import org.jetbrains.kotlin.fir.declarations.FirContextReceiver
 import org.jetbrains.kotlin.fir.FirElementWithResolvePhase
 import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
@@ -61,6 +62,7 @@ import org.jetbrains.kotlin.fir.expressions.FirErrorLoop
 import org.jetbrains.kotlin.fir.expressions.FirDoWhileLoop
 import org.jetbrains.kotlin.fir.expressions.FirWhileLoop
 import org.jetbrains.kotlin.fir.expressions.FirBlock
+import org.jetbrains.kotlin.fir.expressions.FirLazyBlock
 import org.jetbrains.kotlin.fir.expressions.FirBinaryLogicExpression
 import org.jetbrains.kotlin.fir.expressions.FirJump
 import org.jetbrains.kotlin.fir.expressions.FirLoopJump
@@ -203,6 +205,10 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
 
     open fun transformExpression(expression: FirExpression, data: D): FirStatement {
         return transformElement(expression, data)
+    }
+
+    open fun transformLazyExpression(lazyExpression: FirLazyExpression, data: D): FirStatement {
+        return transformElement(lazyExpression, data)
     }
 
     open fun transformContextReceiver(contextReceiver: FirContextReceiver, data: D): FirContextReceiver {
@@ -379,6 +385,10 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
 
     open fun transformBlock(block: FirBlock, data: D): FirStatement {
         return transformElement(block, data)
+    }
+
+    open fun transformLazyBlock(lazyBlock: FirLazyBlock, data: D): FirStatement {
+        return transformElement(lazyBlock, data)
     }
 
     open fun transformBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression, data: D): FirStatement {
@@ -789,6 +799,10 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformExpression(expression, data)
     }
 
+    final override fun visitLazyExpression(lazyExpression: FirLazyExpression, data: D): FirStatement {
+        return transformLazyExpression(lazyExpression, data)
+    }
+
     final override fun visitContextReceiver(contextReceiver: FirContextReceiver, data: D): FirContextReceiver {
         return transformContextReceiver(contextReceiver, data)
     }
@@ -963,6 +977,10 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
 
     final override fun visitBlock(block: FirBlock, data: D): FirStatement {
         return transformBlock(block, data)
+    }
+
+    final override fun visitLazyBlock(lazyBlock: FirLazyBlock, data: D): FirStatement {
+        return transformLazyBlock(lazyBlock, data)
     }
 
     final override fun visitBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression, data: D): FirStatement {
