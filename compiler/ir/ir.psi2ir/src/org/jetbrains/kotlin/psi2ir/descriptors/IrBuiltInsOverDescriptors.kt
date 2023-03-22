@@ -398,6 +398,12 @@ class IrBuiltInsOverDescriptors(
             if (array == null) null else unsignedType to array
         }.toMap()
 
+    override val unsignedArraysElementTypes: Map<IrClassSymbol, IrType?> by lazy {
+        unsignedTypesToUnsignedArrays.map { (k, v) ->
+            v to builtIns.builtInsModule.findClassAcrossModuleDependencies(k.classId)?.defaultType?.toIrType()
+        }.toMap()
+    }
+
     override val lessFunByOperandType = primitiveIrTypesWithComparisons.defineComparisonOperatorForEachIrType(BuiltInOperatorNames.LESS)
     override val lessOrEqualFunByOperandType =
         primitiveIrTypesWithComparisons.defineComparisonOperatorForEachIrType(BuiltInOperatorNames.LESS_OR_EQUAL)

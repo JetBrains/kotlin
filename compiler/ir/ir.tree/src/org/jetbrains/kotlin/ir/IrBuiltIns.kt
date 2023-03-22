@@ -115,6 +115,7 @@ abstract class IrBuiltIns {
     abstract val primitiveArrayForType: Map<IrType?, IrClassSymbol>
 
     abstract val unsignedTypesToUnsignedArrays: Map<UnsignedType, IrClassSymbol>
+    abstract val unsignedArraysElementTypes: Map<IrClassSymbol, IrType?>
 
     abstract val lessFunByOperandType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol>
     abstract val lessOrEqualFunByOperandType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol>
