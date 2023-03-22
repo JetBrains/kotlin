@@ -27,6 +27,7 @@ import androidx.compose.compiler.plugins.kotlin.analysis.Stability
 import androidx.compose.compiler.plugins.kotlin.analysis.knownStable
 import androidx.compose.compiler.plugins.kotlin.analysis.stabilityOf
 import androidx.compose.compiler.plugins.kotlin.irTrace
+import com.intellij.openapi.progress.ProcessCanceledException
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -1121,6 +1122,8 @@ val IrConstructorCall.annotationClass get() =
 inline fun <T> includeFileNameInExceptionTrace(file: IrFile, body: () -> T): T {
     try {
         return body()
+    } catch (e: ProcessCanceledException) {
+        throw e
     } catch (e: Exception) {
         throw Exception("IR lowering failed at: ${file.name}", e)
     }
