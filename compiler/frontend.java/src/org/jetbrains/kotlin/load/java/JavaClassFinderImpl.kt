@@ -44,6 +44,10 @@ class JavaClassFinderImpl : AbstractJavaClassFinder() {
         return javaFacade.findClass(request, javaSearchScope)
     }
 
+    override fun findClasses(request: JavaClassFinder.Request): List<JavaClass> {
+        return javaFacade.findClasses(request, javaSearchScope)
+    }
+
     override fun findPackage(fqName: FqName, mayHaveAnnotations: Boolean): JavaPackage? {
         return javaFacade.findPackage(fqName.asString(), javaSearchScope)?.let { JavaPackageImpl(it, javaSearchScope, mayHaveAnnotations) }
     }
