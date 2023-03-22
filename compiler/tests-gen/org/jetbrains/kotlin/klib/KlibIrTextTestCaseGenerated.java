@@ -1900,6 +1900,11 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
             runTest("compiler/testData/ir/irText/firProblems/ErrorInDefaultValue.kt");
         }
 
+        @TestMetadata("FakeOverrideInAnonymousWithDelegation.kt")
+        public void testFakeOverrideInAnonymousWithDelegation() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/FakeOverrideInAnonymousWithDelegation.kt");
+        }
+
         @TestMetadata("Fir2IrClassifierStorage.kt")
         public void testFir2IrClassifierStorage() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/Fir2IrClassifierStorage.kt");

@@ -2175,6 +2175,12 @@ public class FirPsiJsIrTextTestGenerated extends AbstractFirPsiJsIrTextTest {
         }
 
         @Test
+        @TestMetadata("FakeOverrideInAnonymousWithDelegation.kt")
+        public void testFakeOverrideInAnonymousWithDelegation() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/FakeOverrideInAnonymousWithDelegation.kt");
+        }
+
+        @Test
         @TestMetadata("Fir2IrClassifierStorage.kt")
         public void testFir2IrClassifierStorage() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/Fir2IrClassifierStorage.kt");
