@@ -353,18 +353,6 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
                 model("codegen/box")
                 model("codegen/boxWithStdLib")
             }
-
-            testClass<AbstractFirLightTreeBytecodeListingTest>(
-                suiteTestClassName = "FirLightTreeSpecificBytecodeListingTestGenerated"
-            ) {
-                model("codegen/bytecodeListing")
-            }
-
-            testClass<AbstractFirPsiBytecodeListingTest>(
-                suiteTestClassName = "FirPsiSpecificBytecodeListingTestGenerated"
-            ) {
-                model("codegen/bytecodeListing")
-            }
         }
 
         testGroup("compiler/fir/analysis-tests/tests-gen", "compiler/fir/analysis-tests/testData") {
