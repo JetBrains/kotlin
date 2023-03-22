@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -55,7 +55,13 @@ object FirExpectActualResolver {
                         val actualTypeParameters = actualContainingClass
                             ?.typeParameterSymbols
                             .orEmpty()
-                        parentSubstitutor = createExpectActualTypeParameterSubstitutor(expectTypeParameters, actualTypeParameters, useSiteSession)
+
+                        parentSubstitutor = createExpectActualTypeParameterSubstitutor(
+                            expectTypeParameters,
+                            actualTypeParameters,
+                            useSiteSession,
+                        )
+
                         when (actualSymbol) {
                             is FirConstructorSymbol -> expectContainingClass?.getConstructors(scopeSession)
                             else -> expectContainingClass?.getMembers(callableId.callableName, scopeSession)
@@ -283,7 +289,12 @@ object FirExpectActualResolver {
             return ExpectActualCompatibility.Incompatible.TypeParameterCount
         }
 
-        val substitutor = createExpectActualTypeParameterSubstitutor(expectedTypeParameters, actualTypeParameters, actualSession, parentSubstitutor)
+        val substitutor = createExpectActualTypeParameterSubstitutor(
+            expectedTypeParameters,
+            actualTypeParameters,
+            actualSession,
+            parentSubstitutor,
+        )
 
         if (
             !areCompatibleTypeLists(
@@ -551,10 +562,16 @@ object FirExpectActualResolver {
     private fun FirClassSymbol<*>.getConstructors(
         scopeSession: ScopeSession,
         session: FirSession = moduleData.session
-    ): Collection<FirConstructorSymbol> {
-        return mutableListOf<FirConstructorSymbol>().apply {
-            getConstructorsTo(this, unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false))
-        }
+    ): Collection<FirConstructorSymbol> = mutableListOf<FirConstructorSymbol>().apply {
+        getConstructorsTo(
+            this,
+            unsubstitutedScope(
+                session,
+                scopeSession,
+                withForcedTypeCalculator = false,
+                memberRequiredPhase = FirResolvePhase.STATUS,
+            )
+        )
     }
 
     private fun getConstructorsTo(destination: MutableList<in FirConstructorSymbol>, scope: FirTypeScope) {

@@ -181,7 +181,8 @@ fun ConeClassLikeType.findBaseInvokeSymbol(session: FirSession, scopeSession: Sc
     functionN.unsubstitutedScope(
         session,
         scopeSession,
-        withForcedTypeCalculator = false
+        withForcedTypeCalculator = false,
+        memberRequiredPhase = null,
     ).processFunctionsByName(OperatorNameConventions.INVOKE) { functionSymbol ->
         baseInvokeSymbol = functionSymbol
         return@processFunctionsByName

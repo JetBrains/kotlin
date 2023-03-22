@@ -30,7 +30,7 @@ class AllPropertiesConstructorMetadataProvider(session: FirSession) : FirDeclara
 
     override fun provideDeclarationsForClass(klass: FirClass, scopeSession: ScopeSession): List<FirDeclaration> {
         if (!session.predicateBasedProvider.matches(PREDICATE, klass)) return emptyList()
-        val scope = klass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false)
+        val scope = klass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false, memberRequiredPhase = null)
         val properties = scope.getCallableNames()
             .flatMap { scope.getProperties(it) }
             .sortedBy { it.containingClassLookupTag() == klass.symbol.toLookupTag() }

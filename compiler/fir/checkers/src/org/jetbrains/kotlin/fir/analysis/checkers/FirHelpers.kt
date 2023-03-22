@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -48,10 +48,20 @@ import org.jetbrains.kotlin.util.getChildren
 private val INLINE_ONLY_ANNOTATION_CLASS_ID: ClassId = ClassId.topLevel(FqName("kotlin.internal.InlineOnly"))
 
 fun FirClass.unsubstitutedScope(context: CheckerContext): FirTypeScope =
-    this.unsubstitutedScope(context.sessionHolder.session, context.sessionHolder.scopeSession, withForcedTypeCalculator = false)
+    this.unsubstitutedScope(
+        context.sessionHolder.session,
+        context.sessionHolder.scopeSession,
+        withForcedTypeCalculator = false,
+        memberRequiredPhase = null,
+    )
 
 fun FirClassSymbol<*>.unsubstitutedScope(context: CheckerContext): FirTypeScope =
-    this.unsubstitutedScope(context.sessionHolder.session, context.sessionHolder.scopeSession, withForcedTypeCalculator = false)
+    this.unsubstitutedScope(
+        context.sessionHolder.session,
+        context.sessionHolder.scopeSession,
+        withForcedTypeCalculator = false,
+        memberRequiredPhase = null,
+    )
 
 fun FirTypeRef.toClassLikeSymbol(session: FirSession): FirClassLikeSymbol<*>? {
     return coneTypeSafe<ConeClassLikeType>()?.toSymbol(session)
@@ -181,16 +191,18 @@ fun CheckerContext.findClosestClassOrObject(): FirClass? {
  */
 fun FirSimpleFunction.overriddenFunctions(
     containingClass: FirClassSymbol<*>,
-    context: CheckerContext
+    context: CheckerContext,
+    memberRequiredPhase: FirResolvePhase?,
 ): List<FirFunctionSymbol<*>> {
-    return symbol.overriddenFunctions(containingClass, context)
+    return symbol.overriddenFunctions(containingClass, context, memberRequiredPhase)
 }
 
 fun FirNamedFunctionSymbol.overriddenFunctions(
     containingClass: FirClassSymbol<*>,
-    context: CheckerContext
+    context: CheckerContext,
+    memberRequiredPhase: FirResolvePhase?,
 ): List<FirFunctionSymbol<*>> {
-    return overriddenFunctions(containingClass, context.session, context.scopeSession)
+    return overriddenFunctions(containingClass, context.session, context.scopeSession, memberRequiredPhase)
 }
 
 fun FirClass.collectSupertypesWithDelegates(): Map<FirTypeRef, FirFieldSymbol?> {
@@ -694,7 +706,12 @@ fun ConeKotlinType.getInlineClassUnderlyingType(session: FirSession): ConeKotlin
 
 fun FirNamedFunctionSymbol.directOverriddenFunctions(session: FirSession, scopeSession: ScopeSession): List<FirNamedFunctionSymbol> {
     val classSymbol = getContainingClassSymbol(session) as? FirClassSymbol ?: return emptyList()
-    val scope = classSymbol.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false)
+    val scope = classSymbol.unsubstitutedScope(
+        session,
+        scopeSession,
+        withForcedTypeCalculator = false,
+        memberRequiredPhase = FirResolvePhase.STATUS,
+    )
 
     scope.processFunctionsByName(name) { }
     return scope.getDirectOverriddenFunctions(this, true)

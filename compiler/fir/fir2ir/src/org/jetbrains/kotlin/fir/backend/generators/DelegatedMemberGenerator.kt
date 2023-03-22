@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -96,11 +96,23 @@ class DelegatedMemberGenerator(private val components: Fir2IrComponents) : Fir2I
     fun generate(irField: IrField, firField: FirField, firSubClass: FirClass, subClass: IrClass) {
         val subClassLookupTag = firSubClass.symbol.toLookupTag()
 
-        val subClassScope = firSubClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false)
+        val subClassScope = firSubClass.unsubstitutedScope(
+            session,
+            scopeSession,
+            withForcedTypeCalculator = false,
+            memberRequiredPhase = null,
+        )
+
         val delegateToType = firField.initializer!!.typeRef.coneType.fullyExpandedType(session).lowerBoundIfFlexible()
         val delegateToClass = delegateToType.toSymbol(session).boundClass()
 
-        val delegateToScope = delegateToClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false)
+        val delegateToScope = delegateToClass.unsubstitutedScope(
+            session,
+            scopeSession,
+            withForcedTypeCalculator = false,
+            memberRequiredPhase = null,
+        )
+
         val delegateToLookupTag = (delegateToType as? ConeClassLikeType)?.lookupTag
 
         subClassScope.processAllFunctions { functionSymbol ->

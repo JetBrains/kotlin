@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -283,7 +283,7 @@ class FirElementSerializer private constructor(
     private inline fun <reified T : FirCallableDeclaration, S : FirCallableSymbol<*>> FirClass.collectDeclarations(
         processScope: (FirTypeScope, ((S) -> Unit)) -> Unit
     ): List<T> = buildList {
-        val memberScope = unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false)
+        val memberScope = unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false, memberRequiredPhase = null)
 
         processScope(memberScope) l@{
             val declaration = it.fir as T
@@ -291,7 +291,7 @@ class FirElementSerializer private constructor(
 
             // non-intersection or substitution fake override
             if (!(declaration.isStatic || declaration is FirConstructor)) {
-                if (declaration.dispatchReceiverClassLookupTagOrNull()!= this@collectDeclarations.symbol.toLookupTag()) {
+                if (declaration.dispatchReceiverClassLookupTagOrNull() != this@collectDeclarations.symbol.toLookupTag()) {
                     return@l
                 }
             }

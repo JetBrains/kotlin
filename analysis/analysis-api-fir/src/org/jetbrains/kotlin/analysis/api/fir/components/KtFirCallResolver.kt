@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -31,9 +31,8 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.resolver.AllCandidatesRes
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirEntry
 import org.jetbrains.kotlin.analysis.utils.errors.ExceptionAttachmentBuilder
-import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
-import org.jetbrains.kotlin.analysis.utils.errors.withPsiEntry
 import org.jetbrains.kotlin.analysis.utils.errors.rethrowExceptionWithDetails
+import org.jetbrains.kotlin.analysis.utils.errors.withPsiEntry
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
@@ -191,7 +190,10 @@ internal class KtFirCallResolver(
             }
         }
 
-        fun <T> transformErrorReference(call: FirElement, calleeReference: T): KtCallInfo where T : FirNamedReference, T : FirDiagnosticHolder {
+        fun <T> transformErrorReference(
+            call: FirElement,
+            calleeReference: T,
+        ): KtCallInfo where T : FirNamedReference, T : FirDiagnosticHolder {
             val diagnostic = calleeReference.diagnostic
             val ktDiagnostic = calleeReference.createKtDiagnostic(psi)
 
@@ -953,7 +955,8 @@ internal class KtFirCallResolver(
         return classSymbol.unsubstitutedScope(
             analysisSession.useSiteSession,
             analysisSession.getScopeSessionFor(analysisSession.useSiteSession),
-            withForcedTypeCalculator = true
+            withForcedTypeCalculator = true,
+            memberRequiredPhase = null,
         )
             .getConstructors(analysisSession.firSymbolBuilder)
             .toList()
@@ -1193,8 +1196,10 @@ internal class KtFirCallResolver(
         val scope = unsubstitutedScope(
             analysisSession.useSiteSession,
             analysisSession.getScopeSessionFor(analysisSession.useSiteSession),
-            false
+            false,
+            memberRequiredPhase = null,
         )
+
         var equalsSymbol: FirNamedFunctionSymbol? = null
         scope.processFunctionsByName(EQUALS) { equalsSymbolFromScope ->
             if (equalsSymbol != null) return@processFunctionsByName

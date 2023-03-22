@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -89,7 +89,8 @@ internal class KtFirScopeProvider(
             fir.unsubstitutedScope(
                 firSession,
                 getScopeSession(),
-                withForcedTypeCalculator = false
+                withForcedTypeCalculator = false,
+                memberRequiredPhase = null,
             )
         }?.applyIf(classSymbol is KtEnumEntrySymbol, ::EnumEntryContainingNamesAwareScope)
             ?: return getEmptyScope()
@@ -269,16 +270,26 @@ internal class KtFirScopeProvider(
         )
     }
 
-    private fun buildJavaEnhancementDeclaredMemberScope(useSiteSession: FirSession, symbol: FirRegularClassSymbol, scopeSession: ScopeSession): JavaClassDeclaredMembersEnhancementScope {
+    private fun buildJavaEnhancementDeclaredMemberScope(
+        useSiteSession: FirSession,
+        symbol: FirRegularClassSymbol,
+        scopeSession: ScopeSession,
+    ): JavaClassDeclaredMembersEnhancementScope {
         return scopeSession.getOrBuild(symbol, JAVA_ENHANCEMENT_FOR_DECLARED_MEMBER) {
             val firJavaClass = symbol.fir
             require(firJavaClass is FirJavaClass) {
                 "${firJavaClass.classId} is expected to be FirJavaClass, but ${firJavaClass::class} found"
             }
+
             JavaClassDeclaredMembersEnhancementScope(
                 useSiteSession,
                 firJavaClass,
-                JavaScopeProvider.getUseSiteMemberScope(firJavaClass, useSiteSession, scopeSession)
+                JavaScopeProvider.getUseSiteMemberScope(
+                    firJavaClass,
+                    useSiteSession,
+                    scopeSession,
+                    memberRequiredPhase = FirResolvePhase.TYPES,
+                )
             )
         }
     }

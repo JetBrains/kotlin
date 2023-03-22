@@ -49,7 +49,7 @@ object FirJsSessionFactory : FirAbstractSessionFactory() {
                 registerExtraComponents(session)
             },
             registerExtraCheckers = { it.registerJsCheckers() },
-            createKotlinScopeProvider = { FirKotlinScopeProvider { _, declaredMemberScope, _, _ -> declaredMemberScope } },
+            createKotlinScopeProvider = { FirKotlinScopeProvider { _, declaredMemberScope, _, _, _ -> declaredMemberScope } },
             createProviders = { _, _, symbolProvider, generatedSymbolsProvider, syntheticFunctionInterfaceProvider, dependencies ->
                 listOfNotNull(
                     symbolProvider,
@@ -77,7 +77,7 @@ object FirJsSessionFactory : FirAbstractSessionFactory() {
             it.registerJsSpecificResolveComponents()
             registerExtraComponents(it)
         },
-        createKotlinScopeProvider = { FirKotlinScopeProvider { _, declaredMemberScope, _, _ -> declaredMemberScope } },
+        createKotlinScopeProvider = { FirKotlinScopeProvider { _, declaredMemberScope, _, _, _ -> declaredMemberScope } },
         createProviders = { session, builtinsModuleData, kotlinScopeProvider ->
             listOfNotNull(
                 KlibBasedSymbolProvider(session, moduleDataProvider, kotlinScopeProvider, resolvedLibraries),

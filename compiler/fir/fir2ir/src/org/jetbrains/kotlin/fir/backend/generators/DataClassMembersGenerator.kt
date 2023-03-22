@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -197,7 +197,8 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
             val scope = klass.unsubstitutedScope(
                 components.session,
                 components.scopeSession,
-                withForcedTypeCalculator = true
+                withForcedTypeCalculator = true,
+                memberRequiredPhase = null,
             )
             val contributedFunctionsInSupertypes =
                 buildMap<Name, FirSimpleFunction> {

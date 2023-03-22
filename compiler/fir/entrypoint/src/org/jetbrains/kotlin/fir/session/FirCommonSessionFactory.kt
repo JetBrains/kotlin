@@ -51,7 +51,7 @@ object FirCommonSessionFactory : FirAbstractSessionFactory() {
             registerExtraComponents = {
                 registerExtraComponents(it)
             },
-            createKotlinScopeProvider = { FirKotlinScopeProvider { _, declaredMemberScope, _, _ -> declaredMemberScope } },
+            createKotlinScopeProvider = { FirKotlinScopeProvider { _, declaredMemberScope, _, _, _ -> declaredMemberScope } },
             createProviders = { session, builtinsModuleData, kotlinScopeProvider ->
                 listOfNotNull(
                     MetadataSymbolProvider(
@@ -105,7 +105,7 @@ object FirCommonSessionFactory : FirAbstractSessionFactory() {
                 it.registerJsCheckers()
                 it.registerNativeCheckers()
             },
-            createKotlinScopeProvider = { FirKotlinScopeProvider { _, declaredMemberScope, _, _ -> declaredMemberScope } },
+            createKotlinScopeProvider = { FirKotlinScopeProvider { _, declaredMemberScope, _, _, _ -> declaredMemberScope } },
             createProviders = { session, kotlinScopeProvider, symbolProvider, syntheticFunctionalInterfaceProvider, generatedSymbolsProvider, dependencies ->
                 var symbolProviderForBinariesFromIncrementalCompilation: MetadataSymbolProvider? = null
                 incrementalCompilationContext?.let {

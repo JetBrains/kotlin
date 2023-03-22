@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirFunction
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
@@ -53,7 +54,12 @@ object KtDeclarationAndFirDeclarationEqualityChecker {
 
     private fun receiverTypeMatch(psi: KtCallableDeclaration, fir: FirCallableDeclaration): Boolean {
         if ((fir.receiverParameter != null) != (psi.receiverTypeReference != null)) return false
-        if (fir.receiverParameter != null && !isTheSameTypes(psi.receiverTypeReference!!, fir.receiverParameter!!.typeRef, isVararg = false)) {
+        if (fir.receiverParameter != null && !isTheSameTypes(
+                psi.receiverTypeReference!!,
+                fir.receiverParameter!!.typeRef,
+                isVararg = false,
+            )
+        ) {
             return false
         }
         return true
@@ -249,27 +255,25 @@ object KtDeclarationAndFirDeclarationEqualityChecker {
     }
 
     private object DummyScopeProvider : FirScopeProvider() {
-        override fun getUseSiteMemberScope(klass: FirClass, useSiteSession: FirSession, scopeSession: ScopeSession): FirTypeScope {
-            shouldNotBeCalled()
-        }
+        override fun getUseSiteMemberScope(
+            klass: FirClass,
+            useSiteSession: FirSession,
+            scopeSession: ScopeSession,
+            memberRequiredPhase: FirResolvePhase?,
+        ): FirTypeScope = shouldNotBeCalled()
 
         override fun getStaticMemberScopeForCallables(
             klass: FirClass,
             useSiteSession: FirSession,
             scopeSession: ScopeSession
-        ): FirContainingNamesAwareScope? {
-            shouldNotBeCalled()
-        }
+        ): FirContainingNamesAwareScope? = shouldNotBeCalled()
 
         override fun getNestedClassifierScope(
             klass: FirClass,
             useSiteSession: FirSession,
             scopeSession: ScopeSession
-        ): FirContainingNamesAwareScope? {
-            shouldNotBeCalled()
-        }
+        ): FirContainingNamesAwareScope? = shouldNotBeCalled()
 
-        private fun shouldNotBeCalled(): Nothing =
-            error("Should not be called in RawFirBuilder while converting KtTypeReference")
+        private fun shouldNotBeCalled(): Nothing = error("Should not be called in RawFirBuilder while converting KtTypeReference")
     }
 }

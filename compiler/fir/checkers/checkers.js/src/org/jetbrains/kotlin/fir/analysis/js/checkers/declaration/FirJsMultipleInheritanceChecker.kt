@@ -51,7 +51,7 @@ object FirJsMultipleInheritanceChecker : FirClassChecker() {
         val overridesWithSameName = scope.getFunctions(functionToCheck)
 
         for (function in overridesWithSameName) {
-            val overridden = function.overriddenFunctions(symbol, context)
+            val overridden = function.overriddenFunctions(symbol, context, memberRequiredPhase = null)
 
             if (
                 overridden.size > 1 &&

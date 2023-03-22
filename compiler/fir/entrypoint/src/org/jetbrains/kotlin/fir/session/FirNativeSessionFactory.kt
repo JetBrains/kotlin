@@ -36,7 +36,7 @@ object FirNativeSessionFactory : FirAbstractSessionFactory() {
             moduleDataProvider,
             languageVersionSettings,
             registerExtraComponents,
-            createKotlinScopeProvider = { FirKotlinScopeProvider { _, declaredMemberScope, _, _ -> declaredMemberScope } },
+            createKotlinScopeProvider = { FirKotlinScopeProvider { _, declaredMemberScope, _, _, _ -> declaredMemberScope } },
             createProviders = { session, builtinsModuleData, kotlinScopeProvider ->
                 val forwardDeclarationsModuleData = BinaryModuleData.createDependencyModuleData(
                     Name.special("<forward declarations>"),
@@ -76,7 +76,7 @@ object FirNativeSessionFactory : FirAbstractSessionFactory() {
                 registerExtraComponents(session)
             },
             registerExtraCheckers = { it.registerNativeCheckers() },
-            createKotlinScopeProvider = { FirKotlinScopeProvider { _, declaredMemberScope, _, _ -> declaredMemberScope } },
+            createKotlinScopeProvider = { FirKotlinScopeProvider { _, declaredMemberScope, _, _, _ -> declaredMemberScope } },
             createProviders = { _, _, symbolProvider, generatedSymbolsProvider, syntheticFunctionInterfaceProvider, dependencies ->
                 listOfNotNull(
                     symbolProvider,

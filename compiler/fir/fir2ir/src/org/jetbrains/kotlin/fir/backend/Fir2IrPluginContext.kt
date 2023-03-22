@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -128,8 +128,14 @@ class Fir2IrPluginContext(
             val expandedClass = symbolProvider.getClassLikeSymbolByClassId(classId)
                 ?.fullyExpandedClass(components.session)
                 ?: return emptyList()
+
             expandedClass
-                .unsubstitutedScope(components.session, components.scopeSession, withForcedTypeCalculator = true)
+                .unsubstitutedScope(
+                    components.session,
+                    components.scopeSession,
+                    withForcedTypeCalculator = true,
+                    memberRequiredPhase = null,
+                )
                 .getCallablesFromScope()
         } else {
             symbolProvider.getCallablesFromProvider()
