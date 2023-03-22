@@ -259,9 +259,19 @@ class Fir2IrClassifierStorage(
         processMembersOfClassesOnTheFlyImmediately = true
         for ((klass, irClass) in localClassesCreatedOnTheFly) {
             processMembersOfClassCreatedOnTheFly(klass, irClass)
+            // See the problem from KT-57441
+//            class Wrapper {
+//                private val dummy = object: Bar {}
+//                private val bar = object: Bar by dummy {}
+//            }
+//            interface Bar {
+//                val foo: String
+//                    get() = ""
+//            }
+            // When we are building bar.foo fake override, we should call dummy.foo,
+            // so we should have object : Bar.foo fake override to be built and bound.
+            converter.bindFakeOverridesInClass(irClass)
         }
-        // Note: it's better to bind everything AFTER members are built, in case local classes are dependent on each other
-        localClassesCreatedOnTheFly.values.forEach(converter::bindFakeOverridesInClass)
         localClassesCreatedOnTheFly.clear()
     }
 
