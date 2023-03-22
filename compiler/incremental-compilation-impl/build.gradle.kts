@@ -43,7 +43,6 @@ sourceSets {
 
 projectTest(parallel = true) {
     workingDir = rootDir
-    dependsOn(":kotlin-stdlib-js-ir:packFullRuntimeKLib")
     useJsIrBoxTests(version = version, buildDir = "$buildDir/")
 }
 

@@ -7,12 +7,13 @@ import org.gradle.api.tasks.testing.Test
 fun Test.useJsIrBoxTests(
     version: Any,
     buildDir: String = "",
-    fullStdLib: String = "libraries/stdlib/js-ir/build/classes/kotlin/js/main",
+    fullStdLib: String = "libraries/stdlib/build/classes/kotlin/js/main",
     reducedStdlibPath: String = "libraries/stdlib/js-ir-minimal-for-test/build/classes/kotlin/js/main",
     kotlinJsTestPath: String = "libraries/kotlin.test/js-ir/build/classes/kotlin/js/main"
 ) {
     setupV8()
-    dependsOn(":kotlin-stdlib-js-ir:compileKotlinJs")
+    dependsOn(":kotlin-stdlib:jsJar")
+    dependsOn(":kotlin-stdlib:jsJarForTests") // TODO: think how to remove dependency on the artifact in this place
     dependsOn(":kotlin-test:kotlin-test-js-ir:compileKotlinJs")
     dependsOn(":kotlin-stdlib-js-ir-minimal-for-test:compileKotlinJs")
 
@@ -20,5 +21,5 @@ fun Test.useJsIrBoxTests(
     systemProperty("kotlin.js.full.stdlib.path", fullStdLib)
     systemProperty("kotlin.js.reduced.stdlib.path", reducedStdlibPath)
     systemProperty("kotlin.js.kotlin.test.path", kotlinJsTestPath)
-    systemProperty("kotlin.js.stdlib.klib.path", "libraries/stdlib/js-ir/build/libs/kotlin-stdlib-js-ir-js-$version.klib")
+    systemProperty("kotlin.js.stdlib.klib.path", "libraries/stdlib/build/libs/kotlin-stdlib-js-$version.klib")
 }

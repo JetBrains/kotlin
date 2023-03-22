@@ -240,7 +240,7 @@ abstract class AbstractKlibIrTextTestCase : CodegenTestCase() {
         return result.getFullList(TopologicalLibraryOrder)
     }
 
-    private val runtimeKlibPath = "libraries/stdlib/js-ir/build/classes/kotlin/js/main"
+    private val runtimeKlibPath = "libraries/stdlib/build/classes/kotlin/js/main"
 
     private fun buildFragmentAndLinkIt(stdlib: KotlinLibrary, ignoreErrors: Boolean, expectActualSymbols: MutableMap<DeclarationDescriptor, IrSymbol>): Pair<IrModuleFragment, BindingContext> {
         return generateIrModule(stdlib, ignoreErrors, expectActualSymbols)
