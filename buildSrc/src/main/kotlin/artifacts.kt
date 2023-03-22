@@ -183,6 +183,26 @@ fun Project.sourcesJar(body: Jar.() -> Unit = {}): TaskProvider<Jar> {
     return sourcesJar
 }
 
+/**
+ * Also embeds into final '-sources.jar' file source files from embedded dependencies.
+ */
+fun Project.sourcesJarWithSourcesFromEmbedded(
+    vararg embeddedDepSourcesJarTasks: TaskProvider<out Jar>,
+    body: Jar.() -> Unit = {},
+): TaskProvider<Jar> {
+    val sourcesJarTask = sourcesJar(body)
+
+    sourcesJarTask.configure {
+        val archiveOperations = serviceOf<ArchiveOperations>()
+        embeddedDepSourcesJarTasks.forEach { embeddedSourceJarTask ->
+            dependsOn(embeddedSourceJarTask)
+            from(embeddedSourceJarTask.map { archiveOperations.zipTree(it.archiveFile) })
+        }
+    }
+
+    return sourcesJarTask
+}
+
 fun Jar.addEmbeddedSources() {
     project.configurations.findByName("embedded")?.let { embedded ->
         val allSources by lazy {
@@ -221,6 +241,27 @@ fun Project.javadocJar(body: Jar.() -> Unit = {}): TaskProvider<Jar> {
 
     return javadocTask
 }
+
+/**
+ * Also embeds into final '-javadoc.jar' file javadoc files from embedded dependencies.
+ */
+fun Project.javadocJarWithJavadocFromEmbedded(
+    vararg embeddedDepJavadocJarTasks: TaskProvider<out Jar>,
+    body: Jar.() -> Unit = {},
+): TaskProvider<Jar> {
+    val javadocJarTask = javadocJar(body)
+
+    javadocJarTask.configure {
+        val archiveOperations = serviceOf<ArchiveOperations>()
+        embeddedDepJavadocJarTasks.forEach { embeddedJavadocJarTask ->
+            dependsOn(embeddedJavadocJarTask)
+            from(embeddedJavadocJarTask.map { archiveOperations.zipTree(it.archiveFile) })
+        }
+    }
+
+    return javadocJarTask
+}
+
 
 fun Project.standardPublicJars() {
     runtimeJar()
