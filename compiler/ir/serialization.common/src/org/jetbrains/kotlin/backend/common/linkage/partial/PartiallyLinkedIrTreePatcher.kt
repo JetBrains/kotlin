@@ -519,7 +519,8 @@ internal class PartiallyLinkedIrTreePatcher(
             checkReferencedDeclaration(symbol)
                 ?: checkExpressionTypeArguments()
                 ?: checkReferencedDeclarationType(expression.symbol.owner.parentAsClass, "enum class") { constructedClass ->
-                    constructedClass.kind == ClassKind.ENUM_CLASS || constructedClass.symbol == builtIns.enumClass
+                    constructedClass.kind == ClassKind.ENUM_CLASS || constructedClass.kind == ClassKind.ENUM_ENTRY
+                            || constructedClass.symbol == builtIns.enumClass
                 }
                 ?: checkArgumentsAndValueParameters(symbol.owner)
         }

@@ -220,3 +220,25 @@ fun instantiationOfAbstractClass() {
     // abstract classes except for from their direct inheritors.
     ClassToAbstractClass().getGreeting()
 }
+
+// This is required to check that enum entry classes are correctly handled in partial linkage.
+enum class StableEnum {
+    FOO {
+        val x = "OK"
+
+        inner class Inner {
+            val y = x
+        }
+
+        val z = Inner()
+
+        override val test: String
+            get() = z.y
+    },
+    BAR {
+        override val test = "OK"
+    };
+
+    abstract val test: String
+}
+

@@ -207,4 +207,7 @@ fun box() = abiTest {
     expectSuccess { getFunctionalInterfaceToInterface(); "OK" }
 
     expectFailure(linkage("Constructor 'ClassToAbstractClass.<init>' can not be called: Can not instantiate abstract class 'ClassToAbstractClass'")) { instantiationOfAbstractClass() }
+
+    expectSuccess { StableEnum.FOO.test }
+    expectSuccess { StableEnum.BAR.test }
 }
