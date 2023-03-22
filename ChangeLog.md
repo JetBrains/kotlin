@@ -2,6 +2,7 @@
 
 ### Compiler
 
+- [`KT-57388`](https://youtrack.jetbrains.com/issue/KT-57388) Kapt+JVM_IR: "RuntimeException: No type for expression" for delegated property
 - [`KT-57242`](https://youtrack.jetbrains.com/issue/KT-57242) Equals behaviour for value classes implementing interfaces is different between 1.8.10 and 1.8.20-RC
 - [`KT-57261`](https://youtrack.jetbrains.com/issue/KT-57261) "IllegalArgumentException was thrown at: MemoizedInlineClassReplacements.getSpecializedEqualsMethod" when comparing non-inline class instance with an inline class instance
 - [`KT-56527`](https://youtrack.jetbrains.com/issue/KT-56527) K2: "AssertionError: Assertion failed" during compilation in SequentialFilePositionFinder
@@ -14,6 +15,11 @@
 ### Tools. Gradle. JS
 
 - [`KT-57285`](https://youtrack.jetbrains.com/issue/KT-57285) KJS / Gradle / MPP: FileNotFoundException on publishing empty KJS sourceset
+
+### Tools. Gradle. Multiplatform
+
+- [`KT-57460`](https://youtrack.jetbrains.com/issue/KT-57460) Kotlin Gradle Plugin: Null `this` pointer in transformCommonMainDependenciesMetadata
+- [`KT-57306`](https://youtrack.jetbrains.com/issue/KT-57306) [Kotlin 1.8.20-RC] GradleException: Could not load the value of field `apiConfiguration` of `org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.DefaultKotlinCompilationConfigurationsContainer`
 
 
 ## 1.8.20-RC
