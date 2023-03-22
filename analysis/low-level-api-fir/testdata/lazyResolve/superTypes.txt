@@ -1,6 +1,7 @@
 
 RAW_FIR:
-FILE: superTypes.kt
+FILE: [RAW_FIR] superTypes.kt
+    [RAW_FIR] annotations container
     public? open [RAW_FIR] class A : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
@@ -21,7 +22,8 @@ FILE: superTypes.kt
     }
 
 IMPORTS:
-FILE: superTypes.kt
+FILE: [IMPORTS] superTypes.kt
+    [RAW_FIR] annotations container
     public? open [RAW_FIR] class A : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
@@ -42,7 +44,8 @@ FILE: superTypes.kt
     }
 
 COMPILER_REQUIRED_ANNOTATIONS:
-FILE: superTypes.kt
+FILE: [IMPORTS] superTypes.kt
+    [RAW_FIR] annotations container
     public? open [RAW_FIR] class A : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
@@ -63,7 +66,8 @@ FILE: superTypes.kt
     }
 
 COMPANION_GENERATION:
-FILE: superTypes.kt
+FILE: [IMPORTS] superTypes.kt
+    [RAW_FIR] annotations container
     public? open [RAW_FIR] class A : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
@@ -84,7 +88,8 @@ FILE: superTypes.kt
     }
 
 SUPER_TYPES:
-FILE: superTypes.kt
+FILE: [IMPORTS] superTypes.kt
+    [RAW_FIR] annotations container
     public? open [RAW_FIR] class A : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
@@ -105,7 +110,8 @@ FILE: superTypes.kt
     }
 
 TYPES:
-FILE: superTypes.kt
+FILE: [IMPORTS] superTypes.kt
+    [RAW_FIR] annotations container
     public? open [SUPER_TYPES] class A : R|kotlin/Any| {
         public? [SUPER_TYPES] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
@@ -126,7 +132,8 @@ FILE: superTypes.kt
     }
 
 STATUS:
-FILE: superTypes.kt
+FILE: [IMPORTS] superTypes.kt
+    [RAW_FIR] annotations container
     public open [TYPES] class A : R|kotlin/Any| {
         public [TYPES] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
@@ -147,7 +154,8 @@ FILE: superTypes.kt
     }
 
 EXPECT_ACTUAL_MATCHING:
-FILE: superTypes.kt
+FILE: [IMPORTS] superTypes.kt
+    [RAW_FIR] annotations container
     public open [TYPES] class A : R|kotlin/Any| {
         public [TYPES] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
@@ -168,7 +176,8 @@ FILE: superTypes.kt
     }
 
 ARGUMENTS_OF_ANNOTATIONS:
-FILE: superTypes.kt
+FILE: [IMPORTS] superTypes.kt
+    [RAW_FIR] annotations container
     public open [TYPES] class A : R|kotlin/Any| {
         public [TYPES] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
@@ -189,7 +198,8 @@ FILE: superTypes.kt
     }
 
 CONTRACTS:
-FILE: superTypes.kt
+FILE: [IMPORTS] superTypes.kt
+    [RAW_FIR] annotations container
     public open [TYPES] class A : R|kotlin/Any| {
         public [TYPES] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
@@ -210,7 +220,8 @@ FILE: superTypes.kt
     }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
-FILE: superTypes.kt
+FILE: [IMPORTS] superTypes.kt
+    [RAW_FIR] annotations container
     public open [TYPES] class A : R|kotlin/Any| {
         public [TYPES] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
@@ -231,7 +242,8 @@ FILE: superTypes.kt
     }
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
-FILE: superTypes.kt
+FILE: [IMPORTS] superTypes.kt
+    [RAW_FIR] annotations container
     public open [TYPES] class A : R|kotlin/Any| {
         public [TYPES] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
@@ -252,7 +264,8 @@ FILE: superTypes.kt
     }
 
 BODY_RESOLVE:
-FILE: superTypes.kt
+FILE: [IMPORTS] superTypes.kt
+    [RAW_FIR] annotations container
     public open [STATUS] class A : R|kotlin/Any| {
         public [STATUS] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
@@ -273,7 +286,8 @@ FILE: superTypes.kt
     }
 
 FILE RAW TO BODY:
-FILE: superTypes.kt
+FILE: [IMPORTS] superTypes.kt
+    [BODY_RESOLVE] annotations container
     public open [BODY_RESOLVE] class A : R|kotlin/Any| {
         public [BODY_RESOLVE] [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()

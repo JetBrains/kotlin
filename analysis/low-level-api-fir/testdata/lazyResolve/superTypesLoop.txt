@@ -1,6 +1,7 @@
 
 RAW_FIR:
-FILE: superTypesLoop.kt
+FILE: [RAW_FIR] superTypesLoop.kt
+    [RAW_FIR] annotations container
     public? open [RAW_FIR] class resolveMe : C {
         public? [RAW_FIR] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             LAZY_super<C>
@@ -27,7 +28,8 @@ FILE: superTypesLoop.kt
     }
 
 IMPORTS:
-FILE: superTypesLoop.kt
+FILE: [IMPORTS] superTypesLoop.kt
+    [RAW_FIR] annotations container
     public? open [RAW_FIR] class resolveMe : C {
         public? [RAW_FIR] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             LAZY_super<C>
@@ -54,7 +56,8 @@ FILE: superTypesLoop.kt
     }
 
 COMPILER_REQUIRED_ANNOTATIONS:
-FILE: superTypesLoop.kt
+FILE: [IMPORTS] superTypesLoop.kt
+    [RAW_FIR] annotations container
     public? open [COMPILER_REQUIRED_ANNOTATIONS] class resolveMe : C {
         public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             LAZY_super<C>
@@ -81,7 +84,8 @@ FILE: superTypesLoop.kt
     }
 
 COMPANION_GENERATION:
-FILE: superTypesLoop.kt
+FILE: [IMPORTS] superTypesLoop.kt
+    [RAW_FIR] annotations container
     public? open [COMPANION_GENERATION] class resolveMe : C {
         public? [COMPANION_GENERATION] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             LAZY_super<C>
@@ -108,7 +112,8 @@ FILE: superTypesLoop.kt
     }
 
 SUPER_TYPES:
-FILE: superTypesLoop.kt
+FILE: [IMPORTS] superTypesLoop.kt
+    [RAW_FIR] annotations container
     public? open [SUPER_TYPES] class resolveMe : R|C| {
         public? [SUPER_TYPES] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             LAZY_super<C>
@@ -135,7 +140,8 @@ FILE: superTypesLoop.kt
     }
 
 TYPES:
-FILE: superTypesLoop.kt
+FILE: [IMPORTS] superTypesLoop.kt
+    [RAW_FIR] annotations container
     public? open [TYPES] class resolveMe : R|C| {
         public? [TYPES] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             LAZY_super<R|C|>
@@ -162,7 +168,8 @@ FILE: superTypesLoop.kt
     }
 
 STATUS:
-FILE: superTypesLoop.kt
+FILE: [IMPORTS] superTypesLoop.kt
+    [RAW_FIR] annotations container
     public open [STATUS] class resolveMe : R|C| {
         public [STATUS] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             LAZY_super<R|C|>
@@ -189,7 +196,8 @@ FILE: superTypesLoop.kt
     }
 
 EXPECT_ACTUAL_MATCHING:
-FILE: superTypesLoop.kt
+FILE: [IMPORTS] superTypesLoop.kt
+    [RAW_FIR] annotations container
     public open [EXPECT_ACTUAL_MATCHING] class resolveMe : R|C| {
         public [EXPECT_ACTUAL_MATCHING] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             super<R|C|>()
@@ -216,7 +224,8 @@ FILE: superTypesLoop.kt
     }
 
 ARGUMENTS_OF_ANNOTATIONS:
-FILE: superTypesLoop.kt
+FILE: [IMPORTS] superTypesLoop.kt
+    [RAW_FIR] annotations container
     public open [ARGUMENTS_OF_ANNOTATIONS] class resolveMe : R|C| {
         public [ARGUMENTS_OF_ANNOTATIONS] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             super<R|C|>()
@@ -243,7 +252,8 @@ FILE: superTypesLoop.kt
     }
 
 CONTRACTS:
-FILE: superTypesLoop.kt
+FILE: [IMPORTS] superTypesLoop.kt
+    [RAW_FIR] annotations container
     public open [CONTRACTS] class resolveMe : R|C| {
         public [CONTRACTS] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             super<R|C|>()
@@ -270,7 +280,8 @@ FILE: superTypesLoop.kt
     }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
-FILE: superTypesLoop.kt
+FILE: [IMPORTS] superTypesLoop.kt
+    [RAW_FIR] annotations container
     public open [IMPLICIT_TYPES_BODY_RESOLVE] class resolveMe : R|C| {
         public [IMPLICIT_TYPES_BODY_RESOLVE] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             super<R|C|>()
@@ -297,7 +308,8 @@ FILE: superTypesLoop.kt
     }
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
-FILE: superTypesLoop.kt
+FILE: [IMPORTS] superTypesLoop.kt
+    [RAW_FIR] annotations container
     public open [ANNOTATIONS_ARGUMENTS_MAPPING] class resolveMe : R|C| {
         public [ANNOTATIONS_ARGUMENTS_MAPPING] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             super<R|C|>()
@@ -324,7 +336,8 @@ FILE: superTypesLoop.kt
     }
 
 BODY_RESOLVE:
-FILE: superTypesLoop.kt
+FILE: [IMPORTS] superTypesLoop.kt
+    [RAW_FIR] annotations container
     public open [BODY_RESOLVE] class resolveMe : R|C| {
         public [BODY_RESOLVE] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             super<R|C|>()
@@ -351,7 +364,8 @@ FILE: superTypesLoop.kt
     }
 
 FILE RAW TO BODY:
-FILE: superTypesLoop.kt
+FILE: [IMPORTS] superTypesLoop.kt
+    [BODY_RESOLVE] annotations container
     public open [BODY_RESOLVE] class resolveMe : R|C| {
         public [BODY_RESOLVE] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             super<R|C|>()

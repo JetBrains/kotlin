@@ -1,4 +1,5 @@
-FILE: lambdaInImplicitPropertyBody.kt
+FILE: [IMPORTS] lambdaInImplicitPropertyBody.kt
+    [BODY_RESOLVE] annotations container
     public final inline [BODY_RESOLVE] fun <[BODY_RESOLVE] T, [BODY_RESOLVE] R> with([BODY_RESOLVE] receiver: R|T|, [BODY_RESOLVE] block: R|T.() -> R|): R|R| {
         ^with R|<local>/block|.R|SubstitutionOverride<kotlin/Function1.invoke: R|R|>|(R|<local>/receiver|)
     }

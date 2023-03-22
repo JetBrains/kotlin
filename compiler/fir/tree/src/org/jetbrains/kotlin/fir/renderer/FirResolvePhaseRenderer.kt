@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.fir.renderer
 
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.FirElementWithResolvePhase
 
 class FirResolvePhaseRenderer {
     internal lateinit var components: FirRendererComponents
     private val printer get() = components.printer
 
-    fun render(declaration: FirDeclaration) {
-        printer.print("[${declaration.resolvePhase}] ")
+    fun render(element: FirElementWithResolvePhase) {
+        printer.print("[${element.resolvePhase}] ")
     }
 }

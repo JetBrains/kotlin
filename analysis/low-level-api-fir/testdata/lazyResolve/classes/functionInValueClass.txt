@@ -1,6 +1,7 @@
 
 RAW_FIR:
-FILE: functionInValueClass.kt
+FILE: [RAW_FIR] functionInValueClass.kt
+    [RAW_FIR] annotations container
     @JvmInline() public? final? inline [RAW_FIR] class Value : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=Value] constructor([RAW_FIR] [CorrespondingProperty=/Value.value] value: Int): R|Value| {
             LAZY_super<R|kotlin/Any|>
@@ -14,7 +15,8 @@ FILE: functionInValueClass.kt
     }
 
 IMPORTS:
-FILE: functionInValueClass.kt
+FILE: [IMPORTS] functionInValueClass.kt
+    [RAW_FIR] annotations container
     @JvmInline() public? final? inline [RAW_FIR] class Value : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=Value] constructor([RAW_FIR] [CorrespondingProperty=/Value.value] value: Int): R|Value| {
             LAZY_super<R|kotlin/Any|>
@@ -28,7 +30,8 @@ FILE: functionInValueClass.kt
     }
 
 COMPILER_REQUIRED_ANNOTATIONS:
-FILE: functionInValueClass.kt
+FILE: [IMPORTS] functionInValueClass.kt
+    [RAW_FIR] annotations container
     @JvmInline() public? final? inline [RAW_FIR] class Value : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=Value] constructor([RAW_FIR] [CorrespondingProperty=/Value.value] value: Int): R|Value| {
             LAZY_super<R|kotlin/Any|>
@@ -42,7 +45,8 @@ FILE: functionInValueClass.kt
     }
 
 COMPANION_GENERATION:
-FILE: functionInValueClass.kt
+FILE: [IMPORTS] functionInValueClass.kt
+    [RAW_FIR] annotations container
     @JvmInline() public? final? inline [RAW_FIR] class Value : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=Value] constructor([RAW_FIR] [CorrespondingProperty=/Value.value] value: Int): R|Value| {
             LAZY_super<R|kotlin/Any|>
@@ -56,7 +60,8 @@ FILE: functionInValueClass.kt
     }
 
 SUPER_TYPES:
-FILE: functionInValueClass.kt
+FILE: [IMPORTS] functionInValueClass.kt
+    [RAW_FIR] annotations container
     @JvmInline() public? final? inline [RAW_FIR] class Value : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=Value] constructor([RAW_FIR] [CorrespondingProperty=/Value.value] value: Int): R|Value| {
             LAZY_super<R|kotlin/Any|>
@@ -70,7 +75,8 @@ FILE: functionInValueClass.kt
     }
 
 TYPES:
-FILE: functionInValueClass.kt
+FILE: [IMPORTS] functionInValueClass.kt
+    [RAW_FIR] annotations container
     @R|kotlin/jvm/JvmInline|() public? final? inline [SUPER_TYPES] class Value : R|kotlin/Any| {
         public? [SUPER_TYPES] [ContainingClassKey=Value] constructor([SUPER_TYPES] [CorrespondingProperty=/Value.value] value: Int): R|Value| {
             LAZY_super<R|kotlin/Any|>
@@ -84,7 +90,8 @@ FILE: functionInValueClass.kt
     }
 
 STATUS:
-FILE: functionInValueClass.kt
+FILE: [IMPORTS] functionInValueClass.kt
+    [RAW_FIR] annotations container
     @R|kotlin/jvm/JvmInline|() public final inline [SUPER_TYPES] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Value : R|kotlin/Any| {
         public [TYPES] [ContainingClassKey=Value] constructor([TYPES] [CorrespondingProperty=/Value.value] value: R|kotlin/Int|): R|Value| {
             LAZY_super<R|kotlin/Any|>
@@ -98,7 +105,8 @@ FILE: functionInValueClass.kt
     }
 
 EXPECT_ACTUAL_MATCHING:
-FILE: functionInValueClass.kt
+FILE: [IMPORTS] functionInValueClass.kt
+    [RAW_FIR] annotations container
     @R|kotlin/jvm/JvmInline|() public final inline [SUPER_TYPES] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Value : R|kotlin/Any| {
         public [TYPES] [ContainingClassKey=Value] constructor([TYPES] [CorrespondingProperty=/Value.value] value: R|kotlin/Int|): R|Value| {
             LAZY_super<R|kotlin/Any|>
@@ -113,7 +121,8 @@ FILE: functionInValueClass.kt
     }
 
 ARGUMENTS_OF_ANNOTATIONS:
-FILE: functionInValueClass.kt
+FILE: [IMPORTS] functionInValueClass.kt
+    [RAW_FIR] annotations container
     @R|kotlin/jvm/JvmInline|() public final inline [STATUS] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Value : R|kotlin/Any| {
         public [STATUS] [ContainingClassKey=Value] constructor([STATUS] [CorrespondingProperty=/Value.value] value: R|kotlin/Int|): R|Value| {
             LAZY_super<R|kotlin/Any|>
@@ -128,7 +137,8 @@ FILE: functionInValueClass.kt
     }
 
 CONTRACTS:
-FILE: functionInValueClass.kt
+FILE: [IMPORTS] functionInValueClass.kt
+    [RAW_FIR] annotations container
     @R|kotlin/jvm/JvmInline|() public final inline [STATUS] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Value : R|kotlin/Any| {
         public [STATUS] [ContainingClassKey=Value] constructor([STATUS] [CorrespondingProperty=/Value.value] value: R|kotlin/Int|): R|Value| {
             LAZY_super<R|kotlin/Any|>
@@ -143,7 +153,8 @@ FILE: functionInValueClass.kt
     }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
-FILE: functionInValueClass.kt
+FILE: [IMPORTS] functionInValueClass.kt
+    [RAW_FIR] annotations container
     @R|kotlin/jvm/JvmInline|() public final inline [STATUS] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Value : R|kotlin/Any| {
         public [STATUS] [ContainingClassKey=Value] constructor([STATUS] [CorrespondingProperty=/Value.value] value: R|kotlin/Int|): R|Value| {
             LAZY_super<R|kotlin/Any|>
@@ -158,7 +169,8 @@ FILE: functionInValueClass.kt
     }
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
-FILE: functionInValueClass.kt
+FILE: [IMPORTS] functionInValueClass.kt
+    [RAW_FIR] annotations container
     @R|kotlin/jvm/JvmInline|() public final inline [STATUS] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Value : R|kotlin/Any| {
         public [STATUS] [ContainingClassKey=Value] constructor([STATUS] [CorrespondingProperty=/Value.value] value: R|kotlin/Int|): R|Value| {
             LAZY_super<R|kotlin/Any|>
@@ -173,7 +185,8 @@ FILE: functionInValueClass.kt
     }
 
 BODY_RESOLVE:
-FILE: functionInValueClass.kt
+FILE: [IMPORTS] functionInValueClass.kt
+    [RAW_FIR] annotations container
     @R|kotlin/jvm/JvmInline|() public final inline [STATUS] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Value : R|kotlin/Any| {
         public [STATUS] [ContainingClassKey=Value] constructor([STATUS] [CorrespondingProperty=/Value.value] value: R|kotlin/Int|): R|Value| {
             LAZY_super<R|kotlin/Any|>
@@ -188,7 +201,8 @@ FILE: functionInValueClass.kt
     }
 
 FILE RAW TO BODY:
-FILE: functionInValueClass.kt
+FILE: [IMPORTS] functionInValueClass.kt
+    [BODY_RESOLVE] annotations container
     @R|kotlin/jvm/JvmInline|() public final inline [BODY_RESOLVE] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Value : R|kotlin/Any| {
         public [BODY_RESOLVE] [ContainingClassKey=Value] constructor([BODY_RESOLVE] [CorrespondingProperty=/Value.value] value: R|kotlin/Int|): R|Value| {
             super<R|kotlin/Any|>()

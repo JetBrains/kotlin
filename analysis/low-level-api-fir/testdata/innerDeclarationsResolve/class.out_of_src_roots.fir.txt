@@ -1,4 +1,5 @@
-FILE: class.kt
+FILE: [IMPORTS] class.kt
+    [BODY_RESOLVE] annotations container
     public final [BODY_RESOLVE] class B : R|kotlin/Any| {
         public [BODY_RESOLVE] constructor(): R|B| {
             super<R|kotlin/Any|>()

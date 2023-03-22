@@ -1,6 +1,7 @@
 
 RAW_FIR:
-FILE: secondaryConstructor.kt
+FILE: [RAW_FIR] secondaryConstructor.kt
+    [RAW_FIR] annotations container
     public? final? [RAW_FIR] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] fun receive([RAW_FIR] value: A): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] class A : R|kotlin/Any| {
@@ -9,7 +10,8 @@ FILE: secondaryConstructor.kt
     }
 
 IMPORTS:
-FILE: secondaryConstructor.kt
+FILE: [IMPORTS] secondaryConstructor.kt
+    [RAW_FIR] annotations container
     public? final? [RAW_FIR] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] fun receive([RAW_FIR] value: A): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] class A : R|kotlin/Any| {
@@ -18,7 +20,8 @@ FILE: secondaryConstructor.kt
     }
 
 COMPILER_REQUIRED_ANNOTATIONS:
-FILE: secondaryConstructor.kt
+FILE: [IMPORTS] secondaryConstructor.kt
+    [RAW_FIR] annotations container
     public? final? [COMPILER_REQUIRED_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] fun receive([RAW_FIR] value: A): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] class A : R|kotlin/Any| {
@@ -27,7 +30,8 @@ FILE: secondaryConstructor.kt
     }
 
 COMPANION_GENERATION:
-FILE: secondaryConstructor.kt
+FILE: [IMPORTS] secondaryConstructor.kt
+    [RAW_FIR] annotations container
     public? final? [COMPANION_GENERATION] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] fun receive([RAW_FIR] value: A): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] class A : R|kotlin/Any| {
@@ -36,7 +40,8 @@ FILE: secondaryConstructor.kt
     }
 
 SUPER_TYPES:
-FILE: secondaryConstructor.kt
+FILE: [IMPORTS] secondaryConstructor.kt
+    [RAW_FIR] annotations container
     public? final? [SUPER_TYPES] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] fun receive([RAW_FIR] value: A): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] class A : R|kotlin/Any| {
@@ -45,7 +50,8 @@ FILE: secondaryConstructor.kt
     }
 
 TYPES:
-FILE: secondaryConstructor.kt
+FILE: [IMPORTS] secondaryConstructor.kt
+    [RAW_FIR] annotations container
     public? final? [TYPES] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] fun receive([RAW_FIR] value: A): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] class A : R|kotlin/Any| {
@@ -54,7 +60,8 @@ FILE: secondaryConstructor.kt
     }
 
 STATUS:
-FILE: secondaryConstructor.kt
+FILE: [IMPORTS] secondaryConstructor.kt
+    [RAW_FIR] annotations container
     public final [STATUS] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] fun receive([RAW_FIR] value: A): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] class A : R|kotlin/Any| {
@@ -63,7 +70,8 @@ FILE: secondaryConstructor.kt
     }
 
 EXPECT_ACTUAL_MATCHING:
-FILE: secondaryConstructor.kt
+FILE: [IMPORTS] secondaryConstructor.kt
+    [RAW_FIR] annotations container
     public final [EXPECT_ACTUAL_MATCHING] fun resolveMe(): R|kotlin/Unit| {
         receive#(A#(IntegerLiteral(42)))
     }
@@ -74,7 +82,8 @@ FILE: secondaryConstructor.kt
     }
 
 ARGUMENTS_OF_ANNOTATIONS:
-FILE: secondaryConstructor.kt
+FILE: [IMPORTS] secondaryConstructor.kt
+    [RAW_FIR] annotations container
     public final [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| {
         receive#(A#(IntegerLiteral(42)))
     }
@@ -85,7 +94,8 @@ FILE: secondaryConstructor.kt
     }
 
 CONTRACTS:
-FILE: secondaryConstructor.kt
+FILE: [IMPORTS] secondaryConstructor.kt
+    [RAW_FIR] annotations container
     public final [CONTRACTS] fun resolveMe(): R|kotlin/Unit| {
         receive#(A#(IntegerLiteral(42)))
     }
@@ -96,7 +106,8 @@ FILE: secondaryConstructor.kt
     }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
-FILE: secondaryConstructor.kt
+FILE: [IMPORTS] secondaryConstructor.kt
+    [RAW_FIR] annotations container
     public final [IMPLICIT_TYPES_BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
         receive#(A#(IntegerLiteral(42)))
     }
@@ -107,7 +118,8 @@ FILE: secondaryConstructor.kt
     }
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
-FILE: secondaryConstructor.kt
+FILE: [IMPORTS] secondaryConstructor.kt
+    [RAW_FIR] annotations container
     public final [ANNOTATIONS_ARGUMENTS_MAPPING] fun resolveMe(): R|kotlin/Unit| {
         receive#(A#(IntegerLiteral(42)))
     }
@@ -118,7 +130,8 @@ FILE: secondaryConstructor.kt
     }
 
 BODY_RESOLVE:
-FILE: secondaryConstructor.kt
+FILE: [IMPORTS] secondaryConstructor.kt
+    [RAW_FIR] annotations container
     public final [BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
         R|/receive|(R|/A.A|(Int(42)))
     }
@@ -130,7 +143,8 @@ FILE: secondaryConstructor.kt
     }
 
 FILE RAW TO BODY:
-FILE: secondaryConstructor.kt
+FILE: [IMPORTS] secondaryConstructor.kt
+    [BODY_RESOLVE] annotations container
     public final [BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
         R|/receive|(R|/A.A|(Int(42)))
     }

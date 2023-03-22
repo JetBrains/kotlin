@@ -1,6 +1,7 @@
 
 RAW_FIR:
-FILE: typeParameterBounds.kt
+FILE: [RAW_FIR] typeParameterBounds.kt
+    [RAW_FIR] annotations container
     public? final? [RAW_FIR] fun resolveMe([RAW_FIR] foo: Foo): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] interface Foo : R|kotlin/Any| {
     }
@@ -9,7 +10,8 @@ FILE: typeParameterBounds.kt
     public? final? [RAW_FIR] fun <[RAW_FIR] F : Foo, [RAW_FIR] B : Bar<F>> F.util(): B { LAZY_BLOCK }
 
 IMPORTS:
-FILE: typeParameterBounds.kt
+FILE: [IMPORTS] typeParameterBounds.kt
+    [RAW_FIR] annotations container
     public? final? [RAW_FIR] fun resolveMe([RAW_FIR] foo: Foo): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] interface Foo : R|kotlin/Any| {
     }
@@ -18,7 +20,8 @@ FILE: typeParameterBounds.kt
     public? final? [RAW_FIR] fun <[RAW_FIR] F : Foo, [RAW_FIR] B : Bar<F>> F.util(): B { LAZY_BLOCK }
 
 COMPILER_REQUIRED_ANNOTATIONS:
-FILE: typeParameterBounds.kt
+FILE: [IMPORTS] typeParameterBounds.kt
+    [RAW_FIR] annotations container
     public? final? [COMPILER_REQUIRED_ANNOTATIONS] fun resolveMe([COMPILER_REQUIRED_ANNOTATIONS] foo: Foo): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] interface Foo : R|kotlin/Any| {
     }
@@ -27,7 +30,8 @@ FILE: typeParameterBounds.kt
     public? final? [RAW_FIR] fun <[RAW_FIR] F : Foo, [RAW_FIR] B : Bar<F>> F.util(): B { LAZY_BLOCK }
 
 COMPANION_GENERATION:
-FILE: typeParameterBounds.kt
+FILE: [IMPORTS] typeParameterBounds.kt
+    [RAW_FIR] annotations container
     public? final? [COMPANION_GENERATION] fun resolveMe([COMPANION_GENERATION] foo: Foo): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] interface Foo : R|kotlin/Any| {
     }
@@ -36,7 +40,8 @@ FILE: typeParameterBounds.kt
     public? final? [RAW_FIR] fun <[RAW_FIR] F : Foo, [RAW_FIR] B : Bar<F>> F.util(): B { LAZY_BLOCK }
 
 SUPER_TYPES:
-FILE: typeParameterBounds.kt
+FILE: [IMPORTS] typeParameterBounds.kt
+    [RAW_FIR] annotations container
     public? final? [SUPER_TYPES] fun resolveMe([SUPER_TYPES] foo: Foo): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] interface Foo : R|kotlin/Any| {
     }
@@ -45,7 +50,8 @@ FILE: typeParameterBounds.kt
     public? final? [RAW_FIR] fun <[RAW_FIR] F : Foo, [RAW_FIR] B : Bar<F>> F.util(): B { LAZY_BLOCK }
 
 TYPES:
-FILE: typeParameterBounds.kt
+FILE: [IMPORTS] typeParameterBounds.kt
+    [RAW_FIR] annotations container
     public? final? [TYPES] fun resolveMe([TYPES] foo: R|Foo|): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] interface Foo : R|kotlin/Any| {
     }
@@ -54,7 +60,8 @@ FILE: typeParameterBounds.kt
     public? final? [RAW_FIR] fun <[RAW_FIR] F : Foo, [RAW_FIR] B : Bar<F>> F.util(): B { LAZY_BLOCK }
 
 STATUS:
-FILE: typeParameterBounds.kt
+FILE: [IMPORTS] typeParameterBounds.kt
+    [RAW_FIR] annotations container
     public final [STATUS] fun resolveMe([STATUS] foo: R|Foo|): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] interface Foo : R|kotlin/Any| {
     }
@@ -63,7 +70,8 @@ FILE: typeParameterBounds.kt
     public? final? [RAW_FIR] fun <[RAW_FIR] F : Foo, [RAW_FIR] B : Bar<F>> F.util(): B { LAZY_BLOCK }
 
 EXPECT_ACTUAL_MATCHING:
-FILE: typeParameterBounds.kt
+FILE: [IMPORTS] typeParameterBounds.kt
+    [RAW_FIR] annotations container
     public final [EXPECT_ACTUAL_MATCHING] fun resolveMe([EXPECT_ACTUAL_MATCHING] foo: R|Foo|): R|kotlin/Unit| {
         foo#.util#()
     }
@@ -74,7 +82,8 @@ FILE: typeParameterBounds.kt
     public? final? [RAW_FIR] fun <[RAW_FIR] F : Foo, [RAW_FIR] B : Bar<F>> F.util(): B { LAZY_BLOCK }
 
 ARGUMENTS_OF_ANNOTATIONS:
-FILE: typeParameterBounds.kt
+FILE: [IMPORTS] typeParameterBounds.kt
+    [RAW_FIR] annotations container
     public final [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe([ARGUMENTS_OF_ANNOTATIONS] foo: R|Foo|): R|kotlin/Unit| {
         foo#.util#()
     }
@@ -85,7 +94,8 @@ FILE: typeParameterBounds.kt
     public? final? [RAW_FIR] fun <[RAW_FIR] F : Foo, [RAW_FIR] B : Bar<F>> F.util(): B { LAZY_BLOCK }
 
 CONTRACTS:
-FILE: typeParameterBounds.kt
+FILE: [IMPORTS] typeParameterBounds.kt
+    [RAW_FIR] annotations container
     public final [CONTRACTS] fun resolveMe([CONTRACTS] foo: R|Foo|): R|kotlin/Unit| {
         foo#.util#()
     }
@@ -96,7 +106,8 @@ FILE: typeParameterBounds.kt
     public? final? [RAW_FIR] fun <[RAW_FIR] F : Foo, [RAW_FIR] B : Bar<F>> F.util(): B { LAZY_BLOCK }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
-FILE: typeParameterBounds.kt
+FILE: [IMPORTS] typeParameterBounds.kt
+    [RAW_FIR] annotations container
     public final [IMPLICIT_TYPES_BODY_RESOLVE] fun resolveMe([IMPLICIT_TYPES_BODY_RESOLVE] foo: R|Foo|): R|kotlin/Unit| {
         foo#.util#()
     }
@@ -107,7 +118,8 @@ FILE: typeParameterBounds.kt
     public? final? [RAW_FIR] fun <[RAW_FIR] F : Foo, [RAW_FIR] B : Bar<F>> F.util(): B { LAZY_BLOCK }
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
-FILE: typeParameterBounds.kt
+FILE: [IMPORTS] typeParameterBounds.kt
+    [RAW_FIR] annotations container
     public final [ANNOTATIONS_ARGUMENTS_MAPPING] fun resolveMe([ANNOTATIONS_ARGUMENTS_MAPPING] foo: R|Foo|): R|kotlin/Unit| {
         foo#.util#()
     }
@@ -118,7 +130,8 @@ FILE: typeParameterBounds.kt
     public? final? [RAW_FIR] fun <[RAW_FIR] F : Foo, [RAW_FIR] B : Bar<F>> F.util(): B { LAZY_BLOCK }
 
 BODY_RESOLVE:
-FILE: typeParameterBounds.kt
+FILE: [IMPORTS] typeParameterBounds.kt
+    [RAW_FIR] annotations container
     public final [BODY_RESOLVE] fun resolveMe([BODY_RESOLVE] foo: R|Foo|): R|kotlin/Unit| {
         R|<local>/foo|.R|/util|<R|Foo|, R|Bar<Foo>|>()
     }
@@ -131,7 +144,8 @@ FILE: typeParameterBounds.kt
     }
 
 FILE RAW TO BODY:
-FILE: typeParameterBounds.kt
+FILE: [IMPORTS] typeParameterBounds.kt
+    [BODY_RESOLVE] annotations container
     public final [BODY_RESOLVE] fun resolveMe([BODY_RESOLVE] foo: R|Foo|): R|kotlin/Unit| {
         R|<local>/foo|.R|/util|<R|Foo|, R|Bar<Foo>|>()
     }

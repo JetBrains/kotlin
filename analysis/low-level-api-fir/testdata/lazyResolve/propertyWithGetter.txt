@@ -1,55 +1,63 @@
 
 RAW_FIR:
-FILE: propertyWithGetter.kt
+FILE: [RAW_FIR] propertyWithGetter.kt
+    [RAW_FIR] annotations container
     public? final? [RAW_FIR] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] fun receive([RAW_FIR] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] val withGetter: Int
         public? [RAW_FIR] get(): Int { LAZY_BLOCK }
 
 IMPORTS:
-FILE: propertyWithGetter.kt
+FILE: [IMPORTS] propertyWithGetter.kt
+    [RAW_FIR] annotations container
     public? final? [RAW_FIR] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] fun receive([RAW_FIR] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] val withGetter: Int
         public? [RAW_FIR] get(): Int { LAZY_BLOCK }
 
 COMPILER_REQUIRED_ANNOTATIONS:
-FILE: propertyWithGetter.kt
+FILE: [IMPORTS] propertyWithGetter.kt
+    [RAW_FIR] annotations container
     public? final? [COMPILER_REQUIRED_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] fun receive([RAW_FIR] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] val withGetter: Int
         public? [RAW_FIR] get(): Int { LAZY_BLOCK }
 
 COMPANION_GENERATION:
-FILE: propertyWithGetter.kt
+FILE: [IMPORTS] propertyWithGetter.kt
+    [RAW_FIR] annotations container
     public? final? [COMPANION_GENERATION] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] fun receive([RAW_FIR] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] val withGetter: Int
         public? [RAW_FIR] get(): Int { LAZY_BLOCK }
 
 SUPER_TYPES:
-FILE: propertyWithGetter.kt
+FILE: [IMPORTS] propertyWithGetter.kt
+    [RAW_FIR] annotations container
     public? final? [SUPER_TYPES] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] fun receive([RAW_FIR] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] val withGetter: Int
         public? [RAW_FIR] get(): Int { LAZY_BLOCK }
 
 TYPES:
-FILE: propertyWithGetter.kt
+FILE: [IMPORTS] propertyWithGetter.kt
+    [RAW_FIR] annotations container
     public? final? [TYPES] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] fun receive([RAW_FIR] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] val withGetter: Int
         public? [RAW_FIR] get(): Int { LAZY_BLOCK }
 
 STATUS:
-FILE: propertyWithGetter.kt
+FILE: [IMPORTS] propertyWithGetter.kt
+    [RAW_FIR] annotations container
     public final [STATUS] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] fun receive([RAW_FIR] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] val withGetter: Int
         public? [RAW_FIR] get(): Int { LAZY_BLOCK }
 
 EXPECT_ACTUAL_MATCHING:
-FILE: propertyWithGetter.kt
+FILE: [IMPORTS] propertyWithGetter.kt
+    [RAW_FIR] annotations container
     public final [EXPECT_ACTUAL_MATCHING] fun resolveMe(): R|kotlin/Unit| {
         receive#(withGetter#)
     }
@@ -58,7 +66,8 @@ FILE: propertyWithGetter.kt
         public? [RAW_FIR] get(): Int { LAZY_BLOCK }
 
 ARGUMENTS_OF_ANNOTATIONS:
-FILE: propertyWithGetter.kt
+FILE: [IMPORTS] propertyWithGetter.kt
+    [RAW_FIR] annotations container
     public final [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| {
         receive#(withGetter#)
     }
@@ -67,7 +76,8 @@ FILE: propertyWithGetter.kt
         public? [RAW_FIR] get(): Int { LAZY_BLOCK }
 
 CONTRACTS:
-FILE: propertyWithGetter.kt
+FILE: [IMPORTS] propertyWithGetter.kt
+    [RAW_FIR] annotations container
     public final [CONTRACTS] fun resolveMe(): R|kotlin/Unit| {
         receive#(withGetter#)
     }
@@ -76,7 +86,8 @@ FILE: propertyWithGetter.kt
         public? [RAW_FIR] get(): Int { LAZY_BLOCK }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
-FILE: propertyWithGetter.kt
+FILE: [IMPORTS] propertyWithGetter.kt
+    [RAW_FIR] annotations container
     public final [IMPLICIT_TYPES_BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
         receive#(withGetter#)
     }
@@ -85,7 +96,8 @@ FILE: propertyWithGetter.kt
         public? [RAW_FIR] get(): Int { LAZY_BLOCK }
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
-FILE: propertyWithGetter.kt
+FILE: [IMPORTS] propertyWithGetter.kt
+    [RAW_FIR] annotations container
     public final [ANNOTATIONS_ARGUMENTS_MAPPING] fun resolveMe(): R|kotlin/Unit| {
         receive#(withGetter#)
     }
@@ -94,7 +106,8 @@ FILE: propertyWithGetter.kt
         public? [RAW_FIR] get(): Int { LAZY_BLOCK }
 
 BODY_RESOLVE:
-FILE: propertyWithGetter.kt
+FILE: [IMPORTS] propertyWithGetter.kt
+    [RAW_FIR] annotations container
     public final [BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
         R|/receive|(R|/withGetter|)
     }
@@ -106,7 +119,8 @@ FILE: propertyWithGetter.kt
         }
 
 FILE RAW TO BODY:
-FILE: propertyWithGetter.kt
+FILE: [IMPORTS] propertyWithGetter.kt
+    [BODY_RESOLVE] annotations container
     public final [BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
         R|/receive|(R|/withGetter|)
     }

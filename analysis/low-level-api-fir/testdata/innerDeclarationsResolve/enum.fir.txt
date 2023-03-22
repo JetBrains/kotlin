@@ -1,4 +1,5 @@
-FILE: enum.kt
+FILE: [IMPORTS] enum.kt
+    [BODY_RESOLVE] annotations container
     public final [BODY_RESOLVE] enum class Enum : R|kotlin/Enum<Enum>| {
         private [BODY_RESOLVE] constructor([BODY_RESOLVE] x: R|kotlin/Int|): R|Enum| {
             super<R|kotlin/Enum<Enum>|>()

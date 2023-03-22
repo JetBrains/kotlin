@@ -1,48 +1,56 @@
 
 RAW_FIR:
-FILE: topLevelFunctionsWithExpressionBodyAndExplicitType.kt
+FILE: [RAW_FIR] topLevelFunctionsWithExpressionBodyAndExplicitType.kt
+    [RAW_FIR] annotations container
     public? final? [RAW_FIR] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] fun receive([RAW_FIR] value: String): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] fun functionWithLazyBody(): String { LAZY_BLOCK }
 
 IMPORTS:
-FILE: topLevelFunctionsWithExpressionBodyAndExplicitType.kt
+FILE: [IMPORTS] topLevelFunctionsWithExpressionBodyAndExplicitType.kt
+    [RAW_FIR] annotations container
     public? final? [RAW_FIR] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] fun receive([RAW_FIR] value: String): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] fun functionWithLazyBody(): String { LAZY_BLOCK }
 
 COMPILER_REQUIRED_ANNOTATIONS:
-FILE: topLevelFunctionsWithExpressionBodyAndExplicitType.kt
+FILE: [IMPORTS] topLevelFunctionsWithExpressionBodyAndExplicitType.kt
+    [RAW_FIR] annotations container
     public? final? [COMPILER_REQUIRED_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] fun receive([RAW_FIR] value: String): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] fun functionWithLazyBody(): String { LAZY_BLOCK }
 
 COMPANION_GENERATION:
-FILE: topLevelFunctionsWithExpressionBodyAndExplicitType.kt
+FILE: [IMPORTS] topLevelFunctionsWithExpressionBodyAndExplicitType.kt
+    [RAW_FIR] annotations container
     public? final? [COMPANION_GENERATION] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] fun receive([RAW_FIR] value: String): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] fun functionWithLazyBody(): String { LAZY_BLOCK }
 
 SUPER_TYPES:
-FILE: topLevelFunctionsWithExpressionBodyAndExplicitType.kt
+FILE: [IMPORTS] topLevelFunctionsWithExpressionBodyAndExplicitType.kt
+    [RAW_FIR] annotations container
     public? final? [SUPER_TYPES] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] fun receive([RAW_FIR] value: String): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] fun functionWithLazyBody(): String { LAZY_BLOCK }
 
 TYPES:
-FILE: topLevelFunctionsWithExpressionBodyAndExplicitType.kt
+FILE: [IMPORTS] topLevelFunctionsWithExpressionBodyAndExplicitType.kt
+    [RAW_FIR] annotations container
     public? final? [TYPES] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] fun receive([RAW_FIR] value: String): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] fun functionWithLazyBody(): String { LAZY_BLOCK }
 
 STATUS:
-FILE: topLevelFunctionsWithExpressionBodyAndExplicitType.kt
+FILE: [IMPORTS] topLevelFunctionsWithExpressionBodyAndExplicitType.kt
+    [RAW_FIR] annotations container
     public final [STATUS] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] fun receive([RAW_FIR] value: String): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] fun functionWithLazyBody(): String { LAZY_BLOCK }
 
 EXPECT_ACTUAL_MATCHING:
-FILE: topLevelFunctionsWithExpressionBodyAndExplicitType.kt
+FILE: [IMPORTS] topLevelFunctionsWithExpressionBodyAndExplicitType.kt
+    [RAW_FIR] annotations container
     public final [EXPECT_ACTUAL_MATCHING] fun resolveMe(): R|kotlin/Unit| {
         receive#(functionWithLazyBody#())
     }
@@ -50,7 +58,8 @@ FILE: topLevelFunctionsWithExpressionBodyAndExplicitType.kt
     public? final? [RAW_FIR] fun functionWithLazyBody(): String { LAZY_BLOCK }
 
 ARGUMENTS_OF_ANNOTATIONS:
-FILE: topLevelFunctionsWithExpressionBodyAndExplicitType.kt
+FILE: [IMPORTS] topLevelFunctionsWithExpressionBodyAndExplicitType.kt
+    [RAW_FIR] annotations container
     public final [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| {
         receive#(functionWithLazyBody#())
     }
@@ -58,7 +67,8 @@ FILE: topLevelFunctionsWithExpressionBodyAndExplicitType.kt
     public? final? [RAW_FIR] fun functionWithLazyBody(): String { LAZY_BLOCK }
 
 CONTRACTS:
-FILE: topLevelFunctionsWithExpressionBodyAndExplicitType.kt
+FILE: [IMPORTS] topLevelFunctionsWithExpressionBodyAndExplicitType.kt
+    [RAW_FIR] annotations container
     public final [CONTRACTS] fun resolveMe(): R|kotlin/Unit| {
         receive#(functionWithLazyBody#())
     }
@@ -66,7 +76,8 @@ FILE: topLevelFunctionsWithExpressionBodyAndExplicitType.kt
     public? final? [RAW_FIR] fun functionWithLazyBody(): String { LAZY_BLOCK }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
-FILE: topLevelFunctionsWithExpressionBodyAndExplicitType.kt
+FILE: [IMPORTS] topLevelFunctionsWithExpressionBodyAndExplicitType.kt
+    [RAW_FIR] annotations container
     public final [IMPLICIT_TYPES_BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
         receive#(functionWithLazyBody#())
     }
@@ -74,7 +85,8 @@ FILE: topLevelFunctionsWithExpressionBodyAndExplicitType.kt
     public? final? [RAW_FIR] fun functionWithLazyBody(): String { LAZY_BLOCK }
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
-FILE: topLevelFunctionsWithExpressionBodyAndExplicitType.kt
+FILE: [IMPORTS] topLevelFunctionsWithExpressionBodyAndExplicitType.kt
+    [RAW_FIR] annotations container
     public final [ANNOTATIONS_ARGUMENTS_MAPPING] fun resolveMe(): R|kotlin/Unit| {
         receive#(functionWithLazyBody#())
     }
@@ -82,7 +94,8 @@ FILE: topLevelFunctionsWithExpressionBodyAndExplicitType.kt
     public? final? [RAW_FIR] fun functionWithLazyBody(): String { LAZY_BLOCK }
 
 BODY_RESOLVE:
-FILE: topLevelFunctionsWithExpressionBodyAndExplicitType.kt
+FILE: [IMPORTS] topLevelFunctionsWithExpressionBodyAndExplicitType.kt
+    [RAW_FIR] annotations container
     public final [BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
         R|/receive|(R|/functionWithLazyBody|())
     }
@@ -93,7 +106,8 @@ FILE: topLevelFunctionsWithExpressionBodyAndExplicitType.kt
     }
 
 FILE RAW TO BODY:
-FILE: topLevelFunctionsWithExpressionBodyAndExplicitType.kt
+FILE: [IMPORTS] topLevelFunctionsWithExpressionBodyAndExplicitType.kt
+    [BODY_RESOLVE] annotations container
     public final [BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
         R|/receive|(R|/functionWithLazyBody|())
     }

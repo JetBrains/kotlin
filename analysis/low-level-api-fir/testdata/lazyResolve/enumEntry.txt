@@ -1,6 +1,7 @@
 
 RAW_FIR:
-FILE: enumEntry.kt
+FILE: [RAW_FIR] enumEntry.kt
+    [RAW_FIR] annotations container
     public? final? [RAW_FIR] annotation class Anno : R|kotlin/Annotation| {
         public? [RAW_FIR] [ContainingClassKey=Anno] constructor(): R|Anno| {
             LAZY_super<R|kotlin/Any|>
@@ -25,7 +26,8 @@ FILE: enumEntry.kt
     }
 
 IMPORTS:
-FILE: enumEntry.kt
+FILE: [IMPORTS] enumEntry.kt
+    [RAW_FIR] annotations container
     public? final? [RAW_FIR] annotation class Anno : R|kotlin/Annotation| {
         public? [RAW_FIR] [ContainingClassKey=Anno] constructor(): R|Anno| {
             LAZY_super<R|kotlin/Any|>
@@ -50,7 +52,8 @@ FILE: enumEntry.kt
     }
 
 COMPILER_REQUIRED_ANNOTATIONS:
-FILE: enumEntry.kt
+FILE: [IMPORTS] enumEntry.kt
+    [RAW_FIR] annotations container
     public? final? [RAW_FIR] annotation class Anno : R|kotlin/Annotation| {
         public? [RAW_FIR] [ContainingClassKey=Anno] constructor(): R|Anno| {
             LAZY_super<R|kotlin/Any|>
@@ -75,7 +78,8 @@ FILE: enumEntry.kt
     }
 
 COMPANION_GENERATION:
-FILE: enumEntry.kt
+FILE: [IMPORTS] enumEntry.kt
+    [RAW_FIR] annotations container
     public? final? [RAW_FIR] annotation class Anno : R|kotlin/Annotation| {
         public? [RAW_FIR] [ContainingClassKey=Anno] constructor(): R|Anno| {
             LAZY_super<R|kotlin/Any|>
@@ -100,7 +104,8 @@ FILE: enumEntry.kt
     }
 
 SUPER_TYPES:
-FILE: enumEntry.kt
+FILE: [IMPORTS] enumEntry.kt
+    [RAW_FIR] annotations container
     public? final? [RAW_FIR] annotation class Anno : R|kotlin/Annotation| {
         public? [RAW_FIR] [ContainingClassKey=Anno] constructor(): R|Anno| {
             LAZY_super<R|kotlin/Any|>
@@ -125,7 +130,8 @@ FILE: enumEntry.kt
     }
 
 TYPES:
-FILE: enumEntry.kt
+FILE: [IMPORTS] enumEntry.kt
+    [RAW_FIR] annotations container
     public? final? [RAW_FIR] annotation class Anno : R|kotlin/Annotation| {
         public? [RAW_FIR] [ContainingClassKey=Anno] constructor(): R|Anno| {
             LAZY_super<R|kotlin/Any|>
@@ -150,7 +156,8 @@ FILE: enumEntry.kt
     }
 
 STATUS:
-FILE: enumEntry.kt
+FILE: [IMPORTS] enumEntry.kt
+    [RAW_FIR] annotations container
     public? final? [RAW_FIR] annotation class Anno : R|kotlin/Annotation| {
         public? [RAW_FIR] [ContainingClassKey=Anno] constructor(): R|Anno| {
             LAZY_super<R|kotlin/Any|>
@@ -175,7 +182,8 @@ FILE: enumEntry.kt
     }
 
 EXPECT_ACTUAL_MATCHING:
-FILE: enumEntry.kt
+FILE: [IMPORTS] enumEntry.kt
+    [RAW_FIR] annotations container
     public? final? [RAW_FIR] annotation class Anno : R|kotlin/Annotation| {
         public? [RAW_FIR] [ContainingClassKey=Anno] constructor(): R|Anno| {
             LAZY_super<R|kotlin/Any|>
@@ -206,7 +214,8 @@ FILE: enumEntry.kt
     }
 
 ARGUMENTS_OF_ANNOTATIONS:
-FILE: enumEntry.kt
+FILE: [IMPORTS] enumEntry.kt
+    [RAW_FIR] annotations container
     public? final? [RAW_FIR] annotation class Anno : R|kotlin/Annotation| {
         public? [RAW_FIR] [ContainingClassKey=Anno] constructor(): R|Anno| {
             LAZY_super<R|kotlin/Any|>
@@ -237,7 +246,8 @@ FILE: enumEntry.kt
     }
 
 CONTRACTS:
-FILE: enumEntry.kt
+FILE: [IMPORTS] enumEntry.kt
+    [RAW_FIR] annotations container
     public? final? [RAW_FIR] annotation class Anno : R|kotlin/Annotation| {
         public? [RAW_FIR] [ContainingClassKey=Anno] constructor(): R|Anno| {
             LAZY_super<R|kotlin/Any|>
@@ -268,7 +278,8 @@ FILE: enumEntry.kt
     }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
-FILE: enumEntry.kt
+FILE: [IMPORTS] enumEntry.kt
+    [RAW_FIR] annotations container
     public? final? [RAW_FIR] annotation class Anno : R|kotlin/Annotation| {
         public? [RAW_FIR] [ContainingClassKey=Anno] constructor(): R|Anno| {
             LAZY_super<R|kotlin/Any|>
@@ -299,7 +310,8 @@ FILE: enumEntry.kt
     }
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
-FILE: enumEntry.kt
+FILE: [IMPORTS] enumEntry.kt
+    [RAW_FIR] annotations container
     public final [SUPER_TYPES] annotation class Anno : R|kotlin/Annotation| {
         public [STATUS] [ContainingClassKey=Anno] constructor(): R|Anno| {
             LAZY_super<R|kotlin/Any|>
@@ -330,7 +342,8 @@ FILE: enumEntry.kt
     }
 
 BODY_RESOLVE:
-FILE: enumEntry.kt
+FILE: [IMPORTS] enumEntry.kt
+    [RAW_FIR] annotations container
     public final [SUPER_TYPES] annotation class Anno : R|kotlin/Annotation| {
         public [STATUS] [ContainingClassKey=Anno] constructor(): R|Anno| {
             LAZY_super<R|kotlin/Any|>
@@ -361,7 +374,8 @@ FILE: enumEntry.kt
     }
 
 FILE RAW TO BODY:
-FILE: enumEntry.kt
+FILE: [IMPORTS] enumEntry.kt
+    [BODY_RESOLVE] annotations container
     public final [BODY_RESOLVE] annotation class Anno : R|kotlin/Annotation| {
         public [BODY_RESOLVE] [ContainingClassKey=Anno] constructor(): R|Anno| {
             super<R|kotlin/Any|>()

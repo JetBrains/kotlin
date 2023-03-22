@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.FirElementWithResolvePhase
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.renderer.ConeTypeRendererForDebugging
 import org.jetbrains.kotlin.fir.renderer.FirDeclarationRendererWithAttributes
+import org.jetbrains.kotlin.fir.renderer.FirFileAnnotationsContainerRenderer
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.renderer.FirResolvePhaseRenderer
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -27,7 +28,8 @@ fun ExceptionAttachmentBuilder.withFirEntry(name: String, fir: FirElement) {
     withEntry(name, fir) {
         FirRenderer(
             resolvePhaseRenderer = FirResolvePhaseRenderer(),
-            declarationRenderer = FirDeclarationRendererWithAttributes()
+            declarationRenderer = FirDeclarationRendererWithAttributes(),
+            fileAnnotationsContainerRenderer = FirFileAnnotationsContainerRenderer(),
         ).renderElementAsString(it)
     }
     withEntry("${name}FirSourceElementKind", fir.source?.kind?.let { it::class.simpleName })

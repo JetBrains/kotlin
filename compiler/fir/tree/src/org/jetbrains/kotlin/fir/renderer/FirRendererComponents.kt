@@ -24,4 +24,5 @@ internal interface FirRendererComponents {
     val typeRenderer: ConeTypeRenderer
     val valueParameterRenderer: FirValueParameterRenderer?
     val errorExpressionRenderer: FirErrorExpressionRenderer?
+    val fileAnnotationsContainerRenderer: FirFileAnnotationsContainerRenderer?
 }

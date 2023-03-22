@@ -1,4 +1,5 @@
-FILE: functionValueParameter.kt
+FILE: [IMPORTS] functionValueParameter.kt
+    [BODY_RESOLVE] annotations container
     public final [BODY_RESOLVE] fun bar([BODY_RESOLVE] a: R|kotlin/Int|, [BODY_RESOLVE] b: R|(kotlin/Boolean) -> kotlin/Unit|): R|kotlin/Unit| {
     }
     public final [BODY_RESOLVE] class A : R|kotlin/Any| {

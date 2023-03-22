@@ -1,4 +1,5 @@
-FILE: constructorParameter.kt
+FILE: [IMPORTS] constructorParameter.kt
+    [BODY_RESOLVE] annotations container
     public final [BODY_RESOLVE] class A : R|kotlin/Any| {
         public [BODY_RESOLVE] constructor([BODY_RESOLVE] x: R|kotlin/String|): R|A| {
             super<R|kotlin/Any|>()

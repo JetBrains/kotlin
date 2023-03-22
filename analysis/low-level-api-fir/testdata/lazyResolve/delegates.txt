@@ -1,6 +1,7 @@
 
 RAW_FIR:
-FILE: delegates.kt
+FILE: [RAW_FIR] delegates.kt
+    [RAW_FIR] annotations container
     public? final? [RAW_FIR] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] fun receive([RAW_FIR] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] val delegate: <implicit> = LAZY_EXPRESSION
@@ -29,7 +30,8 @@ FILE: delegates.kt
         }
 
 IMPORTS:
-FILE: delegates.kt
+FILE: [IMPORTS] delegates.kt
+    [RAW_FIR] annotations container
     public? final? [RAW_FIR] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] fun receive([RAW_FIR] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] val delegate: <implicit> = LAZY_EXPRESSION
@@ -58,7 +60,8 @@ FILE: delegates.kt
         }
 
 COMPILER_REQUIRED_ANNOTATIONS:
-FILE: delegates.kt
+FILE: [IMPORTS] delegates.kt
+    [RAW_FIR] annotations container
     public? final? [COMPILER_REQUIRED_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] fun receive([RAW_FIR] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] val delegate: <implicit> = LAZY_EXPRESSION
@@ -87,7 +90,8 @@ FILE: delegates.kt
         }
 
 COMPANION_GENERATION:
-FILE: delegates.kt
+FILE: [IMPORTS] delegates.kt
+    [RAW_FIR] annotations container
     public? final? [COMPANION_GENERATION] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] fun receive([RAW_FIR] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] val delegate: <implicit> = LAZY_EXPRESSION
@@ -116,7 +120,8 @@ FILE: delegates.kt
         }
 
 SUPER_TYPES:
-FILE: delegates.kt
+FILE: [IMPORTS] delegates.kt
+    [RAW_FIR] annotations container
     public? final? [SUPER_TYPES] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] fun receive([RAW_FIR] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] val delegate: <implicit> = LAZY_EXPRESSION
@@ -145,7 +150,8 @@ FILE: delegates.kt
         }
 
 TYPES:
-FILE: delegates.kt
+FILE: [IMPORTS] delegates.kt
+    [RAW_FIR] annotations container
     public? final? [TYPES] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] fun receive([RAW_FIR] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] val delegate: <implicit> = LAZY_EXPRESSION
@@ -174,7 +180,8 @@ FILE: delegates.kt
         }
 
 STATUS:
-FILE: delegates.kt
+FILE: [IMPORTS] delegates.kt
+    [RAW_FIR] annotations container
     public final [STATUS] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] fun receive([RAW_FIR] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] val delegate: <implicit> = LAZY_EXPRESSION
@@ -203,7 +210,8 @@ FILE: delegates.kt
         }
 
 EXPECT_ACTUAL_MATCHING:
-FILE: delegates.kt
+FILE: [IMPORTS] delegates.kt
+    [RAW_FIR] annotations container
     public final [EXPECT_ACTUAL_MATCHING] fun resolveMe(): R|kotlin/Unit| {
         receive#(valueWithExplicitType#)
         receive#(valueWithImplicitType#)
@@ -237,7 +245,8 @@ FILE: delegates.kt
         }
 
 ARGUMENTS_OF_ANNOTATIONS:
-FILE: delegates.kt
+FILE: [IMPORTS] delegates.kt
+    [RAW_FIR] annotations container
     public final [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| {
         receive#(valueWithExplicitType#)
         receive#(valueWithImplicitType#)
@@ -271,7 +280,8 @@ FILE: delegates.kt
         }
 
 CONTRACTS:
-FILE: delegates.kt
+FILE: [IMPORTS] delegates.kt
+    [RAW_FIR] annotations container
     public final [CONTRACTS] fun resolveMe(): R|kotlin/Unit| {
         receive#(valueWithExplicitType#)
         receive#(valueWithImplicitType#)
@@ -305,7 +315,8 @@ FILE: delegates.kt
         }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
-FILE: delegates.kt
+FILE: [IMPORTS] delegates.kt
+    [RAW_FIR] annotations container
     public final [IMPLICIT_TYPES_BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
         receive#(valueWithExplicitType#)
         receive#(valueWithImplicitType#)
@@ -339,7 +350,8 @@ FILE: delegates.kt
         }
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
-FILE: delegates.kt
+FILE: [IMPORTS] delegates.kt
+    [RAW_FIR] annotations container
     public final [ANNOTATIONS_ARGUMENTS_MAPPING] fun resolveMe(): R|kotlin/Unit| {
         receive#(valueWithExplicitType#)
         receive#(valueWithImplicitType#)
@@ -373,7 +385,8 @@ FILE: delegates.kt
         }
 
 BODY_RESOLVE:
-FILE: delegates.kt
+FILE: [IMPORTS] delegates.kt
+    [RAW_FIR] annotations container
     public final [BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
         R|/receive|(R|/valueWithExplicitType|)
         R|/receive|(R|/valueWithImplicitType|)
@@ -421,7 +434,8 @@ FILE: delegates.kt
         }
 
 FILE RAW TO BODY:
-FILE: delegates.kt
+FILE: [IMPORTS] delegates.kt
+    [BODY_RESOLVE] annotations container
     public final [BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
         R|/receive|(R|/valueWithExplicitType|)
         R|/receive|(R|/valueWithImplicitType|)

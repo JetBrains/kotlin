@@ -46,6 +46,7 @@ class FirRenderer(
     override val typeRenderer: ConeTypeRenderer = ConeTypeRendererForDebugging(),
     override val valueParameterRenderer: FirValueParameterRenderer? = FirValueParameterRenderer(),
     override val errorExpressionRenderer: FirErrorExpressionRenderer? = FirErrorExpressionOnlyErrorRenderer(),
+    override val fileAnnotationsContainerRenderer: FirFileAnnotationsContainerRenderer? = null,
 ) : FirRendererComponents {
 
     override val visitor = Visitor()
@@ -59,7 +60,10 @@ class FirRenderer(
             )
 
         fun withResolvePhase(): FirRenderer =
-            FirRenderer(resolvePhaseRenderer = FirResolvePhaseRenderer())
+            FirRenderer(
+                resolvePhaseRenderer = FirResolvePhaseRenderer(),
+                fileAnnotationsContainerRenderer = FirFileAnnotationsContainerRenderer(),
+            )
 
         fun withDeclarationAttributes(): FirRenderer =
             FirRenderer(declarationRenderer = FirDeclarationRendererWithAttributes())
@@ -81,6 +85,7 @@ class FirRenderer(
         typeRenderer.idRenderer = idRenderer
         valueParameterRenderer?.components = this
         errorExpressionRenderer?.components = this
+        fileAnnotationsContainerRenderer?.components = this
     }
 
     fun renderElementAsString(element: FirElement): String {
@@ -162,13 +167,24 @@ class FirRenderer(
         }
 
         override fun visitFile(file: FirFile) {
-            printer.println("FILE: ${file.name}")
+            printer.print("FILE: ")
+            resolvePhaseRenderer?.render(file)
+            printer.println(file.name)
+
             printer.pushIndent()
-            annotationRenderer?.render(file)
+            visitFileAnnotationsContainer(file.annotationsContainer)
             visitPackageDirective(file.packageDirective)
             file.imports.forEach { it.accept(this) }
             file.declarations.forEach { it.accept(this) }
             printer.popIndent()
+        }
+
+        override fun visitFileAnnotationsContainer(fileAnnotationsContainer: FirFileAnnotationsContainer) {
+            if (fileAnnotationsContainerRenderer != null) {
+                fileAnnotationsContainerRenderer.render(fileAnnotationsContainer)
+            } else {
+                annotationRenderer?.render(fileAnnotationsContainer)
+            }
         }
 
         override fun visitAnnotation(annotation: FirAnnotation) {

@@ -1,4 +1,5 @@
-FILE: propertyWithSetter.kt
+FILE: [IMPORTS] propertyWithSetter.kt
+    [BODY_RESOLVE] annotations container
     public abstract [BODY_RESOLVE] class Foo : R|kotlin/Any| {
         public [BODY_RESOLVE] constructor(): R|Foo| {
             super<R|kotlin/Any|>()

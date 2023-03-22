@@ -1,48 +1,56 @@
 
 RAW_FIR:
-FILE: propertyWithInitializer.kt
+FILE: [RAW_FIR] propertyWithInitializer.kt
+    [RAW_FIR] annotations container
     public? final? [RAW_FIR] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] val property: Int = LAZY_EXPRESSION
         public? [RAW_FIR] get(): Int
 
 IMPORTS:
-FILE: propertyWithInitializer.kt
+FILE: [IMPORTS] propertyWithInitializer.kt
+    [RAW_FIR] annotations container
     public? final? [RAW_FIR] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] val property: Int = LAZY_EXPRESSION
         public? [RAW_FIR] get(): Int
 
 COMPILER_REQUIRED_ANNOTATIONS:
-FILE: propertyWithInitializer.kt
+FILE: [IMPORTS] propertyWithInitializer.kt
+    [RAW_FIR] annotations container
     public? final? [COMPILER_REQUIRED_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] val property: Int = LAZY_EXPRESSION
         public? [RAW_FIR] get(): Int
 
 COMPANION_GENERATION:
-FILE: propertyWithInitializer.kt
+FILE: [IMPORTS] propertyWithInitializer.kt
+    [RAW_FIR] annotations container
     public? final? [COMPANION_GENERATION] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] val property: Int = LAZY_EXPRESSION
         public? [RAW_FIR] get(): Int
 
 SUPER_TYPES:
-FILE: propertyWithInitializer.kt
+FILE: [IMPORTS] propertyWithInitializer.kt
+    [RAW_FIR] annotations container
     public? final? [SUPER_TYPES] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] val property: Int = LAZY_EXPRESSION
         public? [RAW_FIR] get(): Int
 
 TYPES:
-FILE: propertyWithInitializer.kt
+FILE: [IMPORTS] propertyWithInitializer.kt
+    [RAW_FIR] annotations container
     public? final? [TYPES] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] val property: Int = LAZY_EXPRESSION
         public? [RAW_FIR] get(): Int
 
 STATUS:
-FILE: propertyWithInitializer.kt
+FILE: [IMPORTS] propertyWithInitializer.kt
+    [RAW_FIR] annotations container
     public final [STATUS] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] val property: Int = LAZY_EXPRESSION
         public? [RAW_FIR] get(): Int
 
 EXPECT_ACTUAL_MATCHING:
-FILE: propertyWithInitializer.kt
+FILE: [IMPORTS] propertyWithInitializer.kt
+    [RAW_FIR] annotations container
     public final [EXPECT_ACTUAL_MATCHING] fun resolveMe(): R|kotlin/Unit| {
         receive#(property#)
     }
@@ -50,7 +58,8 @@ FILE: propertyWithInitializer.kt
         public? [RAW_FIR] get(): Int
 
 ARGUMENTS_OF_ANNOTATIONS:
-FILE: propertyWithInitializer.kt
+FILE: [IMPORTS] propertyWithInitializer.kt
+    [RAW_FIR] annotations container
     public final [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| {
         receive#(property#)
     }
@@ -58,7 +67,8 @@ FILE: propertyWithInitializer.kt
         public? [RAW_FIR] get(): Int
 
 CONTRACTS:
-FILE: propertyWithInitializer.kt
+FILE: [IMPORTS] propertyWithInitializer.kt
+    [RAW_FIR] annotations container
     public final [CONTRACTS] fun resolveMe(): R|kotlin/Unit| {
         receive#(property#)
     }
@@ -66,7 +76,8 @@ FILE: propertyWithInitializer.kt
         public? [RAW_FIR] get(): Int
 
 IMPLICIT_TYPES_BODY_RESOLVE:
-FILE: propertyWithInitializer.kt
+FILE: [IMPORTS] propertyWithInitializer.kt
+    [RAW_FIR] annotations container
     public final [IMPLICIT_TYPES_BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
         receive#(property#)
     }
@@ -74,7 +85,8 @@ FILE: propertyWithInitializer.kt
         public? [RAW_FIR] get(): Int
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
-FILE: propertyWithInitializer.kt
+FILE: [IMPORTS] propertyWithInitializer.kt
+    [RAW_FIR] annotations container
     public final [ANNOTATIONS_ARGUMENTS_MAPPING] fun resolveMe(): R|kotlin/Unit| {
         receive#(property#)
     }
@@ -82,7 +94,8 @@ FILE: propertyWithInitializer.kt
         public? [RAW_FIR] get(): Int
 
 BODY_RESOLVE:
-FILE: propertyWithInitializer.kt
+FILE: [IMPORTS] propertyWithInitializer.kt
+    [RAW_FIR] annotations container
     public final [BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
         <Unresolved name: receive>#(R|/property|)
     }
@@ -90,7 +103,8 @@ FILE: propertyWithInitializer.kt
         public [CONTRACTS] get(): R|kotlin/Int|
 
 FILE RAW TO BODY:
-FILE: propertyWithInitializer.kt
+FILE: [IMPORTS] propertyWithInitializer.kt
+    [BODY_RESOLVE] annotations container
     public final [BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
         <Unresolved name: receive>#(R|/property|)
     }

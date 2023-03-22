@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.renderer.FirDeclarationRendererWithAttributes
 import org.jetbrains.kotlin.fir.renderer.FirErrorExpressionExtendedRenderer
+import org.jetbrains.kotlin.fir.renderer.FirFileAnnotationsContainerRenderer
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.renderer.FirResolvePhaseRenderer
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
@@ -63,7 +64,9 @@ abstract class AbstractFirLazyDeclarationResolveTest : AbstractLowLevelApiSingle
             declarationRenderer = FirDeclarationRendererWithAttributes(),
             resolvePhaseRenderer = FirResolvePhaseRenderer(),
             errorExpressionRenderer = FirErrorExpressionExtendedRenderer(),
+            fileAnnotationsContainerRenderer = FirFileAnnotationsContainerRenderer(),
         )
+
         resolveWithClearCaches(ktFile) { firResolveSession ->
             check(firResolveSession.isSourceSession)
             val declarationToResolve = firResolveSession

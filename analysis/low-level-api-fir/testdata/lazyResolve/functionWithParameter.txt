@@ -1,48 +1,56 @@
 
 RAW_FIR:
-FILE: functionWithParameter.kt
+FILE: [RAW_FIR] functionWithParameter.kt
+    [RAW_FIR] annotations container
     public? final? [RAW_FIR] interface I : R|kotlin/Any| {
     }
     public? final? [RAW_FIR] fun resolveMe([RAW_FIR] param: I): <implicit> { LAZY_BLOCK }
 
 IMPORTS:
-FILE: functionWithParameter.kt
+FILE: [IMPORTS] functionWithParameter.kt
+    [RAW_FIR] annotations container
     public? final? [RAW_FIR] interface I : R|kotlin/Any| {
     }
     public? final? [RAW_FIR] fun resolveMe([RAW_FIR] param: I): <implicit> { LAZY_BLOCK }
 
 COMPILER_REQUIRED_ANNOTATIONS:
-FILE: functionWithParameter.kt
+FILE: [IMPORTS] functionWithParameter.kt
+    [RAW_FIR] annotations container
     public? final? [RAW_FIR] interface I : R|kotlin/Any| {
     }
     public? final? [COMPILER_REQUIRED_ANNOTATIONS] fun resolveMe([COMPILER_REQUIRED_ANNOTATIONS] param: I): <implicit> { LAZY_BLOCK }
 
 COMPANION_GENERATION:
-FILE: functionWithParameter.kt
+FILE: [IMPORTS] functionWithParameter.kt
+    [RAW_FIR] annotations container
     public? final? [RAW_FIR] interface I : R|kotlin/Any| {
     }
     public? final? [COMPANION_GENERATION] fun resolveMe([COMPANION_GENERATION] param: I): <implicit> { LAZY_BLOCK }
 
 SUPER_TYPES:
-FILE: functionWithParameter.kt
+FILE: [IMPORTS] functionWithParameter.kt
+    [RAW_FIR] annotations container
     public? final? [RAW_FIR] interface I : R|kotlin/Any| {
     }
     public? final? [SUPER_TYPES] fun resolveMe([SUPER_TYPES] param: I): <implicit> { LAZY_BLOCK }
 
 TYPES:
-FILE: functionWithParameter.kt
+FILE: [IMPORTS] functionWithParameter.kt
+    [RAW_FIR] annotations container
     public? final? [RAW_FIR] interface I : R|kotlin/Any| {
     }
     public? final? [TYPES] fun resolveMe([TYPES] param: R|I|): <implicit> { LAZY_BLOCK }
 
 STATUS:
-FILE: functionWithParameter.kt
+FILE: [IMPORTS] functionWithParameter.kt
+    [RAW_FIR] annotations container
     public? final? [RAW_FIR] interface I : R|kotlin/Any| {
     }
     public final [STATUS] fun resolveMe([STATUS] param: R|I|): <implicit> { LAZY_BLOCK }
 
 EXPECT_ACTUAL_MATCHING:
-FILE: functionWithParameter.kt
+FILE: [IMPORTS] functionWithParameter.kt
+    [RAW_FIR] annotations container
     public? final? [RAW_FIR] interface I : R|kotlin/Any| {
     }
     public final [EXPECT_ACTUAL_MATCHING] fun resolveMe([EXPECT_ACTUAL_MATCHING] param: R|I|): <implicit> {
@@ -50,7 +58,8 @@ FILE: functionWithParameter.kt
     }
 
 ARGUMENTS_OF_ANNOTATIONS:
-FILE: functionWithParameter.kt
+FILE: [IMPORTS] functionWithParameter.kt
+    [RAW_FIR] annotations container
     public? final? [RAW_FIR] interface I : R|kotlin/Any| {
     }
     public final [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe([ARGUMENTS_OF_ANNOTATIONS] param: R|I|): <implicit> {
@@ -58,7 +67,8 @@ FILE: functionWithParameter.kt
     }
 
 CONTRACTS:
-FILE: functionWithParameter.kt
+FILE: [IMPORTS] functionWithParameter.kt
+    [RAW_FIR] annotations container
     public? final? [RAW_FIR] interface I : R|kotlin/Any| {
     }
     public final [CONTRACTS] fun resolveMe([CONTRACTS] param: R|I|): <implicit> {
@@ -66,7 +76,8 @@ FILE: functionWithParameter.kt
     }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
-FILE: functionWithParameter.kt
+FILE: [IMPORTS] functionWithParameter.kt
+    [RAW_FIR] annotations container
     public? final? [RAW_FIR] interface I : R|kotlin/Any| {
     }
     public final [IMPLICIT_TYPES_BODY_RESOLVE] fun resolveMe([IMPLICIT_TYPES_BODY_RESOLVE] param: R|I|): R|kotlin/Unit| {
@@ -74,7 +85,8 @@ FILE: functionWithParameter.kt
     }
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
-FILE: functionWithParameter.kt
+FILE: [IMPORTS] functionWithParameter.kt
+    [RAW_FIR] annotations container
     public? final? [RAW_FIR] interface I : R|kotlin/Any| {
     }
     public final [ANNOTATIONS_ARGUMENTS_MAPPING] fun resolveMe([ANNOTATIONS_ARGUMENTS_MAPPING] param: R|I|): R|kotlin/Unit| {
@@ -82,7 +94,8 @@ FILE: functionWithParameter.kt
     }
 
 BODY_RESOLVE:
-FILE: functionWithParameter.kt
+FILE: [IMPORTS] functionWithParameter.kt
+    [RAW_FIR] annotations container
     public? final? [RAW_FIR] interface I : R|kotlin/Any| {
     }
     public final [BODY_RESOLVE] fun resolveMe([BODY_RESOLVE] param: R|I|): R|kotlin/Unit| {
@@ -90,7 +103,8 @@ FILE: functionWithParameter.kt
     }
 
 FILE RAW TO BODY:
-FILE: functionWithParameter.kt
+FILE: [IMPORTS] functionWithParameter.kt
+    [BODY_RESOLVE] annotations container
     public abstract [BODY_RESOLVE] interface I : R|kotlin/Any| {
     }
     public final [BODY_RESOLVE] fun resolveMe([BODY_RESOLVE] param: R|I|): R|kotlin/Unit| {

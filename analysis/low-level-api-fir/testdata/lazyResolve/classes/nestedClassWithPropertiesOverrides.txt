@@ -1,6 +1,7 @@
 
 RAW_FIR:
-FILE: nestedClassWithPropertiesOverrides.kt
+FILE: [RAW_FIR] nestedClassWithPropertiesOverrides.kt
+    [RAW_FIR] annotations container
     public? final? [RAW_FIR] interface OV : R|kotlin/Any| {
         public? final? [RAW_FIR] val originalExpressions: A
             public? [RAW_FIR] [ContainingClassKey=OV] get(): A
@@ -24,7 +25,8 @@ FILE: nestedClassWithPropertiesOverrides.kt
     }
 
 IMPORTS:
-FILE: nestedClassWithPropertiesOverrides.kt
+FILE: [IMPORTS] nestedClassWithPropertiesOverrides.kt
+    [RAW_FIR] annotations container
     public? final? [RAW_FIR] interface OV : R|kotlin/Any| {
         public? final? [RAW_FIR] val originalExpressions: A
             public? [RAW_FIR] [ContainingClassKey=OV] get(): A
@@ -48,7 +50,8 @@ FILE: nestedClassWithPropertiesOverrides.kt
     }
 
 COMPILER_REQUIRED_ANNOTATIONS:
-FILE: nestedClassWithPropertiesOverrides.kt
+FILE: [IMPORTS] nestedClassWithPropertiesOverrides.kt
+    [RAW_FIR] annotations container
     public? final? [RAW_FIR] interface OV : R|kotlin/Any| {
         public? final? [RAW_FIR] val originalExpressions: A
             public? [RAW_FIR] [ContainingClassKey=OV] get(): A
@@ -72,7 +75,8 @@ FILE: nestedClassWithPropertiesOverrides.kt
     }
 
 COMPANION_GENERATION:
-FILE: nestedClassWithPropertiesOverrides.kt
+FILE: [IMPORTS] nestedClassWithPropertiesOverrides.kt
+    [RAW_FIR] annotations container
     public? final? [RAW_FIR] interface OV : R|kotlin/Any| {
         public? final? [RAW_FIR] val originalExpressions: A
             public? [RAW_FIR] [ContainingClassKey=OV] get(): A
@@ -96,7 +100,8 @@ FILE: nestedClassWithPropertiesOverrides.kt
     }
 
 SUPER_TYPES:
-FILE: nestedClassWithPropertiesOverrides.kt
+FILE: [IMPORTS] nestedClassWithPropertiesOverrides.kt
+    [RAW_FIR] annotations container
     public? final? [RAW_FIR] interface OV : R|kotlin/Any| {
         public? final? [RAW_FIR] val originalExpressions: A
             public? [RAW_FIR] [ContainingClassKey=OV] get(): A
@@ -120,7 +125,8 @@ FILE: nestedClassWithPropertiesOverrides.kt
     }
 
 TYPES:
-FILE: nestedClassWithPropertiesOverrides.kt
+FILE: [IMPORTS] nestedClassWithPropertiesOverrides.kt
+    [RAW_FIR] annotations container
     public? final? [SUPER_TYPES] interface OV : R|kotlin/Any| {
         public? final? [SUPER_TYPES] val originalExpressions: A
             public? [SUPER_TYPES] [ContainingClassKey=OV] get(): A
@@ -144,7 +150,8 @@ FILE: nestedClassWithPropertiesOverrides.kt
     }
 
 STATUS:
-FILE: nestedClassWithPropertiesOverrides.kt
+FILE: [IMPORTS] nestedClassWithPropertiesOverrides.kt
+    [RAW_FIR] annotations container
     public abstract [SUPER_TYPES] interface OV : R|kotlin/Any| {
         public abstract [TYPES] val originalExpressions: R|A|
             public [TYPES] [ContainingClassKey=OV] get(): R|A|
@@ -168,7 +175,8 @@ FILE: nestedClassWithPropertiesOverrides.kt
     }
 
 EXPECT_ACTUAL_MATCHING:
-FILE: nestedClassWithPropertiesOverrides.kt
+FILE: [IMPORTS] nestedClassWithPropertiesOverrides.kt
+    [RAW_FIR] annotations container
     public abstract [SUPER_TYPES] interface OV : R|kotlin/Any| {
         public abstract [TYPES] val originalExpressions: R|A|
             public [TYPES] [ContainingClassKey=OV] get(): R|A|
@@ -192,7 +200,8 @@ FILE: nestedClassWithPropertiesOverrides.kt
     }
 
 ARGUMENTS_OF_ANNOTATIONS:
-FILE: nestedClassWithPropertiesOverrides.kt
+FILE: [IMPORTS] nestedClassWithPropertiesOverrides.kt
+    [RAW_FIR] annotations container
     public abstract [STATUS] interface OV : R|kotlin/Any| {
         public abstract [STATUS] val originalExpressions: R|A|
             public [STATUS] [ContainingClassKey=OV] get(): R|A|
@@ -216,7 +225,8 @@ FILE: nestedClassWithPropertiesOverrides.kt
     }
 
 CONTRACTS:
-FILE: nestedClassWithPropertiesOverrides.kt
+FILE: [IMPORTS] nestedClassWithPropertiesOverrides.kt
+    [RAW_FIR] annotations container
     public abstract [STATUS] interface OV : R|kotlin/Any| {
         public abstract [STATUS] val originalExpressions: R|A|
             public [STATUS] [ContainingClassKey=OV] get(): R|A|
@@ -240,7 +250,8 @@ FILE: nestedClassWithPropertiesOverrides.kt
     }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
-FILE: nestedClassWithPropertiesOverrides.kt
+FILE: [IMPORTS] nestedClassWithPropertiesOverrides.kt
+    [RAW_FIR] annotations container
     public abstract [STATUS] interface OV : R|kotlin/Any| {
         public abstract [STATUS] val originalExpressions: R|A|
             public [STATUS] [ContainingClassKey=OV] get(): R|A|
@@ -264,7 +275,8 @@ FILE: nestedClassWithPropertiesOverrides.kt
     }
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
-FILE: nestedClassWithPropertiesOverrides.kt
+FILE: [IMPORTS] nestedClassWithPropertiesOverrides.kt
+    [RAW_FIR] annotations container
     public abstract [STATUS] interface OV : R|kotlin/Any| {
         public abstract [STATUS] val originalExpressions: R|A|
             public [STATUS] [ContainingClassKey=OV] get(): R|A|
@@ -288,7 +300,8 @@ FILE: nestedClassWithPropertiesOverrides.kt
     }
 
 BODY_RESOLVE:
-FILE: nestedClassWithPropertiesOverrides.kt
+FILE: [IMPORTS] nestedClassWithPropertiesOverrides.kt
+    [RAW_FIR] annotations container
     public abstract [STATUS] interface OV : R|kotlin/Any| {
         public abstract [STATUS] val originalExpressions: R|A|
             public [STATUS] [ContainingClassKey=OV] get(): R|A|
@@ -312,7 +325,8 @@ FILE: nestedClassWithPropertiesOverrides.kt
     }
 
 FILE RAW TO BODY:
-FILE: nestedClassWithPropertiesOverrides.kt
+FILE: [IMPORTS] nestedClassWithPropertiesOverrides.kt
+    [BODY_RESOLVE] annotations container
     public abstract [BODY_RESOLVE] interface OV : R|kotlin/Any| {
         public abstract [BODY_RESOLVE] val originalExpressions: R|A|
             public [BODY_RESOLVE] [ContainingClassKey=OV] get(): R|A|

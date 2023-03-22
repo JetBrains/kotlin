@@ -1,4 +1,5 @@
-FILE: annonymousClass.kt
+FILE: [IMPORTS] annonymousClass.kt
+    [BODY_RESOLVE] annotations container
     public final [BODY_RESOLVE] fun x(): R|kotlin/Unit| {
         [BODY_RESOLVE] lval x: R|<anonymous>| = object : R|kotlin/Any| {
             private [BODY_RESOLVE] constructor(): R|<anonymous>| {
