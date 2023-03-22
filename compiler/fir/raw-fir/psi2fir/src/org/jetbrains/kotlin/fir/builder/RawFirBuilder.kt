@@ -540,6 +540,7 @@ open class RawFirBuilder(
             property: KtProperty,
             propertySymbol: FirPropertySymbol,
             propertyReturnType: FirTypeRef,
+            annotationsFromProperty: List<FirAnnotationCall>,
         ): FirBackingField {
             val componentVisibility = if (this?.visibility != null && this.visibility != Visibilities.Unknown) {
                 this.visibility
@@ -558,6 +559,7 @@ open class RawFirBuilder(
                     returnTypeRef = returnType
                     this.status = status
                     extractAnnotationsTo(this)
+                    this.annotations += annotationsFromProperty
                     name = BACKING_FIELD
                     symbol = FirBackingFieldSymbol(CallableId(name))
                     this.propertySymbol = propertySymbol
@@ -570,7 +572,7 @@ open class RawFirBuilder(
             } else {
                 FirDefaultPropertyBackingField(
                     moduleData = baseModuleData,
-                    annotations = mutableListOf(),
+                    annotations = annotationsFromProperty.toMutableList(),
                     returnTypeRef = propertyReturnType.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
                     isVar = property.isVar,
                     propertySymbol = propertySymbol,
@@ -654,7 +656,9 @@ open class RawFirBuilder(
                 isLocal = false
                 backingField = FirDefaultPropertyBackingField(
                     moduleData = baseModuleData,
-                    annotations = mutableListOf(),
+                    annotations = parameterAnnotations.filter {
+                        it.useSiteTarget == FIELD || it.useSiteTarget == PROPERTY_DELEGATE_FIELD
+                    }.toMutableList(),
                     returnTypeRef = returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
                     isVar = isVar,
                     propertySymbol = symbol,
@@ -687,9 +691,7 @@ open class RawFirBuilder(
                     setter.replaceAnnotations(parameterAnnotations.filterUseSiteTarget(PROPERTY_SETTER))
                 } else null
                 annotations += parameterAnnotations.filter {
-                    it.useSiteTarget == null || it.useSiteTarget == PROPERTY ||
-                            it.useSiteTarget == FIELD ||
-                            it.useSiteTarget == PROPERTY_DELEGATE_FIELD
+                    it.useSiteTarget == null || it.useSiteTarget == PROPERTY
                 }
 
                 dispatchReceiverType = currentDispatchReceiverType()
@@ -1767,6 +1769,7 @@ open class RawFirBuilder(
                         this@toFirProperty,
                         propertySymbol = symbol,
                         propertyType,
+                        emptyList(),
                     )
 
                     status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL).apply {
@@ -1801,6 +1804,7 @@ open class RawFirBuilder(
                             this@toFirProperty,
                             propertySymbol = symbol,
                             propertyType,
+                            propertyAnnotations.filter { it.useSiteTarget == FIELD || it.useSiteTarget == PROPERTY_DELEGATE_FIELD },
                         )
 
                         getter = this@toFirProperty.getter.toFirPropertyAccessor(
@@ -1856,7 +1860,7 @@ open class RawFirBuilder(
                     }
                 }
                 annotations += if (isLocal) propertyAnnotations else propertyAnnotations.filter {
-                    it.useSiteTarget != PROPERTY_GETTER &&
+                    it.useSiteTarget != FIELD && it.useSiteTarget != PROPERTY_DELEGATE_FIELD && it.useSiteTarget != PROPERTY_GETTER &&
                             (!isVar || it.useSiteTarget != SETTER_PARAMETER && it.useSiteTarget != PROPERTY_SETTER)
                 }
 

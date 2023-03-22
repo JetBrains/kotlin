@@ -38,6 +38,12 @@ open class FirPropertySymbol(
     val delegateFieldSymbol: FirDelegateFieldSymbol?
         get() = fir.delegateFieldSymbol
 
+    val delegate: FirExpression?
+        get() = fir.delegate
+
+    val hasDelegate: Boolean
+        get() = fir.delegate != null
+
     val hasInitializer: Boolean
         get() = fir.initializer != null
 
@@ -46,9 +52,6 @@ open class FirPropertySymbol(
             lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
             return fir.initializer
         }
-
-    val hasDelegate: Boolean
-        get() = fir.delegate != null
 
     val controlFlowGraphReference: FirControlFlowGraphReference?
         get() {

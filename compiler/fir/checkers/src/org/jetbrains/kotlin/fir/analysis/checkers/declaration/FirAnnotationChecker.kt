@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
+import org.jetbrains.kotlin.fir.delegatedWrapperData
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.packageFqName
@@ -118,8 +119,8 @@ object FirAnnotationChecker : FirBasicDeclarationChecker() {
                 propertySymbol.resolvedReceiverTypeRef == null && propertySymbol.resolvedContextReceivers.isEmpty()
 
         val (hint, type) = when (annotation.useSiteTarget) {
-            FIELD -> "fields" to ((declaration as? FirProperty)?.backingField?.returnTypeRef ?: return)
-            PROPERTY_DELEGATE_FIELD -> "delegate fields" to ((declaration as? FirProperty)?.delegate?.typeRef ?: return)
+            FIELD -> "fields" to ((declaration as? FirBackingField)?.returnTypeRef ?: return)
+            PROPERTY_DELEGATE_FIELD -> "delegate fields" to ((declaration as? FirBackingField)?.propertySymbol?.delegate?.typeRef ?: return)
             RECEIVER -> "receivers" to ((declaration as? FirCallableDeclaration)?.receiverParameter?.typeRef ?: return)
             FILE, PROPERTY, PROPERTY_GETTER, PROPERTY_SETTER, CONSTRUCTOR_PARAMETER, SETTER_PARAMETER, null -> when {
                 declaration is FirProperty && !declaration.isLocal -> {
@@ -216,12 +217,15 @@ object FirAnnotationChecker : FirBasicDeclarationChecker() {
                 )
             }
             FIELD -> {
-                if (annotated is FirProperty && annotated.delegateFieldSymbol != null && !annotated.hasBackingField) {
-                    reporter.reportOn(annotation.source, FirErrors.INAPPLICABLE_TARGET_PROPERTY_HAS_NO_BACKING_FIELD, context)
+                if (annotated is FirBackingField) {
+                    val propertySymbol = annotated.propertySymbol
+                    if (propertySymbol.delegateFieldSymbol != null && !propertySymbol.hasBackingField) {
+                        reporter.reportOn(annotation.source, FirErrors.INAPPLICABLE_TARGET_PROPERTY_HAS_NO_BACKING_FIELD, context)
+                    }
                 }
             }
             PROPERTY_DELEGATE_FIELD -> {
-                if (annotated is FirProperty && annotated.delegateFieldSymbol == null) {
+                if (annotated is FirBackingField && annotated.propertySymbol.delegateFieldSymbol == null) {
                     reporter.reportOn(annotation.source, FirErrors.INAPPLICABLE_TARGET_PROPERTY_HAS_NO_DELEGATE, context)
                 }
             }

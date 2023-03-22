@@ -199,6 +199,13 @@ class FirRenderer(
         override fun visitCallableDeclaration(callableDeclaration: FirCallableDeclaration) {
             renderContexts(callableDeclaration.contextReceivers)
             annotationRenderer?.render(callableDeclaration)
+            if (callableDeclaration is FirProperty) {
+                val backingField = callableDeclaration.backingField
+                if (backingField?.annotations?.isNotEmpty() == true) {
+                    print("field:")
+                    annotationRenderer?.render(backingField)
+                }
+            }
             visitMemberDeclaration(callableDeclaration)
             val receiverParameter = callableDeclaration.receiverParameter
             if (callableDeclaration !is FirProperty || callableDeclaration.isCatchParameter != true) {

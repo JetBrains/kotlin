@@ -318,13 +318,6 @@ class DelegatedMemberGenerator(private val components: Fir2IrComponents) : Fir2I
         basePropertySymbols[delegateProperty] = baseSymbols
         annotationGenerator.generate(delegateProperty, firDelegateProperty)
 
-        val getter = delegateProperty.getter!!
-        annotationGenerator.generate(getter, firDelegateProperty)
-        if (delegateProperty.isVar) {
-            val setter = delegateProperty.setter!!
-            annotationGenerator.generate(setter, firDelegateProperty)
-        }
-
         return delegateProperty
     }
 

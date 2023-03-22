@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.lightTree.fir
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.builder.Context
@@ -136,16 +137,16 @@ class ValueParameter(
             }
             backingField = FirDefaultPropertyBackingField(
                 moduleData = moduleData,
-                annotations = mutableListOf(),
+                annotations = modifiers.annotations.filter {
+                    it.useSiteTarget == FIELD || it.useSiteTarget == PROPERTY_DELEGATE_FIELD
+                }.toMutableList(),
                 returnTypeRef = returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
                 isVar = isVar,
                 propertySymbol = symbol,
                 status = status.copy(),
             )
             annotations += modifiers.annotations.filter {
-                it.useSiteTarget == null || it.useSiteTarget == AnnotationUseSiteTarget.PROPERTY ||
-                        it.useSiteTarget == AnnotationUseSiteTarget.FIELD ||
-                        it.useSiteTarget == AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD
+                it.useSiteTarget == null || it.useSiteTarget == PROPERTY
             }
             val defaultAccessorSource = propertySource?.fakeElement(KtFakeSourceElementKind.DefaultAccessor)
             getter = FirDefaultPropertyGetter(

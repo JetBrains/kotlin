@@ -24,8 +24,7 @@ object FirVolatileAnnotationChecker : FirPropertyChecker() {
     override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration.source?.kind != KtRealSourceElementKind) return
 
-        val fieldAnnotation = declaration.annotations.getAnnotationByClassIds(VOLATILE_CLASS_IDS, context.session)
-            ?: declaration.backingField?.annotations?.getAnnotationByClassIds(VOLATILE_CLASS_IDS, context.session)
+        val fieldAnnotation = declaration.backingField?.annotations?.getAnnotationByClassIds(VOLATILE_CLASS_IDS, context.session)
             ?: return
 
         if (!declaration.isVar) {

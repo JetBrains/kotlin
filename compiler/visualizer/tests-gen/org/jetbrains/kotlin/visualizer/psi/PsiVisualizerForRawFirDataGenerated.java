@@ -40,6 +40,18 @@ public class PsiVisualizerForRawFirDataGenerated extends AbstractPsiVisualizerTe
         }
 
         @Test
+        @TestMetadata("annotationOnField.kt")
+        public void testAnnotationOnField() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/annotationOnField.kt");
+        }
+
+        @Test
+        @TestMetadata("annotationOnProperty.kt")
+        public void testAnnotationOnProperty() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/annotationOnProperty.kt");
+        }
+
+        @Test
         @TestMetadata("annotationsOnNullableParenthesizedTypes.kt")
         public void testAnnotationsOnNullableParenthesizedTypes() throws Exception {
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/annotationsOnNullableParenthesizedTypes.kt");

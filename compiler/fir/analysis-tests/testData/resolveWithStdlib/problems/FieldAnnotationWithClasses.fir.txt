@@ -1,0 +1,34 @@
+FILE: FieldAnnotationWithClasses.kt
+    public final annotation class Ann : R|kotlin/Annotation| {
+        public constructor(vararg allowedTypes: R|kotlin/Array<out kotlin/reflect/KClass<*>>|): R|Ann| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val allowedTypes: R|kotlin/Array<out kotlin/reflect/KClass<*>>| = R|<local>/allowedTypes|
+            public get(): R|kotlin/Array<out kotlin/reflect/KClass<*>>|
+
+    }
+    public final fun foo(): R|kotlin/Unit| {
+        local final class Local : R|kotlin/Any| {
+            public constructor(): R|Local| {
+                super<R|kotlin/Any|>()
+            }
+
+            field:@FIELD:R|Ann|(allowedTypes = vararg(allowedTypes = <implicitArrayOf>(<getClass>(Q|Some|), <getClass>(Q|Other|)))) public final val x: R|kotlin/Int| = Int(42)
+                public get(): R|kotlin/Int|
+
+        }
+
+    }
+    public final class Some : R|kotlin/Any| {
+        public constructor(): R|Some| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class Other : R|kotlin/Any| {
+        public constructor(): R|Other| {
+            super<R|kotlin/Any|>()
+        }
+
+    }

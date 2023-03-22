@@ -1,0 +1,46 @@
+FILE: annotationOnField.kt
+    public? final? annotation class Ann : R|kotlin/Annotation| {
+        public? constructor(): R|Ann| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public? final? class CustomDelegate : R|kotlin/Any| {
+        public? constructor(): R|CustomDelegate| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? operator fun getValue(thisRef: Any?, prop: KProperty<*>): String { LAZY_BLOCK }
+
+    }
+    @FIELD:Ann() public? final? class SomeClass : R|kotlin/Any| {
+        @FIELD:Ann() public? constructor(): R|SomeClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        field:@FIELD:Ann() protected final? val simpleProperty: String = LAZY_EXPRESSION
+            protected get(): String
+
+        field:@FIELD:Ann() protected final? val simplePropertyWithAnnotationList: String = LAZY_EXPRESSION
+            protected get(): String
+
+        field:@FIELD:Ann() protected final? val delegatedProperty: Stringby LAZY_EXPRESSION
+            protected get(): <implicit> {
+                ^ this@R|/SomeClass|.D|/SomeClass.delegatedProperty|.getValue#(this@R|/SomeClass|, ::R|/SomeClass.delegatedProperty|)
+            }
+
+        field:@FIELD:Ann() public? final? val propertyWithCustomGetter: Int
+            public? get(): Int { LAZY_BLOCK }
+
+        @FIELD:Ann() public? final? fun anotherFun(@FIELD:Ann() s: String): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public? final? class WithPrimaryConstructor : R|kotlin/Any| {
+        public? constructor(a: String): R|WithPrimaryConstructor| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        field:@FIELD:Ann() public? final? val a: String = R|<local>/a|
+            public? get(): String
+
+    }

@@ -39,7 +39,8 @@ import org.jetbrains.kotlin.name.StandardClassIds
 object FirJvmFieldApplicabilityChecker : FirPropertyChecker() {
     override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
         val session = context.session
-        val annotation = declaration.getAnnotationByClassId(JVM_FIELD_ANNOTATION_CLASS_ID, session) ?: return
+        val annotation = declaration.backingField?.getAnnotationByClassId(JVM_FIELD_ANNOTATION_CLASS_ID, session)
+            ?: return
         val containingClassSymbol = declaration.containingClassLookupTag()?.toFirRegularClassSymbol(session)
 
         val problem = when {
@@ -125,7 +126,7 @@ object FirJvmFieldApplicabilityChecker : FirPropertyChecker() {
     }
 
     private fun FirPropertySymbol.hasJvmFieldAnnotation(session: FirSession): Boolean {
-        return getAnnotationByClassId(JVM_FIELD_ANNOTATION_CLASS_ID, session) != null
+        return backingFieldSymbol?.getAnnotationByClassId(JVM_FIELD_ANNOTATION_CLASS_ID, session) != null
     }
 
     private fun isInsideJvmMultifileClassFile(context: CheckerContext): Boolean {

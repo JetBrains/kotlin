@@ -6748,6 +6748,12 @@ public class FirPsiDiagnosticTestGenerated extends AbstractFirPsiDiagnosticTest 
             }
 
             @Test
+            @TestMetadata("FieldAnnotationWithClasses.kt")
+            public void testFieldAnnotationWithClasses() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/FieldAnnotationWithClasses.kt");
+            }
+
+            @Test
             @TestMetadata("immutableName.kt")
             public void testImmutableName() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/immutableName.kt");
