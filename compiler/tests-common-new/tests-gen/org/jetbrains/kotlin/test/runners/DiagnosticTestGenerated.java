@@ -5722,6 +5722,18 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         @TestDataPath("$PROJECT_ROOT")
         public class ControlFlowAnalysis {
             @Test
+            @TestMetadata("accessToCompanionInBaseEnumInitSection_function.kt")
+            public void testAccessToCompanionInBaseEnumInitSection_function() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/accessToCompanionInBaseEnumInitSection_function.kt");
+            }
+
+            @Test
+            @TestMetadata("accessToCompanionInBaseEnumInitSection_property.kt")
+            public void testAccessToCompanionInBaseEnumInitSection_property() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/accessToCompanionInBaseEnumInitSection_property.kt");
+            }
+
+            @Test
             @TestMetadata("accessValueParameterInDefaultValue_after.kt")
             public void testAccessValueParameterInDefaultValue_after() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/accessValueParameterInDefaultValue_after.kt");
