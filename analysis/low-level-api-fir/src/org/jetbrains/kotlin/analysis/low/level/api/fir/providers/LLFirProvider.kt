@@ -109,7 +109,7 @@ internal class LLFirProvider(
         declarationProvider.getTopLevelKotlinClassLikeDeclarationNamesInPackage(fqName)
 
     @NoMutableState
-    private inner class SymbolProvider : FirSymbolProvider(session) {
+    internal inner class SymbolProvider : FirSymbolProvider(session) {
         override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
             if (!providerHelper.symbolNameCache.mayHaveTopLevelClassifier(classId, mayHaveFunctionClass = false)) return null
             return getFirClassifierByFqName(classId)?.symbol
