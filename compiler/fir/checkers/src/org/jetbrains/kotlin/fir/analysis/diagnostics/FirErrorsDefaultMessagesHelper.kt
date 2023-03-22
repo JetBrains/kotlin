@@ -6,14 +6,28 @@
 package org.jetbrains.kotlin.fir.analysis.diagnostics
 
 import org.jetbrains.kotlin.diagnostics.AbstractKtDiagnosticFactory
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryForDeprecation
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryToRendererMap
+import kotlin.reflect.KProperty
 import kotlin.reflect.full.memberProperties
 
 fun KtDiagnosticFactoryToRendererMap.checkMissingMessages(objectWithErrors: Any) {
     for (property in objectWithErrors.javaClass.kotlin.memberProperties) {
-        val factory = property.getter.call(objectWithErrors) as? AbstractKtDiagnosticFactory
-        if (factory != null && !containsKey(factory)) {
-            throw IllegalStateException("No default diagnostic renderer is provided for ${property.name}")
+        when (val factory = property.getter.call(objectWithErrors)) {
+            is AbstractKtDiagnosticFactory -> {
+                checkMissingMessagesForFactory(factory, property)
+            }
+            is KtDiagnosticFactoryForDeprecation<*> -> {
+                checkMissingMessagesForFactory(factory.warningFactory, property)
+                checkMissingMessagesForFactory(factory.errorFactory, property)
+            }
+            else -> {}
         }
+    }
+}
+
+fun KtDiagnosticFactoryToRendererMap.checkMissingMessagesForFactory(factory: AbstractKtDiagnosticFactory, property: KProperty<*>) {
+    if (!containsKey(factory)) {
+        throw IllegalStateException("No default diagnostic renderer is provided for ${property.name}")
     }
 }

@@ -136,6 +136,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONST_VAL_WITH_GE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONST_VAL_WITH_NON_CONST_INITIALIZER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONTRACT_NOT_ALLOWED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CYCLE_IN_ANNOTATION_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CYCLIC_CONSTRUCTOR_DELEGATION_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CYCLIC_GENERIC_UPPER_BOUND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CYCLIC_INHERITANCE_HIERARCHY
@@ -219,6 +220,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FINAL_SUPERTYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FINAL_UPPER_BOUND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FLOAT_LITERAL_OUT_OF_RANGE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_BINARY_MOD
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPOSED_PROPERTY_TYPE_IN_CONSTRUCTOR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FORBIDDEN_BINARY_MOD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FORBIDDEN_VARARG_PARAMETER_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FUNCTION_CALL_EXPECTED
@@ -291,6 +293,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_CHARACTER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_DEFAULT_FUNCTIONAL_PARAMETER_FOR_INLINE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_IF_AS_EXPRESSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_TYPE_OF_ANNOTATION_MEMBER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVISIBLE_REFERENCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVISIBLE_SETTER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IS_ENUM_ENTRY
@@ -474,6 +477,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REPEATED_MODIFIER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RESERVED_MEMBER_INSIDE_VALUE_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RESOLUTION_TO_CLASSIFIER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RESOLVED_TO_UNDERSCORE_NAMED_CATCH_PARAMETER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RESTRICTED_RETENTION_FOR_EXPRESSION_ANNOTATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RESULT_TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_FOR_BUILT_IN_SUSPEND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY
@@ -856,6 +860,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             EMPTY
         )
         map.put(ANNOTATION_ON_SUPERCLASS, "Annotations on superclass are meaningless")
+        map.put(RESTRICTED_RETENTION_FOR_EXPRESSION_ANNOTATION, "Expression annotations with retention other than SOURCE are prohibited")
         map.put(WRONG_ANNOTATION_TARGET, "This annotation is not applicable to target ''{0}''", TO_STRING)
         map.put(INAPPLICABLE_TARGET_ON_PROPERTY, "''@{0}:'' annotations could be applied only to property declarations", TO_STRING)
         map.put(
@@ -963,6 +968,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(EXPOSED_RECEIVER_TYPE, "{0} member exposes its {2} receiver type ''{1}''", TO_STRING, DECLARATION_NAME, TO_STRING)
         map.put(EXPOSED_PROPERTY_TYPE, "{0} property exposes its {2} type ''{1}''", TO_STRING, DECLARATION_NAME, TO_STRING)
+        map.put(EXPOSED_PROPERTY_TYPE_IN_CONSTRUCTOR, "''{0}'' property exposes its ''{2}'' type{1}", TO_STRING, TO_STRING, TO_STRING)
         map.put(EXPOSED_PARAMETER_TYPE, "{0} function exposes its {2} parameter type ''{1}''", TO_STRING, DECLARATION_NAME, TO_STRING)
         map.put(EXPOSED_SUPER_INTERFACE, "{0} sub-interface exposes its {2} supertype ''{1}''", TO_STRING, DECLARATION_NAME, TO_STRING)
         map.put(EXPOSED_SUPER_CLASS, "{0} subclass exposes its {2} supertype ''{1}''", TO_STRING, DECLARATION_NAME, TO_STRING)
@@ -1268,7 +1274,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
 
         map.put(IMPLICIT_NOTHING_RETURN_TYPE, "'Nothing' return type needs to be specified explicitly")
-        map.put(IMPLICIT_NOTHING_PROPERTY_TYPE, "'Nothing' property type needs to be specified explicitly");
+        map.put(IMPLICIT_NOTHING_PROPERTY_TYPE, "'Nothing' property type needs to be specified explicitly")
 
         map.put(CYCLIC_GENERIC_UPPER_BOUND, "Type parameter has cyclic upper bounds")
 
@@ -1390,6 +1396,12 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "{0} is not abstract and does not implement abstract base class member {1}",
             RENDER_CLASS_OR_OBJECT,
             DECLARATION_NAME
+        )
+        map.put(
+            INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER,
+            "{0} inherits invisible abstract members: {1}",
+            DECLARATION_NAME,
+            FQ_NAMES_IN_TYPES
         )
         map.put(AMBIGUOUS_ANONYMOUS_TYPE_INFERRED, "Right-hand side has anonymous type. Please specify type explicitly", NOT_RENDERED)
         map.put(
@@ -1698,6 +1710,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(CONST_VAL_WITHOUT_INITIALIZER, "Const 'val' should have an initializer")
         map.put(CONST_VAL_WITH_NON_CONST_INITIALIZER, "Const 'val' initializer should be a constant value")
         map.put(NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION, "Only 'const val' can be used in constant expressions")
+        map.put(CYCLE_IN_ANNOTATION_PARAMETER, "Type of this parameter is cyclic")
 
         // Multi-platform projects
         map.put(EXPECTED_DECLARATION_WITH_BODY, "Expected declaration must not have a body")
