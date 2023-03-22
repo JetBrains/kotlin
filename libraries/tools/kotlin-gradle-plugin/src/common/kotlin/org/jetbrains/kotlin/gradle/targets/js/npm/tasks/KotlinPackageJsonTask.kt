@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm.tasks
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
@@ -72,6 +74,14 @@ abstract class KotlinPackageJsonTask :
             .getCompilationNpmRequirements(projectPath, compilationDisambiguatedName.get())
             .map { it.toString() }
             .sorted()
+    }
+
+    @get:IgnoreEmptyDirectories
+    @get:NormalizeLineEndings
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    internal val aggregatedConfiguration: FileCollection by lazy {
+        compilationResolver.aggregatedConfiguration
     }
 
     // nested inputs are processed in configuration phase

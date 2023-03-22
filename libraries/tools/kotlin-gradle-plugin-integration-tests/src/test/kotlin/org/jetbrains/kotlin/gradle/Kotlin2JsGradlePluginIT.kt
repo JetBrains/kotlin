@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.gradle.util.normalizePath
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.DisabledIf
 import java.nio.file.Files
-import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.zip.ZipFile
 import kotlin.io.path.*
@@ -85,26 +84,31 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
     fun testJsCompositeBuild(gradleVersion: GradleVersion) {
         project("js-composite-build", gradleVersion) {
             buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
-            gradleProperties.appendText(jsCompilerType(KotlinJsCompilerType.IR))
 
             subProject("lib").apply {
                 buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
-                gradleProperties.appendText(jsCompilerType(KotlinJsCompilerType.IR))
             }
 
-            fun asyncVersion(rootModulePath: String, moduleName: String): String =
+            subProject("base").apply {
+                buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
+            }
+
+            fun moduleVersion(rootModulePath: String, moduleName: String, pathToPackageJson: String): String =
                 NpmProjectModules(projectPath.resolve(rootModulePath).toFile())
                     .require(moduleName)
-                    .let { Paths.get(it).parent.parent.resolve(NpmProject.PACKAGE_JSON) }
+                    .let { Paths.get(it).parent.resolve(pathToPackageJson).resolve(NpmProject.PACKAGE_JSON) }
                     .let { fromSrcPackageJson(it.toFile()) }
                     .let { it!!.version }
 
             build("build") {
-                val appAsyncVersion = asyncVersion("build/js/node_modules/js-composite-build", "async")
+                val appAsyncVersion = moduleVersion("build/js/node_modules/js-composite-build", "async", "..")
                 assertEquals("3.2.0", appAsyncVersion)
 
-                val libAsyncVersion = asyncVersion("build/js/node_modules/lib2", "async")
+                val libAsyncVersion = moduleVersion("build/js/node_modules/lib2", "async", "..")
                 assertEquals("2.6.2", libAsyncVersion)
+
+                val appDecamelizeVersion = moduleVersion("build/js/node_modules/base2", "decamelize", ".")
+                assertEquals("1.1.1", appDecamelizeVersion)
             }
         }
     }

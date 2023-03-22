@@ -182,6 +182,10 @@ internal open class ProcessedFilesCache(
         file: File,
         compute: () -> File?
     ): String? {
+        if (!file.exists()) {
+            return null
+        }
+
         val hash = fileHasher.hash(file).toByteArray()
         val old = state[hash]
 
