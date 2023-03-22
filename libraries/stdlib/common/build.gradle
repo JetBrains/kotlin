@@ -22,6 +22,7 @@ sourceSets {
         }
     }
     test {
+        if (!BuildPropertiesKt.getKotlinBuildProperties(project).inIdeaSync)
         kotlin {
             srcDir commonTestSrcDir
             srcDir 'test'
