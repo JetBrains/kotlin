@@ -1,3 +1,4 @@
+// IGNORE_REVERSED_RESOLVE
 val list: List<String>
     field = mutableListOf<String>()
 

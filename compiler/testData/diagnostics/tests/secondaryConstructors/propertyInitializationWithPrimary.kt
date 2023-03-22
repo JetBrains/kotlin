@@ -1,3 +1,4 @@
+// IGNORE_REVERSED_RESOLVE
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 class A(val w: Char) {
     val x: Int

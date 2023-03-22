@@ -1,3 +1,4 @@
+// IGNORE_REVERSED_RESOLVE
 // FILE: ExceptionTracker.kt
 
 interface ExceptionTracker : <!CYCLIC_INHERITANCE_HIERARCHY!>LockBasedStorageManager.ExceptionHandlingStrategy<!> {

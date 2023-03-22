@@ -1,3 +1,4 @@
+// IGNORE_REVERSED_RESOLVE
 // !LANGUAGE: +ReadDeserializedContracts +UseCallsInPlaceEffect
 // See KT-17479
 

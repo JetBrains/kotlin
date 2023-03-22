@@ -1,3 +1,4 @@
+// IGNORE_REVERSED_RESOLVE
 // FIR_IDENTICAL
 
 private const val A = 0L

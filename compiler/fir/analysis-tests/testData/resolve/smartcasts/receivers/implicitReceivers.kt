@@ -1,3 +1,4 @@
+// IGNORE_REVERSED_RESOLVE
 // !DUMP_CFG
 class A {
     fun foo() {}

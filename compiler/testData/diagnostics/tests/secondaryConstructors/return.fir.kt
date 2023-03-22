@@ -1,3 +1,4 @@
+// IGNORE_REVERSED_RESOLVE
 class A {
     init {
         <!RETURN_NOT_ALLOWED!>return<!>

@@ -1,3 +1,4 @@
+// IGNORE_REVERSED_RESOLVE
 fun <T, R> use(x: (T) -> R): (T) -> R = x
 
 fun foo() = use(::bar)

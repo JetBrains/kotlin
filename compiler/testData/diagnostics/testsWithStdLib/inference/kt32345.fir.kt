@@ -1,3 +1,4 @@
+// IGNORE_REVERSED_RESOLVE
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 
 import kotlin.reflect.KProperty

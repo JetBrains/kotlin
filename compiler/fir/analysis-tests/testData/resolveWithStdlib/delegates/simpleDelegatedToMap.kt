@@ -1,3 +1,4 @@
+// IGNORE_REVERSED_RESOLVE
 class C(val map: MutableMap<String, Any>) {
     var foo by map
 }

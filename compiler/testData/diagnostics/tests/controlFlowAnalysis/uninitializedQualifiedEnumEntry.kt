@@ -1,3 +1,4 @@
+// IGNORE_REVERSED_RESOLVE
 // FIR_IDENTICAL
 // LANGUAGE: +ProhibitQualifiedAccessToUninitializedEnumEntry
 // ISSUE: KT-41124

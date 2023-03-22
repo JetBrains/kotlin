@@ -1,3 +1,4 @@
+// IGNORE_REVERSED_RESOLVE
 // !LANGUAGE: -ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion
 // FILE: J.java
 public class J {

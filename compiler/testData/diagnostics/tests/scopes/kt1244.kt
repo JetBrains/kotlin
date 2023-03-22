@@ -1,3 +1,4 @@
+// IGNORE_REVERSED_RESOLVE
 //KT-1244 Frontend allows access to private members of other classes
 
 package kt1244

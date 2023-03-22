@@ -1,3 +1,4 @@
+// IGNORE_REVERSED_RESOLVE
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 open class A protected constructor(x: Int) {

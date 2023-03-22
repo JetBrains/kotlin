@@ -1,3 +1,4 @@
+// IGNORE_REVERSED_RESOLVE
 class NoPrimary {
     val x: String
 

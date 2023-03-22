@@ -1,3 +1,4 @@
+// IGNORE_REVERSED_RESOLVE
 // WITH_STDLIB
 
 import kotlin.properties.ReadWriteProperty

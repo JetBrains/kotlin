@@ -1,3 +1,4 @@
+// IGNORE_REVERSED_RESOLVE
 class A {
     val it: Number
         field = 4

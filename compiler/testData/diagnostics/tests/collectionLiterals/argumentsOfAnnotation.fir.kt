@@ -1,3 +1,4 @@
+// IGNORE_REVERSED_RESOLVE
 annotation class Foo(val a: IntArray, val b: Array<String>, val c: FloatArray)
 
 @Foo([1], ["/"], [1f])

@@ -1,3 +1,4 @@
+// IGNORE_REVERSED_RESOLVE
 fun foo(a: (String) -> Unit) {
     "".<!UNRESOLVED_REFERENCE!>a<!>()
 }

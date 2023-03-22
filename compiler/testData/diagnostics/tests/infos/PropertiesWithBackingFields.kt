@@ -1,3 +1,4 @@
+// IGNORE_REVERSED_RESOLVE
 // FIR_IDENTICAL
 abstract class Test() {
     abstract val x : Int

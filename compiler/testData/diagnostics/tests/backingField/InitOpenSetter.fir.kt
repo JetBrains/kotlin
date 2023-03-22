@@ -1,3 +1,4 @@
+// IGNORE_REVERSED_RESOLVE
 abstract class My(val v: Int) {
     // Ok: variable is just abstract
     abstract var x: Int

@@ -1,3 +1,4 @@
+// IGNORE_REVERSED_RESOLVE
 // !LANGUAGE: +ProperCheckAnnotationsTargetInTypeUsePositions -ClassTypeParameterAnnotations
 
 annotation class A1

@@ -1,3 +1,4 @@
+// IGNORE_REVERSED_RESOLVE
 class A(foo: Int.() -> Unit) {
     init {
         4.foo()

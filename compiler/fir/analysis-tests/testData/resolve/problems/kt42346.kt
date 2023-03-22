@@ -1,3 +1,4 @@
+// IGNORE_REVERSED_RESOLVE
 // FILE: MagicConstant.java
 
 public @interface MagicConstant {

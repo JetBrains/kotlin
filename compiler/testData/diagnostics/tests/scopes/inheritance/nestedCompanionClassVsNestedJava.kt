@@ -1,3 +1,4 @@
+// IGNORE_REVERSED_RESOLVE
 // !LANGUAGE: -ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion
 
 // FILE: 1.kt

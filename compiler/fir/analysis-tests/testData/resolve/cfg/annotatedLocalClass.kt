@@ -1,3 +1,4 @@
+// IGNORE_REVERSED_RESOLVE
 // !DUMP_CFG
 
 annotation class Ann

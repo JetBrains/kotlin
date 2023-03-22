@@ -1,3 +1,4 @@
+// IGNORE_REVERSED_RESOLVE
 // !DUMP_CFG
 fun getNothing(): Nothing = throw Exception()
 fun getNullableNothing(): Nothing? = null

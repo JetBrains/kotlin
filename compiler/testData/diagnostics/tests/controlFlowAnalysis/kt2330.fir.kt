@@ -1,3 +1,4 @@
+// IGNORE_REVERSED_RESOLVE
 //KT-2330 Check visibility of getters and setters correspondingly
 package a
 

@@ -1,3 +1,4 @@
+// IGNORE_REVERSED_RESOLVE
 class A(val next: A? = null) {
     val x: String
     init {

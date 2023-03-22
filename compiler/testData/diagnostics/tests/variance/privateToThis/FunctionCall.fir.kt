@@ -1,3 +1,4 @@
+// IGNORE_REVERSED_RESOLVE
 fun <T> getT(): T = null!!
 
 class Test<in I> {

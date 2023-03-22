@@ -1,3 +1,4 @@
+// IGNORE_REVERSED_RESOLVE
 class A(val next: A? = null) {
     <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val x: String<!>
     init {

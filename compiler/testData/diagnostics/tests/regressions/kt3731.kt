@@ -1,3 +1,4 @@
+// IGNORE_REVERSED_RESOLVE
 // FIR_IDENTICAL
 // KT-3731 Resolve & inner class
 

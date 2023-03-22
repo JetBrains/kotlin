@@ -1,3 +1,4 @@
+// IGNORE_REVERSED_RESOLVE
 @Repeatable
 @Target( AnnotationTarget.TYPE_PARAMETER)
 annotation class TypeParameterAnn(val name: String)

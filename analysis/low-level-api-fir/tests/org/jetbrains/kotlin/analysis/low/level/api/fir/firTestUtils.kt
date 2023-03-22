@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,13 +12,11 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirSourceResolveS
 import org.jetbrains.kotlin.analysis.project.structure.getKtModule
 import org.jetbrains.kotlin.analysis.test.framework.services.environmentManager
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousInitializerSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.services.PreAnalysisHandler
@@ -64,4 +62,24 @@ internal fun TestConfigurationBuilder.useFirSessionConfigurator(configurator: (T
     }
 
     usePreAnalysisHandlers(::ConfiguratorPreAnalysisHandler)
+}
+
+inline fun <reified E : FirElement> FirElement.collectAllElementsOfType(): List<E> {
+    val result = mutableListOf<E>()
+    this.accept(object : FirVisitorVoid() {
+        override fun visitElement(element: FirElement) {
+            if (element is E) result += element
+            element.acceptChildren(this)
+        }
+
+    })
+
+    return result
+}
+
+fun Collection<FirFile>.getDeclarationsToResolve() = flatMap { it.collectAllElementsOfType<FirDeclaration>() }.filterNot { declaration ->
+    declaration is FirFile ||
+            declaration is FirBackingField ||
+            declaration is FirAnonymousFunction ||
+            declaration is FirValueParameter && declaration.containingFunctionSymbol is FirAnonymousFunctionSymbol
 }

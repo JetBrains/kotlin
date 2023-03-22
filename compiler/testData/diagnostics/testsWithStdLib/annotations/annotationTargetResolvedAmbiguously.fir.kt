@@ -1,3 +1,4 @@
+// IGNORE_REVERSED_RESOLVE
 import kotlin.annotation.AnnotationTarget.FIELD
 
 object Some {

@@ -1,3 +1,4 @@
+// IGNORE_REVERSED_RESOLVE
 class My(var x: String) {
 
     var y: String

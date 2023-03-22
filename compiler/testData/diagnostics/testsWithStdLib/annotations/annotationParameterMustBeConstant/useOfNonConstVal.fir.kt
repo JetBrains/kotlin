@@ -1,3 +1,4 @@
+// IGNORE_REVERSED_RESOLVE
 val nonConst = 1
 
 const val constConst = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>nonConst * nonConst + 2<!>

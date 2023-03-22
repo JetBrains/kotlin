@@ -1,3 +1,4 @@
+// IGNORE_REVERSED_RESOLVE
 class A {
     @ann init {}
     @aaa init {}

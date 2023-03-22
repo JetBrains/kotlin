@@ -1,3 +1,4 @@
+// IGNORE_REVERSED_RESOLVE
 // FIR_IDENTICAL
 // FILE: A.java
 public class A {

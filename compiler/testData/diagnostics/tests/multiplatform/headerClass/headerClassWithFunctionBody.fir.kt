@@ -1,3 +1,4 @@
+// IGNORE_REVERSED_RESOLVE
 // MODULE: m1-common
 // FILE: common.kt
 expect class Foo(

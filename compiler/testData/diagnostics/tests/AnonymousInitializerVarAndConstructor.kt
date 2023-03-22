@@ -1,3 +1,4 @@
+// IGNORE_REVERSED_RESOLVE
 // FIR_IDENTICAL
 // http://youtrack.jetbrains.net/issue/KT-419
 

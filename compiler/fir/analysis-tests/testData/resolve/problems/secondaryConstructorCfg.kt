@@ -1,3 +1,4 @@
+// IGNORE_REVERSED_RESOLVE
 // !DUMP_CFG
 class B(p0: String) {
     val p1 = p0

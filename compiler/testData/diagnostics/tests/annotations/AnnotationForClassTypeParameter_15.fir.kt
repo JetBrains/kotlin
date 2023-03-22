@@ -1,3 +1,4 @@
+// IGNORE_REVERSED_RESOLVE
 // !LANGUAGE: -ClassTypeParameterAnnotations
 @Target(AnnotationTarget.TYPE_PARAMETER)
 annotation class A1

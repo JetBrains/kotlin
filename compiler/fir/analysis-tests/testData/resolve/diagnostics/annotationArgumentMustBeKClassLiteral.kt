@@ -1,3 +1,4 @@
+// IGNORE_REVERSED_RESOLVE
 import kotlin.reflect.KClass
 
 @Repeatable

@@ -1,3 +1,4 @@
+// IGNORE_REVERSED_RESOLVE
 @<!UNRESOLVED_REFERENCE!><!SYNTAX!><!>myAnnotation<!> public
 package illegal_modifiers
 

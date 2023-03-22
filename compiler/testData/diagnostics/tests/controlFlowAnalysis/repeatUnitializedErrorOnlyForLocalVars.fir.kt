@@ -1,3 +1,4 @@
+// IGNORE_REVERSED_RESOLVE
 package aa
 
 val a : Int = b

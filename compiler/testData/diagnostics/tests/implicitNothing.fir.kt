@@ -1,3 +1,4 @@
+// IGNORE_REVERSED_RESOLVE
 fun <!IMPLICIT_NOTHING_RETURN_TYPE!>foo<!>() = throw Exception()
 
 fun <!IMPLICIT_NOTHING_RETURN_TYPE!>bar<!>() = null!!

@@ -1,3 +1,4 @@
+// IGNORE_REVERSED_RESOLVE
 // ISSUE: KT-56863
 interface I
 

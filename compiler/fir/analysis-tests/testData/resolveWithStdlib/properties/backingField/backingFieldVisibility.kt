@@ -1,3 +1,4 @@
+// IGNORE_REVERSED_RESOLVE
 // MODULE: lib
 // FILE: A.kt
 

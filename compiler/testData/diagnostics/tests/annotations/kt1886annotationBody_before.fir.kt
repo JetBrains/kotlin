@@ -1,3 +1,4 @@
+// IGNORE_REVERSED_RESOLVE
 // !LANGUAGE: -NestedClassesInAnnotations
 
 annotation class Annotation2() {

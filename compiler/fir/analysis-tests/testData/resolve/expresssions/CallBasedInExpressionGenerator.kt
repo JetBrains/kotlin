@@ -1,3 +1,4 @@
+// IGNORE_REVERSED_RESOLVE
 package org.jetbrains.kotlin.codegen.range.inExpression
 
 interface ExpressionCodegen

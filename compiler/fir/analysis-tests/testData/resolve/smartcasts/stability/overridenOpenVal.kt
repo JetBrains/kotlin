@@ -1,3 +1,4 @@
+// IGNORE_REVERSED_RESOLVE
 // !DUMP_CFG
 open class A(open val x: Any)
 

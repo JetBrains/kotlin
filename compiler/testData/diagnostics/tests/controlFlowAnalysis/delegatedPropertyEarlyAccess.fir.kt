@@ -1,3 +1,4 @@
+// IGNORE_REVERSED_RESOLVE
 // ISSUE: KT-10869, KT-56682
 
 import kotlin.reflect.KProperty
