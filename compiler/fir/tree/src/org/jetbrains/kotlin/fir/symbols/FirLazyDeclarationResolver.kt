@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.fir.symbols
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
+import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 
 /**
  * A component to lazy resolve [FirBasedSymbol] to the required phase.
@@ -24,7 +26,7 @@ abstract class FirLazyDeclarationResolver : FirSessionComponent {
 
     abstract fun finishResolvingPhase(phase: FirResolvePhase)
 
-    fun disableLazyResolveContractChecks(){
+    fun disableLazyResolveContractChecks() {
         lazyResolveContractChecksEnabled = false
     }
 
@@ -39,9 +41,12 @@ abstract class FirLazyDeclarationResolver : FirSessionComponent {
     }
 
     abstract fun lazyResolveToPhase(symbol: FirBasedSymbol<*>, toPhase: FirResolvePhase)
+    abstract fun lazyResolveToPhaseWithCallableMembers(symbol: FirClassSymbol<*>, toPhase: FirResolvePhase)
 }
 
 val FirSession.lazyDeclarationResolver: FirLazyDeclarationResolver by FirSession.sessionComponentAccessor()
+
+private val FirDeclaration.lazyDeclarationResolver get() = moduleData.session.lazyDeclarationResolver
 
 /**
  * Lazy resolve [FirBasedSymbol] to [FirResolvePhase].
@@ -58,9 +63,7 @@ val FirSession.lazyDeclarationResolver: FirLazyDeclarationResolver by FirSession
  * @param toPhase the minimum phase, the declaration should be resolved to after an execution of the [lazyResolveToPhase]
  */
 fun FirBasedSymbol<*>.lazyResolveToPhase(toPhase: FirResolvePhase) {
-    val session = fir.moduleData.session
-    val phaseManager = session.lazyDeclarationResolver
-    phaseManager.lazyResolveToPhase(this, toPhase)
+    fir.lazyDeclarationResolver.lazyResolveToPhase(this, toPhase)
 }
 
 /**
@@ -70,4 +73,36 @@ fun FirBasedSymbol<*>.lazyResolveToPhase(toPhase: FirResolvePhase) {
  */
 fun FirDeclaration.lazyResolveToPhase(toPhase: FirResolvePhase) {
     symbol.lazyResolveToPhase(toPhase)
+}
+
+/**
+ * Lazy resolve [FirClassSymbol] and its callable members to [FirResolvePhase].
+ *
+ * Might resolve additional required declarations.
+ *
+ * @receiver [FirClassSymbol] which should be resolved and which callable members should be resolved
+ * @param toPhase the minimum phase, the declaration and callable members should be resolved
+ * to after an execution of the [lazyResolveToPhaseWithCallableMembers]
+ *
+ * Can be used instead of [lazyResolveToPhase] to avoid extra resolve calls.
+ * Effectively the same as:
+ * ```
+ * kclass.lazyResolveToPhase(phase)
+ * kclass.callableDeclarations.forEach { it.lazyResolveToPhase(phase) }
+ * ```
+ *
+ * @see lazyResolveToPhase
+ */
+
+fun FirClassSymbol<*>.lazyResolveToPhaseWithCallableMembers(toPhase: FirResolvePhase) {
+    fir.lazyDeclarationResolver.lazyResolveToPhaseWithCallableMembers(this, toPhase)
+}
+
+/**
+ * Lazy resolve [FirClass] and its callable members to [FirResolvePhase].
+ *
+ * @see lazyResolveToPhaseWithCallableMembers
+ */
+fun FirClass.lazyResolveToPhaseWithCallableMembers(toPhase: FirResolvePhase) {
+    symbol.lazyResolveToPhaseWithCallableMembers(toPhase)
 }
