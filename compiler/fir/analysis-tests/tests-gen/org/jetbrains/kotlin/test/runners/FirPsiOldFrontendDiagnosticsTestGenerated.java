@@ -970,6 +970,18 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         }
 
         @Test
+        @TestMetadata("suppressExposedPropertyTypeInConstructor.kt")
+        public void testSuppressExposedPropertyTypeInConstructor() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/suppressExposedPropertyTypeInConstructor.kt");
+        }
+
+        @Test
+        @TestMetadata("suppressExposedPropertyTypeInPrivateConstructor.kt")
+        public void testSuppressExposedPropertyTypeInPrivateConstructor() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/suppressExposedPropertyTypeInPrivateConstructor.kt");
+        }
+
+        @Test
         @TestMetadata("SyntaxErrorInTestHighlighting.kt")
         public void testSyntaxErrorInTestHighlighting() throws Exception {
             runTest("compiler/testData/diagnostics/tests/SyntaxErrorInTestHighlighting.kt");
