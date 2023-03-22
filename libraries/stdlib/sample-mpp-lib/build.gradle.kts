@@ -1,7 +1,6 @@
 import org.gradle.api.internal.component.SoftwareComponentInternal
 import org.gradle.api.internal.component.UsageContext
 import org.gradle.api.internal.project.ProjectInternal
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 
 plugins {
@@ -105,7 +104,13 @@ publishing {
             // creates a variant from existing configuration or creates new one
             variant("jvmApiElements")
             variant("jvmRuntimeElements")
-            variant("jvmSourcesElements")
+            variant("customSourcesConfiguration") {
+                name = "jvmSourcesElements"
+
+                attributes {
+                    copyAttributes(from = project.configurations.getByName("jvmSourcesElements").attributes, to = this)
+                }
+            }
 
             variant("metadataApiElements")
 //            variant("metadataSourcesElements")
@@ -137,6 +142,17 @@ publishing {
     }
 }
 
+fun copyAttributes(from: AttributeContainer, to: AttributeContainer,) {
+    // capture type argument T
+    fun <T : Any> copyOneAttribute(from: AttributeContainer, to: AttributeContainer, key: Attribute<T>) {
+        val value = checkNotNull(from.getAttribute(key))
+        to.attribute(key, value)
+    }
+    for (key in from.keySet()) {
+        copyOneAttribute(from, to, key)
+    }
+}
+
 class MultiModuleMavenPublishingConfiguration() {
     val modules = mutableMapOf<String, Module>()
 
@@ -145,8 +161,9 @@ class MultiModuleMavenPublishingConfiguration() {
         val includes = mutableSetOf<Module>()
 
         class Variant(
-            val name: String
+            val configurationName: String
         ) {
+            var name: String = configurationName
             val attributesConfigurations = mutableListOf<AttributeContainer.() -> Unit>()
             fun attributes(code: AttributeContainer.() -> Unit) {
                 attributesConfigurations += code
@@ -173,8 +190,8 @@ class MultiModuleMavenPublishingConfiguration() {
             mavenPublicationConfigurations += code
         }
 
-        fun variant(name: String, code: Variant.() -> Unit = {}): Variant {
-            val variant = variants.getOrPut(name) { Variant(name) }
+        fun variant(fromConfigurationName: String, code: Variant.() -> Unit = {}): Variant {
+            val variant = variants.getOrPut(fromConfigurationName) { Variant(fromConfigurationName) }
             variant.code()
             return variant
         }
@@ -223,16 +240,21 @@ fun configureMultiModuleMavenPublishing(code: MultiModuleMavenPublishingConfigur
     }
 }
 
-fun Project.createModulePublication(module: MultiModuleMavenPublishingConfiguration.Module): AdhocComponentWithVariants {
+fun Project.createModulePublication(module: MultiModuleMavenPublishingConfiguration.Module): SoftwareComponent {
     val softwareComponentFactory = (project as ProjectInternal).services.get(SoftwareComponentFactory::class.java)
     val component = softwareComponentFactory.adhoc(module.name)
     module.variants.values.forEach { addVariant(component, it) }
 
-    return component
+    val newNames = module.variants.map { it.key to it.value.name }.filter { it.first != it.second }.toMap()
+    return if (newNames.isNotEmpty()) {
+        ComponentWithRenamedVariants(newNames, component as SoftwareComponentInternal)
+    } else {
+        component
+    }
 }
 
 fun Project.addVariant(component: AdhocComponentWithVariants, variant: MultiModuleMavenPublishingConfiguration.Module.Variant) {
-    val configuration = configurations.getOrCreate(variant.name)
+    val configuration = configurations.getOrCreate(variant.configurationName)
     configuration.apply {
         isCanBeResolved = false
         isCanBeConsumed = true
@@ -252,6 +274,28 @@ fun Project.addVariant(component: AdhocComponentWithVariants, variant: MultiModu
 
     component.addVariantsFromConfiguration(configuration) {
         variant.variantDetailsConfigurations.forEach { configure -> configure() }
+    }
+}
+
+private class RenamedVariant(val newName: String, context: UsageContext) : UsageContext by context {
+    override fun getName(): String = newName
+}
+
+private class ComponentWithRenamedVariants(
+    val newNames: Map<String, String>,
+    private val base: SoftwareComponentInternal
+): SoftwareComponentInternal by base {
+
+    override fun getName(): String = base.name
+    override fun getUsages(): Set<UsageContext> {
+        return base.usages.map {
+            val newName = newNames[it.name]
+            if (newName != null) {
+                RenamedVariant(newName, it)
+            } else {
+                it
+            }
+        }.toSet()
     }
 }
 
