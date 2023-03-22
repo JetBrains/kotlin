@@ -569,6 +569,8 @@ if (buildProperties.inJpsBuildIdeaSync) {
             ":kotlin-stdlib-jvm-minimal-for-test",
             ":tools:binary-compatibility-validator",
             ":tools:kotlin-stdlib-gen",
+            ":sample-mpp-lib",
+            ":sample-mpp-lib:sample-consuming-app",
 
             ":kotlin-test",
             ":kotlin-test:kotlin-test-js",
@@ -580,6 +582,8 @@ if (buildProperties.inJpsBuildIdeaSync) {
 
     project(':kotlin-stdlib-common').projectDir = "$rootDir/libraries/stdlib/common" as File
     project(':kotlin-stdlib').projectDir = "$rootDir/libraries/stdlib/jvm" as File
+    project(':sample-mpp-lib').projectDir = "$rootDir/libraries/stdlib/sample-mpp-lib" as File
+    project(':sample-mpp-lib:sample-consuming-app').projectDir = "$rootDir/libraries/stdlib/sample-mpp-lib/sample-consuming-app" as File
     project(':kotlin-stdlib-js').projectDir = "$rootDir/libraries/stdlib/js-v1" as File
     project(':kotlin-stdlib-js-ir').projectDir = "$rootDir/libraries/stdlib/js-ir" as File
     project(':kotlin-dom-api-compat').projectDir = "$rootDir/libraries/kotlin-dom-api-compat" as File
