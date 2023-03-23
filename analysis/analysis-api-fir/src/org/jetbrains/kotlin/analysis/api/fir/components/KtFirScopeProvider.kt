@@ -193,13 +193,20 @@ internal class KtFirScopeProvider(
         }
 
         val firScopes = towerDataElementsIndexed.flatMap { (index, towerDataElement) ->
-            towerDataElement.getAvailableScopes().map { IndexedValue(index, it) }
+            val availableScopes = towerDataElement.getAvailableScopes().flatMap { flattenFirScope(it) }
+            availableScopes.map { IndexedValue(index, it) }
         }
         val scopes = firScopes.map { (index, firScope) ->
             KtScopeWithKind(convertToKtScope(firScope), getScopeKind(firScope, index), token)
         }
 
         return KtScopeContext(scopes, implicitReceivers, token)
+    }
+
+    private fun flattenFirScope(firScope: FirScope): List<FirScope> = when (firScope) {
+        is FirCompositeScope -> firScope.scopes.flatMap { flattenFirScope(it) }
+        is FirNameAwareCompositeScope -> firScope.scopes.flatMap { flattenFirScope(it) }
+        else -> listOf(firScope)
     }
 
     private fun convertToKtScope(firScope: FirScope): KtScope {

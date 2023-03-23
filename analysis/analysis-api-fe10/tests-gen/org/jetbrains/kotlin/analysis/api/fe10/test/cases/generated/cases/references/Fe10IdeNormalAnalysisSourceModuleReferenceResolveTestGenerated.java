@@ -1275,6 +1275,12 @@ public class Fe10IdeNormalAnalysisSourceModuleReferenceResolveTestGenerated exte
             }
 
             @Test
+            @TestMetadata("SelfNonLocalEnumEntry.kt")
+            public void testSelfNonLocalEnumEntry() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/kDoc/localContext/SelfNonLocalEnumEntry.kt");
+            }
+
+            @Test
             @TestMetadata("SelfNonLocalMethod.kt")
             public void testSelfNonLocalMethod() throws Exception {
                 runTest("analysis/analysis-api/testData/referenceResolve/kDoc/localContext/SelfNonLocalMethod.kt");
