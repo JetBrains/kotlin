@@ -96,7 +96,9 @@ class FirSealedClassInheritorsProcessor(
         }
 
         override fun transformFile(file: FirFile, data: Any?): FirFile {
-            return (file.transformChildren(this, data) as FirFile)
+            return withFileAnalysisExceptionWrapping(file) {
+                file.transformChildren(this, data) as FirFile
+            }
         }
 
         override fun transformRegularClass(regularClass: FirRegularClass, data: Any?): FirStatement {

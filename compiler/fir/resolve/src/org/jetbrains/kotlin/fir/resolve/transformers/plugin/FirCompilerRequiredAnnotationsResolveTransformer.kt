@@ -76,8 +76,10 @@ abstract class AbstractFirCompilerRequiredAnnotationsResolveTransformer(
     }
 
     override fun transformFile(file: FirFile, data: Nothing?): FirFile {
-        checkSessionConsistency(file)
-        file.resolveAnnotations()
+        withFileAnalysisExceptionWrapping(file) {
+            checkSessionConsistency(file)
+            file.resolveAnnotations()
+        }
         return file
     }
 

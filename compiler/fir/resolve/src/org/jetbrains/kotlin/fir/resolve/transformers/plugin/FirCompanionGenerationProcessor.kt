@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
+import org.jetbrains.kotlin.fir.withFileAnalysisExceptionWrapping
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
 
@@ -42,7 +43,9 @@ class FirCompanionGenerationTransformer(val session: FirSession) : FirTransforme
     override fun transformFile(file: FirFile, data: Nothing?): FirFile {
         // I don't want to use laziness here to prevent possible multi-threading problems
         if (generatedDeclarationProvider == null) return file
-        return file.transformDeclarations(this, data)
+        return withFileAnalysisExceptionWrapping(file) {
+            file.transformDeclarations(this, data)
+        }
     }
 
     override fun transformRegularClass(regularClass: FirRegularClass, data: Nothing?): FirStatement {

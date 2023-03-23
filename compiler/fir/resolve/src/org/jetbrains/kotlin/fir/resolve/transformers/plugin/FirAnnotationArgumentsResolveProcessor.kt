@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.AdapterForResolveProcessor
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTransformerBasedResolveProcessor
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.withFileAnalysisExceptionWrapping
 
 @OptIn(AdapterForResolveProcessor::class)
 class FirAnnotationArgumentsResolveProcessor(
@@ -32,6 +33,8 @@ class FirAnnotationArgumentsResolveTransformerAdapter(session: FirSession, scope
     }
 
     override fun transformFile(file: FirFile, data: Any?): FirFile {
-        return file.transform(transformer, ResolutionMode.ContextIndependent)
+        return withFileAnalysisExceptionWrapping(file) {
+            file.transform(transformer, ResolutionMode.ContextIndependent)
+        }
     }
 }

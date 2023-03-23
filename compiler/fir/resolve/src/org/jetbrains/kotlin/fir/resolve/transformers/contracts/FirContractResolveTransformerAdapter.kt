@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFull
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
+import org.jetbrains.kotlin.fir.withFileAnalysisExceptionWrapping
 
 @OptIn(AdapterForResolveProcessor::class)
 class FirContractResolveProcessor(session: FirSession, scopeSession: ScopeSession) : FirTransformerBasedResolveProcessor(
@@ -35,7 +36,9 @@ class FirContractResolveTransformerAdapter(session: FirSession, scopeSession: Sc
     }
 
     override fun transformFile(file: FirFile, data: Any?): FirFile {
-        return file.transform(transformer, ResolutionMode.ContextIndependent)
+        return withFileAnalysisExceptionWrapping(file) {
+            file.transform(transformer, ResolutionMode.ContextIndependent)
+        }
     }
 }
 
