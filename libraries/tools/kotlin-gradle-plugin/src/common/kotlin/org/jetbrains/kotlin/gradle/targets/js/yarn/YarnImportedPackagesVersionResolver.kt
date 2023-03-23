@@ -5,12 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.yarn
 
-import com.google.gson.Gson
 import org.gradle.api.logging.Logger
 import org.jetbrains.kotlin.gradle.targets.js.npm.GradleNodeModule
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
-import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
-import org.jetbrains.kotlin.gradle.targets.js.npm.fileVersion
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.PreparedKotlinCompilationNpmResolution
 import java.io.File
 
@@ -25,22 +21,13 @@ class YarnImportedPackagesVersionResolver(
         it.externalGradleDependencies
     }
 
-    private val internalCompositeModules = npmProjects.flatMapTo(mutableSetOf()) {
-        it.internalCompositeDependencies
-    }
-
     fun resolveAndUpdatePackages(): MutableList<String> {
-        resolve(externalModules, true)
-        resolve(internalCompositeModules, true)
-
-        if (resolvedVersion.isNotEmpty()) {
-            updatePackages(internalCompositeModules)
-        }
+        resolve(externalModules)
 
         return importedProjectWorkspaces
     }
 
-    private fun resolve(modules: MutableSet<GradleNodeModule>, isWorkspace: Boolean) {
+    private fun resolve(modules: MutableSet<GradleNodeModule>) {
         modules.groupBy { it.name }.forEach { (name, versions) ->
             val selected: GradleNodeModule = if (versions.size > 1) {
                 val sorted = versions.sortedBy { it.semver }
@@ -56,48 +43,8 @@ class YarnImportedPackagesVersionResolver(
                 selected
             } else versions.single()
 
-            if (isWorkspace) {
-                importedProjectWorkspaces.add(selected.path.relativeTo(nodeJsWorldDir).path)
-            }
+            importedProjectWorkspaces.add(selected.path.relativeTo(nodeJsWorldDir).path)
         }
-    }
-
-    private fun updatePackages(modules: MutableSet<GradleNodeModule>) {
-        modules.forEach {
-            val packageJsonFile = it.path.resolve(NpmProject.PACKAGE_JSON)
-            val packageJson = packageJsonFile.reader().use {
-                Gson().fromJson<PackageJson>(it, PackageJson::class.java)
-            }
-
-            writePackageJson(
-                packageJson = packageJson,
-                path = packageJsonFile,
-                forceWrite = false
-            )
-        }
-    }
-
-    private fun writePackageJson(
-        packageJson: PackageJson,
-        path: File,
-        forceWrite: Boolean
-    ) {
-        val updates = listOf(packageJson.dependencies, packageJson.devDependencies).map { updateVersionsMap(it) }
-        if (forceWrite || updates.any { it }) {
-            packageJson.saveTo(path)
-        }
-    }
-
-    private fun updateVersionsMap(map: MutableMap<String, String>): Boolean {
-        var doneSomething = false
-        map.iterator().forEachRemaining {
-            val resolved = resolvedVersion[it.key]
-            if (resolved != null && it.value != resolved.version) {
-                it.setValue(fileVersion(resolved.file))
-                doneSomething = true
-            }
-        }
-        return doneSomething
     }
 }
 

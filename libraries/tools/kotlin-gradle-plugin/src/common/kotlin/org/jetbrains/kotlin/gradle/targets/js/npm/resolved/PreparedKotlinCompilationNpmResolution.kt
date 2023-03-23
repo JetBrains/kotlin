@@ -14,7 +14,6 @@ import java.io.Serializable
  */
 class PreparedKotlinCompilationNpmResolution(
     val npmProjectDir: File,
-    val internalCompositeDependencies: Collection<GradleNodeModule>,
     val externalGradleDependencies: Collection<GradleNodeModule>,
     val externalNpmDependencies: Collection<NpmDependencyDeclaration>,
 ) : Serializable

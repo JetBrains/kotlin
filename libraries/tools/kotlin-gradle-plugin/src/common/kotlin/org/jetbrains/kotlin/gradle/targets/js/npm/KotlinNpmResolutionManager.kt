@@ -51,7 +51,6 @@ abstract class KotlinNpmResolutionManager : BuildService<KotlinNpmResolutionMana
         val packageJsonHandlers: MapProperty<String, List<PackageJson.() -> Unit>>
 
         val gradleNodeModulesProvider: Property<GradleNodeModulesCache>
-        val compositeNodeModulesProvider: Property<CompositeNodeModulesCache>
     }
 
     val resolution

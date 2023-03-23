@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.
 import org.jetbrains.kotlin.gradle.targets.js.npm.*
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinCompilationNpmResolver
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinRootNpmResolver
-import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.PACKAGE_JSON_UMBRELLA_TASK_NAME
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.PackageJsonProducerInputs
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import java.io.File
@@ -26,8 +25,7 @@ import java.io.File
 abstract class KotlinPackageJsonTask :
     DefaultTask(),
     UsesKotlinNpmResolutionManager,
-    UsesGradleNodeModulesCache,
-    UsesCompositeNodeModulesCache {
+    UsesGradleNodeModulesCache {
     // Only in configuration phase
     // Not part of configuration caching
 
@@ -43,9 +41,6 @@ abstract class KotlinPackageJsonTask :
     private fun findDependentTasks(): Collection<Any> =
         compilationResolver.compilationNpmResolution.internalDependencies.map { dependency ->
             nodeJs.resolver[dependency.projectPath][dependency.compilationName].npmProject.packageJsonTaskPath
-        } + compilationResolver.compilationNpmResolution.internalCompositeDependencies.map { dependency ->
-            dependency.includedBuild?.task(":$PACKAGE_JSON_UMBRELLA_TASK_NAME") ?: error("includedBuild instance is not available")
-            dependency.includedBuild.task(":${RootPackageJsonTask.NAME}")
         }
 
     // -----
@@ -115,7 +110,6 @@ abstract class KotlinPackageJsonTask :
             val packageJsonUmbrella = nodeJsTaskProviders.packageJsonUmbrellaTaskProvider
             val npmResolutionManager = project.kotlinNpmResolutionManager
             val gradleNodeModules = GradleNodeModulesCache.registerIfAbsent(project, null, null)
-            val compositeNodeModules = CompositeNodeModulesCache.registerIfAbsent(project, null, null)
             val packageJsonTask = project.registerTask<KotlinPackageJsonTask>(packageJsonTaskName) { task ->
                 task.compilationDisambiguatedName.set(compilation.disambiguatedName)
                 task.description = "Create package.json file for $compilation"
@@ -125,9 +119,6 @@ abstract class KotlinPackageJsonTask :
                     .disallowChanges()
 
                 task.gradleNodeModules.value(gradleNodeModules)
-                    .disallowChanges()
-
-                task.compositeNodeModules.value(compositeNodeModules)
                     .disallowChanges()
 
                 task.packageJson.set(compilation.npmProject.packageJsonFile)

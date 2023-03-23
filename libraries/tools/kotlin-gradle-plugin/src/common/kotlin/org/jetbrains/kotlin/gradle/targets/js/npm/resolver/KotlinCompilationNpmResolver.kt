@@ -144,7 +144,6 @@ class KotlinCompilationNpmResolver(
 
     inner class ConfigurationVisitor {
         private val internalDependencies = mutableSetOf<InternalDependency>()
-        private val internalCompositeDependencies = mutableSetOf<CompositeDependency>()
         private val externalGradleDependencies = mutableSetOf<ExternalGradleDependency>()
         private val externalNpmDependencies = mutableSetOf<NpmDependencyDeclaration>()
         private val fileCollectionDependencies = mutableSetOf<FileCollectionExternalGradleDependency>()
@@ -244,7 +243,6 @@ class KotlinCompilationNpmResolver(
 
         fun toPackageJsonProducer() = KotlinCompilationNpmResolution(
             internalDependencies,
-            internalCompositeDependencies,
             externalGradleDependencies.map {
                 FileExternalGradleDependency(
                     it.dependency.moduleName,

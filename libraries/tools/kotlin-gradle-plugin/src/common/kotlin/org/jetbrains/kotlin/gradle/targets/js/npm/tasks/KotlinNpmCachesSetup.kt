@@ -6,20 +6,14 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm.tasks
 
 import org.gradle.api.DefaultTask
-import org.gradle.api.provider.Property
-import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import org.gradle.internal.hash.FileHasher
-import org.jetbrains.kotlin.gradle.targets.js.npm.CompositeNodeModulesCache
-import org.jetbrains.kotlin.gradle.targets.js.npm.GradleNodeModulesCache
-import org.jetbrains.kotlin.gradle.targets.js.npm.UsesCompositeNodeModulesCache
 import org.jetbrains.kotlin.gradle.targets.js.npm.UsesGradleNodeModulesCache
 import javax.inject.Inject
 
 abstract class KotlinNpmCachesSetup :
     DefaultTask(),
-    UsesGradleNodeModulesCache,
-    UsesCompositeNodeModulesCache {
+    UsesGradleNodeModulesCache {
     @get:Inject
     open val fileHasher: FileHasher
         get() = throw UnsupportedOperationException()
@@ -27,7 +21,6 @@ abstract class KotlinNpmCachesSetup :
     @TaskAction
     fun setup() {
         gradleNodeModules.get().fileHasher = fileHasher
-        compositeNodeModules.get().fileHasher = fileHasher
     }
 
     companion object {

@@ -17,12 +17,6 @@ class PackageJsonProducerInputs(
     @get:IgnoreEmptyDirectories
     @get:NormalizeLineEndings
     @get:InputFiles
-    val internalCompositeDependencies: Collection<File>,
-
-    @get:PathSensitive(PathSensitivity.ABSOLUTE)
-    @get:IgnoreEmptyDirectories
-    @get:NormalizeLineEndings
-    @get:InputFiles
     val externalGradleDependencies: Collection<File>,
 
     @get:Input

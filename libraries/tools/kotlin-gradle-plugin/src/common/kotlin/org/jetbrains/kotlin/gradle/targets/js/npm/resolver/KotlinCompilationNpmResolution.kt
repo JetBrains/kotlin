@@ -15,7 +15,6 @@ import java.io.File
 
 class KotlinCompilationNpmResolution(
     var internalDependencies: Collection<InternalDependency>,
-    var internalCompositeDependencies: Collection<CompositeDependency>,
     var externalGradleDependencies: Collection<FileExternalGradleDependency>,
     var externalNpmDependencies: Collection<NpmDependencyDeclaration>,
     var fileCollectionDependencies: Collection<FileCollectionExternalGradleDependency>,
@@ -34,7 +33,6 @@ class KotlinCompilationNpmResolution(
     val inputs: PackageJsonProducerInputs
         get() = PackageJsonProducerInputs(
             internalDependencies.map { it.projectName },
-            internalCompositeDependencies.flatMap { it.getPackages() },
             externalGradleDependencies.map { it.file },
             externalNpmDependencies.map { it.uniqueRepresentation() },
             fileCollectionDependencies.flatMap { it.files }
@@ -115,17 +113,6 @@ class KotlinCompilationNpmResolution(
             it.dependencies
         }.filter { it.scope != NpmDependency.Scope.DEV }
 
-        val compositeDependencies = internalCompositeDependencies.flatMap { dependency ->
-            dependency.getPackages()
-                .map { file ->
-                    npmResolutionManager.parameters.compositeNodeModulesProvider.get().get(
-                        dependency.dependencyName,
-                        dependency.dependencyVersion,
-                        file
-                    )
-                }
-        }.filterNotNull()
-
         val toolsNpmDependencies = tasksRequirements
             .getCompilationNpmRequirements(projectPath, compilationDisambiguatedName)
 
@@ -143,10 +130,6 @@ class KotlinCompilationNpmResolution(
             packageJsonHandlers
         )
 
-        compositeDependencies.forEach {
-            packageJson.dependencies[it.name] = it.version
-        }
-
         packageJsonHandlers.forEach {
             it(packageJson)
         }
@@ -157,7 +140,6 @@ class KotlinCompilationNpmResolution(
 
         return PreparedKotlinCompilationNpmResolution(
             npmProjectDir,
-            compositeDependencies,
             importedExternalGradleDependencies,
             allNpmDependencies,
         )

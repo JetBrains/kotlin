@@ -11,7 +11,6 @@ import org.gradle.api.Task
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.targets.js.MultiplePluginDeclarationDetector
-import org.jetbrains.kotlin.gradle.targets.js.npm.CompositeNodeModulesCache
 import org.jetbrains.kotlin.gradle.targets.js.npm.GradleNodeModulesCache
 import org.jetbrains.kotlin.gradle.targets.js.npm.KotlinNpmResolutionManager
 import org.jetbrains.kotlin.gradle.targets.js.npm.UsesKotlinNpmResolutionManager
@@ -62,17 +61,10 @@ open class NodeJsRootPlugin : Plugin<Project> {
             nodeJs.nodeModulesGradleCacheDir
         )
 
-        val compositeNodeModulesProvider: Provider<CompositeNodeModulesCache> = CompositeNodeModulesCache.registerIfAbsent(
-            project,
-            project.projectDir,
-            nodeJs.nodeModulesGradleCacheDir
-        )
-
         val setupFileHasherTask = project.registerTask<KotlinNpmCachesSetup>(KotlinNpmCachesSetup.NAME) {
             it.description = "Setup file hasher for caches"
 
             it.gradleNodeModules.set(gradleNodeModulesProvider)
-            it.compositeNodeModules.set(compositeNodeModulesProvider)
         }
 
         val npmInstall = project.registerTask<KotlinNpmInstallTask>(KotlinNpmInstallTask.NAME) {
@@ -122,7 +114,6 @@ open class NodeJsRootPlugin : Plugin<Project> {
                 }
             )
             it.parameters.gradleNodeModulesProvider.set(gradleNodeModulesProvider)
-            it.parameters.compositeNodeModulesProvider.set(compositeNodeModulesProvider)
         }
 
         YarnPlugin.apply(project)
@@ -157,13 +148,6 @@ open class NodeJsRootPlugin : Plugin<Project> {
                 null
             )
 
-        private val Project.compositeNodeModules
-            get() = CompositeNodeModulesCache.registerIfAbsent(
-                this,
-                null,
-                null
-            )
-
         val Project.kotlinNpmResolutionManager: Provider<KotlinNpmResolutionManager>
             get() {
                 val npmResolutionManager = project.gradle.sharedServices.registerIfAbsent(
@@ -177,7 +161,6 @@ open class NodeJsRootPlugin : Plugin<Project> {
                     project.tasks.withType<UsesKotlinNpmResolutionManager>().configureEach { task ->
                         task.usesService(npmResolutionManager)
                         task.usesService(gradleNodeModules)
-                        task.usesService(compositeNodeModules)
                     }
                 }
 
