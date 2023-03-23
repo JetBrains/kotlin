@@ -602,11 +602,8 @@ tasks {
     }
 
     val jsJar by existing(Jar::class) {
-        val jsResultingJarFile = jsResultingJar.get().archiveFile
-        inputs.file(jsResultingJarFile)
-        doLast {
-            Files.copy(jsResultingJarFile.get().asFile.toPath(), archiveFile.get().asFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
-        }
+        manifestAttributes(manifest, "Main", multiRelease = true)
+        manifest.attributes(mapOf("Implementation-Title" to "kotlin-stdlib-js"))
     }
 
     val jsV1Jar by existing(Jar::class) {
