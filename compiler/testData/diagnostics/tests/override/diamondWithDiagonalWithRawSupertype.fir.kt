@@ -33,10 +33,10 @@ fun test(it: InheritsAll) {
     val kind = it.hostKind
 
     it.holder.value = 10
-    it.holder.value = <!TYPE_MISMATCH!>"10"<!>
+    it.holder.value = <!ASSIGNMENT_TYPE_MISMATCH!>"10"<!>
 
     val h1: Number = it.holder.value
-    val h2: String = <!SMARTCAST_IMPOSSIBLE!>it.holder.value<!>
+    val h2: String = <!INITIALIZER_TYPE_MISMATCH!>it.holder.value<!>
 }
 
 class InheritsAllKotlin1 : InheritsAll()
