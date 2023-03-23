@@ -21170,6 +21170,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("enumJavaName_after.kt")
+                public void testEnumJavaName_after() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/modifiers/const/enumJavaName_after.kt");
+                }
+
+                @Test
                 @TestMetadata("equals_after.kt")
                 public void testEquals_after() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/modifiers/const/equals_after.kt");

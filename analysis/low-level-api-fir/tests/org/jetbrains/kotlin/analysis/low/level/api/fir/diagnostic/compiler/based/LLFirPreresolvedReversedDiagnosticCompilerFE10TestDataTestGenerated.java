@@ -21164,6 +21164,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
                 }
 
                 @Test
+                @TestMetadata("enumJavaName_after.kt")
+                public void testEnumJavaName_after() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/modifiers/const/enumJavaName_after.kt");
+                }
+
+                @Test
                 @TestMetadata("equals_after.kt")
                 public void testEquals_after() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/modifiers/const/equals_after.kt");
@@ -21227,6 +21233,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
                 @TestMetadata("stdlibConstFun.kt")
                 public void testStdlibConstFun() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/modifiers/const/stdlibConstFun.kt");
+                }
+
+                @Test
+                @TestMetadata("stringConcatenation.kt")
+                public void testStringConcatenation() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/modifiers/const/stringConcatenation.kt");
                 }
 
                 @Test
