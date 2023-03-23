@@ -20,19 +20,27 @@ import org.jetbrains.kotlin.ir.util.kotlinFqName
 import org.jetbrains.kotlin.ir.util.module
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.multiplatform.OptionalAnnotationUtil
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
-fun Map<String, List<IrDeclaration>>.getMatch(
+internal fun Map<String, List<IrDeclaration>>.getMatches(
     expectDeclaration: IrDeclaration,
     expectActualTypesMap: Map<IrSymbol, IrSymbol>,
     expectActualTypeAliasMap: Map<FqName, FqName>
-): IrDeclaration? {
-    val members = this[generateIrElementFullNameFromExpect(expectDeclaration, expectActualTypeAliasMap)] ?: return null
-    return if (expectDeclaration is IrFunction) {
-        members.firstNotNullOfOrNull { runIf(expectDeclaration.match(it as IrFunction, expectActualTypesMap)) { it } }
-    } else {
-        members.singleOrNull()
+): List<IrDeclaration> {
+    val members = this[generateIrElementFullNameFromExpect(expectDeclaration, expectActualTypeAliasMap)] ?: return emptyList()
+    return when (expectDeclaration) {
+        is IrFunction -> members.getMatches(expectDeclaration, expectActualTypesMap) { it as IrFunction }
+        is IrProperty -> members.getMatches(expectDeclaration, expectActualTypesMap) { (it as IrProperty).getter!! }
+        else -> members
     }
+}
+
+private inline fun List<IrDeclaration>.getMatches(
+    expect: IrDeclaration,
+    expectActualTypesMap: Map<IrSymbol, IrSymbol>,
+    functionExtractor: (IrDeclaration) -> IrFunction
+): List<IrDeclaration> {
+    val expectFunction = functionExtractor(expect)
+    return filter { expectFunction.match(functionExtractor(it), expectActualTypesMap) }
 }
 
 private fun IrFunction.match(actualFunction: IrFunction, expectActualTypesMap: Map<IrSymbol, IrSymbol>): Boolean {

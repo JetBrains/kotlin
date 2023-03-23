@@ -83,7 +83,7 @@ class MissingFakeOverridesAdder(
             else -> return
         }
 
-        if (members.getMatch(newMember, expectActualMap, typeAliasMap) == null) {
+        if (members.getMatches(newMember, expectActualMap, typeAliasMap).isEmpty()) {
             declaration.declarations.add(newMember)
             members.getOrPut(generateIrElementFullNameFromExpect(newMember, typeAliasMap)) { mutableListOf() }.add(newMember)
         } else {

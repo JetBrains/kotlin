@@ -163,16 +163,23 @@ private class MemberLinksCollector(
     }
 
     private fun addLink(declaration: IrDeclarationBase) {
-        val actualMember = actualMembers.getMatch(declaration, expectActualMap, typeAliasMap)
-        if (actualMember != null) {
-            expectActualMap[declaration.symbol] = actualMember.symbol
-            if (declaration is IrProperty) {
-                val actualProperty = actualMember as IrProperty
-                declaration.getter?.symbol?.let { expectActualMap[it] = actualProperty.getter!!.symbol }
-                declaration.setter?.symbol?.let { expectActualMap[it] = actualProperty.setter!!.symbol }
+        val actualMemberMatches = actualMembers.getMatches(declaration, expectActualMap, typeAliasMap)
+        when {
+            actualMemberMatches.size == 1 -> {
+                val actualMember = actualMemberMatches.single()
+                expectActualMap[declaration.symbol] = actualMember.symbol
+                if (declaration is IrProperty) {
+                    val actualProperty = actualMember as IrProperty
+                    declaration.getter!!.symbol.let { expectActualMap[it] = actualProperty.getter!!.symbol }
+                    declaration.setter?.symbol?.let { expectActualMap[it] = actualProperty.setter!!.symbol }
+                }
             }
-        } else if (!declaration.parent.containsOptionalExpectation() && !(declaration is IrConstructor && declaration.isPrimary)) {
-            diagnosticsReporter.reportMissingActual(declaration)
+            actualMemberMatches.size > 1 -> {
+                // TODO: report AMBIGUOUS_ACTUALS here, see KT-57932
+            }
+            !declaration.parent.containsOptionalExpectation() && !(declaration is IrConstructor && declaration.isPrimary) -> {
+                diagnosticsReporter.reportMissingActual(declaration)
+            }
         }
     }
 
