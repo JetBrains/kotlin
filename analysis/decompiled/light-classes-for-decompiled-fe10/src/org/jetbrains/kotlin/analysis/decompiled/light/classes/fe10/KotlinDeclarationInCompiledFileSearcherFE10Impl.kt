@@ -19,18 +19,12 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 class KotlinDeclarationInCompiledFileSearcherFE10Impl : KotlinDeclarationInCompiledFileSearcher() {
     override fun findDeclarationInCompiledFile(file: KtClsFile, member: PsiMember, signature: MemberSignature): KtDeclaration? {
         val relativeClassName = member.relativeClassName()
-        val key = ClassNameAndSignature(relativeClassName, signature)
 
         val memberName = member.name
-        if (memberName != null && !file.isContentsLoaded && file.hasDeclarationWithKey(BySignatureIndexer, key)) {
-            findByStubs(file, relativeClassName, member, memberName)?.let { return it }
+        if (memberName != null && !file.isContentsLoaded) {
+            return findByStubs(file, relativeClassName, member, memberName)
         }
 
-        val declaration = file.getDeclaration(BySignatureIndexer, key) ?: return null
-        return if (member is PsiMethod && member.isConstructor && declaration is KtClassOrObject) {
-            declaration.primaryConstructor ?: declaration
-        } else {
-            declaration
-        }
+        error("Should be unreachable")
     }
 }
