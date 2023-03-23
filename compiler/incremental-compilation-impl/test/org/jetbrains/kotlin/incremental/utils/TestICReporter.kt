@@ -30,8 +30,7 @@ class TestICReporter : ICReporterBase() {
     var exitCode: ExitCode = ExitCode.OK
         private set
 
-    override fun report(message: () -> String, severity: ReportSeverity) {
-    }
+    override fun report(message: () -> String, severity: ReportSeverity) {}
 
     override fun reportCompileIteration(incremental: Boolean, sourceFiles: Collection<File>, exitCode: ExitCode) {
         compiledSourcesMutable.addAll(sourceFiles)

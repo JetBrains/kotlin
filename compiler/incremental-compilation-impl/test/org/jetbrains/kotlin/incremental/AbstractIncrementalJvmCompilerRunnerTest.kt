@@ -30,7 +30,7 @@ abstract class AbstractIncrementalJvmCompilerRunnerTest : AbstractIncrementalCom
     override fun make(cacheDir: File, outDir: File, sourceRoots: Iterable<File>, args: K2JVMCompilerArguments): TestCompilationResult {
         val reporter = TestICReporter()
         val messageCollector = TestMessageCollector()
-        makeIncrementally(cacheDir, sourceRoots, args, reporter = reporter, messageCollector = messageCollector)
+        makeJvmIncrementally(cacheDir, sourceRoots, args, reporter = reporter, messageCollector = messageCollector)
         val kotlinCompileResult = TestCompilationResult(reporter, messageCollector)
         if (kotlinCompileResult.exitCode != ExitCode.OK) return kotlinCompileResult
 
@@ -55,9 +55,10 @@ abstract class AbstractIncrementalJvmCompilerRunnerTest : AbstractIncrementalCom
             }
             mkdirs()
         }
-        val args = arrayOf("-cp", javaClasspath,
-                           "-d", javaDestinationDir.canonicalPath,
-                           *javaSources.map { it.canonicalPath }.toTypedArray()
+        val args = arrayOf(
+            "-cp", javaClasspath,
+            "-d", javaDestinationDir.canonicalPath,
+            *javaSources.map { it.canonicalPath }.toTypedArray()
         )
 
         val err = ByteArrayOutputStream()
