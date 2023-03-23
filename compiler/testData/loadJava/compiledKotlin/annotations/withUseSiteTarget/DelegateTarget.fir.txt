@@ -4,7 +4,7 @@ public final annotation class Anno : R|kotlin/Annotation| {
 }
 
 public final class Class : R|kotlin/Any| {
-    @PROPERTY_DELEGATE_FIELD:R|test/Anno|() public final val property: R|kotlin/String|
+    field:@PROPERTY_DELEGATE_FIELD:R|test/Anno|() public final val property: R|kotlin/String|
         public get(): R|kotlin/String|
 
     public constructor(): R|test/Class|

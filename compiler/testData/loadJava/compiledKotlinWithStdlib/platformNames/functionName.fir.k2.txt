@@ -1,6 +1,6 @@
 @R|test/A|(s = String(1)) @R|kotlin/jvm/JvmName|(name = String(bar)) public final fun foo(): R|kotlin/String|
 
-@FIELD:R|test/A|(s = String(2)) public final var v: R|kotlin/Int|
+field:@FIELD:R|test/A|(s = String(2)) public final var v: R|kotlin/Int|
     @R|test/A|(s = String(3)) @R|kotlin/jvm/JvmName|(name = String(vget)) public get(): R|kotlin/Int|
     @R|test/A|(s = String(4)) @R|kotlin/jvm/JvmName|(name = String(vset)) public set(value: R|kotlin/Int|): R|kotlin/Unit|
 
