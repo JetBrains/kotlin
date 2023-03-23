@@ -895,11 +895,12 @@ internal class PartiallyLinkedIrTreePatcher(
             }
         ) { super.visitBlockBody(body) }
 
-        override fun visitCall(expression: IrCall) = withContext(
+        // Allows visiting any type of call: IrCall, IrConstructorCall, IrEnumConstructorCall, IrDelegatingConstructorCall.
+        override fun visitFunctionAccess(expression: IrFunctionAccessExpression) = withContext(
             { oldContext ->
                 val functionSymbol = expression.symbol
                 val function = if (functionSymbol.isBound) functionSymbol.owner else return@withContext oldContext
-                if (!function.isInline) return@withContext oldContext
+                if (!function.isInline && !function.isInlineArrayConstructor(builtIns)) return@withContext oldContext
 
                 fun IrValueParameter?.canHaveNonLocalReturns(): Boolean = this != null && !isCrossinline && !isNoinline
 
@@ -925,7 +926,7 @@ internal class PartiallyLinkedIrTreePatcher(
                     inlinedLambdaArgumentsWithPermittedNonLocalReturns = inlinedLambdaArgumentsWithPermittedNonLocalReturns.toSet()
                 )
             }
-        ) { super.visitCall(expression) }
+        ) { super.visitFunctionAccess(expression) }
 
         override fun visitReturn(expression: IrReturn) = withContext { context ->
             expression.maybeThrowLinkageError(transformer = this@NonLocalReturnsPatcher) {

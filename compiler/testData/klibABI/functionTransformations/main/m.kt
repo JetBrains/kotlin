@@ -119,4 +119,7 @@ fun box() = abiTest {
     expectFailure(linkage("Illegal non-local return: The return target is function 'inlineLambdaToNoinlineLambda' while only the following return targets are allowed: lambda in function 'inlineLambdaToNoinlineLambda'")) { inlineLambdaToNoinlineLambda(-3) }
     expectSuccess("Functions.inlineLambdaToCrossinlineLambda(5) { 10 }") { inlineLambdaToCrossinlineLambda(5) }
     expectFailure(linkage("Illegal non-local return: The return target is function 'inlineLambdaToCrossinlineLambda' while only the following return targets are allowed: lambda in function 'inlineLambdaToCrossinlineLambda'")) { inlineLambdaToCrossinlineLambda(-5) }
+
+    expectSuccess("success") { nonLocalReturnFromArrayConstructorLambda("success", "failure") }
+    expectSuccess(100) { nonLocalReturnFromIntArrayConstructorLambda(100, -100) }
 }

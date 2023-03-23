@@ -161,3 +161,21 @@ fun newNonInlineFunctionInOpenClassImpl(oci: OpenClassImpl, x: Int): String = oc
 
 fun inlineLambdaToNoinlineLambda(x: Int): String = Functions.inlineLambdaToNoinlineLambda(x) { if (it > 0) it.toString() else return "inlineLambdaToNoinlineLambda($x)" }
 fun inlineLambdaToCrossinlineLambda(x: Int): String = Functions.inlineLambdaToCrossinlineLambda(x) { if (it > 0) it.toString() else return "inlineLambdaToCrossinlineLambda($x)" }
+
+fun nonLocalReturnFromArrayConstructorLambda(expected: String, unexpected: String): String = Array(1) outer@{
+    Array(1) {
+        if ('1' in "123") { // The condition that is always true.
+            return@outer expected
+        }
+        unexpected
+    }[0]
+}[0]
+
+fun nonLocalReturnFromIntArrayConstructorLambda(expected: Int, unexpected: Int): Int = IntArray(1) outer@{
+    IntArray(1) {
+        if ('1' in "123") { // The condition that is always true.
+            return@outer expected
+        }
+        unexpected
+    }[0]
+}[0]
