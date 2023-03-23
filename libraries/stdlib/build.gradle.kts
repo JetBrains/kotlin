@@ -781,7 +781,9 @@ publishing {
                 attributes {
                     copyAttributes(from = project.configurations["metadataSourcesElements"].attributes, to = this)
                 }
-                artifact(tasks["jvmSourcesJar"])
+                artifact(tasks["sourcesJar"]) {
+                    classifier = "common-sources"
+                }
             }
             variant("nativeApiElements") {
                 attributes {
