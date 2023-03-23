@@ -31,6 +31,12 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("annotationWithTypeArgument.kt")
+    public void testAnnotationWithTypeArgument() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/lazyResolve/annotationWithTypeArgument.kt");
+    }
+
+    @Test
     @TestMetadata("annotations.kt")
     public void testAnnotations() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/lazyResolve/annotations.kt");
