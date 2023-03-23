@@ -17,9 +17,6 @@ class NativeCompilerOptions(project: Project) : HasCompilerOptions<KotlinCommonC
 
     override val options: KotlinNativeCompilerOptions = project.objects
         .newInstance(KotlinNativeCompilerOptionsDefault::class.java)
-        .apply {
-            useK2.finalizeValue()
-        }
 
     internal fun syncLanguageSettings(languageSettings: LanguageSettings) {
         applyLanguageSettingsToCompilerOptions(languageSettings, options)

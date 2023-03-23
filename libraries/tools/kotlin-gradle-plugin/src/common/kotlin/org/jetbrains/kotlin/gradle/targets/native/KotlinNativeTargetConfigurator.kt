@@ -392,6 +392,11 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
 
                 it.destinationDirectory.set(project.klibOutputDirectory(compilationInfo).resolve("klib"))
                 it.compilerOptions.moduleName.set(project.klibModuleName(it.baseName))
+                val propertiesProvider = PropertiesProvider(project)
+                if (propertiesProvider.useK2 == true) {
+                    it.compilerOptions.useK2.set(true)
+                }
+                it.compilerOptions.useK2.disallowChanges()
             }
 
             compilationInfo.classesDirs.from(compileTaskProvider.map { it.outputFile })

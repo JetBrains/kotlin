@@ -187,6 +187,9 @@ internal fun buildKotlinNativeCompileCommonArgs(
     addKey("-nowarn", compilerOptions.suppressWarnings.get())
     addKey("-verbose", compilerOptions.verbose.get())
     addKey("-progressive", compilerOptions.progressiveMode.get())
+    if (compilerOptions.useK2.get()) {
+        add("-Xuse-k2")
+    }
     compilerOptions.optIn.get().forEach { add("-opt-in=$it") }
 
     addAll(compilerOptions.freeCompilerArgs.get())
