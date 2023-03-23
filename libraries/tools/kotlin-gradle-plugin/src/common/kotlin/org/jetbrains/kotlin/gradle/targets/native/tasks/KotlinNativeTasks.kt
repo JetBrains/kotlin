@@ -560,6 +560,7 @@ internal class ExternalDependenciesBuilder(
         val plainModules: MutableMap<KResolvedDependencyId, KResolvedDependency> = mutableMapOf()
         fun processModule(resolvedDependency: DependencyResult, incomingDependencyId: KResolvedDependencyId) {
             if (resolvedDependency !is ResolvedDependencyResult) return
+            if (resolvedDependency.isConstraint) return
 
             val requestedModule = resolvedDependency.requested as? ModuleComponentSelector ?: return
             val selectedModule = resolvedDependency.selected
