@@ -36,4 +36,6 @@ class TestICReporter : ICReporterBase() {
         compiledSourcesMutable.addAll(sourceFiles)
         this.exitCode = exitCode
     }
+
+    var cachesDump: String = ""
 }

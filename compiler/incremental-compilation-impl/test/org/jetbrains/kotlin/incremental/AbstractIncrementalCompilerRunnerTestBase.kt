@@ -27,9 +27,24 @@ import org.junit.Assert
 import java.io.File
 
 abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerArguments> : TestWithWorkingDir() {
+    protected lateinit var lookupsDuringTest: MutableSet<LookupSymbol>
     protected abstract fun createCompilerArguments(destinationDir: File, testDir: File): Args
 
     protected open val moduleNames: Collection<String>? get() = null
+
+    override fun setUp() {
+        lookupsDuringTest = hashSetOf()
+        super.setUp()
+    }
+
+    override fun tearDown() {
+        try {
+            super.tearDown()
+        } finally {
+            lookupsDuringTest.clear()
+        }
+    }
+
 
     protected open fun setupTest(testDir: File, srcDir: File, cacheDir: File, outDir: File): List<File> =
         listOf(srcDir)
@@ -69,7 +84,10 @@ abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerAr
         val mapWorkingToOriginalFile = HashMap(copyTestSources(testDir, srcDir, filePrefix = ""))
         val sourceRoots = setupTest(testDir, srcDir, cacheDir, outDir)
         val args = createCompilerArgumentsImpl(outDir, testDir)
-        val (_, _, errors) = initialMake(cacheDir, outDir, sourceRoots, args)
+
+        val (initialExitCode, _, errors, initialCachesDump) = initialMake(cacheDir, outDir, sourceRoots, args)
+        var lastExitCode = initialExitCode
+        var lastCachesDump = initialCachesDump
         check(errors.isEmpty()) { "Initial build failed: \n${errors.joinToString("\n")}" }
 
         // modifications
@@ -97,7 +115,18 @@ abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerAr
         var step = 1
         for ((modificationStep, buildLogStep) in modifications.zip(buildLogSteps)) {
             modificationStep.forEach { it.perform(workingDir, mapWorkingToOriginalFile) }
-            val (_, compiledSources, compileErrors) = incrementalMake(cacheDir, outDir, sourceRoots, createCompilerArgumentsImpl(outDir, testDir))
+            val (incrementalExitCode, compiledSources, compileErrors, incrementalCachesDump) = incrementalMake(
+                cacheDir,
+                outDir,
+                sourceRoots,
+                createCompilerArgumentsImpl(
+                    outDir,
+                    testDir
+                )
+            )
+
+            lastExitCode = incrementalExitCode
+            lastCachesDump = incrementalCachesDump
 
             expectedSB.appendLine(stepLogAsString(step, buildLogStep.compiledKotlinFiles, buildLogStep.compileErrors))
             expectedSBWithoutErrors.appendLine(
@@ -122,7 +151,7 @@ abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerAr
             }
         }
 
-        rebuildAndCompareOutput(sourceRoots, testDir, buildLogSteps, outDir)
+        rebuildAndCompareOutput(sourceRoots, testDir, buildLogSteps, outDir, lastExitCode, lastCachesDump)
     }
 
     // these functions are needed only to simplify debugging of IC tests
@@ -131,13 +160,14 @@ abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerAr
     private fun incrementalMake(cacheDir: File, outDir: File, sourceRoots: List<File>, args: Args) =
         make(cacheDir, outDir, sourceRoots, args)
 
-    protected open fun rebuildAndCompareOutput(
+    private fun rebuildAndCompareOutput(
         sourceRoots: List<File>,
         testDir: File,
         buildLogSteps: List<BuildStep>,
-        outDir: File
+        outDir: File,
+        finalExitCode: ExitCode,
+        finalMappingDump: String?
     ) {
-        // todo: also compare caches
         val rebuildOutDir = File(workingDir, "rebuild-out").apply { mkdirs() }
         val rebuildCacheDir = File(workingDir, "rebuild-cache").apply { mkdirs() }
         resetTest(testDir, rebuildOutDir, rebuildCacheDir)
@@ -148,9 +178,16 @@ abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerAr
         val rebuildSucceeded = rebuildResult.exitCode == ExitCode.OK
         Assert.assertEquals("Rebuild exit code differs from incremental exit code", rebuildExpectedToSucceed, rebuildSucceeded)
 
+        Assert.assertEquals("Compilation result differs", rebuildResult.exitCode, finalExitCode)
+        if (finalExitCode != ExitCode.OK) {
+            return
+        }
         if (rebuildSucceeded) {
             assertEqualDirectories(rebuildOutDir, outDir, forgiveExtraFiles = false)
         }
+
+        // compare caches
+        assertEquals(rebuildResult.mappingsDump, finalMappingDump)
     }
 
     protected open val buildLogFinder: BuildLogFinder

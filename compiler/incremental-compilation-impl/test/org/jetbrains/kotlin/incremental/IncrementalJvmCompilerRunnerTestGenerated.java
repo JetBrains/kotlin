@@ -1203,7 +1203,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
         }
 
         public void testAllFilesPresentInWithJava() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
         }
 
         @TestMetadata("jps/jps-plugin/testData/incremental/withJava/convertBetweenJavaAndKotlin")
@@ -1215,27 +1215,12 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
             }
 
             public void testAllFilesPresentInConvertBetweenJavaAndKotlin() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/convertBetweenJavaAndKotlin"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
-            }
-
-            @TestMetadata("javaToKotlin")
-            public void testJavaToKotlin() throws Exception {
-                runTest("jps/jps-plugin/testData/incremental/withJava/convertBetweenJavaAndKotlin/javaToKotlin/");
-            }
-
-            @TestMetadata("javaToKotlinAndBack")
-            public void testJavaToKotlinAndBack() throws Exception {
-                runTest("jps/jps-plugin/testData/incremental/withJava/convertBetweenJavaAndKotlin/javaToKotlinAndBack/");
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/convertBetweenJavaAndKotlin"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
             }
 
             @TestMetadata("javaToKotlinAndRemove")
             public void testJavaToKotlinAndRemove() throws Exception {
                 runTest("jps/jps-plugin/testData/incremental/withJava/convertBetweenJavaAndKotlin/javaToKotlinAndRemove/");
-            }
-
-            @TestMetadata("kotlinToJava")
-            public void testKotlinToJava() throws Exception {
-                runTest("jps/jps-plugin/testData/incremental/withJava/convertBetweenJavaAndKotlin/kotlinToJava/");
             }
 
             @TestMetadata("jps/jps-plugin/testData/incremental/withJava/convertBetweenJavaAndKotlin/javaToKotlin")
@@ -1247,7 +1232,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInJavaToKotlin() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/convertBetweenJavaAndKotlin/javaToKotlin"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/convertBetweenJavaAndKotlin/javaToKotlin"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -1260,7 +1245,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInJavaToKotlinAndBack() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/convertBetweenJavaAndKotlin/javaToKotlinAndBack"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/convertBetweenJavaAndKotlin/javaToKotlinAndBack"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -1273,7 +1258,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInJavaToKotlinAndRemove() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/convertBetweenJavaAndKotlin/javaToKotlinAndRemove"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/convertBetweenJavaAndKotlin/javaToKotlinAndRemove"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -1286,7 +1271,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInKotlinToJava() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/convertBetweenJavaAndKotlin/kotlinToJava"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/convertBetweenJavaAndKotlin/kotlinToJava"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
         }
@@ -1300,17 +1285,12 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
             }
 
             public void testAllFilesPresentInJavaUsedInKotlin() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
             }
 
             @TestMetadata("changeFieldType")
             public void testChangeFieldType() throws Exception {
                 runTest("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/changeFieldType/");
-            }
-
-            @TestMetadata("changeNotUsedSignature")
-            public void testChangeNotUsedSignature() throws Exception {
-                runTest("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/changeNotUsedSignature/");
             }
 
             @TestMetadata("changePropertyOverrideType")
@@ -1422,7 +1402,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInChangeFieldType() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/changeFieldType"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/changeFieldType"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -1435,7 +1415,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInChangeNotUsedSignature() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/changeNotUsedSignature"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/changeNotUsedSignature"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -1448,7 +1428,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInChangePropertyOverrideType() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/changePropertyOverrideType"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/changePropertyOverrideType"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -1461,7 +1441,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInChangeSignature() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/changeSignature"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/changeSignature"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -1474,7 +1454,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInChangeSignaturePackagePrivate() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/changeSignaturePackagePrivate"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/changeSignaturePackagePrivate"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -1487,7 +1467,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInChangeSignaturePackagePrivateNonRoot() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/changeSignaturePackagePrivateNonRoot"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/changeSignaturePackagePrivateNonRoot"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -1500,7 +1480,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInChangeSignatureStatic() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/changeSignatureStatic"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/changeSignatureStatic"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -1513,7 +1493,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInConstantChanged() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/constantChanged"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/constantChanged"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -1526,7 +1506,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInConstantPropertyChanged() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/constantPropertyChanged"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/constantPropertyChanged"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -1539,7 +1519,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInConstantUnchanged() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/constantUnchanged"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/constantUnchanged"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -1552,7 +1532,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInEnumEntryAdded() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/enumEntryAdded"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/enumEntryAdded"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -1565,7 +1545,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInEnumEntryRemoved() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/enumEntryRemoved"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/enumEntryRemoved"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -1578,7 +1558,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInJavaAndKotlinChangedSimultaneously() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/javaAndKotlinChangedSimultaneously"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/javaAndKotlinChangedSimultaneously"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -1591,7 +1571,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInJavaFieldNullabilityChanged() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/javaFieldNullabilityChanged"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/javaFieldNullabilityChanged"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -1604,7 +1584,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInJavaMethodParamNullabilityChanged() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/javaMethodParamNullabilityChanged"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/javaMethodParamNullabilityChanged"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -1617,7 +1597,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInJavaMethodReturnTypeNullabilityChanged() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/javaMethodReturnTypeNullabilityChanged"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/javaMethodReturnTypeNullabilityChanged"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -1630,7 +1610,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInMethodAddedInSuper() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/methodAddedInSuper"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/methodAddedInSuper"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -1643,7 +1623,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInMethodRenamed() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/methodRenamed"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/methodRenamed"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -1656,7 +1636,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInMixedInheritance() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/mixedInheritance"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/mixedInheritance"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -1669,7 +1649,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInNotChangeSignature() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/notChangeSignature"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/notChangeSignature"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -1682,7 +1662,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInRawErrorTypeDuringSerialization() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/rawErrorTypeDuringSerialization"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/rawErrorTypeDuringSerialization"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -1695,7 +1675,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInRemoveAnnotation() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/removeAnnotation"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/removeAnnotation"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -1708,7 +1688,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInSamConversions() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/samConversions"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/samConversions"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
 
                 @TestMetadata("methodAddDefault")
@@ -1745,7 +1725,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                     }
 
                     public void testAllFilesPresentInMethodAddDefault() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/samConversions/methodAddDefault"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/samConversions/methodAddDefault"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                     }
                 }
 
@@ -1758,7 +1738,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                     }
 
                     public void testAllFilesPresentInMethodAdded() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/samConversions/methodAdded"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/samConversions/methodAdded"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                     }
                 }
 
@@ -1771,7 +1751,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                     }
 
                     public void testAllFilesPresentInMethodAddedSamAdapter() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/samConversions/methodAddedSamAdapter"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/samConversions/methodAddedSamAdapter"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                     }
                 }
 
@@ -1784,7 +1764,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                     }
 
                     public void testAllFilesPresentInMethodSignatureChanged() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/samConversions/methodSignatureChanged"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/samConversions/methodSignatureChanged"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                     }
                 }
 
@@ -1797,7 +1777,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                     }
 
                     public void testAllFilesPresentInMethodSignatureChangedSamAdapter() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/samConversions/methodSignatureChangedSamAdapter"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/samConversions/methodSignatureChangedSamAdapter"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                     }
                 }
             }
@@ -1817,12 +1797,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
             }
 
             public void testAllFilesPresentInKotlinUsedInJava() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/kotlinUsedInJava"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
-            }
-
-            @TestMetadata("changeNotUsedSignature")
-            public void testChangeNotUsedSignature() throws Exception {
-                runTest("jps/jps-plugin/testData/incremental/withJava/kotlinUsedInJava/changeNotUsedSignature/");
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/kotlinUsedInJava"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
             }
 
             @TestMetadata("changeSignature")
@@ -1870,11 +1845,6 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 runTest("jps/jps-plugin/testData/incremental/withJava/kotlinUsedInJava/onlyTopLevelFunctionInFileRemoved/");
             }
 
-            @TestMetadata("packageFileAdded")
-            public void testPackageFileAdded() throws Exception {
-                runTest("jps/jps-plugin/testData/incremental/withJava/kotlinUsedInJava/packageFileAdded/");
-            }
-
             @TestMetadata("privateChanges")
             public void testPrivateChanges() throws Exception {
                 runTest("jps/jps-plugin/testData/incremental/withJava/kotlinUsedInJava/privateChanges/");
@@ -1894,7 +1864,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInAddOptionalParameter() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/kotlinUsedInJava/addOptionalParameter"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/kotlinUsedInJava/addOptionalParameter"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -1907,7 +1877,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInChangeNotUsedSignature() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/kotlinUsedInJava/changeNotUsedSignature"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/kotlinUsedInJava/changeNotUsedSignature"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -1920,7 +1890,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInChangeSignature() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/kotlinUsedInJava/changeSignature"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/kotlinUsedInJava/changeSignature"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -1933,7 +1903,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInConstantChanged() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/kotlinUsedInJava/constantChanged"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/kotlinUsedInJava/constantChanged"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -1946,7 +1916,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInConstantUnchanged() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/kotlinUsedInJava/constantUnchanged"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/kotlinUsedInJava/constantUnchanged"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -1959,7 +1929,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInFunRenamed() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/kotlinUsedInJava/funRenamed"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/kotlinUsedInJava/funRenamed"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -1972,7 +1942,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInJvmFieldChanged() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/kotlinUsedInJava/jvmFieldChanged"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/kotlinUsedInJava/jvmFieldChanged"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -1985,7 +1955,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInJvmFieldUnchanged() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/kotlinUsedInJava/jvmFieldUnchanged"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/kotlinUsedInJava/jvmFieldUnchanged"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -1998,7 +1968,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInMethodAddedInSuper() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/kotlinUsedInJava/methodAddedInSuper"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/kotlinUsedInJava/methodAddedInSuper"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -2011,7 +1981,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInNotChangeSignature() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/kotlinUsedInJava/notChangeSignature"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/kotlinUsedInJava/notChangeSignature"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -2024,7 +1994,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInOnlyTopLevelFunctionInFileRemoved() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/kotlinUsedInJava/onlyTopLevelFunctionInFileRemoved"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/kotlinUsedInJava/onlyTopLevelFunctionInFileRemoved"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -2037,7 +2007,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInPackageFileAdded() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/kotlinUsedInJava/packageFileAdded"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/kotlinUsedInJava/packageFileAdded"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -2050,7 +2020,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInPrivateChanges() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/kotlinUsedInJava/privateChanges"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/kotlinUsedInJava/privateChanges"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -2063,7 +2033,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInPropertyRenamed() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/kotlinUsedInJava/propertyRenamed"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/kotlinUsedInJava/propertyRenamed"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
         }
@@ -2082,7 +2052,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
             }
 
             public void testAllFilesPresentInOther() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
             }
 
             @TestMetadata("allKotlinFilesRemovedThenNewAdded")
@@ -2244,7 +2214,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInAccessingFunctionsViaRenamedFileClass() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other/accessingFunctionsViaRenamedFileClass"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other/accessingFunctionsViaRenamedFileClass"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -2257,7 +2227,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInAllKotlinFilesRemovedThenNewAdded() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other/allKotlinFilesRemovedThenNewAdded"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other/allKotlinFilesRemovedThenNewAdded"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -2270,7 +2240,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInClassRedeclaration() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other/classRedeclaration"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other/classRedeclaration"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -2283,7 +2253,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInClassToPackageFacade() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other/classToPackageFacade"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other/classToPackageFacade"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -2296,7 +2266,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInConflictingPlatformDeclarations() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other/conflictingPlatformDeclarations"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other/conflictingPlatformDeclarations"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -2309,7 +2279,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInDefaultValueInConstructorAdded() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other/defaultValueInConstructorAdded"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other/defaultValueInConstructorAdded"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -2322,7 +2292,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInInlineFunctionWithJvmNameInClass() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other/inlineFunctionWithJvmNameInClass"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other/inlineFunctionWithJvmNameInClass"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -2335,7 +2305,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInInlineTopLevelFunctionWithJvmName() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other/inlineTopLevelFunctionWithJvmName"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other/inlineTopLevelFunctionWithJvmName"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -2348,7 +2318,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInInlineTopLevelValPropertyWithJvmName() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other/inlineTopLevelValPropertyWithJvmName"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other/inlineTopLevelValPropertyWithJvmName"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -2361,7 +2331,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInInnerClassNotGeneratedWhenRebuilding() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other/innerClassNotGeneratedWhenRebuilding"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other/innerClassNotGeneratedWhenRebuilding"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -2374,7 +2344,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInJvmNameChanged() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other/jvmNameChanged"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other/jvmNameChanged"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -2387,7 +2357,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInMainRedeclaration() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other/mainRedeclaration"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other/mainRedeclaration"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -2400,7 +2370,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInMultifileClassAddTopLevelFunWithDefault() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other/multifileClassAddTopLevelFunWithDefault"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other/multifileClassAddTopLevelFunWithDefault"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -2413,7 +2383,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInMultifileClassFileAdded() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other/multifileClassFileAdded"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other/multifileClassFileAdded"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -2426,7 +2396,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInMultifileClassFileChanged() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other/multifileClassFileChanged"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other/multifileClassFileChanged"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -2439,7 +2409,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInMultifileClassFileMovedToAnotherMultifileClass() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other/multifileClassFileMovedToAnotherMultifileClass"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other/multifileClassFileMovedToAnotherMultifileClass"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -2452,7 +2422,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInMultifileClassInlineFunction() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other/multifileClassInlineFunction"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other/multifileClassInlineFunction"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -2465,7 +2435,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInMultifileClassInlineFunctionAccessingField() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other/multifileClassInlineFunctionAccessingField"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other/multifileClassInlineFunctionAccessingField"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -2478,7 +2448,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInMultifileClassRecreated() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other/multifileClassRecreated"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other/multifileClassRecreated"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -2491,7 +2461,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInMultifileClassRecreatedAfterRenaming() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other/multifileClassRecreatedAfterRenaming"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other/multifileClassRecreatedAfterRenaming"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -2504,7 +2474,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInMultifileClassRemoved() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other/multifileClassRemoved"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other/multifileClassRemoved"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -2517,7 +2487,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInMultifileDependantUsage() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other/multifileDependantUsage"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other/multifileDependantUsage"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -2530,7 +2500,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInMultifilePackagePartMethodAdded() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other/multifilePackagePartMethodAdded"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other/multifilePackagePartMethodAdded"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -2543,7 +2513,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInMultifilePartsWithProperties() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other/multifilePartsWithProperties"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other/multifilePartsWithProperties"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -2556,7 +2526,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInOptionalParameter() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other/optionalParameter"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other/optionalParameter"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -2569,7 +2539,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInPackageFacadeToClass() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other/packageFacadeToClass"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other/packageFacadeToClass"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -2582,7 +2552,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInPackageMultifileClassOneFileWithPublicChanges() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other/packageMultifileClassOneFileWithPublicChanges"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other/packageMultifileClassOneFileWithPublicChanges"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -2595,7 +2565,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInPackageMultifileClassPrivateOnlyChanged() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other/packageMultifileClassPrivateOnlyChanged"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other/packageMultifileClassPrivateOnlyChanged"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -2608,7 +2578,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInPublicPropertyWithPrivateSetterMultiFileFacade() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other/publicPropertyWithPrivateSetterMultiFileFacade"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other/publicPropertyWithPrivateSetterMultiFileFacade"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -2621,7 +2591,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInTopLevelFunctionWithJvmName() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other/topLevelFunctionWithJvmName"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other/topLevelFunctionWithJvmName"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
 
@@ -2634,7 +2604,7 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
                 }
 
                 public void testAllFilesPresentInTopLevelPropertyWithJvmName() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other/topLevelPropertyWithJvmName"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/other/topLevelPropertyWithJvmName"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature))"), TargetBackend.JVM_IR, true);
                 }
             }
         }

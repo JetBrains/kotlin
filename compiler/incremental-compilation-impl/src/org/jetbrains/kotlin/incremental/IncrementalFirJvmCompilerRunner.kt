@@ -62,7 +62,7 @@ import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.progress.CompilationCanceledException
 import java.io.File
 
-class IncrementalFirJvmCompilerRunner(
+open class IncrementalFirJvmCompilerRunner(
     workingDir: File,
     reporter: BuildReporter,
     buildHistoryFile: File,

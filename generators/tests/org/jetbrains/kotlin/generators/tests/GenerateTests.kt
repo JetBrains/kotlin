@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.impl.generateTestGroupSuite
 import org.jetbrains.kotlin.generators.model.annotation
 import org.jetbrains.kotlin.generators.tests.IncrementalTestsGeneratorUtil.Companion.IcTestTypes.PURE_KOTLIN
+import org.jetbrains.kotlin.generators.tests.IncrementalTestsGeneratorUtil.Companion.IcTestTypes.WITH_JAVA
 import org.jetbrains.kotlin.generators.tests.IncrementalTestsGeneratorUtil.Companion.incrementalJvmTestData
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.jvm.abi.AbstractCompareJvmAbiTest
@@ -51,26 +52,44 @@ fun main(args: Array<String>) {
             testClass<AbstractIncrementalJvmCompilerRunnerTest>(
                 init = incrementalJvmTestData(
                     targetBackend = TargetBackend.JVM_IR,
-                    folderToExcludePatternMap = mapOf(PURE_KOTLIN to ".*SinceK2")
+                    folderToExcludePatternMap = mapOf(
+                        PURE_KOTLIN to ".*SinceK2",
+                        WITH_JAVA to "(^javaToKotlin)|(^javaToKotlinAndBack)|(^kotlinToJava)|(^packageFileAdded)|(^changeNotUsedSignature)" // KT-56681
+                    )
                 )
             )
 
+            // K2
             testClass<AbstractIncrementalFirJvmCompilerRunnerTest>(
                 init = incrementalJvmTestData(
                     TargetBackend.JVM_IR,
-                    folderToExcludePatternMap = mapOf(PURE_KOTLIN to "^.*Expect.*")
+                    folderToExcludePatternMap = mapOf(
+                        PURE_KOTLIN to "(^.*Expect.*)"
+                                + "|(^removeMemberTypeAlias)|(^addMemberTypeAlias)" //KT-55195
+                                + "|(^companionConstantChanged)" //KT-56242
+                    )
                 )
             )
+
             testClass<AbstractIncrementalFirICLightTreeJvmCompilerRunnerTest>(
                 init = incrementalJvmTestData(
                     TargetBackend.JVM_IR,
-                    folderToExcludePatternMap = mapOf(PURE_KOTLIN to "^.*Expect.*")
+                    folderToExcludePatternMap = mapOf(
+                        PURE_KOTLIN to "(^.*Expect.*)"
+                                + "|(^removeMemberTypeAlias)|(^addMemberTypeAlias)" //KT-55195
+                                + "|(^companionConstantChanged)", //KT-56242
+                        WITH_JAVA to "^classToPackageFacade" // KT-56698
+                    )
                 )
             )
             testClass<AbstractIncrementalFirLightTreeJvmCompilerRunnerTest>(
                 init = incrementalJvmTestData(
                     TargetBackend.JVM_IR,
-                    folderToExcludePatternMap = mapOf(PURE_KOTLIN to "^.*Expect.*")
+                    folderToExcludePatternMap = mapOf(
+                        PURE_KOTLIN to "(^.*Expect.*)"
+                                + "|(^removeMemberTypeAlias)|(^addMemberTypeAlias)" //KT-55195
+                                + "|(^companionConstantChanged)" //KT-56242
+                    )
                 )
             )
 

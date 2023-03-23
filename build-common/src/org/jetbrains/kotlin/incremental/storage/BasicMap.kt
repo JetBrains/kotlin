@@ -54,7 +54,7 @@ abstract class BasicMap<K : Comparable<K>, V, StorageType : LazyStorage<K, V>>(
     fun dump(): String {
         return with(StringBuilder()) {
             with(Printer(this)) {
-                println(this@BasicMap::class.java.simpleName)
+                println("${storageFile.name.substringBefore(".tab")} (${this@BasicMap::class.java.simpleName})")
                 pushIndent()
 
                 for (key in storage.keys.sorted()) {
