@@ -40,6 +40,7 @@ public annotation class SymbolName(val name: String)
  */
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.BINARY)
+@Deprecated("This annotation will be removed in a future release")
 public annotation class Retain
 
 /**
@@ -47,6 +48,7 @@ public annotation class Retain
  */
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.BINARY)
+@Deprecated("This annotation will be removed in a future release")
 public annotation class RetainForTarget(val target: String)
 
 
