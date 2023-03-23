@@ -15,6 +15,7 @@ import kotlin.native.internal.ReportUnhandledException
  * Initializes Kotlin runtime for the current thread, if not inited already.
  */
 @GCUnsafeCall("Kotlin_initRuntimeIfNeededFromKotlin")
+@Deprecated("Initializing runtime is not possible in the new memory model.", level = DeprecationLevel.WARNING)
 external public fun initRuntimeIfNeeded(): Unit
 
 /**
