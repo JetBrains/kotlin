@@ -84,8 +84,9 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
         val equalsMethod = lhs.type.findEqualsMethod()
 
         return when {
-            lhs.type is IrDynamicType ->
-                irCall(call, intrinsics.jsEqeq)
+// Temporarily de-optimize dynamic equality due to KT-57509
+//            lhs.type is IrDynamicType ->
+//                irCall(call, intrinsics.jsEqeq)
 
             // Special optimization for "<expression> == null"
             lhs.isNullConst() || rhs.isNullConst() ->

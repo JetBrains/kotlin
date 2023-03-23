@@ -1729,6 +1729,12 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
         }
 
         @Test
+        @TestMetadata("lambdaParameterInlining.kt")
+        public void testLambdaParameterInlining() throws Exception {
+            runTest("js/js.translator/testData/box/dynamic/lambdaParameterInlining.kt");
+        }
+
+        @Test
         @TestMetadata("operationsWithAssignment.kt")
         public void testOperationsWithAssignment() throws Exception {
             runTest("js/js.translator/testData/box/dynamic/operationsWithAssignment.kt");
