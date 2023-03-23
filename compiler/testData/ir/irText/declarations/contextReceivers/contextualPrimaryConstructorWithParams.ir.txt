@@ -33,14 +33,14 @@ FILE fqName:<root> fileName:/contextualPrimaryConstructorWithParams.kt
   CLASS CLASS name:OK modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.OK
     FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField0 type:<root>.O visibility:private [final]
-    CONSTRUCTOR visibility:public <> (_context_receiver_0:<root>.O, k:kotlin.String) returnType:<root>.OK [primary]
-      VALUE_PARAMETER name:_context_receiver_0 index:0 type:<root>.O
+    CONSTRUCTOR visibility:public <> ($context_receiver_0:<root>.O, k:kotlin.String) returnType:<root>.OK [primary]
+      VALUE_PARAMETER name:$context_receiver_0 index:0 type:<root>.O
       VALUE_PARAMETER name:k index:1 type:kotlin.String
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         SET_FIELD 'FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField0 type:<root>.O visibility:private [final]' type=kotlin.Unit origin=null
           receiver: GET_VAR '<this>: <root>.OK declared in <root>.OK' type=<root>.OK origin=null
-          value: GET_VAR '_context_receiver_0: <root>.O declared in <root>.OK.<init>' type=<root>.O origin=null
+          value: GET_VAR '$context_receiver_0: <root>.O declared in <root>.OK.<init>' type=<root>.O origin=null
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:OK modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:k visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:k type:kotlin.String visibility:private [final]
@@ -95,8 +95,8 @@ FILE fqName:<root> fileName:/contextualPrimaryConstructorWithParams.kt
               $receiver: VALUE_PARAMETER name:$this$with type:<root>.O
               BLOCK_BODY
                 VAR name:ok type:<root>.OK [val]
-                  CONSTRUCTOR_CALL 'public constructor <init> (_context_receiver_0: <root>.O, k: kotlin.String) [primary] declared in <root>.OK' type=<root>.OK origin=null
-                    _context_receiver_0: GET_VAR '$this$with: <root>.O declared in <root>.box.<anonymous>' type=<root>.O origin=null
+                  CONSTRUCTOR_CALL 'public constructor <init> ($context_receiver_0: <root>.O, k: kotlin.String) [primary] declared in <root>.OK' type=<root>.OK origin=null
+                    $context_receiver_0: GET_VAR '$this$with: <root>.O declared in <root>.box.<anonymous>' type=<root>.O origin=null
                     k: CONST String type=kotlin.String value="K"
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.String declared in <root>.box'
                   CALL 'public final fun <get-result> (): kotlin.String declared in <root>.OK' type=kotlin.String origin=GET_PROPERTY

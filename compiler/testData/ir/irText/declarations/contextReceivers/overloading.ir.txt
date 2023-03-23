@@ -1,20 +1,20 @@
 FILE fqName:<root> fileName:/overloading.kt
-  FUN name:foo visibility:public modality:FINAL <> (_context_receiver_0:kotlin.Int, _context_receiver_1:kotlin.String) returnType:kotlin.Int
+  FUN name:foo visibility:public modality:FINAL <> ($context_receiver_0:kotlin.Int, $context_receiver_1:kotlin.String) returnType:kotlin.Int
     contextReceiverParametersCount: 2
-    VALUE_PARAMETER name:_context_receiver_0 index:0 type:kotlin.Int
-    VALUE_PARAMETER name:_context_receiver_1 index:1 type:kotlin.String
+    VALUE_PARAMETER name:$context_receiver_0 index:0 type:kotlin.Int
+    VALUE_PARAMETER name:$context_receiver_1 index:1 type:kotlin.String
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun foo (_context_receiver_0: kotlin.Int, _context_receiver_1: kotlin.String): kotlin.Int declared in <root>'
+      RETURN type=kotlin.Nothing from='public final fun foo ($context_receiver_0: kotlin.Int, $context_receiver_1: kotlin.String): kotlin.Int declared in <root>'
         CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUS
-          $this: GET_VAR '_context_receiver_0: kotlin.Int declared in <root>.foo' type=kotlin.Int origin=null
+          $this: GET_VAR '$context_receiver_0: kotlin.Int declared in <root>.foo' type=kotlin.Int origin=null
           other: CONST Int type=kotlin.Int value=42
-  FUN name:foo visibility:public modality:FINAL <> (_context_receiver_0:kotlin.Int) returnType:kotlin.Int
+  FUN name:foo visibility:public modality:FINAL <> ($context_receiver_0:kotlin.Int) returnType:kotlin.Int
     contextReceiverParametersCount: 1
-    VALUE_PARAMETER name:_context_receiver_0 index:0 type:kotlin.Int
+    VALUE_PARAMETER name:$context_receiver_0 index:0 type:kotlin.Int
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun foo (_context_receiver_0: kotlin.Int): kotlin.Int declared in <root>'
+      RETURN type=kotlin.Nothing from='public final fun foo ($context_receiver_0: kotlin.Int): kotlin.Int declared in <root>'
         CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUS
-          $this: GET_VAR '_context_receiver_0: kotlin.Int declared in <root>.foo' type=kotlin.Int origin=null
+          $this: GET_VAR '$context_receiver_0: kotlin.Int declared in <root>.foo' type=kotlin.Int origin=null
           other: CONST Int type=kotlin.Int value=42
   FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
@@ -28,5 +28,5 @@ FILE fqName:<root> fileName:/overloading.kt
               $receiver: VALUE_PARAMETER name:$this$with type:kotlin.Int
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Int declared in <root>.test'
-                  CALL 'public final fun foo (_context_receiver_0: kotlin.Int): kotlin.Int declared in <root>' type=kotlin.Int origin=null
-                    _context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.test.<anonymous>' type=kotlin.Int origin=null
+                  CALL 'public final fun foo ($context_receiver_0: kotlin.Int): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+                    $context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.test.<anonymous>' type=kotlin.Int origin=null

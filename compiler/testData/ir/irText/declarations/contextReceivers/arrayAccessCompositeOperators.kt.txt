@@ -47,9 +47,9 @@ var operationScore: Int
   get
   set
 
-operator fun MyContainer.get(_context_receiver_0: Int, index: Int): Int {
+operator fun MyContainer.get($context_receiver_0: Int, index: Int): Int {
   { // BLOCK
-    <set-operationScore>(<set-?> = <get-operationScore>().plus(other = _context_receiver_0))
+    <set-operationScore>(<set-?> = <get-operationScore>().plus(other = $context_receiver_0))
   }
   return when {
     EQEQ(arg0 = index, arg1 = 0) -> <this>.<get-i>()
@@ -57,9 +57,9 @@ operator fun MyContainer.get(_context_receiver_0: Int, index: Int): Int {
   }
 }
 
-operator fun MyContainer.plusAssign(_context_receiver_0: Int, other: MyContainer) {
+operator fun MyContainer.plusAssign($context_receiver_0: Int, other: MyContainer) {
   { // BLOCK
-    <set-operationScore>(<set-?> = <get-operationScore>().plus(other = _context_receiver_0))
+    <set-operationScore>(<set-?> = <get-operationScore>().plus(other = $context_receiver_0))
   }
   { // BLOCK
     val tmp0_this: MyContainer = <this>
@@ -67,9 +67,9 @@ operator fun MyContainer.plusAssign(_context_receiver_0: Int, other: MyContainer
   }
 }
 
-operator fun MyContainer.inc(_context_receiver_0: Int): MyContainer {
+operator fun MyContainer.inc($context_receiver_0: Int): MyContainer {
   { // BLOCK
-    <set-operationScore>(<set-?> = <get-operationScore>().plus(other = _context_receiver_0))
+    <set-operationScore>(<set-?> = <get-operationScore>().plus(other = $context_receiver_0))
   }
   return MyContainer(i = <this>.<get-i>().plus(other = 1))
 }
@@ -77,11 +77,11 @@ operator fun MyContainer.inc(_context_receiver_0: Int): MyContainer {
 fun box(): String {
   var myContainer: MyContainer = MyContainer(i = 0)
   with<Int, Unit>(receiver = 1, block = local fun Int.<anonymous>() {
-    myContainer.plusAssign(_context_receiver_0 = $this$with, other = MyContainer(i = { // BLOCK
+    myContainer.plusAssign($context_receiver_0 = $this$with, other = MyContainer(i = { // BLOCK
       val tmp0: MyContainer = myContainer
-      myContainer = tmp0.inc(_context_receiver_0 = $this$with)
+      myContainer = tmp0.inc($context_receiver_0 = $this$with)
       tmp0
-    }.get(_context_receiver_0 = $this$with, index = 0)))
+    }.get($context_receiver_0 = $this$with, index = 0)))
   }
 )
   return when {

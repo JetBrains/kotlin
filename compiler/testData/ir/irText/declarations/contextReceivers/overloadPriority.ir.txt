@@ -18,11 +18,11 @@ FILE fqName:<root> fileName:/overloadPriority.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  FUN name:f visibility:public modality:FINAL <> (_context_receiver_0:<root>.Context) returnType:kotlin.String
+  FUN name:f visibility:public modality:FINAL <> ($context_receiver_0:<root>.Context) returnType:kotlin.String
     contextReceiverParametersCount: 1
-    VALUE_PARAMETER name:_context_receiver_0 index:0 type:<root>.Context
+    VALUE_PARAMETER name:$context_receiver_0 index:0 type:<root>.Context
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun f (_context_receiver_0: <root>.Context): kotlin.String declared in <root>'
+      RETURN type=kotlin.Nothing from='public final fun f ($context_receiver_0: <root>.Context): kotlin.String declared in <root>'
         CALL 'public final fun TODO (): kotlin.Nothing [inline] declared in kotlin.StandardKt' type=kotlin.Nothing origin=null
   FUN name:f visibility:public modality:FINAL <> () returnType:kotlin.Any
     BLOCK_BODY
@@ -41,5 +41,5 @@ FILE fqName:<root> fileName:/overloadPriority.kt
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Int declared in <root>.test'
                   CALL 'public open fun <get-length> (): kotlin.Int declared in kotlin.String' type=kotlin.Int origin=GET_PROPERTY
-                    $this: CALL 'public final fun f (_context_receiver_0: <root>.Context): kotlin.String declared in <root>' type=kotlin.String origin=null
-                      _context_receiver_0: GET_VAR '$this$with: <root>.Context declared in <root>.test.<anonymous>' type=<root>.Context origin=null
+                    $this: CALL 'public final fun f ($context_receiver_0: <root>.Context): kotlin.String declared in <root>' type=kotlin.String origin=null
+                      $context_receiver_0: GET_VAR '$this$with: <root>.Context declared in <root>.test.<anonymous>' type=<root>.Context origin=null

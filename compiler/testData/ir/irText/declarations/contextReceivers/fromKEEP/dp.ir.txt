@@ -30,16 +30,16 @@ FILE fqName:<root> fileName:/dp.kt
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   PROPERTY name:dp visibility:public modality:FINAL [val]
-    FUN name:<get-dp> visibility:public modality:FINAL <> ($receiver:kotlin.Int, _context_receiver_0:<root>.View) returnType:kotlin.Int
+    FUN name:<get-dp> visibility:public modality:FINAL <> ($receiver:kotlin.Int, $context_receiver_0:<root>.View) returnType:kotlin.Int
       correspondingProperty: PROPERTY name:dp visibility:public modality:FINAL [val]
       contextReceiverParametersCount: 1
       $receiver: VALUE_PARAMETER name:<this> type:kotlin.Int
-      VALUE_PARAMETER name:_context_receiver_0 index:0 type:<root>.View
+      VALUE_PARAMETER name:$context_receiver_0 index:0 type:<root>.View
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-dp> (_context_receiver_0: <root>.View): kotlin.Int declared in <root>'
+        RETURN type=kotlin.Nothing from='public final fun <get-dp> ($context_receiver_0: <root>.View): kotlin.Int declared in <root>'
           CALL 'public final fun times (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=MUL
             $this: CALL 'public final fun <get-coefficient> (): kotlin.Int declared in <root>.View' type=kotlin.Int origin=GET_PROPERTY
-              $this: GET_VAR '_context_receiver_0: <root>.View declared in <root>.<get-dp>' type=<root>.View origin=null
+              $this: GET_VAR '$context_receiver_0: <root>.View declared in <root>.<get-dp>' type=<root>.View origin=null
             other: GET_VAR '<this>: kotlin.Int declared in <root>.<get-dp>' type=kotlin.Int origin=null
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY
@@ -68,9 +68,9 @@ FILE fqName:<root> fileName:/dp.kt
                           VALUE_PARAMETER name:it index:0 type:kotlin.Int
                           BLOCK_BODY
                             RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.Int): kotlin.Int declared in <root>.box.<anonymous>'
-                              CALL 'public final fun <get-dp> (_context_receiver_0: <root>.View): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
+                              CALL 'public final fun <get-dp> ($context_receiver_0: <root>.View): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
                                 $receiver: GET_VAR 'it: kotlin.Int declared in <root>.box.<anonymous>.<anonymous>' type=kotlin.Int origin=null
-                                _context_receiver_0: GET_VAR '$this$with: <root>.View declared in <root>.box.<anonymous>' type=<root>.View origin=null
+                                $context_receiver_0: GET_VAR '$this$with: <root>.View declared in <root>.box.<anonymous>' type=<root>.View origin=null
                     arg1: CALL 'public final fun listOf <T> (vararg elements: T of kotlin.collections.CollectionsKt.listOf): kotlin.collections.List<T of kotlin.collections.CollectionsKt.listOf> declared in kotlin.collections.CollectionsKt' type=kotlin.collections.List<kotlin.Int> origin=null
                       <T>: kotlin.Int
                       elements: VARARG type=kotlin.Array<out kotlin.Int> varargElementType=kotlin.Int

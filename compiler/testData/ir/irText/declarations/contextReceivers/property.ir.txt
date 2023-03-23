@@ -34,15 +34,15 @@ FILE fqName:<root> fileName:/property.kt
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   PROPERTY name:c visibility:public modality:FINAL [val]
-    FUN name:<get-c> visibility:public modality:FINAL <> (_context_receiver_0:<root>.A, _context_receiver_1:<root>.B) returnType:kotlin.Int
+    FUN name:<get-c> visibility:public modality:FINAL <> ($context_receiver_0:<root>.A, $context_receiver_1:<root>.B) returnType:kotlin.Int
       correspondingProperty: PROPERTY name:c visibility:public modality:FINAL [val]
       contextReceiverParametersCount: 2
-      VALUE_PARAMETER name:_context_receiver_0 index:0 type:<root>.A
-      VALUE_PARAMETER name:_context_receiver_1 index:1 type:<root>.B
+      VALUE_PARAMETER name:$context_receiver_0 index:0 type:<root>.A
+      VALUE_PARAMETER name:$context_receiver_1 index:1 type:<root>.B
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-c> (_context_receiver_0: <root>.A, _context_receiver_1: <root>.B): kotlin.Int declared in <root>'
+        RETURN type=kotlin.Nothing from='public final fun <get-c> ($context_receiver_0: <root>.A, $context_receiver_1: <root>.B): kotlin.Int declared in <root>'
           CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUS
             $this: CALL 'public abstract fun a (): kotlin.Int declared in <root>.A' type=kotlin.Int origin=null
-              $this: GET_VAR '_context_receiver_0: <root>.A declared in <root>.<get-c>' type=<root>.A origin=null
+              $this: GET_VAR '$context_receiver_0: <root>.A declared in <root>.<get-c>' type=<root>.A origin=null
             other: CALL 'public abstract fun b (): kotlin.Int declared in <root>.B' type=kotlin.Int origin=null
-              $this: GET_VAR '_context_receiver_1: <root>.B declared in <root>.<get-c>' type=<root>.B origin=null
+              $this: GET_VAR '$context_receiver_1: <root>.B declared in <root>.<get-c>' type=<root>.B origin=null

@@ -64,5 +64,5 @@ object NameUtils {
 
     @JvmStatic
     fun contextReceiverName(index: Int): Name =
-        Name.identifier("_context_receiver_$index")
+        Name.identifier("\$context_receiver_$index")
 }

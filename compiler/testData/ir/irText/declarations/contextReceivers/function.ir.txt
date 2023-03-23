@@ -29,13 +29,13 @@ FILE fqName:<root> fileName:/function.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  FUN name:foo visibility:public modality:FINAL <> (_context_receiver_0:<root>.C) returnType:kotlin.Unit
+  FUN name:foo visibility:public modality:FINAL <> ($context_receiver_0:<root>.C) returnType:kotlin.Unit
     contextReceiverParametersCount: 1
-    VALUE_PARAMETER name:_context_receiver_0 index:0 type:<root>.C
+    VALUE_PARAMETER name:$context_receiver_0 index:0 type:<root>.C
     BLOCK_BODY
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public final fun <get-c> (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=GET_PROPERTY
-          $this: GET_VAR '_context_receiver_0: <root>.C declared in <root>.foo' type=<root>.C origin=null
+          $this: GET_VAR '$context_receiver_0: <root>.C declared in <root>.foo' type=<root>.C origin=null
   FUN name:bar visibility:public modality:FINAL <> (c:<root>.C) returnType:kotlin.Unit
     VALUE_PARAMETER name:c index:0 type:<root>.C
     BLOCK_BODY
@@ -47,5 +47,5 @@ FILE fqName:<root> fileName:/function.kt
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.C) returnType:kotlin.Unit
             $receiver: VALUE_PARAMETER name:$this$with type:<root>.C
             BLOCK_BODY
-              CALL 'public final fun foo (_context_receiver_0: <root>.C): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-                _context_receiver_0: GET_VAR '$this$with: <root>.C declared in <root>.bar.<anonymous>' type=<root>.C origin=null
+              CALL 'public final fun foo ($context_receiver_0: <root>.C): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                $context_receiver_0: GET_VAR '$this$with: <root>.C declared in <root>.bar.<anonymous>' type=<root>.C origin=null

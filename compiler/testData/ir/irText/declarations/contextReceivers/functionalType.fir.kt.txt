@@ -33,62 +33,62 @@ class R {
 
 }
 
-fun R.f1(_context_receiver_0: C, g: @ExtensionFunctionType Function3<C, R, Param, Unit>) {
-  g.invoke(p1 = _context_receiver_0, p2 = <this>, p3 = Param())
+fun R.f1($context_receiver_0: C, g: @ExtensionFunctionType Function3<C, R, Param, Unit>) {
+  g.invoke(p1 = $context_receiver_0, p2 = <this>, p3 = Param())
 }
 
-fun f2(_context_receiver_0: C, g: Function2<C, Param, Unit>) {
-  g.invoke(p1 = _context_receiver_0, p2 = Param())
+fun f2($context_receiver_0: C, g: Function2<C, Param, Unit>) {
+  g.invoke(p1 = $context_receiver_0, p2 = Param())
 }
 
-fun R.f3(_context_receiver_0: C, g: @ExtensionFunctionType Function2<C, R, Unit>) {
-  g.invoke(p1 = _context_receiver_0, p2 = <this>)
+fun R.f3($context_receiver_0: C, g: @ExtensionFunctionType Function2<C, R, Unit>) {
+  g.invoke(p1 = $context_receiver_0, p2 = <this>)
 }
 
-fun f4(_context_receiver_0: C, g: Function1<C, Unit>) {
-  g.invoke(p1 = _context_receiver_0)
+fun f4($context_receiver_0: C, g: Function1<C, Unit>) {
+  g.invoke(p1 = $context_receiver_0)
 }
 
 fun test() {
-  val lf1: @ExtensionFunctionType Function3<C, R, Param, Unit> = local fun R.<anonymous>(_context_receiver_0: C, <unused var>: Param) {
+  val lf1: @ExtensionFunctionType Function3<C, R, Param, Unit> = local fun R.<anonymous>($context_receiver_0: C, <unused var>: Param) {
     <this>.<get-r>() /*~> Unit */
-    _context_receiver_0.<get-c>() /*~> Unit */
+    $context_receiver_0.<get-c>() /*~> Unit */
   }
 
-  val lf2: Function2<C, Param, Unit> = local fun <anonymous>(_context_receiver_0: C, <unused var>: Param) {
-    _context_receiver_0.<get-c>() /*~> Unit */
+  val lf2: Function2<C, Param, Unit> = local fun <anonymous>($context_receiver_0: C, <unused var>: Param) {
+    $context_receiver_0.<get-c>() /*~> Unit */
   }
 
-  val lf3: @ExtensionFunctionType Function2<C, R, Unit> = local fun R.<anonymous>(_context_receiver_0: C) {
+  val lf3: @ExtensionFunctionType Function2<C, R, Unit> = local fun R.<anonymous>($context_receiver_0: C) {
     <this>.<get-r>() /*~> Unit */
-    _context_receiver_0.<get-c>() /*~> Unit */
+    $context_receiver_0.<get-c>() /*~> Unit */
   }
 
-  val lf4: Function1<C, Unit> = local fun <anonymous>(_context_receiver_0: C) {
-    _context_receiver_0.<get-c>() /*~> Unit */
+  val lf4: Function1<C, Unit> = local fun <anonymous>($context_receiver_0: C) {
+    $context_receiver_0.<get-c>() /*~> Unit */
   }
 
   with<C, Unit>(receiver = C(), block = local fun C.<anonymous>() {
     with<R, Unit>(receiver = R(), block = local fun R.<anonymous>() {
-      $this$with.f1(_context_receiver_0 = $this$with, g = lf1)
-      $this$with.f1(_context_receiver_0 = $this$with, g = local fun R.<anonymous>(_context_receiver_0: C, <unused var>: Param) {
+      $this$with.f1($context_receiver_0 = $this$with, g = lf1)
+      $this$with.f1($context_receiver_0 = $this$with, g = local fun R.<anonymous>($context_receiver_0: C, <unused var>: Param) {
         $this$f1.<get-r>() /*~> Unit */
         $this$with.<get-c>() /*~> Unit */
       }
 )
-      f2(_context_receiver_0 = $this$with, g = lf2)
-      f2(_context_receiver_0 = $this$with, g = local fun <anonymous>(_context_receiver_0: C, <unused var>: Param) {
+      f2($context_receiver_0 = $this$with, g = lf2)
+      f2($context_receiver_0 = $this$with, g = local fun <anonymous>($context_receiver_0: C, <unused var>: Param) {
         $this$with.<get-c>() /*~> Unit */
       }
 )
-      $this$with.f3(_context_receiver_0 = $this$with, g = lf3)
-      $this$with.f3(_context_receiver_0 = $this$with, g = local fun R.<anonymous>(_context_receiver_0: C) {
+      $this$with.f3($context_receiver_0 = $this$with, g = lf3)
+      $this$with.f3($context_receiver_0 = $this$with, g = local fun R.<anonymous>($context_receiver_0: C) {
         $this$f3.<get-r>() /*~> Unit */
         $this$with.<get-c>() /*~> Unit */
       }
 )
-      f4(_context_receiver_0 = $this$with, g = lf4)
-      f4(_context_receiver_0 = $this$with, g = local fun <anonymous>(_context_receiver_0: C) {
+      f4($context_receiver_0 = $this$with, g = lf4)
+      f4($context_receiver_0 = $this$with, g = local fun <anonymous>($context_receiver_0: C) {
         $this$with.<get-c>() /*~> Unit */
       }
 )

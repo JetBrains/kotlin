@@ -41,10 +41,10 @@ FILE fqName:<root> fileName:/passingLambdaToContextualParam.kt
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
         CALL 'public final fun contextual (f: @[ContextFunctionTypeParams(count = '1')] kotlin.Function1<<root>.C, kotlin.String>): kotlin.String declared in <root>' type=kotlin.String origin=null
           f: FUN_EXPR type=@[ContextFunctionTypeParams(count = '1')] kotlin.Function1<<root>.C, kotlin.String> origin=LAMBDA
-            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (_context_receiver_0:<root>.C) returnType:kotlin.String
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($context_receiver_0:<root>.C) returnType:kotlin.String
               contextReceiverParametersCount: 1
-              VALUE_PARAMETER name:_context_receiver_0 index:0 type:<root>.C
+              VALUE_PARAMETER name:$context_receiver_0 index:0 type:<root>.C
               BLOCK_BODY
-                RETURN type=kotlin.Nothing from='local final fun <anonymous> (_context_receiver_0: <root>.C): kotlin.String declared in <root>.box'
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> ($context_receiver_0: <root>.C): kotlin.String declared in <root>.box'
                   CALL 'public final fun <get-result> (): kotlin.String declared in <root>.C' type=kotlin.String origin=GET_PROPERTY
-                    $this: GET_VAR '_context_receiver_0: <root>.C declared in <root>.box.<anonymous>' type=<root>.C origin=null
+                    $this: GET_VAR '$context_receiver_0: <root>.C declared in <root>.box.<anonymous>' type=<root>.C origin=null

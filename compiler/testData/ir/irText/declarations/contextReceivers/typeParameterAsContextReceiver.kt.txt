@@ -1,9 +1,9 @@
-fun <T : Any?> useContext(_context_receiver_0: T, block: Function1<T, Unit>) {
+fun <T : Any?> useContext($context_receiver_0: T, block: Function1<T, Unit>) {
 }
 
 fun test() {
   with<Int, Unit>(receiver = 42, block = local fun Int.<anonymous>() {
-    useContext<Int>(_context_receiver_0 = $this$with, block = local fun <anonymous>(i: Int) {
+    useContext<Int>($context_receiver_0 = $this$with, block = local fun <anonymous>(i: Int) {
       i.toDouble() /*~> Unit */
     }
 )

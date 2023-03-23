@@ -20,10 +20,10 @@ FILE fqName:<root> fileName:/canvas.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS INTERFACE name:Shape modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Shape
-    FUN name:draw visibility:public modality:ABSTRACT <> ($this:<root>.Shape, _context_receiver_0:<root>.Canvas) returnType:kotlin.String
+    FUN name:draw visibility:public modality:ABSTRACT <> ($this:<root>.Shape, $context_receiver_0:<root>.Canvas) returnType:kotlin.String
       $this: VALUE_PARAMETER name:<this> type:<root>.Shape
       contextReceiverParametersCount: 1
-      VALUE_PARAMETER name:_context_receiver_0 index:0 type:<root>.Canvas
+      VALUE_PARAMETER name:$context_receiver_0 index:0 type:<root>.Canvas
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
@@ -43,18 +43,18 @@ FILE fqName:<root> fileName:/canvas.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Circle modality:FINAL visibility:public superTypes:[<root>.Shape]'
-    FUN name:draw visibility:public modality:OPEN <> ($this:<root>.Circle, _context_receiver_0:<root>.Canvas) returnType:kotlin.String
+    FUN name:draw visibility:public modality:OPEN <> ($this:<root>.Circle, $context_receiver_0:<root>.Canvas) returnType:kotlin.String
       overridden:
-        public abstract fun draw (_context_receiver_0: <root>.Canvas): kotlin.String declared in <root>.Shape
+        public abstract fun draw ($context_receiver_0: <root>.Canvas): kotlin.String declared in <root>.Shape
       $this: VALUE_PARAMETER name:<this> type:<root>.Circle
       contextReceiverParametersCount: 1
-      VALUE_PARAMETER name:_context_receiver_0 index:0 type:<root>.Canvas
+      VALUE_PARAMETER name:$context_receiver_0 index:0 type:<root>.Canvas
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public open fun draw (_context_receiver_0: <root>.Canvas): kotlin.String declared in <root>.Circle'
+        RETURN type=kotlin.Nothing from='public open fun draw ($context_receiver_0: <root>.Canvas): kotlin.String declared in <root>.Circle'
           CALL 'public final fun plus (other: kotlin.Any?): kotlin.String [operator] declared in kotlin.String' type=kotlin.String origin=PLUS
             $this: CONST String type=kotlin.String value="OK"
             other: CALL 'public abstract fun <get-suffix> (): kotlin.String declared in <root>.Canvas' type=kotlin.String origin=GET_PROPERTY
-              $this: GET_VAR '_context_receiver_0: <root>.Canvas declared in <root>.Circle.draw' type=<root>.Canvas origin=null
+              $this: GET_VAR '$context_receiver_0: <root>.Canvas declared in <root>.Circle.draw' type=<root>.Canvas origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.Shape
@@ -114,6 +114,6 @@ FILE fqName:<root> fileName:/canvas.kt
               $receiver: VALUE_PARAMETER name:$this$with type:<root>.MyCanvas
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.String declared in <root>.box'
-                  CALL 'public open fun draw (_context_receiver_0: <root>.Canvas): kotlin.String declared in <root>.Circle' type=kotlin.String origin=null
+                  CALL 'public open fun draw ($context_receiver_0: <root>.Canvas): kotlin.String declared in <root>.Circle' type=kotlin.String origin=null
                     $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Circle' type=<root>.Circle origin=null
-                    _context_receiver_0: GET_VAR '$this$with: <root>.MyCanvas declared in <root>.box.<anonymous>' type=<root>.MyCanvas origin=null
+                    $context_receiver_0: GET_VAR '$this$with: <root>.MyCanvas declared in <root>.box.<anonymous>' type=<root>.MyCanvas origin=null

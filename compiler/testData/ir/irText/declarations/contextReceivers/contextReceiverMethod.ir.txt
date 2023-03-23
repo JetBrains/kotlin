@@ -26,13 +26,13 @@ FILE fqName:<root> fileName:/contextReceiverMethod.kt
   CLASS CLASS name:Test modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test
     FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField0 type:<root>.Context visibility:private [final]
-    CONSTRUCTOR visibility:public <> (_context_receiver_0:<root>.Context) returnType:<root>.Test [primary]
-      VALUE_PARAMETER name:_context_receiver_0 index:0 type:<root>.Context
+    CONSTRUCTOR visibility:public <> ($context_receiver_0:<root>.Context) returnType:<root>.Test [primary]
+      VALUE_PARAMETER name:$context_receiver_0 index:0 type:<root>.Context
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         SET_FIELD 'FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField0 type:<root>.Context visibility:private [final]' type=kotlin.Unit origin=null
           receiver: GET_VAR '<this>: <root>.Test declared in <root>.Test' type=<root>.Test origin=null
-          value: GET_VAR '_context_receiver_0: <root>.Context declared in <root>.Test.<init>' type=<root>.Context origin=null
+          value: GET_VAR '$context_receiver_0: <root>.Context declared in <root>.Test.<init>' type=<root>.Context origin=null
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test modality:FINAL visibility:public superTypes:[kotlin.Any]'
     FUN name:foo visibility:public modality:FINAL <> ($this:<root>.Test) returnType:kotlin.Int
       $this: VALUE_PARAMETER name:<this> type:<root>.Test
