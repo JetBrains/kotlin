@@ -193,6 +193,12 @@ public class CInteropNoFModulesTestGenerated extends AbstractNativeCInteropNoFMo
         }
 
         @Test
+        @TestMetadata("protocolDefs")
+        public void testProtocolDefs() throws Exception {
+            runTest("native/native.tests/testData/CInterop/framework/frameworkDefs/protocolDefs/");
+        }
+
+        @Test
         @TestMetadata("twoChildren")
         public void testTwoChildren() throws Exception {
             runTest("native/native.tests/testData/CInterop/framework/frameworkDefs/twoChildren/");

@@ -444,7 +444,7 @@ internal abstract class ObjCContainerStubBuilder(
                 metaContainerStub.protocolGetter!!
             } else {
                 // TODO: handle the case when protocol getter stub can't be compiled.
-                context.generateNextUniqueId("kniprot_")
+                "${context.generateNextUniqueId("kniprot_")}_${container.name}"
             }
             AnnotationStub.ObjC.ExternalClass(protocolGetter)
         }
