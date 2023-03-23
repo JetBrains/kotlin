@@ -1,3 +1,6 @@
+// TARGET_BACKEND: JVM_IR
+// IGNORE_BACKEND_K1: JVM_IR
+
 open class A {
     open var it: Number
         private field = 3

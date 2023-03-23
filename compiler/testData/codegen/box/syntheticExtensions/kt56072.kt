@@ -1,3 +1,4 @@
+// TARGET_BACKEND: JVM
 // FILE: SuperClass.java
 
 public class SuperClass {

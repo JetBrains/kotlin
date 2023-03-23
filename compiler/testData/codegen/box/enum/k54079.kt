@@ -1,3 +1,5 @@
+// WITH_STDLIB
+
 open class Arguments {
     @GradleOption(
         value = DefaultValue.BOOLEAN_FALSE_DEFAULT,

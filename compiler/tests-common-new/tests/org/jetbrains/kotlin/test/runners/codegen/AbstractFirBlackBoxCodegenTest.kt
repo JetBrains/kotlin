@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -71,10 +71,7 @@ abstract class AbstractFirBlackBoxCodegenTestBase(
 
             configureDumpHandlersForCodegenTest()
 
-            forTestsMatching(
-                "compiler/fir/fir2ir/testData/codegen/box/properties/backingField/*" or
-                        "compiler/fir/fir2ir/testData/codegen/boxWithStdLib/properties/backingField/*"
-            ) {
+            forTestsMatching("compiler/testData/codegen/box/properties/backingField/*") {
                 defaultDirectives {
                     LanguageSettingsDirectives.LANGUAGE with "+ExplicitBackingFields"
                 }
