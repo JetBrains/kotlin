@@ -4,7 +4,7 @@
  */
 
 // FILE: hello.kt
-@file:OptIn(FreezingIsDeprecated::class)
+@file:OptIn(FreezingIsDeprecated::class, ExperimentalStdlibApi::class)
 
 import kotlinx.cinterop.*
 

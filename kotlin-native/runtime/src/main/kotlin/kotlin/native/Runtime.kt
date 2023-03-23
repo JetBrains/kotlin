@@ -40,6 +40,7 @@ public class IncorrectDereferenceException : RuntimeException {
 /**
  * Typealias describing custom exception reporting hook.
  */
+@ExperimentalStdlibApi
 public typealias ReportUnhandledExceptionHook = Function1<Throwable, Unit>
 
 /**
@@ -55,6 +56,7 @@ public typealias ReportUnhandledExceptionHook = Function1<Throwable, Unit>
  * Set or default hook is also invoked by [processUnhandledException].
  * With the legacy MM the hook must be a frozen lambda so that it could be called from any thread/worker.
  */
+@ExperimentalStdlibApi
 @OptIn(FreezingIsDeprecated::class)
 public fun setUnhandledExceptionHook(hook: ReportUnhandledExceptionHook?): ReportUnhandledExceptionHook? {
     try {
@@ -66,7 +68,7 @@ public fun setUnhandledExceptionHook(hook: ReportUnhandledExceptionHook?): Repor
 
 @Suppress("CONFLICTING_OVERLOADS")
 @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-@OptIn(FreezingIsDeprecated::class)
+@OptIn(FreezingIsDeprecated::class, ExperimentalStdlibApi::class)
 public fun setUnhandledExceptionHook(hook: ReportUnhandledExceptionHook): ReportUnhandledExceptionHook? {
     try {
         return UnhandledExceptionHookHolder.hook.swap(hook)
