@@ -1130,6 +1130,18 @@ open class HierarchicalMppIT : KGPBaseTest() {
         }
     }
 
+    @GradleTest
+    @DisplayName("KT-57531: Kotlin Native Link with cycle in dependency constraints")
+    fun `test Kotlin Native Link with cycle in dependency constraints`(gradleVersion: GradleVersion) {
+        project("kt-57531-KotlinNativeLink-with-cycle-in-dependency-constraints", gradleVersion) {
+            build("publish")
+            build("assemble") {
+                assertTasksExecuted(":consumer:linkDebugExecutableLinuxX64")
+            }
+        }
+    }
+
+
     private fun TestProject.testDependencyTransformations(
         subproject: String? = null,
         check: BuildResult.(reports: Iterable<DependencyTransformationReport>) -> Unit
