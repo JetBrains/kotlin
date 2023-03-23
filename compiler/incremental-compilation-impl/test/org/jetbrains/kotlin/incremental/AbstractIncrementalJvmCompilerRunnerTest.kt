@@ -55,9 +55,10 @@ abstract class AbstractIncrementalJvmCompilerRunnerTest : AbstractIncrementalCom
             }
             mkdirs()
         }
-        val args = arrayOf("-cp", javaClasspath,
-                           "-d", javaDestinationDir.canonicalPath,
-                           *javaSources.map { it.canonicalPath }.toTypedArray()
+        val args = arrayOf(
+            "-cp", javaClasspath,
+            "-d", javaDestinationDir.canonicalPath,
+            *javaSources.map { it.canonicalPath }.toTypedArray()
         )
 
         val err = ByteArrayOutputStream()

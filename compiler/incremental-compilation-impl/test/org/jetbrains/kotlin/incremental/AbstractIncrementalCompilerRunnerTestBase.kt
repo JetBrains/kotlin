@@ -36,9 +36,10 @@ abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerAr
 
     protected open fun resetTest(testDir: File, newOutDir: File, newCacheDir: File) {}
 
-    private fun createCompilerArgumentsImpl(destinationDir: File, testDir: File): Args = createCompilerArguments(destinationDir, testDir).apply {
-        parseCommandLineArguments(parseAdditionalArgs(testDir), this)
-    }
+    private fun createCompilerArgumentsImpl(destinationDir: File, testDir: File): Args =
+        createCompilerArguments(destinationDir, testDir).apply {
+            parseCommandLineArguments(parseAdditionalArgs(testDir), this)
+        }
 
     fun doTest(path: String) {
         val testDir = File(path)
@@ -127,7 +128,8 @@ abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerAr
     // these functions are needed only to simplify debugging of IC tests
     private fun initialMake(cacheDir: File, outDir: File, sourceRoots: List<File>, args: Args) = make(cacheDir, outDir, sourceRoots, args)
 
-    private fun incrementalMake(cacheDir: File, outDir: File, sourceRoots: List<File>, args: Args) = make(cacheDir, outDir, sourceRoots, args)
+    private fun incrementalMake(cacheDir: File, outDir: File, sourceRoots: List<File>, args: Args) =
+        make(cacheDir, outDir, sourceRoots, args)
 
     protected open fun rebuildAndCompareOutput(
         sourceRoots: List<File>,
