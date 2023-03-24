@@ -93,24 +93,25 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         if (type.hasFlexibleTypeCapabilitiesId()) {
             val id = c.nameResolver.getString(type.flexibleTypeCapabilitiesId)
 
-            if (id == DYNAMIC_TYPE_DESERIALIZER_ID) {
+            val holder =
                 KotlinPlaceHolderStubImpl<KtDynamicType>(nullableTypeParent(parent, type), KtStubElementTypes.DYNAMIC_TYPE)
+            if (id == DYNAMIC_TYPE_DESERIALIZER_ID) {
                 return
             }
-//
-//            val lowerBound = simpleType(proto, attributes)
-//            val upperBound = simpleType(proto.flexibleUpperBound(typeTable)!!, attributes)
-//
-//            val isDynamic = lowerBound == moduleData.session.builtinTypes.nothingType.coneType &&
-//                    upperBound == moduleData.session.builtinTypes.nullableAnyType.coneType
-//
-//            return if (isDynamic) {
-//                ConeDynamicType.create(moduleData.session)
-//            } else {
-//                ConeFlexibleType(lowerBound!!, upperBound!!)
-//            }
+
+            createClassReferenceStubInternal(type, annotations, holder)
+            createClassReferenceStubInternal(type.flexibleUpperBound(c.typeTable)!!, annotations, holder)
+            return
         }
 
+        createClassReferenceStubInternal(type, annotations, parent)
+    }
+
+    private fun createClassReferenceStubInternal(
+        type: Type,
+        annotations: List<AnnotationWithTarget>,
+        parent: KotlinStubBaseImpl<*>
+    ) {
         assert(type.hasClassName() || type.hasTypeAliasName()) {
             "Class reference stub must have either class or type alias name"
         }

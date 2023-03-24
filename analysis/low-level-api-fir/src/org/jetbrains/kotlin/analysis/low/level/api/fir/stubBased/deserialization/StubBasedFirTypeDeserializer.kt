@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasSuspendModifier
 import org.jetbrains.kotlin.psi.psiUtil.unwrapNullability
+import org.jetbrains.kotlin.psi.stubs.KotlinUserTypeStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinNameReferenceExpressionStubImpl
 import org.jetbrains.kotlin.types.Variance
@@ -107,22 +108,25 @@ class StubBasedFirTypeDeserializer(
     }
 
     private fun type(typeReference: KtTypeReference, attributes: ConeAttributes): ConeKotlinType {
-//todo flexible types
-        //        if (typeReference.hasFlexibleTypeCapabilitiesId()) {
-//            val lowerBound = simpleType(typeReference, attributes)
-//            val upperBound = simpleType(typeReference.flexibleUpperBound(typeTable)!!, attributes)
-//
-//            val isDynamic = lowerBound == moduleData.session.builtinTypes.nothingType.coneType &&
-//                    upperBound == moduleData.session.builtinTypes.nullableAnyType.coneType
-//
-//            return if (isDynamic) {
-//                ConeDynamicType.create(moduleData.session)
-//            } else {
-//                ConeFlexibleType(lowerBound!!, upperBound!!)
-//            }
-//        }
+        val typeElement = typeReference.typeElement
+        if (typeElement is KtDynamicType) {
+            val stubs = typeElement.stub?.childrenStubs
+            if (stubs?.size == 2) {
+                val lowerBound = simpleType(attributes, stubs[0].psi as KtTypeElement, typeReference)
+                val upperBound = simpleType(attributes, stubs[1].psi as KtTypeElement, typeReference)
 
-        return simpleType(typeReference, attributes) ?: ConeErrorType(ConeSimpleDiagnostic("?!id:0", DiagnosticKind.DeserializationError))
+                val isDynamic = lowerBound == moduleData.session.builtinTypes.nothingType.coneType &&
+                        upperBound == moduleData.session.builtinTypes.nullableAnyType.coneType
+
+                return if (isDynamic) {
+                    ConeDynamicType.create(moduleData.session)
+                } else {
+                    ConeFlexibleType(lowerBound!!, upperBound!!)
+                }
+            }
+        }
+
+        return simpleType(attributes, typeReference.typeElement, typeReference) ?: ConeErrorType(ConeSimpleDiagnostic("?!id:0", DiagnosticKind.DeserializationError))
     }
 
     private fun typeParameterSymbol(typeParameterName: String): ConeTypeParameterLookupTag? =
@@ -131,47 +135,45 @@ class StubBasedFirTypeDeserializer(
     fun FirClassLikeSymbol<*>.typeParameters(): List<FirTypeParameterSymbol> =
         (fir as? FirTypeParameterRefsOwner)?.typeParameters?.map { it.symbol }.orEmpty()
 
-    private fun simpleType(typeReference: KtTypeReference, attributes: ConeAttributes): ConeSimpleKotlinType? {
-        val constructor = typeSymbol(typeReference) ?: return null
-        val isNullable = typeReference.typeElement is KtNullableType
+    private fun simpleType(attributes: ConeAttributes, typeElement: KtTypeElement?, typeReference: KtTypeReference): ConeSimpleKotlinType? {
+        val constructor = typeSymbol(typeElement, typeReference) ?: return null
+        val isNullable = typeElement is KtNullableType
         if (constructor is ConeTypeParameterLookupTag) {
             return ConeTypeParameterTypeImpl(constructor, isNullable = isNullable)
         }
         if (constructor !is ConeClassLikeLookupTag) return null
 
-        val typeElement = typeReference.typeElement?.unwrapNullability()
-        val arguments = when (typeElement) {
-            is KtUserType -> typeElement.typeArguments.map { typeArgument(it) }.toTypedArray()
+        val unwrappedTypeElement = typeElement?.unwrapNullability()
+        val arguments = when (unwrappedTypeElement) {
+            is KtUserType -> unwrappedTypeElement.typeArguments.map { typeArgument(it) }.toTypedArray()
             is KtFunctionType -> buildList {
-                typeElement.receiver?.let { add(type(it.typeReference).toTypeProjection(Variance.INVARIANT)) }
-                addAll(typeElement.parameters.map { type(it.typeReference!!).toTypeProjection(Variance.INVARIANT) })
-                add(type(typeElement.returnTypeReference!!).toTypeProjection(Variance.INVARIANT))
+                unwrappedTypeElement.receiver?.let { add(type(it.typeReference).toTypeProjection(Variance.INVARIANT)) }
+                addAll(unwrappedTypeElement.parameters.map { type(it.typeReference!!).toTypeProjection(Variance.INVARIANT) })
+                add(type(unwrappedTypeElement.returnTypeReference!!).toTypeProjection(Variance.INVARIANT))
             }.toTypedArray()
-            else -> error("not supported $typeElement")
+            else -> error("not supported $unwrappedTypeElement")
         }
 
         return ConeClassLikeTypeImpl(
             constructor,
             arguments,
             isNullable = isNullable,
-            if (typeElement is KtFunctionType && typeElement.receiver != null) ConeAttributes.WithExtensionFunctionType else attributes
+            if (unwrappedTypeElement is KtFunctionType && unwrappedTypeElement.receiver != null) ConeAttributes.WithExtensionFunctionType else attributes
         )
-//        val abbreviatedTypeProto = typeReference.abbreviatedType(typeTable) ?: return simpleType
-//        return simpleType(abbreviatedTypeProto, attributes)
     }
 
     private fun KtElementImplStub<*>.getAllModifierLists(): Array<out KtDeclarationModifierList> =
         getStubOrPsiChildren(KtStubElementTypes.MODIFIER_LIST, KtStubElementTypes.MODIFIER_LIST.arrayFactory)
 
-    private fun typeSymbol(typeReference: KtTypeReference): ConeClassifierLookupTag? {
-        val typeElement = typeReference.typeElement?.unwrapNullability()
-        if (typeElement is KtFunctionType) {
-            val arity = (if (typeElement.receiver != null) 1 else 0) + typeElement.parameters.size
+    private fun typeSymbol(typeElement: KtTypeElement?, typeReference: KtTypeReference): ConeClassifierLookupTag? {
+        val typeElementUnwrapped = typeElement?.unwrapNullability()
+        if (typeElementUnwrapped is KtFunctionType) {
+            val arity = (if (typeElementUnwrapped.receiver != null) 1 else 0) + typeElementUnwrapped.parameters.size
             val isSuspend = typeReference.getAllModifierLists().any { it.hasSuspendModifier() }
             val functionClassId = if (isSuspend) StandardNames.getSuspendFunctionClassId(arity) else StandardNames.getFunctionClassId(arity)
             return computeClassifier(functionClassId)
         }
-        val type = typeElement as KtUserType
+        val type = typeElementUnwrapped as KtUserType
         val referencedName = type.referencedName
         return typeParameterSymbol(referencedName!!) ?: computeClassifier(type.classId())
     }
