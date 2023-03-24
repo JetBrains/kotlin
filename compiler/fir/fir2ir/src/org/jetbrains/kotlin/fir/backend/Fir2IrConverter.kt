@@ -426,7 +426,7 @@ class Fir2IrConverter(
             val intrinsicConstEvaluation = languageVersionSettings?.supportsFeature(LanguageFeature.IntrinsicConstEvaluation) == true
 
             val configuration = IrInterpreterConfiguration(
-                printOnlyExceptionMessage = targetPlatform.isJs(),
+                printOnlyExceptionMessage = true,
                 treatFloatInSpecialWay = targetPlatform.isJs()
             )
             val interpreter = IrInterpreter(IrInterpreterEnvironment(irModuleFragment.irBuiltins, configuration))
