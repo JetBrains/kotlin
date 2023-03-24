@@ -27,7 +27,7 @@ class FunctionDefaultParametersActualizer(private val expectActualMap: Map<IrSym
                 actualParameter.defaultValue = expectDefaultValue.copyAndActualizeDefaultValue(
                     actualFunction,
                     actualParameter,
-                    mapOf(),
+                    expectFunction.typeParameters.zip(actualFunction.typeParameters).toMap(),
                     classActualizer = { (expectActualMap[it.symbol] as IrClassSymbol).owner },
                     functionActualizer = { (expectActualMap[it.symbol] as IrFunctionSymbol).owner }
                 )
