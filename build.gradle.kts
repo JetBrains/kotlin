@@ -351,8 +351,9 @@ val coreLibProjects by extra {
     )
 }
 val mppProjects by extra {
-    listOf(
-        ":kotlin-stdlib-mpp",
+    listOfNotNull(
+        ":kotlin-stdlib-mpp".takeUnless { kotlinBuildProperties.kotlinStdlibMpp },
+        ":kotlin-stdlib".takeIf { kotlinBuildProperties.kotlinStdlibMpp },
     )
 }
 

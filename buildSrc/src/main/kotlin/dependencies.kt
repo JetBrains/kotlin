@@ -85,7 +85,7 @@ fun Project.kotlinStdlib(suffix: String? = null, classifier: String? = null): An
     return if (kotlinBuildProperties.useBootstrapStdlib)
         kotlinDep(listOfNotNull("stdlib", suffix).joinToString("-"), bootstrapKotlinVersion, classifier)
     else
-        dependencies.project(listOfNotNull(":kotlin-stdlib", suffix).joinToString("-"), classifier)
+        dependencies.project(listOfNotNull(":kotlin-stdlib", suffix.takeUnless {   kotlinBuildProperties.kotlinStdlibMpp && it == "mpp"}).joinToString("-"), classifier)
 }
 
 fun Project.kotlinBuiltins(): Any = kotlinBuiltins(forJvm = false)

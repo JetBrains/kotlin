@@ -975,3 +975,12 @@ private class ComponentWithExternalVariants(
 }
 
 // endregion
+
+// for legacy intra-project dependencies
+for (name in listOf("sources", "distSources")) {
+    val sourcesConfiguration = configurations.getOrCreate(name).apply {
+        isCanBeResolved = false
+        isCanBeConsumed = true
+    }
+    artifacts.add(sourcesConfiguration.name, tasks["jvmSourcesJar"])
+}
