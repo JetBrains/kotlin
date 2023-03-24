@@ -119,7 +119,7 @@ private fun ConeClassLikeType.classScope(
     val substitutor = when {
         attributes.contains(CompilerConeAttributes.RawType) -> ConeRawScopeSubstitutor(useSiteSession)
         else -> substitutorByMap(
-            createSubstitution(fir.typeParameters, fullyExpandedType, useSiteSession),
+            createSubstitutionForScope(fir.typeParameters, fullyExpandedType, useSiteSession),
             useSiteSession,
         )
     }

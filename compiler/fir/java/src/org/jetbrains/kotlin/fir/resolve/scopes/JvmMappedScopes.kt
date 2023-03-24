@@ -11,8 +11,11 @@ import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.utils.classId
-import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.createSubstitutionForScope
+import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+import org.jetbrains.kotlin.fir.resolve.scopeSessionKey
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
@@ -82,7 +85,7 @@ private fun wrapSubstitutionScopeIfNeed(
         // is called on an external type, like MyMap<String, String>,
         // to determine parameter types properly (e.g. String, String instead of K, V)
         val platformTypeParameters = platformClass.typeParameters
-        val platformSubstitution = createSubstitution(platformTypeParameters, declaration.defaultType(), session)
+        val platformSubstitution = createSubstitutionForScope(platformTypeParameters, declaration.defaultType(), session)
         val substitutor = substitutorByMap(platformSubstitution, session)
         FirClassSubstitutionScope(
             session, useSiteMemberScope, PLATFORM_TYPE_PARAMETERS_SUBSTITUTION_SCOPE_KEY, substitutor,
@@ -94,4 +97,3 @@ private fun wrapSubstitutionScopeIfNeed(
 }
 
 private val PLATFORM_TYPE_PARAMETERS_SUBSTITUTION_SCOPE_KEY = scopeSessionKey<FirClassSymbol<*>, FirTypeScope>()
-

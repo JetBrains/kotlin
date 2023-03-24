@@ -25,7 +25,7 @@ fun main() {
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Nothing, kotlin.Unit>")!>getTag3().action<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Nothing, kotlin.Unit>")!>getTag4().action<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Nothing, kotlin.Any?>")!>getTag5().action<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Nothing, kotlin.Unit>")!>getTag6().action<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Nothing, kotlin.Unit>")!>getTag7().action<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Nothing, kotlin.Any?>")!>getTag8().action<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("Action<in kotlin.Any?>")!>getTag6().action<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("Action<kotlin.Any?>")!>getTag7().action<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("Action2<kotlin.Any?>")!>getTag8().action<!>
 }

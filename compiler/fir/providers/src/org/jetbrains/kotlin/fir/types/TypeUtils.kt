@@ -241,11 +241,6 @@ fun FirTypeRef.isExtensionFunctionType(session: FirSession): Boolean {
     return coneTypeSafe<ConeKotlinType>()?.isExtensionFunctionType(session) == true
 }
 
-fun ConeKotlinType.isUnsafeVarianceType(session: FirSession): Boolean {
-    val type = this.coneLowerBoundIfFlexible().fullyExpandedType(session)
-    return type.attributes.unsafeVarianceType != null
-}
-
 fun ConeKotlinType.toSymbol(session: FirSession): FirClassifierSymbol<*>? {
     return (this as? ConeLookupTagBasedType)?.lookupTag?.toSymbol(session)
 }

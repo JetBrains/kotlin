@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
@@ -204,16 +203,9 @@ class ConeSubstitutorByMap(
 
     override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
         if (type !is ConeTypeParameterType) return null
-        val result =
-            substitution[type.lookupTag.symbol].updateNullabilityIfNeeded(type)
-                ?.withCombinedAttributesFrom(type)
-                ?: return null
-        if (type.isUnsafeVarianceType(useSiteSession)) {
-            return useSiteSession.typeApproximator.approximateToSuperType(
-                result, TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference
-            ) ?: result
-        }
-        return result
+        return substitution[type.lookupTag.symbol].updateNullabilityIfNeeded(type)
+            ?.withCombinedAttributesFrom(type)
+            ?: return null
     }
 
     override fun equals(other: Any?): Boolean {

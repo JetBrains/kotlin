@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.AbstractTypeChecker
-import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import kotlin.reflect.KClass
 
 /**
@@ -87,14 +86,6 @@ private class FE10LikeConeSubstitutor(
         val result =
             projection.type!!.updateNullabilityIfNeeded(type)?.withCombinedAttributesFrom(type)
                 ?: return null
-
-        if (type.isUnsafeVarianceType(useSiteSession)) {
-            useSiteSession.typeApproximator.approximateToSuperType(
-                result, TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference
-            )?.let {
-                return it.withProjection(projection)
-            }
-        }
 
         return result.withProjection(projection)
     }

@@ -28149,6 +28149,34 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
                     runTest("compiler/testData/diagnostics/tests/scopes/protectedVisibility/withSmartcast.kt");
                 }
             }
+
+            @Nested
+            @TestMetadata("compiler/testData/diagnostics/tests/scopes/variantProjections")
+            @TestDataPath("$PROJECT_ROOT")
+            public class VariantProjections {
+                @Test
+                public void testAllFilesPresentInVariantProjections() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/scopes/variantProjections"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+                }
+
+                @Test
+                @TestMetadata("dataClassCopy.kt")
+                public void testDataClassCopy() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/scopes/variantProjections/dataClassCopy.kt");
+                }
+
+                @Test
+                @TestMetadata("interdependentStarProjections.kt")
+                public void testInterdependentStarProjections() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/scopes/variantProjections/interdependentStarProjections.kt");
+                }
+
+                @Test
+                @TestMetadata("unsafeVarianceAndCovariantProjection.kt")
+                public void testUnsafeVarianceAndCovariantProjection() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/scopes/variantProjections/unsafeVarianceAndCovariantProjection.kt");
+                }
+            }
         }
 
         @Nested
