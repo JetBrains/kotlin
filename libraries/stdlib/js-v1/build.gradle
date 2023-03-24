@@ -376,3 +376,11 @@ tasks.register("runMocha", NodeTask) {
 tasks.withType(org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile) {
     kotlinOptions.freeCompilerArgs += "-Xforce-deprecated-legacy-compiler-usage"
 }
+
+if (BuildPropertiesExtKt.getKotlinStdlibMpp(project.kotlinBuildProperties)) {
+    afterEvaluate {
+        tasks.withType(AbstractPublishToMaven).configureEach {
+            enabled = false
+        }
+    }
+}
