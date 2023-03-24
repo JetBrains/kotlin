@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 interface A {
     fun <T> foo()
     fun <T> bar()

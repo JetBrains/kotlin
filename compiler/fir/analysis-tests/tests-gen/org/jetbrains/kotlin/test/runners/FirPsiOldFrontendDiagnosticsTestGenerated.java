@@ -23394,6 +23394,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
                 }
 
                 @Test
+                @TestMetadata("conflictingInherited.kt")
+                public void testConflictingInherited() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/override/clashesOnInheritance/conflictingInherited.kt");
+                }
+
+                @Test
                 @TestMetadata("covariantOverrides.kt")
                 public void testCovariantOverrides() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/override/clashesOnInheritance/covariantOverrides.kt");
