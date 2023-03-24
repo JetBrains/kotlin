@@ -140,7 +140,8 @@ internal class ModuleMetadataEmitter(
 
         override fun visitTypealias(element: TypealiasStub, data: VisitingContext): KmTypeAlias =
                 data.withMappingExtensions {
-                    KmTypeAlias(element.flags, element.alias.topLevelName).also { km ->
+                    KmTypeAlias(element.alias.topLevelName).also { km ->
+                        km.flags = element.flags
                         km.underlyingType = element.aliasee.map(shouldExpandTypeAliases = false)
                         km.expandedType = element.aliasee.map()
                     }
@@ -156,7 +157,8 @@ internal class ModuleMetadataEmitter(
                                 annotations = listOf(AnnotationStub.Deprecated.unableToImport)
                         )
                     }
-                    KmFunction(function.flags, function.name).also { km ->
+                    KmFunction(function.name).also { km ->
+                        km.flags = function.flags
                         km.receiverParameterType = function.receiver?.type?.map()
                         function.typeParameters.mapTo(km.typeParameters) { it.map() }
                         function.parameters.mapTo(km.valueParameters) { it.map() }
@@ -176,7 +178,10 @@ internal class ModuleMetadataEmitter(
                         else -> element.copy(kind = bridgeSupportedKind)
                     }
                     val name = getPropertyNameInScope(property, data.container)
-                    KmProperty(property.flags, name, property.getterFlags, property.setterFlags).also { km ->
+                    KmProperty(name).also { km ->
+                        km.flags = property.flags
+                        km.getterFlags = property.getterFlags
+                        km.setterFlags = property.setterFlags
                         property.annotations.mapTo(km.annotations) { it.map() }
                         km.receiverParameterType = property.receiverType?.map()
                         km.returnType = property.type.map()
@@ -199,7 +204,8 @@ internal class ModuleMetadataEmitter(
 
         override fun visitConstructor(constructorStub: ConstructorStub, data: VisitingContext) =
                 data.withMappingExtensions {
-                    KmConstructor(constructorStub.flags).apply {
+                    KmConstructor().apply {
+                        flags = constructorStub.flags
                         constructorStub.parameters.mapTo(valueParameters, { it.map() })
                         constructorStub.annotations.mapTo(annotations, { it.map() })
                     }
@@ -483,12 +489,14 @@ private class MappingExtensions(
         is AbbreviatedType -> {
             val typeAliasClassifier = KmClassifier.TypeAlias(abbreviatedClassifier.fqNameSerialized)
             val typeArguments = typeArguments.map { it.map(shouldExpandTypeAliases) }
-            val abbreviatedType = KmType(flags).also { km ->
+            val abbreviatedType = KmType().also { km ->
+                km.flags = flags
                 km.classifier = typeAliasClassifier
                 km.arguments += typeArguments
             }
             if (shouldExpandTypeAliases) {
-                KmType(expandedTypeFlags).also { km ->
+                KmType().also { km ->
+                    km.flags = expandedTypeFlags
                     km.abbreviatedType = abbreviatedType
                     val kmUnderlyingType = underlyingType.map(true)
                     km.arguments += kmUnderlyingType.arguments
@@ -498,21 +506,25 @@ private class MappingExtensions(
                 abbreviatedType
             }
         }
-        is ClassifierStubType -> KmType(flags).also { km ->
+        is ClassifierStubType -> KmType().also { km ->
+            km.flags = flags
             typeArguments.mapTo(km.arguments) { it.map(shouldExpandTypeAliases) }
             km.classifier = KmClassifier.Class(classifier.fqNameSerialized)
         }
-        is FunctionalType -> KmType(flags).also { km ->
+        is FunctionalType -> KmType().also { km ->
+            km.flags = flags
             typeArguments.mapTo(km.arguments) { it.map(shouldExpandTypeAliases) }
             km.classifier = KmClassifier.Class(classifier.fqNameSerialized)
         }
-        is TypeParameterType -> KmType(flags).also { km ->
+        is TypeParameterType -> KmType().also { km ->
+            km.flags = flags
             km.classifier = KmClassifier.TypeParameter(id)
         }
     }
 
     fun FunctionParameterStub.map(): KmValueParameter =
-            KmValueParameter(flags, name).also { km ->
+            KmValueParameter(name).also { km ->
+                km.flags = flags
                 val kmType = type.map()
                 if (isVararg) {
                     km.varargElementType = kmType
@@ -527,7 +539,7 @@ private class MappingExtensions(
             }
 
     fun TypeParameterStub.map(): KmTypeParameter =
-            KmTypeParameter(flagsOf(), name, id, KmVariance.INVARIANT).also { km ->
+            KmTypeParameter(name, id, KmVariance.INVARIANT).also { km ->
                 km.upperBounds.addIfNotNull(upperBound?.map())
             }
 

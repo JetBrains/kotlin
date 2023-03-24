@@ -49,10 +49,13 @@ class MetadataSmokeTest {
         val klass = KmClass().apply {
             name = "Hello"
             flags = flagsOf(Flag.IS_PUBLIC)
-            constructors += KmConstructor(flagsOf(Flag.IS_PUBLIC)).apply {
+            constructors += KmConstructor().apply {
+                visibility = Visibility.PUBLIC
                 signature = JvmMethodSignature("<init>", "()V")
             }
-            functions += KmFunction(flagsOf(Flag.IS_PUBLIC, Flag.Function.IS_DECLARATION), "hello").apply {
+            functions += KmFunction("hello").apply {
+                visibility = Visibility.PUBLIC
+                kind = MemberKind.DECLARATION
                 returnType = KmType(flagsOf()).apply {
                     classifier = KmClassifier.Class("kotlin/String")
                 }
@@ -166,6 +169,9 @@ class MetadataSmokeTest {
         classWithStableParameterNames.constructors.forEach { assertFalse(Flag.Constructor.HAS_NON_STABLE_PARAMETER_NAMES(it.flags)) }
         classWithStableParameterNames.functions.forEach { assertFalse(Flag.Function.HAS_NON_STABLE_PARAMETER_NAMES(it.flags)) }
 
+        classWithStableParameterNames.constructors.forEach { assertFalse(it.hasNonStableParameterNames) }
+        classWithStableParameterNames.functions.forEach { assertFalse(it.hasNonStableParameterNames) }
+
         val newMetadata = KotlinClassMetadata.writeClass(
             KmClass().apply {
                 classWithStableParameterNames.accept(
@@ -184,6 +190,9 @@ class MetadataSmokeTest {
 
         classWithUnstableParameterNames.constructors.forEach { assertTrue(Flag.Constructor.HAS_NON_STABLE_PARAMETER_NAMES(it.flags)) }
         classWithUnstableParameterNames.functions.forEach { assertTrue(Flag.Function.HAS_NON_STABLE_PARAMETER_NAMES(it.flags)) }
+
+        classWithUnstableParameterNames.constructors.forEach { assertTrue(it.hasNonStableParameterNames) }
+        classWithUnstableParameterNames.functions.forEach { assertTrue(it.hasNonStableParameterNames) }
     }
 
     @Test

@@ -56,6 +56,6 @@ object JvmFlag {
         val IS_COMPILED_IN_COMPATIBILITY_MODE = booleanFlag(JF.IS_COMPILED_IN_COMPATIBILITY_MODE)
     }
 
-    private fun booleanFlag(f: F.BooleanFlagField): Flag =
+    internal fun booleanFlag(f: F.BooleanFlagField): Flag =
         Flag(f.offset, f.bitWidth, 1)
 }

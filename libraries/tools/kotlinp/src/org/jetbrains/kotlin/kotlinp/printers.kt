@@ -34,7 +34,7 @@ private fun visitFunction(
         sb.appendLine(function.contextReceiverTypes.joinToString(prefix = "  context(", postfix = ")", transform = ::printType))
     }
     sb.append("  ")
-    sb.appendFlags(function.flags, FUNCTION_FLAGS_MAP)
+    sb.appendFunctionModifiers(function)
     sb.append("fun ")
     if (function.typeParameters.isNotEmpty()) {
         function.typeParameters.joinTo(sb, prefix = "<", postfix = ">", transform = { printTypeParameter(it, settings) })
@@ -58,8 +58,6 @@ private fun visitProperty(
     settings: KotlinpSettings,
     sb: StringBuilder
 ) {
-    val flags: Flags = property.flags
-
     sb.appendLine()
     property.versionRequirements.map(::printVersionRequirement).forEach { versionRequirement ->
         sb.appendLine("  // $versionRequirement")
@@ -79,15 +77,15 @@ private fun visitProperty(
     if (property.syntheticMethodForDelegate != null) {
         sb.appendLine("  // synthetic method for delegate: ${property.syntheticMethodForDelegate}")
     }
-    if (JvmFlag.Property.IS_MOVED_FROM_INTERFACE_COMPANION(property.jvmFlags)) {
+    if (property.isMovedFromInterfaceCompanion) {
         sb.appendLine("  // is moved from interface companion")
     }
     if (property.contextReceiverTypes.isNotEmpty()) {
         sb.appendLine(property.contextReceiverTypes.joinToString(prefix = "  context(", postfix = ")", transform = ::printType))
     }
     sb.append("  ")
-    sb.appendFlags(flags, PROPERTY_FLAGS_MAP)
-    sb.append(if (Flag.Property.IS_VAR(flags)) "var " else "val ")
+    sb.appendPropertyModifiers(property)
+    sb.append(if (property.isVar) "var " else "val ")
     if (property.typeParameters.isNotEmpty()) {
         property.typeParameters.joinTo(sb, prefix = "<", postfix = ">", transform = { printTypeParameter(it, settings) })
         sb.append(" ")
@@ -97,18 +95,19 @@ private fun visitProperty(
     }
     sb.append(property.name)
     sb.append(": ").append(property.returnType.let(::printType))
-    if (Flag.Property.HAS_CONSTANT(flags)) {
+    if (property.hasConstant) {
         sb.append(" /* = ... */")
     }
     sb.appendLine()
-    if (Flag.Property.HAS_GETTER(flags)) {
+    if (property.hasGetter) {
         sb.append("    ")
-        sb.appendFlags(property.getterFlags, PROPERTY_ACCESSOR_FLAGS_MAP)
+        sb.appendPropertyAccessorModifiers(property.getter)
         sb.appendLine("get")
     }
-    if (Flag.Property.HAS_SETTER(flags)) {
+    val setter = property.setter
+    if (setter != null) {
         sb.append("    ")
-        sb.appendFlags(property.setterFlags, PROPERTY_ACCESSOR_FLAGS_MAP)
+        sb.appendPropertyAccessorModifiers(setter)
         sb.append("set")
         property.setterParameter?.let {
             sb.append("(").append(printValueParameter(it)).append(")")
@@ -127,7 +126,7 @@ private fun visitConstructor(constructor: KmConstructor, sb: StringBuilder) {
         sb.appendLine("  // signature: ${constructor.signature}")
     }
     sb.append("  ")
-    sb.appendFlags(constructor.flags, CONSTRUCTOR_FLAGS_MAP)
+    sb.appendConstructorModifiers(constructor)
     sb.append("constructor(")
     constructor.valueParameters.joinTo(sb, transform = ::printValueParameter)
     sb.appendLine(")")
@@ -146,7 +145,7 @@ private fun visitTypeAlias(
         sb.append("  ").append("@").append(renderAnnotation(annotation)).appendLine()
     }
     sb.append("  ")
-    sb.appendFlags(typeAlias.flags, VISIBILITY_FLAGS_MAP)
+    sb.append(VISIBILITY_MAP[typeAlias.visibility])
     sb.append("typealias ").append(typeAlias.name)
     if (typeAlias.typeParameters.isNotEmpty()) {
         typeAlias.typeParameters.joinTo(sb, prefix = "<", postfix = ">") { printTypeParameter(it, settings) }
@@ -157,7 +156,6 @@ private fun visitTypeAlias(
 }
 
 private fun printType(type: KmType): String {
-    val flags: Flags = type.flags
     val classifier = when (val cls = type.classifier) {
         is KmClassifier.Class -> cls.name
         is KmClassifier.TypeParameter -> "T#${cls.id}"
@@ -198,7 +196,7 @@ private fun printType(type: KmType): String {
         if (type.isRaw) {
             append("/* raw */ ")
         }
-        appendFlags(flags, TYPE_FLAGS_MAP)
+        appendFlags(type.isSuspend to "suspend")
         if (outerType != null) {
             append(outerType).append(".").append(classifier.substringAfterLast('.'))
         } else {
@@ -207,10 +205,10 @@ private fun printType(type: KmType): String {
         if (arguments.isNotEmpty()) {
             arguments.joinTo(this, prefix = "<", postfix = ">")
         }
-        if (Flag.Type.IS_NULLABLE(flags)) {
+        if (type.isNullable) {
             append("?")
         }
-        if (Flag.Type.IS_DEFINITELY_NON_NULL(flags)) {
+        if (type.isDefinitelyNonNull) {
             append(" & Any")
         }
         if (abbreviatedType != null) {
@@ -229,7 +227,7 @@ private fun printTypeParameter(
     typeParameter: KmTypeParameter,
     settings: KotlinpSettings
 ): String = buildString {
-    appendFlags(typeParameter.flags, TYPE_PARAMETER_FLAGS_MAP)
+    appendFlags(typeParameter.isReified to "reified")
     for (annotation in typeParameter.annotations) {
         append("@").append(renderAnnotation(annotation)).append(" ")
     }
@@ -248,17 +246,16 @@ private fun printTypeParameter(
 private fun printValueParameter(
     valueParameter: KmValueParameter
 ): String {
-    val flags: Flags = valueParameter.flags
     val type = printType(valueParameter.type)
     val varargElementType = valueParameter.varargElementType?.let(::printType)
     return buildString {
-        appendFlags(flags, VALUE_PARAMETER_FLAGS_MAP)
+        appendValueParameterModifiers(valueParameter)
         if (varargElementType != null) {
             append("vararg ").append(valueParameter.name).append(": ").append(varargElementType).append(" /* ").append(type).append(" */")
         } else {
             append(valueParameter.name).append(": ").append(type)
         }
-        if (Flag.ValueParameter.DECLARES_DEFAULT_VALUE(flags)) {
+        if (valueParameter.declaresDefaultValue) {
             append(" /* = ... */")
         }
     }
@@ -335,15 +332,6 @@ private fun printVersionRequirement(versionRequirement: KmVersionRequirement): S
             versionRequirement.errorCode?.let { "errorCode=$it" },
             versionRequirement.message?.let { "message=\"$it\"" }
         ).joinTo(this, prefix = " (", postfix = ")")
-    }
-}
-
-private fun StringBuilder.appendFlags(flags: Flags, map: Map<Flag, String>) {
-    for ((modifier, string) in map) {
-        if (modifier(flags)) {
-            append(string)
-            if (string.isNotEmpty()) append(" ")
-        }
     }
 }
 
@@ -427,7 +415,6 @@ private fun printEffect(
 
 @ExperimentalContracts
 private fun printEffectExpression(effectExpression: KmEffectExpression): String {
-    val flags: Flags = effectExpression.flags
     val parameterIndex: Int? = effectExpression.parameterIndex
     val constantValue: List<Any?>? = effectExpression.constantValue?.let { listOf(it.value) }
     val andArguments = effectExpression.andArguments.map(::printEffectExpression)
@@ -447,11 +434,11 @@ private fun printEffectExpression(effectExpression: KmEffectExpression): String 
         )
         if (effectExpression.isInstanceType != null) {
             append(" ")
-            if (Flag.EffectExpression.IS_NEGATED(flags)) append("!")
+            if (effectExpression.isNegated) append("!")
             append("is ${effectExpression.isInstanceType?.let(::printType)}")
         }
-        if (Flag.EffectExpression.IS_NULL_CHECK_PREDICATE(flags)) {
-            append(if (Flag.EffectExpression.IS_NEGATED(flags)) " != " else " == ")
+        if (effectExpression.isNullCheckPredicate) {
+            append(if (effectExpression.isNegated) " != " else " == ")
             append("null")
         }
 
@@ -478,7 +465,7 @@ class ClassPrinter(private val settings: KotlinpSettings) : AbstractPrinter<Kotl
     private val sb = StringBuilder()
     internal val result = StringBuilder()
 
-    private var flags: Flags? = null
+    private var klass: KmClass? = null
     private var name: ClassName? = null
     private val typeParams = mutableListOf<String>()
     private val supertypes = mutableListOf<String>()
@@ -496,7 +483,7 @@ class ClassPrinter(private val settings: KotlinpSettings) : AbstractPrinter<Kotl
         if (contextReceiverTypes.isNotEmpty()) {
             result.appendLine(contextReceiverTypes.joinToString(prefix = "context(", postfix = ")"))
         }
-        result.appendFlags(flags!!, CLASS_FLAGS_MAP)
+        result.appendClassModifiers(klass!!)
         result.append(name)
         if (typeParams.isNotEmpty()) {
             typeParams.joinTo(result, prefix = "<", postfix = ">")
@@ -506,7 +493,7 @@ class ClassPrinter(private val settings: KotlinpSettings) : AbstractPrinter<Kotl
             supertypes.joinTo(result)
         }
         result.appendLine(" {")
-        if (Flag.Class.HAS_ENUM_ENTRIES(flags!!)) {
+        if (klass!!.hasEnumEntries) {
             sb.appendLine()
             sb.appendLine("  // has Enum.entries")
         }
@@ -547,7 +534,6 @@ class ClassPrinter(private val settings: KotlinpSettings) : AbstractPrinter<Kotl
     private fun visitExtensions(kclass: KmClass) {
         val localDelegatedProperties = mutableListOf<StringBuilder>()
         val moduleName: String? = kclass.moduleName
-        val jvmFlags: Flags = kclass.jvmFlags
         anonymousObjectOriginName = kclass.anonymousObjectOriginName
 
         kclass.localDelegatedProperties.sortIfNeededBy(settings) { it.getterSignature?.toString() ?: it.name }.forEach { p ->
@@ -557,11 +543,11 @@ class ClassPrinter(private val settings: KotlinpSettings) : AbstractPrinter<Kotl
         }
 
         sb.appendDeclarationContainerExtensions(settings, localDelegatedProperties, moduleName)
-        if (JvmFlag.Class.HAS_METHOD_BODIES_IN_INTERFACE(jvmFlags)) {
+        if (kclass.hasMethodBodiesInInterface) {
             sb.appendLine()
             sb.appendLine("  // has method bodies in interface")
         }
-        if (JvmFlag.Class.IS_COMPILED_IN_COMPATIBILITY_MODE(jvmFlags)) {
+        if (kclass.isCompiledInCompatibilityMode) {
             sb.appendLine()
             sb.appendLine("  // is compiled in compatibility mode")
         }
@@ -571,7 +557,7 @@ class ClassPrinter(private val settings: KotlinpSettings) : AbstractPrinter<Kotl
 
     @OptIn(ExperimentalContextReceivers::class)
     fun print(kmClass: KmClass): String {
-        flags = kmClass.flags
+        klass = kmClass
         name = kmClass.name
         kmClass.typeParameters.forEach { typeParams.add(printTypeParameter(it, settings)) }
         supertypes.addAll(kmClass.supertypes.map { printType(it) })
@@ -707,89 +693,108 @@ class ModuleFilePrinter(private val settings: KotlinpSettings) {
     }
 }
 
-private val VISIBILITY_FLAGS_MAP = mapOf(
-    Flag.IS_INTERNAL to "internal",
-    Flag.IS_PRIVATE to "private",
-    Flag.IS_PRIVATE_TO_THIS to "private",
-    Flag.IS_PROTECTED to "protected",
-    Flag.IS_PUBLIC to "public",
-    Flag.IS_LOCAL to "local"
+private val VISIBILITY_MAP = mapOf(
+    Visibility.INTERNAL to "internal ",
+    Visibility.PRIVATE to "private ",
+    Visibility.PRIVATE_TO_THIS to "private ",
+    Visibility.PROTECTED to "protected ",
+    Visibility.PUBLIC to "public ",
+    Visibility.LOCAL to "local "
 )
 
-private val COMMON_FLAGS_MAP = VISIBILITY_FLAGS_MAP + mapOf(
-    Flag.IS_FINAL to "final",
-    Flag.IS_OPEN to "open",
-    Flag.IS_ABSTRACT to "abstract",
-    Flag.IS_SEALED to "sealed"
+private val MODALITY_MAP = mapOf(
+    Modality.FINAL to "final ",
+    Modality.OPEN to "open ",
+    Modality.ABSTRACT to "abstract ",
+    Modality.SEALED to "sealed "
 )
 
-private val CLASS_FLAGS_MAP = COMMON_FLAGS_MAP + mapOf(
-    Flag.Class.IS_INNER to "inner",
-    Flag.Class.IS_DATA to "data",
-    Flag.Class.IS_EXTERNAL to "external",
-    Flag.Class.IS_EXPECT to "expect",
-    Flag.Class.IS_VALUE to "value",
-    Flag.Class.IS_FUN to "fun",
-
-    Flag.Class.IS_CLASS to "class",
-    Flag.Class.IS_INTERFACE to "interface",
-    Flag.Class.IS_ENUM_CLASS to "enum class",
-    Flag.Class.IS_ENUM_ENTRY to "enum entry",
-    Flag.Class.IS_ANNOTATION_CLASS to "annotation class",
-    Flag.Class.IS_OBJECT to "object",
-    Flag.Class.IS_COMPANION_OBJECT to "companion object"
+private val CLASS_KIND_MAP = mapOf(
+    ClassKind.CLASS to "class ",
+    ClassKind.INTERFACE to "interface ",
+    ClassKind.ENUM_CLASS to "enum class ",
+    ClassKind.ENUM_ENTRY to "enum entry ",
+    ClassKind.ANNOTATION_CLASS to "annotation class ",
+    ClassKind.OBJECT to "object ",
+    ClassKind.COMPANION_OBJECT to "companion object "
 )
 
-private val CONSTRUCTOR_FLAGS_MAP = VISIBILITY_FLAGS_MAP + mapOf(
-    Flag.Constructor.IS_SECONDARY to "/* secondary */",
-    Flag.Constructor.HAS_NON_STABLE_PARAMETER_NAMES to "/* non-stable parameter names */"
+private val MEMBER_KIND_MAP = mapOf(
+    MemberKind.DECLARATION to "",
+    MemberKind.FAKE_OVERRIDE to "/* fake override */ ",
+    MemberKind.DELEGATION to "/* delegation */ ",
+    MemberKind.SYNTHESIZED to "/* synthesized */ ",
 )
 
-private val FUNCTION_FLAGS_MAP = COMMON_FLAGS_MAP + mapOf(
-    Flag.Function.IS_DECLARATION to "",
-    Flag.Function.IS_FAKE_OVERRIDE to "/* fake override */",
-    Flag.Function.IS_DELEGATION to "/* delegation */",
-    Flag.Function.IS_SYNTHESIZED to "/* synthesized */",
+private fun StringBuilder.appendFlags(vararg modifiers: Pair<Boolean, String>) = modifiers.forEach { (condition, s) ->
+    if (condition) {
+        append(s)
+        if (s.isNotEmpty()) append(" ")
+    }
+}
 
-    Flag.Function.IS_OPERATOR to "operator",
-    Flag.Function.IS_INFIX to "infix",
-    Flag.Function.IS_INLINE to "inline",
-    Flag.Function.IS_TAILREC to "tailrec",
-    Flag.Function.IS_EXTERNAL to "external",
-    Flag.Function.IS_SUSPEND to "suspend",
-    Flag.Function.IS_EXPECT to "expect",
+private fun StringBuilder.appendClassModifiers(kmClass: KmClass) {
+    append(VISIBILITY_MAP[kmClass.visibility])
+    append(MODALITY_MAP[kmClass.modality])
+    appendFlags(
+        kmClass.isInner to "inner",
+        kmClass.isData to "data",
+        kmClass.isExternal to "external",
+        kmClass.isExpect to "expect",
+        kmClass.isValue to "value",
+        kmClass.isFunInterface to "fun",
+    )
+    append(CLASS_KIND_MAP[kmClass.kind])
+}
 
-    Flag.Function.HAS_NON_STABLE_PARAMETER_NAMES to "/* non-stable parameter names */"
-)
+private fun StringBuilder.appendConstructorModifiers(kmConstructor: KmConstructor) {
+    append(VISIBILITY_MAP[kmConstructor.visibility])
+    appendFlags(
+        kmConstructor.isSecondary to "/* secondary */",
+        kmConstructor.hasNonStableParameterNames to "/* non-stable parameter names */"
+    )
+}
 
-private val PROPERTY_FLAGS_MAP = COMMON_FLAGS_MAP + mapOf(
-    Flag.Property.IS_DECLARATION to "",
-    Flag.Property.IS_FAKE_OVERRIDE to "/* fake override */",
-    Flag.Property.IS_DELEGATION to "/* delegation */",
-    Flag.Property.IS_SYNTHESIZED to "/* synthesized */",
+private fun StringBuilder.appendFunctionModifiers(kmFunction: KmFunction) {
+    append(VISIBILITY_MAP[kmFunction.visibility])
+    append(MODALITY_MAP[kmFunction.modality])
+    append(MEMBER_KIND_MAP[kmFunction.kind])
+    appendFlags(
+        kmFunction.isOperator to "operator",
+        kmFunction.isInfix to "infix",
+        kmFunction.isInline to "inline",
+        kmFunction.isTailrec to "tailrec",
+        kmFunction.isExternal to "external",
+        kmFunction.isSuspend to "suspend",
+        kmFunction.isExpect to "expect",
+        kmFunction.hasNonStableParameterNames to "/* non-stable parameter names */"
+    )
+}
 
-    Flag.Property.IS_CONST to "const",
-    Flag.Property.IS_LATEINIT to "lateinit",
-    Flag.Property.IS_EXTERNAL to "external",
-    Flag.Property.IS_DELEGATED to "/* delegated */",
-    Flag.Property.IS_EXPECT to "expect"
-)
+private fun StringBuilder.appendPropertyModifiers(kmProperty: KmProperty) {
+    append(VISIBILITY_MAP[kmProperty.visibility])
+    append(MODALITY_MAP[kmProperty.modality])
+    append(MEMBER_KIND_MAP[kmProperty.kind])
+    appendFlags(
+        kmProperty.isConst to "const",
+        kmProperty.isLateinit to "lateinit",
+        kmProperty.isExternal to "external",
+        kmProperty.isDelegated to "/* delegated */",
+        kmProperty.isExpect to "expect"
+    )
+}
 
-private val PROPERTY_ACCESSOR_FLAGS_MAP = COMMON_FLAGS_MAP + mapOf(
-    Flag.PropertyAccessor.IS_NOT_DEFAULT to "/* non-default */",
-    Flag.PropertyAccessor.IS_EXTERNAL to "external",
-    Flag.PropertyAccessor.IS_INLINE to "inline"
-)
+private fun StringBuilder.appendPropertyAccessorModifiers(accessorAttributes: KmPropertyAccessorAttributes) {
+    append(VISIBILITY_MAP[accessorAttributes.visibility])
+    append(MODALITY_MAP[accessorAttributes.modality])
+    appendFlags(
+        accessorAttributes.isNotDefault to "/* non-default */",
+        accessorAttributes.isExternal to "external",
+        accessorAttributes.isInline to "inline"
+    )
+}
 
-private val VALUE_PARAMETER_FLAGS_MAP = mapOf(
-    Flag.ValueParameter.IS_CROSSINLINE to "crossinline",
-    Flag.ValueParameter.IS_NOINLINE to "noinline"
-)
-
-private val TYPE_PARAMETER_FLAGS_MAP = mapOf(
-    Flag.TypeParameter.IS_REIFIED to "reified"
-)
-
-private val TYPE_FLAGS_MAP = mapOf(
-    Flag.Type.IS_SUSPEND to "suspend"
+private fun StringBuilder.appendValueParameterModifiers(valueParameter: KmValueParameter) = appendFlags(
+    valueParameter.isCrossinline to "crossinline",
+    valueParameter.isNoinline to "noinline"
 )

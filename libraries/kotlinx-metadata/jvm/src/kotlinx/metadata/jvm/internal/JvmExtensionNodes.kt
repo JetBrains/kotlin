@@ -56,7 +56,8 @@ internal class JvmClassExtension : JvmClassExtensionVisitor(), KmClassExtension 
     override fun accept(visitor: KmClassExtensionVisitor) {
         require(visitor is JvmClassExtensionVisitor)
         localDelegatedProperties.forEach {
-            visitor.visitLocalDelegatedProperty(it.flags, it.name, it.getterFlags, it.setterFlags)?.let(it::accept)
+            @Suppress("INVISIBLE_MEMBER") // getter.flags
+            visitor.visitLocalDelegatedProperty(it.flags, it.name, it.getter.flags, it.setterFlags)?.let(it::accept)
         }
         moduleName?.let(visitor::visitModuleName)
         anonymousObjectOriginName?.let(visitor::visitAnonymousObjectOriginName)
@@ -79,7 +80,8 @@ internal class JvmPackageExtension : JvmPackageExtensionVisitor(), KmPackageExte
     override fun accept(visitor: KmPackageExtensionVisitor) {
         require(visitor is JvmPackageExtensionVisitor)
         localDelegatedProperties.forEach {
-            visitor.visitLocalDelegatedProperty(it.flags, it.name, it.getterFlags, it.setterFlags)?.let(it::accept)
+            @Suppress("INVISIBLE_MEMBER") // getter.flags
+            visitor.visitLocalDelegatedProperty(it.flags, it.name, it.getter.flags, it.setterFlags)?.let(it::accept)
         }
         moduleName?.let(visitor::visitModuleName)
         visitor.visitEnd()

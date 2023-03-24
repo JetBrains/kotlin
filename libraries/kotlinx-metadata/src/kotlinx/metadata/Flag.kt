@@ -9,6 +9,9 @@ import kotlinx.metadata.internal.IgnoreInApiDump
 import org.jetbrains.kotlin.metadata.ProtoBuf.*
 import org.jetbrains.kotlin.metadata.ProtoBuf.Class.Kind as ClassKind
 import org.jetbrains.kotlin.metadata.deserialization.Flags as F
+import org.jetbrains.kotlin.metadata.ProtoBuf.Modality as ProtoModality
+import org.jetbrains.kotlin.metadata.ProtoBuf.Visibility as ProtoVisibility
+import org.jetbrains.kotlin.metadata.ProtoBuf.MemberKind as ProtoMemberKind
 
 /**
  * Represents a boolean flag that is either present or not in a Kotlin declaration. A "flag" is a boolean trait that is either present
@@ -38,7 +41,7 @@ import org.jetbrains.kotlin.metadata.deserialization.Flags as F
  * @see Flags
  * @see flagsOf
  */
-class Flag(private val offset: Int, private val bitWidth: Int, private val value: Int) {
+class Flag(internal val offset: Int, internal val bitWidth: Int, internal val value: Int) {
     @IgnoreInApiDump
     internal constructor(field: F.FlagField<*>, value: Int) : this(field.offset, field.bitWidth, value)
 
@@ -71,64 +74,64 @@ class Flag(private val offset: Int, private val bitWidth: Int, private val value
          * A visibility flag, signifying that the corresponding declaration is `internal`.
          */
         @JvmField
-        val IS_INTERNAL = Flag(F.VISIBILITY, Visibility.INTERNAL_VALUE)
+        val IS_INTERNAL = Flag(F.VISIBILITY, ProtoVisibility.INTERNAL_VALUE)
 
         /**
          * A visibility flag, signifying that the corresponding declaration is `private`.
          */
         @JvmField
-        val IS_PRIVATE = Flag(F.VISIBILITY, Visibility.PRIVATE_VALUE)
+        val IS_PRIVATE = Flag(F.VISIBILITY, ProtoVisibility.PRIVATE_VALUE)
 
         /**
          * A visibility flag, signifying that the corresponding declaration is `protected`.
          */
         @JvmField
-        val IS_PROTECTED = Flag(F.VISIBILITY, Visibility.PROTECTED_VALUE)
+        val IS_PROTECTED = Flag(F.VISIBILITY, ProtoVisibility.PROTECTED_VALUE)
 
         /**
          * A visibility flag, signifying that the corresponding declaration is `public`.
          */
         @JvmField
-        val IS_PUBLIC = Flag(F.VISIBILITY, Visibility.PUBLIC_VALUE)
+        val IS_PUBLIC = Flag(F.VISIBILITY, ProtoVisibility.PUBLIC_VALUE)
 
         /**
          * A visibility flag, signifying that the corresponding declaration is "private-to-this", which is a non-denotable visibility of
          * private members in Kotlin which are callable only on the same instance of the declaring class.
          */
         @JvmField
-        val IS_PRIVATE_TO_THIS = Flag(F.VISIBILITY, Visibility.PRIVATE_TO_THIS_VALUE)
+        val IS_PRIVATE_TO_THIS = Flag(F.VISIBILITY, ProtoVisibility.PRIVATE_TO_THIS_VALUE)
 
         /**
          * A visibility flag, signifying that the corresponding declaration is local, i.e. declared inside a code block
          * and not visible from the outside.
          */
         @JvmField
-        val IS_LOCAL = Flag(F.VISIBILITY, Visibility.LOCAL_VALUE)
+        val IS_LOCAL = Flag(F.VISIBILITY, ProtoVisibility.LOCAL_VALUE)
 
 
         /**
          * A modality flag, signifying that the corresponding declaration is `final`.
          */
         @JvmField
-        val IS_FINAL = Flag(F.MODALITY, Modality.FINAL_VALUE)
+        val IS_FINAL = Flag(F.MODALITY, ProtoModality.FINAL_VALUE)
 
         /**
          * A modality flag, signifying that the corresponding declaration is `open`.
          */
         @JvmField
-        val IS_OPEN = Flag(F.MODALITY, Modality.OPEN_VALUE)
+        val IS_OPEN = Flag(F.MODALITY, ProtoModality.OPEN_VALUE)
 
         /**
          * A modality flag, signifying that the corresponding declaration is `abstract`.
          */
         @JvmField
-        val IS_ABSTRACT = Flag(F.MODALITY, Modality.ABSTRACT_VALUE)
+        val IS_ABSTRACT = Flag(F.MODALITY, ProtoModality.ABSTRACT_VALUE)
 
         /**
          * A modality flag, signifying that the corresponding declaration is `sealed`.
          */
         @JvmField
-        val IS_SEALED = Flag(F.MODALITY, Modality.SEALED_VALUE)
+        val IS_SEALED = Flag(F.MODALITY, ProtoModality.SEALED_VALUE)
     }
 
     /**
@@ -267,28 +270,28 @@ class Flag(private val offset: Int, private val bitWidth: Int, private val value
          * A member kind flag, signifying that the corresponding function is explicitly declared in the containing class.
          */
         @JvmField
-        val IS_DECLARATION = Flag(F.MEMBER_KIND, MemberKind.DECLARATION_VALUE)
+        val IS_DECLARATION = Flag(F.MEMBER_KIND, ProtoMemberKind.DECLARATION_VALUE)
 
         /**
          * A member kind flag, signifying that the corresponding function exists in the containing class because a function with a suitable
          * signature exists in a supertype. This flag is not written by the Kotlin compiler and its effects are unspecified.
          */
         @JvmField
-        val IS_FAKE_OVERRIDE = Flag(F.MEMBER_KIND, MemberKind.FAKE_OVERRIDE_VALUE)
+        val IS_FAKE_OVERRIDE = Flag(F.MEMBER_KIND, ProtoMemberKind.FAKE_OVERRIDE_VALUE)
 
         /**
          * A member kind flag, signifying that the corresponding function exists in the containing class because it has been produced
          * by interface delegation (delegation "by").
          */
         @JvmField
-        val IS_DELEGATION = Flag(F.MEMBER_KIND, MemberKind.DELEGATION_VALUE)
+        val IS_DELEGATION = Flag(F.MEMBER_KIND, ProtoMemberKind.DELEGATION_VALUE)
 
         /**
          * A member kind flag, signifying that the corresponding function exists in the containing class because it has been synthesized
          * by the compiler and has no declaration in the source code.
          */
         @JvmField
-        val IS_SYNTHESIZED = Flag(F.MEMBER_KIND, MemberKind.SYNTHESIZED_VALUE)
+        val IS_SYNTHESIZED = Flag(F.MEMBER_KIND, ProtoMemberKind.SYNTHESIZED_VALUE)
 
 
         /**
@@ -351,28 +354,28 @@ class Flag(private val offset: Int, private val bitWidth: Int, private val value
          * A member kind flag, signifying that the corresponding property is explicitly declared in the containing class.
          */
         @JvmField
-        val IS_DECLARATION = Flag(F.MEMBER_KIND, MemberKind.DECLARATION_VALUE)
+        val IS_DECLARATION = Flag(F.MEMBER_KIND, ProtoMemberKind.DECLARATION_VALUE)
 
         /**
          * A member kind flag, signifying that the corresponding property exists in the containing class because a property with a suitable
          * signature exists in a supertype. This flag is not written by the Kotlin compiler and its effects are unspecified.
          */
         @JvmField
-        val IS_FAKE_OVERRIDE = Flag(F.MEMBER_KIND, MemberKind.FAKE_OVERRIDE_VALUE)
+        val IS_FAKE_OVERRIDE = Flag(F.MEMBER_KIND, ProtoMemberKind.FAKE_OVERRIDE_VALUE)
 
         /**
          * A member kind flag, signifying that the corresponding property exists in the containing class because it has been produced
          * by interface delegation (delegation "by").
          */
         @JvmField
-        val IS_DELEGATION = Flag(F.MEMBER_KIND, MemberKind.DELEGATION_VALUE)
+        val IS_DELEGATION = Flag(F.MEMBER_KIND, ProtoMemberKind.DELEGATION_VALUE)
 
         /**
          * A member kind flag, signifying that the corresponding property exists in the containing class because it has been synthesized
          * by the compiler and has no declaration in the source code.
          */
         @JvmField
-        val IS_SYNTHESIZED = Flag(F.MEMBER_KIND, MemberKind.SYNTHESIZED_VALUE)
+        val IS_SYNTHESIZED = Flag(F.MEMBER_KIND, ProtoMemberKind.SYNTHESIZED_VALUE)
 
 
         /**

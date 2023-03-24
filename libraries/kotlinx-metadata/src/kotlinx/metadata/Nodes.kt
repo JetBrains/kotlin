@@ -8,6 +8,7 @@
 package kotlinx.metadata
 
 import kotlinx.metadata.internal.extensions.*
+import kotlinx.metadata.internal.getDefaultPropertyAccessorFlags
 import kotlin.contracts.ExperimentalContracts
 
 /**
@@ -203,7 +204,7 @@ class KmClass : KmClassVisitor(), KmDeclarationContainer {
         typeParameters.forEach { visitor.visitTypeParameter(it.flags, it.name, it.id, it.variance)?.let(it::accept) }
         supertypes.forEach { visitor.visitSupertype(it.flags)?.let(it::accept) }
         functions.forEach { visitor.visitFunction(it.flags, it.name)?.let(it::accept) }
-        properties.forEach { visitor.visitProperty(it.flags, it.name, it.getterFlags, it.setterFlags)?.let(it::accept) }
+        properties.forEach { visitor.visitProperty(it.flags, it.name, it.getter.flags, it.setterFlags)?.let(it::accept) }
         typeAliases.forEach { visitor.visitTypeAlias(it.flags, it.name)?.let(it::accept) }
         constructors.forEach { visitor.visitConstructor(it.flags)?.let(it::accept) }
         companionObject?.let(visitor::visitCompanionObject)
@@ -268,7 +269,7 @@ class KmPackage : KmPackageVisitor(), KmDeclarationContainer {
     @Deprecated(VISITOR_API_MESSAGE)
     fun accept(visitor: KmPackageVisitor) {
         functions.forEach { visitor.visitFunction(it.flags, it.name)?.let(it::accept) }
-        properties.forEach { visitor.visitProperty(it.flags, it.name, it.getterFlags, it.setterFlags)?.let(it::accept) }
+        properties.forEach { visitor.visitProperty(it.flags, it.name, it.getter.flags, it.setterFlags)?.let(it::accept) }
         typeAliases.forEach { visitor.visitTypeAlias(it.flags, it.name)?.let(it::accept) }
         extensions.forEach { visitor.visitExtensions(it.type)?.let(it::accept) }
         visitor.visitEnd()
@@ -307,7 +308,10 @@ class KmLambda : KmLambdaVisitor() {
  * @property flags constructor flags, consisting of [Flag.HAS_ANNOTATIONS], a visibility flag and [Flag.Constructor] flags
  */
 @Suppress("DEPRECATION")
-class KmConstructor(var flags: Flags) : KmConstructorVisitor() {
+class KmConstructor @Deprecated(FLAGS_CTOR_DEPRECATED) constructor(var flags: Flags) :
+    KmConstructorVisitor() {
+    constructor() : this(0)
+
     /**
      * Value parameters of the constructor.
      */
@@ -354,10 +358,13 @@ class KmConstructor(var flags: Flags) : KmConstructorVisitor() {
  * @property name the name of the function
  */
 @Suppress("DEPRECATION")
-class KmFunction(
+class KmFunction @Deprecated(FLAGS_CTOR_DEPRECATED) constructor(
     var flags: Flags,
-    var name: String
+    var name: String,
 ) : KmFunctionVisitor() {
+
+    constructor(name: String) : this(0, name)
+
     /**
      * Type parameters of the function.
      */
@@ -453,22 +460,83 @@ class KmFunction(
 }
 
 /**
+ * Represents a Kotlin property accessor.
+ * Does not contain meaningful information except attributes, such as visibility and modality.
+ * Attributes can be read and written using extension functions, e.g. [KmPropertyAccessorAttributes.visibility] or [KmPropertyAccessorAttributes.isNotDefault].
+ */
+public class KmPropertyAccessorAttributes internal constructor(internal var flags: Flags) {
+    public constructor() : this(0)
+}
+
+/**
  * Represents a Kotlin property declaration.
  *
  * @property flags property flags, consisting of [Flag.HAS_ANNOTATIONS], visibility flag, modality flag and [Flag.Property] flags
  * @property name the name of the property
- * @property getterFlags property accessor flags, consisting of [Flag.HAS_ANNOTATIONS], visibility flag, modality flag
- *   and [Flag.PropertyAccessor] flags
- * @property setterFlags property accessor flags, consisting of [Flag.HAS_ANNOTATIONS], visibility flag, modality flag
- *   and [Flag.PropertyAccessor] flags
  */
 @Suppress("DEPRECATION")
-class KmProperty(
+class KmProperty @Deprecated(FLAGS_CTOR_DEPRECATED) constructor(
     var flags: Flags,
     var name: String,
-    var getterFlags: Flags,
-    var setterFlags: Flags
+    getterFlags: Flags,
+    setterFlags: Flags,
 ) : KmPropertyVisitor() {
+
+    constructor(name: String) : this(0, name, 0, 0)
+
+    /**
+     * Attributes of the getter of this property.
+     * Attributes can be retrieved with extension functions, such as [KmPropertyAccessorAttributes.visibility] or [KmPropertyAccessorAttributes.isNotDefault].
+     *
+     * Getter for property is always present, hence return type of this function is non-nullable.
+     */
+    val getter: KmPropertyAccessorAttributes = KmPropertyAccessorAttributes(getterFlags)
+
+    /**
+     * Attributes of the setter of this property.
+     * Attributes can be retrieved with extension functions, such as [KmPropertyAccessorAttributes.visibility] or [KmPropertyAccessorAttributes.isNotDefault].
+     *
+     * Returns null if setter is absent, i.e. [KmProperty.isVar] is false.
+     */
+    var setter: KmPropertyAccessorAttributes? = if (this.hasSetter) KmPropertyAccessorAttributes(setterFlags) else null
+        set(new) {
+            this.hasSetter = new != null
+            field = new
+        }
+
+    /**
+     * A legacy accessor for getter attributes.
+     *
+     * Property accessor flags, consisting of [Flag.HAS_ANNOTATIONS], visibility flag, modality flag
+     * and [Flag.PropertyAccessor] flags.
+     */
+    var getterFlags: Flags
+        get() = getter.flags
+        set(value) {
+            getter.flags = value
+        }
+
+    /**
+     * A legacy accessor to setter attributes.
+     *
+     * Property accessor flags, consisting of [Flag.HAS_ANNOTATIONS], visibility flag, modality flag
+     * and [Flag.PropertyAccessor] flags.
+     *
+     * Note that, for compatibility reasons, flags are present even the property is `val` and `setter` is null.
+     * In that case, flags for hasAnnotation, visibility and modality are copied from properties' flag, which may lead
+     * to incorrect results. For example, when property is annotated, [setterFlags] will also return true for [Flag.Common.HAS_ANNOTATIONS],
+     * even though there is no setter nor annotations on it.
+     *
+     * Setting this property when setter is absent changes the value, but does not create new [setter].
+     * This behavior is for compatibility only and will be removed in future versions.
+     */
+    var setterFlags: Flags = getDefaultPropertyAccessorFlags(flags)
+        get() = setter?.flags ?: field
+        set(value) {
+            setter?.flags = value
+            field = value
+        }
+
     /**
      * Type parameters of the property.
      */
@@ -486,7 +554,15 @@ class KmProperty(
     val contextReceiverTypes: MutableList<KmType> = ArrayList(0)
 
     /**
-     * Value parameter of the setter of this property, if this is a `var` property.
+     * Value parameter of the setter of this property, if this is a `var` property and parameter is present.
+     * Parameter is present if and only if the setter is not default:
+     *
+     * ```kotlin
+     * var foo: String = ""
+     *   set(param) {
+     *     field = param.removePrefix("bar")
+     *   }
+     * ```
      */
     var setterParameter: KmValueParameter? = null
 
@@ -558,10 +634,13 @@ class KmProperty(
  * @property name the name of the type alias
  */
 @Suppress("DEPRECATION")
-class KmTypeAlias(
+class KmTypeAlias @Deprecated(FLAGS_CTOR_DEPRECATED) constructor(
     var flags: Flags,
-    var name: String
+    var name: String,
 ) : KmTypeAliasVisitor() {
+
+    constructor(name: String) : this(0, name)
+
     /**
      * Type parameters of the type alias.
      */
@@ -640,10 +719,13 @@ class KmTypeAlias(
  * @property name the name of the value parameter
  */
 @Suppress("DEPRECATION")
-class KmValueParameter(
+class KmValueParameter @Deprecated(FLAGS_CTOR_DEPRECATED) constructor(
     var flags: Flags,
-    var name: String
+    var name: String,
 ) : KmValueParameterVisitor() {
+
+    constructor(name: String) : this(0, name)
+
     /**
      * Type of the value parameter.
      * If this is a `vararg` parameter of type `X`, returns the type `Array<out X>`.
@@ -694,12 +776,15 @@ class KmValueParameter(
  * @property variance the declaration-site variance of the type parameter
  */
 @Suppress("DEPRECATION")
-class KmTypeParameter(
+class KmTypeParameter @Deprecated(FLAGS_CTOR_DEPRECATED) constructor(
     var flags: Flags,
     var name: String,
     var id: Int,
-    var variance: KmVariance
+    var variance: KmVariance,
 ) : KmTypeParameterVisitor() {
+
+    constructor(name: String, id: Int, variance: KmVariance) : this(0, name, id, variance)
+
     /**
      * Upper bounds of the type parameter.
      */
@@ -735,7 +820,10 @@ class KmTypeParameter(
  * @property flags type flags, consisting of [Flag.Type] flags
  */
 @Suppress("DEPRECATION")
-class KmType(var flags: Flags) : KmTypeVisitor() {
+class KmType @Deprecated(FLAGS_CTOR_DEPRECATED) constructor(var flags: Flags) : KmTypeVisitor() {
+
+    constructor() : this(0)
+
     /**
      * Classifier of the type.
      */
@@ -994,7 +1082,7 @@ class KmEffect(
  */
 @ExperimentalContracts
 @Suppress("DEPRECATION")
-class  KmEffectExpression : KmEffectExpressionVisitor() {
+class KmEffectExpression : KmEffectExpressionVisitor() {
     /**
      * Effect expression flags, consisting of [Flag.EffectExpression] flags.
      */
@@ -1155,3 +1243,6 @@ internal fun <T> T.addTo(collection: MutableCollection<T>): T {
     collection.add(this)
     return this
 }
+
+private const val FLAGS_CTOR_DEPRECATED =
+    "Constructor with flags is deprecated, use constructor without flags and assign them or corresponding extension properties directly."

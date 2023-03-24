@@ -126,9 +126,8 @@ internal fun linkSealedClassesWithSubclasses(packageName: CirPackageName, classC
 
 internal fun CirClassConstructor.serializeConstructor(
     context: CirTreeSerializationContext
-): KmConstructor = KmConstructor(
-    flags = classConstructorFlags()
-).also { constructor ->
+): KmConstructor = KmConstructor().also { constructor ->
+    constructor.flags = classConstructorFlags()
     annotations.mapTo(constructor.annotations) { it.serializeAnnotation() }
     // TODO: nowhere to write constructor type parameters
     valueParameters.mapTo(constructor.valueParameters) { it.serializeValueParameter(context) }
@@ -137,9 +136,9 @@ internal fun CirClassConstructor.serializeConstructor(
 internal fun CirTypeAlias.serializeTypeAlias(
     context: CirTreeSerializationContext
 ): KmTypeAlias = KmTypeAlias(
-    flags = typeAliasFlags(),
     name = name.name
 ).also { typeAlias ->
+    typeAlias.flags = typeAliasFlags()
     annotations.mapTo(typeAlias.annotations) { it.serializeAnnotation() }
     typeParameters.serializeTypeParameters(context, output = typeAlias.typeParameters)
     typeAlias.underlyingType = underlyingType.serializeType(context, expansion = ONLY_ABBREVIATIONS)
@@ -148,12 +147,10 @@ internal fun CirTypeAlias.serializeTypeAlias(
 
 internal fun CirProperty.serializeProperty(
     context: CirTreeSerializationContext,
-): KmProperty = KmProperty(
-    flags = propertyFlags(isExpect = context.isCommon && !isLiftedUp),
-    name = name.name,
-    getterFlags = getter?.propertyAccessorFlags(this, this) ?: NO_FLAGS,
-    setterFlags = setter?.let { setter -> setter.propertyAccessorFlags(setter, this) } ?: NO_FLAGS
-).also { property ->
+): KmProperty = KmProperty(name = name.name).also { property ->
+    property.flags = propertyFlags(isExpect = context.isCommon && !isLiftedUp)
+    property.getterFlags = getter?.propertyAccessorFlags(this, this) ?: NO_FLAGS
+    property.setterFlags = setter?.let { setter -> setter.propertyAccessorFlags(setter, this) } ?: NO_FLAGS
     annotations.mapTo(property.annotations) { it.serializeAnnotation() }
     getter?.annotations?.mapTo(property.getterAnnotations) { it.serializeAnnotation() }
     setter?.annotations?.mapTo(property.setterAnnotations) { it.serializeAnnotation() }
@@ -181,9 +178,9 @@ internal fun CirProperty.serializeProperty(
 internal fun CirFunction.serializeFunction(
     context: CirTreeSerializationContext,
 ): KmFunction = KmFunction(
-    flags = functionFlags(isExpect = context.isCommon && kind != CallableMemberDescriptor.Kind.SYNTHESIZED),
     name = name.name
 ).also { function ->
+    function.flags = functionFlags(isExpect = context.isCommon && kind != CallableMemberDescriptor.Kind.SYNTHESIZED)
     annotations.mapTo(function.annotations) { it.serializeAnnotation() }
     typeParameters.serializeTypeParameters(context, output = function.typeParameters)
     valueParameters.mapTo(function.valueParameters) { it.serializeValueParameter(context) }
@@ -242,9 +239,9 @@ private fun CirConstantValue.serializeConstantValue(): KmAnnotationArgument? = w
 private fun CirValueParameter.serializeValueParameter(
     context: CirTreeSerializationContext
 ): KmValueParameter = KmValueParameter(
-    flags = valueParameterFlags(),
     name = name.name
 ).also { parameter ->
+    parameter.flags = valueParameterFlags()
     annotations.mapTo(parameter.annotations) { it.serializeAnnotation() }
     parameter.type = returnType.serializeType(context)
     varargElementType?.let { varargElementType ->
@@ -258,11 +255,11 @@ private fun List<CirTypeParameter>.serializeTypeParameters(
 ) {
     mapIndexedTo(output) { index, cirTypeParameter ->
         KmTypeParameter(
-            flags = cirTypeParameter.typeParameterFlags(),
             name = cirTypeParameter.name.name,
             id = context.typeParameterIndexOffset + index,
             variance = cirTypeParameter.variance.serializeVariance()
         ).also { parameter ->
+            parameter.flags = cirTypeParameter.typeParameterFlags()
             cirTypeParameter.upperBounds.mapTo(parameter.upperBounds) { it.serializeType(context) }
             cirTypeParameter.annotations.mapTo(parameter.annotations) { it.serializeAnnotation() }
         }
@@ -287,14 +284,16 @@ private fun CirType.serializeType(
 }
 
 private fun CirTypeParameterType.serializeTypeParameterType(): KmType =
-    KmType(typeFlags()).also { type ->
+    KmType().also { type ->
+        applyTypeFlagsTo(type)
         type.classifier = KmClassifier.TypeParameter(index)
     }
 
 private fun CirClassType.serializeClassType(
     context: CirTreeSerializationContext,
     expansion: TypeAliasExpansion = FOR_TOP_LEVEL_TYPE
-): KmType = KmType(typeFlags()).also { type ->
+): KmType = KmType().also { type ->
+    applyTypeFlagsTo(type)
     type.classifier = KmClassifier.Class(classifierId.toString())
     arguments.mapTo(type.arguments) { it.serializeArgument(context, expansion) }
     outerType?.let { type.outerType = it.serializeClassType(context, expansion) }
@@ -318,7 +317,7 @@ private fun CirTypeAliasType.serializeAbbreviationType(
     context: CirTreeSerializationContext,
     expansion: TypeAliasExpansion
 ): KmType {
-    val abbreviationType = KmType(typeFlags())
+    val abbreviationType = KmType().also { applyTypeFlagsTo(it) }
     abbreviationType.classifier = KmClassifier.TypeAlias(classifierId.toString())
     arguments.mapTo(abbreviationType.arguments) { it.serializeArgument(context, expansion) }
     return abbreviationType
