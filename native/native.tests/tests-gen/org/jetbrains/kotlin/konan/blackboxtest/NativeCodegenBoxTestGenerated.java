@@ -12990,6 +12990,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             }
 
             @Test
+            @TestMetadata("delegationDifferentModule2.kt")
+            public void testDelegationDifferentModule2() throws Exception {
+                runTest("compiler/testData/codegen/box/delegation/delegationDifferentModule2.kt");
+            }
+
+            @Test
             @TestMetadata("delegationToIntersectionType.kt")
             public void testDelegationToIntersectionType() throws Exception {
                 runTest("compiler/testData/codegen/box/delegation/delegationToIntersectionType.kt");
