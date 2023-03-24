@@ -616,7 +616,7 @@ abstract class CompileServiceImplBase(
         val projectRoot = incrementalCompilationOptions.modulesInfo.projectRoot
         val useK2 = k2jvmArgs.useK2 || LanguageVersion.fromVersionString(k2jvmArgs.languageVersion)?.usesK2 == true
         // TODO: This should be reverted after implementing of fir-based java tracker (KT-57147).
-        //  See org.jetbrains.kotlin.incremental.IncrementalJvmCompilerRunnerKt.makeIncrementally
+        //  See org.jetbrains.kotlin.incremental.CompilerRunnerUtilsKt.makeJvmIncrementally
         val usePreciseJavaTracking = if (useK2) false else incrementalCompilationOptions.usePreciseJavaTracking
 
         val compiler = IncrementalJvmCompilerRunner(
