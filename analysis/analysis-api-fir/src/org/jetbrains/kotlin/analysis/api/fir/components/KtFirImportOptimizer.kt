@@ -53,9 +53,10 @@ internal class KtFirImportOptimizer(
         get() = firResolveSession.useSiteFirSession
 
     override fun analyseImports(file: KtFile): KtImportOptimizerResult {
-        val firFile = file.getOrBuildFirFile(firResolveSession).apply { lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE) }
-
         val existingImports = file.importDirectives
+        if (existingImports.isEmpty()) return KtImportOptimizerResult(emptySet())
+
+        val firFile = file.getOrBuildFirFile(firResolveSession).apply { lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE) }
 
         val explicitlyImportedFqNames = existingImports
             .asSequence()
