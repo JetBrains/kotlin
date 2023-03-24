@@ -739,10 +739,11 @@ val emptyJavadocJar by tasks.creating(org.gradle.api.tasks.bundling.Jar::class) 
 }
 
 publishing {
+    val artifactBaseName = base.archivesName.get()
     configureMultiModuleMavenPublishing {
         val rootModule = module("rootModule") {
             mavenPublication {
-                artifactId = "kotlin-stdlib-mpp"
+                artifactId = artifactBaseName
                 configureKotlinPomAttributes(project, "Kotlin Standard Library")
             }
 
@@ -782,7 +783,7 @@ publishing {
 //        }
         val js = module("jsModule") {
             mavenPublication {
-                artifactId = "kotlin-stdlib-mpp-js"
+                artifactId = "$artifactBaseName-js"
                 configureKotlinPomAttributes(project, "Kotlin Standard Library for JS")
             }
             variant("jsApiElements")
