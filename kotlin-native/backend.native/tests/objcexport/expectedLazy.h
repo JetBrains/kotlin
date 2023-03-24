@@ -1294,6 +1294,27 @@ __attribute__((swift_name("Kt56521Kt")))
 @property (class) int32_t initialized __attribute__((swift_name("initialized")));
 @end
 
+__attribute__((swift_name("IKt57373")))
+@protocol KtIKt57373
+@required
+@property (readonly) int32_t bar __attribute__((swift_name("bar")));
+@end
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("DKt57373")))
+@interface KtDKt57373 : KtBase <KtIKt57373>
+- (instancetype)initWithFoo:(id<KtIKt57373>)foo __attribute__((swift_name("init(foo:)"))) __attribute__((objc_designated_initializer));
+@property (readonly) int32_t bar __attribute__((swift_name("bar")));
+@end
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("CKt57373")))
+@interface KtCKt57373 : KtBase <KtIKt57373>
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+@property (readonly) int32_t bar __attribute__((swift_name("bar")));
+@end
+
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("LibraryKt")))
 @interface KtLibraryKt : KtBase

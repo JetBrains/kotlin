@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.comparators.FirCallableDeclarationComparator
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.deserialization.projection
 import org.jetbrains.kotlin.fir.expressions.*
@@ -341,7 +343,14 @@ class FirElementSerializer private constructor(
             false, false, false
         )
 
-        val getter = property.getter
+        val getter = property.getter ?: with(property) {
+            if (origin == FirDeclarationOrigin.Delegated) {
+                // since we generate the default accessor on fir2ir anyway (Fir2IrDeclarationStorage.createIrProperty), we have to
+                // serialize it accordingly at least for delegates to fix issues like #KT-57373
+                // TODO: rewrite accordingly after fixing #KT-58233
+                FirDefaultPropertyGetter(source = null, moduleData, origin, returnTypeRef, visibility, symbol)
+            } else null
+        }
         if (getter != null) {
             hasGetter = true
             val accessorFlags = getAccessorFlags(getter, property)
@@ -350,7 +359,14 @@ class FirElementSerializer private constructor(
             }
         }
 
-        val setter = property.setter
+        val setter = property.setter ?: with(property) {
+            if (origin == FirDeclarationOrigin.Delegated && isVar) {
+                // since we generate the default accessor on fir2ir anyway (Fir2IrDeclarationStorage.createIrProperty), we have to
+                // serialize it accordingly at least for delegates to fix issues like #KT-57373
+                // TODO: rewrite accordingly after fixing #KT-58233
+                FirDefaultPropertySetter(source = null, moduleData, origin, returnTypeRef, visibility, symbol)
+            } else null
+        }
         if (setter != null) {
             hasSetter = true
             val accessorFlags = getAccessorFlags(setter, property)
