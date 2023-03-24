@@ -39,24 +39,13 @@ val jsCommonTestSrcDir = "${jsCommonDir}/test"
 val jsV1Dir = "${projectDir}/js-v1"
 val jsSrcDir = "$jsV1Dir/src"
 val jsSrcJsDir = "${jsSrcDir}/js"
-val prepareJsV1ComparableSources by tasks.registering(Sync::class)
-val prepareJsV1BuiltinsSources by tasks.registering(Sync::class)
 
 // for js-ir
 val jsIrDir = "${projectDir}/js-ir"
 val jsIrMainSources = "${buildDir}/src/jsMainSources"
 val jsIrTestSources = "${buildDir}/src/jsTestSources"
-val prepareJsIrMainSources by tasks.registering(Sync::class)
 lateinit var jsIrTarget: KotlinJsTargetDsl
 lateinit var jsV1Target: KotlinJsTargetDsl
-
-val prepareCommonSources by tasks.registering {
-    dependsOn(":prepare:build.version:writeStdlibVersion")
-}
-val prepareAllSources by tasks.registering {
-    dependsOn(prepareCommonSources)
-    dependsOn(prepareJsIrMainSources, prepareJsV1ComparableSources, prepareJsV1BuiltinsSources)
-}
 
 kotlin {
     metadata {
@@ -265,21 +254,17 @@ kotlin {
         }
     }
 
-    targets.all {
-        compilations.all {
-            if (name == "main" || name == "commonMain") {
-                compileTaskProvider.configure {
-                    dependsOn(prepareCommonSources)
-                }
-            }
-        }
-    }
-
     sourceSets {
+        all {
+            kotlin.setSrcDirs(emptyList<File>())
+        }
         commonMain {
+            val prepareCommonSources by tasks.registering {
+                dependsOn(":prepare:build.version:writeStdlibVersion")
+            }
             kotlin {
                 srcDir("common/src")
-                srcDir("src")
+                srcDir(files("src").builtBy(prepareCommonSources))
                 srcDir("unsigned/src")
                 if (!kotlinBuildProperties.isInIdeaSync) {
                     srcDir("$rootDir/core/builtins/src/kotlin/internal")
@@ -300,12 +285,10 @@ kotlin {
             }
         }
         val jvmCompileOnlyDeclarations by getting {
-            project.configurations.getByName("jvmMainCompileOnly").extendsFrom(configurationBuiltins)
-            project.sourceSets["compileOnlyDeclarations"].java.srcDirs(
-                "jvm/compileOnly"
-            )
+            kotlin.srcDir("jvm/compileOnly")
         }
         val jvmMain by getting {
+            project.configurations.getByName("jvmMainCompileOnly").extendsFrom(configurationBuiltins)
             dependencies {
                 api("org.jetbrains:annotations:13.0")
             }
@@ -315,6 +298,7 @@ kotlin {
                 "$builtinsDir/src"
             )
             project.sourceSets["main"].java.srcDirs(*jvmSrcDirs)
+            kotlin.setSrcDirs(jvmSrcDirs.toList())
         }
 
         val jvmMainJdk7 by getting {
@@ -344,8 +328,9 @@ kotlin {
         }
 
         val jsV1Runtime by getting {
+            val prepareJsV1ComparableSources by tasks.registering(Sync::class)
             kotlin {
-                srcDir(builtinsRuntimeSrcDir)
+                srcDir(prepareJsV1ComparableSources)
                 srcDir("$jsCommonDir/runtime")
                 srcDir("$jsV1Dir/runtime")
             }
@@ -355,14 +340,12 @@ kotlin {
                 }
                 into(builtinsRuntimeSrcDir)
             }
-            jsV1Target.compilations["runtime"].compileTaskProvider.configure {
-                dependsOn(prepareJsV1ComparableSources)
-            }
         }
 
         val jsV1Main by getting {
+            val prepareJsV1BuiltinsSources by tasks.registering(Sync::class)
             kotlin {
-                srcDir(builtinsSrcDir)
+                srcDir(prepareJsV1BuiltinsSources)
                 srcDir(jsCommonSrcDir)
                 srcDir(jsSrcDir)
             }
@@ -386,9 +369,6 @@ kotlin {
                 }
                 into(builtinsSrcDir)
             }
-            jsV1Target.compilations["main"].compileTaskProvider.configure {
-                dependsOn(prepareJsV1BuiltinsSources)
-            }
         }
         val jsV1Test by getting {
             dependencies {
@@ -401,8 +381,9 @@ kotlin {
         }
 
         val jsMain by getting {
+            val prepareJsIrMainSources by tasks.registering(Sync::class)
             kotlin {
-                srcDir(jsIrMainSources)
+                srcDir(prepareJsIrMainSources)
                 srcDir("$jsIrDir/builtins")
                 srcDir("$jsIrDir/runtime")
                 srcDir("$jsIrDir/src")
@@ -464,12 +445,8 @@ kotlin {
                     }
                 }
             }
-            jsIrTarget.compilations["main"].compileTaskProvider.configure {
-                dependsOn(prepareJsIrMainSources)
-            }
         }
         val jsTest by getting {
-            kotlin.srcDir(jsIrTestSources)
             dependencies {
                 api(project(":kotlin-test:kotlin-test-js-ir"))
             }
@@ -477,9 +454,7 @@ kotlin {
                 from(jsCommonTestSrcDir)
                 into(jsIrTestSources)
             }
-            jsIrTarget.compilations["test"].compileTaskProvider.configure {
-                dependsOn(prepareJsIrTestSources)
-            }
+            kotlin.srcDir(prepareJsIrTestSources)
         }
 
         all sourceSet@ {
@@ -514,8 +489,7 @@ tasks {
         from(project.sourceSets["java9"].output)
     }
 
-    val jvmSourcesJar by existing(org.gradle.jvm.tasks.Jar::class) {
-        dependsOn(prepareCommonSources)
+    val jvmSourcesJar by existing(Jar::class) {
         duplicatesStrategy = DuplicatesStrategy.FAIL
         into("jvmMain") {
             from("${rootDir}/core/builtins/native")
@@ -678,24 +652,26 @@ tasks {
         destinationDirectory.set(file("$buildDir/lib"))
 
         includeEmptyDirs = false
-        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-        dependsOn(prepareAllSources)
-        val jsMainSourcesDir = prepareJsIrMainSources.get().destinationDir
+        duplicatesStrategy = DuplicatesStrategy.FAIL
 
         into("commonMain") {
             from(kotlin.sourceSets.commonMain.get().kotlin)
         }
         into("jsMain") {
+            from(kotlin.sourceSets["jsMain"].kotlin) {
+                // just to depend on source-generating tasks
+                exclude("**")
+            }
             from("${rootDir}/core/builtins/native/kotlin") {
                 into("kotlin")
                 include("Comparable.kt")
                 include("Enum.kt")
             }
-            from("$jsMainSourcesDir/core/builtins/native") {
+            from("$jsIrMainSources/core/builtins/native") {
                 exclude("kotlin/Comparable.kt")
             }
-            from("$jsMainSourcesDir/core/builtins/src")
-            from("$jsMainSourcesDir/libraries/stdlib/js/src")
+            from("$jsIrMainSources/core/builtins/src")
+            from("$jsIrMainSources/libraries/stdlib/js/src")
             from("$jsIrDir/builtins") {
                 into("kotlin")
                 exclude("Enum.kt")
