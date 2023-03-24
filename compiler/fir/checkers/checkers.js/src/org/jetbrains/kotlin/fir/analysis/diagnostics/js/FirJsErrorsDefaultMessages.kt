@@ -184,7 +184,5 @@ object FirJsErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "Exported declaration contains non-consumable identifier '${0}', that can't be represented inside TS definitions and ESM",
             CommonRenderers.STRING,
         )
-
-        map.checkMissingMessages(FirJsErrors)
     }
 }
