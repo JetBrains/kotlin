@@ -1489,7 +1489,7 @@ class FunctionBodySkippingTransformTests : FunctionBodySkippingTransformTestsBas
                       traceEventStart(<>, %changed, -1, <>)
                     }
                     used(it)
-                    A(x, 0, %composer, 0b1110 and %dirty, 0b0010)
+                    A(x, 0, %composer, 0b1110 and %dirty@Test, 0b0010)
                     if (isTraceInProgress()) {
                       traceEventEnd()
                     }
@@ -2792,7 +2792,7 @@ class FunctionBodySkippingTransformTests : FunctionBodySkippingTransformTestsBas
                         if (isTraceInProgress()) {
                           traceEventStart(<>, %dirty, -1, <>)
                         }
-                        B(x, y, z, %composer, 0b1110 and %dirty or 0b01110000 and %dirty shl 0b0011 or 0b001110000000 and %dirty shl 0b0110, 0)
+                        B(x, y, z, %composer, 0b1110 and %dirty@A or 0b01110000 and %dirty@A.<anonymous> shl 0b0011 or 0b001110000000 and %dirty shl 0b0110, 0)
                         if (isTraceInProgress()) {
                           traceEventEnd()
                         }
@@ -2800,7 +2800,7 @@ class FunctionBodySkippingTransformTests : FunctionBodySkippingTransformTestsBas
                         %composer.skipToGroupEnd()
                       }
                     }, %composer, 0b0110)
-                    B(x, y, 0, %composer, 0b1110 and %dirty or 0b01110000 and %dirty shl 0b0011, 0b0100)
+                    B(x, y, 0, %composer, 0b1110 and %dirty@A or 0b01110000 and %dirty shl 0b0011, 0b0100)
                     if (isTraceInProgress()) {
                       traceEventEnd()
                     }
