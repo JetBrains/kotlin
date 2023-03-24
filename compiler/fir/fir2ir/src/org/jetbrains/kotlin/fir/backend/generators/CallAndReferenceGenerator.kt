@@ -693,7 +693,7 @@ class CallAndReferenceGenerator(
             val symbol = annotationTypeRef.coneType.fullyExpandedType(session).toSymbol(session) as? FirRegularClassSymbol ?: return null
 
             val constructorSymbol =
-                symbol.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false)
+                symbol.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false, memberRequiredPhase = null)
                     .getDeclaredConstructors().firstOrNull() ?: return null
 
             val argumentToParameterToMapping = constructorSymbol.valueParameterSymbols.mapNotNull {
