@@ -2180,8 +2180,6 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(ASSIGNED_VALUE_IS_NEVER_READ, "Assigned value is never read")
         map.put(VARIABLE_INITIALIZER_IS_REDUNDANT, "Initializer is redundant")
         map.put(VARIABLE_NEVER_READ, "Variable is never read")
-
-        map.checkMissingMessages(FirErrors)
     }
 }
 

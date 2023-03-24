@@ -301,7 +301,5 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             TO_STRING,
             TO_STRING,
         )
-
-        map.checkMissingMessages(FirJvmErrors)
     }
 }
