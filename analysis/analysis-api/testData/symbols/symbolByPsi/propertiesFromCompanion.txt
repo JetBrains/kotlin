@@ -1,5 +1,6 @@
 KtKotlinPropertySymbol:
   annotationsList: []
+  backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
   callableIdIfNonLocal: /MyClass.Companion.property
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
@@ -66,6 +67,7 @@ KtKotlinPropertySymbol:
 
 KtKotlinPropertySymbol:
   annotationsList: []
+  backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
   callableIdIfNonLocal: /MyClass.Companion.constProperty
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
@@ -135,6 +137,7 @@ KtKotlinPropertySymbol:
     kotlin/jvm/JvmStatic()
       psi: KtAnnotationEntry
   ]
+  backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
   callableIdIfNonLocal: /MyClass.Companion.staticProperty
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
@@ -200,10 +203,12 @@ KtKotlinPropertySymbol:
   setterDeprecationStatus: null
 
 KtKotlinPropertySymbol:
-  annotationsList: [
-    kotlin/jvm/JvmField()
-      psi: KtAnnotationEntry
-  ]
+  annotationsList: []
+  backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
+    annotationsList: [
+      kotlin/jvm/JvmField()
+        psi: KtAnnotationEntry
+    ]
   callableIdIfNonLocal: /MyClass.Companion.fieldProperty
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
@@ -270,6 +275,7 @@ KtKotlinPropertySymbol:
 
 KtKotlinPropertySymbol:
   annotationsList: []
+  backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
   callableIdIfNonLocal: /MyClass.Companion.variable
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
@@ -410,6 +416,7 @@ KtKotlinPropertySymbol:
     kotlin/jvm/JvmStatic()
       psi: KtAnnotationEntry
   ]
+  backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
   callableIdIfNonLocal: /MyClass.Companion.staticVariable
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
@@ -546,10 +553,12 @@ KtKotlinPropertySymbol:
   setterDeprecationStatus: null
 
 KtKotlinPropertySymbol:
-  annotationsList: [
-    kotlin/jvm/JvmField()
-      psi: KtAnnotationEntry
-  ]
+  annotationsList: []
+  backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
+    annotationsList: [
+      kotlin/jvm/JvmField()
+        psi: KtAnnotationEntry
+    ]
   callableIdIfNonLocal: /MyClass.Companion.fieldVariable
   contextReceivers: []
   getter: KtPropertyGetterSymbol:

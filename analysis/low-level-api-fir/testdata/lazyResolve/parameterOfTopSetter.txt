@@ -73,7 +73,7 @@ FILE: [ResolvedTo(IMPORTS)] parameterOfTopSetter.kt
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] parameterOfTopSetter.kt
     [ResolvedTo(RAW_FIR)] annotations container
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var x: R|kotlin/Int| = IntegerLiteral(2)
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var x: R|kotlin/Int| = Int(2)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
             ^ Unit#
@@ -82,7 +82,7 @@ FILE: [ResolvedTo(IMPORTS)] parameterOfTopSetter.kt
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] parameterOfTopSetter.kt
     [ResolvedTo(RAW_FIR)] annotations container
-    public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] var x: R|kotlin/Int| = IntegerLiteral(2)
+    public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] var x: R|kotlin/Int| = Int(2)
         public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] get(): R|kotlin/Int|
         public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] set([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
             ^ Unit#

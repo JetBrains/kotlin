@@ -1242,6 +1242,7 @@ KtFunctionSymbol:
 
 KtKotlinPropertySymbol:
   annotationsList: []
+  backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
   callableIdIfNonLocal: kotlin/collections/List.size
   contextReceivers: []
   getter: KtPropertyGetterSymbol:

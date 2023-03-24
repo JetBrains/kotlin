@@ -108,6 +108,7 @@ KtJavaFieldSymbol:
 
 KtSyntheticJavaPropertySymbol:
   annotationsList: []
+  backingFieldSymbol: null
   callableIdIfNonLocal: java/lang/String.length
   contextReceivers: []
   getter: KtPropertyGetterSymbol:

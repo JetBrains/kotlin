@@ -1,5 +1,10 @@
 KtKotlinPropertySymbol:
   annotationsList: []
+  backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
+    annotationsList: [
+      kotlin/jvm/JvmField()
+        psi: KtAnnotationEntry
+    ]
   callableIdIfNonLocal: /jvmField
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
@@ -126,6 +131,11 @@ KtKotlinPropertySymbol:
 
 KtKotlinPropertySymbol:
   annotationsList: []
+  backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
+    annotationsList: [
+      kotlin/jvm/JvmField()
+        psi: KtAnnotationEntry
+    ]
   callableIdIfNonLocal: /jvmFieldOnField
   contextReceivers: []
   getter: KtPropertyGetterSymbol:

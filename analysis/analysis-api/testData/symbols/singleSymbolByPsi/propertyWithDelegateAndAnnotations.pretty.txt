@@ -1,5 +1,5 @@
 @ExplicitPropertyAnnotation
-@delegate:DelegateAnnotation
 @PropertyAnnotation
+@delegate:DelegateAnnotation
 val lazyProperty: kotlin.Int
   get()

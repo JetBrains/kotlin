@@ -1,5 +1,6 @@
 KtKotlinPropertySymbol:
   annotationsList: []
+  backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
   callableIdIfNonLocal: /Foo.i
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
@@ -143,6 +144,7 @@ KtKotlinPropertySymbol:
 
 KtKotlinPropertySymbol:
   annotationsList: []
+  backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
   callableIdIfNonLocal: /Foo.j
   contextReceivers: []
   getter: KtPropertyGetterSymbol:

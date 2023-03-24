@@ -3,6 +3,11 @@ KtKotlinPropertySymbol:
     PropertyAnnotation()
       psi: KtAnnotationEntry
   ]
+  backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
+    annotationsList: [
+      FieldAnnotation()
+        psi: KtAnnotationEntry
+    ]
   callableIdIfNonLocal: /x
   contextReceivers: []
   getter: KtPropertyGetterSymbol:

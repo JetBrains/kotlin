@@ -402,6 +402,12 @@ internal class KtSymbolByFirBuilder constructor(
             }
         }
 
+        fun buildBackingFieldSymbol(firSymbol: FirBackingFieldSymbol): KtFirBackingFieldSymbol {
+            return symbolsCache.cache(firSymbol) {
+                KtFirBackingFieldSymbol(firSymbol, analysisSession)
+            }
+        }
+
         fun buildExtensionReceiverSymbol(firCallableSymbol: FirCallableSymbol<*>): KtReceiverParameterSymbol? {
             if (firCallableSymbol.fir.receiverParameter == null) return null
             return KtFirReceiverParameterSymbol(firCallableSymbol, analysisSession)

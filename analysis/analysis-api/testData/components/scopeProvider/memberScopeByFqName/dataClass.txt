@@ -1,5 +1,6 @@
 KtKotlinPropertySymbol:
   annotationsList: []
+  backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
   callableIdIfNonLocal: /Abc.firstProperty
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
@@ -66,6 +67,7 @@ KtKotlinPropertySymbol:
 
 KtKotlinPropertySymbol:
   annotationsList: []
+  backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
   callableIdIfNonLocal: /Abc.secondProperty
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
@@ -132,6 +134,7 @@ KtKotlinPropertySymbol:
 
 KtKotlinPropertySymbol:
   annotationsList: []
+  backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
   callableIdIfNonLocal: /Abc.thirdProperty
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
@@ -232,6 +235,7 @@ KtFunctionSymbol:
 
 KtKotlinPropertySymbol:
   annotationsList: []
+  backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
   callableIdIfNonLocal: /Abc.bodyProperty
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
@@ -661,6 +665,7 @@ KtConstructorSymbol:
       contextReceivers: []
       generatedPrimaryConstructorProperty: KtKotlinPropertySymbol:
         annotationsList: []
+        backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
         callableIdIfNonLocal: /Abc.firstProperty
         contextReceivers: []
         getter: KtPropertyGetterSymbol:
@@ -747,6 +752,7 @@ KtConstructorSymbol:
       contextReceivers: []
       generatedPrimaryConstructorProperty: KtKotlinPropertySymbol:
         annotationsList: []
+        backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
         callableIdIfNonLocal: /Abc.secondProperty
         contextReceivers: []
         getter: KtPropertyGetterSymbol:
@@ -833,6 +839,7 @@ KtConstructorSymbol:
       contextReceivers: []
       generatedPrimaryConstructorProperty: KtKotlinPropertySymbol:
         annotationsList: []
+        backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
         callableIdIfNonLocal: /Abc.thirdProperty
         contextReceivers: []
         getter: KtPropertyGetterSymbol:

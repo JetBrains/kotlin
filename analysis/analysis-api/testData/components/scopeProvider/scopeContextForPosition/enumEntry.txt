@@ -45,6 +45,7 @@ scopes:
     callables: 9
       KtKotlinPropertySymbol:
         annotationsList: []
+        backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
         callableIdIfNonLocal: null
         contextReceivers: []
         getter: KtPropertyGetterSymbol:
@@ -301,6 +302,7 @@ scopes:
           kotlin/internal/IntrinsicConstEvaluation()
             psi: null
         ]
+        backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
         callableIdIfNonLocal: kotlin/Enum.name
         contextReceivers: []
         getter: KtPropertyGetterSymbol:
@@ -350,6 +352,7 @@ scopes:
         visibility: Public
       KtKotlinPropertySymbol:
         annotationsList: []
+        backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
         callableIdIfNonLocal: kotlin/Enum.ordinal
         contextReceivers: []
         getter: KtPropertyGetterSymbol:
@@ -498,6 +501,7 @@ scopes:
         visibility: Public
       KtKotlinPropertySymbol:
         annotationsList: []
+        backingFieldSymbol: null
         callableIdIfNonLocal: /E.entries
         contextReceivers: []
         getter: KtPropertyGetterSymbol:

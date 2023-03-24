@@ -97,6 +97,7 @@ KtFunctionSymbol:
 
 KtKotlinPropertySymbol:
   annotationsList: []
+  backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
   callableIdIfNonLocal: /testVal
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
@@ -155,6 +156,7 @@ KtKotlinPropertySymbol:
 
 KtKotlinPropertySymbol:
   annotationsList: []
+  backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
   callableIdIfNonLocal: /initializedVariable
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
@@ -280,6 +282,7 @@ KtKotlinPropertySymbol:
 
 KtKotlinPropertySymbol:
   annotationsList: []
+  backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
   callableIdIfNonLocal: /unitializedVariable
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
@@ -405,6 +408,7 @@ KtKotlinPropertySymbol:
 
 KtKotlinPropertySymbol:
   annotationsList: []
+  backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
   callableIdIfNonLocal: /lateinitVariable
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
@@ -530,6 +534,7 @@ KtKotlinPropertySymbol:
 
 KtKotlinPropertySymbol:
   annotationsList: []
+  backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
   callableIdIfNonLocal: /variableWithBackingField
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
@@ -655,6 +660,7 @@ KtKotlinPropertySymbol:
 
 KtKotlinPropertySymbol:
   annotationsList: []
+  backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
   callableIdIfNonLocal: /privateSetter
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
@@ -783,6 +789,7 @@ KtKotlinPropertySymbol:
 
 KtKotlinPropertySymbol:
   annotationsList: []
+  backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
   callableIdIfNonLocal: /jvmNameOnSetter
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
@@ -911,6 +918,7 @@ KtKotlinPropertySymbol:
 
 KtKotlinPropertySymbol:
   annotationsList: []
+  backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
   callableIdIfNonLocal: /customGetter
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
@@ -972,6 +980,7 @@ KtKotlinPropertySymbol:
 
 KtKotlinPropertySymbol:
   annotationsList: []
+  backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
   callableIdIfNonLocal: /jvmNameOnGetter
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
@@ -1033,6 +1042,7 @@ KtKotlinPropertySymbol:
 
 KtKotlinPropertySymbol:
   annotationsList: []
+  backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
   callableIdIfNonLocal: /propertyWithReceiver
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
@@ -1109,6 +1119,7 @@ KtKotlinPropertySymbol:
 
 KtKotlinPropertySymbol:
   annotationsList: []
+  backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
   callableIdIfNonLocal: /propertyWithGenericReceiver
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
@@ -1185,6 +1196,7 @@ KtKotlinPropertySymbol:
 
 KtKotlinPropertySymbol:
   annotationsList: []
+  backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
   callableIdIfNonLocal: /constant
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
@@ -1242,10 +1254,12 @@ KtKotlinPropertySymbol:
   setterDeprecationStatus: null
 
 KtKotlinPropertySymbol:
-  annotationsList: [
-    kotlin/jvm/JvmField()
-      psi: KtAnnotationEntry
-  ]
+  annotationsList: []
+  backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
+    annotationsList: [
+      kotlin/jvm/JvmField()
+        psi: KtAnnotationEntry
+    ]
   callableIdIfNonLocal: /jvmField
   contextReceivers: []
   getter: KtPropertyGetterSymbol:

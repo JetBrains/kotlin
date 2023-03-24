@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.KtConstantInitializerValue
 import org.jetbrains.kotlin.analysis.api.annotations.*
 import org.jetbrains.kotlin.analysis.api.base.KtConstantValue
+import org.jetbrains.kotlin.analysis.api.symbols.KtBackingFieldSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtKotlinPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.isPrivateOrPrivateToThis
@@ -38,6 +39,7 @@ internal class SymbolLightFieldForProperty private constructor(
     lightMemberOrigin: LightMemberOrigin?,
     private val isStatic: Boolean,
     override val kotlinOrigin: KtCallableDeclaration?,
+    private val backingFieldSymbolPointer: KtSymbolPointer<KtBackingFieldSymbol>?,
 ) : SymbolLightField(containingClass, lightMemberOrigin) {
     internal constructor(
         ktAnalysisSession: KtAnalysisSession,
@@ -53,6 +55,7 @@ internal class SymbolLightFieldForProperty private constructor(
         lightMemberOrigin = lightMemberOrigin,
         isStatic = isStatic,
         kotlinOrigin = propertySymbol.sourcePsiSafe<KtCallableDeclaration>(),
+        backingFieldSymbolPointer = with(ktAnalysisSession) { propertySymbol.backingFieldSymbol?.createPointer() },
     )
 
     private inline fun <T> withPropertySymbol(crossinline action: context (KtAnalysisSession) (KtPropertySymbol) -> T): T {
@@ -123,19 +126,19 @@ internal class SymbolLightFieldForProperty private constructor(
         }
 
         PsiModifier.VOLATILE -> withPropertySymbol { propertySymbol ->
-            val hasAnnotation = propertySymbol.hasAnnotation(
+            val hasAnnotation = propertySymbol.backingFieldSymbol?.hasAnnotation(
                 VOLATILE_ANNOTATION_CLASS_ID,
                 AnnotationUseSiteTarget.FIELD.toOptionalFilter(),
-            )
+            ) == true
 
             mapOf(modifier to hasAnnotation)
         }
 
         PsiModifier.TRANSIENT -> withPropertySymbol { propertySymbol ->
-            val hasAnnotation = propertySymbol.hasAnnotation(
+            val hasAnnotation = propertySymbol.backingFieldSymbol?.hasAnnotation(
                 TRANSIENT_ANNOTATION_CLASS_ID,
                 AnnotationUseSiteTarget.FIELD.toOptionalFilter(),
-            )
+            ) == true
 
             mapOf(modifier to hasAnnotation)
         }
@@ -153,7 +156,7 @@ internal class SymbolLightFieldForProperty private constructor(
             annotationsBox = GranularAnnotationsBox(
                 annotationsProvider = SymbolAnnotationsProvider(
                     ktModule = ktModule,
-                    annotatedSymbolPointer = propertySymbolPointer,
+                    annotatedSymbolPointer = backingFieldSymbolPointer ?: propertySymbolPointer,
                     annotationUseSiteTargetFilter = AnnotationUseSiteTarget.FIELD.toOptionalFilter(),
                 ),
                 additionalAnnotationsProvider = NullabilityAnnotationsProvider {

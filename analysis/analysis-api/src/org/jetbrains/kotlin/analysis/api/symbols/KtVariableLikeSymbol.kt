@@ -52,7 +52,7 @@ public abstract class KtBackingFieldSymbol : KtVariableLikeSymbol() {
         get() = withValidityAssertion { emptyList() }
 
     context(KtAnalysisSession)
-    abstract override fun createPointer(): KtSymbolPointer<KtVariableLikeSymbol>
+    abstract override fun createPointer(): KtSymbolPointer<KtBackingFieldSymbol>
 
     public companion object {
         private val fieldName = StandardNames.BACKING_FIELD
@@ -114,6 +114,7 @@ public sealed class KtPropertySymbol : KtVariableSymbol(),
 
     public abstract val getter: KtPropertyGetterSymbol?
     public abstract val setter: KtPropertySetterSymbol?
+    public abstract val backingFieldSymbol: KtBackingFieldSymbol?
 
     public abstract val hasBackingField: Boolean
 

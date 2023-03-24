@@ -33,6 +33,7 @@ scopes:
     callables: 5
       KtKotlinPropertySymbol:
         annotationsList: []
+        backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
         callableIdIfNonLocal: null
         contextReceivers: []
         getter: KtPropertyGetterSymbol:

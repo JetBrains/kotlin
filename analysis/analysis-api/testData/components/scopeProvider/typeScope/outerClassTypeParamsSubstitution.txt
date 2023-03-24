@@ -140,6 +140,7 @@ KtFunctionSymbol:
   visibility: Public
 KtKotlinPropertySymbol:
   annotationsList: []
+  backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
   callableIdIfNonLocal: /Outer.A.map
   contextReceivers: []
   getter: KtPropertyGetterSymbol:

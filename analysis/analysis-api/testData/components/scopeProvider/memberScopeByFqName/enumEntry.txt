@@ -1,5 +1,6 @@
 KtKotlinPropertySymbol:
   annotationsList: []
+  backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
   callableIdIfNonLocal: null
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
@@ -301,6 +302,7 @@ KtKotlinPropertySymbol:
     kotlin/internal/IntrinsicConstEvaluation()
       psi: null
   ]
+  backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
   callableIdIfNonLocal: kotlin/Enum.name
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
@@ -375,6 +377,7 @@ KtKotlinPropertySymbol:
 
 KtKotlinPropertySymbol:
   annotationsList: []
+  backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
   callableIdIfNonLocal: kotlin/Enum.ordinal
   contextReceivers: []
   getter: KtPropertyGetterSymbol:

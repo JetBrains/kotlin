@@ -25,7 +25,7 @@ val j: kotlin.Int
 val j2: kotlin.Int
 
 @java.lang.Deprecated
-val j2: kotlin.Int
+val j3: kotlin.Int
 
 @kotlin.Deprecated(message = "don't use MyClass")
 class MyClass

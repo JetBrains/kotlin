@@ -70,6 +70,12 @@ internal class KtFe10PsiKotlinPropertySymbol(
             return KtFe10PsiPropertySetterSymbol(setter, analysisContext)
         }
 
+    override val backingFieldSymbol: KtBackingFieldSymbol?
+        get() = withValidityAssertion {
+            if (psi.isLocal) null
+            else KtFe10PsiDefaultBackingFieldSymbol(propertyPsi = psi, owningProperty = this, analysisContext)
+        }
+
     override val hasBackingField: Boolean
         get() = withValidityAssertion {
             val bindingContext = analysisContext.analyze(psi, AnalysisMode.PARTIAL)
@@ -143,3 +149,4 @@ internal class KtFe10PsiKotlinPropertySymbol(
     override fun equals(other: Any?): Boolean = isEqualTo(other)
     override fun hashCode(): Int = calculateHashCode()
 }
+

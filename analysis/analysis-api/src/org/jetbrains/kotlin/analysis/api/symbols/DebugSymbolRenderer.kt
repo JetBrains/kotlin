@@ -187,6 +187,13 @@ public class DebugSymbolRenderer(
             else -> error("Unsupported symbol ${symbol::class.java.name}")
         }
         append(")")
+        if (symbol is KtBackingFieldSymbol && symbol.annotationsList.annotations.isNotEmpty()) {
+            appendLine()
+            withIndent {
+                append("annotationsList: ")
+                renderAnnotationsList(symbol.annotationsList)
+            }
+        }
     }
 
     context(KtAnalysisSession)

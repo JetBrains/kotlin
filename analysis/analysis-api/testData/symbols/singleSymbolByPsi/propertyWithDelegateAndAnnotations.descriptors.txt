@@ -5,6 +5,7 @@ KtKotlinPropertySymbol:
     ExplicitPropertyAnnotation()
       psi: KtAnnotationEntry
   ]
+  backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
   callableIdIfNonLocal: /lazyProperty
   contextReceivers: []
   getter: KtPropertyGetterSymbol:

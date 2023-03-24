@@ -2,11 +2,14 @@ KtKotlinPropertySymbol:
   annotationsList: [
     ExplicitPropertyAnnotation()
       psi: KtAnnotationEntry
-    DelegateAnnotation()
-      psi: KtAnnotationEntry
     PropertyAnnotation()
       psi: KtAnnotationEntry
   ]
+  backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
+    annotationsList: [
+      DelegateAnnotation()
+        psi: KtAnnotationEntry
+    ]
   callableIdIfNonLocal: /lazyProperty
   contextReceivers: []
   getter: KtPropertyGetterSymbol:

@@ -34,6 +34,7 @@ KtFunctionSymbol:
 
 KtKotlinPropertySymbol:
   annotationsList: []
+  backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
   callableIdIfNonLocal: null
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
@@ -118,6 +119,7 @@ KtAnonymousObjectSymbol:
 
 KtKotlinPropertySymbol:
   annotationsList: []
+  backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
   callableIdIfNonLocal: /AnonymousContainer.anonymousObject
   contextReceivers: []
   getter: KtPropertyGetterSymbol:

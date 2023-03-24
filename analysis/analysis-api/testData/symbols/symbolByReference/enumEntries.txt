@@ -1,5 +1,6 @@
 KtKotlinPropertySymbol:
   annotationsList: []
+  backingFieldSymbol: null
   callableIdIfNonLocal: /MyKotlinEnum.entries
   contextReceivers: []
   getter: KtPropertyGetterSymbol:

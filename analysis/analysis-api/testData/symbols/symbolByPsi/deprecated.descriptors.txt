@@ -3,6 +3,7 @@ KtKotlinPropertySymbol:
     kotlin/Deprecated(message = "don't use i")
       psi: KtAnnotationEntry
   ]
+  backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
   callableIdIfNonLocal: /i
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
@@ -61,6 +62,7 @@ KtKotlinPropertySymbol:
 
 KtKotlinPropertySymbol:
   annotationsList: []
+  backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
   callableIdIfNonLocal: /i2
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
@@ -122,6 +124,7 @@ KtKotlinPropertySymbol:
 
 KtKotlinPropertySymbol:
   annotationsList: []
+  backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
   callableIdIfNonLocal: /i3
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
@@ -251,6 +254,7 @@ KtKotlinPropertySymbol:
 
 KtKotlinPropertySymbol:
   annotationsList: []
+  backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
   callableIdIfNonLocal: /i4
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
@@ -449,6 +453,7 @@ KtKotlinPropertySymbol:
     kotlin/Deprecated(message = "don't use i2")
       psi: KtAnnotationEntry
   ]
+  backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
   callableIdIfNonLocal: /Foo.i2
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
@@ -582,6 +587,7 @@ KtKotlinPropertySymbol:
     kotlin/Deprecated(level = kotlin.DeprecationLevel.ERROR, message = "don't use j")
       psi: KtAnnotationEntry
   ]
+  backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
   callableIdIfNonLocal: /j
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
@@ -643,6 +649,7 @@ KtKotlinPropertySymbol:
     kotlin/Deprecated(level = kotlin.DeprecationLevel.HIDDEN, message = "don't use j2")
       psi: KtAnnotationEntry
   ]
+  backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
   callableIdIfNonLocal: /j2
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
@@ -701,7 +708,12 @@ KtKotlinPropertySymbol:
 
 KtKotlinPropertySymbol:
   annotationsList: []
-  callableIdIfNonLocal: /j2
+  backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
+    annotationsList: [
+      java/lang/Deprecated()
+        psi: KtAnnotationEntry
+    ]
+  callableIdIfNonLocal: /j3
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
     annotationsList: []
@@ -739,7 +751,7 @@ KtKotlinPropertySymbol:
   isStatic: false
   isVal: true
   modality: FINAL
-  name: j2
+  name: j3
   origin: SOURCE
   receiverParameter: null
   returnType: KtUsualClassType:
@@ -753,6 +765,6 @@ KtKotlinPropertySymbol:
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=null)
   getterDeprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=null)
-  javaGetterName: getJ2
+  javaGetterName: getJ3
   javaSetterName: null
   setterDeprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=null)
