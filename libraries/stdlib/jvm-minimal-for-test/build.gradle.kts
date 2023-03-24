@@ -32,7 +32,7 @@ sourceSets {
 }
 
 val copySources by task<Sync> {
-    val stdlibProjectDir = project(":kotlin-stdlib").projectDir
+    val stdlibProjectDir = file("$rootDir/libraries/stdlib/jvm")
 
     from(stdlibProjectDir.resolve("runtime"))
         .include("kotlin/TypeAliases.kt",

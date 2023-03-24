@@ -59,3 +59,6 @@ val KotlinBuildProperties.useFirWithLightTree: Boolean
 
 val KotlinBuildProperties.useFirTightIC: Boolean
     get() = getBoolean("kotlin.build.useFirIC")
+
+val KotlinBuildProperties.kotlinStdlibMpp: Boolean
+    get() = getBoolean("kotlin.stdlib.mpp")
