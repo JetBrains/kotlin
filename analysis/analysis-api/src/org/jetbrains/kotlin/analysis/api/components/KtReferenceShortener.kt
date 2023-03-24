@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtEnumEntrySymbol
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
@@ -119,7 +118,11 @@ public interface KtReferenceShortenerMixIn : KtAnalysisSessionMixIn {
 }
 
 public interface ShortenCommand {
-    public fun invokeShortening()
+    /**
+     * Shortens target elements, adds necessary import, and returns a list of the shortened result elements.
+     */
+    public fun invokeShortening(): List<KtElement>
+
     public val isEmpty: Boolean
     public fun getTypesToShorten(): List<SmartPsiElementPointer<KtUserType>>
     public fun getQualifiersToShorten(): List<SmartPsiElementPointer<KtDotQualifiedExpression>>

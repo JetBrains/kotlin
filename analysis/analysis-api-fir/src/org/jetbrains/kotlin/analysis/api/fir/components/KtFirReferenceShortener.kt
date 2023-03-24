@@ -667,8 +667,6 @@ private class ElementsToShortenCollector(
                 // No class with name `classId.shortClassName` is present in the scope. Hence, we can safely import the name and shorten
                 // the reference.
                 availableClassifier == null -> {
-                    // Caller indicates don't shorten if doing that needs importing more names. Hence, we just skip.
-                    if (option == ShortenOption.SHORTEN_IF_ALREADY_IMPORTED) continue
                     return createElementToShorten(
                         element,
                         classId.asSingleFqName(),
@@ -1070,9 +1068,9 @@ private class ShortenCommandImpl(
     private val qualifiersToShorten: List<SmartPsiElementPointer<KtDotQualifiedExpression>>,
 ) : ShortenCommand {
 
-    override fun invokeShortening() {
+    override fun invokeShortening(): List<KtElement> {
         // if the file has been invalidated, there's nothing we can shorten
-        val targetFile = targetFile.element ?: return
+        val targetFile = targetFile.element ?: return emptyList()
 
         for (nameToImport in importsToAdd) {
             addImportToFile(targetFile.project, targetFile, nameToImport)
@@ -1082,18 +1080,21 @@ private class ShortenCommandImpl(
             addImportToFile(targetFile.project, targetFile, nameToImport, allUnder = true)
         }
 
+        val shorteningResults = mutableListOf<KtElement>()
 //todo
 //        PostprocessReformattingAspect.getInstance(targetFile.project).disablePostprocessFormattingInside {
         for (typePointer in typesToShorten) {
             val type = typePointer.element ?: continue
             type.deleteQualifier()
+            shorteningResults.add(type)
         }
 
         for (callPointer in qualifiersToShorten) {
             val call = callPointer.element ?: continue
-            call.deleteQualifier()
+            call.deleteQualifier()?.let { shorteningResults.add(it) }
         }
 //        }
+        return shorteningResults
     }
 
     override val isEmpty: Boolean get() = typesToShorten.isEmpty() && qualifiersToShorten.isEmpty()
