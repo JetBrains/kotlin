@@ -10,7 +10,6 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirSymbolProviderNameCache
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 import org.jetbrains.kotlin.analysis.project.structure.getKtModule
 import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
 import org.jetbrains.kotlin.analysis.providers.createDeclarationProvider
@@ -25,9 +24,7 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtClassLikeDeclaration
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.utils.mapToIndex
 
 /**
  * [LLFirCombinedKotlinSymbolProvider] combines multiple [LLFirProvider.SymbolProvider]s with the following advantages:
@@ -46,22 +43,7 @@ internal class LLFirCombinedKotlinSymbolProvider(
     private val project: Project,
     private val providers: List<LLFirProvider.SymbolProvider>,
     private val declarationProvider: KotlinDeclarationProvider,
-) : FirSymbolProvider(session) {
-    private val providersByKtModule: Map<KtModule, LLFirProvider.SymbolProvider> =
-        providers
-            .groupBy { it.session.llFirModuleData.ktModule }
-            .mapValues { (module, list) -> list.singleOrNull() ?: error("$module must have a unique Kotlin symbol providers.") }
-
-    /**
-     * [KtModule] precedence must be checked in case the index finds multiple elements and classpath order needs to be preserved.
-     */
-    private val modulePrecedenceMap: Map<KtModule, Int> = providers.map { it.session.llFirModuleData.ktModule }.mapToIndex()
-
-    /**
-     * Cache [ProjectStructureProvider] to avoid service access when getting [KtModule]s.
-     */
-    private val projectStructureProvider: ProjectStructureProvider = project.getService(ProjectStructureProvider::class.java)
-
+) : LLFirSelectingCombinedSymbolProvider<LLFirProvider.SymbolProvider>(session, project, providers) {
     private val symbolNameCache = object : LLFirSymbolProviderNameCache(session) {
         override fun computeClassifierNames(packageFqName: FqName): Set<String>? = buildSet {
             providers.forEach { addAll(it.knownTopLevelClassifiersInPackage(packageFqName) ?: return null) }
@@ -72,39 +54,17 @@ internal class LLFirCombinedKotlinSymbolProvider(
         }
     }
 
-    @OptIn(FirSymbolProviderInternals::class)
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
         if (!symbolNameCache.mayHaveTopLevelClassifier(classId, mayHaveFunctionClass = false)) return null
 
+        return computeClassLikeSymbolByClassId(classId)
+    }
+
+    @OptIn(FirSymbolProviderInternals::class)
+    private fun computeClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
         val candidates = declarationProvider.getAllClassesByClassId(classId) + declarationProvider.getAllTypeAliasesByClassId(classId)
-        if (candidates.isEmpty()) return null
-
-        // Find the `KtClassLikeDeclaration` with the highest module precedence. (We're using a custom implementation instead of `minBy` so
-        // that `ktModule` doesn't need to be fetched twice.)
-        // TODO (marco): This algorithm can be applied to other combined symbol providers as well, such as Java symbol providers.
-        var ktClassCandidate: KtClassLikeDeclaration? = null
-        var currentPrecedence: Int = Int.MAX_VALUE
-        var ktModule: KtModule? = null
-
-        candidates.forEach { candidate ->
-            val candidateKtModule = projectStructureProvider.getKtModuleForKtElement(candidate)
-
-            // If `candidateKtModule` cannot be found in the map, `candidate` cannot be processed by any of the available providers, because
-            // none of them belong to the correct module. We can skip in that case, because iterating through all providers wouldn't lead to
-            // any results for `candidate`.
-            val precedence = modulePrecedenceMap[candidateKtModule] ?: return@forEach
-            if (precedence < currentPrecedence) {
-                ktClassCandidate = candidate
-                currentPrecedence = precedence
-                ktModule = candidateKtModule
-            }
-        }
-
-        val ktClass = ktClassCandidate ?: return null
-
-        // The provider will always be found at this point, because `modulePrecedenceMap` contains the same keys as `providersByKtModule`
-        // and a precedence for `ktModule` must have been found in the previous step.
-        return providersByKtModule[ktModule]!!.getClassLikeSymbolByClassId(classId, ktClass)
+        val (ktClass, provider) = selectFirstElementInClasspathOrder(candidates) ?: return null
+        return provider.getClassLikeSymbolByClassId(classId, ktClass)
     }
 
     @FirSymbolProviderInternals
