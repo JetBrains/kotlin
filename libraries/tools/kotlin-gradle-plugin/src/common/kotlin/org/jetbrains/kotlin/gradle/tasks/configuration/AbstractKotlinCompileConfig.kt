@@ -119,6 +119,9 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
 
             task.incremental = false
             task.useModuleDetection.convention(false)
+            if (propertiesProvider.useK2 == true) {
+                task.compilerOptions.useK2.value(true)
+            }
         }
     }
 

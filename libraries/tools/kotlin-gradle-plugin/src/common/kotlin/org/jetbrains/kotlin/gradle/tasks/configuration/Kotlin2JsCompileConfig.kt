@@ -42,10 +42,6 @@ internal open class BaseKotlin2JsCompileConfig<TASK : Kotlin2JsCompile>(
                 }
             )
 
-            if (propertiesProvider.useK2 == true) {
-                task.kotlinOptions.useK2 = true
-            }
-
             task.destinationDirectory
                 .convention(
                     project.objects.directoryProperty().fileProvider(
