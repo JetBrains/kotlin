@@ -10,26 +10,37 @@ import org.gradle.api.provider.ProviderFactory
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
-class KotlinTaskProperties(providerFactory: ProviderFactory) {
-    val kotlinLanguageVersion: Provider<KotlinVersion> = readKotlinVersionProperty(KOTLIN_LANGUAGE_VERSION_PROPERTY, providerFactory)
-    val kotlinApiVersion: Provider<KotlinVersion> = readKotlinVersionProperty(KOTLIN_API_VERSION_PROPERTY, providerFactory)
+class KotlinTaskProperties(
+    private val providerFactory: ProviderFactory
+) {
+    private val toKotlinVersionMapper: (String) -> KotlinVersion = { KotlinVersion.fromVersion(it) }
+    private val toBooleanMapper: (String) -> Boolean = { it.toBoolean() }
+
+    val kotlinLanguageVersion: Provider<KotlinVersion> = readProperty(KOTLIN_LANGUAGE_VERSION_PROPERTY, toKotlinVersionMapper)
+    val kotlinApiVersion: Provider<KotlinVersion> = readProperty(KOTLIN_API_VERSION_PROPERTY, toKotlinVersionMapper)
+    val kotlinOverrideUserValues: Provider<Boolean> = readProperty(KOTLIN_OVERRIDE_USER_VALUES, toBooleanMapper).orElse(false)
+
+    private fun <T : Any> readProperty(
+        propertyName: String,
+        mapper: (String) -> T
+    ): Provider<T> {
+        return providerFactory.gradleProperty(propertyName)
+            .configurationCacheCompat<String>()
+            .map(mapper)
+    }
+
+    private fun <T : Any> Provider<T>.configurationCacheCompat(): Provider<T> {
+        return if (GradleVersion.current() < GradleVersion.version("7.4")) {
+            @Suppress("DEPRECATION")
+            this.forUseAtConfigurationTime()
+        } else {
+            this
+        }
+    }
 
     companion object {
         private const val KOTLIN_LANGUAGE_VERSION_PROPERTY = "kotlin.test.languageVersion"
         private const val KOTLIN_API_VERSION_PROPERTY = "kotlin.test.apiVersion"
-
-        @Suppress("DEPRECATION")
-        private fun readKotlinVersionProperty(propertyName: String, providerFactory: ProviderFactory): Provider<KotlinVersion> {
-            return if (GradleVersion.current() < GradleVersion.version("7.4")) {
-                providerFactory.gradleProperty(propertyName)
-                    .forUseAtConfigurationTime()
-                    .map { KotlinVersion.fromVersion(it as String) }
-            } else {
-                providerFactory.gradleProperty(propertyName)
-                    .map { KotlinVersion.fromVersion(it as String) }
-            }
-        }
+        private const val KOTLIN_OVERRIDE_USER_VALUES = "kotlin.test.overrideUserValues"
     }
-
-
 }

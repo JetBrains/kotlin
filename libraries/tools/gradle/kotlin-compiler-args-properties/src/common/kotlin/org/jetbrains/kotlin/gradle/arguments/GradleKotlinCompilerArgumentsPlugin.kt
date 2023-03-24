@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.arguments
 
-import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.plugins.ExtensionContainer
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.kotlin.dsl.withType
@@ -30,12 +30,27 @@ class GradleKotlinCompilerArgumentsPlugin @Inject constructor(
     }
 
     private fun Project.configureKotlinVersions(properties: KotlinTaskProperties) {
-        plugins.withType<KotlinBasePlugin>().configureEach(configureTask(properties))
+        plugins.withType<KotlinBasePlugin>().configureEach {
+            if (properties.kotlinOverrideUserValues.get()) {
+                forceConfigureTask(properties)
+            } else {
+                configureTask(properties)
+            }
+        }
     }
 
-    private fun Project.configureTask(properties: KotlinTaskProperties): Action<KotlinBasePlugin> = Action {
+    private fun Project.configureTask(properties: KotlinTaskProperties) {
         tasks.withType<KotlinCompilationTask<*>>().configureEach {
-            configureKotlinOption(properties, it.compilerOptions)
+            configureKotlinOptions(properties, it.compilerOptions)
+        }
+    }
+
+    private fun Project.forceConfigureTask(properties: KotlinTaskProperties) {
+        // Wrapping into afterEvaluate to reduce amount of exception trying to modify value from the user-script
+        afterEvaluate {
+            tasks.withType<KotlinCompilationTask<*>>().configureEach {
+                configureKotlinOptions(properties, it.compilerOptions, true)
+            }
         }
     }
 
@@ -51,8 +66,21 @@ class GradleKotlinCompilerArgumentsPlugin @Inject constructor(
         return extensions.projectCompilerOptions()?.apiVersion ?: providers.provider { null }
     }
 
-    private fun Project.configureKotlinOption(properties: KotlinTaskProperties, taskOptions: KotlinCommonCompilerOptions) {
-        taskOptions.languageVersion.convention(properties.kotlinLanguageVersion.orElse(projectLevelLanguageVersion()))
-        taskOptions.apiVersion.convention(properties.kotlinApiVersion.orElse(projectLevelApiVersion()))
+    private fun Project.configureKotlinOptions(
+        properties: KotlinTaskProperties,
+        taskOptions: KotlinCommonCompilerOptions,
+        shouldSetValue: Boolean = false
+    ) {
+        taskOptions.languageVersion.configureValue(properties.kotlinLanguageVersion.orElse(projectLevelLanguageVersion()), shouldSetValue)
+        taskOptions.apiVersion.configureValue(properties.kotlinApiVersion.orElse(projectLevelApiVersion()), shouldSetValue)
+    }
+
+    private fun <T : Any> Property<T>.configureValue(
+        source: Provider<T>,
+        shouldSetValue: Boolean
+    ): Property<T> = if (shouldSetValue) {
+        value(source)
+    } else {
+        convention(source)
     }
 }
