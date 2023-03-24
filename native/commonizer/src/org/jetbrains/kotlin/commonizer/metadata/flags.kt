@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.commonizer.metadata
 
-import kotlinx.metadata.Flag
-import kotlinx.metadata.Flags
-import kotlinx.metadata.flagsOf
+import kotlinx.metadata.*
 import org.jetbrains.kotlin.commonizer.cir.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -59,11 +57,13 @@ internal fun CirClassConstructor.classConstructorFlags(): Flags =
         Flag.Constructor.HAS_NON_STABLE_PARAMETER_NAMES.takeIf { !hasStableParameterNames }
     )
 
-internal fun CirType.typeFlags(): Flags =
-    flagsOfNotNull(
-        nullableFlag,
-        //Flag.Type.IS_SUSPEND.takeIf { false }
-    )
+internal fun CirType.applyTypeFlagsTo(type: KmType) {
+    type.isNullable = when (this) {
+        is CirSimpleType -> isMarkedNullable
+        is CirFlexibleType -> lowerBound.isMarkedNullable
+    }
+    //Flag.Type.IS_SUSPEND.takeIf { false }
+}
 
 internal fun CirTypeParameter.typeParameterFlags(): Flags =
     flagsOfNotNull(
@@ -171,15 +171,5 @@ private inline val CirProperty.modifiersFlags: Flags
         Flag.Property.HAS_CONSTANT.takeIf { compileTimeInitializer.takeIf { it !is CirConstantValue.NullValue } != null },
         Flag.Property.IS_LATEINIT.takeIf { isLateInit },
     )
-
-private inline val CirType.nullableFlag: Flag?
-    get() {
-        val isNullable = when (this) {
-            is CirSimpleType -> isMarkedNullable
-            is CirFlexibleType -> lowerBound.isMarkedNullable
-        }
-
-        return if (isNullable) Flag.Type.IS_NULLABLE else null
-    }
 
 private fun flagsOfNotNull(vararg flags: Flag?): Flags = flagsOf(*listOfNotNull(*flags).toTypedArray())
