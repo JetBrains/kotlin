@@ -330,7 +330,6 @@ class DeclarationGenerator(
     }
 
     override fun visitClass(declaration: IrClass) {
-        if (declaration.isAnnotationClass) return
         if (declaration.isExternal) return
         val symbol = declaration.symbol
 
