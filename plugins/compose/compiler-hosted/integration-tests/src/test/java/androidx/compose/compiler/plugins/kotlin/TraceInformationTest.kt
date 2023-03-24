@@ -136,7 +136,7 @@ class TraceInformationTest : AbstractIrTransformTest() {
                     if (isTraceInProgress()) {
                       traceEventEnd()
                     }
-                    %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+                    %composer@Test.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                       Test(condition, %composer, updateChangedFlags(%changed or 0b0001))
                     }
                     return

@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrTypeAlias
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
+import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrBlock
@@ -106,6 +107,7 @@ import org.jetbrains.kotlin.ir.util.constructedClass
 import org.jetbrains.kotlin.ir.util.isAnnotationClass
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.isObject
+import org.jetbrains.kotlin.ir.util.kotlinFqName
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.util.statements
@@ -131,11 +133,17 @@ fun IrElement.dumpSrc(): String {
         .replace(Regex("}\\n(\\s)*,", RegexOption.MULTILINE), "},")
 }
 
+class Scope(
+    val owner: IrFunction? = null,
+    val localValues: HashSet<IrValueDeclaration> = hashSetOf()
+)
+
 class IrSourcePrinterVisitor(
     out: Appendable,
     indentUnit: String = "  ",
 ) : IrElementVisitorVoid {
     private val printer = Printer(out, indentUnit)
+    private var currentScope: Scope = Scope()
 
     private fun IrElement.print() {
         accept(this@IrSourcePrinterVisitor, null)
@@ -145,6 +153,18 @@ class IrSourcePrinterVisitor(
     private fun println() = printer.println()
 
     fun printType(type: IrType) = type.renderSrc()
+
+    private inline fun IrFunction.scoped(block: (IrFunction) -> Unit) {
+        val previousScope = currentScope
+        currentScope = Scope(
+            this,
+            HashSet(valueParameters)
+        )
+
+        block(this)
+
+        currentScope = previousScope
+    }
 
     private inline fun indented(body: () -> Unit) {
         printer.pushIndent()
@@ -197,47 +217,49 @@ class IrSourcePrinterVisitor(
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction) {
         if (declaration.origin == IrDeclarationOrigin.FAKE_OVERRIDE) return
-        declaration.printAnnotations(onePerLine = true)
-        if (declaration.overriddenSymbols.isNotEmpty()) {
-            print("override ")
-        } else {
-            if (
-                declaration.visibility != DescriptorVisibilities.PUBLIC &&
-                declaration.visibility != DescriptorVisibilities.LOCAL
-            ) {
-                print(declaration.visibility.toString().lowercase(Locale.ROOT))
-                print(" ")
+        declaration.scoped {
+            declaration.printAnnotations(onePerLine = true)
+            if (declaration.overriddenSymbols.isNotEmpty()) {
+                print("override ")
+            } else {
+                if (
+                    declaration.visibility != DescriptorVisibilities.PUBLIC &&
+                    declaration.visibility != DescriptorVisibilities.LOCAL
+                ) {
+                    print(declaration.visibility.toString().lowercase(Locale.ROOT))
+                    print(" ")
+                }
+                if (declaration.modality != Modality.FINAL) {
+                    print(declaration.modality.toString().lowercase(Locale.ROOT))
+                    print(" ")
+                }
             }
-            if (declaration.modality != Modality.FINAL) {
-                print(declaration.modality.toString().lowercase(Locale.ROOT))
-                print(" ")
+            if (declaration.isSuspend) {
+                print("suspend ")
             }
+            print("fun ")
+            if (declaration.typeParameters.isNotEmpty()) {
+                print("<")
+                declaration.typeParameters.printJoin(", ")
+                print("> ")
+            }
+            declaration.extensionReceiverParameter?.let {
+                print(it.type.renderSrc())
+                print(".")
+            }
+            print(declaration.name)
+            print("(")
+            declaration.valueParameters.printJoin(", ")
+            print(")")
+            if (!declaration.returnType.isUnit()) {
+                print(": ")
+                print(
+                    declaration.returnType.renderSrc()
+                )
+            }
+            print(" ")
+            declaration.printBody()
         }
-        if (declaration.isSuspend) {
-            print("suspend ")
-        }
-        print("fun ")
-        if (declaration.typeParameters.isNotEmpty()) {
-            print("<")
-            declaration.typeParameters.printJoin(", ")
-            print("> ")
-        }
-        declaration.extensionReceiverParameter?.let {
-            print(it.type.renderSrc())
-            print(".")
-        }
-        print(declaration.name)
-        print("(")
-        declaration.valueParameters.printJoin(", ")
-        print(")")
-        if (!declaration.returnType.isUnit()) {
-            print(": ")
-            print(
-                declaration.returnType.renderSrc()
-            )
-        }
-        print(" ")
-        declaration.printBody()
     }
 
     fun IrFunction.printBody() {
@@ -551,20 +573,22 @@ class IrSourcePrinterVisitor(
     }
 
     fun IrFunction.printAsLambda() {
-        print("{")
-        val parameters = valueParameters
-        if (parameters.isNotEmpty()) {
-            print(" ")
-            parameters.printJoin(", ")
-            println(" ->")
-        } else {
+        scoped {
+            print("{")
+            val parameters = valueParameters
+            if (parameters.isNotEmpty()) {
+                print(" ")
+                parameters.printJoin(", ")
+                println(" ->")
+            } else {
+                println()
+            }
+            indented {
+                body?.print()
+            }
             println()
+            println("}")
         }
-        indented {
-            body?.print()
-        }
-        println()
-        println("}")
     }
 
     override fun visitTypeOperator(expression: IrTypeOperatorCall) {
@@ -855,6 +879,8 @@ class IrSourcePrinterVisitor(
     }
 
     override fun visitVariable(declaration: IrVariable) {
+        currentScope.localValues.add(declaration)
+
         if (declaration.isLateinit) {
             print("lateinit")
         }
@@ -875,7 +901,16 @@ class IrSourcePrinterVisitor(
     }
 
     override fun visitGetValue(expression: IrGetValue) {
-        print(expression.symbol.owner.name)
+        val owner = expression.symbol.owner
+        print(owner.name)
+
+        if (
+            owner.parent != currentScope.owner &&
+            currentScope.localValues.any { it.name == owner.name }
+        ) {
+            print("@")
+            print(owner.parent.kotlinFqName)
+        }
     }
 
     override fun visitField(declaration: IrField) {
@@ -964,7 +999,7 @@ class IrSourcePrinterVisitor(
             }
         }
         indented {
-            declaration.getter?.let {
+            declaration.getter?.scoped {
                 if (it.origin != IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR) {
                     println()
                     it.printAnnotations()
@@ -977,7 +1012,7 @@ class IrSourcePrinterVisitor(
                     println("}")
                 }
             }
-            declaration.setter?.let {
+            declaration.setter?.scoped {
                 if (it.origin != IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR) {
                     println()
                     it.printAnnotations()
