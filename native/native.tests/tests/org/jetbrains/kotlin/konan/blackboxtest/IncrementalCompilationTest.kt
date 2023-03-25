@@ -356,7 +356,7 @@ class IncrementalCompilationTest : AbstractNativeSimpleTest() {
         val modified2 = lib2KtCacheDir.lastModified()
         runExecutableAndVerify(main.testCase, main.testExecutable)
 
-        // Check, <lib2>'s cache will be recompiled after changing lib1/lib1.kt.
+        // Check, <lib2>'s cache won't be recompiled after changing lib1/lib1.kt.
         val lib11 = compileLibrary("lib1") { "lib1/lib1.1.kt" copyTo "lib1.kt" }
         val lib21 = compileLibrary("lib2", lib11) { "lib2/lib2.kt" copyTo "lib2.kt" }
         val main1 = compileToExecutable("main", lib11, lib21) { "main/main.kt" copyTo "main.kt" }
@@ -364,7 +364,7 @@ class IncrementalCompilationTest : AbstractNativeSimpleTest() {
         assertTrue(lib1KtCacheDir.exists())
         assertTrue(lib2KtCacheDir.exists())
         assertNotEquals(modified1, lib1KtCacheDir.lastModified())
-        assertNotEquals(modified2, lib2KtCacheDir.lastModified())
+        assertEquals(modified2, lib2KtCacheDir.lastModified())
         runExecutableAndVerify(main1.testCase, main1.testExecutable)
     }
 
@@ -391,7 +391,7 @@ class IncrementalCompilationTest : AbstractNativeSimpleTest() {
         val modified2 = lib2KtCacheDir.lastModified()
         runExecutableAndVerify(main.testCase, main.testExecutable)
 
-        // Check, <lib2>'s cache will be recompiled after changing lib1/lib1.file1.kt.
+        // Check, <lib2>'s cache won't be recompiled after changing lib1/lib1.file1.kt.
         val lib11 = compileLibrary("lib1") {
             "lib1/lib1.file1.1.kt" copyTo "lib1.file1.kt"
             "lib1/lib1.file2.kt" copyTo "lib1.file2.kt"
@@ -404,7 +404,7 @@ class IncrementalCompilationTest : AbstractNativeSimpleTest() {
         assertTrue(lib2KtCacheDir.exists())
         assertNotEquals(modified11, lib1File1KtCacheDir.lastModified())
         assertNotEquals(modified12, lib1File2KtCacheDir.lastModified())
-        assertNotEquals(modified2, lib2KtCacheDir.lastModified())
+        assertEquals(modified2, lib2KtCacheDir.lastModified())
         runExecutableAndVerify(main1.testCase, main1.testExecutable)
     }
 
@@ -425,7 +425,7 @@ class IncrementalCompilationTest : AbstractNativeSimpleTest() {
         val modified2 = lib2KtCacheDir.lastModified()
         runExecutableAndVerify(main.testCase, main.testExecutable)
 
-        // Check, <lib2>'s cache will be recompiled after changing lib1/lib1.kt.
+        // Check, <lib2>'s cache won't be recompiled after changing lib1/lib1.kt.
         val lib11 = compileLibrary("lib1") { "lib1/lib1.1.kt" copyTo "lib1.kt" }
         val lib21 = compileLibrary("lib2", lib11) { "lib2/lib2.kt" copyTo "lib2.kt" }
         val main1 = compileToExecutable("main", lib11, lib21) { "main/main.1.kt" copyTo "main.kt" }
@@ -433,7 +433,7 @@ class IncrementalCompilationTest : AbstractNativeSimpleTest() {
         assertTrue(lib1KtCacheDir.exists())
         assertTrue(lib2KtCacheDir.exists())
         assertNotEquals(modified1, lib1KtCacheDir.lastModified())
-        assertNotEquals(modified2, lib2KtCacheDir.lastModified())
+        assertEquals(modified2, lib2KtCacheDir.lastModified())
         runExecutableAndVerify(main1.testCase, main1.testExecutable)
     }
 
@@ -460,7 +460,7 @@ class IncrementalCompilationTest : AbstractNativeSimpleTest() {
         val modified2 = lib2KtCacheDir.lastModified()
         runExecutableAndVerify(main.testCase, main.testExecutable)
 
-        // Check, <lib2>'s cache will be recompiled after changing lib1/lib1.file1.kt.
+        // Check, <lib2>'s cache won't be recompiled after changing lib1/lib1.file1.kt.
         val lib11 = compileLibrary("lib1") {
             "lib1/lib1.file1.1.kt" copyTo "lib1.file1.kt"
             "lib1/lib1.file2.kt" copyTo "lib1.file2.kt"
@@ -473,7 +473,7 @@ class IncrementalCompilationTest : AbstractNativeSimpleTest() {
         assertTrue(lib2KtCacheDir.exists())
         assertNotEquals(modified11, lib1File1KtCacheDir.lastModified())
         assertNotEquals(modified12, lib1File2KtCacheDir.lastModified())
-        assertNotEquals(modified2, lib2KtCacheDir.lastModified())
+        assertEquals(modified2, lib2KtCacheDir.lastModified())
         runExecutableAndVerify(main1.testCase, main1.testExecutable)
     }
 
