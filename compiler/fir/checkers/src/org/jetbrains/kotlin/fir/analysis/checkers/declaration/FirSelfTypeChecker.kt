@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.builtins.StandardNames.SELF_TYPE_NAME
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -19,7 +20,7 @@ object FirSelfTypeChecker : FirClassChecker() {
         val self: FirAnnotation? = declaration.getAnnotationByClassId(StandardClassIds.Annotations.Self, context.session)
 
         if (self != null) {
-            val typeParameter = declaration.typeParameters.find { it.symbol.name.asString() == "Self" }
+            val typeParameter = declaration.typeParameters.find { it.symbol.name.asString() == SELF_TYPE_NAME }
             if (typeParameter != null) {
                 reporter.reportOn(typeParameter.source, FirErrors.SELF_TYPE_PARAMETER_FOR_CLASS_WITH_SELF_TYPE, context)
             }
