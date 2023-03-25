@@ -49,11 +49,8 @@ internal class CAdapterCodegen(
                 val bridgeFunctionProto = signature.toProto(cname, null, LLVMLinkage.LLVMExternalLinkage)
                 // If function is virtual, we need to resolve receiver properly.
                 generateFunction(codegen, bridgeFunctionProto) {
-                    val callee = if (!DescriptorUtils.isTopLevelDeclaration(function) &&
-                        irFunction.isOverridable
-                    ) {
-                        val receiver = param(0)
-                        lookupVirtualImpl(receiver, irFunction)
+                    val callee = if (!DescriptorUtils.isTopLevelDeclaration(function) && irFunction.isOverridable) {
+                        codegen.getVirtualFunctionTrampoline(irFunction)
                     } else {
                         // KT-45468: Alias insertion may not be handled by LLVM properly, in case callee is in the cache.
                         // Hence, insert not an alias but a wrapper, hoping it will be optimized out later.

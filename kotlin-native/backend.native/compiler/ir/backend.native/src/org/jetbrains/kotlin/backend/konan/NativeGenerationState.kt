@@ -99,6 +99,8 @@ internal class NativeGenerationState(
     val cStubsManager = CStubsManager(config.target, this)
     lateinit var llvmDeclarations: LlvmDeclarations
 
+    val virtualFunctionTrampolines = mutableMapOf<IrFunction, LlvmCallable>()
+
     val coverage by lazy { CoverageManager(this) }
 
     lateinit var objCExport: ObjCExport

@@ -294,7 +294,7 @@ internal class BlockGenerator(private val codegen: CodeGenerator) {
 
             val invokeMethod = context.ir.symbols.functionN(numberOfParameters).owner.simpleFunctions()
                     .single { it.name == OperatorNameConventions.INVOKE }
-            val llvmDeclarations = lookupVirtualImpl(kotlinFunction, invokeMethod)
+            val llvmDeclarations = codegen.getVirtualFunctionTrampoline(invokeMethod)
             val result = callFromBridge(llvmDeclarations, listOf(kotlinFunction) + kotlinArguments, Lifetime.ARGUMENT)
             if (bridge.returnsVoid) {
                 ret(null)

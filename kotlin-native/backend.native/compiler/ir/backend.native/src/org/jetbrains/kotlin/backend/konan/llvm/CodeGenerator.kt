@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.cgen.CBridgeOrigin
 import org.jetbrains.kotlin.backend.konan.descriptors.ClassGlobalHierarchyInfo
 import org.jetbrains.kotlin.backend.konan.ir.*
+import org.jetbrains.kotlin.backend.konan.llvm.KonanBinaryInterface.symbolName
 import org.jetbrains.kotlin.backend.konan.llvm.ThreadState.Native
 import org.jetbrains.kotlin.backend.konan.llvm.ThreadState.Runnable
 import org.jetbrains.kotlin.backend.konan.llvm.objc.*
@@ -116,6 +117,7 @@ internal inline fun generateFunction(
             startLocation,
             endLocation,
             switchToRunnable = isCToKotlinBridge,
+            needSafePoint = true,
             function)
 
     if (isCToKotlinBridge) {
@@ -147,6 +149,7 @@ internal inline fun generateFunction(
         startLocation: LocationInfo? = null,
         endLocation: LocationInfo? = null,
         switchToRunnable: Boolean = false,
+        needSafePoint: Boolean = true,
         code: FunctionGenerationContext.() -> Unit
 ) : LlvmCallable {
     val function = codegen.addFunction(functionProto)
@@ -155,7 +158,8 @@ internal inline fun generateFunction(
             codegen,
             startLocation,
             endLocation,
-            switchToRunnable = switchToRunnable
+            switchToRunnable = switchToRunnable,
+            needSafePoint = needSafePoint
     )
     try {
         generateFunctionBody(functionGenerationContext, code)
@@ -172,7 +176,8 @@ internal inline fun generateFunctionNoRuntime(
         code: FunctionGenerationContext.() -> Unit,
 ) : LlvmCallable {
     val function = codegen.addFunction(functionProto)
-    val functionGenerationContext = DefaultFunctionGenerationContext(function, codegen, null, null, switchToRunnable = false)
+    val functionGenerationContext = DefaultFunctionGenerationContext(function, codegen, null, null,
+            switchToRunnable = false, needSafePoint = true)
     try {
         functionGenerationContext.forbidRuntime = true
         require(!functionGenerationContext.isObjectType(functionGenerationContext.returnType!!)) {
@@ -196,6 +201,52 @@ private inline fun <T : FunctionGenerationContext> generateFunctionBody(
     functionGenerationContext.epilogue()
     functionGenerationContext.resetDebugLocation()
 }
+
+private fun IrSimpleFunction.findOverriddenMethodOfAny(): IrSimpleFunction? {
+    if (modality == Modality.ABSTRACT) return null
+    val resolved = resolveFakeOverride()!!
+    if ((resolved.parent as IrClass).isAny()) {
+        return resolved
+    }
+
+    return null
+}
+
+internal fun CodeGenerator.getVirtualFunctionTrampoline(irFunction: IrFunction): LlvmCallable {
+    /*
+     * Resolve owner of the call with special handling of Any methods:
+     * if toString/eq/hc is invoked on an interface instance, we resolve
+     * owner as Any and dispatch it via vtable.
+     */
+    val anyMethod = (irFunction as IrSimpleFunction).findOverriddenMethodOfAny()
+    return getVirtualFunctionTrampolineImpl(anyMethod ?: irFunction)
+}
+
+private fun CodeGenerator.getVirtualFunctionTrampolineImpl(irFunction: IrFunction) =
+        generationState.virtualFunctionTrampolines.getOrPut(irFunction) {
+            val targetName = if (irFunction.isExported())
+                irFunction.symbolName
+            else
+                irFunction.computePrivateSymbolName(irFunction.parentAsClass.fqNameForIrSerialization.asString())
+            val proto = LlvmFunctionProto(
+                    name = "$targetName-trampoline",
+                    signature = LlvmFunctionSignature(getLlvmFunctionReturnType(irFunction), getLlvmFunctionParameterTypes(irFunction)),
+                    origin = null,
+                    linkage = when {
+                        irFunction.isExported() -> LLVMLinkage.LLVMExternalLinkage
+                        //context.config.producePerFileCache && irFunction in generationState.calledFromExportedInlineFunctions -> LLVMLinkage.LLVMExternalLinkage
+                        else -> LLVMLinkage.LLVMInternalLinkage
+                    }
+            )
+            if (isExternal(irFunction))
+                llvm.externalFunction(proto)
+            else generateFunction(this, proto, needSafePoint = false) {
+                val args = proto.signature.parameterTypes.indices.map { param(it) }
+                val receiver = param(0)
+                val result = call(lookupVirtualImpl(receiver, irFunction), args, exceptionHandler = ExceptionHandler.Caller, verbatim = true)
+                ret(result)
+            }
+        }
 
 /**
  * There're cases when we don't need end position or it is meaningless.
@@ -390,6 +441,7 @@ internal abstract class FunctionGenerationContextBuilder<T : FunctionGenerationC
     var startLocation: LocationInfo? = null
     var endLocation: LocationInfo? = null
     var switchToRunnable = false
+    var needSafePoint = true
     var irFunction: IrFunction? = null
 
     abstract fun build(): T
@@ -401,6 +453,7 @@ internal abstract class FunctionGenerationContext(
         private val startLocation: LocationInfo?,
         protected val endLocation: LocationInfo?,
         switchToRunnable: Boolean,
+        needSafePoint: Boolean,
         internal val irFunction: IrFunction? = null
 ) : ContextUtils {
 
@@ -410,6 +463,7 @@ internal abstract class FunctionGenerationContext(
             startLocation = builder.startLocation,
             endLocation = builder.endLocation,
             switchToRunnable = builder.switchToRunnable,
+            needSafePoint = builder.needSafePoint,
             irFunction = builder.irFunction
     )
 
@@ -454,6 +508,9 @@ internal abstract class FunctionGenerationContext(
 
     private val switchToRunnable: Boolean =
             context.memoryModel == MemoryModel.EXPERIMENTAL && switchToRunnable
+
+    private val needSafePoint: Boolean =
+            context.memoryModel == MemoryModel.EXPERIMENTAL && needSafePoint
 
     val stackLocalsManager = StackLocalsManagerImpl(this, stackLocalsInitBb)
 
@@ -1194,16 +1251,6 @@ internal abstract class FunctionGenerationContext(
         )
     }
 
-    private fun IrSimpleFunction.findOverriddenMethodOfAny(): IrSimpleFunction? {
-        if (modality == Modality.ABSTRACT) return null
-        val resolved = resolveFakeOverride()!!
-        if ((resolved.parent as IrClass).isAny()) {
-            return resolved
-        }
-
-        return null
-    }
-
     @Suppress("UNUSED_PARAMETER")
     fun getObjectValue(irClass: IrClass, exceptionHandler: ExceptionHandler,
                        startLocationInfo: LocationInfo?, endLocationInfo: LocationInfo? = null,
@@ -1366,7 +1413,7 @@ internal abstract class FunctionGenerationContext(
             } else {
                 check(!setCurrentFrameIsCalled)
             }
-            if (context.memoryModel == MemoryModel.EXPERIMENTAL && !forbidRuntime) {
+            if (context.memoryModel == MemoryModel.EXPERIMENTAL && !forbidRuntime && needSafePoint) {
                 call(llvm.Kotlin_mm_safePointFunctionPrologue, emptyList())
             }
             resetDebugLocation()
@@ -1572,6 +1619,7 @@ internal class DefaultFunctionGenerationContext(
         startLocation: LocationInfo?,
         endLocation: LocationInfo?,
         switchToRunnable: Boolean,
+        needSafePoint: Boolean,
         irFunction: IrFunction? = null
 ) : FunctionGenerationContext(
         function,
@@ -1579,6 +1627,7 @@ internal class DefaultFunctionGenerationContext(
         startLocation,
         endLocation,
         switchToRunnable,
+        needSafePoint,
         irFunction
 ) {
     // Note: return handling can be extracted to a separate class.
