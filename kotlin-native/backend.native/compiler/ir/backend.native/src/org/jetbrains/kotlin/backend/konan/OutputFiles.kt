@@ -69,8 +69,6 @@ class OutputFiles(val outputName: String, target: KonanTarget, val produce: Comp
 
     val bitcodeDependenciesFile = tempCacheDirectory?.cacheBinaryPart()?.child(CachedLibraries.BITCODE_DEPENDENCIES_FILE_NAME)
 
-    val irLevelDependenciesFile = tempCacheDirectory?.cacheBinaryPart()?.child(CachedLibraries.IR_LEVEL_DEPENDENCIES_FILE_NAME)
-
     val inlineFunctionBodiesFile = tempCacheDirectory?.cacheIrPart()?.child(CachedLibraries.INLINE_FUNCTION_BODIES_FILE_NAME)
 
     val classFieldsFile = tempCacheDirectory?.cacheIrPart()?.child(CachedLibraries.CLASS_FIELDS_FILE_NAME)
