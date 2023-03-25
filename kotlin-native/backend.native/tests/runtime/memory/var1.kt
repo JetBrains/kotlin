@@ -33,6 +33,7 @@ fun Any?.use() {
     var x = this
 }
 
+@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.native.internal.CanBePrecreated
 object CompileTime {
 
