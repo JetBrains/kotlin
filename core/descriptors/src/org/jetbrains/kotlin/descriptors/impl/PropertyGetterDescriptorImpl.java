@@ -52,6 +52,7 @@ public class PropertyGetterDescriptorImpl extends PropertyAccessorDescriptorImpl
     
     public void initialize(KotlinType returnType) {
         this.returnType = returnType == null ? getCorrespondingProperty().getType() : returnType;
+        finalizeInit();
     }
 
     @NotNull

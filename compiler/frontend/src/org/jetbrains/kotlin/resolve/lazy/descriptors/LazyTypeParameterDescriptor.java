@@ -60,6 +60,8 @@ public class LazyTypeParameterDescriptor extends AbstractLazyTypeParameterDescri
         this.c = c;
         this.typeParameter = typeParameter;
 
+        finalizeInit();
+
         this.c.getTrace().record(BindingContext.TYPE_PARAMETER, typeParameter, this);
     }
 

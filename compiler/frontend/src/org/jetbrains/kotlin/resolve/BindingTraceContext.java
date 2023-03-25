@@ -17,11 +17,11 @@
 package org.jetbrains.kotlin.resolve;
 
 import com.google.common.collect.ImmutableMap;
-import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.application.ApplicationManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
-import org.jetbrains.kotlin.descriptors.ValidateableDescriptor;
+import org.jetbrains.kotlin.descriptors.InitializableDescriptor;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.resolve.diagnostics.BindingContextSuppressCache;
@@ -35,7 +35,9 @@ import org.jetbrains.kotlin.util.slicedMap.*;
 import java.util.Collection;
 
 public class BindingTraceContext implements BindingTrace {
-    private static final boolean VALIDATION = Boolean.parseBoolean(System.getProperty("kotlin.bindingTrace.validation"));
+    private static final boolean VALIDATION =
+            Boolean.parseBoolean(System.getProperty("kotlin.bindingTrace.validation")) ||
+            ApplicationManager.getApplication().isUnitTestMode();
     // These flags are used for debugging of "Rewrite at slice..." exceptions
     /* package */ final static boolean TRACK_REWRITES = false;
     /* package */ final static boolean TRACK_WITH_STACK_TRACES = true;
@@ -114,7 +116,10 @@ public class BindingTraceContext implements BindingTrace {
 
     @TestOnly
     public static BindingTraceContext createTraceableBindingTrace() {
-        return new BindingTraceContext(new TrackingSlicedMap(TRACK_WITH_STACK_TRACES), BindingTraceFilter.Companion.getACCEPT_ALL(), VALIDATION);
+        return new BindingTraceContext(
+                new TrackingSlicedMap(TRACK_WITH_STACK_TRACES),
+                BindingTraceFilter.Companion.getACCEPT_ALL(),
+                VALIDATION);
     }
 
     @Override
@@ -144,9 +149,7 @@ public class BindingTraceContext implements BindingTrace {
 
     @Override
     public <K, V> void record(WritableSlice<K, V> slice, K key, V value) {
-        if (isValidationEnabled && value instanceof ValidateableDescriptor && !ProgressManager.getInstance().isInNonCancelableSection()) {
-            ((ValidateableDescriptor) value).validate();
-        }
+        checkInitialized(value);
         map.put(slice, key, value);
     }
 
@@ -157,7 +160,18 @@ public class BindingTraceContext implements BindingTrace {
 
     @Override
     public <K, V> V get(ReadOnlySlice<K, V> slice, K key) {
-        return map.get(slice, key);
+        V value = map.get(slice, key);
+        checkInitialized(value);
+        return value;
+    }
+
+    private  <V> void checkInitialized(V value){
+        if (isValidationEnabled && value instanceof InitializableDescriptor) {
+            boolean initialized = ((InitializableDescriptor) value).isInitFinalized();
+            if (!initialized) {
+                throw new IllegalStateException(value + " is not fully initialized");
+            }
+        }
     }
 
     @NotNull

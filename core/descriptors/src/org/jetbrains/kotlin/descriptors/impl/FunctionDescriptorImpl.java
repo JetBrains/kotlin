@@ -102,6 +102,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
                 throw new IllegalStateException(valueParameterDescriptor + "index is " + valueParameterDescriptor.getIndex() + " but position is " + i);
             }
         }
+        finalizeInit();
 
         return this;
     }
@@ -298,17 +299,13 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     @Override
     @NotNull
     public List<TypeParameterDescriptor> getTypeParameters() {
+        checkInitFinalized();
         List<TypeParameterDescriptor> parameters = typeParameters;
         // Diagnostics for EA-141456
         if (parameters == null) {
             throw new IllegalStateException("typeParameters == null for " + this);
         }
         return parameters;
-    }
-
-    @Override
-    public void validate() {
-        getTypeParameters();
     }
 
     @Override

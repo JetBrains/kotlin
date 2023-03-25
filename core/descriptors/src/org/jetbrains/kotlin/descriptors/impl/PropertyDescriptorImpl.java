@@ -36,7 +36,7 @@ import java.util.List;
 import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getBuiltIns;
 
 @SuppressWarnings("deprecation")
-public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImpl implements PropertyDescriptor {
+public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImpl implements PropertyDescriptor, InitializableDescriptor {
     private final Modality modality;
     private DescriptorVisibility visibility;
     private Collection<? extends PropertyDescriptor> overriddenProperties = null;
@@ -164,6 +164,8 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
         this.setter = setter;
         this.backingField = backingField;
         this.delegateField = delegateField;
+
+        finalizeInit();
     }
 
     public void setSetterProjectedOut(boolean setterProjectedOut) {
@@ -183,11 +185,6 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
             throw new IllegalStateException("typeParameters == null for " + this);
         }
         return parameters;
-    }
-
-    @Override
-    public void validate() {
-        getTypeParameters();
     }
 
     @Override

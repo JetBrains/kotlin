@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
+import com.intellij.openapi.diagnostic.ControlFlowException;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import kotlin.Pair;
@@ -388,7 +389,9 @@ public class DescriptorResolver {
                 destructuringVariables
         );
 
-        trace.record(BindingContext.VALUE_PARAMETER, valueParameter, valueParameterDescriptor);
+        valueParameterDescriptor.addInitFinalizationAction(
+                () -> trace.record(BindingContext.VALUE_PARAMETER, valueParameter, valueParameterDescriptor)
+        );
         return valueParameterDescriptor;
     }
 
@@ -487,7 +490,12 @@ public class DescriptorResolver {
                 supertypeLoopsResolver,
                 storageManager
         );
-        trace.record(BindingContext.TYPE_PARAMETER, typeParameter, typeParameterDescriptor);
+        containingDescriptor.addInitFinalizationAction(
+                () -> {
+                    typeParameterDescriptor.finalizeInit();
+                    trace.record(BindingContext.TYPE_PARAMETER, typeParameter, typeParameterDescriptor);
+                }
+        );
         return typeParameterDescriptor;
     }
 
@@ -557,7 +565,9 @@ public class DescriptorResolver {
             }
 
             if (typeParameterDescriptor != null) {
-                trace.record(BindingContext.REFERENCE_TARGET, subjectTypeParameterName, typeParameterDescriptor);
+                typeParameterDescriptor.addInitFinalizationAction(
+                        () -> trace.record(BindingContext.REFERENCE_TARGET, subjectTypeParameterName, typeParameterDescriptor)
+                );
                 if (bound != null) {
                     typeParameterDescriptor.addUpperBound(bound);
                 }

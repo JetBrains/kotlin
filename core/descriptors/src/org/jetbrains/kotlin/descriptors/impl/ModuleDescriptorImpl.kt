@@ -93,7 +93,7 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
         assertValid()
         assert(this in dependenciesDescriptors) { "Module $id is not contained in its own dependencies, this is probably a misconfiguration" }
         dependenciesDescriptors.forEach { dependency ->
-            assert(dependency.isInitialized) {
+            assert(dependency.isInitFinalized) {
                 "Dependency module ${dependency.id} was not initialized by the time contents of dependent module ${this.id} were queried"
             }
         }
@@ -105,8 +105,9 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
         )
     }
 
-    private val isInitialized: Boolean
-        get() = packageFragmentProviderForModuleContent != null
+    override fun isInitFinalized(): Boolean {
+        return packageFragmentProviderForModuleContent != null
+    }
 
     fun setDependencies(dependencies: ModuleDependencies) {
         assert(this.dependencies == null) { "Dependencies of $id were already set" }
@@ -141,7 +142,7 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
      * Call initialize() to set module contents. Uninitialized module cannot be queried for its contents.
      */
     fun initialize(providerForModuleContent: PackageFragmentProvider) {
-        assert(!isInitialized) { "Attempt to initialize module $id twice" }
+        assert(!isInitFinalized) { "Attempt to initialize module $id twice" }
         this.packageFragmentProviderForModuleContent = providerForModuleContent
     }
 

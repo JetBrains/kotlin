@@ -128,6 +128,7 @@ public class TypeParameterDescriptorImpl extends AbstractTypeParameterDescriptor
     }
 
     public void setInitialized() {
+        checkInitNotFinalized();
         checkUninitialized();
         initialized = true;
     }
@@ -137,6 +138,7 @@ public class TypeParameterDescriptorImpl extends AbstractTypeParameterDescriptor
     }
 
     public void addUpperBound(@NotNull KotlinType bound) {
+        checkInitNotFinalized();
         checkUninitialized();
         doAddUpperBound(bound);
     }
@@ -147,6 +149,7 @@ public class TypeParameterDescriptorImpl extends AbstractTypeParameterDescriptor
     }
 
     public void addDefaultUpperBound() {
+        checkInitNotFinalized();
         checkUninitialized();
 
         if (upperBounds.isEmpty()) {
