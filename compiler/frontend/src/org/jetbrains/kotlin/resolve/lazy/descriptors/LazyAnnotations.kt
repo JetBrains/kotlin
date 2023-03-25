@@ -16,7 +16,10 @@
 
 package org.jetbrains.kotlin.resolve.lazy.descriptors
 
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptorVisitor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
+import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
+import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.annotations.FilteredByPredicateAnnotations
@@ -76,7 +79,7 @@ class LazyAnnotations(
 class LazyAnnotationDescriptor(
     val c: LazyAnnotationsContext,
     val annotationEntry: KtAnnotationEntry
-) : AnnotationDescriptor, LazyEntity, ValidateableDescriptor {
+) : AnnotationDescriptor, LazyEntity {
 
     override val type by c.storageManager.createLazyValue(
         computable = lazy@{
@@ -127,11 +130,6 @@ class LazyAnnotationDescriptor(
 
     fun getSourceForArgument(name: Name): SourceElement =
         valueArgumentsWithSourceInfo[name]?.second ?: SourceElement.NO_SOURCE
-
-
-    override fun validate() {
-        checkNotNull(scope) { "scope == null for $this" }
-    }
 
     override fun forceResolveAllContents() {
         ForceResolveUtil.forceResolveAllContents(type)

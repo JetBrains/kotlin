@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl
 import org.jetbrains.kotlin.name.Name
-import java.util.*
 
 class AccessorForFunctionDescriptor(
     override val calleeDescriptor: FunctionDescriptor,
@@ -54,6 +53,8 @@ class AccessorForFunctionDescriptor(
                 calleeDescriptor.getUserData(INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION)
         }
     }
+
+    override fun allowReInitialization(): Boolean = true
 
     override fun createSubstitutedCopy(
         newOwner: DeclarationDescriptor,

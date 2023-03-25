@@ -43,6 +43,7 @@ public class LocalVariableDescriptor extends VariableDescriptorWithInitializerIm
         super(containingDeclaration, annotations, name, type, mutable, source);
         this.isDelegated = isDelegated;
         this.isLateInit = isLateInit;
+        finalizeInit();
     }
 
     public LocalVariableDescriptor(

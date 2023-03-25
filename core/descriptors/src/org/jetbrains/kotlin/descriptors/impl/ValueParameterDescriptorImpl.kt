@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSubstitutor
-import org.jetbrains.kotlin.utils.join
 
 open class ValueParameterDescriptorImpl(
         containingDeclaration: CallableDescriptor,
@@ -36,6 +35,12 @@ open class ValueParameterDescriptorImpl(
         override val varargElementType: KotlinType?,
         source: SourceElement
 ) : VariableDescriptorImpl(containingDeclaration, annotations, name, outType, source), ValueParameterDescriptor {
+
+    init {
+        containingDeclaration.addInitFinalizationAction {
+            finalizeInit()
+        }
+    }
 
     companion object {
         @JvmStatic

@@ -56,9 +56,9 @@ import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.Variance.*
+import org.jetbrains.kotlin.types.error.ErrorScope
 import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.error.ErrorUtils
-import org.jetbrains.kotlin.types.error.ErrorScope
 import org.jetbrains.kotlin.types.error.ThrowingScope
 import org.jetbrains.kotlin.types.extensions.TypeAttributeTranslators
 import org.jetbrains.kotlin.types.typeUtil.*
@@ -273,7 +273,10 @@ class TypeResolver(
                 if (!languageVersionSettings.supportsFeature(LanguageFeature.YieldIsNoMoreReserved)) {
                     checkReservedYield(referenceExpression, c.trace)
                 }
-                c.trace.record(BindingContext.REFERENCE_TARGET, referenceExpression, classifier)
+                // classifier could be non-finally initialized TypeParameterDescriptorImpl
+                classifier.addInitFinalizationAction {
+                    c.trace.record(BindingContext.REFERENCE_TARGET, referenceExpression, classifier)
+                }
 
                 result = resolveTypeForClassifier(c, classifier, qualifierResolutionResult, type, annotations)
             }
@@ -429,6 +432,12 @@ class TypeResolver(
                     type: KotlinType,
                     source: SourceElement
                 ) : VariableDescriptorImpl(containingDeclaration, annotations, name, type, source) {
+                    init {
+                        containingDeclaration.addInitFinalizationAction {
+                            finalizeInit()
+                        }
+                    }
+
                     override fun getVisibility() = DescriptorVisibilities.LOCAL
 
                     override fun substitute(substitutor: TypeSubstitutor): VariableDescriptor? {
@@ -452,16 +461,19 @@ class TypeResolver(
                     identifierChecker.checkDeclaration(it, c.trace)
                     checkParameterInFunctionType(it)
                 }
+                val containingDeclaration = c.scope.ownerDescriptor
                 return parameters.map { parameter ->
                     val parameterType = resolveType(c.noBareTypes(), parameter.typeReference!!)
                     val descriptor = ParameterOfFunctionTypeDescriptor(
-                        c.scope.ownerDescriptor,
+                        containingDeclaration,
                         annotationResolver.resolveAnnotationsWithoutArguments(c.scope, parameter.modifierList, c.trace),
                         parameter.nameAsSafeName,
                         parameterType,
                         parameter.toSourceElement()
                     )
-                    c.trace.record(BindingContext.VALUE_PARAMETER, parameter, descriptor)
+                    containingDeclaration.addInitFinalizationAction {
+                        c.trace.record(BindingContext.VALUE_PARAMETER, parameter, descriptor)
+                    }
                     descriptor
                 }
             }

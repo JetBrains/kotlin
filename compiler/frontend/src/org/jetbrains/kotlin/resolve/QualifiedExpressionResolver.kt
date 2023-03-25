@@ -772,7 +772,9 @@ class QualifiedExpressionResolver(val languageVersionSettings: LanguageVersionSe
             return null
         }
 
-        trace.record(BindingContext.REFERENCE_TARGET, referenceExpression, descriptor)
+        descriptor.addInitFinalizationAction {
+            trace.record(BindingContext.REFERENCE_TARGET, referenceExpression, descriptor)
+        }
 
         UnderscoreUsageChecker.checkSimpleNameUsage(descriptor, referenceExpression, trace)
 

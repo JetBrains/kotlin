@@ -56,6 +56,7 @@ public class PropertySetterDescriptorImpl extends PropertyAccessorDescriptorImpl
     public void initialize(@NotNull ValueParameterDescriptor parameter) {
         assert this.parameter == null;
         this.parameter = parameter;
+        finalizeInit();
     }
 
     public void initializeDefault() {

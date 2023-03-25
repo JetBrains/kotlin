@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.annotations.Annotated;
 
-public interface DeclarationDescriptor extends Annotated, Named, ValidateableDescriptor {
+public interface DeclarationDescriptor extends Annotated, Named, InitializableDescriptor {
     /**
      * @return The descriptor that corresponds to the original declaration of this element.
      *         A descriptor can be obtained from its original by substituting type arguments (of the declaring class

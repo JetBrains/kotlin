@@ -268,6 +268,16 @@ class FunctionDescriptorResolver(
             trace.record(BindingContext.DESCRIPTOR_TO_CONTEXT_RECEIVER_MAP, functionDescriptor, labelNameToReceiverMap)
         }
 
+        functionDescriptor.isOperator = function.hasModifier(KtTokens.OPERATOR_KEYWORD)
+        functionDescriptor.isInfix = function.hasModifier(KtTokens.INFIX_KEYWORD)
+        functionDescriptor.isExternal = function.hasModifier(KtTokens.EXTERNAL_KEYWORD)
+        functionDescriptor.isInline = function.hasModifier(KtTokens.INLINE_KEYWORD)
+        functionDescriptor.isTailrec = function.hasModifier(KtTokens.TAILREC_KEYWORD)
+        functionDescriptor.isSuspend = function.hasModifier(KtTokens.SUSPEND_KEYWORD)
+        functionDescriptor.isExpect = container is PackageFragmentDescriptor && function.hasExpectModifier() ||
+                container is ClassDescriptor && container.isExpect
+        functionDescriptor.isActual = function.hasActualModifier()
+
         functionDescriptor.initialize(
             extensionReceiver,
             getDispatchReceiverParameterIfNeeded(container),
@@ -279,16 +289,6 @@ class FunctionDescriptorResolver(
             visibility,
             userData.takeIf { it.isNotEmpty() }
         )
-
-        functionDescriptor.isOperator = function.hasModifier(KtTokens.OPERATOR_KEYWORD)
-        functionDescriptor.isInfix = function.hasModifier(KtTokens.INFIX_KEYWORD)
-        functionDescriptor.isExternal = function.hasModifier(KtTokens.EXTERNAL_KEYWORD)
-        functionDescriptor.isInline = function.hasModifier(KtTokens.INLINE_KEYWORD)
-        functionDescriptor.isTailrec = function.hasModifier(KtTokens.TAILREC_KEYWORD)
-        functionDescriptor.isSuspend = function.hasModifier(KtTokens.SUSPEND_KEYWORD)
-        functionDescriptor.isExpect = container is PackageFragmentDescriptor && function.hasExpectModifier() ||
-                container is ClassDescriptor && container.isExpect
-        functionDescriptor.isActual = function.hasActualModifier()
 
         receiverType?.let { ForceResolveUtil.forceResolveAllContents(it.annotations) }
         for (valueParameterDescriptor in valueParameterDescriptors) {
@@ -444,8 +444,6 @@ class FunctionDescriptorResolver(
         constructorDescriptor.isActual = modifierList?.hasActualModifier() == true ||
                 // We don't require 'actual' for constructors of actual annotations
                 classDescriptor.kind == ClassKind.ANNOTATION_CLASS && classDescriptor.isActual
-        if (declarationToTrace is PsiElement)
-            trace.record(BindingContext.CONSTRUCTOR, declarationToTrace, constructorDescriptor)
         val parameterScope = LexicalWritableScope(
             scope,
             constructorDescriptor,
@@ -465,6 +463,9 @@ class FunctionDescriptorResolver(
         constructor.returnType = classDescriptor.defaultType
         if (DescriptorUtils.isAnnotationClass(classDescriptor)) {
             CompileTimeConstantUtils.checkConstructorParametersType(valueParameters, trace)
+        }
+        if (declarationToTrace is PsiElement) {
+            trace.record(BindingContext.CONSTRUCTOR, declarationToTrace, constructorDescriptor)
         }
         return constructor
     }
