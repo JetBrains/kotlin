@@ -392,12 +392,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
                 }
             }
 
-            val linkage = when {
-                declaration.isExported() -> LLVMLinkage.LLVMExternalLinkage
-                context.config.producePerFileCache && declaration in generationState.calledFromExportedInlineFunctions -> LLVMLinkage.LLVMExternalLinkage
-                else -> LLVMLinkage.LLVMInternalLinkage
-            }
-            val proto = LlvmFunctionProto(declaration, symbolName, this, linkage)
+            val proto = LlvmFunctionProto(declaration, symbolName, this, linkageOf(declaration))
             context.log {
                 "Creating llvm function ${symbolName} for ${declaration.render()}"
             }

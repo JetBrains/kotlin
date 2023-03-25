@@ -14,7 +14,7 @@ func testDirectObjc2Kotlin() throws {
 
 func testVirtualObjc2Kotlin() throws {
     let trace = StacktraceBridgesKt.createBar().foo()
-    try assertTrue(trace[5].contains("objc2kotlin_virtual_kfun:Foo#foo(){}kotlin.collections.List<kotlin.String>"))
+    try assertTrue(trace[6].contains("objc2kotlin_virtual_kfun:Foo#foo(){}kotlin.collections.List<kotlin.String>"))
 }
 
 func testKotlin2Objc() throws {

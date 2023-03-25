@@ -162,6 +162,13 @@ internal interface ContextUtils : RuntimeAware {
         return !generationState.llvmModuleSpecification.containsDeclaration(declaration)
     }
 
+    fun linkageOf(irFunction: IrFunction) = when {
+        isExternal(irFunction) -> LLVMLinkage.LLVMExternalLinkage
+        irFunction.isExported() -> LLVMLinkage.LLVMExternalLinkage
+        context.config.producePerFileCache && irFunction in generationState.calledFromExportedInlineFunctions -> LLVMLinkage.LLVMExternalLinkage
+        else -> LLVMLinkage.LLVMInternalLinkage
+    }
+
     /**
      * LLVM function generated from the Kotlin function.
      * It may be declared as external function prototype.

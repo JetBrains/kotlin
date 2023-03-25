@@ -784,8 +784,15 @@ internal class CodeGeneratorVisitor(
                 }
             }
 
+    private fun buildVirtualFunctionTrampoline(irFunction: IrSimpleFunction) {
+        codegen.getVirtualFunctionTrampoline(irFunction)
+    }
+
     override fun visitFunction(declaration: IrFunction) {
         context.log{"visitFunction                  : ${ir2string(declaration)}"}
+
+        if (declaration is IrSimpleFunction && declaration.isOverridable && declaration.origin !is DECLARATION_ORIGIN_BRIDGE_METHOD)
+            buildVirtualFunctionTrampoline(declaration)
 
         val scopeState = llvm.initializersGenerationState.scopeState
         if (declaration.origin == DECLARATION_ORIGIN_STATIC_GLOBAL_INITIALIZER) {
@@ -1597,7 +1604,8 @@ internal class CodeGeneratorVisitor(
                 val interfaceId = dstHierarchyInfo.interfaceId
                 val typeInfo = functionGenerationContext.loadTypeInfo(srcObjInfoPtr)
                 with(functionGenerationContext) {
-                    val interfaceTableRecord = lookupInterfaceTableRecord(typeInfo, interfaceId)
+
+                    val interfaceTableRecord = with(VirtualTablesLookup) { getInterfaceTableRecord(typeInfo, interfaceId) }
                     icmpEq(load(structGep(interfaceTableRecord, 0 /* id */)), llvm.int32(interfaceId))
                 }
             }
@@ -2617,8 +2625,8 @@ internal class CodeGeneratorVisitor(
 
     //-------------------------------------------------------------------------//
 
-    fun callVirtual(function: IrFunction, args: List<LLVMValueRef>, resultLifetime: Lifetime, resultSlot: LLVMValueRef?): LLVMValueRef {
-        val functionDeclarations = functionGenerationContext.lookupVirtualImpl(args.first(), function)
+    fun callVirtual(function: IrSimpleFunction, args: List<LLVMValueRef>, resultLifetime: Lifetime, resultSlot: LLVMValueRef?): LLVMValueRef {
+        val functionDeclarations = codegen.getVirtualFunctionTrampoline(function)
         return call(function, functionDeclarations, args, resultLifetime, resultSlot)
     }
 
