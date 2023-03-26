@@ -91,13 +91,19 @@ internal class SymbolLightAccessorMethod private constructor(
 
     private val _name: String by lazyPub {
         analyzeForLightClasses(ktModule) {
-            propertyAccessorSymbol().getJvmNameFromAnnotation(accessorSite.toOptionalFilter()) ?: run {
-                val symbol = propertySymbol()
-                val defaultName = symbol.name.identifier.let {
+            val accessorSymbol = propertyAccessorSymbol()
+            accessorSymbol.getJvmNameFromAnnotation(accessorSite.toOptionalFilter()) ?: run {
+                val propertySymbol = propertySymbol()
+                val defaultName = propertySymbol.name.identifier.let {
                     if (this@SymbolLightAccessorMethod.containingClass.isAnnotationType) it else it.abiName()
                 }
 
-                symbol.computeJvmMethodName(defaultName, this@SymbolLightAccessorMethod.containingClass, accessorSite)
+                val visibility = if (!isGetter && propertySymbol.canHaveNonPrivateField)
+                    accessorSymbol.visibility
+                else
+                    propertySymbol.visibility
+
+                propertySymbol.computeJvmMethodName(defaultName, this@SymbolLightAccessorMethod.containingClass, accessorSite, visibility)
             }
         }
     }
