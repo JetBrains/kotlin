@@ -90,7 +90,6 @@ internal class SymbolLightClassForAnonymousObject : SymbolLightClassForClassLike
                         nameGenerator,
                         isTopLevel = false,
                         forceStatic = false,
-                        takePropertyVisibility = propertySymbol.hasJvmFieldAnnotation(),
                         result,
                     )
                 }

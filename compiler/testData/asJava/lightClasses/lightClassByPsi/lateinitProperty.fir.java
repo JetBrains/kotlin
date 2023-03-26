@@ -1,9 +1,9 @@
 public class A /* A*/ {
+  private java.lang.String b;
+
+  protected java.lang.String c;
+
   public java.lang.String a;
-
-  public java.lang.String b;
-
-  public java.lang.String c;
 
   public java.lang.String d;
 
@@ -29,11 +29,11 @@ public class A /* A*/ {
 }
 
 public class B /* B*/ {
+  private java.lang.String b;
+
+  protected java.lang.String c;
+
   public java.lang.String a;
-
-  public java.lang.String b;
-
-  public java.lang.String c;
 
   public java.lang.String d;
 
@@ -59,9 +59,9 @@ public class B /* B*/ {
 }
 
 public class C /* C*/ {
-  protected java.lang.String a;
+  private java.lang.String b;
 
-  protected java.lang.String b;
+  protected java.lang.String a;
 
   protected java.lang.String c;
 
