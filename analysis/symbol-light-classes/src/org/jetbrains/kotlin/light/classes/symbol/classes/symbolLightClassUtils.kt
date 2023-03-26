@@ -39,8 +39,6 @@ import org.jetbrains.kotlin.light.classes.symbol.copy
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForEnumEntry
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForProperty
-import org.jetbrains.kotlin.light.classes.symbol.isConst
-import org.jetbrains.kotlin.light.classes.symbol.isLateInit
 import org.jetbrains.kotlin.light.classes.symbol.mapType
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightAccessorMethod
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightConstructor
@@ -366,7 +364,6 @@ internal fun SymbolLightClassBase.createField(
     nameGenerator: SymbolLightField.FieldNameGenerator,
     isTopLevel: Boolean,
     forceStatic: Boolean,
-    takePropertyVisibility: Boolean,
     result: MutableList<KtLightField>
 ) {
     if (!hasBackingField(declaration)) return
@@ -385,7 +382,6 @@ internal fun SymbolLightClassBase.createField(
             lightMemberOrigin = null,
             isTopLevel = isTopLevel,
             forceStatic = forceStatic,
-            takePropertyVisibility = takePropertyVisibility,
         )
     )
 }
@@ -602,18 +598,11 @@ internal fun SymbolLightClassBase.addPropertyBackingFields(
 
     val forceStatic = symbolWithMembers is KtClassOrObjectSymbol && symbolWithMembers.classKind.isObject
     fun addPropertyBackingField(propertySymbol: KtPropertySymbol) {
-        val isJvmField = propertySymbol.hasJvmFieldAnnotation()
-        val isLateInit = propertySymbol.isLateInit
-        val isConst = propertySymbol.isConst
-
-        val takePropertyVisibility = isLateInit || isJvmField || isConst
-
         createField(
             declaration = propertySymbol,
             nameGenerator = nameGenerator,
             isTopLevel = false,
             forceStatic = forceStatic,
-            takePropertyVisibility = takePropertyVisibility,
             result = result
         )
     }

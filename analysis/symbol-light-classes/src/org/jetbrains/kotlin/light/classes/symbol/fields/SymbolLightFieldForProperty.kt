@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.annotations.*
 import org.jetbrains.kotlin.analysis.api.base.KtConstantValue
 import org.jetbrains.kotlin.analysis.api.symbols.KtKotlinPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.isPrivateOrPrivateToThis
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.sourcePsiSafe
 import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
@@ -36,7 +37,6 @@ internal class SymbolLightFieldForProperty private constructor(
     lightMemberOrigin: LightMemberOrigin?,
     private val isTopLevel: Boolean,
     private val forceStatic: Boolean,
-    private val takePropertyVisibility: Boolean,
     override val kotlinOrigin: KtCallableDeclaration?,
 ) : SymbolLightField(containingClass, lightMemberOrigin) {
     internal constructor(
@@ -47,7 +47,6 @@ internal class SymbolLightFieldForProperty private constructor(
         lightMemberOrigin: LightMemberOrigin?,
         isTopLevel: Boolean,
         forceStatic: Boolean,
-        takePropertyVisibility: Boolean,
     ) : this(
         propertySymbolPointer = with(ktAnalysisSession) { propertySymbol.createPointer() },
         fieldName = fieldName,
@@ -55,7 +54,6 @@ internal class SymbolLightFieldForProperty private constructor(
         lightMemberOrigin = lightMemberOrigin,
         isTopLevel = isTopLevel,
         forceStatic = forceStatic,
-        takePropertyVisibility = takePropertyVisibility,
         kotlinOrigin = propertySymbol.sourcePsiSafe<KtCallableDeclaration>(),
     )
 
@@ -95,7 +93,20 @@ internal class SymbolLightFieldForProperty private constructor(
     override fun getName(): String = fieldName
 
     private fun computeModifiers(modifier: String): Map<String, Boolean>? = when (modifier) {
-        in GranularModifiersBox.VISIBILITY_MODIFIERS -> GranularModifiersBox.computeVisibilityForMember(ktModule, propertySymbolPointer)
+        in GranularModifiersBox.VISIBILITY_MODIFIERS -> {
+            val visibility = withPropertySymbol { propertySymbol ->
+                when {
+                    propertySymbol.visibility.isPrivateOrPrivateToThis() -> PsiModifier.PRIVATE
+                    propertySymbol.canHaveNonPrivateField -> {
+                        val declaration = propertySymbol.setter ?: propertySymbol
+                        declaration.toPsiVisibilityForMember()
+                    }
+                    else -> PsiModifier.PRIVATE
+                }
+            }
+
+            GranularModifiersBox.VISIBILITY_MODIFIERS_MAP.with(visibility)
+        }
         in GranularModifiersBox.MODALITY_MODIFIERS -> {
             val modality = withPropertySymbol { propertySymbol ->
                 if (propertySymbol.isVal || propertySymbol.isDelegatedProperty) {
@@ -135,15 +146,9 @@ internal class SymbolLightFieldForProperty private constructor(
     }
 
     private val _modifierList: PsiModifierList by lazyPub {
-        val initializerValue = if (takePropertyVisibility) {
-            emptyMap()
-        } else {
-            GranularModifiersBox.VISIBILITY_MODIFIERS_MAP.with(PsiModifier.PRIVATE)
-        }
-
         SymbolLightMemberModifierList(
             containingDeclaration = this,
-            modifiersBox = GranularModifiersBox(initializerValue, ::computeModifiers),
+            modifiersBox = GranularModifiersBox(computer = ::computeModifiers),
             annotationsBox = GranularAnnotationsBox(
                 annotationsProvider = SymbolAnnotationsProvider(
                     ktModule = ktModule,

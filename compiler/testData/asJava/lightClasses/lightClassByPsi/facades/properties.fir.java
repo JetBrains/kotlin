@@ -63,7 +63,7 @@ public final class PropertiesKt /* PropertiesKt*/ {
 
   private static java.lang.String internalVarPrivateSet;
 
-  private static java.lang.String protectedLateinitVar;
+  protected static java.lang.String protectedLateinitVar;
 
   public static Unresolved subject;
 

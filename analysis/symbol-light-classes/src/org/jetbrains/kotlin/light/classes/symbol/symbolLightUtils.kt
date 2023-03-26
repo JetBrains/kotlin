@@ -290,6 +290,7 @@ internal inline fun <T : KtSymbol, R> KtSymbolPointer<T>.withSymbol(
 internal val KtPropertySymbol.isConstOrJvmField: Boolean get() = isConst || hasJvmFieldAnnotation()
 internal val KtPropertySymbol.isConst: Boolean get() = (this as? KtKotlinPropertySymbol)?.isConst == true
 internal val KtPropertySymbol.isLateInit: Boolean get() = (this as? KtKotlinPropertySymbol)?.isLateInit == true
+internal val KtPropertySymbol.canHaveNonPrivateField: Boolean get() = isConstOrJvmField || isLateInit
 
 internal inline fun <reified T> Collection<T>.toArrayIfNotEmptyOrDefault(default: Array<T>): Array<T> {
     return if (isNotEmpty()) toTypedArray() else default
