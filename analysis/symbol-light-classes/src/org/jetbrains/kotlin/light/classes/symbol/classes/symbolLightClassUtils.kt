@@ -449,7 +449,8 @@ internal fun SymbolLightClassForClassLike<*>.createInheritanceList(
                 // We don't have Enum among enums supertype in sources neither we do for decompiled class-files and light-classes
                 if (isEnum && this.classId == StandardClassIds.Enum) return false
 
-                val classKind = (classSymbol as? KtClassOrObjectSymbol)?.classKind
+                // NB: need to expand type alias, e.g., kotlin.Comparator<T> -> java.util.Comparator<T>
+                val classKind = expandedClassSymbol?.classKind
                 val isJvmInterface = classKind == KtClassKind.INTERFACE || classKind == KtClassKind.ANNOTATION_CLASS
 
                 forExtendsList == !isJvmInterface
