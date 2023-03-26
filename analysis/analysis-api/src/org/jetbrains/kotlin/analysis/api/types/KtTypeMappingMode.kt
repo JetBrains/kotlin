@@ -34,6 +34,11 @@ public enum class KtTypeMappingMode {
     SUPER_TYPE_KOTLIN_COLLECTIONS_AS_IS,
 
     /**
+     * When method return type should be boxed (e.g., kotlin.Int to Ljava/lang/Integer;)
+     */
+    RETURN_TYPE_BOXED,
+
+    /**
      * Optimal mode to convert the return type of declarations if it's part of signature.
      */
     RETURN_TYPE,

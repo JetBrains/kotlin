@@ -238,10 +238,19 @@ internal class SymbolLightAccessorMethod private constructor(
         if (!isGetter) return@lazyPub PsiType.VOID
 
         containingPropertySymbolPointer.withSymbol(ktModule) { propertySymbol ->
-            propertySymbol.returnType.asPsiType(
+            val ktType = propertySymbol.returnType
+
+            val forceBoxedReturnType = ktType.isPrimitive &&
+                    propertySymbol.getAllOverriddenSymbols().any { overriddenSymbol ->
+                        !overriddenSymbol.returnType.isPrimitive
+                    }
+
+            val typeMappingMode = if (forceBoxedReturnType) KtTypeMappingMode.RETURN_TYPE_BOXED else KtTypeMappingMode.RETURN_TYPE
+
+            ktType.asPsiType(
                 this@SymbolLightAccessorMethod,
                 allowErrorTypes = true,
-                KtTypeMappingMode.RETURN_TYPE,
+                typeMappingMode,
                 containingClass.isAnnotationType,
             )
         } ?: nonExistentType()
