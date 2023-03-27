@@ -1,0 +1,6 @@
+[TargetsNeedDisambiguation | WARNING] The following targets are not distinguishable:
+  * 'js_A', 'js_B'
+  * 'jvm_C', 'jvm_D'
+  * 'linuxArm_A', 'linuxArm_B'
+Use an additional attribute to disambiguate them
+See https://kotlinlang.org/docs/multiplatform-set-up-targets.html#distinguish-several-targets-for-one-platform for more details
