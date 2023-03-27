@@ -23,9 +23,7 @@ import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrFail
-import org.jetbrains.kotlin.ir.util.DeepCopyIrTreeWithSymbols
-import org.jetbrains.kotlin.ir.util.IrTypeParameterRemapper
-import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -258,11 +256,13 @@ fun IrExpressionBody.copyAndActualizeDefaultValue(
     actualFunction: IrFunction,
     actualValueParameter: IrValueParameter,
     expectActualTypeParametersMap: Map<IrTypeParameter, IrTypeParameter>,
-    classActualizer: (IrClass) -> IrClass,
-    functionActualizer: (IrFunction) -> IrFunction
+    classActualizer: (IrClass) -> IrClass?,
+    functionActualizer: (IrFunction) -> IrFunction?,
 ) = actualValueParameter.factory.createExpressionBody(startOffset, endOffset) {
+    val symbolRemapperWithActualizers = DeepCopySymbolRemapperBackedByActualizerFunctions(classActualizer, functionActualizer)
+
     expression = this@copyAndActualizeDefaultValue.expression
-        .deepCopyWithSymbols(actualFunction) { symbolRemapper, _ ->
+        .deepCopyWithSymbols(actualFunction, symbolRemapperWithActualizers) { symbolRemapper, _ ->
             DeepCopyIrTreeWithSymbols(symbolRemapper, IrTypeParameterRemapper(expectActualTypeParametersMap))
         }
         .transform(object : IrElementTransformerVoid() {
@@ -289,11 +289,11 @@ fun IrExpressionBody.copyAndActualizeDefaultValue(
                 return when (val parent = parameter.parent) {
                     is IrClass -> {
                         assert(parameter == parent.thisReceiver)
-                        classActualizer(parent).thisReceiver!!
+                        classActualizer(parent)!!.thisReceiver!!
                     }
 
                     is IrFunction -> {
-                        val function = functionActualizer(parent)
+                        val function = functionActualizer(parent)!!
                         when (parameter) {
                             parent.dispatchReceiverParameter -> function.dispatchReceiverParameter!!
                             parent.extensionReceiverParameter -> function.extensionReceiverParameter!!

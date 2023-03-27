@@ -28,8 +28,8 @@ class FunctionDefaultParametersActualizer(private val expectActualMap: Map<IrSym
                     actualFunction,
                     actualParameter,
                     expectFunction.typeParameters.zip(actualFunction.typeParameters).toMap(),
-                    classActualizer = { (expectActualMap[it.symbol] as IrClassSymbol).owner },
-                    functionActualizer = { (expectActualMap[it.symbol] as IrFunctionSymbol).owner }
+                    classActualizer = { (expectActualMap[it.symbol] as? IrClassSymbol)?.owner },
+                    functionActualizer = { (expectActualMap[it.symbol] as? IrFunctionSymbol)?.owner },
                 )
             }
         }
