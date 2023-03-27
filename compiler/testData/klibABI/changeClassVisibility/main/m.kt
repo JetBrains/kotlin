@@ -8,7 +8,6 @@ fun box() = abiTest {
     success("PublicTopLevelClass") { PublicTopLevelClass_anyReturnType() }
     success("PublicTopLevelClass.PublicToInternalNestedClass") { PublicTopLevelClass_PublicToInternalNestedClass_valueParameter(null) }
     successViaException("PublicTopLevelClass.PublicToInternalNestedClass") { PublicTopLevelClass_PublicToInternalNestedClass_returnType() }
-    // TODO: KT-54469, creating instance of PublicTopLevelClass.PublicToInternalNestedClass in another module should fail.
     success("PublicTopLevelClass.PublicToInternalNestedClass") { PublicTopLevelClass_PublicToInternalNestedClass_anyReturnType() }
     success("PublicTopLevelClass.PublicToProtectedNestedClass") { PublicTopLevelClass_PublicToProtectedNestedClass_valueParameter(null) }
     successViaException("PublicTopLevelClass.PublicToProtectedNestedClass") { PublicTopLevelClass_PublicToProtectedNestedClass_returnType() }
@@ -18,7 +17,6 @@ fun box() = abiTest {
     inaccessible("PublicToPrivateNestedClass") { PublicTopLevelClass_PublicToPrivateNestedClass_anyReturnType() }
     success("PublicTopLevelClass.PublicToInternalInnerClass") { PublicTopLevelClass_PublicToInternalInnerClass_valueParameter(null) }
     successViaException("PublicTopLevelClass.PublicToInternalInnerClass") { PublicTopLevelClass_PublicToInternalInnerClass_returnType() }
-    // TODO: KT-54469, creating instance of PublicTopLevelClass.PublicToInternalInnerClass in another module should fail.
     success("PublicTopLevelClass.PublicToInternalInnerClass") { PublicTopLevelClass_PublicToInternalInnerClass_anyReturnType() }
     success("PublicTopLevelClass.PublicToProtectedInnerClass") { PublicTopLevelClass_PublicToProtectedInnerClass_valueParameter(null) }
     successViaException("PublicTopLevelClass.PublicToProtectedInnerClass") { PublicTopLevelClass_PublicToProtectedInnerClass_returnType() }
@@ -27,7 +25,6 @@ fun box() = abiTest {
     successViaException("PublicTopLevelClass.PublicToPrivateInnerClass") { PublicTopLevelClass_PublicToPrivateInnerClass_returnType() }
     inaccessible("PublicToPrivateInnerClass") { PublicTopLevelClass_PublicToPrivateInnerClass_anyReturnType() }
 
-    // TODO: KT-54469, accessing PublicToInternalTopLevelClass and all nested classes should fail.
     success("PublicToInternalTopLevelClass") { PublicToInternalTopLevelClass_valueParameter(null) }
     successViaException("PublicToInternalTopLevelClass") { PublicToInternalTopLevelClass_returnType() }
     success("PublicToInternalTopLevelClass") { PublicToInternalTopLevelClass_anyReturnType() }
@@ -73,7 +70,6 @@ fun box() = abiTest {
     unlinkedConstructorSymbol("/PublicToPrivateTopLevelClass.<init>") { PublicToPrivateTopLevelClass_PublicToPrivateInnerClass_anyReturnType() }
 
     success("PublicTopLevelClassInheritor") { PublicTopLevelClassInheritor() }
-    // TODO: KT-54469, creating instance of PublicToInternalTopLevelClassInheritor should fail.
     success("PublicToInternalTopLevelClassInheritor") { PublicToInternalTopLevelClassInheritor() }
     expectFailure(linkage("Constructor 'PublicToPrivateTopLevelClassInheritor.<init>' can not be called: Class 'PublicToPrivateTopLevelClassInheritor' uses unlinked class symbol '/PublicToPrivateTopLevelClass'")) { PublicToPrivateTopLevelClassInheritor() }
 }

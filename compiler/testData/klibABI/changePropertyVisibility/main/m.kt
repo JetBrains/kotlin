@@ -10,23 +10,19 @@ fun box() = abiTest {
     success("publicToInternalTopLevelProperty2.v2") { publicToInternalTopLevelProperty2 } // Signature remains the same.
     success("publicToInternalPATopLevelProperty1.v2") { publicToInternalPATopLevelProperty1 } // Signature remains the same.
     success("publicToInternalPATopLevelProperty2.v2") { publicToInternalPATopLevelProperty2 } // Signature remains the same.
-    unlinkedSymbol("/publicToPrivateTopLevelProperty1.<get-publicToPrivateTopLevelProperty1>") { publicToPrivateTopLevelProperty1 } // Signature changed.
-    unlinkedSymbol("/publicToPrivateTopLevelProperty2.<get-publicToPrivateTopLevelProperty2>") { publicToPrivateTopLevelProperty2 } // Signature changed.
+    unlinkedTopLevelPrivateSymbol("/publicToPrivateTopLevelProperty1.<get-publicToPrivateTopLevelProperty1>") { publicToPrivateTopLevelProperty1 } // Signature changed.
+    unlinkedTopLevelPrivateSymbol("/publicToPrivateTopLevelProperty2.<get-publicToPrivateTopLevelProperty2>") { publicToPrivateTopLevelProperty2 } // Signature changed.
 
     success("Container.publicToProtectedProperty1.v2") { c.publicToProtectedProperty1 } // Signature remains the same.
     success("Container.publicToProtectedProperty1.v2") { ci.publicToProtectedProperty1 } // Signature remains the same.
     success("Container.publicToProtectedProperty2.v2") { c.publicToProtectedProperty2 } // Signature remains the same.
     success("Container.publicToProtectedProperty2.v2") { ci.publicToProtectedProperty2 } // Signature remains the same.
-    // TODO: KT-54469, Container.publicToInternalProperty1 should fail because it is accessed from another module.
     success("Container.publicToInternalProperty1.v2") { c.publicToInternalProperty1 } // Signature remains the same.
     unlinkedSymbol("/ContainerImpl.publicToInternalProperty1.<get-publicToInternalProperty1>") { ci.publicToInternalProperty1 } // FOs are not generated for internal members from other module.
-    // TODO: KT-54469, Container.publicToInternalProperty2 should fail because it is accessed from another module.
     success("Container.publicToInternalProperty2.v2") { c.publicToInternalProperty2 } // Signature remains the same.
     unlinkedSymbol("/ContainerImpl.publicToInternalProperty2.<get-publicToInternalProperty2>") { ci.publicToInternalProperty2 }  // FOs are not generated for internal members from other module.
-    // TODO: KT-54469, Container.publicToInternalPAProperty1 should fail because it is accessed from another module.
     success("Container.publicToInternalPAProperty1.v2") { c.publicToInternalPAProperty1 } // Signature remains the same.
     unlinkedSymbol("/ContainerImpl.publicToInternalPAProperty1.<get-publicToInternalPAProperty1>") { ci.publicToInternalPAProperty1 }  // FOs are not generated for internal members from other module.
-    // TODO: KT-54469, Container.publicToInternalPAProperty2 should fail because it is accessed from another module.
     success("Container.publicToInternalPAProperty2.v2") { c.publicToInternalPAProperty2 } // Signature remains the same.
     unlinkedSymbol("/ContainerImpl.publicToInternalPAProperty2.<get-publicToInternalPAProperty2>") { ci.publicToInternalPAProperty2 }  // FOs are not generated for internal members from other module.
     inaccessible("publicToPrivateProperty1.<get-publicToPrivateProperty1>") { c.publicToPrivateProperty1 } // Inaccessible from other module though signature remains the same.
@@ -125,6 +121,14 @@ private inline fun TestBuilder.success(expectedOutcome: String, noinline block: 
 private inline fun TestBuilder.unlinkedSymbol(signature: String, noinline block: () -> Unit) {
     val accessorName = signature.removePrefix("/").split('.').takeLast(2).joinToString(".")
     expectFailure(linkage("Property accessor '$accessorName' can not be called: No property accessor found for symbol '$signature'"), block)
+}
+
+private inline fun TestBuilder.unlinkedTopLevelPrivateSymbol(signature: String, noinline block: () -> Unit) {
+    if (testMode == NATIVE_CACHE_STATIC_EVERYWHERE) {
+        val accessorName = signature.removePrefix("/").split('.').takeLast(2).joinToString(".")
+        expectFailure(linkage("Property accessor '$accessorName' can not be called: Private property accessor declared in module <lib1> can not be accessed in module <main>"), block)
+    } else
+        unlinkedSymbol(signature, block)
 }
 
 private inline fun TestBuilder.inaccessible(accessorName: String, noinline block: () -> Unit) = expectFailure(

@@ -242,3 +242,16 @@ enum class StableEnum {
     abstract val test: String
 }
 
+// This is required to check that the guard condition initially added in commit
+// https://github.com/JetBrains/kotlin/blob/2a4d8800374578c1aa9ec9c996b393a98f5a6e3b/kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/serialization/KonanIrlinker.kt#L701
+// does not break Native codegen anymore.
+class StableInheritorOfClassThatUsesPrivateTopLevelClass : AbstractIterator<String>() {
+    private var i = 0
+    public override fun computeNext() {
+        if (i < 5) setNext((i++).toString()) else done()
+    }
+}
+
+fun testStableInheritorOfClassThatUsesPrivateTopLevelClass(): String = buildString {
+    for (s in StableInheritorOfClassThatUsesPrivateTopLevelClass()) append(s)
+}

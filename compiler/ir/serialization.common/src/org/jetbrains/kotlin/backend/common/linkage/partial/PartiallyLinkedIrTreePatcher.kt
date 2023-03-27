@@ -624,7 +624,7 @@ internal class PartiallyLinkedIrTreePatcher(
                 return null
 
             // Do the minimal visibility check: Make sure that private declaration is not used outside its declaring entity.
-            // This should be enough to fix KT-54469 (cases #2 and #3).
+            // This should be enough to fix KT-54469 (cases #1-#3).
 
             val signature = symbol.signature
             if (signature != null

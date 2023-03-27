@@ -210,4 +210,6 @@ fun box() = abiTest {
 
     expectSuccess { StableEnum.FOO.test }
     expectSuccess { StableEnum.BAR.test }
+
+    expectSuccess("01234") { testStableInheritorOfClassThatUsesPrivateTopLevelClass() }
 }
