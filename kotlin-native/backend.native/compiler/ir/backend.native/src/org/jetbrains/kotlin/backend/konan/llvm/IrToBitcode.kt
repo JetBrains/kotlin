@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.backend.konan.cgen.CBridgeOrigin
 import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.llvm.coverage.LLVMCoverageInstrumentation
+import org.jetbrains.kotlin.backend.konan.llvm.objcexport.ObjCExportBlockCodeGenerator
 import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_STATIC_GLOBAL_INITIALIZER
 import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_STATIC_STANDALONE_THREAD_LOCAL_INITIALIZER
@@ -436,7 +437,9 @@ internal class CodeGeneratorVisitor(
 
         runAndProcessInitializers(null) {
             // Note: it is here because it also generates some bitcode.
-            generationState.objCExport.generate(codegen)
+            if (context.config.target.family.isAppleFamily && generationState.shouldDefineFunctionClasses) {
+                ObjCExportBlockCodeGenerator(codegen).generate()
+            }
 
             codegen.objCDataGenerator?.finishModule()
 

@@ -64,7 +64,6 @@ private fun staticGnuArCommands(ar: String, executable: ExecutableFile,
 abstract class LinkerFlags(val configurables: Configurables) {
 
     protected val llvmBin = "${configurables.absoluteLlvmHome}/bin"
-    protected val llvmLib = "${configurables.absoluteLlvmHome}/lib"
 
     open val useCompilerDriverAsLinker: Boolean get() = false // TODO: refactor.
 

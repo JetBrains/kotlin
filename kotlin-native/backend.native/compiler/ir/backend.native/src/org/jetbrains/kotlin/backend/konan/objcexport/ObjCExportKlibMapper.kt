@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.backend.konan.objcexport
 
+import org.jetbrains.kotlin.backend.konan.KonanConfig
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.SourceFile
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.DeserializedSourceFile
 import org.jetbrains.kotlin.library.metadata.kotlinLibrary
+import org.jetbrains.kotlin.library.metadata.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
 /**
@@ -87,7 +89,22 @@ data class ObjCExportFrameworkStructure(
 
 data class ObjCExportStructure(
         val frameworks: List<ObjCExportFrameworkStructure>
-)
+) {
+    fun reverseTopSortFrameworks(config: KonanConfig): List<ObjCExportFrameworkStructure> {
+        val frameworkByModule = frameworks.flatMap { framework -> framework.modulesInfo.map { it.module.kotlinLibrary to framework } }.toMap()
+        val visitedFrameworks = mutableSetOf<ObjCExportFrameworkStructure>()
+        val result = mutableListOf<ObjCExportFrameworkStructure>()
+        val sortedLibraries = config.resolvedLibraries.getFullList(TopologicalLibraryOrder)
+        sortedLibraries.forEach {
+            val frameworkStructure = frameworkByModule[it] ?: return@forEach
+            if (frameworkStructure !in visitedFrameworks) {
+                visitedFrameworks += frameworkStructure
+                result += frameworkStructure
+            }
+        }
+        return result
+    }
+}
 
 /**
  * Maps [KotlinLibrary] to a framework.

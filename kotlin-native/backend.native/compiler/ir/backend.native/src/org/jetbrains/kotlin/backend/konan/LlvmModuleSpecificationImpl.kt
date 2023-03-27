@@ -72,7 +72,7 @@ internal class ObjCExportLlvmModuleSpecification() : LlvmModuleSpecification {
             true
 
     override fun importsKotlinDeclarationsFromOtherSharedLibraries(): Boolean =
-            false
+            true
 
     //
     override fun containsLibrary(library: KotlinLibrary): Boolean = false

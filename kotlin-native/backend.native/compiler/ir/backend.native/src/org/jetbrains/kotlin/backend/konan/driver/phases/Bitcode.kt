@@ -168,7 +168,7 @@ internal fun PhaseEngine<NativeGenerationState>.runBitcodePostProcessing(compila
     val optimizationConfig = createLTOFinalPipelineConfig(
             context,
             context.llvm.targetTriple,
-            closedWorld = context.llvmModuleSpecification.isFinal,
+            closedWorld = false,//context.llvmModuleSpecification.isFinal,
             timePasses = config.flexiblePhaseConfig.needProfiling,
     )
     useContext(OptimizationState(config, optimizationConfig)) {

@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.backend.konan.llvm.CodeGeneratorVisitor
 import org.jetbrains.kotlin.backend.konan.llvm.Lifetime
 import org.jetbrains.kotlin.backend.konan.llvm.RTTIGeneratorVisitor
 import org.jetbrains.kotlin.backend.konan.llvm.createLlvmDeclarations
-import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -64,16 +63,7 @@ internal val CodegenPhase = createSimpleNamedCompilerPhase<NativeGenerationState
         preactions = getDefaultIrActions<CodegenInput, NativeGenerationState>() + getDefaultLlvmModuleActions(),
         postactions = getDefaultIrActions<CodegenInput, NativeGenerationState>() + getDefaultLlvmModuleActions(),
         op = { generationState, input ->
-            val context = generationState.context
-            generationState.objCExport = ObjCExport(
-                    generationState,
-                    input.irModule.descriptor,
-                    context.objCExportedInterface,
-                    context.objCExportCodeSpec
-            )
-
             input.irModule.acceptVoid(CodeGeneratorVisitor(generationState, input.irModule.irBuiltins, input.lifetimes))
-
             if (generationState.hasDebugInfo())
                 DIFinalize(generationState.debugInfo.builder)
         }

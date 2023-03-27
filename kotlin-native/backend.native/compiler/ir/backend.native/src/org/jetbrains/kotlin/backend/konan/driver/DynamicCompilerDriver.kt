@@ -9,14 +9,15 @@ import kotlinx.cinterop.usingJvmCInteropCallbacks
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.driver.phases.*
+import org.jetbrains.kotlin.backend.konan.driver.utilities.*
 import org.jetbrains.kotlin.backend.konan.driver.utilities.CompilationFiles
 import org.jetbrains.kotlin.backend.konan.driver.utilities.createCompilationFiles
+import org.jetbrains.kotlin.backend.konan.driver.utilities.createLinkerFrameworkFiles
 import org.jetbrains.kotlin.backend.konan.driver.utilities.createObjCExportCompilationFiles
 import org.jetbrains.kotlin.backend.konan.driver.utilities.createTempFiles
 import org.jetbrains.kotlin.backend.konan.getIncludedLibraryDescriptors
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportGlobalConfig
-import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportFrameworkInfo
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
@@ -27,6 +28,40 @@ import org.jetbrains.kotlin.library.metadata.kotlinLibrary
 import java.io.Closeable
 import java.io.File
 
+internal data class ObjCParts(
+        val exportedInterface: ObjCExportedInterface,
+        val codespec: ObjCExportCodeSpec,
+) {
+    companion object {
+
+        fun topologicalSort(parts: List<ObjCParts>): List<ObjCExportFrameworkId> {
+
+            val adjList = hashMapOf<ObjCExportFrameworkId, MutableList<ObjCExportFrameworkId>>()
+            val visited = mutableSetOf<ObjCExportFrameworkId>()
+            val stack = mutableListOf<ObjCExportFrameworkId>()
+
+            parts.forEach {
+                adjList[it.exportedInterface.frameworkId] = it.exportedInterface.dependencies.map { it.frameworkId }.distinct().toMutableList()
+            }
+
+            fun topologicalSortUtil(v: ObjCExportFrameworkId) {
+                visited += v
+                adjList[v]?.forEach {
+                    if (v !in visited) {
+                        topologicalSortUtil(it)
+                    }
+                }
+                stack += v
+            }
+            parts.forEach {
+                if (it.exportedInterface.frameworkId !in visited) {
+                    topologicalSortUtil(it.exportedInterface.frameworkId)
+                }
+            }
+            return stack
+        }
+    }
+}
 
 /**
  * Dynamic driver does not "know" upfront which phases will be executed.
@@ -92,33 +127,61 @@ internal class DynamicCompilerDriver(
             ))
         }
         val objcExportStructure = ObjCExportStructure(headerInfos)
-
         val objCExportGlobalConfig = ObjCExportGlobalConfig.create(config, frontendOutput.frontendServices,
                 stdlibPrefix = "Kotlin")
         val objCExportedInterfaces = engine.runPhase(ProduceObjCExportMultipleInterfacesPhase, ProduceObjCExportInterfaceInput(
                 globalConfig = objCExportGlobalConfig,
                 structure = objcExportStructure,
         ))
-        objCExportedInterfaces.forEach { (headerInfo, objCExportedInterface) ->
+        objCExportedInterfaces.forEach { objCExportedInterface ->
+            val frameworkDirectory = (files.getComponent<CompilationFiles.Component.FrameworkDirectory>().value).parentFile.resolve("${objCExportedInterface.frameworkName}.framework")
             engine.runPhase(CreateObjCFrameworkPhase, CreateObjCFrameworkInput(
                     frontendOutput.moduleDescriptor,
                     objCExportedInterface,
-                    (files.getComponent<CompilationFiles.Component.FrameworkDirectory>().value).parentFile.resolve("${headerInfo.name}.framework")
+                    frameworkDirectory
             ))
-            if (config.omitFrameworkBinary) {
-                return@forEach
+        }
+        if (config.omitFrameworkBinary) {
+            return
+        }
+        val (psiToIrOutput, codespecs) = engine.runPsiToIr(frontendOutput, isProducingLibrary = false) { psiToIrEngine ->
+            objCExportedInterfaces.map { objCExportedInterface ->
+                psiToIrEngine.runPhase(CreateObjCExportCodeSpecPhase, objCExportedInterface)
             }
-            val (psiToIrOutput, objCCodeSpec) = engine.runPsiToIr(frontendOutput, isProducingLibrary = false) {
-                it.runPhase(CreateObjCExportCodeSpecPhase, objCExportedInterface)
+        }
+        val parts = objCExportedInterfaces.zip(codespecs).map { ObjCParts(it.first, it.second) }
+        val sortedFrameworks = ObjCParts.topologicalSort(parts)
+        require(psiToIrOutput is PsiToIrOutput.ForBackend)
+        val backendContext = createBackendContext(config, frontendOutput, psiToIrOutput)
+        val (mainFile, resolvedCaches, dependencies) = engine.compileMainFrameworkBinary(backendContext, psiToIrOutput.irModule, files)
+        sortedFrameworks.forEach { frameworkId ->
+            val (objCExportedInterface, objCCodeSpec) = parts.single { it.exportedInterface.frameworkId == frameworkId }
+            val objcExportCompilationFiles = createObjCExportCompilationFiles(objCExportedInterface.frameworkName, tempFiles, outputFiles)
+            engine.runObjCExportCodegen(backendContext, objCExportedInterface, objCCodeSpec, objcExportCompilationFiles, objCExportedInterface.frameworkName)
+            val objectFile = objcExportCompilationFiles.getComponent<CompilationFiles.Component.ModuleObjectFile>().file()
+            engine.runPhase(ObjectFilesPhase, ObjectFilesPhaseInput(
+                    objcExportCompilationFiles.getComponent<CompilationFiles.Component.ModuleBitcode>().file(),
+                    objectFile,
+            ))
+            val frameworkDirectory = (files.getComponent<CompilationFiles.Component.FrameworkDirectory>().value).parentFile.resolve("${objCExportedInterface.frameworkName}.framework")
+            val frameworkLinkerFiles = createLinkerFrameworkFiles(config, frameworkDirectory)
+            val additionalLinkerFlags = (listOf("-F", frameworkDirectory.parentFile.absoluteFile.absolutePath) + objCExportedInterface.dependencies
+                    .map { it.frameworkId.name }.distinct()
+                    .flatMap { listOf("-framework", it) }).toMutableList()
+            val (objectFiles, caches, deps) = if (frameworkId.name == "Kotlin") {
+                Triple(listOf(objectFile, mainFile), resolvedCaches, dependencies)
+            } else {
+                additionalLinkerFlags += listOf("-framework", "Kotlin")
+                Triple(listOf(objectFile), ResolvedCacheBinaries(emptyList(), emptyList()), DependenciesTrackingResult.Empty)
             }
-            require(psiToIrOutput is PsiToIrOutput.ForBackend)
-            val backendContext = createBackendContext(config, frontendOutput, psiToIrOutput) {
-                it.objCExportedInterface = objCExportedInterface
-                it.objCExportCodeSpec = objCCodeSpec
-            }
-//        engine.runBackend(backendContext, psiToIrOutput.irModule, files)
-            val objcExportCompilationFiles = createObjCExportCompilationFiles(tempFiles, outputFiles)
-            engine.runObjCExportCodegen(backendContext, objCExportedInterface, objCCodeSpec, objcExportCompilationFiles, "objcexport")
+            engine.link(
+                    objectFiles,
+                    caches,
+                    deps,
+                    frameworkLinkerFiles,
+                    additionalLinkerFlags = additionalLinkerFlags,
+                    isCoverageEnabled = false,
+            )
         }
     }
 

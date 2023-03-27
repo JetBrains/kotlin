@@ -5,12 +5,10 @@
 
 package org.jetbrains.kotlin.backend.konan.objcexport
 
-import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.konan.KonanConfig
+import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
-import org.jetbrains.kotlin.backend.konan.llvm.CodeGenerator
-import org.jetbrains.kotlin.backend.konan.llvm.objcexport.ObjCExportBlockCodeGenerator
-import org.jetbrains.kotlin.backend.konan.llvm.objcexport.ObjCExportCodeGenerator
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -20,14 +18,19 @@ import org.jetbrains.kotlin.konan.file.createTempFile
 import java.io.File
 
 internal class ObjCExportedInterface(
+        val frameworkId: ObjCExportFrameworkId,
         val generatedClasses: Set<ClassDescriptor>,
         val categoryMembers: Map<ClassDescriptor, List<CallableMemberDescriptor>>,
         val topLevel: Map<SourceFile, List<CallableMemberDescriptor>>,
         val headerLines: List<String>,
         val namer: ObjCExportNamer,
         val stdlibNamer: ObjCExportStdlibNamer,
-        val mapper: ObjCExportMapper
-)
+        val mapper: ObjCExportMapper,
+        val dependencies: Set<ObjCExportHeaderId>,
+) {
+    val frameworkName: String
+        get() = frameworkId.name
+}
 
 internal fun createObjCExportHeaderGenerator(
         context: PhaseContext,
@@ -84,50 +87,6 @@ internal fun createObjCFramework(
             exportedInterface.headerLines,
             moduleDependencies = setOf("Foundation")
     )
-}
-
-// TODO: No need for such class in dynamic driver.
-internal class ObjCExport(
-        private val generationState: NativeGenerationState,
-        moduleDescriptor: ModuleDescriptor,
-        private val exportedInterface: ObjCExportedInterface?,
-        private val codeSpec: ObjCExportCodeSpec?
-) {
-    private val config = generationState.config
-    private val target get() = config.target
-    private val topLevelNamePrefix get() = generationState.objCExportTopLevelNamePrefix
-
-    val mapper: ObjCExportMapper = exportedInterface?.mapper ?: ObjCExportMapper(unitSuspendFunctionExport = config.unitSuspendFunctionObjCExport)
-
-    val namer: ObjCExportNamer = exportedInterface?.namer ?: ObjCExportNamerImpl(
-            setOf(ObjCExportModuleInfo(moduleDescriptor, true)),
-            moduleDescriptor.builtIns,
-            ObjCExportStdlibNamer.create(topLevelNamePrefix),
-            mapper,
-            topLevelNamePrefix,
-            local = false
-    )
-
-    val stdlibNamer: ObjCExportStdlibNamer = exportedInterface?.stdlibNamer ?: ObjCExportStdlibNamer.create(
-            topLevelNamePrefix
-    )
-
-    internal fun generate(codegen: CodeGenerator) {
-        if (!target.family.isAppleFamily) return
-
-        if (generationState.shouldDefineFunctionClasses) {
-            ObjCExportBlockCodeGenerator(codegen).generate()
-        }
-
-        if (!config.isFinalBinary) return // TODO: emit RTTI to the same modules as classes belong to.
-
-        val objCCodeGenerator = ObjCExportCodeGenerator(codegen, namer, mapper, stdlibNamer)
-
-        exportedInterface?.generateWorkaroundForSwiftSR10177(generationState)
-
-        objCCodeGenerator.generate(codeSpec)
-        objCCodeGenerator.dispose()
-    }
 }
 
 // See https://bugs.swift.org/browse/SR-10177

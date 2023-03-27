@@ -1154,9 +1154,19 @@ abstract class ObjCExportHeaderGenerator internal constructor(
         add("NS_ASSUME_NONNULL_END")
     }
 
-    internal fun buildInterface(dependencies: Set<ObjCExportHeaderId>): ObjCExportedInterface {
+    internal fun buildInterface(dependencies: Set<ObjCExportHeaderId>, frameworkId: ObjCExportFrameworkId): ObjCExportedInterface {
         val headerLines = build(dependencies)
-        return ObjCExportedInterface(generatedClasses, extensions, topLevel, headerLines, namer, stdlibNamer, mapper)
+        return ObjCExportedInterface(
+                frameworkId,
+                generatedClasses,
+                extensions,
+                topLevel,
+                headerLines,
+                namer,
+                stdlibNamer,
+                mapper,
+                dependencies,
+        )
     }
 
     fun getExportStubs(): ObjCExportedStubs =

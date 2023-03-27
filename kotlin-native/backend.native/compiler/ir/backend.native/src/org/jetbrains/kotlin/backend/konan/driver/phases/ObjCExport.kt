@@ -35,7 +35,7 @@ internal data class ProduceObjCExportInterfaceInput(
 //    produceObjCExportInterface(headerGenerator)
 //}
 
-internal val ProduceObjCExportMultipleInterfacesPhase = createSimpleNamedCompilerPhase<PhaseContext, ProduceObjCExportInterfaceInput, Map<ObjCExportFrameworkStructure,ObjCExportedInterface>>(
+internal val ProduceObjCExportMultipleInterfacesPhase = createSimpleNamedCompilerPhase<PhaseContext, ProduceObjCExportInterfaceInput, List<ObjCExportedInterface>>(
         "ObjCExportInterface",
         "Objective-C header generation",
         outputIfNotEnabled = { _, _, _, _ -> error("Cannot disable `ObjCExportInterface` phase when producing ObjC framework") }
@@ -48,7 +48,7 @@ internal val ProduceObjCExportMultipleInterfacesPhase = createSimpleNamedCompile
     val mapper = ObjCExportMapper(globalConfig.frontendServices.deprecationResolver, unitSuspendFunctionExport = globalConfig.unitSuspendFunctionExport)
     val namerProxy = ObjCExportNamerProxy(namerProvider, headerIdProvider)
     val headerToGeneratorMapping = mutableMapOf<ObjCExportFrameworkId, ObjCExportClassGenerator>()
-    val headerGenerators = structure.frameworks.associateWith { frameworkStructure ->
+    val headerGenerators = structure.reverseTopSortFrameworks(context.config).associateWith { frameworkStructure ->
         val objCExportHeaderGeneratorImpl = ObjCExportHeaderGeneratorImpl(context, frameworkStructure.modulesInfo, mapper, namerProxy, namerProvider.getStdlibNamer(),
                 objcGenerics = globalConfig.objcGenerics)
         frameworkStructure.modulesInfo.forEach { moduleInfo ->
@@ -75,9 +75,9 @@ internal val ProduceObjCExportMultipleInterfacesPhase = createSimpleNamedCompile
     while (headerGenerators.values.any { it.hasPendingRequests() }) {
         headerGenerators.values.filter { it.hasPendingRequests() }.forEach { it.processRequests() }
     }
-    headerGenerators.mapValues { (_, headerGenerator) ->
+    headerGenerators.map { (frameworkStructure, headerGenerator) ->
         val deps = listOfDependenciesPerGenerator[headerGenerator] ?: emptySet()
-        headerGenerator.buildInterface(deps)
+        headerGenerator.buildInterface(deps, ObjCExportFrameworkId(frameworkStructure.name))
     }
 }
 

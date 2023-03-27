@@ -19,7 +19,8 @@ internal data class LinkerPhaseInput(
         val resolvedCacheBinaries: ResolvedCacheBinaries,
         val isCoverageEnabled: Boolean,
         val symbolicInfoFile: String,
-        val installName: String? = null
+        val additionalLinkerFlags: List<String> = emptyList(),
+        val installName: String? = null,
 )
 internal val LinkerPhase = createSimpleNamedCompilerPhase<PhaseContext, LinkerPhaseInput>(
         name = "Linker",
@@ -35,6 +36,7 @@ internal val LinkerPhase = createSimpleNamedCompilerPhase<PhaseContext, LinkerPh
             input.dependenciesTrackingResult,
             input.resolvedCacheBinaries,
             input.symbolicInfoFile,
+            input.additionalLinkerFlags,
             installName = input.installName,
             isCoverageEnabled = input.isCoverageEnabled
     )

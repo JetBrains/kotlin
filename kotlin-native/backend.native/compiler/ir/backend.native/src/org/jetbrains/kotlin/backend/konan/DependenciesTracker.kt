@@ -372,4 +372,12 @@ data class DependenciesTrackingResult(
         val nativeDependenciesToLink: List<KonanLibrary>,
         val allNativeDependencies: List<KonanLibrary>,
         val allCachedBitcodeDependencies: List<DependenciesTracker.ResolvedDependency>
-)
+) {
+    companion object {
+        val Empty = DependenciesTrackingResult(
+                nativeDependenciesToLink = emptyList(),
+                allNativeDependencies = emptyList(),
+                allCachedBitcodeDependencies = emptyList()
+        )
+    }
+}

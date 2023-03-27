@@ -49,6 +49,7 @@ internal class Linker(
             dependenciesTrackingResult: DependenciesTrackingResult,
             caches: ResolvedCacheBinaries,
             symbolicInfoFile: String,
+            additionalLinkerFlags: List<String>,
             installName: String? = null,
             isCoverageEnabled: Boolean = false,
     ): List<Command> {
@@ -63,10 +64,10 @@ internal class Linker(
         val installNameArgument = installName?.let { listOf("-install_name", it) } ?: emptyList()
 
         // TODO: flag to control dead strip
-        val linkerArgs = asLinkerArgs(config.configuration.getNotNull(KonanConfigKeys.LINKER_ARGS)) +
+        val linkerArgs: List<String> = asLinkerArgs(config.configuration.getNotNull(KonanConfigKeys.LINKER_ARGS)) +
                 BitcodeEmbedding.getLinkerOptions(config) +
                 caches.dynamic +
-                libraryProvidedLinkerFlags + installNameArgument
+                libraryProvidedLinkerFlags + installNameArgument + additionalLinkerFlags
 
         return linker.finalLinkCommands(
                 objectFiles = objectFiles,

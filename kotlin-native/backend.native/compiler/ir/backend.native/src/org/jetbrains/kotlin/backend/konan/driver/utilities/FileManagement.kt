@@ -122,7 +122,7 @@ internal fun createCompilationFiles(
         )
     }
     if (config.produce.isCache) {
-        val tempCacheDirectory = File(outputName + Random.nextLong().toString())
+        val tempCacheDirectory = File(outputName + Random.nextLong().toString()).also { it.mkdirs() }
         val outputDirectory = File(outputName)
         components += CompilationFiles.Component.CacheDirectories(
                 tempCacheDirectory = tempCacheDirectory,
@@ -140,16 +140,8 @@ internal fun createCompilationFiles(
     }
     if (config.produce == CompilerOutputKind.FRAMEWORK) {
         val frameworkDirectory = File(config.outputPath).absoluteFile
-        val dylibName = frameworkDirectory.name.removeSuffix(".framework")
-        val dylibRelativePath = when (config.target.family) {
-            Family.IOS,
-            Family.TVOS,
-            Family.WATCHOS -> dylibName
-            Family.OSX -> "Versions/A/$dylibName"
-            else -> error(config.target)
-        }
-        components += CompilationFiles.Component.InstallName("@rpath/${frameworkDirectory.name}/${dylibRelativePath}")
-        components += CompilationFiles.Component.LinkerOutput(frameworkDirectory.resolve(dylibRelativePath))
+        val frameworkLinkerFiles = createLinkerFrameworkFiles(config, frameworkDirectory)
+        components += frameworkLinkerFiles.components
         components += CompilationFiles.Component.FrameworkDirectory(frameworkDirectory)
     }
 
@@ -173,6 +165,21 @@ internal fun createCompilationFiles(
         CompilerOutputKind.DYNAMIC -> components += CompilationFiles.Component.LinkerOutput(File(config.outputPath))
         else -> {}
     }
+    return CompilationFiles(components)
+}
+
+internal fun createLinkerFrameworkFiles(config: KonanConfig, frameworkDirectory: File): CompilationFiles {
+    val components = mutableSetOf<CompilationFiles.Component>()
+    val dylibName = frameworkDirectory.name.removeSuffix(".framework")
+    val dylibRelativePath = when (config.target.family) {
+        Family.IOS,
+        Family.TVOS,
+        Family.WATCHOS -> dylibName
+        Family.OSX -> "Versions/A/$dylibName"
+        else -> error(config.target)
+    }
+    components += CompilationFiles.Component.InstallName("@rpath/${frameworkDirectory.name}/${dylibRelativePath}")
+    components += CompilationFiles.Component.LinkerOutput(frameworkDirectory.resolve(dylibRelativePath))
     return CompilationFiles(components)
 }
 
@@ -200,13 +207,17 @@ internal fun createModuleCompilationFiles(
 }
 
 internal fun createObjCExportCompilationFiles(
+        frameworkName: String,
         temporaryFiles: TempFiles,
         outputFiles: OutputFiles,
 ): CompilationFiles {
     val components = mutableSetOf<CompilationFiles.Component>()
     components += CompilationFiles.Component.ModuleBitcode {
-        temporaryFiles.create("objcexport", ".bc").javaFile()
+        temporaryFiles.create(frameworkName, ".bc").javaFile()
     }
     components += CompilationFiles.Component.DebugInfo(outputFiles.mainFileName)
+    components += CompilationFiles.Component.ModuleObjectFile {
+        temporaryFiles.create(frameworkName, ".o").javaFile()
+    }
     return CompilationFiles(components)
 }
