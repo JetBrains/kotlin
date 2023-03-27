@@ -56,9 +56,6 @@ constructor(
             binaryenDsl()
         }
 
-        binary.compilation.compileTaskProvider.configure {
-            it.finalizedBy(binaryenTask)
-        }
         binary.linkSyncTask.configure {
             it.dependsOn(binaryenTask)
         }

@@ -1987,10 +1987,8 @@ open class NewMultiplatformIT : BaseGradleIT() {
         build(":wasm${name}Test") {
             assertTasksExecuted(":compileKotlinWasm")
             if (useBinaryen) {
-                assertTasksExecuted(":compileTestProductionExecutableKotlinWasmOptimize")
                 assertTasksExecuted(":compileTestDevelopmentExecutableKotlinWasmOptimize")
             } else {
-                assertTasksNotExecuted(":compileTestProductionExecutableKotlinWasmOptimize")
                 assertTasksNotExecuted(":compileTestDevelopmentExecutableKotlinWasmOptimize")
             }
             assertTasksFailed(":wasm${name}Test")
