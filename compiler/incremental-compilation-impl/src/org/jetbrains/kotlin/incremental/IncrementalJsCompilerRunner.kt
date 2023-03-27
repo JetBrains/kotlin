@@ -86,7 +86,7 @@ inline fun <R> withJsIC(args: CommonCompilerArguments, enabled: Boolean = true, 
 class IncrementalJsCompilerRunner(
     workingDir: File,
     reporter: BuildReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
-    buildHistoryFile: File,
+    buildHistoryFile: File?,
     private val modulesApiHistory: ModulesApiHistory,
     private val scopeExpansion: CompileScopeExpansionMode = CompileScopeExpansionMode.NEVER,
     withAbiSnapshot: Boolean = false,
@@ -125,6 +125,9 @@ class IncrementalJsCompilerRunner(
         messageCollector: MessageCollector,
         classpathAbiSnapshots: Map<String, AbiSnapshot> //Ignore for now
     ): CompilationMode {
+        if (buildHistoryFile == null) {
+            error("The build is configured to use the build-history based IC approach, but doesn't specify the buildHistoryFile")
+        }
         if (!withAbiSnapshot && !buildHistoryFile.isFile) {
             return CompilationMode.Rebuild(BuildAttribute.NO_BUILD_HISTORY)
         }

@@ -63,7 +63,7 @@ open class IncrementalJvmCompilerRunner(
     workingDir: File,
     reporter: BuildReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
     private val usePreciseJavaTracking: Boolean,
-    buildHistoryFile: File,
+    buildHistoryFile: File?,
     outputDirs: Collection<File>?,
     private val modulesApiHistory: ModulesApiHistory,
     override val kotlinSourceFilesExtensions: List<String> = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS,
@@ -207,7 +207,10 @@ open class IncrementalJvmCompilerRunner(
             is NotAvailableDueToMissingClasspathSnapshot -> ChangesEither.Unknown(BuildAttribute.CLASSPATH_SNAPSHOT_NOT_FOUND)
             is NotAvailableForNonIncrementalRun -> ChangesEither.Unknown(BuildAttribute.UNKNOWN_CHANGES_IN_GRADLE_INPUTS)
             is ClasspathSnapshotDisabled -> reporter.measure(GradleBuildTime.IC_ANALYZE_CHANGES_IN_DEPENDENCIES) {
-                if (!withAbiSnapshot && !buildHistoryFile.isFile) {
+                if (buildHistoryFile == null) {
+                    error("The build is configured to use the build-history based IC approach, but doesn't specify the buildHistoryFile")
+                }
+                if (!withAbiSnapshot && buildHistoryFile.isFile != true) {
                     // If the previous build was a Gradle cache hit, the build history file must have been deleted as it is marked as
                     // @LocalState in the Gradle task. Therefore, this compilation will need to run non-incrementally.
                     // (Note that buildHistoryFile is outside workingDir. We don't need to perform the same check for files inside

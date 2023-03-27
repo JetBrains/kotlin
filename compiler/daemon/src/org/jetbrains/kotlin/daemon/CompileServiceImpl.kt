@@ -55,6 +55,7 @@ import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
+import org.jetbrains.kotlin.incremental.multiproject.EmptyModulesApiHistory
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistoryAndroid
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistoryJs
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistoryJvm
@@ -560,7 +561,7 @@ abstract class CompileServiceImplBase(
         val compiler = IncrementalJsCompilerRunner(
             workingDir = workingDir,
             reporter = reporter,
-            buildHistoryFile = incrementalCompilationOptions.multiModuleICSettings.buildHistoryFile,
+            buildHistoryFile = incrementalCompilationOptions.multiModuleICSettings?.buildHistoryFile,
             scopeExpansion = if (args.isIrBackendEnabled()) CompileScopeExpansionMode.ALWAYS else CompileScopeExpansionMode.NEVER,
             modulesApiHistory = modulesApiHistory,
             withAbiSnapshot = incrementalCompilationOptions.withAbiSnapshot,
@@ -605,15 +606,15 @@ abstract class CompileServiceImplBase(
 
         val workingDir = incrementalCompilationOptions.workingDir
 
-        val modulesApiHistory = incrementalCompilationOptions.run {
-            reporter.info { "Use module detection: ${multiModuleICSettings.useModuleDetection}" }
+        val modulesApiHistory = incrementalCompilationOptions.multiModuleICSettings?.run {
+            reporter.info { "Use module detection: ${useModuleDetection}" }
 
-            if (!multiModuleICSettings.useModuleDetection) {
-                ModulesApiHistoryJvm(modulesInfo)
+            if (!useModuleDetection) {
+                ModulesApiHistoryJvm(incrementalCompilationOptions.modulesInfo)
             } else {
-                ModulesApiHistoryAndroid(modulesInfo)
+                ModulesApiHistoryAndroid(incrementalCompilationOptions.modulesInfo)
             }
-        }
+        } ?: EmptyModulesApiHistory
 
         val projectRoot = incrementalCompilationOptions.modulesInfo.projectRoot
         val useK2 = k2jvmArgs.useK2 || LanguageVersion.fromVersionString(k2jvmArgs.languageVersion)?.usesK2 == true
@@ -624,7 +625,7 @@ abstract class CompileServiceImplBase(
         val compiler = IncrementalJvmCompilerRunner(
             workingDir,
             reporter,
-            buildHistoryFile = incrementalCompilationOptions.multiModuleICSettings.buildHistoryFile,
+            buildHistoryFile = incrementalCompilationOptions.multiModuleICSettings?.buildHistoryFile,
             outputDirs = incrementalCompilationOptions.outputFiles,
             usePreciseJavaTracking = usePreciseJavaTracking,
             modulesApiHistory = modulesApiHistory,
