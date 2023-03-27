@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.common.*
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.logging.*
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskLoggers
@@ -69,6 +70,7 @@ internal class GradleKotlinCompilerWorkArguments(
     val compilerExecutionSettings: CompilerExecutionSettings,
     val errorsFile: File?,
     val kotlinPluginVersion: String,
+    val kotlinLanguageVersion: KotlinVersion,
 ) : Serializable {
     companion object {
         const val serialVersionUID: Long = 1
@@ -106,6 +108,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
     private val compilerExecutionSettings = config.compilerExecutionSettings
     private val errorsFile = config.errorsFile
     private val kotlinPluginVersion = config.kotlinPluginVersion
+    private val kotlinLanguageVersion = config.kotlinLanguageVersion
 
     private val log: KotlinLogger =
         TaskLoggers.get(taskPath)?.let { GradleKotlinLogger(it).apply { debug("Using '$taskPath' logger") } }
@@ -138,6 +141,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
             throwExceptionIfCompilationFailed(exitCode, executionStrategy)
         } finally {
             val taskInfo = TaskExecutionInfo(
+                kotlinLanguageVersion = kotlinLanguageVersion,
                 changedFiles = incrementalCompilationEnvironment?.changedFiles,
                 compilerArguments = if (reportingSettings.includeCompilerArguments) compilerArgs else emptyArray(),
                 withAbiSnapshot = incrementalCompilationEnvironment?.withAbiSnapshot,

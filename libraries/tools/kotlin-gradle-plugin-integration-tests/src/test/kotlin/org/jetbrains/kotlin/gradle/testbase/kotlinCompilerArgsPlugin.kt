@@ -44,19 +44,13 @@ private fun File.updateSettingsGradle() {
 
 private fun File.updateBuildKtsGradle() {
     modify {
-        if (it.contains("buildscript {")) {
-            it.replaceFirst(
-                "dependencies {", "dependencies {\n" +
-                        "classpath(\"org.jetbrains.kotlin:kotlin-compiler-args-properties:${'$'}test_fixes_version\")"
-            )
-        } else {
-            it.replace(
-                "plugins {",
-                "plugins {\nid(\"org.jetbrains.kotlin.test.kotlin-compiler-args-properties\")"
-            )
-        }
+        it.replace(
+            "plugins {",
+            "plugins {\nid(\"org.jetbrains.kotlin.test.kotlin-compiler-args-properties\")"
+        )
     }
 }
+
 private fun File.updateBuildGradle() {
     modify {
         if (it.contains("buildscript {")) {

@@ -24,16 +24,18 @@ import kotlin.math.sign
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
 class ReportDataTest {
     private val kotlinTaskPath = "testKotlin"
 
     @Test
+    @Suppress("DEPRECATION")
     fun testTags() {
         TaskExecutionResults[kotlinTaskPath] = TaskExecutionResult(
             buildMetrics = BuildMetrics(buildAttributes = BuildAttributes()),
-            taskInfo = TaskExecutionInfo(),
-            icLogLines = emptyList()
+            taskInfo = TaskExecutionInfo(kotlinLanguageVersion = KotlinVersion.KOTLIN_1_4),
+            icLogLines = emptyList(),
         )
         val buildOperationRecord =
             taskRecord(BuildMetrics(buildAttributes = BuildAttributes().also { it.add(BuildAttribute.CLASSPATH_SNAPSHOT_NOT_FOUND) }))
@@ -48,8 +50,9 @@ class ReportDataTest {
         )
 
         assertNotNull(statisticData)
-        assertTrue(statisticData.tags.contains(StatTag.KOTLIN_DEBUG.name))
-        assertTrue(statisticData.tags.contains(StatTag.NON_INCREMENTAL.name))
+        assertTrue(statisticData.tags.contains(StatTag.KOTLIN_DEBUG))
+        assertTrue(statisticData.tags.contains(StatTag.NON_INCREMENTAL))
+        assertTrue(statisticData.tags.contains(StatTag.KOTLIN_1))
     }
 
     private fun taskRecord(buildMetrics: BuildMetrics) = TaskRecord(
@@ -60,7 +63,8 @@ class ReportDataTest {
         buildMetrics = buildMetrics,
         didWork = true,
         skipMessage = null,
-        icLogLines = emptyList()
+        icLogLines = emptyList(),
+        kotlinLanguageVersion = KotlinVersion.KOTLIN_1_8
     )
 
     @Test
