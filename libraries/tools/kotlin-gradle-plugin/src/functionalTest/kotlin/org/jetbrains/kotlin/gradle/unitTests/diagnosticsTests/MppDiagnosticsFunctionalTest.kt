@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.unitTests.diagnosticsTests
 
+import org.gradle.api.attributes.Attribute
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmWithJavaTargetPreset
 import org.jetbrains.kotlin.gradle.util.*
 import org.junit.Test
@@ -118,6 +119,35 @@ class MppDiagnosticsFunctionalTest {
                     val intermediateBetweenAndroid = create("intermediate")
                     androidMain.dependsOn(intermediateBetweenAndroid)
                     intermediateBetweenAndroid.dependsOn(commonMain)
+                }
+            }
+        }
+    }
+
+    @Test
+    fun targetsDisambiguation() {
+        checkDiagnosticsWithMppProject("targetsDisambiguation") {
+            kotlin {
+                val distinguishAttribute = Attribute.of(String::class.java)
+
+                // Simple case: no disambiguation -> warning reported
+                linuxArm64("linuxArm_A") { }
+                linuxArm64("linuxArm_B") { }
+
+                // Some targets are disambiguated and some are not -> warning reported, only on targets without attribute
+                jvm("jvm_A") { attributes { attribute(distinguishAttribute, "jvm1") } }
+                jvm("jvm_B") { attributes { attribute(distinguishAttribute, "jvm2") } }
+                jvm("jvm_C")
+                jvm("jvm_D")
+
+                // Targets formally have attribute, but values are the same -> warning reported
+                js("js_A") {
+                    browser()
+                    attributes { attribute(distinguishAttribute, "js") }
+                }
+                js("js_B") {
+                    browser()
+                    attributes { attribute(distinguishAttribute, "js") }
                 }
             }
         }
