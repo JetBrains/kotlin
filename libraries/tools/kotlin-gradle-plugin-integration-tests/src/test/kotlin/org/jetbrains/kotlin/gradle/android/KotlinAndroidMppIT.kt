@@ -539,7 +539,6 @@ class KotlinAndroidMppIT : MPPBaseTest() {
         }
     }
 
-    // AGP max version is limited due to https://youtrack.jetbrains.com/issue/KT-51940/HMPP-resolves-configurations-during-configuration
     @DisplayName("android app can depend on mpp lib")
     @GradleAndroidTest
     fun testAndroidWithNewMppApp(
