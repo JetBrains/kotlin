@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.gradle.targets.native.internal
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
-import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionType.*
-import org.jetbrains.kotlin.gradle.utils.SingleWarningPerBuild
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnosticOncePerBuild
+import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionType.LIGHT
+import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionType.PREBUILT
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 internal enum class NativeDistributionType(val suffix: String?, val mustGeneratePlatformLibs: Boolean) {
@@ -19,15 +21,13 @@ internal enum class NativeDistributionType(val suffix: String?, val mustGenerate
 internal class NativeDistributionTypeProvider(private val project: Project) {
     private val propertiesProvider = PropertiesProvider(project)
 
-    private fun warning(message: String) = SingleWarningPerBuild.show(project, "Warning: $message")
-
     fun getDistributionType(): NativeDistributionType {
-        return when (propertiesProvider.nativeDistributionType?.toLowerCaseAsciiOnly()) {
+        return when (val type = propertiesProvider.nativeDistributionType?.toLowerCaseAsciiOnly()) {
             null -> PREBUILT
             "prebuilt" -> PREBUILT
             "light" -> LIGHT
             else -> {
-                warning("Unknown Kotlin/Native distribution type: ${propertiesProvider.nativeDistributionType?.toLowerCaseAsciiOnly()}. Available values: prebuilt, light")
+                project.reportDiagnosticOncePerBuild(KotlinToolingDiagnostics.UnrecognizedKotlinNativeDistributionType(type))
                 PREBUILT
             }
         }

@@ -203,4 +203,11 @@ object KotlinToolingDiagnostics {
             "Project property '$deprecatedPropertyName' is deprecated. Please use '$replacement' instead."
         )
     }
+
+    object UnrecognizedKotlinNativeDistributionType : ToolingDiagnosticFactory(WARNING) {
+        operator fun invoke(actualValue: String) = build(
+            "Gradle Property 'kotlin.native.distribution.type' sets unknown Kotlin/Native distribution type: ${actualValue}\n" +
+                    "Available values: prebuilt, light"
+        )
+    }
 }
