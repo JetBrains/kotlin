@@ -1,5 +1,6 @@
 package org.jetbrains.dokka.utilities
 
+import org.jetbrains.dokka.*
 import java.io.File
 import java.net.URISyntaxException
 import java.net.URL
@@ -7,10 +8,13 @@ import java.util.*
 import java.util.jar.JarFile
 import java.util.zip.ZipEntry
 
+@InternalDokkaApi
 data class ServiceDescriptor(val name: String, val category: String, val description: String?, val className: String)
 
+@InternalDokkaApi
 class ServiceLookupException(message: String) : Exception(message)
 
+@InternalDokkaApi
 object ServiceLocator {
     fun <T : Any> lookup(clazz: Class<T>, category: String, implementationName: String): T {
         val descriptor = lookupDescriptor(category, implementationName)
@@ -80,9 +84,6 @@ object ServiceLocator {
         }
     }
 }
-
-inline fun <reified T : Any> ServiceLocator.lookup(category: String, implementationName: String): T = lookup(T::class.java, category, implementationName)
-inline fun <reified T : Any> ServiceLocator.lookup(desc: ServiceDescriptor): T = lookup(T::class.java, desc)
 
 private val ZipEntry.fileName: String
     get() = name.substringAfterLast("/", name)

@@ -1,4 +1,5 @@
 import org.jetbrains.ValidatePublications
+import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.publicationChannels
 
 @Suppress("DSL_SCOPE_VIOLATION") // fixed in Gradle 8.1 https://github.com/gradle/gradle/pull/23639
@@ -50,7 +51,5 @@ apiValidation {
         "gradle",              // :integration-tests:gradle
         "cli",                 // :integration-tests:cli
         "maven",               // integration-tests:maven
-
-        "test-utils",          // :test-utils
     )
 }
