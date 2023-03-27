@@ -75,7 +75,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
             else -> "<unbound>"
         }
 
-    private class InterproceduralAnalysis(val context: Context, val callGraph: CallGraph, val moduleDFG: ModuleDFG) {
+    private class InterproceduralAnalysis(val context: Context, val callGraph: CallGraph, val moduleDFG: ModuleDFG, val needDebug: (IrFunction) -> Boolean) {
         fun analyze() {
             // TODO: To common function.
             context.logMultiple {
@@ -892,7 +892,12 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 val escapeAnalysisResults: Map<IrFunctionSymbol, EscapeAnalysisResult>,
                 val devirtualizedCallSites: Map<IrCall, List<IrFunctionSymbol>>,
                 val maxAllowedGraphSize: Int,
+                val needDebug: Boolean,
         ) : IrElementVisitor<Node, BuilderState> {
+
+            private inline fun debug(block: () -> Unit) =
+                    if (needDebug) block() else Unit
+
             val irBuilder = context.createIrBuilder(function.symbol)
             val fictitiousLoopsStarts = mutableMapOf<IrLoop, IrElement>()
             val fictitiousLoopsEnds = mutableMapOf<IrLoop, IrElement>()
@@ -930,11 +935,6 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 return Node.Nothing
             }
 
-            inline fun PointsToGraph.checkDivergenceOr(block: () -> Node) =
-                    if (forest.totalNodes > maxAllowedGraphSize)
-                        unreachable()
-                    else block()
-
             fun controlFlowMergePoint(graph: PointsToGraph, loop: IrLoop?, element: IrElement?, type: IrType, results: List<ExpressionResult>) =
                     controlFlowMergePointImpl(graph, loop, element, type, results.filterNot { it.value == Node.Nothing })
 
@@ -953,10 +953,12 @@ internal object ControlFlowSensibleEscapeAnalysis {
                     }
                 }
                 else -> {
-                    context.log { "before CFG merge" }
-                    results.forEachIndexed { index, result ->
-                        context.log { "#$index:" }
-                        result.graph.logDigraph(result.value)
+                    debug {
+                        context.log { "before CFG merge" }
+                        results.forEachIndexed { index, result ->
+                            context.log { "#$index:" }
+                            result.graph.logDigraph(result.value)
+                        }
                     }
                     val resultNodes = results.map { it.value }.toMutableList()
                     val mergedGraph = forest.mergeGraphs(results.map { it.graph }, resultNodes)
@@ -968,8 +970,10 @@ internal object ControlFlowSensibleEscapeAnalysis {
                             resultNodes.forEach { phiNode.addEdge(it) }
                         }
                     }.also {
-                        context.log { "after CFG merge" }
-                        graph.logDigraph(it)
+                        debug {
+                            context.log { "after CFG merge" }
+                            graph.logDigraph(it)
+                        }
                     }
                 }
             }
@@ -1013,36 +1017,46 @@ internal object ControlFlowSensibleEscapeAnalysis {
             }
 
             override fun visitSetValue(expression: IrSetValue, data: BuilderState): Node = with(data.graph) {
-                context.log { "before ${expression.dump()}" }
-                logDigraph()
+                debug {
+                    context.log { "before ${expression.dump()}" }
+                    logDigraph()
+                }
 
                 val valueNode = expression.value.accept(this@PointsToGraphBuilder, data)
-                context.log { "after evaluating value" }
-                logDigraph(valueNode)
+                debug {
+                    context.log { "after evaluating value" }
+                    logDigraph(valueNode)
+                }
 
                 val variable = expression.symbol.owner as IrVariable
                 val variableNode = variableNodes[variable] ?: error("Unknown variable: ${variable.render()}")
                 if (!data.insideATry)
                     eraseValue(variableNode, data.loop, expression)
                 variableNode.addEdge(valueNode)
-                context.log { "after ${expression.dump()}" }
-                logDigraph(variableNode)
+                debug {
+                    context.log { "after ${expression.dump()}" }
+                    logDigraph(variableNode)
+                }
 
                 Node.Unit
             }
 
             override fun visitVariable(declaration: IrVariable, data: BuilderState): Node = with(data.graph) {
-                context.log { "before ${declaration.dump()}" }
-                logDigraph()
+                debug {
+                    context.log { "before ${declaration.dump()}" }
+                    logDigraph()
+                }
 
                 require(data.loop != null || variableNodes[declaration] == null) {
                     "Duplicate variable declaration: ${declaration.render()}"
                 }
 
                 val valueNode = declaration.initializer?.accept(this@PointsToGraphBuilder, data)
-                valueNode?.let {
-                    context.log { "after evaluating initializer" }
-                    logDigraph(it)
+                debug {
+                    valueNode?.let {
+                        context.log { "after evaluating initializer" }
+                        logDigraph(it)
+                    }
                 }
 
                 val variableNode = getOrAddVariable(declaration)
@@ -1051,28 +1065,35 @@ internal object ControlFlowSensibleEscapeAnalysis {
                         eraseValue(variableNode, data.loop, declaration)
                     variableNode.addEdge(it)
                 }
-                context.log { "after ${declaration.dump()}" }
-                logDigraph(variableNode)
+                debug {
+                    context.log { "after ${declaration.dump()}" }
+                    logDigraph(variableNode)
+                }
 
                 Node.Unit
             }
 
             override fun visitGetField(expression: IrGetField, data: BuilderState): Node = with(data.graph) {
-                context.log { "before ${expression.dump()}" }
-                logDigraph()
+                debug {
+                    context.log { "before ${expression.dump()}" }
+                    logDigraph()
+                }
 
                 val receiverNode = expression.receiver?.accept(this@PointsToGraphBuilder, data) ?: globalNode
-                context.log { "after evaluating receiver" }
-                logDigraph(receiverNode)
+                debug {
+                    context.log { "after evaluating receiver" }
+                    logDigraph(receiverNode)
+                }
 
                 val receiverObjects = getObjectNodes(receiverNode, data.loop, expression.receiver)
-                context.log { "after getting receiver's objects" }
-                logDigraph(context, receiverObjects)
+                debug {
+                    context.log { "after getting receiver's objects" }
+                    logDigraph(context, receiverObjects)
+                }
 
                 return (when (receiverObjects.size) {
                     0 -> { // This will lead to NPE at runtime.
-                        clear()
-                        Node.Nothing
+                        unreachable()
                     }
                     1 -> {
                         receiverObjects[0].getField(expression.symbol)
@@ -1082,34 +1103,43 @@ internal object ControlFlowSensibleEscapeAnalysis {
                             phiNode.addEdge(receiver.getField(expression.symbol))
                     }
                 }).also {
-                    context.log { "after ${expression.dump()}" }
-                    logDigraph(it)
+                    debug {
+                        context.log { "after ${expression.dump()}" }
+                        logDigraph(it)
+                    }
                 }
             }
 
             override fun visitSetField(expression: IrSetField, data: BuilderState): Node = with(data.graph) {
-                context.log { "before ${expression.dump()}" }
-                logDigraph()
+                debug {
+                    context.log { "before ${expression.dump()}" }
+                    logDigraph()
+                }
 
                 val receiverNode = expression.receiver?.accept(this@PointsToGraphBuilder, data) ?: globalNode
-                context.log { "after evaluating receiver" }
-                logDigraph(receiverNode)
+                debug {
+                    context.log { "after evaluating receiver" }
+                    logDigraph(receiverNode)
+                }
 
                 val valueNode = expression.value.accept(this@PointsToGraphBuilder, data)
-                context.log { "after evaluating value" }
-                logDigraph(valueNode)
+                debug {
+                    context.log { "after evaluating value" }
+                    logDigraph(valueNode)
+                }
 
                 val receiverObjects =
                         if (data.graph.forest.totalNodes > maxAllowedGraphSize)
                             emptyList()
                         else
                             getObjectNodes(data.graph.nodes[receiverNode.id]!!, data.loop, expression.receiver)
-                context.log { "after getting receiver's objects" }
-                logDigraph(context, receiverObjects)
+                debug {
+                    context.log { "after getting receiver's objects" }
+                    logDigraph(context, receiverObjects)
+                }
 
                 return (if (receiverObjects.isEmpty()) { // This will lead to NPE at runtime.
-                    clear()
-                    Node.Nothing
+                    unreachable()
                 } else {
                     receiverObjects.forEach { receiverObject ->
                         val fieldNode = receiverObject.getField(expression.symbol)
@@ -1120,8 +1150,10 @@ internal object ControlFlowSensibleEscapeAnalysis {
                     }
                     Node.Unit
                 }).also {
-                    context.log { "after ${expression.dump()}" }
-                    logDigraph()
+                    debug {
+                        context.log { "after ${expression.dump()}" }
+                        logDigraph()
+                    }
                 }
             }
 
@@ -1132,13 +1164,14 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 val clone = data.graph.clone(list)
                 (returnTargetsResults[expression.returnTargetSymbol] ?: error("Unknown return target: ${expression.render()}"))
                         .add(ExpressionResult(list[0], clone))
-                data.graph.clear()
-                return Node.Nothing
+                return data.graph.unreachable()
             }
 
             override fun visitThrow(expression: IrThrow, data: BuilderState) = with(data.graph) {
-                context.log { "before ${expression.dump()}" }
-                data.graph.logDigraph()
+                debug {
+                    context.log { "before ${expression.dump()}" }
+                    data.graph.logDigraph()
+                }
                 val value = expression.value.accept(this@PointsToGraphBuilder, data)
                 val visited = BitSet()
                 val newObjectsReferencedFromThrown = mutableListOf<Node.Object>()
@@ -1155,11 +1188,12 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 }
 
                 markReachableObjects(value)
-                context.log { "after ${expression.dump()}" }
-                data.graph.logDigraph(context, newObjectsReferencedFromThrown)
+                debug {
+                    context.log { "after ${expression.dump()}" }
+                    data.graph.logDigraph(context, newObjectsReferencedFromThrown)
+                }
 
-                data.graph.clear()
-                Node.Nothing
+                data.graph.unreachable()
             }
 
             override fun visitContainerExpression(expression: IrContainerExpression, data: BuilderState): Node {
@@ -1176,8 +1210,10 @@ internal object ControlFlowSensibleEscapeAnalysis {
             }
 
             override fun visitWhen(expression: IrWhen, data: BuilderState): Node {
-                context.log { "before ${expression.dump()}" }
-                data.graph.logDigraph()
+                debug {
+                    context.log { "before ${expression.dump()}" }
+                    data.graph.logDigraph()
+                }
                 val branchResults = mutableListOf<ExpressionResult>()
                 expression.branches.forEach { branch ->
                     branch.condition.accept(this, data)
@@ -1192,8 +1228,10 @@ internal object ControlFlowSensibleEscapeAnalysis {
                     branchResults.add(ExpressionResult(Node.Unit, data.graph.clone()))
                 }
                 return controlFlowMergePoint(data.graph, data.loop, expression, expression.type, branchResults).also {
-                    context.log { "after ${expression.dump()}" }
-                    data.graph.logDigraph()
+                    debug {
+                        context.log { "after ${expression.dump()}" }
+                        data.graph.logDigraph()
+                    }
                 }
             }
 
@@ -1207,8 +1245,10 @@ internal object ControlFlowSensibleEscapeAnalysis {
 
             override fun visitTry(aTry: IrTry, data: BuilderState): Node {
                 require(aTry.finallyExpression == null) { "All finally clauses should've been lowered out" }
-                context.log { "before ${aTry.dump()}" }
-                data.graph.logDigraph()
+                debug {
+                    context.log { "before ${aTry.dump()}" }
+                    data.graph.logDigraph()
+                }
 
                 val tryGraph = data.graph.clone()
                 val tryResult = aTry.tryResult.accept(this, BuilderState(tryGraph, data.loop, true))
@@ -1237,28 +1277,30 @@ internal object ControlFlowSensibleEscapeAnalysis {
                     controlFlowMergePoint(data.graph, data.loop, aTry, aTry.type,
                             listOf(ExpressionResult(tryResult, tryGraph)) + catchesResults)
                 }.also {
-                    context.log { "after ${aTry.dump()}" }
-                    data.graph.logDigraph()
+                    debug {
+                        context.log { "after ${aTry.dump()}" }
+                        data.graph.logDigraph()
+                    }
                 }
             }
 
             override fun visitContinue(jump: IrContinue, data: BuilderState): Node {
                 (loopsContinueResults[jump.loop] ?: error("A continue from an unknown loop: ${jump.loop}"))
                         .add(ExpressionResult(Node.Unit, data.graph.clone()))
-                data.graph.clear()
-                return Node.Nothing
+                return data.graph.unreachable()
             }
 
             override fun visitBreak(jump: IrBreak, data: BuilderState): Node {
                 (loopsBreakResults[jump.loop] ?: error("A break from an unknown loop: ${jump.loop}"))
                         .add(ExpressionResult(Node.Unit, data.graph.clone()))
-                data.graph.clear()
-                return Node.Nothing
+                return data.graph.unreachable()
             }
 
             override fun visitLoop(loop: IrLoop, data: BuilderState): Node {
-                context.log { "before ${loop.dump()}" }
-                data.graph.logDigraph()
+                debug {
+                    context.log { "before ${loop.dump()}" }
+                    data.graph.logDigraph()
+                }
                 val fictitiousLoopStart = fictitiousLoopsStarts.getOrPut(loop) {
                     when (loop) {
                         is IrWhileLoop -> irBuilder.irWhile()
@@ -1289,8 +1331,10 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 val savedObjectsReferencedFromThrown = objectsReferencedFromThrown.copy()
                 var iterations = 0
                 do {
-                    context.log { "iter#$iterations:" }
-                    prevGraph.logDigraph()
+                    debug {
+                        context.log { "iter#$iterations:" }
+                        prevGraph.logDigraph()
+                    }
                     ++iterations
 
                     returnTargetsResultsSizes.forEach { (key, size) -> returnTargetsResults[key]!!.trimSize(size) }
@@ -1318,8 +1362,10 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 if (iterations >= 10)
                     error("BUGBUGBUG: ${loop.dump()}")
                 controlFlowMergePoint(data.graph, data.loop, loop, context.irBuiltIns.unitType, iterationResults)
-                context.log { "after ${loop.dump()}" }
-                data.graph.logDigraph()
+                debug {
+                    context.log { "after ${loop.dump()}" }
+                    data.graph.logDigraph()
+                }
                 return Node.Unit
             }
 
@@ -1332,23 +1378,23 @@ internal object ControlFlowSensibleEscapeAnalysis {
             ): Node {
                 if (state.graph.forest.totalNodes > maxAllowedGraphSize) {
                     context.log { "The graph is bigger than expected - skipping call to ${callee.render()}" }
-                    state.graph.clear()
-                    return Node.Nothing
+                    return state.graph.unreachable()
                 }
 
                 if (argumentNodeIds.any { it == Node.NOTHING_ID }) {
                     context.log { "Unreachable code - skipping call to ${callee.render()}" }
-                    state.graph.clear()
-                    return Node.Nothing
+                    return state.graph.unreachable()
                 }
 
                 val arguments = argumentNodeIds.map { state.graph.nodes[it]!! }
 
-                context.log { "before calling ${callee.render()}" }
-                state.graph.logDigraph()
-                context.log { "callee EA result" }
-                calleeEscapeAnalysisResult.graph.logDigraph(calleeEscapeAnalysisResult.returnValue)
-                context.log { "arguments: ${arguments.joinToString { it.toString() }}" }
+                debug {
+                    context.log { "before calling ${callee.render()}" }
+                    state.graph.logDigraph()
+                    context.log { "callee EA result" }
+                    calleeEscapeAnalysisResult.graph.logDigraph(calleeEscapeAnalysisResult.returnValue)
+                    context.log { "arguments: ${arguments.joinToString { it.toString() }}" }
+                }
 
                 val calleeGraph = calleeEscapeAnalysisResult.graph
                 require(arguments.size == calleeGraph.parameterNodes.size)
@@ -1371,7 +1417,9 @@ internal object ControlFlowSensibleEscapeAnalysis {
                                 " but is attempted to be reflected again to ($inMirroredNode $outMirroredNode)"
                     }
 
-                    context.log { "Reflecting $node to ($inMirroredNode, $outMirroredNode)" }
+                    debug {
+                        context.log { "Reflecting $node to ($inMirroredNode, $outMirroredNode)" }
+                    }
 
                     inMirroredNodes[node.id] = inMirroredNode
                     outMirroredNodes[node.id] = outMirroredNode
@@ -1530,8 +1578,10 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 val returnValue = outMirroredNodes[calleeEscapeAnalysisResult.returnValue.id]
                         ?: error("Node ${calleeEscapeAnalysisResult.returnValue} hasn't been reflected")
 
-                context.log { "after calling ${callee.render()}" }
-                state.graph.logDigraph(returnValue)
+                debug {
+                    context.log { "after calling ${callee.render()}" }
+                    state.graph.logDigraph(returnValue)
+                }
 
                 return returnValue
             }
@@ -1698,7 +1748,9 @@ internal object ControlFlowSensibleEscapeAnalysis {
 
             val forest = PointsToGraphForest()
             val functionResult = PointsToGraphBuilder(
-                    function, forest, escapeAnalysisResults, devirtualizedCallSites, maxAllowedGraphSize).build()
+                    function, forest, escapeAnalysisResults, devirtualizedCallSites,
+                    maxAllowedGraphSize, needDebug(function)
+            ).build()
 
             if (forest.totalNodes > maxAllowedGraphSize) return false
 
@@ -1904,7 +1956,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
     @Suppress("UNUSED_PARAMETER")
     fun computeLifetimes(context: Context, callGraph: CallGraph, moduleDFG: ModuleDFG, lifetimes: MutableMap<IrElement, Lifetime>) {
         try {
-            InterproceduralAnalysis(context, callGraph, moduleDFG).analyze()
+            InterproceduralAnalysis(context, callGraph, moduleDFG) { false }.analyze()
         } catch (t: Throwable) {
             val extraUserInfo =
                     """
