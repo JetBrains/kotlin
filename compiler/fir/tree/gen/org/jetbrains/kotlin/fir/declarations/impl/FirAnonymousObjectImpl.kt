@@ -58,19 +58,19 @@ internal class FirAnonymousObjectImpl(
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         typeParameters.forEach { it.accept(visitor, data) }
         status.accept(visitor, data)
+        controlFlowGraphReference?.accept(visitor, data)
         superTypeRefs.forEach { it.accept(visitor, data) }
         declarations.forEach { it.accept(visitor, data) }
         annotations.forEach { it.accept(visitor, data) }
-        controlFlowGraphReference?.accept(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirAnonymousObjectImpl {
         transformTypeParameters(transformer, data)
         transformStatus(transformer, data)
+        controlFlowGraphReference = controlFlowGraphReference?.transform(transformer, data)
         transformSuperTypeRefs(transformer, data)
         transformDeclarations(transformer, data)
         transformAnnotations(transformer, data)
-        controlFlowGraphReference = controlFlowGraphReference?.transform(transformer, data)
         return this
     }
 
@@ -111,6 +111,10 @@ internal class FirAnonymousObjectImpl(
         deprecationsProvider = newDeprecationsProvider
     }
 
+    override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {
+        controlFlowGraphReference = newControlFlowGraphReference
+    }
+
     override fun replaceSuperTypeRefs(newSuperTypeRefs: List<FirTypeRef>) {
         superTypeRefs.clear()
         superTypeRefs.addAll(newSuperTypeRefs)
@@ -118,9 +122,5 @@ internal class FirAnonymousObjectImpl(
 
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
         annotations = newAnnotations.toMutableOrEmpty()
-    }
-
-    override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {
-        controlFlowGraphReference = newControlFlowGraphReference
     }
 }

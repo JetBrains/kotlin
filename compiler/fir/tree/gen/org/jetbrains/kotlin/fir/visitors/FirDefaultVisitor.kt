@@ -178,11 +178,15 @@ abstract class FirDefaultVisitor<out R, in D> : FirVisitor<R, D>() {
 
     override fun visitEnumEntry(enumEntry: FirEnumEntry, data: D): R  = visitVariable(enumEntry, data)
 
+    override fun visitRegularClass(regularClass: FirRegularClass, data: D): R  = visitClass(regularClass, data)
+
     override fun visitFile(file: FirFile, data: D): R  = visitDeclaration(file, data)
 
     override fun visitScript(script: FirScript, data: D): R  = visitDeclaration(script, data)
 
     override fun visitAnonymousFunctionExpression(anonymousFunctionExpression: FirAnonymousFunctionExpression, data: D): R  = visitExpression(anonymousFunctionExpression, data)
+
+    override fun visitAnonymousObject(anonymousObject: FirAnonymousObject, data: D): R  = visitClass(anonymousObject, data)
 
     override fun visitAnonymousObjectExpression(anonymousObjectExpression: FirAnonymousObjectExpression, data: D): R  = visitExpression(anonymousObjectExpression, data)
 

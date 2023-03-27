@@ -178,11 +178,15 @@ abstract class FirDefaultVisitorVoid : FirVisitorVoid() {
 
     override fun visitEnumEntry(enumEntry: FirEnumEntry)  = visitVariable(enumEntry)
 
+    override fun visitRegularClass(regularClass: FirRegularClass)  = visitClass(regularClass)
+
     override fun visitFile(file: FirFile)  = visitDeclaration(file)
 
     override fun visitScript(script: FirScript)  = visitDeclaration(script)
 
     override fun visitAnonymousFunctionExpression(anonymousFunctionExpression: FirAnonymousFunctionExpression)  = visitExpression(anonymousFunctionExpression)
+
+    override fun visitAnonymousObject(anonymousObject: FirAnonymousObject)  = visitClass(anonymousObject)
 
     override fun visitAnonymousObjectExpression(anonymousObjectExpression: FirAnonymousObjectExpression)  = visitExpression(anonymousObjectExpression)
 

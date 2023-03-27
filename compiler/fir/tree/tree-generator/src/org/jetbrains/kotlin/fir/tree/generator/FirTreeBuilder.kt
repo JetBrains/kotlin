@@ -51,8 +51,8 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val functionTypeParameter by element(Other, baseFirElement)
 
     val classLikeDeclaration by sealedElement(Declaration, memberDeclaration, statement)
-    val klass by sealedElement("Class", Declaration, classLikeDeclaration, statement, typeParameterRefsOwner)
-    val regularClass by element(Declaration, klass, controlFlowGraphOwner)
+    val klass by sealedElement("Class", Declaration, classLikeDeclaration, statement, typeParameterRefsOwner, controlFlowGraphOwner)
+    val regularClass by element(Declaration, klass)
     val typeAlias by element(Declaration, classLikeDeclaration, typeParametersOwner)
 
     val function by sealedElement(Declaration, callableDeclaration, targetElement, controlFlowGraphOwner, statement)
@@ -69,7 +69,7 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val anonymousFunction by element(Declaration, function, typeParametersOwner, contractDescriptionOwner)
     val anonymousFunctionExpression by element(Expression, expression)
 
-    val anonymousObject by element(Declaration, klass, controlFlowGraphOwner)
+    val anonymousObject by element(Declaration, klass)
     val anonymousObjectExpression by element(Expression, expression)
 
     val diagnosticHolder by element(Diagnostics)

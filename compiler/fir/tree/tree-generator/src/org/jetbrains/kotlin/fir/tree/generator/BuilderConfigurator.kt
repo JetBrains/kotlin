@@ -34,7 +34,7 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
         val classBuilder by builder {
             parents += declarationBuilder
             parents += annotationContainerBuilder
-            fields from klass without listOf("symbol", "resolvePhase")
+            fields from klass without listOf("symbol", "resolvePhase", "controlFlowGraphReference")
         }
 
         builder(regularClass) {

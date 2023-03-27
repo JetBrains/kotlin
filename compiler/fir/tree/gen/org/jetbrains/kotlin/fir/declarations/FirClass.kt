@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -21,7 +22,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-sealed class FirClass : FirClassLikeDeclaration(), FirStatement, FirTypeParameterRefsOwner {
+sealed class FirClass : FirClassLikeDeclaration(), FirStatement, FirTypeParameterRefsOwner, FirControlFlowGraphOwner {
     abstract override val source: KtSourceElement?
     abstract override val resolvePhase: FirResolvePhase
     abstract override val moduleData: FirModuleData
@@ -30,6 +31,7 @@ sealed class FirClass : FirClassLikeDeclaration(), FirStatement, FirTypeParamete
     abstract override val typeParameters: List<FirTypeParameterRef>
     abstract override val status: FirDeclarationStatus
     abstract override val deprecationsProvider: DeprecationsProvider
+    abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
     abstract override val symbol: FirClassSymbol<out FirClass>
     abstract val classKind: ClassKind
     abstract val superTypeRefs: List<FirTypeRef>
@@ -48,6 +50,8 @@ sealed class FirClass : FirClassLikeDeclaration(), FirStatement, FirTypeParamete
     abstract override fun replaceStatus(newStatus: FirDeclarationStatus)
 
     abstract override fun replaceDeprecationsProvider(newDeprecationsProvider: DeprecationsProvider)
+
+    abstract override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?)
 
     abstract fun replaceSuperTypeRefs(newSuperTypeRefs: List<FirTypeRef>)
 

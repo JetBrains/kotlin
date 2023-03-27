@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirRegularClass : FirClass(), FirControlFlowGraphOwner {
+abstract class FirRegularClass : FirClass() {
     abstract override val source: KtSourceElement?
     abstract override val resolvePhase: FirResolvePhase
     abstract override val moduleData: FirModuleData
@@ -31,11 +31,11 @@ abstract class FirRegularClass : FirClass(), FirControlFlowGraphOwner {
     abstract override val typeParameters: List<FirTypeParameterRef>
     abstract override val status: FirDeclarationStatus
     abstract override val deprecationsProvider: DeprecationsProvider
+    abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
     abstract override val classKind: ClassKind
     abstract override val declarations: List<FirDeclaration>
     abstract override val annotations: List<FirAnnotation>
     abstract override val scopeProvider: FirScopeProvider
-    abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
     abstract val name: Name
     abstract override val symbol: FirRegularClassSymbol
     abstract val hasLazyNestedClassifiers: Boolean
@@ -55,9 +55,9 @@ abstract class FirRegularClass : FirClass(), FirControlFlowGraphOwner {
 
     abstract override fun replaceDeprecationsProvider(newDeprecationsProvider: DeprecationsProvider)
 
-    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
-
     abstract override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?)
+
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
     abstract fun replaceCompanionObjectSymbol(newCompanionObjectSymbol: FirRegularClassSymbol?)
 

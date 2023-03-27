@@ -377,7 +377,7 @@ class ControlFlowGraphBuilder {
     }
 
     fun enterClass(klass: FirClass, buildGraph: Boolean): Pair<CFGNode<*>?, ClassEnterNode?> {
-        if (!buildGraph || klass !is FirControlFlowGraphOwner) {
+        if (!buildGraph) {
             graphs.push(ControlFlowGraph(null, "<discarded class graph>", ControlFlowGraph.Kind.Class))
             return null to null
         }
