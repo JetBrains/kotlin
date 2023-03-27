@@ -3,6 +3,7 @@ import abitestutils.abiTest
 fun box() = abiTest {
     val stableClass = StableClass()
     val stableClassInner = stableClass.Inner()
+    val sfh = StableFunctionsHolder()
 
     expectFailure(linkage("Reference to class 'RemovedClass' can not be evaluated: No class found for symbol '/RemovedClass'")) { referenceRemovedClassReference() }
     expectFailure(linkage("Reference to constructor 'RemovedClass.<init>' can not be evaluated: No constructor found for symbol '/RemovedClass.<init>'")) { referenceRemovedClassConstructorReference() }
@@ -46,4 +47,10 @@ fun box() = abiTest {
     expectFailure(linkage("Reference to function 'functionWithUnlinkedParameter' can not be evaluated: Function uses unlinked class symbol '/RemovedClass'")) { referenceFunctionWithUnlinkedParameter() }
     expectFailure(linkage("Reference to function 'functionWithUnlinkedReturnValue' can not be evaluated: Function uses unlinked class symbol '/RemovedClass'")) { referenceFunctionWithUnlinkedReturnValue() }
     expectFailure(linkage("Reference to function 'functionWithRemovedTypeParameter' can not be evaluated: Function uses unlinked class symbol '/RemovedClass' (via type parameter 'T')")) { referenceFunctionWithRemovedTypeParameter() }
+
+    expectSuccess("foo") { referencingMemberFunctionFoo(sfh) }
+    expectSuccess("bar") { referencingMemberFunctionBar(sfh) }
+    expectSuccess("baz") { referencingMemberFunctionBaz(sfh) }
+    expectSuccess { referencingAnyEquals(Any()) }
+    expectSuccess { referencingStableClassWithEquals(StableClassWithEquals(42)) }
 }
