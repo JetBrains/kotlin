@@ -23,7 +23,7 @@ internal object ErrorKClass : KClass<Nothing> {
     override fun isInstance(value: Any?): Boolean = error("Can's check isInstance on ErrorKClass")
 }
 
-internal class KClassImpl<T : Any>(private val typeData: TypeInfoData) : KClass<T> {
+internal class KClassImpl<T : Any>(internal val typeData: TypeInfoData) : KClass<T> {
     override val simpleName: String get() = typeData.typeName
     override val qualifiedName: String =
         if (typeData.packageName.isEmpty()) typeData.typeName else "${typeData.packageName}.${typeData.typeName}"

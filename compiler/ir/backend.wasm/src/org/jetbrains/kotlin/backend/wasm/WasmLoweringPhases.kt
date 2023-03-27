@@ -509,6 +509,13 @@ private val builtInsLoweringPhase = makeWasmModulePhase(
     description = "Lower IR builtins"
 )
 
+private val associatedObjectsLowering = makeWasmModulePhase(
+    ::AssociatedObjectsLowering,
+    name = "AssociatedObjectsLowering",
+    description = "Load associated object init body",
+    prerequisite = setOf(localClassExtractionPhase)
+)
+
 private val objectDeclarationLoweringPhase = makeWasmModulePhase(
     ::ObjectDeclarationLowering,
     name = "ObjectDeclarationLowering",
@@ -687,6 +694,9 @@ val wasmPhases = SameTypeNamedCompilerPhase(
             expressionBodyTransformer then
             eraseVirtualDispatchReceiverParametersTypes then
             bridgesConstructionPhase then
+
+            associatedObjectsLowering then
+
             objectDeclarationLoweringPhase then
             fieldInitializersLoweringPhase then
             genericReturnTypeLowering then
