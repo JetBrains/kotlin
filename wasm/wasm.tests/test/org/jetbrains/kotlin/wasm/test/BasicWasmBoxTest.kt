@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.test.*
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.Closeable
 import java.io.File
+import kotlin.math.abs
 
 abstract class BasicWasmBoxTest(
     private val pathToTestDir: String,
@@ -201,23 +202,61 @@ abstract class BasicWasmBoxTest(
 
             val testJs = if (debugMode >= DebugMode.DEBUG) testJsVerbose else testJsQuiet
 
-            fun writeToFilesAndRunTest(name: String, res: WasmCompilerResult) {
-                val dir = File(outputDirBase, name)
-                dir.mkdirs()
+            fun printPathAndSize(mode: String, fileKind: String, path: String, name: String) {
+                val size = File("$path/$name").length()
+                println(" ------ $mode $fileKind file://$path/$name $size B")
+            }
 
-                if (debugMode >= DebugMode.DEBUG) {
-                    val path = dir.absolutePath
-                    println(" ------ $name Wat  file://$path/index.wat")
-                    println(" ------ $name Wasm file://$path/index.wasm")
-                    println(" ------ $name JS   file://$path/index.uninstantiated.mjs")
-                    println(" ------ $name JS   file://$path/index.mjs")
-                    println(" ------ $name Test file://$path/test.mjs")
-                    val projectName = "kotlin"
-                    println(" ------ $name HTML http://0.0.0.0:63342/$projectName/${dir.path}/index.html")
-                    for (mjsPath: String in mjsFiles) {
-                        println(" ------ $name External ESM file://$path/${File(mjsPath).name}")
+            fun checkExpectedOutputSize(testFileContent: String, testDir: File) {
+                val expectedSizes =
+                    InTextDirectivesUtils.findListWithPrefixes(testFileContent, "// WASM_DCE_EXPECTED_OUTPUT_SIZE: ")
+                        .map {
+                            val i = it.indexOf(' ')
+                            val extension = it.substring(0, i)
+                            val size = it.substring(i + 1)
+                            extension.trim().lowercase() to size.filter(Char::isDigit).toInt()
+                        }
+
+                val filesByExtension = testDir.listFiles()?.groupBy { it.extension }.orEmpty()
+
+                val errors = expectedSizes.mapNotNull { (extension, expectedSize) ->
+                    val totalSize = filesByExtension[extension].orEmpty().sumOf { it.length() }
+
+                    val thresholdPercent = 1
+                    val thresholdInBytes = expectedSize * thresholdPercent / 100
+
+                    val expectedMinSize = expectedSize - thresholdInBytes
+                    val expectedMaxSize = expectedSize + thresholdInBytes
+
+                    val diff = totalSize - expectedSize
+
+                    val message = "Total size of $extension files is $totalSize," +
+                            " but expected $expectedSize ∓ $thresholdInBytes [$expectedMinSize .. $expectedMaxSize]." +
+                            " Diff: $diff (${diff * 100 / expectedSize}%)"
+
+                    if (debugMode >= DebugMode.DEBUG) {
+                        println(" ------ $message")
                     }
 
+                    if (totalSize !in expectedMinSize..expectedMaxSize) message else null
+                }
+
+                if (errors.isNotEmpty()) throw AssertionError(errors.joinToString("\n"))
+            }
+
+            fun writeToFilesAndRunTest(mode: String, res: WasmCompilerResult) {
+                val dir = File(outputDirBase, mode)
+                dir.mkdirs()
+
+                writeCompilationResult(res, dir, baseFileName)
+                File(dir, "test.mjs").writeText(testJs)
+
+                for (mjsPath: String in mjsFiles) {
+                    val mjsFile = File(mjsPath)
+                    File(dir, mjsFile.name).writeText(mjsFile.readText())
+                }
+
+                if (debugMode >= DebugMode.DEBUG) {
                     File(dir, "index.html").writeText(
                         """
                             <!DOCTYPE html>
@@ -240,17 +279,23 @@ abstract class BasicWasmBoxTest(
                             </html>
                         """.trimIndent()
                     )
+
+                    val path = dir.absolutePath
+                    println(" ------ $mode Wat  file://$path/index.wat")
+                    println(" ------ $mode Wasm file://$path/index.wasm")
+                    println(" ------ $mode JS   file://$path/index.uninstantiated.mjs")
+                    println(" ------ $mode JS   file://$path/index.mjs")
+                    println(" ------ $mode Test file://$path/test.mjs")
+                    val projectName = "kotlin"
+                    println(" ------ $mode HTML http://0.0.0.0:63342/$projectName/${dir.path}/index.html")
+                    for (mjsPath: String in mjsFiles) {
+                        println(" ------ $mode External ESM file://$path/${File(mjsPath).name}")
+                    }
                 }
 
-                writeCompilationResult(res, dir, baseFileName)
-                File(dir, "test.mjs").writeText(testJs)
+                val testFile = file.readText()
 
-                for (mjsPath: String in mjsFiles) {
-                    val mjsFile = File(mjsPath)
-                    File(dir, mjsFile.name).writeText(mjsFile.readText())
-                }
-
-                val failsIn = InTextDirectivesUtils.findListWithPrefixes(file.readText(), "// WASM_FAILS_IN: ")
+                val failsIn = InTextDirectivesUtils.findListWithPrefixes(testFile, "// WASM_FAILS_IN: ")
 
                 val exceptions = listOf(WasmVM.V8, WasmVM.SpiderMonkey).mapNotNull map@{ vm ->
                     try {
@@ -283,6 +328,10 @@ abstract class BasicWasmBoxTest(
                             exceptions.forEach { addSuppressed(it) }
                         }
                     }
+                }
+
+                if (mode == "dce") {
+                    checkExpectedOutputSize(testFile, dir)
                 }
             }
 
