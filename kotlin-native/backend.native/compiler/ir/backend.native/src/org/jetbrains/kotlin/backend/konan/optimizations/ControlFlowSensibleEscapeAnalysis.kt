@@ -925,6 +925,16 @@ internal object ControlFlowSensibleEscapeAnalysis {
                         for (node in markedNodes) +node
                     }
 
+            fun PointsToGraph.unreachable(): Node {
+                clear()
+                return Node.Nothing
+            }
+
+            inline fun PointsToGraph.checkDivergenceOr(block: () -> Node) =
+                    if (forest.totalNodes > maxAllowedGraphSize)
+                        unreachable()
+                    else block()
+
             fun controlFlowMergePoint(graph: PointsToGraph, loop: IrLoop?, element: IrElement?, type: IrType, results: List<ExpressionResult>) =
                     controlFlowMergePointImpl(graph, loop, element, type, results.filterNot { it.value == Node.Nothing })
 
@@ -932,8 +942,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
                                           type: IrType, results: List<ExpressionResult>
             ): Node = when (results.size) {
                 0 -> {
-                    graph.clear()
-                    Node.Nothing
+                    graph.unreachable()
                 }
                 1 -> {
                     graph.copyFrom(results[0].graph)
@@ -1065,7 +1074,9 @@ internal object ControlFlowSensibleEscapeAnalysis {
                         clear()
                         Node.Nothing
                     }
-                    1 -> receiverObjects[0].getField(expression.symbol)
+                    1 -> {
+                        receiverObjects[0].getField(expression.symbol)
+                    }
                     else -> at(data.loop, expression).newPhiNode().also { phiNode ->
                         for (receiver in receiverObjects)
                             phiNode.addEdge(receiver.getField(expression.symbol))
@@ -1088,7 +1099,11 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 context.log { "after evaluating value" }
                 logDigraph(valueNode)
 
-                val receiverObjects = getObjectNodes(data.graph.nodes[receiverNode.id]!!, data.loop, expression.receiver)
+                val receiverObjects =
+                        if (data.graph.forest.totalNodes > maxAllowedGraphSize)
+                            emptyList()
+                        else
+                            getObjectNodes(data.graph.nodes[receiverNode.id]!!, data.loop, expression.receiver)
                 context.log { "after getting receiver's objects" }
                 logDigraph(context, receiverObjects)
 
@@ -1312,7 +1327,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
                     state: BuilderState,
                     callSite: IrFunctionAccessExpression,
                     callee: IrFunction,
-                    arguments: List<Node>,
+                    argumentNodeIds: List<Int>,
                     calleeEscapeAnalysisResult: EscapeAnalysisResult,
             ): Node {
                 if (state.graph.forest.totalNodes > maxAllowedGraphSize) {
@@ -1321,17 +1336,19 @@ internal object ControlFlowSensibleEscapeAnalysis {
                     return Node.Nothing
                 }
 
-                if (arguments.any { it == Node.Nothing }) {
+                if (argumentNodeIds.any { it == Node.NOTHING_ID }) {
                     context.log { "Unreachable code - skipping call to ${callee.render()}" }
                     state.graph.clear()
                     return Node.Nothing
                 }
 
+                val arguments = argumentNodeIds.map { state.graph.nodes[it]!! }
+
                 context.log { "before calling ${callee.render()}" }
                 state.graph.logDigraph()
                 context.log { "callee EA result" }
                 calleeEscapeAnalysisResult.graph.logDigraph(calleeEscapeAnalysisResult.returnValue)
-                context.log { "arguments: ${arguments.joinToString() { it.toString() }}" }
+                context.log { "arguments: ${arguments.joinToString { it.toString() }}" }
 
                 val calleeGraph = calleeEscapeAnalysisResult.graph
                 require(arguments.size == calleeGraph.parameterNodes.size)
@@ -1564,7 +1581,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 val argumentNodeIds = listOf(thisNode.id) + arguments.map { it.second.accept(this, state).id }
                 val calleeEscapeAnalysisResult = escapeAnalysisResults[callee.symbol]
                         ?: getExternalFunctionEAResult(callee)
-                processCall(state, callSite, callee, argumentNodeIds.map { state.graph.nodes[it]!! }, calleeEscapeAnalysisResult)
+                processCall(state, callSite, callee, argumentNodeIds, calleeEscapeAnalysisResult)
             }
 
             fun BuilderState.allocObjectNode(expression: IrExpression, irClass: IrClass) =
@@ -1573,7 +1590,10 @@ internal object ControlFlowSensibleEscapeAnalysis {
             override fun visitConstructorCall(expression: IrConstructorCall, data: BuilderState): Node {
                 val thisObject = data.allocObjectNode(expression, expression.symbol.owner.constructedClass)
                 processConstructorCall(expression.symbol.owner, thisObject, expression, data)
-                return data.graph.nodes[thisObject.id]!!
+                return if (data.graph.forest.totalNodes > maxAllowedGraphSize)
+                    Node.Nothing
+                else
+                    data.graph.nodes[thisObject.id]!!
             }
 
             override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: BuilderState): Node {
@@ -1606,25 +1626,24 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 else -> {
                     val arguments = expression.getArgumentsWithIr()
                     val argumentNodeIds = arguments.map { it.second.accept(this, data).id }
-                    val argumentNodes = argumentNodeIds.map { data.graph.nodes[it]!! }
                     val actualCallee = expression.actualCallee
                     if (!expression.isVirtualCall) {
                         val calleeEscapeAnalysisResult = escapeAnalysisResults[actualCallee.symbol]
                                 ?: getExternalFunctionEAResult(actualCallee)
-                        processCall(data, expression, actualCallee, argumentNodes, calleeEscapeAnalysisResult)
+                        processCall(data, expression, actualCallee, argumentNodeIds, calleeEscapeAnalysisResult)
                     } else {
                         val devirtualizedCallSite = devirtualizedCallSites[expression]
                         if (devirtualizedCallSite == null) {
                             // Non-devirtualized call.
-                            processCall(data, expression, expression.actualCallee, argumentNodes,
+                            processCall(data, expression, expression.actualCallee, argumentNodeIds,
                                     EscapeAnalysisResult.pessimistic(actualCallee))
                         } else when (devirtualizedCallSite.size) {
                             0 -> { // TODO: This looks like unreachable code, isn't it? Should we return here Nothing then?
-                                processCall(data, expression, actualCallee, argumentNodes,
+                                processCall(data, expression, actualCallee, argumentNodeIds,
                                         EscapeAnalysisResult.optimistic(actualCallee))
                             }
                             1 -> {
-                                processCall(data, expression, actualCallee, argumentNodes,
+                                processCall(data, expression, actualCallee, argumentNodeIds,
                                         escapeAnalysisResults[devirtualizedCallSite[0]] ?: getExternalFunctionEAResult(devirtualizedCallSite[0].owner))
                             }
                             else -> {
@@ -1641,7 +1660,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
                                     val resultNode = processCall(
                                             BuilderState(clonedGraph, data.loop, data.insideATry),
                                             callSite, callee,
-                                            argumentNodeIds.map { clonedGraph.nodes[it]!! },
+                                            argumentNodeIds,
                                             escapeAnalysisResults[calleeSymbol] ?: getExternalFunctionEAResult(callee))
                                     ExpressionResult(resultNode, clonedGraph)
                                 }
