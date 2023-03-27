@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaCompilation
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.configuration.*
-import org.jetbrains.kotlin.gradle.utils.SingleWarningPerBuild
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -159,13 +158,9 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
             project.plugins.any { it is Kapt3GradleSubplugin }
 
         private fun Project.getBooleanOptionValue(
-            booleanOption: BooleanOption,
-            deprecationMessage: (() -> String)? = null
+            booleanOption: BooleanOption
         ): Boolean {
             val value = findProperty(booleanOption.optionName)
-            if (value != null && deprecationMessage != null) {
-                SingleWarningPerBuild.show(this, deprecationMessage())
-            }
             return when (value) {
                 is Boolean -> value
                 is String -> when {
