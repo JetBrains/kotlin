@@ -1,0 +1,13 @@
+{
+  "version": "1.0",
+  "builds": [
+    {
+      "teamcity": {
+        "configuration": "Kotlin_KotlinDev_SafeMerge",
+        "url": "https://buildserver.labs.intellij.net",
+        "token": "${space-safe-merge-kt}",
+        "ssl-keystore": "BuildServer client"
+      }
+    }
+  ]
+}
