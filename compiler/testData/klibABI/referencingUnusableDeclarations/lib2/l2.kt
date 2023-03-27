@@ -72,3 +72,19 @@ fun referenceFunctionWithRemovedTypeParameter(): String {
      */
     return listOf<Any?>(null).map<Any?, RemovedClassImpl>(::functionWithRemovedTypeParameter).joinToString()
 }
+
+abstract class StableAbstractFunctionsHolder {
+    abstract fun foo(): String
+    open fun bar(): String = "bar"
+}
+class StableFunctionsHolder: StableAbstractFunctionsHolder() {
+    override fun foo(): String = "foo"
+    fun baz(): String = "baz"
+}
+data class StableClassWithEquals(val value: Int)
+
+fun referencingMemberFunctionFoo(sfh: StableFunctionsHolder): String = run(sfh::foo)
+fun referencingMemberFunctionBar(sfh: StableFunctionsHolder): String = run(sfh::bar)
+fun referencingMemberFunctionBaz(sfh: StableFunctionsHolder): String = run(sfh::baz)
+fun referencingAnyEquals(any: Any): String = if ((Any::equals)(any, any)) "OK" else "FAIL"
+fun referencingStableClassWithEquals(stwe: StableClassWithEquals): String = if ((StableClassWithEquals::equals)(stwe, stwe)) "OK" else "FAIL"

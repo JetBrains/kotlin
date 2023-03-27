@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.isSubtypeOfClass
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -716,7 +717,28 @@ internal class PartiallyLinkedIrTreePatcher(
                     val actualDispatchReceiverClassifier: IrClassifierSymbol? =
                         (referenceType.arguments.firstOrNull() as? IrSimpleType)?.classifier
 
-                    expectedDispatchReceiverClassifier == actualDispatchReceiverClassifier
+                    /*
+                     * FIR generates function references for certain overridden functions in a different way than K1. Example:
+                     *   class A
+                     *
+                     *   fun test(a: A): Boolean {
+                     *       return (A::equals)(a, a)
+                     *       //         ^^^ IrFunctionReferenceImpl slightly differs:
+                     *       // | Frontend | Attribute                | Value                          |
+                     *       // +----------+--------------------------+--------------------------------+
+                     *       // | K1       | dispatchReceiver         | null                           |
+                     *       // | K1       | symbol.parent as IrClass | "class A"                      |
+                     *       // | K1       | type as IrSimpleType     | "KFunction2<A, Any?, Boolean>" |
+                     *       // | FIR      | dispatchReceiver         | null                           |
+                     *       // | FIR      | symbol.parent as IrClass | "class Any"                    |
+                     *       // | FIR      | type as IrSimpleType     | "KFunction2<A, Any?, Boolean>" |
+                     *   }
+                     *
+                     * So instead of checking that `expectedDispatchReceiverClassifier == actualDispatchReceiverClassifier` it's
+                     * safer to check that `actualDispatchReceiverClassifier` is the same or subclass of `expectedDispatchReceiverClassifier`.
+                     */
+                    // expectedDispatchReceiverClassifier == actualDispatchReceiverClassifier
+                    actualDispatchReceiverClassifier?.isSubtypeOfClass(expectedDispatchReceiverClassifier) ?: false
                 }
                 else -> false
             }
