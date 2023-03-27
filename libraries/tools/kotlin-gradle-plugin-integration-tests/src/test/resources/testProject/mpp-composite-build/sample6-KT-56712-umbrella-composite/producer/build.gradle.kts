@@ -13,6 +13,7 @@ repositories {
 
 android {
     compileSdk = 33
+    namespace = "com.example.producer"
 }
 
 kotlin {
