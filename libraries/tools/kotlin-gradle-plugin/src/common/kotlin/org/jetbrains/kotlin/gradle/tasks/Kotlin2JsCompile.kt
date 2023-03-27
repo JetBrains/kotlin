@@ -328,6 +328,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
                 getChangedFiles(inputChanges, incrementalProps),
                 ClasspathChanges.NotAvailableForJSCompiler,
                 taskBuildCacheableOutputDirectory.get().asFile,
+                projectRootDir,
                 multiModuleICSettings = multiModuleICSettings,
                 preciseCompilationResultsBackup = preciseCompilationResultsBackup.get(),
                 keepIncrementalCompilationCachesInMemory = keepIncrementalCompilationCachesInMemory.get(),

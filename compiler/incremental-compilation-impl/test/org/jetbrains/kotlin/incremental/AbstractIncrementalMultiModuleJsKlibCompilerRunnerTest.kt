@@ -55,7 +55,7 @@ abstract class AbstractIncrementalMultiModuleJsKlibCompilerRunnerTest :
     }
 
     override val modulesApiHistory: ModulesApiHistoryJs by lazy {
-        ModulesApiHistoryJs(incrementalModuleInfo)
+        ModulesApiHistoryJs(workingDir, incrementalModuleInfo)
     }
 
     override val scopeExpansionMode: CompileScopeExpansionMode get() = CompileScopeExpansionMode.NEVER

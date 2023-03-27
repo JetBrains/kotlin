@@ -25,14 +25,14 @@ object EmptyModulesApiHistory : ModulesApiHistory {
     override fun abiSnapshot(jar: File): Either<Set<File>> = Either.Error("Not supported")
 }
 
-abstract class ModulesApiHistoryBase(protected val modulesInfo: IncrementalModuleInfo) : ModulesApiHistory {
+abstract class ModulesApiHistoryBase(rootProjectDir: File, protected val modulesInfo: IncrementalModuleInfo) : ModulesApiHistory {
     // All project build dirs should have this dir as their parent. For a default project setup, this will
     // be the same as root project path. Some projects map output outside of the root project dir, typically
     // with <some_dir>/<project_path>/build, and in that case, this path will be <some_dir>.
     // This is using set in order to de-dup paths, and avoid duplicate checks when possible.
     protected val possibleParentsToBuildDirs: Set<Path> = setOf(
         Paths.get(modulesInfo.rootProjectBuildDir.parentFile.absolutePath),
-        Paths.get(modulesInfo.projectRoot.absolutePath)
+        Paths.get(rootProjectDir.absolutePath)
     )
     private val dirToHistoryFileCache = HashMap<File, Set<File>>()
 
@@ -107,7 +107,7 @@ abstract class ModulesApiHistoryBase(protected val modulesInfo: IncrementalModul
     protected abstract fun getBuildHistoryFilesForJar(jar: File): Either<Set<File>>
 }
 
-class ModulesApiHistoryJvm(modulesInfo: IncrementalModuleInfo) : ModulesApiHistoryBase(modulesInfo) {
+class ModulesApiHistoryJvm(rootProjectDir: File, modulesInfo: IncrementalModuleInfo) : ModulesApiHistoryBase(rootProjectDir, modulesInfo) {
     override fun getBuildHistoryFilesForJar(jar: File): Either<Set<File>> {
         val moduleInfoFromJar = modulesInfo.jarToModule[jar]
         if (moduleInfoFromJar != null) {
@@ -144,7 +144,7 @@ class ModulesApiHistoryJvm(modulesInfo: IncrementalModuleInfo) : ModulesApiHisto
     }
 }
 
-class ModulesApiHistoryJs(modulesInfo: IncrementalModuleInfo) : ModulesApiHistoryBase(modulesInfo) {
+class ModulesApiHistoryJs(rootProjectDir: File, modulesInfo: IncrementalModuleInfo) : ModulesApiHistoryBase(rootProjectDir, modulesInfo) {
     override fun getBuildHistoryFilesForJar(jar: File): Either<Set<File>> {
         val moduleEntry = modulesInfo.jarToModule[jar]
 
@@ -160,8 +160,8 @@ class ModulesApiHistoryJs(modulesInfo: IncrementalModuleInfo) : ModulesApiHistor
     }
 }
 
-class ModulesApiHistoryAndroid(modulesInfo: IncrementalModuleInfo) : ModulesApiHistoryBase(modulesInfo) {
-    private val delegate = ModulesApiHistoryJvm(modulesInfo)
+class ModulesApiHistoryAndroid(rootProjectDir: File, modulesInfo: IncrementalModuleInfo) : ModulesApiHistoryBase(rootProjectDir, modulesInfo) {
+    private val delegate = ModulesApiHistoryJvm(rootProjectDir, modulesInfo)
 
     override fun historyFilesForChangedFiles(changedFiles: Set<File>): Either<Set<File>> {
         val historyFromDelegate = delegate.historyFilesForChangedFiles(changedFiles)

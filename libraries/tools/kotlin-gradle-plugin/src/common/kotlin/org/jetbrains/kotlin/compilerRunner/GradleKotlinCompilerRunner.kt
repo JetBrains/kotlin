@@ -397,7 +397,6 @@ internal open class GradleCompilerRunner(
             }
 
             return IncrementalModuleInfo(
-                projectRoot = gradle.rootProject.projectDir,
                 rootProjectBuildDir = gradle.rootProject.buildDir,
                 dirToModule = dirToModule,
                 nameToModules = nameToModules,

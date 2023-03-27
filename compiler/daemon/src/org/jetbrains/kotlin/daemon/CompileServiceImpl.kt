@@ -556,7 +556,12 @@ abstract class CompileServiceImplBase(
         }
 
         val workingDir = incrementalCompilationOptions.workingDir
-        val modulesApiHistory = ModulesApiHistoryJs(incrementalCompilationOptions.modulesInfo)
+        val modulesApiHistory = incrementalCompilationOptions.multiModuleICSettings?.run {
+            val modulesInfo = incrementalCompilationOptions.modulesInfo
+                ?: error("The build is configured to use the history-file based IC approach, but doesn't provide the modulesInfo")
+
+            ModulesApiHistoryJs(incrementalCompilationOptions.rootProjectDir, modulesInfo)
+        } ?: EmptyModulesApiHistory
 
         val compiler = IncrementalJsCompilerRunner(
             workingDir = workingDir,
@@ -606,17 +611,20 @@ abstract class CompileServiceImplBase(
 
         val workingDir = incrementalCompilationOptions.workingDir
 
+        val projectRoot = incrementalCompilationOptions.rootProjectDir
+
         val modulesApiHistory = incrementalCompilationOptions.multiModuleICSettings?.run {
-            reporter.info { "Use module detection: ${useModuleDetection}" }
+            reporter.info { "Use module detection: $useModuleDetection" }
+            val modulesInfo = incrementalCompilationOptions.modulesInfo
+                ?: error("The build is configured to use the history-file based IC approach, but doesn't provide the modulesInfo")
 
             if (!useModuleDetection) {
-                ModulesApiHistoryJvm(incrementalCompilationOptions.modulesInfo)
+                ModulesApiHistoryJvm(projectRoot, modulesInfo)
             } else {
-                ModulesApiHistoryAndroid(incrementalCompilationOptions.modulesInfo)
+                ModulesApiHistoryAndroid(projectRoot, modulesInfo)
             }
         } ?: EmptyModulesApiHistory
 
-        val projectRoot = incrementalCompilationOptions.modulesInfo.projectRoot
         val useK2 = k2jvmArgs.useK2 || LanguageVersion.fromVersionString(k2jvmArgs.languageVersion)?.usesK2 == true
         // TODO: This should be reverted after implementing of fir-based java tracker (KT-57147).
         //  See org.jetbrains.kotlin.incremental.CompilerRunnerUtilsKt.makeJvmIncrementally

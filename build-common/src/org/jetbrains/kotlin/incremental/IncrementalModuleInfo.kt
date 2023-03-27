@@ -21,7 +21,6 @@ data class IncrementalModuleEntry(
 }
 
 class IncrementalModuleInfo(
-    val projectRoot: File,
     val rootProjectBuildDir: File,
     val dirToModule: Map<File, IncrementalModuleEntry>,
     val nameToModules: Map<String, Set<IncrementalModuleEntry>>,

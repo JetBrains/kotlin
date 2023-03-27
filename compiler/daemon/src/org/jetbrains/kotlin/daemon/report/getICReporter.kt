@@ -30,7 +30,7 @@ fun getBuildReporter(
     compilationResults: CompilationResults,
     compilationOptions: IncrementalCompilationOptions
 ): RemoteBuildReporter<GradleBuildTime, GradleBuildPerformanceMetric> {
-    val root = compilationOptions.modulesInfo.projectRoot
+    val root = compilationOptions.rootProjectDir
     val reporters = ArrayList<RemoteICReporter>()
 
     if (ReportCategory.IC_MESSAGE.code in compilationOptions.reportCategories) {

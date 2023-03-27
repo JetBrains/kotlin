@@ -69,7 +69,11 @@ class IncrementalCompilationOptions(
      */
     val outputFiles: List<File>,
     val multiModuleICSettings: MultiModuleICSettings? = null,
-    val modulesInfo: IncrementalModuleInfo,
+    val modulesInfo: IncrementalModuleInfo? = null,
+    /**
+     * Root project directory, used to resolve relative paths
+     */
+    val rootProjectDir: File,
     kotlinScriptExtensions: Array<String>? = null,
     val withAbiSnapshot: Boolean = false,
     val preciseCompilationResultsBackup: Boolean = false,
