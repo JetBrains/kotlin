@@ -23,6 +23,7 @@ dependencies {
     testApi(project(":compiler:cli-js"))
     testApi(project(":compiler:serialization"))
     testApi(project(":compiler:fir:entrypoint"))
+    testApi(project(":compiler:fir:fir2ir:jvm-backend"))
     testApi(project(":compiler:backend.jvm.entrypoint"))
     testApi(projectTests(":compiler:test-infrastructure-utils"))
     testApi(project(":kotlin-preloader"))

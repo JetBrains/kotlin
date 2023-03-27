@@ -10,6 +10,7 @@ dependencies {
     api(project(":compiler:frontend"))
     api(project(":compiler:backend-common"))
     api(project(":compiler:fir:fir-serialization"))
+    api(project(":compiler:fir:fir2ir:jvm-backend")) // TODO needed for `FirJvmKotlinMangler`, but obviously wrong
     api(project(":compiler:ir.backend.common"))
     api(project(":compiler:ir.serialization.js"))
     api(project(":compiler:ir.tree"))
