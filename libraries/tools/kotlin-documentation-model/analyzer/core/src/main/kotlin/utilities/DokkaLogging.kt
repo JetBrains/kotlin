@@ -39,7 +39,7 @@ fun interface MessageEmitter : (String) -> Unit {
 }
 
 class DokkaConsoleLogger(
-    val minLevel: LoggingLevel = LoggingLevel.PROGRESS,
+    private val minLevel: LoggingLevel = LoggingLevel.PROGRESS,
     private val emitter: MessageEmitter = MessageEmitter.consoleEmitter
 ) : DokkaLogger {
     private val warningsCounter = AtomicInteger()
