@@ -220,7 +220,7 @@ class Fir2IrConverter(
         irClass: IrClass = classifierStorage.getCachedIrClass(regularClass)!!
     ): IrClass {
         val allDeclarations = mutableListOf<FirDeclaration>().apply {
-            addAll(regularClass.declarations.toMutableList())
+            addAll(regularClass.declarations)
             if (generatorExtensions.isNotEmpty()) {
                 addAll(regularClass.generatedMembers(session))
                 addAll(regularClass.generatedNestedClassifiers(session))
