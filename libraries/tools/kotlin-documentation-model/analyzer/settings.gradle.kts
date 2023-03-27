@@ -88,8 +88,6 @@ include(
     ":integration-tests:cli",
     ":integration-tests:maven",
 
-    ":test-utils",
-
     ":mkdocs",
 )
 
