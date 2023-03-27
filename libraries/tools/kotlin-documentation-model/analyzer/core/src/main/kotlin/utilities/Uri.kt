@@ -1,8 +1,10 @@
 package org.jetbrains.dokka.utilities
 
+import org.jetbrains.dokka.*
 import java.net.URI
 
-
+@InternalDokkaApi
+@Deprecated("Deprecated for removal") // Unused in Dokka
 fun URI.relativeTo(uri: URI): URI {
     // Normalize paths to remove . and .. segments
     val base = uri.normalize()

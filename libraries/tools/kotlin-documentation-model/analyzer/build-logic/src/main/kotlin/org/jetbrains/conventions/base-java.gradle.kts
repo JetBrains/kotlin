@@ -43,4 +43,6 @@ dependencies {
     // repetitive, but more declarative and clear), or some other solution.
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
     testRuntimeOnly("org.junit.vintage:junit-vintage-engine")
+    // kotlin-test asserts for all projects
+    testImplementation(kotlin("test-junit"))
 }
