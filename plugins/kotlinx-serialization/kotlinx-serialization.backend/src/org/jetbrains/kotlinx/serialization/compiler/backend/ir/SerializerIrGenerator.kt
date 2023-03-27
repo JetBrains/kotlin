@@ -354,7 +354,7 @@ open class SerializerIrGenerator(
                 else -> null
             }
         return if (defaultPrimitive == null)
-            irNull(compilerContext.irBuiltIns.anyNType) to (compilerContext.irBuiltIns.anyNType)
+            T.makeNullable().let { irNull(it) to it }
         else
             defaultPrimitive to T
     }
