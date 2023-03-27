@@ -51,7 +51,6 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrOutputGranularity
 import org.jetbrains.kotlin.gradle.targets.native.DisabledNativeTargetsReporter
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
-import org.jetbrains.kotlin.gradle.utils.SingleWarningPerBuild
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.presetName
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
@@ -81,22 +80,6 @@ internal class PropertiesProvider private constructor(private val project: Proje
 
     val buildReportSingleFile: File?
         get() = this.property(PropertyNames.KOTLIN_BUILD_REPORT_SINGLE_FILE)?.let { File(it) }
-
-    @Deprecated(message = "Please use kotlin.build.report.output instead ")
-    val buildReportEnabled: Boolean
-        get() {
-            val propValue = booleanProperty("kotlin.build.report.enable")?.also {
-                SingleWarningPerBuild.show(
-                    project,
-                    """
-                    'kotlin.build.report.enable' property does nothing since 1.7.0 release 
-                    and scheduled to be removed in Kotlin 1.8.0 release!
-                        Please use 'kotlin.build.report.output' instead
-                    """.trimIndent()
-                )
-            }
-            return propValue ?: false
-        }
 
     val buildReportOutputs: List<String>
         get() = this.property("kotlin.build.report.output")?.split(",") ?: emptyList()
