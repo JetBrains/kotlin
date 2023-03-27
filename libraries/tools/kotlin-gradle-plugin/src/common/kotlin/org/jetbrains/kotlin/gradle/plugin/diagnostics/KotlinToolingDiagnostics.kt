@@ -210,4 +210,14 @@ object KotlinToolingDiagnostics {
                     "Available values: prebuilt, light"
         )
     }
+
+    object Kotlin12XMppDeprecation : ToolingDiagnosticFactory(WARNING) {
+        operator fun invoke() = build(
+            """
+            The 'org.jetbrains.kotlin.platform.*' plugins are deprecated and will no longer be available in Kotlin 1.4.
+            Please migrate the project to the 'org.jetbrains.kotlin.multiplatform' plugin.
+            See: https://kotlinlang.org/docs/reference/building-mpp-with-gradle.html
+            """.trimIndent()
+        )
+    }
 }
