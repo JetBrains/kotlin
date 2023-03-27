@@ -296,12 +296,21 @@ class FirElementSerializer private constructor(
 
         processScope(memberScope) l@{
             val declaration = it.fir as T
-            if (declaration.isSubstitutionOrIntersectionOverride) return@l
-
-            // non-intersection or substitution fake override
-            if (!(declaration.isStatic || declaration is FirConstructor)) {
-                if (declaration.dispatchReceiverClassLookupTagOrNull() != this@collectDeclarations.symbol.toLookupTag()) {
+            val dispatchReceiverLookupTag = declaration.dispatchReceiverClassLookupTagOrNull()
+            // Special case for data/value class equals/hashCode/toString, see KT-57510
+            val isOverrideOfAnyFunctionInDataOrValueClass = this@collectDeclarations is FirRegularClass &&
+                    (this@collectDeclarations.isData || this@collectDeclarations.isInline) &&
+                    dispatchReceiverLookupTag?.classId == StandardClassIds.Any && !declaration.isFinal
+            if (declaration.isSubstitutionOrIntersectionOverride) {
+                if (!isOverrideOfAnyFunctionInDataOrValueClass) {
                     return@l
+                }
+            } else if (!(declaration.isStatic || declaration is FirConstructor)) {
+                // non-intersection or substitution fake override
+                if (dispatchReceiverLookupTag != this@collectDeclarations.symbol.toLookupTag()) {
+                    if (!isOverrideOfAnyFunctionInDataOrValueClass) {
+                        return@l
+                    }
                 }
             }
 
