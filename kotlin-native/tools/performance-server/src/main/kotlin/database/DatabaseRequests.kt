@@ -47,9 +47,6 @@ internal fun getBuildsDescription(type: String?, branch: String?, agentInfo: Str
                         "must": [
                             { "bool": {
                                 "should": [
-                                     { "regexp": { "buildNumber": { "value": "${if (it == "release")  
-                                        ".*eap.*|.*release.*|.*rc.*" else ".*dev.*"}" } } 
-                                     },
                                      { "match": { "buildType": "${it.uppercase()}" } }
                                  ]
                             }},
