@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KClass
 
-abstract class ConeAttribute<T : ConeAttribute<T>> : AnnotationMarker {
+abstract class ConeAttribute<out T : ConeAttribute<T>> : AnnotationMarker {
     abstract fun union(other: @UnsafeVariance T?): T?
     abstract fun intersect(other: @UnsafeVariance T?): T?
 
