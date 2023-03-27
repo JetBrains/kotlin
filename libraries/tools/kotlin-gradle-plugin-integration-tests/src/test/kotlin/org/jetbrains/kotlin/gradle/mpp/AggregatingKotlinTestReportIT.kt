@@ -15,7 +15,7 @@ import org.junit.jupiter.api.DisplayName
 
 @MppGradlePluginTests
 @DisplayName("Tests for aggregating kotlin test reports")
-class AggregatingKotlinTestReportIT : KGPBaseTest() {
+class AggregatingKotlinTestReportIT : MPPBaseTest() {
     @DisplayName("KT-54506: `allTests` is not false positively up-to-date after failure")
     @GradleTest
     fun testFailedTestsAreNotUpToDate(gradleVersion: GradleVersion) {

@@ -17,10 +17,10 @@ class MultiplatformAndroidSourceSetLayoutV2IT : KGPBaseTest() {
 
     @GradleAndroidTest
     @DisplayName("test Android project with flavors")
-    @AndroidTestVersions(minVersion = "7.0.4", additionalVersions = [TestVersions.AGP.NEXT_RELEASE])
+    @AndroidTestVersions(minVersion = "7.0.4", additionalVersions = [BETA_AGP])
     @GradleTestVersions(
         minVersion = TestVersions.Gradle.G_7_0,
-        maxVersion = TestVersions.Gradle.NEXT_RELEASE,
+        maxVersion = BETA_GRADLE,
         additionalVersions = [TestVersions.Gradle.MAX_SUPPORTED]
     ) // due AGP version limit ^
     fun testProjectWithFlavors(gradleVersion: GradleVersion, agpVersion: String, jdkVersion: JdkVersions.ProvidedJdk) {

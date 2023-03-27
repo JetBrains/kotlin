@@ -61,7 +61,11 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
 
     @MppGradlePluginTests
     @DisplayName("works with MPP publishing")
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
+    @GradleTestVersions(
+        minVersion = TestVersions.Gradle.G_7_4,
+        maxVersion = BETA_GRADLE,
+        additionalVersions = [TestVersions.Gradle.MAX_SUPPORTED]
+    )
     @GradleTest
     fun testMppWithMavenPublish(gradleVersion: GradleVersion) {
         project("new-mpp-lib-and-app/sample-lib", gradleVersion) {
@@ -77,7 +81,11 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
 
     @NativeGradlePluginTests
     @DisplayName("works with native tasks in complex project")
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
+    @GradleTestVersions(
+        minVersion = TestVersions.Gradle.G_7_4,
+        maxVersion = BETA_GRADLE,
+        additionalVersions = [TestVersions.Gradle.MAX_SUPPORTED]
+    )
     @GradleTest
     fun testNativeTasks(gradleVersion: GradleVersion) {
         val expectedTasks = mutableListOf(
@@ -114,7 +122,11 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
 
     @NativeGradlePluginTests
     @DisplayName("works with commonizer")
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
+    @GradleTestVersions(
+        minVersion = TestVersions.Gradle.G_7_4,
+        maxVersion = BETA_GRADLE,
+        additionalVersions = [TestVersions.Gradle.MAX_SUPPORTED]
+    )
     @GradleTest
     fun testCommonizer(gradleVersion: GradleVersion) {
         project("native-configuration-cache", gradleVersion) {
@@ -154,7 +166,11 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     // Set min Gradle version to 6.8 because of using DependencyResolutionManagement API to add repositories.
     @JvmGradlePluginTests
     @DisplayName("with instance execution")
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_6_8)
+    @GradleTestVersions(
+        minVersion = TestVersions.Gradle.G_6_8,
+        maxVersion = BETA_GRADLE,
+        additionalVersions = [TestVersions.Gradle.MAX_SUPPORTED]
+    )
     @GradleTest
     fun testInstantExecution(gradleVersion: GradleVersion) {
         project("instantExecution", gradleVersion) {
@@ -179,7 +195,11 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
 
     @JvmGradlePluginTests
     @DisplayName("instant execution works with included build plugin")
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_6_8)
+    @GradleTestVersions(
+        minVersion = TestVersions.Gradle.G_6_8,
+        maxVersion = BETA_GRADLE,
+        additionalVersions = [TestVersions.Gradle.MAX_SUPPORTED]
+    )
     @GradleTest
     fun testInstantExecutionWithIncludedBuildPlugin(gradleVersion: GradleVersion) {
         project("instantExecutionWithIncludedBuildPlugin", gradleVersion) {
@@ -192,7 +212,11 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
 
     @MppGradlePluginTests
     @DisplayName("works in MPP withJava project")
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_0)
+    @GradleTestVersions(
+        minVersion = TestVersions.Gradle.G_7_0,
+        maxVersion = BETA_GRADLE,
+        additionalVersions = [TestVersions.Gradle.MAX_SUPPORTED]
+    )
     @GradleTest
     fun testJvmWithJavaConfigurationCache(gradleVersion: GradleVersion) {
         project("mppJvmWithJava", gradleVersion) {
@@ -224,8 +248,11 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     }
 
     @JvmGradlePluginTests
-    @DisplayName("with build build scan report")
+    @DisplayName("with build scan report")
     @GradleTest
+    @GradleTestVersions( // remove restriction after fix KT-57645
+        maxVersion = TestVersions.Gradle.MAX_SUPPORTED
+    )
     fun testBuildScanReportSmokeTestForConfigurationCache(gradleVersion: GradleVersion) {
         project("simpleProject", gradleVersion) {
             val buildOptions = defaultBuildOptions.copy(buildReport = listOf(BuildReportType.BUILD_SCAN), logLevel = LogLevel.DEBUG)
@@ -240,7 +267,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     }
 }
 
-abstract class AbstractConfigurationCacheIT : KGPBaseTest() {
+abstract class AbstractConfigurationCacheIT : MPPBaseTest() {
     override val defaultBuildOptions =
         super.defaultBuildOptions.copy(configurationCache = true)
 

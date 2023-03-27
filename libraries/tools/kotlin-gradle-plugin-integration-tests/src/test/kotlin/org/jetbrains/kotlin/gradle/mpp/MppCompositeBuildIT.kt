@@ -16,12 +16,8 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 
 @MppGradlePluginTests
-@GradleTestVersions(
-    maxVersion = TestVersions.Gradle.NEXT_RELEASE,
-    additionalVersions = [TestVersions.Gradle.MAX_SUPPORTED]
-)
 @DisplayName("Tests for multiplatform with composite builds")
-class MppCompositeBuildIT : KGPBaseTest() {
+class MppCompositeBuildIT : MPPBaseTest() {
     @GradleTest
     fun `test - sample0 - ide dependencies`(gradleVersion: GradleVersion) {
         val producer = project("mpp-composite-build/sample0/producerBuild", gradleVersion)
