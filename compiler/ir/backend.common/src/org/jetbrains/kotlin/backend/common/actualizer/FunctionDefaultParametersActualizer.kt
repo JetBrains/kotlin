@@ -6,7 +6,10 @@
 package org.jetbrains.kotlin.backend.common.actualizer
 
 import org.jetbrains.kotlin.backend.common.lower.copyAndActualizeDefaultValue
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
+import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -27,11 +30,28 @@ class FunctionDefaultParametersActualizer(private val expectActualMap: Map<IrSym
                 actualParameter.defaultValue = expectDefaultValue.copyAndActualizeDefaultValue(
                     actualFunction,
                     actualParameter,
-                    expectFunction.typeParameters.zip(actualFunction.typeParameters).toMap(),
+                    expectFunction.mapTypeParametersTo(actualFunction),
                     classActualizer = { (expectActualMap[it.symbol] as? IrClassSymbol)?.owner },
                     functionActualizer = { (expectActualMap[it.symbol] as? IrFunctionSymbol)?.owner },
                 )
             }
         }
+    }
+
+    private fun IrDeclaration.mapTypeParametersTo(actual: IrDeclaration): Map<IrTypeParameter, IrTypeParameter> {
+        val typeParameters = mutableMapOf<IrTypeParameter, IrTypeParameter>()
+        var currentActual: IrDeclaration? = actual
+        var currentExpect: IrDeclaration? = this
+
+        while (currentExpect != null && currentActual != null) {
+            if (currentExpect is IrTypeParametersContainer && currentActual is IrTypeParametersContainer) {
+                typeParameters += currentExpect.typeParameters.zip(currentActual.typeParameters).toMap()
+            }
+
+            currentExpect = currentExpect.parent as? IrDeclaration
+            currentActual = currentActual.parent as? IrDeclaration
+        }
+
+        return typeParameters
     }
 }
