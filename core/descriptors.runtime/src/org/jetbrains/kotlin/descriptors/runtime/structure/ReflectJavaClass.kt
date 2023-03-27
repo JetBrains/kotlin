@@ -105,7 +105,14 @@ class ReflectJavaClass(
         get() = null
 
     override val name: Name
-        get() = Name.identifier(klass.simpleName)
+        get() = if (klass.isAnonymousClass) {
+            // For anonymous classes, `Class.simpleName` returns an empty string in Java reflection.
+            // We don't want that because it breaks all sorts of invariants on names which cannot be empty in Kotlin.
+            // So we extract the simple name from the full JVM binary name, e.g. "org.test.Foo$1" -> "Foo$1".
+            Name.identifier(klass.name.substringAfterLast("."))
+        } else {
+            Name.identifier(klass.simpleName)
+        }
 
     override val typeParameters: List<ReflectJavaTypeParameter>
         get() = klass.typeParameters.map(::ReflectJavaTypeParameter)

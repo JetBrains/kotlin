@@ -51,8 +51,13 @@ internal class KClassImpl<T : Any>(
             val moduleData = data.value.moduleData
 
             val descriptor =
-                if (classId.isLocal) moduleData.deserialization.deserializeClass(classId)
-                else moduleData.module.findClassAcrossModuleDependencies(classId)
+                if (classId.isLocal && jClass.isAnnotationPresent(Metadata::class.java)) {
+                    // If it's a Kotlin local class or anonymous object, deserialize its metadata directly because it cannot be found via
+                    // `module.findClassAcrossModuleDependencies`.
+                    moduleData.deserialization.deserializeClass(classId)
+                } else {
+                    moduleData.module.findClassAcrossModuleDependencies(classId)
+                }
 
             descriptor ?: reportUnresolvedClass()
         }

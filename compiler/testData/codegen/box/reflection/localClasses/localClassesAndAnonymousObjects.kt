@@ -116,9 +116,8 @@ fun box(): String {
     checkKotlinAnonymousObject()
     checkKotlinLocalClass()
 
-    // TODO: fails with KotlinReflectionInternalError: Unresolved class: class JavaClass$1 (kind = null)
-    // checkJavaAnonymousObject()
-    // checkJavaLocalClass()
+    checkJavaAnonymousObject()
+    checkJavaLocalClass()
 
     return "OK"
 }
