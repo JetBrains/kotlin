@@ -1394,14 +1394,15 @@ val IrFunction.isValueClassTypedEquals: Boolean
 
 /**
  * The method is used to calculate the previous offset from the current one to prevent situations when it can calculate
- * [UNDEFINED_OFFSET] from 0 offset and -2 offset from the [UNDEFINED OFFSET]
+ * [UNDEFINED_OFFSET] from 0 offset and [SYNTHETIC_OFFSET] offset from the [UNDEFINED OFFSET]
  */
 val Int.previousOffset
     get(): Int =
-        when (compareTo(0)) {
+        when (this) {
             0 -> 0
-            -1 -> UNDEFINED_OFFSET
-            else -> minus(1)
+            UNDEFINED_OFFSET -> UNDEFINED_OFFSET
+            SYNTHETIC_OFFSET -> SYNTHETIC_OFFSET
+            else -> if (this > 0) minus(1) else error("Invalid offset appear")
         }
 
 fun IrAttributeContainer.extractRelatedDeclaration(): IrDeclaration? {

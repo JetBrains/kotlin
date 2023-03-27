@@ -408,12 +408,12 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
 
         if (invokeFun.returnType.isUnit()) {
             val unitValue = JsIrBuilder.buildGetObjectValue(context.irBuiltIns.unitType, context.irBuiltIns.unitClass)
-            // Set both offsets of the IrReturn to body.endOffset - 1 so that a breakpoint set at the closing brace of a lambda expression
+            // Set both offsets of the IrReturn to body.previousOffset so that a breakpoint set at the closing brace of a lambda expression
             // could be hit.
             body.statements.add(
                 IrReturnImpl(
-                    body.endOffset - 1,
-                    body.endOffset - 1,
+                    body.endOffset.previousOffset,
+                    body.endOffset.previousOffset,
                     context.irBuiltIns.nothingType,
                     lambdaDeclaration.symbol,
                     unitValue
