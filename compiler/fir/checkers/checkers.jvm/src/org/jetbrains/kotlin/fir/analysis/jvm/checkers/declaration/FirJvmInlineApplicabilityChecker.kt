@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.getModifier
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
+import org.jetbrains.kotlin.fir.declarations.multiFieldValueClassRepresentation
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -21,6 +22,11 @@ import org.jetbrains.kotlin.resolve.JVM_INLINE_ANNOTATION_CLASS_ID
 object FirJvmInlineApplicabilityChecker : FirRegularClassChecker() {
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
         val annotation = declaration.getAnnotationByClassId(JVM_INLINE_ANNOTATION_CLASS_ID, context.session)
+        if (declaration.multiFieldValueClassRepresentation != null) {
+            declaration.getModifier(KtTokens.INLINE_KEYWORD)?.let {
+                reporter.reportOn(it.source, FirJvmErrors.MULTI_FIELD_VALUE_CLASS_WITH_INLINE_MODIFIER, context)
+            }
+        }
         if (annotation != null && !(declaration.isInline && declaration.getModifier(KtTokens.VALUE_KEYWORD) != null)) {
             // only report if value keyword does not exist, this includes the deprecated inline class syntax
             reporter.reportOn(annotation.source, FirJvmErrors.JVM_INLINE_WITHOUT_VALUE_CLASS, context)

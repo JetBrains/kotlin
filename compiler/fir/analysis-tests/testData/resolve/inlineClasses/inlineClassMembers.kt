@@ -22,7 +22,7 @@ inline class ReservedMembers(val x: Int) {
     override fun hashCode() = 1
 }
 
-inline class ReservedMembersMfvc(val x: Int, val y: Int) {
+<!MULTI_FIELD_VALUE_CLASS_WITH_INLINE_MODIFIER!>inline<!> class ReservedMembersMfvc(val x: Int, val y: Int) {
     fun <!RESERVED_MEMBER_INSIDE_VALUE_CLASS!>box<!>() {}
     fun <!RESERVED_MEMBER_INSIDE_VALUE_CLASS!>unbox<!>() {}
 

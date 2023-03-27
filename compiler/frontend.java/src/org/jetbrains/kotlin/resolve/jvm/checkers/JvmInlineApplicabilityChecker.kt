@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.JVM_INLINE_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
+import org.jetbrains.kotlin.resolve.isMultiFieldValueClass
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 
 class JvmInlineApplicabilityChecker : DeclarationChecker {
@@ -34,10 +35,13 @@ class JvmInlineApplicabilityChecker : DeclarationChecker {
             val annotationEntry = DescriptorToSourceUtils.getSourceFromAnnotation(annotation) ?: return
             context.trace.report(ErrorsJvm.JVM_INLINE_WITHOUT_VALUE_CLASS.on(annotationEntry))
         }
-
         if (descriptor.isValue && annotation == null && !descriptor.isExpect) {
             val valueKeyword = declaration.modifierList?.getModifier(KtTokens.VALUE_KEYWORD) ?: return
             context.trace.report(ErrorsJvm.VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION.on(valueKeyword))
+        }
+        if (descriptor.isInline && descriptor.isMultiFieldValueClass()) {
+            val inlineKeyword = declaration.modifierList?.getModifier(KtTokens.INLINE_KEYWORD) ?: return
+            context.trace.report(ErrorsJvm.MULTI_FIELD_VALUE_CLASS_WITH_INLINE_MODIFIER.on(inlineKeyword))
         }
     }
 }

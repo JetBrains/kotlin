@@ -220,6 +220,7 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
 
         MAP.put(VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION, "Value classes without @JvmInline annotation are not supported yet");
         MAP.put(JVM_INLINE_WITHOUT_VALUE_CLASS, "@JvmInline annotation is only applicable to value classes");
+        MAP.put(MULTI_FIELD_VALUE_CLASS_WITH_INLINE_MODIFIER, "inline modifier is not applicable to multi-field value classes");
 
         MAP.put(SYNCHRONIZED_ON_SUSPEND, "@Synchronized annotation is not applicable to suspend functions and lambdas");
 

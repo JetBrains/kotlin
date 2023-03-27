@@ -198,6 +198,7 @@ public interface ErrorsJvm {
 
     DiagnosticFactory0<PsiElement> VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> JVM_INLINE_WITHOUT_VALUE_CLASS = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> MULTI_FIELD_VALUE_CLASS_WITH_INLINE_MODIFIER = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<PsiElement> TYPEOF_SUSPEND_TYPE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory1<PsiElement, String> TYPEOF_NON_REIFIED_TYPE_PARAMETER_WITH_RECURSIVE_BOUND = DiagnosticFactory1.create(ERROR);
