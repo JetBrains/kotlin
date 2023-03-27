@@ -622,6 +622,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         }
 
         @Test
+        @TestMetadata("noUnusedOnDelegationWithProvider.kt")
+        public void testNoUnusedOnDelegationWithProvider() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/noUnusedOnDelegationWithProvider.kt");
+        }
+
+        @Test
         @TestMetadata("Nullability.kt")
         public void testNullability() throws Exception {
             runTest("compiler/testData/diagnostics/tests/Nullability.kt");
@@ -1141,6 +1147,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         @TestMetadata("UnusedParameters.kt")
         public void testUnusedParameters() throws Exception {
             runTest("compiler/testData/diagnostics/tests/UnusedParameters.kt");
+        }
+
+        @Test
+        @TestMetadata("unusedVariableOnRegularDelegatedProperty.kt")
+        public void testUnusedVariableOnRegularDelegatedProperty() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/unusedVariableOnRegularDelegatedProperty.kt");
         }
 
         @Test

@@ -690,6 +690,14 @@ class ControlFlowInformationProviderImpl private constructor(
     private val VariableDescriptor.isLocalVariableWithDelegate: Boolean
         get() = this is LocalVariableDescriptor && this.isDelegated
 
+    private val VariableDescriptor.isLocalVariableWithProvideDelegate: Boolean
+        get() {
+            if (!isLocalVariableWithDelegate) return false
+            if (this !is VariableDescriptorWithAccessors) return false
+
+            return trace.bindingContext[PROVIDE_DELEGATE_RESOLVED_CALL, this] != null
+        }
+
     private fun processUnusedDeclaration(
         element: KtNamedDeclaration,
         variableDescriptor: VariableDescriptor,
@@ -704,8 +712,11 @@ class ControlFlowInformationProviderImpl private constructor(
                 element is KtDestructuringDeclarationEntry && element.parent.parent?.parent is KtParameterList ->
                     report(Errors.UNUSED_DESTRUCTURED_PARAMETER_ENTRY.on(element, variableDescriptor), ctxt)
 
-                KtPsiUtil.isRemovableVariableDeclaration(element) ->
-                    report(Errors.UNUSED_VARIABLE.on(element, variableDescriptor), ctxt)
+                KtPsiUtil.isRemovableVariableDeclaration(element) -> {
+                    if (!variableDescriptor.isLocalVariableWithProvideDelegate) {
+                        report(Errors.UNUSED_VARIABLE.on(element, variableDescriptor), ctxt)
+                    }
+                }
 
                 element is KtParameter ->
                     processUnusedParameter(ctxt, element, variableDescriptor)
