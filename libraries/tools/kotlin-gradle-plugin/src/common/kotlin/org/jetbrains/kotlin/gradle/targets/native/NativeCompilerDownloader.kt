@@ -48,7 +48,7 @@ class NativeCompilerDownloader(
     private val kotlinProperties get() = PropertiesProvider(project)
 
     private val distributionType: NativeDistributionType
-        get() = NativeDistributionTypeProvider(project).getDistributionType(compilerVersion)
+        get() = NativeDistributionTypeProvider(project).getDistributionType()
 
     private val simpleOsName: String
         get() = HostManager.platformName()
@@ -207,7 +207,7 @@ internal fun Project.setupNativeCompiler(konanTarget: KonanTarget) {
         logger.info("User-provided Kotlin/Native distribution: $konanHome")
     }
 
-    val distributionType = NativeDistributionTypeProvider(project).getDistributionType(konanVersion)
+    val distributionType = NativeDistributionTypeProvider(project).getDistributionType()
     if (distributionType.mustGeneratePlatformLibs) {
         PlatformLibrariesGenerator(project, konanTarget).generatePlatformLibsIfNeeded()
     }

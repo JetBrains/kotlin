@@ -174,16 +174,6 @@ class NativeDownloadAndPlatformLibsIT : BaseGradleIT() {
     }
 
     @Test
-    fun testDeprecatedRestrictedDistributionProperty() = with(platformLibrariesProject("linuxX64")) {
-        // We allow using this deprecated property for 1.4 too. Just download the distribution without platform libs in this case.
-        build("tasks", "-Pkotlin.native.restrictedDistribution=true") {
-            assertSuccessful()
-            assertContains("Warning: Project property 'kotlin.native.restrictedDistribution' is deprecated. Please use 'kotlin.native.distribution.type=light' instead")
-            assertContainsRegex("Kotlin/Native distribution: .*kotlin-native-$platformName".toRegex())
-        }
-    }
-
-    @Test
     fun testSettingGenerationMode() = with(platformLibrariesProject("linuxX64")) {
         // Check that user can change generation mode used by the cinterop tool.
         buildWithLightDist("tasks", "-Pkotlin.native.platform.libraries.mode=metadata") {

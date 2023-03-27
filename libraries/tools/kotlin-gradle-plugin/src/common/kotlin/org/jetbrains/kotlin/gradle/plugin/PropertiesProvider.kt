@@ -315,12 +315,6 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = this.booleanProperty("kotlin.native.distribution.downloadFromMaven") ?: false
 
     /**
-     * A property that was used to choose a restricted distribution in 1.3.
-     */
-    val nativeDeprecatedRestricted: Boolean?
-        get() = booleanProperty("kotlin.native.restrictedDistribution")
-
-    /**
      * Allows a user to force a particular cinterop mode for platform libraries generation. Available modes: sourcecode, metadata.
      * A main purpose of this property is working around potential problems with the metadata mode.
      */
