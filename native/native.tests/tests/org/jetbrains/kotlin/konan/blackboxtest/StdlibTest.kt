@@ -77,9 +77,6 @@ class StdlibTest : AbstractNativeBlackBoxTest() {
             DISABLED_K2_MATH,
             DISABLED_K2_DURATION,
             DISABLED_K2_ARRAYS,
-            DISABLED_K2_STRING_NUMBER_CONVERSIONS,
-            DISABLED_K2_UNSIGNED_ARRAYS,
-            DISABLED_K2_RANGE_ITERATION,
         ],
         ignoredTests = [DISABLED_STDLIB_TEST]
     ),
@@ -104,9 +101,6 @@ class StdlibTest : AbstractNativeBlackBoxTest() {
             DISABLED_K2_MATH,
             DISABLED_K2_DURATION,
             DISABLED_K2_ARRAYS,
-            DISABLED_K2_STRING_NUMBER_CONVERSIONS,
-            DISABLED_K2_UNSIGNED_ARRAYS,
-            DISABLED_K2_RANGE_ITERATION,
         ],
         ignoredTests = [DISABLED_STDLIB_TEST]
     )
@@ -130,7 +124,4 @@ private const val DISABLED_STDLIB_TEST = "test.collections.CollectionTest.abstra
 private const val DISABLED_K2_NUMBERS = "libraries/stdlib/test/numbers/NumbersTest.kt"  // KT-56023
 private const val DISABLED_K2_MATH = "libraries/stdlib/test/numbers/MathTest.kt"  // KT-56023
 private const val DISABLED_K2_DURATION = "libraries/stdlib/test/time/DurationTest.kt"  // uses symbols from disabled MathTest.kt (see above)
-private const val DISABLED_K2_ARRAYS = "libraries/stdlib/test/collections/ArraysTest.kt"  // KT-55902
-private const val DISABLED_K2_STRING_NUMBER_CONVERSIONS = "libraries/stdlib/test/text/StringNumberConversionTest.kt"  // KT-55902
-private const val DISABLED_K2_UNSIGNED_ARRAYS = "libraries/stdlib/test/collections/UnsignedArraysTest.kt"  // KT-55902
-private const val DISABLED_K2_RANGE_ITERATION = "libraries/stdlib/test/ranges/RangeIterationTest.kt"  // KT-56483
+private const val DISABLED_K2_ARRAYS = "libraries/stdlib/test/collections/ArraysTest.kt"  // KT-57487
