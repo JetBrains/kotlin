@@ -22,7 +22,7 @@ class MPPBuildReproducibilityIT : KGPBaseTest() {
     @GradleTest
     @GradleTestVersions(
         minVersion = TestVersions.Gradle.G_7_0,
-        maxVersion = TestVersions.Gradle.NEXT_RELEASE,
+        maxVersion = BETA_GRADLE,
         additionalVersions = [TestVersions.Gradle.MAX_SUPPORTED]
     )
     @DisplayName("Check if consecutive builds produce same binaries: Simple Multiplatform project")
