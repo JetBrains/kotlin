@@ -10,8 +10,10 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.ArrayUtil;
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactResolutionRequest;
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.model.PluginExecution;
@@ -51,6 +53,9 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
 
     @Component
     protected RepositorySystem system;
+
+    @Parameter(defaultValue = "${session}", readonly = true, required = true)
+    protected MavenSession session;
 
     /**
      * The source directories containing the sources to be compiled.
@@ -282,9 +287,17 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
 
         List<File> files = new ArrayList<>();
 
+        ArtifactRepository localRepo = session == null ? null : session.getLocalRepository();
+        List<ArtifactRepository> remoteRepos = session == null ? null : session.getRequest().getRemoteRepositories();
         for (Dependency dependency : mojoExecution.getPlugin().getDependencies()) {
             Artifact artifact = system.createDependencyArtifact(dependency);
-            ArtifactResolutionResult resolved = system.resolve(new ArtifactResolutionRequest().setArtifact(artifact));
+
+            ArtifactResolutionRequest request = new ArtifactResolutionRequest().setArtifact(artifact);
+            if (localRepo != null) request.setLocalRepository(localRepo);
+            if (remoteRepos != null) request.setRemoteRepositories(remoteRepos);
+            if (localRepo != null || remoteRepos != null) request.setResolveTransitively(true);
+
+            ArtifactResolutionResult resolved = system.resolve(request);
 
             for (Artifact resolvedArtifact : resolved.getArtifacts()) {
                 File file = resolvedArtifact.getFile();
