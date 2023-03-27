@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.visitors.TransformData
 import org.jetbrains.kotlin.fir.visitors.transformInplace
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.ConstantValueKind
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 inline val FirAnnotation.unexpandedConeClassLikeType: ConeClassLikeType?
     get() = ((annotationTypeRef as? FirResolvedTypeRef)?.type as? ConeClassLikeType)
@@ -169,3 +170,10 @@ fun FirExpression.unwrapSmartcastExpression(): FirExpression =
 val FirCallableReferenceAccess.isBound: Boolean
     get() = (dispatchReceiver != FirNoReceiverExpression || extensionReceiver != FirNoReceiverExpression) &&
             calleeReference.toResolvedCallableSymbol()?.isStatic != true
+
+val FirQualifiedAccessExpression.allReceiverExpressions: List<FirExpression>
+    get() = buildList {
+        addIfNotNull(dispatchReceiver)
+        addIfNotNull(extensionReceiver)
+        addAll(contextReceiverArguments)
+    }

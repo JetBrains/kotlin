@@ -13,11 +13,9 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.classKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
-import org.jetbrains.kotlin.fir.analysis.checkers.outerClassSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.toResolvedBaseSymbol
@@ -77,16 +75,9 @@ object FirUninitializedEnumChecker : FirQualifiedAccessExpressionChecker() {
         if (source.kind is KtFakeSourceElementKind) return
 
         val calleeSymbol = expression.calleeReference.toResolvedBaseSymbol() ?: return
-        val calleeContainingClassSymbol = calleeSymbol.getContainingClassSymbol(context.session) as? FirRegularClassSymbol ?: return
+        val enumClassSymbol = calleeSymbol.getContainingClassSymbol(context.session) as? FirRegularClassSymbol ?: return
         // We're looking for members/entries/companion object in an enum class or members in companion object of an enum class.
-        val calleeIsInsideEnum = calleeContainingClassSymbol.isEnumClass
-        val calleeIsInsideEnumCompanion =
-            calleeContainingClassSymbol.isCompanion && (calleeContainingClassSymbol.outerClassSymbol(context) as? FirRegularClassSymbol)?.isEnumClass == true
-        if (!calleeIsInsideEnum && !calleeIsInsideEnumCompanion) return
-
-        val enumClassSymbol =
-            if (calleeIsInsideEnum) calleeContainingClassSymbol
-            else calleeContainingClassSymbol.outerClassSymbol(context) as? FirRegularClassSymbol ?: return
+        if (!enumClassSymbol.isEnumClass) return
 
         // An accessed context within the enum class of interest. We should look up until either enum members or enum entries are found,
         // not just last containing declaration. For example,
@@ -131,7 +122,9 @@ object FirUninitializedEnumChecker : FirQualifiedAccessExpressionChecker() {
         //           JVM_1_6 -> ...
         //     }
         //   }
-        val containingDeclarationForAccess = context.containingDeclarations.lastOrNull()
+        val containingDeclarationForAccess = context.containingDeclarations.lastOrNull {
+            !(it is FirAnonymousFunction && it.invocationKind != null)
+        }
         if (accessedContext in enumMemberProperties) {
             val lazyDelegation = (accessedContext as FirPropertySymbol).lazyDelegation
             if (lazyDelegation != null && lazyDelegation == containingDeclarationForAccess) {
@@ -151,24 +144,6 @@ object FirUninitializedEnumChecker : FirQualifiedAccessExpressionChecker() {
         //   }
         if (accessedContext in enumEntries && containingDeclarationForAccess?.isEnumEntryInitializer(context.session) != true) {
             return
-        }
-
-        // Members inside the companion object of an enum class
-        if (calleeContainingClassSymbol == enumClassSymbol.companionObjectSymbol) {
-            // Uninitialized from the point of view of members or enum entries of that enum class
-            if (accessedContext in enumMemberProperties || accessedContext in enumEntries) {
-                if (calleeSymbol is FirPropertySymbol) {
-                    // From KT-11769
-                    // enum class Fruit(...) {
-                    //   APPLE(...);
-                    //   companion object {
-                    //     val common = ...
-                    //   }
-                    //   val score = ... <!>common<!>
-                    // }
-                    reporter.reportOn(source, FirErrors.UNINITIALIZED_VARIABLE, calleeSymbol, context)
-                }
-            }
         }
 
         // The enum entries of an enum class

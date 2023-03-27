@@ -10,22 +10,22 @@ import kotlin.reflect.KProperty
 
 enum class Enum {
     A {
-        val aInside = foo()
-        val bInside = inPlaceRun { foo() }
+        val aInside = <!UNINITIALIZED_ENUM_COMPANION!>foo<!>()
+        val bInside = inPlaceRun { <!UNINITIALIZED_ENUM_COMPANION!>foo<!>() }
         val cInside = nonInPlaceRun { foo() }
 
-        val dInside by foo()
-        val eInside by inPlaceDelegate { foo() }
+        val dInside by <!UNINITIALIZED_ENUM_COMPANION!>foo<!>()
+        val eInside by inPlaceDelegate { <!UNINITIALIZED_ENUM_COMPANION!>foo<!>() }
         val fInside by nonInPlaceDelegate { foo() }
     },
     B {
         init {
-            val aInit = foo()
-            val bInit = inPlaceRun { foo() }
+            val aInit = <!UNINITIALIZED_ENUM_COMPANION!>foo<!>()
+            val bInit = inPlaceRun { <!UNINITIALIZED_ENUM_COMPANION!>foo<!>() }
             val cInit = nonInPlaceRun { foo() }
 
-            val dInit by foo()
-            val eInit by inPlaceDelegate { foo() }
+            val dInit by <!UNINITIALIZED_ENUM_COMPANION!>foo<!>()
+            val eInit by inPlaceDelegate { <!UNINITIALIZED_ENUM_COMPANION!>foo<!>() }
             val fInit by nonInPlaceDelegate { foo() }
         }
     },
@@ -65,21 +65,21 @@ enum class Enum {
     D {
         init {
             val someObj = object {
-                val aInside = foo()
-                val bInside = inPlaceRun { foo() }
+                val aInside = <!UNINITIALIZED_ENUM_COMPANION!>foo<!>()
+                val bInside = inPlaceRun { <!UNINITIALIZED_ENUM_COMPANION!>foo<!>() }
                 val cInside = nonInPlaceRun { foo() }
 
-                val dInside by foo()
-                val eInside by inPlaceDelegate { foo() }
+                val dInside by <!UNINITIALIZED_ENUM_COMPANION!>foo<!>()
+                val eInside by inPlaceDelegate { <!UNINITIALIZED_ENUM_COMPANION!>foo<!>() }
                 val fInside by nonInPlaceDelegate { foo() }
 
                 init {
-                    val aInit = foo()
-                    val bInit = inPlaceRun { foo() }
+                    val aInit = <!UNINITIALIZED_ENUM_COMPANION!>foo<!>()
+                    val bInit = inPlaceRun { <!UNINITIALIZED_ENUM_COMPANION!>foo<!>() }
                     val cInit = nonInPlaceRun { foo() }
 
-                    val dInit by foo()
-                    val eInit by inPlaceDelegate { foo() }
+                    val dInit by <!UNINITIALIZED_ENUM_COMPANION!>foo<!>()
+                    val eInit by inPlaceDelegate { <!UNINITIALIZED_ENUM_COMPANION!>foo<!>() }
                     val fInit by nonInPlaceDelegate { foo() }
                 }
 
@@ -97,12 +97,12 @@ enum class Enum {
     }
     ;
 
-    val a = foo()
-    val b = inPlaceRun { foo() }
+    val a = <!UNINITIALIZED_ENUM_COMPANION!>foo<!>()
+    val b = inPlaceRun { <!UNINITIALIZED_ENUM_COMPANION!>foo<!>() }
     val c = nonInPlaceRun { foo() }
 
-    val d by foo()
-    val e by inPlaceDelegate { foo() }
+    val d by <!UNINITIALIZED_ENUM_COMPANION!>foo<!>()
+    val e by inPlaceDelegate { <!UNINITIALIZED_ENUM_COMPANION!>foo<!>() }
     val f by nonInPlaceDelegate { foo() }
 
     companion object {
@@ -114,7 +114,7 @@ enum class EnumWithConstructor(val a: String, val b: String, val c: String) {
     A(
         a = <!UNINITIALIZED_ENUM_COMPANION!>foo<!>(),
         b = inPlaceRun { <!UNINITIALIZED_ENUM_COMPANION!>foo<!>() },
-        c = nonInPlaceRun { <!UNINITIALIZED_ENUM_COMPANION!>foo<!>() }
+        c = nonInPlaceRun { foo() }
     );
 
     companion object {
