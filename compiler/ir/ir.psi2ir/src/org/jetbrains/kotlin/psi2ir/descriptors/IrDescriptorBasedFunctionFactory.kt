@@ -351,8 +351,11 @@ class IrDescriptorBasedFunctionFactory(
 
     private fun IrClass.addFakeOverrides() {
 
-        val fakeOverrideDescriptors = descriptor.unsubstitutedMemberScope.getContributedDescriptors(DescriptorKindFilter.CALLABLES)
-            .filterIsInstance<CallableMemberDescriptor>().filter { it.kind === CallableMemberDescriptor.Kind.FAKE_OVERRIDE }
+        val fakeOverrideDescriptors =
+            descriptor.unsubstitutedMemberScope.getContributedDescriptors(DescriptorKindFilter.CALLABLES).asSequence()
+                .filterIsInstance<CallableMemberDescriptor>()
+                .filter { it.kind === CallableMemberDescriptor.Kind.FAKE_OVERRIDE && it.dispatchReceiverParameter != null }
+                .filter { !DescriptorVisibilities.isPrivate(it.visibility) && it.visibility != DescriptorVisibilities.INVISIBLE_FAKE }
 
         fun createFakeOverrideFunction(descriptor: FunctionDescriptor, property: IrPropertySymbol?): IrSimpleFunction {
             val returnType = descriptor.returnType?.let { toIrType(it) } ?: error("No return type for $descriptor")
