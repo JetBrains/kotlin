@@ -5,7 +5,6 @@
 
 package kotlin.test
 
-import kotlin.test.FrameworkAdapter
 import kotlin.math.abs
 import kotlin.js.*
 
@@ -79,10 +78,19 @@ internal class TeamcityAdapter : FrameworkAdapter {
     }
 
 
-    private val testArguments: FrameworkTestArguments by lazy {
-        val arguments = d8Arguments().takeIf { it.isNotEmpty() } ?: nodeArguments()
-        FrameworkTestArguments.parse(arguments.split(' '))
-    }
+    private var _testArguments: FrameworkTestArguments? = null
+
+    private val testArguments: FrameworkTestArguments
+        get() {
+            var value = _testArguments
+            if (value == null) {
+                val arguments = d8Arguments().takeIf { it.isNotEmpty() } ?: nodeArguments()
+                value= FrameworkTestArguments.parse(arguments.split(' '))
+                _testArguments = value
+            }
+
+            return value
+        }
 
     private fun runSuite(name: String, suiteFn: () -> Unit) {
         runOrScheduleNext {
