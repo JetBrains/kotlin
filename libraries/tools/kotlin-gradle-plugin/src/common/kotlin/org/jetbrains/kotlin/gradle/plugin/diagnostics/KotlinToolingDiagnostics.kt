@@ -197,4 +197,10 @@ object KotlinToolingDiagnostics {
             """.trimMargin()
         )
     }
+
+    object DeprecatedPropertyWithReplacement : ToolingDiagnosticFactory(WARNING) {
+        operator fun invoke(deprecatedPropertyName: String, replacement: String) = build(
+            "Project property '$deprecatedPropertyName' is deprecated. Please use '$replacement' instead."
+        )
+    }
 }
