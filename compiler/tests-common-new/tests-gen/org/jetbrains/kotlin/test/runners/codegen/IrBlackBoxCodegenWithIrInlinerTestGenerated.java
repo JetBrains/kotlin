@@ -45306,6 +45306,22 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
         }
 
         @Nested
+        @TestMetadata("compiler/testData/codegen/box/reflection/localClasses")
+        @TestDataPath("$PROJECT_ROOT")
+        public class LocalClasses {
+            @Test
+            public void testAllFilesPresentInLocalClasses() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/localClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            }
+
+            @Test
+            @TestMetadata("localClassesAndAnonymousObjects.kt")
+            public void testLocalClassesAndAnonymousObjects() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/localClasses/localClassesAndAnonymousObjects.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/codegen/box/reflection/mapping")
         @TestDataPath("$PROJECT_ROOT")
         public class Mapping {

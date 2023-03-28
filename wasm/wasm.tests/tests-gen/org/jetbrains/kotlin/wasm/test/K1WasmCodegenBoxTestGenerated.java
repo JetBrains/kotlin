@@ -32346,6 +32346,16 @@ public class K1WasmCodegenBoxTestGenerated extends AbstractK1WasmCodegenBoxTest 
         }
 
         @Nested
+        @TestMetadata("compiler/testData/codegen/box/reflection/localClasses")
+        @TestDataPath("$PROJECT_ROOT")
+        public class LocalClasses {
+            @Test
+            public void testAllFilesPresentInLocalClasses() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/localClasses"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/codegen/box/reflection/mapping")
         @TestDataPath("$PROJECT_ROOT")
         public class Mapping {
