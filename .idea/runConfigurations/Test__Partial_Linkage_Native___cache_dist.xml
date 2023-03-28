@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Test: KLIB ABI compatibility Native / cache dist" type="GradleRunConfiguration" factoryName="Gradle" folderName="Tests">
+  <configuration default="false" name="Test: Partial Linkage Native / cache dist" type="GradleRunConfiguration" factoryName="Gradle" folderName="Tests">
     <ExternalSystemSettings>
       <option name="executionName" />
       <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -10,9 +10,7 @@
       </option>
       <option name="taskNames">
         <list>
-          <option value=":native:native.tests:klibAbiTest" />
-          <option value="--tests" />
-          <option value="&quot;org.jetbrains.kotlin.konan.blackboxtest.KlibABITestGenerated&quot;" />
+          <option value=":native:native.tests:partialLinkageTest" />
         </list>
       </option>
       <option name="vmOptions" />

@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Test: KLIB ABI compatibility JS / with IC" type="GradleRunConfiguration" factoryName="Gradle" folderName="Tests">
+  <configuration default="false" name="Test: Partial Linkage JS / no IC" type="GradleRunConfiguration" factoryName="Gradle" folderName="Tests">
     <ExternalSystemSettings>
       <option name="executionName" />
       <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -12,7 +12,9 @@
         <list>
           <option value=":js:js.tests:test" />
           <option value="--tests" />
-          <option value="&quot;org.jetbrains.kotlin.js.test.ir.JsKLibABIWithICTestCaseGenerated&quot;" />
+          <option value="&quot;org.jetbrains.kotlin.js.test.ir.JsPartialLinkageNoICTestCaseGenerated&quot;" />
+          <option value="--tests" />
+          <option value="&quot;org.jetbrains.kotlin.js.test.ir.FirJsPartialLinkageNoICTestCaseGenerated&quot;" />
         </list>
       </option>
       <option name="vmOptions" />
