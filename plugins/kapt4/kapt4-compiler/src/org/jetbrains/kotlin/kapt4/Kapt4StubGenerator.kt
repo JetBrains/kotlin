@@ -589,7 +589,7 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
                         PsiType.LONG -> rawNumberValue?.toLong()
                         PsiType.FLOAT -> rawNumberValue?.toFloat()
                         PsiType.DOUBLE -> rawNumberValue?.toDouble()
-                        PsiType.CHAR -> rawNumberValue?.toChar()
+                        PsiType.CHAR -> rawNumberValue?.toInt()?.toChar()
                         else -> null
                     } ?: rawValue
                     convertValueOfPrimitiveTypeOrString(actualValue)
