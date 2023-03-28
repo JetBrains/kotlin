@@ -27266,6 +27266,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 public void testKt_56329() throws Exception {
                     runTest("compiler/testData/codegen/box/multiplatform/k2/basic/kt-56329.kt");
                 }
+
+                @TestMetadata("nonExternalEquals.kt")
+                public void testNonExternalEquals() throws Exception {
+                    runTest("compiler/testData/codegen/box/multiplatform/k2/basic/nonExternalEquals.kt");
+                }
             }
 
             @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/defaultArguments")

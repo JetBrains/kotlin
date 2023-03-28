@@ -20785,6 +20785,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
                     runTest("compiler/testData/codegen/box/multiplatform/k2/basic/kt-56329.kt");
                 }
 
+                @TestMetadata("nonExternalEquals.kt")
+                public void testNonExternalEquals() throws Exception {
+                    runTest("compiler/testData/codegen/box/multiplatform/k2/basic/nonExternalEquals.kt");
+                }
+
                 @TestMetadata("removeExpectDeclarationsFromMetadata.kt")
                 public void testRemoveExpectDeclarationsFromMetadata() throws Exception {
                     runTest("compiler/testData/codegen/box/multiplatform/k2/basic/removeExpectDeclarationsFromMetadata.kt");

@@ -186,6 +186,9 @@ object FirExpectActualResolver {
         outer@ for (expectMember in expectClassSymbol.getMembers(scopeSession)) {
             // if (expectMember is CallableMemberDescriptor && !expectMember.kind.isReal) continue
 
+            // Skip non-expect declarations like equals, hashCode, toString and any inherited declarations from non-expect super types.
+            if (expectMember is FirCallableSymbol && !expectMember.isExpect) continue
+
             val actualMembers = when (expectMember) {
                 is FirConstructorSymbol -> actualConstructors
                 else -> actualMembersByName[expectMember.name]?.filter { actualMember ->

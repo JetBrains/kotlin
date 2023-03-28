@@ -33400,6 +33400,12 @@ public class FirLightTreeBlackBoxCodegenTestGenerated extends AbstractFirLightTr
                 }
 
                 @Test
+                @TestMetadata("nonExternalEquals.kt")
+                public void testNonExternalEquals() throws Exception {
+                    runTest("compiler/testData/codegen/box/multiplatform/k2/basic/nonExternalEquals.kt");
+                }
+
+                @Test
                 @TestMetadata("removeExpectDeclarationsFromMetadata.kt")
                 public void testRemoveExpectDeclarationsFromMetadata() throws Exception {
                     runTest("compiler/testData/codegen/box/multiplatform/k2/basic/removeExpectDeclarationsFromMetadata.kt");
