@@ -65,7 +65,7 @@ fun <F> prepareJvmSessions(
 
     return prepareSessions(
         files, configuration, rootModuleName, JvmPlatforms.unspecifiedJvmPlatform,
-        JvmPlatformAnalyzerServices, libraryList, isCommonSource, fileBelongsToModule,
+        JvmPlatformAnalyzerServices, metadataCompilationMode = false, libraryList, isCommonSource, fileBelongsToModule,
         createLibrarySession = { sessionProvider ->
             FirJvmSessionFactory.createLibrarySession(
                 rootModuleName,
@@ -116,7 +116,7 @@ fun <F> prepareJsSessions(
 ): List<SessionWithSources<F>> {
     return prepareSessions(
         files, configuration, rootModuleName, JsPlatforms.defaultJsPlatform, JsPlatformAnalyzerServices,
-        libraryList, isCommonSource, fileBelongsToModule,
+        metadataCompilationMode = false, libraryList, isCommonSource, fileBelongsToModule,
         createLibrarySession = { sessionProvider ->
             FirJsSessionFactory.createLibrarySession(
                 rootModuleName,
@@ -161,7 +161,7 @@ fun <F> prepareNativeSessions(
 ): List<SessionWithSources<F>> {
     return prepareSessions(
         files, configuration, rootModuleName, NativePlatforms.unspecifiedNativePlatform, NativePlatformAnalyzerServices,
-        libraryList, isCommonSource, fileBelongsToModule, createLibrarySession = { sessionProvider ->
+        metadataCompilationMode = false, libraryList, isCommonSource, fileBelongsToModule, createLibrarySession = { sessionProvider ->
             FirNativeSessionFactory.createLibrarySession(
                 rootModuleName,
                 resolvedLibraries,
@@ -186,10 +186,8 @@ fun <F> prepareNativeSessions(
 
 /**
  * Creates library session and sources session for Common platform (for metadata compilation)
- * Number of created session depends on mode of MPP:
- *   - disabled
- *   - legacy (one platform and one common module)
- *   - HMPP (multiple number of modules)
+ * Number of created sessions is always one, in this mode modules are compiled against compiled
+ *   metadata of dependent modules
  */
 fun <F> prepareCommonSessions(
     files: List<F>,
@@ -206,7 +204,7 @@ fun <F> prepareCommonSessions(
 ): List<SessionWithSources<F>> {
     return prepareSessions(
         files, configuration, rootModuleName, CommonPlatforms.defaultCommonPlatform, CommonPlatformAnalyzerServices,
-        libraryList, isCommonSource, fileBelongsToModule, createLibrarySession = { sessionProvider ->
+        metadataCompilationMode = true, libraryList, isCommonSource, fileBelongsToModule, createLibrarySession = { sessionProvider ->
             FirCommonSessionFactory.createLibrarySession(
                 rootModuleName,
                 sessionProvider,
@@ -246,6 +244,7 @@ private inline fun <F> prepareSessions(
     rootModuleName: Name,
     targetPlatform: TargetPlatform,
     analyzerServices: PlatformDependentAnalyzerServices,
+    metadataCompilationMode: Boolean,
     libraryList: DependencyListForCliModule,
     isCommonSource: (F) -> Boolean,
     fileBelongsToModule: (F, String) -> Boolean,
@@ -267,8 +266,8 @@ private inline fun <F> prepareSessions(
     }
 
     return when {
-        !isMppEnabled -> listOf(
-            createSessionForNonMppProject(
+        metadataCompilationMode || !isMppEnabled -> listOf(
+            createSingleSession(
                 files, rootModuleName, libraryList, targetPlatform, analyzerServices,
                 sessionProvider, sessionConfigurator, createSourceSession
             )
@@ -286,7 +285,7 @@ private inline fun <F> prepareSessions(
     }
 }
 
-private inline fun <F> createSessionForNonMppProject(
+private inline fun <F> createSingleSession(
     files: List<F>,
     rootModuleName: Name,
     libraryList: DependencyListForCliModule,
@@ -299,7 +298,7 @@ private inline fun <F> createSessionForNonMppProject(
     val platformModuleData = FirModuleDataImpl(
         rootModuleName,
         libraryList.regularDependencies,
-        dependsOnDependencies = emptyList(),
+        libraryList.dependsOnDependencies,
         libraryList.friendsDependencies,
         targetPlatform,
         analyzerServices

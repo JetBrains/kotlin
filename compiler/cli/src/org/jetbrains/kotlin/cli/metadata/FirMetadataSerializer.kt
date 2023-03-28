@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.createContextForIncrementa
 import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.createIncrementalCompilationScope
 import org.jetbrains.kotlin.cli.jvm.compiler.toAbstractProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
+import org.jetbrains.kotlin.cli.jvm.config.K2MetadataConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.jvmModularRoots
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
@@ -66,9 +67,11 @@ internal class FirMetadataSerializer(
             CommonPlatformAnalyzerServices
         )
         val libraryList = DependencyListForCliModule.build(binaryModuleData) {
-            dependencies(configuration.jvmClasspathRoots.map { it.toPath() })
+            val refinedPaths = configuration.get(K2MetadataConfigurationKeys.REFINES_PATHS)?.map { File(it) }.orEmpty()
+            dependencies(configuration.jvmClasspathRoots.filter { it !in refinedPaths }.map { it.toPath() })
             dependencies(configuration.jvmModularRoots.map { it.toPath() })
-            friendDependencies(configuration[JVMConfigurationKeys.FRIEND_PATHS] ?: emptyList())
+            friendDependencies(configuration[K2MetadataConfigurationKeys.FRIEND_PATHS] ?: emptyList())
+            dependsOnDependencies(refinedPaths.map { it.toPath() })
         }
 
         val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter()
