@@ -1,3 +1,5 @@
+// IGNORE_REVERSED_RESOLVE
+//  Ignore reason: KT-57619
 enum class B(val x: Int) {
     B1(1),
     B2(2);
