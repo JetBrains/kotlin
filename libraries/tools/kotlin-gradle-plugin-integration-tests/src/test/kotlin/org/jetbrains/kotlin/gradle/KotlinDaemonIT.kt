@@ -154,6 +154,28 @@ class KotlinDaemonIT : KGPDaemonsBaseTest() {
         }
     }
 
+    @DisplayName("KT-57154: Compiler should use specified toolchain regardless of Gradle Runtime JDK")
+    @JdkVersions(versions = [JavaVersion.VERSION_1_8, JavaVersion.VERSION_11, JavaVersion.VERSION_17])
+    @GradleWithJdkTest
+    @GradleTestVersions(minVersion = TestVersions.Gradle.MAX_SUPPORTED)
+    internal fun testCompilerRuntimeJdkToolchainIndependence(gradleVersion: GradleVersion, jdkVersion: JdkVersions.ProvidedJdk) {
+        project(
+            projectName = "kotlin-java-toolchain/onlyJdk11Compatible",
+            gradleVersion = gradleVersion,
+            buildJdk = jdkVersion.location,
+            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.INFO)
+        ) {
+            build("compileKotlin") {
+                val startOptions = output.findAllStringsPrefixed("starting the daemon as: ").single()
+                // ensure that new daemon was started and that specified JDK is used as runtime JDK for it
+                assert(startOptions.startsWith(jdkVersion.location.absolutePath)) {
+                    printBuildOutput()
+                    "Kotlin daemon used non-expected JDK (expected ${jdkVersion.location.absolutePath}): $startOptions"
+                }
+            }
+        }
+    }
+
 
     private fun BuildResult.assertGradleClasspathNotLeaked() {
         assertOutputContains("Kotlin compiler classpath:")

@@ -20,31 +20,18 @@ import com.intellij.openapi.vfs.DeprecatedVirtualFileSystem
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.containers.ConcurrentFactoryMap
-import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.io.URLUtil
 import java.io.File
 import java.net.URI
 import java.net.URLClassLoader
+import java.nio.file.FileSystem
 import java.nio.file.FileSystems
 
 // There's JrtFileSystem in idea-full which we can't use in the compiler because it depends on NewVirtualFileSystem, absent in intellij-core
 class CoreJrtFileSystem : DeprecatedVirtualFileSystem() {
     private val roots =
         ConcurrentFactoryMap.createMap<String, CoreJrtVirtualFile?> { jdkHomePath ->
-            val jdkHome = File(jdkHomePath)
-            val rootUri = URI.create(StandardFileSystems.JRT_PROTOCOL + ":/")
-            val jrtFsJar = loadJrtFsJar(jdkHome) ?: return@createMap null
-
-            /*
-              This ClassLoader actually lives as long as current thread due to ThreadLocal leak in jrt-fs,
-              See https://bugs.openjdk.java.net/browse/JDK-8260621
-              So that cache allows us to avoid creating too many classloaders for same JDK and reduce severity of that leak
-            */
-            val classLoader = globalJrtFsClassLoaderCache.computeIfAbsent(jrtFsJar) {
-                URLClassLoader(arrayOf(jrtFsJar.toURI().toURL()), null)
-            }
-
-            val fileSystem = FileSystems.newFileSystem(rootUri, emptyMap<String, Nothing>(), classLoader)
+            val fileSystem = globalJrtFsCache[jdkHomePath] ?: return@createMap null
             CoreJrtVirtualFile(this, jdkHomePath, fileSystem.getPath(""), parent = null)
         }
 
@@ -84,6 +71,26 @@ class CoreJrtFileSystem : DeprecatedVirtualFileSystem() {
             return Pair(localPath, pathInJar)
         }
 
-        private val globalJrtFsClassLoaderCache = ContainerUtil.createConcurrentWeakValueMap<File, URLClassLoader>()
+        private val globalJrtFsCache = ConcurrentFactoryMap.createMap<String, FileSystem?> { jdkHomePath ->
+            val jdkHome = File(jdkHomePath)
+            val jrtFsJar = loadJrtFsJar(jdkHome) ?: return@createMap null
+            val rootUri = URI.create(StandardFileSystems.JRT_PROTOCOL + ":/")
+            /*
+              The ClassLoader, that was used to load JRT FS Provider actually lives as long as current thread due to ThreadLocal leak in jrt-fs,
+              See https://bugs.openjdk.java.net/browse/JDK-8260621
+              So that cache allows us to avoid creating too many classloaders for same JDK and reduce severity of that leak
+            */
+            if (isAtLeastJava9()) {
+                // If the runtime JDK is set to 9+ it has JrtFileSystemProvider,
+                // but to load proper jrt-fs (one that is pointed by jdkHome) we should provide "java.home" path
+                FileSystems.newFileSystem(rootUri, mapOf("java.home" to jdkHome.absolutePath))
+            } else {
+                val classLoader = URLClassLoader(arrayOf(jrtFsJar.toURI().toURL()), null)
+                // If the runtime JDK is set to <9, there are no JrtFileSystemProvider,
+                // we should create classloader with jrt-fs.jar, and DO NOT NEED to pass "java.home" path,
+                // as otherwise it will incur additional classloader creation
+                FileSystems.newFileSystem(rootUri, emptyMap<String, Nothing>(), classLoader)
+            }
+        }
     }
 }

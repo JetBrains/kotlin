@@ -191,6 +191,9 @@ public class KotlinTestUtils {
             assert jdk6 != null : "Environment variable JDK_1_6 is not set";
             configuration.put(JVMConfigurationKeys.JDK_HOME, new File(jdk6));
         }
+        else if (jdkKind == TestJdkKind.FULL_JDK_11) {
+            configuration.put(JVMConfigurationKeys.JDK_HOME, KtTestUtil.getJdk11Home());
+        }
         else if (jdkKind == TestJdkKind.FULL_JDK_17) {
             configuration.put(JVMConfigurationKeys.JDK_HOME, KtTestUtil.getJdk17Home());
         }

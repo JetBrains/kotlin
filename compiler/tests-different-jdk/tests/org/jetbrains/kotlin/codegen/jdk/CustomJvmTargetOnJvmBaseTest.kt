@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.codegen.jdk
 
+import org.jetbrains.kotlin.test.jvm.compiler.CoreJrtFsTest
 import org.jetbrains.kotlin.test.runners.codegen.*
 import org.junit.platform.runner.JUnitPlatform
 import org.junit.platform.suite.api.ExcludeTags
@@ -26,7 +27,9 @@ import org.junit.runner.RunWith
 
     IrBlackBoxCodegenTestGenerated::class,
     IrBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated::class,
-    IrCompileKotlinAgainstInlineKotlinTestGenerated::class
+    IrCompileKotlinAgainstInlineKotlinTestGenerated::class,
+
+    CoreJrtFsTest::class
 )
 @IncludeClassNamePatterns(".*Test.*Generated")
 @ExcludeTags("<modernJava>")
