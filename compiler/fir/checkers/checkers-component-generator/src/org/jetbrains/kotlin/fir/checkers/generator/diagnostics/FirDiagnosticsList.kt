@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility.Incompatible
 import org.jetbrains.kotlin.types.Variance
 import kotlin.properties.PropertyDelegateProvider
@@ -1089,12 +1090,12 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val NO_ACTUAL_FOR_EXPECT by error<KtNamedDeclaration>(PositioningStrategy.INCOMPATIBLE_DECLARATION) {
             parameter<Symbol>("declaration")
             parameter<FirModuleData>("module")
-            parameter<Map<Incompatible<Symbol>, Collection<Symbol>>>("compatibility")
+            parameter<Map<ExpectActualCompatibility<Symbol>, Collection<Symbol>>>("compatibility")
         }
 
         val ACTUAL_WITHOUT_EXPECT by error<KtNamedDeclaration> {
             parameter<Symbol>("declaration")
-            parameter<Map<Incompatible<Symbol>, Collection<Symbol>>>("compatibility")
+            parameter<Map<ExpectActualCompatibility<Symbol>, Collection<Symbol>>>("compatibility")
         }
 
         val AMBIGUOUS_ACTUALS by error<KtNamedDeclaration>(PositioningStrategy.INCOMPATIBLE_DECLARATION) {

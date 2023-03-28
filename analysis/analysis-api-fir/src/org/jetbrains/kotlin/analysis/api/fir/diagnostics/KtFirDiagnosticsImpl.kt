@@ -81,6 +81,7 @@ import org.jetbrains.kotlin.psi.KtWhenEntry
 import org.jetbrains.kotlin.psi.KtWhenExpression
 import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility.Incompatible
 import org.jetbrains.kotlin.types.Variance
 
@@ -2727,14 +2728,14 @@ internal class ExpectedFunctionSourceWithDefaultArgumentsNotFoundImpl(
 internal class NoActualForExpectImpl(
     override val declaration: KtSymbol,
     override val module: FirModuleData,
-    override val compatibility: Map<Incompatible<FirBasedSymbol<*>>, List<KtSymbol>>,
+    override val compatibility: Map<ExpectActualCompatibility<FirBasedSymbol<*>>, List<KtSymbol>>,
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.NoActualForExpect(), KtAbstractFirDiagnostic<KtNamedDeclaration>
 
 internal class ActualWithoutExpectImpl(
     override val declaration: KtSymbol,
-    override val compatibility: Map<Incompatible<FirBasedSymbol<*>>, List<KtSymbol>>,
+    override val compatibility: Map<ExpectActualCompatibility<FirBasedSymbol<*>>, List<KtSymbol>>,
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.ActualWithoutExpect(), KtAbstractFirDiagnostic<KtNamedDeclaration>

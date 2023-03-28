@@ -93,12 +93,11 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
             }
 
             Compatible !in compatibilityToMembersMap -> {
-                @Suppress("UNCHECKED_CAST")
                 reporter.reportOn(
                     source,
                     FirErrors.ACTUAL_WITHOUT_EXPECT,
                     symbol,
-                    compatibilityToMembersMap as Map<Incompatible<FirBasedSymbol<*>>, Collection<FirBasedSymbol<*>>>,
+                    compatibilityToMembersMap,
                     context
                 )
             }

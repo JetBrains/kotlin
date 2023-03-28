@@ -18,13 +18,14 @@ package org.jetbrains.kotlin.fir.analysis.diagnostics
 
 import org.jetbrains.kotlin.diagnostics.rendering.ContextIndependentParameterRenderer
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility.Incompatible
 
 class FirPlatformIncompatibilityDiagnosticRenderer(
     private val mode: MultiplatformDiagnosticRenderingMode
-) : ContextIndependentParameterRenderer<Map<Incompatible<FirBasedSymbol<*>>, Collection<FirBasedSymbol<*>>>> {
+) : ContextIndependentParameterRenderer<Map<ExpectActualCompatibility<FirBasedSymbol<*>>, Collection<FirBasedSymbol<*>>>> {
     override fun render(
-        obj: Map<Incompatible<FirBasedSymbol<*>>, Collection<FirBasedSymbol<*>>>,
+        obj: Map<ExpectActualCompatibility<FirBasedSymbol<*>>, Collection<FirBasedSymbol<*>>>,
     ): String {
         if (obj.isEmpty()) return ""
 
@@ -80,33 +81,33 @@ open class MultiplatformDiagnosticRenderingMode {
 }
 
 private fun StringBuilder.renderIncompatibilityInformation(
-    map: Map<Incompatible<FirBasedSymbol<*>>, Collection<FirBasedSymbol<*>>>,
+    map: Map<out ExpectActualCompatibility<FirBasedSymbol<*>>, Collection<FirBasedSymbol<*>>>,
     indent: String,
     mode: MultiplatformDiagnosticRenderingMode
 ) {
-    for ((incompatibility, descriptors) in map) {
+    for ((compatibility, descriptors) in map) {
         append(indent)
         append("The following declaration")
         if (descriptors.size == 1) append(" is") else append("s are")
         append(" incompatible")
-        incompatibility.reason?.let { append(" because $it") }
+        (compatibility as? Incompatible)?.reason?.let { append(" because $it") }
         append(":")
 
         mode.renderList(this, descriptors.map { descriptor ->
             { mode.renderSymbol(this, descriptor, indent) }
         })
 
-        if (incompatibility is Incompatible.ClassScopes) {
+        if (compatibility is Incompatible.ClassScopes) {
             append(indent)
             append("No actual members are found for expected members listed below:")
             mode.newLine(this)
-            renderIncompatibleClassScopes(incompatibility.unfulfilled, indent, mode)
+            renderIncompatibleClassScopes(compatibility.unfulfilled, indent, mode)
         }
     }
 }
 
 private fun StringBuilder.renderIncompatibleClassScopes(
-    unfulfilled: List<Pair<FirBasedSymbol<*>, Map<Incompatible<FirBasedSymbol<*>>, Collection<FirBasedSymbol<*>>>>>,
+    unfulfilled: List<Pair<FirBasedSymbol<*>, Map<out ExpectActualCompatibility<FirBasedSymbol<*>>, Collection<FirBasedSymbol<*>>>>>,
     indent: String,
     mode: MultiplatformDiagnosticRenderingMode
 ) {
