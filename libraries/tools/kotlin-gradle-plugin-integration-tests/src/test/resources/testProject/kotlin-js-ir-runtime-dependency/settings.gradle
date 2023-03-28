@@ -1,0 +1,4 @@
+rootProject.name = "kotlin-js-ir-runtime-dependency"
+
+include("lib")
+include("app")

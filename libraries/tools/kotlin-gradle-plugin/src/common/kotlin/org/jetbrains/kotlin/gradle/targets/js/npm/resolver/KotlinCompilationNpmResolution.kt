@@ -8,13 +8,13 @@ package org.jetbrains.kotlin.gradle.targets.js.npm.resolver
 import org.gradle.api.logging.Logger
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.TasksRequirements
 import org.jetbrains.kotlin.gradle.targets.js.npm.*
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject.Companion.PACKAGE_JSON
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.PreparedKotlinCompilationNpmResolution
 import java.io.Serializable
 import java.io.File
 
 class KotlinCompilationNpmResolution(
     var internalDependencies: Collection<InternalDependency>,
+    var internalCompositeDependencies: Collection<CompositeDependency>,
     var externalGradleDependencies: Collection<FileExternalGradleDependency>,
     var externalNpmDependencies: Collection<NpmDependencyDeclaration>,
     var fileCollectionDependencies: Collection<FileCollectionExternalGradleDependency>,
@@ -170,14 +170,5 @@ class KotlinCompilationNpmResolution(
                 }
             }
         return direct + unique
-    }
-
-    internal fun CompositeDependency.getPackages(): List<File> {
-        val packages = includedBuildDir.resolve(projectPackagesDir.relativeTo(rootDir))
-        return packages
-            .list()
-            ?.map { packages.resolve(it) }
-            ?.map { it.resolve(PACKAGE_JSON) }
-            ?: emptyList()
     }
 }

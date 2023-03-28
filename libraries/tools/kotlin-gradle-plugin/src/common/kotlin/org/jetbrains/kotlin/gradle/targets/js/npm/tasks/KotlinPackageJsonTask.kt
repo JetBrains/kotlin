@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm.tasks
 
 import org.gradle.api.DefaultTask
-import org.gradle.api.file.FileCollection
+import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.gradle.work.NormalizeLineEndings
@@ -16,10 +16,10 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNpmResolutionManager
 import org.jetbrains.kotlin.gradle.targets.js.npm.*
-import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinCompilationNpmResolver
-import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinRootNpmResolver
-import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.PackageJsonProducerInputs
+import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.*
 import org.jetbrains.kotlin.gradle.tasks.registerTask
+import org.jetbrains.kotlin.gradle.utils.CompositeProjectComponentArtifactMetadata
+import org.jetbrains.kotlin.gradle.utils.`is`
 import java.io.File
 
 abstract class KotlinPackageJsonTask :
@@ -41,6 +41,9 @@ abstract class KotlinPackageJsonTask :
     private fun findDependentTasks(): Collection<Any> =
         compilationResolver.compilationNpmResolution.internalDependencies.map { dependency ->
             nodeJs.resolver[dependency.projectPath][dependency.compilationName].npmProject.packageJsonTaskPath
+        } + compilationResolver.compilationNpmResolution.internalCompositeDependencies.map { dependency ->
+            dependency.includedBuild?.task(":$PACKAGE_JSON_UMBRELLA_TASK_NAME") ?: error("includedBuild instance is not available")
+            dependency.includedBuild.task(":${RootPackageJsonTask.NAME}")
         }
 
     // -----
@@ -75,8 +78,21 @@ abstract class KotlinPackageJsonTask :
     @get:NormalizeLineEndings
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
-    internal val aggregatedConfiguration: FileCollection by lazy {
-        compilationResolver.aggregatedConfiguration
+    internal val compositeFiles: Set<File> by lazy {
+        val map = compilationResolver.aggregatedConfiguration
+            .incoming
+            .artifactView { artifactView ->
+                artifactView.componentFilter { componentIdentifier ->
+                    componentIdentifier is ProjectComponentIdentifier
+                }
+            }
+            .artifacts
+            .filter {
+                it.id `is` CompositeProjectComponentArtifactMetadata
+            }
+            .map { it.file }
+            .toSet()
+        map
     }
 
     // nested inputs are processed in configuration phase

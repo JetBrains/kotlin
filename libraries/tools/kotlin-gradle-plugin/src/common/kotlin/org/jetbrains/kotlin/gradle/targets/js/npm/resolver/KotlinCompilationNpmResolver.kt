@@ -10,6 +10,7 @@ import org.gradle.api.artifacts.FileCollectionDependency
 import org.gradle.api.artifacts.ResolvedArtifact
 import org.gradle.api.artifacts.ResolvedDependency
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
+import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
 import org.gradle.api.internal.artifacts.DefaultProjectComponentIdentifier
@@ -78,6 +79,9 @@ class KotlinCompilationNpmResolver(
             it.npmProjectName.set(npmProject.name)
             it.npmProjectMain.set(npmProject.main)
         }.also { packageJsonTask ->
+            project.dependencies.attributesSchema {
+                it.attribute(publicPackageJsonAttribute)
+            }
             if (compilation.isMain()) {
                 project.tasks
                     .withType(Zip::class.java)
@@ -85,7 +89,15 @@ class KotlinCompilationNpmResolver(
                     .configure {
                         it.dependsOn(packageJsonTask)
                     }
+
+                val publicPackageJsonConfiguration = createPublicPackageJsonConfiguration()
+
+                target.project.artifacts.add(publicPackageJsonConfiguration.name, packageJsonTask.map { it.packageJsonFile }) {
+                    it.builtBy(packageJsonTask)
+                }
             }
+
+
         }
     }
 
@@ -119,6 +131,7 @@ class KotlinCompilationNpmResolver(
         all.usesPlatformOf(target)
         all.attributes.attribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.consumerRuntimeUsage(target))
         all.attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
+        all.attributes.attribute(publicPackageJsonAttribute, PUBLIC_PACKAGE_JSON_ATTR_VALUE)
         all.isVisible = false
         all.isCanBeConsumed = false
         all.isCanBeResolved = true
@@ -142,8 +155,23 @@ class KotlinCompilationNpmResolver(
         return all
     }
 
+    private fun createPublicPackageJsonConfiguration(): Configuration {
+        val all = project.configurations.create(compilation.disambiguateName("publicPackageJsonConfiguration"))
+
+        all.usesPlatformOf(target)
+        all.attributes.attribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.consumerRuntimeUsage(target))
+        all.attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
+        all.attributes.attribute(publicPackageJsonAttribute, PUBLIC_PACKAGE_JSON_ATTR_VALUE)
+        all.isVisible = false
+        all.isCanBeConsumed = true
+        all.isCanBeResolved = false
+
+        return all
+    }
+
     inner class ConfigurationVisitor {
         private val internalDependencies = mutableSetOf<InternalDependency>()
+        private val internalCompositeDependencies = mutableSetOf<CompositeDependency>()
         private val externalGradleDependencies = mutableSetOf<ExternalGradleDependency>()
         private val externalNpmDependencies = mutableSetOf<NpmDependencyDeclaration>()
         private val fileCollectionDependencies = mutableSetOf<FileCollectionExternalGradleDependency>()
@@ -215,12 +243,38 @@ class KotlinCompilationNpmResolver(
             val artifactId = artifact.id
             val componentIdentifier = artifactId.componentIdentifier
 
+            if (artifactId `is` CompositeProjectComponentArtifactMetadata) {
+                visitCompositeProjectDependency(dependency, componentIdentifier as ProjectComponentIdentifier)
+            }
+
             if (componentIdentifier is ProjectComponentIdentifier && !(artifactId `is` CompositeProjectComponentArtifactMetadata)) {
                 visitProjectDependency(componentIdentifier)
                 return
             }
 
             externalGradleDependencies.add(ExternalGradleDependency(dependency, artifact))
+        }
+
+        private fun visitCompositeProjectDependency(
+            dependency: ResolvedDependency,
+            componentIdentifier: ProjectComponentIdentifier
+        ) {
+            check(target is KotlinJsIrTarget) {
+                """
+                Composite builds for Kotlin/JS are supported only for IR compiler.
+                Use kotlin.js.compiler=ir in gradle.properties or
+                js(IR) {
+                ...
+                }
+                """.trimIndent()
+            }
+
+            (componentIdentifier as DefaultProjectComponentIdentifier).let { identifier ->
+                val includedBuild = project.gradle.includedBuild(identifier.identityPath.topRealPath().name!!)
+                internalCompositeDependencies.add(
+                    CompositeDependency(dependency.moduleName, dependency.moduleVersion, includedBuild.projectDir, includedBuild)
+                )
+            }
         }
 
         private fun visitProjectDependency(
@@ -243,6 +297,7 @@ class KotlinCompilationNpmResolver(
 
         fun toPackageJsonProducer() = KotlinCompilationNpmResolution(
             internalDependencies,
+            internalCompositeDependencies,
             externalGradleDependencies.map {
                 FileExternalGradleDependency(
                     it.dependency.moduleName,
@@ -263,5 +318,14 @@ class KotlinCompilationNpmResolver(
             npmProject.dir,
             rootResolver.tasksRequirements
         )
+    }
+
+    companion object {
+        val publicPackageJsonAttribute = Attribute.of(
+            "org.jetbrains.kotlin.js.public.package.json",
+            String::class.java
+        )
+
+        const val PUBLIC_PACKAGE_JSON_ATTR_VALUE = "public-package-json"
     }
 }
