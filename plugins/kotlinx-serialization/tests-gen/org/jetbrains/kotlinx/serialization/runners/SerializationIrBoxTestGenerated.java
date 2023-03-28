@@ -176,6 +176,12 @@ public class SerializationIrBoxTestGenerated extends AbstractSerializationIrBoxT
     }
 
     @Test
+    @TestMetadata("serializableFromAnotherModule.kt")
+    public void testSerializableFromAnotherModule() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/boxIr/serializableFromAnotherModule.kt");
+    }
+
+    @Test
     @TestMetadata("serializableOnPropertyType.kt")
     public void testSerializableOnPropertyType() throws Exception {
         runTest("plugins/kotlinx-serialization/testData/boxIr/serializableOnPropertyType.kt");

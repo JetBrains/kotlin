@@ -91,11 +91,14 @@ class FirDeclaredMemberScopeProvider(val useSiteSession: FirSession) : FirSessio
     }
 
     private fun createNestedClassifierScope(klass: FirClass): FirNestedClassifierScope? {
-        return if (klass.origin.generated) {
+        val origin = klass.origin
+        return if (origin.generated) {
             FirGeneratedClassNestedClassifierScope.create(useSiteSession, klass, baseScope = null)
         } else {
             val baseScope = FirNestedClassifierScopeImpl(klass, useSiteSession)
-            val generatedScope = FirGeneratedClassNestedClassifierScope.create(useSiteSession, klass, baseScope)
+            val generatedScope = runIf(origin.fromSource) {
+                FirGeneratedClassNestedClassifierScope.create(useSiteSession, klass, baseScope)
+            }
             if (generatedScope != null) {
                 FirCompositeNestedClassifierScope(
                     listOf(baseScope, generatedScope),
