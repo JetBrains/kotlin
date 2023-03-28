@@ -2,8 +2,6 @@
 // !OPT_IN: kotlin.ExperimentalMultiplatform
 // IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_K1: JVM, JVM_IR, JS, JS_IR, JS_IR_ES6, NATIVE
-// IGNORE_BACKEND_K2: NATIVE
-// KT-57181
 // WITH_STDLIB
 
 // MODULE: common
