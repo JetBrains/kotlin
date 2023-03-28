@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.extensions.ASSIGN_METHOD
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 abstract class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleReference<KtSimpleNameExpression>(expression) {
     // Extension point used by deprecated android extensions.
@@ -67,7 +68,9 @@ abstract class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSim
                     val name = OperatorConventions.getNameForOperationSymbol(
                         tokenType, element.parent is KtUnaryExpression, element.parent is KtBinaryExpression
                     )
-                        ?: (expression.parent as? KtBinaryExpression)?.let { ASSIGN_METHOD }
+                        ?: (expression.parent as? KtBinaryExpression)?.let {
+                            runIf(it.operationToken == KtTokens.EQ) { ASSIGN_METHOD }
+                        }
                         ?: return emptyList()
 
                     val counterpart = OperatorConventions.ASSIGNMENT_OPERATION_COUNTERPARTS[tokenType]
