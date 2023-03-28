@@ -26349,6 +26349,12 @@ public class K1NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTes
                     }
 
                     @Test
+                    @TestMetadata("anyMethodInExpect.kt")
+                    public void testAnyMethodInExpect() throws Exception {
+                        runTest("compiler/testData/codegen/box/multiplatform/k2/basic/anyMethodInExpect.kt");
+                    }
+
+                    @Test
                     @TestMetadata("correctParentForTypeParameter.kt")
                     public void testCorrectParentForTypeParameter() throws Exception {
                         runTest("compiler/testData/codegen/box/multiplatform/k2/basic/correctParentForTypeParameter.kt");

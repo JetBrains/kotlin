@@ -32,16 +32,16 @@ class FirBasedSignatureComposer(override val mangler: FirMangler) : Fir2IrSignat
         fileSignature = null
     }
 
-    private data class FirDeclarationWithParentId(val declaration: FirDeclaration, val classId: ClassId?)
+    private data class FirDeclarationWithParentId(val declaration: FirDeclaration, val classId: ClassId?, val forceExpect: Boolean)
 
     private val signatureCache = mutableMapOf<FirDeclarationWithParentId, IdSignature.CommonSignature>()
 
-    inner class SignatureBuilder : FirVisitor<Unit, Any?>() {
+    inner class SignatureBuilder(private val forceExpect: Boolean) : FirVisitor<Unit, Any?>() {
         var hashId: Long? = null
         var mask = 0L
 
         private fun setExpected(f: Boolean) {
-            mask = mask or IdSignature.Flags.IS_EXPECT.encode(f)
+            mask = mask or IdSignature.Flags.IS_EXPECT.encode(f || forceExpect)
         }
 
         override fun visitElement(element: FirElement, data: Any?) {
@@ -89,6 +89,7 @@ class FirBasedSignatureComposer(override val mangler: FirMangler) : Fir2IrSignat
         declaration: FirDeclaration,
         containingClass: ConeClassLikeLookupTag?,
         forceTopLevelPrivate: Boolean,
+        forceExpect: Boolean,
     ): IdSignature? {
         if (declaration is FirAnonymousObject || declaration is FirAnonymousFunction) return null
         if (declaration is FirRegularClass && declaration.classId.isLocal) return null
@@ -98,7 +99,7 @@ class FirBasedSignatureComposer(override val mangler: FirMangler) : Fir2IrSignat
             if (declaration.dispatchReceiverClassLookupTagOrNull()?.classId?.isLocal == true || containingClass?.classId?.isLocal == true) return null
         }
 
-        val declarationWithParentId = FirDeclarationWithParentId(declaration, containingClass?.classId)
+        val declarationWithParentId = FirDeclarationWithParentId(declaration, containingClass?.classId, forceExpect)
         val publicSignature = signatureCache.getOrPut(declarationWithParentId) {
             calculatePublicSignature(declarationWithParentId)
         }
@@ -114,7 +115,7 @@ class FirBasedSignatureComposer(override val mangler: FirMangler) : Fir2IrSignat
 
     private fun calculatePublicSignature(declarationWithParentId: FirDeclarationWithParentId): IdSignature.CommonSignature {
         val (declaration, containingClassId) = declarationWithParentId
-        val builder = SignatureBuilder()
+        val builder = SignatureBuilder(declarationWithParentId.forceExpect)
         try {
             declaration.accept(builder, null)
         } catch (t: Throwable) {

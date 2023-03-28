@@ -20705,6 +20705,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/basic"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
                 }
 
+                @TestMetadata("anyMethodInExpect.kt")
+                public void testAnyMethodInExpect() throws Exception {
+                    runTest("compiler/testData/codegen/box/multiplatform/k2/basic/anyMethodInExpect.kt");
+                }
+
                 @TestMetadata("correctParentForTypeParameter.kt")
                 public void testCorrectParentForTypeParameter() throws Exception {
                     runTest("compiler/testData/codegen/box/multiplatform/k2/basic/correctParentForTypeParameter.kt");

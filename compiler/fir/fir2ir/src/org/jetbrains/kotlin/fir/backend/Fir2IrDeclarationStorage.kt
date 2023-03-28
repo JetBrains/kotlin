@@ -1501,13 +1501,21 @@ class Fir2IrDeclarationStorage(
     ): IrSymbol {
         val fir = firSymbol.fir as F
         val irParent by lazy { findIrParent(fir) }
-        val signature by lazy { signatureComposer.composeSignature(fir, fakeOverrideOwnerLookupTag, forceTopLevelPrivate) }
+        val signature by lazy {
+            signatureComposer.composeSignature(
+                fir,
+                fakeOverrideOwnerLookupTag,
+                forceTopLevelPrivate = forceTopLevelPrivate,
+                forceExpect = fakeOverrideOwnerLookupTag?.toSymbol(session)?.isExpect == true
+            )
+        }
         synchronized(symbolTable.lock) {
             getCachedIrDeclaration(fir, fakeOverrideOwnerLookupTag.takeIf { it !is ConeClassLookupTagWithFixedSymbol }) {
                 // Parent calculation provokes declaration calculation for some members from IrBuiltIns
                 @Suppress("UNUSED_EXPRESSION") irParent
                 signature
             }?.let { return it.symbol }
+
             val parentOrigin = (irParent as? IrDeclaration)?.origin ?: IrDeclarationOrigin.DEFINED
             val declarationOrigin = computeDeclarationOrigin(firSymbol, parentOrigin)
             // TODO: package fragment members (?)
