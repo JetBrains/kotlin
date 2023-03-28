@@ -82,7 +82,7 @@ fun IrFunctionAccessExpression.getArgumentsWithSymbols(): List<Pair<IrValueParam
     }
 
     irFunction.valueParameters.forEach {
-        val arg = getValueArgument(it.descriptor as ValueParameterDescriptor)
+        val arg = getValueArgument((it.descriptor as ValueParameterDescriptor).index)
         if (arg != null) {
             res += (it.symbol to arg)
         }

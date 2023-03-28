@@ -862,3 +862,13 @@ internal fun unwrapCallableDescriptorAndTypeArguments(resolvedCall: ResolvedCall
 
     return CallBuilder(resolvedCall, substitutedUnwrappedDescriptor, unwrappedTypeArguments)
 }
+
+internal inline fun IrMemberAccessExpression<*>.putTypeArguments(
+    typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
+    toIrType: (KotlinType) -> IrType
+) {
+    if (typeArguments == null) return
+    for ((typeParameter, typeArgument) in typeArguments) {
+        putTypeArgument(typeParameter.index, toIrType(typeArgument))
+    }
+}
