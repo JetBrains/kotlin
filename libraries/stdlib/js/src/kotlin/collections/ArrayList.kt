@@ -71,7 +71,8 @@ public actual open class ArrayList<E> internal constructor(private var array: Ar
         checkIsMutable()
         if (elements.isEmpty()) return false
 
-        dummy.push.apply(array, elements.toTypedArray<Any?>())
+
+        elements.forEach(array.asDynamic()::push)
         modCount++
         return true
     }
@@ -82,9 +83,11 @@ public actual open class ArrayList<E> internal constructor(private var array: Ar
 
         if (index == size) return addAll(elements)
         if (elements.isEmpty()) return false
-        when (index) {
-            size -> return addAll(elements)
-            else -> dummy.splice.apply(array, arrayOf<Any?>(index, 0) + elements.toTypedArray<Any?>())
+
+        var i = index
+        elements.forEach { element ->
+            array.asDynamic().splice(i, 0, element)
+            i++
         }
 
         modCount++
@@ -148,7 +151,7 @@ public actual open class ArrayList<E> internal constructor(private var array: Ar
     }
 
     override fun toArray(): Array<Any?> {
-        return dummy.slice.call(array)
+        return jsArrayPrototype.slice.call(array)
     }
 
 
@@ -163,6 +166,6 @@ public actual open class ArrayList<E> internal constructor(private var array: Ar
     private fun insertionRangeCheck(index: Int) = index.apply {
         AbstractList.checkPositionIndex(index, size)
     }
-    
-    private val dummy = js("[]")
+
+    private val jsArrayPrototype = js("[]")
 }
