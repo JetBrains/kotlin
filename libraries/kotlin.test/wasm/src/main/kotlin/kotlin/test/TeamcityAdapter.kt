@@ -78,18 +78,16 @@ internal class TeamcityAdapter : FrameworkAdapter {
     }
 
 
-    private var _testArguments: FrameworkTestArguments? = null
+    private lateinit var _testArguments: FrameworkTestArguments
 
     private val testArguments: FrameworkTestArguments
         get() {
-            var value = _testArguments
-            if (value == null) {
+            if (!::_testArguments.isInitialized) {
                 val arguments = d8Arguments().takeIf { it.isNotEmpty() } ?: nodeArguments()
-                value= FrameworkTestArguments.parse(arguments.split(' '))
-                _testArguments = value
+                _testArguments = FrameworkTestArguments.parse(arguments.split(' '))
             }
 
-            return value
+            return _testArguments
         }
 
     private fun runSuite(name: String, suiteFn: () -> Unit) {
