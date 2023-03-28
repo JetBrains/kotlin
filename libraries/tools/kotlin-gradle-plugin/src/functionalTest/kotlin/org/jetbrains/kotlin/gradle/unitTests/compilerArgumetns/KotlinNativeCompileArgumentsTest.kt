@@ -74,4 +74,24 @@ class KotlinNativeCompileArgumentsTest {
         assertNull(commonMainCompileTask.createCompilerArguments(lenient).libraries)
         assertFails { commonMainCompileTask.createCompilerArguments(default) }
     }
+
+    @Test
+    fun `test - opt in`() {
+        val project = buildProjectWithMPP()
+        val kotlin = project.multiplatformExtension
+        val linuxX64Target = kotlin.linuxX64()
+        linuxX64Target.compilations.all {
+            it.compilerOptions.options.apply {
+                optIn.add("my.OptIn")
+                optIn.add("my.other.OptIn")
+            }
+        }
+
+        project.evaluate()
+
+        val arguments = linuxX64Target.compilations.main.compileTaskProvider.get().createCompilerArguments(lenient)
+        assertEquals(
+            listOf("my.OptIn", "my.other.OptIn"), arguments.optIn?.toList()
+        )
+    }
 }

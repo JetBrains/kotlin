@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.utils.SmartList
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty1
+import kotlin.reflect.cast
 import kotlin.reflect.full.memberProperties
 
 @Target(AnnotationTarget.PROPERTY)
@@ -62,6 +63,19 @@ data class ArgumentParseErrors(
     // Reports from internal arguments parsers
     val internalArgumentsParsingProblems: MutableList<String> = SmartList()
 )
+
+inline fun <reified T : CommonToolArguments> parseCommandLineArguments(args: List<String>): T {
+    return parseCommandLineArguments(T::class, args)
+}
+
+fun <T : CommonToolArguments> parseCommandLineArguments(clazz: KClass<T>, args: List<String>): T {
+    val constructor = clazz.java.constructors.find { it.parameters.isEmpty() }
+        ?: error("Missing empty constructor on '${clazz.java.name}")
+    val arguments = clazz.cast(constructor.newInstance())
+    parseCommandLineArguments(args, arguments)
+    return arguments
+}
+
 
 // Parses arguments into the passed [result] object. Errors related to the parsing will be collected into [CommonToolArguments.errors].
 fun <A : CommonToolArguments> parseCommandLineArguments(args: List<String>, result: A, overrideArguments: Boolean = false) {
