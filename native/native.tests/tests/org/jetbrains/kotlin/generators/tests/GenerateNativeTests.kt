@@ -56,7 +56,13 @@ fun main() {
         // KLIB ABI tests.
         testGroup("native/native.tests/tests-gen", "compiler/testData") {
             testClass<AbstractNativeKlibABITest>(
-                suiteTestClassName = "KlibABITestGenerated"
+                suiteTestClassName = "K1KlibABITestGenerated"
+            ) {
+                model("klibABI/", pattern = "^([^_](.+))$", recursive = false)
+            }
+            testClass<AbstractNativeKlibABITest>(
+                suiteTestClassName = "FirKlibABITestGenerated",
+                annotations = listOf(provider<FirPipeline>())
             ) {
                 model("klibABI/", pattern = "^([^_](.+))$", recursive = false)
             }

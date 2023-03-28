@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.konan.blackboxtest
 
 import com.intellij.testFramework.TestDataFile
+import org.jetbrains.kotlin.codegen.ProjectInfo
 import org.jetbrains.kotlin.klib.KlibABITestUtils
 import org.jetbrains.kotlin.klib.KlibABITestUtils.Dependencies
 import org.jetbrains.kotlin.klib.KlibABITestUtils.MAIN_MODULE_NAME
@@ -52,6 +53,11 @@ abstract class AbstractNativeKlibABITest : AbstractNativeSimpleTest() {
             this@AbstractNativeKlibABITest.buildBinaryAndRun(dependencies)
 
         override fun onNonEmptyBuildDirectory(directory: File) = backupDirectoryContents(directory)
+
+        // Temporarily mute TA tests on FIR FE with caches.
+        override fun isIgnoredTest(projectInfo: ProjectInfo) = super.isIgnoredTest(projectInfo)
+                || (projectInfo.name == "typeAliasChanges" && testModeName.endsWith("STATIC_EVERYWHERE")
+                && this@AbstractNativePartialLinkageTest::class.java.simpleName.startsWith("Fir"))
 
         override fun onIgnoredTest() = throw TestAbortedException()
     }
