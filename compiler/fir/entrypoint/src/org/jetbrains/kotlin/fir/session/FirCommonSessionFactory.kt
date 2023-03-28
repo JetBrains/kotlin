@@ -102,11 +102,7 @@ object FirCommonSessionFactory : FirAbstractSessionFactory() {
                 it.registerDefaultExtraComponentsForModuleBased()
                 registerExtraComponents(it)
             },
-            registerExtraCheckers = {
-                it.registerJvmCheckers()
-                it.registerJsCheckers()
-                it.registerNativeCheckers()
-            },
+            registerExtraCheckers = {},
             createKotlinScopeProvider = { FirKotlinScopeProvider { _, declaredMemberScope, _, _, _ -> declaredMemberScope } },
             createProviders = { session, kotlinScopeProvider, symbolProvider, syntheticFunctionalInterfaceProvider, generatedSymbolsProvider, dependencies ->
                 var symbolProviderForBinariesFromIncrementalCompilation: MetadataSymbolProvider? = null

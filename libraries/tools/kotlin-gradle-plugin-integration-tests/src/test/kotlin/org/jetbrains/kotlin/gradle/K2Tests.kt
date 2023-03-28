@@ -51,4 +51,15 @@ class CustomK2Tests : KGPBaseTest() {
             }
         }
     }
+
+    @GradleTest
+    @DisplayName("HMPP compilation without JS target. KT-57376")
+    fun testHmppCompilationWithoutJsTarget(gradleVersion: GradleVersion) {
+        with(project("k2-mpp-without-js", gradleVersion)) {
+            val taskToExecute = ":compileIntermediateMainKotlinMetadata"
+            build(taskToExecute) {
+                assertTasksExecuted(taskToExecute)
+            }
+        }
+    }
 }
