@@ -2024,6 +2024,11 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
         public void testVarInInit() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/VarInInit.kt");
         }
+
+        @TestMetadata("VarargIntegerLiteral.kt")
+        public void testVarargIntegerLiteral() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/VarargIntegerLiteral.kt");
+        }
     }
 
     @TestMetadata("compiler/testData/ir/irText/js")

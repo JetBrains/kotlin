@@ -16,10 +16,8 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildVarargArgumentsExpression
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
-import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.ConstantValueKind
@@ -39,7 +37,7 @@ internal fun remapArgumentsWithVararg(
     // The order of arguments in the mapping must be preserved for FIR2IR, hence we have to find where the vararg arguments end.
     // FIR2IR uses the mapping order to determine if arguments need to be reordered.
     val varargParameterTypeRef = varargParameter.returnTypeRef
-    val varargElementType = varargArrayType.arrayElementType()
+    val varargElementType = varargArrayType.arrayElementType()?.approximateIntegerLiteralType()
     val argumentList = argumentMapping.keys.toList()
     var indexAfterVarargs = argumentList.size
     val newArgumentMapping = linkedMapOf<FirExpression, FirValueParameter>()
