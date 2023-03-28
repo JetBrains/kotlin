@@ -183,7 +183,7 @@ open class IrFileSerializer(
 
     /* ------- Common fields ---------------------------------------------------- */
 
-    private fun serializeIrDeclarationOrigin(origin: IrDeclarationOrigin): Int = serializeString((origin as IrDeclarationOriginImpl).name)
+    private fun serializeIrDeclarationOrigin(origin: IrDeclarationOrigin): Int = serializeString(origin.name)
 
     private fun serializeIrStatementOrigin(origin: IrStatementOrigin): Int =
         serializeString((origin as? IrStatementOriginImpl)?.debugName ?: error("Unable to serialize origin ${origin.javaClass.name}"))

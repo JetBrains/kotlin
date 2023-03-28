@@ -27,9 +27,9 @@ abstract class AbstractTransformerForGenerator(
     protected val irFactory = context.irFactory
     protected val irBuiltIns = context.irBuiltIns
 
-    abstract fun interestedIn(key: GeneratedDeclarationKey): Boolean
-    abstract fun generateBodyForFunction(function: IrSimpleFunction, key: GeneratedDeclarationKey): IrBody?
-    abstract fun generateBodyForConstructor(constructor: IrConstructor, key: GeneratedDeclarationKey): IrBody?
+    abstract fun interestedIn(key: GeneratedDeclarationKey?): Boolean
+    abstract fun generateBodyForFunction(function: IrSimpleFunction, key: GeneratedDeclarationKey?): IrBody?
+    abstract fun generateBodyForConstructor(constructor: IrConstructor, key: GeneratedDeclarationKey?): IrBody?
 
     final override fun visitElement(element: IrElement) {
         if (visitBodies) {

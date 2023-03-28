@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.jetbrains.kotlin.gradle.testbase.BuildOptions
-import org.jetbrains.kotlin.gradle.testbase.MppGradlePluginTests
+import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import kotlin.test.Ignore
@@ -36,4 +36,19 @@ class K2CommonizerIT : CommonizerIT() {
 @Ignore
 class K2CommonizerHierarchicalIT : CommonizerHierarchicalIT() {
     override fun defaultBuildOptions(): BuildOptions = super.defaultBuildOptions().copy(languageVersion = "2.0")
+}
+
+@MppGradlePluginTests
+@DisplayName("K2: custom tests")
+class CustomK2Tests : KGPBaseTest() {
+    @GradleTest
+    @DisplayName("Serialization plugin in common source set. KT-56911")
+    fun testHmppDependenciesInJsTests(gradleVersion: GradleVersion) {
+        project("k2-serialization-plugin-in-common-sourceset", gradleVersion) {
+            val taskToExecute = ":compileKotlinJs"
+            build(taskToExecute) {
+                assertTasksExecuted(taskToExecute)
+            }
+        }
+    }
 }

@@ -779,9 +779,11 @@ class IrDeclarationDeserializer(
             allKnownDeclarationOrigins.mapNotNull { it.objectInstance as? IrDeclarationOriginImpl }.associateBy { it.name }
     }
 
-    private fun deserializeIrDeclarationOrigin(protoName: Int): IrDeclarationOriginImpl {
+    private fun deserializeIrDeclarationOrigin(protoName: Int): IrDeclarationOrigin {
         val originName = libraryFile.string(protoName)
-        return declarationOriginIndex[originName] ?: object : IrDeclarationOriginImpl(originName) {}
+        return IrDeclarationOrigin.GeneratedByPlugin.fromSerializedString(originName)
+            ?: declarationOriginIndex[originName]
+            ?: object : IrDeclarationOriginImpl(originName) {}
     }
 
     fun deserializeDeclaration(proto: ProtoDeclaration, setParent: Boolean = true): IrDeclaration {
