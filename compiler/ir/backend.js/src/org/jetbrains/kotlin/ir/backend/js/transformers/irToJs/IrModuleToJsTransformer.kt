@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.serialization.checkIsFunctionInterfac
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.export.*
-import org.jetbrains.kotlin.ir.backend.js.lower.StaticMembersLowering
+import org.jetbrains.kotlin.ir.backend.js.lower.JsStaticMembersLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.isBuiltInClass
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -139,7 +139,7 @@ class IrModuleToJsTransformer(
         }
 
         modules.forEach { module ->
-            module.files.forEach { StaticMembersLowering(backendContext).lower(it) }
+            module.files.forEach { JsStaticMembersLowering(backendContext).lower(it) }
         }
     }
 
@@ -287,11 +287,15 @@ class IrModuleToJsTransformer(
         }
 
         staticContext.classModels.entries.forEach { (symbol, model) ->
-            result.classes[nameGenerator.getNameForClass(symbol.owner)] =
-                JsIrIcClassModel(model.superClasses.map { staticContext.getNameForClass(it.owner) }).also {
+            val className = nameGenerator.getNameForClass(symbol.owner)
+            result.classes[className] = run {
+                val superClasses = model.superClasses.map { staticContext.getNameForClass(it.owner) }
+                val metadataInitialization = model.metadataInitialization ?: error("No metadata initialization for class $className")
+                JsIrIcClassModel(superClasses, metadataInitialization).also {
                     it.preDeclarationBlock.statements += model.preDeclarationBlock.statements
                     it.postDeclarationBlock.statements += model.postDeclarationBlock.statements
                 }
+            }
         }
 
         result.initializers.statements += staticContext.initializerBlock.statements

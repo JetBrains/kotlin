@@ -169,6 +169,12 @@ private class JsIrAstSerializer {
         writeCollection(classModel.superClasses) {
             writeInt(internalizeName(it))
         }
+        ifNotNull(classModel.metadataInitialization.classNamespace) {
+            writeInt(internalizeString(it.namespace))
+            writeInt(internalizeName(it.variableName))
+        }
+        writeStatement(classModel.metadataInitialization.initializationStatement)
+        writeBoolean(classModel.metadataInitialization.afterDeclarations)
         writeCompositeBlock(classModel.preDeclarationBlock)
         writeCompositeBlock(classModel.postDeclarationBlock)
     }

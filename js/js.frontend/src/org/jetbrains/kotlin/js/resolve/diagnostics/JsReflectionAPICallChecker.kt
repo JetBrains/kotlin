@@ -32,6 +32,11 @@ private val ADDITIONAL_ALLOWED_CLASSES = setOf(
     FqName("kotlin.reflect.ExperimentalAssociatedObjects")
 )
 
+private val ADDITIONAL_ALLOWED_MEMBER_NAMES = setOf(
+    "findAssociatedObject",
+    "qualifiedName"
+)
+
 class JsReflectionAPICallChecker(
     reflectionTypes: ReflectionTypes,
     storageManager: StorageManager
@@ -46,7 +51,7 @@ class JsReflectionAPICallChecker(
     ): Boolean {
         return super.isAllowedReflectionApi(descriptor, containingClass, context) ||
                 containingClass.fqNameSafe in ADDITIONAL_ALLOWED_CLASSES ||
-                descriptor.name.asString() == "findAssociatedObject"
+                descriptor.name.asString() in ADDITIONAL_ALLOWED_MEMBER_NAMES
     }
 
     override fun report(element: PsiElement, context: CallCheckerContext) {

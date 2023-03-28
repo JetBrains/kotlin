@@ -9933,6 +9933,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
         public void testPrimitives_11() throws Exception {
             runTest("js/js.translator/testData/box/reflection/primitives-11.kt");
         }
+
+        @Test
+        @TestMetadata("qualifiedName.kt")
+        public void testQualifiedName() throws Exception {
+            runTest("js/js.translator/testData/box/reflection/qualifiedName.kt");
+        }
     }
 
     @Nested

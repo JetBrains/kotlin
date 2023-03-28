@@ -8,7 +8,8 @@ package kotlin.js
 internal fun setMetadataFor(
     ctor: Ctor,
     name: String?,
-    metadataConstructor: (name: String?, associatedObjectKey: Number?, associatedObjects: dynamic, suspendArity: Array<Int>?) -> Metadata,
+    namespace: String?,
+    metadataConstructor: (name: String?, namespace: String?, associatedObjectKey: Number?, associatedObjects: dynamic, suspendArity: Array<Int>?) -> Metadata,
     parent: Ctor?,
     interfaces: Array<dynamic>?,
     associatedObjectKey: Number?,
@@ -22,7 +23,7 @@ internal fun setMetadataFor(
         """)
     }
 
-    val metadata = metadataConstructor(name, associatedObjectKey, associatedObjects, suspendArity ?: js("[]"))
+    val metadata = metadataConstructor(name, namespace, associatedObjectKey, associatedObjects, suspendArity ?: js("[]"))
     ctor.`$metadata$` = metadata
 
     if (interfaces != null) {
@@ -45,16 +46,34 @@ private fun generateInterfaceId(): Int {
 }
 
 
-internal fun interfaceMeta(name: String?, associatedObjectKey: Number?, associatedObjects: dynamic, suspendArity: Array<Int>?): Metadata {
-    return createMetadata("interface", name, associatedObjectKey, associatedObjects, suspendArity, generateInterfaceId())
+internal fun interfaceMeta(
+    name: String?,
+    namespace: String?,
+    associatedObjectKey: Number?,
+    associatedObjects: dynamic,
+    suspendArity: Array<Int>?
+): Metadata {
+    return createMetadata("interface", name, namespace, associatedObjectKey, associatedObjects, suspendArity, generateInterfaceId())
 }
 
-internal fun objectMeta(name: String?, associatedObjectKey: Number?, associatedObjects: dynamic, suspendArity: Array<Int>?): Metadata {
-    return createMetadata("object", name, associatedObjectKey, associatedObjects, suspendArity, null)
+internal fun objectMeta(
+    name: String?,
+    namespace: String?,
+    associatedObjectKey: Number?,
+    associatedObjects: dynamic,
+    suspendArity: Array<Int>?
+): Metadata {
+    return createMetadata("object", name, namespace, associatedObjectKey, associatedObjects, suspendArity, null)
 }
 
-internal fun classMeta(name: String?, associatedObjectKey: Number?, associatedObjects: dynamic, suspendArity: Array<Int>?): Metadata {
-    return createMetadata("class", name, associatedObjectKey, associatedObjects, suspendArity, null)
+internal fun classMeta(
+    name: String?,
+    namespace: String?,
+    associatedObjectKey: Number?,
+    associatedObjects: dynamic,
+    suspendArity: Array<Int>?
+): Metadata {
+    return createMetadata("class", name, namespace, associatedObjectKey, associatedObjects, suspendArity, null)
 }
 
 // Seems like we need to disable this check if variables are used inside js annotation
@@ -62,6 +81,7 @@ internal fun classMeta(name: String?, associatedObjectKey: Number?, associatedOb
 private fun createMetadata(
     kind: String,
     name: String?,
+    namespace: String?,
     associatedObjectKey: Number?,
     associatedObjects: dynamic,
     suspendArity: Array<Int>?,
@@ -71,6 +91,7 @@ private fun createMetadata(
     return js("""({
     kind: kind,
     simpleName: name,
+    namespace: namespace,
     associatedObjectKey: associatedObjectKey,
     associatedObjects: associatedObjects,
     suspendArity: suspendArity,
@@ -84,6 +105,7 @@ internal external interface Metadata {
     // This field gives fast access to the prototype of metadata owner (Object.getPrototypeOf())
     // Can be pre-initialized or lazy initialized and then should be immutable
     val simpleName: String?
+    val namespace: String?
     val associatedObjectKey: Number?
     val associatedObjects: dynamic
     val suspendArity: Array<Int>?
@@ -244,7 +266,7 @@ internal fun jsIsType(obj: dynamic, jsClass: dynamic): Boolean {
     }
 
     if (klassMetadata.kind === "interface") {
-        val iid =  klassMetadata.iid.unsafeCast<Int?>() ?: return false
+        val iid = klassMetadata.iid.unsafeCast<Int?>() ?: return false
         return isInterfaceImpl(obj, iid)
     }
 

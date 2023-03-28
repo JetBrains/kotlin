@@ -75,6 +75,8 @@ class JsIrBackendContext(
 
     val localClassNames = WeakHashMap<IrClass, String>()
 
+    val classOriginalFqNames = HashMap<IrClass, FqName>()
+
     val minimizedNameGenerator: MinimizedNameGenerator =
         MinimizedNameGenerator()
 

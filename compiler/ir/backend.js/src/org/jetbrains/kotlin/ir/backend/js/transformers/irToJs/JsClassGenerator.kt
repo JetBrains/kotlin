@@ -208,9 +208,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
             }
         }
 
-        val metadataPlace = if (es6mode) classModel.postDeclarationBlock else classModel.preDeclarationBlock
-
-        metadataPlace.statements += generateSetMetadataCall()
+        classModel.metadataInitialization = generateSetMetadataCall()
         context.staticContext.classModels[irClass.symbol] = classModel
 
         return classBlock
@@ -319,12 +317,13 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
         }
     }
 
-    private fun generateSetMetadataCall(): JsStatement {
+    private fun generateSetMetadataCall(): ClassMetadataInitialization {
         val setMetadataFor = context.staticContext.backendContext.intrinsics.setMetadataForSymbol.owner
 
         val ctor = classNameRef
         val parent = baseClassRef?.takeIf { !es6mode }
         val name = generateSimpleName()
+        val classNamespace = if (name != null) generateNamespaceVar() else null
         val interfaces = generateInterfacesList()
         val metadataConstructor = getMetadataConstructor()
         val associatedObjectKey = generateAssociatedObjectKey()
@@ -333,13 +332,26 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
 
         val undefined = context.staticContext.backendContext.getVoid().accept(IrElementToJsExpressionTransformer(), context)
 
-        return JsInvocation(
-            JsNameRef(context.getNameForStaticFunction(setMetadataFor)),
-            listOf(ctor, name, metadataConstructor, parent, interfaces, associatedObjectKey, associatedObjects, suspendArity)
-                .dropLastWhile { it == null }
-                .map { it ?: undefined }
-        ).makeStmt()
+        val metadataParams = listOf(
+            ctor,
+            name,
+            classNamespace?.variableName?.makeRef(),
+            metadataConstructor,
+            parent,
+            interfaces,
+            associatedObjectKey,
+            associatedObjects,
+            suspendArity
+        )
 
+        return ClassMetadataInitialization(
+            initializationStatement = JsInvocation(
+                JsNameRef(context.getNameForStaticFunction(setMetadataFor)),
+                metadataParams.dropLastWhile { it == null }.map { it ?: undefined }
+            ).makeStmt(),
+            classNamespace = classNamespace,
+            afterDeclarations = es6mode
+        )
     }
 
 
@@ -355,6 +367,10 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
 
     private fun generateSimpleName(): JsStringLiteral? {
         return irClass.name.takeIf { !it.isSpecial }?.let { JsStringLiteral(it.identifier) }
+    }
+
+    private fun generateNamespaceVar(): ClassNamespace? {
+        return generateNamespaceVar(classModel.klass, context.staticContext.backendContext)
     }
 
     private fun getMetadataConstructor(): JsNameRef {
@@ -465,14 +481,25 @@ private fun IrOverridableDeclaration<*>.overridesExternal(): Boolean {
 
 private val IrClassifierSymbol.isInterface get() = (owner as? IrClass)?.isInterface == true
 
+class ClassMetadataInitialization(
+    val initializationStatement: JsStatement,
+    val classNamespace: ClassNamespace?,
+    val afterDeclarations: Boolean
+)
+
 class JsIrClassModel(val klass: IrClass) {
     val superClasses = klass.superTypes.map { it.classifierOrNull as IrClassSymbol }
 
     val preDeclarationBlock = JsCompositeBlock()
     val postDeclarationBlock = JsCompositeBlock()
+
+    var metadataInitialization: ClassMetadataInitialization? = null
 }
 
-class JsIrIcClassModel(val superClasses: List<JsName>) {
+class JsIrIcClassModel(
+    val superClasses: List<JsName>,
+    val metadataInitialization: ClassMetadataInitialization
+) {
     val preDeclarationBlock = JsCompositeBlock()
     val postDeclarationBlock = JsCompositeBlock()
 }

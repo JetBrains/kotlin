@@ -19,7 +19,6 @@ class Merger(
     private val generateRegionComments: Boolean,
     private val generateCallToMain: Boolean,
 ) {
-
     private val isEsModules = moduleKind == ModuleKind.ES
     private val importStatements = mutableMapOf<String, JsStatement>()
     private val importedModulesMap = mutableMapOf<JsImportedModuleKey, JsImportedModule>()
@@ -28,9 +27,10 @@ class Merger(
 
     private fun linkJsNames() {
         val nameMap = mutableMapOf<String, JsName>()
+        val namespaceNameMap = mutableMapOf<String, JsName>()
 
         fragments.forEach { f ->
-            f.buildRenames(nameMap).run {
+            f.buildRenames(nameMap, namespaceNameMap).run {
                 rename(f.declarations)
                 rename(f.exports)
 
@@ -43,7 +43,14 @@ class Merger(
                     .also { f.classes.clear() }
 
                 classModels.entries.forEach { (name, model) ->
-                    f.classes[rename(name)] = JsIrIcClassModel(model.superClasses.map { rename(it) }).also {
+                    val superClasses = model.superClasses.map { rename(it) }
+                    val classNsVar = model.metadataInitialization.classNamespace?.let {
+                        ClassNamespace(it.namespace, rename(it.variableName))
+                    }
+                    val metadataInit = rename(model.metadataInitialization.initializationStatement)
+                    val afterDeclarations = model.metadataInitialization.afterDeclarations
+                    val metadataInitialization = ClassMetadataInitialization(metadataInit, classNsVar, afterDeclarations)
+                    f.classes[rename(name)] = JsIrIcClassModel(superClasses, metadataInitialization).also {
                         it.preDeclarationBlock.statements += model.preDeclarationBlock.statements
                         it.postDeclarationBlock.statements += model.postDeclarationBlock.statements
                         rename(it.preDeclarationBlock)
@@ -90,7 +97,10 @@ class Merger(
         }
     }
 
-    private fun JsIrProgramFragment.buildRenames(nameMap: MutableMap<String, JsName>): Map<JsName, JsName> {
+    private fun JsIrProgramFragment.buildRenames(
+        nameMap: MutableMap<String, JsName>,
+        namespaceNameMap: MutableMap<String, JsName>
+    ): Map<JsName, JsName> {
         val result = mutableMapOf<JsName, JsName>()
 
         this.importedModules.forEach { module ->
@@ -104,6 +114,19 @@ class Merger(
             val existingName = nameMap.getOrPut(tag) { name }
             if (existingName !== name) {
                 result[name] = existingName
+            }
+        }
+
+        this.classes.values.forEach {
+            val classNamespace = it.metadataInitialization.classNamespace
+            if (classNamespace != null) {
+                val usedNamespaceName = namespaceNameMap[classNamespace.namespace]
+                if (usedNamespaceName == null) {
+                    namespaceNameMap[classNamespace.namespace] = classNamespace.variableName
+                    result[classNamespace.variableName] = classNamespace.variableName
+                } else {
+                    result[classNamespace.variableName] = usedNamespaceName
+                }
             }
         }
 
@@ -197,27 +220,27 @@ class Merger(
         linkJsNames()
 
         val moduleBody = mutableListOf<JsStatement>()
-
-        val preDeclarationBlock = JsCompositeBlock()
-        val postDeclarationBlock = JsCompositeBlock()
         val polyfillDeclarationBlock = JsCompositeBlock()
 
-        moduleBody.addWithComment("block: pre-declaration", preDeclarationBlock)
+        val rawClassModels = buildMap { fragments.forEach { putAll(it.classes) } }
 
-        val classModels = mutableMapOf<JsName, JsIrIcClassModel>()
+        // sort member forwarding code
+        val classModels = processClassModels(rawClassModels)
+
+        moduleBody.addWithComment("block: pre-declaration", classModels.preDeclarationBlock)
+        moduleBody.addMetadataInitializationBlock("block: metadata pre-initialization", classModels.preMetadataInitialization)
+
         val initializerBlock = JsCompositeBlock()
 
         fragments.forEach {
             moduleBody += it.declarations.statements
-            classModels += it.classes
             initializerBlock.statements += it.initializers.statements
             polyfillDeclarationBlock.statements += it.polyfills.statements
         }
 
-        // sort member forwarding code
-        processClassModels(classModels, preDeclarationBlock, postDeclarationBlock)
+        moduleBody.addWithComment("block: post-declaration", classModels.postDeclarationBlock)
+        moduleBody.addMetadataInitializationBlock("block: metadata post-initialization", classModels.postMetadataInitialization)
 
-        moduleBody.addWithComment("block: post-declaration", postDeclarationBlock.statements)
         moduleBody.addWithComment("block: init", initializerBlock.statements)
 
         // Merge test function invocations
@@ -282,18 +305,39 @@ class Merger(
         return program
     }
 
+    private class MetadataInitialization {
+        val classNamespaces = mutableListOf<ClassNamespace>()
+        val initializationStatement = mutableListOf<JsStatement>()
+    }
 
-    private fun processClassModels(
-        classModelMap: Map<JsName, JsIrIcClassModel>,
-        preDeclarationBlock: JsBlock,
-        postDeclarationBlock: JsBlock
-    ) {
+    private class ProcessedClassModels {
+        val preDeclarationBlock = mutableListOf<JsStatement>()
+        val postDeclarationBlock = mutableListOf<JsStatement>()
+
+        val preMetadataInitialization = MetadataInitialization()
+        val postMetadataInitialization = MetadataInitialization()
+    }
+
+    private fun processClassModels(classModelMap: Map<JsName, JsIrIcClassModel>): ProcessedClassModels {
         val declarationHandler = object : DFS.AbstractNodeHandler<JsName, Unit>() {
+            val result = ProcessedClassModels()
+
             override fun result() {}
             override fun afterChildren(current: JsName) {
                 classModelMap[current]?.let {
-                    preDeclarationBlock.statements += it.preDeclarationBlock.statements
-                    postDeclarationBlock.statements += it.postDeclarationBlock.statements
+                    result.preDeclarationBlock += it.preDeclarationBlock.statements
+                    result.postDeclarationBlock += it.postDeclarationBlock.statements
+
+                    val metadataInitLocation = if (it.metadataInitialization.afterDeclarations) {
+                        result.postMetadataInitialization
+                    } else {
+                        result.preMetadataInitialization
+                    }
+
+                    metadataInitLocation.initializationStatement += it.metadataInitialization.initializationStatement
+                    if (it.metadataInitialization.classNamespace != null) {
+                        metadataInitLocation.classNamespaces += it.metadataInitialization.classNamespace
+                    }
                 }
             }
         }
@@ -303,6 +347,8 @@ class Merger(
             { classModelMap[it]?.superClasses ?: emptyList() },
             declarationHandler
         )
+
+        return declarationHandler.result
     }
 
     private fun MutableList<JsStatement>.startRegion(description: String = "") {
@@ -317,17 +363,26 @@ class Merger(
         }
     }
 
-    private fun MutableList<JsStatement>.addWithComment(regionDescription: String = "", block: JsBlock) {
-        startRegion(regionDescription)
-        this += block
-        endRegion()
-    }
-
     private fun MutableList<JsStatement>.addWithComment(regionDescription: String = "", statements: List<JsStatement>) {
         if (statements.isEmpty()) return
 
         startRegion(regionDescription)
         this += statements
+        endRegion()
+    }
+
+    private fun MutableList<JsStatement>.addMetadataInitializationBlock(regionDescription: String = "", metadata: MetadataInitialization) {
+        if (metadata.initializationStatement.isEmpty()) return
+
+        startRegion(regionDescription)
+        val varsInitialization = buildNamespaceVarsInitialization(metadata.classNamespaces)
+        val body = JsBlock()
+        if (!varsInitialization.isEmpty) {
+            body.statements += varsInitialization
+        }
+        body.statements += metadata.initializationStatement
+        val function = JsFunction(emptyScope, body, regionDescription)
+        this += JsInvocation(function).makeStmt()
         endRegion()
     }
 }

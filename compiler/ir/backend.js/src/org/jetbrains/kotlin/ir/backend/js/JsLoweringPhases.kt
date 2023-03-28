@@ -764,8 +764,8 @@ private val callsLoweringPhase = makeBodyLoweringPhase(
 )
 
 private val staticMembersLoweringPhase = makeDeclarationTransformerPhase(
-    ::StaticMembersLowering,
-    name = "StaticMembersLowering",
+    ::JsStaticMembersLowering,
+    name = "JsStaticMembersLowering",
     description = "Move static member declarations to top-level"
 )
 

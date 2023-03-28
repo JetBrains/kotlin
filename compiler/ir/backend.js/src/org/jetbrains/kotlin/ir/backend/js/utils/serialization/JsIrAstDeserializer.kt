@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.ir.backend.js.utils.serialization
 
 import org.jetbrains.kotlin.ir.backend.js.export.TypeScriptFragment
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.ClassMetadataInitialization
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.ClassNamespace
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrIcClassModel
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrProgramFragment
 import org.jetbrains.kotlin.ir.backend.js.utils.emptyScope
@@ -111,7 +113,15 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
     }
 
     private fun readIrIcClassModel(): JsIrIcClassModel {
-        return JsIrIcClassModel(readList { nameTable[readInt()] }).apply {
+        val superClasses = readList { nameTable[readInt()] }
+        val namespace = ifTrue {
+            val namespace = stringTable[readInt()]
+            val namespaceVar = nameTable[readInt()]
+            ClassNamespace(namespace, namespaceVar)
+        }
+        val metadataInitialization = readStatement()
+        val afterDeclarations = readBoolean()
+        return JsIrIcClassModel(superClasses, ClassMetadataInitialization(metadataInitialization, namespace, afterDeclarations)).apply {
             readRepeated { preDeclarationBlock.statements += readStatement() }
             readRepeated { postDeclarationBlock.statements += readStatement() }
         }
