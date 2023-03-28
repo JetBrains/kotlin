@@ -151,17 +151,20 @@ internal fun KtType.isClassTypeWithClassId(classId: ClassId): Boolean {
     return this.classId == classId
 }
 
-private fun escapeString(str: String): String = buildString {
-    str.forEach { char ->
-        val escaped = when (char) {
-            '\n' -> "\\n"
-            '\r' -> "\\r"
-            '\t' -> "\\t"
-            '\"' -> "\\\""
-            '\\' -> "\\\\"
-            else -> "$char"
+private fun escapeString(s: String): String = buildString {
+    s.forEach {
+        when (it) {
+            '\n' -> append("\\n")
+            '\r' -> append("\\r")
+            '\t' -> append("\\t")
+            '"' -> append("\\\"")
+            '\\' -> append("\\\\")
+            else -> if (it.code in 32..128) {
+                append(it)
+            } else {
+                append("\\u%04X".format(it.code))
+            }
         }
-        append(escaped)
     }
 }
 
@@ -180,11 +183,11 @@ internal fun KtAnnotationValue.toAnnotationMemberValue(parent: PsiElement): PsiA
         )
 
     is KtConstantAnnotationValue -> {
-        this.constantValue.createPsiExpression(parent)?.let {
-            if (it is PsiLiteral)
-                SymbolPsiLiteral(sourcePsi, parent, it)
-            else
-                SymbolPsiExpression(sourcePsi, parent, it)
+        constantValue.createPsiExpression(parent)?.let {
+            when (it) {
+                is PsiLiteral -> SymbolPsiLiteral(sourcePsi, parent, it)
+                else -> SymbolPsiExpression(sourcePsi, parent, it)
+            }
         }
     }
 
@@ -220,23 +223,30 @@ private fun KtKClassAnnotationValue.toAnnotationMemberValue(parent: PsiElement):
     }
 }
 
-private fun KtConstantValue.asStringForPsiLiteral(): String = when (val value = value) {
-    is Char -> "'$value'"
-    is String -> "\"${escapeString(value)}\""
-    is Long -> "${value}L"
-    is Float -> "${value}f"
-    null -> "null"
-    else -> value.toString()
-}
+private fun KtConstantValue.asStringForPsiExpression(): String =
+    when (val value = value) {
+        Double.NEGATIVE_INFINITY -> "-1.0 / 0.0"
+        Double.NaN -> "0.0 / 0.0"
+        Double.POSITIVE_INFINITY -> "1.0 / 0.0"
+        Float.NEGATIVE_INFINITY -> "-1.0F / 0.0F"
+        Float.NaN -> "0.0F / 0.0F"
+        Float.POSITIVE_INFINITY -> "1.0F / 0.0F"
+        '\'' -> "'\\''"
+        is Char -> "'${escapeString(value.toString())}'"
+        is String -> "\"${escapeString(value)}\""
+        is Long -> "${value}L"
+        is Float -> "${value}f"
+        else -> value.toString()
+    }
 
 internal fun KtConstantValue.createPsiExpression(parent: PsiElement): PsiExpression? {
-    val asString = asStringForPsiLiteral()
+    val asString = asStringForPsiExpression()
     return parent.project.withElementFactorySafe {
         createExpressionFromText(asString, parent)
     }
 }
 
-private inline fun <T> Project.withElementFactorySafe(crossinline action: PsiElementFactory.() -> T): T? {
+internal inline fun <T> Project.withElementFactorySafe(crossinline action: PsiElementFactory.() -> T): T? {
     val instance = PsiElementFactory.getInstance(this)
     return try {
         instance.action()

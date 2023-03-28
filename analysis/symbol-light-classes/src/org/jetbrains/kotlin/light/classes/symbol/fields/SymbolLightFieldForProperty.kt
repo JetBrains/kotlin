@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.light.classes.symbol.fields
 import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.KtConstantInitializerValue
-import org.jetbrains.kotlin.analysis.api.annotations.hasAnnotation
+import org.jetbrains.kotlin.analysis.api.annotations.*
 import org.jetbrains.kotlin.analysis.api.base.KtConstantValue
 import org.jetbrains.kotlin.analysis.api.symbols.KtKotlinPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
@@ -173,8 +173,30 @@ internal class SymbolLightFieldForProperty private constructor(
     }
 
     private val _initializer by lazyPub {
-        _initializerValue?.createPsiExpression(this)
+        _initializerValue?.createPsiExpression(this) ?: withPropertySymbol { propertySymbol ->
+            if (propertySymbol !is KtKotlinPropertySymbol) return@withPropertySymbol null
+            (kotlinOrigin as? KtProperty)?.initializer?.evaluateAsAnnotationValue()
+                ?.let(::toPsiExpression)
+        }
     }
+
+    private fun toPsiExpression(value: KtAnnotationValue): PsiExpression? =
+        project.withElementFactorySafe {
+            when (value) {
+                is KtConstantAnnotationValue ->
+                    value.constantValue.createPsiExpression(this@SymbolLightFieldForProperty)
+                is KtEnumEntryAnnotationValue ->
+                    value.callableId?.let { createExpressionFromText(it.asSingleFqName().asString(), this@SymbolLightFieldForProperty) }
+                is KtArrayAnnotationValue ->
+                    createExpressionFromText(
+                        value.values
+                            .map { toPsiExpression(it)?.text ?: return@withElementFactorySafe null }
+                            .joinToString(", ", "{", "}"),
+                        this@SymbolLightFieldForProperty
+                    )
+                else -> null
+            }
+        }
 
     override fun getInitializer(): PsiExpression? = _initializer
 

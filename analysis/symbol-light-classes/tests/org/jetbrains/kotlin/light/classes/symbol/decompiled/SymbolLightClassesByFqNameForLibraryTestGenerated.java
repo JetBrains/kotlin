@@ -193,6 +193,12 @@ public class SymbolLightClassesByFqNameForLibraryTestGenerated extends AbstractS
     }
 
     @Test
+    @TestMetadata("InvalidJavaIdentifierAsPropertyInitializer.kt")
+    public void testInvalidJavaIdentifierAsPropertyInitializer() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/InvalidJavaIdentifierAsPropertyInitializer.kt");
+    }
+
+    @Test
     @TestMetadata("JavaBetween.kt")
     public void testJavaBetween() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/JavaBetween.kt");

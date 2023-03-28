@@ -319,6 +319,12 @@ public class SymbolLightClassesEqualityByPsiForLibraryTestGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("unsafePropertyInitializers.kt")
+    public void testUnsafePropertyInitializers() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/unsafePropertyInitializers.kt");
+    }
+
+    @Test
     @TestMetadata("valueClassInSignature.kt")
     public void testValueClassInSignature() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/valueClassInSignature.kt");

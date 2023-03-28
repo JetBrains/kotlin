@@ -6,7 +6,7 @@ public final class PropertiesKt /* PropertiesKt*/ {
   private static final error.NonExistentClass delegatedProp2$delegate;
 
   @org.jetbrains.annotations.NotNull()
-  private static final java.lang.Object arrayConst;
+  private static final java.lang.Object arrayConst = {1, 2} /* initializer type: null */;
 
   @org.jetbrains.annotations.NotNull()
   private static final java.lang.String x = "" /* initializer type: java.lang.String */;

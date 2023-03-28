@@ -6,11 +6,14 @@
 package org.jetbrains.kotlin.analysis.api.fir.components
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationValue
 import org.jetbrains.kotlin.analysis.api.base.KtConstantValue
 import org.jetbrains.kotlin.analysis.api.components.KtCompileTimeConstantProvider
 import org.jetbrains.kotlin.analysis.api.components.KtConstantEvaluationMode
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
+import org.jetbrains.kotlin.analysis.api.fir.evaluate.FirAnnotationValueConverter
 import org.jetbrains.kotlin.analysis.api.fir.evaluate.FirCompileTimeConstantEvaluator
+import org.jetbrains.kotlin.analysis.api.fir.utils.asKtInitializerValue
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
@@ -35,6 +38,11 @@ internal class KtFirCompileTimeConstantProvider(
     ): KtConstantValue? {
         return evaluateFir(expression.getOrBuildFir(firResolveSession), expression, mode)
     }
+
+    override fun evaluateAsAnnotationValue(expression: KtExpression): KtAnnotationValue? =
+        (expression.getOrBuildFir(firResolveSession) as? FirExpression)?.let {
+            FirAnnotationValueConverter.toConstantValue(it, firResolveSession.useSiteFirSession)
+        }
 
     private fun evaluateFir(
         fir: FirElement?,
