@@ -18,9 +18,7 @@ import org.jetbrains.kotlin.gradle.util.runLifecycleAwareTest
 import org.jetbrains.kotlin.gradle.utils.newProperty
 import org.junit.Assert.assertFalse
 import org.junit.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 class LifecycleAwarePropertyTest {
     private val project = buildProjectWithMPP()
@@ -48,7 +46,10 @@ class LifecycleAwarePropertyTest {
     fun `test - awaitFinalValue - on non lifecycle aware property`() = project.runLifecycleAwareTest {
         val property = project.newProperty<String>()
         assertFalse(property.isKotlinPluginLifecycleAware())
-        assertFailsWith<IllegalArgumentException> { property.awaitFinalValue() }
+        assertEquals(KotlinPluginLifecycle.Stage.EvaluateBuildscript, currentKotlinPluginLifecycle().stage)
+        assertNull(property.awaitFinalValue())
+        assertEquals(KotlinPluginLifecycle.Stage.FinaliseDsl, currentKotlinPluginLifecycle().stage)
+        assertFails { property.set("x") }
     }
 
     @Test

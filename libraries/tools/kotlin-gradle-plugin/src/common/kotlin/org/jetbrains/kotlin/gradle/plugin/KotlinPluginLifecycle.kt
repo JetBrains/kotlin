@@ -171,11 +171,19 @@ internal suspend fun <T : Any> Property<T>.findKotlinPluginLifecycleAwarePropert
  * Will suspend until the property finalises its value and therefore a final value can returned.
  * Note: This only works on properties that are [isKotlinPluginLifecycleAware]
  * (e.g. by being created using [newKotlinPluginLifecycleAwareProperty]).
+ *
+ * If a property was not created using 'newKotlinPluginLifecycleAwareProperty' then the execution
+ * will suspend until 'FinaliseDsl' and calls [Property.finalizeValue] before returnign the actual value
  */
 internal suspend fun <T : Any> Property<T>.awaitFinalValue(): T? {
     val lifecycleAwareProperty = findKotlinPluginLifecycleAwareProperty()
-        ?: throw IllegalArgumentException("Property is not lifecycle aware")
-    return lifecycleAwareProperty.awaitFinalValue()
+    if (lifecycleAwareProperty != null) {
+        return lifecycleAwareProperty.awaitFinalValue()
+    }
+
+    await(Stage.FinaliseDsl)
+    finalizeValue()
+    return orNull
 }
 
 /**
