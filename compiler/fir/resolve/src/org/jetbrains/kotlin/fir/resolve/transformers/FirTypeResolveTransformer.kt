@@ -133,6 +133,7 @@ open class FirTypeResolveTransformer(
                 }
             }
 
+            calculateDeprecations(result)
             result
         }
     }
@@ -148,6 +149,7 @@ open class FirTypeResolveTransformer(
         enumEntry.transformReturnTypeRef(this, data)
         enumEntry.transformTypeParameters(this, data)
         enumEntry.transformAnnotations(this, data)
+        calculateDeprecations(enumEntry)
         enumEntry
     }
 
@@ -192,6 +194,7 @@ open class FirTypeResolveTransformer(
                     property.removeDuplicateAnnotationsOfPrimaryConstructorElement()
                 }
 
+                calculateDeprecations(property)
                 property
             }
         }
@@ -205,6 +208,7 @@ open class FirTypeResolveTransformer(
     override fun transformField(field: FirField, data: Any?): FirField = whileAnalysing(session, field) {
         withScopeCleanup {
             field.transformReturnTypeRef(this, data).transformAnnotations(this, data)
+            calculateDeprecations(field)
             field
         }
     }
@@ -218,6 +222,7 @@ open class FirTypeResolveTransformer(
                 simpleFunction.addTypeParametersScope()
                 transformDeclaration(simpleFunction, data).also {
                     unboundCyclesInTypeParametersSupertypes(it as FirTypeParametersOwner)
+                    calculateDeprecations(simpleFunction)
                 }
             }
         } as FirSimpleFunction
@@ -282,6 +287,7 @@ open class FirTypeResolveTransformer(
             valueParameter.transformReturnTypeRef(this, data)
             valueParameter.transformAnnotations(this, data)
             valueParameter.transformVarargTypeToArrayType()
+            calculateDeprecations(valueParameter)
             valueParameter
         }
     }
@@ -456,5 +462,11 @@ open class FirTypeResolveTransformer(
                     // CONSTRUCTOR_PARAMETER !in targets && !isParameter
                     AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER in it.useSiteTargetsFromMetaAnnotation(session) == isParameter
         })
+    }
+
+    private fun calculateDeprecations(callableDeclaration: FirCallableDeclaration) {
+        if (callableDeclaration.deprecationsProvider is UnresolvedDeprecationProvider) {
+            callableDeclaration.replaceDeprecationsProvider(callableDeclaration.getDeprecationsProvider(session))
+        }
     }
 }

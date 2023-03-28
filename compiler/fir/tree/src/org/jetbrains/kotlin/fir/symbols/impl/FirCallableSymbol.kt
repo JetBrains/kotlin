@@ -68,7 +68,8 @@ abstract class FirCallableSymbol<D : FirCallableDeclaration> : FirBasedSymbol<D>
 
     fun getDeprecation(apiVersion: ApiVersion): DeprecationsPerUseSite? {
         if (!canBeDeprecated()) return null
-        lazyResolveToPhase(FirResolvePhase.STATUS)
+
+        lazyResolveToPhase(FirResolvePhase.TYPES)
         return fir.deprecationsProvider.getDeprecationsInfo(apiVersion)
     }
 
@@ -85,6 +86,7 @@ abstract class FirCallableSymbol<D : FirCallableDeclaration> : FirBasedSymbol<D>
             else -> lazyResolveToPhase(FirResolvePhase.TYPES)
         }
     }
+
     override fun toString(): String = "${this::class.simpleName} $callableId"
 }
 

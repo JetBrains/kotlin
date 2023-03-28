@@ -9357,6 +9357,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("deprecatedEnumEntry.kt")
+            public void testDeprecatedEnumEntry() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/deprecated/deprecatedEnumEntry.kt");
+            }
+
+            @Test
             @TestMetadata("deprecatedError.kt")
             public void testDeprecatedError() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/deprecated/deprecatedError.kt");
@@ -9366,6 +9372,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             @TestMetadata("deprecatedErrorBuilder.kt")
             public void testDeprecatedErrorBuilder() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/deprecated/deprecatedErrorBuilder.kt");
+            }
+
+            @Test
+            @TestMetadata("deprecatedField.kt")
+            public void testDeprecatedField() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/deprecated/deprecatedField.kt");
             }
 
             @Test
