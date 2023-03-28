@@ -193,11 +193,11 @@ class SerializableIrGenerator(
         // internally generated serializer always declared inside serializable class
 
         val serialDescriptorGetter =
-            serializerIrClass.getPropertyGetter(SERIAL_DESC_FIELD)!!
+            serializerIrClass.getPropertyGetter(SERIAL_DESC_FIELD)!!.owner
         return irGet(
-            serializerIrClass.defaultType,
+            serialDescriptorGetter.returnType,
             irGetObject(serializerIrClass),
-            serialDescriptorGetter.owner.symbol
+            serialDescriptorGetter.symbol
         )
     }
 
