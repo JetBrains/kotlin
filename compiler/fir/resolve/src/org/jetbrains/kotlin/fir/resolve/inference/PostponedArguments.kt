@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.types.model.typeConstructor
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 fun Candidate.preprocessLambdaArgument(
     csBuilder: ConstraintSystemBuilder,
@@ -110,15 +109,14 @@ private fun extractLambdaInfo(
     session: FirSession,
     candidate: Candidate?
 ): ResolvedLambdaAtom {
-    val expectedFunctionKind = expectedType?.lowerBoundIfFlexible()?.functionTypeKind(session)
-    val isFunctionSupertype = expectedFunctionKind != null
-
+    require(expectedType?.lowerBoundIfFlexible()?.functionTypeKind(session) == null) {
+        "Currently, we only extract lambda info from its shape when expected type is not function, but $expectedType"
+    }
     val typeVariable = ConeTypeVariableForLambdaReturnType(argument, "_L")
 
     val receiverType = argument.receiverType
     val returnType =
         argument.returnType
-            ?: runIf(isFunctionSupertype) { (expectedType?.typeArguments?.singleOrNull() as? ConeKotlinTypeProjection)?.type }
             ?: typeVariable.defaultType
 
     val nothingType = session.builtinTypes.nothingType.type
@@ -136,7 +134,7 @@ private fun extractLambdaInfo(
     return ResolvedLambdaAtom(
         argument,
         expectedType,
-        expectedFunctionKind,
+        expectedFunctionTypeKind = null,
         receiverType,
         contextReceivers,
         parameters,
