@@ -102,7 +102,7 @@ internal class SymbolLightClassForFacade(
         }
     }
 
-    private val multiFileClass: Boolean get() = files.size > 1 || firstFileInFacade.isJvmMultifileClassFile
+    override val multiFileClass: Boolean get() = files.size > 1 || firstFileInFacade.isJvmMultifileClassFile
 
     context(KtAnalysisSession)
     private fun loadFieldsFromFile(

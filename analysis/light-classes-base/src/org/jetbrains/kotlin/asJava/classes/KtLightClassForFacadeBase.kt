@@ -35,12 +35,12 @@ abstract class KtLightClassForFacadeBase constructor(
 ) : KtLightClassBase(files.first().manager), KtLightClassForFacade {
     private val firstFileInFacade by lazyPub { files.first() }
 
-    val isMultiFileClass: Boolean by lazyPub {
+    override val multiFileClass: Boolean by lazyPub {
         files.size > 1 || firstFileInFacade.isJvmMultifileClassFile
     }
 
     private val _modifierList: PsiModifierList by lazyPub {
-        if (isMultiFileClass)
+        if (multiFileClass)
             LightModifierList(manager, KotlinLanguage.INSTANCE, PsiModifier.PUBLIC, PsiModifier.FINAL)
         else
             createModifierListForSimpleFacade()
