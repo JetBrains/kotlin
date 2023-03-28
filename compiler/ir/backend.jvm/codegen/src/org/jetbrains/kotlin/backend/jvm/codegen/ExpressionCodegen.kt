@@ -1601,7 +1601,7 @@ class ExpressionCodegen(
                 //avoid ambiguity with type constructor type parameters
                 emptyMap()
             } else typeArgumentContainer.typeParameters.associate {
-                it.symbol to element.getTypeArgumentOrDefault(it)
+                it.symbol to (element.getTypeArgument(it.index) ?: it.defaultType)
             }
 
         val mappings = TypeParameterMappings(typeMapper.typeSystem, typeArguments, allReified = false, typeMapper::mapTypeParameter)
