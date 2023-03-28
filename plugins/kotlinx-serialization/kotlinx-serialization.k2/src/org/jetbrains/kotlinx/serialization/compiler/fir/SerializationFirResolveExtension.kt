@@ -309,7 +309,6 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
         get() = session.predicateBasedProvider.matches(FirSerializationPredicates.serializerFor, this)
 
     context(FirSession)
-    @Suppress("IncorrectFormatting") // KTIJ-22227
     private val FirClassSymbol<*>.companionNeedsSerializerFactory: Boolean
         get() {
             if (!(moduleData.platform.isNative() || moduleData.platform.isJs())) return false
