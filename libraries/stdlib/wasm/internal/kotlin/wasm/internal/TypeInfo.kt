@@ -25,15 +25,30 @@ internal val TypeInfoData.isInterfaceType
     get() = typeId < 0
 
 internal fun getTypeInfoTypeDataByPtr(typeInfoPtr: Int): TypeInfoData {
-    val fqNameLength = wasm_i32_load(typeInfoPtr + TYPE_INFO_TYPE_PACKAGE_NAME_LENGTH_OFFSET)
-    val fqNameId = wasm_i32_load(typeInfoPtr + TYPE_INFO_TYPE_PACKAGE_NAME_ID_OFFSET)
-    val fqNamePtr = wasm_i32_load(typeInfoPtr + TYPE_INFO_TYPE_PACKAGE_NAME_PRT_OFFSET)
-    val simpleNameLength = wasm_i32_load(typeInfoPtr + TYPE_INFO_TYPE_SIMPLE_NAME_LENGTH_OFFSET)
-    val simpleNameId = wasm_i32_load(typeInfoPtr + TYPE_INFO_TYPE_SIMPLE_NAME_ID_OFFSET)
-    val simpleNamePtr = wasm_i32_load(typeInfoPtr + TYPE_INFO_TYPE_SIMPLE_NAME_PRT_OFFSET)
-    val packageName = stringLiteral(fqNameId, fqNamePtr, fqNameLength)
-    val simpleName = stringLiteral(simpleNameId, simpleNamePtr, simpleNameLength)
+    val packageName = getPackageName(typeInfoPtr)
+    val simpleName = getSimpleName(typeInfoPtr)
     return TypeInfoData(typeInfoPtr, packageName, simpleName)
+}
+
+internal fun getSimpleName(typeInfoPtr: Int) = getString(
+    typeInfoPtr,
+    TYPE_INFO_TYPE_SIMPLE_NAME_LENGTH_OFFSET,
+    TYPE_INFO_TYPE_SIMPLE_NAME_ID_OFFSET,
+    TYPE_INFO_TYPE_SIMPLE_NAME_PRT_OFFSET
+)
+
+internal fun getPackageName(typeInfoPtr: Int) = getString(
+    typeInfoPtr,
+    TYPE_INFO_TYPE_PACKAGE_NAME_LENGTH_OFFSET,
+    TYPE_INFO_TYPE_PACKAGE_NAME_ID_OFFSET,
+    TYPE_INFO_TYPE_PACKAGE_NAME_PRT_OFFSET
+)
+
+private fun getString(typeInfoPtr: Int, lengthOffset: Int, idOffset: Int, ptrOffset: Int): String {
+    val length = wasm_i32_load(typeInfoPtr + lengthOffset)
+    val id = wasm_i32_load(typeInfoPtr + idOffset)
+    val ptr = wasm_i32_load(typeInfoPtr + ptrOffset)
+    return stringLiteral(id, ptr, length)
 }
 
 internal fun getSuperTypeId(typeInfoPtr: Int): Int =

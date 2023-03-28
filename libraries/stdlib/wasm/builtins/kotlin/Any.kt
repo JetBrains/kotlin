@@ -57,8 +57,10 @@ public open class Any @WasmPrimitiveConstructor constructor() {
      * Returns a string representation of the object.
      */
     public open fun toString(): String {
-        val typeData = getTypeInfoTypeDataByPtr(typeInfo)
-        val qualifiedName = if (typeData.packageName.isEmpty()) typeData.typeName else "${typeData.packageName}.${typeData.typeName}"
+        val typeInfoPtr = this.typeInfo
+        val packageName = getPackageName(typeInfoPtr)
+        val simpleName = getSimpleName(typeInfoPtr)
+        val qualifiedName = if (packageName.isEmpty()) simpleName else "$packageName.$simpleName"
         return "$qualifiedName@${identityHashCode()}"
     }
 }

@@ -17,7 +17,7 @@ private fun throwJsError(message: String?, wasmTypeName: String?, stack: String)
 }
 
 internal fun throwAsJsException(t: Throwable): Nothing {
-    throwJsError(t.message, t::class.simpleName, t.stackTraceToString())
+    throwJsError(t.message, getSimpleName(t.typeInfo), t.stackTraceToString())
 }
 
 internal var isNotFirstWasmExportCall: Boolean = false
