@@ -9,6 +9,7 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
+import org.jetbrains.kotlin.fileClasses.isJvmMultifileClassFile
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 import org.jetbrains.kotlin.name.FqName
@@ -25,4 +26,6 @@ internal class KtLightClassForDecompiledFacade(
     override fun getName(): String = super<KtLightClassForFacade>.getName()
     override val facadeClassFqName: FqName get() = file.javaFileFacadeFqName
     override val originKind: LightClassOriginKind get() = LightClassOriginKind.BINARY
+
+    override val multiFileClass: Boolean get() = files.size > 1 || files.firstOrNull()?.isJvmMultifileClassFile == true
 }

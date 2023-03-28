@@ -29,18 +29,18 @@ import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 import javax.swing.Icon
 
-abstract class KtLightClassForFacadeBase constructor(
+abstract class KtLightClassForFacadeBase(
     override val facadeClassFqName: FqName,
     final override val files: Collection<KtFile>
 ) : KtLightClassBase(files.first().manager), KtLightClassForFacade {
     private val firstFileInFacade by lazyPub { files.first() }
 
-    val isMultiFileClass: Boolean by lazyPub {
+    override val multiFileClass: Boolean by lazyPub {
         files.size > 1 || firstFileInFacade.isJvmMultifileClassFile
     }
 
     private val _modifierList: PsiModifierList by lazyPub {
-        if (isMultiFileClass)
+        if (multiFileClass)
             LightModifierList(manager, KotlinLanguage.INSTANCE, PsiModifier.PUBLIC, PsiModifier.FINAL)
         else
             createModifierListForSimpleFacade()

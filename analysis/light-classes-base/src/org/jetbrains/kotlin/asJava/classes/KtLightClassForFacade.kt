@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.psi.KtFile
 interface KtLightClassForFacade : KtLightClass {
     val facadeClassFqName: FqName
     val files: Collection<KtFile>
+    val multiFileClass: Boolean
 
     override fun getName(): String = facadeClassFqName.shortName().asString()
 }
