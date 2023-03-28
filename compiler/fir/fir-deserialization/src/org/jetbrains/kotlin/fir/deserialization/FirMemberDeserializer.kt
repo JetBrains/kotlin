@@ -571,7 +571,9 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 Modality.FINAL,
                 visibility.toEffectiveVisibility(classBuilder.symbol)
             ).apply {
-                isExpect = Flags.IS_EXPECT_FUNCTION.get(flags)
+                // We don't store information about expect modifier on constructors
+                // It is inherited from containing class
+                isExpect = Flags.IS_EXPECT_CLASS.get(classProto.flags)
                 hasStableParameterNames = !Flags.IS_CONSTRUCTOR_WITH_NON_STABLE_PARAMETER_NAMES.get(flags)
                 isActual = false
                 isOverride = false
