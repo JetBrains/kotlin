@@ -20,12 +20,12 @@ interface KotlinTargetHierarchyBuilder {
     fun group(name: String, build: KotlinTargetHierarchyBuilder.() -> Unit = {})
 
     /* low-level APIs */
-    fun withCompilations(predicate: suspend (KotlinCompilation<*>) -> Boolean)
+    fun withCompilations(predicate: (KotlinCompilation<*>) -> Boolean)
 
-    fun excludeCompilations(predicate: suspend (KotlinCompilation<*>) -> Boolean)
+    fun excludeCompilations(predicate: (KotlinCompilation<*>) -> Boolean)
 
     @Deprecated("Use 'excludeCompilations' instead", ReplaceWith("excludeCompilations(predicate)"))
-    fun withoutCompilations(predicate: suspend (KotlinCompilation<*>) -> Boolean) = excludeCompilations(predicate)
+    fun withoutCompilations(predicate: (KotlinCompilation<*>) -> Boolean) = excludeCompilations(predicate)
 
     @Deprecated("Use plain 'withoutCompilations(!predicate) instead'", ReplaceWith("withoutCompilations { !predicate(it) }"))
     fun filterCompilations(predicate: (KotlinCompilation<*>) -> Boolean) = excludeCompilations { !predicate(it) }

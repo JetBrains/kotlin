@@ -56,34 +56,25 @@ private class KotlinTargetHierarchyBuilderImplContext(private val compilation: K
 }
 
 private class KotlinTargetHierarchyBuilderRootImpl(
-    private val builder: KotlinTargetHierarchyBuilder
+    private val builder: KotlinTargetHierarchyBuilderImpl
 ) : KotlinTargetHierarchyBuilder.Root, KotlinTargetHierarchyBuilder by builder {
 
-    private var modules: Set<KotlinTargetHierarchy.ModuleName>? = null
 
     override fun modules(vararg module: KotlinTargetHierarchy.ModuleName) {
-        this.modules = module.toHashSet()
+        builder.modules = module.toHashSet()
     }
 
     override fun withModule(vararg module: KotlinTargetHierarchy.ModuleName) {
-        this.modules = this.modules.orEmpty().plus(module)
+        builder.modules = builder.modules.orEmpty().plus(module)
     }
 
     override fun excludeModule(vararg module: KotlinTargetHierarchy.ModuleName) {
         val modules = module.toHashSet()
         if (modules.isEmpty()) return
-        if (this.modules == null) return
-        this.modules = this.modules.orEmpty() - modules
-    }
-
-    init {
-        builder.excludeCompilations exclude@{ compilation ->
-            val modules = this.modules ?: return@exclude false
-            val module = KotlinTargetHierarchy.ModuleName.orNull(compilation) ?: return@exclude false
-            module !in modules
-        }
+        builder.modules = builder.modules.orEmpty() - modules
     }
 }
+
 
 private class KotlinTargetHierarchyBuilderImpl(
     val context: KotlinTargetHierarchyBuilderImplContext,
@@ -93,17 +84,19 @@ private class KotlinTargetHierarchyBuilderImpl(
     val children = mutableSetOf<KotlinTargetHierarchyBuilderImpl>()
     val childrenClosure get() = closure { it.children }
 
-    private var includePredicate: (suspend (KotlinCompilation<*>) -> Boolean) = { false }
-    private var excludePredicate: (suspend (KotlinCompilation<*>) -> Boolean) = { false }
+    var modules: Set<KotlinTargetHierarchy.ModuleName>? = null
+    private var includePredicate: ((KotlinCompilation<*>) -> Boolean) = { false }
+    private var excludePredicate: ((KotlinCompilation<*>) -> Boolean) = { false }
 
-    override fun withCompilations(predicate: suspend (KotlinCompilation<*>) -> Boolean) {
+
+    override fun withCompilations(predicate: (KotlinCompilation<*>) -> Boolean) {
         val previousIncludePredicate = this.includePredicate
         val previousExcludePredicate = this.excludePredicate
         this.includePredicate = { previousIncludePredicate(it) || predicate(it) }
         this.excludePredicate = { previousExcludePredicate(it) && !predicate(it) }
     }
 
-    override fun excludeCompilations(predicate: suspend (KotlinCompilation<*>) -> Boolean) {
+    override fun excludeCompilations(predicate: (KotlinCompilation<*>) -> Boolean) {
         val previousIncludePredicate = this.includePredicate
         val previousExcludePredicate = this.excludePredicate
         this.includePredicate = { previousIncludePredicate(it) && !predicate(it) }
@@ -111,6 +104,11 @@ private class KotlinTargetHierarchyBuilderImpl(
     }
 
     suspend fun contains(compilation: KotlinCompilation<*>): Boolean {
+        modules?.let { modules ->
+            val module = KotlinTargetHierarchy.ModuleName.orNull(compilation) ?: return false
+            if (module !in modules) return false
+        }
+
         /* Return eagerly, when compilation is explicitly excluded */
         if (excludePredicate(compilation)) return false
 
