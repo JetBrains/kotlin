@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.providers
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.NullableCaffeineCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirSymbolProviderNameCache
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
@@ -34,7 +35,8 @@ import org.jetbrains.kotlin.psi.KtFile
  *   [LLFirDependenciesSymbolProvider], this check is especially fruitful.
  * - For a given class or callable ID, indices can be accessed once to get relevant PSI elements. Then the correct symbol provider(s) to
  *   call can be found out via the PSI element's [KtModule]s. This avoids the need to call every single subordinate symbol provider.
- * - TODO (marco): Another layer of caching can be provided, perhaps with an LRU cache.
+ * - A small Caffeine cache can avoid most index accesses for classes, because many names are requested multiple times, with a minor memory
+ *   footprint.
  *
  * [declarationProvider] must have a scope which combines the scopes of the individual [providers].
  */
@@ -54,10 +56,12 @@ internal class LLFirCombinedKotlinSymbolProvider(
         }
     }
 
+    private val classifierCache = NullableCaffeineCache<ClassId, FirClassLikeSymbol<*>> { it.maximumSize(500) }
+
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
         if (!symbolNameCache.mayHaveTopLevelClassifier(classId, mayHaveFunctionClass = false)) return null
 
-        return computeClassLikeSymbolByClassId(classId)
+        return classifierCache.get(classId) { computeClassLikeSymbolByClassId(it) }
     }
 
     @OptIn(FirSymbolProviderInternals::class)
