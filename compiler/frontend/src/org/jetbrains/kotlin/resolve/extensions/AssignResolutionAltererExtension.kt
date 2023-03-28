@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.resolve.extensions
 import org.jetbrains.kotlin.extensions.AnnotationBasedExtension
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.extensions.internal.InternalNonStableExtensionPoints
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -18,8 +17,6 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingComponents
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
 import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
 
-
-val ASSIGN_METHOD: Name = Name.identifier("assign")
 
 @InternalNonStableExtensionPoints
 interface AssignResolutionAltererExtension : AnnotationBasedExtension {

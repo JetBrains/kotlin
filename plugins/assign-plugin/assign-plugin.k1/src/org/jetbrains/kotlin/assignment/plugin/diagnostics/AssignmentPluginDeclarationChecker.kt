@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.psi.KtModifierListOwner
 import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
-import org.jetbrains.kotlin.resolve.extensions.ASSIGN_METHOD
+import org.jetbrains.kotlin.types.expressions.OperatorConventions.ASSIGN_METHOD
 
 class AssignmentPluginDeclarationChecker(private val annotations: List<String>) : DeclarationChecker {
 

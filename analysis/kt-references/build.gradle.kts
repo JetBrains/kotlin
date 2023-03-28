@@ -5,7 +5,6 @@ plugins {
 
 dependencies {
     implementation(project(":compiler:psi"))
-    implementation(project(":compiler:frontend"))
     implementation(project(":analysis:light-classes-base"))
     implementation(intellijCore())
 
