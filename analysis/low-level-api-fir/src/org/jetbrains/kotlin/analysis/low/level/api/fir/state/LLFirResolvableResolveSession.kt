@@ -94,6 +94,9 @@ internal abstract class LLFirResolvableResolveSession(
         ktDeclaration: KtDeclaration,
         phase: FirResolvePhase
     ): FirBasedSymbol<*> {
+        if (ktDeclaration.containingKtFile.isCompiled) {
+            return findFirCompiledSymbol(ktDeclaration)
+        }
         val module = ktDeclaration.getKtModule()
         return when (getModuleKind(module)) {
             ModuleKind.RESOLVABLE_MODULE -> findSourceFirSymbol(ktDeclaration, module).also { resolveFirToPhase(it.fir, phase) }
