@@ -30,8 +30,8 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.testOld.V8IrJsTestChecker
-import org.jetbrains.kotlin.klib.KlibABITestUtils
-import org.jetbrains.kotlin.klib.KlibABITestUtils.MAIN_MODULE_NAME
+import org.jetbrains.kotlin.klib.PartialLinkageTestUtils
+import org.jetbrains.kotlin.klib.PartialLinkageTestUtils.MAIN_MODULE_NAME
 import org.jetbrains.kotlin.konan.file.ZipFileSystemCacheableAccessor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
@@ -40,15 +40,15 @@ import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import java.io.File
 import kotlin.io.path.createTempDirectory
 
-abstract class AbstractJsKLibABIWithICTestCase : AbstractJsKLibABITestCase() {
+abstract class AbstractJsPartialLinkageWithICTestCase : AbstractJsPartialLinkageTestCase() {
     override val useIncrementalCompiler get() = true
 }
 
-abstract class AbstractJsKLibABINoICTestCase : AbstractJsKLibABITestCase() {
+abstract class AbstractJsPartialLinkageNoICTestCase : AbstractJsPartialLinkageTestCase() {
     override val useIncrementalCompiler get() = false
 }
 
-abstract class AbstractJsKLibABITestCase : KtUsefulTestCase() {
+abstract class AbstractJsPartialLinkageTestCase : KtUsefulTestCase() {
     abstract val useIncrementalCompiler: Boolean
 
     private lateinit var buildDir: File
@@ -86,17 +86,17 @@ abstract class AbstractJsKLibABITestCase : KtUsefulTestCase() {
         return config
     }
 
-    private inner class JsTestConfiguration(testPath: String) : KlibABITestUtils.TestConfiguration {
+    private inner class JsTestConfiguration(testPath: String) : PartialLinkageTestUtils.TestConfiguration {
         override val testDir: File = File(testPath).absoluteFile
-        override val buildDir: File get() = this@AbstractJsKLibABITestCase.buildDir
+        override val buildDir: File get() = this@AbstractJsPartialLinkageTestCase.buildDir
         override val stdlibFile: File get() = File("libraries/stdlib/js-ir/build/classes/kotlin/js/main").absoluteFile
-        override val testModeName = if (this@AbstractJsKLibABITestCase.useIncrementalCompiler) "JS_WITH_IC" else "JS_NO_IC"
+        override val testModeName = if (this@AbstractJsPartialLinkageTestCase.useIncrementalCompiler) "JS_WITH_IC" else "JS_NO_IC"
 
-        override fun buildKlib(moduleName: String, moduleSourceDir: File, dependencies: KlibABITestUtils.Dependencies, klibFile: File) =
-            this@AbstractJsKLibABITestCase.buildKlib(moduleName, moduleSourceDir, dependencies, klibFile)
+        override fun buildKlib(moduleName: String, moduleSourceDir: File, dependencies: PartialLinkageTestUtils.Dependencies, klibFile: File) =
+            this@AbstractJsPartialLinkageTestCase.buildKlib(moduleName, moduleSourceDir, dependencies, klibFile)
 
-        override fun buildBinaryAndRun(mainModuleKlibFile: File, dependencies: KlibABITestUtils.Dependencies) =
-            this@AbstractJsKLibABITestCase.buildBinaryAndRun(mainModuleKlibFile, dependencies)
+        override fun buildBinaryAndRun(mainModuleKlibFile: File, dependencies: PartialLinkageTestUtils.Dependencies) =
+            this@AbstractJsPartialLinkageTestCase.buildBinaryAndRun(mainModuleKlibFile, dependencies)
 
         override fun onNonEmptyBuildDirectory(directory: File) {
             zipAccessor.reset()
@@ -109,9 +109,9 @@ abstract class AbstractJsKLibABITestCase : KtUsefulTestCase() {
     }
 
     // The entry point to generated test classes.
-    fun doTest(testPath: String) = KlibABITestUtils.runTest(JsTestConfiguration(testPath))
+    fun doTest(testPath: String) = PartialLinkageTestUtils.runTest(JsTestConfiguration(testPath))
 
-    private fun buildKlib(moduleName: String, moduleSourceDir: File, dependencies: KlibABITestUtils.Dependencies, klibFile: File) {
+    private fun buildKlib(moduleName: String, moduleSourceDir: File, dependencies: PartialLinkageTestUtils.Dependencies, klibFile: File) {
         val config = createConfig(moduleName)
         val ktFiles = environment.createPsiFiles(moduleSourceDir)
 
@@ -157,7 +157,7 @@ abstract class AbstractJsKLibABITestCase : KtUsefulTestCase() {
         }
     }
 
-    private fun buildBinaryAndRun(mainModuleKlibFile: File, allDependencies: KlibABITestUtils.Dependencies) {
+    private fun buildBinaryAndRun(mainModuleKlibFile: File, allDependencies: PartialLinkageTestUtils.Dependencies) {
         val configuration = createConfig(MAIN_MODULE_NAME)
 
         val compilationOutputs = if (useIncrementalCompiler)
@@ -176,7 +176,7 @@ abstract class AbstractJsKLibABITestCase : KtUsefulTestCase() {
     private fun buildBinaryWithIC(
         configuration: CompilerConfiguration,
         mainModuleKlibFile: File,
-        allDependencies: KlibABITestUtils.Dependencies
+        allDependencies: PartialLinkageTestUtils.Dependencies
     ): CompilationOutputs {
         // TODO: what about friend dependencies?
         val cacheUpdater = CacheUpdater(
@@ -208,7 +208,7 @@ abstract class AbstractJsKLibABITestCase : KtUsefulTestCase() {
     private fun buildBinaryNoIC(
         configuration: CompilerConfiguration,
         mainModuleKlibFile: File,
-        allDependencies: KlibABITestUtils.Dependencies
+        allDependencies: PartialLinkageTestUtils.Dependencies
     ): CompilationOutputs {
         val klib = MainModule.Klib(mainModuleKlibFile.path)
         val moduleStructure = ModulesStructure(

@@ -38,12 +38,12 @@ fun main(args: Array<String>) {
         }
 
         testGroup("js/js.tests/tests-gen", "compiler/testData") {
-            testClass<AbstractJsKLibABIWithICTestCase> {
+            testClass<AbstractJsPartialLinkageWithICTestCase> {
                 model("klibABI/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false, )
             }
         }
         testGroup("js/js.tests/tests-gen", "compiler/testData") {
-            testClass<AbstractJsKLibABINoICTestCase> {
+            testClass<AbstractJsPartialLinkageNoICTestCase> {
                 model("klibABI/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false, )
             }
         }

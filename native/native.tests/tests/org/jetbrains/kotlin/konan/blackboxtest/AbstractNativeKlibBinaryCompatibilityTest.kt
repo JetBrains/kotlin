@@ -28,7 +28,6 @@ import kotlin.math.max
 import org.jetbrains.kotlin.compatibility.binary.TestFile as BinaryCompatibilityTestFile
 import org.jetbrains.kotlin.compatibility.binary.TestModule as BinaryCompatibilityTestModule
 
-@Tag("klib-abi")
 @Tag("klib-binary-compatibility")
 abstract class AbstractNativeKlibBinaryCompatibilityTest : AbstractNativeSimpleTest() {
 

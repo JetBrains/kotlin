@@ -6,14 +6,14 @@
 package org.jetbrains.kotlin.klib
 
 import org.jetbrains.kotlin.codegen.*
-import org.jetbrains.kotlin.klib.KlibABITestUtils.ModuleBuildDirs.Companion.OUTPUT_DIR_NAME
-import org.jetbrains.kotlin.klib.KlibABITestUtils.ModuleBuildDirs.Companion.SOURCE_DIR_NAME
+import org.jetbrains.kotlin.klib.PartialLinkageTestUtils.ModuleBuildDirs.Companion.OUTPUT_DIR_NAME
+import org.jetbrains.kotlin.klib.PartialLinkageTestUtils.ModuleBuildDirs.Companion.SOURCE_DIR_NAME
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.fail
 import java.io.File
 
-object KlibABITestUtils {
+object PartialLinkageTestUtils {
     interface TestConfiguration {
         val testDir: File
         val buildDir: File
@@ -93,9 +93,9 @@ object KlibABITestUtils {
                 // Populate the source dir with *.kt files.
                 copySources(from = moduleTestDir, to = moduleBuildDirs.sourceDir)
 
-                // Include ABI utils into the main module.
+                // Include PL utils into the main module.
                 if (moduleName == MAIN_MODULE_NAME) {
-                    val utilsDir = testDir.parentFile.resolve(ABI_UTILS_DIR)
+                    val utilsDir = testDir.parentFile.resolve(PL_UTILS_DIR)
                     KtUsefulTestCase.assertExists(utilsDir)
 
                     copySources(from = utilsDir, to = moduleBuildDirs.sourceDir) { contents ->
@@ -208,6 +208,6 @@ object KlibABITestUtils {
     )
 
     const val MAIN_MODULE_NAME = "main"
-    private const val ABI_UTILS_DIR = "__utils__"
+    private const val PL_UTILS_DIR = "__utils__"
     private const val TEST_MODE_PLACEHOLDER = "TestMode.__UNKNOWN__"
 }

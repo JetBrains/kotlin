@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.konan.blackboxtest
 
 import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.codegen.ProjectInfo
-import org.jetbrains.kotlin.klib.KlibABITestUtils
-import org.jetbrains.kotlin.klib.KlibABITestUtils.Dependencies
-import org.jetbrains.kotlin.klib.KlibABITestUtils.MAIN_MODULE_NAME
+import org.jetbrains.kotlin.klib.PartialLinkageTestUtils
+import org.jetbrains.kotlin.klib.PartialLinkageTestUtils.Dependencies
+import org.jetbrains.kotlin.klib.PartialLinkageTestUtils.MAIN_MODULE_NAME
 import org.jetbrains.kotlin.konan.blackboxtest.support.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCase.WithTestRunnerExtras
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.*
@@ -24,12 +24,12 @@ import org.junit.jupiter.api.Tag
 import org.opentest4j.TestAbortedException
 import java.io.File
 
-@Tag("klib-abi")
-abstract class AbstractNativeKlibABITest : AbstractNativeSimpleTest() {
-    private inner class NativeTestConfiguration(testPath: String) : KlibABITestUtils.TestConfiguration {
+@Tag("partial-linkage")
+abstract class AbstractNativePartialLinkageTest : AbstractNativeSimpleTest() {
+    private inner class NativeTestConfiguration(testPath: String) : PartialLinkageTestUtils.TestConfiguration {
         override val testDir = getAbsoluteFile(testPath)
-        override val buildDir get() = this@AbstractNativeKlibABITest.buildDir
-        override val stdlibFile get() = this@AbstractNativeKlibABITest.stdlibFile
+        override val buildDir get() = this@AbstractNativePartialLinkageTest.buildDir
+        override val stdlibFile get() = this@AbstractNativePartialLinkageTest.stdlibFile
 
         override val testModeName = with(testRunSettings.get<CacheMode>()) {
             val cacheModeAlias = when {
@@ -47,10 +47,10 @@ abstract class AbstractNativeKlibABITest : AbstractNativeSimpleTest() {
         }
 
         override fun buildKlib(moduleName: String, moduleSourceDir: File, dependencies: Dependencies, klibFile: File) =
-            this@AbstractNativeKlibABITest.buildKlib(moduleName, moduleSourceDir, dependencies, klibFile)
+            this@AbstractNativePartialLinkageTest.buildKlib(moduleName, moduleSourceDir, dependencies, klibFile)
 
         override fun buildBinaryAndRun(mainModuleKlibFile: File, dependencies: Dependencies) =
-            this@AbstractNativeKlibABITest.buildBinaryAndRun(dependencies)
+            this@AbstractNativePartialLinkageTest.buildBinaryAndRun(dependencies)
 
         override fun onNonEmptyBuildDirectory(directory: File) = backupDirectoryContents(directory)
 
@@ -70,13 +70,13 @@ abstract class AbstractNativeKlibABITest : AbstractNativeSimpleTest() {
     private val producedKlibs = linkedSetOf<ProducedKlib>() // IMPORTANT: The order makes sense!
 
     private val executableArtifact: Executable by lazy {
-        val (_, outputDir) = KlibABITestUtils.createModuleDirs(buildDir, LAUNCHER_MODULE_NAME)
+        val (_, outputDir) = PartialLinkageTestUtils.createModuleDirs(buildDir, LAUNCHER_MODULE_NAME)
         val executableFile = outputDir.resolve("app." + testRunSettings.get<KotlinNativeTargets>().testTarget.family.exeSuffix)
         Executable(executableFile)
     }
 
     // The entry point to generated test classes.
-    protected fun runTest(@TestDataFile testPath: String) = KlibABITestUtils.runTest(NativeTestConfiguration(testPath))
+    protected fun runTest(@TestDataFile testPath: String) = PartialLinkageTestUtils.runTest(NativeTestConfiguration(testPath))
 
     private fun customizeMainModuleSources(moduleSourceDir: File) {
         // Add a "box" function launcher to the main module.
@@ -153,7 +153,7 @@ abstract class AbstractNativeKlibABITest : AbstractNativeSimpleTest() {
             TestModule.Exclusive(
                 name = moduleName,
                 directDependencySymbols = emptySet(), /* Don't need to pass any dependency symbols here.
-                                                         Dependencies are already handled by the AbstractKlibABITestCase class. */
+                                                         Dependencies are already handled by the AbstractNativePartialLinkageTest class. */
                 directFriendSymbols = emptySet(),
                 directDependsOnSymbols = emptySet(),
             ).also { module ->

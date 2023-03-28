@@ -53,15 +53,15 @@ fun main() {
             }
         }
 
-        // KLIB ABI tests.
+        // Partial linkage tests.
         testGroup("native/native.tests/tests-gen", "compiler/testData") {
-            testClass<AbstractNativeKlibABITest>(
-                suiteTestClassName = "K1KlibABITestGenerated"
+            testClass<AbstractNativePartialLinkageTest>(
+                suiteTestClassName = "K1NativePartialLinkageTestGenerated"
             ) {
                 model("klibABI/", pattern = "^([^_](.+))$", recursive = false)
             }
-            testClass<AbstractNativeKlibABITest>(
-                suiteTestClassName = "FirKlibABITestGenerated",
+            testClass<AbstractNativePartialLinkageTest>(
+                suiteTestClassName = "FirNativePartialLinkageTestGenerated",
                 annotations = listOf(provider<FirPipeline>())
             ) {
                 model("klibABI/", pattern = "^([^_](.+))$", recursive = false)
