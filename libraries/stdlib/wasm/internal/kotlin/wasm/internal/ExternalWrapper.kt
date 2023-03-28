@@ -281,9 +281,29 @@ private fun getJsTrue(): JsBoolean =
 private fun getJsFalse(): JsBoolean =
     js("false")
 
-private val jsEmptyString by lazy(::getJsEmptyString)
-private val jsTrue by lazy(::getJsTrue)
-private val jsFalse by lazy(::getJsFalse)
+private lateinit var _jsEmptyString: JsString 
+private val jsEmptyString: JsString
+    get() {
+        if (!::_jsEmptyString.isInitialized)
+            _jsEmptyString = getJsEmptyString()
+        return _jsEmptyString
+    }
+
+private lateinit var _jsTrue: JsBoolean
+private val jsTrue: JsBoolean
+    get() {
+        if (!::_jsTrue.isInitialized)
+            _jsTrue = getJsTrue()
+        return _jsTrue
+    }
+
+private lateinit var _jsFalse: JsBoolean
+private val jsFalse: JsBoolean 
+    get() {
+        if (!::_jsFalse.isInitialized)
+            _jsFalse = getJsFalse()
+        return _jsFalse
+    }
 
 internal fun numberToDoubleAdapter(x: Number): Double =
     x.toDouble()
