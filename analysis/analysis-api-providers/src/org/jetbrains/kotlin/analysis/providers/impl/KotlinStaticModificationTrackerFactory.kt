@@ -38,11 +38,16 @@ public class KotlinStaticModificationTrackerFactory : KotlinModificationTrackerF
     }
 
     @TestOnly
-    override fun incrementModificationsCount() {
+    override fun incrementModificationsCount(includeBinaryTrackers: Boolean) {
         projectWide.incModificationCount()
-        librariesWide.incModificationCount()
+        if (includeBinaryTrackers) {
+            librariesWide.incModificationCount()
+        }
         moduleOutOfBlock.values.forEach { it.incModificationCount() }
-        moduleState.values.forEach { it.incModificationCount() }
+        moduleState.entries.forEach { (ktModule, tracker) ->
+            if (ktModule is KtBinaryModule && !includeBinaryTrackers) return@forEach
+            tracker.incModificationCount()
+        }
     }
 }
 

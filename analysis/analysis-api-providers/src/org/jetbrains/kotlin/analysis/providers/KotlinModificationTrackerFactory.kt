@@ -72,9 +72,12 @@ public abstract class KotlinModificationTrackerFactory {
      */
     public abstract fun createModuleStateTracker(module: KtModule): KtModuleStateTracker
 
-
+    /**
+     * Increments modification trackers to invalidate caches. If [includeBinaryTrackers] is `false`, binary module-related modification
+     * trackers will not be incremented (such as library trackers, SDK tracker, built-ins tracker, and so on).
+     */
     @TestOnly
-    public abstract fun incrementModificationsCount()
+    public abstract fun incrementModificationsCount(includeBinaryTrackers: Boolean = true)
 
     public companion object {
         public fun getService(project: Project): KotlinModificationTrackerFactory =
