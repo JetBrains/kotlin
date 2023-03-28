@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.providers
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirFileBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirElementFinder
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirSymbolProviderNameCache
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirKotlinSymbolProviderNameCache
 import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
 import org.jetbrains.kotlin.analysis.providers.KotlinPackageProvider
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -60,15 +60,7 @@ internal class LLFirProviderHelper(
             }
         }
 
-    val symbolNameCache = object : LLFirSymbolProviderNameCache(firSession) {
-        override fun computeClassifierNames(packageFqName: FqName): Set<String>? =
-            declarationProvider
-                .getTopLevelKotlinClassLikeDeclarationNamesInPackage(packageFqName)
-                .mapTo(mutableSetOf()) { it.asString() }
-
-        override fun computeCallableNames(packageFqName: FqName): Set<Name>? =
-            declarationProvider.getTopLevelCallableNamesInPackage(packageFqName)
-    }
+    val symbolNameCache = LLFirKotlinSymbolProviderNameCache(firSession, declarationProvider)
 
     fun getFirClassifierByFqNameAndDeclaration(
         classId: ClassId,
