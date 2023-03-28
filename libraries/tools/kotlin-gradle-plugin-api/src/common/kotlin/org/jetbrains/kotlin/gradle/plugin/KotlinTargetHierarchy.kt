@@ -7,8 +7,17 @@ package org.jetbrains.kotlin.gradle.plugin
 
 interface KotlinTargetHierarchy {
 
-    data class ModuleName(val name: String) {
+    class ModuleName(val name: String) {
         override fun toString(): String = name
+
+        override fun equals(other: Any?): Boolean {
+            if (other !is ModuleName) return false
+            return this.name == other.name
+        }
+
+        override fun hashCode(): Int {
+            return name.hashCode()
+        }
 
         companion object {
             val main = ModuleName("main")
