@@ -830,7 +830,7 @@ class Fir2IrDeclarationStorage(
             createIrProperty(
                 field.toStubProperty(),
                 irParent,
-                fakeOverrideOwnerLookupTag = containingClassId?.let { it.toLookupTag() }
+                fakeOverrideOwnerLookupTag = containingClassId?.toLookupTag()
             )
         }
     }
@@ -858,7 +858,7 @@ class Fir2IrDeclarationStorage(
         thisReceiverOwner: IrClass? = irParent as? IrClass,
         predefinedOrigin: IrDeclarationOrigin? = null,
         isLocal: Boolean = false,
-        fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag? = (irParent as? IrClass)?.classId?.let { it.toLookupTag() },
+        fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag? = (irParent as? IrClass)?.classId?.toLookupTag(),
         forceTopLevelPrivate: Boolean = false,
     ): IrProperty = convertCatching(property) {
         val origin =
@@ -1085,7 +1085,7 @@ class Fir2IrDeclarationStorage(
     ): IrField = convertCatching(field) {
         val type = typeRef.toIrType()
         val classId = (irParent as? IrClass)?.classId
-        val containingClassLookupTag = classId?.let { it.toLookupTag() }
+        val containingClassLookupTag = classId?.toLookupTag()
         val signature = signatureComposer.composeSignature(field, containingClassLookupTag)
         return field.convertWithOffsets { startOffset, endOffset ->
             if (signature != null) {
