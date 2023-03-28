@@ -35,6 +35,10 @@ project("lib") {
             browser()
         }
     }
+
+    tasks.withType<KotlinJsCompile>() {
+        kotlinOptions.freeCompilerArgs += "-Xforce-deprecated-legacy-compiler-usage"
+    }
 }
 
 project("app") {
@@ -49,6 +53,9 @@ project("app") {
     }
 
     tasks.withType<KotlinJsCompile>() {
-        kotlinOptions.sourceMap = true
+        kotlinOptions {
+            sourceMap = true
+            freeCompilerArgs += "-Xforce-deprecated-legacy-compiler-usage"
+        }
     }
 }

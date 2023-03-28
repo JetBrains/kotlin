@@ -135,6 +135,7 @@ compileKotlin2Js {
             "-opt-in=kotlin.ExperimentalMultiplatform",
             "-opt-in=kotlin.contracts.ExperimentalContracts",
             "-XXLanguage:+RangeUntilOperator",
+            "-Xforce-deprecated-legacy-compiler-usage"
         ]
     }
 }
@@ -364,3 +365,7 @@ task runMocha(type: NodeTask, dependsOn: [testClasses, installMocha, ':kotlin-te
 }
 
 test.dependsOn runMocha
+
+tasks.withType(org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile) {
+    kotlinOptions.freeCompilerArgs += "-Xforce-deprecated-legacy-compiler-usage"
+}

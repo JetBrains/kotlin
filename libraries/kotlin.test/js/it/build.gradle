@@ -28,7 +28,10 @@ buildDir = "$projectDir/build"
 
 ["compileKotlin2Js", "compileTestKotlin2Js"].forEach {
     tasks.named(it).configure {
-        kotlinOptions.moduleKind = "commonjs"
+        kotlinOptions {
+            moduleKind = "commonjs"
+            freeCompilerArgs += "-Xforce-deprecated-legacy-compiler-usage"
+        }
     }
 }
 

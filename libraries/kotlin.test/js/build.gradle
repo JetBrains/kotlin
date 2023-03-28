@@ -18,6 +18,7 @@ compileKotlin2Js {
             "-Xallow-kotlin-package",
             "-opt-in=kotlin.contracts.ExperimentalContracts",
             "-opt-in=kotlin.RequiresOptIn",
+            "-Xforce-deprecated-legacy-compiler-usage"
     ]
     kotlinOptions {
         moduleKind = "umd"
@@ -29,10 +30,10 @@ compileKotlin2Js {
 }
 
 compileTestKotlin2Js {
-    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package"]
     kotlinOptions {
         metaInfo = false
         moduleKind = "umd"
+        freeCompilerArgs = ["-Xallow-kotlin-package", "-Xforce-deprecated-legacy-compiler-usage"]
     }
 }
 

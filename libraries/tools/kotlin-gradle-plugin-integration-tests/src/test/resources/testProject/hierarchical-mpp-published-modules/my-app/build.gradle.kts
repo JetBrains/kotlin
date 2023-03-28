@@ -87,3 +87,7 @@ kotlin {
         }
     }
 }
+
+tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile> {
+    kotlinOptions.freeCompilerArgs += "-Xforce-deprecated-legacy-compiler-usage"
+}

@@ -492,6 +492,7 @@ class Kotlin2JsGradlePluginIT : AbstractKotlin2JsGradlePluginIT(false) {
                         |afterEvaluate {
                         |    tasks.named('compileKotlinJs') {
                         |        kotlinOptions.outputFile = "${'$'}{project.projectDir}/out/out.js"
+                        |        kotlinOptions.freeCompilerArgs += "-Xforce-deprecated-legacy-compiler-usage"
                         |    }
                         |}
                         |

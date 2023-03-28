@@ -42,6 +42,10 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinJsDce).configureEach {
     destinationDirectory = project.layout.buildDirectory.dir("kotlin-js-min")
 }
 
+tasks.withType(org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile) {
+    kotlinOptions.freeCompilerArgs += "-Xforce-deprecated-legacy-compiler-usage"
+}
+
 task runRhino(type: JavaExec) {
     dependsOn(tasks.named('processDceBrowserKotlinJs'))
     classpath = kotlin.targets.browser.compilations.main.runtimeDependencyFiles

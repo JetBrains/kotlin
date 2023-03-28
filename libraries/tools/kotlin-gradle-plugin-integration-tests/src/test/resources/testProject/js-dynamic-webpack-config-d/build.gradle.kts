@@ -34,3 +34,6 @@ tasks.named("browserTest") {
 tasks.withType<org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack> {
     dependsOn("foo")
 }
+tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile> {
+    kotlinOptions.freeCompilerArgs += "-Xforce-deprecated-legacy-compiler-usage"
+}

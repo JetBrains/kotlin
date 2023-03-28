@@ -68,3 +68,10 @@ rootProject.plugins.withType<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJ
         args("./${project.name}.js")
     }
 }
+
+tasks.named<org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile>("compileKotlinJs") {
+    kotlinOptions.freeCompilerArgs += "-Xforce-deprecated-legacy-compiler-usage"
+}
+tasks.named<org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile>("compileTestKotlinJs") {
+    kotlinOptions.freeCompilerArgs += "-Xforce-deprecated-legacy-compiler-usage"
+}

@@ -274,10 +274,6 @@ abstract class Kotlin2JsCompile @Inject constructor(
 
         args.friendModules = friendDependencies.files.joinToString(File.pathSeparator) { it.absolutePath }
 
-        if (!isIrBackendEnabled()) {
-            args.forceDeprecatedLegacyCompilerUsage = true
-        }
-
         logger.kotlinDebug("compiling with args ${ArgumentUtils.convertArgumentsToStringList(args)}")
 
         val gradlePrintingMessageCollector = GradlePrintingMessageCollector(logger, args.allWarningsAsErrors)
