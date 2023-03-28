@@ -12,6 +12,7 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
+import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution
 import org.jetbrains.kotlin.gradle.targets.js.ir.KLIB_TYPE
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
@@ -361,7 +362,7 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
     fun testKotlinJsPackageModuleName(gradleVersion: GradleVersion) {
         project("kotlin-js-package-module-name", gradleVersion) {
             build("assemble") {
-                assertFileInProjectExists("build/distributions/kotlin-js-package-module-name.js")
+                assertFileInProjectExists("build/${Distribution.JS_DIST}/productionExecutable/kotlin-js-package-module-name.js")
                 assertFileInProjectExists("build/js/packages/@foo/bar/kotlin/@foo/bar.js")
             }
         }
@@ -1147,7 +1148,11 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
                 assertDirectoryInProjectExists("build/js/packages/kotlin-js-browser-lib")
                 assertDirectoryInProjectExists("build/js/packages/kotlin-js-browser-app")
 
-                assertFileInProjectExists("app/build/distributions/app.js")
+                if (irBackend) {
+                    assertFileInProjectExists("app/build/${Distribution.JS_DIST}/productionExecutable/app.js")
+                } else {
+                    assertFileInProjectExists("app/build/distributions/app.js")
+                }
 
                 if (!irBackend) {
                     assertTasksExecuted(":app:processDceKotlinJs")
@@ -1169,7 +1174,11 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
                     if (irBackend) ":app:browserProductionExecutableDistributeResources" else ":app:browserDistributeResources"
                 )
 
-                assertFileInProjectExists("app/build/distributions/index.html")
+                if (irBackend) {
+                    assertFileInProjectExists("app/build/${Distribution.JS_DIST}/productionExecutable/index.html")
+                } else {
+                    assertFileInProjectExists("app/build/distributions/index.html")
+                }
             }
         }
     }

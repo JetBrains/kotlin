@@ -9,6 +9,7 @@ import com.google.gson.Gson
 import com.google.gson.JsonObject
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
+import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution.Companion.JS_DIST
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 import java.util.zip.ZipFile
@@ -31,10 +32,10 @@ abstract class KotlinJsIrLibraryGradlePluginITBase : KGPBaseTest() {
     fun testSimpleJsBinaryLibrary(gradleVersion: GradleVersion) {
         project("simple-js-library", gradleVersion) {
             build("build") {
-                assertFileInProjectExists("build/productionLibrary/js-library.js")
-                assertFileInProjectExists("build/productionLibrary/package.json")
-                assertFileInProjectExists("build/productionLibrary/main.js")
-                projectPath.resolve("build/productionLibrary/package.json").reader()
+                assertFileInProjectExists("build/$JS_DIST/productionLibrary/js-library.js")
+                assertFileInProjectExists("build/$JS_DIST/productionLibrary/package.json")
+                assertFileInProjectExists("build/$JS_DIST/productionLibrary/main.js")
+                projectPath.resolve("build/$JS_DIST/productionLibrary/package.json").reader()
                     .use { Gson().fromJson(it, JsonObject::class.java) }
                     .getAsJsonObject("dependencies")
                     ?.entrySet()?.associate { (k, v) -> k to v.asString }
@@ -51,9 +52,9 @@ abstract class KotlinJsIrLibraryGradlePluginITBase : KGPBaseTest() {
     fun testJsBinaryLibraryAndExecutable(gradleVersion: GradleVersion) {
         project("js-library-with-executable", gradleVersion) {
             build("build") {
-                assertFileInProjectExists("build/productionLibrary/js-library.js")
-                assertFileInProjectExists("build/productionLibrary/package.json")
-                assertFileInProjectExists("build/productionLibrary/main.js")
+                assertFileInProjectExists("build/$JS_DIST/productionLibrary/js-library.js")
+                assertFileInProjectExists("build/$JS_DIST/productionLibrary/package.json")
+                assertFileInProjectExists("build/$JS_DIST/productionLibrary/main.js")
             }
         }
     }
@@ -63,11 +64,11 @@ abstract class KotlinJsIrLibraryGradlePluginITBase : KGPBaseTest() {
     fun testJsBinaryLibraryAndExecutableForBrowserAndNodejs(gradleVersion: GradleVersion) {
         project("js-library-with-executable-browser-nodejs", gradleVersion) {
             build("build") {
-                assertFileInProjectExists("build/productionLibrary/js-library.js")
-                assertFileInProjectExists("build/productionLibrary/package.json")
-                assertFileInProjectExists("build/productionLibrary/main.js")
+                assertFileInProjectExists("build/$JS_DIST/productionLibrary/js-library.js")
+                assertFileInProjectExists("build/$JS_DIST/productionLibrary/package.json")
+                assertFileInProjectExists("build/$JS_DIST/productionLibrary/main.js")
 
-                assertFileInProjectExists("build/distributions/js-library.js")
+                assertFileInProjectExists("build/$JS_DIST/productionExecutable/js-library.js")
             }
         }
     }

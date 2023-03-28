@@ -95,7 +95,7 @@ class Executable(
     override val distribution: Distribution =
         createDefaultDistribution(
             compilation.target.project,
-            if (mode == KotlinJsBinaryMode.PRODUCTION) null else super.distribution.distributionName
+            super.distribution.distributionName
         )
 
     val executeTaskBaseName: String =

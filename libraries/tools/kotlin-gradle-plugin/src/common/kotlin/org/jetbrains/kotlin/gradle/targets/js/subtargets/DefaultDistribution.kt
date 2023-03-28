@@ -10,6 +10,7 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.distsDirectory
 import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution
+import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution.Companion.JS_DIST
 import org.jetbrains.kotlin.gradle.utils.property
 import java.io.File
 
@@ -42,6 +43,6 @@ class DefaultDistribution(
         }
 
     override val outputDirectory: DirectoryProperty = project.objects.directoryProperty().convention(
-        distributionName.flatMap { project.layout.buildDirectory.dir(it) }.orElse(project.distsDirectory)
+        distributionName.flatMap { project.layout.buildDirectory.dir("$JS_DIST/$it") }.orElse(project.distsDirectory)
     )
 }

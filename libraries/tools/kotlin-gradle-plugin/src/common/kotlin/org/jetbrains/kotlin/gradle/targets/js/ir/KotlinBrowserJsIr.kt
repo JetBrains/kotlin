@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJsDce
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.archivesName
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.distsDirectory
 import org.jetbrains.kotlin.gradle.report.BuildMetricsService
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalDceDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
@@ -114,7 +113,6 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                 binary as Executable
 
                 val mode = binary.mode
-                val distsDirectory = project.distsDirectory
                 val archivesName = project.archivesName
 
                 val runTask = registerSubTargetTask<KotlinWebpack>(
@@ -125,7 +123,6 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                     listOf(compilation)
                 ) { task ->
                     task.dependsOn(binary.linkSyncTask)
-                    task.outputDirectory.convention(distsDirectory).finalizeValueOnRead()
 
                     task.args.add(0, "serve")
                     task.description = "start ${mode.name.toLowerCaseAsciiOnly()} webpack dev server"
@@ -143,6 +140,10 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                                 warnings = false
                             )
                         )
+                    )
+
+                    task.watchOptions = KotlinWebpackConfig.WatchOptions(
+                        ignored = arrayOf("*.kt")
                     )
 
 

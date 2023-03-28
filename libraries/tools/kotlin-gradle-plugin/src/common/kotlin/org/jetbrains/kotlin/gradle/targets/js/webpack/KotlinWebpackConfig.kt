@@ -8,11 +8,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.webpack
 
 import com.google.gson.GsonBuilder
-import org.gradle.api.ExtensiblePolymorphicDomainObjectContainer
-import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.*
-import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.appendConfigsFromDir
@@ -27,66 +23,34 @@ import java.io.StringWriter
 
 @Suppress("MemberVisibilityCanBePrivate")
 data class KotlinWebpackConfig(
-    @Internal
     val npmProjectDir: Provider<File>? = null,
-    @Input
     var mode: Mode = Mode.DEVELOPMENT,
-    @Internal
     var entry: File? = null,
-    @Nested
-    @Optional
     var output: KotlinWebpackOutput? = null,
-    @Internal
     var outputPath: File? = null,
-    @Input
-    @Optional
     var outputFileName: String? = entry?.name,
-    @get:PathSensitive(PathSensitivity.NAME_ONLY)
-    @get:Optional
-    @get:IgnoreEmptyDirectories
-    @get:NormalizeLineEndings
-    @get:InputDirectory
     var configDirectory: File? = null,
-    @Internal
     var reportEvaluatedConfigFile: File? = null,
-    @Input
-    @Optional
     var devServer: DevServer? = null,
-    @Input
+    var watchOptions: WatchOptions? = null,
     var experiments: MutableSet<String> = mutableSetOf(),
-    @Nested
     override val rules: KotlinWebpackRulesContainer,
-    @Input
-    @Optional
     var devtool: String? = WebpackDevtool.EVAL_SOURCE_MAP,
-    @Input
     var showProgress: Boolean = false,
     var optimization: Optimization? = null,
-    @Input
     var sourceMaps: Boolean = false,
-    @Input
     var export: Boolean = true,
-    @Input
     var progressReporter: Boolean = false,
-    @Internal
-    @Optional
     var progressReporterPathFilter: File? = null,
-    @Input
     var resolveFromModulesFirst: Boolean = false
 ) : WebpackRulesDsl {
 
-    @get:Input
-    @get:Optional
     val entryInput: String?
         get() = npmProjectDir?.get()?.let { npmProjectDir -> entry?.relativeOrAbsolute(npmProjectDir) }
 
-    @get:Input
-    @get:Optional
     val outputPathInput: String?
         get() = npmProjectDir?.get()?.let { npmProjectDir -> outputPath?.relativeOrAbsolute(npmProjectDir) }
 
-    @get:Input
-    @get:Optional
     val progressReporterPathFilterInput: String?
         get() = npmProjectDir?.get()?.let { npmProjectDir -> progressReporterPathFilter?.relativeOrAbsolute(npmProjectDir) }
 
@@ -148,6 +112,12 @@ data class KotlinWebpackConfig(
         var splitChunks: Any
     ) : Serializable
 
+    @Suppress("unused")
+    data class WatchOptions(
+        var aggregateTimeout: Int? = null,
+        var ignored: Any? = null
+    ) : Serializable
+
     fun save(configFile: File) {
         configFile.writer().use {
             appendTo(it)
@@ -206,11 +176,21 @@ data class KotlinWebpackConfig(
     }
 
     private fun Appendable.appendDevServer() {
-        if (devServer == null) return
+        if (devServer != null) {
 
-        appendLine("// dev server")
-        appendLine("config.devServer = ${json(devServer!!)};")
-        appendLine()
+            appendLine("// dev server")
+            appendLine("config.devServer = ${json(devServer!!)};")
+            appendLine()
+        }
+
+        if (watchOptions == null) return
+
+        //language=JavaScript 1.8
+        appendLine(
+            """
+                config.watchOptions = ${json(watchOptions!!)};
+            """.trimIndent()
+        )
     }
 
     private fun Appendable.appendExperiments() {
@@ -257,25 +237,25 @@ data class KotlinWebpackConfig(
     }
 
     private fun Appendable.appendEntry() {
-        if (
-            entry == null
-            || outputPath == null
-            || output == null
-        )
-            return
-
-        val multiEntryOutput = "${outputFileName!!.removeSuffix(".js")}-[name].js"
-
-        //language=JavaScript 1.8
-        appendLine(
-            """
+        if (entry != null) {
+            //language=JavaScript 1.8
+            appendLine(
+                """
                 // entry
                 config.entry = {
                     main: [require('path').resolve(__dirname, ${entryInput!!.jsQuoted()})]
                 };
-                
+                """.trimIndent()
+            )
+        }
+
+        if (output != null) {
+            val multiEntryOutput = "${outputFileName!!.removeSuffix(".js")}-[name].js"
+
+            //language=JavaScript 1.8
+            appendLine(
+                """
                 config.output = {
-                    path: require('path').resolve(__dirname, ${outputPathInput!!.jsQuoted()}),
                     filename: (chunkData) => {
                         return chunkData.chunk.name === 'main'
                             ? ${outputFileName!!.jsQuoted()}
@@ -285,7 +265,19 @@ data class KotlinWebpackConfig(
                     ${output!!.libraryTarget?.let { "libraryTarget: ${it.jsQuoted()}," } ?: ""}
                     globalObject: "${output!!.globalObject}"
                 };
-                
+                """.trimIndent()
+            )
+        }
+
+        if (
+            outputPath == null
+        )
+            return
+
+        //language=JavaScript 1.8
+        appendLine(
+            """
+                config.output.path = require('path').resolve(__dirname, ${outputPathInput!!.jsQuoted()})
             """.trimIndent()
         )
     }

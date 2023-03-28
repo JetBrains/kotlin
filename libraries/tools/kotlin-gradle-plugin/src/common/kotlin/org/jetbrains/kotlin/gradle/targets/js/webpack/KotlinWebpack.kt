@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporterImpl
 import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.archivesName
 import org.jetbrains.kotlin.gradle.report.UsesBuildMetricsService
@@ -34,7 +33,6 @@ import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWebpackRulesContainer
 import org.jetbrains.kotlin.gradle.targets.js.dsl.WebpackRulesDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.WebpackRulesDsl.Companion.webpackRulesContainer
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
@@ -148,6 +146,7 @@ constructor(
         }
 
     @get:OutputDirectory
+    @get:Optional
     abstract val outputDirectory: DirectoryProperty
 
     @get:Internal
@@ -196,6 +195,10 @@ constructor(
     var devServer: KotlinWebpackConfig.DevServer? = null
 
     @Input
+    @Optional
+    var watchOptions: KotlinWebpackConfig.WatchOptions? = null
+
+    @Input
     var devtool: String = WebpackDevtool.EVAL_SOURCE_MAP
 
     @Incubating
@@ -223,7 +226,7 @@ constructor(
         mode = mode,
         entry = if (forNpmDependencies) null else entry.get().asFile,
         output = output,
-        outputPath = if (forNpmDependencies) null else outputDirectory.get().asFile,
+        outputPath = if (forNpmDependencies) null else outputDirectory.getOrNull()?.asFile,
         outputFileName = mainOutputFileName.get(),
         configDirectory = configDirectory,
         rules = rules,
