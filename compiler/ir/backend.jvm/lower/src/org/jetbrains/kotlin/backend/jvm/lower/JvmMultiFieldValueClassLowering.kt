@@ -428,7 +428,7 @@ internal class JvmMultiFieldValueClassLowering(
             // `takeIf` is a workaround for double addition problem: user-defined typed equals is already defined in the class
             rootNode.boxMethod, rootNode.specializedEqualsMethod.takeIf { rootNode.createdNewSpecializedEqualsMethod }
         )
-        rootNode.replacePrimaryMultiFieldValueClassConstructor()
+        replacePrimaryMultiFieldValueClassConstructor(rootNode)
 
         replaceMfvcStaticFields(declaration)
     }
@@ -702,31 +702,32 @@ internal class JvmMultiFieldValueClassLowering(
         }
     }
 
-    private fun RootMfvcNode.replacePrimaryMultiFieldValueClassConstructor() {
-        val rootMfvcNode = this
-        mfvc.declarations.removeIf { it is IrConstructor && it.isPrimary }
-        mfvc.declarations += listOf(newPrimaryConstructor, primaryConstructorImpl)
+    private fun replacePrimaryMultiFieldValueClassConstructor(rootMfvcNode: RootMfvcNode) {
+        rootMfvcNode.mfvc.declarations.removeIf { it is IrConstructor && it.isPrimary }
+        val newPrimaryConstructor = rootMfvcNode.newPrimaryConstructor
+        rootMfvcNode.throwWhenNotExternalIsNull(newPrimaryConstructor)
+        val primaryConstructorImpl = rootMfvcNode.primaryConstructorImpl
+        rootMfvcNode.throwWhenNotExternalIsNull(primaryConstructorImpl)
+        rootMfvcNode.mfvc.declarations += listOf(newPrimaryConstructor, primaryConstructorImpl)
 
-        val initializersBlocks = mfvc.declarations.filterIsInstance<IrAnonymousInitializer>()
-        val typeArguments = makeTypeParameterSubstitutionMap(mfvc, primaryConstructorImpl)
-        if (!mfvc.isKotlinExternalStub()) {
+        val initializersBlocks = rootMfvcNode.mfvc.declarations.filterIsInstance<IrAnonymousInitializer>()
+        val typeArguments = makeTypeParameterSubstitutionMap(rootMfvcNode.mfvc, primaryConstructorImpl)
+        if (!rootMfvcNode.mfvc.isKotlinExternalStub()) {
+            val oldPrimaryConstructor = rootMfvcNode.oldPrimaryConstructor
+            rootMfvcNode.throwWhenNotExternalIsNull(oldPrimaryConstructor)
             primaryConstructorImpl.body = context.createJvmIrBuilder(primaryConstructorImpl.symbol).irBlockBody {
-                val mfvcNodeInstance =
-                    ValueDeclarationMfvcNodeInstance(rootMfvcNode, typeArguments, primaryConstructorImpl.valueParameters)
-                valueDeclarationsRemapper.registerReplacement(
-                    oldPrimaryConstructor.constructedClass.thisReceiver!!,
-                    mfvcNodeInstance
-                )
+                val mfvcNodeInstance = ValueDeclarationMfvcNodeInstance(rootMfvcNode, typeArguments, primaryConstructorImpl.valueParameters)
+                valueDeclarationsRemapper.registerReplacement(oldPrimaryConstructor.constructedClass.thisReceiver!!, mfvcNodeInstance)
                 for (initializer in initializersBlocks) {
                     +irBlock {
                         for (stmt in initializer.body.statements) {
-                            +stmt.patchDeclarationParents(primaryConstructorImpl) // transformation is done later
+                            +stmt.patchDeclarationParents(rootMfvcNode.primaryConstructorImpl) // transformation is done later
                         }
                     }
                 }
             }
         }
-        mfvc.declarations.removeIf { it is IrAnonymousInitializer }
+        rootMfvcNode.mfvc.declarations.removeIf { it is IrAnonymousInitializer }
     }
 
     private fun IrBlock.hasLambdaLikeOrigin() = origin == IrStatementOrigin.LAMBDA || origin == IrStatementOrigin.ANONYMOUS_FUNCTION
@@ -1274,7 +1275,7 @@ internal class JvmMultiFieldValueClassLowering(
                 for ((subnode, argument) in rootNode.subnodes zip oldArguments) {
                     flattenExpressionTo(argument, instance[subnode.name]!!)
                 }
-                +irCall(rootNode.primaryConstructorImpl).apply {
+                +irCall(rootNode.primaryConstructorImpl.let { rootNode.throwWhenNotExternalIsNull(it); it }).apply {
                     copyTypeArgumentsFrom(expression)
                     val flattenedGetterExpressions =
                         instance.makeFlattenedGetterExpressions(this@flattenExpressionTo, irCurrentClass, ::registerPossibleExtraBoxUsage)

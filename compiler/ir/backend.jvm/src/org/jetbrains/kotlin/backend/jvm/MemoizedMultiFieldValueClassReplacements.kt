@@ -325,20 +325,34 @@ class MemoizedMultiFieldValueClassReplacements(
             createIntermediateNodeForMfvcPropertyOfRegularClass(parent, context, property)
         }
 
+    private fun IrField.withAddedStaticReplacementIfNeeded(): IrField {
+        val property = this.correspondingPropertySymbol?.owner ?: return this
+        val replacementField = context.cachedDeclarations.getStaticBackingField(property) ?: return this
+        property.backingField = replacementField
+        return replacementField
+    }
+
+    private fun IrProperty.withAddedStaticReplacementIfNeeded(): IrProperty {
+        val replacementField = context.cachedDeclarations.getStaticBackingField(this) ?: return this
+        backingField = replacementField
+        return this
+    }
+
     private val fieldsToRemove = ConcurrentHashMap<IrClass, MutableSet<IrField>>()
     fun getFieldsToRemove(clazz: IrClass): Set<IrField> = fieldsToRemove[clazz] ?: emptySet()
     fun addFieldToRemove(clazz: IrClass, field: IrField) {
-        fieldsToRemove.getOrPut(clazz) { ConcurrentHashMap<IrField, Unit>().keySet(Unit) }.add(field)
+        fieldsToRemove.getOrPut(clazz) { ConcurrentHashMap<IrField, Unit>().keySet(Unit) }.add(field.withAddedStaticReplacementIfNeeded())
     }
 
     fun getMfvcFieldNode(field: IrField): NameableMfvcNode? {
-        val parent = field.parent
-        val property = field.correspondingPropertySymbol?.owner
+        val realField = field.withAddedStaticReplacementIfNeeded()
+        val parent = realField.parent
+        val property = realField.correspondingPropertySymbol?.owner
         return when {
             property?.isDelegated == false -> getMfvcPropertyNode(property)
             parent !is IrClass -> null
-            !field.type.needsMfvcFlattening() -> null
-            else -> getMfvcStandaloneFieldNodeImpl(field)
+            !realField.type.needsMfvcFlattening() -> null
+            else -> getMfvcStandaloneFieldNodeImpl(realField)
         }
     }
 
@@ -364,10 +378,11 @@ class MemoizedMultiFieldValueClassReplacements(
 
     fun getMfvcPropertyNode(property: IrProperty): NameableMfvcNode? {
         val parent = property.parent
+        val realProperty = property.withAddedStaticReplacementIfNeeded()
         return when {
             parent !is IrClass -> null
-            useRootNode(parent, property) -> getRootMfvcNode(parent)[property.name]
-            else -> getRegularClassMfvcPropertyNode(property)
+            useRootNode(parent, realProperty) -> getRootMfvcNode(parent)[realProperty.name]
+            else -> getRegularClassMfvcPropertyNode(realProperty)
         }
     }
 

@@ -305,8 +305,8 @@ private fun requireSameClasses(vararg classes: IrClass?) {
     }
 }
 
-private fun requireSameSizes(vararg sizes: Int) {
-    require(sizes.asList().zipWithNext { a, b -> a == b }.all { it }) {
+private fun requireSameSizes(vararg sizes: Int?) {
+    require(sizes.asSequence().filterNotNull().distinct().count() == 1) {
         "Found different sizes: ${sizes.joinToString()}"
     }
 }
@@ -436,9 +436,9 @@ fun IrSimpleFunction.getGetterField(): IrField? {
 class RootMfvcNode internal constructor(
     val mfvc: IrClass,
     subnodes: List<NameableMfvcNode>,
-    val oldPrimaryConstructor: IrConstructor,
-    val newPrimaryConstructor: IrConstructor,
-    val primaryConstructorImpl: IrSimpleFunction,
+    val oldPrimaryConstructor: IrConstructor?,
+    val newPrimaryConstructor: IrConstructor?,
+    val primaryConstructorImpl: IrSimpleFunction?,
     override val boxMethod: IrSimpleFunction,
     val specializedEqualsMethod: IrSimpleFunction,
     val createdNewSpecializedEqualsMethod: Boolean,
@@ -454,48 +454,48 @@ class RootMfvcNode internal constructor(
 
     init {
         require(type.needsMfvcFlattening()) { "MFVC type expected but got: ${type.render()}" }
-        for (constructor in listOf(oldPrimaryConstructor, newPrimaryConstructor)) {
+        for (constructor in listOfNotNull(oldPrimaryConstructor, newPrimaryConstructor)) {
             require(constructor.isPrimary) { "Expected a primary constructor but got:\n${constructor.dump()}" }
         }
         requireSameClasses(
             mfvc,
-            oldPrimaryConstructor.parentAsClass,
-            newPrimaryConstructor.parentAsClass,
-            primaryConstructorImpl.parentAsClass,
+            oldPrimaryConstructor?.parentAsClass,
+            newPrimaryConstructor?.parentAsClass,
+            primaryConstructorImpl?.parentAsClass,
             boxMethod.parentAsClass,
             specializedEqualsMethod.parentAsClass,
-            oldPrimaryConstructor.constructedClass,
-            newPrimaryConstructor.constructedClass,
+            oldPrimaryConstructor?.constructedClass,
+            newPrimaryConstructor?.constructedClass,
             boxMethod.returnType.erasedUpperBound,
         )
-        require(primaryConstructorImpl.returnType.isUnit()) {
-            "Constructor-impl must return Unit but returns ${primaryConstructorImpl.returnType.render()}"
+        require(primaryConstructorImpl == null || primaryConstructorImpl.returnType.isUnit()) {
+            "Constructor-impl must return Unit but returns ${primaryConstructorImpl!!.returnType.render()}"
         }
         require(specializedEqualsMethod.returnType.isBoolean()) {
-            "Specialized equals method must return Boolean but returns ${primaryConstructorImpl.returnType.render()}"
+            "Specialized equals method must return Boolean but returns ${specializedEqualsMethod.returnType.render()}"
         }
-        require(oldPrimaryConstructor.typeParameters.isEmpty() && newPrimaryConstructor.typeParameters.isEmpty()) {
+        require(oldPrimaryConstructor?.typeParameters.isNullOrEmpty() && newPrimaryConstructor?.typeParameters.isNullOrEmpty()) {
             "Constructors do not support type parameters yet"
         }
         requireSameSizes(
             mfvc.typeParameters.size,
             boxMethod.typeParameters.size,
-            primaryConstructorImpl.typeParameters.size,
+            primaryConstructorImpl?.typeParameters?.size,
         )
         require(specializedEqualsMethod.typeParameters.isEmpty()) {
             "Specialized equals method must not contain type parameters but has ${specializedEqualsMethod.typeParameters.map { it.defaultType.render() }}"
         }
-        requireSameSizes(oldPrimaryConstructor.valueParameters.size, subnodes.size)
+        oldPrimaryConstructor?.let { requireSameSizes(it.valueParameters.size, subnodes.size) }
         requireSameSizes(
             leavesCount,
-            newPrimaryConstructor.valueParameters.size,
-            primaryConstructorImpl.valueParameters.size,
+            newPrimaryConstructor?.valueParameters?.size,
+            primaryConstructorImpl?.valueParameters?.size,
             boxMethod.valueParameters.size,
         )
         require(specializedEqualsMethod.valueParameters.size == 1) {
             "Specialized equals method must contain single value parameter but has\n${specializedEqualsMethod.valueParameters.joinToString("\n") { it.dump() }}"
         }
-        for (function in listOf(oldPrimaryConstructor, newPrimaryConstructor, primaryConstructorImpl, boxMethod, specializedEqualsMethod)) {
+        for (function in listOfNotNull(oldPrimaryConstructor, newPrimaryConstructor, primaryConstructorImpl, boxMethod, specializedEqualsMethod)) {
             require(function.extensionReceiverParameter == null) { "Extension receiver is not expected for ${function.render()}" }
             require(function.contextReceiverParametersCount == 0) { "Context receivers are not expected for ${function.render()}" }
         }

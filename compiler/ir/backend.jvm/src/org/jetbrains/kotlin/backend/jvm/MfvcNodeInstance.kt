@@ -226,18 +226,19 @@ class ReceiverBasedMfvcNodeInstance(
     }
 
     override fun makeGetterExpression(scope: IrBuilderWithScope, currentClass: IrClass, registerPossibleExtraBoxCreation: () -> Unit): IrExpression = with(scope) {
+        fun makeFieldRead(field: IrField) = irGetField(if (field.isStatic) null else makeReceiverCopy(), field)
         when {
             node is RootMfvcNode -> makeReceiverCopy()!!
             node is LeafMfvcNode && node.hasPureUnboxMethod && canUsePrivateAccess(node, currentClass) && fields != null ->
-                irGetField(makeReceiverCopy(), fields.single())
+                makeFieldRead(fields.single())
             node is LeafMfvcNode && accessType == AccessType.UseFields -> {
                 require(fields != null) { "Invalid getter to $node" }
-                irGetField(makeReceiverCopy(), fields.single())
+                makeFieldRead(fields.single())
             }
             node is IntermediateMfvcNode && accessType == AccessType.UseFields -> {
                 require(fields != null) { "Invalid getter to $node" }
                 node.makeBoxedExpression(
-                    this, typeArguments, fields.map { irGetField(makeReceiverCopy(), it) }, registerPossibleExtraBoxCreation
+                    this, typeArguments, fields.map(::makeFieldRead), registerPossibleExtraBoxCreation
                 )
             }
             unboxMethod != null -> irCall(unboxMethod).apply {

@@ -85,32 +85,32 @@ abstract class MemoizedValueClassAbstractReplacements(
         if (function is IrSimpleFunction) {
             val propertySymbol = function.correspondingPropertySymbol
             if (propertySymbol != null) {
+                val oldProperty = propertySymbol.owner
                 val property = propertyMap.getOrPut(propertySymbol) {
                     irFactory.buildProperty {
-                        name = propertySymbol.owner.name
-                        updateFrom(propertySymbol.owner)
+                        name = oldProperty.name
+                        updateFrom(oldProperty)
                     }.apply {
-                        parent = propertySymbol.owner.parent
-                        copyAttributes(propertySymbol.owner)
-                        annotations = propertySymbol.owner.annotations
+                        parent = oldProperty.parent
+                        copyAttributes(oldProperty)
+                        annotations = oldProperty.annotations
                         // In case this property is declared in an object in another file which is not yet lowered, its backing field will
                         // be made static later. We have to handle it here though, because this new property will be saved to the cache
                         // and reused when lowering the same call in all subsequent files, which would be incorrect if it was not lowered.
-                        val existingBackingField = propertySymbol.owner.backingField
-                        val skipExistingBackingField = existingBackingField != null && with(context.multiFieldValueClassReplacements) {
-                            getMfvcFieldNode(existingBackingField)
-                            existingBackingField in getFieldsToRemove(propertySymbol.owner.parentAsClass)
-                        }
-                        if (!skipExistingBackingField) {
-                            backingField = context.cachedDeclarations.getStaticBackingField(propertySymbol.owner)
-                                ?: existingBackingField
+                        val newBackingField = context.cachedDeclarations.getStaticBackingField(oldProperty) ?: oldProperty.backingField
+                        if (newBackingField != null) {
+                            context.multiFieldValueClassReplacements.getMfvcFieldNode(newBackingField)
+                            val fieldsToRemove = context.multiFieldValueClassReplacements.getFieldsToRemove(oldProperty.parentAsClass)
+                            if (newBackingField !in fieldsToRemove) {
+                                backingField = newBackingField
+                            }
                         }
                     }
                 }
                 correspondingPropertySymbol = property.symbol
                 when (function) {
-                    propertySymbol.owner.getter -> property.getter = this
-                    propertySymbol.owner.setter -> property.setter = this
+                    oldProperty.getter -> property.getter = this
+                    oldProperty.setter -> property.setter = this
                     else -> error("Orphaned property getter/setter: ${function.render()}")
                 }
             }
