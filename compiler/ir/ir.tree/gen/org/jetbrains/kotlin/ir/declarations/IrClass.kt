@@ -59,6 +59,14 @@ abstract class IrClass : IrDeclarationBase(), IrPossiblyExternalDeclaration,
 
     abstract var valueClassRepresentation: ValueClassRepresentation<IrSimpleType>?
 
+    /**
+     * If this is a sealed class or interface, this list contains symbols of all its immediate
+     * subclasses.
+     * Otherwise, this is an empty list.
+     *
+     * NOTE: If this [IrClass] was deserialized from a klib, this list will always be empty!
+     * See [KT-54028](https://youtrack.jetbrains.com/issue/KT-54028).
+     */
     abstract var sealedSubclasses: List<IrClassSymbol>
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =

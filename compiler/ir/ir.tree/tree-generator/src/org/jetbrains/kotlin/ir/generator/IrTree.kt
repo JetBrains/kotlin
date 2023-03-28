@@ -199,7 +199,15 @@ object IrTree : AbstractTreeBuilder() {
             type<ValueClassRepresentation<*>>().withArgs(type(Packages.types, "IrSimpleType")),
             nullable = true,
         )
-        +listField("sealedSubclasses", classSymbolType, mutability = Var)
+        +listField("sealedSubclasses", classSymbolType, mutability = Var) {
+            kdoc = """
+            If this is a sealed class or interface, this list contains symbols of all its immediate subclasses.
+            Otherwise, this is an empty list.
+            
+            NOTE: If this [${elementName2typeName(this@element.name)}] was deserialized from a klib, this list will always be empty!
+            See [KT-54028](https://youtrack.jetbrains.com/issue/KT-54028).
+            """.trimIndent()
+        }
     }
     val attributeContainer: ElementConfig by element(Declaration) {
         kDoc = """
