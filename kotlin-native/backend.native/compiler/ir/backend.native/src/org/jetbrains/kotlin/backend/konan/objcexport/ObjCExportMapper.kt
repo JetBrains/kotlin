@@ -78,12 +78,11 @@ private fun isSealedClassConstructor(descriptor: ConstructorDescriptor) = descri
  * Check that given [method] is a synthetic .componentN() method of a data class.
  */
 private fun isComponentNMethod(method: CallableMemberDescriptor): Boolean {
-    if (method.kind == CallableMemberDescriptor.Kind.SYNTHESIZED) {
-        val parent = method.containingDeclaration
-        if (parent is ClassDescriptor && parent.isData && DataClassResolver.isComponentLike(method.name)) {
-            // componentN method of data class.
-            return true
-        }
+    if ((method as? FunctionDescriptor)?.isOperator != true) return false
+    val parent = method.containingDeclaration
+    if (parent is ClassDescriptor && parent.isData && DataClassResolver.isComponentLike(method.name)) {
+        // componentN method of data class.
+        return true
     }
     return false
 }

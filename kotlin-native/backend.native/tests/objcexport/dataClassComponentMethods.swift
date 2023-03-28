@@ -27,6 +27,16 @@ private func testTopLevelComponentMethodsAreAccessible() throws {
     try assertEquals(actual: DataClassComponentMethodsKt.component4(), expected: 6)
 }
 
+private func testComponentExportedOrNot() throws {
+    try assertFalse(class_respondsToSelector(object_getClass(DataClassWithStrangeNames.self), NSSelectorFromString("component1")));
+    try assertFalse(class_respondsToSelector(object_getClass(DataClassWithStrangeNames.self), NSSelectorFromString("component2")));
+    try assertFalse(class_respondsToSelector(object_getClass(DataClassWithStrangeNames.self), NSSelectorFromString("component15")));
+    let r = DataClassWithStrangeNames(component124: 1,  componentABC:2)
+    try assertEquals(actual: r.component124, expected: 1)
+    try assertEquals(actual: r.componentABC, expected: 2)
+    try assertEquals(actual: r.component16(), expected: 1)
+}
+
 class DataClassComponentMethodsTests : SimpleTestProvider {
     override init() {
         super.init()
@@ -34,5 +44,6 @@ class DataClassComponentMethodsTests : SimpleTestProvider {
         test("testCustomComponentMethodsAreAccessible", testCustomComponentMethodsAreAccessible)
         test("testRegularComponentMethodsAreAccessible", testRegularComponentMethodsAreAccessible)
         test("testTopLevelComponentMethodsAreAccessible", testTopLevelComponentMethodsAreAccessible)
+        test("testComponentExportedOrNot", testComponentExportedOrNot)
     }
 }
