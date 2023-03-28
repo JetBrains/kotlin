@@ -316,6 +316,15 @@ internal class KClassImpl<T : Any>(
     }
 
     private fun createSyntheticClassOrFail(classId: ClassId, moduleData: RuntimeModuleData): ClassDescriptor {
+        if (jClass.isSynthetic) {
+            // Synthetic classes, either from Java or from Kotlin, have no Kotlin metadata and no reliable way (and probably no use cases)
+            // to introspect, so we create an empty synthetic class descriptor for them.
+            // This is especially useful for Java lambdas which have names like `JavaClass$$Lambda$4711/1112495601` and are NOT recognized
+            // as local or anonymous classes (j.l.Class.isLocalClass/isAnonymousClass return false), which breaks some invariants in the
+            // subsequent code in kotlin-reflect if it tries to interpret them as normal anonymous classes and load their members.
+            return createSyntheticClass(classId, moduleData)
+        }
+
         when (val kind = ReflectKotlinClass.create(jClass)?.classHeader?.kind) {
             KotlinClassHeader.Kind.FILE_FACADE,
             KotlinClassHeader.Kind.MULTIFILE_CLASS,
