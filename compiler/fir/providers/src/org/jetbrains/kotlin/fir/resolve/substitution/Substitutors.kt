@@ -173,7 +173,7 @@ abstract class AbstractConeSubstitutor(protected val typeContext: ConeTypeContex
 fun substitutorByMap(substitution: Map<FirTypeParameterSymbol, ConeKotlinType>, useSiteSession: FirSession): ConeSubstitutor {
     // If all arguments match parameters, then substitutor isn't needed
     if (substitution.all { (parameterSymbol, argumentType) ->
-            (argumentType as? ConeTypeParameterType)?.lookupTag?.typeParameterSymbol == parameterSymbol
+            (argumentType as? ConeTypeParameterType)?.lookupTag?.typeParameterSymbol == parameterSymbol && !argumentType.isMarkedNullable
         }
     ) return ConeSubstitutor.Empty
     return ConeSubstitutorByMap(substitution, useSiteSession)

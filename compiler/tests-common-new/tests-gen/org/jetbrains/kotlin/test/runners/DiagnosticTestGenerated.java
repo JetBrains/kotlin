@@ -12571,6 +12571,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("nullableTypeParameterScope.kt")
+            public void testNullableTypeParameterScope() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/generics/nullableTypeParameterScope.kt");
+            }
+
+            @Test
             @TestMetadata("outerTypeParametersInNestedClasses.kt")
             public void testOuterTypeParametersInNestedClasses() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/generics/outerTypeParametersInNestedClasses.kt");

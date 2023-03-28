@@ -12565,6 +12565,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
             }
 
             @Test
+            @TestMetadata("nullableTypeParameterScope.kt")
+            public void testNullableTypeParameterScope() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/generics/nullableTypeParameterScope.kt");
+            }
+
+            @Test
             @TestMetadata("outerTypeParametersInNestedClasses.kt")
             public void testOuterTypeParametersInNestedClasses() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/generics/outerTypeParametersInNestedClasses.kt");
