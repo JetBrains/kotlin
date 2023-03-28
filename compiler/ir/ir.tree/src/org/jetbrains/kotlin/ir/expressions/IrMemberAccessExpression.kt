@@ -32,45 +32,45 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
 
     abstract val origin: IrStatementOrigin?
 
-    protected abstract val typeArgumentsByIndex: Array<IrType?>
-    val typeArgumentsCount: Int get() = typeArgumentsByIndex.size
+    protected abstract val typeArguments: Array<IrType?>
+    val typeArgumentsCount: Int get() = typeArguments.size
 
-    protected abstract val argumentsByParameterIndex: Array<IrExpression?>
-    open val valueArgumentsCount: Int get() = argumentsByParameterIndex.size
+    protected abstract val valueArguments: Array<IrExpression?>
+    open val valueArgumentsCount: Int get() = valueArguments.size
 
     fun getValueArgument(index: Int): IrExpression? {
         if (index >= valueArgumentsCount) {
             throw AssertionError("$this: No such value argument slot: $index")
         }
-        return argumentsByParameterIndex[index]
+        return valueArguments[index]
     }
 
     fun putValueArgument(index: Int, valueArgument: IrExpression?) {
         if (index >= valueArgumentsCount) {
             throw AssertionError("$this: No such value argument slot: $index")
         }
-        argumentsByParameterIndex[index] = valueArgument
+        valueArguments[index] = valueArgument
     }
 
     fun getTypeArgument(index: Int): IrType? {
         if (index >= typeArgumentsCount) {
             throwNoSuchArgumentSlotException("type", index, typeArgumentsCount)
         }
-        return typeArgumentsByIndex[index]
+        return typeArguments[index]
     }
 
     fun putTypeArgument(index: Int, type: IrType?) {
         if (index >= typeArgumentsCount) {
             throwNoSuchArgumentSlotException("type", index, typeArgumentsCount)
         }
-        typeArgumentsByIndex[index] = type
+        typeArguments[index] = type
     }
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         dispatchReceiver?.accept(visitor, data)
         extensionReceiver?.accept(visitor, data)
         if (valueArgumentsCount > 0) {
-            argumentsByParameterIndex.forEach { it?.accept(visitor, data) }
+            valueArguments.forEach { it?.accept(visitor, data) }
         }
     }
 
@@ -78,8 +78,8 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
         dispatchReceiver = dispatchReceiver?.transform(transformer, data)
         extensionReceiver = extensionReceiver?.transform(transformer, data)
         if (valueArgumentsCount > 0) {
-            argumentsByParameterIndex.forEachIndexed { i, irExpression ->
-                argumentsByParameterIndex[i] = irExpression?.transform(transformer, data)
+            valueArguments.forEachIndexed { i, irExpression ->
+                valueArguments[i] = irExpression?.transform(transformer, data)
             }
         }
     }

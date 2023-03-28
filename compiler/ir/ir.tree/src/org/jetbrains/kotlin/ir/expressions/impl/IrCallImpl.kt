@@ -38,9 +38,9 @@ class IrCallImpl(
     override var superQualifierSymbol: IrClassSymbol? = null
 ) : IrCall() {
 
-    override val typeArgumentsByIndex: Array<IrType?> = arrayOfNulls(typeArgumentsCount)
+    override val typeArguments: Array<IrType?> = arrayOfNulls(typeArgumentsCount)
 
-    override val argumentsByParameterIndex: Array<IrExpression?> = arrayOfNulls(valueArgumentsCount)
+    override val valueArguments: Array<IrExpression?> = arrayOfNulls(valueArgumentsCount)
 
     override var contextReceiversCount = 0
 
