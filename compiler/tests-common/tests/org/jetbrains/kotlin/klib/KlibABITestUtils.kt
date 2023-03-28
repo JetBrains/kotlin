@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.klib.KlibABITestUtils.ModuleBuildDirs.Companion.OUTPUT_DIR_NAME
 import org.jetbrains.kotlin.klib.KlibABITestUtils.ModuleBuildDirs.Companion.SOURCE_DIR_NAME
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.fail
 import java.io.File
 
@@ -19,21 +20,53 @@ object KlibABITestUtils {
         val stdlibFile: File
         val testModeName: String
 
+        // Customize the source code of a module before compiling it to a KLIB.
+        fun customizeModuleSources(moduleName: String, moduleSourceDir: File) = Unit
+
+        // Build a KLIB from a module.
         fun buildKlib(moduleName: String, moduleSourceDir: File, dependencies: Dependencies, klibFile: File)
+
+        // Build a binary (executable) file given the main KLIB and dependencies.
         fun buildBinaryAndRun(mainModuleKlibFile: File, dependencies: Dependencies)
 
+        // Take measures if the build directory is non-empty before the compilation
+        // (ex: backup the previously generated artifacts stored in the build directory).
         fun onNonEmptyBuildDirectory(directory: File)
 
+        // A way to check if a test is ignored or not. Override this function if necessary.
         fun isIgnoredTest(projectInfo: ProjectInfo): Boolean = projectInfo.muted
+
+        // How to handle the test that is known to be ignored.
         fun onIgnoredTest()
     }
 
-    class Dependencies(val regularDependencies: Set<File>, val friendDependencies: Set<File>) {
+    data class Dependency(val moduleName: String, val libraryFile: File)
+
+    class Dependencies(val regularDependencies: Set<Dependency>, val friendDependencies: Set<Dependency>) {
+        init {
+            regularDependencies.checkNoDuplicates("regular")
+            regularDependencies.checkNoDuplicates("friend")
+        }
+
         fun mergeWith(other: Dependencies): Dependencies =
             Dependencies(regularDependencies + other.regularDependencies, friendDependencies + other.friendDependencies)
 
         companion object {
             val EMPTY = Dependencies(emptySet(), emptySet())
+
+            private fun Set<Dependency>.checkNoDuplicates(kind: String) {
+                fun Map<String, List<Dependency>>.dump(): String = values.flatten().sortedBy { it.moduleName }.joinToString()
+
+                val duplicatedModules = groupBy { it.moduleName }.filterValues { it.size > 1 }
+                assertTrue(duplicatedModules.isEmpty()) {
+                    "There are duplicated $kind module dependencies: ${duplicatedModules.dump()}"
+                }
+
+                val duplicatedFiles = groupBy { it.libraryFile.absolutePath }.filterValues { it.size > 1 }
+                assertTrue(duplicatedFiles.isEmpty()) {
+                    "There are $kind module dependencies with conflicting paths: ${duplicatedFiles.dump()}"
+                }
+            }
         }
     }
 
@@ -70,6 +103,8 @@ object KlibABITestUtils {
                     }
                 }
 
+                customizeModuleSources(moduleName, moduleBuildDirs.sourceDir)
+
                 val moduleOutputDir = moduleBuildDirs.outputDir.apply { mkdirs() }
                 val klibFile = moduleOutputDir.resolve("$moduleName.klib")
 
@@ -99,17 +134,18 @@ object KlibABITestUtils {
                 if (!moduleBuildDirs.outputDir.list().isNullOrEmpty())
                     onNonEmptyBuildDirectory(moduleBuildDirs.outputDir)
 
-                val regularDependencies = hashSetOf<File>()
-                val friendDependencies = hashSetOf<File>()
+                val regularDependencies = hashSetOf<Dependency>()
+                val friendDependencies = hashSetOf<Dependency>()
 
                 moduleStep.dependencies.forEach { dependency ->
                     if (dependency.moduleName == "stdlib")
-                        regularDependencies += stdlibFile
+                        regularDependencies += Dependency("stdlib", stdlibFile)
                     else {
                         val moduleFile = modulesMap[dependency.moduleName]?.klibFile
                             ?: fail { "No module ${dependency.moduleName} found on step ${projectStep.id}" }
-                        regularDependencies += moduleFile
-                        if (dependency.isFriend) friendDependencies += moduleFile
+                        val moduleDependency = Dependency(dependency.moduleName, moduleFile)
+                        regularDependencies += moduleDependency
+                        if (dependency.isFriend) friendDependencies += moduleDependency
                     }
                 }
 
@@ -121,7 +157,8 @@ object KlibABITestUtils {
         }
 
         val mainModuleKlibFile = modulesMap[MAIN_MODULE_NAME]?.klibFile ?: fail { "No main module $MAIN_MODULE_NAME found" }
-        binaryDependencies = binaryDependencies.mergeWith(Dependencies(setOf(mainModuleKlibFile), emptySet()))
+        val mainModuleDependency = Dependency(MAIN_MODULE_NAME, mainModuleKlibFile)
+        binaryDependencies = binaryDependencies.mergeWith(Dependencies(setOf(mainModuleDependency), emptySet()))
 
         buildBinaryAndRun(mainModuleKlibFile, binaryDependencies)
     }

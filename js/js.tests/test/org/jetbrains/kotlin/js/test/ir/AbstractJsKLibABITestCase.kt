@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.js.klib.generateIrForKlibSerialization
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.codegen.ProjectInfo
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -120,8 +119,8 @@ abstract class AbstractJsKLibABITestCase : KtUsefulTestCase() {
             environment.project,
             ktFiles,
             config,
-            dependencies.regularDependencies.map { it.path },
-            dependencies.friendDependencies.map { it.path },
+            dependencies.regularDependencies.map { it.libraryFile.path },
+            dependencies.friendDependencies.map { it.libraryFile.path },
             AnalyzerWithCompilerReport(config)
         )
 
@@ -182,7 +181,7 @@ abstract class AbstractJsKLibABITestCase : KtUsefulTestCase() {
         // TODO: what about friend dependencies?
         val cacheUpdater = CacheUpdater(
             mainModule = mainModuleKlibFile.absolutePath,
-            allModules = allDependencies.regularDependencies.map { it.path },
+            allModules = allDependencies.regularDependencies.map { it.libraryFile.path },
             mainModuleFriends = emptyList(),
             cacheDir = buildDir.resolve("libs-cache").absolutePath,
             compilerConfiguration = configuration,
@@ -216,8 +215,8 @@ abstract class AbstractJsKLibABITestCase : KtUsefulTestCase() {
             environment.project,
             klib,
             configuration,
-            allDependencies.regularDependencies.map { it.path },
-            allDependencies.friendDependencies.map { it.path }
+            allDependencies.regularDependencies.map { it.libraryFile.path },
+            allDependencies.friendDependencies.map { it.libraryFile.path }
         )
 
         val ir = compile(
