@@ -5,15 +5,13 @@
 
 package org.jetbrains.kotlin.assignment.plugin
 
-import org.jetbrains.kotlin.cfg.getElementParentDeclaration
-import org.jetbrains.kotlin.assignment.plugin.AssignmentPluginNames.ASSIGN_METHOD
 import org.jetbrains.kotlin.assignment.plugin.diagnostics.ErrorsAssignmentPlugin.CALL_ERROR_ASSIGN_METHOD_SHOULD_RETURN_UNIT
 import org.jetbrains.kotlin.assignment.plugin.diagnostics.ErrorsAssignmentPlugin.NO_APPLICABLE_ASSIGN_METHOD
+import org.jetbrains.kotlin.cfg.getElementParentDeclaration
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.extensions.internal.InternalNonStableExtensionPoints
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContextUtils
@@ -22,6 +20,7 @@ import org.jetbrains.kotlin.resolve.calls.context.TemporaryTraceAndCache
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsUtil
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker.makeCallWithExpressions
+import org.jetbrains.kotlin.resolve.extensions.ASSIGN_METHOD
 import org.jetbrains.kotlin.resolve.extensions.AssignResolutionAltererExtension
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
@@ -32,7 +31,6 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
 import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.util.*
 
 class CliAssignPluginResolutionAltererExtension(
@@ -90,10 +88,6 @@ abstract class AbstractAssignPluginResolutionAltererExtension : AssignResolution
         }
         context.trace.report(NO_APPLICABLE_ASSIGN_METHOD.on(operationSign))
         return null
-    }
-
-    override fun getOperationName(expression: KtBinaryExpression, leftType: KotlinType?, bindingContext: BindingContext): Name? {
-        return runIf(needOverloadAssign(expression, leftType, bindingContext)) { ASSIGN_METHOD }
     }
 
     private fun CallResolver.resolveMethodCall(

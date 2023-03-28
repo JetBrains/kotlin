@@ -8,8 +8,6 @@ package org.jetbrains.kotlin.fir.extensions
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
-import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
-import org.jetbrains.kotlin.name.Name
 import kotlin.reflect.KClass
 
 abstract class FirAssignExpressionAltererExtension(session: FirSession) : FirExtension(session) {
@@ -31,8 +29,6 @@ abstract class FirAssignExpressionAltererExtension(session: FirSession) : FirExt
      *   itself using regular resolution algorithms
      */
     abstract fun transformVariableAssignment(variableAssignment: FirVariableAssignment): FirStatement?
-
-    abstract fun getOperationName(reference: FirErrorNamedReference): Name?
 
     fun interface Factory : FirExtension.Factory<FirAssignExpressionAltererExtension>
 }

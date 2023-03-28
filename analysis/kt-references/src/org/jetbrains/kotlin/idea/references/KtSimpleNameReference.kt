@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.resolve.extensions.ASSIGN_METHOD
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
 abstract class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleReference<KtSimpleNameExpression>(expression) {
@@ -66,7 +67,7 @@ abstract class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSim
                     val name = OperatorConventions.getNameForOperationSymbol(
                         tokenType, element.parent is KtUnaryExpression, element.parent is KtBinaryExpression
                     )
-                        ?: (expression.parent as? KtBinaryExpression)?.let { getOperationNameFromExtensions(it) }
+                        ?: (expression.parent as? KtBinaryExpression)?.let { ASSIGN_METHOD }
                         ?: return emptyList()
 
                     val counterpart = OperatorConventions.ASSIGNMENT_OPERATION_COUNTERPARTS[tokenType]
@@ -81,8 +82,6 @@ abstract class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSim
 
             return listOf(element.getReferencedNameAsName())
         }
-
-    abstract fun getOperationNameFromExtensions(binaryExpression: KtBinaryExpression): Name?
 
     abstract fun getImportAlias(): KtImportAlias?
 }

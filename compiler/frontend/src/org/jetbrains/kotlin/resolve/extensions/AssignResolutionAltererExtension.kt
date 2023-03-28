@@ -18,6 +18,9 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingComponents
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
 import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
 
+
+val ASSIGN_METHOD: Name = Name.identifier("assign")
+
 @InternalNonStableExtensionPoints
 interface AssignResolutionAltererExtension : AnnotationBasedExtension {
     companion object : ProjectExtensionDescriptor<AssignResolutionAltererExtension>(
@@ -37,6 +40,4 @@ interface AssignResolutionAltererExtension : AnnotationBasedExtension {
         components: ExpressionTypingComponents,
         scope: LexicalWritableScope
     ): KotlinTypeInfo?
-
-    fun getOperationName(expression: KtBinaryExpression, leftType: KotlinType?, bindingContext: BindingContext): Name?
 }

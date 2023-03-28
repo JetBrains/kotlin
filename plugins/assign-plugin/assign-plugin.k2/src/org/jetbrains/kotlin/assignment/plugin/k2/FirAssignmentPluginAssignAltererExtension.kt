@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.assignment.plugin.k2
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.assignment.plugin.AssignmentPluginNames.ASSIGN_METHOD
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.*
@@ -25,6 +23,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.upperBoundIfFlexible
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.extensions.ASSIGN_METHOD
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class FirAssignmentPluginAssignAltererExtension(
@@ -35,10 +34,6 @@ class FirAssignmentPluginAssignAltererExtension(
         return runIf(variableAssignment.supportsTransformVariableAssignment()) {
             buildFunctionCall(variableAssignment)
         }
-    }
-
-    override fun getOperationName(reference: FirErrorNamedReference): Name? {
-        return runIf(reference.dealsWith(ASSIGN_METHOD) && reference.source?.elementType == KtNodeTypes.BINARY_EXPRESSION) { ASSIGN_METHOD }
     }
 
     private fun FirVariableAssignment.supportsTransformVariableAssignment(): Boolean {
@@ -79,8 +74,4 @@ class FirAssignmentPluginAssignAltererExtension(
             origin = FirFunctionCallOrigin.Regular
         }
     }
-}
-
-private fun FirErrorNamedReference.dealsWith(name: Name): Boolean {
-    return (diagnostic as? ConeUnresolvedNameError)?.name == name
 }
