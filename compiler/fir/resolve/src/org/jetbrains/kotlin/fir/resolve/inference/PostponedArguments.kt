@@ -134,7 +134,7 @@ private fun extractLambdaInfo(
     return ResolvedLambdaAtom(
         argument,
         expectedType,
-        expectedFunctionTypeKind = null,
+        expectedFunctionTypeKind = argument.typeRef.coneTypeSafe<ConeKotlinType>()?.lowerBoundIfFlexible()?.functionTypeKind(session),
         receiverType,
         contextReceivers,
         parameters,

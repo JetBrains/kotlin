@@ -31927,6 +31927,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
             public void testSuspendConversionWithReferenceAdaptation() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/suspendConversion/suspendConversionWithReferenceAdaptation.kt");
             }
+
+            @Test
+            @TestMetadata("suspendFunctionExpectedTypeAndWhen.kt")
+            public void testSuspendFunctionExpectedTypeAndWhen() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/suspendConversion/suspendFunctionExpectedTypeAndWhen.kt");
+            }
         }
 
         @Nested
