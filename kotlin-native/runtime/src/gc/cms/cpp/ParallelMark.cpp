@@ -172,7 +172,10 @@ void gc::mark::MarkDispatcher::MarkJob::completeMutatorsRootSet() {
 void gc::mark::MarkDispatcher::MarkJob::collectRootSet(mm::ThreadData& thread) {
     GCLogDebug(dispatcher_.gcHandle().getEpoch(), "Root set collection on thread %d for thread %d",
                konan::currentThreadId(), thread.threadId());
-    thread.gc().impl().gc().publish();
+    auto& gcData = thread.gc().impl().gc();
+    gcData.publish();
+    bool markItself = konan::currentThreadId() != thread.threadId();
+    RuntimeAssert(markItself == gcData.cooperative(), "A mutator can mark it's own root set iff the mutator cooperate");
     collectRootSetForThread<gc::mark::MarkTraits>(dispatcher_.gcHandle(), workList_, thread);
 }
 
@@ -407,19 +410,24 @@ void gc::mark::MarkDispatcher::resetMutatorFlags() {
 }
 
 void gc::mark::MarkDispatcher::allCooperativeMutatorsAreRegistered() {
-    if (!mutatorsCooperate_) return; // nothing to care about
+    if (mutatorsCooperate_) {
+        // now that we know the exact number of cooperative mutators,
+        // calculate expectedTasks_'s precise value
+        RuntimeAssert(allMutators(
+                [](mm::ThreadData& mut) { return mut.gc().impl().gc().rootSetLocked(); }),
+                      "All the mutators must be either cooperative or locked by other marker");
 
-    // now that we know the exact number of cooperative mutators,
-    // calculate expectedTasks_'s precise value
-    RuntimeAssert(allMutators(
-            [](mm::ThreadData& mut) { return mut.gc().impl().gc().rootSetLocked(); }), 
-                  "All the mutators must be either cooperative or locked by other marker");
-    auto exactExpectedJobs = count(*lockedMutatorsList_,
-                                   [](mm::ThreadData& mut){ return mut.gc().impl().gc().cooperative(); })
-                                           + gcWorkerPoolSize_;
-    RuntimeAssert(exactExpectedJobs <= expectedJobs_, "Previous expectation must have been not less");
-    expectedJobs_ = exactExpectedJobs;
-    GCLogDebug(gcHandle().getEpoch(), "Expecting exactly %zu markers", expectedJobs_);
-    RuntimeAssert(registeredJobs_.load(std::memory_order_relaxed) <= expectedJobs_, "Must not have registered more jobs than expected");
-    RuntimeAssert(expectedJobs_ <= jobs_.size(), "Tasks array should already be allocated");
+        auto exactExpectedJobs = count(*lockedMutatorsList_,
+                                       [](mm::ThreadData& mut) { return mut.gc().impl().gc().cooperative(); })
+                + gcWorkerPoolSize_;
+        RuntimeAssert(exactExpectedJobs <= expectedJobs_, "Previous expectation must have been not less");
+        expectedJobs_ = exactExpectedJobs;
+        RuntimeAssert(registeredJobs_.load(std::memory_order_relaxed) <= expectedJobs_,
+                      "Must not have registered more jobs than expected");
+        RuntimeAssert(expectedJobs_ <= jobs_.size(), "Tasks array should already be allocated");
+    }
+    const auto coopMutatorsDescr = mutatorsCooperate_
+                                          ? "including cooperative mutators"
+                                          : "mutators cooperation will not be requested";
+    GCLogInfo(gcHandle().getEpoch(), "Expecting exactly %zu markers (%s)", expectedJobs_, coopMutatorsDescr);
 }

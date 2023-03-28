@@ -174,7 +174,7 @@ gc::ConcurrentMarkAndSweep::ConcurrentMarkAndSweep(mm::ObjectFactory<ConcurrentM
     for (std::size_t i = 0; i < auxGCThreads; ++i) {
         auxThreads_.emplace_back(createGCThread("Auxiliary GC thread", [this] { auxiliaryGCThreadBody(); }));
     }
-    RuntimeLogDebug({kTagGC}, "Stoop The World Mark & Sweep GC initialized");
+    RuntimeLogInfo({kTagGC}, "Stop The World Mark & Concurrent Sweep GC initialized");
 }
 
 gc::ConcurrentMarkAndSweep::~ConcurrentMarkAndSweep() {

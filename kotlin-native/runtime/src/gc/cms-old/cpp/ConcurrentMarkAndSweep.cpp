@@ -32,6 +32,7 @@ namespace {
     [[clang::no_destroy]] std::condition_variable markingCondVar;
     [[clang::no_destroy]] std::atomic<bool> markingRequested = false;
     [[clang::no_destroy]] std::atomic<uint64_t> markingEpoch = 0;
+    [[clang::no_destroy]] std::atomic<uint64_t> expectedMarkers = 0;
 
 struct SweepTraits {
     using ObjectFactory = mm::ObjectFactory<gc::ConcurrentMarkAndSweep>;
@@ -84,6 +85,7 @@ NO_EXTERNAL_CALLS_CHECK void gc::ConcurrentMarkAndSweep::ThreadData::OnSuspendFo
     if (!markingRequested.load()) return;
     AutoReset scopedAssignMarking(&marking_, true);
     threadData_.Publish();
+    ++expectedMarkers;
     markingCondVar.wait(lock, []() { return !markingRequested.load(); });
     // // Unlock while marking to allow mutliple threads to mark in parallel.
     lock.unlock();
@@ -124,7 +126,7 @@ gc::ConcurrentMarkAndSweep::ConcurrentMarkAndSweep(kotlin::mm::ObjectFactory<gc:
         }
     });
     markingBehavior_ = kotlin::compiler::gcMarkSingleThreaded() ? MarkingBehavior::kDoNotMark : MarkingBehavior::kMarkOwnStack;
-    RuntimeLogDebug({kTagGC}, "Concurrent Mark & Sweep GC initialized");
+    RuntimeLogInfo({kTagGC}, "Concurrent Mark & Sweep GC initialized");
 }
 
 gc::ConcurrentMarkAndSweep::~ConcurrentMarkAndSweep() {
@@ -224,6 +226,7 @@ namespace {
 } // namespace
 
 void gc::ConcurrentMarkAndSweep::SetMarkingRequested(uint64_t epoch) noexcept {
+    expectedMarkers = 0;
     markingRequested = markingBehavior_ == MarkingBehavior::kMarkOwnStack;
     markingEpoch = epoch;
 }
@@ -237,6 +240,8 @@ void gc::ConcurrentMarkAndSweep::WaitForThreadsReadyToMark() noexcept {
 NO_EXTERNAL_CALLS_CHECK void gc::ConcurrentMarkAndSweep::CollectRootSetAndStartMarking(GCHandle gcHandle) noexcept {
         std::unique_lock lock(markingMutex);
         markingRequested = false;
+        ++expectedMarkers;
+        GCLogInfo(gcHandle.getEpoch(), "Expecting exactly %llu markers", expectedMarkers.load());
         gc::collectRootSet<internal::MarkTraits>(
                 gcHandle,
                 markQueue_,
