@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.ContextByDesignationColle
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDesignation
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirElementWithResolvePhase
+import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContextForProvider
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollectorVisitor
 import org.jetbrains.kotlin.fir.containingClass
@@ -26,7 +26,7 @@ private class ContextCollectingDiagnosticCollectorVisitor private constructor(
     private val contextCollector = object : ContextByDesignationCollector<CheckerContextForProvider>(designation) {
         override fun getCurrentContext(): CheckerContextForProvider = context
 
-        override fun goToNestedDeclaration(target: FirElementWithResolvePhase) {
+        override fun goToNestedDeclaration(target: FirElementWithResolveState) {
             target.accept(this@ContextCollectingDiagnosticCollectorVisitor, null)
         }
     }

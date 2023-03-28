@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirElementWithResolvePhase
+import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
@@ -43,7 +43,7 @@ internal class LLFirDeclarationTransformer(private val designation: FirDesignati
     private inline fun processDeclarationContent(
         declaration: FirDeclaration,
         default: () -> FirDeclaration,
-        applyToDesignated: (FirElementWithResolvePhase) -> Unit,
+        applyToDesignated: (FirElementWithResolveState) -> Unit,
     ): FirDeclaration {
         //It means that we are inside the target declaration
         if (isInsideTargetDeclaration) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.analysis.providers.KotlinModificationTrackerFactory
 import org.jetbrains.kotlin.analysis.providers.KtModuleStateTracker
 import org.jetbrains.kotlin.analysis.utils.trackers.CompositeModificationTracker
 import org.jetbrains.kotlin.fir.BuiltinTypes
-import org.jetbrains.kotlin.fir.FirElementWithResolvePhase
+import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.PrivateSessionConstructor
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -102,7 +102,7 @@ abstract class LLFirModuleSession(
     kind: Kind
 ) : LLFirSession(ktModule, dependencyTracker, builtinTypes, kind)
 
-val FirElementWithResolvePhase.llFirSession: LLFirSession
+val FirElementWithResolveState.llFirSession: LLFirSession
     get() = moduleData.session as LLFirSession
 
 val FirBasedSymbol<*>.llFirSession: LLFirSession

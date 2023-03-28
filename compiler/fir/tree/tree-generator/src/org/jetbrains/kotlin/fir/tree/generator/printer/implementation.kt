@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.tree.generator.model.Implementation.Kind
 import org.jetbrains.kotlin.fir.tree.generator.pureAbstractElementType
 import org.jetbrains.kotlin.util.SmartPrinter
 import org.jetbrains.kotlin.util.withIndent
-
 import java.io.File
 
 fun Implementation.generateCode(generationPath: File): GeneratedFile {
@@ -75,9 +74,12 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
             }
             println("(")
             withIndent {
-
                 fieldsWithoutDefault.forEachIndexed { _, field ->
-                    printField(field, isImplementation = true, override = true, end = ",", notNull = field.notNull)
+                    if (field.isParameter) {
+                        println("${field.name}: ${field.typeWithArguments},")
+                    } else if (!field.isFinal) {
+                        printField(field, isImplementation = true, override = true, end = ",", notNull = field.notNull)
+                    }
                 }
             }
             print(")")
@@ -106,7 +108,7 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
             }
 
 
-            element.allFields.filter {
+            val bindingCalls = element.allFields.filter {
                 it.withBindThis && it.type.contains("Symbol") && it !is FieldList && it.name != "companionObjectSymbol"
             }.takeIf {
                 it.isNotEmpty() && !isInterface && !isAbstract &&
@@ -114,11 +116,22 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
                         && !element.type.contains("ResolvedQualifier")
                         && !element.type.endsWith("Ref")
                         && !element.type.endsWith("AnnotationsContainer")
-            }?.let { symbolFields ->
+            }.orEmpty()
+
+            val customCalls = fieldsWithoutDefault.filter { it.customInitializationCall != null }
+            if (bindingCalls.isNotEmpty() || customCalls.isNotEmpty()) {
                 println("init {")
-                for (symbolField in symbolFields) {
-                    withIndent {
+                withIndent {
+                    for (symbolField in bindingCalls) {
                         println("${symbolField.name}${symbolField.call()}bind(this)")
+                    }
+
+                    for (customCall in customCalls) {
+                        customCall.optInAnnotation?.let {
+                            println("@OptIn(${it.type}::class)")
+                        }
+
+                        println("${customCall.name} = ${customCall.customInitializationCall}")
                     }
                 }
                 println("}")

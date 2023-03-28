@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,17 +7,20 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
 import org.jetbrains.kotlin.analysis.utils.errors.checkWithAttachmentBuilder
-import org.jetbrains.kotlin.fir.FirElementWithResolvePhase
+import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.ResolveStateAccess
+import org.jetbrains.kotlin.fir.declarations.resolvePhase
 
-internal fun FirElementWithResolvePhase.checkPhase(requiredResolvePhase: FirResolvePhase) {
-    val declarationResolvePhase = resolvePhase
+internal fun FirElementWithResolveState.checkPhase(requiredResolvePhase: FirResolvePhase) {
+    @OptIn(ResolveStateAccess::class)
+    val declarationResolveState = resolveState
     checkWithAttachmentBuilder(
-        declarationResolvePhase >= requiredResolvePhase,
-        { "At least $requiredResolvePhase expected but $declarationResolvePhase found for ${this::class.simpleName}" }
+        declarationResolveState.resolvePhase >= requiredResolvePhase,
+        { "At least $requiredResolvePhase expected but $declarationResolveState found for ${this::class.simpleName}" },
     ) {
         withFirEntry("firDeclaration", this@checkPhase)
     }
@@ -34,8 +37,10 @@ internal fun FirDesignation.checkDesignationPhase(firResolvePhase: FirResolvePha
 internal fun FirDesignation.checkDesignationPhaseForClasses(firResolvePhase: FirResolvePhase) {
     checkPathPhase(firResolvePhase)
     if (target is FirClassLikeDeclaration) {
-        check(target.resolvePhase >= firResolvePhase) {
-            "Expected $firResolvePhase but found ${target.resolvePhase}"
+        @OptIn(ResolveStateAccess::class)
+        val resolveState = target.resolveState
+        check(resolveState.resolvePhase >= firResolvePhase) {
+            "Expected $firResolvePhase but found $resolveState"
         }
     }
 }

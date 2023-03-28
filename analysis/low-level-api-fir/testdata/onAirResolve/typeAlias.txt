@@ -1,1 +1,1 @@
-public final [BODY_RESOLVE] typealias B = R|kotlin/collections/Set<K>|
+public final [ResolvedTo(BODY_RESOLVE)] typealias B = R|kotlin/collections/Set<K>|

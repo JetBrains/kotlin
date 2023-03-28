@@ -25,13 +25,17 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.FirResolveState
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.InlineStatus
+import org.jetbrains.kotlin.fir.declarations.ResolveStateAccess
 import org.jetbrains.kotlin.fir.declarations.UnresolvedDeprecationProvider
+import org.jetbrains.kotlin.fir.declarations.asResolveState
 import org.jetbrains.kotlin.fir.declarations.builder.FirFunctionBuilder
 import org.jetbrains.kotlin.fir.declarations.impl.FirAnonymousFunctionImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.resolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
@@ -50,6 +54,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 @FirBuilderDsl
 class FirAnonymousFunctionBuilder : FirFunctionBuilder, FirAnnotationContainerBuilder {
     override var source: KtSourceElement? = null
+    override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     override lateinit var moduleData: FirModuleData
     override lateinit var origin: FirDeclarationOrigin
@@ -76,6 +81,7 @@ class FirAnonymousFunctionBuilder : FirFunctionBuilder, FirAnnotationContainerBu
     override fun build(): FirAnonymousFunction {
         return FirAnonymousFunctionImpl(
             source,
+            resolvePhase,
             annotations.toMutableOrEmpty(),
             moduleData,
             origin,
@@ -102,13 +108,6 @@ class FirAnonymousFunctionBuilder : FirFunctionBuilder, FirAnnotationContainerBu
     }
 
 
-    @Deprecated("Modification of 'resolvePhase' has no impact for FirAnonymousFunctionBuilder", level = DeprecationLevel.HIDDEN)
-    override var resolvePhase: FirResolvePhase
-        get() = throw IllegalStateException()
-        set(_) {
-            throw IllegalStateException()
-        }
-
     @Deprecated("Modification of 'status' has no impact for FirAnonymousFunctionBuilder", level = DeprecationLevel.HIDDEN)
     override var status: FirDeclarationStatus
         get() = throw IllegalStateException()
@@ -132,6 +131,7 @@ inline fun buildAnonymousFunctionCopy(original: FirAnonymousFunction, init: FirA
     }
     val copyBuilder = FirAnonymousFunctionBuilder()
     copyBuilder.source = original.source
+    copyBuilder.resolvePhase = original.resolvePhase
     copyBuilder.annotations.addAll(original.annotations)
     copyBuilder.moduleData = original.moduleData
     copyBuilder.origin = original.origin

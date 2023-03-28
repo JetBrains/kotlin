@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseRunner
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
-import org.jetbrains.kotlin.fir.FirElementWithResolvePhase
+import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -20,9 +20,10 @@ internal class LLFirDesignatedAnnotationsResolveTransformed(
     private val designation: FirDesignationWithFile,
     session: FirSession,
     scopeSession: ScopeSession,
-) : LLFirLazyTransformer, FirCompilerRequiredAnnotationsResolveTransformer(session, scopeSession, CompilerRequiredAnnotationsComputationSession()) {
+) : LLFirLazyTransformer,
+    FirCompilerRequiredAnnotationsResolveTransformer(session, scopeSession, CompilerRequiredAnnotationsComputationSession()) {
 
-    private fun moveNextDeclaration(designationIterator: Iterator<FirElementWithResolvePhase>) {
+    private fun moveNextDeclaration(designationIterator: Iterator<FirElementWithResolveState>) {
         if (!designationIterator.hasNext()) {
             val declaration = designation.target
             FirLazyBodiesCalculator.calculateCompilerAnnotations(declaration)
@@ -59,7 +60,7 @@ internal class LLFirDesignatedAnnotationsResolveTransformed(
         checkIsResolved(designation.target)
     }
 
-    override fun checkIsResolved(target: FirElementWithResolvePhase) {
+    override fun checkIsResolved(target: FirElementWithResolveState) {
         target.checkPhase(FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS)
         // todo add proper check that COMPILER_REQUIRED_ANNOTATIONS are resolved
 //        checkNestedDeclarationsAreResolved(declaration)

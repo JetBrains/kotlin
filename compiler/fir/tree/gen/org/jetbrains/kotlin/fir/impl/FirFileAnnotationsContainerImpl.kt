@@ -11,11 +11,14 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.FirResolveState
+import org.jetbrains.kotlin.fir.declarations.asResolveState
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.fir.MutableOrEmptyList
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
+import org.jetbrains.kotlin.fir.declarations.ResolveStateAccess
 
 /*
  * This file was generated automatically
@@ -24,12 +27,16 @@ import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 
 internal class FirFileAnnotationsContainerImpl(
     override val source: KtSourceElement?,
-    @Volatile
-    override var resolvePhase: FirResolvePhase,
+    resolvePhase: FirResolvePhase,
     override val moduleData: FirModuleData,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override val containingFileSymbol: FirFileSymbol,
 ) : FirFileAnnotationsContainer() {
+    init {
+        @OptIn(ResolveStateAccess::class)
+        resolveState = resolvePhase.asResolveState()
+    }
+
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
     }
@@ -42,10 +49,6 @@ internal class FirFileAnnotationsContainerImpl(
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirFileAnnotationsContainerImpl {
         annotations.transformInplace(transformer, data)
         return this
-    }
-
-    override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
-        resolvePhase = newResolvePhase
     }
 
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {

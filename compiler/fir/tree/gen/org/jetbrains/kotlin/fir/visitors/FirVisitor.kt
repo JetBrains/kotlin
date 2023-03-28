@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirLazyExpression
 import org.jetbrains.kotlin.fir.declarations.FirContextReceiver
-import org.jetbrains.kotlin.fir.FirElementWithResolvePhase
+import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
@@ -188,7 +188,7 @@ abstract class FirVisitor<out R, in D> {
 
     open fun visitContextReceiver(contextReceiver: FirContextReceiver, data: D): R  = visitElement(contextReceiver, data)
 
-    open fun visitElementWithResolvePhase(elementWithResolvePhase: FirElementWithResolvePhase, data: D): R  = visitElement(elementWithResolvePhase, data)
+    open fun visitElementWithResolveState(elementWithResolveState: FirElementWithResolveState, data: D): R  = visitElement(elementWithResolveState, data)
 
     open fun visitFileAnnotationsContainer(fileAnnotationsContainer: FirFileAnnotationsContainer, data: D): R  = visitElement(fileAnnotationsContainer, data)
 

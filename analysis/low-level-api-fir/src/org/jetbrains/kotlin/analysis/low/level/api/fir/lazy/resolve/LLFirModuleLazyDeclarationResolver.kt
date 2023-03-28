@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirEntry
 import org.jetbrains.kotlin.analysis.utils.errors.rethrowExceptionWithDetails
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirElementWithResolvePhase
+import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
@@ -58,13 +58,13 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
         }
     }
 
-    private fun FirElementWithResolvePhase.isValidForResolve() = when (this) {
+    private fun FirElementWithResolveState.isValidForResolve() = when (this) {
         is FirDeclaration -> isValidForResolve()
         is FirFileAnnotationsContainer -> true
         else -> throwUnexpectedFirElementError(this)
     }
 
-    private fun resolveContainingFileToImports(target: FirElementWithResolvePhase) {
+    private fun resolveContainingFileToImports(target: FirElementWithResolveState) {
         if (target.resolvePhase >= FirResolvePhase.IMPORTS) return
         val firFile = target.getContainingFile() ?: return
         if (firFile.resolvePhase >= FirResolvePhase.IMPORTS) return
@@ -77,7 +77,8 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
         if (firFile.resolvePhase >= FirResolvePhase.IMPORTS) return
         checkCanceled()
         firFile.transform<FirElement, Any?>(FirImportResolveTransformer(firFile.moduleData.session), null)
-        firFile.replaceResolvePhase(FirResolvePhase.IMPORTS)
+        @OptIn(ResolveStateAccess::class)
+        firFile.resolveState = FirResolvePhase.IMPORTS.asResolveState()
     }
 
     /**
@@ -87,7 +88,7 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
      * @param target target non-local declaration
      */
     fun lazyResolve(
-        target: FirElementWithResolvePhase,
+        target: FirElementWithResolveState,
         scopeSession: ScopeSession,
         toPhase: FirResolvePhase,
     ) {
@@ -100,7 +101,7 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
     }
 
     private fun doLazyResolve(
-        target: FirElementWithResolvePhase,
+        target: FirElementWithResolveState,
         scopeSession: ScopeSession,
         toPhase: FirResolvePhase,
     ) {
@@ -121,7 +122,7 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
         }
     }
 
-    private fun declarationDesignationsToResolve(target: FirElementWithResolvePhase): List<FirDesignationWithFile> {
+    private fun declarationDesignationsToResolve(target: FirElementWithResolveState): List<FirDesignationWithFile> {
         return when (target) {
             is FirPropertyAccessor -> declarationDesignationsToResolve(target.propertySymbol.fir)
             is FirBackingField -> declarationDesignationsToResolve(target.propertySymbol.fir)
@@ -203,7 +204,7 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
 
 private fun handleExceptionFromResolve(
     exception: Exception,
-    firDeclarationToResolve: FirElementWithResolvePhase,
+    firDeclarationToResolve: FirElementWithResolveState,
     fromPhase: FirResolvePhase,
     toPhase: FirResolvePhase?
 ): Nothing {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -36,8 +36,7 @@ class FirJavaField @FirImplementationDetail constructor(
     override val origin: FirDeclarationOrigin.Java,
     override val symbol: FirFieldSymbol,
     override val name: Name,
-    @Volatile
-    override var resolvePhase: FirResolvePhase,
+    resolvePhase: FirResolvePhase,
     override var returnTypeRef: FirTypeRef,
     override var status: FirDeclarationStatus,
     override val isVar: Boolean,
@@ -49,6 +48,9 @@ class FirJavaField @FirImplementationDetail constructor(
 ) : FirField() {
     init {
         symbol.bind(this)
+
+        @OptIn(ResolveStateAccess::class)
+        this.resolveState = resolvePhase.asResolveState()
     }
 
     override val receiverParameter: FirReceiverParameter? get() = null
@@ -95,10 +97,6 @@ class FirJavaField @FirImplementationDetail constructor(
 
     override fun <D> transformReceiverParameter(transformer: FirTransformer<D>, data: D): FirField {
         return this
-    }
-
-    override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
-        resolvePhase = newResolvePhase
     }
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {

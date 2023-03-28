@@ -1,158 +1,158 @@
 
 RAW_FIR:
-FILE: [RAW_FIR] typeParameterBounds.kt
-    [RAW_FIR] annotations container
-    public? final? [RAW_FIR] fun resolveMe([RAW_FIR] foo: Foo): R|kotlin/Unit| { LAZY_BLOCK }
-    public? final? [RAW_FIR] interface Foo : R|kotlin/Any| {
+FILE: [ResolvedTo(RAW_FIR)] typeParameterBounds.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] fun resolveMe([ResolvedTo(RAW_FIR)] foo: Foo): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
     }
-    public? final? [RAW_FIR] interface Bar<[RAW_FIR] T : Foo> : R|kotlin/Any| {
+    public? final? [ResolvedTo(RAW_FIR)] interface Bar<[ResolvedTo(RAW_FIR)] T : Foo> : R|kotlin/Any| {
     }
-    public? final? [RAW_FIR] fun <[RAW_FIR] F : Foo, [RAW_FIR] B : Bar<F>> F.util(): B { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : Foo, [ResolvedTo(RAW_FIR)] B : Bar<F>> F.util(): B { LAZY_BLOCK }
 
 IMPORTS:
-FILE: [IMPORTS] typeParameterBounds.kt
-    [RAW_FIR] annotations container
-    public? final? [RAW_FIR] fun resolveMe([RAW_FIR] foo: Foo): R|kotlin/Unit| { LAZY_BLOCK }
-    public? final? [RAW_FIR] interface Foo : R|kotlin/Any| {
+FILE: [ResolvedTo(IMPORTS)] typeParameterBounds.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] fun resolveMe([ResolvedTo(RAW_FIR)] foo: Foo): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
     }
-    public? final? [RAW_FIR] interface Bar<[RAW_FIR] T : Foo> : R|kotlin/Any| {
+    public? final? [ResolvedTo(RAW_FIR)] interface Bar<[ResolvedTo(RAW_FIR)] T : Foo> : R|kotlin/Any| {
     }
-    public? final? [RAW_FIR] fun <[RAW_FIR] F : Foo, [RAW_FIR] B : Bar<F>> F.util(): B { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : Foo, [ResolvedTo(RAW_FIR)] B : Bar<F>> F.util(): B { LAZY_BLOCK }
 
 COMPILER_REQUIRED_ANNOTATIONS:
-FILE: [IMPORTS] typeParameterBounds.kt
-    [RAW_FIR] annotations container
-    public? final? [COMPILER_REQUIRED_ANNOTATIONS] fun resolveMe([COMPILER_REQUIRED_ANNOTATIONS] foo: Foo): R|kotlin/Unit| { LAZY_BLOCK }
-    public? final? [RAW_FIR] interface Foo : R|kotlin/Any| {
+FILE: [ResolvedTo(IMPORTS)] typeParameterBounds.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun resolveMe([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] foo: Foo): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
     }
-    public? final? [RAW_FIR] interface Bar<[RAW_FIR] T : Foo> : R|kotlin/Any| {
+    public? final? [ResolvedTo(RAW_FIR)] interface Bar<[ResolvedTo(RAW_FIR)] T : Foo> : R|kotlin/Any| {
     }
-    public? final? [RAW_FIR] fun <[RAW_FIR] F : Foo, [RAW_FIR] B : Bar<F>> F.util(): B { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : Foo, [ResolvedTo(RAW_FIR)] B : Bar<F>> F.util(): B { LAZY_BLOCK }
 
 COMPANION_GENERATION:
-FILE: [IMPORTS] typeParameterBounds.kt
-    [RAW_FIR] annotations container
-    public? final? [COMPANION_GENERATION] fun resolveMe([COMPANION_GENERATION] foo: Foo): R|kotlin/Unit| { LAZY_BLOCK }
-    public? final? [RAW_FIR] interface Foo : R|kotlin/Any| {
+FILE: [ResolvedTo(IMPORTS)] typeParameterBounds.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(COMPANION_GENERATION)] fun resolveMe([ResolvedTo(COMPANION_GENERATION)] foo: Foo): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
     }
-    public? final? [RAW_FIR] interface Bar<[RAW_FIR] T : Foo> : R|kotlin/Any| {
+    public? final? [ResolvedTo(RAW_FIR)] interface Bar<[ResolvedTo(RAW_FIR)] T : Foo> : R|kotlin/Any| {
     }
-    public? final? [RAW_FIR] fun <[RAW_FIR] F : Foo, [RAW_FIR] B : Bar<F>> F.util(): B { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : Foo, [ResolvedTo(RAW_FIR)] B : Bar<F>> F.util(): B { LAZY_BLOCK }
 
 SUPER_TYPES:
-FILE: [IMPORTS] typeParameterBounds.kt
-    [RAW_FIR] annotations container
-    public? final? [SUPER_TYPES] fun resolveMe([SUPER_TYPES] foo: Foo): R|kotlin/Unit| { LAZY_BLOCK }
-    public? final? [RAW_FIR] interface Foo : R|kotlin/Any| {
+FILE: [ResolvedTo(IMPORTS)] typeParameterBounds.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(SUPER_TYPES)] fun resolveMe([ResolvedTo(SUPER_TYPES)] foo: Foo): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
     }
-    public? final? [RAW_FIR] interface Bar<[RAW_FIR] T : Foo> : R|kotlin/Any| {
+    public? final? [ResolvedTo(RAW_FIR)] interface Bar<[ResolvedTo(RAW_FIR)] T : Foo> : R|kotlin/Any| {
     }
-    public? final? [RAW_FIR] fun <[RAW_FIR] F : Foo, [RAW_FIR] B : Bar<F>> F.util(): B { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : Foo, [ResolvedTo(RAW_FIR)] B : Bar<F>> F.util(): B { LAZY_BLOCK }
 
 TYPES:
-FILE: [IMPORTS] typeParameterBounds.kt
-    [RAW_FIR] annotations container
-    public? final? [TYPES] fun resolveMe([TYPES] foo: R|Foo|): R|kotlin/Unit| { LAZY_BLOCK }
-    public? final? [RAW_FIR] interface Foo : R|kotlin/Any| {
+FILE: [ResolvedTo(IMPORTS)] typeParameterBounds.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(TYPES)] fun resolveMe([ResolvedTo(TYPES)] foo: R|Foo|): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
     }
-    public? final? [RAW_FIR] interface Bar<[RAW_FIR] T : Foo> : R|kotlin/Any| {
+    public? final? [ResolvedTo(RAW_FIR)] interface Bar<[ResolvedTo(RAW_FIR)] T : Foo> : R|kotlin/Any| {
     }
-    public? final? [RAW_FIR] fun <[RAW_FIR] F : Foo, [RAW_FIR] B : Bar<F>> F.util(): B { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : Foo, [ResolvedTo(RAW_FIR)] B : Bar<F>> F.util(): B { LAZY_BLOCK }
 
 STATUS:
-FILE: [IMPORTS] typeParameterBounds.kt
-    [RAW_FIR] annotations container
-    public final [STATUS] fun resolveMe([STATUS] foo: R|Foo|): R|kotlin/Unit| { LAZY_BLOCK }
-    public? final? [RAW_FIR] interface Foo : R|kotlin/Any| {
+FILE: [ResolvedTo(IMPORTS)] typeParameterBounds.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public final [ResolvedTo(STATUS)] fun resolveMe([ResolvedTo(STATUS)] foo: R|Foo|): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
     }
-    public? final? [RAW_FIR] interface Bar<[RAW_FIR] T : Foo> : R|kotlin/Any| {
+    public? final? [ResolvedTo(RAW_FIR)] interface Bar<[ResolvedTo(RAW_FIR)] T : Foo> : R|kotlin/Any| {
     }
-    public? final? [RAW_FIR] fun <[RAW_FIR] F : Foo, [RAW_FIR] B : Bar<F>> F.util(): B { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : Foo, [ResolvedTo(RAW_FIR)] B : Bar<F>> F.util(): B { LAZY_BLOCK }
 
 EXPECT_ACTUAL_MATCHING:
-FILE: [IMPORTS] typeParameterBounds.kt
-    [RAW_FIR] annotations container
-    public final [EXPECT_ACTUAL_MATCHING] fun resolveMe([EXPECT_ACTUAL_MATCHING] foo: R|Foo|): R|kotlin/Unit| {
+FILE: [ResolvedTo(IMPORTS)] typeParameterBounds.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe([ResolvedTo(EXPECT_ACTUAL_MATCHING)] foo: R|Foo|): R|kotlin/Unit| {
         foo#.util#()
     }
-    public? final? [RAW_FIR] interface Foo : R|kotlin/Any| {
+    public? final? [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
     }
-    public? final? [RAW_FIR] interface Bar<[RAW_FIR] T : Foo> : R|kotlin/Any| {
+    public? final? [ResolvedTo(RAW_FIR)] interface Bar<[ResolvedTo(RAW_FIR)] T : Foo> : R|kotlin/Any| {
     }
-    public? final? [RAW_FIR] fun <[RAW_FIR] F : Foo, [RAW_FIR] B : Bar<F>> F.util(): B { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : Foo, [ResolvedTo(RAW_FIR)] B : Bar<F>> F.util(): B { LAZY_BLOCK }
 
 ARGUMENTS_OF_ANNOTATIONS:
-FILE: [IMPORTS] typeParameterBounds.kt
-    [RAW_FIR] annotations container
-    public final [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe([ARGUMENTS_OF_ANNOTATIONS] foo: R|Foo|): R|kotlin/Unit| {
+FILE: [ResolvedTo(IMPORTS)] typeParameterBounds.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun resolveMe([ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] foo: R|Foo|): R|kotlin/Unit| {
         foo#.util#()
     }
-    public? final? [RAW_FIR] interface Foo : R|kotlin/Any| {
+    public? final? [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
     }
-    public? final? [RAW_FIR] interface Bar<[RAW_FIR] T : Foo> : R|kotlin/Any| {
+    public? final? [ResolvedTo(RAW_FIR)] interface Bar<[ResolvedTo(RAW_FIR)] T : Foo> : R|kotlin/Any| {
     }
-    public? final? [RAW_FIR] fun <[RAW_FIR] F : Foo, [RAW_FIR] B : Bar<F>> F.util(): B { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : Foo, [ResolvedTo(RAW_FIR)] B : Bar<F>> F.util(): B { LAZY_BLOCK }
 
 CONTRACTS:
-FILE: [IMPORTS] typeParameterBounds.kt
-    [RAW_FIR] annotations container
-    public final [CONTRACTS] fun resolveMe([CONTRACTS] foo: R|Foo|): R|kotlin/Unit| {
+FILE: [ResolvedTo(IMPORTS)] typeParameterBounds.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public final [ResolvedTo(CONTRACTS)] fun resolveMe([ResolvedTo(CONTRACTS)] foo: R|Foo|): R|kotlin/Unit| {
         foo#.util#()
     }
-    public? final? [RAW_FIR] interface Foo : R|kotlin/Any| {
+    public? final? [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
     }
-    public? final? [RAW_FIR] interface Bar<[RAW_FIR] T : Foo> : R|kotlin/Any| {
+    public? final? [ResolvedTo(RAW_FIR)] interface Bar<[ResolvedTo(RAW_FIR)] T : Foo> : R|kotlin/Any| {
     }
-    public? final? [RAW_FIR] fun <[RAW_FIR] F : Foo, [RAW_FIR] B : Bar<F>> F.util(): B { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : Foo, [ResolvedTo(RAW_FIR)] B : Bar<F>> F.util(): B { LAZY_BLOCK }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
-FILE: [IMPORTS] typeParameterBounds.kt
-    [RAW_FIR] annotations container
-    public final [IMPLICIT_TYPES_BODY_RESOLVE] fun resolveMe([IMPLICIT_TYPES_BODY_RESOLVE] foo: R|Foo|): R|kotlin/Unit| {
+FILE: [ResolvedTo(IMPORTS)] typeParameterBounds.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun resolveMe([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] foo: R|Foo|): R|kotlin/Unit| {
         foo#.util#()
     }
-    public? final? [RAW_FIR] interface Foo : R|kotlin/Any| {
+    public? final? [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
     }
-    public? final? [RAW_FIR] interface Bar<[RAW_FIR] T : Foo> : R|kotlin/Any| {
+    public? final? [ResolvedTo(RAW_FIR)] interface Bar<[ResolvedTo(RAW_FIR)] T : Foo> : R|kotlin/Any| {
     }
-    public? final? [RAW_FIR] fun <[RAW_FIR] F : Foo, [RAW_FIR] B : Bar<F>> F.util(): B { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : Foo, [ResolvedTo(RAW_FIR)] B : Bar<F>> F.util(): B { LAZY_BLOCK }
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
-FILE: [IMPORTS] typeParameterBounds.kt
-    [RAW_FIR] annotations container
-    public final [ANNOTATIONS_ARGUMENTS_MAPPING] fun resolveMe([ANNOTATIONS_ARGUMENTS_MAPPING] foo: R|Foo|): R|kotlin/Unit| {
+FILE: [ResolvedTo(IMPORTS)] typeParameterBounds.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun resolveMe([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] foo: R|Foo|): R|kotlin/Unit| {
         foo#.util#()
     }
-    public? final? [RAW_FIR] interface Foo : R|kotlin/Any| {
+    public? final? [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
     }
-    public? final? [RAW_FIR] interface Bar<[RAW_FIR] T : Foo> : R|kotlin/Any| {
+    public? final? [ResolvedTo(RAW_FIR)] interface Bar<[ResolvedTo(RAW_FIR)] T : Foo> : R|kotlin/Any| {
     }
-    public? final? [RAW_FIR] fun <[RAW_FIR] F : Foo, [RAW_FIR] B : Bar<F>> F.util(): B { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : Foo, [ResolvedTo(RAW_FIR)] B : Bar<F>> F.util(): B { LAZY_BLOCK }
 
 BODY_RESOLVE:
-FILE: [IMPORTS] typeParameterBounds.kt
-    [RAW_FIR] annotations container
-    public final [BODY_RESOLVE] fun resolveMe([BODY_RESOLVE] foo: R|Foo|): R|kotlin/Unit| {
+FILE: [ResolvedTo(IMPORTS)] typeParameterBounds.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe([ResolvedTo(BODY_RESOLVE)] foo: R|Foo|): R|kotlin/Unit| {
         R|<local>/foo|.R|/util|<R|Foo|, R|Bar<Foo>|>()
     }
-    public abstract [STATUS] interface Foo : R|kotlin/Any| {
+    public abstract [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
     }
-    public? final? [TYPES] interface Bar<[TYPES] T : R|Foo|> : R|kotlin/Any| {
+    public? final? [ResolvedTo(TYPES)] interface Bar<[ResolvedTo(TYPES)] T : R|Foo|> : R|kotlin/Any| {
     }
-    public final [CONTRACTS] fun <[CONTRACTS] F : R|Foo|, [CONTRACTS] B : R|Bar<F>|> R|F|.util(): R|B| {
+    public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] F : R|Foo|, [ResolvedTo(CONTRACTS)] B : R|Bar<F>|> R|F|.util(): R|B| {
         ^util Null(null)!!
     }
 
 FILE RAW TO BODY:
-FILE: [IMPORTS] typeParameterBounds.kt
-    [BODY_RESOLVE] annotations container
-    public final [BODY_RESOLVE] fun resolveMe([BODY_RESOLVE] foo: R|Foo|): R|kotlin/Unit| {
+FILE: [ResolvedTo(IMPORTS)] typeParameterBounds.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe([ResolvedTo(BODY_RESOLVE)] foo: R|Foo|): R|kotlin/Unit| {
         R|<local>/foo|.R|/util|<R|Foo|, R|Bar<Foo>|>()
     }
-    public abstract [BODY_RESOLVE] interface Foo : R|kotlin/Any| {
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface Foo : R|kotlin/Any| {
     }
-    public abstract [BODY_RESOLVE] interface Bar<[BODY_RESOLVE] T : R|Foo|> : R|kotlin/Any| {
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface Bar<[ResolvedTo(BODY_RESOLVE)] T : R|Foo|> : R|kotlin/Any| {
     }
-    public final [BODY_RESOLVE] fun <[BODY_RESOLVE] F : R|Foo|, [BODY_RESOLVE] B : R|Bar<F>|> R|F|.util(): R|B| {
+    public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] F : R|Foo|, [ResolvedTo(BODY_RESOLVE)] B : R|Bar<F>|> R|F|.util(): R|B| {
         ^util Null(null)!!
     }

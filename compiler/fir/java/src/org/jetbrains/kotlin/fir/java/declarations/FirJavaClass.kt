@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.MutableOrEmptyList
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
-import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirRegularClassBuilder
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -38,8 +37,7 @@ import kotlin.properties.Delegates
 class FirJavaClass @FirImplementationDetail internal constructor(
     override val source: KtSourceElement?,
     override val moduleData: FirModuleData,
-    @Volatile
-    override var resolvePhase: FirResolvePhase,
+    resolvePhase: FirResolvePhase,
     override val name: Name,
     override val origin: FirDeclarationOrigin.Java,
     private val unEnhancedAnnotations: MutableOrEmptyList<JavaAnnotation>,
@@ -62,6 +60,9 @@ class FirJavaClass @FirImplementationDetail internal constructor(
 
     init {
         symbol.bind(this)
+
+        @OptIn(ResolveStateAccess::class)
+        this.resolveState = resolvePhase.asResolveState()
     }
 
     override val attributes: FirDeclarationAttributes = FirDeclarationAttributes()
@@ -84,10 +85,6 @@ class FirJavaClass @FirImplementationDetail internal constructor(
 
     override fun replaceSuperTypeRefs(newSuperTypeRefs: List<FirTypeRef>) {
         error("${::replaceSuperTypeRefs.name} should not be called for ${this::class.simpleName}, ${superTypeRefs::class.simpleName} is lazily calulated")
-    }
-
-    override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
-        resolvePhase = newResolvePhase
     }
 
     override fun replaceDeprecationsProvider(newDeprecationsProvider: DeprecationsProvider) {

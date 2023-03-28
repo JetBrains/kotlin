@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.declarations.ResolveStateAccess
 
 /*
  * This file was generated automatically
@@ -27,7 +28,6 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 abstract class FirAnonymousFunction : FirFunction(), FirTypeParametersOwner, FirContractDescriptionOwner {
     abstract override val source: KtSourceElement?
-    abstract override val resolvePhase: FirResolvePhase
     abstract override val annotations: List<FirAnnotation>
     abstract override val moduleData: FirModuleData
     abstract override val origin: FirDeclarationOrigin
@@ -57,8 +57,6 @@ abstract class FirAnonymousFunction : FirFunction(), FirTypeParametersOwner, Fir
     @Suppress("UNCHECKED_CAST")
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
         transformer.transformAnonymousFunction(this, data) as E
-
-    abstract override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
 
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 

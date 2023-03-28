@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,14 +7,14 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
-import org.jetbrains.kotlin.fir.FirElementWithResolvePhase
+import org.jetbrains.kotlin.fir.FirElementWithResolveState
 
 abstract class ContextByDesignationCollector<C : Any>(private val designation: FirDesignation) {
     private var context: C? = null
     private val designationState = FirDesignationState(designation)
 
     protected abstract fun getCurrentContext(): C
-    protected abstract fun goToNestedDeclaration(target: FirElementWithResolvePhase)
+    protected abstract fun goToNestedDeclaration(target: FirElementWithResolveState)
 
     fun getCollectedContext(): C {
         return context
@@ -48,14 +48,14 @@ private class FirDesignationState(val designation: FirDesignation) {
 
     fun canGoNext(): Boolean = currentIndex < designation.path.size
 
-    val currentDeclarationIfPresent: FirElementWithResolvePhase?
+    val currentDeclarationIfPresent: FirElementWithResolveState?
         get() = when (currentIndex) {
             in designation.path.indices -> designation.path[currentIndex]
             designation.path.size -> designation.target
             else -> null
         }
 
-    val currentDeclaration: FirElementWithResolvePhase
+    val currentDeclaration: FirElementWithResolveState
         get() = currentDeclarationIfPresent
             ?: errorWithFirSpecificEntries("Went inside target declaration")
 

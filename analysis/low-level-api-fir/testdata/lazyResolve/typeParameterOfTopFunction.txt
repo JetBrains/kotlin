@@ -1,77 +1,77 @@
 
 RAW_FIR:
-FILE: [RAW_FIR] typeParameterOfTopFunction.kt
-    [RAW_FIR] annotations container
-    public? final? [RAW_FIR] fun <[RAW_FIR] resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
+FILE: [ResolvedTo(RAW_FIR)] typeParameterOfTopFunction.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
 
 IMPORTS:
-FILE: [IMPORTS] typeParameterOfTopFunction.kt
-    [RAW_FIR] annotations container
-    public? final? [RAW_FIR] fun <[RAW_FIR] resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
+FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopFunction.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
 
 COMPILER_REQUIRED_ANNOTATIONS:
-FILE: [IMPORTS] typeParameterOfTopFunction.kt
-    [RAW_FIR] annotations container
-    public? final? [COMPILER_REQUIRED_ANNOTATIONS] fun <[COMPILER_REQUIRED_ANNOTATIONS] resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
+FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopFunction.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun <[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
 
 COMPANION_GENERATION:
-FILE: [IMPORTS] typeParameterOfTopFunction.kt
-    [RAW_FIR] annotations container
-    public? final? [COMPANION_GENERATION] fun <[COMPANION_GENERATION] resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
+FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopFunction.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(COMPANION_GENERATION)] fun <[ResolvedTo(COMPANION_GENERATION)] resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
 
 SUPER_TYPES:
-FILE: [IMPORTS] typeParameterOfTopFunction.kt
-    [RAW_FIR] annotations container
-    public? final? [SUPER_TYPES] fun <[SUPER_TYPES] resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
+FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopFunction.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(SUPER_TYPES)] fun <[ResolvedTo(SUPER_TYPES)] resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
 
 TYPES:
-FILE: [IMPORTS] typeParameterOfTopFunction.kt
-    [RAW_FIR] annotations container
-    public? final? [TYPES] fun <[TYPES] resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
+FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopFunction.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(TYPES)] fun <[ResolvedTo(TYPES)] resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
 
 STATUS:
-FILE: [IMPORTS] typeParameterOfTopFunction.kt
-    [RAW_FIR] annotations container
-    public final [STATUS] fun <[STATUS] resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
+FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopFunction.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public final [ResolvedTo(STATUS)] fun <[ResolvedTo(STATUS)] resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
 
 EXPECT_ACTUAL_MATCHING:
-FILE: [IMPORTS] typeParameterOfTopFunction.kt
-    [RAW_FIR] annotations container
-    public final [EXPECT_ACTUAL_MATCHING] fun <[EXPECT_ACTUAL_MATCHING] resolveMe> ddd(): R|kotlin/Unit| {
+FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopFunction.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun <[ResolvedTo(EXPECT_ACTUAL_MATCHING)] resolveMe> ddd(): R|kotlin/Unit| {
     }
 
 ARGUMENTS_OF_ANNOTATIONS:
-FILE: [IMPORTS] typeParameterOfTopFunction.kt
-    [RAW_FIR] annotations container
-    public final [ARGUMENTS_OF_ANNOTATIONS] fun <[ARGUMENTS_OF_ANNOTATIONS] resolveMe> ddd(): R|kotlin/Unit| {
+FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopFunction.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun <[ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] resolveMe> ddd(): R|kotlin/Unit| {
     }
 
 CONTRACTS:
-FILE: [IMPORTS] typeParameterOfTopFunction.kt
-    [RAW_FIR] annotations container
-    public final [CONTRACTS] fun <[CONTRACTS] resolveMe> ddd(): R|kotlin/Unit| {
+FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopFunction.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] resolveMe> ddd(): R|kotlin/Unit| {
     }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
-FILE: [IMPORTS] typeParameterOfTopFunction.kt
-    [RAW_FIR] annotations container
-    public final [IMPLICIT_TYPES_BODY_RESOLVE] fun <[IMPLICIT_TYPES_BODY_RESOLVE] resolveMe> ddd(): R|kotlin/Unit| {
+FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopFunction.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun <[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] resolveMe> ddd(): R|kotlin/Unit| {
     }
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
-FILE: [IMPORTS] typeParameterOfTopFunction.kt
-    [RAW_FIR] annotations container
-    public final [ANNOTATIONS_ARGUMENTS_MAPPING] fun <[ANNOTATIONS_ARGUMENTS_MAPPING] resolveMe> ddd(): R|kotlin/Unit| {
+FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopFunction.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun <[ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] resolveMe> ddd(): R|kotlin/Unit| {
     }
 
 BODY_RESOLVE:
-FILE: [IMPORTS] typeParameterOfTopFunction.kt
-    [RAW_FIR] annotations container
-    public final [BODY_RESOLVE] fun <[BODY_RESOLVE] resolveMe> ddd(): R|kotlin/Unit| {
+FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopFunction.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] resolveMe> ddd(): R|kotlin/Unit| {
     }
 
 FILE RAW TO BODY:
-FILE: [IMPORTS] typeParameterOfTopFunction.kt
-    [BODY_RESOLVE] annotations container
-    public final [BODY_RESOLVE] fun <[BODY_RESOLVE] resolveMe> ddd(): R|kotlin/Unit| {
+FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopFunction.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] resolveMe> ddd(): R|kotlin/Unit| {
     }

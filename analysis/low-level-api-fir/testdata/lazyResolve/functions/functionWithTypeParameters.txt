@@ -1,77 +1,77 @@
 
 RAW_FIR:
-FILE: [RAW_FIR] functionWithTypeParameters.kt
-    [RAW_FIR] annotations container
-    public? final? [RAW_FIR] fun <[RAW_FIR] T : Int, [RAW_FIR] K> resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+FILE: [ResolvedTo(RAW_FIR)] functionWithTypeParameters.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T : Int, [ResolvedTo(RAW_FIR)] K> resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 IMPORTS:
-FILE: [IMPORTS] functionWithTypeParameters.kt
-    [RAW_FIR] annotations container
-    public? final? [RAW_FIR] fun <[RAW_FIR] T : Int, [RAW_FIR] K> resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+FILE: [ResolvedTo(IMPORTS)] functionWithTypeParameters.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T : Int, [ResolvedTo(RAW_FIR)] K> resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 COMPILER_REQUIRED_ANNOTATIONS:
-FILE: [IMPORTS] functionWithTypeParameters.kt
-    [RAW_FIR] annotations container
-    public? final? [COMPILER_REQUIRED_ANNOTATIONS] fun <[COMPILER_REQUIRED_ANNOTATIONS] T : Int, [COMPILER_REQUIRED_ANNOTATIONS] K> resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+FILE: [ResolvedTo(IMPORTS)] functionWithTypeParameters.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun <[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] T : Int, [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] K> resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 COMPANION_GENERATION:
-FILE: [IMPORTS] functionWithTypeParameters.kt
-    [RAW_FIR] annotations container
-    public? final? [COMPANION_GENERATION] fun <[COMPANION_GENERATION] T : Int, [COMPANION_GENERATION] K> resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+FILE: [ResolvedTo(IMPORTS)] functionWithTypeParameters.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(COMPANION_GENERATION)] fun <[ResolvedTo(COMPANION_GENERATION)] T : Int, [ResolvedTo(COMPANION_GENERATION)] K> resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 SUPER_TYPES:
-FILE: [IMPORTS] functionWithTypeParameters.kt
-    [RAW_FIR] annotations container
-    public? final? [SUPER_TYPES] fun <[SUPER_TYPES] T : Int, [SUPER_TYPES] K> resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+FILE: [ResolvedTo(IMPORTS)] functionWithTypeParameters.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(SUPER_TYPES)] fun <[ResolvedTo(SUPER_TYPES)] T : Int, [ResolvedTo(SUPER_TYPES)] K> resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 TYPES:
-FILE: [IMPORTS] functionWithTypeParameters.kt
-    [RAW_FIR] annotations container
-    public? final? [TYPES] fun <[TYPES] T : R|kotlin/Int|, [TYPES] K> resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+FILE: [ResolvedTo(IMPORTS)] functionWithTypeParameters.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(TYPES)] fun <[ResolvedTo(TYPES)] T : R|kotlin/Int|, [ResolvedTo(TYPES)] K> resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 STATUS:
-FILE: [IMPORTS] functionWithTypeParameters.kt
-    [RAW_FIR] annotations container
-    public final [STATUS] fun <[STATUS] T : R|kotlin/Int|, [STATUS] K> resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+FILE: [ResolvedTo(IMPORTS)] functionWithTypeParameters.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public final [ResolvedTo(STATUS)] fun <[ResolvedTo(STATUS)] T : R|kotlin/Int|, [ResolvedTo(STATUS)] K> resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 EXPECT_ACTUAL_MATCHING:
-FILE: [IMPORTS] functionWithTypeParameters.kt
-    [RAW_FIR] annotations container
-    public final [EXPECT_ACTUAL_MATCHING] fun <[EXPECT_ACTUAL_MATCHING] T : R|kotlin/Int|, [EXPECT_ACTUAL_MATCHING] K> resolveMe(): R|kotlin/Unit| {
+FILE: [ResolvedTo(IMPORTS)] functionWithTypeParameters.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun <[ResolvedTo(EXPECT_ACTUAL_MATCHING)] T : R|kotlin/Int|, [ResolvedTo(EXPECT_ACTUAL_MATCHING)] K> resolveMe(): R|kotlin/Unit| {
     }
 
 ARGUMENTS_OF_ANNOTATIONS:
-FILE: [IMPORTS] functionWithTypeParameters.kt
-    [RAW_FIR] annotations container
-    public final [ARGUMENTS_OF_ANNOTATIONS] fun <[ARGUMENTS_OF_ANNOTATIONS] T : R|kotlin/Int|, [ARGUMENTS_OF_ANNOTATIONS] K> resolveMe(): R|kotlin/Unit| {
+FILE: [ResolvedTo(IMPORTS)] functionWithTypeParameters.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun <[ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] T : R|kotlin/Int|, [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] K> resolveMe(): R|kotlin/Unit| {
     }
 
 CONTRACTS:
-FILE: [IMPORTS] functionWithTypeParameters.kt
-    [RAW_FIR] annotations container
-    public final [CONTRACTS] fun <[CONTRACTS] T : R|kotlin/Int|, [CONTRACTS] K> resolveMe(): R|kotlin/Unit| {
+FILE: [ResolvedTo(IMPORTS)] functionWithTypeParameters.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T : R|kotlin/Int|, [ResolvedTo(CONTRACTS)] K> resolveMe(): R|kotlin/Unit| {
     }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
-FILE: [IMPORTS] functionWithTypeParameters.kt
-    [RAW_FIR] annotations container
-    public final [IMPLICIT_TYPES_BODY_RESOLVE] fun <[IMPLICIT_TYPES_BODY_RESOLVE] T : R|kotlin/Int|, [IMPLICIT_TYPES_BODY_RESOLVE] K> resolveMe(): R|kotlin/Unit| {
+FILE: [ResolvedTo(IMPORTS)] functionWithTypeParameters.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun <[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] T : R|kotlin/Int|, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] K> resolveMe(): R|kotlin/Unit| {
     }
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
-FILE: [IMPORTS] functionWithTypeParameters.kt
-    [RAW_FIR] annotations container
-    public final [ANNOTATIONS_ARGUMENTS_MAPPING] fun <[ANNOTATIONS_ARGUMENTS_MAPPING] T : R|kotlin/Int|, [ANNOTATIONS_ARGUMENTS_MAPPING] K> resolveMe(): R|kotlin/Unit| {
+FILE: [ResolvedTo(IMPORTS)] functionWithTypeParameters.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun <[ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] T : R|kotlin/Int|, [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] K> resolveMe(): R|kotlin/Unit| {
     }
 
 BODY_RESOLVE:
-FILE: [IMPORTS] functionWithTypeParameters.kt
-    [RAW_FIR] annotations container
-    public final [BODY_RESOLVE] fun <[BODY_RESOLVE] T : R|kotlin/Int|, [BODY_RESOLVE] K> resolveMe(): R|kotlin/Unit| {
+FILE: [ResolvedTo(IMPORTS)] functionWithTypeParameters.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T : R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] K> resolveMe(): R|kotlin/Unit| {
     }
 
 FILE RAW TO BODY:
-FILE: [IMPORTS] functionWithTypeParameters.kt
-    [BODY_RESOLVE] annotations container
-    public final [BODY_RESOLVE] fun <[BODY_RESOLVE] T : R|kotlin/Int|, [BODY_RESOLVE] K> resolveMe(): R|kotlin/Unit| {
+FILE: [ResolvedTo(IMPORTS)] functionWithTypeParameters.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T : R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] K> resolveMe(): R|kotlin/Unit| {
     }

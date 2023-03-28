@@ -355,7 +355,6 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         }
 
         impl(anonymousFunction) {
-            default("resolvePhase", "FirResolvePhase.DECLARATIONS")
         }
 
         noImpl(anonymousFunctionExpression)

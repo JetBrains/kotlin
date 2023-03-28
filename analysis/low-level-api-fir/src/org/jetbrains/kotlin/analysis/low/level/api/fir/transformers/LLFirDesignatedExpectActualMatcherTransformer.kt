@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFil
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyTransformer.Companion.updatePhaseDeep
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
-import org.jetbrains.kotlin.fir.FirElementWithResolvePhase
+import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirStatement
@@ -45,14 +45,14 @@ internal class LLFirDesignatedExpectActualMatcherTransformer(
         phaseRunner.runPhaseWithCustomResolve(FirResolvePhase.EXPECT_ACTUAL_MATCHING) {
             designation.firFile.transform<FirFile, Nothing?>(this, null)
         }
-    
+
 
         declarationTransformer.ensureDesignationPassed()
         updatePhaseDeep(designation.target, FirResolvePhase.EXPECT_ACTUAL_MATCHING)
         checkIsResolved(designation.target)
     }
 
-    override fun checkIsResolved(target: FirElementWithResolvePhase) {
+    override fun checkIsResolved(target: FirElementWithResolveState) {
         target.checkPhase(FirResolvePhase.EXPECT_ACTUAL_MATCHING)
         // TODO check if expect-actual matching is present
         checkNestedDeclarationsAreResolved(target)

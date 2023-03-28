@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirLazyExpression
 import org.jetbrains.kotlin.fir.declarations.FirContextReceiver
-import org.jetbrains.kotlin.fir.FirElementWithResolvePhase
+import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
@@ -215,8 +215,8 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformElement(contextReceiver, data)
     }
 
-    open fun transformElementWithResolvePhase(elementWithResolvePhase: FirElementWithResolvePhase, data: D): FirElementWithResolvePhase {
-        return transformElement(elementWithResolvePhase, data)
+    open fun transformElementWithResolveState(elementWithResolveState: FirElementWithResolveState, data: D): FirElementWithResolveState {
+        return transformElement(elementWithResolveState, data)
     }
 
     open fun transformFileAnnotationsContainer(fileAnnotationsContainer: FirFileAnnotationsContainer, data: D): FirFileAnnotationsContainer {
@@ -807,8 +807,8 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformContextReceiver(contextReceiver, data)
     }
 
-    final override fun visitElementWithResolvePhase(elementWithResolvePhase: FirElementWithResolvePhase, data: D): FirElementWithResolvePhase {
-        return transformElementWithResolvePhase(elementWithResolvePhase, data)
+    final override fun visitElementWithResolveState(elementWithResolveState: FirElementWithResolveState, data: D): FirElementWithResolveState {
+        return transformElementWithResolveState(elementWithResolveState, data)
     }
 
     final override fun visitFileAnnotationsContainer(fileAnnotationsContainer: FirFileAnnotationsContainer, data: D): FirFileAnnotationsContainer {

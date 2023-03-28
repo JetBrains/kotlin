@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-
+import org.jetbrains.kotlin.fir.declarations.resolvePhase
 
 internal fun FirClassSymbol<*>.superTypesList(builder: KtSymbolByFirBuilder): List<KtType> =
     resolvedSuperTypeRefs.mapToKtType(builder)
@@ -39,7 +39,7 @@ internal fun FirCallableSymbol<*>.returnType(builder: KtSymbolByFirBuilder): KtT
     builder.typeBuilder.buildKtType(resolvedReturnType)
 
 internal fun FirCallableSymbol<*>.receiver(builder: KtSymbolByFirBuilder): KtReceiverParameterSymbol? =
-        builder.callableBuilder.buildExtensionReceiverSymbol(this)
+    builder.callableBuilder.buildExtensionReceiverSymbol(this)
 
 internal fun FirCallableSymbol<*>.receiverType(builder: KtSymbolByFirBuilder): KtType? =
     resolvedReceiverTypeRef?.let { receiver ->

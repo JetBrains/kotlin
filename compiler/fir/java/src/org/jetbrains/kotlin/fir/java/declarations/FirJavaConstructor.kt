@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -40,8 +40,7 @@ class FirJavaConstructor @FirImplementationDetail constructor(
     override val typeParameters: MutableList<FirTypeParameterRef>,
     annotationBuilder: () -> List<FirAnnotation>,
     override var status: FirDeclarationStatus,
-    @Volatile
-    override var resolvePhase: FirResolvePhase,
+    resolvePhase: FirResolvePhase,
     override val dispatchReceiverType: ConeSimpleKotlinType?,
 ) : FirConstructor() {
     override val receiverParameter: FirReceiverParameter? get() = null
@@ -50,6 +49,9 @@ class FirJavaConstructor @FirImplementationDetail constructor(
 
     init {
         symbol.bind(this)
+
+        @OptIn(ResolveStateAccess::class)
+        this.resolveState = resolvePhase.asResolveState()
     }
 
     override val delegatedConstructor: FirDelegatedConstructorCall?
@@ -75,10 +77,6 @@ class FirJavaConstructor @FirImplementationDetail constructor(
     override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirConstructor {
         returnTypeRef = returnTypeRef.transformSingle(transformer, data)
         return this
-    }
-
-    override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
-        resolvePhase = newResolvePhase
     }
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {

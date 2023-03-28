@@ -44,7 +44,7 @@ internal object FirLazyBodiesCalculator {
         firFile.transform<FirElement, PersistentList<FirRegularClass>>(FirLazyBodiesCalculatorTransformer, persistentListOf())
     }
 
-    fun calculateAnnotations(firElement: FirElementWithResolvePhase) {
+    fun calculateAnnotations(firElement: FirElementWithResolveState) {
         calculateAnnotations(firElement, firElement.moduleData.session)
     }
 
@@ -55,7 +55,7 @@ internal object FirLazyBodiesCalculator {
         )
     }
 
-    fun calculateCompilerAnnotations(firElement: FirElementWithResolvePhase) {
+    fun calculateCompilerAnnotations(firElement: FirElementWithResolveState) {
         firElement.transform<FirElement, FirLazyAnnotationTransformerData>(
             FirLazyAnnotationTransformer,
             FirLazyAnnotationTransformerData(firElement.moduleData.session, FirLazyAnnotationTransformerScope.COMPILER_ONLY)

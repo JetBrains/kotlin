@@ -1,307 +1,307 @@
 
 RAW_FIR:
-FILE: [RAW_FIR] superTypes.kt
-    [RAW_FIR] annotations container
-    public? open [RAW_FIR] class A : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
+FILE: [ResolvedTo(RAW_FIR)] superTypes.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? open [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public? open [RAW_FIR] class B : A {
-        public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
+    public? open [ResolvedTo(RAW_FIR)] class B : A {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
             LAZY_super<A>
         }
 
     }
-    public? open [RAW_FIR] class resolveMe : A {
-        public? [RAW_FIR] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
+    public? open [ResolvedTo(RAW_FIR)] class resolveMe : A {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             LAZY_super<A>
         }
 
     }
 
 IMPORTS:
-FILE: [IMPORTS] superTypes.kt
-    [RAW_FIR] annotations container
-    public? open [RAW_FIR] class A : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
+FILE: [ResolvedTo(IMPORTS)] superTypes.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? open [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public? open [RAW_FIR] class B : A {
-        public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
+    public? open [ResolvedTo(RAW_FIR)] class B : A {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
             LAZY_super<A>
         }
 
     }
-    public? open [RAW_FIR] class resolveMe : A {
-        public? [RAW_FIR] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
+    public? open [ResolvedTo(RAW_FIR)] class resolveMe : A {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             LAZY_super<A>
         }
 
     }
 
 COMPILER_REQUIRED_ANNOTATIONS:
-FILE: [IMPORTS] superTypes.kt
-    [RAW_FIR] annotations container
-    public? open [RAW_FIR] class A : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
+FILE: [ResolvedTo(IMPORTS)] superTypes.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? open [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public? open [RAW_FIR] class B : A {
-        public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
+    public? open [ResolvedTo(RAW_FIR)] class B : A {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
             LAZY_super<A>
         }
 
     }
-    public? open [COMPILER_REQUIRED_ANNOTATIONS] class resolveMe : A {
-        public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
+    public? open [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class resolveMe : A {
+        public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             LAZY_super<A>
         }
 
     }
 
 COMPANION_GENERATION:
-FILE: [IMPORTS] superTypes.kt
-    [RAW_FIR] annotations container
-    public? open [RAW_FIR] class A : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
+FILE: [ResolvedTo(IMPORTS)] superTypes.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? open [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public? open [RAW_FIR] class B : A {
-        public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
+    public? open [ResolvedTo(RAW_FIR)] class B : A {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
             LAZY_super<A>
         }
 
     }
-    public? open [COMPANION_GENERATION] class resolveMe : A {
-        public? [COMPANION_GENERATION] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
+    public? open [ResolvedTo(COMPANION_GENERATION)] class resolveMe : A {
+        public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             LAZY_super<A>
         }
 
     }
 
 SUPER_TYPES:
-FILE: [IMPORTS] superTypes.kt
-    [RAW_FIR] annotations container
-    public? open [RAW_FIR] class A : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
+FILE: [ResolvedTo(IMPORTS)] superTypes.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? open [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public? open [RAW_FIR] class B : A {
-        public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
+    public? open [ResolvedTo(RAW_FIR)] class B : A {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
             LAZY_super<A>
         }
 
     }
-    public? open [SUPER_TYPES] class resolveMe : R|A| {
-        public? [SUPER_TYPES] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
+    public? open [ResolvedTo(SUPER_TYPES)] class resolveMe : R|A| {
+        public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             LAZY_super<A>
         }
 
     }
 
 TYPES:
-FILE: [IMPORTS] superTypes.kt
-    [RAW_FIR] annotations container
-    public? open [SUPER_TYPES] class A : R|kotlin/Any| {
-        public? [SUPER_TYPES] [ContainingClassKey=A] constructor(): R|A| {
+FILE: [ResolvedTo(IMPORTS)] superTypes.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? open [ResolvedTo(SUPER_TYPES)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public? open [RAW_FIR] class B : A {
-        public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
+    public? open [ResolvedTo(RAW_FIR)] class B : A {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
             LAZY_super<A>
         }
 
     }
-    public? open [TYPES] class resolveMe : R|A| {
-        public? [TYPES] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
+    public? open [ResolvedTo(TYPES)] class resolveMe : R|A| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             LAZY_super<R|A|>
         }
 
     }
 
 STATUS:
-FILE: [IMPORTS] superTypes.kt
-    [RAW_FIR] annotations container
-    public open [TYPES] class A : R|kotlin/Any| {
-        public [TYPES] [ContainingClassKey=A] constructor(): R|A| {
+FILE: [ResolvedTo(IMPORTS)] superTypes.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public open [ResolvedTo(TYPES)] class A : R|kotlin/Any| {
+        public [ResolvedTo(TYPES)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public? open [RAW_FIR] class B : A {
-        public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
+    public? open [ResolvedTo(RAW_FIR)] class B : A {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
             LAZY_super<A>
         }
 
     }
-    public open [STATUS] class resolveMe : R|A| {
-        public [STATUS] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
+    public open [ResolvedTo(STATUS)] class resolveMe : R|A| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             LAZY_super<R|A|>
         }
 
     }
 
 EXPECT_ACTUAL_MATCHING:
-FILE: [IMPORTS] superTypes.kt
-    [RAW_FIR] annotations container
-    public open [TYPES] class A : R|kotlin/Any| {
-        public [TYPES] [ContainingClassKey=A] constructor(): R|A| {
+FILE: [ResolvedTo(IMPORTS)] superTypes.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public open [ResolvedTo(TYPES)] class A : R|kotlin/Any| {
+        public [ResolvedTo(TYPES)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public? open [RAW_FIR] class B : A {
-        public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
+    public? open [ResolvedTo(RAW_FIR)] class B : A {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
             LAZY_super<A>
         }
 
     }
-    public open [EXPECT_ACTUAL_MATCHING] class resolveMe : R|A| {
-        public [EXPECT_ACTUAL_MATCHING] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
+    public open [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class resolveMe : R|A| {
+        public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             super<R|A|>()
         }
 
     }
 
 ARGUMENTS_OF_ANNOTATIONS:
-FILE: [IMPORTS] superTypes.kt
-    [RAW_FIR] annotations container
-    public open [TYPES] class A : R|kotlin/Any| {
-        public [TYPES] [ContainingClassKey=A] constructor(): R|A| {
+FILE: [ResolvedTo(IMPORTS)] superTypes.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public open [ResolvedTo(TYPES)] class A : R|kotlin/Any| {
+        public [ResolvedTo(TYPES)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public? open [RAW_FIR] class B : A {
-        public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
+    public? open [ResolvedTo(RAW_FIR)] class B : A {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
             LAZY_super<A>
         }
 
     }
-    public open [ARGUMENTS_OF_ANNOTATIONS] class resolveMe : R|A| {
-        public [ARGUMENTS_OF_ANNOTATIONS] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
+    public open [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] class resolveMe : R|A| {
+        public [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             super<R|A|>()
         }
 
     }
 
 CONTRACTS:
-FILE: [IMPORTS] superTypes.kt
-    [RAW_FIR] annotations container
-    public open [TYPES] class A : R|kotlin/Any| {
-        public [TYPES] [ContainingClassKey=A] constructor(): R|A| {
+FILE: [ResolvedTo(IMPORTS)] superTypes.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public open [ResolvedTo(TYPES)] class A : R|kotlin/Any| {
+        public [ResolvedTo(TYPES)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public? open [RAW_FIR] class B : A {
-        public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
+    public? open [ResolvedTo(RAW_FIR)] class B : A {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
             LAZY_super<A>
         }
 
     }
-    public open [CONTRACTS] class resolveMe : R|A| {
-        public [CONTRACTS] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
+    public open [ResolvedTo(CONTRACTS)] class resolveMe : R|A| {
+        public [ResolvedTo(CONTRACTS)] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             super<R|A|>()
         }
 
     }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
-FILE: [IMPORTS] superTypes.kt
-    [RAW_FIR] annotations container
-    public open [TYPES] class A : R|kotlin/Any| {
-        public [TYPES] [ContainingClassKey=A] constructor(): R|A| {
+FILE: [ResolvedTo(IMPORTS)] superTypes.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public open [ResolvedTo(TYPES)] class A : R|kotlin/Any| {
+        public [ResolvedTo(TYPES)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public? open [RAW_FIR] class B : A {
-        public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
+    public? open [ResolvedTo(RAW_FIR)] class B : A {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
             LAZY_super<A>
         }
 
     }
-    public open [IMPLICIT_TYPES_BODY_RESOLVE] class resolveMe : R|A| {
-        public [IMPLICIT_TYPES_BODY_RESOLVE] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
+    public open [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class resolveMe : R|A| {
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             super<R|A|>()
         }
 
     }
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
-FILE: [IMPORTS] superTypes.kt
-    [RAW_FIR] annotations container
-    public open [TYPES] class A : R|kotlin/Any| {
-        public [TYPES] [ContainingClassKey=A] constructor(): R|A| {
+FILE: [ResolvedTo(IMPORTS)] superTypes.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public open [ResolvedTo(TYPES)] class A : R|kotlin/Any| {
+        public [ResolvedTo(TYPES)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public? open [RAW_FIR] class B : A {
-        public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
+    public? open [ResolvedTo(RAW_FIR)] class B : A {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
             LAZY_super<A>
         }
 
     }
-    public open [ANNOTATIONS_ARGUMENTS_MAPPING] class resolveMe : R|A| {
-        public [ANNOTATIONS_ARGUMENTS_MAPPING] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
+    public open [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] class resolveMe : R|A| {
+        public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             super<R|A|>()
         }
 
     }
 
 BODY_RESOLVE:
-FILE: [IMPORTS] superTypes.kt
-    [RAW_FIR] annotations container
-    public open [STATUS] class A : R|kotlin/Any| {
-        public [STATUS] [ContainingClassKey=A] constructor(): R|A| {
+FILE: [ResolvedTo(IMPORTS)] superTypes.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public open [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public? open [RAW_FIR] class B : A {
-        public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
+    public? open [ResolvedTo(RAW_FIR)] class B : A {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
             LAZY_super<A>
         }
 
     }
-    public open [BODY_RESOLVE] class resolveMe : R|A| {
-        public [BODY_RESOLVE] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
+    public open [ResolvedTo(BODY_RESOLVE)] class resolveMe : R|A| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             super<R|A|>()
         }
 
     }
 
 FILE RAW TO BODY:
-FILE: [IMPORTS] superTypes.kt
-    [BODY_RESOLVE] annotations container
-    public open [BODY_RESOLVE] class A : R|kotlin/Any| {
-        public [BODY_RESOLVE] [ContainingClassKey=A] constructor(): R|A| {
+FILE: [ResolvedTo(IMPORTS)] superTypes.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public open [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
     }
-    public open [BODY_RESOLVE] class B : R|A| {
-        public [BODY_RESOLVE] [ContainingClassKey=B] constructor(): R|B| {
+    public open [ResolvedTo(BODY_RESOLVE)] class B : R|A| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=B] constructor(): R|B| {
             super<R|A|>()
         }
 
     }
-    public open [BODY_RESOLVE] class resolveMe : R|A| {
-        public [BODY_RESOLVE] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
+    public open [ResolvedTo(BODY_RESOLVE)] class resolveMe : R|A| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             super<R|A|>()
         }
 

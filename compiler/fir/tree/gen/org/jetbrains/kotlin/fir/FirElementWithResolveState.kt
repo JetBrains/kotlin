@@ -7,23 +7,26 @@ package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.FirResolveState
+import org.jetbrains.kotlin.fir.declarations.asResolveState
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.declarations.ResolveStateAccess
 
 /*
  * This file was generated automatically
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirElementWithResolvePhase : FirPureAbstractElement(), FirElement {
+abstract class FirElementWithResolveState : FirPureAbstractElement(), FirElement {
     abstract override val source: KtSourceElement?
-    abstract val resolvePhase: FirResolvePhase
+    @Volatile
+    @ResolveStateAccess
+    lateinit var resolveState: FirResolveState
     abstract val moduleData: FirModuleData
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitElementWithResolvePhase(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitElementWithResolveState(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
-        transformer.transformElementWithResolvePhase(this, data) as E
-
-    abstract fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
+        transformer.transformElementWithResolveState(this, data) as E
 }

@@ -1,118 +1,118 @@
 
 RAW_FIR:
-FILE: [RAW_FIR] topLevelFunctions.kt
-    [RAW_FIR] annotations container
-    public? final? [RAW_FIR] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
-    public? final? [RAW_FIR] fun receive([RAW_FIR] value: String): R|kotlin/Unit| { LAZY_BLOCK }
-    public? final? [RAW_FIR] fun functionWithLazyBody(): String { LAZY_BLOCK }
+FILE: [ResolvedTo(RAW_FIR)] topLevelFunctions.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: String): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun functionWithLazyBody(): String { LAZY_BLOCK }
 
 IMPORTS:
-FILE: [IMPORTS] topLevelFunctions.kt
-    [RAW_FIR] annotations container
-    public? final? [RAW_FIR] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
-    public? final? [RAW_FIR] fun receive([RAW_FIR] value: String): R|kotlin/Unit| { LAZY_BLOCK }
-    public? final? [RAW_FIR] fun functionWithLazyBody(): String { LAZY_BLOCK }
+FILE: [ResolvedTo(IMPORTS)] topLevelFunctions.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: String): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun functionWithLazyBody(): String { LAZY_BLOCK }
 
 COMPILER_REQUIRED_ANNOTATIONS:
-FILE: [IMPORTS] topLevelFunctions.kt
-    [RAW_FIR] annotations container
-    public? final? [COMPILER_REQUIRED_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
-    public? final? [RAW_FIR] fun receive([RAW_FIR] value: String): R|kotlin/Unit| { LAZY_BLOCK }
-    public? final? [RAW_FIR] fun functionWithLazyBody(): String { LAZY_BLOCK }
+FILE: [ResolvedTo(IMPORTS)] topLevelFunctions.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: String): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun functionWithLazyBody(): String { LAZY_BLOCK }
 
 COMPANION_GENERATION:
-FILE: [IMPORTS] topLevelFunctions.kt
-    [RAW_FIR] annotations container
-    public? final? [COMPANION_GENERATION] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
-    public? final? [RAW_FIR] fun receive([RAW_FIR] value: String): R|kotlin/Unit| { LAZY_BLOCK }
-    public? final? [RAW_FIR] fun functionWithLazyBody(): String { LAZY_BLOCK }
+FILE: [ResolvedTo(IMPORTS)] topLevelFunctions.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(COMPANION_GENERATION)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: String): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun functionWithLazyBody(): String { LAZY_BLOCK }
 
 SUPER_TYPES:
-FILE: [IMPORTS] topLevelFunctions.kt
-    [RAW_FIR] annotations container
-    public? final? [SUPER_TYPES] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
-    public? final? [RAW_FIR] fun receive([RAW_FIR] value: String): R|kotlin/Unit| { LAZY_BLOCK }
-    public? final? [RAW_FIR] fun functionWithLazyBody(): String { LAZY_BLOCK }
+FILE: [ResolvedTo(IMPORTS)] topLevelFunctions.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(SUPER_TYPES)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: String): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun functionWithLazyBody(): String { LAZY_BLOCK }
 
 TYPES:
-FILE: [IMPORTS] topLevelFunctions.kt
-    [RAW_FIR] annotations container
-    public? final? [TYPES] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
-    public? final? [RAW_FIR] fun receive([RAW_FIR] value: String): R|kotlin/Unit| { LAZY_BLOCK }
-    public? final? [RAW_FIR] fun functionWithLazyBody(): String { LAZY_BLOCK }
+FILE: [ResolvedTo(IMPORTS)] topLevelFunctions.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(TYPES)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: String): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun functionWithLazyBody(): String { LAZY_BLOCK }
 
 STATUS:
-FILE: [IMPORTS] topLevelFunctions.kt
-    [RAW_FIR] annotations container
-    public final [STATUS] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
-    public? final? [RAW_FIR] fun receive([RAW_FIR] value: String): R|kotlin/Unit| { LAZY_BLOCK }
-    public? final? [RAW_FIR] fun functionWithLazyBody(): String { LAZY_BLOCK }
+FILE: [ResolvedTo(IMPORTS)] topLevelFunctions.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public final [ResolvedTo(STATUS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: String): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun functionWithLazyBody(): String { LAZY_BLOCK }
 
 EXPECT_ACTUAL_MATCHING:
-FILE: [IMPORTS] topLevelFunctions.kt
-    [RAW_FIR] annotations container
-    public final [EXPECT_ACTUAL_MATCHING] fun resolveMe(): R|kotlin/Unit| {
+FILE: [ResolvedTo(IMPORTS)] topLevelFunctions.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe(): R|kotlin/Unit| {
         receive#(functionWithLazyBody#())
     }
-    public? final? [RAW_FIR] fun receive([RAW_FIR] value: String): R|kotlin/Unit| { LAZY_BLOCK }
-    public? final? [RAW_FIR] fun functionWithLazyBody(): String { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: String): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun functionWithLazyBody(): String { LAZY_BLOCK }
 
 ARGUMENTS_OF_ANNOTATIONS:
-FILE: [IMPORTS] topLevelFunctions.kt
-    [RAW_FIR] annotations container
-    public final [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| {
+FILE: [ResolvedTo(IMPORTS)] topLevelFunctions.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| {
         receive#(functionWithLazyBody#())
     }
-    public? final? [RAW_FIR] fun receive([RAW_FIR] value: String): R|kotlin/Unit| { LAZY_BLOCK }
-    public? final? [RAW_FIR] fun functionWithLazyBody(): String { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: String): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun functionWithLazyBody(): String { LAZY_BLOCK }
 
 CONTRACTS:
-FILE: [IMPORTS] topLevelFunctions.kt
-    [RAW_FIR] annotations container
-    public final [CONTRACTS] fun resolveMe(): R|kotlin/Unit| {
+FILE: [ResolvedTo(IMPORTS)] topLevelFunctions.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public final [ResolvedTo(CONTRACTS)] fun resolveMe(): R|kotlin/Unit| {
         receive#(functionWithLazyBody#())
     }
-    public? final? [RAW_FIR] fun receive([RAW_FIR] value: String): R|kotlin/Unit| { LAZY_BLOCK }
-    public? final? [RAW_FIR] fun functionWithLazyBody(): String { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: String): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun functionWithLazyBody(): String { LAZY_BLOCK }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
-FILE: [IMPORTS] topLevelFunctions.kt
-    [RAW_FIR] annotations container
-    public final [IMPLICIT_TYPES_BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
+FILE: [ResolvedTo(IMPORTS)] topLevelFunctions.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
         receive#(functionWithLazyBody#())
     }
-    public? final? [RAW_FIR] fun receive([RAW_FIR] value: String): R|kotlin/Unit| { LAZY_BLOCK }
-    public? final? [RAW_FIR] fun functionWithLazyBody(): String { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: String): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun functionWithLazyBody(): String { LAZY_BLOCK }
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
-FILE: [IMPORTS] topLevelFunctions.kt
-    [RAW_FIR] annotations container
-    public final [ANNOTATIONS_ARGUMENTS_MAPPING] fun resolveMe(): R|kotlin/Unit| {
+FILE: [ResolvedTo(IMPORTS)] topLevelFunctions.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun resolveMe(): R|kotlin/Unit| {
         receive#(functionWithLazyBody#())
     }
-    public? final? [RAW_FIR] fun receive([RAW_FIR] value: String): R|kotlin/Unit| { LAZY_BLOCK }
-    public? final? [RAW_FIR] fun functionWithLazyBody(): String { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: String): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun functionWithLazyBody(): String { LAZY_BLOCK }
 
 BODY_RESOLVE:
-FILE: [IMPORTS] topLevelFunctions.kt
-    [RAW_FIR] annotations container
-    public final [BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
+FILE: [ResolvedTo(IMPORTS)] topLevelFunctions.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
         R|/receive|(R|/functionWithLazyBody|())
     }
-    public final [CONTRACTS] fun receive([CONTRACTS] value: R|kotlin/String|): R|kotlin/Unit| {
+    public final [ResolvedTo(CONTRACTS)] fun receive([ResolvedTo(CONTRACTS)] value: R|kotlin/String|): R|kotlin/Unit| {
     }
-    public final [CONTRACTS] fun functionWithLazyBody(): R|kotlin/String| {
+    public final [ResolvedTo(CONTRACTS)] fun functionWithLazyBody(): R|kotlin/String| {
         ^functionWithLazyBody String(42)
     }
 
 FILE RAW TO BODY:
-FILE: [IMPORTS] topLevelFunctions.kt
-    [BODY_RESOLVE] annotations container
-    public final [BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
+FILE: [ResolvedTo(IMPORTS)] topLevelFunctions.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
         R|/receive|(R|/functionWithLazyBody|())
     }
-    public final [BODY_RESOLVE] fun receive([BODY_RESOLVE] value: R|kotlin/String|): R|kotlin/Unit| {
+    public final [ResolvedTo(BODY_RESOLVE)] fun receive([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/String|): R|kotlin/Unit| {
     }
-    public final [BODY_RESOLVE] fun functionWithLazyBody(): R|kotlin/String| {
+    public final [ResolvedTo(BODY_RESOLVE)] fun functionWithLazyBody(): R|kotlin/String| {
         ^functionWithLazyBody String(42)
     }

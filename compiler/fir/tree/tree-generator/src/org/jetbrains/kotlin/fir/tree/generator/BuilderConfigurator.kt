@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.tree.generator
 
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractBuilderConfigurator
 import org.jetbrains.kotlin.fir.tree.generator.model.*
+import org.jetbrains.kotlin.fir.tree.generator.printer.invisibleField
 import org.jetbrains.kotlin.fir.tree.generator.util.traverseParents
 
 object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTreeBuilder) {
@@ -34,7 +35,7 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
         val classBuilder by builder {
             parents += declarationBuilder
             parents += annotationContainerBuilder
-            fields from klass without listOf("symbol", "resolvePhase", "controlFlowGraphReference")
+            fields from klass without listOf("symbol", "resolvePhase", "resolveState", "controlFlowGraphReference")
         }
 
         builder(regularClass) {
@@ -63,6 +64,7 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             fields from function without listOf(
                 "symbol",
                 "resolvePhase",
+                "resolveState",
                 "controlFlowGraphReference",
                 "receiverParameter",
                 "typeParameters",
@@ -437,6 +439,14 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             fieldPredicate = { it.defaultValueInImplementation == null }
         ) {
             default(it, "FirResolvePhase.RAW_FIR")
+        }
+
+        configureFieldInAllLeafBuilders(
+            field = "resolveState",
+            fieldPredicate = { it.invisibleField },
+            builderPredicate = { it.wantsCopy },
+        ) {
+            useTypes(resolvePhaseExtensionImport)
         }
 
         configureFieldInAllLeafBuilders(

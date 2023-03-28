@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -123,10 +123,13 @@ internal class ReanalyzableFunctionStructureElement(
                 with(originalFunction) {
                     replaceBody(temporaryFunction.body)
                     replaceContractDescription(temporaryFunction.contractDescription)
-                    replaceResolvePhase(upgradedPhase)
+                    @OptIn(ResolveStateAccess::class)
+                    resolveState = upgradedPhase.asResolveState()
                 }
+
                 designation.toSequence(includeTarget = true).forEach {
-                    it.replaceResolvePhase(minOf(it.resolvePhase, upgradedPhase))
+                    @OptIn(ResolveStateAccess::class)
+                    it.resolveState = minOf(it.resolvePhase, upgradedPhase).asResolveState()
                 }
 
                 originalFunction.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
@@ -169,13 +172,14 @@ internal class ReanalyzablePropertyStructureElement(
             val upgradedPhase = minOf(originalProperty.resolvePhase, getterPhase, setterPhase, FirResolvePhase.DECLARATIONS)
 
             withInvalidationOnException(moduleComponents.session) {
+                @OptIn(ResolveStateAccess::class)
                 with(originalProperty) {
                     getter?.replaceBody(temporaryProperty.getter?.body)
                     setter?.replaceBody(temporaryProperty.setter?.body)
                     replaceInitializer(temporaryProperty.initializer)
-                    getter?.replaceResolvePhase(upgradedPhase)
-                    setter?.replaceResolvePhase(upgradedPhase)
-                    replaceResolvePhase(upgradedPhase)
+                    getter?.resolveState = upgradedPhase.asResolveState()
+                    setter?.resolveState = upgradedPhase.asResolveState()
+                    resolveState = upgradedPhase.asResolveState()
                     replaceBodyResolveState(FirPropertyBodyResolveState.NOTHING_RESOLVED)
                 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -75,9 +75,15 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +field("labelNameFromTypeRef", nameType, nullable = true)
         }
 
+        elementWithResolveState.configure {
+            +field("resolvePhase", resolvePhaseType).apply { isParameter = true; }
+            +field("resolveState", resolveStateType).apply {
+                isMutable = true; isVolatile = true; isFinal = true; isLateinit = true
+                customInitializationCall = "resolvePhase.asResolveState()"
+                arbitraryImportables += phaseAsResolveStateExtentionImport
+                optInAnnotation = resolveStateAccessImport
+            }
 
-        elementWithResolvePhase.configure {
-            +field("resolvePhase", resolvePhaseType, withReplace = true).apply { isMutable = true; isVolatile = true }
             +field("moduleData", firModuleDataType)
             shouldBeAbstractClass()
         }
@@ -119,11 +125,10 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         errorFunction.configure {
             +symbol("FirErrorFunctionSymbol")
-            +typeParameters
         }
 
         memberDeclaration.configure {
-            +status.withTransform()
+            +status.withTransform().withReplace()
         }
 
         expression.configure {

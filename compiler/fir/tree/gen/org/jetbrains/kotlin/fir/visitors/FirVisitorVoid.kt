@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirLazyExpression
 import org.jetbrains.kotlin.fir.declarations.FirContextReceiver
-import org.jetbrains.kotlin.fir.FirElementWithResolvePhase
+import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
@@ -214,8 +214,8 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(contextReceiver)
     }
 
-    open fun visitElementWithResolvePhase(elementWithResolvePhase: FirElementWithResolvePhase) {
-        visitElement(elementWithResolvePhase)
+    open fun visitElementWithResolveState(elementWithResolveState: FirElementWithResolveState) {
+        visitElement(elementWithResolveState)
     }
 
     open fun visitFileAnnotationsContainer(fileAnnotationsContainer: FirFileAnnotationsContainer) {
@@ -806,8 +806,8 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitContextReceiver(contextReceiver)
     }
 
-    final override fun visitElementWithResolvePhase(elementWithResolvePhase: FirElementWithResolvePhase, data: Nothing?) {
-        visitElementWithResolvePhase(elementWithResolvePhase)
+    final override fun visitElementWithResolveState(elementWithResolveState: FirElementWithResolveState, data: Nothing?) {
+        visitElementWithResolveState(elementWithResolveState)
     }
 
     final override fun visitFileAnnotationsContainer(fileAnnotationsContainer: FirFileAnnotationsContainer, data: Nothing?) {

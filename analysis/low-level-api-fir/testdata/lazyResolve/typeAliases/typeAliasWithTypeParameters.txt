@@ -1,70 +1,70 @@
 
 RAW_FIR:
-FILE: [RAW_FIR] typeAliasWithTypeParameters.kt
-    [RAW_FIR] annotations container
-    public? final [RAW_FIR] typealias ResolveMe<[RAW_FIR] T : Int, [RAW_FIR] K> = Map<T, K>
+FILE: [ResolvedTo(RAW_FIR)] typeAliasWithTypeParameters.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final [ResolvedTo(RAW_FIR)] typealias ResolveMe<[ResolvedTo(RAW_FIR)] T : Int, [ResolvedTo(RAW_FIR)] K> = Map<T, K>
 
 IMPORTS:
-FILE: [IMPORTS] typeAliasWithTypeParameters.kt
-    [RAW_FIR] annotations container
-    public? final [RAW_FIR] typealias ResolveMe<[RAW_FIR] T : Int, [RAW_FIR] K> = Map<T, K>
+FILE: [ResolvedTo(IMPORTS)] typeAliasWithTypeParameters.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final [ResolvedTo(RAW_FIR)] typealias ResolveMe<[ResolvedTo(RAW_FIR)] T : Int, [ResolvedTo(RAW_FIR)] K> = Map<T, K>
 
 COMPILER_REQUIRED_ANNOTATIONS:
-FILE: [IMPORTS] typeAliasWithTypeParameters.kt
-    [RAW_FIR] annotations container
-    public? final [COMPILER_REQUIRED_ANNOTATIONS] typealias ResolveMe<[COMPILER_REQUIRED_ANNOTATIONS] T : Int, [COMPILER_REQUIRED_ANNOTATIONS] K> = Map<T, K>
+FILE: [ResolvedTo(IMPORTS)] typeAliasWithTypeParameters.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] typealias ResolveMe<[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] T : Int, [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] K> = Map<T, K>
 
 COMPANION_GENERATION:
-FILE: [IMPORTS] typeAliasWithTypeParameters.kt
-    [RAW_FIR] annotations container
-    public? final [COMPANION_GENERATION] typealias ResolveMe<[COMPANION_GENERATION] T : Int, [COMPANION_GENERATION] K> = Map<T, K>
+FILE: [ResolvedTo(IMPORTS)] typeAliasWithTypeParameters.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final [ResolvedTo(COMPANION_GENERATION)] typealias ResolveMe<[ResolvedTo(COMPANION_GENERATION)] T : Int, [ResolvedTo(COMPANION_GENERATION)] K> = Map<T, K>
 
 SUPER_TYPES:
-FILE: [IMPORTS] typeAliasWithTypeParameters.kt
-    [RAW_FIR] annotations container
-    public? final [SUPER_TYPES] typealias ResolveMe<[SUPER_TYPES] T : Int, [SUPER_TYPES] K> = R|kotlin/collections/Map<T, K>|
+FILE: [ResolvedTo(IMPORTS)] typeAliasWithTypeParameters.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final [ResolvedTo(SUPER_TYPES)] typealias ResolveMe<[ResolvedTo(SUPER_TYPES)] T : Int, [ResolvedTo(SUPER_TYPES)] K> = R|kotlin/collections/Map<T, K>|
 
 TYPES:
-FILE: [IMPORTS] typeAliasWithTypeParameters.kt
-    [RAW_FIR] annotations container
-    public? final [TYPES] typealias ResolveMe<[TYPES] T : R|kotlin/Int|, [TYPES] K> = R|kotlin/collections/Map<T, K>|
+FILE: [ResolvedTo(IMPORTS)] typeAliasWithTypeParameters.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final [ResolvedTo(TYPES)] typealias ResolveMe<[ResolvedTo(TYPES)] T : R|kotlin/Int|, [ResolvedTo(TYPES)] K> = R|kotlin/collections/Map<T, K>|
 
 STATUS:
-FILE: [IMPORTS] typeAliasWithTypeParameters.kt
-    [RAW_FIR] annotations container
-    public final [STATUS] typealias ResolveMe<[STATUS] T : R|kotlin/Int|, [STATUS] K> = R|kotlin/collections/Map<T, K>|
+FILE: [ResolvedTo(IMPORTS)] typeAliasWithTypeParameters.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public final [ResolvedTo(STATUS)] typealias ResolveMe<[ResolvedTo(STATUS)] T : R|kotlin/Int|, [ResolvedTo(STATUS)] K> = R|kotlin/collections/Map<T, K>|
 
 EXPECT_ACTUAL_MATCHING:
-FILE: [IMPORTS] typeAliasWithTypeParameters.kt
-    [RAW_FIR] annotations container
-    public final [EXPECT_ACTUAL_MATCHING] typealias ResolveMe<[EXPECT_ACTUAL_MATCHING] T : R|kotlin/Int|, [EXPECT_ACTUAL_MATCHING] K> = R|kotlin/collections/Map<T, K>|
+FILE: [ResolvedTo(IMPORTS)] typeAliasWithTypeParameters.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] typealias ResolveMe<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] T : R|kotlin/Int|, [ResolvedTo(EXPECT_ACTUAL_MATCHING)] K> = R|kotlin/collections/Map<T, K>|
 
 ARGUMENTS_OF_ANNOTATIONS:
-FILE: [IMPORTS] typeAliasWithTypeParameters.kt
-    [RAW_FIR] annotations container
-    public final [ARGUMENTS_OF_ANNOTATIONS] typealias ResolveMe<[ARGUMENTS_OF_ANNOTATIONS] T : R|kotlin/Int|, [ARGUMENTS_OF_ANNOTATIONS] K> = R|kotlin/collections/Map<T, K>|
+FILE: [ResolvedTo(IMPORTS)] typeAliasWithTypeParameters.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] typealias ResolveMe<[ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] T : R|kotlin/Int|, [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] K> = R|kotlin/collections/Map<T, K>|
 
 CONTRACTS:
-FILE: [IMPORTS] typeAliasWithTypeParameters.kt
-    [RAW_FIR] annotations container
-    public final [CONTRACTS] typealias ResolveMe<[CONTRACTS] T : R|kotlin/Int|, [CONTRACTS] K> = R|kotlin/collections/Map<T, K>|
+FILE: [ResolvedTo(IMPORTS)] typeAliasWithTypeParameters.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public final [ResolvedTo(CONTRACTS)] typealias ResolveMe<[ResolvedTo(CONTRACTS)] T : R|kotlin/Int|, [ResolvedTo(CONTRACTS)] K> = R|kotlin/collections/Map<T, K>|
 
 IMPLICIT_TYPES_BODY_RESOLVE:
-FILE: [IMPORTS] typeAliasWithTypeParameters.kt
-    [RAW_FIR] annotations container
-    public final [IMPLICIT_TYPES_BODY_RESOLVE] typealias ResolveMe<[IMPLICIT_TYPES_BODY_RESOLVE] T : R|kotlin/Int|, [IMPLICIT_TYPES_BODY_RESOLVE] K> = R|kotlin/collections/Map<T, K>|
+FILE: [ResolvedTo(IMPORTS)] typeAliasWithTypeParameters.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] typealias ResolveMe<[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] T : R|kotlin/Int|, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] K> = R|kotlin/collections/Map<T, K>|
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
-FILE: [IMPORTS] typeAliasWithTypeParameters.kt
-    [RAW_FIR] annotations container
-    public final [ANNOTATIONS_ARGUMENTS_MAPPING] typealias ResolveMe<[ANNOTATIONS_ARGUMENTS_MAPPING] T : R|kotlin/Int|, [ANNOTATIONS_ARGUMENTS_MAPPING] K> = R|kotlin/collections/Map<T, K>|
+FILE: [ResolvedTo(IMPORTS)] typeAliasWithTypeParameters.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] typealias ResolveMe<[ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] T : R|kotlin/Int|, [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] K> = R|kotlin/collections/Map<T, K>|
 
 BODY_RESOLVE:
-FILE: [IMPORTS] typeAliasWithTypeParameters.kt
-    [RAW_FIR] annotations container
-    public final [BODY_RESOLVE] typealias ResolveMe<[BODY_RESOLVE] T : R|kotlin/Int|, [BODY_RESOLVE] K> = R|kotlin/collections/Map<T, K>|
+FILE: [ResolvedTo(IMPORTS)] typeAliasWithTypeParameters.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public final [ResolvedTo(BODY_RESOLVE)] typealias ResolveMe<[ResolvedTo(BODY_RESOLVE)] T : R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] K> = R|kotlin/collections/Map<T, K>|
 
 FILE RAW TO BODY:
-FILE: [IMPORTS] typeAliasWithTypeParameters.kt
-    [BODY_RESOLVE] annotations container
-    public final [BODY_RESOLVE] typealias ResolveMe<[BODY_RESOLVE] T : R|kotlin/Int|, [BODY_RESOLVE] K> = R|kotlin/collections/Map<T, K>|
+FILE: [ResolvedTo(IMPORTS)] typeAliasWithTypeParameters.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public final [ResolvedTo(BODY_RESOLVE)] typealias ResolveMe<[ResolvedTo(BODY_RESOLVE)] T : R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] K> = R|kotlin/collections/Map<T, K>|

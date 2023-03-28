@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.declarations.ResolveStateAccess
 
 /*
  * This file was generated automatically
@@ -23,7 +24,6 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 abstract class FirTypeParameter : FirTypeParameterRef, FirDeclaration() {
     abstract override val source: KtSourceElement?
-    abstract override val resolvePhase: FirResolvePhase
     abstract override val moduleData: FirModuleData
     abstract override val origin: FirDeclarationOrigin
     abstract override val attributes: FirDeclarationAttributes
@@ -40,8 +40,6 @@ abstract class FirTypeParameter : FirTypeParameterRef, FirDeclaration() {
     @Suppress("UNCHECKED_CAST")
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
         transformer.transformTypeParameter(this, data) as E
-
-    abstract override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
 
     abstract fun replaceBounds(newBounds: List<FirTypeRef>)
 

@@ -1,270 +1,270 @@
 
 RAW_FIR:
-FILE: [RAW_FIR] functionWithGenericExpectedTypeInside.kt
-    [RAW_FIR] annotations container
-    public? open [RAW_FIR] class Foo<[RAW_FIR] T : CharSequence> : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=Foo] constructor<[RAW_FIR] T : CharSequence>(): R|Foo<T>| {
+FILE: [ResolvedTo(RAW_FIR)] functionWithGenericExpectedTypeInside.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T : CharSequence>(): R|Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public? final? [RAW_FIR] class Bar : Foo<String> {
-        public? [RAW_FIR] [ContainingClassKey=Bar] constructor(): R|Bar| {
+    public? final? [ResolvedTo(RAW_FIR)] class Bar : Foo<String> {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Bar] constructor(): R|Bar| {
             LAZY_super<<implicit>>
         }
 
     }
-    public? final? [RAW_FIR] fun bar(): <implicit> { LAZY_BLOCK }
-    public? final? [RAW_FIR] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun bar(): <implicit> { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 IMPORTS:
-FILE: [IMPORTS] functionWithGenericExpectedTypeInside.kt
-    [RAW_FIR] annotations container
-    public? open [RAW_FIR] class Foo<[RAW_FIR] T : CharSequence> : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=Foo] constructor<[RAW_FIR] T : CharSequence>(): R|Foo<T>| {
+FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInside.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T : CharSequence>(): R|Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public? final? [RAW_FIR] class Bar : Foo<String> {
-        public? [RAW_FIR] [ContainingClassKey=Bar] constructor(): R|Bar| {
+    public? final? [ResolvedTo(RAW_FIR)] class Bar : Foo<String> {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Bar] constructor(): R|Bar| {
             LAZY_super<<implicit>>
         }
 
     }
-    public? final? [RAW_FIR] fun bar(): <implicit> { LAZY_BLOCK }
-    public? final? [RAW_FIR] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun bar(): <implicit> { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 COMPILER_REQUIRED_ANNOTATIONS:
-FILE: [IMPORTS] functionWithGenericExpectedTypeInside.kt
-    [RAW_FIR] annotations container
-    public? open [RAW_FIR] class Foo<[RAW_FIR] T : CharSequence> : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=Foo] constructor<[RAW_FIR] T : CharSequence>(): R|Foo<T>| {
+FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInside.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T : CharSequence>(): R|Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public? final? [RAW_FIR] class Bar : Foo<String> {
-        public? [RAW_FIR] [ContainingClassKey=Bar] constructor(): R|Bar| {
+    public? final? [ResolvedTo(RAW_FIR)] class Bar : Foo<String> {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Bar] constructor(): R|Bar| {
             LAZY_super<<implicit>>
         }
 
     }
-    public? final? [RAW_FIR] fun bar(): <implicit> { LAZY_BLOCK }
-    public? final? [COMPILER_REQUIRED_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun bar(): <implicit> { LAZY_BLOCK }
+    public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 COMPANION_GENERATION:
-FILE: [IMPORTS] functionWithGenericExpectedTypeInside.kt
-    [RAW_FIR] annotations container
-    public? open [RAW_FIR] class Foo<[RAW_FIR] T : CharSequence> : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=Foo] constructor<[RAW_FIR] T : CharSequence>(): R|Foo<T>| {
+FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInside.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T : CharSequence>(): R|Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public? final? [RAW_FIR] class Bar : Foo<String> {
-        public? [RAW_FIR] [ContainingClassKey=Bar] constructor(): R|Bar| {
+    public? final? [ResolvedTo(RAW_FIR)] class Bar : Foo<String> {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Bar] constructor(): R|Bar| {
             LAZY_super<<implicit>>
         }
 
     }
-    public? final? [RAW_FIR] fun bar(): <implicit> { LAZY_BLOCK }
-    public? final? [COMPANION_GENERATION] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun bar(): <implicit> { LAZY_BLOCK }
+    public? final? [ResolvedTo(COMPANION_GENERATION)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 SUPER_TYPES:
-FILE: [IMPORTS] functionWithGenericExpectedTypeInside.kt
-    [RAW_FIR] annotations container
-    public? open [RAW_FIR] class Foo<[RAW_FIR] T : CharSequence> : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=Foo] constructor<[RAW_FIR] T : CharSequence>(): R|Foo<T>| {
+FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInside.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T : CharSequence>(): R|Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public? final? [RAW_FIR] class Bar : Foo<String> {
-        public? [RAW_FIR] [ContainingClassKey=Bar] constructor(): R|Bar| {
+    public? final? [ResolvedTo(RAW_FIR)] class Bar : Foo<String> {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Bar] constructor(): R|Bar| {
             LAZY_super<<implicit>>
         }
 
     }
-    public? final? [RAW_FIR] fun bar(): <implicit> { LAZY_BLOCK }
-    public? final? [SUPER_TYPES] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun bar(): <implicit> { LAZY_BLOCK }
+    public? final? [ResolvedTo(SUPER_TYPES)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 TYPES:
-FILE: [IMPORTS] functionWithGenericExpectedTypeInside.kt
-    [RAW_FIR] annotations container
-    public? open [RAW_FIR] class Foo<[RAW_FIR] T : CharSequence> : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=Foo] constructor<[RAW_FIR] T : CharSequence>(): R|Foo<T>| {
+FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInside.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T : CharSequence>(): R|Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public? final? [RAW_FIR] class Bar : Foo<String> {
-        public? [RAW_FIR] [ContainingClassKey=Bar] constructor(): R|Bar| {
+    public? final? [ResolvedTo(RAW_FIR)] class Bar : Foo<String> {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Bar] constructor(): R|Bar| {
             LAZY_super<<implicit>>
         }
 
     }
-    public? final? [RAW_FIR] fun bar(): <implicit> { LAZY_BLOCK }
-    public? final? [TYPES] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun bar(): <implicit> { LAZY_BLOCK }
+    public? final? [ResolvedTo(TYPES)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 STATUS:
-FILE: [IMPORTS] functionWithGenericExpectedTypeInside.kt
-    [RAW_FIR] annotations container
-    public? open [RAW_FIR] class Foo<[RAW_FIR] T : CharSequence> : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=Foo] constructor<[RAW_FIR] T : CharSequence>(): R|Foo<T>| {
+FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInside.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T : CharSequence>(): R|Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public? final? [RAW_FIR] class Bar : Foo<String> {
-        public? [RAW_FIR] [ContainingClassKey=Bar] constructor(): R|Bar| {
+    public? final? [ResolvedTo(RAW_FIR)] class Bar : Foo<String> {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Bar] constructor(): R|Bar| {
             LAZY_super<<implicit>>
         }
 
     }
-    public? final? [RAW_FIR] fun bar(): <implicit> { LAZY_BLOCK }
-    public final [STATUS] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun bar(): <implicit> { LAZY_BLOCK }
+    public final [ResolvedTo(STATUS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 EXPECT_ACTUAL_MATCHING:
-FILE: [IMPORTS] functionWithGenericExpectedTypeInside.kt
-    [RAW_FIR] annotations container
-    public? open [RAW_FIR] class Foo<[RAW_FIR] T : CharSequence> : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=Foo] constructor<[RAW_FIR] T : CharSequence>(): R|Foo<T>| {
+FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInside.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T : CharSequence>(): R|Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public? final? [RAW_FIR] class Bar : Foo<String> {
-        public? [RAW_FIR] [ContainingClassKey=Bar] constructor(): R|Bar| {
+    public? final? [ResolvedTo(RAW_FIR)] class Bar : Foo<String> {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Bar] constructor(): R|Bar| {
             LAZY_super<<implicit>>
         }
 
     }
-    public? final? [RAW_FIR] fun bar(): <implicit> { LAZY_BLOCK }
-    public final [EXPECT_ACTUAL_MATCHING] fun resolveMe(): R|kotlin/Unit| {
-        [RAW_FIR] lval x: Foo<String> = bar#()
+    public? final? [ResolvedTo(RAW_FIR)] fun bar(): <implicit> { LAZY_BLOCK }
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe(): R|kotlin/Unit| {
+        [ResolvedTo(RAW_FIR)] lval x: Foo<String> = bar#()
     }
 
 ARGUMENTS_OF_ANNOTATIONS:
-FILE: [IMPORTS] functionWithGenericExpectedTypeInside.kt
-    [RAW_FIR] annotations container
-    public? open [RAW_FIR] class Foo<[RAW_FIR] T : CharSequence> : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=Foo] constructor<[RAW_FIR] T : CharSequence>(): R|Foo<T>| {
+FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInside.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T : CharSequence>(): R|Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public? final? [RAW_FIR] class Bar : Foo<String> {
-        public? [RAW_FIR] [ContainingClassKey=Bar] constructor(): R|Bar| {
+    public? final? [ResolvedTo(RAW_FIR)] class Bar : Foo<String> {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Bar] constructor(): R|Bar| {
             LAZY_super<<implicit>>
         }
 
     }
-    public? final? [RAW_FIR] fun bar(): <implicit> { LAZY_BLOCK }
-    public final [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| {
-        [RAW_FIR] lval x: Foo<String> = bar#()
+    public? final? [ResolvedTo(RAW_FIR)] fun bar(): <implicit> { LAZY_BLOCK }
+    public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| {
+        [ResolvedTo(RAW_FIR)] lval x: Foo<String> = bar#()
     }
 
 CONTRACTS:
-FILE: [IMPORTS] functionWithGenericExpectedTypeInside.kt
-    [RAW_FIR] annotations container
-    public? open [RAW_FIR] class Foo<[RAW_FIR] T : CharSequence> : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=Foo] constructor<[RAW_FIR] T : CharSequence>(): R|Foo<T>| {
+FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInside.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T : CharSequence>(): R|Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public? final? [RAW_FIR] class Bar : Foo<String> {
-        public? [RAW_FIR] [ContainingClassKey=Bar] constructor(): R|Bar| {
+    public? final? [ResolvedTo(RAW_FIR)] class Bar : Foo<String> {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Bar] constructor(): R|Bar| {
             LAZY_super<<implicit>>
         }
 
     }
-    public? final? [RAW_FIR] fun bar(): <implicit> { LAZY_BLOCK }
-    public final [CONTRACTS] fun resolveMe(): R|kotlin/Unit| {
-        [RAW_FIR] lval x: Foo<String> = bar#()
+    public? final? [ResolvedTo(RAW_FIR)] fun bar(): <implicit> { LAZY_BLOCK }
+    public final [ResolvedTo(CONTRACTS)] fun resolveMe(): R|kotlin/Unit| {
+        [ResolvedTo(RAW_FIR)] lval x: Foo<String> = bar#()
     }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
-FILE: [IMPORTS] functionWithGenericExpectedTypeInside.kt
-    [RAW_FIR] annotations container
-    public? open [RAW_FIR] class Foo<[RAW_FIR] T : CharSequence> : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=Foo] constructor<[RAW_FIR] T : CharSequence>(): R|Foo<T>| {
+FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInside.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T : CharSequence>(): R|Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public? final? [RAW_FIR] class Bar : Foo<String> {
-        public? [RAW_FIR] [ContainingClassKey=Bar] constructor(): R|Bar| {
+    public? final? [ResolvedTo(RAW_FIR)] class Bar : Foo<String> {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Bar] constructor(): R|Bar| {
             LAZY_super<<implicit>>
         }
 
     }
-    public? final? [RAW_FIR] fun bar(): <implicit> { LAZY_BLOCK }
-    public final [IMPLICIT_TYPES_BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
-        [RAW_FIR] lval x: Foo<String> = bar#()
+    public? final? [ResolvedTo(RAW_FIR)] fun bar(): <implicit> { LAZY_BLOCK }
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
+        [ResolvedTo(RAW_FIR)] lval x: Foo<String> = bar#()
     }
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
-FILE: [IMPORTS] functionWithGenericExpectedTypeInside.kt
-    [RAW_FIR] annotations container
-    public? open [RAW_FIR] class Foo<[RAW_FIR] T : CharSequence> : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=Foo] constructor<[RAW_FIR] T : CharSequence>(): R|Foo<T>| {
+FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInside.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T : CharSequence>(): R|Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public? final? [RAW_FIR] class Bar : Foo<String> {
-        public? [RAW_FIR] [ContainingClassKey=Bar] constructor(): R|Bar| {
+    public? final? [ResolvedTo(RAW_FIR)] class Bar : Foo<String> {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Bar] constructor(): R|Bar| {
             LAZY_super<<implicit>>
         }
 
     }
-    public? final? [RAW_FIR] fun bar(): <implicit> { LAZY_BLOCK }
-    public final [ANNOTATIONS_ARGUMENTS_MAPPING] fun resolveMe(): R|kotlin/Unit| {
-        [RAW_FIR] lval x: Foo<String> = bar#()
+    public? final? [ResolvedTo(RAW_FIR)] fun bar(): <implicit> { LAZY_BLOCK }
+    public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun resolveMe(): R|kotlin/Unit| {
+        [ResolvedTo(RAW_FIR)] lval x: Foo<String> = bar#()
     }
 
 BODY_RESOLVE:
-FILE: [IMPORTS] functionWithGenericExpectedTypeInside.kt
-    [RAW_FIR] annotations container
-    public open [TYPES] class Foo<[TYPES] T : R|kotlin/CharSequence|> : R|kotlin/Any| {
-        public [TYPES] [ContainingClassKey=Foo] constructor<[TYPES] T : R|kotlin/CharSequence|>(): R|Foo<T>| {
+FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInside.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public open [ResolvedTo(TYPES)] class Foo<[ResolvedTo(TYPES)] T : R|kotlin/CharSequence|> : R|kotlin/Any| {
+        public [ResolvedTo(TYPES)] [ContainingClassKey=Foo] constructor<[ResolvedTo(TYPES)] T : R|kotlin/CharSequence|>(): R|Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final [TYPES] class Bar : R|Foo<kotlin/String>| {
-        public [STATUS] [ContainingClassKey=Bar] constructor(): R|Bar| {
+    public final [ResolvedTo(TYPES)] class Bar : R|Foo<kotlin/String>| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Bar] constructor(): R|Bar| {
             LAZY_super<<implicit>>
         }
 
     }
-    public final [IMPLICIT_TYPES_BODY_RESOLVE] fun bar(): R|Bar| {
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun bar(): R|Bar| {
         ^bar R|/Bar.Bar|()
     }
-    public final [BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
-        [BODY_RESOLVE] lval x: R|Foo<kotlin/String>| = R|/bar|()
+    public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
+        [ResolvedTo(BODY_RESOLVE)] lval x: R|Foo<kotlin/String>| = R|/bar|()
     }
 
 FILE RAW TO BODY:
-FILE: [IMPORTS] functionWithGenericExpectedTypeInside.kt
-    [BODY_RESOLVE] annotations container
-    public open [BODY_RESOLVE] class Foo<[BODY_RESOLVE] T : R|kotlin/CharSequence|> : R|kotlin/Any| {
-        public [BODY_RESOLVE] [ContainingClassKey=Foo] constructor<[BODY_RESOLVE] T : R|kotlin/CharSequence|>(): R|Foo<T>| {
+FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInside.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public open [ResolvedTo(BODY_RESOLVE)] class Foo<[ResolvedTo(BODY_RESOLVE)] T : R|kotlin/CharSequence|> : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] constructor<[ResolvedTo(BODY_RESOLVE)] T : R|kotlin/CharSequence|>(): R|Foo<T>| {
             super<R|kotlin/Any|>()
         }
 
     }
-    public final [BODY_RESOLVE] class Bar : R|Foo<kotlin/String>| {
-        public [BODY_RESOLVE] [ContainingClassKey=Bar] constructor(): R|Bar| {
+    public final [ResolvedTo(BODY_RESOLVE)] class Bar : R|Foo<kotlin/String>| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Bar] constructor(): R|Bar| {
             super<R|Foo<kotlin/String>|>()
         }
 
     }
-    public final [BODY_RESOLVE] fun bar(): R|Bar| {
+    public final [ResolvedTo(BODY_RESOLVE)] fun bar(): R|Bar| {
         ^bar R|/Bar.Bar|()
     }
-    public final [BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
-        [BODY_RESOLVE] lval x: R|Foo<kotlin/String>| = R|/bar|()
+    public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
+        [ResolvedTo(BODY_RESOLVE)] lval x: R|Foo<kotlin/String>| = R|/bar|()
     }

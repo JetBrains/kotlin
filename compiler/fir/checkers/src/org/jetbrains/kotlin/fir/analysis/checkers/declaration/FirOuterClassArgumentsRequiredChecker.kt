@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.extractArgumentsTypeRefAndSource
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.ResolveStateAccess
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.isValidTypeParameterFromOuterDeclaration
@@ -20,9 +21,10 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 
 object FirOuterClassArgumentsRequiredChecker : FirRegularClassChecker() {
+    @OptIn(ResolveStateAccess::class)
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
         // Checking the rest super types that weren't resolved on the first OUTER_CLASS_ARGUMENTS_REQUIRED check in FirTypeResolver
-        val oldResolvePhase = declaration.resolvePhase
+        val oldResolveState = declaration.resolveState
         val oldList = declaration.superTypeRefs.toList()
 
         try {
@@ -30,15 +32,15 @@ object FirOuterClassArgumentsRequiredChecker : FirRegularClassChecker() {
                 checkOuterClassArgumentsRequired(superTypeRef, declaration, context, reporter)
             }
         } catch (e: ConcurrentModificationException) {
-            val newResolvePhase = declaration.resolvePhase
+            val newResolveState = declaration.resolveState
             val newList = declaration.superTypeRefs.toList()
 
             throw IllegalStateException(
                 """
                 CME while traversing superTypeRefs of declaration=${declaration.render()}:
                 classId: ${declaration.classId},
-                oldPhase: $oldResolvePhase, oldList: ${oldList.joinToString { it.render() }},
-                newPhase: $newResolvePhase, newList: ${newList.joinToString { it.render() }}
+                oldState: $oldResolveState, oldList: ${oldList.joinToString { it.render() }},
+                newState: $newResolveState, newList: ${newList.joinToString { it.render() }}
                 """.trimIndent(), e
             )
         }

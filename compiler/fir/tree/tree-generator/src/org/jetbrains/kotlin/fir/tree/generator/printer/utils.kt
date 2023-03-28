@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.tree.generator.model.*
 import org.jetbrains.kotlin.fir.tree.generator.model.Implementation.Kind
 import org.jetbrains.kotlin.fir.tree.generator.pureAbstractElementType
 import java.io.File
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
 class GeneratedFile(val file: File, val newText: String)
 
@@ -27,9 +28,19 @@ fun Builder.collectImports(): List<String> {
             ImportKind.Builder,
         ) + implementation.fullQualifiedName!! + usedTypes.mapNotNull { it.fullQualifiedName } + builderDsl + "kotlin.contracts.*"
         is IntermediateBuilder -> {
-            val fqns = parents + usedTypes.mapNotNull { it.fullQualifiedName } + allFields.mapNotNull { it.fullQualifiedName } + allFields.flatMap {
-                it.arguments.mapNotNull { it.fullQualifiedName }
-            } + (materializedElement?.fullQualifiedName  ?: throw IllegalStateException(type)) + builderDsl
+            val fqns = buildList {
+                addAll(parents)
+                usedTypes.mapNotNullTo(this) { it.fullQualifiedName }
+                for (field in allFields) {
+                    if (field.invisibleField) continue
+                    field.fullQualifiedName?.let(this::add)
+                    field.arguments.mapNotNullTo(this) { it.fullQualifiedName }
+                }
+
+                add(materializedElement?.fullQualifiedName ?: throw IllegalStateException(type))
+                add(builderDsl)
+            }
+
             fqns.filterRedundantImports(packageName, ImportKind.Builder)
         }
     }.sorted()
@@ -64,22 +75,26 @@ fun Element.collectImports(): List<String> {
 
 private fun Element.collectImportsInternal(base: List<String>, kind: ImportKind): List<String> {
     val fqns = base + allFields.mapNotNull { it.fullQualifiedName } +
-            allFields.flatMap { it.overridenTypes.mapNotNull { it.fullQualifiedName } } +
+            allFields.flatMap { it.overridenTypes.mapNotNull { it.fullQualifiedName } + it.arbitraryImportables.mapNotNull { it.fullQualifiedName } } +
             allFields.flatMap { it.arguments.mapNotNull { it.fullQualifiedName } } +
             typeArguments.flatMap { it.upperBounds.mapNotNull { it.fullQualifiedName } }
-    val result = fqns.filterRedundantImports(packageName, kind) +
-            if (allFields.any { it is FieldList && it.isMutableOrEmpty }) {
-                when (kind) {
-                    ImportKind.Implementation -> listOf(
-                        "org.jetbrains.kotlin.fir.MutableOrEmptyList",
-                        "org.jetbrains.kotlin.fir.builder.toMutableOrEmpty"
-                    )
-                    ImportKind.Builder -> listOf("org.jetbrains.kotlin.fir.builder.toMutableOrEmpty")
-                    else -> emptyList()
-                }
-            } else {
-                emptyList()
-            }
+    val result = fqns.filterRedundantImports(packageName, kind).toMutableList()
+
+    if (allFields.any { it is FieldList && it.isMutableOrEmpty }) {
+        result += when (kind) {
+            ImportKind.Implementation -> listOf(
+                "org.jetbrains.kotlin.fir.MutableOrEmptyList",
+                "org.jetbrains.kotlin.fir.builder.toMutableOrEmpty"
+            )
+            ImportKind.Builder -> listOf("org.jetbrains.kotlin.fir.builder.toMutableOrEmpty")
+            else -> emptyList()
+        }
+    }
+
+    allFields.mapNotNull { it.optInAnnotation?.fullQualifiedName }.distinct().ifNotEmpty {
+        result += this
+    }
+
     if (allFields.any { it.name == "source" && it.withReplace }) {
         return (result + "org.jetbrains.kotlin.fir.FirImplementationDetail").distinct()
     }

@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.symbols.resolvedAnnotationsWithClassIds
 import org.jetbrains.kotlin.fir.symbols.resolvedCompilerRequiredAnnotations
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.fir.declarations.resolvePhase
 
 internal fun mapAnnotationParameters(annotation: FirAnnotation): Map<Name, FirExpression> {
     if (annotation is FirAnnotationCall && annotation.arguments.isEmpty()) return emptyMap()
