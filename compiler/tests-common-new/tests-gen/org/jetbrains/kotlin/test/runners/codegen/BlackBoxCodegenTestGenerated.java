@@ -46567,6 +46567,16 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     }
 
     @Nested
+    @TestMetadata("compiler/testData/codegen/box/size")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Size {
+        @Test
+        public void testAllFilesPresentInSize() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/size"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+        }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/codegen/box/smap")
     @TestDataPath("$PROJECT_ROOT")
     public class Smap {

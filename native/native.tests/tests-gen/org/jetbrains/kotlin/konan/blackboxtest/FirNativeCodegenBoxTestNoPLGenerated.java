@@ -39933,6 +39933,22 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         }
 
         @Nested
+        @TestMetadata("compiler/testData/codegen/box/size")
+        @TestDataPath("$PROJECT_ROOT")
+        @Tag("codegenK2")
+        @Tag("firCodegen")
+        @UseExtTestCaseGroupProvider()
+        @FirPipeline()
+        @UsePartialLinkage(mode = Mode.DISABLED)
+        @Tag("no-partial-linkage-may-be-skipped")
+        public class Size {
+            @Test
+            public void testAllFilesPresentInSize() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/size"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/codegen/box/smap")
         @TestDataPath("$PROJECT_ROOT")
         @Tag("codegenK2")

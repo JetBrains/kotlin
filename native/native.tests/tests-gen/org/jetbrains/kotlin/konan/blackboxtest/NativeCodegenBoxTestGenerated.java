@@ -38493,6 +38493,19 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         }
 
         @Nested
+        @TestMetadata("compiler/testData/codegen/box/size")
+        @TestDataPath("$PROJECT_ROOT")
+        @Tag("codegen")
+        @Tag("k1Codegen")
+        @UseExtTestCaseGroupProvider()
+        public class Size {
+            @Test
+            public void testAllFilesPresentInSize() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/size"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/codegen/box/smap")
         @TestDataPath("$PROJECT_ROOT")
         @Tag("codegen")

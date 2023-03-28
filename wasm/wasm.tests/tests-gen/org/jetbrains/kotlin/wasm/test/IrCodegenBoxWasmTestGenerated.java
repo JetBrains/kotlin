@@ -31189,6 +31189,39 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/box/size")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Size extends AbstractIrCodegenBoxWasmTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
+        }
+
+        @TestMetadata("add.kt")
+        public void testAdd() throws Exception {
+            runTest("compiler/testData/codegen/box/size/add.kt");
+        }
+
+        public void testAllFilesPresentInSize() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/size"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        }
+
+        @TestMetadata("helloWorld.kt")
+        public void testHelloWorld() throws Exception {
+            runTest("compiler/testData/codegen/box/size/helloWorld.kt");
+        }
+
+        @TestMetadata("helloWorldDOM.kt")
+        public void testHelloWorldDOM() throws Exception {
+            runTest("compiler/testData/codegen/box/size/helloWorldDOM.kt");
+        }
+
+        @TestMetadata("ok.kt")
+        public void testOk() throws Exception {
+            runTest("compiler/testData/codegen/box/size/ok.kt");
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/box/smap")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
