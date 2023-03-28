@@ -13,7 +13,7 @@ internal val defaultKotlinTargetHierarchy = KotlinTargetHierarchyDescriptor {
     withModule(ModuleName.main, ModuleName.test)
 
     common {
-        /* All compilations shall receive be added to the common group by default */
+        /* All compilations shall be added to the common group by default */
         withCompilations { true }
 
         group("native") {

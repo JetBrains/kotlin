@@ -127,8 +127,8 @@ internal fun Project.startKotlinPluginLifecycle() {
  * the currently running coroutine. Throws if this coroutine was not started using a [KotlinPluginLifecycle]
  */
 internal suspend fun currentKotlinPluginLifecycle(): KotlinPluginLifecycle {
-    return currentCoroutineContext()[KotlinMultiplatformPluginLifecycleCoroutineContextElement]?.lifecycle
-        ?: error("Missing $KotlinMultiplatformPluginLifecycleCoroutineContextElement in currentCoroutineContext")
+    return currentCoroutineContext()[KotlinPluginLifecycleCoroutineContextElement]?.lifecycle
+        ?: error("Missing $KotlinPluginLifecycleCoroutineContextElement in currentCoroutineContext")
 }
 
 /**
@@ -429,7 +429,7 @@ private class KotlinPluginLifecycleImpl(override val project: Project) : KotlinP
 
         val coroutine = block.createCoroutine(this, object : Continuation<Unit> {
             override val context: CoroutineContext = EmptyCoroutineContext +
-                    KotlinMultiplatformPluginLifecycleCoroutineContextElement(lifecycle)
+                    KotlinPluginLifecycleCoroutineContextElement(lifecycle)
 
             override fun resumeWith(result: Result<Unit>) = result.getOrThrow()
         })
@@ -474,12 +474,12 @@ private class KotlinPluginLifecycleImpl(override val project: Project) : KotlinP
     }
 }
 
-private class KotlinMultiplatformPluginLifecycleCoroutineContextElement(
+private class KotlinPluginLifecycleCoroutineContextElement(
     val lifecycle: KotlinPluginLifecycle
 ) : CoroutineContext.Element {
-    companion object Key : CoroutineContext.Key<KotlinMultiplatformPluginLifecycleCoroutineContextElement>
+    companion object Key : CoroutineContext.Key<KotlinPluginLifecycleCoroutineContextElement>
 
-    override val key: CoroutineContext.Key<KotlinMultiplatformPluginLifecycleCoroutineContextElement> = Key
+    override val key: CoroutineContext.Key<KotlinPluginLifecycleCoroutineContextElement> = Key
 }
 
 private class RestrictedLifecycleStages(
