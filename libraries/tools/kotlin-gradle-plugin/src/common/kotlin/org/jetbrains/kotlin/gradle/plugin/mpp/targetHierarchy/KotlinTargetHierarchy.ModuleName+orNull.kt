@@ -32,6 +32,6 @@ internal suspend fun ModuleName.Companion.orNull(
     AndroidVariantType.UnitTest ->
         target.unitTest.targetHierarchy.module.awaitFinalValue() ?: test
     AndroidVariantType.InstrumentedTest ->
-        target.instrumentedTest.targetHierarchy.module.awaitFinalValue() ?: ModuleName("instrumentedTest")
+        target.instrumentedTest.targetHierarchy.module.awaitFinalValue() ?: instrumentedTest
     AndroidVariantType.Unknown -> null
 }
