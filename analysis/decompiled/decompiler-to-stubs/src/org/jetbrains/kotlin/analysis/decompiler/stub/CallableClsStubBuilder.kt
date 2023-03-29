@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinConstructorStubImpl
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFunctionStubImpl
+import org.jetbrains.kotlin.psi.stubs.impl.KotlinPropertyAccessorStubImpl
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinPropertyStubImpl
 import org.jetbrains.kotlin.resolve.DataClassResolver
 import org.jetbrains.kotlin.serialization.deserialization.AnnotatedCallableKind
@@ -98,6 +99,7 @@ abstract class CallableClsStubBuilder(
         createValueParameterList()
         createReturnTypeStub()
         typeStubBuilder.createTypeConstraintListStub(callableStub, typeConstraintListData)
+        createInitializerStub()
     }
 
     abstract val receiverType: ProtoBuf.Type?
@@ -123,6 +125,8 @@ abstract class CallableClsStubBuilder(
     abstract fun createValueParameterList()
 
     abstract fun doCreateCallableStub(parent: StubElement<out PsiElement>): StubElement<out PsiElement>
+
+    protected open fun createInitializerStub() {}
 }
 
 private class FunctionClsStubBuilder(
@@ -254,6 +258,59 @@ private class PropertyClsStubBuilder(
             hasReturnTypeRef = true,
             fqName = c.containerFqName.child(callableName)
         )
+    }
+
+    override fun createInitializerStub() {
+        val flags = propertyProto.flags
+        if (Flags.HAS_GETTER[flags] && propertyProto.hasGetterFlags()) {
+            val getterFlags = propertyProto.getterFlags
+            if (Flags.IS_NOT_DEFAULT.get(getterFlags)) {
+                val getterStub = KotlinPropertyAccessorStubImpl(callableStub, true, false, true)
+                val modifierList = createModifierListStubForDeclaration(
+                    getterStub,
+                    getterFlags,
+                    listOf(VISIBILITY, MODALITY, INLINE, EXTERNAL_ACCESSOR)
+                )
+                if (Flags.HAS_ANNOTATIONS.get(getterFlags)) {
+                    val annotationIds = c.components.annotationLoader.loadCallableAnnotations(
+                        protoContainer,
+                        propertyProto,
+                        AnnotatedCallableKind.PROPERTY_GETTER
+                    )
+                    createAnnotationStubs(annotationIds, modifierList)
+                }
+            }
+        }
+
+        if (Flags.HAS_SETTER[flags] && propertyProto.hasSetterFlags()) {
+            val setterFlags = propertyProto.setterFlags
+            if (Flags.IS_NOT_DEFAULT.get(setterFlags)) {
+                val setterStub = KotlinPropertyAccessorStubImpl(callableStub, false, true, true)
+                val modifierList = createModifierListStubForDeclaration(
+                    setterStub,
+                    setterFlags,
+                    listOf(VISIBILITY, MODALITY, INLINE, EXTERNAL_ACCESSOR)
+                )
+                if (Flags.HAS_ANNOTATIONS.get(setterFlags)) {
+                    val annotationIds = c.components.annotationLoader.loadCallableAnnotations(
+                        protoContainer,
+                        propertyProto,
+                        AnnotatedCallableKind.PROPERTY_SETTER
+                    )
+                    createAnnotationStubs(annotationIds, modifierList)
+                }
+
+                if (propertyProto.hasSetterValueParameter()) {
+                    typeStubBuilder.createValueParameterListStub(
+                        setterStub,
+                        propertyProto,
+                        listOf(propertyProto.setterValueParameter),
+                        protoContainer,
+                        AnnotatedCallableKind.PROPERTY_SETTER
+                    )
+                }
+            }
+        }
     }
 }
 

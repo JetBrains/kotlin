@@ -16,15 +16,13 @@ import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.stubs.KotlinUserTypeStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.*
-import org.jetbrains.kotlin.serialization.deserialization.DYNAMIC_TYPE_DESERIALIZER_ID
-import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
-import org.jetbrains.kotlin.serialization.deserialization.getClassId
-import org.jetbrains.kotlin.serialization.deserialization.getName
+import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.utils.doNothing
 
 // TODO: see DescriptorRendererOptions.excludedTypeAnnotationClasses for decompiler
@@ -234,14 +232,18 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         parent: StubElement<out PsiElement>,
         callableProto: MessageLite,
         parameters: List<ProtoBuf.ValueParameter>,
-        container: ProtoContainer
+        container: ProtoContainer,
+        callableKind: AnnotatedCallableKind = callableProto.annotatedCallableKind
     ) {
         val parameterListStub = KotlinPlaceHolderStubImpl<KtParameterList>(parent, KtStubElementTypes.VALUE_PARAMETER_LIST)
         for ((index, valueParameterProto) in parameters.withIndex()) {
-            val name = c.nameResolver.getName(valueParameterProto.name)
+            val paramName = when (val name = c.nameResolver.getName(valueParameterProto.name)) {
+                SpecialNames.IMPLICIT_SET_PARAMETER -> Name.identifier("value")
+                else -> name
+            }
             val parameterStub = KotlinParameterStubImpl(
                 parameterListStub,
-                name = name.ref(),
+                name = paramName.ref(),
                 fqName = null,
                 hasDefaultValue = Flags.DECLARES_DEFAULT_VALUE.get(valueParameterProto.flags),
                 hasValOrVar = false,
@@ -265,7 +267,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
 
             if (Flags.HAS_ANNOTATIONS.get(valueParameterProto.flags)) {
                 val parameterAnnotations = c.components.annotationLoader.loadValueParameterAnnotations(
-                    container, callableProto, callableProto.annotatedCallableKind, index, valueParameterProto
+                    container, callableProto, callableKind, index, valueParameterProto
                 )
                 if (parameterAnnotations.isNotEmpty()) {
                     createAnnotationStubs(parameterAnnotations, modifierList ?: createEmptyModifierListStub(parameterStub))
