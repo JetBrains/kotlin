@@ -144,8 +144,11 @@ class StringNumberConversionTest {
             assertProduces("7.7e1", 77.0)
             assertProduces("+770e-1", 77.0)
 
-            assertProduces("-NaN", -Double.NaN)
+            assertProduces("NaN", Double.NaN)
+            assertProduces("Infinity", Double.POSITIVE_INFINITY)
             assertProduces("+Infinity", Double.POSITIVE_INFINITY)
+            assertProduces("-NaN", -Double.NaN)
+            assertProduces("-Infinity", Double.NEGATIVE_INFINITY)
 
             assertFailsOrNull("7..7")
             assertFailsOrNull("007 not a number")
@@ -165,8 +168,11 @@ class StringNumberConversionTest {
             assertProduces("7.7e1", 77.0f)
             assertProduces("+770e-1", 77.0f)
 
-            assertProduces("-NaN", -Float.NaN)
+            assertProduces("NaN", Float.NaN)
+            assertProduces("Infinity", Float.POSITIVE_INFINITY)
             assertProduces("+Infinity", Float.POSITIVE_INFINITY)
+            assertProduces("-NaN", -Float.NaN)
+            assertProduces("-Infinity", Float.NEGATIVE_INFINITY)
 
             assertFailsOrNull("7..7")
             assertFailsOrNull("007 not a number")
