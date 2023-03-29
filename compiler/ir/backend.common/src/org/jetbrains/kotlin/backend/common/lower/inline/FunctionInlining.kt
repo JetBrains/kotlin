@@ -84,7 +84,6 @@ class FunctionInlining(
     private val innerClassesSupport: InnerClassesSupport? = null,
     private val insertAdditionalImplicitCasts: Boolean = false,
     private val alwaysCreateTemporaryVariablesForArguments: Boolean = false,
-    private val inlinePureArguments: Boolean = true,
     private val regenerateInlinedAnonymousObjects: Boolean = false,
     private val inlineArgumentsWithTheirOriginalTypeAndOffset: Boolean = false,
     private val allowExternalInlining: Boolean = false,
@@ -845,8 +844,7 @@ class FunctionInlining(
         }
 
         private fun ParameterToArgument.shouldBeSubstitutedViaTemporaryVariable(): Boolean =
-            !(isImmutableVariableLoad && parameter.index >= 0) &&
-                    !(argumentExpression.isPure(false, context = context) && inlinePureArguments)
+            !(isImmutableVariableLoad && parameter.index >= 0) && !argumentExpression.isPure(false, context = context)
 
         private fun createTemporaryVariable(
             parameter: IrValueParameter,
@@ -873,7 +871,7 @@ class FunctionInlining(
             )
 
             if (alwaysCreateTemporaryVariablesForArguments) {
-                variable.name = parameter.name
+                variable.name = Name.identifier(parameter.name.asStringStripSpecialMarkers())
             }
 
             return variable

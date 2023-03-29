@@ -127,6 +127,7 @@ fun IrInlinable.inline(target: IrDeclarationParent, arguments: List<IrValueDecla
         }
     }
 
+// `getAdditionalStatementsFromInlinedBlock` == `getNonDefaultAdditionalStatementsFromInlinedBlock` + `getDefaultAdditionalStatementsFromInlinedBlock`
 fun IrInlinedFunctionBlock.getAdditionalStatementsFromInlinedBlock(): List<IrStatement> {
     return this.statements
         .filterIsInstance<IrComposite>()
@@ -146,6 +147,7 @@ fun IrInlinedFunctionBlock.getDefaultAdditionalStatementsFromInlinedBlock(): Lis
         .singleOrNull { it.origin == INLINED_FUNCTION_DEFAULT_ARGUMENTS }?.statements ?: emptyList()
 }
 
+// `IrInlinedFunctionBlock`.statements == `getAdditionalStatementsFromInlinedBlock` + `getOriginalStatementsFromInlinedBlock`
 fun IrInlinedFunctionBlock.getOriginalStatementsFromInlinedBlock(): List<IrStatement> {
     return this.statements
         .filter { it !is IrComposite || !(it.origin == INLINED_FUNCTION_ARGUMENTS || it.origin == INLINED_FUNCTION_DEFAULT_ARGUMENTS) }
