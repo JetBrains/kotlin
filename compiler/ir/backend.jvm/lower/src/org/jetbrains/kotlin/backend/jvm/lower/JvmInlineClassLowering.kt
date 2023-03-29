@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
-import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -72,7 +71,6 @@ internal class JvmInlineClassLowering(
 
     override val specificMangle: SpecificMangle
         get() = SpecificMangle.Inline
-    override val IrType.needsHandling get() = isInlineClassType()
     override fun visitClassNewDeclarationsWhenParallel(declaration: IrDeclaration) = Unit
 
     override fun visitClassNew(declaration: IrClass): IrClass {

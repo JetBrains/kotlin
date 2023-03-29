@@ -22,10 +22,7 @@ import org.jetbrains.kotlin.ir.expressions.IrComposite
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOriginImpl
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
-import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.defaultType
-import org.jetbrains.kotlin.ir.types.isNothing
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.InlineClassDescriptorResolver
@@ -289,13 +286,6 @@ class MemoizedMultiFieldValueClassReplacements(
                 else -> null
             }
         }
-
-    override fun quickCheckIfFunctionIsNotApplicable(function: IrFunction): Boolean = !(
-            function.parent.let { it is IrClass && it.isMultiFieldValueClass } ||
-                    function.dispatchReceiverParameter?.type?.needsMfvcFlattening() == true ||
-                    function.extensionReceiverParameter?.type?.needsMfvcFlattening() == true ||
-                    function.valueParameters.any { it.type.needsMfvcFlattening() }
-            )
 
     private val getReplacementForRegularClassConstructorImpl: (IrConstructor) -> IrConstructor? =
         storageManager.createMemoizedFunctionWithNullableValues { constructor ->

@@ -46,8 +46,6 @@ internal class JvmMultiFieldValueClassLowering(
     context: JvmBackendContext,
     scopeStack: MutableList<ScopeWithIr>,
 ) : JvmValueClassAbstractLowering(context, scopeStack) {
-    override val IrType.needsHandling: Boolean
-        get() = needsMfvcFlattening()
 
     private sealed class MfvcNodeInstanceAccessor {
         abstract val instance: MfvcNodeInstance

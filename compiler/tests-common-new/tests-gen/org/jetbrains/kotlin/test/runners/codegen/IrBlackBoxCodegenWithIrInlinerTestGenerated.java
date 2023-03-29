@@ -52150,6 +52150,12 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
         }
 
         @Test
+        @TestMetadata("nestedLoweringStart.kt")
+        public void testNestedLoweringStart() throws Exception {
+            runTest("compiler/testData/codegen/box/valueClasses/nestedLoweringStart.kt");
+        }
+
+        @Test
         @TestMetadata("nothingAsParameterType.kt")
         public void testNothingAsParameterType() throws Exception {
             runTest("compiler/testData/codegen/box/valueClasses/nothingAsParameterType.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());

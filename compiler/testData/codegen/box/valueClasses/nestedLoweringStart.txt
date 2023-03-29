@@ -1,0 +1,40 @@
+@kotlin.Metadata
+public final class A {
+    // source: 'nestedLoweringStart.kt'
+    public method <init>(): void
+    public final method b-1Nq-99U(p0: double, p1: double): void
+}
+
+@kotlin.Metadata
+public final class NestedLoweringStartKt {
+    // source: 'nestedLoweringStart.kt'
+    private static @org.jetbrains.annotations.Nullable field res: java.lang.Object
+    static method <clinit>(): void
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static @org.jetbrains.annotations.Nullable method getRes(): java.lang.Object
+    public final static method setRes(@org.jetbrains.annotations.Nullable p0: java.lang.Object): void
+    private final static method toA$g(p0: A, p1: java.util.List): void
+    public final static @org.jetbrains.annotations.NotNull method toA(@org.jetbrains.annotations.NotNull p0: A): A
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class Point {
+    // source: 'nestedLoweringStart.kt'
+    private final field x: double
+    private final field y: double
+    private synthetic method <init>(p0: double, p1: double): void
+    public synthetic final static method box-impl(p0: double, p1: double): Point
+    public final static method constructor-impl(p0: double, p1: double): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public static method equals-impl(p0: double, p1: double, p2: java.lang.Object): boolean
+    public final static method equals-impl0(p0: double, p1: double, p2: double, p3: double): boolean
+    public final method getX(): double
+    public final method getY(): double
+    public method hashCode(): int
+    public static method hashCode-impl(p0: double, p1: double): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+    public static method toString-impl(p0: double, p1: double): java.lang.String
+    public synthetic final method unbox-impl-x(): double
+    public synthetic final method unbox-impl-y(): double
+}
