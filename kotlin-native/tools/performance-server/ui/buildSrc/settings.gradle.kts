@@ -1,7 +1,4 @@
 pluginManagement {
-    apply(from = "../../../../../repo/scripts/cache-redirector.settings.gradle.kts")
-    apply(from = "../../../../../repo/scripts/kotlin-bootstrap.settings.gradle.kts")
-
     repositories {
         maven {
             url = uri("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
@@ -22,6 +19,8 @@ buildscript {
                 artifact()
             }
         }
+        mavenCentral()
+        gradlePluginPortal()
     }
     val buildGradlePluginVersion = extra["kotlin.build.gradlePlugin.version"]
     dependencies {
