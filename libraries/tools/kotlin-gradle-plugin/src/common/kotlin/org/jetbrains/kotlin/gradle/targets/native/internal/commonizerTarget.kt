@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.gradle.utils.futureExtension
 import org.jetbrains.kotlin.tooling.core.UnsafeApi
 
 internal val KotlinSourceSet.commonizerTarget: Future<CommonizerTarget?> by futureExtension {
-    await(KotlinPluginLifecycle.Stage.AfterFinaliseRefinesEdges)
+    KotlinPluginLifecycle.Stage.AfterFinaliseRefinesEdges.await()
     @OptIn(UnsafeApi::class)
     inferCommonizerTarget(this)
 }
@@ -32,7 +32,7 @@ internal val KotlinSourceSet.sharedCommonizerTarget: Future<SharedCommonizerTarg
     get() = project.future { commonizerTarget.await() as? SharedCommonizerTarget }
 
 internal val KotlinCompilation<*>.commonizerTarget: Future<CommonizerTarget?> by futureExtension {
-    await(KotlinPluginLifecycle.Stage.AfterFinaliseRefinesEdges)
+    KotlinPluginLifecycle.Stage.AfterFinaliseRefinesEdges.await()
     @OptIn(UnsafeApi::class)
     inferCommonizerTarget(this)
 }

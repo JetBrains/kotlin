@@ -68,7 +68,7 @@ class KotlinAndroidTargetVariantTypeDslImplTest {
                 instrumentedTest.targetHierarchy.module.set(KotlinTargetHierarchy.ModuleName.test)
             }
 
-            await(AfterFinaliseRefinesEdges)
+            AfterFinaliseRefinesEdges.await()
 
             assertEquals(setOf("commonTest"), kotlin.sourceSets.getByName("androidInstrumentedTest").dependsOn.map { it.name }.toSet())
             assertEquals(setOf("commonTest"), kotlin.sourceSets.getByName("androidUnitTest").dependsOn.map { it.name }.toSet())
@@ -95,7 +95,7 @@ class KotlinAndroidTargetVariantTypeDslImplTest {
                 withModule(KotlinTargetHierarchy.ModuleName("yyy"))
             }
 
-            await(AfterFinaliseRefinesEdges)
+            AfterFinaliseRefinesEdges.await()
 
             assertEquals(setOf("commonXxx"), kotlin.sourceSets.getByName("androidUnitTest").dependsOn.map { it.name }.toSet())
             assertEquals(setOf("commonYyy"), kotlin.sourceSets.getByName("androidInstrumentedTest").dependsOn.map { it.name }.toSet())

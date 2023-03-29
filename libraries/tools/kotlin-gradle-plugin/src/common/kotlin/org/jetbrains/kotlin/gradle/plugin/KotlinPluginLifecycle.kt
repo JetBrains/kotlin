@@ -132,11 +132,11 @@ internal suspend fun currentKotlinPluginLifecycle(): KotlinPluginLifecycle {
 }
 
 /**
- * Suspends execution until we *at least* reached the specified [stage]
- * This will return right away if the specified [stage] was already executed or we are currently executing the [stage]
+ * Suspends execution until we *at least* reached the specified [this@await]
+ * This will return right away if the specified [this@await] was already executed or we are currently executing the [this@await]
  */
-internal suspend fun await(stage: Stage) {
-    currentKotlinPluginLifecycle().await(stage)
+internal suspend fun Stage.await() {
+    currentKotlinPluginLifecycle().await(this)
 }
 
 /**
@@ -181,7 +181,7 @@ internal suspend fun <T : Any> Property<T>.awaitFinalValue(): T? {
         return lifecycleAwareProperty.awaitFinalValue()
     }
 
-    await(Stage.FinaliseDsl)
+    Stage.FinaliseDsl.await()
     finalizeValue()
     return orNull
 }
@@ -476,7 +476,7 @@ private class KotlinPluginLifecycleImpl(override val project: Project) : KotlinP
     ) : LifecycleAwareProperty<T> {
 
         override suspend fun awaitFinalValue(): T? {
-            await(finaliseIn)
+            finaliseIn.await()
             return property.orNull
         }
     }

@@ -31,7 +31,7 @@ class FutureTest {
     @Test
     fun `test - simple deferred future`() = project.runLifecycleAwareTest {
         val future = project.future {
-            await(FinaliseDsl)
+            FinaliseDsl.await()
             42
         }
 
@@ -44,7 +44,7 @@ class FutureTest {
     @Test
     fun `test - future depending on another future`() = project.runLifecycleAwareTest {
         val futureA = project.future {
-            await(FinaliseDsl)
+            FinaliseDsl.await()
             42
         }
 
@@ -64,7 +64,7 @@ class FutureTest {
         project.evaluate()
 
         val future = project.future {
-            await(FinaliseDsl)
+            FinaliseDsl.await()
             42
         }
 

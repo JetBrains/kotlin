@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.dsl
 
 import org.gradle.api.Action
-import org.gradle.api.GradleException
 import org.gradle.api.Named
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
@@ -30,9 +29,7 @@ import org.jetbrains.kotlin.gradle.utils.castIsolatedKotlinPluginClassLoaderAwar
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
-import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
-import javax.inject.Provider
 import kotlin.reflect.KClass
 
 private const val KOTLIN_PROJECT_EXTENSION_NAME = "kotlin"
@@ -154,7 +151,7 @@ open class KotlinProjectExtension @Inject constructor(project: Project) : Kotlin
         }
 
     internal suspend fun awaitSourceSets(): NamedDomainObjectContainer<KotlinSourceSet> {
-        await(KotlinPluginLifecycle.Stage.AfterFinaliseDsl)
+        KotlinPluginLifecycle.Stage.AfterFinaliseDsl.await()
         return sourceSets
     }
 }

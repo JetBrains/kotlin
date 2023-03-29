@@ -16,7 +16,6 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.internal.customizeKotlinDependencies
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImport
@@ -268,7 +267,7 @@ internal fun sourcesJarTask(compilation: KotlinCompilation<*>, componentName: St
     sourcesJarTask(
         compilation.target.project,
         compilation.target.project.future {
-            await(KotlinPluginLifecycle.Stage.AfterFinaliseCompilations)
+            KotlinPluginLifecycle.Stage.AfterFinaliseCompilations.await()
             compilation.allKotlinSourceSets.associate { it.name to it.kotlin }
         },
         componentName,

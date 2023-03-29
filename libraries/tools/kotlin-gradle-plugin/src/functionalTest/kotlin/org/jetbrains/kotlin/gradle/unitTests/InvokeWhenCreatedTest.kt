@@ -78,7 +78,7 @@ class InvokeWhenCreatedTest {
         project.kotlinExtension.apply {
             val invocations = AtomicInteger(0)
             container.invokeWhenCreated("x") { assertEquals(1, invocations.incrementAndGet()) }
-            await(KotlinPluginLifecycle.Stage.last)
+            KotlinPluginLifecycle.Stage.last.await()
             assertEquals(0, invocations.get())
             container.create("x")
             assertEquals(1, invocations.get())

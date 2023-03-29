@@ -338,7 +338,7 @@ private fun Project.collectAllProjectsData(): Map<String, GranularMetadataTransf
             path = path,
             sourceSetMetadataOutputs = currentProject.future { currentProject.collectSourceSetMetadataOutputs() }.lenient,
             moduleId = currentProject.future {
-                await(KotlinPluginLifecycle.Stage.AfterFinaliseDsl)
+                KotlinPluginLifecycle.Stage.AfterFinaliseDsl.await()
                 ModuleIds.idOfRootModule(currentProject)
             }.lenient
         )

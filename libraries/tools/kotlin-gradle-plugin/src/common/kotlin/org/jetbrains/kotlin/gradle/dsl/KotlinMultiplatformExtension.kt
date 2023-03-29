@@ -27,7 +27,7 @@ abstract class KotlinMultiplatformExtension(project: Project) :
     final override val targets: NamedDomainObjectCollection<KotlinTarget> = project.container(KotlinTarget::class.java)
 
     internal suspend fun awaitTargets(): NamedDomainObjectCollection<KotlinTarget> {
-        await(AfterFinaliseDsl)
+        AfterFinaliseDsl.await()
         return targets
     }
 

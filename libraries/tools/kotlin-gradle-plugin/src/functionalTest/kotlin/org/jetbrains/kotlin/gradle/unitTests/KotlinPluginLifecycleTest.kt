@@ -371,9 +371,9 @@ class KotlinPluginLifecycleTest {
             }
         }
 
-        await(AfterEvaluateBuildscript.nextOrThrow.nextOrThrow)
+        AfterEvaluateBuildscript.nextOrThrow.nextOrThrow.await()
         assertEquals(1, actionInvocations.get())
-        await(Stage.values.last())
+        Stage.values.last().await()
     }
 
     /**

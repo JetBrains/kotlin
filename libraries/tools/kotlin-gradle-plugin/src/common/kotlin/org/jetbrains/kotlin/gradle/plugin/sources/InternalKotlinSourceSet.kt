@@ -26,6 +26,6 @@ internal interface InternalKotlinSourceSet : KotlinSourceSet {
 }
 
 internal suspend fun InternalKotlinSourceSet.awaitPlatformCompilations(): Set<KotlinCompilation<*>> {
-    await(KotlinPluginLifecycle.Stage.FinaliseRefinesEdges)
+    KotlinPluginLifecycle.Stage.FinaliseRefinesEdges.await()
     return compilations.filter { it !is KotlinMetadataCompilation }.toSet()
 }

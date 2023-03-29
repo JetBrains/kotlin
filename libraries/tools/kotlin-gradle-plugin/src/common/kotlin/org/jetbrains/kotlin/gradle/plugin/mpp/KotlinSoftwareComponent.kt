@@ -43,7 +43,7 @@ abstract class KotlinSoftwareComponent(
     private val metadataTarget get() = project.multiplatformExtension.metadata() as KotlinMetadataTarget
 
     private val _variants = project.future {
-        await(AfterFinaliseCompilations)
+        AfterFinaliseCompilations.await()
         kotlinTargets
             .filter { target -> target !is KotlinMetadataTarget }
             .flatMap { target ->

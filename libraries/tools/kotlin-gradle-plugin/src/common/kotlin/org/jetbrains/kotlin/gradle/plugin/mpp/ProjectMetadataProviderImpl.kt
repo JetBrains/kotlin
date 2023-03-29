@@ -67,7 +67,7 @@ internal suspend fun Project.collectSourceSetMetadataOutputs(): Map<SourceSetNam
 }
 
 private suspend fun KotlinMultiplatformExtension.sourceSetsMetadataOutputs(): Map<KotlinSourceSet, FileCollection> {
-    await(KotlinPluginLifecycle.Stage.AfterFinaliseDsl)
+    KotlinPluginLifecycle.Stage.AfterFinaliseDsl.await()
 
     return sourceSets.mapNotNull { sourceSet ->
         val destination = when (val compilation = project.findMetadataCompilation(sourceSet) ?: return@mapNotNull null) {
