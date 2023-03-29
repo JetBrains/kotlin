@@ -5,14 +5,12 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.syntax
 
-import com.intellij.psi.tree.TokenSet
-import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.analysis.getChild
+import org.jetbrains.kotlin.fir.analysis.getSourceForImportSegment
 import org.jetbrains.kotlin.fir.declarations.FirErrorImport
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.collectEnumEntries
@@ -35,7 +33,6 @@ object FirUnresolvedInMiddleOfImportChecker : FirDeclarationSyntaxChecker<FirFil
         when (val diagnostic = import.diagnostic) {
             is ConeUnresolvedParentInImport -> {
                 val source = import.source ?: return
-                var segmentSource: KtSourceElement? = source.dotQualifiedExpression() ?: return
 
                 val symbolProvider = context.session.symbolProvider
                 val parentClassId = diagnostic.parentClassId
@@ -60,13 +57,12 @@ object FirUnresolvedInMiddleOfImportChecker : FirDeclarationSyntaxChecker<FirFil
                     currentClassId = currentClassId.parentClassId
                     errorSegmentIndexFromLast++
                 }
+
                 // Finds the right segment from the last that causes resolution to fail. Note that FirImportResolveTransformer always create
                 // an error import with resolvable package segments. That is, the segment corresponding to the outermost class name is where
                 // resolution failed.
-                for (i in 1..errorSegmentIndexFromLast) {
-                    segmentSource = segmentSource?.dotQualifiedExpression()
-                }
-                val unresolvedSource = segmentSource?.selectorExpression() ?: return
+                val unresolvedSource = import.getSourceForImportSegment(errorSegmentIndexFromLast) ?: return
+
                 reporter.reportOn(
                     unresolvedSource,
                     FirErrors.UNRESOLVED_IMPORT,
@@ -90,12 +86,4 @@ object FirUnresolvedInMiddleOfImportChecker : FirDeclarationSyntaxChecker<FirFil
             (symbolProvider.getClassLikeSymbolByClassId(enumClassId) as? FirRegularClassSymbol)?.takeIf { it.isEnumClass } ?: return false
         return enumClass.collectEnumEntries().any { it.callableId.callableName == classId.shortClassName }
     }
-
-    private val IMPORT_PARENT_TOKEN_TYPES = TokenSet.create(KtNodeTypes.DOT_QUALIFIED_EXPRESSION, KtNodeTypes.REFERENCE_EXPRESSION)
-
-    private fun KtSourceElement.dotQualifiedExpression(): KtSourceElement? = getChild(IMPORT_PARENT_TOKEN_TYPES, depth = 1)
-
-    private fun KtSourceElement.selectorExpression(): KtSourceElement? =
-        takeIf { it.elementType == KtNodeTypes.REFERENCE_EXPRESSION }
-            ?: getChild(KtNodeTypes.REFERENCE_EXPRESSION, depth = 1, reverse = true)
 }

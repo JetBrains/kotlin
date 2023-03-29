@@ -18,7 +18,7 @@ public class B {
 // FILE: C.kt
 
 import A.Nested.*
-import B.JC.JC1
+import B.<!INVISIBLE_REFERENCE!>JC<!>.JC1
 
 fun test() {
     <!INVISIBLE_REFERENCE!>O1<!>

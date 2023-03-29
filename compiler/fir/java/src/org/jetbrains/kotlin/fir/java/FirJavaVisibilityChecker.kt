@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.fir.resolve.isSubclassOf
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 
 @NoMutableState
 object FirJavaVisibilityChecker : FirVisibilityChecker() {

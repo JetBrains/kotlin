@@ -19,10 +19,10 @@ private object PO {}
 //+JDK
 package b
 
-import a.A
-import a.foo
+import a.<!INVISIBLE_REFERENCE!>A<!>
+import a.<!INVISIBLE_REFERENCE!>foo<!>
 import a.makeA
-import a.PO
+import a.<!INVISIBLE_REFERENCE!>PO<!>
 
 fun test() {
     val y = makeA()
