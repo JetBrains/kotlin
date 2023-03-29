@@ -270,7 +270,7 @@ open class DefaultParameterInjector(
         return (0 until functionAccess.valueArgumentsCount).count { functionAccess.getValueArgument(it) != null } != functionAccess.symbol.owner.valueParameters.size
     }
 
-    private fun <T : IrFunctionAccessExpression> visitFunctionAccessExpression(expression: T, builder: (IrFunctionSymbol) -> T): T {
+    private fun <T : IrFunctionAccessExpression> visitFunctionAccessExpression(expression: T, builder: (IrFunctionSymbol) -> T): IrExpression {
         if (!shouldReplaceWithSyntheticFunction(expression))
             return expression
 
@@ -282,7 +282,7 @@ open class DefaultParameterInjector(
 
         val isStatic = isStatic(expression.symbol.owner)
 
-        return builder(symbol).apply {
+        val newCall = builder(symbol).apply {
             copyTypeArgumentsFrom(expression)
 
             var receivers = 0
@@ -307,6 +307,15 @@ open class DefaultParameterInjector(
             log { "call::extension@: ${ir2string(expression.extensionReceiver)}" }
             log { "call::dispatch@: ${ir2string(expression.dispatchReceiver)}" }
         }
+
+        return newCall.takeIf { it.type == expression.type } ?: IrTypeOperatorCallImpl(
+            startOffset = newCall.startOffset,
+            endOffset = newCall.endOffset,
+            type = expression.type,
+            operator = IrTypeOperator.IMPLICIT_CAST,
+            typeOperand = expression.type,
+            argument = newCall
+        )
     }
 
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
@@ -352,8 +361,8 @@ open class DefaultParameterInjector(
 
     override fun visitCall(expression: IrCall): IrExpression {
         expression.transformChildrenVoid()
-        return visitFunctionAccessExpression(expression) {
-            with(expression) {
+        with(expression) {
+            return visitFunctionAccessExpression(expression) {
                 IrCallImpl(
                     startOffset, endOffset, (it as IrSimpleFunctionSymbol).owner.returnType, it,
                     typeArgumentsCount = typeArgumentsCount,
