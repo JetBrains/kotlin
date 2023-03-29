@@ -185,3 +185,4 @@ abstract enum class TestAbstractEnum2 : Enum<TestAbstractEnum2>, IFoo {
     get(): EnumEntries<TestAbstractEnum2> /* Synthetic body for ENUM_ENTRIES */
 
 }
+

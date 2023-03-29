@@ -1,6 +1,9 @@
 // TARGET_BACKEND: JVM
 // SKIP_KT_DUMP
 
+// SKIP_SIGNATURE_DUMP
+// ^ K2 generates an override for foo in C, K1 does not
+
 // FILE: kt45934.kt
 
 class C(client: J) : I by client

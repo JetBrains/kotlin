@@ -12,3 +12,4 @@ fun box(): String {
   val list: List<String> = toList(array = array) as List<String>
   return list.get(index = 0)
 }
+

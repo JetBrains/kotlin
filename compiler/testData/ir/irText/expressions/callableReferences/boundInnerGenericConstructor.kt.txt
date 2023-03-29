@@ -35,3 +35,4 @@ fun box(): String {
   val foo: Inner<String, String> = foo<String, String>(a = "O", b = "K", x = z::<init>/*<String>()*/)
   return foo.<get-a>().plus(other = foo.<get-b>())
 }
+

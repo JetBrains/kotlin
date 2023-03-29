@@ -1,0 +1,72 @@
+// CHECK:
+//   Mangled name: Base
+//   Public signature: /Base|null[0]
+open class Base {
+  // CHECK:
+  //   Mangled name: Base#<init>(){}
+  //   Public signature: /Base.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: TestExplicitPrimaryConstructor
+//   Public signature: /TestExplicitPrimaryConstructor|null[0]
+class TestExplicitPrimaryConstructor : Base {
+  // CHECK:
+  //   Mangled name: TestExplicitPrimaryConstructor#<init>(){}
+  //   Public signature: /TestExplicitPrimaryConstructor.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: TestImplicitPrimaryConstructor
+//   Public signature: /TestImplicitPrimaryConstructor|null[0]
+class TestImplicitPrimaryConstructor : Base {
+  // CHECK:
+  //   Mangled name: TestImplicitPrimaryConstructor#<init>(){}
+  //   Public signature: /TestImplicitPrimaryConstructor.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: TestWithDelegatingConstructor
+//   Public signature: /TestWithDelegatingConstructor|null[0]
+class TestWithDelegatingConstructor : Base {
+  // CHECK:
+  //   Mangled name: TestWithDelegatingConstructor{}x
+  //   Public signature: /TestWithDelegatingConstructor.x|-8060530855978347579[0]
+  val x: Int
+    // CHECK JVM_IR:
+    //   Mangled name: TestWithDelegatingConstructor#<get-x>(){}kotlin.Int
+    //   Public signature: /TestWithDelegatingConstructor.x.<get-x>|4966956098150895696[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: TestWithDelegatingConstructor#<get-x>(){}
+    //   Public signature: /TestWithDelegatingConstructor.x.<get-x>|1482705010654679335[0]
+    get
+
+  // CHECK:
+  //   Mangled name: TestWithDelegatingConstructor{}y
+  //   Public signature: /TestWithDelegatingConstructor.y|3625903257357557171[0]
+  val y: Int
+    // CHECK JVM_IR:
+    //   Mangled name: TestWithDelegatingConstructor#<get-y>(){}kotlin.Int
+    //   Public signature: /TestWithDelegatingConstructor.y.<get-y>|-6745575372101973707[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: TestWithDelegatingConstructor#<get-y>(){}
+    //   Public signature: /TestWithDelegatingConstructor.y.<get-y>|-7902422373892128922[0]
+    get
+
+  // CHECK:
+  //   Mangled name: TestWithDelegatingConstructor#<init>(kotlin.Int){}
+  //   Public signature: /TestWithDelegatingConstructor.<init>|-5182794243525578284[0]
+  constructor(x: Int)
+  // CHECK:
+  //   Mangled name: TestWithDelegatingConstructor#<init>(kotlin.Int;kotlin.Int){}
+  //   Public signature: /TestWithDelegatingConstructor.<init>|-7691762014320324121[0]
+  constructor(x: Int, y: Int) /* primary */
+
+}
+

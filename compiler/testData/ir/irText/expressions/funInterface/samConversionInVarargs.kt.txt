@@ -39,3 +39,4 @@ fun testAdaptedCR() {
     ::withVarargOfInt /*-> IFoo */
   }])
 }
+

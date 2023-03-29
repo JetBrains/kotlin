@@ -1,0 +1,60 @@
+// CHECK:
+//   Mangled name: Outer
+//   Public signature: /Outer|null[0]
+class Outer<T1 : Any?> {
+  // CHECK:
+  //   Mangled name: Outer{}j11
+  //   Public signature: /Outer.j11|3042103907784946942[0]
+  val j11: J<T1, T1>
+    // CHECK JVM_IR:
+    //   Mangled name: Outer#<get-j11>(){}J<1:0,1:0>
+    //   Public signature: /Outer.j11.<get-j11>|1291746945058754296[0]
+    get
+
+  // CHECK:
+  //   Mangled name: Outer.Inner
+  //   Public signature: /Outer.Inner|null[0]
+  inner class Inner<T2 : Any?> {
+    // CHECK:
+    //   Mangled name: Outer.Inner{}j12
+    //   Public signature: /Outer.Inner.j12|8035547960084394556[0]
+    val j12: J<T1, T2>
+      // CHECK JVM_IR:
+      //   Mangled name: Outer.Inner#<get-j12>(){}J<2:0,1:0>
+      //   Public signature: /Outer.Inner.j12.<get-j12>|-5099511302970927970[0]
+      get
+
+    // CHECK:
+    //   Mangled name: Outer.Inner#<init>(J<2:0,1:0>){}
+    //   Public signature: /Outer.Inner.<init>|-1839564309215892252[0]
+    constructor(j12: J<T1, T2>) /* primary */
+
+  }
+
+  // CHECK:
+  //   Mangled name: Outer#<init>(J<1:0,1:0>){}
+  //   Public signature: /Outer.<init>|3621221723434232230[0]
+  constructor(j11: J<T1, T1>) /* primary */
+
+}
+
+// CHECK JVM_IR:
+//   Mangled name: #test3(kotlin.Function1<kotlin.String,kotlin.String>;kotlin.Function1<kotlin.Int,kotlin.String>){}C.D<kotlin.Int?,kotlin.String?>
+//   Public signature: /test3|-179639781639450333[0]
+fun test3(f1: Function1<String, String>, f2: Function1<Int, String>): D<Int?, String?>
+
+// CHECK JVM_IR:
+//   Mangled name: #test4(kotlin.Function1<kotlin.String,kotlin.String>;kotlin.Function1<kotlin.Any,kotlin.String>){}Outer.Inner<kotlin.Any?,kotlin.String?>
+//   Public signature: /test4|7503778563590790519[0]
+fun test4(f: Function1<String, String>, g: Function1<Any, String>): Inner<Any?, String?>
+
+// CHECK JVM_IR:
+//   Mangled name: #testGenericJavaCtor1(kotlin.Function1<kotlin.String,kotlin.Int>){}G<kotlin.String?>
+//   Public signature: /testGenericJavaCtor1|8726720168953319778[0]
+fun testGenericJavaCtor1(f: Function1<String, Int>): G<String?>
+
+// CHECK:
+//   Mangled name: #testGenericJavaCtor2(kotlin.Any){}
+//   Public signature: /testGenericJavaCtor2|-6916979209934908350[0]
+fun testGenericJavaCtor2(x: Any): Unit
+

@@ -24,3 +24,4 @@ val test4: Function2<Int, Int, Unit>
   }
 
   get
+

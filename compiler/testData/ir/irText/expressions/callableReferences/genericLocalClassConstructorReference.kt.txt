@@ -62,3 +62,4 @@ fun <FT : Any?> Rec<FT>.fn(): L<FT> {
 fun <T1 : Any?, T2 : Any?, R : Any?> foo2(t1: T1, t2: T2, bb: Function2<T1, T2, R>): R {
   return bb.invoke(p1 = t1, p2 = t2)
 }
+

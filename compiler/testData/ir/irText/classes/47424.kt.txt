@@ -31,3 +31,4 @@ interface Cb {
 interface C : Cb, Ca {
 
 }
+

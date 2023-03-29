@@ -1,0 +1,9 @@
+// CHECK:
+//   Mangled name: {}test
+//   Public signature: /test|-5712650070209114719[0]
+val test: String?
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-test>(){}kotlin.String?
+  //   Public signature: /test.<get-test>|4001706854451181956[0]
+  get
+

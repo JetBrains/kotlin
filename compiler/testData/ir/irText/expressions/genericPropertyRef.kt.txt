@@ -68,3 +68,4 @@ var <T : Any?> T.bar: T
 val barRef: KMutableProperty1<String?, String?>
   field = ::bar/*<String?>()*/
   get
+

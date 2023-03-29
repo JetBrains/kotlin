@@ -29,3 +29,4 @@ fun box(): String {
     <no name provided>()
   }.<get-a>().<get-ok>()
 }
+

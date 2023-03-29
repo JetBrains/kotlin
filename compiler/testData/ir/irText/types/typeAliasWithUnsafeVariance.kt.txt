@@ -49,3 +49,4 @@ fun getTag(): Tag<*> {
 fun doAction() {
   getTag().<get-action>() /*~> Unit */
 }
+

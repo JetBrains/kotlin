@@ -66,7 +66,8 @@ class Fir2IrResultsConverter(
         val compilerConfigurationProvider = testServices.compilerConfigurationProvider
         val configuration = compilerConfigurationProvider.getCompilerConfiguration(module)
 
-        val fir2IrExtensions = JvmFir2IrExtensions(configuration, JvmIrDeserializerImpl(), JvmIrMangler)
+        val irMangler = JvmIrMangler
+        val fir2IrExtensions = JvmFir2IrExtensions(configuration, JvmIrDeserializerImpl(), irMangler)
 
         // Create and initialize the module and its dependencies
         val project = compilerConfigurationProvider.getProject(module)
@@ -91,8 +92,9 @@ class Fir2IrResultsConverter(
 
         val commonMemberStorage = Fir2IrCommonMemberStorage(
             generateSignatures = generateSignatures,
-            signatureComposerCreator = { JvmIdSignatureDescriptor(JvmDescriptorMangler(null)) },
-            manglerCreator = { FirJvmKotlinMangler() }
+            descriptorMangler = JvmDescriptorMangler(null),
+            signatureComposerCreator = ::JvmIdSignatureDescriptor,
+            firMangler = FirJvmKotlinMangler()
         )
         var irBuiltIns: IrBuiltInsOverFir? = null
 
@@ -136,7 +138,10 @@ class Fir2IrResultsConverter(
             codegenFactory,
             dependentIrParts,
             mainIrPart,
-            sourceFiles
+            sourceFiles,
+            descriptorMangler = commonMemberStorage.symbolTable.signaturer.mangler,
+            irMangler = irMangler,
+            firMangler = commonMemberStorage.signatureComposer.mangler,
         )
     }
 }

@@ -1,0 +1,27 @@
+// CHECK:
+//   Mangled name: IRunnable
+//   Public signature: /IRunnable|null[0]
+fun interface IRunnable {
+
+  // CHECK:
+  //   Mangled name: IRunnable#run(){}
+  //   Public signature: /IRunnable.run|-991178076551934874[0]
+  abstract fun run(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: #foo1(IRunnable;kotlin.Array<out|kotlin.String>...){}
+//   Public signature: /foo1|8109256075034655920[0]
+fun foo1(r: IRunnable, vararg s: String): Unit
+
+// CHECK:
+//   Mangled name: #foo2(IRunnable;IRunnable;kotlin.Array<out|kotlin.String>...){}
+//   Public signature: /foo2|-847052428556006975[0]
+fun foo2(r1: IRunnable, r2: IRunnable, vararg s: String): Unit
+
+// CHECK:
+//   Mangled name: #test(kotlin.Function0<kotlin.Unit>;IRunnable;kotlin.String;kotlin.Array<kotlin.String>){}
+//   Public signature: /test|8261026842322841823[0]
+fun test(fn: Function0<Unit>, r: IRunnable, s: String, arr: Array<String>): Unit
+

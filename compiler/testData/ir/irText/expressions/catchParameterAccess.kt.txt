@@ -7,3 +7,4 @@ fun test(f: Function0<Unit>) {
   }
 
 }
+

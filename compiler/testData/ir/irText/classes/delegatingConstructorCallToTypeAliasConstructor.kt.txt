@@ -30,3 +30,4 @@ class C2 : Cell<String> {
   }
 
 }
+

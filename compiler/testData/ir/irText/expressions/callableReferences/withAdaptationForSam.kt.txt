@@ -19,3 +19,4 @@ fun test() {
     ::withVararg /*-> IFoo */
   })
 }
+

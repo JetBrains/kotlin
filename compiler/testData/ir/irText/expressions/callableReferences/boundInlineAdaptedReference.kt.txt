@@ -16,3 +16,4 @@ fun test() {
     "Fail"::id
   })
 }
+

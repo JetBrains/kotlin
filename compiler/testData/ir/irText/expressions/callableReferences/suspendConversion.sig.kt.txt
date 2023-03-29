@@ -1,0 +1,124 @@
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
+class C {
+  // CHECK:
+  //   Mangled name: C#<init>(){}
+  //   Public signature: /C.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: C#bar(){}
+  //   Public signature: /C.bar|496682602797471549[0]
+  fun bar(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: #foo0(){}
+//   Public signature: /foo0|854950155582184407[0]
+suspend fun foo0(): Unit
+
+// CHECK:
+//   Mangled name: #foo1(){}
+//   Public signature: /foo1|-8639587189244574023[0]
+fun foo1(): Unit
+
+// CHECK:
+//   Mangled name: #foo2(kotlin.IntArray...){}
+//   Public signature: /foo2|5922411859677377366[0]
+fun foo2(vararg xs: Int): Unit
+
+// CHECK JVM_IR:
+//   Mangled name: #foo3(){}kotlin.Int
+//   Public signature: /foo3|8491530264469693037[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #foo3(){}
+//   Public signature: /foo3|-7010019271447432065[0]
+fun foo3(): Int
+
+// CHECK:
+//   Mangled name: #foo4(kotlin.Int){}
+//   Public signature: /foo4|2900723419202106229[0]
+fun foo4(i: Int): Unit
+
+// CHECK:
+//   Mangled name: #fooInt(kotlin.Int){}
+//   Public signature: /fooInt|-6183432728780744676[0]
+fun fooInt(x: Int): Unit
+
+// CHECK:
+//   Mangled name: #testLambda(){}
+//   Public signature: /testLambda|-124997257399938843[0]
+fun testLambda(): Unit
+
+// CHECK:
+//   Mangled name: #testNestedNullableParam(){}
+//   Public signature: /testNestedNullableParam|-2012116353768946084[0]
+fun testNestedNullableParam(): Unit
+
+// CHECK:
+//   Mangled name: #testNoCoversion(){}
+//   Public signature: /testNoCoversion|-8699135843773409510[0]
+fun testNoCoversion(): Unit
+
+// CHECK:
+//   Mangled name: #testNullableParam(){}
+//   Public signature: /testNullableParam|-2995936548663185551[0]
+fun testNullableParam(): Unit
+
+// CHECK:
+//   Mangled name: #testSuspendPlain(){}
+//   Public signature: /testSuspendPlain|8964987636066532028[0]
+fun testSuspendPlain(): Unit
+
+// CHECK:
+//   Mangled name: #testSuspendWithArgs(){}
+//   Public signature: /testSuspendWithArgs|5693690156127811203[0]
+fun testSuspendWithArgs(): Unit
+
+// CHECK:
+//   Mangled name: #testWithBoundReceiver(){}
+//   Public signature: /testWithBoundReceiver|7823514110875059394[0]
+fun testWithBoundReceiver(): Unit
+
+// CHECK:
+//   Mangled name: #testWithCoercionToUnit(){}
+//   Public signature: /testWithCoercionToUnit|7796968706461873316[0]
+fun testWithCoercionToUnit(): Unit
+
+// CHECK:
+//   Mangled name: #testWithDefaults(){}
+//   Public signature: /testWithDefaults|-448085806147000561[0]
+fun testWithDefaults(): Unit
+
+// CHECK:
+//   Mangled name: #testWithVararg(){}
+//   Public signature: /testWithVararg|-4416299807822127184[0]
+fun testWithVararg(): Unit
+
+// CHECK:
+//   Mangled name: #testWithVarargMapped(){}
+//   Public signature: /testWithVarargMapped|-7339035095379549066[0]
+fun testWithVarargMapped(): Unit
+
+// CHECK:
+//   Mangled name: #useSuspend(kotlin.coroutines.SuspendFunction0<kotlin.Unit>){}
+//   Public signature: /useSuspend|60604456614172212[0]
+fun useSuspend(fn: SuspendFunction0<Unit>): Unit
+
+// CHECK:
+//   Mangled name: #useSuspendInt(kotlin.coroutines.SuspendFunction1<kotlin.Int,kotlin.Unit>){}
+//   Public signature: /useSuspendInt|6677445730045728976[0]
+fun useSuspendInt(fn: SuspendFunction1<Int, Unit>): Unit
+
+// CHECK:
+//   Mangled name: #useSuspendNestedNullable(kotlin.coroutines.SuspendFunction0<kotlin.Unit>?){}
+//   Public signature: /useSuspendNestedNullable|4549127976714545272[0]
+fun useSuspendNestedNullable(fn: SuspendFunction0<Unit>?): Unit
+
+// CHECK:
+//   Mangled name: #useSuspendNullable(kotlin.coroutines.SuspendFunction0<kotlin.Unit>?){}
+//   Public signature: /useSuspendNullable|967374217920293410[0]
+fun useSuspendNullable(fn: SuspendFunction0<Unit>?): Unit
+

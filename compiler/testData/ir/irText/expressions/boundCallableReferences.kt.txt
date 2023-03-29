@@ -28,3 +28,4 @@ val test2: KProperty0<Int>
 val test3: KFunction0<Unit>
   field = A()::qux
   get
+

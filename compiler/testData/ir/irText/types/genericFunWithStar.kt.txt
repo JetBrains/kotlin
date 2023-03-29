@@ -27,3 +27,4 @@ abstract class Box<T> : IFoo, IBar where T : IFoo, T : IBar {
   }
 
 }
+

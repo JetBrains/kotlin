@@ -1,0 +1,61 @@
+// CHECK:
+//   Mangled name: IFoo
+//   Public signature: /IFoo|null[0]
+interface IFoo {
+
+  // CHECK:
+  //   Mangled name: IFoo@A{}foo
+  //   Public signature: /IFoo.foo|1214000299789500455[0]
+  val A.foo: B
+    // CHECK JVM_IR:
+    //   Mangled name: IFoo#<get-foo>@A(){}B
+    //   Public signature: /IFoo.foo.<get-foo>|8070848468738985847[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: IFoo#<get-foo>@A(){}
+    //   Public signature: /IFoo.foo.<get-foo>|-1820743651074494698[0]
+    get(): B
+
+}
+
+// CHECK:
+//   Mangled name: IInvoke
+//   Public signature: /IInvoke|null[0]
+interface IInvoke {
+
+  // CHECK JVM_IR:
+  //   Mangled name: IInvoke#invoke@B(){}kotlin.Int
+  //   Public signature: /IInvoke.invoke|7560171197904259096[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: IInvoke#invoke@B(){}
+  //   Public signature: /IInvoke.invoke|-8763880178141053779[0]
+  operator fun B.invoke(): Int
+
+}
+
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+object A {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
+  private constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[0]
+object B {
+  // CHECK:
+  //   Mangled name: B#<init>(){}
+  //   Public signature: /B.<init>|-5645683436151566731[0]
+  private constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: #test(IFoo;IInvoke){}
+//   Public signature: /test|8554265419982095815[0]
+fun test(fooImpl: IFoo, invokeImpl: IInvoke): Unit
+

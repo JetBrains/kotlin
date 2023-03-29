@@ -45,3 +45,4 @@ data class MyRec : Record {
 fun test(rec: MyRec) {
   rec.<get-name>() /*~> Unit */
 }
+

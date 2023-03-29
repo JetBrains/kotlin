@@ -1,0 +1,25 @@
+// CHECK:
+//   Mangled name: KotlinBox
+//   Public signature: /KotlinBox|null[0]
+class KotlinBox<T : Any?> {
+  // CHECK:
+  //   Mangled name: KotlinBox{}data
+  //   Public signature: /KotlinBox.data|4273011692695536650[0]
+  val data: T?
+    // CHECK JVM_IR:
+    //   Mangled name: KotlinBox#<get-data>(){}1:0?
+    //   Public signature: /KotlinBox.data.<get-data>|-1848755759162008356[0]
+    get
+
+  // CHECK:
+  //   Mangled name: KotlinBox#<init>(1:0?){}
+  //   Public signature: /KotlinBox.<init>|-6137285739236751325[0]
+  constructor(data: T?) /* primary */
+
+}
+
+// CHECK JVM_IR:
+//   Mangled name: #f(KotlinBox<JavaBox>){}kotlin.String
+//   Public signature: /f|-1490534641019781585[0]
+fun f(r: KotlinBox<JavaBox>): String
+

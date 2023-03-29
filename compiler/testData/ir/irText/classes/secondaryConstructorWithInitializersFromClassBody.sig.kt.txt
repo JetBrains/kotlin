@@ -1,0 +1,65 @@
+// CHECK:
+//   Mangled name: Base
+//   Public signature: /Base|null[0]
+open class Base {
+  // CHECK:
+  //   Mangled name: Base#<init>(){}
+  //   Public signature: /Base.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: TestInitBlock
+//   Public signature: /TestInitBlock|null[0]
+class TestInitBlock : Base {
+  // CHECK:
+  //   Mangled name: TestInitBlock{}x
+  //   Public signature: /TestInitBlock.x|-8060530855978347579[0]
+  val x: Int
+    // CHECK JVM_IR:
+    //   Mangled name: TestInitBlock#<get-x>(){}kotlin.Int
+    //   Public signature: /TestInitBlock.x.<get-x>|4966956098150895696[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: TestInitBlock#<get-x>(){}
+    //   Public signature: /TestInitBlock.x.<get-x>|1482705010654679335[0]
+    get
+
+  // CHECK:
+  //   Mangled name: TestInitBlock#<init>(){}
+  //   Public signature: /TestInitBlock.<init>|-5645683436151566731[0]
+  constructor()
+  // CHECK:
+  //   Mangled name: TestInitBlock#<init>(kotlin.Int){}
+  //   Public signature: /TestInitBlock.<init>|-5182794243525578284[0]
+  constructor(y: Int)
+  // CHECK:
+  //   Mangled name: TestInitBlock#<init>(kotlin.Any){}
+  //   Public signature: /TestInitBlock.<init>|4518179880532599055[0]
+  constructor(z: Any)
+
+}
+
+// CHECK:
+//   Mangled name: TestProperty
+//   Public signature: /TestProperty|null[0]
+class TestProperty : Base {
+  // CHECK:
+  //   Mangled name: TestProperty{}x
+  //   Public signature: /TestProperty.x|-8060530855978347579[0]
+  val x: Int
+    // CHECK JVM_IR:
+    //   Mangled name: TestProperty#<get-x>(){}kotlin.Int
+    //   Public signature: /TestProperty.x.<get-x>|4966956098150895696[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: TestProperty#<get-x>(){}
+    //   Public signature: /TestProperty.x.<get-x>|1482705010654679335[0]
+    get
+
+  // CHECK:
+  //   Mangled name: TestProperty#<init>(){}
+  //   Public signature: /TestProperty.<init>|-5645683436151566731[0]
+  constructor()
+
+}
+

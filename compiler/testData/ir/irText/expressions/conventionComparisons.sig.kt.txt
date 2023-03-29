@@ -1,0 +1,54 @@
+// CHECK:
+//   Mangled name: IA
+//   Public signature: /IA|null[0]
+interface IA {
+
+}
+
+// CHECK:
+//   Mangled name: IB
+//   Public signature: /IB|null[0]
+interface IB {
+
+  // CHECK JVM_IR:
+  //   Mangled name: IB#compareTo@IA(IA){}kotlin.Int
+  //   Public signature: /IB.compareTo|-7259969497814497426[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: IB#compareTo@IA(IA){}
+  //   Public signature: /IB.compareTo|-6258326288651646740[0]
+  abstract operator fun IA.compareTo(other: IA): Int
+
+}
+
+// CHECK JVM_IR:
+//   Mangled name: #test1@IB(IA;IA){}kotlin.Boolean
+//   Public signature: /test1|-4373836657117486273[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test1@IB(IA;IA){}
+//   Public signature: /test1|2110430035798087324[0]
+fun IB.test1(a1: IA, a2: IA): Boolean
+
+// CHECK JVM_IR:
+//   Mangled name: #test2@IB(IA;IA){}kotlin.Boolean
+//   Public signature: /test2|5436750902587155920[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test2@IB(IA;IA){}
+//   Public signature: /test2|-1582753887583153969[0]
+fun IB.test2(a1: IA, a2: IA): Boolean
+
+// CHECK JVM_IR:
+//   Mangled name: #test3@IB(IA;IA){}kotlin.Boolean
+//   Public signature: /test3|-6567103906122911326[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test3@IB(IA;IA){}
+//   Public signature: /test3|7130450291559664455[0]
+fun IB.test3(a1: IA, a2: IA): Boolean
+
+// CHECK JVM_IR:
+//   Mangled name: #test4@IB(IA;IA){}kotlin.Boolean
+//   Public signature: /test4|-2122684825224786608[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test4@IB(IA;IA){}
+//   Public signature: /test4|-7050566763299108335[0]
+fun IB.test4(a1: IA, a2: IA): Boolean
+

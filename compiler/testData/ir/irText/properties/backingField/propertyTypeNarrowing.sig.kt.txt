@@ -1,0 +1,47 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+class A {
+  // CHECK:
+  //   Mangled name: A{}it
+  //   Public signature: /A.it|3309866017710461759[0]
+  val it: Int
+    // CHECK JVM_IR:
+    //   Mangled name: A#<get-it>(){}kotlin.Number
+    //   Public signature: /A.it.<get-it>|-5000280677775858846[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: A#<get-it>(){}
+    //   Public signature: /A.it.<get-it>|1332554369542649775[0]
+    get
+
+  // CHECK:
+  //   Mangled name: A{}p
+  //   Public signature: /A.p|6715504260787941082[0]
+  val p: Int
+    // CHECK JVM_IR:
+    //   Mangled name: A#<get-p>(){}kotlin.Int
+    //   Public signature: /A.p.<get-p>|5329635969197638839[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: A#<get-p>(){}
+    //   Public signature: /A.p.<get-p>|-1162552463316289847[0]
+    get(): Int
+
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#test(){}kotlin.Int
+  //   Public signature: /A.test|4216975235718029399[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: A#test(){}
+  //   Public signature: /A.test|6620506149988718649[0]
+  fun test(): Int
+
+}
+
+// CHECK:
+//   Mangled name: #test(){}
+//   Public signature: /test|6620506149988718649[0]
+fun test(): Unit

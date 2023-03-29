@@ -34,3 +34,4 @@ fun dump(data: IrElement, dumpStrategy: String): String {
   }
   return dump.invoke(p1 = data)
 }
+

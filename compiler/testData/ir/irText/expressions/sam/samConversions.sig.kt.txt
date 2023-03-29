@@ -1,0 +1,25 @@
+// CHECK:
+//   Mangled name: #test0@J(java.lang.Runnable){}
+//   Public signature: /test0|7082314898497215723[0]
+fun J.test0(a: Runnable): Unit
+
+// CHECK:
+//   Mangled name: #test1(){}
+//   Public signature: /test1|4297044443957252634[0]
+fun test1(): Unit
+
+// CHECK:
+//   Mangled name: #test2@J(){}
+//   Public signature: /test2|-509977306549568233[0]
+fun J.test2(): Unit
+
+// CHECK:
+//   Mangled name: #test3@J(kotlin.Function0<kotlin.Unit>){}
+//   Public signature: /test3|3795186268197616186[0]
+fun J.test3(a: Function0<Unit>): Unit
+
+// CHECK:
+//   Mangled name: #test4@J(kotlin.Function0<kotlin.Unit>;kotlin.Function0<kotlin.Unit>;kotlin.Boolean){}
+//   Public signature: /test4|-7934218580139307891[0]
+fun J.test4(a: Function0<Unit>, b: Function0<Unit>, flag: Boolean): Unit
+

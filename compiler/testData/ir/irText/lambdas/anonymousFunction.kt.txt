@@ -4,3 +4,4 @@ val anonymous: Function0<Unit>
   }
 
   get
+

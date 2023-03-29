@@ -1,0 +1,10 @@
+// CHECK JVM_IR:
+//   Mangled name: #f(0:0){0§<kotlin.CharSequence?&kotlin.Comparable<0:0>>}kotlin.Int
+//   Public signature: /f|-3526152195410076712[0]
+fun <T> f(x: T): Int where T : CharSequence?, T : Comparable<T>
+
+// CHECK:
+//   Mangled name: #test(){}
+//   Public signature: /test|6620506149988718649[0]
+fun test(): Unit
+

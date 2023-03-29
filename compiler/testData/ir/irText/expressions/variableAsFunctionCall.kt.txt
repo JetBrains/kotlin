@@ -32,3 +32,4 @@ fun test4(ns: String?): String? {
     }
   }
 }
+

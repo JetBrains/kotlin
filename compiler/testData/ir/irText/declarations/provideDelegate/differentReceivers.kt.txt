@@ -34,3 +34,4 @@ val testK: String /* by */
 val testOK: String
   field = <get-testO>().plus(other = <get-testK>())
   get
+

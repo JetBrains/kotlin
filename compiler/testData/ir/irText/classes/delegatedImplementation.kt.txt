@@ -147,3 +147,4 @@ class Test2 : IBase, IOther {
     }
 
 }
+

@@ -29,3 +29,4 @@ private fun <A : Any?> allCandidatesResult(allCandidates: Collection<MyCandidate
   }
 )
 }
+

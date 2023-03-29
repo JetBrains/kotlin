@@ -158,6 +158,25 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
         description = "Skips check pretty kt IR dump (disables ${IrPrettyKotlinDumpHandler::class})"
     )
 
+    val DUMP_SIGNATURES by directive(
+        description = """
+        Like $DUMP_KT_IR, but does not dump function bodies, and prints a rendered binary signature and a mangled name for each declaration
+        (enables ${IrMangledNameAndSignatureDumpHandler::class})
+        """.trimIndent()
+    )
+
+    val DUMP_LOCAL_DECLARATION_SIGNATURES by directive(
+        description = "For tests with $DUMP_SIGNATURES, also dumps signatures and mangled names for local functions and classes"
+    )
+
+    val SKIP_SIGNATURE_DUMP by directive(
+        description = "Disables dumping signatures and mangled names of declarations to the ${IrMangledNameAndSignatureDumpHandler.DUMP_EXTENSION} file"
+    )
+
+    val MUTE_SIGNATURE_COMPARISON_K2 by enumDirective<TargetBackend>(
+        description = "Ignores failures of signature dump comparison for tests with the $DUMP_SIGNATURES directive if the test uses the K2 frontend and the specified backend."
+    )
+
     val DUMP_IR_FOR_GIVEN_PHASES by valueDirective<AnyNamedPhase>(
         description = "Dumps backend IR after given lowerings (enables ${PhasedIrDumpHandler::class})",
         parser = { error("Cannot parse value $it for \"DUMP_IR_FOR_GIVEN_PHASES\" directive. All arguments must be specified via code in test system") }

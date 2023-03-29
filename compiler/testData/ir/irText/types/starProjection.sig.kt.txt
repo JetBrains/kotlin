@@ -1,0 +1,26 @@
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
+abstract class C {
+  // CHECK:
+  //   Mangled name: C#<init>(){}
+  //   Public signature: /C.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: C#dispatchResumeWithException(kotlin.Throwable;Continuation<*>){}kotlin.Boolean
+  //   Public signature: /C.dispatchResumeWithException|4528907504622041214[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: C#dispatchResumeWithException(kotlin.Throwable;Continuation<*>){}
+  //   Public signature: /C.dispatchResumeWithException|-2529565672521727710[0]
+  abstract fun dispatchResumeWithException(exception: Throwable, continuation: Continuation<*>): Boolean
+
+}
+
+// CHECK:
+//   Mangled name: Continuation
+//   Public signature: /Continuation|null[0]
+interface Continuation<in T : Any?> {
+
+}
+

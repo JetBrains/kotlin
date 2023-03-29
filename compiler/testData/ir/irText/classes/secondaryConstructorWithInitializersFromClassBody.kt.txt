@@ -45,3 +45,4 @@ class TestInitBlock : Base {
   }
 
 }
+

@@ -1,0 +1,30 @@
+// CHECK:
+//   Mangled name: Base
+//   Public signature: /Base|null[0]
+open class Base {
+  // CHECK:
+  //   Mangled name: Base#<init>(){}
+  //   Public signature: /Base.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: Test
+//   Public signature: /Test|null[0]
+class Test : Base {
+  // CHECK:
+  //   Mangled name: Test#<init>(){}
+  //   Public signature: /Test.<init>|-5645683436151566731[0]
+  constructor()
+  // CHECK:
+  //   Mangled name: Test#<init>(kotlin.Int){}
+  //   Public signature: /Test.<init>|-5182794243525578284[0]
+  constructor(xx: Int)
+  // CHECK:
+  //   Mangled name: Test#<init>(kotlin.Short){}
+  //   Public signature: /Test.<init>|-8537285994488541433[0]
+  constructor(xx: Short)
+
+}
+

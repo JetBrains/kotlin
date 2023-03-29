@@ -1,0 +1,85 @@
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
+class C : J, K {
+  // CHECK:
+  //   Mangled name: C#<init>(J;K){}
+  //   Public signature: /C.<init>|-2567074436149559695[0]
+  constructor(j: J, k: K) /* primary */
+  // CHECK:
+  //   Mangled name: C.$$delegate_0
+  //   Public signature: /C.$$delegate_0|-7286425919675154353[0]
+  private /* final field */ val $$delegate_0: J
+  // CHECK:
+  //   Mangled name: C.$$delegate_1
+  //   Public signature: /C.$$delegate_1|-7286425919675154353[0]
+  private /* final field */ val $$delegate_1: K
+  // CHECK JVM_IR:
+  //   Mangled name: C#jf1(){}kotlin.collections.MutableCollection<out|kotlin.CharSequence?>?
+  //   Public signature: /C.jf1|-387990976967063904[0]
+  override fun jf1(): MutableCollection<out CharSequence?>?
+
+  // CHECK JVM_IR:
+  //   Mangled name: C#jf2(){}kotlin.collections.MutableCollection<kotlin.CharSequence?>?
+  //   Public signature: /C.jf2|-7398686593036415617[0]
+  override fun jf2(): MutableCollection<CharSequence?>?
+
+  // CHECK:
+  //   Mangled name: C#jg1(kotlin.collections.MutableCollection<out|kotlin.CharSequence?>?){}
+  //   Public signature: /C.jg1|2174775240821458908[0]
+  override fun jg1(c: MutableCollection<out CharSequence?>?): Unit
+
+  // CHECK:
+  //   Mangled name: C#jg2(kotlin.collections.MutableCollection<kotlin.CharSequence?>?){}
+  //   Public signature: /C.jg2|-7555364934046539560[0]
+  override fun jg2(c: MutableCollection<CharSequence?>?): Unit
+
+  // CHECK JVM_IR:
+  //   Mangled name: C#kf1(){}kotlin.collections.Collection<out|kotlin.CharSequence>
+  //   Public signature: /C.kf1|-5428150421605044193[0]
+  override fun kf1(): Collection<out CharSequence>
+
+  // CHECK JVM_IR:
+  //   Mangled name: C#kf2(){}kotlin.collections.Collection<kotlin.CharSequence>
+  //   Public signature: /C.kf2|8420376873797628329[0]
+  override fun kf2(): Collection<CharSequence>
+
+  // CHECK:
+  //   Mangled name: C#kg1(kotlin.collections.Collection<out|kotlin.CharSequence>){}
+  //   Public signature: /C.kg1|6666459745981582410[0]
+  override fun kg1(c: Collection<out CharSequence>): Unit
+
+  // CHECK:
+  //   Mangled name: C#kg2(kotlin.collections.Collection<kotlin.CharSequence>){}
+  //   Public signature: /C.kg2|-8205692300519552855[0]
+  override fun kg2(c: Collection<CharSequence>): Unit
+
+}
+
+// CHECK:
+//   Mangled name: K
+//   Public signature: /K|null[0]
+interface K {
+
+  // CHECK JVM_IR:
+  //   Mangled name: K#kf1(){}kotlin.collections.Collection<out|kotlin.CharSequence>
+  //   Public signature: /K.kf1|-5428150421605044193[0]
+  abstract fun kf1(): Collection<out CharSequence>
+
+  // CHECK JVM_IR:
+  //   Mangled name: K#kf2(){}kotlin.collections.Collection<kotlin.CharSequence>
+  //   Public signature: /K.kf2|8420376873797628329[0]
+  abstract fun kf2(): Collection<CharSequence>
+
+  // CHECK:
+  //   Mangled name: K#kg1(kotlin.collections.Collection<out|kotlin.CharSequence>){}
+  //   Public signature: /K.kg1|6666459745981582410[0]
+  abstract fun kg1(c: Collection<out CharSequence>): Unit
+
+  // CHECK:
+  //   Mangled name: K#kg2(kotlin.collections.Collection<kotlin.CharSequence>){}
+  //   Public signature: /K.kg2|-8205692300519552855[0]
+  abstract fun kg2(c: Collection<CharSequence>): Unit
+
+}
+

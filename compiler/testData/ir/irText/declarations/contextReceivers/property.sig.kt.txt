@@ -1,0 +1,44 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+interface A {
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#a(){}kotlin.Int
+  //   Public signature: /A.a|5993980063692763883[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: A#a(){}
+  //   Public signature: /A.a|-4432112437378250461[0]
+  abstract fun a(): Int
+
+}
+
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[0]
+interface B {
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#b(){}kotlin.Int
+  //   Public signature: /B.b|-6472101675379091489[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: B#b(){}
+  //   Public signature: /B.b|4789657038926421504[0]
+  abstract fun b(): Int
+
+}
+
+// CHECK:
+//   Mangled name: {}c
+//   Public signature: /c|-4416962153448040627[0]
+val c: Int
+  // CHECK JVM_IR:
+  //   Mangled name computed from Ir:         #<get-c>(A;B){}kotlin.Int
+  //   Mangled name computed from Descriptor: #<get-c>!A!B(){}kotlin.Int
+  //   Public signature: /c.<get-c>|-2082007887378586898[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name computed from Ir:         #<get-c>(A;B){}
+  //   Mangled name computed from Descriptor: #<get-c>!A!B(){}
+  //   Public signature: /c.<get-c>|2760865531401172403[0]
+  get($context_receiver_0: A, $context_receiver_1: B): Int
+

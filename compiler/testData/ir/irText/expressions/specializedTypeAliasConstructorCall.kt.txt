@@ -15,3 +15,4 @@ typealias IntAlias = Cell<Int>
 fun test(): Cell<Int> {
   return Cell<Int>(value = 42)
 }
+

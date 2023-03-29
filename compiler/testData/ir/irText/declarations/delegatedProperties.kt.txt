@@ -46,3 +46,4 @@ var test4: Any /* by */
   set(<set-?>: Any) {
     return #test4$delegate.setValue<Any>(thisRef = null, property = ::test4, value = <set-?>)
   }
+

@@ -1,24 +1,24 @@
 package events
 
 open external class internal {
-  external constructor() /* primary */ 
+  external constructor() /* primary */
   open external class EventEmitterP : internal {
-    external constructor() /* primary */ 
+    external constructor() /* primary */
 
   }
 
   open external class EventEmitterS : internal {
-    external constructor(a: Any) 
+    external constructor(a: Any)
 
   }
 
   external object NestedExternalObject : internal {
-    private external constructor() /* primary */ 
+    private external constructor() /* primary */
 
   }
 
   external enum class NestedExternalEnum : Enum<NestedExternalEnum> {
-    private external constructor() /* primary */ 
+    private external constructor() /* primary */
     A = NestedExternalEnum()
 
     B = NestedExternalEnum()
@@ -26,6 +26,9 @@ open external class internal {
     external fun values(): Array<NestedExternalEnum> /* Synthetic body for ENUM_VALUES */
 
     external fun valueOf(value: String): NestedExternalEnum /* Synthetic body for ENUM_VALUEOF */
+
+    external val entries: EnumEntries<NestedExternalEnum>
+      external get(): EnumEntries<NestedExternalEnum> /* Synthetic body for ENUM_ENTRIES */
 
   }
 

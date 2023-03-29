@@ -33,3 +33,4 @@ class Test1 : CFoo<String>, IFooStr, IBar {
     override get
 
 }
+

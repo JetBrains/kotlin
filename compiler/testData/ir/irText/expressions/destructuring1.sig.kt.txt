@@ -1,0 +1,43 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+object A {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
+  private constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[0]
+object B {
+  // CHECK:
+  //   Mangled name: B#<init>(){}
+  //   Public signature: /B.<init>|-5645683436151566731[0]
+  private constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#component1@A(){}kotlin.Int
+  //   Public signature: /B.component1|-7852292492190161170[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: B#component1@A(){}
+  //   Public signature: /B.component1|-5209316971718544805[0]
+  operator fun A.component1(): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#component2@A(){}kotlin.Int
+  //   Public signature: /B.component2|-9145888741821901515[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: B#component2@A(){}
+  //   Public signature: /B.component2|-4967140045736561606[0]
+  operator fun A.component2(): Int
+
+}
+
+// CHECK:
+//   Mangled name: #test@B(){}
+//   Public signature: /test|5810566108753944346[0]
+fun B.test(): Unit
+

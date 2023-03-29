@@ -1,0 +1,40 @@
+// CHECK:
+//   Mangled name: In
+//   Public signature: /In|null[0]
+class In<in I : Any?> {
+  // CHECK:
+  //   Mangled name: In#<init>(){}
+  //   Public signature: /In.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+}
+
+// CHECK JVM_IR:
+//   Mangled name: #foo(kotlin.Array<In<0:0>>;kotlin.Array<In<kotlin.String>>){0§<kotlin.Any?>}kotlin.Boolean
+//   Public signature: /foo|2099284871117952931[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #foo(kotlin.Array<In<0:0>>;kotlin.Array<In<kotlin.String>>){0§<kotlin.Any?>}
+//   Public signature: /foo|-9186958305964035853[0]
+fun <T : Any?> foo(a: Array<In<T>>, b: Array<In<String>>): Boolean
+
+// CHECK JVM_IR:
+//   Mangled name: #ofType@In<0:0>(kotlin.Any?){0§<kotlin.Any?>}kotlin.Boolean
+//   Public signature: /ofType|2383203766625380016[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #ofType@In<0:0>(kotlin.Any?){0§<kotlin.Any?>}
+//   Public signature: /ofType|-4707862451809276934[0]
+inline fun <reified K : Any?> In<K>.ofType(y: Any?): Boolean
+
+// CHECK JVM_IR:
+//   Mangled name: #select(0:0;0:0){0§<kotlin.Any?>}0:0
+//   Public signature: /select|8100705338685480795[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #select(0:0;0:0){0§<kotlin.Any?>}
+//   Public signature: /select|6468210419697232897[0]
+fun <S : Any?> select(x: S, y: S): S
+
+// CHECK:
+//   Mangled name: #test(){}
+//   Public signature: /test|6620506149988718649[0]
+fun test(): Unit
+

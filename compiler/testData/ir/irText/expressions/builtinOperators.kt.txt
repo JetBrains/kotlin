@@ -7,3 +7,4 @@ fun callBuiltinFunctions(a: Int, b: Int) {
   a.inv() /*~> Unit */
   a.shl(bitCount = b) /*~> Unit */
 }
+

@@ -22,3 +22,4 @@ fun test1() {
 @A(x = 2)
 fun test2() {
 }
+

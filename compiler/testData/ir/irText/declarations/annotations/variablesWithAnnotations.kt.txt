@@ -17,3 +17,4 @@ fun foo() {
   @TestAnn(x = "foo/testVar")
   var testVar: String = "testVar"
 }
+

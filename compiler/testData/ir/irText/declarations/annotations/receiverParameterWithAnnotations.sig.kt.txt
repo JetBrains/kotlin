@@ -1,0 +1,62 @@
+// CHECK:
+//   Mangled name: Ann
+//   Public signature: /Ann|null[0]
+open annotation class Ann : Annotation {
+  // CHECK:
+  //   Mangled name: Ann#<init>(){}
+  //   Public signature: /Ann.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+class A {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#f@kotlin.String(){}kotlin.String
+  //   Public signature: /A.f|-7101655006580999052[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: A#f@kotlin.String(){}
+  //   Public signature: /A.f|8972825158424444953[0]
+  fun String.f(): String
+
+  // CHECK:
+  //   Mangled name: A@kotlin.String?{}p
+  //   Public signature: /A.p|-5332805019112550693[0]
+  val String?.p: String
+    // CHECK JVM_IR:
+    //   Mangled name: A#<get-p>@kotlin.String?(){}kotlin.String
+    //   Public signature: /A.p.<get-p>|2132774030714660058[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: A#<get-p>@kotlin.String?(){}
+    //   Public signature: /A.p.<get-p>|-206460032103866705[0]
+    get(): String
+
+}
+
+// CHECK JVM_IR:
+//   Mangled name: #topLevelF@kotlin.String?(){}kotlin.String
+//   Public signature: /topLevelF|1393314255563085986[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #topLevelF@kotlin.String?(){}
+//   Public signature: /topLevelF|657392952960169607[0]
+fun String?.topLevelF(): String
+
+// CHECK:
+//   Mangled name: @kotlin.String{}topLevelP
+//   Public signature: /topLevelP|4430474858321876067[0]
+val String.topLevelP: String
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-topLevelP>@kotlin.String(){}kotlin.String
+  //   Public signature: /topLevelP.<get-topLevelP>|6082050321613134215[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-topLevelP>@kotlin.String(){}
+  //   Public signature: /topLevelP.<get-topLevelP>|529461791237324071[0]
+  get(): String
+

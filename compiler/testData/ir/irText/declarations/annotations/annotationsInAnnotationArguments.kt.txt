@@ -41,3 +41,4 @@ open annotation class AA : Annotation {
 @AA(xs = [A1(x = 1), A1(x = 2)])
 fun test() {
 }
+

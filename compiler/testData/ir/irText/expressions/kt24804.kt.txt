@@ -24,3 +24,4 @@ fun run(x: Boolean, y: Boolean): String {
 fun box(): String {
   return run(x = true, y = true)
 }
+

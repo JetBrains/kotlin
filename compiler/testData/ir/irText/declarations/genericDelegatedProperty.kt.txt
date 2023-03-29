@@ -31,3 +31,4 @@ var <T : Any?> C<T>.genericDelegatedProperty: Int /* by */
   set(<set-?>: Int) {
     return #genericDelegatedProperty$delegate.setValue(thisRef = <this>, kProp = ::genericDelegatedProperty/*<T>()*/, newValue = <set-?>)
   }
+

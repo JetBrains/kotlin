@@ -10,8 +10,9 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.IdSignatureComposer
+import org.jetbrains.kotlin.ir.util.KotlinMangler
 
-class DescriptorSignatureComposerStub : IdSignatureComposer {
+class DescriptorSignatureComposerStub(override val mangler: KotlinMangler.DescriptorMangler) : IdSignatureComposer {
     override fun composeSignature(descriptor: DeclarationDescriptor): IdSignature? {
         return null
     }

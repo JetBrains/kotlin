@@ -1,0 +1,61 @@
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[0]
+open class B<T : Any?> {
+  // CHECK:
+  //   Mangled name: B#<init>(){}
+  //   Public signature: /B.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: B#bar(1:0){}
+  //   Public signature: /B.bar|-7393952686038474037[0]
+  open fun bar(t: T): Unit
+
+  // CHECK:
+  //   Mangled name: B#foo(1:0){}
+  //   Public signature: /B.foo|-701456291278879981[0]
+  open fun foo(t: T): Unit
+
+  // CHECK:
+  //   Mangled name: B#qux(B<1:0>){}
+  //   Public signature: /B.qux|511223586194505643[0]
+  open fun qux(b: B<T>): Unit
+
+  // CHECK:
+  //   Mangled name: B#six(1:0;0:0){0§<kotlin.Any?>}
+  //   Public signature: /B.six|-243783432810149721[0]
+  open fun <F : Any?> six(t: T, q: F): Unit
+
+}
+
+// CHECK:
+//   Mangled name: D
+//   Public signature: /D|null[0]
+class D<T : Any?> : B<(T & Any)> {
+  // CHECK:
+  //   Mangled name: D#<init>(){}
+  //   Public signature: /D.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+  // CHECK:
+  //   Mangled name: D#bar(1:0){}
+  //   Public signature: /D.bar|-7393952686038474037[0]
+  /* fake */ override fun bar(t: (T & Any)): Unit
+
+  // CHECK:
+  //   Mangled name: D#qux(B<1:0>){}
+  //   Public signature: /D.qux|511223586194505643[0]
+  /* fake */ override fun qux(b: B<(T & Any)>): Unit
+
+  // CHECK:
+  //   Mangled name: D#six(1:0;0:0){0§<kotlin.Any?>}
+  //   Public signature: /D.six|-243783432810149721[0]
+  /* fake */ override fun <F : Any?> six(t: (T & Any), q: F): Unit
+
+  // CHECK:
+  //   Mangled name: D#foo(1:0){}
+  //   Public signature: /D.foo|-701456291278879981[0]
+  override fun foo(t: (T & Any)): Unit
+
+}
+

@@ -1,0 +1,60 @@
+package test
+
+// CHECK:
+//   Mangled name: test.C
+//   Public signature: test/C|null[0]
+class C {
+  // CHECK:
+  //   Mangled name: test.C#<init>(){}
+  //   Public signature: test/C.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+}
+
+// CHECK JVM_IR:
+//   Mangled name: test#get@kotlin.Int?(kotlin.Int){}kotlin.Int
+//   Public signature: test/get|-6221002532708237996[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: test#get@kotlin.Int?(kotlin.Int){}
+//   Public signature: test/get|2096149375626254616[0]
+operator fun Int?.get(index: Int): Int
+
+// CHECK JVM_IR:
+//   Mangled name: test#inc@kotlin.Int?(){}kotlin.Int?
+//   Public signature: test/inc|-8688916183051881962[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: test#inc@kotlin.Int?(){}
+//   Public signature: test/inc|7389847627046551690[0]
+operator fun Int?.inc(): Int?
+
+// CHECK:
+//   Mangled name: test#set@kotlin.Int?(kotlin.Int;kotlin.Int){}
+//   Public signature: test/set|6578463135726025700[0]
+operator fun Int?.set(index: Int, value: Int): Unit
+
+// CHECK:
+//   Mangled name: test#testArrayAccess(test.C?){}
+//   Public signature: test/testArrayAccess|4252489655706845013[0]
+fun testArrayAccess(nc: C?): Unit
+
+// CHECK:
+//   Mangled name: test#testProperty(test.C?){}
+//   Public signature: test/testProperty|-2369045043413337370[0]
+fun testProperty(nc: C?): Unit
+
+// CHECK:
+//   Mangled name: test@test.C?{}p
+//   Public signature: test/p|-1845876355852807020[0]
+var C?.p: Int
+  // CHECK JVM_IR:
+  //   Mangled name: test#<get-p>@test.C?(){}kotlin.Int
+  //   Public signature: test/p.<get-p>|-8557468444569568699[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: test#<get-p>@test.C?(){}
+  //   Public signature: test/p.<get-p>|-8829073944247347395[0]
+  get(): Int
+  // CHECK:
+  //   Mangled name: test#<set-p>@test.C?(kotlin.Int){}
+  //   Public signature: test/p.<set-p>|358628307976846417[0]
+  set(value: Int): Unit
+

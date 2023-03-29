@@ -1,0 +1,79 @@
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
+class C<TT : Any?> : I<(TT & Any)> {
+  // CHECK:
+  //   Mangled name: C{}t
+  //   Public signature: /C.t|-8767999791664836944[0]
+  val t: TT
+    // CHECK JVM_IR:
+    //   Mangled name: C#<get-t>(){}1:0
+    //   Public signature: /C.t.<get-t>|5296523675281381766[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: C#<get-t>(){}
+    //   Public signature: /C.t.<get-t>|7061140872129253552[0]
+    get
+
+  // CHECK:
+  //   Mangled name: C#<init>(1:0){}
+  //   Public signature: /C.<init>|-8731461708390519279[0]
+  constructor(t: TT) /* primary */
+
+  // CHECK:
+  //   Mangled name: C#input(1:0){}
+  //   Public signature: /C.input|-6221011490461630624[0]
+  override fun input(t: (TT & Any)): Unit
+
+  // CHECK JVM_IR:
+  //   Mangled name: C#output(){}1:0
+  //   Public signature: /C.output|2948120958996440939[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: C#output(){}
+  //   Public signature: /C.output|-7727065428490554292[0]
+  override fun output(): (TT & Any)
+
+}
+
+// CHECK:
+//   Mangled name: I
+//   Public signature: /I|null[0]
+interface I<T : Any?> {
+
+  // CHECK:
+  //   Mangled name: I#input(1:0){}
+  //   Public signature: /I.input|-6221011490461630624[0]
+  abstract fun input(t: T): Unit
+
+  // CHECK JVM_IR:
+  //   Mangled name: I#output(){}1:0
+  //   Public signature: /I.output|2948120958996440939[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: I#output(){}
+  //   Public signature: /I.output|-7727065428490554292[0]
+  abstract fun output(): T
+
+}
+
+// CHECK JVM_IR:
+//   Mangled name: #bar(I<out|0:0>){0§<kotlin.Any?>}0:0
+//   Public signature: /bar|-698012471907349043[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #bar(I<out|0:0>){0§<kotlin.Any?>}
+//   Public signature: /bar|8057913304781866209[0]
+fun <T : Any?> bar(i: I<out (T & Any)>): (T & Any)
+
+// CHECK:
+//   Mangled name: #foo(I<0:0>){0§<kotlin.Any?>}
+//   Public signature: /foo|-4379732489572208906[0]
+fun <T : Any?> foo(i: I<(T & Any)>): Unit
+
+// CHECK:
+//   Mangled name: #foo2(0:0;0:1){0§<kotlin.Any?>;1§<I<0:0>>}
+//   Public signature: /foo2|-3942115984547416735[0]
+fun <T1 : Any?, T2 : I<(T1 & Any)>> foo2(p1: T1, p2: T2): Unit
+
+// CHECK:
+//   Mangled name: #qux(0:0;I<in|0:0>){0§<kotlin.Any?>}
+//   Public signature: /qux|-1677664792094905915[0]
+fun <T : Any?> qux(t: T, i: I<in (T & Any)>): Unit
+

@@ -33,3 +33,4 @@ fun test1() {
 @TestAnnWithStringArray(x = ["d", "e", "f"])
 fun test2() {
 }
+

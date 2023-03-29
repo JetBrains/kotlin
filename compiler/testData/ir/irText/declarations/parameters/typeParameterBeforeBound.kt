@@ -1,4 +1,8 @@
 // FIR_IDENTICAL
+
+// MUTE_SIGNATURE_COMPARISON_K2: ANY
+// ^ KT-57436
+
 class Test1<T : U, U>
 
 fun <T : U, U> test2() {}

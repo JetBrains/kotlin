@@ -1,0 +1,52 @@
+// FILE: fakeOverridesForJavaNonStaticMembers.kt
+package a
+
+// CHECK:
+//   Mangled name: a.Test
+//   Public signature: a/Test|null[0]
+class Test : Base {
+  // CHECK:
+  //   Mangled name: a.Test#<init>(){}
+  //   Public signature: a/Test.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: a.Test#packagePrivateMethod(){}
+  //   Public signature: a/Test.packagePrivateMethod|-6626321591774137652[0]
+  package /* fake */ override fun packagePrivateMethod(): Unit
+
+  // CHECK:
+  //   Mangled name: a.Test#protectedMethod(){}
+  //   Public signature: a/Test.protectedMethod|5447082645647771455[0]
+  protected_and_package /* fake */ override fun protectedMethod(): Unit
+
+  // CHECK:
+  //   Mangled name: a.Test#publicMethod(){}
+  //   Public signature: a/Test.publicMethod|-3952535363739900962[0]
+  /* fake */ override fun publicMethod(): Unit
+
+}
+
+// FILE: fakeOverridesForJavaNonStaticMembers2.kt
+
+// CHECK:
+//   Mangled name: Test2
+//   Public signature: /Test2|null[0]
+class Test2 : Base {
+  // CHECK:
+  //   Mangled name: Test2#<init>(){}
+  //   Public signature: /Test2.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: Test2#protectedMethod(){}
+  //   Public signature: /Test2.protectedMethod|5447082645647771455[0]
+  protected_and_package /* fake */ override fun protectedMethod(): Unit
+
+  // CHECK:
+  //   Mangled name: Test2#publicMethod(){}
+  //   Public signature: /Test2.publicMethod|-3952535363739900962[0]
+  /* fake */ override fun publicMethod(): Unit
+
+}
+

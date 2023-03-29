@@ -1,0 +1,54 @@
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
+class C {
+  // CHECK:
+  //   Mangled name: C{}x
+  //   Public signature: /C.x|-8060530855978347579[0]
+  val x: IntArray
+    // CHECK JVM_IR:
+    //   Mangled name: C#<get-x>(){}kotlin.IntArray
+    //   Public signature: /C.x.<get-x>|-5699461780158713262[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: C#<get-x>(){}
+    //   Public signature: /C.x.<get-x>|1482705010654679335[0]
+    get
+
+  // CHECK:
+  //   Mangled name: C#<init>(kotlin.IntArray){}
+  //   Public signature: /C.<init>|6811679238332965682[0]
+  constructor(x: IntArray) /* primary */
+
+}
+
+// CHECK JVM_IR:
+//   Mangled name: #bar(){}kotlin.Int
+//   Public signature: /bar|-6436649210114349217[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #bar(){}
+//   Public signature: /bar|496682602797471549[0]
+fun bar(): Int
+
+// CHECK JVM_IR:
+//   Mangled name: #foo(){}kotlin.IntArray
+//   Public signature: /foo|-7128217666146299316[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #foo(){}
+//   Public signature: /foo|-1041209573719867811[0]
+fun foo(): IntArray
+
+// CHECK:
+//   Mangled name: #testCall(){}
+//   Public signature: /testCall|-7871976205737309252[0]
+fun testCall(): Unit
+
+// CHECK:
+//   Mangled name: #testMember(C){}
+//   Public signature: /testMember|-6666493840981303553[0]
+fun testMember(c: C): Unit
+
+// CHECK:
+//   Mangled name: #testVariable(){}
+//   Public signature: /testVariable|660968387512033895[0]
+fun testVariable(): Unit
+

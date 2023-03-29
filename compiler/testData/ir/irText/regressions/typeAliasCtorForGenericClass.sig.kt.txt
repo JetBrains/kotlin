@@ -1,0 +1,36 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+class A<Q : Any?> {
+  // CHECK:
+  //   Mangled name: A{}q
+  //   Public signature: /A.q|3274930974999175741[0]
+  val q: Q
+    // CHECK JVM_IR:
+    //   Mangled name: A#<get-q>(){}1:0
+    //   Public signature: /A.q.<get-q>|-447041854451904985[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: A#<get-q>(){}
+    //   Public signature: /A.q.<get-q>|-39243554116721919[0]
+    get
+
+  // CHECK:
+  //   Mangled name: A#<init>(1:0){}
+  //   Public signature: /A.<init>|-8731461708390519279[0]
+  constructor(q: Q) /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: #bar(){}
+//   Public signature: /bar|496682602797471549[0]
+fun bar(): Unit
+
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[0]
+typealias B<X : Any?> = A<X>
+// CHECK:
+//   Mangled name: B2
+//   Public signature: /B2|null[0]
+typealias B2<T : Any?> = A<A<T>>

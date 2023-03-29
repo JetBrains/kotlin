@@ -1,0 +1,38 @@
+// CHECK:
+//   Mangled name: TestClass
+//   Public signature: /TestClass|null[0]
+class TestClass {
+  // CHECK:
+  //   Mangled name: TestClass{}test
+  //   Public signature: /TestClass.test|-5712650070209114719[0]
+  val test: Int
+    // CHECK JVM_IR:
+    //   Mangled name: TestClass#<get-test>(){}kotlin.Int
+    //   Public signature: /TestClass.test.<get-test>|3701432460336260723[0]
+    get
+
+  // CHECK:
+  //   Mangled name: TestClass#<init>(){}
+  //   Public signature: /TestClass.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: #testFun(){}
+//   Public signature: /testFun|6322333980269160703[0]
+fun testFun(): Unit
+
+// CHECK:
+//   Mangled name: {}testProp
+//   Public signature: /testProp|4463768917101701410[0]
+var testProp: Any
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-testProp>(){}kotlin.Any
+  //   Public signature: /testProp.<get-testProp>|3424752583741777147[0]
+  get(): Any
+  // CHECK:
+  //   Mangled name: #<set-testProp>(kotlin.Any){}
+  //   Public signature: /testProp.<set-testProp>|602902979763786235[0]
+  set(value: Any): Unit
+

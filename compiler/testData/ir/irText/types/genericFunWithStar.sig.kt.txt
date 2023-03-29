@@ -1,0 +1,55 @@
+// CHECK:
+//   Mangled name: Box
+//   Public signature: /Box|null[0]
+abstract class Box<T> : IBar, IFoo where T : IBar, T : IFoo {
+  // CHECK:
+  //   Mangled name: Box#<init>(){}
+  //   Public signature: /Box.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: Box#bar(kotlin.Array<out|I<*>>...){}I<*>
+  //   Public signature: /Box.bar|-1391226342944074333[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: Box#bar(kotlin.Array<out|I<*>>...){}
+  //   Public signature: /Box.bar|8084001391747740010[0]
+  fun bar(vararg serializers: I<*>): I<*>
+
+  // CHECK JVM_IR:
+  //   Mangled name: Box#foo(I<0:0>){0§<IFoo&IBar>}I<Box<0:0>>
+  //   Public signature: /Box.foo|-2974216352759527693[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: Box#foo(I<0:0>){0§<IFoo&IBar>}
+  //   Public signature: /Box.foo|4625415251535989427[0]
+  abstract fun <F> foo(tSerializer: I<F>): I<Box<F>> where F : IBar, F : IFoo
+
+}
+
+// CHECK:
+//   Mangled name: I
+//   Public signature: /I|null[0]
+interface I<G> where G : IBar, G : IFoo {
+
+}
+
+// CHECK:
+//   Mangled name: IBar
+//   Public signature: /IBar|null[0]
+interface IBar : IBase {
+
+}
+
+// CHECK:
+//   Mangled name: IBase
+//   Public signature: /IBase|null[0]
+interface IBase {
+
+}
+
+// CHECK:
+//   Mangled name: IFoo
+//   Public signature: /IFoo|null[0]
+interface IFoo : IBase {
+
+}
+

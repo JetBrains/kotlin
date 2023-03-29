@@ -1,0 +1,44 @@
+// CHECK:
+//   Mangled name: Host
+//   Public signature: /Host|null[0]
+class Host {
+  // CHECK:
+  //   Mangled name: Host#<init>(){}
+  //   Public signature: /Host.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: Host#plusAssign(kotlin.Int){}
+  //   Public signature: /Host.plusAssign|3258359553712471205[0]
+  operator fun plusAssign(x: Int): Unit
+
+  // CHECK:
+  //   Mangled name: Host#test1(){}
+  //   Public signature: /Host.test1|4297044443957252634[0]
+  fun test1(): Unit
+
+}
+
+// CHECK JVM_IR:
+//   Mangled name: #foo(){}Host
+//   Public signature: /foo|-9155687047523720482[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #foo(){}
+//   Public signature: /foo|-1041209573719867811[0]
+fun foo(): Host
+
+// CHECK:
+//   Mangled name: #test2@Host(){}
+//   Public signature: /test2|-8326697418267123126[0]
+fun Host.test2(): Unit
+
+// CHECK:
+//   Mangled name: #test3(){}
+//   Public signature: /test3|-3759735065270951803[0]
+fun test3(): Unit
+
+// CHECK:
+//   Mangled name: #test4(kotlin.Function0<Host>){}
+//   Public signature: /test4|1361778723589440005[0]
+fun test4(a: Function0<Host>): Unit
+

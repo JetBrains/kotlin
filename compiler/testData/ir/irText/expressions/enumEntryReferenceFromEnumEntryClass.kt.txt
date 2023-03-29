@@ -69,3 +69,4 @@ open enum class MyEnum : Enum<MyEnum> {
     get(): EnumEntries<MyEnum> /* Synthetic body for ENUM_ENTRIES */
 
 }
+

@@ -1,0 +1,56 @@
+// CHECK JVM_IR:
+//   Mangled name: #foo(kotlin.Double){}kotlin.Double
+//   Public signature: /foo|1917451337252472224[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #foo(kotlin.Double){}
+//   Public signature: /foo|7304084990235995798[0]
+fun foo(x: Double): Double
+
+// CHECK JVM_IR:
+//   Mangled name: #testSimple(kotlin.Double){}kotlin.Int
+//   Public signature: /testSimple|7182738722897187971[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #testSimple(kotlin.Double){}
+//   Public signature: /testSimple|9121439682501266260[0]
+fun testSimple(x: Double): Int
+
+// CHECK JVM_IR:
+//   Mangled name: #testSmartCastInWhenCondition(kotlin.Double;kotlin.Any){}kotlin.Int
+//   Public signature: /testSmartCastInWhenCondition|7854851848186858587[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #testSmartCastInWhenCondition(kotlin.Double;kotlin.Any){}
+//   Public signature: /testSmartCastInWhenCondition|-9013687204664969001[0]
+fun testSmartCastInWhenCondition(x: Double, y: Any): Int
+
+// CHECK JVM_IR:
+//   Mangled name: #testSmartCastInWhenConditionInBranch(kotlin.Any){}kotlin.Int
+//   Public signature: /testSmartCastInWhenConditionInBranch|5671837591576771954[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #testSmartCastInWhenConditionInBranch(kotlin.Any){}
+//   Public signature: /testSmartCastInWhenConditionInBranch|1656824350278623177[0]
+fun testSmartCastInWhenConditionInBranch(x: Any): Int
+
+// CHECK JVM_IR:
+//   Mangled name: #testSmartCastInWhenSubject(kotlin.Any){}kotlin.Int
+//   Public signature: /testSmartCastInWhenSubject|5050233636010761247[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #testSmartCastInWhenSubject(kotlin.Any){}
+//   Public signature: /testSmartCastInWhenSubject|-654930493818491506[0]
+fun testSmartCastInWhenSubject(x: Any): Int
+
+// CHECK JVM_IR:
+//   Mangled name: #testSmartCastToDifferentTypes(kotlin.Any;kotlin.Any){}kotlin.Int
+//   Public signature: /testSmartCastToDifferentTypes|285815180648163500[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #testSmartCastToDifferentTypes(kotlin.Any;kotlin.Any){}
+//   Public signature: /testSmartCastToDifferentTypes|8938507225260152421[0]
+fun testSmartCastToDifferentTypes(x: Any, y: Any): Int
+
+// CHECK JVM_IR:
+//   Mangled name: #testWithPrematureExitInConditionSubexpression(kotlin.Any){}kotlin.Int
+//   Public signature: /testWithPrematureExitInConditionSubexpression|-7044982830298293879[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #testWithPrematureExitInConditionSubexpression(kotlin.Any){}
+//   Public signature: /testWithPrematureExitInConditionSubexpression|-3701426985229225590[0]
+fun testWithPrematureExitInConditionSubexpression(x: Any): Int
+

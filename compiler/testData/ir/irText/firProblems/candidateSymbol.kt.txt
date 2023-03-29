@@ -50,3 +50,4 @@ fun foo(candidate: Candidate) {
     }
   }
 }
+

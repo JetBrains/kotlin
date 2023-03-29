@@ -37,3 +37,4 @@ fun Reader.consumeRestOfQuotedSequence(sb: StringBuilder, quote: Char) {
     ch = <this>.nextChar()
   }
 }
+

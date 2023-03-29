@@ -1,0 +1,73 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+class A : I, J {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: A#ff(){}
+  //   Public signature: /A.ff|-487791955964352654[0]
+  override fun ff(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[0]
+class B : I, J {
+  // CHECK:
+  //   Mangled name: B#<init>(){}
+  //   Public signature: /B.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: B#ff(){}
+  //   Public signature: /B.ff|-487791955964352654[0]
+  override fun ff(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: I
+//   Public signature: /I|null[0]
+interface I : K {
+
+  // CHECK:
+  //   Mangled name: I#ff(){}
+  //   Public signature: /I.ff|-487791955964352654[0]
+  abstract fun ff(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: J
+//   Public signature: /J|null[0]
+interface J : K {
+
+}
+
+// CHECK:
+//   Mangled name: K
+//   Public signature: /K|null[0]
+interface K {
+
+}
+
+// CHECK:
+//   Mangled name: #testFlexible1(){}
+//   Public signature: /testFlexible1|-251385018763070170[0]
+fun testFlexible1(): Unit
+
+// CHECK:
+//   Mangled name: #testFlexible2(A;B){}
+//   Public signature: /testFlexible2|6106734588254663931[0]
+fun testFlexible2(a: A, b: B): Unit
+
+// CHECK:
+//   Mangled name: #testIntersection(A;B){}
+//   Public signature: /testIntersection|-5543165898053334735[0]
+fun testIntersection(a: A, b: B): Unit
+

@@ -43,3 +43,4 @@ fun testDI2(x: Any?, y: Any?): Boolean {
     else -> false
   }
 }
+

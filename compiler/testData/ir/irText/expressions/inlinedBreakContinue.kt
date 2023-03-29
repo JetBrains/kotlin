@@ -1,8 +1,12 @@
 // FIR_IDENTICAL
 // LANGUAGE: +BreakContinueInInlineLambdas
+// DUMP_LOCAL_DECLARATION_SIGNATURES
 // TARGET_BACKEND: JVM_IR
 // IGNORE_ERRORS
 // WITH_STDLIB
+
+// MUTE_SIGNATURE_COMPARISON_K2: ANY
+// ^ KT-57428
 
 inline fun foo(block: () -> Unit) { block() }
 

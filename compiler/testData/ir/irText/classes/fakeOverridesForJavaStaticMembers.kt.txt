@@ -6,3 +6,4 @@ class Test : Base {
   }
 
 }
+

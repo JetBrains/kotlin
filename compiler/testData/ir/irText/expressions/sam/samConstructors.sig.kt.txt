@@ -1,0 +1,25 @@
+// CHECK:
+//   Mangled name: #foo(){}
+//   Public signature: /foo|-1041209573719867811[0]
+fun foo(): Unit
+
+// CHECK JVM_IR:
+//   Mangled name: #test1(){}java.lang.Runnable
+//   Public signature: /test1|-613876279970827772[0]
+fun test1(): Runnable
+
+// CHECK JVM_IR:
+//   Mangled name: #test2(kotlin.Function0<kotlin.Unit>){}java.lang.Runnable
+//   Public signature: /test2|-6701609995382300258[0]
+fun test2(a: Function0<Unit>): Runnable
+
+// CHECK JVM_IR:
+//   Mangled name: #test3(){}java.lang.Runnable
+//   Public signature: /test3|-2297362667420108091[0]
+fun test3(): Runnable
+
+// CHECK JVM_IR:
+//   Mangled name: #test4(){}java.util.Comparator<kotlin.Int>
+//   Public signature: /test4|-6683954143544750623[0]
+fun test4(): Comparator<Int>
+

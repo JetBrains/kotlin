@@ -60,3 +60,4 @@ class StringFlowInfo : ControlFlowInfo<String, String> {
   }
 
 }
+

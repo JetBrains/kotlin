@@ -1,0 +1,69 @@
+// CHECK:
+//   Mangled name: TestInitValFromParameter
+//   Public signature: /TestInitValFromParameter|null[0]
+class TestInitValFromParameter {
+  // CHECK:
+  //   Mangled name: TestInitValFromParameter{}x
+  //   Public signature: /TestInitValFromParameter.x|-8060530855978347579[0]
+  val x: Int
+    // CHECK JVM_IR:
+    //   Mangled name: TestInitValFromParameter#<get-x>(){}kotlin.Int
+    //   Public signature: /TestInitValFromParameter.x.<get-x>|4966956098150895696[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: TestInitValFromParameter#<get-x>(){}
+    //   Public signature: /TestInitValFromParameter.x.<get-x>|1482705010654679335[0]
+    get
+
+  // CHECK:
+  //   Mangled name: TestInitValFromParameter#<init>(kotlin.Int){}
+  //   Public signature: /TestInitValFromParameter.<init>|-5182794243525578284[0]
+  constructor(x: Int) /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: TestInitValInClass
+//   Public signature: /TestInitValInClass|null[0]
+class TestInitValInClass {
+  // CHECK:
+  //   Mangled name: TestInitValInClass{}x
+  //   Public signature: /TestInitValInClass.x|-8060530855978347579[0]
+  val x: Int
+    // CHECK JVM_IR:
+    //   Mangled name: TestInitValInClass#<get-x>(){}kotlin.Int
+    //   Public signature: /TestInitValInClass.x.<get-x>|4966956098150895696[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: TestInitValInClass#<get-x>(){}
+    //   Public signature: /TestInitValInClass.x.<get-x>|1482705010654679335[0]
+    get
+
+  // CHECK:
+  //   Mangled name: TestInitValInClass#<init>(){}
+  //   Public signature: /TestInitValInClass.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: TestInitValInInitBlock
+//   Public signature: /TestInitValInInitBlock|null[0]
+class TestInitValInInitBlock {
+  // CHECK:
+  //   Mangled name: TestInitValInInitBlock{}x
+  //   Public signature: /TestInitValInInitBlock.x|-8060530855978347579[0]
+  val x: Int
+    // CHECK JVM_IR:
+    //   Mangled name: TestInitValInInitBlock#<get-x>(){}kotlin.Int
+    //   Public signature: /TestInitValInInitBlock.x.<get-x>|4966956098150895696[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: TestInitValInInitBlock#<get-x>(){}
+    //   Public signature: /TestInitValInInitBlock.x.<get-x>|1482705010654679335[0]
+    get
+
+  // CHECK:
+  //   Mangled name: TestInitValInInitBlock#<init>(){}
+  //   Public signature: /TestInitValInInitBlock.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+}
+

@@ -18,3 +18,4 @@ fun box(): String {
   val x: Inv2<String, Int> = test()
   return "OK"
 }
+

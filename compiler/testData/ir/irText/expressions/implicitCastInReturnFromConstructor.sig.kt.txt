@@ -1,0 +1,15 @@
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
+class C {
+  // CHECK:
+  //   Mangled name: C#<init>(){}
+  //   Public signature: /C.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+  // CHECK:
+  //   Mangled name: C#<init>(kotlin.Any?){}
+  //   Public signature: /C.<init>|-8205545948568413246[0]
+  constructor(x: Any?)
+
+}
+

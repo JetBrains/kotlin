@@ -45,3 +45,4 @@ open enum class TestEnum : Enum<TestEnum> {
     get(): EnumEntries<TestEnum> /* Synthetic body for ENUM_ENTRIES */
 
 }
+

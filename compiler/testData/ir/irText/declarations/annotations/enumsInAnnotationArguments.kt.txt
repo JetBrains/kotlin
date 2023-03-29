@@ -38,3 +38,4 @@ open annotation class TestAnn : Annotation {
 @TestAnn(x = En.A)
 fun test1() {
 }
+

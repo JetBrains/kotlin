@@ -54,9 +54,10 @@ fun FirResult.convertToIrAndActualizeForJvm(
     fir2IrExtensions,
     irGeneratorExtensions,
     linkViaSignatures = linkViaSignatures,
-    signatureComposerCreator = { JvmIdSignatureDescriptor(JvmDescriptorMangler(null)) },
+    descriptorMangler = JvmDescriptorMangler(null),
+    signatureComposerCreator = ::JvmIdSignatureDescriptor,
     irMangler = JvmIrMangler,
-    firManglerCreator = { FirJvmKotlinMangler() },
+    firMangler = FirJvmKotlinMangler(),
     visibilityConverter = FirJvmVisibilityConverter,
     diagnosticReporter = diagnosticReporter,
     languageVersionSettings = languageVersionSettings,
@@ -67,9 +68,10 @@ fun FirResult.convertToIrAndActualize(
     fir2IrExtensions: Fir2IrExtensions,
     irGeneratorExtensions: Collection<IrGenerationExtension>,
     linkViaSignatures: Boolean,
-    signatureComposerCreator: (() -> IdSignatureComposer)?,
+    descriptorMangler: KotlinMangler.DescriptorMangler,
+    signatureComposerCreator: ((KotlinMangler.DescriptorMangler) -> IdSignatureComposer)?,
     irMangler: KotlinMangler.IrMangler,
-    firManglerCreator: () -> FirMangler,
+    firMangler: FirMangler,
     visibilityConverter: Fir2IrVisibilityConverter,
     kotlinBuiltIns: KotlinBuiltIns,
     diagnosticReporter: DiagnosticReporter,
@@ -81,8 +83,9 @@ fun FirResult.convertToIrAndActualize(
 
     val commonMemberStorage = Fir2IrCommonMemberStorage(
         generateSignatures = linkViaSignatures,
+        descriptorMangler = descriptorMangler,
         signatureComposerCreator = signatureComposerCreator,
-        manglerCreator = firManglerCreator
+        firMangler = firMangler,
     )
 
     when (outputs.size) {

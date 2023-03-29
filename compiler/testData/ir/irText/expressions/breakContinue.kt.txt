@@ -48,3 +48,4 @@ fun test3() {
     continue@L
   }
 }
+

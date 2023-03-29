@@ -1,0 +1,35 @@
+// CHECK:
+//   Mangled name: Cell
+//   Public signature: /Cell|null[0]
+class Cell<T : Any?> {
+  // CHECK:
+  //   Mangled name: Cell{}value
+  //   Public signature: /Cell.value|1987073854177347439[0]
+  val value: T
+    // CHECK JVM_IR:
+    //   Mangled name: Cell#<get-value>(){}1:0
+    //   Public signature: /Cell.value.<get-value>|3167862337988859752[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Cell#<get-value>(){}
+    //   Public signature: /Cell.value.<get-value>|3260093555963109437[0]
+    get
+
+  // CHECK:
+  //   Mangled name: Cell#<init>(1:0){}
+  //   Public signature: /Cell.<init>|-8731461708390519279[0]
+  constructor(value: T) /* primary */
+
+}
+
+// CHECK JVM_IR:
+//   Mangled name: #test(){}Cell<kotlin.Int>
+//   Public signature: /test|-4810339714221695945[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test(){}
+//   Public signature: /test|6620506149988718649[0]
+fun test(): Cell<Int>
+
+// CHECK:
+//   Mangled name: IntAlias
+//   Public signature: /IntAlias|null[0]
+typealias IntAlias = Cell<Int>

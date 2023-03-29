@@ -1,0 +1,75 @@
+// CHECK:
+//   Mangled name: CFoo
+//   Public signature: /CFoo|null[0]
+abstract class CFoo<T : Any?> {
+  // CHECK:
+  //   Mangled name: CFoo#<init>(){}
+  //   Public signature: /CFoo.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: CFoo#foo(1:0){}
+  //   Public signature: /CFoo.foo|-701456291278879981[0]
+  fun foo(x: T): Unit
+
+}
+
+// CHECK:
+//   Mangled name: Test1
+//   Public signature: /Test1|null[0]
+class Test1 : CFoo<String>, IBar, IFooStr {
+  // CHECK:
+  //   Mangled name: Test1{}bar
+  //   Public signature: /Test1.bar|-7864284097863469857[0]
+  override val bar: Int
+    // CHECK JVM_IR:
+    //   Mangled name: Test1#<get-bar>(){}kotlin.Int
+    //   Public signature: /Test1.bar.<get-bar>|-7403724005139201014[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Test1#<get-bar>(){}
+    //   Public signature: /Test1.bar.<get-bar>|6880642144337645699[0]
+    override get
+
+  // CHECK:
+  //   Mangled name: Test1#<init>(){}
+  //   Public signature: /Test1.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: Test1#foo(kotlin.String){}
+  //   Public signature: /Test1.foo|1351044947738582195[0]
+  /* fake */ override fun foo(x: String): Unit
+
+}
+
+// CHECK:
+//   Mangled name: IBar
+//   Public signature: /IBar|null[0]
+interface IBar {
+
+  // CHECK:
+  //   Mangled name: IBar{}bar
+  //   Public signature: /IBar.bar|-7864284097863469857[0]
+  abstract val bar: Int
+    // CHECK JVM_IR:
+    //   Mangled name: IBar#<get-bar>(){}kotlin.Int
+    //   Public signature: /IBar.bar.<get-bar>|-7403724005139201014[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: IBar#<get-bar>(){}
+    //   Public signature: /IBar.bar.<get-bar>|6880642144337645699[0]
+    abstract get
+
+}
+
+// CHECK:
+//   Mangled name: IFooStr
+//   Public signature: /IFooStr|null[0]
+interface IFooStr {
+
+  // CHECK:
+  //   Mangled name: IFooStr#foo(kotlin.String){}
+  //   Public signature: /IFooStr.foo|1351044947738582195[0]
+  abstract fun foo(x: String): Unit
+
+}
+

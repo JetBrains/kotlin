@@ -1,0 +1,5 @@
+// CHECK:
+//   Mangled name: #test(J.JJ){}
+//   Public signature: /test|-1956916194268064921[0]
+fun test(jj: JJ): Unit
+

@@ -13,3 +13,4 @@ fun test() {
   A::class.<get-java><A>() /*~> Unit */
   A()::class.<get-java><A>() /*~> Unit */
 }
+

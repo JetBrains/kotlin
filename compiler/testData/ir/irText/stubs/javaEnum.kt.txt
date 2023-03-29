@@ -1,3 +1,4 @@
 val test: JEnum
   field = JEnum.ONE
   get
+

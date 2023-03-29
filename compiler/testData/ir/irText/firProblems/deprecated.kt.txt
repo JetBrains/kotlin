@@ -11,3 +11,4 @@ fun create(s: String): String {
 fun create(b: Boolean): String {
   return create()
 }
+

@@ -67,3 +67,4 @@ class Test2 : IBase<String> {
   }
 
 }
+

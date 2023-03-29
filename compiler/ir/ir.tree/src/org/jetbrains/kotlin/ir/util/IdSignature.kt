@@ -658,4 +658,6 @@ interface IdSignatureComposer {
     fun composeAnonInitSignature(descriptor: ClassDescriptor): IdSignature?
 
     fun withFileSignature(fileSignature: IdSignature.FileSignature, body: () -> Unit)
+
+    val mangler: KotlinMangler.DescriptorMangler
 }

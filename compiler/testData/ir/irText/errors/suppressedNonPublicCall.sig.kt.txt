@@ -1,0 +1,21 @@
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
+class C {
+  // CHECK:
+  //   Mangled name: C#<init>(){}
+  //   Public signature: /C.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: C#bar(){}
+  //   Public signature: /C.bar|496682602797471549[0]
+  internal fun bar(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: #foo@C(){}
+//   Public signature: /foo|-8448020621019557006[0]
+inline fun C.foo(): Unit
+

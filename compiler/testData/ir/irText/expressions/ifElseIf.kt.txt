@@ -37,3 +37,4 @@ fun testEmptyBranches3(flag: Boolean) {
     else -> true /*~> Unit */
   }
 }
+

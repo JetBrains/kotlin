@@ -18,3 +18,4 @@ fun Foo<*>.testSmartCastOnExtensionReceiver() {
 fun testValueParameter(vp: Foo<*>): Int {
   return vp.<get-x>()
 }
+

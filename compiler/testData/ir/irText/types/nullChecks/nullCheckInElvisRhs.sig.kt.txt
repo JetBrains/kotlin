@@ -1,0 +1,14 @@
+// MODULE: lib
+// MODULE: main
+// FILE: nullCheckInElvisRhs.kt
+
+// CHECK JVM_IR:
+//   Mangled name: #baz(){}kotlin.String?
+//   Public signature: /baz|3245777681320490676[0]
+fun baz(): String?
+
+// CHECK JVM_IR:
+//   Mangled name: #test(){}kotlin.String
+//   Public signature: /test|-7008832412320199001[0]
+fun test(): String
+

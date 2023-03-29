@@ -1,0 +1,10 @@
+// CHECK:
+//   Mangled name: #testArrayAssignment(<dynamic>){}
+//   Public signature: /testArrayAssignment|-7643929268553758425[0]
+fun testArrayAssignment(d: dynamic): Unit
+
+// CHECK:
+//   Mangled name: #testArrayAssignmentFake(<dynamic>){}
+//   Public signature: /testArrayAssignmentFake|3175988190655386022[0]
+fun testArrayAssignmentFake(d: dynamic): Unit
+

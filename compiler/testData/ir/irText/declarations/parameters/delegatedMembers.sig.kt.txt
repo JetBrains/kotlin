@@ -1,0 +1,65 @@
+// CHECK:
+//   Mangled name: Test
+//   Public signature: /Test|null[0]
+class Test<TT : Any?> : IBase<TT> {
+  // CHECK:
+  //   Mangled name: Test#<init>(IBase<1:0>){}
+  //   Public signature: /Test.<init>|-3017997426280513504[0]
+  constructor(impl: IBase<TT>) /* primary */
+  // CHECK:
+  //   Mangled name: Test.$$delegate_0
+  //   Public signature: /Test.$$delegate_0|-7286425919675154353[0]
+  private /* final field */ val $$delegate_0: IBase<TT>
+  // CHECK:
+  //   Mangled name: Test#foo(kotlin.Int){}
+  //   Public signature: /Test.foo|-104159190164110731[0]
+  override fun foo(x: Int): Unit
+
+  // CHECK:
+  //   Mangled name: Test#qux(1:0;0:0){0§<kotlin.Any?>}
+  //   Public signature: /Test.qux|2089843959414439633[0]
+  override fun <X : Any?> qux(t: TT, x: X): Unit
+
+  // CHECK:
+  //   Mangled name: Test{}bar
+  //   Public signature: /Test.bar|-7864284097863469857[0]
+  override val bar: Int
+    // CHECK JVM_IR:
+    //   Mangled name: Test#<get-bar>(){}kotlin.Int
+    //   Public signature: /Test.bar.<get-bar>|-7403724005139201014[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Test#<get-bar>(){}
+    //   Public signature: /Test.bar.<get-bar>|6880642144337645699[0]
+    override get(): Int
+
+}
+
+// CHECK:
+//   Mangled name: IBase
+//   Public signature: /IBase|null[0]
+interface IBase<T : Any?> {
+
+  // CHECK:
+  //   Mangled name: IBase#foo(kotlin.Int){}
+  //   Public signature: /IBase.foo|-104159190164110731[0]
+  abstract fun foo(x: Int): Unit
+
+  // CHECK:
+  //   Mangled name: IBase#qux(1:0;0:0){0§<kotlin.Any?>}
+  //   Public signature: /IBase.qux|2089843959414439633[0]
+  abstract fun <X : Any?> qux(t: T, x: X): Unit
+
+  // CHECK:
+  //   Mangled name: IBase{}bar
+  //   Public signature: /IBase.bar|-7864284097863469857[0]
+  abstract val bar: Int
+    // CHECK JVM_IR:
+    //   Mangled name: IBase#<get-bar>(){}kotlin.Int
+    //   Public signature: /IBase.bar.<get-bar>|-7403724005139201014[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: IBase#<get-bar>(){}
+    //   Public signature: /IBase.bar.<get-bar>|6880642144337645699[0]
+    abstract get
+
+}
+

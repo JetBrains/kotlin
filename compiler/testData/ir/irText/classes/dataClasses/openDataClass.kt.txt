@@ -54,3 +54,4 @@ open data class ValidatedProperties {
   }
 
 }
+

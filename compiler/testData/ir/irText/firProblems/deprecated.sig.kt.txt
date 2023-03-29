@@ -1,0 +1,24 @@
+// CHECK JVM_IR:
+//   Mangled name: #create(){}kotlin.String
+//   Public signature: /create|-1557561735696060682[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #create(){}
+//   Public signature: /create|9033430362705119523[0]
+fun create(): String
+
+// CHECK JVM_IR:
+//   Mangled name: #create(kotlin.Boolean){}kotlin.String
+//   Public signature: /create|-3400482347981983007[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #create(kotlin.Boolean){}
+//   Public signature: /create|-2263398152642299020[0]
+fun create(b: Boolean): String
+
+// CHECK JVM_IR:
+//   Mangled name: #create(kotlin.String){}kotlin.String
+//   Public signature: /create|-6120250208000719461[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #create(kotlin.String){}
+//   Public signature: /create|-5890518877103900297[0]
+fun create(s: String): String
+

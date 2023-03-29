@@ -1,0 +1,209 @@
+// CHECK:
+//   Mangled name: ControlFlowInfo
+//   Public signature: /ControlFlowInfo|null[0]
+open class ControlFlowInfo<K : Any?, V : Any?> : Map<K, V> {
+  // CHECK:
+  //   Mangled name: ControlFlowInfo{}map
+  //   Public signature: /ControlFlowInfo.map|7076745113644856434[0]
+  val map: Map<K, V>
+    // CHECK JVM_IR:
+    //   Mangled name: ControlFlowInfo#<get-map>(){}kotlin.collections.Map<1:0,1:1>
+    //   Public signature: /ControlFlowInfo.map.<get-map>|2022038978683679846[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: ControlFlowInfo#<get-map>(){}
+    //   Public signature: /ControlFlowInfo.map.<get-map>|4042543427940588392[0]
+    get
+
+  // CHECK:
+  //   Mangled name: ControlFlowInfo#<init>(kotlin.collections.Map<1:0,1:1>){}
+  //   Public signature: /ControlFlowInfo.<init>|2293537713863886898[0]
+  constructor(map: Map<K, V>) /* primary */
+  // CHECK JVM_IR:
+  //   Mangled name: ControlFlowInfo#containsKey(1:0){}kotlin.Boolean
+  //   Public signature: /ControlFlowInfo.containsKey|-2697616884574929105[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: ControlFlowInfo#containsKey(1:0){}
+  //   Public signature: /ControlFlowInfo.containsKey|4378783437577239715[0]
+  override fun containsKey(key: K): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: ControlFlowInfo#containsValue(1:1){}kotlin.Boolean
+  //   Public signature: /ControlFlowInfo.containsValue|4814293423579408279[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: ControlFlowInfo#containsValue(1:1){}
+  //   Public signature: /ControlFlowInfo.containsValue|4662958731902362185[0]
+  override fun containsValue(value: V): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: ControlFlowInfo#get(1:0){}1:1?
+  //   Public signature: /ControlFlowInfo.get|-2177239518810968262[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: ControlFlowInfo#get(1:0){}
+  //   Public signature: /ControlFlowInfo.get|3042887604952512631[0]
+  override operator fun get(key: K): V?
+
+  // CHECK JVM_IR:
+  //   Mangled name: ControlFlowInfo#isEmpty(){}kotlin.Boolean
+  //   Public signature: /ControlFlowInfo.isEmpty|-626562167393617703[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: ControlFlowInfo#isEmpty(){}
+  //   Public signature: /ControlFlowInfo.isEmpty|-412363028532554867[0]
+  override fun isEmpty(): Boolean
+
+  // CHECK:
+  //   Mangled name: ControlFlowInfo{}entries
+  //   Public signature: /ControlFlowInfo.entries|-586096469347622282[0]
+  override val entries: Set<Entry<K, V>>
+    // CHECK JVM_IR:
+    //   Mangled name: ControlFlowInfo#<get-entries>(){}kotlin.collections.Set<kotlin.collections.Map.Entry<1:0,1:1>>
+    //   Public signature: /ControlFlowInfo.entries.<get-entries>|-1963460919948819548[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: ControlFlowInfo#<get-entries>(){}
+    //   Public signature: /ControlFlowInfo.entries.<get-entries>|-3918723658541822269[0]
+    override get(): Set<Entry<K, V>>
+
+  // CHECK:
+  //   Mangled name: ControlFlowInfo{}keys
+  //   Public signature: /ControlFlowInfo.keys|-1539062068328255324[0]
+  override val keys: Set<K>
+    // CHECK JVM_IR:
+    //   Mangled name: ControlFlowInfo#<get-keys>(){}kotlin.collections.Set<1:0>
+    //   Public signature: /ControlFlowInfo.keys.<get-keys>|4915091794204623606[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: ControlFlowInfo#<get-keys>(){}
+    //   Public signature: /ControlFlowInfo.keys.<get-keys>|-8185182219094674588[0]
+    override get(): Set<K>
+
+  // CHECK:
+  //   Mangled name: ControlFlowInfo{}size
+  //   Public signature: /ControlFlowInfo.size|-6253659984320132064[0]
+  override val size: Int
+    // CHECK JVM_IR:
+    //   Mangled name: ControlFlowInfo#<get-size>(){}kotlin.Int
+    //   Public signature: /ControlFlowInfo.size.<get-size>|-3941649985161900780[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: ControlFlowInfo#<get-size>(){}
+    //   Public signature: /ControlFlowInfo.size.<get-size>|-8255337774232345969[0]
+    override get(): Int
+
+  // CHECK:
+  //   Mangled name: ControlFlowInfo{}values
+  //   Public signature: /ControlFlowInfo.values|-764749005844117249[0]
+  override val values: Collection<V>
+    // CHECK JVM_IR:
+    //   Mangled name: ControlFlowInfo#<get-values>(){}kotlin.collections.Collection<1:1>
+    //   Public signature: /ControlFlowInfo.values.<get-values>|-8281927905891735092[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: ControlFlowInfo#<get-values>(){}
+    //   Public signature: /ControlFlowInfo.values.<get-values>|2932041455850412365[0]
+    override get(): Collection<V>
+
+}
+
+// CHECK:
+//   Mangled name: StringFlowInfo
+//   Public signature: /StringFlowInfo|null[0]
+class StringFlowInfo : ControlFlowInfo<String, String> {
+  // CHECK:
+  //   Mangled name: StringFlowInfo#<init>(kotlin.collections.Map<kotlin.String,kotlin.String>){}
+  //   Public signature: /StringFlowInfo.<init>|4094084879849523083[0]
+  constructor(map: Map<String, String>) /* primary */
+  // CHECK JVM_IR:
+  //   Mangled name: StringFlowInfo#containsKey(kotlin.String){}kotlin.Boolean
+  //   Public signature: /StringFlowInfo.containsKey|8275396622473115435[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: StringFlowInfo#containsKey(kotlin.String){}
+  //   Public signature: /StringFlowInfo.containsKey|3677836291003130742[0]
+  /* fake */ override fun containsKey(key: String): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: StringFlowInfo#containsValue(kotlin.String){}kotlin.Boolean
+  //   Public signature: /StringFlowInfo.containsValue|-5705743499860588066[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: StringFlowInfo#containsValue(kotlin.String){}
+  //   Public signature: /StringFlowInfo.containsValue|-5079298258943426686[0]
+  /* fake */ override fun containsValue(value: String): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: StringFlowInfo#get(kotlin.String){}kotlin.String?
+  //   Public signature: /StringFlowInfo.get|3520886730483549601[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: StringFlowInfo#get(kotlin.String){}
+  //   Public signature: /StringFlowInfo.get|-2844435113185872994[0]
+  /* fake */ override operator fun get(key: String): String?
+
+  // CHECK JVM_IR:
+  //   Mangled name: StringFlowInfo#isEmpty(){}kotlin.Boolean
+  //   Public signature: /StringFlowInfo.isEmpty|-626562167393617703[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: StringFlowInfo#isEmpty(){}
+  //   Public signature: /StringFlowInfo.isEmpty|-412363028532554867[0]
+  /* fake */ override fun isEmpty(): Boolean
+
+  // CHECK:
+  //   Mangled name: StringFlowInfo#foo(StringFlowInfo){}
+  //   Public signature: /StringFlowInfo.foo|-2258477714905003543[0]
+  fun foo(info: StringFlowInfo): Unit
+
+  // CHECK:
+  //   Mangled name: StringFlowInfo{}entries
+  //   Public signature: /StringFlowInfo.entries|-586096469347622282[0]
+  /* fake */ override val entries: Set<Entry<String, String>>
+    // CHECK JVM_IR:
+    //   Mangled name: StringFlowInfo#<get-entries>(){}kotlin.collections.Set<kotlin.collections.Map.Entry<kotlin.String,kotlin.String>>
+    //   Public signature: /StringFlowInfo.entries.<get-entries>|2415846673528417847[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: StringFlowInfo#<get-entries>(){}
+    //   Public signature: /StringFlowInfo.entries.<get-entries>|-3918723658541822269[0]
+    /* fake */ override get(): Set<Entry<String, String>>
+
+  // CHECK:
+  //   Mangled name: StringFlowInfo{}keys
+  //   Public signature: /StringFlowInfo.keys|-1539062068328255324[0]
+  /* fake */ override val keys: Set<String>
+    // CHECK JVM_IR:
+    //   Mangled name: StringFlowInfo#<get-keys>(){}kotlin.collections.Set<kotlin.String>
+    //   Public signature: /StringFlowInfo.keys.<get-keys>|5348512610294911590[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: StringFlowInfo#<get-keys>(){}
+    //   Public signature: /StringFlowInfo.keys.<get-keys>|-8185182219094674588[0]
+    /* fake */ override get(): Set<String>
+
+  // CHECK:
+  //   Mangled name: StringFlowInfo{}map
+  //   Public signature: /StringFlowInfo.map|7076745113644856434[0]
+  /* fake */ override val map: Map<String, String>
+    // CHECK JVM_IR:
+    //   Mangled name: StringFlowInfo#<get-map>(){}kotlin.collections.Map<kotlin.String,kotlin.String>
+    //   Public signature: /StringFlowInfo.map.<get-map>|-5304991006392731398[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: StringFlowInfo#<get-map>(){}
+    //   Public signature: /StringFlowInfo.map.<get-map>|4042543427940588392[0]
+    /* fake */ override get(): Map<String, String>
+
+  // CHECK:
+  //   Mangled name: StringFlowInfo{}size
+  //   Public signature: /StringFlowInfo.size|-6253659984320132064[0]
+  /* fake */ override val size: Int
+    // CHECK JVM_IR:
+    //   Mangled name: StringFlowInfo#<get-size>(){}kotlin.Int
+    //   Public signature: /StringFlowInfo.size.<get-size>|-3941649985161900780[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: StringFlowInfo#<get-size>(){}
+    //   Public signature: /StringFlowInfo.size.<get-size>|-8255337774232345969[0]
+    /* fake */ override get(): Int
+
+  // CHECK:
+  //   Mangled name: StringFlowInfo{}values
+  //   Public signature: /StringFlowInfo.values|-764749005844117249[0]
+  /* fake */ override val values: Collection<String>
+    // CHECK JVM_IR:
+    //   Mangled name: StringFlowInfo#<get-values>(){}kotlin.collections.Collection<kotlin.String>
+    //   Public signature: /StringFlowInfo.values.<get-values>|-4605576396649500879[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: StringFlowInfo#<get-values>(){}
+    //   Public signature: /StringFlowInfo.values.<get-values>|2932041455850412365[0]
+    /* fake */ override get(): Collection<String>
+
+}
+

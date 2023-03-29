@@ -10,3 +10,4 @@ open annotation class ModuleInfo : Annotation {
     get
 
 }
+

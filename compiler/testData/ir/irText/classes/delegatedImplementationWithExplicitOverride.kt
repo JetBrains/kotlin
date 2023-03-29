@@ -1,3 +1,6 @@
+// MUTE_SIGNATURE_COMPARISON_K2: ANY
+// ^ KT-57754
+
 interface IFooBar {
     fun foo()
     fun bar()

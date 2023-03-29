@@ -77,3 +77,4 @@ fun testWithPrematureExitInConditionSubexpression(x: Any): Int {
     }
   }
 }
+

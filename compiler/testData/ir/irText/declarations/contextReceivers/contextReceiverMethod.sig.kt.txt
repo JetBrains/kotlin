@@ -1,0 +1,42 @@
+// CHECK:
+//   Mangled name: Context
+//   Public signature: /Context|null[0]
+class Context {
+  // CHECK:
+  //   Mangled name: Context#<init>(){}
+  //   Public signature: /Context.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: Context#foo(){}kotlin.Int
+  //   Public signature: /Context.foo|-1256155405684507276[0]
+  fun foo(): Int
+
+}
+
+// CHECK:
+//   Mangled name: Test
+//   Public signature: /Test|null[0]
+class Test {
+  // CHECK:
+  //   Mangled name computed from Ir:         Test#<init>(Context){}
+  //   Mangled name computed from Descriptor: Test#<init>!Context(){}
+  //   Public signature: /Test.<init>|4848133296495274545[0]
+  constructor($context_receiver_0: Context) /* primary */
+  // CHECK:
+  //   Mangled name computed from Ir:         Test.contextReceiverField0
+  //   Mangled name computed from Descriptor: Test{}contextReceiverField0#jf
+  private /* final field */ val contextReceiverField0: Context
+
+  // CHECK:
+  //   Mangled name: Test#bar(){}
+  //   Public signature: /Test.bar|496682602797471549[0]
+  fun bar(): Unit
+
+  // CHECK JVM_IR:
+  //   Mangled name: Test#foo(){}kotlin.Int
+  //   Public signature: /Test.foo|-1256155405684507276[0]
+  fun foo(): Int
+
+}
+

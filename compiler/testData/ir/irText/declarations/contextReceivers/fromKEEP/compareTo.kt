@@ -1,6 +1,9 @@
 // !LANGUAGE: +ContextReceivers
 // TARGET_BACKEND: JVM_IR
 
+// MUTE_SIGNATURE_COMPARISON_K2: ANY
+// ^ KT-57429, KT-57435
+
 data class Pair<A, B>(val first: A, val second: B)
 
 context(Comparator<T>)

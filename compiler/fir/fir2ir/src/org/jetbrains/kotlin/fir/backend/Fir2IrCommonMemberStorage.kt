@@ -11,13 +11,15 @@ import org.jetbrains.kotlin.fir.signaturer.FirMangler
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.util.IdSignatureComposer
+import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import java.util.concurrent.ConcurrentHashMap
 
 class Fir2IrCommonMemberStorage(
     generateSignatures: Boolean,
-    signatureComposerCreator: (() -> IdSignatureComposer)?,
-    manglerCreator: () -> FirMangler
+    descriptorMangler: KotlinMangler.DescriptorMangler,
+    signatureComposerCreator: ((KotlinMangler.DescriptorMangler) -> IdSignatureComposer)?,
+    firMangler: FirMangler
 ) {
     val signatureComposer: FirBasedSignatureComposer
 
@@ -25,10 +27,10 @@ class Fir2IrCommonMemberStorage(
 
     init {
         val signaturer = if (generateSignatures && signatureComposerCreator != null)
-            signatureComposerCreator()
+            signatureComposerCreator(descriptorMangler)
         else
-            DescriptorSignatureComposerStub()
-        signatureComposer = FirBasedSignatureComposer(manglerCreator())
+            DescriptorSignatureComposerStub(descriptorMangler)
+        signatureComposer = FirBasedSignatureComposer(firMangler)
         symbolTable = SymbolTable(
             signaturer = WrappedDescriptorSignatureComposer(signaturer, signatureComposer),
             irFactory = IrFactoryImpl

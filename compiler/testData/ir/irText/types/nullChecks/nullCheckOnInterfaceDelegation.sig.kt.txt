@@ -1,0 +1,56 @@
+// MODULE: lib
+// MODULE: main
+// FILE: nullCheckOnInterfaceDelegation.kt
+
+// CHECK:
+//   Mangled name: Delegated
+//   Public signature: /Delegated|null[0]
+class Delegated : IFoo {
+  // CHECK:
+  //   Mangled name: Delegated#<init>(){}
+  //   Public signature: /Delegated.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+  // CHECK:
+  //   Mangled name: Delegated.$$delegate_0
+  //   Public signature: /Delegated.$$delegate_0|-7286425919675154353[0]
+  private /* final field */ val $$delegate_0: Derived
+  // CHECK JVM_IR:
+  //   Mangled name: Delegated#foo(){}kotlin.String
+  //   Public signature: /Delegated.foo|485335955883620819[0]
+  override fun foo(): String
+
+}
+
+// CHECK:
+//   Mangled name: Derived
+//   Public signature: /Derived|null[0]
+class Derived : A, IFoo {
+  // CHECK:
+  //   Mangled name: Derived#<init>(){}
+  //   Public signature: /Derived.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: Derived#foo(){}kotlin.String?
+  //   Public signature: /Derived.foo|4483044608789364619[0]
+  override fun foo(): String?
+
+}
+
+// CHECK:
+//   Mangled name: IFoo
+//   Public signature: /IFoo|null[0]
+interface IFoo {
+
+  // CHECK JVM_IR:
+  //   Mangled name: IFoo#foo(){}kotlin.String
+  //   Public signature: /IFoo.foo|485335955883620819[0]
+  abstract fun foo(): String
+
+}
+
+// CHECK JVM_IR:
+//   Mangled name: #testReturnValue(){}kotlin.String
+//   Public signature: /testReturnValue|5442151564926968913[0]
+fun testReturnValue(): String
+

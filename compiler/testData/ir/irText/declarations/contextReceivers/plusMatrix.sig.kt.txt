@@ -1,0 +1,34 @@
+// CHECK:
+//   Mangled name: Matrix
+//   Public signature: /Matrix|null[0]
+class Matrix {
+  // CHECK:
+  //   Mangled name: Matrix#<init>(){}
+  //   Public signature: /Matrix.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: NumberOperations
+//   Public signature: /NumberOperations|null[0]
+interface NumberOperations {
+
+  // CHECK JVM_IR:
+  //   Mangled name: NumberOperations#plus@kotlin.Number(kotlin.Number){}kotlin.Number
+  //   Public signature: /NumberOperations.plus|-6518987633126930952[0]
+  abstract fun Number.plus(other: Number): Number
+
+}
+
+// CHECK JVM_IR:
+//   Mangled name computed from Ir:         #plus@Matrix(NumberOperations;Matrix){}Matrix
+//   Mangled name computed from Descriptor: #plus!NumberOperations@Matrix(Matrix){}Matrix
+//   Public signature: /plus|1303343764214809933[0]
+fun Matrix.plus($context_receiver_0: NumberOperations, other: Matrix): Matrix
+
+// CHECK:
+//   Mangled name: #plusMatrix@NumberOperations(Matrix;Matrix){}
+//   Public signature: /plusMatrix|-8194087590203252948[0]
+fun NumberOperations.plusMatrix(m1: Matrix, m2: Matrix): Unit
+

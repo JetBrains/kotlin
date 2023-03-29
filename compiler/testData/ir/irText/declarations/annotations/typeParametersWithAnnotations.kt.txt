@@ -10,3 +10,4 @@ open annotation class Anno : Annotation {
 
 fun <@Anno T : Any?> foo() {
 }
+

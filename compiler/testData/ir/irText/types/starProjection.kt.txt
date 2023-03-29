@@ -12,3 +12,4 @@ abstract class C {
   abstract fun dispatchResumeWithException(exception: Throwable, continuation: Continuation<*>): Boolean
 
 }
+

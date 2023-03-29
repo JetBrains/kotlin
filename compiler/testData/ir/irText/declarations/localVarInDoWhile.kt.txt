@@ -5,3 +5,4 @@ fun foo() {
     // }    while (EQEQ(arg0 = x, arg1 = 42).not())
   }
 }
+

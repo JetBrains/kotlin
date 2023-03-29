@@ -30,3 +30,4 @@ open annotation class A3 : Annotation {
 @A3
 fun test() {
 }
+

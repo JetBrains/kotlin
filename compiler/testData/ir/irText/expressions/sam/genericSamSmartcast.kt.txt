@@ -9,3 +9,4 @@ fun f(x: Any): String {
   }
   return "Fail"
 }
+

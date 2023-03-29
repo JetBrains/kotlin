@@ -129,3 +129,4 @@ val test_varWithPrivateSet: KProperty1<C, Int>
 val test_varWithProtectedSet: KProperty1<C, Int>
   field = C::varWithProtectedSet
   get
+

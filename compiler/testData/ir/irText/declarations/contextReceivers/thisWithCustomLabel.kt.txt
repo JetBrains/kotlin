@@ -53,3 +53,4 @@ val C.p: Int
     <this>.<get-c>() /*~> Unit */
     return 1
   }
+

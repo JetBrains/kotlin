@@ -1,0 +1,5 @@
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test(<dynamic>){}
+//   Public signature: /test|8843648336650546510[0]
+fun test(d: dynamic): dynamic
+

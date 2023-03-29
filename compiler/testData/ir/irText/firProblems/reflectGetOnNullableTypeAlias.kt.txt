@@ -21,3 +21,4 @@ class Foo {
     get
 
 }
+

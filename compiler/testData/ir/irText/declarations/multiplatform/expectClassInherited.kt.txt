@@ -36,3 +36,4 @@ open class B : A {
   }
 
 }
+

@@ -1,0 +1,56 @@
+// CHECK:
+//   Mangled name: KRunnable
+//   Public signature: /KRunnable|null[0]
+fun interface KRunnable {
+
+  // CHECK:
+  //   Mangled name: KRunnable#run(){}
+  //   Public signature: /KRunnable.run|-991178076551934874[0]
+  abstract fun run(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: #foo0(){}
+//   Public signature: /foo0|854950155582184407[0]
+fun foo0(): Unit
+
+// CHECK JVM_IR:
+//   Mangled name: #foo1(kotlin.IntArray...){}kotlin.Int
+//   Public signature: /foo1|7470134185704818303[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #foo1(kotlin.IntArray...){}
+//   Public signature: /foo1|-6748328364529290172[0]
+fun foo1(vararg xs: Int): Int
+
+// CHECK JVM_IR:
+//   Mangled name: #testSamConstructor(){}KRunnable
+//   Public signature: /testSamConstructor|-5482155559435579976[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #testSamConstructor(){}
+//   Public signature: /testSamConstructor|-7853436018033066699[0]
+fun testSamConstructor(): KRunnable
+
+// CHECK:
+//   Mangled name: #testSamConversion(){}
+//   Public signature: /testSamConversion|8522656930427711360[0]
+fun testSamConversion(): Unit
+
+// CHECK:
+//   Mangled name: #testSamConversionOnAdapted(){}
+//   Public signature: /testSamConversionOnAdapted|2809940309834714371[0]
+fun testSamConversionOnAdapted(): Unit
+
+// CHECK JVM_IR:
+//   Mangled name: #testSamCosntructorOnAdapted(){}KRunnable
+//   Public signature: /testSamCosntructorOnAdapted|655519272240812814[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #testSamCosntructorOnAdapted(){}
+//   Public signature: /testSamCosntructorOnAdapted|-7927635342265674772[0]
+fun testSamCosntructorOnAdapted(): KRunnable
+
+// CHECK:
+//   Mangled name: #use(KRunnable){}
+//   Public signature: /use|3076420774911186780[0]
+fun use(r: KRunnable): Unit
+

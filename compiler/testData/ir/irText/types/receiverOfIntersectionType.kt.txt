@@ -58,3 +58,4 @@ fun testFlexible2(a: A, b: B) {
   }
   v /*!! K */ /*as I */.ff()
 }
+

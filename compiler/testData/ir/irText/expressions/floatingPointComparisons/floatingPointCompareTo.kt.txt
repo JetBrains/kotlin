@@ -77,3 +77,4 @@ fun Float.test3fr(x: Any): Boolean {
     else -> false
   }
 }
+

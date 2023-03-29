@@ -1,0 +1,67 @@
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
+class C {
+  // CHECK:
+  //   Mangled name: C#<init>(){}
+  //   Public signature: /C.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: C#compareTo@kotlin.Int(kotlin.Char){}kotlin.Int
+  //   Public signature: /C.compareTo|-3046390620514569100[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: C#compareTo@kotlin.Int(kotlin.Char){}
+  //   Public signature: /C.compareTo|4004432308841029190[0]
+  operator fun Int.compareTo(c: Char): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: C#testMemberExtensionCompareToCall(kotlin.Int;kotlin.Char){}kotlin.Boolean
+  //   Public signature: /C.testMemberExtensionCompareToCall|-4075882409492053136[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: C#testMemberExtensionCompareToCall(kotlin.Int;kotlin.Char){}
+  //   Public signature: /C.testMemberExtensionCompareToCall|8498050272167447890[0]
+  fun testMemberExtensionCompareToCall(x: Int, y: Char): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: C#testMemberExtensionCompareToCallWithSmartCast(kotlin.Any;kotlin.Any){}kotlin.Boolean
+  //   Public signature: /C.testMemberExtensionCompareToCallWithSmartCast|8745947718269383382[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: C#testMemberExtensionCompareToCallWithSmartCast(kotlin.Any;kotlin.Any){}
+  //   Public signature: /C.testMemberExtensionCompareToCallWithSmartCast|-8133797647400685684[0]
+  fun testMemberExtensionCompareToCallWithSmartCast(x: Any, y: Any): Boolean
+
+}
+
+// CHECK JVM_IR:
+//   Mangled name: #compareTo@kotlin.Int(kotlin.Char){}kotlin.Int
+//   Public signature: /compareTo|-3046390620514569100[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #compareTo@kotlin.Int(kotlin.Char){}
+//   Public signature: /compareTo|4004432308841029190[0]
+operator fun Int.compareTo(c: Char): Int
+
+// CHECK JVM_IR:
+//   Mangled name: #testEqualsWithSmartCast(kotlin.Any;kotlin.Any){}kotlin.Boolean
+//   Public signature: /testEqualsWithSmartCast|216587402273338311[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #testEqualsWithSmartCast(kotlin.Any;kotlin.Any){}
+//   Public signature: /testEqualsWithSmartCast|-1534790459299527637[0]
+fun testEqualsWithSmartCast(x: Any, y: Any): Boolean
+
+// CHECK JVM_IR:
+//   Mangled name: #testOverloadedCompareToCall(kotlin.Int;kotlin.Char){}kotlin.Boolean
+//   Public signature: /testOverloadedCompareToCall|-3653539079240215410[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #testOverloadedCompareToCall(kotlin.Int;kotlin.Char){}
+//   Public signature: /testOverloadedCompareToCall|8371154870019873370[0]
+fun testOverloadedCompareToCall(x: Int, y: Char): Boolean
+
+// CHECK JVM_IR:
+//   Mangled name: #testOverloadedCompareToCallWithSmartCast(kotlin.Any;kotlin.Any){}kotlin.Boolean
+//   Public signature: /testOverloadedCompareToCallWithSmartCast|-1185994757727801494[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #testOverloadedCompareToCallWithSmartCast(kotlin.Any;kotlin.Any){}
+//   Public signature: /testOverloadedCompareToCallWithSmartCast|-3249814920840803876[0]
+fun testOverloadedCompareToCallWithSmartCast(x: Any, y: Any): Boolean
+

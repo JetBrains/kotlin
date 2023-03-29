@@ -44,3 +44,4 @@ enum class TestEnumClass : Enum<TestEnumClass> {
     get(): EnumEntries<TestEnumClass> /* Synthetic body for ENUM_ENTRIES */
 
 }
+

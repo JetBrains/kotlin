@@ -1,0 +1,10 @@
+// CHECK:
+//   Mangled name: #branch(kotlin.Int){}
+//   Public signature: /branch|-1878617393485869904[0]
+fun branch(x: Int): Unit
+
+// CHECK:
+//   Mangled name: #run(kotlin.Function0<kotlin.Unit>){}
+//   Public signature: /run|-7851331300955833905[0]
+fun run(block: Function0<Unit>): Unit
+

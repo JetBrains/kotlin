@@ -64,3 +64,4 @@ fun test(j: J) {
   }
  /*-> Fn<String, Int> */, f2 = <get-fis>()) /*~> Unit */
 }
+

@@ -1,5 +1,9 @@
 // FIR_IDENTICAL
 // TARGET_BACKEND: JVM
+
+// MUTE_SIGNATURE_COMPARISON_K2: ANY
+// ^ KT-57429
+
 // FILE: samConversionInGenericConstructorCall.kt
 fun test3(
     f1: (String) -> String,

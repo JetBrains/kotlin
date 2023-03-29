@@ -29,3 +29,4 @@ enum class En : Enum<En> {
     get(): EnumEntries<En> /* Synthetic body for ENUM_ENTRIES */
 
 }
+

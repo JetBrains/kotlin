@@ -1,0 +1,16 @@
+// CHECK JVM_IR:
+//   Mangled name: #foo(){}kotlin.Any
+//   Public signature: /foo|-9059697968601777418[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #foo(){}
+//   Public signature: /foo|-1041209573719867811[0]
+fun foo(): Any
+
+// CHECK JVM_IR:
+//   Mangled name: #test(){}kotlin.Int
+//   Public signature: /test|4216975235718029399[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test(){}
+//   Public signature: /test|6620506149988718649[0]
+fun test(): Int
+

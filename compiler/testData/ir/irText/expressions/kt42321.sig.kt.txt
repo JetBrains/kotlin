@@ -1,0 +1,46 @@
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
+abstract class C<L : Any?> {
+  // CHECK:
+  //   Mangled name: C#<init>(){}
+  //   Public signature: /C.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: C#takeT(1:0){}
+  //   Public signature: /C.takeT|-7480648261330177149[0]
+  abstract fun takeT(x: L): Unit
+
+}
+
+// CHECK:
+//   Mangled name: #testByteDotCall(C<kotlin.Byte>){}
+//   Public signature: /testByteDotCall|7314970765595651111[0]
+fun testByteDotCall(c3: C<Byte>): Unit
+
+// CHECK:
+//   Mangled name: #testByteOperatorInfixCall(C<kotlin.Byte>){}
+//   Public signature: /testByteOperatorInfixCall|-2354875349940919484[0]
+fun testByteOperatorInfixCall(c6: C<Byte>): Unit
+
+// CHECK:
+//   Mangled name: #testLongDotCall(C<kotlin.Long>){}
+//   Public signature: /testLongDotCall|-1826307306703812949[0]
+fun testLongDotCall(c1: C<Long>): Unit
+
+// CHECK:
+//   Mangled name: #testLongOperatorInfixCall(C<kotlin.Long>){}
+//   Public signature: /testLongOperatorInfixCall|-5615398277394944107[0]
+fun testLongOperatorInfixCall(c4: C<Long>): Unit
+
+// CHECK:
+//   Mangled name: #testShortDotCall(C<kotlin.Short>){}
+//   Public signature: /testShortDotCall|2335764331568411495[0]
+fun testShortDotCall(c2: C<Short>): Unit
+
+// CHECK:
+//   Mangled name: #testShortOperatorInfixCall(C<kotlin.Short>){}
+//   Public signature: /testShortOperatorInfixCall|-2126986004644978267[0]
+fun testShortOperatorInfixCall(c5: C<Short>): Unit
+

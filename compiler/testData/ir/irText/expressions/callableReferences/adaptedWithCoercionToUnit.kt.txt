@@ -55,3 +55,4 @@ fun testV1() {
     ::fnv
   })
 }
+

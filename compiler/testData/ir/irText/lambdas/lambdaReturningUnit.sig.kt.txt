@@ -1,0 +1,10 @@
+// CHECK:
+//   Mangled name: #box(){}
+//   Public signature: /box|2173511048851971368[0]
+suspend fun box(): Unit
+
+// CHECK:
+//   Mangled name: #flaf(kotlin.Function0<kotlin.Any?>){}
+//   Public signature: /flaf|8689906342143583664[0]
+inline fun flaf(block: Function0<Any?>): Unit
+

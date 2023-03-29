@@ -1,3 +1,6 @@
+// SKIP_SIGNATURE_DUMP
+// ^ K1 generates a useless delegate field for the Test2 class, K2 does not
+
 interface IBase<A> {
     fun <B> foo(a: A, b: B)
     val <C> C.id: Map<A, C>?

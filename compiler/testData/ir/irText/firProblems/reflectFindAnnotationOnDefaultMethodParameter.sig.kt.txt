@@ -1,0 +1,28 @@
+// CHECK:
+//   Mangled name: Ann
+//   Public signature: /Ann|null[0]
+open annotation class Ann : Annotation {
+  // CHECK:
+  //   Mangled name: Ann#<init>(){}
+  //   Public signature: /Ann.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: I
+//   Public signature: /I|null[0]
+interface I {
+
+  // CHECK:
+  //   Mangled name: I#m(kotlin.String){}
+  //   Public signature: /I.m|934693771674457301[0]
+  fun m(@Ann s: String): Unit
+
+}
+
+// CHECK JVM_IR:
+//   Mangled name: #box(){}kotlin.String
+//   Public signature: /box|-9347091776561469[0]
+fun box(): String
+

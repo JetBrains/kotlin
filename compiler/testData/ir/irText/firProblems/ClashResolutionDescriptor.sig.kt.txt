@@ -1,0 +1,84 @@
+// CHECK:
+//   Mangled name: {}registrationMap
+//   Public signature: [ File 'ClashResolutionDescriptor.kt' <- /registrationMap|8184441143918876435[0] ]
+private val registrationMap: HashMap<Type, Any>
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-registrationMap>(){}java.util.HashMap<java.lang.reflect.Type,kotlin.Any>
+  //   Public signature: [ File 'ClashResolutionDescriptor.kt' <- /registrationMap.<get-registrationMap>|3119298927482099509[0] ]
+  private get
+
+// CHECK:
+//   Mangled name: ClashResolutionDescriptor
+//   Public signature: /ClashResolutionDescriptor|null[0]
+class ClashResolutionDescriptor<E : PlatformSpecificExtension<E>> {
+  // CHECK:
+  //   Mangled name: ClashResolutionDescriptor{}resolver
+  //   Public signature: /ClashResolutionDescriptor.resolver|8912854618409758647[0]
+  private val resolver: PlatformExtensionsClashResolver<E>
+    // CHECK JVM_IR:
+    //   Mangled name: ClashResolutionDescriptor#<get-resolver>(){}PlatformExtensionsClashResolver<1:0>
+    //   Public signature: /ClashResolutionDescriptor.resolver.<get-resolver>|3490691458597764818[0]
+    private get
+
+  // CHECK:
+  //   Mangled name: ClashResolutionDescriptor{}clashedComponents
+  //   Public signature: /ClashResolutionDescriptor.clashedComponents|1468680588633000446[0]
+  private val clashedComponents: List<ComponentDescriptor>
+    // CHECK JVM_IR:
+    //   Mangled name: ClashResolutionDescriptor#<get-clashedComponents>(){}kotlin.collections.List<ComponentDescriptor>
+    //   Public signature: /ClashResolutionDescriptor.clashedComponents.<get-clashedComponents>|-246985097775886667[0]
+    private get
+
+  // CHECK:
+  //   Mangled name: ClashResolutionDescriptor#<init>(ComponentContainer;PlatformExtensionsClashResolver<1:0>;kotlin.collections.List<ComponentDescriptor>){}
+  //   Public signature: /ClashResolutionDescriptor.<init>|5507710378195680379[0]
+  constructor(container: ComponentContainer, resolver: PlatformExtensionsClashResolver<E>, clashedComponents: List<ComponentDescriptor>) /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: PlatformExtensionsClashResolver
+//   Public signature: /PlatformExtensionsClashResolver|null[0]
+abstract class PlatformExtensionsClashResolver<E : PlatformSpecificExtension<E>> {
+  // CHECK:
+  //   Mangled name: PlatformExtensionsClashResolver{}applicableTo
+  //   Public signature: /PlatformExtensionsClashResolver.applicableTo|6029537505993816165[0]
+  val applicableTo: Class<E>
+    // CHECK JVM_IR:
+    //   Mangled name: PlatformExtensionsClashResolver#<get-applicableTo>(){}java.lang.Class<1:0>
+    //   Public signature: /PlatformExtensionsClashResolver.applicableTo.<get-applicableTo>|7304285895281171874[0]
+    get
+
+  // CHECK:
+  //   Mangled name: PlatformExtensionsClashResolver#<init>(java.lang.Class<1:0>){}
+  //   Public signature: /PlatformExtensionsClashResolver.<init>|5119314677210520097[0]
+  constructor(applicableTo: Class<E>) /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: ComponentContainer
+//   Public signature: /ComponentContainer|null[0]
+interface ComponentContainer {
+
+}
+
+// CHECK:
+//   Mangled name: ComponentDescriptor
+//   Public signature: /ComponentDescriptor|null[0]
+interface ComponentDescriptor {
+
+}
+
+// CHECK:
+//   Mangled name: PlatformSpecificExtension
+//   Public signature: /PlatformSpecificExtension|null[0]
+interface PlatformSpecificExtension<S : PlatformSpecificExtension<S>> {
+
+}
+
+// CHECK:
+//   Mangled name: #resolveClashesIfAny(ComponentContainer;kotlin.collections.List<PlatformExtensionsClashResolver<*>>){}
+//   Public signature: /resolveClashesIfAny|1954676013070349118[0]
+fun resolveClashesIfAny(container: ComponentContainer, clashResolvers: List<PlatformExtensionsClashResolver<*>>): Unit
+

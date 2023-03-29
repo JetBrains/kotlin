@@ -1,4 +1,8 @@
 // FIR_IDENTICAL
+
+// MUTE_SIGNATURE_COMPARISON_K2: ANY
+// ^ KT-57429, KT-57427
+
 import kotlin.reflect.KMutableProperty
 
 class C<T>(var x: T)

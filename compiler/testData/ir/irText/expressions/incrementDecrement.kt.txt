@@ -274,3 +274,4 @@ fun testObjectOperatorPostfix() {
     tmp5
   }
 }
+

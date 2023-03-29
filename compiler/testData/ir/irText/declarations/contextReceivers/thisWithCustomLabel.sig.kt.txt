@@ -1,0 +1,76 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+class A<T : Any?> {
+  // CHECK:
+  //   Mangled name: A{}a
+  //   Public signature: /A.a|-1200697420457237799[0]
+  val a: T
+    // CHECK JVM_IR:
+    //   Mangled name: A#<get-a>(){}1:0
+    //   Public signature: /A.a.<get-a>|5765441560292063424[0]
+    get
+
+  // CHECK:
+  //   Mangled name: A#<init>(1:0){}
+  //   Public signature: /A.<init>|-8731461708390519279[0]
+  constructor(a: T) /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[0]
+class B {
+  // CHECK:
+  //   Mangled name: B{}b
+  //   Public signature: /B.b|772347207915745207[0]
+  val b: Any
+    // CHECK JVM_IR:
+    //   Mangled name: B#<get-b>(){}kotlin.Any
+    //   Public signature: /B.b.<get-b>|4768115582956424363[0]
+    get
+
+  // CHECK:
+  //   Mangled name: B#<init>(kotlin.Any){}
+  //   Public signature: /B.<init>|4518179880532599055[0]
+  constructor(b: Any) /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
+class C {
+  // CHECK:
+  //   Mangled name: C{}c
+  //   Public signature: /C.c|-4416962153448040627[0]
+  val c: Any
+    // CHECK JVM_IR:
+    //   Mangled name: C#<get-c>(){}kotlin.Any
+    //   Public signature: /C.c.<get-c>|-7073232512849879703[0]
+    get
+
+  // CHECK:
+  //   Mangled name: C#<init>(kotlin.Any){}
+  //   Public signature: /C.<init>|4518179880532599055[0]
+  constructor(c: Any) /* primary */
+
+}
+
+// CHECK:
+//   Mangled name computed from Ir:         #f(A<kotlin.Int>;A<kotlin.String>;B){}
+//   Mangled name computed from Descriptor: #f!A<kotlin.Int>!A<kotlin.String>!B(){}
+//   Public signature: /f|-2471136927765483161[0]
+fun f($context_receiver_0: A<Int>, $context_receiver_1: A<String>, $context_receiver_2: B): Unit
+
+// CHECK:
+//   Mangled name: @C{}p
+//   Public signature: /p|-5429013048289439414[0]
+val C.p: Int
+  // CHECK JVM_IR:
+  //   Mangled name computed from Ir:         #<get-p>@C(A<kotlin.Int>;A<kotlin.String>;B){}kotlin.Int
+  //   Mangled name computed from Descriptor: #<get-p>!A<kotlin.Int>!A<kotlin.String>!B@C(){}kotlin.Int
+  //   Public signature: /p.<get-p>|-7725362510645392909[0]
+  get($context_receiver_0: A<Int>, $context_receiver_1: A<String>, $context_receiver_2: B): Int
+

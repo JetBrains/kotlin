@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi
 
 // @NoMutableState -- we'll restore this annotation once we get rid of withFileSignature().
 class FirBasedSignatureComposer(override val mangler: FirMangler) : Fir2IrSignatureComposer {

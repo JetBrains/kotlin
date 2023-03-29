@@ -40,3 +40,4 @@ fun testSamConversionOnAdapted() {
     ::foo1 /*-> KRunnable */
   })
 }
+

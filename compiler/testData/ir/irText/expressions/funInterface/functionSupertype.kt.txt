@@ -9,3 +9,4 @@ fun id(foo: Foo): Any {
 fun test(foo: Foo) {
   id(foo = foo) /*~> Unit */
 }
+

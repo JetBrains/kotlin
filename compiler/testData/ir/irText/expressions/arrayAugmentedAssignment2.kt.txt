@@ -15,3 +15,4 @@ fun IB.test(a: IA) {
     (<this>, tmp0_array).set(index = tmp1_index0, value = tmp0_array.get(index = tmp1_index0).plus(other = 42))
   }
 }
+

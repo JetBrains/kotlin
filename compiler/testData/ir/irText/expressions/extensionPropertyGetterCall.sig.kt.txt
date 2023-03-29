@@ -1,0 +1,20 @@
+// CHECK JVM_IR:
+//   Mangled name: #test5@kotlin.String(){}kotlin.String
+//   Public signature: /test5|7396849134865790053[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test5@kotlin.String(){}
+//   Public signature: /test5|6764932899271361379[0]
+fun String.test5(): String
+
+// CHECK:
+//   Mangled name: @kotlin.String{}okext
+//   Public signature: /okext|-7546376167507800782[0]
+val String.okext: String
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-okext>@kotlin.String(){}kotlin.String
+  //   Public signature: /okext.<get-okext>|-4397362169527603922[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-okext>@kotlin.String(){}
+  //   Public signature: /okext.<get-okext>|-5103161093403962760[0]
+  get(): String
+

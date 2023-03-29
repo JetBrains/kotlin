@@ -10,3 +10,4 @@ class Test1 : J {
     get
 
 }
+

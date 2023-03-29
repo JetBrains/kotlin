@@ -1,0 +1,30 @@
+// CHECK JVM_IR:
+//   Mangled name: #testKotlinCompareToPlatform@JavaClass(){}kotlin.Int
+//   Public signature: /testKotlinCompareToPlatform|-5546439559750208367[0]
+fun JavaClass.testKotlinCompareToPlatform(): Int
+
+// CHECK JVM_IR:
+//   Mangled name: #testKotlinEqualsPlatform@JavaClass(){}kotlin.Boolean
+//   Public signature: /testKotlinEqualsPlatform|-887320242138996512[0]
+fun JavaClass.testKotlinEqualsPlatform(): Boolean
+
+// CHECK JVM_IR:
+//   Mangled name: #testPlatformCompareToKotlin@JavaClass(){}kotlin.Int
+//   Public signature: /testPlatformCompareToKotlin|3114749525946571528[0]
+fun JavaClass.testPlatformCompareToKotlin(): Int
+
+// CHECK JVM_IR:
+//   Mangled name: #testPlatformCompareToPlatform@JavaClass(){}kotlin.Int
+//   Public signature: /testPlatformCompareToPlatform|-2508800761104076198[0]
+fun JavaClass.testPlatformCompareToPlatform(): Int
+
+// CHECK JVM_IR:
+//   Mangled name: #testPlatformEqualsKotlin@JavaClass(){}kotlin.Boolean
+//   Public signature: /testPlatformEqualsKotlin|2622447210423888595[0]
+fun JavaClass.testPlatformEqualsKotlin(): Boolean
+
+// CHECK JVM_IR:
+//   Mangled name: #testPlatformEqualsPlatform@JavaClass(){}kotlin.Boolean
+//   Public signature: /testPlatformEqualsPlatform|-3505772133030731244[0]
+fun JavaClass.testPlatformEqualsPlatform(): Boolean
+

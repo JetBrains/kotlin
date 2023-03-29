@@ -1,0 +1,17 @@
+// CHECK:
+//   Mangled name: Anno
+//   Public signature: /Anno|null[0]
+@Target(allowedTargets = [AnnotationTarget.TYPE_PARAMETER])
+open annotation class Anno : Annotation {
+  // CHECK:
+  //   Mangled name: Anno#<init>(){}
+  //   Public signature: /Anno.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: #foo(){0§<kotlin.Any?>}
+//   Public signature: /foo|-7822584347064313243[0]
+fun <@Anno T : Any?> foo(): Unit
+

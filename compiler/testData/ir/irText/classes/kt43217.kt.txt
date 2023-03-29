@@ -38,3 +38,4 @@ class C : DoubleExpression {
   }
 
 }
+

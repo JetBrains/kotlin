@@ -32,3 +32,4 @@ fun f(outer: Outer) {
   }
 ) /*~> Unit */
 }
+

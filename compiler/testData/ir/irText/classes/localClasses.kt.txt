@@ -13,3 +13,4 @@ fun outer() {
 
   LocalClass().foo()
 }
+

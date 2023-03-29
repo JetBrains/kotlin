@@ -10,3 +10,4 @@ fun testImplicitCast(a: Any) {
   }
 
 }
+

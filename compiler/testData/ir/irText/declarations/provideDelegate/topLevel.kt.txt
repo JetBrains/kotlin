@@ -37,3 +37,4 @@ val testTopLevel: String /* by */
   get(): String {
     return #testTopLevel$delegate.getValue(thisRef = null, property = ::testTopLevel)
   }
+

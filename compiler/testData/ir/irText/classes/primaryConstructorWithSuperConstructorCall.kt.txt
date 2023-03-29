@@ -45,3 +45,4 @@ class TestWithDelegatingConstructor : Base {
   }
 
 }
+

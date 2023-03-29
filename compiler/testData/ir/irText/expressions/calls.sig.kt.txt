@@ -1,0 +1,48 @@
+// CHECK JVM_IR:
+//   Mangled name: #bar(kotlin.Int){}kotlin.Int
+//   Public signature: /bar|-9139551794686561208[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #bar(kotlin.Int){}
+//   Public signature: /bar|-6662241134515685168[0]
+fun bar(x: Int): Int
+
+// CHECK JVM_IR:
+//   Mangled name: #ext1@kotlin.Int(){}kotlin.Int
+//   Public signature: /ext1|6413226340790463095[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #ext1@kotlin.Int(){}
+//   Public signature: /ext1|2676317939288138925[0]
+fun Int.ext1(): Int
+
+// CHECK JVM_IR:
+//   Mangled name: #ext2@kotlin.Int(kotlin.Int){}kotlin.Int
+//   Public signature: /ext2|-8066960946657179620[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #ext2@kotlin.Int(kotlin.Int){}
+//   Public signature: /ext2|-2215403909210362549[0]
+fun Int.ext2(x: Int): Int
+
+// CHECK JVM_IR:
+//   Mangled name: #ext3@kotlin.Int(kotlin.Int){}kotlin.Int
+//   Public signature: /ext3|5977745580530222116[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #ext3@kotlin.Int(kotlin.Int){}
+//   Public signature: /ext3|8845146764019956410[0]
+fun Int.ext3(x: Int): Int
+
+// CHECK JVM_IR:
+//   Mangled name: #foo(kotlin.Int;kotlin.Int){}kotlin.Int
+//   Public signature: /foo|4963416038277150675[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #foo(kotlin.Int;kotlin.Int){}
+//   Public signature: /foo|-5894601321690082118[0]
+fun foo(x: Int, y: Int): Int
+
+// CHECK JVM_IR:
+//   Mangled name: #qux(kotlin.Int){}kotlin.Int
+//   Public signature: /qux|8810931378534960479[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #qux(kotlin.Int){}
+//   Public signature: /qux|-7492140954119175349[0]
+fun qux(x: Int): Int
+

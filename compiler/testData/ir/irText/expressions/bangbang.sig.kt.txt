@@ -1,0 +1,34 @@
+// CHECK JVM_IR:
+//   Mangled name: #test1(kotlin.Any?){}kotlin.Any
+//   Public signature: /test1|3740103800770013069[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test1(kotlin.Any?){}
+//   Public signature: /test1|5022087227201313016[0]
+fun test1(a: Any?): Any
+
+// CHECK JVM_IR:
+//   Mangled name: #test2(kotlin.Any?){}kotlin.Int
+//   Public signature: /test2|5851677675624690854[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test2(kotlin.Any?){}
+//   Public signature: /test2|7269867005815420933[0]
+fun test2(a: Any?): Int
+
+// CHECK JVM_IR:
+//   Mangled name: #test3(0:0){0§<kotlin.Any?>}0:0
+//   Public signature: /test3|6230015698608081924[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test3(0:0){0§<kotlin.Any?>}
+//   Public signature: /test3|-7928313088684974141[0]
+fun <X : Any?> test3(a: X): (X & Any)
+
+// CHECK:
+//   Mangled name: #test4(0:0){0§<kotlin.Any?>}
+//   Public signature: /test4|5293645353028387515[0]
+fun <X : Any?> test4(a: X): Unit
+
+// CHECK:
+//   Mangled name: #useString(kotlin.String){}
+//   Public signature: /useString|2275790659251057343[0]
+fun useString(s: String): Unit
+

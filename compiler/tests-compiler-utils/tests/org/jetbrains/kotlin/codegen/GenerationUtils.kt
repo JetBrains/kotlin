@@ -126,14 +126,15 @@ object GenerationUtils {
             emptyList(),
             IrGenerationExtension.getInstances(project),
             FirParser.Psi,
-            generateSignatures = false
+            generateSignatures = configuration.getBoolean(JVMConfigurationKeys.LINK_VIA_SIGNATURES)
         )
         val fir2IrExtensions = JvmFir2IrExtensions(configuration, JvmIrDeserializerImpl(), JvmIrMangler)
 
         val commonMemberStorage = Fir2IrCommonMemberStorage(
             generateSignatures = firAnalyzerFacade.generateSignatures,
-            signatureComposerCreator = { JvmIdSignatureDescriptor(JvmDescriptorMangler(null)) },
-            manglerCreator = { FirJvmKotlinMangler() }
+            descriptorMangler = JvmDescriptorMangler(null),
+            signatureComposerCreator = ::JvmIdSignatureDescriptor,
+            firMangler = FirJvmKotlinMangler(),
         )
 
         val (moduleFragment, components, pluginContext) = firAnalyzerFacade.convertToIr(

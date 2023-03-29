@@ -1,0 +1,9 @@
+// CHECK:
+//   Mangled name: {}test
+//   Public signature: /test|-5712650070209114719[0]
+val test: Unit
+  // CHECK:
+  //   Mangled name: #<get-test>(){}
+  //   Public signature: /test.<get-test>|208282462577758837[0]
+  get
+

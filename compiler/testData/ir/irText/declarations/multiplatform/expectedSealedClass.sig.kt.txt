@@ -1,0 +1,44 @@
+// CHECK:
+//   Mangled name: Add
+//   Public signature: /Add|null[1]
+expect class Add : Ops {
+  // CHECK:
+  //   Mangled name: Add#<init>(){}
+  //   Public signature: /Add.<init>|-5645683436151566731[1]
+  expect constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: Add
+//   Public signature: /Add|null[0]
+class Add : Ops {
+  // CHECK:
+  //   Mangled name: Add#<init>(){}
+  //   Public signature: /Add.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: Ops
+//   Public signature: /Ops|null[1]
+expect sealed class Ops {
+  // CHECK:
+  //   Mangled name: Ops#<init>(){}
+  //   Public signature: /Ops.<init>|-5645683436151566731[1]
+  protected expect constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: Ops
+//   Public signature: /Ops|null[0]
+sealed class Ops {
+  // CHECK:
+  //   Mangled name: Ops#<init>(){}
+  //   Public signature: /Ops.<init>|-5645683436151566731[0]
+  protected constructor() /* primary */
+
+}
+

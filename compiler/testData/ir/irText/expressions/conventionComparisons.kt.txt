@@ -22,3 +22,4 @@ fun IB.test3(a1: IA, a2: IA): Boolean {
 fun IB.test4(a1: IA, a2: IA): Boolean {
   return lessOrEqual(arg0 = (<this>, a1).compareTo(other = a2), arg1 = 0)
 }
+

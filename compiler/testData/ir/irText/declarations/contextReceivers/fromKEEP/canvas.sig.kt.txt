@@ -1,0 +1,71 @@
+// CHECK:
+//   Mangled name: Circle
+//   Public signature: /Circle|null[0]
+class Circle : Shape {
+  // CHECK:
+  //   Mangled name: Circle#<init>(){}
+  //   Public signature: /Circle.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name computed from Ir:         Circle#draw(Canvas){}kotlin.String
+  //   Mangled name computed from Descriptor: Circle#draw!Canvas(){}kotlin.String
+  //   Public signature: /Circle.draw|-6733499063990640842[0]
+  override fun draw($context_receiver_0: Canvas): String
+
+}
+
+// CHECK:
+//   Mangled name: Canvas
+//   Public signature: /Canvas|null[0]
+interface Canvas {
+
+  // CHECK:
+  //   Mangled name: Canvas{}suffix
+  //   Public signature: /Canvas.suffix|-3301965527200666288[0]
+  abstract val suffix: String
+    // CHECK JVM_IR:
+    //   Mangled name: Canvas#<get-suffix>(){}kotlin.String
+    //   Public signature: /Canvas.suffix.<get-suffix>|8958072538558116778[0]
+    abstract get
+
+}
+
+// CHECK:
+//   Mangled name: Shape
+//   Public signature: /Shape|null[0]
+interface Shape {
+
+  // CHECK JVM_IR:
+  //   Mangled name computed from Ir:         Shape#draw(Canvas){}kotlin.String
+  //   Mangled name computed from Descriptor: Shape#draw!Canvas(){}kotlin.String
+  //   Public signature: /Shape.draw|-6733499063990640842[0]
+  abstract fun draw($context_receiver_0: Canvas): String
+
+}
+
+// CHECK:
+//   Mangled name: MyCanvas
+//   Public signature: /MyCanvas|null[0]
+object MyCanvas : Canvas {
+  // CHECK:
+  //   Mangled name: MyCanvas{}suffix
+  //   Public signature: /MyCanvas.suffix|-3301965527200666288[0]
+  override val suffix: String
+    // CHECK JVM_IR:
+    //   Mangled name: MyCanvas#<get-suffix>(){}kotlin.String
+    //   Public signature: /MyCanvas.suffix.<get-suffix>|8958072538558116778[0]
+    override get
+
+  // CHECK:
+  //   Mangled name: MyCanvas#<init>(){}
+  //   Public signature: /MyCanvas.<init>|-5645683436151566731[0]
+  private constructor() /* primary */
+
+}
+
+// CHECK JVM_IR:
+//   Mangled name: #box(){}kotlin.String
+//   Public signature: /box|-9347091776561469[0]
+fun box(): String
+

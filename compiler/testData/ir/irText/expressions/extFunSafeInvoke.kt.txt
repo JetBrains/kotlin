@@ -7,3 +7,4 @@ fun test(receiver: Any?, fn: @ExtensionFunctionType Function3<Any, Int, String, 
     }
   }
 }
+

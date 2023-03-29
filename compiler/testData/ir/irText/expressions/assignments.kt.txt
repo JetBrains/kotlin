@@ -21,3 +21,4 @@ fun test1() {
 fun test2(r: Ref) {
   r.<set-x>(<set-?> = 0)
 }
+

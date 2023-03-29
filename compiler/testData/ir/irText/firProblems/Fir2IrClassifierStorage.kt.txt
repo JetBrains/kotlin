@@ -63,3 +63,4 @@ class Fir2IrClassifierStorage : Fir2IrComponents {
     private get
 
 }
+

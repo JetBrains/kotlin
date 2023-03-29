@@ -1,0 +1,42 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+class A {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+}
+
+// CHECK JVM_IR:
+//   Mangled name: #get@A(kotlin.IntArray...){}kotlin.Int
+//   Public signature: /get|1721673901625314100[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #get@A(kotlin.IntArray...){}
+//   Public signature: /get|-474970059822094928[0]
+operator fun A.get(vararg xs: Int): Int
+
+// CHECK:
+//   Mangled name: #set@A(kotlin.Int;kotlin.Int;kotlin.Int){}
+//   Public signature: /set|-1889324313224580378[0]
+operator fun A.set(i: Int, j: Int, v: Int): Unit
+
+// CHECK:
+//   Mangled name: #testCompoundAssignment(A){}
+//   Public signature: /testCompoundAssignment|446952120601658700[0]
+fun testCompoundAssignment(a: A): Unit
+
+// CHECK JVM_IR:
+//   Mangled name: #testPostfixIncrement(A){}kotlin.Int
+//   Public signature: /testPostfixIncrement|-2576964328021229709[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #testPostfixIncrement(A){}
+//   Public signature: /testPostfixIncrement|1464365050989928678[0]
+fun testPostfixIncrement(a: A): Int
+
+// CHECK:
+//   Mangled name: #testSimpleAssignment(A){}
+//   Public signature: /testSimpleAssignment|1100548656282165605[0]
+fun testSimpleAssignment(a: A): Unit
+

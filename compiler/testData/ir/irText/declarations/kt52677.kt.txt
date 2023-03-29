@@ -85,3 +85,4 @@ fun foo(): @MySerializable(c = UuidSerializer::class) Uuid1 {
 fun bar(): @MySerializable(c = UuidSerializer::class) Uuid1 {
   return foo()
 }
+

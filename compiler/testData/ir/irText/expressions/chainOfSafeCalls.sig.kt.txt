@@ -1,0 +1,35 @@
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
+class C {
+  // CHECK:
+  //   Mangled name: C#<init>(){}
+  //   Public signature: /C.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: C#bar(){}C?
+  //   Public signature: /C.bar|1617899871460343611[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: C#bar(){}
+  //   Public signature: /C.bar|496682602797471549[0]
+  fun bar(): C?
+
+  // CHECK JVM_IR:
+  //   Mangled name: C#foo(){}C
+  //   Public signature: /C.foo|3027884397623430086[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: C#foo(){}
+  //   Public signature: /C.foo|-1041209573719867811[0]
+  fun foo(): C
+
+}
+
+// CHECK JVM_IR:
+//   Mangled name: #test(C?){}C?
+//   Public signature: /test|2090113898813172602[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test(C?){}
+//   Public signature: /test|-9127084887599042119[0]
+fun test(nc: C?): C?
+

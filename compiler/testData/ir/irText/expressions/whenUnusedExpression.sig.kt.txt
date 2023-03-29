@@ -1,0 +1,5 @@
+// CHECK:
+//   Mangled name: #test(kotlin.Boolean;kotlin.Int){}
+//   Public signature: /test|4952296091557857650[0]
+fun test(b: Boolean, i: Int): Unit
+

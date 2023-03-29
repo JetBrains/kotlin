@@ -62,3 +62,4 @@ fun test3(): Int {
 fun test4(): Companion {
   return Companion
 }
+

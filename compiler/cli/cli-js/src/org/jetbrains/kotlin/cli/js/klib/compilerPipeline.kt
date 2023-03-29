@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.fir.serialization.FirKLibSerializerExtension
 import org.jetbrains.kotlin.fir.serialization.serializeSingleFirFile
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.backend.js.*
+import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.js.resolve.JsPlatformAnalyzerServices
@@ -131,9 +132,10 @@ fun transformFirToIr(
         fir2IrExtensions,
         IrGenerationExtension.getInstances(moduleStructure.project),
         linkViaSignatures = false,
+        descriptorMangler = JsManglerDesc,
         signatureComposerCreator = null,
         irMangler = JsManglerIr,
-        firManglerCreator = ::FirJsKotlinMangler,
+        firMangler = FirJsKotlinMangler(),
         visibilityConverter = Fir2IrVisibilityConverter.Default,
         kotlinBuiltIns = builtInsModule ?: DefaultBuiltIns.Instance,
         diagnosticReporter = diagnosticsReporter,

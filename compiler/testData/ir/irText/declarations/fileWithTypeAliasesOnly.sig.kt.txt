@@ -1,0 +1,4 @@
+// CHECK:
+//   Mangled name: Bar
+//   Public signature: /Bar|null[0]
+typealias Bar<T : Any?> = Function1<T, String>

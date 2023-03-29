@@ -1,0 +1,41 @@
+// CHECK:
+//   Mangled name: A1
+//   Public signature: /A1|null[0]
+open annotation class A1 : Annotation {
+  // CHECK:
+  //   Mangled name: A1#<init>(){}
+  //   Public signature: /A1.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: A2
+//   Public signature: /A2|null[0]
+open annotation class A2 : Annotation {
+  // CHECK:
+  //   Mangled name: A2#<init>(){}
+  //   Public signature: /A2.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: A3
+//   Public signature: /A3|null[0]
+open annotation class A3 : Annotation {
+  // CHECK:
+  //   Mangled name: A3#<init>(){}
+  //   Public signature: /A3.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: #test(){}
+//   Public signature: /test|6620506149988718649[0]
+@A1
+@A2
+@A3
+fun test(): Unit
+

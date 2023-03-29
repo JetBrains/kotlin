@@ -1,4 +1,8 @@
 // FIR_IDENTICAL
+
+// MUTE_SIGNATURE_COMPARISON_K2: ANY
+// ^ KT-57429
+
 val test1 = 42
 
 var test2 = 42

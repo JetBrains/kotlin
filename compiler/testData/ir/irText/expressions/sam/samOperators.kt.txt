@@ -15,3 +15,4 @@ fun J.test3() {
   <this>.plusAssign(i = ::f /*-> @FlexibleNullability Runnable? */)
   <this>.minusAssign(i = ::f /*-> @FlexibleNullability Runnable? */)
 }
+

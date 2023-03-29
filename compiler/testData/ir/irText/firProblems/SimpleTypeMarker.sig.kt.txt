@@ -1,0 +1,60 @@
+// CHECK:
+//   Mangled name: SimpleType
+//   Public signature: /SimpleType|null[0]
+class SimpleType : SimpleTypeMarker {
+  // CHECK:
+  //   Mangled name: SimpleType#<init>(){}
+  //   Public signature: /SimpleType.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: SimpleType#foo(){}kotlin.String
+  //   Public signature: /SimpleType.foo|485335955883620819[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: SimpleType#foo(){}
+  //   Public signature: /SimpleType.foo|-1041209573719867811[0]
+  fun foo(): String
+
+}
+
+// CHECK:
+//   Mangled name: UserImpl
+//   Public signature: /UserImpl|null[0]
+class UserImpl {
+  // CHECK:
+  //   Mangled name: UserImpl#<init>(){}
+  //   Public signature: /UserImpl.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: UserImpl#bar@SimpleTypeMarker(){}kotlin.String
+  //   Public signature: /UserImpl.bar|9149645946452319977[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: UserImpl#bar@SimpleTypeMarker(){}
+  //   Public signature: /UserImpl.bar|1189004268240262319[0]
+  fun SimpleTypeMarker.bar(): String
+
+}
+
+// CHECK:
+//   Mangled name: SimpleTypeMarker
+//   Public signature: /SimpleTypeMarker|null[0]
+interface SimpleTypeMarker {
+
+}
+
+// CHECK:
+//   Mangled name: User
+//   Public signature: /User|null[0]
+interface User {
+
+  // CHECK JVM_IR:
+  //   Mangled name: User#bar@SimpleTypeMarker(){}kotlin.String
+  //   Public signature: /User.bar|9149645946452319977[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: User#bar@SimpleTypeMarker(){}
+  //   Public signature: /User.bar|1189004268240262319[0]
+  fun SimpleTypeMarker.bar(): String
+
+}
+

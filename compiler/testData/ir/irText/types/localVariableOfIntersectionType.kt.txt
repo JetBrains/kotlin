@@ -30,3 +30,4 @@ fun test(a: In<IA>, b: In<IB>, z: Z) {
   t /*as IA */.foo()
   t /*as IB */.bar()
 }
+

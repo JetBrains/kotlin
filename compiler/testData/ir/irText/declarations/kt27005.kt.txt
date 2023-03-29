@@ -9,3 +9,4 @@ suspend fun bar(): Any {
 suspend fun <T : Any?> baz(): T {
   TODO()
 }
+

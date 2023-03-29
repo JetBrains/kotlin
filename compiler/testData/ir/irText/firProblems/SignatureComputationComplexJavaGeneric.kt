@@ -1,6 +1,9 @@
 // SKIP_KLIB_TEST
-// IGNORE_BACKEND: JS_IR
-// IGNORE_BACKEND: JS_IR_ES6
+// TARGET_BACKEND: JVM_IR
+
+// MUTE_SIGNATURE_COMPARISON_K2: ANY
+// ^ KT-57429
+
 // FILE: J.java
 
 import org.jetbrains.annotations.Nullable;

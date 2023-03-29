@@ -1,0 +1,28 @@
+// CHECK JVM_IR:
+//   Mangled name: #bar(kotlin.String?;kotlin.String?){}kotlin.String
+//   Public signature: /bar|8959405200213373616[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #bar(kotlin.String?;kotlin.String?){}
+//   Public signature: /bar|7464353977761234214[0]
+fun bar(s: String?, t: String?): String
+
+// CHECK JVM_IR:
+//   Mangled name: #foo(kotlin.String?){}kotlin.String
+//   Public signature: /foo|-459206804338718434[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #foo(kotlin.String?){}
+//   Public signature: /foo|-7402282804178432687[0]
+fun foo(s: String?): String
+
+// CHECK:
+//   Mangled name: @kotlin.String?{}baz
+//   Public signature: /baz|7411160368245609818[0]
+val String?.baz: String
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-baz>@kotlin.String?(){}kotlin.String
+  //   Public signature: /baz.<get-baz>|4455067775993214927[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-baz>@kotlin.String?(){}
+  //   Public signature: /baz.<get-baz>|2073181676262234013[0]
+  get(): String
+

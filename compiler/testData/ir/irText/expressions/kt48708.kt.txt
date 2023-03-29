@@ -13,3 +13,4 @@ fun test(b: Boolean) {
 
 fun takeInt(x: Int) {
 }
+

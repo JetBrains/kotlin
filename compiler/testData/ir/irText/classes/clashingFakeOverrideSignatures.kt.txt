@@ -170,3 +170,4 @@ class OuterDerived : Outer<String> {
   }
 
 }
+

@@ -3,3 +3,4 @@ fun test(): Int {
     else -> 42
   }
 }
+

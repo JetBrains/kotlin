@@ -1,0 +1,25 @@
+// CHECK:
+//   Mangled name: Test
+//   Public signature: /Test|null[0]
+class Test<T : Any?> : J<T> {
+  // CHECK:
+  //   Mangled name: Test{}x
+  //   Public signature: /Test.x|-8060530855978347579[0]
+  val x: T
+    // CHECK JVM_IR:
+    //   Mangled name: Test#<get-x>(){}1:0
+    //   Public signature: /Test.x.<get-x>|-8893883356128097563[0]
+    get
+
+  // CHECK:
+  //   Mangled name: Test#<init>(1:0){}
+  //   Public signature: /Test.<init>|-8731461708390519279[0]
+  constructor(x: T) /* primary */
+
+  // CHECK:
+  //   Mangled name: Test#test(J.B<1:0>){}
+  //   Public signature: /Test.test|7386642793853999047[0]
+  fun test(b: B<T>): Unit
+
+}
+

@@ -1,0 +1,25 @@
+// CHECK:
+//   Mangled name: X
+//   Public signature: /X|null[0]
+object X {
+  // CHECK:
+  //   Mangled name: X#<init>(){}
+  //   Public signature: /X.<init>|-5645683436151566731[0]
+  private constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: X#plusAssign(kotlin.Any){}
+  //   Public signature: /X.plusAssign|-8710543505665420833[0]
+  operator fun plusAssign(any: Any): Unit
+
+}
+
+// CHECK:
+//   Mangled name: #test(){}
+//   Public signature: /test|6620506149988718649[0]
+fun test(): Unit
+
+// CHECK:
+//   Mangled name: AX
+//   Public signature: /AX|null[0]
+typealias AX = X

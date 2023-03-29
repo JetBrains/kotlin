@@ -16,3 +16,4 @@ object Host {
 fun test(): String {
   return Host.foo<Any>()
 }
+

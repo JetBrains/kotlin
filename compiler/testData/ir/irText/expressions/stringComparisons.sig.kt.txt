@@ -1,0 +1,32 @@
+// CHECK JVM_IR:
+//   Mangled name: #test1(kotlin.String;kotlin.String){}kotlin.Boolean
+//   Public signature: /test1|6790785447655035499[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test1(kotlin.String;kotlin.String){}
+//   Public signature: /test1|8554714824822456836[0]
+fun test1(a: String, b: String): Boolean
+
+// CHECK JVM_IR:
+//   Mangled name: #test2(kotlin.String;kotlin.String){}kotlin.Boolean
+//   Public signature: /test2|7858239913425663674[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test2(kotlin.String;kotlin.String){}
+//   Public signature: /test2|-3623168192394156345[0]
+fun test2(a: String, b: String): Boolean
+
+// CHECK JVM_IR:
+//   Mangled name: #test3(kotlin.String;kotlin.String){}kotlin.Boolean
+//   Public signature: /test3|-7031649260333243795[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test3(kotlin.String;kotlin.String){}
+//   Public signature: /test3|-5165614332197612058[0]
+fun test3(a: String, b: String): Boolean
+
+// CHECK JVM_IR:
+//   Mangled name: #test4(kotlin.String;kotlin.String){}kotlin.Boolean
+//   Public signature: /test4|6371007876260764309[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test4(kotlin.String;kotlin.String){}
+//   Public signature: /test4|7384031049358806214[0]
+fun test4(a: String, b: String): Boolean
+
