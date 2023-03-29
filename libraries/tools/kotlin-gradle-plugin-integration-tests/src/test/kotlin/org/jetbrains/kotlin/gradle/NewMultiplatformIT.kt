@@ -8,6 +8,8 @@ import org.gradle.api.logging.LogLevel
 import org.jetbrains.kotlin.gradle.native.GeneralNativeIT.Companion.withNativeCommandLineArguments
 import org.jetbrains.kotlin.gradle.native.GeneralNativeIT.Companion.containsSequentially
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.gradle.native.*
 import org.jetbrains.kotlin.gradle.native.MPPNativeTargets
 import org.jetbrains.kotlin.gradle.native.transformNativeTestProject
@@ -201,6 +203,8 @@ open class NewMultiplatformIT : BaseGradleIT() {
 
                 // Check that linker options were correctly passed to the K/N compiler.
                 withNativeCommandLineArguments(":linkMainDebugExecutableLinux64") { arguments ->
+                    val parsedArguments = parseCommandLineArguments<K2NativeCompilerArguments>(arguments)
+                    assertEquals(listOf("-L."), parsedArguments.singleLinkerArguments?.toList())
                     assertTrue(arguments.containsSequentially("-linker-option", "-L."))
                 }
             }
@@ -1558,7 +1562,8 @@ open class NewMultiplatformIT : BaseGradleIT() {
             ).flatMapTo(mutableSetOf()) { target ->
                 listOf("main", "test").map { compilation ->
                     Triple(target, compilation,
-                           "$target${compilation.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}")
+                           "$target${compilation.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}"
+                    )
                 }
             } + Triple("metadata", "main", "commonMain")
 

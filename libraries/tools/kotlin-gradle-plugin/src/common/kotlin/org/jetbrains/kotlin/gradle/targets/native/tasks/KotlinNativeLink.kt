@@ -219,7 +219,7 @@ constructor(
                 null, BitcodeEmbeddingMode.DISABLE -> Unit
             }
 
-            args.linkerArguments = linkerOpts.toTypedArray()
+            args.singleLinkerArguments = linkerOpts.toTypedArray()
             args.binaryOptions = binaryOptions.map { (key, value) -> "$key=$value" }.toTypedArray()
             args.staticFramework = isStaticFramework
 
