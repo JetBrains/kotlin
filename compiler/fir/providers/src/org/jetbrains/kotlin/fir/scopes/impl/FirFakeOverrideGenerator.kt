@@ -13,8 +13,6 @@ import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
-import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
-import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ChainedSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -26,11 +24,10 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 object FirFakeOverrideGenerator {
@@ -660,60 +657,6 @@ object FirFakeOverrideGenerator {
             containingClassForStaticMemberAttr = derivedClassLookupTag.takeIf { shouldOverrideSetContainingClass(baseField) }
         }
         return symbol
-    }
-
-    fun createSubstitutionOverrideSyntheticProperty(
-        session: FirSession,
-        baseProperty: FirSyntheticProperty,
-        derivedClassLookupTag: ConeClassLikeLookupTag,
-        baseSymbol: FirSyntheticPropertySymbol,
-        newDispatchReceiverType: ConeSimpleKotlinType?,
-        newContextReceiverTypes: List<ConeKotlinType?>?,
-        newReturnType: ConeKotlinType?,
-        newGetterParameterTypes: List<ConeKotlinType?>?,
-        newSetterParameterTypes: List<ConeKotlinType?>?,
-        fakeOverrideSubstitution: FakeOverrideSubstitution?
-    ): FirSyntheticPropertySymbol {
-        val getterSymbol = FirNamedFunctionSymbol(baseSymbol.getterId)
-        val getter = createSubstitutionOverrideFunction(
-            getterSymbol,
-            session,
-            baseProperty.getter.delegate,
-            derivedClassLookupTag,
-            newDispatchReceiverType,
-            newReceiverType = null,
-            newContextReceiverTypes,
-            newReturnType,
-            newGetterParameterTypes,
-            newTypeParameters = null,
-            fakeOverrideSubstitution = fakeOverrideSubstitution
-        )
-        val setterSymbol = FirNamedFunctionSymbol(baseSymbol.getterId)
-        val baseSetter = baseProperty.setter
-        val setter = if (baseSetter == null) null else createSubstitutionOverrideFunction(
-            setterSymbol,
-            session,
-            baseSetter.delegate,
-            derivedClassLookupTag,
-            newDispatchReceiverType,
-            newReceiverType = null,
-            newContextReceiverTypes,
-            StandardClassIds.Unit.constructClassLikeType(emptyArray(), isNullable = false),
-            newSetterParameterTypes,
-            newTypeParameters = null,
-            fakeOverrideSubstitution = fakeOverrideSubstitution
-        )
-        return buildSyntheticProperty {
-            moduleData = session.moduleData
-            name = baseProperty.name
-            symbol = baseSymbol.copy()
-            delegateGetter = getter
-            delegateSetter = setter
-            status = baseProperty.status
-            deprecationsProvider = getDeprecationsProviderFromAccessors(session, getter, setter)
-        }.apply {
-            containingClassForStaticMemberAttr = derivedClassLookupTag.takeIf { shouldOverrideSetContainingClass(baseProperty) }
-        }.symbol
     }
 
     // Returns a list of type parameters, and a substitutor that should be used for all other types

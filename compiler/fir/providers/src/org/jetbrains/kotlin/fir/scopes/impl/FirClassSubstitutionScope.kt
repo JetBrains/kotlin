@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.caches.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.dispatchReceiverClassLookupTagOrNull
 import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
@@ -321,49 +320,6 @@ class FirClassSubstitutionScope(
         return FirFakeOverrideGenerator.createSubstitutionOverrideField(session, member, derivedClassLookupTag, newReturnType)
     }
 
-    fun createSubstitutionOverrideSyntheticProperty(original: FirSyntheticPropertySymbol): FirSyntheticPropertySymbol {
-        if (substitutor == ConeSubstitutor.Empty) return original
-        original.lazyResolveToPhase(FirResolvePhase.TYPES)
-        val member = original.fir as FirSyntheticProperty
-        if (skipPrivateMembers && member.visibility == Visibilities.Private) return original
-
-        val returnType = member.returnTypeRef.coneTypeSafe<ConeKotlinType>()
-        val fakeOverrideSubstitution = runIf(returnType == null) { FakeOverrideSubstitution(substitutor, original) }
-        val newReturnType = returnType?.substitute()
-
-        val newGetterParameterTypes = member.getter.valueParameters.map {
-            it.returnTypeRef.coneType.substitute()
-        }
-        val newSetterParameterTypes = member.setter?.valueParameters?.map {
-            it.returnTypeRef.coneType.substitute()
-        }.orEmpty()
-
-        val newContextReceiverTypes = member.contextReceivers.map {
-            it.typeRef.coneType.substitute()
-        }
-
-        if (original.dispatchReceiverType?.substitute(substitutor) == null &&
-            newReturnType == null &&
-            newGetterParameterTypes.all { it == null } &&
-            newSetterParameterTypes.all { it == null }
-        ) {
-            return original
-        }
-
-        return FirFakeOverrideGenerator.createSubstitutionOverrideSyntheticProperty(
-            session,
-            member,
-            derivedClassLookupTag,
-            original,
-            substitutor.substituteOrSelf(dispatchReceiverTypeForSubstitutedMembers) as ConeSimpleKotlinType?,
-            newContextReceiverTypes,
-            newReturnType,
-            newGetterParameterTypes,
-            newSetterParameterTypes,
-            fakeOverrideSubstitution
-        )
-    }
-
     override fun processDeclaredConstructors(processor: (FirConstructorSymbol) -> Unit) {
         useSiteMemberScope.processDeclaredConstructors process@{ original ->
             val constructor = substitutionOverrideCache.overridesForConstructors.getValue(original, this)
@@ -400,7 +356,6 @@ class FirSubstitutionOverrideStorage(val session: FirSession) : FirSessionCompon
                 when (original) {
                     is FirPropertySymbol -> scope.createSubstitutionOverrideProperty(original)
                     is FirFieldSymbol -> scope.createSubstitutionOverrideField(original)
-                    is FirSyntheticPropertySymbol -> scope.createSubstitutionOverrideSyntheticProperty(original)
                     else -> error("symbol $original is not overridable")
                 }
             }
