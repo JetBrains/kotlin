@@ -6,13 +6,10 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.LowMemoryWatcher
 import com.intellij.openapi.util.ModificationTracker
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.ProjectScope
-import com.intellij.psi.util.CachedValue
-import com.intellij.psi.util.CachedValueProvider
-import com.intellij.psi.util.CachedValuesManager
-import com.intellij.util.containers.CollectionFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirGlobalResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirLazyDeclarationResolver
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
@@ -23,6 +20,7 @@ import org.jetbrains.kotlin.analysis.project.structure.*
 import org.jetbrains.kotlin.analysis.providers.createAnnotationResolver
 import org.jetbrains.kotlin.analysis.providers.createDeclarationProvider
 import org.jetbrains.kotlin.analysis.providers.createPackageProvider
+import org.jetbrains.kotlin.analysis.utils.org.jetbrains.kotlin.analysis.utils.caches.FlexibleCachedValue
 import org.jetbrains.kotlin.analysis.utils.trackers.CompositeModificationTracker
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -49,6 +47,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 import org.jetbrains.kotlin.utils.addToStdlib.partitionIsInstance
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentMap
 
 @OptIn(PrivateSessionConstructor::class, SessionConfiguration::class)
@@ -62,8 +61,12 @@ internal class LLFirSessionCache(private val project: Project) {
     private val globalResolveComponents: LLFirGlobalResolveComponents
         get() = LLFirGlobalResolveComponents.getInstance(project)
 
-    private val sourceCache: ConcurrentMap<KtModule, CachedValue<LLFirSession>> = CollectionFactory.createConcurrentSoftValueMap()
-    private val binaryCache: ConcurrentMap<KtModule, CachedValue<LLFirSession>> = CollectionFactory.createConcurrentSoftValueMap()
+    private val sourceCache: ConcurrentMap<KtModule, FlexibleCachedValue<LLFirSession>> = ConcurrentHashMap()
+    private val binaryCache: ConcurrentMap<KtModule, FlexibleCachedValue<LLFirSession>> = ConcurrentHashMap()
+
+    init {
+        LowMemoryWatcher.register(::softenCachedValues, LowMemoryWatcher.LowMemoryWatcherType.ONLY_AFTER_GC, project)
+    }
 
     /**
      * Returns the existing session if found, or creates a new session and caches it.
@@ -87,17 +90,27 @@ internal class LLFirSessionCache(private val project: Project) {
 
     private fun <T : KtModule> getCachedSession(
         module: T,
-        storage: ConcurrentMap<KtModule, CachedValue<LLFirSession>>,
+        storage: ConcurrentMap<KtModule, FlexibleCachedValue<LLFirSession>>,
         factory: (T) -> LLFirSession
     ): LLFirSession {
         checkCanceled()
 
         return storage.computeIfAbsent(module) {
-            CachedValuesManager.getManager(project).createCachedValue {
+            FlexibleCachedValue {
                 val session = factory(module)
-                CachedValueProvider.Result(session, session.modificationTracker)
+                Pair(session, session.modificationTracker)
             }
         }.value
+    }
+
+    /**
+     * In the event of low memory, softening the cached values allows the GC to gracefully collect sessions which currently aren't used
+     * anywhere. This ensures the referential integrity of FIR symbols, as a new session will only be created if the old session is entirely
+     * unused.
+     */
+    private fun softenCachedValues() {
+        sourceCache.values.forEach { it.soften() }
+        binaryCache.values.forEach { it.soften() }
     }
 
     private fun createSession(module: KtModule): LLFirSession {
