@@ -1,4 +1,5 @@
-// IGNORE_BACKEND_K2: NATIVE
+// IGNORE_BACKEND_K2: NATIVE, JS_IR
+//   Ignore reason: KT-57611
 // MODULE: lib
 // FILE: Class.kt
 

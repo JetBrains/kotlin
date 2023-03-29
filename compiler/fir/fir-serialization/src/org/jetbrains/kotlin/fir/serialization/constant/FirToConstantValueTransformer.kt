@@ -24,17 +24,26 @@ import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.types.ConstantValueKind
 
-internal fun FirExpression.toConstantValue(session: FirSession): ConstantValue<*>? = accept(FirToConstantValueTransformer, session)
+internal fun FirExpression.toConstantValue(session: FirSession): ConstantValue<*>? {
+    return accept(FirToConstantValueTransformerUnsafe, session)
+}
 
-internal object FirToConstantValueTransformer : FirDefaultVisitor<ConstantValue<*>?, FirSession>() {
+private object FirToConstantValueTransformerSafe : FirToConstantValueTransformer(failOnNonConst = false)
+private object FirToConstantValueTransformerUnsafe : FirToConstantValueTransformer(failOnNonConst = true)
+
+private abstract class FirToConstantValueTransformer(
+    private val failOnNonConst: Boolean
+) : FirDefaultVisitor<ConstantValue<*>?, FirSession>() {
     override fun visitElement(
         element: FirElement,
         data: FirSession
     ): ConstantValue<*>? {
-        error("Illegal element as annotation argument: ${element::class.qualifiedName} -> ${element.render()}")
+        if (failOnNonConst) {
+            error("Illegal element as annotation argument: ${element::class.qualifiedName} -> ${element.render()}")
+        }
+        return null
     }
 
-    @OptIn(ExperimentalUnsignedTypes::class)
     override fun <T> visitConstExpression(
         constExpression: FirConstExpression<T>,
         data: FirSession

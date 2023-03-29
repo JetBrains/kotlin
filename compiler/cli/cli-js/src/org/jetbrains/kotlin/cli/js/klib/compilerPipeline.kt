@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.serialization.FirElementAwareSerializableStringTable
 import org.jetbrains.kotlin.fir.serialization.FirKLibSerializerExtension
 import org.jetbrains.kotlin.fir.serialization.serializeSingleFirFile
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -191,8 +190,9 @@ fun serializeFirKlib(
             scopeSession,
             actualizedExpectDeclarations,
             FirKLibSerializerExtension(
-                session, metadataVersion, FirElementAwareSerializableStringTable(),
+                session, metadataVersion,
                 ConstValueProviderImpl(fir2IrActualizedResult.components),
+                allowErrorTypes = false, exportKDoc = false
             ),
             moduleStructure.compilerConfiguration.languageVersionSettings,
         )

@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.fir.backend.jvm.FirJvmKotlinMangler
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
-import org.jetbrains.kotlin.fir.serialization.FirElementAwareSerializableStringTable
 import org.jetbrains.kotlin.fir.serialization.FirKLibSerializerExtension
 import org.jetbrains.kotlin.fir.serialization.serializeSingleFirFile
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -124,7 +123,9 @@ class Fir2IrJsResultsConverter(
                 components.scopeSession,
                 actualizedExpectDeclarations,
                 FirKLibSerializerExtension(
-                    components.session, metadataVersion, FirElementAwareSerializableStringTable(), ConstValueProviderImpl(components),
+                    components.session, metadataVersion,
+                    ConstValueProviderImpl(components),
+                    allowErrorTypes = false, exportKDoc = false
                 ),
                 configuration.languageVersionSettings,
             )

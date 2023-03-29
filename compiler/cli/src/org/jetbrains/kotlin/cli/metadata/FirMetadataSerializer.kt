@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.fir.pipeline.ModuleCompilerAnalyzedOutput
 import org.jetbrains.kotlin.fir.pipeline.buildFirFromKtFiles
 import org.jetbrains.kotlin.fir.pipeline.buildFirViaLightTree
 import org.jetbrains.kotlin.fir.pipeline.resolveAndCheckFir
-import org.jetbrains.kotlin.fir.serialization.FirElementAwareSerializableStringTable
 import org.jetbrains.kotlin.fir.serialization.FirKLibSerializerExtension
 import org.jetbrains.kotlin.fir.serialization.serializeSingleFirFile
 import org.jetbrains.kotlin.library.SerializedMetadata
@@ -168,7 +167,8 @@ internal class FirMetadataSerializer(
                     scopeSession,
                     actualizedExpectDeclarations = null,
                     FirKLibSerializerExtension(
-                        session, metadataVersion, FirElementAwareSerializableStringTable(), constValueProvider = null
+                        session, metadataVersion, constValueProvider = null,
+                        allowErrorTypes = false, exportKDoc = false
                     ),
                     languageVersionSettings,
                 )
