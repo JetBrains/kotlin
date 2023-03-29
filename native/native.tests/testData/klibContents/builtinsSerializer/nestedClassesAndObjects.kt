@@ -1,3 +1,5 @@
+// KT-56190 K2 does not emit const initializers
+// MUTED_WHEN: K2
 package test
 
 class ClassA {
@@ -16,9 +18,7 @@ class ClassA {
     inner class classC {
         val memberFromC: Int = 200
     }
-}
 
-class E {
     companion object {
         val stat: Int = 250
 
@@ -26,9 +26,7 @@ class E {
             val memberFromD: Int = 275
         }
     }
-}
 
-class F {
     object ObjA {
         val memberFromObjA: Int = 300
     }

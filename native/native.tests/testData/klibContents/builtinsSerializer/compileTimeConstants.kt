@@ -1,7 +1,5 @@
-// KT-56190: the following properties miss their initializers: arrayConst, b, enumConst
+// KT-56190 K2 does not emit const initializers
 // MUTED_WHEN: K2
-// IGNORE_BACKEND_K2
-
 package test
 
 enum class Weapon {
