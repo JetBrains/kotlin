@@ -1,0 +1,4 @@
+public abstract interface class org/jetbrains/kotlin/buildtools/api/CompilationFacade {
+	public abstract fun compile ()V
+}
+
