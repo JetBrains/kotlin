@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.await
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
+import org.jetbrains.kotlin.gradle.plugin.sources.awaitPlatformCompilations
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.utils.Future
 import org.jetbrains.kotlin.gradle.utils.future
@@ -23,9 +24,7 @@ import org.jetbrains.kotlin.gradle.utils.futureExtension
 import org.jetbrains.kotlin.tooling.core.UnsafeApi
 
 internal val KotlinSourceSet.commonizerTarget: Future<CommonizerTarget?> by futureExtension {
-    KotlinPluginLifecycle.Stage.AfterFinaliseRefinesEdges.await()
-    @OptIn(UnsafeApi::class)
-    inferCommonizerTarget(this)
+    inferCommonizerTarget(internal.awaitPlatformCompilations())
 }
 
 internal val KotlinSourceSet.sharedCommonizerTarget: Future<SharedCommonizerTarget?>
@@ -39,7 +38,15 @@ internal val KotlinCompilation<*>.commonizerTarget: Future<CommonizerTarget?> by
 
 @UnsafeApi("Use sourceSet.commonizerTarget instead")
 internal fun inferCommonizerTarget(sourceSet: KotlinSourceSet): CommonizerTarget? {
-    val allCompilationLeafTargets = sourceSet.internal.compilations
+    val platformCompilations = sourceSet.internal.compilations
+        .filter { compilation -> compilation !is KotlinMetadataCompilation }
+    return inferCommonizerTarget(platformCompilations)
+}
+
+
+private fun inferCommonizerTarget(compilations: Iterable<KotlinCompilation<*>>): CommonizerTarget? {
+    @OptIn(UnsafeApi::class)
+    val allCompilationLeafTargets = compilations
         .filter { compilation -> compilation !is KotlinMetadataCompilation }
         .map { compilation -> inferCommonizerTarget(compilation) ?: return null }
         .allLeaves()
