@@ -36098,6 +36098,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         }
 
         @Test
+        @TestMetadata("ambiguityWithUnsignedSpecificity.kt")
+        public void testAmbiguityWithUnsignedSpecificity() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/ambiguityWithUnsignedSpecificity.kt");
+        }
+
+        @Test
         @TestMetadata("ArrayOfNothing.kt")
         public void testArrayOfNothing() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/ArrayOfNothing.kt");
