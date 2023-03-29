@@ -47,9 +47,7 @@ internal interface Future<T> {
     fun getOrThrow(): T
 }
 
-internal interface LenientFuture<T> : Future<T?> {
-    override suspend fun await(): T
-    override fun getOrThrow(): T
+internal interface LenientFuture<T> : Future<T> {
     fun getOrNull(): T?
 }
 
