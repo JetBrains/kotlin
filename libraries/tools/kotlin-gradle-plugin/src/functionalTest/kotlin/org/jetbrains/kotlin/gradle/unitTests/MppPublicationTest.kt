@@ -201,6 +201,18 @@ class MppPublicationTest {
         }
     }
 
+    @Test
+    fun `test that no sourcesElements should be exposed when sources are not published`() {
+        kotlin.linuxX64("linux")
+        kotlin.withSourcesJar(publish = false)
+
+        project.evaluate()
+        kotlin.targets.forEach {
+            if (it.sourcesElementsConfigurationName in project.configurations.names)
+                fail("Configuration '${it.sourcesElementsConfigurationName}' should not be created")
+        }
+    }
+
     private fun SoftwareComponent.attributesOfUsageContext(usageContextName: String): AttributeContainer {
         this as SoftwareComponentInternal
         return usages.first { it.name == usageContextName }.attributes
