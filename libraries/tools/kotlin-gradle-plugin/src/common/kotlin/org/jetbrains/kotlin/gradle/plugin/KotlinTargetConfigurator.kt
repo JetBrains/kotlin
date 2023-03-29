@@ -201,12 +201,16 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
             }
         }
 
-        configurations.maybeCreate(target.sourcesElementsConfigurationName).apply {
-            description = "Source files of main compilation of ${target.name}."
-            isVisible = false
-            isCanBeResolved = false
-            isCanBeConsumed = true
-            configureSourcesPublicationAttributes(target)
+        project.whenEvaluated {
+            if (target.internal.isSourcesPublishable) {
+                configurations.maybeCreate(target.sourcesElementsConfigurationName).apply {
+                    description = "Source files of main compilation of ${target.name}."
+                    isVisible = false
+                    isCanBeResolved = false
+                    isCanBeConsumed = true
+                    configureSourcesPublicationAttributes(target)
+                }
+            }
         }
 
         if (createTestCompilation) {
