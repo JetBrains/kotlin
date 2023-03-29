@@ -56,13 +56,13 @@ abstract class KotlinDeclarationInCompiledFileSearcher {
             classOrFile
         else {
             relativeClassName.fold(classOrFile) { declaration: KtDeclarationContainer?, name: Name ->
-                declaration?.declarations?.singleOrNull { it is KtClassOrObject && getJvmName(it) == name.asString() } as? KtClassOrObject
+                declaration?.declarations?.singleOrNull { it is KtClassOrObject && it.name == name.asString() } as? KtClassOrObject
             }
         } ?: return null
 
         if (member is PsiMethod && member.isConstructor) {
             return container.safeAs<KtClassOrObject>()
-                ?.takeIf { getJvmName(it) == memberName }
+                ?.takeIf { it.name == memberName }
                 ?.allConstructors
                 ?.firstOrNull { doParametersMatch(member, it) }
         }
@@ -90,9 +90,9 @@ abstract class KotlinDeclarationInCompiledFileSearcher {
                 if (container is KtObjectDeclaration && memberName == "INSTANCE") {
                     return container
                 }
-                declarations.singleOrNull { it !is KtNamedFunction && getJvmName(it) == memberName }
+                declarations.singleOrNull { it !is KtNamedFunction && it.name == memberName }
             }
-            else -> declarations.singleOrNull { getJvmName(it) == memberName }
+            else -> declarations.singleOrNull { it.name == memberName }
         }
     }
 
@@ -133,12 +133,18 @@ abstract class KotlinDeclarationInCompiledFileSearcher {
         val ktTypes = mutableListOf<KtTypeReference?>()
         ktNamedFunction.receiverTypeReference?.let { ktTypes.add(it) }
         val parametersCount = member.parameterList.parametersCount
-        val numberOfDefaultParameters = ktNamedFunction.valueParameters.filter { it.hasDefaultValue() }.size
-        val numberOfDefaultParametersAsDefaults = ktNamedFunction.valueParameters.size + ktTypes.size - parametersCount
-        val firstDefaultParametersToPass = numberOfDefaultParameters - numberOfDefaultParametersAsDefaults
+        val isJvmOverloads = ktNamedFunction.annotationEntries.any {
+            it.calleeExpression?.constructorReferenceExpression?.getReferencedName() ==
+                    JvmNames.JVM_OVERLOADS_FQ_NAME.shortName().asString()
+        }
+        val firstDefaultParametersToPass = if (isJvmOverloads) {
+            val totalNumberOfParametersWithDefaultValues = ktNamedFunction.valueParameters.filter { it.hasDefaultValue() }.size
+            val numberOfSkippedParameters = ktNamedFunction.valueParameters.size + ktTypes.size - parametersCount
+            totalNumberOfParametersWithDefaultValues - numberOfSkippedParameters
+        } else 0
         var defaultParamIdx = 0
         for (valueParameter in ktNamedFunction.valueParameters) {
-            if (valueParameter.hasDefaultValue()) {
+            if (isJvmOverloads && valueParameter.hasDefaultValue()) {
                 if (defaultParamIdx >= firstDefaultParametersToPass) {
                     continue
                 }
