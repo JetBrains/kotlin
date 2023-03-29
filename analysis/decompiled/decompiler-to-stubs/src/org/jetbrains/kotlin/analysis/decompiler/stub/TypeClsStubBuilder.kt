@@ -243,7 +243,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
                 parameterListStub,
                 name = name.ref(),
                 fqName = null,
-                hasDefaultValue = false,
+                hasDefaultValue = Flags.DECLARES_DEFAULT_VALUE.get(valueParameterProto.flags),
                 hasValOrVar = false,
                 isMutable = false
             )

@@ -32,6 +32,7 @@ fun DescriptorRendererOptions.defaultDecompilerRendererOptions() {
     excludedTypeAnnotationClasses = emptySet()
     alwaysRenderModifiers = true
     parameterNamesInFunctionalTypes = false // to support parameters names in decompiled text we need to load annotation arguments
+    defaultParameterValueRenderer = { _ -> "null" }
 }
 
 internal fun CallableMemberDescriptor.mustNotBeWrittenToDecompiledText(): Boolean {

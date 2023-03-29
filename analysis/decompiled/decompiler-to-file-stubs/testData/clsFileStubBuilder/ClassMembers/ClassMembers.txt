@@ -25,13 +25,13 @@ PsiJetFileStubImpl[package=test]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Int]
-        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p4]
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=p4]
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Int]
-        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p5]
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=p5]
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
