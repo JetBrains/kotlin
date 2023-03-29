@@ -112,7 +112,7 @@ class JvmDependenciesIndexImpl(_roots: List<JavaRoot>) : JvmDependenciesIndex {
 
     private fun <T : Any> search(request: SearchRequest, handler: (VirtualFile, JavaRoot.RootType) -> T?): T? {
         // a list of package sub names, ["org", "jb", "kotlin"]
-        val packagesPath = request.packageFqName.pathSegments().map { it.identifier }
+        val packagesPath = request.packageFqName.pathSegments().map { it.identifierOrNullIfSpecial ?: return null }
         // a list of caches corresponding to packages, [default, "org", "org.jb", "org.jb.kotlin"]
         val caches = cachesPath(packagesPath)
 

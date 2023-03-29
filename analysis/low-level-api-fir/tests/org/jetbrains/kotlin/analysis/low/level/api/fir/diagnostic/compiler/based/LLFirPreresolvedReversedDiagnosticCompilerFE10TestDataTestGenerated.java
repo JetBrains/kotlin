@@ -13545,6 +13545,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
             }
 
             @Test
+            @TestMetadata("brokenImport.kt")
+            public void testBrokenImport() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/imports/brokenImport.kt");
+            }
+
+            @Test
             @TestMetadata("CheckJavaVisibility.kt")
             public void testCheckJavaVisibility() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/imports/CheckJavaVisibility.kt");
