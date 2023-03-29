@@ -127,6 +127,7 @@ fun generateKLib(
     icData: List<KotlinFileSerializedData>,
     expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,
     moduleFragment: IrModuleFragment,
+    builtInsPlatform: BuiltInsPlatform = BuiltInsPlatform.JS,
     serializeSingleFile: (KtSourceFile) -> ProtoBuf.PackageFragment
 ) {
     val files = (depsDescriptors.mainModule as MainModule.SourceFiles).files.map(::KtPsiSourceFile)
@@ -149,6 +150,7 @@ fun generateKLib(
         depsDescriptors.jsFrontEndResult.hasErrors,
         abiVersion,
         jsOutputName,
+        builtInsPlatform,
         serializeSingleFile
     )
 }
@@ -617,6 +619,7 @@ fun serializeModuleIntoKlib(
     containsErrorCode: Boolean = false,
     abiVersion: KotlinAbiVersion,
     jsOutputName: String?,
+    builtInsPlatform: BuiltInsPlatform = BuiltInsPlatform.JS,
     serializeSingleFile: (KtSourceFile) -> ProtoBuf.PackageFragment
 ) {
     assert(files.size == moduleFragment.files.size)
@@ -725,7 +728,7 @@ fun serializeModuleIntoKlib(
         perFile = perFile,
         output = klibPath,
         versions = versions,
-        builtInsPlatform = BuiltInsPlatform.JS
+        builtInsPlatform = builtInsPlatform
     )
 }
 

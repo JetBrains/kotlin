@@ -177,7 +177,7 @@ class KotlinLibraryOnlyIrWriter(output: String, moduleName: String, versions: Ko
 }
 
 enum class BuiltInsPlatform {
-    JVM, JS, NATIVE, COMMON;
+    JVM, JS, NATIVE, WASM, COMMON;
 
     companion object {
         fun parseFromString(name: String): BuiltInsPlatform? = values().firstOrNull { it.name == name }

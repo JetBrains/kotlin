@@ -57,6 +57,7 @@ import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.konan.file.ZipFileSystemAccessor
 import org.jetbrains.kotlin.konan.file.ZipFileSystemCacheableAccessor
+import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.name.FqName
@@ -464,7 +465,8 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 jsOutputName = arguments.irPerModuleOutputName,
                 icData = icData,
                 expectDescriptorToSymbol = expectDescriptorToSymbol,
-                moduleFragment = moduleFragment
+                moduleFragment = moduleFragment,
+                builtInsPlatform = if (arguments.wasm) BuiltInsPlatform.WASM else BuiltInsPlatform.JS
             ) { file ->
                 metadataSerializer.serializeScope(file, sourceModule.jsFrontEndResult.bindingContext, moduleFragment.descriptor)
             }
