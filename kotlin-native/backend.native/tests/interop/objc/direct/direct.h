@@ -6,21 +6,21 @@ __attribute__((objc_runtime_name("CC")))
 __attribute__((swift_name("CC")))
 @interface CallingConventions : NSObject
 
-+ (NSUInteger)regular:(NSUInteger)arg;
-- (NSUInteger)regular:(NSUInteger)arg;
++ (uint64_t)regular:(uint64_t)arg;
+- (uint64_t)regular:(uint64_t)arg;
 
-+ (NSUInteger)direct:(NSUInteger)arg __attribute__((objc_direct));
-- (NSUInteger)direct:(NSUInteger)arg __attribute__((objc_direct));
++ (uint64_t)direct:(uint64_t)arg __attribute__((objc_direct));
+- (uint64_t)direct:(uint64_t)arg __attribute__((objc_direct));
 
 @end
 
 @interface CallingConventions(Ext)
 
-+ (NSUInteger)regularExt:(NSUInteger)arg;
-- (NSUInteger)regularExt:(NSUInteger)arg;
++ (uint64_t)regularExt:(uint64_t)arg;
+- (uint64_t)regularExt:(uint64_t)arg;
 
-+ (NSUInteger)directExt:(NSUInteger)arg __attribute__((objc_direct));
-- (NSUInteger)directExt:(NSUInteger)arg __attribute__((objc_direct));
++ (uint64_t)directExt:(uint64_t)arg __attribute__((objc_direct));
+- (uint64_t)directExt:(uint64_t)arg __attribute__((objc_direct));
 
 @end
 
