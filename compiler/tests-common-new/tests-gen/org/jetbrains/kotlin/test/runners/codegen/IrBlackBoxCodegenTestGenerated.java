@@ -18572,6 +18572,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         public void testUnqualifiedEnum() throws Exception {
             runTest("compiler/testData/codegen/box/fir/unqualifiedEnum.kt");
         }
+
+        @Test
+        @TestMetadata("vararg.kt")
+        public void testVararg() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/vararg.kt");
+        }
     }
 
     @Nested

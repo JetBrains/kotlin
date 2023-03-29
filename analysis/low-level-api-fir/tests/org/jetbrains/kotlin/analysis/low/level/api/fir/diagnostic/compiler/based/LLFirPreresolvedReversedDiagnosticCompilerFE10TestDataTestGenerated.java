@@ -19253,6 +19253,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
             public void testTypealiasOnLong() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/integerLiterals/typealiasOnLong.kt");
             }
+
+            @Test
+            @TestMetadata("vararg.kt")
+            public void testVararg() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/integerLiterals/vararg.kt");
+            }
         }
 
         @Nested
