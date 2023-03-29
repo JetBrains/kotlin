@@ -21,6 +21,17 @@ PsiJetFileStubImpl[package=test]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
+        PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=true]
+          MODIFIER_LIST[public final external]
+        PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=false]
+          MODIFIER_LIST[public final external]
+          VALUE_PARAMETER_LIST
+            VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
+              TYPE_REFERENCE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=Int]
       PROPERTY[fqName=test.Modifiers.x, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=x]
         MODIFIER_LIST[public final]
         TYPE_REFERENCE
