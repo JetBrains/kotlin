@@ -17,6 +17,7 @@
 package androidx.compose.compiler.plugins.kotlin.lower
 
 import androidx.compose.compiler.plugins.kotlin.KtxNameConventions
+import androidx.compose.compiler.plugins.kotlin.hasComposableAnnotation
 import java.util.Locale
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -107,11 +108,13 @@ import org.jetbrains.kotlin.ir.util.constructedClass
 import org.jetbrains.kotlin.ir.util.isAnnotationClass
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.isObject
+import org.jetbrains.kotlin.ir.util.isSetter
 import org.jetbrains.kotlin.ir.util.kotlinFqName
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.util.statements
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.Printer
 
@@ -384,7 +387,12 @@ class IrSourcePrinterVisitor(
                     expression.getValueArgument(0)?.print()
                     print(opSymbol)
                 }
-                // invoke
+                "getValue", "setValue" -> {
+                    (expression.dispatchReceiver ?: expression.extensionReceiver)?.print()
+                    print(".")
+                    print(opSymbol)
+                    expression.printArgumentList()
+                }
                 "invoke" -> {
                     (expression.dispatchReceiver ?: expression.extensionReceiver)?.print()
                     expression.printArgumentList()
@@ -414,7 +422,7 @@ class IrSourcePrinterVisitor(
                     print(" $opSymbol ")
                     expression.getValueArgument(1)?.print()
                 }
-                "iterator", "hasNext", "next", "getValue", "setValue",
+                "iterator", "hasNext", "next",
                 "noWhenBranchMatchedException" -> {
                     (expression.dispatchReceiver ?: expression.extensionReceiver)?.print()
                     print(".")
@@ -456,7 +464,7 @@ class IrSourcePrinterVisitor(
 
         val prop = (function as? IrSimpleFunction)?.correspondingPropertySymbol?.owner
 
-        if (prop != null) {
+        if (prop != null && !function.hasComposableAnnotation()) {
             val propName = prop.name.asString()
             print(propName)
             if (function == prop.setter) {
@@ -1283,13 +1291,37 @@ class IrSourcePrinterVisitor(
     }
 
     override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty) {
-        print("<<LOCALDELPROP>>")
+        declaration.printAnnotations(onePerLine = true)
+        print(if (declaration.isVar) "var " else "val ")
+        print(declaration.name)
+        print(" by ")
+        bracedBlock {
+            declaration.delegate.acceptVoid(this)
+            declaration.getter.scoped { it.printPropertyAccessor() }
+            declaration.setter?.scoped { it.printPropertyAccessor(isSetter = true) }
+        }
+    }
+
+    private fun IrFunction.printPropertyAccessor(isSetter: Boolean = this.isSetter) {
+        if (origin != IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR) {
+            println()
+            printAnnotations()
+            println()
+            print(if (isSetter) "set" else "get")
+            print("(")
+            valueParameters.printJoin(", ")
+            print(") ")
+            bracedBlock {
+                body?.acceptVoid(this@IrSourcePrinterVisitor)
+            }
+        }
     }
 
     override fun visitLocalDelegatedPropertyReference(
         expression: IrLocalDelegatedPropertyReference
     ) {
-        print("<<LOCALDELPROPREF>>")
+        print("::")
+        print(expression.delegate.owner.name)
     }
 
     override fun visitLoop(loop: IrLoop) {

@@ -3405,7 +3405,7 @@ class FunctionBodySkippingTransformTests : FunctionBodySkippingTransformTestsBas
                     wontChange = 123
                   }
                   if (%default and 0b0010 !== 0) {
-                    mightChange = LocalColor.current
+                    mightChange = LocalColor.<get-current>(%composer, 0b0110)
                     %dirty = %dirty and 0b01110000.inv()
                   }
                 } else {

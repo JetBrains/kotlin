@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyGetterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.descriptors.synthetic.FunctionInterfaceConstructorDescriptor
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
@@ -48,6 +49,7 @@ import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.psi.KtTryExpression
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL
 import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.util.getValueArgumentForExpression
 import org.jetbrains.kotlin.resolve.calls.checkers.AdditionalTypeChecker
@@ -131,11 +133,15 @@ open class ComposableCallChecker :
         reportOn: PsiElement,
         context: CallCheckerContext
     ) {
-        if (!resolvedCall.isComposableInvocation()) {
+        val bindingContext = context.trace.bindingContext
+        if (
+            !resolvedCall.isComposableDelegateReference(bindingContext) &&
+                !resolvedCall.isComposableInvocation()
+        ) {
             checkInlineLambdaCall(resolvedCall, reportOn, context)
             return
         }
-        val bindingContext = context.trace.bindingContext
+
         var node: PsiElement? = reportOn
         loop@while (node != null) {
             when (node) {
@@ -224,6 +230,23 @@ open class ComposableCallChecker :
                     // KtPropertyAccessor, the ONLY time we make it into this branch is when the
                     // call was done in the initializer of the property/variable.
                     val descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, node]
+
+                    if (resolvedCall.isComposableDelegateOperator()) {
+                        // The call is initializer for fields like `val foo by composableDelegate()`.
+                        // Creating the property doesn't have any requirements from Compose side,
+                        // we will recheck on the property call site instead.
+                        if (
+                            descriptor is VariableDescriptorWithAccessors &&
+                                descriptor.isDelegated
+                        ) {
+                            if (descriptor.isVar) {
+                                // setValue delegate is not allowed for now.
+                                illegalComposableDelegate(context, reportOn)
+                            }
+                            return
+                        }
+                    }
+
                     if (
                         descriptor !is LocalVariableDescriptor &&
                         node.annotationEntries.hasComposableAnnotation(bindingContext)
@@ -311,6 +334,13 @@ open class ComposableCallChecker :
         refExpr: KtCallableReferenceExpression
     ) {
         context.trace.report(ComposeErrors.COMPOSABLE_FUNCTION_REFERENCE.on(refExpr))
+    }
+
+    private fun illegalComposableDelegate(
+        context: CallCheckerContext,
+        reportOn: PsiElement
+    ) {
+        context.trace.report(ComposeErrors.COMPOSE_INVALID_DELEGATE.on(reportOn))
     }
 
     override fun checkType(
@@ -414,6 +444,23 @@ fun ResolvedCall<*>.isReadOnlyComposableInvocation(): Boolean {
         is PropertyGetterDescriptor -> candidateDescriptor.hasReadonlyComposableAnnotation()
         else -> candidateDescriptor.hasReadonlyComposableAnnotation()
     }
+}
+
+fun ResolvedCall<*>.isComposableDelegateReference(bindingContext: BindingContext): Boolean {
+    val descriptor = candidateDescriptor
+    if (descriptor is VariableDescriptorWithAccessors) {
+        val delegateInitCall = bindingContext[DELEGATED_PROPERTY_RESOLVED_CALL, descriptor.getter]
+        return delegateInitCall?.candidateDescriptor?.isMarkedAsComposable() == true
+    } else {
+        return false
+    }
+}
+
+fun ResolvedCall<*>.isComposableDelegateOperator(): Boolean {
+    val descriptor = candidateDescriptor
+    return descriptor is FunctionDescriptor &&
+        descriptor.isOperator &&
+        descriptor.name in OperatorNameConventions.DELEGATED_PROPERTY_OPERATORS
 }
 
 fun ResolvedCall<*>.isComposableInvocation(): Boolean {
