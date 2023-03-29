@@ -48,8 +48,15 @@ internal abstract class SymbolLightParameterCommon(
 
     abstract override fun getModifierList(): PsiModifierList
 
+    protected open fun isDeclaredAsVararg(): Boolean =
+        parameterSymbolPointer.withSymbol(ktModule) { it.isVararg }
+
+    override fun isVarArgs() =
+        // true only if this is "last" `vararg`
+        containingMethod.parameterList.parameters.lastOrNull() == this && isDeclaredAsVararg()
+
     protected open fun nullabilityType(): NullabilityType {
-        if (isVarArgs) return NullabilityType.NotNull
+        if (isDeclaredAsVararg()) return NullabilityType.NotNull
 
         val nullabilityApplicable = !containingMethod.hasModifierProperty(PsiModifier.PRIVATE) &&
                 !containingMethod.containingClass.let { it.isAnnotationType || it.isEnum }
@@ -83,8 +90,14 @@ internal abstract class SymbolLightParameterCommon(
                 }
             } ?: nonExistentType()
 
-            if (parameterSymbol.isVararg) {
-                PsiEllipsisType(convertedType, convertedType.annotationProvider)
+            if (isDeclaredAsVararg()) {
+                if (isVarArgs) {
+                    // last vararg
+                    PsiEllipsisType(convertedType, convertedType.annotationProvider)
+                } else {
+                    // non-last vararg
+                    PsiArrayType(convertedType, convertedType.annotationProvider)
+                }
             } else {
                 convertedType
             }

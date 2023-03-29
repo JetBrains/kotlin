@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolAnnotationsPr
 import org.jetbrains.kotlin.light.classes.symbol.annotations.toOptionalFilter
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
-import org.jetbrains.kotlin.light.classes.symbol.withSymbol
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
 internal class SymbolLightParameter(
@@ -43,10 +42,4 @@ internal class SymbolLightParameter(
             ),
         )
     }
-
-    private val isVararg: Boolean by lazyPub {
-        parameterSymbolPointer.withSymbol(ktModule) { it.isVararg }
-    }
-
-    override fun isVarArgs() = isVararg
 }
