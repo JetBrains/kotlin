@@ -1594,6 +1594,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/metadata/anonymousObjectTypeWithFir.args");
         }
 
+        @TestMetadata("hmppModules.args")
+        public void testHmppModules() throws Exception {
+            runTest("compiler/testData/cli/metadata/hmppModules.args");
+        }
+
         @TestMetadata("inheritorOfExpectSealedClass.args")
         public void testInheritorOfExpectSealedClass() throws Exception {
             runTest("compiler/testData/cli/metadata/inheritorOfExpectSealedClass.args");
@@ -1652,11 +1657,6 @@ public class CliTestGenerated extends AbstractCliTest {
         @TestMetadata("optionalExpectationUsageWithFir.args")
         public void testOptionalExpectationUsageWithFir() throws Exception {
             runTest("compiler/testData/cli/metadata/optionalExpectationUsageWithFir.args");
-        }
-
-        @TestMetadata("successfulHmpp.args")
-        public void testSuccessfulHmpp() throws Exception {
-            runTest("compiler/testData/cli/metadata/successfulHmpp.args");
         }
     }
 }
