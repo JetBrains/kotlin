@@ -945,10 +945,10 @@ class ClassStabilityTransformTests : AbstractIrTransformTest() {
             class StableDelegateProp {
               var p1: StableDelegate = StableDelegate()
                 get() {
-                  return <this>.p1%delegate.getValue()
+                  return <this>.p1%delegate.getValue(<this>, ::p1)
                 }
                 set(value) {
-                  return <this>.p1%delegate.setValue()
+                  return <this>.p1%delegate.setValue(<this>, ::p1, <set-?>)
                 }
               static val %stable: Int = 0
             }
@@ -956,10 +956,10 @@ class ClassStabilityTransformTests : AbstractIrTransformTest() {
             class UnstableDelegateProp {
               var p1: UnstableDelegate = UnstableDelegate()
                 get() {
-                  return <this>.p1%delegate.getValue()
+                  return <this>.p1%delegate.getValue(<this>, ::p1)
                 }
                 set(value) {
-                  return <this>.p1%delegate.setValue()
+                  return <this>.p1%delegate.setValue(<this>, ::p1, <set-?>)
                 }
               static val %stable: Int = 8
             }
@@ -1166,10 +1166,10 @@ class ClassStabilityTransformTests : AbstractIrTransformTest() {
             class StableDelegateProp {
               var p1: StableDelegate = StableDelegate()
                 get() {
-                  return <this>.p1%delegate.getValue()
+                  return <this>.p1%delegate.getValue(<this>, ::p1)
                 }
                 set(value) {
-                  return <this>.p1%delegate.setValue()
+                  return <this>.p1%delegate.setValue(<this>, ::p1, <set-?>)
                 }
               static val %stable: Int = 0
             }
@@ -1177,10 +1177,10 @@ class ClassStabilityTransformTests : AbstractIrTransformTest() {
             class UnstableDelegateProp {
               var p1: UnstableDelegate = UnstableDelegate()
                 get() {
-                  return <this>.p1%delegate.getValue()
+                  return <this>.p1%delegate.getValue(<this>, ::p1)
                 }
                 set(value) {
-                  return <this>.p1%delegate.setValue()
+                  return <this>.p1%delegate.setValue(<this>, ::p1, <set-?>)
                 }
               static val %stable: Int = UnstableDelegate.%stable
             }

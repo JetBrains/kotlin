@@ -154,6 +154,12 @@ object ComposeErrors {
             Severity.WARNING
         )
 
+    @JvmField
+    val COMPOSE_INVALID_DELEGATE =
+        DiagnosticFactory0.create<PsiElement>(
+            Severity.ERROR
+        )
+
     init {
         Errors.Initializer.initializeFactoryNamesAndDefaultErrorMessages(
             ComposeErrors::class.java,
