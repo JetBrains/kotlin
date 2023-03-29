@@ -250,6 +250,9 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     @JvmGradlePluginTests
     @DisplayName("with build scan report")
     @GradleTest
+    @GradleTestVersions( // remove restriction after fix KT-57645
+        maxVersion = TestVersions.Gradle.MAX_SUPPORTED
+    )
     fun testBuildScanReportSmokeTestForConfigurationCache(gradleVersion: GradleVersion) {
         project("simpleProject", gradleVersion) {
             val buildOptions = defaultBuildOptions.copy(buildReport = listOf(BuildReportType.BUILD_SCAN), logLevel = LogLevel.DEBUG)
