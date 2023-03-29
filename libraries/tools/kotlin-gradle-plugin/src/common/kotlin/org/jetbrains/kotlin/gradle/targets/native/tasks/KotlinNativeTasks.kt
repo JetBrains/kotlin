@@ -21,8 +21,10 @@ import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
 import org.gradle.work.NormalizeLineEndings
+import org.jetbrains.kotlin.cli.common.arguments.Argument
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
+import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.compilerRunner.KotlinNativeCInteropRunner.Companion.run
 import org.jetbrains.kotlin.gradle.dsl.*
@@ -42,6 +44,7 @@ import org.jetbrains.kotlin.gradle.targets.native.internal.isAllowCommonizer
 import org.jetbrains.kotlin.gradle.targets.native.tasks.*
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.listFilesOrEmpty
+import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageMode
 import org.jetbrains.kotlin.konan.library.KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
 import org.jetbrains.kotlin.konan.properties.saveToFile
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
@@ -299,7 +302,13 @@ abstract class AbstractKotlinNativeCompile<
 }
 
 // Remove it once actual K2NativeCompilerArguments will be available without 'kotlin.native.enabled = true' flag
-class StubK2NativeCompilerArguments : CommonCompilerArguments()
+class StubK2NativeCompilerArguments : CommonCompilerArguments() {
+    @Argument(value = "-Xpartial-linkage", valueDescription = "{enable|disable}", description = "Use partial linkage mode")
+    var partialLinkageMode: String? = null
+        set(value) {
+            field = if (value.isNullOrEmpty()) null else value
+        }
+}
 
 /**
  * A task producing a klibrary from a compilation.
@@ -761,7 +770,20 @@ internal class CacheBuilder(
         get() = settings.rootCacheDirectory
 
     private val partialLinkage: Boolean
-        get() = PARTIAL_LINKAGE in settings.toolOptions.freeCompilerArgs.get()
+        get() {
+            val partialLinkageMode: String = StubK2NativeCompilerArguments().apply {
+                parseCommandLineArguments(
+                    settings.toolOptions.freeCompilerArgs.get().filter { arg -> arg.startsWith("-Xpartial-linkage=") },
+                    this
+                )
+            }.partialLinkageMode ?: return PartialLinkageMode.DEFAULT.isEnabled
+
+            return PartialLinkageMode.resolveMode(partialLinkageMode)?.isEnabled
+                ?: run {
+                    // Unexpected partial linkage mode. The compiler should report it as an error.
+                    false
+                }
+        }
 
     private fun getCacheDirectory(
         resolvedConfiguration: LazyResolvedConfiguration,
@@ -846,7 +868,7 @@ internal class CacheBuilder(
             if (debuggable) args += "-g"
             args += konanPropertiesService.additionalCacheFlags(konanTarget)
             args += settings.externalDependenciesArgs
-            if (partialLinkage) args += PARTIAL_LINKAGE
+            args += if (partialLinkage) "-Xpartial-linkage=enable" else "-Xpartial-linkage=disable"
             args += "-Xadd-cache=${library.libraryFile.absolutePath}"
             args += "-Xcache-directory=${cacheDirectory.absolutePath}"
             args += "-Xcache-directory=${rootCacheDirectory.absolutePath}"
@@ -954,8 +976,6 @@ internal class CacheBuilder(
             cacheKind.outputKind?.let {
                 "${baseName}-cache"
             } ?: error("No output for kind $cacheKind")
-
-        private const val PARTIAL_LINKAGE = "-Xpartial-linkage"
     }
 }
 

@@ -211,7 +211,7 @@ abstract class AbstractNativePartialLinkageTest : AbstractNativeSimpleTest() {
         )
 
         private val COMPILER_ARGS_FOR_STATIC_CACHE_AND_EXECUTABLE = TestCompilerArgs(
-            COMPILER_ARGS_FOR_KLIB.compilerArgs + "-Xpartial-linkage"
+            COMPILER_ARGS_FOR_KLIB.compilerArgs + "-Xpartial-linkage=enable"
         )
 
         private val DEFAULT_EXTRAS = WithTestRunnerExtras(TestRunnerType.DEFAULT)
