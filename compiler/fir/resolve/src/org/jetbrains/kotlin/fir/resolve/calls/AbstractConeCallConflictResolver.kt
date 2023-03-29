@@ -81,6 +81,8 @@ abstract class AbstractConeCallConflictResolver(
             val specificClassId = specific.lowerBoundIfFlexible().classId ?: return false
             val generalClassId = general.upperBoundIfFlexible().classId ?: return false
 
+            // any signed >= any unsigned
+
             if (!specificClassId.isUnsigned && generalClassId.isUnsigned) {
                 return true
             }
