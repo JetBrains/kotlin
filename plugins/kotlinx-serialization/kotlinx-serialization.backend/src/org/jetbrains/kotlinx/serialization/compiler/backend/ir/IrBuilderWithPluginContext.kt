@@ -214,15 +214,11 @@ interface IrBuilderWithPluginContext {
         }
     }
 
-    fun IrBuilderWithScope.createPrimitiveArrayOfExpression(
-        elementPrimitiveType: IrType,
-        arrayElements: List<IrExpression>
-    ): IrExpression {
-        val arrayType = compilerContext.irBuiltIns.primitiveArrayForType.getValue(elementPrimitiveType).defaultType
-        val arg0 = IrVarargImpl(startOffset, endOffset, arrayType, elementPrimitiveType, arrayElements)
-        val typeArguments = listOf(elementPrimitiveType)
-
-        return irCall(compilerContext.irBuiltIns.arrayOf, arrayType, typeArguments = typeArguments).apply {
+    fun IrBuilderWithScope.createIntArrayOfExpression(arrayElements: List<IrExpression>): IrExpression {
+        val elementType = compilerContext.irBuiltIns.intType
+        val arrayType = compilerContext.intArrayOfFunctionSymbol.owner.returnType
+        val arg0 = IrVarargImpl(startOffset, endOffset, arrayType, elementType, arrayElements)
+        return irCall(compilerContext.intArrayOfFunctionSymbol, arrayType).apply {
             putValueArgument(0, arg0)
         }
     }

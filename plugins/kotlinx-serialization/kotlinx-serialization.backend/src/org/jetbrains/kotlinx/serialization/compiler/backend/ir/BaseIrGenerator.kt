@@ -177,8 +177,8 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
                 +irInvoke(
                     null,
                     throwMissedFieldExceptionArrayFunc!!,
-                    createPrimitiveArrayOfExpression(compilerContext.irBuiltIns.intType, goldenMaskList.indices.map { irGet(seenVars[it]) }),
-                    createPrimitiveArrayOfExpression(compilerContext.irBuiltIns.intType, goldenMaskList.map { irInt(it) }),
+                    createIntArrayOfExpression(goldenMaskList.indices.map { irGet(seenVars[it]) }),
+                    createIntArrayOfExpression(goldenMaskList.map { irInt(it) }),
                     serialDescriptor,
                     typeHint = compilerContext.irBuiltIns.unitType
                 )
