@@ -10,9 +10,11 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.util.parseCompilerArguments
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.fail
 import kotlin.io.path.appendText
+import kotlin.test.assertEquals
 import kotlin.test.fail
 
 internal class CompilerOptionsIT : KGPBaseTest() {
@@ -249,24 +251,20 @@ internal class CompilerOptionsIT : KGPBaseTest() {
 
             build("compileNativeMainKotlinMetadata") {
                 assertTasksExecuted(":compileNativeMainKotlinMetadata")
-                assert(
-                    output.contains("-opt-in=another.custom.UnderOptIn") &&
-                            output.contains("-opt-in=my.custom.OptInAnnotation")
-                ) {
-                    printBuildOutput()
-                    "Output does not contain '-opt-in=another.custom.UnderOptIn, -opt-in=my.custom.OptInAnnotation'!"
-                }
+                val arguments = parseCompilerArguments<K2NativeCompilerArguments>()
+                assertEquals(
+                    setOf("another.custom.UnderOptIn", "my.custom.OptInAnnotation"), arguments.optIn?.toSet(),
+                    "Arguments optIn does not match '-opt-in=another.custom.UnderOptIn, -opt-in=my.custom.OptInAnnotation'"
+                )
             }
 
             build("compileKotlinLinux64") {
                 assertTasksExecuted(":compileKotlinLinux64")
-                assert(
-                    output.contains("-opt-in=another.custom.UnderOptIn") &&
-                            output.contains("-opt-in=my.custom.OptInAnnotation")
-                ) {
-                    printBuildOutput()
-                    "Output does not contain '-opt-in=another.custom.UnderOptIn, -opt-in=my.custom.OptInAnnotation'!"
-                }
+                val arguments = parseCompilerArguments<K2NativeCompilerArguments>()
+                assertEquals(
+                    setOf("another.custom.UnderOptIn", "my.custom.OptInAnnotation"), arguments.optIn?.toSet(),
+                    "Arguments optIn does not match '-opt-in=another.custom.UnderOptIn, -opt-in=my.custom.OptInAnnotation'"
+                )
             }
         }
     }
@@ -290,12 +288,7 @@ internal class CompilerOptionsIT : KGPBaseTest() {
 
             build("compileKotlinHost", forceOutput = true) {
                 val expectedOptIn = listOf("kotlin.RequiresOptIn", "my.CustomOptIn")
-                val argumentsString = output
-                    .substringAfter("Arguments = [")
-                    .substringBefore("]")
-
-                val rawArguments = argumentsString.lines().map { it.trim() }
-                val arguments = parseCommandLineArguments<K2NativeCompilerArguments>(rawArguments)
+                val arguments = parseCompilerArguments<K2NativeCompilerArguments>()
                 if (arguments.optIn?.toList() != listOf("kotlin.RequiresOptIn", "my.CustomOptIn")) {
                     fail(
                         "compiler arguments does not contain expected optIns'${expectedOptIn.joinToString()}': ${arguments.optIn}"
