@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.serialization
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.serialization.constant.ConstantValue
@@ -44,4 +45,7 @@ class FirAnnotationSerializer(private val session: FirSession, internal val stri
                 FirAnnotationArgumentVisitorData(this@FirAnnotationSerializer, this)
             )
         }
+
+    fun valueProto(constExpression: FirConstExpression<*>): ProtoBuf.Annotation.Argument.Value.Builder? =
+        constExpression.toConstantValue(session)?.let { valueProto(it) }
 }

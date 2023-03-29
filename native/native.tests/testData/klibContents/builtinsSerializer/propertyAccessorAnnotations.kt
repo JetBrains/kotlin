@@ -1,5 +1,3 @@
-// KT-56190 K2 does not emit const initializers
-// MUTED_WHEN: K2
 package test
 
 annotation class Anno(val value: String)
