@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.syntax
 
+import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -90,6 +91,11 @@ object FirUnresolvedInMiddleOfImportChecker : FirDeclarationSyntaxChecker<FirFil
         return enumClass.collectEnumEntries().any { it.callableId.callableName == classId.shortClassName }
     }
 
-    private fun KtSourceElement.dotQualifiedExpression() = getChild(KtNodeTypes.DOT_QUALIFIED_EXPRESSION, depth = 1)
-    private fun KtSourceElement.selectorExpression() = getChild(KtNodeTypes.REFERENCE_EXPRESSION, depth = 1, reverse = true)
+    private val IMPORT_PARENT_TOKEN_TYPES = TokenSet.create(KtNodeTypes.DOT_QUALIFIED_EXPRESSION, KtNodeTypes.REFERENCE_EXPRESSION)
+
+    private fun KtSourceElement.dotQualifiedExpression(): KtSourceElement? = getChild(IMPORT_PARENT_TOKEN_TYPES, depth = 1)
+
+    private fun KtSourceElement.selectorExpression(): KtSourceElement? =
+        takeIf { it.elementType == KtNodeTypes.REFERENCE_EXPRESSION }
+            ?: getChild(KtNodeTypes.REFERENCE_EXPRESSION, depth = 1, reverse = true)
 }

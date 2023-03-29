@@ -1,6 +1,6 @@
 // IGNORE_REVERSED_RESOLVE
 //  Ignore reason: KT-57619
-import my.println
+import <!UNRESOLVED_IMPORT!>my<!>.println
 
 enum class Order {
     FIRST,
