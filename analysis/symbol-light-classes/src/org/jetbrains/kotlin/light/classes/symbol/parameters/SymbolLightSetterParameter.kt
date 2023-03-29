@@ -64,6 +64,7 @@ internal class SymbolLightSetterParameter(
     override fun nullabilityType(): NullabilityType =
         if (containingPropertySymbolPointer.withSymbol(ktModule) { it.isLateInit }) NullabilityType.NotNull else super.nullabilityType()
 
+    override fun isDeclaredAsVararg(): Boolean = false
 
     override fun isVarArgs() = false
 }

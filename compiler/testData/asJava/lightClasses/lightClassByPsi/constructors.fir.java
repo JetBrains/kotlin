@@ -11,7 +11,7 @@ public abstract class A /* A*/ {
 }
 
 public final class AAA /* AAA*/ {
-  public /* vararg */  AAA(@org.jetbrains.annotations.NotNull() int..., @org.jetbrains.annotations.NotNull() kotlin.jvm.functions.Function0<kotlin.Unit>);//  .ctor(int[], kotlin.jvm.functions.Function0<kotlin.Unit>)
+  public /* vararg */  AAA(@org.jetbrains.annotations.NotNull() int[], @org.jetbrains.annotations.NotNull() kotlin.jvm.functions.Function0<kotlin.Unit>);//  .ctor(int[], kotlin.jvm.functions.Function0<kotlin.Unit>)
 }
 
 public final class B /* B*/ {
