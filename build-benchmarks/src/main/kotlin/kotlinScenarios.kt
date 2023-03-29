@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.build.benchmarks.dsl.*
+import java.io.File
 
 fun historyFilesBenchmarks() = kotlinBenchmarks(additionalDefaultProperties = arrayOf("-Pkotlin.incremental.useClasspathSnapshot=false"))
 fun abiSnapshotBenchmarks() = kotlinBenchmarks(prefix = "ABI_SNAPSHOT: ", arrayOf("-Pkotlin.incremental.classpath.snapshot.enabled=true"))
@@ -9,6 +10,13 @@ fun artifactTransformWithK2Benchmarks() = kotlinBenchmarks(prefix = "TRANSFORMAT
 //move prefix to suite
 fun kotlinBenchmarks(prefix: String = "", additionalDefaultProperties: Array<String> = emptyArray(), withLatestLtsJdk: Boolean = false) =
     suite {
+        val kotlinK2CompatibleTasks = buildSet {
+            File("../k2-compatible-tasks.txt").inputStream().bufferedReader().useLines { lines ->
+                lines.forEach {
+                    add(it)
+                }
+            }
+        }
         val coreUtilStrings = changeableFile("coreUtil/StringsKt")
         val coreUtilCoreLib = changeableFile("coreUtil/CoreLibKt")
         val compilerCommonBackendContext = changeableFile("compiler/CommonBackendContext")
@@ -88,6 +96,7 @@ fun kotlinBenchmarks(prefix: String = "", additionalDefaultProperties: Array<Str
                 jdk = jdkPath
                 arguments(*nonParallelRerunBuild, "-x", "compileKotlinWasm")
                 expectSlowBuild("clean build")
+                k2CompatibleTasks = kotlinK2CompatibleTasks
                 step {
                     doNotMeasure()
                     runTasks(Tasks.CLEAN)
@@ -101,6 +110,7 @@ fun kotlinBenchmarks(prefix: String = "", additionalDefaultProperties: Array<Str
                 jdk = jdkPath
                 arguments(*parallelRerunBuild, "-x", "compileKotlinWasm")
                 expectSlowBuild("clean build")
+                k2CompatibleTasks = kotlinK2CompatibleTasks
                 step {
                     doNotMeasure()
                     runTasks(Tasks.CLEAN)
