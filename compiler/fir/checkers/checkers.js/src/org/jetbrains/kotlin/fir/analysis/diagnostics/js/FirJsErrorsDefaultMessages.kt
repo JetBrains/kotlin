@@ -105,7 +105,7 @@ object FirJsErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             WRONG_DEFAULT_VALUE_FOR_EXTERNAL_FUN_PARAMETER,
             "Wrong default value for parameter of external function. Must be ' = definedExternally'"
         )
-        map.put(NESTED_EXTERNAL_DECLARATION, "Non top-level `external` declaration")
+        map.put(NESTED_EXTERNAL_DECLARATION, "Non-top-level `external` declaration")
         map.put(WRONG_EXTERNAL_DECLARATION, "Declaration of such kind ({0}) can''t be external", CommonRenderers.STRING)
         map.put(NESTED_CLASS_IN_EXTERNAL_INTERFACE, "Interface can't contain nested classes and objects")
         map.put(EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE, "External type extends non-external type")
@@ -154,7 +154,7 @@ object FirJsErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             FirDiagnosticRenderers.RENDER_TYPE
         )
         map.put(JS_NAME_PROHIBITED_FOR_EXTENSION_PROPERTY, "@JsName is prohibited for extension properties")
-        map.put(JS_NAME_IS_NOT_ON_ALL_ACCESSORS, "@JsName should be on all of the property accessors")
+        map.put(JS_NAME_IS_NOT_ON_ALL_ACCESSORS, "@JsName should be on all the property accessors")
         map.put(JS_NAME_PROHIBITED_FOR_NAMED_NATIVE, "@JsName is prohibited for external declaration with explicit name")
         map.put(JS_NAME_PROHIBITED_FOR_OVERRIDE, "@JsName is prohibited for overridden members")
         map.put(JS_NAME_ON_PRIMARY_CONSTRUCTOR_PROHIBITED, "@JsName annotation is prohibited for primary constructors")
