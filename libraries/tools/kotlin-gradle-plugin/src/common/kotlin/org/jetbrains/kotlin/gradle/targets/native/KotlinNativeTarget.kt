@@ -151,6 +151,10 @@ abstract class KotlinNativeTarget @Inject constructor(
             "org.jetbrains.kotlin.native.build.type",
             String::class.java
         )
+        val kotlinNativeFrameworkNameAttribute = Attribute.of(
+            "org.jetbrains.kotlin.native.framework.name",
+            String::class.java
+        )
     }
 }
 

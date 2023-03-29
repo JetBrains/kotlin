@@ -46,7 +46,8 @@ private val Framework.frameworkGroupDescription
 internal fun Project.createFrameworkArtifact(binaryFramework: Framework, linkTask: TaskProvider<KotlinNativeLink>) {
     val frameworkConfiguration = configurations.getOrCreate(binaryFramework.binaryFrameworkConfigurationName, invokeWhenCreated = {
         it.markConsumable()
-        it.applyBinaryFrameworkAttributes(project, binaryFramework.frameworkGroupDescription, listOf(binaryFramework.target))
+        it.applyBinaryFrameworkGroupAttributes(project, binaryFramework.frameworkGroupDescription, listOf(binaryFramework.target))
+        it.attributes.attribute(KotlinNativeTarget.kotlinNativeFrameworkNameAttribute, binaryFramework.baseName)
     })
 
     addFrameworkArtifact(frameworkConfiguration, linkTask.flatMap { it.outputFile })
@@ -69,7 +70,7 @@ internal fun KotlinMultiplatformExtension.createFatFrameworks() {
 private val Framework.binaryFrameworkConfigurationName get() = lowerCamelCaseName(name, target.name)
 private val FrameworkGroupDescription.fatFrameworkConfigurationName get() = lowerCamelCaseName(frameworkName, targetFamilyName, "fat")
 
-private fun Configuration.applyBinaryFrameworkAttributes(
+private fun Configuration.applyBinaryFrameworkGroupAttributes(
     project: Project,
     frameworkDescription: FrameworkGroupDescription,
     targets: List<KotlinNativeTarget>
@@ -117,7 +118,7 @@ private fun Project.createFatFramework(groupDescription: FrameworkGroupDescripti
 
     val fatFrameworkConfiguration = project.configurations.getOrCreate(fatFrameworkConfigurationName, invokeWhenCreated = {
         it.markConsumable()
-        it.applyBinaryFrameworkAttributes(project, groupDescription, targets = frameworks.map(Framework::target))
+        it.applyBinaryFrameworkGroupAttributes(project, groupDescription, targets = frameworks.map(Framework::target))
     })
 
     addFrameworkArtifact(fatFrameworkConfiguration, fatFrameworkTask.map { it.fatFramework })
