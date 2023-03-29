@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirDefaultStarImportingScope
 import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectOrStaticData
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.HidesMembers
 import org.jetbrains.kotlin.types.AbstractTypeChecker
@@ -400,12 +401,15 @@ class ScopeTowerLevel(
         callInfo: CallInfo,
         processor: TowerScopeLevelProcessor<T>
     ) {
-        val candidateReceiverTypeRef = candidate.fir.receiverParameter?.typeRef
+        candidate.lazyResolveToPhase(FirResolvePhase.TYPES)
         if (withHideMembersOnly && candidate.getAnnotationByClassId(HidesMembers, session) == null) {
             return
         }
+
         val receiverExpected = withHideMembersOnly || areThereExtensionReceiverOptions()
+        val candidateReceiverTypeRef = candidate.fir.receiverParameter?.typeRef
         if (candidateReceiverTypeRef == null == receiverExpected) return
+
         val dispatchReceiverValue = dispatchReceiverValue(candidate, callInfo)
         if (dispatchReceiverValue == null && shouldSkipCandidateWithInconsistentExtensionReceiver(candidate)) {
             return
