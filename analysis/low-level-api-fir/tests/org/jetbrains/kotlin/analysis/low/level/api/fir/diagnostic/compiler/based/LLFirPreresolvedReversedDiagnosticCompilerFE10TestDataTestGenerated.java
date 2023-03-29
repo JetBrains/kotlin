@@ -16378,6 +16378,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
                 }
 
                 @Test
+                @TestMetadata("emptyIntersectionOnIf.kt")
+                public void testEmptyIntersectionOnIf() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/emptyIntersectionTypes/emptyIntersectionOnIf.kt");
+                }
+
+                @Test
                 @TestMetadata("kt45461.kt")
                 public void testKt45461() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/emptyIntersectionTypes/kt45461.kt");
