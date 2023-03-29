@@ -35648,6 +35648,24 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         }
 
         @Test
+        @TestMetadata("kotlinJavaDelegateInapplicable.kt")
+        public void testKotlinJavaDelegateInapplicable() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/kotlinJavaDelegateInapplicable.kt");
+        }
+
+        @Test
+        @TestMetadata("kotlinJavaDelegateInapplicable_HelperCast.kt")
+        public void testKotlinJavaDelegateInapplicable_HelperCast() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/kotlinJavaDelegateInapplicable_HelperCast.kt");
+        }
+
+        @Test
+        @TestMetadata("kotlinJavaDelegateInapplicable_Kotlin.kt")
+        public void testKotlinJavaDelegateInapplicable_Kotlin() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/kotlinJavaDelegateInapplicable_Kotlin.kt");
+        }
+
+        @Test
         @TestMetadata("kt54410.kt")
         public void testKt54410() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/kt54410.kt");
