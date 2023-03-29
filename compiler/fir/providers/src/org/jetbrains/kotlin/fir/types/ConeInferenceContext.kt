@@ -303,7 +303,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         val symbol = toClassLikeSymbol() ?: return false
         if (symbol is FirAnonymousObjectSymbol) return true
         val classSymbol = symbol as? FirRegularClassSymbol ?: return false
-        return classSymbol.fir.modality == Modality.FINAL
+        return classSymbol.modality == Modality.FINAL
     }
 
     override fun TypeVariableMarker.freshTypeConstructor(): TypeConstructorMarker {
