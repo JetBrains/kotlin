@@ -130,7 +130,8 @@ abstract class KotlinDeclarationInCompiledFileSearcher {
     }
 
     private fun doParametersMatch(member: PsiMethod, ktNamedFunction: KtFunction): Boolean {
-        val ktTypes = mutableListOf<KtTypeReference?>()
+        val ktTypes = mutableListOf<KtTypeReference>()
+        ktNamedFunction.contextReceivers.forEach { ktTypes.add(it.typeReference()!!) }
         ktNamedFunction.receiverTypeReference?.let { ktTypes.add(it) }
         val parametersCount = member.parameterList.parametersCount
         val isJvmOverloads = ktNamedFunction.annotationEntries.any {
@@ -151,13 +152,13 @@ abstract class KotlinDeclarationInCompiledFileSearcher {
                 defaultParamIdx++
             }
 
-            ktTypes.add(valueParameter.typeReference)
+            ktTypes.add(valueParameter.typeReference!!)
         }
         if (parametersCount != ktTypes.size) return false
         member.parameterList.parameters.map { it.type }
             .zip(ktTypes)
             .forEach { (psiType, ktTypeRef) ->
-                if (!areTypesTheSame(ktTypeRef!!, psiType, (ktTypeRef.parent as? KtParameter)?.isVarArg == true)) return false
+                if (!areTypesTheSame(ktTypeRef, psiType, (ktTypeRef.parent as? KtParameter)?.isVarArg == true)) return false
             }
         return true
     }
