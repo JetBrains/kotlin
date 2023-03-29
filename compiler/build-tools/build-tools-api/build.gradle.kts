@@ -10,6 +10,10 @@ dependencies {
     compileOnly(kotlinStdlib())
 }
 
+kotlin {
+    explicitApi()
+}
+
 publish()
 
 standardPublicJars()
