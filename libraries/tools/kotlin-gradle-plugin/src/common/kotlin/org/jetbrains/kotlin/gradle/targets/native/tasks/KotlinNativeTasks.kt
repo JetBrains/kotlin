@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.gradle.targets.native.internal.isAllowCommonizer
 import org.jetbrains.kotlin.gradle.targets.native.tasks.*
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.listFilesOrEmpty
+import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageMode
 import org.jetbrains.kotlin.konan.library.KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
 import org.jetbrains.kotlin.konan.properties.saveToFile
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
@@ -760,8 +761,10 @@ internal class CacheBuilder(
     private val rootCacheDirectory: File
         get() = settings.rootCacheDirectory
 
-    private val partialLinkage: Boolean
-        get() = PARTIAL_LINKAGE in settings.toolOptions.freeCompilerArgs.get()
+    private val partialLinkageMode: String
+        get() = settings.toolOptions.freeCompilerArgs.get().mapNotNull { arg ->
+            arg.substringAfter("$PARTIAL_LINKAGE_PARAMETER=", missingDelimiterValue = "").takeIf(String::isNotEmpty)
+        }.lastOrNull() ?: PartialLinkageMode.DEFAULT.name
 
     private fun getCacheDirectory(
         resolvedConfiguration: LazyResolvedConfiguration,
@@ -771,7 +774,7 @@ internal class CacheBuilder(
         dependency = dependency,
         artifact = null,
         resolvedConfiguration = resolvedConfiguration,
-        partialLinkage = partialLinkage
+        partialLinkageMode = partialLinkageMode
     )
 
     private fun needCache(libraryPath: String) =
@@ -800,7 +803,7 @@ internal class CacheBuilder(
             dependency = dependency,
             considerArtifact = false,
             resolvedConfiguration = this,
-            partialLinkage = partialLinkage
+            partialLinkageMode = partialLinkageMode
         ) ?: return
 
         val cacheDirectory = getCacheDirectory(this, dependency)
@@ -846,7 +849,7 @@ internal class CacheBuilder(
             if (debuggable) args += "-g"
             args += konanPropertiesService.additionalCacheFlags(konanTarget)
             args += settings.externalDependenciesArgs
-            if (partialLinkage) args += PARTIAL_LINKAGE
+            args += "$PARTIAL_LINKAGE_PARAMETER=$partialLinkageMode"
             args += "-Xadd-cache=${library.libraryFile.absolutePath}"
             args += "-Xcache-directory=${cacheDirectory.absolutePath}"
             args += "-Xcache-directory=${rootCacheDirectory.absolutePath}"
@@ -955,7 +958,7 @@ internal class CacheBuilder(
                 "${baseName}-cache"
             } ?: error("No output for kind $cacheKind")
 
-        private const val PARTIAL_LINKAGE = "-Xpartial-linkage"
+        private const val PARTIAL_LINKAGE_PARAMETER = "-Xpartial-linkage"
     }
 }
 
