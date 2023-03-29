@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.psi.stubs.elements;
 
+import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.kotlin.psi.*;
 
 public interface KtStubElementTypes {
@@ -164,6 +165,23 @@ public interface KtStubElementTypes {
 
     KtPlaceHolderStubElementType<KtStringTemplateExpression> STRING_TEMPLATE =
             new KtStringTemplateExpressionElementType("STRING_TEMPLATE");
+
+    TokenSet CONSTANT_EXPRESSIONS_TYPES = TokenSet.create(
+            NULL,
+            BOOLEAN_CONSTANT,
+            FLOAT_CONSTANT,
+            CHARACTER_CONSTANT,
+            INTEGER_CONSTANT,
+
+            REFERENCE_EXPRESSION,
+            DOT_QUALIFIED_EXPRESSION,
+
+            STRING_TEMPLATE,
+
+            CLASS_LITERAL_EXPRESSION,
+
+            COLLECTION_LITERAL_EXPRESSION
+    );
 
     KtPlaceHolderWithTextStubElementType<KtBlockStringTemplateEntry> LONG_STRING_TEMPLATE_ENTRY =
             new KtPlaceHolderWithTextStubElementType<>("LONG_STRING_TEMPLATE_ENTRY", KtBlockStringTemplateEntry.class);
