@@ -373,12 +373,15 @@ class FirElementSerializer private constructor(
             }
         }
 
+        val hasConstant = !property.isVar && property.initializer?.let {
+            it is FirConstExpression<*> && it.value != null
+        } ?: false
         val flags = Flags.getPropertyFlags(
             hasAnnotations,
             ProtoEnumFlags.visibility(normalizeVisibility(property)),
             ProtoEnumFlags.modality(modality),
             ProtoBuf.MemberKind.DECLARATION,
-            property.isVar, hasGetter, hasSetter, property.isConst, property.isConst, property.isLateInit,
+            property.isVar, hasGetter, hasSetter, hasConstant, property.isConst, property.isLateInit,
             property.isExternal, property.delegateFieldSymbol != null, property.isExpect
         )
         if (flags != builder.flags) {
