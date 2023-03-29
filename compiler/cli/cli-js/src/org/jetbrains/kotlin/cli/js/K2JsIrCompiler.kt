@@ -172,7 +172,10 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         configuration.put(JSConfigurationKeys.WASM_ENABLE_ARRAY_RANGE_CHECKS, arguments.wasmEnableArrayRangeChecks)
         configuration.put(JSConfigurationKeys.WASM_ENABLE_ASSERTS, arguments.wasmEnableAsserts)
         configuration.put(JSConfigurationKeys.WASM_GENERATE_WAT, arguments.wasmGenerateWat)
-        configuration.setupPartialLinkageConfig(arguments.partialLinkage, arguments.partialLinkageLogLevel)
+        configuration.setupPartialLinkageConfig(arguments.partialLinkageMode, arguments.partialLinkageLogLevel) { errorMessage ->
+            messageCollector.report(ERROR, errorMessage, null)
+            return COMPILATION_ERROR
+        }
 
         val commonSourcesArray = arguments.commonSources
         val commonSources = commonSourcesArray?.toSet() ?: emptySet()
