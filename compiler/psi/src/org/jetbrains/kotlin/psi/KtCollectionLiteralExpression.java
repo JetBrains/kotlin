@@ -65,7 +65,7 @@ public class KtCollectionLiteralExpression extends KtElementImplStub<KotlinColle
     public List<KtExpression> getInnerExpressions() {
         KotlinCollectionLiteralExpressionStub stub = getStub();
         if (stub != null) {
-            return Arrays.asList(stub.getChildrenByType(KtValueArgument.CONSTANT_EXPRESSIONS_TYPES, KtExpression.EMPTY_ARRAY));
+            return Arrays.asList(stub.getChildrenByType(KtStubElementTypes.CONSTANT_EXPRESSIONS_TYPES, KtExpression.EMPTY_ARRAY));
         }
         return PsiTreeUtil.getChildrenOfTypeAsList(this, KtExpression.class);
     }
