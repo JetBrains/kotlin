@@ -266,7 +266,6 @@ enum class LanguageFeature(
     ReportTypeVarianceConflictOnQualifierArguments(KOTLIN_1_9, kind = BUG_FIX), // KT-50947
     ReportErrorsOnRecursiveTypeInsidePlusAssignment(KOTLIN_1_9, kind = BUG_FIX), // KT-48546
     ForbidExtensionCallsOnInlineFunctionalParameters(KOTLIN_1_9, kind = BUG_FIX), // KT-52502
-    KeepNullabilityWhenApproximatingLocalType(KOTLIN_1_9, kind = BUG_FIX), // KT-53982
     SkipStandaloneScriptsInSourceRoots(KOTLIN_1_9, kind = OTHER), // KT-52525
     ModifierNonBuiltinSuspendFunError(KOTLIN_1_9, kind = BUG_FIX), // KT-49264
     EnumEntries(KOTLIN_1_9, sinceApiVersion = ApiVersion.KOTLIN_1_8, kind = UNSTABLE_FEATURE), // KT-48872
@@ -287,6 +286,7 @@ enum class LanguageFeature(
     ProhibitSmartcastsOnPropertyFromAlienBaseClassInheritedInInvisibleClass(KOTLIN_2_0, kind = BUG_FIX), // KT-57290
     ForbidInferringPostponedTypeVariableIntoDeclaredUpperBound(KOTLIN_2_0, kind = BUG_FIX), // KT-47986
     ProhibitUseSiteGetTargetAnnotations(KOTLIN_2_0, kind = BUG_FIX), // KT-15470
+    KeepNullabilityWhenApproximatingLocalType(KOTLIN_2_0, kind = BUG_FIX), // KT-53982
 
     // 2.1
 
