@@ -106,7 +106,7 @@ fun generateIrElementFullNameFromExpect(
     declaration: IrElement,
     expectActualTypeAliasMap: Map<FqName, FqName>
 ): String {
-    return StringBuilder().apply { appendElementFullName(declaration, this, expectActualTypeAliasMap) }.toString()
+    return buildString { appendElementFullName(declaration, this, expectActualTypeAliasMap) }
 }
 
 private fun appendElementFullName(
