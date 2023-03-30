@@ -91,6 +91,7 @@ public final class Container$$serializer : java/lang/Object, kotlinx/serializati
           CHECKCAST (kotlinx/serialization/DeserializationStrategy)
           ALOAD (6)
           INVOKEINTERFACE (kotlinx/serialization/encoding/CompositeDecoder, decodeSerializableElement, (Lkotlinx/serialization/descriptors/SerialDescriptor;ILkotlinx/serialization/DeserializationStrategy;Ljava/lang/Object;)Ljava/lang/Object;)
+          CHECKCAST (Result)
           ASTORE (6)
           ILOAD (5)
           ICONST_1
@@ -123,6 +124,7 @@ public final class Container$$serializer : java/lang/Object, kotlinx/serializati
           CHECKCAST (kotlinx/serialization/DeserializationStrategy)
           ALOAD (6)
           INVOKEINTERFACE (kotlinx/serialization/encoding/CompositeDecoder, decodeSerializableElement, (Lkotlinx/serialization/descriptors/SerialDescriptor;ILkotlinx/serialization/DeserializationStrategy;Ljava/lang/Object;)Ljava/lang/Object;)
+          CHECKCAST (Result)
           ASTORE (6)
           ILOAD (5)
           ICONST_1
@@ -143,7 +145,6 @@ public final class Container$$serializer : java/lang/Object, kotlinx/serializati
           DUP
           ILOAD (5)
           ALOAD (6)
-          CHECKCAST (Result)
           ACONST_NULL
           INVOKESPECIAL (Container, <init>, (ILResult;Lkotlinx/serialization/internal/SerializationConstructorMarker;)V)
           ARETURN

@@ -91,6 +91,7 @@ public final class ListOfUsers$$serializer : java/lang/Object, kotlinx/serializa
           CHECKCAST (kotlinx/serialization/DeserializationStrategy)
           ALOAD (6)
           INVOKEINTERFACE (kotlinx/serialization/encoding/CompositeDecoder, decodeSerializableElement, (Lkotlinx/serialization/descriptors/SerialDescriptor;ILkotlinx/serialization/DeserializationStrategy;Ljava/lang/Object;)Ljava/lang/Object;)
+          CHECKCAST (java/util/List)
           ASTORE (6)
           ILOAD (5)
           ICONST_1
@@ -123,6 +124,7 @@ public final class ListOfUsers$$serializer : java/lang/Object, kotlinx/serializa
           CHECKCAST (kotlinx/serialization/DeserializationStrategy)
           ALOAD (6)
           INVOKEINTERFACE (kotlinx/serialization/encoding/CompositeDecoder, decodeSerializableElement, (Lkotlinx/serialization/descriptors/SerialDescriptor;ILkotlinx/serialization/DeserializationStrategy;Ljava/lang/Object;)Ljava/lang/Object;)
+          CHECKCAST (java/util/List)
           ASTORE (6)
           ILOAD (5)
           ICONST_1
@@ -143,7 +145,6 @@ public final class ListOfUsers$$serializer : java/lang/Object, kotlinx/serializa
           DUP
           ILOAD (5)
           ALOAD (6)
-          CHECKCAST (java/util/List)
           ACONST_NULL
           INVOKESPECIAL (ListOfUsers, <init>, (ILjava/util/List;Lkotlinx/serialization/internal/SerializationConstructorMarker;)V)
           ARETURN
@@ -416,6 +417,7 @@ public final class OptionalUser$$serializer : java/lang/Object, kotlinx/serializ
           CHECKCAST (kotlinx/serialization/DeserializationStrategy)
           ALOAD (6)
           INVOKEINTERFACE (kotlinx/serialization/encoding/CompositeDecoder, decodeSerializableElement, (Lkotlinx/serialization/descriptors/SerialDescriptor;ILkotlinx/serialization/DeserializationStrategy;Ljava/lang/Object;)Ljava/lang/Object;)
+          CHECKCAST (User)
           ASTORE (6)
           ILOAD (5)
           ICONST_1
@@ -446,6 +448,7 @@ public final class OptionalUser$$serializer : java/lang/Object, kotlinx/serializ
           CHECKCAST (kotlinx/serialization/DeserializationStrategy)
           ALOAD (6)
           INVOKEINTERFACE (kotlinx/serialization/encoding/CompositeDecoder, decodeSerializableElement, (Lkotlinx/serialization/descriptors/SerialDescriptor;ILkotlinx/serialization/DeserializationStrategy;Ljava/lang/Object;)Ljava/lang/Object;)
+          CHECKCAST (User)
           ASTORE (6)
           ILOAD (5)
           ICONST_1
@@ -466,7 +469,6 @@ public final class OptionalUser$$serializer : java/lang/Object, kotlinx/serializ
           DUP
           ILOAD (5)
           ALOAD (6)
-          CHECKCAST (User)
           ACONST_NULL
           INVOKESPECIAL (OptionalUser, <init>, (ILUser;Lkotlinx/serialization/internal/SerializationConstructorMarker;)V)
           ARETURN
