@@ -592,7 +592,7 @@ internal fun SymbolLightClassBase.addPropertyBackingFields(
             filter { containingClass?.isInterface == true && !it.hasJvmFieldAnnotation() }
         }
 
-    val propertyGroups = propertySymbols.groupBy { it.isFromPrimaryConstructor }
+    val (ctorProperties, memberProperties) = propertySymbols.partition { it.isFromPrimaryConstructor }
 
     val nameGenerator = SymbolLightField.FieldNameGenerator()
 
@@ -608,9 +608,9 @@ internal fun SymbolLightClassBase.addPropertyBackingFields(
     }
 
     // First, properties from parameters
-    propertyGroups[true]?.forEach(::addPropertyBackingField)
+    ctorProperties.forEach(::addPropertyBackingField)
     // Then, regular member properties
-    propertyGroups[false]?.forEach(::addPropertyBackingField)
+    memberProperties.forEach(::addPropertyBackingField)
 }
 
 context(KtAnalysisSession)
