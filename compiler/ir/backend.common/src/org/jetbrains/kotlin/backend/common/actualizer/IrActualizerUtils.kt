@@ -150,7 +150,11 @@ private fun appendElementFullName(
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 fun KtDiagnosticReporterWithImplicitIrBasedContext.reportMissingActual(irDeclaration: IrDeclaration) {
-    at(irDeclaration).report(CommonBackendErrors.NO_ACTUAL_FOR_EXPECT, irDeclaration.module)
+    at(irDeclaration).report(
+        CommonBackendErrors.NO_ACTUAL_FOR_EXPECT,
+        (irDeclaration as? IrDeclarationWithName)?.name?.asString().orEmpty(),
+        irDeclaration.module
+    )
 }
 
 internal fun IrElement.containsOptionalExpectation(): Boolean {

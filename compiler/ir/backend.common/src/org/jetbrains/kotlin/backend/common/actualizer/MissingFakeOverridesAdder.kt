@@ -89,6 +89,7 @@ class MissingFakeOverridesAdder(
         } else {
             diagnosticsReporter.at(declaration).report(
                 CommonBackendErrors.MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED,
+                declaration.name.asString(),
                 (actualMember as IrDeclarationWithName).name.asString()
             )
         }
