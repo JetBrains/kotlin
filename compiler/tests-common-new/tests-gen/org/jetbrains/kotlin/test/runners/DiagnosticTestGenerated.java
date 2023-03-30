@@ -19237,6 +19237,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("complexMapping.kt")
+            public void testComplexMapping() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/integerLiterals/complexMapping.kt");
+            }
+
+            @Test
             @TestMetadata("constantUnaryOperators.kt")
             public void testConstantUnaryOperators() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/integerLiterals/constantUnaryOperators.kt");
