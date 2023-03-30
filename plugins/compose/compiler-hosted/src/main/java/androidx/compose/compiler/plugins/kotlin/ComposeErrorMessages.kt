@@ -124,5 +124,9 @@ class ComposeErrorMessages : DefaultErrorMessages.Extension {
             ComposeErrors.COMPOSE_APPLIER_DECLARATION_MISMATCH,
             "The composition target of an override must match the ancestor target"
         )
+        MAP.put(
+            ComposeErrors.COMPOSE_INVALID_DELEGATE,
+            "Composable setValue operator is not currently supported."
+        )
     }
 }

@@ -32,7 +32,9 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrLocalDelegatedProperty
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.copyAttributes
@@ -40,6 +42,7 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
+import org.jetbrains.kotlin.ir.expressions.IrLocalDelegatedPropertyReference
 import org.jetbrains.kotlin.ir.expressions.IrReturn
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.copyTypeArgumentsFrom
@@ -48,6 +51,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrLocalDelegatedPropertyReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
@@ -58,6 +62,7 @@ import org.jetbrains.kotlin.ir.types.isMarkedNullable
 import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
+import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.copyTo
 import org.jetbrains.kotlin.ir.util.copyTypeParametersFrom
@@ -69,6 +74,7 @@ import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isGetter
 import org.jetbrains.kotlin.ir.util.isVararg
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
+import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.util.remapTypeParameters
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -138,8 +144,67 @@ class ComposerParamTransformer(
     override fun visitSimpleFunction(declaration: IrSimpleFunction): IrStatement =
         super.visitSimpleFunction(declaration.withComposerParamIfNeeded())
 
+    override fun visitLocalDelegatedPropertyReference(
+        expression: IrLocalDelegatedPropertyReference
+    ): IrExpression {
+        val transformedGetter = expression.getter.owner.withComposerParamIfNeeded()
+        return super.visitLocalDelegatedPropertyReference(
+            IrLocalDelegatedPropertyReferenceImpl(
+                expression.startOffset,
+                expression.endOffset,
+                expression.type,
+                expression.symbol,
+                expression.delegate,
+                transformedGetter.symbol,
+                expression.setter,
+                expression.origin
+            )
+        )
+    }
+
+    override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty): IrStatement {
+        if (declaration.getter.isComposableDelegatedAccessor()) {
+            declaration.getter.annotations += createComposableAnnotation()
+        }
+
+        if (declaration.setter?.isComposableDelegatedAccessor() == true) {
+            declaration.setter!!.annotations += createComposableAnnotation()
+        }
+
+        return super.visitLocalDelegatedProperty(declaration)
+    }
+
+    override fun visitProperty(declaration: IrProperty): IrStatement {
+        if (declaration.getter?.isComposableDelegatedAccessor() == true) {
+            declaration.getter!!.annotations += createComposableAnnotation()
+        }
+
+        if (declaration.setter?.isComposableDelegatedAccessor() == true) {
+            declaration.setter!!.annotations += createComposableAnnotation()
+        }
+
+        return super.visitProperty(declaration)
+    }
+
+    private fun createComposableAnnotation() =
+        IrConstructorCallImpl(
+            startOffset = SYNTHETIC_OFFSET,
+            endOffset = SYNTHETIC_OFFSET,
+            type = composableIrClass.defaultType,
+            symbol = composableIrClass.primaryConstructor!!.symbol,
+            typeArgumentsCount = 0,
+            constructorTypeArgumentsCount = 0,
+            valueArgumentsCount = 0
+        )
+
     fun IrCall.withComposerParamIfNeeded(composerParam: IrValueParameter): IrCall {
         val ownerFn = when {
+            symbol.owner.isComposableDelegatedAccessor() -> {
+                if (!symbol.owner.hasComposableAnnotation()) {
+                    symbol.owner.annotations += createComposableAnnotation()
+                }
+                symbol.owner.withComposerParamIfNeeded()
+            }
             symbol.owner.hasComposableAnnotation() ->
                 symbol.owner.withComposerParamIfNeeded()
             isComposableLambdaInvoke() ->

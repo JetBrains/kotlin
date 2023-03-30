@@ -1264,7 +1264,12 @@ class TargetAnnotationsTransformTests : AbstractIrTransformTest() {
             if (isTraceInProgress()) {
               traceEventStart(<>, %dirty, -1, <>)
             }
-            <<LOCALDELPROP>>
+            val updatedContent by {
+              val updatedContent%delegate = rememberUpdatedState(content, %composer, 0b1110 and %dirty)
+              get() {
+                return updatedContent%delegate.getValue(null, ::updatedContent%delegate)
+              }
+            }
             Defer(composableLambda(%composer, <>, true) { %composer: Composer?, %changed: Int ->
               sourceInformation(%composer, "C:Test.kt")
               if (%changed and 0b1011 !== 0b0010 || !%composer.skipping) {
