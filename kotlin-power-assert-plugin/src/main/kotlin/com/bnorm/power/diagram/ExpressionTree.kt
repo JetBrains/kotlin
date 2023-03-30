@@ -76,13 +76,6 @@ fun buildTree(expression: IrExpression): Node? {
 
   val tree = RootNode()
   expression.accept(object : IrElementVisitor<Unit, Node> {
-    val INCREMENT_DECREMENT_OPERATORS = setOf(
-      IrStatementOrigin.PREFIX_INCR,
-      IrStatementOrigin.PREFIX_DECR,
-      IrStatementOrigin.POSTFIX_INCR,
-      IrStatementOrigin.POSTFIX_DECR
-    )
-
     override fun visitElement(element: IrElement, data: Node) {
       element.acceptChildren(this, data)
     }
@@ -96,13 +89,14 @@ fun buildTree(expression: IrExpression): Node? {
     }
 
     override fun visitContainerExpression(expression: IrContainerExpression, data: Node) {
-      if (expression.origin in INCREMENT_DECREMENT_OPERATORS) {
+      if (expression.origin is IrStatementOrigin.SAFE_CALL) {
+        // Null safe expressions can be correctly navigated
+        super.visitContainerExpression(expression, data)
+      } else {
+        // Everything else is considered unsafe and terminates the expression tree
         val node = data as? ExpressionNode ?: ExpressionNode().also { data.addChild(it) }
         node.add(expression)
-        return // Skip the internals of increment/decrement operations
       }
-
-      super.visitContainerExpression(expression, data)
     }
 
     override fun visitTypeOperator(expression: IrTypeOperatorCall, data: Node) {
