@@ -24,9 +24,14 @@ public open class Throwable(open val message: String?, open val cause: kotlin.Th
 
     private val jsStack: ExternalInterfaceType = captureStackTrace()
 
-    internal val stack: String by lazy {
-        jsToKotlinStringAdapter(jsStack).removePrefix("Error\n")
-    }
+    private lateinit var _stack: String
+    internal val stack: String
+        get() {
+            if (!::_stack.isInitialized) {
+                _stack = jsToKotlinStringAdapter(jsStack).removePrefix("Error\n")
+            }
+            return _stack
+        }
 
     internal var suppressedExceptionsList: MutableList<Throwable>? = null
 
