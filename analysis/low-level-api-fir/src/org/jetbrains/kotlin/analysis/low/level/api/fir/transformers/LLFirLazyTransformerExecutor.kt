@@ -13,30 +13,28 @@ import org.jetbrains.kotlin.fir.declarations.asResolveState
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataContextCollector
 
-internal class LLFirLazyTransformerExecutor {
-    companion object {
-        fun execute(
-            phase: FirResolvePhase,
-            designation: FirDesignationWithFile,
-            scopeSession: ScopeSession,
-            phaseRunner: LLFirPhaseRunner,
-            lockProvider: LLFirLockProvider,
-            towerDataContextCollector: FirTowerDataContextCollector?
-        ) {
-            val lazyTransformer = LazyTransformerFactory.createLazyTransformer(
-                phase,
-                designation,
-                scopeSession,
-                lockProvider,
-                towerDataContextCollector,
-            )
+internal object LLFirLazyTransformerExecutor {
+    fun execute(
+        phase: FirResolvePhase,
+        designation: FirDesignationWithFile,
+        scopeSession: ScopeSession,
+        phaseRunner: LLFirPhaseRunner,
+        lockProvider: LLFirLockProvider,
+        towerDataContextCollector: FirTowerDataContextCollector?
+    ) {
+        val lazyTransformer = LazyTransformerFactory.createLazyTransformer(
+            phase,
+            designation,
+            scopeSession,
+            lockProvider,
+            towerDataContextCollector,
+        )
 
-            lockProvider.withLock(designation.firFile) {
-                lazyTransformer.transformDeclaration(phaseRunner)
-                lazyTransformer.updatePhaseForDeclarationInternals(designation.target)
-                designation.target.replaceResolveState(phase.asResolveState())
-                lazyTransformer.checkIsResolved(designation.target)
-            }
+        lockProvider.withLock(designation.firFile) {
+            lazyTransformer.transformDeclaration(phaseRunner)
+            lazyTransformer.updatePhaseForDeclarationInternals(designation.target)
+            designation.target.replaceResolveState(phase.asResolveState())
+            lazyTransformer.checkIsResolved(designation.target)
         }
     }
 }
