@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.native
 
+import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.*
 import org.jetbrains.kotlin.gradle.testbase.TestVersions
@@ -376,6 +377,17 @@ class AppleFrameworkIT : BaseGradleIT() {
             ) {
                 assertFailed()
                 assertContains("/sharedAppleFramework/shared/src/commonMain/kotlin/com/github/jetbrains/myapplication/Greeting.kt:7:2: error: Expecting a top level declaration")
+            }
+        }
+    }
+
+    @Test
+    fun `frameworks can be consumed from other gradle project`() {
+        with(Project("consumableAppleFrameworks", minLogLevel = LogLevel.INFO)) {
+            setupWorkingDir()
+            build(":consumer:help") {
+                assertContains("RESOLUTION_SUCCESS")
+                assertNotContains("RESOLUTION_FAILURE")
             }
         }
     }
