@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.backend.jvm.FirJvmVisibilityConverter
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.signaturer.FirMangler
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmDescriptorMangler
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -55,6 +56,7 @@ fun FirResult.convertToIrAndActualizeForJvm(
     linkViaSignatures = linkViaSignatures,
     signatureComposerCreator = { JvmIdSignatureDescriptor(JvmDescriptorMangler(null)) },
     irMangler = JvmIrMangler,
+    firManglerCreator = { FirJvmKotlinMangler() },
     visibilityConverter = FirJvmVisibilityConverter,
     diagnosticReporter = diagnosticReporter,
     languageVersionSettings = languageVersionSettings,
@@ -67,6 +69,7 @@ fun FirResult.convertToIrAndActualize(
     linkViaSignatures: Boolean,
     signatureComposerCreator: (() -> IdSignatureComposer)?,
     irMangler: KotlinMangler.IrMangler,
+    firManglerCreator: () -> FirMangler,
     visibilityConverter: Fir2IrVisibilityConverter,
     kotlinBuiltIns: KotlinBuiltIns,
     diagnosticReporter: DiagnosticReporter,
@@ -79,7 +82,7 @@ fun FirResult.convertToIrAndActualize(
     val commonMemberStorage = Fir2IrCommonMemberStorage(
         generateSignatures = linkViaSignatures,
         signatureComposerCreator = signatureComposerCreator,
-        manglerCreator = { FirJvmKotlinMangler() } // TODO: replace with potentially simpler version for other backends.
+        manglerCreator = firManglerCreator
     )
 
     when (outputs.size) {
@@ -94,7 +97,9 @@ fun FirResult.convertToIrAndActualize(
                 irMangler,
                 visibilityConverter,
                 kotlinBuiltIns,
-            )
+            ).also { result ->
+                fir2IrResultPostCompute(result)
+            }
             actualizationResult = null
         }
         else -> {

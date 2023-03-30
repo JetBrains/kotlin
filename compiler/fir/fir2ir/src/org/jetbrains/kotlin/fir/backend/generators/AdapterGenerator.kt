@@ -221,8 +221,6 @@ internal class AdapterGenerator(
             isExpect = false,
             isFakeOverride = false
         ).also { irAdapterFunction ->
-            irAdapterFunction.metadata = FirMetadataSource.Function(firAdaptee)
-
             symbolTable.enterScope(irAdapterFunction)
             irAdapterFunction.dispatchReceiverParameter = null
             val boundReceiver = boundDispatchReceiver ?: boundExtensionReceiver

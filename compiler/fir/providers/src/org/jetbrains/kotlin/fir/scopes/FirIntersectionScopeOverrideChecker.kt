@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
-import org.jetbrains.kotlin.fir.scopes.impl.FirStandardOverrideChecker
 
 /**
  * That class is expected to work just the same as FirStandardOverrideChecker for regular members,
@@ -20,7 +19,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirStandardOverrideChecker
  * while in Java class they would be treated equally.
  */
 class FirIntersectionScopeOverrideChecker(session: FirSession) : FirOverrideChecker {
-    private val standardOverrideChecker = FirStandardOverrideChecker(session)
+    private val standardOverrideChecker = session.firOverrideChecker
     private val platformSpecificOverridabilityRules = session.platformSpecificOverridabilityRules
 
     override fun isOverriddenFunction(overrideCandidate: FirSimpleFunction, baseDeclaration: FirSimpleFunction): Boolean {

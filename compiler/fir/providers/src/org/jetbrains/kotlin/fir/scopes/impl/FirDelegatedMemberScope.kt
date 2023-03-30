@@ -37,7 +37,7 @@ class FirDelegatedMemberScope(
     private val delegateFields: List<FirField>,
 ) : FirContainingNamesAwareScope() {
     private val dispatchReceiverType = containingClass.defaultType()
-    private val overrideChecker = FirStandardOverrideChecker(session)
+    private val overrideChecker = session.firOverrideChecker
 
     override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
         declaredMemberScope.processFunctionsByName(name, processor)

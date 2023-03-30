@@ -37,7 +37,9 @@ object FirNativeSessionFactory : FirAbstractSessionFactory() {
             moduleDataProvider,
             languageVersionSettings,
             extensionRegistrars,
-            registerExtraComponents,
+            registerExtraComponents = { session ->
+                registerExtraComponents(session)
+            },
             createKotlinScopeProvider = { FirKotlinScopeProvider { _, declaredMemberScope, _, _, _ -> declaredMemberScope } },
             createProviders = { session, builtinsModuleData, kotlinScopeProvider ->
                 val forwardDeclarationsModuleData = BinaryModuleData.createDependencyModuleData(

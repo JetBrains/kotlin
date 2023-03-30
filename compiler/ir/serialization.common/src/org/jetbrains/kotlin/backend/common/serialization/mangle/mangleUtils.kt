@@ -36,4 +36,4 @@ fun <T> Iterable<T>.collectForMangler(builder: StringBuilder, params: MangleCons
     builder.append(params.suffix)
 }
 
-internal val publishedApiAnnotation = FqName("kotlin.PublishedApi")
+val publishedApiAnnotation = FqName("kotlin.PublishedApi")

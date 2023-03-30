@@ -9,10 +9,7 @@ import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.analyzer.common.CommonPlatformAnalyzerServices
 import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.GroupedKtSources
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.fir.DependencyListForCliModule
-import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.FirModuleDataImpl
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
@@ -160,6 +157,7 @@ fun <F> prepareNativeSessions(
     extensionRegistrars: List<FirExtensionRegistrar>,
     isCommonSource: (F) -> Boolean,
     fileBelongsToModule: (F, String) -> Boolean,
+    registerExtraComponents: ((FirSession) -> Unit) = {},
 ): List<SessionWithSources<F>> {
     return prepareSessions(
         files, configuration, rootModuleName, NativePlatforms.unspecifiedNativePlatform, NativePlatformAnalyzerServices,
@@ -171,7 +169,7 @@ fun <F> prepareNativeSessions(
                 libraryList.moduleDataProvider,
                 extensionRegistrars,
                 configuration.languageVersionSettings,
-                registerExtraComponents = {},
+                registerExtraComponents,
             )
         }
     ) { _, moduleData, sessionProvider, sessionConfigurator ->
@@ -181,6 +179,7 @@ fun <F> prepareNativeSessions(
             extensionRegistrars,
             configuration.languageVersionSettings,
             sessionConfigurator,
+            registerExtraComponents,
         )
     }
 }

@@ -4917,7 +4917,7 @@ standaloneTest("interop_opengl_teapot") {
 
 if (PlatformInfo.isAppleTarget(project)) {
     interopTest("interop_objc_smoke") {
-        enabled = !isNoopGC && !isK2(project) // KT-56030
+        enabled = !isNoopGC
         source = "interop/objc/smoke.kt"
         interop = 'objcSmoke'
         doBeforeBuild {
@@ -4968,7 +4968,7 @@ if (PlatformInfo.isAppleTarget(project)) {
     }
 
     interopTestMultifile("interop_objc_tests") {
-        disabled = isK2(project) // KT-55909
+        disabled = isK2(project) // KT-57504
         source = "interop/objc/tests/"
         interop = 'objcTests'
         flags = ['-tr', '-e', 'main']
@@ -5259,8 +5259,7 @@ if (PlatformInfo.isAppleTarget(project)) {
 
     standaloneTest("interop_kt55653") {
         // Test depends on macOS-specific AppKit
-        enabled = (project.testTarget == 'macos_x64' || project.testTarget == 'macos_arm64' || project.testTarget == null) &&
-                !isK2(project) // KT-56030
+        enabled = (project.testTarget == 'macos_x64' || project.testTarget == 'macos_arm64' || project.testTarget == null)
         source = "interop/objc/kt55653/main.kt"
         useGoldenData = true
         UtilsKt.dependsOnPlatformLibs(it)

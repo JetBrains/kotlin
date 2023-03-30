@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
+import org.jetbrains.kotlin.fir.scopes.firOverrideChecker
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
 
@@ -23,7 +24,7 @@ class FirClassUseSiteMemberScope(
 ) : AbstractFirUseSiteMemberScope(
     klass.classId,
     session,
-    FirStandardOverrideChecker(session),
+    session.firOverrideChecker,
     superTypeScopes,
     klass.defaultType(),
     declaredMemberScope

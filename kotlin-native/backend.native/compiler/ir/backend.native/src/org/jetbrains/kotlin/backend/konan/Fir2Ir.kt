@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
+import org.jetbrains.kotlin.backend.common.serialization.mangle.ManglerChecker
 import org.jetbrains.kotlin.backend.common.serialization.metadata.DynamicTypeDeserializer
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.phases.Fir2IrOutput
@@ -18,16 +19,15 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.deserialization.PlatformDependentTypeTransformer
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
-import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
-import org.jetbrains.kotlin.fir.backend.Fir2IrExtensions
-import org.jetbrains.kotlin.fir.backend.Fir2IrPluginContext
-import org.jetbrains.kotlin.fir.backend.Fir2IrVisibilityConverter
+import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.pipeline.convertToIrAndActualize
+import org.jetbrains.kotlin.fir.signaturer.Ir2FirManglerAdapter
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
@@ -74,10 +74,17 @@ internal fun PhaseContext.fir2Ir(
             linkViaSignatures = false,
             signatureComposerCreator = null,
             irMangler = KonanManglerIr,
+            firManglerCreator = { FirNativeKotlinMangler() },
             visibilityConverter = Fir2IrVisibilityConverter.Default,
             diagnosticReporter = diagnosticsReporter,
             languageVersionSettings = configuration.languageVersionSettings,
             kotlinBuiltIns = builtInsModule ?: DefaultBuiltIns.Instance,
+            fir2IrResultPostCompute = {
+                // it's important to compare manglers before actualization, since IR will be actualized, while FIR won't
+                irModuleFragment.acceptVoid(
+                        ManglerChecker(KonanManglerIr, Ir2FirManglerAdapter(FirNativeKotlinMangler()), needsChecking = ManglerChecker.hasMetadata)
+                )
+            }
     ).also {
         (it.irModuleFragment.descriptor as? FirModuleDescriptor)?.let { it.allDependencyModules = librariesDescriptors }
     }
@@ -86,7 +93,6 @@ internal fun PhaseContext.fir2Ir(
     }
 
     val symbols = createKonanSymbols(irModuleFragment, components, pluginContext)
-    // TODO KT-55580 Invoke CopyDefaultValuesToActualPhase, same as PsiToir phase does.
 
     val renderDiagnosticNames = configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
     FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, messageCollector, renderDiagnosticNames)

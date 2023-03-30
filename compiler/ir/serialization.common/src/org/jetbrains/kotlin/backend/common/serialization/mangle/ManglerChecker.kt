@@ -15,7 +15,15 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.SpecialNames
 
-class ManglerChecker(vararg _manglers: KotlinMangler<IrDeclaration>) : IrElementVisitorVoid {
+class ManglerChecker(
+    vararg _manglers: KotlinMangler<IrDeclaration>,
+    private val needsChecking: (IrDeclarationBase) -> Boolean = hasDescriptor
+) : IrElementVisitorVoid {
+
+    companion object {
+        val hasDescriptor: (IrDeclarationBase) -> Boolean = { it.symbol.hasDescriptor }
+        val hasMetadata: (IrDeclarationBase) -> Boolean = { (it as? IrMetadataSourceOwner)?.metadata != null }
+    }
 
     private val manglers = _manglers.toList()
 
@@ -29,7 +37,7 @@ class ManglerChecker(vararg _manglers: KotlinMangler<IrDeclaration>) : IrElement
         }
 
         override fun visitDeclaration(declaration: IrDeclarationBase, data: Nothing?): Boolean {
-            if (!declaration.symbol.hasDescriptor) return true
+            if (!needsChecking(declaration)) return true
 
             if (declaration.parent is IrPackageFragment) {
                 val vis = declaration as IrDeclarationWithVisibility
@@ -87,7 +95,7 @@ class ManglerChecker(vararg _manglers: KotlinMangler<IrDeclaration>) : IrElement
         if (declaration is IrErrorDeclaration) return
 
         val exported = manglers.checkAllEqual(false, { isExportCheck(declaration) }) { m1, r1, m2, r2 ->
-            error("${declaration.render()}\n ${m1.manglerName}: $r1\n ${m2.manglerName}: $r2\n")
+            error("isExportCheck: ${declaration.render()}\n ${m1.manglerName}: $r1\n ${m2.manglerName}: $r2\n")
         }
 
         if (!exported) return
