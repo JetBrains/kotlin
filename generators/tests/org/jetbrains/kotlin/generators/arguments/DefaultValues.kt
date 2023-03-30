@@ -24,6 +24,7 @@ open class DefaultValues(
     val defaultValue: String,
     val type: KType,
     val kotlinOptionsType: KType,
+    val prettyDefaultValue: String? = null,
     val possibleValues: List<String>? = null,
     val fromKotlinOptionConverterProp: String? = null,
     val toKotlinOptionConverterProp: String? = null,
@@ -78,16 +79,17 @@ open class DefaultValues(
     )
 
     object JvmTargetVersions : DefaultValues(
-        "null",
-        typeOf<JvmTargetDsl?>(),
+        "org.jetbrains.kotlin.gradle.dsl.JvmTarget.DEFAULT",
+        typeOf<JvmTargetDsl>(),
         typeOf<String?>(),
         possibleValues = JvmTarget.supportedValues().map { "\"${it.description}\"" },
         fromKotlinOptionConverterProp = """
         if (this != null) ${typeOf<JvmTargetDsl>()}.fromTarget(this) else null
         """.trimIndent(),
         toKotlinOptionConverterProp = """
-        this?.target
-        """.trimIndent()
+        this.target
+        """.trimIndent(),
+        prettyDefaultValue = "\"${JvmTarget.DEFAULT}\""
     )
 
     object JsEcmaVersions : DefaultValues(

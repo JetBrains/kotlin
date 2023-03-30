@@ -100,6 +100,7 @@ public final class org/jetbrains/kotlin/gradle/dsl/JvmTarget : java/lang/Enum {
 
 public final class org/jetbrains/kotlin/gradle/dsl/JvmTarget$Companion {
 	public final fun fromTarget (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/dsl/JvmTarget;
+	public final fun getDEFAULT ()Lorg/jetbrains/kotlin/gradle/dsl/JvmTarget;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KaptArguments {
