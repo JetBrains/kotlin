@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.fir.resolve.FirSamResolver
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.name.StandardClassIds.Byte
 import org.jetbrains.kotlin.name.StandardClassIds.Double
 import org.jetbrains.kotlin.name.StandardClassIds.Float
@@ -79,6 +81,12 @@ abstract class AbstractConeCallConflictResolver(
             val specificClassId = specific.lowerBoundIfFlexible().classId ?: return false
             val generalClassId = general.upperBoundIfFlexible().classId ?: return false
 
+            // any signed >= any unsigned
+
+            if (!specificClassId.isUnsigned && generalClassId.isUnsigned) {
+                return true
+            }
+
             // int >= long, int >= short, short >= byte
 
             if (specificClassId == Int) {
@@ -99,6 +107,8 @@ abstract class AbstractConeCallConflictResolver(
 
             return specificClassId == Double && generalClassId == Float
         }
+
+        private val ClassId.isUnsigned get() = this in StandardClassIds.unsignedTypes
     }
 
     protected fun createFlatSignature(call: Candidate): FlatSignature<Candidate> {
