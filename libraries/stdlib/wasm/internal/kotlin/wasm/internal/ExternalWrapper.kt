@@ -281,28 +281,40 @@ private fun getJsTrue(): JsBoolean =
 private fun getJsFalse(): JsBoolean =
     js("false")
 
-private lateinit var _jsEmptyString: JsString 
+private var _jsEmptyString: JsString? = null
 private val jsEmptyString: JsString
     get() {
-        if (!::_jsEmptyString.isInitialized)
-            _jsEmptyString = getJsEmptyString()
-        return _jsEmptyString
+        var value = _jsEmptyString
+        if (value == null) {
+            value = getJsEmptyString()
+            _jsEmptyString = value
+        }
+
+        return value
     }
 
-private lateinit var _jsTrue: JsBoolean
+private var _jsTrue: JsBoolean? = null
 private val jsTrue: JsBoolean
     get() {
-        if (!::_jsTrue.isInitialized)
-            _jsTrue = getJsTrue()
-        return _jsTrue
+        var value = _jsTrue
+        if (value == null) {
+            value = getJsTrue()
+            _jsTrue = value
+        }
+
+        return value
     }
 
-private lateinit var _jsFalse: JsBoolean
-private val jsFalse: JsBoolean 
+private var _jsFalse: JsBoolean? = null
+private val jsFalse: JsBoolean
     get() {
-        if (!::_jsFalse.isInitialized)
-            _jsFalse = getJsFalse()
-        return _jsFalse
+        var value = _jsFalse
+        if (value == null) {
+            value = getJsFalse()
+            _jsFalse = value
+        }
+
+        return value
     }
 
 internal fun numberToDoubleAdapter(x: Number): Double =

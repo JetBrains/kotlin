@@ -77,17 +77,17 @@ internal class TeamcityAdapter : FrameworkAdapter {
         println("##teamcity[$type name='${name.tcEscape()}' message='${errorMessage.tcEscape()}' $flowId]")
     }
 
-
-    private lateinit var _testArguments: FrameworkTestArguments
-
+    private var _testArguments: FrameworkTestArguments? = null
     private val testArguments: FrameworkTestArguments
         get() {
-            if (!::_testArguments.isInitialized) {
+            var value = _testArguments
+            if (value == null) {
                 val arguments = d8Arguments().takeIf { it.isNotEmpty() } ?: nodeArguments()
-                _testArguments = FrameworkTestArguments.parse(arguments.split(' '))
+                value = FrameworkTestArguments.parse(arguments.split(' '))
+                _testArguments = value
             }
 
-            return _testArguments
+            return value
         }
 
     private fun runSuite(name: String, suiteFn: () -> Unit) {
