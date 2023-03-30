@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class ComposableDeclarationChecker : DeclarationChecker, StorageComponentContainerContributor {
     override fun registerModuleComponents(
@@ -143,6 +144,18 @@ class ComposableDeclarationChecker : DeclarationChecker, StorageComponentContain
         ) {
             context.trace.report(
                 COMPOSABLE_FUN_MAIN.on(declaration.nameIdentifier ?: declaration)
+            )
+        }
+
+        if (
+            hasComposableAnnotation &&
+            descriptor.isOperator &&
+            descriptor.name == OperatorNameConventions.SET_VALUE
+        ) {
+            context.trace.report(
+                ComposeErrors.COMPOSE_INVALID_DELEGATE.on(
+                    declaration.nameIdentifier ?: declaration
+                )
             )
         }
     }

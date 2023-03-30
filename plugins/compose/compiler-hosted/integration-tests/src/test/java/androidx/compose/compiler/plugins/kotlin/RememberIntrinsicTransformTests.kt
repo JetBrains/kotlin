@@ -501,7 +501,7 @@ class RememberIntrinsicTransformTests : AbstractIrTransformTest() {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %changed, -1, <>)
                 }
-                val bar = compositionLocalBar.current
+                val bar = compositionLocalBar.<get-current>(%composer, 0b0110)
                 val foo = remember(bar, {
                   Foo()
                 }, %composer, 0)
@@ -542,7 +542,7 @@ class RememberIntrinsicTransformTests : AbstractIrTransformTest() {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %changed, -1, <>)
                 }
-                val foo = remember(compositionLocalBar.current, {
+                val foo = remember(compositionLocalBar.<get-current>(%composer, 0b0110), {
                   Foo()
                 }, %composer, 0)
                 if (isTraceInProgress()) {
