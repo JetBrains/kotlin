@@ -2749,6 +2749,7 @@ standaloneTest("custom_hook") {
     }
     expectedExitStatusChecker = { it != 0 }
     source = "runtime/exceptions/custom_hook.kt"
+    flags = ['-opt-in=kotlin.native.internal.InternalForKotlinNative']
 }
 
 standaloneTest("custom_hook_memory_leak") {
@@ -4709,6 +4710,7 @@ interopTest("interop_threadStates") {
     disabled = (project.testTarget == 'wasm32') || // No interop for wasm yet.
             !isExperimentalMM // No thread state switching in the legacy MM.
     source = "interop/threadStates/threadStates.kt"
+    flags = ['-opt-in=kotlin.native.internal.InternalForKotlinNative']
     interop = "threadStates"
 }
 
@@ -4717,6 +4719,7 @@ interopTest("interop_threadStates_callbacksWithExceptions") {
             !isExperimentalMM // No thread state switching in the legacy MM.
     source = "interop/threadStates/callbacksWithExceptions.kt"
     interop = "threadStates"
+    flags = ['-opt-in=kotlin.native.internal.InternalForKotlinNative']
 }
 
 interopTest("interop_threadStates_unhandledException") {
@@ -4726,6 +4729,7 @@ interopTest("interop_threadStates_unhandledException") {
     interop = "threadStates"
     outputChecker = { it.contains("Error. Runnable state: true") }
     expectedExitStatusChecker = { it != 0 }
+    flags = ['-opt-in=kotlin.native.internal.InternalForKotlinNative']
 }
 
 interopTest("interop_threadStates_unhandledExceptionInForeignThread") {
@@ -4735,6 +4739,7 @@ interopTest("interop_threadStates_unhandledExceptionInForeignThread") {
     interop = "threadStates"
     outputChecker = { it.contains("Error. Runnable state: true") }
     expectedExitStatusChecker = { it != 0 }
+    flags = ['-opt-in=kotlin.native.internal.InternalForKotlinNative']
 }
 
 interopTest("interop_withSpaces") {
@@ -5408,6 +5413,7 @@ dynamicTest("produce_dynamic_unhandledException") {
     clangTool = "clang++"
     expectedExitStatusChecker = { it != 0 }
     outputChecker = { str -> str.startsWith("Kotlin hook: Exception. Runnable state: true") }
+    flags = ['-opt-in=kotlin.native.internal.InternalForKotlinNative']
 }
 
 dynamicTest("interop_concurrentRuntime") {
