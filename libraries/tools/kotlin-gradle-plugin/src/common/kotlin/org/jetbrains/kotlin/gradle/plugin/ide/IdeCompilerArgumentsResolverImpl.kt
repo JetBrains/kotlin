@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.ide
 
-import org.jetbrains.kotlin.compilerRunner.toArgumentStrings
+import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.CreateCompilerArgumentsContext
@@ -43,6 +43,6 @@ internal class IdeCompilerArgumentsResolverImpl(
                 ),
             )
         )
-        return compilerArguments.toArgumentStrings(useShortNames = true)
+        return ArgumentUtils.convertArgumentsToStringList(compilerArguments)
     }
 }

@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.arguments.CompilerArgumentsSerializerV5
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.platform.*
-import org.jetbrains.kotlin.platform.impl.FakeK2NativeCompilerArguments
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
 import org.jetbrains.kotlin.platform.jvm.JdkPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
@@ -43,7 +42,7 @@ fun TargetPlatform.createArguments(init: (CommonCompilerArguments).() -> Unit = 
             jvmTarget = (single() as? JdkPlatform)?.targetVersion?.description ?: JvmTarget.DEFAULT.description
         }
         isJs() -> K2JSCompilerArguments().apply { init() }
-        isNative() -> FakeK2NativeCompilerArguments().apply { init() }
+        isNative() -> K2NativeCompilerArguments().apply { init() }
         else -> error("Unknown platform $this")
     }
 }
