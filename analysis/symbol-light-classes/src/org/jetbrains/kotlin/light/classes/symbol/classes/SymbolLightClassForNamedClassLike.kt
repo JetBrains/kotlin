@@ -113,8 +113,7 @@ abstract class SymbolLightClassForNamedClassLike : SymbolLightClassForClassLike<
                     fieldName = it.name.asString(),
                     containingClass = this,
                     lightMemberOrigin = null,
-                    isTopLevel = false,
-                    forceStatic = true,
+                    isStatic = true,
                 )
             }
     }

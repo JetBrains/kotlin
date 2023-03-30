@@ -362,8 +362,7 @@ context(KtAnalysisSession)
 internal fun SymbolLightClassBase.createField(
     declaration: KtPropertySymbol,
     nameGenerator: SymbolLightField.FieldNameGenerator,
-    isTopLevel: Boolean,
-    forceStatic: Boolean,
+    isStatic: Boolean,
     result: MutableList<KtLightField>
 ) {
     if (!hasBackingField(declaration)) return
@@ -380,8 +379,7 @@ internal fun SymbolLightClassBase.createField(
             fieldName = fieldName,
             containingClass = this,
             lightMemberOrigin = null,
-            isTopLevel = isTopLevel,
-            forceStatic = forceStatic,
+            isStatic = isStatic,
         )
     )
 }
@@ -596,13 +594,12 @@ internal fun SymbolLightClassBase.addPropertyBackingFields(
 
     val nameGenerator = SymbolLightField.FieldNameGenerator()
 
-    val forceStatic = symbolWithMembers is KtClassOrObjectSymbol && symbolWithMembers.classKind.isObject
+    val isStatic = symbolWithMembers is KtClassOrObjectSymbol && symbolWithMembers.classKind.isObject
     fun addPropertyBackingField(propertySymbol: KtPropertySymbol) {
         createField(
             declaration = propertySymbol,
             nameGenerator = nameGenerator,
-            isTopLevel = false,
-            forceStatic = forceStatic,
+            isStatic = isStatic,
             result = result
         )
     }
