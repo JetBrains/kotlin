@@ -3,7 +3,9 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-import kotlin.native.internal.Debugging
+@file:OptIn(kotlin.native.runtime.NativeRuntimeApi::class)
+
+import kotlin.native.runtime.Debugging
 import kotlin.test.*
 import kotlinx.cinterop.staticCFunction
 import threadStates.*

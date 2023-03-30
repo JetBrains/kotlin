@@ -1,3 +1,5 @@
+@file:OptIn(kotlin.native.runtime.NativeRuntimeApi::class)
+
 import objclib.*
 import kotlin.native.concurrent.*
 import kotlinx.cinterop.*
@@ -19,6 +21,6 @@ fun main() {
     if (Platform.memoryModel == MemoryModel.EXPERIMENTAL) {
         // Experimental MM by default doesn't run GC neither on worker termination nor on program exit.
         // Enforce GC on program exit:
-        kotlin.native.internal.Debugging.forceCheckedShutdown = true
+        kotlin.native.runtime.Debugging.forceCheckedShutdown = true
     }
 }
