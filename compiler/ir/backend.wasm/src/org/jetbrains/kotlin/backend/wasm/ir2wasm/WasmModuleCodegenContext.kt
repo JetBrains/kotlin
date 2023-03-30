@@ -177,12 +177,8 @@ class WasmModuleCodegenContext(
     fun referenceFunctionType(irFunction: IrFunctionSymbol): WasmSymbol<WasmFunctionType> =
         wasmFragment.functionTypes.reference(irFunction)
 
-    fun referenceClassId(irClass: IrClassSymbol): WasmSymbol<Int> =
-        wasmFragment.classIds.reference(irClass)
-
-    fun referenceInterfaceId(irInterface: IrClassSymbol): WasmSymbol<Int> {
-        return wasmFragment.interfaceId.reference(irInterface)
-    }
+    fun referenceTypeId(irClass: IrClassSymbol): WasmSymbol<Int> =
+        wasmFragment.typeIds.reference(irClass)
 
     fun getStructFieldRef(field: IrField): WasmSymbol<Int> {
         val klass = field.parentAsClass

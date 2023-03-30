@@ -56,8 +56,7 @@ internal class WasmUsefulDeclarationProcessor(
                 true
             }
 
-            context.wasmSymbols.wasmClassId,
-            context.wasmSymbols.wasmInterfaceId,
+            context.wasmSymbols.wasmTypeId,
             context.wasmSymbols.refCastNull,
             context.wasmSymbols.refTest,
             context.wasmSymbols.boxIntrinsic,

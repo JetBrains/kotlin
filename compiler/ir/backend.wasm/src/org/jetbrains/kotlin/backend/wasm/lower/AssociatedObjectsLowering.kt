@@ -90,19 +90,15 @@ private fun IrBuilderWithScope.createAssociatedObjectAdd(
             0,
             irGet(wasmSymbols.initAssociatedObjects.owner.valueParameters[0])
         )
-        val classIdGetter = when (targetClass.owner.isInterface) {
-            true -> wasmSymbols.wasmInterfaceId
-            false -> wasmSymbols.wasmClassId
-        }
         addCall.putValueArgument(
             1,
-            irCall(classIdGetter, irBuiltIns.intType).also {
+            irCall(wasmSymbols.wasmTypeId, irBuiltIns.intType).also {
                 it.putTypeArgument(0, targetClass.defaultType)
             }
         )
         addCall.putValueArgument(
             2,
-            irCall(wasmSymbols.wasmClassId, irBuiltIns.intType).also {
+            irCall(wasmSymbols.wasmTypeId, irBuiltIns.intType).also {
                 it.putTypeArgument(0, keyAnnotation.defaultType)
             }
         )

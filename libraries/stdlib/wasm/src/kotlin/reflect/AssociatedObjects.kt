@@ -5,7 +5,7 @@
 
 package kotlin.reflect
 
-import kotlin.wasm.internal.wasmClassId
+import kotlin.wasm.internal.wasmTypeId
 import kotlin.wasm.internal.findAssociatedObject
 
 /**
@@ -40,4 +40,4 @@ public annotation class AssociatedObjectKey
 @ExperimentalAssociatedObjects
 @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
 public inline fun <reified T : Annotation> KClass<*>.findAssociatedObject(): Any? =
-    findAssociatedObject(this, wasmClassId<T>())
+    findAssociatedObject(this, wasmTypeId<T>())

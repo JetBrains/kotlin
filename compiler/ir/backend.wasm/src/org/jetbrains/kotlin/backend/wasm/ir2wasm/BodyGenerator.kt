@@ -317,7 +317,7 @@ class BodyGenerator(
             body.buildRefNull(WasmHeapType.Simple.Data, location)
         }
 
-        body.buildConstI32Symbol(context.referenceClassId(klassSymbol), location)
+        body.buildConstI32Symbol(context.referenceTypeId(klassSymbol), location)
         body.buildConstI32(0, location) // Any::_hashCode
         body.commentGroupEnd()
     }
@@ -519,23 +519,15 @@ class BodyGenerator(
         val location = call.getSourceLocation()
 
         when (function.symbol) {
-            wasmSymbols.wasmClassId -> {
+            wasmSymbols.wasmTypeId -> {
                 val klass = call.getTypeArgument(0)!!.getClass()
-                    ?: error("No class given for wasmClassId intrinsic")
-                assert(!klass.isInterface)
-                body.buildConstI32Symbol(context.referenceClassId(klass.symbol), location)
-            }
-
-            wasmSymbols.wasmInterfaceId -> {
-                val irInterface = call.getTypeArgument(0)!!.getClass()
-                    ?: error("No interface given for wasmInterfaceId intrinsic")
-                assert(irInterface.isInterface)
-                body.buildConstI32Symbol(context.referenceInterfaceId(irInterface.symbol), location)
+                    ?: error("No class given for wasmTypeId intrinsic")
+                body.buildConstI32Symbol(context.referenceTypeId(klass.symbol), location)
             }
 
             wasmSymbols.wasmIsInterface -> {
                 val irInterface = call.getTypeArgument(0)!!.getClass()
-                    ?: error("No interface given for wasmInterfaceId intrinsic")
+                    ?: error("No interface given for wasmIsInterface intrinsic")
                 assert(irInterface.isInterface)
                 if (irInterface.symbol in hierarchyDisjointUnions) {
                     val classITable = context.referenceClassITableGcType(irInterface.symbol)

@@ -33,6 +33,7 @@ fun main(args: Array<String>) {
                     )
                 )
                 model("box/jsQualifier/", pattern = jsTranslatorTestPattern, targetBackend = TargetBackend.WASM)
+                model("box/reflection/", pattern = "^(findAssociatedObject(InSeparatedFile)?)\\.kt$", targetBackend = TargetBackend.WASM)
             }
 
             testClass<AbstractJsTranslatorUnitWasmTest> {
