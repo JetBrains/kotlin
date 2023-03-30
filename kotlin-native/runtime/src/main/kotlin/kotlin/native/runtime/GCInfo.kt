@@ -1,9 +1,17 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package kotlin.native.internal.gc
+package kotlin.native.runtime
+
+import kotlin.native.internal.*
+import kotlin.native.internal.NativePtr
+import kotlin.native.concurrent.*
+import kotlin.time.*
+import kotlin.time.Duration.Companion.nanoseconds
+import kotlinx.cinterop.*
+import kotlin.system.*
 
 /**
  * This class represents statistics of memory usage in one memory pool.
@@ -13,9 +21,8 @@ package kotlin.native.internal.gc
  *                                 so it can not perfectly match the value received by os tools.
  *                                 All alignment and auxiliary object headers are included.
  */
-@Deprecated("Use kotlin.native.runtime.MemoryUsage instead.", ReplaceWith("MemoryUsage", "kotlin.native.runtime.MemoryUsage"))
-@DeprecatedSinceKotlin(warningSince = "1.9")
-@ExperimentalStdlibApi
+@NativeRuntimeApi
+@SinceKotlin("1.9")
 public class MemoryUsage(
         val objectsCount: Long,
         val totalObjectsSizeBytes: Long,
@@ -35,9 +42,8 @@ public class MemoryUsage(
  * @property stableReferences The number of objects referenced by [kotlinx.cinterop.StableRef]. It includes both explicit usage
  *                            of this API, and internal usages, e.g. inside interop and Worker API.
  */
-@ExperimentalStdlibApi
-@Deprecated("Use kotlin.native.runtime.RootSetStatistics instead.", ReplaceWith("RootSetStatistics", "kotlin.native.runtime.RootSetStatistics"))
-@DeprecatedSinceKotlin(warningSince = "1.9")
+@NativeRuntimeApi
+@SinceKotlin("1.9")
 public class RootSetStatistics(
         val threadLocalReferences: Long,
         val stackReferences: Long,
@@ -65,11 +71,8 @@ public class RootSetStatistics(
  *                            The set of memory pools depends on the collector implementation.
  *                            Can be empty, of colelction is in progress.
  */
-@ExperimentalStdlibApi
-@Deprecated("Use kotlin.native.runtime.GCInfo instead.", ReplaceWith("GCInfo", "kotlin.native.runtime.GCInfo"))
-@DeprecatedSinceKotlin(warningSince = "1.9")
-@OptIn(kotlin.native.runtime.NativeRuntimeApi::class)
-@Suppress("DEPRECATION")
+@NativeRuntimeApi
+@SinceKotlin("1.9")
 public class GCInfo(
         val epoch: Long,
         val startTimeNs: Long,
@@ -83,36 +86,88 @@ public class GCInfo(
 ) {
     internal companion object {
         val lastGCInfo: GCInfo?
-            get() {
-                val info = kotlin.native.runtime.GCInfo.lastGCInfo ?: return null
-                return GCInfo(
-                        info.epoch,
-                        info.startTimeNs,
-                        info.endTimeNs,
-                        info.pauseStartTimeNs,
-                        info.pauseEndTimeNs,
-                        info.postGcCleanupTimeNs,
-                        info.rootSet.let {
-                            RootSetStatistics(
-                                    it.threadLocalReferences,
-                                    it.stackReferences,
-                                    it.globalReferences,
-                                    it.stableReferences
-                            )
-                        },
-                        info.memoryUsageBefore.mapValues { (_, v) ->
-                            MemoryUsage(
-                                    v.objectsCount,
-                                    v.totalObjectsSizeBytes,
-                            )
-                        },
-                        info.memoryUsageAfter.mapValues { (_, v) ->
-                            MemoryUsage(
-                                    v.objectsCount,
-                                    v.totalObjectsSizeBytes,
-                            )
-                        }
-                )
-            }
+            get() = getGcInfo(0)
+
+        private fun getGcInfo(id: Int) = GCInfoBuilder().apply { fill(id) }.build();
     }
+}
+
+
+@NativeRuntimeApi
+private class GCInfoBuilder() {
+    var epoch: Long? = null
+    var startTimeNs: Long? = null
+    var endTimeNs: Long? = null
+    var pauseStartTimeNs: Long? = null
+    var pauseEndTimeNs: Long? = null
+    var postGcCleanupTimeNs: Long? = null
+    var rootSet: RootSetStatistics? = null
+    var memoryUsageBefore = mutableMapOf<String, MemoryUsage>()
+    var memoryUsageAfter = mutableMapOf<String, MemoryUsage>()
+
+    @ExportForCppRuntime("Kotlin_Internal_GC_GCInfoBuilder_setEpoch")
+    private fun setEpoch(value: Long) {
+        epoch = value
+    }
+
+    @ExportForCppRuntime("Kotlin_Internal_GC_GCInfoBuilder_setStartTime")
+    private fun setStartTime(value: Long) {
+        startTimeNs = value
+    }
+
+    @ExportForCppRuntime("Kotlin_Internal_GC_GCInfoBuilder_setEndTime")
+    private fun setEndTime(value: Long) {
+        endTimeNs = value
+    }
+
+    @ExportForCppRuntime("Kotlin_Internal_GC_GCInfoBuilder_setPauseStartTime")
+    private fun setPauseStartTime(value: Long) {
+        pauseStartTimeNs = value
+    }
+
+    @ExportForCppRuntime("Kotlin_Internal_GC_GCInfoBuilder_setPauseEndTime")
+    private fun setPauseEndTime(value: Long) {
+        pauseEndTimeNs = value
+    }
+
+    @ExportForCppRuntime("Kotlin_Internal_GC_GCInfoBuilder_setPostGcCleanupTime")
+    private fun setFinalizersDoneTime(value: Long) {
+        postGcCleanupTimeNs = value
+    }
+
+    @ExportForCppRuntime("Kotlin_Internal_GC_GCInfoBuilder_setRootSet")
+    private fun setRootSet(threadLocalReferences: Long, stackReferences: Long, globalReferences: Long, stableReferences: Long) {
+        rootSet = RootSetStatistics(threadLocalReferences, stackReferences, globalReferences, stableReferences)
+    }
+
+    @ExportForCppRuntime("Kotlin_Internal_GC_GCInfoBuilder_setMemoryUsageBefore")
+    private fun setMemoryUsageBefore(name: NativePtr, objectsCount: Long, totalObjectsSize: Long) {
+        val nameString = interpretCPointer<ByteVar>(name)!!.toKString()
+        val memoryUsage = MemoryUsage(objectsCount, totalObjectsSize)
+        memoryUsageBefore[nameString] = memoryUsage
+    }
+
+    @ExportForCppRuntime("Kotlin_Internal_GC_GCInfoBuilder_setMemoryUsageAfter")
+    private fun setMemoryUsageAfter(name: NativePtr, objectsCount: Long, totalObjectsSize: Long) {
+        val nameString = interpretCPointer<ByteVar>(name)!!.toKString()
+        val memoryUsage = MemoryUsage(objectsCount, totalObjectsSize)
+        memoryUsageAfter[nameString] = memoryUsage
+    }
+
+    fun build(): GCInfo? {
+        return GCInfo(
+                epoch ?: return null,
+                startTimeNs ?: return null,
+                endTimeNs ?: return null,
+                pauseStartTimeNs ?: return null,
+                pauseEndTimeNs ?: return null,
+                postGcCleanupTimeNs,
+                rootSet ?: return null,
+                memoryUsageBefore.toMap(),
+                memoryUsageAfter.toMap()
+        )
+    }
+
+    @GCUnsafeCall("Kotlin_Internal_GC_GCInfoBuilder_Fill")
+    external fun fill(id: Int)
 }
