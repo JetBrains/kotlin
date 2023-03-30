@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.renderer.DescriptorRendererOptions
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.DataClassDescriptorResolver
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry
+import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.secondaryConstructors
 import org.jetbrains.kotlin.types.isFlexible
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
@@ -36,6 +37,37 @@ fun DescriptorRendererOptions.defaultDecompilerRendererOptions() {
     parameterNamesInFunctionalTypes = false // to support parameters names in decompiled text we need to load annotation arguments
     defaultParameterValueRenderer = { _ -> "null" }
     includePropertyConstant = true
+    propertyConstantRenderer = { value, renderer -> renderConstant(value, renderer) }
+}
+
+private fun renderConstant(value: ConstantValue<*>, renderer: DescriptorRenderer): String? {
+    return when (value) {
+        is ArrayValue -> value.value.mapNotNull { renderConstant(it, renderer) }.joinToString(", ", "[", "]")
+        is AnnotationValue -> renderer.renderAnnotation(value.value).removePrefix("@")
+        is KClassValue -> when (val classValue = value.value) {
+            is KClassValue.Value.LocalClass -> "${classValue.type}::class"
+            is KClassValue.Value.NormalClass -> {
+                var type = classValue.classId.asSingleFqName().asString()
+                repeat(classValue.arrayDimensions) { type = "kotlin.Array<$type>" }
+                "$type::class"
+            }
+        }
+        is CharValue -> String.format("'\\u%04X'", value.value.code)
+        is StringValue, is EnumValue, is UnsignedValueConstant -> value.toString()
+        is FloatValue -> {
+            val boxedValue = value.value
+            if (boxedValue < 0 || boxedValue.isNaN() || boxedValue.isInfinite()) null else boxedValue.toString() + "f"
+        }
+        is DoubleValue -> {
+            val boxedValue = value.value
+            if (boxedValue < 0 || boxedValue.isNaN() || boxedValue.isInfinite()) null else boxedValue.toString()
+        }
+        is IntegerValueConstant<*> -> {
+            val boxedValue = value.value
+            if ((boxedValue as Number).toLong() < 0) null else boxedValue.toString()
+        }
+        else -> value.value.toString()
+    }
 }
 
 internal fun CallableMemberDescriptor.mustNotBeWrittenToDecompiledText(): Boolean {
