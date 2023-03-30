@@ -16,9 +16,6 @@ java {
     toolchain {
         languageVersion.set(dokkaBuild.mainJavaVersion)
     }
-}
-
-java {
     withSourcesJar()
 }
 
