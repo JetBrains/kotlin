@@ -33,7 +33,6 @@ object IrActualizer {
 
         val symbolRemapper = ActualizerSymbolRemapper(expectActualMap)
         val typeRemapper = DeepCopyTypeRemapper(symbolRemapper)
-
         FunctionDefaultParametersActualizer(symbolRemapper, typeRemapper, expectActualMap).actualize()
 
         MissingFakeOverridesAdder(

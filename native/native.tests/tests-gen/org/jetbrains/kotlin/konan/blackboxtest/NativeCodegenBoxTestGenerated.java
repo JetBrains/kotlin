@@ -26487,6 +26487,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                     }
 
                     @Test
+                    @TestMetadata("expectActualTypeParameters.kt")
+                    public void testExpectActualTypeParameters() throws Exception {
+                        runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectActualTypeParameters.kt");
+                    }
+
+                    @Test
                     @TestMetadata("expectActualTypealias.kt")
                     public void testExpectActualTypealias() throws Exception {
                         runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectActualTypealias.kt");

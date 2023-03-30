@@ -126,12 +126,7 @@ private class ClassLinksCollector(
         val actualClassSymbol = actualClasses[generateIrElementFullNameFromExpect(declaration, expectActualTypeAliasMap)]
         if (actualClassSymbol != null) {
             expectActualMap[declaration.symbol] = actualClassSymbol
-            val actualClass = actualClassSymbol.owner
-            for (expectTypeParameter in declaration.typeParameters) {
-                actualClass.typeParameters.firstOrNull { it.name == expectTypeParameter.name }?.let { actualTypeParameter ->
-                    expectActualMap[expectTypeParameter.symbol] = actualTypeParameter.symbol
-                }
-            }
+            expectActualMap.appendTypeParametersMap(declaration, actualClassSymbol.owner)
         } else if (!declaration.containsOptionalExpectation()) {
             diagnosticsReporter.reportMissingActual(declaration)
         }
@@ -170,8 +165,14 @@ private class MemberLinksCollector(
                 expectActualMap[declaration.symbol] = actualMember.symbol
                 if (declaration is IrProperty) {
                     val actualProperty = actualMember as IrProperty
-                    declaration.getter!!.symbol.let { expectActualMap[it] = actualProperty.getter!!.symbol }
+                    declaration.getter?.let {
+                        val getter = actualProperty.getter!!
+                        expectActualMap[it.symbol] = getter.symbol
+                        expectActualMap.appendTypeParametersMap(it, getter)
+                    }
                     declaration.setter?.symbol?.let { expectActualMap[it] = actualProperty.setter!!.symbol }
+                } else if (declaration is IrFunction) {
+                    expectActualMap.appendTypeParametersMap(declaration, actualMember as IrFunction)
                 }
             }
             actualMemberMatches.size > 1 -> {
@@ -186,4 +187,12 @@ private class MemberLinksCollector(
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
     }
+}
+
+private fun MutableMap<IrSymbol, IrSymbol>.appendTypeParametersMap(
+    expectTypeParametersContainer: IrTypeParametersContainer,
+    actualTypeParametersContainer: IrTypeParametersContainer
+) {
+    expectTypeParametersContainer.typeParameters.zip(actualTypeParametersContainer.typeParameters)
+        .forEach { (expectTypeParameter, actualTypeParameter) -> this[expectTypeParameter.symbol] = actualTypeParameter.symbol }
 }
