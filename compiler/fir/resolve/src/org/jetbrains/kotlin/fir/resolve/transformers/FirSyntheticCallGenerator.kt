@@ -239,7 +239,10 @@ class FirSyntheticCallGenerator(
         containingDeclarations = components.containingDeclarations
     )
 
-    private fun generateSyntheticSelectTypeParameter(functionSymbol: FirSyntheticFunctionSymbol): Pair<FirTypeParameter, FirResolvedTypeRef> {
+    private fun generateSyntheticSelectTypeParameter(
+        functionSymbol: FirSyntheticFunctionSymbol,
+        isNullableBound: Boolean = true,
+    ): Pair<FirTypeParameter, FirResolvedTypeRef> {
         val typeParameterSymbol = FirTypeParameterSymbol()
         val typeParameter =
             buildTypeParameter {
@@ -251,7 +254,12 @@ class FirSyntheticCallGenerator(
                 containingDeclarationSymbol = functionSymbol
                 variance = Variance.INVARIANT
                 isReified = false
-                addDefaultBoundIfNecessary()
+
+                if (!isNullableBound) {
+                    bounds += moduleData.session.builtinTypes.anyType
+                } else {
+                    addDefaultBoundIfNecessary()
+                }
             }
 
         val typeParameterTypeRef = buildResolvedTypeRef { type = ConeTypeParameterTypeImpl(typeParameterSymbol.toLookupTag(), false) }
@@ -280,13 +288,9 @@ class FirSyntheticCallGenerator(
 
     private fun generateSyntheticCheckNotNullFunction(): FirSimpleFunction {
         // Synthetic function signature:
-        //   fun <K> checkNotNull(arg: K?): K
-        //
-        // Note: The upper bound of `K` cannot be `Any` because of the following case:
-        //   fun <X> test(a: X) = a!!
-        // `X` is not a subtype of `Any` and hence cannot satisfy `K` if it had an upper bound of `Any`.
+        //   fun <K : Any> checkNotNull(arg: K?): K
         val functionSymbol = FirSyntheticFunctionSymbol(SyntheticCallableId.CHECK_NOT_NULL)
-        val (typeParameter, returnType) = generateSyntheticSelectTypeParameter(functionSymbol)
+        val (typeParameter, returnType) = generateSyntheticSelectTypeParameter(functionSymbol, isNullableBound = false)
 
         val argumentType = buildResolvedTypeRef {
             type = returnType.type.withNullability(ConeNullability.NULLABLE, session.typeContext)

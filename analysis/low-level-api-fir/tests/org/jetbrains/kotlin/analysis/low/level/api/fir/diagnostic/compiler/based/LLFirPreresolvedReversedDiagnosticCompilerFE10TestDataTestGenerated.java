@@ -14367,6 +14367,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
             }
 
             @Test
+            @TestMetadata("exclExclInference.kt")
+            public void testExclExclInference() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/exclExclInference.kt");
+            }
+
+            @Test
             @TestMetadata("expectedTypeAdditionalTest.kt")
             public void testExpectedTypeAdditionalTest() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/expectedTypeAdditionalTest.kt");
