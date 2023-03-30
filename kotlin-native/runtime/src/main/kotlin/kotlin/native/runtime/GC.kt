@@ -1,11 +1,13 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package kotlin.native.internal
+package kotlin.native.runtime
 
 import kotlin.time.*
+import kotlin.time.Duration.Companion.microseconds
+import kotlin.native.internal.GCUnsafeCall
 
 /**
  * __Note__: this API is unstable and may change in any release.
@@ -32,10 +34,9 @@ import kotlin.time.*
  * its lifetime, and resume it later on, or just completely turn it off, if GC pauses
  * are less desirable than cyclical garbage leaks.
  */
-@Deprecated("Use kotlin.native.runtime.GC instead.", ReplaceWith("GC", "kotlin.native.runtime.GC"))
-@DeprecatedSinceKotlin(warningSince = "1.9")
-@OptIn(kotlin.native.runtime.NativeRuntimeApi::class)
-object GC {
+@NativeRuntimeApi
+@SinceKotlin("1.9")
+public object GC {
     /**
      * Trigger new collection and wait for its completion.
      *
@@ -48,8 +49,8 @@ object GC {
     /**
      * Trigger new collection without waiting for its completion.
      */
-     @GCUnsafeCall("Kotlin_native_internal_GC_schedule")
-     external fun schedule()
+    @GCUnsafeCall("Kotlin_native_internal_GC_schedule")
+    external fun schedule()
 
     /**
      * Deprecated and unused.
@@ -109,7 +110,12 @@ object GC {
      *
      * @throws [IllegalArgumentException] when value is not positive.
      */
-    var threshold: Int by kotlin.native.runtime.GC::threshold
+    var threshold: Int
+        get() = getThreshold()
+        set(value) {
+            require(value > 0) { "threshold must be positive: $value" }
+            setThreshold(value)
+        }
 
     /**
      * Deprecated and unused.
@@ -121,9 +127,13 @@ object GC {
      *
      * @throws [IllegalArgumentException] when value is not positive.
      */
-    @Suppress("DEPRECATION")
     @Deprecated("No-op in modern GC implementation")
-    var collectCyclesThreshold: Long by kotlin.native.runtime.GC::collectCyclesThreshold
+    var collectCyclesThreshold: Long
+        get() = getCollectCyclesThreshold()
+        set(value) {
+            require(value > 0) { "collectCyclesThreshold must be positive: $value" }
+            setCollectCyclesThreshold(value)
+        }
 
     /**
      * How many bytes a thread can allocate before informing the GC scheduler.
@@ -137,7 +147,12 @@ object GC {
      *
      * @throws [IllegalArgumentException] when value is not positive.
      */
-    var thresholdAllocations: Long by kotlin.native.runtime.GC::thresholdAllocations
+    var thresholdAllocations: Long
+        get() = getThresholdAllocations()
+        set(value) {
+            require(value > 0) { "thresholdAllocations must be positive: $value" }
+            setThresholdAllocations(value)
+        }
 
     /**
      * If true update targetHeapBytes after each collection.
@@ -146,7 +161,9 @@ object GC {
      *
      * Default: true
      */
-    var autotune: Boolean by kotlin.native.runtime.GC::autotune
+    var autotune: Boolean
+        get() = getTuneThreshold()
+        set(value) = setTuneThreshold(value)
 
 
     /**
@@ -154,9 +171,10 @@ object GC {
      *
      * Legacy MM: If cyclic collector for atomic references to be deployed.
      */
-    @Suppress("DEPRECATION")
     @Deprecated("No-op in modern GC implementation")
-    var cyclicCollectorEnabled: Boolean by kotlin.native.runtime.GC::cyclicCollectorEnabled
+    var cyclicCollectorEnabled: Boolean
+        get() = getCyclicCollectorEnabled()
+        set(value) = setCyclicCollectorEnabled(value)
 
     /**
      * When Kotlin code is not allocating enough to trigger GC, the GC scheduler uses timer to drive collection.
@@ -170,7 +188,12 @@ object GC {
      *
      * @throws [IllegalArgumentException] when value is negative.
      */
-     var regularGCInterval: Duration by kotlin.native.runtime.GC::regularGCInterval
+    var regularGCInterval: Duration
+        get() = getRegularGCIntervalMicroseconds().microseconds
+        set(value) {
+            require(!value.isNegative()) { "regularGCInterval must not be negative: $value" }
+            setRegularGCIntervalMicroseconds(value.inWholeMicroseconds)
+        }
 
     /**
      * Total amount of heap available for Kotlin objects. When Kotlin objects overflow this heap,
@@ -187,7 +210,12 @@ object GC {
      *
      * @throws [IllegalArgumentException] when value is negative.
      */
-    var targetHeapBytes: Long by kotlin.native.runtime.GC::targetHeapBytes
+    var targetHeapBytes: Long
+        get() = getTargetHeapBytes()
+        set(value) {
+            require(value >= 0) { "targetHeapBytes must not be negative: $value" }
+            setTargetHeapBytes(value)
+        }
 
     /**
      * What fraction of the Kotlin heap should be populated.
@@ -199,7 +227,12 @@ object GC {
      *
      * @throws [IllegalArgumentException] when value is outside (0, 1] interval.
      */
-     var targetHeapUtilization: Double by kotlin.native.runtime.GC::targetHeapUtilization
+    var targetHeapUtilization: Double
+        get() = getTargetHeapUtilization()
+        set(value) {
+            require(value > 0 && value <= 1) { "targetHeapUtilization must be in (0, 1] interval: $value" }
+            setTargetHeapUtilization(value)
+        }
 
     /**
      * The minimum value for [targetHeapBytes]
@@ -211,7 +244,12 @@ object GC {
      *
      * @throws [IllegalArgumentException] when value is negative.
      */
-     var minHeapBytes: Long by kotlin.native.runtime.GC::minHeapBytes
+    var minHeapBytes: Long
+        get() = getMinHeapBytes()
+        set(value) {
+            require(value >= 0) { "minHeapBytes must not be negative: $value" }
+            setMinHeapBytes(value)
+        }
 
     /**
      * The maximum value for [targetHeapBytes].
@@ -223,7 +261,12 @@ object GC {
      *
      * @throws [IllegalArgumentException] when value is negative.
      */
-     var maxHeapBytes: Long by kotlin.native.runtime.GC::maxHeapBytes
+    var maxHeapBytes: Long
+        get() = getMaxHeapBytes()
+        set(value) {
+            require(value >= 0) { "maxHeapBytes must not be negative: $value" }
+            setMaxHeapBytes(value)
+        }
 
     /**
      * Deprecated and unused. Always returns null.
@@ -245,7 +288,75 @@ object GC {
      * Legacy MM: Always returns null
      */
     @ExperimentalStdlibApi
-    @Suppress("DEPRECATION")
-    val lastGCInfo: kotlin.native.internal.gc.GCInfo?
-        get() = kotlin.native.internal.gc.GCInfo.lastGCInfo
+    val lastGCInfo: GCInfo?
+        get() = GCInfo.lastGCInfo
+
+    /**
+     * Deprecated and unused. Always returns null.
+     *
+     * Legacy MM: Find a reference cycle including from the given object, `null` if no cycles detected.
+     */
+    @GCUnsafeCall("Kotlin_native_internal_GC_findCycle")
+    @Deprecated("No-op in modern GC implementation")
+    external fun findCycle(root: Any): Array<Any>?
+
+    @GCUnsafeCall("Kotlin_native_internal_GC_getThreshold")
+    private external fun getThreshold(): Int
+
+    @GCUnsafeCall("Kotlin_native_internal_GC_setThreshold")
+    private external fun setThreshold(value: Int)
+
+    @GCUnsafeCall("Kotlin_native_internal_GC_getCollectCyclesThreshold")
+    private external fun getCollectCyclesThreshold(): Long
+
+    @GCUnsafeCall("Kotlin_native_internal_GC_setCollectCyclesThreshold")
+    private external fun setCollectCyclesThreshold(value: Long)
+
+    @GCUnsafeCall("Kotlin_native_internal_GC_getThresholdAllocations")
+    private external fun getThresholdAllocations(): Long
+
+    @GCUnsafeCall("Kotlin_native_internal_GC_setThresholdAllocations")
+    private external fun setThresholdAllocations(value: Long)
+
+    @GCUnsafeCall("Kotlin_native_internal_GC_getTuneThreshold")
+    private external fun getTuneThreshold(): Boolean
+
+    @GCUnsafeCall("Kotlin_native_internal_GC_setTuneThreshold")
+    private external fun setTuneThreshold(value: Boolean)
+
+    @GCUnsafeCall("Kotlin_native_internal_GC_getCyclicCollector")
+    private external fun getCyclicCollectorEnabled(): Boolean
+
+    @GCUnsafeCall("Kotlin_native_internal_GC_setCyclicCollector")
+    private external fun setCyclicCollectorEnabled(value: Boolean)
+
+    @GCUnsafeCall("Kotlin_native_internal_GC_getRegularGCIntervalMicroseconds")
+    private external fun getRegularGCIntervalMicroseconds(): Long
+
+    @GCUnsafeCall("Kotlin_native_internal_GC_setRegularGCIntervalMicroseconds")
+    private external fun setRegularGCIntervalMicroseconds(value: Long)
+
+    @GCUnsafeCall("Kotlin_native_internal_GC_getTargetHeapBytes")
+    private external fun getTargetHeapBytes(): Long
+
+    @GCUnsafeCall("Kotlin_native_internal_GC_setTargetHeapBytes")
+    private external fun setTargetHeapBytes(value: Long)
+
+    @GCUnsafeCall("Kotlin_native_internal_GC_getTargetHeapUtilization")
+    private external fun getTargetHeapUtilization(): Double
+
+    @GCUnsafeCall("Kotlin_native_internal_GC_setTargetHeapUtilization")
+    private external fun setTargetHeapUtilization(value: Double)
+
+    @GCUnsafeCall("Kotlin_native_internal_GC_getMinHeapBytes")
+    private external fun getMinHeapBytes(): Long
+
+    @GCUnsafeCall("Kotlin_native_internal_GC_setMinHeapBytes")
+    private external fun setMinHeapBytes(value: Long)
+
+    @GCUnsafeCall("Kotlin_native_internal_GC_getMaxHeapBytes")
+    private external fun getMaxHeapBytes(): Long
+
+    @GCUnsafeCall("Kotlin_native_internal_GC_setMaxHeapBytes")
+    private external fun setMaxHeapBytes(value: Long)
 }

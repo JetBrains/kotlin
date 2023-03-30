@@ -33,7 +33,7 @@ import kotlin.native.internal.Frozen
  *   Note, that for some cases cycle collection need to be done to ensure that dead cycles do not affect
  *  reachability of passed object graph.
  *
- *  @see [kotlin.native.internal.GC.collect].
+ *  @see [kotlin.native.runtime.GC.collect].
  */
 // Not @FreezingIsDeprecated: every `Worker.execute` uses this.
 public enum class TransferMode(val value: Int) {

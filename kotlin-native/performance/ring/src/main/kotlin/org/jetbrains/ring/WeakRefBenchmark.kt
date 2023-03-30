@@ -5,7 +5,7 @@
 
 package org.jetbrains.ring
 
-import kotlin.native.internal.GC
+import kotlin.native.runtime.GC
 import kotlin.native.ref.WeakReference
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
@@ -46,6 +46,7 @@ private fun ReferenceWrapper.stress() = (1..REPEAT_COUNT).sumOf {
     this.value
 }
 
+@file:OptIn(kotlin.native.runtime.NativeRuntimeApi::class)
 open class WeakRefBenchmark {
     private val aliveRef = ReferenceWrapper.create()
     private val deadRef = ReferenceWrapper.create().apply {

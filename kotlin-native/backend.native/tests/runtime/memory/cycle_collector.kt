@@ -1,5 +1,7 @@
+@file:OptIn(kotlin.native.runtime.NativeRuntimeApi::class)
+
 import kotlin.native.concurrent.*
-import kotlin.native.internal.GC
+import kotlin.native.runtime.GC
 import kotlin.native.Platform
 import kotlin.test.*
 
@@ -44,15 +46,15 @@ fun makeIt(): Holder {
 fun test4() {
     val holder = makeIt()
     // To clean rc count coming from rememberNewContainer().
-    kotlin.native.internal.GC.collect()
+    kotlin.native.runtime.GC.collect()
     // Request cyclic collection.
-    kotlin.native.internal.GC.collectCyclic()
+    kotlin.native.runtime.GC.collectCyclic()
     // Ensure we processed delayed release.
     repeat(10) {
         // Wait a bit and process queue.
         Worker.current.park(10)
         Worker.current.processQueue()
-        kotlin.native.internal.GC.collect()
+        kotlin.native.runtime.GC.collect()
     }
     val value = @Suppress("UNCHECKED_CAST") (holder.other as? AtomicReference<Holder?>?)
     assertTrue(value != null)
@@ -77,15 +79,15 @@ fun createHolder2() = Holder2(createRef())
 
 fun test5() {
     val holder = createHolder2()
-    kotlin.native.internal.GC.collect()
-    kotlin.native.internal.GC.collectCyclic()
+    kotlin.native.runtime.GC.collect()
+    kotlin.native.runtime.GC.collectCyclic()
     Worker.current.park(100 * 1000)
     holder.switch()
-    kotlin.native.internal.GC.collect()
+    kotlin.native.runtime.GC.collect()
     Worker.current.park(100 * 1000)
     withWorker {
         executeAfter(0L, {
-            kotlin.native.internal.GC.collect()
+            kotlin.native.runtime.GC.collect()
         }.freeze())
     }
     Worker.current.park(1000)
@@ -109,9 +111,9 @@ fun createRoot(): AtomicReference<Any?> {
 
 fun test7() {
     val ref1 = createRoot()
-    kotlin.native.internal.GC.collect()
+    kotlin.native.runtime.GC.collect()
 
-    kotlin.native.internal.GC.collectCyclic()
+    kotlin.native.runtime.GC.collectCyclic()
     Worker.current.park(500 * 1000L)
 
     withWorker {
@@ -177,7 +179,7 @@ fun test9() {
 
 fun main() {
     Platform.isMemoryLeakCheckerActive = true
-    kotlin.native.internal.GC.cyclicCollectorEnabled = true
+    kotlin.native.runtime.GC.cyclicCollectorEnabled = true
     test1()
     test2()
     test3()

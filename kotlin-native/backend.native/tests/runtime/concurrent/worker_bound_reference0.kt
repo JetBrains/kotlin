@@ -2,16 +2,16 @@
  * Copyright 2010-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
-@file:OptIn(FreezingIsDeprecated::class)
+@file:OptIn(FreezingIsDeprecated::class, kotlin.native.runtime.NativeRuntimeApi::class)
 
 package runtime.concurrent.worker_bound_reference0
 
 import kotlin.test.*
 
 import kotlin.native.concurrent.*
-import kotlin.native.internal.GC
 import kotlin.native.*
 import kotlin.native.ref.WeakReference
+import kotlin.native.runtime.GC
 import kotlin.text.Regex
 
 class A(var a: Int)

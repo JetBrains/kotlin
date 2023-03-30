@@ -1,4 +1,4 @@
-@file:OptIn(FreezingIsDeprecated::class)
+@file:OptIn(FreezingIsDeprecated::class, kotlin.native.runtime.NativeRuntimeApi::class)
 
 import kotlinx.cinterop.*
 import kotlin.native.concurrent.*
@@ -16,7 +16,7 @@ import objcTests.*
         testObjCWeakRef0(deallocListener)
     }
 
-    kotlin.native.internal.GC.collect()
+    kotlin.native.runtime.GC.collect()
     assertTrue(deallocListener.deallocated)
     assertTrue(deallocListener.deallocExecutorIsNil())
 }
@@ -47,6 +47,6 @@ private fun testObjCWeakRef0(deallocListener: DeallocListener) = withWorker {
             assertFalse(deallocListener.deallocExecutorIsNil())
         }
         // Process release of Kotlin reference to [obj] in any case:
-        kotlin.native.internal.GC.collect()
+        kotlin.native.runtime.GC.collect()
     }
 }

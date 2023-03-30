@@ -1,4 +1,4 @@
-@file:OptIn(FreezingIsDeprecated::class, kotlin.experimental.ExperimentalNativeApi::class)
+@file:OptIn(FreezingIsDeprecated::class, kotlin.experimental.ExperimentalNativeApi::class, kotlin.native.runtime.NativeRuntimeApi::class)
 package runtime.workers.worker10
 
 import kotlin.test.*
@@ -99,7 +99,7 @@ val semaphore = AtomicInt(0)
     }
     while (semaphore.value != 1) {}
     atomicRef.value = null
-    kotlin.native.internal.GC.collect()
+    kotlin.native.runtime.GC.collect()
     semaphore.increment()
     future.result
     worker.requestTermination().result
@@ -116,7 +116,7 @@ val semaphore = AtomicInt(0)
     }
     while (semaphore.value != 1) {}
     stableRef.dispose()
-    kotlin.native.internal.GC.collect()
+    kotlin.native.runtime.GC.collect()
     semaphore.increment()
     future.result
     worker.requestTermination().result
@@ -135,12 +135,12 @@ val stableHolder1 = StableRef.create(("hello" to "world").freeze())
         ensureWeakIs(it, "hello" to "world")
         semaphore.increment()
         while (semaphore.value != 2) {}
-        kotlin.native.internal.GC.collect()
+        kotlin.native.runtime.GC.collect()
         ensureWeakIs(it, null)
     }
     while (semaphore.value != 1) {}
     stableHolder1.dispose()
-    kotlin.native.internal.GC.collect()
+    kotlin.native.runtime.GC.collect()
     semaphore.increment()
     future.result
     worker.requestTermination().result
@@ -155,12 +155,12 @@ val stableHolder2 = StableRef.create(("hello" to "world").freeze())
         val value = it.get()
         semaphore.increment()
         while (semaphore.value != 2) {}
-        kotlin.native.internal.GC.collect()
+        kotlin.native.runtime.GC.collect()
         assertEquals("hello" to "world", value)
     }
     while (semaphore.value != 1) {}
     stableHolder2.dispose()
-    kotlin.native.internal.GC.collect()
+    kotlin.native.runtime.GC.collect()
     semaphore.increment()
     future.result
     worker.requestTermination().result
@@ -178,7 +178,7 @@ val atomicRef2 = AtomicReference<Any?>(Any().freeze())
     }
     while (semaphore.value != 1) {}
     atomicRef2.value = null
-    kotlin.native.internal.GC.collect()
+    kotlin.native.runtime.GC.collect()
     semaphore.increment()
     future.result
     worker.requestTermination().result

@@ -1,5 +1,7 @@
+@file:OptIn(kotlin.native.runtime.NativeRuntimeApi::class)
+
 import kotlin.native.concurrent.*
-import kotlin.native.internal.GC
+import kotlin.native.runtime.GC
 import kotlin.native.Platform
 import kotlin.test.*
 
