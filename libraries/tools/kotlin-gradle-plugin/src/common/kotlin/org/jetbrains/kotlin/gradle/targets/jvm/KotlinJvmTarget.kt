@@ -20,6 +20,7 @@ import org.gradle.language.jvm.tasks.ProcessResources
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.IdeJvmIncludedCompilationsResolver
 import org.jetbrains.kotlin.gradle.plugin.internal.JavaSourceSetsAccessor
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
@@ -103,6 +104,11 @@ abstract class KotlinJvmTarget @Inject constructor(
 
         disableJavaPluginTasks(javaSourceSets)
     }
+
+    val sourceSetsFromIncludedCompilations: Set<String> get() = IdeJvmIncludedCompilationsResolver
+        .resolve(this)
+        .map { it.coordinates.sourceSetName }
+        .toSet()
 
     private fun setupJavaSourceSetSourcesAndResources(
         javaSourceSet: SourceSet,
