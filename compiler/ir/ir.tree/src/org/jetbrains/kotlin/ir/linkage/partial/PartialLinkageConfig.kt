@@ -44,11 +44,25 @@ enum class PartialLinkageLogLevel {
 val CompilerConfiguration.partialLinkageConfig: PartialLinkageConfig
     get() = this[PartialLinkageConfig.KEY] ?: PartialLinkageConfig.DEFAULT
 
-inline fun CompilerConfiguration.setupPartialLinkageConfig(mode: String?, logLevel: String?, onError: (String) -> Unit) {
-    val resolvedMode = if (mode != null)
-        PartialLinkageMode.resolveMode(mode) ?: return onError("Unknown partial linkage mode '$mode'")
-    else
-        PartialLinkageMode.DEFAULT
+fun CompilerConfiguration.setupPartialLinkageConfig(
+    mode: String?,
+    logLevel: String?,
+    compilerModeAllowsUsingPartialLinkage: Boolean,
+    onWarning: (String) -> Unit,
+    onError: (String) -> Unit
+) {
+    val resolvedMode = when {
+        mode != null -> {
+            val resolvedMode = PartialLinkageMode.resolveMode(mode) ?: return onError("Unknown partial linkage mode '$mode'")
+            if (!compilerModeAllowsUsingPartialLinkage && resolvedMode.isEnabled) {
+                onWarning("Current compiler configuration does not allow using partial linkage mode '$mode'. The partial linkage will be disabled.")
+                PartialLinkageMode.DISABLE
+            } else
+                resolvedMode
+        }
+        !compilerModeAllowsUsingPartialLinkage -> PartialLinkageMode.DISABLE
+        else -> PartialLinkageMode.DEFAULT
+    }
 
     val resolvedLogLevel = if (logLevel != null)
         PartialLinkageLogLevel.resolveLogLevel(logLevel) ?: return onError("Unknown partial linkage compile-time log level '$logLevel'")

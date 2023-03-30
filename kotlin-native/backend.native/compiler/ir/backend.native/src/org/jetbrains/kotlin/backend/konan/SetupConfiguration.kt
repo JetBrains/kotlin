@@ -270,9 +270,15 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     putIfNotNull(RUNTIME_LOGS, arguments.runtimeLogs)
     putIfNotNull(BUNDLE_ID, parseBundleId(arguments, outputKind, this@setupFromArguments))
     arguments.testDumpOutputPath?.let { put(TEST_DUMP_OUTPUT_PATH, it) }
-    setupPartialLinkageConfig(arguments.partialLinkageMode, arguments.partialLinkageLogLevel) { errorMessage ->
-        report(ERROR, errorMessage)
-    }
+
+    setupPartialLinkageConfig(
+            mode = arguments.partialLinkageMode,
+            logLevel = arguments.partialLinkageLogLevel,
+            compilerModeAllowsUsingPartialLinkage = outputKind != CompilerOutputKind.LIBRARY, // Don't run PL when producing KLIB.
+            onWarning = { report(WARNING, it) },
+            onError = { report(ERROR, it) }
+    )
+
     put(OMIT_FRAMEWORK_BINARY, arguments.omitFrameworkBinary)
     putIfNotNull(COMPILE_FROM_BITCODE, parseCompileFromBitcode(arguments, this@setupFromArguments, outputKind))
     putIfNotNull(SERIALIZED_DEPENDENCIES, parseSerializedDependencies(arguments, this@setupFromArguments))

@@ -172,10 +172,6 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         configuration.put(JSConfigurationKeys.WASM_ENABLE_ARRAY_RANGE_CHECKS, arguments.wasmEnableArrayRangeChecks)
         configuration.put(JSConfigurationKeys.WASM_ENABLE_ASSERTS, arguments.wasmEnableAsserts)
         configuration.put(JSConfigurationKeys.WASM_GENERATE_WAT, arguments.wasmGenerateWat)
-        configuration.setupPartialLinkageConfig(arguments.partialLinkageMode, arguments.partialLinkageLogLevel) { errorMessage ->
-            messageCollector.report(ERROR, errorMessage, null)
-            return COMPILATION_ERROR
-        }
 
         val commonSourcesArray = arguments.commonSources
         val commonSources = commonSourcesArray?.toSet() ?: emptySet()
@@ -260,6 +256,14 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             friendLibraries = friendLibraries,
             configurationJs = configurationJs,
             mainCallArguments = mainCallArguments
+        )
+
+        configuration.setupPartialLinkageConfig(
+            mode = arguments.partialLinkageMode,
+            logLevel = arguments.partialLinkageLogLevel,
+            compilerModeAllowsUsingPartialLinkage = arguments.includes != null, // Don't run PL when producing KLIB.
+            onWarning = { messageCollector.report(WARNING, it) },
+            onError = { messageCollector.report(ERROR, it) }
         )
 
         // Run analysis if main module is sources
