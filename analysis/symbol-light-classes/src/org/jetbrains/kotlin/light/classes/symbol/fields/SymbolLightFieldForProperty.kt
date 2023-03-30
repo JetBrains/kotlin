@@ -35,8 +35,7 @@ internal class SymbolLightFieldForProperty private constructor(
     private val fieldName: String,
     containingClass: SymbolLightClassBase,
     lightMemberOrigin: LightMemberOrigin?,
-    private val isTopLevel: Boolean,
-    private val forceStatic: Boolean,
+    private val isStatic: Boolean,
     override val kotlinOrigin: KtCallableDeclaration?,
 ) : SymbolLightField(containingClass, lightMemberOrigin) {
     internal constructor(
@@ -45,15 +44,13 @@ internal class SymbolLightFieldForProperty private constructor(
         fieldName: String,
         containingClass: SymbolLightClassBase,
         lightMemberOrigin: LightMemberOrigin?,
-        isTopLevel: Boolean,
-        forceStatic: Boolean,
+        isStatic: Boolean,
     ) : this(
         propertySymbolPointer = with(ktAnalysisSession) { propertySymbol.createPointer() },
         fieldName = fieldName,
         containingClass = containingClass,
         lightMemberOrigin = lightMemberOrigin,
-        isTopLevel = isTopLevel,
-        forceStatic = forceStatic,
+        isStatic = isStatic,
         kotlinOrigin = propertySymbol.sourcePsiSafe<KtCallableDeclaration>(),
     )
 
@@ -120,7 +117,6 @@ internal class SymbolLightFieldForProperty private constructor(
         }
 
         PsiModifier.STATIC -> {
-            val isStatic = forceStatic || isTopLevel
             mapOf(modifier to isStatic)
         }
 

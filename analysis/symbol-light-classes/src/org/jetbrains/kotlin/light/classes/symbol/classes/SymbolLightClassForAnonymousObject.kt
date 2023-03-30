@@ -88,8 +88,7 @@ internal class SymbolLightClassForAnonymousObject : SymbolLightClassForClassLike
                     createField(
                         propertySymbol,
                         nameGenerator,
-                        isTopLevel = false,
-                        forceStatic = false,
+                        isStatic = false,
                         result,
                     )
                 }

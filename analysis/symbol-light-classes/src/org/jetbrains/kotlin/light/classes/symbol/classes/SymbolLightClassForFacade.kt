@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.light.classes.symbol.analyzeForLightClasses
 import org.jetbrains.kotlin.light.classes.symbol.annotations.*
 import org.jetbrains.kotlin.light.classes.symbol.cachedValue
-import org.jetbrains.kotlin.light.classes.symbol.canHaveNonPrivateField
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.InitializedModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
@@ -117,15 +116,10 @@ internal class SymbolLightClassForFacade(
             // If this facade represents multiple files, only `const` properties need to be generated.
             if (multiFileClass && !propertySymbol.isConst) continue
 
-            val forceStatic = propertySymbol.canHaveNonPrivateField &&
-                    propertySymbol.getter.isNullOrPublic() &&
-                    propertySymbol.setter.isNullOrPublic()
-
             createField(
                 propertySymbol,
                 nameGenerator,
-                isTopLevel = true,
-                forceStatic = forceStatic,
+                isStatic = true,
                 result,
             )
         }
