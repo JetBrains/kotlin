@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.utils.doNotTrackStateCompat
 import org.jetbrains.kotlin.gradle.utils.newFileProperty
 import org.jetbrains.kotlin.gradle.utils.relativeOrAbsolute
-import org.jetbrains.kotlin.gradle.utils.relativeToRoot
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.io.File
 import javax.inject.Inject
@@ -189,9 +188,24 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                         binary.name,
                         DISTRIBUTE_RESOURCES_TASK_NAME
                     )
-                ) {
-                    it.from(processResourcesTask)
-                    it.into(binary.distribution.directory)
+                ) { copy ->
+                    copy.from(processResourcesTask)
+
+                    if (binary.compilation.platformType == KotlinPlatformType.wasm) {
+                        copy.from(
+                            binary.linkSyncTask.flatMap { linkSyncTask ->
+                                linkSyncTask.destinationDirectory.map { destDir ->
+                                    binary.linkTask.map { linkTask ->
+                                        linkTask.compilerOptions.moduleName.map {
+                                            destDir.resolve("$it.wasm")
+                                        }
+                                    }
+                                }
+                            }
+                        )
+                    }
+
+                    copy.into(binary.distribution.directory)
                 }
 
                 val webpackTask = registerSubTargetTask<KotlinWebpack>(
