@@ -4,6 +4,7 @@
  */
 
 @file:Suppress("UNUSED")
+@file:OptIn(kotlin.native.runtime.NativeRuntimeApi::class)
 
 package stdlib
 
@@ -63,7 +64,7 @@ data class TripleVars<T>(var first: T, var second: T, var third: T) {
     }
 }
 
-fun gc() = kotlin.native.internal.GC.collect()
+fun gc() = kotlin.native.runtime.GC.collect()
 
 // Note: this method checks only some of the operations (namely the ones modified recently,
 // and thus required additional tests).

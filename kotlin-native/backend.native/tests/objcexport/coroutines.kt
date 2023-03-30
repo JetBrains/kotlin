@@ -2,6 +2,7 @@
  * Copyright 2010-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
+@file:OptIn(kotlin.native.runtime.NativeRuntimeApi::class)
 
 package coroutines
 
@@ -243,4 +244,4 @@ fun createCoroutineUninterceptedAndResume(fn: suspend () -> Any?, resultHolder: 
 fun createCoroutineUninterceptedAndResume(fn: suspend Any?.() -> Any?, receiver: Any?, resultHolder: ResultHolder<Any?>) =
         fn.createCoroutine(receiver, ResultHolderCompletion(resultHolder)).resume(Unit)
 
-fun gc() = kotlin.native.internal.GC.collect()
+fun gc() = kotlin.native.runtime.GC.collect()

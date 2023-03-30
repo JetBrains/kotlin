@@ -1,4 +1,4 @@
-@file:OptIn(FreezingIsDeprecated::class)
+@file:OptIn(FreezingIsDeprecated::class, kotlin.native.runtime.NativeRuntimeApi::class)
 
 import kotlin.native.concurrent.*
 import kotlin.native.ref.*
@@ -49,7 +49,7 @@ fun ensureGetsCollectedFrozenAndNotFrozen(create: () -> Any) {
 
 fun ensureGetsCollected(create: () -> Any) {
     val ref = makeWeakRef(create)
-    kotlin.native.internal.GC.collect()
+    kotlin.native.runtime.GC.collect()
     assertNull(ref.get())
 }
 

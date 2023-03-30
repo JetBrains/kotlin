@@ -1,3 +1,5 @@
+@file:OptIn(kotlin.native.runtime.NativeRuntimeApi::class)
+
 import kotlin.native.ref.WeakReference
 import kotlinx.cinterop.*
 import kotlin.test.*
@@ -6,7 +8,7 @@ import objcTests.*
 @Test
 fun testKT42482() {
     // Attempt to make the state predictable:
-    kotlin.native.internal.GC.collect()
+    kotlin.native.runtime.GC.collect()
 
     kt42482Deallocated = false
     assertFalse(kt42482Deallocated);
@@ -25,7 +27,7 @@ fun testKT42482() {
         kt42482Global = null
     }()
 
-    kotlin.native.internal.GC.collect()
+    kotlin.native.runtime.GC.collect()
 
     assertTrue(kt42482Deallocated)
 }

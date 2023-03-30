@@ -78,12 +78,13 @@ fun makeCyclic(): Node {
     return outer
 }
 
+@OptIn(kotlin.native.runtime.NativeRuntimeApi::class)
 @Test fun runTest4() {
     val worker = Worker.start()
 
     val future = worker.execute(TransferMode.SAFE, { }) {
         makeCyclic().also {
-            kotlin.native.internal.GC.collect()
+            kotlin.native.runtime.GC.collect()
         }
     }
     assert(future.result != null)

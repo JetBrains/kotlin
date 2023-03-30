@@ -1,10 +1,12 @@
+@file:OptIn(kotlin.native.runtime.NativeRuntimeApi::class)
+
 import kotlinx.cinterop.*
 import kotlin.test.*
 import objcTests.*
 
 @Test
 fun testTryRetainGC() {
-    kotlin.native.internal.GC.collect()
+    kotlin.native.runtime.GC.collect()
     val weakRefHolder = WeakRefHolder()
     createGarbageNSObjects(weakRefHolder)
     weakRefHolder.obj = object : NSObject() {}

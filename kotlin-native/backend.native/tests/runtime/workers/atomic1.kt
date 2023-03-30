@@ -4,11 +4,13 @@
  */
 
 // Note: This test reproduces a race, so it'll start flaking if problem is reintroduced.
+@file:OptIn(kotlin.native.runtime.NativeRuntimeApi::class)
 
 import kotlin.test.*
 
 import kotlin.native.concurrent.*
 import kotlin.native.internal.*
+import kotlin.native.runtime.GC
 
 val thrashGC = AtomicInt(1)
 val canStartCreating = AtomicInt(0)

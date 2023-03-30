@@ -2,6 +2,8 @@
  * Copyright 2010-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
+@file:OptIn(kotlin.native.runtime.NativeRuntimeApi::class)
+
 import kotlin.test.*
 
 import kotlin.native.concurrent.*
@@ -58,8 +60,8 @@ fun test() {
     val progressReportsCount = 100
 
     if (Platform.memoryModel == MemoryModel.EXPERIMENTAL) {
-        kotlin.native.internal.GC.autotune = false
-        kotlin.native.internal.GC.targetHeapBytes = retainLimit
+        kotlin.native.runtime.GC.autotune = false
+        kotlin.native.runtime.GC.targetHeapBytes = retainLimit
     }
 
     // On Linux, the child process might immediately commit the same amount of memory as the parent.

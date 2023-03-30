@@ -2,7 +2,7 @@
  * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
-@file:OptIn(FreezingIsDeprecated::class)
+@file:OptIn(FreezingIsDeprecated::class, kotlin.native.runtime.NativeRuntimeApi::class)
 
 package runtime.workers.freeze6
 
@@ -48,7 +48,7 @@ var global = 0
 @Test
 fun ensureFreezableHandlesCycles1() {
     val ref = createRef1()
-    kotlin.native.internal.GC.collect()
+    kotlin.native.runtime.GC.collect()
 
     val obj: Any = ref
     global = obj.hashCode()
@@ -86,7 +86,7 @@ fun createRef2(): Pair<FreezableAtomicReference<Node?>, Any> {
 @Test
 fun ensureFreezableHandlesCycles2() {
     val (ref, obj) = createRef2()
-    kotlin.native.internal.GC.collect()
+    kotlin.native.runtime.GC.collect()
 
     assertTrue(obj.toString().length > 0)
     global = ref.value!!.ref!!.hashCode()
@@ -108,7 +108,7 @@ fun createRef3(): FreezableAtomicReference<Any?> {
 fun ensureFreezableHandlesCycles3() {
     val ref = createRef3()
     ref.value = null
-    kotlin.native.internal.GC.collect()
+    kotlin.native.runtime.GC.collect()
 
     val obj: Any = ref
     assertTrue(obj.toString().length > 0)
@@ -133,7 +133,7 @@ fun ensureWeakRefNotLeaks1() {
     ref.value = null
     // We cannot check weakRef.get() here, as value read will be stored in the stack slot,
     // and thus hold weak reference from release.
-    kotlin.native.internal.GC.collect()
+    kotlin.native.runtime.GC.collect()
 
     assertTrue(weakRef.get() == null)
 }
@@ -155,6 +155,6 @@ fun createRef5() {
 @Test
 fun ensureWeakRefNotLeaks2() {
     createRef5()
-    kotlin.native.internal.GC.collect()
+    kotlin.native.runtime.GC.collect()
     assertTrue(weakNode2.get() == null)
 }

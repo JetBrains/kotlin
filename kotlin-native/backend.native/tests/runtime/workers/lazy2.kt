@@ -24,8 +24,9 @@ fun printAll() {
 // initializer field in frozen lazy object led to the crash, induced by breaking frozen objects'
 // invariant (initializer end up in the same container as the lazy object itself, so it was destroyed
 // earlier than it should when reference counter was decremented).
+@OptIn(kotlin.native.runtime.NativeRuntimeApi::class)
 fun main(args: Array<String>) {
     printAll()
-    kotlin.native.internal.GC.collect()
+    kotlin.native.runtime.GC.collect()
     println("OK")
 }
