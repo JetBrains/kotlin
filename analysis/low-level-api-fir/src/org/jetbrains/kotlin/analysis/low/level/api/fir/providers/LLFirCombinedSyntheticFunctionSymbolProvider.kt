@@ -55,7 +55,8 @@ internal class LLFirCombinedSyntheticFunctionSymbolProvider(
     override fun computeCallableNamesInPackage(packageFqName: FqName): Set<Name>? = null
 
     companion object {
-        fun merge(session: FirSession, providers: List<FirSyntheticFunctionInterfaceProviderBase>): FirSymbolProvider =
-            providers.singleOrNull() ?: LLFirCombinedSyntheticFunctionSymbolProvider(session, providers)
+        fun merge(session: FirSession, providers: List<FirSyntheticFunctionInterfaceProviderBase>): FirSymbolProvider? =
+            if (providers.size > 1) LLFirCombinedSyntheticFunctionSymbolProvider(session, providers)
+            else providers.singleOrNull()
     }
 }

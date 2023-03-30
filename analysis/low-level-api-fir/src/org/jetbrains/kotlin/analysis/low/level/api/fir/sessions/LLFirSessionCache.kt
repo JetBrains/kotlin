@@ -13,7 +13,6 @@ import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.containers.CollectionFactory
-import java.util.concurrent.ConcurrentMap
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirGlobalResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirLazyDeclarationResolver
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
@@ -49,9 +48,9 @@ import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
-import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
-import org.jetbrains.kotlin.utils.addToStdlib.partitionIsInstance
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.partitionIsInstance
+import java.util.concurrent.ConcurrentMap
 
 @OptIn(PrivateSessionConstructor::class, SessionConfiguration::class)
 internal class LLFirSessionCache(private val project: Project) {
@@ -549,7 +548,7 @@ internal class LLFirSessionCache(private val project: Project) {
         // Unfortunately, the functions that an extension synthetic function symbol provider might provide differ between sessions because
         // they depend on compiler plugins. However, only extension providers that are affected by compiler plugins are added in
         // `createSourcesSession`. We can still combine these, because the `ClassId` heuristics only need to be checked once.
-        destination.add(LLFirCombinedSyntheticFunctionSymbolProvider.merge(session, syntheticFunctionSymbolProviders))
+        destination.addIfNotNull(LLFirCombinedSyntheticFunctionSymbolProvider.merge(session, syntheticFunctionSymbolProviders))
     }
 }
 
