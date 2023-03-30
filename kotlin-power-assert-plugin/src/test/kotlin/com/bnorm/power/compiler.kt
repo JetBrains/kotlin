@@ -59,7 +59,7 @@ fun executeAssertion(
     listOf(SourceFile.kotlin("main.kt", source, trimIndent = false)),
     *plugins,
   )
-  assertEquals(KotlinCompilation.ExitCode.OK, result.exitCode)
+  assertEquals(KotlinCompilation.ExitCode.OK, result.exitCode, result.messages)
 
   val kClazz = result.classLoader.loadClass("MainKt")
   val main = kClazz.declaredMethods.single { it.name == "main" && it.parameterCount == 0 }

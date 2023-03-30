@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
+import org.jetbrains.kotlin.ir.expressions.IrVararg
 import org.jetbrains.kotlin.ir.expressions.IrWhen
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -121,6 +122,11 @@ fun buildTree(expression: IrExpression): Node? {
       } else {
         super.visitCall(expression, data)
       }
+    }
+
+    override fun visitVararg(expression: IrVararg, data: Node) {
+      // Skip processing of vararg array
+      expression.acceptChildren(this, data)
     }
 
     override fun visitConst(expression: IrConst<*>, data: Node) {
