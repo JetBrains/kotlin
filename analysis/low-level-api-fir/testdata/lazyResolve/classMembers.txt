@@ -78,7 +78,7 @@ FILE: [ResolvedTo(IMPORTS)] classMembers.kt
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] classMembers.kt
     [ResolvedTo(RAW_FIR)] annotations container
-    public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+    public? final? [ResolvedTo(SUPER_TYPES)] class A : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -97,59 +97,57 @@ FILE: [ResolvedTo(IMPORTS)] classMembers.kt
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] classMembers.kt
     [ResolvedTo(RAW_FIR)] annotations container
-    public? final? [ResolvedTo(SUPER_TYPES)] class A : R|kotlin/Any| {
-        public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=A] constructor(): R|A| {
+    public? final? [ResolvedTo(TYPES)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 
         public? final? [ResolvedTo(TYPES)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(SUPER_TYPES)] val x: Int = LAZY_EXPRESSION
-            public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=A] get(): Int { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] val x: Int = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] get(): Int { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(SUPER_TYPES)] fun receive([ResolvedTo(SUPER_TYPES)] value: String): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: String): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(SUPER_TYPES)] fun functionWithLazyBody(): String { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] fun functionWithLazyBody(): String { LAZY_BLOCK }
 
     }
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] classMembers.kt
     [ResolvedTo(RAW_FIR)] annotations container
-    public final [ResolvedTo(SUPER_TYPES)] class A : R|kotlin/Any| {
-        public [ResolvedTo(TYPES)] [ContainingClassKey=A] constructor(): R|A| {
+    public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 
         public final [ResolvedTo(STATUS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public final [ResolvedTo(TYPES)] val x: R|kotlin/Int| = LAZY_EXPRESSION
-            public [ResolvedTo(TYPES)] [ContainingClassKey=A] get(): R|kotlin/Int| { LAZY_BLOCK }
+        public final [ResolvedTo(STATUS)] val x: R|kotlin/Int| = LAZY_EXPRESSION
+            public [ResolvedTo(STATUS)] [ContainingClassKey=A] get(): R|kotlin/Int| { LAZY_BLOCK }
 
-        public final [ResolvedTo(TYPES)] fun receive([ResolvedTo(TYPES)] value: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
+        public final [ResolvedTo(STATUS)] fun receive([ResolvedTo(STATUS)] value: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public final [ResolvedTo(TYPES)] fun functionWithLazyBody(): R|kotlin/String| { LAZY_BLOCK }
+        public final [ResolvedTo(STATUS)] fun functionWithLazyBody(): R|kotlin/String| { LAZY_BLOCK }
 
     }
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] classMembers.kt
     [ResolvedTo(RAW_FIR)] annotations container
-    public final [ResolvedTo(SUPER_TYPES)] class A : R|kotlin/Any| {
-        public [ResolvedTo(TYPES)] [ContainingClassKey=A] constructor(): R|A| {
+    public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe(): R|kotlin/Unit| {
-            receive#(functionWithLazyBody#())
-        }
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public final [ResolvedTo(TYPES)] val x: R|kotlin/Int| = LAZY_EXPRESSION
-            public [ResolvedTo(TYPES)] [ContainingClassKey=A] get(): R|kotlin/Int| { LAZY_BLOCK }
+        public final [ResolvedTo(STATUS)] val x: R|kotlin/Int| = LAZY_EXPRESSION
+            public [ResolvedTo(STATUS)] [ContainingClassKey=A] get(): R|kotlin/Int| { LAZY_BLOCK }
 
-        public final [ResolvedTo(TYPES)] fun receive([ResolvedTo(TYPES)] value: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
+        public final [ResolvedTo(STATUS)] fun receive([ResolvedTo(STATUS)] value: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public final [ResolvedTo(TYPES)] fun functionWithLazyBody(): R|kotlin/String| { LAZY_BLOCK }
+        public final [ResolvedTo(STATUS)] fun functionWithLazyBody(): R|kotlin/String| { LAZY_BLOCK }
 
     }
 
@@ -161,9 +159,7 @@ FILE: [ResolvedTo(IMPORTS)] classMembers.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| {
-            receive#(functionWithLazyBody#())
-        }
+        public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
         public final [ResolvedTo(STATUS)] val x: R|kotlin/Int| = LAZY_EXPRESSION
             public [ResolvedTo(STATUS)] [ContainingClassKey=A] get(): R|kotlin/Int| { LAZY_BLOCK }

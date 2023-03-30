@@ -1,4 +1,3 @@
-// IGNORE_REVERSED_RESOLVE
 // !DUMP_CFG
 
 import kotlin.contracts.*

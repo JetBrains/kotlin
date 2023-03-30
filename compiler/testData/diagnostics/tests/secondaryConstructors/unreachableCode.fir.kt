@@ -1,4 +1,3 @@
-// IGNORE_REVERSED_RESOLVE
 class A0 {
     <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val x: Int<!>
     constructor() {

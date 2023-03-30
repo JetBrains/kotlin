@@ -1,6 +1,4 @@
 // DIAGNOSTICS: -UNUSED_VARIABLE
-// IGNORE_REVERSED_RESOLVE
-//  Ignore reason: KT-57619
 // WITH_STDLIB
 // ISSUE: KT-57456, KT-57608
 @file:OptIn(ExperimentalContracts::class)

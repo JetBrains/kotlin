@@ -37,14 +37,12 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopFunction.kt
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopFunction.kt
     [ResolvedTo(RAW_FIR)] annotations container
-    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun <[ResolvedTo(EXPECT_ACTUAL_MATCHING)] resolveMe> ddd(): R|kotlin/Unit| {
-    }
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun <[ResolvedTo(EXPECT_ACTUAL_MATCHING)] resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopFunction.kt
     [ResolvedTo(RAW_FIR)] annotations container
-    public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun <[ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] resolveMe> ddd(): R|kotlin/Unit| {
-    }
+    public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun <[ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopFunction.kt

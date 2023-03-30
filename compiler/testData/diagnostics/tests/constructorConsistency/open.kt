@@ -1,4 +1,3 @@
-// IGNORE_REVERSED_RESOLVE
 open class Base {
     init {
         register(<!DEBUG_INFO_LEAKING_THIS!>this<!>)

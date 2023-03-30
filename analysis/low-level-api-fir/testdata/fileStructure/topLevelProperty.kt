@@ -4,6 +4,6 @@ var x: Int/* ReanalyzablePropertyStructureElement */
         field = value
     }
 
-val y = 42/* NonReanalyzableDeclarationStructureElement */
+val y = 42/* NonReanalyzableNonClassDeclarationStructureElement */
 
 var z: Int = 15/* ReanalyzablePropertyStructureElement */

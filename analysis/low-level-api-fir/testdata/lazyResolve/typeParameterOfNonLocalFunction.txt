@@ -50,7 +50,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfNonLocalFunction.kt
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfNonLocalFunction.kt
     [ResolvedTo(RAW_FIR)] annotations container
-    public? final? [ResolvedTo(RAW_FIR)] class X : R|kotlin/Any| {
+    public? final? [ResolvedTo(SUPER_TYPES)] class X : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor(): R|X| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -62,8 +62,8 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfNonLocalFunction.kt
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfNonLocalFunction.kt
     [ResolvedTo(RAW_FIR)] annotations container
-    public? final? [ResolvedTo(SUPER_TYPES)] class X : R|kotlin/Any| {
-        public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=X] constructor(): R|X| {
+    public? final? [ResolvedTo(TYPES)] class X : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=X] constructor(): R|X| {
             LAZY_super<R|kotlin/Any|>
         }
 
@@ -74,8 +74,8 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfNonLocalFunction.kt
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfNonLocalFunction.kt
     [ResolvedTo(RAW_FIR)] annotations container
-    public final [ResolvedTo(SUPER_TYPES)] class X : R|kotlin/Any| {
-        public [ResolvedTo(TYPES)] [ContainingClassKey=X] constructor(): R|X| {
+    public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
             LAZY_super<R|kotlin/Any|>
         }
 
@@ -86,13 +86,12 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfNonLocalFunction.kt
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfNonLocalFunction.kt
     [ResolvedTo(RAW_FIR)] annotations container
-    public final [ResolvedTo(SUPER_TYPES)] class X : R|kotlin/Any| {
-        public [ResolvedTo(TYPES)] [ContainingClassKey=X] constructor(): R|X| {
+    public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun <[ResolvedTo(EXPECT_ACTUAL_MATCHING)] resolveMe> ddd(): R|kotlin/Unit| {
-        }
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun <[ResolvedTo(EXPECT_ACTUAL_MATCHING)] resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -104,8 +103,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfNonLocalFunction.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun <[ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] resolveMe> ddd(): R|kotlin/Unit| {
-        }
+        public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun <[ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 

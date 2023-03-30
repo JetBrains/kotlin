@@ -1,3 +1,4 @@
+
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] annotationWithTypeArgument.kt
     [ResolvedTo(RAW_FIR)] annotations container
@@ -108,8 +109,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgument.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): KClass<T>
 
     }
-    @R|one/Anno<kotlin/Int>|[Types](<getClass>(Int#)) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe(): R|kotlin/Unit| {
-    }
+    @R|one/Anno<kotlin/Int>|[Types](LAZY_EXPRESSION) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgument.kt
@@ -123,8 +123,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgument.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): KClass<T>
 
     }
-    @R|one/Anno<kotlin/Int>|[Types](<getClass>(Q|kotlin/Int|)) public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| {
-    }
+    @R|one/Anno<kotlin/Int>|[Types](<getClass>(Q|kotlin/Int|)) public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgument.kt
@@ -159,13 +158,13 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgument.kt
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgument.kt
     [ResolvedTo(RAW_FIR)] annotations container
-    public final [ResolvedTo(TYPES)] annotation class Anno<[ResolvedTo(TYPES)] T : R|kotlin/Number|> : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor<[ResolvedTo(TYPES)] T : R|kotlin/Number|>([ResolvedTo(STATUS)] [CorrespondingProperty=one/Anno.value] value: <ERROR TYPE REF: Symbol not found for KClass>): R|one/Anno<T>| {
+    public final [ResolvedTo(STATUS)] annotation class Anno<[ResolvedTo(STATUS)] T : R|kotlin/Number|> : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor<[ResolvedTo(STATUS)] T : R|kotlin/Number|>([ResolvedTo(STATUS)] [CorrespondingProperty=one/Anno.value] value: <ERROR TYPE REF: Symbol not found for KClass>): R|one/Anno<T>| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(TYPES)] [IsFromPrimaryConstructor=true] val value: <ERROR TYPE REF: Symbol not found for KClass> = R|<local>/value|
-            public [ResolvedTo(TYPES)] [ContainingClassKey=Anno] get(): <ERROR TYPE REF: Symbol not found for KClass>
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val value: <ERROR TYPE REF: Symbol not found for KClass> = R|<local>/value|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): <ERROR TYPE REF: Symbol not found for KClass>
 
     }
     @R|one/Anno<kotlin/Int>|[Types](value = <getClass>(Q|kotlin/Int|)) public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun resolveMe(): R|kotlin/Unit| {
@@ -174,13 +173,13 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgument.kt
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgument.kt
     [ResolvedTo(RAW_FIR)] annotations container
-    public final [ResolvedTo(TYPES)] annotation class Anno<[ResolvedTo(TYPES)] T : R|kotlin/Number|> : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor<[ResolvedTo(TYPES)] T : R|kotlin/Number|>([ResolvedTo(STATUS)] [CorrespondingProperty=one/Anno.value] value: <ERROR TYPE REF: Symbol not found for KClass>): R|one/Anno<T>| {
+    public final [ResolvedTo(STATUS)] annotation class Anno<[ResolvedTo(STATUS)] T : R|kotlin/Number|> : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor<[ResolvedTo(STATUS)] T : R|kotlin/Number|>([ResolvedTo(STATUS)] [CorrespondingProperty=one/Anno.value] value: <ERROR TYPE REF: Symbol not found for KClass>): R|one/Anno<T>| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(TYPES)] [IsFromPrimaryConstructor=true] val value: <ERROR TYPE REF: Symbol not found for KClass> = R|<local>/value|
-            public [ResolvedTo(TYPES)] [ContainingClassKey=Anno] get(): <ERROR TYPE REF: Symbol not found for KClass>
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val value: <ERROR TYPE REF: Symbol not found for KClass> = R|<local>/value|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): <ERROR TYPE REF: Symbol not found for KClass>
 
     }
     @R|one/Anno<kotlin/Int>|[Types](value = <getClass>(Q|kotlin/Int|)) public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {

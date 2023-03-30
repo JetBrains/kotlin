@@ -37,14 +37,12 @@ FILE: [ResolvedTo(IMPORTS)] functionWithTypeParameters.kt
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] functionWithTypeParameters.kt
     [ResolvedTo(RAW_FIR)] annotations container
-    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun <[ResolvedTo(EXPECT_ACTUAL_MATCHING)] T : R|kotlin/Int|, [ResolvedTo(EXPECT_ACTUAL_MATCHING)] K> resolveMe(): R|kotlin/Unit| {
-    }
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun <[ResolvedTo(EXPECT_ACTUAL_MATCHING)] T : R|kotlin/Int|, [ResolvedTo(EXPECT_ACTUAL_MATCHING)] K> resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] functionWithTypeParameters.kt
     [ResolvedTo(RAW_FIR)] annotations container
-    public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun <[ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] T : R|kotlin/Int|, [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] K> resolveMe(): R|kotlin/Unit| {
-    }
+    public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun <[ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] T : R|kotlin/Int|, [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] K> resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] functionWithTypeParameters.kt

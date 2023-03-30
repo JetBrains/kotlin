@@ -1,4 +1,3 @@
-// IGNORE_REVERSED_RESOLVE
 // !LANGUAGE: +AllowContractsForNonOverridableMembers +AllowReifiedGenericsInContracts
 // !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -UNREACHABLE_CODE -UNUSED_EXPRESSION
 // !OPT_IN: kotlin.contracts.ExperimentalContracts

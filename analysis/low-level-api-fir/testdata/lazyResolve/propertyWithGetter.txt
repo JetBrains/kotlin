@@ -58,9 +58,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithGetter.kt
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] propertyWithGetter.kt
     [ResolvedTo(RAW_FIR)] annotations container
-    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe(): R|kotlin/Unit| {
-        receive#(withGetter#)
-    }
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [ResolvedTo(RAW_FIR)] val withGetter: Int
         public? [ResolvedTo(RAW_FIR)] get(): Int { LAZY_BLOCK }
@@ -68,9 +66,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithGetter.kt
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] propertyWithGetter.kt
     [ResolvedTo(RAW_FIR)] annotations container
-    public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| {
-        receive#(withGetter#)
-    }
+    public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [ResolvedTo(RAW_FIR)] val withGetter: Int
         public? [ResolvedTo(RAW_FIR)] get(): Int { LAZY_BLOCK }

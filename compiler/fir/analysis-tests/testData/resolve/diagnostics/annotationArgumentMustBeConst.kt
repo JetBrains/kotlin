@@ -1,4 +1,3 @@
-// IGNORE_REVERSED_RESOLVE
 annotation class Ann1(vararg val a: String)
 annotation class Ann2(val a: IntArray)
 annotation class Ann3(val a: Array<String>)

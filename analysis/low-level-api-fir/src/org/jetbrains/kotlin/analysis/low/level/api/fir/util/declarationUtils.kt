@@ -9,10 +9,13 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirEle
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirFileBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
+import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.types.ConeLookupTagBasedType
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 
@@ -95,7 +98,7 @@ private fun KtDeclaration.findSourceNonLocalFirDeclarationByProvider(
              */
             declarations?.firstOrNull { it.psi == this || it.psi == original }
         }
-        this is KtConstructor<*> -> {
+        this is KtConstructor<*> || this is KtClassInitializer -> {
             val containingClass = containingClassOrObject
                 ?: errorWithFirSpecificEntries("Container class should be not null for KtConstructor", psi = this)
             val containerClassFir = containingClass.findFir(provider) as? FirRegularClass ?: return null
@@ -110,6 +113,16 @@ private fun KtDeclaration.findSourceNonLocalFirDeclarationByProvider(
         else -> errorWithFirSpecificEntries("Invalid container", psi = this)
     }
     return candidate?.takeIf { it.realPsi == this }
+}
+
+fun FirAnonymousInitializer.containingClass(): FirRegularClass {
+    val dispatchReceiverType = this.dispatchReceiverType as? ConeLookupTagBasedType
+        ?: error("dispatchReceiverType for FirAnonymousInitializer modifier cannot be null")
+
+    val dispatchReceiverSymbol = dispatchReceiverType.lookupTag.toSymbol(llFirSession)
+        ?: error("symbol for FirAnonymousInitializer cannot be null")
+
+    return dispatchReceiverSymbol.fir as FirRegularClass
 }
 
 val ORIGINAL_DECLARATION_KEY = com.intellij.openapi.util.Key<KtDeclaration>("ORIGINAL_DECLARATION_KEY")

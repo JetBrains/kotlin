@@ -1,4 +1,3 @@
-// IGNORE_REVERSED_RESOLVE
 class My {
     val x: Int
         get() = field + if (z != "") 1 else 0

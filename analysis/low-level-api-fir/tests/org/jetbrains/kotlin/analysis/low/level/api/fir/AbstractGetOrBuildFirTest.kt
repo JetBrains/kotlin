@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLevelApiSingleFileTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirOutOfContentRootTestConfigurator
@@ -20,6 +19,7 @@ import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.renderer.FirResolvePhaseRenderer
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.services.TestModuleStructure
@@ -55,9 +55,9 @@ abstract class AbstractGetOrBuildFirTest : AbstractLowLevelApiSingleFileTest() {
         @Suppress("UNCHECKED_CAST") val expectedClass = Class.forName(expectedType) as Class<PsiElement>
         if (expectedClass.isInstance(selectedElement)) return selectedElement
 
-        return listOfNotNull(
-            PsiTreeUtil.getChildOfType(selectedElement, expectedClass),
-        ).single { it.textRange == selectedElement.textRange }
+        return selectedElement.collectDescendantsOfType<PsiElement> {
+            expectedClass.isInstance(it)
+        }.single { it.textRange == selectedElement.textRange }
     }
 
     private fun render(firElement: FirElement?): String = when (firElement) {

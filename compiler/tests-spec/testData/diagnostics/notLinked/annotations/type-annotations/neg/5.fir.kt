@@ -1,4 +1,3 @@
-// IGNORE_REVERSED_RESOLVE
 // TESTCASE NUMBER: 1, 2
 @Target(AnnotationTarget.TYPE)
 annotation class Ann(val x: Int)

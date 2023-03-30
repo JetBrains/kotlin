@@ -535,18 +535,27 @@ open class FirDeclarationsResolveTransformer(
         return typeAlias
     }
 
-    private fun doTransformRegularClass(
+    protected fun doTransformRegularClass(
         regularClass: FirRegularClass,
         data: ResolutionMode
+    ): FirRegularClass = withRegularClass(regularClass) {
+        transformDeclarationContent(regularClass, data) as FirRegularClass
+    }
+
+    open fun withRegularClass(
+        regularClass: FirRegularClass,
+        action: () -> FirRegularClass
     ): FirRegularClass {
-        dataFlowAnalyzer.enterClass(regularClass, !implicitTypeOnly)
+        dataFlowAnalyzer.enterClass(regularClass, buildGraph = transformer.preserveCFGForClasses)
         val result = context.withRegularClass(regularClass, components) {
-            transformDeclarationContent(regularClass, data) as FirRegularClass
+            action()
         }
+
         val controlFlowGraph = dataFlowAnalyzer.exitClass()
         if (controlFlowGraph != null) {
             result.replaceControlFlowGraphReference(FirControlFlowGraphReferenceImpl(controlFlowGraph))
         }
+
         return result
     }
 

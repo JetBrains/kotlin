@@ -72,9 +72,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterBounds.kt
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] typeParameterBounds.kt
     [ResolvedTo(RAW_FIR)] annotations container
-    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe([ResolvedTo(EXPECT_ACTUAL_MATCHING)] foo: R|Foo|): R|kotlin/Unit| {
-        foo#.util#()
-    }
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe([ResolvedTo(EXPECT_ACTUAL_MATCHING)] foo: R|Foo|): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
     }
     public? final? [ResolvedTo(RAW_FIR)] interface Bar<[ResolvedTo(RAW_FIR)] T : Foo> : R|kotlin/Any| {
@@ -84,9 +82,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterBounds.kt
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterBounds.kt
     [ResolvedTo(RAW_FIR)] annotations container
-    public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun resolveMe([ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] foo: R|Foo|): R|kotlin/Unit| {
-        foo#.util#()
-    }
+    public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun resolveMe([ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] foo: R|Foo|): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
     }
     public? final? [ResolvedTo(RAW_FIR)] interface Bar<[ResolvedTo(RAW_FIR)] T : Foo> : R|kotlin/Any| {

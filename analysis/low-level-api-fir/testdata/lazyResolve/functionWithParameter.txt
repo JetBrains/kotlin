@@ -53,18 +53,14 @@ FILE: [ResolvedTo(IMPORTS)] functionWithParameter.kt
     [ResolvedTo(RAW_FIR)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] interface I : R|kotlin/Any| {
     }
-    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe([ResolvedTo(EXPECT_ACTUAL_MATCHING)] param: R|I|): <implicit> {
-        ^resolveMe Unit#
-    }
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe([ResolvedTo(EXPECT_ACTUAL_MATCHING)] param: R|I|): <implicit> { LAZY_BLOCK }
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] functionWithParameter.kt
     [ResolvedTo(RAW_FIR)] annotations container
     public? final? [ResolvedTo(RAW_FIR)] interface I : R|kotlin/Any| {
     }
-    public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun resolveMe([ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] param: R|I|): <implicit> {
-        ^resolveMe Unit#
-    }
+    public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun resolveMe([ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] param: R|I|): <implicit> { LAZY_BLOCK }
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] functionWithParameter.kt

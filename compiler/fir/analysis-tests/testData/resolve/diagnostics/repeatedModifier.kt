@@ -1,4 +1,3 @@
-// IGNORE_REVERSED_RESOLVE
 open <!REPEATED_MODIFIER!>open<!> class A
 
 internal <!REPEATED_MODIFIER!>internal<!> object B

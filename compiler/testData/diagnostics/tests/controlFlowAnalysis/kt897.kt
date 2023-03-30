@@ -1,4 +1,3 @@
-// IGNORE_REVERSED_RESOLVE
 // FIR_IDENTICAL
 //KT-897 Don't allow assignment to a property before it is defined
 

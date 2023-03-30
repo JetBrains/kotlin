@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContextForProvi
 import org.jetbrains.kotlin.fir.analysis.collectors.CheckerRunningDiagnosticCollectorVisitor
 import org.jetbrains.kotlin.fir.analysis.collectors.DiagnosticCollectorComponents
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 
 internal open class LLFirDiagnosticVisitor(
     context: CheckerContextForProvider,
@@ -37,5 +38,21 @@ internal open class LLFirDiagnosticVisitor(
         }
         checkCanceled()
         element.accept(components.reportCommitter, context)
+
+        if (element is FirRegularClass) {
+            suppressReportedDiagnosticsOnClassMembers(element)
+        }
+    }
+
+    /**
+     * Some FirClassChecker may report diagnostics on class member headers.
+     * That diagnostics should be suppressed if we have a `@Suppress` annotation on class member.
+     */
+    private fun suppressReportedDiagnosticsOnClassMembers(element: FirRegularClass) {
+        for (member in element.declarations) {
+            withAnnotationContainer(member) {
+                member.accept(components.reportCommitter, context)
+            }
+        }
     }
 }

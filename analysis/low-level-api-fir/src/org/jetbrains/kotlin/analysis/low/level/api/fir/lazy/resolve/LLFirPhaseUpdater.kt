@@ -17,10 +17,18 @@ internal object LLFirPhaseUpdater {
         newPhase: FirResolvePhase,
         updateForLocalDeclarations: Boolean,
     ) {
-        if (updateForLocalDeclarations) {
-            target.acceptChildren(PhaseUpdatingTransformer, newPhase)
-        } else {
-            updatePhaseForNonLocals(target, newPhase, isTargetDeclaration = true)
+        updatePhaseForNonLocals(target, newPhase, isTargetDeclaration = true)
+
+        if (updateForLocalDeclarations && target is FirCallableDeclaration) {
+            when (target) {
+                is FirFunction -> target.body?.accept(PhaseUpdatingTransformer, newPhase)
+                is FirVariable -> {
+                    target.initializer?.accept(PhaseUpdatingTransformer, newPhase)
+                    target.getter?.body?.accept(PhaseUpdatingTransformer, newPhase)
+                    target.setter?.body?.accept(PhaseUpdatingTransformer, newPhase)
+                    target.backingField?.accept(PhaseUpdatingTransformer, newPhase)
+                }
+            }
         }
     }
 
@@ -29,7 +37,8 @@ internal object LLFirPhaseUpdater {
         if (element.resolvePhase >= newPhase) return
         if (!isTargetDeclaration) {
             // phase update for target declaration happens as a declaration publication event after resolve is finished
-            element.replaceResolveState(newPhase.asResolveState())
+            @OptIn(ResolveStateAccess::class)
+            element.resolveState = newPhase.asResolveState()
         }
 
         if (element is FirTypeParameterRefsOwner) {
@@ -48,13 +57,9 @@ internal object LLFirPhaseUpdater {
             is FirProperty -> {
                 element.getter?.let { updatePhaseForNonLocals(it, newPhase, isTargetDeclaration = false) }
                 element.setter?.let { updatePhaseForNonLocals(it, newPhase, isTargetDeclaration = false) }
+                element.backingField?.let { updatePhaseForNonLocals(it, newPhase, isTargetDeclaration = false) }
             }
-            is FirClass -> {
-                element.declarations.forEach {
-                    updatePhaseForNonLocals(it, newPhase, isTargetDeclaration = false)
-                }
-            }
-            else -> Unit
+            else -> {}
         }
     }
 }
@@ -63,7 +68,9 @@ private object PhaseUpdatingTransformer : FirVisitor<Unit, FirResolvePhase>() {
     override fun visitElement(element: FirElement, data: FirResolvePhase) {
         if (element is FirElementWithResolveState) {
             if (element.resolvePhase >= data && element !is FirDefaultPropertyAccessor) return
-            element.replaceResolveState(data.asResolveState())
+
+            @OptIn(ResolveStateAccess::class)
+            element.resolveState = data.asResolveState()
         }
 
         element.acceptChildren(this, data)

@@ -62,7 +62,7 @@ FILE: [ResolvedTo(IMPORTS)] functionInValueClass.kt
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] functionInValueClass.kt
     [ResolvedTo(RAW_FIR)] annotations container
-    @JvmInline[Unresolved]() public? final? inline [ResolvedTo(RAW_FIR)] class Value : R|kotlin/Any| {
+    @JvmInline[Unresolved]() public? final? inline [ResolvedTo(SUPER_TYPES)] class Value : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Value] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Value.value] value: Int): R|Value| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -77,13 +77,13 @@ FILE: [ResolvedTo(IMPORTS)] functionInValueClass.kt
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] functionInValueClass.kt
     [ResolvedTo(RAW_FIR)] annotations container
-    @R|kotlin/jvm/JvmInline|[Types]() public? final? inline [ResolvedTo(SUPER_TYPES)] class Value : R|kotlin/Any| {
-        public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=Value] constructor([ResolvedTo(SUPER_TYPES)] [CorrespondingProperty=/Value.value] value: Int): R|Value| {
+    @R|kotlin/jvm/JvmInline|[Types]() public? final? inline [ResolvedTo(TYPES)] class Value : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=Value] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=/Value.value] value: R|kotlin/Int|): R|Value| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public? final? [ResolvedTo(SUPER_TYPES)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
-            public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=Value] get(): Int
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Value] get(): Int
 
         public? final? [ResolvedTo(TYPES)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -92,13 +92,13 @@ FILE: [ResolvedTo(IMPORTS)] functionInValueClass.kt
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] functionInValueClass.kt
     [ResolvedTo(RAW_FIR)] annotations container
-    @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(SUPER_TYPES)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Value : R|kotlin/Any| {
-        public [ResolvedTo(TYPES)] [ContainingClassKey=Value] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=/Value.value] value: R|kotlin/Int|): R|Value| {
+    @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Value : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Value] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Value.value] value: R|kotlin/Int|): R|Value| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(TYPES)] [IsFromPrimaryConstructor=true] val value: R|kotlin/Int| = R|<local>/value|
-            public [ResolvedTo(TYPES)] [ContainingClassKey=Value] get(): R|kotlin/Int|
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val value: R|kotlin/Int| = R|<local>/value|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Value] get(): R|kotlin/Int|
 
         public final [ResolvedTo(STATUS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -107,16 +107,15 @@ FILE: [ResolvedTo(IMPORTS)] functionInValueClass.kt
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] functionInValueClass.kt
     [ResolvedTo(RAW_FIR)] annotations container
-    @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(SUPER_TYPES)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Value : R|kotlin/Any| {
-        public [ResolvedTo(TYPES)] [ContainingClassKey=Value] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=/Value.value] value: R|kotlin/Int|): R|Value| {
+    @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Value : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Value] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Value.value] value: R|kotlin/Int|): R|Value| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(TYPES)] [IsFromPrimaryConstructor=true] val value: R|kotlin/Int| = R|<local>/value|
-            public [ResolvedTo(TYPES)] [ContainingClassKey=Value] get(): R|kotlin/Int|
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val value: R|kotlin/Int| = R|<local>/value|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Value] get(): R|kotlin/Int|
 
-        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe(): R|kotlin/Unit| {
-        }
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -131,8 +130,7 @@ FILE: [ResolvedTo(IMPORTS)] functionInValueClass.kt
         public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val value: R|kotlin/Int| = R|<local>/value|
             public [ResolvedTo(STATUS)] [ContainingClassKey=Value] get(): R|kotlin/Int|
 
-        public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| {
-        }
+        public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 

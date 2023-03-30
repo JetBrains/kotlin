@@ -1,4 +1,3 @@
-// IGNORE_REVERSED_RESOLVE
 // FIR_IDENTICAL
 // !OPT_IN: kotlin.contracts.ExperimentalContracts
 // SKIP_TXT

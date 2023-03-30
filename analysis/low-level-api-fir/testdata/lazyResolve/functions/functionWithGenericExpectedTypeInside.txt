@@ -141,9 +141,7 @@ FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInside.kt
 
     }
     public? final? [ResolvedTo(RAW_FIR)] fun bar(): <implicit> { LAZY_BLOCK }
-    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe(): R|kotlin/Unit| {
-        [ResolvedTo(RAW_FIR)] lval x: Foo<String> = bar#()
-    }
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInside.kt
@@ -161,9 +159,7 @@ FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInside.kt
 
     }
     public? final? [ResolvedTo(RAW_FIR)] fun bar(): <implicit> { LAZY_BLOCK }
-    public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| {
-        [ResolvedTo(RAW_FIR)] lval x: Foo<String> = bar#()
-    }
+    public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInside.kt
@@ -228,19 +224,19 @@ FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInside.kt
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInside.kt
     [ResolvedTo(RAW_FIR)] annotations container
-    public open [ResolvedTo(TYPES)] class Foo<[ResolvedTo(TYPES)] T : R|kotlin/CharSequence|> : R|kotlin/Any| {
-        public [ResolvedTo(TYPES)] [ContainingClassKey=Foo] constructor<[ResolvedTo(TYPES)] T : R|kotlin/CharSequence|>(): R|Foo<T>| {
+    public open [ResolvedTo(STATUS)] class Foo<[ResolvedTo(STATUS)] T : R|kotlin/CharSequence|> : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor<[ResolvedTo(STATUS)] T : R|kotlin/CharSequence|>(): R|Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final [ResolvedTo(TYPES)] class Bar : R|Foo<kotlin/String>| {
+    public final [ResolvedTo(STATUS)] class Bar : R|Foo<kotlin/String>| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Bar] constructor(): R|Bar| {
             LAZY_super<<implicit>>
         }
 
     }
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun bar(): R|Bar| {
+    public final [ResolvedTo(CONTRACTS)] fun bar(): R|Bar| {
         ^bar R|/Bar.Bar|()
     }
     public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {

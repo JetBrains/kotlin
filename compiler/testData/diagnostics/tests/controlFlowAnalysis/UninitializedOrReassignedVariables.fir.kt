@@ -1,4 +1,3 @@
-// IGNORE_REVERSED_RESOLVE
 package uninitialized_reassigned_variables
 
 fun doSmth(s: String) {}

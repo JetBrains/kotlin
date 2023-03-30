@@ -57,12 +57,12 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverrides.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OV] get(): A
 
         public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class ResolveMe : OV {
-            public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
                 LAZY_super<<implicit>>
             }
 
-            public? open? override [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] val originalExpressions: A
-                public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=ResolveMe] get(): A
+            public? open? override [ResolvedTo(RAW_FIR)] val originalExpressions: A
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] get(): A
 
         }
 
@@ -82,12 +82,12 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverrides.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OV] get(): A
 
         public? final? [ResolvedTo(COMPANION_GENERATION)] class ResolveMe : OV {
-            public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
                 LAZY_super<<implicit>>
             }
 
-            public? open? override [ResolvedTo(COMPANION_GENERATION)] val originalExpressions: A
-                public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=ResolveMe] get(): A
+            public? open? override [ResolvedTo(RAW_FIR)] val originalExpressions: A
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] get(): A
 
         }
 
@@ -102,17 +102,17 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverrides.kt
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverrides.kt
     [ResolvedTo(RAW_FIR)] annotations container
-    public? final? [ResolvedTo(RAW_FIR)] interface OV : R|kotlin/Any| {
+    public? final? [ResolvedTo(SUPER_TYPES)] interface OV : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] val originalExpressions: A
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OV] get(): A
 
         public? final? [ResolvedTo(SUPER_TYPES)] class ResolveMe : R|OV| {
-            public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
                 LAZY_super<<implicit>>
             }
 
-            public? open? override [ResolvedTo(SUPER_TYPES)] val originalExpressions: A
-                public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=ResolveMe] get(): A
+            public? open? override [ResolvedTo(RAW_FIR)] val originalExpressions: A
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] get(): A
 
         }
 
@@ -127,17 +127,17 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverrides.kt
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverrides.kt
     [ResolvedTo(RAW_FIR)] annotations container
-    public? final? [ResolvedTo(SUPER_TYPES)] interface OV : R|kotlin/Any| {
-        public? final? [ResolvedTo(SUPER_TYPES)] val originalExpressions: A
-            public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=OV] get(): A
+    public? final? [ResolvedTo(TYPES)] interface OV : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] val originalExpressions: A
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OV] get(): A
 
         public? final? [ResolvedTo(TYPES)] class ResolveMe : R|OV| {
-            public? [ResolvedTo(TYPES)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
                 LAZY_super<<implicit>>
             }
 
-            public? open? override [ResolvedTo(TYPES)] val originalExpressions: R|A|
-                public? [ResolvedTo(TYPES)] [ContainingClassKey=ResolveMe] get(): R|A|
+            public? open? override [ResolvedTo(RAW_FIR)] val originalExpressions: A
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] get(): A
 
         }
 
@@ -152,9 +152,9 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverrides.kt
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverrides.kt
     [ResolvedTo(RAW_FIR)] annotations container
-    public abstract [ResolvedTo(SUPER_TYPES)] interface OV : R|kotlin/Any| {
-        public abstract [ResolvedTo(TYPES)] val originalExpressions: R|A|
-            public [ResolvedTo(TYPES)] [ContainingClassKey=OV] get(): R|A|
+    public abstract [ResolvedTo(STATUS)] interface OV : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] val originalExpressions: R|A|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=OV] get(): R|A|
 
         public final [ResolvedTo(STATUS)] class ResolveMe : R|OV| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
@@ -177,17 +177,17 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverrides.kt
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverrides.kt
     [ResolvedTo(RAW_FIR)] annotations container
-    public abstract [ResolvedTo(SUPER_TYPES)] interface OV : R|kotlin/Any| {
-        public abstract [ResolvedTo(TYPES)] val originalExpressions: R|A|
-            public [ResolvedTo(TYPES)] [ContainingClassKey=OV] get(): R|A|
+    public abstract [ResolvedTo(STATUS)] interface OV : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] val originalExpressions: R|A|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=OV] get(): R|A|
 
         public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class ResolveMe : R|OV| {
-            public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
-                super<<implicit>>()
+            public [ResolvedTo(STATUS)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
+                LAZY_super<<implicit>>
             }
 
-            public open override [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val originalExpressions: R|A|
-                public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=ResolveMe] get(): R|A|
+            public open override [ResolvedTo(STATUS)] val originalExpressions: R|A|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=ResolveMe] get(): R|A|
 
         }
 
@@ -207,12 +207,12 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverrides.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=OV] get(): R|A|
 
         public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] class ResolveMe : R|OV| {
-            public [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
-                super<<implicit>>()
+            public [ResolvedTo(STATUS)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
+                LAZY_super<<implicit>>
             }
 
-            public open override [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] val originalExpressions: R|A|
-                public [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] [ContainingClassKey=ResolveMe] get(): R|A|
+            public open override [ResolvedTo(STATUS)] val originalExpressions: R|A|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=ResolveMe] get(): R|A|
 
         }
 
@@ -232,12 +232,12 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverrides.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=OV] get(): R|A|
 
         public final [ResolvedTo(CONTRACTS)] class ResolveMe : R|OV| {
-            public [ResolvedTo(CONTRACTS)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
-                super<<implicit>>()
+            public [ResolvedTo(STATUS)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
+                LAZY_super<<implicit>>
             }
 
-            public open override [ResolvedTo(CONTRACTS)] val originalExpressions: R|A|
-                public [ResolvedTo(CONTRACTS)] [ContainingClassKey=ResolveMe] get(): R|A|
+            public open override [ResolvedTo(STATUS)] val originalExpressions: R|A|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=ResolveMe] get(): R|A|
 
         }
 
@@ -257,12 +257,12 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverrides.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=OV] get(): R|A|
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class ResolveMe : R|OV| {
-            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
-                super<<implicit>>()
+            public [ResolvedTo(STATUS)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
+                LAZY_super<<implicit>>
             }
 
-            public open override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val originalExpressions: R|A|
-                public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=ResolveMe] get(): R|A|
+            public open override [ResolvedTo(STATUS)] val originalExpressions: R|A|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=ResolveMe] get(): R|A|
 
         }
 
@@ -282,12 +282,12 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverrides.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=OV] get(): R|A|
 
         public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] class ResolveMe : R|OV| {
-            public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
-                super<<implicit>>()
+            public [ResolvedTo(STATUS)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
+                LAZY_super<<implicit>>
             }
 
-            public open override [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] val originalExpressions: R|A|
-                public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=ResolveMe] get(): R|A|
+            public open override [ResolvedTo(STATUS)] val originalExpressions: R|A|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=ResolveMe] get(): R|A|
 
         }
 

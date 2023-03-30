@@ -8,14 +8,17 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.fir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.ContextByDesignationCollector
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDesignation
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.containingClass
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContextForProvider
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollectorVisitor
 import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.resolve.SessionHolder
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 
 private class ContextCollectingDiagnosticCollectorVisitor private constructor(
     sessionHolder: SessionHolder,
@@ -60,13 +63,20 @@ internal object PersistenceContextCollector {
             is FirClassLikeDeclaration -> declaration.symbol.classId.isLocal
             is FirCallableDeclaration -> declaration.symbol.callableId.isLocal
             is FirDanglingModifierList -> declaration.containingClass()?.classId?.isLocal == true
+            is FirAnonymousInitializer -> declaration.containingClass().classId.isLocal
             is FirScript -> false
             else -> error("Unsupported declaration ${declaration.renderWithType()}")
         }
+
         require(!isLocal) {
             "Cannot collect context for local declaration ${declaration.renderWithType()}"
         }
+
         val designation = declaration.collectDesignation(firFile)
+        designation.path.forEach { firClass ->
+            firClass.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
+        }
+
         return ContextCollectingDiagnosticCollectorVisitor.collect(sessionHolder, designation)
     }
 }

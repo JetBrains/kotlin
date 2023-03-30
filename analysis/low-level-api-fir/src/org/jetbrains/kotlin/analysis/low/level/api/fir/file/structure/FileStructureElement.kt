@@ -6,19 +6,20 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LowLevelFirApiFacadeForResolveOnAir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDesignation
+import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.ClassDiagnosticRetriever
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.FileDiagnosticRetriever
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.FileStructureElementDiagnostics
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.SingleNonLocalDeclarationDiagnosticRetriever
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.RawFirNonLocalDeclarationBuilder
-import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.declarationCanBeLazilyResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withInvalidationOnException
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.psi
+import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
@@ -116,7 +117,7 @@ internal class ReanalyzableFunctionStructureElement(
             rootNonLocalDeclaration = newKtDeclaration,
         ) as FirSimpleFunction
 
-        return moduleComponents.globalResolveComponents.lockProvider.withLock(firFile) {
+        return moduleComponents.globalResolveComponents.lockProvider.withGlobalLock(firFile) {
             val upgradedPhase = minOf(originalFunction.resolvePhase, FirResolvePhase.DECLARATIONS)
 
             withInvalidationOnException(moduleComponents.session) {
@@ -166,7 +167,7 @@ internal class ReanalyzablePropertyStructureElement(
             rootNonLocalDeclaration = newKtDeclaration,
         ) as FirProperty
 
-        return moduleComponents.globalResolveComponents.lockProvider.withLock(firFile) {
+        return moduleComponents.globalResolveComponents.lockProvider.withGlobalLock(firFile) {
             val getterPhase = originalProperty.getter?.resolvePhase ?: originalProperty.resolvePhase
             val setterPhase = originalProperty.setter?.resolvePhase ?: originalProperty.resolvePhase
             val upgradedPhase = minOf(originalProperty.resolvePhase, getterPhase, setterPhase, FirResolvePhase.DECLARATIONS)
@@ -197,13 +198,63 @@ internal class ReanalyzablePropertyStructureElement(
     }
 }
 
-internal class NonReanalyzableDeclarationStructureElement(
+internal sealed class NonReanalyzableDeclarationStructureElement(
+    firFile: FirFile,
+    moduleComponents: LLFirModuleResolveComponents,
+) : FileStructureElement(firFile, moduleComponents)
+
+internal class NonReanalyzableClassDeclarationStructureElement(
+    firFile: FirFile,
+    val fir: FirRegularClass,
+    override val psi: KtClassOrObject,
+    moduleComponents: LLFirModuleResolveComponents,
+) : NonReanalyzableDeclarationStructureElement(firFile, moduleComponents) {
+
+    override val mappings = KtToFirMapping(fir, Recorder())
+
+    override val diagnostics = FileStructureElementDiagnostics(
+        firFile,
+        ClassDiagnosticRetriever(fir),
+        moduleComponents,
+    )
+
+    private inner class Recorder : FirElementsRecorder() {
+        override fun visitProperty(property: FirProperty, data: MutableMap<KtElement, FirElement>) {
+            if (property.source?.kind == KtFakeSourceElementKind.PropertyFromParameter) {
+                super.visitProperty(property, data)
+            }
+        }
+
+        override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: MutableMap<KtElement, FirElement>) {
+        }
+
+        override fun visitConstructor(constructor: FirConstructor, data: MutableMap<KtElement, FirElement>) {
+            if (constructor is FirPrimaryConstructor && constructor.source?.kind == KtFakeSourceElementKind.ImplicitConstructor) {
+                super.visitConstructor(constructor, data)
+            }
+        }
+
+        override fun visitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer, data: MutableMap<KtElement, FirElement>) {
+        }
+
+        override fun visitRegularClass(regularClass: FirRegularClass, data: MutableMap<KtElement, FirElement>) {
+            if (regularClass != fir) return
+            super.visitRegularClass(regularClass, data)
+        }
+
+        override fun visitTypeAlias(typeAlias: FirTypeAlias, data: MutableMap<KtElement, FirElement>) {
+        }
+    }
+}
+
+internal class NonReanalyzableNonClassDeclarationStructureElement(
     firFile: FirFile,
     val fir: FirDeclaration,
     override val psi: KtDeclaration,
     moduleComponents: LLFirModuleResolveComponents,
-) : FileStructureElement(firFile, moduleComponents) {
-    override val mappings = KtToFirMapping(fir, recorder)
+) : NonReanalyzableDeclarationStructureElement(firFile, moduleComponents) {
+
+    override val mappings = KtToFirMapping(fir, Recorder)
 
     override val diagnostics = FileStructureElementDiagnostics(
         firFile,
@@ -211,24 +262,7 @@ internal class NonReanalyzableDeclarationStructureElement(
         moduleComponents,
     )
 
-
-    companion object {
-        private val recorder = object : FirElementsRecorder() {
-            override fun visitProperty(property: FirProperty, data: MutableMap<KtElement, FirElement>) {
-                val psi = property.psi as? KtProperty ?: return super.visitProperty(property, data)
-                if (!isReanalyzableContainer(psi) || !declarationCanBeLazilyResolved(psi)) {
-                    super.visitProperty(property, data)
-                }
-            }
-
-            override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: MutableMap<KtElement, FirElement>) {
-                val psi = simpleFunction.psi as? KtNamedFunction ?: return super.visitSimpleFunction(simpleFunction, data)
-                if (!isReanalyzableContainer(psi) || !declarationCanBeLazilyResolved(psi)) {
-                    super.visitSimpleFunction(simpleFunction, data)
-                }
-            }
-        }
-    }
+    private object Recorder : FirElementsRecorder()
 }
 
 internal class DanglingTopLevelModifierListStructureElement(

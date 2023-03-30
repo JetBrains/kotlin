@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -116,6 +116,16 @@ internal fun PsiElement.getNonLocalContainingOrThisDeclaration(predicate: (KtDec
             when (parent) {
                 is KtScript -> propose(parent)
                 is KtDestructuringDeclaration -> propose(parent)
+                is KtAnonymousInitializer -> {
+                    val container = parent.containingDeclaration
+                    if (container is KtClassOrObject &&
+                        !container.isObjectLiteral() &&
+                        declarationCanBeLazilyResolved(container) &&
+                        predicate(parent)
+                    ) {
+                        propose(parent)
+                    }
+                }
                 is KtNamedDeclaration -> {
                     val isKindApplicable = when (parent) {
                         is KtClassOrObject -> !parent.isObjectLiteral()

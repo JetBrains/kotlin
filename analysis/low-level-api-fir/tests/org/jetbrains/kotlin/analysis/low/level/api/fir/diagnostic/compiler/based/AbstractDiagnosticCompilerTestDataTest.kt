@@ -7,12 +7,47 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.base
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based.AbstractCompilerBasedTestForFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.facades.LLFirAnalyzerFacadeFactoryWithoutPreresolve
+import org.jetbrains.kotlin.fir.symbols.FirLazyResolveContractViolationException
+import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.bind
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
+import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
+import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.runners.baseFirDiagnosticTestConfiguration
+import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.moduleStructure
 
 abstract class AbstractDiagnosticCompilerTestDataTest : AbstractCompilerBasedTestForFir() {
     override fun TestConfigurationBuilder.configureTest() {
         baseFirDiagnosticTestConfiguration(frontendFacade = ::LowLevelFirFrontendFacade.bind(LLFirAnalyzerFacadeFactoryWithoutPreresolve))
+        useAfterAnalysisCheckers(::ContractViolationSuppressor)
+    }
+}
+
+private class ContractViolationSuppressor(testServices: TestServices) : AfterAnalysisChecker(testServices) {
+    override val directiveContainers: List<DirectivesContainer> get() = listOf(Companion)
+
+    override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
+        if (!isDisabled()) {
+            return failedAssertions
+        }
+
+        val filteredExceptions = failedAssertions.filterNot { it.cause is FirLazyResolveContractViolationException }
+        return if (filteredExceptions.isEmpty()) {
+            listOf(
+                AssertionError(
+                    "Test contains $IGNORE_CONTRACT_VIOLATIONS directive but no errors was reported. Please remove directive",
+                ).wrap()
+            )
+        } else {
+            emptyList()
+        }
+    }
+
+    private fun isDisabled(): Boolean = IGNORE_CONTRACT_VIOLATIONS in testServices.moduleStructure.allDirectives
+
+    companion object : SimpleDirectivesContainer() {
+        val IGNORE_CONTRACT_VIOLATIONS by directive("Temporary disables test with contract violation until the issue is fixed")
     }
 }

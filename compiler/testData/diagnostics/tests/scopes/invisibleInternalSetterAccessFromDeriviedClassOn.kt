@@ -1,5 +1,4 @@
 // !LANGUAGE:+ProhibitAccessToInvisibleSetterFromDerivedClass
-// IGNORE_REVERSED_RESOLVE
 
 // MODULE: m1
 // FILE: base.kt

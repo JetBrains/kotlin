@@ -51,18 +51,14 @@ FILE: [ResolvedTo(IMPORTS)] topLevelFunctionsWithImplicitType.kt
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] topLevelFunctionsWithImplicitType.kt
     [ResolvedTo(RAW_FIR)] annotations container
-    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe(): R|kotlin/Unit| {
-        receive#(functionWithLazyBody#())
-    }
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: String): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [ResolvedTo(RAW_FIR)] fun functionWithLazyBody(): <implicit> { LAZY_BLOCK }
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] topLevelFunctionsWithImplicitType.kt
     [ResolvedTo(RAW_FIR)] annotations container
-    public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| {
-        receive#(functionWithLazyBody#())
-    }
+    public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: String): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [ResolvedTo(RAW_FIR)] fun functionWithLazyBody(): <implicit> { LAZY_BLOCK }
 
@@ -101,7 +97,7 @@ FILE: [ResolvedTo(IMPORTS)] topLevelFunctionsWithImplicitType.kt
     }
     public final [ResolvedTo(CONTRACTS)] fun receive([ResolvedTo(CONTRACTS)] value: R|kotlin/String|): R|kotlin/Unit| {
     }
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun functionWithLazyBody(): R|kotlin/String| {
+    public final [ResolvedTo(CONTRACTS)] fun functionWithLazyBody(): R|kotlin/String| {
         ^functionWithLazyBody String(42)
     }
 

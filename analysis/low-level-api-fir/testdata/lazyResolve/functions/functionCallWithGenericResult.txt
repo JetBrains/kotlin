@@ -93,9 +93,7 @@ FILE: [ResolvedTo(IMPORTS)] functionCallWithGenericResult.kt
 
     }
     public? final? [ResolvedTo(RAW_FIR)] fun bar(): Foo<String>? { LAZY_BLOCK }
-    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe(): R|kotlin/Unit| {
-        [ResolvedTo(RAW_FIR)] lval x: <implicit> = bar#()
-    }
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] functionCallWithGenericResult.kt
@@ -107,9 +105,7 @@ FILE: [ResolvedTo(IMPORTS)] functionCallWithGenericResult.kt
 
     }
     public? final? [ResolvedTo(RAW_FIR)] fun bar(): Foo<String>? { LAZY_BLOCK }
-    public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| {
-        [ResolvedTo(RAW_FIR)] lval x: <implicit> = bar#()
-    }
+    public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] functionCallWithGenericResult.kt

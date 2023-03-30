@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -34,6 +34,11 @@ internal class LLFirLazyDeclarationResolver : FirLazyDeclarationResolver() {
         val fir = symbol.fir as? FirRegularClass ?: return
         val session = fir.moduleData.session
         if (session !is LLFirResolvableModuleSession) return
-        // TODO: should be implemented in the context of KT-56543
+        val moduleComponents = session.moduleComponents
+        moduleComponents.firModuleLazyDeclarationResolver.lazyResolveWithCallableMembers(
+            target = fir,
+            scopeSession = moduleComponents.scopeSessionProvider.getScopeSession(),
+            toPhase = toPhase,
+        )
     }
 }

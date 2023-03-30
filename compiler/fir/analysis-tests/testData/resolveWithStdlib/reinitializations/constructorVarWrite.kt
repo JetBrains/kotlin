@@ -1,4 +1,3 @@
-// IGNORE_REVERSED_RESOLVE
 class Some(var foo: Int) {
     init {
         if (foo < 0) {

@@ -1,4 +1,3 @@
-// IGNORE_REVERSED_RESOLVE
 open class A {
     // protected relative to A
     protected open class B { 

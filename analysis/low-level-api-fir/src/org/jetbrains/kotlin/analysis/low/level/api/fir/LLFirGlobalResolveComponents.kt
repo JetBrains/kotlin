@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirLazyResolveContractChecker
 
 internal class LLFirGlobalResolveComponents(val project: Project) {
     companion object {
@@ -15,5 +16,6 @@ internal class LLFirGlobalResolveComponents(val project: Project) {
         }
     }
 
-    val lockProvider: LLFirLockProvider = LLFirLockProvider()
+    val checker: LLFirLazyResolveContractChecker = LLFirLazyResolveContractChecker()
+    val lockProvider: LLFirLockProvider = LLFirLockProvider(checker)
 }

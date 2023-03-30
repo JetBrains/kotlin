@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
 import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirBlock
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
@@ -40,6 +42,27 @@ internal inline fun checkTypeRefIsResolved(
         withFirEntry("typeRef", typeRef)
         withFirEntry("firDeclaration", owner)
         extraAttachment()
+    }
+}
+
+internal fun checkBodyIsResolved(function: FirFunction) {
+    val block = function.body ?: return
+    checkTypeRefIsResolved(block.typeRef, "block type", function) {
+        withFirEntry("block", block)
+    }
+}
+
+internal fun checkInitializerIsResolved(variable: FirVariable) {
+    val initializer = variable.initializer ?: return
+    checkTypeRefIsResolved(initializer.typeRef, "initializer type", variable) {
+        withFirEntry("initializer", initializer)
+    }
+}
+
+internal fun checkDefaultValueIsResolved(parameter: FirValueParameter) {
+    val defaultValue = parameter.defaultValue ?: return
+    checkTypeRefIsResolved(defaultValue.typeRef, "default value type", parameter) {
+        withFirEntry("defaultValue", defaultValue)
     }
 }
 

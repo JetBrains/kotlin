@@ -1,4 +1,3 @@
-// IGNORE_REVERSED_RESOLVE
 // FILE: A.kt
 open class A {
     open fun getScope(): String? = null

@@ -51,20 +51,16 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopSetter.kt
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopSetter.kt
     [ResolvedTo(RAW_FIR)] annotations container
-    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] var x: R|kotlin/Int| = IntegerLiteral(2)
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] var x: R|kotlin/Int| = LAZY_EXPRESSION
         public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): R|kotlin/Int|
-        public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] set([ResolvedTo(EXPECT_ACTUAL_MATCHING)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
-            ^ Unit#
-        }
+        public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] set([ResolvedTo(EXPECT_ACTUAL_MATCHING)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopSetter.kt
     [ResolvedTo(RAW_FIR)] annotations container
-    public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] var x: R|kotlin/Int| = IntegerLiteral(2)
+    public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] var x: R|kotlin/Int| = LAZY_EXPRESSION
         public [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] get(): R|kotlin/Int|
-        public [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] set([ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
-            ^ Unit#
-        }
+        public [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] set([ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopSetter.kt

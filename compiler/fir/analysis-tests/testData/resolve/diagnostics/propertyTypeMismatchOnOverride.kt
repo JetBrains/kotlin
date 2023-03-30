@@ -1,4 +1,3 @@
-// IGNORE_REVERSED_RESOLVE
 open class A {
     open var test: Number = 10
 }

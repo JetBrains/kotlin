@@ -1,4 +1,3 @@
-// IGNORE_REVERSED_RESOLVE
 // !DUMP_CFG
 fun test_0(x: Any) {
     if (x is String) {
