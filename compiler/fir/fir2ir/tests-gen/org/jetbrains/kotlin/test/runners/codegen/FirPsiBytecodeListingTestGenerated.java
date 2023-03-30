@@ -1560,12 +1560,6 @@ public class FirPsiBytecodeListingTestGenerated extends AbstractFirPsiBytecodeLi
             public void testJvmDefaultAll() throws Exception {
                 runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/defaultInterfaceMembers/jvmDefaultAll.kt");
             }
-
-            @Test
-            @TestMetadata("jvmDefaultEnable.kt")
-            public void testJvmDefaultEnable() throws Exception {
-                runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/defaultInterfaceMembers/jvmDefaultEnable.kt");
-            }
         }
 
         @Nested
@@ -1918,22 +1912,6 @@ public class FirPsiBytecodeListingTestGenerated extends AbstractFirPsiBytecodeLi
             }
 
             @Nested
-            @TestMetadata("compiler/testData/codegen/bytecodeListing/jvm8/defaults/enable")
-            @TestDataPath("$PROJECT_ROOT")
-            public class Enable {
-                @Test
-                public void testAllFilesPresentInEnable() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/jvm8/defaults/enable"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
-                }
-
-                @Test
-                @TestMetadata("interfaceProperty.kt")
-                public void testInterfaceProperty() throws Exception {
-                    runTest("compiler/testData/codegen/bytecodeListing/jvm8/defaults/enable/interfaceProperty.kt");
-                }
-            }
-
-            @Nested
             @TestMetadata("compiler/testData/codegen/bytecodeListing/jvm8/defaults/noDefaultImpl")
             @TestDataPath("$PROJECT_ROOT")
             public class NoDefaultImpl {
@@ -1946,6 +1924,12 @@ public class FirPsiBytecodeListingTestGenerated extends AbstractFirPsiBytecodeLi
                 @TestMetadata("interfaceProperty.kt")
                 public void testInterfaceProperty() throws Exception {
                     runTest("compiler/testData/codegen/bytecodeListing/jvm8/defaults/noDefaultImpl/interfaceProperty.kt");
+                }
+
+                @Test
+                @TestMetadata("privateAccessorNaming.kt")
+                public void testPrivateAccessorNaming() throws Exception {
+                    runTest("compiler/testData/codegen/bytecodeListing/jvm8/defaults/noDefaultImpl/privateAccessorNaming.kt");
                 }
             }
         }

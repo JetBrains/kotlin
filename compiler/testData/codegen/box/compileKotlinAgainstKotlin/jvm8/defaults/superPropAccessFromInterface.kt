@@ -1,10 +1,9 @@
-// !JVM_DEFAULT_MODE: enable
+// !JVM_DEFAULT_MODE: all
 // JVM_TARGET: 1.8
 // WITH_STDLIB
 // MODULE: lib
 // FILE: 1.kt
 interface Test {
-    @JvmDefault
     val prop: String
         get() =  "OK"
 }
@@ -12,7 +11,6 @@ interface Test {
 // MODULE: main(lib)
 // FILE: 2.kt
 interface Test2 : Test {
-    @JvmDefault
     override val prop: String
         get() = super.prop
 }

@@ -6,24 +6,11 @@
 // MODULE: lib
 // FILE: 1.kt
 interface Test {
-    @JvmDefault
-    fun test(): String {
-        return "O"
-    }
-
-    fun delegatedTest(): String {
-        return "fail"
-    }
+    fun test(): String = "Fail"
 }
 
 class Delegate : Test {
-    override fun test(): String {
-        return "Fail"
-    }
-
-    override fun delegatedTest(): String {
-        return "K"
-    }
+    override fun test(): String = "OK"
 }
 
 // MODULE: main(lib)
@@ -32,5 +19,5 @@ class TestClass(val foo: Test) : Test by foo
 
 fun box(): String {
     val testClass = TestClass(Delegate())
-    return testClass.test() + testClass.delegatedTest()
+    return testClass.test()
 }

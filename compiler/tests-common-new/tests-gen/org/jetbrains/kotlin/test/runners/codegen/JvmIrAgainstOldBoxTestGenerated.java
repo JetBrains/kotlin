@@ -758,6 +758,12 @@ public class JvmIrAgainstOldBoxTestGenerated extends AbstractJvmIrAgainstOldBoxT
             }
 
             @Test
+            @TestMetadata("callStackTrace.kt")
+            public void testCallStackTrace() throws Exception {
+                runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/callStackTrace.kt");
+            }
+
+            @Test
             @TestMetadata("superCall.kt")
             public void testSuperCall() throws Exception {
                 runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/superCall.kt");
@@ -770,12 +776,6 @@ public class JvmIrAgainstOldBoxTestGenerated extends AbstractJvmIrAgainstOldBoxT
             }
 
             @Test
-            @TestMetadata("superCallFromInterface2.kt")
-            public void testSuperCallFromInterface2() throws Exception {
-                runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/superCallFromInterface2.kt");
-            }
-
-            @Test
             @TestMetadata("superPropAccess.kt")
             public void testSuperPropAccess() throws Exception {
                 runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/superPropAccess.kt");
@@ -785,12 +785,6 @@ public class JvmIrAgainstOldBoxTestGenerated extends AbstractJvmIrAgainstOldBoxT
             @TestMetadata("superPropAccessFromInterface.kt")
             public void testSuperPropAccessFromInterface() throws Exception {
                 runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/superPropAccessFromInterface.kt");
-            }
-
-            @Test
-            @TestMetadata("superPropAccessFromInterface2.kt")
-            public void testSuperPropAccessFromInterface2() throws Exception {
-                runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/superPropAccessFromInterface2.kt");
             }
 
             @Nested
@@ -922,28 +916,6 @@ public class JvmIrAgainstOldBoxTestGenerated extends AbstractJvmIrAgainstOldBoxT
                 @TestMetadata("newAndOldSchemes3.kt")
                 public void testNewAndOldSchemes3() throws Exception {
                     runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop/newAndOldSchemes3.kt");
-                }
-
-                @Test
-                @TestMetadata("newSchemeWithJvmDefault.kt")
-                public void testNewSchemeWithJvmDefault() throws Exception {
-                    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop/newSchemeWithJvmDefault.kt");
-                }
-            }
-
-            @Nested
-            @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/noDefaultImpls")
-            @TestDataPath("$PROJECT_ROOT")
-            public class NoDefaultImpls {
-                @Test
-                public void testAllFilesPresentInNoDefaultImpls() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/noDefaultImpls"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_MULTI_MODULE_IR_AGAINST_OLD, true);
-                }
-
-                @Test
-                @TestMetadata("superPropAccessFromInterface.kt")
-                public void testSuperPropAccessFromInterface() throws Exception {
-                    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/noDefaultImpls/superPropAccessFromInterface.kt");
                 }
             }
         }

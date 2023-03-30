@@ -1,10 +1,9 @@
-// !JVM_DEFAULT_MODE: enable
+// !JVM_DEFAULT_MODE: all
 // JVM_TARGET: 1.8
 // WITH_STDLIB
 // MODULE: lib
 // FILE: 1.kt
 interface Test {
-    @JvmDefault
     fun test(): String {
         return "OK"
     }
@@ -14,7 +13,6 @@ interface Test {
 // FILE: 2.kt
 
 interface Test2 : Test {
-    @JvmDefault
     override fun test(): String {
         return super.test()
     }

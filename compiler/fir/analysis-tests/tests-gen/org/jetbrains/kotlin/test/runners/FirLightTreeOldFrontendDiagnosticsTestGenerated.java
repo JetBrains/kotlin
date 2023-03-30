@@ -36148,24 +36148,6 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
                 }
 
                 @Test
-                @TestMetadata("javaOverride.kt")
-                public void testJavaOverride() throws Exception {
-                    runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmDefault/javaOverride.kt");
-                }
-
-                @Test
-                @TestMetadata("javaOverrideAll.kt")
-                public void testJavaOverrideAll() throws Exception {
-                    runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmDefault/javaOverrideAll.kt");
-                }
-
-                @Test
-                @TestMetadata("jvmDefaultInInheritance.kt")
-                public void testJvmDefaultInInheritance() throws Exception {
-                    runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmDefault/jvmDefaultInInheritance.kt");
-                }
-
-                @Test
                 @TestMetadata("jvmDefaults.kt")
                 public void testJvmDefaults() throws Exception {
                     runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmDefault/jvmDefaults.kt");
@@ -36175,72 +36157,6 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
                 @TestMetadata("jvmDefaultsWithJava.kt")
                 public void testJvmDefaultsWithJava() throws Exception {
                     runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmDefault/jvmDefaultsWithJava.kt");
-                }
-
-                @Test
-                @TestMetadata("noJvmDefaultFlag.kt")
-                public void testNoJvmDefaultFlag() throws Exception {
-                    runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmDefault/noJvmDefaultFlag.kt");
-                }
-
-                @Test
-                @TestMetadata("notInterface.kt")
-                public void testNotInterface() throws Exception {
-                    runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmDefault/notInterface.kt");
-                }
-
-                @Test
-                @TestMetadata("propertyAccessor.kt")
-                public void testPropertyAccessor() throws Exception {
-                    runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmDefault/propertyAccessor.kt");
-                }
-
-                @Test
-                @TestMetadata("simpleOverride.kt")
-                public void testSimpleOverride() throws Exception {
-                    runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmDefault/simpleOverride.kt");
-                }
-
-                @Test
-                @TestMetadata("simplePropertyOverride.kt")
-                public void testSimplePropertyOverride() throws Exception {
-                    runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmDefault/simplePropertyOverride.kt");
-                }
-
-                @Test
-                @TestMetadata("superCall.kt")
-                public void testSuperCall() throws Exception {
-                    runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmDefault/superCall.kt");
-                }
-
-                @Test
-                @TestMetadata("superCallAmbiguity.kt")
-                public void testSuperCallAmbiguity() throws Exception {
-                    runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmDefault/superCallAmbiguity.kt");
-                }
-
-                @Test
-                @TestMetadata("superCallAmbiguity2.kt")
-                public void testSuperCallAmbiguity2() throws Exception {
-                    runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmDefault/superCallAmbiguity2.kt");
-                }
-
-                @Test
-                @TestMetadata("superCallAmbiguity3.kt")
-                public void testSuperCallAmbiguity3() throws Exception {
-                    runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmDefault/superCallAmbiguity3.kt");
-                }
-
-                @Test
-                @TestMetadata("target6.kt")
-                public void testTarget6() throws Exception {
-                    runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmDefault/target6.kt");
-                }
-
-                @Test
-                @TestMetadata("target8.kt")
-                public void testTarget8() throws Exception {
-                    runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmDefault/target8.kt");
                 }
 
                 @Nested
