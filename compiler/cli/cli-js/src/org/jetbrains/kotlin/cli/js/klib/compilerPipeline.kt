@@ -130,7 +130,10 @@ fun transformFirToIr(
     val firResult = FirResult(firOutputs)
     return firResult.convertToIrAndActualize(
         fir2IrExtensions,
-        Fir2IrConfiguration(linkViaSignatures = false),
+        Fir2IrConfiguration(
+            languageVersionSettings = moduleStructure.compilerConfiguration.languageVersionSettings,
+            linkViaSignatures = false
+        ),
         IrGenerationExtension.getInstances(moduleStructure.project),
         signatureComposerCreator = null,
         irMangler = JsManglerIr,
@@ -138,7 +141,6 @@ fun transformFirToIr(
         visibilityConverter = Fir2IrVisibilityConverter.Default,
         kotlinBuiltIns = builtInsModule ?: DefaultBuiltIns.Instance,
         diagnosticReporter = diagnosticsReporter,
-        languageVersionSettings = moduleStructure.compilerConfiguration.languageVersionSettings,
         fir2IrResultPostCompute = {
             (this.irModuleFragment.descriptor as? FirModuleDescriptor)?.let { it.allDependencyModules = librariesDescriptors }
         }

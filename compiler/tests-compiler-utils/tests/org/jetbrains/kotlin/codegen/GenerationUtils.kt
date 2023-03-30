@@ -122,8 +122,10 @@ object GenerationUtils {
         // TODO: add running checkers and check that it's safe to compile
         val firAnalyzerFacade = FirAnalyzerFacade(
             session,
-            configuration.languageVersionSettings,
-            Fir2IrConfiguration(linkViaSignatures = false),
+            Fir2IrConfiguration(
+                languageVersionSettings = configuration.languageVersionSettings,
+                linkViaSignatures = false
+            ),
             files,
             emptyList(),
             IrGenerationExtension.getInstances(project),

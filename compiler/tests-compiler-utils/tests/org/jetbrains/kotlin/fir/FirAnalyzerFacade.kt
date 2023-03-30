@@ -42,7 +42,6 @@ abstract class AbstractFirAnalyzerFacade {
 
 class FirAnalyzerFacade(
     val session: FirSession,
-    val languageVersionSettings: LanguageVersionSettings,
     val fir2IrConfiguration: Fir2IrConfiguration,
     val ktFiles: Collection<KtFile> = emptyList(), // may be empty if light tree mode enabled
     val lightTreeFiles: Collection<LightTreeFile> = emptyList(), // may be empty if light tree mode disabled
@@ -114,7 +113,6 @@ class FirAnalyzerFacade(
 
         return Fir2IrConverter.createModuleFragmentWithSignaturesIfNeeded(
             session, _scopeSession!!, firFiles!!,
-            languageVersionSettings,
             fir2IrExtensions,
             fir2IrConfiguration,
             JvmIrMangler, IrFactoryImpl,

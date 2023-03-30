@@ -232,12 +232,12 @@ fun convertAnalyzedFirToIr(
             IrGenerationExtension.getInstances(it)
         } ?: emptyList()
     val fir2IrConfiguration = Fir2IrConfiguration(
+        languageVersionSettings = input.configuration.languageVersionSettings,
         linkViaSignatures = input.configuration.getBoolean(JVMConfigurationKeys.LINK_VIA_SIGNATURES)
     )
     val (irModuleFragment, components, pluginContext, irActualizedResult) =
         analysisResults.convertToIrAndActualizeForJvm(
-            extensions, fir2IrConfiguration, irGenerationExtensions,
-            environment.diagnosticsReporter, input.configuration.languageVersionSettings
+            extensions, fir2IrConfiguration, irGenerationExtensions, environment.diagnosticsReporter,
         )
 
     return ModuleCompilerIrBackendInput(

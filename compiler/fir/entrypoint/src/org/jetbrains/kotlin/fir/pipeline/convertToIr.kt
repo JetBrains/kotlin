@@ -49,7 +49,6 @@ fun FirResult.convertToIrAndActualizeForJvm(
     fir2IrConfiguration: Fir2IrConfiguration,
     irGeneratorExtensions: Collection<IrGenerationExtension>,
     diagnosticReporter: DiagnosticReporter,
-    languageVersionSettings: LanguageVersionSettings,
 ): Fir2IrActualizedResult = this.convertToIrAndActualize(
     fir2IrExtensions,
     fir2IrConfiguration,
@@ -59,7 +58,6 @@ fun FirResult.convertToIrAndActualizeForJvm(
     firManglerCreator = { FirJvmKotlinMangler() },
     visibilityConverter = FirJvmVisibilityConverter,
     diagnosticReporter = diagnosticReporter,
-    languageVersionSettings = languageVersionSettings,
     kotlinBuiltIns = DefaultBuiltIns.Instance,
 )
 
@@ -73,7 +71,6 @@ fun FirResult.convertToIrAndActualize(
     visibilityConverter: Fir2IrVisibilityConverter,
     kotlinBuiltIns: KotlinBuiltIns,
     diagnosticReporter: DiagnosticReporter,
-    languageVersionSettings: LanguageVersionSettings,
     fir2IrResultPostCompute: Fir2IrResult.() -> Unit = {},
 ): Fir2IrActualizedResult {
     val fir2IrResult: Fir2IrResult
@@ -140,7 +137,7 @@ fun FirResult.convertToIrAndActualize(
                 fir2IrResult.irModuleFragment,
                 commonIrOutputs.map { it.irModuleFragment },
                 diagnosticReporter,
-                languageVersionSettings
+                fir2IrConfiguration.languageVersionSettings
             )
         }
     }
@@ -161,7 +158,7 @@ private fun ModuleCompilerAnalyzedOutput.convertToIr(
 ): Fir2IrResult {
     return Fir2IrConverter.createModuleFragmentWithSignaturesIfNeeded(
         session, scopeSession, fir,
-        session.languageVersionSettings, fir2IrExtensions, fir2IrConfiguration,
+        fir2IrExtensions, fir2IrConfiguration,
         irMangler, IrFactoryImpl, visibilityConverter,
         Fir2IrJvmSpecialAnnotationSymbolProvider(), // TODO: replace with appropriate (probably empty) implementation for other backends.
         irGeneratorExtensions,

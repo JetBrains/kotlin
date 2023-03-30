@@ -73,14 +73,16 @@ internal fun PhaseContext.fir2Ir(
 
     val (irModuleFragment, components, pluginContext, irActualizedResult) = input.firResult.convertToIrAndActualize(
             fir2IrExtensions,
-            Fir2IrConfiguration(linkViaSignatures = false),
+            Fir2IrConfiguration(
+                    languageVersionSettings = configuration.languageVersionSettings,
+                    linkViaSignatures = false
+            ),
             IrGenerationExtension.getInstances(config.project),
             signatureComposerCreator = null,
             irMangler = KonanManglerIr,
             firManglerCreator = { FirNativeKotlinMangler() },
             visibilityConverter = Fir2IrVisibilityConverter.Default,
             diagnosticReporter = diagnosticsReporter,
-            languageVersionSettings = configuration.languageVersionSettings,
             kotlinBuiltIns = builtInsModule ?: DefaultBuiltIns.Instance,
             fir2IrResultPostCompute = {
                 // it's important to compare manglers before actualization, since IR will be actualized, while FIR won't

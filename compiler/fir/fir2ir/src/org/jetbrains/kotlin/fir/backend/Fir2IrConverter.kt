@@ -440,7 +440,6 @@ class Fir2IrConverter(
             session: FirSession,
             scopeSession: ScopeSession,
             firFiles: List<FirFile>,
-            languageVersionSettings: LanguageVersionSettings,
             fir2IrExtensions: Fir2IrExtensions,
             fir2IrConfiguration: Fir2IrConfiguration,
             irMangler: KotlinMangler.IrMangler,
@@ -471,8 +470,8 @@ class Fir2IrConverter(
             components.visibilityConverter = visibilityConverter
             components.typeConverter = Fir2IrTypeConverter(components)
             val irBuiltIns = initializedIrBuiltIns ?: IrBuiltInsOverFir(
-                components, languageVersionSettings, moduleDescriptor, irMangler,
-                languageVersionSettings.getFlag(AnalysisFlags.builtInsFromSources) || kotlinBuiltIns !== DefaultBuiltIns.Instance
+                components, fir2IrConfiguration.languageVersionSettings, moduleDescriptor, irMangler,
+                fir2IrConfiguration.languageVersionSettings.getFlag(AnalysisFlags.builtInsFromSources) || kotlinBuiltIns !== DefaultBuiltIns.Instance
             )
             components.irBuiltIns = irBuiltIns
             val conversionScope = Fir2IrConversionScope()

@@ -147,11 +147,14 @@ fun AbstractFirAnalyzerFacade.convertToJsIr(
     val libraries = resolveJsLibraries(module, testServices, configuration)
     val (dependencies, builtIns) = loadResolvedLibraries(libraries, configuration.languageVersionSettings, testServices)
 
+    val fir2IrConfiguration = Fir2IrConfiguration(
+        languageVersionSettings = configuration.languageVersionSettings,
+        linkViaSignatures = false
+    )
     return Fir2IrConverter.createModuleFragmentWithSignaturesIfNeeded(
         session, scopeSession, firFiles.toList(),
-        languageVersionSettings,
         fir2IrExtensions,
-        Fir2IrConfiguration(linkViaSignatures = false),
+        fir2IrConfiguration,
         JsManglerIr, IrFactoryImpl,
         Fir2IrVisibilityConverter.Default,
         Fir2IrJvmSpecialAnnotationSymbolProvider(), // TODO: replace with appropriate (probably empty) implementation

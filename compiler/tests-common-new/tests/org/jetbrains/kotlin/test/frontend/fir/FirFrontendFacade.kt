@@ -304,8 +304,10 @@ open class FirFrontendFacade(
         val enablePluginPhases = FirDiagnosticsDirectives.ENABLE_PLUGIN_PHASES in module.directives
         val firAnalyzerFacade = FirAnalyzerFacade(
             moduleBasedSession,
-            module.languageVersionSettings,
-            Fir2IrConfiguration(linkViaSignatures = module.targetBackend == TargetBackend.JVM_IR_SERIALIZE),
+            Fir2IrConfiguration(
+                languageVersionSettings = module.languageVersionSettings,
+                linkViaSignatures = module.targetBackend == TargetBackend.JVM_IR_SERIALIZE
+            ),
             ktFiles,
             lightTreeFiles,
             IrGenerationExtension.getInstances(project),

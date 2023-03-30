@@ -16,6 +16,9 @@
 
 package org.jetbrains.kotlin.fir.backend
 
+import org.jetbrains.kotlin.config.LanguageVersionSettings
+
 data class Fir2IrConfiguration(
+    val languageVersionSettings: LanguageVersionSettings,
     val linkViaSignatures: Boolean
 )
