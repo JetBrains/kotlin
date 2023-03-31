@@ -188,14 +188,16 @@ internal class Timeouts(val executionTimeout: Duration) {
 /**
  * Used cache mode.
  */
-internal sealed interface CacheMode {
-    val staticCacheRootDir: File?
-    val staticCacheRequiredForEveryLibrary: Boolean
-    val makePerFileCaches: Boolean
+internal sealed class CacheMode {
+    abstract val staticCacheForDistributionLibrariesRootDir: File?
+    abstract val useStaticCacheForUserLibraries: Boolean
+    abstract val makePerFileCaches: Boolean
 
-    object WithoutCache : CacheMode {
-        override val staticCacheRootDir: File? get() = null
-        override val staticCacheRequiredForEveryLibrary get() = false
+    val useStaticCacheForDistributionLibraries: Boolean get() = staticCacheForDistributionLibrariesRootDir != null
+
+    object WithoutCache : CacheMode() {
+        override val staticCacheForDistributionLibrariesRootDir: File? get() = null
+        override val useStaticCacheForUserLibraries: Boolean get() = false
         override val makePerFileCaches: Boolean = false
     }
 
@@ -203,21 +205,21 @@ internal sealed interface CacheMode {
         distribution: Distribution,
         kotlinNativeTargets: KotlinNativeTargets,
         optimizationMode: OptimizationMode,
-        override val staticCacheRequiredForEveryLibrary: Boolean,
+        override val useStaticCacheForUserLibraries: Boolean,
         override val makePerFileCaches: Boolean
-    ) : CacheMode {
-        override val staticCacheRootDir: File = File(distribution.klib)
+    ) : CacheMode() {
+        override val staticCacheForDistributionLibrariesRootDir: File = File(distribution.klib)
             .resolve("cache")
             .resolve(
-                computeCacheDirName(
+                computeDistroCacheDirName(
                     testTarget = kotlinNativeTargets.testTarget,
                     cacheKind = CACHE_KIND,
                     debuggable = optimizationMode == OptimizationMode.DEBUG
                 )
-            ).also { rootCacheDir ->
-                assertTrue(rootCacheDir.exists()) { "The root cache directory is not found: $rootCacheDir" }
-                assertTrue(rootCacheDir.isDirectory) { "The root cache directory is not a directory: $rootCacheDir" }
-                assertTrue(rootCacheDir.list().orEmpty().isNotEmpty()) { "The root cache directory is empty: $rootCacheDir" }
+            ).apply {
+                assertTrue(exists()) { "The distribution libraries cache directory is not found: $this" }
+                assertTrue(isDirectory) { "The distribution libraries cache directory is not a directory: $this" }
+                assertTrue(list().orEmpty().isNotEmpty()) { "The distribution libraries cache directory is empty: $this" }
             }
 
         companion object {
@@ -237,8 +239,19 @@ internal sealed interface CacheMode {
             return if (kotlinNativeTargets.testTarget in cacheableTargets) Alias.STATIC_ONLY_DIST else Alias.NO
         }
 
-        fun computeCacheDirName(testTarget: KonanTarget, cacheKind: String, debuggable: Boolean) =
-            "$testTarget${if (debuggable) "-g" else ""}$cacheKind"
+        fun computeCacheDirName(
+            testTarget: KonanTarget,
+            cacheKind: String,
+            debuggable: Boolean,
+            partialLinkageEnabled: Boolean
+        ) = "$testTarget${if (debuggable) "-g" else ""}$cacheKind${if (partialLinkageEnabled) "-pl" else ""}"
+
+        // N.B. The distribution libs are always built with the partial linkage turned off.
+        fun computeDistroCacheDirName(
+            testTarget: KonanTarget,
+            cacheKind: String,
+            debuggable: Boolean,
+        ) = "$testTarget${if (debuggable) "-g" else ""}$cacheKind"
     }
 }
 

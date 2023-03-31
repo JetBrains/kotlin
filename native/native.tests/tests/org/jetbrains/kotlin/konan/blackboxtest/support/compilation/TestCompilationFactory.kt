@@ -65,10 +65,10 @@ internal class TestCompilationFactory {
 
         companion object {
             fun decideForRegularKlib(settings: Settings): ProduceStaticCache =
-                if (settings.get<CacheMode>().staticCacheRequiredForEveryLibrary) Yes.Regular else No
+                if (settings.get<CacheMode>().useStaticCacheForUserLibraries) Yes.Regular else No
 
             fun decideForIncludedKlib(settings: Settings, expectedExecutableArtifact: Executable, extras: Extras): ProduceStaticCache =
-                if (!settings.get<CacheMode>().staticCacheRequiredForEveryLibrary)
+                if (!settings.get<CacheMode>().useStaticCacheForUserLibraries)
                     No
                 else
                     when (extras) {
