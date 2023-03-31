@@ -28,9 +28,9 @@ class KRefSharedHolder {
   template <ErrorPolicy errorPolicy>
   ObjHeader* ref() const;
 
-  void dispose() const;
+  void dispose();
 
-  void disposeFromNative() const {
+  void disposeFromNative() {
     kotlin::CalledFromNativeGuard guard;
     dispose();
   }
@@ -78,7 +78,7 @@ static_assert(
 extern "C" {
 RUNTIME_NOTHROW void KRefSharedHolder_initLocal(KRefSharedHolder* holder, ObjHeader* obj);
 RUNTIME_NOTHROW void KRefSharedHolder_init(KRefSharedHolder* holder, ObjHeader* obj);
-RUNTIME_NOTHROW void KRefSharedHolder_dispose(const KRefSharedHolder* holder);
+RUNTIME_NOTHROW void KRefSharedHolder_dispose(KRefSharedHolder* holder);
 RUNTIME_NOTHROW ObjHeader* KRefSharedHolder_ref(const KRefSharedHolder* holder);
 } // extern "C"
 

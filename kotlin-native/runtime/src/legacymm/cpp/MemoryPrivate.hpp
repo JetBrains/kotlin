@@ -327,6 +327,18 @@ void ReleaseHeapRef(const ObjHeader* object) RUNTIME_NOTHROW;
 MODEL_VARIANTS(void, ReleaseHeapRef, const ObjHeader* object);
 MODEL_VARIANTS(void, ReleaseHeapRefNoCollect, const ObjHeader* object);
 
+bool TryAddHeapRef(const ObjHeader* object);
+void ReleaseHeapRefNoCollect(const ObjHeader* object) RUNTIME_NOTHROW;
+
+ForeignRefContext InitLocalForeignRef(ObjHeader* object);
+ForeignRefContext InitForeignRef(ObjHeader* object);
+void DeinitForeignRef(ObjHeader* object, ForeignRefContext context);
+bool IsForeignRefAccessible(ObjHeader* object, ForeignRefContext context);
+
+// Should be used when reference is read from a possibly shared variable,
+// and there's nothing else keeping the object alive.
+void AdoptReferenceFromSharedVariable(ObjHeader* object);
+
 }  // extern "C"
 
 #endif // RUNTIME_MEMORYPRIVATE_HPP

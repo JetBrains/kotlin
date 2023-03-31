@@ -51,7 +51,7 @@ inline void unlock(int32_t* address) {
 
 extern "C" {
 
-OBJ_GETTER(makeWeakReferenceCounter, void*);
+OBJ_GETTER(makeWeakReferenceCounterLegacyMM, void*);
 OBJ_GETTER(makeObjCWeakReferenceImpl, void*);
 OBJ_GETTER(makePermanentWeakReferenceImpl, ObjHeader*);
 
@@ -72,14 +72,18 @@ OBJ_GETTER(Konan_getWeakReferenceImpl, ObjHeader* referred) {
   if (weakCounter == nullptr) {
       ObjHolder counterHolder;
       // Cast unneeded, just to emphasize we store an object reference as void*.
-      ObjHeader* counter = makeWeakReferenceCounter(reinterpret_cast<void*>(referred), counterHolder.slot());
+      ObjHeader* counter = makeWeakReferenceCounterLegacyMM(reinterpret_cast<void*>(referred), counterHolder.slot());
       weakCounter = referred->GetOrSetWeakCounter(counter);
   }
   RETURN_OBJ(weakCounter);
 }
 
+OBJ_GETTER(Konan_RegularWeakReferenceImpl_get, ObjHeader* counter) {
+  RuntimeFail("New MM only");
+}
+
 // Materialize a weak reference to either null or the real reference.
-OBJ_GETTER(Konan_WeakReferenceCounter_get, ObjHeader* counter) {
+OBJ_GETTER(Konan_WeakReferenceCounterLegacyMM_get, ObjHeader* counter) {
   ObjHeader** referredAddress = &asWeakReferenceCounter(counter)->referred;
 #if KONAN_NO_THREADS
   RETURN_OBJ(*referredAddress);
@@ -87,10 +91,6 @@ OBJ_GETTER(Konan_WeakReferenceCounter_get, ObjHeader* counter) {
   auto* weakCounter = asWeakReferenceCounter(counter);
   RETURN_RESULT_OF(ReadHeapRefLocked, referredAddress,  &weakCounter->lock,  &weakCounter->cookie);
 #endif
-}
-
-ALWAYS_INLINE ObjHeader* UnsafeWeakReferenceCounterGet(ObjHeader* counter) {
-    return asWeakReferenceCounter(counter)->referred;
 }
 
 void WeakReferenceCounterClear(ObjHeader* counter) {

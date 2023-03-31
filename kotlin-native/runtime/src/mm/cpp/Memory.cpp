@@ -48,11 +48,11 @@ ALWAYS_INLINE mm::StableRefRegistry::Node* FromForeignRefManager(ForeignRefManag
 } // namespace
 
 ObjHeader* ObjHeader::GetWeakCounter() {
-    return mm::ExtraObjectData::FromMetaObjHeader(this->meta_object()).GetWeakReferenceCounter();
+    RuntimeFail("Only for legacy MM");
 }
 
 ObjHeader* ObjHeader::GetOrSetWeakCounter(ObjHeader* counter) {
-    return mm::ExtraObjectData::FromMetaObjHeader(this->meta_object()).GetOrSetWeakReferenceCounter(this, counter);
+    RuntimeFail("Only for legacy MM");
 }
 
 #ifdef KONAN_OBJC_INTEROP
@@ -464,14 +464,6 @@ extern "C" RUNTIME_NOTHROW void PerformFullGC(MemoryState* memory) {
     threadData->gc().ScheduleAndWaitFullGCWithFinalizers();
 }
 
-extern "C" bool TryAddHeapRef(const ObjHeader* object) {
-    RuntimeFail("Only for legacy MM");
-}
-
-extern "C" RUNTIME_NOTHROW void ReleaseHeapRefNoCollect(const ObjHeader* object) {
-    RuntimeFail("Only for legacy MM");
-}
-
 extern "C" RUNTIME_NOTHROW OBJ_GETTER(TryRef, ObjHeader* object) {
     // TODO: With CMS this needs:
     //       * during marking phase if `object` is unmarked: barrier (might be automatic because of the stack write)
@@ -562,13 +554,6 @@ extern "C" void EnsureNeverFrozen(ObjHeader* obj) {
     }
 }
 
-extern "C" ForeignRefContext InitLocalForeignRef(ObjHeader* object) {
-    AssertThreadState(ThreadState::kRunnable);
-    // TODO: Remove when legacy MM is gone.
-    // Nothing to do.
-    return nullptr;
-}
-
 extern "C" ForeignRefContext InitForeignRef(ObjHeader* object) {
     AssertThreadState(ThreadState::kRunnable);
     auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
@@ -583,16 +568,6 @@ extern "C" void DeinitForeignRef(ObjHeader* object, ForeignRefContext context) {
     auto* node = FromForeignRefManager(context);
     RuntimeAssert(object == **node, "Must correspond to the same object");
     mm::StableRefRegistry::Instance().UnregisterStableRef(threadData, node);
-}
-
-extern "C" bool IsForeignRefAccessible(ObjHeader* object, ForeignRefContext context) {
-    // TODO: Remove when legacy MM is gone.
-    return true;
-}
-
-extern "C" void AdoptReferenceFromSharedVariable(ObjHeader* object) {
-    // TODO: Remove when legacy MM is gone.
-    // Nothing to do.
 }
 
 extern "C" void CheckGlobalsAccessible() {
@@ -660,4 +635,27 @@ RUNTIME_NOTHROW ALWAYS_INLINE extern "C" void Kotlin_processFieldInMark(void* st
 RUNTIME_NOTHROW ALWAYS_INLINE extern "C" void Kotlin_processEmptyObjectInMark(void* state, ObjHeader* object) {
     // Empty object. Nothing to do.
     // TODO: Try to generate it in the code generator.
+}
+
+extern "C" OBJ_GETTER(makePermanentWeakReferenceImpl, ObjHeader*);
+extern "C" OBJ_GETTER(makeObjCWeakReferenceImpl, void*);
+
+RUNTIME_NOTHROW extern "C" OBJ_GETTER(Konan_getWeakReferenceImpl, ObjHeader* referred) {
+    if (referred->permanent()) {
+        RETURN_RESULT_OF(makePermanentWeakReferenceImpl, referred);
+    }
+#if KONAN_OBJC_INTEROP
+    if (IsInstance(referred, theObjCObjectWrapperTypeInfo)) {
+        RETURN_RESULT_OF(makeObjCWeakReferenceImpl, referred->GetAssociatedObject());
+    }
+#endif // KONAN_OBJC_INTEROP
+    RETURN_RESULT_OF(mm::createRegularWeakReferenceImpl, referred);
+}
+
+RUNTIME_NOTHROW extern "C" OBJ_GETTER(Konan_WeakReferenceCounterLegacyMM_get, ObjHeader* counter) {
+    RuntimeFail("Legacy MM only");
+}
+
+RUNTIME_NOTHROW extern "C" OBJ_GETTER(Konan_RegularWeakReferenceImpl_get, ObjHeader* weakRef) {
+    RETURN_RESULT_OF(mm::derefRegularWeakReferenceImpl, weakRef);
 }

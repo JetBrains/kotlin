@@ -12,7 +12,6 @@ extern "C" {
 
 // Atomically clears counter object reference.
 void WeakReferenceCounterClear(ObjHeader* counter);
-ObjHeader* UnsafeWeakReferenceCounterGet(ObjHeader* counter);
 
 } // extern "C"
 

@@ -7,7 +7,6 @@
 
 #include "PointerBits.h"
 #include "ThreadData.hpp"
-#include "Weak.h"
 
 #ifdef KONAN_OBJC_INTEROP
 #include "ObjCMMAPI.h"
@@ -77,20 +76,19 @@ bool mm::ExtraObjectData::HasAssociatedObject() noexcept {
 #endif
 }
 
-
-void mm::ExtraObjectData::ClearWeakReferenceCounter() noexcept {
-    if (!HasWeakReferenceCounter()) return;
+void mm::ExtraObjectData::ClearRegularWeakReferenceImpl() noexcept {
+    if (!HasRegularWeakReferenceImpl()) return;
 
     auto *object = GetBaseObject();
-    WeakReferenceCounterClear(GetWeakReferenceCounter());
+    disposeRegularWeakReferenceImpl(GetRegularWeakReferenceImpl());
     // Not using `mm::SetHeapRef here`, because this code is called during sweep phase by the GC thread,
     // and so cannot affect marking.
     // TODO: Asserts on the above?
-    weakReferenceCounterOrBaseObject_ = object;
+    weakReferenceOrBaseObject_ = object;
 }
 
 mm::ExtraObjectData::~ExtraObjectData() {
-    RuntimeAssert(!HasWeakReferenceCounter(), "Object must have cleared weak references");
+    RuntimeAssert(!HasRegularWeakReferenceImpl(), "Object must have cleared weak references");
 
 #ifdef KONAN_OBJC_INTEROP
     RuntimeAssert(associatedObject_ == nullptr, "Object must have cleared associated object");

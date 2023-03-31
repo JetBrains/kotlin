@@ -74,16 +74,16 @@ bool collectRoot(typename Traits::MarkQueue& markQueue, ObjHeader* object) noexc
 // TODO: Consider making it noinline to keep loop in `Mark` small.
 template <typename Traits>
 void processExtraObjectData(GCHandle::GCMarkScope& markHandle, typename Traits::MarkQueue& markQueue, mm::ExtraObjectData& extraObjectData, ObjHeader* object) noexcept {
-    if (auto weakCounter = extraObjectData.GetWeakReferenceCounter()) {
+    if (auto weakReference = extraObjectData.GetRegularWeakReferenceImpl()) {
         RuntimeAssert(
-                weakCounter->heap(), "Weak counter must be a heap object. object=%p counter=%p permanent=%d local=%d", object, weakCounter,
-                weakCounter->permanent(), weakCounter->local());
-        // Do not schedule WeakReferenceCounter but process it right away.
+                weakReference->heap(), "Weak reference must be a heap object. object=%p weak=%p permanent=%d local=%d", object,
+                weakReference, weakReference->permanent(), weakReference->local());
+        // Do not schedule RegularWeakReferenceImpl but process it right away.
         // This will skip markQueue interaction.
-        if (Traits::tryMark(weakCounter)) {
-            markHandle.addObject(mm::GetAllocatedHeapSize(weakCounter));
-            // WeakReferenceCounter is empty, but keeping this just in case.
-            Traits::processInMark(markQueue, weakCounter);
+        if (Traits::tryMark(weakReference)) {
+            markHandle.addObject(mm::GetAllocatedHeapSize(weakReference));
+            // RegularWeakReferenceImpl is empty, but keeping this just in case.
+            Traits::processInMark(markQueue, weakReference);
         }
     }
 }
@@ -114,7 +114,7 @@ void SweepExtraObjects(GCHandle handle, typename Traits::ExtraObjectsFactory::It
     for (auto it = factoryIter.begin(); it != factoryIter.end();) {
         auto &extraObject = *it;
         if (!extraObject.getFlag(mm::ExtraObjectData::FLAGS_IN_FINALIZER_QUEUE) && !Traits::IsMarkedByExtraObject(extraObject)) {
-            extraObject.ClearWeakReferenceCounter();
+            extraObject.ClearRegularWeakReferenceImpl();
             if (extraObject.HasAssociatedObject()) {
                 extraObject.DetachAssociatedObject();
                 extraObject.setFlag(mm::ExtraObjectData::FLAGS_IN_FINALIZER_QUEUE);

@@ -149,9 +149,16 @@ ALWAYS_INLINE inline bool isNullOrMarker(const ObjHeader* obj) noexcept {
     return reinterpret_cast<uintptr_t>(obj) <= 1;
 }
 
-class ForeignRefManager;
 struct FrameOverlay;
+
+// Legacy MM only:
+class ForeignRefManager;
 typedef ForeignRefManager* ForeignRefContext;
+
+namespace kotlin::mm {
+// New MM only:
+struct RawSpecialRef;
+} // namespace kotlin::mm
 
 #ifdef __cplusplus
 extern "C" {
@@ -336,24 +343,6 @@ void Kotlin_native_internal_GC_setCyclicCollector(ObjHeader* gc, bool value);
 bool Kotlin_Any_isShareable(ObjHeader* thiz);
 void Kotlin_Any_share(ObjHeader* thiz);
 void PerformFullGC(MemoryState* memory) RUNTIME_NOTHROW;
-
-// Only for legacy
-bool TryAddHeapRef(const ObjHeader* object);
-void ReleaseHeapRefNoCollect(const ObjHeader* object) RUNTIME_NOTHROW;
-
-// Only for experimental
-OBJ_GETTER(TryRef, ObjHeader* object) RUNTIME_NOTHROW;
-
-ForeignRefContext InitLocalForeignRef(ObjHeader* object);
-
-ForeignRefContext InitForeignRef(ObjHeader* object);
-void DeinitForeignRef(ObjHeader* object, ForeignRefContext context);
-
-bool IsForeignRefAccessible(ObjHeader* object, ForeignRefContext context);
-
-// Should be used when reference is read from a possibly shared variable,
-// and there's nothing else keeping the object alive.
-void AdoptReferenceFromSharedVariable(ObjHeader* object);
 
 void CheckGlobalsAccessible();
 

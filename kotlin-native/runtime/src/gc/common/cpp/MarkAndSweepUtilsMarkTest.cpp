@@ -35,77 +35,40 @@ struct Payload {
 
 test_support::TypeInfoHolder typeHolder{test_support::TypeInfoHolder::ObjectBuilder<Payload>()};
 
-// TODO: This base might belong in `test_support`
-class BaseObject {
+void InstallWeakReference(test_support::Any& object, test_support::RegularWeakReferenceImpl& weakRef) noexcept {
+    auto& extraObjectData = mm::ExtraObjectData::GetOrInstall(object.header());
+    weakRef->referred = object.header();
+    auto* setWeakRef = extraObjectData.GetOrSetRegularWeakReferenceImpl(object.header(), weakRef.header());
+    EXPECT_EQ(setWeakRef, weakRef.header());
+    EXPECT_EQ(extraObjectData.GetBaseObject(), object.header());
+}
+
+void Finalize(test_support::Any& object) noexcept {
+    if (auto* extraObjectData = mm::ExtraObjectData::Get(object.header())) {
+        extraObjectData->ClearRegularWeakReferenceImpl();
+    }
+    RunFinalizers(object.header());
+}
+
+class Object : public test_support::Object<Payload> {
 public:
-    enum class Kind {
-        kPermanent,
-        kStackLocal,
-        kHeapLike // Treated as heap object for the purposes of the test.
-    };
+    Object() : test_support::Object<Payload>(typeHolder.typeInfo()) {}
 
-    virtual ObjHeader* GetObjHeader() = 0;
-
-    void InstallExtraData() { mm::ExtraObjectData::Install(GetObjHeader()); }
-
-    void InstallWeakCounter(BaseObject& counter) {
-        auto& extraObjectData = mm::ExtraObjectData::GetOrInstall(GetObjHeader());
-        auto *setCounter = extraObjectData.GetOrSetWeakReferenceCounter(GetObjHeader(), counter.GetObjHeader());
-        EXPECT_EQ(setCounter, counter.GetObjHeader());
-        EXPECT_EQ(extraObjectData.GetBaseObject(), GetObjHeader());
-    }
-
-protected:
-    void SetKind(Kind kind) {
-        switch (kind) {
-            case Kind::kPermanent:
-                GetObjHeader()->typeInfoOrMeta_ = setPointerBits(GetObjHeader()->typeInfoOrMeta_, OBJECT_TAG_PERMANENT_CONTAINER);
-                RuntimeAssert(GetObjHeader()->permanent(), "Must be permanent");
-                break;
-            case Kind::kHeapLike:
-                RuntimeAssert(GetObjHeader()->heap(), "Must be heap");
-                break;
-            case Kind::kStackLocal:
-                GetObjHeader()->typeInfoOrMeta_ = setPointerBits(GetObjHeader()->typeInfoOrMeta_,
-                                                                 OBJECT_TAG_PERMANENT_CONTAINER | OBJECT_TAG_NONTRIVIAL_CONTAINER);
-                RuntimeAssert(GetObjHeader()->local(), "Must be stack local");
-                break;
-        }
-    }
-
-    void Finalize() {
-        if (auto* extraObjectData = mm::ExtraObjectData::Get(GetObjHeader())) {
-            extraObjectData->ClearWeakReferenceCounter();
-        }
-        RunFinalizers(GetObjHeader());
-    }
+    ~Object() { Finalize(*this); }
 };
 
-class Object : public BaseObject, public test_support::Object<Payload> {
+class ObjectArray : public test_support::ObjectArray<3> {
 public:
-    explicit Object(Kind kind = Kind::kHeapLike) : test_support::Object<Payload>(typeHolder.typeInfo()) { SetKind(kind); }
+    ObjectArray() : test_support::ObjectArray<3>() {}
 
-    ~Object() { Finalize(); }
-
-    ObjHeader* GetObjHeader() override { return header(); }
+    ~ObjectArray() { Finalize(*this); }
 };
 
-class ObjectArray : public BaseObject, public test_support::ObjectArray<3> {
+class CharArray : public test_support::CharArray<3> {
 public:
-    explicit ObjectArray(Kind kind = Kind::kHeapLike) : test_support::ObjectArray<3>() { SetKind(kind); }
+    CharArray() : test_support::CharArray<3>() {}
 
-    ~ObjectArray() { Finalize(); }
-
-    ObjHeader* GetObjHeader() override { return header(); }
-};
-
-class CharArray : public BaseObject, public test_support::CharArray<3> {
-public:
-    explicit CharArray(Kind kind = Kind::kHeapLike) : test_support::CharArray<3>() { SetKind(kind); }
-
-    ~CharArray() { Finalize(); }
-
-    ObjHeader* GetObjHeader() override { return header(); }
+    ~CharArray() { Finalize(*this); }
 };
 
 class ScopedMarkTraits : private Pinned {
@@ -169,17 +132,17 @@ class MarkAndSweepUtilsMarkTest : public ::testing::Test {
 public:
     const std_support::unordered_set<ObjHeader*>& marked() const { return markTraits_.marked(); }
 
-    auto MarkedMatcher(std::initializer_list<std::reference_wrapper<BaseObject>> expected) {
+    auto MarkedMatcher(std::initializer_list<std::reference_wrapper<test_support::Any>> expected) {
         std_support::vector<ObjHeader*> objects;
         for (auto& object : expected) {
-            objects.push_back(object.get().GetObjHeader());
+            objects.push_back(object.get().header());
         }
         return testing::UnorderedElementsAreArray(objects);
     }
 
-    gc::MemoryUsage Mark(std::initializer_list<std::reference_wrapper<BaseObject>> graySet) {
+    gc::MemoryUsage Mark(std::initializer_list<std::reference_wrapper<test_support::Any>> graySet) {
         std_support::vector<ObjHeader*> objects;
-        for (auto& object : graySet) ScopedMarkTraits::tryEnqueue(objects, object.get().GetObjHeader());
+        for (auto& object : graySet) ScopedMarkTraits::tryEnqueue(objects, object.get().header());
         auto handle = gc::GCHandle::create(epoch_++);
         gc::Mark<ScopedMarkTraits>(handle, objects);
         handle.finished();
@@ -194,17 +157,17 @@ private:
     ScopedMarkTraits markTraits_;
 };
 
-size_t GetObjectsSize(std::initializer_list<std::reference_wrapper<BaseObject>> objects) {
+size_t GetObjectsSize(std::initializer_list<std::reference_wrapper<test_support::Any>> objects) {
     size_t size = 0;
     for (auto& object : objects) {
-        size += mm::GetAllocatedHeapSize(object.get().GetObjHeader());
+        size += mm::GetAllocatedHeapSize(object.get().header());
     }
     return size;
 }
 
 #define EXPECT_MARKED(stats, ...) \
     do { \
-        std::initializer_list<std::reference_wrapper<BaseObject>> objects = {__VA_ARGS__}; \
+        std::initializer_list<std::reference_wrapper<test_support::Any>> objects = {__VA_ARGS__}; \
         EXPECT_THAT(stats.objectsCount, objects.size()); \
         EXPECT_THAT(stats.totalObjectsSize, GetObjectsSize(objects)); \
         EXPECT_THAT(marked(), MarkedMatcher(objects)); \
@@ -273,7 +236,7 @@ TEST_F(MarkAndSweepUtilsMarkTest, MarkSingleCharArrayWithSomeData) {
 
 TEST_F(MarkAndSweepUtilsMarkTest, MarkSingleObjectWithExtraData) {
     Object object;
-    object.InstallExtraData();
+    object.installMetaObject();
 
     auto stats = Mark({object});
 
@@ -282,7 +245,7 @@ TEST_F(MarkAndSweepUtilsMarkTest, MarkSingleObjectWithExtraData) {
 
 TEST_F(MarkAndSweepUtilsMarkTest, MarkSingleObjectArrayWithExtraData) {
     ObjectArray array;
-    array.InstallExtraData();
+    array.installMetaObject();
 
     auto stats = Mark({array});
 
@@ -291,82 +254,76 @@ TEST_F(MarkAndSweepUtilsMarkTest, MarkSingleObjectArrayWithExtraData) {
 
 TEST_F(MarkAndSweepUtilsMarkTest, MarkSingleCharArrayWithExtraData) {
     CharArray array;
-    array.InstallExtraData();
+    array.installMetaObject();
 
     auto stats = Mark({array});
 
     EXPECT_MARKED(stats, array);
 }
 
-TEST_F(MarkAndSweepUtilsMarkTest, MarkSingleObjectWithWeakCounter) {
-    Object weakCounter;
+TEST_F(MarkAndSweepUtilsMarkTest, MarkSingleObjectWithWeakReference) {
+    test_support::RegularWeakReferenceImpl weakReference;
     Object object;
-    weakCounter->field1 = object.header();
-    object.InstallWeakCounter(weakCounter);
+    InstallWeakReference(object, weakReference);
 
     auto stats = Mark({object});
 
-    EXPECT_MARKED(stats, object, weakCounter);
+    EXPECT_MARKED(stats, object, weakReference);
 }
 
-TEST_F(MarkAndSweepUtilsMarkTest, MarkSingleObjectArrayWithWeakCounter) {
-    Object weakCounter;
+TEST_F(MarkAndSweepUtilsMarkTest, MarkSingleObjectArrayWithWeakReference) {
+    test_support::RegularWeakReferenceImpl weakReference;
     ObjectArray array;
-    weakCounter->field1 = array.header();
-    array.InstallWeakCounter(weakCounter);
+    InstallWeakReference(array, weakReference);
 
     auto stats = Mark({array});
 
-    EXPECT_MARKED(stats, array, weakCounter);
+    EXPECT_MARKED(stats, array, weakReference);
 }
 
-TEST_F(MarkAndSweepUtilsMarkTest, MarkSingleCharArrayWithWeakCounter) {
-    Object weakCounter;
+TEST_F(MarkAndSweepUtilsMarkTest, MarkSingleCharArrayWithWeakReference) {
+    test_support::RegularWeakReferenceImpl weakReference;
     CharArray array;
-    weakCounter->field1 = array.header();
-    array.InstallWeakCounter(weakCounter);
+    InstallWeakReference(array, weakReference);
 
     auto stats = Mark({array});
 
-    EXPECT_MARKED(stats, array, weakCounter);
+    EXPECT_MARKED(stats, array, weakReference);
 }
 
-TEST_F(MarkAndSweepUtilsMarkTest, MarkSingleObjectWithInvalidFieldsWithWeakCounter) {
-    Object weakCounter;
+TEST_F(MarkAndSweepUtilsMarkTest, MarkSingleObjectWithInvalidFieldsWithWeakReference) {
+    test_support::RegularWeakReferenceImpl weakReference;
     Object object;
     object->field1 = nullptr;
-    weakCounter->field1 = object.header();
-    object.InstallWeakCounter(weakCounter);
+    InstallWeakReference(object, weakReference);
 
     auto stats = Mark({object});
 
-    EXPECT_MARKED(stats, object, weakCounter);
+    EXPECT_MARKED(stats, object, weakReference);
 }
 
-TEST_F(MarkAndSweepUtilsMarkTest, MarkSingleObjectArrayWithInvalidFieldsWithWeakCounter) {
-    Object weakCounter;
+TEST_F(MarkAndSweepUtilsMarkTest, MarkSingleObjectArrayWithInvalidFieldsWithWeakReference) {
+    test_support::RegularWeakReferenceImpl weakReference;
     ObjectArray array;
     array.elements()[0] = nullptr;
-    weakCounter->field1 = array.header();
-    array.InstallWeakCounter(weakCounter);
+    InstallWeakReference(array, weakReference);
 
     auto stats = Mark({array});
 
-    EXPECT_MARKED(stats, array, weakCounter);
+    EXPECT_MARKED(stats, array, weakReference);
 }
 
-TEST_F(MarkAndSweepUtilsMarkTest, MarkSingleCharArrayWithSomeDataWithWeakCounter) {
-    Object weakCounter;
+TEST_F(MarkAndSweepUtilsMarkTest, MarkSingleCharArrayWithSomeDataWithWeakReference) {
+    test_support::RegularWeakReferenceImpl weakReference;
     CharArray array;
     array.elements()[0] = 'a';
     array.elements()[1] = 'b';
     array.elements()[2] = 'c';
-    weakCounter->field1 = array.header();
-    array.InstallWeakCounter(weakCounter);
+    InstallWeakReference(array, weakReference);
 
     auto stats = Mark({array});
 
-    EXPECT_MARKED(stats, array, weakCounter);
+    EXPECT_MARKED(stats, array, weakReference);
 }
 
 TEST_F(MarkAndSweepUtilsMarkTest, MarkTree) {
