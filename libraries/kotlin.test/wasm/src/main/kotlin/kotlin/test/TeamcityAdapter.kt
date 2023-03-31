@@ -82,7 +82,7 @@ internal class TeamcityAdapter : FrameworkAdapter {
         get() {
             var value = _testArguments
             if (value == null) {
-                val arguments = d8Arguments().takeIf { it.isNotEmpty() } ?: nodeArguments()
+                val arguments = d8Arguments().ifEmpty { nodeArguments() }
                 value = FrameworkTestArguments.parse(arguments.split(' '))
                 _testArguments = value
             }
