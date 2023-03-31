@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/klibABI")
 @TestDataPath("$PROJECT_ROOT")
-public class K1NativePartialLinkageTestGenerated extends AbstractNativePartialLinkageTest {
+public class NativePartialLinkageTestGenerated extends AbstractNativePartialLinkageTest {
     @Test
     @TestMetadata("addEnumEntry")
     public void testAddEnumEntry() throws Exception {

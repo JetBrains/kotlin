@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 @TestMetadata("native/native.tests/testData/klibContents")
 @TestDataPath("$PROJECT_ROOT")
 @Tag("k1libContents")
-public class K1NativeKLibContentsTestGenerated extends AbstractNativeKlibContentsTest {
+public class NativeKLibContentsTestGenerated extends AbstractNativeKlibContentsTest {
     @Test
     public void testAllFilesPresentInKlibContents() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/klibContents"), Pattern.compile("^([^_](.+)).kt$"), null, true);

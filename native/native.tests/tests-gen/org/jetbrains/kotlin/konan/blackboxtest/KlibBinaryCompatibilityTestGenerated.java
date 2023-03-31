@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/binaryCompatibility/klibEvolution")
 @TestDataPath("$PROJECT_ROOT")
 @Tag("k1KlibCompatibility")
-public class K1KlibBinaryCompatibilityTestGenerated extends AbstractNativeKlibBinaryCompatibilityTest {
+public class KlibBinaryCompatibilityTestGenerated extends AbstractNativeKlibBinaryCompatibilityTest {
     @Test
     @TestMetadata("addAbstractMemberBody.kt")
     public void testAddAbstractMemberBody() throws Exception {

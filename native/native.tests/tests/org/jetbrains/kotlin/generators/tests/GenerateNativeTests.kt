@@ -24,7 +24,7 @@ fun main() {
         // Codegen box tests.
         testGroup("native/native.tests/tests-gen", "compiler/testData") {
             testClass<AbstractNativeCodegenBoxTest>(
-                suiteTestClassName = "K1NativeCodegenBoxTestGenerated",
+                suiteTestClassName = "NativeCodegenBoxTestGenerated",
                 annotations = listOf(codegen(), k1Codegen(), provider<UseExtTestCaseGroupProvider>())
             ) {
                 model("codegen/box", targetBackend = TargetBackend.NATIVE)
@@ -45,7 +45,7 @@ fun main() {
         // Samples (how to utilize the abilities of new test infrastructure).
         testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
             testClass<AbstractNativeBlackBoxTest>(
-                suiteTestClassName = "K1InfrastructureTestGenerated",
+                suiteTestClassName = "InfrastructureTestGenerated",
                 annotations = listOf(infrastructure(), k1Infrastructure(), provider<UseStandardTestCaseGroupProvider>())
             ) {
                 model("samples")
@@ -56,7 +56,7 @@ fun main() {
         // Partial linkage tests.
         testGroup("native/native.tests/tests-gen", "compiler/testData") {
             testClass<AbstractNativePartialLinkageTest>(
-                suiteTestClassName = "K1NativePartialLinkageTestGenerated"
+                suiteTestClassName = "NativePartialLinkageTestGenerated"
             ) {
                 model("klibABI/", pattern = "^([^_](.+))$", recursive = false)
             }
@@ -71,7 +71,7 @@ fun main() {
         // KLIB binary compatibility tests.
         testGroup("native/native.tests/tests-gen", "compiler/testData") {
             testClass<AbstractNativeKlibBinaryCompatibilityTest>(
-                suiteTestClassName = "K1KlibBinaryCompatibilityTestGenerated",
+                suiteTestClassName = "KlibBinaryCompatibilityTestGenerated",
                 annotations = listOf(k1KLibCompatibility())
             ) {
                 model("binaryCompatibility/klibEvolution", recursive = false)
@@ -111,7 +111,7 @@ fun main() {
         // Klib contents tests
         testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
             testClass<AbstractNativeKlibContentsTest>(
-                suiteTestClassName = "K1NativeKLibContentsTestGenerated",
+                suiteTestClassName = "NativeKLibContentsTestGenerated",
                 annotations = listOf(k1libContents())
             ) {
                 model("klibContents", pattern = "^([^_](.+)).kt$", recursive = true)
