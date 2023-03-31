@@ -9,10 +9,9 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.serialization.constant.ConstValueProvider
-import org.jetbrains.kotlin.fir.serialization.constant.buildValueProtoBufIfPropertyIsConst
-import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
+import org.jetbrains.kotlin.fir.serialization.constant.buildValueProtoBufIfPropertyHasConst
 import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.metadata.serialization.MutableVersionRequirementTable
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.protobuf.GeneratedMessageLite
@@ -81,7 +80,8 @@ abstract class FirSerializerExtensionBase(
         property.setter?.serializeAnnotations(proto, protocol.propertySetterAnnotation)
         property.receiverParameter?.serializeAnnotations(proto, protocol.propertyExtensionReceiverAnnotation, property)
 
-        constValueProvider?.buildValueProtoBufIfPropertyIsConst(property, annotationSerializer)?.let { constProtoBuf ->
+        if (!Flags.HAS_CONSTANT.get(proto.flags)) return
+        constValueProvider?.buildValueProtoBufIfPropertyHasConst(property, annotationSerializer)?.let { constProtoBuf ->
             proto.setExtension(protocol.compileTimeValue, constProtoBuf)
         }
     }

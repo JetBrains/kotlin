@@ -52,7 +52,7 @@ enum class EvaluationMode(protected val mustCheckBody: Boolean) {
         private val forbiddenMethodsOnStrings = setOf("subSequence", "hashCode", "<init>")
         private val allowedExtensionFunctions = setOf(
             "kotlin.floorDiv", "kotlin.mod", "kotlin.NumbersKt.floorDiv", "kotlin.NumbersKt.mod", "kotlin.<get-code>",
-            "kotlin.internal.ir.EQEQ",
+            "kotlin.internal.ir.EQEQ", "kotlin.internal.ir.ieee754equals",
         )
 
         override fun canEvaluateFunction(function: IrFunction, context: IrCall?): Boolean {

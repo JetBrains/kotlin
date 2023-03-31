@@ -28,11 +28,11 @@ class ConstValueProviderImpl(
 ) : ConstValueProvider() {
     override val session: FirSession = components.session
 
-    override fun getConstantValueForProperty(firProperty: FirProperty): FirConstExpression<*>? {
-        val irProperty: IrProperty = components.declarationStorage.getCachedIrProperty(firProperty) ?: return null
-        if (!irProperty.isConst) return null
-        val irConst = irProperty.backingField?.initializer?.expression as? IrConst<*> ?: return null
-        return irConst.toFirConst()
+    override fun getConstantValueForProperty(firProperty: FirProperty): FirExpression? {
+        val firInitializer = firProperty.initializer
+        val irProperty: IrProperty = components.declarationStorage.getCachedIrProperty(firProperty) ?: return firInitializer
+        val irConst = irProperty.backingField?.initializer?.expression as? IrConst<*> ?: return firInitializer
+        return irConst.toFirConst() ?: firInitializer
     }
 
     override fun getNewFirAnnotationWithConstantValues(

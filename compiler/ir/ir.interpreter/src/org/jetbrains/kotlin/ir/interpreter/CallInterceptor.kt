@@ -153,7 +153,11 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
         val receiverType = irFunction.dispatchReceiverParameter?.type ?: irFunction.extensionReceiverParameter?.type
         val argsType = (listOfNotNull(receiverType) + irFunction.valueParameters.map { it.type }).map {
             // TODO: for consistency with current K/JS implementation Float constant should be treated as a Double (KT-35422)
-            if (environment.configuration.treatFloatInSpecialWay && it.isFloat()) irBuiltIns.doubleType else it
+            if (environment.configuration.treatFloatInSpecialWay && it.makeNotNull().isFloat()) {
+                if (it.isNullable()) irBuiltIns.doubleType.makeNullable() else irBuiltIns.doubleType
+            } else {
+                it
+            }
         }
         val argsValues = args.wrap(this, irFunction)
 

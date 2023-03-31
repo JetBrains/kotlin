@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.extensions.typeAttributeExtensions
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.*
+import org.jetbrains.kotlin.fir.serialization.constant.*
 import org.jetbrains.kotlin.fir.serialization.constant.EnumValue
 import org.jetbrains.kotlin.fir.serialization.constant.IntValue
 import org.jetbrains.kotlin.fir.serialization.constant.StringValue
@@ -375,12 +376,13 @@ class FirElementSerializer private constructor(
             }
         }
 
+        val hasConstant = (!property.isVar && property.initializer.hasConstantValue(session)) || property.isConst
         val flags = Flags.getPropertyFlags(
             hasAnnotations,
             ProtoEnumFlags.visibility(normalizeVisibility(property)),
             ProtoEnumFlags.modality(modality),
             ProtoBuf.MemberKind.DECLARATION,
-            property.isVar, hasGetter, hasSetter, property.isConst, property.isConst, property.isLateInit,
+            property.isVar, hasGetter, hasSetter, hasConstant, property.isConst, property.isLateInit,
             property.isExternal, property.delegateFieldSymbol != null, property.isExpect
         )
         if (flags != builder.flags) {
