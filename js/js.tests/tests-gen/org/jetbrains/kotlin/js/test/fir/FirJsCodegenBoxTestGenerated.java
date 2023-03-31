@@ -35056,6 +35056,12 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("smartcastOnDynamic.kt")
+        public void testSmartcastOnDynamic() throws Exception {
+            runTest("compiler/testData/codegen/box/smartCasts/smartcastOnDynamic.kt");
+        }
+
+        @Test
         @TestMetadata("whenSmartCast.kt")
         public void testWhenSmartCast() throws Exception {
             runTest("compiler/testData/codegen/box/smartCasts/whenSmartCast.kt");
