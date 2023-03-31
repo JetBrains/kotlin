@@ -313,65 +313,7 @@ sealed class KtSourceElement : AbstractKtSourceElement() {
     abstract override fun equals(other: Any?): Boolean
 }
 
-// NB: in certain situations, psi.node could be null (see e.g. KT-44152)
-// Potentially exceptions can be provoked by elementType / lighterASTNode
-sealed class KtPsiSourceElement(val psi: PsiElement) : KtSourceElement() {
-    override val elementType: IElementType?
-        get() = psi.node?.elementType
 
-    override val startOffset: Int
-        get() = psi.textRange.startOffset
-
-    override val endOffset: Int
-        get() = psi.textRange.endOffset
-
-    override val lighterASTNode: LighterASTNode by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        TreeBackedLighterAST.wrap(psi.node)
-    }
-
-    override val treeStructure: FlyweightCapableTreeStructure<LighterASTNode> by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        WrappedTreeStructure(psi.containingFile)
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as KtPsiSourceElement
-
-        if (psi != other.psi) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        return psi.hashCode()
-    }
-}
-
-private class KtRealPsiSourceElement(psi: PsiElement) : KtPsiSourceElement(psi) {
-    override val kind: KtSourceElementKind get() = KtRealSourceElementKind
-}
-
-private class KtFakeSourceElement(psi: PsiElement, override val kind: KtFakeSourceElementKind) : KtPsiSourceElement(psi) {
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-        if (!super.equals(other)) return false
-
-        other as KtFakeSourceElement
-
-        if (kind != other.kind) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = super.hashCode()
-        result = 31 * result + kind.hashCode()
-        return result
-    }
-}
 
 fun KtSourceElement.fakeElement(newKind: KtFakeSourceElementKind): KtSourceElement {
     if (kind == newKind) return this
@@ -381,10 +323,12 @@ fun KtSourceElement.fakeElement(newKind: KtFakeSourceElementKind): KtSourceEleme
     }
 }
 
-fun KtSourceElement.realElement(): KtSourceElement = when (this) {
-    is KtRealPsiSourceElement -> this
-    is KtLightSourceElement -> KtLightSourceElement(lighterASTNode, startOffset, endOffset, treeStructure, KtRealSourceElementKind)
-    is KtPsiSourceElement -> KtRealPsiSourceElement(psi)
+fun KtSourceElement.realElement(): KtSourceElement {
+    return when (this) {
+        is KtRealPsiSourceElement -> this
+        is KtLightSourceElement -> KtLightSourceElement(lighterASTNode, startOffset, endOffset, treeStructure, KtRealSourceElementKind)
+        is KtPsiSourceElement -> KtRealPsiSourceElement(psi)
+    }
 }
 
 
@@ -511,11 +455,6 @@ val KtSourceElement?.text: CharSequence?
         is KtLightSourceElement -> treeStructure.toString(lighterASTNode)
         else -> null
     }
-
-fun PsiElement.toKtPsiSourceElement(kind: KtSourceElementKind = KtRealSourceElementKind): KtPsiSourceElement = when (kind) {
-    is KtRealSourceElementKind -> KtRealPsiSourceElement(this)
-    is KtFakeSourceElementKind -> KtFakeSourceElement(this, kind)
-}
 
 @Suppress("NOTHING_TO_INLINE")
 inline fun LighterASTNode.toKtLightSourceElement(
