@@ -188,7 +188,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
         value = "-Xcompiler-plugin",
         valueDescription = "<path1>,<path2>:<optionName>=<value>,<optionName>=<value>",
         description = "Register compiler plugin",
-        delimiter = ""
+        delimiter = Argument.Delimiters.none
     )
     var pluginConfigurations: Array<String>? = null
         set(value) {

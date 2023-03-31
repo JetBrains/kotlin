@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.cli.common.arguments
 
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
+import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.utils.SmartList
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty1
@@ -28,13 +29,34 @@ annotation class Argument(
     val value: String,
     val shortName: String = "",
     val deprecatedName: String = "",
-    val delimiter: String = ",",
+    @property:RawDelimiter
+    val delimiter: String = Delimiters.default,
     val valueDescription: String = "",
     val description: String
-)
+) {
+    @RequiresOptIn(
+        message = "The raw delimiter value needs to be resolved. See 'resolvedDelimiter'. Using the raw value requires opt-in",
+        level = RequiresOptIn.Level.ERROR
+    )
+    annotation class RawDelimiter
+
+    object Delimiters {
+        const val default = ","
+        const val none = ""
+        const val pathSeparator = "<path_separator>"
+    }
+}
 
 val Argument.isAdvanced: Boolean
     get() = value.startsWith(ADVANCED_ARGUMENT_PREFIX) && value.length > ADVANCED_ARGUMENT_PREFIX.length
+
+@OptIn(Argument.RawDelimiter::class)
+val Argument.resolvedDelimiter: String?
+    get() = when (delimiter) {
+        Argument.Delimiters.none -> null
+        Argument.Delimiters.pathSeparator -> File.pathSeparator
+        else -> delimiter
+    }
 
 private const val ADVANCED_ARGUMENT_PREFIX = "-X"
 private const val FREE_ARGS_DELIMITER = "--"
@@ -211,7 +233,7 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(
             errors.value.duplicateArguments[argument.value] = value
         }
 
-        updateField(property, result, value, argument.delimiter, overrideArguments)
+        updateField(property, result, value, argument.resolvedDelimiter, overrideArguments)
     }
 
     result.freeArgs += freeArgs
@@ -238,13 +260,13 @@ private fun <A : CommonToolArguments> updateField(
     property: KMutableProperty1<A, Any?>,
     result: A,
     value: Any,
-    delimiter: String,
+    delimiter: String?,
     overrideArguments: Boolean
 ) {
     when (property.returnType.classifier) {
         Boolean::class, String::class -> property.set(result, value)
         Array<String>::class -> {
-            val newElements = if (delimiter.isEmpty()) {
+            val newElements = if (delimiter.isNullOrEmpty()) {
                 arrayOf(value as String)
             } else {
                 (value as String).split(delimiter).toTypedArray()

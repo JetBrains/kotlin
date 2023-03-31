@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.compilerRunner
 import org.jetbrains.kotlin.cli.common.arguments.Argument
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
 import org.jetbrains.kotlin.cli.common.arguments.isAdvanced
+import org.jetbrains.kotlin.cli.common.arguments.resolvedDelimiter
 import kotlin.reflect.KClass
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.memberProperties
@@ -31,8 +32,8 @@ internal fun <T : CommonToolArguments> toArgumentStrings(thisArguments: T, type:
         val rawPropertyValue = property.get(thisArguments)
         val rawDefaultValue = property.get(defaultArguments)
 
-        /* Default value can be omitted when not marked as 'isExplicit' */
-        if (rawPropertyValue == rawDefaultValue && !argumentAnnotation.isExplicit) {
+        /* Default value can be omitted */
+        if (rawPropertyValue == rawDefaultValue) {
             return@forEach
         }
 
@@ -78,8 +79,8 @@ internal fun <T : CommonToolArguments> toArgumentStrings(thisArguments: T, type:
 
 private fun getArgumentStringValue(argumentAnnotation: Argument, values: Array<*>?): List<String> {
     if (values.isNullOrEmpty()) return emptyList()
-    val delimiter = argumentAnnotation.delimiter
-    return if (delimiter.isEmpty()) values.map { it.toString() }
+    val delimiter = argumentAnnotation.resolvedDelimiter
+    return if (delimiter.isNullOrEmpty()) values.map { it.toString() }
     else listOf(values.joinToString(delimiter))
 }
 
