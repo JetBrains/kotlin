@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/binaryCompatibility/klibEvolution")
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
-public class JsKlibEvolutionTestGenerated extends AbstractJsKlibEvolutionTest {
+public class ClassicJsKlibEvolutionTestGenerated extends AbstractClassicJsKlibEvolutionTest {
     private void runTest(String testDataFilePath) throws Exception {
         KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS_IR, testDataFilePath);
     }

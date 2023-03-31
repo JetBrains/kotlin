@@ -16,7 +16,8 @@ import org.jetbrains.kotlin.js.test.ir.*
 import org.jetbrains.kotlin.js.testOld.AbstractDceTest
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.js.test.fir.AbstractFirLightTreeJsIrTextTest
-import org.jetbrains.kotlin.js.testOld.klib.AbstractJsKlibEvolutionTest
+import org.jetbrains.kotlin.js.testOld.klib.AbstractClassicJsKlibEvolutionTest
+import org.jetbrains.kotlin.js.testOld.klib.AbstractFirJsKlibEvolutionTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -68,7 +69,10 @@ fun main(args: Array<String>) {
         }
 
         testGroup("js/js.tests/tests-gen", "compiler/testData/binaryCompatibility", testRunnerMethodName = "runTest0") {
-            testClass<AbstractJsKlibEvolutionTest> {
+            testClass<AbstractClassicJsKlibEvolutionTest> {
+                model("klibEvolution", targetBackend = TargetBackend.JS_IR)
+            }
+            testClass<AbstractFirJsKlibEvolutionTest> {
                 model("klibEvolution", targetBackend = TargetBackend.JS_IR)
             }
         }

@@ -15,11 +15,32 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.js.testOld.V8JsTestChecker
+import org.jetbrains.kotlin.js.testOld.klib.AbstractJsKlibEvolutionTest.Companion.klib
 import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
+import org.jetbrains.kotlin.test.Directives
 import org.jetbrains.kotlin.test.KotlinBaseTest
 import java.io.File
 
-abstract class AbstractJsKlibEvolutionTest : AbstractKlibBinaryCompatibilityTest() {
+abstract class AbstractClassicJsKlibEvolutionTest : AbstractJsKlibEvolutionTest(CompilerType.K1)
+abstract class AbstractFirJsKlibEvolutionTest : AbstractJsKlibEvolutionTest(CompilerType.K2) {
+    // TODO: unmute after fixing KT-57711
+    override fun isIgnoredTest(filePath: String): Boolean {
+        val fileName = filePath.substringAfterLast('/')
+        return fileName == "addOrRemoveConst.kt" || fileName == "changeConstInitialization.kt"
+    }
+}
+
+abstract class AbstractJsKlibEvolutionTest(val compilerType: CompilerType) : AbstractKlibBinaryCompatibilityTest() {
+    enum class CompilerType {
+        K1,
+        K2 {
+            override fun setup(args: K2JSCompilerArguments) {
+                args.languageVersion = "2.0" // Activate FIR.
+            }
+        };
+
+        open fun setup(args: K2JSCompilerArguments) = Unit
+    }
 
     override fun createEnvironment() =
         KotlinCoreEnvironment.createForTests(testRootDisposable, CompilerConfiguration(), EnvironmentConfigFiles.JS_CONFIG_FILES)
@@ -61,10 +82,11 @@ abstract class AbstractJsKlibEvolutionTest : AbstractKlibBinaryCompatibilityTest
             file.absolutePath
         }
 
-    private fun runnerFunctionFile(): String {
+    private fun runnerFunctionFile(): Pair<String, File> {
         val file = File(workingDir, RUNNER_FUNCTION_FILE)
+        val text = runnerFileText
         file.writeText(runnerFileText)
-        return file.absolutePath
+        return text to file
     }
 
     override fun produceKlib(module: TestModule, version: Int) {
@@ -76,20 +98,28 @@ abstract class AbstractJsKlibEvolutionTest : AbstractKlibBinaryCompatibilityTest
             irProduceKlibFile = true
             irOnly = true
             irModuleName = module.name
+            compilerType.setup(this)
         }
         K2JSCompiler().exec(TestMessageCollector(), Services.EMPTY, args)
     }
 
     override fun produceProgram(module: TestModule) {
         assert(!module.hasVersions)
+
+        val (text, file) = runnerFunctionFile()
+        TestFile(module, file.name, text, Directives())
+
+        produceKlib(module, version = 2)
+
         val args = K2JSCompilerArguments().apply {
-            freeArgs = createFiles(module.files) + runnerFunctionFile()
             libraries = module.dependenciesToLibrariesArg(version = 2)
+            includes = File(workingDir, module.name(version = 2).klib).absolutePath
             outputDir = jsOutDir.normalize().absolutePath
             moduleName = module.name
             irProduceJs = true
             irOnly = true
             irModuleName = module.name
+            compilerType.setup(this)
         }
         K2JSCompiler().exec(TestMessageCollector(), Services.EMPTY, args)
     }
