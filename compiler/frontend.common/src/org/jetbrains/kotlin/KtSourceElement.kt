@@ -349,11 +349,11 @@ sealed class KtPsiSourceElement(val psi: PsiElement) : KtSourceElement() {
     }
 }
 
-class KtRealPsiSourceElement(psi: PsiElement) : KtPsiSourceElement(psi) {
+private class KtRealPsiSourceElement(psi: PsiElement) : KtPsiSourceElement(psi) {
     override val kind: KtSourceElementKind get() = KtRealSourceElementKind
 }
 
-class KtFakeSourceElement(psi: PsiElement, override val kind: KtFakeSourceElementKind) : KtPsiSourceElement(psi) {
+private class KtFakeSourceElement(psi: PsiElement, override val kind: KtFakeSourceElementKind) : KtPsiSourceElement(psi) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -436,7 +436,7 @@ class KtLightSourceElement(
     }
 }
 
-private class WrappedTreeStructure(file: PsiFile) : FlyweightCapableTreeStructure<LighterASTNode> {
+internal class WrappedTreeStructure(file: PsiFile) : FlyweightCapableTreeStructure<LighterASTNode> {
     private val lighterAST = TreeBackedLighterAST(file.node)
 
     fun unwrap(node: LighterASTNode) = lighterAST.unwrap(node)
@@ -512,8 +512,7 @@ val KtSourceElement?.text: CharSequence?
         else -> null
     }
 
-@Suppress("NOTHING_TO_INLINE")
-inline fun PsiElement.toKtPsiSourceElement(kind: KtSourceElementKind = KtRealSourceElementKind): KtPsiSourceElement = when (kind) {
+fun PsiElement.toKtPsiSourceElement(kind: KtSourceElementKind = KtRealSourceElementKind): KtPsiSourceElement = when (kind) {
     is KtRealSourceElementKind -> KtRealPsiSourceElement(this)
     is KtFakeSourceElementKind -> KtFakeSourceElement(this, kind)
 }

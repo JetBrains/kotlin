@@ -106,7 +106,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
     ) {
         val metaInfos = if (firFile.psi != null) {
             AnalyzingUtils.getSyntaxErrorRanges(firFile.psi!!).flatMap {
-                FirSyntaxErrors.SYNTAX.on(KtRealPsiSourceElement(it), positioningStrategy = null)
+                FirSyntaxErrors.SYNTAX.on(it.toKtPsiSourceElement(), positioningStrategy = null)
                     .toMetaInfos(
                         module,
                         testFile,
@@ -486,7 +486,7 @@ private class DebugDiagnosticConsumer(
         ) {
             if (sourceElement is KtPsiSourceElement) {
                 val psi = (sourceElement.psi as KtQualifiedExpression).selectorExpression
-                psi?.let { KtRealPsiSourceElement(it) } ?: sourceElement
+                psi?.toKtPsiSourceElement() ?: sourceElement
             } else {
                 val tree = sourceElement.treeStructure
                 val selector = tree.selector(sourceElement.lighterASTNode)

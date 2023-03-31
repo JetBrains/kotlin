@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.ElementTypeUtils.isExpression
 import org.jetbrains.kotlin.KtLightSourceElement
 import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.KtPsiSourceElement
-import org.jetbrains.kotlin.KtRealPsiSourceElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -22,6 +21,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.toKtPsiSourceElement
 import org.jetbrains.kotlin.util.getChildren
 
 object FirConfusingWhenBranchSyntaxChecker : FirExpressionSyntaxChecker<FirWhenExpression, PsiElement>() {
@@ -111,7 +111,7 @@ object FirConfusingWhenBranchSyntaxChecker : FirExpressionSyntaxChecker<FirWhenE
             else -> false
         }
         if (shouldReport) {
-            val source = KtRealPsiSourceElement(rawExpression)
+            val source = rawExpression.toKtPsiSourceElement()
             reporter.reportOn(source, FirErrors.CONFUSING_BRANCH_CONDITION, context)
         }
     }

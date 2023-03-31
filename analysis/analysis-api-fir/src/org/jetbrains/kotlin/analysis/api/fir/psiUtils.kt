@@ -7,9 +7,8 @@ package org.jetbrains.kotlin.analysis.api.fir
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.KtFakeSourceElement
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.KtRealPsiSourceElement
+import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
@@ -29,11 +28,14 @@ private val allowedFakeElementKinds = setOf(
     KtFakeSourceElementKind.ImplicitConstructor,
 )
 
-internal fun FirElement.getAllowedPsi() = when (val source = source) {
-    null -> null
-    is KtRealPsiSourceElement -> source.psi
-    is KtFakeSourceElement -> if (source.kind in allowedFakeElementKinds) psi else null
-    else -> null
+internal fun FirElement.getAllowedPsi(): PsiElement? {
+    val source = source ?: return null
+    val psi = psi ?: return null
+    return when (source.kind) {
+        is KtRealSourceElementKind -> psi
+        is KtFakeSourceElementKind -> if (source.kind in allowedFakeElementKinds) psi else null
+        else -> null
+    }
 }
 
 fun FirElement.findPsi(project: Project): PsiElement? =

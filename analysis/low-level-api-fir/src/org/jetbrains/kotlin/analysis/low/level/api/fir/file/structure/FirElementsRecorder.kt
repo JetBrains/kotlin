@@ -110,7 +110,7 @@ internal open class FirElementsRecorder : FirVisitor<Unit, MutableMap<KtElement,
     private fun cacheElement(element: FirElement, cache: MutableMap<KtElement, FirElement>) {
         val psi = element.source
             ?.takeIf {
-                it is KtRealPsiSourceElement ||
+                it.kind == KtRealSourceElementKind ||
                         it.kind == KtFakeSourceElementKind.ReferenceInAtomicQualifiedAccess ||
                         it.kind == KtFakeSourceElementKind.FromUseSiteTarget ||
                         // For secondary constructors without explicit delegated constructor call, the PSI tree always create an empty

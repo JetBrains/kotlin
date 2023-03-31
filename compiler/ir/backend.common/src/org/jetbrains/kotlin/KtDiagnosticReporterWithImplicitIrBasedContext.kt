@@ -33,7 +33,7 @@ class KtDiagnosticReporterWithImplicitIrBasedContext(
     private val suppressCache = IrBasedSuppressCache()
 
     private fun IrElement.toSourceElement(containingIrFile: IrFile) =
-        (PsiSourceManager.findPsiElement(this, containingIrFile)?.let(::KtRealPsiSourceElement)
+        (PsiSourceManager.findPsiElement(this, containingIrFile)?.toKtPsiSourceElement()
             ?: sourceElement())
 
     fun atFirstValidFrom(vararg irElements: IrElement, containingIrFile: IrFile): DiagnosticContextImpl? =
@@ -43,7 +43,7 @@ class KtDiagnosticReporterWithImplicitIrBasedContext(
         var irElement: IrElement? = null
         for (e in irElements) {
             PsiSourceManager.findPsiElement(e, containingIrFile)?.let {
-                return at(KtRealPsiSourceElement(it), e, containingIrFile)
+                return at(it.toKtPsiSourceElement(), e, containingIrFile)
             }
             if (irElement == null && e.startOffset >= 0) {
                 irElement = e

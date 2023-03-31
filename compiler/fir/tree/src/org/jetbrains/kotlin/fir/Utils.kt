@@ -78,7 +78,7 @@ val FirFile.packageFqName: FqName
     get() = packageDirective.packageFqName
 
 val FirElement.psi: PsiElement? get() = (source as? KtPsiSourceElement)?.psi
-val FirElement.realPsi: PsiElement? get() = (source as? KtRealPsiSourceElement)?.psi
+val FirElement.realPsi: PsiElement? get() = (source as? KtPsiSourceElement)?.takeIf { it.kind == KtRealSourceElementKind }?.psi
 
 val FirContextReceiver.labelName: Name? get() = customLabelName ?: labelNameFromTypeRef
 

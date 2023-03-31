@@ -5,12 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve
 
-import org.jetbrains.kotlin.KtFakeSourceElement
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.psi
-import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
@@ -19,7 +17,7 @@ internal fun FirDeclaration.getKtDeclarationForFirElement(): KtDeclaration {
     require(this !is FirFile)
 
     val ktDeclaration = (psi as? KtDeclaration) ?: run {
-        (source as? KtFakeSourceElement).psi?.parentOfType()
+        if (source?.kind is KtFakeSourceElementKind) { psi?.parentOfType() } else null
     }
     check(ktDeclaration is KtDeclaration) {
         "FirDeclaration should have a PSI of type KtDeclaration"
