@@ -21,7 +21,6 @@ void (*g_hookOverrideForTesting)(ObjHeader*) = nullptr;
 NO_INLINE void RunFinalizerHooksImpl(ObjHeader* object, const TypeInfo* type) noexcept {
     if (g_hookOverrideForTesting != nullptr) {
         g_hookOverrideForTesting(object);
-        return;
     }
     // TODO: Consider some global registration.
     if (type == theCleanerImplTypeInfo) {
