@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 public abstract class KtCompilerPluginsProvider {
     /**
      * Returns a list of extensions of a base [extensionType] which are registered for [module]
+     *
+     * These extensions are used in addition to those provided by the extension descriptor's [ProjectExtensionDescriptor.getInstances].
      */
     public abstract fun <T : Any> getRegisteredExtensions(module: KtSourceModule, extensionType: ProjectExtensionDescriptor<T>): List<T>
 }
