@@ -7,20 +7,18 @@ package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.UnsignedType
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotation
-import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationArgumentMapping
-import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCall
-import org.jetbrains.kotlin.fir.expressions.builder.buildConstExpression
+import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.serialization.constant.ConstValueProvider
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
 import org.jetbrains.kotlin.ir.declarations.IrProperty
-import org.jetbrains.kotlin.ir.expressions.IrConst
-import org.jetbrains.kotlin.ir.expressions.IrConstKind
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.getArgumentsWithIr
 import org.jetbrains.kotlin.types.ConstantValueKind
@@ -56,7 +54,21 @@ class ConstValueProviderImpl(
             else -> error("Cannot extract IR declaration for ${firAnnotationContainer.render()}")
         } ?: return firAnnotation
 
-        return buildNewFirAnnotationByCorrespondingIrAnnotation(irDeclaration, firAnnotationContainer, firAnnotation)
+        val correctFirContainer = when (firAnnotation.useSiteTarget) {
+            AnnotationUseSiteTarget.FIELD, AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD -> {
+                (firAnnotationContainer as? FirProperty)?.backingField ?: return firAnnotation
+            }
+            else -> firAnnotationContainer
+        }
+
+        val correctIrDeclaration = when (firAnnotation.useSiteTarget) {
+            AnnotationUseSiteTarget.FIELD, AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD -> {
+                (irDeclaration as? IrProperty)?.backingField ?: return firAnnotation
+            }
+            else -> irDeclaration
+        }
+
+        return buildNewFirAnnotationByCorrespondingIrAnnotation(correctIrDeclaration, correctFirContainer, firAnnotation)
     }
 
     override fun getNewFirAnnotationWithConstantValues(
@@ -121,8 +133,7 @@ class ConstValueProviderImpl(
                     return@forEach
                 }
                 val irExpression = irArguments.single { it.first.name == name }.second
-                // TODO recursion for annotations
-                mapping[name] = (irExpression as? IrConst<*>)?.toFirConst() ?: firExpression
+                mapping[name] = irExpression.convertToFir(firExpression)
             }
         }
 
@@ -136,6 +147,54 @@ class ConstValueProviderImpl(
                 this.annotationTypeRef = firAnnotation.annotationTypeRef
                 this.argumentMapping = annotationArgsMapping
             }
+        }
+    }
+
+    private fun IrElement.convertToFir(firExpression: FirExpression): FirExpression {
+        return when {
+            this is IrConst<*> -> toFirConst() ?: firExpression
+            this is IrConstructorCall && firExpression is FirFunctionCall -> {
+                val resolvedArgumentMapping = firExpression.resolvedArgumentMapping ?: return firExpression
+                val irArgs = this.getArgumentsWithIr()
+                buildFunctionCall {
+                    this.source = firExpression.source
+                    this.typeRef = firExpression.typeRef
+                    this.dispatchReceiver = firExpression.dispatchReceiver
+                    this.extensionReceiver = firExpression.extensionReceiver
+                    this.explicitReceiver = firExpression.explicitReceiver
+                    this.calleeReference = firExpression.calleeReference
+                    this.annotations.addAll(firExpression.annotations)
+                    this.typeArguments.addAll(firExpression.typeArguments)
+
+                    val newArgMapping = LinkedHashMap(
+                        resolvedArgumentMapping.map { (key, value) ->
+                            irArgs.first { it.first.name == value.name }.second.convertToFir(key) to value
+                        }.toMap()
+                    )
+                    this.argumentList = buildResolvedArgumentList(newArgMapping, firExpression.argumentList.source)
+                }
+            }
+            this is IrVararg && firExpression is FirVarargArgumentsExpression -> buildVarargArgumentsExpression {
+                this.source = firExpression.source
+                this.typeRef = firExpression.typeRef
+                this.annotations.addAll(firExpression.annotations)
+                this.varargElementType = firExpression.varargElementType
+                this.arguments.addAll(
+                    firExpression.arguments.zip(this@convertToFir.elements).map { it.second.convertToFir(it.first) }
+                )
+            }
+            this is IrVararg && firExpression is FirArrayOfCall -> buildArrayOfCall {
+                this.source = firExpression.source
+                this.typeRef = firExpression.typeRef
+                this.annotations.addAll(firExpression.annotations)
+                this.argumentList = buildArgumentList {
+                    this.source = firExpression.argumentList.source
+                    this.arguments.addAll(
+                        firExpression.argumentList.arguments.zip(this@convertToFir.elements).map { it.second.convertToFir(it.first) }
+                    )
+                }
+            }
+            else -> firExpression
         }
     }
 

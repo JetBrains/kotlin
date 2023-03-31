@@ -24141,9 +24141,27 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 }
 
                 @Test
+                @TestMetadata("annotationInArguments.kt")
+                public void testAnnotationInArguments() throws Exception {
+                    runTest("compiler/testData/codegen/box/involvesIrInterpreter/serialization/annotationInArguments.kt");
+                }
+
+                @Test
                 @TestMetadata("annotationSerialization.kt")
                 public void testAnnotationSerialization() throws Exception {
                     runTest("compiler/testData/codegen/box/involvesIrInterpreter/serialization/annotationSerialization.kt");
+                }
+
+                @Test
+                @TestMetadata("annotationWithArray.kt")
+                public void testAnnotationWithArray() throws Exception {
+                    runTest("compiler/testData/codegen/box/involvesIrInterpreter/serialization/annotationWithArray.kt");
+                }
+
+                @Test
+                @TestMetadata("annotationWithDefaults.kt")
+                public void testAnnotationWithDefaults() throws Exception {
+                    runTest("compiler/testData/codegen/box/involvesIrInterpreter/serialization/annotationWithDefaults.kt");
                 }
             }
         }
