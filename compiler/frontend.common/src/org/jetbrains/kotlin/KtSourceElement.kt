@@ -333,72 +333,6 @@ sealed class KtPsiSourceElement(val psi: PsiElement) : KtSourceElement() {
         WrappedTreeStructure(psi.containingFile)
     }
 
-    internal class WrappedTreeStructure(file: PsiFile) : FlyweightCapableTreeStructure<LighterASTNode> {
-        private val lighterAST = TreeBackedLighterAST(file.node)
-
-        fun unwrap(node: LighterASTNode) = lighterAST.unwrap(node)
-
-        override fun toString(node: LighterASTNode): CharSequence = unwrap(node).text
-
-        override fun getRoot(): LighterASTNode = lighterAST.root
-
-        override fun getParent(node: LighterASTNode): LighterASTNode? =
-            unwrap(node).psi.parent?.node?.let { TreeBackedLighterAST.wrap(it) }
-
-        override fun getChildren(node: LighterASTNode, nodesRef: Ref<Array<LighterASTNode>>): Int {
-            val psi = unwrap(node).psi
-            val children = mutableListOf<PsiElement>()
-            var child = psi.firstChild
-            while (child != null) {
-                children += child
-                child = child.nextSibling
-            }
-            if (children.isEmpty()) {
-                nodesRef.set(LighterASTNode.EMPTY_ARRAY)
-            } else {
-                nodesRef.set(children.map { TreeBackedLighterAST.wrap(it.node) }.toTypedArray())
-            }
-            return children.size
-        }
-
-        override fun disposeChildren(p0: Array<out LighterASTNode>?, p1: Int) {
-        }
-
-        override fun getStartOffset(node: LighterASTNode): Int {
-            return getStartOffset(unwrap(node).psi)
-        }
-
-        private fun getStartOffset(element: PsiElement): Int {
-            var child = element.firstChild
-            if (child != null) {
-                while (child is PsiComment || child is PsiWhiteSpace) {
-                    child = child.nextSibling
-                }
-                if (child != null) {
-                    return getStartOffset(child)
-                }
-            }
-            return element.textRange.startOffset
-        }
-
-        override fun getEndOffset(node: LighterASTNode): Int {
-            return getEndOffset(unwrap(node).psi)
-        }
-
-        private fun getEndOffset(element: PsiElement): Int {
-            var child = element.lastChild
-            if (child != null) {
-                while (child is PsiComment || child is PsiWhiteSpace) {
-                    child = child.prevSibling
-                }
-                if (child != null) {
-                    return getEndOffset(child)
-                }
-            }
-            return element.textRange.endOffset
-        }
-    }
-
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -472,7 +406,7 @@ class KtLightSourceElement(
      * Otherwise, return some not-null result.
      */
     fun unwrapToKtPsiSourceElement(): KtPsiSourceElement? {
-        if (treeStructure !is KtPsiSourceElement.WrappedTreeStructure) return null
+        if (treeStructure !is WrappedTreeStructure) return null
         val node = treeStructure.unwrap(lighterASTNode)
         return node.psi?.toKtPsiSourceElement(kind)
     }
@@ -501,6 +435,73 @@ class KtLightSourceElement(
         return result
     }
 }
+
+private class WrappedTreeStructure(file: PsiFile) : FlyweightCapableTreeStructure<LighterASTNode> {
+    private val lighterAST = TreeBackedLighterAST(file.node)
+
+    fun unwrap(node: LighterASTNode) = lighterAST.unwrap(node)
+
+    override fun toString(node: LighterASTNode): CharSequence = unwrap(node).text
+
+    override fun getRoot(): LighterASTNode = lighterAST.root
+
+    override fun getParent(node: LighterASTNode): LighterASTNode? =
+        unwrap(node).psi.parent?.node?.let { TreeBackedLighterAST.wrap(it) }
+
+    override fun getChildren(node: LighterASTNode, nodesRef: Ref<Array<LighterASTNode>>): Int {
+        val psi = unwrap(node).psi
+        val children = mutableListOf<PsiElement>()
+        var child = psi.firstChild
+        while (child != null) {
+            children += child
+            child = child.nextSibling
+        }
+        if (children.isEmpty()) {
+            nodesRef.set(LighterASTNode.EMPTY_ARRAY)
+        } else {
+            nodesRef.set(children.map { TreeBackedLighterAST.wrap(it.node) }.toTypedArray())
+        }
+        return children.size
+    }
+
+    override fun disposeChildren(p0: Array<out LighterASTNode>?, p1: Int) {
+    }
+
+    override fun getStartOffset(node: LighterASTNode): Int {
+        return getStartOffset(unwrap(node).psi)
+    }
+
+    private fun getStartOffset(element: PsiElement): Int {
+        var child = element.firstChild
+        if (child != null) {
+            while (child is PsiComment || child is PsiWhiteSpace) {
+                child = child.nextSibling
+            }
+            if (child != null) {
+                return getStartOffset(child)
+            }
+        }
+        return element.textRange.startOffset
+    }
+
+    override fun getEndOffset(node: LighterASTNode): Int {
+        return getEndOffset(unwrap(node).psi)
+    }
+
+    private fun getEndOffset(element: PsiElement): Int {
+        var child = element.lastChild
+        if (child != null) {
+            while (child is PsiComment || child is PsiWhiteSpace) {
+                child = child.prevSibling
+            }
+            if (child != null) {
+                return getEndOffset(child)
+            }
+        }
+        return element.textRange.endOffset
+    }
+}
+
 
 val AbstractKtSourceElement?.psi: PsiElement? get() = (this as? KtPsiSourceElement)?.psi
 
