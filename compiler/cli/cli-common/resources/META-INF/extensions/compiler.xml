@@ -75,7 +75,7 @@
         <extensionPoint qualifiedName="org.jetbrains.kotlin.renameHandler"
                         interface="com.intellij.refactoring.rename.RenameHandler"
                         dynamic="true"/>
-        <extensionPoint qualifiedName="org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter"
+        <extensionPoint qualifiedName="org.jetbrains.kotlin.fir.extensions.firExtensionRegistrar"
                         interface="org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter"/>
         <extensionPoint qualifiedName="org.jetbrains.kotlin.DescriptorSerializerPlugin"
                         interface="org.jetbrains.kotlin.serialization.DescriptorSerializerPlugin"/>
