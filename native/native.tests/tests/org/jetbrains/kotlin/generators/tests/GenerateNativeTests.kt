@@ -75,6 +75,12 @@ fun main() {
             ) {
                 model("binaryCompatibility/klibEvolution", recursive = false)
             }
+            testClass<AbstractNativeKlibEvolutionTest>(
+                suiteTestClassName = "FirNativeKlibEvolutionTestGenerated",
+                annotations = listOf(provider<FirPipeline>())
+            ) {
+                model("binaryCompatibility/klibEvolution", recursive = false)
+            }
         }
 
         // CInterop tests.
