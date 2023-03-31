@@ -42,7 +42,11 @@ static void injectToRuntime();
 }
 
 -(KRef)toKotlin:(KRef*)OBJ_RESULT {
-  RETURN_OBJ(refHolder.ref<ErrorPolicy::kTerminate>());
+  if (permanent) {
+    RETURN_OBJ(refHolder.refPermanent());
+  } else {
+    RETURN_OBJ(refHolder.ref<ErrorPolicy::kTerminate>());
+  }
 }
 
 +(void)load {
@@ -88,10 +92,11 @@ static void injectToRuntime();
 
   KotlinBase* candidate = [super allocWithZone:nil];
   // TODO: should we call NSObject.init ?
-  candidate->refHolder.initAndAddRef(obj);
-  candidate->permanent = obj->permanent();
+  bool permanent = obj->permanent();
+  candidate->permanent = permanent;
 
-  if (!obj->permanent()) { // TODO: permanent objects should probably be supported as custom types.
+  if (!permanent) { // TODO: permanent objects should probably be supported as custom types.
+    candidate->refHolder.initAndAddRef(obj);
     if (!isShareable(obj)) {
       SetAssociatedObject(obj, candidate);
     } else {
@@ -105,6 +110,8 @@ static void injectToRuntime();
         return objc_retain(old);
       }
     }
+  } else {
+    candidate->refHolder.initForPermanentObject(obj);
   }
 
   return candidate;
@@ -136,6 +143,8 @@ static void injectToRuntime();
 }
 
 -(void)releaseAsAssociatedObject:(ReleaseMode)mode {
+  RuntimeAssert(!permanent, "Cannot be called on permanent objects");
+
   // This function is called by the GC. It made a decision to reclaim Kotlin object, and runs
   // deallocation hooks at the moment, including deallocation of the "associated object" ([self])
   // using the [super release] call below.

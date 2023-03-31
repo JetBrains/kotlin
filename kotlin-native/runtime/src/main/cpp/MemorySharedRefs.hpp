@@ -46,6 +46,7 @@ static_assert(std::is_trivially_destructible_v<KRefSharedHolder>, "KRefSharedHol
 
 class BackRefFromAssociatedObject {
  public:
+  void initForPermanentObject(ObjHeader* obj);
   void initAndAddRef(ObjHeader* obj);
 
   // Error if refCount is zero and it's called from the wrong worker with non-frozen obj_.
@@ -64,6 +65,8 @@ class BackRefFromAssociatedObject {
   // Error if called from the wrong worker with non-frozen obj_.
   template <ErrorPolicy errorPolicy>
   ObjHeader* ref() const;
+
+  ObjHeader* refPermanent() const;
 
  private:
   ObjHeader* obj_; // May be null before [initAndAddRef] or after [detach].

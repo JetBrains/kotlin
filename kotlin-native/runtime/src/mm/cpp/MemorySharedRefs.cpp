@@ -41,8 +41,15 @@ void KRefSharedHolder::dispose() {
     DeinitForeignRef(obj_, context_);
 }
 
+void BackRefFromAssociatedObject::initForPermanentObject(ObjHeader* obj) {
+    RuntimeAssert(obj != nullptr, "must not be null");
+    RuntimeAssert(obj->permanent(), "Can only be called with permanent object");
+    obj_ = obj;
+}
+
 void BackRefFromAssociatedObject::initAndAddRef(ObjHeader* obj) {
     RuntimeAssert(obj != nullptr, "must not be null");
+    RuntimeAssert(!obj->permanent(), "Can only be called with non-permanent object");
     obj_ = obj;
 
     // Generally a specialized addRef below:
@@ -126,3 +133,7 @@ ObjHeader* BackRefFromAssociatedObject::ref() const {
 template ObjHeader* BackRefFromAssociatedObject::ref<ErrorPolicy::kDefaultValue>() const;
 template ObjHeader* BackRefFromAssociatedObject::ref<ErrorPolicy::kThrow>() const;
 template ObjHeader* BackRefFromAssociatedObject::ref<ErrorPolicy::kTerminate>() const;
+
+ObjHeader* BackRefFromAssociatedObject::refPermanent() const {
+  return obj_;
+}
