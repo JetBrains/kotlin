@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.EnforcedHostTarget
 import org.jetbrains.kotlin.konan.blackboxtest.support.EnforcedProperty
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.FirPipeline
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.UseExtTestCaseGroupProvider
+import org.jetbrains.kotlin.konan.blackboxtest.support.group.UsePartialLinkage
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.UseStandardTestCaseGroupProvider
 import org.jetbrains.kotlin.test.TargetBackend
 import org.junit.jupiter.api.Tag
@@ -25,17 +26,48 @@ fun main() {
         testGroup("native/native.tests/tests-gen", "compiler/testData") {
             testClass<AbstractNativeCodegenBoxTest>(
                 suiteTestClassName = "NativeCodegenBoxTestGenerated",
-                annotations = listOf(codegen(), k1Codegen(), provider<UseExtTestCaseGroupProvider>())
+                annotations = listOf(
+                    codegen(),
+                    k1Codegen(),
+                    provider<UseExtTestCaseGroupProvider>()
+                )
             ) {
                 model("codegen/box", targetBackend = TargetBackend.NATIVE)
                 model("codegen/boxInline", targetBackend = TargetBackend.NATIVE)
             }
-        }
-
-        testGroup("native/native.tests/tests-gen", "compiler/testData") {
+            testClass<AbstractNativeCodegenBoxTest>(
+                suiteTestClassName = "NativeCodegenBoxTestNoPLGenerated",
+                annotations = listOf(
+                    codegen(),
+                    k1Codegen(),
+                    provider<UseExtTestCaseGroupProvider>(),
+                    noPartialLinkage()
+                )
+            ) {
+                model("codegen/box", targetBackend = TargetBackend.NATIVE)
+                model("codegen/boxInline", targetBackend = TargetBackend.NATIVE)
+            }
             testClass<AbstractNativeCodegenBoxTest>(
                 suiteTestClassName = "FirNativeCodegenBoxTestGenerated",
-                annotations = listOf(codegenK2(), firCodegen(), provider<UseExtTestCaseGroupProvider>(), provider<FirPipeline>())
+                annotations = listOf(
+                    codegenK2(),
+                    firCodegen(),
+                    provider<UseExtTestCaseGroupProvider>(),
+                    provider<FirPipeline>()
+                )
+            ) {
+                model("codegen/box", targetBackend = TargetBackend.NATIVE)
+                model("codegen/boxInline", targetBackend = TargetBackend.NATIVE)
+            }
+            testClass<AbstractNativeCodegenBoxTest>(
+                suiteTestClassName = "FirNativeCodegenBoxTestNoPLGenerated",
+                annotations = listOf(
+                    codegenK2(),
+                    firCodegen(),
+                    provider<UseExtTestCaseGroupProvider>(),
+                    provider<FirPipeline>(),
+                    noPartialLinkage()
+                )
             ) {
                 model("codegen/box", targetBackend = TargetBackend.NATIVE)
                 model("codegen/boxInline", targetBackend = TargetBackend.NATIVE)
@@ -157,6 +189,11 @@ private fun debugOnly() = annotation(
 )
 
 private fun hostOnly() = provider<EnforcedHostTarget>()
+
+private fun noPartialLinkage() = annotation(
+    UsePartialLinkage::class.java,
+    "mode" to UsePartialLinkage.Mode.DISABLED
+)
 
 private fun codegen() = annotation(Tag::class.java, "codegen")
 private fun k1Codegen() = annotation(Tag::class.java, "k1Codegen")
