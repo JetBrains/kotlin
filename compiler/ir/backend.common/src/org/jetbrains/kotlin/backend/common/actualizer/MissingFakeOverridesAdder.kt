@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.FqName
 
-class MissingFakeOverridesAdder(
+internal class MissingFakeOverridesAdder(
     private val expectActualMap: Map<IrSymbol, IrSymbol>,
     private val typeAliasMap: Map<FqName, FqName>,
     private val diagnosticsReporter: KtDiagnosticReporterWithImplicitIrBasedContext

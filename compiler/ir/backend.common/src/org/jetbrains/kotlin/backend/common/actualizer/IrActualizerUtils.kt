@@ -108,9 +108,9 @@ private fun IrFunction.match(actualFunction: IrFunction, expectActualTypesMap: M
     return true
 }
 
-fun generateActualIrClassOrTypeAliasFullName(declaration: IrElement) = generateIrElementFullNameFromExpect(declaration, emptyMap())
+internal fun generateActualIrClassOrTypeAliasFullName(declaration: IrElement) = generateIrElementFullNameFromExpect(declaration, emptyMap())
 
-fun generateIrElementFullNameFromExpect(
+internal fun generateIrElementFullNameFromExpect(
     declaration: IrElement,
     expectActualTypeAliasMap: Map<FqName, FqName>
 ): String {
@@ -157,7 +157,7 @@ private fun appendElementFullName(
 }
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
-fun KtDiagnosticReporterWithImplicitIrBasedContext.reportMissingActual(irDeclaration: IrDeclaration) {
+internal fun KtDiagnosticReporterWithImplicitIrBasedContext.reportMissingActual(irDeclaration: IrDeclaration) {
     at(irDeclaration).report(
         CommonBackendErrors.NO_ACTUAL_FOR_EXPECT,
         (irDeclaration as? IrDeclarationWithName)?.name?.asString().orEmpty(),

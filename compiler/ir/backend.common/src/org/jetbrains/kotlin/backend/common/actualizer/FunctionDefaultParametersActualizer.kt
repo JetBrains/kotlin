@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 
-class FunctionDefaultParametersActualizer(private val expectActualMap: Map<IrSymbol, IrSymbol>) {
+internal class FunctionDefaultParametersActualizer(private val expectActualMap: Map<IrSymbol, IrSymbol>) {
     fun actualize() {
         for ((expect, actual) in expectActualMap) {
             if (expect is IrFunctionSymbol) {
@@ -26,7 +26,6 @@ class FunctionDefaultParametersActualizer(private val expectActualMap: Map<IrSym
             if (actualParameter.defaultValue == null && expectDefaultValue != null) {
                 actualParameter.defaultValue = expectDefaultValue.copyAndActualizeDefaultValue(
                     actualFunction,
-                    actualParameter,
                     mapOf(),
                     classActualizer = { (expectActualMap[it.symbol] as IrClassSymbol).owner },
                     functionActualizer = { (expectActualMap[it.symbol] as IrFunctionSymbol).owner }

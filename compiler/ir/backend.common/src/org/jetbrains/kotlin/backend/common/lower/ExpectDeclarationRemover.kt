@@ -151,7 +151,6 @@ open class ExpectDeclarationRemover(val symbolTable: ReferenceSymbolTable, priva
         defaultValue.let { originalDefault ->
             declaration.defaultValue = originalDefault.copyAndActualizeDefaultValue(
                 function,
-                declaration,
                 typeParameterSubstitutionMap.getValue(expectToActual),
                 classActualizer = { symbolTable.referenceClass(it.descriptor.findActualForExpect() as ClassDescriptor).owner },
                 functionActualizer = { symbolTable.referenceFunction(it.descriptor.findActualForExpect() as FunctionDescriptor).owner }
