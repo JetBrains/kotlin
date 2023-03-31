@@ -25,11 +25,11 @@ import org.jetbrains.kotlin.utils.DFS
 import org.junit.jupiter.api.Tag
 import java.io.File
 import kotlin.math.max
-import org.jetbrains.kotlin.compatibility.binary.TestFile as BinaryCompatibilityTestFile
-import org.jetbrains.kotlin.compatibility.binary.TestModule as BinaryCompatibilityTestModule
+import org.jetbrains.kotlin.compatibility.binary.TestFile as TFile
+import org.jetbrains.kotlin.compatibility.binary.TestModule as TModule
 
-@Tag("klib-binary-compatibility")
-abstract class AbstractNativeKlibBinaryCompatibilityTest : AbstractNativeSimpleTest() {
+@Tag("klib-evolution")
+abstract class AbstractNativeKlibEvolutionTest : AbstractNativeSimpleTest() {
 
     protected fun runTest(@TestDataFile testPath: String): Unit = AbstractKlibBinaryCompatibilityTest.doTest(
         filePath = testPath,
@@ -39,12 +39,12 @@ abstract class AbstractNativeKlibBinaryCompatibilityTest : AbstractNativeSimpleT
     )
 
     private fun buildKlib(
-        binaryCompatibilityTestModule: BinaryCompatibilityTestModule,
+        testModule: TModule,
         version: Int
     ) {
-        val module = binaryCompatibilityTestModule.toLightDependencyWithVersion(version)
+        val module = testModule.toLightDependencyWithVersion(version)
         val moduleDependencies = collectDependencies(
-            binaryCompatibilityTestModule.dependenciesSymbols,
+            testModule.dependenciesSymbols,
             withVersion = version
         )
         val klibFile = module.klibFile
@@ -65,7 +65,7 @@ abstract class AbstractNativeKlibBinaryCompatibilityTest : AbstractNativeSimpleT
     }
 
     private fun buildAndExecuteBinary(
-        mainTestModule: BinaryCompatibilityTestModule,
+        mainTestModule: TModule,
         expectedResult: String
     ) {
         val binaryVersion = moduleVersions.values.maxOrNull() ?: 2
@@ -224,7 +224,7 @@ abstract class AbstractNativeKlibBinaryCompatibilityTest : AbstractNativeSimpleT
         }
     }
 
-    private fun BinaryCompatibilityTestFile.toUncommittedIn(
+    private fun TFile.toUncommittedIn(
         extra: LightDependencyWithVersion
     ): TestFile<TestModule.Exclusive> = TestFile.createUncommitted(
         location = extra.localBuildDir.resolve(name),
@@ -232,7 +232,7 @@ abstract class AbstractNativeKlibBinaryCompatibilityTest : AbstractNativeSimpleT
         text = content
     )
 
-    private fun BinaryCompatibilityTestModule.toLightDependencyWithVersion(
+    private fun TModule.toLightDependencyWithVersion(
         version: Int
     ): LightDependencyWithVersion {
         val extra = LightDependencyWithVersion(name, version)

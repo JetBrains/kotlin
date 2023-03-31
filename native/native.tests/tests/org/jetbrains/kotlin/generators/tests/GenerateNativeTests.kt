@@ -68,11 +68,10 @@ fun main() {
             }
         }
 
-        // KLIB binary compatibility tests.
+        // KLIB evolution tests.
         testGroup("native/native.tests/tests-gen", "compiler/testData") {
-            testClass<AbstractNativeKlibBinaryCompatibilityTest>(
-                suiteTestClassName = "KlibBinaryCompatibilityTestGenerated",
-                annotations = listOf(k1KLibCompatibility())
+            testClass<AbstractNativeKlibEvolutionTest>(
+                suiteTestClassName = "NativeKlibEvolutionTestGenerated"
             ) {
                 model("binaryCompatibility/klibEvolution", recursive = false)
             }
@@ -163,4 +162,3 @@ private fun k1Infrastructure() = annotation(Tag::class.java, "k1Infrastructure")
 private fun k1libContents() = annotation(Tag::class.java, "k1libContents")
 private fun k2libContents() = annotation(Tag::class.java, "k2libContents")
 private fun firKLibContents() = annotation(Tag::class.java, "firKlibContents")
-private fun k1KLibCompatibility() = annotation(Tag::class.java, "k1KlibCompatibility")
