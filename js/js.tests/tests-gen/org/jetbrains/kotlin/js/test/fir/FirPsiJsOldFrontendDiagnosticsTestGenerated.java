@@ -26,6 +26,12 @@ public class FirPsiJsOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiJ
     }
 
     @Test
+    @TestMetadata("dynamicUnresolved.kt")
+    public void testDynamicUnresolved() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicUnresolved.kt");
+    }
+
+    @Test
     @TestMetadata("funConstructorCallJS.kt")
     public void testFunConstructorCallJS() throws Exception {
         runTest("compiler/testData/diagnostics/testsWithJsStdLib/funConstructorCallJS.kt");
