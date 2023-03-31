@@ -48,14 +48,14 @@ abstract class AbstractIncrementalJvmCompilerRunnerTest : AbstractIncrementalCom
         }
         if (javaSources.isEmpty()) return TestCompilationResult(ExitCode.OK, emptyList(), emptyList())
 
-        val javaClasspath = compileClasspath + File.pathSeparator + kotlinClassesPath
+        val javaClasspath = compileClasspath + kotlinClassesPath
         val javaDestinationDir = File(workingDir, "java-classes").apply {
             if (exists()) {
                 deleteRecursively()
             }
             mkdirs()
         }
-        val args = arrayOf("-cp", javaClasspath,
+        val args = arrayOf("-cp", javaClasspath.joinToString(File.pathSeparator),
                            "-d", javaDestinationDir.canonicalPath,
                            *javaSources.map { it.canonicalPath }.toTypedArray()
         )
@@ -73,12 +73,12 @@ abstract class AbstractIncrementalJvmCompilerRunnerTest : AbstractIncrementalCom
         K2JVMCompilerArguments().apply {
             moduleName = testDir.name
             destination = destinationDir.path
-            classpath = compileClasspath
+            classpath = compileClasspath.toTypedArray()
         }
 
     private val compileClasspath =
         listOf(
             kotlinStdlibJvm,
             KtTestUtil.getAnnotationsJar()
-        ).joinToString(File.pathSeparator) { it.canonicalPath }
+        ).map { it.canonicalPath }
 }

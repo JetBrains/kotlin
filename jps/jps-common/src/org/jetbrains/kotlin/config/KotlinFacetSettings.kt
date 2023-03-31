@@ -181,7 +181,7 @@ class KotlinFacetSettings {
                 if (compilerSettings != null) {
                     parseCommandLineArguments(compilerSettings.additionalArgumentsAsList, this)
                 }
-                if (this is K2JVMCompilerArguments) this.classpath = ""
+                if (this is K2JVMCompilerArguments) this.classpath = null
             }
         } else null
     }

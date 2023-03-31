@@ -35,7 +35,7 @@ abstract class AbstractIncrementalFirJvmWithPluginCompilerRunnerTest : AbstractI
             val annotationsJar = findJar(ANNOTATIONS_JAR_DIR, ANNOTATIONS_JAR_NAME, ":plugins:fir-plugin-prototype:plugin-annotations:jar")
             val pluginJar = findJar(PLUGIN_JAR_DIR, PLUGIN_JAR_NAME, ":plugins:fir-plugin-prototype:jar")
 
-            classpath += "${File.pathSeparator}$annotationsJar"
+            classpath = classpath?.plus(annotationsJar)
             pluginClasspaths = arrayOf(pluginJar)
         }
 

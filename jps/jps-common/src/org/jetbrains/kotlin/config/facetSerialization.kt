@@ -230,7 +230,7 @@ fun CommonCompilerArguments.convertPathsToSystemIndependent() {
     when (this) {
         is K2JVMCompilerArguments -> {
             destination = destination?.let(FileUtilRt::toSystemIndependentName)
-            classpath = classpath?.let(FileUtilRt::toSystemIndependentName)
+            classpath?.forEachIndexed { index, s -> classpath!![index] = FileUtilRt.toSystemIndependentName(s) }
             jdkHome = jdkHome?.let(FileUtilRt::toSystemIndependentName)
             kotlinHome = kotlinHome?.let(FileUtilRt::toSystemIndependentName)
             friendPaths?.forEachIndexed { index, s -> friendPaths!![index] = FileUtilRt.toSystemIndependentName(s) }
@@ -334,7 +334,7 @@ private fun KotlinFacetSettings.writeConfig(element: Element) {
         element.addContent(
             Element("externalSystemTestTasks").apply {
                 externalSystemRunTasks.forEach { task ->
-                    when(task) {
+                    when (task) {
                         is ExternalSystemTestRunTask -> {
                             addContent(
                                 Element("externalSystemTestTask").apply { addContent(task.toStringRepresentation()) }

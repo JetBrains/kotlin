@@ -179,7 +179,7 @@ fun CompilerConfiguration.configureJavaModulesContentRoots(arguments: K2JVMCompi
 }
 
 fun CompilerConfiguration.configureContentRootsFromClassPath(arguments: K2JVMCompilerArguments) {
-    for (path in arguments.classpath?.split(File.pathSeparatorChar).orEmpty()) {
+    for (path in arguments.classpath.orEmpty()) {
         add(CLIConfigurationKeys.CONTENT_ROOTS, JvmClasspathRoot(File(path)))
     }
 }

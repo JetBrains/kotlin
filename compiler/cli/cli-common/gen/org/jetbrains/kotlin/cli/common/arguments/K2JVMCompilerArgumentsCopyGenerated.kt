@@ -17,7 +17,7 @@ fun copyK2JVMCompilerArguments(from: K2JVMCompilerArguments, to: K2JVMCompilerAr
     to.assertionsMode = from.assertionsMode
     to.backendThreads = from.backendThreads
     to.buildFile = from.buildFile
-    to.classpath = from.classpath
+    to.classpath = from.classpath?.copyOf()
     to.compileJava = from.compileJava
     to.declarationsOutputPath = from.declarationsOutputPath
     to.defaultScriptExtension = from.defaultScriptExtension

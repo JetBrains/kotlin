@@ -26,9 +26,10 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
         value = "-classpath",
         shortName = "-cp",
         valueDescription = "<path>",
-        description = "List of directories and JAR/ZIP archives to search for user class files"
+        description = "List of directories and JAR/ZIP archives to search for user class files",
+        delimiter = Argument.Delimiters.pathSeparator
     )
-    var classpath: String? = null
+    var classpath: Array<String>? = null
         set(value) {
             checkFrozen()
             field = if (value.isNullOrEmpty()) null else value

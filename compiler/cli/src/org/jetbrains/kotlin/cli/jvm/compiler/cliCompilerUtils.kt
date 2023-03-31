@@ -174,7 +174,7 @@ fun writeOutputsIfNeeded(
 
 fun ModuleBuilder.configureFromArgs(args: K2JVMCompilerArguments) {
     args.friendPaths?.forEach { addFriendDir(it) }
-    args.classpath?.split(File.pathSeparator)?.forEach { addClasspathEntry(it) }
+    args.classpath?.forEach { addClasspathEntry(it) }
     args.javaSourceRoots?.forEach {
         addJavaSourceRoot(JavaRootPath(it, args.javaPackagePrefix))
     }

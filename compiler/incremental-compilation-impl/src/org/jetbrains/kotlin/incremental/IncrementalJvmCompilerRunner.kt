@@ -174,7 +174,8 @@ open class IncrementalJvmCompilerRunner(
         private val psiFileFactory: PsiFileFactory by lazy {
             val rootDisposable = Disposer.newDisposable()
             val configuration = compilerConfiguration
-            val environment = KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+            val environment =
+                KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
             val project = environment.project
             PsiFileFactory.getInstance(project)
         }
@@ -281,7 +282,8 @@ open class IncrementalJvmCompilerRunner(
                 if (!lastBuildInfoFile.exists()) {
                     return CompilationMode.Rebuild(BuildAttribute.NO_LAST_BUILD_INFO)
                 }
-                val lastBuildInfo = BuildInfo.read(lastBuildInfoFile, messageCollector) ?: return CompilationMode.Rebuild(BuildAttribute.INVALID_LAST_BUILD_INFO)
+                val lastBuildInfo = BuildInfo.read(lastBuildInfoFile, messageCollector)
+                    ?: return CompilationMode.Rebuild(BuildAttribute.INVALID_LAST_BUILD_INFO)
                 reporter.debug { "Last Kotlin Build info -- $lastBuildInfo" }
                 val scopes = caches.lookupCache.lookupSymbols.map { it.scope.ifBlank { it.name } }.distinct()
 
@@ -548,7 +550,7 @@ var K2JVMCompilerArguments.destinationAsFile: File
     }
 
 var K2JVMCompilerArguments.classpathAsList: List<File>
-    get() = classpath.orEmpty().split(File.pathSeparator).map(::File)
+    get() = classpath.orEmpty().map(::File)
     set(value) {
-        classpath = value.joinToString(separator = File.pathSeparator, transform = { it.path })
+        classpath = value.map { it.path }.toTypedArray()
     }

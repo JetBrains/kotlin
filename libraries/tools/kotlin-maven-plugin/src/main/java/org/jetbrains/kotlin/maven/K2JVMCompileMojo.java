@@ -171,7 +171,7 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
             }
             else {
                 getLog().debug("Classpath: " + classPathString);
-                arguments.setClasspath(classPathString);
+                arguments.setClasspath(classpathList.toArray(String[]::new));
             }
         }
 
@@ -255,19 +255,19 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
         File classesDir = new File(destination);
         File kotlinClassesDir = new File(cachesDir, "classes");
         File snapshotsFile = new File(cachesDir, "snapshots.bin");
-        String classpath = arguments.getClasspath();
+        String[] classpath = arguments.getClasspath();
         MavenICReporter icReporter = new MavenICReporter(getLog());
 
         try {
             arguments.setDestination(kotlinClassesDir.getAbsolutePath());
             if (classpath != null) {
                 List<String> filteredClasspath = new ArrayList<>();
-                for (String path : classpath.split(File.pathSeparator)) {
+                for (String path : classpath) {
                     if (!classesDir.equals(new File(path))) {
                         filteredClasspath.add(path);
                     }
                 }
-                arguments.setClasspath(StringUtil.join(filteredClasspath, File.pathSeparator));
+                arguments.setClasspath(filteredClasspath.toArray(new String[0]));
             }
 
             IncrementalJvmCompilerRunnerKt.makeIncrementally(cachesDir, sourceRoots, arguments, messageCollector, icReporter);
