@@ -53,7 +53,7 @@ internal fun collectNewDirtySources(
                         data.lastOrNull(),
                         targetId,
                         configuration,
-                        irActualizationResult = null
+                        irActualizedResult = null
                     )
                     data.push(serializer)
                     body(serializer)

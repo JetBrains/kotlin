@@ -108,7 +108,7 @@ class Fir2IrResultsConverter(
                 phaseConfig,
                 components.irProviders,
                 fir2IrExtensions,
-                FirJvmBackendExtension(components, irActualizationResult = null),
+                FirJvmBackendExtension(components, irActualizedResult = null),
                 pluginContext,
                 notifyCodegenStart = {},
             )

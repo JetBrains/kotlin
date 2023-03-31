@@ -231,7 +231,7 @@ fun convertAnalyzedFirToIr(
             IrGenerationExtension.getInstances(it)
         } ?: emptyList()
     val linkViaSignatures = input.configuration.getBoolean(JVMConfigurationKeys.LINK_VIA_SIGNATURES)
-    val (irModuleFragment, components, pluginContext, irActualizationResult) =
+    val (irModuleFragment, components, pluginContext, irActualizedResult) =
         analysisResults.convertToIrAndActualizeForJvm(
             extensions, irGenerationExtensions, linkViaSignatures,
             environment.diagnosticsReporter, input.configuration.languageVersionSettings
@@ -244,7 +244,7 @@ fun convertAnalyzedFirToIr(
         irModuleFragment,
         components,
         pluginContext,
-        irActualizationResult
+        irActualizedResult
     )
 }
 
@@ -288,7 +288,7 @@ fun generateCodeFromIr(
         input.components.symbolTable,
         input.components.irProviders,
         input.extensions,
-        FirJvmBackendExtension(input.components, input.irActualizationResult),
+        FirJvmBackendExtension(input.components, input.irActualizedResult),
         input.pluginContext
     ) {
         performanceManager?.notifyIRLoweringFinished()

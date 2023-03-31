@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
-import org.jetbrains.kotlin.backend.common.actualizer.IrActualizationResult
+import org.jetbrains.kotlin.backend.common.actualizer.IrActualizedResult
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.PhaseEngine
 import org.jetbrains.kotlin.backend.konan.fir2Ir
@@ -22,7 +22,7 @@ internal data class Fir2IrOutput(
         val irModuleFragment: IrModuleFragment,
         val components: Fir2IrComponents,
         val pluginContext: Fir2IrPluginContext,
-        val irActualizationResult: IrActualizationResult?,
+        val irActualizedResult: IrActualizedResult?,
         val usedLibraries: Set<KotlinResolvedLibrary>
 )
 

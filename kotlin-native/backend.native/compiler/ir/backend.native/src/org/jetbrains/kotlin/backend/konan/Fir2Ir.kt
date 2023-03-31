@@ -70,7 +70,7 @@ internal fun PhaseContext.fir2Ir(
     }
     val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter()
 
-    val (irModuleFragment, components, pluginContext, irActualizationResult) = input.firResult.convertToIrAndActualize(
+    val (irModuleFragment, components, pluginContext, irActualizedResult) = input.firResult.convertToIrAndActualize(
             fir2IrExtensions,
             IrGenerationExtension.getInstances(config.project),
             linkViaSignatures = false,
@@ -120,7 +120,7 @@ internal fun PhaseContext.fir2Ir(
         throw KonanCompilationException("Compilation failed: there were some diagnostics during fir2ir")
     }
 
-    return Fir2IrOutput(input.firResult, symbols, irModuleFragment, components, pluginContext, irActualizationResult, usedLibraries)
+    return Fir2IrOutput(input.firResult, symbols, irModuleFragment, components, pluginContext, irActualizedResult, usedLibraries)
 }
 
 private fun PhaseContext.createKonanSymbols(

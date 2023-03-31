@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.DeepCopyTypeRemapper
 
-data class IrActualizationResult(val actualizedExpectDeclarations: List<IrDeclaration>)
+data class IrActualizedResult(val actualizedExpectDeclarations: List<IrDeclaration>)
 
 object IrActualizer {
     fun actualize(
@@ -20,7 +20,7 @@ object IrActualizer {
         dependentFragments: List<IrModuleFragment>,
         diagnosticReporter: DiagnosticReporter,
         languageVersionSettings: LanguageVersionSettings
-    ): IrActualizationResult {
+    ): IrActualizedResult {
         val ktDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(diagnosticReporter, languageVersionSettings)
 
         val (expectActualMap, expectActualTypeAliasMap) = ExpectActualCollector(
@@ -47,7 +47,7 @@ object IrActualizer {
 
         mergeIrFragments(mainFragment, dependentFragments)
 
-        return IrActualizationResult(removedExpectDeclarations)
+        return IrActualizedResult(removedExpectDeclarations)
     }
 
     private fun removeExpectDeclarations(dependentFragments: List<IrModuleFragment>, expectActualMap: Map<IrSymbol, IrSymbol>): List<IrDeclaration> {

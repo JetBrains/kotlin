@@ -167,7 +167,7 @@ fun serializeFirKlib(
 
     val metadataVersion = moduleStructure.compilerConfiguration.metadataVersion()
 
-    val actualizedExpectDeclarations = fir2IrActualizedResult.irActualizationResult.extractFirDeclarations()
+    val actualizedExpectDeclarations = fir2IrActualizedResult.irActualizedResult.extractFirDeclarations()
 
     serializeModuleIntoKlib(
         moduleStructure.compilerConfiguration[CommonConfigurationKeys.MODULE_NAME]!!,

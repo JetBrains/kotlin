@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.backend
 
 import com.intellij.psi.PsiCompiledElement
 import org.jetbrains.kotlin.*
-import org.jetbrains.kotlin.backend.common.actualizer.IrActualizationResult
+import org.jetbrains.kotlin.backend.common.actualizer.IrActualizedResult
 import org.jetbrains.kotlin.builtins.StandardNames.DATA_CLASS_COMPONENT_PREFIX
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.startOffsetSkippingComments
@@ -757,6 +757,6 @@ fun FirCallableDeclaration.contextReceiversForFunctionOrContainingProperty(): Li
     else
         this.contextReceivers
 
-fun IrActualizationResult?.extractFirDeclarations(): Set<FirDeclaration>? {
+fun IrActualizedResult?.extractFirDeclarations(): Set<FirDeclaration>? {
     return this?.actualizedExpectDeclarations?.mapNotNullTo(mutableSetOf()) { ((it as IrMetadataSourceOwner).metadata as FirMetadataSource).fir }
 }

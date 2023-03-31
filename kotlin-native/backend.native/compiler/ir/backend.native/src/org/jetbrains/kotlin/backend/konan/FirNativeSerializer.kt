@@ -49,7 +49,7 @@ internal fun PhaseContext.firSerializer(
     val usedResolvedLibraries = resolvedLibraries.filter {
         (!it.isDefault && !configuration.getBoolean(KonanConfigKeys.PURGE_USER_LIBS)) || it in input.usedLibraries
     }
-    val actualizedFirDeclarations = input.irActualizationResult.extractFirDeclarations()
+    val actualizedFirDeclarations = input.irActualizedResult.extractFirDeclarations()
     return serializeNativeModule(
             configuration = configuration,
             messageLogger = configuration.get(IrMessageLogger.IR_MESSAGE_LOGGER) ?: IrMessageLogger.None,

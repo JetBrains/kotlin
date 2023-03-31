@@ -223,7 +223,7 @@ object FirKotlinToJvmBytecodeCompiler {
         extensions: JvmGeneratorExtensions,
         diagnosticsReporter: BaseDiagnosticsCollector
     ): GenerationState {
-        val (moduleFragment, components, pluginContext, irActualizationResult) = fir2IrActualizedResult
+        val (moduleFragment, components, pluginContext, irActualizedResult) = fir2IrActualizedResult
         val dummyBindingContext = NoScopeRecordCliBindingTrace().bindingContext
         val codegenFactory = JvmIrCodegenFactory(
             moduleConfiguration,
@@ -252,7 +252,7 @@ object FirKotlinToJvmBytecodeCompiler {
         generationState.oldBEInitTrace(ktFiles)
         codegenFactory.generateModuleInFrontendIRMode(
             generationState, moduleFragment, components.symbolTable, components.irProviders,
-            extensions, FirJvmBackendExtension(components, irActualizationResult), pluginContext
+            extensions, FirJvmBackendExtension(components, irActualizedResult), pluginContext
         ) {
             performanceManager?.notifyIRLoweringFinished()
             performanceManager?.notifyIRGenerationStarted()

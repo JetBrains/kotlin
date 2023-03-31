@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.pipeline
 
-import org.jetbrains.kotlin.backend.common.actualizer.IrActualizationResult
+import org.jetbrains.kotlin.backend.common.actualizer.IrActualizedResult
 import org.jetbrains.kotlin.backend.common.actualizer.IrActualizer
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
@@ -41,7 +41,7 @@ data class Fir2IrActualizedResult(
     val irModuleFragment: IrModuleFragment,
     val components: Fir2IrComponents,
     val pluginContext: Fir2IrPluginContext,
-    val irActualizationResult: IrActualizationResult?,
+    val irActualizedResult: IrActualizedResult?,
 )
 
 fun FirResult.convertToIrAndActualizeForJvm(
@@ -77,7 +77,7 @@ fun FirResult.convertToIrAndActualize(
     fir2IrResultPostCompute: Fir2IrResult.() -> Unit = {},
 ): Fir2IrActualizedResult {
     val fir2IrResult: Fir2IrResult
-    val actualizationResult: IrActualizationResult?
+    val actualizationResult: IrActualizedResult?
 
     val commonMemberStorage = Fir2IrCommonMemberStorage(
         generateSignatures = linkViaSignatures,

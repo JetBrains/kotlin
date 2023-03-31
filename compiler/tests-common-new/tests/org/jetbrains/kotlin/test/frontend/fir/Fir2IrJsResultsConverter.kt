@@ -111,11 +111,11 @@ class Fir2IrJsResultsConverter(
             expectDescriptorToSymbol = mutableMapOf(),
             diagnosticsCollector = DiagnosticReporterFactory.createReporter(),
             hasErrors = inputArtifact.hasErrors
-        ) { file, irActualizationResult ->
+        ) { file, irActualizedResult ->
             val (firFile, components) = firFilesAndComponentsBySourceFile[file]
                 ?: error("cannot find FIR file by source file ${file.name} (${file.path})")
-            if (actualizedExpectDeclarations == null && irActualizationResult != null) {
-                actualizedExpectDeclarations = irActualizationResult.extractFirDeclarations()
+            if (actualizedExpectDeclarations == null && irActualizedResult != null) {
+                actualizedExpectDeclarations = irActualizedResult.extractFirDeclarations()
             }
             serializeSingleFirFile(
                 firFile,

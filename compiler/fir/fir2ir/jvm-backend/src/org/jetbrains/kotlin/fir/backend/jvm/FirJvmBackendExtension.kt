@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.backend.jvm
 
-import org.jetbrains.kotlin.backend.common.actualizer.IrActualizationResult
+import org.jetbrains.kotlin.backend.common.actualizer.IrActualizedResult
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmBackendExtension
 import org.jetbrains.kotlin.backend.jvm.metadata.MetadataSerializer
@@ -18,7 +18,7 @@ import org.jetbrains.org.objectweb.asm.Type
 
 class FirJvmBackendExtension(
     private val components: Fir2IrComponents,
-    private val irActualizationResult: IrActualizationResult?
+    private val irActualizedResult: IrActualizedResult?
 ) : JvmBackendExtension {
     override fun createSerializer(
         context: JvmBackendContext,
@@ -34,7 +34,7 @@ class FirJvmBackendExtension(
             bindings,
             components,
             parentSerializer,
-            irActualizationResult
+            irActualizedResult
         )
     }
 
