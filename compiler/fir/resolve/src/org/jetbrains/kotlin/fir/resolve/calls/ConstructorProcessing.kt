@@ -42,23 +42,23 @@ internal fun FirScope.processConstructorsByName(
     includeInnerConstructors: Boolean,
     processor: (FirCallableSymbol<*>) -> Unit
 ) {
-    val (matchedClassifierSymbol, substitutor) = getFirstClassifierOrNull(callInfo, session, bodyResolveComponents) ?: return
-    val matchedClassSymbol = matchedClassifierSymbol as? FirClassLikeSymbol<*> ?: return
+    for ((matchedClassifierSymbol, substitutor) in getClassifierResults(callInfo, session, bodyResolveComponents)) {
+        val matchedClassSymbol = matchedClassifierSymbol as? FirClassLikeSymbol<*> ?: continue
+        processConstructors(
+            matchedClassSymbol,
+            substitutor,
+            processor,
+            session,
+            bodyResolveComponents,
+            includeInnerConstructors
+        )
 
-    processConstructors(
-        matchedClassSymbol,
-        substitutor,
-        processor,
-        session,
-        bodyResolveComponents,
-        includeInnerConstructors
-    )
-
-    processSyntheticConstructors(
-        matchedClassSymbol,
-        processor,
-        bodyResolveComponents
-    )
+        processSyntheticConstructors(
+            matchedClassSymbol,
+            processor,
+            bodyResolveComponents
+        )
+    }
 }
 
 internal fun FirScope.processFunctionsAndConstructorsByName(
@@ -110,46 +110,27 @@ private fun FirDeclaration.isInvisibleOrHidden(session: FirSession, bodyResolveC
     return deprecation != null && deprecation.deprecationLevel == DeprecationLevelValue.HIDDEN
 }
 
-private fun FirScope.getFirstClassifierOrNull(
+private fun FirScope.getClassifierResults(
     callInfo: CallInfo,
     session: FirSession,
     bodyResolveComponents: BodyResolveComponents
-): SymbolWithSubstitutor? {
+): List<SymbolWithSubstitutor> {
     var isSuccessResult = false
-    var isAmbiguousResult = false
-    var result: SymbolWithSubstitutor? = null
+    val result = mutableListOf<SymbolWithSubstitutor>()
     processClassifiersByNameWithSubstitution(callInfo.name) { symbol, substitutor ->
         val classifierDeclaration = symbol.fir
         val isSuccessCandidate = !classifierDeclaration.isInvisibleOrHidden(session, bodyResolveComponents)
 
-        when {
-            isSuccessCandidate && !isSuccessResult -> {
-                // successful result is better than unsuccessful
-                isSuccessResult = true
-                isAmbiguousResult = false
-                result = SymbolWithSubstitutor(symbol, substitutor)
-            }
-            result?.symbol === symbol -> {
-                // miss identical results
-                return@processClassifiersByNameWithSubstitution
-            }
-            result != null -> {
-                if (isSuccessResult == isSuccessCandidate) {
-                    // results are similar => ambiguity
-                    isAmbiguousResult = true
-                } else {
-                    // ignore unsuccessful result if we have successful one
-                }
-            }
-            else -> {
-                // result == null: any result is better than no result
-                isSuccessResult = isSuccessCandidate
-                result = SymbolWithSubstitutor(symbol, substitutor)
-            }
+        if (!isSuccessResult && isSuccessCandidate) {
+            // successful result is better than unsuccessful
+            isSuccessResult = true
+            result.clear()
         }
+
+        result.add(SymbolWithSubstitutor(symbol, substitutor))
     }
 
-    return result.takeUnless { isAmbiguousResult }
+    return result
 }
 
 private fun processSyntheticConstructors(

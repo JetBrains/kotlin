@@ -13887,6 +13887,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             }
 
             @Test
+            @TestMetadata("starImportAmbiguity.kt")
+            public void testStarImportAmbiguity() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/imports/starImportAmbiguity.kt");
+            }
+
+            @Test
             @TestMetadata("StarImportFromObject.kt")
             public void testStarImportFromObject() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/imports/StarImportFromObject.kt");
