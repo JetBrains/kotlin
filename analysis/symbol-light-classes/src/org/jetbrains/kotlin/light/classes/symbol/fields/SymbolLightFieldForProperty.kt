@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.light.classes.symbol.fields
 
 import com.intellij.psi.*
+import kotlinx.collections.immutable.persistentHashMapOf
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.KtConstantInitializerValue
 import org.jetbrains.kotlin.analysis.api.annotations.*
@@ -116,10 +117,6 @@ internal class SymbolLightFieldForProperty private constructor(
             GranularModifiersBox.MODALITY_MODIFIERS_MAP.with(modality)
         }
 
-        PsiModifier.STATIC -> {
-            mapOf(modifier to isStatic)
-        }
-
         PsiModifier.VOLATILE -> withPropertySymbol { propertySymbol ->
             val hasAnnotation = propertySymbol.hasAnnotation(
                 VOLATILE_ANNOTATION_CLASS_ID,
@@ -144,7 +141,10 @@ internal class SymbolLightFieldForProperty private constructor(
     private val _modifierList: PsiModifierList by lazyPub {
         SymbolLightMemberModifierList(
             containingDeclaration = this,
-            modifiersBox = GranularModifiersBox(computer = ::computeModifiers),
+            modifiersBox = GranularModifiersBox(
+                initialValue = persistentHashMapOf(PsiModifier.STATIC to isStatic),
+                computer = ::computeModifiers,
+            ),
             annotationsBox = GranularAnnotationsBox(
                 annotationsProvider = SymbolAnnotationsProvider(
                     ktModule = ktModule,
