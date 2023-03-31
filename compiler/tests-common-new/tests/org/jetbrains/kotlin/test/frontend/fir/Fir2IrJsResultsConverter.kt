@@ -18,8 +18,8 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.fir.AbstractFirAnalyzerFacade
 import org.jetbrains.kotlin.fir.FirAnalyzerFacade
 import org.jetbrains.kotlin.fir.backend.*
+import org.jetbrains.kotlin.fir.backend.js.FirJsKotlinMangler
 import org.jetbrains.kotlin.fir.backend.jvm.Fir2IrJvmSpecialAnnotationSymbolProvider
-import org.jetbrains.kotlin.fir.backend.jvm.FirJvmKotlinMangler
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
@@ -68,7 +68,7 @@ class Fir2IrJsResultsConverter(
         val commonMemberStorage = Fir2IrCommonMemberStorage(
             generateSignatures = false,
             signatureComposerCreator = null,
-            manglerCreator = { FirJvmKotlinMangler() } // TODO: replace with potentially simpler JS version
+            manglerCreator = ::FirJsKotlinMangler
         )
 
         for ((index, part) in inputArtifact.partsForDependsOnModules.withIndex()) {

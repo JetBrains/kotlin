@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.types.coneType
 
 /**
- * A mangle computer that generates a mangled name for a Kotlin declaration represented by [FirDeclaration].
+ * JVM backend-specific mangle computer that generates a mangled name for a Kotlin declaration represented by [FirDeclaration].
  */
 class FirJvmMangleComputer(
     builder: StringBuilder,
