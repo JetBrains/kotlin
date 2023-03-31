@@ -91,6 +91,10 @@ class BinaryClassAnnotationAndConstantLoaderImpl(
                     // E.g. if we see `@Foo.Container(@Foo(1), @Foo(2))` in the bytecode on some declaration where `Foo` is some
                     // Kotlin-repeatable annotation, we want to read annotations on that declaration as a list `[@Foo(1), @Foo(2)]`.
                     elements.filterIsInstance<AnnotationValue>().mapTo(result, AnnotationValue::value)
+                } else {
+                    arguments[name] = ArrayValue(elements.compact()) { moduleDescriptor ->
+                        moduleDescriptor.builtIns.anyType
+                    }
                 }
             }
 

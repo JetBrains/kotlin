@@ -13,6 +13,8 @@ import com.intellij.psi.stubs.PsiFileStub
 import com.intellij.util.indexing.FileContent
 import org.jetbrains.kotlin.SpecialJvmAnnotations
 import org.jetbrains.kotlin.analysis.decompiler.stub.*
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns
+import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.*
@@ -28,10 +30,9 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.stubs.KotlinStubVersions
-import org.jetbrains.kotlin.resolve.constants.ClassLiteralValue
-import org.jetbrains.kotlin.resolve.constants.ConstantValue
-import org.jetbrains.kotlin.resolve.constants.KClassValue
+import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
+import org.jetbrains.kotlin.serialization.deserialization.getName
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
 open class KotlinClsStubBuilder : ClsStubBuilder() {
@@ -134,14 +135,16 @@ private class AnnotationLoaderForClassFileStubBuilder(
     private val cachedFile: VirtualFile,
     private val cachedFileContent: ByteArray,
     override val jvmMetadataVersion: JvmMetadataVersion
-) : AbstractBinaryClassAnnotationLoader<ClassId, AnnotationLoaderForClassFileStubBuilder.AnnotationsClassIdContainer>(kotlinClassFinder) {
+) : AbstractBinaryClassAnnotationLoader<AnnotationWithArgs, AnnotationsContainerWithConstants<AnnotationWithArgs, ConstantValue<*>>>(
+    kotlinClassFinder
+) {
 
     private val storage =
-        LockBasedStorageManager.NO_LOCKS.createMemoizedFunction<KotlinJvmBinaryClass, AnnotationsClassIdContainer> { kotlinClass ->
+        LockBasedStorageManager.NO_LOCKS.createMemoizedFunction<KotlinJvmBinaryClass, AnnotationsContainerWithConstants<AnnotationWithArgs, ConstantValue<*>>> { kotlinClass ->
             loadAnnotationsAndInitializers(kotlinClass)
         }
 
-    override fun getAnnotationsContainer(binaryClass: KotlinJvmBinaryClass): AnnotationsClassIdContainer {
+    override fun getAnnotationsContainer(binaryClass: KotlinJvmBinaryClass): AnnotationsContainerWithConstants<AnnotationWithArgs, ConstantValue<*>> {
         return storage(binaryClass)
     }
 
@@ -152,17 +155,14 @@ private class AnnotationLoaderForClassFileStubBuilder(
         return null
     }
 
-    override fun loadTypeAnnotation(proto: ProtoBuf.Annotation, nameResolver: NameResolver): ClassId = nameResolver.getClassId(proto.id)
-
+    override fun loadTypeAnnotation(proto: ProtoBuf.Annotation, nameResolver: NameResolver): AnnotationWithArgs {
+        val args = proto.argumentList.associate { nameResolver.getName(it.nameId) to toConstantValue(it.value, nameResolver) }
+        return AnnotationWithArgs(nameResolver.getClassId(proto.id), args)
+    }
 
     override fun loadAnnotation(
-        annotationClassId: ClassId, source: SourceElement, result: MutableList<ClassId>
-    ): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
-        if (annotationClassId != SpecialJvmAnnotations.JAVA_LANG_ANNOTATION_REPEATABLE) {
-            result += annotationClassId
-            return null
-        }
-
+        annotationClassId: ClassId, source: SourceElement, result: MutableList<AnnotationWithArgs>
+    ): KotlinJvmBinaryClass.AnnotationArgumentVisitor {
         return object : KotlinJvmBinaryClass.AnnotationArgumentVisitor {
             private val arguments = mutableMapOf<Name, ConstantValue<*>>()
             override fun visitClassLiteral(name: Name?, value: ClassLiteralValue) {
@@ -172,15 +172,107 @@ private class AnnotationLoaderForClassFileStubBuilder(
 
             override fun visitEnd() {
                 if (!isRepeatableWithImplicitContainer(annotationClassId, arguments)) {
-                    result.add(annotationClassId)
+                    result.add(AnnotationWithArgs(annotationClassId, arguments))
                 }
             }
 
-            override fun visit(name: Name?, value: Any?) = Unit
-            override fun visitEnum(name: Name?, enumClassId: ClassId, enumEntryName: Name) = Unit
-            override fun visitArray(name: Name?): KotlinJvmBinaryClass.AnnotationArrayArgumentVisitor? = null
-            override fun visitAnnotation(name: Name?, classId: ClassId): KotlinJvmBinaryClass.AnnotationArgumentVisitor? = null
+            override fun visit(name: Name?, value: Any?) {
+                if (name != null) {
+                    arguments[name] = createConstant(value)
+                }
+            }
+
+            override fun visitEnum(name: Name?, enumClassId: ClassId, enumEntryName: Name) {
+                if (name != null) {
+                    arguments[name] = EnumValue(enumClassId, enumEntryName)
+                }
+            }
+
+            override fun visitArray(name: Name?): KotlinJvmBinaryClass.AnnotationArrayArgumentVisitor? {
+                if (name == null) return null
+                return object : KotlinJvmBinaryClass.AnnotationArrayArgumentVisitor {
+                    private val elements = mutableListOf<ConstantValue<*>>()
+
+                    override fun visit(value: Any?) {
+                        elements.add(createConstant(value))
+                    }
+
+                    override fun visitEnum(enumClassId: ClassId, enumEntryName: Name) {
+                        elements.add(EnumValue(enumClassId, enumEntryName))
+                    }
+
+                    override fun visitClassLiteral(value: ClassLiteralValue) {
+                        elements.add(KClassValue(value))
+                    }
+
+                    override fun visitAnnotation(classId: ClassId): KotlinJvmBinaryClass.AnnotationArgumentVisitor {
+                        val list = mutableListOf<AnnotationWithArgs>()
+                        val visitor = loadAnnotation(classId, source, list)
+                        return object : KotlinJvmBinaryClass.AnnotationArgumentVisitor by visitor {
+                            override fun visitEnd() {
+                                visitor.visitEnd()
+                                elements.add(AnnotationValue(object : AnnotationDescriptorWithClassId(classId) {
+                                    override val allValueArguments: Map<Name, ConstantValue<*>>
+                                        get() = list.single().args
+                                    override val source: SourceElement
+                                        get() = SourceElement.NO_SOURCE
+                                }))
+                            }
+                        }
+                    }
+
+                    override fun visitEnd() {
+                        arguments[name] = ArrayValue(elements) { it.builtIns.getArrayElementType(it.builtIns.anyType) }
+                    }
+                }
+            }
+
+            override fun visitAnnotation(name: Name?, classId: ClassId): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
+                if (name == null) return null
+                val list = mutableListOf<AnnotationWithArgs>()
+                val visitor = loadAnnotation(classId, source, list)
+                return object : KotlinJvmBinaryClass.AnnotationArgumentVisitor by visitor {
+                    override fun visitEnd() {
+                        visitor.visitEnd()
+                        arguments[name] = AnnotationValue(object : AnnotationDescriptorWithClassId(classId) {
+                            override val allValueArguments: Map<Name, ConstantValue<*>>
+                                get() = list.single().args
+                            override val source: SourceElement
+                                get() = source
+                        })
+                    }
+                }
+            }
         }
+    }
+
+    fun createConstant(value: Any?): ConstantValue<*> {
+        return when (value) {
+            is Byte -> ByteValue(value)
+            is Short -> ShortValue(value)
+            is Int -> IntValue(value)
+            is Long -> LongValue(value)
+            is Char -> CharValue(value)
+            is Float -> FloatValue(value)
+            is Double -> DoubleValue(value)
+            is Boolean -> BooleanValue(value)
+            is String -> StringValue(value)
+            is ByteArray -> createArrayValue(value.toList(), PrimitiveType.BYTE)
+            is ShortArray -> createArrayValue(value.toList(), PrimitiveType.SHORT)
+            is IntArray -> createArrayValue(value.toList(), PrimitiveType.INT)
+            is LongArray -> createArrayValue(value.toList(), PrimitiveType.LONG)
+            is CharArray -> createArrayValue(value.toList(), PrimitiveType.CHAR)
+            is FloatArray -> createArrayValue(value.toList(), PrimitiveType.FLOAT)
+            is DoubleArray -> createArrayValue(value.toList(), PrimitiveType.DOUBLE)
+            is BooleanArray -> createArrayValue(value.toList(), PrimitiveType.BOOLEAN)
+            null -> NullValue()
+            else -> error("Unknown value $value")
+        }
+    }
+
+    private fun createArrayValue(value: List<*>, componentType: PrimitiveType): ArrayValue {
+        val elements = value.toList().mapNotNull(this::createConstant)
+        return ArrayValue(elements) { it.builtIns.getPrimitiveArrayKotlinType(componentType) }
     }
 
     protected fun isRepeatableWithImplicitContainer(annotationClassId: ClassId, arguments: Map<Name, ConstantValue<*>>): Boolean {
@@ -191,8 +283,10 @@ private class AnnotationLoaderForClassFileStubBuilder(
         return isImplicitRepeatableContainer(normalClass.classId)
     }
 
-    private fun loadAnnotationsAndInitializers(kotlinClass: KotlinJvmBinaryClass): AnnotationsClassIdContainer {
-        val memberAnnotations = HashMap<MemberSignature, MutableList<ClassId>>()
+    private fun loadAnnotationsAndInitializers(kotlinClass: KotlinJvmBinaryClass): AnnotationsContainerWithConstants<AnnotationWithArgs, ConstantValue<*>> {
+        val memberAnnotations = HashMap<MemberSignature, MutableList<AnnotationWithArgs>>()
+        val propertyConstants = HashMap<MemberSignature, ConstantValue<*>>()
+        val annotationParametersDefaultValues = HashMap<MemberSignature, ConstantValue<*>>()
 
         kotlinClass.visitMembers(object : KotlinJvmBinaryClass.MemberVisitor {
             override fun visitMethod(name: Name, desc: String): KotlinJvmBinaryClass.MethodAnnotationVisitor {
@@ -225,7 +319,7 @@ private class AnnotationLoaderForClassFileStubBuilder(
             }
 
             open inner class MemberAnnotationVisitor(protected val signature: MemberSignature) : KotlinJvmBinaryClass.AnnotationVisitor {
-                private val result = ArrayList<ClassId>()
+                private val result = ArrayList<AnnotationWithArgs>()
 
                 override fun visitAnnotation(classId: ClassId, source: SourceElement): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
                     return loadAnnotationIfNotSpecial(classId, source, result)
@@ -239,10 +333,45 @@ private class AnnotationLoaderForClassFileStubBuilder(
             }
         }, getCachedFileContent(kotlinClass))
 
-        return AnnotationsClassIdContainer(memberAnnotations)
+        return AnnotationsContainerWithConstants(
+            memberAnnotations,
+            propertyConstants,
+            annotationParametersDefaultValues
+        )
     }
+}
 
-    class AnnotationsClassIdContainer(
-        override val memberAnnotations: Map<MemberSignature, List<ClassId>>
-    ) : AbstractBinaryClassAnnotationLoader.AnnotationsContainer<ClassId>()
+internal fun toConstantValue(value: ProtoBuf.Annotation.Argument.Value, nameResolver: NameResolver): ConstantValue<*> {
+    val isUnsigned = Flags.IS_UNSIGNED.get(value.flags)
+
+    fun <T, R> T.letIf(predicate: Boolean, f: (T) -> R, g: (T) -> R): R =
+        if (predicate) f(this) else g(this)
+
+    return when (value.type) {
+        ProtoBuf.Annotation.Argument.Value.Type.BYTE -> value.intValue.toByte().letIf(isUnsigned, ::UByteValue, ::ByteValue)
+        ProtoBuf.Annotation.Argument.Value.Type.CHAR -> CharValue(value.intValue.toInt().toChar())
+        ProtoBuf.Annotation.Argument.Value.Type.SHORT -> value.intValue.toShort().letIf(isUnsigned, ::UShortValue, ::ShortValue)
+        ProtoBuf.Annotation.Argument.Value.Type.INT -> value.intValue.toInt().letIf(isUnsigned, ::UIntValue, ::IntValue)
+        ProtoBuf.Annotation.Argument.Value.Type.LONG -> value.intValue.letIf(isUnsigned, ::ULongValue, ::LongValue)
+        ProtoBuf.Annotation.Argument.Value.Type.FLOAT -> FloatValue(value.floatValue)
+        ProtoBuf.Annotation.Argument.Value.Type.DOUBLE -> DoubleValue(value.doubleValue)
+        ProtoBuf.Annotation.Argument.Value.Type.BOOLEAN -> BooleanValue(value.intValue != 0L)
+        ProtoBuf.Annotation.Argument.Value.Type.STRING -> StringValue(nameResolver.getString(value.stringValue))
+        ProtoBuf.Annotation.Argument.Value.Type.CLASS -> KClassValue(nameResolver.getClassId(value.classId), value.arrayDimensionCount)
+        ProtoBuf.Annotation.Argument.Value.Type.ENUM -> EnumValue(
+            nameResolver.getClassId(value.classId),
+            nameResolver.getName(value.enumValueId)
+        )
+        ProtoBuf.Annotation.Argument.Value.Type.ANNOTATION -> AnnotationValue(object : AnnotationDescriptorWithClassId(nameResolver.getClassId(value.annotation.id)) {
+            override val allValueArguments: Map<Name, ConstantValue<*>>
+                get() = value.annotation.argumentList.associate { nameResolver.getName(it.nameId) to toConstantValue(it.value, nameResolver) }
+            override val source: SourceElement
+                get() = SourceElement.NO_SOURCE
+        })
+        ProtoBuf.Annotation.Argument.Value.Type.ARRAY -> ConstantValueFactory.createArrayValue(
+            value.arrayElementList.map { toConstantValue(it, nameResolver) },
+            DefaultBuiltIns.Instance.anyType
+        )
+        else -> error("Unsupported annotation argument type: ${value.type}")
+    }
 }

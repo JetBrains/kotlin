@@ -8,6 +8,7 @@ import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.analysis.decompiler.stub.flags.FlagsToModifiers
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.SourceElement
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
@@ -20,9 +21,11 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.stubs.ConstantValueKind
 import org.jetbrains.kotlin.psi.stubs.KotlinUserTypeStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.*
+import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.AnnotatedCallableKind
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
@@ -101,31 +104,32 @@ fun createFileStub(packageFqName: FqName, isScript: Boolean): KotlinFileStubImpl
 
 private fun setupFileStub(fileStub: KotlinFileStubImpl, packageFqName: FqName) {
     val packageDirectiveStub = KotlinPlaceHolderStubImpl<KtPackageDirective>(fileStub, KtStubElementTypes.PACKAGE_DIRECTIVE)
-    createStubForPackageName(packageDirectiveStub, packageFqName)
+    createStubForPackageName(packageDirectiveStub, packageFqName, 0)
     KotlinPlaceHolderStubImpl<KtImportList>(fileStub, KtStubElementTypes.IMPORT_LIST)
 }
 
-fun createStubForPackageName(packageDirectiveStub: KotlinPlaceHolderStubImpl<KtPackageDirective>, packageFqName: FqName) {
+fun createStubForPackageName(stub: StubElement<*>, packageFqName: FqName, classLength: Int){
     val segments = packageFqName.pathSegments()
     val iterator = segments.listIterator(segments.size)
+    val packageLength = segments.size - classLength
 
-    fun recCreateStubForPackageName(current: StubElement<out PsiElement>) {
-        when (iterator.previousIndex()) {
+    fun recCreateStubForPackageName(current: StubElement<out PsiElement>){
+        when (val index = iterator.previousIndex()) {
             -1 -> return
             0 -> {
-                KotlinNameReferenceExpressionStubImpl(current, iterator.previous().ref())
+                KotlinNameReferenceExpressionStubImpl(current, iterator.previous().ref(), false)
                 return
             }
             else -> {
                 val lastSegment = iterator.previous()
                 val receiver = KotlinPlaceHolderStubImpl<KtDotQualifiedExpression>(current, KtStubElementTypes.DOT_QUALIFIED_EXPRESSION)
                 recCreateStubForPackageName(receiver)
-                KotlinNameReferenceExpressionStubImpl(receiver, lastSegment.ref())
+                KotlinNameReferenceExpressionStubImpl(receiver, lastSegment.ref(), index >= packageLength)
             }
         }
     }
 
-    recCreateStubForPackageName(packageDirectiveStub)
+    recCreateStubForPackageName(stub)
 }
 
 fun createStubForTypeName(
@@ -191,31 +195,177 @@ fun createEmptyModifierListStub(parent: KotlinStubBaseImpl<*>): KotlinModifierLi
     )
 }
 
-fun createAnnotationStubs(annotationIds: List<ClassId>, parent: KotlinStubBaseImpl<*>) {
-    return createTargetedAnnotationStubs(annotationIds.map { ClassIdWithTarget(it, null) }, parent)
+fun createAnnotationStubs(annotations: List<AnnotationWithArgs>, parent: KotlinStubBaseImpl<*>) {
+    return createTargetedAnnotationStubs(annotations.map { AnnotationWithTarget(it, null) }, parent)
 }
 
 fun createTargetedAnnotationStubs(
-    annotationIds: List<ClassIdWithTarget>,
+    annotations: List<AnnotationWithTarget>,
     parent: KotlinStubBaseImpl<*>
 ) {
-    if (annotationIds.isEmpty()) return
+    if (annotations.isEmpty()) return
 
-    annotationIds.forEach { annotation ->
-        val (annotationClassId, target) = annotation
-        val annotationEntryStubImpl = KotlinAnnotationEntryStubImpl(
-            parent,
-            shortName = annotationClassId.shortClassName.ref(),
-            hasValueArguments = false
-        )
-        if (target != null) {
-            KotlinAnnotationUseSiteTargetStubImpl(annotationEntryStubImpl, StringRef.fromString(target.name)!!)
-        }
-        val constructorCallee =
-            KotlinPlaceHolderStubImpl<KtConstructorCalleeExpression>(annotationEntryStubImpl, KtStubElementTypes.CONSTRUCTOR_CALLEE)
-        val typeReference = KotlinPlaceHolderStubImpl<KtTypeReference>(constructorCallee, KtStubElementTypes.TYPE_REFERENCE)
-        createStubForTypeName(annotationClassId, typeReference)
+    annotations.forEach { annotation ->
+        val (annotationWithArgs, target) = annotation
+        createAnnotationStub(parent, annotationWithArgs, target)
     }
+}
+
+private fun createAnnotationStub(
+    parent: StubElement<*>,
+    annotationWithArgs: AnnotationWithArgs,
+    target: AnnotationUseSiteTarget?
+) {
+    val annotationEntryStubImpl = KotlinAnnotationEntryStubImpl(
+        parent,
+        shortName = annotationWithArgs.classId.shortClassName.ref(),
+        hasValueArguments = annotationWithArgs.args.isNotEmpty()
+    )
+    if (target != null) {
+        KotlinAnnotationUseSiteTargetStubImpl(annotationEntryStubImpl, StringRef.fromString(target.name)!!)
+    }
+    val constructorCallee =
+        KotlinPlaceHolderStubImpl<KtConstructorCalleeExpression>(annotationEntryStubImpl, KtStubElementTypes.CONSTRUCTOR_CALLEE)
+    val typeReference = KotlinPlaceHolderStubImpl<KtTypeReference>(constructorCallee, KtStubElementTypes.TYPE_REFERENCE)
+    createStubForTypeName(annotationWithArgs.classId, typeReference)
+    if (annotationWithArgs.args.isNotEmpty()) {
+        val valueArgumentListStub =
+            KotlinPlaceHolderStubImpl<KtValueArgumentList>(annotationEntryStubImpl, KtStubElementTypes.VALUE_ARGUMENT_LIST)
+        for (entry in annotationWithArgs.args) {
+            val constantValue = entry.value
+            val valueArg = createValueArgWithName(valueArgumentListStub, entry.key)
+            createAnnotationMappingByConstantValue(constantValue, valueArg)
+        }
+    }
+}
+
+/**
+ * [org.jetbrains.kotlin.analysis.decompiler.stub.CallableClsStubBuilderKt.buildConstantInitializer]
+ */
+private fun createAnnotationMappingByConstantValue(
+    constantValue: ConstantValue<*>,
+    parent: StubElement<out PsiElement>
+) {
+    when (constantValue) {
+        is EnumValue -> {
+            createQualifiedReference(
+                parent,
+                ClassId(
+                    constantValue.enumClassId.packageFqName,
+                    constantValue.enumClassId.relativeClassName.child(constantValue.enumEntryName),
+                    false
+                )
+            )
+        }
+        is KClassValue -> {
+            when (val value = constantValue.value) {
+                is KClassValue.Value.LocalClass -> error("Local classes are not reachable in annotation arguments, $value")
+                is KClassValue.Value.NormalClass -> {
+                    val classLiteralStub = KotlinClassLiteralExpressionStubImpl(parent)
+                    createQualifiedReference(classLiteralStub, value.classId)
+                }
+            }
+        }
+        is BooleanValue -> {
+            KotlinConstantExpressionStubImpl(
+                parent,
+                KtStubElementTypes.BOOLEAN_CONSTANT,
+                ConstantValueKind.BOOLEAN_CONSTANT,
+                StringRef.fromString(constantValue.toString()))
+        }
+        is CharValue -> {
+            KotlinConstantExpressionStubImpl(
+                parent,
+                KtStubElementTypes.CHARACTER_CONSTANT,
+                ConstantValueKind.CHARACTER_CONSTANT,
+                StringRef.fromString(String.format("'\\u%04X'", constantValue.value.code))
+            )
+        }
+        is IntegerValueConstant -> {
+            //todo negative values as well as named constants may appear as constants; should be processed separately
+            KotlinConstantExpressionStubImpl(
+                parent,
+                KtStubElementTypes.INTEGER_CONSTANT,
+                ConstantValueKind.INTEGER_CONSTANT,
+                StringRef.fromString((constantValue.value as Number).toString())
+            )
+        }
+        is DoubleValue, is FloatValue -> {
+            KotlinConstantExpressionStubImpl(
+                parent,
+                KtStubElementTypes.FLOAT_CONSTANT,
+                ConstantValueKind.FLOAT_CONSTANT,
+                StringRef.fromString(constantValue.value.toString())
+            )
+        }
+        is NullValue -> {
+            KotlinConstantExpressionStubImpl(
+                parent,
+                KtStubElementTypes.NULL,
+                ConstantValueKind.NULL,
+                StringRef.fromString("null")
+            )
+        }
+        is StringValue -> {
+            buildStringTemplateExpressionStub(constantValue.value, parent)
+        }
+        is AnnotationValue -> {
+            val valueArguments = constantValue.value.allValueArguments
+            val classId = (constantValue.value as? AnnotationDescriptorWithClassId)?.classId ?: run {
+                val fqName = constantValue.value.fqName ?: error("Missed annotation FqName")
+                ClassId(fqName.parent(), fqName.shortName())
+            }
+            createAnnotationStub(parent, AnnotationWithArgs(classId, valueArguments), null)
+        }
+        is ArrayValue -> {
+            val collectionLiteralStub = KotlinCollectionLiteralExpressionStubImpl(parent)
+            for (value in constantValue.value) {
+                createAnnotationMappingByConstantValue(value, collectionLiteralStub)
+            }
+        }
+    }
+}
+
+internal fun buildStringTemplateExpressionStub(
+    text: String,
+    parent: StubElement<out PsiElement>
+) {
+    val stringStub =
+        KotlinPlaceHolderStubImpl<KtStringTemplateExpression>(parent, KtStubElementTypes.STRING_TEMPLATE)
+    if (text.isNotEmpty()) {
+        text.split("\\").forEachIndexed { index, part ->
+            if (index > 0) {
+                KotlinPlaceHolderWithTextStubImpl<KtStringTemplateExpression>(
+                    stringStub,
+                    KtStubElementTypes.ESCAPE_STRING_TEMPLATE_ENTRY,
+                    "\\" + part.substring(0, 1)
+                )
+            }
+            KotlinPlaceHolderWithTextStubImpl<KtStringTemplateExpression>(
+                stringStub,
+                KtStubElementTypes.LITERAL_STRING_TEMPLATE_ENTRY,
+                if (index == 0) part else part.substring(1)
+            )
+        }
+    }
+}
+
+private fun createValueArgWithName(
+    parent: StubElement<out PsiElement>,
+    name: Name
+): KotlinValueArgumentStubImpl<KtValueArgument> {
+    val valueArg = KotlinValueArgumentStubImpl(parent, KtStubElementTypes.VALUE_ARGUMENT, false)
+    val argName = KotlinPlaceHolderStubImpl<KtValueArgumentName>(valueArg, KtStubElementTypes.VALUE_ARGUMENT_NAME)
+    KotlinNameReferenceExpressionStubImpl(argName, name.ref())
+    return valueArg
+}
+
+private fun createQualifiedReference(
+    valueArg: StubElement<*>,
+    classId: ClassId
+) {
+    val classLength = classId.relativeClassName.pathSegments().size
+    createStubForPackageName(valueArg, classId.asSingleFqName(), classLength)
 }
 
 val MessageLite.annotatedCallableKind: AnnotatedCallableKind

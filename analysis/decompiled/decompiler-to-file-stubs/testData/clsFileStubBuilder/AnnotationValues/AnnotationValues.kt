@@ -21,7 +21,7 @@ class AnnotationValues {
     )
     class WithSimple
 
-    @StringLiteral("some", "", "H$CONSTANT")
+    @StringLiteral("some", "", "H$CONSTANT", "with '\\n' escape")
     class WithStringLiteral
 
     @EnumLiteral(E1, E.E2, e3 = test.E.E2)
@@ -46,7 +46,7 @@ class AnnotationValues {
     )
     class WithClassLiteral<T>
 
-    @Outer("value", nested = Nested(12, "nested value"))
+    @Outer("value", nested = Nested(12, "nested value"), nestedArray = [Nested(21, "nested value 21"), Nested(42, "nested value 42")])
     class WithNested
 }
 
@@ -67,7 +67,8 @@ annotation class Simple(
 annotation class StringLiteral(
     val s1: String,
     val s2: String,
-    val s3: String
+    val s3: String,
+    val s4: String
 )
 
 enum class E {
@@ -105,5 +106,6 @@ annotation class Nested(
 
 annotation class Outer(
     val some: String,
-    val nested: Nested
+    val nested: Nested,
+    val nestedArray: Array<Nested>
 )

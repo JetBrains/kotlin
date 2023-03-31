@@ -12,16 +12,13 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.serialization.deserialization.AnnotationLoader
-import org.jetbrains.kotlin.serialization.deserialization.ClassDataFinder
-import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
-import org.jetbrains.kotlin.serialization.deserialization.getName
+import org.jetbrains.kotlin.serialization.deserialization.*
 
-data class ClassIdWithTarget(val classId: ClassId, val target: AnnotationUseSiteTarget?)
+data class AnnotationWithTarget(val annotationWithArgs: AnnotationWithArgs, val target: AnnotationUseSiteTarget?)
 
 class ClsStubBuilderComponents(
     val classDataFinder: ClassDataFinder,
-    val annotationLoader: AnnotationLoader<ClassId>,
+    val annotationLoader: AnnotationLoader<AnnotationWithArgs>,
     val virtualFileForDebug: VirtualFile,
     val classFinder: KotlinClassFinder? = null,
     val jvmMetadataVersion: JvmMetadataVersion? = null

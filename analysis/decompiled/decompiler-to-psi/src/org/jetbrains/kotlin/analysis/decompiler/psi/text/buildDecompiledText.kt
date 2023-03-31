@@ -11,10 +11,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.psiUtil.quoteIfNeeded
-import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
-import org.jetbrains.kotlin.renderer.DescriptorRendererOptions
-import org.jetbrains.kotlin.renderer.render
+import org.jetbrains.kotlin.renderer.*
 import org.jetbrains.kotlin.resolve.DataClassDescriptorResolver
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry
 import org.jetbrains.kotlin.resolve.constants.*
@@ -38,6 +35,7 @@ fun DescriptorRendererOptions.defaultDecompilerRendererOptions() {
     defaultParameterValueRenderer = { _ -> "null" }
     includePropertyConstant = true
     propertyConstantRenderer = { value, renderer -> renderConstant(value, renderer) }
+    annotationArgumentsRenderingPolicy = AnnotationArgumentsRenderingPolicy.UNLESS_EMPTY
 }
 
 private fun renderConstant(value: ConstantValue<*>, renderer: DescriptorRenderer): String? {
@@ -53,7 +51,8 @@ private fun renderConstant(value: ConstantValue<*>, renderer: DescriptorRenderer
             }
         }
         is CharValue -> String.format("'\\u%04X'", value.value.code)
-        is StringValue, is EnumValue, is UnsignedValueConstant -> value.toString()
+        is StringValue, is UnsignedValueConstant -> value.toString()
+        is EnumValue -> value.enumClassId.asFqNameString() + "." + value.enumEntryName.asString()
         is FloatValue -> {
             val boxedValue = value.value
             if (boxedValue < 0 || boxedValue.isNaN() || boxedValue.isInfinite()) null else boxedValue.toString() + "f"
