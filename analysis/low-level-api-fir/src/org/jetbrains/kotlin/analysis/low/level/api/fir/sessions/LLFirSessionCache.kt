@@ -537,18 +537,29 @@ internal class LLFirSessionCache(private val project: Project) {
         session: FirSession,
         destination: MutableList<FirSymbolProvider>,
     ) {
-        val (kotlinSymbolProviders, remainingSymbolProviders1) = partitionIsInstance<_, LLFirProvider.SymbolProvider>()
-        destination.addIfNotNull(LLFirCombinedKotlinSymbolProvider.merge(session, project, kotlinSymbolProviders))
+        SymbolProviderMerger(this, destination).apply {
+            merge<LLFirProvider.SymbolProvider> { LLFirCombinedKotlinSymbolProvider.merge(session, project, it) }
+            merge<FirExtensionSyntheticFunctionInterfaceProvider> { LLFirCombinedSyntheticFunctionSymbolProvider.merge(session, it) }
+            finish()
+        }
+    }
 
-        val (syntheticFunctionSymbolProviders, remainingSymbolProviders2) =
-            remainingSymbolProviders1.partitionIsInstance<_, FirExtensionSyntheticFunctionInterfaceProvider>()
+    private class SymbolProviderMerger(
+        symbolProviders: List<FirSymbolProvider>,
+        private val destination: MutableList<FirSymbolProvider>
+    ) {
+        private var remainingSymbolProviders = symbolProviders
 
-        destination.addAll(remainingSymbolProviders2)
+        inline fun <reified A : FirSymbolProvider> merge(create: (List<A>) -> FirSymbolProvider?) {
+            val (specificSymbolProviders, remainingSymbolProviders) = remainingSymbolProviders.partitionIsInstance<_, A>()
+            destination.addIfNotNull(create(specificSymbolProviders))
+            this.remainingSymbolProviders = remainingSymbolProviders
+        }
 
-        // Unfortunately, the functions that an extension synthetic function symbol provider might provide differ between sessions because
-        // they depend on compiler plugins. However, only extension providers that are affected by compiler plugins are added in
-        // `createSourcesSession`. We can still combine these, because the `ClassId` heuristics only need to be checked once.
-        destination.addIfNotNull(LLFirCombinedSyntheticFunctionSymbolProvider.merge(session, syntheticFunctionSymbolProviders))
+        fun finish() {
+            destination.addAll(remainingSymbolProviders)
+            remainingSymbolProviders = emptyList()
+        }
     }
 }
 
