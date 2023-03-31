@@ -20879,6 +20879,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
                     runTest("compiler/testData/codegen/box/multiplatform/k2/defaultArguments/dispatchReceiverValue.kt");
                 }
 
+                @TestMetadata("expectPropertyAsDefaultArgument.kt")
+                public void testExpectPropertyAsDefaultArgument() throws Exception {
+                    runTest("compiler/testData/codegen/box/multiplatform/k2/defaultArguments/expectPropertyAsDefaultArgument.kt");
+                }
+
                 @TestMetadata("extensionReceiverValue.kt")
                 public void testExtensionReceiverValue() throws Exception {
                     runTest("compiler/testData/codegen/box/multiplatform/k2/defaultArguments/extensionReceiverValue.kt");

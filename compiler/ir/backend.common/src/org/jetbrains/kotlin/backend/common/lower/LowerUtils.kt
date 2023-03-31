@@ -22,9 +22,6 @@ import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrFail
-import org.jetbrains.kotlin.ir.util.DeepCopyIrTreeWithSymbols
-import org.jetbrains.kotlin.ir.util.IrTypeParameterRemapper
-import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -253,28 +250,7 @@ fun ParameterDescriptor.copyAsValueParameter(newOwner: CallableDescriptor, index
     else -> throw Error("Unexpected parameter descriptor: $this")
 }
 
-fun IrExpressionBody.copyAndActualizeDefaultValue(
-    actualFunction: IrFunction,
-    expectActualTypeParametersMap: Map<IrTypeParameter, IrTypeParameter>,
-    classActualizer: (IrClass) -> IrClass,
-    functionActualizer: (IrFunction) -> IrFunction
-): IrExpressionBody {
-    return this
-        .deepCopyWithSymbols(actualFunction) { symbolRemapper, _ ->
-            DeepCopyIrTreeWithSymbols(symbolRemapper, IrTypeParameterRemapper(expectActualTypeParametersMap))
-        }
-        .transform(object : IrElementTransformerVoid() {
-            override fun visitGetValue(expression: IrGetValue): IrExpression {
-                expression.transformChildrenVoid()
-                return expression.actualizeForDefaultValue(
-                    classActualizer = { classActualizer(it) },
-                    functionActualizer = { functionActualizer(it) }
-                )
-            }
-        }, data = null)
-}
-
-fun IrGetValue.actualizeForDefaultValue(classActualizer: (IrClass) -> IrClass, functionActualizer: (IrFunction) -> IrFunction): IrGetValue {
+fun IrGetValue.actualize(classActualizer: (IrClass) -> IrClass, functionActualizer: (IrFunction) -> IrFunction): IrGetValue {
     val symbol = symbol
     if (symbol !is IrValueParameterSymbol) {
         return this
@@ -288,13 +264,13 @@ fun IrGetValue.actualizeForDefaultValue(classActualizer: (IrClass) -> IrClass, f
         }
 
         is IrFunction -> {
-            val function = functionActualizer(parent)
+            val actualizedFunction = functionActualizer(parent)
             when (parameter) {
-                parent.dispatchReceiverParameter -> function.dispatchReceiverParameter!!
-                parent.extensionReceiverParameter -> function.extensionReceiverParameter!!
+                parent.dispatchReceiverParameter -> actualizedFunction.dispatchReceiverParameter!!
+                parent.extensionReceiverParameter -> actualizedFunction.extensionReceiverParameter!!
                 else -> {
                     assert(parent.valueParameters[parameter.index] == parameter)
-                    function.valueParameters[parameter.index]
+                    actualizedFunction.valueParameters[parameter.index]
                 }
             }
         }

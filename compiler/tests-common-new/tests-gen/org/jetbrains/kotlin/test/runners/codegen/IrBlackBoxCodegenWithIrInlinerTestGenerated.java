@@ -33562,6 +33562,12 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
                 }
 
                 @Test
+                @TestMetadata("expectPropertyAsDefaultArgument.kt")
+                public void testExpectPropertyAsDefaultArgument() throws Exception {
+                    runTest("compiler/testData/codegen/box/multiplatform/k2/defaultArguments/expectPropertyAsDefaultArgument.kt");
+                }
+
+                @Test
                 @TestMetadata("extensionReceiverValue.kt")
                 public void testExtensionReceiverValue() throws Exception {
                     runTest("compiler/testData/codegen/box/multiplatform/k2/defaultArguments/extensionReceiverValue.kt");
