@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.TestCaseId
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestRunnerType
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.FirPipeline
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.PredefinedTestCases
+import org.jetbrains.kotlin.konan.blackboxtest.support.group.UsePartialLinkage
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.PredefinedTestCase as TC
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.TestFactory
@@ -29,6 +30,7 @@ import org.junit.jupiter.api.TestFactory
         sourceLocations = ["libraries/kotlin.test/common/src/test/kotlin/**.kt"]
     )
 )
+@UsePartialLinkage(UsePartialLinkage.Mode.DISABLED)
 class K1KotlinTestLibraryTest : AbstractNativeBlackBoxTest() {
     @TestFactory
     fun default() = dynamicTestCase(TestCaseId.Named("default"))
@@ -54,6 +56,7 @@ class K1KotlinTestLibraryTest : AbstractNativeBlackBoxTest() {
     )
 )
 @FirPipeline
+@UsePartialLinkage(UsePartialLinkage.Mode.DISABLED)
 class FirKotlinTestLibraryTest : AbstractNativeBlackBoxTest() {
     @TestFactory
     fun default() = dynamicTestCase(TestCaseId.Named("default"))

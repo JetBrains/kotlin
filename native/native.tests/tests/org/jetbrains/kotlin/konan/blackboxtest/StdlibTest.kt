@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.group.FirPipeline
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.PredefinedPaths.KOTLIN_NATIVE_DISTRIBUTION
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.PredefinedTestCase as TC
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.PredefinedTestCases
+import org.jetbrains.kotlin.konan.blackboxtest.support.group.UsePartialLinkage
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.TestFactory
 
@@ -45,6 +46,7 @@ import org.junit.jupiter.api.TestFactory
         ignoredTests = [DISABLED_STDLIB_TEST]
     )
 )
+@UsePartialLinkage(UsePartialLinkage.Mode.DISABLED)
 class StdlibTest : AbstractNativeBlackBoxTest() {
     @TestFactory
     fun default() = dynamicTestCase(TestCaseId.Named("default"))
@@ -100,6 +102,7 @@ class StdlibTest : AbstractNativeBlackBoxTest() {
     )
 )
 @FirPipeline
+@UsePartialLinkage(UsePartialLinkage.Mode.DISABLED)
 class FirStdlibTest : AbstractNativeBlackBoxTest() {
     @TestFactory
     fun default() = dynamicTestCase(TestCaseId.Named("default"))

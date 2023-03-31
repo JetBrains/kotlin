@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationArtifact.KLIB
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationArtifact.KLIBStaticCache
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationResult.Companion.assertSuccess
+import org.jetbrains.kotlin.konan.blackboxtest.support.group.UsePartialLinkage
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestExecutable
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.CacheMode
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.compatibility.binary.TestFile as TFile
 import org.jetbrains.kotlin.compatibility.binary.TestModule as TModule
 
 @Tag("klib-evolution")
+@UsePartialLinkage(UsePartialLinkage.Mode.DISABLED)
 abstract class AbstractNativeKlibEvolutionTest : AbstractNativeSimpleTest() {
     // Const evaluation tests muted for FIR because FIR does const propagation.
     private fun isIgnoredTest(filePath: String): Boolean {
@@ -98,7 +100,7 @@ abstract class AbstractNativeKlibEvolutionTest : AbstractNativeSimpleTest() {
         )
         val executableArtifact = TestCompilationArtifact.Executable(executableFile)
 
-        val cachedDependencies: List<ExistingDependency<KLIBStaticCache>> = if (staticCacheRequiredForEveryLibrary) {
+        val cachedDependencies: List<ExistingDependency<KLIBStaticCache>> = if (useStaticCacheForUserLibraries) {
             latestDependencies.map { (module, deps) ->
                 val testModule = module.module
 
@@ -282,10 +284,8 @@ abstract class AbstractNativeKlibEvolutionTest : AbstractNativeSimpleTest() {
         initialize(null, null)
     }
 
-    private val buildDir: File
-        get() = testRunSettings.get<SimpleTestDirectories>().testBuildDir
-    private val staticCacheRequiredForEveryLibrary: Boolean
-        get() = testRunSettings.get<CacheMode>().staticCacheRequiredForEveryLibrary
+    private val buildDir: File get() = testRunSettings.get<SimpleTestDirectories>().testBuildDir
+    private val useStaticCacheForUserLibraries: Boolean get() = testRunSettings.get<CacheMode>().useStaticCacheForUserLibraries
 
     companion object {
         private val COMPILER_ARGS_FOR_KLIB = TestCompilerArgs.EMPTY
