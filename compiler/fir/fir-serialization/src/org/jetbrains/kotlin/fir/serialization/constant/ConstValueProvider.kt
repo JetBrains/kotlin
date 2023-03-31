@@ -5,8 +5,13 @@
 
 package org.jetbrains.kotlin.fir.serialization.constant
 
+import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
+import org.jetbrains.kotlin.fir.declarations.FirReceiverParameter
+import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.serialization.FirAnnotationSerializer
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -16,17 +21,37 @@ abstract class ConstValueProvider {
 
     abstract fun getConstantValueForProperty(firProperty: FirProperty): FirConstExpression<*>?
 
-    fun buildValueProtoBufIfPropertyIsConst(
-        firProperty: FirProperty, annotationSerializer: FirAnnotationSerializer
-    ): ProtoBuf.Annotation.Argument.Value? {
-        return getConstantValueForProperty(firProperty).toProtoBuf(annotationSerializer)
-    }
+    abstract fun getNewFirAnnotationWithConstantValues(
+        firAnnotationContainer: FirAnnotationContainer,
+        firAnnotation: FirAnnotation,
+    ): FirAnnotation
 
-    private fun FirConstExpression<*>?.toProtoBuf(
-        annotationSerializer: FirAnnotationSerializer
-    ): ProtoBuf.Annotation.Argument.Value? {
+    abstract fun getNewFirAnnotationWithConstantValues(
+        firProperty: FirProperty,
+        firAnnotation: FirAnnotation,
+        firPropertyAccessor: FirPropertyAccessor,
+        isGetter: Boolean,
+    ): FirAnnotation
+
+    abstract fun getNewFirAnnotationWithConstantValues(
+        firExtensionReceiverContainer: FirAnnotationContainer,
+        firAnnotation: FirAnnotation,
+        receiverParameter: FirReceiverParameter,
+    ): FirAnnotation
+
+    abstract fun getNewFirAnnotationWithConstantValues(
+        valueParameter: FirValueParameter,
+        firAnnotation: FirAnnotation,
+    ): FirAnnotation
+
+    fun FirConstExpression<*>?.toProtoBuf(annotationSerializer: FirAnnotationSerializer): ProtoBuf.Annotation.Argument.Value? {
         val constantValue = this?.toConstantValue(session) ?: return null
         return annotationSerializer.valueProto(constantValue).build()
     }
 }
 
+fun ConstValueProvider.buildValueProtoBufIfPropertyIsConst(
+    firProperty: FirProperty, annotationSerializer: FirAnnotationSerializer
+): ProtoBuf.Annotation.Argument.Value? {
+    return getConstantValueForProperty(firProperty).toProtoBuf(annotationSerializer)
+}

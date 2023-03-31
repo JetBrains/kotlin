@@ -573,10 +573,6 @@ class FirElementSerializer private constructor(
             builder.addAllVersionRequirement(serializeVersionRequirements(typeAlias))
         }
 
-        for (annotation in typeAlias.nonSourceAnnotations(session)) {
-            builder.addAnnotation(extension.annotationSerializer.serializeAnnotation(annotation))
-        }
-
         extension.serializeTypeAlias(typeAlias, builder)
 
         return builder

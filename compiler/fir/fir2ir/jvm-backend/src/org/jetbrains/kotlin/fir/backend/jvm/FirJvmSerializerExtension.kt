@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.backend.ConstValueProviderImpl
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.fir.declarations.*
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.serialization.*
+import org.jetbrains.kotlin.fir.serialization.constant.ConstValueProvider
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.load.kotlin.NON_EXISTENT_CLASS_NAME
@@ -58,6 +60,7 @@ class FirJvmSerializerExtension(
     override val metadataVersion: BinaryVersion,
     private val jvmDefaultMode: JvmDefaultMode,
     override val stringTable: FirElementAwareStringTable,
+    override val constValueProvider: ConstValueProvider?,
 ) : FirSerializerExtension() {
 
     constructor(
@@ -73,7 +76,7 @@ class FirJvmSerializerExtension(
         session, bindings, metadata, localDelegatedProperties, approximator, components.scopeSession,
         state.globalSerializationBindings, state.useTypeTableInSerializer, state.moduleName, state.classBuilderMode,
         state.isParamAssertionsDisabled, state.unifiedNullChecks, state.metadataVersion, state.jvmDefaultMode,
-        FirJvmElementAwareStringTable(typeMapper, components),
+        FirJvmElementAwareStringTable(typeMapper, components), ConstValueProviderImpl(components),
     )
 
     override fun shouldUseTypeTable(): Boolean = useTypeTable
@@ -173,7 +176,8 @@ class FirJvmSerializerExtension(
 
     override fun serializeTypeParameter(typeParameter: FirTypeParameter, proto: ProtoBuf.TypeParameter.Builder) {
         for (annotation in typeParameter.nonSourceAnnotations(session)) {
-            proto.addExtension(JvmProtoBuf.typeParameterAnnotation, annotationSerializer.serializeAnnotation(annotation))
+            val annotationWithConstants = constValueProvider?.getNewFirAnnotationWithConstantValues(typeParameter, annotation) ?: annotation
+            proto.addExtension(JvmProtoBuf.typeParameterAnnotation, annotationSerializer.serializeAnnotation(annotationWithConstants))
         }
     }
 

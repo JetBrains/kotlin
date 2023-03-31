@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.serialization
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.serialization.constant.ConstantValue
 import org.jetbrains.kotlin.fir.serialization.constant.toConstantValue
@@ -28,7 +29,9 @@ class FirAnnotationSerializer(private val session: FirSession, internal val stri
         fun addArgument(argumentExpression: FirExpression, parameterName: Name) {
             val argument = ProtoBuf.Annotation.Argument.newBuilder()
             argument.nameId = stringTable.getStringIndex(parameterName.asString())
-            argument.setValue(valueProto(argumentExpression.toConstantValue(session) ?: return))
+            val constantValue = argumentExpression.toConstantValue(session)
+                ?: error("Cannot convert expression ${argumentExpression.render()} to constant")
+            argument.setValue(valueProto(constantValue))
             addArgument(argument)
         }
 

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.serialization
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.serialization.constant.ConstValueProvider
 import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeFlexibleType
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -23,6 +24,8 @@ abstract class FirSerializerExtension {
     abstract val metadataVersion: BinaryVersion
 
     val annotationSerializer by lazy { FirAnnotationSerializer(session, stringTable) }
+
+    protected abstract val constValueProvider: ConstValueProvider?
 
     open fun shouldUseTypeTable(): Boolean = false
     open fun shouldUseNormalizedVisibility(): Boolean = false
@@ -77,6 +80,10 @@ abstract class FirSerializerExtension {
     }
 
     open fun serializeTypeAlias(typeAlias: FirTypeAlias, proto: ProtoBuf.TypeAlias.Builder) {
+        for (annotation in typeAlias.nonSourceAnnotations(session)) {
+            val annotationWithConstants = constValueProvider?.getNewFirAnnotationWithConstantValues(typeAlias, annotation) ?: annotation
+            proto.addAnnotation(annotationSerializer.serializeAnnotation(annotationWithConstants))
+        }
     }
 
     open fun serializeErrorType(type: ConeErrorType, builder: ProtoBuf.Type.Builder) {

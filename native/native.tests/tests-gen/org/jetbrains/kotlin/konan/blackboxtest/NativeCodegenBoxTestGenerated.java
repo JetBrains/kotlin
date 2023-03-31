@@ -24127,6 +24127,25 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                     runTest("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck/unsignedConst.kt");
                 }
             }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/involvesIrInterpreter/serialization")
+            @TestDataPath("$PROJECT_ROOT")
+            @Tag("codegen")
+            @Tag("k1Codegen")
+            @UseExtTestCaseGroupProvider()
+            public class Serialization {
+                @Test
+                public void testAllFilesPresentInSerialization() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/involvesIrInterpreter/serialization"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+                }
+
+                @Test
+                @TestMetadata("annotationSerialization.kt")
+                public void testAnnotationSerialization() throws Exception {
+                    runTest("compiler/testData/codegen/box/involvesIrInterpreter/serialization/annotationSerialization.kt");
+                }
+            }
         }
 
         @Nested

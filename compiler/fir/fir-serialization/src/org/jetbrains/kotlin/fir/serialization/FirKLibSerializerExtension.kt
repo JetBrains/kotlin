@@ -24,10 +24,10 @@ import org.jetbrains.kotlin.serialization.deserialization.DYNAMIC_TYPE_DESERIALI
 class FirKLibSerializerExtension(
     override val session: FirSession,
     override val metadataVersion: BinaryVersion,
-    constValueProvider: ConstValueProvider?,
+    override val constValueProvider: ConstValueProvider?,
     private val allowErrorTypes: Boolean,
     private val exportKDoc: Boolean
-) : FirSerializerExtensionBase(KlibMetadataSerializerProtocol, constValueProvider) {
+) : FirSerializerExtensionBase(KlibMetadataSerializerProtocol) {
     override fun shouldUseTypeTable(): Boolean = true
 
     override fun serializeFlexibleType(type: ConeFlexibleType, lowerProto: ProtoBuf.Type.Builder, upperProto: ProtoBuf.Type.Builder) {
