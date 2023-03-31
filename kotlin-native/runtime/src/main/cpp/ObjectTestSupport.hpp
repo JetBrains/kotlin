@@ -345,6 +345,7 @@ public:
 };
 
 struct RegularWeakReferenceImplPayload {
+    void* weakRef;
     void* referred;
 
     using Field = ObjHeader* RegularWeakReferenceImplPayload::*;

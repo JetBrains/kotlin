@@ -22,6 +22,7 @@
 #include "SingleThreadExecutor.hpp"
 #include "TestSupport.hpp"
 #include "ThreadData.hpp"
+#include "WeakRef.hpp"
 #include "std_support/Memory.hpp"
 #include "std_support/Vector.hpp"
 
@@ -197,6 +198,7 @@ test_support::RegularWeakReferenceImpl& InstallWeakReference(mm::ThreadData& thr
     mm::AllocateObject(&threadData, theRegularWeakReferenceImplTypeInfo, location);
     auto& weakReference = test_support::RegularWeakReferenceImpl::FromObjHeader(*location);
     auto& extraObjectData = mm::ExtraObjectData::GetOrInstall(objHeader);
+    weakReference->weakRef = static_cast<mm::RawSpecialRef*>(mm::WeakRef::create(objHeader));
     weakReference->referred = objHeader;
     auto* setWeakRef = extraObjectData.GetOrSetRegularWeakReferenceImpl(objHeader, weakReference.header());
     EXPECT_EQ(setWeakRef, weakReference.header());
@@ -207,6 +209,7 @@ class SameThreadMarkAndSweepTest : public testing::Test {
 public:
     ~SameThreadMarkAndSweepTest() {
         mm::GlobalsRegistry::Instance().ClearForTests();
+        mm::SpecialRefRegistry::instance().clearForTests();
         mm::GlobalData::Instance().extraObjectDataFactory().ClearForTests();
         mm::GlobalData::Instance().gc().impl().objectFactory().ClearForTests();
     }
@@ -333,7 +336,7 @@ TEST_F(SameThreadMarkAndSweepTest, FreeObjectsWithFinalizers) {
 }
 
 TEST_F(SameThreadMarkAndSweepTest, FreeObjectWithFreeWeak) {
-    RunInNewThread([](mm::ThreadData& threadData) {
+    RunInNewThread([this](mm::ThreadData& threadData) {
         auto& object1 = AllocateObject(threadData);
         auto& weak1 = ([&threadData, &object1]() -> test_support::RegularWeakReferenceImpl& {
             ObjHolder holder;
@@ -345,6 +348,7 @@ TEST_F(SameThreadMarkAndSweepTest, FreeObjectWithFreeWeak) {
         ASSERT_THAT(IsMarked(weak1.header()), false);
         ASSERT_THAT(weak1.get(), object1.header());
 
+        EXPECT_CALL(finalizerHook(), Call(weak1.header()));
         threadData.gc().ScheduleAndWaitFullGC();
 
         EXPECT_THAT(Alive(threadData), testing::UnorderedElementsAre());
@@ -1096,6 +1100,7 @@ TEST_F(SameThreadMarkAndSweepTest, FreeObjectWithFreeWeakReversedOrder) {
 
         global1->field1 = nullptr;
 
+        EXPECT_CALL(finalizerHook(), Call(weak.load()->header()));
         threadData.gc().ScheduleAndWaitFullGC();
 
         EXPECT_THAT(Alive(threadData), testing::UnorderedElementsAre(global1.header()));

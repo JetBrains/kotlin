@@ -95,7 +95,7 @@ private fun PatchBuilder.addObjCPatches() {
     addProtocolImport("NSCopying")
 
     addPrivateSelector("toKotlin:")
-    addPrivateSelector("releaseAsAssociatedObject:")
+    addPrivateSelector("releaseAsAssociatedObject")
 
     addPrivateClass("KIteratorAsNSEnumerator", "iteratorHolder")
     addPrivateClass("KListAsNSArray", "listHolder")

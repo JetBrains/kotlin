@@ -355,6 +355,8 @@ CODEGEN_INLINE_POLICY RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateRunnable()
 CODEGEN_INLINE_POLICY void Kotlin_mm_safePointFunctionPrologue() RUNTIME_NOTHROW;
 CODEGEN_INLINE_POLICY void Kotlin_mm_safePointWhileLoopBody() RUNTIME_NOTHROW;
 
+RUNTIME_NOTHROW void DisposeRegularWeakReferenceImpl(ObjHeader* counter);
+
 #ifdef __cplusplus
 }
 #endif

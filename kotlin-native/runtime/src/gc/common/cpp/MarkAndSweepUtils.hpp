@@ -16,7 +16,7 @@
 #include "ObjectTraversal.hpp"
 #include "RootSet.hpp"
 #include "Runtime.h"
-#include "StableRefRegistry.hpp"
+#include "SpecialRefRegistry.hpp"
 #include "ThreadData.hpp"
 #include "Types.h"
 
@@ -116,7 +116,6 @@ void SweepExtraObjects(GCHandle handle, typename Traits::ExtraObjectsFactory::It
         if (!extraObject.getFlag(mm::ExtraObjectData::FLAGS_IN_FINALIZER_QUEUE) && !Traits::IsMarkedByExtraObject(extraObject)) {
             extraObject.ClearRegularWeakReferenceImpl();
             if (extraObject.HasAssociatedObject()) {
-                extraObject.DetachAssociatedObject();
                 extraObject.setFlag(mm::ExtraObjectData::FLAGS_IN_FINALIZER_QUEUE);
                 ++it;
             } else {
@@ -184,7 +183,6 @@ void collectRootSetForThread(GCHandle gcHandle, typename Traits::MarkQueue& mark
 template <typename Traits>
 void collectRootSetGlobals(GCHandle gcHandle, typename Traits::MarkQueue& markQueue) noexcept {
     auto handle = gcHandle.collectGlobalRoots();
-    mm::StableRefRegistry::Instance().ProcessDeletions();
     // TODO: Remove useless mm::GlobalRootSet abstraction.
     for (auto value : mm::GlobalRootSet()) {
         if (internal::collectRoot<Traits>(markQueue, value.object)) {
@@ -211,6 +209,28 @@ void collectRootSet(GCHandle handle, typename Traits::MarkQueue& markQueue, F&& 
         collectRootSetForThread<Traits>(handle, markQueue, thread);
     }
     collectRootSetGlobals<Traits>(handle, markQueue);
+}
+
+template <typename Traits>
+void processWeaks(GCHandle gcHandle, mm::SpecialRefRegistry& registry) noexcept {
+    auto handle = gcHandle.processWeaks();
+    for (auto& object : registry.lockForIter()) {
+        auto* obj = object;
+        if (!obj) {
+            // We already processed it at some point.
+            handle.addUndisposed();
+            continue;
+        }
+        if (obj->permanent() || Traits::IsMarked(obj)) {
+            // TODO: Let's not put permanent objects in here at all?
+            // Object is alive. Nothing to do.
+            handle.addAlive();
+            continue;
+        }
+        // Object is not alive. Clear it out.
+        object = nullptr;
+        handle.addNulled();
+    }
 }
 
 } // namespace gc

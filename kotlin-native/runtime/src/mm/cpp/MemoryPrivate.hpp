@@ -39,10 +39,4 @@ extern "C" struct MemoryState : kotlin::Pinned {
     }
 };
 
-extern "C" {
-ForeignRefContext InitForeignRef(ObjHeader* object);
-void DeinitForeignRef(ObjHeader* object, ForeignRefContext context);
-RUNTIME_NOTHROW OBJ_GETTER(TryRef, ObjHeader* object);
-}
-
 #endif //RUNTIME_MEMORYPRIVATE_HPP

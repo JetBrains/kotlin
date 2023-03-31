@@ -14,6 +14,7 @@
 #include <cinttypes>
 #include <mutex>
 
+using namespace kotlin;
 
 extern "C" {
 void Kotlin_Internal_GC_GCInfoBuilder_setEpoch(KRef thiz, KLong value);
@@ -368,6 +369,16 @@ GCHandle::GCMarkScope::~GCMarkScope() {
     GCLogDebug(handle_.getEpoch(),
                "Marked %" PRIu64 " objects in %" PRIu64 " microseconds in thread %d",
                objectsCount, getStageTime(), konan::currentThreadId());
+}
+
+gc::GCHandle::GCProcessWeaksScope::GCProcessWeaksScope(gc::GCHandle& handle) noexcept : handle_(handle) {}
+
+gc::GCHandle::GCProcessWeaksScope::~GCProcessWeaksScope() {
+    GCLogDebug(
+            handle_.getEpoch(),
+            "Processed special refs in %" PRIu64 " microseconds. %" PRIu64 " are undisposed, %" PRIu64 " are alive, %" PRIu64
+            " are nulled out",
+            getStageTime(), undisposedCount_, aliveCount_, nulledCount_);
 }
 
 } // namespace kotlin::gc

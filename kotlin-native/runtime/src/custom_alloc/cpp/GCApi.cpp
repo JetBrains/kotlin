@@ -58,7 +58,6 @@ bool SweepExtraObject(ExtraObjectCell* extraObjectCell, AtomicStack<ExtraObjectC
     }
     extraObject->ClearRegularWeakReferenceImpl();
     if (extraObject->HasAssociatedObject()) {
-        extraObject->DetachAssociatedObject();
         extraObject->setFlag(mm::ExtraObjectData::FLAGS_IN_FINALIZER_QUEUE);
         finalizerQueue.Push(extraObjectCell);
         KeepAlive(baseObject);

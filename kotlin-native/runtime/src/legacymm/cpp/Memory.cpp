@@ -3085,7 +3085,7 @@ void ObjHeader::destroyMetaObject(ObjHeader* object) {
   }
 
 #ifdef KONAN_OBJC_INTEROP
-  Kotlin_ObjCExport_detachAndReleaseAssociatedObject(meta->associatedObject_);
+  Kotlin_ObjCExport_releaseAssociatedObject(meta->associatedObject_);
 #endif
 
   std_support::allocator_delete(objectAllocator, meta);
@@ -3728,6 +3728,10 @@ RUNTIME_NOTHROW ALWAYS_INLINE void Kotlin_processFieldInMark(void* state, ObjHea
 
 RUNTIME_NOTHROW ALWAYS_INLINE void Kotlin_processEmptyObjectInMark(void* state, ObjHeader* object) {
     // no-op, used by the new MM only.
+}
+
+RUNTIME_NOTHROW void DisposeRegularWeakReferenceImpl(ObjHeader* counter) {
+    RuntimeFail("New MM only");
 }
 
 } // extern "C"

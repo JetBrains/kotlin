@@ -15,7 +15,7 @@
 #include "ObjectFactory.hpp"
 #include "ExtraObjectDataFactory.hpp"
 #include "ShadowStack.hpp"
-#include "StableRefRegistry.hpp"
+#include "SpecialRefRegistry.hpp"
 #include "ThreadLocalStorage.hpp"
 #include "Utils.hpp"
 #include "ThreadSuspension.hpp"
@@ -33,7 +33,7 @@ public:
     explicit ThreadData(int threadId) noexcept :
         threadId_(threadId),
         globalsThreadQueue_(GlobalsRegistry::Instance()),
-        stableRefThreadQueue_(StableRefRegistry::Instance()),
+        specialRefRegistry_(SpecialRefRegistry::instance()),
         extraObjectDataThreadQueue_(ExtraObjectDataFactory::Instance()),
         gc_(GlobalData::Instance().gc(), *this),
         suspensionData_(ThreadState::kNative, *this) {}
@@ -46,7 +46,7 @@ public:
 
     ThreadLocalStorage& tls() noexcept { return tls_; }
 
-    StableRefRegistry::ThreadQueue& stableRefThreadQueue() noexcept { return stableRefThreadQueue_; }
+    SpecialRefRegistry::ThreadQueue& specialRefRegistry() noexcept { return specialRefRegistry_; }
 
     ExtraObjectDataFactory::ThreadQueue& extraObjectDataThreadQueue() noexcept { return extraObjectDataThreadQueue_; }
 
@@ -65,14 +65,14 @@ public:
     void Publish() noexcept {
         // TODO: These use separate locks, which is inefficient.
         globalsThreadQueue_.Publish();
-        stableRefThreadQueue_.Publish();
+        specialRefRegistry_.publish();
         extraObjectDataThreadQueue_.Publish();
         gc_.Publish();
     }
 
     void ClearForTests() noexcept {
         globalsThreadQueue_.ClearForTests();
-        stableRefThreadQueue_.ClearForTests();
+        specialRefRegistry_.clearForTests();
         extraObjectDataThreadQueue_.ClearForTests();
         gc_.ClearForTests();
     }
@@ -81,7 +81,7 @@ private:
     const int threadId_;
     GlobalsRegistry::ThreadQueue globalsThreadQueue_;
     ThreadLocalStorage tls_;
-    StableRefRegistry::ThreadQueue stableRefThreadQueue_;
+    SpecialRefRegistry::ThreadQueue specialRefRegistry_;
     ExtraObjectDataFactory::ThreadQueue extraObjectDataThreadQueue_;
     ShadowStack shadowStack_;
     gc::GC::ThreadData gc_;

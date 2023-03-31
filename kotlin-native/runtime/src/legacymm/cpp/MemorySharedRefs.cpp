@@ -183,8 +183,8 @@ void BackRefFromAssociatedObject::detach() {
   obj_ = nullptr; // Handled in addRef/tryAddRef/releaseRef/ref.
 }
 
-ALWAYS_INLINE void BackRefFromAssociatedObject::assertDetached() {
-    RuntimeAssert(obj_ == nullptr, "Expecting this=%p to be detached, but found obj_=%p", this, obj_);
+void BackRefFromAssociatedObject::dealloc() {
+    RuntimeFail("New MM only");
 }
 
 template <ErrorPolicy errorPolicy>

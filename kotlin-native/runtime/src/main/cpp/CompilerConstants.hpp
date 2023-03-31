@@ -86,6 +86,10 @@ ALWAYS_INLINE inline RuntimeAssertsMode runtimeAssertsMode() noexcept {
     return static_cast<RuntimeAssertsMode>(Kotlin_runtimeAssertsMode);
 }
 
+ALWAYS_INLINE inline bool runtimeAssertsEnabled() noexcept {
+    return runtimeAssertsMode() != RuntimeAssertsMode::kIgnore;
+}
+
 ALWAYS_INLINE inline std::string_view runtimeLogs() noexcept {
     return Kotlin_runtimeLogs == nullptr ? std::string_view() : std::string_view(Kotlin_runtimeLogs);
 }

@@ -14,6 +14,7 @@
 #include "ObjectFactory.hpp"
 #include "ObjectTestSupport.hpp"
 #include "ExtraObjectDataFactory.hpp"
+#include "WeakRef.hpp"
 
 using namespace kotlin;
 
@@ -154,6 +155,13 @@ struct SweepTraits {
     }
 };
 
+struct ProcessWeakTraits {
+    static bool IsMarked(ObjHeader* object) noexcept {
+        auto& objectData = ObjectFactory::NodeRef::From(object).ObjectData();
+        return objectData.state != ObjectFactoryTraits::ObjectData::State::kUnmarked;
+    }
+};
+
 class MarkAndSweepUtilsSweepTest : public ::testing::Test {
 public:
     ~MarkAndSweepUtilsSweepTest() override {
@@ -186,6 +194,7 @@ public:
     }
 
     std_support::vector<ObjHeader*> Sweep() {
+        gc::processWeaks<ProcessWeakTraits>(gc::GCHandle::getByEpoch(0), specialRefRegistry_);
         gc::SweepExtraObjects<SweepTraits>(gc::GCHandle::getByEpoch(0), extraObjectFactory_);
         auto finalizers = gc::Sweep<SweepTraits>(gc::GCHandle::getByEpoch(0), objectFactory_);
         std_support::vector<ObjHeader*> objects;
@@ -244,7 +253,9 @@ public:
         auto& extraObjectData = InstallExtraData(objHeader);
         auto* setHeader = extraObjectData.GetOrSetRegularWeakReferenceImpl(objHeader, weakReference.header());
         EXPECT_EQ(setHeader, weakReference.header());
+        weakReference->weakRef = static_cast<mm::RawSpecialRef*>(specialRefRegistryThreadQueue_.createWeakRef(objHeader));
         weakReference->referred = objHeader;
+        specialRefRegistryThreadQueue_.publish();
         return weakReference;
     }
 
@@ -258,6 +269,9 @@ private:
     ObjectFactory::ThreadQueue objectFactoryThreadQueue_{objectFactory_, gc::Allocator()};
     ExtraObjectsDataFactory extraObjectFactory_;
     ExtraObjectsDataFactory::ThreadQueue extraObjectFactoryThreadQueue_{extraObjectFactory_};
+    mm::SpecialRefRegistry specialRefRegistry_;
+    mm::SpecialRefRegistry::ThreadQueue specialRefRegistryThreadQueue_{specialRefRegistry_};
+
     std_support::vector<ObjectFactory::FinalizerQueue> finalizers_;
 };
 
@@ -445,8 +459,10 @@ TEST_F(MarkAndSweepUtilsSweepTest, SweepSingleObjectWithWeakReference) {
 
     auto finalizers = Sweep();
 
-    EXPECT_THAT(finalizers, testing::UnorderedElementsAre());
+    EXPECT_THAT(finalizers, testing::UnorderedElementsAre(weakReference.header()));
     EXPECT_THAT(Alive(), testing::UnorderedElementsAre());
+
+    EXPECT_CALL(finalizerHook(), Call(weakReference.header()));
 }
 
 TEST_F(MarkAndSweepUtilsSweepTest, SweepSingleObjectArrayWithWeakReference) {
@@ -456,8 +472,10 @@ TEST_F(MarkAndSweepUtilsSweepTest, SweepSingleObjectArrayWithWeakReference) {
 
     auto finalizers = Sweep();
 
-    EXPECT_THAT(finalizers, testing::UnorderedElementsAre());
+    EXPECT_THAT(finalizers, testing::UnorderedElementsAre(weakReference.header()));
     EXPECT_THAT(Alive(), testing::UnorderedElementsAre());
+
+    EXPECT_CALL(finalizerHook(), Call(weakReference.header()));
 }
 
 TEST_F(MarkAndSweepUtilsSweepTest, SweepSingleCharArrayWithWeakReference) {
@@ -467,8 +485,10 @@ TEST_F(MarkAndSweepUtilsSweepTest, SweepSingleCharArrayWithWeakReference) {
 
     auto finalizers = Sweep();
 
-    EXPECT_THAT(finalizers, testing::UnorderedElementsAre());
+    EXPECT_THAT(finalizers, testing::UnorderedElementsAre(weakReference.header()));
     EXPECT_THAT(Alive(), testing::UnorderedElementsAre());
+
+    EXPECT_CALL(finalizerHook(), Call(weakReference.header()));
 }
 
 TEST_F(MarkAndSweepUtilsSweepTest, SweepSingleMarkedObjectWithWeakReference) {

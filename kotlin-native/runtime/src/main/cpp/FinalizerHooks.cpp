@@ -27,6 +27,8 @@ NO_INLINE void RunFinalizerHooksImpl(ObjHeader* object, const TypeInfo* type) no
         DisposeCleaner(object);
     } else if (type == theWorkerBoundReferenceTypeInfo) {
         DisposeWorkerBoundReference(object);
+    } else if (type == theRegularWeakReferenceImplTypeInfo) {
+        DisposeRegularWeakReferenceImpl(object);
     }
 }
 

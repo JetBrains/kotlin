@@ -44,6 +44,13 @@ struct FinalizeTraits {
     using ObjectFactory = mm::ObjectFactory<gc::SameThreadMarkAndSweep>;
 };
 
+struct ProcessWeaksTraits {
+    static bool IsMarked(ObjHeader* obj) noexcept {
+        auto& objectData = mm::ObjectFactory<gc::SameThreadMarkAndSweep>::NodeRef::From(obj).ObjectData();
+        return objectData.marked();
+    }
+};
+
 // Global, because it's accessed on a hot path: avoid memory load from `this`.
 std::atomic<gc::SameThreadMarkAndSweep::SafepointFlag> gSafepointFlag = gc::SameThreadMarkAndSweep::SafepointFlag::kNone;
 
@@ -130,6 +137,9 @@ bool gc::SameThreadMarkAndSweep::PerformFullGC() noexcept {
         gc::Mark<internal::MarkTraits>(gcHandle, markQueue_);
         auto markStats = gcHandle.getMarked();
         scheduler.gcData().UpdateAliveSetBytes(markStats.totalObjectsSize);
+
+        gc::processWeaks<ProcessWeaksTraits>(gcHandle, mm::SpecialRefRegistry::instance());
+
         gc::SweepExtraObjects<SweepTraits>(gcHandle, extraObjectsDataFactory);
         finalizerQueue = gc::Sweep<SweepTraits>(gcHandle, objectFactory_);
 

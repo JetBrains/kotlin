@@ -22,7 +22,7 @@ import kotlin.native.internal.*
  *              [weak1]   [weak2]
  *                 \       /
  *                  V     V
- *     ...... [WeakReferenceImpl] <------
+ *     ... [RegularWeakReferenceImpl] <-
  *     .                                |
  *     .                                |
  *      ->[Object] -> [ExtraObjectData]-
@@ -50,8 +50,10 @@ internal class WeakReferenceCounterLegacyMM(var referred: COpaquePointer?) : Wea
 
 @NoReorderFields
 @ExportTypeInfo("theRegularWeakReferenceImplTypeInfo")
+@HasFinalizer // TODO: Consider just using Cleaners.
 internal class RegularWeakReferenceImpl(
-    val referred: COpaquePointer,
+    val weakRef: COpaquePointer,
+    val referred: COpaquePointer, // TODO: This exists only for the ExtraObjectData's sake. Refactor and remove.
 ) : WeakReferenceImpl() {
     @GCUnsafeCall("Konan_RegularWeakReferenceImpl_get")
     external override fun get(): Any?
@@ -73,7 +75,7 @@ internal fun makeWeakReferenceCounterLegacyMM(referred: COpaquePointer) = WeakRe
 
 // Create a counter object.
 @ExportForCppRuntime
-internal fun makeRegularWeakReferenceImpl(referred: COpaquePointer) = RegularWeakReferenceImpl(referred)
+internal fun makeRegularWeakReferenceImpl(weakRef: COpaquePointer, referred: COpaquePointer) = RegularWeakReferenceImpl(weakRef, referred)
 
 internal class PermanentWeakReferenceImpl(val referred: Any): kotlin.native.ref.WeakReferenceImpl() {
     override fun get(): Any? = referred

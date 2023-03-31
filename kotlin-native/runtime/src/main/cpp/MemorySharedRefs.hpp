@@ -8,7 +8,9 @@
 
 #include <type_traits>
 
+#include "ManuallyScoped.hpp"
 #include "Memory.h"
+#include "Mutex.hpp"
 
 // TODO: Generalize for uses outside this file.
 enum class ErrorPolicy {
@@ -30,16 +32,14 @@ class KRefSharedHolder {
 
   void dispose();
 
-  void disposeFromNative() {
-    kotlin::CalledFromNativeGuard guard;
-    dispose();
-  }
-
   OBJ_GETTER0(describe) const;
 
  private:
   ObjHeader* obj_;
-  ForeignRefContext context_;
+  union {
+    ForeignRefContext context_; // Legacy MM.
+    kotlin::mm::RawSpecialRef* ref_; // New MM.
+  };
 };
 
 static_assert(std::is_trivially_destructible_v<KRefSharedHolder>, "KRefSharedHolder destructor is not guaranteed to be called.");
@@ -47,6 +47,7 @@ static_assert(std::is_trivially_destructible_v<KRefSharedHolder>, "KRefSharedHol
 class BackRefFromAssociatedObject {
  public:
   void initForPermanentObject(ObjHeader* obj);
+
   void initAndAddRef(ObjHeader* obj);
 
   // Error if refCount is zero and it's called from the wrong worker with non-frozen obj_.
@@ -59,8 +60,11 @@ class BackRefFromAssociatedObject {
 
   void releaseRef();
 
+  // This does nothing with the new MM.
   void detach();
-  void assertDetached();
+
+  // This does nothing with legacy MM.
+  void dealloc();
 
   // Error if called from the wrong worker with non-frozen obj_.
   template <ErrorPolicy errorPolicy>
@@ -69,9 +73,18 @@ class BackRefFromAssociatedObject {
   ObjHeader* refPermanent() const;
 
  private:
-  ObjHeader* obj_; // May be null before [initAndAddRef] or after [detach].
-  ForeignRefContext context_;
-  volatile int refCount;
+  union {
+    struct {
+      ObjHeader* obj_; // May be null before [initAndAddRef] or after [detach].
+      ForeignRefContext context_;
+      volatile int refCount;
+    }; // Legacy MM
+    struct {
+      kotlin::mm::RawSpecialRef* ref_;
+      kotlin::ManuallyScoped<kotlin::RWSpinLock<kotlin::MutexThreadStateHandling::kIgnore>> deallocMutex_;
+    }; // New MM. Regular object.
+    ObjHeader* permanentObj_; // New MM. Permanent object.
+  };
 };
 
 static_assert(
