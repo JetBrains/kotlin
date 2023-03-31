@@ -38,6 +38,7 @@ public:
         explicit Node(Producer* owner, Args&& ...args) noexcept : value_(std::forward<Args>(args)...), owner_(owner) {}
 
         T& operator*() noexcept { return value_; }
+        T* operator->() noexcept { return &value_; }
 
         static Node& fromValue(T& t) noexcept {
             static_assert(std::is_base_of_v<Pinned, T>, "fromValue function only makes sense for non-movable object");
@@ -111,11 +112,14 @@ public:
     class Iterator {
     public:
         T& operator*() noexcept { return **position_; }
+        T* operator->() noexcept { return &*this; }
 
         Iterator& operator++() noexcept {
             ++position_;
             return *this;
         }
+
+        void EraseAndAdvance() noexcept { owner_->EraseAndAdvance(*this); }
 
         bool operator==(const Iterator& rhs) const noexcept { return position_ == rhs.position_; }
 
@@ -124,15 +128,18 @@ public:
     private:
         friend class MultiSourceQueue;
 
-        explicit Iterator(const typename List<Node>::iterator& position) noexcept : position_(position) {}
+        Iterator(MultiSourceQueue& owner, const typename List<Node>::iterator& position) noexcept : owner_(&owner), position_(position) {}
 
+        MultiSourceQueue* owner_;
         typename List<Node>::iterator position_;
     };
 
     class Iterable : MoveOnly {
     public:
-        Iterator begin() noexcept { return Iterator(owner_.queue_.begin()); }
-        Iterator end() noexcept { return Iterator(owner_.queue_.end()); }
+        Iterator begin() noexcept { return Iterator(owner_, owner_.queue_.begin()); }
+        Iterator end() noexcept { return Iterator(owner_, owner_.queue_.end()); }
+
+        void ApplyDeletions() noexcept { owner_.ApplyDeletionsUnsafe(); }
 
     private:
         friend class MultiSourceQueue;
@@ -152,6 +159,22 @@ public:
     // Lock `MultiSourceQueue` and apply deletions. Only deletes elements that were published.
     void ApplyDeletions() noexcept {
         std::lock_guard<Mutex> guard(mutex_);
+        ApplyDeletionsUnsafe();
+    }
+
+    // requires LockForIter
+    void EraseAndAdvance(Iterator& it) { it.position_ = queue_.erase(it.position_); }
+
+    void ClearForTests() noexcept {
+        queue_.clear();
+        deletionQueue_.clear();
+    }
+
+    size_t GetSizeUnsafe() noexcept { return queue_.size(); }
+
+private:
+    // Requires a lock to be taken externally.
+    void ApplyDeletionsUnsafe() noexcept {
         List<Node*> remainingDeletions(deletionQueue_.get_allocator());
 
         auto it = deletionQueue_.begin();
@@ -172,21 +195,6 @@ public:
         deletionQueue_ = std::move(remainingDeletions);
     }
 
-    // requires LockForIter
-    void EraseAndAdvance(Iterator &it) {
-        it.position_ = queue_.erase(it.position_);
-    }
-
-    void ClearForTests() noexcept {
-        queue_.clear();
-        deletionQueue_.clear();
-    }
-
-    size_t GetSizeUnsafe() noexcept {
-        return queue_.size();
-    }
-
-private:
     List<Node> queue_;
     List<Node*> deletionQueue_;
     Mutex mutex_;

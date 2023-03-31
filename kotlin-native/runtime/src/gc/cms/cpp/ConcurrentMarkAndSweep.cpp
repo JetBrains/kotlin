@@ -180,8 +180,8 @@ bool gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
     scheduler.gcData().UpdateAliveSetBytes(markStats.totalObjectsSize);
 
 #ifndef CUSTOM_ALLOCATOR
-    mm::ExtraObjectDataFactory& extraObjectDataFactory = mm::GlobalData::Instance().extraObjectDataFactory();
-    gc::SweepExtraObjects<SweepTraits>(gcHandle, extraObjectDataFactory);
+    auto extraObjectFactoryIterable = mm::GlobalData::Instance().extraObjectDataFactory().LockForIter();
+    gc::SweepExtraObjects<SweepTraits>(gcHandle, extraObjectFactoryIterable);
 
     auto objectFactoryIterable = objectFactory_.LockForIter();
     mm::ResumeThreads();

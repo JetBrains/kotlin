@@ -108,11 +108,10 @@ void Mark(GCHandle handle, typename Traits::MarkQueue& markQueue) noexcept {
 }
 
 template <typename Traits>
-void SweepExtraObjects(GCHandle handle, typename Traits::ExtraObjectsFactory& objectFactory) noexcept {
-    objectFactory.ProcessDeletions();
+void SweepExtraObjects(GCHandle handle, typename Traits::ExtraObjectsFactory::Iterable& factoryIter) noexcept {
     auto sweepHandle = handle.sweepExtraObjects();
-    auto iter = objectFactory.LockForIter();
-    for (auto it = iter.begin(); it != iter.end();) {
+    factoryIter.ApplyDeletions();
+    for (auto it = factoryIter.begin(); it != factoryIter.end();) {
         auto &extraObject = *it;
         if (!extraObject.getFlag(mm::ExtraObjectData::FLAGS_IN_FINALIZER_QUEUE) && !Traits::IsMarkedByExtraObject(extraObject)) {
             extraObject.ClearWeakReferenceCounter();
@@ -122,12 +121,18 @@ void SweepExtraObjects(GCHandle handle, typename Traits::ExtraObjectsFactory& ob
                 ++it;
             } else {
                 extraObject.Uninstall();
-                objectFactory.EraseAndAdvance(it);
+                it.EraseAndAdvance();
             }
         } else {
             ++it;
         }
     }
+}
+
+template <typename Traits>
+void SweepExtraObjects(GCHandle handle, typename Traits::ExtraObjectsFactory& factory) noexcept {
+    auto iter = factory.LockForIter();
+    return SweepExtraObjects<Traits>(handle, iter);
 }
 
 template <typename Traits>
