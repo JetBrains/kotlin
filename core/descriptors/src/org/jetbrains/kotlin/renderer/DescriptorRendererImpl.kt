@@ -482,9 +482,13 @@ internal class DescriptorRendererImpl(
             .orEmpty()
         val defaultList = parameterDescriptorsWithDefaultValue.filter { it !in allValueArguments }.map { "${it.asString()} = ..." }
         val argumentList = allValueArguments.entries
+            .filter { !annotationArgumentsRenderingPolicy.forDecompiledText || it.value is StringValue }
             .map { (name, value) ->
                 "${name.asString()} = ${if (name !in parameterDescriptorsWithDefaultValue) renderConstant(value) else "..."}"
             }
+        if (annotationArgumentsRenderingPolicy.forDecompiledText) {
+            return argumentList
+        }
         return (defaultList + argumentList).sorted()
     }
 

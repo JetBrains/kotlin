@@ -192,10 +192,12 @@ abstract class DescriptorRenderer {
 
 enum class AnnotationArgumentsRenderingPolicy(
     val includeAnnotationArguments: Boolean = false,
-    val includeEmptyAnnotationArguments: Boolean = false
+    val includeEmptyAnnotationArguments: Boolean = false,
+    val forDecompiledText: Boolean = false //todo to be removed
 ) {
     NO_ARGUMENTS,
     UNLESS_EMPTY(true),
+    FOR_DECOMPILED_TEXT(includeAnnotationArguments = true, forDecompiledText = true),
     ALWAYS_PARENTHESIZED(includeAnnotationArguments = true, includeEmptyAnnotationArguments = true)
 }
 

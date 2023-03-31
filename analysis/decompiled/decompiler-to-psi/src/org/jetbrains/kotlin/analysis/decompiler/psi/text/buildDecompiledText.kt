@@ -35,7 +35,7 @@ fun DescriptorRendererOptions.defaultDecompilerRendererOptions() {
     defaultParameterValueRenderer = { _ -> "null" }
     includePropertyConstant = true
     propertyConstantRenderer = { value, renderer -> renderConstant(value, renderer) }
-    annotationArgumentsRenderingPolicy = AnnotationArgumentsRenderingPolicy.UNLESS_EMPTY
+    annotationArgumentsRenderingPolicy = AnnotationArgumentsRenderingPolicy.FOR_DECOMPILED_TEXT
 }
 
 private fun renderConstant(value: ConstantValue<*>, renderer: DescriptorRenderer): String? {

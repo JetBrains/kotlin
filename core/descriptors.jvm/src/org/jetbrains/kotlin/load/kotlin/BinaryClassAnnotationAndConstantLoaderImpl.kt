@@ -74,7 +74,7 @@ class BinaryClassAnnotationAndConstantLoaderImpl(
         val annotationClass = resolveClass(annotationClassId)
 
         return object : AbstractAnnotationArgumentVisitor() {
-            private val arguments = HashMap<Name, ConstantValue<*>>()
+            private val arguments = LinkedHashMap<Name, ConstantValue<*>>()
 
             override fun visitConstantValue(name: Name?, value: ConstantValue<*>) {
                 if (name != null) arguments[name] = value

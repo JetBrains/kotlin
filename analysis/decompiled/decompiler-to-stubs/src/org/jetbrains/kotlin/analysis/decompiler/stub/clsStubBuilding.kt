@@ -216,10 +216,11 @@ private fun createAnnotationStub(
     annotationWithArgs: AnnotationWithArgs,
     target: AnnotationUseSiteTarget?
 ) {
+    val hasArguments = annotationWithArgs.args.values.filterIsInstance<StringValue>().isNotEmpty()
     val annotationEntryStubImpl = KotlinAnnotationEntryStubImpl(
         parent,
         shortName = annotationWithArgs.classId.shortClassName.ref(),
-        hasValueArguments = annotationWithArgs.args.isNotEmpty()
+        hasValueArguments = hasArguments
     )
     if (target != null) {
         KotlinAnnotationUseSiteTargetStubImpl(annotationEntryStubImpl, StringRef.fromString(target.name)!!)
@@ -228,11 +229,12 @@ private fun createAnnotationStub(
         KotlinPlaceHolderStubImpl<KtConstructorCalleeExpression>(annotationEntryStubImpl, KtStubElementTypes.CONSTRUCTOR_CALLEE)
     val typeReference = KotlinPlaceHolderStubImpl<KtTypeReference>(constructorCallee, KtStubElementTypes.TYPE_REFERENCE)
     createStubForTypeName(annotationWithArgs.classId, typeReference)
-    if (annotationWithArgs.args.isNotEmpty()) {
+    if (hasArguments) {
         val valueArgumentListStub =
             KotlinPlaceHolderStubImpl<KtValueArgumentList>(annotationEntryStubImpl, KtStubElementTypes.VALUE_ARGUMENT_LIST)
         for (entry in annotationWithArgs.args) {
             val constantValue = entry.value
+            if (constantValue !is StringValue) continue
             val valueArg = createValueArgWithName(valueArgumentListStub, entry.key)
             createAnnotationMappingByConstantValue(constantValue, valueArg)
         }
