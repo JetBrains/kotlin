@@ -118,8 +118,6 @@ abstract class AbstractJsKlibBinaryCompatibilityTest : AbstractKlibBinaryCompati
     }
 }
 
-abstract class AbstractJsKlibBinaryCompatibilityErrorTest : AbstractJsKlibBinaryCompatibilityTest()
-
 private class TestMessageCollector : MessageCollector {
     override fun clear() {}
     override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageSourceLocation?) {
