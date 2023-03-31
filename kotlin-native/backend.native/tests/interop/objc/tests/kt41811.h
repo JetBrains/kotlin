@@ -22,3 +22,9 @@ extern BOOL deallocLoadWeakDeallocated;
 @interface DeallocLoadWeak : NSObject
 -(void)checkWeak;
 @end
+
+extern BOOL deallocRetainAndAccessDeallocated;
+
+@interface DeallocRetainAndAccess : NSObject
+@property void (^onDealloc)(id);
+@end

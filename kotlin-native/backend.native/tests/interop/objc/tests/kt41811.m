@@ -37,3 +37,20 @@ BOOL deallocLoadWeakDeallocated = NO;
     deallocLoadWeakDeallocated = YES;
 }
 @end
+
+id retainObject2 = nil;
+BOOL deallocRetainAndAccessDeallocated = NO;
+
+@implementation DeallocRetainAndAccess
+
+- (void)dealloc {
+    retainObject2 = self;
+    assert(_onDealloc != nil);
+    _onDealloc(retainObject2);
+    retainObject2 = nil;
+
+    assert(!deallocRetainAndAccessDeallocated);
+    deallocRetainAndAccessDeallocated = YES;
+}
+
+@end

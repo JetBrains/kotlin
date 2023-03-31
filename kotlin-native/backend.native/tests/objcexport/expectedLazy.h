@@ -481,6 +481,8 @@ __attribute__((swift_name("DeallocRetainKt")))
 @interface KtDeallocRetainKt : KtBase
 + (void)garbageCollect __attribute__((swift_name("garbageCollect()")));
 + (KtKotlinWeakReference<id> *)createWeakReferenceValue:(id)value __attribute__((swift_name("createWeakReference(value:)")));
++ (void)assertNullValue:(id _Nullable)value __attribute__((swift_name("assertNull(value:)")));
++ (BOOL)isExperimentalMM __attribute__((swift_name("isExperimentalMM()")));
 @end
 
 __attribute__((objc_subclassing_restricted))

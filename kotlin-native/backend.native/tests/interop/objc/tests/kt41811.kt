@@ -116,3 +116,44 @@ fun testKT41811WithGlobal() {
 
     assertTrue(deallocRetainReleaseDeallocated)
 }
+
+var localDeallocRetainAndAccessDeallocated = false
+
+@Test
+fun testKT41811WithAccess() {
+    // Legacy MM crashes with an assertion failure.
+    @OptIn(kotlin.ExperimentalStdlibApi::class)
+    if (!isExperimentalMM())
+        return
+
+    // Attempt to make the state predictable:
+    kotlin.native.internal.GC.collect()
+
+    deallocRetainAndAccessDeallocated = false
+    localDeallocRetainAndAccessDeallocated = false
+
+    createGarbageDeallocRetainAndAccess()
+
+    // Runs [DeallocRetainAndAccess dealloc]:
+    kotlin.native.internal.GC.collect()
+
+    assertTrue(deallocRetainAndAccessDeallocated)
+    assertTrue(localDeallocRetainAndAccessDeallocated)
+
+    // Might crash due to double-dispose if the dealloc applied addRef/releaseRef to reclaimed Kotlin object:
+    kotlin.native.internal.GC.collect()
+}
+
+private fun createGarbageDeallocRetainAndAccess() {
+    autoreleasepool {
+        object : DeallocRetainAndAccess() {
+            init {
+                onDealloc = {
+                    assertNull(it)
+                    assertFalse(localDeallocRetainAndAccessDeallocated)
+                    localDeallocRetainAndAccessDeallocated = true
+                }
+            }
+        }
+    }
+}
