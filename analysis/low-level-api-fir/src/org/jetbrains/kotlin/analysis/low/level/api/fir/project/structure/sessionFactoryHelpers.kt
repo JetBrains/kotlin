@@ -54,13 +54,10 @@ internal inline fun createCompositeSymbolProvider(
 internal fun FirSession.registerCompilerPluginExtensions(project: Project, module: KtSourceModule) {
     val extensionProvider = project.getService(KtCompilerPluginsProvider::class.java) ?: return
     FirSessionConfigurator(this).apply {
-        @Suppress("UNCHECKED_CAST")
-        val registrars = extensionProvider.getRegisteredExtensions(
-            module,
-            FirExtensionRegistrarAdapter,
-        ) as List<FirExtensionRegistrar>
+        val registrars = FirExtensionRegistrarAdapter.getInstances(project) +
+                extensionProvider.getRegisteredExtensions(module, FirExtensionRegistrarAdapter)
         for (extensionRegistrar in registrars) {
-            registerExtensions(extensionRegistrar.configure())
+            registerExtensions((extensionRegistrar as FirExtensionRegistrar).configure())
         }
     }.configure()
 }
