@@ -358,7 +358,7 @@ fun Project.getKotlinPluginVersion() = getKotlinPluginVersion(project.logger)
 fun getKotlinPluginVersion(logger: Logger): String {
     if (!kotlinPluginVersionFromResources.isInitialized()) {
         logger.kotlinDebug("Loading version information")
-        logger.kotlinDebug("Found project version [${kotlinPluginVersionFromResources.value}")
+        logger.kotlinDebug("Found project version [${kotlinPluginVersionFromResources.value}]")
     }
     return kotlinPluginVersionFromResources.value
 }
