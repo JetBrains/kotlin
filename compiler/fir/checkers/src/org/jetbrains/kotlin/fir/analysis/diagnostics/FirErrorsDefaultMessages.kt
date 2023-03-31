@@ -716,7 +716,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(FUNCTION_CALL_EXPECTED, "Function invocation ''{0}({1})'' expected", TO_STRING, FUNCTION_PARAMETERS)
         map.put(
             FUNCTION_EXPECTED,
-            "Expression ''{0}'' of type {1} cannot be invoked as a function. The function 'invoke()' is not found", TO_STRING, RENDER_TYPE
+            "Expression ''{0}'' of type {1} cannot be invoked as a function. The function ''invoke()'' is not found", TO_STRING, RENDER_TYPE
         )
         map.put(
             RESOLUTION_TO_CLASSIFIER,
@@ -751,7 +751,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(SINGLETON_IN_SUPERTYPE, "Cannot inherit from a singleton")
         map.put(NULLABLE_SUPERTYPE, "A supertype cannot be nullable")
         map.put(REDUNDANT_NULLABLE, "Redundant '?'")
-        map.put(PLATFORM_CLASS_MAPPED_TO_KOTLIN, "This class shouldn't be used in Kotlin. Use {0} instead.", TO_STRING)
+        map.put(PLATFORM_CLASS_MAPPED_TO_KOTLIN, "This class shouldn''t be used in Kotlin. Use {0} instead.", TO_STRING)
         map.put(MANY_CLASSES_IN_SUPERTYPE_LIST, "Only one class may appear in a supertype list")
         map.put(SUPERTYPE_APPEARS_TWICE, "A supertype appears twice")
         map.put(CLASS_IN_SUPERTYPE_FOR_ENUM, "Enum class cannot inherit from classes")
@@ -788,7 +788,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             AMBIGUOUS_SUPER,
-            "Many supertypes available, please specify the one you mean in angle brackets, e.g. 'super<Foo>'",
+            "Many supertypes available, please specify the one you mean in angle brackets, e.g. ''super<Foo>''",
             NOT_RENDERED
         )
 
@@ -1176,7 +1176,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             CONFLICTING_PROJECTION_IN_TYPEALIAS_EXPANSION,
-            "Conflicting projection in type alias expansion in intermediate type '{0}'",
+            "Conflicting projection in type alias expansion in intermediate type ''{0}''",
             RENDER_TYPE
         )
         map.put(
@@ -1436,7 +1436,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             VAR_TYPE_MISMATCH_ON_OVERRIDE,
-            "Type of ''{0}'' doesn't match the type of the overridden var-property ''{1}''",
+            "Type of ''{0}'' doesn''t match the type of the overridden var-property ''{1}''",
             DECLARATION_NAME,
             SYMBOL
         )
@@ -1631,7 +1631,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             DELEGATE_USES_EXTENSION_PROPERTY_TYPE_PARAMETER,
-            "It's forbidden to use the extension property type parameter ''{0}'' in delegate. See https://youtrack.jetbrains.com/issue/KT-24643",
+            "It''s forbidden to use the extension property type parameter ''{0}'' in delegate. See https://youtrack.jetbrains.com/issue/KT-24643",
             SYMBOL
         )
         map.put(INITIALIZER_TYPE_MISMATCH, "Initializer type mismatch: expected {0}, actual {1}", RENDER_TYPE, RENDER_TYPE, NOT_RENDERED)
