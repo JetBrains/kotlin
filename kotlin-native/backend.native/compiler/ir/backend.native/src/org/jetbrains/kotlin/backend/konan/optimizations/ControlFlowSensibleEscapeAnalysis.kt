@@ -1284,6 +1284,20 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 }
             }
 
+            override fun visitSuspensionPoint(expression: IrSuspensionPoint, data: BuilderState): Node {
+                expression.suspensionPointIdParameter.accept(this, data)
+                val normalResultGraph = data.graph.clone()
+                val normalResult = expression.result.accept(this, BuilderState(normalResultGraph, data.loop, data.insideATry))
+                val resumeResultGraph = data.graph.clone()
+                val resumeResult = expression.resumeResult.accept(this, BuilderState(resumeResultGraph, data.loop, data.insideATry))
+                return controlFlowMergePoint(data.graph, data.loop, expression, expression.type,
+                        listOf(ExpressionResult(normalResult, normalResultGraph), ExpressionResult(resumeResult, resumeResultGraph))
+                )
+            }
+
+            override fun visitSuspendableExpression(expression: IrSuspendableExpression, data: BuilderState) =
+                    expression.result.accept(this, data)
+
             override fun visitContinue(jump: IrContinue, data: BuilderState): Node {
                 (loopsContinueResults[jump.loop] ?: error("A continue from an unknown loop: ${jump.loop}"))
                         .add(ExpressionResult(Node.Unit, data.graph.clone()))
