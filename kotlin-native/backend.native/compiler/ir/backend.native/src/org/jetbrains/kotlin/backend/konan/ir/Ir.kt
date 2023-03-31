@@ -231,7 +231,8 @@ internal abstract class KonanSymbols(
     val executeImpl =
             irBuiltIns.findFunctions(Name.identifier("executeImpl"),"kotlin", "native", "concurrent").single()
 
-    val createCleaner = internalFunction("createCleaner")
+    val createCleaner =
+            irBuiltIns.findFunctions(Name.identifier("createCleaner"),"kotlin", "native", "ref").single()
 
     val areEqualByValue = internalFunctions("areEqualByValue").associateBy {
         it.descriptor.valueParameters[0].type.computePrimitiveBinaryTypeOrNull()!!

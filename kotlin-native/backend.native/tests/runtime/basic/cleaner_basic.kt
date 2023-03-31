@@ -11,6 +11,8 @@ import kotlin.test.*
 import kotlin.native.internal.*
 import kotlin.native.concurrent.*
 import kotlin.native.ref.WeakReference
+import kotlin.native.ref.Cleaner
+import kotlin.native.ref.createCleaner
 
 class AtomicBoolean(initialValue: Boolean) {
     private val impl = AtomicInt(if (initialValue) 1 else 0)
