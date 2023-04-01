@@ -78,7 +78,11 @@ internal class KtFirReferenceShortener(
             ?: file.withDeclarationsResolvedToBodyResolve()
 
         val firDeclaration = declarationToVisit.getOrBuildFir(firResolveSession) as? FirDeclaration ?: return ShortenCommandImpl(
-            file.createSmartPointer(), emptyList(), emptyList(), emptyList(), emptyList(),
+            file.createSmartPointer(),
+            importsToAdd = emptyList(),
+            starImportsToAdd = emptyList(),
+            typesToShorten = emptyList(),
+            qualifiersToShorten = emptyList(),
         )
 
         val towerContext =
@@ -98,10 +102,10 @@ internal class KtFirReferenceShortener(
 
         return ShortenCommandImpl(
             file.createSmartPointer(),
-            collector.namesToImport.distinct(),
-            collector.namesToImportWithStar.distinct(),
-            collector.typesToShorten.distinct().map { it.createSmartPointer() },
-            collector.qualifiersToShorten.distinct().map { it.createSmartPointer() }
+            collector.getNamesToImport(starImport = false).toList(),
+            collector.getNamesToImport(starImport = true).toList(),
+            collector.typesToShorten.map { it.element }.distinct().map { it.createSmartPointer() },
+            collector.qualifiersToShorten.map { it.element }.distinct().map { it.createSmartPointer() }
         )
     }
 
@@ -231,7 +235,7 @@ private class FirShorteningContext(val analysisSession: KtFirAnalysisSession) {
 
     fun findScopesAtPosition(
         position: KtElement,
-        newImports: List<FqName>,
+        newImports: Sequence<FqName>,
         towerContextProvider: FirTowerContextProvider
     ): List<FirScope>? {
         val towerDataContext = towerContextProvider.getClosestAvailableParentContext(position) ?: return null
@@ -248,8 +252,8 @@ private class FirShorteningContext(val analysisSession: KtFirAnalysisSession) {
         return result.asReversed()
     }
 
-    private fun createFakeImportingScope(newImports: List<FqName>): FirScope? {
-        val resolvedNewImports = newImports.mapNotNull { createFakeResolvedImport(it) }
+    private fun createFakeImportingScope(newImports: Sequence<FqName>): FirScope? {
+        val resolvedNewImports = newImports.mapNotNull { createFakeResolvedImport(it) }.toList()
         if (resolvedNewImports.isEmpty()) return null
 
         return FirExplicitSimpleImportingScope(
@@ -311,10 +315,8 @@ private class ElementsToShortenCollector(
     private val firResolveSession: LLFirResolveSession,
 ) :
     FirVisitorVoid() {
-    val namesToImport: MutableList<FqName> = mutableListOf()
-    val namesToImportWithStar: MutableList<FqName> = mutableListOf()
-    val typesToShorten: MutableList<KtUserType> = mutableListOf()
-    val qualifiersToShorten: MutableList<KtDotQualifiedExpression> = mutableListOf()
+    val typesToShorten: MutableList<ShortenType> = mutableListOf()
+    val qualifiersToShorten: MutableList<ShortenQualifier> = mutableListOf()
     private val visitedProperty = mutableSetOf<FirProperty>()
 
     override fun visitValueParameter(valueParameter: FirValueParameter) {
@@ -392,8 +394,14 @@ private class ElementsToShortenCollector(
             }
         }
 
+    fun getNamesToImport(starImport: Boolean = false): Sequence<FqName> = sequence {
+        yieldAll(typesToShorten)
+        yieldAll(qualifiersToShorten)
+    }.filter { starImport == it.importAllInParent }.mapNotNull { it.nameToImport }.distinct()
+
     private fun findTypeToShorten(wholeClassifierId: ClassId, wholeTypeElement: KtUserType): ElementToShorten? {
-        val positionScopes = shorteningContext.findScopesAtPosition(wholeTypeElement, namesToImport, towerContextProvider) ?: return null
+        val positionScopes =
+            shorteningContext.findScopesAtPosition(wholeTypeElement, getNamesToImport(), towerContextProvider) ?: return null
         val allClassIds = wholeClassifierId.outerClassesWithSelf
         val allQualifiedTypeElements = wholeTypeElement.qualifiedTypesWithSelf
         return findClassifierElementsToShorten(
@@ -429,7 +437,7 @@ private class ElementsToShortenCollector(
         wholeQualifierElement: KtDotQualifiedExpression
     ): ElementToShorten? {
         val positionScopes: List<FirScope> =
-            shorteningContext.findScopesAtPosition(wholeQualifierElement, namesToImport, towerContextProvider) ?: return null
+            shorteningContext.findScopesAtPosition(wholeQualifierElement, getNamesToImport(), towerContextProvider) ?: return null
         val allClassIds: Sequence<ClassId> = wholeClassQualifier.outerClassesWithSelf
         val allQualifiers: Sequence<KtDotQualifiedExpression> = wholeQualifierElement.qualifiedExpressionsWithSelf
         return findClassifierElementsToShorten(
@@ -862,7 +870,7 @@ private class ElementsToShortenCollector(
         val option = callableShortenOption(callableSymbol)
         if (option == ShortenOption.DO_NOT_SHORTEN) return
 
-        val scopes = shorteningContext.findScopesAtPosition(qualifiedProperty, namesToImport, towerContextProvider) ?: return
+        val scopes = shorteningContext.findScopesAtPosition(qualifiedProperty, getNamesToImport(), towerContextProvider) ?: return
         val availableCallables = shorteningContext.findPropertiesInScopes(scopes, callableSymbol.name)
 
         val firPropertyAccess = qualifiedProperty.getOrBuildFir(firResolveSession) as? FirQualifiedAccessExpression ?: return
@@ -893,7 +901,7 @@ private class ElementsToShortenCollector(
         val option = callableShortenOption(calledSymbol)
         if (option == ShortenOption.DO_NOT_SHORTEN) return
 
-        val scopes = shorteningContext.findScopesAtPosition(callExpression, namesToImport, towerContextProvider) ?: return
+        val scopes = shorteningContext.findScopesAtPosition(callExpression, getNamesToImport(), towerContextProvider) ?: return
         val availableCallables = shorteningContext.findFunctionsInScopes(scopes, calledSymbol.name)
         if (availableCallables.isNotEmpty() && shortenIfAlreadyImported(functionCall, calledSymbol, callExpression)) {
             addElementToShorten(ShortenQualifier(qualifiedCallExpression))
@@ -986,19 +994,46 @@ private class ElementsToShortenCollector(
         return if (deepestQualifier.hasFakeRootPrefix()) ShortenQualifier(deepestQualifier) else null
     }
 
-    private fun addElementToShorten(element: ElementToShorten) {
-        if (element.importAllInParent && element.nameToImport?.parentOrNull()?.isRoot == false) {
-            namesToImportWithStar.addIfNotNull(element.nameToImport?.parent())
-        } else {
-            namesToImport.addIfNotNull(element.nameToImport)
+    private fun KtElement.isInsideOf(another: KtElement): Boolean = another.textRange.contains(textRange)
+
+    /**
+     * Remove entries from [typesToShorten] and [qualifiersToShorten] if their qualifiers will be shortened
+     * when we shorten [qualifier].
+     */
+    private fun removeRedundantElements(qualifier: KtElement) {
+        typesToShorten.removeAll { it.element.qualifier?.isInsideOf(qualifier) == true }
+        qualifiersToShorten.removeAll { it.element.receiverExpression.isInsideOf(qualifier) }
+    }
+
+    private fun KtElement.isAlreadyCollected(): Boolean {
+        val thisElement = this
+        return typesToShorten.any { shortenType ->
+            shortenType.element.qualifier?.let { thisElement.isInsideOf(it) } == true
+        } || qualifiersToShorten.any { shortenQualifier ->
+            thisElement.isInsideOf(shortenQualifier.element.receiverExpression)
         }
-        when (element) {
-            is ShortenType -> {
-                typesToShorten.add(element.element)
+    }
+
+    private fun addElementToShorten(element: KtElement, nameToImport: FqName?, isImportWithStar: Boolean) {
+        val qualifier = element.getQualifier() ?: return
+        if (!qualifier.isAlreadyCollected()) {
+            removeRedundantElements(qualifier)
+            when (element) {
+                is KtUserType -> typesToShorten.add(ShortenType(element, nameToImport, isImportWithStar))
+                is KtDotQualifiedExpression -> qualifiersToShorten.add(ShortenQualifier(element, nameToImport, isImportWithStar))
             }
-            is ShortenQualifier -> {
-                qualifiersToShorten.add(element.element)
-            }
+        }
+    }
+
+    private fun addElementToShorten(elementInfoToShorten: ElementToShorten) {
+        val (nameToImport, isImportWithStar) = if (elementInfoToShorten.importAllInParent && elementInfoToShorten.nameToImport?.parentOrNull()?.isRoot == false) {
+            elementInfoToShorten.nameToImport?.parent() to true
+        } else {
+            elementInfoToShorten.nameToImport to false
+        }
+        when (elementInfoToShorten) {
+            is ShortenType -> addElementToShorten(elementInfoToShorten.element, nameToImport, isImportWithStar)
+            is ShortenQualifier -> addElementToShorten(elementInfoToShorten.element, nameToImport, isImportWithStar)
         }
     }
 
@@ -1076,4 +1111,10 @@ internal fun KtElement.getDotQualifiedExpressionForSelector(): KtDotQualifiedExp
 private fun KtDotQualifiedExpression.deleteQualifier(): KtExpression? {
     val selectorExpression = selectorExpression ?: return null
     return this.replace(selectorExpression) as KtExpression
+}
+
+private fun KtElement.getQualifier(): KtElement? = when (this) {
+    is KtUserType -> qualifier
+    is KtDotQualifiedExpression -> receiverExpression
+    else -> null
 }
