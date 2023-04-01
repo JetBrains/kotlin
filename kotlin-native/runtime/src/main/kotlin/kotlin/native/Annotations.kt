@@ -99,6 +99,7 @@ public actual annotation class CName(actual val externName: String = "", actual 
 @Retention(AnnotationRetention.BINARY)
 @MustBeDocumented
 @ExperimentalObjCName
+@SinceKotlin("1.8")
 public actual annotation class ObjCName(actual val name: String = "", actual val swiftName: String = "", actual val exact: Boolean = false)
 
 /**
@@ -113,6 +114,7 @@ public actual annotation class ObjCName(actual val name: String = "", actual val
 @Retention(AnnotationRetention.BINARY)
 @MustBeDocumented
 @ExperimentalObjCRefinement
+@SinceKotlin("1.8")
 public actual annotation class HidesFromObjC
 
 /**
@@ -123,6 +125,7 @@ public actual annotation class HidesFromObjC
 @Retention(AnnotationRetention.BINARY)
 @MustBeDocumented
 @ExperimentalObjCRefinement
+@SinceKotlin("1.8")
 public actual annotation class HiddenFromObjC
 
 /**
@@ -141,6 +144,7 @@ public actual annotation class HiddenFromObjC
 @Retention(AnnotationRetention.BINARY)
 @MustBeDocumented
 @ExperimentalObjCRefinement
+@SinceKotlin("1.8")
 public actual annotation class RefinesInSwift
 
 /**
@@ -154,4 +158,5 @@ public actual annotation class RefinesInSwift
 @Retention(AnnotationRetention.BINARY)
 @MustBeDocumented
 @ExperimentalObjCRefinement
+@SinceKotlin("1.8")
 public actual annotation class ShouldRefineInSwift

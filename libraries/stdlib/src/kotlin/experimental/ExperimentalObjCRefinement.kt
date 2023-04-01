@@ -12,4 +12,5 @@ package kotlin.experimental
 @Target(AnnotationTarget.ANNOTATION_CLASS)
 @Retention(AnnotationRetention.BINARY)
 @MustBeDocumented
+@SinceKotlin("1.8")
 public annotation class ExperimentalObjCRefinement

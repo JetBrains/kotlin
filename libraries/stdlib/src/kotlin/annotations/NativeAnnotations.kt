@@ -65,6 +65,7 @@ expect annotation class FreezingIsDeprecated
 @MustBeDocumented
 @OptionalExpectation
 @ExperimentalObjCName
+@SinceKotlin("1.8")
 public expect annotation class ObjCName(val name: String = "", val swiftName: String = "", val exact: Boolean = false)
 
 /**
@@ -80,6 +81,7 @@ public expect annotation class ObjCName(val name: String = "", val swiftName: St
 @MustBeDocumented
 @OptionalExpectation
 @ExperimentalObjCRefinement
+@SinceKotlin("1.8")
 public expect annotation class HidesFromObjC()
 
 /**
@@ -91,6 +93,7 @@ public expect annotation class HidesFromObjC()
 @MustBeDocumented
 @OptionalExpectation
 @ExperimentalObjCRefinement
+@SinceKotlin("1.8")
 public expect annotation class HiddenFromObjC()
 
 /**
@@ -110,6 +113,7 @@ public expect annotation class HiddenFromObjC()
 @MustBeDocumented
 @OptionalExpectation
 @ExperimentalObjCRefinement
+@SinceKotlin("1.8")
 public expect annotation class RefinesInSwift()
 
 /**
@@ -124,4 +128,5 @@ public expect annotation class RefinesInSwift()
 @MustBeDocumented
 @OptionalExpectation
 @ExperimentalObjCRefinement
+@SinceKotlin("1.8")
 public expect annotation class ShouldRefineInSwift()
