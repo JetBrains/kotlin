@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.Fir2IrPluginContext
 import org.jetbrains.kotlin.fir.pipeline.FirResult
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 
 internal data class Fir2IrOutput(
         val firResult: FirResult,
@@ -21,7 +22,8 @@ internal data class Fir2IrOutput(
         val irModuleFragment: IrModuleFragment,
         val components: Fir2IrComponents,
         val pluginContext: Fir2IrPluginContext,
-        val irActualizationResult: IrActualizationResult?
+        val irActualizationResult: IrActualizationResult?,
+        val usedLibraries: Set<KotlinResolvedLibrary>
 )
 
 internal val Fir2IrPhase = createSimpleNamedCompilerPhase(

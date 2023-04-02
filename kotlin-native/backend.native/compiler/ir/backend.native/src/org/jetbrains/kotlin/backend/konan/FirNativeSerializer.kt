@@ -45,13 +45,16 @@ internal fun PhaseContext.firSerializer(
             configuration.get(CommonConfigurationKeys.METADATA_VERSION)
                     ?: configuration.languageVersionSettings.languageVersion.toMetadataVersion()
 
-    val resolvedLibraries = config.resolvedLibraries.getFullResolvedList(TopologicalLibraryOrder) // FIXME KT-55603
+    val resolvedLibraries = config.resolvedLibraries.getFullResolvedList(TopologicalLibraryOrder)
+    val usedResolvedLibraries = resolvedLibraries.filter {
+        (!it.isDefault && !configuration.getBoolean(KonanConfigKeys.PURGE_USER_LIBS)) || it in input.usedLibraries
+    }
     val actualizedFirDeclarations = input.irActualizationResult.extractFirDeclarations()
     return serializeNativeModule(
             configuration = configuration,
             messageLogger = configuration.get(IrMessageLogger.IR_MESSAGE_LOGGER) ?: IrMessageLogger.None,
             sourceFiles,
-            resolvedLibraries.map { it.library as KonanLibrary },
+            usedResolvedLibraries.map { it.library as KonanLibrary },
             input.irModuleFragment,
             expectDescriptorToSymbol = mutableMapOf() // TODO: expect -> actual mapping
     ) { file ->

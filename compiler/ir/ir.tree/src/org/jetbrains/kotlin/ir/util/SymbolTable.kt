@@ -1147,23 +1147,28 @@ open class SymbolTable(
                 throw IllegalArgumentException("Unexpected value descriptor: $value")
         }
 
-    private inline fun <D : DeclarationDescriptor, IR : IrSymbolOwner, S : IrBindableSymbol<D, IR>> FlatSymbolTable<D, IR, S>.forEachPublicSymbolImpl(
+    private inline fun <D : DeclarationDescriptor, IR : IrSymbolOwner, S : IrBindableSymbol<D, IR>> FlatSymbolTable<D, IR, S>.forEachSymbolImpl(
         block: (IrSymbol) -> Unit
     ) {
         idSigToSymbol.forEach { (_, sym) ->
-            assert(sym.isPublicApi)
             block(sym)
         }
     }
 
-    fun forEachPublicSymbol(block: (IrSymbol) -> Unit) {
-        classSymbolTable.forEachPublicSymbolImpl { block(it) }
-        constructorSymbolTable.forEachPublicSymbolImpl { block(it) }
-        simpleFunctionSymbolTable.forEachPublicSymbolImpl { block(it) }
-        propertySymbolTable.forEachPublicSymbolImpl { block(it) }
-        enumEntrySymbolTable.forEachPublicSymbolImpl { block(it) }
-        typeAliasSymbolTable.forEachPublicSymbolImpl { block(it) }
-        fieldSymbolTable.forEachPublicSymbolImpl { block(it) }
+    /**
+     * This function is quite messy and doesn't have good contract of what exactly is traversed.
+     * Basic idea is it traverse symbols which can be reasonable referered from other module
+     *
+     * Be careful when using it, and avoid it, except really need.
+     */
+    fun forEachDeclarationSymbol(block: (IrSymbol) -> Unit) {
+        classSymbolTable.forEachSymbolImpl { block(it) }
+        constructorSymbolTable.forEachSymbolImpl { block(it) }
+        simpleFunctionSymbolTable.forEachSymbolImpl { block(it) }
+        propertySymbolTable.forEachSymbolImpl { block(it) }
+        enumEntrySymbolTable.forEachSymbolImpl { block(it) }
+        typeAliasSymbolTable.forEachSymbolImpl { block(it) }
+        fieldSymbolTable.forEachSymbolImpl { block(it) }
     }
 }
 
