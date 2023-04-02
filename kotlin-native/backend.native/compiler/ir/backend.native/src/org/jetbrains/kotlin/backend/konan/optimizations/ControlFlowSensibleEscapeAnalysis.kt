@@ -443,6 +443,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 override fun toString() = "$label$id"
             }
 
+            // TODO: Make separate inheritor (SpecialObject isn't allowed to have any fields, force this with type hierarchy).
             open class SpecialObject(id: Int, label: String) : Object(id, null, label) {
                 override fun toString() = label!!
                 override fun shallowCopy() = this
@@ -695,7 +696,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
                     loop?.let { NodeContext(forest.getAssociatedId(anchorNodeId, element!!), it) } ?: this
 
             fun Node.Object.getField(field: IrFieldSymbol): Node.FieldValue {
-                require(this != Node.Unit && this != Node.Nothing)
+                require(this !is Node.SpecialObject)
                 return fields.getOrPut(field) {
                     putNewNodeAt(forest.getAssociatedId(id, field)) { Node.FieldValue(it, id, field) }
                 }
@@ -743,6 +744,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
 
             // Called only for get/set field of [node] further.
             fun getObjectNodes(node: Node, loop: IrLoop?, element: IrElement?, anchorNodeId: Int = 0) = when (node) {
+                is Node.SpecialObject -> emptyList()
                 is Node.Object -> listOf(node)
                 is Node.Reference -> {
                     val visited = BitSet()
@@ -909,6 +911,9 @@ internal object ControlFlowSensibleEscapeAnalysis {
             val objectsReferencedFromThrown = BitSet()
 
             fun build(): EscapeAnalysisResult {
+                require(Node.Nothing.fields.isEmpty())
+                require(Node.Null.fields.isEmpty())
+                require(Node.Unit.fields.isEmpty())
                 val pointsToGraph = PointsToGraph(forest)
                 function.allParameters.forEachIndexed { index, parameter -> pointsToGraph.addParameter(parameter, index) }
                 val returnResults = mutableListOf<ExpressionResult>()
@@ -1888,6 +1893,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
             }
         }
 
+        // TODO: Remove incoming edges to Unit/Null/Nothing.
         private fun EscapeAnalysisResult.removeRedundantNodes() {
             val singleNodesPointingAt = arrayOfNulls<Node>(graph.nodes.size)
             val incomingEdgesCounts = IntArray(graph.nodes.size)
