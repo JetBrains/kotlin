@@ -1,5 +1,5 @@
 // TARGET_BACKEND: NATIVE
-// LANGUAGE: -NativeJsProhibitLateinitIsInitalizedIntrinsicWithoutPrivateAccess
+// LANGUAGE: -NativeJsProhibitLateinitIsInitializedIntrinsicWithoutPrivateAccess
 // WITH_STDLIB
 
 // MODULE: lib

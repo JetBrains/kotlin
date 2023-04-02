@@ -42,7 +42,7 @@ class LateinitIntrinsicApplicabilityChecker(val isWarningInPre19: Boolean) : Cal
 
         val expression = (resolvedCall.extensionReceiver as? ExpressionReceiver)?.expression?.let(KtPsiUtil::safeDeparenthesize)
         fun <T> chooseDiagnostic(ifWarning: T, ifError: T) =
-            if (isWarningInPre19 && !context.languageVersionSettings.supportsFeature(LanguageFeature.NativeJsProhibitLateinitIsInitalizedIntrinsicWithoutPrivateAccess))
+            if (isWarningInPre19 && !context.languageVersionSettings.supportsFeature(LanguageFeature.NativeJsProhibitLateinitIsInitializedIntrinsicWithoutPrivateAccess))
                 ifWarning
             else
                 ifError

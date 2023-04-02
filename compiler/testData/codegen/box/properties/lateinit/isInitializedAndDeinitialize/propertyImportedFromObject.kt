@@ -1,4 +1,4 @@
-// LANGUAGE: -NativeJsProhibitLateinitIsInitalizedIntrinsicWithoutPrivateAccess
+// LANGUAGE: -NativeJsProhibitLateinitIsInitializedIntrinsicWithoutPrivateAccess
 // WITH_STDLIB
 // IGNORE_BACKEND: JS, JS_IR_ES6
 
