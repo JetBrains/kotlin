@@ -22,7 +22,7 @@ dependencies {
     compileOnly(intellijCore())
     compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
     compileOnly(commonDependency("org.jetbrains.intellij.deps:trove4j"))
-    api(project(":kotlin-build-statistic"))
+    compileOnly(project(":kotlin-build-statistic"))
 
     testCompileOnly(project(":compiler:cli-common"))
     testApi(projectTests(":compiler:tests-common"))
