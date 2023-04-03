@@ -21,7 +21,7 @@ import org.w3c.notifications.*
 public external abstract class ServiceWorker : EventTarget, AbstractWorker, UnionMessagePortOrServiceWorker, UnionClientOrMessagePortOrServiceWorker, JsAny {
     open val scriptURL: String
     open val state: ServiceWorkerState
-    open var onstatechange: ((Event) -> JsAny?)?
+    open var onstatechange: ((Event) -> Unit)?
     fun postMessage(message: JsAny?, transfer: JsArray<JsAny> = definedExternally)
 }
 
@@ -33,7 +33,7 @@ public external abstract class ServiceWorkerRegistration : EventTarget, JsAny {
     open val waiting: ServiceWorker?
     open val active: ServiceWorker?
     open val scope: String
-    open var onupdatefound: ((Event) -> JsAny?)?
+    open var onupdatefound: ((Event) -> Unit)?
     open val APISpace: JsAny?
     fun update(): Promise<Nothing?>
     fun unregister(): Promise<JsBoolean>
@@ -48,8 +48,8 @@ public external abstract class ServiceWorkerRegistration : EventTarget, JsAny {
 public external abstract class ServiceWorkerContainer : EventTarget, JsAny {
     open val controller: ServiceWorker?
     open val ready: Promise<ServiceWorkerRegistration>
-    open var oncontrollerchange: ((Event) -> JsAny?)?
-    open var onmessage: ((MessageEvent) -> JsAny?)?
+    open var oncontrollerchange: ((Event) -> Unit)?
+    open var onmessage: ((MessageEvent) -> Unit)?
     fun register(scriptURL: String, options: RegistrationOptions = definedExternally): Promise<ServiceWorkerRegistration>
     fun getRegistration(clientURL: String = definedExternally): Promise<JsAny?>
     fun getRegistrations(): Promise<JsArray<ServiceWorkerRegistration>>
@@ -113,14 +113,14 @@ public fun ServiceWorkerMessageEventInit(data: JsAny? = undefined, origin: Strin
 public external abstract class ServiceWorkerGlobalScope : WorkerGlobalScope, JsAny {
     open val clients: Clients
     open val registration: ServiceWorkerRegistration
-    open var oninstall: ((Event) -> JsAny?)?
-    open var onactivate: ((Event) -> JsAny?)?
-    open var onfetch: ((FetchEvent) -> JsAny?)?
-    open var onforeignfetch: ((Event) -> JsAny?)?
-    open var onmessage: ((MessageEvent) -> JsAny?)?
-    open var onnotificationclick: ((NotificationEvent) -> JsAny?)?
-    open var onnotificationclose: ((NotificationEvent) -> JsAny?)?
-    open var onfunctionalevent: ((Event) -> JsAny?)?
+    open var oninstall: ((Event) -> Unit)?
+    open var onactivate: ((Event) -> Unit)?
+    open var onfetch: ((FetchEvent) -> Unit)?
+    open var onforeignfetch: ((Event) -> Unit)?
+    open var onmessage: ((MessageEvent) -> Unit)?
+    open var onnotificationclick: ((NotificationEvent) -> Unit)?
+    open var onnotificationclose: ((NotificationEvent) -> Unit)?
+    open var onfunctionalevent: ((Event) -> Unit)?
     fun skipWaiting(): Promise<Nothing?>
 }
 

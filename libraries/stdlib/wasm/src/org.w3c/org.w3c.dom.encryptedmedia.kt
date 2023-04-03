@@ -80,8 +80,8 @@ public external abstract class MediaKeySession : EventTarget, JsAny {
     open val expiration: Double
     open val closed: Promise<Nothing?>
     open val keyStatuses: MediaKeyStatusMap
-    open var onkeystatuseschange: ((Event) -> JsAny?)?
-    open var onmessage: ((MessageEvent) -> JsAny?)?
+    open var onkeystatuseschange: ((Event) -> Unit)?
+    open var onmessage: ((MessageEvent) -> Unit)?
     fun generateRequest(initDataType: String, initData: JsAny?): Promise<Nothing?>
     fun load(sessionId: String): Promise<JsBoolean>
     fun update(response: JsAny?): Promise<Nothing?>

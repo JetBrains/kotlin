@@ -21,9 +21,9 @@ public external open class MediaSource : EventTarget, MediaProvider, JsAny {
     open val activeSourceBuffers: SourceBufferList
     open val readyState: ReadyState
     var duration: Double
-    var onsourceopen: ((Event) -> JsAny?)?
-    var onsourceended: ((Event) -> JsAny?)?
-    var onsourceclose: ((Event) -> JsAny?)?
+    var onsourceopen: ((Event) -> Unit)?
+    var onsourceended: ((Event) -> Unit)?
+    var onsourceclose: ((Event) -> Unit)?
     fun addSourceBuffer(type: String): SourceBuffer
     fun removeSourceBuffer(sourceBuffer: SourceBuffer)
     fun endOfStream(error: EndOfStreamError = definedExternally)
@@ -48,11 +48,11 @@ public external abstract class SourceBuffer : EventTarget, JsAny {
     open val textTracks: TextTrackList
     open var appendWindowStart: Double
     open var appendWindowEnd: Double
-    open var onupdatestart: ((Event) -> JsAny?)?
-    open var onupdate: ((Event) -> JsAny?)?
-    open var onupdateend: ((Event) -> JsAny?)?
-    open var onerror: ((Event) -> JsAny?)?
-    open var onabort: ((Event) -> JsAny?)?
+    open var onupdatestart: ((Event) -> Unit)?
+    open var onupdate: ((Event) -> Unit)?
+    open var onupdateend: ((Event) -> Unit)?
+    open var onerror: ((Event) -> Unit)?
+    open var onabort: ((Event) -> Unit)?
     fun appendBuffer(data: JsAny?)
     fun abort()
     fun remove(start: Double, end: Double)
@@ -63,8 +63,8 @@ public external abstract class SourceBuffer : EventTarget, JsAny {
  */
 public external abstract class SourceBufferList : EventTarget, JsAny {
     open val length: Int
-    open var onaddsourcebuffer: ((Event) -> JsAny?)?
-    open var onremovesourcebuffer: ((Event) -> JsAny?)?
+    open var onaddsourcebuffer: ((Event) -> Unit)?
+    open var onremovesourcebuffer: ((Event) -> Unit)?
 }
 
 @Suppress("UNUSED_PARAMETER")

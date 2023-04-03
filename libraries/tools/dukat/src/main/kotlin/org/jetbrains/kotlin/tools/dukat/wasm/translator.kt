@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.tools.dukat.wasm
 import org.jetbrains.dukat.astCommon.IdentifierEntity
 import org.jetbrains.dukat.astCommon.NameEntity
 import org.jetbrains.dukat.astModel.*
-import org.jetbrains.dukat.astModel.modifiers.VisibilityModifierModel
 import org.jetbrains.dukat.commonLowerings.AddExplicitGettersAndSetters
 import org.jetbrains.dukat.idlLowerings.*
 import org.jetbrains.dukat.idlParser.parseIDL
@@ -19,6 +18,7 @@ import org.jetbrains.dukat.ownerContext.NodeOwner
 fun translateIdlToSourceSet(fileName: String): SourceSetModel {
     val translationContext = TranslationContext()
     return parseIDL(fileName, DirectoryReferencesResolver())
+        .voidifyEventHandlerReturnType()
         .resolvePartials()
         .addConstructors()
         .resolveTypedefs()

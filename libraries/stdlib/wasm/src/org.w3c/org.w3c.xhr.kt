@@ -18,13 +18,13 @@ import org.w3c.files.*
  * Exposes the JavaScript [XMLHttpRequestEventTarget](https://developer.mozilla.org/en/docs/Web/API/XMLHttpRequestEventTarget) to Kotlin
  */
 public external abstract class XMLHttpRequestEventTarget : EventTarget, JsAny {
-    open var onloadstart: ((ProgressEvent) -> JsAny?)?
-    open var onprogress: ((ProgressEvent) -> JsAny?)?
-    open var onabort: ((Event) -> JsAny?)?
-    open var onerror: ((Event) -> JsAny?)?
-    open var onload: ((Event) -> JsAny?)?
-    open var ontimeout: ((Event) -> JsAny?)?
-    open var onloadend: ((Event) -> JsAny?)?
+    open var onloadstart: ((ProgressEvent) -> Unit)?
+    open var onprogress: ((ProgressEvent) -> Unit)?
+    open var onabort: ((Event) -> Unit)?
+    open var onerror: ((Event) -> Unit)?
+    open var onload: ((Event) -> Unit)?
+    open var ontimeout: ((Event) -> Unit)?
+    open var onloadend: ((Event) -> Unit)?
 }
 
 public external abstract class XMLHttpRequestUpload : XMLHttpRequestEventTarget, JsAny
@@ -33,7 +33,7 @@ public external abstract class XMLHttpRequestUpload : XMLHttpRequestEventTarget,
  * Exposes the JavaScript [XMLHttpRequest](https://developer.mozilla.org/en/docs/Web/API/XMLHttpRequest) to Kotlin
  */
 public external open class XMLHttpRequest : XMLHttpRequestEventTarget, JsAny {
-    var onreadystatechange: ((Event) -> JsAny?)?
+    var onreadystatechange: ((Event) -> Unit)?
     open val readyState: Short
     var timeout: Int
     var withCredentials: Boolean
