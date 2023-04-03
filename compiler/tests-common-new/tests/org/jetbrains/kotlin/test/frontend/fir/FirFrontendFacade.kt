@@ -17,19 +17,19 @@ import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.jvmModularRoots
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.container.topologicalSort
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
+import org.jetbrains.kotlin.fir.session.FirCommonSessionFactory
 import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory
 import org.jetbrains.kotlin.fir.session.FirNativeSessionFactory
 import org.jetbrains.kotlin.fir.session.FirSessionConfigurator
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
+import org.jetbrains.kotlin.load.kotlin.PackageAndMetadataPartProvider
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.isCommon
@@ -191,9 +191,9 @@ open class FirFrontendFacade(
         val compilerConfigurationProvider = testServices.compilerConfigurationProvider
         val projectEnvironment: AbstractProjectEnvironment?
         val languageVersionSettings = module.languageVersionSettings
+        val isCommon = module.targetPlatform.isCommon()
         when {
-            // TODO: use common session for common target platform when it's implemented
-            module.targetPlatform.isCommon() || module.targetPlatform.isJvm() -> {
+            isCommon || module.targetPlatform.isJvm() -> {
                 val packagePartProviderFactory = compilerConfigurationProvider.getPackagePartProviderFactory(module)
                 projectEnvironment = VfsBasedProjectEnvironment(
                     project, VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL),
@@ -201,17 +201,32 @@ open class FirFrontendFacade(
                 val projectFileSearchScope = PsiBasedProjectFileSearchScope(ProjectScope.getLibrariesScope(project))
                 val packagePartProvider = projectEnvironment.getPackagePartProvider(projectFileSearchScope)
 
-                FirJvmSessionFactory.createLibrarySession(
-                    moduleName,
-                    sessionProvider,
-                    moduleDataProvider,
-                    projectEnvironment,
-                    extensionRegistrars,
-                    projectFileSearchScope,
-                    packagePartProvider,
-                    languageVersionSettings,
-                    registerExtraComponents = ::registerExtraComponents,
-                )
+                if (isCommon) {
+                    FirCommonSessionFactory.createLibrarySession(
+                        mainModuleName = moduleName,
+                        sessionProvider = sessionProvider,
+                        moduleDataProvider = moduleDataProvider,
+                        projectEnvironment = projectEnvironment,
+                        extensionRegistrars = extensionRegistrars,
+                        librariesScope = projectFileSearchScope,
+                        resolvedKLibs = emptyList(),
+                        packageAndMetadataPartProvider = packagePartProvider as PackageAndMetadataPartProvider,
+                        languageVersionSettings = languageVersionSettings,
+                        registerExtraComponents = ::registerExtraComponents
+                    )
+                } else {
+                    FirJvmSessionFactory.createLibrarySession(
+                        moduleName,
+                        sessionProvider,
+                        moduleDataProvider,
+                        projectEnvironment,
+                        extensionRegistrars,
+                        projectFileSearchScope,
+                        packagePartProvider,
+                        languageVersionSettings,
+                        registerExtraComponents = ::registerExtraComponents,
+                    )
+                }
             }
             module.targetPlatform.isJs() -> {
                 projectEnvironment = null
@@ -318,8 +333,19 @@ open class FirFrontendFacade(
     ): FirSession {
         val languageVersionSettings = module.languageVersionSettings
         return when {
-            // TODO: use common session for common target platform when it's implemented
-            targetPlatform.isCommon() || targetPlatform.isJvm() -> {
+            targetPlatform.isCommon() -> {
+                FirCommonSessionFactory.createModuleBasedSession(
+                    moduleData = moduleData,
+                    sessionProvider = sessionProvider,
+                    projectEnvironment = projectEnvironment!!,
+                    incrementalCompilationContext = null,
+                    extensionRegistrars = extensionRegistrars,
+                    languageVersionSettings = languageVersionSettings,
+                    registerExtraComponents = ::registerExtraComponents,
+                    init = sessionConfigurator,
+                )
+            }
+            targetPlatform.isJvm() -> {
                 FirJvmSessionFactory.createModuleBasedSession(
                     moduleData,
                     sessionProvider,
@@ -328,11 +354,9 @@ open class FirFrontendFacade(
                     incrementalCompilationContext = null,
                     extensionRegistrars,
                     languageVersionSettings,
-                    lookupTracker = null,
-                    enumWhenTracker = null,
                     needRegisterJavaElementFinder = true,
                     registerExtraComponents = ::registerExtraComponents,
-                    sessionConfigurator,
+                    init = sessionConfigurator,
                 )
             }
             targetPlatform.isJs() -> {
