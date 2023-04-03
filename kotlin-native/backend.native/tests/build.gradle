@@ -4920,6 +4920,7 @@ if (PlatformInfo.isAppleTarget(project)) {
         enabled = !isNoopGC
         source = "interop/objc/smoke.kt"
         interop = 'objcSmoke'
+        verifyIr = false  // KT-57716
         doBeforeBuild {
             mkdir(buildDir)
             project.extensions.execClang.execClangForCompilerTests(project.target) {
