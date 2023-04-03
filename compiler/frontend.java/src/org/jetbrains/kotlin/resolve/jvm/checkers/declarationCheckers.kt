@@ -168,24 +168,6 @@ class JvmNameAnnotationChecker : DeclarationChecker {
     }
 }
 
-class VolatileAnnotationChecker : DeclarationChecker {
-    override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
-        if (descriptor !is PropertyDescriptor) return
-
-        val fieldAnnotation = descriptor.backingField?.annotations?.findAnnotation(VOLATILE_ANNOTATION_FQ_NAME)
-        if (fieldAnnotation != null && !descriptor.isVar) {
-            val annotationEntry = DescriptorToSourceUtils.getSourceFromAnnotation(fieldAnnotation) ?: return
-            context.trace.report(ErrorsJvm.VOLATILE_ON_VALUE.on(annotationEntry))
-        }
-
-        val delegateAnnotation = descriptor.delegateField?.annotations?.findAnnotation(VOLATILE_ANNOTATION_FQ_NAME)
-        if (delegateAnnotation != null) {
-            val annotationEntry = DescriptorToSourceUtils.getSourceFromAnnotation(delegateAnnotation) ?: return
-            context.trace.report(ErrorsJvm.VOLATILE_ON_DELEGATE.on(annotationEntry))
-        }
-    }
-}
-
 class SynchronizedAnnotationChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         val synchronizedAnnotation = descriptor.findSynchronizedAnnotation()

@@ -1208,6 +1208,9 @@ public class DefaultErrorMessages {
         MAP.put(UNSUPPORTED_CONTEXTUAL_DECLARATION_CALL, "To use contextual declarations, specify the `-Xcontext-receivers` compiler option");
         MAP.put(SUBTYPING_BETWEEN_CONTEXT_RECEIVERS, "Subtyping relation between context receivers is prohibited");
 
+        MAP.put(VOLATILE_ON_VALUE, "'@Volatile' annotation cannot be used on immutable properties");
+        MAP.put(VOLATILE_ON_DELEGATE, "'@Volatile' annotation cannot be used on delegated properties");
+
         MAP.setImmutable();
 
         for (Field field : Errors.class.getFields()) {
