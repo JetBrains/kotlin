@@ -54,10 +54,10 @@ fun checkSimpleArgument(
     receiverInfo: ReceiverInfo,
     convertedType: UnwrappedType?,
     inferenceSession: InferenceSession?,
-    kotlinCall: KotlinCall?
+    selectorCall: KotlinCall?
 ): ResolvedAtom = when (argument) {
     is ExpressionKotlinCallArgument ->
-        checkExpressionArgument(csBuilder, argument, expectedType, diagnosticsHolder, receiverInfo.isReceiver, convertedType, kotlinCall)
+        checkExpressionArgument(csBuilder, argument, expectedType, diagnosticsHolder, receiverInfo.isReceiver, convertedType, selectorCall)
     is SubKotlinCallArgument ->
         checkSubCallArgument(csBuilder, argument, expectedType, diagnosticsHolder, receiverInfo, inferenceSession)
     else ->
@@ -71,7 +71,7 @@ private fun checkExpressionArgument(
     diagnosticsHolder: KotlinDiagnosticsHolder,
     isReceiver: Boolean,
     convertedType: UnwrappedType?,
-    kotlinCall: KotlinCall?
+    selectorCall: KotlinCall?
 ): ResolvedAtom {
     val resolvedExpression = ResolvedExpressionAtom(expressionArgument)
     if (expectedType == null) return resolvedExpression
@@ -100,7 +100,7 @@ private fun checkExpressionArgument(
     }
 
     val position =
-        if (isReceiver) ReceiverConstraintPositionImpl(expressionArgument, kotlinCall)
+        if (isReceiver) ReceiverConstraintPositionImpl(expressionArgument, selectorCall)
         else ArgumentConstraintPositionImpl(expressionArgument)
 
     // Used only for arguments with @NotNull annotation

@@ -534,7 +534,7 @@ private fun ResolutionCandidate.resolveKotlinArgument(
             receiverInfo,
             convertedArgument?.unknownIntegerType?.unwrap(),
             inferenceSession,
-            receiverInfo.selectorCall
+            selectorCall = receiverInfo.selectorCall
         )
 
         addResolvedKtPrimitive(resolvedAtom)

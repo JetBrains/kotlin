@@ -41,7 +41,7 @@ class CallableReferenceConstraintPositionImpl(val callableReferenceCall: Callabl
 
 class ReceiverConstraintPositionImpl(
     argument: KotlinCallArgument,
-    val kotlinCall: KotlinCall?
+    val selectorCall: KotlinCall?
 ) : ReceiverConstraintPosition<KotlinCallArgument>(argument)
 
 class FixVariableConstraintPositionImpl(

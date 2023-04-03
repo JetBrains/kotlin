@@ -460,21 +460,21 @@ class DiagnosticReporterByTrackingStrategy(
                 reportArgumentConstraintErrorByPosition(
                     error, position.argument as KotlinCallArgument,
                     isWarning, typeMismatchDiagnostic,
-                    kotlinCall = null, report
+                    selectorCall = null, report
                 )
             }
             is ReceiverConstraintPosition<*> -> {
                 reportArgumentConstraintErrorByPosition(
                     error, position.argument as KotlinCallArgument,
                     isWarning, typeMismatchDiagnostic,
-                    kotlinCall = (position as ReceiverConstraintPositionImpl).kotlinCall, report
+                    selectorCall = (position as ReceiverConstraintPositionImpl).selectorCall, report
                 )
             }
             is LambdaArgumentConstraintPosition<*> -> {
                 reportArgumentConstraintErrorByPosition(
                     error, (position.lambda as ResolvedLambdaAtom).atom,
                     isWarning, typeMismatchDiagnostic,
-                    kotlinCall = null, report
+                    selectorCall = null, report
                 )
             }
             is BuilderInferenceExpectedTypeConstraintPosition -> {
@@ -548,7 +548,7 @@ class DiagnosticReporterByTrackingStrategy(
         argument: KotlinCallArgument,
         isWarning: Boolean,
         typeMismatchDiagnostic: DiagnosticFactory2<KtExpression, KotlinType, KotlinType>,
-        kotlinCall: KotlinCall?,
+        selectorCall: KotlinCall?,
         report: (Diagnostic) -> Unit
     ) {
         if (argument is LambdaKotlinCallArgument) {
@@ -567,7 +567,7 @@ class DiagnosticReporterByTrackingStrategy(
         }
 
         val expression = argument.psiExpression ?: run {
-            val psiCall = (kotlinCall as? PSIKotlinCall)?.psiCall ?: psiKotlinCall.psiCall
+            val psiCall = (selectorCall as? PSIKotlinCall)?.psiCall ?: psiKotlinCall.psiCall
             report(
                 RECEIVER_TYPE_MISMATCH.on(
                     psiCall.calleeExpression ?: psiCall.callElement, error.upperKotlinType, error.lowerKotlinType
