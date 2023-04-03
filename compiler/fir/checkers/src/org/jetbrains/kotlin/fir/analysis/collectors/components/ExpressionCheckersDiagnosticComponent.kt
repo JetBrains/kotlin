@@ -48,6 +48,10 @@ class ExpressionCheckersDiagnosticComponent(
         checkers.allFunctionCallCheckers.check(functionCall, data)
     }
 
+    override fun visitComponentCall(componentCall: FirComponentCall, data: CheckerContext) {
+        checkers.allFunctionCallCheckers.check(componentCall, data)
+    }
+
     override fun visitIntegerLiteralOperatorCall(integerLiteralOperatorCall: FirIntegerLiteralOperatorCall, data: CheckerContext) {
         checkers.allIntegerLiteralOperatorCallCheckers.check(integerLiteralOperatorCall, data)
     }

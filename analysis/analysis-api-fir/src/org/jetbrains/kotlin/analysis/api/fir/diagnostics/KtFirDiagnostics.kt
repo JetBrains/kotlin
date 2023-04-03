@@ -3517,6 +3517,15 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = DelegationByDynamic::class
     }
 
+    abstract class SpreadOperatorInDynamicCall : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = SpreadOperatorInDynamicCall::class
+    }
+
+    abstract class WrongOperationWithDynamic : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = WrongOperationWithDynamic::class
+        abstract val operation: String
+    }
+
     abstract class Syntax : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = Syntax::class
     }

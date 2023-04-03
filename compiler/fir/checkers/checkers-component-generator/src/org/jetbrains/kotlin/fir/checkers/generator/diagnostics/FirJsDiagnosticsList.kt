@@ -112,5 +112,9 @@ object JS_DIAGNOSTICS_LIST : DiagnosticList("FirJsErrors") {
 
     val DYNAMICS by object : DiagnosticGroup("Dynamics") {
         val DELEGATION_BY_DYNAMIC by error<KtElement>()
+        val SPREAD_OPERATOR_IN_DYNAMIC_CALL by error<KtElement>(PositioningStrategy.SPREAD_OPERATOR)
+        val WRONG_OPERATION_WITH_DYNAMIC by error<KtElement> {
+            parameter<String>("operation")
+        }
     }
 }

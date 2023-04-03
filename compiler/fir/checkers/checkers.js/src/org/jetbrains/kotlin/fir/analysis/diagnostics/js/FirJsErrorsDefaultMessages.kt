@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.OVERRIDING_E
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.OVERRIDING_EXTERNAL_FUN_WITH_OPTIONAL_PARAMS_WITH_FAKE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.RUNTIME_ANNOTATION_NOT_SUPPORTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.RUNTIME_ANNOTATION_ON_EXTERNAL_DECLARATION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.SPREAD_OPERATOR_IN_DYNAMIC_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.UNCHECKED_CAST_TO_EXTERNAL_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.WRONG_BODY_OF_EXTERNAL_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.WRONG_DEFAULT_VALUE_FOR_EXTERNAL_FUN_PARAMETER
@@ -60,6 +61,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.WRONG_EXTERN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.WRONG_INITIALIZER_OF_EXTERNAL_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.WRONG_JS_QUALIFIER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.WRONG_MULTIPLE_INHERITANCE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.WRONG_OPERATION_WITH_DYNAMIC
 
 @Suppress("unused")
 object FirJsErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
@@ -77,6 +79,8 @@ object FirJsErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             FirDiagnosticRenderers.SYMBOL
         )
         map.put(DELEGATION_BY_DYNAMIC, "Can't delegate to dynamic value")
+        map.put(SPREAD_OPERATOR_IN_DYNAMIC_CALL, "Can't apply spread operator in dynamic call")
+        map.put(WRONG_OPERATION_WITH_DYNAMIC, "Wrong operation with dynamic value: {0}", CommonRenderers.STRING)
         map.put(IMPLEMENTING_FUNCTION_INTERFACE, "Implementing function interface is prohibited in JavaScript")
         map.put(OVERRIDING_EXTERNAL_FUN_WITH_OPTIONAL_PARAMS, "Overriding `external` function with optional parameters")
         map.put(
