@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.serialization.constant
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
+import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCall
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirArrayOfCallTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirArrayOfCallTransformer.Companion.isArrayOfCall
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
@@ -106,6 +108,10 @@ private abstract class FirToConstantValueTransformer(
             symbol.fir is FirEnumEntry -> {
                 val classId = symbol.fir.returnTypeRef.coneTypeSafe<ConeClassLikeType>()?.classId ?: return null
                 EnumValue(classId, (symbol.fir as FirEnumEntry).name)
+            }
+
+            symbol is FirPropertySymbol -> {
+                if (symbol.fir.isConst) symbol.fir.initializer?.accept(this, data) else null
             }
 
             symbol is FirConstructorSymbol -> {
@@ -219,6 +225,8 @@ internal object FirToConstantValueChecker : FirDefaultVisitor<Boolean, FirSessio
 
         return when {
             symbol.fir is FirEnumEntry -> symbol.fir.returnTypeRef.coneTypeSafe<ConeClassLikeType>()?.classId != null
+
+            symbol is FirPropertySymbol -> symbol.fir.isConst
 
             symbol is FirConstructorSymbol -> {
                 symbol.containingClassLookupTag()?.toFirRegularClassSymbol(data)?.classKind == ClassKind.ANNOTATION_CLASS
