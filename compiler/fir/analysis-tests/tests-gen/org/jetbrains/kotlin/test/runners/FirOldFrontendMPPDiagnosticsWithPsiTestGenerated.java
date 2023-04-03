@@ -344,6 +344,12 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
         }
 
         @Test
+        @TestMetadata("actualMethodInExpectClass.kt")
+        public void testActualMethodInExpectClass() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/headerClass/actualMethodInExpectClass.kt");
+        }
+
+        @Test
         @TestMetadata("actualMissing.kt")
         public void testActualMissing() throws Exception {
             runTest("compiler/testData/diagnostics/tests/multiplatform/headerClass/actualMissing.kt");
