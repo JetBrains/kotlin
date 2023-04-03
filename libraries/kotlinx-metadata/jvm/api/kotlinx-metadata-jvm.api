@@ -177,7 +177,6 @@ public final class kotlinx/metadata/KmAnnotationArgument$BooleanValue : kotlinx/
 	public fun getValue ()Ljava/lang/Boolean;
 	public synthetic fun getValue ()Ljava/lang/Object;
 	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
 }
 
 public final class kotlinx/metadata/KmAnnotationArgument$ByteValue : kotlinx/metadata/KmAnnotationArgument$LiteralValue {
@@ -189,7 +188,6 @@ public final class kotlinx/metadata/KmAnnotationArgument$ByteValue : kotlinx/met
 	public fun getValue ()Ljava/lang/Byte;
 	public synthetic fun getValue ()Ljava/lang/Object;
 	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
 }
 
 public final class kotlinx/metadata/KmAnnotationArgument$CharValue : kotlinx/metadata/KmAnnotationArgument$LiteralValue {
@@ -201,7 +199,6 @@ public final class kotlinx/metadata/KmAnnotationArgument$CharValue : kotlinx/met
 	public fun getValue ()Ljava/lang/Character;
 	public synthetic fun getValue ()Ljava/lang/Object;
 	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
 }
 
 public final class kotlinx/metadata/KmAnnotationArgument$DoubleValue : kotlinx/metadata/KmAnnotationArgument$LiteralValue {
@@ -213,7 +210,6 @@ public final class kotlinx/metadata/KmAnnotationArgument$DoubleValue : kotlinx/m
 	public fun getValue ()Ljava/lang/Double;
 	public synthetic fun getValue ()Ljava/lang/Object;
 	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
 }
 
 public final class kotlinx/metadata/KmAnnotationArgument$EnumValue : kotlinx/metadata/KmAnnotationArgument {
@@ -238,7 +234,6 @@ public final class kotlinx/metadata/KmAnnotationArgument$FloatValue : kotlinx/me
 	public fun getValue ()Ljava/lang/Float;
 	public synthetic fun getValue ()Ljava/lang/Object;
 	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
 }
 
 public final class kotlinx/metadata/KmAnnotationArgument$IntValue : kotlinx/metadata/KmAnnotationArgument$LiteralValue {
@@ -250,7 +245,6 @@ public final class kotlinx/metadata/KmAnnotationArgument$IntValue : kotlinx/meta
 	public fun getValue ()Ljava/lang/Integer;
 	public synthetic fun getValue ()Ljava/lang/Object;
 	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
 }
 
 public final class kotlinx/metadata/KmAnnotationArgument$KClassValue : kotlinx/metadata/KmAnnotationArgument {
@@ -269,6 +263,7 @@ public final class kotlinx/metadata/KmAnnotationArgument$KClassValue : kotlinx/m
 
 public abstract class kotlinx/metadata/KmAnnotationArgument$LiteralValue : kotlinx/metadata/KmAnnotationArgument {
 	public abstract fun getValue ()Ljava/lang/Object;
+	public final fun toString ()Ljava/lang/String;
 }
 
 public final class kotlinx/metadata/KmAnnotationArgument$LongValue : kotlinx/metadata/KmAnnotationArgument$LiteralValue {
@@ -280,7 +275,6 @@ public final class kotlinx/metadata/KmAnnotationArgument$LongValue : kotlinx/met
 	public fun getValue ()Ljava/lang/Long;
 	public synthetic fun getValue ()Ljava/lang/Object;
 	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
 }
 
 public final class kotlinx/metadata/KmAnnotationArgument$ShortValue : kotlinx/metadata/KmAnnotationArgument$LiteralValue {
@@ -292,7 +286,6 @@ public final class kotlinx/metadata/KmAnnotationArgument$ShortValue : kotlinx/me
 	public synthetic fun getValue ()Ljava/lang/Object;
 	public fun getValue ()Ljava/lang/Short;
 	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
 }
 
 public final class kotlinx/metadata/KmAnnotationArgument$StringValue : kotlinx/metadata/KmAnnotationArgument$LiteralValue {
@@ -304,7 +297,6 @@ public final class kotlinx/metadata/KmAnnotationArgument$StringValue : kotlinx/m
 	public synthetic fun getValue ()Ljava/lang/Object;
 	public fun getValue ()Ljava/lang/String;
 	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
 }
 
 public final class kotlinx/metadata/KmAnnotationArgument$UByteValue : kotlinx/metadata/KmAnnotationArgument$LiteralValue {
@@ -316,7 +308,6 @@ public final class kotlinx/metadata/KmAnnotationArgument$UByteValue : kotlinx/me
 	public synthetic fun getValue ()Ljava/lang/Object;
 	public fun getValue-w2LRezQ ()B
 	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
 }
 
 public final class kotlinx/metadata/KmAnnotationArgument$UIntValue : kotlinx/metadata/KmAnnotationArgument$LiteralValue {
@@ -328,7 +319,6 @@ public final class kotlinx/metadata/KmAnnotationArgument$UIntValue : kotlinx/met
 	public synthetic fun getValue ()Ljava/lang/Object;
 	public fun getValue-pVg5ArA ()I
 	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
 }
 
 public final class kotlinx/metadata/KmAnnotationArgument$ULongValue : kotlinx/metadata/KmAnnotationArgument$LiteralValue {
@@ -340,7 +330,6 @@ public final class kotlinx/metadata/KmAnnotationArgument$ULongValue : kotlinx/me
 	public synthetic fun getValue ()Ljava/lang/Object;
 	public fun getValue-s-VKNKU ()J
 	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
 }
 
 public final class kotlinx/metadata/KmAnnotationArgument$UShortValue : kotlinx/metadata/KmAnnotationArgument$LiteralValue {
@@ -352,7 +341,6 @@ public final class kotlinx/metadata/KmAnnotationArgument$UShortValue : kotlinx/m
 	public synthetic fun getValue ()Ljava/lang/Object;
 	public fun getValue-Mh2AYeg ()S
 	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
 }
 
 public final class kotlinx/metadata/KmClass : kotlinx/metadata/KmClassVisitor, kotlinx/metadata/KmDeclarationContainer {

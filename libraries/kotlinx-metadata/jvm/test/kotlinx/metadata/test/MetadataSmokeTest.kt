@@ -17,9 +17,6 @@ import kotlin.test.*
 
 @Suppress("DEPRECATION")
 class MetadataSmokeTest {
-    private fun Class<*>.readMetadata(): Metadata {
-        return getAnnotation(Metadata::class.java)
-    }
 
     @Test
     fun listInlineFunctions() {
@@ -30,9 +27,9 @@ class MetadataSmokeTest {
             fun bar() {}
         }
 
-        val classMetadata = KotlinClassMetadata.read(L::class.java.readMetadata()) as KotlinClassMetadata.Class
+        val classMetadata = L::class.java.readMetadataAsKmClass()
 
-        val inlineFunctions = classMetadata.toKmClass().functions
+        val inlineFunctions = classMetadata.functions
             .filter { Flag.Function.IS_INLINE(it.flags) }
             .mapNotNull { it.signature?.toString() }
 
@@ -135,14 +132,14 @@ class MetadataSmokeTest {
         class L
 
         val l = ClassNameReader().run {
-            (KotlinClassMetadata.read(L::class.java.readMetadata()) as KotlinClassMetadata.Class).accept(this)
+            (KotlinClassMetadata.read(L::class.java.getMetadata()) as KotlinClassMetadata.Class).accept(this)
             className
         }
         assertEquals(".kotlinx/metadata/test/MetadataSmokeTest\$jvmInternalName\$L", l)
         assertEquals("kotlinx/metadata/test/MetadataSmokeTest\$jvmInternalName\$L", l.toJvmInternalName())
 
         val coroutineContextKey = ClassNameReader().run {
-            (KotlinClassMetadata.read(CoroutineContext.Key::class.java.readMetadata()) as KotlinClassMetadata.Class).accept(this)
+            (KotlinClassMetadata.read(CoroutineContext.Key::class.java.getMetadata()) as KotlinClassMetadata.Class).accept(this)
             className
         }
         assertEquals("kotlin/coroutines/CoroutineContext.Key", coroutineContextKey)
@@ -152,7 +149,7 @@ class MetadataSmokeTest {
     @Test
     fun lambdaVersionRequirement() {
         val x: suspend Int.(String, String) -> Unit = { _, _ -> }
-        val annotation = x::class.java.getAnnotation(Metadata::class.java)!!
+        val annotation = x::class.java.getMetadata()
         val metadata = KotlinClassMetadata.read(annotation) as KotlinClassMetadata.SyntheticClass
         metadata.accept(KmLambda())
     }
@@ -164,8 +161,7 @@ class MetadataSmokeTest {
             fun foo(a: String, b: Int, c: Boolean) = Unit
         }
 
-        val classWithStableParameterNames =
-            (KotlinClassMetadata.read(Test::class.java.readMetadata()) as KotlinClassMetadata.Class).toKmClass()
+        val classWithStableParameterNames = Test::class.java.readMetadataAsKmClass()
 
         classWithStableParameterNames.constructors.forEach { assertFalse(Flag.Constructor.HAS_NON_STABLE_PARAMETER_NAMES(it.flags)) }
         classWithStableParameterNames.functions.forEach { assertFalse(Flag.Function.HAS_NON_STABLE_PARAMETER_NAMES(it.flags)) }
@@ -193,7 +189,7 @@ class MetadataSmokeTest {
     @Test
     @OptIn(UnstableMetadataApi::class)
     fun metadataVersionEarlierThan1_4() {
-        val dummy = (KotlinClassMetadata.read(MetadataSmokeTest::class.java.readMetadata()) as KotlinClassMetadata.Class).toKmClass()
+        val dummy = MetadataSmokeTest::class.java.readMetadataAsKmClass()
         val mv = intArrayOf(1, 3)
         assertFailsWith<IllegalArgumentException> { KotlinClassMetadata.writeClass(dummy, mv) } // We can't write empty KmClass()
         assertFailsWith<IllegalArgumentException> { KotlinClassMetadata.writeFileFacade(KmPackage(), mv) }
@@ -215,8 +211,8 @@ class MetadataSmokeTest {
             JvmFlag.Class.HAS_METHOD_BODIES_IN_INTERFACE
         )
 
-        val metadata = CoroutineContext::class.java.readMetadata()
-        val kmClass = (KotlinClassMetadata.read(metadata) as KotlinClassMetadata.Class).toKmClass()
+        val metadata = CoroutineContext::class.java.getMetadata()
+        val kmClass = metadata.readAsKmClass()
         kmClass.jvmFlags = jvmClassFlags
 
         val kmClassCopy = KotlinClassMetadata

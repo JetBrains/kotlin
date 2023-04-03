@@ -30,13 +30,13 @@ class KmAnnotation(val className: ClassName, val arguments: Map<String, KmAnnota
 }
 
 /**
- * Represents an argument to the annotation.
+ * Represents an argument of the annotation.
  */
 @Suppress("IncorrectFormatting") // one-line KDoc
 sealed class KmAnnotationArgument {
     /**
      * A kind of annotation argument, whose value is directly accessible via [value].
-     * This is possible for annotation arguments of primitive types, unsigned types and strings.
+     * This is possible for annotation arguments of primitive types, unsigned types, and strings.
      *
      * For example, in `@Foo("bar")`, argument of `Foo` is a [StringValue] with [value] equal to `bar`.
      *
@@ -47,6 +47,11 @@ sealed class KmAnnotationArgument {
          * The value of this argument.
          */
         abstract val value: T
+
+        // final modifier prevents generation of data class-like .toString() in inheritors
+        // Java reflection instead of Kotlin reflection to avoid (probably small) overhead of mapping Kotlin/Java names
+        final override fun toString(): String =
+            "${this::class.java.simpleName}(${if (this is StringValue) "\"$value\"" else value.toString()})"
     }
 
     // For all inheritors of LiteralValue: KDoc is automatically copied from base property `value`
@@ -90,7 +95,9 @@ sealed class KmAnnotationArgument {
      * @property enumClassName FQ name of the enum class
      * @property enumEntryName Name of the enum entry
      */
-    data class EnumValue(val enumClassName: ClassName, val enumEntryName: String) : KmAnnotationArgument()
+    data class EnumValue(val enumClassName: ClassName, val enumEntryName: String) : KmAnnotationArgument() {
+        override fun toString(): String = "EnumValue($enumClassName.$enumEntryName)"
+    }
 
     /**
      * An annotation argument which is another annotation value.
@@ -107,7 +114,9 @@ sealed class KmAnnotationArgument {
      *
      * @property annotation Annotation instance with all its arguments.
      */
-    data class AnnotationValue(val annotation: KmAnnotation) : KmAnnotationArgument()
+    data class AnnotationValue(val annotation: KmAnnotation) : KmAnnotationArgument() {
+        override fun toString(): String = "AnnotationValue($annotation)"
+    }
 
     /**
      * An annotation argument with an array type, i.e. several values of one arbitrary type.
@@ -119,7 +128,9 @@ sealed class KmAnnotationArgument {
      *
      * @property elements Values of elements in the array.
      */
-    data class ArrayValue(val elements: List<KmAnnotationArgument>) : KmAnnotationArgument()
+    data class ArrayValue(val elements: List<KmAnnotationArgument>) : KmAnnotationArgument() {
+        override fun toString(): String = "ArrayValue($elements)"
+    }
 
     /**
      * An annotation argument of KClass type.
@@ -147,6 +158,8 @@ sealed class KmAnnotationArgument {
         init {
             require(arrayDimensionCount == 0) { "KClassValue must not have array dimensions. For Array<X>::class, use ArrayKClassValue." }
         }
+
+        override fun toString(): String = "KClassValue($className)"
     }
 
     /**
@@ -154,7 +167,7 @@ sealed class KmAnnotationArgument {
      *
      * Due to the nature of JVM, Arrays with different arguments are represented by different `kotlin.reflect.KClass` and `java.lang.Class` instances
      * (while e.g. `List` has always one KClass instance regardless of generic arguments).
-     * As a result, Kotlin compiler allows to use generic arguments for the arrays in annotations: `@Foo(Array<Array<String>>::class)`.
+     * As a result, Kotlin compiler allows using generic arguments for the arrays in annotations: `@Foo(Array<Array<String>>::class)`.
      * [ArrayKClassValue] allows to distinguish such arguments from regular [KClassValue].
      *
      * [className] is the array element type's fully qualified name — in the example above, it is `kotlin/String`.
@@ -173,5 +186,15 @@ sealed class KmAnnotationArgument {
         init {
             require(arrayDimensionCount > 0) { "ArrayKClassValue must have at least one dimension. For regular X::class argument, use KClassValue." }
         }
+
+        private val stringRepresentation = buildString {
+            append("ArrayKClassValue(")
+            repeat(arrayDimensionCount) { append("kotlin/Array<") }
+            append(className)
+            repeat(arrayDimensionCount) { append(">") }
+            append(")")
+        }
+
+        override fun toString(): String = stringRepresentation
     }
 }

@@ -44,6 +44,8 @@ class JarContentTest {
             }
 
             for (constant in loadedConstants) {
+                // kotlin/Array appears as constant because it is used in ArrayKClassValue.toString()
+                if (constant == "kotlin/Array<") continue
                 // Explicitly checking types that are programmatically built don't appear as string constants.
                 assertNull("$constant found at ${entry.name}", PREDEFINED_STRINGS.find { it in constant })
 
