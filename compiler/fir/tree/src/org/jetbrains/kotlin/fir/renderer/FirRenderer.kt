@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import java.util.*
 
 class FirRenderer(
@@ -88,9 +89,9 @@ class FirRenderer(
         fileAnnotationsContainerRenderer?.components = this
     }
 
-    fun renderElementAsString(element: FirElement): String {
+    fun renderElementAsString(element: FirElement, trim: Boolean = false): String {
         element.accept(visitor)
-        return printer.toString()
+        return printer.toString().applyIf(trim, String::trim)
     }
 
     fun renderElementWithTypeAsString(element: FirElement): String {
