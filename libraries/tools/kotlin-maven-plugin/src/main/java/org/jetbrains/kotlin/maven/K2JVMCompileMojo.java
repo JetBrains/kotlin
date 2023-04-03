@@ -165,13 +165,14 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
 
         if (!classpathList.isEmpty()) {
             String classPathString = join(classpathList, File.pathSeparator);
+            String[] classPath = classpathList.toArray(new String[0]);
             if (isJava9Module(sourceRoots)) {
                 getLog().debug("Module path: " + classPathString);
-                arguments.setJavaModulePath(classPathString);
+                arguments.setJavaModulePath(classPath);
             }
             else {
                 getLog().debug("Classpath: " + classPathString);
-                arguments.setClasspath(classpathList.toArray(String[]::new));
+                arguments.setClasspath(classPath);
             }
         }
 

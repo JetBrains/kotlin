@@ -77,7 +77,7 @@ abstract class AbstractFrontendModularizedTest : AbstractModularizedTest() {
         if (originalArguments != null) {
             configuration.put(JVMConfigurationKeys.NO_JDK, originalArguments.noJdk)
 
-            for (modularRoot in originalArguments.javaModulePath?.split(File.pathSeparatorChar).orEmpty()) {
+            for (modularRoot in originalArguments.javaModulePath.orEmpty()) {
                 configuration.add(CLIConfigurationKeys.CONTENT_ROOTS, JvmModulePathRoot(modularRoot.fixPath()))
             }
 

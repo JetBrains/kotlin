@@ -210,8 +210,13 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
             field = value
         }
 
-    @Argument(value = "-Xmodule-path", valueDescription = "<path>", description = "Paths where to find Java 9+ modules")
-    var javaModulePath: String? = null
+    @Argument(
+        value = "-Xmodule-path",
+        valueDescription = "<path>",
+        description = "Paths where to find Java 9+ modules",
+        delimiter = Argument.Delimiters.pathSeparator
+    )
+    var javaModulePath: Array<String>? = null
         set(value) {
             checkFrozen()
             field = if (value.isNullOrEmpty()) null else value
