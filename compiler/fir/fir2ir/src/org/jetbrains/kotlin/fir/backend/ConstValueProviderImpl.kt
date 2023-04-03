@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.UnsignedType
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirSession
@@ -21,6 +23,9 @@ import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.getArgumentsWithIr
+import org.jetbrains.kotlin.ir.util.hasAnnotation
+import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.types.ConstantValueKind
 
 class ConstValueProviderImpl(
@@ -39,7 +44,7 @@ class ConstValueProviderImpl(
         firAnnotationContainer: FirAnnotationContainer,
         firAnnotation: FirAnnotation,
     ): FirAnnotation {
-        if (firAnnotation is FirErrorAnnotationCall) return firAnnotation
+        if (firAnnotation is FirErrorAnnotationCall || firAnnotation.source == null) return firAnnotation
 
         val irDeclaration = when (firAnnotationContainer) {
             is FirClass -> components.classifierStorage.getCachedIrClass(firAnnotationContainer)
@@ -80,7 +85,7 @@ class ConstValueProviderImpl(
         firAnnotation: FirAnnotation,
         receiverParameter: FirReceiverParameter
     ): FirAnnotation {
-        if (firAnnotation is FirErrorAnnotationCall) return firAnnotation
+        if (firAnnotation is FirErrorAnnotationCall || firAnnotation.source == null) return firAnnotation
 
         val extensionReceiver = when (firExtensionReceiverContainer) {
             is FirFunction -> components.declarationStorage.getCachedIrFunction(firExtensionReceiverContainer)?.extensionReceiverParameter
@@ -96,12 +101,24 @@ class ConstValueProviderImpl(
         firAnnotationContainer: FirAnnotationContainer,
         firAnnotation: FirAnnotation
     ): FirAnnotation {
-        assert(irDeclaration.annotations.size == firAnnotationContainer.annotations.size) {
+        val unwrappedIrAnnotations = irDeclaration.annotations.flatMap {
+            val containerClass = it.symbol.owner.parentAsClass
+            val realAnnotation = containerClass.parentClassOrNull ?: return@flatMap listOf(it)
+            if (realAnnotation.kind != ClassKind.ANNOTATION_CLASS || !realAnnotation.hasAnnotation(StandardNames.FqNames.repeatable)) {
+                return@flatMap listOf(it)
+            }
+
+            (it.getValueArgument(0) as IrVararg).elements.map { repAnno -> repAnno as IrConstructorCall }
+        }.filter { it.startOffset != -1 && it.endOffset != -1 }
+
+        assert(unwrappedIrAnnotations.size == firAnnotationContainer.annotations.size) {
             "Number of annotations for IR and FIR declaration are not equal"
         }
 
-        val annotationIndex = firAnnotationContainer.annotations.indexOf(firAnnotation)
-        val irArguments = irDeclaration.annotations[annotationIndex].getArgumentsWithIr()
+        val irArguments = unwrappedIrAnnotations
+            .find { it.startOffset == firAnnotation.source?.startOffset && it.endOffset == firAnnotation.source?.endOffset }
+            ?.getArgumentsWithIr()
+            ?: error("Could not find corresponding IR annotation for ${firAnnotation.render()}")
 
         val annotationArgsMapping = buildAnnotationArgumentMapping {
             firAnnotation.argumentMapping.mapping.forEach { (name, firExpression) ->
