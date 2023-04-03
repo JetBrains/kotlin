@@ -21,6 +21,7 @@ fun List<ClassBinarySignature>.dumpAndCompareWith(to: File) {
         fail("Expected data file did not exist. Generating: $to")
     } else {
         val actual = dump(to = StringBuilder())
+        println(actual)
         assertEqualsToFile(to, actual)
     }
 }
