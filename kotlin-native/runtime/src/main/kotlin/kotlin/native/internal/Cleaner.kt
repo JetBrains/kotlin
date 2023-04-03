@@ -5,6 +5,7 @@
 
 package kotlin.native.internal
 
+import kotlin.experimental.ExperimentalNativeApi
 import kotlin.native.concurrent.*
 import kotlinx.cinterop.NativePtr
 
@@ -74,7 +75,7 @@ public interface Cleaner
 @Suppress("DEPRECATION")
 @ExperimentalStdlibApi
 @ExportForCompiler
-@OptIn(FreezingIsDeprecated::class)
+@OptIn(ExperimentalNativeApi::class)
 fun <T> createCleaner(argument: T, block: (T) -> Unit): Cleaner =
         kotlin.native.ref.createCleanerImpl(argument, block) as Cleaner
 

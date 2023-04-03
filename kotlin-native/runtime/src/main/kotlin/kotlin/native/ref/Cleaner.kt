@@ -5,6 +5,7 @@
 
 package kotlin.native.ref
 
+import kotlin.experimental.ExperimentalNativeApi
 import kotlin.native.concurrent.isShareable
 import kotlin.native.concurrent.freeze
 import kotlin.native.internal.*
@@ -15,7 +16,7 @@ import kotlinx.cinterop.NativePtr
  *
  * Use [createCleaner] to create an instance of this type.
  */
-@ExperimentalStdlibApi
+@ExperimentalNativeApi
 @SinceKotlin("1.9")
 public sealed interface Cleaner
 
@@ -83,13 +84,13 @@ public sealed interface Cleaner
  */
 // TODO: Consider just annotating the lambda argument rather than hardcoding checking
 // by function name in the compiler.
-@ExperimentalStdlibApi
+@ExperimentalNativeApi
 @SinceKotlin("1.9")
 @ExportForCompiler
 public fun <T> createCleaner(resource: T, cleanupAction: (resource: T) -> Unit): Cleaner =
         createCleanerImpl(resource, cleanupAction)
 
-@ExperimentalStdlibApi
+@ExperimentalNativeApi
 @OptIn(FreezingIsDeprecated::class)
 internal fun <T> createCleanerImpl(resource: T, cleanupAction: (T) -> Unit): Cleaner {
     if (!resource.isShareable())
@@ -110,7 +111,7 @@ internal fun <T> createCleanerImpl(resource: T, cleanupAction: (T) -> Unit): Cle
 }
 
 @Suppress("DEPRECATION")
-@ExperimentalStdlibApi
+@ExperimentalNativeApi
 @NoReorderFields
 @ExportTypeInfo("theCleanerImplTypeInfo")
 @HasFinalizer
