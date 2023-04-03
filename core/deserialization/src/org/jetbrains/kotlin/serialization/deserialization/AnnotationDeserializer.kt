@@ -41,11 +41,21 @@ class AnnotationDeserializer(private val module: ModuleDescriptor, private val n
         val annotationClass = resolveClass(nameResolver.getClassId(proto.id))
 
         var arguments = emptyMap<Name, ConstantValue<*>>()
-        if (proto.argumentCount != 0 && !ErrorUtils.isError(annotationClass) && DescriptorUtils.isAnnotationClass(annotationClass)) {
-            val constructor = annotationClass.constructors.singleOrNull()
-            if (constructor != null) {
-                val parameterByName = constructor.valueParameters.associateBy { it.name }
-                arguments = proto.argumentList.mapNotNull { resolveArgument(it, parameterByName, nameResolver) }.toMap()
+        if (proto.argumentCount != 0) {
+            if (annotationClass is NotFoundClasses.MockClassDescriptor) {
+                arguments =
+                    proto.argumentList.mapNotNull { arg ->
+                        Pair(
+                            nameResolver.getName(arg.nameId),
+                            resolveValue(builtIns.anyType, arg.value, nameResolver)
+                        )
+                    }.toMap()
+            } else if (!ErrorUtils.isError(annotationClass) && DescriptorUtils.isAnnotationClass(annotationClass)) {
+                val constructor = annotationClass.constructors.singleOrNull()
+                if (constructor != null) {
+                    val parameterByName = constructor.valueParameters.associateBy { it.name }
+                    arguments = proto.argumentList.mapNotNull { resolveArgument(it, parameterByName, nameResolver) }.toMap()
+                }
             }
         }
 
