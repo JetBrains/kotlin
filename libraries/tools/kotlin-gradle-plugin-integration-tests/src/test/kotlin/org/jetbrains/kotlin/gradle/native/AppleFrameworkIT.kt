@@ -28,8 +28,7 @@ class AppleFrameworkIT : BaseGradleIT() {
     override val defaultGradleVersion = GradleVersionRequired.FOR_MPP_SUPPORT
     override fun defaultBuildOptions() = super.defaultBuildOptions().copy(
         androidHome = KtTestUtil.findAndroidSdk(),
-        androidGradlePluginVersion = AGPVersion.v7_4_0,
-        javaHome = KtTestUtil.getJdk17Home()
+        androidGradlePluginVersion = AGPVersion.v7_4_0
     )
 
     @Test
