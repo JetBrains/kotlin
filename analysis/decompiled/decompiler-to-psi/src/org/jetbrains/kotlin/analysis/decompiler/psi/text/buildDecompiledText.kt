@@ -51,7 +51,7 @@ private fun renderConstant(value: ConstantValue<*>, renderer: DescriptorRenderer
             }
         }
         is CharValue -> String.format("'\\u%04X'", value.value.code)
-        is StringValue, is UnsignedValueConstant -> value.toString()
+        is StringValue -> value.toString()
         is EnumValue -> value.enumClassId.asFqNameString() + "." + value.enumEntryName.asString()
         is FloatValue -> {
             val boxedValue = value.value
@@ -61,7 +61,7 @@ private fun renderConstant(value: ConstantValue<*>, renderer: DescriptorRenderer
             val boxedValue = value.value
             if (boxedValue < 0 || boxedValue.isNaN() || boxedValue.isInfinite()) null else boxedValue.toString()
         }
-        is IntegerValueConstant<*> -> {
+        is IntegerValueConstant<*>, is UnsignedValueConstant<*> -> {
             val boxedValue = value.value
             if ((boxedValue as Number).toLong() < 0) null else boxedValue.toString()
         }
