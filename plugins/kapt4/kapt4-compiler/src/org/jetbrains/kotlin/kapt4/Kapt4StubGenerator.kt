@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.kapt3.base.javac.reportKaptError
 import org.jetbrains.kotlin.kapt3.base.stubs.KaptStubLineInformation
 import org.jetbrains.kotlin.kapt3.base.stubs.KotlinPosition
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForNamedClassLike
+import org.jetbrains.kotlin.light.classes.symbol.isPropertySetter
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isOneSegmentFQN
@@ -766,7 +767,7 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
                 metadata = null
             )
 
-            val name = info.name.takeIf { isValidIdentifier(it) } ?: "p$index"
+            val name = info.name.takeIf { isValidIdentifier(it) } ?: if (method.isPropertySetter) "p0" else "p${index}_${info.name.hashCode().ushr(1)}"
 
             val type = info.type.convertAndRecordErrors(this)
             treeMaker.VarDef(modifiers, treeMaker.name(name), type, null)
