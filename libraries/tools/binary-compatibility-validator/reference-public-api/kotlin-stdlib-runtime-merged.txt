@@ -6227,3 +6227,4 @@ public final class kotlin/time/TimedValue {
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
+
