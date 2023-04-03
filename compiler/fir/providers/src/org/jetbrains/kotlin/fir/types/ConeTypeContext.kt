@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.ValueClassKind
-import org.jetbrains.kotlin.descriptors.valueClassLoweringKind
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
@@ -521,9 +518,14 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     override fun TypeConstructorMarker.isFinalClassOrEnumEntryOrAnnotationClassConstructor(): Boolean {
         val firRegularClass = toFirRegularClass() ?: return false
 
-        return firRegularClass.modality == Modality.FINAL ||
-                firRegularClass.classKind == ClassKind.ENUM_ENTRY ||
-                firRegularClass.classKind == ClassKind.ANNOTATION_CLASS
+        // NB: This API is used to determine if a given type [isMostPreciseCovariantArgument] (at `typeMappingUtil.kt`),
+        // affecting the upper bound wildcard when mapping the enclosing type to [PsiType]. See KT-57578 for more details.
+        // The counterpart in K1, [ClassicTypeSystemContext], uses [ClassDescriptor.isFinalClass] in `ModalityUtils.kt`,
+        // which filters out `enum` class. It seems [ClassDescriptor.isFinalOrEnum] is for truly `final` class.
+        // That is, the overall API name---isFinalClassOr...---is misleading.
+        return (firRegularClass.modality == Modality.FINAL && !firRegularClass.classKind.isEnumClass) ||
+                firRegularClass.classKind.isEnumEntry ||
+                firRegularClass.classKind.isAnnotationClass
     }
 
     override fun KotlinTypeMarker.hasAnnotation(fqName: FqName): Boolean {
