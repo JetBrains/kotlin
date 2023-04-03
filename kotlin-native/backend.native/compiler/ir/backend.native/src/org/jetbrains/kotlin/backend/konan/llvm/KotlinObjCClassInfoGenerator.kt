@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.konan.llvm
 
 import llvm.LLVMLinkage
-import llvm.LLVMSetLinkage
 import llvm.LLVMValueRef
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.getAnnotationStringValue
@@ -14,7 +13,6 @@ import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 
 internal class KotlinObjCClassInfoGenerator(override val generationState: NativeGenerationState) : ContextUtils {
     fun generate(irClass: IrClass) {
@@ -92,7 +90,7 @@ internal class KotlinObjCClassInfoGenerator(override val generationState: Native
     }
 
     private fun selectExportedClassName(irClass: IrClass): String? {
-        val exportObjCClassAnnotation = context.interopBuiltIns.exportObjCClass.fqNameSafe
+        val exportObjCClassAnnotation = InteropFqNames.exportObjCClass
         val explicitName = irClass.getAnnotationArgumentValue<String>(exportObjCClassAnnotation, "name")
         if (explicitName != null) return explicitName
 
@@ -120,7 +118,7 @@ internal class KotlinObjCClassInfoGenerator(override val generationState: Native
             .filterIsInstance<IrSimpleFunction>()
             .mapNotNull {
                 val annotation =
-                        it.annotations.findAnnotation(context.interopBuiltIns.objCMethodImp.fqNameSafe) ?:
+                        it.annotations.findAnnotation(InteropFqNames.objCMethodImp) ?:
                                 return@mapNotNull null
 
                 ObjCMethodDesc(

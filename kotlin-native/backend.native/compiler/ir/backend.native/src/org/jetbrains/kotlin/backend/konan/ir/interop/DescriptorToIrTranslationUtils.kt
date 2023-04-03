@@ -4,7 +4,7 @@
  */
 package org.jetbrains.kotlin.backend.konan.ir.interop
 
-import org.jetbrains.kotlin.backend.konan.InteropBuiltIns
+import org.jetbrains.kotlin.backend.konan.InteropFqNames
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -17,10 +17,7 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
-import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperInterfaces
-import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
-import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
+import org.jetbrains.kotlin.resolve.descriptorUtil.*
 import org.jetbrains.kotlin.types.KotlinType
 
 internal inline fun <reified T: DeclarationDescriptor> ClassDescriptor.findDeclarationByName(name: String): T? =
@@ -153,32 +150,32 @@ internal fun IrBuilder.irInstanceInitializer(classSymbol: IrClassSymbol): IrExpr
                 context.irBuiltIns.unitType
         )
 
-internal fun ClassDescriptor.implementsCEnum(interopBuiltIns: InteropBuiltIns): Boolean =
-        interopBuiltIns.cEnum in this.getSuperInterfaces()
+internal fun ClassDescriptor.implementsCEnum(): Boolean =
+        getSuperInterfaces().any { it.fqNameSafe == InteropFqNames.cEnum }
 
-internal fun ClassDescriptor.inheritsFromCStructVar(interopBuiltIns: InteropBuiltIns): Boolean =
-        interopBuiltIns.cStructVar == this.getSuperClassNotAny()
+internal fun ClassDescriptor.inheritsFromCStructVar(): Boolean =
+        getSuperClassNotAny()?.fqNameSafe == InteropFqNames.cStructVar
 
 /**
  * All enums that come from interop library implement CEnum interface.
  * This function checks that given symbol located in subtree of
  * CEnum inheritor.
  */
-internal fun IrSymbol.findCEnumDescriptor(interopBuiltIns: InteropBuiltIns): ClassDescriptor? =
-        descriptor.findCEnumDescriptor(interopBuiltIns)
+internal fun IrSymbol.findCEnumDescriptor(): ClassDescriptor? =
+        descriptor.findCEnumDescriptor()
 
-internal fun DeclarationDescriptor.findCEnumDescriptor(interopBuiltIns: InteropBuiltIns): ClassDescriptor? =
-        parentsWithSelf.filterIsInstance<ClassDescriptor>().firstOrNull { it.implementsCEnum(interopBuiltIns) }
+internal fun DeclarationDescriptor.findCEnumDescriptor(): ClassDescriptor? =
+        parentsWithSelf.filterIsInstance<ClassDescriptor>().firstOrNull { it.implementsCEnum() }
 
 /**
  * All structs that come from interop library inherit from CStructVar class.
  * This function checks that given symbol located in subtree of
  * CStructVar inheritor.
  */
-internal fun IrSymbol.findCStructDescriptor(interopBuiltIns: InteropBuiltIns): ClassDescriptor? =
-        descriptor.findCStructDescriptor(interopBuiltIns)
+internal fun IrSymbol.findCStructDescriptor(): ClassDescriptor? =
+        descriptor.findCStructDescriptor()
 
-internal fun DeclarationDescriptor.findCStructDescriptor(interopBuiltIns: InteropBuiltIns): ClassDescriptor? =
+internal fun DeclarationDescriptor.findCStructDescriptor(): ClassDescriptor? =
         parentsWithSelf.filterIsInstance<ClassDescriptor>().firstOrNull {
-            it.inheritsFromCStructVar(interopBuiltIns) || it.annotations.hasAnnotation(RuntimeNames.managedType)
+            it.inheritsFromCStructVar() || it.annotations.hasAnnotation(RuntimeNames.managedType)
         }

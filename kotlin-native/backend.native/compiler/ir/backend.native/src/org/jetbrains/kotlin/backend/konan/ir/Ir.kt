@@ -14,11 +14,9 @@ import org.jetbrains.kotlin.backend.konan.llvm.findMainEntryPoint
 import org.jetbrains.kotlin.backend.konan.lower.TestProcessor
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.fir.backend.IrBuiltInsOverFir
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -32,8 +30,6 @@ import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.findDeclaration
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
-import kotlin.properties.Delegates
 
 object KonanNameConventions {
     val setWithoutBoundCheck = Name.special("<setWithoutBoundCheck>")
@@ -112,7 +108,6 @@ internal abstract class KonanSymbols(
     val interopWcstr = symbolTable.referenceSimpleFunction(descriptorsLookup.interopBuiltIns.wcstr.getter!!)
     val interopMemScope = symbolTable.referenceClass(descriptorsLookup.interopBuiltIns.memScope)
     val interopCValue = symbolTable.referenceClass(descriptorsLookup.interopBuiltIns.cValue)
-    val interopCValues = symbolTable.referenceClass(descriptorsLookup.interopBuiltIns.cValues)
     val interopCValuesRef = symbolTable.referenceClass(descriptorsLookup.interopBuiltIns.cValuesRef)
     val interopCValueWrite = symbolTable.referenceSimpleFunction(descriptorsLookup.interopBuiltIns.cValueWrite)
     val interopCValueRead = symbolTable.referenceSimpleFunction(descriptorsLookup.interopBuiltIns.cValueRead)
@@ -180,20 +175,9 @@ internal abstract class KonanSymbols(
     val interopInterpretCPointer =
             symbolTable.referenceSimpleFunction(descriptorsLookup.interopBuiltIns.interpretCPointer)
 
-    val interopCreateNSStringFromKString =
-            symbolTable.referenceSimpleFunction(descriptorsLookup.interopBuiltIns.CreateNSStringFromKString)
-
     val createForeignException = interopFunction("CreateForeignException")
 
-    val interopObjCGetSelector = interopFunction("objCGetSelector")
-
-    val interopCEnum = interopClass("CEnum")
-
-    val interopCPrimitiveVar = interopClass("CPrimitiveVar")
-
     val interopCEnumVar = interopClass("CEnumVar")
-
-    val interopCStructVar = interopClass("CStructVar")
 
     val nativeMemUtils = symbolTable.referenceClass(descriptorsLookup.interopBuiltIns.nativeMemUtils)
 
@@ -414,6 +398,20 @@ internal abstract class KonanSymbols(
     val volatile = topLevelClass(KonanFqNames.volatile)
 
     val eagerInitialization = topLevelClass(KonanFqNames.eagerInitialization)
+
+    val cStructVarConstructorSymbol = symbolTable.referenceConstructor(
+            descriptorsLookup.interopBuiltIns.cStructVar.unsubstitutedPrimaryConstructor!!
+    )
+    val managedTypeConstructor = symbolTable.referenceConstructor(
+            descriptorsLookup.interopBuiltIns.managedType.unsubstitutedPrimaryConstructor!!
+    )
+    val enumVarConstructorSymbol = symbolTable.referenceConstructor(
+            descriptorsLookup.interopBuiltIns.cEnumVar.unsubstitutedPrimaryConstructor!!
+    )
+    val primitiveVarPrimaryConstructor = symbolTable.referenceConstructor(
+            descriptorsLookup.interopBuiltIns.cPrimitiveVarType.unsubstitutedPrimaryConstructor!!)
+    val structVarPrimaryConstructor = symbolTable.referenceConstructor(
+            descriptorsLookup.interopBuiltIns.cStructVarType.unsubstitutedPrimaryConstructor!!)
 
     private fun topLevelClass(fqName: FqName): IrClassSymbol = irBuiltIns.findClass(fqName.shortName(), fqName.parent())!!
 

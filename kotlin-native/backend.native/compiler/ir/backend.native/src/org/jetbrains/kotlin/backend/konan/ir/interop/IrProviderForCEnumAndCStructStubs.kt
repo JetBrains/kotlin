@@ -5,7 +5,6 @@
 package org.jetbrains.kotlin.backend.konan.ir.interop
 
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
-import org.jetbrains.kotlin.backend.konan.InteropBuiltIns
 import org.jetbrains.kotlin.backend.konan.descriptors.getPackageFragments
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.ir.interop.cenum.CEnumByValueFunctionGenerator
@@ -34,7 +33,6 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
  */
 internal class IrProviderForCEnumAndCStructStubs(
         context: GeneratorContext,
-        private val interopBuiltIns: InteropBuiltIns,
         symbols: KonanSymbols
 ) {
 
@@ -48,30 +46,30 @@ internal class IrProviderForCEnumAndCStructStubs(
     private val cEnumCompanionGenerator =
             CEnumCompanionGenerator(context, cEnumByValueFunctionGenerator)
     private val cEnumVarClassGenerator =
-            CEnumVarClassGenerator(context, interopBuiltIns)
+            CEnumVarClassGenerator(context, symbols)
     private val cEnumClassGenerator =
             CEnumClassGenerator(context, cEnumCompanionGenerator, cEnumVarClassGenerator)
     private val cStructCompanionGenerator =
-            CStructVarCompanionGenerator(context, interopBuiltIns)
+            CStructVarCompanionGenerator(context, symbols)
     private val cStructClassGenerator =
-            CStructVarClassGenerator(context, interopBuiltIns, cStructCompanionGenerator, symbols)
+            CStructVarClassGenerator(context, cStructCompanionGenerator, symbols)
 
     fun isCEnumOrCStruct(declarationDescriptor: DeclarationDescriptor): Boolean =
-            declarationDescriptor.run { findCEnumDescriptor(interopBuiltIns) ?: findCStructDescriptor(interopBuiltIns) } != null
+            declarationDescriptor.run { findCEnumDescriptor() ?: findCStructDescriptor() } != null
 
     fun referenceAllEnumsAndStructsFrom(interopModule: ModuleDescriptor) = interopModule.getPackageFragments()
             .flatMap { it.getMemberScope().getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS) }
             .filterIsInstance<ClassDescriptor>()
-            .filter { it.implementsCEnum(interopBuiltIns) || it.inheritsFromCStructVar(interopBuiltIns) }
+            .filter { it.implementsCEnum() || it.inheritsFromCStructVar() }
             .forEach { symbolTable.referenceClass(it) }
 
     private fun generateIrIfNeeded(symbol: IrSymbol, file: IrFile) {
         // TODO: These `findOrGenerate` calls generate a whole subtree.
         //  This a simple but clearly suboptimal solution.
-        symbol.findCEnumDescriptor(interopBuiltIns)?.let { enumDescriptor ->
+        symbol.findCEnumDescriptor()?.let { enumDescriptor ->
             cEnumClassGenerator.findOrGenerateCEnum(enumDescriptor, file)
         }
-        symbol.findCStructDescriptor(interopBuiltIns)?.let { structDescriptor ->
+        symbol.findCStructDescriptor()?.let { structDescriptor ->
             cStructClassGenerator.findOrGenerateCStruct(structDescriptor, file)
         }
     }

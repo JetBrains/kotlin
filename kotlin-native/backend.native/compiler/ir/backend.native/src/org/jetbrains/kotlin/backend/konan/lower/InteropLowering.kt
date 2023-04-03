@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.ir.inlineDeclaration
 import org.jetbrains.kotlin.backend.common.ir.inlineFunction
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.peek
@@ -51,7 +50,7 @@ import org.jetbrains.kotlin.konan.ForeignExceptionMode
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
 internal class InteropLowering(generationState: NativeGenerationState) : FileLoweringPass {
@@ -189,14 +188,12 @@ private class InteropLoweringPart1(val generationState: NativeGenerationState) :
     private fun lowerKotlinObjCClass(irClass: IrClass) {
         checkKotlinObjCClass(irClass)
 
-        val interop = context.interopBuiltIns
-
         irClass.declarations.toList().mapNotNull {
             when {
-                it is IrSimpleFunction && it.annotations.hasAnnotation(interop.objCAction.fqNameSafe) ->
+                it is IrSimpleFunction && it.annotations.hasAnnotation(InteropFqNames.objCAction) ->
                         generateActionImp(it)
 
-                it is IrProperty && it.annotations.hasAnnotation(interop.objCOutlet.fqNameSafe) ->
+                it is IrProperty && it.annotations.hasAnnotation(InteropFqNames.objCOutlet) ->
                         generateOutletSetterImp(it)
 
                 it is IrConstructor && it.isOverrideInit() ->
@@ -206,7 +203,7 @@ private class InteropLoweringPart1(val generationState: NativeGenerationState) :
             }
         }.let { irClass.addChildren(it) }
 
-        if (irClass.annotations.hasAnnotation(interop.exportObjCClass.fqNameSafe)) {
+        if (irClass.annotations.hasAnnotation(InteropFqNames.exportObjCClass)) {
             val irBuilder = context.createIrBuilder(currentFile.symbol).at(irClass)
             eagerTopLevelInitializers.add(irBuilder.getObjCClass(symbols, irClass.symbol))
         }
@@ -220,7 +217,7 @@ private class InteropLoweringPart1(val generationState: NativeGenerationState) :
             return false
         }
 
-        return this.annotations.hasAnnotation(context.interopBuiltIns.objCOverrideInit.fqNameSafe)
+        return this.annotations.hasAnnotation(InteropFqNames.objCOverrideInit)
     }
 
     private fun generateOverrideInit(irClass: IrClass, constructor: IrConstructor): IrSimpleFunction {
@@ -787,7 +784,6 @@ private class InteropTransformer(
 
     val newTopLevelDeclarations = mutableListOf<IrDeclaration>()
 
-    val interop = context.interopBuiltIns
     val symbols = context.ir.symbols
 
     override fun addTopLevel(declaration: IrDeclaration) {
@@ -854,8 +850,8 @@ private class InteropTransformer(
 
         val callee = expression.symbol.owner
         val inlinedClass = callee.returnType.getInlinedClassNative()
-        require(inlinedClass?.descriptor != interop.cPointer) { renderCompilerError(expression) }
-        require(inlinedClass?.descriptor != interop.nativePointed) { renderCompilerError(expression) }
+        require(inlinedClass?.symbol != symbols.interopCPointer) { renderCompilerError(expression) }
+        require(inlinedClass?.symbol != symbols.nativePointed) { renderCompilerError(expression) }
 
         val constructedClass = callee.constructedClass
         if (!constructedClass.isObjCClass())

@@ -32,8 +32,8 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext.getClassFqNameUnsafe
 import org.jetbrains.kotlin.utils.fileUtils.descendantRelativeTo
 import java.io.File
 
@@ -43,16 +43,14 @@ import java.io.File
  */
 internal class SpecialBackendChecksTraversal(
         private val context: PhaseContext,
-        private val interop: InteropBuiltIns,
         private val symbols: KonanSymbols,
         private val irBuiltIns: IrBuiltIns,
 ) : FileLoweringPass {
-    override fun lower(irFile: IrFile) = irFile.acceptChildrenVoid(BackendChecker(context, interop, symbols, irBuiltIns, irFile))
+    override fun lower(irFile: IrFile) = irFile.acceptChildrenVoid(BackendChecker(context, symbols, irBuiltIns, irFile))
 }
 
 private class BackendChecker(
         private val context: PhaseContext,
-        val interop: InteropBuiltIns,
         val symbols: KonanSymbols,
         val irBuiltIns: IrBuiltIns,
         private val irFile: IrFile,
@@ -109,7 +107,7 @@ private class BackendChecker(
     }
 
     private fun IrConstructor.isOverrideInit() =
-            this.annotations.hasAnnotation(interop.objCOverrideInit.fqNameSafe)
+            this.annotations.hasAnnotation(InteropFqNames.objCOverrideInit)
 
     private fun checkCanGenerateOverrideInit(irClass: IrClass, constructor: IrConstructor) {
         val superClass = irClass.getSuperClassNotAny()!!
@@ -118,7 +116,7 @@ private class BackendChecker(
         }.toList()
 
         val superConstructor = superConstructors.singleOrNull() ?: run {
-            val annotation = interop.objCOverrideInit.name
+            val annotation = InteropFqNames.objCOverrideInit
             if (superConstructors.isEmpty())
                 reportError(constructor,
                         """
@@ -136,7 +134,7 @@ private class BackendChecker(
         // Remove fake overrides of this init method, also check for explicit overriding:
         irClass.declarations.forEach {
             if (it is IrSimpleFunction && initMethod.symbol in it.overriddenSymbols && it.isReal) {
-                val annotation = interop.objCOverrideInit.name
+                val annotation = InteropFqNames.objCOverrideInit
                 reportError(constructor,
                         "constructor with @$annotation overrides initializer that is already overridden explicitly"
                 )
@@ -152,7 +150,7 @@ private class BackendChecker(
                     }
 
     private fun checkCanGenerateActionImp(function: IrSimpleFunction) {
-        val action = "@${interop.objCAction.name}"
+        val action = "@${InteropFqNames.objCAction}"
 
         function.extensionReceiverParameter?.let {
             reportError(it, "$action method must not have extension receiver")
@@ -176,7 +174,7 @@ private class BackendChecker(
     private fun checkCanGenerateOutletSetterImp(property: IrProperty) {
         val descriptor = property.descriptor
 
-        val outlet = "@${interop.objCOutlet.name}"
+        val outlet = "@${InteropFqNames.objCOutlet}"
 
         if (!descriptor.isVar)
             reportError(property, "$outlet property must be var")
@@ -209,9 +207,9 @@ private class BackendChecker(
 
     private fun checkKotlinObjCClass(irClass: IrClass) {
         for (declaration in irClass.declarations) {
-            if (declaration is IrSimpleFunction && declaration.annotations.hasAnnotation(interop.objCAction.fqNameSafe))
+            if (declaration is IrSimpleFunction && declaration.annotations.hasAnnotation(InteropFqNames.objCAction))
                 checkCanGenerateActionImp(declaration)
-            if (declaration is IrProperty && declaration.annotations.hasAnnotation(interop.objCOutlet.fqNameSafe))
+            if (declaration is IrProperty && declaration.annotations.hasAnnotation(InteropFqNames.objCOutlet))
                 checkCanGenerateOutletSetterImp(declaration)
             if (declaration is IrConstructor && declaration.isOverrideInit())
                 checkCanGenerateOverrideInit(irClass, declaration)
@@ -379,7 +377,7 @@ private class BackendChecker(
         }
 
         callee.getExternalObjCMethodInfo()?.let { _ ->
-            val isInteropStubsFile = irFile.annotations.hasAnnotation(FqName("kotlinx.cinterop.InteropStubs"))
+            val isInteropStubsFile = irFile.annotations.hasAnnotation(InteropFqNames.interopStubs)
 
             // Special case: bridge from Objective-C method implementation template to Kotlin method;
             // handled in CodeGeneratorVisitor.callVirtual.
@@ -740,8 +738,8 @@ private fun BackendChecker.checkCanMapCalleeFunctionParameter(
 ) {
     val classifier = type.classifierOrNull
     when {
-        classifier == symbols.interopCValues || // Note: this should not be accepted, but is required for compatibility
-                classifier == symbols.interopCValuesRef -> return
+        classifier?.isClassWithFqName(InteropFqNames.cValues.toUnsafe()) == true || // Note: this should not be accepted, but is required for compatibility
+                classifier?.isClassWithFqName(InteropFqNames.cValuesRef.toUnsafe()) == true -> return
 
         classifier == symbols.string && (variadic || parameter?.isCStringParameter() == true) -> {
             if (variadic && isObjCMethod) {

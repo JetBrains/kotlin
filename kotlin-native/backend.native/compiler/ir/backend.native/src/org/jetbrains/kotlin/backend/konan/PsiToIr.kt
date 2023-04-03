@@ -110,7 +110,7 @@ internal fun PsiToIrContext.psiToIr(
     } else {
         val exportedDependencies = (moduleDescriptor.getExportedDependencies(config) + libraryToCacheModule?.let { listOf(it) }.orEmpty()).distinct()
         val irProviderForCEnumsAndCStructs =
-                IrProviderForCEnumAndCStructStubs(generatorContext, interopBuiltIns, symbols)
+                IrProviderForCEnumAndCStructStubs(generatorContext, symbols)
 
         val translationContext = object : TranslationPluginContext {
             override val moduleDescriptor: ModuleDescriptor

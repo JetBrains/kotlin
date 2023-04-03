@@ -93,10 +93,6 @@ internal class Context(
     override val typeSystem: IrTypeSystemContext
         get() = IrTypeSystemContextImpl(irBuiltIns)
 
-    val interopBuiltIns by lazy {
-        InteropBuiltIns(this.builtIns)
-    }
-
     var cAdapterExportedElements: CAdapterExportedElements? = null
     var objCExportedInterface: ObjCExportedInterface? = null
     var objCExportCodeSpec: ObjCExportCodeSpec? = null

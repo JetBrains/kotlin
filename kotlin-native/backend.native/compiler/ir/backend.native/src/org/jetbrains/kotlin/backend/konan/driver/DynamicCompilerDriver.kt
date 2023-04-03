@@ -104,7 +104,7 @@ internal class DynamicCompilerDriver : CompilerDriver() {
         require(frontendOutput is FirOutput.Full)
 
         val fir2IrOutput = engine.runFir2Ir(frontendOutput)
-//        engine.runK2SpecialBackendChecks(fir2IrOutput)  // TODO After fix of KT-56018 try uncommenting this line
+        //engine.runK2SpecialBackendChecks(fir2IrOutput)  // TODO KT-55598 try uncommenting this line after getting rid of InteropBuiltins excessive usage
         return engine.runFirSerializer(fir2IrOutput)
     }
 
