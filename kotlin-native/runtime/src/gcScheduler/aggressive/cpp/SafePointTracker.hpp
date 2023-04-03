@@ -7,6 +7,7 @@
 
 #include <cstddef>
 
+#include "CallsChecker.hpp"
 #include "KAssert.h"
 #include "Logging.hpp"
 #include "Mutex.hpp"
@@ -24,6 +25,7 @@ public:
 
     /** Returns whether the GC must be triggered on the current safe point or not. */
     NO_INLINE bool registerCurrentSafePoint(size_t skipFrames) noexcept {
+        CallsCheckerIgnoreGuard guard;
         auto currentSP = SafePointID::current(skipFrames + 1);
 
         std::unique_lock lock(mutex_);

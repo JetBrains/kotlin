@@ -61,7 +61,6 @@ struct ProcessWeaksTraits {
 
 void gc::ConcurrentMarkAndSweep::ThreadData::SafePointAllocation(size_t size) noexcept {
     gcScheduler_.OnSafePointAllocation(size);
-    mm::SuspendIfRequested();
 }
 
 void gc::ConcurrentMarkAndSweep::ThreadData::Schedule() noexcept {

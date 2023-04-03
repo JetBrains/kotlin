@@ -42,16 +42,10 @@ public:
 
 class GCSchedulerThreadData {
 public:
-    static constexpr size_t kFunctionPrologueWeight = 1;
-    static constexpr size_t kLoopBodyWeight = 1;
-
     explicit GCSchedulerThreadData(GCSchedulerConfig& config, std::function<void(GCSchedulerThreadData&)> slowPath) noexcept :
         config_(config), slowPath_(std::move(slowPath)) {
         ClearCountersAndUpdateThresholds();
     }
-
-    // Should be called on encountering a safepoint.
-    void OnSafePointRegular(size_t weight) noexcept;
 
     // Should be called on encountering a safepoint placed by the allocator.
     // TODO: Should this even be a safepoint (i.e. a place, where we suspend)?
@@ -67,18 +61,8 @@ public:
 
     size_t allocatedBytes() const noexcept { return allocatedBytes_; }
 
-    size_t safePointsCounter() const noexcept { return safePointsCounter_; }
-
 private:
     friend class test_support::GCSchedulerThreadDataTestApi;
-
-    void OnSafePointRegularImpl(size_t weight) noexcept {
-        safePointsCounter_ += weight;
-        if (safePointsCounter_ < safePointsCounterThreshold_) {
-            return;
-        }
-        OnSafePointSlowPath();
-    }
 
     void OnSafePointSlowPath() noexcept {
         slowPath_(*this);
@@ -87,10 +71,8 @@ private:
 
     void ClearCountersAndUpdateThresholds() noexcept {
         allocatedBytes_ = 0;
-        safePointsCounter_ = 0;
 
         allocatedBytesThreshold_ = config_.allocationThresholdBytes;
-        safePointsCounterThreshold_ = config_.threshold;
     }
 
     GCSchedulerConfig& config_;
@@ -98,8 +80,6 @@ private:
 
     size_t allocatedBytes_ = 0;
     size_t allocatedBytesThreshold_ = 0;
-    size_t safePointsCounter_ = 0;
-    size_t safePointsCounterThreshold_ = 0;
 };
 
 class GCScheduler : private Pinned {
@@ -112,6 +92,9 @@ public:
     GCSchedulerThreadData NewThreadData() noexcept {
         return GCSchedulerThreadData(config_, [this](auto& threadData) { gcData_->UpdateFromThreadData(threadData); });
     }
+
+    // Should be called on encountering a safepoint.
+    void safePoint() noexcept;
 
 private:
     GCSchedulerConfig config_;

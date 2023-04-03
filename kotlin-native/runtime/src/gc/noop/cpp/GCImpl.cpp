@@ -17,14 +17,6 @@ gc::GC::ThreadData::ThreadData(GC& gc, gcScheduler::GCSchedulerThreadData&, mm::
 
 gc::GC::ThreadData::~ThreadData() = default;
 
-ALWAYS_INLINE void gc::GC::ThreadData::SafePointFunctionPrologue() noexcept {
-    impl_->gc().SafePointFunctionPrologue();
-}
-
-ALWAYS_INLINE void gc::GC::ThreadData::SafePointLoopBody() noexcept {
-    impl_->gc().SafePointLoopBody();
-}
-
 void gc::GC::ThreadData::Schedule() noexcept {
     impl_->gc().Schedule();
 }

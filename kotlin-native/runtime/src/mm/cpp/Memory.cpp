@@ -16,6 +16,7 @@
 #include "ObjectOps.hpp"
 #include "Porting.h"
 #include "Runtime.h"
+#include "SafePoint.hpp"
 #include "StableRef.hpp"
 #include "ThreadData.hpp"
 #include "ThreadRegistry.hpp"
@@ -342,12 +343,14 @@ extern "C" void Kotlin_native_internal_GC_start(ObjHeader*) {
 }
 
 extern "C" void Kotlin_native_internal_GC_setThreshold(ObjHeader*, KInt value) {
-    RuntimeAssert(value > 0, "Must be handled by the caller");
-    mm::GlobalData::Instance().gcScheduler().config().threshold = value;
+    // TODO: Remove when legacy MM is gone.
+    // Nothing to do
 }
 
 extern "C" KInt Kotlin_native_internal_GC_getThreshold(ObjHeader*) {
-    return mm::GlobalData::Instance().gcScheduler().config().threshold.load();
+    // TODO: Remove when legacy MM is gone.
+    // Nothing to do
+    return 0;
 }
 
 extern "C" void Kotlin_native_internal_GC_setCollectCyclesThreshold(ObjHeader*, int64_t value) {
@@ -541,17 +544,11 @@ extern "C" void CheckGlobalsAccessible() {
 
 // it would be inlined manually in RemoveRedundantSafepointsPass
 extern "C" RUNTIME_NOTHROW NO_INLINE void Kotlin_mm_safePointFunctionPrologue() {
-    auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
-    AssertThreadState(threadData, ThreadState::kRunnable);
-    threadData->gcScheduler().OnSafePointRegular(gcScheduler::GCSchedulerThreadData::kFunctionPrologueWeight);
-    threadData->gc().SafePointFunctionPrologue();
+    mm::safePoint();
 }
 
 extern "C" RUNTIME_NOTHROW CODEGEN_INLINE_POLICY void Kotlin_mm_safePointWhileLoopBody() {
-    auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
-    AssertThreadState(threadData, ThreadState::kRunnable);
-    threadData->gcScheduler().OnSafePointRegular(gcScheduler::GCSchedulerThreadData::kLoopBodyWeight);
-    threadData->gc().SafePointLoopBody();
+    mm::safePoint();
 }
 
 extern "C" CODEGEN_INLINE_POLICY RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateNative() {

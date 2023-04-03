@@ -6,6 +6,7 @@
 #include "MemoryPrivate.hpp"
 #include "Runtime.h"
 #include "RuntimePrivate.hpp"
+#include "SafePoint.hpp"
 #include "ScopedThread.hpp"
 #include "ThreadSuspension.hpp"
 #include "ThreadState.hpp"
@@ -228,7 +229,7 @@ TEST_F(ThreadSuspensionTest, FileInitializationWithSuspend) {
         EXPECT_EQ(GetThreadState(), ThreadState::kRunnable);
         // Give other threads a chance to call CallInitGlobalPossiblyLock.
         std::this_thread::yield();
-        mm::SuspendIfRequested();
+        mm::safePoint();
     });
 
     for (size_t i = 0; i < kThreadCount; i++) {
@@ -241,7 +242,7 @@ TEST_F(ThreadSuspensionTest, FileInitializationWithSuspend) {
 
             CallInitGlobalPossiblyLock(&lock, initializationFunction);
             // Try to suspend to handle a case when this thread doesn't call the initialization function.
-            mm::SuspendIfRequested();
+            mm::safePoint();
         });
     }
     waitUntilThreadsAreReady();

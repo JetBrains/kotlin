@@ -13,8 +13,6 @@ class GCSchedulerThreadDataTestApi : private Pinned {
 public:
     explicit GCSchedulerThreadDataTestApi(GCSchedulerThreadData& scheduler) : scheduler_(scheduler) {}
 
-    void OnSafePointRegularImpl(size_t weight) { scheduler_.OnSafePointRegularImpl(weight); }
-
     void SetAllocatedBytes(size_t bytes) { scheduler_.allocatedBytes_ = bytes; }
 
 private:

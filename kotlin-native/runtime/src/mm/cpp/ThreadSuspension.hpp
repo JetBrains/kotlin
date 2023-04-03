@@ -34,35 +34,21 @@ public:
 
     ThreadState state() noexcept { return state_; }
 
-    ThreadState setState(ThreadState newState) noexcept {
-        ThreadState oldState = state_.exchange(newState);
-        if (oldState == ThreadState::kNative && newState == ThreadState::kRunnable) {
-            suspendIfRequested();
-        }
-        return oldState;
-    }
+    ThreadState setState(ThreadState newState) noexcept;
 
     bool suspended() noexcept { return suspended_; }
+    bool suspendedOrNative() noexcept { return suspended() || state() == kotlin::ThreadState::kNative; }
 
-    void suspendIfRequested() noexcept {
-        if (IsThreadSuspensionRequested()) {
-            suspendIfRequestedSlowPath();
-        }
-    }
+    void suspendIfRequested() noexcept;
 
 private:
-    friend void SuspendIfRequestedSlowPath() noexcept;
-
     std::atomic<ThreadState> state_;
     mm::ThreadData& threadData_;
     std::atomic<bool> suspended_;
-    void suspendIfRequestedSlowPath() noexcept;
 };
 
 bool RequestThreadsSuspension() noexcept;
 void WaitForThreadsSuspension() noexcept;
-void SuspendIfRequestedSlowPath() noexcept;
-void SuspendIfRequested() noexcept;
 
 /**
  * Suspends all threads registered in ThreadRegistry except threads that are in the Native state.

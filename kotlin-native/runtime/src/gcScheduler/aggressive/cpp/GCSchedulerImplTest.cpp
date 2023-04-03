@@ -31,18 +31,15 @@ TEST(AggressiveSchedulerTest, TriggerGCOnUniqueSafePoint) {
 
         gcScheduler::GCSchedulerConfig config;
         gcScheduler::internal::GCSchedulerDataAggressive scheduler(config, scheduleGC.AsStdFunction());
-        ASSERT_EQ(config.threshold, 1);
-
-        gcScheduler::GCSchedulerThreadData threadSchedulerData(config, [](gcScheduler::GCSchedulerThreadData&) {});
 
         EXPECT_CALL(scheduleGC, Call()).Times(1);
         for (int i = 0; i < 10; i++) {
-            scheduler.UpdateFromThreadData(threadSchedulerData);
+            scheduler.safePoint();
         }
         testing::Mock::VerifyAndClearExpectations(&scheduleGC);
 
         EXPECT_CALL(scheduleGC, Call()).Times(1);
-        scheduler.UpdateFromThreadData(threadSchedulerData);
+        scheduler.safePoint();
         testing::Mock::VerifyAndClearExpectations(&scheduleGC);
     }();
 }

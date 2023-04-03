@@ -98,17 +98,17 @@ object GC {
     external fun start()
 
     /**
-     * GC threshold, controlling how frequenly GC is activated, and how much time GC
+     * Deprecated and unused.
+     *
+     * Legacy MM: GC threshold, controlling how frequenly GC is activated, and how much time GC
      * takes. Bigger values lead to longer GC pauses, but less GCs.
-     * Usually unused. For the on-safepoints GC scheduler counts
-     *         how many safepoints must the code pass before informing the GC scheduler.
      *
-     * Default: (old MM) 8 * 1024
-     *
-     * Default: (new MM) 100000
+     * Default: 8 * 1024
      *
      * @throws [IllegalArgumentException] when value is not positive.
      */
+    @Suppress("DEPRECATION")
+    @Deprecated("No-op in modern GC implementation")
     var threshold: Int by kotlin.native.runtime.GC::threshold
 
     /**

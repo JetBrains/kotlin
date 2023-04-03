@@ -5,6 +5,7 @@
 
 #include "GCSchedulerImpl.hpp"
 
+#include "CallsChecker.hpp"
 #include "GlobalData.hpp"
 #include "Memory.h"
 #include "Logging.hpp"
@@ -12,11 +13,12 @@
 
 using namespace kotlin;
 
-void gcScheduler::GCSchedulerThreadData::OnSafePointRegular(size_t weight) noexcept {}
-
 gcScheduler::GCScheduler::GCScheduler() noexcept :
     gcData_(std_support::make_unique<internal::GCSchedulerDataAdaptive<steady_clock>>(config_, []() noexcept {
-        // This call acquires a lock, so we need to ensure that we're in the safe state.
-        NativeOrUnregisteredThreadGuard guard(/* reentrant = */ true);
+        // This call acquires a lock, but the lock are always short-lived,
+        // so we ignore thread state switching to avoid recursive safe points.
+        CallsCheckerIgnoreGuard guard;
         mm::GlobalData::Instance().gc().Schedule();
     })) {}
+
+ALWAYS_INLINE void gcScheduler::GCScheduler::safePoint() noexcept {}

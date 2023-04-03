@@ -9,6 +9,7 @@
 #include <cstdarg>
 
 #include "std_support/Span.hpp"
+#include "CallsChecker.hpp"
 #include "Format.h"
 #include "Porting.h"
 #include "StackTrace.hpp"
@@ -20,6 +21,8 @@ namespace {
 THREAD_LOCAL_VARIABLE bool assertionReportInProgress = false;
 
 void PrintAssert(bool allowStacktrace, const char* location, const char* format, std::va_list args) noexcept {
+    CallsCheckerIgnoreGuard ignoreCallsChecker;
+
     if (assertionReportInProgress) {
         // WARNING: avoid anything that can assert ar panic here
         konan::consoleErrorf("An attempt to report an assertion lead to another failure:\n");

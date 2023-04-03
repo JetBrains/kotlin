@@ -13,8 +13,6 @@ namespace kotlin::gcScheduler {
 
 // NOTE: When changing default values, reflect them in GC.kt as well.
 struct GCSchedulerConfig {
-    // Only used when useGCTimer() is false. How many regular safepoints will trigger slow path.
-    std::atomic<int32_t> threshold = 100000;
     // How many object bytes a thread must allocate to trigger slow path.
     std::atomic<int64_t> allocationThresholdBytes = 10 * 1024;
     std::atomic<bool> autoTune = true;
