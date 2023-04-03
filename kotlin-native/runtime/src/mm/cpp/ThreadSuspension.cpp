@@ -19,8 +19,8 @@ template<typename F>
 bool allThreads(F predicate) noexcept {
     auto& threadRegistry = kotlin::mm::ThreadRegistry::Instance();
     auto* currentThread = (threadRegistry.IsCurrentThreadRegistered())
-            ? threadRegistry.CurrentThreadData()
-            : nullptr;
+                          ? threadRegistry.CurrentThreadData()
+                          : nullptr;
     kotlin::mm::ThreadRegistry::Iterable threads = kotlin::mm::ThreadRegistry::Instance().LockForIter();
     for (auto& thread : threads) {
         // Handle if suspension was initiated by the mutator thread.
@@ -50,7 +50,15 @@ bool kotlin::mm::isSuspendedOrNative(kotlin::mm::ThreadData& thread) noexcept {
 
 std::atomic<bool> kotlin::mm::internal::gSuspensionRequested = false;
 
-NO_EXTERNAL_CALLS_CHECK void kotlin::mm::ThreadSuspensionData::suspendIfRequestedSlowPath() noexcept {
+kotlin::ThreadState kotlin::mm::ThreadSuspensionData::setState(kotlin::ThreadState newState) noexcept {
+    ThreadState oldState = state_.exchange(newState);
+    if (oldState == ThreadState::kNative && newState == ThreadState::kRunnable) {
+        SafePoint(threadData_); // must use already acquired thread data // TODO explain why
+    }
+    return oldState;
+}
+
+NO_EXTERNAL_CALLS_CHECK void kotlin::mm::ThreadSuspensionData::suspendIfRequested() noexcept {
     if (IsThreadSuspensionRequested()) {
         auto suspendStartMs = konan::getTimeMicros();
         threadData_.gc().OnSuspendForGC();
@@ -69,11 +77,12 @@ NO_EXTERNAL_CALLS_CHECK bool kotlin::mm::RequestThreadsSuspension() noexcept {
     RuntimeAssert(gSuspensionRequestedByCurrentThread == false, "Current thread already suspended threads.");
     {
         std::unique_lock lock(gSuspensionMutex);
-        bool actual = false;
-        internal::gSuspensionRequested.compare_exchange_strong(actual, true);
-        if (actual) {
-            return false;
-        }
+        bool safePointSet = mm::TrySetSafePointAction([](mm::ThreadData& threadData) {
+            threadData.suspensionData().suspendIfRequested();
+        });
+        if (!safePointSet) return false;
+        RuntimeAssert(!IsThreadSuspensionRequested(), "Suspension must not be requested without altering safe point action");
+        internal::gSuspensionRequested = true;
     }
     gSuspensionRequestedByCurrentThread = true;
 
@@ -82,18 +91,8 @@ NO_EXTERNAL_CALLS_CHECK bool kotlin::mm::RequestThreadsSuspension() noexcept {
 
 void kotlin::mm::WaitForThreadsSuspension() noexcept {
     // Spin waiting for threads to suspend. Ignore Native threads.
-    while(!allThreads(isSuspendedOrNative)) {
+    while(!allThreads([] (mm::ThreadData& thread) { return thread.suspensionData().suspendedOrNative(); })) {
         yield();
-    }
-}
-
-NO_INLINE void kotlin::mm::SuspendIfRequestedSlowPath() noexcept {
-    mm::ThreadRegistry::Instance().CurrentThreadData()->suspensionData().suspendIfRequestedSlowPath();
-}
-
-ALWAYS_INLINE void kotlin::mm::SuspendIfRequested() noexcept {
-    if (IsThreadSuspensionRequested()) {
-        SuspendIfRequestedSlowPath();
     }
 }
 
@@ -105,6 +104,7 @@ void kotlin::mm::ResumeThreads() noexcept {
     {
         std::unique_lock lock(gSuspensionMutex);
         internal::gSuspensionRequested = false;
+        mm::UnsetSafePointAction();
     }
     gSuspensionRequestedByCurrentThread = false;
     gSuspensionCondVar.notify_all();
