@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf.MemberKind
 import org.jetbrains.kotlin.metadata.ProtoBuf.Modality
 import org.jetbrains.kotlin.metadata.deserialization.*
+import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.*
 import org.jetbrains.kotlin.resolve.DataClassResolver
 import org.jetbrains.kotlin.resolve.constants.ClassLiteralValue
+import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.serialization.deserialization.AnnotatedCallableKind
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
@@ -337,8 +339,13 @@ private class PropertyClsStubBuilder(
         if (binaryClass != null) {
             val callableName = c.nameResolver.getName(propertyProto.name)
             binaryClass.visitMembers(object : KotlinJvmBinaryClass.MemberVisitor {
+                private val getterName = lazy {
+                    val signature = propertyProto.getExtensionOrNull(JvmProtoBuf.propertySignature) ?: return@lazy null
+                    c.nameResolver.getName(signature.getter.name)
+                }
+
                 override fun visitMethod(name: Name, desc: String): KotlinJvmBinaryClass.MethodAnnotationVisitor? {
-                    if (name == callableName && protoContainer is ProtoContainer.Class && protoContainer.kind == ProtoBuf.Class.Kind.ANNOTATION_CLASS) {
+                    if (protoContainer is ProtoContainer.Class && protoContainer.kind == ProtoBuf.Class.Kind.ANNOTATION_CLASS && getterName.value == name) {
                         return object : KotlinJvmBinaryClass.MethodAnnotationVisitor {
                             override fun visitParameterAnnotation(
                                 index: Int,
@@ -368,7 +375,24 @@ private class PropertyClsStubBuilder(
                                         classId: ClassId
                                     ): KotlinJvmBinaryClass.AnnotationArgumentVisitor? = null
 
-                                    override fun visitArray(name: Name?): KotlinJvmBinaryClass.AnnotationArrayArgumentVisitor? = null
+                                    override fun visitArray(name: Name?): KotlinJvmBinaryClass.AnnotationArrayArgumentVisitor {
+                                        return object : KotlinJvmBinaryClass.AnnotationArrayArgumentVisitor {
+                                            private val elements = mutableListOf<Any>()
+
+                                            override fun visit(value: Any?) {
+                                                value?.let { elements.add(it) }
+                                            }
+
+                                            override fun visitEnum(enumClassId: ClassId, enumEntryName: Name) {}
+                                            override fun visitClassLiteral(value: ClassLiteralValue) {}
+                                            override fun visitAnnotation(classId: ClassId): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {return null}
+
+                                            override fun visitEnd() {
+                                                constantInitializer = ConstantInitializer(elements.toTypedArray(), null, desc.substring(2))
+                                            }
+                                        }
+                                    }
+
                                     override fun visitEnd() {}
                                 }
                             }
@@ -517,7 +541,7 @@ private fun Double.nonConstant() = this < 0 || isNaN() || isInfinite()
 private fun buildConstantInitializer(
     initializer: ConstantInitializer, nameResolver: NameResolver, parent: StubElement<out PsiElement>
 ) {
-    when (initializer.constKind) {
+    when (val constKind = initializer.constKind) {
         "BYTE", "B", "SHORT", "S", "LONG", "J", "INT", "I" -> {
             val number = (initializer.valueFromClassFile ?: initializer.builtInValue?.intValue) as Number
             if (number.toLong() < 0) return
@@ -563,6 +587,57 @@ private fun buildConstantInitializer(
         "STRING", "Ljava/lang/String;" -> {
             val text = (initializer.valueFromClassFile ?: nameResolver.getString(initializer.builtInValue!!.stringValue)) as String
             buildStringTemplateExpressionStub(text, parent)
+        }
+        "[I", "[B", "[S", "[L", "[C", "[F", "[D", "[Z" -> {
+            val collectionStub = KotlinCollectionLiteralExpressionStubImpl(parent)
+            when (val value = initializer.valueFromClassFile) {
+                is IntArray -> {
+                    for (v in value) {
+                        buildConstantInitializer(ConstantInitializer(v, null, "I"), nameResolver, collectionStub)
+                    }
+                }
+                is ByteArray -> {
+                    for (v in value) {
+                        buildConstantInitializer(ConstantInitializer(v, null, "B"), nameResolver, collectionStub)
+                    }
+                }
+                is ShortArray -> {
+                    for (v in value) {
+                        buildConstantInitializer(ConstantInitializer(v, null, "S"), nameResolver, collectionStub)
+                    }
+                }
+                is LongArray -> {
+                    for (v in value) {
+                        buildConstantInitializer(ConstantInitializer(v, null, "L"), nameResolver, collectionStub)
+                    }
+                }
+                is CharArray -> {
+                    for (v in value) {
+                        buildConstantInitializer(ConstantInitializer(v, null, "C"), nameResolver, collectionStub)
+                    }
+                }
+                is FloatArray -> {
+                    for (v in value) {
+                        buildConstantInitializer(ConstantInitializer(v, null, "F"), nameResolver, collectionStub)
+                    }
+                }
+                is DoubleArray -> {
+                    for (v in value) {
+                        buildConstantInitializer(ConstantInitializer(v, null, "D"), nameResolver, collectionStub)
+                    }
+                }
+                is BooleanArray -> {
+                    for (v in value) {
+                        buildConstantInitializer(ConstantInitializer(v, null, "Z"), nameResolver, collectionStub)
+                    }
+                }
+            }
+        }
+        else -> if (constKind.startsWith("[")) {
+            val collectionStub = KotlinCollectionLiteralExpressionStubImpl(parent)
+            for (v in (initializer.valueFromClassFile as Array<*>)) {
+                buildConstantInitializer(ConstantInitializer(v, null, constKind.substring(1)), nameResolver, collectionStub)
+            }
         }
     }
 }
