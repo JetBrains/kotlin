@@ -224,7 +224,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     }
 
     @JvmGradlePluginTests
-    @DisplayName("with build build scan report")
+    @DisplayName("with build scan report")
     @GradleTest
     fun testBuildScanReportSmokeTestForConfigurationCache(gradleVersion: GradleVersion) {
         project("simpleProject", gradleVersion) {

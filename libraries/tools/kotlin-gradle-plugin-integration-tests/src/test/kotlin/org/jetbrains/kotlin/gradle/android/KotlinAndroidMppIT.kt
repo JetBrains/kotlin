@@ -71,6 +71,7 @@ class KotlinAndroidMppIT : KGPBaseTest() {
         
                 android {
                     compileSdkVersion 22
+                    namespace 'org.jetbrains.kotlin.gradle.test.android.libalfa'
                 }
         
                 kotlin { android("android") { } }
@@ -129,7 +130,6 @@ class KotlinAndroidMppIT : KGPBaseTest() {
 
     @DisplayName("mpp source sets are registered in AGP")
     @GradleAndroidTest
-    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_42)
     fun testAndroidMppSourceSets(
         gradleVersion: GradleVersion,
         agpVersion: String,
@@ -540,10 +540,7 @@ class KotlinAndroidMppIT : KGPBaseTest() {
         }
     }
 
-    // AGP max version is limited due to https://youtrack.jetbrains.com/issue/KT-51940/HMPP-resolves-configurations-during-configuration
     @DisplayName("android app can depend on mpp lib")
-    @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_72)
-    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_7_4) // due AGP version limit ^
     @GradleAndroidTest
     fun testAndroidWithNewMppApp(
         gradleVersion: GradleVersion,
@@ -726,7 +723,10 @@ class KotlinAndroidMppIT : KGPBaseTest() {
                 appBuildScriptBackup +
                         //language=Gradle
                         """
-
+                            
+                        android {
+                            namespace 'app.example.com.lib'
+                        }
                         kotlin.targets.all {
                             compilations.all {
                                 attributes.attribute(
@@ -741,7 +741,10 @@ class KotlinAndroidMppIT : KGPBaseTest() {
                 appBuildScriptBackup +
                         //language=Gradle
                         """
-
+                            
+                        android {
+                            namespace 'app.example.com.app_sample'
+                        }
                         kotlin.targets.androidApp.compilations.all {
                             attributes.attribute(
                                 Attribute.of("com.example.compilation", String),
