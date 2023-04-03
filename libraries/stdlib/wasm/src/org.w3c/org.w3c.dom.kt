@@ -1311,8 +1311,8 @@ public external abstract class HTMLMediaElement : HTMLElement, JsAny {
     open val videoTracks: VideoTrackList
     open val textTracks: TextTrackList
     open val mediaKeys: MediaKeys?
-    open var onencrypted: ((Event) -> JsAny?)?
-    open var onwaitingforkey: ((Event) -> JsAny?)?
+    open var onencrypted: ((Event) -> Unit)?
+    open var onwaitingforkey: ((Event) -> Unit)?
     fun load()
     fun canPlayType(type: String): CanPlayTypeResult
     fun fastSeek(time: Double)
@@ -1372,9 +1372,9 @@ public external abstract class MediaError : JsAny {
  */
 public external abstract class AudioTrackList : EventTarget, JsAny {
     open val length: Int
-    open var onchange: ((Event) -> JsAny?)?
-    open var onaddtrack: ((TrackEvent) -> JsAny?)?
-    open var onremovetrack: ((TrackEvent) -> JsAny?)?
+    open var onchange: ((Event) -> Unit)?
+    open var onaddtrack: ((TrackEvent) -> Unit)?
+    open var onremovetrack: ((TrackEvent) -> Unit)?
     fun getTrackById(id: String): AudioTrack?
 }
 
@@ -1401,9 +1401,9 @@ public external abstract class AudioTrack : UnionAudioTrackOrTextTrackOrVideoTra
 public external abstract class VideoTrackList : EventTarget, JsAny {
     open val length: Int
     open val selectedIndex: Int
-    open var onchange: ((Event) -> JsAny?)?
-    open var onaddtrack: ((TrackEvent) -> JsAny?)?
-    open var onremovetrack: ((TrackEvent) -> JsAny?)?
+    open var onchange: ((Event) -> Unit)?
+    open var onaddtrack: ((TrackEvent) -> Unit)?
+    open var onremovetrack: ((TrackEvent) -> Unit)?
     fun getTrackById(id: String): VideoTrack?
 }
 
@@ -1426,9 +1426,9 @@ public external abstract class VideoTrack : UnionAudioTrackOrTextTrackOrVideoTra
 
 public external abstract class TextTrackList : EventTarget, JsAny {
     open val length: Int
-    open var onchange: ((Event) -> JsAny?)?
-    open var onaddtrack: ((TrackEvent) -> JsAny?)?
-    open var onremovetrack: ((TrackEvent) -> JsAny?)?
+    open var onchange: ((Event) -> Unit)?
+    open var onaddtrack: ((TrackEvent) -> Unit)?
+    open var onremovetrack: ((TrackEvent) -> Unit)?
     fun getTrackById(id: String): TextTrack?
 }
 
@@ -1449,7 +1449,7 @@ public external abstract class TextTrack : EventTarget, UnionAudioTrackOrTextTra
     open var mode: TextTrackMode
     open val cues: TextTrackCueList?
     open val activeCues: TextTrackCueList?
-    open var oncuechange: ((Event) -> JsAny?)?
+    open var oncuechange: ((Event) -> Unit)?
     open val sourceBuffer: SourceBuffer?
     fun addCue(cue: TextTrackCue)
     fun removeCue(cue: TextTrackCue)
@@ -1474,8 +1474,8 @@ public external abstract class TextTrackCue : EventTarget, JsAny {
     open var startTime: Double
     open var endTime: Double
     open var pauseOnExit: Boolean
-    open var onenter: ((Event) -> JsAny?)?
-    open var onexit: ((Event) -> JsAny?)?
+    open var onenter: ((Event) -> Unit)?
+    open var onexit: ((Event) -> Unit)?
 }
 
 /**
@@ -3270,14 +3270,14 @@ public external open class BeforeUnloadEvent : Event, JsAny {
 
 public external abstract class ApplicationCache : EventTarget, JsAny {
     open val status: Short
-    open var onchecking: ((Event) -> JsAny?)?
-    open var onerror: ((Event) -> JsAny?)?
-    open var onnoupdate: ((Event) -> JsAny?)?
-    open var ondownloading: ((Event) -> JsAny?)?
-    open var onprogress: ((ProgressEvent) -> JsAny?)?
-    open var onupdateready: ((Event) -> JsAny?)?
-    open var oncached: ((Event) -> JsAny?)?
-    open var onobsolete: ((Event) -> JsAny?)?
+    open var onchecking: ((Event) -> Unit)?
+    open var onerror: ((Event) -> Unit)?
+    open var onnoupdate: ((Event) -> Unit)?
+    open var ondownloading: ((Event) -> Unit)?
+    open var onprogress: ((ProgressEvent) -> Unit)?
+    open var onupdateready: ((Event) -> Unit)?
+    open var oncached: ((Event) -> Unit)?
+    open var onobsolete: ((Event) -> Unit)?
     fun update()
     fun abort()
     fun swapCache()
@@ -3367,217 +3367,217 @@ public fun PromiseRejectionEventInit(promise: Promise<JsAny?>?, reason: JsAny? =
  * Exposes the JavaScript [GlobalEventHandlers](https://developer.mozilla.org/en/docs/Web/API/GlobalEventHandlers) to Kotlin
  */
 public external interface GlobalEventHandlers : JsAny {
-    var onabort: ((Event) -> JsAny?)?
+    var onabort: ((Event) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var onblur: ((FocusEvent) -> JsAny?)?
+    var onblur: ((FocusEvent) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var oncancel: ((Event) -> JsAny?)?
+    var oncancel: ((Event) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var oncanplay: ((Event) -> JsAny?)?
+    var oncanplay: ((Event) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var oncanplaythrough: ((Event) -> JsAny?)?
+    var oncanplaythrough: ((Event) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var onchange: ((Event) -> JsAny?)?
+    var onchange: ((Event) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var onclick: ((MouseEvent) -> JsAny?)?
+    var onclick: ((MouseEvent) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var onclose: ((Event) -> JsAny?)?
+    var onclose: ((Event) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var oncontextmenu: ((MouseEvent) -> JsAny?)?
+    var oncontextmenu: ((MouseEvent) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var oncuechange: ((Event) -> JsAny?)?
+    var oncuechange: ((Event) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var ondblclick: ((MouseEvent) -> JsAny?)?
+    var ondblclick: ((MouseEvent) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var ondrag: ((DragEvent) -> JsAny?)?
+    var ondrag: ((DragEvent) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var ondragend: ((DragEvent) -> JsAny?)?
+    var ondragend: ((DragEvent) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var ondragenter: ((DragEvent) -> JsAny?)?
+    var ondragenter: ((DragEvent) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var ondragexit: ((DragEvent) -> JsAny?)?
+    var ondragexit: ((DragEvent) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var ondragleave: ((DragEvent) -> JsAny?)?
+    var ondragleave: ((DragEvent) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var ondragover: ((DragEvent) -> JsAny?)?
+    var ondragover: ((DragEvent) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var ondragstart: ((DragEvent) -> JsAny?)?
+    var ondragstart: ((DragEvent) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var ondrop: ((DragEvent) -> JsAny?)?
+    var ondrop: ((DragEvent) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var ondurationchange: ((Event) -> JsAny?)?
+    var ondurationchange: ((Event) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var onemptied: ((Event) -> JsAny?)?
+    var onemptied: ((Event) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var onended: ((Event) -> JsAny?)?
+    var onended: ((Event) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
     var onerror: ((JsAny?, String, Int, Int, JsAny?) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
-    var onfocus: ((FocusEvent) -> JsAny?)?
+    var onfocus: ((FocusEvent) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var oninput: ((InputEvent) -> JsAny?)?
+    var oninput: ((InputEvent) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var oninvalid: ((Event) -> JsAny?)?
+    var oninvalid: ((Event) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var onkeydown: ((KeyboardEvent) -> JsAny?)?
+    var onkeydown: ((KeyboardEvent) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var onkeypress: ((KeyboardEvent) -> JsAny?)?
+    var onkeypress: ((KeyboardEvent) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var onkeyup: ((KeyboardEvent) -> JsAny?)?
+    var onkeyup: ((KeyboardEvent) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var onload: ((Event) -> JsAny?)?
+    var onload: ((Event) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var onloadeddata: ((Event) -> JsAny?)?
+    var onloadeddata: ((Event) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var onloadedmetadata: ((Event) -> JsAny?)?
+    var onloadedmetadata: ((Event) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var onloadend: ((Event) -> JsAny?)?
+    var onloadend: ((Event) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var onloadstart: ((ProgressEvent) -> JsAny?)?
+    var onloadstart: ((ProgressEvent) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var onmousedown: ((MouseEvent) -> JsAny?)?
+    var onmousedown: ((MouseEvent) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var onmouseenter: ((MouseEvent) -> JsAny?)?
+    var onmouseenter: ((MouseEvent) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var onmouseleave: ((MouseEvent) -> JsAny?)?
+    var onmouseleave: ((MouseEvent) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var onmousemove: ((MouseEvent) -> JsAny?)?
+    var onmousemove: ((MouseEvent) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var onmouseout: ((MouseEvent) -> JsAny?)?
+    var onmouseout: ((MouseEvent) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var onmouseover: ((MouseEvent) -> JsAny?)?
+    var onmouseover: ((MouseEvent) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var onmouseup: ((MouseEvent) -> JsAny?)?
+    var onmouseup: ((MouseEvent) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var onwheel: ((WheelEvent) -> JsAny?)?
+    var onwheel: ((WheelEvent) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var onpause: ((Event) -> JsAny?)?
+    var onpause: ((Event) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var onplay: ((Event) -> JsAny?)?
+    var onplay: ((Event) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var onplaying: ((Event) -> JsAny?)?
+    var onplaying: ((Event) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var onprogress: ((ProgressEvent) -> JsAny?)?
+    var onprogress: ((ProgressEvent) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var onratechange: ((Event) -> JsAny?)?
+    var onratechange: ((Event) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var onreset: ((Event) -> JsAny?)?
+    var onreset: ((Event) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var onresize: ((Event) -> JsAny?)?
+    var onresize: ((Event) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var onscroll: ((Event) -> JsAny?)?
+    var onscroll: ((Event) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var onseeked: ((Event) -> JsAny?)?
+    var onseeked: ((Event) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var onseeking: ((Event) -> JsAny?)?
+    var onseeking: ((Event) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var onselect: ((Event) -> JsAny?)?
+    var onselect: ((Event) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var onshow: ((Event) -> JsAny?)?
+    var onshow: ((Event) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var onstalled: ((Event) -> JsAny?)?
+    var onstalled: ((Event) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var onsubmit: ((Event) -> JsAny?)?
+    var onsubmit: ((Event) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var onsuspend: ((Event) -> JsAny?)?
+    var onsuspend: ((Event) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var ontimeupdate: ((Event) -> JsAny?)?
+    var ontimeupdate: ((Event) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var ontoggle: ((Event) -> JsAny?)?
+    var ontoggle: ((Event) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var onvolumechange: ((Event) -> JsAny?)?
+    var onvolumechange: ((Event) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var onwaiting: ((Event) -> JsAny?)?
+    var onwaiting: ((Event) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var ongotpointercapture: ((PointerEvent) -> JsAny?)?
+    var ongotpointercapture: ((PointerEvent) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var onlostpointercapture: ((PointerEvent) -> JsAny?)?
+    var onlostpointercapture: ((PointerEvent) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var onpointerdown: ((PointerEvent) -> JsAny?)?
+    var onpointerdown: ((PointerEvent) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var onpointermove: ((PointerEvent) -> JsAny?)?
+    var onpointermove: ((PointerEvent) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var onpointerup: ((PointerEvent) -> JsAny?)?
+    var onpointerup: ((PointerEvent) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var onpointercancel: ((PointerEvent) -> JsAny?)?
+    var onpointercancel: ((PointerEvent) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var onpointerover: ((PointerEvent) -> JsAny?)?
+    var onpointerover: ((PointerEvent) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var onpointerout: ((PointerEvent) -> JsAny?)?
+    var onpointerout: ((PointerEvent) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var onpointerenter: ((PointerEvent) -> JsAny?)?
+    var onpointerenter: ((PointerEvent) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var onpointerleave: ((PointerEvent) -> JsAny?)?
+    var onpointerleave: ((PointerEvent) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
 }
@@ -3586,61 +3586,61 @@ public external interface GlobalEventHandlers : JsAny {
  * Exposes the JavaScript [WindowEventHandlers](https://developer.mozilla.org/en/docs/Web/API/WindowEventHandlers) to Kotlin
  */
 public external interface WindowEventHandlers : JsAny {
-    var onafterprint: ((Event) -> JsAny?)?
+    var onafterprint: ((Event) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var onbeforeprint: ((Event) -> JsAny?)?
+    var onbeforeprint: ((Event) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
     var onbeforeunload: ((BeforeUnloadEvent) -> String?)?
         get() = definedExternally
         set(value) = definedExternally
-    var onhashchange: ((HashChangeEvent) -> JsAny?)?
+    var onhashchange: ((HashChangeEvent) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var onlanguagechange: ((Event) -> JsAny?)?
+    var onlanguagechange: ((Event) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var onmessage: ((MessageEvent) -> JsAny?)?
+    var onmessage: ((MessageEvent) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var onoffline: ((Event) -> JsAny?)?
+    var onoffline: ((Event) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var ononline: ((Event) -> JsAny?)?
+    var ononline: ((Event) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var onpagehide: ((PageTransitionEvent) -> JsAny?)?
+    var onpagehide: ((PageTransitionEvent) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var onpageshow: ((PageTransitionEvent) -> JsAny?)?
+    var onpageshow: ((PageTransitionEvent) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var onpopstate: ((PopStateEvent) -> JsAny?)?
+    var onpopstate: ((PopStateEvent) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var onrejectionhandled: ((Event) -> JsAny?)?
+    var onrejectionhandled: ((Event) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var onstorage: ((StorageEvent) -> JsAny?)?
+    var onstorage: ((StorageEvent) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var onunhandledrejection: ((PromiseRejectionEvent) -> JsAny?)?
+    var onunhandledrejection: ((PromiseRejectionEvent) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var onunload: ((Event) -> JsAny?)?
+    var onunload: ((Event) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
 }
 
 public external interface DocumentAndElementEventHandlers : JsAny {
-    var oncopy: ((ClipboardEvent) -> JsAny?)?
+    var oncopy: ((ClipboardEvent) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var oncut: ((ClipboardEvent) -> JsAny?)?
+    var oncut: ((ClipboardEvent) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var onpaste: ((ClipboardEvent) -> JsAny?)?
+    var onpaste: ((ClipboardEvent) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
 }
@@ -3870,9 +3870,9 @@ public external open class EventSource(url: String, eventSourceInitDict: EventSo
     open val url: String
     open val withCredentials: Boolean
     open val readyState: Short
-    var onopen: ((Event) -> JsAny?)?
-    var onmessage: ((MessageEvent) -> JsAny?)?
-    var onerror: ((Event) -> JsAny?)?
+    var onopen: ((Event) -> Unit)?
+    var onmessage: ((MessageEvent) -> Unit)?
+    var onerror: ((Event) -> Unit)?
     fun close()
 
     companion object {
@@ -3898,12 +3898,12 @@ public external open class WebSocket(url: String, protocols: JsAny? = definedExt
     open val url: String
     open val readyState: Short
     open val bufferedAmount: JsNumber
-    var onopen: ((Event) -> JsAny?)?
-    var onerror: ((Event) -> JsAny?)?
-    var onclose: ((Event) -> JsAny?)?
+    var onopen: ((Event) -> Unit)?
+    var onerror: ((Event) -> Unit)?
+    var onclose: ((Event) -> Unit)?
     open val extensions: String
     open val protocol: String
-    var onmessage: ((MessageEvent) -> JsAny?)?
+    var onmessage: ((MessageEvent) -> Unit)?
     var binaryType: BinaryType
     fun close(code: Short = definedExternally, reason: String = definedExternally)
     fun send(data: String)
@@ -3962,7 +3962,7 @@ public external open class MessageChannel : JsAny {
  * Exposes the JavaScript [MessagePort](https://developer.mozilla.org/en/docs/Web/API/MessagePort) to Kotlin
  */
 public external abstract class MessagePort : EventTarget, UnionMessagePortOrWindowProxy, UnionMessagePortOrServiceWorker, UnionClientOrMessagePortOrServiceWorker, JsAny {
-    open var onmessage: ((MessageEvent) -> JsAny?)?
+    open var onmessage: ((MessageEvent) -> Unit)?
     fun postMessage(message: JsAny?, transfer: JsArray<JsAny> = definedExternally)
     fun start()
     fun close()
@@ -3973,7 +3973,7 @@ public external abstract class MessagePort : EventTarget, UnionMessagePortOrWind
  */
 public external open class BroadcastChannel(name: String) : EventTarget, JsAny {
     open val name: String
-    var onmessage: ((MessageEvent) -> JsAny?)?
+    var onmessage: ((MessageEvent) -> Unit)?
     fun postMessage(message: JsAny?)
     fun close()
 }
@@ -3986,11 +3986,11 @@ public external abstract class WorkerGlobalScope : EventTarget, WindowOrWorkerGl
     open val location: WorkerLocation
     open val navigator: WorkerNavigator
     open var onerror: ((JsAny?, String, Int, Int, JsAny?) -> JsAny?)?
-    open var onlanguagechange: ((Event) -> JsAny?)?
-    open var onoffline: ((Event) -> JsAny?)?
-    open var ononline: ((Event) -> JsAny?)?
-    open var onrejectionhandled: ((Event) -> JsAny?)?
-    open var onunhandledrejection: ((PromiseRejectionEvent) -> JsAny?)?
+    open var onlanguagechange: ((Event) -> Unit)?
+    open var onoffline: ((Event) -> Unit)?
+    open var ononline: ((Event) -> Unit)?
+    open var onrejectionhandled: ((Event) -> Unit)?
+    open var onunhandledrejection: ((PromiseRejectionEvent) -> Unit)?
     fun importScripts(vararg urls: String)
 }
 
@@ -3998,7 +3998,7 @@ public external abstract class WorkerGlobalScope : EventTarget, WindowOrWorkerGl
  * Exposes the JavaScript [DedicatedWorkerGlobalScope](https://developer.mozilla.org/en/docs/Web/API/DedicatedWorkerGlobalScope) to Kotlin
  */
 public external abstract class DedicatedWorkerGlobalScope : WorkerGlobalScope, JsAny {
-    open var onmessage: ((MessageEvent) -> JsAny?)?
+    open var onmessage: ((MessageEvent) -> Unit)?
     fun postMessage(message: JsAny?, transfer: JsArray<JsAny> = definedExternally)
     fun close()
 }
@@ -4009,7 +4009,7 @@ public external abstract class DedicatedWorkerGlobalScope : WorkerGlobalScope, J
 public external abstract class SharedWorkerGlobalScope : WorkerGlobalScope, JsAny {
     open val name: String
     open val applicationCache: ApplicationCache
-    open var onconnect: ((Event) -> JsAny?)?
+    open var onconnect: ((Event) -> Unit)?
     fun close()
 }
 
@@ -4017,7 +4017,7 @@ public external abstract class SharedWorkerGlobalScope : WorkerGlobalScope, JsAn
  * Exposes the JavaScript [AbstractWorker](https://developer.mozilla.org/en/docs/Web/API/AbstractWorker) to Kotlin
  */
 public external interface AbstractWorker : JsAny {
-    var onerror: ((Event) -> JsAny?)?
+    var onerror: ((Event) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
 }
@@ -4026,8 +4026,8 @@ public external interface AbstractWorker : JsAny {
  * Exposes the JavaScript [Worker](https://developer.mozilla.org/en/docs/Web/API/Worker) to Kotlin
  */
 public external open class Worker(scriptURL: String, options: WorkerOptions = definedExternally) : EventTarget, AbstractWorker, JsAny {
-    var onmessage: ((MessageEvent) -> JsAny?)?
-    override var onerror: ((Event) -> JsAny?)?
+    var onmessage: ((MessageEvent) -> Unit)?
+    override var onerror: ((Event) -> Unit)?
     fun terminate()
     fun postMessage(message: JsAny?, transfer: JsArray<JsAny> = definedExternally)
 }
@@ -4049,7 +4049,7 @@ public fun WorkerOptions(type: WorkerType? = WorkerType.CLASSIC, credentials: Re
  */
 public external open class SharedWorker(scriptURL: String, name: String = definedExternally, options: WorkerOptions = definedExternally) : EventTarget, AbstractWorker, JsAny {
     open val port: MessagePort
-    override var onerror: ((Event) -> JsAny?)?
+    override var onerror: ((Event) -> Unit)?
 }
 
 /**
@@ -4206,9 +4206,9 @@ public external abstract class HTMLMarqueeElement : HTMLElement, JsAny {
     open var trueSpeed: Boolean
     open var vspace: Int
     open var width: String
-    open var onbounce: ((Event) -> JsAny?)?
-    open var onfinish: ((Event) -> JsAny?)?
-    open var onstart: ((Event) -> JsAny?)?
+    open var onbounce: ((Event) -> Unit)?
+    open var onfinish: ((Event) -> Unit)?
+    open var onstart: ((Event) -> Unit)?
     fun start()
     fun stop()
 
@@ -4657,7 +4657,7 @@ public external open class Document : Node, GlobalEventHandlers, DocumentAndElem
     open val defaultView: Window?
     open val activeElement: Element?
     var designMode: String
-    var onreadystatechange: ((Event) -> JsAny?)?
+    var onreadystatechange: ((Event) -> Unit)?
     var fgColor: String
     var linkColor: String
     var vlinkColor: String
@@ -4671,82 +4671,82 @@ public external open class Document : Node, GlobalEventHandlers, DocumentAndElem
     open val rootElement: SVGSVGElement?
     open val fullscreenEnabled: Boolean
     open val fullscreen: Boolean
-    var onfullscreenchange: ((Event) -> JsAny?)?
-    var onfullscreenerror: ((Event) -> JsAny?)?
-    override var onabort: ((Event) -> JsAny?)?
-    override var onblur: ((FocusEvent) -> JsAny?)?
-    override var oncancel: ((Event) -> JsAny?)?
-    override var oncanplay: ((Event) -> JsAny?)?
-    override var oncanplaythrough: ((Event) -> JsAny?)?
-    override var onchange: ((Event) -> JsAny?)?
-    override var onclick: ((MouseEvent) -> JsAny?)?
-    override var onclose: ((Event) -> JsAny?)?
-    override var oncontextmenu: ((MouseEvent) -> JsAny?)?
-    override var oncuechange: ((Event) -> JsAny?)?
-    override var ondblclick: ((MouseEvent) -> JsAny?)?
-    override var ondrag: ((DragEvent) -> JsAny?)?
-    override var ondragend: ((DragEvent) -> JsAny?)?
-    override var ondragenter: ((DragEvent) -> JsAny?)?
-    override var ondragexit: ((DragEvent) -> JsAny?)?
-    override var ondragleave: ((DragEvent) -> JsAny?)?
-    override var ondragover: ((DragEvent) -> JsAny?)?
-    override var ondragstart: ((DragEvent) -> JsAny?)?
-    override var ondrop: ((DragEvent) -> JsAny?)?
-    override var ondurationchange: ((Event) -> JsAny?)?
-    override var onemptied: ((Event) -> JsAny?)?
-    override var onended: ((Event) -> JsAny?)?
+    var onfullscreenchange: ((Event) -> Unit)?
+    var onfullscreenerror: ((Event) -> Unit)?
+    override var onabort: ((Event) -> Unit)?
+    override var onblur: ((FocusEvent) -> Unit)?
+    override var oncancel: ((Event) -> Unit)?
+    override var oncanplay: ((Event) -> Unit)?
+    override var oncanplaythrough: ((Event) -> Unit)?
+    override var onchange: ((Event) -> Unit)?
+    override var onclick: ((MouseEvent) -> Unit)?
+    override var onclose: ((Event) -> Unit)?
+    override var oncontextmenu: ((MouseEvent) -> Unit)?
+    override var oncuechange: ((Event) -> Unit)?
+    override var ondblclick: ((MouseEvent) -> Unit)?
+    override var ondrag: ((DragEvent) -> Unit)?
+    override var ondragend: ((DragEvent) -> Unit)?
+    override var ondragenter: ((DragEvent) -> Unit)?
+    override var ondragexit: ((DragEvent) -> Unit)?
+    override var ondragleave: ((DragEvent) -> Unit)?
+    override var ondragover: ((DragEvent) -> Unit)?
+    override var ondragstart: ((DragEvent) -> Unit)?
+    override var ondrop: ((DragEvent) -> Unit)?
+    override var ondurationchange: ((Event) -> Unit)?
+    override var onemptied: ((Event) -> Unit)?
+    override var onended: ((Event) -> Unit)?
     override var onerror: ((JsAny?, String, Int, Int, JsAny?) -> JsAny?)?
-    override var onfocus: ((FocusEvent) -> JsAny?)?
-    override var oninput: ((InputEvent) -> JsAny?)?
-    override var oninvalid: ((Event) -> JsAny?)?
-    override var onkeydown: ((KeyboardEvent) -> JsAny?)?
-    override var onkeypress: ((KeyboardEvent) -> JsAny?)?
-    override var onkeyup: ((KeyboardEvent) -> JsAny?)?
-    override var onload: ((Event) -> JsAny?)?
-    override var onloadeddata: ((Event) -> JsAny?)?
-    override var onloadedmetadata: ((Event) -> JsAny?)?
-    override var onloadend: ((Event) -> JsAny?)?
-    override var onloadstart: ((ProgressEvent) -> JsAny?)?
-    override var onmousedown: ((MouseEvent) -> JsAny?)?
-    override var onmouseenter: ((MouseEvent) -> JsAny?)?
-    override var onmouseleave: ((MouseEvent) -> JsAny?)?
-    override var onmousemove: ((MouseEvent) -> JsAny?)?
-    override var onmouseout: ((MouseEvent) -> JsAny?)?
-    override var onmouseover: ((MouseEvent) -> JsAny?)?
-    override var onmouseup: ((MouseEvent) -> JsAny?)?
-    override var onwheel: ((WheelEvent) -> JsAny?)?
-    override var onpause: ((Event) -> JsAny?)?
-    override var onplay: ((Event) -> JsAny?)?
-    override var onplaying: ((Event) -> JsAny?)?
-    override var onprogress: ((ProgressEvent) -> JsAny?)?
-    override var onratechange: ((Event) -> JsAny?)?
-    override var onreset: ((Event) -> JsAny?)?
-    override var onresize: ((Event) -> JsAny?)?
-    override var onscroll: ((Event) -> JsAny?)?
-    override var onseeked: ((Event) -> JsAny?)?
-    override var onseeking: ((Event) -> JsAny?)?
-    override var onselect: ((Event) -> JsAny?)?
-    override var onshow: ((Event) -> JsAny?)?
-    override var onstalled: ((Event) -> JsAny?)?
-    override var onsubmit: ((Event) -> JsAny?)?
-    override var onsuspend: ((Event) -> JsAny?)?
-    override var ontimeupdate: ((Event) -> JsAny?)?
-    override var ontoggle: ((Event) -> JsAny?)?
-    override var onvolumechange: ((Event) -> JsAny?)?
-    override var onwaiting: ((Event) -> JsAny?)?
-    override var ongotpointercapture: ((PointerEvent) -> JsAny?)?
-    override var onlostpointercapture: ((PointerEvent) -> JsAny?)?
-    override var onpointerdown: ((PointerEvent) -> JsAny?)?
-    override var onpointermove: ((PointerEvent) -> JsAny?)?
-    override var onpointerup: ((PointerEvent) -> JsAny?)?
-    override var onpointercancel: ((PointerEvent) -> JsAny?)?
-    override var onpointerover: ((PointerEvent) -> JsAny?)?
-    override var onpointerout: ((PointerEvent) -> JsAny?)?
-    override var onpointerenter: ((PointerEvent) -> JsAny?)?
-    override var onpointerleave: ((PointerEvent) -> JsAny?)?
-    override var oncopy: ((ClipboardEvent) -> JsAny?)?
-    override var oncut: ((ClipboardEvent) -> JsAny?)?
-    override var onpaste: ((ClipboardEvent) -> JsAny?)?
+    override var onfocus: ((FocusEvent) -> Unit)?
+    override var oninput: ((InputEvent) -> Unit)?
+    override var oninvalid: ((Event) -> Unit)?
+    override var onkeydown: ((KeyboardEvent) -> Unit)?
+    override var onkeypress: ((KeyboardEvent) -> Unit)?
+    override var onkeyup: ((KeyboardEvent) -> Unit)?
+    override var onload: ((Event) -> Unit)?
+    override var onloadeddata: ((Event) -> Unit)?
+    override var onloadedmetadata: ((Event) -> Unit)?
+    override var onloadend: ((Event) -> Unit)?
+    override var onloadstart: ((ProgressEvent) -> Unit)?
+    override var onmousedown: ((MouseEvent) -> Unit)?
+    override var onmouseenter: ((MouseEvent) -> Unit)?
+    override var onmouseleave: ((MouseEvent) -> Unit)?
+    override var onmousemove: ((MouseEvent) -> Unit)?
+    override var onmouseout: ((MouseEvent) -> Unit)?
+    override var onmouseover: ((MouseEvent) -> Unit)?
+    override var onmouseup: ((MouseEvent) -> Unit)?
+    override var onwheel: ((WheelEvent) -> Unit)?
+    override var onpause: ((Event) -> Unit)?
+    override var onplay: ((Event) -> Unit)?
+    override var onplaying: ((Event) -> Unit)?
+    override var onprogress: ((ProgressEvent) -> Unit)?
+    override var onratechange: ((Event) -> Unit)?
+    override var onreset: ((Event) -> Unit)?
+    override var onresize: ((Event) -> Unit)?
+    override var onscroll: ((Event) -> Unit)?
+    override var onseeked: ((Event) -> Unit)?
+    override var onseeking: ((Event) -> Unit)?
+    override var onselect: ((Event) -> Unit)?
+    override var onshow: ((Event) -> Unit)?
+    override var onstalled: ((Event) -> Unit)?
+    override var onsubmit: ((Event) -> Unit)?
+    override var onsuspend: ((Event) -> Unit)?
+    override var ontimeupdate: ((Event) -> Unit)?
+    override var ontoggle: ((Event) -> Unit)?
+    override var onvolumechange: ((Event) -> Unit)?
+    override var onwaiting: ((Event) -> Unit)?
+    override var ongotpointercapture: ((PointerEvent) -> Unit)?
+    override var onlostpointercapture: ((PointerEvent) -> Unit)?
+    override var onpointerdown: ((PointerEvent) -> Unit)?
+    override var onpointermove: ((PointerEvent) -> Unit)?
+    override var onpointerup: ((PointerEvent) -> Unit)?
+    override var onpointercancel: ((PointerEvent) -> Unit)?
+    override var onpointerover: ((PointerEvent) -> Unit)?
+    override var onpointerout: ((PointerEvent) -> Unit)?
+    override var onpointerenter: ((PointerEvent) -> Unit)?
+    override var onpointerleave: ((PointerEvent) -> Unit)?
+    override var oncopy: ((ClipboardEvent) -> Unit)?
+    override var oncut: ((ClipboardEvent) -> Unit)?
+    override var onpaste: ((ClipboardEvent) -> Unit)?
     override val fullscreenElement: Element?
     override val children: HTMLCollection
     override val firstElementChild: Element?
@@ -5632,7 +5632,7 @@ public fun ScrollToOptions(left: Double? = undefined, top: Double? = undefined, 
 public external abstract class MediaQueryList : EventTarget, JsAny {
     open val media: String
     open val matches: Boolean
-    open var onchange: ((Event) -> JsAny?)?
+    open var onchange: ((Event) -> Unit)?
     fun addListener(listener: EventListener?)
     fun addListener(listener: ((Event) -> Unit)?)
     fun removeListener(listener: EventListener?)
@@ -5778,80 +5778,80 @@ public external open class TouchEvent : UIEvent, JsAny {
  * Exposes the JavaScript [Image](https://developer.mozilla.org/en/docs/Web/API/Image) to Kotlin
  */
 public external open class Image(width: Int = definedExternally, height: Int = definedExternally) : HTMLImageElement, JsAny {
-    override var onabort: ((Event) -> JsAny?)?
-    override var onblur: ((FocusEvent) -> JsAny?)?
-    override var oncancel: ((Event) -> JsAny?)?
-    override var oncanplay: ((Event) -> JsAny?)?
-    override var oncanplaythrough: ((Event) -> JsAny?)?
-    override var onchange: ((Event) -> JsAny?)?
-    override var onclick: ((MouseEvent) -> JsAny?)?
-    override var onclose: ((Event) -> JsAny?)?
-    override var oncontextmenu: ((MouseEvent) -> JsAny?)?
-    override var oncuechange: ((Event) -> JsAny?)?
-    override var ondblclick: ((MouseEvent) -> JsAny?)?
-    override var ondrag: ((DragEvent) -> JsAny?)?
-    override var ondragend: ((DragEvent) -> JsAny?)?
-    override var ondragenter: ((DragEvent) -> JsAny?)?
-    override var ondragexit: ((DragEvent) -> JsAny?)?
-    override var ondragleave: ((DragEvent) -> JsAny?)?
-    override var ondragover: ((DragEvent) -> JsAny?)?
-    override var ondragstart: ((DragEvent) -> JsAny?)?
-    override var ondrop: ((DragEvent) -> JsAny?)?
-    override var ondurationchange: ((Event) -> JsAny?)?
-    override var onemptied: ((Event) -> JsAny?)?
-    override var onended: ((Event) -> JsAny?)?
+    override var onabort: ((Event) -> Unit)?
+    override var onblur: ((FocusEvent) -> Unit)?
+    override var oncancel: ((Event) -> Unit)?
+    override var oncanplay: ((Event) -> Unit)?
+    override var oncanplaythrough: ((Event) -> Unit)?
+    override var onchange: ((Event) -> Unit)?
+    override var onclick: ((MouseEvent) -> Unit)?
+    override var onclose: ((Event) -> Unit)?
+    override var oncontextmenu: ((MouseEvent) -> Unit)?
+    override var oncuechange: ((Event) -> Unit)?
+    override var ondblclick: ((MouseEvent) -> Unit)?
+    override var ondrag: ((DragEvent) -> Unit)?
+    override var ondragend: ((DragEvent) -> Unit)?
+    override var ondragenter: ((DragEvent) -> Unit)?
+    override var ondragexit: ((DragEvent) -> Unit)?
+    override var ondragleave: ((DragEvent) -> Unit)?
+    override var ondragover: ((DragEvent) -> Unit)?
+    override var ondragstart: ((DragEvent) -> Unit)?
+    override var ondrop: ((DragEvent) -> Unit)?
+    override var ondurationchange: ((Event) -> Unit)?
+    override var onemptied: ((Event) -> Unit)?
+    override var onended: ((Event) -> Unit)?
     override var onerror: ((JsAny?, String, Int, Int, JsAny?) -> JsAny?)?
-    override var onfocus: ((FocusEvent) -> JsAny?)?
-    override var oninput: ((InputEvent) -> JsAny?)?
-    override var oninvalid: ((Event) -> JsAny?)?
-    override var onkeydown: ((KeyboardEvent) -> JsAny?)?
-    override var onkeypress: ((KeyboardEvent) -> JsAny?)?
-    override var onkeyup: ((KeyboardEvent) -> JsAny?)?
-    override var onload: ((Event) -> JsAny?)?
-    override var onloadeddata: ((Event) -> JsAny?)?
-    override var onloadedmetadata: ((Event) -> JsAny?)?
-    override var onloadend: ((Event) -> JsAny?)?
-    override var onloadstart: ((ProgressEvent) -> JsAny?)?
-    override var onmousedown: ((MouseEvent) -> JsAny?)?
-    override var onmouseenter: ((MouseEvent) -> JsAny?)?
-    override var onmouseleave: ((MouseEvent) -> JsAny?)?
-    override var onmousemove: ((MouseEvent) -> JsAny?)?
-    override var onmouseout: ((MouseEvent) -> JsAny?)?
-    override var onmouseover: ((MouseEvent) -> JsAny?)?
-    override var onmouseup: ((MouseEvent) -> JsAny?)?
-    override var onwheel: ((WheelEvent) -> JsAny?)?
-    override var onpause: ((Event) -> JsAny?)?
-    override var onplay: ((Event) -> JsAny?)?
-    override var onplaying: ((Event) -> JsAny?)?
-    override var onprogress: ((ProgressEvent) -> JsAny?)?
-    override var onratechange: ((Event) -> JsAny?)?
-    override var onreset: ((Event) -> JsAny?)?
-    override var onresize: ((Event) -> JsAny?)?
-    override var onscroll: ((Event) -> JsAny?)?
-    override var onseeked: ((Event) -> JsAny?)?
-    override var onseeking: ((Event) -> JsAny?)?
-    override var onselect: ((Event) -> JsAny?)?
-    override var onshow: ((Event) -> JsAny?)?
-    override var onstalled: ((Event) -> JsAny?)?
-    override var onsubmit: ((Event) -> JsAny?)?
-    override var onsuspend: ((Event) -> JsAny?)?
-    override var ontimeupdate: ((Event) -> JsAny?)?
-    override var ontoggle: ((Event) -> JsAny?)?
-    override var onvolumechange: ((Event) -> JsAny?)?
-    override var onwaiting: ((Event) -> JsAny?)?
-    override var ongotpointercapture: ((PointerEvent) -> JsAny?)?
-    override var onlostpointercapture: ((PointerEvent) -> JsAny?)?
-    override var onpointerdown: ((PointerEvent) -> JsAny?)?
-    override var onpointermove: ((PointerEvent) -> JsAny?)?
-    override var onpointerup: ((PointerEvent) -> JsAny?)?
-    override var onpointercancel: ((PointerEvent) -> JsAny?)?
-    override var onpointerover: ((PointerEvent) -> JsAny?)?
-    override var onpointerout: ((PointerEvent) -> JsAny?)?
-    override var onpointerenter: ((PointerEvent) -> JsAny?)?
-    override var onpointerleave: ((PointerEvent) -> JsAny?)?
-    override var oncopy: ((ClipboardEvent) -> JsAny?)?
-    override var oncut: ((ClipboardEvent) -> JsAny?)?
-    override var onpaste: ((ClipboardEvent) -> JsAny?)?
+    override var onfocus: ((FocusEvent) -> Unit)?
+    override var oninput: ((InputEvent) -> Unit)?
+    override var oninvalid: ((Event) -> Unit)?
+    override var onkeydown: ((KeyboardEvent) -> Unit)?
+    override var onkeypress: ((KeyboardEvent) -> Unit)?
+    override var onkeyup: ((KeyboardEvent) -> Unit)?
+    override var onload: ((Event) -> Unit)?
+    override var onloadeddata: ((Event) -> Unit)?
+    override var onloadedmetadata: ((Event) -> Unit)?
+    override var onloadend: ((Event) -> Unit)?
+    override var onloadstart: ((ProgressEvent) -> Unit)?
+    override var onmousedown: ((MouseEvent) -> Unit)?
+    override var onmouseenter: ((MouseEvent) -> Unit)?
+    override var onmouseleave: ((MouseEvent) -> Unit)?
+    override var onmousemove: ((MouseEvent) -> Unit)?
+    override var onmouseout: ((MouseEvent) -> Unit)?
+    override var onmouseover: ((MouseEvent) -> Unit)?
+    override var onmouseup: ((MouseEvent) -> Unit)?
+    override var onwheel: ((WheelEvent) -> Unit)?
+    override var onpause: ((Event) -> Unit)?
+    override var onplay: ((Event) -> Unit)?
+    override var onplaying: ((Event) -> Unit)?
+    override var onprogress: ((ProgressEvent) -> Unit)?
+    override var onratechange: ((Event) -> Unit)?
+    override var onreset: ((Event) -> Unit)?
+    override var onresize: ((Event) -> Unit)?
+    override var onscroll: ((Event) -> Unit)?
+    override var onseeked: ((Event) -> Unit)?
+    override var onseeking: ((Event) -> Unit)?
+    override var onselect: ((Event) -> Unit)?
+    override var onshow: ((Event) -> Unit)?
+    override var onstalled: ((Event) -> Unit)?
+    override var onsubmit: ((Event) -> Unit)?
+    override var onsuspend: ((Event) -> Unit)?
+    override var ontimeupdate: ((Event) -> Unit)?
+    override var ontoggle: ((Event) -> Unit)?
+    override var onvolumechange: ((Event) -> Unit)?
+    override var onwaiting: ((Event) -> Unit)?
+    override var ongotpointercapture: ((PointerEvent) -> Unit)?
+    override var onlostpointercapture: ((PointerEvent) -> Unit)?
+    override var onpointerdown: ((PointerEvent) -> Unit)?
+    override var onpointermove: ((PointerEvent) -> Unit)?
+    override var onpointerup: ((PointerEvent) -> Unit)?
+    override var onpointercancel: ((PointerEvent) -> Unit)?
+    override var onpointerover: ((PointerEvent) -> Unit)?
+    override var onpointerout: ((PointerEvent) -> Unit)?
+    override var onpointerenter: ((PointerEvent) -> Unit)?
+    override var onpointerleave: ((PointerEvent) -> Unit)?
+    override var oncopy: ((ClipboardEvent) -> Unit)?
+    override var oncut: ((ClipboardEvent) -> Unit)?
+    override var onpaste: ((ClipboardEvent) -> Unit)?
     override var contentEditable: String
     override val isContentEditable: Boolean
     override val style: CSSStyleDeclaration
@@ -5898,80 +5898,80 @@ public external open class Image(width: Int = definedExternally, height: Int = d
 }
 
 public external open class Audio(src: String = definedExternally) : HTMLAudioElement, JsAny {
-    override var onabort: ((Event) -> JsAny?)?
-    override var onblur: ((FocusEvent) -> JsAny?)?
-    override var oncancel: ((Event) -> JsAny?)?
-    override var oncanplay: ((Event) -> JsAny?)?
-    override var oncanplaythrough: ((Event) -> JsAny?)?
-    override var onchange: ((Event) -> JsAny?)?
-    override var onclick: ((MouseEvent) -> JsAny?)?
-    override var onclose: ((Event) -> JsAny?)?
-    override var oncontextmenu: ((MouseEvent) -> JsAny?)?
-    override var oncuechange: ((Event) -> JsAny?)?
-    override var ondblclick: ((MouseEvent) -> JsAny?)?
-    override var ondrag: ((DragEvent) -> JsAny?)?
-    override var ondragend: ((DragEvent) -> JsAny?)?
-    override var ondragenter: ((DragEvent) -> JsAny?)?
-    override var ondragexit: ((DragEvent) -> JsAny?)?
-    override var ondragleave: ((DragEvent) -> JsAny?)?
-    override var ondragover: ((DragEvent) -> JsAny?)?
-    override var ondragstart: ((DragEvent) -> JsAny?)?
-    override var ondrop: ((DragEvent) -> JsAny?)?
-    override var ondurationchange: ((Event) -> JsAny?)?
-    override var onemptied: ((Event) -> JsAny?)?
-    override var onended: ((Event) -> JsAny?)?
+    override var onabort: ((Event) -> Unit)?
+    override var onblur: ((FocusEvent) -> Unit)?
+    override var oncancel: ((Event) -> Unit)?
+    override var oncanplay: ((Event) -> Unit)?
+    override var oncanplaythrough: ((Event) -> Unit)?
+    override var onchange: ((Event) -> Unit)?
+    override var onclick: ((MouseEvent) -> Unit)?
+    override var onclose: ((Event) -> Unit)?
+    override var oncontextmenu: ((MouseEvent) -> Unit)?
+    override var oncuechange: ((Event) -> Unit)?
+    override var ondblclick: ((MouseEvent) -> Unit)?
+    override var ondrag: ((DragEvent) -> Unit)?
+    override var ondragend: ((DragEvent) -> Unit)?
+    override var ondragenter: ((DragEvent) -> Unit)?
+    override var ondragexit: ((DragEvent) -> Unit)?
+    override var ondragleave: ((DragEvent) -> Unit)?
+    override var ondragover: ((DragEvent) -> Unit)?
+    override var ondragstart: ((DragEvent) -> Unit)?
+    override var ondrop: ((DragEvent) -> Unit)?
+    override var ondurationchange: ((Event) -> Unit)?
+    override var onemptied: ((Event) -> Unit)?
+    override var onended: ((Event) -> Unit)?
     override var onerror: ((JsAny?, String, Int, Int, JsAny?) -> JsAny?)?
-    override var onfocus: ((FocusEvent) -> JsAny?)?
-    override var oninput: ((InputEvent) -> JsAny?)?
-    override var oninvalid: ((Event) -> JsAny?)?
-    override var onkeydown: ((KeyboardEvent) -> JsAny?)?
-    override var onkeypress: ((KeyboardEvent) -> JsAny?)?
-    override var onkeyup: ((KeyboardEvent) -> JsAny?)?
-    override var onload: ((Event) -> JsAny?)?
-    override var onloadeddata: ((Event) -> JsAny?)?
-    override var onloadedmetadata: ((Event) -> JsAny?)?
-    override var onloadend: ((Event) -> JsAny?)?
-    override var onloadstart: ((ProgressEvent) -> JsAny?)?
-    override var onmousedown: ((MouseEvent) -> JsAny?)?
-    override var onmouseenter: ((MouseEvent) -> JsAny?)?
-    override var onmouseleave: ((MouseEvent) -> JsAny?)?
-    override var onmousemove: ((MouseEvent) -> JsAny?)?
-    override var onmouseout: ((MouseEvent) -> JsAny?)?
-    override var onmouseover: ((MouseEvent) -> JsAny?)?
-    override var onmouseup: ((MouseEvent) -> JsAny?)?
-    override var onwheel: ((WheelEvent) -> JsAny?)?
-    override var onpause: ((Event) -> JsAny?)?
-    override var onplay: ((Event) -> JsAny?)?
-    override var onplaying: ((Event) -> JsAny?)?
-    override var onprogress: ((ProgressEvent) -> JsAny?)?
-    override var onratechange: ((Event) -> JsAny?)?
-    override var onreset: ((Event) -> JsAny?)?
-    override var onresize: ((Event) -> JsAny?)?
-    override var onscroll: ((Event) -> JsAny?)?
-    override var onseeked: ((Event) -> JsAny?)?
-    override var onseeking: ((Event) -> JsAny?)?
-    override var onselect: ((Event) -> JsAny?)?
-    override var onshow: ((Event) -> JsAny?)?
-    override var onstalled: ((Event) -> JsAny?)?
-    override var onsubmit: ((Event) -> JsAny?)?
-    override var onsuspend: ((Event) -> JsAny?)?
-    override var ontimeupdate: ((Event) -> JsAny?)?
-    override var ontoggle: ((Event) -> JsAny?)?
-    override var onvolumechange: ((Event) -> JsAny?)?
-    override var onwaiting: ((Event) -> JsAny?)?
-    override var ongotpointercapture: ((PointerEvent) -> JsAny?)?
-    override var onlostpointercapture: ((PointerEvent) -> JsAny?)?
-    override var onpointerdown: ((PointerEvent) -> JsAny?)?
-    override var onpointermove: ((PointerEvent) -> JsAny?)?
-    override var onpointerup: ((PointerEvent) -> JsAny?)?
-    override var onpointercancel: ((PointerEvent) -> JsAny?)?
-    override var onpointerover: ((PointerEvent) -> JsAny?)?
-    override var onpointerout: ((PointerEvent) -> JsAny?)?
-    override var onpointerenter: ((PointerEvent) -> JsAny?)?
-    override var onpointerleave: ((PointerEvent) -> JsAny?)?
-    override var oncopy: ((ClipboardEvent) -> JsAny?)?
-    override var oncut: ((ClipboardEvent) -> JsAny?)?
-    override var onpaste: ((ClipboardEvent) -> JsAny?)?
+    override var onfocus: ((FocusEvent) -> Unit)?
+    override var oninput: ((InputEvent) -> Unit)?
+    override var oninvalid: ((Event) -> Unit)?
+    override var onkeydown: ((KeyboardEvent) -> Unit)?
+    override var onkeypress: ((KeyboardEvent) -> Unit)?
+    override var onkeyup: ((KeyboardEvent) -> Unit)?
+    override var onload: ((Event) -> Unit)?
+    override var onloadeddata: ((Event) -> Unit)?
+    override var onloadedmetadata: ((Event) -> Unit)?
+    override var onloadend: ((Event) -> Unit)?
+    override var onloadstart: ((ProgressEvent) -> Unit)?
+    override var onmousedown: ((MouseEvent) -> Unit)?
+    override var onmouseenter: ((MouseEvent) -> Unit)?
+    override var onmouseleave: ((MouseEvent) -> Unit)?
+    override var onmousemove: ((MouseEvent) -> Unit)?
+    override var onmouseout: ((MouseEvent) -> Unit)?
+    override var onmouseover: ((MouseEvent) -> Unit)?
+    override var onmouseup: ((MouseEvent) -> Unit)?
+    override var onwheel: ((WheelEvent) -> Unit)?
+    override var onpause: ((Event) -> Unit)?
+    override var onplay: ((Event) -> Unit)?
+    override var onplaying: ((Event) -> Unit)?
+    override var onprogress: ((ProgressEvent) -> Unit)?
+    override var onratechange: ((Event) -> Unit)?
+    override var onreset: ((Event) -> Unit)?
+    override var onresize: ((Event) -> Unit)?
+    override var onscroll: ((Event) -> Unit)?
+    override var onseeked: ((Event) -> Unit)?
+    override var onseeking: ((Event) -> Unit)?
+    override var onselect: ((Event) -> Unit)?
+    override var onshow: ((Event) -> Unit)?
+    override var onstalled: ((Event) -> Unit)?
+    override var onsubmit: ((Event) -> Unit)?
+    override var onsuspend: ((Event) -> Unit)?
+    override var ontimeupdate: ((Event) -> Unit)?
+    override var ontoggle: ((Event) -> Unit)?
+    override var onvolumechange: ((Event) -> Unit)?
+    override var onwaiting: ((Event) -> Unit)?
+    override var ongotpointercapture: ((PointerEvent) -> Unit)?
+    override var onlostpointercapture: ((PointerEvent) -> Unit)?
+    override var onpointerdown: ((PointerEvent) -> Unit)?
+    override var onpointermove: ((PointerEvent) -> Unit)?
+    override var onpointerup: ((PointerEvent) -> Unit)?
+    override var onpointercancel: ((PointerEvent) -> Unit)?
+    override var onpointerover: ((PointerEvent) -> Unit)?
+    override var onpointerout: ((PointerEvent) -> Unit)?
+    override var onpointerenter: ((PointerEvent) -> Unit)?
+    override var onpointerleave: ((PointerEvent) -> Unit)?
+    override var oncopy: ((ClipboardEvent) -> Unit)?
+    override var oncut: ((ClipboardEvent) -> Unit)?
+    override var onpaste: ((ClipboardEvent) -> Unit)?
     override var contentEditable: String
     override val isContentEditable: Boolean
     override val style: CSSStyleDeclaration
@@ -6030,80 +6030,80 @@ public external open class Audio(src: String = definedExternally) : HTMLAudioEle
  * Exposes the JavaScript [Option](https://developer.mozilla.org/en/docs/Web/API/Option) to Kotlin
  */
 public external open class Option(text: String = definedExternally, value: String = definedExternally, defaultSelected: Boolean = definedExternally, selected: Boolean = definedExternally) : HTMLOptionElement, JsAny {
-    override var onabort: ((Event) -> JsAny?)?
-    override var onblur: ((FocusEvent) -> JsAny?)?
-    override var oncancel: ((Event) -> JsAny?)?
-    override var oncanplay: ((Event) -> JsAny?)?
-    override var oncanplaythrough: ((Event) -> JsAny?)?
-    override var onchange: ((Event) -> JsAny?)?
-    override var onclick: ((MouseEvent) -> JsAny?)?
-    override var onclose: ((Event) -> JsAny?)?
-    override var oncontextmenu: ((MouseEvent) -> JsAny?)?
-    override var oncuechange: ((Event) -> JsAny?)?
-    override var ondblclick: ((MouseEvent) -> JsAny?)?
-    override var ondrag: ((DragEvent) -> JsAny?)?
-    override var ondragend: ((DragEvent) -> JsAny?)?
-    override var ondragenter: ((DragEvent) -> JsAny?)?
-    override var ondragexit: ((DragEvent) -> JsAny?)?
-    override var ondragleave: ((DragEvent) -> JsAny?)?
-    override var ondragover: ((DragEvent) -> JsAny?)?
-    override var ondragstart: ((DragEvent) -> JsAny?)?
-    override var ondrop: ((DragEvent) -> JsAny?)?
-    override var ondurationchange: ((Event) -> JsAny?)?
-    override var onemptied: ((Event) -> JsAny?)?
-    override var onended: ((Event) -> JsAny?)?
+    override var onabort: ((Event) -> Unit)?
+    override var onblur: ((FocusEvent) -> Unit)?
+    override var oncancel: ((Event) -> Unit)?
+    override var oncanplay: ((Event) -> Unit)?
+    override var oncanplaythrough: ((Event) -> Unit)?
+    override var onchange: ((Event) -> Unit)?
+    override var onclick: ((MouseEvent) -> Unit)?
+    override var onclose: ((Event) -> Unit)?
+    override var oncontextmenu: ((MouseEvent) -> Unit)?
+    override var oncuechange: ((Event) -> Unit)?
+    override var ondblclick: ((MouseEvent) -> Unit)?
+    override var ondrag: ((DragEvent) -> Unit)?
+    override var ondragend: ((DragEvent) -> Unit)?
+    override var ondragenter: ((DragEvent) -> Unit)?
+    override var ondragexit: ((DragEvent) -> Unit)?
+    override var ondragleave: ((DragEvent) -> Unit)?
+    override var ondragover: ((DragEvent) -> Unit)?
+    override var ondragstart: ((DragEvent) -> Unit)?
+    override var ondrop: ((DragEvent) -> Unit)?
+    override var ondurationchange: ((Event) -> Unit)?
+    override var onemptied: ((Event) -> Unit)?
+    override var onended: ((Event) -> Unit)?
     override var onerror: ((JsAny?, String, Int, Int, JsAny?) -> JsAny?)?
-    override var onfocus: ((FocusEvent) -> JsAny?)?
-    override var oninput: ((InputEvent) -> JsAny?)?
-    override var oninvalid: ((Event) -> JsAny?)?
-    override var onkeydown: ((KeyboardEvent) -> JsAny?)?
-    override var onkeypress: ((KeyboardEvent) -> JsAny?)?
-    override var onkeyup: ((KeyboardEvent) -> JsAny?)?
-    override var onload: ((Event) -> JsAny?)?
-    override var onloadeddata: ((Event) -> JsAny?)?
-    override var onloadedmetadata: ((Event) -> JsAny?)?
-    override var onloadend: ((Event) -> JsAny?)?
-    override var onloadstart: ((ProgressEvent) -> JsAny?)?
-    override var onmousedown: ((MouseEvent) -> JsAny?)?
-    override var onmouseenter: ((MouseEvent) -> JsAny?)?
-    override var onmouseleave: ((MouseEvent) -> JsAny?)?
-    override var onmousemove: ((MouseEvent) -> JsAny?)?
-    override var onmouseout: ((MouseEvent) -> JsAny?)?
-    override var onmouseover: ((MouseEvent) -> JsAny?)?
-    override var onmouseup: ((MouseEvent) -> JsAny?)?
-    override var onwheel: ((WheelEvent) -> JsAny?)?
-    override var onpause: ((Event) -> JsAny?)?
-    override var onplay: ((Event) -> JsAny?)?
-    override var onplaying: ((Event) -> JsAny?)?
-    override var onprogress: ((ProgressEvent) -> JsAny?)?
-    override var onratechange: ((Event) -> JsAny?)?
-    override var onreset: ((Event) -> JsAny?)?
-    override var onresize: ((Event) -> JsAny?)?
-    override var onscroll: ((Event) -> JsAny?)?
-    override var onseeked: ((Event) -> JsAny?)?
-    override var onseeking: ((Event) -> JsAny?)?
-    override var onselect: ((Event) -> JsAny?)?
-    override var onshow: ((Event) -> JsAny?)?
-    override var onstalled: ((Event) -> JsAny?)?
-    override var onsubmit: ((Event) -> JsAny?)?
-    override var onsuspend: ((Event) -> JsAny?)?
-    override var ontimeupdate: ((Event) -> JsAny?)?
-    override var ontoggle: ((Event) -> JsAny?)?
-    override var onvolumechange: ((Event) -> JsAny?)?
-    override var onwaiting: ((Event) -> JsAny?)?
-    override var ongotpointercapture: ((PointerEvent) -> JsAny?)?
-    override var onlostpointercapture: ((PointerEvent) -> JsAny?)?
-    override var onpointerdown: ((PointerEvent) -> JsAny?)?
-    override var onpointermove: ((PointerEvent) -> JsAny?)?
-    override var onpointerup: ((PointerEvent) -> JsAny?)?
-    override var onpointercancel: ((PointerEvent) -> JsAny?)?
-    override var onpointerover: ((PointerEvent) -> JsAny?)?
-    override var onpointerout: ((PointerEvent) -> JsAny?)?
-    override var onpointerenter: ((PointerEvent) -> JsAny?)?
-    override var onpointerleave: ((PointerEvent) -> JsAny?)?
-    override var oncopy: ((ClipboardEvent) -> JsAny?)?
-    override var oncut: ((ClipboardEvent) -> JsAny?)?
-    override var onpaste: ((ClipboardEvent) -> JsAny?)?
+    override var onfocus: ((FocusEvent) -> Unit)?
+    override var oninput: ((InputEvent) -> Unit)?
+    override var oninvalid: ((Event) -> Unit)?
+    override var onkeydown: ((KeyboardEvent) -> Unit)?
+    override var onkeypress: ((KeyboardEvent) -> Unit)?
+    override var onkeyup: ((KeyboardEvent) -> Unit)?
+    override var onload: ((Event) -> Unit)?
+    override var onloadeddata: ((Event) -> Unit)?
+    override var onloadedmetadata: ((Event) -> Unit)?
+    override var onloadend: ((Event) -> Unit)?
+    override var onloadstart: ((ProgressEvent) -> Unit)?
+    override var onmousedown: ((MouseEvent) -> Unit)?
+    override var onmouseenter: ((MouseEvent) -> Unit)?
+    override var onmouseleave: ((MouseEvent) -> Unit)?
+    override var onmousemove: ((MouseEvent) -> Unit)?
+    override var onmouseout: ((MouseEvent) -> Unit)?
+    override var onmouseover: ((MouseEvent) -> Unit)?
+    override var onmouseup: ((MouseEvent) -> Unit)?
+    override var onwheel: ((WheelEvent) -> Unit)?
+    override var onpause: ((Event) -> Unit)?
+    override var onplay: ((Event) -> Unit)?
+    override var onplaying: ((Event) -> Unit)?
+    override var onprogress: ((ProgressEvent) -> Unit)?
+    override var onratechange: ((Event) -> Unit)?
+    override var onreset: ((Event) -> Unit)?
+    override var onresize: ((Event) -> Unit)?
+    override var onscroll: ((Event) -> Unit)?
+    override var onseeked: ((Event) -> Unit)?
+    override var onseeking: ((Event) -> Unit)?
+    override var onselect: ((Event) -> Unit)?
+    override var onshow: ((Event) -> Unit)?
+    override var onstalled: ((Event) -> Unit)?
+    override var onsubmit: ((Event) -> Unit)?
+    override var onsuspend: ((Event) -> Unit)?
+    override var ontimeupdate: ((Event) -> Unit)?
+    override var ontoggle: ((Event) -> Unit)?
+    override var onvolumechange: ((Event) -> Unit)?
+    override var onwaiting: ((Event) -> Unit)?
+    override var ongotpointercapture: ((PointerEvent) -> Unit)?
+    override var onlostpointercapture: ((PointerEvent) -> Unit)?
+    override var onpointerdown: ((PointerEvent) -> Unit)?
+    override var onpointermove: ((PointerEvent) -> Unit)?
+    override var onpointerup: ((PointerEvent) -> Unit)?
+    override var onpointercancel: ((PointerEvent) -> Unit)?
+    override var onpointerover: ((PointerEvent) -> Unit)?
+    override var onpointerout: ((PointerEvent) -> Unit)?
+    override var onpointerenter: ((PointerEvent) -> Unit)?
+    override var onpointerleave: ((PointerEvent) -> Unit)?
+    override var oncopy: ((ClipboardEvent) -> Unit)?
+    override var oncut: ((ClipboardEvent) -> Unit)?
+    override var onpaste: ((ClipboardEvent) -> Unit)?
     override var contentEditable: String
     override val isContentEditable: Boolean
     override val style: CSSStyleDeclaration

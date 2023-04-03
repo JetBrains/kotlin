@@ -17,8 +17,8 @@ import org.w3c.workers.*
  * Exposes the JavaScript [Notification](https://developer.mozilla.org/en/docs/Web/API/Notification) to Kotlin
  */
 public external open class Notification(title: String, options: NotificationOptions = definedExternally) : EventTarget, JsAny {
-    var onclick: ((MouseEvent) -> JsAny?)?
-    var onerror: ((Event) -> JsAny?)?
+    var onclick: ((MouseEvent) -> Unit)?
+    var onerror: ((Event) -> Unit)?
     open val title: String
     open val dir: NotificationDirection
     open val lang: String

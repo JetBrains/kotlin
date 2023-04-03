@@ -70,12 +70,12 @@ public external open class FileReader : EventTarget, JsAny {
     open val readyState: Short
     open val result: JsAny?
     open val error: JsAny?
-    var onloadstart: ((ProgressEvent) -> JsAny?)?
-    var onprogress: ((ProgressEvent) -> JsAny?)?
-    var onload: ((Event) -> JsAny?)?
-    var onabort: ((Event) -> JsAny?)?
-    var onerror: ((Event) -> JsAny?)?
-    var onloadend: ((Event) -> JsAny?)?
+    var onloadstart: ((ProgressEvent) -> Unit)?
+    var onprogress: ((ProgressEvent) -> Unit)?
+    var onload: ((Event) -> Unit)?
+    var onabort: ((Event) -> Unit)?
+    var onerror: ((Event) -> Unit)?
+    var onloadend: ((Event) -> Unit)?
     fun readAsArrayBuffer(blob: Blob)
     fun readAsBinaryString(blob: Blob)
     fun readAsText(blob: Blob, label: String = definedExternally)

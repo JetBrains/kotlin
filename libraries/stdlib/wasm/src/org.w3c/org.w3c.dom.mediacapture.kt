@@ -21,8 +21,8 @@ public external open class MediaStream() : EventTarget, MediaProvider, JsAny {
     constructor(tracks: JsArray<MediaStreamTrack>)
     open val id: String
     open val active: Boolean
-    var onaddtrack: ((MediaStreamTrackEvent) -> JsAny?)?
-    var onremovetrack: ((MediaStreamTrackEvent) -> JsAny?)?
+    var onaddtrack: ((MediaStreamTrackEvent) -> Unit)?
+    var onremovetrack: ((MediaStreamTrackEvent) -> Unit)?
     fun getAudioTracks(): JsArray<MediaStreamTrack>
     fun getVideoTracks(): JsArray<MediaStreamTrack>
     fun getTracks(): JsArray<MediaStreamTrack>
@@ -41,11 +41,11 @@ public external abstract class MediaStreamTrack : EventTarget, JsAny {
     open val label: String
     open var enabled: Boolean
     open val muted: Boolean
-    open var onmute: ((Event) -> JsAny?)?
-    open var onunmute: ((Event) -> JsAny?)?
+    open var onmute: ((Event) -> Unit)?
+    open var onunmute: ((Event) -> Unit)?
     open val readyState: MediaStreamTrackState
-    open var onended: ((Event) -> JsAny?)?
-    open var onoverconstrained: ((Event) -> JsAny?)?
+    open var onended: ((Event) -> Unit)?
+    open var onoverconstrained: ((Event) -> Unit)?
     fun clone(): MediaStreamTrack
     fun stop()
     fun getCapabilities(): MediaTrackCapabilities
@@ -333,7 +333,7 @@ public fun OverconstrainedErrorEventInit(error: JsAny? = null, bubbles: Boolean?
  * Exposes the JavaScript [MediaDevices](https://developer.mozilla.org/en/docs/Web/API/MediaDevices) to Kotlin
  */
 public external abstract class MediaDevices : EventTarget, JsAny {
-    open var ondevicechange: ((Event) -> JsAny?)?
+    open var ondevicechange: ((Event) -> Unit)?
     fun enumerateDevices(): Promise<JsArray<MediaDeviceInfo>>
     fun getSupportedConstraints(): MediaTrackSupportedConstraints
     fun getUserMedia(constraints: MediaStreamConstraints = definedExternally): Promise<MediaStream>
@@ -370,7 +370,7 @@ public external interface MediaStreamConstraints : JsAny {
 public fun MediaStreamConstraints(video: JsAny? = false.toJsBoolean(), audio: JsAny? = false.toJsBoolean()): MediaStreamConstraints { js("return { video, audio };") }
 
 public external interface ConstrainablePattern : JsAny {
-    var onoverconstrained: ((Event) -> JsAny?)?
+    var onoverconstrained: ((Event) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
     fun getCapabilities(): Capabilities
