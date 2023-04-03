@@ -7,9 +7,6 @@ plugins {
     kotlin("multiplatform")
 }
 
-java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(8))
-}
 
 android {
     compileSdk = 31
@@ -17,7 +14,6 @@ android {
         minSdk = 31
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
-    namespace = "org.jetbrains.kotlin.sample"
 
     android.flavorDimensions.add("market")
     android.flavorDimensions.add("price")

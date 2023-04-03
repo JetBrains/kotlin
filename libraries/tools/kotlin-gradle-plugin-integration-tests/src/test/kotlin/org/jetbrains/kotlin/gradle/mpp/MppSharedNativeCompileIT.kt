@@ -15,10 +15,6 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.fail
 
 @MppGradlePluginTests
-@GradleTestVersions(
-    maxVersion = TestVersions.Gradle.NEXT_RELEASE,
-    additionalVersions = [TestVersions.Gradle.MAX_SUPPORTED]
-)
 @DisplayName("Tests for multiplatform | shared native compilations")
 class MppSharedNativeCompileIT : KGPBaseTest() {
     /**

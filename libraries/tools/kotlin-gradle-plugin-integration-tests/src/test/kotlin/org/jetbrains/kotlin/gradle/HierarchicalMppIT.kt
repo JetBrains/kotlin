@@ -31,10 +31,6 @@ import kotlin.test.assertTrue
 import kotlin.test.fail
 
 @MppGradlePluginTests
-@GradleTestVersions(
-    maxVersion = TestVersions.Gradle.NEXT_RELEASE,
-    additionalVersions = [TestVersions.Gradle.MAX_SUPPORTED]
-)
 @DisplayName("Hierarchical multiplatform")
 open class HierarchicalMppIT : KGPBaseTest() {
 

@@ -30,10 +30,6 @@ import kotlin.test.assertEquals
 import kotlin.test.fail
 
 @MppGradlePluginTests
-@GradleTestVersions(
-    maxVersion = TestVersions.Gradle.NEXT_RELEASE,
-    additionalVersions = [TestVersions.Gradle.MAX_SUPPORTED]
-)
 @DisplayName("Multiplatform IDE dependency resolution")
 class MppIdeDependencyResolutionIT : KGPBaseTest() {
     @GradleTest

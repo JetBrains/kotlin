@@ -5,13 +5,8 @@ apply plugin: 'maven-publish'
 group 'com.example'
 version '1.0'
 
-java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(8))
-}
-
 android {
     compileSdkVersion 27
-    namespace 'app.example.com.lib'
 
     defaultConfig {
         minSdkVersion 21
