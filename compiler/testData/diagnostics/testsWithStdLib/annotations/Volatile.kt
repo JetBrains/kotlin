@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_ANONYMOUS_PARAMETER
 // !API_VERSION: 1.9
 // !LANGUAGE: +MultiPlatformProjects
@@ -10,15 +11,15 @@ import kotlin.properties.Delegates
 
 @OptIn(ExperimentalStdlibApi::class)
 class ConcurrentVolatile {
-    <!VOLATILE_ON_VALUE, VOLATILE_ON_VALUE{JVM}!>@Volatile<!> val x = 0
+    <!VOLATILE_ON_VALUE!>@Volatile<!> val x = 0
     // ok
     @Volatile var y = 1
 
-    <!VOLATILE_ON_DELEGATE, VOLATILE_ON_DELEGATE{JVM}!>@delegate:Volatile<!> var z: String by Delegates.observable("?") { prop, old, new -> old.hashCode() }
+    <!VOLATILE_ON_DELEGATE!>@delegate:Volatile<!> var z: String by Delegates.observable("?") { prop, old, new -> old.hashCode() }
 
-    <!VOLATILE_ON_VALUE, VOLATILE_ON_VALUE{JVM}!>@field:Volatile<!> val w = 2
+    <!VOLATILE_ON_VALUE!>@field:Volatile<!> val w = 2
 
-    <!WRONG_ANNOTATION_TARGET, WRONG_ANNOTATION_TARGET{JVM}!>@Volatile<!>
+    <!WRONG_ANNOTATION_TARGET!>@Volatile<!>
     var noBacking: String
         get() = ""
         set(value) {}

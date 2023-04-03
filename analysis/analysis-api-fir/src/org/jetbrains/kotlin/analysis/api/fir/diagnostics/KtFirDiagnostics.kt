@@ -739,6 +739,14 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val symbols: List<KtSymbol>
     }
 
+    abstract class VolatileOnValue : KtFirDiagnostic<KtAnnotationEntry>() {
+        override val diagnosticClass get() = VolatileOnValue::class
+    }
+
+    abstract class VolatileOnDelegate : KtFirDiagnostic<KtAnnotationEntry>() {
+        override val diagnosticClass get() = VolatileOnDelegate::class
+    }
+
     abstract class WrongJsQualifier : KtFirDiagnostic<KtElement>() {
         override val diagnosticClass get() = WrongJsQualifier::class
     }
@@ -3064,14 +3072,6 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     abstract class StrictfpOnClass : KtFirDiagnostic<KtAnnotationEntry>() {
         override val diagnosticClass get() = StrictfpOnClass::class
-    }
-
-    abstract class VolatileOnValue : KtFirDiagnostic<KtAnnotationEntry>() {
-        override val diagnosticClass get() = VolatileOnValue::class
-    }
-
-    abstract class VolatileOnDelegate : KtFirDiagnostic<KtAnnotationEntry>() {
-        override val diagnosticClass get() = VolatileOnDelegate::class
     }
 
     abstract class SynchronizedOnAbstract : KtFirDiagnostic<KtAnnotationEntry>() {

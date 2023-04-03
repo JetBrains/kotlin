@@ -178,6 +178,12 @@ fun List<FirAnnotation>.getAnnotationsByClassId(classId: ClassId, session: FirSe
     }
 }
 
+fun List<FirAnnotation>.getAnnotationByClassIds(classIds: Collection<ClassId>, session: FirSession): FirAnnotation? {
+    return firstOrNull {
+        it.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.fullyExpandedType(session)?.lookupTag?.classId in classIds
+    }
+}
+
 inline fun <T> List<FirAnnotation>.mapAnnotationsWithClassIdTo(
     classId: ClassId,
     destination: MutableCollection<T>,

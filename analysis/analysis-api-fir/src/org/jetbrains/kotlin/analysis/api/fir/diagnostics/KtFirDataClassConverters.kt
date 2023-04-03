@@ -1023,6 +1023,18 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.VOLATILE_ON_VALUE) { firDiagnostic ->
+        VolatileOnValueImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.VOLATILE_ON_DELEGATE) { firDiagnostic ->
+        VolatileOnDelegateImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJsErrors.WRONG_JS_QUALIFIER) { firDiagnostic ->
         WrongJsQualifierImpl(
             firDiagnostic as KtPsiDiagnostic,
@@ -4396,18 +4408,6 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     }
     add(FirJvmErrors.STRICTFP_ON_CLASS) { firDiagnostic ->
         StrictfpOnClassImpl(
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
-    add(FirJvmErrors.VOLATILE_ON_VALUE) { firDiagnostic ->
-        VolatileOnValueImpl(
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
-    add(FirJvmErrors.VOLATILE_ON_DELEGATE) { firDiagnostic ->
-        VolatileOnDelegateImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )

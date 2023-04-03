@@ -54,8 +54,6 @@ object FirJvmErrors {
 
     // annotations
     val STRICTFP_ON_CLASS by error0<KtAnnotationEntry>()
-    val VOLATILE_ON_VALUE by error0<KtAnnotationEntry>()
-    val VOLATILE_ON_DELEGATE by error0<KtAnnotationEntry>()
     val SYNCHRONIZED_ON_ABSTRACT by error0<KtAnnotationEntry>()
     val SYNCHRONIZED_IN_INTERFACE by error0<KtAnnotationEntry>()
     val SYNCHRONIZED_ON_INLINE by warning0<KtAnnotationEntry>()

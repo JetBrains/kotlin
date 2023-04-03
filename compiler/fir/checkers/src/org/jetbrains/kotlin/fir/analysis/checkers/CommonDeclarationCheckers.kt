@@ -76,6 +76,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirTopLevelPropertiesChecker,
             FirLocalExtensionPropertyChecker,
             ContractSyntaxV2PropertyChecker,
+            FirVolatileAnnotationChecker,
         )
 
     override val backingFieldCheckers: Set<FirBackingFieldChecker>
