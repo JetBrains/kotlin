@@ -13,7 +13,7 @@ import genericWithConstraint = JS_TESTS.foo.genericWithConstraint;
 import genericWithMultipleConstraints = JS_TESTS.foo.genericWithMultipleConstraints;
 import formatList = JS_TESTS.foo.formatList;
 import createList = JS_TESTS.foo.createList;
-import defaultParametersAtTheBegining = JS_TESTS.foo.defaultParametersAtTheBegining;
+import defaultParametersAtTheBeginning = JS_TESTS.foo.defaultParametersAtTheBeginning;
 import nonDefaultParametersInBetween = JS_TESTS.foo.nonDefaultParameterInBetween;
 function assert(condition: boolean) {
     if (!condition) {
@@ -59,8 +59,8 @@ function box(): string {
 
     assert(formatList(createList()) === "1, 2, 3")
 
-    assert(defaultParametersAtTheBegining("A", "B") == "A and B")
-    assert(defaultParametersAtTheBegining(undefined, "B") == "Default Value and B")
+    assert(defaultParametersAtTheBeginning("A", "B") == "A and B")
+    assert(defaultParametersAtTheBeginning(undefined, "B") == "Default Value and B")
 
     assert(nonDefaultParametersInBetween("A",  "B", "C") == "A and B and C")
     assert(nonDefaultParametersInBetween("A",  "B") == "A and B and Default C")
