@@ -17,7 +17,7 @@ namespace {
 
 ALWAYS_INLINE void SafePointRegular(gc::GC::ThreadData& threadData, size_t weight) noexcept {
     threadData.impl().gcScheduler().OnSafePointRegular(weight);
-    mm::SuspendIfRequested();
+    mm::SafePoint();
 }
 
 } // namespace

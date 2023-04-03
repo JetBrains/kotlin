@@ -98,6 +98,8 @@ public:
 
         Allocator CreateAllocator() noexcept { return Allocator(gc::Allocator(), *this); }
 
+        mm::ThreadData& CommonThreadData() noexcept;
+
     private:
         friend ConcurrentMarkAndSweep;
         ConcurrentMarkAndSweep& gc_;

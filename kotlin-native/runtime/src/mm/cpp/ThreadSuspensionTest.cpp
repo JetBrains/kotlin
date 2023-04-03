@@ -228,7 +228,7 @@ TEST_F(ThreadSuspensionTest, FileInitializationWithSuspend) {
         EXPECT_EQ(GetThreadState(), ThreadState::kRunnable);
         // Give other threads a chance to call CallInitGlobalPossiblyLock.
         std::this_thread::yield();
-        mm::SuspendIfRequested();
+        mm::SafePoint();
     });
 
     for (size_t i = 0; i < kThreadCount; i++) {
@@ -241,7 +241,7 @@ TEST_F(ThreadSuspensionTest, FileInitializationWithSuspend) {
 
             CallInitGlobalPossiblyLock(&lock, initializationFunction);
             // Try to suspend to handle a case when this thread doesn't call the initialization function.
-            mm::SuspendIfRequested();
+            mm::SafePoint();
         });
     }
     waitUntilThreadsAreReady();

@@ -69,8 +69,8 @@ void gc::SameThreadMarkAndSweep::ThreadData::ScheduleAndWaitFullGC() noexcept {
     auto didGC = gc_.PerformFullGC();
 
     if (!didGC) {
-        // If we failed to suspend threads, someone else might be asking to suspend them.
-        mm::SuspendIfRequested();
+        // If we failed to suspend threads, someone else might be asking for some action at safe point
+        mm::SafePoint();
     }
 }
 
@@ -84,8 +84,7 @@ NO_INLINE void gc::SameThreadMarkAndSweep::ThreadData::SafePointSlowPath(Safepoi
         case SafepointFlag::kNone:
             RuntimeAssert(false, "Must've been handled by the caller");
             return;
-        case SafepointFlag::kNeedsSuspend:
-            mm::SuspendIfRequested();
+        case SafepointFlag::kNeedsSuspend:mm::SafePoint();
             return;
         case SafepointFlag::kNeedsGC:
             RuntimeLogDebug({kTagGC}, "Attempt to GC at SafePoint");
