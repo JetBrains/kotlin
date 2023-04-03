@@ -30,7 +30,7 @@ abstract class YarnBasics : NpmApi {
                     if (logger.isDebugEnabled) "--verbose" else ""
                 )
                 .plus(
-                    if (yarn.ignoreScripts) "--ignore-scripts" else ""
+                    if (yarn.ignoreScripts && !isBerryInstalled()) "--ignore-scripts" else ""
                 ).filter { it.isNotEmpty() }
 
             val nodeExecutable = nodeJs.nodeExecutable
@@ -58,5 +58,22 @@ abstract class YarnBasics : NpmApi {
             exec.workingDir = dir
         }
 
+    }
+
+    fun isBerryInstalled(): Boolean {
+        var flag = true
+        runCatching {
+            val osName = System.getProperty("os.name")
+            val command = if (osName != null && osName.startsWith("Windows")) {
+                arrayOf("cmd", "/c", "yarn --version")
+            } else {
+                arrayOf("/bin/sh", "-c", "yarn --version")
+            }
+            val process = Runtime.getRuntime().exec(command)
+            val reader = process.inputStream.bufferedReader()
+            val version = reader.readText()
+            flag = version.isNotEmpty() && !version.startsWith("1.")
+        }
+        return flag
     }
 }
