@@ -86,8 +86,10 @@ fun assertEqualsWithFirstLineDiff(expectedText: String, actualText: String, mess
 
         println("DEBUG INFO!!!")
         println(expectedTextAroundDiff)
+        println(expectedTextAroundDiff.toByteArray().joinToString())
         println("--------------------")
         println(actualTextAroundDiff)
+        println(actualTextAroundDiff.toByteArray().joinToString())
 
         assertEquals(
             expectedTextAroundDiff,
