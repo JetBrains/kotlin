@@ -4262,6 +4262,17 @@ internal class DelegationByDynamicImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.DelegationByDynamic(), KtAbstractFirDiagnostic<KtElement>
 
+internal class SpreadOperatorInDynamicCallImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.SpreadOperatorInDynamicCall(), KtAbstractFirDiagnostic<KtElement>
+
+internal class WrongOperationWithDynamicImpl(
+    override val operation: String,
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.WrongOperationWithDynamic(), KtAbstractFirDiagnostic<KtElement>
+
 internal class SyntaxImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: KtLifetimeToken,

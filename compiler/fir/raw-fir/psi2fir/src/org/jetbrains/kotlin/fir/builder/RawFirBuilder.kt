@@ -2399,11 +2399,13 @@ open class RawFirBuilder(
                     return leftArgument.generateLazyLogicalOperation(rightArgument, operationToken == ANDAND, source)
                 in OperatorConventions.IN_OPERATIONS ->
                     return rightArgument.generateContainsOperation(
-                        leftArgument, operationToken == NOT_IN, source, expression.operationReference.toFirSourceElement(),
+                        leftArgument, operationToken == NOT_IN, source,
+                        expression.operationReference.toFirSourceElement(),
                     )
                 in OperatorConventions.COMPARISON_OPERATIONS ->
                     return leftArgument.generateComparisonExpression(
-                        rightArgument, operationToken, source, expression.operationReference.toFirSourceElement(),
+                        rightArgument, operationToken, source,
+                        expression.operationReference.toFirSourceElement(),
                     )
             }
             val conventionCallName = operationToken.toBinaryName()

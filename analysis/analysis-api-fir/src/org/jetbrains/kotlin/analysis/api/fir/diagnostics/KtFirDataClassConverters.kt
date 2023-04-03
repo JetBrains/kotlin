@@ -5063,6 +5063,19 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirJsErrors.SPREAD_OPERATOR_IN_DYNAMIC_CALL) { firDiagnostic ->
+        SpreadOperatorInDynamicCallImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJsErrors.WRONG_OPERATION_WITH_DYNAMIC) { firDiagnostic ->
+        WrongOperationWithDynamicImpl(
+            firDiagnostic.a,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirSyntaxErrors.SYNTAX) { firDiagnostic ->
         SyntaxImpl(
             firDiagnostic as KtPsiDiagnostic,
