@@ -15,8 +15,12 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.fail
 
 @MppGradlePluginTests
+@GradleTestVersions(
+    maxVersion = TestVersions.Gradle.NEXT_RELEASE,
+    additionalVersions = [TestVersions.Gradle.MAX_SUPPORTED]
+)
 @DisplayName("Tests for multiplatform | shared native compilations")
-class MppSharedNativeCompileIT : MPPBaseTest() {
+class MppSharedNativeCompileIT : KGPBaseTest() {
     /**
      * https://youtrack.jetbrains.com/issue/KT-56205/Shared-Native-Compilation-False-positive-w-Could-not-find-warnings-on-metadata-klibs
      * metadata klib should not contain any dependsOn= in their klib manifest.

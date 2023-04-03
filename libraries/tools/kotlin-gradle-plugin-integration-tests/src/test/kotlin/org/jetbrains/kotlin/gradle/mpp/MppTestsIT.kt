@@ -12,10 +12,10 @@ import org.junit.jupiter.api.DisplayName
 
 @MppGradlePluginTests
 @DisplayName("Tests for multiplatform testing")
-class MppTestsIT : MPPBaseTest() {
+class MppTestsIT : KGPBaseTest() {
     @DisplayName("KT-54634: MPP testing logic is compatible with API changes in Gradle 7.6")
     @GradleTestVersions(
-        maxVersion = BETA_GRADLE,
+        maxVersion = TestVersions.Gradle.NEXT_RELEASE,
         additionalVersions = [TestVersions.Gradle.G_7_5, TestVersions.Gradle.G_7_6]
     )
     @GradleTest

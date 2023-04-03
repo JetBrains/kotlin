@@ -9,7 +9,11 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 
 @MppGradlePluginTests
-class CinteropIT : MPPBaseTest() {
+@GradleTestVersions(
+    maxVersion = TestVersions.Gradle.NEXT_RELEASE,
+    additionalVersions = [TestVersions.Gradle.MAX_SUPPORTED]
+)
+class CinteropIT : KGPBaseTest() {
 
     @GradleTest
     fun `rerun cinterop after a header changing`(gradleVersion: GradleVersion) {
