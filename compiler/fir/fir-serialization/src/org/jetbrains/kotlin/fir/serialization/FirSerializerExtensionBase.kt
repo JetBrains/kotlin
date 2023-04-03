@@ -132,18 +132,6 @@ abstract class FirSerializerExtensionBase(
         for (annotation in this) {
             val annotationWithConstants = when {
                 container == null -> null
-                container is FirPropertyAccessor ->
-                    constValueProvider?.getNewFirAnnotationWithConstantValues(
-                        container.propertySymbol.fir,
-                        annotation,
-                        container,
-                        isGetter = container.isGetter
-                    )
-                container is FirValueParameter ->
-                    constValueProvider?.getNewFirAnnotationWithConstantValues(
-                        container,
-                        annotation,
-                    )
                 extension == protocol.propertyExtensionReceiverAnnotation || extension == protocol.functionExtensionReceiverAnnotation  ->
                     constValueProvider?.getNewFirAnnotationWithConstantValues(
                         container,

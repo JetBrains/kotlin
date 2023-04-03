@@ -49,8 +49,12 @@ class ConstValueProviderImpl(
 
             is FirScript -> components.declarationStorage.getCachedIrScript(firAnnotationContainer)
             is FirConstructor -> components.declarationStorage.getCachedIrConstructor(firAnnotationContainer)
+            is FirPropertyAccessor -> components.declarationStorage.getCachedIrProperty(firAnnotationContainer.propertySymbol.fir)
+                ?.let { if (firAnnotationContainer.isGetter) it.getter else it.setter }
             is FirFunction -> components.declarationStorage.getCachedIrFunction(firAnnotationContainer)
             is FirProperty -> components.declarationStorage.getCachedIrProperty(firAnnotationContainer)
+            is FirValueParameter -> components.declarationStorage.getCachedIrFunction(firAnnotationContainer.containingFunctionSymbol.fir)
+                ?.valueParameters?.single { it.name == firAnnotationContainer.name }
             else -> error("Cannot extract IR declaration for ${firAnnotationContainer.render()}")
         } ?: return firAnnotation
 
@@ -72,20 +76,6 @@ class ConstValueProviderImpl(
     }
 
     override fun getNewFirAnnotationWithConstantValues(
-        firProperty: FirProperty,
-        firAnnotation: FirAnnotation,
-        firPropertyAccessor: FirPropertyAccessor,
-        isGetter: Boolean,
-    ): FirAnnotation {
-        if (firAnnotation is FirErrorAnnotationCall) return firAnnotation
-
-        val irProperty = components.declarationStorage.getCachedIrProperty(firProperty) ?: return firAnnotation
-        val irAccessor = (if (isGetter) irProperty.getter else irProperty.setter)
-            ?: error("Cannot extract IR property accessor for ${firProperty.render()}")
-        return buildNewFirAnnotationByCorrespondingIrAnnotation(irAccessor, firPropertyAccessor, firAnnotation)
-    }
-
-    override fun getNewFirAnnotationWithConstantValues(
         firExtensionReceiverContainer: FirAnnotationContainer,
         firAnnotation: FirAnnotation,
         receiverParameter: FirReceiverParameter
@@ -99,19 +89,6 @@ class ConstValueProviderImpl(
         } ?: return firAnnotation
 
         return buildNewFirAnnotationByCorrespondingIrAnnotation(extensionReceiver, receiverParameter, firAnnotation)
-    }
-
-    override fun getNewFirAnnotationWithConstantValues(
-        valueParameter: FirValueParameter,
-        firAnnotation: FirAnnotation,
-    ): FirAnnotation {
-        if (firAnnotation is FirErrorAnnotationCall) return firAnnotation
-
-        val firFunction = valueParameter.containingFunctionSymbol.fir
-        val irFunction = components.declarationStorage.getCachedIrFunction(firFunction) ?: return firAnnotation
-        val irValueParameter = irFunction.valueParameters.single { it.name == valueParameter.name }
-
-        return buildNewFirAnnotationByCorrespondingIrAnnotation(irValueParameter, valueParameter, firAnnotation)
     }
 
     private fun buildNewFirAnnotationByCorrespondingIrAnnotation(

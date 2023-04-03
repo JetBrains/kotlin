@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirReceiverParameter
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.serialization.FirAnnotationSerializer
@@ -27,21 +26,9 @@ abstract class ConstValueProvider {
     ): FirAnnotation
 
     abstract fun getNewFirAnnotationWithConstantValues(
-        firProperty: FirProperty,
-        firAnnotation: FirAnnotation,
-        firPropertyAccessor: FirPropertyAccessor,
-        isGetter: Boolean,
-    ): FirAnnotation
-
-    abstract fun getNewFirAnnotationWithConstantValues(
         firExtensionReceiverContainer: FirAnnotationContainer,
         firAnnotation: FirAnnotation,
         receiverParameter: FirReceiverParameter,
-    ): FirAnnotation
-
-    abstract fun getNewFirAnnotationWithConstantValues(
-        valueParameter: FirValueParameter,
-        firAnnotation: FirAnnotation,
     ): FirAnnotation
 
     fun FirExpression?.toProtoBuf(annotationSerializer: FirAnnotationSerializer): ProtoBuf.Annotation.Argument.Value? {
