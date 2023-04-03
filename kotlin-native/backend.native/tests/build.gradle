@@ -264,7 +264,7 @@ Task linkTest(String name, Closure<KonanLinkTest> configureClosure) {
                     srcFiles task.lib
                     baseDir  "$testOutputLocal/$name"
                     extraOpts task.flags
-                    extraOpts project.globalTestArgs
+                    extraOpts project.globalTestArgs.findAll { !it.contains("-Xpartial-linkage") }
                 }
                 UtilsKt.dependsOnKonanBuildingTask(task, lib, target)
 
@@ -3424,7 +3424,8 @@ linkTest("mpp2") {
 }
 
 standaloneTest("mpp_default_args") {
-    disabled = isK2(project) // KT-56071
+    // Disabled in one stage mode because of KT-57747
+    disabled = !twoStageEnabled || isK2(project) // KT-56071
     source = "codegen/mpp/mpp_default_args.kt"
     flags = ['-tr', '-Xmulti-platform']
 }
@@ -4477,7 +4478,7 @@ Task interopTestBase(String name, boolean multiFile, Closure<KonanInteropTest> c
                         srcFiles task.lib
                         baseDir  "$testOutputLocal/$name"
                         extraOpts task.flags
-                        extraOpts project.globalTestArgs
+                        extraOpts project.globalTestArgs.findAll { !it.contains("-Xpartial-linkage") }
                     }
                     UtilsKt.dependsOnKonanBuildingTask(task, lib, target)
                 }
