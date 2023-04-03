@@ -21,7 +21,6 @@ fun List<ClassBinarySignature>.dumpAndCompareWith(to: File) {
         fail("Expected data file did not exist. Generating: $to")
     } else {
         val actual = dump(to = StringBuilder())
-        println(actual)
         assertEqualsToFile(to, actual)
     }
 }
@@ -84,6 +83,11 @@ fun assertEqualsWithFirstLineDiff(expectedText: String, actualText: String, mess
         val expectedTextAroundDiff = expectedBufferLines.filterNotNull().joinToString("\n", prefix = "$lineInfo\n")
 
         assertNotEquals(expectedTextAroundDiff, actualTextAroundDiff, "Sanity check - chunks should be different")
+
+        println("DEBUG INFO!!!")
+        println(expectedTextAroundDiff)
+        println("--------------------")
+        println(actualTextAroundDiff)
 
         assertEquals(
             expectedTextAroundDiff,
