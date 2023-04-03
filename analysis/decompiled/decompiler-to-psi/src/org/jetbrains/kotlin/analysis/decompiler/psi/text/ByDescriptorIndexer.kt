@@ -89,7 +89,7 @@ object ByDescriptorIndexer : DecompiledTextIndexer<String> {
         error("Should not be reachable")
     }
 
-    private fun isSameCallable(
+    fun isSameCallable(
         declaration: KtCallableDeclaration,
         original: CallableDescriptor
     ): Boolean {
