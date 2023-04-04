@@ -19,3 +19,13 @@ actual typealias C4<F> = C4Impl<F>
 class C4Impl<F : Number>
 
 actual abstract class ExtendsNumber : Any()
+
+actual interface FunInterface {
+    actual fun run()
+}
+
+interface FunInterface2Typealias {
+    fun run()
+}
+
+actual typealias FunInterface2 = FunInterface2Typealias

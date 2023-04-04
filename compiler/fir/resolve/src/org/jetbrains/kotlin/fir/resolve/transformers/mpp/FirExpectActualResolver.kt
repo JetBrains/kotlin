@@ -123,6 +123,9 @@ object FirExpectActualResolver {
         if (!equalBy(expectClassSymbol, actualClass) { listOf(it.isCompanion, it.isInner, it.isInline /*|| it.isValue*/) }) {
             return ExpectActualCompatibility.Incompatible.ClassModifiers
         }
+        if (expectClassSymbol.isFun && !actualClass.isFun) {
+            return ExpectActualCompatibility.Incompatible.FunInterfaceModifier
+        }
 
         val expectTypeParameterSymbols = expectClassSymbol.typeParameterSymbols
         val actualTypeParameterSymbols = actualClass.typeParameterSymbols

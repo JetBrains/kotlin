@@ -387,6 +387,9 @@ object ExpectedActualResolver {
         if (a.kind != b.kind) return Incompatible.ClassKind
 
         if (!equalBy(a, b) { listOf(it.isCompanionObject, it.isInner, it.isInline || it.isValue) }) return Incompatible.ClassModifiers
+        if (a.isFun && !b.isFun && b.isNotJavaSamInterface()) {
+            return Incompatible.FunInterfaceModifier
+        }
 
         val aTypeParams = a.declaredTypeParameters
         val bTypeParams = b.declaredTypeParameters
@@ -563,3 +566,7 @@ fun DeclarationDescriptor.findActuals(inModule: ModuleDescriptor): List<MemberDe
 val DeclarationDescriptorWithSource.couldHaveASource: Boolean
     get() = this.source.containingFile != SourceFile.NO_SOURCE_FILE ||
             this is DeserializedDescriptor
+
+private fun ClassDescriptor.isNotJavaSamInterface(): Boolean {
+    return isDefinitelyNotSamInterface || defaultFunctionTypeForSamInterface == null
+}

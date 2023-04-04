@@ -65,6 +65,8 @@ sealed class ExpectActualCompatibility<out D> {
 
         object ClassModifiers : Incompatible<Nothing>("modifiers are different (companion, inner, inline)")
 
+        object FunInterfaceModifier : Incompatible<Nothing>("actual declaration for fun expect interface is not a functional interface")
+
         object Supertypes : Incompatible<Nothing>("some supertypes are missing in the actual declaration")
 
         class ClassScopes<D>(
