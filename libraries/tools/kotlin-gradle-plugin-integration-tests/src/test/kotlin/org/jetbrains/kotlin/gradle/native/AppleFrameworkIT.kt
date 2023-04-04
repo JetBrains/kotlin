@@ -392,4 +392,35 @@ class AppleFrameworkIT : BaseGradleIT() {
         }
     }
 
+    @Test
+    fun `smoke test with apple gradle plugin`() {
+        with(Project("appleGradlePluginConsumesAppleFrameworks", minLogLevel = LogLevel.INFO)) {
+            setupWorkingDir()
+
+            fun dependencyInsight(configuration: String) = arrayOf(
+                ":iosApp:dependencyInsight", "--configuration", configuration, "--dependency", "iosLib"
+            )
+            build(*dependencyInsight("iosAppIosX64DebugImplementation")) {
+                assertSuccessful()
+                assertContains("variant \"mainDynamicDebugFrameworkIos\"")
+            }
+
+            build(*dependencyInsight("iosAppIosX64ReleaseImplementation")) {
+                assertSuccessful()
+                assertContains("variant \"mainDynamicReleaseFrameworkIos\"")
+            }
+
+            // NB: '0' is required at the end since dependency is added with custom attribute and it creates new configuration
+            build(*dependencyInsight("iosAppIosX64DebugImplementation0"), "-PmultipleFrameworks") {
+                assertSuccessful()
+                assertContains("variant \"mainStaticDebugFrameworkIos\"")
+            }
+
+            build(*dependencyInsight("iosAppIosX64ReleaseImplementation0"), "-PmultipleFrameworks") {
+                assertSuccessful()
+                assertContains("variant \"mainStaticReleaseFrameworkIos\"")
+            }
+        }
+    }
+
 }

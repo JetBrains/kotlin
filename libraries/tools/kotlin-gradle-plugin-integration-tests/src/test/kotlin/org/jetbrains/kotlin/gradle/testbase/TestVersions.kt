@@ -64,4 +64,8 @@ interface TestVersions {
         AGP_80(AGP.AGP_80, GradleVersion.version(Gradle.G_8_0), GradleVersion.version(Gradle.G_8_0), JavaVersion.VERSION_17),
         ;
     }
+
+    object AppleGradlePlugin {
+        const val V222_0_21 = "222.4550-0.21"
+    }
 }
