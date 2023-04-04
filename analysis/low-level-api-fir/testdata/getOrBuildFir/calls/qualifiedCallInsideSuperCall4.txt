@@ -1,0 +1,17 @@
+KT element: KtNameReferenceExpression
+FIR element: FirRegularClassImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+public final [ResolvedTo(BODY_RESOLVE)] class G : R|A| {
+    public [ResolvedTo(BODY_RESOLVE)] constructor(): R|G| {
+        super<R|A|>([ResolvedTo(RAW_FIR)] fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+            local final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/String| {
+                ^foo Q|C|.R|/A.prop|.R|kotlin/String.toString|()
+            }
+
+        }
+        )
+    }
+
+}

@@ -1,0 +1,11 @@
+KT element: KtNameReferenceExpression
+FIR element: FirRegularClassImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+public final [ResolvedTo(BODY_RESOLVE)] object C : R|A| {
+    public [ResolvedTo(BODY_RESOLVE)] constructor(): R|C| {
+        super<R|A|>()
+    }
+
+}

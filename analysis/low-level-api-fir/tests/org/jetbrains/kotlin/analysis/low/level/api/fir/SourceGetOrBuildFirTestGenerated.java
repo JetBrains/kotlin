@@ -306,6 +306,42 @@ public class SourceGetOrBuildFirTestGenerated extends AbstractSourceGetOrBuildFi
         }
 
         @Test
+        @TestMetadata("qualifiedCallInsidePropertyInsideConstructor.kt")
+        public void testQualifiedCallInsidePropertyInsideConstructor() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/calls/qualifiedCallInsidePropertyInsideConstructor.kt");
+        }
+
+        @Test
+        @TestMetadata("qualifiedCallInsideSuperCall.kt")
+        public void testQualifiedCallInsideSuperCall() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/calls/qualifiedCallInsideSuperCall.kt");
+        }
+
+        @Test
+        @TestMetadata("qualifiedCallInsideSuperCall2.kt")
+        public void testQualifiedCallInsideSuperCall2() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/calls/qualifiedCallInsideSuperCall2.kt");
+        }
+
+        @Test
+        @TestMetadata("qualifiedCallInsideSuperCall3.kt")
+        public void testQualifiedCallInsideSuperCall3() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/calls/qualifiedCallInsideSuperCall3.kt");
+        }
+
+        @Test
+        @TestMetadata("qualifiedCallInsideSuperCall4.kt")
+        public void testQualifiedCallInsideSuperCall4() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/calls/qualifiedCallInsideSuperCall4.kt");
+        }
+
+        @Test
+        @TestMetadata("qualifiedCallInsideSuperCall5.kt")
+        public void testQualifiedCallInsideSuperCall5() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/calls/qualifiedCallInsideSuperCall5.kt");
+        }
+
+        @Test
         @TestMetadata("qualifiedCallSelector.kt")
         public void testQualifiedCallSelector() throws Exception {
             runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/calls/qualifiedCallSelector.kt");

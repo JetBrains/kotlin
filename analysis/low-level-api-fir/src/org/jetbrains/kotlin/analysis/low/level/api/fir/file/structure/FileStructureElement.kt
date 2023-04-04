@@ -244,7 +244,7 @@ internal class NonReanalyzableClassDeclarationStructureElement(
 
         override fun visitConstructor(constructor: FirConstructor, data: MutableMap<KtElement, FirElement>) {
             if (constructor is FirPrimaryConstructor && constructor.source?.kind == KtFakeSourceElementKind.ImplicitConstructor) {
-                super.visitConstructor(constructor, data)
+                NonReanalyzableNonClassDeclarationStructureElement.Recorder.visitConstructor(constructor, data)
             }
         }
 
@@ -276,7 +276,7 @@ internal class NonReanalyzableNonClassDeclarationStructureElement(
         moduleComponents,
     )
 
-    private object Recorder : FirElementsRecorder()
+    internal object Recorder : FirElementsRecorder()
 }
 
 internal class DanglingTopLevelModifierListStructureElement(

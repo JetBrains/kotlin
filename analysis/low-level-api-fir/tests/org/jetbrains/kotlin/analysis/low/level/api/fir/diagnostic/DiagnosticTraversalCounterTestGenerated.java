@@ -169,6 +169,12 @@ public class DiagnosticTraversalCounterTestGenerated extends AbstractDiagnosticT
     }
 
     @Test
+    @TestMetadata("qualifiedCallInsideSuperCall.kt")
+    public void testQualifiedCallInsideSuperCall() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/diagnosticTraversalCounter/qualifiedCallInsideSuperCall.kt");
+    }
+
+    @Test
     @TestMetadata("secondaryConstructor.kt")
     public void testSecondaryConstructor() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/diagnosticTraversalCounter/secondaryConstructor.kt");
