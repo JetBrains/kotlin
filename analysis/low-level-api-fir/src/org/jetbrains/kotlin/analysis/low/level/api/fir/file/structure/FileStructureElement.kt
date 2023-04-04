@@ -8,23 +8,22 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LowLevelFirApiFacadeForResolveOnAir
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDesignation
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.ClassDiagnosticRetriever
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.FileDiagnosticRetriever
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.FileStructureElementDiagnostics
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.SingleNonLocalDeclarationDiagnosticRetriever
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.RawFirNonLocalDeclarationBuilder
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withInvalidationOnException
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.builder.FirBackingFieldBuilder
+import org.jetbrains.kotlin.fir.declarations.builder.FirFunctionBuilder
+import org.jetbrains.kotlin.fir.declarations.builder.FirPropertyBuilder
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.psi.*
 import java.util.concurrent.ConcurrentHashMap
 
@@ -108,42 +107,33 @@ internal class ReanalyzableFunctionStructureElement(
 
     override fun reanalyze(newKtDeclaration: KtNamedFunction): ReanalyzableFunctionStructureElement {
         val originalFunction = firSymbol.fir as FirSimpleFunction
-        val designation = originalFunction.collectDesignation()
+        val originalDesignation = originalFunction.collectDesignation()
 
-        val temporaryFunction = RawFirNonLocalDeclarationBuilder.buildWithFunctionSymbolRebind(
+        val newFunction = RawFirNonLocalDeclarationBuilder.buildNewSimpleFunction(
             session = originalFunction.moduleData.session,
             scopeProvider = originalFunction.moduleData.session.kotlinScopeProvider,
-            designation = designation,
-            rootNonLocalDeclaration = newKtDeclaration,
-        ) as FirSimpleFunction
+            designation = originalDesignation,
+            newFunction = newKtDeclaration,
+            additionalFunctionInit = {
+                copyUnmodifiableFieldsForFunction(originalFunction)
+            },
+        )
 
-        return moduleComponents.globalResolveComponents.lockProvider.withGlobalLock(firFile) {
-            val upgradedPhase = minOf(originalFunction.resolvePhase, FirResolvePhase.DECLARATIONS)
+        newFunction.apply {
+            copyAllExceptBodyForFunction(originalFunction)
 
-            withInvalidationOnException(moduleComponents.session) {
-                with(originalFunction) {
-                    replaceBody(temporaryFunction.body)
-                    replaceContractDescription(temporaryFunction.contractDescription)
-                    @OptIn(ResolveStateAccess::class)
-                    resolveState = upgradedPhase.asResolveState()
-                }
-
-                designation.toSequence(includeTarget = true).forEach {
-                    @OptIn(ResolveStateAccess::class)
-                    it.resolveState = minOf(it.resolvePhase, upgradedPhase).asResolveState()
-                }
-
-                originalFunction.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
-
-                ReanalyzableFunctionStructureElement(
-                    firFile,
-                    newKtDeclaration,
-                    originalFunction.symbol,
-                    newKtDeclaration.modificationStamp,
-                    moduleComponents,
-                )
-            }
+            @OptIn(ResolveStateAccess::class)
+            resolveState = FirResolvePhase.STATUS.asResolveState()
         }
+
+        newFunction.bodyResolveOnAir(originalDesignation, firFile, moduleComponents)
+        return ReanalyzableFunctionStructureElement(
+            firFile,
+            newKtDeclaration,
+            newFunction.symbol,
+            newKtDeclaration.modificationStamp,
+            moduleComponents,
+        )
     }
 }
 
@@ -158,43 +148,67 @@ internal class ReanalyzablePropertyStructureElement(
 
     override fun reanalyze(newKtDeclaration: KtProperty): ReanalyzablePropertyStructureElement {
         val originalProperty = firSymbol.fir
-        val designation = originalProperty.collectDesignation()
+        val originalDesignation = originalProperty.collectDesignation()
 
-        val temporaryProperty = RawFirNonLocalDeclarationBuilder.buildWithFunctionSymbolRebind(
+        val newProperty = RawFirNonLocalDeclarationBuilder.buildNewProperty(
             session = originalProperty.moduleData.session,
             scopeProvider = originalProperty.moduleData.session.kotlinScopeProvider,
-            designation = designation,
-            rootNonLocalDeclaration = newKtDeclaration,
-        ) as FirProperty
-
-        return moduleComponents.globalResolveComponents.lockProvider.withGlobalLock(firFile) {
-            val getterPhase = originalProperty.getter?.resolvePhase ?: originalProperty.resolvePhase
-            val setterPhase = originalProperty.setter?.resolvePhase ?: originalProperty.resolvePhase
-            val upgradedPhase = minOf(originalProperty.resolvePhase, getterPhase, setterPhase, FirResolvePhase.DECLARATIONS)
-
-            withInvalidationOnException(moduleComponents.session) {
-                @OptIn(ResolveStateAccess::class)
-                with(originalProperty) {
-                    getter?.replaceBody(temporaryProperty.getter?.body)
-                    setter?.replaceBody(temporaryProperty.setter?.body)
-                    replaceInitializer(temporaryProperty.initializer)
-                    getter?.resolveState = upgradedPhase.asResolveState()
-                    setter?.resolveState = upgradedPhase.asResolveState()
-                    resolveState = upgradedPhase.asResolveState()
-                    replaceBodyResolveState(FirPropertyBodyResolveState.NOTHING_RESOLVED)
-                }
-
-                originalProperty.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
-
-                ReanalyzablePropertyStructureElement(
-                    firFile,
-                    newKtDeclaration,
-                    originalProperty.symbol,
-                    newKtDeclaration.modificationStamp,
-                    moduleComponents,
+            designation = originalDesignation,
+            newProperty = newKtDeclaration,
+            additionalPropertyInit = {
+                copyUnmodifiableFieldsForProperty(originalProperty)
+            },
+            additionalAccessorInit = {
+                copyUnmodifiableFieldsForFunction(
+                    if (isGetter) {
+                        originalProperty.getter!!
+                    } else {
+                        originalProperty.setter!!
+                    }
                 )
+            },
+            additionalBackingFieldInit = {
+                copyUnmodifiableFieldsForBackingField(originalProperty.backingField!!)
+            },
+        )
+
+        newProperty.apply {
+            copyAllExceptBodyFromCallable(originalProperty)
+            replaceBodyResolveState(FirPropertyBodyResolveState.NOTHING_RESOLVED)
+
+            @OptIn(ResolveStateAccess::class)
+            resolveState = FirResolvePhase.STATUS.asResolveState()
+
+            getter?.let { getter ->
+                getter.copyAllExceptBodyForFunction(originalProperty.getter!!)
+
+                @OptIn(ResolveStateAccess::class)
+                getter.resolveState = FirResolvePhase.STATUS.asResolveState()
+            }
+
+            setter?.let { setter ->
+                setter.copyAllExceptBodyForFunction(originalProperty.setter!!)
+
+                @OptIn(ResolveStateAccess::class)
+                setter.resolveState = FirResolvePhase.STATUS.asResolveState()
+            }
+
+            backingField?.let { backingField ->
+                backingField.copyAllExceptBodyFromCallable(originalProperty.backingField!!)
+
+                @OptIn(ResolveStateAccess::class)
+                backingField.resolveState = FirResolvePhase.STATUS.asResolveState()
             }
         }
+
+        newProperty.bodyResolveOnAir(originalDesignation, firFile, moduleComponents)
+        return ReanalyzablePropertyStructureElement(
+            firFile,
+            newKtDeclaration,
+            newProperty.symbol,
+            newKtDeclaration.modificationStamp,
+            moduleComponents,
+        )
     }
 }
 
@@ -295,5 +309,57 @@ internal class RootStructureElement(
                 }
             }
         }
+    }
+}
+
+private fun <C : FirCallableDeclaration> C.bodyResolveOnAir(
+    originalDesignation: FirDesignation,
+    firFile: FirFile,
+    moduleComponents: LLFirModuleResolveComponents
+) {
+    val designationToResolveOnAir = FirDesignationWithFile(originalDesignation.path, this, firFile)
+    moduleComponents.firModuleLazyDeclarationResolver.runLazyDesignatedOnAirResolveToBodyWithoutLock(
+        designationToResolveOnAir,
+        onAirCreatedDeclaration = false,
+        towerDataContextCollector = null
+    )
+}
+
+private fun FirPropertyBuilder.copyUnmodifiableFieldsForProperty(prototype: FirProperty) {
+    attributes = prototype.attributes
+    dispatchReceiverType = prototype.dispatchReceiverType
+}
+
+private fun FirFunctionBuilder.copyUnmodifiableFieldsForFunction(prototype: FirFunction) {
+    attributes = prototype.attributes
+    dispatchReceiverType = prototype.dispatchReceiverType
+}
+
+private fun FirBackingFieldBuilder.copyUnmodifiableFieldsForBackingField(prototype: FirBackingField) {
+    attributes = prototype.attributes
+    dispatchReceiverType = prototype.dispatchReceiverType
+}
+
+private fun <F : FirFunction> F.copyAllExceptBodyForFunction(prototype: F) {
+    this.copyAllExceptBodyFromCallable(prototype)
+    this.replaceValueParameters(prototype.valueParameters)
+
+    if (this is FirContractDescriptionOwner) {
+        this.replaceContractDescription((prototype as FirContractDescriptionOwner).contractDescription)
+    }
+}
+
+private fun <C : FirCallableDeclaration> C.copyAllExceptBodyFromCallable(prototype: C) {
+    this.replaceAnnotations(prototype.annotations)
+    this.replaceReturnTypeRef(prototype.returnTypeRef)
+    this.replaceReceiverParameter(prototype.receiverParameter)
+    this.replaceStatus(prototype.status)
+    this.replaceDeprecationsProvider(prototype.deprecationsProvider)
+    this.replaceContextReceivers(prototype.contextReceivers)
+
+    // TODO add replaceTypeParameter to FirCallableDeclaration instead of this unsafe case
+    (this.typeParameters as MutableList<FirTypeParameterRef>).apply {
+        clear()
+        addAll(prototype.typeParameters)
     }
 }

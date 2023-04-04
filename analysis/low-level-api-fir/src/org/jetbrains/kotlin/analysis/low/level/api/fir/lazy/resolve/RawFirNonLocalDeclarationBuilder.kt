@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,6 +14,10 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.BodyBuildingMode
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.builder.FirBackingFieldBuilder
+import org.jetbrains.kotlin.fir.declarations.builder.FirFunctionBuilder
+import org.jetbrains.kotlin.fir.declarations.builder.FirPropertyAccessorBuilder
+import org.jetbrains.kotlin.fir.declarations.builder.FirPropertyBuilder
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.references.FirSuperReference
@@ -24,9 +28,7 @@ import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 
 internal class RawFirNonLocalDeclarationBuilder private constructor(
@@ -35,9 +37,71 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
     private val originalDeclaration: FirDeclaration,
     private val declarationToBuild: KtDeclaration,
     private val functionsToRebind: Set<FirFunction>? = null,
-    private val replacementApplier: RawFirReplacement.Applier? = null
+    private val replacementApplier: RawFirReplacement.Applier? = null,
+    private val additionalFunctionInit: FirFunctionBuilder.() -> Unit = {},
+    private val additionalPropertyInit: FirPropertyBuilder.() -> Unit = {},
+    private val additionalAccessorInit: FirPropertyAccessorBuilder.() -> Unit = {},
+    private val additionalBackingFieldInit: FirBackingFieldBuilder.() -> Unit = {},
 ) : RawFirBuilder(session, baseScopeProvider, bodyBuildingMode = BodyBuildingMode.NORMAL) {
+    override fun FirFunctionBuilder.additionalFunctionInit() {
+        additionalFunctionInit.invoke(this)
+    }
+
+    override fun FirPropertyBuilder.additionalPropertyInit() {
+        additionalPropertyInit.invoke(this)
+    }
+
+    override fun FirPropertyAccessorBuilder.additionalPropertyAccessorInit() {
+        additionalAccessorInit.invoke(this)
+    }
+
+    override fun FirBackingFieldBuilder.additionalBackingFieldInit() {
+        additionalBackingFieldInit.invoke(this)
+    }
+
     companion object {
+        fun buildNewSimpleFunction(
+            session: FirSession,
+            scopeProvider: FirScopeProvider,
+            designation: FirDesignation,
+            newFunction: KtNamedFunction,
+            additionalFunctionInit: FirFunctionBuilder.() -> Unit,
+        ): FirSimpleFunction {
+            val builder = RawFirNonLocalDeclarationBuilder(
+                session = session,
+                baseScopeProvider = scopeProvider,
+                originalDeclaration = designation.target as FirDeclaration,
+                declarationToBuild = newFunction,
+                additionalFunctionInit = additionalFunctionInit,
+            )
+
+            builder.context.packageFqName = newFunction.containingKtFile.packageFqName
+            return builder.moveNext(designation.path.iterator(), containingClass = null) as FirSimpleFunction
+        }
+
+        fun buildNewProperty(
+            session: FirSession,
+            scopeProvider: FirScopeProvider,
+            designation: FirDesignation,
+            newProperty: KtProperty,
+            additionalPropertyInit: FirPropertyBuilder.() -> Unit,
+            additionalAccessorInit: FirPropertyAccessorBuilder.() -> Unit,
+            additionalBackingFieldInit: FirBackingFieldBuilder.() -> Unit,
+        ): FirProperty {
+            val builder = RawFirNonLocalDeclarationBuilder(
+                session = session,
+                baseScopeProvider = scopeProvider,
+                originalDeclaration = designation.target as FirDeclaration,
+                declarationToBuild = newProperty,
+                additionalPropertyInit = additionalPropertyInit,
+                additionalAccessorInit = additionalAccessorInit,
+                additionalBackingFieldInit = additionalBackingFieldInit,
+            )
+
+            builder.context.packageFqName = newProperty.containingKtFile.packageFqName
+            return builder.moveNext(designation.path.iterator(), containingClass = null) as FirProperty
+        }
+
         fun buildWithReplacement(
             session: FirSession,
             scopeProvider: FirScopeProvider,

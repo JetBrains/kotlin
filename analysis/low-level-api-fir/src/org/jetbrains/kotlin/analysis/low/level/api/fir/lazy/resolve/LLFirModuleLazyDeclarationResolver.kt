@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFil
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirClassWithAllMembersResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirSingleResolveTarget
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.forEachPathElementAndTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyResolverRunner
@@ -55,6 +54,7 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
                 targets = LLFirResolveMultiDesignationCollector.getDesignationsToResolve(target),
                 scopeSession = scopeSession,
                 toPhase = toPhase,
+                towerDataContextCollector = null,
             )
         } catch (e: Exception) {
             handleExceptionFromResolve(e, target, fromPhase, toPhase)
@@ -84,6 +84,7 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
                 targets = LLFirResolveMultiDesignationCollector.getDesignationsToResolveWithCallableMembers(target),
                 scopeSession = scopeSession,
                 toPhase = toPhase,
+                towerDataContextCollector = null,
             )
         } catch (e: Exception) {
             handleExceptionFromResolve(e, target, fromPhase, toPhase)
@@ -105,45 +106,41 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
         toPhase: FirResolvePhase
     ) {
         try {
-            lazyResolveTargets(listOf(target), moduleComponents.scopeSessionProvider.getScopeSession(), toPhase)
+            lazyResolveTargets(
+                targets = listOf(target),
+                moduleComponents.scopeSessionProvider.getScopeSession(),
+                toPhase,
+                towerDataContextCollector = null,
+            )
         } catch (e: Exception) {
             handleExceptionFromResolve(e, target, toPhase)
         }
     }
 
-    internal fun runLazyDesignatedOnAirResolveToBodyWithoutLock(
+    fun runLazyDesignatedOnAirResolveToBodyWithoutLock(
         designation: FirDesignationWithFile,
         onAirCreatedDeclaration: Boolean,
         towerDataContextCollector: FirTowerDataContextCollector?,
     ) {
         resolveFileToImportsWithoutLock(designation.firFile)
-        val resolveTarget = when (designation.target) {
+        val target = when (designation.target) {
             is FirRegularClass -> LLFirClassWithAllMembersResolveTarget(designation.firFile, designation.path, designation.target)
             else -> LLFirSingleResolveTarget(designation.firFile, designation.path, designation.target)
         }
 
         fun runTransformation() {
             val scopeSession = ScopeSession()
-            var currentPhase = maxOf(designation.target.resolvePhase, FirResolvePhase.IMPORTS)
-
-            while (currentPhase < FirResolvePhase.BODY_RESOLVE) {
-                currentPhase = currentPhase.next
-                checkCanceled()
-
-                LLFirLazyResolverRunner.runLazyResolverByPhase(
-                    phase = currentPhase,
-                    target = resolveTarget,
-                    scopeSession = scopeSession,
-                    lockProvider = moduleComponents.globalResolveComponents.lockProvider,
-                    towerDataContextCollector = towerDataContextCollector,
-                )
-            }
+            lazyResolveTargets(listOf(target), scopeSession, FirResolvePhase.BODY_RESOLVE, towerDataContextCollector)
         }
 
-        if (onAirCreatedDeclaration) {
-            withOnAirDesignation(designation, ::runTransformation)
-        } else {
-            runTransformation()
+        try {
+            if (onAirCreatedDeclaration) {
+                withOnAirDesignation(designation, ::runTransformation)
+            } else {
+                runTransformation()
+            }
+        } catch (e: Exception) {
+            handleExceptionFromResolve(e, target, FirResolvePhase.BODY_RESOLVE)
         }
     }
 
@@ -166,6 +163,7 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
         targets: List<LLFirResolveTarget>,
         scopeSession: ScopeSession,
         toPhase: FirResolvePhase,
+        towerDataContextCollector: FirTowerDataContextCollector?,
     ) {
         if (targets.isEmpty()) return
         var currentPhase = getMinResolvePhase(targets).coerceAtLeast(FirResolvePhase.IMPORTS)
@@ -181,7 +179,7 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
                     target = target,
                     scopeSession = scopeSession,
                     lockProvider = moduleComponents.globalResolveComponents.lockProvider,
-                    towerDataContextCollector = null
+                    towerDataContextCollector = towerDataContextCollector,
                 )
             }
         }
@@ -191,7 +189,7 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
         var min = FirResolvePhase.BODY_RESOLVE
         for (designation in designations) {
             if (min == FirResolvePhase.RAW_FIR) break
-            designation.forEachPathElementAndTarget { target ->
+            designation.forEachTarget { target ->
                 min = minOf(min, target.resolvePhase)
             }
         }
