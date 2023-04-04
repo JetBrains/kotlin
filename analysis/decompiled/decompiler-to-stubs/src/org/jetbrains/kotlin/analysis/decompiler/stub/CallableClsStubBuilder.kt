@@ -285,7 +285,7 @@ private class PropertyClsStubBuilder(
                 val modifierList = createModifierListStubForDeclaration(
                     getterStub,
                     getterFlags,
-                    listOf(VISIBILITY, MODALITY, INLINE, EXTERNAL_ACCESSOR)
+                    listOf(VISIBILITY, MODALITY, INLINE_ACCESSOR, EXTERNAL_ACCESSOR)
                 )
                 if (Flags.HAS_ANNOTATIONS.get(getterFlags)) {
                     val annotationIds = c.components.annotationLoader.loadCallableAnnotations(
@@ -305,7 +305,7 @@ private class PropertyClsStubBuilder(
                 val modifierList = createModifierListStubForDeclaration(
                     setterStub,
                     setterFlags,
-                    listOf(VISIBILITY, MODALITY, INLINE, EXTERNAL_ACCESSOR)
+                    listOf(VISIBILITY, MODALITY, INLINE_ACCESSOR, EXTERNAL_ACCESSOR)
                 )
                 if (Flags.HAS_ANNOTATIONS.get(setterFlags)) {
                     val annotationIds = c.components.annotationLoader.loadCallableAnnotations(
@@ -339,7 +339,7 @@ private class PropertyClsStubBuilder(
         if (binaryClass != null) {
             val callableName = c.nameResolver.getName(propertyProto.name)
             binaryClass.visitMembers(object : KotlinJvmBinaryClass.MemberVisitor {
-                private val getterName = lazy {
+                private val getterName = lazy(LazyThreadSafetyMode.NONE) {
                     val signature = propertyProto.getExtensionOrNull(JvmProtoBuf.propertySignature) ?: return@lazy null
                     c.nameResolver.getName(signature.getter.name)
                 }
@@ -363,7 +363,7 @@ private class PropertyClsStubBuilder(
                                                 value is Double && value.nonConstant()) {
                                                 return
                                             }
-                                            val returnType = desc.substring(2) // trim leading '()' - empty parameters
+                                            val returnType = desc.removePrefix("()")
                                             constantInitializer = ConstantInitializer(value, null, returnType)
                                         }
                                     }
@@ -388,7 +388,7 @@ private class PropertyClsStubBuilder(
                                             override fun visitAnnotation(classId: ClassId): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {return null}
 
                                             override fun visitEnd() {
-                                                constantInitializer = ConstantInitializer(elements.toTypedArray(), null, desc.substring(2))
+                                                constantInitializer = ConstantInitializer(elements.toTypedArray(), null, desc.removePrefix("()"))
                                             }
                                         }
                                     }

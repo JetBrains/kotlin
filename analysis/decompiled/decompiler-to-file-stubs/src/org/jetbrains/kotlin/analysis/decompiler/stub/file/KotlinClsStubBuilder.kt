@@ -211,9 +211,10 @@ private class AnnotationLoaderForClassFileStubBuilder(
                         return object : KotlinJvmBinaryClass.AnnotationArgumentVisitor by visitor {
                             override fun visitEnd() {
                                 visitor.visitEnd()
+                                val annotationWithArgs = list.singleOrNull() ?: return
                                 elements.add(AnnotationValue(object : AnnotationDescriptorWithClassId(classId) {
                                     override val allValueArguments: Map<Name, ConstantValue<*>>
-                                        get() = list.single().args
+                                        get() = annotationWithArgs.args
                                     override val source: SourceElement
                                         get() = SourceElement.NO_SOURCE
                                 }))
@@ -246,33 +247,8 @@ private class AnnotationLoaderForClassFileStubBuilder(
         }
     }
 
-    fun createConstant(value: Any?): ConstantValue<*> {
-        return when (value) {
-            is Byte -> ByteValue(value)
-            is Short -> ShortValue(value)
-            is Int -> IntValue(value)
-            is Long -> LongValue(value)
-            is Char -> CharValue(value)
-            is Float -> FloatValue(value)
-            is Double -> DoubleValue(value)
-            is Boolean -> BooleanValue(value)
-            is String -> StringValue(value)
-            is ByteArray -> createArrayValue(value.toList(), PrimitiveType.BYTE)
-            is ShortArray -> createArrayValue(value.toList(), PrimitiveType.SHORT)
-            is IntArray -> createArrayValue(value.toList(), PrimitiveType.INT)
-            is LongArray -> createArrayValue(value.toList(), PrimitiveType.LONG)
-            is CharArray -> createArrayValue(value.toList(), PrimitiveType.CHAR)
-            is FloatArray -> createArrayValue(value.toList(), PrimitiveType.FLOAT)
-            is DoubleArray -> createArrayValue(value.toList(), PrimitiveType.DOUBLE)
-            is BooleanArray -> createArrayValue(value.toList(), PrimitiveType.BOOLEAN)
-            null -> NullValue()
-            else -> error("Unknown value $value")
-        }
-    }
-
-    private fun createArrayValue(value: List<*>, componentType: PrimitiveType): ArrayValue {
-        val elements = value.toList().mapNotNull(this::createConstant)
-        return ArrayValue(elements) { it.builtIns.getPrimitiveArrayKotlinType(componentType) }
+    private fun createConstant(value: Any?): ConstantValue<*> {
+        return ConstantValueFactory.createConstantValue(value) ?: error("Unknown value $value")
     }
 
     protected fun isRepeatableWithImplicitContainer(annotationClassId: ClassId, arguments: Map<Name, ConstantValue<*>>): Boolean {

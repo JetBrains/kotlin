@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.analysis.decompiler.psi.text
 
 import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.analysis.decompiler.stub.COMPILED_DEFAULT_PARAMETER_VALUE
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.contracts.description.ContractProviderKey
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.FqName
@@ -165,10 +167,10 @@ fun buildDecompiledText(
                             builder.append(" ")
                         }
                         val paramName = when (val name = parameterDescriptor.name) {
-                            SpecialNames.IMPLICIT_SET_PARAMETER -> "value"
-                            else -> name.asString()
+                            SpecialNames.IMPLICIT_SET_PARAMETER -> StandardNames.DEFAULT_VALUE_PARAMETER
+                            else -> name
                         }
-                        builder.append(paramName).append(": ")
+                        builder.append(paramName.asString()).append(": ")
                             .append(descriptorRenderer.renderType(parameterDescriptor.type))
                         builder.append(")")
                         builder.append(" {").append(DECOMPILED_CODE_COMMENT).append(" }")

@@ -48,6 +48,7 @@ val EXTERNAL_PROPERTY = createBooleanFlagToModifier(Flags.IS_EXTERNAL_PROPERTY, 
 val EXTERNAL_ACCESSOR = createBooleanFlagToModifier(Flags.IS_EXTERNAL_ACCESSOR, KtTokens.EXTERNAL_KEYWORD)
 val EXTERNAL_CLASS = createBooleanFlagToModifier(Flags.IS_EXTERNAL_CLASS, KtTokens.EXTERNAL_KEYWORD)
 val INLINE = createBooleanFlagToModifier(Flags.IS_INLINE, KtTokens.INLINE_KEYWORD)
+val INLINE_ACCESSOR = createBooleanFlagToModifier(Flags.IS_INLINE_ACCESSOR, KtTokens.INLINE_KEYWORD)
 val VALUE_CLASS = createBooleanFlagToModifier(Flags.IS_VALUE_CLASS, KtTokens.VALUE_KEYWORD)
 val FUN_INTERFACE = createBooleanFlagToModifier(Flags.IS_FUN_INTERFACE, KtTokens.FUN_KEYWORD)
 val TAILREC = createBooleanFlagToModifier(Flags.IS_TAILREC, KtTokens.TAILREC_KEYWORD)
