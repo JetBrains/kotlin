@@ -102,7 +102,7 @@ abstract class KaptGenerateStubsTask @Inject constructor(
     internal abstract val compileTaskCompilerOptions: Property<KotlinJvmCompilerOptions>
 
     override fun createCompilerArguments(context: CreateCompilerArgumentsContext) = context.create<K2JVMCompilerArguments> {
-        contribute(KotlinCompilerArgumentsProducer.ArgumentType.Primitive) { args ->
+        primitive { args ->
             args.allowNoSourceFiles = true
             KotlinJvmCompilerOptionsHelper.fillCompilerArguments(compileTaskCompilerOptions.get(), args)
 
@@ -126,18 +126,18 @@ abstract class KaptGenerateStubsTask @Inject constructor(
             args.destinationAsFile = destinationDirectory.get().asFile
         }
 
-        contribute(KotlinCompilerArgumentsProducer.ArgumentType.Classpath) { args ->
-            args.pluginClasspaths = tryLenient {
+        classpath { args ->
+            args.pluginClasspaths = runSafe {
                 listOfNotNull(
                     pluginClasspath, kotlinPluginData?.orNull?.classpath
                 ).reduce(FileCollection::plus).toPathsArray()
             }
 
-            args.classpathAsList = tryLenient { libraries.toList().filter { it.exists() } }.orEmpty()
+            args.classpathAsList = runSafe { libraries.toList().filter { it.exists() } }.orEmpty()
             args.friendPaths = friendPaths.toPathsArray()
         }
 
-        contribute(KotlinCompilerArgumentsProducer.ArgumentType.Sources) { args ->
+        sources{ args ->
             args.freeArgs += (scriptSources.asFileTree.files + javaSources.files + sources.asFileTree.files).map { it.absolutePath }
         }
     }

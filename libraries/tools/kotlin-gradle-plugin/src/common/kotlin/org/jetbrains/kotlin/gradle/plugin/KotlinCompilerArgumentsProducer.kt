@@ -38,8 +38,10 @@ interface KotlinCompilerArgumentsProducer {
     }
 
     interface ContributeCompilerArgumentsContext<T : CommonToolArguments> {
-        fun <T> tryLenient(action: () -> T): T?
-        fun contribute(type: ArgumentType, contribution: (T) -> Unit)
+        fun <T> runSafe(action: () -> T): T?
+        fun primitive(contribution: (args: T) -> Unit)
+        fun classpath(contribution: (args: T) -> Unit)
+        fun sources(contribution: (args: T) -> Unit)
     }
 
     fun createCompilerArguments(
@@ -65,15 +67,25 @@ private class CreateCompilerArgumentsContextImpl(
         val constructor = type.java.constructors.firstOrNull { it.parameters.isEmpty() }
             ?: throw IllegalArgumentException("'${type.qualifiedName}' does not have an empty constructor")
         val arguments = type.cast(constructor.newInstance())
-        ContributeCompilerArgumentsContextImpl(arguments).also(action)
+        ContributeCompilerArgumentsContextImpl(arguments, includeArgumentTypes, isLenient).also(action)
         return arguments
     }
 
-    private inner class ContributeCompilerArgumentsContextImpl<T : CommonToolArguments>(
-        private val arguments: T
+    private class ContributeCompilerArgumentsContextImpl<T : CommonToolArguments>(
+        private val arguments: T,
+        private val includedArgumentTypes: Set<KotlinCompilerArgumentsProducer.ArgumentType>,
+        private val isLenient: Boolean
     ) : ContributeCompilerArgumentsContext<T> {
 
-        override fun <T> tryLenient(action: () -> T): T? {
+        private inline fun applyContribution(contribution: (args: T) -> Unit) {
+            try {
+                contribution(arguments)
+            } catch (t: Throwable) {
+                if (!isLenient) throw t
+            }
+        }
+
+        override fun <T> runSafe(action: () -> T): T? {
             return try {
                 action()
             } catch (t: Throwable) {
@@ -81,8 +93,22 @@ private class CreateCompilerArgumentsContextImpl(
             }
         }
 
-        override fun contribute(type: KotlinCompilerArgumentsProducer.ArgumentType, contribution: (T) -> Unit) {
-            if (type in includeArgumentTypes) contribution(arguments)
+        override fun primitive(contribution: (args: T) -> Unit) {
+            if (KotlinCompilerArgumentsProducer.ArgumentType.Primitive in includedArgumentTypes) {
+                applyContribution(contribution)
+            }
+        }
+
+        override fun classpath(contribution: (args: T) -> Unit) {
+            if (KotlinCompilerArgumentsProducer.ArgumentType.Classpath in includedArgumentTypes) {
+                applyContribution(contribution)
+            }
+        }
+
+        override fun sources(contribution: (args: T) -> Unit) {
+            if (KotlinCompilerArgumentsProducer.ArgumentType.Sources in includedArgumentTypes) {
+                applyContribution(contribution)
+            }
         }
     }
 }

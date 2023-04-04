@@ -200,7 +200,7 @@ constructor(
             kotlinPluginData?.orNull?.let { CompilerPluginData(it.classpath, it.options) }
         )
 
-        contribute(KotlinCompilerArgumentsProducer.ArgumentType.Primitive) { args ->
+        primitive { args ->
             args.outputName = outputFile.get().absolutePath
             args.optimization = optimized
             args.debug = debuggable
@@ -226,15 +226,15 @@ constructor(
             KotlinCommonCompilerToolOptionsHelper.fillCompilerArguments(toolOptions, args)
         }
 
-        contribute(KotlinCompilerArgumentsProducer.ArgumentType.Classpath) { args ->
-            args.pluginClasspaths = compilerPlugins.flatMap { classpath -> tryLenient { classpath.files } ?: emptySet() }.toPathsArray()
-            args.libraries = tryLenient { libraries.files.filterKlibsPassedToCompiler() }?.toPathsArray()
-            args.exportedLibraries = tryLenient { exportLibraries.files.filterKlibsPassedToCompiler() }?.toPathsArray()
-            args.friendModules = tryLenient { friendModule.files.toList().takeIf { it.isNotEmpty() } }
+        classpath { args ->
+            args.pluginClasspaths = compilerPlugins.flatMap { classpath -> runSafe { classpath.files } ?: emptySet() }.toPathsArray()
+            args.libraries = runSafe { libraries.files.filterKlibsPassedToCompiler() }?.toPathsArray()
+            args.exportedLibraries = runSafe { exportLibraries.files.filterKlibsPassedToCompiler() }?.toPathsArray()
+            args.friendModules = runSafe { friendModule.files.toList().takeIf { it.isNotEmpty() } }
                 ?.joinToString(File.pathSeparator) { it.absolutePath }
         }
 
-        contribute(KotlinCompilerArgumentsProducer.ArgumentType.Sources) { args ->
+        sources { args ->
             args.includes = sources.asFileTree.files.toPathsArray()
         }
     }

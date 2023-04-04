@@ -220,7 +220,7 @@ abstract class KotlinCompile @Inject constructor(
     override fun createCompilerArguments(
         context: KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext
     ): K2JVMCompilerArguments = context.create<K2JVMCompilerArguments> {
-        contribute(ArgumentType.Primitive) { args ->
+        primitive { args ->
             args.allowNoSourceFiles = true
 
             args.multiPlatform = multiPlatformEnabled.get()
@@ -252,20 +252,20 @@ abstract class KotlinCompile @Inject constructor(
             }
         }
 
-        contribute(ArgumentType.Classpath) { args ->
-            args.pluginClasspaths = tryLenient {
+        classpath { args ->
+            args.pluginClasspaths = runSafe {
                 listOfNotNull(
                     pluginClasspath, kotlinPluginData?.orNull?.classpath
                 ).reduce(FileCollection::plus).toPathsArray()
             }
 
             args.friendPaths = friendPaths.toPathsArray()
-            args.classpathAsList = tryLenient {
+            args.classpathAsList = runSafe {
                 libraries.toList().filter { it.exists() }
             }.orEmpty()
         }
 
-        contribute(ArgumentType.Sources) { args ->
+        sources { args ->
             if (compilerOptions.usesK2.get()) {
                 args.fragmentSources = multiplatformStructure.fragmentSourcesCompilerArgs
             } else {

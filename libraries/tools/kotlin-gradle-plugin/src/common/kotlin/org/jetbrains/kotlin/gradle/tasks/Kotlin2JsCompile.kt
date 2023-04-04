@@ -132,7 +132,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
         K2JSCompilerArguments()
 
     override fun createCompilerArguments(context: CreateCompilerArgumentsContext) = context.create<K2JSCompilerArguments> {
-        contribute(KotlinCompilerArgumentsProducer.ArgumentType.Primitive) { args ->
+        primitive { args ->
             args.multiPlatform = multiPlatformEnabled.get()
 
             args.pluginOptions = (pluginOptions.toSingleCompilerPluginOptions() + kotlinPluginData?.orNull?.options)
@@ -172,8 +172,8 @@ abstract class Kotlin2JsCompile @Inject constructor(
             args.freeArgs = executionTimeFreeCompilerArgs ?: enhancedFreeCompilerArgs.get()
         }
 
-        contribute(KotlinCompilerArgumentsProducer.ArgumentType.Classpath) { args ->
-            args.pluginClasspaths = tryLenient {
+        classpath { args ->
+            args.pluginClasspaths = runSafe {
                 listOfNotNull(
                     pluginClasspath, kotlinPluginData?.orNull?.classpath
                 ).reduce(FileCollection::plus).toPathsArray()
@@ -181,7 +181,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
 
             args.friendModules = friendDependencies.files.joinToString(File.pathSeparator) { it.absolutePath }
 
-            args.libraries = tryLenient {
+            args.libraries = runSafe {
                 libraries
                     .filter { it.exists() && libraryFilter(it) }
                     .map { it.normalize().absolutePath }
@@ -191,7 +191,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
             }
         }
 
-        contribute(KotlinCompilerArgumentsProducer.ArgumentType.Sources) { args ->
+        sources { args ->
             if (!args.sourceMapPrefix.isNullOrEmpty()) {
                 args.sourceMapBaseDirs = sourceMapBaseDir.get().asFile.absolutePath
             }

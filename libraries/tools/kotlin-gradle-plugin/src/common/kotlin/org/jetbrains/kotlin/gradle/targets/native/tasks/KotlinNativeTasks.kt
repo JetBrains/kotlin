@@ -428,7 +428,7 @@ internal constructor(
             kotlinPluginData?.orNull?.let { CompilerPluginData(it.classpath, it.options) }
         )
 
-        contribute(KotlinCompilerArgumentsProducer.ArgumentType.Primitive) { args ->
+        primitive { args ->
             args.moduleName = compilerOptions.moduleName.get()
             args.shortModuleName = shortModuleName
             args.multiPlatform = true
@@ -454,19 +454,19 @@ internal constructor(
             KotlinNativeCompilerOptionsHelper.fillCompilerArguments(compilerOptions, args)
         }
 
-        contribute(KotlinCompilerArgumentsProducer.ArgumentType.Classpath) { args ->
-            args.pluginClasspaths = compilerPlugins.flatMap { classpath -> tryLenient { classpath.files } ?: emptySet() }.toPathsArray()
+        classpath { args ->
+            args.pluginClasspaths = compilerPlugins.flatMap { classpath -> runSafe { classpath.files } ?: emptySet() }.toPathsArray()
 
-            args.libraries = tryLenient { libraries.files.filterKlibsPassedToCompiler().toPathsArray() }
-            args.friendModules = tryLenient {
+            args.libraries = runSafe { libraries.files.filterKlibsPassedToCompiler().toPathsArray() }
+            args.friendModules = runSafe {
                 friendModule.files.takeIf { it.isNotEmpty() }?.map { it.absolutePath }?.joinToString(File.pathSeparator)
             }
-            args.refinesPaths = tryLenient {
+            args.refinesPaths = runSafe {
                 sharedCompilationData?.refinesPaths?.files?.takeIf { it.isNotEmpty() }?.toPathsArray()
             }
         }
 
-        contribute(KotlinCompilerArgumentsProducer.ArgumentType.Sources) { args ->
+        sources { args ->
             if (compilerOptions.usesK2.get()) {
                 /*
                 For now, we only pass multiplatform structure to K2 for platform compilations

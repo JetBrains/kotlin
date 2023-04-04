@@ -59,7 +59,7 @@ abstract class KotlinJsDce @Inject constructor(
     override val toolOptions: KotlinJsDceCompilerToolOptions = objectFactory.newInstance<KotlinJsDceCompilerToolOptionsDefault>()
 
     override fun createCompilerArguments(context: CreateCompilerArgumentsContext) = context.create<K2JSDceArguments> {
-        contribute(KotlinCompilerArgumentsProducer.ArgumentType.Primitive) { args ->
+        primitive { args ->
             KotlinJsDceCompilerToolOptionsHelper.fillCompilerArguments(toolOptions, args)
             args.declarationsToKeep = keep.toTypedArray()
             args.outputDirectory = destinationDirectory.get().asFile.path

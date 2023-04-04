@@ -127,7 +127,7 @@ abstract class KotlinJsIrLink @Inject constructor(
     override fun contributeAdditionalCompilerArguments(context: ContributeCompilerArgumentsContext<K2JSCompilerArguments>) {
         super.contributeAdditionalCompilerArguments(context)
 
-        context.contribute(KotlinCompilerArgumentsProducer.ArgumentType.Primitive) { args ->
+        context.primitive { args ->
             // TODO Ilya Goncharov: This should not be part of creating compiler arguments;
             KotlinBuildStatsService.applyIfInitialised {
                 it.report(BooleanMetrics.JS_IR_INCREMENTAL, this.incrementalJsIr)

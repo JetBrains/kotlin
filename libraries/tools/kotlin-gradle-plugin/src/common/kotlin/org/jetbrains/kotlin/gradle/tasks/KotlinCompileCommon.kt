@@ -69,7 +69,7 @@ abstract class KotlinCompileCommon @Inject constructor(
     internal var executionTimeFreeCompilerArgs: List<String>? = null
 
     override fun createCompilerArguments(context: CreateCompilerArgumentsContext) = context.create<K2MetadataCompilerArguments> {
-        contribute(KotlinCompilerArgumentsProducer.ArgumentType.Primitive) { args ->
+        primitive { args ->
             args.multiPlatform = multiPlatformEnabled.get()
 
             args.moduleName = this@KotlinCompileCommon.moduleName.get()
@@ -93,18 +93,18 @@ abstract class KotlinCompileCommon @Inject constructor(
             }
         }
 
-        contribute(KotlinCompilerArgumentsProducer.ArgumentType.Classpath) { args ->
-            args.pluginClasspaths = tryLenient {
+        classpath { args ->
+            args.pluginClasspaths = runSafe {
                 listOfNotNull(
                     pluginClasspath, kotlinPluginData?.orNull?.classpath
                 ).reduce(FileCollection::plus).toPathsArray()
             }
-            args.classpath = tryLenient { libraries.files.filter { it.exists() }.joinToString(File.pathSeparator) }
-            args.friendPaths = tryLenient { this@KotlinCompileCommon.friendPaths.files.toPathsArray() }
+            args.classpath = runSafe { libraries.files.filter { it.exists() }.joinToString(File.pathSeparator) }
+            args.friendPaths = runSafe { this@KotlinCompileCommon.friendPaths.files.toPathsArray() }
             args.refinesPaths = refinesMetadataPaths.toPathsArray()
         }
 
-        contribute(KotlinCompilerArgumentsProducer.ArgumentType.Sources) { args ->
+        sources { args ->
             args.freeArgs += sources.asFileTree.map { it.absolutePath }
             args.commonSources = commonSourceSet.asFileTree.toPathsArray()
         }
