@@ -20,6 +20,7 @@ dependencies {
     testCompileOnly(project(":kotlin-test:kotlin-test-jvm"))
     testCompileOnly(project(":kotlin-test:kotlin-test-junit"))
     testApi(projectTests(":compiler:tests-common"))
+    testApi(projectTests(":compiler:tests-common-new"))
     testApi(projectTests(":compiler:fir:raw-fir:psi2fir"))
     testApi(projectTests(":compiler:fir:raw-fir:light-tree2fir"))
     testApi(projectTests(":compiler:fir:analysis-tests:legacy-fir-tests"))

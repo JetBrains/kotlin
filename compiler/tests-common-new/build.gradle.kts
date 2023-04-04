@@ -13,6 +13,7 @@ dependencies {
     testImplementation(project(":compiler:backend.jvm.entrypoint"))
     testImplementation(project(":compiler:backend.jvm.lower"))
     testImplementation(intellijCore())
+    testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 
     testRuntimeOnly(project(":core:descriptors.runtime"))
 
