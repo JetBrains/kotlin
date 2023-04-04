@@ -878,14 +878,14 @@ private fun Printer.generateOptionDeprecation(property: KProperty1<*, *>) {
 private fun Printer.generateDoc(property: KProperty1<*, *>) {
     val description = property.findAnnotation<Argument>()!!.description
     val possibleValues = property.gradleValues.possibleValues
-    val defaultValue = property.gradleValues.prettyDefaultValue ?: property.gradleValues.defaultValue
+    val defaultValue = property.gradleValues.defaultValue
 
     println("/**")
     println(" * ${description.replace("\n", " ")}")
     if (possibleValues != null) {
         println(" * Possible values: ${possibleValues.joinToString()}")
     }
-    println(" * Default value: $defaultValue")
+    println(" * Default value: ${defaultValue.removePrefix("$OPTIONS_PACKAGE_PREFIX.")}")
     println(" */")
 }
 

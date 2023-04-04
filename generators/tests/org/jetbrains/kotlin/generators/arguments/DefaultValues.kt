@@ -24,7 +24,6 @@ open class DefaultValues(
     val defaultValue: String,
     val type: KType,
     val kotlinOptionsType: KType,
-    val prettyDefaultValue: String? = null,
     val possibleValues: List<String>? = null,
     val fromKotlinOptionConverterProp: String? = null,
     val toKotlinOptionConverterProp: String? = null,
@@ -89,7 +88,6 @@ open class DefaultValues(
         toKotlinOptionConverterProp = """
         this.target
         """.trimIndent(),
-        prettyDefaultValue = "\"${JvmTarget.DEFAULT}\""
     )
 
     object JsEcmaVersions : DefaultValues(
