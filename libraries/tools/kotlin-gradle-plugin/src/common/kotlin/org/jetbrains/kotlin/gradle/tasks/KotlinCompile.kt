@@ -226,12 +226,9 @@ abstract class KotlinCompile @Inject constructor(
             args.pluginOptions = (pluginOptions.toSingleCompilerPluginOptions() + kotlinPluginData?.orNull?.options)
                 .arguments.toTypedArray()
 
-            args.moduleName = compilerOptions.moduleName.orNull
-
             args.destinationAsFile = destinationDirectory.get().asFile
 
             args.javaPackagePrefix = javaPackagePrefix
-
 
             if (compilerOptions.usesK2.get()) {
                 args.fragments = multiplatformStructure.fragmentsCompilerArgs
