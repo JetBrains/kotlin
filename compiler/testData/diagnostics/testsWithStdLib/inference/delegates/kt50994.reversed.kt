@@ -5,11 +5,11 @@ import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty1
 
 class ProcessorWithParent : Entity {
-    var processor by parent(ProcessorWithChildren::processors)
+    var processor by parent(<!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>ProcessorWithChildren::processors<!>)
 }
 
 class ProcessorWithChildren : Entity {
-    var processors by <!INAPPLICABLE_CANDIDATE!>children<!>(ProcessorWithParent::class.java, ProcessorWithParent::<!UNRESOLVED_REFERENCE!>processor<!>)
+    var processors by children(ProcessorWithParent::class.java, ProcessorWithParent::processor)
 }
 
 class Processor2WithParent : Entity {

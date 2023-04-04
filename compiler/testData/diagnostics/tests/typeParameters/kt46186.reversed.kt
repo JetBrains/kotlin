@@ -71,7 +71,7 @@ object Obj {
     fun test9(): View1 = <!NEW_INFERENCE_ERROR, RETURN_TYPE_MISMATCH!>findViewById9()<!>
 
     inline fun <reified T> findViewById10(): T where T: View3, T: View5 = null as T
-    fun test10(): View1 = <!NEW_INFERENCE_ERROR, RETURN_TYPE_MISMATCH!>findViewById10()<!>
+    fun test10(): View1 = <!INFERRED_TYPE_VARIABLE_INTO_POSSIBLE_EMPTY_INTERSECTION!>findViewById10<!>()
 
     fun <T: View2> findViewById11(): T = null as T
     fun test11(): View4 = <!NEW_INFERENCE_ERROR, RETURN_TYPE_MISMATCH!>findViewById11()<!>

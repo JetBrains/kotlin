@@ -1,4 +1,4 @@
-FILE: implicitTypes.kt
+FILE: implicitTypes.reversed.kt
     public final fun <T, R> use(x: R|(T) -> R|): R|(T) -> R| {
         ^use R|<local>/x|
     }
@@ -11,6 +11,6 @@ FILE: implicitTypes.kt
     public final fun loop1(): R|(ERROR CLASS: Cannot infer argument for type parameter T) -> ERROR CLASS: Cannot infer argument for type parameter R| {
         ^loop1 R|/use<Inapplicable(INAPPLICABLE): /use>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>, <ERROR TYPE REF: Cannot infer argument for type parameter R>>(::<Unresolved reference: loop2>#)
     }
-    public final fun loop2(): <ERROR TYPE REF: cycle> {
+    public final fun loop2(): R|(ERROR CLASS: Cannot infer argument for type parameter T) -> ERROR CLASS: Cannot infer argument for type parameter R| {
         ^loop2 R|/loop1|()
     }

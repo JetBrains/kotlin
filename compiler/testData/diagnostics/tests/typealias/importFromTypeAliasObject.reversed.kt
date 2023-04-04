@@ -12,5 +12,5 @@ object Host {
 import bar.HostAlias.foo
 
 fun test() {
-    foo()
+    <!UNRESOLVED_REFERENCE!>foo<!>()
 }

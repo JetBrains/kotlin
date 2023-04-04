@@ -15,8 +15,8 @@ class A {
         <!WRONG_MODIFIER_TARGET!>public<!> field = 5
 
     fun rest() {
-        val aI = A().a + 10
-        val bI = A().b + 20
+        val aI = A().a <!UNRESOLVED_REFERENCE!>+<!> 10
+        val bI = A().b <!UNRESOLVED_REFERENCE!>+<!> 20
         val cI = A().c <!UNRESOLVED_REFERENCE!>+<!> 30
         val dI = A().d <!UNRESOLVED_REFERENCE!>+<!> 40
     }
@@ -24,7 +24,7 @@ class A {
 
 fun test() {
     val aA = A().a <!UNRESOLVED_REFERENCE!>+<!> 10
-    val bA = A().b + 20
+    val bA = A().b <!UNRESOLVED_REFERENCE!>+<!> 20
     val cA = A().c <!UNRESOLVED_REFERENCE!>+<!> 30
     val dA = A().d <!UNRESOLVED_REFERENCE!>+<!> 40
 }

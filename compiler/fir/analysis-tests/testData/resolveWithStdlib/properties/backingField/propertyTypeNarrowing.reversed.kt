@@ -2,7 +2,7 @@ class A {
     val it: Number
         field = 4
 
-    fun test() = it + 3
+    fun test() = it <!UNRESOLVED_REFERENCE!>+<!> 3
 
     val p = 5
         get() = field

@@ -1,4 +1,4 @@
-FILE: kt50994.fir.kt
+FILE: kt50994.reversed.kt
     public final class ProcessorWithParent : R|Entity| {
         public constructor(): R|ProcessorWithParent| {
             super<R|kotlin/Any|>()
@@ -18,11 +18,11 @@ FILE: kt50994.fir.kt
             super<R|kotlin/Any|>()
         }
 
-        public final var processors: R|kotlin/collections/MutableCollection<ERROR CLASS: Type for TC is not inferred>|by this@R|/ProcessorWithChildren|.R|/children<Inapplicable(INAPPLICABLE): /children>#|<<ERROR TYPE REF: Type for SC is not inferred>, <ERROR TYPE REF: Type for TC is not inferred>>(<getClass>(Q|ProcessorWithParent|).R|kotlin/jvm/java|<R|ProcessorWithParent|>, Q|ProcessorWithParent|::<Unresolved reference: processor>#)
-            public get(): R|kotlin/collections/MutableCollection<ERROR CLASS: Type for TC is not inferred>| {
+        public final var processors: R|kotlin/collections/MutableCollection<ProcessorWithParent>|by this@R|/ProcessorWithChildren|.R|/children|<R|ProcessorWithChildren|, R|ProcessorWithParent|>(<getClass>(Q|ProcessorWithParent|).R|kotlin/jvm/java|<R|ProcessorWithParent|>, Q|ProcessorWithParent|::R|/ProcessorWithParent.processor|)
+            public get(): R|kotlin/collections/MutableCollection<ProcessorWithParent>| {
                 ^ this@R|/ProcessorWithChildren|.D|/ProcessorWithChildren.processors|.R|SubstitutionOverride</Delegate.getValue: R|kotlin/collections/MutableCollection<Stub (chain inference): TypeVariable(_TC)>|>|(this@R|/ProcessorWithChildren|, ::R|/ProcessorWithChildren.processors|)
             }
-            public set(<set-?>: R|kotlin/collections/MutableCollection<ERROR CLASS: Type for TC is not inferred>|): R|kotlin/Unit| {
+            public set(<set-?>: R|kotlin/collections/MutableCollection<ProcessorWithParent>|): R|kotlin/Unit| {
                 this@R|/ProcessorWithChildren|.D|/ProcessorWithChildren.processors|.R|SubstitutionOverride</Delegate.setValue: R|kotlin/Unit|>|(this@R|/ProcessorWithChildren|, ::R|/ProcessorWithChildren.processors|, R|<local>/processors|)
             }
 

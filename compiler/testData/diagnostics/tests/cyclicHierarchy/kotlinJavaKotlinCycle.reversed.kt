@@ -15,6 +15,6 @@ class J extends I {
 
 // FILE: K.kt
 
-open class K : <!CYCLIC_INHERITANCE_HIERARCHY!>J<!>() {
+open class K : <!EXPOSED_SUPER_CLASS!>J<!>() {
     fun baz() {}
 }

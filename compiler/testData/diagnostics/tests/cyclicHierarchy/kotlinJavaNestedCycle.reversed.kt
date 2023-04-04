@@ -1,6 +1,6 @@
 // FILE: ExceptionTracker.kt
 
-interface ExceptionTracker : <!EXPOSED_SUPER_INTERFACE!>LockBasedStorageManager.ExceptionHandlingStrategy<!> {
+interface ExceptionTracker : <!CYCLIC_INHERITANCE_HIERARCHY!>LockBasedStorageManager.ExceptionHandlingStrategy<!> {
 }
 
 // FILE: StorageManager.kt

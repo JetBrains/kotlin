@@ -18,5 +18,7 @@ abstract class AbstractLLFirPreresolvedReversedDiagnosticCompilerTestDataSpecTes
         )
         baseFirSpecDiagnosticTestConfigurationForIde()
         useAfterAnalysisCheckers(::FirReversedSuppressor)
+        useMetaTestConfigurators(::ReversedDiagnosticsConfigurator)
+        useAfterAnalysisCheckers(::ReversedFirIdenticalChecker)
     }
 }
