@@ -1,4 +1,6 @@
 public final class ClassObjectDeclaresProperty : R|kotlin/Any| {
+    public constructor(): R|test/ClassObjectDeclaresProperty|
+
     public final companion object Companion : R|kotlin/Any| {
         public final val i: R|kotlin/Int|
             public get(): R|kotlin/Int|
@@ -7,6 +9,5 @@ public final class ClassObjectDeclaresProperty : R|kotlin/Any| {
 
     }
 
-    public constructor(): R|test/ClassObjectDeclaresProperty|
-
 }
+

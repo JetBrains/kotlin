@@ -1,9 +1,10 @@
 public final class Outer : R|kotlin/Any| {
+    public constructor(): R|test/Outer|
+
     public final inner class Inner : R|kotlin/Any| {
         public test/Outer.constructor(): R|test/Outer.Inner|
 
     }
 
-    public constructor(): R|test/Outer|
-
 }
+

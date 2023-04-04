@@ -7,6 +7,8 @@ public final annotation class Anno : R|kotlin/Annotation| {
 }
 
 @R|test/Anno|(t = R|java/lang/annotation/ElementType.METHOD|) public final class Class : R|kotlin/Any| {
+    public constructor(): R|test/Class|
+
     @R|test/Anno|(t = R|java/lang/annotation/ElementType.ANNOTATION_TYPE|) public final companion object Companion : R|kotlin/Any| {
         private constructor(): R|test/Class.Companion|
 
@@ -21,7 +23,5 @@ public final annotation class Anno : R|kotlin/Annotation| {
         public constructor(): R|test/Class.Nested|
 
     }
-
-    public constructor(): R|test/Class|
 
 }

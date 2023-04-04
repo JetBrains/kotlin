@@ -2,11 +2,12 @@ public abstract interface Bbb : R|kotlin/Any| {
 }
 
 public final class ClassObjectextendsTrait : R|kotlin/Any| {
+    public constructor(): R|test/ClassObjectextendsTrait|
+
     public final companion object Companion : R|test/Bbb| {
         private constructor(): R|test/ClassObjectextendsTrait.Companion|
 
     }
 
-    public constructor(): R|test/ClassObjectextendsTrait|
-
 }
+

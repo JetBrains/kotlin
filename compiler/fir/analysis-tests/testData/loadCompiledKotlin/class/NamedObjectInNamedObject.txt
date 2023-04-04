@@ -1,4 +1,6 @@
 public final object Outer : R|kotlin/Any| {
+    private constructor(): R|test/Outer|
+
     public final object Obj : R|kotlin/Any| {
         public final fun f(): R|kotlin/String|
 
@@ -9,6 +11,5 @@ public final object Outer : R|kotlin/Any| {
 
     }
 
-    private constructor(): R|test/Outer|
-
 }
+

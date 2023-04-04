@@ -4,15 +4,15 @@ public final annotation class Ann : R|kotlin/Annotation| {
 }
 
 public sealed class Sealed : R|kotlin/Any| {
-    public final class Derived : R|test/Sealed| {
-        @R|test/Ann|() public constructor(z: R|test/Z|): R|test/Sealed.Derived|
-
-    }
-
     public final val z: R|test/Z|
         public get(): R|test/Z|
 
     @R|test/Ann|() protected constructor(@R|test/Ann|() z: R|test/Z|): R|test/Sealed|
+
+    public final class Derived : R|test/Sealed| {
+        @R|test/Ann|() public constructor(z: R|test/Z|): R|test/Sealed.Derived|
+
+    }
 
 }
 

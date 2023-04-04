@@ -1,4 +1,6 @@
 public final class InheritMethodsDifferentReturnTypesGeneric : R|kotlin/Any| {
+    public constructor(): R|test/InheritMethodsDifferentReturnTypesGeneric|
+
     public abstract interface Sub : R|test/InheritMethodsDifferentReturnTypesGeneric.Super1<kotlin/String, kotlin/CharSequence>|, R|test/InheritMethodsDifferentReturnTypesGeneric.Super2<kotlin/CharSequence, kotlin/String>| {
     }
 
@@ -16,6 +18,5 @@ public final class InheritMethodsDifferentReturnTypesGeneric : R|kotlin/Any| {
 
     }
 
-    public constructor(): R|test/InheritMethodsDifferentReturnTypesGeneric|
-
 }
+

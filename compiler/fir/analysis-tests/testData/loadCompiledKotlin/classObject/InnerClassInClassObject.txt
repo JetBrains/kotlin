@@ -1,4 +1,6 @@
 public final class TestFirst : R|kotlin/Any| {
+    public constructor(): R|test/TestFirst|
+
     public final companion object Companion : R|kotlin/Any| {
         public final fun testing(a: R|test/TestFirst.InnerClass|): R|kotlin/Int|
 
@@ -18,6 +20,5 @@ public final class TestFirst : R|kotlin/Any| {
 
     }
 
-    public constructor(): R|test/TestFirst|
-
 }
+

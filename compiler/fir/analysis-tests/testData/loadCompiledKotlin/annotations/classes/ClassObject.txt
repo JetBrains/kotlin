@@ -4,11 +4,11 @@ public final annotation class Anno : R|kotlin/Annotation| {
 }
 
 public final class Class : R|kotlin/Any| {
+    public constructor(): R|test/Class|
+
     @R|test/Anno|() public final companion object Companion : R|kotlin/Any| {
         private constructor(): R|test/Class.Companion|
 
     }
-
-    public constructor(): R|test/Class|
 
 }

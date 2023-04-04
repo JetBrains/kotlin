@@ -2,13 +2,13 @@ public final class A : R|kotlin/Any| {
     public final val a: R|kotlin/Int|
         public get(): R|kotlin/Int|
 
+    public final val c: R|kotlin/Int|
+        public get(): R|kotlin/Int|
+
     public final val R|kotlin/Int|.a: R|kotlin/Int|
         public get(): R|kotlin/Int|
 
     public final val R|kotlin/Int|.b: R|kotlin/Int|
-        public get(): R|kotlin/Int|
-
-    public final val c: R|kotlin/Int|
         public get(): R|kotlin/Int|
 
     public final val R|kotlin/Int|.c: R|kotlin/Int|
@@ -17,3 +17,4 @@ public final class A : R|kotlin/Any| {
     public constructor(): R|test/A|
 
 }
+

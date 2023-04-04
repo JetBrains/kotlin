@@ -1,9 +1,10 @@
 public final class A : R|kotlin/Any| {
+    public constructor(): R|test/A|
+
     public final class TestConstructor : R|kotlin/Any| {
         public constructor(p: R|kotlin/Int| = STUB): R|test/A.TestConstructor|
 
     }
 
-    public constructor(): R|test/A|
-
 }
+

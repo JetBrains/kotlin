@@ -136,15 +136,6 @@ public abstract class LongIterator : R|kotlin/collections/Iterator<kotlin/Long>|
 }
 
 public abstract interface Map<K, out V> : R|kotlin/Any| {
-    public abstract interface Entry<out K, out V> : R|kotlin/Any| {
-        public abstract val key: R|K|
-            public get(): R|K|
-
-        public abstract val value: R|V|
-            public get(): R|V|
-
-    }
-
     public abstract fun containsKey(key: R|K|): R|kotlin/Boolean|
 
     public abstract fun containsValue(value: R|V|): R|kotlin/Boolean|
@@ -166,6 +157,15 @@ public abstract interface Map<K, out V> : R|kotlin/Any| {
 
     public abstract val values: R|kotlin/collections/Collection<V>|
         public get(): R|kotlin/collections/Collection<V>|
+
+    public abstract interface Entry<out K, out V> : R|kotlin/Any| {
+        public abstract val key: R|K|
+            public get(): R|K|
+
+        public abstract val value: R|V|
+            public get(): R|V|
+
+    }
 
 }
 
@@ -239,11 +239,6 @@ public abstract interface MutableListIterator<T> : R|kotlin/collections/ListIter
 }
 
 public abstract interface MutableMap<K, V> : R|kotlin/collections/Map<K, V>| {
-    public abstract interface MutableEntry<K, V> : R|kotlin/collections/Map.Entry<K, V>| {
-        public abstract fun setValue(newValue: R|V|): R|V|
-
-    }
-
     public abstract fun clear(): R|kotlin/Unit|
 
     public abstract fun put(key: R|K|, value: R|V|): R|V?|
@@ -262,6 +257,11 @@ public abstract interface MutableMap<K, V> : R|kotlin/collections/Map<K, V>| {
 
     public abstract val values: R|kotlin/collections/MutableCollection<V>|
         public get(): R|kotlin/collections/MutableCollection<V>|
+
+    public abstract interface MutableEntry<K, V> : R|kotlin/collections/Map.Entry<K, V>| {
+        public abstract fun setValue(newValue: R|V|): R|V|
+
+    }
 
 }
 

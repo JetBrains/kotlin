@@ -1,4 +1,8 @@
 public final class A : R|test/T| {
+    public open fun foo(): R|kotlin/Int|
+
+    public constructor(): R|test/A|
+
     public final companion object Companion : R|test/T| {
         public open fun foo(): R|kotlin/Int|
 
@@ -6,13 +10,10 @@ public final class A : R|test/T| {
 
     }
 
-    public open fun foo(): R|kotlin/Int|
-
-    public constructor(): R|test/A|
-
 }
 
 public abstract interface T : R|kotlin/Any| {
     public abstract fun foo(): R|kotlin/Int|
 
 }
+

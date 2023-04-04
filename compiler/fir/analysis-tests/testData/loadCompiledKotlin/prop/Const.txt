@@ -10,6 +10,8 @@ public final object A : R|kotlin/Any| {
 }
 
 public final class B : R|kotlin/Any| {
+    public constructor(): R|test/B|
+
     public final companion object Companion : R|kotlin/Any| {
         public final const val inCompanion: R|kotlin/Int| = Int(3)
             public get(): R|kotlin/Int|
@@ -17,8 +19,6 @@ public final class B : R|kotlin/Any| {
         private constructor(): R|test/B.Companion|
 
     }
-
-    public constructor(): R|test/B|
 
 }
 

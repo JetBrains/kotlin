@@ -1,4 +1,9 @@
 public final class ConstructorTypeParamClassObjectConflict<test> : R|kotlin/Any| {
+    public final val some: R|kotlin/Int|
+        public get(): R|kotlin/Int|
+
+    public constructor<test>(): R|test/ConstructorTypeParamClassObjectConflict<test>|
+
     public final companion object Companion : R|kotlin/Any| {
         public final val test: R|kotlin/Int|
             public get(): R|kotlin/Int|
@@ -7,38 +12,25 @@ public final class ConstructorTypeParamClassObjectConflict<test> : R|kotlin/Any|
 
     }
 
-    public final val some: R|kotlin/Int|
-        public get(): R|kotlin/Int|
-
-    public constructor<test>(): R|test/ConstructorTypeParamClassObjectConflict<test>|
-
 }
 
 public final class ConstructorTypeParamClassObjectTypeConflict<test> : R|kotlin/Any| {
-    public final companion object Companion : R|kotlin/Any| {
-        public abstract interface test : R|kotlin/Any| {
-        }
-
-        private constructor(): R|test/ConstructorTypeParamClassObjectTypeConflict.Companion|
-
-    }
-
     public final val some: R|test?|
         public get(): R|test?|
 
     public constructor<test>(): R|test/ConstructorTypeParamClassObjectTypeConflict<test>|
 
-}
-
-public final class TestClassObjectAndClassConflict : R|kotlin/Any| {
     public final companion object Companion : R|kotlin/Any| {
-        public final val bla: R|kotlin/Int|
-            public get(): R|kotlin/Int|
+        private constructor(): R|test/ConstructorTypeParamClassObjectTypeConflict.Companion|
 
-        private constructor(): R|test/TestClassObjectAndClassConflict.Companion|
+        public abstract interface test : R|kotlin/Any| {
+        }
 
     }
 
+}
+
+public final class TestClassObjectAndClassConflict : R|kotlin/Any| {
     public final val bla: R|kotlin/String|
         public get(): R|kotlin/String|
 
@@ -47,9 +39,22 @@ public final class TestClassObjectAndClassConflict : R|kotlin/Any| {
 
     public constructor(): R|test/TestClassObjectAndClassConflict|
 
+    public final companion object Companion : R|kotlin/Any| {
+        public final val bla: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+
+        private constructor(): R|test/TestClassObjectAndClassConflict.Companion|
+
+    }
+
 }
 
 public final class TestConstructorParamClassObjectConflict : R|kotlin/Any| {
+    public final val some: R|kotlin/String|
+        public get(): R|kotlin/String|
+
+    public constructor(test: R|kotlin/String|): R|test/TestConstructorParamClassObjectConflict|
+
     public final companion object Companion : R|kotlin/Any| {
         public final val test: R|kotlin/Int|
             public get(): R|kotlin/Int|
@@ -58,22 +63,9 @@ public final class TestConstructorParamClassObjectConflict : R|kotlin/Any| {
 
     }
 
-    public final val some: R|kotlin/String|
-        public get(): R|kotlin/String|
-
-    public constructor(test: R|kotlin/String|): R|test/TestConstructorParamClassObjectConflict|
-
 }
 
 public final class TestConstructorValClassObjectConflict : R|kotlin/Any| {
-    public final companion object Companion : R|kotlin/Any| {
-        public final val test: R|kotlin/Int|
-            public get(): R|kotlin/Int|
-
-        private constructor(): R|test/TestConstructorValClassObjectConflict.Companion|
-
-    }
-
     public final val some: R|kotlin/String|
         public get(): R|kotlin/String|
 
@@ -81,6 +73,14 @@ public final class TestConstructorValClassObjectConflict : R|kotlin/Any| {
         public get(): R|kotlin/String|
 
     public constructor(test: R|kotlin/String|): R|test/TestConstructorValClassObjectConflict|
+
+    public final companion object Companion : R|kotlin/Any| {
+        public final val test: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+
+        private constructor(): R|test/TestConstructorValClassObjectConflict.Companion|
+
+    }
 
 }
 

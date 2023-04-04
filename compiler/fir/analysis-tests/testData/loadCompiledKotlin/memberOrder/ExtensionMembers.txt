@@ -1,17 +1,17 @@
 public final class A : R|kotlin/Any| {
     public final fun f1(): R|kotlin/Unit|
 
+    public final fun f2(): R|kotlin/Unit|
+
+    public final fun f3(): R|kotlin/Unit|
+
     public final fun R|kotlin/Int|.f1(): R|kotlin/Unit|
 
     public final fun R|kotlin/String|.f1(): R|kotlin/Unit|
 
-    public final fun f2(): R|kotlin/Unit|
-
     public final fun R|kotlin/Int|.f2(): R|kotlin/Unit|
 
     public final fun R|kotlin/String|.f2(): R|kotlin/Unit|
-
-    public final fun f3(): R|kotlin/Unit|
 
     public final fun R|kotlin/Int|.f3(): R|kotlin/Unit|
 
@@ -20,10 +20,10 @@ public final class A : R|kotlin/Any| {
     public final val c: R|kotlin/Int|
         public get(): R|kotlin/Int|
 
-    public final val R|kotlin/Int|.c: R|kotlin/Int|
+    public final val d: R|kotlin/Int|
         public get(): R|kotlin/Int|
 
-    public final val d: R|kotlin/Int|
+    public final val R|kotlin/Int|.c: R|kotlin/Int|
         public get(): R|kotlin/Int|
 
     public final val R|kotlin/Int|.d: R|kotlin/Int|
@@ -32,3 +32,4 @@ public final class A : R|kotlin/Any| {
     public constructor(): R|test/A|
 
 }
+

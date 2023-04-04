@@ -1,10 +1,10 @@
 public final class A : R|kotlin/Any| {
+    public constructor(): R|test/A|
+
     public final annotation class Anno : R|kotlin/Annotation| {
         public constructor(): R|test/A.Anno|
 
     }
-
-    public constructor(): R|test/A|
 
 }
 

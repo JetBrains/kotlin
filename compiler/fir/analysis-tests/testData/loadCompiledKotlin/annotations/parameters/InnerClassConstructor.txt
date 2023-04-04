@@ -7,6 +7,8 @@ public final annotation class A : R|kotlin/Annotation| {
 }
 
 public final class Outer : R|kotlin/Any| {
+    public constructor(): R|test/Outer|
+
     public final inner class Inner : R|kotlin/Any| {
         public final val y: R|kotlin/String|
             public get(): R|kotlin/String|
@@ -23,6 +25,5 @@ public final class Outer : R|kotlin/Any| {
 
     }
 
-    public constructor(): R|test/Outer|
-
 }
+

@@ -1,25 +1,25 @@
 public final class A : R|kotlin/Any| {
+    public constructor(): R|test/A|
+
     public final companion object Companion : R|kotlin/Any| {
+        private constructor(): R|test/A.Companion|
+
         public final annotation class Anno1 : R|kotlin/Annotation| {
             public constructor(): R|test/A.Companion.Anno1|
 
         }
 
         public final class B : R|kotlin/Any| {
+            public constructor(): R|test/A.Companion.B|
+
             public final annotation class Anno2 : R|kotlin/Annotation| {
                 public constructor(): R|test/A.Companion.B.Anno2|
 
             }
 
-            public constructor(): R|test/A.Companion.B|
-
         }
 
-        private constructor(): R|test/A.Companion|
-
     }
-
-    public constructor(): R|test/A|
 
 }
 
@@ -27,3 +27,4 @@ public final class A : R|kotlin/Any| {
     public constructor(): R|test/C|
 
 }
+

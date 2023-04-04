@@ -9,12 +9,12 @@ public final class Inheritor3 : R|test/SealedClass| {
 }
 
 public sealed class SealedClass : R|kotlin/Any| {
+    protected constructor(): R|test/SealedClass|
+
     public final class Inheritor1 : R|test/SealedClass| {
         public constructor(): R|test/SealedClass.Inheritor1|
 
     }
-
-    protected constructor(): R|test/SealedClass|
 
 }
 

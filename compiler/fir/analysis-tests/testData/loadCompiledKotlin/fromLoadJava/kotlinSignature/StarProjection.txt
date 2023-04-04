@@ -1,10 +1,10 @@
 public final class StarProjection : R|kotlin/Any| {
-    public abstract interface MyClass<T : R|kotlin/CharSequence?|> : R|kotlin/Any| {
-    }
-
     public final fun foo(): R|test/StarProjection.MyClass<*>|
 
     public constructor(): R|test/StarProjection|
+
+    public abstract interface MyClass<T : R|kotlin/CharSequence?|> : R|kotlin/Any| {
+    }
 
 }
 

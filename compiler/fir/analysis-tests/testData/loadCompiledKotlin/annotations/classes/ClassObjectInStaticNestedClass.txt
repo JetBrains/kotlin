@@ -1,5 +1,9 @@
 public final class A : R|kotlin/Any| {
+    public constructor(): R|test/A|
+
     public final class B : R|kotlin/Any| {
+        public constructor(): R|test/A.B|
+
         public final companion object Companion : R|kotlin/Any| {
             public final val TEST: R|kotlin/Int|
                 public get(): R|kotlin/Int|
@@ -8,10 +12,6 @@ public final class A : R|kotlin/Any| {
 
         }
 
-        public constructor(): R|test/A.B|
-
     }
-
-    public constructor(): R|test/A|
 
 }

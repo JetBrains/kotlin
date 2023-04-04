@@ -1,5 +1,9 @@
 public final class Outer : R|kotlin/Any| {
+    public constructor(): R|test/Outer|
+
     public final companion object Companion : R|kotlin/Any| {
+        private constructor(): R|test/Outer.Companion|
+
         public final object Obj : R|kotlin/Any| {
             public final fun f(): R|kotlin/String|
 
@@ -10,10 +14,7 @@ public final class Outer : R|kotlin/Any| {
 
         }
 
-        private constructor(): R|test/Outer.Companion|
-
     }
 
-    public constructor(): R|test/Outer|
-
 }
+

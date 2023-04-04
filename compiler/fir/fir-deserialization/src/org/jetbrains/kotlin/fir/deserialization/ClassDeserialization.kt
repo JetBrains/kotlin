@@ -203,16 +203,6 @@ fun deserializeClassToSymbol(
             configure(classId)
         }
 
-        declarations.sortWith(object : Comparator<FirDeclaration> {
-            override fun compare(a: FirDeclaration, b: FirDeclaration): Int {
-                // Reorder members based on their type and name only.
-                // See FE 1.0's [DeserializedMemberScope#addMembers].
-                if (a is FirMemberDeclaration && b is FirMemberDeclaration) {
-                    return FirMemberDeclarationComparator.TypeAndNameComparator.compare(a, b)
-                }
-                return 0
-            }
-        })
         companionObjectSymbol = (declarations.firstOrNull { it is FirRegularClass && it.isCompanion } as FirRegularClass?)?.symbol
 
         contextReceivers.addAll(classDeserializer.createContextReceiversForClass(classProto))
