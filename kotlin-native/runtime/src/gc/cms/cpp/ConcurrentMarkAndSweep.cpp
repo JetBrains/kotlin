@@ -63,9 +63,8 @@ ScopedThread createGCThread(const char* name, Body&& body) {
         auto obj = objRef.GetObjHeader();
         auto& objData = objRef.ObjectData();
         if (objData.marked()) {
-            gc::internal::forEachRefField(obj, [obj](KRef* fieldPtr) {
-                auto field = *fieldPtr;
-                if (field && field->heap()) {
+            traverseReferredObjects(obj, [obj](ObjHeader* field) {
+                if (field->heap()) {
                     auto& fieldObjData =
                             mm::ObjectFactory<gc::ConcurrentMarkAndSweep>::NodeRef::From(field).ObjectData();
                     RuntimeAssert(fieldObjData.marked(), "Field %p of an alive obj %p must be alive", field, obj);

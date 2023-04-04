@@ -52,11 +52,10 @@ std::atomic<bool> kotlin::mm::internal::gSuspensionRequested = false;
 
 NO_EXTERNAL_CALLS_CHECK void kotlin::mm::ThreadSuspensionData::suspendIfRequestedSlowPath() noexcept {
     if (IsThreadSuspensionRequested()) {
+        auto suspendStartMs = konan::getTimeMicros();
         threadData_.gc().OnSuspendForGC();
         std::unique_lock lock(gSuspensionMutex);
         auto threadId = konan::currentThreadId();
-        // TODO account GC time?
-        auto suspendStartMs = konan::getTimeMicros();
         RuntimeLogDebug({kTagGC, kTagMM}, "Suspending thread %d", threadId);
         AutoReset scopedAssignSuspended(&suspended_, true);
         gSuspensionCondVar.wait(lock, []() { return !IsThreadSuspensionRequested(); });

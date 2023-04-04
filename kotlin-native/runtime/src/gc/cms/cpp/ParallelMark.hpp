@@ -81,9 +81,9 @@ public:
 
     // These numbers were chosen pretty arbitrary.
     /** A marker will from time to time share this amount of jobs with others. */
-    static const std::size_t kMinWorkSizeToShare = 128;
-    /** A marker depleted of work will try to steal `1/kFractionToSteal` jobs from a victim worker at once. */
-    static const std::size_t kFractionToSteal = 2;
+    static const std::size_t kMinWorkSizeToShare = 256;
+    /** A marker depleted of work will try to steal at most `kMaxWorkSieToSteal` jobs from a victim worker at once. */
+    static const std::size_t kMaxWorkSizeToSteal = kMinWorkSizeToShare / 2;
     /** A marker will iterate over other workers this number of times searching for a victim for work-stealing. */
     static const std::size_t kStealingAttemptCyclesBeforeWait = 4;
 

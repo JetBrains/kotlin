@@ -346,10 +346,8 @@ public:
     // The behavior is undefined if `insertAfter` is an iterator in the range `(++firstExcl, lastIncl]`.
     // Complexity: O(1)
     void splice_after_excl_incl(iterator insertAfter, iterator firstExcl, iterator lastIncl) {
-        auto firstIncl = firstExcl;
-        ++firstIncl;
-        auto lastExcl = lastIncl;
-        ++lastExcl;
+        auto firstIncl = std::next(firstExcl);
+        auto lastExcl = std::next(lastIncl);
         if (firstIncl == insertAfter || firstIncl == lastExcl) return;
         setNext(firstExcl.node_, lastExcl.node_);
         setNext(lastIncl.node_, next(insertAfter.node_));

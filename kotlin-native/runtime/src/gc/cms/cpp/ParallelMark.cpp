@@ -174,7 +174,7 @@ void gc::mark::MarkDispatcher::MarkJob::collectRootSet(mm::ThreadData& thread) {
                konan::currentThreadId(), thread.threadId());
     auto& gcData = thread.gc().impl().gc();
     gcData.publish();
-    bool markItself = konan::currentThreadId() != thread.threadId();
+    bool markItself = konan::currentThreadId() == thread.threadId();
     RuntimeAssert(markItself == gcData.cooperative(), "A mutator can mark it's own root set iff the mutator cooperate");
     collectRootSetForThread<gc::mark::MarkTraits>(dispatcher_.gcHandle(), workList_, thread);
 }
@@ -244,7 +244,7 @@ bool gc::mark::MarkDispatcher::MarkJob::tryAcquireWork() {
     }
 
     // check own shared queue first
-    auto selfStolen = workList_.tryStealFractionFrom(workList_, kFractionToSteal);
+    auto selfStolen = workList_.tryStealFrom(workList_, kMaxWorkSizeToSteal);
     if (selfStolen > 0) {
         GCLogTrace(dispatcher_.gcHandle().getEpoch(), "Mark task %d has stolen %zu tasks from itself", carrierThreadId_, selfStolen);
         return true;
@@ -255,7 +255,7 @@ bool gc::mark::MarkDispatcher::MarkJob::tryAcquireWork() {
         for (size_t vi = 0; vi < registeredJobs; ++vi) {
             auto victim = dispatcher_.jobs_[vi].load(std::memory_order_relaxed);
             RuntimeAssert(victim != nullptr, "victim job can not be null here");
-            auto stolen = workList_.tryStealFractionFrom(victim->workList_, kFractionToSteal);
+            auto stolen = workList_.tryStealFrom(victim->workList_, kMaxWorkSizeToSteal);
             if (stolen > 0) {
                 GCLogTrace(dispatcher_.gcHandle().getEpoch(), "Mark task %d has stolen %zu tasks from %d", carrierThreadId_, stolen, victim->carrierThreadId_);
                 return true;

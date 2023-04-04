@@ -25,85 +25,6 @@ namespace gc {
 
 namespace internal {
 
-class ObjFieldIterable {
-public:
-    class Iterator {
-    public:
-        Iterator(ObjFieldIterable& owner, std::size_t fieldIndex) noexcept
-            : owner_(owner), fieldIndex_(fieldIndex) {}
-
-        KRef* operator*() noexcept {
-            auto obj = owner_.obj_;
-            auto offs = owner_.typeInfo_->objOffsets_[fieldIndex_];
-            return reinterpret_cast<KRef*>(reinterpret_cast<uintptr_t>(obj) + offs);
-        }
-        Iterator& operator++() noexcept {
-            ++fieldIndex_;
-            return *this;
-        }
-
-        bool operator==(const Iterator& rhs) const noexcept { return &owner_ == &rhs.owner_ && fieldIndex_ == rhs.fieldIndex_; }
-        bool operator!=(const Iterator& rhs) const noexcept { return !(*this == rhs); }
-    private:
-        ObjFieldIterable& owner_;
-        std::size_t fieldIndex_;
-    };
-
-    explicit ObjFieldIterable(ObjHeader* obj) noexcept : obj_(obj), typeInfo_(obj->type_info()) {
-        RuntimeAssert(obj->type_info() != theArrayTypeInfo, "Must not be an array of objects");
-    }
-    Iterator begin() noexcept { return { *this, 0 }; }
-    Iterator end() noexcept { return { *this, static_cast<std::size_t>(typeInfo_->objOffsetsCount_) }; }
-
-private:
-    ObjHeader* obj_;
-    const TypeInfo* typeInfo_;
-};
-
-class ArrayElemIterable {
-public:
-    class Iterator {
-    public:
-        explicit Iterator(KRef* elemPtr) : cur_(elemPtr) {}
-        Iterator(ArrayHeader* array, std::size_t idx) : Iterator(ArrayAddressOfElementAt(array, idx)) {}
-        KRef* operator*() noexcept { return cur_; }
-        Iterator& operator++() noexcept {
-            ++cur_;
-            return *this;
-        }
-
-        bool operator==(const Iterator& rhs) const noexcept { return cur_ == rhs.cur_; }
-        bool operator!=(const Iterator& rhs) const noexcept { return !(*this == rhs); }
-    private:
-        KRef* cur_;
-    };
-    explicit ArrayElemIterable(ArrayHeader* array) noexcept : array_(array) {
-        RuntimeAssert(array->type_info() == theArrayTypeInfo, "Must be an array of objects");
-    }
-    Iterator begin() noexcept { return {array_, 0}; }
-    Iterator end() noexcept { return {array_, array_->count_}; }
-
-private:
-    ArrayHeader* array_;
-};
-
-// TODO consider making an iterator
-// TODO consider moving somewhere else
-template<typename Fun>
-void forEachRefField(ObjHeader* obj, Fun fun) {
-    auto* typeInfo = obj->type_info();
-    if (typeInfo == theArrayTypeInfo) {
-        auto array = reinterpret_cast<ArrayHeader*>(obj);
-        for (auto elemPtr: gc::internal::ArrayElemIterable(array)) {
-            fun(elemPtr);
-        }
-    } else {
-        for (auto elemPtr: gc::internal::ObjFieldIterable(obj)) {
-            fun(elemPtr);
-        }
-    }
-}
-
 template <typename Traits>
 void processFieldInMark(void* state, ObjHeader* field) noexcept {
     auto& markQueue = *static_cast<typename Traits::MarkQueue*>(state);
@@ -114,27 +35,25 @@ void processFieldInMark(void* state, ObjHeader* field) noexcept {
 
 template <typename Traits>
 void processObjectInMark(void* state, ObjHeader* object) noexcept {
-    for (auto fieldPtr: ObjFieldIterable(object)) {
-        auto field = *fieldPtr;
-        if (!field) continue;
-        // FIXME not long
-        long offs = reinterpret_cast<void**>(fieldPtr) - reinterpret_cast<void**>(object);
-        // TODO TraceMark("Marking field *(%p + %" PRIdPTR ") -> %p", object, offs, field);
-        TraceMark("Marking field *(%p + %ld) -> %p", object, offs, field);
-        processFieldInMark<Traits>(state, field);
-    }
+    traverseClassObjectFields(object, [state, object] (ObjHeader** fieldLocation) {
+        if (auto field = *fieldLocation) {
+            ptrdiff_t offs = reinterpret_cast<void**>(fieldLocation) - reinterpret_cast<void**>(object);
+            TraceMark("Marking field *(%p + %td) -> %p", object, offs, field);
+            processFieldInMark<Traits>(state, field);
+        }
+    });
 }
 
 template <typename Traits>
 void processArrayInMark(void* state, ArrayHeader* array) noexcept {
     std::size_t idx = 0;
-    for (auto elemPtr: ArrayElemIterable(array)) {
-        auto elem = *elemPtr;
+    traverseArrayOfObjectsElements(array, [state, array, &idx] (ObjHeader** elemLocation) {
         auto curIdx = idx++;
-        if (!elem) continue;
-        TraceMark("Marking array element %p[%zu] -> %p", array, curIdx, elem);
-        processFieldInMark<Traits>(state, elem);
-    }
+        if (auto elem = *elemLocation) {
+            TraceMark("Marking array element %p[%zu] -> %p", array, curIdx, elem);
+            processFieldInMark<Traits>(state, elem);
+        }
+    });
 }
 
 template <typename Traits>

@@ -19,7 +19,7 @@ using Kotlin_getSourceInfo_FunctionType = int(*)(void * /*addr*/, SourceInfo* /*
  * but can be changed after compiling caches. So use this way for variables, which will be rarely accessed.
  */
 RUNTIME_WEAK int32_t Kotlin_destroyRuntimeMode = 1;
-RUNTIME_WEAK int32_t Kotlin_gcMarkSingleThreaded = 1; // TODO defaults?
+RUNTIME_WEAK int32_t Kotlin_gcMarkSingleThreaded = 1;
 RUNTIME_WEAK int32_t Kotlin_auxGCThreads = 0;
 RUNTIME_WEAK int32_t Kotlin_workerExceptionHandling = 0;
 RUNTIME_WEAK int32_t Kotlin_suspendFunctionsFromAnyThreadFromObjC = 0;

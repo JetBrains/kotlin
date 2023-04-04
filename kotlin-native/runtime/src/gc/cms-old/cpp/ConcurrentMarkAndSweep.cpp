@@ -241,7 +241,7 @@ NO_EXTERNAL_CALLS_CHECK void gc::ConcurrentMarkAndSweep::CollectRootSetAndStartM
         std::unique_lock lock(markingMutex);
         markingRequested = false;
         ++expectedMarkers;
-        GCLogInfo(gcHandle.getEpoch(), "Expecting exactly %llu markers", expectedMarkers.load());
+        GCLogInfo(gcHandle.getEpoch(), "Expecting exactly %" PRIu64 " markers", expectedMarkers.load());
         gc::collectRootSet<internal::MarkTraits>(
                 gcHandle,
                 markQueue_,

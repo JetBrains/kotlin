@@ -61,20 +61,17 @@ public:
     }
 
     /**
-     * Tries to move a 1/`denominator` part of a victim's shared list into `this`'s local list.
+     * Tries to move at most `maxAmount` elements from a victim's shared list into `this`'s local list.
      * In case some other thread is currently operating with the victim's shared list, returns `0`.
      * @return the number of elements stolen
      */
-    size_type tryStealFractionFrom(StealableWorkList<T, Traits>& victim, size_type denominator) {
+    size_type tryStealFrom(StealableWorkList<T, Traits>& victim, size_type maxAmount) {
         auto locked = victim.sharedLock_.tryLock(false);
         if (!locked) return 0;
         RuntimeAssert(!victim.sharedEmpty(), "Victim's shared was locked as non-empty");
 
-        auto lastToSteal = victim.shared_.before_begin();
-        auto amount = (victim.sharedSize_ + denominator  - 1) / denominator;
-        for (size_type i = 0; i < amount; ++i) {
-            ++lastToSteal;
-        }
+        auto amount = std::min(victim.sharedSize_, maxAmount);
+        auto lastToSteal = std::next(victim.shared_.before_begin(), amount);
         RuntimeAssert(lastToSteal != victim.shared_.before_begin(), "Must steal at least something");
         local_.splice_after_excl_incl(local_.before_begin(), victim.shared_.before_begin(), lastToSteal);
         victim.sharedSize_ -= amount;

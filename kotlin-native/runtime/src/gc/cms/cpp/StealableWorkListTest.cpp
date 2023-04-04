@@ -140,7 +140,7 @@ TEST(StealableWorkListTest, ShareSome) {
 TEST(StealableWorkListTest, TryStealFromEmpty) {
     TestSubject victim;
     TestSubject thief;
-    auto stolenAmount = thief.tryStealFractionFrom(victim, 2);
+    auto stolenAmount = thief.tryStealFrom(victim, 1);
     EXPECT_THAT(stolenAmount, 0);
 }
 
@@ -151,11 +151,12 @@ TEST(StealableWorkListTest, TryStealHalf) {
     victim.shareAll();
 
     TestSubject thief;
-    auto stolenAmount = thief.tryStealFractionFrom(victim, 2);
-    EXPECT_THAT(stolenAmount, (values.size() + 1) / 2);
+    auto toSteal = values.size() / 2;
+    auto stolenAmount = thief.tryStealFrom(victim, toSteal);
+    EXPECT_THAT(stolenAmount, toSteal);
     EXPECT_THAT(thief.localSize(), stolenAmount);
 
-    victim.tryStealFractionFrom(victim, 1);
+    victim.tryStealFrom(victim, values.size());
     EXPECT_THAT(victim.sharedEmpty(), true);
 
     std_support::vector<int> allTheElements;
@@ -172,7 +173,7 @@ TEST(StealableWorkListTest, TryStealAllEventually) {
 
     TestSubject thief;
     for (std::size_t i = 0; i < values.size(); ++i) {
-        auto stolenAmount = thief.tryStealFractionFrom(victim, 10000);
+        auto stolenAmount = thief.tryStealFrom(victim, 1);
         EXPECT_THAT(stolenAmount, 1);
     }
     EXPECT_THAT(victim.sharedEmpty(), true);
@@ -187,7 +188,8 @@ TEST(StealableWorkListTest, TryStealAllEventually) {
 TEST(StealableWorkListTest, StealingPingPong) {
     TestSubject list1;
     TestSubject list2;
-    auto values = range(0, 100);
+    const auto size = 100;
+    auto values = range(0, size);
     auto nodesHandle1 = fill(list1, values);
     auto nodesHandle2 = fill(list2, values);
 
@@ -203,9 +205,9 @@ TEST(StealableWorkListTest, StealingPingPong) {
             }
             for (int iter = 0; iter < kIters; ++iter) {
                 if (!self.localEmpty()) self.shareAll();
-                self.tryStealFractionFrom(victim, 2);
+                self.tryStealFrom(victim, size / 2);
                 if (!self.localEmpty()) self.shareAll();
-                self.tryStealFractionFrom(victim, 1);
+                self.tryStealFrom(victim, size);
                 if (auto popped = self.tryPopLocal()) {
                     popped->clearNext();
                     self.tryPushLocal(*popped);
@@ -220,8 +222,8 @@ TEST(StealableWorkListTest, StealingPingPong) {
     }
 
     // check nothing is lost
-    list1.tryStealFractionFrom(list1, 1);
-    list2.tryStealFractionFrom(list2, 1);
+    list1.tryStealFrom(list1, size * 2);
+    list2.tryStealFrom(list2, size * 2);
     std_support::vector<int> allTheElements;
     drainLocalInto(list1, allTheElements);
     drainLocalInto(list2, allTheElements);

@@ -709,15 +709,6 @@ typename List::iterator before_end(List& list) {
     return cur;
 }
 
-template<typename List>
-typename List::iterator idxIter(List& list, std::size_t idx) {
-    auto cur = list.begin();
-    for (std::size_t i = 0; i < idx; ++i) {
-        ++cur;
-    }
-    return cur;
-}
-
 TEST(IntrusiveForwardListTest, SpliceAfterEIBeforeBeginAll) {
     using List = intrusive_forward_list<Node>;
     auto values1 = create<List>({1, 2, 3, 4});
@@ -749,7 +740,7 @@ TEST(IntrusiveForwardListTest, SpliceAfterEIMidMidHalf) {
     List l1(values1.begin(), values1.end());
     List l2(values2.begin(), values2.end());
 
-    l1.splice_after_excl_incl(idxIter(l1, 1), l2.begin(), idxIter(l2, 2));
+    l1.splice_after_excl_incl(std::next(l1.begin(), 1), l2.begin(), std::next(l2.begin(), 2));
     EXPECT_ELEMENTS_ARE(l1, 1, 2, 12, 13, 3, 4);
     EXPECT_ELEMENTS_ARE(l2, 11, 14);
 }
@@ -759,7 +750,7 @@ TEST(IntrusiveForwardListTest, SpliceAfterEIBeginSame) {
     auto values = create<List>({1, 2, 3, 4});
     List list(values.begin(), values.end());
 
-    list.splice_after_excl_incl(list.begin(), list.before_begin(), idxIter(list, 2));
+    list.splice_after_excl_incl(list.begin(), list.before_begin(), std::next(list.begin(), 2));
     EXPECT_ELEMENTS_ARE(list, 1, 2, 3, 4);
 }
 
@@ -767,6 +758,6 @@ TEST(IntrusiveForwardListTest, SpliceAfterEIBeforeBeginOwnTail) {
     using List = intrusive_forward_list<Node>;
     auto values = create<List>({1, 2, 3, 4});
     List list(values.begin(), values.end());
-    list.splice_after_excl_incl(list.before_begin(), idxIter(list, 1), before_end(list));
+    list.splice_after_excl_incl(list.before_begin(), std::next(list.begin(), 1), before_end(list));
     EXPECT_ELEMENTS_ARE(list, 3, 4, 1, 2);
 }
