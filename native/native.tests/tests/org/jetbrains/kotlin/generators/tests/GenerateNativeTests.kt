@@ -41,7 +41,8 @@ fun main() {
                     codegen(),
                     k1Codegen(),
                     provider<UseExtTestCaseGroupProvider>(),
-                    noPartialLinkage()
+                    noPartialLinkage(),
+                    noPartialLinkageMayBeSkipped()
                 )
             ) {
                 model("codegen/box", targetBackend = TargetBackend.NATIVE)
@@ -66,7 +67,8 @@ fun main() {
                     firCodegen(),
                     provider<UseExtTestCaseGroupProvider>(),
                     provider<FirPipeline>(),
-                    noPartialLinkage()
+                    noPartialLinkage(),
+                    noPartialLinkageMayBeSkipped()
                 )
             ) {
                 model("codegen/box", targetBackend = TargetBackend.NATIVE)
@@ -194,6 +196,9 @@ private fun noPartialLinkage() = annotation(
     UsePartialLinkage::class.java,
     "mode" to UsePartialLinkage.Mode.DISABLED
 )
+
+// This is a special tag to mark codegen box tests with disabled partial linkage that may be skipped in slow TC configurations.
+private fun noPartialLinkageMayBeSkipped() = annotation(Tag::class.java, "no-partial-linkage-may-be-skipped")
 
 private fun codegen() = annotation(Tag::class.java, "codegen")
 private fun k1Codegen() = annotation(Tag::class.java, "k1Codegen")
