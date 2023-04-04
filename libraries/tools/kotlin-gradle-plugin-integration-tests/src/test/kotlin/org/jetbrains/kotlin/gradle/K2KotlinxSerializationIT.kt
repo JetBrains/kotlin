@@ -55,4 +55,12 @@ class K2KotlinxSerializationIT : KGPBaseTest() {
             }
         }
     }
+
+    @DisplayName("Compile production executable with kotlinx.serialization to JS. KT-57690, KT-57807")
+    @GradleTest
+    fun `test kotlinx serialization compile to JS`() {
+        project("kotlinxSerializationK2WithJs", gradleVersion) {
+            build(":compileProductionExecutableKotlinJs")
+        }
+    }
 }
