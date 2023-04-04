@@ -52,7 +52,7 @@ val JavaClass.classKind: ClassKind
         else -> ClassKind.CLASS
     }
 
-internal fun JavaClass.hasMetadataAnnotation(): Boolean =
+fun JavaClass.hasMetadataAnnotation(): Boolean =
     annotations.any { it.classId?.asSingleFqName() == JvmAnnotationNames.METADATA_FQ_NAME }
 
 internal fun Any?.createConstantOrError(session: FirSession): FirExpression {

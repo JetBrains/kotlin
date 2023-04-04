@@ -47,35 +47,39 @@ abstract class LLFirSelectingCombinedSymbolProvider<PROVIDER : FirSymbolProvider
      * should be delegated. This is a post-processing step that preserves classpath order when, for example, an index access with a combined
      * scope isn't guaranteed to return the first element in classpath order.
      */
-    protected fun <ELEMENT : PsiElement> selectFirstElementInClasspathOrder(candidates: Collection<ELEMENT>): Pair<ELEMENT, PROVIDER>? {
+    protected fun <CANDIDATE> selectFirstElementInClasspathOrder(
+        candidates: Collection<CANDIDATE>,
+        getElement: (CANDIDATE) -> PsiElement?,
+    ): Pair<CANDIDATE, PROVIDER>? {
         if (candidates.isEmpty()) return null
 
         // We're using a custom implementation instead of `minBy` so that `ktModule` doesn't need to be fetched twice.
-        var currentElement: ELEMENT? = null
+        var currentCandidate: CANDIDATE? = null
         var currentPrecedence: Int = Int.MAX_VALUE
         var currentKtModule: KtModule? = null
 
         for (candidate in candidates) {
-            val ktModule = projectStructureProvider.getKtModuleForKtElement(candidate)
+            val element = getElement(candidate) ?: continue
+            val ktModule = projectStructureProvider.getKtModuleForKtElement(element)
 
             // If `ktModule` cannot be found in the map, `candidate` cannot be processed by any of the available providers, because none of
             // them belong to the correct module. We can skip in that case, because iterating through all providers wouldn't lead to any
             // results for `candidate`.
             val precedence = modulePrecedenceMap[ktModule] ?: continue
             if (precedence < currentPrecedence) {
-                currentElement = candidate
+                currentCandidate = candidate
                 currentPrecedence = precedence
                 currentKtModule = ktModule
             }
         }
 
-        val element = currentElement ?: return null
-        val ktModule = currentKtModule ?: error("`currentKtModule` must not be `null` when `currentElement` has been found.")
+        val candidate = currentCandidate ?: return null
+        val ktModule = currentKtModule ?: error("`currentKtModule` must not be `null` when `currentCandidate` has been found.")
 
         // The provider will always be found at this point, because `modulePrecedenceMap` contains the same keys as `providersByKtModule`
         // and a precedence for `currentKtModule` must have been found in the previous step.
         val provider = providersByKtModule.getValue(ktModule)
 
-        return Pair(element, provider)
+        return Pair(candidate, provider)
     }
 }

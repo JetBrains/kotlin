@@ -67,7 +67,7 @@ internal class LLFirCombinedKotlinSymbolProvider private constructor(
     @OptIn(FirSymbolProviderInternals::class)
     private fun computeClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
         val candidates = declarationProvider.getAllClassesByClassId(classId) + declarationProvider.getAllTypeAliasesByClassId(classId)
-        val (ktClass, provider) = selectFirstElementInClasspathOrder(candidates) ?: return null
+        val (ktClass, provider) = selectFirstElementInClasspathOrder(candidates) { it } ?: return null
         return provider.getClassLikeSymbolByClassId(classId, ktClass)
     }
 
