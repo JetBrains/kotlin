@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.analysis.checkers.typeParameterSymbols
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.FirCachesFactory
 import org.jetbrains.kotlin.fir.caches.createCache
@@ -116,8 +115,7 @@ class FirSignatureEnhancement(
                     predefinedEnhancementInfo = null
                 ).let {
                     val lowerBound = it.type.lowerBoundIfFlexible()
-
-                    if (firElement.isStatic && firElement.initializer != null && (lowerBound.isString || lowerBound.isInt)) {
+                    if ((lowerBound.isString || lowerBound.isInt) && firElement.isStatic && firElement.initializer != null) {
                         it.withReplacedConeType(it.type.withNullability(ConeNullability.NOT_NULL, session.typeContext))
                     } else {
                         it
@@ -140,7 +138,12 @@ class FirSignatureEnhancement(
                     isStatic = firElement.isStatic
                     annotationBuilder = { firElement.annotations }
                     status = firElement.status
-                    initializer = firElement.initializer
+                    if (firElement is FirJavaField) {
+                        lazyInitializer = firElement.lazyInitializer
+                    } else {
+                        initializer = firElement.initializer
+                    }
+
                     dispatchReceiverType = firElement.dispatchReceiverType
                     attributes = firElement.attributes.copy()
                 }

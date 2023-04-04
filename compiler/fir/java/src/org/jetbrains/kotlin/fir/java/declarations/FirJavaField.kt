@@ -42,10 +42,13 @@ class FirJavaField @FirImplementationDetail constructor(
     override val isVar: Boolean,
     annotationBuilder: () -> List<FirAnnotation>,
     override val typeParameters: MutableList<FirTypeParameterRef>,
-    private var lazyInitializer: Lazy<FirExpression?>,
+    lazyInitializer: Lazy<FirExpression?>,
     override val dispatchReceiverType: ConeSimpleKotlinType?,
     override val attributes: FirDeclarationAttributes,
 ) : FirField() {
+    internal var lazyInitializer: Lazy<FirExpression?> = lazyInitializer
+        private set
+
     init {
         symbol.bind(this)
 
