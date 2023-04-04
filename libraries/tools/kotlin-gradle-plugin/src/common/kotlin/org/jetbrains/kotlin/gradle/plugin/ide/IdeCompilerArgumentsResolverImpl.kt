@@ -19,15 +19,11 @@ internal class IdeCompilerArgumentsResolverImpl(
 ) : IdeCompilerArgumentsResolver {
 
     override fun resolveCompilerArguments(any: Any): List<String>? {
-        if (any is KotlinCompilerArgumentsProducer) {
-            return resolveCompilerArguments(any)
+        return when (any) {
+            is KotlinCompilerArgumentsProducer -> resolveCompilerArguments(any)
+            is KotlinCompilation<*> -> resolveCompilerArguments(any.compileTaskProvider.orNull ?: return null)
+            else -> return null
         }
-
-        if (any is KotlinCompilation<*>) {
-            return resolveCompilerArguments(any.compileTaskProvider.orNull ?: return null)
-        }
-
-        return null
     }
 
     private fun resolveCompilerArguments(producer: KotlinCompilerArgumentsProducer): List<String> {
