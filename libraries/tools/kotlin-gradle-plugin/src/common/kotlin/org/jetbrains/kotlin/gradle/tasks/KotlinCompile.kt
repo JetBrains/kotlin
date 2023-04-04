@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.gradle.logging.GradleErrorMessageCollector
 import org.jetbrains.kotlin.gradle.logging.GradlePrintingMessageCollector
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.ArgumentType
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.create
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
@@ -54,7 +53,6 @@ import org.jetbrains.kotlin.incremental.ClasspathSnapshotFiles
 import org.jetbrains.kotlin.incremental.classpathAsList
 import org.jetbrains.kotlin.incremental.destinationAsFile
 import org.jetbrains.kotlin.utils.addToStdlib.cast
-import java.io.File
 import javax.inject.Inject
 
 @CacheableTask
@@ -267,7 +265,18 @@ abstract class KotlinCompile @Inject constructor(
                 args.commonSources = commonSourceSet.asFileTree.toPathsArray()
             }
 
-            args.freeArgs += (scriptSources.asFileTree.files + javaSources.files + sources.asFileTree.files).map { it.absolutePath }
+            val sourcesFiles = sources.asFileTree.files.toList()
+            val javaSourcesFiles = javaSources.files.toList()
+            val scriptSourcesFiles = scriptSources.asFileTree.files.toList()
+
+            if (logger.isInfoEnabled) {
+                logger.info("Kotlin source files: ${sourcesFiles.joinToString()}")
+                logger.info("Java source files: ${javaSourcesFiles.joinToString()}")
+                logger.info("Script source files: ${scriptSourcesFiles.joinToString()}")
+                logger.info("Script file extensions: ${scriptExtensions.get().joinToString()}")
+            }
+
+            args.freeArgs += (scriptSourcesFiles + javaSourcesFiles + sourcesFiles).map { it.absolutePath }
         }
     }
 
@@ -278,8 +287,6 @@ abstract class KotlinCompile @Inject constructor(
     ) {
         validateKotlinAndJavaHasSameTargetCompatibility(args)
 
-        val scriptSources = scriptSources.asFileTree.files
-        val javaSources = javaSources.files
         val gradlePrintingMessageCollector = GradlePrintingMessageCollector(logger, args.allWarningsAsErrors)
         val gradleMessageCollector = GradleErrorMessageCollector(
             gradlePrintingMessageCollector, kotlinPluginVersion = getKotlinPluginVersion(logger)
@@ -314,10 +321,6 @@ abstract class KotlinCompile @Inject constructor(
             incrementalCompilationEnvironment = icEnv,
             kotlinScriptExtensions = scriptExtensions.get().toTypedArray()
         )
-        logger.info("Kotlin source files: ${sources.asFileTree.joinToString()}")
-        logger.info("Java source files: ${javaSources.joinToString()}")
-        logger.info("Script source files: ${scriptSources.joinToString()}")
-        logger.info("Script file extensions: ${scriptExtensions.get().joinToString()}")
         compilerRunner.runJvmCompilerAsync(
             args,
             environment,
