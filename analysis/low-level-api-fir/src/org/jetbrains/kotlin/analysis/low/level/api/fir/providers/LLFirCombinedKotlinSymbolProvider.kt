@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.psi.KtFile
 internal class LLFirCombinedKotlinSymbolProvider private constructor(
     session: FirSession,
     private val project: Project,
-    private val providers: List<LLFirProvider.SymbolProvider>,
+    providers: List<LLFirProvider.SymbolProvider>,
     private val declarationProvider: KotlinDeclarationProvider,
 ) : LLFirSelectingCombinedSymbolProvider<LLFirProvider.SymbolProvider>(session, project, providers) {
     private val symbolNameCache = object : LLFirSymbolProviderNameCache(session) {

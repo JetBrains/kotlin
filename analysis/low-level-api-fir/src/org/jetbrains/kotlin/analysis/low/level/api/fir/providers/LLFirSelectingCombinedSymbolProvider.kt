@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.utils.mapToIndex
 abstract class LLFirSelectingCombinedSymbolProvider<PROVIDER : FirSymbolProvider>(
     session: FirSession,
     project: Project,
-    private val providers: List<PROVIDER>,
+    protected val providers: List<PROVIDER>,
 ) : FirSymbolProvider(session) {
     protected val providersByKtModule: Map<KtModule, PROVIDER> =
         providers
