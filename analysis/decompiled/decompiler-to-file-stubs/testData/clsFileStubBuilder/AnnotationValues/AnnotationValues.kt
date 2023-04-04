@@ -46,7 +46,7 @@ class AnnotationValues {
     )
     class WithClassLiteral<T>
 
-    @Outer("value", nested = Nested(12, "nested value"), nestedArray = [Nested(21, "nested value 21"), Nested(42, "nested value 42")])
+    @Outer("value\nwith http://address", nested = Nested(12, "nested value"), nestedArray = [Nested(21, "nested value 21"), Nested(42, "nested value 42")])
     class WithNested
 }
 

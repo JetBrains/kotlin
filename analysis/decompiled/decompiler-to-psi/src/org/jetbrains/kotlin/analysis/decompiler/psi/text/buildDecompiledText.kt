@@ -51,7 +51,7 @@ private fun renderConstant(value: ConstantValue<*>, renderer: DescriptorRenderer
             }
         }
         is CharValue -> String.format("'\\u%04X'", value.value.code)
-        is StringValue -> value.toString()
+        is StringValue -> "\"${value.value.replace("\n", "\\\\n")}\""
         is EnumValue -> value.enumClassId.asFqNameString() + "." + value.enumEntryName.asString()
         is FloatValue -> {
             val boxedValue = value.value

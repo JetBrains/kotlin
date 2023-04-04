@@ -335,18 +335,18 @@ internal fun buildStringTemplateExpressionStub(
     val stringStub =
         KotlinPlaceHolderStubImpl<KtStringTemplateExpression>(parent, KtStubElementTypes.STRING_TEMPLATE)
     if (text.isNotEmpty()) {
-        text.split("\\").forEachIndexed { index, part ->
+        text.split("\n").forEachIndexed { index, part ->
             if (index > 0) {
                 KotlinPlaceHolderWithTextStubImpl<KtStringTemplateExpression>(
                     stringStub,
                     KtStubElementTypes.ESCAPE_STRING_TEMPLATE_ENTRY,
-                    "\\" + part.substring(0, 1)
+                    "\\\\"
                 )
             }
             KotlinPlaceHolderWithTextStubImpl<KtStringTemplateExpression>(
                 stringStub,
                 KtStubElementTypes.LITERAL_STRING_TEMPLATE_ENTRY,
-                if (index == 0) part else part.substring(1)
+                if (index == 0) part else "n$part"
             )
         }
     }

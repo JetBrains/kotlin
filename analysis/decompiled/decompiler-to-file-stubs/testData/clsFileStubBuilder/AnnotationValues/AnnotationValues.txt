@@ -64,6 +64,8 @@ PsiJetFileStubImpl[package=test]
                   REFERENCE_EXPRESSION[referencedName=some]
                 STRING_TEMPLATE
                   LITERAL_STRING_TEMPLATE_ENTRY[text=value]
+                  ESCAPE_STRING_TEMPLATE_ENTRY[text=\\]
+                  LITERAL_STRING_TEMPLATE_ENTRY[text=nwith http://address]
         PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=WithNested]
           MODIFIER_LIST[public]
           VALUE_PARAMETER_LIST
