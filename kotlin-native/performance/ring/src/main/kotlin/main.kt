@@ -206,6 +206,8 @@ class RingLauncher : Launcher() {
                     "Lambda.mutatingLambda" to BenchmarkEntryWithInit.create(::LambdaBenchmark, { mutatingLambda() }),
                     "Lambda.mutatingLambdaNoInline" to BenchmarkEntryWithInit.create(::LambdaBenchmark, { mutatingLambdaNoInline() }),
                     "Lambda.methodReferenceNoInline" to BenchmarkEntryWithInit.create(::LambdaBenchmark, { methodReferenceNoInline() }),
+                    "Life" to BenchmarkEntryWithInit.create(::LifeBenchmark, { bench() }),
+                    "LifeWithWorkers" to BenchmarkEntryWithInitAndValidation.create(::LifeWithWorkersBenchmark, { benchWithWorkers() }, { terminate() }),
                     "Loop.arrayIndexLoop" to BenchmarkEntryWithInit.create(::LoopBenchmark, { arrayIndexLoop() }),
                     "Loop.arrayListLoop" to BenchmarkEntryWithInit.create(::LoopBenchmark, { arrayListLoop() }),
                     "ParameterNotNull.invokeOneArgWithNullCheck" to BenchmarkEntryWithInit.create(::ParameterNotNullAssertionBenchmark, { invokeOneArgWithNullCheck() }),
