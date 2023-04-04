@@ -30,9 +30,8 @@ internal fun <T : CommonToolArguments> toArgumentStrings(
     thisArguments: T, type: KClass<T>,
     shortArgumentKeys: Boolean,
     compactArgumentValues: Boolean
-): List<String> {
+): List<String> = ArrayList<String>().apply {
     val defaultArguments = type.newArgumentsInstance()
-    val result = mutableListOf<String>()
     type.memberProperties.forEach { property ->
         val argumentAnnotation = property.findAnnotation<Argument>() ?: return@forEach
         val rawPropertyValue = property.get(thisArguments)
@@ -63,24 +62,23 @@ internal fun <T : CommonToolArguments> toArgumentStrings(
             when {
                 /* We can just enable the flag by passing the argument name like -myFlag: Value not required */
                 rawPropertyValue is Boolean && rawPropertyValue -> {
-                    result.add(argumentName)
+                    add(argumentName)
                 }
 
                 /* Advanced (e.g. -X arguments) or boolean properties need to be passed using the '=' */
                 argumentAnnotation.isAdvanced || property.returnType.classifier == Boolean::class -> {
-                    result.add("$argumentName=$argumentStringValue")
+                    add("$argumentName=$argumentStringValue")
                 }
                 else -> {
-                    result.add(argumentName)
-                    result.add(argumentStringValue)
+                    add(argumentName)
+                    add(argumentStringValue)
                 }
             }
         }
     }
 
-    result.addAll(thisArguments.freeArgs)
-    result.addAll(thisArguments.internalArguments.map { it.stringRepresentation })
-    return result
+    addAll(thisArguments.freeArgs)
+    addAll(thisArguments.internalArguments.map { it.stringRepresentation })
 }
 
 private fun getArgumentStringValue(argumentAnnotation: Argument, values: Array<*>?, compactArgumentValues: Boolean): List<String> {
