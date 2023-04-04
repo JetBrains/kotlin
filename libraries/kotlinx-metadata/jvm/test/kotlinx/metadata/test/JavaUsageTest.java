@@ -11,16 +11,28 @@ import kotlinx.metadata.jvm.KotlinClassHeader;
 import kotlinx.metadata.jvm.KotlinClassMetadata;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import java.util.Arrays;
+import java.util.Objects;
+
+import static org.junit.Assert.*;
 
 public class JavaUsageTest {
-    @SuppressWarnings("ConstantConditions")
+
     @Test
     public void testKotlinClassHeader() {
         Metadata m = MetadataSmokeTest.class.getAnnotation(Metadata.class);
-        KmClass clazz1 = ((KotlinClassMetadata.Class) KotlinClassMetadata.read(m)).toKmClass();
-        KotlinClassHeader kh = new KotlinClassHeader(m.k(), m.mv(),m.d1(),m.d2(), m.xs(), m.pn(), m.xi());
-        KmClass clazz2 = ((KotlinClassMetadata.Class) KotlinClassMetadata.read(kh)).toKmClass();
+        KmClass clazz1 = ((KotlinClassMetadata.Class) Objects.requireNonNull(KotlinClassMetadata.read(m))).toKmClass();
+        KotlinClassHeader kh = new KotlinClassHeader(m.k(), m.mv(), m.d1(), m.d2(), m.xs(), m.pn(), m.xi());
+        KmClass clazz2 = ((KotlinClassMetadata.Class) Objects.requireNonNull(KotlinClassMetadata.read(kh))).toKmClass();
         assertEquals(clazz1.getName(), clazz2.getName());
+    }
+
+    @Test
+    public void testWritingBackWithDefaults() {
+        Metadata m = MetadataSmokeTest.class.getAnnotation(Metadata.class);
+        KmClass clazz1 = ((KotlinClassMetadata.Class) Objects.requireNonNull(KotlinClassMetadata.read(m))).toKmClass();
+        Metadata written = KotlinClassMetadata.writeClass(clazz1).getAnnotationData();
+        assertArrayEquals(written.mv(), KotlinClassMetadata.COMPATIBLE_METADATA_VERSION);
+        assertEquals(0, written.xi());
     }
 }

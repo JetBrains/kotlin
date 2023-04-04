@@ -409,6 +409,8 @@ sealed class KotlinClassMetadata(val annotationData: Metadata) {
          *
          * @throws IllegalArgumentException if [kmClass] is not correct and cannot be written or if [metadataVersion] is not supported for writing.
          */
+        @JvmStatic
+        @JvmOverloads
         fun writeClass(
             kmClass: KmClass,
             metadataVersion: IntArray = COMPATIBLE_METADATA_VERSION,
@@ -427,6 +429,8 @@ sealed class KotlinClassMetadata(val annotationData: Metadata) {
          *
          * @throws IllegalArgumentException if [kmPackage] is not correct and cannot be written or if [metadataVersion] is not supported for writing.
          */
+        @JvmStatic
+        @JvmOverloads
         fun writeFileFacade(
             kmPackage: KmPackage,
             metadataVersion: IntArray = COMPATIBLE_METADATA_VERSION,
@@ -445,6 +449,8 @@ sealed class KotlinClassMetadata(val annotationData: Metadata) {
          *
          * @throws IllegalArgumentException if [kmLambda] is not correct and cannot be written or if [metadataVersion] is not supported for writing.
          */
+        @JvmStatic
+        @JvmOverloads
         fun writeLambda(
             kmLambda: KmLambda,
             metadataVersion: IntArray = COMPATIBLE_METADATA_VERSION,
@@ -463,6 +469,8 @@ sealed class KotlinClassMetadata(val annotationData: Metadata) {
          *
          * @throws IllegalArgumentException if [metadataVersion] is not supported for writing.
          */
+        @JvmStatic
+        @JvmOverloads
         fun writeSyntheticClass(
             metadataVersion: IntArray = COMPATIBLE_METADATA_VERSION,
             extraInt: Int = 0
@@ -479,6 +487,8 @@ sealed class KotlinClassMetadata(val annotationData: Metadata) {
          *
          * @throws IllegalArgumentException if [metadataVersion] is not supported for writing.
          */
+        @JvmStatic
+        @JvmOverloads
         fun writeMultiFileClassFacade(
             partClassNames: List<String>, metadataVersion: IntArray = COMPATIBLE_METADATA_VERSION,
             extraInt: Int = 0
@@ -495,6 +505,8 @@ sealed class KotlinClassMetadata(val annotationData: Metadata) {
          *
          * @throws IllegalArgumentException if [kmPackage] is not correct and cannot be written or if [metadataVersion] is not supported for writing.
          */
+        @JvmStatic
+        @JvmOverloads
         fun writeMultiFileClassPart(
             kmPackage: KmPackage,
             facadeClassName: String,

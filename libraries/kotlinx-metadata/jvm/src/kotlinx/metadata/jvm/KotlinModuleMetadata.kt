@@ -156,6 +156,8 @@ class KotlinModuleMetadata(@Suppress("MemberVisibilityCanBePrivate") val bytes: 
          * @throws IllegalArgumentException if [kmModule] is not correct and cannot be written or if [metadataVersion] is not supported for writing.
          */
         @UnstableMetadataApi
+        @JvmStatic
+        @JvmOverloads
         fun write(kmModule: KmModule, metadataVersion: IntArray = COMPATIBLE_METADATA_VERSION): KotlinModuleMetadata = wrapWriteIntoIAE {
             Writer().also { kmModule.accept(it) }.write(metadataVersion)
         }
