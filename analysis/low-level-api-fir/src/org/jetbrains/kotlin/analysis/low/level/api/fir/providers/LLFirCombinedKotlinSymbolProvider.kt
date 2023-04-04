@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.psi.KtFile
  *
  * [declarationProvider] must have a scope which combines the scopes of the individual [providers].
  */
-internal class LLFirCombinedKotlinSymbolProvider(
+internal class LLFirCombinedKotlinSymbolProvider private constructor(
     session: FirSession,
     private val project: Project,
     private val providers: List<LLFirProvider.SymbolProvider>,
