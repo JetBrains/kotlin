@@ -25,14 +25,28 @@ class CompilerArgumentParsingTest {
 
     @ParameterizedTest
     @MethodSource("parameters")
-    fun `test - parsing random compiler arguments`(type: KClass<out CommonToolArguments>, seed: Int, useShortNames: Boolean) {
+    fun `test - parsing random compiler arguments`(
+        type: KClass<out CommonToolArguments>,
+        seed: Int,
+        shortArgumentKeys: Boolean,
+        compactArgumentValues: Boolean
+    ) {
         val constructor = type.constructors.find { it.parameters.isEmpty() } ?: error("Missing empty constructor on $type")
         val arguments = constructor.call()
         arguments.fillRandomValues(Random(seed))
-        val argumentsAsStrings = arguments.toArgumentStrings(useShortNames)
+        val argumentsAsStrings = arguments.toArgumentStrings(
+            shortArgumentKeys = shortArgumentKeys,
+            compactArgumentValues = compactArgumentValues
+        )
         val parsedArguments = parseCommandLineArguments(type, argumentsAsStrings)
         assertEqualArguments(arguments, parsedArguments)
-        assertEquals(argumentsAsStrings, parsedArguments.toArgumentStrings(useShortNames))
+        assertEquals(
+            argumentsAsStrings,
+            parsedArguments.toArgumentStrings(
+                shortArgumentKeys = shortArgumentKeys,
+                compactArgumentValues = compactArgumentValues
+            )
+        )
     }
 
     companion object {
@@ -40,12 +54,15 @@ class CompilerArgumentParsingTest {
         fun parameters(): List<Arguments> = getCompilerArgumentImplementations()
             .flatMap { clazz ->
                 listOf(1002, 2803, 2411).flatMap { seed ->
-                    listOf(true, false).map { useShortNames ->
-                        Arguments.of(
-                            Named.of("${clazz.simpleName}", clazz),
-                            Named.of("seed: $seed", seed),
-                            Named.of("useShortNames: $useShortNames", useShortNames)
-                        )
+                    listOf(true, false).flatMap { shortArgumentKeys ->
+                        listOf(true, false).map { compactArgumentValues ->
+                            Arguments.of(
+                                Named.of("${clazz.simpleName}", clazz),
+                                Named.of("seed: $seed", seed),
+                                Named.of("shortArgumentKeys: $shortArgumentKeys", shortArgumentKeys),
+                                Named.of("compactArgumentValues: $compactArgumentValues", compactArgumentValues)
+                            )
+                        }
                     }
                 }
             }
@@ -96,14 +113,14 @@ private fun Random.randomString() = nextBytes(nextInt(8, 12)).let { data ->
 private fun Random.randomBoolean() = nextBoolean()
 
 private fun Random.randomStringArray(): Array<String> {
-    val size = nextInt(1, 5)
+    val size = nextInt(5, 10)
     return Array(size) {
         randomString()
     }
 }
 
 private fun Random.randomList(elementType: KType): List<Any>? {
-    val size = nextInt(1, 5)
+    val size = nextInt(5, 10)
     return List(size) {
         randomValue(elementType) ?: return null
     }

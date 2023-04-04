@@ -17,14 +17,20 @@ import kotlin.reflect.full.memberProperties
 
 @Suppress("UNCHECKED_CAST")
 @JvmOverloads
-fun CommonToolArguments.toArgumentStrings(useShortNames: Boolean = false): List<String> {
+fun CommonToolArguments.toArgumentStrings(shortArgumentKeys: Boolean = false, compactArgumentValues: Boolean = true): List<String> {
     return toArgumentStrings(
-        this, this::class as KClass<CommonToolArguments>, useShortNames = useShortNames
+        this, this::class as KClass<CommonToolArguments>,
+        shortArgumentKeys = shortArgumentKeys,
+        compactArgumentValues = compactArgumentValues
     )
 }
 
 @PublishedApi
-internal fun <T : CommonToolArguments> toArgumentStrings(thisArguments: T, type: KClass<T>, useShortNames: Boolean): List<String> {
+internal fun <T : CommonToolArguments> toArgumentStrings(
+    thisArguments: T, type: KClass<T>,
+    shortArgumentKeys: Boolean,
+    compactArgumentValues: Boolean
+): List<String> {
     val defaultArguments = type.newArgumentsInstance()
     val result = mutableListOf<String>()
     type.memberProperties.forEach { property ->
@@ -41,15 +47,15 @@ internal fun <T : CommonToolArguments> toArgumentStrings(thisArguments: T, type:
             property.returnType.classifier == Boolean::class -> listOf(rawPropertyValue?.toString() ?: false.toString())
 
             (property.returnType.classifier as? KClass<*>)?.java?.isArray == true ->
-                getArgumentStringValue(argumentAnnotation, rawPropertyValue as Array<*>?)
+                getArgumentStringValue(argumentAnnotation, rawPropertyValue as Array<*>?, compactArgumentValues)
 
             property.returnType.classifier == List::class ->
-                getArgumentStringValue(argumentAnnotation, (rawPropertyValue as List<*>?)?.toTypedArray())
+                getArgumentStringValue(argumentAnnotation, (rawPropertyValue as List<*>?)?.toTypedArray(), compactArgumentValues)
 
             else -> listOf(rawPropertyValue.toString())
         }
 
-        val argumentName = if (useShortNames && argumentAnnotation.shortName.isNotEmpty()) argumentAnnotation.shortName
+        val argumentName = if (shortArgumentKeys && argumentAnnotation.shortName.isNotEmpty()) argumentAnnotation.shortName
         else argumentAnnotation.value
 
         argumentStringValues.forEach { argumentStringValue ->
@@ -77,10 +83,10 @@ internal fun <T : CommonToolArguments> toArgumentStrings(thisArguments: T, type:
     return result
 }
 
-private fun getArgumentStringValue(argumentAnnotation: Argument, values: Array<*>?): List<String> {
+private fun getArgumentStringValue(argumentAnnotation: Argument, values: Array<*>?, compactArgumentValues: Boolean): List<String> {
     if (values.isNullOrEmpty()) return emptyList()
     val delimiter = argumentAnnotation.resolvedDelimiter
-    return if (delimiter.isNullOrEmpty()) values.map { it.toString() }
+    return if (delimiter.isNullOrEmpty() || !compactArgumentValues) values.map { it.toString() }
     else listOf(values.joinToString(delimiter))
 }
 
