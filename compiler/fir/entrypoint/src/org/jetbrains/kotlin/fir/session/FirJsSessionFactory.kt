@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirVisibilityChecker
 import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.analysis.FirOverridesBackwardCompatibilityHelper
+import org.jetbrains.kotlin.fir.analysis.checkers.FirPlatformDiagnosticSuppressor
+import org.jetbrains.kotlin.fir.analysis.js.checkers.FirJsPlatformDiagnosticSuppressor
 import org.jetbrains.kotlin.fir.checkers.registerJsCheckers
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
@@ -44,7 +46,7 @@ object FirJsSessionFactory : FirAbstractSessionFactory() {
             null,
             init,
             registerExtraComponents = { session ->
-                session.registerJsSpecificResolveComponents()
+                session.registerJsSpecificComponents()
                 registerExtraComponents(session)
             },
             registerExtraCheckers = { it.registerJsCheckers() },
@@ -75,7 +77,7 @@ object FirJsSessionFactory : FirAbstractSessionFactory() {
         languageVersionSettings,
         extensionRegistrars,
         registerExtraComponents = {
-            it.registerJsSpecificResolveComponents()
+            it.registerJsSpecificComponents()
             registerExtraComponents(it)
         },
         createKotlinScopeProvider = { FirKotlinScopeProvider { _, declaredMemberScope, _, _, _ -> declaredMemberScope } },
@@ -92,10 +94,11 @@ object FirJsSessionFactory : FirAbstractSessionFactory() {
     )
 
     @OptIn(SessionConfiguration::class)
-    fun FirSession.registerJsSpecificResolveComponents() {
+    fun FirSession.registerJsSpecificComponents() {
         register(FirVisibilityChecker::class, FirVisibilityChecker.Default)
         register(ConeCallConflictResolverFactory::class, JsCallConflictResolverFactory)
         register(FirPlatformClassMapper::class, FirPlatformClassMapper.Default)
         register(FirOverridesBackwardCompatibilityHelper::class, FirOverridesBackwardCompatibilityHelper.Default())
+        register(FirPlatformDiagnosticSuppressor::class, FirJsPlatformDiagnosticSuppressor())
     }
 }
