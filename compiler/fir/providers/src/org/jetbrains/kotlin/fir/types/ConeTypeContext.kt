@@ -523,9 +523,11 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         // The counterpart in K1, [ClassicTypeSystemContext], uses [ClassDescriptor.isFinalClass] in `ModalityUtils.kt`,
         // which filters out `enum` class. It seems [ClassDescriptor.isFinalOrEnum] is for truly `final` class.
         // That is, the overall API name---isFinalClassOr...---is misleading.
-        return (firRegularClass.modality == Modality.FINAL && !firRegularClass.classKind.isEnumClass) ||
-                firRegularClass.classKind.isEnumEntry ||
-                firRegularClass.classKind.isAnnotationClass
+        val classKind = firRegularClass.classKind
+        return classKind.isEnumEntry ||
+                classKind.isAnnotationClass ||
+                classKind.isObject ||
+                classKind.isClass && firRegularClass.symbol.modality == Modality.FINAL
     }
 
     override fun KotlinTypeMarker.hasAnnotation(fqName: FqName): Boolean {
