@@ -951,6 +951,11 @@ class ControlFlowInformationProviderImpl private constructor(
     }
 
     private fun markAnnotationArguments() {
+        if (subroutine.containingKtFile.isCompiled) {
+            //annotation arguments are not included in the decompiled code,
+            //so no need to search for them
+            return
+        }
         if (subroutine is KtAnnotationEntry) {
             markAnnotationArguments(subroutine)
         } else {
