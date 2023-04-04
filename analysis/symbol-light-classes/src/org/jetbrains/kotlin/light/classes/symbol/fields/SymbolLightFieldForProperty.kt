@@ -66,10 +66,15 @@ internal class SymbolLightFieldForProperty private constructor(
                 (kotlinOrigin as? KtProperty)?.delegateExpression?.getKtType()
             else
                 propertySymbol.returnType
+            // See [KotlinTypeMapper#writeFieldSignature]
+            val typeMappingMode = if (propertySymbol.isVal)
+                KtTypeMappingMode.RETURN_TYPE
+            else
+                KtTypeMappingMode.VALUE_PARAMETER
             ktType?.asPsiType(
                 this@SymbolLightFieldForProperty,
                 allowErrorTypes = true,
-                KtTypeMappingMode.RETURN_TYPE
+                typeMappingMode,
             )
         } ?: nonExistentType()
     }
