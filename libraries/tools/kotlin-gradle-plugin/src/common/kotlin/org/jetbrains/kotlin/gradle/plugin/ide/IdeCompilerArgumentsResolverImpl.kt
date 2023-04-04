@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.ide
 
-import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
+import org.jetbrains.kotlin.compilerRunner.toArgumentStrings
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.CreateCompilerArgumentsContext
@@ -43,6 +43,9 @@ internal class IdeCompilerArgumentsResolverImpl(
                 ),
             )
         )
-        return ArgumentUtils.convertArgumentsToStringList(compilerArguments)
+        return compilerArguments.toArgumentStrings(
+            shortArgumentKeys = true,
+            compactArgumentValues = false
+        )
     }
 }
