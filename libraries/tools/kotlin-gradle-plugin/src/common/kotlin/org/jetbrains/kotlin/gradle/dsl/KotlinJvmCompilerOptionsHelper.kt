@@ -23,21 +23,6 @@ internal object KotlinJvmCompilerOptionsHelper {
         args.allowNoSourceFiles = true
     }
 
-    internal fun fillDefaultValues(
-        args: org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments,
-    ) {
-        org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptionsHelper.fillDefaultValues(args)
-        args.javaParameters = false
-        args.jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.DEFAULT.target
-        args.moduleName = null
-        args.noJdk = false
-
-        // Arguments with always default values when used from build tools
-        args.noStdlib = true
-        args.noReflect = true
-        args.allowNoSourceFiles = true
-    }
-
     internal fun syncOptionsAsConvention(
         from: org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions,
         into: org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions,

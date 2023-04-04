@@ -15,13 +15,6 @@ internal object KotlinNativeCompilerOptionsHelper {
         args.moduleName = from.moduleName.orNull
     }
 
-    internal fun fillDefaultValues(
-        args: org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments,
-    ) {
-        org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptionsHelper.fillDefaultValues(args)
-        args.moduleName = null
-    }
-
     internal fun syncOptionsAsConvention(
         from: org.jetbrains.kotlin.gradle.dsl.KotlinNativeCompilerOptions,
         into: org.jetbrains.kotlin.gradle.dsl.KotlinNativeCompilerOptions,

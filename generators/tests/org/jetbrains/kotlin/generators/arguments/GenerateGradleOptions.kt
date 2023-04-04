@@ -713,29 +713,6 @@ private fun Printer.generateCompilerOptionsHelper(
         println("}")
 
         println()
-        println("internal fun fillDefaultValues(")
-        withIndent {
-            println("args: $argsType,")
-        }
-        println(") {")
-        withIndent {
-            if (parentHelperName != null) println("$parentHelperName.fillDefaultValues(args)")
-            properties
-                .filter { it.name != "freeCompilerArgs" }
-                .forEach {
-                    val defaultValue = it.gradleValues
-                    var value = defaultValue.defaultValue
-                    if (value != "null" && defaultValue.toArgumentConverter != null) {
-                        value = "$value${defaultValue.toArgumentConverter.substringAfter("this")}"
-                    }
-                    println("args.${it.name} = $value")
-                }
-
-            addAdditionalJvmArgs(helperName)
-        }
-        println("}")
-
-        println()
         println("internal fun syncOptionsAsConvention(")
         withIndent {
             println("from: $type,")

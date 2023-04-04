@@ -14,12 +14,6 @@ internal object KotlinMultiplatformCommonCompilerOptionsHelper {
         org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptionsHelper.fillCompilerArguments(from, args)
     }
 
-    internal fun fillDefaultValues(
-        args: org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments,
-    ) {
-        org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptionsHelper.fillDefaultValues(args)
-    }
-
     internal fun syncOptionsAsConvention(
         from: org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformCommonCompilerOptions,
         into: org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformCommonCompilerOptions,

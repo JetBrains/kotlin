@@ -28,26 +28,6 @@ internal object KotlinJsCompilerOptionsHelper {
         args.useEsClasses = from.useEsClasses.get()
     }
 
-    internal fun fillDefaultValues(
-        args: org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments,
-    ) {
-        org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptionsHelper.fillDefaultValues(args)
-        args.friendModulesDisabled = false
-        args.main = org.jetbrains.kotlin.gradle.dsl.JsMainFunctionExecutionMode.CALL.mode
-        args.metaInfo = true
-        args.moduleKind = org.jetbrains.kotlin.gradle.dsl.JsModuleKind.MODULE_PLAIN.kind
-        args.moduleName = null
-        args.noStdlib = true
-        args.outputFile = null
-        args.sourceMap = false
-        args.sourceMapEmbedSources = null
-        args.sourceMapNamesPolicy = null
-        args.sourceMapPrefix = null
-        args.target = "v5"
-        args.typedArrays = true
-        args.useEsClasses = false
-    }
-
     internal fun syncOptionsAsConvention(
         from: org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptions,
         into: org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptions,
