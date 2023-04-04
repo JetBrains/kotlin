@@ -283,6 +283,7 @@ abstract class BaseGradleIT {
         val enableCompatibilityMetadataVariant: Boolean? = null,
         val withReports: List<BuildReportType> = emptyList(),
         val enableKpmModelMapping: Boolean? = null,
+        val useDaemonFallbackStrategy: Boolean = false,
     ) {
         val safeAndroidGradlePluginVersion: AGPVersion
             get() = androidGradlePluginVersion ?: error("AGP version is expected to be set")
@@ -960,6 +961,8 @@ abstract class BaseGradleIT {
             if (options.enableKpmModelMapping != null) {
                 add("-Pkotlin.kpm.experimentalModelMapping=${options.enableKpmModelMapping}")
             }
+
+            add("-Pkotlin.daemon.useFallbackStrategy=${options.useDaemonFallbackStrategy}")
 
             add("-Dorg.gradle.unsafe.configuration-cache=${options.configurationCache}")
             add("-Dorg.gradle.unsafe.configuration-cache-problems=${options.configurationCacheProblems.name.lowercase(Locale.getDefault())}")

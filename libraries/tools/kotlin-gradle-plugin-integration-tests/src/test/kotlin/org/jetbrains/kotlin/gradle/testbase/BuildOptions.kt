@@ -41,6 +41,7 @@ data class BuildOptions(
     val statisticsForceValidation: Boolean = true,
     val usePreciseOutputsBackup: Boolean? = null,
     val keepIncrementalCompilationCachesInMemory: Boolean? = null,
+    val useDaemonFallbackStrategy: Boolean = false,
 ) {
     val safeAndroidVersion: String
         get() = androidVersion ?: error("AGP version is expected to be set")
@@ -161,6 +162,8 @@ data class BuildOptions(
         if (keepIncrementalCompilationCachesInMemory != null) {
             arguments.add("-Pkotlin.compiler.keepIncrementalCompilationCachesInMemory=$keepIncrementalCompilationCachesInMemory")
         }
+
+        arguments.add("-Pkotlin.daemon.useFallbackStrategy=$useDaemonFallbackStrategy")
 
         arguments.addAll(freeArgs)
 
