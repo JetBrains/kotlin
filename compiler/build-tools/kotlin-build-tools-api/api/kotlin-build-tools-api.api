@@ -1,6 +1,6 @@
 public abstract interface class org/jetbrains/kotlin/buildtools/api/CompilationService {
 	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/CompilationService$Companion;
-	public abstract fun compile ()V
+	public abstract fun compile (Lorg/jetbrains/kotlin/buildtools/api/compilation/CompilationStrategySettings;Ljava/util/List;Lorg/jetbrains/kotlin/buildtools/api/compilation/CompilationOptions;)Lorg/jetbrains/kotlin/buildtools/api/compilation/CompilationResult;
 	public static fun loadImplementation (Ljava/lang/ClassLoader;)Lorg/jetbrains/kotlin/buildtools/api/CompilationService;
 }
 
@@ -20,5 +20,70 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/KotlinLogger
 
 public final class org/jetbrains/kotlin/buildtools/api/SharedApiClassesClassLoader {
 	public static final fun newInstance ()Ljava/lang/ClassLoader;
+}
+
+public abstract class org/jetbrains/kotlin/buildtools/api/compilation/CompilationOptions {
+	public synthetic fun <init> (Lorg/jetbrains/kotlin/buildtools/api/KotlinLogger;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getLogger ()Lorg/jetbrains/kotlin/buildtools/api/KotlinLogger;
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/compilation/CompilationResult : java/lang/Enum {
+	public static final field COMPILATION_ERROR Lorg/jetbrains/kotlin/buildtools/api/compilation/CompilationResult;
+	public static final field COMPILATION_OOM_ERROR Lorg/jetbrains/kotlin/buildtools/api/compilation/CompilationResult;
+	public static final field COMPILATION_SUCCESS Lorg/jetbrains/kotlin/buildtools/api/compilation/CompilationResult;
+	public static final field COMPILER_INTERNAL_ERROR Lorg/jetbrains/kotlin/buildtools/api/compilation/CompilationResult;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/compilation/CompilationResult;
+	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/compilation/CompilationResult;
+}
+
+public abstract class org/jetbrains/kotlin/buildtools/api/compilation/CompilationStrategySettings {
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/compilation/CompilationStrategySettings$InProcess : org/jetbrains/kotlin/buildtools/api/compilation/CompilationStrategySettings {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/buildtools/api/compilation/CompilationStrategySettings$InProcess;
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/compilation/IncrementalCompilationOptions {
+}
+
+public abstract class org/jetbrains/kotlin/buildtools/api/compilation/JsCompilationOptions : org/jetbrains/kotlin/buildtools/api/compilation/CompilationOptions {
+	public fun <init> (Lorg/jetbrains/kotlin/buildtools/api/KotlinLogger;)V
+}
+
+public abstract class org/jetbrains/kotlin/buildtools/api/compilation/JvmCompilationOptions : org/jetbrains/kotlin/buildtools/api/compilation/CompilationOptions {
+	public fun <init> (Lorg/jetbrains/kotlin/buildtools/api/KotlinLogger;Ljava/util/List;)V
+	public final fun getKotlinScriptExtensions ()Ljava/util/List;
+}
+
+public class org/jetbrains/kotlin/buildtools/api/compilation/KotlinBuildToolsException : java/lang/Exception {
+	public fun <init> (Ljava/lang/String;)V
+}
+
+public abstract class org/jetbrains/kotlin/buildtools/api/compilation/MetadataCompilationOptions : org/jetbrains/kotlin/buildtools/api/compilation/CompilationOptions {
+	public fun <init> (Lorg/jetbrains/kotlin/buildtools/api/KotlinLogger;)V
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/compilation/NonIncrementalCompilationOptions {
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/compilation/NonIncrementalJsCompilationOptions : org/jetbrains/kotlin/buildtools/api/compilation/JsCompilationOptions, org/jetbrains/kotlin/buildtools/api/compilation/NonIncrementalCompilationOptions {
+	public fun <init> ()V
+	public fun <init> (Lorg/jetbrains/kotlin/buildtools/api/KotlinLogger;)V
+	public synthetic fun <init> (Lorg/jetbrains/kotlin/buildtools/api/KotlinLogger;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/compilation/NonIncrementalJvmCompilationOptions : org/jetbrains/kotlin/buildtools/api/compilation/JvmCompilationOptions, org/jetbrains/kotlin/buildtools/api/compilation/NonIncrementalCompilationOptions {
+	public fun <init> (Lorg/jetbrains/kotlin/buildtools/api/KotlinLogger;Ljava/util/List;)V
+	public synthetic fun <init> (Lorg/jetbrains/kotlin/buildtools/api/KotlinLogger;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/compilation/NonIncrementalMetadataCompilationOptions : org/jetbrains/kotlin/buildtools/api/compilation/MetadataCompilationOptions, org/jetbrains/kotlin/buildtools/api/compilation/NonIncrementalCompilationOptions {
+	public fun <init> ()V
+	public fun <init> (Lorg/jetbrains/kotlin/buildtools/api/KotlinLogger;)V
+	public synthetic fun <init> (Lorg/jetbrains/kotlin/buildtools/api/KotlinLogger;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/compilation/ParseCompilationArgumentsException : org/jetbrains/kotlin/buildtools/api/compilation/KotlinBuildToolsException {
+	public fun <init> (Ljava/lang/String;)V
 }
 
