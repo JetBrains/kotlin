@@ -43,7 +43,7 @@ interface KotlinCompilerArgumentsProducer {
     }
 
     fun createCompilerArguments(
-        context: CreateCompilerArgumentsContext = CreateCompilerArgumentsContext()
+        context: CreateCompilerArgumentsContext = CreateCompilerArgumentsContext.default
     ): CommonToolArguments
 }
 
