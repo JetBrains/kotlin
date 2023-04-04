@@ -1398,7 +1398,7 @@ public final class kotlinx/metadata/jvm/KotlinClassMetadata$Unknown : kotlinx/me
 
 public final class kotlinx/metadata/jvm/KotlinModuleMetadata {
 	public static final field Companion Lkotlinx/metadata/jvm/KotlinModuleMetadata$Companion;
-	public fun <init> ([B)V
+	public synthetic fun <init> ([BLkotlinx/metadata/internal/metadata/jvm/deserialization/ModuleMapping;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun accept (Lkotlinx/metadata/jvm/KmModuleVisitor;)V
 	public final fun getBytes ()[B
 	public static final fun read ([B)Lkotlinx/metadata/jvm/KotlinModuleMetadata;

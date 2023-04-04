@@ -8,10 +8,10 @@ package kotlinx.metadata.test
 import kotlinx.metadata.KmClass
 import kotlinx.metadata.jvm.KotlinClassMetadata
 import kotlinx.metadata.jvm.Metadata
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException
 import org.junit.Test
-import kotlin.test.assertFailsWith
-import kotlin.test.assertIs
+import kotlin.test.*
 
 class MetadataExceptionsTest {
     @Test
@@ -32,5 +32,36 @@ class MetadataExceptionsTest {
             KotlinClassMetadata.writeClass(kmClass)
         }
         assertIs<UninitializedPropertyAccessException>(e.cause)
+    }
+
+    private fun doTestVersion(version: IntArray, expectedText: String) {
+        val md = Metadata(metadataVersion = version)
+        val iae = assertFailsWith<IllegalArgumentException> { KotlinClassMetadata.read(md) }
+        assertContains(iae.message.orEmpty(), expectedText)
+    }
+
+    @Test
+    fun testReadObsoleteVersion() {
+        doTestVersion(intArrayOf(0, 1, 0), "version 0.1.0, while minimum supported version is 1.1.0")
+        doTestVersion(intArrayOf(1, 0, 0), "version 1.0.0, while minimum supported version is 1.1.0")
+        doTestVersion(intArrayOf(1, 0, 255), "version 1.0.255, while minimum supported version is 1.1.0")
+    }
+
+    @Test
+    fun testReadNewerVersion() {
+        val versionPlus2 = JvmMetadataVersion.INSTANCE.next().next()
+        doTestVersion(
+            versionPlus2.toArray(),
+            "version $versionPlus2, while maximum supported version is ${JvmMetadataVersion.INSTANCE_NEXT}"
+        )
+    }
+
+    @Test
+    fun testInvalidVersion() {
+        doTestVersion(intArrayOf(), "instance does not have metadataVersion in it and therefore is malformed and cannot be read")
+        doTestVersion(
+            JvmMetadataVersion.INVALID_VERSION.toArray(),
+            "instance does not have metadataVersion in it and therefore is malformed and cannot be read"
+        )
     }
 }
