@@ -4,7 +4,10 @@ plugins {
 }
 
 dependencies {
+    api(platform(project(":jps:jps-bom")))
     implementation(kotlinStdlib())
+//    println(kotlinBuildProperties.useBootstrapStdlib)
+//    println("================")
     @Suppress("UNCHECKED_CAST")
     rootProject.extra["kotlinJpsPluginEmbeddedDependencies"]
         .let { it as List<String> }
