@@ -99,6 +99,9 @@ internal fun FirCallableSymbol<*>.dispatchReceiverType(
 }
 
 internal fun FirVariableSymbol<*>.getKtConstantInitializer(resolveSession: LLFirResolveSession): KtInitializerValue? {
+    // to avoid lazy resolve
+    if (fir.initializer == null) return null
+
     lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
     var firInitializer = fir.initializer ?: return null
     if (firInitializer is FirPropertyAccessExpression) {
