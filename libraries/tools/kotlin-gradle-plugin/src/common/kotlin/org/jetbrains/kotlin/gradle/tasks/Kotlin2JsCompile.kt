@@ -292,7 +292,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
 
     }
 
-    open fun contributeAdditionalCompilerArguments(context: ContributeCompilerArgumentsContext<K2JSCompilerArguments>) = Unit
+    protected open fun contributeAdditionalCompilerArguments(context: ContributeCompilerArgumentsContext<K2JSCompilerArguments>) = Unit
 
     override fun callCompilerAsync(
         args: K2JSCompilerArguments,
