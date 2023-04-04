@@ -32,8 +32,7 @@ import org.jetbrains.kotlin.compatibility.binary.TestModule as TModule
 
 @Tag("klib-evolution")
 abstract class AbstractNativeKlibEvolutionTest : AbstractNativeSimpleTest() {
-
-    // TODO: unmute after fixing KT-57711
+    // Const evaluation tests muted for FIR because FIR does const propagation.
     private fun isIgnoredTest(filePath: String): Boolean {
         if (!this::class.java.simpleName.startsWith("Fir"))
             return false

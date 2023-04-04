@@ -23,7 +23,7 @@ import java.io.File
 
 abstract class AbstractClassicJsKlibEvolutionTest : AbstractJsKlibEvolutionTest(CompilerType.K1)
 abstract class AbstractFirJsKlibEvolutionTest : AbstractJsKlibEvolutionTest(CompilerType.K2) {
-    // TODO: unmute after fixing KT-57711
+    // Const evaluation tests muted for FIR because FIR does const propagation.
     override fun isIgnoredTest(filePath: String): Boolean {
         val fileName = filePath.substringAfterLast('/')
         return fileName == "addOrRemoveConst.kt" || fileName == "changeConstInitialization.kt"
