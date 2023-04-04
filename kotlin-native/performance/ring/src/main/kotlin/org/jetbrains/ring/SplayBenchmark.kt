@@ -43,6 +43,7 @@
 
 import kotlin.native.concurrent.*
 import kotlin.random.Random
+import platform.posix.*
 
 // A splay tree is a self-balancing binary search tree with the additional
 // property that recently accessed elements are quick to access again.
@@ -306,14 +307,41 @@ class SplayBenchmark {
 class SplayBenchmarkUsingWorkers {
     val numberOfWorkers = 5;
     val workers = Array(numberOfWorkers, { _ -> Worker.start() })
-    val splayTrees = Array(numberOfWorkers, { _ -> SplayBenchmark() });
+
+    var done = false
+     init {
+         workers.forEach {
+             it.execute(TransferMode.SAFE, { this }) {
+                 while (!it.done) {
+                     pthread_yield_np()
+                 }
+             }
+         }
+     }
+
+    val splay = SplayBenchmark()
 
     fun runSplayWorkers() {
+        splay.runSplay()
+    }
+
+    fun splayTearDownWorkers() {
+        done = true
+        splay.splayTearDown()
+    }
+}
+
+class SplayBenchmarkParallel {
+    val numberOfWorkers = 5;
+    val workers = Array(numberOfWorkers, { _ -> Worker.start() })
+    val splayTrees = Array(numberOfWorkers, { _ -> SplayBenchmark() });
+
+    fun runSplayParallel() {
         val futures = Array(numberOfWorkers) {i -> workers[i].execute(TransferMode.SAFE, { splayTrees[i] }, {it.runSplay()})};
         futures.forEach{it.consume {}};
     }
 
-    fun splayTearDownWorkers() {
+    fun splayTearDownParallel() {
         val futures = Array(numberOfWorkers) {i -> workers[i].execute(TransferMode.SAFE, { splayTrees[i] }, {it.splayTearDown()})};
         futures.forEach{it.consume {}};
         workers.forEach { it.requestTermination().result }

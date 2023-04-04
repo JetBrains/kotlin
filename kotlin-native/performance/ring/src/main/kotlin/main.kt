@@ -62,6 +62,7 @@ class RingLauncher : Launcher() {
                     "Singleton.access" to BenchmarkEntryWithInit.create(::SingletonBenchmark, { access() }),
                     "Splay" to BenchmarkEntryWithInitAndValidation.create(::SplayBenchmark, { runSplay() }, { splayTearDown() }),
                     "SplayWithWorkers" to BenchmarkEntryWithInitAndValidation.create(::SplayBenchmarkUsingWorkers, { runSplayWorkers() }, { splayTearDownWorkers() }),
+                    "SplayParallel" to BenchmarkEntryWithInitAndValidation.create(::SplayBenchmarkParallel, { runSplayParallel() }, { splayTearDownParallel() }),
                     "String.stringConcat" to BenchmarkEntryWithInit.create(::StringBenchmark, { stringConcat() }),
                     "String.stringBuilderConcat" to BenchmarkEntryWithInit.create(::StringBenchmark, { stringBuilderConcat() }),
                     "String.stringBuilderConcatNullable" to BenchmarkEntryWithInit.create(::StringBenchmark, { stringBuilderConcatNullable() }),
