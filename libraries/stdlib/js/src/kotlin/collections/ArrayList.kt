@@ -67,12 +67,20 @@ public actual open class ArrayList<E> internal constructor(private var array: Ar
         modCount++
     }
 
+    private fun increaseLength(amount: Int): Int {
+        val previous = size
+        array.asDynamic().length = size + amount
+        return previous
+    }
+
     actual override fun addAll(elements: Collection<E>): Boolean {
         checkIsMutable()
         if (elements.isEmpty()) return false
 
-
-        elements.forEach(array.asDynamic()::push)
+        val offset = increaseLength(elements.size)
+        elements.forEachIndexed { i, element ->
+            array[i + offset] = element
+        }
         modCount++
         return true
     }
@@ -84,10 +92,12 @@ public actual open class ArrayList<E> internal constructor(private var array: Ar
         if (index == size) return addAll(elements)
         if (elements.isEmpty()) return false
 
-        var i = index
-        elements.forEach { element ->
-            array.asDynamic().splice(i, 0, element)
-            i++
+        val cut = array.asDynamic().splice(index).unsafeCast<Array<E>>()
+        addAll(elements)
+
+        val offset = increaseLength(cut.size)
+        repeat(cut.size) { i ->
+            array[i + offset] = cut[i]
         }
 
         modCount++
@@ -151,7 +161,7 @@ public actual open class ArrayList<E> internal constructor(private var array: Ar
     }
 
     override fun toArray(): Array<Any?> {
-        return jsArrayPrototype.slice.call(array)
+        return js("[]").slice.call(array)
     }
 
 
@@ -167,5 +177,4 @@ public actual open class ArrayList<E> internal constructor(private var array: Ar
         AbstractList.checkPositionIndex(index, size)
     }
 
-    private val jsArrayPrototype = js("[]")
 }
