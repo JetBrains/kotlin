@@ -226,11 +226,8 @@ constructor(
             KotlinCommonCompilerToolOptionsHelper.fillCompilerArguments(toolOptions, args)
         }
 
-        contribute(KotlinCompilerArgumentsProducer.ArgumentType.PluginClasspath) { args ->
+        contribute(KotlinCompilerArgumentsProducer.ArgumentType.Classpath) { args ->
             args.pluginClasspaths = compilerPlugins.flatMap { classpath -> tryLenient { classpath.files } ?: emptySet() }.toPathsArray()
-        }
-
-        contribute(KotlinCompilerArgumentsProducer.ArgumentType.DependencyClasspath) { args ->
             args.libraries = tryLenient { libraries.files.filterKlibsPassedToCompiler() }?.toPathsArray()
             args.exportedLibraries = tryLenient { exportLibraries.files.filterKlibsPassedToCompiler() }?.toPathsArray()
             args.friendModules = tryLenient { friendModule.files.toList().takeIf { it.isNotEmpty() } }

@@ -252,15 +252,13 @@ abstract class KotlinCompile @Inject constructor(
             }
         }
 
-        contribute(ArgumentType.PluginClasspath) { args ->
+        contribute(ArgumentType.Classpath) { args ->
             args.pluginClasspaths = tryLenient {
                 listOfNotNull(
                     pluginClasspath, kotlinPluginData?.orNull?.classpath
                 ).reduce(FileCollection::plus).toPathsArray()
             }
-        }
 
-        contribute(ArgumentType.DependencyClasspath) { args ->
             args.friendPaths = friendPaths.toPathsArray()
             args.classpathAsList = tryLenient {
                 libraries.toList().filter { it.exists() }

@@ -454,11 +454,9 @@ internal constructor(
             KotlinNativeCompilerOptionsHelper.fillCompilerArguments(compilerOptions, args)
         }
 
-        contribute(KotlinCompilerArgumentsProducer.ArgumentType.PluginClasspath) { args ->
+        contribute(KotlinCompilerArgumentsProducer.ArgumentType.Classpath) { args ->
             args.pluginClasspaths = compilerPlugins.flatMap { classpath -> tryLenient { classpath.files } ?: emptySet() }.toPathsArray()
-        }
 
-        contribute(KotlinCompilerArgumentsProducer.ArgumentType.DependencyClasspath) { args ->
             args.libraries = tryLenient { libraries.files.filterKlibsPassedToCompiler().toPathsArray() }
             args.friendModules = tryLenient {
                 friendModule.files.takeIf { it.isNotEmpty() }?.map { it.absolutePath }?.joinToString(File.pathSeparator)

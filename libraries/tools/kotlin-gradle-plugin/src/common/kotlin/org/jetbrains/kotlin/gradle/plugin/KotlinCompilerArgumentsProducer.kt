@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.plugin
 
-import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.ContributeCompilerArgumentsContext
@@ -17,8 +16,7 @@ interface KotlinCompilerArgumentsProducer {
 
     enum class ArgumentType {
         Primitive,
-        DependencyClasspath,
-        PluginClasspath,
+        Classpath,
         Sources;
 
         companion object {

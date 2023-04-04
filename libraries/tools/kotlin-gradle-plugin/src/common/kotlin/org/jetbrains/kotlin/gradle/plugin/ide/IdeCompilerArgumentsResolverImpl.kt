@@ -36,7 +36,7 @@ internal class IdeCompilerArgumentsResolverImpl(
                 isLenient = true,
                 includeArgumentTypes = setOfNotNull(
                     KotlinCompilerArgumentsProducer.ArgumentType.Primitive,
-                    KotlinCompilerArgumentsProducer.ArgumentType.DependencyClasspath
+                    KotlinCompilerArgumentsProducer.ArgumentType.Classpath
                         .takeIf { extension !is KotlinMultiplatformExtension }
                         .takeIf { producer is KotlinCompile }
                         .takeIf { !extension.project.hasAndroidPlugin }

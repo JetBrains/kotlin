@@ -126,15 +126,13 @@ abstract class KaptGenerateStubsTask @Inject constructor(
             args.destinationAsFile = destinationDirectory.get().asFile
         }
 
-        contribute(KotlinCompilerArgumentsProducer.ArgumentType.PluginClasspath) { args ->
+        contribute(KotlinCompilerArgumentsProducer.ArgumentType.Classpath) { args ->
             args.pluginClasspaths = tryLenient {
                 listOfNotNull(
                     pluginClasspath, kotlinPluginData?.orNull?.classpath
                 ).reduce(FileCollection::plus).toPathsArray()
             }
-        }
 
-        contribute(KotlinCompilerArgumentsProducer.ArgumentType.DependencyClasspath) { args ->
             args.classpathAsList = tryLenient { libraries.toList().filter { it.exists() } }.orEmpty()
             args.friendPaths = friendPaths.toPathsArray()
         }

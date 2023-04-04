@@ -172,15 +172,13 @@ abstract class Kotlin2JsCompile @Inject constructor(
             args.freeArgs = executionTimeFreeCompilerArgs ?: enhancedFreeCompilerArgs.get()
         }
 
-        contribute(KotlinCompilerArgumentsProducer.ArgumentType.PluginClasspath) { args ->
+        contribute(KotlinCompilerArgumentsProducer.ArgumentType.Classpath) { args ->
             args.pluginClasspaths = tryLenient {
                 listOfNotNull(
                     pluginClasspath, kotlinPluginData?.orNull?.classpath
                 ).reduce(FileCollection::plus).toPathsArray()
             }
-        }
 
-        contribute(KotlinCompilerArgumentsProducer.ArgumentType.DependencyClasspath) { args ->
             args.friendModules = friendDependencies.files.joinToString(File.pathSeparator) { it.absolutePath }
 
             args.libraries = tryLenient {

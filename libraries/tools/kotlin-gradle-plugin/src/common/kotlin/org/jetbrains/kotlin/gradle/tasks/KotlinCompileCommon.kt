@@ -93,15 +93,12 @@ abstract class KotlinCompileCommon @Inject constructor(
             }
         }
 
-        contribute(KotlinCompilerArgumentsProducer.ArgumentType.PluginClasspath) { args ->
+        contribute(KotlinCompilerArgumentsProducer.ArgumentType.Classpath) { args ->
             args.pluginClasspaths = tryLenient {
                 listOfNotNull(
                     pluginClasspath, kotlinPluginData?.orNull?.classpath
                 ).reduce(FileCollection::plus).toPathsArray()
             }
-        }
-
-        contribute(KotlinCompilerArgumentsProducer.ArgumentType.DependencyClasspath) { args ->
             args.classpath = tryLenient { libraries.files.filter { it.exists() }.joinToString(File.pathSeparator) }
             args.friendPaths = tryLenient { this@KotlinCompileCommon.friendPaths.files.toPathsArray() }
             args.refinesPaths = refinesMetadataPaths.toPathsArray()
