@@ -20,6 +20,7 @@ internal object KotlinJvmCompilerOptionsHelper {
         // Arguments with always default values when used from build tools
         args.noStdlib = true
         args.noReflect = true
+        args.allowNoSourceFiles = true
     }
 
     internal fun fillDefaultValues(
@@ -34,6 +35,7 @@ internal object KotlinJvmCompilerOptionsHelper {
         // Arguments with always default values when used from build tools
         args.noStdlib = true
         args.noReflect = true
+        args.allowNoSourceFiles = true
     }
 
     internal fun syncOptionsAsConvention(

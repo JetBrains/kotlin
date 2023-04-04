@@ -760,6 +760,7 @@ private fun Printer.addAdditionalJvmArgs(implType: FqName) {
         println("// Arguments with always default values when used from build tools")
         println("args.noStdlib = true")
         println("args.noReflect = true")
+        println("args.allowNoSourceFiles = true")
     }
 }
 
