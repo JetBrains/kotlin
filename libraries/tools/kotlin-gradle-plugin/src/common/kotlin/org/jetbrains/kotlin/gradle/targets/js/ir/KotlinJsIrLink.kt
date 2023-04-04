@@ -94,36 +94,6 @@ abstract class KotlinJsIrLink @Inject constructor(
         }
     }
 
-    override fun processArgs(args: K2JSCompilerArguments) {
-        super.processArgs(args)
-        KotlinBuildStatsService.applyIfInitialised {
-            it.report(BooleanMetrics.JS_IR_INCREMENTAL, incrementalJsIr)
-            val newArgs = K2JSCompilerArguments()
-            parseCommandLineArguments(ArgumentUtils.convertArgumentsToStringList(args), newArgs)
-            it.report(
-                StringMetrics.JS_OUTPUT_GRANULARITY,
-                if (newArgs.irPerModule)
-                    KotlinJsIrOutputGranularity.PER_MODULE.name.toLowerCaseAsciiOnly()
-                else
-                    KotlinJsIrOutputGranularity.WHOLE_PROGRAM.name.toLowerCaseAsciiOnly()
-            )
-        }
-
-        // moduleName can start with @ for group of NPM packages
-        // but args parsing @ as start of argfile
-        // so WA we provide moduleName as one parameter
-        if (args.moduleName != null) {
-            args.freeArgs += "-ir-output-name=${args.moduleName}"
-            args.moduleName = null
-        }
-
-        args.includes = entryModule.get().asFile.canonicalPath
-
-        if (usingCacheDirectory()) {
-            args.cacheDirectory = rootCacheDirectory.get().asFile.also { it.mkdirs() }.absolutePath
-        }
-    }
-
     override fun contributeAdditionalCompilerArguments(context: ContributeCompilerArgumentsContext<K2JSCompilerArguments>) {
         super.contributeAdditionalCompilerArguments(context)
 

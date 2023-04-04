@@ -286,12 +286,6 @@ abstract class Kotlin2JsCompile @Inject constructor(
     override val incrementalProps: List<FileCollection>
         get() = super.incrementalProps + listOf(friendDependencies)
 
-    open fun processArgs(
-        args: K2JSCompilerArguments
-    ) {
-
-    }
-
     protected open fun contributeAdditionalCompilerArguments(context: ContributeCompilerArgumentsContext<K2JSCompilerArguments>) = Unit
 
     override fun callCompilerAsync(
@@ -345,7 +339,6 @@ abstract class Kotlin2JsCompile @Inject constructor(
             reportingSettings = reportingSettings(),
             incrementalCompilationEnvironment = icEnv
         )
-        processArgs(args)
         compilerRunner.runJsCompilerAsync(
             args,
             environment,
