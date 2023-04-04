@@ -121,14 +121,12 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker() {
         // we only need to check if one is related
         // to the other
 
-        fun TypeInfo.isSubclassOf(other: TypeInfo) = when {
-            other.enforcesEmptyIntersection -> type.classId == other.type.classId
-            else -> notNullType.isSubtypeOf(other.notNullType, context.session)
-        }
+        fun TypeInfo.isSubtypeOf(other: TypeInfo) =
+            notNullType.isSubtypeOf(other.notNullType, context.session)
 
         return when {
             l.type.isNothingOrNullableNothing || r.type.isNothingOrNullableNothing -> false
-            else -> !l.isSubclassOf(r) && !r.isSubclassOf(l)
+            else -> !l.isSubtypeOf(r) && !r.isSubtypeOf(l)
         }
     }
 
