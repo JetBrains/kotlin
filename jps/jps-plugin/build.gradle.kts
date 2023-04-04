@@ -18,6 +18,8 @@ val generateTests by generator("org.jetbrains.kotlin.jps.GenerateJpsPluginTestsK
 }
 
 dependencies {
+    api(platform(project(":jps:jps-bom")))
+    implementation(kotlinStdlib())
     compileOnly(project(":jps:jps-platform-api-signatures"))
     testImplementation(projectTests(":generators:test-generator"))
 

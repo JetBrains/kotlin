@@ -521,7 +521,8 @@ if (attachedIntellijVersion == "master") {
 include ":jps:jps-common",
         ":jps:jps-plugin",
         ":prepare:kotlin-jps-plugin",
-        ":jps:jps-platform-api-signatures"
+        ":jps:jps-platform-api-signatures",
+        ":jps:jps-bom"
 
 include ":generators:analysis-api-generator",
         ":analysis",
