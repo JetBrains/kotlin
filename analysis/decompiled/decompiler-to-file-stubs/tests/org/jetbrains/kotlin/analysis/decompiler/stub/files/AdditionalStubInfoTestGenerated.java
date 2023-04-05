@@ -31,6 +31,12 @@ public class AdditionalStubInfoTestGenerated extends AbstractAdditionalStubInfoT
     }
 
     @Test
+    @TestMetadata("Contracts")
+    public void testContracts() throws Exception {
+        runTest("analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo/Contracts/");
+    }
+
+    @Test
     @TestMetadata("AnnotationValues")
     public void testAnnotationValues() throws Exception {
         runTest("analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo/AnnotationValues/");
