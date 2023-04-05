@@ -245,6 +245,8 @@ class RingLauncher : Launcher() {
         @OptIn(kotlin.ExperimentalStdlibApi::class)
         if (!isExperimentalMM()) {
             baseBenchmarksSet -= listOf("SplayWithWorkers")
+            baseBenchmarksSet -= listOf("SplayParallel")
+            baseBenchmarksSet -= listOf("LifeWithWorkers")
         }
     }
 }
