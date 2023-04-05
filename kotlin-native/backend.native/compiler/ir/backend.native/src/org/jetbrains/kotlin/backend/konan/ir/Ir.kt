@@ -16,19 +16,20 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
-import org.jetbrains.kotlin.ir.declarations.IrProperty
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
+import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.defaultType
-import org.jetbrains.kotlin.ir.types.typeWith
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.findDeclaration
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
+import org.jetbrains.kotlin.types.TypeUtils
 
 object KonanNameConventions {
     val setWithoutBoundCheck = Name.special("<setWithoutBoundCheck>")
@@ -40,12 +41,14 @@ internal class KonanIr(context: Context, override val symbols: KonanSymbols): Ir
 
 internal abstract class KonanSymbols(
         context: PhaseContext,
-        descriptorsLookup: DescriptorsLookup, // Deprecated to use in this class, except `findMainEntryPoint`. Also KonanBuiltins are deprecated
+        val descriptorsLookup: DescriptorsLookup, // Deprecated to use in this class, except `findMainEntryPoint`. Also KonanBuiltins are deprecated
         irBuiltIns: IrBuiltIns,
         internal val symbolTable: SymbolTable, // Deprecated to use in this class
 ): Symbols(irBuiltIns, symbolTable) {
     internal abstract fun IrClassSymbol.findMemberSimpleFunction(name: Name): IrSimpleFunctionSymbol?
+    internal abstract fun IrClassSymbol.findMemberProperty(name: Name): IrPropertySymbol?
     internal abstract fun IrClassSymbol.findMemberPropertyGetter(name: Name): IrSimpleFunctionSymbol?
+    internal abstract fun findInteropExtensionPropertyGetter(name: String): IrSimpleFunctionSymbol?
 
     val entryPoint = findMainEntryPoint(context, descriptorsLookup.builtIns)?.let { symbolTable.referenceSimpleFunction(it) }
 
@@ -96,22 +99,21 @@ internal abstract class KonanSymbols(
     val processUnhandledException = irBuiltIns.findFunctions(Name.identifier("processUnhandledException"), "kotlin", "native").single()
     val terminateWithUnhandledException = irBuiltIns.findFunctions(Name.identifier("terminateWithUnhandledException"), "kotlin", "native").single()
 
-    val interopNativePointedGetRawPointer =
-            symbolTable.referenceSimpleFunction(descriptorsLookup.interopBuiltIns.nativePointedGetRawPointer)
+    abstract val interopNativePointedGetRawPointer: IrSimpleFunctionSymbol
 
     val interopCPointer = interopClass(InteropFqNames.cPointerName)
-    val interopCstr = symbolTable.referenceSimpleFunction(descriptorsLookup.interopBuiltIns.cstr.getter!!)
-    val interopWcstr = symbolTable.referenceSimpleFunction(descriptorsLookup.interopBuiltIns.wcstr.getter!!)
+    val interopCstr = findInteropExtensionPropertyGetter(InteropFqNames.cstrPropertyName)!!
+    val interopWcstr = findInteropExtensionPropertyGetter(InteropFqNames.wcstrPropertyName)!!
     val interopMemScope = interopClass(InteropFqNames.memScopeName)
     val interopCValue = interopClass(InteropFqNames.cValueName)
     val interopCValuesRef = interopClass(InteropFqNames.cValuesRefName)
-    val interopCValueWrite = symbolTable.referenceSimpleFunction(descriptorsLookup.interopBuiltIns.cValueWrite)
-    val interopCValueRead = symbolTable.referenceSimpleFunction(descriptorsLookup.interopBuiltIns.cValueRead)
-    val interopAllocType = symbolTable.referenceSimpleFunction(descriptorsLookup.interopBuiltIns.allocType)
+    abstract val interopCValueWrite: IrSimpleFunctionSymbol
+    abstract val interopCValueRead: IrSimpleFunctionSymbol
+    abstract val interopAllocType: IrSimpleFunctionSymbol
 
     val interopTypeOf = interopFunction(InteropFqNames.typeOfFunName)
 
-    val interopCPointerGetRawValue = symbolTable.referenceSimpleFunction(descriptorsLookup.interopBuiltIns.cPointerGetRawValue)
+    abstract val interopCPointerGetRawValue: IrSimpleFunctionSymbol
 
     val interopAllocObjCObject = interopFunction(InteropFqNames.allocObjCObjectFunName)
 
@@ -148,11 +150,11 @@ internal abstract class KonanSymbols(
     val interopObjCObjectInitBy = interopFunction(InteropFqNames.objCObjectInitByFunName)
     val interopObjCObjectRawValueGetter = interopFunction(InteropFqNames.objCObjectRawPtrFunName)
 
-    val interopNativePointedRawPtrGetter =
-            symbolTable.referenceSimpleFunction(descriptorsLookup.interopBuiltIns.nativePointedRawPtrGetter)
+    val interopNativePointedRawPtrGetter = interopClass(InteropFqNames.nativePointedName)
+            .findMemberPropertyGetter(Name.identifier(InteropFqNames.nativePointedRawPtrPropertyName))!!
 
-    val interopCPointerRawValue =
-            symbolTable.referenceProperty(descriptorsLookup.interopBuiltIns.cPointerRawValue)
+    val interopCPointerRawValue: IrPropertySymbol = interopClass(InteropFqNames.cPointerName)
+            .findMemberProperty(Name.identifier(InteropFqNames.cPointerRawValuePropertyName))!!
 
     val interopInterpretObjCPointer = interopFunction(InteropFqNames.interpretObjCPointerFunName)
     val interopInterpretObjCPointerOrNull = interopFunction(InteropFqNames.interpretObjCPointerOrNullFunName)
@@ -166,9 +168,8 @@ internal abstract class KonanSymbols(
     val nativeMemUtils = interopClass(InteropFqNames.nativeMemUtilsName)
     val nativeHeap = interopClass(InteropFqNames.nativeHeapName)
 
-    val interopGetPtr = symbolTable.referenceSimpleFunction(descriptorsLookup.interopBuiltIns.interopGetPtr)
-
-    val interopManagedGetPtr = symbolTable.referenceSimpleFunction(descriptorsLookup.interopBuiltIns.interopManagedGetPtr)
+    abstract val interopGetPtr: IrSimpleFunctionSymbol
+    abstract val interopManagedGetPtr: IrSimpleFunctionSymbol
 
     val interopManagedType = interopClass(InteropFqNames.managedTypeName)
     val interopCPlusPlusClass = interopClass(InteropFqNames.cPlusPlusClassName)
@@ -380,20 +381,11 @@ internal abstract class KonanSymbols(
 
     val eagerInitialization = topLevelClass(KonanFqNames.eagerInitialization)
 
-    val cStructVarConstructorSymbol = symbolTable.referenceConstructor(
-            descriptorsLookup.interopBuiltIns.cStructVar.unsubstitutedPrimaryConstructor!!
-    )
-    val managedTypeConstructor = symbolTable.referenceConstructor(
-            descriptorsLookup.interopBuiltIns.managedType.unsubstitutedPrimaryConstructor!!
-    )
-    val enumVarConstructorSymbol = symbolTable.referenceConstructor(
-            descriptorsLookup.interopBuiltIns.cEnumVar.unsubstitutedPrimaryConstructor!!
-    )
-    val primitiveVarPrimaryConstructor = symbolTable.referenceConstructor(
-            descriptorsLookup.interopBuiltIns.cPrimitiveVarType.unsubstitutedPrimaryConstructor!!)
-    val structVarPrimaryConstructor = symbolTable.referenceConstructor(
-            descriptorsLookup.interopBuiltIns.cStructVarType.unsubstitutedPrimaryConstructor!!)
-
+    abstract val cStructVarConstructorSymbol: IrConstructorSymbol
+    abstract val managedTypeConstructor: IrConstructorSymbol
+    abstract val enumVarConstructorSymbol: IrConstructorSymbol
+    abstract val primitiveVarPrimaryConstructor: IrConstructorSymbol
+    abstract val structVarPrimaryConstructor: IrConstructorSymbol
     private fun topLevelClass(fqName: FqName): IrClassSymbol = irBuiltIns.findClass(fqName.shortName(), fqName.parent())!!
 
     private fun nativeFunction(name: String) =
@@ -417,7 +409,7 @@ internal abstract class KonanSymbols(
     private fun interopFunction(name: String) =
             irBuiltIns.findFunctions(Name.identifier(name), InteropFqNames.packageName).single()
 
-    private fun interopClass(name: String) =
+    protected fun interopClass(name: String) =
             irBuiltIns.findClass(Name.identifier(name), InteropFqNames.packageName)!!
 
     private fun interopVarGetter(name: String) =
@@ -465,11 +457,85 @@ internal class KonanSymbolsOverDescriptors(
                     .singleOrNull()
                     ?.let { symbolTable.referenceSimpleFunction(it) }
 
+    override fun IrClassSymbol.findMemberProperty(name: Name): IrPropertySymbol? =
+            descriptor.unsubstitutedMemberScope.getContributedVariables(name, NoLookupLocation.FROM_BACKEND)
+                    .singleOrNull()
+                    ?.let { symbolTable.referenceProperty(it) }
+
     override fun IrClassSymbol.findMemberPropertyGetter(name: Name): IrSimpleFunctionSymbol? =
             descriptor.unsubstitutedMemberScope.getContributedVariables(name, NoLookupLocation.FROM_BACKEND)
                     .singleOrNull()
                     ?.getter
                     ?.let { symbolTable.referenceSimpleFunction(it) }
+
+    override fun findInteropExtensionPropertyGetter(name: String): IrSimpleFunctionSymbol? =
+            super.descriptorsLookup.interopBuiltIns.getContributedVariables(name)
+                    .singleOrNull()
+                    ?.getter
+                    ?.let { symbolTable.referenceSimpleFunction(it) }
+
+    override val interopNativePointedGetRawPointer = symbolTable.referenceSimpleFunction(
+            descriptorsLookup.interopBuiltIns.getContributedFunctions(InteropFqNames.nativePointedGetRawPointerFunName).single {
+                val extensionReceiverParameter = it.extensionReceiverParameter
+                extensionReceiverParameter != null &&
+                        TypeUtils.getClassDescriptor(extensionReceiverParameter.type)?.fqNameUnsafe == InteropFqNames.nativePointed
+            })
+    override val interopCValueWrite = symbolTable.referenceSimpleFunction(
+            descriptorsLookup.interopBuiltIns.getContributedFunctions(InteropFqNames.cValueWriteFunName).single {
+                it.extensionReceiverParameter?.type?.constructor?.declarationDescriptor?.fqNameSafe == InteropFqNames.cValue
+            })
+    override val interopCValueRead = symbolTable.referenceSimpleFunction(
+            descriptorsLookup.interopBuiltIns.getContributedFunctions(InteropFqNames.cValueReadFunName).single {
+                it.valueParameters.size == 1
+            })
+    override val interopAllocType = symbolTable.referenceSimpleFunction(
+            descriptorsLookup.interopBuiltIns.getContributedFunctions(InteropFqNames.allocTypeFunName).single {
+                it.extensionReceiverParameter != null && it.valueParameters.singleOrNull()?.name?.toString() == "type"
+            })
+    override val interopCPointerGetRawValue = symbolTable.referenceSimpleFunction(
+            descriptorsLookup.interopBuiltIns.getContributedFunctions(InteropFqNames.cPointerGetRawValueFunName).single {
+                val extensionReceiverParameter = it.extensionReceiverParameter
+                extensionReceiverParameter != null &&
+                        TypeUtils.getClassDescriptor(extensionReceiverParameter.type)?.fqNameUnsafe == InteropFqNames.cPointer
+            })
+
+    override val cStructVarConstructorSymbol = findDefaultConstructor(InteropFqNames.cStructVarName)
+    override val managedTypeConstructor = findDefaultConstructor(InteropFqNames.managedTypeName)
+    override val enumVarConstructorSymbol = findDefaultConstructor(InteropFqNames.cEnumVarName)
+    override val primitiveVarPrimaryConstructor = findDefaultConstructor(InteropFqNames.cPrimitiveVarName, InteropFqNames.TypeName)
+    override val structVarPrimaryConstructor = findDefaultConstructor(InteropFqNames.cStructVarName, InteropFqNames.TypeName)
+    private fun findDefaultConstructor(className: String): IrConstructorSymbol = symbolTable.referenceConstructor(
+            descriptorsLookup.interopBuiltIns.getContributedClass(className)
+                    .unsubstitutedPrimaryConstructor!!
+    )
+
+    private fun findDefaultConstructor(className: String, nestedClassName: String): IrConstructorSymbol = symbolTable.referenceConstructor(
+            descriptorsLookup.interopBuiltIns.getContributedClass(className)
+                    .defaultType.memberScope.getContributedClass(nestedClassName)
+                    .unsubstitutedPrimaryConstructor!!
+    )
+
+    override val interopGetPtr = descriptorsLookup.interopBuiltIns.getContributedVariables("ptr").single {
+        val singleTypeParameter = it.typeParameters.singleOrNull()
+        val singleTypeParameterUpperBound = singleTypeParameter?.upperBounds?.singleOrNull()
+        val extensionReceiverParameter = it.extensionReceiverParameter
+
+        singleTypeParameterUpperBound != null &&
+                extensionReceiverParameter != null &&
+                TypeUtils.getClassDescriptor(singleTypeParameterUpperBound)?.fqNameSafe == InteropFqNames.cPointed &&
+                extensionReceiverParameter.type == singleTypeParameter.defaultType
+    }.getter!!.let { symbolTable.referenceSimpleFunction(it) }
+
+    override val interopManagedGetPtr = descriptorsLookup.interopBuiltIns.getContributedVariables("ptr").single {
+        val singleTypeParameter = it.typeParameters.singleOrNull()
+        val singleTypeParameterUpperBound = singleTypeParameter?.upperBounds?.singleOrNull()
+        val extensionReceiverParameter = it.extensionReceiverParameter
+
+        singleTypeParameterUpperBound != null &&
+                extensionReceiverParameter != null &&
+                TypeUtils.getClassDescriptor(singleTypeParameterUpperBound)?.fqNameSafe == InteropFqNames.cStructVar &&
+                TypeUtils.getClassDescriptor(extensionReceiverParameter.type)?.fqNameSafe == InteropFqNames.managedType
+    }.getter!!.let { symbolTable.referenceSimpleFunction(it) }
 }
 
 internal class KonanSymbolsOverFir(
@@ -481,6 +547,75 @@ internal class KonanSymbolsOverFir(
     override fun IrClassSymbol.findMemberSimpleFunction(name: Name): IrSimpleFunctionSymbol? =
             owner.findDeclaration<IrSimpleFunction> { it.name == name }?.symbol
 
+    override fun IrClassSymbol.findMemberProperty(name: Name): IrPropertySymbol? =
+            owner.findDeclaration<IrProperty> { it.name == name }?.symbol
+
     override fun IrClassSymbol.findMemberPropertyGetter(name: Name): IrSimpleFunctionSymbol? =
             owner.findDeclaration<IrProperty> { it.name == name }?.getter?.symbol
+
+    override fun findInteropExtensionPropertyGetter(name: String): IrSimpleFunctionSymbol? =
+            irBuiltIns.findProperties(Name.identifier(name), InteropFqNames.packageName).single().owner.getter?.symbol
+
+    override val interopNativePointedGetRawPointer = findSingleInteropFunction(InteropFqNames.nativePointedGetRawPointerFunName) {
+        val extensionReceiverParameter = it.owner.extensionReceiverParameter
+        extensionReceiverParameter != null &&
+                extensionReceiverParameter.type.classFqName?.toUnsafe() == InteropFqNames.nativePointed
+    }
+    override val interopCValueWrite = findSingleInteropFunction(InteropFqNames.cValueWriteFunName) {
+        it.owner.extensionReceiverParameter?.type?.classFqName == InteropFqNames.cValue
+    }
+    override val interopCValueRead = findSingleInteropFunction(InteropFqNames.cValueReadFunName) {
+        it.owner.valueParameters.size == 1
+    }
+    override val interopAllocType = findSingleInteropFunction(InteropFqNames.allocTypeFunName) {
+        it.owner.extensionReceiverParameter != null && it.owner.valueParameters.singleOrNull()?.name?.toString() == "type"
+    }
+    override val interopCPointerGetRawValue = findSingleInteropFunction(InteropFqNames.cPointerGetRawValueFunName) {
+        it.owner.extensionReceiverParameter?.type?.classFqName?.toUnsafe() == InteropFqNames.cPointer
+    }
+
+    override val cStructVarConstructorSymbol = findDefaultConstructor(InteropFqNames.cStructVarName)
+    override val managedTypeConstructor = findDefaultConstructor(InteropFqNames.managedTypeName)
+    override val enumVarConstructorSymbol = findDefaultConstructor(InteropFqNames.cEnumVarName)
+    override val primitiveVarPrimaryConstructor = findDefaultConstructor(InteropFqNames.cPrimitiveVarName, InteropFqNames.TypeName)
+    override val structVarPrimaryConstructor = findDefaultConstructor(InteropFqNames.cStructVarName, InteropFqNames.TypeName)
+
+    override val interopGetPtr = irBuiltIns.findProperties(Name.identifier("ptr"), InteropFqNames.packageName).single {
+        val singleTypeParameter = it.owner.getter?.typeParameters?.singleOrNull()
+        val singleTypeParameterUpperBound = singleTypeParameter?.symbol?.superTypes()?.singleOrNull()
+        val extensionReceiverParameter = it.owner.getter?.extensionReceiverParameter
+
+        singleTypeParameterUpperBound != null &&
+                extensionReceiverParameter != null &&
+                singleTypeParameterUpperBound.classFqName == InteropFqNames.cPointed &&
+                extensionReceiverParameter.type.classFqName == singleTypeParameter.defaultType.classFqName
+    }.owner.getter!!.symbol
+
+    override val interopManagedGetPtr = irBuiltIns.findProperties(Name.identifier("ptr"), InteropFqNames.packageName).single {
+        val singleTypeParameter = it.owner.getter?.typeParameters?.singleOrNull()
+        val singleTypeParameterUpperBound = singleTypeParameter?.symbol?.superTypes()?.singleOrNull()
+        val extensionReceiverParameter = it.owner.getter?.extensionReceiverParameter
+
+        singleTypeParameterUpperBound != null &&
+                extensionReceiverParameter != null &&
+                singleTypeParameterUpperBound.classFqName == InteropFqNames.cStructVar &&
+                extensionReceiverParameter.type.classFqName == InteropFqNames.managedType
+    }.owner.getter!!.symbol
+
+    private fun findSingleInteropFunction(name: String, predicate: (IrSimpleFunctionSymbol) -> Boolean) =
+            irBuiltIns.findFunctions(Name.identifier(name), InteropFqNames.packageName).single(predicate)
+
+    private fun findDefaultConstructor(className: String): IrConstructorSymbol =
+            interopClass(className).owner.declarations.single {
+                it is IrConstructor && it.isPrimary
+            }.symbol as IrConstructorSymbol
+
+    private fun findDefaultConstructor(className: String, nestedClassName: String): IrConstructorSymbol {
+        val nested = interopClass(className).owner.declarations.single {
+            it is IrClass && it.name == Name.identifier(nestedClassName)
+        }.symbol as IrClassSymbol
+        return nested.owner.declarations.single {
+            it is IrConstructor && it.isPrimary
+        }.symbol as IrConstructorSymbol
+    }
 }

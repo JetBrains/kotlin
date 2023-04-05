@@ -5,19 +5,12 @@
 
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.backend.konan.InteropFqNames.cstrName
-import org.jetbrains.kotlin.backend.konan.InteropFqNames.managedTypeName
-import org.jetbrains.kotlin.backend.konan.InteropFqNames.wcstrName
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.types.TypeUtils
 
 object InteropFqNames {
 
@@ -37,6 +30,8 @@ object InteropFqNames {
     const val cValuesRefName = "CValuesRef"
     const val cEnumName = "CEnum"
     const val cStructVarName = "CStructVar"
+    const val cEnumVarName = "CEnumVar"
+    const val cPrimitiveVarName = "CPrimitiveVar"
     private const val cPointedName = "CPointed"
 
     const val interopStubsName = "InteropStubs"
@@ -50,10 +45,14 @@ object InteropFqNames {
     const val objCClassOfName = "ObjCClassOf"
     const val objCProtocolName = "ObjCProtocol"
     const val nativeMemUtilsName = "nativeMemUtils"
-    const val cstrName = "cstr"
-    const val wcstrName = "wcstr"
     const val cPlusPlusClassName = "CPlusPlusClass"
     const val skiaRefCntName = "SkiaRefCnt"
+    const val TypeName = "Type"
+
+    const val cstrPropertyName = "cstr"
+    const val wcstrPropertyName = "wcstr"
+    const val nativePointedRawPtrPropertyName = "rawPtr"
+    const val cPointerRawValuePropertyName = "rawValue"
 
     const val getObjCClassFunName = "getObjCClass"
     const val objCObjectSuperInitCheckFunName = "superInitCheck"
@@ -65,6 +64,11 @@ object InteropFqNames {
     const val interpretObjCPointerOrNullFunName = "interpretObjCPointerOrNull"
     const val interpretNullablePointedFunName = "interpretNullablePointed"
     const val interpretCPointerFunName = "interpretCPointer"
+    const val nativePointedGetRawPointerFunName = "getRawPointer"
+    const val cPointerGetRawValueFunName = "getRawValue"
+    const val cValueWriteFunName = "write"
+    const val cValueReadFunName = "readValue"
+    const val allocTypeFunName = "alloc"
 
     val packageName = FqName("kotlinx.cinterop")
 
@@ -95,74 +99,15 @@ internal class InteropBuiltIns(builtIns: KonanBuiltIns) {
 
     private val packageScope = builtIns.builtInsModule.getPackage(InteropFqNames.packageName).memberScope
 
-    val nativePointed = packageScope.getContributedClass(InteropFqNames.nativePointedName)
-
-    val cValueWrite = this.packageScope.getContributedFunctions("write")
-            .single { it.extensionReceiverParameter?.type?.constructor?.declarationDescriptor?.fqNameSafe == InteropFqNames.cValue }
-    val cValueRead = this.packageScope.getContributedFunctions("readValue")
-            .single { it.valueParameters.size == 1 }
-
-    val cEnumVar = this.packageScope.getContributedClass("CEnumVar")
-    val cStructVar = this.packageScope.getContributedClass("CStructVar")
-    val cStructVarType = cStructVar.defaultType.memberScope.getContributedClass("Type")
-    private val cPrimitiveVar = this.packageScope.getContributedClass("CPrimitiveVar")
-    val cPrimitiveVarType = cPrimitiveVar.defaultType.memberScope.getContributedClass("Type")
-
-    val allocType = this.packageScope.getContributedFunctions("alloc")
-            .single { it.extensionReceiverParameter != null
-                    && it.valueParameters.singleOrNull()?.name?.toString() == "type" }
-
-    private val cPointer = this.packageScope.getContributedClass(InteropFqNames.cPointerName)
-
-    val cPointerRawValue = cPointer.unsubstitutedMemberScope.getContributedVariables("rawValue").single()
-
-    val cPointerGetRawValue = packageScope.getContributedFunctions("getRawValue").single {
-        val extensionReceiverParameter = it.extensionReceiverParameter
-        extensionReceiverParameter != null &&
-                TypeUtils.getClassDescriptor(extensionReceiverParameter.type)?.fqNameUnsafe == InteropFqNames.cPointer
-    }
-
-    val cstr = packageScope.getContributedVariables("cstr").single()
-    val wcstr = packageScope.getContributedVariables("wcstr").single()
-
-    val nativePointedRawPtrGetter =
-            nativePointed.unsubstitutedMemberScope.getContributedVariables("rawPtr").single().getter!!
-
-    val nativePointedGetRawPointer = packageScope.getContributedFunctions("getRawPointer").single {
-        val extensionReceiverParameter = it.extensionReceiverParameter
-        extensionReceiverParameter != null &&
-                TypeUtils.getClassDescriptor(extensionReceiverParameter.type) == nativePointed
-    }
-
-    val managedType = packageScope.getContributedClass(managedTypeName)  // used in CStructVarClassGenerator.kt
-
-    val interopGetPtr = packageScope.getContributedVariables("ptr").single {
-        val singleTypeParameter = it.typeParameters.singleOrNull()
-        val singleTypeParameterUpperBound = singleTypeParameter?.upperBounds?.singleOrNull()
-        val extensionReceiverParameter = it.extensionReceiverParameter
-
-        singleTypeParameterUpperBound != null &&
-        extensionReceiverParameter != null &&
-        TypeUtils.getClassDescriptor(singleTypeParameterUpperBound)?.fqNameSafe == InteropFqNames.cPointed &&
-        extensionReceiverParameter.type == singleTypeParameter.defaultType
-    }.getter!!
-
-    val interopManagedGetPtr = packageScope.getContributedVariables("ptr").single {
-        val singleTypeParameter = it.typeParameters.singleOrNull()
-        val singleTypeParameterUpperBound = singleTypeParameter?.upperBounds?.singleOrNull()
-        val extensionReceiverParameter = it.extensionReceiverParameter
-
-        singleTypeParameterUpperBound != null &&
-        extensionReceiverParameter != null &&
-        TypeUtils.getClassDescriptor(singleTypeParameterUpperBound)?.fqNameSafe == InteropFqNames.cStructVar &&
-        TypeUtils.getClassDescriptor(extensionReceiverParameter.type)?.fqNameSafe == InteropFqNames.managedType
-    }.getter!!
+    internal fun getContributedVariables(name: String) = packageScope.getContributedVariables(name)
+    internal fun getContributedFunctions(name: String) = packageScope.getContributedFunctions(name)
+    internal fun getContributedClass(name: String) = packageScope.getContributedClass(name)
 }
 
 private fun MemberScope.getContributedVariables(name: String) =
         this.getContributedVariables(Name.identifier(name), NoLookupLocation.FROM_BUILTINS)
 
-private fun MemberScope.getContributedClass(name: String): ClassDescriptor =
+internal fun MemberScope.getContributedClass(name: String): ClassDescriptor =
         this.getContributedClassifier(Name.identifier(name), NoLookupLocation.FROM_BUILTINS) as ClassDescriptor
 
 private fun MemberScope.getContributedFunctions(name: String) =
