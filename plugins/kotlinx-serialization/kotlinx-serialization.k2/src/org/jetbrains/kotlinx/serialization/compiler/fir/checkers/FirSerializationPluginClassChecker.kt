@@ -536,7 +536,7 @@ object FirSerializationPluginClassChecker : FirClassChecker() {
             }
             checkTypeArguments(type, source, reporter)
         } else {
-            if (!type.isEnum) {
+            if (type.toRegularClassSymbol(session)?.isEnumClass != true) {
                 // enums are always serializable
                 reporter.reportOn(source, FirSerializationErrors.SERIALIZER_NOT_FOUND, type)
             }
