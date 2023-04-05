@@ -73,6 +73,12 @@ private abstract class FirToConstantValueTransformer(
         }
     }
 
+    override fun visitStringConcatenationCall(stringConcatenationCall: FirStringConcatenationCall, data: FirSession): ConstantValue<*>? {
+        val strings = stringConcatenationCall.argumentList.arguments.map { it.accept(this, data) }
+        if (strings.any { it == null || it !is StringValue }) return null
+        return StringValue(strings.joinToString(separator = "") { (it as StringValue).value })
+    }
+
     override fun visitArrayOfCall(
         arrayOfCall: FirArrayOfCall,
         data: FirSession
@@ -206,6 +212,10 @@ internal object FirToConstantValueChecker : FirDefaultVisitor<Boolean, FirSessio
         data: FirSession
     ): Boolean {
         return constExpression.kind in supportedConstKinds
+    }
+
+    override fun visitStringConcatenationCall(stringConcatenationCall: FirStringConcatenationCall, data: FirSession): Boolean {
+        return stringConcatenationCall.argumentList.arguments.all { it.accept(this, data) }
     }
 
     override fun visitArrayOfCall(arrayOfCall: FirArrayOfCall, data: FirSession): Boolean {

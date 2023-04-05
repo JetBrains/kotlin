@@ -126,6 +126,12 @@ public class FirNativeKLibContentsTestGenerated extends AbstractNativeKlibConten
         }
 
         @Test
+        @TestMetadata("stringConcatenation.kt")
+        public void testStringConcatenation() throws Exception {
+            runTest("native/native.tests/testData/klibContents/builtinsSerializer/stringConcatenation.kt");
+        }
+
+        @Test
         @TestMetadata("typeParameterAnnotation.kt")
         public void testTypeParameterAnnotation() throws Exception {
             runTest("native/native.tests/testData/klibContents/builtinsSerializer/typeParameterAnnotation.kt");
