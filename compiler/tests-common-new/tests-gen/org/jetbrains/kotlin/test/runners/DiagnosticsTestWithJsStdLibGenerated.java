@@ -49,6 +49,12 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
     }
 
     @Test
+    @TestMetadata("jsExternalSuperclassWithoutArguments.kt")
+    public void testJsExternalSuperclassWithoutArguments() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithJsStdLib/jsExternalSuperclassWithoutArguments.kt");
+    }
+
+    @Test
     @TestMetadata("localClassMetadata.kt")
     public void testLocalClassMetadata() throws Exception {
         runTest("compiler/testData/diagnostics/testsWithJsStdLib/localClassMetadata.kt");

@@ -9,7 +9,7 @@ open external class internal {
 
   open class EventEmitterP : internal {
     constructor() /* primary */ {
-      super/*internal*/()
+      super/*Any*/()
       /* <init>() */
 
     }
@@ -27,7 +27,7 @@ open external class internal {
 
   object NestedExternalObject : internal {
     private constructor() /* primary */ {
-      super/*internal*/()
+      super/*Any*/()
       /* <init>() */
 
     }

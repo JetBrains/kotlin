@@ -13,7 +13,7 @@ open external class A {
 
 open external class B : A {
   constructor() /* primary */ {
-    super/*A*/()
+    super/*Any*/()
     /* <init>() */
 
   }
