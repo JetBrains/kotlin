@@ -574,6 +574,7 @@ class KotlinNativeTargetWithSimulatorTestsConfigurator :
             }
             testTask.device.convention(deviceIdProvider).finalizeValueOnRead()
         }
+        testTask.standalone.convention(true).finalizeValueOnRead()
     }
 
     override fun createTestRun(

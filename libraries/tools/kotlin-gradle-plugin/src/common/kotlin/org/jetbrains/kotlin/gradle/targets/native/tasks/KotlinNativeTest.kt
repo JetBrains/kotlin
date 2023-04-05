@@ -235,6 +235,9 @@ abstract class KotlinNativeSimulatorTest : KotlinNativeTest() {
     @Internal
     var debugMode = false
 
+    @get:Input
+    abstract val standalone: Property<Boolean> // disabled standalone means that xcode won't handle simulator boot/shutdown automatically
+
     @get:Internal
     override val testCommand: TestCommand = object : TestCommand() {
         override val executable: String
@@ -251,7 +254,7 @@ abstract class KotlinNativeSimulatorTest : KotlinNativeTest() {
                 "simctl",
                 "spawn",
                 "--wait-for-debugger".takeIf { debugMode },
-                "--standalone",
+                "--standalone".takeIf { standalone.get() },
                 device.get(),
                 this@KotlinNativeSimulatorTest.executable.absolutePath,
                 "--"
