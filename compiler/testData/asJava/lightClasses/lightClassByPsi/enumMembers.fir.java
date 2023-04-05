@@ -23,7 +23,7 @@ public enum Event /* Event*/ {
 
   @kotlin.jvm.JvmStatic()
   @org.jetbrains.annotations.Nullable()
-  public static final Event upTo(State);//  upTo(State)
+  public static final Event upTo(@org.jetbrains.annotations.NotNull() State);//  upTo(State)
 
   @org.jetbrains.annotations.NotNull()
   public static Event valueOf(java.lang.String) throws java.lang.IllegalArgumentException, java.lang.NullPointerException;//  valueOf(java.lang.String)
@@ -61,7 +61,7 @@ public enum State /* State*/ {
 
   private  State();//  .ctor()
 
-  public final boolean isAtLeast(State);//  isAtLeast(State)
+  public final boolean isAtLeast(@org.jetbrains.annotations.NotNull() State);//  isAtLeast(State)
 
   public final boolean isFinished();//  isFinished()
 
