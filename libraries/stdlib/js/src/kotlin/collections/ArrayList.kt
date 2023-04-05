@@ -78,8 +78,8 @@ public actual open class ArrayList<E> internal constructor(private var array: Ar
         if (elements.isEmpty()) return false
 
         val offset = increaseLength(elements.size)
-        elements.forEachIndexed { i, element ->
-            array[i + offset] = element
+        elements.forEachIndexed { index, element ->
+            array[offset + index] = element
         }
         modCount++
         return true
@@ -92,12 +92,12 @@ public actual open class ArrayList<E> internal constructor(private var array: Ar
         if (index == size) return addAll(elements)
         if (elements.isEmpty()) return false
 
-        val cut = array.asDynamic().splice(index).unsafeCast<Array<E>>()
+        val tail = array.asDynamic().splice(index).unsafeCast<Array<E>>()
         addAll(elements)
 
-        val offset = increaseLength(cut.size)
-        repeat(cut.size) { i ->
-            array[i + offset] = cut[i]
+        val offset = increaseLength(tail.size)
+        repeat(tail.size) { tailIndex ->
+            array[offset + tailIndex] = tail[tailIndex]
         }
 
         modCount++
