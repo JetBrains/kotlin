@@ -21239,6 +21239,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             }
 
             @Test
+            @TestMetadata("protectedInExpectActual.kt")
+            public void testProtectedInExpectActual() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/modifiers/protectedInExpectActual.kt");
+            }
+
+            @Test
             @TestMetadata("redundantTargets.kt")
             public void testRedundantTargets() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/modifiers/redundantTargets.kt");

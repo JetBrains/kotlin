@@ -180,6 +180,15 @@ object ModifierCheckerCore {
             )
             return true
         }
+        if (modifier == PROTECTED_KEYWORD && isFinalExpectOrActualClass(parentDescriptor)) {
+            trace.report(
+                Errors.WRONG_MODIFIER_CONTAINING_DECLARATION.on(
+                    node.psi,
+                    modifier,
+                    "final expect or actual class"
+                )
+            )
+        }
         val possibleParentPredicate = possibleParentTargetPredicateMap[modifier] ?: return true
         if (actualParents.any { possibleParentPredicate.isAllowed(it, languageVersionSettings) }) return true
         trace.report(
@@ -236,5 +245,9 @@ object ModifierCheckerCore {
         }
 
         return true
+    }
+
+    private fun isFinalExpectOrActualClass(d: DeclarationDescriptor?): Boolean {
+        return d is ClassDescriptor && d.isFinalOrEnum && (d.isExpect || d.isActual)
     }
 }
