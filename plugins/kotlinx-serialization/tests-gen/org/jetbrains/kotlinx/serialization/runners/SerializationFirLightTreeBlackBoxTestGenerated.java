@@ -82,6 +82,12 @@ public class SerializationFirLightTreeBlackBoxTestGenerated extends AbstractSeri
         }
 
         @Test
+        @TestMetadata("externalSerializerForClassWithNonSerializableType.kt")
+        public void testExternalSerializerForClassWithNonSerializableType() throws Exception {
+            runTest("plugins/kotlinx-serialization/testData/boxIr/externalSerializerForClassWithNonSerializableType.kt");
+        }
+
+        @Test
         @TestMetadata("generatedClassifiersViaLibraryDependency.kt")
         public void testGeneratedClassifiersViaLibraryDependency() throws Exception {
             runTest("plugins/kotlinx-serialization/testData/boxIr/generatedClassifiersViaLibraryDependency.kt");
