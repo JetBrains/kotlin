@@ -572,7 +572,7 @@ class KotlinNativeTargetWithSimulatorTestsConfigurator :
                 Xcode.getDefaultTestDeviceId(target.konanTarget)
                     ?: error("Xcode does not support simulator tests for ${target.konanTarget.name}. Check that requested SDK is installed.")
             }
-            testTask.device.set(deviceIdProvider)
+            testTask.device.convention(deviceIdProvider).finalizeValueOnRead()
         }
     }
 
