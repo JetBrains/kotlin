@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.commonizer.metadata
 
 import kotlinx.metadata.*
+import kotlinx.metadata.internal.common.KmModuleFragment
 import kotlinx.metadata.klib.*
-import org.jetbrains.kotlin.backend.common.serialization.metadata.DynamicTypeDeserializer
 import org.jetbrains.kotlin.commonizer.cir.*
 import org.jetbrains.kotlin.commonizer.metadata.TypeAliasExpansion.*
 import org.jetbrains.kotlin.commonizer.utils.DEFAULT_SETTER_VALUE_NAME

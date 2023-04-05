@@ -226,7 +226,7 @@ abstract class KmModuleVisitor(private val delegate: KmModuleVisitor? = null) {
 }
 
 /**
- * Represents a Kotlin JVM module file.
+ * Represents a Kotlin JVM module file (`.kotlin_module` extension).
  */
 @UnstableMetadataApi
 class KmModule : KmModuleVisitor() {

@@ -6,6 +6,7 @@
 package kotlinx.metadata.klib
 
 import kotlinx.metadata.*
+import kotlinx.metadata.internal.common.KmModuleFragment
 
 class ChunkedKlibModuleFragmentWriteStrategy(
     private val topLevelClassifierDeclarationsPerFile: Int = 64,

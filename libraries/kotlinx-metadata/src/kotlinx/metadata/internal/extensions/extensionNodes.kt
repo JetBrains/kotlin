@@ -7,6 +7,7 @@
 package kotlinx.metadata.internal.extensions
 
 import kotlinx.metadata.*
+import kotlinx.metadata.internal.common.KmModuleFragmentExtensionVisitor
 
 interface KmExtension<V : KmExtensionVisitor> : KmExtensionVisitor {
     fun accept(visitor: V)

@@ -70,12 +70,6 @@ interface KmClassExtensionVisitor : KmDeclarationContainerExtensionVisitor
 interface KmPackageExtensionVisitor : KmDeclarationContainerExtensionVisitor
 
 /**
- * A visitor to visit platform-specific extensions for a module fragment.
- */
-@Deprecated(VISITOR_API_MESSAGE)
-interface KmModuleFragmentExtensionVisitor : KmExtensionVisitor
-
-/**
  * A visitor to visit platform-specific extensions for a function.
  */
 @Deprecated(VISITOR_API_MESSAGE)

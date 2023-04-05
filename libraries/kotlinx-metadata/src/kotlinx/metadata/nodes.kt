@@ -220,7 +220,9 @@ class KmClass : KmClassVisitor(), KmDeclarationContainer {
 }
 
 /**
- * Represents a Kotlin package fragment, including single file facades and multi-file class parts.
+ * Represents a Kotlin package fragment that contains top-level functions, properties and type aliases.
+ * Package fragments are produced from single file facades and multi-file class parts.
+ * Note that a package fragment does not contain any classes, as classes are not a part of file facades and have their own metadata.
  */
 @Suppress("DEPRECATION")
 class KmPackage : KmPackageVisitor(), KmDeclarationContainer {
@@ -268,51 +270,6 @@ class KmPackage : KmPackageVisitor(), KmDeclarationContainer {
         functions.forEach { visitor.visitFunction(it.flags, it.name)?.let(it::accept) }
         properties.forEach { visitor.visitProperty(it.flags, it.name, it.getterFlags, it.setterFlags)?.let(it::accept) }
         typeAliases.forEach { visitor.visitTypeAlias(it.flags, it.name)?.let(it::accept) }
-        extensions.forEach { visitor.visitExtensions(it.type)?.let(it::accept) }
-        visitor.visitEnd()
-    }
-}
-
-/**
- * Represents a Kotlin module fragment. This is used to represent metadata of a part of a module on platforms other than JVM.
- */
-@Suppress("DEPRECATION")
-class KmModuleFragment : KmModuleFragmentVisitor() {
-
-    /**
-     * Top-level functions, type aliases and properties in the module fragment.
-     */
-    var pkg: KmPackage? = null
-
-    /**
-     * Classes in the module fragment.
-     */
-    val classes: MutableList<KmClass> = ArrayList()
-
-    private val extensions: List<KmModuleFragmentExtension> =
-        MetadataExtensions.INSTANCES.map(MetadataExtensions::createModuleFragmentExtensions)
-
-    @Deprecated(VISITOR_API_MESSAGE)
-    override fun visitPackage(): KmPackageVisitor? =
-        KmPackage().also { pkg = it }
-
-    @Deprecated(VISITOR_API_MESSAGE)
-    override fun visitExtensions(type: KmExtensionType): KmModuleFragmentExtensionVisitor? =
-        extensions.singleOfType(type)
-
-    @Deprecated(VISITOR_API_MESSAGE)
-    override fun visitClass(): KmClassVisitor? =
-        KmClass().addTo(classes)
-
-    /**
-     * Populates the given visitor with data in this module fragment.
-     *
-     * @param visitor the visitor which will visit data in the module fragment.
-     */
-    @Deprecated(VISITOR_API_MESSAGE)
-    fun accept(visitor: KmModuleFragmentVisitor) {
-        pkg?.let { visitor.visitPackage()?.let(it::accept) }
-        classes.forEach { visitor.visitClass()?.let(it::accept) }
         extensions.forEach { visitor.visitExtensions(it.type)?.let(it::accept) }
         visitor.visitEnd()
     }

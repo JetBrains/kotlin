@@ -6,6 +6,8 @@
 package kotlinx.metadata.internal
 
 import kotlinx.metadata.*
+import kotlinx.metadata.internal.common.KmModuleFragmentExtensionVisitor
+import kotlinx.metadata.internal.common.KmModuleFragmentVisitor
 import kotlinx.metadata.internal.extensions.applySingleExtension
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.VersionRequirement

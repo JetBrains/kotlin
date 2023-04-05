@@ -2,7 +2,7 @@ package org.jetbrains.kotlin.native.interop.gen
 
 import kotlinx.metadata.KmAnnotationArgument
 import kotlinx.metadata.KmClassifier
-import kotlinx.metadata.KmModuleFragment
+import kotlinx.metadata.internal.common.KmModuleFragment
 import kotlinx.metadata.klib.compileTimeValue
 import org.jetbrains.kotlin.native.interop.indexer.FunctionDecl
 import org.jetbrains.kotlin.native.interop.indexer.IntegerConstantDef

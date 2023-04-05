@@ -6,6 +6,7 @@
 package kotlinx.metadata.klib
 
 import kotlinx.metadata.*
+import kotlinx.metadata.internal.common.KmModuleFragment
 import kotlinx.metadata.klib.impl.klibExtensions
 
 val KmFunction.annotations: MutableList<KmAnnotation>

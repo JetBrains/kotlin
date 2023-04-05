@@ -9,7 +9,7 @@ package kotlinx.metadata.internal
 import kotlinx.metadata.*
 import kotlinx.metadata.Flags // Don't remove this import. See KT-45553
 import kotlinx.metadata.internal.extensions.MetadataExtensions
-import kotlinx.metadata.internal.IgnoreInApiDump
+import kotlinx.metadata.internal.common.KmModuleFragmentVisitor
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.*
 import kotlin.contracts.ExperimentalContracts

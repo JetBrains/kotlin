@@ -9,7 +9,7 @@ import com.intellij.util.containers.FactoryMap
 import kotlinx.metadata.Flag
 import kotlinx.metadata.KmAnnotation
 import kotlinx.metadata.KmClass
-import kotlinx.metadata.KmModuleFragment
+import kotlinx.metadata.internal.common.KmModuleFragment
 import kotlinx.metadata.klib.klibEnumEntries
 import org.jetbrains.kotlin.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.commonizer.cir.CirName

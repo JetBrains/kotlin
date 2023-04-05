@@ -6,6 +6,7 @@ package org.jetbrains.kotlin.native.interop.gen
 
 import kotlinx.metadata.*
 import kotlinx.metadata.klib.*
+import kotlinx.metadata.internal.common.*
 import org.jetbrains.kotlin.metadata.serialization.Interner
 import org.jetbrains.kotlin.utils.addIfNotNull
 

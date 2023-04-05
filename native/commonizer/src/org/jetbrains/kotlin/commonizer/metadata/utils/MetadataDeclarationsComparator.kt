@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.commonizer.metadata.utils
 
 import com.intellij.util.containers.FactoryMap
 import kotlinx.metadata.*
+import kotlinx.metadata.internal.common.KmModuleFragment
 import kotlinx.metadata.klib.*
 import org.jetbrains.kotlin.commonizer.metadata.utils.MetadataDeclarationsComparator.EntityKind.*
 import org.jetbrains.kotlin.commonizer.metadata.utils.MetadataDeclarationsComparator.Mismatch

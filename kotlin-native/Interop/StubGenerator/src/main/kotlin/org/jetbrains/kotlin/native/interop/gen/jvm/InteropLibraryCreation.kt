@@ -5,7 +5,7 @@
 package org.jetbrains.kotlin.native.interop.gen.jvm
 
 import kotlinx.metadata.*
-import kotlinx.metadata.KmModuleFragment
+import kotlinx.metadata.internal.common.KmModuleFragment
 import kotlinx.metadata.klib.KlibModuleFragmentWriteStrategy
 import kotlinx.metadata.klib.KlibModuleMetadata
 import kotlinx.metadata.klib.className

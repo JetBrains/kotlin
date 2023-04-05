@@ -7,6 +7,8 @@
 package kotlinx.metadata.klib.impl
 
 import kotlinx.metadata.*
+import kotlinx.metadata.internal.common.KmModuleFragment
+import kotlinx.metadata.internal.common.KmModuleFragmentExtensionVisitor
 import kotlinx.metadata.internal.extensions.*
 import kotlinx.metadata.klib.*
 

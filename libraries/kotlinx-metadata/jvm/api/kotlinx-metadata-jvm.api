@@ -682,30 +682,6 @@ public abstract class kotlinx/metadata/KmLambdaVisitor {
 	public fun visitFunction (ILjava/lang/String;)Lkotlinx/metadata/KmFunctionVisitor;
 }
 
-public final class kotlinx/metadata/KmModuleFragment : kotlinx/metadata/KmModuleFragmentVisitor {
-	public fun <init> ()V
-	public final fun accept (Lkotlinx/metadata/KmModuleFragmentVisitor;)V
-	public final fun getClasses ()Ljava/util/List;
-	public final fun getPkg ()Lkotlinx/metadata/KmPackage;
-	public final fun setPkg (Lkotlinx/metadata/KmPackage;)V
-	public fun visitClass ()Lkotlinx/metadata/KmClassVisitor;
-	public fun visitExtensions (Lkotlinx/metadata/KmExtensionType;)Lkotlinx/metadata/KmModuleFragmentExtensionVisitor;
-	public fun visitPackage ()Lkotlinx/metadata/KmPackageVisitor;
-}
-
-public abstract interface class kotlinx/metadata/KmModuleFragmentExtensionVisitor : kotlinx/metadata/KmExtensionVisitor {
-}
-
-public abstract class kotlinx/metadata/KmModuleFragmentVisitor {
-	public fun <init> ()V
-	public fun <init> (Lkotlinx/metadata/KmModuleFragmentVisitor;)V
-	public synthetic fun <init> (Lkotlinx/metadata/KmModuleFragmentVisitor;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public fun visitClass ()Lkotlinx/metadata/KmClassVisitor;
-	public fun visitEnd ()V
-	public fun visitExtensions (Lkotlinx/metadata/KmExtensionType;)Lkotlinx/metadata/KmModuleFragmentExtensionVisitor;
-	public fun visitPackage ()Lkotlinx/metadata/KmPackageVisitor;
-}
-
 public final class kotlinx/metadata/KmPackage : kotlinx/metadata/KmPackageVisitor, kotlinx/metadata/KmDeclarationContainer {
 	public fun <init> ()V
 	public final fun accept (Lkotlinx/metadata/KmPackageVisitor;)V

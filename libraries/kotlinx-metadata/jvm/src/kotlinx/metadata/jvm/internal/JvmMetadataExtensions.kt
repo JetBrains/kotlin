@@ -7,6 +7,7 @@ package kotlinx.metadata.jvm.internal
 
 import kotlinx.metadata.*
 import kotlinx.metadata.internal.*
+import kotlinx.metadata.internal.common.*
 import kotlinx.metadata.internal.extensions.*
 import kotlinx.metadata.jvm.*
 import org.jetbrains.kotlin.metadata.ProtoBuf

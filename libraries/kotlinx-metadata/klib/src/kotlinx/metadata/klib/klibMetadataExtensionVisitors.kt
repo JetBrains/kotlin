@@ -7,6 +7,7 @@
 package kotlinx.metadata.klib
 
 import kotlinx.metadata.*
+import kotlinx.metadata.internal.common.KmModuleFragmentExtensionVisitor
 
 abstract class KlibFunctionExtensionVisitor : KmFunctionExtensionVisitor {
 

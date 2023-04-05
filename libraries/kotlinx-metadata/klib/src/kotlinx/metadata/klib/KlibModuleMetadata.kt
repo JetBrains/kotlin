@@ -7,7 +7,7 @@
 package kotlinx.metadata.klib
 
 import kotlinx.metadata.KmAnnotation
-import kotlinx.metadata.KmModuleFragment
+import kotlinx.metadata.internal.common.KmModuleFragment
 import kotlinx.metadata.internal.*
 import kotlinx.metadata.klib.impl.*
 import org.jetbrains.kotlin.library.metadata.parseModuleHeader
