@@ -3,6 +3,7 @@ plugins {
 }
 
 dependencies {
+    api(platform(project(":jps:jps-bom")))
     @Suppress("UNCHECKED_CAST")
     rootProject.extra["kotlinJpsPluginMavenDependencies"]
         .let { it as List<String> }
