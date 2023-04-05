@@ -5,40 +5,53 @@
 
 package org.jetbrains.kotlin.fir.serialization
 
+import org.jetbrains.kotlin.constant.AnnotationValue
+import org.jetbrains.kotlin.constant.ConstantValue
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.serialization.constant.ConstantValue
-import org.jetbrains.kotlin.fir.serialization.constant.toConstantValue
+import org.jetbrains.kotlin.fir.serialization.constant.coneTypeSafe
+import org.jetbrains.kotlin.fir.serialization.constant.convertToConstantValues
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.name.Name
 
 class FirAnnotationSerializer(private val session: FirSession, internal val stringTable: FirElementAwareStringTable) {
-    fun serializeAnnotation(annotation: FirAnnotation): ProtoBuf.Annotation = ProtoBuf.Annotation.newBuilder().apply {
-        val lookupTag = annotation.typeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag
-            ?: error { "Annotation without proper lookup tag: ${annotation.annotationTypeRef.coneType}" }
+    fun serializeAnnotation(annotation: FirAnnotation): ProtoBuf.Annotation {
+        return serializeAnnotation(
+            annotation.typeRef.coneTypeSafe<ConeClassLikeType>(),
+            annotation.argumentMapping.mapping.convertToConstantValues(session)
+        )
+    }
 
-        id = lookupTag.toSymbol(session)?.let { stringTable.getFqNameIndex(it.fir) }
-            ?: stringTable.getQualifiedClassNameIndex(lookupTag.classId)
+    fun serializeAnnotation(annotation: AnnotationValue): ProtoBuf.Annotation {
+        return serializeAnnotation(annotation.coneTypeSafe<ConeClassLikeType>(), annotation.value.argumentsMapping)
+    }
 
-        fun addArgument(argumentExpression: FirExpression, parameterName: Name) {
-            val argument = ProtoBuf.Annotation.Argument.newBuilder()
-            argument.nameId = stringTable.getStringIndex(parameterName.asString())
-            val constantValue = argumentExpression.toConstantValue(session)
-                ?: error("Cannot convert expression ${argumentExpression.render()} to constant")
-            argument.setValue(valueProto(constantValue))
-            addArgument(argument)
-        }
+    private fun serializeAnnotation(coneType: ConeClassLikeType?, argumentsMapping: Map<Name, ConstantValue<*>?>): ProtoBuf.Annotation {
+        return ProtoBuf.Annotation.newBuilder().apply {
+            val lookupTag = coneType?.lookupTag
+                ?: error { "Annotation without proper lookup tag: $coneType" }
 
-        for ((name, argument) in annotation.argumentMapping.mapping) {
-            addArgument(argument, name)
-        }
-    }.build()
+            id = lookupTag.toSymbol(session)?.let { stringTable.getFqNameIndex(it.fir) }
+                ?: stringTable.getQualifiedClassNameIndex(lookupTag.classId)
+
+            fun addArgument(argumentExpression: ConstantValue<*>?, parameterName: Name) {
+                if (argumentExpression == null) {
+                    error("Cannot use null argument expression for parameter $parameterName")
+                }
+                val argument = ProtoBuf.Annotation.Argument.newBuilder()
+                argument.nameId = stringTable.getStringIndex(parameterName.asString())
+                argument.setValue(valueProto(argumentExpression))
+                addArgument(argument)
+            }
+
+            for ((name, argument) in argumentsMapping) {
+                addArgument(argument, name)
+            }
+        }.build()
+    }
 
     internal fun valueProto(constant: ConstantValue<*>): ProtoBuf.Annotation.Argument.Value.Builder =
         ProtoBuf.Annotation.Argument.Value.newBuilder().apply {

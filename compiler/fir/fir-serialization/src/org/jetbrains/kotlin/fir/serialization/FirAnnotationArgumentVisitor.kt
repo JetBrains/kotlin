@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.fir.serialization
 
+import org.jetbrains.kotlin.constant.*
 import org.jetbrains.kotlin.fir.serialization.constant.*
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.arrayElementType
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.Flags
@@ -13,7 +15,7 @@ import org.jetbrains.kotlin.metadata.deserialization.Flags
 internal object FirAnnotationArgumentVisitor : AnnotationArgumentVisitor<Unit, FirAnnotationArgumentVisitorData>() {
     override fun visitAnnotationValue(value: AnnotationValue, data: FirAnnotationArgumentVisitorData) {
         data.builder.type = ProtoBuf.Annotation.Argument.Value.Type.ANNOTATION
-        data.builder.annotation = data.serializer.serializeAnnotation(value.value)
+        data.builder.annotation = data.serializer.serializeAnnotation(value)
     }
 
     override fun visitArrayValue(value: ArrayValue, data: FirAnnotationArgumentVisitorData) {
@@ -76,7 +78,7 @@ internal object FirAnnotationArgumentVisitor : AnnotationArgumentVisitor<Unit, F
             }
             is KClassValue.Value.LocalClass -> {
                 var arrayDimensions = 0
-                var type = classValue.type
+                var type = classValue.coneType<ConeKotlinType>()
                 while (true) {
                     type = type.arrayElementType() ?: break
                     arrayDimensions++

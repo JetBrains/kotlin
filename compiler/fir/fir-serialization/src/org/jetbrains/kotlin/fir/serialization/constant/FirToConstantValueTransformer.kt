@@ -5,25 +5,23 @@
 
 package org.jetbrains.kotlin.fir.serialization.constant
 
+import org.jetbrains.kotlin.constant.*
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationArgumentMapping
-import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCall
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
-import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirArrayOfCallTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirArrayOfCallTransformer.Companion.isArrayOfCall
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.classId
-import org.jetbrains.kotlin.fir.types.coneTypeSafe
-import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.types.ConstantValueKind
 
@@ -92,7 +90,8 @@ private abstract class FirToConstantValueTransformer(
         annotation: FirAnnotation,
         data: FirSession
     ): ConstantValue<*> {
-        return AnnotationValue(annotation)
+        val mapping = annotation.argumentMapping.mapping.convertToConstantValues(data)
+        return AnnotationValue.create(annotation.annotationTypeRef.coneType, mapping)
     }
 
     override fun visitAnnotationCall(annotationCall: FirAnnotationCall, data: FirSession): ConstantValue<*> {
@@ -103,7 +102,7 @@ private abstract class FirToConstantValueTransformer(
         getClassCall: FirGetClassCall,
         data: FirSession
     ): ConstantValue<*>? {
-        return KClassValue.create(getClassCall.argument.typeRef.coneTypeUnsafe())
+        return create(getClassCall.argument.typeRef.coneTypeUnsafe())
     }
 
     override fun visitQualifiedAccessExpression(
@@ -136,20 +135,8 @@ private abstract class FirToConstantValueTransformer(
                 val constructedClassSymbol = symbol.containingClassLookupTag()?.toFirRegularClassSymbol(data) ?: return null
                 if (constructedClassSymbol.classKind != ClassKind.ANNOTATION_CLASS) return null
 
-                return AnnotationValue(
-                    buildAnnotationCall {
-                        argumentMapping = buildAnnotationArgumentMapping {
-                            constructorCall.resolvedArgumentMapping?.forEach { (firExpression, firValueParameter) ->
-                                mapping[firValueParameter.name] = firExpression
-                            }
-                        }
-                        annotationTypeRef = qualifiedAccessExpression.typeRef
-                        calleeReference = buildSimpleNamedReference {
-                            source = qualifiedAccessExpression.source
-                            name = qualifiedAccessExpression.calleeReference.name
-                        }
-                    }
-                )
+                val mapping = constructorCall.resolvedArgumentMapping?.convertToConstantValues(data) ?: return null
+                return AnnotationValue.create(qualifiedAccessExpression.typeRef.coneType, mapping)
             }
 
             symbol.callableId.packageName.asString() == "kotlin" -> {
@@ -240,7 +227,7 @@ internal object FirToConstantValueChecker : FirDefaultVisitor<Boolean, FirSessio
     override fun visitAnnotationCall(annotationCall: FirAnnotationCall, data: FirSession): Boolean = true
 
     override fun visitGetClassCall(getClassCall: FirGetClassCall, data: FirSession): Boolean {
-        return KClassValue.create(getClassCall.argument.typeRef.coneTypeUnsafe()) != null
+        return create(getClassCall.argument.typeRef.coneTypeUnsafe()) != null
     }
 
     override fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression, data: FirSession): Boolean {
