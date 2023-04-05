@@ -16,7 +16,8 @@ interface KotlinCompilerArgumentsProducer {
 
     enum class ArgumentType {
         Primitive,
-        Classpath,
+        PluginClasspath,
+        DependencyClasspath,
         Sources;
 
         companion object {
@@ -40,7 +41,8 @@ interface KotlinCompilerArgumentsProducer {
     interface ContributeCompilerArgumentsContext<T : CommonToolArguments> {
         fun <T> runSafe(action: () -> T): T?
         fun primitive(contribution: (args: T) -> Unit)
-        fun classpath(contribution: (args: T) -> Unit)
+        fun pluginClasspath(contribution: (args: T) -> Unit)
+        fun dependencyClasspath(contribution: (args: T) -> Unit)
         fun sources(contribution: (args: T) -> Unit)
     }
 
@@ -99,8 +101,14 @@ private class CreateCompilerArgumentsContextImpl(
             }
         }
 
-        override fun classpath(contribution: (args: T) -> Unit) {
-            if (KotlinCompilerArgumentsProducer.ArgumentType.Classpath in includedArgumentTypes) {
+        override fun pluginClasspath(contribution: (args: T) -> Unit) {
+            if (KotlinCompilerArgumentsProducer.ArgumentType.PluginClasspath in includedArgumentTypes) {
+                applyContribution(contribution)
+            }
+        }
+
+        override fun dependencyClasspath(contribution: (args: T) -> Unit) {
+            if (KotlinCompilerArgumentsProducer.ArgumentType.DependencyClasspath in includedArgumentTypes) {
                 applyContribution(contribution)
             }
         }

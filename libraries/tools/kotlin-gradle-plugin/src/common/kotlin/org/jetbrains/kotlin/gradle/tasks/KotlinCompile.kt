@@ -245,13 +245,15 @@ abstract class KotlinCompile @Inject constructor(
             }
         }
 
-        classpath { args ->
+        pluginClasspath { args ->
             args.pluginClasspaths = runSafe {
                 listOfNotNull(
                     pluginClasspath, kotlinPluginData?.orNull?.classpath
                 ).reduce(FileCollection::plus).toPathsArray()
             }
+        }
 
+        dependencyClasspath { args ->
             args.friendPaths = friendPaths.toPathsArray()
             args.classpathAsList = runSafe {
                 libraries.toList().filter { it.exists() }

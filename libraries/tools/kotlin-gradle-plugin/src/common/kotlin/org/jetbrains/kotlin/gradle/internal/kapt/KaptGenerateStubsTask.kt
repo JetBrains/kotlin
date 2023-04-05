@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptionsDefault
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptionsHelper
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.create
 import org.jetbrains.kotlin.gradle.report.BuildReportMode
@@ -126,13 +125,15 @@ abstract class KaptGenerateStubsTask @Inject constructor(
             args.destinationAsFile = destinationDirectory.get().asFile
         }
 
-        classpath { args ->
+        pluginClasspath { args ->
             args.pluginClasspaths = runSafe {
                 listOfNotNull(
                     pluginClasspath, kotlinPluginData?.orNull?.classpath
                 ).reduce(FileCollection::plus).toPathsArray()
             }
+        }
 
+        dependencyClasspath { args ->
             args.classpathAsList = runSafe { libraries.toList().filter { it.exists() } }.orEmpty()
             args.friendPaths = friendPaths.toPathsArray()
         }
