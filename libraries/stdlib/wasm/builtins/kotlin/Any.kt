@@ -44,15 +44,6 @@ public open class Any @WasmPrimitiveConstructor constructor() {
         return identityHashCode()
     }
 
-    // Don't use outside, otherwise it could break classes reusing `_hashCode` field, like String.
-    // Don't inline it into usages, specifically to `hashCode`. 
-    // It was extracted to remove `toString`'s dependency on `hashCode`, which improves output size when DCE is involved.
-    private fun identityHashCode(): Int {
-        if (_hashCode == 0)
-            _hashCode = Random.nextInt(1, Int.MAX_VALUE)
-        return _hashCode
-    }
-
     /**
      * Returns a string representation of the object.
      */
@@ -63,4 +54,13 @@ public open class Any @WasmPrimitiveConstructor constructor() {
         val qualifiedName = if (packageName.isEmpty()) simpleName else "$packageName.$simpleName"
         return "$qualifiedName@${identityHashCode()}"
     }
+}
+
+// Don't use outside, otherwise it could break classes reusing `_hashCode` field, like String.
+// Don't inline it into usages, specifically to `hashCode`. 
+// It was extracted to remove `toString`'s dependency on `hashCode`, which improves output size when DCE is involved.
+private fun Any.identityHashCode(): Int {
+    if (_hashCode == 0)
+        _hashCode = Random.nextInt(1, Int.MAX_VALUE)
+    return _hashCode
 }
