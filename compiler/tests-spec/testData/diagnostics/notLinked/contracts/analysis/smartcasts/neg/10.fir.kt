@@ -345,22 +345,22 @@ class case_14_class {
         if (!funWithReturnsTrueAndInvertCondition(value_1 is Float? && value_1 != null && value_2 != null && o.prop_1 != null)) {
             println(value_1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>dec<!>())
             println(value_2?.toByte())
-            <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(o.prop_1<!UNSAFE_CALL!>.<!>plus(3))
+            println(o.prop_1<!UNSAFE_CALL!>.<!>plus(3))
         }
         if (funWithReturnsFalse(value_1 !is Float? || value_1 == null || value_2 == null || o.prop_1 == null || this.prop_1 == null)) {
             println(value_1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>dec<!>())
             println(value_2?.toByte())
-            <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(o.prop_1<!UNSAFE_CALL!>.<!>plus(3))
+            println(o.prop_1<!UNSAFE_CALL!>.<!>plus(3))
         }
         if (funWithReturnsNotNull(value_1 !is Float? || value_1 == null || value_2 == null || o.prop_1 == null || this.prop_1 == null) == null) {
             println(value_1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>dec<!>())
             println(value_2?.toByte())
-            <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(o.prop_1<!UNSAFE_CALL!>.<!>plus(3))
+            println(o.prop_1<!UNSAFE_CALL!>.<!>plus(3))
         }
         if (funWithReturnsNull(value_1 !is Float? || value_1 == null || value_2 == null || o.prop_1 == null || this.prop_1 == null) != null) {
             println(value_1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>dec<!>())
             println(value_2?.toByte())
-            <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(o.prop_1<!UNSAFE_CALL!>.<!>plus(3))
+            println(o.prop_1<!UNSAFE_CALL!>.<!>plus(3))
         }
     }
 }
@@ -414,26 +414,26 @@ class case_17_class {
         if (contracts.case_17_1(value_1, value_2, o.prop_1, this.prop_1)) {
             println(value_1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>dec<!>())
             println(value_2?.toByte())
-            <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(o.prop_1<!UNSAFE_CALL!>.<!>plus(3))
-            <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(this.prop_1<!UNSAFE_CALL!>.<!>plus(3))
+            println(o.prop_1<!UNSAFE_CALL!>.<!>plus(3))
+            println(this.prop_1<!UNSAFE_CALL!>.<!>plus(3))
         }
         if (contracts.case_17_2(value_1, value_2, o.prop_1, this.prop_1)) {
             println(value_1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>dec<!>())
             println(value_2?.toByte())
-            <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(o.prop_1<!UNSAFE_CALL!>.<!>plus(3))
-            <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(this.prop_1<!UNSAFE_CALL!>.<!>plus(3))
+            println(o.prop_1<!UNSAFE_CALL!>.<!>plus(3))
+            println(this.prop_1<!UNSAFE_CALL!>.<!>plus(3))
         }
         if (contracts.case_17_3(value_1, value_2, o.prop_1, this.prop_1) == null) {
             println(value_1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>dec<!>())
             println(value_2?.toByte())
-            <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(o.prop_1<!UNSAFE_CALL!>.<!>plus(3))
-            <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(this.prop_1<!UNSAFE_CALL!>.<!>plus(3))
+            println(o.prop_1<!UNSAFE_CALL!>.<!>plus(3))
+            println(this.prop_1<!UNSAFE_CALL!>.<!>plus(3))
         }
         if (contracts.case_17_4(value_1, value_2, o.prop_1, this.prop_1) != null) {
             println(value_1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>dec<!>())
             println(value_2?.toByte())
-            <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(o.prop_1<!UNSAFE_CALL!>.<!>plus(3))
-            <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(this.prop_1<!UNSAFE_CALL!>.<!>plus(3))
+            println(o.prop_1<!UNSAFE_CALL!>.<!>plus(3))
+            println(this.prop_1<!UNSAFE_CALL!>.<!>plus(3))
         }
     }
 }

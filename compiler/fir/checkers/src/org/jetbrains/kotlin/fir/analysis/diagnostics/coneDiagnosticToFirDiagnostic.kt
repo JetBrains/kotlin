@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.EmptyIntersectionTypeKind
 import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 private fun ConeDiagnostic.toKtDiagnostic(
@@ -68,14 +68,12 @@ private fun ConeDiagnostic.toKtDiagnostic(
     is ConeAmbiguityError -> when {
         applicability.isSuccess -> FirErrors.OVERLOAD_RESOLUTION_AMBIGUITY.createOn(source, this.candidates.map { it.symbol })
         applicability == CandidateApplicability.UNSAFE_CALL -> {
-            val candidate = candidates.first { it.applicability == CandidateApplicability.UNSAFE_CALL }
-            val unsafeCall = candidate.diagnostics.firstIsInstance<UnsafeCall>()
+            val (unsafeCall, candidate) = candidates.firstNotNullOf { it.diagnostics.firstIsInstanceOrNull<UnsafeCall>()?.to(it) }
             mapUnsafeCallError(candidate, unsafeCall, source, qualifiedAccessSource)
         }
 
         applicability == CandidateApplicability.UNSTABLE_SMARTCAST -> {
-            val unstableSmartcast =
-                this.candidates.first { it.applicability == CandidateApplicability.UNSTABLE_SMARTCAST }.diagnostics.firstIsInstance<UnstableSmartCast>()
+            val unstableSmartcast = this.candidates.firstNotNullOf { it.diagnostics.firstIsInstanceOrNull<UnstableSmartCast>() }
             FirErrors.SMARTCAST_IMPOSSIBLE.createOn(
                 unstableSmartcast.argument.source,
                 unstableSmartcast.targetType,

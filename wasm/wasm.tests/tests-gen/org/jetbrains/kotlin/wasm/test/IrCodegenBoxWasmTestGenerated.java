@@ -32032,6 +32032,24 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/box/suppressions")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Suppressions extends AbstractIrCodegenBoxWasmTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInSuppressions() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/suppressions"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        }
+
+        @TestMetadata("suppressInvisible.kt")
+        public void testSuppressInvisible() throws Exception {
+            runTest("compiler/testData/codegen/box/suppressions/suppressInvisible.kt");
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/box/suspendConversion")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

@@ -39476,6 +39476,25 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         }
 
         @Nested
+        @TestMetadata("compiler/testData/codegen/box/suppressions")
+        @TestDataPath("$PROJECT_ROOT")
+        @Tag("codegen")
+        @Tag("k1Codegen")
+        @UseExtTestCaseGroupProvider()
+        public class Suppressions {
+            @Test
+            public void testAllFilesPresentInSuppressions() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/suppressions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+            }
+
+            @Test
+            @TestMetadata("suppressInvisible.kt")
+            public void testSuppressInvisible() throws Exception {
+                runTest("compiler/testData/codegen/box/suppressions/suppressInvisible.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/codegen/box/suspendConversion")
         @TestDataPath("$PROJECT_ROOT")
         @Tag("codegen")

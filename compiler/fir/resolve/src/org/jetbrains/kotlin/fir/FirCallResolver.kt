@@ -165,28 +165,50 @@ class FirCallResolver(
         val result = towerResolver.runResolver(info, resolutionContext, collector)
         val bestCandidates = result.bestCandidates()
 
-        fun chooseMostSpecific(): Set<Candidate> {
-            val onSuperReference = (explicitReceiver as? FirQualifiedAccessExpression)?.calleeReference is FirSuperReference
-            return conflictResolver.chooseMaximallySpecificCandidates(
-                bestCandidates, discriminateAbstracts = onSuperReference
-            )
-        }
-
-        var reducedCandidates = if (!result.currentApplicability.isSuccess) {
-            val distinctApplicabilities = bestCandidates.mapTo(mutableSetOf()) { it.currentApplicability }
-            //if all candidates have the same kind on inApplicability - try to choose the most specific one
-            if (distinctApplicabilities.size == 1 && distinctApplicabilities.single() > CandidateApplicability.INAPPLICABLE) {
-                chooseMostSpecific()
-            } else {
-                bestCandidates.toSet()
-            }
-        } else {
-            chooseMostSpecific()
-        }
-
+        var reducedCandidates = reduceCandidates(bestCandidates, explicitReceiver, resolutionContext, result.currentApplicability.isSuccess)
         reducedCandidates = overloadByLambdaReturnTypeResolver.reduceCandidates(qualifiedAccess, bestCandidates, reducedCandidates)
 
         return ResolutionResult(info, result.currentApplicability, reducedCandidates)
+    }
+
+    private fun reduceCandidates(
+        candidates: List<Candidate>,
+        explicitReceiver: FirExpression?,
+        resolutionContext: ResolutionContext,
+        isSuccess: Boolean,
+    ): Set<Candidate> {
+        fun chooseMostSpecific(list: List<Candidate>): Set<Candidate> {
+            val onSuperReference = (explicitReceiver as? FirQualifiedAccessExpression)?.calleeReference is FirSuperReference
+            return conflictResolver.chooseMaximallySpecificCandidates(list, discriminateAbstracts = onSuperReference)
+        }
+
+        if (isSuccess) {
+            return chooseMostSpecific(candidates)
+        }
+
+        val singleApplicability = candidates.mapTo(mutableSetOf()) { it.currentApplicability }.singleOrNull()
+
+        if (singleApplicability == null || singleApplicability <= CandidateApplicability.INAPPLICABLE) {
+            return candidates.toSet()
+        }
+
+        // If all candidates have the same kind on inapplicability - try to choose the most specific one
+        if (candidates.size > 1) {
+            // We have multiple candidates with the same inapplicability. We want to select the "least bad" candidates.
+
+            // First, fully process all of them and group them by their worst applicability.
+            val groupedByDiagnosticCount = candidates.groupBy {
+                components.resolutionStageRunner.fullyProcessCandidate(it, resolutionContext)
+                it.diagnostics.minOf(ResolutionDiagnostic::applicability)
+            }
+
+            // Then, select the group with the best worst applicability.
+            groupedByDiagnosticCount.maxBy { it.key }.let {
+                return chooseMostSpecific(it.value)
+            }
+        }
+
+        return chooseMostSpecific(candidates)
     }
 
     fun resolveVariableAccessAndSelectCandidate(
