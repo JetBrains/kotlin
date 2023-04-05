@@ -158,6 +158,10 @@ fun deserializeClassToSymbol(
         )
 
         addDeclarations(
+            classProto.typeAliasList.mapNotNull(classDeserializer::loadTypeAlias)
+        )
+
+        addDeclarations(
             classProto.enumEntryList.mapNotNull { enumEntryProto ->
                 val enumEntryName = nameResolver.getName(enumEntryProto.name)
 
