@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.type.FirTypeChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.type.TypeCheckers
 import org.jetbrains.kotlin.fir.analysis.checkersComponent
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.types.*
 
 @OptIn(CheckersComponentInternal::class)
@@ -20,6 +21,11 @@ class TypeCheckersDiagnosticComponent(
     reporter: DiagnosticReporter,
     private val checkers: TypeCheckers = session.checkersComponent.typeCheckers,
 ) : AbstractDiagnosticCollectorComponent(session, reporter) {
+    override fun visitElement(element: FirElement, data: CheckerContext) {
+        if (element is FirTypeRef) {
+            error("${element::class.simpleName} should call parent checkers inside ${this::class.simpleName}")
+        }
+    }
 
     override fun visitDynamicTypeRef(dynamicTypeRef: FirDynamicTypeRef, data: CheckerContext) {
         checkers.allTypeRefCheckers.check(dynamicTypeRef, data)
@@ -43,6 +49,10 @@ class TypeCheckersDiagnosticComponent(
 
     override fun visitTypeRefWithNullability(typeRefWithNullability: FirTypeRefWithNullability, data: CheckerContext) {
         checkers.allTypeRefCheckers.check(typeRefWithNullability, data)
+    }
+
+    override fun visitIntersectionTypeRef(intersectionTypeRef: FirIntersectionTypeRef, data: CheckerContext) {
+        checkers.allTypeRefCheckers.check(intersectionTypeRef, data)
     }
 
     override fun visitImplicitTypeRef(implicitTypeRef: FirImplicitTypeRef, data: CheckerContext) {
