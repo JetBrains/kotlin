@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.serialization.MutableVersionRequirementTable
 import org.jetbrains.kotlin.protobuf.GeneratedMessageLite
 import org.jetbrains.kotlin.serialization.deserialization.DYNAMIC_TYPE_DESERIALIZER_ID
+import org.jetbrains.kotlin.metadata.deserialization.*
 
 class FirKLibSerializerExtension(
     override val session: FirSession,
@@ -67,6 +68,7 @@ class FirKLibSerializerExtension(
     ) {
         property.setFileId(proto, KlibMetadataProtoBuf.propertyFile)
         property.setKDoc(proto, KlibMetadataProtoBuf.propertyKdoc)
+        proto.flags = proto.flags or Flags.HAS_GETTER.toFlags(true) or Flags.HAS_SETTER.toFlags(property.isVar)
         super.serializeProperty(property, proto, versionRequirementTable, childSerializer)
     }
 
