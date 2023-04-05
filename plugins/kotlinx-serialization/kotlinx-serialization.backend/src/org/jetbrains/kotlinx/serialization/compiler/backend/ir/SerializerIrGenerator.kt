@@ -66,11 +66,9 @@ open class SerializerIrGenerator(
         SerialEntityNames.SERIAL_DESC_FIELD
     ) { true }?.takeIf { it.isFromPlugin(compilerContext.afterK2) }
 
-    protected val anySerialDescProperty = getProperty(
+    protected val irAnySerialDescProperty = getProperty(
         SerialEntityNames.SERIAL_DESC_FIELD,
-    ) { true } // remove true?
-
-    protected val irAnySerialDescProperty = anySerialDescProperty
+    ) { true }
 
     fun getProperty(
         name: String,
@@ -83,13 +81,16 @@ open class SerializerIrGenerator(
         private set
 
     // child serializers cached if serializable class is internal
-    private val cachedChildSerializersProperty = if (isGeneratedSerializer)
-        serializableIrClass.companionObject()?.properties?.singleOrNull { it.name == CACHED_CHILD_SERIALIZERS_PROPERTY_NAME }
-    else null
+    private val cachedChildSerializersProperty by lazy {
+        if (isGeneratedSerializer)
+            serializableIrClass.companionObject()?.properties?.singleOrNull { it.name == CACHED_CHILD_SERIALIZERS_PROPERTY_NAME }
+        else null
+    }
 
     // non-object serializers which can be cached
-    private val cacheableChildSerializers =
+    private val cacheableChildSerializers by lazy {
         serializableIrClass.createCachedChildSerializers(properties.serializableProperties).map { it != null }
+    }
 
     // null if was not found — we're in FIR
     private fun findLocalSerializersFieldDescriptors(): List<IrProperty?> {
@@ -230,7 +231,12 @@ open class SerializerIrGenerator(
 
         val allSerializers = serializableProperties.mapIndexed { index, property ->
             requireNotNull(
-                serializerTower(this@SerializerIrGenerator, irFun.dispatchReceiverParameter!!, property, cachedChildSerializerByIndex(index))
+                serializerTower(
+                    this@SerializerIrGenerator,
+                    irFun.dispatchReceiverParameter!!,
+                    property,
+                    cachedChildSerializerByIndex(index)
+                )
             ) { "Property ${property.name} must have a serializer" }
         }
 
