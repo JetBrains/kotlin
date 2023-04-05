@@ -33,7 +33,12 @@ fun Candidate.preprocessLambdaArgument(
     duringCompletion: Boolean = false,
     returnTypeVariable: ConeTypeVariableForLambdaReturnType? = null
 ): PostponedResolvedAtom {
-    if (expectedType != null && expectedTypeRef != null && !duringCompletion && csBuilder.isTypeVariable(expectedType)) {
+    if (
+        expectedType != null &&
+        expectedTypeRef != null &&
+        !duringCompletion && csBuilder.isTypeVariable(expectedType) &&
+        argument.typeRef !is FirResolvedTypeRef
+    ) {
         val expectedTypeVariableWithConstraints = csBuilder.currentStorage().notFixedTypeVariables[expectedType.typeConstructor(context.typeContext)]
 
         if (expectedTypeVariableWithConstraints != null) {

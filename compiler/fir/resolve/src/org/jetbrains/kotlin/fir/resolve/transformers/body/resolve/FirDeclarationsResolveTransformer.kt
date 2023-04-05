@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 
 open class FirDeclarationsResolveTransformer(
     transformer: FirAbstractBodyResolveTransformerDispatcher
@@ -734,6 +735,14 @@ open class FirDeclarationsResolveTransformer(
             anonymousFunction.transformReturnTypeRef(transformer, ResolutionMode.ContextIndependent)
             anonymousFunction.transformReceiverParameter(transformer, ResolutionMode.ContextIndependent)
             anonymousFunction.valueParameters.forEach { it.transformReturnTypeRef(transformer, ResolutionMode.ContextIndependent) }
+
+            val allTypesAreResolved = anonymousFunction.returnTypeRef is FirResolvedTypeRef
+                    && anonymousFunction.valueParameters.all { it.returnTypeRef is FirResolvedTypeRef }
+                    && anonymousFunction.receiverParameter.let { it == null || it.typeRef is FirResolvedTypeRef }
+
+            if (allTypesAreResolved) {
+                anonymousFunction.replaceTypeRef(buildLambdaTypeFor(anonymousFunction))
+            }
         }
 
         if (anonymousFunction.contractDescription != FirEmptyContractDescription) {
@@ -759,6 +768,40 @@ open class FirDeclarationsResolveTransformer(
         }
     }
 
+    private fun buildLambdaTypeFor(anonymousFunction: FirAnonymousFunction): FirTypeRef {
+        val valueParametersTypes = anonymousFunction.valueParameters
+            .map { it.returnTypeRef.coneType.toTypeProjection(ProjectionKind.INVARIANT) }
+        val returnType = anonymousFunction.returnTypeRef.coneType.toTypeProjection(ProjectionKind.INVARIANT)
+        val receiverType = anonymousFunction.receiverParameter?.typeRef?.coneType?.toTypeProjection(ProjectionKind.INVARIANT)
+
+        val typeArguments = if (receiverType != null) {
+            listOf(receiverType) + valueParametersTypes + returnType
+        } else {
+            valueParametersTypes + returnType
+        }
+
+        val typeArgumentsCount = anonymousFunction.valueParameters.size + if (receiverType != null) 1 else 0
+
+        val functionalClassId = StandardClassIds.FunctionN(typeArgumentsCount)
+        val functionalLookupTag = symbolProvider.getClassLikeSymbolByClassId(functionalClassId)?.toLookupTag()
+            ?: error("Failed to load the functional type for: $functionalClassId")
+
+        val attributes = if (receiverType != null) {
+            ConeAttributes.WithExtensionFunctionType
+        } else {
+            ConeAttributes.Empty
+        }
+
+        val lambdaType = functionalLookupTag.constructClassType(
+            typeArguments = typeArguments.toTypedArray(),
+            isNullable = false,
+            attributes = attributes,
+        )
+
+        return buildResolvedTypeRef {
+            this.type = lambdaType
+        }
+    }
 
     private fun transformAnonymousFunctionBody(
         anonymousFunction: FirAnonymousFunction,
