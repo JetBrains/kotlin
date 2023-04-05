@@ -176,5 +176,4 @@ public actual open class ArrayList<E> internal constructor(private var array: Ar
     private fun insertionRangeCheck(index: Int) = index.apply {
         AbstractList.checkPositionIndex(index, size)
     }
-
 }
