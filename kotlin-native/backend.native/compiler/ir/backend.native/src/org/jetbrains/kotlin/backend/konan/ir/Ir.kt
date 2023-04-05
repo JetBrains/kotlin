@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.typeWith
-import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.findDeclaration
@@ -41,26 +40,23 @@ internal class KonanIr(context: Context, override val symbols: KonanSymbols): Ir
 
 internal abstract class KonanSymbols(
         context: PhaseContext,
-        descriptorsLookup: DescriptorsLookup,
+        descriptorsLookup: DescriptorsLookup, // Deprecated to use in this class, except `findMainEntryPoint`. Also KonanBuiltins are deprecated
         irBuiltIns: IrBuiltIns,
-        internal val symbolTable: SymbolTable,
-        lazySymbolTable: ReferenceSymbolTable
+        internal val symbolTable: SymbolTable, // Deprecated to use in this class
 ): Symbols(irBuiltIns, symbolTable) {
     internal abstract fun IrClassSymbol.findMemberSimpleFunction(name: Name): IrSimpleFunctionSymbol?
     internal abstract fun IrClassSymbol.findMemberPropertyGetter(name: Name): IrSimpleFunctionSymbol?
 
     val entryPoint = findMainEntryPoint(context, descriptorsLookup.builtIns)?.let { symbolTable.referenceSimpleFunction(it) }
 
-    override val externalSymbolTable = lazySymbolTable
-
     val nothing get() = irBuiltIns.nothingClass
     val throwable get() = irBuiltIns.throwableClass
     val enum get() = irBuiltIns.enumClass
-    val nativePtr = symbolTable.referenceClass(descriptorsLookup.nativePtr)
-    val nativePointed = symbolTable.referenceClass(descriptorsLookup.interopBuiltIns.nativePointed)
+    private val nativePtr = internalClass(NATIVE_PTR_NAME)
+    val nativePointed = interopClass(InteropFqNames.nativePointedName)
     val nativePtrType = nativePtr.typeWith(arguments = emptyList())
 
-    val immutableBlobOf = symbolTable.referenceSimpleFunction(descriptorsLookup.immutableBlobOf)
+    val immutableBlobOf = nativeFunction(IMMUTABLE_BLOB_OF)
 
     val signedIntegerClasses = setOf(byte, short, int, long)
     val unsignedIntegerClasses = setOf(uByte!!, uShort!!, uInt!!, uLong!!)
@@ -95,7 +91,7 @@ internal abstract class KonanSymbols(
     val exportForCppRuntime = topLevelClass(RuntimeNames.exportForCppRuntime)
     val typedIntrinsic = topLevelClass(RuntimeNames.typedIntrinsicAnnotation)
 
-    val objCMethodImp = symbolTable.referenceClass(descriptorsLookup.interopBuiltIns.objCMethodImp)
+    val objCMethodImp = interopClass(InteropFqNames.objCMethodImpName)
 
     val processUnhandledException = irBuiltIns.findFunctions(Name.identifier("processUnhandledException"), "kotlin", "native").single()
     val terminateWithUnhandledException = irBuiltIns.findFunctions(Name.identifier("terminateWithUnhandledException"), "kotlin", "native").single()
@@ -103,33 +99,33 @@ internal abstract class KonanSymbols(
     val interopNativePointedGetRawPointer =
             symbolTable.referenceSimpleFunction(descriptorsLookup.interopBuiltIns.nativePointedGetRawPointer)
 
-    val interopCPointer = symbolTable.referenceClass(descriptorsLookup.interopBuiltIns.cPointer)
+    val interopCPointer = interopClass(InteropFqNames.cPointerName)
     val interopCstr = symbolTable.referenceSimpleFunction(descriptorsLookup.interopBuiltIns.cstr.getter!!)
     val interopWcstr = symbolTable.referenceSimpleFunction(descriptorsLookup.interopBuiltIns.wcstr.getter!!)
-    val interopMemScope = symbolTable.referenceClass(descriptorsLookup.interopBuiltIns.memScope)
-    val interopCValue = symbolTable.referenceClass(descriptorsLookup.interopBuiltIns.cValue)
-    val interopCValuesRef = symbolTable.referenceClass(descriptorsLookup.interopBuiltIns.cValuesRef)
+    val interopMemScope = interopClass(InteropFqNames.memScopeName)
+    val interopCValue = interopClass(InteropFqNames.cValueName)
+    val interopCValuesRef = interopClass(InteropFqNames.cValuesRefName)
     val interopCValueWrite = symbolTable.referenceSimpleFunction(descriptorsLookup.interopBuiltIns.cValueWrite)
     val interopCValueRead = symbolTable.referenceSimpleFunction(descriptorsLookup.interopBuiltIns.cValueRead)
     val interopAllocType = symbolTable.referenceSimpleFunction(descriptorsLookup.interopBuiltIns.allocType)
 
-    val interopTypeOf = symbolTable.referenceSimpleFunction(descriptorsLookup.interopBuiltIns.typeOf)
+    val interopTypeOf = interopFunction(InteropFqNames.typeOfFunName)
 
     val interopCPointerGetRawValue = symbolTable.referenceSimpleFunction(descriptorsLookup.interopBuiltIns.cPointerGetRawValue)
 
-    val interopAllocObjCObject = symbolTable.referenceSimpleFunction(descriptorsLookup.interopBuiltIns.allocObjCObject)
+    val interopAllocObjCObject = interopFunction(InteropFqNames.allocObjCObjectFunName)
 
-    val interopForeignObjCObject = interopClass("ForeignObjCObject")
+    val interopForeignObjCObject = interopClass(InteropFqNames.foreignObjCObjectName)
 
     // These are possible supertypes of forward declarations - we need to reference them explicitly to force their deserialization.
     // TODO: Do it lazily.
-    val interopCOpaque = symbolTable.referenceClass(descriptorsLookup.interopBuiltIns.cOpaque)
-    val interopObjCObject = symbolTable.referenceClass(descriptorsLookup.interopBuiltIns.objCObject)
-    val interopObjCObjectBase = symbolTable.referenceClass(descriptorsLookup.interopBuiltIns.objCObjectBase)
-    val interopObjCObjectBaseMeta = symbolTable.referenceClass(descriptorsLookup.interopBuiltIns.objCObjectBaseMeta)
-    val interopObjCClass = symbolTable.referenceClass(descriptorsLookup.interopBuiltIns.objCClass)
-    val interopObjCClassOf = symbolTable.referenceClass(descriptorsLookup.interopBuiltIns.objCClassOf)
-    val interopObjCProtocol = symbolTable.referenceClass(descriptorsLookup.interopBuiltIns.objCProtocol)
+    val interopCOpaque = interopClass(InteropFqNames.cOpaqueName)
+    val interopObjCObject = interopClass(InteropFqNames.objCObjectName)
+    val interopObjCObjectBase = interopClass(InteropFqNames.objCObjectBaseName)
+    val interopObjCObjectBaseMeta = interopClass(InteropFqNames.objCObjectBaseMetaName)
+    val interopObjCClass = interopClass(InteropFqNames.objCClassName)
+    val interopObjCClassOf = interopClass(InteropFqNames.objCClassOfName)
+    val interopObjCProtocol = interopClass(InteropFqNames.objCProtocolName)
 
     val interopObjCRelease = interopFunction("objc_release")
 
@@ -147,15 +143,10 @@ internal abstract class KonanSymbols(
     val interopGetMessenger = interopFunction("getMessenger")
     val interopGetMessengerStret = interopFunction("getMessengerStret")
 
-    val interopGetObjCClass = symbolTable.referenceSimpleFunction(descriptorsLookup.interopBuiltIns.getObjCClass)
-
-    val interopObjCObjectSuperInitCheck =
-            symbolTable.referenceSimpleFunction(descriptorsLookup.interopBuiltIns.objCObjectSuperInitCheck)
-
-    val interopObjCObjectInitBy = symbolTable.referenceSimpleFunction(descriptorsLookup.interopBuiltIns.objCObjectInitBy)
-
-    val interopObjCObjectRawValueGetter =
-            symbolTable.referenceSimpleFunction(descriptorsLookup.interopBuiltIns.objCObjectRawPtr)
+    val interopGetObjCClass = interopFunction(InteropFqNames.getObjCClassFunName)
+    val interopObjCObjectSuperInitCheck = interopFunction(InteropFqNames.objCObjectSuperInitCheckFunName)
+    val interopObjCObjectInitBy = interopFunction(InteropFqNames.objCObjectInitByFunName)
+    val interopObjCObjectRawValueGetter = interopFunction(InteropFqNames.objCObjectRawPtrFunName)
 
     val interopNativePointedRawPtrGetter =
             symbolTable.referenceSimpleFunction(descriptorsLookup.interopBuiltIns.nativePointedRawPtrGetter)
@@ -163,33 +154,25 @@ internal abstract class KonanSymbols(
     val interopCPointerRawValue =
             symbolTable.referenceProperty(descriptorsLookup.interopBuiltIns.cPointerRawValue)
 
-    val interopInterpretObjCPointer =
-            symbolTable.referenceSimpleFunction(descriptorsLookup.interopBuiltIns.interpretObjCPointer)
-
-    val interopInterpretObjCPointerOrNull =
-            symbolTable.referenceSimpleFunction(descriptorsLookup.interopBuiltIns.interpretObjCPointerOrNull)
-
-    val interopInterpretNullablePointed =
-            symbolTable.referenceSimpleFunction(descriptorsLookup.interopBuiltIns.interpretNullablePointed)
-
-    val interopInterpretCPointer =
-            symbolTable.referenceSimpleFunction(descriptorsLookup.interopBuiltIns.interpretCPointer)
+    val interopInterpretObjCPointer = interopFunction(InteropFqNames.interpretObjCPointerFunName)
+    val interopInterpretObjCPointerOrNull = interopFunction(InteropFqNames.interpretObjCPointerOrNullFunName)
+    val interopInterpretNullablePointed = interopFunction(InteropFqNames.interpretNullablePointedFunName)
+    val interopInterpretCPointer = interopFunction(InteropFqNames.interpretCPointerFunName)
 
     val createForeignException = interopFunction("CreateForeignException")
 
     val interopCEnumVar = interopClass("CEnumVar")
 
-    val nativeMemUtils = symbolTable.referenceClass(descriptorsLookup.interopBuiltIns.nativeMemUtils)
-
-    val nativeHeap = symbolTable.referenceClass(descriptorsLookup.interopBuiltIns.nativeHeap)
+    val nativeMemUtils = interopClass(InteropFqNames.nativeMemUtilsName)
+    val nativeHeap = interopClass(InteropFqNames.nativeHeapName)
 
     val interopGetPtr = symbolTable.referenceSimpleFunction(descriptorsLookup.interopBuiltIns.interopGetPtr)
 
     val interopManagedGetPtr = symbolTable.referenceSimpleFunction(descriptorsLookup.interopBuiltIns.interopManagedGetPtr)
 
-    val interopManagedType = symbolTable.referenceClass(descriptorsLookup.interopBuiltIns.managedType)
-    val interopCPlusPlusClass = symbolTable.referenceClass(descriptorsLookup.interopBuiltIns.cPlusPlusClass)
-    val interopSkiaRefCnt = symbolTable.referenceClass(descriptorsLookup.interopBuiltIns.skiaRefCnt)
+    val interopManagedType = interopClass(InteropFqNames.managedTypeName)
+    val interopCPlusPlusClass = interopClass(InteropFqNames.cPlusPlusClassName)
+    val interopSkiaRefCnt = interopClass(InteropFqNames.skiaRefCntName)
 
     val readBits = interopFunction("readBits")
     val writeBits = interopFunction("writeBits")
@@ -200,7 +183,7 @@ internal abstract class KonanSymbols(
     val objCExportGetCoroutineSuspended = internalFunction("getCoroutineSuspended")
     val objCExportInterceptedContinuation = internalFunction("interceptedContinuation")
 
-    val getNativeNullPtr = symbolTable.referenceSimpleFunction(descriptorsLookup.getNativeNullPtr)
+    val getNativeNullPtr = internalFunction("getNativeNullPtr")
 
     val boxCachePredicates = BoxCache.values().associateWith {
         internalFunction("in${it.name.lowercase().replaceFirstChar(Char::uppercaseChar)}BoxCache")
@@ -395,8 +378,6 @@ internal abstract class KonanSymbols(
 
     val sharedImmutable = topLevelClass(KonanFqNames.sharedImmutable)
 
-    val volatile = topLevelClass(KonanFqNames.volatile)
-
     val eagerInitialization = topLevelClass(KonanFqNames.eagerInitialization)
 
     val cStructVarConstructorSymbol = symbolTable.referenceConstructor(
@@ -414,6 +395,9 @@ internal abstract class KonanSymbols(
             descriptorsLookup.interopBuiltIns.cStructVarType.unsubstitutedPrimaryConstructor!!)
 
     private fun topLevelClass(fqName: FqName): IrClassSymbol = irBuiltIns.findClass(fqName.shortName(), fqName.parent())!!
+
+    private fun nativeFunction(name: String) =
+            irBuiltIns.findFunctions(Name.identifier(name), KonanFqNames.packageName).single()
 
     private fun internalFunction(name: String) =
             irBuiltIns.findFunctions(Name.identifier(name), RuntimeNames.kotlinNativeInternalPackageName).single()
@@ -434,6 +418,9 @@ internal abstract class KonanSymbols(
             irBuiltIns.findFunctions(Name.identifier(name), InteropFqNames.packageName).single()
 
     private fun interopClass(name: String) =
+            irBuiltIns.findClass(Name.identifier(name), InteropFqNames.packageName)!!
+
+    private fun interopVarGetter(name: String) =
             irBuiltIns.findClass(Name.identifier(name), InteropFqNames.packageName)!!
 
     fun kFunctionN(n: Int) = irBuiltIns.kFunctionN(n).symbol
@@ -471,8 +458,7 @@ internal class KonanSymbolsOverDescriptors(
         descriptorsLookup: DescriptorsLookup,
         irBuiltIns: IrBuiltIns,
         symbolTable: SymbolTable,
-        lazySymbolTable: ReferenceSymbolTable
-) : KonanSymbols(context, descriptorsLookup, irBuiltIns, symbolTable, lazySymbolTable) {
+) : KonanSymbols(context, descriptorsLookup, irBuiltIns, symbolTable) {
     override fun IrClassSymbol.findMemberSimpleFunction(name: Name): IrSimpleFunctionSymbol? =
             // inspired by: irBuiltIns.findBuiltInClassMemberFunctions(this, name).singleOrNull()
             descriptor.unsubstitutedMemberScope.getContributedFunctions(name, NoLookupLocation.FROM_BACKEND)
@@ -491,8 +477,7 @@ internal class KonanSymbolsOverFir(
         descriptorsLookup: DescriptorsLookup,
         irBuiltIns: IrBuiltIns,
         symbolTable: SymbolTable,
-        lazySymbolTable: ReferenceSymbolTable
-) : KonanSymbols(context, descriptorsLookup, irBuiltIns, symbolTable, lazySymbolTable) {
+) : KonanSymbols(context, descriptorsLookup, irBuiltIns, symbolTable) {
     override fun IrClassSymbol.findMemberSimpleFunction(name: Name): IrSimpleFunctionSymbol? =
             owner.findDeclaration<IrSimpleFunction> { it.name == name }?.symbol
 

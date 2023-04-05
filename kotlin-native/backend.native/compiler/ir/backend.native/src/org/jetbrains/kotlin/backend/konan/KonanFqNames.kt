@@ -6,12 +6,12 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 
 internal const val NATIVE_PTR_NAME = "NativePtr"
 internal const val NON_NULL_NATIVE_PTR_NAME = "NonNullNativePtr"
 internal const val VECTOR128 = "Vector128"
+internal const val IMMUTABLE_BLOB_OF = "immutableBlobOf"
 
 object KonanFqNames {
     val function = FqName("kotlin.Function")

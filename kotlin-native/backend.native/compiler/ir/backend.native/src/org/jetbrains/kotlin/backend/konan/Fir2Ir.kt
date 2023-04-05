@@ -113,5 +113,5 @@ private fun PhaseContext.createKonanSymbols(
     val symbolTable = SymbolTable(KonanIdSignaturer(KonanManglerDesc), pluginContext.irFactory)
     val descriptorsLookup = DescriptorsLookup(moduleDescriptor.builtIns as KonanBuiltIns)
 
-    return KonanSymbolsOverFir(this, descriptorsLookup, components.irBuiltIns, symbolTable, symbolTable.lazyWrapper)
+    return KonanSymbolsOverFir(this, descriptorsLookup, components.irBuiltIns, symbolTable)
 }

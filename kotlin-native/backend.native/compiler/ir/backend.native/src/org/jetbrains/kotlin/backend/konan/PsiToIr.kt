@@ -93,7 +93,7 @@ internal fun PsiToIrContext.psiToIr(
                 BuiltInFictitiousFunctionIrClassFactory(symbolTable, irBuiltInsOverDescriptors, reflectionTypes)
     irBuiltInsOverDescriptors.functionFactory = functionIrClassFactory
     val descriptorsLookup = DescriptorsLookup(this.builtIns)
-    val symbols = KonanSymbolsOverDescriptors(this, descriptorsLookup, generatorContext.irBuiltIns, symbolTable, symbolTable.lazyWrapper)
+    val symbols = KonanSymbolsOverDescriptors(this, descriptorsLookup, generatorContext.irBuiltIns, symbolTable)
 
     val irDeserializer = if (isProducingLibrary && !useLinkerWhenProducingLibrary) {
         // Enable lazy IR generation for newly-created symbols inside BE

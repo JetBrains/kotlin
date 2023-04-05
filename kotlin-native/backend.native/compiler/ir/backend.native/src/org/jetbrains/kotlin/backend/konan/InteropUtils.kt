@@ -5,11 +5,12 @@
 
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.backend.konan.InteropFqNames.cValue
-import org.jetbrains.kotlin.backend.konan.InteropFqNames.cValueName
+import org.jetbrains.kotlin.backend.konan.InteropFqNames.cstrName
 import org.jetbrains.kotlin.backend.konan.InteropFqNames.managedTypeName
+import org.jetbrains.kotlin.backend.konan.InteropFqNames.wcstrName
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -29,6 +30,7 @@ object InteropFqNames {
     const val objCOutletName = "ObjCOutlet"
     const val objCMethodImpName = "ObjCMethodImp"
     const val exportObjCClassName = "ExportObjCClass"
+    const val nativeHeapName = "nativeHeap"
 
     const val cValueName = "CValue"
     const val cValuesName = "CValues"
@@ -39,6 +41,30 @@ object InteropFqNames {
 
     const val interopStubsName = "InteropStubs"
     const val managedTypeName = "ManagedType"
+    const val memScopeName = "MemScope"
+    const val foreignObjCObjectName = "ForeignObjCObject"
+    const val cOpaqueName = "COpaque"
+    const val objCObjectName = "ObjCObject"
+    const val objCObjectBaseMetaName = "ObjCObjectBaseMeta"
+    const val objCClassName = "ObjCClass"
+    const val objCClassOfName = "ObjCClassOf"
+    const val objCProtocolName = "ObjCProtocol"
+    const val nativeMemUtilsName = "nativeMemUtils"
+    const val cstrName = "cstr"
+    const val wcstrName = "wcstr"
+    const val cPlusPlusClassName = "CPlusPlusClass"
+    const val skiaRefCntName = "SkiaRefCnt"
+
+    const val getObjCClassFunName = "getObjCClass"
+    const val objCObjectSuperInitCheckFunName = "superInitCheck"
+    const val allocObjCObjectFunName = "allocObjCObject"
+    const val typeOfFunName = "typeOf"
+    const val objCObjectInitByFunName = "initBy"
+    const val objCObjectRawPtrFunName = "objcPtr"
+    const val interpretObjCPointerFunName = "interpretObjCPointer"
+    const val interpretObjCPointerOrNullFunName = "interpretObjCPointerOrNull"
+    const val interpretNullablePointedFunName = "interpretNullablePointed"
+    const val interpretCPointerFunName = "interpretCPointer"
 
     val packageName = FqName("kotlinx.cinterop")
 
@@ -71,9 +97,6 @@ internal class InteropBuiltIns(builtIns: KonanBuiltIns) {
 
     val nativePointed = packageScope.getContributedClass(InteropFqNames.nativePointedName)
 
-    val cValuesRef = this.packageScope.getContributedClass("CValuesRef")
-    val cValue = this.packageScope.getContributedClass(cValueName)
-    val cOpaque = this.packageScope.getContributedClass("COpaque")
     val cValueWrite = this.packageScope.getContributedFunctions("write")
             .single { it.extensionReceiverParameter?.type?.constructor?.declarationDescriptor?.fqNameSafe == InteropFqNames.cValue }
     val cValueRead = this.packageScope.getContributedFunctions("readValue")
@@ -85,13 +108,11 @@ internal class InteropBuiltIns(builtIns: KonanBuiltIns) {
     private val cPrimitiveVar = this.packageScope.getContributedClass("CPrimitiveVar")
     val cPrimitiveVarType = cPrimitiveVar.defaultType.memberScope.getContributedClass("Type")
 
-    val nativeMemUtils = this.packageScope.getContributedClass("nativeMemUtils")
-
     val allocType = this.packageScope.getContributedFunctions("alloc")
             .single { it.extensionReceiverParameter != null
                     && it.valueParameters.singleOrNull()?.name?.toString() == "type" }
 
-    val cPointer = this.packageScope.getContributedClass(InteropFqNames.cPointerName)
+    private val cPointer = this.packageScope.getContributedClass(InteropFqNames.cPointerName)
 
     val cPointerRawValue = cPointer.unsubstitutedMemberScope.getContributedVariables("rawValue").single()
 
@@ -103,7 +124,6 @@ internal class InteropBuiltIns(builtIns: KonanBuiltIns) {
 
     val cstr = packageScope.getContributedVariables("cstr").single()
     val wcstr = packageScope.getContributedVariables("wcstr").single()
-    val memScope = packageScope.getContributedClass("MemScope")
 
     val nativePointedRawPtrGetter =
             nativePointed.unsubstitutedMemberScope.getContributedVariables("rawPtr").single().getter!!
@@ -114,39 +134,7 @@ internal class InteropBuiltIns(builtIns: KonanBuiltIns) {
                 TypeUtils.getClassDescriptor(extensionReceiverParameter.type) == nativePointed
     }
 
-    val typeOf = packageScope.getContributedFunctions("typeOf").single()
-
-    val objCObject = packageScope.getContributedClass("ObjCObject")
-
-    val objCObjectBase = packageScope.getContributedClass("ObjCObjectBase")
-
-    val objCObjectBaseMeta = packageScope.getContributedClass("ObjCObjectBaseMeta")
-
-    val objCClass = packageScope.getContributedClass("ObjCClass")
-
-    val objCClassOf = packageScope.getContributedClass("ObjCClassOf")
-
-    val objCProtocol = packageScope.getContributedClass("ObjCProtocol")
-
-    val allocObjCObject = packageScope.getContributedFunctions("allocObjCObject").single()
-
-    val getObjCClass = packageScope.getContributedFunctions("getObjCClass").single()
-
-    val objCObjectRawPtr = packageScope.getContributedFunctions("objcPtr").single()
-
-    val interpretObjCPointerOrNull = packageScope.getContributedFunctions("interpretObjCPointerOrNull").single()
-    val interpretObjCPointer = packageScope.getContributedFunctions("interpretObjCPointer").single()
-    val interpretNullablePointed = packageScope.getContributedFunctions("interpretNullablePointed").single()
-    val interpretCPointer = packageScope.getContributedFunctions("interpretCPointer").single()
-
-    val objCObjectSuperInitCheck = packageScope.getContributedFunctions("superInitCheck").single()
-    val objCObjectInitBy = packageScope.getContributedFunctions("initBy").single()
-
-    val objCMethodImp = packageScope.getContributedClass(InteropFqNames.objCMethodImpName)
-    val nativeHeap = packageScope.getContributedClass("nativeHeap")
     val managedType = packageScope.getContributedClass(managedTypeName)  // used in CStructVarClassGenerator.kt
-    val cPlusPlusClass = packageScope.getContributedClass("CPlusPlusClass")
-    val skiaRefCnt = packageScope.getContributedClass("SkiaRefCnt")
 
     val interopGetPtr = packageScope.getContributedVariables("ptr").single {
         val singleTypeParameter = it.typeParameters.singleOrNull()
