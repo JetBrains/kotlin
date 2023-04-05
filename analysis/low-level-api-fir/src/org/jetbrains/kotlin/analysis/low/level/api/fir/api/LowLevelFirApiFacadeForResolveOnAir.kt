@@ -49,7 +49,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 
 object LowLevelFirApiFacadeForResolveOnAir {
-    private fun PsiElement.onAirGetNonLocalContainingOrThisDeclarationFor(): KtDeclaration? {
+    fun PsiElement.onAirGetNonLocalContainingOrThisDeclarationFor(): KtDeclaration? {
         return getNonLocalContainingOrThisDeclaration { declaration ->
             when (declaration) {
                 is KtNamedFunction,

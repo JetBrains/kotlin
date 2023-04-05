@@ -5,9 +5,13 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
+import com.github.benmanes.caffeine.cache.CacheLoader
+import com.github.benmanes.caffeine.cache.Caffeine
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiFile
 import com.intellij.psi.SmartPsiElementPointer
+import java.time.Duration
+import java.util.concurrent.ConcurrentHashMap
 import org.jetbrains.kotlin.analysis.api.components.KtReferenceShortener
 import org.jetbrains.kotlin.analysis.api.components.ShortenCommand
 import org.jetbrains.kotlin.analysis.api.components.ShortenOption
@@ -60,6 +64,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LowLevelFirApiFacadeForResolveOnAir.onAirGetNonLocalContainingOrThisDeclarationFor
 
 internal class KtFirReferenceShortener(
     override val analysisSession: KtFirAnalysisSession,
@@ -67,6 +72,14 @@ internal class KtFirReferenceShortener(
     override val firResolveSession: LLFirResolveSession,
 ) : KtReferenceShortener(), KtFirAnalysisSessionComponent {
     private val context = FirShorteningContext(analysisSession)
+
+    // RemoveRedundantQualifierNameInspection executes collectShortenings for the whole file and collectShortenings is called for every qualified statement in the file
+    // we cache the results per resolvable declaration basis to avoid recreating the same FirTowerContextProvider dozen of times
+    private val cache = Caffeine.newBuilder()
+        .maximumSize(3) // estimated amount of visible files which can be opened in the IJ by the user at the same time
+        .expireAfterAccess(Duration.ofSeconds(20L)) // inspection for one file should hopefully be executed for 20 seconds, after we will rarely need the results
+        .weakKeys() // if KtFile was garbage collected, when the file is not definetly opened in the editor and we can collect the cached value
+        .build<KtFile, ConcurrentHashMap<KtAnnotated, FirTowerContextProvider>>(CacheLoader { ConcurrentHashMap() })
 
     override fun collectShortenings(
         file: KtFile,
@@ -82,8 +95,10 @@ internal class KtFirReferenceShortener(
         )
 
         val towerContext =
-            LowLevelFirApiFacadeForResolveOnAir.onAirGetTowerContextProvider(firResolveSession, declarationToVisit)
-
+            cache.get(file)!! // by JavaDoc, `com.github.benmanes.caffeine.cache.Cache.get` returns `null` iff `mappingFunction` lambda returns `null` which is not the case
+                .computeIfAbsent(declarationToVisit) {
+                    LowLevelFirApiFacadeForResolveOnAir.onAirGetTowerContextProvider(firResolveSession, declarationToVisit)
+                }
         //TODO: collect all usages of available symbols in the file and prevent importing symbols that could introduce name clashes, which
         // may alter the meaning of existing code.
         val collector = ElementsToShortenCollector(
@@ -115,9 +130,10 @@ internal class KtFirReferenceShortener(
 }
 
 private fun KtFile.findSmallestDeclarationContainingSelection(selection: TextRange): KtDeclaration? =
-    findElementAt(selection.startOffset)
+     findElementAt(selection.startOffset)
         ?.parentsOfType<KtDeclaration>(withSelf = true)
         ?.firstOrNull { selection in it.textRange }
+         ?.onAirGetNonLocalContainingOrThisDeclarationFor()
 
 /**
  * How a symbol is imported. The order of the enum entry represents the priority of imports. If a symbol is available from multiple kinds of
