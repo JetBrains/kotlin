@@ -1152,6 +1152,36 @@ open class HierarchicalMppIT : KGPBaseTest() {
         }
     }
 
+    @GradleTest
+    @DisplayName("It should be possible to disable default publications for stdlib and other kotlin libraries")
+    fun `test disable default publications`(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
+        project("mppCustomPublicationLayout", gradleVersion = gradleVersion, localRepoDir = tempDir) {
+            build(":libWithCustomLayout:publishKotlinPublicationToMavenRepository") {
+                listOf("jvm.jar", "linuxArm64.klib", "linuxX64.klib")
+                    .map { tempDir.resolve("test/libWithCustomLayout/1.0/libWithCustomLayout-1.0-$it") }
+                    .forEach { if (!it.exists()) fail("Artifact $it does not exist") }
+            }
+
+            build(":libWithDefaultLayout:publish") {
+                val pom = tempDir.resolve("test/libWithDefaultLayout-jvm/1.0/libWithDefaultLayout-jvm-1.0.pom").readText()
+                val expectedDependency = """
+                    |    <dependency>
+                    |      <groupId>test</groupId>
+                    |      <artifactId>libWithCustomLayout</artifactId>
+                    |      <version>1.0</version>
+                    |      <scope>compile</scope>
+                    |    </dependency>
+                """.trimMargin()
+
+                if (expectedDependency !in pom) {
+                    fail("Expected to find:\n$expectedDependency\nin pom file:\n$pom")
+                }
+            }
+
+            build(":app:assemble")
+        }
+    }
+
 
     private fun TestProject.testDependencyTransformations(
         subproject: String? = null,

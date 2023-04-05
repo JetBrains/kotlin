@@ -1,0 +1,5 @@
+include(
+    ":libWithDefaultLayout",
+    ":libWithCustomLayout",
+    ":app"
+)
