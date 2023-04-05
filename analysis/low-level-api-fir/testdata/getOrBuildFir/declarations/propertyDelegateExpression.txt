@@ -3,7 +3,7 @@ FIR element: FirFunctionCallImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-R|kotlin/lazy|<R|kotlin/Int|>(<L> = lazy@fun <anonymous>(): R|kotlin/Int| <inline=NoInline>  {
+R|kotlin/lazy|<R|kotlin/Int|>(<L> = [ResolvedTo(BODY_RESOLVE)] lazy@fun <anonymous>(): R|kotlin/Int| <inline=NoInline>  {
     ^ Int(1)
 }
 )

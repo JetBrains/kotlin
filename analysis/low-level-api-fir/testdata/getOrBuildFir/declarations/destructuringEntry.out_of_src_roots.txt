@@ -3,4 +3,4 @@ FIR element: FirPropertyImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-lval a: <ERROR TYPE REF: Unresolved name: component1> = R|<local>/<destruct>|.<Unresolved name: component1>#()
+[ResolvedTo(BODY_RESOLVE)] lval a: <ERROR TYPE REF: Unresolved name: component1> = R|<local>/<destruct>|.<Unresolved name: component1>#()

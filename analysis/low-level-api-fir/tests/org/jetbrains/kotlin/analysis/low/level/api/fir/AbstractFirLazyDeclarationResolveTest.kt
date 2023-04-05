@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -85,7 +85,11 @@ abstract class AbstractFirLazyDeclarationResolveTest : AbstractLowLevelApiSingle
             check(llSession.isSourceSession)
             val firFile = llSession.getOrBuildFirFile(ktFile)
             firFile.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
-            resultBuilder.append("\nFILE RAW TO BODY:\n")
+            if (resultBuilder.isNotEmpty()) {
+                resultBuilder.appendLine()
+            }
+
+            resultBuilder.append("FILE RAW TO BODY:\n")
             renderer.renderElementAsString(firFile)
         }
 

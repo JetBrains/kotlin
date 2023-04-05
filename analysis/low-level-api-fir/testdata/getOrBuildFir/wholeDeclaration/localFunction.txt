@@ -3,6 +3,6 @@ FIR element: FirSimpleFunctionImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-local final fun x(): R|kotlin/String| {
+local final [ResolvedTo(BODY_RESOLVE)] fun x(): R|kotlin/String| {
     ^x String()
 }

@@ -1,91 +1,91 @@
 
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] annotations.kt
-    @FILE:Suppress(LAZY_EXPRESSION)
+    @FILE:Suppress[Unresolved](LAZY_EXPRESSION)
     [ResolvedTo(RAW_FIR)] annotations container
-    @Suppress(LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+    @Suppress[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] annotations.kt
-    @FILE:Suppress(LAZY_EXPRESSION)
+    @FILE:Suppress[Unresolved](LAZY_EXPRESSION)
     [ResolvedTo(RAW_FIR)] annotations container
-    @Suppress(LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+    @Suppress[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] annotations.kt
-    @FILE:Suppress(LAZY_EXPRESSION)
+    @FILE:Suppress[Unresolved](LAZY_EXPRESSION)
     [ResolvedTo(RAW_FIR)] annotations container
-    @Suppress(LAZY_EXPRESSION) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+    @Suppress[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] annotations.kt
-    @FILE:Suppress(LAZY_EXPRESSION)
+    @FILE:Suppress[Unresolved](LAZY_EXPRESSION)
     [ResolvedTo(RAW_FIR)] annotations container
-    @Suppress(LAZY_EXPRESSION) public? final? [ResolvedTo(COMPANION_GENERATION)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+    @Suppress[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(COMPANION_GENERATION)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] annotations.kt
-    @FILE:Suppress(LAZY_EXPRESSION)
+    @FILE:Suppress[Unresolved](LAZY_EXPRESSION)
     [ResolvedTo(RAW_FIR)] annotations container
-    @Suppress(LAZY_EXPRESSION) public? final? [ResolvedTo(SUPER_TYPES)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+    @Suppress[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(SUPER_TYPES)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] annotations.kt
-    @FILE:Suppress(LAZY_EXPRESSION)
+    @FILE:Suppress[Unresolved](LAZY_EXPRESSION)
     [ResolvedTo(RAW_FIR)] annotations container
-    @R|kotlin/Suppress|(LAZY_EXPRESSION) public? final? [ResolvedTo(TYPES)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+    @R|kotlin/Suppress|[Types](LAZY_EXPRESSION) public? final? [ResolvedTo(TYPES)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] annotations.kt
-    @FILE:Suppress(LAZY_EXPRESSION)
+    @FILE:Suppress[Unresolved](LAZY_EXPRESSION)
     [ResolvedTo(RAW_FIR)] annotations container
-    @R|kotlin/Suppress|(LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+    @R|kotlin/Suppress|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] annotations.kt
-    @FILE:Suppress(LAZY_EXPRESSION)
+    @FILE:Suppress[Unresolved](LAZY_EXPRESSION)
     [ResolvedTo(RAW_FIR)] annotations container
-    @R|kotlin/Suppress|(String(2)) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe(): R|kotlin/Unit| {
+    @R|kotlin/Suppress|[Types](String(2)) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe(): R|kotlin/Unit| {
     }
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] annotations.kt
-    @FILE:Suppress(LAZY_EXPRESSION)
+    @FILE:Suppress[Unresolved](LAZY_EXPRESSION)
     [ResolvedTo(RAW_FIR)] annotations container
-    @R|kotlin/Suppress|(String(2)) public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| {
+    @R|kotlin/Suppress|[Types](String(2)) public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| {
     }
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] annotations.kt
-    @FILE:Suppress(LAZY_EXPRESSION)
+    @FILE:Suppress[Unresolved](LAZY_EXPRESSION)
     [ResolvedTo(RAW_FIR)] annotations container
-    @R|kotlin/Suppress|(String(2)) public final [ResolvedTo(CONTRACTS)] fun resolveMe(): R|kotlin/Unit| {
+    @R|kotlin/Suppress|[Types](String(2)) public final [ResolvedTo(CONTRACTS)] fun resolveMe(): R|kotlin/Unit| {
     }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] annotations.kt
-    @FILE:Suppress(LAZY_EXPRESSION)
+    @FILE:Suppress[Unresolved](LAZY_EXPRESSION)
     [ResolvedTo(RAW_FIR)] annotations container
-    @R|kotlin/Suppress|(String(2)) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
+    @R|kotlin/Suppress|[Types](String(2)) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
     }
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] annotations.kt
-    @FILE:Suppress(String(1))
+    @FILE:Suppress[Unresolved](String(1))
     [ResolvedTo(RAW_FIR)] annotations container
-    @R|kotlin/Suppress|(names = vararg(String(2))) public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun resolveMe(): R|kotlin/Unit| {
+    @R|kotlin/Suppress|[Types](names = vararg(String(2))) public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun resolveMe(): R|kotlin/Unit| {
     }
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] annotations.kt
-    @FILE:Suppress(String(1))
+    @FILE:Suppress[Unresolved](String(1))
     [ResolvedTo(RAW_FIR)] annotations container
-    @R|kotlin/Suppress|(names = vararg(String(2))) public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
+    @R|kotlin/Suppress|[Types](names = vararg(String(2))) public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
     }
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(IMPORTS)] annotations.kt
-    @FILE:R|kotlin/Suppress|(names = vararg(String(1)))
+    @FILE:R|kotlin/Suppress|[Types](names = vararg(String(1)))
     [ResolvedTo(BODY_RESOLVE)] annotations container
-    @R|kotlin/Suppress|(names = vararg(String(2))) public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
+    @R|kotlin/Suppress|[Types](names = vararg(String(2))) public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
     }

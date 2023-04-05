@@ -13,7 +13,7 @@ FILE: [ResolvedTo(RAW_FIR)] enumEntry.kt
             LAZY_super<R|kotlin/Enum<Foo>|>
         }
 
-        @Anno() public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] enum entry ResolveMe: R|Foo| = LAZY_EXPRESSION
+        @Anno[Unresolved]() public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] enum entry ResolveMe: R|Foo| = LAZY_EXPRESSION
         public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] fun values(): R|kotlin/Array<Foo>| {
         }
 
@@ -39,7 +39,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntry.kt
             LAZY_super<R|kotlin/Enum<Foo>|>
         }
 
-        @Anno() public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] enum entry ResolveMe: R|Foo| = LAZY_EXPRESSION
+        @Anno[Unresolved]() public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] enum entry ResolveMe: R|Foo| = LAZY_EXPRESSION
         public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] fun values(): R|kotlin/Array<Foo>| {
         }
 
@@ -65,7 +65,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntry.kt
             LAZY_super<R|kotlin/Enum<Foo>|>
         }
 
-        @Anno() public final static [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=Foo] enum entry ResolveMe: R|Foo| = LAZY_EXPRESSION
+        @Anno[Unresolved]() public final static [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=Foo] enum entry ResolveMe: R|Foo| = LAZY_EXPRESSION
         public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] fun values(): R|kotlin/Array<Foo>| {
         }
 
@@ -91,7 +91,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntry.kt
             LAZY_super<R|kotlin/Enum<Foo>|>
         }
 
-        @Anno() public final static [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=Foo] enum entry ResolveMe: R|Foo| = LAZY_EXPRESSION
+        @Anno[Unresolved]() public final static [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=Foo] enum entry ResolveMe: R|Foo| = LAZY_EXPRESSION
         public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] fun values(): R|kotlin/Array<Foo>| {
         }
 
@@ -117,7 +117,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntry.kt
             LAZY_super<R|kotlin/Enum<Foo>|>
         }
 
-        @Anno() public final static [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=Foo] enum entry ResolveMe: R|Foo| = LAZY_EXPRESSION
+        @Anno[Unresolved]() public final static [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=Foo] enum entry ResolveMe: R|Foo| = LAZY_EXPRESSION
         public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] fun values(): R|kotlin/Array<Foo>| {
         }
 
@@ -143,7 +143,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntry.kt
             LAZY_super<R|kotlin/Enum<Foo>|>
         }
 
-        @R|Anno|() public final static [ResolvedTo(TYPES)] [ContainingClassKey=Foo] enum entry ResolveMe: R|Foo| = LAZY_EXPRESSION
+        @R|Anno|[Types]() public final static [ResolvedTo(TYPES)] [ContainingClassKey=Foo] enum entry ResolveMe: R|Foo| = LAZY_EXPRESSION
         public final static [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=Foo] fun values(): R|kotlin/Array<Foo>| {
         }
 
@@ -169,7 +169,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntry.kt
             LAZY_super<R|kotlin/Enum<Foo>|>
         }
 
-        @R|Anno|() public final static [ResolvedTo(STATUS)] [ContainingClassKey=Foo] enum entry ResolveMe: R|Foo| = LAZY_EXPRESSION
+        @R|Anno|[Types]() public final static [ResolvedTo(STATUS)] [ContainingClassKey=Foo] enum entry ResolveMe: R|Foo| = LAZY_EXPRESSION
         public final static [ResolvedTo(TYPES)] [ContainingClassKey=Foo] fun values(): R|kotlin/Array<Foo>| {
         }
 
@@ -195,7 +195,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntry.kt
             LAZY_super<R|kotlin/Enum<Foo>|>
         }
 
-        @R|Anno|() public final static [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=Foo] enum entry ResolveMe: R|Foo| = object : R|Foo| {
+        @R|Anno|[Types]() public final static [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=Foo] enum entry ResolveMe: R|Foo| = object : R|Foo| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
                 super<R|Foo|>()
             }
@@ -227,7 +227,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntry.kt
             LAZY_super<R|kotlin/Enum<Foo>|>
         }
 
-        @R|Anno|() public final static [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] [ContainingClassKey=Foo] enum entry ResolveMe: R|Foo| = object : R|Foo| {
+        @R|Anno|[Types]() public final static [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] [ContainingClassKey=Foo] enum entry ResolveMe: R|Foo| = object : R|Foo| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
                 super<R|Foo|>()
             }
@@ -259,7 +259,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntry.kt
             LAZY_super<R|kotlin/Enum<Foo>|>
         }
 
-        @R|Anno|() public final static [ResolvedTo(CONTRACTS)] [ContainingClassKey=Foo] enum entry ResolveMe: R|Foo| = object : R|Foo| {
+        @R|Anno|[Types]() public final static [ResolvedTo(CONTRACTS)] [ContainingClassKey=Foo] enum entry ResolveMe: R|Foo| = object : R|Foo| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
                 super<R|Foo|>()
             }
@@ -291,7 +291,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntry.kt
             LAZY_super<R|kotlin/Enum<Foo>|>
         }
 
-        @R|Anno|() public final static [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=Foo] enum entry ResolveMe: R|Foo| = object : R|Foo| {
+        @R|Anno|[Types]() public final static [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=Foo] enum entry ResolveMe: R|Foo| = object : R|Foo| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
                 super<R|Foo|>()
             }
@@ -323,7 +323,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntry.kt
             LAZY_super<R|kotlin/Enum<Foo>|>
         }
 
-        @R|Anno|() public final static [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=Foo] enum entry ResolveMe: R|Foo| = object : R|Foo| {
+        @R|Anno|[Types]() public final static [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=Foo] enum entry ResolveMe: R|Foo| = object : R|Foo| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
                 super<R|Foo|>()
             }
@@ -355,7 +355,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntry.kt
             LAZY_super<R|kotlin/Enum<Foo>|>
         }
 
-        @R|Anno|() public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] enum entry ResolveMe: R|Foo| = object : R|Foo| {
+        @R|Anno|[Types]() public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] enum entry ResolveMe: R|Foo| = object : R|Foo| {
             private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
                 super<R|Foo|>()
             }
@@ -387,7 +387,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntry.kt
             super<R|kotlin/Enum<Foo>|>()
         }
 
-        @R|Anno|() public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] enum entry ResolveMe: R|Foo| = object : R|Foo| {
+        @R|Anno|[Types]() public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] enum entry ResolveMe: R|Foo| = object : R|Foo| {
             private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
                 super<R|Foo|>()
             }
