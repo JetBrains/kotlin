@@ -1,4 +1,3 @@
-// IGNORE_REVERSED_RESOLVE
 // FILE: I.kt
 
 open class I : <!CYCLIC_INHERITANCE_HIERARCHY!>K<!>() {

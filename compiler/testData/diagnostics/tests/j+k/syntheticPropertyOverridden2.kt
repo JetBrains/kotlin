@@ -1,4 +1,3 @@
-// IGNORE_REVERSED_RESOLVE
 // ISSUE: KT-57166
 
 // FILE: Modality.kt
