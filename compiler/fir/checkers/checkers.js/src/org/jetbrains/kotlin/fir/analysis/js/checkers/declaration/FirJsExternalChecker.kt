@@ -72,7 +72,11 @@ object FirJsExternalChecker : FirBasicDeclarationChecker() {
 
         if (declaration is FirPropertyAccessor && declaration.isDirectlyExternal(context.session)) {
             reporter.reportOn(declaration.source, FirJsErrors.WRONG_EXTERNAL_DECLARATION, "property accessor", context)
-        } else if (declaration !is FirPrimaryConstructor && declaration.isPrivateMemberOfExternalClass(context.session)) {
+        } else if (
+            declaration !is FirPrimaryConstructor &&
+            declaration !is FirField &&
+            declaration.isPrivateMemberOfExternalClass(context.session)
+        ) {
             reporter.reportOn(declaration.source, FirJsErrors.WRONG_EXTERNAL_DECLARATION, "private member of class", context)
         }
 

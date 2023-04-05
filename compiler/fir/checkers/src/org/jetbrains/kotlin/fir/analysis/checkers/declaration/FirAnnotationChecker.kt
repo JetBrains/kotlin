@@ -42,6 +42,10 @@ object FirAnnotationChecker : FirBasicDeclarationChecker() {
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
+        if (declaration is FirDanglingModifierList) {
+            return
+        }
+
         checkAnnotationContainer(declaration, context, reporter)
 
         if (declaration is FirCallableDeclaration) {
