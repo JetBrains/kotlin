@@ -72,6 +72,8 @@ sourceSets {
 
 optInToExperimentalCompilerApi()
 
+publish()
+
 runtimeJar()
 sourcesJar()
 javadocJar()

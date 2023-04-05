@@ -323,6 +323,7 @@ include ":kotlin-lombok-compiler-plugin",
         ":kotlin-lombok"
 
 include ":kotlinx-serialization-compiler-plugin",
+        ":kotlinx-serialization-compiler-plugin.embeddable",
         ":kotlinx-serialization-compiler-plugin.common",
         ":kotlinx-serialization-compiler-plugin.k1",
         ":kotlinx-serialization-compiler-plugin.k2",
@@ -783,6 +784,7 @@ project(':js:js.tests').projectDir = "$rootDir/js/js.tests" as File
 project(':js:js.engines').projectDir = "$rootDir/js/js.engines" as File
 
 project(':kotlinx-serialization-compiler-plugin').projectDir = "$rootDir/plugins/kotlinx-serialization" as File
+project(':kotlinx-serialization-compiler-plugin.embeddable').projectDir = "$rootDir/plugins/kotlinx-serialization/kotlinx-serialization.embeddable" as File
 project(':kotlinx-serialization-compiler-plugin.cli').projectDir = "$rootDir/plugins/kotlinx-serialization/kotlinx-serialization.cli" as File
 project(':kotlinx-serialization-compiler-plugin.backend').projectDir = "$rootDir/plugins/kotlinx-serialization/kotlinx-serialization.backend" as File
 project(':kotlinx-serialization-compiler-plugin.k1').projectDir = "$rootDir/plugins/kotlinx-serialization/kotlinx-serialization.k1" as File
