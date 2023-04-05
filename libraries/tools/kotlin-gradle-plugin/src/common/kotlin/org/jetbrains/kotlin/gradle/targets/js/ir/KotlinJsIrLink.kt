@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptionsDefault
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.ContributeCompilerArgumentsContext
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
@@ -98,20 +97,6 @@ abstract class KotlinJsIrLink @Inject constructor(
         super.contributeAdditionalCompilerArguments(context)
 
         context.primitive { args ->
-            // TODO Ilya Goncharov: This should not be part of creating compiler arguments;
-            KotlinBuildStatsService.applyIfInitialised {
-                it.report(BooleanMetrics.JS_IR_INCREMENTAL, this.incrementalJsIr)
-                val newArgs = K2JSCompilerArguments()
-                parseCommandLineArguments(ArgumentUtils.convertArgumentsToStringList(args), newArgs)
-                it.report(
-                    StringMetrics.JS_OUTPUT_GRANULARITY,
-                    if (newArgs.irPerModule)
-                        KotlinJsIrOutputGranularity.PER_MODULE.name.toLowerCaseAsciiOnly()
-                    else
-                        KotlinJsIrOutputGranularity.WHOLE_PROGRAM.name.toLowerCaseAsciiOnly()
-                )
-            }
-
             // moduleName can start with @ for group of NPM packages
             // but args parsing @ as start of argfile
             // so WA we provide moduleName as one parameter
@@ -125,6 +110,21 @@ abstract class KotlinJsIrLink @Inject constructor(
             if (usingCacheDirectory()) {
                 args.cacheDirectory = rootCacheDirectory.get().asFile.also { it.mkdirs() }.absolutePath
             }
+        }
+    }
+
+    override fun processArgsBeforeCompile(args: K2JSCompilerArguments) {
+        KotlinBuildStatsService.applyIfInitialised {
+            it.report(BooleanMetrics.JS_IR_INCREMENTAL, incrementalJsIr)
+            val newArgs = K2JSCompilerArguments()
+            parseCommandLineArguments(ArgumentUtils.convertArgumentsToStringList(args), newArgs)
+            it.report(
+                StringMetrics.JS_OUTPUT_GRANULARITY,
+                if (newArgs.irPerModule)
+                    KotlinJsIrOutputGranularity.PER_MODULE.name.toLowerCaseAsciiOnly()
+                else
+                    KotlinJsIrOutputGranularity.WHOLE_PROGRAM.name.toLowerCaseAsciiOnly()
+            )
         }
     }
 
