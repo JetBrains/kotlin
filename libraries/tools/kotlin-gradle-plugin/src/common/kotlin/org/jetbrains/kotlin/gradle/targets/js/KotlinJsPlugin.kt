@@ -57,6 +57,13 @@ open class KotlinJsPlugin: Plugin<Project> {
                     """.trimIndent()
                 )
             }
+
+            project.logger.warn(
+                """
+                        w: Kotlin js gradle plugin is deprecated and will be removed in the future. 
+                        Please migrate to the kotlin("multiplatform") plugin. You could find migration guide here: https://kotl.in/t6m3vu
+                    """.trimIndent()
+            )
         }
 
         // Explicitly create configurations for main and test

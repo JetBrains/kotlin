@@ -132,3 +132,8 @@ private val propertiesSetByPlugin: Set<String> = setOf(
 internal fun getMppDeprecationWarningMessageForProperty(property: String): String =
     "w: The property '$property' is obsolete and will be removed in Kotlin 1.9. Read the details here: " +
             "https://kotlinlang.org/docs/multiplatform-compatibility-guide.html#deprecate-hmpp-properties"
+
+
+internal fun reportDeprecatedJsPluginDiagnostic() {
+
+}
