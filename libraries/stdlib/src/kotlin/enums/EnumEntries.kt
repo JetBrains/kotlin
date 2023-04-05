@@ -7,8 +7,6 @@
 
 package kotlin.enums
 
-import kotlin.jvm.Volatile
-
 /**
  * A specialized immutable implementation of [List] interface that
  * contains all enum entries of the specified enum type [E].

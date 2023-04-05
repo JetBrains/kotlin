@@ -1,6 +1,5 @@
 // FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_ANONYMOUS_PARAMETER
-// !API_VERSION: 1.9
 // !LANGUAGE: +MultiPlatformProjects
 
 // MODULE: common
@@ -9,7 +8,6 @@
 import kotlin.concurrent.Volatile
 import kotlin.properties.Delegates
 
-@OptIn(ExperimentalStdlibApi::class)
 class ConcurrentVolatile {
     <!VOLATILE_ON_VALUE!>@Volatile<!> val x = 0
     // ok
@@ -32,7 +30,6 @@ import kotlin.jvm.Volatile as JvmVolatile
 import kotlin.concurrent.Volatile
 import kotlin.properties.Delegates
 
-@OptIn(ExperimentalStdlibApi::class)
 class ConcurrentVolatileOnJvm {
     <!VOLATILE_ON_VALUE!>@Volatile<!> val x = 0
     // ok
