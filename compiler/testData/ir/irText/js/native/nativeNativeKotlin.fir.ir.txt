@@ -24,7 +24,7 @@ FILE fqName:foo fileName:/nativeNativeKotlin.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:foo.B
     CONSTRUCTOR visibility:public <> () returnType:foo.B [primary]
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in foo.A'
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:OPEN visibility:public [external] superTypes:[foo.A]'
     FUN name:bar visibility:public modality:FINAL <> ($this:foo.B) returnType:kotlin.String
       $this: VALUE_PARAMETER name:<this> type:foo.B

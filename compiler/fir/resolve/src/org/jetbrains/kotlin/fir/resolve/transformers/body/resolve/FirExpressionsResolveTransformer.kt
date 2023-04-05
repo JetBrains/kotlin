@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isExternal
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
@@ -1265,7 +1266,10 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             val superClass = containingClass.superTypeRefs.firstOrNull {
                 if (it !is FirResolvedTypeRef) return@firstOrNull false
                 val declaration = extractSuperTypeDeclaration(it) ?: return@firstOrNull false
-                declaration.classKind == ClassKind.CLASS
+                val isExternalConstructorWithoutArguments = declaration.isExternal
+                        && delegatedConstructorCall.isCallToDelegatedConstructorWithoutArguments
+                declaration.classKind == ClassKind.CLASS && !isExternalConstructorWithoutArguments
+
             } as FirResolvedTypeRef? ?: session.builtinTypes.anyType
             delegatedConstructorCall.replaceConstructedTypeRef(superClass)
             delegatedConstructorCall.replaceCalleeReference(buildExplicitSuperReference {
@@ -1306,6 +1310,9 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         dataFlowAnalyzer.exitDelegatedConstructorCall(result, callCompleted)
         return result
     }
+
+    private val FirDelegatedConstructorCall.isCallToDelegatedConstructorWithoutArguments
+        get() = source?.kind == KtFakeSourceElementKind.DelegatingConstructorCall
 
     private fun extractSuperTypeDeclaration(typeRef: FirTypeRef): FirRegularClass? {
         if (typeRef !is FirResolvedTypeRef) return null
