@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.decompiler.stub.files
 import com.intellij.psi.stubs.StubElement
 import com.intellij.util.indexing.FileContentImpl
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.KotlinClsStubBuilder
+import org.jetbrains.kotlin.contracts.description.*
 import org.jetbrains.kotlin.psi.KtProjectionKind
 import org.jetbrains.kotlin.psi.stubs.impl.*
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -25,11 +26,22 @@ abstract class AbstractAdditionalStubInfoTest : AbstractDecompiledClassTest() {
 
     private fun extractAdditionInfo(stub: StubElement<*>, builder: StringBuilder, level: Int) {
         builder.append(stub.toString())
-        if (stub is KotlinUserTypeStubImpl) {
-            val upperBound = stub.upperBound
-            if (upperBound != null) {
-                builder.append("    ft: ")
-                appendFlexibleTypeInfo(builder, upperBound)
+        when (stub) {
+            is KotlinUserTypeStubImpl -> {
+                val upperBound = stub.upperBound
+                if (upperBound != null) {
+                    builder.append("    ft: ")
+                    appendFlexibleTypeInfo(builder, upperBound)
+                }
+            }
+            is KotlinFunctionStubImpl -> {
+                val contract = stub.contract
+                if (contract != null) {
+                    for (element in contract) {
+                        builder.append("\n" + "  ".repeat(level)).append("effect:")
+                        element.accept(KotlinContractRenderer(builder), null)
+                    }
+                }
             }
         }
         for (child in stub.childrenStubs) {
@@ -77,4 +89,53 @@ abstract class AbstractAdditionalStubInfoTest : AbstractDecompiledClassTest() {
             }
         }
     }
+}
+
+class KotlinContractRenderer(private val buffer: StringBuilder) : KtContractDescriptionVisitor<Unit, Nothing?, KotlinTypeBean, Nothing?>() {
+    override fun visitConditionalEffectDeclaration(conditionalEffect: KtConditionalEffectDeclaration<KotlinTypeBean, Nothing?>, data: Nothing?) {
+        conditionalEffect.effect.accept(this, data)
+        buffer.append(" -> ")
+        conditionalEffect.condition.accept(this, data)
+    }
+
+    override fun visitReturnsEffectDeclaration(returnsEffect: KtReturnsEffectDeclaration<KotlinTypeBean, Nothing?>, data: Nothing?) {
+        buffer.append("Returns(")
+        returnsEffect.value.accept(this, data)
+        buffer.append(")")
+    }
+
+    override fun visitCallsEffectDeclaration(callsEffect: KtCallsEffectDeclaration<KotlinTypeBean, Nothing?>, data: Nothing?) {
+        buffer.append("CallsInPlace(")
+        callsEffect.valueParameterReference.accept(this, data)
+        buffer.append(", ${callsEffect.kind})")
+    }
+
+    override fun visitLogicalBinaryOperationContractExpression(binaryLogicExpression: KtBinaryLogicExpression<KotlinTypeBean, Nothing?>, data: Nothing?) {
+        binaryLogicExpression.left.accept(this, data)
+        buffer.append(" ${binaryLogicExpression.kind.token} ")
+        binaryLogicExpression.right.accept(this, data)
+    }
+
+    override fun visitLogicalNot(logicalNot: KtLogicalNot<KotlinTypeBean, Nothing?>, data: Nothing?) {
+        logicalNot.arg.accept(this, data)
+    }
+
+    override fun visitIsInstancePredicate(isInstancePredicate: KtIsInstancePredicate<KotlinTypeBean, Nothing?>, data: Nothing?) {
+        isInstancePredicate.arg.accept(this, data)
+        buffer.append(" ${if (isInstancePredicate.isNegated) "!" else ""}is ${isInstancePredicate.type}")
+    }
+
+    override fun visitIsNullPredicate(isNullPredicate: KtIsNullPredicate<KotlinTypeBean, Nothing?>, data: Nothing?) {
+        isNullPredicate.arg.accept(this, data)
+        buffer.append(" ${if (isNullPredicate.isNegated) "!=" else "=="} null")
+    }
+
+    override fun visitConstantDescriptor(constantReference: KtConstantReference<KotlinTypeBean, Nothing?>, data: Nothing?) {
+        buffer.append(constantReference.name)
+    }
+
+    override fun visitValueParameterReference(valueParameterReference: KtValueParameterReference<KotlinTypeBean, Nothing?>, data: Nothing?) {
+        buffer.append("param(").append(valueParameterReference.parameterIndex).append(")")
+    }
+
 }

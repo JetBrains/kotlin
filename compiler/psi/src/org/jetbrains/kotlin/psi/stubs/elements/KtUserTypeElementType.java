@@ -61,7 +61,7 @@ public class KtUserTypeElementType extends KtStubElementType<KotlinUserTypeStub,
         }
     }
 
-    private static void serializeType(@NotNull StubOutputStream dataStream, @Nullable KotlinTypeBean type) throws IOException {
+    public static void serializeType(@NotNull StubOutputStream dataStream, @Nullable KotlinTypeBean type) throws IOException {
         dataStream.writeInt(KotlinTypeBeanKind.fromBean(type).ordinal());
         if (type instanceof KotlinClassTypeBean) {
             StubUtils.serializeClassId(dataStream, ((KotlinClassTypeBean) type).getClassId());
@@ -94,7 +94,7 @@ public class KtUserTypeElementType extends KtStubElementType<KotlinUserTypeStub,
     }
 
     @Nullable
-    private static KotlinTypeBean deserializeType(@NotNull StubInputStream dataStream) throws IOException {
+    public static KotlinTypeBean deserializeType(@NotNull StubInputStream dataStream) throws IOException {
         KotlinTypeBeanKind typeKind = KotlinTypeBeanKind.values()[dataStream.readInt()];
         switch (typeKind) {
             case CLASS: {

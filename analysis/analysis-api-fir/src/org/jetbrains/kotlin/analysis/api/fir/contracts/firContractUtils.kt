@@ -12,10 +12,13 @@ import org.jetbrains.kotlin.analysis.api.contracts.description.booleans.*
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtParameterSymbol
+import org.jetbrains.kotlin.contracts.description.*
 import org.jetbrains.kotlin.fir.contracts.description.*
-import org.jetbrains.kotlin.fir.expressions.LogicOperationKind
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
+import org.jetbrains.kotlin.contracts.description.LogicOperationKind
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 
-internal fun ConeEffectDeclaration.coneEffectDeclarationToAnalysisApi(
+internal fun KtEffectDeclaration<ConeKotlinType, ConeDiagnostic>.coneEffectDeclarationToAnalysisApi(
     builder: KtSymbolByFirBuilder,
     firFunctionSymbol: KtFirFunctionSymbol
 ): KtContractEffectDeclaration =
@@ -24,7 +27,7 @@ internal fun ConeEffectDeclaration.coneEffectDeclarationToAnalysisApi(
 private class ConeContractDescriptionElementToAnalysisApi(
     private val builder: KtSymbolByFirBuilder,
     private val firFunctionSymbol: KtFirFunctionSymbol
-) : ConeContractDescriptionVisitor<Any, Unit>() {
+) : KtContractDescriptionVisitor<Any, Unit, ConeKotlinType, ConeDiagnostic>() {
 
     override fun visitConditionalEffectDeclaration(
         conditionalEffect: ConeConditionalEffectDeclaration,
@@ -39,15 +42,15 @@ private class ConeContractDescriptionElementToAnalysisApi(
         data: Unit
     ): KtContractReturnsContractEffectDeclaration =
         when (val value = returnsEffect.value) {
-            ConeConstantReference.NULL ->
+            ConeContractConstantValues.NULL ->
                 KtContractReturnsSpecificValueEffectDeclaration(KtContractConstantValue(KtContractConstantType.NULL, builder.token))
-            ConeConstantReference.NOT_NULL -> KtContractReturnsNotNullEffectDeclaration(builder.token)
-            ConeConstantReference.WILDCARD -> KtContractReturnsSuccessfullyEffectDeclaration(builder.token)
-            is ConeBooleanConstantReference -> KtContractReturnsSpecificValueEffectDeclaration(
+            ConeContractConstantValues.NOT_NULL -> KtContractReturnsNotNullEffectDeclaration(builder.token)
+            ConeContractConstantValues.WILDCARD -> KtContractReturnsSuccessfullyEffectDeclaration(builder.token)
+            is KtBooleanConstantReference -> KtContractReturnsSpecificValueEffectDeclaration(
                 KtContractConstantValue(
                     when (value) {
-                        ConeBooleanConstantReference.TRUE -> KtContractConstantType.TRUE
-                        ConeBooleanConstantReference.FALSE -> KtContractConstantType.FALSE
+                        ConeContractConstantValues.TRUE -> KtContractConstantType.TRUE
+                        ConeContractConstantValues.FALSE -> KtContractConstantType.FALSE
                         else -> error("Can't convert $value to the Analysis API")
                     },
                     builder.token
@@ -56,7 +59,7 @@ private class ConeContractDescriptionElementToAnalysisApi(
             else -> error("Can't convert $returnsEffect to the Analysis API")
         }
 
-    override fun visitCallsEffectDeclaration(callsEffect: ConeCallsEffectDeclaration, data: Unit): KtContractCallsInPlaceContractEffectDeclaration =
+    override fun visitCallsEffectDeclaration(callsEffect: KtCallsEffectDeclaration<ConeKotlinType, ConeDiagnostic>, data: Unit): KtContractCallsInPlaceContractEffectDeclaration =
         KtContractCallsInPlaceContractEffectDeclaration(
             callsEffect.valueParameterReference.accept(),
             callsEffect.kind
@@ -92,8 +95,8 @@ private class ConeContractDescriptionElementToAnalysisApi(
         data: Unit
     ): KtContractBooleanConstantExpression =
         when (booleanConstantDescriptor) {
-            ConeBooleanConstantReference.TRUE -> KtContractBooleanConstantExpression(true, builder.token)
-            ConeBooleanConstantReference.FALSE -> KtContractBooleanConstantExpression(false, builder.token)
+            ConeContractConstantValues.TRUE -> KtContractBooleanConstantExpression(true, builder.token)
+            ConeContractConstantValues.FALSE -> KtContractBooleanConstantExpression(false, builder.token)
             else -> error("Can't convert $booleanConstantDescriptor to Analysis API")
         }
 

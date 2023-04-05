@@ -150,7 +150,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         }
     }
 
-    private fun createKotlinTypeBean(
+    fun createKotlinTypeBean(
         type: Type?
     ): KotlinTypeBean? {
         if (type == null) return null

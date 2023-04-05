@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.resolve.DataClassResolver
 import org.jetbrains.kotlin.serialization.deserialization.AnnotatedCallableKind
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 import org.jetbrains.kotlin.serialization.deserialization.getName
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 fun createPackageDeclarationsStubs(
     parentStub: StubElement<out PsiElement>,
@@ -173,6 +174,7 @@ private class FunctionClsStubBuilder(
         // Note that arguments passed to stubs here and elsewhere are based on what stabs would be generated based on decompiled code
         // As functions are never decompiled to fun f() = 1 form, hasBlockBody is always true
         // This info is anyway irrelevant for the purposes these stubs are used
+        val hasContract = functionProto.hasContract()
         return KotlinFunctionStubImpl(
             parent,
             callableName.ref(),
@@ -182,7 +184,10 @@ private class FunctionClsStubBuilder(
             hasBlockBody = true,
             hasBody = Flags.MODALITY.get(functionProto.flags) != Modality.ABSTRACT,
             hasTypeParameterListBeforeFunctionName = functionProto.typeParameterList.isNotEmpty(),
-            mayHaveContract = functionProto.hasContract()
+            mayHaveContract = hasContract,
+            runIf(hasContract) {
+                ClsContractBuilder(c, typeStubBuilder).loadContract(functionProto)
+            }
         )
     }
 }

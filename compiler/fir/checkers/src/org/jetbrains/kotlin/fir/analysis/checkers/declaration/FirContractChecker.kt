@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtRealSourceElementKind
+import org.jetbrains.kotlin.contracts.description.*
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 
 object FirContractChecker : FirFunctionChecker() {
     private val EMPTY_CONTRACT_MESSAGE = "Empty contract block is not allowed"
@@ -66,7 +68,7 @@ object FirContractChecker : FirFunctionChecker() {
         else if (declaration.symbol.callableId.isLocal || declaration.visibility == Visibilities.Local) contractNotAllowed("Contracts are not allowed for local functions")
     }
 
-    private object DiagnosticExtractor : ConeContractDescriptionVisitor<ConeDiagnostic?, Nothing?>() {
+    private object DiagnosticExtractor : KtContractDescriptionVisitor<ConeDiagnostic?, Nothing?, ConeKotlinType, ConeDiagnostic>() {
         override fun visitContractDescriptionElement(
             contractDescriptionElement: ConeContractDescriptionElement,
             data: Nothing?
@@ -90,7 +92,7 @@ object FirContractChecker : FirFunctionChecker() {
         }
 
         override fun visitErroneousCallsEffectDeclaration(
-            callsEffect: ConeErroneousCallsEffectDeclaration,
+            callsEffect: KtErroneousCallsEffectDeclaration<ConeKotlinType, ConeDiagnostic>,
             data: Nothing?
         ): ConeDiagnostic {
             return callsEffect.diagnostic
@@ -112,7 +114,7 @@ object FirContractChecker : FirFunctionChecker() {
         }
 
         override fun visitErroneousIsInstancePredicate(
-            isInstancePredicate: ConeErroneousIsInstancePredicate,
+            isInstancePredicate: KtErroneousIsInstancePredicate<ConeKotlinType, ConeDiagnostic>,
             data: Nothing?
         ): ConeDiagnostic {
             return isInstancePredicate.diagnostic
@@ -123,20 +125,20 @@ object FirContractChecker : FirFunctionChecker() {
         }
 
         override fun visitErroneousConstantReference(
-            erroneousConstantReference: ConeErroneousConstantReference,
+            erroneousConstantReference: KtErroneousConstantReference<ConeKotlinType, ConeDiagnostic>,
             data: Nothing?
         ): ConeDiagnostic {
             return erroneousConstantReference.diagnostic
         }
 
         override fun visitErroneousValueParameterReference(
-            valueParameterReference: ConeErroneousValueParameterReference,
+            valueParameterReference: KtErroneousValueParameterReference<ConeKotlinType, ConeDiagnostic>,
             data: Nothing?
         ): ConeDiagnostic {
             return valueParameterReference.diagnostic
         }
 
-        override fun visitErroneousElement(element: ConeErroneousContractElement, data: Nothing?): ConeDiagnostic {
+        override fun visitErroneousElement(element: KtErroneousContractElement<ConeKotlinType, ConeDiagnostic>, data: Nothing?): ConeDiagnostic {
             return element.diagnostic
         }
     }

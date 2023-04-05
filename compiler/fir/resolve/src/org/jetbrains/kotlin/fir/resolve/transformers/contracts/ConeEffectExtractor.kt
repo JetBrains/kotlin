@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers.contracts
 
-import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
+import org.jetbrains.kotlin.contracts.description.*
+import org.jetbrains.kotlin.contracts.description.LogicOperationKind
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.contracts.description.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeContractDescriptionError
@@ -37,8 +39,8 @@ class ConeEffectExtractor(
         private val BOOLEAN_NOT = FirContractsDslNames.id("kotlin", "Boolean", "not")
     }
 
-    private fun ConeContractDescriptionError.asElement(): ConeErroneousContractElement {
-        return ConeErroneousContractElement(this)
+    private fun ConeContractDescriptionError.asElement(): KtErroneousContractElement<ConeKotlinType, ConeDiagnostic> {
+        return KtErroneousContractElement(this)
     }
 
     override fun visitElement(element: FirElement, data: Nothing?): ConeContractDescriptionElement {
@@ -63,18 +65,19 @@ class ConeEffectExtractor(
             FirContractsDslNames.RETURNS -> {
                 val argument = functionCall.arguments.firstOrNull()
                 val value = if (argument == null) {
-                    ConeConstantReference.WILDCARD
+                    ConeContractConstantValues.WILDCARD
                 } else {
                     when (val value = argument.asContractElement()) {
                         is ConeConstantReference -> value
-                        else -> ConeErroneousConstantReference(ConeContractDescriptionError.NotAConstant(value))
+                        else -> KtErroneousConstantReference(ConeContractDescriptionError.NotAConstant(value))
                     }
                 }
-                ConeReturnsEffectDeclaration(value)
+                @Suppress("UNCHECKED_CAST")
+                KtReturnsEffectDeclaration(value as ConeConstantReference)
             }
 
             FirContractsDslNames.RETURNS_NOT_NULL -> {
-                ConeReturnsEffectDeclaration(ConeConstantReference.NOT_NULL)
+                ConeReturnsEffectDeclaration(ConeContractConstantValues.NOT_NULL)
             }
 
             FirContractsDslNames.CALLS_IN_PLACE -> {
@@ -82,7 +85,7 @@ class ConeEffectExtractor(
                 when (val argument = functionCall.arguments.getOrNull(1)) {
                     null -> ConeCallsEffectDeclaration(reference, EventOccurrencesRange.UNKNOWN)
                     else -> when (val kind = argument.parseInvocationKind()) {
-                        null -> ConeErroneousCallsEffectDeclaration(reference, ConeContractDescriptionError.UnresolvedInvocationKind(argument))
+                        null -> KtErroneousCallsEffectDeclaration(reference, ConeContractDescriptionError.UnresolvedInvocationKind(argument))
                         else -> ConeCallsEffectDeclaration(reference, kind)
                     }
                 }
@@ -146,10 +149,10 @@ class ConeEffectExtractor(
                 return ConeContractDescriptionError.UnresolvedCall(name).asElement()
             }
         val parameter = symbol.fir as? FirValueParameter
-            ?: return ConeErroneousValueParameterReference(
+            ?: return KtErroneousValueParameterReference(
                 ConeContractDescriptionError.IllegalParameter(symbol, "$symbol is not a value parameter")
             )
-        val index = valueParameters.indexOf(parameter).takeUnless { it < 0 } ?: return ConeErroneousValueParameterReference(
+        val index = valueParameters.indexOf(parameter).takeUnless { it < 0 } ?: return KtErroneousValueParameterReference(
             ConeContractDescriptionError.IllegalParameter(symbol, "Value paramter $symbol is not found in parameters of outer function")
         )
         val type = parameter.returnTypeRef.coneType
@@ -200,10 +203,10 @@ class ConeEffectExtractor(
 
     override fun <T> visitConstExpression(constExpression: FirConstExpression<T>, data: Nothing?): ConeContractDescriptionElement {
         return when (constExpression.kind) {
-            ConstantValueKind.Null -> ConeConstantReference.NULL
+            ConstantValueKind.Null -> ConeContractConstantValues.NULL
             ConstantValueKind.Boolean -> when (constExpression.value as Boolean) {
-                true -> ConeBooleanConstantReference.TRUE
-                false -> ConeBooleanConstantReference.FALSE
+                true -> ConeContractConstantValues.TRUE
+                false -> ConeContractConstantValues.FALSE
             }
             else -> ConeContractDescriptionError.IllegalConst(constExpression, onlyNullAllowed = false).asElement()
         }
@@ -224,7 +227,7 @@ class ConeEffectExtractor(
         }
         return when (diagnostic) {
             null -> ConeIsInstancePredicate(arg, type, isNegated)
-            else -> ConeErroneousIsInstancePredicate(arg, type, isNegated, diagnostic)
+            else -> KtErroneousIsInstancePredicate(arg, type, isNegated, diagnostic)
         }
     }
 
@@ -240,11 +243,11 @@ class ConeEffectExtractor(
         }
     }
 
-    private fun noReceiver(callableId: CallableId): ConeErroneousContractElement {
+    private fun noReceiver(callableId: CallableId): KtErroneousContractElement<ConeKotlinType, ConeDiagnostic> {
         return ConeContractDescriptionError.NoReceiver(callableId.callableName).asElement()
     }
 
-    private fun noArgument(callableId: CallableId): ConeErroneousContractElement {
+    private fun noArgument(callableId: CallableId): KtErroneousContractElement<ConeKotlinType, ConeDiagnostic> {
         return ConeContractDescriptionError.NoArgument(callableId.callableName).asElement()
     }
 
@@ -262,7 +265,7 @@ class ConeEffectExtractor(
     private fun FirExpression.asContractValueExpression(): ConeValueParameterReference {
         return when (val element = asContractElement()) {
             is ConeValueParameterReference -> element
-            else -> ConeErroneousValueParameterReference(ConeContractDescriptionError.NotAParameterReference(element))
+            else -> KtErroneousValueParameterReference(ConeContractDescriptionError.NotAParameterReference(element))
         }
     }
 }

@@ -1,74 +1,33 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.contracts.description
 
+import org.jetbrains.kotlin.contracts.description.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 
-interface ConeContractDescriptionValue : ConeContractDescriptionElement {
-    override fun <R, D> accept(contractDescriptionVisitor: ConeContractDescriptionVisitor<R, D>, data: D): R =
-        contractDescriptionVisitor.visitValue(this, data)
+object ConeContractConstantValues {
+    val NULL = KtConstantReference<ConeKotlinType, ConeDiagnostic>("NULL")
+    val WILDCARD = KtConstantReference<ConeKotlinType, ConeDiagnostic>("WILDCARD")
+    val NOT_NULL = KtConstantReference<ConeKotlinType, ConeDiagnostic>("NOT_NULL")
+    val TRUE = KtBooleanConstantReference<ConeKotlinType, ConeDiagnostic>("TRUE")
+    val FALSE = KtBooleanConstantReference<ConeKotlinType, ConeDiagnostic>("FALSE")
 }
 
-open class ConeConstantReference protected constructor(val name: String) : ConeContractDescriptionValue {
-    override val erroneous: Boolean
-        get() = false
-
-    override fun <R, D> accept(contractDescriptionVisitor: ConeContractDescriptionVisitor<R, D>, data: D): R =
-        contractDescriptionVisitor.visitConstantDescriptor(this, data)
-
-    companion object {
-        val NULL = ConeConstantReference("NULL")
-        val WILDCARD = ConeConstantReference("WILDCARD")
-        val NOT_NULL = ConeConstantReference("NOT_NULL")
-    }
-}
-
-class ConeBooleanConstantReference private constructor(name: String) : ConeConstantReference(name), ConeBooleanExpression {
-    override fun <R, D> accept(contractDescriptionVisitor: ConeContractDescriptionVisitor<R, D>, data: D): R =
-        contractDescriptionVisitor.visitBooleanConstantDescriptor(this, data)
-
-    companion object {
-        val TRUE = ConeBooleanConstantReference("TRUE")
-        val FALSE = ConeBooleanConstantReference("FALSE")
-    }
-}
-
-class ConeErroneousConstantReference(val diagnostic: ConeDiagnostic) : ConeConstantReference("ERROR") {
-    override val erroneous: Boolean
-        get() = true
-
-    override fun <R, D> accept(contractDescriptionVisitor: ConeContractDescriptionVisitor<R, D>, data: D): R =
-        contractDescriptionVisitor.visitErroneousConstantReference(this, data)
-}
-
-/*
- * Index of value parameter of function
- * -1 means that it is reference to extension receiver
- */
-open class ConeValueParameterReference(val parameterIndex: Int, val name: String) : ConeContractDescriptionValue {
-    init {
-        assert(parameterIndex >= -1)
-    }
-
-    override val erroneous: Boolean
-        get() = false
-
-    override fun <R, D> accept(contractDescriptionVisitor: ConeContractDescriptionVisitor<R, D>, data: D): R =
-        contractDescriptionVisitor.visitValueParameterReference(this, data)
-}
-
-class ConeBooleanValueParameterReference(parameterIndex: Int, name: String) : ConeValueParameterReference(parameterIndex, name), ConeBooleanExpression {
-    override fun <R, D> accept(contractDescriptionVisitor: ConeContractDescriptionVisitor<R, D>, data: D): R =
-        contractDescriptionVisitor.visitBooleanValueParameterReference(this, data)
-}
-
-class ConeErroneousValueParameterReference(val diagnostic: ConeDiagnostic) : ConeValueParameterReference(Int.MAX_VALUE, "ERROR") {
-    override val erroneous: Boolean
-        get() = true
-
-    override fun <R, D> accept(contractDescriptionVisitor: ConeContractDescriptionVisitor<R, D>, data: D): R =
-        contractDescriptionVisitor.visitErroneousValueParameterReference(this, data)
-}
+typealias ConeEffectDeclaration = KtEffectDeclaration<ConeKotlinType, ConeDiagnostic>
+typealias ConeContractDescriptionElement = KtContractDescriptionElement<ConeKotlinType, ConeDiagnostic>
+typealias ConeCallsEffectDeclaration = KtCallsEffectDeclaration<ConeKotlinType, ConeDiagnostic>
+typealias ConeConditionalEffectDeclaration = KtConditionalEffectDeclaration<ConeKotlinType, ConeDiagnostic>
+typealias ConeReturnsEffectDeclaration = KtReturnsEffectDeclaration<ConeKotlinType, ConeDiagnostic>
+typealias ConeConstantReference = KtConstantReference<ConeKotlinType, ConeDiagnostic>
+typealias ConeIsNullPredicate = KtIsNullPredicate<ConeKotlinType, ConeDiagnostic>
+typealias ConeIsInstancePredicate = KtIsInstancePredicate<ConeKotlinType, ConeDiagnostic>
+typealias ConeLogicalNot = KtLogicalNot<ConeKotlinType, ConeDiagnostic>
+typealias ConeBooleanExpression = KtBooleanExpression<ConeKotlinType, ConeDiagnostic>
+typealias ConeBinaryLogicExpression = KtBinaryLogicExpression<ConeKotlinType, ConeDiagnostic>
+typealias ConeBooleanConstantReference = KtBooleanConstantReference<ConeKotlinType, ConeDiagnostic>
+typealias ConeValueParameterReference = KtValueParameterReference<ConeKotlinType, ConeDiagnostic>
+typealias ConeBooleanValueParameterReference = KtBooleanValueParameterReference<ConeKotlinType, ConeDiagnostic>
