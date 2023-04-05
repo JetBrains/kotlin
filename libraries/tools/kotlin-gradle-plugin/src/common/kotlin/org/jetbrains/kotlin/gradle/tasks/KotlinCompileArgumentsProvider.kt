@@ -26,5 +26,8 @@ class KotlinJvmCompilerArgumentsProvider
     val friendPaths: FileCollection = taskProvider.friendPaths
     val compileClasspath: Iterable<File> = taskProvider.libraries
     val destinationDir: File = taskProvider.destinationDirectory.get().asFile
+    @Suppress("DEPRECATION")
+    val taskModuleName: String? = taskProvider.moduleName.orNull
+    val nagTaskModuleNameUsage: Boolean = taskProvider.nagTaskModuleNameUsage.get()
     internal val compilerOptions: KotlinJvmCompilerOptions = taskProvider.compilerOptions
 }

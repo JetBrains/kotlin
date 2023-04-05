@@ -91,6 +91,7 @@ class KotlinCompileApiTest {
         assertEquals(setOf(pluginDependency, anotherCompilerPlugin), taskImpl.pluginClasspath.files)
     }
 
+    @Suppress("DEPRECATION")
     @Test
     fun testModuleName() {
         taskApi.moduleName.set("foo")

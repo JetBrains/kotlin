@@ -36,17 +36,16 @@ internal open class KotlinJvmPlugin(
             @Suppress("DEPRECATION") compilationsContainer: NamedDomainObjectContainer<out AbstractKotlinCompilation<KotlinJvmOptions>>
         ) {
             extensionCompilerOptions.verbose.convention(logger.isDebugEnabled)
+            extensionCompilerOptions.moduleName.convention(baseModuleName())
             compilationsContainer.configureEach {
                 val jvmCompilerOptions = it.compilerOptions.options as KotlinJvmCompilerOptions
                 KotlinJvmCompilerOptionsHelper.syncOptionsAsConvention(
                     from = extensionCompilerOptions,
                     into = jvmCompilerOptions
                 )
+
                 jvmCompilerOptions.moduleName.convention(
-                    extensionCompilerOptions.moduleName.orElse(
-                        @Suppress("DEPRECATION")
-                        project.providers.provider { it.moduleName }
-                    )
+                    it.moduleNameForCompilation(extensionCompilerOptions.moduleName)
                 )
             }
         }
@@ -77,15 +76,15 @@ internal open class KotlinJvmPlugin(
             .apply {
                 disambiguationClassifier = null // don't add anything to the task names
             }
-
         val kotlinExtension = project.kotlinExtension as KotlinJvmProjectExtension
         kotlinExtension.target = target
+
+        super.apply(project)
+
         project.configureCompilerOptionsForTarget(
             kotlinExtension.compilerOptions,
             target.compilations
         )
-
-        super.apply(project)
 
         project.pluginManager.apply(ScriptingGradleSubplugin::class.java)
     }

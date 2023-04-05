@@ -205,6 +205,10 @@ class CompilerOptionsProjectIT : KGPBaseTest() {
             build("compileKotlin") {
                 assertTasksExecuted(":compileKotlin")
 
+                assertOutputDoesNotContain(
+                    "w: :compileKotlin 'KotlinJvmCompile.moduleName' is deprecated, please migrate to 'compilerOptions.moduleName'!"
+                )
+
                 val compilationArgs = output.lineSequence().first { it.contains("Kotlin compiler args:") }
 
                 assert(compilationArgs.contains("-module-name customModule")) {
@@ -236,6 +240,7 @@ class CompilerOptionsProjectIT : KGPBaseTest() {
                 |kotlin {
                 |   compilerOptions {
                 |       javaParameters = true
+                |       moduleName = "my_app"
                 |   }
                 |}
                 """.trimMargin()
@@ -244,11 +249,62 @@ class CompilerOptionsProjectIT : KGPBaseTest() {
             build("compileDebugKotlin") {
                 assertTasksExecuted(":compileDebugKotlin")
 
+                assertOutputDoesNotContain(
+                    "w: :compileKotlin 'KotlinJvmCompile.moduleName' is deprecated, please migrate to 'compilerOptions.moduleName'!"
+                )
+
                 val compilationArgs = output.lineSequence().first { it.contains("Kotlin compiler args:") }
 
                 assert(compilationArgs.contains("-java-parameters")) {
                     printBuildOutput()
                     "Compiler arguments does not contain '-java-parameters': $compilationArgs"
+                }
+
+                assert(compilationArgs.contains("-module-name my_app_debug")) {
+                    printBuildOutput()
+                    "Compiler arguments does not contain '-module-name my_app_debug': $compilationArgs"
+                }
+            }
+        }
+    }
+
+    @DisplayName("KT-57688: task moduleName input overrides project level moduleName")
+    @JvmGradlePluginTests
+    @GradleTest
+    fun moduleNameTaskOverrideProject(gradleVersion: GradleVersion) {
+        project(
+            projectName = "simpleProject",
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
+        ) {
+            buildGradle.appendText(
+                //language=Groovy
+                """
+                |
+                |kotlin {
+                |    compilerOptions {
+                |         moduleName = "customModule"
+                |    }
+                |}
+                |
+                |tasks.named("compileKotlin", org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile.class).configure {
+                |    moduleName = "otherCustomModuleName"
+                |}
+                """.trimMargin()
+            )
+
+            build("compileKotlin") {
+                assertTasksExecuted(":compileKotlin")
+
+                assertOutputContains(
+                    "w: :compileKotlin 'KotlinJvmCompile.moduleName' is deprecated, please migrate to 'compilerOptions.moduleName'!"
+                )
+
+                val compilationArgs = output.lineSequence().first { it.contains("Kotlin compiler args:") }
+
+                assert(compilationArgs.contains("-module-name otherCustomModuleName")) {
+                    printBuildOutput()
+                    "Compiler arguments does not contain '-module-name otherCustomModuleName': $compilationArgs"
                 }
             }
         }

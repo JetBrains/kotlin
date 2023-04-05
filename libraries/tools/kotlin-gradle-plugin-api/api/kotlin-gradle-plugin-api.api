@@ -1540,6 +1540,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/tasks/Kapt : org/jet
 
 public abstract interface class org/jetbrains/kotlin/gradle/tasks/KaptGenerateStubs : org/jetbrains/kotlin/gradle/tasks/KotlinJvmCompile {
 	public abstract fun getKaptClasspath ()Lorg/gradle/api/file/ConfigurableFileCollection;
+	public abstract fun getModuleName ()Lorg/gradle/api/provider/Property;
 	public abstract fun getStubsDir ()Lorg/gradle/api/file/DirectoryProperty;
 }
 
@@ -1606,6 +1607,7 @@ public final class org/jetbrains/kotlin/gradle/tasks/KotlinJavaToolchain$JdkSett
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/tasks/KotlinJvmCompile : org/jetbrains/kotlin/gradle/dsl/KotlinCompile, org/jetbrains/kotlin/gradle/tasks/BaseKotlinCompile, org/jetbrains/kotlin/gradle/tasks/KotlinCompilationTask {
+	public abstract fun getModuleName ()Lorg/gradle/api/provider/Property;
 	public abstract fun getParentKotlinOptions ()Lorg/gradle/api/provider/Property;
 }
 

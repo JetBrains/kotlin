@@ -66,9 +66,6 @@ abstract class KotlinCompile @Inject constructor(
     KotlinCompilationTask<KotlinJvmCompilerOptions>,
     UsesKotlinJavaToolchain {
 
-    @get:Internal // covered by compiler options
-    abstract override val moduleName: Property<String>
-
     final override val kotlinOptions: KotlinJvmOptions = KotlinJvmOptionsCompat(
         { this },
         compilerOptions
@@ -110,6 +107,14 @@ abstract class KotlinCompile @Inject constructor(
     var classpath: FileCollection
         set(value) = libraries.setFrom(value)
         get() = libraries
+
+    @get:Deprecated(
+        message = "Please migrate to compilerOptions.moduleName",
+        replaceWith = ReplaceWith("compilerOptions.moduleName")
+    )
+    @get:Optional
+    @get:Input
+    abstract override val moduleName: Property<String>
 
     @get:Input
     abstract val useKotlinAbiSnapshot: Property<Boolean>
@@ -162,6 +167,9 @@ abstract class KotlinCompile @Inject constructor(
 
     @get:Input
     internal abstract val jvmTargetValidationMode: Property<PropertiesProvider.JvmTargetValidationMode>
+
+    @get:Internal
+    internal val nagTaskModuleNameUsage: Property<Boolean> = objectFactory.propertyWithConvention(false)
 
     @get:Internal
     internal val scriptDefinitions: ConfigurableFileCollection = objectFactory.fileCollection()
@@ -239,6 +247,9 @@ abstract class KotlinCompile @Inject constructor(
 
             KotlinJvmCompilerOptionsHelper.fillCompilerArguments(compilerOptions, args)
 
+            overrideArgsUsingTaskModuleNameWithWarning(args)
+            requireNotNull(args.moduleName)
+
             val localExecutionTimeFreeCompilerArgs = executionTimeFreeCompilerArgs
             if (localExecutionTimeFreeCompilerArgs != null) {
                 args.freeArgs = localExecutionTimeFreeCompilerArgs
@@ -279,6 +290,21 @@ abstract class KotlinCompile @Inject constructor(
             }
 
             args.freeArgs += (scriptSourcesFiles + javaSourcesFiles + sourcesFiles).map { it.absolutePath }
+        }
+    }
+
+    @Suppress("DEPRECATION")
+    protected fun overrideArgsUsingTaskModuleNameWithWarning(
+        args: K2JVMCompilerArguments
+    ) {
+        val taskModuleName = moduleName.orNull
+        if (taskModuleName != null) {
+            if (nagTaskModuleNameUsage.get()) {
+                logger.warn(
+                    "w: $path 'KotlinJvmCompile.moduleName' is deprecated, please migrate to 'compilerOptions.moduleName'!"
+                )
+            }
+            args.moduleName = taskModuleName
         }
     }
 

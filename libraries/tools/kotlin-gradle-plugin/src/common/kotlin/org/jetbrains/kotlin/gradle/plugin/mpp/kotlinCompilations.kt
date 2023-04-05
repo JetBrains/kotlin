@@ -6,10 +6,12 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
+import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.plugin.HasCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.archivesName
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.utils.fileExtensionCasePermutations
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -75,6 +77,19 @@ internal fun KotlinCompilation<*>.disambiguateName(simpleName: String): String {
 }
 
 private val invalidModuleNameCharactersRegex = """[\\/\r\n\t]""".toRegex()
+
+internal fun Project.baseModuleName(): Provider<String> = archivesName.orElse(project.name)
+
+internal fun KotlinCompilation<*>.moduleNameForCompilation(
+    baseName: Provider<String>
+): Provider<String> = baseName.map {
+    val suffix = if (compilationName == KotlinCompilation.MAIN_COMPILATION_NAME) {
+        ""
+    } else {
+        "_${compilationName}"
+    }
+    filterModuleName("$it$suffix")
+}
 
 internal fun filterModuleName(moduleName: String): String =
     moduleName.replace(invalidModuleNameCharactersRegex, "_")

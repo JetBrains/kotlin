@@ -111,6 +111,9 @@ abstract class KaptGenerateStubsTask @Inject constructor(
             args.freeArgs = emptyList()
             KotlinJvmCompilerOptionsHelper.fillCompilerArguments(compilerOptions, args)
 
+            overrideArgsUsingTaskModuleNameWithWarning(args)
+            requireNotNull(args.moduleName)
+
             // Copied from KotlinCompile
             if (reportingSettings().buildReportMode == BuildReportMode.VERBOSE) {
                 args.reportPerf = true

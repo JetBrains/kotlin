@@ -39,6 +39,7 @@ internal class KaptGenerateStubsConfig : BaseKotlinCompileConfig<KaptGenerateStu
         configureTask { task ->
             val kotlinCompileTask = kotlinTaskProvider.get()
             task.useModuleDetection.value(kotlinCompileTask.useModuleDetection).disallowChanges()
+            @Suppress("DEPRECATION")
             task.moduleName.value(kotlinCompileTask.moduleName).disallowChanges()
             task.libraries.from({ kotlinCompileTask.libraries - project.files(kaptClassesDir) })
             task.compileTaskCompilerOptions.set(providers.provider { kotlinCompileTask.compilerOptions })

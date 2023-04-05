@@ -81,6 +81,14 @@ interface KotlinJvmCompile : BaseKotlinCompile,
     KotlinCompileDeprecated<KotlinJvmOptionsDeprecated>,
     KotlinCompilationTask<KotlinJvmCompilerOptions> {
 
+    @get:Deprecated(
+        message = "Please migrate to compilerOptions.moduleName",
+        replaceWith = ReplaceWith("compilerOptions.moduleName")
+    )
+    @get:Optional
+    @get:Input
+    override val moduleName: Property<String>
+
     // JVM specific
     @get:Internal("Takes part in compiler args.")
     @Deprecated(
@@ -96,6 +104,14 @@ interface KaptGenerateStubs : KotlinJvmCompile {
 
     @get:Internal("Not an input, just passed as kapt args. ")
     val kaptClasspath: ConfigurableFileCollection
+
+    @get:Deprecated(
+        message = "Please migrate to compilerOptions.moduleName",
+        replaceWith = ReplaceWith("compilerOptions.moduleName")
+    )
+    @get:Optional
+    @get:Input
+    override val moduleName: Property<String>
 }
 
 interface BaseKapt : Task {

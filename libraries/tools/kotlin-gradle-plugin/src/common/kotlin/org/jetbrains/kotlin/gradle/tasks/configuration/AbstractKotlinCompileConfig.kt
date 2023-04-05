@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.project.model.LanguageSettings
  */
 internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile<*>>(
     project: Project,
-    private val ext: KotlinTopLevelExtension,
+    val ext: KotlinTopLevelExtension,
     private val languageSettings: Provider<LanguageSettings>
 ) : TaskConfigAction<TASK>(project) {
 
@@ -146,7 +146,7 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
                     compilation.internal.configurations.pluginConfiguration
                 )
             }
-            task.moduleName.set(providers.provider { compilationInfo.moduleName })
+
             @Suppress("DEPRECATION")
             task.ownModuleName.set(project.provider { compilationInfo.moduleName })
             task.sourceSetName.value(providers.provider { compilationInfo.compilationName })
