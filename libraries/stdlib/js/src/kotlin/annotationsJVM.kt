@@ -7,10 +7,10 @@ package kotlin.jvm
 
 // these are used in common generated code in stdlib
 
-// TODO: find how to deprecate these ones
-
 @Target(AnnotationTarget.FIELD)
 @Retention(AnnotationRetention.SOURCE)
+@Deprecated("This annotation has no effect in Kotlin/JS. Use kotlin.concurrent.Volatile annotation in multiplatform code instead.", ReplaceWith("kotlin.concurrent.Volatile", "kotlin.concurrent.Volatile"))
+@DeprecatedSinceKotlin(warningSince = "1.9")
 public actual annotation class Volatile
 
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
