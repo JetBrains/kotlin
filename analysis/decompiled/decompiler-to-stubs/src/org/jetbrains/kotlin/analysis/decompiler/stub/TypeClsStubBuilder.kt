@@ -90,6 +90,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
     }
 
     private fun createClassReferenceTypeStub(parent: KotlinStubBaseImpl<*>, type: Type, annotations: List<ClassIdWithTarget>) {
+        var upperBoundType: KotlinFlexibleType? = null
         if (type.hasFlexibleTypeCapabilitiesId()) {
             val id = c.nameResolver.getString(type.flexibleTypeCapabilitiesId)
 
@@ -97,6 +98,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
                 KotlinPlaceHolderStubImpl<KtDynamicType>(nullableTypeParent(parent, type), KtStubElementTypes.DYNAMIC_TYPE)
                 return
             }
+            upperBoundType = createFlexibleType(type.flexibleUpperBound(c.typeTable)!!)
         }
 
         assert(type.hasClassName() || type.hasTypeAliasName()) {
@@ -131,9 +133,25 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
 
         val outerTypeChain = generateSequence(type) { it.outerType(c.typeTable) }.toList()
 
-        createStubForTypeName(classId, nullableTypeParent(parent, type)) { userTypeStub, index ->
+        createStubForTypeName(classId, nullableTypeParent(parent, type), upperBoundType) { userTypeStub, index ->
             outerTypeChain.getOrNull(index)?.let { createTypeArgumentListStub(userTypeStub, it.argumentList) }
         }
+    }
+
+    private fun createFlexibleType(
+        upperBound: Type?
+    ): KotlinFlexibleType? {
+        if (upperBound == null) return null
+        val classId = c.nameResolver.getClassId(if (upperBound.hasClassName()) upperBound.className else upperBound.typeAliasName)
+        val arguments = upperBound.argumentList.map { argument ->
+            val kind = argument.projection.toProjectionKind()
+            Argument(kind, if (kind == KtProjectionKind.STAR) null else createFlexibleType(argument.type(c.typeTable)))
+        }
+        if (upperBound.hasFlexibleUpperBound()) {
+            val flexibleUpperBound = upperBound.flexibleUpperBound(c.typeTable)!!
+            return KotlinFlexibleType(classId, arguments, flexibleUpperBound.nullable, createFlexibleType(flexibleUpperBound))
+        }
+        return KotlinFlexibleType(classId, arguments, upperBound.nullable, null)
     }
 
     private fun createTypeAnnotationStubs(parent: KotlinStubBaseImpl<*>, type: Type, annotations: List<ClassIdWithTarget>) {

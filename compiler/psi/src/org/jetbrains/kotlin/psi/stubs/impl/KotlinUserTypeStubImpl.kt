@@ -18,10 +18,23 @@ package org.jetbrains.kotlin.psi.stubs.impl
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
+import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.psi.KtProjectionKind
 import org.jetbrains.kotlin.psi.KtUserType
 import org.jetbrains.kotlin.psi.stubs.KotlinUserTypeStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 class KotlinUserTypeStubImpl(
-    parent: StubElement<out PsiElement>?
+    parent: StubElement<out PsiElement>?,
+    val upperBound: KotlinFlexibleType? = null
 ) : KotlinStubBaseImpl<KtUserType>(parent, KtStubElementTypes.USER_TYPE), KotlinUserTypeStub
+
+data class KotlinFlexibleType(
+    val classId: ClassId,
+    val arguments: List<Argument>,
+    val nullable: Boolean,
+    val upperBound: KotlinFlexibleType?
+)
+
+data class Argument(val projectionKind: KtProjectionKind, val type: KotlinFlexibleType?)
