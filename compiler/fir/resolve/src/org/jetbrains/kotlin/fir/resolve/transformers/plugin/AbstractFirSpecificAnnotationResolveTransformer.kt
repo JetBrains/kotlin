@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.transformers.DesignationState
 import org.jetbrains.kotlin.fir.resolve.transformers.FirSpecificTypeResolverTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.ScopeClassDeclaration
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformerDispatcher
@@ -39,7 +38,6 @@ import org.jetbrains.kotlin.fir.types.impl.FirImplicitUnitTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirQualifierPartImpl
 import org.jetbrains.kotlin.fir.types.impl.FirTypeArgumentListImpl
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
-import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -242,16 +240,7 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
 
     private fun resolveAnnotationsOnAnnotationIfNeeded(annotationTypeRef: FirResolvedTypeRef) {
         val symbol = annotationTypeRef.coneType.toRegularClassSymbol(session) ?: return
-        val regularClass = symbol.fir
-        if (computationSession.annotationsAreResolved(regularClass)) return
-        val designation = DesignationState.create(symbol, emptyMap(), includeFile = true) ?: return
-        val transformer = FirDesignatedCompilerRequiredAnnotationsResolveTransformer(
-            designation.firstDeclaration.moduleData.session,
-            scopeSession,
-            computationSession,
-            designation
-        )
-        designation.firstDeclaration.transformSingle(transformer, null)
+        computationSession.resolveAnnotationsOnAnnotationIfNeeded(symbol, scopeSession)
     }
 
     override fun transformAnnotation(annotation: FirAnnotation, data: Nothing?): FirStatement {

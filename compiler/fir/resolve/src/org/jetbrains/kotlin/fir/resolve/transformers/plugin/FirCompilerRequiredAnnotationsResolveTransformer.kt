@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.DesignationState
 import org.jetbrains.kotlin.fir.resolve.transformers.FirAbstractPhaseTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.FirGlobalResolveProcessor
 import org.jetbrains.kotlin.fir.resolve.transformers.FirImportResolveTransformer
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.fir.withFileAnalysisExceptionWrapping
 import org.jetbrains.kotlin.name.FqName
@@ -127,7 +128,7 @@ class FirDesignatedCompilerRequiredAnnotationsResolveTransformer(
         FirDesignatedSpecificAnnotationResolveTransformer(session, scopeSession, computationSession, designation)
 }
 
-class CompilerRequiredAnnotationsComputationSession {
+open class CompilerRequiredAnnotationsComputationSession {
     private val filesWithResolvedImports = mutableSetOf<FirFile>()
 
     fun importsAreResolved(file: FirFile): Boolean {
@@ -152,6 +153,25 @@ class CompilerRequiredAnnotationsComputationSession {
         if (!declarationsWithResolvedAnnotations.add(declaration)) {
             error("Annotations are resolved twice")
         }
+    }
+
+    fun resolveAnnotationsOnAnnotationIfNeeded(symbol: FirRegularClassSymbol, scopeSession: ScopeSession) {
+        val regularClass = symbol.fir
+        if (annotationsAreResolved(regularClass)) return
+
+        resolveAnnotationSymbol(symbol, scopeSession)
+    }
+
+    open fun resolveAnnotationSymbol(symbol: FirRegularClassSymbol, scopeSession: ScopeSession) {
+        val designation = DesignationState.create(symbol, emptyMap(), includeFile = true) ?: return
+        val transformer = FirDesignatedCompilerRequiredAnnotationsResolveTransformer(
+            designation.firstDeclaration.moduleData.session,
+            scopeSession,
+            this,
+            designation,
+        )
+
+        designation.firstDeclaration.transformSingle(transformer, null)
     }
 }
 
