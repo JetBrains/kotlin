@@ -67,11 +67,20 @@ public actual open class ArrayList<E> internal constructor(private var array: Ar
         modCount++
     }
 
+    private fun increaseLength(amount: Int): Int {
+        val previous = size
+        array.asDynamic().length = size + amount
+        return previous
+    }
+
     actual override fun addAll(elements: Collection<E>): Boolean {
         checkIsMutable()
         if (elements.isEmpty()) return false
 
-        array += elements.toTypedArray<Any?>()
+        val offset = increaseLength(elements.size)
+        elements.forEachIndexed { index, element ->
+            array[offset + index] = element
+        }
         modCount++
         return true
     }
@@ -82,10 +91,13 @@ public actual open class ArrayList<E> internal constructor(private var array: Ar
 
         if (index == size) return addAll(elements)
         if (elements.isEmpty()) return false
-        when (index) {
-            size -> return addAll(elements)
-            0 -> array = elements.toTypedArray<Any?>() + array
-            else -> array = array.copyOfRange(0, index).asDynamic().concat(elements.toTypedArray<Any?>(), array.copyOfRange(index, size))
+
+        val tail = array.asDynamic().splice(index).unsafeCast<Array<E>>()
+        addAll(elements)
+
+        val offset = increaseLength(tail.size)
+        repeat(tail.size) { tailIndex ->
+            array[offset + tailIndex] = tail[tailIndex]
         }
 
         modCount++
