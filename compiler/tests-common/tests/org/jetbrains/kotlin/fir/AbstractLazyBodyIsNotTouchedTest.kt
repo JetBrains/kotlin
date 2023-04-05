@@ -17,6 +17,7 @@ abstract class AbstractLazyBodyIsNotTouchedTest : AbstractFirBaseDiagnosticsTest
     override fun runAnalysis(testDataFile: File, testFiles: List<TestFile>, firFilesPerSession: Map<FirSession, List<FirFile>>) {
         val phases = FirResolvePhase.values()
             .dropWhile { it <= FirResolvePhase.RAW_FIR }
+            .filterNot { it == FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS }
             .takeWhile { it < FirResolvePhase.ARGUMENTS_OF_ANNOTATIONS }
 
         for ((session, firFiles) in firFilesPerSession) {
