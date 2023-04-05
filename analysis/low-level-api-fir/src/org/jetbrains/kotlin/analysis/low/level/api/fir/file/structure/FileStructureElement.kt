@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.psi.*
 import java.util.concurrent.ConcurrentHashMap
+import org.jetbrains.kotlin.fir.correspondingProperty
 
 internal sealed class FileStructureElement(val firFile: FirFile, protected val moduleComponents: LLFirModuleResolveComponents) {
     abstract val psi: KtAnnotated
@@ -276,7 +277,19 @@ internal class NonReanalyzableNonClassDeclarationStructureElement(
         moduleComponents,
     )
 
-    internal object Recorder : FirElementsRecorder()
+    internal object Recorder : FirElementsRecorder() {
+        override fun visitConstructor(constructor: FirConstructor, data: MutableMap<KtElement, FirElement>) {
+            if (constructor is FirPrimaryConstructor) {
+                constructor.valueParameters.forEach { parameter ->
+                    parameter.correspondingProperty?.let { property ->
+                        visitProperty(property, data)
+                    }
+                }
+            }
+
+            super.visitConstructor(constructor, data)
+        }
+    }
 }
 
 internal class DanglingTopLevelModifierListStructureElement(

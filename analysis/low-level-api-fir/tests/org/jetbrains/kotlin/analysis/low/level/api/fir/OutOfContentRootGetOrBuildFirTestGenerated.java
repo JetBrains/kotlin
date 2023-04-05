@@ -70,6 +70,18 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
         }
 
         @Test
+        @TestMetadata("annotationOnConstructorProperty.kt")
+        public void testAnnotationOnConstructorProperty() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/annotations/annotationOnConstructorProperty.kt");
+        }
+
+        @Test
+        @TestMetadata("annotationOnReturnType.kt")
+        public void testAnnotationOnReturnType() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/annotations/annotationOnReturnType.kt");
+        }
+
+        @Test
         @TestMetadata("danglingAnnotation.kt")
         public void testDanglingAnnotation() throws Exception {
             runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/annotations/danglingAnnotation.kt");
@@ -88,6 +100,12 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
         }
 
         @Test
+        @TestMetadata("jvmFieldAnnotationOnConstructorProperty.kt")
+        public void testJvmFieldAnnotationOnConstructorProperty() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/annotations/jvmFieldAnnotationOnConstructorProperty.kt");
+        }
+
+        @Test
         @TestMetadata("retentionValue.kt")
         public void testRetentionValue() throws Exception {
             runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/annotations/retentionValue.kt");
@@ -103,6 +121,42 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
         @TestMetadata("superCallAnnotation2.kt")
         public void testSuperCallAnnotation2() throws Exception {
             runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/annotations/superCallAnnotation2.kt");
+        }
+
+        @Test
+        @TestMetadata("typeOnAnnotationOnConstructorParameter.kt")
+        public void testTypeOnAnnotationOnConstructorParameter() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/annotations/typeOnAnnotationOnConstructorParameter.kt");
+        }
+
+        @Test
+        @TestMetadata("typeOnAnnotationOnConstructorProperty.kt")
+        public void testTypeOnAnnotationOnConstructorProperty() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/annotations/typeOnAnnotationOnConstructorProperty.kt");
+        }
+
+        @Test
+        @TestMetadata("typeOnAnnotationOnConstructorPropertyAndParameter.kt")
+        public void testTypeOnAnnotationOnConstructorPropertyAndParameter() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/annotations/typeOnAnnotationOnConstructorPropertyAndParameter.kt");
+        }
+
+        @Test
+        @TestMetadata("typeOnAnnotationOnConstructorPropertyWithArguments.kt")
+        public void testTypeOnAnnotationOnConstructorPropertyWithArguments() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/annotations/typeOnAnnotationOnConstructorPropertyWithArguments.kt");
+        }
+
+        @Test
+        @TestMetadata("typeOnAnnotationOnFunctionParameter.kt")
+        public void testTypeOnAnnotationOnFunctionParameter() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/annotations/typeOnAnnotationOnFunctionParameter.kt");
+        }
+
+        @Test
+        @TestMetadata("typeOnAnnotationOnFunctionParameterWithArguments.kt")
+        public void testTypeOnAnnotationOnFunctionParameterWithArguments() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/annotations/typeOnAnnotationOnFunctionParameterWithArguments.kt");
         }
 
         @Nested
@@ -373,6 +427,12 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
         @Test
         public void testAllFilesPresentInDeclarations() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/getOrBuildFir/declarations"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("constructorProperty.kt")
+        public void testConstructorProperty() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/declarations/constructorProperty.kt");
         }
 
         @Test

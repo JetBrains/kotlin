@@ -26,6 +26,8 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import java.util.concurrent.ConcurrentHashMap
+import org.jetbrains.kotlin.fir.correspondingProperty
+import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 
 internal class FileStructure private constructor(
     private val ktFile: KtFile,
@@ -69,10 +71,6 @@ internal class FileStructure private constructor(
             container is KtClassOrObject && container.isInsideSuperClassCall(element) -> {
                 container.primaryConstructor?.let { return it }
             }
-
-            container is KtPrimaryConstructor && container.isInsideAnnotationOnParameter(element) -> {
-                container.containingClassOrObject?.let { return it }
-            }
         }
 
         return container
@@ -81,30 +79,6 @@ internal class FileStructure private constructor(
     private fun KtClassOrObject.isInsideSuperClassCall(element: KtElement): Boolean {
         for (entry in superTypeListEntries) {
             if (entry is KtSuperTypeCallEntry && entry.isAncestor(element, strict = false)) return true
-        }
-
-        return false
-    }
-
-    private fun KtPrimaryConstructor.isInsideAnnotationOnParameter(element: KtElement): Boolean {
-        for (parameter in valueParameters) {
-            for (annotation in parameter.annotationEntries) {
-                val target = annotation.useSiteTarget?.getAnnotationUseSiteTarget() ?: continue
-                when (target) {
-                    AnnotationUseSiteTarget.FIELD,
-                    AnnotationUseSiteTarget.PROPERTY,
-                    AnnotationUseSiteTarget.PROPERTY_GETTER,
-                    AnnotationUseSiteTarget.PROPERTY_SETTER,
-                    AnnotationUseSiteTarget.SETTER_PARAMETER -> {
-                        if (annotation.isAncestor(element)) return true
-                    }
-                    AnnotationUseSiteTarget.FILE,
-                    AnnotationUseSiteTarget.RECEIVER,
-                    AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER,
-                    AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD -> {
-                    }
-                }
-            }
         }
 
         return false
@@ -178,6 +152,12 @@ internal class FileStructure private constructor(
         )
 
         firDeclaration.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
+        if (firDeclaration is FirPrimaryConstructor) {
+            firDeclaration.valueParameters.forEach { parameter ->
+                parameter.correspondingProperty?.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
+            }
+        }
+
         return FileElementFactory.createFileStructureElement(
             firDeclaration = firDeclaration,
             ktDeclaration = declaration,

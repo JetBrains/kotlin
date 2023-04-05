@@ -81,8 +81,9 @@ internal class FirElementBuilder(
         val firFile = element.containingKtFile
         val fileStructure = moduleComponents.fileStructureCache.getFileStructure(firFile)
 
-        val mappings = fileStructure.getStructureElementFor(element).mappings
+        val structureElement = fileStructure.getStructureElementFor(element)
         val psi = getPsiAsFirElementSource(element) ?: return null
+        val mappings = structureElement.mappings
         return mappings.getFirOfClosestParent(psi, firResolveSession)
             ?: firResolveSession.getOrBuildFirFile(firFile)
     }
