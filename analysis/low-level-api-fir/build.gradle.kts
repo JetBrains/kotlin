@@ -26,8 +26,7 @@ dependencies {
     implementation(project(":analysis:analysis-api-providers"))
     implementation(project(":analysis:analysis-internal-utils"))
 
-    // We cannot use the latest version `3.1.5` because it doesn't support Java 8.
-    implementation("com.github.ben-manes.caffeine:caffeine:2.9.3")
+    implementation(caffeine())
 
     api(intellijCore())
 

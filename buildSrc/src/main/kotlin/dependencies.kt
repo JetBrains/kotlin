@@ -240,6 +240,9 @@ fun Project.protobufFull(): String = "org.jetbrains.kotlin:protobuf-relocated:$p
 fun Project.kotlinxCollectionsImmutable() =
     "org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:${rootProject.extra["versions.kotlinx-collections-immutable"]}"
 
+fun Project.caffeine() =
+    "com.github.ben-manes.caffeine:caffeine:${rootProject.extra["versions.caffeine"]}"
+
 val Project.kotlinNativeVersion: String get() = property("versions.kotlin-native") as String
 
 val Project.nodejsVersion: String get() = property("versions.nodejs") as String
