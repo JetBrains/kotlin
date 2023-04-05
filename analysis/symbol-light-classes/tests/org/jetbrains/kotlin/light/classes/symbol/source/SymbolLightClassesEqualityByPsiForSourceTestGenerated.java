@@ -115,6 +115,12 @@ public class SymbolLightClassesEqualityByPsiForSourceTestGenerated extends Abstr
     }
 
     @Test
+    @TestMetadata("enumMembers.kt")
+    public void testEnumMembers() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/enumMembers.kt");
+    }
+
+    @Test
     @TestMetadata("enums.kt")
     public void testEnums() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/enums.kt");
