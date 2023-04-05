@@ -18,6 +18,7 @@ dependencies {
         api(project(":jps:jps-plugin"))
         api(project(":jps:jps-common"))
         api(kotlinStdlib())
+        api(project(":prepare:kotlin-jps-plugin"))
     }
 //    testImplementation(platform("org.junit:junit-bom:5.9.1"))
 //    testImplementation("org.junit.jupiter:junit-jupiter")
