@@ -6,6 +6,10 @@
 package kotlin.js
 
 internal fun equals(obj1: dynamic, obj2: dynamic): Boolean {
+    if (obj1 === obj2 && obj1 !== 0) {
+        return true
+    }
+
     if (obj1 == null) {
         return obj2 == null
     }
