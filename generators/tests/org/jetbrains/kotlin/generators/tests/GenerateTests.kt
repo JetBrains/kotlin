@@ -109,6 +109,18 @@ fun main(args: Array<String>) {
                 model("incremental/scopeExpansion", extension = null, excludeParentDirs = true)
             }
 
+            testClass<AbstractIncrementalJsFirKlibCompilerWithScopeExpansionRunnerTest> {
+                // IC of sealed interfaces are not supported in JS
+                // Some IC tests fail with K2
+                model("incremental/pureKotlin", extension = null, recursive = false,
+                      excludedPattern = "^(sealed|propertyRedeclaration|funRedeclaration|funVsConstructorOverloadConflict).*")
+                model("incremental/classHierarchyAffected", extension = null, recursive = false,
+                      excludedPattern = "^(secondaryConstructorAdded|withIntermediateBodiesChanged|companionObjectNameChanged).*")
+                model("incremental/js", extension = null, excludeParentDirs = true)
+                model("incremental/scopeExpansion", extension = null, excludeParentDirs = true,
+                      excludedPattern = "^protectedBecomesPublicAccessedTroughChild.*")
+            }
+
             testClass<AbstractIncrementalJsCompilerRunnerWithFriendModulesDisabledTest> {
                 model("incremental/js/friendsModuleDisabled", extension = null, recursive = false)
             }

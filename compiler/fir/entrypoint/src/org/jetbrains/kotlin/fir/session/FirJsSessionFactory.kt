@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.FirPlatformDiagnosticSuppresso
 import org.jetbrains.kotlin.fir.analysis.js.checkers.FirJsPlatformDiagnosticSuppressor
 import org.jetbrains.kotlin.fir.checkers.registerJsCheckers
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
+import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.resolve.calls.ConeCallConflictResolverFactory
@@ -35,6 +36,7 @@ object FirJsSessionFactory : FirAbstractSessionFactory() {
         extensionRegistrars: List<FirExtensionRegistrar>,
         languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
         lookupTracker: LookupTracker?,
+        icData: KlibIcData? = null,
         registerExtraComponents: ((FirSession) -> Unit) = {},
         init: FirSessionConfigurator.() -> Unit
     ): FirSession {
@@ -52,10 +54,18 @@ object FirJsSessionFactory : FirAbstractSessionFactory() {
             },
             registerExtraCheckers = { it.registerJsCheckers() },
             createKotlinScopeProvider = { FirKotlinScopeProvider { _, declaredMemberScope, _, _, _ -> declaredMemberScope } },
-            createProviders = { _, _, symbolProvider, generatedSymbolsProvider, syntheticFunctionInterfaceProvider, dependencies ->
+            createProviders = { session, kotlinScopeProvider, symbolProvider, generatedSymbolsProvider, syntheticFunctionInterfaceProvider, dependencies ->
                 listOfNotNull(
                     symbolProvider,
                     generatedSymbolsProvider,
+                    icData?.let {
+                        KlibIcCacheBasedSymbolProvider(
+                            session,
+                            SingleModuleDataProvider(moduleData),
+                            kotlinScopeProvider,
+                            it,
+                        )
+                    },
                     syntheticFunctionInterfaceProvider,
                     *dependencies.toTypedArray(),
                 )
