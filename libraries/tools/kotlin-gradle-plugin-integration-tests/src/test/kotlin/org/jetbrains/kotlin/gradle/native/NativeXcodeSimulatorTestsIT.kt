@@ -21,6 +21,32 @@ import kotlin.test.assertEquals
 @NativeGradlePluginTests
 @EnabledOnOs(OS.MAC)
 class NativeXcodeSimulatorTestsIT : KGPBaseTest() {
+    private val defaultIosSimulator by lazy {
+        val xcode = Xcode ?: error("XCode is expected to be defined")
+        xcode.getDefaultTestDeviceId(KonanTarget.IOS_SIMULATOR_ARM64) ?: error("No simulator found for iOS ARM64")
+    }
+
+    @DisplayName("A user-friendly error message is produced when the standalone mode is disabled and no simulator has booted")
+    @GradleTest
+    fun checkNoSimulatorErrorMessage(gradleVersion: GradleVersion) {
+        shutDownSimulators() // based on the tests order there no simulator should be booted, but anyway to be sure
+        // Note the test still may fail if you have booted the required simulator manually before running the test
+        // We don't shut down such simulators in the tests
+        project("native-test-ios-https-request", gradleVersion) {
+            buildGradleKts.append(
+                """
+                tasks.withType<org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeSimulatorTest> {
+                    device.set("$defaultIosSimulator")
+                    standalone.set(false)
+                }
+                """.trimIndent()
+            )
+            buildAndFail("check") {
+                assertOutputContains("The problem can be that you have not booted the required device or have configured the task to a different simulator. Please check the task output and its device configuration.")
+            }
+        }
+    }
+
     @DisplayName("iOS simulator test with an https request fails with default settings")
     @GradleTest
     fun checkSimulatorTestFailsInStandaloneMode(gradleVersion: GradleVersion) {
@@ -36,13 +62,11 @@ class NativeXcodeSimulatorTestsIT : KGPBaseTest() {
     @GradleTest
     fun checkSimulatorTestFailsInNonStandaloneMode(gradleVersion: GradleVersion) {
         project("native-test-ios-https-request", gradleVersion) {
-            val xcode = Xcode ?: error("XCode is expected to be defined")
-            val device = xcode.getDefaultTestDeviceId(KonanTarget.IOS_SIMULATOR_ARM64) ?: error("No simulator found for iOS ARM64")
-            bootXcodeSimulator(device)
+            bootXcodeSimulator(defaultIosSimulator)
             buildGradleKts.append(
                 """
                 tasks.withType<org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeSimulatorTest> {
-                    device.set("$device")
+                    device.set("$defaultIosSimulator")
                     standalone.set(false)
                 }
                 """.trimIndent()
