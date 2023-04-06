@@ -326,32 +326,6 @@ bitcode {
             onlyIf { target.supportsThreads() }
         }
 
-        module("concurrent_ms_old_gc") {
-            srcRoot.set(layout.projectDirectory.dir("src/gc/cms-old"))
-            headersDirs.from(files("src/gc/cms-old/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/main/cpp"))
-            sourceSets {
-                main {}
-                testFixtures {}
-                test {}
-            }
-
-            onlyIf { target.supportsThreads() }
-        }
-
-        module("concurrent_ms_old_gc_custom") {
-            srcRoot.set(layout.projectDirectory.dir("src/gc/cms-old"))
-            headersDirs.from(files("src/gc/cms-old/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/main/cpp", "src/custom_alloc/cpp"))
-            sourceSets {
-                main {}
-                testFixtures {}
-                test {}
-            }
-
-            compilerArgs.add("-DCUSTOM_ALLOCATOR")
-
-            onlyIf { target.supportsThreads() }
-        }
-
         testsGroup("std_alloc_runtime_tests") {
             testedModules.addAll("main", "legacy_memory_manager", "strict", "std_alloc", "objc")
         }

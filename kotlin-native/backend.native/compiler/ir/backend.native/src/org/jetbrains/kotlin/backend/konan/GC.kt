@@ -9,5 +9,4 @@ enum class GC {
     NOOP,
     SAME_THREAD_MARK_AND_SWEEP,
     CONCURRENT_MARK_AND_SWEEP,
-    OLD_CMS,
 }

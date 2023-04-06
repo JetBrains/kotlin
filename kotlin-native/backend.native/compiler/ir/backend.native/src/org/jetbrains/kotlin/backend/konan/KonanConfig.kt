@@ -110,7 +110,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     val gc: GC by lazy {
         val configGc = configuration.get(KonanConfigKeys.GARBAGE_COLLECTOR)
         val (gcFallbackReason, realGc) = when {
-            (configGc == GC.CONCURRENT_MARK_AND_SWEEP || configGc == GC.OLD_CMS) && !target.supportsThreads() -> // FIXME threads?
+            (configGc == GC.CONCURRENT_MARK_AND_SWEEP) && !target.supportsThreads() ->
                 "Concurrent mark and sweep gc is not supported for this target. Fallback to Same thread mark and sweep is done" to GC.SAME_THREAD_MARK_AND_SWEEP
             configGc == null -> null to defaultGC
             else -> null to configGc
@@ -274,7 +274,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
                 }
             }
             AllocationMode.CUSTOM -> {
-                if (gc == GC.CONCURRENT_MARK_AND_SWEEP || gc == GC.OLD_CMS) {
+                if (gc == GC.CONCURRENT_MARK_AND_SWEEP) {
                     AllocationMode.CUSTOM
                 } else {
                     configuration.report(CompilerMessageSeverity.STRONG_WARNING,
@@ -304,9 +304,6 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
                         GC.CONCURRENT_MARK_AND_SWEEP -> {
                             add("concurrent_ms_gc_custom.bc")
                         }
-                        GC.OLD_CMS -> {
-                            add("concurrent_ms_old_gc_custom.bc")
-                        }
                         else -> throw AssertionError("Should not reach here: $gc")
                     }
                 } else {
@@ -320,9 +317,6 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
                         }
                         GC.CONCURRENT_MARK_AND_SWEEP -> {
                             add("concurrent_ms_gc.bc")
-                        }
-                        GC.OLD_CMS -> {
-                            add("concurrent_ms_old_gc.bc")
                         }
                     }
                 }
