@@ -62,6 +62,12 @@ public class FirPsiJsOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiJ
     }
 
     @Test
+    @TestMetadata("overridesMemberWithPlatformDependent.kt")
+    public void testOverridesMemberWithPlatformDependent() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithJsStdLib/overridesMemberWithPlatformDependent.kt");
+    }
+
+    @Test
     @TestMetadata("platformDependent.kt")
     public void testPlatformDependent() throws Exception {
         runTest("compiler/testData/diagnostics/testsWithJsStdLib/platformDependent.kt");

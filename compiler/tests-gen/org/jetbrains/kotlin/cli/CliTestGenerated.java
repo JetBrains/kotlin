@@ -1639,6 +1639,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/metadata/moduleNameWithFir.args");
         }
 
+        @TestMetadata("noVirtualFileHiddenForMemberWithPlatformDependentAnnotation.args")
+        public void testNoVirtualFileHiddenForMemberWithPlatformDependentAnnotation() throws Exception {
+            runTest("compiler/testData/cli/metadata/noVirtualFileHiddenForMemberWithPlatformDependentAnnotation.args");
+        }
+
         @TestMetadata("optionalAnnotationsFromMetadata.args")
         public void testOptionalAnnotationsFromMetadata() throws Exception {
             runTest("compiler/testData/cli/metadata/optionalAnnotationsFromMetadata.args");

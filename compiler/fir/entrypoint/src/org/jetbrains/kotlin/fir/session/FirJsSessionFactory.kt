@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirVisibilityChecker
 import org.jetbrains.kotlin.fir.SessionConfiguration
+import org.jetbrains.kotlin.fir.analysis.FirEmptyOverridesBackwardCompatibilityHelper
 import org.jetbrains.kotlin.fir.analysis.FirOverridesBackwardCompatibilityHelper
 import org.jetbrains.kotlin.fir.analysis.checkers.FirPlatformDiagnosticSuppressor
 import org.jetbrains.kotlin.fir.analysis.js.checkers.FirJsPlatformDiagnosticSuppressor
@@ -98,7 +99,7 @@ object FirJsSessionFactory : FirAbstractSessionFactory() {
         register(FirVisibilityChecker::class, FirVisibilityChecker.Default)
         register(ConeCallConflictResolverFactory::class, JsCallConflictResolverFactory)
         register(FirPlatformClassMapper::class, FirPlatformClassMapper.Default)
-        register(FirOverridesBackwardCompatibilityHelper::class, FirOverridesBackwardCompatibilityHelper.Default())
+        register(FirOverridesBackwardCompatibilityHelper::class, FirEmptyOverridesBackwardCompatibilityHelper)
         register(FirPlatformDiagnosticSuppressor::class, FirJsPlatformDiagnosticSuppressor())
     }
 }
