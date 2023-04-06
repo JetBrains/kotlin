@@ -123,6 +123,17 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<String>("message")
         }
 
+        val TYPEALIAS_EXPANSION_DEPRECATION_ERROR by error<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
+            parameter<Symbol>("alias")
+            parameter<Symbol>("reference")
+            parameter<String>("message")
+        }
+        val TYPEALIAS_EXPANSION_DEPRECATION by warning<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
+            parameter<Symbol>("alias")
+            parameter<Symbol>("reference")
+            parameter<String>("message")
+        }
+
         val API_NOT_AVAILABLE by error<PsiElement>(PositioningStrategy.SELECTOR_BY_QUALIFIED) {
             parameter<ApiVersion>("sinceKotlinVersion")
             parameter<ApiVersion>("currentVersion")

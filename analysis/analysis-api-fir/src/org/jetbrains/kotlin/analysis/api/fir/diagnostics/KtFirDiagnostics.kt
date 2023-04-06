@@ -259,6 +259,20 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val message: String
     }
 
+    abstract class TypealiasExpansionDeprecationError : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = TypealiasExpansionDeprecationError::class
+        abstract val alias: KtSymbol
+        abstract val reference: KtSymbol
+        abstract val message: String
+    }
+
+    abstract class TypealiasExpansionDeprecation : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = TypealiasExpansionDeprecation::class
+        abstract val alias: KtSymbol
+        abstract val reference: KtSymbol
+        abstract val message: String
+    }
+
     abstract class ApiNotAvailable : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = ApiNotAvailable::class
         abstract val sinceKotlinVersion: ApiVersion

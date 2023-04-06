@@ -297,6 +297,22 @@ internal class DeprecationImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.Deprecation(), KtAbstractFirDiagnostic<PsiElement>
 
+internal class TypealiasExpansionDeprecationErrorImpl(
+    override val alias: KtSymbol,
+    override val reference: KtSymbol,
+    override val message: String,
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.TypealiasExpansionDeprecationError(), KtAbstractFirDiagnostic<PsiElement>
+
+internal class TypealiasExpansionDeprecationImpl(
+    override val alias: KtSymbol,
+    override val reference: KtSymbol,
+    override val message: String,
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.TypealiasExpansionDeprecation(), KtAbstractFirDiagnostic<PsiElement>
+
 internal class ApiNotAvailableImpl(
     override val sinceKotlinVersion: ApiVersion,
     override val currentVersion: ApiVersion,
