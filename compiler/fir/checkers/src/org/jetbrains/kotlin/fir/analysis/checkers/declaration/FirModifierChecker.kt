@@ -250,12 +250,12 @@ object FirModifierChecker : FirBasicDeclarationChecker() {
             return true
         }
 
-        if (modifierToken == KtTokens.PROTECTED_KEYWORD && isFinalExpectOrActualClass(parent)) {
+        if (modifierToken == KtTokens.PROTECTED_KEYWORD && isFinalExpectClass(parent)) {
             reporter.reportOn(
                 modifierSource,
                 FirErrors.WRONG_MODIFIER_CONTAINING_DECLARATION,
                 modifierToken,
-                "final expect or actual class",
+                "final expect class",
                 context,
             )
         }
@@ -277,7 +277,7 @@ object FirModifierChecker : FirBasicDeclarationChecker() {
         return firstOrNull()?.description ?: "this"
     }
 
-    private fun isFinalExpectOrActualClass(d: FirDeclaration?): Boolean {
-        return d is FirClass && d.isFinal && (d.isExpect || d.isActual)
+    private fun isFinalExpectClass(d: FirDeclaration?): Boolean {
+        return d is FirClass && d.isFinal && d.isExpect
     }
 }

@@ -180,12 +180,12 @@ object ModifierCheckerCore {
             )
             return true
         }
-        if (modifier == PROTECTED_KEYWORD && isFinalExpectOrActualClass(parentDescriptor)) {
+        if (modifier == PROTECTED_KEYWORD && isFinalExpectClass(parentDescriptor)) {
             trace.report(
                 Errors.WRONG_MODIFIER_CONTAINING_DECLARATION.on(
                     node.psi,
                     modifier,
-                    "final expect or actual class"
+                    "final expect class"
                 )
             )
         }
@@ -247,7 +247,7 @@ object ModifierCheckerCore {
         return true
     }
 
-    private fun isFinalExpectOrActualClass(d: DeclarationDescriptor?): Boolean {
-        return d is ClassDescriptor && d.isFinalOrEnum && (d.isExpect || d.isActual)
+    private fun isFinalExpectClass(d: DeclarationDescriptor?): Boolean {
+        return d is ClassDescriptor && d.isFinalOrEnum && d.isExpect
     }
 }
