@@ -98,7 +98,7 @@ class Fir2IrConverter(
             }
         }
 
-        evaluateConstants(irModuleFragment)
+        evaluateConstants(irModuleFragment, configuration)
 
         if (irGenerationExtensions.isNotEmpty()) {
             val pluginContext = Fir2IrPluginContext(components, irModuleFragment.descriptor)
@@ -419,7 +419,7 @@ class Fir2IrConverter(
     }
 
     companion object {
-        private fun evaluateConstants(irModuleFragment: IrModuleFragment) {
+        private fun evaluateConstants(irModuleFragment: IrModuleFragment, fir2IrConfiguration: Fir2IrConfiguration) {
             val firModuleDescriptor = irModuleFragment.descriptor as? FirModuleDescriptor
             val targetPlatform = firModuleDescriptor?.platform
             val languageVersionSettings = firModuleDescriptor?.session?.languageVersionSettings
@@ -433,7 +433,9 @@ class Fir2IrConverter(
             val mode = if (intrinsicConstEvaluation) EvaluationMode.ONLY_INTRINSIC_CONST else EvaluationMode.ONLY_BUILTINS
             irModuleFragment.files.forEach {
                 val transformer = IrConstTransformer(
-                    interpreter, it, mode = mode
+                    interpreter, it,
+                    mode = mode,
+                    evaluatedConstTracker = fir2IrConfiguration.evaluatedConstTracker
                 )
                 it.transformChildren(transformer, null)
             }

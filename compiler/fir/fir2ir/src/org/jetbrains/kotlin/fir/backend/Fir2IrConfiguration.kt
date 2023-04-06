@@ -22,5 +22,5 @@ import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 data class Fir2IrConfiguration(
     val languageVersionSettings: LanguageVersionSettings,
     val linkViaSignatures: Boolean,
-    val evaluatedConstTracker: EvaluatedConstTracker? = null,
+    val evaluatedConstTracker: EvaluatedConstTracker,
 )

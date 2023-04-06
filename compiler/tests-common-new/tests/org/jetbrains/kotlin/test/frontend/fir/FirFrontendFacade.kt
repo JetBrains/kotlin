@@ -17,7 +17,11 @@ import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.jvmModularRoots
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.container.topologicalSort
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.Fir2IrConfiguration
@@ -306,7 +310,9 @@ open class FirFrontendFacade(
             moduleBasedSession,
             Fir2IrConfiguration(
                 languageVersionSettings = module.languageVersionSettings,
-                linkViaSignatures = module.targetBackend == TargetBackend.JVM_IR_SERIALIZE
+                linkViaSignatures = module.targetBackend == TargetBackend.JVM_IR_SERIALIZE,
+                evaluatedConstTracker = compilerConfigurationProvider.getCompilerConfiguration(module)
+                    .putIfAbsent(CommonConfigurationKeys.EVALUATED_CONST_TRACKER, EvaluatedConstTracker.create()),
             ),
             ktFiles,
             lightTreeFiles,

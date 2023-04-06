@@ -10,9 +10,20 @@ import java.util.concurrent.ConcurrentHashMap
 abstract class EvaluatedConstTracker {
     abstract fun save(start: Int, end: Int, constant: ConstantValue<*>)
     abstract fun load(start: Int, end: Int): ConstantValue<*>?
+
+    companion object {
+        /**
+         * Right now there are two places where we want to create this tracker.
+         * 1. Right before `fir2ir` phase. We need to store evaluated values to use them later in const value serialization.
+         * 2. In interpreter's tests for all IR backends. This is needed ONLY for tests and cover case when we run K1 IR compiler.
+         */
+        fun create(): EvaluatedConstTracker {
+            return DefaultEvaluatedConstTracker()
+        }
+    }
 }
 
-class DefaultEvaluatedConstTracker : EvaluatedConstTracker() {
+private class DefaultEvaluatedConstTracker : EvaluatedConstTracker() {
     private val storage = ConcurrentHashMap<Pair<Int, Int>, ConstantValue<*>>()
 
     override fun save(start: Int, end: Int, constant: ConstantValue<*>) {
