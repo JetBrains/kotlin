@@ -212,7 +212,9 @@ sealed class ClangArgs(
      */
     val clangXXArgs: Array<String> = clangArgs + when (configurables) {
         is AppleConfigurables -> arrayOf(
-                "-stdlib=libc++"
+                "-stdlib=libc++",
+                // KT-57848
+                "-Dat_quick_exit=atexit", "-Dquick_exit=exit",
         )
         else -> emptyArray()
     }
