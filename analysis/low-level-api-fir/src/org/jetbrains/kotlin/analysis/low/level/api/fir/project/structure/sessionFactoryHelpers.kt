@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.LLFirN
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.LLFirResolveExtensionTool
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSourcesSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.tree.LLFirPsiSourceElementWithSmartPointerFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirExceptionHandler
 import org.jetbrains.kotlin.analysis.project.structure.KtCompilerPluginsProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
@@ -27,7 +28,6 @@ import org.jetbrains.kotlin.fir.FirExceptionHandler
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.builder.FirPsiSourceElementFactory
-import org.jetbrains.kotlin.fir.builder.FirPsiSourceElementWithFixedPsiFactory
 import org.jetbrains.kotlin.fir.caches.FirCachesFactory
 import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
@@ -50,7 +50,7 @@ internal fun LLFirSession.registerIdeComponents(project: Project) {
     createResolveExtensionTool()?.let {
         register(LLFirResolveExtensionTool::class, it)
     }
-    register(FirPsiSourceElementFactory::class, FirPsiSourceElementWithFixedPsiFactory)
+    register(FirPsiSourceElementFactory::class, LLFirPsiSourceElementWithSmartPointerFactory)
 }
 
 private fun LLFirSession.createResolveExtensionTool(): LLFirResolveExtensionTool? {

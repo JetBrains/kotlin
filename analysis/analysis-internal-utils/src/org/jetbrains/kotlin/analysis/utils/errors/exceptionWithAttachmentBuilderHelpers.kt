@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.utils.errors
 
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiInvalidElementAccessException
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
@@ -24,6 +25,12 @@ public fun ExceptionAttachmentBuilder.withPsiEntry(name: String, psi: PsiElement
         withKtModuleEntry("${name}KtModule", psi.getKtModule())
     }
 }
+
+public fun ExceptionAttachmentBuilder.withVirtualFileEntry(name: String, file: VirtualFile?) {
+    withEntry("${name}Path", file) { it.path }
+    withEntry("${name}VFS", file) { it.fileSystem.toString() }
+}
+
 
 public fun ExceptionAttachmentBuilder.withKtModuleEntry(name: String, module: KtModule?) {
     withEntry(name, module) { ktModule -> ktModule.moduleDescription }

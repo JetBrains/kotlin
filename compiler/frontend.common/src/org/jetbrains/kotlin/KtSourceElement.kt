@@ -375,7 +375,7 @@ class KtLightSourceElement(
     }
 }
 
-internal class WrappedTreeStructure(file: PsiFile) : FlyweightCapableTreeStructure<LighterASTNode> {
+class WrappedTreeStructure(file: PsiFile) : FlyweightCapableTreeStructure<LighterASTNode> {
     private val lighterAST = TreeBackedLighterAST(file.node)
 
     fun unwrap(node: LighterASTNode) = lighterAST.unwrap(node)
