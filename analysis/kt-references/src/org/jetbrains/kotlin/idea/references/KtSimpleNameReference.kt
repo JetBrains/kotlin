@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.idea.references
 
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -16,6 +18,8 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.types.expressions.OperatorConventions.ASSIGN_METHOD
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.analysis.project.structure.getKtModule
+import org.jetbrains.kotlin.analysis.providers.KtAssignResolutionPresenceService
 
 abstract class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleReference<KtSimpleNameExpression>(expression) {
     // Extension point used by deprecated android extensions.
@@ -69,7 +73,7 @@ abstract class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSim
                         tokenType, element.parent is KtUnaryExpression, element.parent is KtBinaryExpression
                     )
                         ?: (expression.parent as? KtBinaryExpression)?.let {
-                            runIf(it.operationToken == KtTokens.EQ) { ASSIGN_METHOD }
+                            runIf(it.operationToken == KtTokens.EQ && isAssignmentResolved(element.project, it)) { ASSIGN_METHOD }
                         }
                         ?: return emptyList()
 
@@ -87,4 +91,13 @@ abstract class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSim
         }
 
     abstract fun getImportAlias(): KtImportAlias?
+
+    private fun isAssignmentResolved(project: Project, binaryExpression: KtBinaryExpression): Boolean {
+        val sourceModule = binaryExpression.getKtModule(element.project) as? KtSourceModule ?: return false
+        val reference = binaryExpression.operationReference.reference ?: return false
+        val pluginPresenceService = project.getService(KtAssignResolutionPresenceService::class.java)
+            ?: error("KtAssignResolutionPresenceService is not available as a service")
+        return pluginPresenceService.assignResolutionIsOn(sourceModule)
+                && (reference.resolve() as? KtNamedFunction)?.nameAsName == ASSIGN_METHOD
+    }
 }
