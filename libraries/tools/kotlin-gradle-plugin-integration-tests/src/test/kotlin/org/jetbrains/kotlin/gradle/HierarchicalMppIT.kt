@@ -1173,7 +1173,8 @@ open class HierarchicalMppIT : KGPBaseTest() {
                     |    </dependency>
                 """.trimMargin()
 
-                if (expectedDependency !in pom) {
+                fun String.asOneLine() = lines().joinToString(" ") { it.trim() }
+                if (expectedDependency.asOneLine() !in pom.asOneLine()) {
                     fail("Expected to find:\n$expectedDependency\nin pom file:\n$pom")
                 }
             }
