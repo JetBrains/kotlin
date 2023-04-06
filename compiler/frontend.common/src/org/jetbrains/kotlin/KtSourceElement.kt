@@ -311,26 +311,11 @@ sealed class KtSourceElement : AbstractKtSourceElement() {
 
     /** Elements of the same source should be considered equal. */
     abstract override fun equals(other: Any?): Boolean
+
+    abstract fun fakeElement(newKind: KtFakeSourceElementKind): KtSourceElement
+
+    abstract fun realElement(): KtSourceElement
 }
-
-
-
-fun KtSourceElement.fakeElement(newKind: KtFakeSourceElementKind): KtSourceElement {
-    if (kind == newKind) return this
-    return when (this) {
-        is KtLightSourceElement -> KtLightSourceElement(lighterASTNode, startOffset, endOffset, treeStructure, newKind)
-        is KtPsiSourceElement -> KtFakeSourceElement(psi, newKind)
-    }
-}
-
-fun KtSourceElement.realElement(): KtSourceElement {
-    return when (this) {
-        is KtRealPsiSourceElement -> this
-        is KtLightSourceElement -> KtLightSourceElement(lighterASTNode, startOffset, endOffset, treeStructure, KtRealSourceElementKind)
-        is KtPsiSourceElement -> KtRealPsiSourceElement(psi)
-    }
-}
-
 
 class KtLightSourceElement(
     override val lighterASTNode: LighterASTNode,
@@ -377,6 +362,16 @@ class KtLightSourceElement(
         result = 31 * result + treeStructure.hashCode()
         result = 31 * result + kind.hashCode()
         return result
+    }
+
+    override fun fakeElement(newKind: KtFakeSourceElementKind): KtSourceElement {
+        if (kind == newKind) return this
+        return KtLightSourceElement(lighterASTNode, startOffset, endOffset, treeStructure, newKind)
+    }
+
+    override fun realElement(): KtSourceElement {
+        if (kind == KtRealSourceElementKind) return this
+        return KtLightSourceElement(lighterASTNode, startOffset, endOffset, treeStructure, KtRealSourceElementKind)
     }
 }
 

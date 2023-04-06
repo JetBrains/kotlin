@@ -124,7 +124,6 @@ abstract class AbstractFirTreeImplementationConfigurator {
         fun defaultTypeRefWithSource(typeRefClass: String) {
             default("typeRef", "$typeRefClass(source?.fakeElement(KtFakeSourceElementKind.ImplicitTypeRef))")
             implementation.arbitraryImportables += ArbitraryImportable("org.jetbrains.kotlin", "KtFakeSourceElementKind")
-            implementation.arbitraryImportables += ArbitraryImportable("org.jetbrains.kotlin", "fakeElement")
         }
 
         fun defaultTrue(field: String, withGetter: Boolean = false) {

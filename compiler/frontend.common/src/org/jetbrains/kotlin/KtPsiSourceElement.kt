@@ -49,6 +49,14 @@ sealed class KtPsiSourceElement(val psi: PsiElement) : KtSourceElement() {
 
 internal class KtRealPsiSourceElement(psi: PsiElement) : KtPsiSourceElement(psi) {
     override val kind: KtSourceElementKind get() = KtRealSourceElementKind
+
+    override fun fakeElement(newKind: KtFakeSourceElementKind): KtSourceElement {
+        return KtFakeSourceElement(psi, newKind)
+    }
+
+    override fun realElement(): KtSourceElement {
+        return this
+    }
 }
 
 internal class KtFakeSourceElement(psi: PsiElement, override val kind: KtFakeSourceElementKind) : KtPsiSourceElement(psi) {
@@ -68,6 +76,15 @@ internal class KtFakeSourceElement(psi: PsiElement, override val kind: KtFakeSou
         var result = super.hashCode()
         result = 31 * result + kind.hashCode()
         return result
+    }
+
+    override fun fakeElement(newKind: KtFakeSourceElementKind): KtSourceElement {
+        if (kind == newKind) return this
+        return KtFakeSourceElement(psi, newKind)
+    }
+
+    override fun realElement(): KtSourceElement {
+        return KtRealPsiSourceElement(psi)
     }
 }
 
