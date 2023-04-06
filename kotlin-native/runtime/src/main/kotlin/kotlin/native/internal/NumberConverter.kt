@@ -27,7 +27,7 @@ private external fun ceil(x: Double): Double
 /**
  * Converts [Float] or [Double] numbers to the [String] representation
  */
-class NumberConverter {
+internal class NumberConverter {
 
     private var setCount: Int = 0 // Number of times u and k have been gotten.
 

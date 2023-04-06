@@ -1753,6 +1753,14 @@ public final class Float private constructor() : Number(), Comparable<Float> {
 
     public override fun equals(other: Any?): Boolean = other is Float && this.equals(other)
 
+    /**
+     * Returns the string representation of this [Float] value.
+     *
+     * Note that the representation format is unstable and may change in a future release.
+     * However, it is guaranteed that the returned string is valid for converting back to [Float]
+     * using [String.toFloat], and will result in the same numeric value.
+     * The exact bit pattern of a `NaN` float is not guaranteed to be preserved though.
+     */
     public override fun toString() = NumberConverter.convert(this)
 
     public override fun hashCode(): Int = toBits()
@@ -2063,6 +2071,14 @@ public final class Double private constructor() : Number(), Comparable<Double> {
 
     public override fun equals(other: Any?): Boolean = other is Double && this.equals(other)
 
+    /**
+     * Returns the string representation of this [Double] value.
+     *
+     * Note that the representation format is unstable and may change in a future release.
+     * However, it is guaranteed that the returned string is valid for converting back to [Double]
+     * using [String.toDouble], and will result in the same numeric value.
+     * The exact bit pattern of a `NaN` double is not guaranteed to be preserved though.
+     */
     public override fun toString(): String = NumberConverter.convert(this)
 
     public override fun hashCode(): Int = toBits().hashCode()
