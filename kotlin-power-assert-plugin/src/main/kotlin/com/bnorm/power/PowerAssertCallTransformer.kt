@@ -170,9 +170,9 @@ class PowerAssertCallTransformer(
       }
     }
 
-    return buildDiagramNestingNullable(dispatchRoot) { dispatch, newVariables ->
-      buildDiagramNestingNullable(extensionRoot, newVariables) { extension, newVariables ->
-        recursive(0, dispatch, extension, emptyList(), newVariables)
+    return buildDiagramNestingNullable(dispatchRoot) { dispatch, dispatchNewVariables ->
+      buildDiagramNestingNullable(extensionRoot, dispatchNewVariables) { extension, extensionNewVariables ->
+        recursive(0, dispatch, extension, emptyList(), extensionNewVariables)
       }
     }
   }

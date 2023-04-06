@@ -354,10 +354,10 @@ class InfixFunctionTest {
     assertEquals(KotlinCompilation.ExitCode.OK, result.exitCode, "Failed with messages: " + result.messages)
 
     val kClazz = result.classLoader.loadClass(main)
-    val main = kClazz.declaredMethods.single { it.name == "main" && it.parameterCount == 0 }
+    val mainMethod = kClazz.declaredMethods.single { it.name == "main" && it.parameterCount == 0 }
     try {
       try {
-        main.invoke(null)
+        mainMethod.invoke(null)
       } catch (t: InvocationTargetException) {
         throw t.cause!!
       }

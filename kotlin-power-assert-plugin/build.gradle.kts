@@ -92,11 +92,11 @@ publishing {
       hasProperty("sonatypeReleaseUrl")
     ) {
       maven {
-        val url = when {
-          "SNAPSHOT" in version.toString() -> property("sonatypeSnapshotUrl")
-          else -> property("sonatypeReleaseUrl")
-        } as String
-        setUrl(url)
+        val sonatypeUrlProperty = when {
+          version.toString().endsWith("-SNAPSHOT") -> "sonatypeSnapshotUrl"
+          else -> "sonatypeReleaseUrl"
+        }
+        setUrl(property(sonatypeUrlProperty) as String)
         credentials {
           username = property("sonatypeUsername") as String
           password = property("sonatypePassword") as String
@@ -105,7 +105,7 @@ publishing {
     }
     maven {
       name = "test"
-      setUrl("file://${rootProject.buildDir}/localMaven")
+      url = uri(rootProject.layout.buildDirectory.dir("localMaven"))
     }
   }
 }

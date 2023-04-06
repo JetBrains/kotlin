@@ -20,19 +20,16 @@ buildConfig {
   buildConfigField("String", "PLUGIN_VERSION", "\"${project.version}\"")
 }
 
-pluginBundle {
-  website = "https://github.com/bnorm/kotlin-power-assert"
-  vcsUrl = "https://github.com/bnorm/kotlin-power-assert.git"
-  tags = listOf("kotlin", "power-assert")
-}
-
 gradlePlugin {
+  website.set("https://github.com/bnorm/kotlin-power-assert")
+  vcsUrl.set("https://github.com/bnorm/kotlin-power-assert.git")
   plugins {
     create("kotlinPowerAssert") {
       id = "com.bnorm.power.kotlin-power-assert"
       displayName = "Kotlin Power Assertion Plugin"
       description = "Kotlin Compiler Plugin to add power to your assertions"
       implementationClass = "com.bnorm.power.PowerAssertGradlePlugin"
+      tags.set(listOf("kotlin", "power-assert"))
     }
   }
 }
@@ -41,6 +38,15 @@ tasks.withType<KotlinCompile> {
   kotlinOptions.jvmTarget = "1.8"
 }
 
-tasks.register("publish") {
+tasks.named("publish") {
   dependsOn("publishPlugins")
+}
+
+publishing {
+  repositories {
+    maven {
+      name = "test"
+      url = uri(rootProject.layout.buildDirectory.dir("localMaven"))
+    }
+  }
 }
