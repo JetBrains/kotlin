@@ -82,13 +82,6 @@ internal annotation class ExportTypeInfo(val name: String)
 internal annotation class VolatileLambda
 
 /**
- * Need to be fixed because of reflection.
- */
-@Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
-@Retention(AnnotationRetention.SOURCE)
-internal annotation class FixmeReflection
-
-/**
  * Need to be fixed because of concurrency.
  */
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)

@@ -5,8 +5,6 @@
 
 package kotlin.reflect
 
-import kotlin.native.internal.FixmeReflection
-
 /**
  * Represents a callable entity, such as a function or a property.
  *

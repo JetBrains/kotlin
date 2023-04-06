@@ -8,7 +8,6 @@ package kotlin.native.internal
 import kotlin.UnsupportedOperationException
 import kotlin.reflect.*
 
-@FixmeReflection
 abstract class KProperty0ImplBase<out R> : KProperty0<R> {
     abstract val getter: KFunction0<R>
     override val returnType get() = getter.returnType
@@ -22,7 +21,6 @@ abstract class KProperty0ImplBase<out R> : KProperty0<R> {
     }
 }
 
-@FixmeReflection
 final class KProperty0Impl<out R>(override val name: String, override val getter: KFunction0<R>) : KProperty0ImplBase<R>() {
     override fun equals(other: Any?): Boolean {
         val otherKProperty = other as? KProperty0Impl<*>
@@ -39,7 +37,6 @@ final class KProperty0Impl<out R>(override val name: String, override val getter
     }
 }
 
-@FixmeReflection
 abstract class KProperty1ImplBase<T, out R> : KProperty1<T, R> {
     abstract val getter: KFunction1<T, R>
     override val returnType get() = getter.returnType
@@ -53,7 +50,6 @@ abstract class KProperty1ImplBase<T, out R> : KProperty1<T, R> {
     }
 }
 
-@FixmeReflection
 class KProperty1Impl<T, out R>(override val name: String, override val getter: KFunction1<T, R>) : KProperty1ImplBase<T, R>() {
     override fun equals(other: Any?): Boolean {
         val otherKProperty = other as? KProperty1Impl<*, *>
@@ -71,7 +67,6 @@ class KProperty1Impl<T, out R>(override val name: String, override val getter: K
 }
 
 
-@FixmeReflection
 abstract class KProperty2ImplBase<T1, T2, out R> : KProperty2<T1, T2, R> {
     abstract val getter: KFunction2<T1, T2, R>
     override val returnType get() = getter.returnType
@@ -85,7 +80,6 @@ abstract class KProperty2ImplBase<T1, T2, out R> : KProperty2<T1, T2, R> {
     }
 }
 
-@FixmeReflection
 class KProperty2Impl<T1, T2, out R>(override val name: String, override val getter: KFunction2<T1, T2, R>)
     : KProperty2ImplBase<T1, T2, R>() {
     override fun equals(other: Any?): Boolean {
@@ -104,7 +98,6 @@ class KProperty2Impl<T1, T2, out R>(override val name: String, override val gett
 }
 
 
-@FixmeReflection
 class KMutableProperty0Impl<R>(override val name: String, override val getter: KFunction0<R>, val setter: (R) -> Unit)
     : KProperty0ImplBase<R>(), KMutableProperty0<R> {
     override fun set(value: R): Unit {
@@ -126,7 +119,6 @@ class KMutableProperty0Impl<R>(override val name: String, override val getter: K
     }
 }
 
-@FixmeReflection
 class KMutableProperty1Impl<T, R>(override val name: String, override val getter: KFunction1<T, R>, val setter: (T, R) -> Unit)
     : KProperty1ImplBase<T, R>(), KMutableProperty1<T, R> {
     override fun set(receiver: T, value: R): Unit {
@@ -148,7 +140,6 @@ class KMutableProperty1Impl<T, R>(override val name: String, override val getter
     }
 }
 
-@FixmeReflection
 class KMutableProperty2Impl<T1, T2, R>(
         override val name: String,
         override val getter: KFunction2<T1, T2, R>,
