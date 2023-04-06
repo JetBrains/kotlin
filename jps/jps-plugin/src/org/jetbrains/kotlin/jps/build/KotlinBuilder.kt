@@ -72,7 +72,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             get() = ClassCondition { className ->
                 val prefixes = listOf(
                     "org.apache.log4j.", // For logging from compiler
-                    "org.jetbrains.kotlin.incremental.components.",
+//                    "org.jetbrains.kotlin.incremental.components.",
                     "org.jetbrains.kotlin.incremental.js",
                     "org.jetbrains.kotlin.load.kotlin.incremental.components."
                 ) + classPrefixesToLoadByParentFromRegistry
