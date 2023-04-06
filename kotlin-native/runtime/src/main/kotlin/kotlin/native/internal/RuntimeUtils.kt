@@ -188,7 +188,8 @@ internal fun runUnhandledExceptionHook(throwable: Throwable) {
 @ExportForCppRuntime
 internal fun TheEmptyString() = ""
 
-public fun <T: Enum<T>> valueOfForEnum(name: String, values: Array<T>) : T {
+@PublishedApi
+internal fun <T: Enum<T>> valueOfForEnum(name: String, values: Array<T>) : T {
     var left = 0
     var right = values.size - 1
     while (left <= right) {
@@ -203,7 +204,8 @@ public fun <T: Enum<T>> valueOfForEnum(name: String, values: Array<T>) : T {
     throw Exception("Invalid enum value name: $name")
 }
 
-public fun <T: Enum<T>> valuesForEnum(values: Array<T>): Array<T> {
+@PublishedApi
+internal fun <T: Enum<T>> valuesForEnum(values: Array<T>): Array<T> {
     val result = @Suppress("TYPE_PARAMETER_AS_REIFIED") Array<T?>(values.size)
     for (value in values)
         result[value.ordinal] = value
