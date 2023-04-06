@@ -480,13 +480,12 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return when (this) {
             is ConeFlexibleType -> this.upperBound.isNullableType()
             is ConeTypeParameterType -> lookupTag.symbol.allBoundsAreNullableOrUnresolved()
-            is ConeTypeVariableType -> {
-                val symbol = lookupTag.toSymbol(session) ?: return false
-                when (symbol) {
-                    is FirClassSymbol -> false
-                    is FirTypeAliasSymbol -> symbol.fir.expandedConeType?.isNullableType() ?: false
-                    is FirTypeParameterSymbol -> symbol.allBoundsAreNullableOrUnresolved()
-                }
+            // NB: There's no branch for ConeTypeVariableType, i.e. it always returns false for them
+            // And while it seems reasonable to have similar semantics as for stub types, it would make some diagnostic test failing
+            // Thus, we leave the same semantics only for stubs (similar to TypeUtils.isNullableType)
+            is ConeStubType -> {
+                val symbol = (this.constructor.variable.defaultType.lookupTag.originalTypeParameter as? ConeTypeParameterLookupTag)?.symbol
+                symbol == null || symbol.allBoundsAreNullableOrUnresolved()
             }
             is ConeIntersectionType -> intersectedTypes.all { it.isNullableType() }
             is ConeClassLikeType -> directExpansionType(session)?.isNullableType() ?: false

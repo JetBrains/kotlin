@@ -31,6 +31,7 @@ fun ConeClassifierLookupTag.toSymbol(useSiteSession: FirSession): FirClassifierS
     when (this) {
         is ConeClassLikeLookupTag -> toSymbol(useSiteSession)
         is ConeClassifierLookupTagWithFixedSymbol -> this.symbol
+        // TODO: replace null with error(), see KT-57921
         else -> null
     }
 
@@ -136,4 +137,3 @@ private fun Collection<ConeKotlinType>.findClassRepresentationThatIsSubtypeOf(
     supertype: ConeKotlinType,
     session: FirSession
 ): ConeClassLikeLookupTag? = firstOrNull { it.isSubtypeOf(supertype, session) }?.findClassRepresentation(supertype, session)
-

@@ -8836,6 +8836,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
                 }
 
                 @Test
+                @TestMetadata("decoratedLambda.kt")
+                public void testDecoratedLambda() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/delegatedProperty/inference/decoratedLambda.kt");
+                }
+
+                @Test
                 @TestMetadata("delegateExpressionAsLambda.kt")
                 public void testDelegateExpressionAsLambda() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/delegatedProperty/inference/delegateExpressionAsLambda.kt");
