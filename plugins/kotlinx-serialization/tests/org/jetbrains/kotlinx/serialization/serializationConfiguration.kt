@@ -8,11 +8,17 @@ package org.jetbrains.kotlinx.serialization
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.bind
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
+import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
 import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.runners.codegen.configureDumpHandlersForCodegenTest
+import org.jetbrains.kotlin.test.runners.codegen.configureModernJavaTest
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.RuntimeClasspathProvider
 import org.jetbrains.kotlin.test.services.TestServices
@@ -60,6 +66,7 @@ fun TestConfigurationBuilder.configureForKotlinxSerialization(
     target: TargetBackend = TargetBackend.JVM
 ) {
     useConfigurators(::SerializationEnvironmentConfigurator.bind(noLibraries))
+    configureModernJavaTest(TestJdkKind.FULL_JDK_11, JvmTarget.JVM_11)
 
     if (!noLibraries) {
         when (target) {

@@ -5,14 +5,19 @@
 
 package org.jetbrains.kotlin.test.runners.codegen
 
+import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.HandlersStepBuilder
+import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.backend.handlers.*
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.builders.*
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_SMAP
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.RUN_DEX_CHECKER
+import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
@@ -187,4 +192,14 @@ fun HandlersStepBuilder<BinaryArtifacts.Jvm>.inlineHandlers() {
         ::BytecodeInliningHandler,
         ::SMAPDumpHandler
     )
+}
+
+fun TestConfigurationBuilder.configureModernJavaTest(jdkKind: TestJdkKind, jvmTarget: JvmTarget) {
+    defaultDirectives {
+        JvmEnvironmentConfigurationDirectives.JDK_KIND with jdkKind
+        JvmEnvironmentConfigurationDirectives.JVM_TARGET with jvmTarget
+        +ConfigurationDirectives.WITH_STDLIB
+        +CodegenTestDirectives.USE_JAVAC_BASED_ON_JVM_TARGET
+        +CodegenTestDirectives.IGNORE_DEXING
+    }
 }

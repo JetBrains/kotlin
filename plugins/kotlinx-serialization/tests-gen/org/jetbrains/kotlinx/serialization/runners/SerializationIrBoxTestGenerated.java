@@ -128,6 +128,12 @@ public class SerializationIrBoxTestGenerated extends AbstractSerializationIrBoxT
     }
 
     @Test
+    @TestMetadata("kt57647.kt")
+    public void testKt57647() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/boxIr/kt57647.kt");
+    }
+
+    @Test
     @TestMetadata("metaSerializable.kt")
     public void testMetaSerializable() throws Exception {
         runTest("plugins/kotlinx-serialization/testData/boxIr/metaSerializable.kt");

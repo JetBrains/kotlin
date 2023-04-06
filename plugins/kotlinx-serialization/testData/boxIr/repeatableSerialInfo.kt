@@ -1,7 +1,6 @@
 // TARGET_BACKEND: JVM_IR
 
 // WITH_STDLIB
-// FULL_JDK
 
 import kotlinx.serialization.*
 
