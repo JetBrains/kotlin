@@ -210,7 +210,9 @@ abstract class AbstractJsPartialLinkageTestCase(val compilerType: CompilerType) 
             libraries = regularDependencies,
             friendLibraries = friendDependencies,
             messageCollector = messageCollector,
-            diagnosticsReporter = diagnosticsReporter
+            diagnosticsReporter = diagnosticsReporter,
+            incrementalDataProvider = null,
+            lookupTracker = null
         )
 
         if (outputs != null) {

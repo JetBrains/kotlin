@@ -63,7 +63,9 @@ abstract class FirAbstractInvalidationTest(
             libraries = libraries,
             friendLibraries = friendLibraries,
             messageCollector = messageCollector,
-            diagnosticsReporter = diagnosticsReporter
+            diagnosticsReporter = diagnosticsReporter,
+            incrementalDataProvider = null,
+            lookupTracker = null,
         )
 
         if (outputs != null) {

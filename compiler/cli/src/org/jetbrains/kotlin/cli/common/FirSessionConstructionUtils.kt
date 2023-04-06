@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.session.*
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
+import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.js.resolve.JsPlatformAnalyzerServices
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
@@ -113,6 +114,8 @@ fun <F> prepareJsSessions(
     extensionRegistrars: List<FirExtensionRegistrar>,
     isCommonSource: (F) -> Boolean,
     fileBelongsToModule: (F, String) -> Boolean,
+    lookupTracker: LookupTracker?,
+    icData: KlibIcData?,
 ): List<SessionWithSources<F>> {
     return prepareSessions(
         files, configuration, rootModuleName, JsPlatforms.defaultJsPlatform, JsPlatformAnalyzerServices,
@@ -134,7 +137,8 @@ fun <F> prepareJsSessions(
             sessionProvider,
             extensionRegistrars,
             configuration.languageVersionSettings,
-            null,
+            lookupTracker,
+            icData = icData,
             registerExtraComponents = {},
             init = sessionConfigurator,
         )

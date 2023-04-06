@@ -64,6 +64,7 @@ object TestFirJsSessionFactory {
             extensionRegistrars,
             languageVersionSettings,
             lookupTracker,
+            icData = null,
             registerExtraComponents,
             sessionConfigurator
         )
