@@ -106,6 +106,9 @@ object ClassicPositioningStrategies {
                     ExpectActualCompatibility.Incompatible.Visibility -> {
                         element.visibilityModifier()
                     }
+                    ExpectActualCompatibility.Incompatible.PropertySetterVisibility -> {
+                        (element as? KtProperty)?.setter?.modifierList
+                    }
                 }?.let { markElement(it) } ?: ACTUAL_DECLARATION_NAME.mark(element)
             }
         }

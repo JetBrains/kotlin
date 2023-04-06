@@ -127,6 +127,12 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeTestGenerated extends Abst
         runTest("compiler/testData/diagnostics/tests/multiplatform/smartcastOnMemberPropertyFromCommonClass.kt");
     }
 
+    @Test
+    @TestMetadata("varSetterVisibility.kt")
+    public void testVarSetterVisibility() throws Exception {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/varSetterVisibility.kt");
+    }
+
     @Nested
     @TestMetadata("compiler/testData/diagnostics/tests/multiplatform/defaultArguments")
     @TestDataPath("$PROJECT_ROOT")

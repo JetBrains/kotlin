@@ -370,8 +370,18 @@ object ExpectedActualResolver {
             !equalBy(expected, actual) { p -> p.isVar } -> Incompatible.PropertyKind
             !equalBy(expected, actual) { p -> p.isLateInit } -> Incompatible.PropertyLateinitModifier
             expected.isConst && !actual.isConst -> Incompatible.PropertyConstModifier
+            !arePropertySettersWithCompatibleVisibilities(expected, actual) -> Incompatible.PropertySetterVisibility
             else -> Compatible
         }
+    }
+
+    private fun arePropertySettersWithCompatibleVisibilities(expected: PropertyDescriptor, actual: PropertyDescriptor): Boolean {
+        val expectedSetter = expected.setter
+        val actualSetter = actual.setter
+        if (expectedSetter == null || actualSetter == null) {
+            return true
+        }
+        return areDeclarationsWithCompatibleVisibilities(expectedSetter, actualSetter)
     }
 
     private fun areCompatibleClassifiers(a: ClassDescriptor, other: ClassifierDescriptor): ExpectActualCompatibility<MemberDescriptor> {
