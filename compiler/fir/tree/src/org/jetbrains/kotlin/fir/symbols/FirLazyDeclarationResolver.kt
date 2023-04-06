@@ -44,6 +44,17 @@ abstract class FirLazyDeclarationResolver : FirSessionComponent {
     abstract fun lazyResolveToPhaseWithCallableMembers(symbol: FirClassSymbol<*>, toPhase: FirResolvePhase)
 }
 
+class FirLazyResolveContractViolationException(
+    currentPhase: FirResolvePhase,
+    requestedPhase: FirResolvePhase,
+) : IllegalStateException(
+    """
+        `lazyResolveToPhase($requestedPhase)` cannot be called from a transformer with a phase $currentPhase.
+        `lazyResolveToPhase` can be called only from a transformer with a phase which is strictly greater than a requested phase;
+         i.e., `lazyResolveToPhase(A)` may be only called from a lazy transformer with a phase B, where A < B. This is a contract of lazy resolve
+     """.trimIndent()
+)
+
 val FirSession.lazyDeclarationResolver: FirLazyDeclarationResolver by FirSession.sessionComponentAccessor()
 
 private val FirDeclaration.lazyDeclarationResolver get() = moduleData.session.lazyDeclarationResolver
