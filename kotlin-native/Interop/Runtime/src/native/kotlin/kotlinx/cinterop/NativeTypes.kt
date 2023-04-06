@@ -16,7 +16,6 @@
 
 package kotlinx.cinterop
 
-import kotlin.native.internal.getNativeNullPtr
 import kotlin.native.internal.reinterpret
 import kotlin.native.internal.Intrinsic
 import kotlin.native.internal.VolatileLambda
@@ -30,7 +29,7 @@ internal typealias NonNullNativePtr = kotlin.native.internal.NonNullNativePtr
 internal inline fun NativePtr.toNonNull() = this.reinterpret<NativePtr, NonNullNativePtr>()
 
 inline val nativeNullPtr: NativePtr
-    get() = getNativeNullPtr()
+    get() = NativePtr.NULL
 
 @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
 @Suppress("DEPRECATION")

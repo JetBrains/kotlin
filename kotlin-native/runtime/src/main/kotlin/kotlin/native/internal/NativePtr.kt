@@ -8,7 +8,8 @@
 package kotlin.native.internal
 
 @TypedIntrinsic(IntrinsicType.INTEROP_GET_NATIVE_NULL_PTR)
-external fun getNativeNullPtr(): NativePtr
+@PublishedApi
+internal external fun getNativeNullPtr(): NativePtr
 
 class NativePtr @PublishedApi internal constructor(private val value: NonNullNativePtr?) {
     companion object {
