@@ -39,6 +39,11 @@ interface KotlinCompilerArgumentsProducer {
     }
 
     interface ContributeCompilerArgumentsContext<T : CommonToolArguments> {
+        /**
+         * This method shall be used for any [action] used to build arguments, that could potentially throw an exception
+         * (like resolving dependencies). There are some scenarios (like IDE import), where we want to be lenient
+         * and provide arguments on a 'best effort bases'.
+         */
         fun <T> runSafe(action: () -> T): T?
         fun primitive(contribution: (args: T) -> Unit)
         fun pluginClasspath(contribution: (args: T) -> Unit)
