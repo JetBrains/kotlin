@@ -161,25 +161,29 @@ class MutableCollectionTest {
         }
     }
 
-    @Test fun shuffled() {
-        val list = MutableList(100) { it }
-        val shuffled = list.shuffled()
-
-        assertNotEquals(list, shuffled)
-        assertEquals(list.toSet(), shuffled.toSet())
-        assertEquals(list.size, shuffled.distinct().size)
+    @Test fun shuffle() {
+        val list = List(100) { it }
+        forAllStandardMutableLists(list) { shuffled ->
+            shuffled.shuffle()
+            assertNotEquals(list, shuffled)
+            assertEquals(list.toSet(), shuffled.toSet())
+            assertEquals(list.size, shuffled.distinct().size)
+        }
     }
 
-    @Test fun shuffledPredictably() {
+    @Test fun shufflePredictably() {
         val list = List(10) { it }
-        val shuffled1 = list.shuffled(Random(1))
-        val shuffled11 = list.shuffled(Random(1))
+        repeat(2) {
+            forAllStandardMutableLists(list) { shuffled1 ->
+                shuffled1.shuffle(Random(1))
+                assertEquals("[1, 4, 0, 6, 2, 8, 9, 7, 3, 5]", shuffled1.toString())
+            }
+        }
 
-        assertEquals(shuffled1, shuffled11)
-        assertEquals("[1, 4, 0, 6, 2, 8, 9, 7, 3, 5]", shuffled1.toString())
-
-        val shuffled2 = list.shuffled(Random(42))
-        assertEquals("[5, 0, 4, 9, 2, 8, 1, 7, 6, 3]", shuffled2.toString())
+        forAllStandardMutableLists(list) { shuffled2 ->
+            shuffled2.shuffle(Random(42))
+            assertEquals("[5, 0, 4, 9, 2, 8, 1, 7, 6, 3]", shuffled2.toString())
+        }
     }
 
 }
