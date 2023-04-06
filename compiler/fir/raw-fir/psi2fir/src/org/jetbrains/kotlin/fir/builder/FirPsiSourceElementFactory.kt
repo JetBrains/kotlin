@@ -7,12 +7,13 @@ package org.jetbrains.kotlin.fir.builder
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtPsiSourceElement
+import org.jetbrains.kotlin.KtPsiSourceElementInternals
 import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.KtSourceElementKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.builder.FirPsiSourceElementFactory
-import org.jetbrains.kotlin.toKtPsiSourceElement
+import org.jetbrains.kotlin.toKtPsiSourceElementWithFixedPsi
 
 abstract class FirPsiSourceElementFactory : FirSessionComponent {
     abstract fun createSourceElement(psi: PsiElement, kind: KtSourceElementKind = KtRealSourceElementKind): KtPsiSourceElement
@@ -28,6 +29,7 @@ fun PsiElement.toKtPsiSourceElement(
 }
 
 object FirPsiSourceElementWithFixedPsiFactory : FirPsiSourceElementFactory() {
+    @OptIn(KtPsiSourceElementInternals::class)
     override fun createSourceElement(psi: PsiElement, kind: KtSourceElementKind): KtPsiSourceElement {
         return psi.toKtPsiSourceElementWithFixedPsi(kind)
     }

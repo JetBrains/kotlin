@@ -92,7 +92,13 @@ private sealed class KtFixedPsiSourceElement(override val psi: PsiElement) : KtP
     }
 }
 
+@RequiresOptIn(
+    "Declarations marked with KtPsiSourceElementInternals should not be used in FIR and Analysis API modules, " +
+            "org.jetbrains.kotlin.fir.builder.FirPsiSourceElementFactory should be used instead"
+)
+annotation class KtPsiSourceElementInternals
 
+@KtPsiSourceElementInternals
 fun PsiElement.toKtPsiSourceElementWithFixedPsi(kind: KtSourceElementKind = KtRealSourceElementKind): KtPsiSourceElement = when (kind) {
     is KtRealSourceElementKind -> KtFixedPsiSourceElement.KtRealPsiSourceElement(this)
     is KtFakeSourceElementKind -> KtFixedPsiSourceElement.KtFakeSourceElement(this, kind)

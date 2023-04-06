@@ -17,3 +17,8 @@ sourceSets {
     "test" {}
 }
 
+tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>>().configureEach {
+    kotlinOptions {
+        freeCompilerArgs += "-opt-in=org.jetbrains.kotlin.KtPsiSourceElementInternals"
+    }
+}
