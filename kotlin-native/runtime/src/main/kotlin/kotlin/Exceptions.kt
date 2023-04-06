@@ -106,7 +106,8 @@ public actual open class ClassCastException : RuntimeException {
     actual constructor(message: String?) : super(message)
 }
 
-public open class TypeCastException : ClassCastException {
+@PublishedApi
+internal open class TypeCastException : ClassCastException {
 
     constructor() : super()
 
