@@ -93,7 +93,7 @@ private sealed class KtFixedPsiSourceElement(override val psi: PsiElement) : KtP
 }
 
 
-fun PsiElement.toKtPsiSourceElement(kind: KtSourceElementKind = KtRealSourceElementKind): KtPsiSourceElement = when (kind) {
+fun PsiElement.toKtPsiSourceElementWithFixedPsi(kind: KtSourceElementKind = KtRealSourceElementKind): KtPsiSourceElement = when (kind) {
     is KtRealSourceElementKind -> KtFixedPsiSourceElement.KtRealPsiSourceElement(this)
     is KtFakeSourceElementKind -> KtFixedPsiSourceElement.KtFakeSourceElement(this, kind)
 }

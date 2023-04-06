@@ -29,6 +29,6 @@ fun PsiElement.toKtPsiSourceElement(
 
 object FirPsiSourceElementWithFixedPsiFactory : FirPsiSourceElementFactory() {
     override fun createSourceElement(psi: PsiElement, kind: KtSourceElementKind): KtPsiSourceElement {
-        return psi.toKtPsiSourceElement(kind)
+        return psi.toKtPsiSourceElementWithFixedPsi(kind)
     }
 }

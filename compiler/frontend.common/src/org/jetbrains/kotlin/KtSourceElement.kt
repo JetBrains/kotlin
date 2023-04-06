@@ -337,7 +337,7 @@ class KtLightSourceElement(
     fun unwrapToKtPsiSourceElement(): KtPsiSourceElement? {
         if (treeStructure !is WrappedTreeStructure) return null
         val node = treeStructure.unwrap(lighterASTNode)
-        return node.psi?.toKtPsiSourceElement(kind)
+        return node.psi?.toKtPsiSourceElementWithFixedPsi(kind)
     }
 
     override fun equals(other: Any?): Boolean {
