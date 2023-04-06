@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasSuspendModifier
 import org.jetbrains.kotlin.type.MapPsiToAsmDesc
+import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -71,7 +72,7 @@ abstract class KotlinDeclarationInCompiledFileSearcher {
         val declarations = container.declarations
         return when (member) {
             is PsiMethod -> {
-                val names = mutableListOf(memberName)
+                val names = SmartList(memberName)
                 val setter = if (JvmAbi.isGetterName(memberName) && !PsiType.VOID.equals(member.returnType)) {
                     propertyNameByGetMethodName(Name.identifier(memberName))?.let { names.add(it.identifier) }
                     false
@@ -80,10 +81,10 @@ abstract class KotlinDeclarationInCompiledFileSearcher {
                     true
                 } else true
                 declarations
-                    .filter { getJvmName(it) in names || it is KtProperty && (getJvmName(it.getter) in names || getJvmName(it.setter) in names)}
                     .firstOrNull { declaration ->
-                        declaration is KtNamedFunction && doParametersMatch(member, declaration) ||
-                                declaration is KtProperty && doPropertyMatch(member, declaration, setter)
+                        nameMatches(declaration, names) &&
+                                (declaration is KtNamedFunction && doParametersMatch(member, declaration) ||
+                                        declaration is KtProperty && doPropertyMatch(member, declaration, setter))
                     }
             }
 
@@ -95,6 +96,11 @@ abstract class KotlinDeclarationInCompiledFileSearcher {
             }
             else -> declarations.singleOrNull { it.name == memberName }
         }
+    }
+
+    private fun nameMatches(declaration: KtDeclaration?, names: MutableList<String>): Boolean {
+        if (getJvmName(declaration) in names) return true
+        return declaration is KtProperty && (getJvmName(declaration.getter) in names || getJvmName(declaration.setter) in names)
     }
 
     private fun getJvmName(declaration: KtDeclaration?): String? {
