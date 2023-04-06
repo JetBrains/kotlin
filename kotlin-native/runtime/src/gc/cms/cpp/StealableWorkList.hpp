@@ -70,10 +70,7 @@ public:
         if (!locked) return 0;
         RuntimeAssert(!victim.sharedEmpty(), "Victim's shared was locked as non-empty");
 
-        auto amount = std::min(victim.sharedSize_, maxAmount);
-        auto lastToSteal = std::next(victim.shared_.before_begin(), amount);
-        RuntimeAssert(lastToSteal != victim.shared_.before_begin(), "Must steal at least something");
-        local_.splice_after_excl_incl(local_.before_begin(), victim.shared_.before_begin(), lastToSteal);
+        auto amount = local_.splice_after(local_.before_begin(), victim.shared_.before_begin(), victim.shared_.end(), maxAmount);
         victim.sharedSize_ -= amount;
         localSize_ += amount;
 
@@ -103,18 +100,6 @@ public:
     }
 
 private:
-    static inline void checkSizeCorrectness(const ListImpl& list,
-                                            size_type expectedSize,
-                                            const char* dscr) {
-        if (compiler::runtimeAssertsMode() != compiler::RuntimeAssertsMode::kIgnore) {
-            size_type actualSize = 0;
-            for ([[maybe_unused]] const auto& item: list) {
-                ++actualSize;
-            }
-            RuntimeAssert(expectedSize == actualSize, "List \"%s\" size inconsistent: expected %zu, actual %zu", dscr, expectedSize, actualSize);
-        }
-    }
-
     class TheftLock {
         static const std::size_t Empty = 0;
         static const std::size_t Available = 1;

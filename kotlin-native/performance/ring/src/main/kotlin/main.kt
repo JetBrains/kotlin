@@ -62,7 +62,7 @@ class RingLauncher : Launcher() {
                     "Singleton.access" to BenchmarkEntryWithInit.create(::SingletonBenchmark, { access() }),
                     "Splay" to BenchmarkEntryWithInitAndValidation.create(::SplayBenchmark, { runSplay() }, { splayTearDown() }),
                     "SplayWithWorkers" to BenchmarkEntryWithInitAndValidation.create(::SplayBenchmarkUsingWorkers, { runSplayWorkers() }, { splayTearDownWorkers() }),
-                    "SplayParallel" to BenchmarkEntryWithInitAndValidation.create(::SplayBenchmarkParallel, { runSplayParallel() }, { splayTearDownParallel() }),
+                    "SplayWithMarkHelpers" to BenchmarkEntryWithInitAndValidation.create(::SplayBenchmarkWithMarkHelpers, { runSplayWithMarkHelpers() }, { splayTearDownMarkHelpers() }),
                     "String.stringConcat" to BenchmarkEntryWithInit.create(::StringBenchmark, { stringConcat() }),
                     "String.stringBuilderConcat" to BenchmarkEntryWithInit.create(::StringBenchmark, { stringBuilderConcat() }),
                     "String.stringBuilderConcatNullable" to BenchmarkEntryWithInit.create(::StringBenchmark, { stringBuilderConcatNullable() }),
@@ -208,7 +208,7 @@ class RingLauncher : Launcher() {
                     "Lambda.mutatingLambdaNoInline" to BenchmarkEntryWithInit.create(::LambdaBenchmark, { mutatingLambdaNoInline() }),
                     "Lambda.methodReferenceNoInline" to BenchmarkEntryWithInit.create(::LambdaBenchmark, { methodReferenceNoInline() }),
                     "Life" to BenchmarkEntryWithInit.create(::LifeBenchmark, { bench() }),
-                    "LifeWithWorkers" to BenchmarkEntryWithInitAndValidation.create(::LifeWithWorkersBenchmark, { benchWithWorkers() }, { terminate() }),
+                    "LifeWithMarkHelpers" to BenchmarkEntryWithInitAndValidation.create(::LifeWithMarkHelpersBenchmark, { bench() }, { terminate() }),
                     "Loop.arrayIndexLoop" to BenchmarkEntryWithInit.create(::LoopBenchmark, { arrayIndexLoop() }),
                     "Loop.arrayListLoop" to BenchmarkEntryWithInit.create(::LoopBenchmark, { arrayListLoop() }),
                     "ParameterNotNull.invokeOneArgWithNullCheck" to BenchmarkEntryWithInit.create(::ParameterNotNullAssertionBenchmark, { invokeOneArgWithNullCheck() }),
@@ -245,8 +245,8 @@ class RingLauncher : Launcher() {
         @OptIn(kotlin.ExperimentalStdlibApi::class)
         if (!isExperimentalMM()) {
             baseBenchmarksSet -= listOf("SplayWithWorkers")
-            baseBenchmarksSet -= listOf("SplayParallel")
-            baseBenchmarksSet -= listOf("LifeWithWorkers")
+            baseBenchmarksSet -= listOf("SplayWithMarkHelpers")
+            baseBenchmarksSet -= listOf("LifeWithMarkHelpers")
         }
     }
 }

@@ -307,43 +307,58 @@ class SplayBenchmark {
 class SplayBenchmarkUsingWorkers {
     val numberOfWorkers = 5;
     val workers = Array(numberOfWorkers, { _ -> Worker.start() })
-
-    var done = false
-     init {
-         workers.forEach {
-             it.execute(TransferMode.SAFE, { this }) {
-                 while (!it.done) {
-                     pthread_yield_np()
-                 }
-             }
-         }
-     }
-
-    val splay = SplayBenchmark()
-
-    fun runSplayWorkers() {
-        splay.runSplay()
-    }
-
-    fun splayTearDownWorkers() {
-        done = true
-        splay.splayTearDown()
-    }
-}
-
-class SplayBenchmarkParallel {
-    val numberOfWorkers = 5;
-    val workers = Array(numberOfWorkers, { _ -> Worker.start() })
     val splayTrees = Array(numberOfWorkers, { _ -> SplayBenchmark() });
 
-    fun runSplayParallel() {
+    fun runSplayWorkers() {
         val futures = Array(numberOfWorkers) {i -> workers[i].execute(TransferMode.SAFE, { splayTrees[i] }, {it.runSplay()})};
         futures.forEach{it.consume {}};
     }
 
-    fun splayTearDownParallel() {
+    fun splayTearDownWorkers() {
         val futures = Array(numberOfWorkers) {i -> workers[i].execute(TransferMode.SAFE, { splayTrees[i] }, {it.splayTearDown()})};
         futures.forEach{it.consume {}};
         workers.forEach { it.requestTermination().result }
+    }
+}
+
+class SplayBenchmarkWithMarkHelpers {
+    val numberOfMarkHelpers = 5;
+    val markHelpers = Array(numberOfMarkHelpers, { _ -> Worker.start() })
+
+    var done = false
+    val markHelperJobs = markHelpers.map {
+        it.execute(TransferMode.SAFE, { this }) {
+            // run some thread-local work in a loop without allocations or external calls
+            fun fib(n: Int): Int {
+                if (n == 0) return 0
+                var prev = 0
+                var cur = 1
+                for (i in 2..n) {
+                    val next = cur + prev
+                    prev = cur
+                    cur = next
+                }
+                return cur
+            }
+
+            var sum = 0
+            while (!it.done) {
+                sum += fib(100)
+            }
+            return@execute sum
+        }
+    }
+
+    val splay = SplayBenchmark()
+
+    fun runSplayWithMarkHelpers() {
+        splay.runSplay()
+    }
+
+    fun splayTearDownMarkHelpers() {
+        done = true
+        splay.splayTearDown()
+        markHelperJobs.forEach { it.result }
+        markHelpers.forEach { it.requestTermination().result }
     }
 }

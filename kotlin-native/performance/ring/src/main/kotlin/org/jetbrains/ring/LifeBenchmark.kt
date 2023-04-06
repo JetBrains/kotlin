@@ -97,28 +97,38 @@ open class LifeBenchmark {
     }
 }
 
-class LifeWithWorkersBenchmark : LifeBenchmark() {
-    val numberOfWorkers = 5;
+class LifeWithMarkHelpersBenchmark : LifeBenchmark() {
+    val numberOfMarkHelpers = 5;
 
     var done = false
-    val workers = Array(numberOfWorkers, { _ -> Worker.start() })
-    init {
-        workers.forEach {
-            it.execute(TransferMode.SAFE, { this }) {
-                while (!it.done) {
-                    pthread_yield_np()
+    val markHelpers = Array(numberOfMarkHelpers, { _ -> Worker.start() })
+    val markHelperJobs = markHelpers.map {
+        it.execute(TransferMode.SAFE, { this }) {
+            // run some thread-local work in a loop without allocations or external calls
+            fun fib(n: Int): Int {
+                if (n == 0) return 0
+                var prev = 0
+                var cur = 1
+                for (i in 2..n) {
+                    val next = cur + prev
+                    prev = cur
+                    cur = next
                 }
+                return cur
             }
-        }
-    }
 
-    fun benchWithWorkers() {
-        bench()
+            var sum = 0
+            while (!it.done) {
+                sum += fib(100)
+            }
+            return@execute sum
+        }
     }
 
     fun terminate() {
         done = true
-        workers.forEach { it.requestTermination().result }
+        markHelperJobs.forEach { it.result }
+        markHelpers.forEach { it.requestTermination().result }
     }
 }
 
