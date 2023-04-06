@@ -33,14 +33,20 @@ object FirDeprecationChecker : FirBasicExpressionChecker() {
 
     override fun check(expression: FirStatement, context: CheckerContext, reporter: DiagnosticReporter) {
         if (!allowedSourceKinds.contains(expression.source?.kind)) return
-        if (expression is FirAnnotation || expression is FirDelegatedConstructorCall) return //checked by FirDeprecatedTypeChecker
+        if (expression is FirAnnotation) return // checked by FirDeprecatedTypeChecker
         if (expression.isLhsOfAssignment(context)) return
 
         val calleeReference = expression.calleeReference ?: return
         val resolvedReference = calleeReference.resolved ?: return
         val referencedSymbol = resolvedReference.resolvedSymbol
 
-        reportApiStatusIfNeeded(resolvedReference.source, referencedSymbol, expression, context, reporter)
+        if (expression is FirDelegatedConstructorCall) {
+            // Report deprecations on the constructor itself, not on the declaring class as that will be handled by FirDeprecatedTypeChecker
+            val constructorOnlyDeprecation = referencedSymbol.getDeprecation(context.session, expression) ?: return
+            reportApiStatus(resolvedReference.source, referencedSymbol, constructorOnlyDeprecation, reporter, context)
+        } else {
+            reportApiStatusIfNeeded(resolvedReference.source, referencedSymbol, expression, context, reporter)
+        }
     }
 
     internal fun reportApiStatusIfNeeded(

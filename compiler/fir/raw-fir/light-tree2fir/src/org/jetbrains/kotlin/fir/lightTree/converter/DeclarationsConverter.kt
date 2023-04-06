@@ -1838,7 +1838,7 @@ class DeclarationsConverter(
                     delegatedSuperTypeRef = first
                     superTypeRefs += first
                     superTypeCallEntry += second
-                    delegateConstructorSource = it.toFirSourceElement(KtFakeSourceElementKind.DelegatingConstructorCall)
+                    delegateConstructorSource = it.toFirSourceElement()
                     index++
                 }
                 DELEGATED_SUPER_TYPE_ENTRY -> {
