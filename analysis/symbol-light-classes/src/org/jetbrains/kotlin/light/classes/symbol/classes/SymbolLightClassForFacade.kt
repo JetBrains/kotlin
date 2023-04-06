@@ -144,7 +144,7 @@ internal class SymbolLightClassForFacade(
 
     private val packageClsFile = FakeFileForLightClass(
         firstFileInFacade,
-        lightClass = { this },
+        lightClass = this,
         packageFqName = facadeClassFqName.parent()
     )
 

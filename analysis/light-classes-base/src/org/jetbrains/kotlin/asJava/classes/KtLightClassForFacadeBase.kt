@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 import javax.swing.Icon
 
-abstract class KtLightClassForFacadeBase constructor(
+abstract class KtLightClassForFacadeBase(
     override val facadeClassFqName: FqName,
     final override val files: Collection<KtFile>
 ) : KtLightClassBase(files.first().manager), KtLightClassForFacade {
@@ -54,7 +54,7 @@ abstract class KtLightClassForFacadeBase constructor(
     private val packageClsFile by lazyPub {
         FakeFileForLightClass(
             firstFileInFacade,
-            lightClass = { this },
+            lightClass = this,
             packageFqName = facadeClassFqName.parent()
         )
     }
