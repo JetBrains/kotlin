@@ -1,6 +1,6 @@
 package kotlin.native.internal
 
-class IntrinsicType {
+internal class IntrinsicType {
     companion object {
         // Arithmetic
         const val PLUS                  = "PLUS"
