@@ -327,19 +327,6 @@ class KtLightSourceElement(
     override val elementType: IElementType
         get() = lighterASTNode.tokenType
 
-    /**
-     * We can create a [KtLightSourceElement] from a [KtPsiSourceElement] by using [KtPsiSourceElement.lighterASTNode];
-     * [unwrapToKtPsiSourceElement] allows to get original [KtPsiSourceElement] in such case.
-     *
-     * If it is `pure` [KtLightSourceElement], i.e, compiler created it in light tree mode, then return [unwrapToKtPsiSourceElement] `null`.
-     * Otherwise, return some not-null result.
-     */
-    fun unwrapToKtPsiSourceElement(): KtPsiSourceElement? {
-        if (treeStructure !is WrappedTreeStructure) return null
-        val node = treeStructure.unwrap(lighterASTNode)
-        return node.psi?.toKtPsiSourceElementWithFixedPsi(kind)
-    }
-
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

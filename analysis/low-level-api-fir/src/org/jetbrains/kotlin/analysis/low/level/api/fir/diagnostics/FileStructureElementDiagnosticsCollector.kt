@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics
 import org.jetbrains.kotlin.fir.analysis.collectors.CheckerRunningDiagnosticCollectorVisitor
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.fir.LLFirStructureElementDiagnosticsCollector
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.fir.analysis.collectors.DiagnosticCollectorComponents
 
 internal class FileStructureElementDiagnosticsCollector private constructor(private val useExtendedCheckers: Boolean) {
@@ -20,7 +21,7 @@ internal class FileStructureElementDiagnosticsCollector private constructor(priv
         firDeclaration: FirDeclaration,
         createVisitor: (components: DiagnosticCollectorComponents) -> CheckerRunningDiagnosticCollectorVisitor,
     ): FileStructureElementDiagnosticList {
-        val reporter = LLFirDiagnosticReporter()
+        val reporter = LLFirDiagnosticReporter(firDeclaration.llFirSession)
         val collector = LLFirStructureElementDiagnosticsCollector(
             firDeclaration.moduleData.session,
             createVisitor,
