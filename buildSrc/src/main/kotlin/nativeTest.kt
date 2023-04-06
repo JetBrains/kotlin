@@ -80,7 +80,7 @@ fun Project.nativeTest(
 ) = projectTest(
     taskName,
     jUnitMode = JUnitMode.JUnit5,
-    maxHeapSizeMb = 3072 // Extra heap space for Kotlin/Native compiler.
+    maxHeapSizeMb = 4096 // Extra heap space for Kotlin/Native compiler.
 ) {
     group = "verification"
 
@@ -108,6 +108,9 @@ fun Project.nativeTest(
             logger.info("$path JIT C2 compiler has been disabled")
             jvmArgs("-XX:TieredStopAtLevel=1") // Disable C2 if there are more than 4 CPUs at the host machine.
         }
+
+        systemProperty("junit.jupiter.execution.parallel.config.strategy", "fixed")
+        systemProperty("junit.jupiter.execution.parallel.config.fixed.parallelism", 4)
 
         // Compute test properties in advance. Make sure that the necessary dependencies are settled.
         // But do not resolve any configurations until the execution phase.
