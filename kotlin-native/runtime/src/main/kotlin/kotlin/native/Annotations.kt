@@ -55,6 +55,8 @@ public annotation class RetainForTarget(val target: String)
 public typealias Throws = kotlin.Throws
 
 /** @suppress */
+@Deprecated("Use kotlin.native.concurrent.ThreadLocal instead.", ReplaceWith("ThreadLocal", "kotlin.native.concurrent.ThreadLocal"))
+@DeprecatedSinceKotlin(warningSince = "1.9")
 public typealias ThreadLocal = kotlin.native.concurrent.ThreadLocal
 
 /** @suppress */
