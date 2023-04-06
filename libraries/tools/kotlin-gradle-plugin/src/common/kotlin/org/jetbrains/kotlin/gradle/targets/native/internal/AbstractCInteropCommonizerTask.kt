@@ -25,7 +25,7 @@ internal abstract class AbstractCInteropCommonizerTask : DefaultTask() {
 }
 
 internal fun AbstractCInteropCommonizerTask.outputDirectory(group: CInteropCommonizerGroup): File {
-    val interopsDirectoryName = group.interops.map { it.interopName }.toSet().joinToString(";")
+    val interopsDirectoryName = group.interops.map { it.interopName }.toSet().joinToString(":")
     val groupDisambiguation = group.targets.joinToString { it.identityString } +
             group.interops.joinToString { it.uniqueName }
 
