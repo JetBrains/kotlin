@@ -22,15 +22,12 @@ import com.intellij.psi.stubs.StubOutputStream;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.metadata.ProtoBuf;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.psi.KtProjectionKind;
 import org.jetbrains.kotlin.psi.KtUserType;
 import org.jetbrains.kotlin.psi.stubs.KotlinUserTypeStub;
 import org.jetbrains.kotlin.psi.stubs.StubUtils;
-import org.jetbrains.kotlin.psi.stubs.impl.Argument;
-import org.jetbrains.kotlin.psi.stubs.impl.KotlinFlexibleType;
-import org.jetbrains.kotlin.psi.stubs.impl.KotlinUserTypeStubImpl;
+import org.jetbrains.kotlin.psi.stubs.impl.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -53,21 +50,35 @@ public class KtUserTypeElementType extends KtStubElementType<KotlinUserTypeStub,
         serializeType(dataStream, ((KotlinUserTypeStubImpl) stub).getUpperBound());
     }
 
-    private static void serializeType(@NotNull StubOutputStream dataStream, @Nullable KotlinFlexibleType type) throws IOException {
-        dataStream.writeBoolean(type != null);
-        if (type != null) {
-            StubUtils.serializeClassId(dataStream, type.getClassId());
+    private enum KotlinTypeBeanType {
+        CLASS, TYPE_PARAMETER, NONE;
+
+        static KotlinTypeBeanType fromBean(KotlinTypeBean typeBean) {
+            if (typeBean == null) return NONE;
+            if (typeBean instanceof KotlinTypeParameterTypeBean) return TYPE_PARAMETER;
+            return CLASS;
+        }
+    }
+
+    private static void serializeType(@NotNull StubOutputStream dataStream, @Nullable KotlinTypeBean type) throws IOException {
+        dataStream.writeInt(KotlinTypeBeanType.fromBean(type).ordinal());
+        if (type instanceof KotlinClassTypeBean) {
+            StubUtils.serializeClassId(dataStream, ((KotlinClassTypeBean) type).getClassId());
             dataStream.writeBoolean(type.getNullable());
-            List<Argument> arguments = type.getArguments();
+            List<KotlinTypeArgumentBean> arguments = ((KotlinClassTypeBean) type).getArguments();
             dataStream.writeInt(arguments.size());
-            for (Argument argument : arguments) {
+            for (KotlinTypeArgumentBean argument : arguments) {
                 KtProjectionKind kind = argument.getProjectionKind();
                 dataStream.writeInt(kind.ordinal());
                 if (kind != KtProjectionKind.STAR) {
                     serializeType(dataStream, argument.getType());
                 }
             }
-            serializeType(dataStream, type.getUpperBound());
+            serializeType(dataStream, ((KotlinClassTypeBean) type).getUpperBound());
+        }
+        else if (type instanceof KotlinTypeParameterTypeBean) {
+            dataStream.writeName(((KotlinTypeParameterTypeBean) type).getTypeParameterName());
+            dataStream.writeBoolean(type.getNullable());
         }
     }
 
@@ -78,25 +89,32 @@ public class KtUserTypeElementType extends KtStubElementType<KotlinUserTypeStub,
     }
 
     @Nullable
-    private static KotlinFlexibleType deserializeType(@NotNull StubInputStream dataStream) throws IOException {
-        boolean hasFlexibleType = dataStream.readBoolean();
-        if (hasFlexibleType) {
-            ClassId classId = Objects.requireNonNull(StubUtils.deserializeClassId(dataStream));
-            boolean isNullable = dataStream.readBoolean();
-            int count = dataStream.readInt();
-            List<Argument> arguments = new ArrayList<>();
-            for (int i = 0; i < count; i++) {
-                int kind = dataStream.readInt();
-                Argument argument;
-                if (kind != KtProjectionKind.STAR.ordinal()) {
-                    argument = new Argument(KtProjectionKind.values()[kind], deserializeType(dataStream));
+    private static KotlinTypeBean deserializeType(@NotNull StubInputStream dataStream) throws IOException {
+        KotlinTypeBeanType hasFlexibleType = KotlinTypeBeanType.values()[dataStream.readInt()];
+        switch (hasFlexibleType) {
+            case CLASS: {
+                ClassId classId = Objects.requireNonNull(StubUtils.deserializeClassId(dataStream));
+                boolean isNullable = dataStream.readBoolean();
+                int count = dataStream.readInt();
+                List<KotlinTypeArgumentBean> arguments = new ArrayList<>();
+                for (int i = 0; i < count; i++) {
+                    int kind = dataStream.readInt();
+                    KotlinTypeArgumentBean argument;
+                    if (kind != KtProjectionKind.STAR.ordinal()) {
+                        argument = new KotlinTypeArgumentBean(KtProjectionKind.values()[kind], deserializeType(dataStream));
+                    }
+                    else {
+                        argument = new KotlinTypeArgumentBean(KtProjectionKind.STAR, null);
+                    }
+                    arguments.add(argument);
                 }
-                else {
-                    argument = new Argument(KtProjectionKind.STAR, null);
-                }
-                arguments.add(argument);
+                return new KotlinClassTypeBean(classId, arguments, isNullable, deserializeType(dataStream));
             }
-            return new KotlinFlexibleType(classId, arguments, isNullable, deserializeType(dataStream));
+            case TYPE_PARAMETER: {
+                return new KotlinTypeParameterTypeBean(Objects.requireNonNull(dataStream.readNameString()), dataStream.readBoolean());
+            }
+            case NONE:
+                return null;
         }
         return null;
     }

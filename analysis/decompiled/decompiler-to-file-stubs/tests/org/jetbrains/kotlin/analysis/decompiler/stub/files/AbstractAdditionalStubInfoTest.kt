@@ -9,7 +9,9 @@ import com.intellij.psi.stubs.StubElement
 import com.intellij.util.indexing.FileContentImpl
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.KotlinClsStubBuilder
 import org.jetbrains.kotlin.psi.KtProjectionKind
-import org.jetbrains.kotlin.psi.stubs.impl.KotlinFlexibleType
+import org.jetbrains.kotlin.psi.stubs.impl.KotlinClassTypeBean
+import org.jetbrains.kotlin.psi.stubs.impl.KotlinTypeBean
+import org.jetbrains.kotlin.psi.stubs.impl.KotlinTypeParameterTypeBean
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinUserTypeStubImpl
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.nio.file.Paths
@@ -39,29 +41,39 @@ abstract class AbstractAdditionalStubInfoTest : AbstractDecompiledClassTest() {
         }
     }
 
-    private fun appendFlexibleTypeInfo(builder: StringBuilder, upperBound: KotlinFlexibleType) {
-        builder.append(upperBound.classId.asFqNameString())
-        val arguments = upperBound.arguments
-        if (arguments.isNotEmpty()) {
-            builder.append("<")
-            arguments.forEachIndexed { index, arg ->
-                if (index > 0) builder.append(", ")
-                if (arg.projectionKind != KtProjectionKind.NONE) {
-                    builder.append(arg.projectionKind.name)
+    private fun appendFlexibleTypeInfo(builder: StringBuilder, upperBound: KotlinTypeBean) {
+        when (upperBound) {
+            is KotlinClassTypeBean -> {
+                builder.append(upperBound.classId.asFqNameString())
+                val arguments = upperBound.arguments
+                if (arguments.isNotEmpty()) {
+                    builder.append("<")
+                    arguments.forEachIndexed { index, arg ->
+                        if (index > 0) builder.append(", ")
+                        if (arg.projectionKind != KtProjectionKind.NONE) {
+                            builder.append(arg.projectionKind.name)
+                        }
+                        if (arg.projectionKind != KtProjectionKind.STAR) {
+                            appendFlexibleTypeInfo(builder, arg.type!!)
+                        }
+                    }
+                    builder.append(">")
                 }
-                if (arg.projectionKind != KtProjectionKind.STAR) {
-                    appendFlexibleTypeInfo(builder, arg.type!!)
+                if (upperBound.nullable) {
+                    builder.append("?")
+                }
+                val uUpperBound = upperBound.upperBound
+                if (uUpperBound != null) {
+                    builder.append(" .. ")
+                    appendFlexibleTypeInfo(builder, uUpperBound)
                 }
             }
-            builder.append(">")
-        }
-        if (upperBound.nullable) {
-            builder.append("?")
-        }
-        val uUpperBound = upperBound.upperBound
-        if (uUpperBound != null) {
-            builder.append(" .. ")
-            appendFlexibleTypeInfo(builder, uUpperBound)
+            is KotlinTypeParameterTypeBean -> {
+                builder.append(upperBound.typeParameterName)
+                if (upperBound.nullable) {
+                    builder.append("?")
+                }
+            }
         }
     }
 }

@@ -29,4 +29,10 @@ public class AdditionalStubInfoTestGenerated extends AbstractAdditionalStubInfoT
     public void testAnnotatedFlexibleTypes() throws Exception {
         runTest("analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo/AnnotatedFlexibleTypes/");
     }
+
+    @Test
+    @TestMetadata("TypeParametersInFlexibleTypes")
+    public void testTypeParametersInFlexibleTypes() throws Exception {
+        runTest("analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo/TypeParametersInFlexibleTypes/");
+    }
 }

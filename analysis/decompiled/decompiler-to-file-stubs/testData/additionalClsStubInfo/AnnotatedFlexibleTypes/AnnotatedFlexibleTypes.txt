@@ -17,7 +17,7 @@ KotlinStub$CLASS[classId=test/AnnotatedFlexibleTypes, fqName=test.AnnotatedFlexi
     KotlinStub$PROPERTY[fqName=test.AnnotatedFlexibleTypes.bar, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=bar]
       KotlinStub$MODIFIER_LIST[public final]
       KotlinStub$TYPE_REFERENCE
-        KotlinStub$USER_TYPE    ft: kotlin.collections.Collection<kotlin.Int? .. kotlin.Int?>?
+        KotlinStub$USER_TYPE    ft: kotlin.collections.Collection<kotlin.Int .. kotlin.Int?>?
           KotlinStub$USER_TYPE
             KotlinStub$USER_TYPE
               KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
