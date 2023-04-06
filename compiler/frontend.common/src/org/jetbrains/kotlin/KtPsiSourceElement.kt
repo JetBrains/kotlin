@@ -13,7 +13,9 @@ import com.intellij.util.diff.FlyweightCapableTreeStructure
 
 // NB: in certain situations, psi.node could be null (see e.g. KT-44152)
 // Potentially exceptions can be provoked by elementType / lighterASTNode
-sealed class KtPsiSourceElement(val psi: PsiElement) : KtSourceElement() {
+abstract class KtPsiSourceElement : KtSourceElement() {
+    abstract val psi: PsiElement
+
     override val elementType: IElementType?
         get() = psi.node?.elementType
 
@@ -22,14 +24,6 @@ sealed class KtPsiSourceElement(val psi: PsiElement) : KtSourceElement() {
 
     override val endOffset: Int
         get() = psi.textRange.endOffset
-
-    override val lighterASTNode: LighterASTNode by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        TreeBackedLighterAST.wrap(psi.node)
-    }
-
-    override val treeStructure: FlyweightCapableTreeStructure<LighterASTNode> by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        WrappedTreeStructure(psi.containingFile)
-    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -47,49 +41,60 @@ sealed class KtPsiSourceElement(val psi: PsiElement) : KtSourceElement() {
     }
 }
 
-private class KtRealPsiSourceElement(psi: PsiElement) : KtPsiSourceElement(psi) {
-    override val kind: KtSourceElementKind get() = KtRealSourceElementKind
-
-    override fun fakeElement(newKind: KtFakeSourceElementKind): KtSourceElement {
-        return KtFakeSourceElement(psi, newKind)
+private sealed class KtFixedPsiSourceElement(override val psi: PsiElement) : KtPsiSourceElement() {
+    override val lighterASTNode: LighterASTNode by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        TreeBackedLighterAST.wrap(psi.node)
     }
 
-    override fun realElement(): KtSourceElement {
-        return this
+    override val treeStructure: FlyweightCapableTreeStructure<LighterASTNode> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        WrappedTreeStructure(psi.containingFile)
+    }
+
+    class KtRealPsiSourceElement(psi: PsiElement) : KtFixedPsiSourceElement(psi) {
+        override val kind: KtSourceElementKind get() = KtRealSourceElementKind
+
+        override fun fakeElement(newKind: KtFakeSourceElementKind): KtSourceElement {
+            return KtFakeSourceElement(psi, newKind)
+        }
+
+        override fun realElement(): KtSourceElement {
+            return this
+        }
+    }
+
+    class KtFakeSourceElement(psi: PsiElement, override val kind: KtFakeSourceElementKind) : KtFixedPsiSourceElement(psi) {
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (javaClass != other?.javaClass) return false
+            if (!super.equals(other)) return false
+
+            other as KtFakeSourceElement
+
+            if (kind != other.kind) return false
+
+            return true
+        }
+
+        override fun hashCode(): Int {
+            var result = super.hashCode()
+            result = 31 * result + kind.hashCode()
+            return result
+        }
+
+        override fun fakeElement(newKind: KtFakeSourceElementKind): KtSourceElement {
+            if (kind == newKind) return this
+            return KtFakeSourceElement(psi, newKind)
+        }
+
+        override fun realElement(): KtSourceElement {
+            return KtRealPsiSourceElement(psi)
+        }
     }
 }
 
-private class KtFakeSourceElement(psi: PsiElement, override val kind: KtFakeSourceElementKind) : KtPsiSourceElement(psi) {
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-        if (!super.equals(other)) return false
-
-        other as KtFakeSourceElement
-
-        if (kind != other.kind) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = super.hashCode()
-        result = 31 * result + kind.hashCode()
-        return result
-    }
-
-    override fun fakeElement(newKind: KtFakeSourceElementKind): KtSourceElement {
-        if (kind == newKind) return this
-        return KtFakeSourceElement(psi, newKind)
-    }
-
-    override fun realElement(): KtSourceElement {
-        return KtRealPsiSourceElement(psi)
-    }
-}
 
 fun PsiElement.toKtPsiSourceElement(kind: KtSourceElementKind = KtRealSourceElementKind): KtPsiSourceElement = when (kind) {
-    is KtRealSourceElementKind -> KtRealPsiSourceElement(this)
-    is KtFakeSourceElementKind -> KtFakeSourceElement(this, kind)
+    is KtRealSourceElementKind -> KtFixedPsiSourceElement.KtRealPsiSourceElement(this)
+    is KtFakeSourceElementKind -> KtFixedPsiSourceElement.KtFakeSourceElement(this, kind)
 }
 
