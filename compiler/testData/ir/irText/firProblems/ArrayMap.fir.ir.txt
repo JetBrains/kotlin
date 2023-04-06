@@ -717,19 +717,19 @@ FILE fqName:<root> fileName:/ArrayMap.kt
             RETURN type=kotlin.Nothing from='public open fun <get-value> (): T of <root>.ArrayMapImpl.Entry declared in <root>.ArrayMapImpl.Entry'
               GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.ArrayMapImpl.Entry visibility:private [final]' type=T of <root>.ArrayMapImpl.Entry origin=null
                 receiver: GET_VAR '<this>: <root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry> declared in <root>.ArrayMapImpl.Entry.<get-value>' type=<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry> origin=null
-      FUN name:component1 visibility:public modality:FINAL <> ($this:<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry>) returnType:kotlin.Int [operator]
+      FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry>) returnType:kotlin.Int [operator]
         $this: VALUE_PARAMETER name:<this> type:<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.Int [operator] declared in <root>.ArrayMapImpl.Entry'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:key type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry> declared in <root>.ArrayMapImpl.Entry.component1' type=<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry> origin=null
-      FUN name:component2 visibility:public modality:FINAL <> ($this:<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry>) returnType:T of <root>.ArrayMapImpl.Entry [operator]
+      FUN GENERATED_DATA_CLASS_MEMBER name:component2 visibility:public modality:FINAL <> ($this:<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry>) returnType:T of <root>.ArrayMapImpl.Entry [operator]
         $this: VALUE_PARAMETER name:<this> type:<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun component2 (): T of <root>.ArrayMapImpl.Entry [operator] declared in <root>.ArrayMapImpl.Entry'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.ArrayMapImpl.Entry visibility:private [final]' type=T of <root>.ArrayMapImpl.Entry origin=null
               receiver: GET_VAR '<this>: <root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry> declared in <root>.ArrayMapImpl.Entry.component2' type=<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry> origin=null
-      FUN name:copy visibility:public modality:FINAL <> ($this:<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry>, key:kotlin.Int, value:T of <root>.ArrayMapImpl.Entry) returnType:<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry>
+      FUN GENERATED_DATA_CLASS_MEMBER name:copy visibility:public modality:FINAL <> ($this:<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry>, key:kotlin.Int, value:T of <root>.ArrayMapImpl.Entry) returnType:<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry>
         $this: VALUE_PARAMETER name:<this> type:<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry>
         VALUE_PARAMETER name:key index:0 type:kotlin.Int
           EXPRESSION_BODY

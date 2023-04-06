@@ -31,19 +31,19 @@ FILE fqName:<root> fileName:/compareTo.kt
           RETURN type=kotlin.Nothing from='public final fun <get-second> (): B of <root>.Pair declared in <root>.Pair'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:second type:B of <root>.Pair visibility:private [final]' type=B of <root>.Pair origin=null
               receiver: GET_VAR '<this>: <root>.Pair<A of <root>.Pair, B of <root>.Pair> declared in <root>.Pair.<get-second>' type=<root>.Pair<A of <root>.Pair, B of <root>.Pair> origin=null
-    FUN name:component1 visibility:public modality:FINAL <> ($this:<root>.Pair<A of <root>.Pair, B of <root>.Pair>) returnType:A of <root>.Pair [operator]
+    FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.Pair<A of <root>.Pair, B of <root>.Pair>) returnType:A of <root>.Pair [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.Pair<A of <root>.Pair, B of <root>.Pair>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component1 (): A of <root>.Pair [operator] declared in <root>.Pair'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:first type:A of <root>.Pair visibility:private [final]' type=A of <root>.Pair origin=null
             receiver: GET_VAR '<this>: <root>.Pair<A of <root>.Pair, B of <root>.Pair> declared in <root>.Pair.component1' type=<root>.Pair<A of <root>.Pair, B of <root>.Pair> origin=null
-    FUN name:component2 visibility:public modality:FINAL <> ($this:<root>.Pair<A of <root>.Pair, B of <root>.Pair>) returnType:B of <root>.Pair [operator]
+    FUN GENERATED_DATA_CLASS_MEMBER name:component2 visibility:public modality:FINAL <> ($this:<root>.Pair<A of <root>.Pair, B of <root>.Pair>) returnType:B of <root>.Pair [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.Pair<A of <root>.Pair, B of <root>.Pair>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component2 (): B of <root>.Pair [operator] declared in <root>.Pair'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:second type:B of <root>.Pair visibility:private [final]' type=B of <root>.Pair origin=null
             receiver: GET_VAR '<this>: <root>.Pair<A of <root>.Pair, B of <root>.Pair> declared in <root>.Pair.component2' type=<root>.Pair<A of <root>.Pair, B of <root>.Pair> origin=null
-    FUN name:copy visibility:public modality:FINAL <> ($this:<root>.Pair<A of <root>.Pair, B of <root>.Pair>, first:A of <root>.Pair, second:B of <root>.Pair) returnType:<root>.Pair<A of <root>.Pair, B of <root>.Pair>
+    FUN GENERATED_DATA_CLASS_MEMBER name:copy visibility:public modality:FINAL <> ($this:<root>.Pair<A of <root>.Pair, B of <root>.Pair>, first:A of <root>.Pair, second:B of <root>.Pair) returnType:<root>.Pair<A of <root>.Pair, B of <root>.Pair>
       $this: VALUE_PARAMETER name:<this> type:<root>.Pair<A of <root>.Pair, B of <root>.Pair>
       VALUE_PARAMETER name:first index:0 type:A of <root>.Pair
         EXPRESSION_BODY

@@ -255,14 +255,17 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
         }
 
         fun generateComponentBody(irFunction: IrFunction) {
+            irFunction.origin = origin
             val index = DataClassResolver.getComponentIndex(irFunction.name.asString())
             val valueParameter = irClass.primaryConstructor!!.valueParameters[index - 1]
             val irProperty = irDataClassMembersGenerator.getProperty(null, valueParameter)!!
             irDataClassMembersGenerator.generateComponentFunction(irFunction, irProperty)
         }
 
-        fun generateCopyBody(irFunction: IrFunction) =
+        fun generateCopyBody(irFunction: IrFunction) {
+            irFunction.origin = origin
             irDataClassMembersGenerator.generateCopyFunction(irFunction, irClass.primaryConstructor!!.symbol)
+        }
 
         private fun createSyntheticIrFunction(
             name: Name,

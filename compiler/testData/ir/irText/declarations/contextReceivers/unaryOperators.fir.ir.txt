@@ -17,13 +17,13 @@ FILE fqName:<root> fileName:/unaryOperators.kt
           RETURN type=kotlin.Nothing from='public final fun <get-i> (): kotlin.Int declared in <root>.Result'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:i type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.Result declared in <root>.Result.<get-i>' type=<root>.Result origin=null
-    FUN name:component1 visibility:public modality:FINAL <> ($this:<root>.Result) returnType:kotlin.Int [operator]
+    FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.Result) returnType:kotlin.Int [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.Result
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.Int [operator] declared in <root>.Result'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:i type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
             receiver: GET_VAR '<this>: <root>.Result declared in <root>.Result.component1' type=<root>.Result origin=null
-    FUN name:copy visibility:public modality:FINAL <> ($this:<root>.Result, i:kotlin.Int) returnType:<root>.Result
+    FUN GENERATED_DATA_CLASS_MEMBER name:copy visibility:public modality:FINAL <> ($this:<root>.Result, i:kotlin.Int) returnType:<root>.Result
       $this: VALUE_PARAMETER name:<this> type:<root>.Result
       VALUE_PARAMETER name:i index:0 type:kotlin.Int
         EXPRESSION_BODY
