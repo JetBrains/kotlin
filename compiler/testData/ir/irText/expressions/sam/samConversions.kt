@@ -1,6 +1,7 @@
 // FIR_IDENTICAL
 // TARGET_BACKEND: JVM
 // WITH_JDK
+
 // FILE: samConversions.kt
 fun J.test0(a: Runnable) {
     J.runStatic(a)

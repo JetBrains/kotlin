@@ -1,4 +1,9 @@
 // FIR_IDENTICAL
+// DUMP_LOCAL_DECLARATION_SIGNATURES
+
+// MUTE_SIGNATURE_COMPARISON_K2: ANY
+// ^ KT-57434
+
 class Delegate(val value: String) {
     operator fun getValue(thisRef: Any?, property: Any?) = value
 }

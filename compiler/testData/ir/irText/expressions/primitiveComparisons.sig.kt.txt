@@ -1,0 +1,192 @@
+// CHECK JVM_IR:
+//   Mangled name: #btest1(kotlin.Byte;kotlin.Byte){}kotlin.Boolean
+//   Public signature: /btest1|6730584705987479338[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #btest1(kotlin.Byte;kotlin.Byte){}
+//   Public signature: /btest1|5100557308846811449[0]
+fun btest1(a: Byte, b: Byte): Boolean
+
+// CHECK JVM_IR:
+//   Mangled name: #btest2(kotlin.Byte;kotlin.Byte){}kotlin.Boolean
+//   Public signature: /btest2|-6552371622511203923[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #btest2(kotlin.Byte;kotlin.Byte){}
+//   Public signature: /btest2|3052207698542953276[0]
+fun btest2(a: Byte, b: Byte): Boolean
+
+// CHECK JVM_IR:
+//   Mangled name: #btest3(kotlin.Byte;kotlin.Byte){}kotlin.Boolean
+//   Public signature: /btest3|-1633706830867065376[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #btest3(kotlin.Byte;kotlin.Byte){}
+//   Public signature: /btest3|-5652941477615644172[0]
+fun btest3(a: Byte, b: Byte): Boolean
+
+// CHECK JVM_IR:
+//   Mangled name: #btest4(kotlin.Byte;kotlin.Byte){}kotlin.Boolean
+//   Public signature: /btest4|-7673388339311765317[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #btest4(kotlin.Byte;kotlin.Byte){}
+//   Public signature: /btest4|7053360996245144820[0]
+fun btest4(a: Byte, b: Byte): Boolean
+
+// CHECK JVM_IR:
+//   Mangled name: #dtest1(kotlin.Double;kotlin.Double){}kotlin.Boolean
+//   Public signature: /dtest1|1293020120253569605[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #dtest1(kotlin.Double;kotlin.Double){}
+//   Public signature: /dtest1|-3670856411002880609[0]
+fun dtest1(a: Double, b: Double): Boolean
+
+// CHECK JVM_IR:
+//   Mangled name: #dtest2(kotlin.Double;kotlin.Double){}kotlin.Boolean
+//   Public signature: /dtest2|-401220502378854550[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #dtest2(kotlin.Double;kotlin.Double){}
+//   Public signature: /dtest2|710371925947423598[0]
+fun dtest2(a: Double, b: Double): Boolean
+
+// CHECK JVM_IR:
+//   Mangled name: #dtest3(kotlin.Double;kotlin.Double){}kotlin.Boolean
+//   Public signature: /dtest3|9087445662424121701[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #dtest3(kotlin.Double;kotlin.Double){}
+//   Public signature: /dtest3|-8298317474692620489[0]
+fun dtest3(a: Double, b: Double): Boolean
+
+// CHECK JVM_IR:
+//   Mangled name: #dtest4(kotlin.Double;kotlin.Double){}kotlin.Boolean
+//   Public signature: /dtest4|-1521716954463317470[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #dtest4(kotlin.Double;kotlin.Double){}
+//   Public signature: /dtest4|6778330273234975821[0]
+fun dtest4(a: Double, b: Double): Boolean
+
+// CHECK JVM_IR:
+//   Mangled name: #ftest1(kotlin.Float;kotlin.Float){}kotlin.Boolean
+//   Public signature: /ftest1|7638926557162622532[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #ftest1(kotlin.Float;kotlin.Float){}
+//   Public signature: /ftest1|-2472379729840891235[0]
+fun ftest1(a: Float, b: Float): Boolean
+
+// CHECK JVM_IR:
+//   Mangled name: #ftest2(kotlin.Float;kotlin.Float){}kotlin.Boolean
+//   Public signature: /ftest2|2172716929351344911[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #ftest2(kotlin.Float;kotlin.Float){}
+//   Public signature: /ftest2|-6338145559112408330[0]
+fun ftest2(a: Float, b: Float): Boolean
+
+// CHECK JVM_IR:
+//   Mangled name: #ftest3(kotlin.Float;kotlin.Float){}kotlin.Boolean
+//   Public signature: /ftest3|-468626791227486374[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #ftest3(kotlin.Float;kotlin.Float){}
+//   Public signature: /ftest3|735138896823635398[0]
+fun ftest3(a: Float, b: Float): Boolean
+
+// CHECK JVM_IR:
+//   Mangled name: #ftest4(kotlin.Float;kotlin.Float){}kotlin.Boolean
+//   Public signature: /ftest4|-563998142236945116[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #ftest4(kotlin.Float;kotlin.Float){}
+//   Public signature: /ftest4|-6316245319701743761[0]
+fun ftest4(a: Float, b: Float): Boolean
+
+// CHECK JVM_IR:
+//   Mangled name: #itest1(kotlin.Int;kotlin.Int){}kotlin.Boolean
+//   Public signature: /itest1|6340059804502952428[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #itest1(kotlin.Int;kotlin.Int){}
+//   Public signature: /itest1|2943936311178324727[0]
+fun itest1(a: Int, b: Int): Boolean
+
+// CHECK JVM_IR:
+//   Mangled name: #itest2(kotlin.Int;kotlin.Int){}kotlin.Boolean
+//   Public signature: /itest2|6922746060529996151[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #itest2(kotlin.Int;kotlin.Int){}
+//   Public signature: /itest2|-2847434528416538539[0]
+fun itest2(a: Int, b: Int): Boolean
+
+// CHECK JVM_IR:
+//   Mangled name: #itest3(kotlin.Int;kotlin.Int){}kotlin.Boolean
+//   Public signature: /itest3|-4434266925583117272[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #itest3(kotlin.Int;kotlin.Int){}
+//   Public signature: /itest3|-1930560630840536241[0]
+fun itest3(a: Int, b: Int): Boolean
+
+// CHECK JVM_IR:
+//   Mangled name: #itest4(kotlin.Int;kotlin.Int){}kotlin.Boolean
+//   Public signature: /itest4|1388121819832551698[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #itest4(kotlin.Int;kotlin.Int){}
+//   Public signature: /itest4|7597396364397358070[0]
+fun itest4(a: Int, b: Int): Boolean
+
+// CHECK JVM_IR:
+//   Mangled name: #ltest1(kotlin.Long;kotlin.Long){}kotlin.Boolean
+//   Public signature: /ltest1|9212930367460177077[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #ltest1(kotlin.Long;kotlin.Long){}
+//   Public signature: /ltest1|-8498134014415114523[0]
+fun ltest1(a: Long, b: Long): Boolean
+
+// CHECK JVM_IR:
+//   Mangled name: #ltest2(kotlin.Long;kotlin.Long){}kotlin.Boolean
+//   Public signature: /ltest2|-3882280686576941701[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #ltest2(kotlin.Long;kotlin.Long){}
+//   Public signature: /ltest2|-6051755770291351912[0]
+fun ltest2(a: Long, b: Long): Boolean
+
+// CHECK JVM_IR:
+//   Mangled name: #ltest3(kotlin.Long;kotlin.Long){}kotlin.Boolean
+//   Public signature: /ltest3|-658692317728529650[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #ltest3(kotlin.Long;kotlin.Long){}
+//   Public signature: /ltest3|6063756894384388964[0]
+fun ltest3(a: Long, b: Long): Boolean
+
+// CHECK JVM_IR:
+//   Mangled name: #ltest4(kotlin.Long;kotlin.Long){}kotlin.Boolean
+//   Public signature: /ltest4|-7065839936524359450[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #ltest4(kotlin.Long;kotlin.Long){}
+//   Public signature: /ltest4|1773951101980382389[0]
+fun ltest4(a: Long, b: Long): Boolean
+
+// CHECK JVM_IR:
+//   Mangled name: #stest1(kotlin.Short;kotlin.Short){}kotlin.Boolean
+//   Public signature: /stest1|2091834275868806980[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #stest1(kotlin.Short;kotlin.Short){}
+//   Public signature: /stest1|-2109438361398971372[0]
+fun stest1(a: Short, b: Short): Boolean
+
+// CHECK JVM_IR:
+//   Mangled name: #stest2(kotlin.Short;kotlin.Short){}kotlin.Boolean
+//   Public signature: /stest2|-8199878878380259195[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #stest2(kotlin.Short;kotlin.Short){}
+//   Public signature: /stest2|4687807588444680071[0]
+fun stest2(a: Short, b: Short): Boolean
+
+// CHECK JVM_IR:
+//   Mangled name: #stest3(kotlin.Short;kotlin.Short){}kotlin.Boolean
+//   Public signature: /stest3|-1498769342871932498[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #stest3(kotlin.Short;kotlin.Short){}
+//   Public signature: /stest3|-8085248862010978029[0]
+fun stest3(a: Short, b: Short): Boolean
+
+// CHECK JVM_IR:
+//   Mangled name: #stest4(kotlin.Short;kotlin.Short){}kotlin.Boolean
+//   Public signature: /stest4|-5913675845898960216[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #stest4(kotlin.Short;kotlin.Short){}
+//   Public signature: /stest4|-4183064856238597809[0]
+fun stest4(a: Short, b: Short): Boolean
+

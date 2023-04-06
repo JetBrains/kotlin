@@ -1,0 +1,130 @@
+package events
+
+// CHECK:
+//   Mangled name: events.internal
+//   Public signature: events/internal|null[0]
+open external class internal {
+  // CHECK:
+  //   Mangled name: events.internal.EventEmitterP
+  //   Public signature: events/internal.EventEmitterP|null[0]
+  open external class EventEmitterP : internal {
+    // CHECK:
+    //   Mangled name: events.internal.EventEmitterP#<init>(){}
+    //   Public signature: events/internal.EventEmitterP.<init>|-5645683436151566731[0]
+    external constructor() /* primary */
+
+  }
+
+  // CHECK:
+  //   Mangled name: events.internal.EventEmitterS
+  //   Public signature: events/internal.EventEmitterS|null[0]
+  open external class EventEmitterS : internal {
+    // CHECK:
+    //   Mangled name: events.internal.EventEmitterS#<init>(kotlin.Any){}
+    //   Public signature: events/internal.EventEmitterS.<init>|4518179880532599055[0]
+    external constructor(a: Any)
+
+  }
+
+  // CHECK:
+  //   Mangled name: events.internal.NestedExternalEnum
+  //   Public signature: events/internal.NestedExternalEnum|null[0]
+  external enum class NestedExternalEnum : Enum<NestedExternalEnum> {
+    // CHECK:
+    //   Mangled name: events.internal.NestedExternalEnum#<init>(){}
+    //   Public signature: events/internal.NestedExternalEnum.<init>|-5645683436151566731[0]
+    private external constructor() /* primary */
+    // CHECK:
+    //   Mangled name: events.internal.NestedExternalEnum.A
+    //   Public signature: events/internal.NestedExternalEnum.A|null[0]
+    A
+
+    // CHECK:
+    //   Mangled name: events.internal.NestedExternalEnum.B
+    //   Public signature: events/internal.NestedExternalEnum.B|null[0]
+    B
+
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: events.internal.NestedExternalEnum#valueOf#static(kotlin.String){}
+    //   Public signature: events/internal.NestedExternalEnum.valueOf|-4683474617854611729[0]
+    external fun valueOf(value: String): NestedExternalEnum
+
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: events.internal.NestedExternalEnum#values#static(){}
+    //   Public signature: events/internal.NestedExternalEnum.values|-8715569000920726747[0]
+    external fun values(): Array<NestedExternalEnum>
+
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: events.internal.NestedExternalEnum#compareTo(events.internal.NestedExternalEnum){}
+    //   Public signature: events/internal.NestedExternalEnum.compareTo|-4902667871773591290[0]
+    external /* fake */ override operator fun compareTo(other: NestedExternalEnum): Int
+
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: events.internal.NestedExternalEnum#equals(kotlin.Any?){}
+    //   Public signature: events/internal.NestedExternalEnum.equals|4638265728071529943[0]
+    external /* fake */ override operator fun equals(other: Any?): Boolean
+
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: events.internal.NestedExternalEnum#hashCode(){}
+    //   Public signature: events/internal.NestedExternalEnum.hashCode|3409210261493131192[0]
+    external /* fake */ override fun hashCode(): Int
+
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: events.internal.NestedExternalEnum#toString(){}
+    //   Public signature: events/internal.NestedExternalEnum.toString|-1522858123163872138[0]
+    external /* fake */ override fun toString(): String
+
+    // CHECK:
+    //   Mangled name: events.internal.NestedExternalEnum#static{}entries
+    //   Public signature: events/internal.NestedExternalEnum.entries|-5134227801081826149[0]
+    external val entries: EnumEntries<NestedExternalEnum>
+      // CHECK JS_IR NATIVE:
+      //   Mangled name: events.internal.NestedExternalEnum#<get-entries>#static(){}
+      //   Public signature: events/internal.NestedExternalEnum.entries.<get-entries>|-6068527377476727729[0]
+      external get(): EnumEntries<NestedExternalEnum>
+
+    // CHECK:
+    //   Mangled name: events.internal.NestedExternalEnum{}name
+    //   Public signature: events/internal.NestedExternalEnum.name|4231860309499509769[0]
+    external /* fake */ override val name: String
+      // CHECK JS_IR NATIVE:
+      //   Mangled name: events.internal.NestedExternalEnum#<get-name>(){}
+      //   Public signature: events/internal.NestedExternalEnum.name.<get-name>|5879344792307730109[0]
+      external /* fake */ override get(): String
+
+    // CHECK:
+    //   Mangled name: events.internal.NestedExternalEnum{}ordinal
+    //   Public signature: events/internal.NestedExternalEnum.ordinal|1912745122988592376[0]
+    external /* fake */ override val ordinal: Int
+      // CHECK JS_IR NATIVE:
+      //   Mangled name: events.internal.NestedExternalEnum#<get-ordinal>(){}
+      //   Public signature: events/internal.NestedExternalEnum.ordinal.<get-ordinal>|8409904226035914023[0]
+      external /* fake */ override get(): Int
+
+  }
+
+  // CHECK:
+  //   Mangled name: events.internal.NestedExternalInterface
+  //   Public signature: events/internal.NestedExternalInterface|null[0]
+  external interface NestedExternalInterface {
+
+  }
+
+  // CHECK:
+  //   Mangled name: events.internal.NestedExternalObject
+  //   Public signature: events/internal.NestedExternalObject|null[0]
+  external object NestedExternalObject : internal {
+    // CHECK:
+    //   Mangled name: events.internal.NestedExternalObject#<init>(){}
+    //   Public signature: events/internal.NestedExternalObject.<init>|-5645683436151566731[0]
+    private external constructor() /* primary */
+
+  }
+
+  // CHECK:
+  //   Mangled name: events.internal#<init>(){}
+  //   Public signature: events/internal.<init>|-5645683436151566731[0]
+  external constructor() /* primary */
+
+}
+

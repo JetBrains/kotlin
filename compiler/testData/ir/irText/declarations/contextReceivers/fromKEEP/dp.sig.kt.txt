@@ -1,0 +1,35 @@
+// CHECK:
+//   Mangled name: View
+//   Public signature: /View|null[0]
+class View {
+  // CHECK:
+  //   Mangled name: View{}coefficient
+  //   Public signature: /View.coefficient|4563127391682800227[0]
+  val coefficient: Int
+    // CHECK JVM_IR:
+    //   Mangled name: View#<get-coefficient>(){}kotlin.Int
+    //   Public signature: /View.coefficient.<get-coefficient>|2286291581442465794[0]
+    get
+
+  // CHECK:
+  //   Mangled name: View#<init>(){}
+  //   Public signature: /View.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+}
+
+// CHECK JVM_IR:
+//   Mangled name: #box(){}kotlin.String
+//   Public signature: /box|-9347091776561469[0]
+fun box(): String
+
+// CHECK:
+//   Mangled name: @kotlin.Int{}dp
+//   Public signature: /dp|-4245635280375224248[0]
+val Int.dp: Int
+  // CHECK JVM_IR:
+  //   Mangled name computed from Ir:         #<get-dp>@kotlin.Int(View){}kotlin.Int
+  //   Mangled name computed from Descriptor: #<get-dp>!View@kotlin.Int(){}kotlin.Int
+  //   Public signature: /dp.<get-dp>|933397372434095199[0]
+  get($context_receiver_0: View): Int
+

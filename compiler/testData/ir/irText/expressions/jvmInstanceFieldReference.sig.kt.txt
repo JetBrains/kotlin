@@ -1,0 +1,21 @@
+// CHECK:
+//   Mangled name: Derived
+//   Public signature: /Derived|null[0]
+class Derived : Base {
+  // CHECK:
+  //   Mangled name: Derived#<init>(){}
+  //   Public signature: /Derived.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: Derived#getValue(){}kotlin.Int
+  //   Public signature: /Derived.getValue|5786129636844002858[0]
+  fun getValue(): Int
+
+  // CHECK:
+  //   Mangled name: Derived#setValue(kotlin.Int){}
+  //   Public signature: /Derived.setValue|4983946438954816976[0]
+  fun setValue(value: Int): Unit
+
+}
+

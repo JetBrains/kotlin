@@ -2,6 +2,9 @@
 // SKIP_KT_DUMP
 // TARGET_BACKEND: JVM_IR
 
+// MUTE_SIGNATURE_COMPARISON_K2: ANY
+// ^ KT-57429
+
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 

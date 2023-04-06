@@ -1,0 +1,48 @@
+// CHECK:
+//   Mangled name: Bar
+//   Public signature: /Bar|null[0]
+class Bar<T : Any?> {
+  // CHECK:
+  //   Mangled name: Bar#<init>(){}
+  //   Public signature: /Bar.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: Bar#test(kotlin.Any){}
+  //   Public signature: /Bar.test|-7985792749252989017[0]
+  fun test(arg: Any): Unit
+
+  // CHECK:
+  //   Mangled name: Bar#useT(1:0){}
+  //   Public signature: /Bar.useT|2218364832177755788[0]
+  fun useT(t: T): Unit
+
+}
+
+// CHECK:
+//   Mangled name: Foo
+//   Public signature: /Foo|null[0]
+interface Foo<T : Any?> {
+
+}
+
+// CHECK JVM_IR:
+//   Mangled name: #test1@kotlin.Any(){0§<kotlin.Any>}0:0?
+//   Public signature: /test1|2900041689817297802[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test1@kotlin.Any(){0§<kotlin.Any>}
+//   Public signature: /test1|-8490072393471393600[0]
+inline fun <reified T : Any> Any.test1(): T?
+
+// CHECK:
+//   Mangled name: @Foo<0:0>{0§<kotlin.Any>}asT
+//   Public signature: /asT|-840544213460054683[0]
+val <reified T : Any> Foo<T>.asT: T?
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-asT>@Foo<0:0>(){0§<kotlin.Any>}0:0?
+  //   Public signature: /asT.<get-asT>|-4847921419158920204[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-asT>@Foo<0:0>(){0§<kotlin.Any>}
+  //   Public signature: /asT.<get-asT>|4488225205783861105[0]
+  inline get(): T?
+

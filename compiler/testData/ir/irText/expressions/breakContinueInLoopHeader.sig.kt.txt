@@ -1,0 +1,25 @@
+// CHECK:
+//   Mangled name: #test1(kotlin.Boolean?){}
+//   Public signature: /test1|-614655814357645647[0]
+fun test1(c: Boolean?): Unit
+
+// CHECK:
+//   Mangled name: #test2(kotlin.Boolean?){}
+//   Public signature: /test2|433529625541321478[0]
+fun test2(c: Boolean?): Unit
+
+// CHECK:
+//   Mangled name: #test3(kotlin.collections.List<kotlin.String>?){}
+//   Public signature: /test3|7517805814041019716[0]
+fun test3(ss: List<String>?): Unit
+
+// CHECK:
+//   Mangled name: #test4(kotlin.collections.List<kotlin.String>?){}
+//   Public signature: /test4|1371726193385654339[0]
+fun test4(ss: List<String>?): Unit
+
+// CHECK:
+//   Mangled name: #test5(){}
+//   Public signature: /test5|-2461239215881954159[0]
+fun test5(): Unit
+

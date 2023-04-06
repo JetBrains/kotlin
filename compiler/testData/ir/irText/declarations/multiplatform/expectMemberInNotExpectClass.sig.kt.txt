@@ -1,0 +1,92 @@
+// CHECK:
+//   Mangled name: C1
+//   Public signature: /C1|null[1]
+expect open class C1 {
+  // CHECK:
+  //   Mangled name: C1{}p
+  //   Public signature: /C1.p|6715504260787941082[1]
+  expect val p: Int
+    // CHECK JVM_IR:
+    //   Mangled name: C1#<get-p>(){}kotlin.Int
+    //   Public signature: /C1.p.<get-p>|5329635969197638839[1]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: C1#<get-p>(){}
+    //   Public signature: /C1.p.<get-p>|-1162552463316289847[1]
+    get
+
+  // CHECK:
+  //   Mangled name: C1#<init>(){}
+  //   Public signature: /C1.<init>|-5645683436151566731[1]
+  expect constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: C1#f(){}kotlin.String
+  //   Public signature: /C1.f|9098388873611041001[1]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: C1#f(){}
+  //   Public signature: /C1.f|5316533450599009716[1]
+  expect fun f(): String
+
+}
+
+// CHECK:
+//   Mangled name: C1
+//   Public signature: /C1|null[0]
+open class C1 {
+  // CHECK:
+  //   Mangled name: C1{}p
+  //   Public signature: /C1.p|6715504260787941082[0]
+  val p: Int
+    // CHECK JVM_IR:
+    //   Mangled name: C1#<get-p>(){}kotlin.Int
+    //   Public signature: /C1.p.<get-p>|5329635969197638839[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: C1#<get-p>(){}
+    //   Public signature: /C1.p.<get-p>|-1162552463316289847[0]
+    get
+
+  // CHECK:
+  //   Mangled name: C1#<init>(){}
+  //   Public signature: /C1.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: C1#f(){}kotlin.String
+  //   Public signature: /C1.f|9098388873611041001[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: C1#f(){}
+  //   Public signature: /C1.f|5316533450599009716[0]
+  fun f(): String
+
+}
+
+// CHECK:
+//   Mangled name: C2
+//   Public signature: /C2|null[0]
+class C2 : C1 {
+  // CHECK:
+  //   Mangled name: C2#<init>(){}
+  //   Public signature: /C2.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: C2#f(){}kotlin.String
+  //   Public signature: /C2.f|9098388873611041001[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: C2#f(){}
+  //   Public signature: /C2.f|5316533450599009716[0]
+  /* fake */ override fun f(): String
+
+  // CHECK:
+  //   Mangled name: C2{}p
+  //   Public signature: /C2.p|6715504260787941082[0]
+  /* fake */ override val p: Int
+    // CHECK JVM_IR:
+    //   Mangled name: C2#<get-p>(){}kotlin.Int
+    //   Public signature: /C2.p.<get-p>|5329635969197638839[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: C2#<get-p>(){}
+    //   Public signature: /C2.p.<get-p>|-1162552463316289847[0]
+    /* fake */ override get(): Int
+
+}

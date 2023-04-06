@@ -1,3 +1,6 @@
+// SKIP_SIGNATURE_DUMP
+// ^ KT-45285
+
 typealias Test1 = String
 
 fun foo() {

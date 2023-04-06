@@ -1,0 +1,10 @@
+// CHECK:
+//   Mangled name: #test1(kotlin.Boolean){}
+//   Public signature: /test1|-5145024389903460958[0]
+fun test1(b: Boolean): Unit
+
+// CHECK:
+//   Mangled name: #test2(kotlin.Boolean){}
+//   Public signature: /test2|-1465977587350129281[0]
+fun test2(b: Boolean): Unit
+

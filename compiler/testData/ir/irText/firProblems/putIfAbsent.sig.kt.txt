@@ -1,0 +1,16 @@
+// CHECK:
+//   Mangled name: Owner
+//   Public signature: /Owner|null[0]
+class Owner {
+  // CHECK:
+  //   Mangled name: Owner#<init>(){}
+  //   Public signature: /Owner.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: Owner#foo(0:0;0:0){0§<kotlin.Any?>}
+  //   Public signature: /Owner.foo|6541897014956795195[0]
+  fun <T : Any?> foo(x: T, y: T): Unit
+
+}
+

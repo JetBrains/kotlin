@@ -1,0 +1,10 @@
+// CHECK:
+//   Mangled name: #with1(kotlin.Any?;kotlin.Function1<kotlin.Any?,kotlin.Unit>){}
+//   Public signature: /with1|7457831097191590523[0]
+fun with1(receiver: Any?, block: @ExtensionFunctionType Function1<Any?, Unit>): Unit
+
+// CHECK:
+//   Mangled name: #with2(kotlin.Any?;kotlin.Function1<kotlin.Any?,kotlin.Unit>){}
+//   Public signature: /with2|-8465193088240547938[0]
+fun with2(receiver: Any?, block: @ExtensionFunctionType Function1<Any?, Unit>): Unit
+

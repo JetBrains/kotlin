@@ -1,0 +1,37 @@
+// CHECK:
+//   Mangled name: #arrayData(kotlin.Array<out|0:0>...;kotlin.Function1<kotlin.Array<0:0>,kotlin.Unit>){0§<kotlin.Comparable<0:0>>}
+//   Public signature: /arrayData|8117169174787452654[0]
+fun <T : Comparable<T>> arrayData(vararg values: T, toArray: @ExtensionFunctionType Function1<Array<T>, Unit>): Unit
+
+// CHECK:
+//   Mangled name: #arrayLongInheritedData(kotlin.Array<out|0:0>...;kotlin.Function1<kotlin.Array<0:0>,kotlin.Unit>){0§<kotlin.Long>}
+//   Public signature: /arrayLongInheritedData|7935982938453772037[0]
+fun <T : Long> arrayLongInheritedData(vararg values: T, toArray: @ExtensionFunctionType Function1<Array<T>, Unit>): Unit
+
+// CHECK:
+//   Mangled name: #arrayOfLongData(kotlin.LongArray...;kotlin.Function1<kotlin.Array<kotlin.Long>,kotlin.Unit>){}
+//   Public signature: /arrayOfLongData|-2929474358277942763[0]
+fun arrayOfLongData(vararg values: Long, toArray: @ExtensionFunctionType Function1<Array<Long>, Unit>): Unit
+
+// CHECK:
+//   Mangled name: #arrayOfShortData(kotlin.ShortArray...;kotlin.Function1<kotlin.Array<kotlin.Short>,kotlin.Unit>){}
+//   Public signature: /arrayOfShortData|-7325619972814797178[0]
+fun arrayOfShortData(vararg values: Short, toArray: @ExtensionFunctionType Function1<Array<Short>, Unit>): Unit
+
+// CHECK JVM_IR:
+//   Mangled name: #box(){}kotlin.String
+//   Public signature: /box|-9347091776561469[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #box(){}
+//   Public signature: /box|2173511048851971368[0]
+fun box(): String
+
+// CHECK:
+//   Mangled name: #longArrayData(kotlin.LongArray...;kotlin.Function1<kotlin.LongArray,kotlin.Unit>){}
+//   Public signature: /longArrayData|6251465179130826600[0]
+fun longArrayData(vararg values: Long, toArray: @ExtensionFunctionType Function1<LongArray, Unit>): Unit
+
+// CHECK:
+//   Mangled name: #shortArrayData(kotlin.ShortArray...;kotlin.Function1<kotlin.ShortArray,kotlin.Unit>){}
+//   Public signature: /shortArrayData|4891730698858661609[0]
+fun shortArrayData(vararg values: Short, toArray: @ExtensionFunctionType Function1<ShortArray, Unit>): Unit

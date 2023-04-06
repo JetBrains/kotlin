@@ -1,0 +1,139 @@
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[0]
+class B {
+  // CHECK:
+  //   Mangled name: B{}s
+  //   Public signature: /B.s|7217541905509134881[0]
+  var s: Int
+    // CHECK JVM_IR:
+    //   Mangled name: B#<get-s>(){}kotlin.Int
+    //   Public signature: /B.s.<get-s>|-4647012324166823285[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: B#<get-s>(){}
+    //   Public signature: /B.s.<get-s>|-1662172381559511151[0]
+    get
+    // CHECK:
+    //   Mangled name: B#<set-s>(kotlin.Int){}
+    //   Public signature: /B.s.<set-s>|-271772167961470196[0]
+    set
+
+  // CHECK:
+  //   Mangled name: B#<init>(kotlin.Int){}
+  //   Public signature: /B.<init>|-5182794243525578284[0]
+  constructor(s: Int) /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: Host
+//   Public signature: /Host|null[0]
+object Host {
+  // CHECK:
+  //   Mangled name: Host#<init>(){}
+  //   Public signature: /Host.<init>|-5645683436151566731[0]
+  private constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: Host#plusAssign@B(B){}
+  //   Public signature: /Host.plusAssign|2019899313104241875[0]
+  operator fun B.plusAssign(b: B): Unit
+
+}
+
+// CHECK:
+//   Mangled name: X1
+//   Public signature: /X1|null[0]
+object X1 {
+  // CHECK:
+  //   Mangled name: X1{}x1
+  //   Public signature: /X1.x1|-8458287146120398778[0]
+  var x1: Int
+    // CHECK JVM_IR:
+    //   Mangled name: X1#<get-x1>(){}kotlin.Int
+    //   Public signature: /X1.x1.<get-x1>|7552224918031182012[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: X1#<get-x1>(){}
+    //   Public signature: /X1.x1.<get-x1>|-6784695929064323344[0]
+    get
+    // CHECK:
+    //   Mangled name: X1#<set-x1>(kotlin.Int){}
+    //   Public signature: /X1.x1.<set-x1>|6559558337863343625[0]
+    set
+
+  // CHECK:
+  //   Mangled name: X1.X2
+  //   Public signature: /X1.X2|null[0]
+  object X2 {
+    // CHECK:
+    //   Mangled name: X1.X2{}x2
+    //   Public signature: /X1.X2.x2|7624999599297478649[0]
+    var x2: Int
+      // CHECK JVM_IR:
+      //   Mangled name: X1.X2#<get-x2>(){}kotlin.Int
+      //   Public signature: /X1.X2.x2.<get-x2>|8643944297803616344[0]
+      // CHECK JS_IR NATIVE:
+      //   Mangled name: X1.X2#<get-x2>(){}
+      //   Public signature: /X1.X2.x2.<get-x2>|4516516368910539088[0]
+      get
+      // CHECK:
+      //   Mangled name: X1.X2#<set-x2>(kotlin.Int){}
+      //   Public signature: /X1.X2.x2.<set-x2>|8440745702617099146[0]
+      set
+
+    // CHECK:
+    //   Mangled name: X1.X2.X3
+    //   Public signature: /X1.X2.X3|null[0]
+    object X3 {
+      // CHECK:
+      //   Mangled name: X1.X2.X3{}x3
+      //   Public signature: /X1.X2.X3.x3|6087740953699108933[0]
+      var x3: Int
+        // CHECK JVM_IR:
+        //   Mangled name: X1.X2.X3#<get-x3>(){}kotlin.Int
+        //   Public signature: /X1.X2.X3.x3.<get-x3>|8346856633438806711[0]
+        // CHECK JS_IR NATIVE:
+        //   Mangled name: X1.X2.X3#<get-x3>(){}
+        //   Public signature: /X1.X2.X3.x3.<get-x3>|1880487902145043103[0]
+        get
+        // CHECK:
+        //   Mangled name: X1.X2.X3#<set-x3>(kotlin.Int){}
+        //   Public signature: /X1.X2.X3.x3.<set-x3>|5328650237314019083[0]
+        set
+
+      // CHECK:
+      //   Mangled name: X1.X2.X3#<init>(){}
+      //   Public signature: /X1.X2.X3.<init>|-5645683436151566731[0]
+      private constructor() /* primary */
+
+    }
+
+    // CHECK:
+    //   Mangled name: X1.X2#<init>(){}
+    //   Public signature: /X1.X2.<init>|-5645683436151566731[0]
+    private constructor() /* primary */
+
+  }
+
+  // CHECK:
+  //   Mangled name: X1#<init>(){}
+  //   Public signature: /X1.<init>|-5645683436151566731[0]
+  private constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: #test1(kotlin.IntArray){}
+//   Public signature: /test1|4961304868876759524[0]
+fun test1(a: IntArray): Unit
+
+// CHECK:
+//   Mangled name: #test2(){}
+//   Public signature: /test2|4279114864133353152[0]
+fun test2(): Unit
+
+// CHECK:
+//   Mangled name: #test3@Host(B){}
+//   Public signature: /test3|8876438075235988874[0]
+fun Host.test3(v: B): Unit
+

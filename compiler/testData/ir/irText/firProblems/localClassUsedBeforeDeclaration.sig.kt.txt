@@ -1,0 +1,57 @@
+// CHECK JVM_IR:
+//   Mangled name: #box(){}kotlin.String
+//   Public signature: /box|-9347091776561469[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #box(){}
+//   Public signature: /box|2173511048851971368[0]
+fun box(): String
+  // CHECK JVM_IR:
+  //   Mangled name: #box(){}kotlin.String.<no name provided>
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #box(){}.<no name provided>
+  local class <no name provided> {
+    // CHECK JVM_IR:
+    //   Mangled name: #box(){}kotlin.String.<no name provided>{}a
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: #box(){}.<no name provided>{}a
+    val a: A
+      field
+      // CHECK JVM_IR:
+      //   Mangled name: #box(){}kotlin.String.<no name provided>#<get-a>(){}#box.<no name provided>.A
+      // CHECK JS_IR NATIVE:
+      //   Mangled name: #box(){}.<no name provided>#<get-a>(){}
+      get
+
+    // CHECK JVM_IR:
+    //   Mangled name: #box(){}kotlin.String.<no name provided>.A
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: #box(){}.<no name provided>.A
+    local inner class A {
+      // CHECK JVM_IR:
+      //   Mangled name: #box(){}kotlin.String.<no name provided>.A{}ok
+      // CHECK JS_IR NATIVE:
+      //   Mangled name: #box(){}.<no name provided>.A{}ok
+      val ok: String
+        field
+        // CHECK JVM_IR:
+        //   Mangled name: #box(){}kotlin.String.<no name provided>.A#<get-ok>(){}kotlin.String
+        // CHECK JS_IR NATIVE:
+        //   Mangled name: #box(){}.<no name provided>.A#<get-ok>(){}
+        get
+
+      // CHECK JVM_IR:
+      //   Mangled name: #box(){}kotlin.String.<no name provided>.A#<init>(kotlin.String){}
+      // CHECK JS_IR NATIVE:
+      //   Mangled name: #box(){}.<no name provided>.A#<init>(kotlin.String){}
+      constructor(ok: String) /* primary */
+
+    }
+
+    // CHECK JVM_IR:
+    //   Mangled name: #box(){}kotlin.String.<no name provided>#<init>(){}
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: #box(){}.<no name provided>#<init>(){}
+    constructor() /* primary */
+
+  }
+

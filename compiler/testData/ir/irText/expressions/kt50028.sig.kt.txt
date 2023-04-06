@@ -1,0 +1,16 @@
+// CHECK JVM_IR:
+//   Mangled name: #test_1(){}kotlin.String
+//   Public signature: /test_1|118893848170480080[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test_1(){}
+//   Public signature: /test_1|9184463131871799545[0]
+fun test_1(): String
+
+// CHECK JVM_IR:
+//   Mangled name: #test_2(kotlin.Boolean){}kotlin.Boolean
+//   Public signature: /test_2|1864697323811942156[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test_2(kotlin.Boolean){}
+//   Public signature: /test_2|-1271056002368224685[0]
+fun test_2(b: Boolean): Boolean
+

@@ -1,0 +1,5 @@
+// CHECK:
+//   Mangled name: #test(kotlin.Function0<kotlin.Unit>){}
+//   Public signature: /test|6634439856618498021[0]
+fun test(f: Function0<Unit>): Unit
+

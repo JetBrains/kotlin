@@ -1,0 +1,233 @@
+// CHECK:
+//   Mangled name: Base
+//   Public signature: /Base|null[0]
+open class Base<T : Any?> {
+  // CHECK:
+  //   Mangled name: Base#<init>(){}
+  //   Public signature: /Base.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: Base#foo(1:0){}
+  //   Public signature: /Base.foo|-701456291278879981[0]
+  fun foo(x: T): Unit
+
+  // CHECK:
+  //   Mangled name: Base#foo(kotlin.String){}
+  //   Public signature: /Base.foo|1351044947738582195[0]
+  fun foo(y: String): Unit
+
+  // CHECK:
+  //   Mangled name: Base@1:0{}bar
+  //   Public signature: /Base.bar|2723903059187474703[0]
+  val T.bar: Int
+    // CHECK JVM_IR:
+    //   Mangled name: Base#<get-bar>@1:0(){}kotlin.Int
+    //   Public signature: /Base.bar.<get-bar>|-3456944057375693285[0]
+    get(): Int
+
+  // CHECK:
+  //   Mangled name: Base@kotlin.String{}bar
+  //   Public signature: /Base.bar|-1423076340722422780[0]
+  val String.bar: Int
+    // CHECK JVM_IR:
+    //   Mangled name: Base#<get-bar>@kotlin.String(){}kotlin.Int
+    //   Public signature: /Base.bar.<get-bar>|-1735437823545695148[0]
+    get(): Int
+
+}
+
+// CHECK:
+//   Mangled name: BaseXY
+//   Public signature: /BaseXY|null[0]
+open class BaseXY<X : Any?, Y : Any?> {
+  // CHECK:
+  //   Mangled name: BaseXY#<init>(){}
+  //   Public signature: /BaseXY.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: BaseXY#foo(1:0;kotlin.String){}
+  //   Public signature: /BaseXY.foo|-6449444608569619796[0]
+  fun foo(x: X, y: String): Unit
+
+  // CHECK:
+  //   Mangled name: BaseXY#foo(kotlin.String;1:1){}
+  //   Public signature: /BaseXY.foo|1702475903058974856[0]
+  fun foo(x: String, y: Y): Unit
+
+}
+
+// CHECK:
+//   Mangled name: Derived
+//   Public signature: /Derived|null[0]
+open class Derived : Base<String> {
+  // CHECK:
+  //   Mangled name: Derived#<init>(){}
+  //   Public signature: /Derived.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: Derived#foo(kotlin.String){}
+  //   Public signature: /Derived.foo|1351044947738582195[0]
+  /* fake */ override fun foo(x: String): Unit
+
+  // CHECK:
+  //   Mangled name: Derived#foo(kotlin.String){}
+  //   Public signature: /Derived.foo|1351044947738582195[0]
+  /* fake */ override fun foo(y: String): Unit
+
+  // CHECK:
+  //   Mangled name: Derived@kotlin.String{}bar
+  //   Public signature: /Derived.bar|-1423076340722422780[0]
+  /* fake */ override val String.bar: Int
+    // CHECK JVM_IR:
+    //   Mangled name: Derived#<get-bar>@kotlin.String(){}kotlin.Int
+    //   Public signature: /Derived.bar.<get-bar>|-1735437823545695148[0]
+    /* fake */ override get(): Int
+
+  // CHECK:
+  //   Mangled name: Derived@kotlin.String{}bar
+  //   Public signature: /Derived.bar|-1423076340722422780[0]
+  /* fake */ override val String.bar: Int
+    // CHECK JVM_IR:
+    //   Mangled name: Derived#<get-bar>@kotlin.String(){}kotlin.Int
+    //   Public signature: /Derived.bar.<get-bar>|-1735437823545695148[0]
+    /* fake */ override get(): Int
+
+}
+
+// CHECK:
+//   Mangled name: Derived2
+//   Public signature: /Derived2|null[0]
+class Derived2 : Derived {
+  // CHECK:
+  //   Mangled name: Derived2#<init>(){}
+  //   Public signature: /Derived2.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: Derived2#foo(kotlin.String){}
+  //   Public signature: /Derived2.foo|1351044947738582195[0]
+  /* fake */ override fun foo(x: String): Unit
+
+  // CHECK:
+  //   Mangled name: Derived2#foo(kotlin.String){}
+  //   Public signature: /Derived2.foo|1351044947738582195[0]
+  /* fake */ override fun foo(y: String): Unit
+
+  // CHECK:
+  //   Mangled name: Derived2@kotlin.String{}bar
+  //   Public signature: /Derived2.bar|-1423076340722422780[0]
+  /* fake */ override val String.bar: Int
+    // CHECK JVM_IR:
+    //   Mangled name: Derived2#<get-bar>@kotlin.String(){}kotlin.Int
+    //   Public signature: /Derived2.bar.<get-bar>|-1735437823545695148[0]
+    /* fake */ override get(): Int
+
+  // CHECK:
+  //   Mangled name: Derived2@kotlin.String{}bar
+  //   Public signature: /Derived2.bar|-1423076340722422780[0]
+  /* fake */ override val String.bar: Int
+    // CHECK JVM_IR:
+    //   Mangled name: Derived2#<get-bar>@kotlin.String(){}kotlin.Int
+    //   Public signature: /Derived2.bar.<get-bar>|-1735437823545695148[0]
+    /* fake */ override get(): Int
+
+}
+
+// CHECK:
+//   Mangled name: DerivedXY
+//   Public signature: /DerivedXY|null[0]
+class DerivedXY : BaseXY<String, String> {
+  // CHECK:
+  //   Mangled name: DerivedXY#<init>(){}
+  //   Public signature: /DerivedXY.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: DerivedXY#foo(kotlin.String;kotlin.String){}
+  //   Public signature: /DerivedXY.foo|-3768462707108232911[0]
+  /* fake */ override fun foo(x: String, y: String): Unit
+
+  // CHECK:
+  //   Mangled name: DerivedXY#foo(kotlin.String;kotlin.String){}
+  //   Public signature: /DerivedXY.foo|-3768462707108232911[0]
+  /* fake */ override fun foo(x: String, y: String): Unit
+
+}
+
+// CHECK:
+//   Mangled name: Outer
+//   Public signature: /Outer|null[0]
+open class Outer<T : Any?> {
+  // CHECK:
+  //   Mangled name: Outer.Inner
+  //   Public signature: /Outer.Inner|null[0]
+  open inner class Inner {
+    // CHECK:
+    //   Mangled name: Outer.Inner#<init>(){}
+    //   Public signature: /Outer.Inner.<init>|-5645683436151566731[0]
+    constructor() /* primary */
+
+    // CHECK:
+    //   Mangled name: Outer.Inner#foo(2:0){}
+    //   Public signature: /Outer.Inner.foo|5312251114282969214[0]
+    fun foo(x: T): Unit
+
+    // CHECK:
+    //   Mangled name: Outer.Inner#foo(kotlin.String){}
+    //   Public signature: /Outer.Inner.foo|1351044947738582195[0]
+    fun foo(y: String): Unit
+
+  }
+
+  // CHECK:
+  //   Mangled name: Outer#<init>(){}
+  //   Public signature: /Outer.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: OuterDerived
+//   Public signature: /OuterDerived|null[0]
+class OuterDerived : Outer<String> {
+  // CHECK:
+  //   Mangled name: OuterDerived.InnerDerived
+  //   Public signature: /OuterDerived.InnerDerived|null[0]
+  inner class InnerDerived : Inner<String> {
+    // CHECK:
+    //   Mangled name: OuterDerived.InnerDerived#<init>(){}
+    //   Public signature: /OuterDerived.InnerDerived.<init>|-5645683436151566731[0]
+    constructor() /* primary */
+
+    // CHECK:
+    //   Mangled name: OuterDerived.InnerDerived#foo(kotlin.String){}
+    //   Public signature: /OuterDerived.InnerDerived.foo|1351044947738582195[0]
+    /* fake */ override fun foo(x: String): Unit
+
+    // CHECK:
+    //   Mangled name: OuterDerived.InnerDerived#foo(kotlin.String){}
+    //   Public signature: /OuterDerived.InnerDerived.foo|1351044947738582195[0]
+    /* fake */ override fun foo(y: String): Unit
+
+  }
+
+  // CHECK:
+  //   Mangled name: OuterDerived#<init>(){}
+  //   Public signature: /OuterDerived.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: #outerFun(){}
+//   Public signature: /outerFun|-7637205853782391556[0]
+fun outerFun(): Unit
+
+// CHECK:
+//   Mangled name: #test(Base<kotlin.String>;Derived;Derived2){}
+//   Public signature: /test|4797523954931916574[0]
+fun test(b: Base<String>, d: Derived, d2: Derived2): Unit
+

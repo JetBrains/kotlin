@@ -1,0 +1,64 @@
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[0]
+class B : A {
+  // CHECK:
+  //   Mangled name: B#<init>(){}
+  //   Public signature: /B.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#f(kotlin.String){}kotlin.String
+  //   Public signature: /B.f|-2199490409267413998[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: B#f(kotlin.String){}
+  //   Public signature: /B.f|5157548403930815746[0]
+  override fun f(x: String): String
+
+}
+
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
+class C : A {
+  // CHECK:
+  //   Mangled name: C{}x
+  //   Public signature: /C.x|-8060530855978347579[0]
+  val x: A
+    // CHECK JVM_IR:
+    //   Mangled name: C#<get-x>(){}A
+    //   Public signature: /C.x.<get-x>|-8084666749302497299[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: C#<get-x>(){}
+    //   Public signature: /C.x.<get-x>|1482705010654679335[0]
+    get
+
+  // CHECK:
+  //   Mangled name: C#<init>(A){}
+  //   Public signature: /C.<init>|-3166999336802030902[0]
+  constructor(x: A) /* primary */
+  // CHECK JVM_IR:
+  //   Mangled name: C#f(kotlin.String){}kotlin.String
+  //   Public signature: /C.f|-2199490409267413998[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: C#f(kotlin.String){}
+  //   Public signature: /C.f|5157548403930815746[0]
+  override fun f(x: String): String
+
+}
+
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+interface A {
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#f(kotlin.String){}kotlin.String
+  //   Public signature: /A.f|-2199490409267413998[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: A#f(kotlin.String){}
+  //   Public signature: /A.f|5157548403930815746[0]
+  abstract fun f(x: String): String
+
+}
+

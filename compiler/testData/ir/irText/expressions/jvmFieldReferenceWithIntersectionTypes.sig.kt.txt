@@ -1,0 +1,67 @@
+// CHECK:
+//   Mangled name: Derived1
+//   Public signature: /Derived1|null[0]
+class Derived1 : JFieldOwner, IFoo {
+  // CHECK:
+  //   Mangled name: Derived1#<init>(){}
+  //   Public signature: /Derived1.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: Derived2
+//   Public signature: /Derived2|null[0]
+class Derived2 : JFieldOwner, IFoo {
+  // CHECK:
+  //   Mangled name: Derived2#<init>(){}
+  //   Public signature: /Derived2.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: DerivedThroughMid1
+//   Public signature: /DerivedThroughMid1|null[0]
+class DerivedThroughMid1 : Mid, IFoo {
+  // CHECK:
+  //   Mangled name: DerivedThroughMid1#<init>(){}
+  //   Public signature: /DerivedThroughMid1.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: DerivedThroughMid2
+//   Public signature: /DerivedThroughMid2|null[0]
+class DerivedThroughMid2 : Mid, IFoo {
+  // CHECK:
+  //   Mangled name: DerivedThroughMid2#<init>(){}
+  //   Public signature: /DerivedThroughMid2.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: Mid
+//   Public signature: /Mid|null[0]
+open class Mid : JFieldOwner {
+  // CHECK:
+  //   Mangled name: Mid#<init>(){}
+  //   Public signature: /Mid.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: IFoo
+//   Public signature: /IFoo|null[0]
+interface IFoo {
+
+}
+
+// CHECK:
+//   Mangled name: #test(kotlin.Boolean){}
+//   Public signature: /test|-88931722341009933[0]
+fun test(b: Boolean): Unit
+

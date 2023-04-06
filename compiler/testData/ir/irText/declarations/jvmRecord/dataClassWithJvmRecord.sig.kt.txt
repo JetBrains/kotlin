@@ -1,0 +1,50 @@
+// CHECK:
+//   Mangled name: MyRec
+//   Public signature: /MyRec|null[0]
+@JvmRecord
+data class MyRec : Record {
+  // CHECK:
+  //   Mangled name: MyRec{}name
+  //   Public signature: /MyRec.name|4231860309499509769[0]
+  val name: String
+    // CHECK JVM_IR:
+    //   Mangled name: MyRec#<get-name>(){}kotlin.String
+    //   Public signature: /MyRec.name.<get-name>|-8006111524522882650[0]
+    get
+
+  // CHECK:
+  //   Mangled name: MyRec#<init>(kotlin.String){}
+  //   Public signature: /MyRec.<init>|1280618353163213788[0]
+  constructor(name: String) /* primary */
+  // CHECK JVM_IR:
+  //   Mangled name: MyRec#component1(){}kotlin.String
+  //   Public signature: /MyRec.component1|-7481405593404337796[0]
+  operator fun component1(): String
+
+  // CHECK JVM_IR:
+  //   Mangled name: MyRec#copy(kotlin.String){}MyRec
+  //   Public signature: /MyRec.copy|4211487615034027288[0]
+  fun copy(name: String): MyRec
+
+  // CHECK JVM_IR:
+  //   Mangled name: MyRec#equals(kotlin.Any?){}kotlin.Boolean
+  //   Public signature: /MyRec.equals|722809408929142791[0]
+  override operator fun equals(other: Any?): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: MyRec#hashCode(){}kotlin.Int
+  //   Public signature: /MyRec.hashCode|-8048879360829830756[0]
+  override fun hashCode(): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: MyRec#toString(){}kotlin.String
+  //   Public signature: /MyRec.toString|6958853723545266802[0]
+  override fun toString(): String
+
+}
+
+// CHECK:
+//   Mangled name: #test(MyRec){}
+//   Public signature: /test|3445256146312347200[0]
+fun test(rec: MyRec): Unit
+

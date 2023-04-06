@@ -1,0 +1,33 @@
+// CHECK:
+//   Mangled name: Base
+//   Public signature: /Base|null[0]
+interface Base {
+
+  // CHECK:
+  //   Mangled name: Base#foo(){}
+  //   Public signature: /Base.foo|-1041209573719867811[0]
+  fun foo(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: Derived
+//   Public signature: /Derived|null[0]
+object Derived : Base {
+  // CHECK:
+  //   Mangled name: Derived#<init>(){}
+  //   Public signature: /Derived.<init>|-5645683436151566731[0]
+  private constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: Derived#foo(){}
+  //   Public signature: /Derived.foo|-1041209573719867811[0]
+  /* fake */ override fun foo(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: #test(){}
+//   Public signature: /test|6620506149988718649[0]
+fun test(): Unit
+

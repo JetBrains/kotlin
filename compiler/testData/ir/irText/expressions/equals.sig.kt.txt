@@ -1,0 +1,20 @@
+// CHECK JVM_IR:
+//   Mangled name: #testEqeq(kotlin.Int;kotlin.Int){}kotlin.Boolean
+//   Public signature: /testEqeq|-8467980441682237872[0]
+fun testEqeq(a: Int, b: Int): Boolean
+
+// CHECK JVM_IR:
+//   Mangled name: #testEquals(kotlin.Int;kotlin.Int){}kotlin.Boolean
+//   Public signature: /testEquals|-6776844626244337538[0]
+fun testEquals(a: Int, b: Int): Boolean
+
+// CHECK JVM_IR:
+//   Mangled name: #testJEqeqNull(){}kotlin.Boolean
+//   Public signature: /testJEqeqNull|-16498498668551755[0]
+fun testJEqeqNull(): Boolean
+
+// CHECK JVM_IR:
+//   Mangled name: #testJEqualsNull(){}kotlin.Boolean
+//   Public signature: /testJEqualsNull|1794297066470075977[0]
+fun testJEqualsNull(): Boolean
+

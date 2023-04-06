@@ -1,0 +1,158 @@
+// CHECK:
+//   Mangled name: @Value<0:0>{0§<kotlin.Any?>}additionalText
+//   Public signature: /additionalText|7734412113224529319[0]
+val <T : Any?> Value<T>.additionalText: Int /* by */
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-additionalText>@Value<0:0>(){0§<kotlin.Any?>}kotlin.Int
+  //   Public signature: /additionalText.<get-additionalText>|-1100553327198583886[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-additionalText>@Value<0:0>(){0§<kotlin.Any?>}
+  //   Public signature: /additionalText.<get-additionalText>|-5973216610316851494[0]
+  get(): Int
+
+// CHECK:
+//   Mangled name: @Value<0:0>{0§<kotlin.Any?>}additionalValue
+//   Public signature: /additionalValue|-2810095538737902404[0]
+val <T : Any?> Value<T>.additionalValue: Int /* by */
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-additionalValue>@Value<0:0>(){0§<kotlin.Any?>}kotlin.Int
+  //   Public signature: /additionalValue.<get-additionalValue>|-6473236166172047985[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-additionalValue>@Value<0:0>(){0§<kotlin.Any?>}
+  //   Public signature: /additionalValue.<get-additionalValue>|2814172998464653518[0]
+  get(): Int
+
+// CHECK:
+//   Mangled name: {}recivier
+//   Public signature: /recivier|1393137265049165560[0]
+var recivier: Any?
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-recivier>(){}kotlin.Any?
+  //   Public signature: /recivier.<get-recivier>|-76909196192166129[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-recivier>(){}
+  //   Public signature: /recivier.<get-recivier>|4125249954356201901[0]
+  get
+  // CHECK:
+  //   Mangled name: #<set-recivier>(kotlin.Any?){}
+  //   Public signature: /recivier.<set-recivier>|-6816770784536396062[0]
+  set
+
+// CHECK:
+//   Mangled name: {}value2
+//   Public signature: /value2|-1664181645671419060[0]
+var value2: Any?
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-value2>(){}kotlin.Any?
+  //   Public signature: /value2.<get-value2>|8693017805210729038[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-value2>(){}
+  //   Public signature: /value2.<get-value2>|1776957621204807843[0]
+  get
+  // CHECK:
+  //   Mangled name: #<set-value2>(kotlin.Any?){}
+  //   Public signature: /value2.<set-value2>|4550500963091635103[0]
+  set
+
+// CHECK:
+//   Mangled name: {}barRef
+//   Public signature: /barRef|3707178067815059623[0]
+val barRef: KMutableProperty1<String?, String?>
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-barRef>(){}kotlin.reflect.KMutableProperty1<kotlin.String?,kotlin.String?>
+  //   Public signature: /barRef.<get-barRef>|-5465997532673085658[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-barRef>(){}
+  //   Public signature: /barRef.<get-barRef>|1175959013941245768[0]
+  get
+
+// CHECK:
+//   Mangled name: DVal
+//   Public signature: /DVal|null[0]
+class DVal {
+  // CHECK:
+  //   Mangled name: DVal{}kmember
+  //   Public signature: /DVal.kmember|-9008673543363374935[0]
+  val kmember: Any
+    // CHECK JVM_IR:
+    //   Mangled name: DVal#<get-kmember>(){}kotlin.Any
+    //   Public signature: /DVal.kmember.<get-kmember>|-7207078138930224715[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: DVal#<get-kmember>(){}
+    //   Public signature: /DVal.kmember.<get-kmember>|-3711067038955963135[0]
+    get
+
+  // CHECK:
+  //   Mangled name: DVal#<init>(kotlin.Any){}
+  //   Public signature: /DVal.<init>|4518179880532599055[0]
+  constructor(kmember: Any) /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: DVal#getValue(kotlin.Any?;kotlin.Any){}kotlin.Int
+  //   Public signature: /DVal.getValue|-4563103632143148557[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: DVal#getValue(kotlin.Any?;kotlin.Any){}
+  //   Public signature: /DVal.getValue|317500257957269026[0]
+  operator fun getValue(t: Any?, p: Any): Int
+
+}
+
+// CHECK:
+//   Mangled name: Value
+//   Public signature: /Value|null[0]
+class Value<T : Any?> {
+  // CHECK:
+  //   Mangled name: Value{}value
+  //   Public signature: /Value.value|1987073854177347439[0]
+  var value: T
+    // CHECK JVM_IR:
+    //   Mangled name: Value#<get-value>(){}1:0
+    //   Public signature: /Value.value.<get-value>|3167862337988859752[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Value#<get-value>(){}
+    //   Public signature: /Value.value.<get-value>|3260093555963109437[0]
+    get
+    // CHECK:
+    //   Mangled name: Value#<set-value>(1:0){}
+    //   Public signature: /Value.value.<set-value>|-5529925203468114125[0]
+    set
+
+  // CHECK:
+  //   Mangled name: Value{}text
+  //   Public signature: /Value.text|2188424425118836640[0]
+  var text: String?
+    // CHECK JVM_IR:
+    //   Mangled name: Value#<get-text>(){}kotlin.String?
+    //   Public signature: /Value.text.<get-text>|-7147571129451640862[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Value#<get-text>(){}
+    //   Public signature: /Value.text.<get-text>|8349765969627210272[0]
+    get
+    // CHECK:
+    //   Mangled name: Value#<set-text>(kotlin.String?){}
+    //   Public signature: /Value.text.<set-text>|-5643986239339503171[0]
+    set
+
+  // CHECK:
+  //   Mangled name: Value#<init>(1:0;kotlin.String?){}
+  //   Public signature: /Value.<init>|6863397651870522306[0]
+  constructor(value: T, text: String?) /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: @0:0{0§<kotlin.Any?>}bar
+//   Public signature: /bar|-2607368775982314867[0]
+var <T : Any?> T.bar: T
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-bar>@0:0(){0§<kotlin.Any?>}0:0
+  //   Public signature: /bar.<get-bar>|-1733273639849676739[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-bar>@0:0(){0§<kotlin.Any?>}
+  //   Public signature: /bar.<get-bar>|-3183755745889883279[0]
+  get(): T
+  // CHECK:
+  //   Mangled name: #<set-bar>@0:0(0:0){0§<kotlin.Any?>}
+  //   Public signature: /bar.<set-bar>|1507801333641327058[0]
+  set(value: T): Unit
+

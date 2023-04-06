@@ -1,0 +1,24 @@
+// CHECK:
+//   Mangled name: Test1
+//   Public signature: /Test1|null[0]
+class Test1 : J {
+  // CHECK:
+  //   Mangled name: Test1{}test
+  //   Public signature: /Test1.test|-5712650070209114719[0]
+  val test: JInner
+    // CHECK JVM_IR:
+    //   Mangled name: Test1#<get-test>(){}J.JInner
+    //   Public signature: /Test1.test.<get-test>|3142095303045720451[0]
+    get
+
+  // CHECK:
+  //   Mangled name: Test1#<init>(){}
+  //   Public signature: /Test1.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+  // CHECK:
+  //   Mangled name: Test1#bar(){}
+  //   Public signature: /Test1.bar|496682602797471549[0]
+  /* fake */ override fun bar(): Unit
+
+}
+

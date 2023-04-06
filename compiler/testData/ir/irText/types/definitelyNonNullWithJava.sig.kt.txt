@@ -1,0 +1,17 @@
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[0]
+interface B<T1 : Any?> : A<T1> {
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#bar(1:0){}1:0
+  //   Public signature: /B.bar|-3264834230504995152[0]
+  abstract override fun bar(x: (T1 & Any)): (T1 & Any)
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#foo(1:0){}1:0
+  //   Public signature: /B.foo|2191932182509326162[0]
+  abstract override fun foo(x: T1): T1
+
+}
+

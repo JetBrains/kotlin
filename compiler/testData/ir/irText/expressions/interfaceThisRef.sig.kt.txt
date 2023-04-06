@@ -1,0 +1,17 @@
+// CHECK:
+//   Mangled name: IFoo
+//   Public signature: /IFoo|null[0]
+interface IFoo {
+
+  // CHECK:
+  //   Mangled name: IFoo#bar(){}
+  //   Public signature: /IFoo.bar|496682602797471549[0]
+  fun bar(): Unit
+
+  // CHECK:
+  //   Mangled name: IFoo#foo(){}
+  //   Public signature: /IFoo.foo|-1041209573719867811[0]
+  abstract fun foo(): Unit
+
+}
+

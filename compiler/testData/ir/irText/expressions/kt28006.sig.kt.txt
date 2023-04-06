@@ -1,0 +1,96 @@
+// CHECK:
+//   Mangled name: {}test1
+//   Public signature: /test1|6005685442305498193[0]
+val test1: String
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-test1>(){}kotlin.String
+  //   Public signature: /test1.<get-test1>|-7403750508378492770[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-test1>(){}
+  //   Public signature: /test1.<get-test1>|-5735092642142423279[0]
+  get
+
+// CHECK:
+//   Mangled name: {}test2
+//   Public signature: /test2|2517758057000911509[0]
+val test2: String
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-test2>(){}kotlin.String
+  //   Public signature: /test2.<get-test2>|-8062412501290172814[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-test2>(){}
+  //   Public signature: /test2.<get-test2>|-5218942532816206869[0]
+  get
+
+// CHECK JVM_IR:
+//   Mangled name: #test1(kotlin.Int){}kotlin.String
+//   Public signature: /test1|431552432157022210[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test1(kotlin.Int){}
+//   Public signature: /test1|-3111244057316668638[0]
+fun test1(x: Int): String
+
+// CHECK JVM_IR:
+//   Mangled name: #test2(kotlin.Int){}kotlin.String
+//   Public signature: /test2|-4821521016036724259[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test2(kotlin.Int){}
+//   Public signature: /test2|734099489197097820[0]
+fun test2(x: Int): String
+
+// CHECK JVM_IR:
+//   Mangled name: #test3(kotlin.Int){}kotlin.String
+//   Public signature: /test3|361194729147267791[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test3(kotlin.Int){}
+//   Public signature: /test3|7508947747710505690[0]
+fun test3(x: Int): String
+
+// CHECK:
+//   Mangled name: {}testConst1
+//   Public signature: /testConst1|2874352644667430152[0]
+const val testConst1: String
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-testConst1>(){}kotlin.String
+  //   Public signature: /testConst1.<get-testConst1>|-7158246920211242171[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-testConst1>(){}
+  //   Public signature: /testConst1.<get-testConst1>|-2360900528432484243[0]
+  get
+
+// CHECK:
+//   Mangled name: {}testConst2
+//   Public signature: /testConst2|-4483171841540106635[0]
+const val testConst2: String
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-testConst2>(){}kotlin.String
+  //   Public signature: /testConst2.<get-testConst2>|3150256866714449140[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-testConst2>(){}
+  //   Public signature: /testConst2.<get-testConst2>|7445013255069886264[0]
+  get
+
+// CHECK:
+//   Mangled name: {}testConst3
+//   Public signature: /testConst3|6023257891078233015[0]
+const val testConst3: String
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-testConst3>(){}kotlin.String
+  //   Public signature: /testConst3.<get-testConst3>|2239866314418466934[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-testConst3>(){}
+  //   Public signature: /testConst3.<get-testConst3>|1088737574065398195[0]
+  get
+
+// CHECK:
+//   Mangled name: {}testConst4
+//   Public signature: /testConst4|-8316573179481780901[0]
+const val testConst4: String
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-testConst4>(){}kotlin.String
+  //   Public signature: /testConst4.<get-testConst4>|-5321192346636591115[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-testConst4>(){}
+  //   Public signature: /testConst4.<get-testConst4>|8141561508753910958[0]
+  get
+

@@ -1,0 +1,10 @@
+// CHECK:
+//   Mangled name: #takeInt(kotlin.Int){}
+//   Public signature: /takeInt|7506881980524470334[0]
+fun takeInt(x: Int): Unit
+
+// CHECK:
+//   Mangled name: #test(kotlin.Boolean){}
+//   Public signature: /test|-88931722341009933[0]
+fun test(b: Boolean): Unit
+

@@ -1,0 +1,61 @@
+// CHECK JVM_IR:
+//   Mangled name: #nsum(kotlin.Array<out|kotlin.Number>...){}kotlin.Int
+//   Public signature: /nsum|849274247512080219[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #nsum(kotlin.Array<out|kotlin.Number>...){}
+//   Public signature: /nsum|1669670680890244180[0]
+fun nsum(vararg args: Number): Int
+
+// CHECK JVM_IR:
+//   Mangled name: #sum(kotlin.IntArray...){}kotlin.Int
+//   Public signature: /sum|7786429240262788644[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #sum(kotlin.IntArray...){}
+//   Public signature: /sum|2467160042393820864[0]
+fun sum(vararg args: Int): Int
+
+// CHECK:
+//   Mangled name: #testArrayAndDefaults(){}
+//   Public signature: /testArrayAndDefaults|-7178960797889847684[0]
+fun testArrayAndDefaults(): Unit
+
+// CHECK:
+//   Mangled name: #testArrayAsVararg(){}
+//   Public signature: /testArrayAsVararg|-3169605914862197201[0]
+fun testArrayAsVararg(): Unit
+
+// CHECK:
+//   Mangled name: #testPlainArgs(){}
+//   Public signature: /testPlainArgs|2446557808710455455[0]
+fun testPlainArgs(): Unit
+
+// CHECK:
+//   Mangled name: #testPrimitiveArrayAsVararg(){}
+//   Public signature: /testPrimitiveArrayAsVararg|-8111480002705343386[0]
+fun testPrimitiveArrayAsVararg(): Unit
+
+// CHECK:
+//   Mangled name: #useArray(kotlin.Function1<kotlin.Array<kotlin.Int>,kotlin.Int>){}
+//   Public signature: /useArray|7556411346761547128[0]
+fun useArray(fn: Function1<Array<Int>, Int>): Unit
+
+// CHECK:
+//   Mangled name: #usePlainArgs(kotlin.Function2<kotlin.Int,kotlin.Int,kotlin.Int>){}
+//   Public signature: /usePlainArgs|-2723039808667754959[0]
+fun usePlainArgs(fn: Function2<Int, Int, Int>): Unit
+
+// CHECK:
+//   Mangled name: #usePrimitiveArray(kotlin.Function1<kotlin.IntArray,kotlin.Int>){}
+//   Public signature: /usePrimitiveArray|-3895122125685485943[0]
+fun usePrimitiveArray(fn: Function1<IntArray, Int>): Unit
+
+// CHECK:
+//   Mangled name: #useStringArray(kotlin.Function1<kotlin.Array<kotlin.String>,kotlin.Unit>){}
+//   Public signature: /useStringArray|-6441375296594019709[0]
+fun useStringArray(fn: Function1<Array<String>, Unit>): Unit
+
+// CHECK:
+//   Mangled name: #zap(kotlin.Array<out|kotlin.String>...;kotlin.Int){}
+//   Public signature: /zap|-516812668141712757[0]
+fun zap(vararg b: String, k: Int): Unit
+

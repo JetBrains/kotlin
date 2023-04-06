@@ -1,0 +1,10 @@
+// CHECK:
+//   Mangled name: #testNullCheck(){}
+//   Public signature: /testNullCheck|3964065321325408775[0]
+fun testNullCheck(): Unit
+
+// CHECK JVM_IR:
+//   Mangled name: #useAny(kotlin.Function0<kotlin.Any>){}kotlin.Any
+//   Public signature: /useAny|7648226468706473651[0]
+fun useAny(fn: Function0<Any>): Any
+

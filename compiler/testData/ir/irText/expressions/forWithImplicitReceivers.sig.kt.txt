@@ -1,0 +1,74 @@
+// CHECK:
+//   Mangled name: IntCell
+//   Public signature: /IntCell|null[0]
+class IntCell {
+  // CHECK:
+  //   Mangled name: IntCell{}value
+  //   Public signature: /IntCell.value|1987073854177347439[0]
+  var value: Int
+    // CHECK JVM_IR:
+    //   Mangled name: IntCell#<get-value>(){}kotlin.Int
+    //   Public signature: /IntCell.value.<get-value>|-5900028706170996[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: IntCell#<get-value>(){}
+    //   Public signature: /IntCell.value.<get-value>|3260093555963109437[0]
+    get
+    // CHECK:
+    //   Mangled name: IntCell#<set-value>(kotlin.Int){}
+    //   Public signature: /IntCell.value.<set-value>|-195057410739577239[0]
+    set
+
+  // CHECK:
+  //   Mangled name: IntCell#<init>(kotlin.Int){}
+  //   Public signature: /IntCell.<init>|-5182794243525578284[0]
+  constructor(value: Int) /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: IReceiver
+//   Public signature: /IReceiver|null[0]
+interface IReceiver {
+
+  // CHECK JVM_IR:
+  //   Mangled name: IReceiver#hasNext@IntCell(){}kotlin.Boolean
+  //   Public signature: /IReceiver.hasNext|8807543829800046753[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: IReceiver#hasNext@IntCell(){}
+  //   Public signature: /IReceiver.hasNext|4886533440515007751[0]
+  operator fun IntCell.hasNext(): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: IReceiver#iterator@FiveTimes(){}IntCell
+  //   Public signature: /IReceiver.iterator|-6854781980601462817[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: IReceiver#iterator@FiveTimes(){}
+  //   Public signature: /IReceiver.iterator|-6775444143424139294[0]
+  operator fun FiveTimes.iterator(): IntCell
+
+  // CHECK JVM_IR:
+  //   Mangled name: IReceiver#next@IntCell(){}kotlin.Int
+  //   Public signature: /IReceiver.next|-2134453721443530519[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: IReceiver#next@IntCell(){}
+  //   Public signature: /IReceiver.next|3171952556520323113[0]
+  operator fun IntCell.next(): Int
+
+}
+
+// CHECK:
+//   Mangled name: FiveTimes
+//   Public signature: /FiveTimes|null[0]
+object FiveTimes {
+  // CHECK:
+  //   Mangled name: FiveTimes#<init>(){}
+  //   Public signature: /FiveTimes.<init>|-5645683436151566731[0]
+  private constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: #test@IReceiver(){}
+//   Public signature: /test|-5472672617978108350[0]
+fun IReceiver.test(): Unit
+

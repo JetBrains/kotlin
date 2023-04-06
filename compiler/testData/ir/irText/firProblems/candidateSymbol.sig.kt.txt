@@ -1,0 +1,100 @@
+// CHECK:
+//   Mangled name: AbstractFirBasedSymbol
+//   Public signature: /AbstractFirBasedSymbol|null[0]
+abstract class AbstractFirBasedSymbol<E> where E : FirDeclaration, E : FirSymbolOwner<E> {
+  // CHECK:
+  //   Mangled name: AbstractFirBasedSymbol{}fir
+  //   Public signature: /AbstractFirBasedSymbol.fir|1746130073614419861[0]
+  lateinit var fir: E
+    // CHECK JVM_IR:
+    //   Mangled name: AbstractFirBasedSymbol#<get-fir>(){}1:0
+    //   Public signature: /AbstractFirBasedSymbol.fir.<get-fir>|-6624502324313406460[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: AbstractFirBasedSymbol#<get-fir>(){}
+    //   Public signature: /AbstractFirBasedSymbol.fir.<get-fir>|1707733779722107125[0]
+    get
+    // CHECK:
+    //   Mangled name: AbstractFirBasedSymbol#<set-fir>(1:0){}
+    //   Public signature: /AbstractFirBasedSymbol.fir.<set-fir>|3965135793336265915[0]
+    set
+
+  // CHECK:
+  //   Mangled name: AbstractFirBasedSymbol#<init>(){}
+  //   Public signature: /AbstractFirBasedSymbol.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: Candidate
+//   Public signature: /Candidate|null[0]
+class Candidate {
+  // CHECK:
+  //   Mangled name: Candidate{}symbol
+  //   Public signature: /Candidate.symbol|-2022127689160258603[0]
+  val symbol: AbstractFirBasedSymbol<*>
+    // CHECK JVM_IR:
+    //   Mangled name: Candidate#<get-symbol>(){}AbstractFirBasedSymbol<*>
+    //   Public signature: /Candidate.symbol.<get-symbol>|-1417251974778824167[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Candidate#<get-symbol>(){}
+    //   Public signature: /Candidate.symbol.<get-symbol>|-1453516714111318019[0]
+    get
+
+  // CHECK:
+  //   Mangled name: Candidate#<init>(AbstractFirBasedSymbol<*>){}
+  //   Public signature: /Candidate.<init>|8793240427329821773[0]
+  constructor(symbol: AbstractFirBasedSymbol<*>) /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: FirCallableMemberDeclaration
+//   Public signature: /FirCallableMemberDeclaration|null[0]
+interface FirCallableMemberDeclaration<F : FirCallableMemberDeclaration<F>> : FirDeclaration, FirSymbolOwner<F> {
+
+  // CHECK:
+  //   Mangled name: FirCallableMemberDeclaration{}symbol
+  //   Public signature: /FirCallableMemberDeclaration.symbol|-2022127689160258603[0]
+  abstract override val symbol: AbstractFirBasedSymbol<F>
+    // CHECK JVM_IR:
+    //   Mangled name: FirCallableMemberDeclaration#<get-symbol>(){}AbstractFirBasedSymbol<1:0>
+    //   Public signature: /FirCallableMemberDeclaration.symbol.<get-symbol>|-2189475889945454446[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: FirCallableMemberDeclaration#<get-symbol>(){}
+    //   Public signature: /FirCallableMemberDeclaration.symbol.<get-symbol>|-1453516714111318019[0]
+    abstract override get
+
+}
+
+// CHECK:
+//   Mangled name: FirDeclaration
+//   Public signature: /FirDeclaration|null[0]
+interface FirDeclaration {
+
+}
+
+// CHECK:
+//   Mangled name: FirSymbolOwner
+//   Public signature: /FirSymbolOwner|null[0]
+interface FirSymbolOwner<E> where E : FirDeclaration, E : FirSymbolOwner<E> {
+
+  // CHECK:
+  //   Mangled name: FirSymbolOwner{}symbol
+  //   Public signature: /FirSymbolOwner.symbol|-2022127689160258603[0]
+  abstract val symbol: AbstractFirBasedSymbol<E>
+    // CHECK JVM_IR:
+    //   Mangled name: FirSymbolOwner#<get-symbol>(){}AbstractFirBasedSymbol<1:0>
+    //   Public signature: /FirSymbolOwner.symbol.<get-symbol>|-2189475889945454446[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: FirSymbolOwner#<get-symbol>(){}
+    //   Public signature: /FirSymbolOwner.symbol.<get-symbol>|-1453516714111318019[0]
+    abstract get
+
+}
+
+// CHECK:
+//   Mangled name: #foo(Candidate){}
+//   Public signature: /foo|1785536575582425549[0]
+fun foo(candidate: Candidate): Unit
+

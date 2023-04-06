@@ -1,5 +1,8 @@
 //!LANGUAGE: +DefinitelyNonNullableTypes
 
+// MUTE_SIGNATURE_COMPARISON_K2: JVM_IR
+// ^ KT-57755
+
 fun <T> elvisLike(x: T, y: T & Any): T & Any = x ?: y
 
 fun main() {

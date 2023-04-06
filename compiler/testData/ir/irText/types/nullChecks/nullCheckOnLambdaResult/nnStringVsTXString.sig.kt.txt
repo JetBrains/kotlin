@@ -1,0 +1,10 @@
+// CHECK:
+//   Mangled name: #testWithNullCheck(){}
+//   Public signature: /testWithNullCheck|3877804200563740268[0]
+fun testWithNullCheck(): Unit
+
+// CHECK JVM_IR:
+//   Mangled name: #useTX(0:0;kotlin.Function0<0:0>){0§<kotlin.Any?>}0:0
+//   Public signature: /useTX|-6964391636652065512[0]
+fun <T : Any?> useTX(x: T, fn: Function0<T>): T
+

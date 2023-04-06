@@ -1,0 +1,8 @@
+// CHECK JVM_IR:
+//   Mangled name: #test(kotlin.Any){}kotlin.Boolean
+//   Public signature: /test|1012595665164220820[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test(kotlin.Any){}
+//   Public signature: /test|-7985792749252989017[0]
+fun test(x: Any): Boolean
+

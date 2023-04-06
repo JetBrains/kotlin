@@ -1,0 +1,51 @@
+// CHECK:
+//   Mangled name: @C<0:0>{0§<kotlin.Any?>}genericDelegatedProperty
+//   Public signature: /genericDelegatedProperty|7487675580233236234[0]
+var <T : Any?> C<T>.genericDelegatedProperty: Int /* by */
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-genericDelegatedProperty>@C<0:0>(){0§<kotlin.Any?>}kotlin.Int
+  //   Public signature: /genericDelegatedProperty.<get-genericDelegatedProperty>|6889694694135857174[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-genericDelegatedProperty>@C<0:0>(){0§<kotlin.Any?>}
+  //   Public signature: /genericDelegatedProperty.<get-genericDelegatedProperty>|5217762966964391406[0]
+  get(): Int
+  // CHECK:
+  //   Mangled name: #<set-genericDelegatedProperty>@C<0:0>(kotlin.Int){0§<kotlin.Any?>}
+  //   Public signature: /genericDelegatedProperty.<set-genericDelegatedProperty>|3753144775079530725[0]
+  set(<set-?>: Int): Unit
+
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
+class C<T : Any?> {
+  // CHECK:
+  //   Mangled name: C#<init>(){}
+  //   Public signature: /C.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: Delegate
+//   Public signature: /Delegate|null[0]
+object Delegate {
+  // CHECK:
+  //   Mangled name: Delegate#<init>(){}
+  //   Public signature: /Delegate.<init>|-5645683436151566731[0]
+  private constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: Delegate#getValue(kotlin.Any?;kotlin.Any?){}kotlin.Int
+  //   Public signature: /Delegate.getValue|-3377375928534350672[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: Delegate#getValue(kotlin.Any?;kotlin.Any?){}
+  //   Public signature: /Delegate.getValue|-9077843357189755365[0]
+  operator fun getValue(thisRef: Any?, kProp: Any?): Int
+
+  // CHECK:
+  //   Mangled name: Delegate#setValue(kotlin.Any?;kotlin.Any?;kotlin.Int){}
+  //   Public signature: /Delegate.setValue|6795912344196649599[0]
+  operator fun setValue(thisRef: Any?, kProp: Any?, newValue: Int): Unit
+
+}
+

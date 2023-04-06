@@ -1,4 +1,8 @@
 // FIR_IDENTICAL
+
+// MUTE_SIGNATURE_COMPARISON_K2: JVM_IR
+// ^ KT-57429
+
 fun testFunction(a: Any, b: Any) {
     a as MutableList<String>
     b as String

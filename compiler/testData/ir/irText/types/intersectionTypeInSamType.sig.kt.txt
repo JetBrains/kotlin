@@ -1,0 +1,124 @@
+// CHECK:
+//   Mangled name: G1
+//   Public signature: /G1|null[0]
+class G1<T : X> {
+  // CHECK:
+  //   Mangled name: G1#<init>(){}
+  //   Public signature: /G1.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: G1#checkFoo(IFoo<in|1:0>){}
+  //   Public signature: /G1.checkFoo|-5158579555496340270[0]
+  fun checkFoo(x: IFoo<in T>): Unit
+
+}
+
+// CHECK:
+//   Mangled name: G2
+//   Public signature: /G2|null[0]
+class G2<T> where T : X, T : Z {
+  // CHECK:
+  //   Mangled name: G2#<init>(){}
+  //   Public signature: /G2.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: G2#checkBar1(IBar1<in|1:0>){}
+  //   Public signature: /G2.checkBar1|8625706131283272107[0]
+  fun checkBar1(x: IBar1<in T>): Unit
+
+  // CHECK:
+  //   Mangled name: G2#checkBar2(IBar2<in|1:0>){}
+  //   Public signature: /G2.checkBar2|2985423947777386089[0]
+  fun checkBar2(x: IBar2<in T>): Unit
+
+  // CHECK:
+  //   Mangled name: G2#checkFoo(IFoo<in|1:0>){}
+  //   Public signature: /G2.checkFoo|-5158579555496340270[0]
+  fun checkFoo(x: IFoo<in T>): Unit
+
+}
+
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+interface A : X, Z {
+
+}
+
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[0]
+interface B : X, Z {
+
+}
+
+// CHECK:
+//   Mangled name: IBar1
+//   Public signature: /IBar1|null[0]
+fun interface IBar1<T> where T : X, T : Z {
+
+  // CHECK:
+  //   Mangled name: IBar1#bar(1:0){}
+  //   Public signature: /IBar1.bar|-7393952686038474037[0]
+  abstract fun bar(t: T): Unit
+
+}
+
+// CHECK:
+//   Mangled name: IBar2
+//   Public signature: /IBar2|null[0]
+fun interface IBar2<T> where T : X, T : Z {
+
+  // CHECK:
+  //   Mangled name: IBar2#bar(1:0){}
+  //   Public signature: /IBar2.bar|-7393952686038474037[0]
+  abstract fun bar(t: T): Unit
+
+}
+
+// CHECK:
+//   Mangled name: IFoo
+//   Public signature: /IFoo|null[0]
+fun interface IFoo<T : X> {
+
+  // CHECK:
+  //   Mangled name: IFoo#foo(1:0){}
+  //   Public signature: /IFoo.foo|-701456291278879981[0]
+  abstract fun foo(t: T): Unit
+
+}
+
+// CHECK:
+//   Mangled name: X
+//   Public signature: /X|null[0]
+interface X {
+
+}
+
+// CHECK:
+//   Mangled name: Z
+//   Public signature: /Z|null[0]
+interface Z {
+
+}
+
+// CHECK JVM_IR:
+//   Mangled name: #sel(0:0;0:0){0§<kotlin.Any?>}0:0
+//   Public signature: /sel|-3127722538163724092[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #sel(0:0;0:0){0§<kotlin.Any?>}
+//   Public signature: /sel|-259814768749576946[0]
+fun <T : Any?> sel(x: T, y: T): T
+
+// CHECK:
+//   Mangled name: #test1(){}
+//   Public signature: /test1|4297044443957252634[0]
+fun test1(): Unit
+
+// CHECK:
+//   Mangled name: #test2(){}
+//   Public signature: /test2|4279114864133353152[0]
+fun test2(): Unit
+

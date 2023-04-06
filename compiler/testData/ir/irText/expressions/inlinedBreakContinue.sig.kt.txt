@@ -1,0 +1,66 @@
+// CHECK:
+//   Mangled name: #bar(kotlin.Function0<kotlin.Unit>;kotlin.Function0<kotlin.Unit>){}
+//   Public signature: /bar|1436837239648519468[0]
+inline fun bar(block1: Function0<Unit>, noinline block2: Function0<Unit>): Unit
+
+// CHECK:
+//   Mangled name: #foo(kotlin.Function0<kotlin.Unit>){}
+//   Public signature: /foo|251397761749529488[0]
+inline fun foo(block: Function0<Unit>): Unit
+
+// CHECK:
+//   Mangled name: #test1(){}
+//   Public signature: /test1|4297044443957252634[0]
+fun test1(): Unit
+  // CHECK:
+  //   Mangled name: #test1(){}#<anonymous>#static(){}
+  local fun <anonymous>(): Unit
+
+  // CHECK:
+  //   Mangled name: #test1(){}#<anonymous>#static(){}
+  local fun <anonymous>(): Unit
+
+  // CHECK:
+  //   Mangled name: #test1(){}#<no name provided>#static(){}
+  local fun <no name provided>(): Unit
+
+  // CHECK:
+  //   Mangled name: #test1(){}#<no name provided>#static(){}
+  local fun <no name provided>(): Unit
+
+// CHECK:
+//   Mangled name: #test2(){}
+//   Public signature: /test2|4279114864133353152[0]
+fun test2(): Unit
+  // CHECK:
+  //   Mangled name: #test2(){}#<anonymous>#static(){}
+  local fun <anonymous>(): Unit
+
+  // CHECK:
+  //   Mangled name: #test2(){}#<anonymous>#static(){}
+  local fun <anonymous>(): Unit
+
+  // CHECK:
+  //   Mangled name: #test2(){}#<anonymous>#static(){}
+  local fun <anonymous>(): Unit
+
+  // CHECK:
+  //   Mangled name: #test2(){}#<anonymous>#static(){}
+  local fun <anonymous>(): Unit
+
+  // CHECK:
+  //   Mangled name: #test2(){}#<no name provided>#static(){}
+  local fun <no name provided>(): Unit
+
+  // CHECK:
+  //   Mangled name: #test2(){}#<no name provided>#static(){}
+  local fun <no name provided>(): Unit
+
+  // CHECK:
+  //   Mangled name: #test2(){}#<no name provided>#static(){}
+  local fun <no name provided>(): Unit
+
+  // CHECK:
+  //   Mangled name: #test2(){}#<no name provided>#static(){}
+  local fun <no name provided>(): Unit
+

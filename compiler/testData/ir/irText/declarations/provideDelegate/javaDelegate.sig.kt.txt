@@ -1,0 +1,33 @@
+package k
+
+// CHECK:
+//   Mangled name: k{}p1
+//   Public signature: k/p1|7711764890799440087[0]
+var p1: String? /* by */
+  // CHECK JVM_IR:
+  //   Mangled name: k#<get-p1>(){}kotlin.String?
+  //   Public signature: k/p1.<get-p1>|5971261250566155614[0]
+  get(): String?
+  // CHECK:
+  //   Mangled name: k#<set-p1>(kotlin.String?){}
+  //   Public signature: k/p1.<set-p1>|3343971922772025315[0]
+  set(<set-?>: String?): Unit
+
+// CHECK:
+//   Mangled name: k{}p2
+//   Public signature: k/p2|1837305664617486052[0]
+var p2: String? /* by */
+  // CHECK JVM_IR:
+  //   Mangled name: k#<get-p2>(){}kotlin.String?
+  //   Public signature: k/p2.<get-p2>|-4091002339170091991[0]
+  get(): String?
+  // CHECK:
+  //   Mangled name: k#<set-p2>(kotlin.String?){}
+  //   Public signature: k/p2.<set-p2>|-4224463707988097282[0]
+  set(<set-?>: String?): Unit
+
+// CHECK JVM_IR:
+//   Mangled name: k#box(){}kotlin.String
+//   Public signature: k/box|-9347091776561469[0]
+fun box(): String
+

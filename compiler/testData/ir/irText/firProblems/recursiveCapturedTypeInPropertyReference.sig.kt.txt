@@ -1,0 +1,42 @@
+// CHECK:
+//   Mangled name: AbstractSymbol
+//   Public signature: /AbstractSymbol|null[0]
+abstract class AbstractSymbol<E> where E : Recursive<E>, E : Something {
+  // CHECK:
+  //   Mangled name: AbstractSymbol#<init>(){}
+  //   Public signature: /AbstractSymbol.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: AbstractSymbol#foo(kotlin.collections.List<kotlin.Any>){}
+  //   Public signature: /AbstractSymbol.foo|-4032272801520658510[0]
+  fun foo(list: List<Any>): Unit
+
+}
+
+// CHECK:
+//   Mangled name: Recursive
+//   Public signature: /Recursive|null[0]
+interface Recursive<R> where R : Recursive<R>, R : Something {
+
+  // CHECK:
+  //   Mangled name: Recursive{}symbol
+  //   Public signature: /Recursive.symbol|-2022127689160258603[0]
+  abstract val symbol: AbstractSymbol<R>
+    // CHECK JVM_IR:
+    //   Mangled name: Recursive#<get-symbol>(){}AbstractSymbol<1:0>
+    //   Public signature: /Recursive.symbol.<get-symbol>|6872691415411276539[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Recursive#<get-symbol>(){}
+    //   Public signature: /Recursive.symbol.<get-symbol>|-1453516714111318019[0]
+    abstract get
+
+}
+
+// CHECK:
+//   Mangled name: Something
+//   Public signature: /Something|null[0]
+interface Something {
+
+}
+

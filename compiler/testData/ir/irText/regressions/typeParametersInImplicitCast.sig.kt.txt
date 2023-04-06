@@ -1,0 +1,5 @@
+// CHECK JVM_IR:
+//   Mangled name: #problematic(kotlin.collections.List<kotlin.collections.List<0:0>>){0§<kotlin.Any?>}kotlin.collections.List<0:0>
+//   Public signature: /problematic|-8622452458410513914[0]
+fun <T : Any?> problematic(lss: List<List<T>>): List<T>
+

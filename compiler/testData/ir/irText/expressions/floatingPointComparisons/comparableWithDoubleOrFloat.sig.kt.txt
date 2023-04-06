@@ -1,0 +1,16 @@
+// CHECK JVM_IR:
+//   Mangled name: #testD(kotlin.Comparable<kotlin.Double>;kotlin.Comparable<kotlin.Double>){}kotlin.Boolean
+//   Public signature: /testD|-8334682674453061094[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #testD(kotlin.Comparable<kotlin.Double>;kotlin.Comparable<kotlin.Double>){}
+//   Public signature: /testD|6420307726503450357[0]
+fun testD(x: Comparable<Double>, y: Comparable<Double>): Boolean
+
+// CHECK JVM_IR:
+//   Mangled name: #testF(kotlin.Comparable<kotlin.Float>;kotlin.Comparable<kotlin.Float>){}kotlin.Boolean
+//   Public signature: /testF|2241994539085447467[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #testF(kotlin.Comparable<kotlin.Float>;kotlin.Comparable<kotlin.Float>){}
+//   Public signature: /testF|5734029490201124122[0]
+fun testF(x: Comparable<Float>, y: Comparable<Float>): Boolean
+

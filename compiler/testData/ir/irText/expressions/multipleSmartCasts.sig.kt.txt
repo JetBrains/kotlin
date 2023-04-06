@@ -1,0 +1,35 @@
+// CHECK:
+//   Mangled name: IC1
+//   Public signature: /IC1|null[0]
+interface IC1 {
+
+  // CHECK JVM_IR:
+  //   Mangled name: IC1#component1(){}kotlin.Int
+  //   Public signature: /IC1.component1|-8217597213800111288[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: IC1#component1(){}
+  //   Public signature: /IC1.component1|162597135895221648[0]
+  abstract operator fun component1(): Int
+
+}
+
+// CHECK:
+//   Mangled name: IC2
+//   Public signature: /IC2|null[0]
+interface IC2 {
+
+  // CHECK JVM_IR:
+  //   Mangled name: IC2#component2(){}kotlin.String
+  //   Public signature: /IC2.component2|1228864375093914597[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: IC2#component2(){}
+  //   Public signature: /IC2.component2|3796717572321500973[0]
+  abstract operator fun component2(): String
+
+}
+
+// CHECK:
+//   Mangled name: #test(kotlin.Any){}
+//   Public signature: /test|-7985792749252989017[0]
+fun test(x: Any): Unit
+

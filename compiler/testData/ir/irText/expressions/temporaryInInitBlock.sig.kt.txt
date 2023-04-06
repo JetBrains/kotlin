@@ -1,0 +1,23 @@
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
+class C {
+  // CHECK:
+  //   Mangled name: C{}s
+  //   Public signature: /C.s|7217541905509134881[0]
+  val s: String?
+    // CHECK JVM_IR:
+    //   Mangled name: C#<get-s>(){}kotlin.String?
+    //   Public signature: /C.s.<get-s>|-8914674600070030279[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: C#<get-s>(){}
+    //   Public signature: /C.s.<get-s>|-1662172381559511151[0]
+    get
+
+  // CHECK:
+  //   Mangled name: C#<init>(kotlin.Any?){}
+  //   Public signature: /C.<init>|-8205545948568413246[0]
+  constructor(x: Any?) /* primary */
+
+}
+

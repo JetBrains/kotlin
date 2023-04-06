@@ -1,0 +1,140 @@
+// CHECK:
+//   Mangled name: DefaultImpl
+//   Public signature: /DefaultImpl|null[0]
+class DefaultImpl : IFoo {
+  // CHECK:
+  //   Mangled name: DefaultImpl#<init>(){}
+  //   Public signature: /DefaultImpl.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: DefaultImpl@kotlin.String{}extProp
+  //   Public signature: /DefaultImpl.extProp|9137761441129982647[0]
+  /* fake */ override val String.extProp: String
+    // CHECK JVM_IR:
+    //   Mangled name: DefaultImpl#<get-extProp>@kotlin.String(){}kotlin.String
+    //   Public signature: /DefaultImpl.extProp.<get-extProp>|-8732758648969586151[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: DefaultImpl#<get-extProp>@kotlin.String(){}
+    //   Public signature: /DefaultImpl.extProp.<get-extProp>|-2957953481772901234[0]
+    /* fake */ override get(): String
+
+  // CHECK:
+  //   Mangled name: DefaultImpl{}prop
+  //   Public signature: /DefaultImpl.prop|3598315380056892812[0]
+  /* fake */ override val prop: String
+    // CHECK JVM_IR:
+    //   Mangled name: DefaultImpl#<get-prop>(){}kotlin.String
+    //   Public signature: /DefaultImpl.prop.<get-prop>|-4077144726618700772[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: DefaultImpl#<get-prop>(){}
+    //   Public signature: /DefaultImpl.prop.<get-prop>|-5734736374948136327[0]
+    /* fake */ override get(): String
+
+}
+
+// CHECK:
+//   Mangled name: Delegated
+//   Public signature: /Delegated|null[0]
+class Delegated : IFoo {
+  // CHECK:
+  //   Mangled name: Delegated#<init>(IFoo){}
+  //   Public signature: /Delegated.<init>|-657369904845510135[0]
+  constructor(foo: IFoo) /* primary */
+  // CHECK:
+  //   Mangled name: Delegated.$$delegate_0
+  //   Public signature: /Delegated.$$delegate_0|-7286425919675154353[0]
+  private /* final field */ val $$delegate_0: IFoo
+
+  // CHECK:
+  //   Mangled name: Delegated@kotlin.String{}extProp
+  //   Public signature: /Delegated.extProp|9137761441129982647[0]
+  override val String.extProp: String
+    // CHECK JVM_IR:
+    //   Mangled name: Delegated#<get-extProp>@kotlin.String(){}kotlin.String
+    //   Public signature: /Delegated.extProp.<get-extProp>|-8732758648969586151[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Delegated#<get-extProp>@kotlin.String(){}
+    //   Public signature: /Delegated.extProp.<get-extProp>|-2957953481772901234[0]
+    override get(): String
+
+  // CHECK:
+  //   Mangled name: Delegated{}prop
+  //   Public signature: /Delegated.prop|3598315380056892812[0]
+  override val prop: String
+    // CHECK JVM_IR:
+    //   Mangled name: Delegated#<get-prop>(){}kotlin.String
+    //   Public signature: /Delegated.prop.<get-prop>|-4077144726618700772[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Delegated#<get-prop>(){}
+    //   Public signature: /Delegated.prop.<get-prop>|-5734736374948136327[0]
+    override get(): String
+
+}
+
+// CHECK:
+//   Mangled name: ExplicitOverride
+//   Public signature: /ExplicitOverride|null[0]
+class ExplicitOverride : IFoo {
+  // CHECK:
+  //   Mangled name: ExplicitOverride#<init>(){}
+  //   Public signature: /ExplicitOverride.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: ExplicitOverride@kotlin.String{}extProp
+  //   Public signature: /ExplicitOverride.extProp|9137761441129982647[0]
+  override val String.extProp: String
+    // CHECK JVM_IR:
+    //   Mangled name: ExplicitOverride#<get-extProp>@kotlin.String(){}kotlin.String
+    //   Public signature: /ExplicitOverride.extProp.<get-extProp>|-8732758648969586151[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: ExplicitOverride#<get-extProp>@kotlin.String(){}
+    //   Public signature: /ExplicitOverride.extProp.<get-extProp>|-2957953481772901234[0]
+    override get(): String
+
+  // CHECK:
+  //   Mangled name: ExplicitOverride{}prop
+  //   Public signature: /ExplicitOverride.prop|3598315380056892812[0]
+  override val prop: String
+    // CHECK JVM_IR:
+    //   Mangled name: ExplicitOverride#<get-prop>(){}kotlin.String
+    //   Public signature: /ExplicitOverride.prop.<get-prop>|-4077144726618700772[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: ExplicitOverride#<get-prop>(){}
+    //   Public signature: /ExplicitOverride.prop.<get-prop>|-5734736374948136327[0]
+    override get(): String
+
+}
+
+// CHECK:
+//   Mangled name: IFoo
+//   Public signature: /IFoo|null[0]
+interface IFoo {
+
+  // CHECK:
+  //   Mangled name: IFoo@kotlin.String{}extProp
+  //   Public signature: /IFoo.extProp|9137761441129982647[0]
+  val String.extProp: String
+    // CHECK JVM_IR:
+    //   Mangled name: IFoo#<get-extProp>@kotlin.String(){}kotlin.String
+    //   Public signature: /IFoo.extProp.<get-extProp>|-8732758648969586151[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: IFoo#<get-extProp>@kotlin.String(){}
+    //   Public signature: /IFoo.extProp.<get-extProp>|-2957953481772901234[0]
+    get(): String
+
+  // CHECK:
+  //   Mangled name: IFoo{}prop
+  //   Public signature: /IFoo.prop|3598315380056892812[0]
+  val prop: String
+    // CHECK JVM_IR:
+    //   Mangled name: IFoo#<get-prop>(){}kotlin.String
+    //   Public signature: /IFoo.prop.<get-prop>|-4077144726618700772[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: IFoo#<get-prop>(){}
+    //   Public signature: /IFoo.prop.<get-prop>|-5734736374948136327[0]
+    get(): String
+
+}
+

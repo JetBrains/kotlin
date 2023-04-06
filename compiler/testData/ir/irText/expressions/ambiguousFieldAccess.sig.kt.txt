@@ -1,0 +1,28 @@
+package test
+
+// CHECK:
+//   Mangled name: test.C
+//   Public signature: test/C|null[0]
+class C : B {
+  // CHECK:
+  //   Mangled name: test.C#<init>(){}
+  //   Public signature: test/C.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: test.C#f(){}kotlin.String?
+  //   Public signature: test/C.f|6718023650115810455[0]
+  fun f(): String?
+
+  // CHECK JVM_IR:
+  //   Mangled name: test.C#g(){}kotlin.String?
+  //   Public signature: test/C.g|-377144927952738440[0]
+  fun g(): String?
+
+}
+
+// CHECK JVM_IR:
+//   Mangled name: test#eval(kotlin.Function0<0:0>){0§<kotlin.Any?>}0:0
+//   Public signature: test/eval|-3571752498880916343[0]
+fun <T : Any?> eval(f: Function0<T>): T
+

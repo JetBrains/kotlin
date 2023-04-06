@@ -1,0 +1,22 @@
+// CHECK:
+//   Mangled name: Foo
+//   Public signature: /Foo|null[0]
+fun interface Foo : Function0<Int> {
+
+  // CHECK JVM_IR:
+  //   Mangled name: Foo#invoke(){}kotlin.Int
+  //   Public signature: /Foo.invoke|906964710558498066[0]
+  abstract /* fake */ override operator fun invoke(): Int
+
+}
+
+// CHECK JVM_IR:
+//   Mangled name: #id(Foo){}kotlin.Any
+//   Public signature: /id|-7816997914602483733[0]
+fun id(foo: Foo): Any
+
+// CHECK:
+//   Mangled name: #test(Foo){}
+//   Public signature: /test|1185534388124909890[0]
+fun test(foo: Foo): Unit
+

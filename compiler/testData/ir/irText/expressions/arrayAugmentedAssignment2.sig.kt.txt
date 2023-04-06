@@ -1,0 +1,32 @@
+// CHECK:
+//   Mangled name: IA
+//   Public signature: /IA|null[0]
+interface IA {
+
+  // CHECK JVM_IR:
+  //   Mangled name: IA#get(kotlin.String){}kotlin.Int
+  //   Public signature: /IA.get|8115151130332405730[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: IA#get(kotlin.String){}
+  //   Public signature: /IA.get|-2844435113185872994[0]
+  abstract operator fun get(index: String): Int
+
+}
+
+// CHECK:
+//   Mangled name: IB
+//   Public signature: /IB|null[0]
+interface IB {
+
+  // CHECK:
+  //   Mangled name: IB#set@IA(kotlin.String;kotlin.Int){}
+  //   Public signature: /IB.set|-3878244067281394744[0]
+  abstract operator fun IA.set(index: String, value: Int): Unit
+
+}
+
+// CHECK:
+//   Mangled name: #test@IB(IA){}
+//   Public signature: /test|-3494937446551267445[0]
+fun IB.test(a: IA): Unit
+

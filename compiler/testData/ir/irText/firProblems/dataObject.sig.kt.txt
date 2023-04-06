@@ -1,0 +1,33 @@
+// CHECK:
+//   Mangled name: DataObject
+//   Public signature: /DataObject|null[0]
+data object DataObject {
+  // CHECK:
+  //   Mangled name: DataObject#<init>(){}
+  //   Public signature: /DataObject.<init>|-5645683436151566731[0]
+  private constructor() /* primary */
+  // CHECK JVM_IR:
+  //   Mangled name: DataObject#equals(kotlin.Any?){}kotlin.Boolean
+  //   Public signature: /DataObject.equals|722809408929142791[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: DataObject#equals(kotlin.Any?){}
+  //   Public signature: /DataObject.equals|4638265728071529943[0]
+  override operator fun equals(other: Any?): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: DataObject#hashCode(){}kotlin.Int
+  //   Public signature: /DataObject.hashCode|-8048879360829830756[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: DataObject#hashCode(){}
+  //   Public signature: /DataObject.hashCode|3409210261493131192[0]
+  override fun hashCode(): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: DataObject#toString(){}kotlin.String
+  //   Public signature: /DataObject.toString|6958853723545266802[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: DataObject#toString(){}
+  //   Public signature: /DataObject.toString|-1522858123163872138[0]
+  override fun toString(): String
+
+}

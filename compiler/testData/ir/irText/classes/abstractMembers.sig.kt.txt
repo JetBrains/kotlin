@@ -1,0 +1,84 @@
+// CHECK:
+//   Mangled name: AbstractClass
+//   Public signature: /AbstractClass|null[0]
+abstract class AbstractClass {
+  // CHECK:
+  //   Mangled name: AbstractClass#<init>(){}
+  //   Public signature: /AbstractClass.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: AbstractClass#abstractFun(){}
+  //   Public signature: /AbstractClass.abstractFun|-8137574360252002020[0]
+  abstract fun abstractFun(): Unit
+
+  // CHECK:
+  //   Mangled name: AbstractClass{}abstractVal
+  //   Public signature: /AbstractClass.abstractVal|2000751617811374017[0]
+  abstract val abstractVal: Int
+    // CHECK JVM_IR:
+    //   Mangled name: AbstractClass#<get-abstractVal>(){}kotlin.Int
+    //   Public signature: /AbstractClass.abstractVal.<get-abstractVal>|1560246296064696993[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: AbstractClass#<get-abstractVal>(){}
+    //   Public signature: /AbstractClass.abstractVal.<get-abstractVal>|-836793625462255519[0]
+    abstract get
+
+  // CHECK:
+  //   Mangled name: AbstractClass{}abstractVar
+  //   Public signature: /AbstractClass.abstractVar|-2520811489168320452[0]
+  abstract var abstractVar: Int
+    // CHECK JVM_IR:
+    //   Mangled name: AbstractClass#<get-abstractVar>(){}kotlin.Int
+    //   Public signature: /AbstractClass.abstractVar.<get-abstractVar>|-3718567610021314347[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: AbstractClass#<get-abstractVar>(){}
+    //   Public signature: /AbstractClass.abstractVar.<get-abstractVar>|7559126596100066971[0]
+    abstract get
+    // CHECK:
+    //   Mangled name: AbstractClass#<set-abstractVar>(kotlin.Int){}
+    //   Public signature: /AbstractClass.abstractVar.<set-abstractVar>|-250114380965539035[0]
+    abstract set
+
+}
+
+// CHECK:
+//   Mangled name: Interface
+//   Public signature: /Interface|null[0]
+interface Interface {
+
+  // CHECK:
+  //   Mangled name: Interface#abstractFun(){}
+  //   Public signature: /Interface.abstractFun|-8137574360252002020[0]
+  abstract fun abstractFun(): Unit
+
+  // CHECK:
+  //   Mangled name: Interface{}abstractVal
+  //   Public signature: /Interface.abstractVal|2000751617811374017[0]
+  abstract val abstractVal: Int
+    // CHECK JVM_IR:
+    //   Mangled name: Interface#<get-abstractVal>(){}kotlin.Int
+    //   Public signature: /Interface.abstractVal.<get-abstractVal>|1560246296064696993[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Interface#<get-abstractVal>(){}
+    //   Public signature: /Interface.abstractVal.<get-abstractVal>|-836793625462255519[0]
+    abstract get
+
+  // CHECK:
+  //   Mangled name: Interface{}abstractVar
+  //   Public signature: /Interface.abstractVar|-2520811489168320452[0]
+  abstract var abstractVar: Int
+    // CHECK JVM_IR:
+    //   Mangled name: Interface#<get-abstractVar>(){}kotlin.Int
+    //   Public signature: /Interface.abstractVar.<get-abstractVar>|-3718567610021314347[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Interface#<get-abstractVar>(){}
+    //   Public signature: /Interface.abstractVar.<get-abstractVar>|7559126596100066971[0]
+    abstract get
+    // CHECK:
+    //   Mangled name: Interface#<set-abstractVar>(kotlin.Int){}
+    //   Public signature: /Interface.abstractVar.<set-abstractVar>|-250114380965539035[0]
+    abstract set
+
+}
+

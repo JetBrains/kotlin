@@ -1,0 +1,43 @@
+// CHECK:
+//   Mangled name: Host
+//   Public signature: /Host|null[0]
+object Host {
+  // CHECK:
+  //   Mangled name: Host#<init>(){}
+  //   Public signature: /Host.<init>|-5645683436151566731[0]
+  private constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: Host#foo(kotlin.Array<out|kotlin.String>...){}kotlin.String
+  //   Public signature: /Host.foo|-204629006600469165[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: Host#foo(kotlin.Array<out|kotlin.String>...){}
+  //   Public signature: /Host.foo|7137812470563281312[0]
+  fun foo(vararg x: String): String
+
+}
+
+// CHECK JVM_IR:
+//   Mangled name: #test1(){}kotlin.String
+//   Public signature: /test1|5794939649815924341[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test1(){}
+//   Public signature: /test1|4297044443957252634[0]
+fun test1(): String
+
+// CHECK JVM_IR:
+//   Mangled name: #test2(){}kotlin.String
+//   Public signature: /test2|7756882030981116149[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test2(){}
+//   Public signature: /test2|4279114864133353152[0]
+fun test2(): String
+
+// CHECK JVM_IR:
+//   Mangled name: #withO(kotlin.Function1<kotlin.String,kotlin.String>){}kotlin.String
+//   Public signature: /withO|-2767877202488996611[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #withO(kotlin.Function1<kotlin.String,kotlin.String>){}
+//   Public signature: /withO|2914129526547888389[0]
+fun withO(fn: Function1<String, String>): String
+

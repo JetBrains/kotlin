@@ -1,0 +1,30 @@
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
+class C {
+  // CHECK:
+  //   Mangled name: C{}result
+  //   Public signature: /C.result|456251868630197251[0]
+  val result: String
+    // CHECK JVM_IR:
+    //   Mangled name: C#<get-result>(){}kotlin.String
+    //   Public signature: /C.result.<get-result>|8441547134620975366[0]
+    get
+
+  // CHECK:
+  //   Mangled name: C#<init>(){}
+  //   Public signature: /C.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+}
+
+// CHECK JVM_IR:
+//   Mangled name: #box(){}kotlin.String
+//   Public signature: /box|-9347091776561469[0]
+fun box(): String
+
+// CHECK JVM_IR:
+//   Mangled name: #contextual(kotlin.Function1<C,kotlin.String>){}kotlin.String
+//   Public signature: /contextual|-248785556334643583[0]
+fun contextual(f: Function1<C, String>): String
+

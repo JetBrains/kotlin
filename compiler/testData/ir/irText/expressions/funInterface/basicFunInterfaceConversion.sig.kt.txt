@@ -1,0 +1,36 @@
+// CHECK:
+//   Mangled name: Foo
+//   Public signature: /Foo|null[0]
+fun interface Foo {
+
+  // CHECK JVM_IR:
+  //   Mangled name: Foo#invoke(){}kotlin.String
+  //   Public signature: /Foo.invoke|8861605044563078664[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: Foo#invoke(){}
+  //   Public signature: /Foo.invoke|-4663091332620260873[0]
+  abstract fun invoke(): String
+
+}
+
+// CHECK JVM_IR:
+//   Mangled name: #foo(Foo){}kotlin.String
+//   Public signature: /foo|-5888774885663875480[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #foo(Foo){}
+//   Public signature: /foo|-8233162121880232317[0]
+fun foo(f: Foo): String
+
+// CHECK JVM_IR:
+//   Mangled name: #test(){}kotlin.String
+//   Public signature: /test|-7008832412320199001[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test(){}
+//   Public signature: /test|6620506149988718649[0]
+fun test(): String
+  // CHECK JVM_IR:
+  //   Mangled name: #test(){}kotlin.String#<anonymous>#static(){}kotlin.String
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #test(){}#<anonymous>#static(){}
+  local fun <anonymous>(): String
+

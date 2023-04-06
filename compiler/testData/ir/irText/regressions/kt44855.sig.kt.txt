@@ -1,0 +1,41 @@
+// CHECK:
+//   Mangled name: Child
+//   Public signature: /Child|null[0]
+open class Child : Parent {
+  // CHECK:
+  //   Mangled name: Child{}x
+  //   Public signature: /Child.x|-8060530855978347579[0]
+  val x: Parent?
+    // CHECK JVM_IR:
+    //   Mangled name: Child#<get-x>(){}Parent?
+    //   Public signature: /Child.x.<get-x>|-4268238355990068356[0]
+    get
+
+  // CHECK:
+  //   Mangled name: Child.QQQ
+  //   Public signature: /Child.QQQ|null[0]
+  inner class QQQ {
+    // CHECK:
+    //   Mangled name: Child.QQQ#<init>(){}
+    //   Public signature: /Child.QQQ.<init>|-5645683436151566731[0]
+    constructor() /* primary */
+
+    // CHECK:
+    //   Mangled name: Child.QQQ#z(){}
+    //   Public signature: /Child.QQQ.z|-6990221057904452282[0]
+    fun z(): Unit
+
+  }
+
+  // CHECK:
+  //   Mangled name: Child#<init>(Parent?){}
+  //   Public signature: /Child.<init>|690323910030303924[0]
+  constructor(x: Parent?) /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: Child#getQqq(){}kotlin.String?
+  //   Public signature: /Child.getQqq|2603726480275639305[0]
+  /* fake */ override fun getQqq(): String?
+
+}
+

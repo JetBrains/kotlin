@@ -1,0 +1,64 @@
+// FILE: kt19306_test1.kt
+package test1
+
+// CHECK:
+//   Mangled name: test1.A
+//   Public signature: test1/A|null[0]
+abstract class A {
+  // CHECK:
+  //   Mangled name: test1.A{}p
+  //   Public signature: test1/A.p|6715504260787941082[0]
+  protected var p: String
+    // CHECK JVM_IR:
+    //   Mangled name: test1.A#<get-p>(){}kotlin.String
+    //   Public signature: test1/A.p.<get-p>|-7630602400384289276[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: test1.A#<get-p>(){}
+    //   Public signature: test1/A.p.<get-p>|-1162552463316289847[0]
+    protected get
+    // CHECK:
+    //   Mangled name: test1.A#<set-p>(kotlin.String){}
+    //   Public signature: test1/A.p.<set-p>|1896329871380024517[0]
+    private set
+
+  // CHECK:
+  //   Mangled name: test1.A#<init>(){}
+  //   Public signature: test1/A.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+}
+
+// FILE: kt19306_test2.kt
+package test2
+
+// CHECK:
+//   Mangled name: test2.B
+//   Public signature: test2/B|null[0]
+class B : A {
+  // CHECK:
+  //   Mangled name: test2.B#<init>(){}
+  //   Public signature: test2/B.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: test2.B#test(){}kotlin.Function0<kotlin.String>
+  //   Public signature: test2/B.test|4450727485295834919[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: test2.B#test(){}
+  //   Public signature: test2/B.test|6620506149988718649[0]
+  fun test(): Function0<String>
+
+  // CHECK:
+  //   Mangled name: test2.B{}p
+  //   Public signature: test2/B.p|6715504260787941082[0]
+  protected /* fake */ override var p: String
+    // CHECK JVM_IR:
+    //   Mangled name: test2.B#<get-p>(){}kotlin.String
+    //   Public signature: test2/B.p.<get-p>|-7630602400384289276[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: test2.B#<get-p>(){}
+    //   Public signature: test2/B.p.<get-p>|-1162552463316289847[0]
+    protected /* fake */ override get(): String
+
+}
+

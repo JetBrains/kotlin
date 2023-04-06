@@ -1,0 +1,1005 @@
+// CHECK:
+//   Mangled name: TestEnum1
+//   Public signature: /TestEnum1|null[0]
+enum class TestEnum1 : Enum<TestEnum1> {
+  // CHECK:
+  //   Mangled name: TestEnum1#<init>(){}
+  //   Public signature: /TestEnum1.<init>|-5645683436151566731[0]
+  private constructor() /* primary */
+  // CHECK:
+  //   Mangled name: TestEnum1.TEST1
+  //   Public signature: /TestEnum1.TEST1|null[0]
+  TEST1
+
+  // CHECK:
+  //   Mangled name: TestEnum1.TEST2
+  //   Public signature: /TestEnum1.TEST2|null[0]
+  TEST2
+
+  // CHECK JVM_IR:
+  //   Mangled name: TestEnum1#valueOf#static(kotlin.String){}TestEnum1
+  //   Public signature: /TestEnum1.valueOf|-580817076166996450[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: TestEnum1#valueOf#static(kotlin.String){}
+  //   Public signature: /TestEnum1.valueOf|-4683474617854611729[0]
+  fun valueOf(value: String): TestEnum1
+
+  // CHECK JVM_IR:
+  //   Mangled name: TestEnum1#values#static(){}kotlin.Array<TestEnum1>
+  //   Public signature: /TestEnum1.values|8058701171109769002[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: TestEnum1#values#static(){}
+  //   Public signature: /TestEnum1.values|-8715569000920726747[0]
+  fun values(): Array<TestEnum1>
+
+  // CHECK JVM_IR:
+  //   Mangled name: TestEnum1#clone(){}kotlin.Any
+  //   Public signature: /TestEnum1.clone|-6903128697527593263[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: TestEnum1#compareTo(TestEnum1){}
+  //   Public signature: /TestEnum1.compareTo|620946564205650373[0]
+  protected /* fake */ override fun clone(): Any
+
+  // CHECK JVM_IR:
+  //   Mangled name: TestEnum1#compareTo(TestEnum1){}kotlin.Int
+  //   Public signature: /TestEnum1.compareTo|2053309372276441830[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: TestEnum1#equals(kotlin.Any?){}
+  //   Public signature: /TestEnum1.equals|4638265728071529943[0]
+  /* fake */ override operator fun compareTo(other: TestEnum1): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: TestEnum1#equals(kotlin.Any?){}kotlin.Boolean
+  //   Public signature: /TestEnum1.equals|722809408929142791[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: TestEnum1#hashCode(){}
+  //   Public signature: /TestEnum1.hashCode|3409210261493131192[0]
+  /* fake */ override operator fun equals(other: Any?): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: TestEnum1#hashCode(){}kotlin.Int
+  //   Public signature: /TestEnum1.hashCode|-8048879360829830756[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: TestEnum1#toString(){}
+  //   Public signature: /TestEnum1.toString|-1522858123163872138[0]
+  /* fake */ override fun hashCode(): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: TestEnum1#toString(){}kotlin.String
+  //   Public signature: /TestEnum1.toString|6958853723545266802[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: TestEnum1#static{}entries
+  //   Public signature: /TestEnum1.entries|-5134227801081826149[0]
+  /* fake */ override fun toString(): String
+
+  // CHECK:
+  //   Mangled name: TestEnum1#static{}entries
+  //   Public signature: /TestEnum1.entries|-5134227801081826149[0]
+  val entries: EnumEntries<TestEnum1>
+    // CHECK JVM_IR:
+    //   Mangled name: TestEnum1#<get-entries>#static(){}kotlin.enums.EnumEntries<TestEnum1>
+    //   Public signature: /TestEnum1.entries.<get-entries>|-834374959367663023[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: TestEnum1{}name
+    //   Public signature: /TestEnum1.name|4231860309499509769[0]
+    get(): EnumEntries<TestEnum1>
+
+  // CHECK:
+  //   Mangled name: TestEnum1{}name
+  //   Public signature: /TestEnum1.name|4231860309499509769[0]
+  /* fake */ override val name: String
+    // CHECK JVM_IR:
+    //   Mangled name: TestEnum1#<get-name>(){}kotlin.String
+    //   Public signature: /TestEnum1.name.<get-name>|-8006111524522882650[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: TestEnum1{}ordinal
+    //   Public signature: /TestEnum1.ordinal|1912745122988592376[0]
+    /* fake */ override get(): String
+
+  // CHECK:
+  //   Mangled name: TestEnum1{}ordinal
+  //   Public signature: /TestEnum1.ordinal|1912745122988592376[0]
+  /* fake */ override val ordinal: Int
+    // CHECK JVM_IR:
+    //   Mangled name: TestEnum1#<get-ordinal>(){}kotlin.Int
+    //   Public signature: /TestEnum1.ordinal.<get-ordinal>|-6902664390061762634[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: TestEnum2
+    //   Public signature: /TestEnum2|null[0]
+    /* fake */ override get(): Int
+
+}
+
+// CHECK:
+//   Mangled name: TestEnum2
+//   Public signature: /TestEnum2|null[0]
+enum class TestEnum2 : Enum<TestEnum2> {
+  // CHECK:
+  //   Mangled name: TestEnum2{}x
+  //   Public signature: /TestEnum2.x|-8060530855978347579[0]
+  val x: Int
+    // CHECK JVM_IR:
+    //   Mangled name: TestEnum2#<get-x>(){}kotlin.Int
+    //   Public signature: /TestEnum2.x.<get-x>|4966956098150895696[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: TestEnum2#<init>(kotlin.Int){}
+    //   Public signature: /TestEnum2.<init>|-5182794243525578284[0]
+    get
+
+  // CHECK:
+  //   Mangled name: TestEnum2#<init>(kotlin.Int){}
+  //   Public signature: /TestEnum2.<init>|-5182794243525578284[0]
+  private constructor(x: Int) /* primary */
+  // CHECK:
+  //   Mangled name: TestEnum2.TEST1
+  //   Public signature: /TestEnum2.TEST1|null[0]
+  TEST1
+
+  // CHECK:
+  //   Mangled name: TestEnum2.TEST2
+  //   Public signature: /TestEnum2.TEST2|null[0]
+  TEST2
+
+  // CHECK:
+  //   Mangled name: TestEnum2.TEST3
+  //   Public signature: /TestEnum2.TEST3|null[0]
+  TEST3
+
+  // CHECK JVM_IR:
+  //   Mangled name: TestEnum2#valueOf#static(kotlin.String){}TestEnum2
+  //   Public signature: /TestEnum2.valueOf|-8239244547219711173[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: TestEnum2#values#static(){}
+  //   Public signature: /TestEnum2.values|-8715569000920726747[0]
+  fun valueOf(value: String): TestEnum2
+
+  // CHECK JVM_IR:
+  //   Mangled name: TestEnum2#values#static(){}kotlin.Array<TestEnum2>
+  //   Public signature: /TestEnum2.values|-8089803756089363016[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: TestEnum2#compareTo(TestEnum2){}
+  //   Public signature: /TestEnum2.compareTo|-7814829049390923815[0]
+  fun values(): Array<TestEnum2>
+
+  // CHECK JVM_IR:
+  //   Mangled name: TestEnum2#clone(){}kotlin.Any
+  //   Public signature: /TestEnum2.clone|-6903128697527593263[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: TestEnum2#equals(kotlin.Any?){}
+  //   Public signature: /TestEnum2.equals|4638265728071529943[0]
+  protected /* fake */ override fun clone(): Any
+
+  // CHECK JVM_IR:
+  //   Mangled name: TestEnum2#compareTo(TestEnum2){}kotlin.Int
+  //   Public signature: /TestEnum2.compareTo|-5150224806840857090[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: TestEnum2#hashCode(){}
+  //   Public signature: /TestEnum2.hashCode|3409210261493131192[0]
+  /* fake */ override operator fun compareTo(other: TestEnum2): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: TestEnum2#equals(kotlin.Any?){}kotlin.Boolean
+  //   Public signature: /TestEnum2.equals|722809408929142791[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: TestEnum2#toString(){}
+  //   Public signature: /TestEnum2.toString|-1522858123163872138[0]
+  /* fake */ override operator fun equals(other: Any?): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: TestEnum2#hashCode(){}kotlin.Int
+  //   Public signature: /TestEnum2.hashCode|-8048879360829830756[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: TestEnum2#static{}entries
+  //   Public signature: /TestEnum2.entries|-5134227801081826149[0]
+  /* fake */ override fun hashCode(): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: TestEnum2#toString(){}kotlin.String
+  //   Public signature: /TestEnum2.toString|6958853723545266802[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: TestEnum2#<get-entries>#static(){}
+  //   Public signature: /TestEnum2.entries.<get-entries>|-6068527377476727729[0]
+  /* fake */ override fun toString(): String
+
+  // CHECK:
+  //   Mangled name: TestEnum2#static{}entries
+  //   Public signature: /TestEnum2.entries|-5134227801081826149[0]
+  val entries: EnumEntries<TestEnum2>
+    // CHECK JVM_IR:
+    //   Mangled name: TestEnum2#<get-entries>#static(){}kotlin.enums.EnumEntries<TestEnum2>
+    //   Public signature: /TestEnum2.entries.<get-entries>|-6243748706014676194[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: TestEnum2#<get-name>(){}
+    //   Public signature: /TestEnum2.name.<get-name>|5879344792307730109[0]
+    get(): EnumEntries<TestEnum2>
+
+  // CHECK:
+  //   Mangled name: TestEnum2{}name
+  //   Public signature: /TestEnum2.name|4231860309499509769[0]
+  /* fake */ override val name: String
+    // CHECK JVM_IR:
+    //   Mangled name: TestEnum2#<get-name>(){}kotlin.String
+    //   Public signature: /TestEnum2.name.<get-name>|-8006111524522882650[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: TestEnum2#<get-ordinal>(){}
+    //   Public signature: /TestEnum2.ordinal.<get-ordinal>|8409904226035914023[0]
+    /* fake */ override get(): String
+
+  // CHECK:
+  //   Mangled name: TestEnum2{}ordinal
+  //   Public signature: /TestEnum2.ordinal|1912745122988592376[0]
+  /* fake */ override val ordinal: Int
+    // CHECK JVM_IR:
+    //   Mangled name: TestEnum2#<get-ordinal>(){}kotlin.Int
+    //   Public signature: /TestEnum2.ordinal.<get-ordinal>|-6902664390061762634[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: TestEnum3#<init>(){}
+    //   Public signature: /TestEnum3.<init>|-5645683436151566731[0]
+    /* fake */ override get(): Int
+
+}
+
+// CHECK:
+//   Mangled name: TestEnum3
+//   Public signature: /TestEnum3|null[0]
+abstract enum class TestEnum3 : Enum<TestEnum3> {
+  // CHECK:
+  //   Mangled name: TestEnum3#<init>(){}
+  //   Public signature: /TestEnum3.<init>|-5645683436151566731[0]
+  private constructor() /* primary */
+  // CHECK:
+  //   Mangled name: TestEnum3.TEST
+  //   Public signature: /TestEnum3.TEST|null[0]
+
+  TEST
+  // CHECK:
+  //   Mangled name: TestEnum3.TEST
+  //   Public signature: /TestEnum3.TEST.<EEC>|null[0]
+  private enum entry class TEST : TestEnum3 {
+    // CHECK:
+    //   Mangled name: TestEnum3.TEST#<init>(){}
+    //   Public signature: /TestEnum3.TEST.<EEC>.<init>|-5645683436151566731[0]
+    private constructor() /* primary */
+    // CHECK JVM_IR:
+    //   Mangled name: TestEnum3.TEST#clone(){}kotlin.Any
+    //   Public signature: /TestEnum3.TEST.<EEC>.clone|-6903128697527593263[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: TestEnum3.TEST#hashCode(){}
+    //   Public signature: /TestEnum3.TEST.<EEC>.hashCode|3409210261493131192[0]
+    protected /* fake */ override fun clone(): Any
+
+    // CHECK JVM_IR:
+    //   Mangled name: TestEnum3.TEST#compareTo(TestEnum3){}kotlin.Int
+    //   Public signature: /TestEnum3.TEST.<EEC>.compareTo|3758334100252612666[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: TestEnum3.TEST#toString(){}
+    //   Public signature: /TestEnum3.TEST.<EEC>.toString|-1522858123163872138[0]
+    /* fake */ override operator fun compareTo(other: TestEnum3): Int
+
+    // CHECK JVM_IR:
+    //   Mangled name: TestEnum3.TEST#equals(kotlin.Any?){}kotlin.Boolean
+    //   Public signature: /TestEnum3.TEST.<EEC>.equals|722809408929142791[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: TestEnum3.TEST#foo(){}
+    //   Public signature: /TestEnum3.TEST.<EEC>.foo|-1041209573719867811[0]
+    /* fake */ override operator fun equals(other: Any?): Boolean
+
+    // CHECK JVM_IR:
+    //   Mangled name: TestEnum3.TEST#hashCode(){}kotlin.Int
+    //   Public signature: /TestEnum3.TEST.<EEC>.hashCode|-8048879360829830756[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: TestEnum3.TEST{}name
+    //   Public signature: /TestEnum3.TEST.<EEC>.name|4231860309499509769[0]
+    /* fake */ override fun hashCode(): Int
+
+    // CHECK JVM_IR:
+    //   Mangled name: TestEnum3.TEST#toString(){}kotlin.String
+    //   Public signature: /TestEnum3.TEST.<EEC>.toString|6958853723545266802[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: TestEnum3.TEST#<get-name>(){}
+    //   Public signature: /TestEnum3.TEST.<EEC>.name.<get-name>|5879344792307730109[0]
+    /* fake */ override fun toString(): String
+
+    // CHECK:
+    //   Mangled name: TestEnum3.TEST#foo(){}
+    //   Public signature: /TestEnum3.TEST.<EEC>.foo|-1041209573719867811[0]
+    override fun foo(): Unit
+
+    // CHECK:
+    //   Mangled name: TestEnum3.TEST{}name
+    //   Public signature: /TestEnum3.TEST.<EEC>.name|4231860309499509769[0]
+    /* fake */ override val name: String
+      // CHECK JVM_IR:
+      //   Mangled name: TestEnum3.TEST#<get-name>(){}kotlin.String
+      //   Public signature: /TestEnum3.TEST.<EEC>.name.<get-name>|-8006111524522882650[0]
+      // CHECK JS_IR NATIVE:
+      //   Mangled name: TestEnum3#valueOf#static(kotlin.String){}
+      //   Public signature: /TestEnum3.valueOf|-4683474617854611729[0]
+      /* fake */ override get(): String
+
+    // CHECK:
+    //   Mangled name: TestEnum3.TEST{}ordinal
+    //   Public signature: /TestEnum3.TEST.<EEC>.ordinal|1912745122988592376[0]
+    /* fake */ override val ordinal: Int
+      // CHECK JVM_IR:
+      //   Mangled name: TestEnum3.TEST#<get-ordinal>(){}kotlin.Int
+      //   Public signature: /TestEnum3.TEST.<EEC>.ordinal.<get-ordinal>|-6902664390061762634[0]
+      // CHECK JS_IR NATIVE:
+      //   Mangled name: TestEnum3#compareTo(TestEnum3){}
+      //   Public signature: /TestEnum3.compareTo|-8584066847092174536[0]
+      /* fake */ override get(): Int
+
+  }
+
+  // CHECK JVM_IR:
+  //   Mangled name: TestEnum3#valueOf#static(kotlin.String){}TestEnum3
+  //   Public signature: /TestEnum3.valueOf|2590925147797279879[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: TestEnum3#equals(kotlin.Any?){}
+  //   Public signature: /TestEnum3.equals|4638265728071529943[0]
+  fun valueOf(value: String): TestEnum3
+
+  // CHECK JVM_IR:
+  //   Mangled name: TestEnum3#values#static(){}kotlin.Array<TestEnum3>
+  //   Public signature: /TestEnum3.values|-3929439371307377630[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: TestEnum3#hashCode(){}
+  //   Public signature: /TestEnum3.hashCode|3409210261493131192[0]
+  fun values(): Array<TestEnum3>
+
+  // CHECK JVM_IR:
+  //   Mangled name: TestEnum3#clone(){}kotlin.Any
+  //   Public signature: /TestEnum3.clone|-6903128697527593263[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: TestEnum3#toString(){}
+  //   Public signature: /TestEnum3.toString|-1522858123163872138[0]
+  protected /* fake */ override fun clone(): Any
+
+  // CHECK JVM_IR:
+  //   Mangled name: TestEnum3#compareTo(TestEnum3){}kotlin.Int
+  //   Public signature: /TestEnum3.compareTo|3758334100252612666[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: TestEnum3#foo(){}
+  //   Public signature: /TestEnum3.foo|-1041209573719867811[0]
+  /* fake */ override operator fun compareTo(other: TestEnum3): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: TestEnum3#equals(kotlin.Any?){}kotlin.Boolean
+  //   Public signature: /TestEnum3.equals|722809408929142791[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: TestEnum3#static{}entries
+  //   Public signature: /TestEnum3.entries|-5134227801081826149[0]
+  /* fake */ override operator fun equals(other: Any?): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: TestEnum3#hashCode(){}kotlin.Int
+  //   Public signature: /TestEnum3.hashCode|-8048879360829830756[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: TestEnum3#<get-entries>#static(){}
+  //   Public signature: /TestEnum3.entries.<get-entries>|-6068527377476727729[0]
+  /* fake */ override fun hashCode(): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: TestEnum3#toString(){}kotlin.String
+  //   Public signature: /TestEnum3.toString|6958853723545266802[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: TestEnum3{}name
+  //   Public signature: /TestEnum3.name|4231860309499509769[0]
+  /* fake */ override fun toString(): String
+
+  // CHECK:
+  //   Mangled name: TestEnum3#foo(){}
+  //   Public signature: /TestEnum3.foo|-1041209573719867811[0]
+  abstract fun foo(): Unit
+
+  // CHECK:
+  //   Mangled name: TestEnum3#static{}entries
+  //   Public signature: /TestEnum3.entries|-5134227801081826149[0]
+  val entries: EnumEntries<TestEnum3>
+    // CHECK JVM_IR:
+    //   Mangled name: TestEnum3#<get-entries>#static(){}kotlin.enums.EnumEntries<TestEnum3>
+    //   Public signature: /TestEnum3.entries.<get-entries>|-6780028181727590184[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: TestEnum3#<get-ordinal>(){}
+    //   Public signature: /TestEnum3.ordinal.<get-ordinal>|8409904226035914023[0]
+    get(): EnumEntries<TestEnum3>
+
+  // CHECK:
+  //   Mangled name: TestEnum3{}name
+  //   Public signature: /TestEnum3.name|4231860309499509769[0]
+  /* fake */ override val name: String
+    // CHECK JVM_IR:
+    //   Mangled name: TestEnum3#<get-name>(){}kotlin.String
+    //   Public signature: /TestEnum3.name.<get-name>|-8006111524522882650[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: TestEnum4{}x
+    //   Public signature: /TestEnum4.x|-8060530855978347579[0]
+    /* fake */ override get(): String
+
+  // CHECK:
+  //   Mangled name: TestEnum3{}ordinal
+  //   Public signature: /TestEnum3.ordinal|1912745122988592376[0]
+  /* fake */ override val ordinal: Int
+    // CHECK JVM_IR:
+    //   Mangled name: TestEnum3#<get-ordinal>(){}kotlin.Int
+    //   Public signature: /TestEnum3.ordinal.<get-ordinal>|-6902664390061762634[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: TestEnum4#<init>(kotlin.Int){}
+    //   Public signature: /TestEnum4.<init>|-5182794243525578284[0]
+    /* fake */ override get(): Int
+
+}
+
+// CHECK:
+//   Mangled name: TestEnum4
+//   Public signature: /TestEnum4|null[0]
+abstract enum class TestEnum4 : Enum<TestEnum4> {
+  // CHECK:
+  //   Mangled name: TestEnum4{}x
+  //   Public signature: /TestEnum4.x|-8060530855978347579[0]
+  val x: Int
+    // CHECK JVM_IR:
+    //   Mangled name: TestEnum4#<get-x>(){}kotlin.Int
+    //   Public signature: /TestEnum4.x.<get-x>|4966956098150895696[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: TestEnum4.TEST1#<init>(){}
+    //   Public signature: /TestEnum4.TEST1.<EEC>.<init>|-5645683436151566731[0]
+    get
+
+  // CHECK:
+  //   Mangled name: TestEnum4#<init>(kotlin.Int){}
+  //   Public signature: /TestEnum4.<init>|-5182794243525578284[0]
+  private constructor(x: Int) /* primary */
+  // CHECK:
+  //   Mangled name: TestEnum4.TEST1
+  //   Public signature: /TestEnum4.TEST1|null[0]
+
+  TEST1
+  // CHECK:
+  //   Mangled name: TestEnum4.TEST1
+  //   Public signature: /TestEnum4.TEST1.<EEC>|null[0]
+  private enum entry class TEST1 : TestEnum4 {
+    // CHECK:
+    //   Mangled name: TestEnum4.TEST1#<init>(){}
+    //   Public signature: /TestEnum4.TEST1.<EEC>.<init>|-5645683436151566731[0]
+    private constructor() /* primary */
+    // CHECK JVM_IR:
+    //   Mangled name: TestEnum4.TEST1#clone(){}kotlin.Any
+    //   Public signature: /TestEnum4.TEST1.<EEC>.clone|-6903128697527593263[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: TestEnum4.TEST1#foo(){}
+    //   Public signature: /TestEnum4.TEST1.<EEC>.foo|-1041209573719867811[0]
+    protected /* fake */ override fun clone(): Any
+
+    // CHECK JVM_IR:
+    //   Mangled name: TestEnum4.TEST1#compareTo(TestEnum4){}kotlin.Int
+    //   Public signature: /TestEnum4.TEST1.<EEC>.compareTo|-8388826051358644820[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: TestEnum4.TEST1{}name
+    //   Public signature: /TestEnum4.TEST1.<EEC>.name|4231860309499509769[0]
+    /* fake */ override operator fun compareTo(other: TestEnum4): Int
+
+    // CHECK JVM_IR:
+    //   Mangled name: TestEnum4.TEST1#equals(kotlin.Any?){}kotlin.Boolean
+    //   Public signature: /TestEnum4.TEST1.<EEC>.equals|722809408929142791[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: TestEnum4.TEST1#<get-name>(){}
+    //   Public signature: /TestEnum4.TEST1.<EEC>.name.<get-name>|5879344792307730109[0]
+    /* fake */ override operator fun equals(other: Any?): Boolean
+
+    // CHECK JVM_IR:
+    //   Mangled name: TestEnum4.TEST1#hashCode(){}kotlin.Int
+    //   Public signature: /TestEnum4.TEST1.<EEC>.hashCode|-8048879360829830756[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: TestEnum4.TEST1{}ordinal
+    //   Public signature: /TestEnum4.TEST1.<EEC>.ordinal|1912745122988592376[0]
+    /* fake */ override fun hashCode(): Int
+
+    // CHECK JVM_IR:
+    //   Mangled name: TestEnum4.TEST1#toString(){}kotlin.String
+    //   Public signature: /TestEnum4.TEST1.<EEC>.toString|6958853723545266802[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: TestEnum4.TEST1#<get-ordinal>(){}
+    //   Public signature: /TestEnum4.TEST1.<EEC>.ordinal.<get-ordinal>|8409904226035914023[0]
+    /* fake */ override fun toString(): String
+
+    // CHECK:
+    //   Mangled name: TestEnum4.TEST1#foo(){}
+    //   Public signature: /TestEnum4.TEST1.<EEC>.foo|-1041209573719867811[0]
+    override fun foo(): Unit
+
+    // CHECK:
+    //   Mangled name: TestEnum4.TEST1{}name
+    //   Public signature: /TestEnum4.TEST1.<EEC>.name|4231860309499509769[0]
+    /* fake */ override val name: String
+      // CHECK JVM_IR:
+      //   Mangled name: TestEnum4.TEST1#<get-name>(){}kotlin.String
+      //   Public signature: /TestEnum4.TEST1.<EEC>.name.<get-name>|-8006111524522882650[0]
+      // CHECK JS_IR NATIVE:
+      //   Mangled name: TestEnum4.TEST2
+      //   Public signature: /TestEnum4.TEST2|null[0]
+      /* fake */ override get(): String
+
+    // CHECK:
+    //   Mangled name: TestEnum4.TEST1{}ordinal
+    //   Public signature: /TestEnum4.TEST1.<EEC>.ordinal|1912745122988592376[0]
+    /* fake */ override val ordinal: Int
+      // CHECK JVM_IR:
+      //   Mangled name: TestEnum4.TEST1#<get-ordinal>(){}kotlin.Int
+      //   Public signature: /TestEnum4.TEST1.<EEC>.ordinal.<get-ordinal>|-6902664390061762634[0]
+      // CHECK JS_IR NATIVE:
+      //   Mangled name: TestEnum4.TEST2{}z
+      //   Public signature: /TestEnum4.TEST2.<EEC>.z|7549650372729116193[0]
+      /* fake */ override get(): Int
+
+    // CHECK:
+    //   Mangled name: TestEnum4.TEST1{}x
+    //   Public signature: /TestEnum4.TEST1.<EEC>.x|-8060530855978347579[0]
+    /* fake */ override val x: Int
+      // CHECK JVM_IR:
+      //   Mangled name: TestEnum4.TEST1#<get-x>(){}kotlin.Int
+      //   Public signature: /TestEnum4.TEST1.<EEC>.x.<get-x>|4966956098150895696[0]
+      // CHECK JS_IR NATIVE:
+      //   Mangled name: TestEnum4.TEST2#<init>(){}
+      //   Public signature: /TestEnum4.TEST2.<EEC>.<init>|-5645683436151566731[0]
+      /* fake */ override get(): Int
+
+  }
+
+  // CHECK:
+  //   Mangled name: TestEnum4.TEST2
+  //   Public signature: /TestEnum4.TEST2|null[0]
+
+  TEST2
+  // CHECK:
+  //   Mangled name: TestEnum4.TEST2
+  //   Public signature: /TestEnum4.TEST2.<EEC>|null[0]
+  private enum entry class TEST2 : TestEnum4 {
+    // CHECK:
+    //   Mangled name: TestEnum4.TEST2{}z
+    //   Public signature: /TestEnum4.TEST2.<EEC>.z|7549650372729116193[0]
+    val z: Int
+      // CHECK JVM_IR:
+      //   Mangled name: TestEnum4.TEST2#<get-z>(){}kotlin.Int
+      //   Public signature: /TestEnum4.TEST2.<EEC>.z.<get-z>|373477940260174794[0]
+      // CHECK JS_IR NATIVE:
+      //   Mangled name: TestEnum4.TEST2#toString(){}
+      //   Public signature: /TestEnum4.TEST2.<EEC>.toString|-1522858123163872138[0]
+      get
+
+    // CHECK:
+    //   Mangled name: TestEnum4.TEST2#<init>(){}
+    //   Public signature: /TestEnum4.TEST2.<EEC>.<init>|-5645683436151566731[0]
+    private constructor() /* primary */
+    // CHECK JVM_IR:
+    //   Mangled name: TestEnum4.TEST2#clone(){}kotlin.Any
+    //   Public signature: /TestEnum4.TEST2.<EEC>.clone|-6903128697527593263[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: TestEnum4.TEST2{}name
+    //   Public signature: /TestEnum4.TEST2.<EEC>.name|4231860309499509769[0]
+    protected /* fake */ override fun clone(): Any
+
+    // CHECK JVM_IR:
+    //   Mangled name: TestEnum4.TEST2#compareTo(TestEnum4){}kotlin.Int
+    //   Public signature: /TestEnum4.TEST2.<EEC>.compareTo|-8388826051358644820[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: TestEnum4.TEST2#<get-name>(){}
+    //   Public signature: /TestEnum4.TEST2.<EEC>.name.<get-name>|5879344792307730109[0]
+    /* fake */ override operator fun compareTo(other: TestEnum4): Int
+
+    // CHECK JVM_IR:
+    //   Mangled name: TestEnum4.TEST2#equals(kotlin.Any?){}kotlin.Boolean
+    //   Public signature: /TestEnum4.TEST2.<EEC>.equals|722809408929142791[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: TestEnum4.TEST2{}ordinal
+    //   Public signature: /TestEnum4.TEST2.<EEC>.ordinal|1912745122988592376[0]
+    /* fake */ override operator fun equals(other: Any?): Boolean
+
+    // CHECK JVM_IR:
+    //   Mangled name: TestEnum4.TEST2#hashCode(){}kotlin.Int
+    //   Public signature: /TestEnum4.TEST2.<EEC>.hashCode|-8048879360829830756[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: TestEnum4.TEST2#<get-ordinal>(){}
+    //   Public signature: /TestEnum4.TEST2.<EEC>.ordinal.<get-ordinal>|8409904226035914023[0]
+    /* fake */ override fun hashCode(): Int
+
+    // CHECK JVM_IR:
+    //   Mangled name: TestEnum4.TEST2#toString(){}kotlin.String
+    //   Public signature: /TestEnum4.TEST2.<EEC>.toString|6958853723545266802[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: TestEnum4.TEST2{}x
+    //   Public signature: /TestEnum4.TEST2.<EEC>.x|-8060530855978347579[0]
+    /* fake */ override fun toString(): String
+
+    // CHECK:
+    //   Mangled name: TestEnum4.TEST2#foo(){}
+    //   Public signature: /TestEnum4.TEST2.<EEC>.foo|-1041209573719867811[0]
+    override fun foo(): Unit
+
+    // CHECK:
+    //   Mangled name: TestEnum4.TEST2{}name
+    //   Public signature: /TestEnum4.TEST2.<EEC>.name|4231860309499509769[0]
+    /* fake */ override val name: String
+      // CHECK JVM_IR:
+      //   Mangled name: TestEnum4.TEST2#<get-name>(){}kotlin.String
+      //   Public signature: /TestEnum4.TEST2.<EEC>.name.<get-name>|-8006111524522882650[0]
+      // CHECK JS_IR NATIVE:
+      //   Mangled name: TestEnum4#values#static(){}
+      //   Public signature: /TestEnum4.values|-8715569000920726747[0]
+      /* fake */ override get(): String
+
+    // CHECK:
+    //   Mangled name: TestEnum4.TEST2{}ordinal
+    //   Public signature: /TestEnum4.TEST2.<EEC>.ordinal|1912745122988592376[0]
+    /* fake */ override val ordinal: Int
+      // CHECK JVM_IR:
+      //   Mangled name: TestEnum4.TEST2#<get-ordinal>(){}kotlin.Int
+      //   Public signature: /TestEnum4.TEST2.<EEC>.ordinal.<get-ordinal>|-6902664390061762634[0]
+      // CHECK JS_IR NATIVE:
+      //   Mangled name: TestEnum4#equals(kotlin.Any?){}
+      //   Public signature: /TestEnum4.equals|4638265728071529943[0]
+      /* fake */ override get(): Int
+
+    // CHECK:
+    //   Mangled name: TestEnum4.TEST2{}x
+    //   Public signature: /TestEnum4.TEST2.<EEC>.x|-8060530855978347579[0]
+    /* fake */ override val x: Int
+      // CHECK JVM_IR:
+      //   Mangled name: TestEnum4.TEST2#<get-x>(){}kotlin.Int
+      //   Public signature: /TestEnum4.TEST2.<EEC>.x.<get-x>|4966956098150895696[0]
+      // CHECK JS_IR NATIVE:
+      //   Mangled name: TestEnum4#toString(){}
+      //   Public signature: /TestEnum4.toString|-1522858123163872138[0]
+      /* fake */ override get(): Int
+
+  }
+
+  // CHECK JVM_IR:
+  //   Mangled name: TestEnum4#valueOf#static(kotlin.String){}TestEnum4
+  //   Public signature: /TestEnum4.valueOf|2423737738768372933[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: TestEnum4#foo(){}
+  //   Public signature: /TestEnum4.foo|-1041209573719867811[0]
+  fun valueOf(value: String): TestEnum4
+
+  // CHECK JVM_IR:
+  //   Mangled name: TestEnum4#values#static(){}kotlin.Array<TestEnum4>
+  //   Public signature: /TestEnum4.values|-3255933436834389837[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: TestEnum4#static{}entries
+  //   Public signature: /TestEnum4.entries|-5134227801081826149[0]
+  fun values(): Array<TestEnum4>
+
+  // CHECK JVM_IR:
+  //   Mangled name: TestEnum4#clone(){}kotlin.Any
+  //   Public signature: /TestEnum4.clone|-6903128697527593263[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: TestEnum4#<get-entries>#static(){}
+  //   Public signature: /TestEnum4.entries.<get-entries>|-6068527377476727729[0]
+  protected /* fake */ override fun clone(): Any
+
+  // CHECK JVM_IR:
+  //   Mangled name: TestEnum4#compareTo(TestEnum4){}kotlin.Int
+  //   Public signature: /TestEnum4.compareTo|-8388826051358644820[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: TestEnum4{}name
+  //   Public signature: /TestEnum4.name|4231860309499509769[0]
+  /* fake */ override operator fun compareTo(other: TestEnum4): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: TestEnum4#equals(kotlin.Any?){}kotlin.Boolean
+  //   Public signature: /TestEnum4.equals|722809408929142791[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: TestEnum4#<get-name>(){}
+  //   Public signature: /TestEnum4.name.<get-name>|5879344792307730109[0]
+  /* fake */ override operator fun equals(other: Any?): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: TestEnum4#hashCode(){}kotlin.Int
+  //   Public signature: /TestEnum4.hashCode|-8048879360829830756[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: TestEnum4{}ordinal
+  //   Public signature: /TestEnum4.ordinal|1912745122988592376[0]
+  /* fake */ override fun hashCode(): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: TestEnum4#toString(){}kotlin.String
+  //   Public signature: /TestEnum4.toString|6958853723545266802[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: TestEnum4#<get-ordinal>(){}
+  //   Public signature: /TestEnum4.ordinal.<get-ordinal>|8409904226035914023[0]
+  /* fake */ override fun toString(): String
+
+  // CHECK:
+  //   Mangled name: TestEnum4#foo(){}
+  //   Public signature: /TestEnum4.foo|-1041209573719867811[0]
+  abstract fun foo(): Unit
+
+  // CHECK:
+  //   Mangled name: TestEnum4#static{}entries
+  //   Public signature: /TestEnum4.entries|-5134227801081826149[0]
+  val entries: EnumEntries<TestEnum4>
+    // CHECK JVM_IR:
+    //   Mangled name: TestEnum4#<get-entries>#static(){}kotlin.enums.EnumEntries<TestEnum4>
+    //   Public signature: /TestEnum4.entries.<get-entries>|-5379266754828508305[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: TestEnum5#<get-x>(){}
+    //   Public signature: /TestEnum5.x.<get-x>|1482705010654679335[0]
+    get(): EnumEntries<TestEnum4>
+
+  // CHECK:
+  //   Mangled name: TestEnum4{}name
+  //   Public signature: /TestEnum4.name|4231860309499509769[0]
+  /* fake */ override val name: String
+    // CHECK JVM_IR:
+    //   Mangled name: TestEnum4#<get-name>(){}kotlin.String
+    //   Public signature: /TestEnum4.name.<get-name>|-8006111524522882650[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: TestEnum5.TEST1
+    //   Public signature: /TestEnum5.TEST1|null[0]
+    /* fake */ override get(): String
+
+  // CHECK:
+  //   Mangled name: TestEnum4{}ordinal
+  //   Public signature: /TestEnum4.ordinal|1912745122988592376[0]
+  /* fake */ override val ordinal: Int
+    // CHECK JVM_IR:
+    //   Mangled name: TestEnum4#<get-ordinal>(){}kotlin.Int
+    //   Public signature: /TestEnum4.ordinal.<get-ordinal>|-6902664390061762634[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: TestEnum5.TEST3
+    //   Public signature: /TestEnum5.TEST3|null[0]
+    /* fake */ override get(): Int
+
+}
+
+// CHECK:
+//   Mangled name: TestEnum5
+//   Public signature: /TestEnum5|null[0]
+enum class TestEnum5 : Enum<TestEnum5> {
+  // CHECK:
+  //   Mangled name: TestEnum5{}x
+  //   Public signature: /TestEnum5.x|-8060530855978347579[0]
+  val x: Int
+    // CHECK JVM_IR:
+    //   Mangled name: TestEnum5#<get-x>(){}kotlin.Int
+    //   Public signature: /TestEnum5.x.<get-x>|4966956098150895696[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: TestEnum5#compareTo(TestEnum5){}
+    //   Public signature: /TestEnum5.compareTo|5363466639006514831[0]
+    get
+
+  // CHECK:
+  //   Mangled name: TestEnum5#<init>(kotlin.Int){}
+  //   Public signature: /TestEnum5.<init>|-5182794243525578284[0]
+  private constructor(x: Int) /* primary */
+  // CHECK:
+  //   Mangled name: TestEnum5.TEST1
+  //   Public signature: /TestEnum5.TEST1|null[0]
+  TEST1
+
+  // CHECK:
+  //   Mangled name: TestEnum5.TEST2
+  //   Public signature: /TestEnum5.TEST2|null[0]
+  TEST2
+
+  // CHECK:
+  //   Mangled name: TestEnum5.TEST3
+  //   Public signature: /TestEnum5.TEST3|null[0]
+  TEST3
+
+  // CHECK JVM_IR:
+  //   Mangled name: TestEnum5#valueOf#static(kotlin.String){}TestEnum5
+  //   Public signature: /TestEnum5.valueOf|-5169706962915676486[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: TestEnum5#<get-entries>#static(){}
+  //   Public signature: /TestEnum5.entries.<get-entries>|-6068527377476727729[0]
+  fun valueOf(value: String): TestEnum5
+
+  // CHECK JVM_IR:
+  //   Mangled name: TestEnum5#values#static(){}kotlin.Array<TestEnum5>
+  //   Public signature: /TestEnum5.values|-344605949466928180[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: TestEnum5{}name
+  //   Public signature: /TestEnum5.name|4231860309499509769[0]
+  fun values(): Array<TestEnum5>
+
+  // CHECK JVM_IR:
+  //   Mangled name: TestEnum5#clone(){}kotlin.Any
+  //   Public signature: /TestEnum5.clone|-6903128697527593263[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: TestEnum5#<get-name>(){}
+  //   Public signature: /TestEnum5.name.<get-name>|5879344792307730109[0]
+  protected /* fake */ override fun clone(): Any
+
+  // CHECK JVM_IR:
+  //   Mangled name: TestEnum5#compareTo(TestEnum5){}kotlin.Int
+  //   Public signature: /TestEnum5.compareTo|-2291427915690208293[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: TestEnum5{}ordinal
+  //   Public signature: /TestEnum5.ordinal|1912745122988592376[0]
+  /* fake */ override operator fun compareTo(other: TestEnum5): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: TestEnum5#equals(kotlin.Any?){}kotlin.Boolean
+  //   Public signature: /TestEnum5.equals|722809408929142791[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: TestEnum5#<get-ordinal>(){}
+  //   Public signature: /TestEnum5.ordinal.<get-ordinal>|8409904226035914023[0]
+  /* fake */ override operator fun equals(other: Any?): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: TestEnum5#hashCode(){}kotlin.Int
+  //   Public signature: /TestEnum5.hashCode|-8048879360829830756[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: TestEnum6
+  //   Public signature: /TestEnum6|null[0]
+  /* fake */ override fun hashCode(): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: TestEnum5#toString(){}kotlin.String
+  //   Public signature: /TestEnum5.toString|6958853723545266802[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: TestEnum6{}x
+  //   Public signature: /TestEnum6.x|-8060530855978347579[0]
+  /* fake */ override fun toString(): String
+
+  // CHECK:
+  //   Mangled name: TestEnum5#static{}entries
+  //   Public signature: /TestEnum5.entries|-5134227801081826149[0]
+  val entries: EnumEntries<TestEnum5>
+    // CHECK JVM_IR:
+    //   Mangled name: TestEnum5#<get-entries>#static(){}kotlin.enums.EnumEntries<TestEnum5>
+    //   Public signature: /TestEnum5.entries.<get-entries>|-7808662118823437075[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: TestEnum6{}y
+    //   Public signature: /TestEnum6.y|3625903257357557171[0]
+    get(): EnumEntries<TestEnum5>
+
+  // CHECK:
+  //   Mangled name: TestEnum5{}name
+  //   Public signature: /TestEnum5.name|4231860309499509769[0]
+  /* fake */ override val name: String
+    // CHECK JVM_IR:
+    //   Mangled name: TestEnum5#<get-name>(){}kotlin.String
+    //   Public signature: /TestEnum5.name.<get-name>|-8006111524522882650[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: TestEnum6#<init>(kotlin.Int;kotlin.Int){}
+    //   Public signature: /TestEnum6.<init>|-7691762014320324121[0]
+    /* fake */ override get(): String
+
+  // CHECK:
+  //   Mangled name: TestEnum5{}ordinal
+  //   Public signature: /TestEnum5.ordinal|1912745122988592376[0]
+  /* fake */ override val ordinal: Int
+    // CHECK JVM_IR:
+    //   Mangled name: TestEnum5#<get-ordinal>(){}kotlin.Int
+    //   Public signature: /TestEnum5.ordinal.<get-ordinal>|-6902664390061762634[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: TestEnum6#valueOf#static(kotlin.String){}
+    //   Public signature: /TestEnum6.valueOf|-4683474617854611729[0]
+    /* fake */ override get(): Int
+
+}
+
+// CHECK:
+//   Mangled name: TestEnum6
+//   Public signature: /TestEnum6|null[0]
+enum class TestEnum6 : Enum<TestEnum6> {
+  // CHECK:
+  //   Mangled name: TestEnum6{}x
+  //   Public signature: /TestEnum6.x|-8060530855978347579[0]
+  val x: Int
+    // CHECK JVM_IR:
+    //   Mangled name: TestEnum6#<get-x>(){}kotlin.Int
+    //   Public signature: /TestEnum6.x.<get-x>|4966956098150895696[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: TestEnum6#equals(kotlin.Any?){}
+    //   Public signature: /TestEnum6.equals|4638265728071529943[0]
+    get
+
+  // CHECK:
+  //   Mangled name: TestEnum6{}y
+  //   Public signature: /TestEnum6.y|3625903257357557171[0]
+  val y: Int
+    // CHECK JVM_IR:
+    //   Mangled name: TestEnum6#<get-y>(){}kotlin.Int
+    //   Public signature: /TestEnum6.y.<get-y>|-6745575372101973707[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: TestEnum6#toString(){}
+    //   Public signature: /TestEnum6.toString|-1522858123163872138[0]
+    get
+
+  // CHECK:
+  //   Mangled name: TestEnum6#<init>(kotlin.Int;kotlin.Int){}
+  //   Public signature: /TestEnum6.<init>|-7691762014320324121[0]
+  private constructor(x: Int, y: Int) /* primary */
+  // CHECK:
+  //   Mangled name: TestEnum6.TEST
+  //   Public signature: /TestEnum6.TEST|null[0]
+  TEST
+
+  // CHECK JVM_IR:
+  //   Mangled name: TestEnum6#valueOf#static(kotlin.String){}TestEnum6
+  //   Public signature: /TestEnum6.valueOf|4918214435711157814[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: TestEnum6{}name
+  //   Public signature: /TestEnum6.name|4231860309499509769[0]
+  fun valueOf(value: String): TestEnum6
+
+  // CHECK JVM_IR:
+  //   Mangled name: TestEnum6#values#static(){}kotlin.Array<TestEnum6>
+  //   Public signature: /TestEnum6.values|-3500841970921663207[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: TestEnum6#<get-name>(){}
+  //   Public signature: /TestEnum6.name.<get-name>|5879344792307730109[0]
+  fun values(): Array<TestEnum6>
+
+  // CHECK JVM_IR:
+  //   Mangled name: TestEnum6#clone(){}kotlin.Any
+  //   Public signature: /TestEnum6.clone|-6903128697527593263[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: TestEnum6{}ordinal
+  //   Public signature: /TestEnum6.ordinal|1912745122988592376[0]
+  protected /* fake */ override fun clone(): Any
+
+  // CHECK JVM_IR:
+  //   Mangled name: TestEnum6#compareTo(TestEnum6){}kotlin.Int
+  //   Public signature: /TestEnum6.compareTo|-8618169451141618664[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: TestEnum6#<get-ordinal>(){}
+  //   Public signature: /TestEnum6.ordinal.<get-ordinal>|8409904226035914023[0]
+  /* fake */ override operator fun compareTo(other: TestEnum6): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: TestEnum6#equals(kotlin.Any?){}kotlin.Boolean
+  //   Public signature: /TestEnum6.equals|722809408929142791[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #f(){}
+  //   Public signature: /f|5316533450599009716[0]
+  /* fake */ override operator fun equals(other: Any?): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: TestEnum6#hashCode(){}kotlin.Int
+  //   Public signature: /TestEnum6.hashCode|-8048879360829830756[0]
+  /* fake */ override fun hashCode(): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: TestEnum6#toString(){}kotlin.String
+  //   Public signature: /TestEnum6.toString|6958853723545266802[0]
+  /* fake */ override fun toString(): String
+
+  // CHECK:
+  //   Mangled name: TestEnum6#static{}entries
+  //   Public signature: /TestEnum6.entries|-5134227801081826149[0]
+  val entries: EnumEntries<TestEnum6>
+    // CHECK JVM_IR:
+    //   Mangled name: TestEnum6#<get-entries>#static(){}kotlin.enums.EnumEntries<TestEnum6>
+    //   Public signature: /TestEnum6.entries.<get-entries>|-6978845766362641693[0]
+    get(): EnumEntries<TestEnum6>
+
+  // CHECK:
+  //   Mangled name: TestEnum6{}name
+  //   Public signature: /TestEnum6.name|4231860309499509769[0]
+  /* fake */ override val name: String
+    // CHECK JVM_IR:
+    //   Mangled name: TestEnum6#<get-name>(){}kotlin.String
+    //   Public signature: /TestEnum6.name.<get-name>|-8006111524522882650[0]
+    /* fake */ override get(): String
+
+  // CHECK:
+  //   Mangled name: TestEnum6{}ordinal
+  //   Public signature: /TestEnum6.ordinal|1912745122988592376[0]
+  /* fake */ override val ordinal: Int
+    // CHECK JVM_IR:
+    //   Mangled name: TestEnum6#<get-ordinal>(){}kotlin.Int
+    //   Public signature: /TestEnum6.ordinal.<get-ordinal>|-6902664390061762634[0]
+    /* fake */ override get(): Int
+
+}
+
+// CHECK JVM_IR:
+//   Mangled name: #f(){}kotlin.Int
+//   Public signature: /f|-2854658745315648608[0]
+fun f(): Int
+

@@ -1,0 +1,135 @@
+// CHECK:
+//   Mangled name: MySerializable
+//   Public signature: /MySerializable|null[0]
+@Target(allowedTargets = [AnnotationTarget.TYPE])
+open annotation class MySerializable : Annotation {
+  // CHECK:
+  //   Mangled name: MySerializable{}c
+  //   Public signature: /MySerializable.c|-4416962153448040627[0]
+  val c: KClass<*>
+    // CHECK JVM_IR:
+    //   Mangled name: MySerializable#<get-c>(){}kotlin.reflect.KClass<*>
+    //   Public signature: /MySerializable.c.<get-c>|-6941111973387927723[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: MySerializable#<get-c>(){}
+    //   Public signature: /MySerializable.c.<get-c>|2368736057102379596[0]
+    get
+
+  // CHECK:
+  //   Mangled name: MySerializable#<init>(kotlin.reflect.KClass<*>){}
+  //   Public signature: /MySerializable.<init>|5783844857148764471[0]
+  constructor(c: KClass<*>) /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: LoginSuccessPacket
+//   Public signature: /LoginSuccessPacket|null[0]
+data class LoginSuccessPacket {
+  // CHECK:
+  //   Mangled name: LoginSuccessPacket{}id
+  //   Public signature: /LoginSuccessPacket.id|4553357683448926321[0]
+  val id: @MySerializable(c = UuidSerializer::class) Uuid1
+    // CHECK JVM_IR:
+    //   Mangled name: LoginSuccessPacket#<get-id>(){}Uuid1
+    //   Public signature: /LoginSuccessPacket.id.<get-id>|1939250508314525801[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: LoginSuccessPacket#<get-id>(){}
+    //   Public signature: /LoginSuccessPacket.id.<get-id>|2571929917854535737[0]
+    get
+
+  // CHECK:
+  //   Mangled name: LoginSuccessPacket#<init>(Uuid1){}
+  //   Public signature: /LoginSuccessPacket.<init>|-1666114669831529718[0]
+  constructor(id: @MySerializable(c = UuidSerializer::class) Uuid1) /* primary */
+  // CHECK JVM_IR:
+  //   Mangled name: LoginSuccessPacket#component1(){}Uuid1
+  //   Public signature: /LoginSuccessPacket.component1|-3428488995872773450[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: LoginSuccessPacket#component1(){}
+  //   Public signature: /LoginSuccessPacket.component1|162597135895221648[0]
+  operator fun component1(): @MySerializable(c = UuidSerializer::class) Uuid1
+
+  // CHECK JVM_IR:
+  //   Mangled name: LoginSuccessPacket#copy(Uuid1){}LoginSuccessPacket
+  //   Public signature: /LoginSuccessPacket.copy|-7819973036324215638[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: LoginSuccessPacket#copy(Uuid1){}
+  //   Public signature: /LoginSuccessPacket.copy|9160330822770885462[0]
+  fun copy(id: @MySerializable(c = UuidSerializer::class) Uuid1): LoginSuccessPacket
+
+  // CHECK JVM_IR:
+  //   Mangled name: LoginSuccessPacket#equals(kotlin.Any?){}kotlin.Boolean
+  //   Public signature: /LoginSuccessPacket.equals|722809408929142791[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: LoginSuccessPacket#equals(kotlin.Any?){}
+  //   Public signature: /LoginSuccessPacket.equals|4638265728071529943[0]
+  override operator fun equals(other: Any?): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: LoginSuccessPacket#hashCode(){}kotlin.Int
+  //   Public signature: /LoginSuccessPacket.hashCode|-8048879360829830756[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: LoginSuccessPacket#hashCode(){}
+  //   Public signature: /LoginSuccessPacket.hashCode|3409210261493131192[0]
+  override fun hashCode(): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: LoginSuccessPacket#toString(){}kotlin.String
+  //   Public signature: /LoginSuccessPacket.toString|6958853723545266802[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: LoginSuccessPacket#toString(){}
+  //   Public signature: /LoginSuccessPacket.toString|-1522858123163872138[0]
+  override fun toString(): String
+
+}
+
+// CHECK:
+//   Mangled name: Uuid1
+//   Public signature: /Uuid1|null[0]
+class Uuid1 {
+  // CHECK:
+  //   Mangled name: Uuid1#<init>(){}
+  //   Public signature: /Uuid1.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: MySerializer
+//   Public signature: /MySerializer|null[0]
+interface MySerializer<T : Any?> {
+
+}
+
+// CHECK:
+//   Mangled name: UuidSerializer
+//   Public signature: /UuidSerializer|null[0]
+object UuidSerializer : MySerializer<@MySerializable(c = UuidSerializer::class) Uuid1> {
+  // CHECK:
+  //   Mangled name: UuidSerializer#<init>(){}
+  //   Public signature: /UuidSerializer.<init>|-5645683436151566731[0]
+  private constructor() /* primary */
+
+}
+
+// CHECK JVM_IR:
+//   Mangled name: #bar(){}Uuid1
+//   Public signature: /bar|-6949225675121992296[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #bar(){}
+//   Public signature: /bar|496682602797471549[0]
+fun bar(): @MySerializable(c = UuidSerializer::class) Uuid1
+
+// CHECK JVM_IR:
+//   Mangled name: #foo(){}Uuid1
+//   Public signature: /foo|-4975789094402571215[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #foo(){}
+//   Public signature: /foo|-1041209573719867811[0]
+fun foo(): @MySerializable(c = UuidSerializer::class) Uuid1
+
+// CHECK:
+//   Mangled name: Uuid
+//   Public signature: /Uuid|null[0]
+typealias Uuid = @MySerializable(c = UuidSerializer::class) Uuid1

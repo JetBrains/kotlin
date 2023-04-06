@@ -4,6 +4,9 @@
 // IGNORE_BACKEND: JS_IR
 // IGNORE_BACKEND: JS_IR_ES6
 
+// MUTE_SIGNATURE_COMPARISON_K2: ANY
+// ^ KT-57435
+
 interface NumberOperations {
     fun Number.plus(other: Number): Number
 }

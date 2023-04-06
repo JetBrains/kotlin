@@ -1,0 +1,52 @@
+// CHECK:
+//   Mangled name: WithCompanion
+//   Public signature: /WithCompanion|null[0]
+open class WithCompanion {
+  // CHECK:
+  //   Mangled name: WithCompanion.Companion
+  //   Public signature: /WithCompanion.Companion|null[0]
+  companion object Companion {
+    // CHECK:
+    //   Mangled name: WithCompanion.Companion#<init>(){}
+    //   Public signature: /WithCompanion.Companion.<init>|-5645683436151566731[0]
+    private constructor() /* primary */
+
+    // CHECK JVM_IR:
+    //   Mangled name: WithCompanion.Companion#foo(){}WithCompanion.Companion
+    //   Public signature: /WithCompanion.Companion.foo|3115869173477949534[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: WithCompanion.Companion#foo(){}
+    //   Public signature: /WithCompanion.Companion.foo|-1041209573719867811[0]
+    fun foo(): Companion
+
+  }
+
+  // CHECK:
+  //   Mangled name: WithCompanion#<init>(WithCompanion.Companion){}
+  //   Public signature: /WithCompanion.<init>|-2521748254232742494[0]
+  constructor(a: Companion) /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: #test@WithCompanion(){}
+//   Public signature: /test|4153745090133876513[0]
+fun WithCompanion.test(): Unit
+  // CHECK:
+  //   Mangled name: #test@WithCompanion(){}.<no name provided>
+  local class <no name provided> : WithCompanion {
+    // CHECK:
+    //   Mangled name: #test@WithCompanion(){}.<no name provided>#<init>(){}
+    constructor() /* primary */
+
+  }
+
+  // CHECK:
+  //   Mangled name: #test@WithCompanion(){}.<no name provided>
+  local class <no name provided> : WithCompanion {
+    // CHECK:
+    //   Mangled name: #test@WithCompanion(){}.<no name provided>#<init>(){}
+    constructor() /* primary */
+
+  }
+

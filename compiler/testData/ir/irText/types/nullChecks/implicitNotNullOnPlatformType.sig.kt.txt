@@ -1,0 +1,55 @@
+// CHECK:
+//   Mangled name: MySet
+//   Public signature: /MySet|null[0]
+class MySet : Set<String> {
+  // CHECK:
+  //   Mangled name: MySet#<init>(){}
+  //   Public signature: /MySet.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: MySet#contains(kotlin.String){}kotlin.Boolean
+  //   Public signature: /MySet.contains|-5026920908417540913[0]
+  override operator fun contains(element: String): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: MySet#containsAll(kotlin.collections.Collection<kotlin.String>){}kotlin.Boolean
+  //   Public signature: /MySet.containsAll|-2238462666028753495[0]
+  override fun containsAll(elements: Collection<String>): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: MySet#isEmpty(){}kotlin.Boolean
+  //   Public signature: /MySet.isEmpty|-626562167393617703[0]
+  override fun isEmpty(): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: MySet#iterator(){}kotlin.collections.Iterator<kotlin.String>
+  //   Public signature: /MySet.iterator|-3234682308746536807[0]
+  override operator fun iterator(): Iterator<String>
+
+  // CHECK:
+  //   Mangled name: MySet{}size
+  //   Public signature: /MySet.size|-6253659984320132064[0]
+  override val size: Int
+    // CHECK JVM_IR:
+    //   Mangled name: MySet#<get-size>(){}kotlin.Int
+    //   Public signature: /MySet.size.<get-size>|-3941649985161900780[0]
+    override get(): Int
+
+}
+
+// CHECK:
+//   Mangled name: #f(kotlin.String){}
+//   Public signature: /f|5157548403930815746[0]
+fun f(s: String): Unit
+
+// CHECK:
+//   Mangled name: #test(){}
+//   Public signature: /test|6620506149988718649[0]
+fun test(): Unit
+
+// CHECK:
+//   Mangled name: #testContains(MySet){}
+//   Public signature: /testContains|-6934706963240728441[0]
+fun testContains(m: MySet): Unit
+

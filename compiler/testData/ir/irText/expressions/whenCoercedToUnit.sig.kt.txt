@@ -1,0 +1,5 @@
+// CHECK:
+//   Mangled name: #foo(kotlin.Int){}
+//   Public signature: /foo|-104159190164110731[0]
+fun foo(x: Int): Unit
+

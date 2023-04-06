@@ -1,0 +1,94 @@
+// CHECK:
+//   Mangled name: {}test1
+//   Public signature: /test1|6005685442305498193[0]
+val test1: Int /* by */
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-test1>(){}kotlin.Int
+  //   Public signature: /test1.<get-test1>|3978508226793108919[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-test1>(){}
+  //   Public signature: /test1.<get-test1>|-5735092642142423279[0]
+  @A(x = "test1.get")
+  get(): Int
+
+// CHECK:
+//   Mangled name: {}test2
+//   Public signature: /test2|2517758057000911509[0]
+var test2: Int /* by */
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-test2>(){}kotlin.Int
+  //   Public signature: /test2.<get-test2>|-8779933517717592707[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-test2>(){}
+  //   Public signature: /test2.<get-test2>|-5218942532816206869[0]
+  @A(x = "test2.get")
+  get(): Int
+  // CHECK:
+  //   Mangled name: #<set-test2>(kotlin.Int){}
+  //   Public signature: /test2.<set-test2>|1925150309265265312[0]
+  @A(x = "test2.set")
+  set(@A(x = "test2.set.param") <set-?>: Int): Unit
+
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+open annotation class A : Annotation {
+  // CHECK:
+  //   Mangled name: A{}x
+  //   Public signature: /A.x|-8060530855978347579[0]
+  val x: String
+    // CHECK JVM_IR:
+    //   Mangled name: A#<get-x>(){}kotlin.String
+    //   Public signature: /A.x.<get-x>|316111172223894646[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: A#<get-x>(){}
+    //   Public signature: /A.x.<get-x>|1482705010654679335[0]
+    get
+
+  // CHECK:
+  //   Mangled name: A#<init>(kotlin.String){}
+  //   Public signature: /A.<init>|1280618353163213788[0]
+  constructor(x: String) /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: Cell
+//   Public signature: /Cell|null[0]
+class Cell {
+  // CHECK:
+  //   Mangled name: Cell{}value
+  //   Public signature: /Cell.value|1987073854177347439[0]
+  var value: Int
+    // CHECK JVM_IR:
+    //   Mangled name: Cell#<get-value>(){}kotlin.Int
+    //   Public signature: /Cell.value.<get-value>|-5900028706170996[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Cell#<get-value>(){}
+    //   Public signature: /Cell.value.<get-value>|3260093555963109437[0]
+    get
+    // CHECK:
+    //   Mangled name: Cell#<set-value>(kotlin.Int){}
+    //   Public signature: /Cell.value.<set-value>|-195057410739577239[0]
+    set
+
+  // CHECK:
+  //   Mangled name: Cell#<init>(kotlin.Int){}
+  //   Public signature: /Cell.<init>|-5182794243525578284[0]
+  constructor(value: Int) /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: Cell#getValue(kotlin.Any?;kotlin.Any?){}kotlin.Int
+  //   Public signature: /Cell.getValue|-3377375928534350672[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: Cell#getValue(kotlin.Any?;kotlin.Any?){}
+  //   Public signature: /Cell.getValue|-9077843357189755365[0]
+  operator fun getValue(thisRef: Any?, kProp: Any?): Int
+
+  // CHECK:
+  //   Mangled name: Cell#setValue(kotlin.Any?;kotlin.Any?;kotlin.Int){}
+  //   Public signature: /Cell.setValue|6795912344196649599[0]
+  operator fun setValue(thisRef: Any?, kProp: Any?, newValue: Int): Unit
+
+}
+

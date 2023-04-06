@@ -1,0 +1,25 @@
+// MODULE: a
+// FILE: a.kt
+package a
+
+// CHECK:
+//   Mangled name: a.A
+//   Public signature: a/A|null[0]
+typealias A = String
+// MODULE: b
+// FILE: b.kt
+package b
+
+// CHECK JVM_IR:
+//   Mangled name: b#foo(kotlin.Function0<kotlin.String>){}kotlin.String
+//   Public signature: b/foo|-5020381652845254261[0]
+fun foo(f: Function0<String>): String
+
+// MODULE: c
+// FILE: c.kt
+
+// CHECK JVM_IR:
+//   Mangled name: #box(){}kotlin.String
+//   Public signature: /box|-9347091776561469[0]
+fun box(): String
+

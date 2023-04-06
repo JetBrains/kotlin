@@ -1,4 +1,8 @@
 // TARGET_BACKEND: JVM
+
+// MUTE_SIGNATURE_COMPARISON_K2: ANY
+// ^ KT-57754
+
 // FILE: Foo.java
 
 import java.util.Set;

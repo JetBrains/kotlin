@@ -1,5 +1,9 @@
 // FIR_IDENTICAL
 
+// MUTE_SIGNATURE_COMPARISON_K2: JS_IR
+// MUTE_SIGNATURE_COMPARISON_K2: NATIVE
+// ^ KT-57818
+
 fun foo(): String = ""
 val x = 42
 

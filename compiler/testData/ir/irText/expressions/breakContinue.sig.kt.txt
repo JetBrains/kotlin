@@ -1,0 +1,15 @@
+// CHECK:
+//   Mangled name: #test1(){}
+//   Public signature: /test1|4297044443957252634[0]
+fun test1(): Unit
+
+// CHECK:
+//   Mangled name: #test2(){}
+//   Public signature: /test2|4279114864133353152[0]
+fun test2(): Unit
+
+// CHECK:
+//   Mangled name: #test3(){}
+//   Public signature: /test3|-3759735065270951803[0]
+fun test3(): Unit
+

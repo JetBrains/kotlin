@@ -1,0 +1,110 @@
+// CHECK:
+//   Mangled name: IFoo
+//   Public signature: /IFoo|null[0]
+fun interface IFoo {
+
+  // CHECK:
+  //   Mangled name: IFoo#foo(kotlin.Int){}
+  //   Public signature: /IFoo.foo|-104159190164110731[0]
+  abstract fun foo(i: Int): Unit
+
+}
+
+// CHECK:
+//   Mangled name: IFoo2
+//   Public signature: /IFoo2|null[0]
+fun interface IFoo2 : IFoo {
+
+  // CHECK:
+  //   Mangled name: IFoo2#foo(kotlin.Int){}
+  //   Public signature: /IFoo2.foo|-104159190164110731[0]
+  abstract /* fake */ override fun foo(i: Int): Unit
+
+}
+
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+object A {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
+  private constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[0]
+object B {
+  // CHECK:
+  //   Mangled name: B#<init>(){}
+  //   Public signature: /B.<init>|-5645683436151566731[0]
+  private constructor() /* primary */
+
+}
+
+// CHECK JVM_IR:
+//   Mangled name: #get@A(IFoo){}kotlin.Int
+//   Public signature: /get|-3861638864893341854[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #get@A(IFoo){}
+//   Public signature: /get|-2254127918202281135[0]
+operator fun A.get(i: IFoo): Int
+
+// CHECK JVM_IR:
+//   Mangled name: #get@B(IFoo){}kotlin.Int
+//   Public signature: /get|-7877609025632018899[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #get@B(IFoo){}
+//   Public signature: /get|4390292684640882975[0]
+operator fun B.get(i: IFoo): Int
+
+// CHECK:
+//   Mangled name: #set@A(IFoo;kotlin.Int){}
+//   Public signature: /set|2215990406215766902[0]
+operator fun A.set(i: IFoo, newValue: Int): Unit
+
+// CHECK:
+//   Mangled name: #set@B(IFoo2;kotlin.Int){}
+//   Public signature: /set|-3309277558159597845[0]
+operator fun B.set(i: IFoo2, newValue: Int): Unit
+
+// CHECK:
+//   Mangled name: #test1(){}
+//   Public signature: /test1|4297044443957252634[0]
+fun test1(): Unit
+
+// CHECK:
+//   Mangled name: #test2(){}
+//   Public signature: /test2|4279114864133353152[0]
+fun test2(): Unit
+
+// CHECK:
+//   Mangled name: #test3(kotlin.Function1<kotlin.Int,kotlin.Unit>){}
+//   Public signature: /test3|-2027394029153051749[0]
+fun test3(fn: Function1<Int, Unit>): Unit
+
+// CHECK:
+//   Mangled name: #test4(kotlin.Function1<kotlin.Int,kotlin.Unit>){}
+//   Public signature: /test4|5380102774610726252[0]
+fun test4(fn: Function1<Int, Unit>): Unit
+
+// CHECK:
+//   Mangled name: #test5(kotlin.Any){}
+//   Public signature: /test5|4504681808078971124[0]
+fun test5(a: Any): Unit
+
+// CHECK:
+//   Mangled name: #test6(kotlin.Any){}
+//   Public signature: /test6|-7590017673454141671[0]
+fun test6(a: Any): Unit
+
+// CHECK JVM_IR:
+//   Mangled name: #withVararg(kotlin.IntArray...){}kotlin.Int
+//   Public signature: /withVararg|2262699225692856772[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #withVararg(kotlin.IntArray...){}
+//   Public signature: /withVararg|2511032413940817176[0]
+fun withVararg(vararg xs: Int): Int
+

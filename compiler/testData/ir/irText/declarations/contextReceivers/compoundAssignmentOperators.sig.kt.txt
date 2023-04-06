@@ -1,0 +1,114 @@
+// CHECK:
+//   Mangled name: {}operationScore
+//   Public signature: /operationScore|-9073278321118823634[0]
+var operationScore: Int
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-operationScore>(){}kotlin.Int
+  //   Public signature: /operationScore.<get-operationScore>|7107010356269447258[0]
+  get
+  // CHECK:
+  //   Mangled name: #<set-operationScore>(kotlin.Int){}
+  //   Public signature: /operationScore.<set-operationScore>|1936076120216071025[0]
+  set
+
+// CHECK:
+//   Mangled name: Result
+//   Public signature: /Result|null[0]
+data class Result {
+  // CHECK:
+  //   Mangled name: Result{}i
+  //   Public signature: /Result.i|5014384761142332495[0]
+  var i: Int
+    // CHECK JVM_IR:
+    //   Mangled name: Result#<get-i>(){}kotlin.Int
+    //   Public signature: /Result.i.<get-i>|-8784396159001927527[0]
+    get
+    // CHECK:
+    //   Mangled name: Result#<set-i>(kotlin.Int){}
+    //   Public signature: /Result.i.<set-i>|1223530399758590178[0]
+    set
+
+  // CHECK:
+  //   Mangled name: Result#<init>(kotlin.Int){}
+  //   Public signature: /Result.<init>|-5182794243525578284[0]
+  constructor(i: Int) /* primary */
+  // CHECK JVM_IR:
+  //   Mangled name: Result#component1(){}kotlin.Int
+  //   Public signature: /Result.component1|-8217597213800111288[0]
+  operator fun component1(): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: Result#copy(kotlin.Int){}Result
+  //   Public signature: /Result.copy|5439238034196076859[0]
+  fun copy(i: Int): Result
+
+  // CHECK JVM_IR:
+  //   Mangled name: Result#equals(kotlin.Any?){}kotlin.Boolean
+  //   Public signature: /Result.equals|722809408929142791[0]
+  override operator fun equals(other: Any?): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: Result#hashCode(){}kotlin.Int
+  //   Public signature: /Result.hashCode|-8048879360829830756[0]
+  override fun hashCode(): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: Result#toString(){}kotlin.String
+  //   Public signature: /Result.toString|6958853723545266802[0]
+  override fun toString(): String
+
+}
+
+// CHECK JVM_IR:
+//   Mangled name: #box(){}kotlin.String
+//   Public signature: /box|-9347091776561469[0]
+fun box(): String
+
+// CHECK JVM_IR:
+//   Mangled name computed from Ir:         #div@Result(kotlin.Int;Result){}Result
+//   Mangled name computed from Descriptor: #div!kotlin.Int@Result(Result){}Result
+//   Public signature: /div|4720798164978030724[0]
+operator fun Result.div($context_receiver_0: Int, other: Result): Result
+
+// CHECK:
+//   Mangled name computed from Ir:         #divAssign@Result(kotlin.Int;Result){}
+//   Mangled name computed from Descriptor: #divAssign!kotlin.Int@Result(Result){}
+//   Public signature: /divAssign|2355297718303587055[0]
+operator fun Result.divAssign($context_receiver_0: Int, other: Result): Unit
+
+// CHECK JVM_IR:
+//   Mangled name computed from Ir:         #minus@Result(kotlin.Int;Result){}Result
+//   Mangled name computed from Descriptor: #minus!kotlin.Int@Result(Result){}Result
+//   Public signature: /minus|3968749932240310139[0]
+operator fun Result.minus($context_receiver_0: Int, other: Result): Result
+
+// CHECK:
+//   Mangled name computed from Ir:         #minusAssign@Result(kotlin.Int;Result){}
+//   Mangled name computed from Descriptor: #minusAssign!kotlin.Int@Result(Result){}
+//   Public signature: /minusAssign|5475976237961546392[0]
+operator fun Result.minusAssign($context_receiver_0: Int, other: Result): Unit
+
+// CHECK JVM_IR:
+//   Mangled name computed from Ir:         #plus@Result(kotlin.Int;Result){}Result
+//   Mangled name computed from Descriptor: #plus!kotlin.Int@Result(Result){}Result
+//   Public signature: /plus|4903222358721452198[0]
+operator fun Result.plus($context_receiver_0: Int, other: Result): Result
+
+// CHECK:
+//   Mangled name computed from Ir:         #plusAssign@Result(kotlin.Int;Result){}
+//   Mangled name computed from Descriptor: #plusAssign!kotlin.Int@Result(Result){}
+//   Public signature: /plusAssign|-1237264614376392652[0]
+operator fun Result.plusAssign($context_receiver_0: Int, other: Result): Unit
+
+// CHECK JVM_IR:
+//   Mangled name computed from Ir:         #times@Result(kotlin.Int;Result){}Result
+//   Mangled name computed from Descriptor: #times!kotlin.Int@Result(Result){}Result
+//   Public signature: /times|3621876074874527655[0]
+operator fun Result.times($context_receiver_0: Int, other: Result): Result
+
+// CHECK:
+//   Mangled name computed from Ir:         #timesAssign@Result(kotlin.Int;Result){}
+//   Mangled name computed from Descriptor: #timesAssign!kotlin.Int@Result(Result){}
+//   Public signature: /timesAssign|1025810528106719294[0]
+operator fun Result.timesAssign($context_receiver_0: Int, other: Result): Unit
+

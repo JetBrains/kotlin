@@ -1,0 +1,105 @@
+// CHECK:
+//   Mangled name: {}test1
+//   Public signature: /test1|6005685442305498193[0]
+val test1: Long
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-test1>(){}kotlin.Long
+  //   Public signature: /test1.<get-test1>|-7756650713406824739[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-test1>(){}
+  //   Public signature: /test1.<get-test1>|-5735092642142423279[0]
+  get
+
+// CHECK:
+//   Mangled name: {}test2
+//   Public signature: /test2|2517758057000911509[0]
+val test2: Short
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-test2>(){}kotlin.Short
+  //   Public signature: /test2.<get-test2>|3647244765573083120[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-test2>(){}
+  //   Public signature: /test2.<get-test2>|-5218942532816206869[0]
+  get
+
+// CHECK:
+//   Mangled name: {}test3
+//   Public signature: /test3|7677556066983021166[0]
+val test3: Byte
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-test3>(){}kotlin.Byte
+  //   Public signature: /test3.<get-test3>|3590115425428046549[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-test3>(){}
+  //   Public signature: /test3.<get-test3>|-7333791615083236686[0]
+  get
+
+// CHECK:
+//   Mangled name: {}test4
+//   Public signature: /test4|-9115637610245762085[0]
+val test4: Long
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-test4>(){}kotlin.Long
+  //   Public signature: /test4.<get-test4>|8355198295430948956[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-test4>(){}
+  //   Public signature: /test4.<get-test4>|4166854324968284003[0]
+  get
+
+// CHECK:
+//   Mangled name: {}test5
+//   Public signature: /test5|4734809624271551895[0]
+val test5: Short
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-test5>(){}kotlin.Short
+  //   Public signature: /test5.<get-test5>|-6403114982829239942[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-test5>(){}
+  //   Public signature: /test5.<get-test5>|-839819880171293643[0]
+  get
+
+// CHECK:
+//   Mangled name: {}test6
+//   Public signature: /test6|-2606527149405855403[0]
+val test6: Byte
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-test6>(){}kotlin.Byte
+  //   Public signature: /test6.<get-test6>|-8478196724021525234[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-test6>(){}
+  //   Public signature: /test6.<get-test6>|2028965735388282488[0]
+  get
+
+// CHECK:
+//   Mangled name: TestImplicitArguments
+//   Public signature: /TestImplicitArguments|null[0]
+class TestImplicitArguments {
+  // CHECK:
+  //   Mangled name: TestImplicitArguments{}x
+  //   Public signature: /TestImplicitArguments.x|-8060530855978347579[0]
+  val x: Long
+    // CHECK JVM_IR:
+    //   Mangled name: TestImplicitArguments#<get-x>(){}kotlin.Long
+    //   Public signature: /TestImplicitArguments.x.<get-x>|-5038004036748815641[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: TestImplicitArguments#<get-x>(){}
+    //   Public signature: /TestImplicitArguments.x.<get-x>|1482705010654679335[0]
+    get
+
+  // CHECK:
+  //   Mangled name: TestImplicitArguments#<init>(kotlin.Long){}
+  //   Public signature: /TestImplicitArguments.<init>|5217973964116651322[0]
+  constructor(x: Long) /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: #test(){}
+//   Public signature: /test|6620506149988718649[0]
+fun test(): Unit
+
+// CHECK:
+//   Mangled name: #testImplicitArguments(kotlin.Long){}
+//   Public signature: /testImplicitArguments|2321828765355433756[0]
+fun testImplicitArguments(x: Long): Unit
+

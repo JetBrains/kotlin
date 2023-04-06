@@ -1,0 +1,20 @@
+// CHECK JVM_IR:
+//   Mangled name computed from Ir:         #foo(kotlin.Int){}kotlin.Int
+//   Mangled name computed from Descriptor: #foo!kotlin.Int(){}kotlin.Int
+//   Public signature: /foo|-298514072419997277[0]
+fun foo($context_receiver_0: Int): Int
+
+// CHECK JVM_IR:
+//   Mangled name computed from Ir:         #foo(kotlin.Int;kotlin.String){}kotlin.Int
+//   Mangled name computed from Descriptor: #foo!kotlin.Int!kotlin.String(){}kotlin.Int
+//   Public signature: /foo|7076979931255393427[0]
+fun foo($context_receiver_0: Int, $context_receiver_1: String): Int
+
+// CHECK:
+//   Mangled name: #test(){}
+//   Public signature: /test|6620506149988718649[0]
+fun test(): Unit
+  // CHECK JVM_IR:
+  //   Mangled name: #test(){}#<anonymous>#static@kotlin.Int(){}kotlin.Int
+  local fun Int.<anonymous>(): Int
+

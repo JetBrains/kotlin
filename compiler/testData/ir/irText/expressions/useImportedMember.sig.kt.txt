@@ -1,0 +1,165 @@
+// CHECK:
+//   Mangled name: BaseClass
+//   Public signature: /BaseClass|null[0]
+open class BaseClass {
+  // CHECK:
+  //   Mangled name: BaseClass#<init>(){}
+  //   Public signature: /BaseClass.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: BaseClass@0:0{0§<kotlin.Any?>}fromClass
+  //   Public signature: /BaseClass.fromClass|-434634369200779905[0]
+  val <T : Any?> T.fromClass: T
+    // CHECK JVM_IR:
+    //   Mangled name: BaseClass#<get-fromClass>@0:0(){0§<kotlin.Any?>}0:0
+    //   Public signature: /BaseClass.fromClass.<get-fromClass>|1075975932794232667[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: BaseClass#<get-fromClass>@0:0(){0§<kotlin.Any?>}
+    //   Public signature: /BaseClass.fromClass.<get-fromClass>|8463340725421946486[0]
+    get(): T
+
+}
+
+// CHECK:
+//   Mangled name: I
+//   Public signature: /I|null[0]
+interface I<G : Any?> {
+
+  // CHECK JVM_IR:
+  //   Mangled name: I#fromInterface@0:0(){0§<kotlin.Any?>}0:0
+  //   Public signature: /I.fromInterface|-4942486396992795009[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: I#fromInterface@0:0(){0§<kotlin.Any?>}
+  //   Public signature: /I.fromInterface|5511198429410705347[0]
+  fun <T : Any?> T.fromInterface(): T
+
+  // CHECK JVM_IR:
+  //   Mangled name: I#genericFromSuper(1:0){}1:0
+  //   Public signature: /I.genericFromSuper|8776773144406187108[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: I#genericFromSuper(1:0){}
+  //   Public signature: /I.genericFromSuper|-1644691372973676049[0]
+  fun genericFromSuper(g: G): G
+
+}
+
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
+object C : BaseClass, I<String> {
+  // CHECK:
+  //   Mangled name: C{}p
+  //   Public signature: /C.p|6715504260787941082[0]
+  var p: Int
+    // CHECK JVM_IR:
+    //   Mangled name: C#<get-p>(){}kotlin.Int
+    //   Public signature: /C.p.<get-p>|5329635969197638839[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: C#<get-p>(){}
+    //   Public signature: /C.p.<get-p>|-1162552463316289847[0]
+    get
+    // CHECK:
+    //   Mangled name: C#<set-p>(kotlin.Int){}
+    //   Public signature: /C.p.<set-p>|-6346582004572228570[0]
+    set
+
+  // CHECK:
+  //   Mangled name: C#<init>(){}
+  //   Public signature: /C.<init>|-5645683436151566731[0]
+  private constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: C#fromInterface@0:0(){0§<kotlin.Any?>}0:0
+  //   Public signature: /C.fromInterface|-4942486396992795009[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: C#fromInterface@0:0(){0§<kotlin.Any?>}
+  //   Public signature: /C.fromInterface|5511198429410705347[0]
+  /* fake */ override fun <T : Any?> T.fromInterface(): T
+
+  // CHECK JVM_IR:
+  //   Mangled name: C#genericFromSuper(kotlin.String){}kotlin.String
+  //   Public signature: /C.genericFromSuper|-3774933388415552430[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: C#genericFromSuper(kotlin.String){}
+  //   Public signature: /C.genericFromSuper|-3764809794745363336[0]
+  /* fake */ override fun genericFromSuper(g: String): String
+
+  // CHECK JVM_IR:
+  //   Mangled name: C#f@kotlin.Boolean(){}kotlin.Int
+  //   Public signature: /C.f|-2085546679212506947[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: C#f@kotlin.Boolean(){}
+  //   Public signature: /C.f|-7209860956633916761[0]
+  fun Boolean.f(): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: C#f(kotlin.Int){}kotlin.Int
+  //   Public signature: /C.f|-3963816453364174180[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: C#f(kotlin.Int){}
+  //   Public signature: /C.f|-3170307087267241726[0]
+  fun f(s: Int): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: C#f(kotlin.String){}kotlin.Int
+  //   Public signature: /C.f|-4014058920923284658[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: C#f(kotlin.String){}
+  //   Public signature: /C.f|5157548403930815746[0]
+  fun f(s: String): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: C#g1(0:0){0§<kotlin.Any?>}0:0
+  //   Public signature: /C.g1|600972423589629792[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: C#g1(0:0){0§<kotlin.Any?>}
+  //   Public signature: /C.g1|-2502969624600571326[0]
+  fun <T : Any?> g1(t: T): T
+
+  // CHECK:
+  //   Mangled name: C@0:0{0§<kotlin.Any?>}fromClass
+  //   Public signature: /C.fromClass|-434634369200779905[0]
+  /* fake */ override val <T : Any?> T.fromClass: T
+    // CHECK JVM_IR:
+    //   Mangled name: C#<get-fromClass>@0:0(){0§<kotlin.Any?>}0:0
+    //   Public signature: /C.fromClass.<get-fromClass>|1075975932794232667[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: C#<get-fromClass>@0:0(){0§<kotlin.Any?>}
+    //   Public signature: /C.fromClass.<get-fromClass>|8463340725421946486[0]
+    /* fake */ override get(): T
+
+  // CHECK:
+  //   Mangled name: C@kotlin.Int{}ext
+  //   Public signature: /C.ext|-8111988424022289676[0]
+  val Int.ext: Int
+    // CHECK JVM_IR:
+    //   Mangled name: C#<get-ext>@kotlin.Int(){}kotlin.Int
+    //   Public signature: /C.ext.<get-ext>|6877487399042398312[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: C#<get-ext>@kotlin.Int(){}
+    //   Public signature: /C.ext.<get-ext>|4181680515445802017[0]
+    get(): Int
+
+  // CHECK:
+  //   Mangled name: C@0:0{0§<kotlin.Any?>}g2
+  //   Public signature: /C.g2|8414340838395849892[0]
+  val <T : Any?> T.g2: T
+    // CHECK JVM_IR:
+    //   Mangled name: C#<get-g2>@0:0(){0§<kotlin.Any?>}0:0
+    //   Public signature: /C.g2.<get-g2>|6685580240509732107[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: C#<get-g2>@0:0(){0§<kotlin.Any?>}
+    //   Public signature: /C.g2.<get-g2>|-386868283857669113[0]
+    get(): T
+
+}
+
+// CHECK JVM_IR:
+//   Mangled name: #box(){}kotlin.String
+//   Public signature: /box|-9347091776561469[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #box(){}
+//   Public signature: /box|2173511048851971368[0]
+fun box(): String
+

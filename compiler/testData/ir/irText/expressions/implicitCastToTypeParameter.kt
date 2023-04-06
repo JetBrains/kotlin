@@ -1,3 +1,6 @@
+// MUTE_SIGNATURE_COMPARISON_K2: ANY
+// ^ KT-57436
+
 inline fun <reified T : Any> Any.test1(): T? =
     if (this is T) this else null
 

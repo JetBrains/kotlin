@@ -1,0 +1,16 @@
+@file:JvmName(name = "FileWithAnnotations")
+
+// CHECK:
+//   Mangled name: {}bar
+//   Public signature: /bar|-7864284097863469857[0]
+val bar: Int
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-bar>(){}kotlin.Int
+  //   Public signature: /bar.<get-bar>|-7403724005139201014[0]
+  get
+
+// CHECK:
+//   Mangled name: #foo(){}
+//   Public signature: /foo|-1041209573719867811[0]
+fun foo(): Unit
+

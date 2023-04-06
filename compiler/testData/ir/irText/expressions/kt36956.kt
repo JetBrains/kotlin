@@ -1,3 +1,6 @@
+// MUTE_SIGNATURE_COMPARISON_K2: ANY
+// ^ KT-57429
+
 class A<T>(private val value: T) {
     operator fun get(i: Int) = value
     operator fun set(i: Int, v: T) {}

@@ -1,0 +1,39 @@
+// CHECK:
+//   Mangled name: IThing
+//   Public signature: /IThing|null[0]
+interface IThing {
+
+}
+
+// CHECK JVM_IR:
+//   Mangled name: #test1(kotlin.Any){}kotlin.Boolean
+//   Public signature: /test1|1992455603103220352[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test1(kotlin.Any){}
+//   Public signature: /test1|-4133164698161335314[0]
+fun test1(x: Any): Boolean
+
+// CHECK JVM_IR:
+//   Mangled name: #test2(kotlin.Any){}kotlin.Boolean
+//   Public signature: /test2|3521389046788459849[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test2(kotlin.Any){}
+//   Public signature: /test2|-8648451680149324146[0]
+fun test2(x: Any): Boolean
+
+// CHECK JVM_IR:
+//   Mangled name: #test3(kotlin.Any){}IThing
+//   Public signature: /test3|4511496264328134559[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test3(kotlin.Any){}
+//   Public signature: /test3|165168275269731002[0]
+fun test3(x: Any): IThing
+
+// CHECK JVM_IR:
+//   Mangled name: #test4(kotlin.Any){}IThing?
+//   Public signature: /test4|754810918571935352[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test4(kotlin.Any){}
+//   Public signature: /test4|-9023258848991787985[0]
+fun test4(x: Any): IThing?
+

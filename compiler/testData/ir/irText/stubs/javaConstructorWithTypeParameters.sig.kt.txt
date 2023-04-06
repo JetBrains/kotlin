@@ -1,0 +1,20 @@
+// CHECK JVM_IR:
+//   Mangled name: #test1(){}J1<kotlin.Int>
+//   Public signature: /test1|3199616915653410742[0]
+fun test1(): J1<Int>
+
+// CHECK JVM_IR:
+//   Mangled name: #test2(){}J1<kotlin.Int>
+//   Public signature: /test2|7911590194658936613[0]
+fun test2(): J1<Int>
+
+// CHECK JVM_IR:
+//   Mangled name: #test3(J1<kotlin.Any>){}J1.J2<kotlin.Int,kotlin.Any>
+//   Public signature: /test3|-2201383984425029215[0]
+fun test3(j1: J1<Any>): J2<Int, Any>
+
+// CHECK JVM_IR:
+//   Mangled name: #test4(J1<kotlin.Any>){}J1.J2<kotlin.Int,kotlin.Any>
+//   Public signature: /test4|6994753301121646380[0]
+fun test4(j1: J1<Any>): J2<Int, Any>
+

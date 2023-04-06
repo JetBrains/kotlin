@@ -1,0 +1,102 @@
+// CHECK:
+//   Mangled name: Host
+//   Public signature: /Host|null[0]
+class Host {
+  // CHECK:
+  //   Mangled name: Host{}y
+  //   Public signature: /Host.y|3625903257357557171[0]
+  val y: Int
+    field
+    // CHECK JVM_IR:
+    //   Mangled name: Host#<get-y>(){}kotlin.Int
+    //   Public signature: /Host.y.<get-y>|-6745575372101973707[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Host#<get-y>(){}
+    //   Public signature: /Host.y.<get-y>|-7902422373892128922[0]
+    get
+
+  // CHECK:
+  //   Mangled name: Host#<init>(kotlin.Int){}
+  //   Public signature: /Host.<init>|-5182794243525578284[0]
+  constructor(y: Int) /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: Host#test@Outer(){}Outer.Inner
+  //   Public signature: /Host.test|-982409629050476808[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: Host#test@Outer(){}
+  //   Public signature: /Host.test|-3179256530033214921[0]
+  fun Outer.test(): Inner
+    // CHECK JVM_IR:
+    //   Mangled name: Host#test@Outer(){}Outer.Inner.<no name provided>
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Host#test@Outer(){}.<no name provided>
+    local class <no name provided> : Inner {
+      // CHECK JVM_IR:
+      //   Mangled name: Host#test@Outer(){}Outer.Inner.<no name provided>{}xx
+      // CHECK JS_IR NATIVE:
+      //   Mangled name: Host#test@Outer(){}.<no name provided>{}xx
+      val xx: Int
+        field
+        // CHECK JVM_IR:
+        //   Mangled name: Host#test@Outer(){}Outer.Inner.<no name provided>#<get-xx>(){}kotlin.Int
+        // CHECK JS_IR NATIVE:
+        //   Mangled name: Host#test@Outer(){}.<no name provided>#<get-xx>(){}
+        get
+
+      // CHECK JVM_IR:
+      //   Mangled name: Host#test@Outer(){}Outer.Inner.<no name provided>#<init>(){}
+      // CHECK JS_IR NATIVE:
+      //   Mangled name: Host#test@Outer(){}.<no name provided>#<init>(){}
+      constructor() /* primary */
+
+      // CHECK JVM_IR:
+      //   Mangled name: Host#test@Outer(){}Outer.Inner.<no name provided>{}x
+      // CHECK JS_IR NATIVE:
+      //   Mangled name: Host#test@Outer(){}.<no name provided>{}x
+      /* fake */ override val x: Int
+        // CHECK JVM_IR:
+        //   Mangled name: Host#test@Outer(){}Outer.Inner.<no name provided>#<get-x>(){}kotlin.Int
+        // CHECK JS_IR NATIVE:
+        //   Mangled name: Host#test@Outer(){}.<no name provided>#<get-x>(){}
+        /* fake */ override get(): Int
+
+    }
+
+}
+
+// CHECK:
+//   Mangled name: Outer
+//   Public signature: /Outer|null[0]
+class Outer {
+  // CHECK:
+  //   Mangled name: Outer.Inner
+  //   Public signature: /Outer.Inner|null[0]
+  open inner class Inner {
+    // CHECK:
+    //   Mangled name: Outer.Inner{}x
+    //   Public signature: /Outer.Inner.x|-8060530855978347579[0]
+    val x: Int
+      field
+      // CHECK JVM_IR:
+      //   Mangled name: Outer.Inner#<get-x>(){}kotlin.Int
+      //   Public signature: /Outer.Inner.x.<get-x>|4966956098150895696[0]
+      // CHECK JS_IR NATIVE:
+      //   Mangled name: Outer.Inner#<get-x>(){}
+      //   Public signature: /Outer.Inner.x.<get-x>|1482705010654679335[0]
+      get
+
+    // CHECK:
+    //   Mangled name: Outer.Inner#<init>(kotlin.Int){}
+    //   Public signature: /Outer.Inner.<init>|-5182794243525578284[0]
+    constructor(x: Int) /* primary */
+
+  }
+
+  // CHECK:
+  //   Mangled name: Outer#<init>(){}
+  //   Public signature: /Outer.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+}
+

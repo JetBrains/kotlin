@@ -1,5 +1,8 @@
 // TARGET_BACKEND: JVM
 
+// MUTE_SIGNATURE_COMPARISON_K2: ANY
+// ^ KT-57754
+
 // MODULE: lib
 // FILE: A.java
 public class A {

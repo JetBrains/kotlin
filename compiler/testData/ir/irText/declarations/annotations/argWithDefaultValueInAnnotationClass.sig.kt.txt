@@ -1,0 +1,20 @@
+// CHECK:
+//   Mangled name: ModuleInfo
+//   Public signature: /ModuleInfo|null[0]
+open annotation class ModuleInfo : Annotation {
+  // CHECK:
+  //   Mangled name: ModuleInfo{}keyBind
+  //   Public signature: /ModuleInfo.keyBind|-3946407517690370511[0]
+  val keyBind: Int
+    // CHECK JVM_IR:
+    //   Mangled name: ModuleInfo#<get-keyBind>(){}kotlin.Int
+    //   Public signature: /ModuleInfo.keyBind.<get-keyBind>|-5105783608349623557[0]
+    get
+
+  // CHECK:
+  //   Mangled name: ModuleInfo#<init>(kotlin.Int){}
+  //   Public signature: /ModuleInfo.<init>|-5182794243525578284[0]
+  constructor(keyBind: Int) /* primary */
+
+}
+

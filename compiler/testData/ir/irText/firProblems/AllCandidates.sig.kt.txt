@@ -1,0 +1,36 @@
+// CHECK:
+//   Mangled name: MyCandidate
+//   Public signature: /MyCandidate|null[0]
+class MyCandidate {
+  // CHECK:
+  //   Mangled name: MyCandidate{}resolvedCall
+  //   Public signature: /MyCandidate.resolvedCall|-2429780263902948392[0]
+  val resolvedCall: ResolvedCall<*>
+    // CHECK JVM_IR:
+    //   Mangled name: MyCandidate#<get-resolvedCall>(){}ResolvedCall<*>
+    //   Public signature: /MyCandidate.resolvedCall.<get-resolvedCall>|2961495013206965605[0]
+    get
+
+  // CHECK:
+  //   Mangled name: MyCandidate#<init>(ResolvedCall<*>){}
+  //   Public signature: /MyCandidate.<init>|-1587603405695784398[0]
+  constructor(resolvedCall: ResolvedCall<*>) /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: ResolvedCall
+//   Public signature: /ResolvedCall|null[0]
+class ResolvedCall<C : Any?> {
+  // CHECK:
+  //   Mangled name: ResolvedCall#<init>(){}
+  //   Public signature: /ResolvedCall.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+}
+
+// CHECK JVM_IR:
+//   Mangled name: #allCandidatesResult(kotlin.collections.Collection<MyCandidate>){0§<kotlin.Any?>}OverloadResolutionResultsImpl<0:0?>?
+//   Public signature: [ File 'AllCandidates.kt' <- /allCandidatesResult|-4417746287859138452[0] ]
+private fun <A : Any?> allCandidatesResult(allCandidates: Collection<MyCandidate>): OverloadResolutionResultsImpl<A?>?
+

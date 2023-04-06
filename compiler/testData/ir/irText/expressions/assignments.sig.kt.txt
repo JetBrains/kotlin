@@ -1,0 +1,37 @@
+// CHECK:
+//   Mangled name: Ref
+//   Public signature: /Ref|null[0]
+class Ref {
+  // CHECK:
+  //   Mangled name: Ref{}x
+  //   Public signature: /Ref.x|-8060530855978347579[0]
+  var x: Int
+    // CHECK JVM_IR:
+    //   Mangled name: Ref#<get-x>(){}kotlin.Int
+    //   Public signature: /Ref.x.<get-x>|4966956098150895696[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Ref#<get-x>(){}
+    //   Public signature: /Ref.x.<get-x>|1482705010654679335[0]
+    get
+    // CHECK:
+    //   Mangled name: Ref#<set-x>(kotlin.Int){}
+    //   Public signature: /Ref.x.<set-x>|-740209739415615559[0]
+    set
+
+  // CHECK:
+  //   Mangled name: Ref#<init>(kotlin.Int){}
+  //   Public signature: /Ref.<init>|-5182794243525578284[0]
+  constructor(x: Int) /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: #test1(){}
+//   Public signature: /test1|4297044443957252634[0]
+fun test1(): Unit
+
+// CHECK:
+//   Mangled name: #test2(Ref){}
+//   Public signature: /test2|-2139715783370980088[0]
+fun test2(r: Ref): Unit
+

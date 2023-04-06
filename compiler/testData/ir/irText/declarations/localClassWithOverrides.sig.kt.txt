@@ -1,0 +1,74 @@
+// CHECK:
+//   Mangled name: #outer(){}
+//   Public signature: /outer|1607449560170809066[0]
+fun outer(): Unit
+  // CHECK:
+  //   Mangled name: #outer(){}.ALocal
+  local abstract class ALocal {
+    // CHECK:
+    //   Mangled name: #outer(){}.ALocal#<init>(){}
+    constructor() /* primary */
+
+    // CHECK:
+    //   Mangled name: #outer(){}.ALocal#afun(){}
+    abstract fun afun(): Unit
+
+    // CHECK:
+    //   Mangled name: #outer(){}.ALocal{}aval
+    abstract val aval: Int
+      // CHECK JVM_IR:
+      //   Mangled name: #outer(){}.ALocal#<get-aval>(){}kotlin.Int
+      // CHECK JS_IR NATIVE:
+      //   Mangled name: #outer(){}.ALocal#<get-aval>(){}
+      abstract get
+
+    // CHECK:
+    //   Mangled name: #outer(){}.ALocal{}avar
+    abstract var avar: Int
+      // CHECK JVM_IR:
+      //   Mangled name: #outer(){}.ALocal#<get-avar>(){}kotlin.Int
+      // CHECK JS_IR NATIVE:
+      //   Mangled name: #outer(){}.ALocal#<get-avar>(){}
+      abstract get
+      // CHECK:
+      //   Mangled name: #outer(){}.ALocal#<set-avar>(kotlin.Int){}
+      abstract set
+
+  }
+
+  // CHECK:
+  //   Mangled name: #outer(){}.Local
+  local class Local : ALocal {
+    // CHECK:
+    //   Mangled name: #outer(){}.Local{}aval
+    override val aval: Int
+      field
+      // CHECK JVM_IR:
+      //   Mangled name: #outer(){}.Local#<get-aval>(){}kotlin.Int
+      // CHECK JS_IR NATIVE:
+      //   Mangled name: #outer(){}.Local#<get-aval>(){}
+      override get
+
+    // CHECK:
+    //   Mangled name: #outer(){}.Local{}avar
+    override var avar: Int
+      field
+      // CHECK JVM_IR:
+      //   Mangled name: #outer(){}.Local#<get-avar>(){}kotlin.Int
+      // CHECK JS_IR NATIVE:
+      //   Mangled name: #outer(){}.Local#<get-avar>(){}
+      override get
+      // CHECK:
+      //   Mangled name: #outer(){}.Local#<set-avar>(kotlin.Int){}
+      override set
+
+    // CHECK:
+    //   Mangled name: #outer(){}.Local#<init>(){}
+    constructor() /* primary */
+
+    // CHECK:
+    //   Mangled name: #outer(){}.Local#afun(){}
+    override fun afun(): Unit
+
+  }
+

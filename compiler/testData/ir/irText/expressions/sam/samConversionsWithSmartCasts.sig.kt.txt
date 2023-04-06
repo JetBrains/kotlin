@@ -1,0 +1,50 @@
+// CHECK:
+//   Mangled name: #test1(kotlin.Function0<kotlin.Unit>){}
+//   Public signature: /test1|-2870537507416699845[0]
+fun test1(a: Function0<Unit>): Unit
+
+// CHECK:
+//   Mangled name: #test2(kotlin.Function0<kotlin.Unit>){}
+//   Public signature: /test2|-8241603768593447441[0]
+fun test2(a: Function0<Unit>): Unit
+
+// CHECK:
+//   Mangled name: #test3(kotlin.Function0<kotlin.Unit>){}
+//   Public signature: /test3|-1760685804488672424[0]
+fun test3(a: Function0<Unit>): Unit
+
+// CHECK:
+//   Mangled name: #test4(kotlin.Function0<kotlin.Unit>;kotlin.Function0<kotlin.Unit>){}
+//   Public signature: /test4|1443124276429499957[0]
+fun test4(a: Function0<Unit>, b: Function0<Unit>): Unit
+
+// CHECK:
+//   Mangled name: #test5(kotlin.Any){}
+//   Public signature: /test5|4504681808078971124[0]
+fun test5(a: Any): Unit
+
+// CHECK:
+//   Mangled name: #test5x(kotlin.Any){}
+//   Public signature: /test5x|8044678810048210306[0]
+fun test5x(a: Any): Unit
+
+// CHECK:
+//   Mangled name: #test6(kotlin.Any){}
+//   Public signature: /test6|-7590017673454141671[0]
+fun test6(a: Any): Unit
+
+// CHECK:
+//   Mangled name: #test7(kotlin.Function1<kotlin.Int,kotlin.Int>){}
+//   Public signature: /test7|1095013294548842913[0]
+fun test7(a: Function1<Int, Int>): Unit
+
+// CHECK:
+//   Mangled name: #test8(kotlin.Function0<kotlin.Unit>){}
+//   Public signature: /test8|8321269803549472585[0]
+fun test8(a: Function0<Unit>): Unit
+
+// CHECK:
+//   Mangled name: #test9(){}
+//   Public signature: /test9|9214787561267119658[0]
+fun test9(): Unit
+

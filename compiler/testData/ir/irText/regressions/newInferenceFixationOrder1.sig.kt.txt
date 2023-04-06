@@ -1,0 +1,39 @@
+// CHECK:
+//   Mangled name: Inv2
+//   Public signature: /Inv2|null[0]
+interface Inv2<A : Any?, B : Any?> {
+
+}
+
+// CHECK JVM_IR:
+//   Mangled name: #box(){}kotlin.String
+//   Public signature: /box|-9347091776561469[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #box(){}
+//   Public signature: /box|2173511048851971368[0]
+fun box(): String
+
+// CHECK JVM_IR:
+//   Mangled name: #check(0:0;0:1;kotlin.Function1<0:0,0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}Inv2<0:0,0:1>
+//   Public signature: /check|5984400751488580697[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #check(0:0;0:1;kotlin.Function1<0:0,0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}
+//   Public signature: /check|-3580207389157345567[0]
+fun <T : Any?, R : Any?> check(x: T, y: R, f: Function1<T, R>): Inv2<T, R>
+
+// CHECK JVM_IR:
+//   Mangled name: #foo(){0§<kotlin.Any?>;1§<kotlin.Any?>}kotlin.Function1<0:0,0:1>
+//   Public signature: /foo|-9122187844133412005[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #foo(){0§<kotlin.Any?>;1§<kotlin.Any?>}
+//   Public signature: /foo|5215108069702224664[0]
+fun <X : Any?, Y : Any?> foo(): Function1<X, Y>
+
+// CHECK JVM_IR:
+//   Mangled name: #test(){}Inv2<kotlin.String,kotlin.Int>
+//   Public signature: /test|1156894151612153537[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test(){}
+//   Public signature: /test|6620506149988718649[0]
+fun test(): Inv2<String, Int>
+

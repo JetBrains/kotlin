@@ -1,0 +1,76 @@
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[0]
+class B : A {
+  // CHECK:
+  //   Mangled name: B{}x
+  //   Public signature: /B.x|-8060530855978347579[0]
+  override val x: Int
+    // CHECK JVM_IR:
+    //   Mangled name: B#<get-x>(){}kotlin.Int
+    //   Public signature: /B.x.<get-x>|4966956098150895696[0]
+    override get
+
+  // CHECK:
+  //   Mangled name: B#<init>(kotlin.Int){}
+  //   Public signature: /B.<init>|-5182794243525578284[0]
+  constructor(x: Int) /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
+class C<D : A> {
+  // CHECK:
+  //   Mangled name: C{}d
+  //   Public signature: /C.d|5174763769109925331[0]
+  val d: D
+    // CHECK JVM_IR:
+    //   Mangled name: C#<get-d>(){}1:0
+    //   Public signature: /C.d.<get-d>|4569732825360858900[0]
+    get
+
+  // CHECK:
+  //   Mangled name: C#<init>(1:0){}
+  //   Public signature: /C.<init>|-8731461708390519279[0]
+  constructor(d: D) /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: E
+//   Public signature: /E|null[0]
+class E {
+  // CHECK:
+  //   Mangled name: E{}ax
+  //   Public signature: /E.ax|7263490434229062825[0]
+  val ax: Int
+    // CHECK JVM_IR:
+    //   Mangled name: E#<get-ax>(){}kotlin.Int
+    //   Public signature: /E.ax.<get-ax>|-2085846616989636187[0]
+    get
+
+  // CHECK:
+  //   Mangled name: E#<init>(C<B>){}
+  //   Public signature: /E.<init>|498936025095833067[0]
+  constructor(c: C<B>) /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+interface A {
+
+  // CHECK:
+  //   Mangled name: A{}x
+  //   Public signature: /A.x|-8060530855978347579[0]
+  abstract val x: Int
+    // CHECK JVM_IR:
+    //   Mangled name: A#<get-x>(){}kotlin.Int
+    //   Public signature: /A.x.<get-x>|4966956098150895696[0]
+    abstract get
+
+}
+

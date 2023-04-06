@@ -1,0 +1,85 @@
+// CHECK:
+//   Mangled name: {}test3
+//   Public signature: /test3|7677556066983021166[0]
+val test3: String
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-test3>(){}kotlin.String
+  //   Public signature: /test3.<get-test3>|-2084248125648281731[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-test3>(){}
+  //   Public signature: /test3.<get-test3>|-7333791615083236686[0]
+  @TestAnn(x = "test3.get")
+  get
+
+// CHECK:
+//   Mangled name: {}test4
+//   Public signature: /test4|-9115637610245762085[0]
+var test4: String
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-test4>(){}kotlin.String
+  //   Public signature: /test4.<get-test4>|5046196083583551233[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-test4>(){}
+  //   Public signature: /test4.<get-test4>|4166854324968284003[0]
+  @TestAnn(x = "test4.get")
+  get
+  // CHECK:
+  //   Mangled name: #<set-test4>(kotlin.String){}
+  //   Public signature: /test4.<set-test4>|-6376420079491092905[0]
+  @TestAnn(x = "test4.set")
+  set
+
+// CHECK:
+//   Mangled name: TestAnn
+//   Public signature: /TestAnn|null[0]
+open annotation class TestAnn : Annotation {
+  // CHECK:
+  //   Mangled name: TestAnn{}x
+  //   Public signature: /TestAnn.x|-8060530855978347579[0]
+  val x: String
+    // CHECK JVM_IR:
+    //   Mangled name: TestAnn#<get-x>(){}kotlin.String
+    //   Public signature: /TestAnn.x.<get-x>|316111172223894646[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: TestAnn#<get-x>(){}
+    //   Public signature: /TestAnn.x.<get-x>|1482705010654679335[0]
+    get
+
+  // CHECK:
+  //   Mangled name: TestAnn#<init>(kotlin.String){}
+  //   Public signature: /TestAnn.<init>|1280618353163213788[0]
+  constructor(x: String) /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: {}test1
+//   Public signature: /test1|6005685442305498193[0]
+val test1: String
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-test1>(){}kotlin.String
+  //   Public signature: /test1.<get-test1>|-7403750508378492770[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-test1>(){}
+  //   Public signature: /test1.<get-test1>|-5735092642142423279[0]
+  @TestAnn(x = "test1.get")
+  get(): String
+
+// CHECK:
+//   Mangled name: {}test2
+//   Public signature: /test2|2517758057000911509[0]
+var test2: String
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-test2>(){}kotlin.String
+  //   Public signature: /test2.<get-test2>|-8062412501290172814[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-test2>(){}
+  //   Public signature: /test2.<get-test2>|-5218942532816206869[0]
+  @TestAnn(x = "test2.get")
+  get(): String
+  // CHECK:
+  //   Mangled name: #<set-test2>(kotlin.String){}
+  //   Public signature: /test2.<set-test2>|4560361687368503848[0]
+  @TestAnn(x = "test2.set")
+  set(value: String): Unit
+

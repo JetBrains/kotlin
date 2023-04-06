@@ -1,0 +1,82 @@
+// CHECK:
+//   Mangled name: ValidatedProperties
+//   Public signature: /ValidatedProperties|null[0]
+open data class ValidatedProperties {
+  // CHECK:
+  //   Mangled name: ValidatedProperties{}test1
+  //   Public signature: /ValidatedProperties.test1|6005685442305498193[0]
+  open val test1: String
+    // CHECK JVM_IR:
+    //   Mangled name: ValidatedProperties#<get-test1>(){}kotlin.String
+    //   Public signature: /ValidatedProperties.test1.<get-test1>|-7403750508378492770[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: ValidatedProperties#<get-test1>(){}
+    //   Public signature: /ValidatedProperties.test1.<get-test1>|-5735092642142423279[0]
+    open get
+
+  // CHECK:
+  //   Mangled name: ValidatedProperties{}test2
+  //   Public signature: /ValidatedProperties.test2|2517758057000911509[0]
+  open val test2: String
+    // CHECK JVM_IR:
+    //   Mangled name: ValidatedProperties#<get-test2>(){}kotlin.String
+    //   Public signature: /ValidatedProperties.test2.<get-test2>|-8062412501290172814[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: ValidatedProperties#<get-test2>(){}
+    //   Public signature: /ValidatedProperties.test2.<get-test2>|-5218942532816206869[0]
+    open get
+
+  // CHECK:
+  //   Mangled name: ValidatedProperties#<init>(kotlin.String;kotlin.String){}
+  //   Public signature: /ValidatedProperties.<init>|9140439783797628932[0]
+  constructor(test1: String, test2: String) /* primary */
+  // CHECK JVM_IR:
+  //   Mangled name: ValidatedProperties#component1(){}kotlin.String
+  //   Public signature: /ValidatedProperties.component1|-7481405593404337796[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: ValidatedProperties#component1(){}
+  //   Public signature: /ValidatedProperties.component1|162597135895221648[0]
+  operator fun component1(): String
+
+  // CHECK JVM_IR:
+  //   Mangled name: ValidatedProperties#component2(){}kotlin.String
+  //   Public signature: /ValidatedProperties.component2|1228864375093914597[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: ValidatedProperties#component2(){}
+  //   Public signature: /ValidatedProperties.component2|3796717572321500973[0]
+  operator fun component2(): String
+
+  // CHECK JVM_IR:
+  //   Mangled name: ValidatedProperties#copy(kotlin.String;kotlin.String){}ValidatedProperties
+  //   Public signature: /ValidatedProperties.copy|3682871900302910646[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: ValidatedProperties#copy(kotlin.String;kotlin.String){}
+  //   Public signature: /ValidatedProperties.copy|-7088139716016046259[0]
+  fun copy(test1: String, test2: String): ValidatedProperties
+
+  // CHECK JVM_IR:
+  //   Mangled name: ValidatedProperties#equals(kotlin.Any?){}kotlin.Boolean
+  //   Public signature: /ValidatedProperties.equals|722809408929142791[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: ValidatedProperties#equals(kotlin.Any?){}
+  //   Public signature: /ValidatedProperties.equals|4638265728071529943[0]
+  override operator fun equals(other: Any?): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: ValidatedProperties#hashCode(){}kotlin.Int
+  //   Public signature: /ValidatedProperties.hashCode|-8048879360829830756[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: ValidatedProperties#hashCode(){}
+  //   Public signature: /ValidatedProperties.hashCode|3409210261493131192[0]
+  override fun hashCode(): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: ValidatedProperties#toString(){}kotlin.String
+  //   Public signature: /ValidatedProperties.toString|6958853723545266802[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: ValidatedProperties#toString(){}
+  //   Public signature: /ValidatedProperties.toString|-1522858123163872138[0]
+  override fun toString(): String
+
+}
+

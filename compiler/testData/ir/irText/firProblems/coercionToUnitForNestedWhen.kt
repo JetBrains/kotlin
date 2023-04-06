@@ -1,6 +1,10 @@
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
 // FULL_JDK
+
+// MUTE_SIGNATURE_COMPARISON_K2: ANY
+// ^ KT-57778
+
 import java.io.Reader
 import java.io.StringReader
 

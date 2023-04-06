@@ -1,0 +1,132 @@
+// CHECK:
+//   Mangled name: {}test1
+//   Public signature: /test1|6005685442305498193[0]
+val test1: Any
+  field
+    // CHECK JVM_IR:
+    //   Mangled name (compatible mode: false): {}test1.<no name provided>
+    //   Mangled name (compatible mode: true):  test1.<no name provided>
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: #<get-test1>(){}
+    //   Public signature: /test1.<get-test1>|-5735092642142423279[0]
+    local class <no name provided> {
+      // CHECK:
+      //   Mangled name (compatible mode: false): {}test1.<no name provided>#<init>(){}
+      //   Mangled name (compatible mode: true):  test1.<no name provided>#<init>(){}
+      constructor() /* primary */
+
+    }
+
+  // CHECK:
+  //   Mangled name: #<get-test1>(){}kotlin.Any
+  //   Public signature: /test1.<get-test1>|-6000098324399857556[0]
+  get
+
+// CHECK:
+//   Mangled name: {}test2
+//   Public signature: /test2|2517758057000911509[0]
+val test2: IFoo
+  field
+    // CHECK JVM_IR:
+    //   Mangled name (compatible mode: false): {}test2.<no name provided>
+    //   Mangled name (compatible mode: true):  test2.<no name provided>
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: #<get-test2>(){}
+    //   Public signature: /test2.<get-test2>|-5218942532816206869[0]
+    local class <no name provided> : IFoo {
+      // CHECK:
+      //   Mangled name (compatible mode: false): {}test2.<no name provided>#<init>(){}
+      //   Mangled name (compatible mode: true):  test2.<no name provided>#<init>(){}
+      constructor() /* primary */
+
+      // CHECK:
+      //   Mangled name (compatible mode: false): {}test2.<no name provided>#foo(){}
+      //   Mangled name (compatible mode: true):  test2.<no name provided>#foo(){}
+      override fun foo(): Unit
+
+    }
+
+  // CHECK:
+  //   Mangled name: #<get-test2>(){}IFoo
+  //   Public signature: /test2.<get-test2>|8558399082919905120[0]
+  get
+
+// CHECK:
+//   Mangled name: Outer
+//   Public signature: /Outer|null[0]
+class Outer {
+  // CHECK:
+  //   Mangled name: Outer.Inner
+  //   Public signature: /Outer.Inner|null[0]
+  abstract inner class Inner : IFoo {
+    // CHECK:
+    //   Mangled name: Outer.Inner#<init>(){}
+    //   Public signature: /Outer.Inner.<init>|-5645683436151566731[0]
+    constructor() /* primary */
+
+    // CHECK:
+    //   Mangled name: Outer.Inner#foo(){}
+    //   Public signature: /Outer.Inner.foo|-1041209573719867811[0]
+    abstract /* fake */ override fun foo(): Unit
+
+  }
+
+  // CHECK:
+  //   Mangled name: Outer#<init>(){}
+  //   Public signature: /Outer.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: Outer#test3(){}Outer.Inner
+  //   Public signature: /Outer.test3|6083507929198720424[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: Outer#test3(){}
+  //   Public signature: /Outer.test3|-3759735065270951803[0]
+  fun test3(): Inner
+    // CHECK:
+    //   Mangled name: Outer#test3(){}Outer.Inner.<no name provided>
+    local class <no name provided> : Inner {
+      // CHECK:
+      //   Mangled name: Outer#test3(){}Outer.Inner.<no name provided>#<init>(){}
+      constructor() /* primary */
+
+      // CHECK:
+      //   Mangled name: Outer#test3(){}Outer.Inner.<no name provided>#foo(){}
+      override fun foo(): Unit
+
+    }
+
+}
+
+// CHECK:
+//   Mangled name: IFoo
+//   Public signature: /IFoo|null[0]
+interface IFoo {
+
+  // CHECK:
+  //   Mangled name: IFoo#foo(){}
+  //   Public signature: /IFoo.foo|-1041209573719867811[0]
+  abstract fun foo(): Unit
+
+}
+
+// CHECK JVM_IR:
+//   Mangled name: #test4@Outer(){}Outer.Inner
+//   Public signature: /test4|-5948342138475838209[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test4@Outer(){}
+//   Public signature: /test4|5715080467126173402[0]
+fun Outer.test4(): Inner
+  // CHECK:
+  //   Mangled name: #test4@Outer(){}Outer.Inner.<no name provided>
+  local class <no name provided> : Inner {
+    // CHECK:
+    //   Mangled name: #test4@Outer(){}Outer.Inner.<no name provided>#<init>(){}
+    constructor() /* primary */
+
+    // CHECK:
+    //   Mangled name: #test4@Outer(){}Outer.Inner.<no name provided>#foo(){}
+    override fun foo(): Unit
+
+  }
+

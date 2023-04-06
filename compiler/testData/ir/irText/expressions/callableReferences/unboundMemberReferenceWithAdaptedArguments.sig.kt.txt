@@ -1,0 +1,63 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+open class A {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#foo(kotlin.IntArray...){}kotlin.Int
+  //   Public signature: /A.foo|-3529930544137592433[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: A#foo(kotlin.IntArray...){}
+  //   Public signature: /A.foo|112986931506401688[0]
+  open fun foo(vararg xs: Int): Int
+
+}
+
+// CHECK:
+//   Mangled name: Obj
+//   Public signature: /Obj|null[0]
+object Obj : A {
+  // CHECK:
+  //   Mangled name: Obj#<init>(){}
+  //   Public signature: /Obj.<init>|-5645683436151566731[0]
+  private constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: Obj#foo(kotlin.IntArray...){}kotlin.Int
+  //   Public signature: /Obj.foo|-3529930544137592433[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: Obj#foo(kotlin.IntArray...){}
+  //   Public signature: /Obj.foo|112986931506401688[0]
+  override fun foo(vararg xs: Int): Int
+
+}
+
+// CHECK:
+//   Mangled name: #testBound(A){}
+//   Public signature: /testBound|1636169933869733015[0]
+fun testBound(a: A): Unit
+
+// CHECK:
+//   Mangled name: #testObject(){}
+//   Public signature: /testObject|-3988286999538388748[0]
+fun testObject(): Unit
+
+// CHECK:
+//   Mangled name: #testUnbound(){}
+//   Public signature: /testUnbound|-7514176206479207862[0]
+fun testUnbound(): Unit
+
+// CHECK:
+//   Mangled name: #use1(kotlin.Function2<A,kotlin.Int,kotlin.Unit>){}
+//   Public signature: /use1|-4462422680581088517[0]
+fun use1(fn: Function2<A, Int, Unit>): Unit
+
+// CHECK:
+//   Mangled name: #use2(kotlin.Function1<kotlin.Int,kotlin.Unit>){}
+//   Public signature: /use2|-4849598794733123366[0]
+fun use2(fn: Function1<Int, Unit>): Unit
+

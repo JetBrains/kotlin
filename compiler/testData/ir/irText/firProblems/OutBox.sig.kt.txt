@@ -1,0 +1,29 @@
+// CHECK:
+//   Mangled name: Box
+//   Public signature: /Box|null[0]
+class Box<out T : Foo> {
+  // CHECK:
+  //   Mangled name: Box{}foo
+  //   Public signature: /Box.foo|1688079488202778848[0]
+  val foo: T
+    // CHECK JVM_IR:
+    //   Mangled name: Box#<get-foo>(){}1:0
+    //   Public signature: /Box.foo.<get-foo>|3855223738271342790[0]
+    get
+
+  // CHECK:
+  //   Mangled name: Box#<init>(1:0){}
+  //   Public signature: /Box.<init>|-8731461708390519279[0]
+  constructor(foo: T) /* primary */
+
+  // CHECK:
+  //   Mangled name: Box{}str
+  //   Public signature: /Box.str|4033248252607519654[0]
+  val str: String
+    // CHECK JVM_IR:
+    //   Mangled name: Box#<get-str>(){}kotlin.String
+    //   Public signature: /Box.str.<get-str>|7048381576567484853[0]
+    get(): String
+
+}
+

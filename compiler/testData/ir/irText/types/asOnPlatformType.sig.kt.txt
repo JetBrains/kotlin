@@ -1,0 +1,15 @@
+// CHECK JVM_IR:
+//   Mangled name: #foo@0:0(){0§<kotlin.Any?>}0:0
+//   Public signature: /foo|5130895959053851544[0]
+inline fun <reified T : Any?> T.foo(): T
+
+// CHECK JVM_IR:
+//   Mangled name: #fooN@0:0(){0§<kotlin.Any?>}0:0?
+//   Public signature: /fooN|-7256324909189827969[0]
+inline fun <reified T : Any?> T.fooN(): T?
+
+// CHECK:
+//   Mangled name: #test(){}
+//   Public signature: /test|6620506149988718649[0]
+fun test(): Unit
+

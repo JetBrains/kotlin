@@ -1,0 +1,76 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+class A {
+  // CHECK:
+  //   Mangled name: A{}b
+  //   Public signature: /A.b|772347207915745207[0]
+  private val b: <no name provided>
+    field
+      // CHECK JVM_IR:
+      //   Mangled name (compatible mode: false): A{}b.<no name provided>
+      //   Mangled name (compatible mode: true):  A.b.<no name provided>
+      local class <no name provided> : DoubleExpression {
+        // CHECK:
+        //   Mangled name (compatible mode: false): A{}b.<no name provided>#<init>(){}
+        //   Mangled name (compatible mode: true):  A.b.<no name provided>#<init>(){}
+        constructor() /* primary */
+
+        // CHECK:
+        //   Mangled name (compatible mode: false): A{}b.<no name provided>#isEqualTo(kotlin.Double){}kotlin.Any{EnhancedNullability}
+        //   Mangled name (compatible mode: true):  A.b.<no name provided>#isEqualTo(kotlin.Double){}kotlin.Any{EnhancedNullability}
+        @Override
+        /* fake */ override fun isEqualTo(value: Double): @EnhancedNullability Any
+
+        // CHECK JVM_IR:
+        //   Mangled name (compatible mode: false): A{}b.<no name provided>#isEqualTo(kotlin.Double{EnhancedNullability}){}kotlin.Any{EnhancedNullability}
+        //   Mangled name (compatible mode: true):  A.b.<no name provided>#isEqualTo(kotlin.Double{EnhancedNullability}){}kotlin.Any{EnhancedNullability}
+        /* fake */ override fun isEqualTo(value: @EnhancedNullability Double): @EnhancedNullability Any
+
+        // CHECK JVM_IR:
+        //   Mangled name (compatible mode: false): A{}b.<no name provided>#get(){}kotlin.Double
+        //   Mangled name (compatible mode: true):  A.b.<no name provided>#get(){}kotlin.Double
+        override fun get(): Double
+
+      }
+
+    // CHECK JVM_IR:
+    //   Mangled name (compatible mode: false): A#<get-b>(){}A{}b.<no name provided>
+    //   Mangled name (compatible mode: true):  A#<get-b>(){}A.b.<no name provided>
+    //   Public signature: /A.b.<get-b>|-6508357397455690228[0]
+    private get
+
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
+class C : DoubleExpression {
+  // CHECK:
+  //   Mangled name: C#<init>(){}
+  //   Public signature: /C.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: C#isEqualTo(kotlin.Double){}kotlin.Any{EnhancedNullability}
+  //   Public signature: /C.isEqualTo|6549516741996743028[0]
+  @Override
+  /* fake */ override fun isEqualTo(value: Double): @EnhancedNullability Any
+
+  // CHECK JVM_IR:
+  //   Mangled name: C#isEqualTo(kotlin.Double{EnhancedNullability}){}kotlin.Any{EnhancedNullability}
+  //   Public signature: /C.isEqualTo|3976283770497294654[0]
+  /* fake */ override fun isEqualTo(value: @EnhancedNullability Double): @EnhancedNullability Any
+
+  // CHECK JVM_IR:
+  //   Mangled name: C#get(){}kotlin.Double
+  //   Public signature: /C.get|-8276149070669614990[0]
+  override fun get(): Double
+
+}
+

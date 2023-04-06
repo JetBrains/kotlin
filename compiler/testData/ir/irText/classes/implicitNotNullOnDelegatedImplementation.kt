@@ -1,4 +1,8 @@
 // TARGET_BACKEND: JVM
+
+// MUTE_SIGNATURE_COMPARISON_K2: ANY
+// ^ KT-57788
+
 // FILE: implicitNotNullOnDelegatedImplementation.kt
 interface IFoo {
     fun foo(): String

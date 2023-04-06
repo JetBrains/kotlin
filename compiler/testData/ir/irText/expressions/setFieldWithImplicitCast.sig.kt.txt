@@ -1,0 +1,16 @@
+// CHECK:
+//   Mangled name: Derived
+//   Public signature: /Derived|null[0]
+class Derived : Base {
+  // CHECK:
+  //   Mangled name: Derived#<init>(){}
+  //   Public signature: /Derived.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: Derived#setValue(kotlin.Any){}
+  //   Public signature: /Derived.setValue|6640123509702957343[0]
+  fun setValue(v: Any): Unit
+
+}
+

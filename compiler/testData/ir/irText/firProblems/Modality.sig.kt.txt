@@ -1,0 +1,90 @@
+// CHECK:
+//   Mangled name: Atom
+//   Public signature: /Atom|null[0]
+class Atom {
+  // CHECK:
+  //   Mangled name: Atom{}candidateDescriptor
+  //   Public signature: /Atom.candidateDescriptor|-3112599931076785471[0]
+  val candidateDescriptor: CallableDescriptor
+    // CHECK JVM_IR:
+    //   Mangled name: Atom#<get-candidateDescriptor>(){}CallableDescriptor
+    //   Public signature: /Atom.candidateDescriptor.<get-candidateDescriptor>|4556132200066715385[0]
+    get
+
+  // CHECK:
+  //   Mangled name: Atom#<init>(CallableDescriptor){}
+  //   Public signature: /Atom.<init>|-1799222929165952555[0]
+  constructor(candidateDescriptor: CallableDescriptor) /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: KotlinResolutionCandidate
+//   Public signature: /KotlinResolutionCandidate|null[0]
+class KotlinResolutionCandidate {
+  // CHECK:
+  //   Mangled name: KotlinResolutionCandidate{}resolvedCall
+  //   Public signature: /KotlinResolutionCandidate.resolvedCall|-2429780263902948392[0]
+  val resolvedCall: Atom
+    // CHECK JVM_IR:
+    //   Mangled name: KotlinResolutionCandidate#<get-resolvedCall>(){}Atom
+    //   Public signature: /KotlinResolutionCandidate.resolvedCall.<get-resolvedCall>|49370572931497711[0]
+    get
+
+  // CHECK:
+  //   Mangled name: KotlinResolutionCandidate#<init>(Atom){}
+  //   Public signature: /KotlinResolutionCandidate.<init>|-8995219914817488939[0]
+  constructor(resolvedCall: Atom) /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: ResolutionPart
+//   Public signature: /ResolutionPart|null[0]
+abstract class ResolutionPart {
+  // CHECK:
+  //   Mangled name: ResolutionPart#<init>(){}
+  //   Public signature: /ResolutionPart.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: ResolutionPart#process@KotlinResolutionCandidate(){}kotlin.String
+  //   Public signature: /ResolutionPart.process|8201571705428560068[0]
+  abstract fun KotlinResolutionCandidate.process(): String
+
+}
+
+// CHECK:
+//   Mangled name: Substitutable
+//   Public signature: /Substitutable|null[0]
+interface Substitutable<out T : DeclarationDescriptorNonRoot> {
+
+}
+
+// CHECK:
+//   Mangled name: Final
+//   Public signature: /Final|null[0]
+object Final : Modality {
+  // CHECK:
+  //   Mangled name: Final#<init>(){}
+  //   Public signature: /Final.<init>|-5645683436151566731[0]
+  private constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: Owner
+//   Public signature: /Owner|null[0]
+object Owner : ResolutionPart {
+  // CHECK:
+  //   Mangled name: Owner#<init>(){}
+  //   Public signature: /Owner.<init>|-5645683436151566731[0]
+  private constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: Owner#process@KotlinResolutionCandidate(){}kotlin.String
+  //   Public signature: /Owner.process|8201571705428560068[0]
+  override fun KotlinResolutionCandidate.process(): String
+
+}
+

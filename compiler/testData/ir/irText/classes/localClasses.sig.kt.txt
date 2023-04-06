@@ -1,0 +1,17 @@
+// CHECK:
+//   Mangled name: #outer(){}
+//   Public signature: /outer|1607449560170809066[0]
+fun outer(): Unit
+  // CHECK:
+  //   Mangled name: #outer(){}.LocalClass
+  local class LocalClass {
+    // CHECK:
+    //   Mangled name: #outer(){}.LocalClass#<init>(){}
+    constructor() /* primary */
+
+    // CHECK:
+    //   Mangled name: #outer(){}.LocalClass#foo(){}
+    fun foo(): Unit
+
+  }
+

@@ -1,0 +1,33 @@
+// CHECK:
+//   Mangled name: Serializer
+//   Public signature: /Serializer|null[0]
+class Serializer {
+  // CHECK:
+  //   Mangled name: Serializer#<init>(){}
+  //   Public signature: /Serializer.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: Serializer#createMessageCollector(){}Serializer#createMessageCollector.<no name provided>
+  //   Public signature: /Serializer.createMessageCollector|2610567021773551177[0]
+  private fun createMessageCollector(): <no name provided>
+    // CHECK:
+    //   Mangled name: Serializer#createMessageCollector(){}Serializer#createMessageCollector.<no name provided>.<no name provided>
+    local class <no name provided> : Collector {
+      // CHECK:
+      //   Mangled name: Serializer#createMessageCollector(){}Serializer#createMessageCollector.<no name provided>.<no name provided>#<init>(){}
+      constructor() /* primary */
+
+      // CHECK:
+      //   Mangled name: Serializer#createMessageCollector(){}Serializer#createMessageCollector.<no name provided>.<no name provided>#flush(){}
+      /* fake */ override fun flush(): Unit
+
+    }
+
+  // CHECK:
+  //   Mangled name: Serializer#serialize(){}
+  //   Public signature: /Serializer.serialize|2218225496927039174[0]
+  fun serialize(): Unit
+
+}
+

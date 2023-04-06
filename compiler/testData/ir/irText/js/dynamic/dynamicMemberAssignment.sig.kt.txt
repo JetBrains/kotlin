@@ -1,0 +1,10 @@
+// CHECK:
+//   Mangled name: #testMemberAssignment(<dynamic>){}
+//   Public signature: /testMemberAssignment|3403761995191046849[0]
+fun testMemberAssignment(d: dynamic): Unit
+
+// CHECK:
+//   Mangled name: #testSafeMemberAssignment(<dynamic>){}
+//   Public signature: /testSafeMemberAssignment|1432313440653046937[0]
+fun testSafeMemberAssignment(d: dynamic): Unit
+

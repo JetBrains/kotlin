@@ -1,0 +1,32 @@
+// CHECK:
+//   Mangled name: {}test1
+//   Public signature: /test1|6005685442305498193[0]
+val test1: Int /* by */
+  field
+    // CHECK JVM_IR:
+    //   Mangled name (compatible mode: false): {}test1#<anonymous>#static(){}kotlin.Int
+    //   Mangled name (compatible mode: true):  test1$delegate#<anonymous>#static(){}kotlin.Int
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: #<get-test1>(){}
+    //   Public signature: /test1.<get-test1>|-5735092642142423279[0]
+    local fun <anonymous>(): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-test1>(){}kotlin.Int
+  //   Public signature: /test1.<get-test1>|3978508226793108919[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name (compatible mode: false): {}test1#<anonymous>#static(){}
+  //   Mangled name (compatible mode: true):  test1$delegate#<anonymous>#static(){}
+  get(): Int
+
+// CHECK:
+//   Mangled name: Ann
+//   Public signature: /Ann|null[0]
+open annotation class Ann : Annotation {
+  // CHECK:
+  //   Mangled name: Ann#<init>(){}
+  //   Public signature: /Ann.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+}
+

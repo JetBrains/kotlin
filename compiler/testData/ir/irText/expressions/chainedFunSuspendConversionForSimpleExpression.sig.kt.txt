@@ -1,0 +1,30 @@
+// CHECK:
+//   Mangled name: SuspendRunnable
+//   Public signature: /SuspendRunnable|null[0]
+fun interface SuspendRunnable {
+
+  // CHECK:
+  //   Mangled name: SuspendRunnable#invoke(){}
+  //   Public signature: /SuspendRunnable.invoke|-4663091332620260873[0]
+  abstract suspend fun invoke(): Unit
+
+}
+
+// CHECK JVM_IR:
+//   Mangled name: #bar(){}kotlin.Function0<kotlin.Unit>
+//   Public signature: /bar|-2077237772809994309[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #bar(){}
+//   Public signature: /bar|496682602797471549[0]
+fun bar(): Function0<Unit>
+
+// CHECK:
+//   Mangled name: #foo(SuspendRunnable){}
+//   Public signature: /foo|3528754128205426736[0]
+fun foo(s: SuspendRunnable): Unit
+
+// CHECK:
+//   Mangled name: #test(kotlin.Function0<kotlin.Unit>){}
+//   Public signature: /test|6634439856618498021[0]
+fun test(f: Function0<Unit>): Unit
+

@@ -1,0 +1,87 @@
+package com.example
+
+// CHECK:
+//   Mangled name: com.example.Aa
+//   Public signature: com.example/Aa|null[0]
+interface Aa {
+
+}
+
+// CHECK:
+//   Mangled name: com.example.Ab
+//   Public signature: com.example/Ab|null[0]
+interface Ab<T : Ab<T>> : Aa {
+
+}
+
+// CHECK:
+//   Mangled name: com.example.Ba
+//   Public signature: com.example/Ba|null[0]
+interface Ba {
+
+}
+
+// CHECK:
+//   Mangled name: com.example.Bb
+//   Public signature: com.example/Bb|null[0]
+interface Bb<T : Bb<T>> : Ab<T>, Ba {
+
+}
+
+// CHECK:
+//   Mangled name: com.example.C
+//   Public signature: com.example/C|null[0]
+interface C : Ca, Cb {
+
+  // CHECK:
+  //   Mangled name: com.example.C{}b
+  //   Public signature: com.example/C.b|772347207915745207[0]
+  abstract /* fake */ override val b: Bb<*>
+    // CHECK JVM_IR:
+    //   Mangled name: com.example.C#<get-b>(){}com.example.Bb<*>
+    //   Public signature: com.example/C.b.<get-b>|8945515346267380674[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: com.example.C#<get-b>(){}
+    //   Public signature: com.example/C.b.<get-b>|812004636995167743[0]
+    abstract /* fake */ override get(): Bb<*>
+
+}
+
+// CHECK:
+//   Mangled name: com.example.Ca
+//   Public signature: com.example/Ca|null[0]
+interface Ca {
+
+  // CHECK:
+  //   Mangled name: com.example.Ca{}b
+  //   Public signature: com.example/Ca.b|772347207915745207[0]
+  abstract val b: Ba
+    // CHECK JVM_IR:
+    //   Mangled name: com.example.Ca#<get-b>(){}com.example.Ba
+    //   Public signature: com.example/Ca.b.<get-b>|-5371331002991031414[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: com.example.Ca#<get-b>(){}
+    //   Public signature: com.example/Ca.b.<get-b>|812004636995167743[0]
+    abstract get
+
+}
+
+// CHECK:
+//   Mangled name: com.example.Cb
+//   Public signature: com.example/Cb|null[0]
+interface Cb {
+
+  // CHECK:
+  //   Mangled name: com.example.Cb{}b
+  //   Public signature: com.example/Cb.b|772347207915745207[0]
+  abstract val b: Bb<*>
+    // CHECK JVM_IR:
+    //   Mangled name: com.example.Cb#<get-b>(){}com.example.Bb<*>
+    //   Public signature: com.example/Cb.b.<get-b>|8945515346267380674[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: com.example.Cb#<get-b>(){}
+    //   Public signature: com.example/Cb.b.<get-b>|812004636995167743[0]
+    abstract get
+
+}
+

@@ -1,4 +1,8 @@
 // FIR_IDENTICAL
+
+// MUTE_SIGNATURE_COMPARISON_K2: ANY
+// ^KT-57436
+
 inline fun <reified T : Any> classRefFun() = T::class
 
 inline fun <reified T : Any> Any.classRefExtFun() = T::class

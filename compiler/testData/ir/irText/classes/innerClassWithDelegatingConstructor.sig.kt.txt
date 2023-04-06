@@ -1,0 +1,38 @@
+// CHECK:
+//   Mangled name: Outer
+//   Public signature: /Outer|null[0]
+class Outer {
+  // CHECK:
+  //   Mangled name: Outer.Inner
+  //   Public signature: /Outer.Inner|null[0]
+  inner class Inner {
+    // CHECK:
+    //   Mangled name: Outer.Inner{}x
+    //   Public signature: /Outer.Inner.x|-8060530855978347579[0]
+    val x: Int
+      // CHECK JVM_IR:
+      //   Mangled name: Outer.Inner#<get-x>(){}kotlin.Int
+      //   Public signature: /Outer.Inner.x.<get-x>|4966956098150895696[0]
+      // CHECK JS_IR NATIVE:
+      //   Mangled name: Outer.Inner#<get-x>(){}
+      //   Public signature: /Outer.Inner.x.<get-x>|1482705010654679335[0]
+      get
+
+    // CHECK:
+    //   Mangled name: Outer.Inner#<init>(){}
+    //   Public signature: /Outer.Inner.<init>|-5645683436151566731[0]
+    constructor()
+    // CHECK:
+    //   Mangled name: Outer.Inner#<init>(kotlin.Int){}
+    //   Public signature: /Outer.Inner.<init>|-5182794243525578284[0]
+    constructor(x: Int) /* primary */
+
+  }
+
+  // CHECK:
+  //   Mangled name: Outer#<init>(){}
+  //   Public signature: /Outer.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+}
+

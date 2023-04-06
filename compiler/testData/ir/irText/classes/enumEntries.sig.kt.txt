@@ -1,0 +1,88 @@
+// CHECK:
+//   Mangled name: MyEnum
+//   Public signature: /MyEnum|null[0]
+enum class MyEnum : Enum<MyEnum> {
+  // CHECK:
+  //   Mangled name: MyEnum#<init>(){}
+  //   Public signature: /MyEnum.<init>|-5645683436151566731[0]
+  private constructor() /* primary */
+  // CHECK:
+  //   Mangled name: MyEnum.Nope
+  //   Public signature: /MyEnum.Nope|null[0]
+  Nope
+
+  // CHECK:
+  //   Mangled name: MyEnum.Ok
+  //   Public signature: /MyEnum.Ok|null[0]
+  Ok
+
+  // CHECK JVM_IR:
+  //   Mangled name: MyEnum#valueOf#static(kotlin.String){}MyEnum
+  //   Public signature: /MyEnum.valueOf|4316550590519800984[0]
+  fun valueOf(value: String): MyEnum
+
+  // CHECK JVM_IR:
+  //   Mangled name: MyEnum#values#static(){}kotlin.Array<MyEnum>
+  //   Public signature: /MyEnum.values|3097625172661156808[0]
+  fun values(): Array<MyEnum>
+
+  // CHECK JVM_IR:
+  //   Mangled name: MyEnum#clone(){}kotlin.Any
+  //   Public signature: /MyEnum.clone|-6903128697527593263[0]
+  protected /* fake */ override fun clone(): Any
+
+  // CHECK JVM_IR:
+  //   Mangled name: MyEnum#compareTo(MyEnum){}kotlin.Int
+  //   Public signature: /MyEnum.compareTo|2015858924903177055[0]
+  /* fake */ override operator fun compareTo(other: MyEnum): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: MyEnum#equals(kotlin.Any?){}kotlin.Boolean
+  //   Public signature: /MyEnum.equals|722809408929142791[0]
+  /* fake */ override operator fun equals(other: Any?): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: MyEnum#hashCode(){}kotlin.Int
+  //   Public signature: /MyEnum.hashCode|-8048879360829830756[0]
+  /* fake */ override fun hashCode(): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: MyEnum#toString(){}kotlin.String
+  //   Public signature: /MyEnum.toString|6958853723545266802[0]
+  /* fake */ override fun toString(): String
+
+  // CHECK:
+  //   Mangled name: MyEnum#static{}entries
+  //   Public signature: /MyEnum.entries|-5134227801081826149[0]
+  val entries: EnumEntries<MyEnum>
+    // CHECK JVM_IR:
+    //   Mangled name: MyEnum#<get-entries>#static(){}kotlin.enums.EnumEntries<MyEnum>
+    //   Public signature: /MyEnum.entries.<get-entries>|-3922959509726908718[0]
+    get(): EnumEntries<MyEnum>
+
+  // CHECK:
+  //   Mangled name: MyEnum{}name
+  //   Public signature: /MyEnum.name|4231860309499509769[0]
+  /* fake */ override val name: String
+    // CHECK JVM_IR:
+    //   Mangled name: MyEnum#<get-name>(){}kotlin.String
+    //   Public signature: /MyEnum.name.<get-name>|-8006111524522882650[0]
+    /* fake */ override get(): String
+
+  // CHECK:
+  //   Mangled name: MyEnum{}ordinal
+  //   Public signature: /MyEnum.ordinal|1912745122988592376[0]
+  /* fake */ override val ordinal: Int
+    // CHECK JVM_IR:
+    //   Mangled name: MyEnum#<get-ordinal>(){}kotlin.Int
+    //   Public signature: /MyEnum.ordinal.<get-ordinal>|-6902664390061762634[0]
+    /* fake */ override get(): Int
+
+}
+
+// CHECK JVM_IR:
+//   Mangled name: #box(){}kotlin.enums.EnumEntries<MyEnum>
+//   Public signature: /box|700999420470824741[0]
+@OptIn(markerClass = [ExperimentalStdlibApi::class])
+fun box(): EnumEntries<MyEnum>
+

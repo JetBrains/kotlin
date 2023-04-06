@@ -1,0 +1,142 @@
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
+class C {
+  // CHECK:
+  //   Mangled name: C{}y
+  //   Public signature: /C.y|3625903257357557171[0]
+  val y: Int
+    // CHECK JVM_IR:
+    //   Mangled name: C#<get-y>(){}kotlin.Int
+    //   Public signature: /C.y.<get-y>|-6745575372101973707[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: C#<get-y>(){}
+    //   Public signature: /C.y.<get-y>|-7902422373892128922[0]
+    get
+
+  // CHECK:
+  //   Mangled name: C{}z
+  //   Public signature: /C.z|7549650372729116193[0]
+  var z: Int
+    // CHECK JVM_IR:
+    //   Mangled name: C#<get-z>(){}kotlin.Int
+    //   Public signature: /C.z.<get-z>|373477940260174794[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: C#<get-z>(){}
+    //   Public signature: /C.z.<get-z>|4925813204745917177[0]
+    get
+    // CHECK:
+    //   Mangled name: C#<set-z>(kotlin.Int){}
+    //   Public signature: /C.z.<set-z>|8486465404430625584[0]
+    set
+
+  // CHECK:
+  //   Mangled name: C{}property
+  //   Public signature: /C.property|4634558160746314112[0]
+  val property: Int
+    // CHECK JVM_IR:
+    //   Mangled name: C#<get-property>(){}kotlin.Int
+    //   Public signature: /C.property.<get-property>|2853131919076574313[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: C#<get-property>(){}
+    //   Public signature: /C.property.<get-property>|4838831487146901942[0]
+    get
+
+  // CHECK:
+  //   Mangled name: C.NestedClass
+  //   Public signature: /C.NestedClass|null[0]
+  class NestedClass {
+    // CHECK:
+    //   Mangled name: C.NestedClass#<init>(){}
+    //   Public signature: /C.NestedClass.<init>|-5645683436151566731[0]
+    constructor() /* primary */
+
+    // CHECK:
+    //   Mangled name: C.NestedClass#function(){}
+    //   Public signature: /C.NestedClass.function|-3322893411126713785[0]
+    fun function(): Unit
+
+    // CHECK:
+    //   Mangled name: C.NestedClass#memberExtensionFunction@kotlin.Int(){}
+    //   Public signature: /C.NestedClass.memberExtensionFunction|4691153119931446820[0]
+    fun Int.memberExtensionFunction(): Unit
+
+  }
+
+  // CHECK:
+  //   Mangled name: C.NestedInterface
+  //   Public signature: /C.NestedInterface|null[0]
+  interface NestedInterface {
+
+    // CHECK:
+    //   Mangled name: C.NestedInterface#bar(){}
+    //   Public signature: /C.NestedInterface.bar|496682602797471549[0]
+    fun bar(): Unit
+
+    // CHECK:
+    //   Mangled name: C.NestedInterface#foo(){}
+    //   Public signature: /C.NestedInterface.foo|-1041209573719867811[0]
+    abstract fun foo(): Unit
+
+  }
+
+  // CHECK:
+  //   Mangled name: C.Companion
+  //   Public signature: /C.Companion|null[0]
+  companion object Companion {
+    // CHECK:
+    //   Mangled name: C.Companion#<init>(){}
+    //   Public signature: /C.Companion.<init>|-5645683436151566731[0]
+    private constructor() /* primary */
+
+  }
+
+  // CHECK:
+  //   Mangled name: C#<init>(){}
+  //   Public signature: /C.<init>|-5645683436151566731[0]
+  constructor()
+  // CHECK:
+  //   Mangled name: C#<init>(kotlin.Int;kotlin.Int;kotlin.Int){}
+  //   Public signature: /C.<init>|3555954663887180339[0]
+  constructor(x: Int, y: Int, z: Int) /* primary */
+
+  // CHECK:
+  //   Mangled name: C#function(){}
+  //   Public signature: /C.function|-3322893411126713785[0]
+  fun function(): Unit
+
+  // CHECK:
+  //   Mangled name: C#memberExtensionFunction@kotlin.Int(){}
+  //   Public signature: /C.memberExtensionFunction|4691153119931446820[0]
+  fun Int.memberExtensionFunction(): Unit
+
+  // CHECK:
+  //   Mangled name: C{}propertyWithGet
+  //   Public signature: /C.propertyWithGet|3309863354483039401[0]
+  val propertyWithGet: Int
+    // CHECK JVM_IR:
+    //   Mangled name: C#<get-propertyWithGet>(){}kotlin.Int
+    //   Public signature: /C.propertyWithGet.<get-propertyWithGet>|-1283372725192636165[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: C#<get-propertyWithGet>(){}
+    //   Public signature: /C.propertyWithGet.<get-propertyWithGet>|5182559010864477179[0]
+    get(): Int
+
+  // CHECK:
+  //   Mangled name: C{}propertyWithGetAndSet
+  //   Public signature: /C.propertyWithGetAndSet|9136157132489204883[0]
+  var propertyWithGetAndSet: Int
+    // CHECK JVM_IR:
+    //   Mangled name: C#<get-propertyWithGetAndSet>(){}kotlin.Int
+    //   Public signature: /C.propertyWithGetAndSet.<get-propertyWithGetAndSet>|2703109318737687323[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: C#<get-propertyWithGetAndSet>(){}
+    //   Public signature: /C.propertyWithGetAndSet.<get-propertyWithGetAndSet>|6534309127249044994[0]
+    get(): Int
+    // CHECK:
+    //   Mangled name: C#<set-propertyWithGetAndSet>(kotlin.Int){}
+    //   Public signature: /C.propertyWithGetAndSet.<set-propertyWithGetAndSet>|-6849583414558768890[0]
+    set(value: Int): Unit
+
+}
+

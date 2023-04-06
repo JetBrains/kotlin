@@ -1,0 +1,32 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+class A {
+  // CHECK:
+  //   Mangled name: A.Companion
+  //   Public signature: /A.Companion|null[0]
+  companion object Companion {
+    // CHECK:
+    //   Mangled name: A.Companion#<init>(){}
+    //   Public signature: /A.Companion.<init>|-5645683436151566731[0]
+    private constructor() /* primary */
+
+  }
+
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: A#close(){}
+  //   Public signature: /A.close|-6769325599864818364[0]
+  fun close(): Unit
+
+  // CHECK:
+  //   Mangled name: A#invoke@kotlin.String(){}
+  //   Public signature: /A.invoke|8337314068813101957[0]
+  operator fun String.invoke(): Unit
+
+}
+

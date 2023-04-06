@@ -1,0 +1,33 @@
+// CHECK:
+//   Mangled name: NestedGroupFragment
+//   Public signature: /NestedGroupFragment|null[0]
+interface NestedGroupFragment {
+
+}
+
+// CHECK JVM_IR:
+//   Mangled name: #addMavenOptionsGroupFragment(){}#addOptionsGroup.<no name provided><kotlin.Int>
+//   Public signature: [ File 'AnonymousAsReturnOfGenericFunction.kt' <- /addMavenOptionsGroupFragment|1068646653174639665[0] ]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #addMavenOptionsGroupFragment(){}
+private fun addMavenOptionsGroupFragment(): <no name provided><Int>
+
+// CHECK JVM_IR:
+//   Mangled name: #addOptionsGroup(){0§<kotlin.Any?>}#addOptionsGroup.<no name provided><0:0>
+//   Public signature: [ File 'AnonymousAsReturnOfGenericFunction.kt' <- /addOptionsGroup|1295014906395670038[0] ]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #addOptionsGroup(){0§<kotlin.Any?>}
+private fun <S : Any?> addOptionsGroup(): <no name provided><S>
+  // CHECK JVM_IR:
+  //   Mangled name: #addOptionsGroup(){0§<kotlin.Any?>}#addOptionsGroup.<no name provided><1:0>.<no name provided>
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #addOptionsGroup(){0§<kotlin.Any?>}.<no name provided>
+  local class <no name provided> : NestedGroupFragment {
+    // CHECK JVM_IR:
+    //   Mangled name: #addOptionsGroup(){0§<kotlin.Any?>}#addOptionsGroup.<no name provided><2:0>.<no name provided>#<init>(){}
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: #addOptionsGroup(){0§<kotlin.Any?>}.<no name provided>#<init>(){}
+    constructor() /* primary */
+
+  }
+

@@ -1,0 +1,47 @@
+// CHECK:
+//   Mangled name: AnnotationLoader
+//   Public signature: /AnnotationLoader|null[0]
+class AnnotationLoader {
+  // CHECK:
+  //   Mangled name: AnnotationLoader#<init>(){}
+  //   Public signature: /AnnotationLoader.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: AnnotationLoader#loadAnnotation(){}Visitor?
+  //   Public signature: /AnnotationLoader.loadAnnotation|-7081476927485882760[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: AnnotationLoader#loadAnnotation(){}
+  //   Public signature: /AnnotationLoader.loadAnnotation|-6649617337478670271[0]
+  fun loadAnnotation(): Visitor?
+
+}
+
+// CHECK:
+//   Mangled name: Visitor
+//   Public signature: /Visitor|null[0]
+interface Visitor {
+
+  // CHECK:
+  //   Mangled name: Visitor#visit(){}
+  //   Public signature: /Visitor.visit|-7531698844362190050[0]
+  abstract fun visit(): Unit
+
+  // CHECK JVM_IR:
+  //   Mangled name: Visitor#visitAnnotation(){}Visitor?
+  //   Public signature: /Visitor.visitAnnotation|-8142708510940079695[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: Visitor#visitAnnotation(){}
+  //   Public signature: /Visitor.visitAnnotation|4794980067153158180[0]
+  fun visitAnnotation(): Visitor?
+
+  // CHECK JVM_IR:
+  //   Mangled name: Visitor#visitArray(){}Visitor?
+  //   Public signature: /Visitor.visitArray|-7483008353702058436[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: Visitor#visitArray(){}
+  //   Public signature: /Visitor.visitArray|-4548341020158450010[0]
+  fun visitArray(): Visitor?
+
+}
+

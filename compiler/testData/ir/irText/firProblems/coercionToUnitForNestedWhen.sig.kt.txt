@@ -1,0 +1,19 @@
+// CHECK:
+//   Mangled name: #consumeRestOfQuotedSequence@java.io.Reader(java.lang.StringBuilder;kotlin.Char){}
+//   Public signature: /consumeRestOfQuotedSequence|-9181202314719024538[0]
+fun Reader.consumeRestOfQuotedSequence(sb: StringBuilder, quote: Char): Unit
+
+// CHECK JVM_IR:
+//   Mangled name: #nextChar@java.io.Reader(){}kotlin.Char?
+//   Public signature: [ File 'coercionToUnitForNestedWhen.kt' <- /nextChar|8697099457416866690[0] ]
+private fun Reader.nextChar(): Char?
+
+// CHECK:
+//   Mangled name: {}BACKSLASH
+//   Public signature: [ File 'coercionToUnitForNestedWhen.kt' <- /BACKSLASH|9213821134505379379[0] ]
+private const val BACKSLASH: Char
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-BACKSLASH>(){}kotlin.Char
+  //   Public signature: [ File 'coercionToUnitForNestedWhen.kt' <- /BACKSLASH.<get-BACKSLASH>|7174062972088453102[0] ]
+  private get
+

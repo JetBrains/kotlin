@@ -1,3 +1,7 @@
+// MUTE_SIGNATURE_COMPARISON_K2: JS_IR
+// MUTE_SIGNATURE_COMPARISON_K2: NATIVE
+// ^ KT-57818
+
 class A
 
 operator fun A.plusAssign(s: String) {}

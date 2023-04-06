@@ -1,0 +1,65 @@
+// CHECK:
+//   Mangled name: O
+//   Public signature: /O|null[0]
+class O {
+  // CHECK:
+  //   Mangled name: O{}o
+  //   Public signature: /O.o|-5332571409865440260[0]
+  val o: String
+    field
+    // CHECK JVM_IR:
+    //   Mangled name: O#<get-o>(){}kotlin.String
+    //   Public signature: /O.o.<get-o>|2606027183154875572[0]
+    get
+
+  // CHECK:
+  //   Mangled name: O#<init>(kotlin.String){}
+  //   Public signature: /O.<init>|1280618353163213788[0]
+  constructor(o: String) /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: OK
+//   Public signature: /OK|null[0]
+class OK {
+  // CHECK:
+  //   Mangled name: OK{}k
+  //   Public signature: /OK.k|2162811783424158931[0]
+  val k: String
+    field
+    // CHECK JVM_IR:
+    //   Mangled name: OK#<get-k>(){}kotlin.String
+    //   Public signature: /OK.k.<get-k>|-8248201737917988340[0]
+    get
+
+  // CHECK:
+  //   Mangled name: OK{}result
+  //   Public signature: /OK.result|456251868630197251[0]
+  val result: String
+    field
+    // CHECK JVM_IR:
+    //   Mangled name: OK#<get-result>(){}kotlin.String
+    //   Public signature: /OK.result.<get-result>|8441547134620975366[0]
+    get
+
+  // CHECK:
+  //   Mangled name computed from Ir:         OK#<init>(O;kotlin.String){}
+  //   Mangled name computed from Descriptor: OK#<init>!O(kotlin.String){}
+  //   Public signature: /OK.<init>|-804847331171011326[0]
+  constructor($context_receiver_0: O, k: String) /* primary */
+  // CHECK:
+  //   Mangled name computed from Ir:         OK.contextReceiverField0
+  //   Mangled name computed from Descriptor: OK{}contextReceiverField0#jf
+  private /* final field */ val contextReceiverField0: O
+
+}
+
+// CHECK JVM_IR:
+//   Mangled name: #box(){}kotlin.String
+//   Public signature: /box|-9347091776561469[0]
+fun box(): String
+  // CHECK JVM_IR:
+  //   Mangled name: #box(){}kotlin.String#<anonymous>#static@O(){}kotlin.String
+  local fun O.<anonymous>(): String
+

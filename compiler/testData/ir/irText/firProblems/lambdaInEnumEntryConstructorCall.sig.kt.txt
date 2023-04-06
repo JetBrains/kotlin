@@ -1,0 +1,136 @@
+// CHECK:
+//   Mangled name: Wrapper
+//   Public signature: /Wrapper|null[0]
+class Wrapper {
+  // CHECK:
+  //   Mangled name: Wrapper{}baseUrl
+  //   Public signature: /Wrapper.baseUrl|8725729733335673706[0]
+  var baseUrl: String
+    field
+    // CHECK JVM_IR:
+    //   Mangled name: Wrapper#<get-baseUrl>(){}kotlin.String
+    //   Public signature: /Wrapper.baseUrl.<get-baseUrl>|-3814925406424189958[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Wrapper#<get-baseUrl>(){}
+    //   Public signature: /Wrapper.baseUrl.<get-baseUrl>|-5017063075718914624[0]
+    get
+    // CHECK:
+    //   Mangled name: Wrapper#<set-baseUrl>(kotlin.String){}
+    //   Public signature: /Wrapper.baseUrl.<set-baseUrl>|-3147657826477490604[0]
+    set
+
+  // CHECK:
+  //   Mangled name: Wrapper#<init>(kotlin.String){}
+  //   Public signature: /Wrapper.<init>|1280618353163213788[0]
+  constructor(baseUrl: String) /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: ConfigurationParameter
+//   Public signature: /ConfigurationParameter|null[0]
+enum class ConfigurationParameter : Enum<ConfigurationParameter> {
+  // CHECK:
+  //   Mangled name: ConfigurationParameter#<init>(kotlin.Function2<kotlin.String,Wrapper,kotlin.Unit>){}
+  //   Public signature: /ConfigurationParameter.<init>|-5590500836156829531[0]
+  private constructor(apply: Function2<String, Wrapper, Unit>)
+  // CHECK:
+  //   Mangled name: ConfigurationParameter.BASE_URL
+  //   Public signature: /ConfigurationParameter.BASE_URL|null[0]
+  BASE_URL
+    // CHECK:
+    //   Mangled name computed from Ir:         ConfigurationParameter#<anonymous>#static(kotlin.String;Wrapper){}
+    //   Mangled name computed from Descriptor: ConfigurationParameter.BASE_URL#<init>(){}#<anonymous>#static(kotlin.String;Wrapper){}
+    local fun <anonymous>(value: String, nc: Wrapper): Unit
+
+  // CHECK JVM_IR:
+  //   Mangled name: ConfigurationParameter#valueOf#static(kotlin.String){}ConfigurationParameter
+  //   Public signature: /ConfigurationParameter.valueOf|4681288256259957260[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: ConfigurationParameter#valueOf#static(kotlin.String){}
+  //   Public signature: /ConfigurationParameter.valueOf|-4683474617854611729[0]
+  fun valueOf(value: String): ConfigurationParameter
+
+  // CHECK JVM_IR:
+  //   Mangled name: ConfigurationParameter#values#static(){}kotlin.Array<ConfigurationParameter>
+  //   Public signature: /ConfigurationParameter.values|-8145439714348067759[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: ConfigurationParameter#values#static(){}
+  //   Public signature: /ConfigurationParameter.values|-8715569000920726747[0]
+  fun values(): Array<ConfigurationParameter>
+
+  // CHECK JVM_IR:
+  //   Mangled name: ConfigurationParameter#clone(){}kotlin.Any
+  //   Public signature: /ConfigurationParameter.clone|-6903128697527593263[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: ConfigurationParameter#compareTo(ConfigurationParameter){}
+  //   Public signature: /ConfigurationParameter.compareTo|1827634897792549080[0]
+  protected /* fake */ override fun clone(): Any
+
+  // CHECK JVM_IR:
+  //   Mangled name: ConfigurationParameter#compareTo(ConfigurationParameter){}kotlin.Int
+  //   Public signature: /ConfigurationParameter.compareTo|-5479522582886187389[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: ConfigurationParameter#equals(kotlin.Any?){}
+  //   Public signature: /ConfigurationParameter.equals|4638265728071529943[0]
+  /* fake */ override operator fun compareTo(other: ConfigurationParameter): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: ConfigurationParameter#equals(kotlin.Any?){}kotlin.Boolean
+  //   Public signature: /ConfigurationParameter.equals|722809408929142791[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: ConfigurationParameter#hashCode(){}
+  //   Public signature: /ConfigurationParameter.hashCode|3409210261493131192[0]
+  /* fake */ override operator fun equals(other: Any?): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: ConfigurationParameter#hashCode(){}kotlin.Int
+  //   Public signature: /ConfigurationParameter.hashCode|-8048879360829830756[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: ConfigurationParameter#toString(){}
+  //   Public signature: /ConfigurationParameter.toString|-1522858123163872138[0]
+  /* fake */ override fun hashCode(): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: ConfigurationParameter#toString(){}kotlin.String
+  //   Public signature: /ConfigurationParameter.toString|6958853723545266802[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: ConfigurationParameter#static{}entries
+  //   Public signature: /ConfigurationParameter.entries|-5134227801081826149[0]
+  /* fake */ override fun toString(): String
+
+  // CHECK:
+  //   Mangled name: ConfigurationParameter#static{}entries
+  //   Public signature: /ConfigurationParameter.entries|-5134227801081826149[0]
+  val entries: EnumEntries<ConfigurationParameter>
+    // CHECK JVM_IR:
+    //   Mangled name: ConfigurationParameter#<get-entries>#static(){}kotlin.enums.EnumEntries<ConfigurationParameter>
+    //   Public signature: /ConfigurationParameter.entries.<get-entries>|-1947990751381640787[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: ConfigurationParameter{}name
+    //   Public signature: /ConfigurationParameter.name|4231860309499509769[0]
+    get(): EnumEntries<ConfigurationParameter>
+
+  // CHECK:
+  //   Mangled name: ConfigurationParameter{}name
+  //   Public signature: /ConfigurationParameter.name|4231860309499509769[0]
+  /* fake */ override val name: String
+    // CHECK JVM_IR:
+    //   Mangled name: ConfigurationParameter#<get-name>(){}kotlin.String
+    //   Public signature: /ConfigurationParameter.name.<get-name>|-8006111524522882650[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: ConfigurationParameter{}ordinal
+    //   Public signature: /ConfigurationParameter.ordinal|1912745122988592376[0]
+    /* fake */ override get(): String
+
+  // CHECK:
+  //   Mangled name: ConfigurationParameter{}ordinal
+  //   Public signature: /ConfigurationParameter.ordinal|1912745122988592376[0]
+  /* fake */ override val ordinal: Int
+    // CHECK JVM_IR:
+    //   Mangled name: ConfigurationParameter#<get-ordinal>(){}kotlin.Int
+    //   Public signature: /ConfigurationParameter.ordinal.<get-ordinal>|-6902664390061762634[0]
+    /* fake */ override get(): Int
+
+}
+

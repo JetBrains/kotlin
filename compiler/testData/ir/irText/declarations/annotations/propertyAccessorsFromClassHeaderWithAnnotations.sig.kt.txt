@@ -1,0 +1,65 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+open annotation class A : Annotation {
+  // CHECK:
+  //   Mangled name: A{}x
+  //   Public signature: /A.x|-8060530855978347579[0]
+  val x: String
+    // CHECK JVM_IR:
+    //   Mangled name: A#<get-x>(){}kotlin.String
+    //   Public signature: /A.x.<get-x>|316111172223894646[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: A#<get-x>(){}
+    //   Public signature: /A.x.<get-x>|1482705010654679335[0]
+    get
+
+  // CHECK:
+  //   Mangled name: A#<init>(kotlin.String){}
+  //   Public signature: /A.<init>|1280618353163213788[0]
+  constructor(x: String) /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
+class C {
+  // CHECK:
+  //   Mangled name: C{}x
+  //   Public signature: /C.x|-8060530855978347579[0]
+  val x: Int
+    // CHECK JVM_IR:
+    //   Mangled name: C#<get-x>(){}kotlin.Int
+    //   Public signature: /C.x.<get-x>|4966956098150895696[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: C#<get-x>(){}
+    //   Public signature: /C.x.<get-x>|1482705010654679335[0]
+    @A(x = "C.x.get")
+    get
+
+  // CHECK:
+  //   Mangled name: C{}y
+  //   Public signature: /C.y|3625903257357557171[0]
+  var y: Int
+    // CHECK JVM_IR:
+    //   Mangled name: C#<get-y>(){}kotlin.Int
+    //   Public signature: /C.y.<get-y>|-6745575372101973707[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: C#<get-y>(){}
+    //   Public signature: /C.y.<get-y>|-7902422373892128922[0]
+    @A(x = "C.y.get")
+    get
+    // CHECK:
+    //   Mangled name: C#<set-y>(kotlin.Int){}
+    //   Public signature: /C.y.<set-y>|2154335559382602722[0]
+    @A(x = "C.y.set")
+    set
+
+  // CHECK:
+  //   Mangled name: C#<init>(kotlin.Int;kotlin.Int){}
+  //   Public signature: /C.<init>|-7691762014320324121[0]
+  constructor(x: Int, y: Int) /* primary */
+
+}
+

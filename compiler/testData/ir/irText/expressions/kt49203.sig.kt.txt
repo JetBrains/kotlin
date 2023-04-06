@@ -1,0 +1,115 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+abstract class A {
+  // CHECK:
+  //   Mangled name: A{}x
+  //   Public signature: /A.x|-8060530855978347579[0]
+  lateinit var x: X
+    // CHECK JVM_IR:
+    //   Mangled name: A#<get-x>(){}X
+    //   Public signature: /A.x.<get-x>|4318922799872535978[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: A#<get-x>(){}
+    //   Public signature: /A.x.<get-x>|1482705010654679335[0]
+    get
+    // CHECK:
+    //   Mangled name: A#<set-x>(X){}
+    //   Public signature: /A.x.<set-x>|-2731605021834565340[0]
+    private set
+
+  // CHECK:
+  //   Mangled name: A{}y
+  //   Public signature: /A.y|3625903257357557171[0]
+  var y: X
+    // CHECK JVM_IR:
+    //   Mangled name: A#<get-y>(){}X
+    //   Public signature: /A.y.<get-y>|-1726466926791307923[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: A#<get-y>(){}
+    //   Public signature: /A.y.<get-y>|-7902422373892128922[0]
+    get
+    // CHECK:
+    //   Mangled name: A#<set-y>(X){}
+    //   Public signature: /A.y.<set-y>|-4972047968960381371[0]
+    private set
+
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[0]
+class B : A {
+  // CHECK:
+  //   Mangled name: B#<init>(){}
+  //   Public signature: /B.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: B{}x
+  //   Public signature: /B.x|-8060530855978347579[0]
+  /* fake */ override lateinit var x: X
+    // CHECK JVM_IR:
+    //   Mangled name: B#<get-x>(){}X
+    //   Public signature: /B.x.<get-x>|4318922799872535978[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: B#<get-x>(){}
+    //   Public signature: /B.x.<get-x>|1482705010654679335[0]
+    /* fake */ override get(): X
+
+  // CHECK:
+  //   Mangled name: B{}y
+  //   Public signature: /B.y|3625903257357557171[0]
+  /* fake */ override var y: X
+    // CHECK JVM_IR:
+    //   Mangled name: B#<get-y>(){}X
+    //   Public signature: /B.y.<get-y>|-1726466926791307923[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: B#<get-y>(){}
+    //   Public signature: /B.y.<get-y>|-7902422373892128922[0]
+    /* fake */ override get(): X
+
+}
+
+// CHECK:
+//   Mangled name: X
+//   Public signature: /X|null[0]
+class X {
+  // CHECK:
+  //   Mangled name: X{}value
+  //   Public signature: /X.value|1987073854177347439[0]
+  var value: String
+    // CHECK JVM_IR:
+    //   Mangled name: X#<get-value>(){}kotlin.String
+    //   Public signature: /X.value.<get-value>|-7202092821145242726[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: X#<get-value>(){}
+    //   Public signature: /X.value.<get-value>|3260093555963109437[0]
+    get
+    // CHECK:
+    //   Mangled name: X#<set-value>(kotlin.String){}
+    //   Public signature: /X.value.<set-value>|7375160065891674826[0]
+    set
+
+  // CHECK:
+  //   Mangled name: X#<init>(){}
+  //   Public signature: /X.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: X#plusAssign(kotlin.String){}
+  //   Public signature: /X.plusAssign|-9128532564902303626[0]
+  operator fun plusAssign(data: String): Unit
+
+}
+
+// CHECK:
+//   Mangled name: #test(B){}
+//   Public signature: /test|3809392349795657853[0]
+fun test(b: B): Unit
+

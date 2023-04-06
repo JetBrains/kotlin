@@ -1,0 +1,15 @@
+// CHECK JVM_IR:
+//   Mangled name: #component1@J?(){}kotlin.Int
+//   Public signature: /component1|-3884047873137386118[0]
+operator fun J?.component1(): Int
+
+// CHECK JVM_IR:
+//   Mangled name: #component2@J(){}kotlin.Int
+//   Public signature: [ File 'implicitNotNullInDestructuringAssignment.kt' <- /component2|-623550756830644944[0] ]
+private operator fun J.component2(): Int
+
+// CHECK:
+//   Mangled name: #test(){}
+//   Public signature: /test|6620506149988718649[0]
+fun test(): Unit
+

@@ -1,0 +1,20 @@
+// CHECK JVM_IR:
+//   Mangled name: #box(){}kotlin.String
+//   Public signature: /box|-9347091776561469[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #box(){}
+//   Public signature: /box|2173511048851971368[0]
+fun box(): String
+
+// CHECK JVM_IR:
+//   Mangled name: #foo(kotlin.Long){}kotlin.String
+//   Public signature: /foo|2242291574308227467[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #foo(kotlin.Long){}
+//   Public signature: /foo|1078915626370986218[0]
+fun foo(l: Long): String
+
+// CHECK:
+//   Mangled name: MyLong
+//   Public signature: /MyLong|null[0]
+typealias MyLong = Long

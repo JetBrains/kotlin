@@ -1,0 +1,144 @@
+// CHECK:
+//   Mangled name: AC
+//   Public signature: /AC|null[0]
+abstract class AC<T : Any?> : I1<T>, I2<T> {
+  // CHECK:
+  //   Mangled name: AC{}sam
+  //   Public signature: /AC.sam|8824598858531533052[0]
+  override val sam: FIn<T>
+    // CHECK JVM_IR:
+    //   Mangled name: AC#<get-sam>(){}FIn<1:0>
+    //   Public signature: /AC.sam.<get-sam>|7063493038287370262[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: AC#<get-sam>(){}
+    //   Public signature: /AC.sam.<get-sam>|6359168897517051114[0]
+    override get
+
+  // CHECK:
+  //   Mangled name: AC#<init>(){}
+  //   Public signature: /AC.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: AC{}l
+  //   Public signature: /AC.l|3307215303229595169[0]
+  abstract /* fake */ override val l: @ExtensionFunctionType Function1<T, Unit>
+    // CHECK JVM_IR:
+    //   Mangled name: AC#<get-l>(){}kotlin.Function1<1:0,kotlin.Unit>
+    //   Public signature: /AC.l.<get-l>|-5292723073790207311[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: AC#<get-l>(){}
+    //   Public signature: /AC.l.<get-l>|3795442967620585[0]
+    abstract /* fake */ override get(): @ExtensionFunctionType Function1<T, Unit>
+
+}
+
+// CHECK:
+//   Mangled name: AD
+//   Public signature: /AD|null[0]
+abstract class AD<T : Any?> : AC<(T & Any)> {
+  // CHECK:
+  //   Mangled name: AD{}l
+  //   Public signature: /AD.l|3307215303229595169[0]
+  override val l: @ExtensionFunctionType Function1<(T & Any), Unit>
+    // CHECK JVM_IR:
+    //   Mangled name: AD#<get-l>(){}kotlin.Function1<1:0,kotlin.Unit>
+    //   Public signature: /AD.l.<get-l>|-5292723073790207311[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: AD#<get-l>(){}
+    //   Public signature: /AD.l.<get-l>|3795442967620585[0]
+    override get
+
+  // CHECK:
+  //   Mangled name: AD#<init>(){}
+  //   Public signature: /AD.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: AD{}sam
+  //   Public signature: /AD.sam|8824598858531533052[0]
+  /* fake */ override val sam: FIn<(T & Any)>
+    // CHECK JVM_IR:
+    //   Mangled name: AD#<get-sam>(){}FIn<1:0>
+    //   Public signature: /AD.sam.<get-sam>|7063493038287370262[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: AD#<get-sam>(){}
+    //   Public signature: /AD.sam.<get-sam>|6359168897517051114[0]
+    /* fake */ override get(): FIn<(T & Any)>
+
+}
+
+// CHECK:
+//   Mangled name: Test
+//   Public signature: /Test|null[0]
+class Test<S : Any?> {
+  // CHECK:
+  //   Mangled name: Test#<init>(){}
+  //   Public signature: /Test.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: Test#foo(){}FIn<1:0>
+  //   Public signature: /Test.foo|8840966648510275976[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: Test#foo(){}
+  //   Public signature: /Test.foo|-1041209573719867811[0]
+  fun foo(): FIn<(S & Any)>
+
+}
+
+// CHECK:
+//   Mangled name: FIn
+//   Public signature: /FIn|null[0]
+fun interface FIn<in T : Any?> {
+
+  // CHECK:
+  //   Mangled name: FIn#f(1:0){}
+  //   Public signature: /FIn.f|5824974961856025845[0]
+  abstract fun f(x: T): Unit
+
+}
+
+// CHECK:
+//   Mangled name: I1
+//   Public signature: /I1|null[0]
+interface I1<in T : Any?> {
+
+  // CHECK:
+  //   Mangled name: I1{}l
+  //   Public signature: /I1.l|3307215303229595169[0]
+  abstract val l: @ExtensionFunctionType Function1<T, Unit>
+    // CHECK JVM_IR:
+    //   Mangled name: I1#<get-l>(){}kotlin.Function1<1:0,kotlin.Unit>
+    //   Public signature: /I1.l.<get-l>|-5292723073790207311[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: I1#<get-l>(){}
+    //   Public signature: /I1.l.<get-l>|3795442967620585[0]
+    abstract get
+
+}
+
+// CHECK:
+//   Mangled name: I2
+//   Public signature: /I2|null[0]
+interface I2<in T : Any?> {
+
+  // CHECK:
+  //   Mangled name: I2{}sam
+  //   Public signature: /I2.sam|8824598858531533052[0]
+  abstract val sam: FIn<T>
+    // CHECK JVM_IR:
+    //   Mangled name: I2#<get-sam>(){}FIn<1:0>
+    //   Public signature: /I2.sam.<get-sam>|7063493038287370262[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: I2#<get-sam>(){}
+    //   Public signature: /I2.sam.<get-sam>|6359168897517051114[0]
+    abstract get
+
+}
+
+// CHECK:
+//   Mangled name: #bar(){0§<kotlin.Any?>}
+//   Public signature: /bar|5907622255144383210[0]
+fun <T : Any?> bar(): Unit
+

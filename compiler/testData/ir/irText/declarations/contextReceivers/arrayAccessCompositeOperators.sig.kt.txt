@@ -1,0 +1,84 @@
+// CHECK:
+//   Mangled name: {}operationScore
+//   Public signature: /operationScore|-9073278321118823634[0]
+var operationScore: Int
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-operationScore>(){}kotlin.Int
+  //   Public signature: /operationScore.<get-operationScore>|7107010356269447258[0]
+  get
+  // CHECK:
+  //   Mangled name: #<set-operationScore>(kotlin.Int){}
+  //   Public signature: /operationScore.<set-operationScore>|1936076120216071025[0]
+  set
+
+// CHECK:
+//   Mangled name: MyContainer
+//   Public signature: /MyContainer|null[0]
+data class MyContainer {
+  // CHECK:
+  //   Mangled name: MyContainer{}i
+  //   Public signature: /MyContainer.i|5014384761142332495[0]
+  var i: Int
+    // CHECK JVM_IR:
+    //   Mangled name: MyContainer#<get-i>(){}kotlin.Int
+    //   Public signature: /MyContainer.i.<get-i>|-8784396159001927527[0]
+    get
+    // CHECK:
+    //   Mangled name: MyContainer#<set-i>(kotlin.Int){}
+    //   Public signature: /MyContainer.i.<set-i>|1223530399758590178[0]
+    set
+
+  // CHECK:
+  //   Mangled name: MyContainer#<init>(kotlin.Int){}
+  //   Public signature: /MyContainer.<init>|-5182794243525578284[0]
+  constructor(i: Int) /* primary */
+  // CHECK JVM_IR:
+  //   Mangled name: MyContainer#component1(){}kotlin.Int
+  //   Public signature: /MyContainer.component1|-8217597213800111288[0]
+  operator fun component1(): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: MyContainer#copy(kotlin.Int){}MyContainer
+  //   Public signature: /MyContainer.copy|-2712595066263545556[0]
+  fun copy(i: Int): MyContainer
+
+  // CHECK JVM_IR:
+  //   Mangled name: MyContainer#equals(kotlin.Any?){}kotlin.Boolean
+  //   Public signature: /MyContainer.equals|722809408929142791[0]
+  override operator fun equals(other: Any?): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: MyContainer#hashCode(){}kotlin.Int
+  //   Public signature: /MyContainer.hashCode|-8048879360829830756[0]
+  override fun hashCode(): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: MyContainer#toString(){}kotlin.String
+  //   Public signature: /MyContainer.toString|6958853723545266802[0]
+  override fun toString(): String
+
+}
+
+// CHECK JVM_IR:
+//   Mangled name: #box(){}kotlin.String
+//   Public signature: /box|-9347091776561469[0]
+fun box(): String
+
+// CHECK JVM_IR:
+//   Mangled name computed from Ir:         #get@MyContainer(kotlin.Int;kotlin.Int){}kotlin.Int
+//   Mangled name computed from Descriptor: #get!kotlin.Int@MyContainer(kotlin.Int){}kotlin.Int
+//   Public signature: /get|-3979760669169671321[0]
+operator fun MyContainer.get($context_receiver_0: Int, index: Int): Int
+
+// CHECK JVM_IR:
+//   Mangled name computed from Ir:         #inc@MyContainer(kotlin.Int){}MyContainer
+//   Mangled name computed from Descriptor: #inc!kotlin.Int@MyContainer(){}MyContainer
+//   Public signature: /inc|-8228731243470619532[0]
+operator fun MyContainer.inc($context_receiver_0: Int): MyContainer
+
+// CHECK:
+//   Mangled name computed from Ir:         #plusAssign@MyContainer(kotlin.Int;MyContainer){}
+//   Mangled name computed from Descriptor: #plusAssign!kotlin.Int@MyContainer(MyContainer){}
+//   Public signature: /plusAssign|677104996565540010[0]
+operator fun MyContainer.plusAssign($context_receiver_0: Int, other: MyContainer): Unit
+

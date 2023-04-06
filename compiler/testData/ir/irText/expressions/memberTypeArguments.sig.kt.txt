@@ -1,0 +1,31 @@
+// CHECK:
+//   Mangled name: GenericClass
+//   Public signature: /GenericClass|null[0]
+class GenericClass<T : Any?> {
+  // CHECK:
+  //   Mangled name: GenericClass{}value
+  //   Public signature: /GenericClass.value|1987073854177347439[0]
+  val value: T
+    // CHECK JVM_IR:
+    //   Mangled name: GenericClass#<get-value>(){}1:0
+    //   Public signature: /GenericClass.value.<get-value>|3167862337988859752[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: GenericClass#<get-value>(){}
+    //   Public signature: /GenericClass.value.<get-value>|3260093555963109437[0]
+    get
+
+  // CHECK:
+  //   Mangled name: GenericClass#<init>(1:0){}
+  //   Public signature: /GenericClass.<init>|-8731461708390519279[0]
+  constructor(value: T) /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: GenericClass#withNewValue(1:0){}GenericClass<1:0>
+  //   Public signature: /GenericClass.withNewValue|7171026453547930712[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: GenericClass#withNewValue(1:0){}
+  //   Public signature: /GenericClass.withNewValue|-2595992965033306150[0]
+  fun withNewValue(newValue: T): GenericClass<T>
+
+}
+

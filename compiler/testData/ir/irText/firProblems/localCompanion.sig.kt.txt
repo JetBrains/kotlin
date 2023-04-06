@@ -1,0 +1,45 @@
+// CHECK JVM_IR:
+//   Mangled name computed from Ir:         #main(){}
+//   Mangled name computed from Descriptor: #main(){}%localCompanion.kt
+//   Public signature: /main|1798078925369608927[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #main(){}
+//   Public signature: /main|-4284757841571462650[0]
+fun main(): Unit
+  // CHECK JVM_IR:
+  //   Mangled name computed from Ir:         #main(){}.Foo
+  //   Mangled name computed from Descriptor: #main(){}%localCompanion.kt.Foo
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #main(){}.Foo
+  local class Foo {
+    // CHECK JVM_IR:
+    //   Mangled name computed from Ir:         #main(){}.Foo.Companion
+    //   Mangled name computed from Descriptor: #main(){}%localCompanion.kt.Foo.Companion
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: #main(){}.Foo.Companion
+    local companion object Companion {
+      // CHECK JVM_IR:
+      //   Mangled name computed from Ir:         #main(){}.Foo.Companion#<init>(){}
+      //   Mangled name computed from Descriptor: #main(){}%localCompanion.kt.Foo.Companion#<init>(){}
+      // CHECK JS_IR NATIVE:
+      //   Mangled name: #main(){}.Foo.Companion#<init>(){}
+      private constructor() /* primary */
+
+      // CHECK JVM_IR:
+      //   Mangled name computed from Ir:         #main(){}.Foo.Companion#bar(){}
+      //   Mangled name computed from Descriptor: #main(){}%localCompanion.kt.Foo.Companion#bar(){}
+      // CHECK JS_IR NATIVE:
+      //   Mangled name: #main(){}.Foo.Companion#bar(){}
+      fun bar(): Unit
+
+    }
+
+    // CHECK JVM_IR:
+    //   Mangled name computed from Ir:         #main(){}.Foo#<init>(){}
+    //   Mangled name computed from Descriptor: #main(){}%localCompanion.kt.Foo#<init>(){}
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: #main(){}.Foo#<init>(){}
+    constructor() /* primary */
+
+  }
+

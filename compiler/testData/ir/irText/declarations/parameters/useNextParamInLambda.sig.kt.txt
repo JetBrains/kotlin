@@ -1,0 +1,16 @@
+// CHECK JVM_IR:
+//   Mangled name: #box(){}kotlin.String
+//   Public signature: /box|-9347091776561469[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #box(){}
+//   Public signature: /box|2173511048851971368[0]
+fun box(): String
+
+// CHECK JVM_IR:
+//   Mangled name: #f(kotlin.Function0<kotlin.String>;kotlin.Function0<kotlin.String>){}kotlin.String
+//   Public signature: /f|3250103379442841891[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #f(kotlin.Function0<kotlin.String>;kotlin.Function0<kotlin.String>){}
+//   Public signature: /f|1185070276750380808[0]
+fun f(f1: Function0<String>, f2: Function0<String>): String
+

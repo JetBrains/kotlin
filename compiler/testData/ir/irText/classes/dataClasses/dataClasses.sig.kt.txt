@@ -1,0 +1,286 @@
+// CHECK:
+//   Mangled name: Test1
+//   Public signature: /Test1|null[0]
+data class Test1 {
+  // CHECK:
+  //   Mangled name: Test1{}x
+  //   Public signature: /Test1.x|-8060530855978347579[0]
+  val x: Int
+    // CHECK JVM_IR:
+    //   Mangled name: Test1#<get-x>(){}kotlin.Int
+    //   Public signature: /Test1.x.<get-x>|4966956098150895696[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Test1#<get-x>(){}
+    //   Public signature: /Test1.x.<get-x>|1482705010654679335[0]
+    get
+
+  // CHECK:
+  //   Mangled name: Test1{}y
+  //   Public signature: /Test1.y|3625903257357557171[0]
+  val y: String
+    // CHECK JVM_IR:
+    //   Mangled name: Test1#<get-y>(){}kotlin.String
+    //   Public signature: /Test1.y.<get-y>|1760775372995524147[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Test1#<get-y>(){}
+    //   Public signature: /Test1.y.<get-y>|-7902422373892128922[0]
+    get
+
+  // CHECK:
+  //   Mangled name: Test1{}z
+  //   Public signature: /Test1.z|7549650372729116193[0]
+  val z: Any
+    // CHECK JVM_IR:
+    //   Mangled name: Test1#<get-z>(){}kotlin.Any
+    //   Public signature: /Test1.z.<get-z>|3264772919715209875[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Test1#<get-z>(){}
+    //   Public signature: /Test1.z.<get-z>|4925813204745917177[0]
+    get
+
+  // CHECK:
+  //   Mangled name: Test1#<init>(kotlin.Int;kotlin.String;kotlin.Any){}
+  //   Public signature: /Test1.<init>|3237794121889594884[0]
+  constructor(x: Int, y: String, z: Any) /* primary */
+  // CHECK JVM_IR:
+  //   Mangled name: Test1#component1(){}kotlin.Int
+  //   Public signature: /Test1.component1|-8217597213800111288[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: Test1#component1(){}
+  //   Public signature: /Test1.component1|162597135895221648[0]
+  operator fun component1(): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: Test1#component2(){}kotlin.String
+  //   Public signature: /Test1.component2|1228864375093914597[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: Test1#component2(){}
+  //   Public signature: /Test1.component2|3796717572321500973[0]
+  operator fun component2(): String
+
+  // CHECK JVM_IR:
+  //   Mangled name: Test1#component3(){}kotlin.Any
+  //   Public signature: /Test1.component3|-8402360621236361298[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: Test1#component3(){}
+  //   Public signature: /Test1.component3|-7448948688383327918[0]
+  operator fun component3(): Any
+
+  // CHECK JVM_IR:
+  //   Mangled name: Test1#copy(kotlin.Int;kotlin.String;kotlin.Any){}Test1
+  //   Public signature: /Test1.copy|9126311422094034907[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: Test1#copy(kotlin.Int;kotlin.String;kotlin.Any){}
+  //   Public signature: /Test1.copy|1970049041797344002[0]
+  fun copy(x: Int, y: String, z: Any): Test1
+
+  // CHECK JVM_IR:
+  //   Mangled name: Test1#equals(kotlin.Any?){}kotlin.Boolean
+  //   Public signature: /Test1.equals|722809408929142791[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: Test1#equals(kotlin.Any?){}
+  //   Public signature: /Test1.equals|4638265728071529943[0]
+  override operator fun equals(other: Any?): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: Test1#hashCode(){}kotlin.Int
+  //   Public signature: /Test1.hashCode|-8048879360829830756[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: Test1#hashCode(){}
+  //   Public signature: /Test1.hashCode|3409210261493131192[0]
+  override fun hashCode(): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: Test1#toString(){}kotlin.String
+  //   Public signature: /Test1.toString|6958853723545266802[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: Test1#toString(){}
+  //   Public signature: /Test1.toString|-1522858123163872138[0]
+  override fun toString(): String
+
+}
+
+// CHECK:
+//   Mangled name: Test2
+//   Public signature: /Test2|null[0]
+data class Test2 {
+  // CHECK:
+  //   Mangled name: Test2{}x
+  //   Public signature: /Test2.x|-8060530855978347579[0]
+  val x: Any?
+    // CHECK JVM_IR:
+    //   Mangled name: Test2#<get-x>(){}kotlin.Any?
+    //   Public signature: /Test2.x.<get-x>|4529939993405876842[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Test2#<get-x>(){}
+    //   Public signature: /Test2.x.<get-x>|1482705010654679335[0]
+    get
+
+  // CHECK:
+  //   Mangled name: Test2#<init>(kotlin.Any?){}
+  //   Public signature: /Test2.<init>|-8205545948568413246[0]
+  constructor(x: Any?) /* primary */
+  // CHECK JVM_IR:
+  //   Mangled name: Test2#component1(){}kotlin.Any?
+  //   Public signature: /Test2.component1|-9062417290864755441[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: Test2#component1(){}
+  //   Public signature: /Test2.component1|162597135895221648[0]
+  operator fun component1(): Any?
+
+  // CHECK JVM_IR:
+  //   Mangled name: Test2#copy(kotlin.Any?){}Test2
+  //   Public signature: /Test2.copy|6930260054694985237[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: Test2#copy(kotlin.Any?){}
+  //   Public signature: /Test2.copy|4356513146641810493[0]
+  fun copy(x: Any?): Test2
+
+  // CHECK JVM_IR:
+  //   Mangled name: Test2#equals(kotlin.Any?){}kotlin.Boolean
+  //   Public signature: /Test2.equals|722809408929142791[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: Test2#equals(kotlin.Any?){}
+  //   Public signature: /Test2.equals|4638265728071529943[0]
+  override operator fun equals(other: Any?): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: Test2#hashCode(){}kotlin.Int
+  //   Public signature: /Test2.hashCode|-8048879360829830756[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: Test2#hashCode(){}
+  //   Public signature: /Test2.hashCode|3409210261493131192[0]
+  override fun hashCode(): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: Test2#toString(){}kotlin.String
+  //   Public signature: /Test2.toString|6958853723545266802[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: Test2#toString(){}
+  //   Public signature: /Test2.toString|-1522858123163872138[0]
+  override fun toString(): String
+
+}
+
+// CHECK:
+//   Mangled name: Test3
+//   Public signature: /Test3|null[0]
+data class Test3 {
+  // CHECK:
+  //   Mangled name: Test3{}d
+  //   Public signature: /Test3.d|5174763769109925331[0]
+  val d: Double
+    // CHECK JVM_IR:
+    //   Mangled name: Test3#<get-d>(){}kotlin.Double
+    //   Public signature: /Test3.d.<get-d>|-5403877192080381201[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Test3#<get-d>(){}
+    //   Public signature: /Test3.d.<get-d>|-6701718004621354461[0]
+    get
+
+  // CHECK:
+  //   Mangled name: Test3{}dn
+  //   Public signature: /Test3.dn|-2746901618144580958[0]
+  val dn: Double?
+    // CHECK JVM_IR:
+    //   Mangled name: Test3#<get-dn>(){}kotlin.Double?
+    //   Public signature: /Test3.dn.<get-dn>|-6168917619305056925[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Test3#<get-dn>(){}
+    //   Public signature: /Test3.dn.<get-dn>|2804503042141689390[0]
+    get
+
+  // CHECK:
+  //   Mangled name: Test3{}f
+  //   Public signature: /Test3.f|4026638760133205152[0]
+  val f: Float
+    // CHECK JVM_IR:
+    //   Mangled name: Test3#<get-f>(){}kotlin.Float
+    //   Public signature: /Test3.f.<get-f>|6014982203170860581[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Test3#<get-f>(){}
+    //   Public signature: /Test3.f.<get-f>|2894053160377864677[0]
+    get
+
+  // CHECK:
+  //   Mangled name: Test3{}df
+  //   Public signature: /Test3.df|8501496894035980235[0]
+  val df: Float?
+    // CHECK JVM_IR:
+    //   Mangled name: Test3#<get-df>(){}kotlin.Float?
+    //   Public signature: /Test3.df.<get-df>|-3259181884204926150[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Test3#<get-df>(){}
+    //   Public signature: /Test3.df.<get-df>|23337897124649238[0]
+    get
+
+  // CHECK:
+  //   Mangled name: Test3#<init>(kotlin.Double;kotlin.Double?;kotlin.Float;kotlin.Float?){}
+  //   Public signature: /Test3.<init>|8878758829470622568[0]
+  constructor(d: Double, dn: Double?, f: Float, df: Float?) /* primary */
+  // CHECK JVM_IR:
+  //   Mangled name: Test3#component1(){}kotlin.Double
+  //   Public signature: /Test3.component1|2948120330742694173[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: Test3#component1(){}
+  //   Public signature: /Test3.component1|162597135895221648[0]
+  operator fun component1(): Double
+
+  // CHECK JVM_IR:
+  //   Mangled name: Test3#component2(){}kotlin.Double?
+  //   Public signature: /Test3.component2|-4142687720775551365[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: Test3#component2(){}
+  //   Public signature: /Test3.component2|3796717572321500973[0]
+  operator fun component2(): Double?
+
+  // CHECK JVM_IR:
+  //   Mangled name: Test3#component3(){}kotlin.Float
+  //   Public signature: /Test3.component3|-7671183964878043859[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: Test3#component3(){}
+  //   Public signature: /Test3.component3|-7448948688383327918[0]
+  operator fun component3(): Float
+
+  // CHECK JVM_IR:
+  //   Mangled name: Test3#component4(){}kotlin.Float?
+  //   Public signature: /Test3.component4|-5678719099315503302[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: Test3#component4(){}
+  //   Public signature: /Test3.component4|-5228865120014592696[0]
+  operator fun component4(): Float?
+
+  // CHECK JVM_IR:
+  //   Mangled name: Test3#copy(kotlin.Double;kotlin.Double?;kotlin.Float;kotlin.Float?){}Test3
+  //   Public signature: /Test3.copy|-4127117122996434411[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: Test3#copy(kotlin.Double;kotlin.Double?;kotlin.Float;kotlin.Float?){}
+  //   Public signature: /Test3.copy|-125565994452859048[0]
+  fun copy(d: Double, dn: Double?, f: Float, df: Float?): Test3
+
+  // CHECK JVM_IR:
+  //   Mangled name: Test3#equals(kotlin.Any?){}kotlin.Boolean
+  //   Public signature: /Test3.equals|722809408929142791[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: Test3#equals(kotlin.Any?){}
+  //   Public signature: /Test3.equals|4638265728071529943[0]
+  override operator fun equals(other: Any?): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: Test3#hashCode(){}kotlin.Int
+  //   Public signature: /Test3.hashCode|-8048879360829830756[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: Test3#hashCode(){}
+  //   Public signature: /Test3.hashCode|3409210261493131192[0]
+  override fun hashCode(): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: Test3#toString(){}kotlin.String
+  //   Public signature: /Test3.toString|6958853723545266802[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: Test3#toString(){}
+  //   Public signature: /Test3.toString|-1522858123163872138[0]
+  override fun toString(): String
+
+}
+

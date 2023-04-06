@@ -1,0 +1,69 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+class A : Cloneable {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+  // CHECK JVM_IR:
+  //   Mangled name: A#clone(){}kotlin.Any
+  //   Public signature: /A.clone|-6903128697527593263[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: A#clone(){}
+  //   Public signature: /A.clone|-2406852056970293187[0]
+  protected /* fake */ override fun clone(): Any
+
+}
+
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
+class C : I {
+  // CHECK:
+  //   Mangled name: C#<init>(){}
+  //   Public signature: /C.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+  // CHECK JVM_IR:
+  //   Mangled name: C#clone(){}kotlin.Any
+  //   Public signature: /C.clone|-6903128697527593263[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: C#clone(){}
+  //   Public signature: /C.clone|-2406852056970293187[0]
+  protected /* fake */ override fun clone(): Any
+
+}
+
+// CHECK:
+//   Mangled name: OC
+//   Public signature: /OC|null[0]
+class OC : I {
+  // CHECK:
+  //   Mangled name: OC#<init>(){}
+  //   Public signature: /OC.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: OC#clone(){}OC
+  //   Public signature: /OC.clone|8389954697594281582[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: OC#clone(){}
+  //   Public signature: /OC.clone|-2406852056970293187[0]
+  protected override fun clone(): OC
+
+}
+
+// CHECK:
+//   Mangled name: I
+//   Public signature: /I|null[0]
+interface I : Cloneable {
+  // CHECK JVM_IR:
+  //   Mangled name: I#clone(){}kotlin.Any
+  //   Public signature: /I.clone|-6903128697527593263[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: I#clone(){}
+  //   Public signature: /I.clone|-2406852056970293187[0]
+  protected /* fake */ override fun clone(): Any
+
+}
+

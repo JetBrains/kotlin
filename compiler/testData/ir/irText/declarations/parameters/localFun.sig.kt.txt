@@ -1,0 +1,20 @@
+// CHECK:
+//   Mangled name: #outer(){0§<kotlin.Any?>}
+//   Public signature: /outer|-6093606212547620330[0]
+fun <TT : Any?> outer(): Unit
+  // CHECK:
+  //   Mangled name: #outer(){0§<kotlin.Any?>}#test1#static(kotlin.Int;0:0){0§<kotlin.Any?>}
+  local fun <T : Any?> test1(i: Int, j: T): Unit
+
+  // CHECK:
+  //   Mangled name: #outer(){0§<kotlin.Any?>}#test2#static(kotlin.Int;kotlin.String){}
+  local fun test2(i: Int, j: String): Unit
+
+  // CHECK:
+  //   Mangled name: #outer(){0§<kotlin.Any?>}#test3#static(kotlin.Array<out|kotlin.String>...){}
+  local fun test3(vararg args: String): Unit
+
+  // CHECK:
+  //   Mangled name: #outer(){0§<kotlin.Any?>}#textExt1#static@kotlin.String(kotlin.Int;1:0){}
+  local fun String.textExt1(i: Int, j: TT): Unit
+

@@ -1,0 +1,28 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+open annotation class A : Annotation {
+  // CHECK:
+  //   Mangled name: A{}x
+  //   Public signature: /A.x|-8060530855978347579[0]
+  val x: String
+    // CHECK JVM_IR:
+    //   Mangled name: A#<get-x>(){}kotlin.String
+    //   Public signature: /A.x.<get-x>|316111172223894646[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: A#<get-x>(){}
+    //   Public signature: /A.x.<get-x>|1482705010654679335[0]
+    get
+
+  // CHECK:
+  //   Mangled name: A#<init>(kotlin.String){}
+  //   Public signature: /A.<init>|1280618353163213788[0]
+  constructor(x: String) /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: #foo(kotlin.collections.Map<kotlin.String,kotlin.Int>){}
+//   Public signature: /foo|2882082711847831728[0]
+fun foo(m: Map<String, Int>): Unit
+

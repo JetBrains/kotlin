@@ -1,0 +1,30 @@
+// CHECK:
+//   Mangled name: IFoo
+//   Public signature: /IFoo|null[0]
+fun interface IFoo {
+
+  // CHECK:
+  //   Mangled name: IFoo#foo(kotlin.Int){}
+  //   Public signature: /IFoo.foo|-104159190164110731[0]
+  abstract fun foo(i: Int): Unit
+
+}
+
+// CHECK:
+//   Mangled name: #test(){}
+//   Public signature: /test|6620506149988718649[0]
+fun test(): Unit
+
+// CHECK:
+//   Mangled name: #useFoo(IFoo){}
+//   Public signature: /useFoo|-5008863146598304258[0]
+fun useFoo(foo: IFoo): Unit
+
+// CHECK JVM_IR:
+//   Mangled name: #withVararg(kotlin.IntArray...){}kotlin.Int
+//   Public signature: /withVararg|2262699225692856772[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #withVararg(kotlin.IntArray...){}
+//   Public signature: /withVararg|2511032413940817176[0]
+fun withVararg(vararg xs: Int): Int
+

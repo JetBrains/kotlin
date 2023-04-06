@@ -1,0 +1,8 @@
+// CHECK:
+//   Mangled name: #test1(kotlin.Int;kotlin.Int;kotlin.String){}
+//   Public signature: /test1|-2420205866450198550[0]
+fun test1(x: Int, y: Int, z: String): Unit
+  // CHECK:
+  //   Mangled name: #test1(kotlin.Int;kotlin.Int;kotlin.String){}#local#static(kotlin.Int;kotlin.Int;kotlin.String){}
+  local fun local(xx: Int, yy: Int, zz: String): Unit
+

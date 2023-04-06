@@ -1,0 +1,17 @@
+// CHECK JVM_IR:
+//   Mangled name: #elvisLike(0:0;0:0){0§<kotlin.Any?>}0:0
+//   Public signature: /elvisLike|7044130161831229286[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #elvisLike(0:0;0:0){0§<kotlin.Any?>}
+//   Public signature: /elvisLike|-2891753181650577145[0]
+fun <T : Any?> elvisLike(x: T, y: (T & Any)): (T & Any)
+
+// CHECK JVM_IR:
+//   Mangled name computed from Ir:         #main(){}
+//   Mangled name computed from Descriptor: #main(){}%definitelyNonNull.kt
+//   Public signature: /main|536315142565162436[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #main(){}
+//   Public signature: /main|-4284757841571462650[0]
+fun main(): Unit
+

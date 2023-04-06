@@ -1,0 +1,24 @@
+// CHECK:
+//   Mangled name: {}test1
+//   Public signature: /test1|6005685442305498193[0]
+val test1: Function0<Int>
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-test1>(){}kotlin.Function0<kotlin.Int>
+  //   Public signature: /test1.<get-test1>|3140014614812373095[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-test1>(){}
+  //   Public signature: /test1.<get-test1>|-5735092642142423279[0]
+  get
+
+// CHECK:
+//   Mangled name: {}test2
+//   Public signature: /test2|2517758057000911509[0]
+val test2: Function0<Unit>
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-test2>(){}kotlin.Function0<kotlin.Unit>
+  //   Public signature: /test2.<get-test2>|-6581063117552766488[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-test2>(){}
+  //   Public signature: /test2.<get-test2>|-5218942532816206869[0]
+  get
+

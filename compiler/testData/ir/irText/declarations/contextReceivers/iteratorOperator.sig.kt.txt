@@ -1,0 +1,138 @@
+// CHECK:
+//   Mangled name: Counter
+//   Public signature: /Counter|null[0]
+data class Counter {
+  // CHECK:
+  //   Mangled name: Counter{}i
+  //   Public signature: /Counter.i|5014384761142332495[0]
+  var i: Int
+    // CHECK JVM_IR:
+    //   Mangled name: Counter#<get-i>(){}kotlin.Int
+    //   Public signature: /Counter.i.<get-i>|-8784396159001927527[0]
+    get
+    // CHECK:
+    //   Mangled name: Counter#<set-i>(kotlin.Int){}
+    //   Public signature: /Counter.i.<set-i>|1223530399758590178[0]
+    set
+
+  // CHECK:
+  //   Mangled name: Counter#<init>(kotlin.Int){}
+  //   Public signature: /Counter.<init>|-5182794243525578284[0]
+  constructor(i: Int) /* primary */
+  // CHECK JVM_IR:
+  //   Mangled name: Counter#component1(){}kotlin.Int
+  //   Public signature: /Counter.component1|-8217597213800111288[0]
+  operator fun component1(): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: Counter#copy(kotlin.Int){}Counter
+  //   Public signature: /Counter.copy|2961790952651150110[0]
+  fun copy(i: Int): Counter
+
+  // CHECK JVM_IR:
+  //   Mangled name: Counter#equals(kotlin.Any?){}kotlin.Boolean
+  //   Public signature: /Counter.equals|722809408929142791[0]
+  override operator fun equals(other: Any?): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: Counter#hashCode(){}kotlin.Int
+  //   Public signature: /Counter.hashCode|-8048879360829830756[0]
+  override fun hashCode(): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: Counter#toString(){}kotlin.String
+  //   Public signature: /Counter.toString|6958853723545266802[0]
+  override fun toString(): String
+
+}
+
+// CHECK:
+//   Mangled name: CounterConfig
+//   Public signature: /CounterConfig|null[0]
+data class CounterConfig {
+  // CHECK:
+  //   Mangled name: CounterConfig{}max
+  //   Public signature: /CounterConfig.max|-4328207510034083913[0]
+  val max: Int
+    // CHECK JVM_IR:
+    //   Mangled name: CounterConfig#<get-max>(){}kotlin.Int
+    //   Public signature: /CounterConfig.max.<get-max>|3083068406880796820[0]
+    get
+
+  // CHECK:
+  //   Mangled name: CounterConfig#<init>(kotlin.Int){}
+  //   Public signature: /CounterConfig.<init>|-5182794243525578284[0]
+  constructor(max: Int) /* primary */
+  // CHECK JVM_IR:
+  //   Mangled name: CounterConfig#component1(){}kotlin.Int
+  //   Public signature: /CounterConfig.component1|-8217597213800111288[0]
+  operator fun component1(): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: CounterConfig#copy(kotlin.Int){}CounterConfig
+  //   Public signature: /CounterConfig.copy|-6936688204078599579[0]
+  fun copy(max: Int): CounterConfig
+
+  // CHECK JVM_IR:
+  //   Mangled name: CounterConfig#equals(kotlin.Any?){}kotlin.Boolean
+  //   Public signature: /CounterConfig.equals|722809408929142791[0]
+  override operator fun equals(other: Any?): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: CounterConfig#hashCode(){}kotlin.Int
+  //   Public signature: /CounterConfig.hashCode|-8048879360829830756[0]
+  override fun hashCode(): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: CounterConfig#toString(){}kotlin.String
+  //   Public signature: /CounterConfig.toString|6958853723545266802[0]
+  override fun toString(): String
+
+}
+
+// CHECK:
+//   Mangled name: CounterIterator
+//   Public signature: /CounterIterator|null[0]
+class CounterIterator : Iterator<Int> {
+  // CHECK:
+  //   Mangled name: CounterIterator{}counter
+  //   Public signature: /CounterIterator.counter|3849500605769271673[0]
+  private val counter: Counter
+    // CHECK JVM_IR:
+    //   Mangled name: CounterIterator#<get-counter>(){}Counter
+    //   Public signature: /CounterIterator.counter.<get-counter>|-1972897806384113317[0]
+    private get
+
+  // CHECK:
+  //   Mangled name computed from Ir:         CounterIterator#<init>(CounterConfig;Counter){}
+  //   Mangled name computed from Descriptor: CounterIterator#<init>!CounterConfig(Counter){}
+  //   Public signature: /CounterIterator.<init>|4731448293962665986[0]
+  constructor($context_receiver_0: CounterConfig, counter: Counter) /* primary */
+  // CHECK:
+  //   Mangled name computed from Ir:         CounterIterator.contextReceiverField0
+  //   Mangled name computed from Descriptor: CounterIterator{}contextReceiverField0#jf
+  private /* final field */ val contextReceiverField0: CounterConfig
+
+  // CHECK JVM_IR:
+  //   Mangled name: CounterIterator#hasNext(){}kotlin.Boolean
+  //   Public signature: /CounterIterator.hasNext|-8822308834813776763[0]
+  override operator fun hasNext(): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: CounterIterator#next(){}kotlin.Int
+  //   Public signature: /CounterIterator.next|-2200495694769701977[0]
+  override operator fun next(): Int
+
+}
+
+// CHECK JVM_IR:
+//   Mangled name: #box(){}kotlin.String
+//   Public signature: /box|-9347091776561469[0]
+fun box(): String
+
+// CHECK JVM_IR:
+//   Mangled name computed from Ir:         #iterator@Counter(CounterConfig){}CounterIterator
+//   Mangled name computed from Descriptor: #iterator!CounterConfig@Counter(){}CounterIterator
+//   Public signature: /iterator|3723033021471264185[0]
+operator fun Counter.iterator($context_receiver_0: CounterConfig): CounterIterator
+

@@ -1,0 +1,40 @@
+// CHECK JVM_IR:
+//   Mangled name: #test1(kotlin.collections.List<kotlin.Int>){}kotlin.collections.List<kotlin.Int>
+//   Public signature: /test1|5510304245988545247[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test1(kotlin.collections.List<kotlin.Int>){}
+//   Public signature: /test1|-6321727921997545888[0]
+fun test1(x: List<Int>): List<Int>
+
+// CHECK JVM_IR:
+//   Mangled name: #test2(kotlin.collections.List<kotlin.collections.List<kotlin.Int>>){}kotlin.collections.List<kotlin.collections.List<kotlin.Int>>
+//   Public signature: /test2|-8198897601185053178[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test2(kotlin.collections.List<kotlin.collections.List<kotlin.Int>>){}
+//   Public signature: /test2|-5740489603269288144[0]
+fun test2(x: List<List<Int>>): List<List<Int>>
+
+// CHECK JVM_IR:
+//   Mangled name: #test3(kotlin.collections.List<kotlin.collections.List<kotlin.Int>>){}kotlin.collections.List<kotlin.collections.List<kotlin.Int>>
+//   Public signature: /test3|7316669450113571999[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test3(kotlin.collections.List<kotlin.collections.List<kotlin.Int>>){}
+//   Public signature: /test3|-1654983922072882043[0]
+fun test3(x: List<List<Int>>): List<List<Int>>
+
+// CHECK JVM_IR:
+//   Mangled name: #test4(kotlin.collections.List<kotlin.collections.List<kotlin.Int>>){}kotlin.collections.List<kotlin.collections.List<kotlin.Int>>
+//   Public signature: /test4|7378137562896561443[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test4(kotlin.collections.List<kotlin.collections.List<kotlin.Int>>){}
+//   Public signature: /test4|-8069698833973176329[0]
+fun test4(x: List<List<Int>>): List<List<Int>>
+
+// CHECK:
+//   Mangled name: I
+//   Public signature: /I|null[0]
+typealias I = Int
+// CHECK:
+//   Mangled name: L
+//   Public signature: /L|null[0]
+typealias L<T : Any?> = List<T>

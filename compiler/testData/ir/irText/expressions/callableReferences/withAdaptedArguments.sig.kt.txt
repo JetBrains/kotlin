@@ -1,0 +1,109 @@
+// CHECK:
+//   Mangled name: Host
+//   Public signature: /Host|null[0]
+object Host {
+  // CHECK:
+  //   Mangled name: Host#<init>(){}
+  //   Public signature: /Host.<init>|-5645683436151566731[0]
+  private constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: Host#importedObjectMemberWithVarargs(kotlin.IntArray...){}kotlin.String
+  //   Public signature: /Host.importedObjectMemberWithVarargs|7476492663444631478[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: Host#importedObjectMemberWithVarargs(kotlin.IntArray...){}
+  //   Public signature: /Host.importedObjectMemberWithVarargs|-6707689478577439496[0]
+  fun importedObjectMemberWithVarargs(vararg xs: Int): String
+
+}
+
+// CHECK:
+//   Mangled name: #coerceToUnit(kotlin.Function1<kotlin.Int,kotlin.Unit>){}
+//   Public signature: /coerceToUnit|-7636359994506321399[0]
+fun coerceToUnit(fn: Function1<Int, Unit>): Unit
+
+// CHECK JVM_IR:
+//   Mangled name: #fnWithDefault(kotlin.Int;kotlin.Int){}kotlin.String
+//   Public signature: /fnWithDefault|615312624340614007[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #fnWithDefault(kotlin.Int;kotlin.Int){}
+//   Public signature: /fnWithDefault|4463734860376909437[0]
+fun fnWithDefault(a: Int, b: Int): String
+
+// CHECK JVM_IR:
+//   Mangled name: #fnWithDefaults(kotlin.Int;kotlin.Int){}kotlin.String
+//   Public signature: /fnWithDefaults|684786503990558671[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #fnWithDefaults(kotlin.Int;kotlin.Int){}
+//   Public signature: /fnWithDefaults|-7235704441165534247[0]
+fun fnWithDefaults(a: Int, b: Int): String
+
+// CHECK JVM_IR:
+//   Mangled name: #fnWithVarargs(kotlin.IntArray...){}kotlin.String
+//   Public signature: /fnWithVarargs|-2554710779226431969[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #fnWithVarargs(kotlin.IntArray...){}
+//   Public signature: /fnWithVarargs|3976112711378731544[0]
+fun fnWithVarargs(vararg xs: Int): String
+
+// CHECK:
+//   Mangled name: #testCoercionToUnit(){}
+//   Public signature: /testCoercionToUnit|5471888531952545525[0]
+fun testCoercionToUnit(): Unit
+
+// CHECK JVM_IR:
+//   Mangled name: #testDefault(){}kotlin.String
+//   Public signature: /testDefault|-5176015430445505410[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #testDefault(){}
+//   Public signature: /testDefault|3818133201085041648[0]
+fun testDefault(): String
+
+// CHECK JVM_IR:
+//   Mangled name: #testDefault0(){}kotlin.String
+//   Public signature: /testDefault0|6498614662521529564[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #testDefault0(){}
+//   Public signature: /testDefault0|-915023763116368991[0]
+fun testDefault0(): String
+
+// CHECK JVM_IR:
+//   Mangled name: #testImportedObjectMember(){}kotlin.String
+//   Public signature: /testImportedObjectMember|-2324367102610217786[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #testImportedObjectMember(){}
+//   Public signature: /testImportedObjectMember|-2303712063541498691[0]
+fun testImportedObjectMember(): String
+
+// CHECK JVM_IR:
+//   Mangled name: #testVararg(){}kotlin.String
+//   Public signature: /testVararg|-987920175184523683[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #testVararg(){}
+//   Public signature: /testVararg|-5161893703415149761[0]
+fun testVararg(): String
+
+// CHECK JVM_IR:
+//   Mangled name: #testVararg0(){}kotlin.String
+//   Public signature: /testVararg0|-3604981276033465673[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #testVararg0(){}
+//   Public signature: /testVararg0|2721664056984839243[0]
+fun testVararg0(): String
+
+// CHECK JVM_IR:
+//   Mangled name: #use(kotlin.Function1<kotlin.Int,kotlin.String>){}kotlin.String
+//   Public signature: /use|6965134968711081892[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #use(kotlin.Function1<kotlin.Int,kotlin.String>){}
+//   Public signature: /use|-5628727036913455711[0]
+fun use(fn: Function1<Int, String>): String
+
+// CHECK JVM_IR:
+//   Mangled name: #use0(kotlin.Function0<kotlin.String>){}kotlin.String
+//   Public signature: /use0|-1882178247581270166[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #use0(kotlin.Function0<kotlin.String>){}
+//   Public signature: /use0|1837102046920892382[0]
+fun use0(fn: Function0<String>): String
+

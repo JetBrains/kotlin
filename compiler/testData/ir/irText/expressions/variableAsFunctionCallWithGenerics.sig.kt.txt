@@ -1,0 +1,40 @@
+// CHECK JVM_IR:
+//   Mangled name: #kt26531(){}kotlin.Int
+//   Public signature: /kt26531|-5036677741316309709[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #kt26531(){}
+//   Public signature: /kt26531|7300576202386148897[0]
+fun kt26531(): Int
+
+// CHECK JVM_IR:
+//   Mangled name: #testGeneric1(kotlin.String){}kotlin.String
+//   Public signature: /testGeneric1|-7724827201218857505[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #testGeneric1(kotlin.String){}
+//   Public signature: /testGeneric1|-5931195457682017374[0]
+fun testGeneric1(x: String): String
+
+// CHECK:
+//   Mangled name: @0:0{0§<kotlin.CharSequence>}gk
+//   Public signature: /gk|9014869081681113059[0]
+val <T : CharSequence> T.gk: Function0<T>
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-gk>@0:0(){0§<kotlin.CharSequence>}kotlin.Function0<0:0>
+  //   Public signature: /gk.<get-gk>|7271261295339366926[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-gk>@0:0(){0§<kotlin.CharSequence>}
+  //   Public signature: /gk.<get-gk>|1726105423392935976[0]
+  get(): Function0<T>
+
+// CHECK:
+//   Mangled name: @0:0{0§<kotlin.Any?>}kt26531Val
+//   Public signature: /kt26531Val|-1273322007718616598[0]
+val <T : Any?> T.kt26531Val: Function0<T>
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-kt26531Val>@0:0(){0§<kotlin.Any?>}kotlin.Function0<0:0>
+  //   Public signature: /kt26531Val.<get-kt26531Val>|5121802790804301435[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-kt26531Val>@0:0(){0§<kotlin.Any?>}
+  //   Public signature: /kt26531Val.<get-kt26531Val>|-5027838736242807292[0]
+  get(): Function0<T>
+

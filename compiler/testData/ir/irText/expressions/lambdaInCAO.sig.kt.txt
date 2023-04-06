@@ -1,0 +1,33 @@
+// CHECK JVM_IR:
+//   Mangled name: #get@kotlin.Any(kotlin.Function0<kotlin.Unit>){}kotlin.Int
+//   Public signature: /get|-8047211373454001717[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #get@kotlin.Any(kotlin.Function0<kotlin.Unit>){}
+//   Public signature: /get|-138406221196188690[0]
+operator fun Any.get(index: Function0<Unit>): Int
+
+// CHECK:
+//   Mangled name: #plusAssign@kotlin.Any(kotlin.Function0<kotlin.Unit>){}
+//   Public signature: /plusAssign|7373131702739256667[0]
+operator fun Any.plusAssign(lambda: Function0<Unit>): Unit
+
+// CHECK:
+//   Mangled name: #set@kotlin.Any(kotlin.Function0<kotlin.Unit>;kotlin.Int){}
+//   Public signature: /set|-1483796712330329080[0]
+operator fun Any.set(index: Function0<Unit>, value: Int): Unit
+
+// CHECK:
+//   Mangled name: #test1(kotlin.Any){}
+//   Public signature: /test1|-4133164698161335314[0]
+fun test1(a: Any): Unit
+
+// CHECK:
+//   Mangled name: #test2(kotlin.Any){}
+//   Public signature: /test2|-8648451680149324146[0]
+fun test2(a: Any): Unit
+
+// CHECK:
+//   Mangled name: #test3(kotlin.Any){}
+//   Public signature: /test3|165168275269731002[0]
+fun test3(a: Any): Unit
+

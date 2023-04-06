@@ -1,0 +1,115 @@
+// CHECK:
+//   Mangled name: KConsumer
+//   Public signature: /KConsumer|null[0]
+fun interface KConsumer<T : Any?> {
+
+  // CHECK:
+  //   Mangled name: KConsumer#accept(1:0){}
+  //   Public signature: /KConsumer.accept|6106307687017385176[0]
+  abstract fun accept(x: T): Unit
+
+}
+
+// CHECK:
+//   Mangled name: KRunnable
+//   Public signature: /KRunnable|null[0]
+fun interface KRunnable {
+
+  // CHECK:
+  //   Mangled name: KRunnable#run(){}
+  //   Public signature: /KRunnable.run|-991178076551934874[0]
+  abstract fun run(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: KSupplier
+//   Public signature: /KSupplier|null[0]
+fun interface KSupplier<T : Any?> {
+
+  // CHECK JVM_IR:
+  //   Mangled name: KSupplier#get(){}1:0
+  //   Public signature: /KSupplier.get|-8285253024618084508[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: KSupplier#get(){}
+  //   Public signature: /KSupplier.get|5453051481459130259[0]
+  abstract fun get(): T
+
+}
+
+// CHECK JVM_IR:
+//   Mangled name: #test1(){}kotlin.reflect.KFunction1<kotlin.Function0<kotlin.Unit>,KRunnable>
+//   Public signature: /test1|506540275033726465[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test1(){}
+//   Public signature: /test1|4297044443957252634[0]
+fun test1(): KFunction1<Function0<Unit>, KRunnable>
+
+// CHECK JVM_IR:
+//   Mangled name: #test1a(){}kotlin.reflect.KFunction1<kotlin.Function0<kotlin.Unit>,KRunnable>
+//   Public signature: /test1a|-8182615495924259711[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test1a(){}
+//   Public signature: /test1a|9065284326198644477[0]
+fun test1a(): KFunction1<Function0<Unit>, KRunnable>
+
+// CHECK JVM_IR:
+//   Mangled name: #test1b(){}kotlin.reflect.KFunction<KRunnable>
+//   Public signature: /test1b|2835121128193807915[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test1b(){}
+//   Public signature: /test1b|-2979752850126686011[0]
+fun test1b(): KFunction<KRunnable>
+
+// CHECK JVM_IR:
+//   Mangled name: #test2(){}kotlin.Function1<kotlin.Function0<kotlin.String>,KSupplier<kotlin.String>>
+//   Public signature: /test2|8549593161906467660[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test2(){}
+//   Public signature: /test2|4279114864133353152[0]
+fun test2(): Function1<Function0<String>, KSupplier<String>>
+
+// CHECK JVM_IR:
+//   Mangled name: #test2a(){}kotlin.Function1<kotlin.Function0<kotlin.String>,KSupplier<kotlin.String>>
+//   Public signature: /test2a|2821642702752260802[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test2a(){}
+//   Public signature: /test2a|-4222972209784837425[0]
+fun test2a(): Function1<Function0<String>, KSupplier<String>>
+
+// CHECK JVM_IR:
+//   Mangled name: #test3(){}kotlin.Function1<kotlin.Function1<kotlin.String,kotlin.Unit>,KConsumer<kotlin.String>>
+//   Public signature: /test3|2652628399422738400[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test3(){}
+//   Public signature: /test3|-3759735065270951803[0]
+fun test3(): Function1<Function1<String, Unit>, KConsumer<String>>
+
+// CHECK JVM_IR:
+//   Mangled name: #test3a(){}kotlin.Function1<kotlin.Function1<kotlin.String,kotlin.Unit>,KConsumer<kotlin.String>>
+//   Public signature: /test3a|-985514784897508218[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test3a(){}
+//   Public signature: /test3a|2047593289081242684[0]
+fun test3a(): Function1<Function1<String, Unit>, KConsumer<String>>
+
+// CHECK JVM_IR:
+//   Mangled name: #test3b(){}kotlin.reflect.KFunction<KConsumer<kotlin.String>>
+//   Public signature: /test3b|-1724736633267333752[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test3b(){}
+//   Public signature: /test3b|8779461353386599427[0]
+fun test3b(): KFunction<KConsumer<String>>
+
+// CHECK:
+//   Mangled name: KCS
+//   Public signature: /KCS|null[0]
+typealias KCS = KConsumer<String>
+// CHECK:
+//   Mangled name: KR
+//   Public signature: /KR|null[0]
+typealias KR = KRunnable
+// CHECK:
+//   Mangled name: KSS
+//   Public signature: /KSS|null[0]
+typealias KSS = KSupplier<String>

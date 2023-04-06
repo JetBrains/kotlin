@@ -1,0 +1,54 @@
+// CHECK:
+//   Mangled name: Outer
+//   Public signature: /Outer|null[0]
+class Outer<T : Any?> {
+  // CHECK:
+  //   Mangled name: Outer{}x
+  //   Public signature: /Outer.x|-8060530855978347579[0]
+  val x: T
+    // CHECK JVM_IR:
+    //   Mangled name: Outer#<get-x>(){}1:0
+    //   Public signature: /Outer.x.<get-x>|-8893883356128097563[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Outer#<get-x>(){}
+    //   Public signature: /Outer.x.<get-x>|1482705010654679335[0]
+    get
+
+  // CHECK:
+  //   Mangled name: Outer.Inner
+  //   Public signature: /Outer.Inner|null[0]
+  open inner class Inner {
+    // CHECK:
+    //   Mangled name: Outer.Inner{}y
+    //   Public signature: /Outer.Inner.y|3625903257357557171[0]
+    val y: Int
+      // CHECK JVM_IR:
+      //   Mangled name: Outer.Inner#<get-y>(){}kotlin.Int
+      //   Public signature: /Outer.Inner.y.<get-y>|-6745575372101973707[0]
+      // CHECK JS_IR NATIVE:
+      //   Mangled name: Outer.Inner#<get-y>(){}
+      //   Public signature: /Outer.Inner.y.<get-y>|-7902422373892128922[0]
+      get
+
+    // CHECK:
+    //   Mangled name: Outer.Inner#<init>(kotlin.Int){}
+    //   Public signature: /Outer.Inner.<init>|-5182794243525578284[0]
+    constructor(y: Int) /* primary */
+
+  }
+
+  // CHECK:
+  //   Mangled name: Outer#<init>(1:0){}
+  //   Public signature: /Outer.<init>|-8731461708390519279[0]
+  constructor(x: T) /* primary */
+
+}
+
+// CHECK JVM_IR:
+//   Mangled name: #test@Outer<kotlin.Int>(){}Outer.Inner<kotlin.Int>
+//   Public signature: /test|7679810293855475963[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test@Outer<kotlin.Int>(){}
+//   Public signature: /test|6770853626275071541[0]
+fun Outer<Int>.test(): Inner<Int>
+

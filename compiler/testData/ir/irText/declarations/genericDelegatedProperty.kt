@@ -1,3 +1,6 @@
+// MUTE_SIGNATURE_COMPARISON_K2: ANY
+// ^ KT-57436
+
 class C<T>
 
 object Delegate {

@@ -1,0 +1,25 @@
+// CHECK JS_IR NATIVE:
+//   Mangled name: #testBinaryMinus(<dynamic>){}
+//   Public signature: /testBinaryMinus|-6906044509434142120[0]
+fun testBinaryMinus(d: dynamic): dynamic
+
+// CHECK JS_IR NATIVE:
+//   Mangled name: #testBinaryPlus(<dynamic>){}
+//   Public signature: /testBinaryPlus|-1566186978437165994[0]
+fun testBinaryPlus(d: dynamic): dynamic
+
+// CHECK JS_IR NATIVE:
+//   Mangled name: #testDiv(<dynamic>){}
+//   Public signature: /testDiv|-5313978605720972233[0]
+fun testDiv(d: dynamic): dynamic
+
+// CHECK JS_IR NATIVE:
+//   Mangled name: #testMod(<dynamic>){}
+//   Public signature: /testMod|-4500464822782079065[0]
+fun testMod(d: dynamic): dynamic
+
+// CHECK JS_IR NATIVE:
+//   Mangled name: #testMul(<dynamic>){}
+//   Public signature: /testMul|7374329083477531332[0]
+fun testMul(d: dynamic): dynamic
+

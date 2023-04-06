@@ -1,0 +1,78 @@
+// CHECK:
+//   Mangled name: Impl
+//   Public signature: /Impl|null[0]
+class Impl : A, B {
+  // CHECK:
+  //   Mangled name: Impl#<init>(Foo.B){}
+  //   Public signature: /Impl.<init>|1084968671839233134[0]
+  constructor(b: B) /* primary */
+  // CHECK:
+  //   Mangled name: Impl.$$delegate_0
+  //   Public signature: /Impl.$$delegate_0|-7286425919675154353[0]
+  private /* final field */ val $$delegate_0: B
+  // CHECK JVM_IR:
+  //   Mangled name: Impl#add(kotlin.String?){}kotlin.Boolean
+  //   Public signature: /Impl.add|-2525808668243873976[0]
+  override fun add(element: String?): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: Impl#addAll(kotlin.collections.Collection<kotlin.String?>){}kotlin.Boolean
+  //   Public signature: /Impl.addAll|-3089528969221638255[0]
+  override fun addAll(elements: Collection<String?>): Boolean
+
+  // CHECK:
+  //   Mangled name: Impl#clear(){}
+  //   Public signature: /Impl.clear|-6446868449915108923[0]
+  override fun clear(): Unit
+
+  // CHECK JVM_IR:
+  //   Mangled name: Impl#contains(kotlin.String?){}kotlin.Boolean
+  //   Public signature: /Impl.contains|5952569342946134495[0]
+  override operator fun contains(element: String?): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: Impl#containsAll(kotlin.collections.Collection<kotlin.String?>){}kotlin.Boolean
+  //   Public signature: /Impl.containsAll|1049727718390523309[0]
+  override fun containsAll(elements: Collection<String?>): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: Impl#isEmpty(){}kotlin.Boolean
+  //   Public signature: /Impl.isEmpty|-626562167393617703[0]
+  override fun isEmpty(): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: Impl#iterator(){}kotlin.collections.MutableIterator<kotlin.String?>
+  //   Public signature: /Impl.iterator|-2471973611389785770[0]
+  override operator fun iterator(): MutableIterator<String?>
+
+  // CHECK JVM_IR:
+  //   Mangled name: Impl#remove(kotlin.String?){}kotlin.Boolean
+  //   Public signature: /Impl.remove|8505628602427100346[0]
+  override fun remove(element: String?): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: Impl#removeAll(kotlin.collections.Collection<kotlin.String?>){}kotlin.Boolean
+  //   Public signature: /Impl.removeAll|-7838912124890825774[0]
+  override fun removeAll(elements: Collection<String?>): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: Impl#retainAll(kotlin.collections.Collection<kotlin.String?>){}kotlin.Boolean
+  //   Public signature: /Impl.retainAll|6732730442391802777[0]
+  override fun retainAll(elements: Collection<String?>): Boolean
+
+  // CHECK:
+  //   Mangled name: Impl{}size
+  //   Public signature: /Impl.size|-6253659984320132064[0]
+  override val size: Int
+    // CHECK JVM_IR:
+    //   Mangled name: Impl#<get-size>(){}kotlin.Int
+    //   Public signature: /Impl.size.<get-size>|-3941649985161900780[0]
+    override get(): Int
+
+}
+
+// CHECK JVM_IR:
+//   Mangled name: #box(){}kotlin.String
+//   Public signature: /box|-9347091776561469[0]
+fun box(): String
+

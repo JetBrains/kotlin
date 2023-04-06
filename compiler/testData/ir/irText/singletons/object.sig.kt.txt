@@ -1,0 +1,32 @@
+// CHECK:
+//   Mangled name: Z
+//   Public signature: /Z|null[0]
+object Z {
+  // CHECK:
+  //   Mangled name: Z.A
+  //   Public signature: /Z.A|null[0]
+  class A {
+    // CHECK:
+    //   Mangled name: Z.A#<init>(){}
+    //   Public signature: /Z.A.<init>|-5645683436151566731[0]
+    constructor() /* primary */
+
+    // CHECK:
+    //   Mangled name: Z.A#test2(){}
+    //   Public signature: /Z.A.test2|4279114864133353152[0]
+    fun test2(): Unit
+
+  }
+
+  // CHECK:
+  //   Mangled name: Z#<init>(){}
+  //   Public signature: /Z.<init>|-5645683436151566731[0]
+  private constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: Z#test(){}
+  //   Public signature: /Z.test|6620506149988718649[0]
+  fun test(): Unit
+
+}
+

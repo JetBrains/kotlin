@@ -1,0 +1,20 @@
+// CHECK JS_IR NATIVE:
+//   Mangled name: #testGreater(<dynamic>){}
+//   Public signature: /testGreater|8630519043746384333[0]
+fun testGreater(d: dynamic): Boolean
+
+// CHECK JS_IR NATIVE:
+//   Mangled name: #testGreaterOrEqual(<dynamic>){}
+//   Public signature: /testGreaterOrEqual|-4223395036536198085[0]
+fun testGreaterOrEqual(d: dynamic): Boolean
+
+// CHECK JS_IR NATIVE:
+//   Mangled name: #testLess(<dynamic>){}
+//   Public signature: /testLess|7641985245454790157[0]
+fun testLess(d: dynamic): Boolean
+
+// CHECK JS_IR NATIVE:
+//   Mangled name: #testLessOrEqual(<dynamic>){}
+//   Public signature: /testLessOrEqual|-6484107233559376103[0]
+fun testLessOrEqual(d: dynamic): Boolean
+

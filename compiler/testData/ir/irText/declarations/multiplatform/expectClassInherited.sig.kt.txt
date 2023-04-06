@@ -1,0 +1,74 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[1]
+expect abstract class A {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[1]
+  protected expect constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: A#foo(){}
+  //   Public signature: /A.foo|-1041209573719867811[1]
+  expect abstract fun foo(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+abstract class A {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
+  protected constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: A#foo(){}
+  //   Public signature: /A.foo|-1041209573719867811[0]
+  abstract fun foo(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[1]
+expect open class B : A {
+  // CHECK:
+  //   Mangled name: B#<init>(kotlin.Int){}
+  //   Public signature: /B.<init>|-5182794243525578284[1]
+  expect constructor(i: Int) /* primary */
+
+  // CHECK:
+  //   Mangled name: B#bar(kotlin.String){}
+  //   Public signature: /B.bar|5132770888056479978[1]
+  expect open fun bar(s: String): Unit
+
+  // CHECK:
+  //   Mangled name: B#foo(){}
+  //   Public signature: /B.foo|-1041209573719867811[1]
+  expect override fun foo(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[0]
+open class B : A {
+  // CHECK:
+  //   Mangled name: B#<init>(kotlin.Int){}
+  //   Public signature: /B.<init>|-5182794243525578284[0]
+  constructor(i: Int) /* primary */
+
+  // CHECK:
+  //   Mangled name: B#bar(kotlin.String){}
+  //   Public signature: /B.bar|5132770888056479978[0]
+  open fun bar(s: String): Unit
+
+  // CHECK:
+  //   Mangled name: B#foo(){}
+  //   Public signature: /B.foo|-1041209573719867811[0]
+  override fun foo(): Unit
+
+}
+

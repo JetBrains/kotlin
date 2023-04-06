@@ -1,0 +1,26 @@
+// CHECK:
+//   Mangled name: {}p
+//   Public signature: /p|6715504260787941082[0]
+var p: Int
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-p>(){}kotlin.Int
+  //   Public signature: /p.<get-p>|5329635969197638839[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-p>(){}
+  //   Public signature: /p.<get-p>|-1162552463316289847[0]
+  get
+  // CHECK:
+  //   Mangled name: #<set-p>(kotlin.Int){}
+  //   Public signature: /p.<set-p>|-6346582004572228570[0]
+  set
+
+// CHECK:
+//   Mangled name: #testProperty(){}
+//   Public signature: /testProperty|5285658686723604291[0]
+fun testProperty(): Unit
+
+// CHECK:
+//   Mangled name: #testVariable(){}
+//   Public signature: /testVariable|660968387512033895[0]
+fun testVariable(): Unit
+

@@ -1,0 +1,39 @@
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
+class C {
+  // CHECK:
+  //   Mangled name: C{}test1
+  //   Public signature: /C.test1|6005685442305498193[0]
+  val test1: Int
+    // CHECK JVM_IR:
+    //   Mangled name: C#<get-test1>(){}kotlin.Int
+    //   Public signature: /C.test1.<get-test1>|3978508226793108919[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: C#<get-test1>(){}
+    //   Public signature: /C.test1.<get-test1>|-5735092642142423279[0]
+    get
+
+  // CHECK:
+  //   Mangled name: C{}test2
+  //   Public signature: /C.test2|2517758057000911509[0]
+  var test2: Int
+    // CHECK JVM_IR:
+    //   Mangled name: C#<get-test2>(){}kotlin.Int
+    //   Public signature: /C.test2.<get-test2>|-8779933517717592707[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: C#<get-test2>(){}
+    //   Public signature: /C.test2.<get-test2>|-5218942532816206869[0]
+    get
+    // CHECK:
+    //   Mangled name: C#<set-test2>(kotlin.Int){}
+    //   Public signature: /C.test2.<set-test2>|1925150309265265312[0]
+    set
+
+  // CHECK:
+  //   Mangled name: C#<init>(kotlin.Int;kotlin.Int){}
+  //   Public signature: /C.<init>|-7691762014320324121[0]
+  constructor(test1: Int, test2: Int) /* primary */
+
+}
+

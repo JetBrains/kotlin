@@ -1,0 +1,129 @@
+// CHECK:
+//   Mangled name: IdeWizard
+//   Public signature: /IdeWizard|null[0]
+class IdeWizard {
+  // CHECK:
+  //   Mangled name: IdeWizard{}projectTemplate
+  //   Public signature: /IdeWizard.projectTemplate|1011078309052725595[0]
+  var projectTemplate: Int? /* by */
+    field
+    // CHECK JVM_IR:
+    //   Mangled name: IdeWizard#<get-projectTemplate>(){}kotlin.Int?
+    //   Public signature: /IdeWizard.projectTemplate.<get-projectTemplate>|-8817473698570649998[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: IdeWizard#<get-projectTemplate>(){}
+    //   Public signature: /IdeWizard.projectTemplate.<get-projectTemplate>|-3125600217184137732[0]
+    get(): Int?
+    // CHECK:
+    //   Mangled name: IdeWizard#<set-projectTemplate>(kotlin.Int?){}
+    //   Public signature: /IdeWizard.projectTemplate.<set-projectTemplate>|7033237300104161042[0]
+    set(<set-?>: Int?): Unit
+
+  // CHECK:
+  //   Mangled name: IdeWizard#<init>(){}
+  //   Public signature: /IdeWizard.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: IdeWizard#setting(SettingReference<0:0,0:1>){0§<kotlin.Any>;1§<SettingType<0:0>>}IdeWizard#setting.<no name provided><0:0,0:1>
+  //   Public signature: /IdeWizard.setting|-3504445808823548764[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: IdeWizard#setting(SettingReference<0:0,0:1>){0§<kotlin.Any>;1§<SettingType<0:0>>}
+  //   Public signature: /IdeWizard.setting|2630265268614068431[0]
+  private fun <V : Any, T : SettingType<V>> setting(reference: SettingReference<V, T>): <no name provided><V, T>
+    // CHECK JVM_IR:
+    //   Mangled name: IdeWizard#setting(SettingReference<1:0,1:1>){0§<kotlin.Any>;1§<SettingType<1:0>>}IdeWizard#setting.<no name provided><1:0,1:1>.<no name provided>
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: IdeWizard#setting(SettingReference<1:0,1:1>){0§<kotlin.Any>;1§<SettingType<1:0>>}.<no name provided>
+    local class <no name provided> : ReadWriteProperty<Any?, V?> {
+      // CHECK JVM_IR:
+      //   Mangled name: IdeWizard#setting(SettingReference<2:0,2:1>){0§<kotlin.Any>;1§<SettingType<2:0>>}IdeWizard#setting.<no name provided><2:0,2:1>.<no name provided>#<init>(){}
+      // CHECK JS_IR NATIVE:
+      //   Mangled name: IdeWizard#setting(SettingReference<2:0,2:1>){0§<kotlin.Any>;1§<SettingType<2:0>>}.<no name provided>#<init>(){}
+      constructor() /* primary */
+
+      // CHECK JVM_IR:
+      //   Mangled name: IdeWizard#setting(SettingReference<2:0,2:1>){0§<kotlin.Any>;1§<SettingType<2:0>>}IdeWizard#setting.<no name provided><2:0,2:1>.<no name provided>#getValue(kotlin.Any?;kotlin.reflect.KProperty<*>){}2:0?
+      // CHECK JS_IR NATIVE:
+      //   Mangled name: IdeWizard#setting(SettingReference<2:0,2:1>){0§<kotlin.Any>;1§<SettingType<2:0>>}.<no name provided>#getValue(kotlin.Any?;kotlin.reflect.KProperty<*>){}
+      override operator fun getValue(thisRef: Any?, property: KProperty<*>): V?
+
+      // CHECK JVM_IR:
+      //   Mangled name: IdeWizard#setting(SettingReference<2:0,2:1>){0§<kotlin.Any>;1§<SettingType<2:0>>}IdeWizard#setting.<no name provided><2:0,2:1>.<no name provided>#setValue(kotlin.Any?;kotlin.reflect.KProperty<*>;2:0?){}
+      // CHECK JS_IR NATIVE:
+      //   Mangled name: IdeWizard#setting(SettingReference<2:0,2:1>){0§<kotlin.Any>;1§<SettingType<2:0>>}.<no name provided>#setValue(kotlin.Any?;kotlin.reflect.KProperty<*>;2:0?){}
+      override operator fun setValue(thisRef: Any?, property: KProperty<*>, value: V?): Unit
+
+    }
+
+}
+
+// CHECK:
+//   Mangled name: SettingReference
+//   Public signature: /SettingReference|null[0]
+class SettingReference<V : Any, T : SettingType<V>> {
+  // CHECK:
+  //   Mangled name: SettingReference{}t
+  //   Public signature: /SettingReference.t|-8767999791664836944[0]
+  var t: T
+    field
+    // CHECK JVM_IR:
+    //   Mangled name: SettingReference#<get-t>(){}1:1
+    //   Public signature: /SettingReference.t.<get-t>|3876475218778608787[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: SettingReference#<get-t>(){}
+    //   Public signature: /SettingReference.t.<get-t>|7061140872129253552[0]
+    get
+    // CHECK:
+    //   Mangled name: SettingReference#<set-t>(1:1){}
+    //   Public signature: /SettingReference.t.<set-t>|-1029452311345649469[0]
+    set
+
+  // CHECK:
+  //   Mangled name: SettingReference{}v
+  //   Public signature: /SettingReference.v|138869847852828796[0]
+  var v: V
+    field
+    // CHECK JVM_IR:
+    //   Mangled name: SettingReference#<get-v>(){}1:0
+    //   Public signature: /SettingReference.v.<get-v>|-6358452650346304910[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: SettingReference#<get-v>(){}
+    //   Public signature: /SettingReference.v.<get-v>|4964732996156868941[0]
+    get
+    // CHECK:
+    //   Mangled name: SettingReference#<set-v>(1:0){}
+    //   Public signature: /SettingReference.v.<set-v>|-106720973864593013[0]
+    set
+
+  // CHECK:
+  //   Mangled name: SettingReference#<init>(1:1;1:0){}
+  //   Public signature: /SettingReference.<init>|6008610667973001214[0]
+  constructor(t: T, v: V) /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: SettingType
+//   Public signature: /SettingType|null[0]
+class SettingType<out V : Any> {
+  // CHECK:
+  //   Mangled name: SettingType{}type
+  //   Public signature: /SettingType.type|-6051055617123801408[0]
+  val type: KClass<out V>
+    field
+    // CHECK JVM_IR:
+    //   Mangled name: SettingType#<get-type>(){}kotlin.reflect.KClass<out|1:0>
+    //   Public signature: /SettingType.type.<get-type>|-782685829818054763[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: SettingType#<get-type>(){}
+    //   Public signature: /SettingType.type.<get-type>|5958014174245684635[0]
+    get
+
+  // CHECK:
+  //   Mangled name: SettingType#<init>(kotlin.reflect.KClass<out|1:0>){}
+  //   Public signature: /SettingType.<init>|-6177444285779890382[0]
+  constructor(type: KClass<out V>) /* primary */
+
+}
+

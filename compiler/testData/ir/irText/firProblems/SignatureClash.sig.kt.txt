@@ -1,0 +1,128 @@
+// CHECK:
+//   Mangled name: DataClass
+//   Public signature: /DataClass|null[0]
+data class DataClass : Delegate, Derived {
+  // CHECK:
+  //   Mangled name: DataClass{}delegate
+  //   Public signature: /DataClass.delegate|-801742451047326070[0]
+  val delegate: Delegate
+    // CHECK JVM_IR:
+    //   Mangled name: DataClass#<get-delegate>(){}Delegate
+    //   Public signature: /DataClass.delegate.<get-delegate>|6133163829830511426[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: DataClass#<get-delegate>(){}
+    //   Public signature: /DataClass.delegate.<get-delegate>|448313462178410567[0]
+    get
+
+  // CHECK:
+  //   Mangled name: DataClass#<init>(Delegate){}
+  //   Public signature: /DataClass.<init>|7426992287025160657[0]
+  constructor(delegate: Delegate) /* primary */
+  // CHECK:
+  //   Mangled name: DataClass#bar(){}
+  //   Public signature: /DataClass.bar|496682602797471549[0]
+  override fun bar(): Unit
+
+  // CHECK JVM_IR:
+  //   Mangled name: DataClass#component1(){}Delegate
+  //   Public signature: /DataClass.component1|748132671697339477[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: DataClass#component1(){}
+  //   Public signature: /DataClass.component1|162597135895221648[0]
+  operator fun component1(): Delegate
+
+  // CHECK JVM_IR:
+  //   Mangled name: DataClass#copy(Delegate){}DataClass
+  //   Public signature: /DataClass.copy|-3599253859920134304[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: DataClass#copy(Delegate){}
+  //   Public signature: /DataClass.copy|-6641847768161473840[0]
+  fun copy(delegate: Delegate): DataClass
+
+  // CHECK JVM_IR:
+  //   Mangled name: DataClass#equals(kotlin.Any?){}kotlin.Boolean
+  //   Public signature: /DataClass.equals|722809408929142791[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: DataClass#equals(kotlin.Any?){}
+  //   Public signature: /DataClass.equals|4638265728071529943[0]
+  override operator fun equals(other: Any?): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: DataClass#hashCode(){}kotlin.Int
+  //   Public signature: /DataClass.hashCode|-8048879360829830756[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: DataClass#hashCode(){}
+  //   Public signature: /DataClass.hashCode|3409210261493131192[0]
+  override fun hashCode(): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: DataClass#toString(){}kotlin.String
+  //   Public signature: /DataClass.toString|6958853723545266802[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: DataClass#toString(){}
+  //   Public signature: /DataClass.toString|-1522858123163872138[0]
+  override fun toString(): String
+
+}
+
+// CHECK:
+//   Mangled name: Base
+//   Public signature: /Base|null[0]
+interface Base {
+
+}
+
+// CHECK:
+//   Mangled name: Delegate
+//   Public signature: /Delegate|null[0]
+interface Delegate : Base {
+
+  // CHECK:
+  //   Mangled name: Delegate#bar(){}
+  //   Public signature: /Delegate.bar|496682602797471549[0]
+  abstract fun bar(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: Derived
+//   Public signature: /Derived|null[0]
+interface Derived : Delegate {
+  // CHECK:
+  //   Mangled name: Derived#bar(){}
+  //   Public signature: /Derived.bar|496682602797471549[0]
+  abstract /* fake */ override fun bar(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: Factory
+//   Public signature: /Factory|null[0]
+object Factory {
+  // CHECK:
+  //   Mangled name: Factory#<init>(){}
+  //   Public signature: /Factory.<init>|-5645683436151566731[0]
+  private constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: Factory#foo(kotlin.String){}kotlin.String
+  //   Public signature: /Factory.foo|-5534735991146511619[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: Factory#foo(kotlin.String){}
+  //   Public signature: /Factory.foo|1351044947738582195[0]
+  fun foo(a: String): String
+
+  // CHECK JVM_IR:
+  //   Mangled name: Factory#foo(kotlin.String;kotlin.Function1<kotlin.Any,kotlin.String?>){}kotlin.String
+  //   Public signature: /Factory.foo|-1406038686123493927[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: Factory#foo(kotlin.String;kotlin.Function1<kotlin.Any,kotlin.String?>){}
+  //   Public signature: /Factory.foo|555399751922815029[0]
+  fun foo(a: String, f: Function1<Any, String?>): String
+
+}
+
+// CHECK:
+//   Mangled name: Some
+//   Public signature: /Some|null[0]
+typealias Some = Function1<Any, String?>

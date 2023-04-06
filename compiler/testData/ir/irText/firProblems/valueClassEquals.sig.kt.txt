@@ -1,0 +1,43 @@
+// CHECK:
+//   Mangled name: {}equals
+//   Public signature: /equals|-1340381053427629212[0]
+val equals: KFunction2<Z, Any?, Boolean>
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-equals>(){}kotlin.reflect.KFunction2<Z,kotlin.Any?,kotlin.Boolean>
+  //   Public signature: /equals.<get-equals>|5606412553566840313[0]
+  get
+
+// CHECK:
+//   Mangled name: Z
+//   Public signature: /Z|null[0]
+@JvmInline
+value class Z {
+  // CHECK:
+  //   Mangled name: Z{}s
+  //   Public signature: /Z.s|7217541905509134881[0]
+  val s: String
+    // CHECK JVM_IR:
+    //   Mangled name: Z#<get-s>(){}kotlin.String
+    //   Public signature: /Z.s.<get-s>|4142379646177092803[0]
+    get
+
+  // CHECK:
+  //   Mangled name: Z#<init>(kotlin.String){}
+  //   Public signature: /Z.<init>|1280618353163213788[0]
+  constructor(s: String) /* primary */
+  // CHECK JVM_IR:
+  //   Mangled name: Z#equals(kotlin.Any?){}kotlin.Boolean
+  //   Public signature: /Z.equals|722809408929142791[0]
+  override operator fun equals(other: Any?): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: Z#hashCode(){}kotlin.Int
+  //   Public signature: /Z.hashCode|-8048879360829830756[0]
+  override fun hashCode(): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: Z#toString(){}kotlin.String
+  //   Public signature: /Z.toString|6958853723545266802[0]
+  override fun toString(): String
+
+}

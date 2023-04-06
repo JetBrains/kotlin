@@ -1,0 +1,92 @@
+package test
+
+// CHECK:
+//   Mangled name: test.A
+//   Public signature: test/A|null[0]
+class A {
+  // CHECK:
+  //   Mangled name: test.A{}b
+  //   Public signature: test/A.b|772347207915745207[0]
+  val b: Int
+    // CHECK JVM_IR:
+    //   Mangled name: test.A#<get-b>(){}kotlin.Int
+    //   Public signature: test/A.b.<get-b>|-2902143276921469679[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: test.A#<get-b>(){}
+    //   Public signature: test/A.b.<get-b>|812004636995167743[0]
+    get
+
+  // CHECK:
+  //   Mangled name: test.A{}a
+  //   Public signature: test/A.a|-1200697420457237799[0]
+  val a: Int
+    // CHECK JVM_IR:
+    //   Mangled name: test.A#<get-a>(){}kotlin.Int
+    //   Public signature: test/A.a.<get-a>|4232747788241509192[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: test.A#<get-a>(){}
+    //   Public signature: test/A.a.<get-a>|6785176174175479410[0]
+    get
+
+  // CHECK:
+  //   Mangled name: test.A#<init>(){}
+  //   Public signature: test/A.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+  // CHECK:
+  //   Mangled name: test.A#<init>(kotlin.Double){}
+  //   Public signature: test/A.<init>|575075696928934302[0]
+  constructor(x: Double)
+  // CHECK:
+  //   Mangled name: test.A#<init>(kotlin.Int){}
+  //   Public signature: test/A.<init>|-5182794243525578284[0]
+  constructor(x: Int)
+  // CHECK:
+  //   Mangled name: test.A#<init>(kotlin.String){}
+  //   Public signature: test/A.<init>|1280618353163213788[0]
+  constructor(x: String)
+
+  // CHECK:
+  //   Mangled name: test.A#a(){}
+  //   Public signature: test/A.a|-4432112437378250461[0]
+  fun a(): Unit
+
+  // CHECK:
+  //   Mangled name: test.A#a@kotlin.String(){}
+  //   Public signature: test/A.a|1255254255352403666[0]
+  fun String.a(): Unit
+
+  // CHECK:
+  //   Mangled name: test.A#b(){}
+  //   Public signature: test/A.b|4789657038926421504[0]
+  fun b(): Unit
+
+  // CHECK:
+  //   Mangled name: test.A#b@kotlin.String(){}
+  //   Public signature: test/A.b|7551113070366625353[0]
+  fun String.b(): Unit
+
+  // CHECK:
+  //   Mangled name: test.A@kotlin.Int{}a
+  //   Public signature: test/A.a|6414450735717092429[0]
+  val Int.a: String
+    // CHECK JVM_IR:
+    //   Mangled name: test.A#<get-a>@kotlin.Int(){}kotlin.String
+    //   Public signature: test/A.a.<get-a>|-8980177656795826496[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: test.A#<get-a>@kotlin.Int(){}
+    //   Public signature: test/A.a.<get-a>|7799474542058666497[0]
+    get(): String
+
+  // CHECK:
+  //   Mangled name: test.A@kotlin.Int{}b
+  //   Public signature: test/A.b|1728020612396458771[0]
+  val Int.b: String
+    // CHECK JVM_IR:
+    //   Mangled name: test.A#<get-b>@kotlin.Int(){}kotlin.String
+    //   Public signature: test/A.b.<get-b>|-3427454669423307773[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: test.A#<get-b>@kotlin.Int(){}
+    //   Public signature: test/A.b.<get-b>|1001308148257010945[0]
+    get(): String
+
+}

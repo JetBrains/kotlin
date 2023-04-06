@@ -1,0 +1,46 @@
+// CHECK:
+//   Mangled name: Test
+//   Public signature: /Test|null[0]
+class Test<T0 : Any?> {
+  // CHECK:
+  //   Mangled name: Test.TestInner
+  //   Public signature: /Test.TestInner|null[0]
+  inner class TestInner<T2 : Any?> {
+    // CHECK:
+    //   Mangled name: Test.TestInner#<init>(){}
+    //   Public signature: /Test.TestInner.<init>|-5645683436151566731[0]
+    constructor() /* primary */
+
+  }
+
+  // CHECK:
+  //   Mangled name: Test.TestNested
+  //   Public signature: /Test.TestNested|null[0]
+  class TestNested<T1 : Any?> {
+    // CHECK:
+    //   Mangled name: Test.TestNested#<init>(){}
+    //   Public signature: /Test.TestNested.<init>|-5645683436151566731[0]
+    constructor() /* primary */
+
+  }
+
+  // CHECK:
+  //   Mangled name: Test#<init>(){}
+  //   Public signature: /Test.<init>|-5645683436151566731[0]
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: TestInterface
+//   Public signature: /TestInterface|null[0]
+interface TestInterface<T : Any?> {
+  // CHECK:
+  //   Mangled name: TestInterface.TestNestedInterface
+  //   Public signature: /TestInterface.TestNestedInterface|null[0]
+  interface TestNestedInterface<TT : Any?> {
+
+  }
+
+}
+

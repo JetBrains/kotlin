@@ -1,6 +1,9 @@
 // !LANGUAGE: +ContextReceivers
 // TARGET_BACKEND: JVM_IR
 
+// MUTE_SIGNATURE_COMPARISON_K2: ANY
+// ^ KT-57435
+
 data class Result(var i: Int)
 
 var operationScore = 0
