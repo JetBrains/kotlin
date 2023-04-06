@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.getModifierList
 import org.jetbrains.kotlin.fir.analysis.checkers.syntax.FirSyntaxChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.builder.toKtPsiSourceElement
 import org.jetbrains.kotlin.fir.types.FirFunctionTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.psi.KtParameter
@@ -34,7 +35,7 @@ object FirUnsupportedModifiersInFunctionTypeParameterChecker : FirFunctionalType
     private fun checkValOrVarKeyword(source: KtSourceElement, reporter: DiagnosticReporter, context: CheckerContext) {
         val keyword = when (source) {
             is KtPsiSourceElement ->
-                (source.psi as? KtValVarKeywordOwner)?.valOrVarKeyword?.toKtPsiSourceElement()
+                (source.psi as? KtValVarKeywordOwner)?.valOrVarKeyword?.toKtPsiSourceElement(context.session)
 
             is KtLightSourceElement ->
                 source.treeStructure.valOrVarKeyword(source.lighterASTNode)?.toKtLightSourceElement(source.treeStructure)
@@ -53,7 +54,7 @@ object FirUnsupportedModifiersInFunctionTypeParameterChecker : FirFunctionalType
         val modifiersList = source.getModifierList() ?: return true
         for (modifier in modifiersList.modifiers) {
             reporter.reportOn(
-                modifier.source,
+                modifier.getSource(context.session),
                 FirErrors.UNSUPPORTED,
                 "modifier on parameter in function type",
                 context

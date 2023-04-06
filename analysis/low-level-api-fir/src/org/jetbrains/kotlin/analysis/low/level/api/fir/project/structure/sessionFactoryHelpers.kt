@@ -26,6 +26,8 @@ import org.jetbrains.kotlin.analysis.providers.createDeclarationProvider
 import org.jetbrains.kotlin.fir.FirExceptionHandler
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionConfiguration
+import org.jetbrains.kotlin.fir.builder.FirPsiSourceElementFactory
+import org.jetbrains.kotlin.fir.builder.FirPsiSourceElementWithFixedPsiFactory
 import org.jetbrains.kotlin.fir.caches.FirCachesFactory
 import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
@@ -48,6 +50,7 @@ internal fun LLFirSession.registerIdeComponents(project: Project) {
     createResolveExtensionTool()?.let {
         register(LLFirResolveExtensionTool::class, it)
     }
+    register(FirPsiSourceElementFactory::class, FirPsiSourceElementWithFixedPsiFactory)
 }
 
 private fun LLFirSession.createResolveExtensionTool(): LLFirResolveExtensionTool? {

@@ -58,7 +58,7 @@ object FirJvmExternalDeclarationChecker : FirBasicDeclarationChecker() {
             }
             val externalModifier = declaration.getModifier(KtTokens.EXTERNAL_KEYWORD)
             externalModifier?.let {
-                reporter.reportOn(it.source, FirErrors.WRONG_MODIFIER_TARGET, it.token, target, context)
+                reporter.reportOn(it.getSource(context.session), FirErrors.WRONG_MODIFIER_TARGET, it.token, target, context)
             }
             return
         }

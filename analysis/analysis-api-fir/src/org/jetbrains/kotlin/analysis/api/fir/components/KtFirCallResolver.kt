@@ -67,12 +67,12 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.KtPsiUtil.deparenthesize
 import org.jetbrains.kotlin.psi.psiUtil.getPossiblyQualifiedCallExpression
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
-import org.jetbrains.kotlin.toKtPsiSourceElement
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions.EQUALS
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import org.jetbrains.kotlin.fir.builder.toKtPsiSourceElement
 
 internal class KtFirCallResolver(
     override val analysisSession: KtFirAnalysisSession,
@@ -235,7 +235,7 @@ internal class KtFirCallResolver(
                     is FirSuperReference -> {
                         val delegatedConstructorCall = this as? FirDelegatedConstructorCall ?: return null
                         val errorTypeRef = delegatedConstructorCall.constructedTypeRef as? FirErrorTypeRef ?: return null
-                        val psiSource = psi.toKtPsiSourceElement()
+                        val psiSource = psi.toKtPsiSourceElement(rootModuleSession)
                         val ktDiagnostic = errorTypeRef.diagnostic.asKtDiagnostic(source ?: psiSource, psiSource) ?: return null
                         KtErrorCallInfo(emptyList(), ktDiagnostic, token)
                     }
@@ -1071,7 +1071,7 @@ internal class KtFirCallResolver(
         val diagnostic = createConeDiagnosticForCandidateWithError(candidate.currentApplicability, candidate)
         if (diagnostic is ConeHiddenCandidateError) return null
         val ktDiagnostic =
-            resolvable.source?.let { diagnostic.asKtDiagnostic(it, element.toKtPsiSourceElement()) }
+            resolvable.source?.let { diagnostic.asKtDiagnostic(it, element.toKtPsiSourceElement(rootModuleSession)) }
                 ?: KtNonBoundToPsiErrorDiagnostic(factoryName = null, diagnostic.reason, token)
         return KtInapplicableCallCandidateInfo(call, isInBestCandidates, ktDiagnostic)
     }
@@ -1304,7 +1304,7 @@ internal class KtFirCallResolver(
     }
 
     private fun FirDiagnosticHolder.createKtDiagnostic(psi: KtElement?): KtDiagnostic {
-        return (source?.let { diagnostic.asKtDiagnostic(it, psi?.toKtPsiSourceElement()) }
+        return (source?.let { diagnostic.asKtDiagnostic(it, psi?.toKtPsiSourceElement(rootModuleSession)) }
             ?: KtNonBoundToPsiErrorDiagnostic(factoryName = null, diagnostic.reason, token))
     }
 }

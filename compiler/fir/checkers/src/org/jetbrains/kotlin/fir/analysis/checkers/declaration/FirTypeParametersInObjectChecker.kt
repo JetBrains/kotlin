@@ -28,7 +28,7 @@ object FirTypeParametersInObjectChecker : FirClassChecker() {
             is FirRegularClass -> if (declaration.typeParameters.isNotEmpty()) {
                 reporter.reportOn(declaration.source, FirErrors.TYPE_PARAMETERS_IN_OBJECT, context)
             }
-            is FirAnonymousObject -> if (declaration.source?.getChild(KtNodeTypes.TYPE_PARAMETER_LIST, depth = 1) != null) {
+            is FirAnonymousObject -> if (declaration.source?.getChild(context.session, KtNodeTypes.TYPE_PARAMETER_LIST, depth = 1) != null) {
                 val diagnosticFactory =
                     if (context.session.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitTypeParametersInAnonymousObjects)) {
                         FirErrors.TYPE_PARAMETERS_IN_OBJECT

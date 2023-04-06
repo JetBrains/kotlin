@@ -12,6 +12,7 @@ import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.diagnostics.valOrVarKeyword
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.lexer.KtKeywordToken
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.psi.KtModifierList
 import org.jetbrains.kotlin.psi.KtModifierListOwner
 import org.jetbrains.kotlin.psi.KtValVarKeywordOwner
 import org.jetbrains.kotlin.util.getChildren
+import org.jetbrains.kotlin.fir.builder.toKtPsiSourceElement
 
 // DO
 // - use this to retrieve modifiers on the source and confirm a certain modifier indeed appears
@@ -61,8 +63,11 @@ sealed class FirModifier<Node : Any>(val node: Node, val token: KtModifierKeywor
         node: ASTNode,
         token: KtModifierKeywordToken
     ) : FirModifier<ASTNode>(node, token) {
-        override val source: KtSourceElement
-            get() = node.psi.toKtPsiSourceElement()
+
+        override fun getSource(session: FirSession): KtSourceElement {
+            return node.psi.toKtPsiSourceElement(session)
+        }
+
     }
 
     class FirLightModifier(
@@ -71,15 +76,16 @@ sealed class FirModifier<Node : Any>(val node: Node, val token: KtModifierKeywor
         val tree: FlyweightCapableTreeStructure<LighterASTNode>,
         private val offsetDelta: Int
     ) : FirModifier<LighterASTNode>(node, token) {
-        override val source: KtSourceElement
-            get() = node.toKtLightSourceElement(
+        override fun getSource(session: FirSession): KtSourceElement {
+            return node.toKtLightSourceElement(
                 tree,
                 startOffset = node.startOffset + offsetDelta,
                 endOffset = node.endOffset + offsetDelta
             )
+        }
     }
 
-    abstract val source: KtSourceElement
+    abstract fun getSource(session: FirSession): KtSourceElement
 }
 
 fun KtSourceElement?.getModifierList(): FirModifierList? {

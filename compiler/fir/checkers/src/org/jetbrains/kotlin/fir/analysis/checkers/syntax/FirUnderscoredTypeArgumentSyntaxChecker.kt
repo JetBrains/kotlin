@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.analysis.buildChildSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.isUnderscore
 import org.jetbrains.kotlin.fir.analysis.diagnostics.*
+import org.jetbrains.kotlin.fir.builder.toKtPsiSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.psi.KtTypeProjection
 
@@ -37,7 +38,7 @@ object FirUnderscoredTypeArgumentSyntaxChecker : FirExpressionSyntaxChecker<FirF
 
             for (annotation in typeReference.annotationEntries) {
                 reporter.reportOn(
-                    annotation.toKtPsiSourceElement(), FirErrors.UNSUPPORTED,
+                    annotation.toKtPsiSourceElement(context.session), FirErrors.UNSUPPORTED,
                     "annotations on an underscored type argument", context
                 )
             }

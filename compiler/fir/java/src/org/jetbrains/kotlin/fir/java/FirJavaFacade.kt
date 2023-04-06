@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.builder.toKtPsiSourceElement
 import org.jetbrains.kotlin.fir.caches.createCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
@@ -689,7 +690,7 @@ abstract class FirJavaFacade(
         asString().substringBefore(".")
 
     private fun JavaElement.toSourceElement(sourceElementKind: KtSourceElementKind = KtRealSourceElementKind): KtSourceElement? {
-        return (this as? JavaElementImpl<*>)?.psi?.toKtPsiSourceElement(sourceElementKind)
+        return (this as? JavaElementImpl<*>)?.psi?.toKtPsiSourceElement(session, sourceElementKind)
     }
 
     private fun List<FirTypeParameter>.toRefs(): List<FirTypeParameterRef> {

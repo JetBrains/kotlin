@@ -81,12 +81,12 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker() {
         if (symbol.callableId == KOTLIN_SUSPEND_BUILT_IN_FUNCTION_CALLABLE_ID) {
             if (reference.name != BUILTIN_SUSPEND_NAME ||
                 expression.explicitReceiver != null ||
-                expression.formOfSuspendModifierForLambdaOrFun() == null
+                expression.formOfSuspendModifierForLambdaOrFun(context) == null
             ) {
                 reporter.reportOn(expression.source, FirErrors.NON_MODIFIER_FORM_FOR_BUILT_IN_SUSPEND, context)
             }
         } else if (reference.name == BUILTIN_SUSPEND_NAME) {
-            when (expression.formOfSuspendModifierForLambdaOrFun()) {
+            when (expression.formOfSuspendModifierForLambdaOrFun(context)) {
                 SuspendCallArgumentKind.FUN -> {
                     reporter.reportOn(expression.source, FirErrors.MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND_FUN, context)
                 }
@@ -100,7 +100,7 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker() {
         }
     }
 
-    private fun FirQualifiedAccessExpression.formOfSuspendModifierForLambdaOrFun(): SuspendCallArgumentKind? {
+    private fun FirQualifiedAccessExpression.formOfSuspendModifierForLambdaOrFun(context: CheckerContext): SuspendCallArgumentKind? {
         if (this !is FirFunctionCall) return null
         val reference = this.calleeReference
         if (reference is FirResolvedCallableReference) return null
@@ -109,14 +109,14 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker() {
             // No brackets should be in a selector call
             val callExpressionSource =
                 if (explicitReceiver == null) source
-                else source?.getChild(KtNodeTypes.CALL_EXPRESSION, index = 1, depth = 1)
-            if (callExpressionSource?.getChild(KtNodeTypes.VALUE_ARGUMENT_LIST, depth = 1) == null) {
+                else source?.getChild(context.session, KtNodeTypes.CALL_EXPRESSION, index = 1, depth = 1)
+            if (callExpressionSource?.getChild(context.session, KtNodeTypes.VALUE_ARGUMENT_LIST, depth = 1) == null) {
                 return SuspendCallArgumentKind.LAMBDA
             }
         }
         if (origin == FirFunctionCallOrigin.Infix) {
             val lastArgument = arguments.lastOrNull()
-            if (lastArgument is FirAnonymousFunctionExpression && source?.getChild(KtNodeTypes.PARENTHESIZED, depth = 1) == null) {
+            if (lastArgument is FirAnonymousFunctionExpression && source?.getChild(context.session, KtNodeTypes.PARENTHESIZED, depth = 1) == null) {
                 return if (lastArgument.source?.lighterASTNode?.tokenType == KtStubElementTypes.FUNCTION) {
                     SuspendCallArgumentKind.FUN
                 } else {

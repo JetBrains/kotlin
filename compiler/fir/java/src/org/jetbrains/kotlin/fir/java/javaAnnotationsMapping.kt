@@ -40,9 +40,9 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.toKtPsiSourceElement
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.util.*
+import org.jetbrains.kotlin.fir.builder.toKtPsiSourceElement
 
 internal fun Iterable<JavaAnnotation>.convertAnnotationsToFir(
     session: FirSession, javaTypeParameterStack: JavaTypeParameterStack
@@ -70,7 +70,7 @@ internal fun JavaValueParameter.toFirValueParameter(
     javaTypeParameterStack: JavaTypeParameterStack,
 ): FirValueParameter {
     return buildJavaValueParameter {
-        source = (this@toFirValueParameter as? JavaElementImpl<*>)?.psi?.toKtPsiSourceElement()
+        source = (this@toFirValueParameter as? JavaElementImpl<*>)?.psi?.toKtPsiSourceElement(session)
         isFromSource = this@toFirValueParameter.isFromSource
         this.moduleData = moduleData
         containingFunctionSymbol = functionSymbol

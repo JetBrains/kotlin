@@ -63,7 +63,7 @@ object FirExplicitApiDeclarationChecker : FirDeclarationSyntaxChecker<FirDeclara
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
-        val visibilityModifier = source.getChild(KtNodeTypes.MODIFIER_LIST, depth = 1)?.getChild(KtTokens.VISIBILITY_MODIFIERS)
+        val visibilityModifier = source.getChild(context.session, KtNodeTypes.MODIFIER_LIST, depth = 1)?.getChild(context.session, KtTokens.VISIBILITY_MODIFIERS)
         if (visibilityModifier != null) return
 
         if (explicitVisibilityIsNotRequired(declaration, context)) return
@@ -133,7 +133,7 @@ object FirExplicitApiDeclarationChecker : FirDeclarationSyntaxChecker<FirDeclara
 
     private fun returnTypeCheckIsApplicable(source: KtSourceElement, context: CheckerContext): Boolean {
         // Note that by default getChild uses `depth = -1`, which would find all descendents.
-        if (source.getChild(KtNodeTypes.TYPE_REFERENCE, depth = 1) != null) return false
+        if (source.getChild(context.session, KtNodeTypes.TYPE_REFERENCE, depth = 1) != null) return false
         // Do not check if the containing file is not a physical file.
         val containingFile = context.containingDeclarations.first()
         if (containingFile.source?.elementType in codeFragmentTypes) return false
@@ -141,7 +141,7 @@ object FirExplicitApiDeclarationChecker : FirDeclarationSyntaxChecker<FirDeclara
         return when (source.elementType) {
             // Only require return type if the function is defined via `=`. If it has a block body or is abstract, we don't require return
             // type because not declaring means it returns `Unit`.
-            KtNodeTypes.FUN -> source.getChild(KtTokens.EQ, depth = 1) != null
+            KtNodeTypes.FUN -> source.getChild(context.session, KtTokens.EQ, depth = 1) != null
             KtNodeTypes.PROPERTY -> true
             else -> false
         }

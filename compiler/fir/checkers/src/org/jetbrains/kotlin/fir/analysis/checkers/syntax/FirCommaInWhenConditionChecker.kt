@@ -37,7 +37,7 @@ object FirCommaInWhenConditionChecker : FirExpressionSyntaxChecker<FirWhenExpres
 
     private fun checkCommaInBranchCondition(branch: FirWhenBranch, context: CheckerContext, reporter: DiagnosticReporter) {
         val source = branch.source
-        if (source?.elementType == KtNodeTypes.WHEN_ENTRY && source?.getChild(KtTokens.COMMA, depth = 1) != null) {
+        if (source?.elementType == KtNodeTypes.WHEN_ENTRY && source?.getChild(context.session, KtTokens.COMMA, depth = 1) != null) {
             reporter.reportOn(source, FirErrors.COMMA_IN_WHEN_CONDITION_WITHOUT_ARGUMENT, context)
         }
     }

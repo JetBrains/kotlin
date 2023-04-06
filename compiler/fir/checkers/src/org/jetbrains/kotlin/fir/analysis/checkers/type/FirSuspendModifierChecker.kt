@@ -36,7 +36,7 @@ object FirSuspendModifierChecker : FirTypeRefChecker() {
         // In both cases, the FirFunctionTypeRef is marked nullable. But it is invalid to have the `suspend` modifier on the source element.
         if (typeRef !is FirFunctionTypeRef || typeRef.isMarkedNullable) {
             reporter.reportOn(
-                suspendModifier.source,
+                suspendModifier.getSource(context.session),
                 FirErrors.WRONG_MODIFIER_TARGET,
                 suspendModifier.token,
                 "non-functional type",

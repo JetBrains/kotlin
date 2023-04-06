@@ -45,7 +45,7 @@ object FirClassLiteralChecker : FirGetClassCallChecker() {
         //   where TYPE_ARGUMENT_LIST may have QUEST in it
         //
         // Only the 2nd example is valid, and we want to check if token type QUEST doesn't exist at the same level as COLONCOLON.
-        val markedNullable = source.getChild(QUEST, depth = 1) != null
+        val markedNullable = source.getChild(context.session, QUEST, depth = 1) != null
         val isNullable = markedNullable ||
                 (argument as? FirResolvedQualifier)?.isNullableLHSForCallableReference == true ||
                 argument.typeRef.coneType.isMarkedNullable ||

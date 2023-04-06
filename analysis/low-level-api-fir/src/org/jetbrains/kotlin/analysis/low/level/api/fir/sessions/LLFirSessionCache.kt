@@ -34,6 +34,8 @@ import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.analysis.checkersComponent
 import org.jetbrains.kotlin.fir.analysis.extensions.additionalCheckers
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmTypeMapper
+import org.jetbrains.kotlin.fir.builder.FirPsiSourceElementFactory
+import org.jetbrains.kotlin.fir.builder.FirPsiSourceElementWithFixedPsiFactory
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.*
@@ -575,7 +577,7 @@ internal fun LLFirSessionConfigurator.Companion.configure(session: LLFirSession)
     "This is a dirty hack used only for one usage (building fir for psi from stubs) and it should be removed after fix of that usage",
     level = DeprecationLevel.ERROR
 )
-@OptIn(PrivateSessionConstructor::class)
+@OptIn(PrivateSessionConstructor::class, SessionConfiguration::class)
 fun createEmptySession(): FirSession {
     return object : FirSession(null, Kind.Source) {}.apply {
         val moduleData = FirModuleDataImpl(
@@ -587,6 +589,7 @@ fun createEmptySession(): FirSession {
             analyzerServices = JvmPlatformAnalyzerServices
         )
         registerModuleData(moduleData)
+        register(FirPsiSourceElementFactory::class, FirPsiSourceElementWithFixedPsiFactory)
         moduleData.bindSession(this)
     }
 }

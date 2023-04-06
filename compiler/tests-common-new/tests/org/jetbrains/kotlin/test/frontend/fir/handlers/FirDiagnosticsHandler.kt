@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.diagnostics.rendering.Renderers
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
+import org.jetbrains.kotlin.fir.builder.toKtPsiSourceElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirNamedReference
@@ -106,7 +107,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
     ) {
         val metaInfos = if (firFile.psi != null) {
             AnalyzingUtils.getSyntaxErrorRanges(firFile.psi!!).flatMap {
-                FirSyntaxErrors.SYNTAX.on(it.toKtPsiSourceElement(), positioningStrategy = null)
+                FirSyntaxErrors.SYNTAX.on(it.toKtPsiSourceElement(firFile.moduleData.session), positioningStrategy = null)
                     .toMetaInfos(
                         module,
                         testFile,
@@ -141,12 +142,13 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
         lightTreeComparingModeEnabled: Boolean
     ) {
         val result = mutableListOf<KtDiagnostic>()
+        val session = firFile.moduleData.session
 
         val diagnosedRangesToDiagnosticNames = globalMetadataInfoHandler.getExistingMetaInfosForFile(testFile)
             .groupBy(keySelector = { it.start..it.end }, valueTransform = { it.tag })
             .mapValues { (_, value) -> value.toSet() }
 
-        val consumer = DebugDiagnosticConsumer(result, diagnosedRangesToDiagnosticNames)
+        val consumer = DebugDiagnosticConsumer(session, result, diagnosedRangesToDiagnosticNames)
         val shouldRenderDynamic = DiagnosticsDirectives.MARK_DYNAMIC_CALLS in module.directives
 
         object : FirDefaultVisitorVoid() {
@@ -168,7 +170,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
                 val calleeDeclaration = element.calleeReference.toResolvedCallableSymbol() ?: return
                 val isInvokeCallWithDynamicReceiver = calleeDeclaration.name == OperatorNameConventions.INVOKE
                         && element is FirQualifiedAccessExpression
-                        && element.dispatchReceiver.typeRef.isFunctionTypeWithDynamicReceiver(firFile.moduleData.session)
+                        && element.dispatchReceiver.typeRef.isFunctionTypeWithDynamicReceiver(session)
 
                 if (calleeDeclaration.origin !is FirDeclarationOrigin.DynamicScope && !isInvokeCallWithDynamicReceiver) {
                     return
@@ -181,13 +183,13 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
                 val target = when (calleeDeclaration.name) {
                     OperatorNameConventions.INVOKE -> when {
                         isInvokeCallWithDynamicReceiver -> source
-                        else -> source?.parentAsSourceElement ?: source
+                        else -> source?.parentAsSourceElement(session) ?: source
                     }
                     in OperatorNameConventions.ALL_BINARY_OPERATION_NAMES,
                     in OperatorNameConventions.UNARY_OPERATION_NAMES,
                     in OperatorNameConventions.ASSIGNMENT_OPERATIONS,
                     OperatorNameConventions.GET, OperatorNameConventions.SET -> {
-                        source?.operatorSignIfBinary ?: source
+                        source?.operatorSignIfBinary(firFile.moduleData.session) ?: source
                     }
                     else -> {
                         source
@@ -248,7 +250,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
     }
 
     private fun DebugDiagnosticConsumer.reportExpressionTypeDiagnostic(element: FirExpression) {
-        report(DebugInfoDiagnosticFactory1.EXPRESSION_TYPE, element) {
+        report(session, DebugInfoDiagnosticFactory1.EXPRESSION_TYPE, element) {
             val originalTypeRef = (element as? FirSmartCastExpression)?.takeIf { it.isStable }?.originalExpression?.typeRef
 
             val type = element.typeRef.coneTypeSafe<ConeKotlinType>()
@@ -263,7 +265,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
     }
 
     private fun DebugDiagnosticConsumer.reportCallDiagnostic(element: FirElement, reference: FirNamedReference) {
-        report(DebugInfoDiagnosticFactory1.CALL, element) {
+        report(session, DebugInfoDiagnosticFactory1.CALL, element) {
             val resolvedSymbol = (reference as? FirResolvedNamedReference)?.resolvedSymbol
             val fqName = resolvedSymbol?.fqNameUnsafe()
             Renderers.renderCallInfo(fqName, getTypeOfCall(reference, resolvedSymbol))
@@ -271,7 +273,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
     }
 
     private fun DebugDiagnosticConsumer.reportContainingClassDiagnostic(element: FirElement, reference: FirNamedReference) {
-        report(DebugInfoDiagnosticFactory1.CALLABLE_OWNER, element) {
+        report(session, DebugInfoDiagnosticFactory1.CALLABLE_OWNER, element) {
             val resolvedSymbol = (reference as? FirResolvedNamedReference)?.resolvedSymbol
             val callable = resolvedSymbol?.fir as? FirCallableDeclaration ?: return@report ""
             DebugInfoDiagnosticFactory1.renderCallableOwner(
@@ -359,20 +361,21 @@ private fun ConeKotlinType.isFunctionTypeWithDynamicReceiver(session: FirSession
     return hasExplicitDynamicReceiver || hasImplicitDynamicReceiver
 }
 
-private val KtSourceElement.parentAsSourceElement: KtSourceElement?
-    get() = when (elementType) {
+private fun KtSourceElement.parentAsSourceElement(session: FirSession): KtSourceElement? {
+    return when (elementType) {
         KtNodeTypes.REFERENCE_EXPRESSION -> when (this) {
-            is KtPsiSourceElement -> psi.parent.toKtPsiSourceElement(kind)
+            is KtPsiSourceElement -> psi.parent.toKtPsiSourceElement(session, kind)
             is KtLightSourceElement -> treeStructure.getParent(lighterASTNode)?.toKtLightSourceElement(treeStructure, kind)
             else -> null
         }
         else -> null
     }
+}
 
-private val KtSourceElement.operatorSignIfBinary: KtSourceElement?
-    get() = when (elementType) {
+private fun KtSourceElement.operatorSignIfBinary(session: FirSession): KtSourceElement? {
+    return when (elementType) {
         KtNodeTypes.BINARY_EXPRESSION -> when (this) {
-            is KtPsiSourceElement -> (psi as? KtBinaryExpression)?.operationReference?.toKtPsiSourceElement(kind)
+            is KtPsiSourceElement -> (psi as? KtBinaryExpression)?.operationReference?.toKtPsiSourceElement(session, kind)
             is KtLightSourceElement -> treeStructure.getParent(lighterASTNode)
                 ?.let { treeStructure.findChildByType(it, KtNodeTypes.OPERATION_REFERENCE) }
                 ?.toKtLightSourceElement(treeStructure, kind)
@@ -380,8 +383,10 @@ private val KtSourceElement.operatorSignIfBinary: KtSourceElement?
         }
         else -> null
     }
+}
 
 private class DebugDiagnosticConsumer(
+    val session: FirSession,
     private val result: MutableList<KtDiagnostic>,
     private val diagnosedRangesToDiagnosticNames: Map<IntRange, Set<String>>
 ) {
@@ -436,7 +441,7 @@ private class DebugDiagnosticConsumer(
         result.add(diagnostic)
     }
 
-    fun report(debugFactory: DebugInfoDiagnosticFactory1, element: FirElement, argumentFactory: () -> String) {
+    fun report(session: FirSession, debugFactory: DebugInfoDiagnosticFactory1, element: FirElement, argumentFactory: () -> String) {
         val sourceElement = element.source?.takeIf { it.kind in allowedKindsForDebugInfo } ?: return
 
         // Lambda argument is always (?) duplicated by function literal
@@ -445,7 +450,7 @@ private class DebugDiagnosticConsumer(
 
         // Unfortunately I had to repeat positioning strategy logic here
         // (we need to check diagnostic range before applying it)
-        val positionedElement = debugFactory.getPositionedElement(sourceElement)
+        val positionedElement = debugFactory.getPositionedElement(session, sourceElement)
 
         val availableDiagnostics = diagnosedRangesToDiagnosticNames[positionedElement.startOffset..positionedElement.endOffset]
         if (availableDiagnostics == null || debugFactory.name !in availableDiagnostics) {
@@ -479,14 +484,14 @@ private class DebugDiagnosticConsumer(
         result.add(diagnostic)
     }
 
-    private fun DebugInfoDiagnosticFactory1.getPositionedElement(sourceElement: KtSourceElement): KtSourceElement {
+    private fun DebugInfoDiagnosticFactory1.getPositionedElement(session: FirSession, sourceElement: KtSourceElement): KtSourceElement {
         val elementType = sourceElement.elementType
         return if (this === DebugInfoDiagnosticFactory1.CALL
             && (elementType == KtNodeTypes.DOT_QUALIFIED_EXPRESSION || elementType == KtNodeTypes.SAFE_ACCESS_EXPRESSION)
         ) {
             if (sourceElement is KtPsiSourceElement) {
                 val psi = (sourceElement.psi as KtQualifiedExpression).selectorExpression
-                psi?.toKtPsiSourceElement() ?: sourceElement
+                psi?.toKtPsiSourceElement(session) ?: sourceElement
             } else {
                 val tree = sourceElement.treeStructure
                 val selector = tree.selector(sourceElement.lighterASTNode)

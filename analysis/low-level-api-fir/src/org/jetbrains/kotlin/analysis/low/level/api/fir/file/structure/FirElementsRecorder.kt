@@ -7,9 +7,12 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure
 
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.DuplicatedFirSourceElementsException
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isErrorElement
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.builder.toFirOperationOrNull
+import org.jetbrains.kotlin.fir.builder.toKtPsiSourceElement
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildConstExpression
 import org.jetbrains.kotlin.fir.references.*
@@ -26,7 +29,7 @@ import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-internal open class FirElementsRecorder : FirVisitor<Unit, MutableMap<KtElement, FirElement>>() {
+internal open class FirElementsRecorder(private val session: FirSession) : FirVisitor<Unit, MutableMap<KtElement, FirElement>>() {
     private fun cache(psi: KtElement, fir: FirElement, cache: MutableMap<KtElement, FirElement>) {
         val existingFir = cache[psi]
         if (existingFir != null && existingFir !== fir) {
@@ -201,7 +204,7 @@ internal open class FirElementsRecorder : FirVisitor<Unit, MutableMap<KtElement,
         } ?: return null
         @Suppress("UNCHECKED_CAST")
         return buildConstExpression(
-            original.ktConstantExpression?.toKtPsiSourceElement(),
+            original.ktConstantExpression?.toKtPsiSourceElement(session),
             this,
             convertedValue as T
         ).also {

@@ -9,6 +9,7 @@ dependencies {
     api(project(":compiler:fir:providers"))
     api(project(":compiler:fir:semantics"))
     api(project(":compiler:fir:raw-fir:raw-fir.common"))
+    api(project(":compiler:fir:raw-fir:psi2fir"))
     implementation(project(":compiler:frontend.common"))
     implementation(project(":compiler:frontend.common-psi"))
     implementation(project(":compiler:psi"))

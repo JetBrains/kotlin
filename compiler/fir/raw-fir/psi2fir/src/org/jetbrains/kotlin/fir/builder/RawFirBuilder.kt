@@ -171,6 +171,9 @@ open class RawFirBuilder(
                 else -> if (hasModifier(OPEN_KEYWORD)) Modality.OPEN else null
             }
         }
+    
+    private fun PsiElement.toKtPsiSourceElement(kind: KtSourceElementKind = KtRealSourceElementKind): KtPsiSourceElement = 
+        toKtPsiSourceElement(baseSession, kind)
 
     protected open inner class Visitor : KtVisitor<FirElement, Unit>() {
         private inline fun <reified R : FirElement> KtElement?.convertSafe(): R? =
@@ -2231,6 +2234,7 @@ open class RawFirBuilder(
                                 source = entrySource
                                 condition = entry.conditions.toFirWhenCondition(
                                     ref,
+                                    baseSession,
                                     { toFirExpression(it) },
                                     { toFirOrErrorType() },
                                 )

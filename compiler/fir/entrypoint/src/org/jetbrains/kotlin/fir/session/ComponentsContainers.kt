@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.fir.analysis.CheckersComponent
 import org.jetbrains.kotlin.fir.analysis.FirOverridesBackwardCompatibilityHelper
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirNameConflictsTracker
 import org.jetbrains.kotlin.fir.analysis.jvm.FirJvmOverridesBackwardCompatibilityHelper
+import org.jetbrains.kotlin.fir.builder.FirPsiSourceElementFactory
+import org.jetbrains.kotlin.fir.builder.FirPsiSourceElementWithFixedPsiFactory
 import org.jetbrains.kotlin.fir.caches.FirCachesFactory
 import org.jetbrains.kotlin.fir.caches.FirThreadUnsafeCachesFactory
 import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProvider
@@ -94,6 +96,7 @@ fun FirSession.registerCliCompilerOnlyComponents() {
 
     register(FirRegisteredPluginAnnotations::class, FirRegisteredPluginAnnotationsImpl(this))
     register(FirPredicateBasedProvider::class, FirPredicateBasedProviderImpl(this))
+    register(FirPsiSourceElementFactory::class, FirPsiSourceElementWithFixedPsiFactory)
 }
 
 @OptIn(SessionConfiguration::class)

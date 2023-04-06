@@ -18,10 +18,10 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.builder.toKtPsiSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.toKtPsiSourceElement
 import org.jetbrains.kotlin.util.getChildren
 
 object FirConfusingWhenBranchSyntaxChecker : FirExpressionSyntaxChecker<FirWhenExpression, PsiElement>() {
@@ -111,7 +111,7 @@ object FirConfusingWhenBranchSyntaxChecker : FirExpressionSyntaxChecker<FirWhenE
             else -> false
         }
         if (shouldReport) {
-            val source = rawExpression.toKtPsiSourceElement()
+            val source = rawExpression.toKtPsiSourceElement(context.session)
             reporter.reportOn(source, FirErrors.CONFUSING_BRANCH_CONDITION, context)
         }
     }

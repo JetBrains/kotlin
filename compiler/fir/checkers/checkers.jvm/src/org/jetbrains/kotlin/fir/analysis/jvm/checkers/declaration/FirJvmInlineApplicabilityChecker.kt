@@ -26,7 +26,7 @@ object FirJvmInlineApplicabilityChecker : FirRegularClassChecker() {
             reporter.reportOn(annotation.source, FirJvmErrors.JVM_INLINE_WITHOUT_VALUE_CLASS, context)
         } else if (annotation == null && declaration.isInline && !declaration.isExpect) {
             // only report if value keyword exists, this ignores the deprecated inline class syntax
-            val keyword = declaration.getModifier(KtTokens.VALUE_KEYWORD)?.source ?: return
+            val keyword = declaration.getModifier(KtTokens.VALUE_KEYWORD)?.getSource(context.session) ?: return
             reporter.reportOn(keyword, FirJvmErrors.VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION, context)
         }
     }

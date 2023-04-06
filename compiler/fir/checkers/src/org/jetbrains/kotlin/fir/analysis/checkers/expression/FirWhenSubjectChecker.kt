@@ -23,10 +23,10 @@ object FirWhenSubjectChecker : FirWhenExpressionChecker() {
             subject?.source?.elementType == KtNodeTypes.DESTRUCTURING_DECLARATION -> {
                 reporter.reportOn(source, FirErrors.ILLEGAL_DECLARATION_IN_WHEN_SUBJECT, "destructuring declaration", context)
             }
-            subjectVariable?.source?.getChild(KtTokens.VAR_KEYWORD) != null -> {
+            subjectVariable?.source?.getChild(context.session, KtTokens.VAR_KEYWORD) != null -> {
                 reporter.reportOn(source, FirErrors.ILLEGAL_DECLARATION_IN_WHEN_SUBJECT, "var", context)
             }
-            subjectVariable?.source?.getChild(KtNodeTypes.PROPERTY_DELEGATE) != null -> {
+            subjectVariable?.source?.getChild(context.session, KtNodeTypes.PROPERTY_DELEGATE) != null -> {
                 reporter.reportOn(source, FirErrors.ILLEGAL_DECLARATION_IN_WHEN_SUBJECT, "delegated property", context)
             }
             subjectVariable != null && subjectVariable.initializer == null -> {

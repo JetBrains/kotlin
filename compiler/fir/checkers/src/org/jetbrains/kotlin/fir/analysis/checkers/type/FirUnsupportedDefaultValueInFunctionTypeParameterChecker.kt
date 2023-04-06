@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirFunctionTypeParameter
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.defaultValueForParameter
+import org.jetbrains.kotlin.fir.analysis.checkers.getDefaultValueForParameter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnsupportedDefaultValueInFunctionType
 
@@ -21,7 +21,7 @@ object FirUnsupportedDefaultValueInFunctionTypeParameterChecker : FirFunctionalT
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
-        val defaultValue = source.defaultValueForParameter ?: return
+        val defaultValue = source.getDefaultValueForParameter(context.session) ?: return
         report(defaultValue, reporter, context)
     }
 

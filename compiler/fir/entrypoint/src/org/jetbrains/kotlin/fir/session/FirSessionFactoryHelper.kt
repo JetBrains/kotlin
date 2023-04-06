@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.fir.session
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.builder.FirPsiSourceElementFactory
+import org.jetbrains.kotlin.fir.builder.FirPsiSourceElementWithFixedPsiFactory
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
@@ -91,7 +93,9 @@ object FirSessionFactoryHelper {
                 analyzerServices = JvmPlatformAnalyzerServices
             )
             registerModuleData(moduleData)
+            register(FirPsiSourceElementFactory::class, FirPsiSourceElementWithFixedPsiFactory)
             moduleData.bindSession(this)
+
             // Empty stub for tests
             register(FirLanguageSettingsComponent::class, FirLanguageSettingsComponent(
                 object : LanguageVersionSettings {

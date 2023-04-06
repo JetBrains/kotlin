@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.primaryConstructorSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.getChild
+import org.jetbrains.kotlin.fir.builder.toKtPsiSourceElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.*
@@ -277,7 +278,7 @@ fun ConeKotlinType.isSubtypeOfThrowable(session: FirSession): Boolean =
 val FirValueParameter.hasValOrVar: Boolean
     get() {
         val source = this.source ?: return false
-        return source.getChild(VAL_VAR_TOKEN_SET) != null
+        return source.getChild(moduleData.session, VAL_VAR_TOKEN_SET) != null
     }
 
 fun KotlinTypeMarker.isSupertypeOf(context: TypeCheckerProviderContext, type: KotlinTypeMarker?): Boolean =
@@ -671,11 +672,12 @@ fun FirQualifiedAccessExpression.explicitReceiverIsNotSuperReference(): Boolean 
 }
 
 
-internal val KtSourceElement.defaultValueForParameter: KtSourceElement?
-    get() = when (this) {
-        is KtPsiSourceElement -> (psi as? KtParameter)?.defaultValue?.toKtPsiSourceElement()
+internal fun KtSourceElement.getDefaultValueForParameter(session: FirSession): KtSourceElement? {
+    return when (this) {
+        is KtPsiSourceElement -> (psi as? KtParameter)?.defaultValue?.toKtPsiSourceElement(session)
         is KtLightSourceElement -> findDefaultValue(this)
     }
+}
 
 private fun findDefaultValue(source: KtLightSourceElement): KtLightSourceElement? {
     var defaultValue: LighterASTNode? = null

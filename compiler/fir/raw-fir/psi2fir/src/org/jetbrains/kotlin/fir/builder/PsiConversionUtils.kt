@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirExpressionRef
 import org.jetbrains.kotlin.fir.FirModuleData
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
@@ -26,10 +27,11 @@ import org.jetbrains.kotlin.psi.*
 
 internal fun KtWhenCondition.toFirWhenCondition(
     whenRefWithSibject: FirExpressionRef<FirWhenExpression>,
+    session: FirSession,
     convert: KtExpression?.(String) -> FirExpression,
     toFirOrErrorTypeRef: KtTypeReference?.() -> FirTypeRef,
 ): FirExpression {
-    val firSubjectSource = this.toKtPsiSourceElement(KtFakeSourceElementKind.WhenGeneratedSubject)
+    val firSubjectSource = this.toKtPsiSourceElement(session, KtFakeSourceElementKind.WhenGeneratedSubject)
     val firSubjectExpression = buildWhenSubjectExpression {
         source = firSubjectSource
         whenRef = whenRefWithSibject
@@ -37,7 +39,7 @@ internal fun KtWhenCondition.toFirWhenCondition(
     return when (this) {
         is KtWhenConditionWithExpression -> {
             buildEqualityOperatorCall {
-                source = expression?.toKtPsiSourceElement(KtFakeSourceElementKind.WhenCondition)
+                source = expression?.toKtPsiSourceElement(session, KtFakeSourceElementKind.WhenCondition)
                 operation = FirOperation.EQ
                 argumentList = buildBinaryArgumentList(
                     firSubjectExpression, expression.convert("No expression in condition with expression")
@@ -49,13 +51,13 @@ internal fun KtWhenCondition.toFirWhenCondition(
             firRange.generateContainsOperation(
                 firSubjectExpression,
                 isNegated,
-                this@toFirWhenCondition.toKtPsiSourceElement(KtFakeSourceElementKind.WhenCondition),
-                operationReference.toKtPsiSourceElement()
+                this@toFirWhenCondition.toKtPsiSourceElement(session, KtFakeSourceElementKind.WhenCondition),
+                operationReference.toKtPsiSourceElement(session)
             )
         }
         is KtWhenConditionIsPattern -> {
             buildTypeOperatorCall {
-                source = this@toFirWhenCondition.toKtPsiSourceElement()
+                source = this@toFirWhenCondition.toKtPsiSourceElement(session)
                 operation = if (isNegated) FirOperation.NOT_IS else FirOperation.IS
                 conversionTypeRef = typeReference.toFirOrErrorTypeRef()
                 argumentList = buildUnaryArgumentList(firSubjectExpression)
@@ -69,11 +71,12 @@ internal fun KtWhenCondition.toFirWhenCondition(
 
 internal fun Array<KtWhenCondition>.toFirWhenCondition(
     subject: FirExpressionRef<FirWhenExpression>,
+    session: FirSession,
     convert: KtExpression?.(String) -> FirExpression,
     toFirOrErrorTypeRef: KtTypeReference?.() -> FirTypeRef,
 ): FirExpression {
     val conditions = this.map { condition ->
-        condition.toFirWhenCondition(subject, convert, toFirOrErrorTypeRef)
+        condition.toFirWhenCondition(subject, session, convert, toFirOrErrorTypeRef)
     }
 
     require(conditions.isNotEmpty())
@@ -129,14 +132,14 @@ internal fun generateDestructuringBlock(
     toFirOrImplicitTypeRef: KtTypeReference?.() -> FirTypeRef,
 ): FirBlock {
     return buildBlock {
-        source = multiDeclaration.toKtPsiSourceElement()
+        source = multiDeclaration.toKtPsiSourceElement(moduleData.session)
         if (tmpVariable) {
             statements += container
         }
         val isVar = multiDeclaration.isVar
         for ((index, entry) in multiDeclaration.entries.withIndex()) {
             if (entry.nameIdentifier?.text == "_") continue
-            val entrySource = entry.toKtPsiSourceElement()
+            val entrySource = entry.toKtPsiSourceElement(moduleData.session)
             val name = entry.nameAsSafeName
             statements += buildProperty {
                 source = entrySource

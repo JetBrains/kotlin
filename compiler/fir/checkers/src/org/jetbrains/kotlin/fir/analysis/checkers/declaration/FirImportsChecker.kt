@@ -75,7 +75,7 @@ object FirImportsChecker : FirFileChecker() {
 
             fun reportInvisibleParentClasses(classSymbol: FirRegularClassSymbol, depth: Int) {
                 if (!classSymbol.fir.isVisible(context)) {
-                    val source = import.getSourceForImportSegment(indexFromLast = depth)
+                    val source = import.getSourceForImportSegment(context.session, indexFromLast = depth)
                     reporter.reportOn(source, FirErrors.INVISIBLE_REFERENCE, classSymbol, context)
                 }
 
@@ -87,7 +87,7 @@ object FirImportsChecker : FirFileChecker() {
             when (val status = parentClassSymbol.getImportStatusOfCallableMembers(context, importedName)) {
                 ImportStatus.OK -> return
                 is ImportStatus.Invisible -> {
-                    val source = import.getSourceForImportSegment(0)
+                    val source = import.getSourceForImportSegment(context.session, 0)
                     reporter.reportOn(source, FirErrors.INVISIBLE_REFERENCE, status.symbol, context)
                 }
                 else -> {
@@ -107,7 +107,7 @@ object FirImportsChecker : FirFileChecker() {
 
         if (resolvedClassSymbol != null) {
             if (!resolvedClassSymbol.fir.isVisible(context)) {
-                reporter.reportOn(import.getSourceForImportSegment(0), FirErrors.INVISIBLE_REFERENCE, resolvedClassSymbol, context)
+                reporter.reportOn(import.getSourceForImportSegment(context.session, 0), FirErrors.INVISIBLE_REFERENCE, resolvedClassSymbol, context)
             }
 
             return
@@ -118,7 +118,7 @@ object FirImportsChecker : FirFileChecker() {
         val topLevelCallableSymbol = symbolProvider.getTopLevelCallableSymbols(importedFqName.parent(), importedName)
         if (topLevelCallableSymbol.isNotEmpty()) {
             if (topLevelCallableSymbol.none { it.fir.isVisible(context) }) {
-                val source = import.getSourceForImportSegment(0)
+                val source = import.getSourceForImportSegment(context.session, 0)
                 reporter.reportOn(source, FirErrors.INVISIBLE_REFERENCE, topLevelCallableSymbol.first(), context)
             }
 

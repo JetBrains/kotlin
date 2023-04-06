@@ -9,20 +9,40 @@ import com.intellij.lang.LighterASTNode
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.builder.toKtPsiSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirImport
 
-fun KtSourceElement.getChild(type: IElementType, index: Int = 0, depth: Int = -1, reverse: Boolean = false): KtSourceElement? {
-    return getChild(setOf(type), index, depth, reverse)
+fun KtSourceElement.getChild(
+    session: FirSession,
+    type: IElementType,
+    index: Int = 0,
+    depth: Int = -1,
+    reverse: Boolean = false
+): KtSourceElement? {
+    return getChild(session, setOf(type), index, depth, reverse)
 }
 
-fun KtSourceElement.getChild(types: TokenSet, index: Int = 0, depth: Int = -1, reverse: Boolean = false): KtSourceElement? {
-    return getChild(types.types.toSet(), index, depth, reverse)
+fun KtSourceElement.getChild(
+    session: FirSession,
+    types: TokenSet,
+    index: Int = 0,
+    depth: Int = -1,
+    reverse: Boolean = false
+): KtSourceElement? {
+    return getChild(session, types.types.toSet(), index, depth, reverse)
 }
 
-fun KtSourceElement.getChild(types: Set<IElementType>, index: Int = 0, depth: Int = -1, reverse: Boolean = false): KtSourceElement? {
+fun KtSourceElement.getChild(
+    session: FirSession,
+    types: Set<IElementType>,
+    index: Int = 0,
+    depth: Int = -1,
+    reverse: Boolean = false,
+): KtSourceElement? {
     return when (this) {
         is KtPsiSourceElement -> {
-            getChild(types, index, depth, reverse)
+            getChild(session, types, index, depth, reverse)
         }
         is KtLightSourceElement -> {
             getChild(types, index, depth, reverse)
@@ -31,9 +51,15 @@ fun KtSourceElement.getChild(types: Set<IElementType>, index: Int = 0, depth: In
     }
 }
 
-private fun KtPsiSourceElement.getChild(types: Set<IElementType>, index: Int, depth: Int, reverse: Boolean): KtSourceElement? {
+private fun KtPsiSourceElement.getChild(
+    session: FirSession,
+    types: Set<IElementType>,
+    index: Int,
+    depth: Int,
+    reverse: Boolean
+): KtSourceElement? {
     val visitor = PsiElementFinderByType(types, index, depth, reverse)
-    return visitor.find(psi)?.toKtPsiSourceElement()
+    return visitor.find(psi)?.toKtPsiSourceElement(session)
 }
 
 private fun KtLightSourceElement.getChild(types: Set<IElementType>, index: Int, depth: Int, reverse: Boolean): KtSourceElement? {
@@ -59,13 +85,13 @@ private val IMPORT_PARENT_TOKEN_TYPES = TokenSet.create(KtNodeTypes.DOT_QUALIFIE
 /**
  * Returns a source element for the import segment that is [indexFromLast]th from last.
  */
-fun FirImport.getSourceForImportSegment(indexFromLast: Int): KtSourceElement? {
+fun FirImport.getSourceForImportSegment(session: FirSession, indexFromLast: Int): KtSourceElement? {
     var segmentSource: KtSourceElement = source ?: return null
 
     repeat(indexFromLast + 1) {
-        segmentSource = segmentSource.getChild(IMPORT_PARENT_TOKEN_TYPES, depth = 1) ?: return null
+        segmentSource = segmentSource.getChild(session, IMPORT_PARENT_TOKEN_TYPES, depth = 1) ?: return null
     }
 
     return segmentSource.takeIf { it.elementType == KtNodeTypes.REFERENCE_EXPRESSION }
-        ?: segmentSource.getChild(KtNodeTypes.REFERENCE_EXPRESSION, depth = 1, reverse = true)
+        ?: segmentSource.getChild(session, KtNodeTypes.REFERENCE_EXPRESSION, depth = 1, reverse = true)
 }

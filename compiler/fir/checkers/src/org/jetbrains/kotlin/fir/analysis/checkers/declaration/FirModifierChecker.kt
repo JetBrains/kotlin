@@ -79,7 +79,7 @@ object FirModifierChecker : FirBasicDeclarationChecker() {
                 checkCompatibilityType(modifiers[firstIndex], secondModifier, reporter, reportedNodes, owner, context)
             }
             if (secondModifier !in reportedNodes) {
-                val modifierSource = secondModifier.source
+                val modifierSource = secondModifier.getSource(context.session)
                 val modifier = secondModifier.token
                 when {
                     !checkTarget(modifierSource, modifier, actualTargets, parent, context, reporter) -> reportedNodes += secondModifier
@@ -104,11 +104,11 @@ object FirModifierChecker : FirBasicDeclarationChecker() {
             }
             Compatibility.REPEATED ->
                 if (reportedNodes.add(secondModifier)) {
-                    reporter.reportOn(secondModifier.source, FirErrors.REPEATED_MODIFIER, secondModifierToken, context)
+                    reporter.reportOn(secondModifier.getSource(context.session), FirErrors.REPEATED_MODIFIER, secondModifierToken, context)
                 }
             Compatibility.REDUNDANT -> {
                 reporter.reportOn(
-                    secondModifier.source,
+                    secondModifier.getSource(context.session),
                     FirErrors.REDUNDANT_MODIFIER,
                     secondModifierToken,
                     firstModifierToken,
@@ -117,7 +117,7 @@ object FirModifierChecker : FirBasicDeclarationChecker() {
             }
             Compatibility.REVERSE_REDUNDANT -> {
                 reporter.reportOn(
-                    firstModifier.source,
+                    firstModifier.getSource(context.session),
                     FirErrors.REDUNDANT_MODIFIER,
                     firstModifierToken,
                     secondModifierToken,
@@ -126,14 +126,14 @@ object FirModifierChecker : FirBasicDeclarationChecker() {
             }
             Compatibility.DEPRECATED -> {
                 reporter.reportOn(
-                    firstModifier.source,
+                    firstModifier.getSource(context.session),
                     FirErrors.DEPRECATED_MODIFIER_PAIR,
                     firstModifierToken,
                     secondModifierToken,
                     context
                 )
                 reporter.reportOn(
-                    secondModifier.source,
+                    secondModifier.getSource(context.session),
                     FirErrors.DEPRECATED_MODIFIER_PAIR,
                     secondModifierToken,
                     firstModifierToken,
@@ -146,7 +146,7 @@ object FirModifierChecker : FirBasicDeclarationChecker() {
                 }
                 if (reportedNodes.add(firstModifier)) {
                     reporter.reportOn(
-                        firstModifier.source,
+                        firstModifier.getSource(context.session),
                         FirErrors.INCOMPATIBLE_MODIFIERS,
                         firstModifierToken,
                         secondModifierToken,
@@ -155,7 +155,7 @@ object FirModifierChecker : FirBasicDeclarationChecker() {
                 }
                 if (reportedNodes.add(secondModifier)) {
                     reporter.reportOn(
-                        secondModifier.source,
+                        secondModifier.getSource(context.session),
                         FirErrors.INCOMPATIBLE_MODIFIERS,
                         secondModifierToken,
                         firstModifierToken,
