@@ -47,7 +47,7 @@ sealed class KtPsiSourceElement(val psi: PsiElement) : KtSourceElement() {
     }
 }
 
-internal class KtRealPsiSourceElement(psi: PsiElement) : KtPsiSourceElement(psi) {
+private class KtRealPsiSourceElement(psi: PsiElement) : KtPsiSourceElement(psi) {
     override val kind: KtSourceElementKind get() = KtRealSourceElementKind
 
     override fun fakeElement(newKind: KtFakeSourceElementKind): KtSourceElement {
@@ -59,7 +59,7 @@ internal class KtRealPsiSourceElement(psi: PsiElement) : KtPsiSourceElement(psi)
     }
 }
 
-internal class KtFakeSourceElement(psi: PsiElement, override val kind: KtFakeSourceElementKind) : KtPsiSourceElement(psi) {
+private class KtFakeSourceElement(psi: PsiElement, override val kind: KtFakeSourceElementKind) : KtPsiSourceElement(psi) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
