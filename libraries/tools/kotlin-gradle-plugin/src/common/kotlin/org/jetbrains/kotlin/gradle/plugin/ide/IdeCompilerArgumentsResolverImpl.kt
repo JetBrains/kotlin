@@ -32,7 +32,19 @@ internal class IdeCompilerArgumentsResolverImpl(
                 isLenient = true,
                 includeArgumentTypes = setOfNotNull(
                     KotlinCompilerArgumentsProducer.ArgumentType.Primitive,
+
+                    /*
+                    Always resolve the plugin classpath: This is still consumed by the associated IDE plugins.
+                    e.g: the kotlinx.serialisation IDE plugin relies on this classpath.
+                     */
                     KotlinCompilerArgumentsProducer.ArgumentType.PluginClasspath,
+
+                    /*
+                    Dependency Classpath is required for IDE import to provide the ability to compile
+                    the given Gradle project using 'jps'. This is only supported by the jvm Kotlin plugin
+                    and does not work for Multiplatform or Android projects:
+                    Therefore, we omit the classpath for multiplatform and Android projects
+                     */
                     KotlinCompilerArgumentsProducer.ArgumentType.DependencyClasspath
                         .takeIf { extension !is KotlinMultiplatformExtension }
                         .takeIf { producer is KotlinCompile }
