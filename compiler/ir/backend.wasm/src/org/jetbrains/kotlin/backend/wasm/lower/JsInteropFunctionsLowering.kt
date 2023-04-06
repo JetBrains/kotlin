@@ -458,6 +458,8 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
             }
             +irReturn(info.resultAdapter.adaptIfNeeded(callInvoke, builder))
         }
+
+        // TODO find out a better way to export the such declarations only when it's required. Also, fix building roots for DCE, then.
         result.annotations += builder.irCallConstructor(context.wasmSymbols.jsExportConstructor, typeArguments = emptyList())
         additionalDeclarations += result
         return result

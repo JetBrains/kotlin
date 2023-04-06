@@ -53,6 +53,9 @@ private fun buildRoots(modules: List<IrModuleFragment>, context: WasmBackendCont
     add(context.irBuiltIns.throwableClass.owner)
     add(context.mainCallsWrapperFunction)
     add(context.fieldInitFunction)
+
+    // Remove all functions used to call a kotlin closure from JS side, reachable ones will be added back later.
+    removeAll(context.closureCallExports.values)
 }
 
 private inline fun List<IrModuleFragment>.onAllFiles(body: IrFile.() -> Unit) {
