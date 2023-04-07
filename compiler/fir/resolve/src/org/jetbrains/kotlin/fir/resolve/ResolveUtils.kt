@@ -593,6 +593,7 @@ fun FirExpression?.isIntegerLiteralOrOperatorCall(): Boolean {
                 || kind == ConstantValueKind.UnsignedIntegerLiteral
 
         is FirIntegerLiteralOperatorCall -> true
+        is FirNamedArgumentExpression -> this.expression.isIntegerLiteralOrOperatorCall()
         else -> false
     }
 }

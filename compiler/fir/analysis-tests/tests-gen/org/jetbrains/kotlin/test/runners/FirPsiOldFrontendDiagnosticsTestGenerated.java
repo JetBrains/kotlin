@@ -34010,6 +34010,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
                 }
 
                 @Test
+                @TestMetadata("implicitIntegerCoercionNamedArg.kt")
+                public void testImplicitIntegerCoercionNamedArg() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/unsignedTypes/conversions/implicitIntegerCoercionNamedArg.kt");
+                }
+
+                @Test
                 @TestMetadata("inferenceForSignedAndUnsignedTypes.kt")
                 public void testInferenceForSignedAndUnsignedTypes() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/unsignedTypes/conversions/inferenceForSignedAndUnsignedTypes.kt");
