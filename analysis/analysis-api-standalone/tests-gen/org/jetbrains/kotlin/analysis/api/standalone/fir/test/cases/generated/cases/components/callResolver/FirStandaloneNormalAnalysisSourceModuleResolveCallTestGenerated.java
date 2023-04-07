@@ -785,6 +785,18 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCallTestGenerated ext
     }
 
     @Test
+    @TestMetadata("smartCastedArg.kt")
+    public void testSmartCastedArg() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/smartCastedArg.kt");
+    }
+
+    @Test
+    @TestMetadata("smartCastedNonNullArg.kt")
+    public void testSmartCastedNonNullArg() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/smartCastedNonNullArg.kt");
+    }
+
+    @Test
     @TestMetadata("substituteOverrideResolution.kt")
     public void testSubstituteOverrideResolution() throws Exception {
         runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/substituteOverrideResolution.kt");
