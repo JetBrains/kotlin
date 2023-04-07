@@ -32,6 +32,12 @@ public class FirPsiJsOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiJ
     }
 
     @Test
+    @TestMetadata("externalInterfaceClassLiteral.kt")
+    public void testExternalInterfaceClassLiteral() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithJsStdLib/externalInterfaceClassLiteral.kt");
+    }
+
+    @Test
     @TestMetadata("funConstructorCallJS.kt")
     public void testFunConstructorCallJS() throws Exception {
         runTest("compiler/testData/diagnostics/testsWithJsStdLib/funConstructorCallJS.kt");
