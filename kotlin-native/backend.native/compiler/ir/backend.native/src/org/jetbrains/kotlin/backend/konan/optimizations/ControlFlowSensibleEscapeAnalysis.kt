@@ -40,7 +40,6 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.addToStdlib.trimToSize
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -886,7 +885,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
 
         private class ExpressionResult(val value: Node, val graph: PointsToGraph)
 
-        private data class BuilderState(val graph: PointsToGraph, val loop: IrLoop?, val insideATry: Boolean)
+        private data class BuilderState(val graph: PointsToGraph, val loop: IrLoop?, val tryBlock: IrTry?)
 
         private inner class PointsToGraphBuilder(
                 val function: IrFunction,
@@ -906,6 +905,8 @@ internal object ControlFlowSensibleEscapeAnalysis {
             val devirtualizedFictitiousCallSites = mutableMapOf<IrCall, List<IrFunctionAccessExpression>>()
 
             val returnTargetsResults = mutableMapOf<IrReturnTargetSymbol, MutableList<ExpressionResult>>()
+            val tryBlocksThrowGraphs = mutableMapOf<IrTry, MutableList<PointsToGraph>>()
+            val topLevelThrowGraphs = mutableListOf<PointsToGraph>()
             val loopsContinueResults = mutableMapOf<IrLoop, MutableList<ExpressionResult>>()
             val loopsBreakResults = mutableMapOf<IrLoop, MutableList<ExpressionResult>>()
             val objectsReferencedFromThrown = BitSet()
@@ -918,7 +919,16 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 function.allParameters.forEachIndexed { index, parameter -> pointsToGraph.addParameter(parameter, index) }
                 val returnResults = mutableListOf<ExpressionResult>()
                 returnTargetsResults[function.symbol] = returnResults
-                (function.body as IrBlockBody).statements.forEach { it.accept(this, BuilderState(pointsToGraph, null, false)) }
+                (function.body as IrBlockBody).statements.forEach { it.accept(this, BuilderState(pointsToGraph, null, null)) }
+                if (topLevelThrowGraphs.isNotEmpty()) {
+                    val fictitiousReturnValue =
+                            if (function is IrConstructor || function.returnType.isUnit())
+                                Node.Unit
+                            else Node.Null
+                    topLevelThrowGraphs.forEach {
+                        returnResults.add(ExpressionResult(fictitiousReturnValue, it))
+                    }
+                }
                 val functionResult = controlFlowMergePoint(pointsToGraph, null, null, function.returnType, returnResults)
                 return EscapeAnalysisResult(pointsToGraph, functionResult, objectsReferencedFromThrown)
             }
@@ -1035,7 +1045,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
 
                 val variable = expression.symbol.owner as IrVariable
                 val variableNode = variableNodes[variable] ?: error("Unknown variable: ${variable.render()}")
-                if (!data.insideATry)
+                if (data.tryBlock == null)
                     eraseValue(variableNode, data.loop, expression)
                 variableNode.addEdge(valueNode)
                 debug {
@@ -1066,7 +1076,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
 
                 val variableNode = getOrAddVariable(declaration)
                 valueNode?.let {
-                    if (!data.insideATry)
+                    if (data.tryBlock == null)
                         eraseValue(variableNode, data.loop, declaration)
                     variableNode.addEdge(it)
                 }
@@ -1149,7 +1159,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
                     receiverObjects.forEach { receiverObject ->
                         val fieldNode = receiverObject.getField(expression.symbol)
                         // TODO: Probably can do for any outer loop as well (not only for the current).
-                        if (receiverObjects.size == 1 && data.loop == receiverObjects[0].loop && !data.insideATry)
+                        if (receiverObjects.size == 1 && data.loop == receiverObjects[0].loop && data.tryBlock == null)
                             eraseValue(fieldNode, data.loop, expression)
                         fieldNode.addEdge(valueNode)
                     }
@@ -1170,6 +1180,45 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 (returnTargetsResults[expression.returnTargetSymbol] ?: error("Unknown return target: ${expression.render()}"))
                         .add(ExpressionResult(list[0], clone))
                 return data.graph.unreachable()
+            }
+
+            override fun visitContainerExpression(expression: IrContainerExpression, data: BuilderState): Node {
+                val returnableBlockSymbol = (expression as? IrReturnableBlock)?.symbol
+                returnableBlockSymbol?.let { returnTargetsResults[it] = mutableListOf() }
+                expression.statements.forEachIndexed { index, statement ->
+                    val result = statement.accept(this, data)
+                    if (index == expression.statements.size - 1 && returnableBlockSymbol == null)
+                        return result
+                }
+                return returnableBlockSymbol?.let {
+                    controlFlowMergePoint(data.graph, data.loop, expression, expression.type, returnTargetsResults[it]!!)
+                } ?: Node.Unit
+            }
+
+            override fun visitWhen(expression: IrWhen, data: BuilderState): Node {
+                debug {
+                    context.log { "before ${expression.dump()}" }
+                    data.graph.logDigraph()
+                }
+                val branchResults = mutableListOf<ExpressionResult>()
+                expression.branches.forEach { branch ->
+                    branch.condition.accept(this, data)
+                    val branchGraph = data.graph.clone()
+                    val branchState = BuilderState(branchGraph, data.loop, data.tryBlock)
+                    branchResults.add(ExpressionResult(branch.result.accept(this, branchState), branchGraph))
+                }
+                val isExhaustive = expression.branches.last().isUnconditional()
+                require(isExhaustive || expression.type.isUnit())
+                if (!isExhaustive) {
+                    // Reflecting the case when none of the clauses have been executed.
+                    branchResults.add(ExpressionResult(Node.Unit, data.graph.clone()))
+                }
+                return controlFlowMergePoint(data.graph, data.loop, expression, expression.type, branchResults).also {
+                    debug {
+                        context.log { "after ${expression.dump()}" }
+                        data.graph.logDigraph()
+                    }
+                }
             }
 
             override fun visitThrow(expression: IrThrow, data: BuilderState) = with(data.graph) {
@@ -1198,46 +1247,9 @@ internal object ControlFlowSensibleEscapeAnalysis {
                     data.graph.logDigraph(context, newObjectsReferencedFromThrown)
                 }
 
+                (data.tryBlock?.let { tryBlocksThrowGraphs[it]!! } ?: topLevelThrowGraphs).add(data.graph.clone())
+
                 data.graph.unreachable()
-            }
-
-            override fun visitContainerExpression(expression: IrContainerExpression, data: BuilderState): Node {
-                val returnableBlockSymbol = (expression as? IrReturnableBlock)?.symbol
-                returnableBlockSymbol?.let { returnTargetsResults[it] = mutableListOf() }
-                expression.statements.forEachIndexed { index, statement ->
-                    val result = statement.accept(this, data)
-                    if (index == expression.statements.size - 1 && returnableBlockSymbol == null)
-                        return result
-                }
-                return returnableBlockSymbol?.let {
-                    controlFlowMergePoint(data.graph, data.loop, expression, expression.type, returnTargetsResults[it]!!)
-                } ?: Node.Unit
-            }
-
-            override fun visitWhen(expression: IrWhen, data: BuilderState): Node {
-                debug {
-                    context.log { "before ${expression.dump()}" }
-                    data.graph.logDigraph()
-                }
-                val branchResults = mutableListOf<ExpressionResult>()
-                expression.branches.forEach { branch ->
-                    branch.condition.accept(this, data)
-                    val branchGraph = data.graph.clone()
-                    val branchState = BuilderState(branchGraph, data.loop, data.insideATry)
-                    branchResults.add(ExpressionResult(branch.result.accept(this, branchState), branchGraph))
-                }
-                val isExhaustive = expression.branches.last().isUnconditional()
-                require(isExhaustive || expression.type.isUnit())
-                if (!isExhaustive) {
-                    // Reflecting the case when none of the clauses have been executed.
-                    branchResults.add(ExpressionResult(Node.Unit, data.graph.clone()))
-                }
-                return controlFlowMergePoint(data.graph, data.loop, expression, expression.type, branchResults).also {
-                    debug {
-                        context.log { "after ${expression.dump()}" }
-                        data.graph.logDigraph()
-                    }
-                }
             }
 
             override fun visitCatch(aCatch: IrCatch, data: BuilderState): Node {
@@ -1248,6 +1260,18 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 return aCatch.result.accept(this, data)
             }
 
+            /*
+              TODO | A more precise way of handling try/catch/throw is to find all the points in the program
+              TODO | which can throw an exception (an explicit throw, an external function call, an instance method call,
+              TODO | or an instance field read/write), then connect all these points to the catch clauses.
+              TODO | We would probably need to save two graphs per function instead of one: usual return and failure.
+
+              TODO | A note: this probably can lead to automatic nounwind attribute evaluation as a side effect
+              TODO | (as long as all runtime functions are marked with annotation/attribute).
+
+              TODO | And even more precise way if we distinguish between different exception types.
+              TODO | (And save the graphs for all types as well). But it looks overkillish to me.
+             */
             override fun visitTry(aTry: IrTry, data: BuilderState): Node {
                 require(aTry.finallyExpression == null) { "All finally clauses should've been lowered out" }
                 debug {
@@ -1255,11 +1279,17 @@ internal object ControlFlowSensibleEscapeAnalysis {
                     data.graph.logDigraph()
                 }
 
+                val tryBlockThrowGraphs = mutableListOf<PointsToGraph>()
+                tryBlocksThrowGraphs[aTry] = tryBlockThrowGraphs
                 val tryGraph = data.graph.clone()
-                val tryResult = aTry.tryResult.accept(this, BuilderState(tryGraph, data.loop, true))
+                val tryResult = aTry.tryResult.accept(this, BuilderState(tryGraph, data.loop, aTry))
+                val tryGraphWithThrows = if (tryBlockThrowGraphs.isEmpty())
+                    tryGraph
+                else
+                    tryGraph.forest.mergeGraphs(listOf(tryGraph) + tryBlockThrowGraphs, mutableListOf())
                 val catchesResults = aTry.catches.map {
-                    val catchGraph = tryGraph.clone()
-                    val catchResult = it.accept(this, BuilderState(catchGraph, data.loop, data.insideATry))
+                    val catchGraph = tryGraphWithThrows.clone()
+                    val catchResult = it.accept(this, BuilderState(catchGraph, data.loop, data.tryBlock))
                     ExpressionResult(catchResult, catchGraph)
                 }
 
@@ -1277,14 +1307,14 @@ internal object ControlFlowSensibleEscapeAnalysis {
                     // (otherwise, it either would've been caught by one of the catch blocks or
                     // would've been thrown to upper scope and, since they all return nothing,
                     // the control flow wouldn't have gotten to this point).
-                    aTry.tryResult.accept(this, BuilderState(data.graph, data.loop, false))
+                    aTry.tryResult.accept(this, BuilderState(data.graph, data.loop, null))
                 } else {
                     controlFlowMergePoint(data.graph, data.loop, aTry, aTry.type,
                             listOf(ExpressionResult(tryResult, tryGraph)) + catchesResults)
                 }.also {
                     debug {
                         context.log { "after ${aTry.dump()}" }
-                        data.graph.logDigraph()
+                        data.graph.logDigraph(it)
                     }
                 }
             }
@@ -1292,9 +1322,9 @@ internal object ControlFlowSensibleEscapeAnalysis {
             override fun visitSuspensionPoint(expression: IrSuspensionPoint, data: BuilderState): Node {
                 expression.suspensionPointIdParameter.accept(this, data)
                 val normalResultGraph = data.graph.clone()
-                val normalResult = expression.result.accept(this, BuilderState(normalResultGraph, data.loop, data.insideATry))
+                val normalResult = expression.result.accept(this, BuilderState(normalResultGraph, data.loop, data.tryBlock))
                 val resumeResultGraph = data.graph.clone()
-                val resumeResult = expression.resumeResult.accept(this, BuilderState(resumeResultGraph, data.loop, data.insideATry))
+                val resumeResult = expression.resumeResult.accept(this, BuilderState(resumeResultGraph, data.loop, data.tryBlock))
                 return controlFlowMergePoint(data.graph, data.loop, expression, expression.type,
                         listOf(ExpressionResult(normalResult, normalResultGraph), ExpressionResult(resumeResult, resumeResultGraph))
                 )
@@ -1340,34 +1370,38 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 val iterationResults = mutableListOf<ExpressionResult>()
                 var prevGraph = data.graph
                 if (loop is IrWhileLoop) {
-                    loop.condition.accept(this, BuilderState(prevGraph, loop, data.insideATry))
+                    loop.condition.accept(this, BuilderState(prevGraph, loop, data.tryBlock))
                     // A while loop might not execute even a single iteration.
                     iterationResults.add(ExpressionResult(Node.Unit, prevGraph.clone()))
                 }
                 val returnTargetsResultsSizes = returnTargetsResults.entries.associate { it.key to it.value.size }
+                val tryBlocksThrowGraphsSizes = tryBlocksThrowGraphs.entries.associate { it.key to it.value.size }
+                val topLevelThrowGraphsSize = topLevelThrowGraphs.size
                 val loopsContinueResultsSizes = loopsContinueResults.entries.associate { it.key to it.value.size }
                 val loopsBreakResultsSizes = loopsBreakResults.entries.associate { it.key to it.value.size }
                 val savedObjectsReferencedFromThrown = objectsReferencedFromThrown.copy()
-                var iterations = 0
+                var iteration = 0
                 do {
                     debug {
-                        context.log { "iter#$iterations:" }
+                        context.log { "iter#$iteration:" }
                         prevGraph.logDigraph()
                     }
-                    ++iterations
+                    ++iteration
 
                     returnTargetsResultsSizes.forEach { (key, size) -> returnTargetsResults[key]!!.trimSize(size) }
+                    tryBlocksThrowGraphsSizes.forEach { (key, size) -> tryBlocksThrowGraphs[key]!!.trimSize(size) }
+                    topLevelThrowGraphs.trimSize(topLevelThrowGraphsSize)
                     loopsContinueResultsSizes.forEach { (key, size) -> loopsContinueResults[key]!!.trimSize(size) }
                     loopsBreakResultsSizes.forEach { (key, size) -> loopsBreakResults[key]!!.trimSize(size) }
                     objectsReferencedFromThrown.clear()
                     objectsReferencedFromThrown.or(savedObjectsReferencedFromThrown)
 
                     val curGraph = prevGraph.clone()
-                    loop.body?.accept(this, BuilderState(curGraph, loop, data.insideATry))
+                    loop.body?.accept(this, BuilderState(curGraph, loop, data.tryBlock))
                     continueResults.add(ExpressionResult(Node.Unit, curGraph))
                     val nextGraph = PointsToGraph(prevGraph.forest)
                     controlFlowMergePoint(nextGraph, loop, fictitiousLoopStart, context.irBuiltIns.unitType, continueResults)
-                    loop.condition.accept(this, BuilderState(nextGraph, loop, data.insideATry))
+                    loop.condition.accept(this, BuilderState(nextGraph, loop, data.tryBlock))
                     val graphHasChanged = !PointsToGraphForest.graphsAreEqual(prevGraph, nextGraph)
                     prevGraph = nextGraph
                     if (graphHasChanged) {
@@ -1376,9 +1410,9 @@ internal object ControlFlowSensibleEscapeAnalysis {
                         controlFlowMergePoint(iterationGraph, loop, fictitiousLoopEnd, context.irBuiltIns.unitType, breakResults)
                         iterationResults.add(ExpressionResult(Node.Unit, iterationGraph))
                     }
-                } while (graphHasChanged && iterations < 10)
+                } while (graphHasChanged && iteration < 10)
 
-                if (iterations >= 10)
+                if (iteration >= 10)
                     error("BUGBUGBUG: ${loop.dump()}")
                 controlFlowMergePoint(data.graph, data.loop, loop, context.irBuiltIns.unitType, iterationResults)
                 debug {
@@ -1471,7 +1505,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
                                 && inMirroredNodes[fieldPointee.id] == null // Skip cycles.
 
                         val mirroredNode = when {
-                            actualObjects.size == 1 && actualObjects[0].loop == state.loop && !state.insideATry -> {
+                            actualObjects.size == 1 && actualObjects[0].loop == state.loop && state.tryBlock == null -> {
                                 // Can reflect directly field value to field value.
                                 null
                             }
@@ -1529,7 +1563,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
                                 val objFieldValue = with(state.graph) { obj.getField(field) }
                                 if (fieldPointee != null) { // An actual field rewrite.
                                     // TODO: Probably can do for any outer loop as well (not only for the current).
-                                    if (actualObjects.size == 1 && state.loop == obj.loop && !state.insideATry) {
+                                    if (actualObjects.size == 1 && state.loop == obj.loop && state.tryBlock == null) {
                                         state.graph.eraseValue(objFieldValue, state.loop, callSite, fieldValue.id + 2 * calleeGraph.nodes.size)
                                     } else {
                                         require(mirroredNode?.outNode != null)
@@ -1727,7 +1761,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
                                     val clonedGraph = clonedGraphs[index]
                                     val callee = calleeSymbol.owner
                                     val resultNode = processCall(
-                                            BuilderState(clonedGraph, data.loop, data.insideATry),
+                                            BuilderState(clonedGraph, data.loop, data.tryBlock),
                                             callSite, callee,
                                             argumentNodeIds,
                                             escapeAnalysisResults[calleeSymbol] ?: getExternalFunctionEAResult(callee))
@@ -1976,7 +2010,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
     @Suppress("UNUSED_PARAMETER")
     fun computeLifetimes(context: Context, callGraph: CallGraph, moduleDFG: ModuleDFG, lifetimes: MutableMap<IrElement, Lifetime>) {
         try {
-            InterproceduralAnalysis(context, callGraph, moduleDFG) { false }.analyze()
+            InterproceduralAnalysis(context, callGraph, moduleDFG) { it.file.path.endsWith("z.kt") }.analyze()
         } catch (t: Throwable) {
             val extraUserInfo =
                     """
