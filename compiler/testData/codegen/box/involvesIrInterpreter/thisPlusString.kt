@@ -6,7 +6,7 @@
 object Test {
     fun foo(): String = "foo " + this
 
-    fun bar(): String = "bar $this"
+    fun bar(): String = "<!EVALUATED("bar ")!>bar <!>$this"
 
     fun baz(): String = "baz " + this.toString()
 }

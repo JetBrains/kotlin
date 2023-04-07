@@ -7,8 +7,8 @@ fun ObjectWithExtension?.nullableExtensionFun(): String =
         "Not null"
 
 fun ObjectWithExtension.extensionFun(): String =
-    if(<!EVALUATED("false")!>this == null<!>)
-        "Null" // unreachable branch, will be optimized by interpreter
+    if(this == null)
+        "Null"
     else
         "Not null"
 
