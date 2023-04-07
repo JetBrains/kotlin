@@ -1,0 +1,28 @@
+KtSuccessCallInfo:
+  call = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = /processB(b: B): kotlin.Int
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = b
+            receiverType = null
+            returnType = B
+            symbol = b: B
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = /processB
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      a -> (KtVariableLikeSignature:
+        name = b
+        receiverType = null
+        returnType = B
+        symbol = b: B
+        callableIdIfNonLocal = null)
+    }
